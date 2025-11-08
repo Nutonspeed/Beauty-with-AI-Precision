@@ -17,7 +17,10 @@ export type SkinConcern =
   | 'dullness'
   | 'fine_lines'
   | 'blackheads'
-  | 'hyperpigmentation';
+  | 'hyperpigmentation'
+  | 'spots'
+  | 'pores'
+  | 'texture';
 
 // ผลการวิเคราะห์จาก Computer Vision
 export interface CVAnalysisResult {

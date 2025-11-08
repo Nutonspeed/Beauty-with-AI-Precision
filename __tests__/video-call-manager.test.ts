@@ -6,9 +6,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { VideoCallManager } from '@/lib/video-call-manager';
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { VideoCallManager } from '@/lib/video-call-manager';
-
 // Mock WebSocketClient
 vi.mock('@/lib/websocket-client', () => ({
   default: {

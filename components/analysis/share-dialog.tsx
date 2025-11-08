@@ -54,7 +54,8 @@ export function ShareDialog({
 }: ShareDialogProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [shareUrl, setShareUrl] = useState<string | null>(null)
-  const [expiryDays, setExpiryDays] = useState<string>("7")
+  type ExpiryOption = '7' | '30' | '90' | 'never'
+  const [expiryDays, setExpiryDays] = useState<ExpiryOption>('7')
   const [recipientEmail, setRecipientEmail] = useState("")
   const [recipientName, setRecipientName] = useState("")
   const [message, setMessage] = useState("")
@@ -161,12 +162,14 @@ export function ShareDialog({
     onOpenChange(false)
   }
 
-  const expiryText = {
+  const expiryTextMap = {
     "7": "7 days",
     "30": "30 days",
     "90": "90 days",
     "never": "Never expires"
-  }[expiryDays]
+  } as const
+
+  const expiryText = expiryTextMap[expiryDays] ?? 'the selected period'
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
@@ -200,7 +203,10 @@ export function ShareDialog({
                   <Clock className="h-4 w-4" />
                   Link Expiry
                 </Label>
-                <Select value={expiryDays} onValueChange={setExpiryDays}>
+                <Select
+                  value={expiryDays}
+                  onValueChange={(value) => setExpiryDays(value as ExpiryOption)}
+                >
                   <SelectTrigger id="expiry" className="mt-2">
                     <SelectValue />
                   </SelectTrigger>

@@ -275,6 +275,9 @@ function concernToParameter(concern: SkinConcern): string {
     hyperpigmentation: 'pigmentation',
     acne: 'redness',
     blackheads: 'pores',
+    spots: 'spots',
+    pores: 'pores',
+    texture: 'texture',
   };
   return map[concern] || 'unknown';
 }
@@ -516,6 +519,24 @@ function generateRecommendations(
       'Tranexamic Acid',
       'Laser Toning',
       'Brightening Serum',
+    ],
+    spots: [
+      'Spot Corrector Serum',
+      'Targeted Laser Treatment',
+      'Brightening Peel',
+      'Broad-Spectrum Sunscreen (SPF 50+)',
+    ],
+    pores: [
+      'Deep Pore Cleansing Facial',
+      'Niacinamide Booster',
+      'Fractional Laser Resurfacing',
+      'Clay & Charcoal Mask',
+    ],
+    texture: [
+      'Microdermabrasion',
+      'Retexturizing Serum (AHA/BHA)',
+      'Dermaplaning Treatment',
+      'LED Phototherapy',
     ],
   };
 

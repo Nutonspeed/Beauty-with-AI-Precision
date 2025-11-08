@@ -78,8 +78,8 @@ export function ComparisonPageClient({
       redness: analysis.metrics?.redness || 0,
       overall: analysis.metrics?.overall_score || 0
     },
-    imageUrl: analysis.image_url,
-    thumbnailUrl: analysis.thumbnail_url
+  imageUrl: analysis.image_url,
+  thumbnailUrl: analysis.thumbnail_url ?? undefined
   }));
 
   // Transform analyses to gallery format
@@ -92,8 +92,8 @@ export function ComparisonPageClient({
     milestoneType: analysis.milestone_type,
     notes: analysis.notes,
     metrics: {
-      overall_score: analysis.metrics?.overall_score || 0,
-      ...analysis.metrics
+      ...(analysis.metrics ?? {}),
+      overall_score: analysis.metrics?.overall_score ?? 0
     }
   }));
 

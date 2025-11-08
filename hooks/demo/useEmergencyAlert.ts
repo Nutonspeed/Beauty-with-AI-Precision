@@ -114,9 +114,16 @@ export function useEmergencyAlert(options: UseEmergencyAlertOptions): UseEmergen
       };
 
       try {
-        const AudioContext =
-          globalThis.AudioContext || (globalThis as typeof globalThis & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-        const audioContext = new (AudioContext as typeof globalThis.AudioContext)();
+        const AudioContextConstructor =
+          globalThis.AudioContext ||
+          (globalThis as typeof globalThis & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+
+        if (!AudioContextConstructor) {
+          console.warn('[useEmergencyAlert] Web Audio API not supported');
+          return;
+        }
+
+        const audioContext = new AudioContextConstructor();
         const oscillator = audioContext.createOscillator();
         const gainNode = audioContext.createGain();
 

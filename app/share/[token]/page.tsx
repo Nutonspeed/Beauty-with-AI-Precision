@@ -49,7 +49,7 @@ export default async function SharePage({ params }: SharePageProps) {
   }
 
   // Check if link expired
-  if (analysis.share_expires_at && isShareExpired(new Date(analysis.share_expires_at))) {
+  if (analysis.share_expires_at && isShareExpired(analysis.share_expires_at)) {
     notFound()
   }
 
@@ -76,7 +76,7 @@ export default async function SharePage({ params }: SharePageProps) {
 
   // Calculate remaining days if expiry is set
   const remainingDays = analysis.share_expires_at 
-    ? getRemainingDays(new Date(analysis.share_expires_at))
+    ? getRemainingDays(analysis.share_expires_at)
     : null
 
   return (
@@ -102,7 +102,11 @@ export async function generateMetadata({ params }: SharePageProps) {
     .eq('share_token', token)
     .single()
 
-  const clinicName = analysis?.clinic?.name || 'Clinic'
+  const clinicRecord = Array.isArray(analysis?.clinic)
+    ? analysis?.clinic[0]
+    : analysis?.clinic
+
+  const clinicName = clinicRecord?.name || 'Clinic'
 
   return {
     title: `Skin Analysis Report - ${clinicName}`,

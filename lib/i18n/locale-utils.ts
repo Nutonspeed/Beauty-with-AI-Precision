@@ -196,6 +196,12 @@ export function formatRelativeTime(date: Date | string, locale: Locale = 'th'): 
   const now = new Date();
   const diffInSeconds = Math.floor((now.getTime() - dateObj.getTime()) / 1000);
 
+  const relativeTimeFormatters = {
+    th: new Intl.RelativeTimeFormat('th-TH', { numeric: 'auto' }),
+    en: new Intl.RelativeTimeFormat('en-US', { numeric: 'auto' }),
+    zh: new Intl.RelativeTimeFormat('zh-CN', { numeric: 'auto' }),
+  };
+
   const units: { unit: Intl.RelativeTimeFormatUnit; seconds: number }[] = [
     { unit: 'year', seconds: 31536000 },
     { unit: 'month', seconds: 2592000 },
@@ -209,16 +215,11 @@ export function formatRelativeTime(date: Date | string, locale: Locale = 'th'): 
   for (const { unit, seconds } of units) {
     if (Math.abs(diffInSeconds) >= seconds) {
       const value = Math.floor(diffInSeconds / seconds);
-      const formatters = {
-        th: new Intl.RelativeTimeFormat('th-TH', { numeric: 'auto' }),
-        en: new Intl.RelativeTimeFormat('en-US', { numeric: 'auto' }),
-        zh: new Intl.RelativeTimeFormat('zh-CN', { numeric: 'auto' }),
-      };
-      return formatters[locale].format(-value, unit);
+      return relativeTimeFormatters[locale].format(-value, unit);
     }
   }
 
-  return formatters[locale].format(0, 'second');
+  return relativeTimeFormatters[locale].format(0, 'second');
 }
 
 /**

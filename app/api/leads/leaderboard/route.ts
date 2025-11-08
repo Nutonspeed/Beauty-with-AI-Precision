@@ -130,12 +130,15 @@ export async function GET(request: NextRequest) {
 
     for (const lead of leads || []) {
       const staffId = lead.sales_staff_id
+      const staffRecord = Array.isArray(lead.sales_staff)
+        ? lead.sales_staff[0]
+        : lead.sales_staff
       
       if (!staffStats.has(staffId)) {
         staffStats.set(staffId, {
           staff_id: staffId,
-          staff_name: lead.sales_staff?.full_name || 'Unknown',
-          staff_email: lead.sales_staff?.email || '',
+          staff_name: staffRecord?.full_name || 'Unknown',
+          staff_email: staffRecord?.email || '',
           total: 0,
           new: 0,
           contacted: 0,

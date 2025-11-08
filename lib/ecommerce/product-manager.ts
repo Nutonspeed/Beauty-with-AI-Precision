@@ -528,8 +528,7 @@ export class ProductManager {
     const product = this.products.get(productId);
     if (!product) return [];
 
-    const related = this.products
-      .entries()
+    const related = Array.from(this.products.entries())
       .filter(([id]) => id !== productId)
       .map(([id, p]) => {
         let score = 0;
@@ -542,7 +541,7 @@ export class ProductManager {
       .slice(0, limit)
       .map(r => r.id);
 
-    return Array.from(related);
+    return related;
   }
 
   /**

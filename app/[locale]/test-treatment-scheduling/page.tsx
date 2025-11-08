@@ -213,16 +213,18 @@ const MOCK_ANALYSIS: HybridSkinAnalysis = {
     skinType: 'combination',
     concerns: ['dark_spots', 'large_pores', 'wrinkles', 'texture'] as const,
     severity: {
-      wrinkles: 7,
-      dark_spots: 6,
-      large_pores: 5,
-      texture: 6,
-      redness: 3,
       acne: 2,
+      blackheads: 3,
+      dark_spots: 6,
       dullness: 2,
       fine_lines: 6,
-      blackheads: 3,
       hyperpigmentation: 4,
+      large_pores: 5,
+      pores: 5,
+      redness: 3,
+      spots: 6,
+      texture: 6,
+      wrinkles: 7,
     },
     recommendations: [
       { category: 'serum', product: 'Vitamin C Serum', reason: 'For brightening and antioxidant protection' },
@@ -273,6 +275,9 @@ const MOCK_ANALYSIS: HybridSkinAnalysis = {
     redness: 45,
     overall: 62,
   },
+  confidence: 0.9,
+  recommendations: ['Hydrate daily', 'Apply SPF 50+ each morning'],
+  annotatedImages: {},
 };
 
 const MOCK_HISTORY: TreatmentHistory[] = [
@@ -512,9 +517,17 @@ export default function TreatmentSchedulingTestPage() {
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    label={({ name, percentage }: { name: string; percentage: number }) =>
-                      `${name} ${(percentage * 100).toFixed(0)}%`
-                    }
+                    label={(props) => {
+                      const payloadPercentage = (props.payload as { percentage?: number })?.percentage;
+                      const ratio = typeof props.percent === 'number'
+                        ? props.percent
+                        : typeof payloadPercentage === 'number'
+                          ? payloadPercentage / 100
+                          : 0;
+                      const name = (props.payload as { name?: string })?.name || props.name || '';
+                      const percentageText = (ratio * 100).toFixed(0);
+                      return name ? `${name} ${percentageText}%` : `${percentageText}%`;
+                    }}
                     outerRadius={80}
                     fill="#8884d8"
                     dataKey="value"

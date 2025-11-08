@@ -236,7 +236,7 @@ export class IndexedDBManager {
       const transaction = db.transaction(['analyses'], 'readonly');
       const store = transaction.objectStore('analyses');
       const index = store.index('synced');
-      const request = index.getAll(false);
+  const request = index.getAll(IDBKeyRange.only(false));
 
       request.onsuccess = () => {
         resolve(request.result as OfflineAnalysis[]);
@@ -377,7 +377,7 @@ export class IndexedDBManager {
       const transaction = db.transaction(['leads'], 'readonly');
       const store = transaction.objectStore('leads');
       const index = store.index('synced');
-      const request = index.getAll(false);
+  const request = index.getAll(IDBKeyRange.only(false));
 
       request.onsuccess = () => {
         resolve(request.result as OfflineLead[]);

@@ -310,7 +310,7 @@ export function ProgressTrackingChart({
                 parameter={selectedParameter}
                 maxValue={maxValue}
                 locale={locale}
-                onBarClick={(id) => onAnalysisClick?.(id)}
+                onPointClick={(id) => onAnalysisClick?.(id)}
               />
             )}
           </div>
@@ -532,7 +532,7 @@ function LineChart({ data, parameter, minValue, maxValue, locale, onPointClick }
 }
 
 // Bar Chart Component
-function BarChartComponent({ data, parameter, maxValue, locale, onBarClick }: Omit<ChartProps, 'minValue'>) {
+function BarChartComponent({ data, parameter, maxValue, locale, onPointClick }: Omit<ChartProps, 'minValue'>) {
   const height = 300;
   const width = 800;
   const padding = { top: 20, right: 20, bottom: 40, left: 50 };
@@ -594,7 +594,7 @@ function BarChartComponent({ data, parameter, maxValue, locale, onBarClick }: Om
                 height={barHeight}
                 fill={color}
                 className="cursor-pointer hover:opacity-80 transition-opacity"
-                onClick={() => onBarClick?.(item.id)}
+                onClick={() => onPointClick?.(item.id)}
                 rx="4"
               />
               {/* Value label on top of bar */}

@@ -32,8 +32,8 @@ export interface UseLiveARPreviewReturn extends UseLiveARPreviewState {
   captureFrame: () => string | null
   
   // Refs
-  videoRef: React.RefObject<HTMLVideoElement>
-  canvasRef: React.RefObject<HTMLCanvasElement>
+  videoRef: React.RefObject<HTMLVideoElement | null>
+  canvasRef: React.RefObject<HTMLCanvasElement | null>
 }
 
 export function useLiveARPreview(): UseLiveARPreviewReturn {

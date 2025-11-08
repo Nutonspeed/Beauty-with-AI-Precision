@@ -12,7 +12,7 @@
 'use client';
 
 import { useAuth } from './useAuth';
-import { type Clinic } from '@/types/multi-tenant';
+import { type Clinic, type UserRole } from '@/types/multi-tenant';
 
 // ============================================================================
 // useClinicContext Hook
@@ -27,15 +27,16 @@ export function useClinicContext() {
   const clinic = user?.clinic;
   const clinicId = user?.clinic_id;
   const branchId = user?.branch_id;
+  const role = user?.role as UserRole | undefined;
   
   /**
    * Check if user can access specific clinic
    */
   function canAccessClinic(targetClinicId: string): boolean {
-    if (!user) return false;
+    if (!user || !role) return false;
     
     // Super admin can access all clinics
-    if (user.role === 'super_admin') {
+    if (role === 'super_admin') {
       return true;
     }
     
@@ -47,15 +48,15 @@ export function useClinicContext() {
    * Check if user can manage clinic
    */
   function canManageClinic(targetClinicId?: string): boolean {
-    if (!user) return false;
+    if (!user || !role) return false;
     
     // Super admin can manage all
-    if (user.role === 'super_admin') {
+    if (role === 'super_admin') {
       return true;
     }
     
     // Owner/Admin can manage own clinic
-    if (user.role === 'clinic_owner' || user.role === 'clinic_admin') {
+    if (role === 'clinic_owner' || role === 'clinic_admin') {
       if (!targetClinicId) return true;
       return clinicId === targetClinicId;
     }
@@ -67,15 +68,15 @@ export function useClinicContext() {
    * Check if user can manage staff in clinic
    */
   function canManageStaff(targetClinicId?: string): boolean {
-    if (!user) return false;
+    if (!user || !role) return false;
     
     // Super admin can manage all
-    if (user.role === 'super_admin') {
+    if (role === 'super_admin') {
       return true;
     }
     
     // Owner/Admin can manage staff in own clinic
-    if (user.role === 'clinic_owner' || user.role === 'clinic_admin') {
+    if (role === 'clinic_owner' || role === 'clinic_admin') {
       if (!targetClinicId) return true;
       return clinicId === targetClinicId;
     }
@@ -87,26 +88,26 @@ export function useClinicContext() {
    * Check if user can view analytics
    */
   function canViewAnalytics(scope: 'own' | 'clinic' | 'all' = 'own'): boolean {
-    if (!user) return false;
+    if (!user || !role) return false;
     
     // Super admin can view all
-    if (user.role === 'super_admin') {
+    if (role === 'super_admin') {
       return true;
     }
     
     // Owner/Admin can view clinic analytics
     if (scope === 'clinic') {
-      return ['clinic_owner', 'clinic_admin'].includes(user.role);
+      return ['clinic_owner', 'clinic_admin'].includes(role);
     }
     
     // Sales staff can only view own
     if (scope === 'own') {
-      return ['sales_staff', 'clinic_staff', 'clinic_admin', 'clinic_owner'].includes(user.role);
+      return ['sales_staff', 'clinic_staff', 'clinic_admin', 'clinic_owner'].includes(role);
     }
     
     // Only super admin can view all
     if (scope === 'all') {
-      return user.role === 'super_admin';
+      return false;
     }
     
     return false;
@@ -116,9 +117,9 @@ export function useClinicContext() {
    * Check if user can assign leads
    */
   function canAssignLeads(): boolean {
-    if (!user) return false;
+  if (!user || !role) return false;
     
-    return ['super_admin', 'clinic_owner', 'clinic_admin'].includes(user.role);
+  return ['super_admin', 'clinic_owner', 'clinic_admin'].includes(role);
   }
   
   /**

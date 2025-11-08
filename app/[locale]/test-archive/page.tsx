@@ -2,93 +2,187 @@
 
 import React, { useState, useEffect } from 'react';
 import ArchiveManagement from '@/components/archive-management';
-import { AnalysisArchiveEngine } from '@/lib/analysis-archive-engine';
-import { VISIAAnalysisResult } from '@/types';
-import { Calendar, Plus, RefreshCw } from 'lucide-react';
+import { AnalysisArchiveEngine, type AnalysisRecord } from '@/lib/analysis-archive-engine';
+import type { AIAnalysisResult, SkinConcern, SkinType } from '@/lib/types/skin-analysis';
+import { Calendar, RefreshCw } from 'lucide-react';
 
-// Mock VISIA analysis data
-const mockAnalysisData: VISIAAnalysisResult[] = [
+// Mock AI analysis data
+const SKIN_CONCERNS: SkinConcern[] = [
+  'acne',
+  'wrinkles',
+  'dark_spots',
+  'large_pores',
+  'redness',
+  'dullness',
+  'fine_lines',
+  'blackheads',
+  'hyperpigmentation',
+  'spots',
+  'pores',
+  'texture',
+];
+
+const createSeverity = (overrides: Partial<Record<SkinConcern, number>>): Record<SkinConcern, number> => {
+  return SKIN_CONCERNS.reduce<Record<SkinConcern, number>>((acc, concern) => {
+    acc[concern] = overrides[concern] ?? 0;
+    return acc;
+  }, {} as Record<SkinConcern, number>);
+};
+
+const createAnalysis = ({
+  skinType,
+  concerns,
+  severity,
+  recommendations,
+  confidence,
+  treatmentPlan,
+}: {
+  skinType: SkinType;
+  concerns: SkinConcern[];
+  severity: Partial<Record<SkinConcern, number>>;
+  recommendations: Array<{ category: 'cleanser' | 'serum' | 'moisturizer' | 'treatment' | 'sunscreen'; product: string; reason: string }>;
+  confidence: number;
+  treatmentPlan?: string;
+}): AIAnalysisResult => ({
+  skinType,
+  concerns,
+  severity: createSeverity(severity),
+  recommendations,
+  treatmentPlan,
+  confidence,
+});
+
+interface MockAnalysisEntry {
+  id: string;
+  timestamp: Date;
+  overallScore: number;
+  measurementCompletion: number;
+  recommendations: string[];
+  analysis: AIAnalysisResult;
+}
+
+const mockAnalysisData: MockAnalysisEntry[] = [
   {
     id: 'analysis-1',
     timestamp: new Date('2024-11-01'),
-    skinType: 'combination',
-    concerns: [
-      { type: 'acne', severity: 7, location: ['cheeks', 'forehead'], confidence: 0.85 },
-      { type: 'redness', severity: 5, location: ['cheeks'], confidence: 0.75 },
-    ],
     overallScore: 72,
     measurementCompletion: 100,
     recommendations: ['cleanser', 'serum', 'sunscreen'],
+    analysis: createAnalysis({
+      skinType: 'combination',
+      concerns: ['acne', 'redness', 'spots'],
+      severity: {
+        acne: 7,
+        redness: 5,
+        spots: 6,
+        texture: 3,
+      },
+      recommendations: [
+        { category: 'cleanser', product: 'Balancing Gel Cleanser', reason: 'Controls excess oil without irritation.' },
+        { category: 'serum', product: 'Calming Niacinamide Serum', reason: 'Reduces redness and supports barrier health.' },
+        { category: 'sunscreen', product: 'SPF 50 Mineral Shield', reason: 'Protects against UV-triggered inflammation.' },
+      ],
+      confidence: 0.85,
+    }),
   },
   {
     id: 'analysis-2',
     timestamp: new Date('2024-09-15'),
-    skinType: 'combination',
-    concerns: [
-      { type: 'acne', severity: 8, location: ['cheeks', 'forehead', 'chin'], confidence: 0.90 },
-      { type: 'redness', severity: 6, location: ['cheeks', 'nose'], confidence: 0.80 },
-      { type: 'texture', severity: 5, location: ['forehead'], confidence: 0.70 },
-    ],
     overallScore: 65,
     measurementCompletion: 100,
     recommendations: ['cleanser', 'treatment'],
+    analysis: createAnalysis({
+      skinType: 'combination',
+      concerns: ['acne', 'redness', 'texture', 'pores'],
+      severity: {
+        acne: 8,
+        redness: 6,
+        texture: 5,
+        pores: 4,
+        spots: 5,
+      },
+      recommendations: [
+        { category: 'cleanser', product: 'Clarifying Foam Cleanser', reason: 'Targets breakout-prone areas without over-drying.' },
+        { category: 'treatment', product: 'Retinol Renewal Treatment', reason: 'Improves texture and reduces congestion.' },
+      ],
+      confidence: 0.82,
+    }),
   },
   {
     id: 'analysis-3',
     timestamp: new Date('2024-07-10'),
-    skinType: 'combination',
-    concerns: [
-      { type: 'acne', severity: 9, location: ['cheeks', 'forehead', 'chin'], confidence: 0.95 },
-      { type: 'redness', severity: 8, location: ['cheeks', 'nose', 'chin'], confidence: 0.85 },
-      { type: 'texture', severity: 7, location: ['forehead', 'cheeks'], confidence: 0.80 },
-      { type: 'pores', severity: 6, location: ['nose', 'cheeks'], confidence: 0.75 },
-    ],
     overallScore: 58,
     measurementCompletion: 100,
     recommendations: ['cleanser', 'toner', 'treatment'],
+    analysis: createAnalysis({
+      skinType: 'combination',
+      concerns: ['acne', 'redness', 'texture', 'pores', 'spots'],
+      severity: {
+        acne: 9,
+        redness: 8,
+        texture: 7,
+        pores: 6,
+        spots: 7,
+      },
+      recommendations: [
+        { category: 'cleanser', product: 'Anti-Acne Cleanser', reason: 'Deep cleanses to reduce acne-causing bacteria.' },
+        { category: 'moisturizer', product: 'Barrier Repair Moisturizer', reason: 'Replenishes hydration after treatments.' },
+        { category: 'treatment', product: 'Professional LED Therapy', reason: 'Targets inflammation and accelerates healing.' },
+      ],
+      confidence: 0.88,
+      treatmentPlan: 'Combine weekly LED therapy with monthly deep cleansing facials.',
+    }),
   },
   {
     id: 'analysis-4',
     timestamp: new Date('2024-05-20'),
-    skinType: 'oily',
-    concerns: [
-      { type: 'oiliness', severity: 8, location: ['T-zone'], confidence: 0.90 },
-      { type: 'pores', severity: 7, location: ['nose'], confidence: 0.85 },
-      { type: 'acne', severity: 6, location: ['forehead'], confidence: 0.75 },
-    ],
     overallScore: 62,
     measurementCompletion: 100,
     recommendations: ['cleanser', 'toner'],
+    analysis: createAnalysis({
+      skinType: 'oily',
+      concerns: ['large_pores', 'spots', 'acne'],
+      severity: {
+        large_pores: 7,
+        acne: 6,
+        spots: 5,
+        redness: 3,
+      },
+      recommendations: [
+        { category: 'cleanser', product: 'Oil-Control Cleanser', reason: 'Manages shine and prevents clogged pores.' },
+        { category: 'treatment', product: 'Salicylic Acid Peel', reason: 'Exfoliates and refines enlarged pores.' },
+      ],
+      confidence: 0.8,
+    }),
   },
   {
     id: 'analysis-5',
     timestamp: new Date('2024-03-05'),
-    skinType: 'dry',
-    concerns: [
-      { type: 'dryness', severity: 7, location: ['cheeks', 'forehead'], confidence: 0.85 },
-      { type: 'sensitivity', severity: 6, location: ['cheeks'], confidence: 0.75 },
-      { type: 'texture', severity: 5, location: ['forehead'], confidence: 0.70 },
-    ],
     overallScore: 68,
     measurementCompletion: 100,
     recommendations: ['moisturizer', 'sunscreen'],
+    analysis: createAnalysis({
+      skinType: 'dry',
+      concerns: ['dullness', 'texture', 'fine_lines'],
+      severity: {
+        dullness: 7,
+        texture: 5,
+        fine_lines: 6,
+        redness: 2,
+      },
+      recommendations: [
+        { category: 'moisturizer', product: 'Ceramide Rich Cream', reason: 'Restores the lipid barrier and boosts hydration.' },
+        { category: 'sunscreen', product: 'Hydrating SPF 50+', reason: 'Prevents UV damage that worsens dryness and lines.' },
+      ],
+      confidence: 0.78,
+    }),
   },
 ];
 
-interface ArchiveRecord {
-  id: string;
-  date: Date;
-  analysis: VISIAAnalysisResult;
-  clinicName?: string;
-  clinicianName?: string;
-  tags: string[];
-  notes: string;
-  treatmentApplied: boolean;
-  improvementScore?: number;
-}
+const formatConcerns = (concerns: SkinConcern[]): string =>
+  concerns.map((concern) => concern.replace(/_/g, ' ')).join(', ');
 
 const TestArchivePage: React.FC = () => {
-  const [records, setRecords] = useState<ArchiveRecord[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
   const [language, setLanguage] = useState<'th' | 'en'>('en');
 
@@ -98,13 +192,13 @@ const TestArchivePage: React.FC = () => {
     AnalysisArchiveEngine.clearArchive();
 
     // Add mock records
-    const newRecords: ArchiveRecord[] = [];
+    const newRecords: AnalysisRecord[] = [];
 
     mockAnalysisData.forEach((analysis, index) => {
       const improvement = 72 - (index * 3.5); // Declining trend
       const record = AnalysisArchiveEngine.addToArchive(
         analysis.id,
-        analysis,
+        analysis.analysis,
         {
           clinicName: index % 2 === 0 ? 'Bangkok Skin Clinic' : 'Phuket Beauty Center',
           clinicianName: index % 3 === 0 ? 'Dr. Somchai' : index % 3 === 1 ? 'Dr. Niran' : 'Dr. Pornthip',
@@ -118,10 +212,28 @@ const TestArchivePage: React.FC = () => {
         }
       );
 
-      newRecords.push(record as unknown as ArchiveRecord);
+      if (record) {
+        // Preserve the mock timeline so stats show a meaningful range.
+        record.date = new Date(analysis.timestamp);
+        record.timestamp = new Date(analysis.timestamp);
+        newRecords.push(record);
+      }
     });
 
-    setRecords(newRecords);
+    if (typeof window !== 'undefined') {
+      try {
+        const serialized = newRecords.map((record) => ({
+          ...record,
+          date: record.date.toISOString(),
+          timestamp: record.timestamp ? record.timestamp.toISOString() : undefined,
+          exportedAt: record.exportedAt?.map((date) => date.toISOString()) ?? [],
+        }));
+        window.localStorage.setItem('analysis_archive', JSON.stringify(serialized));
+      } catch (error) {
+        console.error('Failed to persist archive timeline', error);
+      }
+    }
+
     setIsInitialized(true);
   };
 
@@ -259,7 +371,7 @@ const TestArchivePage: React.FC = () => {
             {language === 'th' ? 'บันทึกตัวอย่าง' : 'Sample Records'}
           </h2>
           <div className="space-y-3">
-            {mockAnalysisData.map((analysis, index) => (
+            {mockAnalysisData.map((analysis) => (
               <div key={analysis.id} className="border border-gray-200 rounded-lg p-4">
                 <div className="flex items-start justify-between">
                   <div>
@@ -272,7 +384,7 @@ const TestArchivePage: React.FC = () => {
                     </p>
                     <p className="text-sm text-gray-600 mt-1">
                       {language === 'th' ? 'ปัญหา' : 'Concerns'}:{' '}
-                      {analysis.concerns.map((c) => c.type).join(', ')}
+                      {formatConcerns(analysis.analysis.concerns)}
                     </p>
                     <p className="text-sm text-gray-600">
                       {language === 'th' ? 'คะแนน' : 'Score'}: {analysis.overallScore}/100
@@ -280,7 +392,7 @@ const TestArchivePage: React.FC = () => {
                   </div>
                   <div className="text-right">
                     <span className="inline-block px-3 py-1 bg-blue-100 text-blue-700 rounded text-sm">
-                      {analysis.skinType}
+                      {analysis.analysis.skinType}
                     </span>
                   </div>
                 </div>

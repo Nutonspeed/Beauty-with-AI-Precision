@@ -357,7 +357,7 @@ export function useBranchInventory(
   }, [loadInventory])
 
   const addItem = useCallback(
-    async (data: Omit<InventoryItem, "id" | "createdAt" | "updatedAt" | "branchId" | "status">) => {
+    async (data: Omit<InventoryItem, "id" | "createdAt" | "updatedAt" | "branchId">) => {
       if (!branchId) throw new Error("Branch ID required")
 
       try {
@@ -365,7 +365,7 @@ export function useBranchInventory(
         const newItem = manager.addInventoryItem({
           ...data,
           branchId,
-          status: data.status || "in_stock",
+          status: data.status ?? "in_stock",
         })
         setInventory(prev => [...prev, newItem])
         setError(null)

@@ -1,7 +1,6 @@
 // React hooks for AI features
 'use client';
 
-// @ts-nocheck
 import { useState, useCallback, useEffect } from 'react';
 import { SkinDiseaseDetector, AnalysisResult, SkinCondition } from '@/lib/ai/skin-disease-detector';
 import { VirtualMakeupTryOn, TryOnResult, MakeupProduct, MakeupLook } from '@/lib/ai/virtual-makeup';
@@ -22,6 +21,7 @@ export interface UseAIState {
  * Hook for skin disease detection
  */
 export function useSkinAnalysis() {
+  type KnownSkinCondition = Omit<SkinCondition, 'confidence' | 'severity'>;
   const [state, setState] = useState<UseAIState>({
     loading: false,
     error: null,
@@ -42,19 +42,19 @@ export function useSkinAnalysis() {
     }
   }, []);
 
-  const getConditionInfo = useCallback((conditionId: string): SkinCondition | null => {
+  const getConditionInfo = useCallback((conditionId: string): KnownSkinCondition | null => {
     return skinDetector.getConditionInfo(conditionId);
   }, []);
 
-  const getAllConditions = useCallback((): SkinCondition[] => {
+  const getAllConditions = useCallback((): KnownSkinCondition[] => {
     return skinDetector.getAllConditions();
   }, []);
 
   return {
     ...state,
     analyzeImage,
-    getConditionInfo,
-    getAllConditions,
+  getConditionInfo,
+  getAllConditions,
     result: state.result as AnalysisResult | null,
   };
 }

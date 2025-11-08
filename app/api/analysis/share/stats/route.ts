@@ -64,12 +64,16 @@ export async function GET(request: NextRequest) {
       )
     }
 
+    const salesStaff = Array.isArray(analysis.sales_staff)
+      ? analysis.sales_staff[0]
+      : analysis.sales_staff;
+
     // Check permission: owner, sales_staff who created it, super_admin, or clinic_admin with same clinic
     const canViewStats = 
       analysis.user_id === userId ||
-      analysis.sales_staff?.user_id === userId ||
-      (analysis.sales_staff?.role === 'super_admin') ||
-      (analysis.sales_staff?.role === 'clinic_admin' && analysis.sales_staff?.clinic_id === analysis.clinic_id)
+      salesStaff?.user_id === userId ||
+      salesStaff?.role === 'super_admin' ||
+      (salesStaff?.role === 'clinic_admin' && salesStaff?.clinic_id === analysis.clinic_id)
 
     if (!canViewStats) {
       return NextResponse.json(
@@ -121,10 +125,18 @@ export async function GET(request: NextRequest) {
     }
 
     // Calculate statistics
+    const createdAt = analysis.created_at instanceof Date
+      ? analysis.created_at.toISOString()
+      : analysis.created_at
+
+    const expiresAt = analysis.share_expires_at instanceof Date
+      ? analysis.share_expires_at.toISOString()
+      : analysis.share_expires_at
+
     const stats = calculateShareStats(
       views,
-      new Date(analysis.created_at),
-      analysis.share_expires_at ? new Date(analysis.share_expires_at) : null
+      createdAt,
+      expiresAt
     )
 
     return NextResponse.json({

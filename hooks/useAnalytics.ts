@@ -63,7 +63,7 @@ export function useMetrics(category?: string, refreshInterval?: number): UseMetr
   const [metrics, setMetrics] = useState<MetricData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const intervalRef = useRef<NodeJS.Timeout>();
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const fetchMetrics = useCallback(async () => {
     try {
@@ -285,7 +285,7 @@ export function useInsights(
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dismissedInsights, setDismissedInsights] = useState<Set<string>>(new Set());
-  const intervalRef = useRef<NodeJS.Timeout>();
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const fetchInsights = useCallback(async () => {
     try {

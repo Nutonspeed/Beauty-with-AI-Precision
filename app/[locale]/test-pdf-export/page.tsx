@@ -18,16 +18,48 @@ export default function TestPDFExportPage() {
 
   // Mock analysis data for testing
   const mockAnalysis: HybridSkinAnalysis = {
+    id: 'mock-analysis-001',
+    userId: 'test-user-001',
+    createdAt: new Date(),
     timestamp: new Date(),
-    overallScore: 78,
-    confidence: 92,
-    percentiles: {
-      spots: 65,
-      pores: 58,
-      wrinkles: 72,
-      texture: 68,
-      redness: 45,
-      overall: 67,
+    imageUrl: 'https://images.placeholderhub.com/skin-analysis.jpg',
+    aiProvider: 'gemini',
+    ai: {
+      skinType: 'combination',
+      concerns: ['spots', 'wrinkles', 'large_pores'],
+      severity: {
+        acne: 3,
+        wrinkles: 7,
+        dark_spots: 6,
+        large_pores: 5,
+        redness: 4,
+        dullness: 5,
+        fine_lines: 6,
+        blackheads: 2,
+        hyperpigmentation: 5,
+        spots: 6,
+        pores: 5,
+        texture: 4,
+      },
+      recommendations: [
+        {
+          category: 'serum',
+          product: 'Vitamin C Brightening Serum',
+          reason: 'Helps reduce pigmentation and brighten overall complexion.',
+        },
+        {
+          category: 'treatment',
+          product: 'Professional Chemical Peel',
+          reason: 'Targets uneven texture and persistent dark spots.',
+        },
+        {
+          category: 'sunscreen',
+          product: 'Broad-Spectrum SPF 50+',
+          reason: 'Protects against UV-induced hyperpigmentation and aging.',
+        },
+      ],
+      treatmentPlan: 'Combine at-home care with monthly clinical treatments for best results.',
+      confidence: 0.92,
     },
     cv: {
       spots: {
@@ -46,9 +78,9 @@ export default function TestPDFExportPage() {
         locations: [],
       },
       texture: {
-        score: 6.8,
         smoothness: 6.2,
         roughness: 3.8,
+        score: 6.8,
       },
       redness: {
         percentage: 12.5,
@@ -56,20 +88,23 @@ export default function TestPDFExportPage() {
         areas: [],
       },
     },
-    ai: {
-      skinType: 'combination',
-      concerns: ['spots', 'wrinkles', 'pores'],
-      recommendations: [
-        'Use vitamin C serum daily for pigmentation',
-        'Apply retinol 2-3 times per week for anti-aging',
-        'Use products with niacinamide for pore refinement',
-        'Maintain consistent sunscreen usage (SPF 50+)',
-        'Consider professional treatments like chemical peels',
-      ],
-      model: 'gemini-1.5-pro',
-      confidence: 0.92,
+    overallScore: {
+      spots: 6,
+      pores: 5,
+      wrinkles: 7,
+      texture: 6,
+      redness: 4,
+      pigmentation: 5,
     },
-    imageUrl: undefined,
+    percentiles: {
+      spots: 65,
+      pores: 58,
+      wrinkles: 72,
+      texture: 68,
+      redness: 45,
+      overall: 67,
+    },
+    confidence: 92,
     recommendations: [
       'Daily vitamin C serum application',
       'Weekly retinol treatment',
@@ -77,6 +112,7 @@ export default function TestPDFExportPage() {
       'Daily broad-spectrum SPF 50+ sunscreen',
       'Monthly professional facial treatment',
     ],
+    annotatedImages: {},
   };
 
   const handleGeneratePDF = async (lang: 'en' | 'th') => {

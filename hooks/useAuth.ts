@@ -193,9 +193,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const permissionContext: PermissionContext | null = user
     ? {
         userId: user.id,
-        userRole: user.role,
-        userClinicId: user.clinic_id,
-        userBranchId: user.branch_id,
+        role: user.role,
+        clinicId: user.clinic_id,
+        branchId: user.branch_id,
       }
     : null;
 

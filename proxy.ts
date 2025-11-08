@@ -41,15 +41,16 @@ export async function proxy(request: NextRequest) {
   // ============================================================================
   if (pathname.startsWith('/api')) {
     // Get identifier (prefer user ID over IP)
-    const userId = request.headers.get('x-user-id'); // Set by auth middleware
-    const ipAddress = request.headers.get('x-forwarded-for') || 
-                      request.headers.get('x-real-ip') ||
-                      request.ip;
+  const userId = request.headers.get('x-user-id'); // Set by auth middleware
+  const ipAddress = request.headers.get('x-forwarded-for') ?? 
+            request.headers.get('x-real-ip') ??
+            request.headers.get('cf-connecting-ip') ??
+            undefined;
     
     const identifier = getRateLimitIdentifier(userId || undefined, ipAddress || undefined);
     
     // Choose rate limit based on endpoint
-    let rateLimit = RATE_LIMITS.API_GENERAL;
+  let rateLimit = RATE_LIMITS.API_GENERAL;
     
     if (pathname.includes('/api/analysis')) {
       rateLimit = pathname.includes('create') 

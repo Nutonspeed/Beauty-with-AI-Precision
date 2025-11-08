@@ -23,6 +23,7 @@ import { ARPreviewStep } from './steps/ar-preview-step'
 import { ProductShowcaseStep } from './steps/product-showcase-step'
 import { ProposalStep } from './steps/proposal-step'
 import { SummaryStep } from './steps/summary-step'
+import type { HybridAnalysisResult } from '@/lib/ai/hybrid-analyzer'
 
 export interface PresentationData {
   customer: {
@@ -36,21 +37,7 @@ export interface PresentationData {
     left?: string
     right?: string
   }
-  analysisResults: {
-    skinAge: number
-    actualAge: number
-    concerns: Array<{
-      type: string
-      severity: number
-      description: string
-    }>
-    recommendations: Array<{
-      treatment: string
-      sessions: number
-      price: number
-      expectedResult: string
-    }>
-  } | null
+  analysisResults: HybridAnalysisResult | null
   selectedTreatments: string[]
   selectedProducts: string[]
   proposal: {
@@ -270,7 +257,7 @@ export function PresentationWizard({
         return (
           <ProductShowcaseStep
             selectedProducts={data.selectedProducts}
-            recommendedProducts={data.analysisResults?.recommendations.map(r => r.treatment) || []}
+            recommendedProducts={data.analysisResults?.recommendations ?? []}
             onUpdate={(products) => updateData('selectedProducts', products)}
             customerName={data.customer.name || 'Customer'}
           />

@@ -71,6 +71,7 @@ const TRANSLATIONS = {
     session: 'Session',
     date: 'Date',
     score: 'Score',
+  parameterHeading: 'Parameter',
     change: 'Change from previous',
     overall: 'Overall Change',
     improving: 'Improving',
@@ -109,6 +110,7 @@ const TRANSLATIONS = {
     session: 'เซสชัน',
     date: 'วันที่',
     score: 'คะแนน',
+  parameterHeading: 'พารามิเตอร์',
     change: 'เปลี่ยนแปลงจากครั้งก่อน',
     overall: 'การเปลี่ยนแปลงโดยรวม',
     improving: 'ดีขึ้น',
@@ -416,7 +418,7 @@ export function MultiAnalysisComparison({
                 <table className="w-full">
                   <thead>
                     <tr className="border-b">
-                      <th className="text-left py-3 px-4">{t.parameters}</th>
+                      <th className="text-left py-3 px-4">{t.parameterHeading}</th>
                       {analyses.map((a) => (
                         <th key={a.id} className="text-center py-3 px-4">
                           {t.session} {a.sessionNumber}

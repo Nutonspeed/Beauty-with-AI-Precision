@@ -25,7 +25,30 @@ import {
   DollarSign,
 } from 'lucide-react';
 import type { ProductRecommendationResult } from '@/lib/ai/product-recommendation';
-import type { HybridSkinAnalysis } from '@/lib/types/skin-analysis';
+import type { HybridSkinAnalysis, SkinConcern } from '@/lib/types/skin-analysis';
+import type { PieLabelRenderProps } from 'recharts';
+
+const SKIN_CONCERNS: SkinConcern[] = [
+  'acne',
+  'wrinkles',
+  'dark_spots',
+  'large_pores',
+  'redness',
+  'dullness',
+  'fine_lines',
+  'blackheads',
+  'hyperpigmentation',
+  'spots',
+  'pores',
+  'texture',
+];
+
+const createSeverity = (overrides: Partial<Record<SkinConcern, number>>): Record<SkinConcern, number> => {
+  return SKIN_CONCERNS.reduce<Record<SkinConcern, number>>((acc, concern) => {
+    acc[concern] = overrides[concern] ?? 0;
+    return acc;
+  }, {} as Record<SkinConcern, number>);
+};
 
 // Mock analysis data
 const mockAnalysis: HybridSkinAnalysis = {
@@ -37,7 +60,7 @@ const mockAnalysis: HybridSkinAnalysis = {
   ai: {
     skinType: 'combination',
     concerns: ['dark_spots', 'large_pores', 'fine_lines'],
-    severity: {
+    severity: createSeverity({
       acne: 2,
       wrinkles: 4,
       dark_spots: 5,
@@ -47,7 +70,10 @@ const mockAnalysis: HybridSkinAnalysis = {
       fine_lines: 3,
       blackheads: 2,
       hyperpigmentation: 5,
-    },
+      spots: 5,
+      pores: 4,
+      texture: 4,
+    }),
     recommendations: [
       { category: 'serum', product: 'Vitamin C', reason: 'Brightening' },
       { category: 'moisturizer', product: 'Hydrator', reason: 'Hydration' },
@@ -587,13 +613,19 @@ export default function ProductRecommendationTestPage() {
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    label={({ name, percent }: { name: string; percent: number }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    nameKey="category"
+                    label={(props: PieLabelRenderProps) => {
+                      const percentValue = typeof props.percent === 'number' ? props.percent : Number(props.percent ?? 0);
+                      const name = (props.payload as { category?: string })?.category || props.name || '';
+                      const displayPercent = (percentValue * 100).toFixed(0);
+                      return name ? `${name} ${displayPercent}%` : `${displayPercent}%`;
+                    }}
                     outerRadius={80}
                     fill="#8884d8"
                     dataKey="amount"
                   >
-                    {spendingData.map((entry) => (
-                      <Cell key={entry.name} fill={COLORS[spendingData.indexOf(entry) % COLORS.length]} />
+                    {spendingData.map((entry, index) => (
+                      <Cell key={entry.category} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
                   <Tooltip />

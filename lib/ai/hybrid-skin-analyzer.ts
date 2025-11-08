@@ -43,7 +43,10 @@ const TRACKED_CONCERNS: SkinConcern[] = [
   'dullness',
   'fine_lines',
   'blackheads',
-  'hyperpigmentation'
+  'hyperpigmentation',
+  'spots',
+  'pores',
+  'texture',
 ];
 
 type AIProviderId = 'huggingface' | 'google-vision' | 'gemini';
@@ -64,6 +67,9 @@ const DEFAULT_SEVERITY: Record<SkinConcern, number> = {
   fine_lines: 5,
   blackheads: 5,
   hyperpigmentation: 5,
+  spots: 5,
+  pores: 5,
+  texture: 5,
 };
 
 const VALID_RECOMMENDATION_CATEGORIES: ReadonlyArray<AIAnalysisResult['recommendations'][number]['category']> = [
@@ -75,10 +81,11 @@ const VALID_RECOMMENDATION_CATEGORIES: ReadonlyArray<AIAnalysisResult['recommend
 ];
 
 const CONCERN_SYNONYMS: Record<string, SkinConcern> = {
-  pores: 'large_pores',
+  pores: 'pores',
   large_pores: 'large_pores',
-  pore: 'large_pores',
-  spots: 'dark_spots',
+  pore: 'pores',
+  spots: 'spots',
+  spot: 'spots',
   dark_spot: 'dark_spots',
   pigmentation: 'hyperpigmentation',
   hyper_pigmentation: 'hyperpigmentation',
@@ -94,6 +101,7 @@ const CONCERN_SYNONYMS: Record<string, SkinConcern> = {
   wrinkles: 'wrinkles',
   wrinkle: 'wrinkles',
   hyperpigmentation: 'hyperpigmentation',
+  texture: 'texture',
 };
 
 interface HuggingFaceAnalysisPayload {
@@ -263,6 +271,9 @@ function mergeSeverity(partial: Partial<Record<SkinConcern, number>>): Record<Sk
     fine_lines: clampScore(partial.fine_lines ?? DEFAULT_SEVERITY.fine_lines),
     blackheads: clampScore(partial.blackheads ?? DEFAULT_SEVERITY.blackheads),
     hyperpigmentation: clampScore(partial.hyperpigmentation ?? DEFAULT_SEVERITY.hyperpigmentation),
+    spots: clampScore(partial.spots ?? DEFAULT_SEVERITY.spots),
+    pores: clampScore(partial.pores ?? DEFAULT_SEVERITY.pores),
+    texture: clampScore(partial.texture ?? DEFAULT_SEVERITY.texture),
   };
 }
 
@@ -278,6 +289,7 @@ function normalizeHuggingFaceResult(raw: HuggingFaceAnalysisPayload): AIAnalysis
     const score = Math.round(visiaScores.spots / 10);
     severityPartial.dark_spots = score;
     severityPartial.hyperpigmentation = score;
+    severityPartial.spots = score;
   }
 
   if (typeof visiaScores.wrinkles === 'number') {
@@ -290,6 +302,7 @@ function normalizeHuggingFaceResult(raw: HuggingFaceAnalysisPayload): AIAnalysis
     const score = Math.round(visiaScores.pores / 10);
     severityPartial.large_pores = score;
     severityPartial.blackheads = score;
+    severityPartial.pores = score;
   }
 
   const concerns = normalizeConcernsList(raw.concerns);

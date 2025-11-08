@@ -336,17 +336,20 @@ export class LiveARPreviewManager {
 
       if (results.faceLandmarks && results.faceLandmarks.length > 0) {
         const landmarks = results.faceLandmarks[0]
-        
+        type NormalizedLandmark = { x: number; y: number; z: number }
+
         // Convert to our format
-        const landmarksArray = landmarks.map((lm: any) => ({
-          x: lm.x * this.canvasElement!.width,
-          y: lm.y * this.canvasElement!.height,
-          z: lm.z
-        }))
+        const landmarksArray: Array<{ x: number; y: number; z: number }> = landmarks.map(
+          (lm: NormalizedLandmark) => ({
+            x: lm.x * this.canvasElement!.width,
+            y: lm.y * this.canvasElement!.height,
+            z: lm.z,
+          })
+        )
 
         // Calculate bounding box
-        const xs = landmarksArray.map(l => l.x)
-        const ys = landmarksArray.map(l => l.y)
+        const xs = landmarksArray.map((landmark) => landmark.x)
+        const ys = landmarksArray.map((landmark) => landmark.y)
         const minX = Math.min(...xs)
         const maxX = Math.max(...xs)
         const minY = Math.min(...ys)

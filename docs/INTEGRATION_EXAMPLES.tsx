@@ -228,7 +228,7 @@ export function DataProcessor() {
       'process-large-dataset',
       async () => {
         // Your async operation
-        return data.map(item => /* processing */);
+        return data.map(item => item * 2); // Example processing
       },
       {
         onSlow: (duration) => {

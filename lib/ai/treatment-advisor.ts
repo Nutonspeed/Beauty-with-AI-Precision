@@ -92,6 +92,7 @@ export class TreatmentAdvisor {
     
     // 3. Get recommendations from engine
     const criteria = {
+      age: 30, // Default age
       budget_max: options.budgetMax,
       max_downtime_days: options.maxDowntimeDays,
       max_pain_level: options.maxPainLevel
@@ -106,6 +107,10 @@ export class TreatmentAdvisor {
     const enhancedAdvice: TreatmentAdvice[] = []
     
     for (const rec of recommendations.recommended_treatments.slice(0, 5)) {
+      if (!rec.treatment) {
+        console.warn('Skipping recommendation without treatment data', rec);
+        continue;
+      }
       // Calculate predicted improvements using calibrated confidence
       const predictedMetrics = this.predictImprovement(
         currentMetrics,
@@ -119,16 +124,15 @@ export class TreatmentAdvisor {
         rec.treatment
       )
       
-      // Create enhanced advice
       const advice: TreatmentAdvice = {
-        treatmentId: rec.treatment_id,
-        treatmentName: rec.treatment.name,
-        treatmentNameTh: rec.treatment.name_th || rec.treatment.name,
-        category: rec.treatment.category,
+  treatmentId: rec.treatment_id,
+  treatmentName: rec.treatment.name,
+  treatmentNameTh: rec.treatment.name_th || rec.treatment.name,
+  category: rec.treatment.category,
         priority: rec.priority,
         confidenceScore: rec.confidence_score,
         targetConcerns: rec.target_concerns,
-        effectiveness: this.calculateEffectiveness(rec.treatment),
+  effectiveness: this.calculateEffectiveness(rec.treatment),
         currentState: currentMetrics,
         predictedState: predictedMetrics,
         improvementPercentage: rec.predicted_improvement,
@@ -145,7 +149,7 @@ export class TreatmentAdvisor {
           description: this.getDowntimeDescription(rec.treatment.downtime_days)
         },
         painLevel: rec.treatment.pain_level || 0,
-        reason: rec.recommendation_reason,
+        reason: rec.recommendation_reason || 'Recommended treatment',
         warnings: this.generateWarnings(rec.treatment, currentMetrics),
         prerequisites: this.generatePrerequisites(rec.treatment),
         requiresDoctor: rec.treatment.requires_doctor || false,
@@ -175,7 +179,7 @@ export class TreatmentAdvisor {
       wrinkles: cv.wrinkles?.severity || 0,
       texture: 100 - (cv.texture?.score || 0), // Invert (lower texture score = more issues)
       redness: cv.redness?.severity || 0,
-      overall: analysis.overallScore || 0
+      overall: Object.values(analysis.overallScore).reduce((a, b) => a + b, 0) / Object.values(analysis.overallScore).length
     }
   }
   
@@ -191,8 +195,8 @@ export class TreatmentAdvisor {
         severity: cv.spots?.severity
       },
       pores: {
-        count: cv.pores?.count,
-        size: cv.pores?.severity
+        count: cv.pores?.enlargedCount,
+        size: cv.pores?.averageSize
       },
       wrinkles: {
         severity: cv.wrinkles?.severity
@@ -203,7 +207,7 @@ export class TreatmentAdvisor {
       redness: {
         level: cv.redness?.severity
       },
-      overall_score: analysis.overallScore
+      overall_score: Object.values(analysis.overallScore).reduce((a, b) => a + b, 0) / Object.values(analysis.overallScore).length
     }
   }
   

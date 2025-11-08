@@ -139,7 +139,12 @@ export default rateLimiter;
 // Pre-configured Rate Limit Configurations
 // ============================================================================
 
-export const RATE_LIMITS = {
+export type RateLimitConfig = {
+  maxRequests: number;
+  windowMs: number;
+};
+
+export const RATE_LIMITS: Record<string, RateLimitConfig> = {
   // Authentication endpoints
   AUTH_LOGIN: {
     maxRequests: 5,
@@ -191,7 +196,7 @@ export const RATE_LIMITS = {
     maxRequests: 10,
     windowMs: 60 * 1000, // 10 requests per minute
   },
-} as const;
+};
 
 // ============================================================================
 // Helper Functions

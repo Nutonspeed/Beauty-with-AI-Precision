@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { HuggingFaceAnalyzer } from '@/lib/ai/huggingface-analyzer'
+import { HuggingFaceAnalyzer, type HuggingFaceAnalysisResult } from '@/lib/ai/huggingface-analyzer'
 
 /**
  * Lab: HuggingFace Integration (legacy /test-ai-huggingface)
@@ -14,7 +14,7 @@ export function HuggingFaceIntegrationLab() {
   const [status, setStatus] = useState('Ready to test')
   const [error, setError] = useState('')
   const [logs, setLogs] = useState<string[]>([])
-  const [results, setResults] = useState<unknown>(null)
+  const [results, setResults] = useState<HuggingFaceAnalysisResult | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const addLog = (message: string) => {
@@ -128,7 +128,7 @@ export function HuggingFaceIntegrationLab() {
             </div>
           )}
 
-          {results && (
+          {results !== null && (
             <div className="space-y-2">
               <h3 className="font-semibold">ผลการวิเคราะห์:</h3>
               <div className="max-h-96 overflow-y-auto rounded-lg bg-muted p-4 font-mono text-xs">

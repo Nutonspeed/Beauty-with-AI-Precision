@@ -3,7 +3,8 @@
  * Manages historical analysis records with advanced search, filtering, and export capabilities
  */
 
-import { VISIAAnalysisResult, SkinConcern } from '@/types';
+import { AIAnalysisResult } from './types/skin-analysis';
+import { SkinConcern } from './types/skin-analysis';
 
 export interface ArchiveFilter {
   dateRange?: { start: Date; end: Date };
@@ -31,18 +32,22 @@ export interface ArchiveStats {
 
 export interface AnalysisRecord {
   id: string;
+  userId?: string;
   date: Date;
+  timestamp?: Date;
+  imageUrl?: string;
+  analysis: AIAnalysisResult;
   clinicId?: string;
   clinicName?: string;
   clinicianId?: string;
   clinicianName?: string;
-  analysis: VISIAAnalysisResult;
   tags: string[];
   notes: string;
   treatmentApplied: boolean;
-  improvementScore?: number;
   archived: boolean;
+  improvementScore?: number;
   exportedAt?: Date[];
+  metadata?: Record<string, unknown>;
 }
 
 export interface ExportOptions {
@@ -150,7 +155,7 @@ export class AnalysisArchiveEngine {
    */
   static addToArchive(
     analysisId: string,
-    analysis: VISIAAnalysisResult,
+    analysis: AIAnalysisResult,
     metadata: {
       clinicId?: string;
       clinicName?: string;
@@ -159,6 +164,7 @@ export class AnalysisArchiveEngine {
       tags?: string[];
       notes?: string;
       treatmentApplied?: boolean;
+      improvementScore?: number;
     } = {}
   ): AnalysisRecord {
     const records = this.loadArchive();
@@ -181,6 +187,7 @@ export class AnalysisArchiveEngine {
       notes: metadata.notes || '',
       treatmentApplied: metadata.treatmentApplied || false,
       archived: false,
+      improvementScore: metadata.improvementScore,
     };
 
     records.push(record);
@@ -305,7 +312,7 @@ export class AnalysisArchiveEngine {
 
     records.forEach((record) => {
       record.analysis.concerns.forEach((concern) => {
-        concernCount[concern.type] = (concernCount[concern.type] || 0) + 1;
+        concernCount[concern] = (concernCount[concern] || 0) + 1;
       });
 
       if (record.improvementScore !== undefined) {
@@ -398,7 +405,7 @@ export class AnalysisArchiveEngine {
 
     // Concerns filter
     if (filters.concerns && filters.concerns.length > 0) {
-      const recordConcerns = record.analysis.concerns.map((c) => c.type);
+      const recordConcerns = record.analysis.concerns.map((c) => c);
       const hasMatchingConcern = filters.concerns.some((c) =>
         recordConcerns.includes(c)
       );
@@ -408,7 +415,7 @@ export class AnalysisArchiveEngine {
     // Severity range filter
     if (filters.severityRange) {
       const avgSeverity =
-        record.analysis.concerns.reduce((sum, c) => sum + c.severity, 0) /
+        record.analysis.concerns.reduce((sum, c) => sum + (record.analysis.severity[c] || 0), 0) /
         record.analysis.concerns.length;
       if (avgSeverity < filters.severityRange.min || avgSeverity > filters.severityRange.max) {
         return false;
@@ -480,7 +487,7 @@ export class AnalysisArchiveEngine {
       record.clinicName || '',
       record.clinicianName || '',
       record.analysis.skinType,
-      record.analysis.concerns.map((c) => c.type).join('; '),
+      record.analysis.concerns.join('; '),
       record.treatmentApplied ? 'Yes' : 'No',
       record.improvementScore || '',
       record.tags.join('; '),
@@ -600,7 +607,7 @@ export class AnalysisArchiveEngine {
   static getRecordsByConcern(concern: SkinConcern): AnalysisRecord[] {
     const records = this.loadArchive();
     return records.filter((r) =>
-      r.analysis.concerns.some((c) => c.type === concern)
+      r.analysis.concerns.some((c) => c === concern)
     );
   }
 
