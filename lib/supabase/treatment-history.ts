@@ -56,7 +56,7 @@ export class TreatmentHistoryManager {
     const url = supabaseUrl || process.env.NEXT_PUBLIC_SUPABASE_URL || '';
     const key = supabaseKey || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
     
-    this.supabase = createClient(url, key);
+  this.supabase = createClient(url, key);
   }
 
   /**
@@ -93,29 +93,29 @@ export class TreatmentHistoryManager {
       .from('user_profiles')
       .select('id')
       .eq('user_id', userId)
-      .single();
+      .maybeSingle<{ id: string }>();
 
     if (existing) {
       // Update existing profile
-      const { data, error } = await this.supabase
-        .from('user_profiles')
+      const { data, error } = await (this.supabase
+        .from('user_profiles') as any)
         .update(profileData)
         .eq('user_id', userId)
         .select()
         .single();
 
       if (error) throw error;
-      return data;
+      return data as UserProfileRecord;
     } else {
       // Insert new profile
-      const { data, error } = await this.supabase
-        .from('user_profiles')
+      const { data, error } = await (this.supabase
+        .from('user_profiles') as any)
         .insert({ ...profileData, created_at: new Date().toISOString() })
         .select()
         .single();
 
       if (error) throw error;
-      return data;
+      return data as UserProfileRecord;
     }
   }
 
@@ -130,24 +130,26 @@ export class TreatmentHistoryManager {
       .from('user_profiles')
       .select('*')
       .eq('user_id', userId)
-      .single();
+      .maybeSingle<UserProfileRecord>();
 
     if (error || !data) return null;
+
+    const record = data as UserProfileRecord;
 
     // Get treatment history
     const treatments = await this.getTreatmentHistory();
 
     return {
-      age: data.age,
-      skinType: data.skin_type,
-      allergies: data.allergies,
-      medications: data.medications,
+      age: record.age,
+      skinType: record.skin_type,
+      allergies: record.allergies,
+      medications: record.medications,
       previousTreatments: treatments,
-      budget: data.budget_min && data.budget_max ? {
-        min: data.budget_min,
-        max: data.budget_max,
+      budget: record.budget_min && record.budget_max ? {
+        min: record.budget_min,
+        max: record.budget_max,
       } : undefined,
-      downtimePreference: data.downtime_preference,
+      downtimePreference: record.downtime_preference,
     };
   }
 
@@ -176,14 +178,14 @@ export class TreatmentHistoryManager {
       updated_at: new Date().toISOString(),
     };
 
-    const { data, error } = await this.supabase
-      .from('treatment_history')
+    const { data, error } = await (this.supabase
+      .from('treatment_history') as any)
       .insert(treatmentData)
       .select()
       .single();
 
     if (error) throw error;
-    return data;
+    return data as TreatmentHistoryRecord;
   }
 
   /**
@@ -207,7 +209,9 @@ export class TreatmentHistoryManager {
 
     if (error || !data) return [];
 
-    return data.map(record => ({
+    const records = data as TreatmentHistoryRecord[];
+
+    return records.map(record => ({
       treatmentType: record.treatment_type,
       date: new Date(record.treatment_date),
       effectiveness: record.effectiveness,
@@ -224,8 +228,8 @@ export class TreatmentHistoryManager {
     effectiveness: number,
     notes?: string
   ): Promise<void> {
-    const { error } = await this.supabase
-      .from('treatment_history')
+    const { error } = await (this.supabase
+      .from('treatment_history') as any)
       .update({
         effectiveness,
         notes,
@@ -258,14 +262,14 @@ export class TreatmentHistoryManager {
       created_at: new Date().toISOString(),
     };
 
-    const { data, error } = await this.supabase
-      .from('analysis_history')
+    const { data, error } = await (this.supabase
+      .from('analysis_history') as any)
       .insert(analysisData)
       .select()
-      .single();
+        .single();
 
-    if (error) throw error;
-    return data;
+  if (error) throw error;
+    return data as AnalysisHistoryRecord;
   }
 
   /**
@@ -289,11 +293,13 @@ export class TreatmentHistoryManager {
       query = query.limit(limit);
     }
 
-    const { data, error } = await query;
+  const { data, error } = await query;
 
     if (error || !data) return [];
 
-    return data.map(record => ({
+    const records = data as AnalysisHistoryRecord[];
+
+    return records.map(record => ({
       date: new Date(record.analysis_date),
       metrics: record.metrics,
       photoUrl: record.photo_url,
@@ -384,7 +390,9 @@ export class TreatmentHistoryManager {
       .select('*')
       .eq('user_id', userId);
 
-    if (error || !data || data.length === 0) {
+    const typedData = (data as TreatmentHistoryRecord[] | null) ?? null;
+
+    if (error || !typedData || typedData.length === 0) {
       return {
         totalTreatments: 0,
         averageEffectiveness: 0,
@@ -393,11 +401,11 @@ export class TreatmentHistoryManager {
       };
     }
 
-    const totalEffectiveness = data.reduce((sum, t) => sum + t.effectiveness, 0);
-    const averageEffectiveness = totalEffectiveness / data.length;
-    
+    const totalEffectiveness = typedData.reduce((sum, t) => sum + t.effectiveness, 0);
+    const averageEffectiveness = totalEffectiveness / typedData.length;
+
     const treatmentEffectiveness = new Map<TreatmentType, number[]>();
-    data.forEach(t => {
+    typedData.forEach(t => {
       const existing = treatmentEffectiveness.get(t.treatment_type) || [];
       existing.push(t.effectiveness);
       treatmentEffectiveness.set(t.treatment_type, existing);
@@ -413,10 +421,10 @@ export class TreatmentHistoryManager {
       }
     });
 
-    const totalSpent = data.reduce((sum, t) => sum + (t.cost || 0), 0);
+    const totalSpent = typedData.reduce((sum, t) => sum + (t.cost || 0), 0);
 
     return {
-      totalTreatments: data.length,
+      totalTreatments: typedData.length,
       averageEffectiveness,
       mostEffectiveTreatment,
       totalSpent,

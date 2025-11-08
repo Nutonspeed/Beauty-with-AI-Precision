@@ -80,6 +80,7 @@ export interface MultiTenantUser {
   email: string;
   role: UserRole;
   tier: string;
+  metadata?: Record<string, unknown>;
   
   // Multi-Clinic fields
   clinic_id?: string;
@@ -145,6 +146,33 @@ export interface Lead {
   // Notes & History
   notes?: string;
   interaction_history: LeadInteraction[];
+
+  // Relations (loaded on demand)
+  clinic?: {
+    id: string;
+    name: string;
+    logo_url?: string;
+    contact_phone?: string;
+    contact_email?: string;
+  };
+  branch?: {
+    id: string;
+    name: string;
+    address?: string;
+  };
+  sales_staff?: {
+    id: string;
+    full_name?: string;
+    email?: string;
+  };
+  analysis?: {
+    id: string;
+    overall_score?: number;
+    image_url?: string;
+    ai_skin_type?: string;
+    ai_concerns?: string[];
+    created_at?: string;
+  };
   
   // Score
   lead_score: number;

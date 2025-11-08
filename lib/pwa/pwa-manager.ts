@@ -270,9 +270,13 @@ export class PWAManager {
         return null;
       }
 
+      const applicationServerKey = this.urlBase64ToUint8Array(vapidPublicKey);
+      const keyBuffer = new ArrayBuffer(applicationServerKey.byteLength);
+      new Uint8Array(keyBuffer).set(applicationServerKey);
+
       const subscription = await this.swRegistration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: this.urlBase64ToUint8Array(vapidPublicKey),
+        applicationServerKey: keyBuffer,
       });
 
       console.log('Push subscription created:', subscription);
@@ -333,7 +337,13 @@ export class PWAManager {
     }
 
     try {
-      await this.swRegistration.sync.register(tag);
+      const syncManager = (this.swRegistration as ServiceWorkerRegistration & {
+        sync?: { register(tag: string): Promise<void> };
+      }).sync;
+      if (!syncManager) {
+        throw new Error('Background sync not supported');
+      }
+      await syncManager.register(tag);
       console.log('Background sync registered:', tag);
     } catch (error) {
       console.error('Failed to register background sync:', error);

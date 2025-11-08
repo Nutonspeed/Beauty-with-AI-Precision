@@ -57,7 +57,7 @@ import {
 } from "lucide-react"
 import { toast } from "sonner"
 import { format } from "date-fns"
-import type { LeadStatus, LeadSource } from "@/types/multi-tenant"
+import type { Lead, LeadStatus } from "@/types/multi-tenant"
 
 const updateFormSchema = z.object({
   status: z.enum(['new', 'contacted', 'hot', 'warm', 'cold', 'converted', 'lost']),
@@ -82,22 +82,39 @@ export default function LeadDetailPage() {
   const params = useParams()
   const leadId = params.id as string
 
-  const [lead, setLead] = useState<any>(null)
+  const [lead, setLead] = useState<Lead | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isUpdating, setIsUpdating] = useState(false)
   const [showInteractionDialog, setShowInteractionDialog] = useState(false)
   const [showConvertDialog, setShowConvertDialog] = useState(false)
 
-  const updateForm = useForm({
+  const analysisId = lead?.analysis?.id ?? null
+
+  const updateForm = useForm<z.infer<typeof updateFormSchema>>({
     resolver: zodResolver(updateFormSchema),
+    defaultValues: {
+      status: 'new',
+      follow_up_date: '',
+      next_action: '',
+      notes: '',
+    },
   })
 
-  const interactionForm = useForm({
+  const interactionForm = useForm<z.infer<typeof interactionFormSchema>>({
     resolver: zodResolver(interactionFormSchema),
+    defaultValues: {
+      type: 'call',
+      notes: '',
+    },
   })
 
-  const convertForm = useForm({
+  const convertForm = useForm<z.infer<typeof convertFormSchema>>({
     resolver: zodResolver(convertFormSchema),
+    defaultValues: {
+      create_user_account: false,
+      password: '',
+      send_welcome_email: false,
+    },
   })
 
   // Fetch lead details
@@ -118,7 +135,11 @@ export default function LeadDetailPage() {
       const result = await response.json()
 
       if (result.success) {
-        setLead(result.data)
+        const leadData: Lead = {
+          ...result.data,
+          interaction_history: result.data.interaction_history ?? [],
+        }
+        setLead(leadData)
         
         // Set form defaults
         updateForm.reset({
@@ -510,7 +531,7 @@ export default function LeadDetailPage() {
                 </div>
               </div>
 
-              {lead.analysis && (
+              {analysisId && (
                 <>
                   <Separator />
                   <div>
@@ -519,7 +540,7 @@ export default function LeadDetailPage() {
                       variant="link"
                       size="sm"
                       className="p-0 h-auto"
-                      onClick={() => router.push(`/analysis/detail/${lead.analysis.id}`)}
+                      onClick={() => router.push(`/analysis/detail/${analysisId}`)}
                     >
                       View Analysis <ExternalLink className="ml-1 h-3 w-3" />
                     </Button>

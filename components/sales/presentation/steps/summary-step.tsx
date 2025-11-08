@@ -55,6 +55,21 @@ export function SummaryStep({
   const [signature, setSignature] = useState<string | null>(data.signature)
   const [lastPoint, setLastPoint] = useState<{ x: number; y: number } | null>(null)
 
+  const analysisSummary = data.analysisResults
+    ? (() => {
+        const analysis = data.analysisResults
+        const overallScore = Math.round(analysis.overallScore)
+        const topMetricEntry = Object.entries(analysis.visiaMetrics)
+          .sort(([, a], [, b]) => b - a)[0]
+        const primaryConcern = topMetricEntry?.[0] ?? 'N/A'
+        return {
+          overallScore,
+          primaryConcern,
+          recommendationCount: analysis.recommendations.length,
+        }
+      })()
+    : null
+
   // Initialize canvas
   useEffect(() => {
     const canvas = canvasRef.current
@@ -267,7 +282,7 @@ export function SummaryStep({
             </AccordionItem>
 
             {/* Analysis Results */}
-            {data.analysisResults && (
+            {analysisSummary && (
               <AccordionItem value="analysis">
                 <AccordionTrigger className="text-sm font-medium">
                   <div className="flex items-center gap-2">
@@ -278,9 +293,11 @@ export function SummaryStep({
                 <AccordionContent>
                   <div className="space-y-3 pl-8">
                     <div className="text-sm">
-                      <strong>Skin Age:</strong> {data.analysisResults.skinAge} years
+                      <strong>Overall Score:</strong> {analysisSummary.overallScore}/100
                       <br />
-                      <strong>Concerns:</strong> {data.analysisResults.concerns.length} identified
+                      <strong>Primary Concern:</strong> {analysisSummary.primaryConcern}
+                      <br />
+                      <strong>Recommendations:</strong> {analysisSummary.recommendationCount} personalized tips
                     </div>
                   </div>
                 </AccordionContent>

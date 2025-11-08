@@ -1,7 +1,7 @@
 // Video Call Manager - WebRTC-based video consultation system
 // Supports peer-to-peer video calls, screen sharing, recording, and in-call chat
 
-import SimplePeer, { Instance as SimplePeerInstance } from 'simple-peer';
+import SimplePeer, { Instance as SimplePeerInstance, type SignalData } from 'simple-peer';
 import { io, Socket } from 'socket.io-client';
 
 export interface VideoCallConfig {
@@ -265,7 +265,7 @@ export class VideoCallManager {
     });
 
     // Send WebRTC signal
-    peer.on('signal', (signal) => {
+    peer.on('signal', (signal: SignalData) => {
       this.socket?.emit('signal', {
         to: userId,
         signal,
@@ -273,7 +273,7 @@ export class VideoCallManager {
     });
 
     // Receive remote stream
-    peer.on('stream', (stream) => {
+    peer.on('stream', (stream: MediaStream) => {
       console.log('[VideoCall] Stream received from:', userId);
       
       this.callState.remoteStreams.set(userId, stream);
@@ -295,7 +295,7 @@ export class VideoCallManager {
     });
 
     // Connection state change
-    peer.on('error', (error) => {
+    peer.on('error', (error: Error) => {
       console.error('[VideoCall] Peer error:', userId, error);
       this.removePeer(userId);
     });
@@ -406,7 +406,7 @@ export class VideoCallManager {
     }
 
     // Stop recording
-    if (this.isRecording) {
+    if (this.callState.isRecording) {
       this.stopRecording();
     }
 
@@ -684,10 +684,15 @@ export class VideoCallManager {
    * Check if browser supports WebRTC
    */
   static isSupported(): boolean {
-    return !!(
-      navigator.mediaDevices &&
-      navigator.mediaDevices.getUserMedia &&
-      window.RTCPeerConnection
+    if (typeof window === 'undefined' || typeof navigator === 'undefined') {
+      return false;
+    }
+
+    const { mediaDevices } = navigator;
+    return (
+      typeof mediaDevices !== 'undefined' &&
+      typeof mediaDevices.getUserMedia === 'function' &&
+      typeof window.RTCPeerConnection !== 'undefined'
     );
   }
 
