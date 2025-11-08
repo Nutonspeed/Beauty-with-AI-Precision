@@ -74,3 +74,11 @@ logs
 *.tmp
 *.temp
 .cache
+
+# Prisma database files
+prisma/*.db
+prisma/*.db-*
+
+# Prisma database files
+prisma/*.db
+prisma/*.db-*
