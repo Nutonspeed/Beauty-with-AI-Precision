@@ -6,9 +6,31 @@
 import vision from '@google-cloud/vision';
 
 // Initialize Google Cloud Vision client
-const client = new vision.ImageAnnotatorClient({
-  keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
-});
+// Support both file-based (dev) and JSON-based (production) credentials
+const getCredentials = () => {
+  // For Vercel: use GOOGLE_CREDENTIALS_JSON environment variable
+  if (process.env.GOOGLE_CREDENTIALS_JSON) {
+    try {
+      return {
+        credentials: JSON.parse(process.env.GOOGLE_CREDENTIALS_JSON),
+      };
+    } catch (error) {
+      console.error('Failed to parse GOOGLE_CREDENTIALS_JSON:', error);
+      throw new Error('Invalid GOOGLE_CREDENTIALS_JSON format');
+    }
+  }
+  
+  // For local dev: use GOOGLE_APPLICATION_CREDENTIALS file path
+  if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+    return {
+      keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
+    };
+  }
+  
+  throw new Error('Missing Google Cloud credentials. Set either GOOGLE_CREDENTIALS_JSON or GOOGLE_APPLICATION_CREDENTIALS');
+};
+
+const client = new vision.ImageAnnotatorClient(getCredentials());
 
 export interface FaceDetectionResult {
   hasFace: boolean;

@@ -112,6 +112,7 @@
     "expo-gl": "latest",
     "framer-motion": "latest",
     "fs": "latest",
+    "html2canvas": "^1.4.1",
     "http": "latest",
     "https": "latest",
     "input-otp": "latest",

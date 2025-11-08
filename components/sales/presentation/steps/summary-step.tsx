@@ -84,21 +84,6 @@ export function SummaryStep({
     }
   }, [data.analysisResults])
 
-  const analysisSummary = data.analysisResults
-    ? (() => {
-        const analysis = data.analysisResults
-        const overallScore = Math.round(analysis.overallScore)
-        const topMetricEntry = Object.entries(analysis.visiaMetrics)
-          .sort(([, a], [, b]) => b - a)[0]
-        const primaryConcern = topMetricEntry?.[0] ?? 'N/A'
-        return {
-          overallScore,
-          primaryConcern,
-          recommendationCount: analysis.recommendations.length,
-        }
-      })()
-    : null
-
   // Initialize canvas
   useEffect(() => {
     const canvas = canvasRef.current

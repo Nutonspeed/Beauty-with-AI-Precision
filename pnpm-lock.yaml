@@ -245,6 +245,9 @@ importers:
       fs:
         specifier: latest
         version: 0.0.1-security
+      html2canvas:
+        specifier: ^1.4.1
+        version: 1.4.1
       http:
         specifier: latest
         version: 0.0.1-security
@@ -11616,8 +11619,7 @@ snapshots:
       bare-path: 3.0.0
     optional: true
 
-  base64-arraybuffer@1.0.2:
-    optional: true
+  base64-arraybuffer@1.0.2: {}
 
   base64-js@1.5.1: {}
 
@@ -12016,7 +12018,6 @@ snapshots:
   css-line-break@2.1.0:
     dependencies:
       utrie: 1.0.2
-    optional: true
 
   css-select@5.2.2:
     dependencies:
@@ -12923,7 +12924,6 @@ snapshots:
     dependencies:
       css-line-break: 2.1.0
       text-segmentation: 1.0.3
-    optional: true
 
   htmlfy@0.8.1: {}
 
@@ -15604,7 +15604,6 @@ snapshots:
   text-segmentation@1.0.3:
     dependencies:
       utrie: 1.0.2
-    optional: true
 
   thenify-all@1.6.0:
     dependencies:
@@ -15816,7 +15815,6 @@ snapshots:
   utrie@1.0.2:
     dependencies:
       base64-arraybuffer: 1.0.2
-    optional: true
 
   uuid@13.0.0: {}
 
