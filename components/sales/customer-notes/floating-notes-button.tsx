@@ -22,18 +22,18 @@ export function FloatingNotesButton({
   position = "bottom-right",
 }: FloatingNotesButtonProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const { notes } = useCustomerNotes(customer_id);
+  const { notes = [] } = useCustomerNotes(customer_id);
 
   // Count unread reminders (follow-ups due today or past)
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const overdueReminders = notes.filter((note) => {
+  const overdueReminders = notes?.filter((note) => {
     if (!note.followup_date || note.reminder_sent) return false;
     const followupDate = new Date(note.followup_date);
     followupDate.setHours(0, 0, 0, 0);
     return followupDate <= today;
-  }).length;
+  }).length ?? 0;
 
   const positionClasses = {
     "bottom-right": "bottom-6 right-6",

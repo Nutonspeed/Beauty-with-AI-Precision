@@ -25,106 +25,84 @@ export async function GET(request: NextRequest) {
     const yesterdayStart = yesterday.toISOString()
     const yesterdayEnd = today.toISOString()
 
-    // Query 1: Calls made today (activity_type = 'call')
-    const { count: callsMadeToday } = await supabase
-      .from('sales_activities')
+    // ===== QUERY FROM SALES_LEADS TABLE (REAL DATA) =====
+    
+    // Query 1: Hot leads (high priority) - total active leads
+    const { count: totalHotLeads } = await supabase
+      .from('sales_leads')
       .select('*', { count: 'exact', head: true })
       .eq('sales_user_id', user.id)
-      .eq('activity_type', 'call')
+      .in('status', ['new', 'contacted', 'qualified'])
+      .gte('score', 70) // High priority = score >= 70
+
+    // Query 2: New leads today
+    const { count: newLeadsToday } = await supabase
+      .from('sales_leads')
+      .select('*', { count: 'exact', head: true })
+      .eq('sales_user_id', user.id)
+      .eq('status', 'new')
       .gte('created_at', todayStart)
 
-    // Query 2: Calls made yesterday
-    const { count: callsMadeYesterday } = await supabase
-      .from('sales_activities')
+    // Query 3: New leads yesterday
+    const { count: newLeadsYesterday } = await supabase
+      .from('sales_leads')
       .select('*', { count: 'exact', head: true })
       .eq('sales_user_id', user.id)
-      .eq('activity_type', 'call')
+      .eq('status', 'new')
       .gte('created_at', yesterdayStart)
       .lt('created_at', yesterdayEnd)
 
-    // Query 3: Unique leads contacted today
-    const { data: activitiesToday } = await supabase
-      .from('sales_activities')
-      .select('lead_id')
-      .eq('sales_user_id', user.id)
-      .gte('created_at', todayStart)
-      .not('lead_id', 'is', null)
-
-    const uniqueLeadsToday = new Set(activitiesToday?.map(a => a.lead_id)).size
-
-    // Query 4: Unique leads contacted yesterday
-    const { data: activitiesYesterday } = await supabase
-      .from('sales_activities')
-      .select('lead_id')
-      .eq('sales_user_id', user.id)
-      .gte('created_at', yesterdayStart)
-      .lt('created_at', yesterdayEnd)
-      .not('lead_id', 'is', null)
-
-    const uniqueLeadsYesterday = new Set(activitiesYesterday?.map(a => a.lead_id)).size
-
-    // Query 5: Proposals sent today (status != 'draft')
-    const { count: proposalsSentToday } = await supabase
-      .from('sales_proposals')
+    // Query 4: Leads contacted today (last_contact_at updated today)
+    const { count: leadsContactedToday } = await supabase
+      .from('sales_leads')
       .select('*', { count: 'exact', head: true })
       .eq('sales_user_id', user.id)
-      .neq('status', 'draft')
-      .gte('sent_at', todayStart)
+      .gte('last_contact_at', todayStart)
 
-    // Query 6: Proposals sent yesterday
-    const { count: proposalsSentYesterday } = await supabase
-      .from('sales_proposals')
+    // Query 5: Leads contacted yesterday
+    const { count: leadsContactedYesterday } = await supabase
+      .from('sales_leads')
       .select('*', { count: 'exact', head: true })
       .eq('sales_user_id', user.id)
-      .neq('status', 'draft')
-      .gte('sent_at', yesterdayStart)
-      .lt('sent_at', yesterdayEnd)
+      .gte('last_contact_at', yesterdayStart)
+      .lt('last_contact_at', yesterdayEnd)
 
-    // Query 7: Proposals accepted today
-    const { count: proposalsAcceptedToday } = await supabase
-      .from('sales_proposals')
+    // Query 6: Qualified leads today
+    const { count: qualifiedLeadsToday } = await supabase
+      .from('sales_leads')
       .select('*', { count: 'exact', head: true })
       .eq('sales_user_id', user.id)
-      .eq('status', 'accepted')
-      .gte('accepted_at', todayStart)
+      .eq('status', 'qualified')
+      .gte('updated_at', todayStart)
 
-    // Query 8: Proposals accepted yesterday
-    const { count: proposalsAcceptedYesterday } = await supabase
-      .from('sales_proposals')
+    // Query 7: Qualified leads yesterday
+    const { count: qualifiedLeadsYesterday } = await supabase
+      .from('sales_leads')
       .select('*', { count: 'exact', head: true })
       .eq('sales_user_id', user.id)
-      .eq('status', 'accepted')
-      .gte('accepted_at', yesterdayStart)
-      .lt('accepted_at', yesterdayEnd)
+      .eq('status', 'qualified')
+      .gte('updated_at', yesterdayStart)
+      .lt('updated_at', yesterdayEnd)
 
-    // Query 9: Revenue today (sum of accepted proposals)
-    const { data: revenueToday } = await supabase
-      .from('sales_proposals')
-      .select('total_value')
+    // Query 8: Total estimated revenue from active leads
+    const { data: activeLeads } = await supabase
+      .from('sales_leads')
+      .select('estimated_value')
       .eq('sales_user_id', user.id)
-      .eq('status', 'accepted')
-      .gte('accepted_at', todayStart)
+      .in('status', ['qualified', 'proposal_sent'])
 
-    // Query 10: Revenue yesterday
-    const { data: revenueYesterday } = await supabase
-      .from('sales_proposals')
-      .select('total_value')
-      .eq('sales_user_id', user.id)
-      .eq('status', 'accepted')
-      .gte('accepted_at', yesterdayStart)
-      .lt('accepted_at', yesterdayEnd)
+    const totalPotentialRevenue = activeLeads?.reduce(
+      (sum, lead) => sum + (Number(lead.estimated_value) || 0), 
+      0
+    ) || 0
 
-    // Calculate totals
-    const revenueTodayTotal = revenueToday?.reduce((sum, p) => sum + (Number(p.total_value) || 0), 0) || 0
-    const revenueYesterdayTotal = revenueYesterday?.reduce((sum, p) => sum + (Number(p.total_value) || 0), 0) || 0
-
-    // Calculate conversion rates
-    const conversionRateToday = proposalsSentToday && proposalsSentToday > 0
-      ? ((proposalsAcceptedToday || 0) / proposalsSentToday) * 100
+    // Calculate conversion rate (contacted → qualified)
+    const conversionRateToday = leadsContactedToday && leadsContactedToday > 0
+      ? ((qualifiedLeadsToday || 0) / leadsContactedToday) * 100
       : 0
 
-    const conversionRateYesterday = proposalsSentYesterday && proposalsSentYesterday > 0
-      ? ((proposalsAcceptedYesterday || 0) / proposalsSentYesterday) * 100
+    const conversionRateYesterday = leadsContactedYesterday && leadsContactedYesterday > 0
+      ? ((qualifiedLeadsYesterday || 0) / leadsContactedYesterday) * 100
       : 0
 
     // Calculate percentage changes
@@ -135,42 +113,47 @@ export async function GET(request: NextRequest) {
 
     // Set targets (can be customized or fetched from settings table)
     const targets = {
-      callsMade: 20,
-      leadsContacted: 15,
-      proposalsSent: 5,
-      conversionRate: 30,
-      revenueGenerated: 100000
+      callsMade: 20, // Target for hot leads
+      leadsContacted: 15, // Target for contacted leads
+      proposalsSent: 5, // Target for qualified leads
+      conversionRate: 30, // Target conversion rate %
+      revenueGenerated: 100000 // Target potential revenue
     }
 
     const metrics = {
+      // Map to Hot Leads count
       callsMade: {
-        today: callsMadeToday || 0,
-        yesterday: callsMadeYesterday || 0,
-        change: calculateChange(callsMadeToday || 0, callsMadeYesterday || 0),
+        today: totalHotLeads || 0,
+        yesterday: 0, // Not applicable for total count
+        change: 0,
         target: targets.callsMade
       },
+      // Map to Leads Contacted
       leadsContacted: {
-        today: uniqueLeadsToday,
-        yesterday: uniqueLeadsYesterday,
-        change: calculateChange(uniqueLeadsToday, uniqueLeadsYesterday),
+        today: leadsContactedToday || 0,
+        yesterday: leadsContactedYesterday || 0,
+        change: calculateChange(leadsContactedToday || 0, leadsContactedYesterday || 0),
         target: targets.leadsContacted
       },
+      // Map to Qualified Leads
       proposalsSent: {
-        today: proposalsSentToday || 0,
-        yesterday: proposalsSentYesterday || 0,
-        change: calculateChange(proposalsSentToday || 0, proposalsSentYesterday || 0),
+        today: qualifiedLeadsToday || 0,
+        yesterday: qualifiedLeadsYesterday || 0,
+        change: calculateChange(qualifiedLeadsToday || 0, qualifiedLeadsYesterday || 0),
         target: targets.proposalsSent
       },
+      // Conversion Rate (contacted → qualified)
       conversionRate: {
         today: conversionRateToday,
         yesterday: conversionRateYesterday,
         change: calculateChange(conversionRateToday, conversionRateYesterday),
         target: targets.conversionRate
       },
+      // Map to Total Potential Revenue
       revenueGenerated: {
-        today: revenueTodayTotal,
-        yesterday: revenueYesterdayTotal,
-        change: calculateChange(revenueTodayTotal, revenueYesterdayTotal),
+        today: totalPotentialRevenue,
+        yesterday: 0, // Not applicable for total potential
+        change: 0,
         target: targets.revenueGenerated
       }
     }

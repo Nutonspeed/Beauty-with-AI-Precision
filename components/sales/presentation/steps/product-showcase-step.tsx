@@ -11,7 +11,7 @@
  * - Mobile-optimized touch controls
  */
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -70,13 +70,47 @@ export function ProductShowcaseStep({
     setCurrentProductIndex((prev) => (prev - 1 + allProducts.length) % allProducts.length)
   }
 
+  const recommendedProductIds = useMemo(() => {
+    if (recommendedProducts.length === 0) {
+      return new Set<string>()
+    }
+
+    const normalizedRecommendations = recommendedProducts
+      .filter(Boolean)
+      .map((rec) => rec.toLowerCase())
+
+    const keywordOverrides: Record<string, string[]> = {
+      'vitamin-c-serum': ['vitamin c', 'brighten', 'pigment', 'dark spot'],
+      'retinol-cream': ['retinol', 'night cream', 'anti-aging', 'wrinkle'],
+      'pico-device': ['laser', 'pico', 'device'],
+      'botox-syringe': ['botox', 'injection', 'wrinkle'],
+    }
+
+    const matches = new Set<string>()
+
+    for (const product of allProducts) {
+      const keywords = new Set<string>([
+        product.name.toLowerCase(),
+        product.category.toLowerCase(),
+        ...product.ingredients.map((ingredient) => ingredient.name.toLowerCase()),
+        ...product.ingredients.map((ingredient) => ingredient.nameThai.toLowerCase()),
+        ...(keywordOverrides[product.id] ?? []),
+      ])
+
+      const isMatch = normalizedRecommendations.some((rec) =>
+        Array.from(keywords).some((keyword) => keyword && rec.includes(keyword))
+      )
+
+      if (isMatch) {
+        matches.add(product.id)
+      }
+    }
+
+    return matches
+  }, [recommendedProducts, allProducts])
+
   // Check if product is recommended
-  const isRecommended = (productId: string) => {
-    return recommendedProducts.some(rec => 
-      productId.toLowerCase().includes(rec.toLowerCase()) ||
-      rec.toLowerCase().includes(productId.toLowerCase())
-    )
-  }
+  const isRecommended = (productId: string) => recommendedProductIds.has(productId)
 
   return (
     <div className="space-y-6">

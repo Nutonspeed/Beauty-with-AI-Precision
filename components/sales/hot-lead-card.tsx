@@ -23,6 +23,7 @@ import {
 interface HotLeadCardProps {
   lead: {
     id: string
+    customer_user_id?: string  // UUID from users table (for customer notes)
     name: string
     age: number
     photo?: string
@@ -51,19 +52,22 @@ export function HotLeadCard({ lead, onCall, onChat, onEmail, onARDemo, onProposa
   const [isExpanded, setIsExpanded] = useState(false)
   const [notesDrawerOpen, setNotesDrawerOpen] = useState(false)
   
-  // Get customer notes
-  const { notes } = useCustomerNotes(lead.id)
-  const latestNote = notes[0]
+  // Get customer notes using customer_user_id (UUID from users table)
+  // Note: Only fetch if customer_user_id exists (converted customer)
+  // Mock leads don't have customer_user_id, so skip API call
+  const shouldFetchNotes = lead.customer_user_id !== undefined && lead.customer_user_id !== null
+  const { notes = [] } = useCustomerNotes(shouldFetchNotes ? lead.customer_user_id : null)
+  const latestNote = notes?.[0]
   
   // Count overdue follow-ups
   const today = new Date()
   today.setHours(0, 0, 0, 0)
-  const overdueFollowups = notes.filter((note) => {
+  const overdueFollowups = notes?.filter((note) => {
     if (!note.followup_date || note.reminder_sent) return false
     const followupDate = new Date(note.followup_date)
     followupDate.setHours(0, 0, 0, 0)
     return followupDate <= today
-  }).length
+  }).length ?? 0
 
   // Determine priority color based on score
   const getPriorityColor = (score: number) => {
@@ -296,12 +300,14 @@ export function HotLeadCard({ lead, onCall, onChat, onEmail, onARDemo, onProposa
       )}
 
       {/* Notes Drawer */}
-      <NotesDrawer
-        open={notesDrawerOpen}
-        onOpenChange={setNotesDrawerOpen}
-        customer_id={lead.id}
-        customer_name={lead.name}
-      />
+      {lead.customer_user_id && (
+        <NotesDrawer
+          open={notesDrawerOpen}
+          onOpenChange={setNotesDrawerOpen}
+          customer_id={lead.customer_user_id}
+          customer_name={lead.name}
+        />
+      )}
     </Card>
   )
 }

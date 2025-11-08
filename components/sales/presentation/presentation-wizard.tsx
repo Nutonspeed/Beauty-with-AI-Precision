@@ -2,17 +2,12 @@
 
 /**
  * Presentation Wizard Component
- * 
- * Main wizard container that manages:
- * - Step navigation
- * - State management
- * - Progress tracking
- * - Data persistence
- * 
- * Mobile-first design with swipe gestures
+ *
+ * Manages the full seven-step customer presentation workflow with
+ * offline-first persistence and deferred sync support.
  */
 
-import { useState, useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Card } from '@/components/ui/card'
 import { WizardProgress } from './wizard-progress'
 import { WizardNavigation } from './wizard-navigation'
@@ -23,43 +18,13 @@ import { ARPreviewStep } from './steps/ar-preview-step'
 import { ProductShowcaseStep } from './steps/product-showcase-step'
 import { ProposalStep } from './steps/proposal-step'
 import { SummaryStep } from './steps/summary-step'
-import type { HybridAnalysisResult } from '@/lib/ai/hybrid-analyzer'
-
-export interface PresentationData {
-  customer: {
-    id: string
-    name: string
-    phone: string
-    email?: string
-  }
-  scannedImages: {
-    front?: string
-    left?: string
-    right?: string
-  }
-  analysisResults: HybridAnalysisResult | null
-  selectedTreatments: string[]
-  selectedProducts: string[]
-  proposal: {
-    items: Array<{
-      id: string
-      name: string
-      type: 'treatment' | 'product'
-      quantity: number
-      pricePerUnit: number
-      total: number
-    }>
-    subtotal: number
-    discountType: 'percent' | 'fixed'
-    discountValue: number
-    discountAmount: number
-    total: number
-    paymentTerms: string
-    notes: string
-  } | null
-  signature: string | null
-  completedAt: Date | null
-}
+import type { PresentationData } from '@/lib/sales/presentation-types'
+import {
+  loadPresentationData,
+  savePresentationData,
+  enqueuePresentationSync,
+  flushPresentationSyncQueue,
+} from '@/lib/sales/presentation-storage'
 
 interface PresentationWizardProps {
   customerId: string
@@ -82,19 +47,35 @@ const STEPS = [
   { id: 7, name: 'Summary', key: 'summary' },
 ] as const
 
-export function PresentationWizard({ 
-  customerId, 
-  isNewCustomer,
-  isOnline,
-  initialCustomerData
-}: PresentationWizardProps) {
-  const [currentStep, setCurrentStep] = useState(isNewCustomer ? 1 : 2)
-  const [data, setData] = useState<PresentationData>({
+const STORAGE_DEBOUNCE_MS = 500
+
+type InitialDataConfig = {
+  customerId: string
+  initialCustomerData?: PresentationWizardProps['initialCustomerData']
+}
+
+function generateSessionId() {
+  const scope = typeof globalThis === 'object' ? (globalThis as { crypto?: Crypto }) : undefined
+  const cryptoApi = scope?.crypto
+
+  if (cryptoApi?.randomUUID) {
+    return cryptoApi.randomUUID()
+  }
+
+  return `presentation-${Date.now()}-${Math.random().toString(36).slice(2)}`
+}
+
+function createInitialPresentationData({
+  customerId,
+  initialCustomerData,
+}: InitialDataConfig): PresentationData {
+  return {
+    sessionId: generateSessionId(),
     customer: {
       id: customerId,
-      name: initialCustomerData?.name || '',
-      phone: initialCustomerData?.phone || '',
-      email: initialCustomerData?.email || '',
+      name: initialCustomerData?.name ?? '',
+      phone: initialCustomerData?.phone ?? '',
+      email: initialCustomerData?.email ?? '',
     },
     scannedImages: {},
     analysisResults: null,
@@ -103,84 +84,156 @@ export function PresentationWizard({
     proposal: null,
     signature: null,
     completedAt: null,
-  })
+    lastSavedAt: null,
+    lastSyncedAt: null,
+    syncStatus: 'idle',
+  }
+}
 
-  // Load saved data from localStorage (for offline support)
+function findLastCompletedStep(data: PresentationData): number {
+  if (data.completedAt) return 7
+  if (data.signature) return 7
+  if (data.proposal) return 6
+  if (data.selectedProducts.length > 0) return 5
+  if (data.selectedTreatments.length > 0) return 4
+  if (data.analysisResults) return 3
+  if (data.scannedImages.front && data.scannedImages.left && data.scannedImages.right) return 2
+  if (data.customer.name && data.customer.phone) return 1
+  return 0
+}
+
+export function PresentationWizard({
+  customerId,
+  isNewCustomer,
+  isOnline,
+  initialCustomerData,
+}: Readonly<PresentationWizardProps>) {
+  const [currentStep, setCurrentStep] = useState(() => (isNewCustomer ? 1 : 2))
+  const [data, setData] = useState<PresentationData>(() =>
+    createInitialPresentationData({ customerId, initialCustomerData })
+  )
+
   useEffect(() => {
-    const savedData = localStorage.getItem(`presentation-${customerId}`)
-    if (savedData) {
-      try {
-        const parsed = JSON.parse(savedData)
-        // Merge saved data with initial customer data (prioritize saved if exists)
-        setData({
-          ...parsed,
-          customer: {
-            ...parsed.customer,
-            // Keep saved data if exists, otherwise use URL params
-            name: parsed.customer?.name || initialCustomerData?.name || '',
-            phone: parsed.customer?.phone || initialCustomerData?.phone || '',
-            email: parsed.customer?.email || initialCustomerData?.email || '',
-          }
-        })
-        // Resume from last incomplete step
-        if (!parsed.completedAt) {
-          const lastStep = findLastCompletedStep(parsed)
-          setCurrentStep(Math.min(lastStep + 1, STEPS.length))
-        }
-      } catch (error) {
-        console.error('Failed to load saved presentation data:', error)
-      }
-    }
-  }, [customerId, initialCustomerData])
+    const base = createInitialPresentationData({ customerId, initialCustomerData })
+    const saved = loadPresentationData(customerId)
 
-  // Auto-save data to localStorage
+    if (!saved) {
+      setData(base)
+      setCurrentStep(isNewCustomer ? 1 : 2)
+      return
+    }
+
+    const merged: PresentationData = {
+      ...base,
+      ...saved,
+      sessionId: saved.sessionId || base.sessionId,
+      lastSavedAt: saved.lastSavedAt ?? saved.completedAt ?? null,
+      lastSyncedAt: saved.lastSyncedAt ?? null,
+      syncStatus: saved.syncStatus ?? 'idle',
+      customer: {
+        ...base.customer,
+        ...saved.customer,
+        id: saved.customer?.id || customerId,
+      },
+    }
+
+    setData(merged)
+
+    if (merged.completedAt) {
+      setCurrentStep(STEPS.length)
+    } else {
+      const lastStep = findLastCompletedStep(merged)
+      setCurrentStep(Math.min(Math.max(lastStep + 1, 1), STEPS.length))
+    }
+  }, [customerId, initialCustomerData, isNewCustomer])
+
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      localStorage.setItem(`presentation-${customerId}`, JSON.stringify(data))
-    }, 500)
+      savePresentationData(customerId, data)
+      enqueuePresentationSync(customerId, data)
+    }, STORAGE_DEBOUNCE_MS)
 
     return () => clearTimeout(timeoutId)
-  }, [data, customerId])
+  }, [customerId, data])
 
-  // Find the last completed step based on data
-  const findLastCompletedStep = (presentationData: PresentationData): number => {
-    if (presentationData.completedAt) return 7
-    if (presentationData.signature) return 6
-    if (presentationData.proposal) return 5
-    if (presentationData.selectedProducts.length > 0) return 4
-    if (presentationData.selectedTreatments.length > 0) return 3
-    if (presentationData.analysisResults) return 2
-    if (presentationData.scannedImages.front) return 1
-    if (presentationData.customer.name) return 0
-    return 0
-  }
+  useEffect(() => {
+    if (!isOnline) {
+      return
+    }
 
-  // Update data for specific field
+    let cancelled = false
+
+    const attemptFlush = async () => {
+      let syncedCurrentSession = false
+
+      await flushPresentationSyncQueue(async (record) => {
+        try {
+          const response = await fetch('/api/sales/presentation-sessions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              customerId: record.customerId,
+              payload: record.payload,
+            }),
+          })
+
+          const ok = response.ok
+          if (ok && record.customerId === customerId) {
+            if (record.payload.sessionId === data.sessionId) {
+              syncedCurrentSession = true
+            }
+          }
+
+          return ok
+        } catch (error) {
+          console.warn('[presentation-wizard] Failed to sync presentation session', error)
+          return false
+        }
+      })
+
+      if (!cancelled && syncedCurrentSession) {
+        setData((prev) => ({
+          ...prev,
+          lastSyncedAt: new Date(),
+          syncStatus: 'synced',
+        }))
+      }
+    }
+
+    const handleOnline = () => {
+      void attemptFlush()
+    }
+
+    void attemptFlush()
+    globalThis.addEventListener?.('online', handleOnline)
+
+    return () => {
+      cancelled = true
+      globalThis.removeEventListener?.('online', handleOnline)
+    }
+  }, [customerId, data.sessionId, isOnline])
+
   const updateData = useCallback(<K extends keyof PresentationData>(
     field: K,
     value: PresentationData[K]
   ) => {
-    setData(prev => ({
+    setData((prev) => ({
       ...prev,
       [field]: value,
+      lastSavedAt: new Date(),
+      syncStatus: 'pending',
     }))
   }, [])
 
-  // Navigation handlers
   const goToNext = useCallback(() => {
-    if (currentStep < STEPS.length) {
-      setCurrentStep(prev => prev + 1)
-      // Scroll to top on mobile
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    }
-  }, [currentStep])
+    setCurrentStep((prev) => Math.min(prev + 1, STEPS.length))
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [])
 
   const goToPrev = useCallback(() => {
-    if (currentStep > 1) {
-      setCurrentStep(prev => prev - 1)
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    }
-  }, [currentStep])
+    setCurrentStep((prev) => Math.max(prev - 1, 1))
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [])
 
   const goToStep = useCallback((step: number) => {
     if (step >= 1 && step <= STEPS.length) {
@@ -189,32 +242,37 @@ export function PresentationWizard({
     }
   }, [])
 
-  // Check if current step is complete (validation)
   const isStepComplete = useCallback((step: number): boolean => {
     switch (step) {
       case 1:
-        return !!(data.customer.name && data.customer.phone)
+        return Boolean(data.customer.name && data.customer.phone)
       case 2:
-        return !!(data.scannedImages.front && data.scannedImages.left && data.scannedImages.right)
+        return Boolean(data.scannedImages.front && data.scannedImages.left && data.scannedImages.right)
       case 3:
-        return !!data.analysisResults
+        return Boolean(data.analysisResults)
       case 4:
         return data.selectedTreatments.length > 0
       case 5:
         return data.selectedProducts.length > 0
       case 6:
-        return !!data.proposal
+        return Boolean(data.proposal)
       case 7:
-        return !!(data.signature && data.completedAt)
+        return Boolean(data.signature && data.completedAt)
       default:
         return false
     }
   }, [data])
 
-  // Enable/disable next button
-  const canGoNext = isStepComplete(currentStep)
+  const canGoNext = useMemo(() => isStepComplete(currentStep), [currentStep, isStepComplete])
 
-  // Render current step content
+  const completedSteps = useMemo(
+    () =>
+      STEPS.filter((step) => step.id !== currentStep && isStepComplete(step.id as number)).map(
+        (step) => step.id
+      ),
+    [currentStep, isStepComplete]
+  )
+
   const renderStepContent = () => {
     switch (currentStep) {
       case 1:
@@ -268,7 +326,7 @@ export function PresentationWizard({
             selectedTreatments={data.selectedTreatments}
             selectedProducts={data.selectedProducts}
             proposal={data.proposal}
-            onUpdate={(proposal: any) => updateData('proposal', proposal)}
+            onUpdate={(proposal) => updateData('proposal', proposal)}
             customerName={data.customer.name || 'Customer'}
             isOnline={isOnline}
           />
@@ -277,8 +335,8 @@ export function PresentationWizard({
         return (
           <SummaryStep
             data={data}
-            onSignature={(signature: string) => updateData('signature', signature)}
-            onComplete={(completedAt: Date) => updateData('completedAt', completedAt)}
+            onSignature={(signature) => updateData('signature', signature)}
+            onComplete={(completedAt) => updateData('completedAt', completedAt)}
             isOnline={isOnline}
           />
         )
@@ -289,32 +347,24 @@ export function PresentationWizard({
 
   return (
     <div className="space-y-4">
-      {/* Progress Indicator */}
       <WizardProgress
         steps={STEPS}
         currentStep={currentStep}
-        completedSteps={STEPS.filter((_, idx) => isStepComplete(idx + 1)).map(s => s.id)}
+        completedSteps={completedSteps}
         onStepClick={goToStep}
       />
 
-      {/* Step Content Card */}
       <Card className="p-6 min-h-[60vh]">
         <div className="mb-6">
-          <h2 className="text-2xl font-bold mb-2">
-            {STEPS[currentStep - 1].name}
-          </h2>
+          <h2 className="text-2xl font-bold mb-2">{STEPS[currentStep - 1].name}</h2>
           <p className="text-sm text-muted-foreground">
             Step {currentStep} of {STEPS.length}
           </p>
         </div>
 
-        {/* Dynamic Step Content */}
-        <div className="mb-8">
-          {renderStepContent()}
-        </div>
+        <div className="mb-8">{renderStepContent()}</div>
       </Card>
 
-      {/* Navigation Buttons */}
       <WizardNavigation
         currentStep={currentStep}
         totalSteps={STEPS.length}

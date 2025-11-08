@@ -10,7 +10,7 @@
  * - Completion confirmation
  */
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -35,7 +35,9 @@ import {
   Sparkles
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import type { PresentationData } from '../presentation-wizard'
+import type { PresentationData } from '@/lib/sales/presentation-types'
+import { getTreatmentDisplayName } from '@/lib/sales/presentation-catalog'
+import { getProduct3DManager } from '@/lib/ar/product-3d-viewer'
 
 interface SummaryStepProps {
   readonly data: PresentationData
@@ -54,6 +56,33 @@ export function SummaryStep({
   const [isDrawing, setIsDrawing] = useState(false)
   const [signature, setSignature] = useState<string | null>(data.signature)
   const [lastPoint, setLastPoint] = useState<{ x: number; y: number } | null>(null)
+  const productManager = useMemo(() => getProduct3DManager(), [])
+
+  const analysisSummary = useMemo(() => {
+    if (!data.analysisResults) {
+      return null
+    }
+
+    const { overallScore, skinCondition, recommendations } = data.analysisResults
+    const normalizedScore = overallScore > 1 ? overallScore : overallScore * 100
+    const skinAge = Math.round(normalizedScore * 0.5 + 20)
+
+    let estimatedActualAge = 38
+    if (normalizedScore > 70) {
+      estimatedActualAge = 35
+    } else if (normalizedScore > 50) {
+      estimatedActualAge = 32
+    }
+    const ageDifference = skinAge - estimatedActualAge
+
+    return {
+      skinAge,
+      estimatedActualAge,
+      ageDifference,
+      skinCondition,
+      recommendationsCount: recommendations.length,
+    }
+  }, [data.analysisResults])
 
   const analysisSummary = data.analysisResults
     ? (() => {
@@ -292,13 +321,22 @@ export function SummaryStep({
                 </AccordionTrigger>
                 <AccordionContent>
                   <div className="space-y-3 pl-8">
-                    <div className="text-sm">
-                      <strong>Overall Score:</strong> {analysisSummary.overallScore}/100
-                      <br />
-                      <strong>Primary Concern:</strong> {analysisSummary.primaryConcern}
-                      <br />
-                      <strong>Recommendations:</strong> {analysisSummary.recommendationCount} personalized tips
-                    </div>
+                    {analysisSummary && (
+                      <div className="text-sm space-y-1">
+                        <p>
+                          <strong>Skin Age:</strong> {analysisSummary.skinAge} years
+                        </p>
+                        <p>
+                          <strong>Condition:</strong> {analysisSummary.skinCondition}
+                        </p>
+                        <p>
+                          <strong>Age Difference:</strong> {analysisSummary.ageDifference > 0 ? '+' : ''}{analysisSummary.ageDifference} years
+                        </p>
+                        <p>
+                          <strong>Recommendations:</strong> {analysisSummary.recommendationsCount} personalized tips
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </AccordionContent>
               </AccordionItem>
@@ -315,10 +353,10 @@ export function SummaryStep({
               </AccordionTrigger>
               <AccordionContent>
                 <div className="space-y-1 pl-8">
-                  {data.selectedTreatments.map((treatment) => (
+                  {data.selectedTreatments.map((treatment: string) => (
                     <div key={treatment} className="flex items-center gap-2 text-sm">
                       <Sparkles className="h-3 w-3 text-purple-500" />
-                      {treatment}
+                      {getTreatmentDisplayName(treatment)}
                     </div>
                   ))}
                 </div>
@@ -336,10 +374,10 @@ export function SummaryStep({
               </AccordionTrigger>
               <AccordionContent>
                 <div className="space-y-1 pl-8">
-                  {data.selectedProducts.map((product) => (
+                  {data.selectedProducts.map((product: string) => (
                     <div key={product} className="flex items-center gap-2 text-sm">
                       <CheckCircle2 className="h-3 w-3 text-blue-500" />
-                      {product}
+                      {productManager.getProduct(product)?.name ?? product}
                     </div>
                   ))}
                 </div>

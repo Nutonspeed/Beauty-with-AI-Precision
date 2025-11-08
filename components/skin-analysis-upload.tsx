@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Upload, Camera, X, Loader2, ArrowRight } from "lucide-react"
 import Image from "next/image"
-import { useRouter } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { resizeImage, compressImage } from "@/lib/image-optimizer"
 import { CameraPositioningGuide } from "@/components/camera-positioning-guide"
 import { validateImageQuality, getQualityFeedback } from "@/lib/image-quality-validator"
@@ -30,6 +30,7 @@ export function SkinAnalysisUpload({ isLoggedIn = false }: SkinAnalysisUploadPro
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const streamRef = useRef<MediaStream | null>(null)
   const router = useRouter()
+  const pathname = usePathname()
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -190,8 +191,12 @@ export function SkinAnalysisUpload({ isLoggedIn = false }: SkinAnalysisUploadPro
       console.log("[HYBRID] 📊 Analysis ID:", analysisData.id)
       console.log("[HYBRID] 🎯 Overall Score:", analysisData.overall_score)
 
-      // Redirect to detail page with full VISIA report
-      router.push(`/analysis/detail/${analysisData.id}`)
+  // Redirect to locale-aware detail page so users don't hit a 404
+  const supportedLocales = new Set(["en", "th", "zh"])
+  const segments = pathname?.split("/").filter(Boolean) ?? []
+  const localeSegment = segments.length > 0 && supportedLocales.has(segments[0]) ? segments[0] : "th"
+
+  router.push(`/${localeSegment}/analysis/detail/${analysisData.id}`)
     } catch (err) {
       console.error("[v0] ❌ === ANALYSIS ERROR ===")
       console.error("[v0] ❌ Error:", err)

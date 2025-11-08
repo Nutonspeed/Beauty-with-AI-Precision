@@ -38,44 +38,16 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { getProduct3DManager } from '@/lib/ar/product-3d-viewer'
-
-interface ProposalItem {
-  id: string
-  name: string
-  type: 'treatment' | 'product'
-  quantity: number
-  pricePerUnit: number
-  total: number
-}
-
-interface ProposalData {
-  items: ProposalItem[]
-  subtotal: number
-  discountType: 'percent' | 'fixed'
-  discountValue: number
-  discountAmount: number
-  total: number
-  paymentTerms: string
-  notes: string
-}
+import { getTreatmentById, getTreatmentDisplayName, getTreatmentPrice } from '@/lib/sales/presentation-catalog'
+import type { ProposalDetails, ProposalItem } from '@/lib/sales/presentation-types'
 
 interface ProposalStepProps {
   readonly selectedTreatments: string[]
   readonly selectedProducts: string[]
-  readonly proposal: ProposalData | null
-  readonly onUpdate: (proposal: ProposalData) => void
+  readonly proposal: ProposalDetails | null
+  readonly onUpdate: (proposal: ProposalDetails) => void
   readonly customerName: string
   readonly isOnline: boolean
-}
-
-// Treatment price database (Thai Baht)
-const TREATMENT_PRICES: Record<string, number> = {
-  'Botox': 12000,
-  'Dermal Fillers': 15000,
-  'Laser Skin Resurfacing': 8000,
-  'Chemical Peel': 3500,
-  'Microneedling': 4500,
-  'HydraFacial': 5500,
 }
 
 // Product price database (Thai Baht)
@@ -118,10 +90,11 @@ export function ProposalStep({
 
       // Add treatments
       for (const treatment of selectedTreatments) {
-        const price = TREATMENT_PRICES[treatment] || 5000
+        const treatmentDefinition = getTreatmentById(treatment)
+        const price = getTreatmentPrice(treatment)
         newItems.push({
           id: `treatment-${treatment}`,
-          name: treatment,
+          name: treatmentDefinition?.name ?? getTreatmentDisplayName(treatment),
           type: 'treatment',
           quantity: 1,
           pricePerUnit: price,
@@ -159,7 +132,7 @@ export function ProposalStep({
 
   // Update parent with proposal data
   useEffect(() => {
-    const proposalData: ProposalData = {
+  const proposalData: ProposalDetails = {
       items,
       subtotal,
       discountType,

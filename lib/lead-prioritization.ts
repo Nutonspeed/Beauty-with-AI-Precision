@@ -11,7 +11,7 @@ export interface LeadData {
   isOnline: boolean
   estimatedValue: number
   lastActivity?: string
-  analysisTimestamp?: Date
+  analysisTimestamp?: Date | string
   engagementCount?: number
 }
 
@@ -28,80 +28,73 @@ export interface PriorityScore {
   badge: string
 }
 
+const CRITICAL_AI_BONUS = 50
+const HIGH_AI_BONUS = 30
+const MEDIUM_AI_BONUS = 15
+const VIP_VALUE_BONUS = 30
+const HIGH_VALUE_BONUS = 20
+const MEDIUM_VALUE_BONUS = 10
+const VERY_FRESH_BONUS = 15
+const FRESH_BONUS = 10
+const RECENT_BONUS = 5
+const HIGH_ENGAGEMENT_BONUS = 20
+const MEDIUM_ENGAGEMENT_BONUS = 10
+const LOW_ENGAGEMENT_BONUS = 5
+
+function normalizeTimestamp(timestamp?: Date | string): Date | null {
+  if (!timestamp) return null
+  const normalized = timestamp instanceof Date ? timestamp : new Date(timestamp)
+  return Number.isNaN(normalized.getTime()) ? null : normalized
+}
+
+function calculateAiScoreBonus(score: number): number {
+  if (score < 60) return CRITICAL_AI_BONUS
+  if (score < 70) return HIGH_AI_BONUS
+  if (score < 80) return MEDIUM_AI_BONUS
+  return 0
+}
+
+function calculateValueBonus(estimatedValue: number): number {
+  if (estimatedValue >= 75000) return VIP_VALUE_BONUS
+  if (estimatedValue >= 50000) return HIGH_VALUE_BONUS
+  if (estimatedValue >= 30000) return MEDIUM_VALUE_BONUS
+  return 0
+}
+
+function calculateTimeBonus(timestamp?: Date | string): number {
+  const analysisDate = normalizeTimestamp(timestamp)
+  if (!analysisDate) return 0
+
+  const minutesSinceAnalysis = (Date.now() - analysisDate.getTime()) / 1000 / 60
+
+  if (minutesSinceAnalysis <= 5) return VERY_FRESH_BONUS
+  if (minutesSinceAnalysis <= 15) return FRESH_BONUS
+  if (minutesSinceAnalysis <= 30) return RECENT_BONUS
+  return 0
+}
+
+function calculateEngagementBonus(engagementCount = 0): number {
+  if (engagementCount >= 5) return HIGH_ENGAGEMENT_BONUS
+  if (engagementCount >= 3) return MEDIUM_ENGAGEMENT_BONUS
+  if (engagementCount >= 1) return LOW_ENGAGEMENT_BONUS
+  return 0
+}
+
 /**
  * Calculate priority score for a lead
  * @param lead Lead data
  * @returns Priority score with breakdown
  */
 export function calculatePriorityScore(lead: LeadData): PriorityScore {
-  let totalScore = 0
   const breakdown = {
-    onlineBonus: 0,
-    aiScoreBonus: 0,
-    valueBonus: 0,
-    timeBonus: 0,
-    engagementBonus: 0
+    onlineBonus: lead.isOnline ? 50 : 0,
+    aiScoreBonus: calculateAiScoreBonus(lead.score),
+    valueBonus: calculateValueBonus(lead.estimatedValue),
+    timeBonus: calculateTimeBonus(lead.analysisTimestamp),
+    engagementBonus: calculateEngagementBonus(lead.engagementCount)
   }
 
-  // 1. Online Status Bonus (+50 points)
-  if (lead.isOnline) {
-    breakdown.onlineBonus = 50
-    totalScore += 50
-  }
-
-  // 2. AI Score Bonus (Lower score = Higher priority)
-  if (lead.score < 60) {
-    breakdown.aiScoreBonus = 50 // Critical issues
-    totalScore += 50
-  } else if (lead.score < 70) {
-    breakdown.aiScoreBonus = 30 // High priority issues
-    totalScore += 30
-  } else if (lead.score < 80) {
-    breakdown.aiScoreBonus = 15 // Medium priority
-    totalScore += 15
-  }
-
-  // 3. Estimated Value Bonus
-  if (lead.estimatedValue >= 75000) {
-    breakdown.valueBonus = 30 // VIP leads
-    totalScore += 30
-  } else if (lead.estimatedValue >= 50000) {
-    breakdown.valueBonus = 20 // High value
-    totalScore += 20
-  } else if (lead.estimatedValue >= 30000) {
-    breakdown.valueBonus = 10 // Medium value
-    totalScore += 10
-  }
-
-  // 4. Time Since Analysis Bonus (Fresher = Higher priority)
-  if (lead.analysisTimestamp) {
-    const minutesSinceAnalysis = (Date.now() - lead.analysisTimestamp.getTime()) / 1000 / 60
-
-    if (minutesSinceAnalysis <= 5) {
-      breakdown.timeBonus = 15 // Very fresh
-      totalScore += 15
-    } else if (minutesSinceAnalysis <= 15) {
-      breakdown.timeBonus = 10 // Fresh
-      totalScore += 10
-    } else if (minutesSinceAnalysis <= 30) {
-      breakdown.timeBonus = 5 // Recent
-      totalScore += 5
-    }
-  }
-
-  // 5. Engagement Bonus (More engagement = Higher interest)
-  if (lead.engagementCount) {
-    if (lead.engagementCount >= 5) {
-      breakdown.engagementBonus = 20 // High engagement
-      totalScore += 20
-    } else if (lead.engagementCount >= 3) {
-      breakdown.engagementBonus = 10 // Medium engagement
-      totalScore += 10
-    } else if (lead.engagementCount >= 1) {
-      breakdown.engagementBonus = 5 // Some engagement
-      totalScore += 5
-    }
-  }
+  const totalScore = Object.values(breakdown).reduce((score, bonus) => score + bonus, 0)
 
   // Determine priority level based on total score
   let priorityLevel: "critical" | "high" | "medium" | "low"

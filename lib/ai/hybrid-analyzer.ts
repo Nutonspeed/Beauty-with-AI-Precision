@@ -8,6 +8,10 @@ import {
   type PorphyrinAnalysis,
   type RBXAnalysis,
 } from "./advanced-skin-algorithms"
+import { analyzePores } from "../cv/pore-analyzer"
+import { detectSpots } from "../cv/spot-detector"
+import { detectWrinkles } from "../cv/wrinkle-detector"
+import { Jimp } from "jimp"
 
 export interface HybridAnalysisResult {
   // Individual model results
@@ -224,8 +228,64 @@ export class HybridAnalyzer {
         })
       }
 
-      // ✅ Calculate VISIA metrics with advanced features (if available)
-      const visiaMetrics = this.calculateVisiaMetrics(results.mediapipe, results.tensorflow, results.huggingface, advancedFeatures)
+      // 🔥 NEW: Run CV algorithms for accurate VISIA metrics
+      console.log("[CV] Running Computer Vision algorithms for skin analysis...")
+      let cvResults
+      try {
+        // Convert ImageData to Jimp for CV processing
+        const jimpImage = await Jimp.fromBitmap({
+          data: Buffer.from(imageData.data),
+          width: imageData.width,
+          height: imageData.height
+        })
+
+        // Run CV algorithms in parallel for better performance
+        const [poreResult, spotResult, wrinkleResult] = await Promise.all([
+          analyzePores(jimpImage),
+          detectSpots(jimpImage),
+          detectWrinkles(jimpImage)
+        ])
+
+        cvResults = {
+          pores: {
+            severity: poreResult.severity,
+            enlargedCount: poreResult.enlargedCount
+          },
+          spots: {
+            severity: spotResult.severity,
+            count: spotResult.count
+          },
+          wrinkles: {
+            severity: wrinkleResult.severity,
+            count: wrinkleResult.count
+          },
+          texture: {
+            smoothness: 10 - (poreResult.severity + spotResult.severity) / 2 // Calculate from pores + spots
+          },
+          redness: {
+            severity: spotResult.severity * 0.5, // Approximate from spots (red areas)
+            coverage: spotResult.totalArea
+          }
+        }
+
+        console.log("[CV] CV algorithms complete:", {
+          pores: cvResults.pores.severity,
+          spots: cvResults.spots.severity,
+          wrinkles: cvResults.wrinkles.severity
+        })
+      } catch (error) {
+        console.warn("[CV] CV algorithms failed, falling back to AI models:", error)
+        cvResults = undefined
+      }
+
+      // ✅ Calculate VISIA metrics with CV results (if available) and advanced features
+      const visiaMetrics = this.calculateVisiaMetrics(
+        results.mediapipe, 
+        results.tensorflow, 
+        results.huggingface, 
+        advancedFeatures,
+        cvResults
+      )
 
   const processingTime = Math.max(1, Date.now() - startTime)
 

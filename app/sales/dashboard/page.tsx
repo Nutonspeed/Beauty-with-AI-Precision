@@ -10,7 +10,6 @@ import { useInfiniteScroll } from "@/lib/hooks/use-infinite-scroll"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { SalesMetrics } from "@/components/sales/sales-metrics"
-import { SalesMetricsSkeleton } from "@/components/sales/sales-metrics-skeleton"
 import { HotLeadCard } from "@/components/sales/hot-lead-card"
 import { HotLeadCardSkeleton } from "@/components/sales/hot-lead-card-skeleton"
 import { ResumePresentations } from "@/components/sales/presentation/resume-presentations"
@@ -36,6 +35,7 @@ import notificationSound from "@/lib/notification-sound"
 const mockHotLeads = [
   {
     id: "1",
+    customer_user_id: undefined, // Mock lead not yet converted to customer
     name: "Sarah Johnson",
     age: 32,
     photo: undefined,
@@ -60,6 +60,7 @@ const mockHotLeads = [
   },
   {
     id: "3",
+    customer_user_id: undefined, // Mock lead not yet converted to customer
     name: "Emma Wilson",
     age: 45,
     photo: undefined,
@@ -84,6 +85,7 @@ const mockHotLeads = [
   },
   {
     id: "2",
+    customer_user_id: undefined, // Mock lead not yet converted to customer
     name: "Michael Chen",
     age: 28,
     photo: undefined,
@@ -108,6 +110,7 @@ const mockHotLeads = [
   },
   {
     id: "4",
+    customer_user_id: undefined, // Mock lead not yet converted to customer
     name: "Lisa Anderson",
     age: 38,
     photo: undefined,
@@ -164,11 +167,44 @@ export default function SalesDashboardPage() {
   const [chatOpen, setChatOpen] = useState(false)
   const [proposalOpen, setProposalOpen] = useState(false)
   const [scoreDetailOpen, setScoreDetailOpen] = useState(false)
-  const [selectedCustomer, setSelectedCustomer] = useState(mockHotLeads[0])
+  
+  // Hot leads state - fetch from API instead of mock
+  const [hotLeads, setHotLeads] = useState<typeof mockHotLeads>([])
+  const [selectedCustomer, setSelectedCustomer] = useState<typeof mockHotLeads[0] | null>(null)
   const [selectedLead, setSelectedLead] = useState<(typeof mockHotLeads)[0] | null>(null)
   const [selectedLeadForScore, setSelectedLeadForScore] = useState<(typeof mockHotLeads)[0] & { priorityScore: PriorityScore } | null>(null)
-  const [messages, setMessages] = useState(initialMessages)
+  const [messages, setMessages] = useState<typeof initialMessages>([])
+  const [isLoadingMessages, setIsLoadingMessages] = useState(false)
   const [lastSortTime, setLastSortTime] = useState(new Date())
+
+  // Fetch chat messages when chat opens
+  useEffect(() => {
+    async function fetchMessages() {
+      if (!chatOpen || !selectedCustomer) return
+      
+      try {
+        setIsLoadingMessages(true)
+        const response = await fetch(`/api/sales/chat-messages?customer_id=${selectedCustomer.id}`)
+        if (!response.ok) throw new Error('Failed to fetch messages')
+        const data = await response.json()
+        
+        // If no messages (chat system not implemented), use empty array
+        setMessages(data.messages || [])
+        
+        if (data.note) {
+          console.log('[SalesDashboard]', data.note)
+        }
+      } catch (error) {
+        console.error('[SalesDashboard] Error fetching messages:', error)
+        // Fallback to empty messages
+        setMessages([])
+      } finally {
+        setIsLoadingMessages(false)
+      }
+    }
+
+    fetchMessages()
+  }, [chatOpen, selectedCustomer])
 
   // Notification state
   const [notifications, setNotifications] = useState<LeadNotification[]>([])
@@ -176,7 +212,6 @@ export default function SalesDashboardPage() {
   const [soundEnabled, setSoundEnabled] = useState(true)
   const [newLeadIds, setNewLeadIds] = useState<Set<string>>(new Set())
   const [isLoadingLeads, setIsLoadingLeads] = useState(true)
-  const [isLoadingMetrics, setIsLoadingMetrics] = useState(true)
 
   // Search and filter state
   const [searchQuery, setSearchQuery] = useState("")
@@ -189,9 +224,39 @@ export default function SalesDashboardPage() {
   // Debounced search query (500ms delay)
   const debouncedSearchQuery = useDebounce(searchQuery, 500)
 
+  // Fetch hot leads from API
+  useEffect(() => {
+    async function fetchHotLeads() {
+      try {
+        setIsLoadingLeads(true)
+        const response = await fetch('/api/sales/hot-leads?limit=50')
+        if (!response.ok) throw new Error('Failed to fetch hot leads')
+        const data = await response.json()
+        setHotLeads(data.leads || [])
+        // Set first lead as selected customer if available
+        if (data.leads && data.leads.length > 0 && !selectedCustomer) {
+          setSelectedCustomer(data.leads[0])
+        }
+      } catch (error) {
+        console.error('[SalesDashboard] Error fetching hot leads:', error)
+        toast.error('ไม่สามารถโหลดข้อมูล Hot Leads ได้')
+        // Fallback to mock data on error
+        setHotLeads(mockHotLeads)
+        if (!selectedCustomer) setSelectedCustomer(mockHotLeads[0])
+      } finally {
+        setIsLoadingLeads(false)
+      }
+    }
+
+    fetchHotLeads()
+    // Refresh every 2 minutes
+    const interval = setInterval(fetchHotLeads, 120000)
+    return () => clearInterval(interval)
+  }, [])
+
   // Auto-sort and filter leads using prioritization algorithm
   const sortedLeads = useMemo(() => {
-    let sorted = sortLeadsByPriority(mockHotLeads)
+    let sorted = sortLeadsByPriority(hotLeads)
 
     // Apply search filter
     if (debouncedSearchQuery) {
@@ -211,7 +276,7 @@ export default function SalesDashboardPage() {
     }
 
     return sorted
-  }, [debouncedSearchQuery, filterPriority])
+  }, [hotLeads, debouncedSearchQuery, filterPriority])
 
   // Reset display count when filters change
   useEffect(() => {
@@ -239,24 +304,6 @@ export default function SalesDashboardPage() {
     isLoading: isLoadingMore,
     threshold: 300,
   })
-
-  // Simulate initial data loading
-  useEffect(() => {
-    // Simulate metrics loading (500ms)
-    const metricsTimer = setTimeout(() => {
-      setIsLoadingMetrics(false)
-    }, 500)
-
-    // Simulate leads loading (800ms)
-    const leadsTimer = setTimeout(() => {
-      setIsLoadingLeads(false)
-    }, 800)
-
-    return () => {
-      clearTimeout(metricsTimer)
-      clearTimeout(leadsTimer)
-    }
-  }, [])
 
   // Auto-refresh sort every 30 seconds
   useEffect(() => {
@@ -353,7 +400,7 @@ export default function SalesDashboardPage() {
   }, [router])
 
   const handleCall = (leadId: string) => {
-    const lead = mockHotLeads.find((l) => l.id === leadId)
+    const lead = hotLeads.find((l) => l.id === leadId)
     if (!lead) {
       toast.error("ไม่พบข้อมูล Lead")
       return
@@ -363,7 +410,7 @@ export default function SalesDashboardPage() {
   }
 
   const handleChat = (leadId: string) => {
-    const lead = mockHotLeads.find((l) => l.id === leadId)
+    const lead = hotLeads.find((l) => l.id === leadId)
     if (!lead) {
       toast.error("ไม่พบข้อมูล Lead")
       return
@@ -373,7 +420,7 @@ export default function SalesDashboardPage() {
   }
 
   const handleEmail = (leadId: string) => {
-    const lead = mockHotLeads.find((l) => l.id === leadId)
+    const lead = hotLeads.find((l) => l.id === leadId)
     if (!lead) {
       toast.error("ไม่พบข้อมูล Lead")
       return
@@ -383,7 +430,7 @@ export default function SalesDashboardPage() {
   }
 
   const handleARDemo = (leadId: string) => {
-    const lead = mockHotLeads.find((l) => l.id === leadId)
+    const lead = hotLeads.find((l) => l.id === leadId)
     if (!lead) {
       toast.error("ไม่พบข้อมูล Lead")
       return
@@ -395,7 +442,7 @@ export default function SalesDashboardPage() {
   }
 
   const handleProposal = (leadId: string) => {
-    const lead = mockHotLeads.find((l) => l.id === leadId)
+    const lead = hotLeads.find((l) => l.id === leadId)
     if (!lead) {
       toast.error("ไม่พบข้อมูล Lead")
       return
@@ -588,7 +635,7 @@ export default function SalesDashboardPage() {
                   </Button>
                 </Link>
               </div>
-              {isLoadingMetrics ? <SalesMetricsSkeleton /> : <SalesMetrics />}
+              <SalesMetrics />
             </div>
 
             {/* Presentation Stats Cards */}
@@ -657,9 +704,9 @@ export default function SalesDashboardPage() {
                       }{" "}
                       High Priority
                     </Badge>
-                    {sortedLeads.length < mockHotLeads.length && (
-                      <Badge variant="outline" className="text-xs">
-                        {sortedLeads.length} of {mockHotLeads.length}
+                    {sortedLeads.length < hotLeads.length && (
+                      <Badge variant="secondary" className="ml-2">
+                        {sortedLeads.length} of {hotLeads.length}
                       </Badge>
                     )}
                   </h2>
@@ -845,22 +892,24 @@ export default function SalesDashboardPage() {
         />
 
         {/* Chat Drawer */}
-        <ChatDrawer
-          open={chatOpen}
-          onOpenChange={setChatOpen}
-          customer={{
-            id: selectedCustomer.id,
-            name: selectedCustomer.name,
-            photo: selectedCustomer.photo,
-            initials: selectedCustomer.initials,
-            isOnline: selectedCustomer.isOnline,
-            isTyping: false,
-          }}
-          messages={messages}
-          onSendMessage={handleSendMessage}
-          onCall={() => handleCall(selectedCustomer.id)}
-          onVideoCall={() => alert("📹 Starting video call...")}
-        />
+        {selectedCustomer && (
+          <ChatDrawer
+            open={chatOpen}
+            onOpenChange={setChatOpen}
+            customer={{
+              id: selectedCustomer.id,
+              name: selectedCustomer.name,
+              photo: selectedCustomer.photo,
+              initials: selectedCustomer.initials,
+              isOnline: selectedCustomer.isOnline,
+              isTyping: false,
+            }}
+            messages={messages}
+            onSendMessage={handleSendMessage}
+            onCall={() => handleCall(selectedCustomer.id)}
+            onVideoCall={() => alert("📹 Starting video call...")}
+          />
+        )}
 
         {/* Quick Proposal - Tablet Optimized */}
         <QuickProposal

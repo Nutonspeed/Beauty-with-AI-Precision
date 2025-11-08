@@ -13,7 +13,7 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-  const { id } = await context.params
+    const { id } = await context.params
 
     // Verify proposal exists and belongs to user
     const { data: existing, error: checkError } = await supabase

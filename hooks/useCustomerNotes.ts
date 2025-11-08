@@ -107,16 +107,42 @@ export function useCustomerNotes(
       });
 
       const response = await fetch(`/api/customer-notes?${params}`);
+      
+      // Handle non-JSON responses (e.g., HTML error pages)
+      const contentType = response.headers.get('content-type');
+      if (!contentType?.includes('application/json')) {
+        console.warn('Customer notes API returned non-JSON response, table may not exist yet');
+        setNotes([]);
+        setError('Customer notes feature not available');
+        return;
+      }
+
       const result = await response.json();
 
       if (!response.ok) {
+        // Graceful degradation for missing table/feature
+        if (response.status === 500 && result.details?.includes('relation "customer_notes" does not exist')) {
+          console.warn('customer_notes table does not exist yet - feature disabled');
+          setNotes([]);
+          setError(null); // Don't show error to user
+          return;
+        }
+        
         throw new Error(result.error || 'Failed to fetch notes');
       }
 
       setNotes(result.data || []);
     } catch (err) {
       console.error('Error fetching customer notes:', err);
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      
+      // Don't show errors for missing features
+      if (errorMessage.includes('does not exist')) {
+        setError(null);
+      } else {
+        setError(errorMessage);
+      }
+      
       setNotes([]);
     } finally {
       setLoading(false);

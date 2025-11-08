@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
-import { TrendingUp, TrendingDown, Users, DollarSign, Target, MessageSquare } from "lucide-react"
+import { TrendingUp, TrendingDown, Users, DollarSign, Target } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
 
 interface SalesMetrics {
@@ -110,20 +110,16 @@ export function SalesMetrics() {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-      {/* Calls Made */}
+      {/* Hot Leads */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Calls Made</CardTitle>
-          <MessageSquare className="h-4 w-4 text-muted-foreground" />
+          <CardTitle className="text-sm font-medium">Hot Leads</CardTitle>
+          <Target className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{metrics.callsMade.today}</div>
           <div className="flex items-center text-xs text-muted-foreground mt-1">
-            <span className={`flex items-center ${getChangeColor(metrics.callsMade.change)}`}>
-              {getChangeIcon(metrics.callsMade.change)}
-              <span className="ml-1">{Math.abs(metrics.callsMade.change).toFixed(1)}%</span>
-            </span>
-            <span className="ml-2">vs yesterday</span>
+            <span className="text-blue-600">High priority (score ≥ 70)</span>
           </div>
           <div className="mt-3">
             <Progress value={(metrics.callsMade.today / metrics.callsMade.target) * 100} className="h-2" />
@@ -158,10 +154,10 @@ export function SalesMetrics() {
         </CardContent>
       </Card>
 
-      {/* Proposals Sent */}
+      {/* Qualified Leads */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Proposals Sent</CardTitle>
+          <CardTitle className="text-sm font-medium">Qualified Leads</CardTitle>
           <Target className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
@@ -206,20 +202,16 @@ export function SalesMetrics() {
         </CardContent>
       </Card>
 
-      {/* Revenue Generated */}
+      {/* Potential Revenue */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Revenue Generated</CardTitle>
+          <CardTitle className="text-sm font-medium">Potential Revenue</CardTitle>
           <DollarSign className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{formatCurrency(metrics.revenueGenerated.today)}</div>
           <div className="flex items-center text-xs text-muted-foreground mt-1">
-            <span className={`flex items-center ${getChangeColor(metrics.revenueGenerated.change)}`}>
-              {getChangeIcon(metrics.revenueGenerated.change)}
-              <span className="ml-1">{Math.abs(metrics.revenueGenerated.change).toFixed(1)}%</span>
-            </span>
-            <span className="ml-2">vs yesterday</span>
+            <span className="text-purple-600">From qualified leads</span>
           </div>
           <div className="mt-3">
             <Progress

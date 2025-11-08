@@ -11,7 +11,7 @@
  * - Mobile-optimized controls
  */
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -31,66 +31,15 @@ import { cn } from '@/lib/utils'
 import { ARVisualization } from '@/components/ar-visualization'
 import { BeforeAfterSlider } from '@/components/ar/before-after-slider'
 import type { HybridAnalysisResult } from '@/lib/ai/hybrid-analyzer'
+import { TREATMENT_OPTIONS } from '@/lib/sales/presentation-catalog'
 
 interface ARPreviewStepProps {
-  image: string
-  analysisResults: HybridAnalysisResult | null
-  selectedTreatments: string[]
-  onUpdate: (treatments: string[]) => void
-  customerName: string
+  readonly image: string
+  readonly analysisResults: HybridAnalysisResult | null
+  readonly selectedTreatments: string[]
+  readonly onUpdate: (treatments: string[]) => void
+  readonly customerName: string
 }
-
-// Treatment options based on analysis results
-const TREATMENT_OPTIONS = [
-  { 
-    id: 'botox', 
-    name: 'Botox (Wrinkle Reduction)', 
-    icon: '💉',
-    concerns: ['wrinkles', 'fine_lines'],
-    description: 'Smooths fine lines and wrinkles',
-    color: 'bg-purple-50 border-purple-200 text-purple-900'
-  },
-  { 
-    id: 'filler', 
-    name: 'Dermal Fillers', 
-    icon: '💧',
-    concerns: ['wrinkles', 'volume_loss'],
-    description: 'Restores facial volume and contours',
-    color: 'bg-blue-50 border-blue-200 text-blue-900'
-  },
-  { 
-    id: 'laser', 
-    name: 'Laser Skin Resurfacing', 
-    icon: '✨',
-    concerns: ['dark_spots', 'texture', 'pores'],
-    description: 'Improves skin texture and tone',
-    color: 'bg-yellow-50 border-yellow-200 text-yellow-900'
-  },
-  { 
-    id: 'peel', 
-    name: 'Chemical Peel', 
-    icon: '🧪',
-    concerns: ['dark_spots', 'acne', 'dullness'],
-    description: 'Exfoliates and brightens skin',
-    color: 'bg-green-50 border-green-200 text-green-900'
-  },
-  { 
-    id: 'microneedling', 
-    name: 'Microneedling', 
-    icon: '📍',
-    concerns: ['texture', 'pores', 'scars'],
-    description: 'Stimulates collagen production',
-    color: 'bg-pink-50 border-pink-200 text-pink-900'
-  },
-  { 
-    id: 'hydrafacial', 
-    name: 'HydraFacial', 
-    icon: '💦',
-    concerns: ['hydration', 'dullness', 'pores'],
-    description: 'Deep cleansing and hydration',
-    color: 'bg-cyan-50 border-cyan-200 text-cyan-900'
-  },
-]
 
 export function ARPreviewStep({
   image,
@@ -102,6 +51,66 @@ export function ARPreviewStep({
   const [intensity, setIntensity] = useState(70)
   const [viewMode, setViewMode] = useState<'ar' | 'comparison'>('ar')
   const [processedImage, setProcessedImage] = useState<string | null>(null)
+
+  // Generate processed image when treatments or intensity change
+  useEffect(() => {
+    if (selectedTreatments.length === 0 || !image) {
+      setProcessedImage(null)
+      return
+    }
+
+    const generateProcessedImage = async () => {
+      try {
+        // Create offscreen canvas for processing
+        const canvas = document.createElement('canvas')
+        const ctx = canvas.getContext('2d')
+        if (!ctx) return
+
+        // Load original image
+        const img = new Image()
+        img.crossOrigin = 'anonymous'
+        await new Promise((resolve, reject) => {
+          img.onload = resolve
+          img.onerror = reject
+          img.src = image
+        })
+
+        canvas.width = img.width
+        canvas.height = img.height
+        ctx.drawImage(img, 0, 0)
+
+        // Apply simple treatment effects (placeholder for actual AR processing)
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+        const data = imageData.data
+        const effectIntensity = intensity / 100
+
+        // Apply treatments based on selection
+        for (let i = 0; i < data.length; i += 4) {
+          if (selectedTreatments.includes('botox') || selectedTreatments.includes('filler')) {
+            // Smoothing effect
+            data[i] = Math.min(255, data[i] * (1 + 0.1 * effectIntensity))
+            data[i + 1] = Math.min(255, data[i + 1] * (1 + 0.1 * effectIntensity))
+            data[i + 2] = Math.min(255, data[i + 2] * (1 + 0.1 * effectIntensity))
+          }
+          if (selectedTreatments.includes('laser') || selectedTreatments.includes('peel')) {
+            // Brightening effect
+            data[i] = Math.min(255, data[i] + 5 * effectIntensity)
+            data[i + 1] = Math.min(255, data[i + 1] + 5 * effectIntensity)
+            data[i + 2] = Math.min(255, data[i + 2] + 5 * effectIntensity)
+          }
+        }
+
+        ctx.putImageData(imageData, 0, 0)
+        const processed = canvas.toDataURL('image/jpeg', 0.9)
+        setProcessedImage(processed)
+      } catch (error) {
+        console.error('Error generating processed image:', error)
+        setProcessedImage(null)
+      }
+    }
+
+    generateProcessedImage()
+  }, [selectedTreatments, intensity, image])
 
   // Get recommended treatments based on analysis
   const recommendedTreatments = analysisResults 
@@ -118,13 +127,20 @@ export function ARPreviewStep({
 
   const toggleTreatment = (treatmentId: string) => {
     if (selectedTreatments.includes(treatmentId)) {
-      // Remove if already selected
       onUpdate(selectedTreatments.filter(id => id !== treatmentId))
-    } else {
-      // Add to selection (max 3 treatments)
-      if (selectedTreatments.length < 3) {
-        onUpdate([...selectedTreatments, treatmentId])
-      }
+      return
+    }
+
+    if (selectedTreatments.length >= 3) {
+      return
+    }
+
+    onUpdate([...selectedTreatments, treatmentId])
+  }
+
+  const handleViewModeChange = (mode: string) => {
+    if (mode === 'ar' || mode === 'comparison') {
+      setViewMode(mode)
     }
   }
 
@@ -154,7 +170,7 @@ export function ARPreviewStep({
       </Alert>
 
       {/* View Mode Tabs */}
-      <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as any)}>
+  <Tabs value={viewMode} onValueChange={handleViewModeChange}>
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="ar" className="gap-2">
             <Eye className="h-4 w-4" />
@@ -306,7 +322,7 @@ export function ARPreviewStep({
                     "hover:shadow-md active:scale-98",
                     isSelected && "ring-2 ring-primary ring-offset-2",
                     !canSelect && "opacity-50 cursor-not-allowed",
-                    treatment.color
+                    treatment.colorClass
                   )}
                 >
                   {/* Recommended Badge */}

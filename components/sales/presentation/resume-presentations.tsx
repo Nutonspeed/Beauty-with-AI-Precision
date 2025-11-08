@@ -7,26 +7,12 @@ import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { Clock, User, CheckCircle2, PlayCircle, Trash2 } from "lucide-react"
 import Link from "next/link"
-
-interface PresentationData {
-  customer: {
-    id: string
-    name: string
-    phone: string
-    email: string
-  }
-  scannedImages?: {
-    front?: string
-    left?: string
-    right?: string
-  }
-  analysisResults?: any
-  selectedTreatments?: string[]
-  selectedProducts?: string[]
-  proposal?: any
-  signature?: string | null
-  completedAt?: Date | null
-}
+import type { PresentationData } from "@/lib/sales/presentation-types"
+import {
+  listStoredPresentationIds,
+  loadPresentationData,
+  clearPresentationData,
+} from "@/lib/sales/presentation-storage"
 
 interface IncompletePresentationSummary {
   customerId: string
@@ -47,6 +33,44 @@ const STEP_NAMES = [
   "เซ็นสัญญา"
 ]
 
+function computeLastStep(data: PresentationData): number {
+  const selectedTreatments = data.selectedTreatments ?? []
+  const selectedProducts = data.selectedProducts ?? []
+
+  if (data.completedAt) return 7
+  if (data.proposal) return 6
+  if (selectedProducts.length > 0) return 5
+  if (selectedTreatments.length > 0) return 4
+  if (data.analysisResults) return 3
+  if (data.scannedImages?.front) return 2
+  if (data.customer?.name) return 1
+  return 0
+}
+
+function buildPresentationSummary(
+  customerId: string,
+  data: PresentationData
+): IncompletePresentationSummary | null {
+  if (data.completedAt) {
+    return null
+  }
+
+  const lastStep = computeLastStep(data)
+
+  if (lastStep === 0) {
+    return null
+  }
+
+  return {
+    customerId,
+    customerName: data.customer.name || 'Unknown',
+    lastStep,
+    lastUpdated: data.lastSavedAt ?? new Date(),
+    progress: (lastStep / 7) * 100,
+    data,
+  }
+}
+
 export function ResumePresentations() {
   const [incompletePresentations, setIncompletePresentations] = useState<IncompletePresentationSummary[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -57,48 +81,14 @@ export function ResumePresentations() {
 
   const loadIncompletePresentations = () => {
     try {
-      const presentations: IncompletePresentationSummary[] = []
-      
-      // Scan localStorage for incomplete presentations
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i)
-        if (key && key.startsWith('sales-presentation-')) {
-          const customerId = key.replace('sales-presentation-', '')
-          const dataStr = localStorage.getItem(key)
-          
-          if (dataStr) {
-            const data: PresentationData = JSON.parse(dataStr)
-            
-            // Skip completed presentations
-            if (data.completedAt) continue
-            
-            // Calculate last step completed
-            let lastStep = 0
-            if (data.customer?.name) lastStep = 1
-            if (data.scannedImages?.front) lastStep = 2
-            if (data.analysisResults) lastStep = 3
-            if (data.selectedTreatments && data.selectedTreatments.length > 0) lastStep = 4
-            if (data.selectedProducts && data.selectedProducts.length > 0) lastStep = 5
-            if (data.proposal) lastStep = 6
-            
-            // Only show if some progress was made
-            if (lastStep > 0) {
-              presentations.push({
-                customerId,
-                customerName: data.customer?.name || 'Unknown',
-                lastStep,
-                lastUpdated: new Date(), // Would be better to store this in localStorage
-                progress: (lastStep / 7) * 100,
-                data
-              })
-            }
-          }
-        }
-      }
-      
-      // Sort by most recent
-      presentations.sort((a, b) => b.lastUpdated.getTime() - a.lastUpdated.getTime())
-      
+      const presentations = listStoredPresentationIds()
+        .map((customerId) => {
+          const data = loadPresentationData(customerId)
+          return data ? buildPresentationSummary(customerId, data) : null
+        })
+        .filter((summary): summary is IncompletePresentationSummary => summary !== null)
+        .sort((a, b) => b.lastUpdated.getTime() - a.lastUpdated.getTime())
+
       setIncompletePresentations(presentations)
     } catch (error) {
       console.error('Error loading presentations:', error)
@@ -109,7 +99,7 @@ export function ResumePresentations() {
 
   const handleDelete = (customerId: string) => {
     if (confirm('ต้องการลบ presentation นี้ใช่หรือไม่?')) {
-      localStorage.removeItem(`sales-presentation-${customerId}`)
+      clearPresentationData(customerId)
       loadIncompletePresentations()
     }
   }

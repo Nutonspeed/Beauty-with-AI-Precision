@@ -24,12 +24,8 @@ import {
   AlertCircle,
   TrendingUp,
   TrendingDown,
-  Minus,
   CheckCircle2,
   FileText,
-  Droplets,
-  Sun,
-  Wind,
   Gauge
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -199,21 +195,11 @@ export function AnalysisStep({
 
   // Calculate skin age (simplified)
   const skinAge = Math.round(overallScore * 0.5 + 20)
-  const actualAge = 30 // TODO: Get from customer data
-  const ageDifference = skinAge - actualAge
-
-  // Severity color helper
-  const getSeverityColor = (value: number) => {
-    if (value >= 70) return 'text-red-600 bg-red-50 border-red-200'
-    if (value >= 40) return 'text-yellow-600 bg-yellow-50 border-yellow-200'
-    return 'text-green-600 bg-green-50 border-green-200'
-  }
-
-  const getSeverityIcon = (value: number) => {
-    if (value >= 70) return <TrendingUp className="h-4 w-4" />
-    if (value >= 40) return <Minus className="h-4 w-4" />
-    return <TrendingDown className="h-4 w-4" />
-  }
+  // Estimate actual age from skin condition (35 as baseline for beauty clinic customers)
+  const estimatedActualAge = Math.max(25, Math.min(60, 
+    overallScore > 70 ? 35 : overallScore > 50 ? 32 : 38
+  ))
+  const ageDifference = skinAge - estimatedActualAge
 
   return (
     <div className="space-y-6">
@@ -337,7 +323,7 @@ export function AnalysisStep({
         <CardContent>
           <div className="space-y-3">
             {recommendations.map((rec, index) => (
-              <Alert key={index} className="bg-green-50 dark:bg-green-950/20 border-green-200">
+              <Alert key={`rec-${rec.substring(0, 20)}-${index}`} className="bg-green-50 dark:bg-green-950/20 border-green-200">
                 <CheckCircle2 className="h-4 w-4 text-green-600" />
                 <AlertDescription className="text-sm text-green-900 dark:text-green-100">
                   {rec}
