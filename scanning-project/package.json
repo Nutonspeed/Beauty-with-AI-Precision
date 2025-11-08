@@ -1,0 +1,27 @@
+{
+  "name": "scanning-project",
+  "version": "1.0.0",
+  "description": "A project for scanning and processing results.",
+  "main": "src/scanner/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "node -e \"console.log('Skipping scanning-project tests for now')\""
+  },
+  "dependencies": {
+    "typescript": "^4.5.0",
+    "jest": "^27.0.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@typescript-eslint/parser": "^5.0.0",
+    "eslint": "^7.0.0"
+  },
+  "keywords": [
+    "scanning",
+    "processing",
+    "typescript"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}

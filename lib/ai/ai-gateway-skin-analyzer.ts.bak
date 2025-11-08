@@ -1,0 +1,452 @@
+/**
+ * AI Gateway Multi-Model Skin Analyzer
+ * Phase 14: Ensemble AI Analysis with GPT-4o + Claude 3.5 + Gemini 2.0
+ * 
+ * Uses Vercel AI Gateway to orchestrate multiple AI models:
+ * - GPT-4o (45% weight) - Best at detailed analysis
+ * - Claude 3.5 Sonnet (40% weight) - Best at structured reasoning
+ * - Gemini 2.0 Flash (15% weight) - Fast validation
+ * 
+ * Target Accuracy: 95-99%
+ */
+
+import { generateObject } from 'ai';
+import { openai } from '@ai-sdk/openai';
+import { anthropic } from '@ai-sdk/anthropic';
+import { google } from '@ai-sdk/google';
+import { z } from 'zod';
+
+// Skin Analysis Schema (same as Google Vision)
+const SkinAnalysisSchema = z.object({
+  skinType: z.enum(['oily', 'dry', 'combination', 'normal', 'sensitive']),
+  concerns: z.array(z.enum(['acne', 'wrinkles', 'dark_spots', 'large_pores', 'redness', 'dullness'])),
+  severity: z.object({
+    acne: z.number().min(1).max(10),
+    wrinkles: z.number().min(1).max(10),
+    dark_spots: z.number().min(1).max(10),
+    large_pores: z.number().min(1).max(10),
+    redness: z.number().min(1).max(10),
+    dullness: z.number().min(1).max(10),
+  }),
+  skinTone: z.string(),
+  texture: z.string(),
+  confidence: z.number().min(0).max(1),
+  detailedAnalysis: z.string(),
+});
+
+export type SkinAnalysisResult = z.infer<typeof SkinAnalysisSchema>;
+
+// Ensemble result with individual model outputs
+export interface EnsembleAnalysisResult extends SkinAnalysisResult {
+  modelResults: {
+    gpt4o?: SkinAnalysisResult;
+    claude?: SkinAnalysisResult;
+    gemini?: SkinAnalysisResult;
+  };
+  consensusScore: number; // 0-1, how much models agree
+  processingTime: number;
+}
+
+/**
+ * System prompt for skin analysis (bilingual Thai/English)
+ */
+const SKIN_ANALYSIS_PROMPT = `You are an expert dermatologist AI analyzing facial skin images.
+
+Analyze the image and provide:
+1. **Skin Type**: oily, dry, combination, normal, or sensitive
+2. **Skin Concerns**: Identify ALL visible concerns from: acne, wrinkles, dark_spots, large_pores, redness, dullness
+3. **Severity Scores** (1-10 scale):
+   - 1-3: Mild (ปานกลาง)
+   - 4-6: Moderate (ปานกลาง)
+   - 7-10: Severe (รุนแรง)
+4. **Skin Tone**: Describe the overall skin tone (e.g., "fair with warm undertones")
+5. **Texture**: Describe the skin texture (e.g., "smooth with some roughness on T-zone")
+6. **Confidence**: Your confidence level (0.0-1.0) in this analysis
+7. **Detailed Analysis**: A comprehensive analysis in Thai (150-200 words) covering:
+   - Current skin condition
+   - Main concerns and their severity
+   - Possible causes
+   - Treatment recommendations
+   - Skincare routine suggestions
+
+Be precise, professional, and provide actionable insights.`;
+
+/**
+ * Analyze skin with GPT-4o (45% weight)
+ * Best at detailed, comprehensive analysis
+ */
+async function analyzeWithGPT4o(imageBase64: string): Promise<SkinAnalysisResult> {
+  console.log('🤖 GPT-4o analyzing...');
+  const startTime = performance.now();
+
+  try {
+    const result = await generateObject({
+      model: openai('gpt-4o'),
+      schema: SkinAnalysisSchema,
+      messages: [
+        {
+          role: 'user',
+          content: [
+            { type: 'text', text: SKIN_ANALYSIS_PROMPT },
+            {
+              type: 'image',
+              image: imageBase64,
+            },
+          ],
+        },
+      ],
+      temperature: 0.3, // Low temperature for consistent medical analysis
+    });
+
+    const processingTime = performance.now() - startTime;
+    console.log(`✅ GPT-4o completed in ${processingTime.toFixed(0)}ms`);
+
+    return result.object;
+  } catch (error) {
+    console.error('❌ GPT-4o analysis failed:', error);
+    throw error;
+  }
+}
+
+/**
+ * Analyze skin with Claude 3.5 Sonnet (40% weight)
+ * Best at structured, logical reasoning
+ */
+async function analyzeWithClaude(imageBase64: string): Promise<SkinAnalysisResult> {
+  console.log('🧠 Claude 3.5 analyzing...');
+  const startTime = performance.now();
+
+  try {
+    const result = await generateObject({
+      model: anthropic('claude-3-5-sonnet-20241022'),
+      schema: SkinAnalysisSchema,
+      messages: [
+        {
+          role: 'user',
+          content: [
+            { type: 'text', text: SKIN_ANALYSIS_PROMPT },
+            {
+              type: 'image',
+              image: imageBase64,
+            },
+          ],
+        },
+      ],
+      temperature: 0.3,
+    });
+
+    const processingTime = performance.now() - startTime;
+    console.log(`✅ Claude completed in ${processingTime.toFixed(0)}ms`);
+
+    return result.object;
+  } catch (error) {
+    console.error('❌ Claude analysis failed:', error);
+    throw error;
+  }
+}
+
+/**
+ * Analyze skin with Gemini 2.0 Flash (15% weight)
+ * Fast validation and supplementary insights
+ */
+async function analyzeWithGemini(imageBase64: string): Promise<SkinAnalysisResult> {
+  console.log('⚡ Gemini 2.0 analyzing...');
+  const startTime = performance.now();
+
+  try {
+    const result = await generateObject({
+      model: google('gemini-2.0-flash-exp'),
+      schema: SkinAnalysisSchema,
+      messages: [
+        {
+          role: 'user',
+          content: [
+            { type: 'text', text: SKIN_ANALYSIS_PROMPT },
+            {
+              type: 'image',
+              image: imageBase64,
+            },
+          ],
+        },
+      ],
+      temperature: 0.3,
+    });
+
+    const processingTime = performance.now() - startTime;
+    console.log(`✅ Gemini completed in ${processingTime.toFixed(0)}ms`);
+
+    return result.object;
+  } catch (error) {
+    console.error('❌ Gemini analysis failed:', error);
+    throw error;
+  }
+}
+
+/**
+ * Calculate consensus score (how much models agree)
+ */
+function calculateConsensus(results: {
+  gpt4o?: SkinAnalysisResult;
+  claude?: SkinAnalysisResult;
+  gemini?: SkinAnalysisResult;
+}): number {
+  const models = Object.values(results).filter(Boolean) as SkinAnalysisResult[];
+  if (models.length < 2) return 0;
+
+  let agreements = 0;
+  let comparisons = 0;
+
+  // Compare skin types
+  for (let i = 0; i < models.length; i++) {
+    for (let j = i + 1; j < models.length; j++) {
+      comparisons++;
+      if (models[i].skinType === models[j].skinType) {
+        agreements++;
+      }
+    }
+  }
+
+  // Compare concerns overlap
+  for (let i = 0; i < models.length; i++) {
+    for (let j = i + 1; j < models.length; j++) {
+      const overlap = models[i].concerns.filter((c) =>
+        models[j].concerns.includes(c)
+      ).length;
+      const total = new Set([...models[i].concerns, ...models[j].concerns]).size;
+      agreements += overlap / total;
+      comparisons++;
+    }
+  }
+
+  return comparisons > 0 ? agreements / comparisons : 0;
+}
+
+/**
+ * Weighted ensemble of severity scores
+ */
+function ensembleSeverity(results: {
+  gpt4o?: SkinAnalysisResult;
+  claude?: SkinAnalysisResult;
+  gemini?: SkinAnalysisResult;
+}): SkinAnalysisResult['severity'] {
+  const weights = {
+    gpt4o: 0.45,
+    claude: 0.40,
+    gemini: 0.15,
+  };
+
+  const concerns = ['acne', 'wrinkles', 'dark_spots', 'large_pores', 'redness', 'dullness'] as const;
+  const severity: any = {};
+
+  for (const concern of concerns) {
+    let weightedSum = 0;
+    let totalWeight = 0;
+
+    if (results.gpt4o) {
+      weightedSum += results.gpt4o.severity[concern] * weights.gpt4o;
+      totalWeight += weights.gpt4o;
+    }
+    if (results.claude) {
+      weightedSum += results.claude.severity[concern] * weights.claude;
+      totalWeight += weights.claude;
+    }
+    if (results.gemini) {
+      weightedSum += results.gemini.severity[concern] * weights.gemini;
+      totalWeight += weights.gemini;
+    }
+
+    severity[concern] = Math.round(weightedSum / totalWeight);
+  }
+
+  return severity;
+}
+
+/**
+ * Main ensemble analysis function
+ * Runs 3 AI models in parallel and combines results with weighted averaging
+ */
+export async function analyzeSkinWithAIGateway(
+  imageBuffer: Buffer
+): Promise<EnsembleAnalysisResult> {
+  const startTime = performance.now();
+
+  // Convert buffer to base64
+  const imageBase64 = imageBuffer.toString('base64');
+  const dataUrl = `data:image/jpeg;base64,${imageBase64}`;
+
+  console.log('🚀 Starting AI Gateway Multi-Model Analysis...');
+  console.log('📊 Models: GPT-4o (45%) + Claude 3.5 (40%) + Gemini 2.0 (15%)');
+
+  // Run all 3 models in parallel
+  const [gpt4oResult, claudeResult, geminiResult] = await Promise.allSettled([
+    analyzeWithGPT4o(dataUrl),
+    analyzeWithClaude(dataUrl),
+    analyzeWithGemini(dataUrl),
+  ]);
+
+  // Collect successful results
+  const modelResults: {
+    gpt4o?: SkinAnalysisResult;
+    claude?: SkinAnalysisResult;
+    gemini?: SkinAnalysisResult;
+  } = {};
+
+  if (gpt4oResult.status === 'fulfilled') {
+    modelResults.gpt4o = gpt4oResult.value;
+    console.log('✅ GPT-4o analysis successful');
+  } else {
+    console.warn('⚠️ GPT-4o failed, excluding from ensemble');
+  }
+
+  if (claudeResult.status === 'fulfilled') {
+    modelResults.claude = claudeResult.value;
+    console.log('✅ Claude analysis successful');
+  } else {
+    console.warn('⚠️ Claude failed, excluding from ensemble');
+  }
+
+  if (geminiResult.status === 'fulfilled') {
+    modelResults.gemini = geminiResult.value;
+    console.log('✅ Gemini analysis successful');
+  } else {
+    console.warn('⚠️ Gemini failed, excluding from ensemble');
+  }
+
+  // Ensure at least one model succeeded
+  const successfulModels = Object.values(modelResults).filter(Boolean);
+  if (successfulModels.length === 0) {
+    throw new Error('All AI models failed. Please try again.');
+  }
+
+  console.log(`📊 ${successfulModels.length}/3 models succeeded`);
+
+  // Calculate consensus score
+  const consensusScore = calculateConsensus(modelResults);
+  console.log(`🤝 Consensus Score: ${(consensusScore * 100).toFixed(1)}%`);
+
+  // Ensemble skin type (weighted voting)
+  const skinTypeVotes: Record<string, number> = {};
+  if (modelResults.gpt4o) skinTypeVotes[modelResults.gpt4o.skinType] = (skinTypeVotes[modelResults.gpt4o.skinType] || 0) + 0.45;
+  if (modelResults.claude) skinTypeVotes[modelResults.claude.skinType] = (skinTypeVotes[modelResults.claude.skinType] || 0) + 0.40;
+  if (modelResults.gemini) skinTypeVotes[modelResults.gemini.skinType] = (skinTypeVotes[modelResults.gemini.skinType] || 0) + 0.15;
+  const skinType = Object.entries(skinTypeVotes).sort((a, b) => b[1] - a[1])[0][0] as SkinAnalysisResult['skinType'];
+
+  // Ensemble concerns (union of all concerns with >30% support)
+  const concernVotes: Record<string, number> = {};
+  if (modelResults.gpt4o) modelResults.gpt4o.concerns.forEach((c) => concernVotes[c] = (concernVotes[c] || 0) + 0.45);
+  if (modelResults.claude) modelResults.claude.concerns.forEach((c) => concernVotes[c] = (concernVotes[c] || 0) + 0.40);
+  if (modelResults.gemini) modelResults.gemini.concerns.forEach((c) => concernVotes[c] = (concernVotes[c] || 0) + 0.15);
+  const concerns = Object.entries(concernVotes)
+    .filter(([, vote]) => vote >= 0.3)
+    .map(([concern]) => concern) as SkinAnalysisResult['concerns'];
+
+  // Ensemble severity (weighted average)
+  const severity = ensembleSeverity(modelResults);
+
+  // Ensemble confidence (weighted average)
+  let confidence = 0;
+  let totalWeight = 0;
+  if (modelResults.gpt4o) {
+    confidence += modelResults.gpt4o.confidence * 0.45;
+    totalWeight += 0.45;
+  }
+  if (modelResults.claude) {
+    confidence += modelResults.claude.confidence * 0.40;
+    totalWeight += 0.40;
+  }
+  if (modelResults.gemini) {
+    confidence += modelResults.gemini.confidence * 0.15;
+    totalWeight += 0.15;
+  }
+  confidence = confidence / totalWeight;
+
+  // Use GPT-4o's detailed analysis (it's best at this)
+  const detailedAnalysis = modelResults.gpt4o?.detailedAnalysis || 
+                          modelResults.claude?.detailedAnalysis || 
+                          modelResults.gemini?.detailedAnalysis || 
+                          'ไม่สามารถวิเคราะห์รายละเอียดได้';
+
+  // Use GPT-4o's skin tone and texture (most detailed)
+  const skinTone = modelResults.gpt4o?.skinTone || 
+                   modelResults.claude?.skinTone || 
+                   modelResults.gemini?.skinTone || 
+                   'ไม่ระบุ';
+
+  const texture = modelResults.gpt4o?.texture || 
+                  modelResults.claude?.texture || 
+                  modelResults.gemini?.texture || 
+                  'ไม่ระบุ';
+
+  const processingTime = performance.now() - startTime;
+
+  console.log(`✨ AI Gateway Analysis Complete in ${(processingTime / 1000).toFixed(2)}s`);
+  console.log(`📊 Final Results: Skin Type: ${skinType}, Concerns: ${concerns.length}, Confidence: ${(confidence * 100).toFixed(1)}%`);
+
+  return {
+    skinType,
+    concerns,
+    severity,
+    skinTone,
+    texture,
+    confidence,
+    detailedAnalysis,
+    modelResults,
+    consensusScore,
+    processingTime,
+  };
+}
+
+/**
+ * Generate treatment recommendations based on ensemble analysis
+ */
+export function generateEnsembleRecommendations(analysis: EnsembleAnalysisResult): string[] {
+  const recommendations: string[] = [];
+
+  // Skin type recommendations
+  if (analysis.skinType === 'oily') {
+    recommendations.push('ใช้ผลิตภัณฑ์ที่ไม่อุดตันรูขุมขน (Non-comedogenic)');
+    recommendations.push('ล้างหน้าด้วยโฟมทำความสะอาดแบบลดความมัน');
+  } else if (analysis.skinType === 'dry') {
+    recommendations.push('ใช้ครีมบำรุงที่มีส่วนผสมของ Hyaluronic Acid');
+    recommendations.push('หลีกเลี่ยงการล้างหน้าด้วยน้ำร้อน');
+  } else if (analysis.skinType === 'combination') {
+    recommendations.push('ใช้ผลิตภัณฑ์แยกตามโซน (T-zone และ cheek)');
+    recommendations.push('มอยส์เจอไรเซอร์เนื้อเบาสำหรับทั่วใบหน้า');
+  } else if (analysis.skinType === 'sensitive') {
+    recommendations.push('เลือกผลิตภัณฑ์ที่ไม่มีน้ำหอมและแอลกอฮอล์');
+    recommendations.push('ทดสอบผลิตภัณฑ์ใหม่บริเวณข้อพับแขนก่อน');
+  }
+
+  // Concern-specific recommendations (weighted by severity)
+  const severeConnections = Object.entries(analysis.severity)
+    .filter(([, severity]) => severity >= 7)
+    .sort((a, b) => b[1] - a[1]);
+
+  severeConnections.forEach(([concern]) => {
+    if (concern === 'acne') {
+      recommendations.push('ปรึกษาแพทย์ผิวหนังสำหรับการรักษาสิว');
+      recommendations.push('ใช้ผลิตภัณฑ์ที่มี Salicylic Acid หรือ Benzoyl Peroxide');
+    } else if (concern === 'wrinkles') {
+      recommendations.push('ใช้ครีมบำรุงที่มี Retinol หรือ Peptides');
+      recommendations.push('พิจารณาทำ Botox หรือ Filler (ปรึกษาแพทย์)');
+    } else if (concern === 'dark_spots') {
+      recommendations.push('ใช้เซรั่มลดจุดด่างดำที่มี Vitamin C หรือ Niacinamide');
+      recommendations.push('ทาครีมกันแดด SPF 50+ ทุกวัน');
+    } else if (concern === 'large_pores') {
+      recommendations.push('ใช้ผลิตภัณฑ์กระชับรูขุมขนที่มี Niacinamide');
+      recommendations.push('พิจารณาทำ Chemical Peel หรือ Laser (ปรึกษาแพทย์)');
+    } else if (concern === 'redness') {
+      recommendations.push('ใช้ผลิตภัณฑ์ลดการอักเสบที่มี Centella Asiatica');
+      recommendations.push('หลีกเลี่ยงสารระคายเคือง (fragrance, alcohol)');
+    }
+  });
+
+  // Consensus-based recommendations
+  if (analysis.consensusScore >= 0.8) {
+    recommendations.push('ผลการวิเคราะห์มีความแม่นยำสูง (AI models ตกลงกัน 80%+)');
+  } else if (analysis.consensusScore < 0.5) {
+    recommendations.push('แนะนำให้ปรึกษาแพทย์ผิวหนังเพื่อยืนยันผล (ความแม่นยำต่ำ)');
+  }
+
+  return recommendations;
+}

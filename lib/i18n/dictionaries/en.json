@@ -1,0 +1,28 @@
+{
+  "common": {
+    "welcome": "Welcome",
+    "login": "Login",
+    "logout": "Logout",
+    "register": "Register",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "search": "Search",
+    "loading": "Loading..."
+  },
+  "nav": {
+    "home": "Home",
+    "analysis": "AI Analysis",
+    "booking": "Book Appointment",
+    "dashboard": "Dashboard",
+    "profile": "Profile"
+  },
+  "booking": {
+    "title": "Book an Appointment",
+    "selectTreatment": "Select Treatment",
+    "selectDate": "Select Date",
+    "selectTime": "Select Time",
+    "confirm": "Confirm Booking"
+  }
+}

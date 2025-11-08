@@ -1,0 +1,14 @@
+<!-- Placeholder SVG icon - Replace with actual branded icon -->
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" rx="128" fill="url(#gradient)"/>
+  <defs>
+    <linearGradient id="gradient" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#667eea"/>
+      <stop offset="100%" stop-color="#764ba2"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(128, 128)">
+    <circle cx="128" cy="128" r="96" fill="white" opacity="0.2"/>
+    <text x="128" y="180" font-family="Arial, sans-serif" font-size="120" font-weight="bold" fill="white" text-anchor="middle">AI</text>
+  </g>
+</svg>

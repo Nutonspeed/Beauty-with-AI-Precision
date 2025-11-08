@@ -1,0 +1,245 @@
+{
+  "common": {
+    "appName": "AI美容诊所",
+    "loading": "加载中...",
+    "error": "错误",
+    "success": "成功",
+    "save": "保存",
+    "cancel": "取消",
+    "delete": "删除",
+    "edit": "编辑",
+    "view": "查看",
+    "search": "搜索",
+    "filter": "筛选",
+    "reset": "重置",
+    "submit": "提交",
+    "close": "关闭",
+    "confirm": "确认",
+    "back": "返回",
+    "next": "下一步",
+    "previous": "上一步",
+    "selectLanguage": "选择语言"
+  },
+  "nav": {
+    "home": "首页",
+    "features": "功能",
+    "about": "关于我们",
+    "contact": "联系我们",
+    "booking": "预约",
+    "dashboard": "仪表板",
+    "admin": "管理员",
+    "profile": "个人资料",
+    "logout": "登出",
+    "login": "登录"
+  },
+  "home": {
+    "hero": {
+      "title": "AI驱动的美容与护肤",
+      "subtitle": "通过先进的AR可视化和AI分析改变您的肌肤",
+      "cta": "开始使用",
+      "learnMore": "了解更多"
+    },
+    "features": {
+      "title": "我们的功能",
+      "ar": {
+        "title": "AR 3D可视化",
+        "description": "通过先进的3D面部映射实时查看治疗效果"
+      },
+      "ai": {
+        "title": "AI分析",
+        "description": "获得AI驱动的个性化治疗建议"
+      },
+      "booking": {
+        "title": "在线预约",
+        "description": "使用智能调度系统轻松预约"
+      }
+    }
+  },
+  "booking": {
+    "title": "预约",
+    "selectDoctor": "选择医生",
+    "selectTreatment": "选择治疗",
+    "selectDate": "选择日期",
+    "selectTime": "选择时间",
+    "patientInfo": "患者信息",
+    "name": "全名",
+    "email": "电子邮件",
+    "phone": "电话号码",
+    "notes": "备注",
+    "payment": "付款",
+    "paymentMethod": "付款方式",
+    "bookingConfirmed": "预约成功!",
+    "bookingFailed": "预约失败",
+    "treatments": {
+      "botox": "肉毒杆菌注射",
+      "filler": "填充剂",
+      "laser": "激光治疗",
+      "facial": "面部护理",
+      "peeling": "化学换肤",
+      "mesotherapy": "中胚层疗法",
+      "thread_lift": "线雕提升",
+      "acne_treatment": "痤疮治疗",
+      "pigmentation": "色素治疗",
+      "anti_aging": "抗衰老治疗",
+      "skin_tightening": "紧肤"
+    },
+    "status": {
+      "pending": "待处理",
+      "confirmed": "已确认",
+      "completed": "已完成",
+      "cancelled": "已取消",
+      "no_show": "未到"
+    },
+    "paymentStatus": {
+      "pending": "待付款",
+      "paid": "已付款",
+      "refunded": "已退款"
+    },
+    "stats": {
+      "totalBookings": "总预约",
+      "confirmed": "已确认",
+      "completed": "已完成",
+      "revenue": "总收入"
+    }
+  },
+  "admin": {
+    "dashboard": "管理仪表板",
+    "overview": "概览",
+    "patients": "患者",
+    "staff": "员工",
+    "inventory": "库存",
+    "analytics": "分析",
+    "reports": "报告",
+    "totalPatients": "总患者数",
+    "activePatients": "活跃患者",
+    "newThisMonth": "本月新增",
+    "totalRevenue": "总收入",
+    "revenueThisMonth": "本月收入",
+    "revenueGrowth": "增长",
+    "appointments": "预约",
+    "appointmentsToday": "今天",
+    "appointmentsWeek": "本周",
+    "appointmentsMonth": "本月",
+    "popularTreatments": "热门治疗",
+    "staffCount": "员工人数",
+    "activeStaff": "在职",
+    "inventoryStatus": "库存状态",
+    "totalItems": "总项目",
+    "lowStock": "库存不足",
+    "outOfStock": "缺货",
+    "addPatient": "添加患者",
+    "addStaff": "添加员工",
+    "addInventory": "添加库存",
+    "exportReport": "导出报告",
+    "revenueReport": "收入报告",
+    "revenueTrend": "收入趋势（最近30天）",
+    "treatmentPerformance": "治疗效果",
+    "recentPatients": "最近患者",
+    "patientManagement": "患者管理",
+    "staffManagement": "员工管理",
+    "inventoryManagement": "库存管理",
+    "treatmentStats": "治疗统计"
+  },
+  "patient": {
+    "name": "姓名",
+    "email": "电子邮件",
+    "phone": "电话",
+    "dateOfBirth": "出生日期",
+    "gender": {
+      "label": "性别",
+      "male": "男",
+      "female": "女",
+      "other": "其他"
+    },
+    "address": "地址",
+    "skinType": {
+      "label": "肤质",
+      "oily": "油性",
+      "dry": "干性",
+      "combination": "混合性",
+      "sensitive": "敏感性",
+      "normal": "正常"
+    },
+    "allergies": "过敏史",
+    "medications": "当前用药",
+    "medicalHistory": "病史",
+    "skinConcerns": "皮肤问题",
+    "previousTreatments": "既往治疗",
+    "totalVisits": "就诊次数",
+    "totalSpent": "总消费",
+    "lastVisit": "上次就诊",
+    "status": {
+      "label": "状态",
+      "active": "活跃",
+      "inactive": "非活跃"
+    }
+  },
+  "staff": {
+    "name": "姓名",
+    "email": "电子邮件",
+    "phone": "电话",
+    "role": {
+      "label": "职位",
+      "doctor": "医生",
+      "nurse": "护士",
+      "receptionist": "接待员",
+      "admin": "管理员"
+    },
+    "specialization": "专业",
+    "licenseNumber": "执照号码",
+    "hireDate": "入职日期",
+    "salary": "薪水",
+    "workingHours": "工作时间",
+    "isActive": "在职状态"
+  },
+  "inventory": {
+    "name": "项目名称",
+    "sku": "SKU",
+    "category": {
+      "label": "类别",
+      "product": "产品",
+      "equipment": "设备",
+      "medicine": "药品",
+      "supply": "耗材"
+    },
+    "description": "描述",
+    "quantity": "数量",
+    "minQuantity": "最小数量",
+    "unitPrice": "单价",
+    "supplier": "供应商",
+    "expiryDate": "有效期",
+    "status": {
+      "label": "状态",
+      "inStock": "有货",
+      "lowStock": "库存不足",
+      "outOfStock": "缺货"
+    },
+    "lastRestocked": "上次补货",
+    "location": "位置"
+  },
+  "format": {
+    "currency": "¥{amount}",
+    "date": "{date}",
+    "time": "{time}",
+    "dateTime": "{date} {time}",
+    "percentage": "{value}%"
+  },
+  "validation": {
+    "required": "此字段为必填项",
+    "invalidEmail": "无效的电子邮件地址",
+    "invalidPhone": "无效的电话号码",
+    "minLength": "最小长度为{min}个字符",
+    "maxLength": "最大长度为{max}个字符",
+    "invalidDate": "无效的日期",
+    "invalidNumber": "无效的数字"
+  },
+  "messages": {
+    "bookingSuccess": "您的预约已成功!",
+    "bookingError": "预约失败，请重试",
+    "updateSuccess": "更新成功",
+    "updateError": "更新失败",
+    "deleteSuccess": "删除成功",
+    "deleteError": "删除失败",
+    "deleteConfirm": "您确定要删除此项吗？"
+  }
+}

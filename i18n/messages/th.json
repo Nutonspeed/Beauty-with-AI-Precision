@@ -1,0 +1,256 @@
+{
+  "common": {
+    "appName": "คลินิกความงาม AI",
+    "loading": "กำลังโหลด...",
+    "error": "เกิดข้อผิดพลาด",
+    "success": "สำเร็จ",
+    "save": "บันทึก",
+    "cancel": "ยกเลิก",
+    "delete": "ลบ",
+    "edit": "แก้ไข",
+    "view": "ดู",
+    "search": "ค้นหา",
+    "filter": "กรอง",
+    "reset": "รีเซ็ต",
+    "submit": "ส่ง",
+    "close": "ปิด",
+    "confirm": "ยืนยัน",
+    "back": "ย้อนกลับ",
+    "next": "ถัดไป",
+    "previous": "ก่อนหน้า",
+    "selectLanguage": "เลือกภาษา"
+  },
+  "analysis": {
+    "title": "วิเคราะห์ผิวหน้าด้วย AI",
+    "subtitle": "อัปโหลดรูปภาพหรือถ่ายเซลฟี่เพื่อรับการวิเคราะห์ผิวหน้าทันที",
+    "report": "รายงาน",
+    "3dView": "มุมมอง 3D",
+    "simulator": "จำลองผล",
+    "backToHistory": "กลับไปประวัติ",
+    "notFound": "ไม่พบข้อมูลการวิเคราะห์",
+    "loading": "กำลังโหลดข้อมูล...",
+    "error": "ไม่สามารถโหลดข้อมูลได้"
+  },
+  "nav": {
+    "home": "หน้าแรก",
+    "features": "ฟีเจอร์",
+    "about": "เกี่ยวกับเรา",
+    "contact": "ติดต่อ",
+    "booking": "จองนัดหมาย",
+    "dashboard": "แดชบอร์ด",
+    "admin": "ผู้ดูแลระบบ",
+    "profile": "โปรไฟล์",
+    "logout": "ออกจากระบบ",
+    "login": "เข้าสู่ระบบ"
+  },
+  "home": {
+    "hero": {
+      "title": "ความงามและการดูแลผิวด้วย AI",
+      "subtitle": "เปลี่ยนผิวของคุณด้วยเทคโนโลยี AR และการวิเคราะห์ AI ขั้นสูง",
+      "cta": "เริ่มต้นใช้งาน",
+      "learnMore": "เรียนรู้เพิ่มเติม"
+    },
+    "features": {
+      "title": "ฟีเจอร์ของเรา",
+      "ar": {
+        "title": "AR 3D แบบเรียลไทม์",
+        "description": "ดูผลลัพธ์การรักษาแบบเรียลไทม์ด้วยเทคโนโลยี 3D"
+      },
+      "ai": {
+        "title": "การวิเคราะห์ AI",
+        "description": "รับคำแนะนำการรักษาที่เหมาะกับคุณด้วย AI"
+      },
+      "booking": {
+        "title": "จองออนไลน์",
+        "description": "จองนัดหมายได้ง่ายๆ ด้วยระบบอัจฉริยะ"
+      }
+    }
+  },
+  "booking": {
+    "title": "จองนัดหมาย",
+    "selectDoctor": "เลือกแพทย์",
+    "selectTreatment": "เลือกการรักษา",
+    "selectDate": "เลือกวันที่",
+    "selectTime": "เลือกเวลา",
+    "patientInfo": "ข้อมูลผู้ป่วย",
+    "name": "ชื่อ-นามสกุล",
+    "email": "อีเมล",
+    "phone": "เบอร์โทรศัพท์",
+    "notes": "หมายเหตุเพิ่มเติม",
+    "payment": "การชำระเงิน",
+    "paymentMethod": "วิธีการชำระเงิน",
+    "bookingConfirmed": "จองสำเร็จ!",
+    "bookingFailed": "การจองล้มเหลว",
+    "treatments": {
+      "botox": "ฉีดโบท็อกซ์",
+      "filler": "ฉีดฟิลเลอร์",
+      "laser": "เลเซอร์",
+      "facial": "ทรีทเม้นท์ผิวหน้า",
+      "peeling": "ลอกสิว",
+      "mesotherapy": "เมโสเธอราพี",
+      "thread_lift": "ไหมยกกระชับ",
+      "acne_treatment": "รักษาสิว",
+      "pigmentation": "รักษาฝ้า กระ",
+      "anti_aging": "ต้านริ้วรอย",
+      "skin_tightening": "กระชับผิว"
+    },
+    "status": {
+      "pending": "รอดำเนินการ",
+      "confirmed": "ยืนยันแล้ว",
+      "completed": "เสร็จสิ้น",
+      "cancelled": "ยกเลิก",
+      "no_show": "ไม่มาตามนัด"
+    },
+    "paymentStatus": {
+      "pending": "รอชำระ",
+      "paid": "ชำระแล้ว",
+      "refunded": "คืนเงินแล้ว"
+    },
+    "stats": {
+      "totalBookings": "การจองทั้งหมด",
+      "confirmed": "ยืนยันแล้ว",
+      "completed": "เสร็จสิ้น",
+      "revenue": "รายได้รวม"
+    }
+  },
+  "admin": {
+    "dashboard": "แดชบอร์ดผู้ดูแล",
+    "overview": "ภาพรวม",
+    "patients": "ผู้ป่วย",
+    "staff": "พนักงาน",
+    "inventory": "คลังสินค้า",
+    "analytics": "การวิเคราะห์",
+    "reports": "รายงาน",
+    "totalPatients": "ผู้ป่วยทั้งหมด",
+    "activePatients": "ผู้ป่วยที่ใช้งาน",
+    "newThisMonth": "ผู้ป่วยใหม่เดือนนี้",
+    "totalRevenue": "รายได้รวม",
+    "revenueThisMonth": "เดือนนี้",
+    "revenueGrowth": "การเติบโต",
+    "appointments": "นัดหมาย",
+    "appointmentsToday": "วันนี้",
+    "appointmentsWeek": "สัปดาห์นี้",
+    "appointmentsMonth": "เดือนนี้",
+    "popularTreatments": "การรักษายอดนิยม",
+    "staffCount": "พนักงาน",
+    "activeStaff": "ที่ใช้งาน",
+    "inventoryStatus": "สถานะคลังสินค้า",
+    "totalItems": "สินค้าทั้งหมด",
+    "lowStock": "สินค้าใกล้หมด",
+    "outOfStock": "สินค้าหมด",
+    "addPatient": "เพิ่มผู้ป่วย",
+    "addStaff": "เพิ่มพนักงาน",
+    "addInventory": "เพิ่มสินค้า",
+    "exportReport": "ส่งออกรายงาน",
+    "revenueReport": "รายงานรายได้",
+    "revenueTrend": "แนวโน้มรายได้ (30 วันล่าสุด)",
+    "treatmentPerformance": "ประสิทธิภาพการรักษา",
+    "recentPatients": "ผู้ป่วยล่าสุด",
+    "patientManagement": "จัดการผู้ป่วย",
+    "staffManagement": "จัดการพนักงาน",
+    "inventoryManagement": "จัดการคลังสินค้า",
+    "treatmentStats": "สถิติการรักษา"
+  },
+  "patient": {
+    "name": "ชื่อ",
+    "email": "อีเมล",
+    "phone": "โทรศัพท์",
+    "dateOfBirth": "วันเกิด",
+    "gender": {
+      "label": "เพศ",
+      "male": "ชาย",
+      "female": "หญิง",
+      "other": "อื่นๆ"
+    },
+    "address": "ที่อยู่",
+    "skinType": {
+      "label": "ประเภทผิว",
+      "oily": "ผิวมัน",
+      "dry": "ผิวแห้ง",
+      "combination": "ผิวผสม",
+      "sensitive": "ผิวแพ้ง่าย",
+      "normal": "ผิวปกติ"
+    },
+    "allergies": "ประวัติแพ้ยา",
+    "medications": "ยาที่ใช้ปัจจุบัน",
+    "medicalHistory": "ประวัติการรักษา",
+    "skinConcerns": "ปัญหาผิว",
+    "previousTreatments": "การรักษาก่อนหน้า",
+    "totalVisits": "จำนวนครั้งที่มา",
+    "totalSpent": "ยอดใช้จ่ายรวม",
+    "lastVisit": "มาครั้งล่าสุด",
+    "status": {
+      "label": "สถานะ",
+      "active": "ใช้งาน",
+      "inactive": "ไม่ใช้งาน"
+    }
+  },
+  "staff": {
+    "name": "ชื่อ",
+    "email": "อีเมล",
+    "phone": "โทรศัพท์",
+    "role": {
+      "label": "ตำแหน่ง",
+      "doctor": "แพทย์",
+      "nurse": "พยาบาล",
+      "receptionist": "พนักงานต้อนรับ",
+      "admin": "ผู้ดูแลระบบ"
+    },
+    "specialization": "ความเชี่ยวชาญ",
+    "licenseNumber": "เลขใบอนุญาต",
+    "hireDate": "วันที่เริ่มงาน",
+    "salary": "เงินเดือน",
+    "workingHours": "เวลาทำงาน",
+    "isActive": "สถานะการทำงาน"
+  },
+  "inventory": {
+    "name": "ชื่อสินค้า",
+    "sku": "รหัสสินค้า",
+    "category": {
+      "label": "หมวดหมู่",
+      "product": "ผลิตภัณฑ์",
+      "equipment": "อุปกรณ์",
+      "medicine": "ยา",
+      "supply": "วัสดุสิ้นเปลือง"
+    },
+    "description": "รายละเอียด",
+    "quantity": "จำนวน",
+    "minQuantity": "จำนวนขั้นต่ำ",
+    "unitPrice": "ราคาต่อหน่วย",
+    "supplier": "ผู้จัดจำหน่าย",
+    "expiryDate": "วันหมดอายุ",
+    "status": {
+      "label": "สถานะ",
+      "inStock": "มีสินค้า",
+      "lowStock": "สินค้าใกล้หมด",
+      "outOfStock": "สินค้าหมด"
+    },
+    "lastRestocked": "เติมสินค้าล่าสุด",
+    "location": "ตำแหน่งจัดเก็บ"
+  },
+  "format": {
+    "currency": "฿{amount}",
+    "date": "{date}",
+    "time": "{time}",
+    "dateTime": "{date} {time}",
+    "percentage": "{value}%"
+  },
+  "validation": {
+    "required": "กรุณากรอกข้อมูล",
+    "invalidEmail": "อีเมลไม่ถูกต้อง",
+    "invalidPhone": "เบอร์โทรไม่ถูกต้อง",
+    "minLength": "ต้องมีอย่างน้อย {min} ตัวอักษร",
+    "maxLength": "ต้องไม่เกิน {max} ตัวอักษร",
+    "invalidDate": "วันที่ไม่ถูกต้อง",
+    "invalidNumber": "ตัวเลขไม่ถูกต้อง"
+  },
+  "messages": {
+    "bookingSuccess": "จองนัดหมายสำเร็จ!",
+    "bookingError": "การจองล้มเหลว กรุณาลองใหม่อีกครั้ง",
+    "updateSuccess": "อัปเดตสำเร็จ",
+    "updateError": "การอัปเดตล้มเหลว",
+    "deleteSuccess": "ลบสำเร็จ",
+    "deleteError": "การลบล้มเหลว",
+    "deleteConfirm": "คุณแน่ใจหรือไม่ว่าต้องการลบรายการนี้?"
+  }
+}

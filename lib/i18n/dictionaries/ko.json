@@ -1,0 +1,28 @@
+{
+  "common": {
+    "welcome": "환영합니다",
+    "login": "로그인",
+    "logout": "로그아웃",
+    "register": "등록",
+    "save": "저장",
+    "cancel": "취소",
+    "delete": "삭제",
+    "edit": "편집",
+    "search": "검색",
+    "loading": "로딩 중..."
+  },
+  "nav": {
+    "home": "홈",
+    "analysis": "AI 분석",
+    "booking": "예약",
+    "dashboard": "대시보드",
+    "profile": "프로필"
+  },
+  "booking": {
+    "title": "예약",
+    "selectTreatment": "치료 선택",
+    "selectDate": "날짜 선택",
+    "selectTime": "시간 선택",
+    "confirm": "예약 확인"
+  }
+}

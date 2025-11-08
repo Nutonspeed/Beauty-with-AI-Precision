@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 1 Migration - Quality Metrics</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #0f1419;
+            color: #e6edf3;
+        }
+        .container {
+            background: #161b22;
+            border-radius: 8px;
+            padding: 30px;
+            border: 1px solid #30363d;
+        }
+        h1 {
+            color: #58a6ff;
+            margin-top: 0;
+        }
+        .step {
+            background: #0d1117;
+            border-left: 4px solid #58a6ff;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .step-number {
+            display: inline-block;
+            background: #58a6ff;
+            color: #0d1117;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            border-radius: 50%;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        pre {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 16px;
+            overflow-x: auto;
+            position: relative;
+        }
+        code {
+            color: #79c0ff;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #238636;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.2s;
+        }
+        .copy-btn:hover {
+            background: #2ea043;
+        }
+        .copy-btn.copied {
+            background: #1f6feb;
+        }
+        .url {
+            background: #2d333b;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #79c0ff;
+            word-break: break-all;
+        }
+        .warning {
+            background: #3d1f00;
+            border-left: 4px solid #f85149;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .success-icon {
+            color: #3fb950;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Phase 1 Migration: Quality Metrics</h1>
+        <p>เพิ่ม columns สำหรับเก็บ Image Quality Metrics ใน skin_analyses table</p>
+
+        <div class="warning">
+            <strong>⚠️ สำคัญ:</strong> Migration นี้จะเพิ่ม 4 columns ใหม่ใน table skin_analyses
+            <br>ข้อมูลเดิมจะไม่ถูกลบ (ปลอดภัย 100%)
+        </div>
+
+        <div class="step">
+            <span class="step-number">1</span>
+            <strong>เปิด Supabase SQL Editor</strong>
+            <div class="url" style="margin-top: 10px;">
+                <a href="https://supabase.com/dashboard/project/bgejeqqngzvuokdffadu/sql/new" target="_blank" style="color: #58a6ff; text-decoration: none;">
+                    https://supabase.com/dashboard/project/bgejeqqngzvuokdffadu/sql/new
+                </a>
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">2</span>
+            <strong>Copy SQL ด้านล่าง</strong>
+            <div style="position: relative; margin-top: 15px;">
+                <pre id="sql-code"><code>-- ============================================
+-- Phase 1 Enhancement: Quality Metrics
+-- ============================================
+-- เพิ่ม 4 columns สำหรับเก็บคะแนนคุณภาพภาพ
+-- ใช้ตรวจสอบความสัมพันธ์ระหว่างคุณภาพภาพกับความแม่นยำ
+
+ALTER TABLE public.skin_analyses
+ADD COLUMN IF NOT EXISTS quality_lighting NUMERIC(5,2) 
+  CHECK (quality_lighting >= 0 AND quality_lighting <= 100),
+ADD COLUMN IF NOT EXISTS quality_blur NUMERIC(5,2) 
+  CHECK (quality_blur >= 0 AND quality_blur <= 100),
+ADD COLUMN IF NOT EXISTS quality_face_size NUMERIC(4,3) 
+  CHECK (quality_face_size >= 0 AND quality_face_size <= 1),
+ADD COLUMN IF NOT EXISTS quality_overall NUMERIC(5,2) 
+  CHECK (quality_overall >= 0 AND quality_overall <= 100);
+
+-- Index สำหรับ query โดย quality score
+CREATE INDEX IF NOT EXISTS idx_skin_analyses_quality_overall 
+ON public.skin_analyses(quality_overall DESC);
+
+-- Comments อธิบายแต่ละ column
+COMMENT ON COLUMN public.skin_analyses.quality_lighting IS 
+  'Image lighting quality score (0-100), higher is better';
+  
+COMMENT ON COLUMN public.skin_analyses.quality_blur IS 
+  'Image sharpness score (0-100), higher is sharper';
+  
+COMMENT ON COLUMN public.skin_analyses.quality_face_size IS 
+  'Face coverage ratio (0-1), optimal 0.15-0.45';
+  
+COMMENT ON COLUMN public.skin_analyses.quality_overall IS 
+  'Composite quality score (0-100), >= 70 is excellent';
+
+-- ============================================
+-- Phase 1 Complete! 🎉
+-- ============================================</code></pre>
+                <button class="copy-btn" onclick="copySql()">📋 Copy SQL</button>
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">3</span>
+            <strong>Paste และ Run</strong>
+            <p style="margin-top: 10px;">
+                วาง SQL ใน Editor แล้วกด <strong>Ctrl+Enter</strong> หรือคลิก <strong>Run</strong>
+            </p>
+        </div>
+
+        <div class="step">
+            <span class="step-number">4</span>
+            <strong>ตรวจสอบผลลัพธ์</strong>
+            <p style="margin-top: 10px;">
+                ควรเห็นข้อความ <span class="success-icon">✅</span> "Success. No rows returned"
+            </p>
+            <p style="margin-top: 15px;">
+                ตรวจสอบ columns ด้วยคำสั่ง:
+            </p>
+            <div style="position: relative; margin-top: 10px;">
+                <pre id="verify-code"><code>SELECT column_name, data_type 
+FROM information_schema.columns 
+WHERE table_name = 'skin_analyses' 
+  AND column_name LIKE 'quality_%'
+ORDER BY column_name;</code></pre>
+                <button class="copy-btn" onclick="copyVerify()">📋 Copy</button>
+            </div>
+        </div>
+
+        <div class="step" style="background: #0a3a0a; border-left-color: #3fb950;">
+            <span class="step-number" style="background: #3fb950;">✓</span>
+            <strong>เสร็จแล้ว!</strong>
+            <p style="margin-top: 10px;">
+                กลับไปที่แอป http://localhost:3000/analysis แล้วอัปโหลดภาพทดสอบ
+                <br>Quality metrics จะถูกบันทึกอัตโนมัติ
+            </p>
+        </div>
+    </div>
+
+    <script>
+        function copySql() {
+            const code = document.getElementById('sql-code').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                const btn = event.target;
+                btn.textContent = '✓ Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = '📋 Copy SQL';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        function copyVerify() {
+            const code = document.getElementById('verify-code').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                const btn = event.target;
+                btn.textContent = '✓ Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = '📋 Copy';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

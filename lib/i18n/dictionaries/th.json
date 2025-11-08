@@ -1,0 +1,28 @@
+{
+  "common": {
+    "welcome": "ยินดีต้อนรับ",
+    "login": "เข้าสู่ระบบ",
+    "logout": "ออกจากระบบ",
+    "register": "สมัครสมาชิก",
+    "save": "บันทึก",
+    "cancel": "ยกเลิก",
+    "delete": "ลบ",
+    "edit": "แก้ไข",
+    "search": "ค้นหา",
+    "loading": "กำลังโหลด..."
+  },
+  "nav": {
+    "home": "หน้าแรก",
+    "analysis": "วิเคราะห์ AI",
+    "booking": "จองนัดหมาย",
+    "dashboard": "แดชบอร์ด",
+    "profile": "โปรไฟล์"
+  },
+  "booking": {
+    "title": "จองนัดหมาย",
+    "selectTreatment": "เลือกการรักษา",
+    "selectDate": "เลือกวันที่",
+    "selectTime": "เลือกเวลา",
+    "confirm": "ยืนยันการจอง"
+  }
+}
