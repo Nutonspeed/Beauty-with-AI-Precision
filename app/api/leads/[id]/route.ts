@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { normalizeRole } from '@/lib/auth/role-normalize'
 
 interface RouteContext {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 /**
@@ -16,7 +17,7 @@ export async function GET(
   { params }: RouteContext
 ) {
   try {
-    const { id } = params
+    const { id } = await params
     const supabase = await createClient()
 
     // Verify authentication
@@ -88,10 +89,11 @@ export async function GET(
     }
 
     // Check permission: owner, clinic admin, or super admin
+    const staffRole = normalizeRole(salesStaff.role)
     const canView = 
       lead.sales_staff_id === salesStaff.id ||
-      salesStaff.role === 'super_admin' ||
-      (salesStaff.role === 'clinic_admin' && lead.clinic_id === salesStaff.clinic_id)
+      staffRole === 'super_admin' ||
+      (staffRole === 'clinic_admin' && lead.clinic_id === salesStaff.clinic_id)
 
     if (!canView) {
       return NextResponse.json(
@@ -126,7 +128,7 @@ export async function PATCH(
   { params }: RouteContext
 ) {
   try {
-    const { id } = params
+    const { id } = await params
     const supabase = await createClient()
 
     // Verify authentication
@@ -170,10 +172,11 @@ export async function PATCH(
     }
 
     // Check permission
+    const staffRole2 = normalizeRole(salesStaff.role)
     const canEdit = 
       existingLead.sales_staff_id === salesStaff.id ||
-      salesStaff.role === 'super_admin' ||
-      (salesStaff.role === 'clinic_admin' && existingLead.clinic_id === salesStaff.clinic_id)
+      staffRole2 === 'super_admin' ||
+      (staffRole2 === 'clinic_admin' && existingLead.clinic_id === salesStaff.clinic_id)
 
     if (!canEdit) {
       return NextResponse.json(
@@ -284,7 +287,7 @@ export async function DELETE(
   { params }: RouteContext
 ) {
   try {
-    const { id } = params
+    const { id } = await params
     const supabase = await createClient()
 
     // Verify authentication
@@ -328,9 +331,10 @@ export async function DELETE(
     }
 
     // Check permission (only super admin can hard delete)
+    const staffRole3 = normalizeRole(salesStaff.role)
     const canDelete = 
-      salesStaff.role === 'super_admin' ||
-      (salesStaff.role === 'clinic_admin' && existingLead.clinic_id === salesStaff.clinic_id)
+      staffRole3 === 'super_admin' ||
+      (staffRole3 === 'clinic_admin' && existingLead.clinic_id === salesStaff.clinic_id)
 
     if (!canDelete) {
       return NextResponse.json(

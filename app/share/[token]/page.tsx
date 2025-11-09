@@ -4,13 +4,13 @@ import { ShareReportView } from "@/components/share/share-report-view"
 import { getRemainingDays, isShareExpired } from "@/lib/utils/report-sharing"
 
 interface SharePageProps {
-  params: {
+  params: Promise<{
     token: string
-  }
+  }>
 }
 
 export default async function SharePage({ params }: SharePageProps) {
-  const { token } = params
+  const { token } = await params
 
   // Validate token format
   if (!/^[A-Za-z0-9_-]{32}$/.test(token)) {
@@ -93,7 +93,7 @@ export default async function SharePage({ params }: SharePageProps) {
 
 // Generate metadata for SEO
 export async function generateMetadata({ params }: SharePageProps) {
-  const { token } = params
+  const { token } = await params
   const supabase = await createClient()
 
   const { data: analysis } = await supabase

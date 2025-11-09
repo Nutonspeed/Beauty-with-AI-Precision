@@ -62,8 +62,8 @@ test.describe('Profile Page E2E Tests', () => {
     
     try {
       await expect(successAlert.or(successToast)).toBeVisible({ timeout: 5000 });
-    } catch (e) {
-      console.log('Success message not found, checking for any success indicators...');
+    } catch (error) {
+      console.log('Success message not found, checking for any success indicators...', error);
       // Try to find any success-related elements
       const anySuccess = page.locator('[class*="success"], [class*="green"]').filter({ hasText: /สำเร็จ/ });
       await expect(anySuccess).toBeVisible({ timeout: 2000 });
@@ -80,10 +80,10 @@ test.describe('Profile Page E2E Tests', () => {
   });
 
   test('should display security settings correctly', async ({ page }) => {
-    await page.getByRole('tab', { name: 'Security' }).click();
-    await expect(page.getByLabel('รหัสผ่านปัจจุบัน')).toBeVisible();
-    await expect(page.getByLabel('รหัสผ่านใหม่')).toBeVisible();
-    await expect(page.getByLabel('ยืนยันรหัสผ่านใหม่')).toBeVisible();
+  await page.getByRole('tab', { name: 'Security' }).click();
+  await expect(page.getByLabel(/Current Password/).first()).toBeVisible();
+  await expect(page.getByLabel(/New Password/).first()).toBeVisible();
+  await expect(page.getByLabel(/Confirm New Password/).first()).toBeVisible();
     await expect(page.getByRole('button', { name: 'เปลี่ยนรหัสผ่าน' })).toBeVisible();
   });
 
@@ -96,16 +96,16 @@ test.describe('Profile Page E2E Tests', () => {
     await emailSwitch.click();
     await page.getByRole('button', { name: 'Save Preferences / บันทึกการตั้งค่า' }).click();
     
-    await expect(page.getByText('บันทึกการตั้งค่าสำเร็จ!')).toBeVisible({ timeout: 10000 });
+  await expect(page.getByText('บันทึกการตั้งค่าสำเร็จ!', { exact: false }).first()).toBeVisible({ timeout: 10000 });
 
     await page.reload();
     await page.getByRole('tab', { name: 'Notifications' }).click();
 
     const emailSwitchAfter = page.getByLabel('Booking Confirmations / ยืนยันการจอง');
-    if (!isCheckedBefore) {
-      await expect(emailSwitchAfter).toBeChecked();
-    } else {
+    if (isCheckedBefore) {
       await expect(emailSwitchAfter).not.toBeChecked();
+    } else {
+      await expect(emailSwitchAfter).toBeChecked();
     }
   });
 
@@ -120,7 +120,7 @@ test.describe('Profile Page E2E Tests', () => {
 
     await page.getByRole('button', { name: 'Save Preferences / บันทึกการตั้งค่า' }).click();
 
-    await expect(page.getByText('บันทึกการตั้งค่าสำเร็จ!')).toBeVisible({ timeout: 10000 });
+  await expect(page.getByText('บันทึกการตั้งค่าสำเร็จ!', { exact: false }).first()).toBeVisible({ timeout: 10000 });
 
     await page.reload();
     await page.getByRole('tab', { name: 'Preferences' }).click();

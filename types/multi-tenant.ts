@@ -65,10 +65,14 @@ export interface Clinic {
 // Enhanced User Types (with Clinic)
 // ============================================================================
 
+// Canonical UserRole: legacy variants removed (free_user, premium_customer) in favor of normalized forms.
+// Use normalizeRole(value) from lib/auth/role-normalize before assigning.
 export type UserRole = 
   | 'public'
-  | 'free_user'
-  | 'premium_customer'
+  | 'customer_free'
+  | 'customer_premium'
+  | 'customer_clinical'
+  | 'customer' // generic fallback
   | 'clinic_staff'
   | 'clinic_admin'
   | 'sales_staff'

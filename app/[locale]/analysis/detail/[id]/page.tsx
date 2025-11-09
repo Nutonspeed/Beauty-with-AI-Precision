@@ -38,6 +38,7 @@ import type {
   AIProvider,
 } from '@/lib/types/skin-analysis';
 import { useAuth } from '@/lib/auth/context';
+import { normalizeRole } from '@/lib/auth/role-normalize';
 
 const TRANSLATIONS = {
   en: {
@@ -79,7 +80,7 @@ const LANGUAGES = [
   { code: 'en', name: 'English', flag: '🇬🇧' },
 ];
 
-const SKIN_TYPES: SkinType[] = ['oily', 'dry', 'combination', 'normal', 'sensitive'];
+const SKIN_TYPES: Set<SkinType> = new Set(['oily', 'dry', 'combination', 'normal', 'sensitive']);
 const SKIN_CONCERNS: SkinConcern[] = [
   'acne',
   'wrinkles',
@@ -99,19 +100,19 @@ const RECOMMENDATION_CATEGORIES: RecommendationCategory[] = [
   'treatment',
   'sunscreen',
 ];
-const AI_PROVIDERS: AIProvider[] = ['huggingface', 'google-vision', 'gemini'];
+const AI_PROVIDERS: Set<AIProvider> = new Set(['huggingface', 'google-vision', 'gemini']);
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null;
 
 const isSkinType = (value: unknown): value is SkinType =>
-  typeof value === 'string' && SKIN_TYPES.includes(value as SkinType);
+  typeof value === 'string' && SKIN_TYPES.has(value as SkinType);
 
 const isSkinConcern = (value: unknown): value is SkinConcern =>
   typeof value === 'string' && SKIN_CONCERNS.includes(value as SkinConcern);
 
 const isAIProvider = (value: unknown): value is AIProvider =>
-  typeof value === 'string' && AI_PROVIDERS.includes(value as AIProvider);
+  typeof value === 'string' && AI_PROVIDERS.has(value as AIProvider);
 
 const asNumber = (value: unknown): number | undefined => {
   if (typeof value === 'number' && Number.isFinite(value)) {
@@ -161,7 +162,7 @@ const normalizeAIRecommendations = (raw: unknown): AIAnalysisResult['recommendat
       continue;
     }
 
-    const entryRecord = entry as Record<string, unknown>;
+    const entryRecord = entry;
     const productValue = entryRecord.product;
     if (typeof productValue !== 'string' || productValue.trim() === '') {
       continue;
@@ -214,14 +215,14 @@ const normalizeAIAnalysis = (raw: unknown): AIAnalysisResult => {
 
 const normalizeCVAnalysis = (raw: unknown): CVAnalysisResult => {
   const record = isRecord(raw) ? raw : {};
-  const spotsRaw = isRecord(record.spots) ? record.spots : {};
-  const poresRaw = isRecord(record.pores) ? record.pores : {};
-  const wrinklesRaw = isRecord(record.wrinkles) ? record.wrinkles : {};
-  const textureRaw = isRecord(record.texture) ? record.texture : {};
-  const rednessRaw = isRecord(record.redness) ? record.redness : {};
+  const spotsRaw: Record<string, unknown> = isRecord(record.spots) ? record.spots : {};
+  const poresRaw: Record<string, unknown> = isRecord(record.pores) ? record.pores : {};
+  const wrinklesRaw: Record<string, unknown> = isRecord(record.wrinkles) ? record.wrinkles : {};
+  const textureRaw: Record<string, unknown> = isRecord(record.texture) ? record.texture : {};
+  const rednessRaw: Record<string, unknown> = isRecord(record.redness) ? record.redness : {};
 
-  const spotsLocations = Array.isArray((spotsRaw as Record<string, unknown>).locations)
-    ? ((spotsRaw as Record<string, unknown>).locations as unknown[])
+  const spotsLocations = Array.isArray(spotsRaw['locations'])
+    ? (spotsRaw['locations'] as unknown[])
         .map((loc) => {
           if (!isRecord(loc)) return null;
           const x = asNumber(loc.x);
@@ -234,17 +235,17 @@ const normalizeCVAnalysis = (raw: unknown): CVAnalysisResult => {
     : [];
 
   const poresAverage =
-    asNumber((poresRaw as Record<string, unknown>).averageSize) ??
-    asNumber((poresRaw as Record<string, unknown>).average) ??
-    asNumber((poresRaw as Record<string, unknown>).size) ??
+    asNumber(poresRaw['averageSize']) ??
+    asNumber(poresRaw['average']) ??
+    asNumber(poresRaw['size']) ??
     0;
   const poresCount =
-    asNumber((poresRaw as Record<string, unknown>).enlargedCount) ??
-    asNumber((poresRaw as Record<string, unknown>).count) ??
+    asNumber(poresRaw['enlargedCount']) ??
+    asNumber(poresRaw['count']) ??
     0;
 
-  const wrinklesLocations = Array.isArray((wrinklesRaw as Record<string, unknown>).locations)
-    ? ((wrinklesRaw as Record<string, unknown>).locations as unknown[])
+  const wrinklesLocations = Array.isArray(wrinklesRaw['locations'])
+    ? (wrinklesRaw['locations'] as unknown[])
         .map((loc) => {
           if (!isRecord(loc)) return null;
           const x1 = asNumber(loc.x1);
@@ -257,11 +258,12 @@ const normalizeCVAnalysis = (raw: unknown): CVAnalysisResult => {
         .filter((loc): loc is { x1: number; y1: number; x2: number; y2: number } => loc !== null)
     : [];
 
-  const rednessAreasSource = Array.isArray((rednessRaw as Record<string, unknown>).areas)
-    ? ((rednessRaw as Record<string, unknown>).areas as unknown[])
-    : Array.isArray((rednessRaw as Record<string, unknown>).locations)
-    ? ((rednessRaw as Record<string, unknown>).locations as unknown[])
-    : [];
+  let rednessAreasSource: unknown[] = [];
+  if (Array.isArray(rednessRaw['areas'])) {
+    rednessAreasSource = rednessRaw['areas'] as unknown[];
+  } else if (Array.isArray(rednessRaw['locations'])) {
+    rednessAreasSource = rednessRaw['locations'] as unknown[];
+  }
 
   const rednessAreas = rednessAreasSource
     .map((area) => {
@@ -276,30 +278,30 @@ const normalizeCVAnalysis = (raw: unknown): CVAnalysisResult => {
     .filter((area): area is { x: number; y: number; width: number; height: number } => area !== null);
 
   const textureSmoothness = clamp(
-    toNumber((textureRaw as Record<string, unknown>).smoothness ?? (textureRaw as Record<string, unknown>).score, 0)
+    toNumber(textureRaw['smoothness'] ?? textureRaw['score'], 0)
   );
   const textureScore = clamp(
-    toNumber((textureRaw as Record<string, unknown>).score ?? textureSmoothness, textureSmoothness)
+    toNumber(textureRaw['score'] ?? textureSmoothness, textureSmoothness)
   );
   const textureRoughness = clamp(
-    toNumber((textureRaw as Record<string, unknown>).roughness ?? 10 - textureSmoothness, 10 - textureSmoothness)
+    toNumber(textureRaw['roughness'] ?? 10 - textureSmoothness, 10 - textureSmoothness)
   );
 
   return {
     spots: {
-      count: clamp(toNumber((spotsRaw as Record<string, unknown>).count, spotsLocations.length), 0, Number.MAX_SAFE_INTEGER),
+      count: clamp(toNumber(spotsRaw['count'], spotsLocations.length), 0, Number.MAX_SAFE_INTEGER),
       locations: spotsLocations,
-      severity: clamp(toNumber((spotsRaw as Record<string, unknown>).severity, 0)),
+      severity: clamp(toNumber(spotsRaw['severity'], 0)),
     },
     pores: {
       averageSize: clamp(poresAverage, 0, Number.MAX_SAFE_INTEGER),
       enlargedCount: clamp(poresCount, 0, Number.MAX_SAFE_INTEGER),
-      severity: clamp(toNumber((poresRaw as Record<string, unknown>).severity, 0)),
+      severity: clamp(toNumber(poresRaw['severity'], 0)),
     },
     wrinkles: {
-      count: clamp(toNumber((wrinklesRaw as Record<string, unknown>).count, wrinklesLocations.length), 0, Number.MAX_SAFE_INTEGER),
+      count: clamp(toNumber(wrinklesRaw['count'], wrinklesLocations.length), 0, Number.MAX_SAFE_INTEGER),
       locations: wrinklesLocations,
-      severity: clamp(toNumber((wrinklesRaw as Record<string, unknown>).severity, 0)),
+      severity: clamp(toNumber(wrinklesRaw['severity'], 0)),
     },
     texture: {
       smoothness: textureSmoothness,
@@ -308,12 +310,12 @@ const normalizeCVAnalysis = (raw: unknown): CVAnalysisResult => {
     },
     redness: {
       percentage: clamp(
-        toNumber((rednessRaw as Record<string, unknown>).percentage ?? (rednessRaw as Record<string, unknown>).coverage, 0),
+        toNumber(rednessRaw['percentage'] ?? rednessRaw['coverage'], 0),
         0,
         100
       ),
       areas: rednessAreas,
-      severity: clamp(toNumber((rednessRaw as Record<string, unknown>).severity, 0)),
+      severity: clamp(toNumber(rednessRaw['severity'], 0)),
     },
   };
 };
@@ -616,7 +618,7 @@ function transformToAnalysisFormat(dbRecord: any) {
  * Advanced Analysis Tab Component
  * Fetches and displays 8-mode CV analysis data
  */
-function AdvancedAnalysisTab({ analysisId, locale }: { analysisId: string; locale: string }) {
+function AdvancedAnalysisTab({ analysisId, locale }: Readonly<{ analysisId: string; locale: string }>) {
   const [cvData, setCvData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -684,12 +686,11 @@ function AdvancedAnalysisTab({ analysisId, locale }: { analysisId: string; local
       userId={cvData.user_id}
       comparisonAnalysis={null}
       availableAnalyses={[]}
-      userProfile={null}
     />
   );
 }
 
-export default function AnalysisDetailPage({ params }: AnalysisDetailPageProps) {
+export default function AnalysisDetailPage({ params }: Readonly<AnalysisDetailPageProps>) {
   const [analysis, setAnalysis] = useState<HybridSkinAnalysis | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [patientInfo, setPatientInfo] = useState<any>(null);
@@ -706,7 +707,9 @@ export default function AnalysisDetailPage({ params }: AnalysisDetailPageProps) 
   
   // Get user role for permission checks
   const { user } = useAuth();
-  const canAccessSalesPresentation = user?.role && ['sales_staff', 'clinic_owner', 'clinic_admin', 'super_admin'].includes(user.role);
+  const allowedRoles = new Set(['sales_staff', 'clinic_owner', 'clinic_admin', 'super_admin']);
+  const normalized = normalizeRole(user?.role ?? null);
+  const canAccessSalesPresentation = allowedRoles.has(normalized);
 
   // Check authentication status
   useEffect(() => {

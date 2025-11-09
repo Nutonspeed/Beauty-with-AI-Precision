@@ -16,19 +16,20 @@ import { Metadata } from 'next';
 import AnalysisDetailClient from '@/components/analysis/AnalysisDetailClient';
 
 interface AnalysisDetailPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
-  searchParams: {
+  }>;
+  searchParams: Promise<{
     compare?: string; // Optional: comparison analysis ID
-  };
+  }>;
 }
 
 export async function generateMetadata(
   { params }: AnalysisDetailPageProps
 ): Promise<Metadata> {
+  const { id } = await params
   return {
-    title: `Analysis #${params.id} - AI Beauty Platform`,
+    title: `Analysis #${id} - AI Beauty Platform`,
     description: 'View your comprehensive skin analysis results with AI-powered insights',
   };
 }
@@ -38,6 +39,8 @@ export default async function AnalysisDetailPage({
   searchParams,
 }: Readonly<AnalysisDetailPageProps>) {
   const supabase = await createServerClient();
+  const { id } = await params
+  const { compare } = await searchParams
 
   // Check authentication
   const {
@@ -46,14 +49,14 @@ export default async function AnalysisDetailPage({
   } = await supabase.auth.getUser();
 
   if (authError || !user) {
-    redirect('/auth/login?redirectTo=/analysis/' + params.id);
+    redirect('/auth/login?redirectTo=/analysis/' + id);
   }
 
   // Fetch analysis data
   const { data: analysis, error: analysisError } = await supabase
     .from('skin_analyses')
     .select('*')
-    .eq('id', params.id)
+    .eq('id', id)
     .single();
 
   if (analysisError || !analysis) {
@@ -77,11 +80,11 @@ export default async function AnalysisDetailPage({
 
   // Fetch comparison analysis if requested
   let comparisonAnalysis = null;
-  if (searchParams.compare) {
+  if (compare) {
     const { data: comparison } = await supabase
       .from('skin_analyses')
       .select('*')
-      .eq('id', searchParams.compare)
+      .eq('id', compare)
       .eq('user_id', user.id)
       .single();
 
@@ -93,7 +96,7 @@ export default async function AnalysisDetailPage({
     .from('skin_analyses')
     .select('id, analyzed_at, overall_score, is_baseline')
     .eq('user_id', user.id)
-    .neq('id', params.id)
+    .neq('id', id)
     .order('analyzed_at', { ascending: false })
     .limit(10);
 

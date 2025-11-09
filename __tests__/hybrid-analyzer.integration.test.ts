@@ -345,13 +345,21 @@ describe('Hybrid AI Analyzer Integration Tests', () => {
       expect(result.recommendations.length).toBeGreaterThan(0)
       expect(result.recommendations.length).toBeLessThanOrEqual(5)
 
-      // Each recommendation should be a string
+      // Each recommendation should be an object with required fields
       result.recommendations.forEach(rec => {
-        expect(typeof rec).toBe('string')
-        expect(rec.length).toBeGreaterThan(10) // Meaningful length
+        expect(typeof rec).toBe('object')
+        expect(rec).toHaveProperty('text')
+        expect(rec).toHaveProperty('confidence')
+        expect(rec).toHaveProperty('priority')
+        expect(typeof rec.text).toBe('string')
+        expect(rec.text.length).toBeGreaterThan(10) // Meaningful length
+        expect(typeof rec.confidence).toBe('number')
+        expect(rec.confidence).toBeGreaterThanOrEqual(0)
+        expect(rec.confidence).toBeLessThanOrEqual(1)
+        expect(['high','medium','low']).toContain(rec.priority)
       })
 
-      console.log(`Generated ${result.recommendations.length} recommendations`)
+      console.log(`Generated ${result.recommendations.length} recommendations with confidence scores`)
     })
 
     it('should identify skin condition', async () => {

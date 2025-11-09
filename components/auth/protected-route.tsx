@@ -4,6 +4,7 @@ import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth/context"
 import { UserRole } from "@/types/supabase"
+import { roleHierarchy as globalRoleHierarchy } from "@/lib/auth/role-config"
 import { Loader2 } from "lucide-react"
 
 // Helper: เช็คว่า user มี role ที่อนุญาตหรือไม่
@@ -11,17 +12,9 @@ function hasAllowedRole(userRole: UserRole, allowedRoles: UserRole[]): boolean {
   return allowedRoles.includes(userRole)
 }
 
-// Role hierarchy สำหรับเช็คสิทธิ์
-const roleHierarchy: Record<UserRole, number> = {
-  customer_free: 1,
-  customer: 1,
-  customer_premium: 2,
-  customer_clinical: 3,
-  sales_staff: 3,
-  clinic_staff: 4,
-  clinic_owner: 5,
-  super_admin: 6,
-}
+// ใช้ roleHierarchy กลางจากระบบ RBAC configuration เพื่อหลีกเลี่ยงค่าซ้ำ/ไม่ตรงกัน
+// (public, clinic_admin ถูกเพิ่มไว้แล้วใน globalRoleHierarchy)
+const roleHierarchy = globalRoleHierarchy
 
 function hasMinimumRole(userRole: UserRole, requiredRole: UserRole): boolean {
   const userLevel = roleHierarchy[userRole] ?? 0

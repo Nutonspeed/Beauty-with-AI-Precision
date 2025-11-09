@@ -13,13 +13,13 @@ import Link from 'next/link';
 import { ComparisonPageClient } from './comparison-page-client';
 
 interface PageProps {
-  params: {
+  params: Promise<{
     locale: string;
     userId: string;
-  };
-  searchParams: {
+  }>;
+  searchParams: Promise<{
     analysisIds?: string;
-  };
+  }>;
 }
 
 async function getAnalyses(userId: string, analysisIds?: string[]) {
@@ -69,11 +69,12 @@ async function getAnalyses(userId: string, analysisIds?: string[]) {
 }
 
 export default async function ComparisonPage({ params, searchParams }: PageProps) {
-  const { locale, userId } = params;
-  
-  // Parse analysis IDs from search params
-  const analysisIds = searchParams.analysisIds
-    ? searchParams.analysisIds.split(',').filter(Boolean)
+  const { locale, userId } = await params;
+  const { analysisIds: rawIds } = await searchParams;
+
+  // Parse analysis IDs from awaited search params
+  const analysisIds = rawIds
+    ? rawIds.split(',').filter(Boolean)
     : undefined;
 
   const analyses = await getAnalyses(userId, analysisIds);
@@ -148,7 +149,7 @@ export default async function ComparisonPage({ params, searchParams }: PageProps
 }
 
 export async function generateMetadata({ params }: PageProps) {
-  const { locale } = params;
+  const { locale } = await params;
   
   return {
     title: locale === 'th' ? 'ติดตามความคืบหน้า - ai367bar' : 'Progress Tracking - ai367bar',

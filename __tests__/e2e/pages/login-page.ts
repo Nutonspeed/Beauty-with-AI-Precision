@@ -9,10 +9,10 @@ export class LoginPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.emailInput = page.getByLabel('อีเมล');
-    this.passwordInput = page.getByLabel('รหัสผ่าน');
-    this.loginButton = page.getByRole('button', { name: 'เข้าสู่ระบบ' });
-    this.heading = this.page.locator('[data-slot="card-title"]').getByText('เข้าสู่ระบบ');
+    this.emailInput = page.getByLabel(/Email|อีเมล/i).first();
+    this.passwordInput = page.getByLabel(/Password|รหัสผ่าน/i).first();
+    this.loginButton = page.getByRole('button', { name: /เข้าสู่ระบบ|Sign In/i });
+    this.heading = this.page.locator('[data-slot="card-title"]').getByText(/เข้าสู่ระบบ|Sign In/i);
   }
 
   async goto() {
@@ -23,6 +23,9 @@ export class LoginPage {
   async login(email: string, password_str: string) {
     await this.emailInput.fill(email);
     await this.passwordInput.fill(password_str);
-    await this.loginButton.click();
+    await Promise.all([
+      this.page.waitForURL(/\/(analysis|clinic\/dashboard|sales\/dashboard)/, { timeout: 20000 }).catch(() => undefined),
+      this.loginButton.click(),
+    ]);
   }
 }

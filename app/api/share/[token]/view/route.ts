@@ -5,9 +5,9 @@ import { extractViewMetadata } from '@/lib/utils/report-sharing'
 export const runtime = 'edge'
 
 interface RouteContext {
-  params: {
+  params: Promise<{
     token: string
-  }
+  }>
 }
 
 /**
@@ -20,7 +20,7 @@ export async function POST(
   { params }: RouteContext
 ) {
   try {
-    const { token } = params
+    const { token } = await params
 
     // Validate token format
     if (!/^[A-Za-z0-9_-]{32}$/.test(token)) {

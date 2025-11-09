@@ -315,18 +315,27 @@ describe('Phase 1 Hybrid AI Integration', () => {
       expect(result.confidence).toBeLessThanOrEqual(1)
     }, 90000)
 
-    it('should provide recommendations array', async () => {
+    it('should provide recommendations array with details', async () => {
       await hybridAnalyzer.initialize()
       
       const result = await hybridAnalyzer.analyzeSkin(testImageData)
 
       expect(Array.isArray(result.recommendations)).toBe(true)
       expect(result.recommendations.length).toBeGreaterThan(0)
-      
-      // Each recommendation should be a string
+      expect(result.recommendations.length).toBeLessThanOrEqual(5)
+
+      // Each recommendation should be an object with text/confidence/priority
       result.recommendations.forEach(rec => {
-        expect(typeof rec).toBe('string')
-        expect(rec.length).toBeGreaterThan(0)
+        expect(typeof rec).toBe('object')
+        expect(rec).toHaveProperty('text')
+        expect(rec).toHaveProperty('confidence')
+        expect(rec).toHaveProperty('priority')
+        expect(typeof rec.text).toBe('string')
+        expect(rec.text.length).toBeGreaterThan(0)
+        expect(typeof rec.confidence).toBe('number')
+        expect(rec.confidence).toBeGreaterThanOrEqual(0)
+        expect(rec.confidence).toBeLessThanOrEqual(1)
+        expect(['high','medium','low']).toContain(rec.priority)
       })
     }, 90000)
   })

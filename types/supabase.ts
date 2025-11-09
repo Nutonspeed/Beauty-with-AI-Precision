@@ -12,8 +12,11 @@ export type Json =
   | Json[]
 
 // User Roles (เป็น string ธรรมดา ไม่ใช่ ENUM ใน DB)
+// Canonical Supabase User Roles (normalized via normalizeRole). Added 'public'.
 export type UserRole = 
+  | 'public'
   | 'clinic_owner'
+  | 'clinic_admin'
   | 'sales_staff'
   | 'clinic_staff'
   | 'customer'
@@ -190,27 +193,13 @@ export type Updates<T extends keyof Database['public']['Tables']> =
   Database['public']['Tables'][T]['Update']
 
 // Helper: แปลง string role เป็น UserRole type
+import { normalizeRole } from '../lib/auth/role-normalize'
+
 export function parseUserRole(role: string): UserRole {
-  const validRoles: UserRole[] = [
-    'clinic_owner',
-    'sales_staff', 
-    'clinic_staff',
-    'customer',
-    'customer_free', 
-    'customer_premium', 
-    'customer_clinical',
-    'super_admin'
-  ]
-  
-  if (validRoles.includes(role as UserRole)) {
-    return role as UserRole
-  }
-  
-  // Legacy role mapping
-  if (role === 'free_user') return 'customer_free'
-  if (role === 'premium_customer') return 'customer_premium'
-  
-  return 'customer_free' // default
+  const normalized = normalizeRole(role)
+  // normalizeRole may return canonical roles including 'public' & 'customer_free'
+  // Cast is safe because CanonicalRole ⊆ UserRole; fallback already handled inside normalizeRole.
+  return normalized as UserRole
 }
 
 // Helper: แปลง role เป็น tier

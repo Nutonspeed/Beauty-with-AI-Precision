@@ -315,7 +315,7 @@ export function PresentationWizard({
         return (
           <ProductShowcaseStep
             selectedProducts={data.selectedProducts}
-            recommendedProducts={data.analysisResults?.recommendations ?? []}
+            recommendedProducts={(data.analysisResults?.recommendations?.map((r: any) => typeof r === 'string' ? r : r.text)) ?? []}
             onUpdate={(products) => updateData('selectedProducts', products)}
             customerName={data.customer.name || 'Customer'}
           />

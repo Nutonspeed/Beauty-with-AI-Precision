@@ -179,21 +179,24 @@ async function createImageTensor(dataUrl: string): Promise<tf.Tensor3D> {
 // Analysis functions (simplified for Web Worker)
 async function analyzeWrinkles(imageTensor: tf.Tensor3D, landmarks: any[]): Promise<number> {
   return tf.tidy(() => {
-    // Simplified wrinkle detection
-    const grayscale = tf.image.rgbToGrayscale(imageTensor)
-    
-    // Use simple mean and standard deviation
+    // Manual grayscale conversion (luminosity method) instead of tf.image.rgbToGrayscale
+    const [r, g, b] = tf.split(imageTensor, 3, 2)
+    const grayscale = tf.addN([
+      r.toFloat().mul(0.299),
+      g.toFloat().mul(0.587),
+      b.toFloat().mul(0.114),
+    ])
+
     const moments = tf.moments(grayscale)
-    const mean = moments.mean.dataSync()[0]
     const variance = moments.variance.dataSync()[0]
-    
+
     // Higher variance = more texture/wrinkles
     const wrinkleScore = Math.min(100, (variance / 100) * 50)
-    
+
     // Focus on wrinkle-prone areas using landmarks
     const foreheadArea = landmarks.filter((lm: any, idx: number) => idx <= 10)
-    const wrinkleFactor = foreheadArea.length > 0 ? 0.8 : 1.0
-    
+  const wrinkleFactor = foreheadArea.length > 0 ? 0.8 : 1
+
     return Math.round(wrinkleScore * wrinkleFactor)
   })
 }
@@ -212,11 +215,16 @@ async function analyzeSpots(imageTensor: tf.Tensor3D): Promise<number> {
 
 async function analyzeTexture(imageTensor: tf.Tensor3D): Promise<number> {
   return tf.tidy(() => {
-    // Simplified texture analysis
-    const grayscale = tf.image.rgbToGrayscale(imageTensor)
+    // Manual grayscale conversion
+    const [r, g, b] = tf.split(imageTensor, 3, 2)
+    const grayscale = tf.addN([
+      r.toFloat().mul(0.299),
+      g.toFloat().mul(0.587),
+      b.toFloat().mul(0.114),
+    ])
     const moments = tf.moments(grayscale)
     const variance = moments.variance.dataSync()[0]
-    
+
     // Lower variance = smoother texture
     const smoothness = Math.max(0, 1 - variance / 5000)
     return Math.round(smoothness * 100)
@@ -225,11 +233,16 @@ async function analyzeTexture(imageTensor: tf.Tensor3D): Promise<number> {
 
 async function analyzePores(imageTensor: tf.Tensor3D): Promise<number> {
   return tf.tidy(() => {
-    // Simplified pore detection
-    const grayscale = tf.image.rgbToGrayscale(imageTensor)
+    // Manual grayscale conversion
+    const [r, g, b] = tf.split(imageTensor, 3, 2)
+    const grayscale = tf.addN([
+      r.toFloat().mul(0.299),
+      g.toFloat().mul(0.587),
+      b.toFloat().mul(0.114),
+    ])
     const moments = tf.moments(grayscale)
     const variance = moments.variance.dataSync()[0]
-    
+
     // Pore visibility correlates with high frequency details (variance)
     const poreVisibility = Math.min(100, (variance / 50) * 40)
     return Math.round(Math.max(0, 100 - poreVisibility))
@@ -271,11 +284,16 @@ async function analyzeRadiance(imageTensor: tf.Tensor3D): Promise<number> {
 
 async function analyzeHydration(imageTensor: tf.Tensor3D): Promise<number> {
   return tf.tidy(() => {
-    // Simplified hydration - based on image luminance and saturation
-    const grayscale = tf.image.rgbToGrayscale(imageTensor)
+    // Manual grayscale conversion for luminance
+    const [r, g, b] = tf.split(imageTensor, 3, 2)
+    const grayscale = tf.addN([
+      r.toFloat().mul(0.299),
+      g.toFloat().mul(0.587),
+      b.toFloat().mul(0.114),
+    ])
     const moments = tf.moments(grayscale)
     const mean = moments.mean.dataSync()[0] / 255
-    
+
     // Well-hydrated skin appears more luminous
     // Combine brightness and smoothness
     return Math.round(mean * 80 + 20)

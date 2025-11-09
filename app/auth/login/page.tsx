@@ -4,6 +4,8 @@ import type React from "react"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth/context"
+import { getDefaultLandingPage } from "@/lib/auth/role-config"
+import { normalizeRole } from "@/lib/auth/role-normalize"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -26,29 +28,8 @@ export default function LoginPage() {
   useEffect(() => {
     if (user) {
       console.log('[LoginPage] User detected, redirecting based on role:', user.role)
-      
-      // Role-based redirect
-      let redirectPath = '/dashboard'
-      
-      switch (user.role) {
-        case 'super_admin':
-          redirectPath = '/super-admin'
-          break
-        case 'clinic_admin': // Updated from clinic_owner
-        case 'clinic_staff':
-          redirectPath = '/clinic/dashboard'
-          break
-        case 'sales_staff':
-          redirectPath = '/sales/dashboard'
-          break
-        case 'customer':
-        case 'free_user':
-        case 'premium_customer':
-        default:
-          redirectPath = '/dashboard'
-          break
-      }
-      
+      const normalized = normalizeRole(user.role as any)
+      const redirectPath = getDefaultLandingPage(normalized as any)
       console.log('[LoginPage] Redirecting to:', redirectPath)
       router.push(redirectPath)
     }

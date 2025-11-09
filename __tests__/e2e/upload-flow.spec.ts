@@ -2,26 +2,33 @@ import { test, expect } from '@playwright/test'
 import path from 'node:path'
 
 async function login(page: import('@playwright/test').Page) {
-  await page.goto('http://localhost:3000/auth/login')
+  await page.goto('/auth/login')
   // If app redirects automatically (already logged in), bail out early
-  if (page.url().includes('/analysis') || page.url().includes('/dashboard')) {
+  if (/\/(analysis|clinic\/dashboard|sales\/dashboard)/.test(page.url())) {
     return
   }
 
-  await page.fill('input[type="email"]', 'test@example.com')
-  await page.fill('input[type="password"]', 'password123')
-  await page.click('button[type="submit"]')
-  try {
-    await page.waitForURL(/\/(dashboard|analysis)/, { timeout: 15000 })
-  } catch {
-    // Fallback: verify Analysis page is visible via heading
-    await expect(page.locator('text=/AI Skin Analysis|วิเคราะห์ผิว/i')).toBeVisible({ timeout: 5000 })
-  }
+  const emailField = page.getByLabel(/Email|อีเมล/i).first()
+  const passwordField = page.getByLabel(/Password|รหัสผ่าน/i).first()
+
+  await emailField.fill('clinic-owner@example.com')
+  await passwordField.fill('password123')
+
+  await Promise.all([
+    page.waitForURL(/\/(analysis|clinic\/dashboard|sales\/dashboard)/, { timeout: 20000 }),
+    page.getByRole('button', { name: /เข้าสู่ระบบ|Sign In/i }).click(),
+  ]).catch(async () => {
+    const errorAlert = page.locator('text=/อีเมลหรือรหัสผ่านไม่ถูกต้อง|invalid email or password/i')
+    if (await errorAlert.first().isVisible()) {
+      throw new Error('Login failed: invalid credentials displayed on page')
+    }
+    throw new Error('Login did not complete within expected time')
+  })
 }
 
 async function seedResultsSession(page: import('@playwright/test').Page) {
   // Ensure origin is set so sessionStorage writes to the right domain
-  await page.goto('http://localhost:3000/analysis')
+  await page.goto('/analysis')
 
   const tinyTransparentPng =
     'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII='
@@ -84,15 +91,14 @@ test.describe('Skin Analysis Upload Flow', () => {
   test('should complete full upload and analysis workflow', async ({ page }) => {
     // 1. Login first
     await login(page)
-    
-    // If redirected to dashboard, navigate to analysis
-    if (page.url().includes('/dashboard')) {
-      await page.goto('http://localhost:3000/analysis')
+
+    if (!page.url().includes('/analysis')) {
+      await page.goto('/analysis')
     }
-    
+
     // 2. Wait for page to load
-    await expect(page.locator('h1')).toContainText('AI Skin Analysis')
-    
+    await expect(page.locator('h1')).toContainText(/AI Skin Analysis|วิเคราะห์ผิว/i)
+
     // 3. Upload test image
     const fileInput = page.locator('input[type="file"]')
     const testImagePath = path.resolve(__dirname, '../../public/placeholder-user.jpg')
@@ -147,54 +153,44 @@ test.describe('Skin Analysis Upload Flow', () => {
 
   test('should handle upload errors gracefully', async ({ page }) => {
     await login(page)
-    await page.goto('http://localhost:3000/analysis')
-    
-    // Try to upload invalid file
+    await page.goto('/analysis')
+
     const fileInput = page.locator('input[type="file"]')
     await fileInput.setInputFiles({
       name: 'test.txt',
       mimeType: 'text/plain',
       buffer: Buffer.from('not an image'),
     })
-    
-    // Should show error message
+
     await expect(page.locator('text=/error|ผิดพลาด/i')).toBeVisible({ timeout: 5000 })
   })
 
   test('should display loading states during processing', async ({ page }) => {
     await login(page)
-    await page.goto('http://localhost:3000/analysis')
-    
+    await page.goto('/analysis')
+
     const fileInput = page.locator('input[type="file"]')
     const testImagePath = path.resolve(__dirname, '../../public/placeholder-user.jpg')
     await fileInput.setInputFiles(testImagePath)
-    
-    // Should show processing indicator
+
     await expect(page.locator('text=/Processing|กำลังประมวลผล/i')).toBeVisible()
-    
-    // Should show face detection step
     await expect(page.locator('text=/Detecting face|ตรวจจับใบหน้า/i')).toBeVisible()
-    
-    // Should show skin analysis step
     await expect(page.locator('text=/Analyzing skin|วิเคราะห์ผิว/i')).toBeVisible()
   })
 
   test('should allow switching between tabs in results page', async ({ page }) => {
     await login(page)
     await seedResultsSession(page)
-    await page.goto('http://localhost:3000/analysis/results')
-    
-    // Click Overview tab
+    await page.goto('/analysis/results')
+
     const overviewTab = page.locator('button:has-text("Overview")')
     await overviewTab.click()
     await expect(page.locator('text=/Overall Score|คะแนนรวม/i')).toBeVisible()
-    
-    // Click AI Details tab
+
     const aiDetailsTab = page.locator('button:has-text("AI Details")')
     await aiDetailsTab.click()
     await expect(page.locator('text=/Total Processing Time/i')).toBeVisible()
-    
-    // Click Recommendations tab
+
     const recommendationsTab = page.locator('button:has-text("Recommendations")')
     await recommendationsTab.click()
     await expect(page.locator('text=/Recommended|แนะนำ/i')).toBeVisible()
@@ -205,7 +201,7 @@ test.describe('Canvas Visualization', () => {
   test('should render canvas with correct dimensions', async ({ page }) => {
     await login(page)
     await seedResultsSession(page)
-    await page.goto('http://localhost:3000/analysis/results')
+    await page.goto('/analysis/results')
     await page.locator('button:has-text("AI Details")').click()
     
     const canvas = page.locator('canvas')
@@ -223,7 +219,7 @@ test.describe('Canvas Visualization', () => {
   test('should display all landmark colors', async ({ page }) => {
     await login(page)
     await seedResultsSession(page)
-    await page.goto('http://localhost:3000/analysis/results')
+    await page.goto('/analysis/results')
     await page.locator('button:has-text("AI Details")').click()
     
     // Verify legend contains all color descriptions
@@ -238,26 +234,25 @@ test.describe('Canvas Visualization', () => {
 test.describe('Responsive Design', () => {
   test('should work on mobile viewport', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 667 })
-      await login(page)
-      await page.goto('http://localhost:3000/analysis')
-    
-    // Upload should still work
-    const fileInput = page.locator('input[type="file"]')
-    await expect(fileInput).toBeVisible()
+    await login(page)
+    await page.goto('/analysis')
+
+    const dropzoneButton = page.getByRole('button', { name: /Click to upload|คลิกเพื่ออัปโหลด/i })
+    await expect(dropzoneButton).toBeVisible()
   })
 
   test('should work on tablet viewport', async ({ page }) => {
     await page.setViewportSize({ width: 768, height: 1024 })
-      await login(page)
-      await page.goto('http://localhost:3000/analysis')
+    await login(page)
+    await page.goto('/analysis')
     
     await expect(page.locator('h1')).toBeVisible()
   })
 
   test('should work on desktop viewport', async ({ page }) => {
     await page.setViewportSize({ width: 1920, height: 1080 })
-      await login(page)
-      await page.goto('http://localhost:3000/analysis')
+    await login(page)
+    await page.goto('/analysis')
     
     await expect(page.locator('h1')).toBeVisible()
   })

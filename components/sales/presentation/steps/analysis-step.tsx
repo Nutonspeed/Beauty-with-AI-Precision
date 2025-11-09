@@ -326,14 +326,36 @@ export function AnalysisStep({
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {recommendations.map((rec, index) => (
-              <Alert key={`rec-${rec.substring(0, 20)}-${index}`} className="bg-green-50 dark:bg-green-950/20 border-green-200">
-                <CheckCircle2 className="h-4 w-4 text-green-600" />
-                <AlertDescription className="text-sm text-green-900 dark:text-green-100">
-                  {rec}
-                </AlertDescription>
-              </Alert>
-            ))}
+            {recommendations.map((rec, index) => {
+              // Support both legacy string[] and new object[] format
+              const item = typeof rec === 'string' ? { text: rec, confidence: 0.8, priority: 'medium' as const } : rec
+              const confidencePct = Math.round(item.confidence * 100)
+              let priorityColor = 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300'
+              if (item.priority === 'high') {
+                priorityColor = 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300'
+              } else if (item.priority === 'medium') {
+                priorityColor = 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300'
+              }
+              return (
+                <Alert
+                  key={`rec-${item.text.substring(0, 28)}-${index}`}
+                  className="bg-green-50 dark:bg-green-950/20 border-green-200"
+                >
+                  <CheckCircle2 className="h-4 w-4 text-green-600" />
+                  <AlertDescription className="text-sm text-green-900 dark:text-green-100 space-y-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span>{item.text}</span>
+                      <Badge className={"text-[10px] px-2 py-0.5 font-semibold " + priorityColor}>
+                        {item.priority.toUpperCase()}
+                      </Badge>
+                      <Badge variant="outline" className="text-[10px] px-2 py-0.5">
+                        {confidencePct}%
+                      </Badge>
+                    </div>
+                  </AlertDescription>
+                </Alert>
+              )
+            })}
           </div>
         </CardContent>
       </Card>

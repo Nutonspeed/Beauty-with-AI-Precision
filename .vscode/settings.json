@@ -53,8 +53,8 @@
   "git.autorefresh": false,
   "git.autofetch": false,
   
-  // File Watcher
-  "files.watcherInclude": {
-    "**/*.{ts,tsx,js,jsx,json,css}": true
-  }
+  // File Watcher (แก้ให้เป็น array ตามสคีมา VS Code)
+  "files.watcherInclude": [
+    "**/*.{ts,tsx,js,jsx,json,css}"
+  ]
 }
