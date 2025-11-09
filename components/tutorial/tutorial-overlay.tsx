@@ -40,20 +40,23 @@ export function TutorialOverlay({ steps, onComplete, onSkip }: TutorialOverlayPr
         // Scroll element into view
         element.scrollIntoView({ behavior: 'smooth', block: 'center' });
       } else {
-        console.warn('[Tutorial] Element not found:', currentStep.element);
+        // Silently skip if element not found (it might not be rendered yet)
         setHighlightRect(null);
       }
     };
 
-    // Delay to ensure DOM is ready
-    const timer = setTimeout(updateHighlight, 100);
+    // Retry with increasing delays to handle slow rendering
+    const timers: NodeJS.Timeout[] = [];
+    [100, 300, 500, 1000].forEach(delay => {
+      timers.push(setTimeout(updateHighlight, delay));
+    });
     
     // Also update on window resize
     window.addEventListener('resize', updateHighlight);
     window.addEventListener('scroll', updateHighlight);
 
     return () => {
-      clearTimeout(timer);
+      timers.forEach(t => clearTimeout(t));
       window.removeEventListener('resize', updateHighlight);
       window.removeEventListener('scroll', updateHighlight);
     };
