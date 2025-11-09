@@ -3,6 +3,7 @@ import { requireRole } from "@/lib/supabase/auth"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { AnalyticsClient } from "./analytics-client"
+import { PageLayout } from "@/components/layouts/page-layout"
 
 export default async function AnalyticsPage() {
   // Authentication check
@@ -55,10 +56,12 @@ export default async function AnalyticsPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-muted/30">
-      <Header />
-      <AnalyticsClient initialData={initialData} />
-      <Footer />
-    </div>
+    <PageLayout>
+      <div className="flex min-h-screen flex-col bg-muted/30">
+        <Header />
+        <AnalyticsClient initialData={initialData} />
+        <Footer />
+      </div>
+    </PageLayout>
   )
 }

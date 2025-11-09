@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import ReceptionClient from "./reception-client";
 import { format } from "date-fns";
+import { PageLayout } from "@/components/layouts/page-layout";
 
 async function requireReceptionRole() {
   const supabase = await createClient();
@@ -71,5 +72,9 @@ export default async function ReceptionPage() {
   await requireReceptionRole();
   const data = await getTodayBookings();
 
-  return <ReceptionClient {...data} />;
+  return (
+    <PageLayout>
+      <ReceptionClient {...data} />
+    </PageLayout>
+  );
 }

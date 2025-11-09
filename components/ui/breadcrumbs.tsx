@@ -41,6 +41,13 @@ const routeNames: Record<string, { th: string; en: string }> = {
   'schedule': { th: 'ตารางเวลา', en: 'Schedule' },
   'notifications': { th: 'แจ้งเตือน', en: 'Notifications' },
   'emergency-alerts': { th: 'แจ้งเหตุฉุกเฉิน', en: 'Emergency Alerts' },
+  'analytics': { th: 'รายงานและวิเคราะห์', en: 'Analytics' },
+  'reception': { th: 'แผนกต้อนรับ', en: 'Reception' },
+  'my-schedule': { th: 'ตารางงานของฉัน', en: 'My Schedule' },
+  'automation': { th: 'ระบบอัตโนมัติ', en: 'Automation' },
+  'customers': { th: 'ลูกค้า', en: 'Customers' },
+  'leads': { th: 'ลูกค้าเป้าหมาย', en: 'Leads' },
+  'presentations': { th: 'งานนำเสนอ', en: 'Presentations' },
 };
 
 /**

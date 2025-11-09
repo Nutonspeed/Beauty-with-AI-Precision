@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import StaffScheduleClient from "@/app/clinic/staff/my-schedule/schedule-client";
 import { format, startOfDay, endOfDay } from "date-fns";
 import { th } from "date-fns/locale";
+import { PageLayout } from "@/components/layouts/page-layout";
 
 async function requireStaffRole() {
   const supabase = await createClient();
@@ -115,16 +116,22 @@ export default async function StaffSchedulePage() {
 
   if (!scheduleData) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-2">ไม่พบข้อมูลทีมงาน</h1>
-          <p className="text-muted-foreground">
-            กรุณาติดต่อผู้ดูแลระบบเพื่อเพิ่มข้อมูลของคุณ
-          </p>
+      <PageLayout>
+        <div className="flex min-h-screen items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold mb-2">ไม่พบข้อมูลทีมงาน</h1>
+            <p className="text-muted-foreground">
+              กรุณาติดต่อผู้ดูแลระบบเพื่อเพิ่มข้อมูลของคุณ
+            </p>
+          </div>
         </div>
-      </div>
+      </PageLayout>
     );
   }
 
-  return <StaffScheduleClient {...scheduleData} />;
+  return (
+    <PageLayout>
+      <StaffScheduleClient {...scheduleData} />
+    </PageLayout>
+  );
 }
