@@ -16,6 +16,7 @@ import {
   showSettingsSavedToast,
 } from "@/components/ui/success-toast";
 import { AlertCircle, AlertTriangle, Info, XCircle } from "lucide-react";
+import { AnalysisError } from "@/lib/errors/analysis-errors";
 
 /**
  * Notification types
@@ -123,11 +124,64 @@ class NotificationManagerClass {
 
   /**
    * Show error notification
+   * Supports string messages, Error objects, and AnalysisError
    */
-  error(message: string, options?: NotificationOptions) {
-    const { duration = 5000, action, ...restOptions } = options || {};
+  error(
+    error: string | Error | AnalysisError,
+    options?: NotificationOptions & {
+      showTechnical?: boolean;
+      onRetry?: () => void;
+    }
+  ) {
+    const { duration = 5000, action, showTechnical = false, onRetry, ...restOptions } =
+      options || {};
 
-    return toast.error(message, {
+    // Handle AnalysisError
+    if (error instanceof AnalysisError) {
+      const message = error.userMessage[this.defaultLocale as "th" | "en"] || error.userMessage.th;
+      const description = showTechnical ? error.technicalMessage : undefined;
+
+      return toast.error(message, {
+        description,
+        duration: error.retryable ? 6000 : duration,
+        icon: <AlertCircle className="h-5 w-5" />,
+        action:
+          error.retryable && onRetry
+            ? {
+                label: this.defaultLocale === "th" ? "ลองใหม่" : "Retry",
+                onClick: onRetry,
+              }
+            : action
+            ? {
+                label: action.label,
+                onClick: action.onClick,
+              }
+            : undefined,
+        ...restOptions,
+      });
+    }
+
+    // Handle regular Error
+    if (error instanceof Error) {
+      return toast.error(
+        this.defaultLocale === "th" ? "เกิดข้อผิดพลาด" : "Error Occurred",
+        {
+          description: error.message,
+          duration,
+          icon: <XCircle className="h-5 w-5" />,
+          action: action
+            ? {
+                label: action.label,
+                onClick: action.onClick,
+              }
+            : undefined,
+          ...restOptions,
+        }
+      );
+    }
+
+    // Handle string error
+    return toast.error(error, {
       duration,
       icon: <XCircle className="h-5 w-5" />,
       action: action
@@ -288,6 +342,17 @@ class NotificationManagerClass {
   // ============================================
   // Common Error Notifications
   // ============================================
+
+  /**
+   * Show error notification from AnalysisError
+   * This is the recommended way to display AnalysisError to users
+   */
+  analysisError(error: AnalysisError, onRetry?: () => void, showTechnical?: boolean) {
+    return this.error(error, {
+      showTechnical,
+      onRetry: error.retryable ? onRetry : undefined,
+    });
+  }
 
   /**
    * Network error notification
