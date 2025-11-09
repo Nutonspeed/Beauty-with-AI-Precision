@@ -54,9 +54,9 @@ export function Header() {
       case "clinic_owner":
         return [
           { href: "/clinic/dashboard", label: t.nav.dashboard },
-          { href: "/customers", label: t.nav.customers },
-          { href: "/ai-chat", label: "💬 AI Advisor" },
-          { href: "/analytics", label: t.nav.analytics },
+          { href: "/clinic/analytics", label: t.nav.analytics },
+          { href: "/clinic/customers", label: t.nav.customers },
+          { href: "/clinic/settings/automation", label: "⚙️ Automation" },
         ]
       case "clinic_staff":
         return [
@@ -67,8 +67,8 @@ export function Header() {
       case "sales_staff":
         return [
           { href: "/sales/dashboard", label: t.nav.dashboard },
-          { href: "/leads", label: t.nav.leads },
-          { href: "/proposals", label: t.nav.proposals },
+          { href: "/sales/leads", label: t.nav.leads },
+          { href: "/sales/presentations", label: t.nav.proposals },
         ]
       case "super_admin":
         return [
@@ -88,17 +88,19 @@ export function Header() {
 
   const navItems = getNavItems()
 
+  // Import centralized colors at top of file
+  // import { getRoleColor } from "@/lib/ui/colors"
   const getRoleBadgeColor = (role: string) => {
-    switch (role) {
-      case "clinic_owner":
-        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
-      case "sales_staff":
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-      case "super_admin":
-        return "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200"
-      default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200"
+    // Use centralized color system
+    const roleColors: Record<string, string> = {
+      super_admin: "bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-900 dark:text-orange-200",
+      clinic_owner: "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900 dark:text-blue-200",
+      clinic_staff: "bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900 dark:text-purple-200",
+      sales_staff: "bg-green-100 text-green-800 border-green-200 dark:bg-green-900 dark:text-green-200",
+      customer: "bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-900 dark:text-gray-200",
+      premium_customer: "bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-900 dark:text-amber-200",
     }
+    return roleColors[role] || roleColors.customer
   }
 
   return (
@@ -108,13 +110,13 @@ export function Header() {
     >
       <div className="container flex h-14 sm:h-16 items-center justify-between gap-2 px-4">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-shrink">
+        <Link href="/" className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-shrink" aria-label="กลับสู่หน้าแรก">
           <div className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-lg bg-primary flex-shrink-0">
-            <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-primary-foreground" />
+            <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-primary-foreground" aria-hidden="true" />
           </div>
-          <div className="hidden sm:flex flex-col">
+          <div className="hidden md:flex flex-col">
             <span className="text-base font-bold leading-tight">{t.brand}</span>
-            <span className="text-[10px] text-muted-foreground leading-tight">Medical-Grade AI</span>
+            <span className="text-[10px] text-muted-foreground leading-tight hidden lg:inline">Medical-Grade AI</span>
           </div>
         </Link>
 
@@ -139,8 +141,13 @@ export function Header() {
           {/* Language Switcher */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-8 sm:h-9 gap-1 px-2 sm:px-3">
-                <Globe className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-8 sm:h-9 gap-1 px-2 sm:px-3"
+                aria-label={language === "en" ? "Switch language to Thai" : "เปลี่ยนภาษาเป็นอังกฤษ"}
+              >
+                <Globe className="h-3.5 w-3.5 sm:h-4 sm:w-4" aria-hidden="true" />
                 <span className="text-xs font-medium hidden sm:inline">{language === "en" ? "🇬🇧 EN" : "🇹🇭 TH"}</span>
                 <span className="text-xs font-medium sm:hidden">{language === "en" ? "EN" : "TH"}</span>
               </Button>
@@ -165,9 +172,14 @@ export function Header() {
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="h-8 sm:h-9 gap-1.5 sm:gap-2 px-1.5 sm:px-3">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="h-8 sm:h-9 gap-1.5 sm:gap-2 px-1.5 sm:px-3"
+                  aria-label="เปิดเมนูผู้ใช้"
+                >
                   <Avatar className="h-6 w-6 sm:h-7 sm:w-7">
-                    <AvatarImage src={user.avatar_url || ""} />
+                    <AvatarImage src={user.avatar_url || ""} alt={user.full_name || "User avatar"} />
                     <AvatarFallback className="text-xs">{user.full_name?.charAt(0) || user.email?.charAt(0) || "U"}</AvatarFallback>
                   </Avatar>
                   <div className="hidden flex-col items-start xl:flex">

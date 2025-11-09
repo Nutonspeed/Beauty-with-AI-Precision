@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 import { format, differenceInMinutes } from "date-fns";
 import { th } from "date-fns/locale";
+import { getStatusColor, STATUS_LABELS } from "@/lib/ui/colors";
 
 interface ReceptionClientProps {
   bookings: any[];
@@ -70,38 +71,16 @@ export default function ReceptionClient({
   };
 
   const getStatusInfo = (status: string) => {
-    const statusMap: Record<
-      string,
-      { label: string; color: string; bgColor: string }
-    > = {
-      confirmed: {
-        label: "รอเข้ารับบริการ",
-        color: "text-blue-700",
-        bgColor: "bg-blue-50 dark:bg-blue-900/20",
-      },
-      arrived: {
-        label: "เช็คอินแล้ว",
-        color: "text-orange-700",
-        bgColor: "bg-orange-50 dark:bg-orange-900/20",
-      },
-      in_progress: {
-        label: "กำลังให้บริการ",
-        color: "text-purple-700",
-        bgColor: "bg-purple-50 dark:bg-purple-900/20",
-      },
-      completed: {
-        label: "เสร็จสิ้น",
-        color: "text-green-700",
-        bgColor: "bg-green-50 dark:bg-green-900/20",
-      },
-      no_show: {
-        label: "ไม่มา",
-        color: "text-gray-700",
-        bgColor: "bg-gray-50 dark:bg-gray-900/20",
-      },
-    };
+    // Use centralized color system
+    const colors = getStatusColor(status as keyof typeof STATUS_LABELS);
+    const label = STATUS_LABELS[status as keyof typeof STATUS_LABELS] || status;
 
-    return statusMap[status] || statusMap.confirmed;
+    return {
+      label,
+      color: colors.text,
+      bgColor: colors.background,
+      badgeColor: colors.badge,
+    };
   };
 
   const filteredBookings = bookings.filter((booking) => {
