@@ -29,6 +29,7 @@ import {
 import { format, differenceInMinutes } from "date-fns";
 import { th } from "date-fns/locale";
 import { getStatusColor, STATUS_LABELS } from "@/lib/ui/colors";
+import { NoDataState } from "@/components/ui/empty-state";
 
 interface ReceptionClientProps {
   bookings: any[];
@@ -118,13 +119,13 @@ export default function ReceptionClient({
 
   return (
     <div className="min-h-screen bg-muted/30">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-teal-600 to-cyan-600 text-white">
+      {/* Header - ลด gradient เหลือแค่ background solid */}
+      <div className="bg-teal-600 dark:bg-teal-700 text-white border-b-4 border-teal-700 dark:border-teal-800">
         <div className="container py-6">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold mb-2">🏥 Reception Check-in</h1>
-              <p className="text-white/80">
+              <p className="text-white/90">
                 {format(new Date(), "EEEE, d MMMM yyyy", { locale: th })} •{" "}
                 {format(new Date(), "HH:mm")} น.
               </p>
@@ -134,8 +135,9 @@ export default function ReceptionClient({
                 variant="secondary"
                 size="lg"
                 onClick={() => window.location.reload()}
+                aria-label="รีเฟรชข้อมูล"
               >
-                <RefreshCw className="w-5 h-5 mr-2" />
+                <RefreshCw className="w-5 h-5 mr-2" aria-hidden="true" />
                 รีเฟรช
               </Button>
               <Dialog>
@@ -242,14 +244,10 @@ export default function ReceptionClient({
             </div>
 
             {pendingBookings.length === 0 ? (
-              <Card>
-                <CardContent className="py-12 text-center">
-                  <Clock className="w-12 h-12 mx-auto text-muted-foreground mb-2" />
-                  <p className="text-muted-foreground text-sm">
-                    ไม่มีนัดที่รอเช็คอิน
-                  </p>
-                </CardContent>
-              </Card>
+              <NoDataState 
+                message="ไม่มีนัดที่รอเช็คอิน"
+                description="นัดหมายที่ยืนยันแล้วจะแสดงที่นี่"
+              />
             ) : (
               pendingBookings.map((booking) => {
                 const statusInfo = getStatusInfo(booking.status);
@@ -314,12 +312,13 @@ export default function ReceptionClient({
 
                       {/* Check-in Button */}
                       <Button
-                        className="w-full bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700"
+                        className="w-full bg-teal-600 hover:bg-teal-700 dark:bg-teal-700 dark:hover:bg-teal-800"
                         size="lg"
                         onClick={() => handleCheckIn(booking.id)}
                         disabled={isChecking}
+                        aria-label={`เช็คอินสำหรับ ${booking.customer?.name}`}
                       >
-                        <UserCheck className="w-5 h-5 mr-2" />
+                        <UserCheck className="w-5 h-5 mr-2" aria-hidden="true" />
                         เช็คอิน
                       </Button>
                     </CardContent>
