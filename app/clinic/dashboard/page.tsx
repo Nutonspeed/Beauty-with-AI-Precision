@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation"
+import { PageLayout } from "@/components/layouts/page-layout"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { PerformanceCards } from "@/components/dashboard/performance-cards"
@@ -29,8 +30,9 @@ export default async function ClinicDashboardPage() {
   console.log('[ClinicDashboard] ✅ User authorized:', user.email, 'Clinic:', clinicId)
 
   return (
-    <div className="flex min-h-screen flex-col bg-muted/30">
-      <Header />
+    <PageLayout>
+      <div className="flex min-h-screen flex-col bg-muted/30">
+        <Header />
 
       <main className="flex-1">
         {/* Header */}
@@ -269,6 +271,7 @@ export default async function ClinicDashboardPage() {
       </main>
 
       <Footer />
-    </div>
+      </div>
+    </PageLayout>
   )
 }
