@@ -8,7 +8,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -96,19 +95,19 @@ const MetricCard = ({
   color: string;
   icon: string;
 }) => {
-  const TrendIcon =
-    trend === 'improving'
-      ? TrendingUp
-      : trend === 'worsening'
-      ? TrendingDown
-      : Minus;
+  let TrendIcon = Minus;
+  if (trend === 'improving') {
+    TrendIcon = TrendingUp;
+  } else if (trend === 'worsening') {
+    TrendIcon = TrendingDown;
+  }
 
-  const trendColor =
-    trend === 'improving'
-      ? 'text-green-600'
-      : trend === 'worsening'
-      ? 'text-red-600'
-      : 'text-gray-600';
+  let trendColor = 'text-gray-600';
+  if (trend === 'improving') {
+    trendColor = 'text-green-600';
+  } else if (trend === 'worsening') {
+    trendColor = 'text-red-600';
+  }
 
   return (
     <Card>
@@ -246,7 +245,6 @@ export default function CustomerDashboard({
   customerId,
   defaultPeriod = '3m',
 }: CustomerDashboardProps) {
-  const t = useTranslations();
   const [period, setPeriod] = useState<TrendPeriod>(defaultPeriod);
   const [trends, setTrends] = useState<TrendsResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -314,7 +312,7 @@ export default function CustomerDashboard({
             <h3 className="mt-4 text-lg font-semibold">
               {error || 'Failed to load data'}
             </h3>
-            <Button className="mt-4" onClick={() => window.location.reload()}>
+            <Button className="mt-4" onClick={() => globalThis.location.reload()}>
               Retry
             </Button>
           </div>
@@ -412,7 +410,7 @@ export default function CustomerDashboard({
 
       {/* Metric Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {METRIC_CONFIGS.map((config) => {
+        {Object.values(METRIC_CONFIGS).map((config) => {
           const metric = trends.metrics[config.key as keyof typeof trends.metrics];
           return (
             <MetricCard

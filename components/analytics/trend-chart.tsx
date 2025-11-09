@@ -18,7 +18,6 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  TooltipProps,
 } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { MetricTrend, METRIC_CONFIGS } from '@/types/analytics';
@@ -39,16 +38,16 @@ interface TrendChartProps {
 // Custom Tooltip
 // =============================================
 
-const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
-  if (!active || !payload || !payload.length) {
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (!active?.length) {
     return null;
   }
 
   return (
     <div className="rounded-lg border bg-background p-3 shadow-md">
       <p className="mb-2 text-sm font-medium">{label}</p>
-      {payload.map((entry, index) => (
-        <div key={index} className="flex items-center justify-between gap-4">
+      {payload.map((entry: any) => (
+        <div key={entry.name} className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <div
               className="h-3 w-3 rounded-full"
@@ -153,7 +152,7 @@ export default function TrendChart({
             {showLegend && <Legend />}
 
             {selectedMetrics.map((metricKey) => {
-              const config = METRIC_CONFIGS.find((c) => c.key === metricKey);
+              const config = METRIC_CONFIGS[metricKey as keyof typeof METRIC_CONFIGS];
               if (!config) return null;
 
               return (
