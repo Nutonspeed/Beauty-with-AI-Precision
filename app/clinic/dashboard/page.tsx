@@ -12,7 +12,7 @@ import { StaffAvailability } from "@/components/dashboard/staff-availability"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Settings, Bell, User, Calendar, Users, BarChart3, Package, Building2, MessageSquare, TrendingUp, Zap } from "lucide-react"
+import { Settings, Bell, User, Calendar, Users, BarChart3, Package, Building2, MessageSquare, TrendingUp, Zap, Monitor } from "lucide-react"
 import { checkUserRole } from "@/lib/auth/check-role"
 import Link from "next/link"
 
@@ -103,6 +103,20 @@ export default async function ClinicDashboardPage() {
                     <div>
                       <p className="font-semibold text-sm">Queue</p>
                       <p className="text-xs text-muted-foreground">จัดการคิว</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+
+              <Link href={`/clinic/queue/display?clinicId=${clinicId}`} target="_blank">
+                <Card className="cursor-pointer border-2 border-yellow-500/30 bg-yellow-50 dark:bg-yellow-900/10 transition-all hover:border-yellow-500 hover:shadow-md">
+                  <CardContent className="flex items-center gap-3 p-4">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-500/20">
+                      <Monitor className="h-5 w-5 text-yellow-600" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-sm">Queue Display</p>
+                      <p className="text-xs text-yellow-700 dark:text-yellow-400">📺 หน้าจอแสดงคิว</p>
                     </div>
                   </CardContent>
                 </Card>

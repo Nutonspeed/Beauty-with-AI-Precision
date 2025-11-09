@@ -37,6 +37,9 @@ export default function QueueDisplayPage() {
   const [currentServing, setCurrentServing] = useState<QueueEntry | null>(null)
   const [nextInQueue, setNextInQueue] = useState<QueueEntry[]>([])
   const [isFullscreen, setIsFullscreen] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [isOnline, setIsOnline] = useState(true)
+  const [lastUpdate, setLastUpdate] = useState<Date>(new Date())
 
   // Update time every second
   useEffect(() => {
@@ -51,50 +54,79 @@ export default function QueueDisplayPage() {
   useEffect(() => {
     const fetchQueue = async () => {
       try {
-        // TODO: Replace with actual API call
-        // const response = await fetch('/api/clinic/queue/display')
-        // const data = await response.json()
+        setIsLoading(true)
         
-        // Mock data for now
-        setCurrentServing({
-          id: '1',
-          queueNumber: 'A-015',
-          patientName: 'คุณสมชาย',
-          status: 'serving',
-          room: 'ห้อง 2',
-          doctor: 'นพ.สมศักดิ์',
-          checkInTime: new Date()
-        })
-
-        setNextInQueue([
-          {
-            id: '2',
-            queueNumber: 'A-016',
-            patientName: 'คุณสมหญิง',
-            status: 'called',
-            estimatedWait: 10,
-            checkInTime: new Date()
-          },
-          {
-            id: '3',
-            queueNumber: 'A-017',
-            patientName: 'คุณประชา',
-            status: 'waiting',
-            estimatedWait: 25,
-            checkInTime: new Date()
-          },
-          {
-            id: '4',
-            queueNumber: 'A-018',
-            patientName: 'คุณสุวรรณี',
-            status: 'waiting',
-            estimatedWait: 40,
-            checkInTime: new Date()
-          }
-        ])
+        // Get clinicId from URL or localStorage
+        const urlParams = new URLSearchParams(window.location.search)
+        const clinicId = urlParams.get('clinicId') || localStorage.getItem('clinicId') || 'demo-clinic-1'
+        
+        const response = await fetch(`/api/clinic/queue/display?clinicId=${clinicId}&limit=3`)
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        
+        const data = await response.json()
+        
+        if (data.success) {
+          setCurrentServing(data.currentServing)
+          setNextInQueue(data.nextInQueue || [])
+          setIsOnline(true)
+          setLastUpdate(new Date())
+        } else {
+          console.error('API returned error:', data.error)
+          // Fallback to mock data
+          setIsOnline(false)
+          useMockData()
+        }
       } catch (error) {
         console.error('Failed to fetch queue:', error)
+        // Fallback to mock data on error
+        setIsOnline(false)
+        useMockData()
+      } finally {
+        setIsLoading(false)
       }
+    }
+
+    // Mock data fallback function
+    const useMockData = () => {
+      setCurrentServing({
+        id: '1',
+        queueNumber: 'A-015',
+        patientName: 'คุณสมชาย',
+        status: 'serving',
+        room: 'ห้อง 2',
+        doctor: 'นพ.สมศักดิ์',
+        checkInTime: new Date()
+      })
+
+      setNextInQueue([
+        {
+          id: '2',
+          queueNumber: 'A-016',
+          patientName: 'คุณสมหญิง',
+          status: 'called',
+          estimatedWait: 10,
+          checkInTime: new Date()
+        },
+        {
+          id: '3',
+          queueNumber: 'A-017',
+          patientName: 'คุณประชา',
+          status: 'waiting',
+          estimatedWait: 25,
+          checkInTime: new Date()
+        },
+        {
+          id: '4',
+          queueNumber: 'A-018',
+          patientName: 'คุณสุวรรณี',
+          status: 'waiting',
+          estimatedWait: 40,
+          checkInTime: new Date()
+        }
+      ])
     }
 
     fetchQueue()
@@ -142,13 +174,26 @@ export default function QueueDisplayPage() {
               </div>
             </div>
 
-            {/* Clock & Date */}
+            {/* Clock, Date & Status */}
             <div className="text-right">
               <div className="text-5xl font-bold text-blue-600 dark:text-blue-400 font-mono">
                 {format(currentTime, 'HH:mm:ss')}
               </div>
               <div className="text-xl text-gray-600 dark:text-gray-300 mt-1">
                 {format(currentTime, 'EEEE, d MMMM yyyy', { locale: th })}
+              </div>
+              
+              {/* Connection Status */}
+              <div className="flex items-center justify-end gap-2 mt-2">
+                <div className={`w-3 h-3 rounded-full ${isOnline ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
+                <span className="text-sm text-gray-500 dark:text-gray-400">
+                  {isOnline ? 'เชื่อมต่อแล้ว' : 'โหมดออฟไลน์'}
+                </span>
+                {!isLoading && (
+                  <span className="text-xs text-gray-400 dark:text-gray-500">
+                    • อัพเดท {format(lastUpdate, 'HH:mm:ss')}
+                  </span>
+                )}
               </div>
             </div>
           </div>
