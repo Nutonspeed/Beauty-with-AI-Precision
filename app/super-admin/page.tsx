@@ -16,7 +16,6 @@ import { Loader2 } from 'lucide-react'
 
 // Force dynamic rendering for this page
 export const dynamic = 'force-dynamic'
-export const runtime = 'edge'
 
 function SuperAdminDashboardContent() {
   const { user, loading } = useAuth()
@@ -48,6 +47,11 @@ function SuperAdminDashboardContent() {
     async function loadTenants() {
       try {
         const response = await fetch('/api/tenant')
+        if (!response.ok) {
+          console.error('Failed to load tenants:', response.status)
+          setIsLoading(false)
+          return
+        }
         const data = await response.json()
         setTenants(data.tenants || [])
       } catch (error) {
@@ -59,6 +63,9 @@ function SuperAdminDashboardContent() {
 
     if (!loading && user && user.role === 'super_admin') {
       loadTenants()
+    } else if (!loading) {
+      // Not super admin or not logged in - stop loading
+      setIsLoading(false)
     }
   }, [loading, user])
 
