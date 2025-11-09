@@ -7,6 +7,7 @@ import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { useDebounce } from "@/lib/hooks/use-debounce"
 import { useInfiniteScroll } from "@/lib/hooks/use-infinite-scroll"
+import { PageLayout } from "@/components/layouts/page-layout"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { SalesMetrics } from "@/components/sales/sales-metrics"
@@ -30,6 +31,7 @@ import Link from "next/link"
 import { sortLeadsByPriority, formatTimeAgo, type PriorityScore } from "@/lib/lead-prioritization"
 import wsClient, { type LeadNotification } from "@/lib/websocket-client"
 import notificationSound from "@/lib/notification-sound"
+import { SearchNoResultsState, NoDataState } from "@/components/ui/empty-state"
 
 // Mock hot leads data with prioritization fields
 const mockHotLeads = [
@@ -469,16 +471,15 @@ export default function SalesDashboardPage() {
   }
 
   const getPriorityBadgeClass = (level: string) => {
-    switch (level) {
-      case "critical":
-        return "bg-red-600"
-      case "high":
-        return "bg-orange-600"
-      case "medium":
-        return "bg-yellow-600"
-      default:
-        return "bg-gray-500"
+    // Solid background colors for priority badges (darker for better contrast)
+    const solidColors = {
+      critical: "bg-red-600",
+      high: "bg-orange-600",
+      medium: "bg-yellow-600",
+      low: "bg-green-600",
+      info: "bg-blue-600",
     }
+    return solidColors[level as keyof typeof solidColors] || solidColors.info
   }
 
   if (isCheckingAuth) {
@@ -493,9 +494,10 @@ export default function SalesDashboardPage() {
   }
 
   return (
-    <ErrorBoundary>
-      <div className="flex min-h-screen flex-col bg-muted/30">
-        <Header />
+    <PageLayout>
+      <ErrorBoundary>
+        <div className="flex min-h-screen flex-col bg-muted/30">
+          <Header />
 
         <main className="flex-1 pb-20 md:pb-0">
           {/* Header */}
@@ -658,7 +660,7 @@ export default function SalesDashboardPage() {
             </div>
 
             {/* Field Presentation CTA - Prominent Button */}
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-6 text-white shadow-lg">
+            <div className="bg-blue-600 border-b-4 border-blue-700 rounded-xl p-6 text-white shadow-lg">
               <div className="flex items-center justify-between flex-wrap gap-4">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-2">
@@ -769,10 +771,20 @@ export default function SalesDashboardPage() {
                   </>
                 ) : displayedLeads.length === 0 ? (
                   // No results found
-                  <div className="text-center py-12 text-foreground/70">
-                    <p className="text-lg">ไม่พบข้อมูลที่ค้นหา</p>
-                    <p className="text-sm mt-2">ลองเปลี่ยนคำค้นหาหรือตัวกรอง</p>
-                  </div>
+                  searchQuery || filterPriority !== "all" ? (
+                    <SearchNoResultsState
+                      query={searchQuery || `Priority: ${filterPriority}`}
+                      onClear={() => {
+                        setSearchQuery("")
+                        setFilterPriority("all")
+                      }}
+                    />
+                  ) : (
+                    <NoDataState
+                      message="ยังไม่มี Hot Leads"
+                      description="รอลูกค้าทำ Skin Analysis หรือเพิ่มลูกค้าใหม่"
+                    />
+                  )
                 ) : (
                   <>
                     {/* Show actual lead cards when loaded */}
@@ -781,7 +793,7 @@ export default function SalesDashboardPage() {
                         {/* NEW Lead Indicator */}
                         {newLeadIds.has(lead.id) && (
                           <div className="absolute -top-3 -left-3 z-20 animate-bounce">
-                            <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg">
+                            <Badge className="bg-green-600 border-2 border-green-700 text-white shadow-lg">
                               ✨ NEW
                             </Badge>
                           </div>
@@ -807,7 +819,7 @@ export default function SalesDashboardPage() {
                           <Link href={`/sales/wizard/${lead.id}?name=${encodeURIComponent(lead.name)}&phone=${encodeURIComponent(lead.phone || '')}&email=${encodeURIComponent(lead.email || '')}`}>
                             <Button 
                               size="sm"
-                              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg h-8 px-4"
+                              className="bg-blue-600 hover:bg-blue-700 border-2 border-blue-700 text-white shadow-lg h-8 px-4"
                             >
                               <Smartphone className="h-3.5 w-3.5 mr-1.5" />
                               Start Presentation
@@ -977,7 +989,8 @@ export default function SalesDashboardPage() {
         />
 
         <Footer />
-      </div>
-    </ErrorBoundary>
+        </div>
+      </ErrorBoundary>
+    </PageLayout>
   )
 }

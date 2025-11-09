@@ -48,6 +48,8 @@ const routeNames: Record<string, { th: string; en: string }> = {
   'customers': { th: 'ลูกค้า', en: 'Customers' },
   'leads': { th: 'ลูกค้าเป้าหมาย', en: 'Leads' },
   'presentations': { th: 'งานนำเสนอ', en: 'Presentations' },
+  'wizard': { th: 'เริ่มงานนำเสนอ', en: 'Presentation Wizard' },
+  'quick-scan': { th: 'สแกนด่วน', en: 'Quick Scan' },
 };
 
 /**
