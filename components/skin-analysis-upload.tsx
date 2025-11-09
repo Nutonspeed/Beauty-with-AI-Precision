@@ -12,6 +12,7 @@ import { usePathname, useRouter } from "next/navigation"
 import { resizeImage, compressImage } from "@/lib/image-optimizer"
 import { CameraPositioningGuide } from "@/components/camera-positioning-guide"
 import { validateImageQuality, getQualityFeedback } from "@/lib/image-quality-validator"
+import { NotificationManager } from "@/lib/notifications/notification-manager"
 import type { AnalysisMode } from "@/types"
 
 const MODE_PROGRESS: Record<AnalysisMode, string> = {
@@ -203,7 +204,21 @@ export function SkinAnalysisUpload({ isLoggedIn = false, analysisMode = "auto" }
       const analysisData = await analysisResponse.json()
 
       if (!analysisResponse.ok) {
-        setError(`Hybrid analysis failed: ${analysisData.error || "Unknown error"}`)
+        const errorMsg = `Hybrid analysis failed: ${analysisData.error || "Unknown error"}`
+        setError(errorMsg)
+        NotificationManager.error(
+          locale === "th" ? "การวิเคราะห์ล้มเหลว" : "Analysis Failed",
+          {
+            description: analysisData.error || "Unknown error",
+            action: {
+              label: locale === "th" ? "ลองอีกครั้ง" : "Retry",
+              onClick: () => {
+                setError(null)
+                setIsAnalyzing(false)
+              },
+            },
+          }
+        )
         setIsAnalyzing(false)
         return
       }
@@ -212,8 +227,15 @@ export function SkinAnalysisUpload({ isLoggedIn = false, analysisMode = "auto" }
       console.log("[HYBRID] 📊 Analysis ID:", analysisData.id)
       console.log("[HYBRID] 🎯 Overall Score:", analysisData.overall_score)
 
-  // Redirect to VISIA report (with Advanced Analysis tab)
-  router.push(`/${locale}/analysis/detail/${analysisData.id}`)
+      // Show success notification
+      NotificationManager.analysisSaved(
+        analysisData.id,
+        () => router.push(`/${locale}/analysis/detail/${analysisData.id}`),
+        locale
+      )
+
+      // Redirect to VISIA report (with Advanced Analysis tab)
+      router.push(`/${locale}/analysis/detail/${analysisData.id}`)
     } catch (err) {
       console.error("[v0] ❌ === ANALYSIS ERROR ===")
       console.error("[v0] ❌ Error:", err)
@@ -232,6 +254,27 @@ export function SkinAnalysisUpload({ isLoggedIn = false, analysisMode = "auto" }
       ) {
         errorMessage =
           "❌ Network Error - Cannot load AI models\n\nPlease check your internet connection.\nMediaPipe and TensorFlow need to download models from CDN.\n\n---\n\n❌ ข้อผิดพลาดเครือข่าย - ไม่สามารถโหลดโมเดล AI\n\nกรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต\nMediaPipe และ TensorFlow ต้องดาวน์โหลดโมเดลจาก CDN"
+        
+        // Show network error notification
+        NotificationManager.networkError(locale, () => {
+          setError(null)
+          setIsAnalyzing(false)
+        })
+      } else {
+        // Show generic error notification
+        NotificationManager.error(
+          locale === "th" ? "เกิดข้อผิดพลาด" : "An Error Occurred",
+          {
+            description: errorMessage,
+            action: {
+              label: locale === "th" ? "ลองอีกครั้ง" : "Retry",
+              onClick: () => {
+                setError(null)
+                setIsAnalyzing(false)
+              },
+            },
+          }
+        )
       }
 
       setError(errorMessage)
