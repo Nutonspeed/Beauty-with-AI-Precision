@@ -1,3 +1,5 @@
+import type { AnalysisMode } from '../../types/analysis-mode';
+
 /**
  * TypeScript Types for Skin Analysis System
  */
@@ -5,7 +7,7 @@
 // ประเภทผิว
 export type SkinType = 'oily' | 'dry' | 'combination' | 'normal' | 'sensitive';
 
-export type AIProvider = 'huggingface' | 'google-vision' | 'gemini';
+export type AIProvider = 'local' | 'huggingface' | 'google-vision' | 'gemini';
 
 // ปัญหาผิว
 export type SkinConcern = 
@@ -161,6 +163,8 @@ export interface AnalysisOptions {
     faceSize: number; // 0-1
     overallQuality: number; // 0-100
   };
+
+  mode?: AnalysisMode;
 }
 
 // ประวัติการวิเคราะห์

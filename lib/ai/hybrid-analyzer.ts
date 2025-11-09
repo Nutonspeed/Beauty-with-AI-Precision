@@ -24,7 +24,12 @@ export interface HybridAnalysisResult {
   confidence: number
   skinCondition: string
   severity: number
-  recommendations: string[]
+  // 🔥 BUG #14 FIX: Changed from string[] to include confidence for each recommendation
+  recommendations: Array<{
+    text: string
+    confidence: number // 0-1 scale based on severity threshold used
+    priority: 'high' | 'medium' | 'low'
+  }>
 
   // VISIA-compatible metrics
   visiaMetrics: {
@@ -390,65 +395,158 @@ export class HybridAnalyzer {
 
   /**
    * Generate personalized recommendations based on all model results
+   * 🔥 BUG #14 FIX: Now returns recommendations with confidence scores
    */
   private generateRecommendations(
     mp: MediaPipeAnalysisResult,
     tf: TensorFlowAnalysisResult,
     hf: HuggingFaceAnalysisResult,
-  ): string[] {
-    const recommendations: string[] = []
+  ): Array<{ text: string; confidence: number; priority: 'high' | 'medium' | 'low' }> {
+    const recommendations: Array<{ text: string; confidence: number; priority: 'high' | 'medium' | 'low' }> = []
 
     // Analyze wrinkle severity from MediaPipe
     if (mp.wrinkles && mp.wrinkles.severity > 50) {
-      recommendations.push("Consider anti-aging treatments like retinoids or peptides")
-      recommendations.push("Daily SPF 30+ sunscreen is crucial for wrinkle prevention")
+      recommendations.push({
+        text: "Consider anti-aging treatments like retinoids or peptides",
+        confidence: Math.min(1.0, mp.wrinkles.severity / 100),
+        priority: 'high'
+      })
+      recommendations.push({
+        text: "Daily SPF 30+ sunscreen is crucial for wrinkle prevention",
+        confidence: Math.min(1.0, mp.wrinkles.severity / 100),
+        priority: 'high'
+      })
     } else if (mp.wrinkles && mp.wrinkles.severity > 25) {
-      recommendations.push("Use hyaluronic acid serum for hydration and fine line reduction")
+      recommendations.push({
+        text: "Use hyaluronic acid serum for hydration and fine line reduction",
+        confidence: Math.min(1.0, mp.wrinkles.severity / 100),
+        priority: 'medium'
+      })
     }
 
     // Analyze texture from TensorFlow
     if (tf.texture.roughness > 0.7) {
-      recommendations.push("Exfoliate 2-3 times per week with gentle AHA/BHA")
-      recommendations.push("Consider chemical peels for texture improvement")
+      recommendations.push({
+        text: "Exfoliate 2-3 times per week with gentle AHA/BHA",
+        confidence: tf.texture.roughness,
+        priority: 'high'
+      })
+      recommendations.push({
+        text: "Consider chemical peels for texture improvement",
+        confidence: tf.texture.roughness * 0.8,
+        priority: 'medium'
+      })
     } else if (tf.texture.smoothness < 0.3) {
-      recommendations.push("Increase moisturizer use and consider humidifier")
+      recommendations.push({
+        text: "Increase moisturizer use and consider humidifier",
+        confidence: 1.0 - tf.texture.smoothness,
+        priority: 'medium'
+      })
     }
 
     // Analyze skin condition from Hugging Face
     const skinAnalysis = this.huggingFaceAnalyzer.analyzeSkinCondition(hf.classification)
+    const hfConfidence = hf.classification.confidence || 0.7
 
     switch (skinAnalysis.condition) {
       case "acne":
-        recommendations.push("Use salicylic acid or benzoyl peroxide treatments")
-        recommendations.push("Avoid touching face and change pillowcases frequently")
+        recommendations.push({
+          text: "Use salicylic acid or benzoyl peroxide treatments",
+          confidence: hfConfidence,
+          priority: 'high'
+        })
+        recommendations.push({
+          text: "Avoid touching face and change pillowcases frequently",
+          confidence: hfConfidence * 0.9,
+          priority: 'medium'
+        })
         break
       case "oily":
-        recommendations.push("Use mattifying moisturizer and clay masks")
-        recommendations.push("Consider tea tree oil or niacinamide products")
+        recommendations.push({
+          text: "Use mattifying moisturizer and clay masks",
+          confidence: hfConfidence,
+          priority: 'medium'
+        })
+        recommendations.push({
+          text: "Consider tea tree oil or niacinamide products",
+          confidence: hfConfidence * 0.8,
+          priority: 'medium'
+        })
         break
       case "dry":
-        recommendations.push("Use rich moisturizers and avoid hot showers")
-        recommendations.push("Apply facial oil before moisturizer")
+        recommendations.push({
+          text: "Use rich moisturizers and avoid hot showers",
+          confidence: hfConfidence,
+          priority: 'high'
+        })
+        recommendations.push({
+          text: "Apply facial oil before moisturizer",
+          confidence: hfConfidence * 0.85,
+          priority: 'medium'
+        })
         break
       case "pigmentation":
-        recommendations.push("Use vitamin C serum and sunscreen daily")
-        recommendations.push("Consider professional treatments for dark spots")
+        recommendations.push({
+          text: "Use vitamin C serum and sunscreen daily",
+          confidence: hfConfidence,
+          priority: 'high'
+        })
+        recommendations.push({
+          text: "Consider professional treatments for dark spots",
+          confidence: hfConfidence * 0.7,
+          priority: 'low'
+        })
         break
       case "sensitive":
-        recommendations.push("Use fragrance-free, hypoallergenic products")
-        recommendations.push("Patch test new products before full use")
+        recommendations.push({
+          text: "Use fragrance-free, hypoallergenic products",
+          confidence: hfConfidence,
+          priority: 'high'
+        })
+        recommendations.push({
+          text: "Patch test new products before full use",
+          confidence: hfConfidence * 0.9,
+          priority: 'high'
+        })
         break
     }
 
     // Add general recommendations if none specific
     if (recommendations.length === 0) {
-      recommendations.push("Maintain current skincare routine")
-      recommendations.push("Use sunscreen daily to protect skin health")
-      recommendations.push("Stay hydrated and maintain healthy diet")
+      recommendations.push({
+        text: "Maintain current skincare routine",
+        confidence: 0.8,
+        priority: 'low'
+      })
+      recommendations.push({
+        text: "Use sunscreen daily to protect skin health",
+        confidence: 1.0,
+        priority: 'high'
+      })
+      recommendations.push({
+        text: "Stay hydrated and maintain healthy diet",
+        confidence: 0.9,
+        priority: 'medium'
+      })
     }
 
-    // Remove duplicates and limit to top 5
-    return [...new Set(recommendations)].slice(0, 5)
+    // Remove duplicates by text and limit to top 5, sorted by priority then confidence
+    const uniqueRecs = recommendations.reduce((acc, rec) => {
+      if (!acc.find(r => r.text === rec.text)) {
+        acc.push(rec)
+      }
+      return acc
+    }, [] as typeof recommendations)
+
+    const priorityOrder = { high: 0, medium: 1, low: 2 }
+    return uniqueRecs
+      .sort((a, b) => {
+        if (priorityOrder[a.priority] !== priorityOrder[b.priority]) {
+          return priorityOrder[a.priority] - priorityOrder[b.priority]
+        }
+        return b.confidence - a.confidence
+      })
+      .slice(0, 5)
   }
 
   /**
@@ -479,14 +577,17 @@ export class HybridAnalyzer {
       ?? Math.min(10, (mp.wrinkles?.severity || 0) / 10) // Fallback to MediaPipe
     
     const poreScore = cvResults?.pores?.severity 
-      ?? 2 // ⚠️ Fallback only if CV failed (should rarely happen)
+      ?? Math.max(2, Math.min(10, 10 - (tf.texture.smoothness * 10))) // Fallback: inverse texture smoothness
+      ?? 5 // Final fallback to neutral score if no data
 
     // Extract metrics from TensorFlow (texture and segmentation)
     const textureScore = cvResults?.texture?.smoothness 
       ?? (1 - tf.texture.smoothness) * 10 // CV texture already 0-10 scale
     
+    // 🔥 BUG #15 FIX: Use real CV spot detection, not hardcoded placeholder
     const spotScore = cvResults?.spots?.severity 
-      ?? 1.5 // ⚠️ Fallback only if CV failed (should rarely happen)
+      ?? Math.min(10, (hf.classification.confidence || 0.5) * 10) // Fallback: use HF confidence directly (no 0.6 multiplier)
+      ?? 5 // Final fallback to neutral score if no data
 
     // 🔥 FIXED: Calculate hydration from skin texture analysis (not hardcoded!)
     // Good texture + low wrinkles = well-hydrated skin

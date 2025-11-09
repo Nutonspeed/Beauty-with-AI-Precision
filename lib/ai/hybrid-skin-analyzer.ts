@@ -30,9 +30,12 @@ import type {
   AnalysisOptions, 
   AIAnalysisResult,
   CVAnalysisResult,
-  SkinConcern
+  SkinConcern,
+  AIProvider
 } from '../types/skin-analysis';
 import type { VisionSkinAnalysis } from './google-vision-skin-analyzer';
+import type { AnalysisMode } from '../../types/analysis-mode';
+import { parseAnalysisMode } from '../../types/analysis-mode';
 
 const TRACKED_CONCERNS: SkinConcern[] = [
   'acne',
@@ -49,9 +52,10 @@ const TRACKED_CONCERNS: SkinConcern[] = [
   'texture',
 ];
 
-type AIProviderId = 'huggingface' | 'google-vision' | 'gemini';
+type RemoteAIProvider = Exclude<AIProvider, 'local'>;
 
-const PROVIDER_LABELS: Record<AIProviderId, string> = {
+const PROVIDER_LABELS: Record<AIProvider, string> = {
+  local: 'Local CV Pipeline',
   huggingface: 'Hugging Face',
   'google-vision': 'Google Vision',
   gemini: 'Gemini 2.0 Flash',
@@ -364,6 +368,9 @@ async function analyzeWithHuggingFace(imageBuffer: Buffer): Promise<any> {
   const analyzer = new HuggingFaceAnalyzer();
 
   try {
+    // Ensure analyzer is ready before running heavy models
+    await analyzer.initialize();
+
     // Convert buffer to mock ImageData
     const imageData = bufferToMockImageData(imageBuffer);
 
@@ -435,37 +442,207 @@ async function analyzeWithHuggingFace(imageBuffer: Buffer): Promise<any> {
   }
 }
 
-async function resolveAIAnalysis(buffer: Buffer): Promise<{ analysis: AIAnalysisResult; provider: AIProviderId }> {
-  const providers: Array<{ id: AIProviderId; run: () => Promise<AIAnalysisResult> }> = [
+async function resolveAIAnalysis(buffer: Buffer, mode: AnalysisMode): Promise<{ analysis: AIAnalysisResult; provider: RemoteAIProvider }> {
+  const providers: Array<{ id: RemoteAIProvider; run: () => Promise<AIAnalysisResult> }> = [];
+
+  if (mode !== 'hf') {
+    providers.push(
+      {
+        id: 'gemini',
+        run: async () => normalizeGeminiResult(await analyzeWithGemini(buffer)),
+      },
+      {
+        id: 'google-vision',
+        run: async () => normalizeVisionResult(await analyzeSkinWithVision(buffer)),
+      },
+    );
+  }
+
+  providers.push({
+    id: 'huggingface',
+    run: async () => normalizeHuggingFaceResult(await analyzeWithHuggingFace(buffer)),
+  });
+
+  console.log(`🏁 Racing AI providers (mode=${mode})...`);
+
+  if (mode === 'hf') {
+    // In HF mode, prefer Hugging Face by putting it first
+    providers.sort((a, b) => (a.id === 'huggingface' ? -1 : b.id === 'huggingface' ? 1 : 0));
+  }
+
+  if (providers.length === 0) {
+    throw new Error('No remote AI providers configured for the selected mode.');
+  }
+
+  const timeoutMs = 30000; // 30 วินาที timeout ต่อ provider
+  const errors: Array<{ provider: RemoteAIProvider; message: string }> = [];
+
+  return await new Promise((resolve, reject) => {
+    let settled = false;
+    let remaining = providers.length;
+
+    const tryResolve = (result: { analysis: AIAnalysisResult; provider: RemoteAIProvider }) => {
+      if (settled) {
+        return;
+      }
+      settled = true;
+      resolve(result);
+    };
+
+    const tryReject = () => {
+      if (settled || remaining > 0) {
+        return;
+      }
+
+      const errorSummary = errors
+        .map((entry) => `${PROVIDER_LABELS[entry.provider]} (${entry.message})`)
+        .join(' → ');
+      settled = true;
+      reject(new Error(`All AI providers failed. ${errorSummary}`));
+    };
+
+    const runWithTimeout = async (provider: typeof providers[number]) => {
+      return new Promise<AIAnalysisResult>((resolveProvider, rejectProvider) => {
+        const timer = setTimeout(() => {
+          rejectProvider(new Error('Timeout'));
+        }, timeoutMs);
+
+        provider
+          .run()
+          .then((analysis) => {
+            clearTimeout(timer);
+            resolveProvider(analysis);
+          })
+          .catch((error) => {
+            clearTimeout(timer);
+            rejectProvider(error);
+          });
+      });
+    };
+
+    providers.forEach((provider) => {
+      runWithTimeout(provider)
+        .then((analysis) => {
+          console.log(`✅ ${PROVIDER_LABELS[provider.id]} responded successfully`);
+          tryResolve({ analysis, provider: provider.id });
+        })
+        .catch((error) => {
+          const message = (error as Error)?.message ?? 'Unknown error';
+          console.warn(`⚠️ ${PROVIDER_LABELS[provider.id]} failed: ${message}`);
+          errors.push({ provider: provider.id, message });
+        })
+        .finally(() => {
+          remaining -= 1;
+          tryReject();
+        });
+    });
+  });
+}
+
+function deriveSkinType(cv: CVAnalysisResult): AIAnalysisResult['skinType'] {
+  const poreSeverity = clampScore(cv.pores.severity);
+  const textureRoughness = clampScore(cv.texture.roughness);
+  const rednessSeverity = clampScore(cv.redness.severity);
+
+  if (rednessSeverity >= 7) {
+    return 'sensitive';
+  }
+
+  if (poreSeverity >= 7 && textureRoughness <= 5) {
+    return 'oily';
+  }
+
+  if (textureRoughness >= 7 && poreSeverity <= 4) {
+    return 'dry';
+  }
+
+  if (Math.abs(poreSeverity - textureRoughness) >= 2) {
+    return 'combination';
+  }
+
+  return 'normal';
+}
+
+function buildLocalAIAnalysis(cv: CVAnalysisResult): AIAnalysisResult {
+  const texturePenalty = clampScore(10 - cv.texture.smoothness);
+
+  const severity: Record<SkinConcern, number> = {
+    acne: clampScore(cv.spots.severity),
+    wrinkles: clampScore(cv.wrinkles.severity),
+    dark_spots: clampScore(cv.spots.severity),
+    large_pores: clampScore(cv.pores.severity),
+    redness: clampScore(cv.redness.severity),
+    dullness: texturePenalty,
+    fine_lines: clampScore(cv.wrinkles.severity),
+    blackheads: clampScore(cv.spots.severity),
+    hyperpigmentation: clampScore(cv.spots.severity),
+    spots: clampScore(cv.spots.severity),
+    pores: clampScore(cv.pores.severity),
+    texture: texturePenalty,
+  };
+
+  const rankedConcerns = (Object.entries(severity) as Array<[SkinConcern, number]>).sort((a, b) => b[1] - a[1]);
+  const primaryConcerns = rankedConcerns
+    .filter(([, score]) => score >= 6)
+    .map(([concern]) => concern)
+    .slice(0, 4);
+
+  if (primaryConcerns.length === 0 && rankedConcerns.length > 0) {
+    primaryConcerns.push(rankedConcerns[0][0]);
+  }
+
+  const skinType = deriveSkinType(cv);
+
+  const recommendations: AIAnalysisResult['recommendations'] = [
     {
-      id: 'huggingface',
-      run: async () => normalizeHuggingFaceResult(await analyzeWithHuggingFace(buffer)),
+      category: 'cleanser',
+      product: 'Gentle pH-balanced cleanser',
+      reason: 'Maintains skin barrier while following local CV insights',
     },
     {
-      id: 'google-vision',
-      run: async () => normalizeVisionResult(await analyzeSkinWithVision(buffer)),
+      category: 'moisturizer',
+      product: 'Barrier-repair moisturizer with ceramides',
+      reason: 'Supports hydration alongside treatment steps',
     },
     {
-      id: 'gemini',
-      run: async () => normalizeGeminiResult(await analyzeWithGemini(buffer)),
+      category: 'sunscreen',
+      product: 'Broad-spectrum SPF 30+',
+      reason: 'Protects skin while addressing highlighted concerns',
     },
   ];
 
-  const errors: Array<{ provider: AIProviderId; message: string }> = [];
-
-  for (const provider of providers) {
-    try {
-      const analysis = await provider.run();
-      return { analysis, provider: provider.id };
-    } catch (error) {
-      const message = (error as Error)?.message ?? 'Unknown error';
-      console.warn(`⚠️ ${PROVIDER_LABELS[provider.id]} analysis failed: ${message}`);
-      errors.push({ provider: provider.id, message });
-    }
+  if (severity.spots >= 6 || severity.hyperpigmentation >= 6) {
+    recommendations.push({
+      category: 'treatment',
+      product: 'Niacinamide + vitamin C serum',
+      reason: 'Targets pigmentation and spots detected locally',
+    });
   }
 
-  const errorSummary = errors.map((entry) => `${PROVIDER_LABELS[entry.provider]} (${entry.message})`).join(' → ');
-  throw new Error(`All AI providers failed. ${errorSummary}`);
+  if (severity.pores >= 6 || severity.large_pores >= 6) {
+    recommendations.push({
+      category: 'treatment',
+      product: 'Refining serum with niacinamide',
+      reason: 'Helps minimize enlarged pores highlighted in analysis',
+    });
+  }
+
+  if (severity.wrinkles >= 6 || severity.fine_lines >= 6) {
+    recommendations.push({
+      category: 'treatment',
+      product: 'Peptide or retinol night treatment',
+      reason: 'Addresses lines emphasized by wrinkle detection',
+    });
+  }
+
+  return {
+    skinType,
+    concerns: primaryConcerns,
+    severity,
+    recommendations: recommendations.slice(0, 5),
+    treatmentPlan: `Focus on ${primaryConcerns.slice(0, 2).join(', ') || 'overall skin health'} with consistent daily care.`,
+    confidence: 0.55,
+  };
 }
 
 /**
@@ -490,22 +667,39 @@ export async function analyzeSkin(
       throw new Error('No face detected in image');
     }
 
-    // Step 2: AI Analysis (Phase 1 Hybrid AI with fallbacks)
-    console.log('🤖 Step 2: Hybrid AI analysis (Hugging Face → Google Vision → Gemini)...');
-    
-    // Ensure we have a Buffer
-    const buffer = typeof imageBuffer === 'string' 
-      ? Buffer.from(imageBuffer, 'base64') 
-      : imageBuffer;
-    
-    const aiStart = Date.now();
-    const { analysis: aiAnalysis, provider: aiProvider } = await resolveAIAnalysis(buffer);
-    const aiProcessingTime = Date.now() - aiStart;
+    const defaultMode = parseAnalysisMode(process.env.ANALYSIS_MODE, 'auto');
+    const analysisMode = parseAnalysisMode(options.mode, defaultMode);
 
-    console.log(`✅ ${PROVIDER_LABELS[aiProvider]} AI completed (${aiProcessingTime}ms)`);
-    console.log(`   - Concerns found: ${aiAnalysis.concerns.length}`);
-    console.log(`   - Skin type: ${aiAnalysis.skinType}`);
-    console.log(`   - Confidence: ${(aiAnalysis.confidence * 100).toFixed(1)}%`);
+    console.log(`🤖 Step 2: Hybrid AI analysis (mode=${analysisMode})`);
+
+    // Ensure we have a Buffer
+    const buffer = typeof imageBuffer === 'string'
+      ? Buffer.from(imageBuffer, 'base64')
+      : imageBuffer;
+
+    let aiAnalysis: AIAnalysisResult | null = null;
+    let aiProvider: AIProvider = 'local';
+    let aiProcessingTime = 0;
+
+    if (analysisMode !== 'local') {
+      const aiStart = Date.now();
+      try {
+        const remoteResult = await resolveAIAnalysis(buffer, analysisMode);
+        aiProcessingTime = Date.now() - aiStart;
+        aiAnalysis = remoteResult.analysis;
+        aiProvider = remoteResult.provider;
+
+        console.log(`✅ ${PROVIDER_LABELS[aiProvider]} AI completed (${aiProcessingTime}ms)`);
+        console.log(`   - Concerns found: ${aiAnalysis.concerns.length}`);
+        console.log(`   - Skin type: ${aiAnalysis.skinType}`);
+        console.log(`   - Confidence: ${(aiAnalysis.confidence * 100).toFixed(1)}%`);
+      } catch (error) {
+        aiProcessingTime = Date.now() - aiStart;
+        console.warn(`⚠️ Remote AI providers failed in ${analysisMode} mode after ${aiProcessingTime}ms.`, error);
+      }
+    } else {
+      console.log('🛡️ Local-only mode: skipping remote AI providers.');
+    }
 
     // Step 3: Computer Vision Algorithms (ทำ parallel)
     console.log('🔬 Step 3: Running 6 CV algorithms in parallel...');
@@ -520,8 +714,6 @@ export async function analyzeSkin(
 
     console.log('✅ All algorithms completed!');
 
-    // Step 4: Combine Results
-    console.log('📊 Step 4: Combining results...');
     const cvAnalysis: CVAnalysisResult = {
       spots,
       pores,
@@ -542,6 +734,15 @@ export async function analyzeSkin(
         severity: redness.severity
       },
     };
+
+    if (!aiAnalysis) {
+      console.log('💡 Falling back to local CV-powered insights.');
+      aiAnalysis = buildLocalAIAnalysis(cvAnalysis);
+      aiProvider = 'local';
+      console.log(`   - Concerns found: ${aiAnalysis.concerns.length}`);
+      console.log(`   - Skin type: ${aiAnalysis.skinType}`);
+      console.log(`   - Confidence: ${(aiAnalysis.confidence * 100).toFixed(1)}%`);
+    }
 
     // Calculate overall scores FIRST (ต้องมีก่อนจะคำนวณ percentiles)
     console.log('📊 Step 4: Combining results...');
@@ -577,7 +778,7 @@ export async function analyzeSkin(
       createdAt: new Date(),
       timestamp: new Date(), // เพิ่ม timestamp property
       imageUrl: '', // Will be set by caller
-      ai: aiAnalysis,
+  ai: aiAnalysis,
       aiProvider,
       cv: cvAnalysis,
       overallScore,
@@ -623,28 +824,33 @@ export async function analyzeSkin(
  */
 async function calculatePercentile(score: number, metric: string): Promise<number> {
   try {
-    // ⚠️ TODO: Query real database for accurate percentile
-    // For MVP: Use statistical approximation until we have 100+ users
+    // 🔥 BUG #16 FIX: Corrected percentile calculation logic
+    // For MVP: Use statistical approximation until we have 50+ analyses in database
     
-    // Statistical assumption: Normal distribution with mean=5, std=2
-    // Lower score = better skin = lower percentile (you're better than X% of users)
-    const mean = 5.0
-    const std = 2.0
+    // Statistical assumption: Normal distribution across score range 0-10
+    // IMPORTANT: Higher score = WORSE skin condition (severity scale)
+    // Therefore: Higher score = Higher percentile (you're worse than X% of users)
+    const mean = 5.0  // Middle of 0-10 scale
+    const std = 2.5   // Adjusted to cover 95% of 0-10 range (mean ± 2*std)
     
     // Z-score calculation
     const z = (score - mean) / std
     
-    // Convert to percentile (0-100)
-    // Using approximation: CDF(z) ≈ 0.5 * (1 + erf(z/√2))
-    const percentile = 50 * (1 + erf(z / Math.sqrt(2)))
+    // Convert to percentile (0-100) using cumulative distribution function
+    // CDF(z) ≈ 0.5 * (1 + erf(z/√2))
+    // This gives us: score 0 ≈ 2%, score 5 = 50%, score 10 ≈ 98%
+    const rawPercentile = 50 * (1 + erf(z / Math.sqrt(2)))
     
     // Clamp to 1-99 range (avoid 0% or 100% to maintain realistic expectations)
-    return Math.max(1, Math.min(99, Math.round(percentile)))
+    const percentile = Math.max(1, Math.min(99, Math.round(rawPercentile)))
+    
+    console.log(`📊 Mock percentile for ${metric}: score=${score.toFixed(1)} → ${percentile}% (using normal distribution approximation)`)
+    return percentile
     
   } catch (error) {
     console.warn(`⚠️ Percentile calculation failed for ${metric}:`, error)
-    // Fallback: Simple linear mapping
-    return Math.min(95, Math.round(score * 9.5))
+    // Fallback: Simple linear mapping (score 0 = 5%, score 10 = 95%)
+    return Math.max(5, Math.min(95, Math.round(5 + score * 9)))
   }
 }
 
