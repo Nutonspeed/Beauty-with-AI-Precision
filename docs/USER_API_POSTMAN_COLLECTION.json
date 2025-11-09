@@ -1,0 +1,276 @@
+{
+  "info": {
+    "name": "Beauty AI - User Management API",
+    "description": "User Management API for hierarchical user creation (Super Admin → Clinic Admin → Sales Staff)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "beauty-ai-user-api-v1"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{supabase_access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://beauty-with-ai-precision.vercel.app",
+      "type": "string"
+    },
+    {
+      "key": "supabase_access_token",
+      "value": "YOUR_SUPABASE_JWT_TOKEN_HERE",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Create Clinic Admin (Super Admin only)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{supabase_access_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/users/create",
+          "host": ["{{base_url}}"],
+          "path": ["api", "users", "create"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"clinic-admin@example.com\",\n  \"full_name\": \"สมชาย คลินิกเจ้าของ\",\n  \"role\": \"clinic_admin\",\n  \"clinic_id\": \"YOUR_CLINIC_UUID_HERE\",\n  \"send_invitation_email\": true\n}"
+        },
+        "description": "**Permission:** Super Admin only\n\nCreates a new Clinic Admin user with temporary password. Returns:\n- User ID\n- Setup link (valid 7 days)\n- Temporary password\n- Invitation record\n\n**Required Fields:**\n- `email`: Valid email\n- `full_name`: Display name\n- `role`: Must be 'clinic_admin'\n- `clinic_id`: UUID of clinic\n\n**Optional:**\n- `send_invitation_email`: Default true"
+      },
+      "response": []
+    },
+    {
+      "name": "2. Create Sales Staff (Clinic Admin only)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{supabase_access_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/users/create",
+          "host": ["{{base_url}}"],
+          "path": ["api", "users", "create"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"sales@example.com\",\n  \"full_name\": \"สมหญิง ขายดี\",\n  \"role\": \"sales_staff\",\n  \"send_invitation_email\": true\n}"
+        },
+        "description": "**Permission:** Clinic Admin only\n\nCreates a new Sales Staff user. Automatically inherits clinic_id from creator.\n\n**Required Fields:**\n- `email`: Valid email\n- `full_name`: Display name\n- `role`: Must be 'sales_staff'\n\n**Note:** clinic_id is auto-filled from authenticated user"
+      },
+      "response": []
+    },
+    {
+      "name": "3. Invite User (Resend setup link)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{supabase_access_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/users/invite",
+          "host": ["{{base_url}}"],
+          "path": ["api", "users", "invite"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"user_id\": \"TARGET_USER_UUID_HERE\"\n}"
+        },
+        "description": "**Permission:** Super Admin or Clinic Admin (same clinic)\n\nGenerates a new setup link for existing user. Use cases:\n- User lost invitation email\n- Setup link expired (>7 days)\n- User needs password reset\n\n**Returns:**\n- New setup link (valid 7 days)\n- New temporary password\n- Updated invitation record"
+      },
+      "response": []
+    },
+    {
+      "name": "4. Test: Create Clinic Admin (Success)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 201\", function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "",
+              "pm.test(\"Response has user_id\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.user_id).to.be.a('string');",
+              "});",
+              "",
+              "pm.test(\"Response has setup_link\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.setup_link).to.include('/auth/setup');",
+              "});",
+              "",
+              "pm.test(\"Response has temp_password\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.temp_password).to.have.lengthOf.at.least(8);",
+              "});",
+              "",
+              "// Save user_id for next test",
+              "var jsonData = pm.response.json();",
+              "pm.environment.set(\"created_user_id\", jsonData.user_id);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/api/users/create",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"test-admin-{{$timestamp}}@example.com\",\n  \"full_name\": \"Test Admin User\",\n  \"role\": \"clinic_admin\",\n  \"clinic_id\": \"{{test_clinic_id}}\",\n  \"send_invitation_email\": false\n}"
+        }
+      }
+    },
+    {
+      "name": "5. Test: Create User (Permission Denied)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 403\", function () {",
+              "    pm.response.to.have.status(403);",
+              "});",
+              "",
+              "pm.test(\"Error message mentions permission\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.error).to.include('permission');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer INVALID_TOKEN"
+          }
+        ],
+        "url": "{{base_url}}/api/users/create",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"unauthorized@example.com\",\n  \"full_name\": \"Unauthorized User\",\n  \"role\": \"clinic_admin\",\n  \"clinic_id\": \"00000000-0000-0000-0000-000000000000\"\n}"
+        }
+      }
+    },
+    {
+      "name": "6. Test: Create User (Invalid Email)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 400\", function () {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "",
+              "pm.test(\"Error message mentions email\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.error.toLowerCase()).to.include('email');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/api/users/create",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"not-an-email\",\n  \"full_name\": \"Test User\",\n  \"role\": \"clinic_admin\",\n  \"clinic_id\": \"{{test_clinic_id}}\"\n}"
+        }
+      }
+    },
+    {
+      "name": "7. Test: Invite User (Success)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Response has new setup_link\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.setup_link).to.include('/auth/setup');",
+              "});",
+              "",
+              "pm.test(\"Response has new temp_password\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.temp_password).to.be.a('string');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/api/users/invite",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"user_id\": \"{{created_user_id}}\"\n}"
+        }
+      }
+    }
+  ]
+}
