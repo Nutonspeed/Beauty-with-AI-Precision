@@ -57,7 +57,7 @@ async function getAnalyzer(): Promise<InstanceType<HybridAnalyzerType>> {
  * Automatically loads models on first use
  */
 export async function analyzeSkin(
-  imageData: ImageData | string
+  imageData: ImageData
 ): Promise<HybridAnalysisResult> {
   const analyzer = await getAnalyzer()
   return analyzer.analyzeSkin(imageData)
