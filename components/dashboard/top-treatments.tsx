@@ -1,12 +1,99 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
+import { Skeleton } from "@/components/ui/skeleton"
 import { TrendingUp, Star } from "lucide-react"
 
-// Mock data - ในโปรดักชั่นจะดึงจาก API
-const topTreatments = [
+interface Treatment {
+  name: string
+  bookings: number
+  revenue: number
+  avgPrice: number
+}
+
+interface TreatmentsData {
+  treatments: Treatment[]
+  totalTreatments: number
+}
+
+export function TopTreatments() {
+  const [data, setData] = useState<TreatmentsData | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    async function fetchTreatments() {
+      try {
+        const response = await fetch("/api/clinic/dashboard/treatments")
+        if (!response.ok) {
+          throw new Error(`Failed to fetch treatments: ${response.status}`)
+        }
+        const result = await response.json()
+        setData(result)
+      } catch (err) {
+        console.error("[TopTreatments] Error:", err)
+        setError(err instanceof Error ? err.message : "Failed to load treatments")
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchTreatments()
+    const interval = setInterval(fetchTreatments, 5 * 60 * 1000)
+    return () => clearInterval(interval)
+  }, [])
+
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-6 w-48" />
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {[...Array(5)].map((_, i) => (
+              <Skeleton key={i} className="h-24 w-full" />
+            ))}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-6 w-48" />
+          </CardHeader>
+          <CardContent>
+            <Skeleton className="h-64 w-full" />
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  if (error || !data) {
+    return (
+      <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-center">
+        <p className="text-sm text-destructive">Failed to load treatments. Please try again.</p>
+      </div>
+    )
+  }
+
+  const topTreatments = data.treatments.slice(0, 5).map((treatment, index) => ({
+    ...treatment,
+    rating: 4.5 + (Math.random() * 0.5), // Mock ratings for now
+    growth: 5 + (Math.random() * 20), // Mock growth for now
+    color: [
+      "bg-purple-500",
+      "bg-blue-500",
+      "bg-green-500",
+      "bg-orange-500",
+      "bg-red-500"
+    ][index] || "bg-gray-500"
+  }))
+
+// Mock data - replaced with real data from API
+const mockTopTreatments = [
   {
     name: "Complete Skin Renewal Package",
     revenue: 285000,
@@ -49,7 +136,6 @@ const topTreatments = [
   }
 ]
 
-export function TopTreatments() {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('th-TH', {
       style: 'currency',
@@ -58,7 +144,9 @@ export function TopTreatments() {
     }).format(amount)
   }
 
-  const maxRevenue = Math.max(...topTreatments.map(t => t.revenue))
+  const maxRevenue = topTreatments.length > 0 
+    ? Math.max(...topTreatments.map(t => t.revenue)) 
+    : 1
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -67,11 +155,17 @@ export function TopTreatments() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             🏆 Top Performing Treatments
-            <Badge className="bg-green-100 text-green-800">This Month</Badge>
+            <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">This Month</Badge>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {topTreatments.map((treatment, index) => (
+          {topTreatments.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              <p>ยังไม่มีข้อมูลทรีตเมนต์</p>
+              <p className="text-sm mt-2">ข้อมูลจะแสดงเมื่อมีการจองบริการ</p>
+            </div>
+          ) : (
+            topTreatments.map((treatment, index) => (
             <div key={treatment.name} className="flex items-center gap-4 p-4 border rounded-lg">
               <div className="flex-shrink-0">
                 <div className={`w-12 h-12 rounded-full ${treatment.color} flex items-center justify-center text-white font-bold text-lg`}>
@@ -104,7 +198,8 @@ export function TopTreatments() {
                 </div>
               </div>
             </div>
-          ))}
+            ))
+          )}
         </CardContent>
       </Card>
 

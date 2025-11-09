@@ -1,0 +1,17 @@
+# Vercel Ignore - Don't upload these to Vercel
+.git
+.next
+node_modules
+*.log
+.env
+.env.local
+.DS_Store
+docs/
+scripts/
+*.test.ts
+*.test.tsx
+__tests__/
+coverage/
+.vscode/
+.devcontainer/
+build.log

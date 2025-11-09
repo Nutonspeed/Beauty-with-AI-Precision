@@ -30,6 +30,13 @@ const nextConfig = {
   compress: true,
   poweredByHeader: false,
   
+  // Build optimization for limited memory environments
+  experimental: {
+    // Reduce memory usage during build
+    workerThreads: false,
+    cpus: 1,
+  },
+  
   // Development performance boost
   ...(process.env.NODE_ENV === 'development' && {
     onDemandEntries: {

@@ -6,10 +6,12 @@ import { LivePipeline } from "@/components/dashboard/live-pipeline"
 import { RevenueChart } from "@/components/dashboard/revenue-chart"
 import { TopTreatments } from "@/components/dashboard/top-treatments"
 import { QuickActions } from "@/components/dashboard/quick-actions"
+import { RecentActivity } from "@/components/dashboard/recent-activity"
+import { StaffAvailability } from "@/components/dashboard/staff-availability"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Settings, Bell, User, Calendar, Users, BarChart3, Package, Building2, MessageSquare, TrendingUp } from "lucide-react"
+import { Settings, Bell, User, Calendar, Users, BarChart3, Package, Building2, MessageSquare, TrendingUp, Zap } from "lucide-react"
 import { checkUserRole } from "@/lib/auth/check-role"
 import Link from "next/link"
 
@@ -62,6 +64,20 @@ export default async function ClinicDashboardPage() {
           <div className="mb-8">
             <h2 className="text-lg font-semibold mb-4">Management Tools / เครื่องมือจัดการ</h2>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              <Link href="/clinic/customers">
+                <Card className="cursor-pointer border-2 border-transparent transition-all hover:border-primary/50 hover:shadow-md">
+                  <CardContent className="flex items-center gap-3 p-4">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/10">
+                      <User className="h-5 w-5 text-emerald-500" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-sm">Customers</p>
+                      <p className="text-xs text-muted-foreground">ลูกค้า & Leads</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+
               <Link href="/schedule">
                 <Card className="cursor-pointer border-2 border-transparent transition-all hover:border-primary/50 hover:shadow-md">
                   <CardContent className="flex items-center gap-3 p-4">
@@ -90,15 +106,15 @@ export default async function ClinicDashboardPage() {
                 </Card>
               </Link>
 
-              <Link href="/reports">
+              <Link href="/clinic/analytics">
                 <Card className="cursor-pointer border-2 border-transparent transition-all hover:border-primary/50 hover:shadow-md">
                   <CardContent className="flex items-center gap-3 p-4">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-500/10">
                       <BarChart3 className="h-5 w-5 text-green-500" />
                     </div>
                     <div>
-                      <p className="font-semibold text-sm">Reports</p>
-                      <p className="text-xs text-muted-foreground">รายงาน</p>
+                      <p className="font-semibold text-sm">Analytics</p>
+                      <p className="text-xs text-muted-foreground">วิเคราะห์ข้อมูล</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -155,6 +171,20 @@ export default async function ClinicDashboardPage() {
                     <div>
                       <p className="font-semibold text-sm">Live Chat</p>
                       <p className="text-xs text-muted-foreground">แชทสด</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+
+              <Link href="/clinic/settings/automation">
+                <Card className="cursor-pointer border-2 border-transparent transition-all hover:border-primary/50 hover:shadow-md">
+                  <CardContent className="flex items-center gap-3 p-4">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-500/10">
+                      <Zap className="h-5 w-5 text-amber-500" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-sm">Automation</p>
+                      <p className="text-xs text-muted-foreground">ระบบอัตโนมัติ</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -219,6 +249,15 @@ export default async function ClinicDashboardPage() {
           <div className="mb-8">
             <h2 className="text-xl font-semibold mb-6">🎯 Top Performing Treatments</h2>
             <TopTreatments />
+          </div>
+
+          {/* Staff & Activity Grid */}
+          <div className="mb-8">
+            <h2 className="text-xl font-semibold mb-6">👥 Team & Activity</h2>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <StaffAvailability />
+              <RecentActivity />
+            </div>
           </div>
 
           {/* Quick Actions */}

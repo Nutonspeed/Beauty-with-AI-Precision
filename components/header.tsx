@@ -58,6 +58,12 @@ export function Header() {
           { href: "/ai-chat", label: "💬 AI Advisor" },
           { href: "/analytics", label: t.nav.analytics },
         ]
+      case "clinic_staff":
+        return [
+          { href: "/clinic/staff/my-schedule", label: "📅 ตารางงานของฉัน" },
+          { href: "/clinic/reception", label: "🏥 Reception" },
+          { href: "/clinic/dashboard", label: "Dashboard" },
+        ]
       case "sales_staff":
         return [
           { href: "/sales/dashboard", label: t.nav.dashboard },

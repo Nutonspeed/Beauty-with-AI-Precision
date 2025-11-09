@@ -1,44 +1,114 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Skeleton } from "@/components/ui/skeleton"
 import { TrendingUp, TrendingDown } from "lucide-react"
 
-// Mock data - ในโปรดักชั่นจะดึงจาก API
-const revenueData = [
-  { day: "1", revenue: 32000, target: 35000 },
-  { day: "2", revenue: 28000, target: 35000 },
-  { day: "3", revenue: 41000, target: 35000 },
-  { day: "4", revenue: 38000, target: 35000 },
-  { day: "5", revenue: 45000, target: 35000 },
-  { day: "6", revenue: 52000, target: 35000 },
-  { day: "7", revenue: 48000, target: 35000 },
-  { day: "8", revenue: 39000, target: 35000 },
-  { day: "9", revenue: 43000, target: 35000 },
-  { day: "10", revenue: 51000, target: 35000 },
-  { day: "11", revenue: 47000, target: 35000 },
-  { day: "12", revenue: 55000, target: 35000 },
-  { day: "13", revenue: 49000, target: 35000 },
-  { day: "14", revenue: 42000, target: 35000 },
-  { day: "15", revenue: 46000, target: 35000 },
-  { day: "16", revenue: 53000, target: 35000 },
-  { day: "17", revenue: 50000, target: 35000 },
-  { day: "18", revenue: 44000, target: 35000 },
-  { day: "19", revenue: 48000, target: 35000 },
-  { day: "20", revenue: 56000, target: 35000 },
-  { day: "21", revenue: 52000, target: 35000 },
-  { day: "22", revenue: 45000, target: 35000 },
-  { day: "23", revenue: 49000, target: 35000 },
-  { day: "24", revenue: 57000, target: 35000 },
-  { day: "25", revenue: 54000, target: 35000 },
-  { day: "26", revenue: 46000, target: 35000 },
-  { day: "27", revenue: 50000, target: 35000 },
-  { day: "28", revenue: 58000, target: 35000 },
-  { day: "29", revenue: 55000, target: 35000 },
-  { day: "30", revenue: 47000, target: 35000 }
-]
+interface RevenueDataPoint {
+  date: string
+  revenue: number
+}
+
+interface RevenueChartData {
+  chartData: RevenueDataPoint[]
+  summary: {
+    current: {
+      monthly: number
+      total: number
+    }
+    targets: {
+      daily: number
+      monthly: number
+      monthlyProgress: number
+    }
+    topServices: Array<{
+      name: string
+      revenue: number
+    }>
+    daysTracked: number
+  }
+}
 
 export function RevenueChart() {
+  const [data, setData] = useState<RevenueChartData | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    async function fetchRevenue() {
+      try {
+        const response = await fetch("/api/clinic/dashboard/revenue")
+        if (!response.ok) {
+          throw new Error(`Failed to fetch revenue: ${response.status}`)
+        }
+        const result = await response.json()
+        setData(result)
+      } catch (err) {
+        console.error("[RevenueChart] Error:", err)
+        setError(err instanceof Error ? err.message : "Failed to load revenue")
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchRevenue()
+    const interval = setInterval(fetchRevenue, 5 * 60 * 1000) // Refresh every 5 minutes
+    return () => clearInterval(interval)
+  }, [])
+
+  if (isLoading) {
+    return (
+      <Card>
+        <CardHeader>
+          <Skeleton className="h-6 w-64" />
+        </CardHeader>
+        <CardContent>
+          <Skeleton className="h-64 w-full mb-6" />
+          <div className="grid grid-cols-3 gap-4">
+            <Skeleton className="h-20 w-full" />
+            <Skeleton className="h-20 w-full" />
+            <Skeleton className="h-20 w-full" />
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  if (error || !data) {
+    return (
+      <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-center">
+        <p className="text-sm text-destructive">Failed to load revenue chart. Please try again.</p>
+      </div>
+    )
+  }
+
+  // Process data for chart
+  const revenueData = data.chartData.length > 0 
+    ? data.chartData.map((point) => ({
+        day: new Date(point.date).getDate().toString(),
+        revenue: point.revenue,
+        target: data.summary.targets.daily
+      }))
+    : []
+
+  const totalRevenue = data.summary.current.monthly
+  const totalTarget = data.summary.targets.monthly
+  const achievement = totalTarget > 0 ? (totalRevenue / totalTarget) * 100 : 0
+
+  const maxRevenue = revenueData.length > 0 
+    ? Math.max(...revenueData.map(d => d.revenue)) 
+    : data.summary.targets.daily
+
+  const minRevenue = revenueData.length > 0 
+    ? Math.min(...revenueData.map(d => d.revenue)) 
+    : 0
+
+  const avgRevenue = revenueData.length > 0
+    ? totalRevenue / revenueData.length
+    : 0
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('th-TH', {
       style: 'currency',
@@ -47,20 +117,13 @@ export function RevenueChart() {
     }).format(amount)
   }
 
-  const totalRevenue = revenueData.reduce((sum, day) => sum + day.revenue, 0)
-  const totalTarget = revenueData.reduce((sum, day) => sum + day.target, 0)
-  const achievement = (totalRevenue / totalTarget) * 100
-
-  const maxRevenue = Math.max(...revenueData.map(d => d.revenue))
-  const minRevenue = Math.min(...revenueData.map(d => d.revenue))
-
   return (
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle>Revenue Trends (This Month)</CardTitle>
           <div className="flex items-center gap-2">
-            <Badge className={achievement >= 100 ? "bg-green-100 text-green-800" : "bg-orange-100 text-orange-800"}>
+            <Badge className={achievement >= 100 ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100" : "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-100"}>
               {achievement >= 100 ? "🎯 Target Achieved" : "📈 On Track"}
             </Badge>
             <div className="text-right">
@@ -73,10 +136,17 @@ export function RevenueChart() {
         </div>
       </CardHeader>
       <CardContent>
-        {/* Simple Bar Chart */}
-        <div className="space-y-4">
-          <div className="flex items-end gap-1 h-64">
-            {revenueData.map((day, index) => {
+        {revenueData.length === 0 ? (
+          <div className="text-center py-16 text-muted-foreground">
+            <p>ยังไม่มีข้อมูลรายได้ในเดือนนี้</p>
+            <p className="text-sm mt-2">ข้อมูลจะแสดงเมื่อมีการจองหรือชำระเงิน</p>
+          </div>
+        ) : (
+          <>
+            {/* Simple Bar Chart */}
+            <div className="space-y-4">
+              <div className="flex items-end gap-1 h-64">
+                {revenueData.map((day, index) => {
               const height = (day.revenue / maxRevenue) * 100
               const isAboveTarget = day.revenue >= day.target
               return (
@@ -119,23 +189,25 @@ export function RevenueChart() {
             <div className="text-sm text-muted-foreground">Best Day</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-blue-600">{formatCurrency(Math.round(totalRevenue / revenueData.length))}</div>
+            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{formatCurrency(Math.round(avgRevenue))}</div>
             <div className="text-sm text-muted-foreground">Daily Average</div>
           </div>
           <div className="text-center">
             <div className="flex items-center justify-center gap-1">
               {achievement > 100 ? (
-                <TrendingUp className="h-5 w-5 text-green-600" />
+                <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" />
               ) : (
-                <TrendingDown className="h-5 w-5 text-orange-600" />
+                <TrendingDown className="h-5 w-5 text-orange-600 dark:text-orange-400" />
               )}
-              <div className={`text-2xl font-bold ${achievement > 100 ? 'text-green-600' : 'text-orange-600'}`}>
+              <div className={`text-2xl font-bold ${achievement > 100 ? 'text-green-600 dark:text-green-400' : 'text-orange-600 dark:text-orange-400'}`}>
                 {(achievement - 100).toFixed(1)}%
               </div>
             </div>
             <div className="text-sm text-muted-foreground">vs Target</div>
           </div>
         </div>
+            </>
+          )}
       </CardContent>
     </Card>
   )
