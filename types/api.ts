@@ -5,6 +5,13 @@
 import type { SkinConcern } from '@/lib/ai/tensorflow-analyzer'
 
 // ============================================================================
+// Common Types
+// ============================================================================
+
+export type SkinType = 'dry' | 'oily' | 'combination' | 'normal' | 'sensitive'
+export type Gender = 'male' | 'female' | 'other'
+
+// ============================================================================
 // Analysis API Types
 // ============================================================================
 
@@ -19,6 +26,18 @@ export interface SaveAnalysisRequest {
     detectionCount: number
   }
   aiVersion: string
+  patientInfo?: {
+    name: string
+    age?: number
+    gender?: Gender
+    skinType?: SkinType
+    medicalHistory?: string[]
+    allergies?: string[]
+    currentMedications?: string[]
+    notes?: string
+  }
+  appointmentId?: string
+  treatmentPlanId?: string
 }
 
 export interface SaveAnalysisResponse {
@@ -64,7 +83,7 @@ export interface GetAnalysisResponse {
 
 export interface UserProfileData {
   id: string
-  skinType?: 'oily' | 'dry' | 'combination' | 'normal' | 'sensitive'
+  skinType?: SkinType
   primaryConcerns: string[]
   allergies?: string
   preferences: {
@@ -77,7 +96,7 @@ export interface UserProfileData {
 }
 
 export interface UpdateProfileRequest {
-  skinType?: 'oily' | 'dry' | 'combination' | 'normal' | 'sensitive'
+  skinType?: SkinType
   primaryConcerns?: string[]
   allergies?: string
   preferences?: {

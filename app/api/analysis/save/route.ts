@@ -46,6 +46,9 @@ export async function POST(request: NextRequest) {
         heatmap_data: body.heatmapData || null,
         metrics: body.metrics,
         ai_version: body.aiVersion || "v1.0.0",
+        patient_info: body.patientInfo || null,
+        appointment_id: body.appointmentId || null,
+        treatment_plan_id: body.treatmentPlanId || null,
       })
       .select()
       .single()

@@ -93,6 +93,9 @@ export interface Database {
           ai_model_version: string | null
           ip_address: string | null
           user_agent: string | null
+          patient_info: Json | null
+          appointment_id: string | null
+          treatment_plan_id: string | null
           created_at: string
         }
         Insert: {
@@ -111,6 +114,9 @@ export interface Database {
           ai_model_version?: string | null
           ip_address?: string | null
           user_agent?: string | null
+          patient_info?: Json | null
+          appointment_id?: string | null
+          treatment_plan_id?: string | null
           created_at?: string
         }
         Update: {
@@ -129,6 +135,9 @@ export interface Database {
           ai_model_version?: string | null
           ip_address?: string | null
           user_agent?: string | null
+          patient_info?: Json | null
+          appointment_id?: string | null
+          treatment_plan_id?: string | null
           created_at?: string
         }
       }
@@ -238,4 +247,16 @@ export function hasFeatureAccess(role: UserRole, feature: string): boolean {
   
   const allowedTiers = featureMap[feature] || []
   return allowedTiers.includes(tier)
+}
+
+// Patient Info Type for skin_analyses.patient_info JSONB column
+export interface PatientInfo {
+  name: string;
+  age?: number;
+  gender?: 'male' | 'female' | 'other';
+  skinType?: 'dry' | 'oily' | 'combination' | 'normal' | 'sensitive';
+  medicalHistory?: string[];
+  allergies?: string[];
+  currentMedications?: string[];
+  notes?: string;
 }
