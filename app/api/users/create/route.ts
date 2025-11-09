@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
 
     // Get user profile with role
     const { data: profile, error: profileError } = await supabase
-      .from('profiles')
+      .from('users')
       .select('role, clinic_id')
       .eq('id', user.id)
       .single()
@@ -51,28 +51,28 @@ export async function POST(request: NextRequest) {
 
     // Permission checks
     if (profile.role === 'super_admin') {
-      // Super Admin can only create clinic_owner
-      if (role !== 'clinic_owner') {
+      // Super Admin can only create clinic_admin
+      if (role !== 'clinic_admin') {
         return NextResponse.json(
-          { error: 'Super Admin can only create clinic_owner' },
+          { error: 'Super Admin can only create clinic_admin' },
           { status: 403 }
         )
       }
       if (!clinic_id) {
         return NextResponse.json(
-          { error: 'clinic_id required when creating clinic_owner' },
+          { error: 'clinic_id required when creating clinic_admin' },
           { status: 400 }
         )
       }
-    } else if (profile.role === 'clinic_owner') {
-      // Clinic Owner can only create sales_staff in their own clinic
+    } else if (profile.role === 'clinic_admin') {
+      // Clinic Admin can only create sales_staff in their own clinic
       if (role !== 'sales_staff') {
         return NextResponse.json(
-          { error: 'Clinic Owner can only create sales_staff' },
+          { error: 'Clinic Admin can only create sales_staff' },
           { status: 403 }
         )
       }
-      // Use clinic owner's clinic_id
+      // Use clinic admin's clinic_id
       if (clinic_id && clinic_id !== profile.clinic_id) {
         return NextResponse.json(
           { error: 'Cannot create users in other clinics' },
@@ -111,9 +111,9 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Create profile entry
-    const { error: profileInsertError } = await supabase
-      .from('profiles')
+    // Create user entry in users table
+    const { error: userInsertError } = await supabase
+      .from('users')
       .insert({
         id: newUser.user.id,
         email,
@@ -122,12 +122,12 @@ export async function POST(request: NextRequest) {
         clinic_id: clinic_id || profile.clinic_id,
       })
 
-    if (profileInsertError) {
-      console.error('Failed to create profile:', profileInsertError)
+    if (userInsertError) {
+      console.error('Failed to create user entry:', userInsertError)
       // Rollback: delete auth user
       await supabase.auth.admin.deleteUser(newUser.user.id)
       return NextResponse.json(
-        { error: 'Failed to create profile', details: profileInsertError.message },
+        { error: 'Failed to create user entry', details: userInsertError.message },
         { status: 500 }
       )
     }

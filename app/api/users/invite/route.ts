@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
 
     // Get user profile with role
     const { data: profile, error: profileError } = await supabase
-      .from('profiles')
+      .from('users')
       .select('role, clinic_id, full_name')
       .eq('id', user.id)
       .single()
@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
 
     // Verify target user exists and was created by current user or in same clinic
     const { data: targetUser, error: targetError } = await supabase
-      .from('profiles')
+      .from('users')
       .select('id, email, full_name, role, clinic_id')
       .eq('id', user_id)
       .single()
@@ -63,8 +63,8 @@ export async function POST(request: NextRequest) {
     // Permission check
     if (profile.role === 'super_admin') {
       // Super admin can invite anyone
-    } else if (profile.role === 'clinic_owner') {
-      // Clinic owner can only invite users in their clinic
+    } else if (profile.role === 'clinic_admin') {
+      // Clinic admin can only invite users in their clinic
       if (targetUser.clinic_id !== profile.clinic_id) {
         return NextResponse.json(
           { error: 'Cannot invite users from other clinics' },

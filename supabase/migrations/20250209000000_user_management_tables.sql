@@ -48,24 +48,24 @@ CREATE POLICY "super_admin_view_all_invitations" ON invitations
   FOR SELECT
   USING (
     EXISTS (
-      SELECT 1 FROM profiles
-      WHERE profiles.id = auth.uid()
-      AND profiles.role = 'super_admin'
+      SELECT 1 FROM users
+      WHERE users.id = auth.uid()
+      AND users.role = 'super_admin'
     )
   );
 
--- Clinic owner can see invitations in their clinic
-CREATE POLICY "clinic_owner_view_own_clinic_invitations" ON invitations
+-- Clinic admin can see invitations in their clinic
+CREATE POLICY "clinic_admin_view_own_clinic_invitations" ON invitations
   FOR SELECT
   USING (
     EXISTS (
-      SELECT 1 FROM profiles AS p1
-      WHERE p1.id = auth.uid()
-      AND p1.role = 'clinic_owner'
+      SELECT 1 FROM users AS u1
+      WHERE u1.id = auth.uid()
+      AND u1.role = 'clinic_admin'
       AND EXISTS (
-        SELECT 1 FROM profiles AS p2
-        WHERE p2.id = invitations.user_id
-        AND p2.clinic_id = p1.clinic_id
+        SELECT 1 FROM users AS u2
+        WHERE u2.id = invitations.user_id
+        AND u2.clinic_id = u1.clinic_id
       )
     )
   );
@@ -75,14 +75,14 @@ CREATE POLICY "user_view_own_invitation" ON invitations
   FOR SELECT
   USING (user_id = auth.uid());
 
--- Super admin and clinic owner can insert invitations
+-- Super admin and clinic admin can insert invitations
 CREATE POLICY "admin_insert_invitations" ON invitations
   FOR INSERT
   WITH CHECK (
     EXISTS (
-      SELECT 1 FROM profiles
-      WHERE profiles.id = auth.uid()
-      AND profiles.role IN ('super_admin', 'clinic_owner')
+      SELECT 1 FROM users
+      WHERE users.id = auth.uid()
+      AND users.role IN ('super_admin', 'clinic_admin')
     )
   );
 
@@ -100,24 +100,24 @@ CREATE POLICY "super_admin_view_all_logs" ON user_activity_log
   FOR SELECT
   USING (
     EXISTS (
-      SELECT 1 FROM profiles
-      WHERE profiles.id = auth.uid()
-      AND profiles.role = 'super_admin'
+      SELECT 1 FROM users
+      WHERE users.id = auth.uid()
+      AND users.role = 'super_admin'
     )
   );
 
--- Clinic owner can see logs in their clinic
-CREATE POLICY "clinic_owner_view_own_clinic_logs" ON user_activity_log
+-- Clinic admin can see logs in their clinic
+CREATE POLICY "clinic_admin_view_own_clinic_logs" ON user_activity_log
   FOR SELECT
   USING (
     EXISTS (
-      SELECT 1 FROM profiles AS p1
-      WHERE p1.id = auth.uid()
-      AND p1.role = 'clinic_owner'
+      SELECT 1 FROM users AS u1
+      WHERE u1.id = auth.uid()
+      AND u1.role = 'clinic_admin'
       AND EXISTS (
-        SELECT 1 FROM profiles AS p2
-        WHERE p2.id = user_activity_log.user_id
-        AND p2.clinic_id = p1.clinic_id
+        SELECT 1 FROM users AS u2
+        WHERE u2.id = user_activity_log.user_id
+        AND u2.clinic_id = u1.clinic_id
       )
     )
   );
