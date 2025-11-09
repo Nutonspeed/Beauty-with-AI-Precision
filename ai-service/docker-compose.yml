@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  ai-service:
+    build: .
+    container_name: beauty-ai-service
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./ml_models:/app/ml_models
+      - ./api:/app/api
+    environment:
+      - API_TITLE=Beauty AI Analysis Service
+      - USE_GPU=false
+      - MODELS_DIR=/app/ml_models/weights
+      - ALLOWED_ORIGINS=http://localhost:3000,http://localhost:3001,https://beauty-with-ai-precision.vercel.app
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s

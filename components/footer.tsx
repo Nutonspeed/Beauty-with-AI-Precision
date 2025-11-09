@@ -9,7 +9,7 @@ export function Footer() {
   return (
     <footer className="border-t border-border bg-muted/30">
       <div className="container py-12">
-        <div className="grid gap-8 md:grid-cols-4">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">

@@ -1,13 +1,19 @@
 "use client"
 
 /**
- * Branch Management Demo Page
+ * Branch Management Page
  * 
- * Complete demo showcasing multi-branch management, staff transfers,
- * inventory tracking, and analytics.
+ * Complete multi-branch management system for clinic owners:
+ * - View all branches in clinic
+ * - Manage staff transfers between branches
+ * - Track inventory and analytics per branch
+ * - Configure branch settings
+ * 
+ * Access: clinic_owner, clinic_admin, clinic_staff (view-only)
  */
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -20,13 +26,50 @@ import {
   BarChart3,
   Plus,
   Settings,
+  Loader2,
+  AlertCircle,
 } from "lucide-react"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Header } from "@/components/header"
+import { Footer } from "@/components/footer"
 import BranchDashboard from "@/components/branch-dashboard"
 import StaffTransferModal from "@/components/staff-transfer-modal"
 import { useBranches, useBranchComparison } from "@/hooks/useBranch"
+import { useClinicContext } from "@/hooks/useClinicContext"
 
 export default function BranchManagementPage() {
-  const { branches } = useBranches({ status: "active" })
+  const router = useRouter()
+  const { canManageClinic } = useClinicContext()
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true)
+  
+  // Check authentication and permissions
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch("/api/auth/check-role")
+        if (!response.ok) {
+          router.push("/auth/login")
+          return
+        }
+        const data = await response.json()
+        
+        // Only clinic staff can access this page
+        if (!["clinic_owner", "clinic_admin", "clinic_staff"].includes(data.role)) {
+          router.push("/dashboard")
+          return
+        }
+      } catch (error) {
+        console.error("Auth check failed:", error)
+        router.push("/auth/login")
+      } finally {
+        setIsCheckingAuth(false)
+      }
+    }
+    
+    checkAuth()
+  }, [router])
+  
+  const { branches, loading: branchesLoading, error: branchesError } = useBranches({ status: "active" })
   const [selectedBranchId, setSelectedBranchId] = useState<string>()
   const [transferModalOpen, setTransferModalOpen] = useState(false)
   const [transferMode, setTransferMode] = useState<"request" | "approve" | "view">("request")
@@ -38,58 +81,81 @@ export default function BranchManagementPage() {
     new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
     new Date()
   )
-
-  const selectedBranch = branches.find(b => b.id === selectedBranchId)
+  
+  // Loading state
+  if (isCheckingAuth) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-2 text-primary" />
+          <p className="text-foreground/70">Verifying access...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Branch Management System
-            </h1>
-            <p className="text-gray-600 mt-2">
-              Multi-branch operations, staff transfers, and inventory management
-            </p>
+    <div className="flex min-h-screen flex-col">
+      <Header />
+      
+      <main className="flex-1 container mx-auto py-8 px-4">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                Branch Management System
+              </h1>
+              <p className="text-gray-600 mt-2">
+                Multi-branch operations, staff transfers, and inventory management
+              </p>
+            </div>
+            <Button disabled={!canManageClinic()}>
+              <Plus className="h-4 w-4 mr-2" />
+              Add New Branch
+            </Button>
           </div>
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            Add New Branch
-          </Button>
         </div>
 
+        {/* Loading State */}
+        {branchesLoading && (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <span className="ml-2 text-foreground/70">Loading branches...</span>
+          </div>
+        )}
+        
         {/* Key Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <Building2 className="h-4 w-4" />
-                Total Branches
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">{branches.length}</div>
-              <p className="text-xs text-gray-500">
-                {branches.filter(b => b.status === "active").length} active
-              </p>
-            </CardContent>
-          </Card>
+        {!branchesLoading && !branchesError && (
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium flex items-center gap-2">
+                  <Building2 className="h-4 w-4" />
+                  Total Branches
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold">{branches.length}</div>
+                <p className="text-xs text-gray-500">
+                  {branches.filter(b => b.status === "active").length} active
+                </p>
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <Users className="h-4 w-4" />
-                Total Staff
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">
-                {reports.reduce((sum, r) => sum + r.metrics.totalStaff, 0)}
-              </div>
-              <p className="text-xs text-gray-500">
-                {reports.reduce((sum, r) => sum + r.metrics.activeStaff, 0)} active
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium flex items-center gap-2">
+                  <Users className="h-4 w-4" />
+                  Total Staff
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold">
+                  {reports.reduce((sum, r) => sum + r.metrics.totalStaff, 0)}
+                </div>
+                <p className="text-xs text-gray-500">
+                  {reports.reduce((sum, r) => sum + r.metrics.activeStaff, 0)} active
               </p>
             </CardContent>
           </Card>
@@ -123,10 +189,10 @@ export default function BranchManagementPage() {
               <p className="text-xs text-gray-500">Across all branches</p>
             </CardContent>
           </Card>
-        </div>
-      </div>
+          </div>
+        )}
 
-      {/* Main Content */}
+        {/* Main Content */}
       <Tabs defaultValue="branches" className="space-y-6">
         <TabsList>
           <TabsTrigger value="branches">
@@ -403,13 +469,26 @@ export default function BranchManagementPage() {
         </TabsContent>
       </Tabs>
 
-      {/* Transfer Modal */}
-      <StaffTransferModal
-        open={transferModalOpen}
-        onClose={() => setTransferModalOpen(false)}
-        branchId={selectedBranchId}
-        mode={transferMode}
-      />
+        {/* Transfer Modal */}
+        <StaffTransferModal
+          open={transferModalOpen}
+          onClose={() => setTransferModalOpen(false)}
+          branchId={selectedBranchId}
+          mode={transferMode}
+        />
+        
+        {/* Error Alert */}
+        {branchesError && (
+          <Alert variant="destructive" className="mt-4">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              Failed to load branches. Please try again later.
+            </AlertDescription>
+          </Alert>
+        )}
+      </main>
+      
+      <Footer />
     </div>
   )
 }

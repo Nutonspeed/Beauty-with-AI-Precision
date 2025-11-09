@@ -15,7 +15,7 @@
  * - Mobile-friendly touch controls
  */
 
-import { useState, useRef, useCallback, useEffect } from 'react'
+import { useState, useRef, useCallback, useEffect, type ChangeEvent } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -53,12 +53,24 @@ export function ScanStep({ images, onUpdate, customerName }: ScanStepProps) {
   const [isCameraActive, setIsCameraActive] = useState(false)
   const [isCameraLoading, setIsCameraLoading] = useState(false)
   const [cameraError, setCameraError] = useState<string | null>(null)
+  const [cameraUnavailable, setCameraUnavailable] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const streamRef = useRef<MediaStream | null>(null)
 
   // Start camera
   const startCamera = useCallback(async () => {
+    if (
+      !navigator.mediaDevices?.getUserMedia ||
+      (!window.isSecureContext && window.location.hostname !== 'localhost')
+    ) {
+      setCameraUnavailable(true)
+      setCameraError(
+        'Camera access requires a secure connection (HTTPS) or localhost. Use the upload option instead.'
+      )
+      return
+    }
+
     setIsCameraLoading(true)
     setCameraError(null)
 
@@ -81,6 +93,7 @@ export function ScanStep({ images, onUpdate, customerName }: ScanStepProps) {
     } catch (error) {
       console.error('Camera access error:', error)
       setCameraError('Unable to access camera. Please grant camera permissions.')
+      setCameraUnavailable(true)
     } finally {
       setIsCameraLoading(false)
     }
@@ -155,6 +168,30 @@ export function ScanStep({ images, onUpdate, customerName }: ScanStepProps) {
     }
   }, [stopCamera])
 
+  const handleFileUpload = useCallback(
+    async (event: ChangeEvent<HTMLInputElement>, angle: AngleType) => {
+      const file = event.target.files?.[0]
+      if (!file) return
+
+      try {
+        const reader = new FileReader()
+        reader.onload = () => {
+          if (typeof reader.result === 'string') {
+            const updatedImages = {
+              ...images,
+              [angle]: reader.result,
+            }
+            onUpdate(updatedImages)
+          }
+        }
+        reader.readAsDataURL(file)
+      } finally {
+        event.target.value = ''
+      }
+    },
+    [images, onUpdate]
+  )
+
   // Check if all photos captured
   const allPhotosCaptured = images.front && images.left && images.right
 
@@ -212,7 +249,7 @@ export function ScanStep({ images, onUpdate, customerName }: ScanStepProps) {
               <Button
                 size="lg"
                 onClick={startCamera}
-                disabled={isCameraLoading}
+                disabled={isCameraLoading || cameraUnavailable}
                 className="gap-2"
               >
                 {isCameraLoading ? (
@@ -234,6 +271,25 @@ export function ScanStep({ images, onUpdate, customerName }: ScanStepProps) {
                     {cameraError}
                   </AlertDescription>
                 </Alert>
+              )}
+              {cameraUnavailable && (
+                <Button asChild variant="secondary" className="gap-2">
+                  <label className="cursor-pointer">
+                    <Camera className="h-5 w-5" />
+                    Upload from Camera Roll
+                    <input
+                      ref={(node) => {
+                        if (node) {
+                          node.setAttribute('capture', 'user')
+                        }
+                      }}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(event) => handleFileUpload(event, currentAngle)}
+                    />
+                  </label>
+                </Button>
               )}
             </div>
           )}

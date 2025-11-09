@@ -1,0 +1,23 @@
+# FastAPI Framework (updated for Python 3.13 compatibility)
+fastapi>=0.115.0
+uvicorn[standard]>=0.34.0
+python-multipart>=0.0.20
+pydantic>=2.10.0
+pydantic-settings>=2.7.0
+
+# ML & Computer Vision (updated for Python 3.13)
+torch>=2.6.0
+torchvision>=0.21.0
+opencv-python>=4.10.0
+numpy>=1.26.0
+scikit-image>=0.24.0
+scipy>=1.13.0
+
+# Image Processing
+Pillow>=10.4.0
+albumentations>=1.4.0
+
+# Utilities
+python-jose[cryptography]==3.3.0
+python-dotenv==1.0.0
+aiofiles==23.2.1

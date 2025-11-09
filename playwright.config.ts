@@ -36,7 +36,7 @@ export default defineConfig({
   ],
   webServer: {
     // Use development server for testing to avoid production build issues
-    command: 'npm run dev',
+    command: 'pnpm dev',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
     timeout: 180000,

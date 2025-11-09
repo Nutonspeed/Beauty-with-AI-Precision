@@ -6,7 +6,7 @@ import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { ArrowRight, BarChart, Bot, BrainCircuit, Camera, Users } from "lucide-react"
+import { ArrowRight, Bot, BrainCircuit, Camera } from "lucide-react"
 
 export default function LandingPage() {
   return (
@@ -28,7 +28,7 @@ export default function LandingPage() {
                 <p className="max-w-[600px] text-gray-500 md:text-xl dark:text-gray-400">
                   Empower your sales team with our advanced AI skin analysis, AR visualization, and automated sales tools. Drive engagement and boost conversions.
                 </p>
-                <div className="flex flex-col gap-2 min-[400px]:flex-row">
+                <div className="flex flex-col gap-2 sm:flex-row">
                   <Link
                     href="/demo"
                     className="inline-flex h-12 items-center justify-center rounded-md bg-blue-600 px-8 text-sm font-medium text-gray-50 shadow transition-colors hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-950 disabled:pointer-events-none disabled:opacity-50"

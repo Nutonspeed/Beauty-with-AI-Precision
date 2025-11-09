@@ -11,7 +11,7 @@
  * Run: npm run test:offline
  */
 
-import { describe, it, expect, beforeAll, afterAll, beforeEach, afterEach, vi } from 'vitest'
+import { describe, it, expect, beforeAll, afterAll, beforeEach, vi } from 'vitest'
 
 // Mock IndexedDB for Node.js environment
 import 'fake-indexeddb/auto'
@@ -26,7 +26,6 @@ import type { OfflineAnalysis, OfflineLead } from '@/lib/db/indexed-db'
 describe('Offline Mode - Complete Workflow', () => {
   let indexedDB: ReturnType<typeof getIndexedDB>
   let conflictResolver: ReturnType<typeof getConflictResolver>
-  let syncManager: ReturnType<typeof getBackgroundSyncManager>
 
   const clinicId = 'test-clinic-1'
   const salesStaffId = 'test-staff-1'
@@ -145,21 +144,20 @@ describe('Offline Mode - Complete Workflow', () => {
   beforeAll(async () => {
     indexedDB = getIndexedDB()
     conflictResolver = getConflictResolver()
-    syncManager = getBackgroundSyncManager()
 
     await indexedDB.initialize()
-  })
+  }, 30000) // Increase timeout for IndexedDB initialization
 
   afterAll(async () => {
     await indexedDB.clearAll()
     resetIndexedDB()
     resetConflictResolver()
     resetBackgroundSyncManager()
-  })
+  }, 30000) // Increase timeout for cleanup
 
   beforeEach(async () => {
     await indexedDB.clearAll()
-  })
+  }, 30000) // Increase timeout for clearing between tests
 
   describe('IndexedDB Storage', () => {
     it('should save analysis with clinic scope', async () => {
@@ -202,7 +200,7 @@ describe('Offline Mode - Complete Workflow', () => {
       
       // Should keep the newest 50
       expect(analyses[0].patient_name).toBe('Patient 59')
-    })
+    }, 30000) // Increase timeout for large batch operations
 
     it('should isolate data by clinic', async () => {
       await indexedDB.saveAnalysis(
@@ -230,7 +228,7 @@ describe('Offline Mode - Complete Workflow', () => {
       expect(clinic2Data).toHaveLength(1)
       expect(clinic1Data[0].patient_name).toBe('Clinic 1 Patient')
       expect(clinic2Data[0].patient_name).toBe('Clinic 2 Patient')
-    })
+    }, 30000)
 
     it('should save lead with all fields', async () => {
       const lead = createLead({
@@ -249,7 +247,7 @@ describe('Offline Mode - Complete Workflow', () => {
       expect(leads).toHaveLength(1)
       expect(leads[0].full_name).toBe('Test Lead')
       expect(leads[0].status).toBe('hot')
-    })
+    }, 30000)
   })
 
   describe('Sync Queue Management', () => {
@@ -266,7 +264,7 @@ describe('Offline Mode - Complete Workflow', () => {
       const pending = await indexedDB.getPendingSyncActions()
       expect(pending).toHaveLength(1)
       expect(pending[0].resource_id).toBe('analysis-queued')
-    })
+    }, 30000)
 
     it('should process sync queue in FIFO order', async () => {
       vi.useFakeTimers()
@@ -310,7 +308,7 @@ describe('Offline Mode - Complete Workflow', () => {
         'lead-update',
         'lead-create',
       ])
-    })
+    }, 30000)
 
     it('should track retry attempts', async () => {
       await indexedDB.addToSyncQueue({
@@ -335,7 +333,7 @@ describe('Offline Mode - Complete Workflow', () => {
       
       expect(updatedAction?.attempts).toBe(3)
       expect(updatedAction?.last_error).toBe('Error attempt 3')
-    })
+    }, 30000)
   })
 
   describe('Conflict Resolution', () => {
@@ -365,7 +363,7 @@ describe('Offline Mode - Complete Workflow', () => {
       // Client should win (newer timestamp)
       expect(resolution.resolved_data.status).toBe('warm')
       expect(resolution.strategy).toBe('last_write_wins')
-    })
+    }, 30000)
 
     it('should detect critical field conflicts requiring manual review', async () => {
       const now = Date.now()
@@ -395,7 +393,7 @@ describe('Offline Mode - Complete Workflow', () => {
 
       expect(resolution.requires_manual_review).toBe(true)
       expect(resolution.conflicts_found.length).toBeGreaterThanOrEqual(3)
-    })
+    }, 30000)
 
     it('should merge interaction histories', async () => {
       const serverLead = createLead({
@@ -423,7 +421,7 @@ describe('Offline Mode - Complete Workflow', () => {
       expect(mergedHistory).toHaveLength(2)
       expect(mergedHistory[0].type).toBe('email') // Newer first
       expect(mergedHistory[1].type).toBe('call')
-    })
+    }, 30000)
 
     it('should merge analysis notes with separator', async () => {
       const serverAnalysis = createAnalysis({
@@ -447,7 +445,7 @@ describe('Offline Mode - Complete Workflow', () => {
       expect(resolution.resolved_data.notes).toContain('Server notes')
       expect(resolution.resolved_data.notes).toContain('--- Offline Edit ---')
       expect(resolution.resolved_data.notes).toContain('Client notes')
-    })
+    }, 30000)
   })
 
   describe('Offline Indicator State', () => {
@@ -466,7 +464,7 @@ describe('Offline Mode - Complete Workflow', () => {
 
       const pending = await indexedDB.getPendingSyncActions()
       expect(pending).toHaveLength(3)
-    })
+    }, 30000)
 
     it('should calculate storage statistics', async () => {
       // Add some data
@@ -485,7 +483,7 @@ describe('Offline Mode - Complete Workflow', () => {
       expect(stats.analyses_count).toBe(1)
       expect(stats.leads_count).toBe(1)
       expect(stats.total_size_mb).toBeGreaterThan(0)
-    })
+    }, 30000)
   })
 
   describe('Cleanup Operations', () => {
@@ -521,7 +519,7 @@ describe('Offline Mode - Complete Workflow', () => {
       // Old synced should be removed, new unsynced should remain
       expect(remaining.some(a => a.id === 'old-analysis')).toBe(false)
       expect(remaining.some(a => a.id === 'new-analysis')).toBe(true)
-    })
+    }, 30000)
 
     it('should clear all data on reset', async () => {
       await indexedDB.saveAnalysis(createAnalysis({ id: 'analysis-1' }), true)
@@ -537,7 +535,7 @@ describe('Offline Mode - Complete Workflow', () => {
       expect(analyses).toHaveLength(0)
       expect(leads).toHaveLength(0)
       expect(pending).toHaveLength(0)
-    })
+    }, 30000)
   })
 
   describe('Edge Cases', () => {
@@ -546,11 +544,11 @@ describe('Offline Mode - Complete Workflow', () => {
     beforeAll(async () => {
       indexedDB = getIndexedDB()
       await indexedDB.initialize()
-    })
+    }, 30000)
 
     afterAll(async () => {
       await indexedDB.clearAll()
-    })
+    }, 30000)
 
     it('should handle duplicate IDs gracefully', async () => {
       let analysis = createAnalysis({

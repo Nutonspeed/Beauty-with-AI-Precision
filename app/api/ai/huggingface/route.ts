@@ -8,7 +8,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 // Hugging Face API configuration
 const HUGGINGFACE_TOKEN = process.env.HUGGINGFACE_TOKEN
-const BASE_URL = 'https://api-inference.huggingface.co/models'
+const BASE_URL = 'https://router.huggingface.co/hf-inference/models'
 
 // Supported models
 const MODELS = {

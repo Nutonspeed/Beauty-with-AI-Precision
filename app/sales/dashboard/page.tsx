@@ -176,7 +176,6 @@ export default function SalesDashboardPage() {
   const [selectedLead, setSelectedLead] = useState<(typeof mockHotLeads)[0] | null>(null)
   const [selectedLeadForScore, setSelectedLeadForScore] = useState<(typeof mockHotLeads)[0] & { priorityScore: PriorityScore } | null>(null)
   const [messages, setMessages] = useState<typeof initialMessages>([])
-  const [isLoadingMessages, setIsLoadingMessages] = useState(false)
   const [lastSortTime, setLastSortTime] = useState(new Date())
 
   // Fetch chat messages when chat opens
@@ -185,7 +184,6 @@ export default function SalesDashboardPage() {
       if (!chatOpen || !selectedCustomer) return
       
       try {
-        setIsLoadingMessages(true)
         const response = await fetch(`/api/sales/chat-messages?customer_id=${selectedCustomer.id}`)
         if (!response.ok) throw new Error('Failed to fetch messages')
         const data = await response.json()
@@ -200,8 +198,6 @@ export default function SalesDashboardPage() {
         console.error('[SalesDashboard] Error fetching messages:', error)
         // Fallback to empty messages
         setMessages([])
-      } finally {
-        setIsLoadingMessages(false)
       }
     }
 
@@ -219,9 +215,12 @@ export default function SalesDashboardPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [filterPriority, setFilterPriority] = useState<string>("all")
 
-  // Infinite scroll state
-  const [displayCount, setDisplayCount] = useState(5)
-  const ITEMS_PER_PAGE = 5
+  // Auto-refresh state
+  const [autoRefreshEnabled, setAutoRefreshEnabled] = useState(true)
+
+  // Pagination state
+  const ITEMS_PER_PAGE = 10
+  const [displayCount, setDisplayCount] = useState(ITEMS_PER_PAGE)
 
   // Debounced search query (500ms delay)
   const debouncedSearchQuery = useDebounce(searchQuery, 500)
@@ -251,9 +250,11 @@ export default function SalesDashboardPage() {
     }
 
     fetchHotLeads()
-    // Refresh every 2 minutes
-    const interval = setInterval(fetchHotLeads, 120000)
-    return () => clearInterval(interval)
+    // Refresh every 5 minutes if auto-refresh is enabled
+    const interval = autoRefreshEnabled ? setInterval(fetchHotLeads, 300000) : null
+    return () => {
+      if (interval) clearInterval(interval)
+    }
   }, [])
 
   // Auto-sort and filter leads using prioritization algorithm
@@ -532,6 +533,15 @@ export default function SalesDashboardPage() {
                   <Button variant="outline" size="sm">
                     <Mail className="h-4 w-4 mr-2" />
                     Email Templates
+                  </Button>
+                  <Button 
+                    variant={autoRefreshEnabled ? "default" : "outline"} 
+                    size="sm"
+                    onClick={() => setAutoRefreshEnabled(!autoRefreshEnabled)}
+                    title={autoRefreshEnabled ? "Disable auto-refresh" : "Enable auto-refresh"}
+                  >
+                    <RefreshCw className={`h-4 w-4 mr-2 ${autoRefreshEnabled ? 'animate-spin' : ''}`} />
+                    Auto {autoRefreshEnabled ? 'On' : 'Off'}
                   </Button>
                 </div>
               </div>
@@ -856,7 +866,6 @@ export default function SalesDashboardPage() {
             </div>
 
             {/* AI Tools - Hidden on Mobile, Grid on Desktop */}
-            {/* TODO: Implement AI Tools components - AIProposalGenerator, LeadScoring, TreatmentComparison */}
             {/* <div className="hidden lg:grid grid-cols-3 gap-6">
             <div>
               <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">

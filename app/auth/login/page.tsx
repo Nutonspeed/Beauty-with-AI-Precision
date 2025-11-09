@@ -25,32 +25,34 @@ export default function LoginPage() {
   // Auto-redirect if already logged in
   useEffect(() => {
     if (user) {
-      console.log('[LoginPage] Already logged in, redirecting based on role:', user.role)
+      console.log('[LoginPage] User detected, redirecting based on role:', user.role)
       
       // Role-based redirect
+      let redirectPath = '/dashboard'
+      
       switch (user.role) {
         case 'super_admin':
-          window.location.href = '/super-admin'
+          redirectPath = '/super-admin'
           break
-        case 'clinic_owner':
-          window.location.href = '/clinic'
-          break
+        case 'clinic_admin': // Updated from clinic_owner
         case 'clinic_staff':
-          window.location.href = '/clinic'
+          redirectPath = '/clinic/dashboard'
           break
         case 'sales_staff':
-          window.location.href = '/sales'
+          redirectPath = '/sales/dashboard'
           break
         case 'customer':
-        case 'customer_free':
-        case 'customer_premium':
-        case 'customer_clinical':
+        case 'free_user':
+        case 'premium_customer':
         default:
-          window.location.href = '/dashboard'
+          redirectPath = '/dashboard'
           break
       }
+      
+      console.log('[LoginPage] Redirecting to:', redirectPath)
+      router.push(redirectPath)
     }
-  }, [user])
+  }, [user, router])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -96,8 +98,9 @@ export default function LoginPage() {
 
       console.log('[LoginPage] ✅ Login successful! Waiting for auth context...')
       
-      // Don't redirect here - let useEffect handle it when user context loads
-      // The useEffect will detect user change and redirect based on role
+      // Keep loading = true while waiting for auth context to update
+      // useEffect will detect user change and redirect based on role
+      // Don't setLoading(false) here - let redirect happen with spinner visible
     } catch (err) {
       setError('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง')
       console.error('[LoginPage] ❌ Unexpected error:', err)

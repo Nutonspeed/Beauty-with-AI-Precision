@@ -54,8 +54,10 @@ export function Header() {
       case "clinic_owner":
         return [
           { href: "/clinic/dashboard", label: t.nav.dashboard },
+          { href: "/branches", label: "🏢 Branches" },
           { href: "/clinic/analytics", label: t.nav.analytics },
           { href: "/clinic/customers", label: t.nav.customers },
+          { href: "/ai-chat", label: "💬 AI Advisor" },
           { href: "/clinic/settings/automation", label: "⚙️ Automation" },
         ]
       case "clinic_staff":
@@ -243,7 +245,7 @@ export function Header() {
                 <Menu className="h-4 w-4 sm:h-5 sm:w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+            <SheetContent side="right" className="w-[300px] sm:w-[400px] bg-background">
               <VisuallyHidden>
                 <SheetTitle>Navigation Menu</SheetTitle>
               </VisuallyHidden>
@@ -252,7 +254,7 @@ export function Header() {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary"
+                    className="text-base font-medium text-foreground hover:text-primary transition-colors py-2 px-3 rounded-md hover:bg-accent"
                   >
                     {item.label}
                   </Link>
@@ -260,7 +262,7 @@ export function Header() {
                 {!user && (
                   <>
                     <div className="my-4 border-t" />
-                    <Button variant="outline" asChild className="w-full bg-transparent">
+                    <Button variant="outline" asChild className="w-full">
                       <Link href="/auth/login">{t.common.login}</Link>
                     </Button>
                     <Button asChild className="w-full">

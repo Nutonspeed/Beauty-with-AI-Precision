@@ -42,7 +42,7 @@ export interface HuggingFaceAnalysisResult {
 
 export class HuggingFaceAnalyzer {
   private apiToken: string;
-  private baseUrl = 'https://api-inference.huggingface.co/models';
+  private baseUrl = 'https://router.huggingface.co/hf-inference/models';
   private _initialized = false;
   private useProxy: boolean;
 

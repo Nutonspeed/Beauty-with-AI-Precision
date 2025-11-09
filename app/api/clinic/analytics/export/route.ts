@@ -1,10 +1,16 @@
 import { createServerClient } from "@/lib/supabase/server"
 import { NextRequest, NextResponse } from "next/server"
-import * as XLSX from "xlsx"
+// import * as XLSX from "xlsx" // TODO: Install xlsx package
 
 // GET /api/clinic/analytics/export - Export analytics to Excel
 export async function GET(request: NextRequest) {
-  try {
+  // TODO: Temporarily disabled until xlsx package is properly installed
+  return NextResponse.json(
+    { error: "Export feature temporarily unavailable. Please contact support." },
+    { status: 503 }
+  )
+  
+  /* try {
     const supabase = await createServerClient()
 
     // Check authentication
@@ -169,5 +175,5 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("Error generating Excel export:", error)
     return NextResponse.json({ error: "Failed to generate export" }, { status: 500 })
-  }
+  } */
 }

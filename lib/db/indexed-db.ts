@@ -297,10 +297,20 @@ export class IndexedDBManager {
           return a.synced && age > 24 * 60 * 60 * 1000; // 24 hours
         });
 
-        Promise.all(toDelete.map((a) => store.delete(a.id))).then(() => {
-          console.log(`[IndexedDB] Cleaned up ${toDelete.length} old analyses`);
-          resolve();
+        const deletionPromises = toDelete.map((a) => {
+          return new Promise<void>((res, rej) => {
+            const deleteRequest = store.delete(a.id);
+            deleteRequest.onsuccess = () => res();
+            deleteRequest.onerror = () => rej(deleteRequest.error);
+          });
         });
+
+        Promise.all(deletionPromises)
+          .then(() => {
+            console.log(`[IndexedDB] Cleaned up ${toDelete.length} old analyses`);
+            resolve();
+          })
+          .catch(reject);
       };
 
       request.onerror = () => reject(request.error);
@@ -618,28 +628,24 @@ export class IndexedDBManager {
   async clearAll(): Promise<void> {
     const db = await this.getDB();
 
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction(
-        ['analyses', 'leads', 'sync-queue', 'clinic-cache'],
-        'readwrite'
-      );
+    const stores = ['analyses', 'leads', 'sync-queue', 'clinic-cache'];
 
-      const stores = ['analyses', 'leads', 'sync-queue', 'clinic-cache'];
-      const promises = stores.map((storeName) => {
-        return new Promise<void>((res, rej) => {
-          const clearRequest = transaction.objectStore(storeName).clear();
-          clearRequest.onsuccess = () => res();
-          clearRequest.onerror = () => rej(clearRequest.error);
-        });
+    for (const storeName of stores) {
+      console.log(`[IndexedDB] Clearing store ${storeName}`);
+      await new Promise<void>((resolveStore, rejectStore) => {
+        const transaction = db.transaction([storeName], 'readwrite');
+        const store = transaction.objectStore(storeName);
+        const clearRequest = store.clear();
+
+        transaction.onerror = () => rejectStore(transaction.error ?? undefined);
+        transaction.onabort = () => rejectStore(transaction.error ?? undefined);
+
+        clearRequest.onsuccess = () => resolveStore();
+        clearRequest.onerror = () => rejectStore(clearRequest.error ?? undefined);
       });
+    }
 
-      Promise.all(promises)
-        .then(() => {
-          console.log('[IndexedDB] All data cleared');
-          resolve();
-        })
-        .catch(reject);
-    });
+    console.log('[IndexedDB] All data cleared');
   }
 
   // ============================================================================

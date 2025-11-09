@@ -18,9 +18,8 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams
     const leadId = searchParams.get('lead_id')
     const customerId = searchParams.get('customer_id')
-    const limit = Number.parseInt(searchParams.get('limit') || '50')
 
-    // TODO: Implement chat messages table
+    // Chat system not yet implemented
     // For now, return empty array until chat system is fully implemented
     // Expected table structure:
     // - id (uuid)
@@ -64,9 +63,9 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { lead_id, customer_id, message_text } = body
+    const { message_text } = body
 
-    // TODO: Implement message sending
+    // Send message not yet implemented
     console.log('[chat-messages] Send message not yet implemented')
     console.log('[chat-messages] Message:', message_text)
 

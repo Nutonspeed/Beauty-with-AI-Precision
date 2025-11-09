@@ -59,15 +59,15 @@ export default function SalesDashboard() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Sales Dashboard</h1>
             <p className="text-gray-600 mt-1">Track your sales performance</p>
           </div>
-          <Link href="/sales/quick-scan">
+          <Link href="/sales/quick-scan" className="w-full sm:w-auto">
             <Button 
               size="lg"
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
             >
               <Target className="w-5 h-5 mr-2" />
               Quick Scan
@@ -235,37 +235,41 @@ export default function SalesDashboard() {
 
         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 hover:shadow-lg transition-shadow cursor-pointer">
-            <CardContent className="pt-6">
-              <Link href="/sales/quick-scan">
+          <Link href="/sales/quick-scan" className="block">
+            <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 hover:shadow-lg transition-shadow cursor-pointer h-full">
+              <CardContent className="pt-6">
                 <div className="text-center">
                   <Target className="w-12 h-12 text-blue-600 mx-auto mb-3" />
                   <h3 className="font-bold text-lg text-gray-900">Quick Scan</h3>
                   <p className="text-sm text-gray-600 mt-1">Start new customer scan</p>
                 </div>
-              </Link>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </Link>
 
-          <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200 hover:shadow-lg transition-shadow cursor-pointer">
-            <CardContent className="pt-6">
-              <div className="text-center">
-                <Users className="w-12 h-12 text-green-600 mx-auto mb-3" />
-                <h3 className="font-bold text-lg text-gray-900">Customers</h3>
-                <p className="text-sm text-gray-600 mt-1">View customer database</p>
-              </div>
-            </CardContent>
-          </Card>
+          <Link href="/customer" className="block">
+            <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200 hover:shadow-lg transition-shadow cursor-pointer h-full">
+              <CardContent className="pt-6">
+                <div className="text-center">
+                  <Users className="w-12 h-12 text-green-600 mx-auto mb-3" />
+                  <h3 className="font-bold text-lg text-gray-900">Customers</h3>
+                  <p className="text-sm text-gray-600 mt-1">View customer database</p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
 
-          <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 hover:shadow-lg transition-shadow cursor-pointer">
-            <CardContent className="pt-6">
-              <div className="text-center">
-                <TrendingUp className="w-12 h-12 text-purple-600 mx-auto mb-3" />
-                <h3 className="font-bold text-lg text-gray-900">Reports</h3>
-                <p className="text-sm text-gray-600 mt-1">Detailed analytics</p>
-              </div>
-            </CardContent>
-          </Card>
+          <Link href="/analytics" className="block">
+            <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 hover:shadow-lg transition-shadow cursor-pointer h-full">
+              <CardContent className="pt-6">
+                <div className="text-center">
+                  <TrendingUp className="w-12 h-12 text-purple-600 mx-auto mb-3" />
+                  <h3 className="font-bold text-lg text-gray-900">Reports</h3>
+                  <p className="text-sm text-gray-600 mt-1">Detailed analytics</p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
       </div>
     </div>

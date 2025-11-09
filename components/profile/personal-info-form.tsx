@@ -50,19 +50,37 @@ export function PersonalInfoForm({ user, profile }: PersonalInfoFormProps) {
         return
       }
 
-      // Update profile
-      const { error: updateError } = await supabase
-        .from("users")
-        .update({
-          full_name: fullName,
-          phone: phone || null,
-          address: address || null,
-          bio: bio || null,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", user.id)
+      // Update profile using internal API (service role bypass)
+      const {
+        data: { session },
+      } = await supabase.auth.getSession()
 
-      if (updateError) throw updateError
+      if (!session?.access_token) {
+        throw new Error("ไม่พบเซสชันสำหรับการอัปเดตข้อมูล")
+      }
+
+      const response = await fetch("/api/user-profile", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({
+          userId: user.id,
+          updates: {
+            full_name: fullName,
+            phone: phone || null,
+            updated_at: new Date().toISOString(),
+          },
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || "Failed to update profile")
+      }
+
+      await response.json()
 
       setSuccess(true)
       toast.success("อัปเดตข้อมูลสำเร็จ!")
@@ -72,7 +90,7 @@ export function PersonalInfoForm({ user, profile }: PersonalInfoFormProps) {
         router.refresh()
       }, 1000)
     } catch (err: any) {
-      setError(err.message || "เกิดข้อผิดพลาดในการอัปเดตข้อมูล")
+  setError(err.message || "เกิดข้อผิดพลาดในการอัปเดตข้อมูล")
       toast.error("เกิดข้อผิดพลาด")
     } finally {
       setIsLoading(false)

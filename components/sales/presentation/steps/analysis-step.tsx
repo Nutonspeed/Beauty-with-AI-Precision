@@ -32,15 +32,15 @@ import { cn } from '@/lib/utils'
 import type { HybridAnalysisResult } from '@/lib/ai/hybrid-analyzer'
 
 interface AnalysisStepProps {
-  images: {
-    front?: string
-    left?: string
-    right?: string
+  readonly images: {
+    readonly front?: string
+    readonly left?: string
+    readonly right?: string
   }
-  analysisResults: HybridAnalysisResult | null
-  onAnalysisComplete: (results: HybridAnalysisResult) => void
-  customerName: string
-  isOnline: boolean
+  readonly analysisResults: HybridAnalysisResult | null
+  readonly onAnalysisComplete: (results: HybridAnalysisResult) => void
+  readonly customerName: string
+  readonly isOnline: boolean
 }
 
 // Helper to convert base64 to ImageData
@@ -196,9 +196,13 @@ export function AnalysisStep({
   // Calculate skin age (simplified)
   const skinAge = Math.round(overallScore * 0.5 + 20)
   // Estimate actual age from skin condition (35 as baseline for beauty clinic customers)
-  const estimatedActualAge = Math.max(25, Math.min(60, 
-    overallScore > 70 ? 35 : overallScore > 50 ? 32 : 38
-  ))
+  let estimatedAge = 38
+  if (overallScore > 70) {
+    estimatedAge = 35
+  } else if (overallScore > 50) {
+    estimatedAge = 32
+  }
+  const estimatedActualAge = Math.max(25, Math.min(60, estimatedAge))
   const ageDifference = skinAge - estimatedActualAge
 
   return (

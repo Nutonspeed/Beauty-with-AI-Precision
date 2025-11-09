@@ -181,6 +181,7 @@
     "@vitest/ui": "^4.0.7",
     "autoprefixer": "^10.4.21",
     "dotenv": "latest",
+    "fake-indexeddb": "^6.2.5",
     "happy-dom": "latest",
     "jsdom": "^27.1.0",
     "playwright": "^1.56.1",

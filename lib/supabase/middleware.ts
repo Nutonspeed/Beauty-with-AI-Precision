@@ -1,12 +1,16 @@
 import { createServerClient } from "@supabase/ssr"
 import { NextResponse, type NextRequest } from "next/server"
 
-const PUBLIC_ROUTES = ["/", "/auth/login", "/auth/sign-up", "/auth/error", "/demo", "/contact", "/api/analyze"]
+const PUBLIC_ROUTES = new Set(["/", "/auth/login", "/auth/sign-up", "/auth/error", "/demo", "/contact", "/api/analyze", "/analysis"])
 
 const PROTECTED_ROUTE_PATTERNS = [
   "/clinic",
+  "/branches",
   "/sales",
   "/admin",
+  "/super-admin",
+  "/users",
+  "/settings",
   "/dashboard",
   "/profile",
   "/booking",
@@ -15,7 +19,7 @@ const PROTECTED_ROUTE_PATTERNS = [
 ]
 
 function isPublicRoute(pathname: string): boolean {
-  if (PUBLIC_ROUTES.includes(pathname)) return true
+  if (PUBLIC_ROUTES.has(pathname)) return true
   if (pathname.startsWith("/api/")) return true
   return false
 }
@@ -92,19 +96,40 @@ export async function updateSession(request: NextRequest) {
       const { data: userProfile } = await supabase.from("users").select("role, clinic_id").eq("id", user.id).single()
 
       if (userProfile) {
-        // Clinic routes require clinic_owner role
-        if (pathname.startsWith("/clinic") && userProfile.role !== "clinic_owner") {
-          return NextResponse.redirect(new URL("/", request.url))
+        // Clinic and branches routes require clinic_owner or clinic_staff
+        if ((pathname.startsWith("/clinic") || pathname.startsWith("/branches")) && 
+            userProfile.role !== "clinic_owner" && 
+            userProfile.role !== "clinic_staff" &&
+            userProfile.role !== "clinic_admin") {
+          const url = request.nextUrl.clone()
+          url.pathname = "/dashboard"
+          return NextResponse.redirect(url)
         }
 
-        // Sales routes require sales_staff role
+        // Sales routes require sales_staff
         if (pathname.startsWith("/sales") && userProfile.role !== "sales_staff") {
-          return NextResponse.redirect(new URL("/", request.url))
+          const url = request.nextUrl.clone()
+          url.pathname = "/dashboard"
+          return NextResponse.redirect(url)
         }
 
-        // Admin routes require clinic_owner role
-        if (pathname.startsWith("/admin") && userProfile.role !== "clinic_owner") {
-          return NextResponse.redirect(new URL("/", request.url))
+        // Super Admin exclusive routes (super_admin only)
+        if ((pathname.startsWith("/super-admin") || 
+             pathname.startsWith("/users") || 
+             pathname.startsWith("/settings")) && 
+            userProfile.role !== "super_admin") {
+          const url = request.nextUrl.clone()
+          url.pathname = "/dashboard"
+          return NextResponse.redirect(url)
+        }
+
+        // Admin routes require clinic_owner or super_admin (shared admin tools)
+        if (pathname.startsWith("/admin") && 
+            userProfile.role !== "clinic_owner" && 
+            userProfile.role !== "super_admin") {
+          const url = request.nextUrl.clone()
+          url.pathname = "/dashboard"
+          return NextResponse.redirect(url)
         }
       }
     }

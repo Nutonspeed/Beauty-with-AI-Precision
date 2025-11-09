@@ -3,13 +3,14 @@ import { AnalysisTutorialWrapper } from "@/components/tutorial/analysis-tutorial
 import { Footer } from "@/components/footer"
 import { Header } from "@/components/header"
 import { LightingQualityChecker } from "@/components/lighting-quality-checker"
+import { AnalysisInteractionPanel } from "@/components/analysis-interaction-panel"
 import { SkinAnalysisUpload } from "@/components/skin-analysis-upload"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { createServerClient } from "@/lib/supabase/server"
 import { Info, Lightbulb } from "lucide-react"
 import Link from "next/link"
 
-async function AnalysisContent({ locale }: { locale: string }) {
+async function AnalysisContent({ locale }: Readonly<{ locale: string }>) {
   // Check if user is logged in
   const supabase = await createServerClient()
   
@@ -65,7 +66,7 @@ async function AnalysisContent({ locale }: { locale: string }) {
               </Alert>
             )}
 
-            <div className="mb-6 grid gap-4 md:grid-cols-2">
+            <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
               <div className="rounded-lg border-2 border-primary/20 bg-primary/5 p-4" data-tour="photo-tips">
                 <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold">
                   <Lightbulb className="h-4 w-4 text-primary" />
@@ -94,7 +95,7 @@ async function AnalysisContent({ locale }: { locale: string }) {
               <LightingQualityChecker />
             </div>
 
-            <SkinAnalysisUpload isLoggedIn={isLoggedIn} />
+            <AnalysisInteractionPanel isLoggedIn={isLoggedIn} />
 
             <div className="mt-12 rounded-lg border border-border bg-muted/30 p-6">
               <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold">
@@ -141,9 +142,9 @@ async function AnalysisContent({ locale }: { locale: string }) {
 
 export default async function AnalysisPage({
   params,
-}: {
+}: Readonly<{
   params: Promise<{ locale: string }>
-}) {
+}>) {
   const { locale } = await params
   
   return (

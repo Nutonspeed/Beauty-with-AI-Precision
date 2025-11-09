@@ -81,6 +81,7 @@ export default function LeadDetailPage() {
   const router = useRouter()
   const params = useParams()
   const leadId = params.id as string
+  const locale = (params.locale as string) || 'en'
 
   const [lead, setLead] = useState<Lead | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -540,7 +541,7 @@ export default function LeadDetailPage() {
                       variant="link"
                       size="sm"
                       className="p-0 h-auto"
-                      onClick={() => router.push(`/analysis/detail/${analysisId}`)}
+                      onClick={() => router.push(`/${locale}/analysis/detail/${analysisId}`)}
                     >
                       View Analysis <ExternalLink className="ml-1 h-3 w-3" />
                     </Button>
@@ -647,6 +648,7 @@ export default function LeadDetailPage() {
                         checked={field.value}
                         onChange={field.onChange}
                         className="mt-1"
+                        aria-label="Create user account"
                       />
                     </FormControl>
                     <div className="space-y-1 leading-none">

@@ -12,12 +12,26 @@ import { usePathname, useRouter } from "next/navigation"
 import { resizeImage, compressImage } from "@/lib/image-optimizer"
 import { CameraPositioningGuide } from "@/components/camera-positioning-guide"
 import { validateImageQuality, getQualityFeedback } from "@/lib/image-quality-validator"
+import type { AnalysisMode } from "@/types"
+
+const MODE_PROGRESS: Record<AnalysisMode, string> = {
+  local: "Running local computer vision pipeline...",
+  hf: "Running Hugging Face enhanced analysis...",
+  auto: "Selecting fastest analysis pipeline...",
+}
+
+const MODE_LABEL: Record<AnalysisMode, string> = {
+  local: "Start Local Analysis / เริ่มวิเคราะห์แบบออฟไลน์",
+  hf: "Start AI Analysis / เริ่มวิเคราะห์ด้วย AI",
+  auto: "Start Analysis / เริ่มการวิเคราะห์",
+}
 
 interface SkinAnalysisUploadProps {
   isLoggedIn?: boolean
+  analysisMode?: AnalysisMode
 }
 
-export function SkinAnalysisUpload({ isLoggedIn = false }: SkinAnalysisUploadProps) {
+export function SkinAnalysisUpload({ isLoggedIn = false, analysisMode = "auto" }: Readonly<SkinAnalysisUploadProps>) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
@@ -31,6 +45,12 @@ export function SkinAnalysisUpload({ isLoggedIn = false }: SkinAnalysisUploadPro
   const streamRef = useRef<MediaStream | null>(null)
   const router = useRouter()
   const pathname = usePathname()
+  const locale = (() => {
+    const segments = pathname.split("/").filter(Boolean)
+    const candidate = segments[0]?.toLowerCase()
+    const supportedLocales = new Set(["th", "en"])
+    return candidate && supportedLocales.has(candidate) ? candidate : "th"
+  })()
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -160,7 +180,7 @@ export function SkinAnalysisUpload({ isLoggedIn = false }: SkinAnalysisUploadPro
       })
 
       // Use new Hybrid AI API (Phase 1: MediaPipe + TensorFlow + HuggingFace + 6 CV algorithms)
-      setAnalysisProgress("Running Phase 1 Hybrid AI (3 models + 6 CV algorithms)...")
+      setAnalysisProgress(MODE_PROGRESS[analysisMode])
       console.log("[HYBRID] 🔬 Using Phase 1 Hybrid Pipeline (MediaPipe 35% + TensorFlow 40% + HuggingFace 25%)...")
 
       const analysisResponse = await fetch("/api/skin-analysis/analyze", {
@@ -170,6 +190,7 @@ export function SkinAnalysisUpload({ isLoggedIn = false }: SkinAnalysisUploadPro
         },
         body: JSON.stringify({
           image: compressResult.dataUrl, // Use optimized image
+          mode: analysisMode,
           patientInfo: {
             name: "",
             age: 0,
@@ -191,12 +212,8 @@ export function SkinAnalysisUpload({ isLoggedIn = false }: SkinAnalysisUploadPro
       console.log("[HYBRID] 📊 Analysis ID:", analysisData.id)
       console.log("[HYBRID] 🎯 Overall Score:", analysisData.overall_score)
 
-  // Redirect to locale-aware detail page so users don't hit a 404
-  const supportedLocales = new Set(["en", "th", "zh"])
-  const segments = pathname?.split("/").filter(Boolean) ?? []
-  const localeSegment = segments.length > 0 && supportedLocales.has(segments[0]) ? segments[0] : "th"
-
-  router.push(`/${localeSegment}/analysis/detail/${analysisData.id}`)
+  // Redirect to VISIA report (with Advanced Analysis tab)
+  router.push(`/${locale}/analysis/detail/${analysisData.id}`)
     } catch (err) {
       console.error("[v0] ❌ === ANALYSIS ERROR ===")
       console.error("[v0] ❌ Error:", err)
@@ -267,11 +284,21 @@ export function SkinAnalysisUpload({ isLoggedIn = false }: SkinAnalysisUploadPro
             </TabsList>
 
             <TabsContent value="upload" className="mt-6">
-              {!selectedImage ? (
-                <div
+              {selectedImage ? (
+                <div className="relative">
+                  <div className="relative aspect-[4/3] overflow-hidden rounded-lg">
+                    <Image src={selectedImage || "/placeholder.svg"} alt="Selected" fill className="object-contain" />
+                  </div>
+                  <Button variant="destructive" size="icon" className="absolute right-2 top-2" onClick={clearImage}>
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
+                <button
                   className="flex min-h-[400px] cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-border bg-muted/30 transition-colors hover:border-primary hover:bg-muted/50"
                   onClick={() => fileInputRef.current?.click()}
                   data-tour="upload-button"
+                  type="button"
                 >
                   <Upload className="mb-4 h-12 w-12 text-muted-foreground" />
                   <p className="mb-2 text-center text-sm font-medium">
@@ -284,29 +311,29 @@ export function SkinAnalysisUpload({ isLoggedIn = false }: SkinAnalysisUploadPro
                     <br />
                     PNG, JPG หรือ JPEG (สูงสุด 10MB)
                   </p>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/png,image/jpeg,image/jpg"
-                    onChange={handleFileSelect}
-                    className="hidden"
-                    aria-label="Upload face image for skin analysis"
-                  />
-                </div>
-              ) : (
+                </button>
+              )}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/png,image/jpeg,image/jpg"
+                onChange={handleFileSelect}
+                className="hidden"
+                aria-label="Upload face image for skin analysis"
+              />
+            </TabsContent>
+
+            <TabsContent value="camera" className="mt-6">
+              {selectedImage ? (
                 <div className="relative">
                   <div className="relative aspect-[4/3] overflow-hidden rounded-lg">
-                    <Image src={selectedImage || "/placeholder.svg"} alt="Selected" fill className="object-contain" />
+                    <Image src={selectedImage || "/placeholder.svg"} alt="Captured" fill className="object-contain" />
                   </div>
                   <Button variant="destructive" size="icon" className="absolute right-2 top-2" onClick={clearImage}>
                     <X className="h-4 w-4" />
                   </Button>
                 </div>
-              )}
-            </TabsContent>
-
-            <TabsContent value="camera" className="mt-6">
-              {!selectedImage ? (
+              ) : (
                 <div className="relative min-h-[400px] overflow-hidden rounded-lg bg-black">
                   {isCameraActive ? (
                     <div className="relative">
@@ -346,15 +373,6 @@ export function SkinAnalysisUpload({ isLoggedIn = false }: SkinAnalysisUploadPro
                   )}
                   <canvas ref={canvasRef} className="hidden" />
                 </div>
-              ) : (
-                <div className="relative">
-                  <div className="relative aspect-[4/3] overflow-hidden rounded-lg">
-                    <Image src={selectedImage || "/placeholder.svg"} alt="Captured" fill className="object-contain" />
-                  </div>
-                  <Button variant="destructive" size="icon" className="absolute right-2 top-2" onClick={clearImage}>
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
               )}
             </TabsContent>
           </Tabs>
@@ -365,11 +383,11 @@ export function SkinAnalysisUpload({ isLoggedIn = false }: SkinAnalysisUploadPro
                 {isAnalyzing ? (
                   <>
                     <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    Analyzing with AI / กำลังวิเคราะห์ด้วย AI...
+                    {MODE_PROGRESS[analysisMode]}
                   </>
                 ) : (
                   <>
-                    Start AI Analysis / เริ่มวิเคราะห์ด้วย AI
+                    {MODE_LABEL[analysisMode]}
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </>
                 )}

@@ -6,6 +6,8 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
 import { analyzeSkin } from "@/lib/ai/hybrid-skin-analyzer"
+import type { AnalysisMode } from "@/types"
+import { parseAnalysisMode } from "@/types"
 
 export const runtime = "nodejs"
 export const maxDuration = 60 // 60 seconds timeout
@@ -13,6 +15,7 @@ export const maxDuration = 60 // 60 seconds timeout
 interface AnalyzeRequest {
   image: string // base64 encoded image
   userId?: string
+  mode?: AnalysisMode
   patientInfo?: {
     name?: string
     age?: number
@@ -63,11 +66,15 @@ export async function POST(request: NextRequest) {
     const processedImage = await processImage(imageBuffer)
     console.log("[v0] ✅ Image processed successfully")
 
+    const envMode = parseAnalysisMode(process.env.ANALYSIS_MODE, "auto")
+    const requestMode = parseAnalysisMode(body.mode, envMode)
+
     // Run hybrid analysis
     console.log("[v0] 🤖 Starting hybrid skin analysis...")
     const startTime = Date.now()
 
     const analysis = await analyzeSkin(processedImage, {
+      mode: requestMode,
       qualityMetrics: body.qualityMetrics, // Phase 1: Pass quality metrics to analyzer
     })
 

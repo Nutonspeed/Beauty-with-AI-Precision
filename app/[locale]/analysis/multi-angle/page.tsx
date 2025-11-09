@@ -5,13 +5,15 @@ import { MultiAngleCamera, type CapturedView } from "@/components/ar/multi-angle
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowLeft, Loader2 } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { useRouter, useParams } from "next/navigation"
 import Image from "next/image"
 
 export default function MultiAngleAnalysisPage() {
   const router = useRouter()
+  const params = useParams()
   const [capturedViews, setCapturedViews] = useState<CapturedView[]>([])
   const [isAnalyzing, setIsAnalyzing] = useState(false)
+  const locale = (params.locale as string) || "th"
 
   const handleCaptureComplete = async (views: CapturedView[]) => {
     console.log("[v0] Multi-angle capture complete:", views.length, "views")
@@ -44,8 +46,8 @@ export default function MultiAngleAnalysisPage() {
         throw new Error(result.error || "Analysis failed")
       }
 
-      console.log("[v0] Multi-angle analysis complete:", result.id)
-      router.push(`/analysis/detail/${result.id}`)
+  console.log("[v0] Multi-angle analysis complete:", result.id)
+  router.push(`/${locale}/analysis/detail/${result.id}`)
     } catch (error) {
       console.error("[v0] Multi-angle analysis error:", error)
       alert("Analysis failed. Please try again.")

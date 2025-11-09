@@ -103,7 +103,7 @@ export async function proxy(request: NextRequest) {
   if (
     pathname.includes('/auth/') ||
     pathname === '/' ||
-    pathname.match(/^\/(th|en|zh)\/?$/) ||
+    /^\/(th|en|zh)\/?$/.test(pathname) ||
     pathname.includes('/about') ||
     pathname.includes('/contact') ||
     pathname.includes('/pricing') ||
@@ -111,7 +111,8 @@ export async function proxy(request: NextRequest) {
     pathname.includes('/faq') ||
     pathname.includes('/privacy') ||
     pathname.includes('/terms') ||
-    pathname.includes('/pdpa')
+    pathname.includes('/pdpa') ||
+    pathname.includes('/analysis')
   ) {
     return intlResponse;
   }
@@ -130,7 +131,6 @@ export async function proxy(request: NextRequest) {
     console.log('[Proxy] 👤 Session check:', { hasSession: !!session, hasUser: !!user, hasError: !!authError, path: pathname });
 
     let userRole: UserRole | null = null;
-    let userClinicId: string | null = null;
 
     if (!authError && user) {
       // Use service client to bypass RLS policies (avoid infinite recursion)
@@ -150,7 +150,6 @@ export async function proxy(request: NextRequest) {
 
       if (userData) {
         userRole = userData.role as UserRole || 'customer_free';
-        userClinicId = userData.clinic_id;
         
         console.log('[Proxy] 🔍 User:', user.id.slice(0, 8), 'Role:', userRole, 'Path:', pathname);
         

@@ -6,6 +6,7 @@ import type { SkinConcern } from "@/lib/ai/tensorflow-analyzer"
 /**
  * GET /api/analysis/history/[userId]
  * Get analysis history for a user
+ * Updated to use correct schema (ai_concerns, *_count fields)
  */
 export async function GET(request: NextRequest, context: { params: Promise<{ userId: string }> }) {
   try {
@@ -39,7 +40,7 @@ export async function GET(request: NextRequest, context: { params: Promise<{ use
     // Fetch analysis history
     const { data: analyses, error } = await supabase
       .from("skin_analyses")
-      .select("id, image_url, thumbnail_url, concerns, created_at")
+      .select("id, image_url, ai_concerns, spots_count, pores_count, wrinkles_count, redness_count, created_at")
       .eq("user_id", userId)
       .order("created_at", { ascending: false })
       .range(offset, offset + limit - 1)
@@ -56,28 +57,29 @@ export async function GET(request: NextRequest, context: { params: Promise<{ use
 
     // Transform to response format
     const history: AnalysisHistoryItem[] = (analyses || []).map((analysis) => {
-      const concerns = analysis.concerns as unknown as SkinConcern[]
+      // Convert ai_concerns array to SkinConcern format
+      const aiConcerns = (analysis.ai_concerns || []) as string[]
+      const concerns: SkinConcern[] = aiConcerns.map((type) => ({
+        type: type as SkinConcern['type'],
+        severity: 50, // Default severity (0-100) since we don't store individual severities
+        confidence: 0.8, // Default confidence
+        locations: [], // Empty locations array
+      }))
 
-      // Count concerns by type
+      // Count concerns by type using CV counts from database
       const concernCount = {
-        wrinkle: 0,
-        pigmentation: 0,
-        pore: 0,
-        redness: 0,
-        acne: 0,
-        dark_circle: 0,
-      }
-
-      for (const concern of concerns) {
-        if (concern.type in concernCount) {
-          concernCount[concern.type as keyof typeof concernCount]++
-        }
+        wrinkle: analysis.wrinkles_count || 0,
+        pigmentation: analysis.spots_count || 0, // Map spots to pigmentation
+        pore: analysis.pores_count || 0,
+        redness: analysis.redness_count || 0,
+        acne: 0, // Not tracked in current schema
+        dark_circle: 0, // Not tracked in current schema
       }
 
       return {
         id: analysis.id,
         imageUrl: analysis.image_url,
-        thumbnailUrl: analysis.thumbnail_url || undefined,
+        thumbnailUrl: undefined, // Not stored in current schema
         concerns,
         createdAt: analysis.created_at,
         concernCount,

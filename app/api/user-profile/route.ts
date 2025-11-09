@@ -5,7 +5,7 @@ import { createClient } from '@supabase/supabase-js'
  * API Route: Get User Profile (bypasses RLS using service role)
  * 
  * ⚠️ TEMPORARY: ใช้ service role key เพื่อ bypass RLS recursion issue
- * TODO: แก้ RLS policies แล้วลบ route นี้ทิ้ง
+ * NOTE: ต้องแก้ RLS policies เพื่อลบ route นี้ในอนาคต
  */
 
 export async function GET(request: NextRequest) {
@@ -90,8 +90,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { userId, updates } = body
+  const body = await request.json()
+  const { userId, updates = {} } = body
 
     if (!userId) {
       return NextResponse.json(
@@ -121,10 +121,35 @@ export async function POST(request: NextRequest) {
       }
     )
 
+    // Only allow updating known safe columns to avoid schema cache errors
+    const allowedFields = new Set([
+      'full_name',
+      'phone',
+      'avatar_url',
+      'permissions',
+      'role',
+      'clinic_id',
+      'last_login_at',
+      'is_active',
+      'updated_at',
+      'email',
+    ])
+
+    const sanitizedUpdates = Object.fromEntries(
+      Object.entries(updates).filter(([key]) => allowedFields.has(key))
+    )
+
+    if (Object.keys(sanitizedUpdates).length === 0) {
+      return NextResponse.json(
+        { error: 'No valid fields provided for update' },
+        { status: 400 }
+      )
+    }
+
     // Update user profile
     const { data, error } = await supabaseAdmin
       .from('users')
-      .update(updates)
+      .update(sanitizedUpdates)
       .eq('id', userId)
       .select()
       .single()

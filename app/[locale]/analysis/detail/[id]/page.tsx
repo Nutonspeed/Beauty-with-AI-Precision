@@ -7,6 +7,7 @@
 
 import { useState, useEffect } from 'react';
 import { VISIAReport } from '@/components/analysis/visia-report';
+import AnalysisDetailClient from '@/components/analysis/AnalysisDetailClient';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -45,6 +46,7 @@ const TRANSLATIONS = {
     simulator: 'Simulator',
     priorities: 'Priorities',
     recommendations: 'Recommendations',
+    advanced: 'Advanced',
     backToHistory: 'Back to History',
     analyzeAnother: 'Analyze Another Photo',
     backToHome: 'Back to Home',
@@ -60,6 +62,7 @@ const TRANSLATIONS = {
     simulator: 'จำลองผล',
     priorities: 'ความสำคัญ',
     recommendations: 'คำแนะนำการรักษา',
+    advanced: 'ขั้นสูง',
     backToHistory: 'กลับไปประวัติ',
     analyzeAnother: 'วิเคราะห์รูปใหม่',
     backToHome: 'กลับหน้าแรก',
@@ -474,6 +477,218 @@ interface AnalysisDetailPageProps {
   params: Promise<{ id: string; locale: string }>;
 }
 
+/**
+ * Transform database record to AnalysisDetailClient format
+ */
+function transformToAnalysisFormat(dbRecord: any) {
+  const getHealthGrade = (score: number): string => {
+    if (score >= 90) return 'A+';
+    if (score >= 80) return 'A';
+    if (score >= 70) return 'B';
+    if (score >= 60) return 'C';
+    if (score >= 50) return 'D';
+    return 'F';
+  };
+
+  const parseDate = (value: unknown): string => {
+    if (!value) {
+      return new Date().toISOString();
+    }
+
+    const parsed = new Date(value as string);
+    return Number.isNaN(parsed.getTime()) ? new Date().toISOString() : parsed.toISOString();
+  };
+
+  const getSeverityFromScore = (score: number): string => {
+    if (score >= 90) return 'low';
+    if (score >= 75) return 'moderate';
+    if (score >= 50) return 'high';
+    return 'severe';
+  };
+
+  const normalizeSeverity = (value: unknown, scoreFallback?: number, countFallback?: number, maxGood: number = 0): string => {
+    if (typeof value === 'string' && value.trim() !== '') {
+      return value;
+    }
+
+    if (typeof value === 'number' && Number.isFinite(value)) {
+      if (value <= 2) return 'mild';
+      if (value <= 5) return 'moderate';
+      if (value <= 8) return 'high';
+      return 'severe';
+    }
+
+    if (typeof scoreFallback === 'number') {
+      return getSeverityFromScore(scoreFallback);
+    }
+
+    if (typeof countFallback === 'number') {
+      const scoreFromCount = Math.max(0, 100 - Math.max(0, countFallback - maxGood) * 2);
+      return getSeverityFromScore(scoreFromCount);
+    }
+
+    return 'mild';
+  };
+
+  const parseOptionalNumber = (value: unknown): number | undefined => {
+    if (typeof value === 'number' && Number.isFinite(value)) return value;
+    if (typeof value === 'string') {
+      const n = Number(value);
+      return Number.isFinite(n) ? n : undefined;
+    }
+    return undefined;
+  };
+
+  const numberWithFallback = (value: unknown, fallback: number): number => {
+    const parsed = parseOptionalNumber(value);
+    return typeof parsed === 'number' ? parsed : fallback;
+  };
+
+  let parsedRecommendations: string[] | null = null;
+  if (Array.isArray(dbRecord.recommendations)) {
+    parsedRecommendations = dbRecord.recommendations;
+  } else if (typeof dbRecord.recommendations === 'string' && dbRecord.recommendations.trim() !== '') {
+    parsedRecommendations = [dbRecord.recommendations];
+  }
+
+  const analyzedAt = parseDate(dbRecord.analyzed_at || dbRecord.created_at || dbRecord.createdAt);
+  const overallScore = numberWithFallback(dbRecord.overall_score, 0);
+  const spotsCount = numberWithFallback(dbRecord.spots_count, 0);
+  const wrinklesCount = numberWithFallback(dbRecord.wrinkles_count, 0);
+  const poresCount = numberWithFallback(dbRecord.pores_count, 0);
+  const uvSpotsCount = numberWithFallback(dbRecord.uv_spots_count, 0);
+  const brownSpotsCount = numberWithFallback(dbRecord.brown_spots_count, 0);
+  const redAreasPct = numberWithFallback(dbRecord.red_areas_percentage, 0);
+  const porphyrinsCount = numberWithFallback(dbRecord.porphyrins_count, 0);
+
+  const calcScoreFromCount = (count: number, maxGood: number) => Math.max(0, 100 - Math.max(0, count - maxGood) * 2);
+
+  return {
+    id: dbRecord.id,
+    user_id: dbRecord.user_id,
+    image_url: dbRecord.image_url,
+    visualization_url: dbRecord.visualization_url,
+    analyzed_at: analyzedAt,
+    overall_score: overallScore,
+    skin_health_grade: getHealthGrade(overallScore),
+
+    spots_score: numberWithFallback(dbRecord.spots_score, calcScoreFromCount(spotsCount, 5)),
+    spots_count: spotsCount,
+    spots_severity: normalizeSeverity(dbRecord.spots_severity, parseOptionalNumber(dbRecord.spots_score), spotsCount, 5),
+
+    wrinkles_score: numberWithFallback(dbRecord.wrinkles_score, calcScoreFromCount(wrinklesCount, 3)),
+    wrinkles_count: wrinklesCount,
+    wrinkles_severity: normalizeSeverity(dbRecord.wrinkles_severity, parseOptionalNumber(dbRecord.wrinkles_score), wrinklesCount, 3),
+
+    texture_score: numberWithFallback(dbRecord.texture_score, numberWithFallback(dbRecord.texture_smoothness, 80)),
+    texture_smoothness: numberWithFallback(dbRecord.texture_smoothness, 0),
+    texture_roughness: numberWithFallback(dbRecord.texture_roughness, 0),
+    texture_severity: normalizeSeverity(dbRecord.texture_severity, parseOptionalNumber(dbRecord.texture_score)),
+
+    pores_score: numberWithFallback(dbRecord.pores_score, calcScoreFromCount(poresCount, 50)),
+    pores_count: poresCount,
+    pores_average_size: numberWithFallback(dbRecord.pores_average_size, 0),
+    pores_severity: normalizeSeverity(dbRecord.pores_severity, parseOptionalNumber(dbRecord.pores_score), poresCount, 50),
+
+    uv_spots_score: numberWithFallback(dbRecord.uv_spots_score, calcScoreFromCount(uvSpotsCount, 3)),
+    uv_spots_count: uvSpotsCount,
+    uv_spots_severity: normalizeSeverity(dbRecord.uv_spots_severity, parseOptionalNumber(dbRecord.uv_spots_score), uvSpotsCount, 3),
+
+    brown_spots_score: numberWithFallback(dbRecord.brown_spots_score, calcScoreFromCount(brownSpotsCount, 3)),
+    brown_spots_count: brownSpotsCount,
+    brown_spots_severity: normalizeSeverity(dbRecord.brown_spots_severity, parseOptionalNumber(dbRecord.brown_spots_score), brownSpotsCount, 3),
+
+    red_areas_score: numberWithFallback(dbRecord.red_areas_score, Math.max(0, 100 - redAreasPct)),
+    red_areas_percentage: redAreasPct,
+    red_areas_severity: normalizeSeverity(dbRecord.red_areas_severity, parseOptionalNumber(dbRecord.red_areas_score), redAreasPct, 0),
+
+    porphyrins_score: numberWithFallback(dbRecord.porphyrins_score, calcScoreFromCount(porphyrinsCount, 2)),
+    porphyrins_count: porphyrinsCount,
+    porphyrins_severity: normalizeSeverity(dbRecord.porphyrins_severity, parseOptionalNumber(dbRecord.porphyrins_score), porphyrinsCount, 2),
+
+    processing_time_ms: numberWithFallback(dbRecord.processing_time_ms ?? dbRecord.processing_time, 0),
+    recommendations: parsedRecommendations,
+    is_baseline: Boolean(dbRecord.is_baseline),
+  };
+}
+
+/**
+ * Advanced Analysis Tab Component
+ * Fetches and displays 8-mode CV analysis data
+ */
+function AdvancedAnalysisTab({ analysisId, locale }: { analysisId: string; locale: string }) {
+  const [cvData, setCvData] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchCVAnalysis = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        // Fetch 8-mode analysis from API
+        const response = await fetch(`/api/analysis/multi-mode?id=${analysisId}`, {
+          credentials: 'include',
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to load advanced analysis');
+        }
+
+        const data = await response.json();
+        
+        if (data.success && data.data) {
+          // Transform database format to component format
+          const transformedData = transformToAnalysisFormat(data.data);
+          setCvData(transformedData);
+        } else {
+          throw new Error(data.error || 'Failed to load analysis');
+        }
+      } catch (err) {
+        console.error('Advanced analysis error:', err);
+        setError(err instanceof Error ? err.message : 'Failed to load advanced analysis');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCVAnalysis();
+  }, [analysisId]);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        <span className="ml-2 text-muted-foreground">
+          {locale === 'th' ? 'กำลังโหลดการวิเคราะห์ขั้นสูง...' : 'Loading advanced analysis...'}
+        </span>
+      </div>
+    );
+  }
+
+  if (error || !cvData) {
+    return (
+      <Alert variant="destructive">
+        <AlertCircle className="h-4 w-4" />
+        <AlertDescription>
+          {error || (locale === 'th' ? 'ไม่พบข้อมูลการวิเคราะห์ขั้นสูง' : 'Advanced analysis not found')}
+        </AlertDescription>
+      </Alert>
+    );
+  }
+
+  return (
+    <AnalysisDetailClient
+      analysis={cvData}
+      userId={cvData.user_id}
+      comparisonAnalysis={null}
+      availableAnalyses={[]}
+      userProfile={null}
+    />
+  );
+}
+
 export default function AnalysisDetailPage({ params }: AnalysisDetailPageProps) {
   const [analysis, setAnalysis] = useState<HybridSkinAnalysis | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -743,10 +958,11 @@ export default function AnalysisDetailPage({ params }: AnalysisDetailPageProps) 
       </div>
 
       <Tabs defaultValue="report" className="space-y-6">
-        <TabsList className="grid w-full max-w-2xl grid-cols-5">
+        <TabsList className="grid w-full max-w-3xl grid-cols-6">
           <TabsTrigger value="report">{t.report}</TabsTrigger>
           <TabsTrigger value="priorities">{t.priorities}</TabsTrigger>
           <TabsTrigger value="recommendations">{t.recommendations}</TabsTrigger>
+          <TabsTrigger value="advanced">{t.advanced}</TabsTrigger>
           <TabsTrigger value="3d">{t['3dView']}</TabsTrigger>
           <TabsTrigger value="simulator">{t.simulator}</TabsTrigger>
         </TabsList>
@@ -789,6 +1005,12 @@ export default function AnalysisDetailPage({ params }: AnalysisDetailPageProps) 
                 }
               }}
             />
+          )}
+        </TabsContent>
+
+        <TabsContent value="advanced">
+          {analysisId && (
+            <AdvancedAnalysisTab analysisId={analysisId} locale={locale} />
           )}
         </TabsContent>
 
