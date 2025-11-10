@@ -12,30 +12,38 @@ import { PerformanceInit } from "./performance-init"
 import "./globals.css"
 
 import { ServiceWorkerRegistration } from "@/components/service-worker-registration"
+import { InstallPrompt } from "@/components/pwa/install-prompt"
 
 const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "AI Beauty Platform - Medical-Grade Skin Analysis",
-  description: "Advanced AI-powered skin analysis and treatment recommendations for beauty clinics",
-  generator: "v0.app",
+  title: "AI367 Beauty & Aesthetic Clinic",
+  description: "AI-powered beauty clinic platform with skin analysis, booking, and treatment recommendations",
+  generator: "Next.js",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "AI367Bar",
+    title: "AI367",
   },
   formatDetection: {
     telephone: false,
   },
   icons: {
     icon: "/favicon.ico",
-    apple: "/icons/icon-192x192.png",
+    apple: [
+      { url: "/icon-192.svg", sizes: "192x192", type: "image/svg+xml" },
+      { url: "/icon-512.svg", sizes: "512x512", type: "image/svg+xml" },
+    ],
   },
   other: {
     "mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-status-bar-style": "black-translucent",
   },
+  applicationName: "AI367 Beauty",
+  keywords: ["beauty", "skin analysis", "AI", "aesthetic clinic", "treatment"],
 }
 
 export const viewport = {
@@ -44,7 +52,10 @@ export const viewport = {
   maximumScale: 5,
   userScalable: true,
   viewportFit: "cover",
-  themeColor: "#667eea",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#3b82f6" },
+    { media: "(prefers-color-scheme: dark)", color: "#1e40af" },
+  ],
   colorScheme: "light dark",
 }
 
@@ -79,6 +90,7 @@ export default function RootLayout({
         <ErrorBoundaryWrapper locale="th" showDetails={process.env.NODE_ENV === 'development'}>
           <Providers>
             <ServiceWorkerRegistration />
+            <InstallPrompt />
             {/* Global realtime announcements */}
             <AnnouncementSubscriber />
             {/* Connection status indicator (fixed bottom-right) */}
