@@ -77,64 +77,80 @@ export function TutorialOverlay({ steps, onComplete, onSkip }: TutorialOverlayPr
   };
 
   const getTooltipPosition = () => {
-    if (!highlightRect) return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' };
-
-    const tooltipOffset = 20;
     const viewportHeight = window.innerHeight;
     const viewportWidth = window.innerWidth;
+    const isMobile = viewportWidth < 768;
 
-    // Smart positioning: avoid viewport edges
+    // Mobile: Always use bottom fixed position for better UX
+    if (isMobile || !highlightRect) {
+      return {
+        position: 'fixed' as const,
+        bottom: '0',
+        left: '0',
+        right: '0',
+        transform: 'none',
+        maxWidth: '100%',
+      };
+    }
+
+    // Desktop: Smart positioning
+    const tooltipOffset = 20;
     let position = currentStep.position;
     
     // Check if tooltip would go off-screen
     if (position === 'bottom' && highlightRect.bottom + 300 > viewportHeight) {
-      position = 'top'; // Switch to top if bottom would overflow
+      position = 'top';
     }
     if (position === 'top' && highlightRect.top - 300 < 0) {
-      position = 'bottom'; // Switch to bottom if top would overflow
+      position = 'bottom';
     }
     if (position === 'right' && highlightRect.right + 400 > viewportWidth) {
-      position = 'left'; // Switch to left if right would overflow
+      position = 'left';
     }
     if (position === 'left' && highlightRect.left - 400 < 0) {
-      position = 'right'; // Switch to right if left would overflow
+      position = 'right';
     }
 
     switch (position) {
       case 'top':
         return {
+          position: 'absolute' as const,
           top: `${Math.max(20, highlightRect.top - tooltipOffset)}px`,
           left: `${highlightRect.left + highlightRect.width / 2}px`,
           transform: 'translate(-50%, -100%)',
-          maxWidth: `${Math.min(400, viewportWidth - 40)}px`,
+          maxWidth: '400px',
         };
       case 'right':
         return {
+          position: 'absolute' as const,
           top: `${highlightRect.top + highlightRect.height / 2}px`,
           left: `${highlightRect.right + tooltipOffset}px`,
           transform: 'translateY(-50%)',
-          maxWidth: `${Math.min(400, viewportWidth - 40)}px`,
+          maxWidth: '400px',
         };
       case 'bottom':
         return {
+          position: 'absolute' as const,
           top: `${Math.min(viewportHeight - 20, highlightRect.bottom + tooltipOffset)}px`,
           left: `${highlightRect.left + highlightRect.width / 2}px`,
           transform: 'translateX(-50%)',
-          maxWidth: `${Math.min(400, viewportWidth - 40)}px`,
+          maxWidth: '400px',
         };
       case 'left':
         return {
+          position: 'absolute' as const,
           top: `${highlightRect.top + highlightRect.height / 2}px`,
           left: `${highlightRect.left - tooltipOffset}px`,
           transform: 'translate(-100%, -50%)',
-          maxWidth: `${Math.min(400, viewportWidth - 40)}px`,
+          maxWidth: '400px',
         };
       default:
-        return { 
-          top: '50%', 
-          left: '50%', 
+        return {
+          position: 'absolute' as const,
+          top: '50%',
+          left: '50%',
           transform: 'translate(-50%, -50%)',
-          maxWidth: `${Math.min(400, viewportWidth - 40)}px`,
+          maxWidth: '400px',
         };
     }
   };
@@ -165,15 +181,16 @@ export function TutorialOverlay({ steps, onComplete, onSkip }: TutorialOverlayPr
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-[9999] pointer-events-none">
-        {/* Dark overlay with spotlight effect */}
+      <div className="fixed inset-0 z-[9999] pointer-events-none" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+        {/* Dark overlay with spotlight effect - Click to close */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="absolute inset-0 pointer-events-auto"
+          className="absolute inset-0 pointer-events-auto cursor-pointer"
           style={getSpotlightStyle()}
           onClick={onSkip}
+          aria-label="คลิกเพื่อปิดคำแนะนำ"
         />
 
         {/* Highlight border with pulse animation */}
@@ -207,28 +224,28 @@ export function TutorialOverlay({ steps, onComplete, onSkip }: TutorialOverlayPr
           />
         )}
 
-        {/* Tooltip */}
+        {/* Tooltip - Responsive */}
         <motion.div
           key={currentStep.id}
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          className="absolute max-w-md pointer-events-auto"
+          exit={{ opacity: 0, y: 20 }}
+          className="pointer-events-auto md:max-w-md w-full max-h-[90vh] md:max-h-[600px] overflow-y-auto"
           style={{
             ...getTooltipPosition(),
             zIndex: 10001,
           }}
         >
-          <div className="bg-white dark:bg-slate-800 rounded-lg shadow-2xl border-2 border-blue-500 dark:border-blue-400 p-6 backdrop-blur-sm">
+          <div className="bg-white dark:bg-slate-800 md:rounded-lg rounded-t-2xl shadow-2xl border-t-4 md:border-2 border-blue-500 dark:border-blue-400 p-3 md:p-5 backdrop-blur-sm min-h-0">
             {/* Header */}
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex-1">
+            <div className="flex items-start justify-between mb-2 md:mb-3">
+              <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xs font-bold text-white bg-blue-600 dark:bg-blue-500 px-3 py-1.5 rounded shadow-md">
-                    ขั้นตอน {currentStepIndex + 1} / {steps.length}
+                  <span className="text-xs font-bold text-white bg-blue-600 dark:bg-blue-500 px-2 py-0.5 rounded shadow-md">
+                    {currentStepIndex + 1}/{steps.length}
                   </span>
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white mt-2 drop-shadow-sm">
+                <h3 className="text-base font-bold text-gray-900 dark:text-white mt-1 drop-shadow-sm line-clamp-2">
                   {currentStep.title}
                 </h3>
               </div>
@@ -236,20 +253,21 @@ export function TutorialOverlay({ steps, onComplete, onSkip }: TutorialOverlayPr
                 variant="ghost"
                 size="icon"
                 onClick={onSkip}
-                className="h-8 w-8 -mt-1 -mr-1 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200"
+                className="h-9 w-9 -mt-1 -mr-1 shrink-0 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 touch-manipulation"
+                aria-label="ปิด"
               >
-                <X className="h-4 w-4" />
+                <X className="h-5 w-5" />
               </Button>
             </div>
 
             {/* Description */}
-            <p className="text-sm text-gray-800 dark:text-gray-100 mb-6 leading-relaxed font-medium">
+            <p className="text-sm text-gray-800 dark:text-gray-100 mb-3 md:mb-4 leading-snug md:leading-relaxed font-medium line-clamp-4 md:line-clamp-none">
               {currentStep.description}
             </p>
 
             {/* Progress bar */}
-            <div className="mb-4">
-              <div className="h-2.5 bg-gray-300 dark:bg-gray-600 rounded-full overflow-hidden shadow-inner">
+            <div className="mb-3">
+              <div className="h-1.5 md:h-2 bg-gray-300 dark:bg-gray-600 rounded-full overflow-hidden shadow-inner">
                 <motion.div
                   className="h-full bg-blue-600 dark:bg-blue-400 shadow-sm"
                   initial={{ width: 0 }}
@@ -259,37 +277,37 @@ export function TutorialOverlay({ steps, onComplete, onSkip }: TutorialOverlayPr
               </div>
             </div>
 
-            {/* Actions */}
-            <div className="flex items-center justify-between gap-3">
+            {/* Actions - Mobile optimized */}
+            <div className="flex items-center justify-between gap-2">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handlePrevious}
                 disabled={isFirstStep}
-                className="flex items-center gap-1 border-gray-400 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white font-medium disabled:opacity-50"
+                className="flex items-center gap-1 border-gray-400 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white font-medium disabled:opacity-50 touch-manipulation h-10 px-3"
               >
                 <ChevronLeft className="h-4 w-4" />
-                ก่อนหน้า
+                <span className="hidden sm:inline text-xs">ก่อนหน้า</span>
               </Button>
 
               <Button 
                 onClick={onSkip} 
                 variant="ghost" 
                 size="sm"
-                className="hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 font-medium"
+                className="hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 font-medium touch-manipulation h-10 px-2 text-xs"
               >
-                ข้ามทั้งหมด
+                ข้าม
               </Button>
 
               <Button
                 onClick={handleNext}
                 size="sm"
-                className="flex items-center gap-1 bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white font-medium shadow-md"
+                className="flex items-center gap-1 bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white font-medium shadow-md touch-manipulation h-10 px-4"
               >
                 {isLastStep ? (
                   <>
                     <CheckCircle2 className="h-4 w-4" />
-                    เสร็จสิ้น
+                    เสร็จ
                   </>
                 ) : (
                   <>

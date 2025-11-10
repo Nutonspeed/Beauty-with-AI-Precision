@@ -144,7 +144,6 @@ class NotificationManagerClass {
       return toast.error(message, {
         description,
         duration: error.retryable ? 6000 : duration,
-        icon: <AlertCircle className="h-5 w-5" />,
         action:
           error.retryable && onRetry
             ? {
@@ -168,7 +167,6 @@ class NotificationManagerClass {
         {
           description: error.message,
           duration,
-          icon: <XCircle className="h-5 w-5" />,
           action: action
             ? {
                 label: action.label,
@@ -183,7 +181,6 @@ class NotificationManagerClass {
     // Handle string error
     return toast.error(error, {
       duration,
-      icon: <XCircle className="h-5 w-5" />,
       action: action
         ? {
             label: action.label,
@@ -202,7 +199,6 @@ class NotificationManagerClass {
 
     return toast.warning(message, {
       duration,
-      icon: <AlertTriangle className="h-5 w-5" />,
       action: action
         ? {
             label: action.label,
@@ -221,7 +217,6 @@ class NotificationManagerClass {
 
     return toast.info(message, {
       duration,
-      icon: <Info className="h-5 w-5" />,
       action: action
         ? {
             label: action.label,

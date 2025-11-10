@@ -12,11 +12,12 @@ export function AnalysisTutorialWrapper() {
 
   console.log('[AnalysisTutorialWrapper] State:', { isActive, hasCompleted });
 
-  // Auto-start tutorial on first visit
+  // Auto-start tutorial on first visit (only once)
   useEffect(() => {
-    console.log('[AnalysisTutorialWrapper] useEffect triggered, hasCompleted:', hasCompleted);
+    console.log('[AnalysisTutorialWrapper] useEffect triggered, hasCompleted:', hasCompleted, 'isActive:', isActive);
     
-    if (!hasCompleted) {
+    // Only start if not completed AND not already active
+    if (!hasCompleted && !isActive) {
       // Start tutorial after 1 second delay
       const timer = setTimeout(() => {
         console.log('[AnalysisTutorialWrapper] Starting tutorial...');
@@ -25,7 +26,7 @@ export function AnalysisTutorialWrapper() {
 
       return () => clearTimeout(timer);
     }
-  }, [hasCompleted, startTutorial]);
+  }, [hasCompleted, isActive, startTutorial]);
 
   return (
     <>

@@ -22,12 +22,17 @@ export function useTutorial(tutorialType: TutorialType) {
   };
 
   const completeTutorial = () => {
+    console.log('[useTutorial] Completing tutorial:', tutorialType);
     localStorage.setItem(`${STORAGE_KEY_PREFIX}${tutorialType}`, 'true');
     setHasCompleted(true);
     setIsActive(false);
   };
 
   const skipTutorial = () => {
+    console.log('[useTutorial] Skipping tutorial:', tutorialType);
+    // Mark as completed when skipped to prevent auto-restart
+    localStorage.setItem(`${STORAGE_KEY_PREFIX}${tutorialType}`, 'true');
+    setHasCompleted(true);
     setIsActive(false);
   };
 

@@ -218,28 +218,28 @@ export default function AnalysisDetailClient({
 
         {/* Overall Score Card */}
         <Card className="mb-8 border-2 shadow-lg">
-          <CardContent className="p-8">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <CardContent className="p-4 md:p-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
               {/* Score */}
               <div className="text-center">
-                <div className="mb-2 text-slate-600 dark:text-slate-400">
+                <div className="mb-2 text-sm md:text-base text-slate-600 dark:text-slate-400">
                   Overall Skin Score
                 </div>
-                <div className={`text-6xl font-bold ${getScoreColor(analysis.overall_score)}`}>
+                <div className={`text-4xl md:text-6xl font-bold ${getScoreColor(analysis.overall_score)}`}>
                   {analysis.overall_score.toFixed(1)}
                 </div>
                 <div className="mt-2">
-                  <Badge className={`text-lg px-4 py-1 ${getSeverityColor('low')}`}>
+                  <Badge className={`text-sm md:text-lg px-3 md:px-4 py-0.5 md:py-1 ${getSeverityColor('low')}`}>
                     {analysis.skin_health_grade}
                   </Badge>
                 </div>
               </div>
 
               {/* Image Comparison */}
-              <div className="col-span-2">
-                <div className="grid grid-cols-2 gap-4">
+              <div className="md:col-span-2">
+                <div className="grid grid-cols-2 gap-2 md:gap-4">
                   <div>
-                    <div className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">
+                    <div className="text-xs md:text-sm font-medium text-slate-600 dark:text-slate-400 mb-1 md:mb-2">
                       Original Image
                     </div>
                     <div className="relative aspect-square rounded-lg overflow-hidden border-2 border-slate-200 dark:border-slate-700">
@@ -252,7 +252,7 @@ export default function AnalysisDetailClient({
                     </div>
                   </div>
                   <div>
-                    <div className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">
+                    <div className="text-xs md:text-sm font-medium text-slate-600 dark:text-slate-400 mb-1 md:mb-2">
                       Analysis Visualization
                     </div>
                     <div className="relative aspect-square rounded-lg overflow-hidden border-2 border-slate-200 dark:border-slate-700">
@@ -300,18 +300,18 @@ export default function AnalysisDetailClient({
             </div>
 
             {/* Processing Info */}
-            <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between text-sm text-slate-600 dark:text-slate-400">
-              <div className="flex items-center gap-4">
+            <div className="mt-4 md:mt-6 pt-4 md:pt-6 border-t border-slate-200 dark:border-slate-700 flex flex-col md:flex-row items-start md:items-center justify-between gap-2 text-xs md:text-sm text-slate-600 dark:text-slate-400">
+              <div className="flex items-center gap-2 md:gap-4 flex-wrap">
                 <span className="flex items-center gap-1">
-                  <Clock className="w-4 h-4" />
+                  <Clock className="w-3 h-3 md:w-4 md:h-4" />
                   Processing: {analysis.processing_time_ms}ms
                 </span>
                 <span className="flex items-center gap-1">
-                  <Activity className="w-4 h-4" />
+                  <Activity className="w-3 h-3 md:w-4 md:h-4" />
                   8-Mode Analysis
                 </span>
               </div>
-              <span className="text-xs">Analysis ID: {analysis.id.slice(0, 8)}</span>
+              <span className="text-xs">ID: {analysis.id.slice(0, 8)}</span>
             </div>
           </CardContent>
         </Card>
@@ -326,37 +326,37 @@ export default function AnalysisDetailClient({
 
           {/* Overview Tab */}
           <TabsContent value="overview" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
               {MODES.map((mode) => {
                 const data = getModeData(mode.id);
                 return (
                   <Card key={mode.id} className="border-2 hover:shadow-lg transition-shadow">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="flex items-center justify-between text-base">
-                        <span className="flex items-center gap-2">
-                          <span className="text-2xl">{mode.icon}</span>
-                          {mode.label}
+                    <CardHeader className="pb-2">
+                      <div className="flex items-start justify-between gap-2 mb-1">
+                        <span className="flex items-center gap-1.5 min-w-0">
+                          <span className="text-xl shrink-0">{mode.icon}</span>
+                          <span className="font-semibold text-sm truncate">{mode.label}</span>
                         </span>
-                        <Badge className={getSeverityColor(data.severity)}>
+                        <Badge className={`${getSeverityColor(data.severity)} shrink-0 text-xs`}>
                           {data.severity}
                         </Badge>
-                      </CardTitle>
+                      </div>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="pt-0">
                       <div className="space-y-2">
-                        <div className="flex items-baseline justify-between">
-                          <span className="text-sm text-slate-600 dark:text-slate-400">
+                        <div className="flex items-baseline justify-between gap-2">
+                          <span className="text-xs text-slate-600 dark:text-slate-400">
                             Score
                           </span>
-                          <span className={`text-2xl font-bold ${getScoreColor(data.score)}`}>
+                          <span className={`text-xl md:text-2xl font-bold ${getScoreColor(data.score)}`}>
                             {data.score.toFixed(1)}
                           </span>
                         </div>
-                        <div className="flex items-baseline justify-between">
-                          <span className="text-sm text-slate-600 dark:text-slate-400">
+                        <div className="flex items-baseline justify-between gap-2">
+                          <span className="text-xs text-slate-600 dark:text-slate-400">
                             {mode.id === 'red_areas' ? 'Coverage' : 'Count'}
                           </span>
-                          <span className="text-lg font-semibold">
+                          <span className="text-base md:text-lg font-semibold">
                             {mode.id === 'red_areas' 
                               ? `${data.count.toFixed(1)}%` 
                               : data.count}
