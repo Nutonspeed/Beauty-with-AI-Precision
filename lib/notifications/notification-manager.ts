@@ -4,6 +4,8 @@
  */
 
 import { toast, type ExternalToast } from "sonner";
+import React from "react";
+import type { SuccessToastOptions } from "@/components/ui/success-toast";
 import {
   showSuccessToast,
   showAnalysisSavedToast,
@@ -119,7 +121,23 @@ class NotificationManagerClass {
    * Show success notification
    */
   success(message: string, options?: NotificationOptions) {
-    return showSuccessToast(message, options);
+    const mapped: SuccessToastOptions | undefined = options
+      ? {
+          ...options,
+          // Ensure description is string per SuccessToastOptions contract
+          description:
+            typeof (options as any).description === "string"
+              ? ((options as any).description as string)
+              : undefined,
+          action: options.action
+            ? {
+                label: options.action.label,
+                onClick: options.action.onClick,
+              }
+            : undefined,
+        }
+      : undefined;
+    return showSuccessToast(message, mapped);
   }
 
   /**
@@ -144,7 +162,7 @@ class NotificationManagerClass {
       return toast.error(message, {
         description,
         duration: error.retryable ? 6000 : duration,
-        icon: <AlertCircle className="h-5 w-5" />,
+        icon: React.createElement(AlertCircle, { className: "h-5 w-5" }),
         action:
           error.retryable && onRetry
             ? {
@@ -168,7 +186,7 @@ class NotificationManagerClass {
         {
           description: error.message,
           duration,
-          icon: <XCircle className="h-5 w-5" />,
+          icon: React.createElement(XCircle, { className: "h-5 w-5" }),
           action: action
             ? {
                 label: action.label,
@@ -183,7 +201,7 @@ class NotificationManagerClass {
     // Handle string error
     return toast.error(error, {
       duration,
-      icon: <XCircle className="h-5 w-5" />,
+      icon: React.createElement(XCircle, { className: "h-5 w-5" }),
       action: action
         ? {
             label: action.label,
@@ -202,7 +220,7 @@ class NotificationManagerClass {
 
     return toast.warning(message, {
       duration,
-      icon: <AlertTriangle className="h-5 w-5" />,
+      icon: React.createElement(AlertTriangle, { className: "h-5 w-5" }),
       action: action
         ? {
             label: action.label,
@@ -221,7 +239,7 @@ class NotificationManagerClass {
 
     return toast.info(message, {
       duration,
-      icon: <Info className="h-5 w-5" />,
+      icon: React.createElement(Info, { className: "h-5 w-5" }),
       action: action
         ? {
             label: action.label,

@@ -113,7 +113,7 @@ export async function GET(request: NextRequest) {
       return {
         id: booking.id,
         queueNumber: booking.queue_number || `Q-${booking.id.slice(0, 6)}`,
-        patientName: booking.customer?.full_name || booking.customer_name || "ลูกค้า",
+  patientName: (booking as any).customer?.full_name || booking.customer_name || "ลูกค้า",
         status: booking.status,
         treatmentType: booking.treatment_type,
         estimatedWait,
@@ -126,11 +126,11 @@ export async function GET(request: NextRequest) {
       ? {
           id: servingData.id,
           queueNumber: servingData.queue_number || `Q-${servingData.id.slice(0, 6)}`,
-          patientName: servingData.customer?.full_name || servingData.customer_name || "ลูกค้า",
+          patientName: (servingData as any).customer?.full_name || (servingData as any).customer_name || "ลูกค้า",
           status: servingData.status,
           treatmentType: servingData.treatment_type,
           room: "ห้อง 1", // TODO: Add room assignment logic
-          doctor: servingData.staff?.full_name || "แพทย์",
+          doctor: (servingData as any).staff?.full_name || "แพทย์",
           checkInTime: servingData.check_in_time,
         }
       : null

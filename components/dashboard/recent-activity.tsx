@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { motion, AnimatePresence, type Variants } from "framer-motion"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -50,6 +51,15 @@ export function RecentActivity() {
     }
   }
 
+  // Central meta mapping for consistency
+  const TYPE_META: Record<Activity["type"], { label: string; badgeClass: string; icon: React.ReactElement }> = {
+    booking:   { label: "การนัด", badgeClass: "bg-blue-500/10 text-blue-600 dark:text-blue-400", icon: <Calendar className="h-4 w-4 text-blue-500" /> },
+    customer:  { label: "ลูกค้า", badgeClass: "bg-green-500/10 text-green-600 dark:text-green-400", icon: <User className="h-4 w-4 text-green-500" /> },
+    inventory: { label: "สต็อก", badgeClass: "bg-orange-500/10 text-orange-600 dark:text-orange-400", icon: <Package className="h-4 w-4 text-orange-500" /> },
+    staff:     { label: "ทีมงาน", badgeClass: "bg-purple-500/10 text-purple-600 dark:text-purple-400", icon: <User className="h-4 w-4 text-purple-500" /> },
+    revenue:   { label: "รายได้", badgeClass: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400", icon: <TrendingUp className="h-4 w-4 text-emerald-500" /> },
+  }
+
   const getActivityIcon = (type: string) => {
     switch (type) {
       case "booking":
@@ -68,20 +78,13 @@ export function RecentActivity() {
   }
 
   const getActivityBadge = (type: string) => {
-    switch (type) {
-      case "booking":
-        return <Badge variant="outline" className="bg-blue-500/10 text-blue-600 dark:text-blue-400">การนัด</Badge>
-      case "customer":
-        return <Badge variant="outline" className="bg-green-500/10 text-green-600 dark:text-green-400">ลูกค้า</Badge>
-      case "inventory":
-        return <Badge variant="outline" className="bg-orange-500/10 text-orange-600 dark:text-orange-400">สต็อก</Badge>
-      case "staff":
-        return <Badge variant="outline" className="bg-purple-500/10 text-purple-600 dark:text-purple-400">ทีมงาน</Badge>
-      case "revenue":
-        return <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">รายได้</Badge>
-      default:
-        return <Badge variant="outline">อื่นๆ</Badge>
-    }
+    const meta = TYPE_META[type as Activity["type"]]
+    if (!meta) return <Badge variant="outline">อื่นๆ</Badge>
+    return (
+      <Badge variant="outline" className={meta.badgeClass}>
+        {meta.label}
+      </Badge>
+    )
   }
 
   const formatTime = (timestamp: string) => {
@@ -97,7 +100,7 @@ export function RecentActivity() {
 
   if (isLoading) {
     return (
-      <Card className="h-full">
+      <Card className="h-full" aria-busy="true" aria-live="polite">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Clock className="h-5 w-5" />
@@ -105,7 +108,7 @@ export function RecentActivity() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
+          <div className="space-y-4 animate-pulse">
             {[1, 2, 3, 4, 5].map((i) => (
               <div key={i} className="flex items-start gap-3">
                 <Skeleton className="h-10 w-10 rounded-full" />
@@ -157,6 +160,16 @@ export function RecentActivity() {
     )
   }
 
+  // Motion variants
+  const container: Variants = {
+    hidden: {},
+    show: { transition: { staggerChildren: 0.06, delayChildren: 0.04 } },
+  }
+  const item: Variants = {
+    hidden: { opacity: 0, y: 6 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.35, ease: [0.25, 0.1, 0.25, 1] } },
+  }
+
   return (
     <Card className="h-full">
       <CardHeader>
@@ -165,34 +178,44 @@ export function RecentActivity() {
           กิจกรรมล่าสุด
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          {data.activities.slice(0, 8).map((activity) => (
-            <div
-              key={activity.id}
-              className="flex items-start gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors"
-            >
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
-                {getActivityIcon(activity.type)}
-              </div>
-              <div className="flex-1 space-y-1">
-                <div className="flex items-start justify-between gap-2">
-                  <p className="text-sm font-medium leading-tight">
-                    {activity.title}
-                  </p>
-                  {getActivityBadge(activity.type)}
+      <CardContent aria-live="polite" role="feed">
+        <motion.div className="space-y-3" variants={container} initial="hidden" animate="show">
+          <AnimatePresence initial={false}>
+            {data.activities.slice(0, 8).map((activity) => (
+              <motion.article
+                key={activity.id}
+                variants={item}
+                layout
+                whileHover={{ y: -1, scale: 1.01 }}
+                whileTap={{ scale: 0.995 }}
+                className="flex items-start gap-3 p-3 rounded-lg border border-transparent hover:border-border/80 hover:bg-muted/50 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/40"
+                role="article"
+                aria-label={activity.title}
+                tabIndex={0}
+              >
+                <div className="relative flex h-10 w-10 items-center justify-center rounded-full bg-muted">
+                  <span className="pointer-events-none absolute -inset-1 rounded-full bg-gradient-to-b from-primary/25 to-transparent blur-md opacity-60" aria-hidden />
+                  <span className="relative">{getActivityIcon(activity.type)}</span>
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  {activity.description}
-                </p>
-                <p className="text-xs text-muted-foreground flex items-center gap-1">
-                  <Clock className="h-3 w-3" />
-                  {formatTime(activity.timestamp)}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
+                <div className="flex-1 space-y-1">
+                  <div className="flex items-start justify-between gap-2">
+                    <h3 className="text-sm font-medium leading-tight">{activity.title}</h3>
+                    {getActivityBadge(activity.type)}
+                  </div>
+                  <p className="text-xs text-muted-foreground line-clamp-2">{activity.description}</p>
+                  <time
+                    className="text-xs text-muted-foreground flex items-center gap-1"
+                    dateTime={activity.timestamp}
+                    aria-label={`เกิดขึ้นเมื่อ ${formatTime(activity.timestamp)}`}
+                  >
+                    <Clock className="h-3 w-3" />
+                    {formatTime(activity.timestamp)}
+                  </time>
+                </div>
+              </motion.article>
+            ))}
+          </AnimatePresence>
+        </motion.div>
       </CardContent>
     </Card>
   )

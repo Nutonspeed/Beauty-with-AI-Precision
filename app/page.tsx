@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ArrowRight, Bot, BrainCircuit, Camera } from "lucide-react"
+import AuroraBackground from "@/components/marketing/aurora-background"
+import HeroModern from "@/components/marketing/hero-modern"
 
 export default function LandingPage() {
   return (
@@ -14,44 +16,12 @@ export default function LandingPage() {
       <Header />
 
       <main className="flex-1">
-        {/* Hero Section */}
-        <section className="w-full py-20 md:py-32 lg:py-40 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+        {/* Hero Section - Modernized with Aurora + Motion */}
+        <section className="w-full py-16 md:py-24 lg:py-28">
           <div className="container px-4 md:px-6">
-            <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 xl:gap-16 items-center">
-              <div className="space-y-4">
-                <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300">
-                  AI-Powered Sales & Analysis
-                </Badge>
-                <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl text-gray-900 dark:text-gray-50">
-                  The Future of Personalized Skin Care
-                </h1>
-                <p className="max-w-[600px] text-gray-500 md:text-xl dark:text-gray-400">
-                  Empower your sales team with our advanced AI skin analysis, AR visualization, and automated sales tools. Drive engagement and boost conversions.
-                </p>
-                <div className="flex flex-col gap-2 sm:flex-row">
-                  <Link
-                    href="/demo"
-                    className="inline-flex h-12 items-center justify-center rounded-md bg-blue-600 px-8 text-sm font-medium text-gray-50 shadow transition-colors hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-950 disabled:pointer-events-none disabled:opacity-50"
-                    prefetch={false}
-                  >
-                    Request a Demo
-                  </Link>
-                  <Link
-                    href="/auth/login"
-                    className="inline-flex h-12 items-center justify-center rounded-md border border-gray-200 bg-white px-8 text-sm font-medium shadow-sm transition-colors hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50 dark:border-gray-800 dark:bg-gray-950 dark:hover:bg-gray-800 dark:hover:text-gray-50"
-                    prefetch={false}
-                  >
-                    Sales Login
-                  </Link>
-                </div>
-              </div>
-              <div className="hidden lg:block">
-                {/* Placeholder for a cool graphic or animation */}
-                <div className="w-full h-80 rounded-xl bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                  <p className="text-gray-500">[AI Analysis in Action]</p>
-                </div>
-              </div>
-            </div>
+            <AuroraBackground>
+              <HeroModern />
+            </AuroraBackground>
           </div>
         </section>
 
