@@ -8,7 +8,7 @@ import type { CheckIn } from '@/lib/goals/smart-goals';
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { goalId: string } }
+  { params }: { params: Promise<{ goalId: string }> }
 ) {
   try {
     const supabase = await createClient();
@@ -23,7 +23,7 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const goalId = params.goalId;
+    const { goalId } = await params;
     const checkInData: Omit<CheckIn, 'id'> = await request.json();
 
     // Verify goal ownership
@@ -154,7 +154,7 @@ export async function POST(
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { goalId: string } }
+  { params }: { params: Promise<{ goalId: string }> }
 ) {
   try {
     const supabase = await createClient();
@@ -169,7 +169,7 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const goalId = params.goalId;
+    const { goalId } = await params;
 
     // Verify goal ownership
     const { data: goal, error: goalError } = await supabase

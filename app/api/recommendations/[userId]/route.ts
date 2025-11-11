@@ -10,9 +10,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 
 interface RouteParams {
-  params: {
+  params: Promise<{
     userId: string;
-  };
+  }>;
 }
 
 /**
@@ -23,7 +23,7 @@ export async function GET(
   { params }: RouteParams
 ) {
   try {
-    const { userId } = params;
+    const { userId } = await params;
 
     if (!userId) {
       return NextResponse.json(
@@ -133,7 +133,7 @@ export async function DELETE(
   { params }: RouteParams
 ) {
   try {
-    const { userId } = params;
+    const { userId } = await params;
 
     if (!userId) {
       return NextResponse.json(

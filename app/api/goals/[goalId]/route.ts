@@ -8,7 +8,7 @@ import type { GoalStatus } from '@/lib/goals/smart-goals';
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { goalId: string } }
+  { params }: { params: Promise<{ goalId: string }> }
 ) {
   try {
     const supabase = await createClient();
@@ -23,7 +23,7 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const goalId = params.goalId;
+    const { goalId } = await params;
 
     // Fetch goal with milestones and check-ins
     const { data: goal, error } = await supabase
@@ -67,7 +67,7 @@ export async function GET(
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { goalId: string } }
+  { params }: { params: Promise<{ goalId: string }> }
 ) {
   try {
     const supabase = await createClient();
@@ -82,7 +82,7 @@ export async function PATCH(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const goalId = params.goalId;
+    const { goalId } = await params;
     const updates = await request.json();
 
     // Prepare update data
@@ -153,7 +153,7 @@ export async function PATCH(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { goalId: string } }
+  { params }: { params: Promise<{ goalId: string }> }
 ) {
   try {
     const supabase = await createClient();
@@ -168,7 +168,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const goalId = params.goalId;
+    const { goalId } = await params;
 
     // Delete goal (cascade will delete milestones, check-ins, photos)
     const { error } = await supabase

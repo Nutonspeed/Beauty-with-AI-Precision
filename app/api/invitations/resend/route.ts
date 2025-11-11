@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
         role: invitation.invited_role,
         clinicName,
         invitationLink,
-        expiresAt: newExpiresAt
+        expiresAt: newExpiresAt.toISOString()
       })
       console.log('✅ Invitation email resent to:', invitation.email)
     } catch (emailError) {

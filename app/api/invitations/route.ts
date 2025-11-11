@@ -211,6 +211,10 @@ export async function POST(request: Request) {
       .eq('id', user.id)
       .single()
 
+    // Type cast for clinic relationship
+    const invitationWithClinic = invitation as any
+    const clinicData = invitationWithClinic.clinics
+
     // Send invitation email
     try {
       await sendInvitationEmail({
@@ -218,7 +222,7 @@ export async function POST(request: Request) {
         inviterName: inviterData?.full_name || 'Admin',
         inviterEmail: inviterData?.email || user.email || '',
         role: invitation.invited_role,
-        clinicName: invitation.clinics?.name || null,
+        clinicName: clinicData?.name || null,
         invitationLink,
         expiresAt: invitation.expires_at
       })
@@ -236,7 +240,7 @@ export async function POST(request: Request) {
         email: invitation.email,
         invited_role: invitation.invited_role,
         clinic_id: invitation.clinic_id,
-        clinic_name: invitation.clinics?.name || null,
+        clinic_name: clinicData?.name || null,
         token: invitation.token,
         invitation_link: invitationLink,
         expires_at: invitation.expires_at,

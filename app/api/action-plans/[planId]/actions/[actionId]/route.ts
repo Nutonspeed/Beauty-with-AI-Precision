@@ -9,7 +9,7 @@ import type { ActionStatus } from '@/lib/action-plan/action-plan-generator';
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { planId: string; actionId: string } }
+  { params }: { params: Promise<{ planId: string; actionId: string }> }
 ) {
   try {
     const supabase = await createClient();
@@ -24,7 +24,7 @@ export async function PATCH(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { planId, actionId } = params;
+    const { planId, actionId } = await params;
     const updates = await request.json();
 
     // Verify plan ownership
@@ -132,7 +132,7 @@ export async function PATCH(
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { planId: string; actionId: string } }
+  { params }: { params: Promise<{ planId: string; actionId: string }> }
 ) {
   try {
     const supabase = await createClient();
@@ -147,7 +147,7 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { planId, actionId } = params;
+    const { planId, actionId } = await params;
 
     // Verify plan ownership
     const { data: plan, error: planError } = await supabase

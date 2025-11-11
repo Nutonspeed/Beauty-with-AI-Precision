@@ -50,12 +50,12 @@ export async function GET(request: NextRequest) {
         status,
         check_in_time,
         customer_name,
-        customer:customers!inner (
+        customers (
           id,
           full_name,
           phone
         ),
-        staff:clinic_staff (
+        clinic_staff (
           id,
           full_name,
           role
@@ -85,7 +85,7 @@ export async function GET(request: NextRequest) {
         status,
         check_in_time,
         customer_name,
-        customer:customers!inner (
+        customers (
           id,
           full_name,
           phone
@@ -108,12 +108,13 @@ export async function GET(request: NextRequest) {
 
     // Calculate estimated wait times
     const AVERAGE_SERVICE_TIME = 15 // minutes per patient
-    const nextWithEstimates = (nextData || []).map((booking, index) => {
+    const nextWithEstimates = (nextData || []).map((booking: any, index) => {
       const estimatedWait = (index + 1) * AVERAGE_SERVICE_TIME
+      const customer = Array.isArray(booking.customers) ? booking.customers[0] : booking.customers
       return {
         id: booking.id,
         queueNumber: booking.queue_number || `Q-${booking.id.slice(0, 6)}`,
-        patientName: booking.customer?.full_name || booking.customer_name || "ลูกค้า",
+        patientName: customer?.full_name || booking.customer_name || "ลูกค้า",
         status: booking.status,
         treatmentType: booking.treatment_type,
         estimatedWait,
@@ -123,16 +124,24 @@ export async function GET(request: NextRequest) {
 
     // Format current serving
     const currentServing = servingData
-      ? {
-          id: servingData.id,
-          queueNumber: servingData.queue_number || `Q-${servingData.id.slice(0, 6)}`,
-          patientName: servingData.customer?.full_name || servingData.customer_name || "ลูกค้า",
-          status: servingData.status,
-          treatmentType: servingData.treatment_type,
-          room: "ห้อง 1", // TODO: Add room assignment logic
-          doctor: servingData.staff?.full_name || "แพทย์",
-          checkInTime: servingData.check_in_time,
-        }
+      ? (() => {
+          const customer = Array.isArray((servingData as any).customers) 
+            ? (servingData as any).customers[0] 
+            : (servingData as any).customers
+          const staff = Array.isArray((servingData as any).clinic_staff) 
+            ? (servingData as any).clinic_staff[0] 
+            : (servingData as any).clinic_staff
+          return {
+            id: servingData.id,
+            queueNumber: servingData.queue_number || `Q-${servingData.id.slice(0, 6)}`,
+            patientName: customer?.full_name || servingData.customer_name || "ลูกค้า",
+            status: servingData.status,
+            treatmentType: servingData.treatment_type,
+            room: "ห้อง 1", // TODO: Add room assignment logic
+            doctor: staff?.full_name || "แพทย์",
+            checkInTime: servingData.check_in_time,
+          }
+        })()
       : null
 
     // Get queue statistics

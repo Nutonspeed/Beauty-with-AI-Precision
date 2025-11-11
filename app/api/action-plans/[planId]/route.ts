@@ -7,7 +7,7 @@ import { createClient } from '@/lib/supabase/server';
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { planId: string } }
+  { params }: { params: Promise<{ planId: string }> }
 ) {
   try {
     const supabase = await createClient();
@@ -22,7 +22,7 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const planId = params.planId;
+    const { planId } = await params;
 
     // Fetch action plan with items
     const { data: plan, error } = await supabase
@@ -66,7 +66,7 @@ export async function GET(
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { planId: string } }
+  { params }: { params: Promise<{ planId: string }> }
 ) {
   try {
     const supabase = await createClient();
@@ -81,7 +81,7 @@ export async function PATCH(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const planId = params.planId;
+    const { planId } = await params;
     const updates = await request.json();
 
     // Only allow updating specific fields
@@ -140,7 +140,7 @@ export async function PATCH(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { planId: string } }
+  { params }: { params: Promise<{ planId: string }> }
 ) {
   try {
     const supabase = await createClient();
@@ -155,7 +155,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const planId = params.planId;
+    const { planId } = await params;
 
     // Delete action plan (cascade will delete action_items)
     const { error } = await supabase
