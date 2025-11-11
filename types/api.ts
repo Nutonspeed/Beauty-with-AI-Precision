@@ -38,21 +38,21 @@ export interface SaveAnalysisRequest {
   }
   appointmentId?: string
   treatmentPlanId?: string
-  // 🔥 FIX: Add quality metrics (CRITICAL BUG #1)
+  // Quality metrics from image validation
   qualityMetrics?: {
     lighting: number        // 0-100
     blur: number            // 0-100
     faceSize: number        // 0-1
     overallQuality: number  // 0-100
   }
-  // 🔥 FIX: Add AI concerns array (CRITICAL BUG #2)
+  // AI-detected concerns with priority
   aiConcerns?: Array<{
     type: string
     severity: number
     description: string
     priority: 'high' | 'medium' | 'low'
   }>
-  // 🔥 FIX: Add recommendations for treatment plan (CRITICAL BUG #4)
+  // Treatment recommendations with confidence scores
   recommendations?: Array<{
     text: string
     confidence: number

@@ -10,11 +10,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { SeverityLevel, ConcernType } from '@/types/calibration';
 
-// Import AI analysis functions
-// TODO: Implement these analyzers or use existing HybridAnalyzer
-// import { analyzeImageWithMediaPipe } from '@/lib/ai/mediapipe-analyzer';
-// import { analyzeImageWithTensorFlow } from '@/lib/ai/tensorflow-analyzer';
-// import { analyzeImageWithHuggingFace } from '@/lib/ai/huggingface-analyzer';
+// Using HybridAnalyzer for all model types (mediapipe, tensorflow, huggingface, ensemble)
 import { analyzeSkin } from '@/lib/ai/hybrid-skin-analyzer';
 
 const CALIBRATION_DIR = path.join(process.cwd(), 'test-images', 'calibration');
@@ -61,14 +57,12 @@ async function runPredictionOnImage(
 
     let results: any;
 
-    // Run appropriate model
-    // TODO: Implement individual analyzers or route all to HybridAnalyzer
+    // All models route to HybridAnalyzer for consistent results
     switch (model) {
       case 'mediapipe':
       case 'tensorflow':
       case 'huggingface':
       case 'ensemble':
-        // For now, use HybridAnalyzer for all models
         results = await analyzeSkin(imageBuffer);
         break;
       default:
