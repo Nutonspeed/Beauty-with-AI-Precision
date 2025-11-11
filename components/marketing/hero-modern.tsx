@@ -1,15 +1,18 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function HeroModern() {
+  const prefersReducedMotion = useReducedMotion();
   return (
     <div className="mx-auto max-w-7xl px-6 py-16 sm:py-24 lg:py-28">
       <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
+        initial={prefersReducedMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.5, ease: "easeOut" }}
         className="max-w-2xl"
       >
         <div className="inline-flex items-center gap-2 rounded-full border bg-white/70 px-3 py-1 text-xs text-muted-foreground backdrop-blur dark:bg-neutral-900/60">
@@ -22,11 +25,15 @@ export default function HeroModern() {
           จองคิวอัจฉริยะ วิเคราะห์ก่อน–หลัง และรายงานรายได้แบบเรียลไทม์ ทั้งหมดในที่เดียว
         </p>
         <div className="mt-6 flex flex-wrap items-center gap-3">
-          <motion.div whileHover={{ y: -1 }} whileTap={{ scale: 0.98 }}>
+          <motion.div whileHover={prefersReducedMotion ? undefined : { y: -1 }} whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}>
             <Button size="lg">เริ่มใช้งานฟรี</Button>
           </motion.div>
-          <motion.div whileHover={{ y: -1 }} whileTap={{ scale: 0.98 }}>
-            <Button variant="outline" size="lg">ดูเดโม</Button>
+          <motion.div whileHover={prefersReducedMotion ? undefined : { y: -1 }} whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}>
+            <Link href="/demo/before-after">
+              <Button asChild variant="outline" size="lg">
+                <span>ดูเดโม</span>
+              </Button>
+            </Link>
           </motion.div>
         </div>
 
