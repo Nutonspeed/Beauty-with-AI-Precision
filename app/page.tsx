@@ -9,6 +9,8 @@ import { Badge } from "@/components/ui/badge"
 import { ArrowRight, Bot, BrainCircuit, Camera } from "lucide-react"
 import AuroraBackground from "@/components/marketing/aurora-background"
 import HeroModern from "@/components/marketing/hero-modern"
+import { RadialMetric } from "@/components/metrics/radial-metric"
+import { BeforeAfter } from "@/components/marketing/before-after"
 
 export default function LandingPage() {
   return (
@@ -22,6 +24,30 @@ export default function LandingPage() {
             <AuroraBackground>
               <HeroModern />
             </AuroraBackground>
+          </div>
+        </section>
+
+        {/* Metrics strip */}
+        <section className="w-full py-8 md:py-12">
+          <div className="container px-4 md:px-6">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <RadialMetric label="ความพึงพอใจ" value={98} suffix="%" />
+              <RadialMetric label="การนัด/เดือน" value={12000} suffix="" colorClass="stroke-blue-500" />
+              <RadialMetric label="อัตรากลับมาใช้ซ้ำ" value={320} suffix="%" colorClass="stroke-purple-500" />
+            </div>
+          </div>
+        </section>
+
+        {/* Before/After section (placeholder mode until assets are provided) */}
+        <section className="w-full py-12 md:py-20">
+          <div className="container px-4 md:px-6">
+            <div className="max-w-4xl mx-auto">
+              <h2 className="text-2xl md:text-3xl font-bold tracking-tight">ก่อน–หลัง แบบเปรียบเทียบ</h2>
+              <p className="mt-2 text-muted-foreground">แสดงผลลัพธ์ที่พิสูจน์ได้ เมื่อมีภาพจริงจะโชว์แบบสไลด์เปรียบเทียบทันที</p>
+              <div className="mt-6">
+                <BeforeAfter />
+              </div>
+            </div>
           </div>
         </section>
 
