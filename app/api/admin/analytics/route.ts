@@ -155,7 +155,7 @@ export async function GET(request: Request) {
     }
 
     // 3. User Analytics
-    let userData = null
+    let userAnalyticsData = null
     if (metric === 'users' || metric === 'all') {
       const { data: allUsers } = await supabase
         .from('users')
@@ -187,7 +187,7 @@ export async function GET(request: Request) {
         .map(([month, count]) => ({ month, count }))
         .sort((a, b) => a.month.localeCompare(b.month))
 
-      userData = {
+      userAnalyticsData = {
         total: totalUsers,
         newInPeriod: usersInPeriod.length,
         roleDistribution,
@@ -274,7 +274,7 @@ export async function GET(request: Request) {
       },
       revenue: revenueData,
       clinics: clinicData,
-      users: userData,
+      users: userAnalyticsData,
       system: systemData,
       popularFeatures,
     })
