@@ -1,0 +1,249 @@
+{
+  "type": "blackheads",
+  "icon": "⚫",
+  "color": "#1f2937",
+  "definition": {
+    "en": "Blackheads (open comedones) are small dark bumps on the skin caused by clogged hair follicles. The black appearance is due to oxidation of sebum and dead skin cells, not dirt.",
+    "th": "สิวหัวดำ (open comedones) เป็นตุ่มเล็กสีดำบนผิวที่เกิดจากรูขุมขนอุดตัน สีดำเกิดจากการออกซิเดชันของน้ำมันและเซลล์ผิวที่ตาย ไม่ใช่จากสิ่งสกปรก"
+  },
+  "causes": {
+    "en": [
+      "Excess sebum (oil) production",
+      "Buildup of dead skin cells in pores",
+      "Hormonal changes increasing oil production",
+      "Using comedogenic (pore-clogging) products",
+      "Inadequate cleansing or makeup removal",
+      "Genetics predisposing to oily skin",
+      "Certain medications (corticosteroids, lithium)",
+      "High humidity and sweating",
+      "Touching face frequently with dirty hands",
+      "Diet high in dairy and refined carbohydrates"
+    ],
+    "th": [
+      "ผลิตน้ำมันบนผิวมากเกินไป",
+      "เซลล์ผิวที่ตายสะสมในรูขุมขน",
+      "ฮอร์โมนเปลี่ยนแปลงเพิ่มการผลิตน้ำมัน",
+      "ใช้ผลิตภัณฑ์ที่อุดรูขุมขน (comedogenic)",
+      "ทำความสะอาดไม่เพียงพอหรือไม่ล้างเครื่องสำอาง",
+      "พันธุกรรมที่มีแนวโน้มผิวมัน",
+      "ยาบางชนิด (คอร์ติโคสเตียรอยด์, ลิเธียม)",
+      "ความชื้นสูงและการเหงื่อออก",
+      "สัมผัสหน้าบ่อยด้วยมือสกปรก",
+      "อาหารที่มีนมและคาร์โบไฮเดรตสูง"
+    ]
+  },
+  "prevention": {
+    "en": [
+      "Cleanse face twice daily with salicylic acid cleanser",
+      "Use oil-free, non-comedogenic products",
+      "Exfoliate regularly with BHA (salicylic acid)",
+      "Remove makeup thoroughly before bed",
+      "Use clay masks 1-2 times per week",
+      "Avoid touching face with unwashed hands",
+      "Change pillowcases weekly",
+      "Keep hair off face and wash regularly",
+      "Use oil-absorbing sheets during the day",
+      "Maintain balanced diet limiting dairy and sugar"
+    ],
+    "th": [
+      "ล้างหน้าวันละ 2 ครั้งด้วยผลิตภัณฑ์ที่มีกรด salicylic",
+      "ใช้ผลิตภัณฑ์ปลอดน้ำมันและไม่อุดรูขุมขน",
+      "ผลัดเซลล์ผิวเป็นประจำด้วย BHA (กรด salicylic)",
+      "ล้างเครื่องสำอางออกให้หมดก่อนนอน",
+      "ใช้มาส์กดินเหนียวสัปดาห์ละ 1-2 ครั้ง",
+      "หลีกเลี่ยงการสัมผัสหน้าด้วยมือที่ไม่สะอาด",
+      "เปลี่ยนปลอกหมอนทุกสัปดาห์",
+      "เก็บผมไว้ห่างจากใบหน้าและสระผมเป็นประจำ",
+      "ใช้กระดาษซับมันในระหว่างวัน",
+      "รักษาอาหารที่สมดุล จำกัดนมและน้ำตาล"
+    ]
+  },
+  "treatment": {
+    "mild": {
+      "description": "Home care with OTC products",
+      "options": [
+        "Salicylic acid cleanser 2% twice daily",
+        "BHA toner or serum 2% nightly",
+        "Clay mask with kaolin or bentonite 1-2x weekly",
+        "Niacinamide serum to regulate oil production",
+        "Oil-free moisturizer with hyaluronic acid",
+        "Retinol 0.25-0.5% to prevent pore clogging",
+        "Pore strips occasionally (not as long-term solution)",
+        "Double cleansing method (oil then water-based)",
+        "Non-comedogenic sunscreen daily"
+      ]
+    },
+    "moderate": {
+      "description": "Professional extraction and stronger treatments",
+      "options": [
+        "Professional facial with extraction every 4-6 weeks",
+        "Chemical peels with salicylic acid 20-30%",
+        "Prescription retinoids (adapalene, tretinoin)",
+        "Azelaic acid 15-20% to unclog pores",
+        "Microdermabrasion treatments",
+        "HydraFacial with deep pore cleansing",
+        "LED blue light therapy to reduce bacteria",
+        "Combination of retinoid + BHA at night",
+        "Professional comedone extraction tools"
+      ]
+    },
+    "severe": {
+      "description": "Intensive treatment for stubborn blackheads",
+      "options": [
+        "High-strength prescription tretinoin 0.1%",
+        "Carbon laser facial (Hollywood peel)",
+        "Microneedling to refine pores",
+        "Fractional laser to reduce pore size",
+        "IPL (Intense Pulsed Light) to control oil",
+        "Oral isotretinoin for severe cases",
+        "Chemical peels every 2-4 weeks",
+        "Professional deep pore extractions monthly",
+        "Combination laser + chemical peel treatments"
+      ]
+    }
+  },
+  "relatedConcerns": ["large_pores", "oily_skin", "acne", "texture", "sebaceous_hyperplasia"],
+  "visualExamples": [
+    "/images/concerns/blackheads-nose.jpg",
+    "/images/concerns/blackheads-chin.jpg",
+    "/images/concerns/blackheads-extraction.jpg",
+    "/images/concerns/blackheads-treatment.jpg"
+  ],
+  "statistics": {
+    "prevalence": "50-80% of people experience blackheads at some point",
+    "location": "Most common on nose, chin, and forehead (T-zone)",
+    "age": "Peak occurrence during teenage years, but can persist into adulthood",
+    "recurrence": "Blackheads can return within 20-40 days without proper skincare",
+    "genetics": "Genetics play a 40-50% role in susceptibility to blackheads"
+  },
+  "myths": [
+    {
+      "myth": "Blackheads are caused by dirt",
+      "fact": "The black color is from oxidized sebum and dead skin cells, not dirt. Overwashing can actually worsen blackheads by increasing oil production."
+    },
+    {
+      "myth": "Squeezing blackheads is the best removal method",
+      "fact": "Improper extraction can damage skin, enlarge pores, cause scarring, and push bacteria deeper. Professional extraction is safer."
+    },
+    {
+      "myth": "Pore strips permanently remove blackheads",
+      "fact": "Pore strips only provide temporary removal of superficial blackheads. They don't address the root cause and blackheads quickly return."
+    },
+    {
+      "myth": "You can permanently shrink or close pores",
+      "fact": "Pore size is largely genetic. While you can minimize their appearance with proper care, pores cannot be permanently closed."
+    }
+  ],
+  "dailyRoutine": {
+    "morning": [
+      "Cleanse with salicylic acid cleanser 2%",
+      "Apply BHA toner to T-zone",
+      "Use niacinamide serum to control oil",
+      "Apply lightweight, oil-free moisturizer",
+      "Use oil-free SPF 30-50 sunscreen"
+    ],
+    "evening": [
+      "Double cleanse: oil cleanser first, then salicylic acid cleanser",
+      "Apply BHA toner or serum 2%",
+      "Use retinol or prescription retinoid (on alternate nights if needed)",
+      "Apply niacinamide serum if not using retinoid",
+      "Use oil-free night moisturizer"
+    ],
+    "weekly": [
+      "Clay mask 1-2 times per week (kaolin or bentonite)",
+      "Gentle enzyme exfoliation 1-2 times per week",
+      "Steam face for 5-10 minutes before mask to open pores",
+      "Use pore strips sparingly (not more than once per week)"
+    ]
+  },
+  "extractionTechnique": {
+    "safe": {
+      "title": "Safe At-Home Extraction",
+      "steps": [
+        "Cleanse face thoroughly",
+        "Apply warm (not hot) compress for 5-10 minutes",
+        "Wrap clean fingers with tissue or cotton",
+        "Apply gentle pressure around blackhead (not on it)",
+        "If it doesn't release easily, STOP - don't force it",
+        "Cleanse area with salicylic acid toner",
+        "Apply soothing serum or light moisturizer"
+      ],
+      "warning": "Only extract blackheads that are clearly visible and near the surface. For deeper or stubborn blackheads, see a professional."
+    },
+    "avoid": [
+      "Never use fingernails directly on skin",
+      "Don't squeeze or pick at skin aggressively",
+      "Avoid metal extraction tools without proper training",
+      "Don't extract inflamed or painful areas",
+      "Never share extraction tools"
+    ]
+  },
+  "ingredients": {
+    "mostEffective": [
+      "Salicylic acid (BHA) 2% - penetrates oil and unclogs pores",
+      "Retinoids - prevent pore clogging and increase cell turnover",
+      "Niacinamide 5-10% - regulates sebum production",
+      "Clay (kaolin, bentonite) - absorbs excess oil",
+      "Azelaic acid 10-20% - unclogs pores and reduces oil",
+      "Glycolic acid (AHA) 5-10% - exfoliates surface",
+      "Charcoal - draws out impurities",
+      "Zinc - reduces oil production and inflammation"
+    ],
+    "avoid": [
+      "Heavy oils (coconut, mineral oil)",
+      "Thick silicones (dimethicone in high concentrations)",
+      "Comedogenic ingredients (cocoa butter, wheat germ oil)",
+      "Harsh physical scrubs with large particles"
+    ]
+  },
+  "professionalTreatments": {
+    "extraction": {
+      "name": "Professional Facial with Extraction",
+      "description": "Esthetician uses steam and tools to safely remove blackheads",
+      "frequency": "Every 4-6 weeks",
+      "cost": "$75-$150 per session",
+      "benefits": "Safe removal, reduced pore appearance, smoother texture"
+    },
+    "hydroFacial": {
+      "name": "HydraFacial",
+      "description": "Vacuum suction removes blackheads while hydrating skin",
+      "frequency": "Every 4-6 weeks",
+      "cost": "$150-$300 per session",
+      "benefits": "Deep cleansing, instant results, no downtime"
+    },
+    "chemicalPeel": {
+      "name": "Salicylic Acid Peel",
+      "description": "20-30% salicylic acid penetrates pores deeply",
+      "frequency": "Every 2-4 weeks initially, then maintenance",
+      "cost": "$100-$250 per session",
+      "benefits": "Unclogs pores, reduces oil, prevents formation"
+    },
+    "carbonLaser": {
+      "name": "Carbon Laser Facial (Hollywood Peel)",
+      "description": "Carbon paste + laser removes blackheads and shrinks pores",
+      "frequency": "Every 4-8 weeks",
+      "cost": "$200-$400 per session",
+      "benefits": "Deep cleansing, pore refinement, oil control"
+    }
+  },
+  "whenToSeeDermatologist": {
+    "en": [
+      "Blackheads covering large areas of face",
+      "Home treatments not showing improvement after 8-12 weeks",
+      "Blackheads accompanied by painful cystic acne",
+      "Desire for professional extractions",
+      "Considering prescription retinoids or stronger treatments",
+      "Blackheads causing significant distress or affecting confidence",
+      "Recurrent infections or scarring from blackhead removal attempts"
+    ],
+    "th": [
+      "สิวหัวดำปกคลุมพื้นที่กว้างของใบหน้า",
+      "การรักษาที่บ้านไม่ได้ผลหลัง 8-12 สัปดาห์",
+      "สิวหัวดำพร้อมกับสิวอุดตันที่เจ็บปวด",
+      "ต้องการให้ผู้เชี่ยวชาญดึงออก",
+      "พิจารณาใช้ retinoid ที่ต้องมีใบสั่งแพทย์",
+      "สิวหัวดำทำให้เครียดหรือส่งผลต่อความมั่นใจ",
+      "การติดเชื้อหรือแผลเป็นจากการดึงสิวหัวดำเอง"
+    ]
+  }
+}

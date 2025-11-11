@@ -1,0 +1,169 @@
+{
+  "type": "large_pores",
+  "icon": "⚫",
+  "color": "#44403c",
+  "definition": {
+    "en": "Enlarged pores are small openings in the skin that appear larger than normal due to excess oil production, loss of skin elasticity, sun damage, or genetics. They are most visible on the T-zone (nose, forehead, chin).",
+    "th": "รูขุมขนกว้าง คือช่องเปิดเล็กๆ บนผิวหนังที่ดูใหญ่กว่าปกติเนื่องจากการผลิตน้ำมันมากเกินไป การสูญเสียความยืดหยุ่นของผิว ความเสียหายจากแดด หรือพันธุกรรม มักเห็นได้ชัดในโซนที (จมูก หน้าผาก คาง)"
+  },
+  "causes": [
+    "Genetics (primary factor)",
+    "Excess sebum (oil) production",
+    "Loss of skin elasticity with age",
+    "Sun damage and photoaging",
+    "Blackheads and debris stretching pores",
+    "Improper cleansing",
+    "Chronic acne",
+    "Hormonal changes",
+    "Thick hair follicles",
+    "Smoking"
+  ],
+  "prevention": [
+    "Cleanse face twice daily with salicylic acid cleanser",
+    "Use oil-free, non-comedogenic products",
+    "Never sleep with makeup on",
+    "Exfoliate regularly (2-3 times per week)",
+    "Use pore-minimizing toner",
+    "Apply retinol at night",
+    "Use niacinamide serum daily",
+    "Wear SPF 30+ sunscreen daily",
+    "Avoid heavy, pore-clogging products",
+    "Don't pick at skin or squeeze pores"
+  ],
+  "treatment": {
+    "mild": {
+      "description": "Slightly visible pores, mainly on nose and central face",
+      "options": [
+        "Salicylic acid cleanser (0.5-2%)",
+        "Niacinamide serum 5-10%",
+        "Retinol 0.25-0.5% nightly",
+        "Clay masks weekly",
+        "AHA/BHA toners",
+        "Pore strips (occasional use)",
+        "Gentle exfoliation",
+        "Oil-free moisturizers",
+        "Consistent skincare routine"
+      ]
+    },
+    "moderate": {
+      "description": "Noticeable pores across T-zone, oily skin, visible from distance",
+      "options": [
+        "Prescription tretinoin 0.025-0.05%",
+        "Professional chemical peels (salicylic, glycolic)",
+        "Microdermabrasion treatments",
+        "Hydrafacial (deep cleansing)",
+        "Laser genesis",
+        "IPL (Intense Pulsed Light)",
+        "Microneedling",
+        "High-strength niacinamide treatments",
+        "Professional extractions"
+      ]
+    },
+    "severe": {
+      "description": "Very large pores, visible without magnification, orange-peel texture",
+      "options": [
+        "Fractional CO2 laser resurfacing",
+        "Fractional radiofrequency microneedling",
+        "TCA chemical peels 20-35%",
+        "Morpheus8 (RF microneedling)",
+        "Plasma fibroblast treatment",
+        "Multiple IPL sessions",
+        "Dermabrasion",
+        "Long-term retinoid therapy",
+        "Combination treatments (laser + chemical peel)"
+      ]
+    }
+  },
+  "whenToSeeDermatologist": [
+    "Pores don't improve with OTC treatments after 3 months",
+    "Pores significantly enlarged suddenly",
+    "Accompanied by severe acne or blackheads",
+    "Want professional treatments (lasers, peels)",
+    "Pores causing emotional distress",
+    "Interested in prescription retinoids",
+    "Want professional extractions"
+  ],
+  "relatedConcerns": [
+    "oily_skin",
+    "blackheads",
+    "acne",
+    "texture",
+    "sebaceous_hyperplasia"
+  ],
+  "visualExamples": [
+    "/images/concerns/pores-mild.jpg",
+    "/images/concerns/pores-severe.jpg",
+    "/images/concerns/pores-tzone.jpg",
+    "/images/concerns/pores-before-after.jpg"
+  ],
+  "statistics": {
+    "genetics": "Pore size is 50% determined by genetics",
+    "men": "Men typically have larger pores than women",
+    "age": "Pores appear larger with age due to loss of collagen"
+  },
+  "myths": [
+    {
+      "myth": "You can permanently shrink pores",
+      "fact": "Pore size is largely genetic. Treatments can minimize appearance temporarily, but pores cannot permanently close."
+    },
+    {
+      "myth": "Hot water opens pores, cold water closes them",
+      "fact": "Pores don't have muscles and can't open or close. Temperature affects blood flow and oil consistency, not pore size."
+    },
+    {
+      "myth": "Pore strips permanently remove blackheads",
+      "fact": "Pore strips only remove surface sebum. Blackheads return quickly without proper cleansing and exfoliation."
+    },
+    {
+      "myth": "Makeup causes large pores",
+      "fact": "Makeup doesn't enlarge pores, but not removing it properly can clog pores and make them appear larger."
+    }
+  ],
+  "dailyRoutine": {
+    "morning": [
+      "Salicylic acid cleanser 0.5-2%",
+      "BHA/AHA toner",
+      "Niacinamide serum 10%",
+      "Oil-free, mattifying moisturizer",
+      "Pore-minimizing primer",
+      "SPF 30+ oil-free sunscreen"
+    ],
+    "evening": [
+      "Oil cleanser (double cleanse)",
+      "Salicylic acid cleanser",
+      "Retinol or tretinoin",
+      "Niacinamide serum",
+      "Lightweight moisturizer",
+      "Clay mask 2-3 times per week"
+    ]
+  },
+  "ingredients": {
+    "effective": [
+      "Salicylic acid (BHA)",
+      "Niacinamide",
+      "Retinoids (retinol, tretinoin)",
+      "Glycolic acid (AHA)",
+      "Lactic acid",
+      "Azelaic acid",
+      "Zinc",
+      "Tea tree oil"
+    ],
+    "avoid": [
+      "Heavy oils (coconut oil)",
+      "Thick butters (cocoa, shea)",
+      "Alcohol-based products (can increase oil)",
+      "Pore-clogging ingredients (isopropyl myristate)"
+    ]
+  },
+  "professionalTreatments": {
+    "mostEffective": [
+      "Fractional CO2 laser - stimulates collagen, tightens pores",
+      "Microneedling with RF - improves texture and pore size",
+      "Chemical peels - deep exfoliation and skin renewal",
+      "Hydrafacial - deep cleansing and extraction",
+      "IPL - improves overall skin texture"
+    ],
+    "sessions": "Multiple sessions needed for best results (3-6 treatments)",
+    "cost": "$200-$1500 per session depending on treatment"
+  }
+}

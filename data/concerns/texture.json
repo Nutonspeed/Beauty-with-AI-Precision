@@ -1,0 +1,216 @@
+{
+  "type": "texture",
+  "icon": "🔲",
+  "color": "#6b7280",
+  "definition": {
+    "en": "Uneven skin texture refers to rough, bumpy, or irregular skin surface. It can manifest as roughness, bumps, flakiness, or raised areas caused by dead skin cells, acne scars, sun damage, or loss of collagen.",
+    "th": "ผิวไม่เรียบ หมายถึงผิวหนังที่ขรุขระ เป็นปุ่ม หรือไม่สม่ำเสมอ อาจปรากฏเป็นความหยาบกระด้าง ปุ่มนูน ผิวลอก หรือพื้นผิวยกตัว เกิดจากเซลล์ผิวตาย รอยแผลเป็นจากสิว ความเสียหายจากแดด หรือการสูญเสียคอลลาเจน"
+  },
+  "causes": [
+    "Buildup of dead skin cells",
+    "Acne scars (atrophic or hypertrophic)",
+    "Sun damage and photoaging",
+    "Loss of collagen and elastin with age",
+    "Keratosis pilaris (chicken skin)",
+    "Enlarged pores",
+    "Dehydration",
+    "Poor exfoliation habits",
+    "Genetics",
+    "Smoking",
+    "Environmental damage"
+  ],
+  "prevention": [
+    "Exfoliate regularly (2-3 times per week)",
+    "Use retinoids to boost cell turnover",
+    "Wear SPF 30+ sunscreen daily",
+    "Stay well-hydrated internally and externally",
+    "Use moisturizer with humectants",
+    "Avoid picking at skin or acne",
+    "Treat acne promptly to prevent scarring",
+    "Use chemical exfoliants (AHAs, BHAs)",
+    "Don't skip moisturizer",
+    "Get adequate sleep (7-9 hours)"
+  ],
+  "treatment": {
+    "mild": {
+      "description": "Slight roughness, minor dry patches, subtle texture issues",
+      "options": [
+        "AHA toners (glycolic 5-8%, lactic acid)",
+        "BHA serum (salicylic acid 2%)",
+        "Retinol 0.25-0.5% nightly",
+        "Gentle physical exfoliation (1-2x/week)",
+        "Hydrating serums (hyaluronic acid)",
+        "Niacinamide 5-10%",
+        "Enzyme masks (papaya, pineapple)",
+        "Consistent moisturization",
+        "Weekly exfoliating masks"
+      ]
+    },
+    "moderate": {
+      "description": "Noticeable roughness, visible texture, some scarring or bumps",
+      "options": [
+        "Prescription tretinoin 0.025-0.05%",
+        "Professional chemical peels (30-50% glycolic)",
+        "Microdermabrasion series",
+        "Dermaplaning treatments",
+        "Hydrafacial",
+        "Microneedling",
+        "At-home dermarolling (0.25-0.5mm)",
+        "High-strength AHA serums (10-15%)",
+        "Resurfacing serums"
+      ]
+    },
+    "severe": {
+      "description": "Deep scarring, significant roughness, orange-peel texture, pitted scars",
+      "options": [
+        "Fractional CO2 laser resurfacing",
+        "Erbium laser treatments",
+        "Deep TCA peels (30-50%)",
+        "Subcision for deep scars",
+        "Dermal fillers for atrophic scars",
+        "Microneedling with radiofrequency",
+        "Multiple laser treatment sessions",
+        "Dermabrasion (more aggressive)",
+        "Combination treatments (laser + filler)",
+        "Long-term high-dose retinoid therapy"
+      ]
+    }
+  },
+  "whenToSeeDermatologist": [
+    "Texture doesn't improve with home treatments after 3 months",
+    "Significant acne scarring",
+    "Keratosis pilaris not responding to treatment",
+    "Want professional resurfacing treatments",
+    "Deep pitted or rolling scars",
+    "Texture causing emotional distress",
+    "Interested in prescription retinoids",
+    "Need professional scar revision"
+  ],
+  "relatedConcerns": [
+    "acne_scars",
+    "keratosis_pilaris",
+    "large_pores",
+    "dryness",
+    "sun_damage"
+  ],
+  "visualExamples": [
+    "/images/concerns/texture-types.jpg",
+    "/images/concerns/texture-acne-scars.jpg",
+    "/images/concerns/texture-rough.jpg",
+    "/images/concerns/texture-treatment.jpg"
+  ],
+  "statistics": {
+    "acneScars": "80% of people aged 11-30 have acne, many develop scars",
+    "improvement": "Texture improvement takes 8-12 weeks with consistent treatment",
+    "collagen": "Skin loses 1% of collagen per year after age 30"
+  },
+  "types": {
+    "roughness": "Overall bumpy, non-smooth surface",
+    "icePickScars": "Deep, narrow, pitted scars from severe acne",
+    "boxcarScars": "Broad, box-like depressions with defined edges",
+    "rollingScars": "Wide, shallow scars with sloping edges",
+    "keratosisPilaris": "Small, rough bumps (chicken skin) on arms, thighs, buttocks, face",
+    "milia": "Small white bumps (trapped keratin)",
+    "seborrheousHyperplasia": "Small, shiny bumps (enlarged oil glands)"
+  },
+  "myths": [
+    {
+      "myth": "Physical scrubs are the best way to smooth texture",
+      "fact": "Chemical exfoliants (AHAs, BHAs) are more effective and gentler. Physical scrubs can cause micro-tears and worsen texture."
+    },
+    {
+      "myth": "Acne scars will fade on their own",
+      "fact": "Deep atrophic scars (ice pick, boxcar, rolling) are permanent without treatment. Only PIH (dark spots) fades naturally."
+    },
+    {
+      "myth": "You can't fix texture without lasers",
+      "fact": "Retinoids, chemical peels, and microneedling can significantly improve texture. Lasers are one option but not the only one."
+    },
+    {
+      "myth": "Moisturizer makes texture worse",
+      "fact": "Dehydrated skin can appear rough. Proper moisturization plumps skin and improves texture appearance."
+    }
+  ],
+  "dailyRoutine": {
+    "morning": [
+      "Gentle cleanser",
+      "Hydrating toner (hyaluronic acid)",
+      "Niacinamide serum 10%",
+      "Vitamin C serum (optional)",
+      "Moisturizer with peptides",
+      "SPF 30+ sunscreen"
+    ],
+    "evening": [
+      "Oil cleanser (double cleanse)",
+      "Water-based cleanser",
+      "AHA/BHA toner (alternate nights)",
+      "Retinol or tretinoin (alternate nights)",
+      "Peptide serum",
+      "Rich moisturizer",
+      "Facial oil (squalane, rosehip) for extra hydration"
+    ],
+    "weekly": [
+      "Enzyme mask or chemical exfoliating mask",
+      "Dermaplaning or dermarolling (if trained)",
+      "Deep hydrating mask"
+    ]
+  },
+  "ingredients": {
+    "resurfacing": [
+      "Retinoids (tretinoin, retinol)",
+      "Glycolic acid (AHA)",
+      "Lactic acid (AHA)",
+      "Salicylic acid (BHA)",
+      "Mandelic acid (AHA)",
+      "Azelaic acid",
+      "Niacinamide",
+      "Peptides",
+      "Vitamin C"
+    ],
+    "hydrating": [
+      "Hyaluronic acid",
+      "Glycerin",
+      "Ceramides",
+      "Squalane",
+      "Urea",
+      "Panthenol (pro-vitamin B5)"
+    ]
+  },
+  "exfoliationGuide": {
+    "chemical": {
+      "ahas": "Water-soluble, work on surface. Best for: dry skin, sun damage, fine lines",
+      "bhas": "Oil-soluble, penetrate pores. Best for: oily skin, acne, blackheads",
+      "enzymes": "Gentle, digest dead cells. Best for: sensitive skin, mild texture",
+      "frequency": "Start 1-2x/week, increase to 3-4x/week as tolerated"
+    },
+    "physical": {
+      "gentle": "Konjac sponge, soft washcloth, jojoba beads",
+      "moderate": "Sugar scrubs, microfiber cloth",
+      "avoid": "Walnut shells, apricot kernels, harsh scrubs (cause micro-tears)",
+      "frequency": "1-2x/week maximum"
+    }
+  },
+  "professionalTreatments": {
+    "microneedling": {
+      "description": "Creates micro-injuries to stimulate collagen",
+      "bestFor": "Acne scars, fine lines, overall texture",
+      "sessions": "3-6 treatments, 4-6 weeks apart",
+      "downtime": "2-3 days redness",
+      "cost": "$200-$700 per session"
+    },
+    "chemicalPeels": {
+      "description": "Removes outer layers of skin",
+      "bestFor": "Rough texture, scarring, sun damage",
+      "sessions": "3-6 treatments for best results",
+      "downtime": "3-7 days peeling",
+      "cost": "$150-$600 per session"
+    },
+    "fractionalLaser": {
+      "description": "Resurfacing with heat columns",
+      "bestFor": "Deep scars, severe texture, aging",
+      "sessions": "1-3 treatments",
+      "downtime": "5-10 days",
+      "cost": "$1000-$3000 per session"
+    }
+  }
+}

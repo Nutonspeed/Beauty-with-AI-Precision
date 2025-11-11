@@ -1,0 +1,256 @@
+{
+  "type": "dullness",
+  "icon": "🌫️",
+  "color": "#9ca3af",
+  "definition": {
+    "en": "Dull skin lacks radiance, glow, and vibrancy. It appears flat, lifeless, and lacking in luminosity, often caused by dead skin cell buildup, dehydration, poor circulation, or environmental damage.",
+    "th": "ผิวหมองคล้ำ คือผิวที่ขาดความสดใส ขาดความกระจ่างเปล่งประกาย ดูแบนราบ ไร้ชีวิตชีวา และขาดความโปร่งแสง มักเกิดจากเซลล์ผิวตายสะสม ขาดน้ำ การไหลเวียนโลหิตไม่ดี หรือความเสียหายจากสิ่งแวดล้อม"
+  },
+  "causes": [
+    "Buildup of dead skin cells",
+    "Dehydration (internal and external)",
+    "Poor blood circulation",
+    "Lack of sleep",
+    "Stress",
+    "Smoking",
+    "Environmental pollution",
+    "Sun damage",
+    "Aging and decreased cell turnover",
+    "Poor diet lacking vitamins",
+    "Not removing makeup properly",
+    "Inadequate exfoliation"
+  ],
+  "prevention": [
+    "Exfoliate regularly (2-3 times per week)",
+    "Use vitamin C serum daily",
+    "Stay hydrated (8+ glasses water daily)",
+    "Get 7-9 hours of quality sleep",
+    "Exercise regularly for blood circulation",
+    "Eat antioxidant-rich diet",
+    "Remove makeup thoroughly before bed",
+    "Use moisturizer with humectants",
+    "Protect skin with SPF daily",
+    "Manage stress levels",
+    "Avoid smoking and limit alcohol"
+  ],
+  "treatment": {
+    "mild": {
+      "description": "Slight loss of glow, minor dullness, usually temporary",
+      "options": [
+        "Vitamin C serum 15-20%",
+        "AHA toner (glycolic, lactic acid)",
+        "Gentle exfoliation 2-3x/week",
+        "Hydrating sheet masks",
+        "Niacinamide 5-10%",
+        "Face oils (rosehip, squalane)",
+        "Illuminating moisturizers",
+        "Increase water intake",
+        "Sleep hygiene improvement",
+        "Facial massage"
+      ]
+    },
+    "moderate": {
+      "description": "Noticeable lack of radiance, skin looks tired and flat",
+      "options": [
+        "Prescription tretinoin 0.025-0.05%",
+        "Professional chemical peels (glycolic 30-50%)",
+        "Vitamin C + E + ferulic acid serum",
+        "Microdermabrasion",
+        "Dermaplaning",
+        "Hydrafacial",
+        "LED light therapy (red light)",
+        "Oxygen facials",
+        "High-strength AHA serums",
+        "Alpha arbutin for brightening"
+      ]
+    },
+    "severe": {
+      "description": "Chronically dull, gray-toned skin, significant lack of vitality",
+      "options": [
+        "IPL photo facial",
+        "Fractional laser treatments",
+        "Deep chemical peels (TCA)",
+        "Microneedling with PRP",
+        "Multiple professional facial series",
+        "IV vitamin therapy (glutathione)",
+        "Oral supplements (NAC, vitamin C, E)",
+        "Combination treatments",
+        "Address underlying health issues",
+        "Comprehensive lifestyle changes"
+      ]
+    }
+  },
+  "whenToSeeDermatologist": [
+    "Persistent dullness despite consistent skincare",
+    "Sudden change in skin radiance",
+    "Dullness accompanied by other skin changes",
+    "Want professional brightening treatments",
+    "Dullness affecting confidence",
+    "Interested in prescription treatments",
+    "Need help identifying underlying causes"
+  ],
+  "relatedConcerns": [
+    "dehydration",
+    "dark_circles",
+    "uneven_tone",
+    "texture",
+    "fatigue"
+  ],
+  "visualExamples": [
+    "/images/concerns/dullness-before.jpg",
+    "/images/concerns/dullness-comparison.jpg",
+    "/images/concerns/dullness-glow.jpg",
+    "/images/concerns/dullness-treatment.jpg"
+  ],
+  "statistics": {
+    "sleep": "7-9 hours of sleep needed for optimal skin regeneration",
+    "water": "1.5% decrease in hydration can cause visible dullness",
+    "exfoliation": "Skin cell turnover slows from 28 days (20s) to 45-60 days (50s+)"
+  },
+  "myths": [
+    {
+      "myth": "Dull skin is just a cosmetic issue",
+      "fact": "Dullness can indicate dehydration, poor circulation, nutrient deficiencies, or lack of sleep - it's often a sign of overall health."
+    },
+    {
+      "myth": "Expensive products are needed for glowing skin",
+      "fact": "Basic steps - cleansing, exfoliating, hydrating, SPF, plus sleep and water - create glow. Expensive products are optional."
+    },
+    {
+      "myth": "Only face products can fix dullness",
+      "fact": "Lifestyle factors (sleep, hydration, exercise, stress) have huge impact on skin radiance. Topicals alone aren't enough."
+    },
+    {
+      "myth": "Oily skin can't be dull",
+      "fact": "Oily skin can be dull if dehydrated or covered in dead skin cells. Oily ≠ hydrated or radiant."
+    }
+  ],
+  "dailyRoutine": {
+    "morning": [
+      "Gentle cleanser or water rinse",
+      "Vitamin C serum 15-20%",
+      "Hyaluronic acid serum",
+      "Niacinamide 5-10%",
+      "Moisturizer with illuminating properties",
+      "SPF 30+ sunscreen",
+      "Facial massage (3-5 minutes)"
+    ],
+    "evening": [
+      "Oil cleanser (double cleanse)",
+      "Water-based cleanser",
+      "AHA toner (3-4x/week)",
+      "Retinol or tretinoin",
+      "Hydrating serum",
+      "Peptide cream",
+      "Face oil (squalane, rosehip)",
+      "Eye cream"
+    ],
+    "weekly": [
+      "Exfoliating mask or enzyme peel",
+      "Brightening sheet mask",
+      "Facial massage or gua sha (10-15 minutes)"
+    ]
+  },
+  "ingredients": {
+    "brightening": [
+      "Vitamin C (L-ascorbic acid)",
+      "Niacinamide",
+      "Alpha arbutin",
+      "Kojic acid",
+      "Licorice root extract",
+      "Tranexamic acid",
+      "Azelaic acid",
+      "Vitamin E",
+      "Ferulic acid"
+    ],
+    "exfoliating": [
+      "Glycolic acid (AHA)",
+      "Lactic acid (AHA)",
+      "Mandelic acid (AHA)",
+      "Salicylic acid (BHA)",
+      "Enzymes (papain, bromelain)"
+    ],
+    "hydrating": [
+      "Hyaluronic acid",
+      "Glycerin",
+      "Squalane",
+      "Ceramides",
+      "Beta-glucan"
+    ]
+  },
+  "lifestyleFactors": {
+    "sleep": {
+      "importance": "7-9 hours for skin regeneration",
+      "tips": [
+        "Consistent sleep schedule",
+        "Dark, cool room",
+        "No screens 1 hour before bed",
+        "Silk pillowcase to reduce friction",
+        "Elevate head to reduce puffiness"
+      ]
+    },
+    "hydration": {
+      "water": "8-10 glasses daily (more if exercising)",
+      "foods": "Cucumbers, watermelon, celery, lettuce",
+      "avoid": "Excessive caffeine and alcohol (dehydrating)"
+    },
+    "diet": {
+      "glow": [
+        "Berries (antioxidants)",
+        "Fatty fish (omega-3)",
+        "Nuts and seeds (vitamin E)",
+        "Leafy greens (vitamins A, C, K)",
+        "Sweet potatoes (beta-carotene)",
+        "Avocados (healthy fats)",
+        "Green tea (polyphenols)"
+      ],
+      "avoid": [
+        "Excessive sugar (glycation)",
+        "Processed foods",
+        "Trans fats"
+      ]
+    },
+    "exercise": {
+      "benefits": "Increases blood flow, delivers oxygen and nutrients",
+      "recommendation": "30 minutes moderate exercise 5x/week",
+      "types": "Cardio (running, cycling), yoga, strength training"
+    }
+  },
+  "instantGlowTips": [
+    "Cold water splash or ice cube massage (5 minutes)",
+    "Facial massage with oil (improves circulation)",
+    "Sheet mask before event (instant hydration)",
+    "Vitamin C serum + moisturizer (brightening)",
+    "Illuminating primer or highlighter (cosmetic glow)",
+    "Drink 2 glasses of water immediately",
+    "5-minute exercise (jumping jacks, burpees)",
+    "Caffeine eye cream (reduces puffiness)",
+    "Hydrating facial mist throughout day"
+  ],
+  "professionalTreatments": {
+    "hydrafacial": {
+      "description": "Deep cleansing, exfoliation, and hydration",
+      "benefits": "Instant glow, clean pores, hydrated skin",
+      "frequency": "Monthly",
+      "cost": "$150-$300 per session"
+    },
+    "oxygenFacial": {
+      "description": "Infuses oxygen and serums into skin",
+      "benefits": "Immediate radiance, plumped skin",
+      "frequency": "Every 4-6 weeks",
+      "cost": "$200-$400 per session"
+    },
+    "chemicalPeel": {
+      "description": "Removes dead skin cell layers",
+      "benefits": "Reveals fresh, glowing skin",
+      "frequency": "Every 4-6 weeks",
+      "cost": "$150-$300 per session"
+    },
+    "ledTherapy": {
+      "description": "Red light stimulates collagen and circulation",
+      "benefits": "Improves overall radiance and texture",
+      "frequency": "2-3x per week",
+      "cost": "$50-$150 per session"
+    }
+  }
+}
