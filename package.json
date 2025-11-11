@@ -142,6 +142,7 @@
     "react-native": "^0.82.1",
     "react-resizable-panels": "^3.0.6",
     "recharts": "^3.3.0",
+    "resend": "^6.4.2",
     "sass": "^1.93.3",
     "sass-embedded": "^1.93.3",
     "sharp": "^0.34.4",

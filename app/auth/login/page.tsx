@@ -176,13 +176,13 @@ export default function LoginPage() {
 
           <CardFooter className="flex flex-col space-y-4">
             <div className="text-sm text-center text-muted-foreground">
-              ยังไม่มีบัญชี?{' '}
-              <Link 
-                href="/auth/register" 
+              ระบบนี้เปิดให้เฉพาะผู้ใช้ที่ได้รับเชิญเท่านั้น{' '}
+              <a 
+                href="mailto:admin@beautyclinic.com?subject=ขอเข้าใช้งานระบบ" 
                 className="text-primary hover:underline font-medium"
               >
-                สมัครสมาชิก
-              </Link>
+                ติดต่อผู้ดูแลระบบ
+              </a>
             </div>
 
             <div className="relative">

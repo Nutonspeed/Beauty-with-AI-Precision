@@ -3,16 +3,29 @@
  * Core utilities for multi-tenant operations
  */
 
-import type {
-  Tenant,
-  CreateTenantInput,
-  TenantFeatures,
-  TenantSettings,
-  TenantBranding,
-  TenantSubscription,
-} from "../types/tenant"
+import type { Tenant, CreateTenantInput, TenantFeatures } from "../types/tenant"
 import { PLAN_FEATURES } from "../types/tenant"
 import { createClient } from "../supabase/server"
+
+// Helper function to create default business hours
+function getDefaultBusinessHours() {
+  return {
+    monday: { open: "09:00", close: "18:00", closed: false },
+    tuesday: { open: "09:00", close: "18:00", closed: false },
+    wednesday: { open: "09:00", close: "18:00", closed: false },
+    thursday: { open: "09:00", close: "18:00", closed: false },
+    friday: { open: "09:00", close: "18:00", closed: false },
+    saturday: { open: "10:00", close: "16:00", closed: false },
+    sunday: { open: "", close: "", closed: true },
+  }
+}
+
+// Helper function to calculate subscription amount
+function getSubscriptionAmount(tier: string): number {
+  if (tier === "starter") return 2900
+  if (tier === "professional") return 9900
+  return 29900
+}
 
 /**
  * Get tenant by ID
@@ -20,25 +33,54 @@ import { createClient } from "../supabase/server"
 export async function getTenantById(tenantId: string): Promise<Tenant | null> {
   try {
     const supabase = await createClient()
-    const { data: tenant, error } = await supabase.from("tenants").select("*").eq("id", tenantId).single()
+    const { data: clinic, error } = await supabase
+      .from("clinics")
+      .select("*")
+      .eq("id", tenantId)
+      .single()
 
-    if (error || !tenant) return null
+    if (error || !clinic) return null
 
-    // Convert snake_case to camelCase and proper types
+    // Map clinics table to Tenant type (same as createTenant)
+    const features = PLAN_FEATURES[clinic.subscription_tier as keyof typeof PLAN_FEATURES] || PLAN_FEATURES.starter
+    const subscriptionAmount = getSubscriptionAmount(clinic.subscription_tier)
+
     return {
-      id: tenant.id,
-      slug: tenant.slug,
-      settings: tenant.settings as unknown as TenantSettings,
-      branding: tenant.branding as unknown as TenantBranding,
-      features: tenant.features as unknown as TenantFeatures,
-      subscription: tenant.subscription as unknown as TenantSubscription,
-      createdAt: tenant.created_at,
-      updatedAt: tenant.updated_at,
-      createdBy: tenant.created_by,
-      isActive: tenant.is_active,
-      isTrial: tenant.is_trial,
-      isolationStrategy: tenant.isolation_strategy as "shared_schema" | "separate_schema" | "separate_database",
-      usage: tenant.usage as unknown as Tenant["usage"],
+      id: clinic.id,
+      slug: clinic.slug,
+      settings: {
+        clinicName: clinic.name || clinic.clinic_name,
+        clinicType: "aesthetic_clinic",
+        email: clinic.email,
+        phone: clinic.phone,
+        address: { street: "", city: "", state: "", postalCode: "", country: "Thailand" },
+        timezone: "Asia/Bangkok",
+        businessHours: getDefaultBusinessHours(),
+        defaultLanguage: "th",
+        supportedLanguages: ["th", "en"],
+        currency: "THB",
+        emailNotifications: true,
+        smsNotifications: true,
+        pushNotifications: true,
+      },
+      branding: { primaryColor: "#8B5CF6", secondaryColor: "#EC4899" },
+      features: features as TenantFeatures,
+      subscription: {
+        plan: clinic.subscription_tier,
+        status: clinic.subscription_tier === "starter" ? "trial" : "active",
+        startDate: new Date(),
+        endDate: clinic.subscription_tier === "starter" ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) : undefined,
+        billingCycle: "monthly",
+        amount: subscriptionAmount,
+        currency: "THB",
+      },
+      createdAt: clinic.created_at || new Date().toISOString(),
+      updatedAt: clinic.updated_at || new Date().toISOString(),
+      createdBy: "",
+      isActive: clinic.is_active ?? true,
+      isTrial: clinic.subscription_tier === "starter",
+      isolationStrategy: "shared_schema",
+      usage: { currentUsers: 1, currentCustomers: 0, storageUsedGB: 0, apiCallsThisMonth: 0 },
     }
   } catch (error) {
     console.error("Error fetching tenant by ID:", error)
@@ -52,25 +94,54 @@ export async function getTenantById(tenantId: string): Promise<Tenant | null> {
 export async function getTenantBySlug(slug: string): Promise<Tenant | null> {
   try {
     const supabase = await createClient()
-    const { data: tenant, error } = await supabase.from("tenants").select("*").eq("slug", slug).single()
+    const { data: clinic, error } = await supabase
+      .from("clinics")
+      .select("*")
+      .eq("slug", slug)
+      .single()
 
-    if (error || !tenant) return null
+    if (error || !clinic) return null
 
-    // Convert snake_case to camelCase and proper types
+    // Map clinics table to Tenant type
+    const features = PLAN_FEATURES[clinic.subscription_tier as keyof typeof PLAN_FEATURES] || PLAN_FEATURES.starter
+    const subscriptionAmount = getSubscriptionAmount(clinic.subscription_tier)
+
     return {
-      id: tenant.id,
-      slug: tenant.slug,
-      settings: tenant.settings as unknown as TenantSettings,
-      branding: tenant.branding as unknown as TenantBranding,
-      features: tenant.features as unknown as TenantFeatures,
-      subscription: tenant.subscription as unknown as TenantSubscription,
-      createdAt: tenant.created_at,
-      updatedAt: tenant.updated_at,
-      createdBy: tenant.created_by,
-      isActive: tenant.is_active,
-      isTrial: tenant.is_trial,
-      isolationStrategy: tenant.isolation_strategy as "shared_schema" | "separate_schema" | "separate_database",
-      usage: tenant.usage as unknown as Tenant["usage"],
+      id: clinic.id,
+      slug: clinic.slug,
+      settings: {
+        clinicName: clinic.name || clinic.clinic_name,
+        clinicType: "aesthetic_clinic",
+        email: clinic.email,
+        phone: clinic.phone,
+        address: { street: "", city: "", state: "", postalCode: "", country: "Thailand" },
+        timezone: "Asia/Bangkok",
+        businessHours: getDefaultBusinessHours(),
+        defaultLanguage: "th",
+        supportedLanguages: ["th", "en"],
+        currency: "THB",
+        emailNotifications: true,
+        smsNotifications: true,
+        pushNotifications: true,
+      },
+      branding: { primaryColor: "#8B5CF6", secondaryColor: "#EC4899" },
+      features: features as TenantFeatures,
+      subscription: {
+        plan: clinic.subscription_tier,
+        status: clinic.subscription_tier === "starter" ? "trial" : "active",
+        startDate: new Date(),
+        endDate: clinic.subscription_tier === "starter" ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) : undefined,
+        billingCycle: "monthly",
+        amount: subscriptionAmount,
+        currency: "THB",
+      },
+      createdAt: clinic.created_at || new Date().toISOString(),
+      updatedAt: clinic.updated_at || new Date().toISOString(),
+      createdBy: "",
+      isActive: clinic.is_active ?? true,
+      isTrial: clinic.subscription_tier === "starter",
+      isolationStrategy: "shared_schema",
+      usage: { currentUsers: 1, currentCustomers: 0, storageUsedGB: 0, apiCallsThisMonth: 0 },
     }
   } catch (error) {
     console.error("Error fetching tenant by slug:", error)
@@ -84,26 +155,53 @@ export async function getTenantBySlug(slug: string): Promise<Tenant | null> {
 export async function getAllTenants(): Promise<Tenant[]> {
   try {
     const supabase = await createClient()
-    const { data: tenants, error } = await supabase.from("tenants").select("*")
+    const { data: clinics, error } = await supabase.from("clinics").select("*")
 
-    if (error || !tenants) return []
+    if (error || !clinics) return []
 
-    // Convert snake_case to camelCase and proper types
-    return tenants.map((tenant: any) => ({
-      id: tenant.id,
-      slug: tenant.slug,
-      settings: tenant.settings as unknown as TenantSettings,
-      branding: tenant.branding as unknown as TenantBranding,
-      features: tenant.features as unknown as TenantFeatures,
-      subscription: tenant.subscription as unknown as TenantSubscription,
-      createdAt: tenant.created_at,
-      updatedAt: tenant.updated_at,
-      createdBy: tenant.created_by,
-      isActive: tenant.is_active,
-      isTrial: tenant.is_trial,
-      isolationStrategy: tenant.isolation_strategy as "shared_schema" | "separate_schema" | "separate_database",
-      usage: tenant.usage as unknown as Tenant["usage"],
-    }))
+    // Map clinics table to Tenant type
+    return clinics.map((clinic: any) => {
+      const features = PLAN_FEATURES[clinic.subscription_tier as keyof typeof PLAN_FEATURES] || PLAN_FEATURES.starter
+      const subscriptionAmount = getSubscriptionAmount(clinic.subscription_tier)
+
+      return {
+        id: clinic.id,
+        slug: clinic.slug,
+        settings: {
+          clinicName: clinic.name || clinic.clinic_name,
+          clinicType: "aesthetic_clinic",
+          email: clinic.email,
+          phone: clinic.phone,
+          address: { street: "", city: "", state: "", postalCode: "", country: "Thailand" },
+          timezone: "Asia/Bangkok",
+          businessHours: getDefaultBusinessHours(),
+          defaultLanguage: "th",
+          supportedLanguages: ["th", "en"],
+          currency: "THB",
+          emailNotifications: true,
+          smsNotifications: true,
+          pushNotifications: true,
+        },
+        branding: { primaryColor: "#8B5CF6", secondaryColor: "#EC4899" },
+        features: features as TenantFeatures,
+        subscription: {
+          plan: clinic.subscription_tier,
+          status: clinic.subscription_tier === "starter" ? "trial" : "active",
+          startDate: new Date(),
+          endDate: clinic.subscription_tier === "starter" ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) : undefined,
+          billingCycle: "monthly",
+          amount: subscriptionAmount,
+          currency: "THB",
+        },
+        createdAt: clinic.created_at || new Date().toISOString(),
+        updatedAt: clinic.updated_at || new Date().toISOString(),
+        createdBy: "",
+        isActive: clinic.is_active ?? true,
+        isTrial: clinic.subscription_tier === "starter",
+        isolationStrategy: "shared_schema",
+        usage: { currentUsers: 1, currentCustomers: 0, storageUsedGB: 0, apiCallsThisMonth: 0 },
+      }
+    })
   } catch (error) {
     console.error("Error fetching all tenants:", error)
     return []
@@ -116,26 +214,53 @@ export async function getAllTenants(): Promise<Tenant[]> {
 export async function getActiveTenants(): Promise<Tenant[]> {
   try {
     const supabase = await createClient()
-    const { data: tenants, error } = await supabase.from("tenants").select("*").eq("is_active", true)
+    const { data: clinics, error } = await supabase.from("clinics").select("*").eq("is_active", true)
 
-    if (error || !tenants) return []
+    if (error || !clinics) return []
 
-    // Convert snake_case to camelCase and proper types
-    return tenants.map((tenant: any) => ({
-      id: tenant.id,
-      slug: tenant.slug,
-      settings: tenant.settings as unknown as TenantSettings,
-      branding: tenant.branding as unknown as TenantBranding,
-      features: tenant.features as unknown as TenantFeatures,
-      subscription: tenant.subscription as unknown as TenantSubscription,
-      createdAt: tenant.created_at,
-      updatedAt: tenant.updated_at,
-      createdBy: tenant.created_by,
-      isActive: tenant.is_active,
-      isTrial: tenant.is_trial,
-      isolationStrategy: tenant.isolation_strategy as "shared_schema" | "separate_schema" | "separate_database",
-      usage: tenant.usage as unknown as Tenant["usage"],
-    }))
+    // Map clinics table to Tenant type
+    return clinics.map((clinic: any) => {
+      const features = PLAN_FEATURES[clinic.subscription_tier as keyof typeof PLAN_FEATURES] || PLAN_FEATURES.starter
+      const subscriptionAmount = getSubscriptionAmount(clinic.subscription_tier)
+
+      return {
+        id: clinic.id,
+        slug: clinic.slug,
+        settings: {
+          clinicName: clinic.name || clinic.clinic_name,
+          clinicType: "aesthetic_clinic",
+          email: clinic.email,
+          phone: clinic.phone,
+          address: { street: "", city: "", state: "", postalCode: "", country: "Thailand" },
+          timezone: "Asia/Bangkok",
+          businessHours: getDefaultBusinessHours(),
+          defaultLanguage: "th",
+          supportedLanguages: ["th", "en"],
+          currency: "THB",
+          emailNotifications: true,
+          smsNotifications: true,
+          pushNotifications: true,
+        },
+        branding: { primaryColor: "#8B5CF6", secondaryColor: "#EC4899" },
+        features: features as TenantFeatures,
+        subscription: {
+          plan: clinic.subscription_tier,
+          status: clinic.subscription_tier === "starter" ? "trial" : "active",
+          startDate: new Date(),
+          endDate: clinic.subscription_tier === "starter" ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) : undefined,
+          billingCycle: "monthly",
+          amount: subscriptionAmount,
+          currency: "THB",
+        },
+        createdAt: clinic.created_at || new Date().toISOString(),
+        updatedAt: clinic.updated_at || new Date().toISOString(),
+        createdBy: "",
+        isActive: clinic.is_active ?? true,
+        isTrial: clinic.subscription_tier === "starter",
+        isolationStrategy: "shared_schema",
+        usage: { currentUsers: 1, currentCustomers: 0, storageUsedGB: 0, apiCallsThisMonth: 0 },
+      }
+    })
   } catch (error) {
     console.error("Error fetching active tenants:", error)
     return []
@@ -153,81 +278,34 @@ export async function createTenant(input: CreateTenantInput): Promise<Tenant> {
       throw new Error(`Tenant with slug '${input.slug}' already exists`)
     }
 
-    const tenantId = `tenant_${Date.now()}`
+    const tenantId = crypto.randomUUID()
     const features = {
       ...(PLAN_FEATURES[input.plan] as TenantFeatures),
       ...input.customFeatures,
     }
 
     // Determine subscription amount based on plan
-    let subscriptionAmount = 29900 // enterprise default
-    if (input.plan === "starter") {
-      subscriptionAmount = 2900
-    } else if (input.plan === "professional") {
-      subscriptionAmount = 9900
-    }
+    const subscriptionAmount = getSubscriptionAmount(input.plan)
 
     const supabase = await createClient()
 
+    // Insert into clinics table (using actual schema)
+    const maxStaff = input.plan === "starter" ? 5 : input.plan === "professional" ? 15 : 50
+    const maxAnalyses = input.plan === "starter" ? 100 : input.plan === "professional" ? 500 : 10000
+
     const { data: tenant, error } = await supabase
-      .from("tenants")
+      .from("clinics")
       .insert({
         id: tenantId,
         slug: input.slug,
-        settings: {
-          clinicName: input.clinicName,
-          clinicType: "aesthetic_clinic",
-          email: input.email,
-          phone: input.phone,
-          address: {
-            street: "",
-            city: "",
-            state: "",
-            postalCode: "",
-            country: "Thailand",
-          },
-          timezone: "Asia/Bangkok",
-          businessHours: {
-            monday: { open: "09:00", close: "18:00", closed: false },
-            tuesday: { open: "09:00", close: "18:00", closed: false },
-            wednesday: { open: "09:00", close: "18:00", closed: false },
-            thursday: { open: "09:00", close: "18:00", closed: false },
-            friday: { open: "09:00", close: "18:00", closed: false },
-            saturday: { open: "10:00", close: "16:00", closed: false },
-            sunday: { open: "00:00", close: "00:00", closed: true },
-          },
-          defaultLanguage: "th",
-          supportedLanguages: ["th", "en"],
-          currency: "THB",
-          emailNotifications: true,
-          smsNotifications: true,
-          pushNotifications: true,
-        },
-        branding: {
-          primaryColor: "#8B5CF6",
-          secondaryColor: "#EC4899",
-          ...input.branding,
-        },
-        features,
-        subscription: {
-          plan: input.plan,
-          status: input.plan === "starter" ? "trial" : "active",
-          startDate: new Date(),
-          endDate: input.plan === "starter" ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) : undefined,
-          billingCycle: "monthly",
-          amount: subscriptionAmount,
-          currency: "THB",
-        },
-        created_by: input.ownerId,
+        name: input.clinicName,
+        clinic_name: input.clinicName,
+        email: input.email,
+        phone: input.phone,
+        subscription_tier: input.plan,
+        max_sales_staff: maxStaff,
+        max_analyses_per_month: maxAnalyses,
         is_active: true,
-        is_trial: input.plan === "starter",
-        isolation_strategy: "shared_schema",
-        usage: {
-          currentUsers: 1,
-          currentCustomers: 0,
-          storageUsedGB: 0,
-          apiCallsThisMonth: 0,
-        },
       })
       .select()
       .single()
@@ -236,21 +314,58 @@ export async function createTenant(input: CreateTenantInput): Promise<Tenant> {
       throw new Error(error?.message || "Failed to create tenant")
     }
 
-    // Convert snake_case to camelCase and proper types
+    // Convert clinics table data to Tenant type
+    // Note: clinics table doesn't have all fields, so we create defaults
     return {
       id: tenant.id,
       slug: tenant.slug,
-      settings: tenant.settings as unknown as TenantSettings,
-      branding: tenant.branding as unknown as TenantBranding,
-      features: tenant.features as unknown as TenantFeatures,
-      subscription: tenant.subscription as unknown as TenantSubscription,
-      createdAt: tenant.created_at,
-      updatedAt: tenant.updated_at,
-      createdBy: tenant.created_by,
-      isActive: tenant.is_active,
-      isTrial: tenant.is_trial,
-      isolationStrategy: tenant.isolation_strategy as "shared_schema" | "separate_schema" | "separate_database",
-      usage: tenant.usage as unknown as Tenant["usage"],
+      settings: {
+        clinicName: tenant.name || tenant.clinic_name,
+        clinicType: "aesthetic_clinic",
+        email: tenant.email,
+        phone: tenant.phone,
+        address: {
+          street: "",
+          city: "",
+          state: "",
+          postalCode: "",
+          country: "Thailand",
+        },
+        timezone: "Asia/Bangkok",
+        businessHours: getDefaultBusinessHours(),
+        defaultLanguage: "th",
+        supportedLanguages: ["th", "en"],
+        currency: "THB",
+        emailNotifications: true,
+        smsNotifications: true,
+        pushNotifications: true,
+      },
+      branding: {
+        primaryColor: input.branding?.primaryColor || "#8B5CF6",
+        secondaryColor: input.branding?.secondaryColor || "#EC4899",
+      },
+      features: features,
+      subscription: {
+        plan: input.plan,
+        status: input.plan === "starter" ? "trial" : "active",
+        startDate: new Date(),
+        endDate: input.plan === "starter" ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) : undefined,
+        billingCycle: "monthly",
+        amount: subscriptionAmount,
+        currency: "THB",
+      },
+      createdAt: tenant.created_at || new Date().toISOString(),
+      updatedAt: tenant.updated_at || new Date().toISOString(),
+      createdBy: input.ownerId,
+      isActive: tenant.is_active ?? true,
+      isTrial: input.plan === "starter",
+      isolationStrategy: "shared_schema",
+      usage: {
+        currentUsers: 1,
+        currentCustomers: 0,
+        storageUsedGB: 0,
+        apiCallsThisMonth: 0,
+      },
     }
   } catch (error) {
     console.error("Error creating tenant:", error)
@@ -265,43 +380,70 @@ export async function updateTenant(tenantId: string, updates: Partial<Tenant>): 
   try {
     const supabase = await createClient()
 
-    // Prepare update data - convert camelCase to snake_case
+    // Map Tenant updates to clinics table columns
     const updateData: any = {}
 
     if (updates.slug) updateData.slug = updates.slug
-    if (updates.settings) updateData.settings = updates.settings
-    if (updates.branding) updateData.branding = updates.branding
-    if (updates.features) updateData.features = updates.features
-    if (updates.subscription) updateData.subscription = updates.subscription
-    if (updates.usage) updateData.usage = updates.usage
+    if (updates.settings?.clinicName) updateData.name = updates.settings.clinicName
+    if (updates.settings?.email) updateData.email = updates.settings.email
+    if (updates.settings?.phone) updateData.phone = updates.settings.phone
+    if (updates.subscription?.plan) updateData.subscription_tier = updates.subscription.plan
     if (updates.isActive !== undefined) updateData.is_active = updates.isActive
-    if (updates.isTrial !== undefined) updateData.is_trial = updates.isTrial
-    if (updates.isolationStrategy) updateData.isolation_strategy = updates.isolationStrategy
 
-    const { data: updatedTenant, error } = await supabase
-      .from("tenants")
+    // Only update if there's data to update
+    if (Object.keys(updateData).length === 0) {
+      return getTenantById(tenantId)
+    }
+
+    const { data: updatedClinic, error } = await supabase
+      .from("clinics")
       .update(updateData)
       .eq("id", tenantId)
       .select()
       .single()
 
-    if (error || !updatedTenant) return null
+    if (error || !updatedClinic) return null
 
-    // Convert snake_case to camelCase and proper types
+    // Map back to Tenant type
+    const features = PLAN_FEATURES[updatedClinic.subscription_tier as keyof typeof PLAN_FEATURES] || PLAN_FEATURES.starter
+    const subscriptionAmount = getSubscriptionAmount(updatedClinic.subscription_tier)
+
     return {
-      id: updatedTenant.id,
-      slug: updatedTenant.slug,
-      settings: updatedTenant.settings as unknown as TenantSettings,
-      branding: updatedTenant.branding as unknown as TenantBranding,
-      features: updatedTenant.features as unknown as TenantFeatures,
-      subscription: updatedTenant.subscription as unknown as TenantSubscription,
-      createdAt: updatedTenant.created_at,
-      updatedAt: updatedTenant.updated_at,
-      createdBy: updatedTenant.created_by,
-      isActive: updatedTenant.is_active,
-      isTrial: updatedTenant.is_trial,
-      isolationStrategy: updatedTenant.isolation_strategy as "shared_schema" | "separate_schema" | "separate_database",
-      usage: updatedTenant.usage as unknown as Tenant["usage"],
+      id: updatedClinic.id,
+      slug: updatedClinic.slug,
+      settings: {
+        clinicName: updatedClinic.name || updatedClinic.clinic_name,
+        clinicType: "aesthetic_clinic",
+        email: updatedClinic.email,
+        phone: updatedClinic.phone,
+        address: { street: "", city: "", state: "", postalCode: "", country: "Thailand" },
+        timezone: "Asia/Bangkok",
+        businessHours: getDefaultBusinessHours(),
+        defaultLanguage: "th",
+        supportedLanguages: ["th", "en"],
+        currency: "THB",
+        emailNotifications: true,
+        smsNotifications: true,
+        pushNotifications: true,
+      },
+      branding: { primaryColor: "#8B5CF6", secondaryColor: "#EC4899" },
+      features: features as TenantFeatures,
+      subscription: {
+        plan: updatedClinic.subscription_tier,
+        status: updatedClinic.subscription_tier === "starter" ? "trial" : "active",
+        startDate: new Date(),
+        endDate: updatedClinic.subscription_tier === "starter" ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) : undefined,
+        billingCycle: "monthly",
+        amount: subscriptionAmount,
+        currency: "THB",
+      },
+      createdAt: updatedClinic.created_at || new Date().toISOString(),
+      updatedAt: updatedClinic.updated_at || new Date().toISOString(),
+      createdBy: "",
+      isActive: updatedClinic.is_active ?? true,
+      isTrial: updatedClinic.subscription_tier === "starter",
+      isolationStrategy: "shared_schema",
+      usage: { currentUsers: 1, currentCustomers: 0, storageUsedGB: 0, apiCallsThisMonth: 0 },
     }
   } catch (error) {
     console.error("Error updating tenant:", error)
@@ -316,7 +458,7 @@ export async function deleteTenant(tenantId: string): Promise<boolean> {
   try {
     const supabase = await createClient()
 
-    const { error } = await supabase.from("tenants").update({ is_active: false }).eq("id", tenantId)
+    const { error } = await supabase.from("clinics").update({ is_active: false }).eq("id", tenantId)
 
     return !error
   } catch (error) {
@@ -370,6 +512,8 @@ export function checkUsageLimit(
 
 /**
  * Update tenant usage
+ * Note: Usage data not stored in clinics table - this is a no-op for now
+ * Consider using separate usage_tracking table in future
  */
 export async function updateTenantUsage(
   tenantId: string,
@@ -377,41 +521,11 @@ export async function updateTenantUsage(
   value: number,
 ): Promise<boolean> {
   try {
-    const supabase = await createClient()
-
-    // First get current tenant to read existing usage
-    const { data: tenant, error: fetchError } = await supabase
-      .from("tenants")
-      .select("usage")
-      .eq("id", tenantId)
-      .single()
-
-    if (fetchError || !tenant) {
-      console.error("Tenant not found for usage update:", tenantId)
-      return false
-    }
-
-    const currentUsage = tenant.usage as unknown as Tenant["usage"]
-    const updatedUsage = { ...currentUsage }
-
-    switch (usageType) {
-      case "users":
-        updatedUsage.currentUsers = value
-        break
-      case "customers":
-        updatedUsage.currentCustomers = value
-        break
-      case "storage":
-        updatedUsage.storageUsedGB = value
-        break
-      case "apiCalls":
-        updatedUsage.apiCallsThisMonth = value
-        break
-    }
-
-    const { error: updateError } = await supabase.from("tenants").update({ usage: updatedUsage }).eq("id", tenantId)
-
-    return !updateError
+    // Clinics table doesn't have usage column
+    // This function is kept for API compatibility but does nothing
+    // TODO: Implement usage tracking in separate table if needed
+    console.warn(`Usage tracking not implemented - ignoring update for tenant ${tenantId}`)
+    return true
   } catch (error) {
     console.error("Error updating tenant usage:", error)
     return false
