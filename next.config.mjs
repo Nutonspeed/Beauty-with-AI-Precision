@@ -11,7 +11,7 @@ const nextConfig = {
 
   // Note: Next.js 16 removes eslint config in next.config; use a separate eslint config and CI steps instead.
 
-  // Images
+  // Images - ⚡ Performance Optimization (Week 9)
   images: {
     unoptimized: false, // Enable Next.js image optimization
     formats: ['image/avif', 'image/webp'], // Modern formats for better compression
@@ -29,6 +29,18 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: '**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cdn.beauty-ai.com', // CDN domain (Week 9)
+      },
+      {
+        protocol: 'https',
+        hostname: '*.cloudfront.net', // AWS CloudFront
+      },
+      {
+        protocol: 'https',
+        hostname: '*.vercel-storage.com', // Vercel Blob Storage
       },
     ],
   },

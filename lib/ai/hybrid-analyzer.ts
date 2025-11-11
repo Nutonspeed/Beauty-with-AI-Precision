@@ -67,6 +67,14 @@ export interface HybridAnalysisResult {
     faceSize: number // 0-1, face coverage ratio
     overallQuality: number // 0-100, composite quality score
   }
+
+  // 🔥 FIX CRITICAL BUG #2: AI concerns array for detected skin issues
+  aiConcerns?: Array<{
+    type: string
+    severity: number
+    description: string
+    priority: 'high' | 'medium' | 'low'
+  }>
 }
 
 /**
@@ -292,6 +300,9 @@ export class HybridAnalyzer {
         cvResults
       )
 
+      // 🔥 FIX CRITICAL BUG #2: Generate AI concerns from VISIA metrics
+      const aiConcerns = this.generateAIConcerns(visiaMetrics)
+
   const processingTime = Math.max(1, Date.now() - startTime)
 
       // Phase 1: Log quality metrics if provided
@@ -304,6 +315,13 @@ export class HybridAnalyzer {
         })
       }
 
+      // 🔥 Log AI concerns generated
+      console.log("[AI] 🎯 AI Concerns Detected:", {
+        count: aiConcerns.length,
+        highPriority: aiConcerns.filter(c => c.priority === 'high').length,
+        concerns: aiConcerns.map(c => `${c.type}(${c.severity.toFixed(1)})`).join(', ')
+      })
+
       const finalResult: HybridAnalysisResult = {
         mediapipe: results.mediapipe,
         tensorflow: results.tensorflow,
@@ -314,6 +332,7 @@ export class HybridAnalyzer {
         severity: skinAnalysis.severity,
         recommendations,
         visiaMetrics,
+        aiConcerns, // 🔥 FIX: Add AI concerns to result
         processingTime,
         modelWeights: weights,
         advancedFeatures,
@@ -351,6 +370,8 @@ export class HybridAnalyzer {
     const combinedScore =
       mediaPipeScore * weights.mediapipe + tensorFlowScore * weights.tensorflow + huggingFaceScore * weights.huggingface
 
+    // 🔥 FIX CRITICAL BUG #3: Return 0-1 scale (will convert to 0-100 in API)
+    // Ensure each model score is already 0-1 scale before weighting
     return Math.max(0, Math.min(1, combinedScore))
   }
 
@@ -629,6 +650,168 @@ export class HybridAnalyzer {
     }
 
     return baseMetrics
+  }
+
+  /**
+   * 🔥 FIX CRITICAL BUG #2: Generate AI concerns from VISIA metrics
+   * Identifies skin issues based on severity thresholds
+   */
+  private generateAIConcerns(
+    visiaMetrics: ReturnType<typeof this.calculateVisiaMetrics>
+  ): Array<{
+    type: string
+    severity: number
+    description: string
+    priority: 'high' | 'medium' | 'low'
+  }> {
+    const concerns: Array<{
+      type: string
+      severity: number
+      description: string
+      priority: 'high' | 'medium' | 'low'
+    }> = []
+
+    // Define severity thresholds for each metric (0-10 scale)
+    const THRESHOLD_HIGH = 7
+    const THRESHOLD_MEDIUM = 4
+
+    // Check wrinkles
+    if (visiaMetrics.wrinkles >= THRESHOLD_HIGH) {
+      concerns.push({
+        type: 'wrinkles',
+        severity: visiaMetrics.wrinkles,
+        description: 'Significant fine lines and wrinkles detected',
+        priority: 'high'
+      })
+    } else if (visiaMetrics.wrinkles >= THRESHOLD_MEDIUM) {
+      concerns.push({
+        type: 'wrinkles',
+        severity: visiaMetrics.wrinkles,
+        description: 'Moderate fine lines present',
+        priority: 'medium'
+      })
+    }
+
+    // Check spots (hyperpigmentation)
+    if (visiaMetrics.spots >= THRESHOLD_HIGH) {
+      concerns.push({
+        type: 'spots',
+        severity: visiaMetrics.spots,
+        description: 'Significant hyperpigmentation and dark spots detected',
+        priority: 'high'
+      })
+    } else if (visiaMetrics.spots >= THRESHOLD_MEDIUM) {
+      concerns.push({
+        type: 'spots',
+        severity: visiaMetrics.spots,
+        description: 'Moderate hyperpigmentation present',
+        priority: 'medium'
+      })
+    }
+
+    // Check pores
+    if (visiaMetrics.pores >= THRESHOLD_HIGH) {
+      concerns.push({
+        type: 'pores',
+        severity: visiaMetrics.pores,
+        description: 'Enlarged pores detected, may indicate oily skin or clogged pores',
+        priority: 'medium'
+      })
+    } else if (visiaMetrics.pores >= THRESHOLD_MEDIUM) {
+      concerns.push({
+        type: 'pores',
+        severity: visiaMetrics.pores,
+        description: 'Visible pores present',
+        priority: 'low'
+      })
+    }
+
+    // Check texture (lower is worse)
+    if (visiaMetrics.texture >= THRESHOLD_HIGH) {
+      concerns.push({
+        type: 'texture',
+        severity: visiaMetrics.texture,
+        description: 'Uneven and rough skin texture detected',
+        priority: 'high'
+      })
+    } else if (visiaMetrics.texture >= THRESHOLD_MEDIUM) {
+      concerns.push({
+        type: 'texture',
+        severity: visiaMetrics.texture,
+        description: 'Skin texture could be improved',
+        priority: 'medium'
+      })
+    }
+
+    // Check redness
+    if (visiaMetrics.redAreas >= THRESHOLD_HIGH) {
+      concerns.push({
+        type: 'redness',
+        severity: visiaMetrics.redAreas,
+        description: 'Significant redness and inflammation detected, possible rosacea or sensitivity',
+        priority: 'high'
+      })
+    } else if (visiaMetrics.redAreas >= THRESHOLD_MEDIUM) {
+      concerns.push({
+        type: 'redness',
+        severity: visiaMetrics.redAreas,
+        description: 'Mild redness present',
+        priority: 'medium'
+      })
+    }
+
+    // Check UV spots (sun damage)
+    if (visiaMetrics.uvSpots >= THRESHOLD_HIGH) {
+      concerns.push({
+        type: 'uvSpots',
+        severity: visiaMetrics.uvSpots,
+        description: 'Significant sun damage detected, may develop into visible spots',
+        priority: 'high'
+      })
+    } else if (visiaMetrics.uvSpots >= THRESHOLD_MEDIUM) {
+      concerns.push({
+        type: 'uvSpots',
+        severity: visiaMetrics.uvSpots,
+        description: 'Moderate sun damage present',
+        priority: 'medium'
+      })
+    }
+
+    // Check brown spots
+    if (visiaMetrics.brownSpots >= THRESHOLD_HIGH) {
+      concerns.push({
+        type: 'brownSpots',
+        severity: visiaMetrics.brownSpots,
+        description: 'Brown spots and age spots detected',
+        priority: 'high'
+      })
+    } else if (visiaMetrics.brownSpots >= THRESHOLD_MEDIUM) {
+      concerns.push({
+        type: 'brownSpots',
+        severity: visiaMetrics.brownSpots,
+        description: 'Mild brown spots present',
+        priority: 'medium'
+      })
+    }
+
+    // Check porphyrins (bacterial acne)
+    if (visiaMetrics.porphyrins >= THRESHOLD_HIGH) {
+      concerns.push({
+        type: 'porphyrins',
+        severity: visiaMetrics.porphyrins,
+        description: 'High bacterial activity detected, may indicate acne risk',
+        priority: 'high'
+      })
+    } else if (visiaMetrics.porphyrins >= THRESHOLD_MEDIUM) {
+      concerns.push({
+        type: 'porphyrins',
+        severity: visiaMetrics.porphyrins,
+        description: 'Moderate bacterial activity present',
+        priority: 'medium'
+      })
+    }
+
+    return concerns
   }
 
   /**

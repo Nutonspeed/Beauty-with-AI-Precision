@@ -189,3 +189,70 @@ export async function sendAnalysisComplete(to: string, analysisId: string) {
 
   return sendEmail({ to, subject, html })
 }
+
+// ========================================
+// NEW EMAIL TEMPLATES (Phase 1)
+// ========================================
+
+import {
+  generateWeeklyProgressDigest,
+  generateAutomatedProgressReport,
+  generateGoalAchievement,
+  generateReEngagement,
+  type WeeklyDigestData,
+  type ProgressReportData,
+  type GoalAchievementData,
+  type ReEngagementData,
+} from "./email-templates"
+
+// Export types for external use
+export type {
+  WeeklyDigestData,
+  ProgressReportData,
+  GoalAchievementData,
+  ReEngagementData,
+}
+
+/**
+ * Send weekly progress digest email
+ * Sent every Monday morning with summary of past week
+ */
+export async function sendWeeklyProgressDigest(to: string, data: WeeklyDigestData) {
+  const subject = `📊 สรุปความคืบหน้าประจำสัปดาห์ (${data.weekStart} - ${data.weekEnd})`
+  const html = generateWeeklyProgressDigest(data)
+
+  return sendEmail({ to, subject, html })
+}
+
+/**
+ * Send automated progress report
+ * Sent every 2 weeks comparing latest analysis with previous
+ */
+export async function sendAutomatedProgressReport(to: string, data: ProgressReportData) {
+  const subject = `✨ รายงานความคืบหน้า - ${data.reportPeriod}`
+  const html = generateAutomatedProgressReport(data)
+
+  return sendEmail({ to, subject, html })
+}
+
+/**
+ * Send goal achievement celebration email
+ * Sent immediately when user achieves a goal
+ */
+export async function sendGoalAchievementEmail(to: string, data: GoalAchievementData) {
+  const subject = `🎉 ยินดีด้วย! คุณบรรลุเป้าหมาย "${data.goalName}" แล้ว!`
+  const html = generateGoalAchievement(data)
+
+  return sendEmail({ to, subject, html })
+}
+
+/**
+ * Send re-engagement email
+ * Sent to inactive users (no analysis for 7+ days)
+ */
+export async function sendReEngagementEmail(to: string, data: ReEngagementData) {
+  const subject = `💜 เราคิดถึงคุณ! กลับมาดูแลผิวกันต่อนะ`
+  const html = generateReEngagement(data)
+
+  return sendEmail({ to, subject, html })
+}

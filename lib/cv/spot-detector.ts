@@ -41,7 +41,10 @@ export async function detectSpots(
     await (image.greyscale() as unknown as Promise<void>);
 
     const spots: Array<{ x: number; y: number; radius: number }> = [];
-    const threshold = 100; // Threshold สำหรับจุดมืด
+    // Threshold tuned based on real-world testing (2025-11-10)
+    // Previous: 100 → caused 21-81% false positives (hair/background detected)
+    // New: 70 → focus on actual dark spots on skin
+    const threshold = 70; // Threshold สำหรับจุดมืด
     const minBlobSize = 5; // ขนาดต่ำสุดของ blob (pixels)
     const maxBlobSize = 100; // ขนาดสูงสุดของ blob (pixels)
 

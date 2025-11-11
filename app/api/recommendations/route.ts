@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
 
     // Get user profile for personalization
     const { data: profile } = await supabase
-      .from('users')
+      .from('profiles')
       .select('birth_date, medical_history, skin_type')
       .eq('id', user.id)
       .single()

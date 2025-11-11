@@ -1,46 +1,95 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { MultiAngleAnalyzer } from "@/lib/ai/multi-angle-analyzer"
+import { saveAnalysisWithStorage } from "@/lib/api/analysis-storage"
+import { createServerClient } from "@/lib/supabase/server"
+
+export const runtime = 'nodejs'
+export const maxDuration = 60 // 60 seconds for AI processing + image upload
 
 export async function POST(request: NextRequest) {
   try {
     const { views } = await request.json()
 
-    if (!views || views.length !== 3) {
+    if (views?.length !== 3) {
       return NextResponse.json({ error: "Exactly 3 views required (front, left, right)" }, { status: 400 })
     }
 
-    console.log("[v0] Processing multi-angle analysis...")
+    // Get authenticated user
+    const supabase = await createServerClient()
+    const { data: { user } } = await supabase.auth.getUser()
 
+    if (!user) {
+      return NextResponse.json({ error: "Authentication required" }, { status: 401 })
+    }
+
+    console.log("[MultiAngle] Processing multi-angle analysis for user:", user.id)
+
+    // Process images for AI analysis
     const imageDataArray = await Promise.all(
       views.map(async (view: { angle: string; image: string }) => {
         const img = await loadImage(view.image)
-        return { angle: view.angle, data: getImageData(img) }
+        return { angle: view.angle, data: getImageData(img), dataUrl: view.image }
       }),
     )
 
-    const frontView = imageDataArray.find((v) => v.angle === "front")?.data
-    const leftView = imageDataArray.find((v) => v.angle === "left")?.data
-    const rightView = imageDataArray.find((v) => v.angle === "right")?.data
+    const frontView = imageDataArray.find((v) => v.angle === "front")
+    const leftView = imageDataArray.find((v) => v.angle === "left")
+    const rightView = imageDataArray.find((v) => v.angle === "right")
 
     if (!frontView || !leftView || !rightView) {
       return NextResponse.json({ error: "Missing required views" }, { status: 400 })
     }
 
+    // Run AI analysis on ORIGINAL full-resolution images (100% accuracy)
+    console.log("[MultiAngle] Running AI analysis on full-resolution images...")
     const analyzer = new MultiAngleAnalyzer()
-    const result = analyzer.analyzeSkin(frontView, leftView, rightView)
+    const result = analyzer.analyzeSkin(frontView.data, leftView.data, rightView.data)
 
-    console.log("[v0] Multi-angle analysis complete:", result.combinedScore)
+    console.log("[MultiAngle] AI analysis complete:", result.combinedScore)
 
-    // TODO: Save to database and return analysis ID
-    const analysisId = `multi-${Date.now()}`
+    // Save analysis with multi-tier storage
+    // Original tier = for re-analysis (full accuracy)
+    // Display tier = for results page (fast loading)
+    // Thumbnail tier = for history list (instant loading)
+    console.log("[MultiAngle] Saving analysis with multi-tier storage...")
+    
+    const storageResult = await saveAnalysisWithStorage(
+      user.id,
+      {
+        front: frontView.dataUrl,
+        left: leftView.dataUrl,
+        right: rightView.dataUrl,
+      },
+      result,
+      {
+        analysisType: 'multi-angle',
+        metadata: {
+          views: ['front', 'left', 'right'],
+          timestamp: new Date().toISOString(),
+        },
+      }
+    )
+
+    console.log("[MultiAngle] Analysis saved successfully:", storageResult.id)
+    console.log("[MultiAngle] Storage optimization:", {
+      front: Object.keys(storageResult.imageUrls.front || {}).length + ' tiers',
+      left: Object.keys(storageResult.imageUrls.left || {}).length + ' tiers',
+      right: Object.keys(storageResult.imageUrls.right || {}).length + ' tiers',
+    })
 
     return NextResponse.json({
-      id: analysisId,
+      id: storageResult.id,
       result,
-      timestamp: new Date().toISOString(),
+      imageUrls: {
+        // Return display URLs for immediate viewing
+        front: storageResult.imageUrls.front?.display,
+        left: storageResult.imageUrls.left?.display,
+        right: storageResult.imageUrls.right?.display,
+      },
+      timestamp: storageResult.createdAt,
     })
   } catch (error) {
-    console.error("[v0] Multi-angle analysis error:", error)
+    console.error("[MultiAngle] Analysis error:", error)
     return NextResponse.json({ error: "Analysis failed" }, { status: 500 })
   }
 }

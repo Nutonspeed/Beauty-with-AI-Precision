@@ -79,6 +79,11 @@ logs
 prisma/*.db
 prisma/*.db-*
 
-# Prisma database files
-prisma/*.db
-prisma/*.db-*
+# Test images (privacy - do not commit real photos)
+test-images/samples/*.jpg
+test-images/samples/*.jpeg
+test-images/samples/*.png
+test-images/results/*.json
+!test-images/README.md
+!test-images/SAMPLE_IMAGES_GUIDE.md
+!test-images/TESTING_SUMMARY.md

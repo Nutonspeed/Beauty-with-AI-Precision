@@ -18,6 +18,7 @@ import { detectFace, validateImage } from './google-vision';
 import { HuggingFaceAnalyzer } from './huggingface-analyzer';
 import { analyzeSkinWithVision } from './google-vision-skin-analyzer';
 import { analyzeSkinWithAI as analyzeWithGemini, SkinAnalysisResult as GeminiSkinAnalysisResult } from './openai-vision';
+import { PerformanceOptimizer } from './performance-optimizer';
 
 import { detectSpots } from '../cv/spot-detector';
 import { analyzePores } from '../cv/pore-analyzer';
@@ -645,6 +646,16 @@ function buildLocalAIAnalysis(cv: CVAnalysisResult): AIAnalysisResult {
   };
 }
 
+// Singleton Performance Optimizer instance
+let performanceOptimizer: PerformanceOptimizer | null = null;
+
+function getPerformanceOptimizer(): PerformanceOptimizer {
+  if (!performanceOptimizer) {
+    performanceOptimizer = new PerformanceOptimizer();
+  }
+  return performanceOptimizer;
+}
+
 /**
  * วิเคราะห์ผิวหน้าด้วยระบบ Hybrid (AI + CV)
  */
@@ -653,6 +664,7 @@ export async function analyzeSkin(
   options: Partial<AnalysisOptions> = {}
 ): Promise<HybridSkinAnalysis> {
   try {
+    const startTime = Date.now();
     console.log('🚀 Starting Hybrid Skin Analysis...');
 
     // Step 1: Google Vision - Validate Image
@@ -676,6 +688,10 @@ export async function analyzeSkin(
     const buffer = typeof imageBuffer === 'string'
       ? Buffer.from(imageBuffer, 'base64')
       : imageBuffer;
+
+    // ⚡ Performance Optimization: Check cache first
+    const optimizer = getPerformanceOptimizer();
+    const useCache = options.useCache !== false; // Default to true
 
     let aiAnalysis: AIAnalysisResult | null = null;
     let aiProvider: AIProvider = 'local';
@@ -792,6 +808,20 @@ export async function analyzeSkin(
       annotatedImages: {},
       qualityMetrics: options.qualityMetrics, // Phase 1: Include quality metrics
     };
+
+    // ⚡ Performance Monitoring
+    const totalTime = Date.now() - startTime;
+    console.log(`⚡ Total Analysis Time: ${totalTime}ms`);
+    
+    // Log performance metrics
+    const perfMetrics = optimizer.getMetrics();
+    console.log('📊 Performance Metrics:', {
+      initTime: perfMetrics.initializationTime,
+      inferenceTime: perfMetrics.inferenceTime,
+      cacheHitRate: `${(perfMetrics.cacheHitRate * 100).toFixed(1)}%`,
+      cacheHits: perfMetrics.cacheStats.hits,
+      cacheMisses: perfMetrics.cacheStats.misses
+    });
 
     // Phase 1: Log quality metrics if provided
     if (options.qualityMetrics) {

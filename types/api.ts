@@ -38,6 +38,42 @@ export interface SaveAnalysisRequest {
   }
   appointmentId?: string
   treatmentPlanId?: string
+  // 🔥 FIX: Add quality metrics (CRITICAL BUG #1)
+  qualityMetrics?: {
+    lighting: number        // 0-100
+    blur: number            // 0-100
+    faceSize: number        // 0-1
+    overallQuality: number  // 0-100
+  }
+  // 🔥 FIX: Add AI concerns array (CRITICAL BUG #2)
+  aiConcerns?: Array<{
+    type: string
+    severity: number
+    description: string
+    priority: 'high' | 'medium' | 'low'
+  }>
+  // 🔥 FIX: Add recommendations for treatment plan (CRITICAL BUG #4)
+  recommendations?: Array<{
+    text: string
+    confidence: number
+    priority: 'high' | 'medium' | 'low'
+  }>
+  // Analysis scores
+  analysisScores?: {
+    overall: number
+    spots: number
+    wrinkles: number
+    texture: number
+    pores: number
+    redness: number
+    uvSpots?: number
+    brownSpots?: number
+    redAreas?: number
+    porphyrins?: number
+  }
+  // AI generated fields
+  aiSkinType?: string
+  aiTreatmentPlan?: string
 }
 
 export interface SaveAnalysisResponse {

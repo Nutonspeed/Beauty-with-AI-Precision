@@ -33,7 +33,7 @@ function createMockImageData(width = 640, height = 480): ImageData {
   return new ImageData(data, width, height)
 }
 
-describe.skip('Performance Benchmark Tests', () => {
+describe('Performance Benchmark Tests', () => {
   let analyzer: HybridAnalyzer
   let performanceOptimizer: PerformanceOptimizer
   const testImages = [

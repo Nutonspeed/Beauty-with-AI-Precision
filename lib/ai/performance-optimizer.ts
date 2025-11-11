@@ -248,11 +248,11 @@ export class PerformanceOptimizer {
     totalRequests: 0
   };
 
-  // Configuration
-  private readonly CACHE_TTL = 5 * 60 * 1000; // 5 minutes
-  private readonly MAX_CACHE_SIZE = 100; // Maximum cache entries (increased from 50)
-  private readonly MAX_CACHE_BYTES = 50 * 1024 * 1024; // 50MB
-  private readonly CONCURRENT_LIMIT = 3; // Max concurrent model loads
+  // ⚡ Performance Configuration (Week 9 - Tuned)
+  private readonly CACHE_TTL = 10 * 60 * 1000; // 10 minutes (increased from 5)
+  private readonly MAX_CACHE_SIZE = 150; // Maximum cache entries (increased from 100)
+  private readonly MAX_CACHE_BYTES = 100 * 1024 * 1024; // 100MB (increased from 50MB)
+  private readonly CONCURRENT_LIMIT = 5; // Max concurrent model loads (increased from 3)
 
   constructor() {
     this.cache = new LRUCache(this.MAX_CACHE_SIZE, this.MAX_CACHE_BYTES);

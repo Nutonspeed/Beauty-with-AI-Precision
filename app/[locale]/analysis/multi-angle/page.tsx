@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowLeft, Loader2 } from "lucide-react"
 import { useRouter, useParams } from "next/navigation"
 import Image from "next/image"
+import { AnalysisProgressIndicator } from "@/components/analysis/AnalysisProgressIndicator"
 
 export default function MultiAngleAnalysisPage() {
   const router = useRouter()
@@ -46,8 +47,8 @@ export default function MultiAngleAnalysisPage() {
         throw new Error(result.error || "Analysis failed")
       }
 
-  console.log("[v0] Multi-angle analysis complete:", result.id)
-  router.push(`/${locale}/analysis/detail/${result.id}`)
+      console.log("[v0] Multi-angle analysis complete:", result.id)
+      router.push(`/${locale}/analysis/detail/${result.id}`)
     } catch (error) {
       console.error("[v0] Multi-angle analysis error:", error)
       alert("Analysis failed. Please try again.")
@@ -95,21 +96,25 @@ export default function MultiAngleAnalysisPage() {
               ))}
             </div>
 
-            <div className="flex gap-2">
-              <Button onClick={handleAnalyze} disabled={isAnalyzing} className="flex-1 gap-2" size="lg">
-                {isAnalyzing ? (
-                  <>
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    Analyzing / กำลังวิเคราะห์...
-                  </>
-                ) : (
-                  "Start Analysis / เริ่มวิเคราะห์"
-                )}
-              </Button>
-              <Button onClick={() => setCapturedViews([])} variant="outline" size="lg" disabled={isAnalyzing}>
-                Retake / ถ่ายใหม่
-              </Button>
-            </div>
+            {/* Show Progress Indicator during analysis */}
+            {isAnalyzing ? (
+              <div className="py-8">
+                <AnalysisProgressIndicator
+                  autoStart={true}
+                  showTimeEstimate={true}
+                  showDescription={true}
+                />
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                <Button onClick={handleAnalyze} disabled={isAnalyzing} className="flex-1 gap-2" size="lg">
+                  Start Analysis / เริ่มวิเคราะห์
+                </Button>
+                <Button onClick={() => setCapturedViews([])} variant="outline" size="lg" disabled={isAnalyzing}>
+                  Retake / ถ่ายใหม่
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
       )}
