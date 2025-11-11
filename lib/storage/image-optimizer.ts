@@ -137,7 +137,7 @@ export class ImageOptimizer {
       if (input instanceof Buffer) {
         buffer = input;
       } else {
-        const response = await fetch(input);
+        const response = await fetch(input as string);
         const arrayBuffer = await response.arrayBuffer();
         buffer = Buffer.from(new Uint8Array(arrayBuffer));
       }

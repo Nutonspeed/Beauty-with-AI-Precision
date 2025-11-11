@@ -125,7 +125,7 @@ export function useAnalysisProgress(options: UseAnalysisProgressOptions = {}) {
   })
 
   const startTimeRef = useRef<number | null>(null)
-  const animationFrameRef = useRef<number>()
+  const animationFrameRef = useRef<number | null>(null)
   const timeoutRefs = useRef<NodeJS.Timeout[]>([])
 
   /**

@@ -77,8 +77,12 @@ interface Activity {
   id: string
   action_type: string
   description: string | null
-  user_name: string | null
   created_at: string
+  user?: {
+    id: string
+    name: string
+    role: string
+  }
 }
 
 function RecentActivity({ activities }: { activities: Activity[] }) {
@@ -134,7 +138,7 @@ function RecentActivity({ activities }: { activities: Activity[] }) {
                     {activity.description || activity.action_type}
                   </p>
                   <div className="flex items-center mt-1 text-xs text-muted-foreground">
-                    <span>{activity.user_name || 'System'}</span>
+                    <span>{activity.user?.name || 'System'}</span>
                     <span className="mx-2">•</span>
                     <span>{formatTime(activity.created_at)}</span>
                   </div>

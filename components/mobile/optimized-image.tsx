@@ -27,7 +27,7 @@ export interface OptimizedImageProps extends Omit<ImageProps, 'src'> {
   fallbackSrc?: string;
   lowQualitySrc?: string;
   onLoad?: () => void;
-  onError?: (error: Error) => void;
+  onError?: (event: React.SyntheticEvent<HTMLImageElement, Event>) => void;
   adaptiveQuality?: boolean;
 }
 
@@ -102,10 +102,10 @@ export function OptimizedImage({
     onLoad?.();
   }, [onLoad]);
 
-  const handleError = useCallback(() => {
+  const handleError = useCallback((event: React.SyntheticEvent<HTMLImageElement, Event>) => {
     setHasError(true);
-    onError?.(new Error(`Failed to load image: ${src}`));
-  }, [src, onError]);
+    onError?.(event);
+  }, [onError]);
 
   // Get aspect ratio value
   const getAspectRatio = () => {

@@ -9,75 +9,124 @@ import type { HybridSkinAnalysis } from '@/lib/types/skin-analysis';
 
 // Mock analysis data for demonstration
 const mockAnalysis: HybridSkinAnalysis = {
+  id: 'demo-analysis-001',
+  userId: 'demo-user-001',
+  createdAt: new Date(),
   imageUrl: '/demo/face-analysis.jpg',
-  timestamp: new Date().toISOString(),
+  timestamp: new Date(),
+  aiProvider: 'gemini',
+  ai: {
+    skinType: 'combination',
+    concerns: ['dark_spots', 'large_pores', 'redness', 'texture', 'wrinkles', 'fine_lines', 'dullness'],
+    severity: {
+      dark_spots: 6.5,
+      large_pores: 7.8,
+      redness: 6.0,
+      texture: 6.8,
+      wrinkles: 5.2,
+      fine_lines: 4.5,
+      dullness: 5.5,
+      acne: 0,
+      blackheads: 0,
+      hyperpigmentation: 0,
+      spots: 0,
+      pores: 0
+    },
+    recommendations: [
+      {
+        category: 'cleanser',
+        product: 'Gentle Foaming Cleanser',
+        reason: 'Removes impurities without stripping natural oils'
+      },
+      {
+        category: 'serum',
+        product: 'Vitamin C Brightening Serum',
+        reason: 'Helps reduce dark spots and even skin tone'
+      },
+      {
+        category: 'moisturizer',
+        product: 'Hydrating Moisturizer',
+        reason: 'Maintains skin barrier and prevents dryness'
+      },
+      {
+        category: 'sunscreen',
+        product: 'Broad Spectrum SPF 50',
+        reason: 'Protects against UV damage that causes dark spots'
+      }
+    ],
+    confidence: 0.88
+  },
   cv: {
     spots: {
       count: 12,
       severity: 6.5,
       locations: [
-        { x: 0.45, y: 0.35, radius: 8, confidence: 0.92 },
-        { x: 0.52, y: 0.38, radius: 6, confidence: 0.87 },
-        { x: 0.48, y: 0.42, radius: 10, confidence: 0.95 },
-        { x: 0.55, y: 0.36, radius: 7, confidence: 0.89 },
-        { x: 0.42, y: 0.40, radius: 9, confidence: 0.91 },
+        { x: 0.45, y: 0.35, radius: 8 },
+        { x: 0.52, y: 0.38, radius: 6 },
+        { x: 0.48, y: 0.42, radius: 10 },
+        { x: 0.55, y: 0.36, radius: 7 },
+        { x: 0.42, y: 0.40, radius: 9 },
       ],
     },
     wrinkles: {
       count: 8,
       severity: 5.2,
       locations: [
-        { x1: 0.35, y1: 0.25, x2: 0.42, y2: 0.26, confidence: 0.88 }, // Forehead
-        { x1: 0.58, y1: 0.25, x2: 0.65, y2: 0.26, confidence: 0.86 },
-        { x1: 0.68, y1: 0.32, x2: 0.72, y2: 0.35, confidence: 0.90 }, // Crow's feet
-        { x1: 0.28, y1: 0.32, x2: 0.32, y2: 0.35, confidence: 0.89 },
+        { x1: 0.35, y1: 0.25, x2: 0.42, y2: 0.26 }, // Forehead
+        { x1: 0.58, y1: 0.25, x2: 0.65, y2: 0.26 },
+        { x1: 0.68, y1: 0.32, x2: 0.72, y2: 0.35 }, // Crow's feet
+        { x1: 0.28, y1: 0.32, x2: 0.32, y2: 0.35 },
       ],
     },
     pores: {
-      visibility: 7.8,
-      enlargedCount: 45,
       averageSize: 1.2,
+      enlargedCount: 45,
+      severity: 7.8,
     },
     redness: {
-      severity: 6.0,
       percentage: 15.5,
+      severity: 6.0,
       areas: [
-        { x: 0.48, y: 0.45, width: 30, height: 25, confidence: 0.85 }, // Cheeks
-        { x: 0.52, y: 0.45, width: 28, height: 24, confidence: 0.83 },
-        { x: 0.50, y: 0.30, radius: 12, confidence: 0.78 }, // Nose
+        { x: 0.48, y: 0.45, width: 30, height: 25 }, // Cheeks
+        { x: 0.52, y: 0.45, width: 28, height: 24 },
       ],
     },
     texture: {
-      roughness: 6.8,
-      uniformity: 65,
       smoothness: 45,
+      roughness: 6.8,
+      score: 65,
     },
   },
-  ai: {
-    overallAssessment: {
-      en: 'Moderate skin concerns detected. Primary issues: dark spots, enlarged pores, and mild redness. Consistent skincare routine and sun protection recommended.',
-      th: 'พบปัญหาผิวระดับปานกลาง ปัญหาหลัก: จุดด่างดำ รูขุมขนกว้าง และผิวแดงเล็กน้อย แนะนำการดูแลผิวที่สม่ำเสมอและป้องกันแสงแดด',
-    },
-    concerns: [
-      { type: 'dark_spots' as any, severity: 6.5, confidence: 0.92 },
-      { type: 'large_pores' as any, severity: 7.8, confidence: 0.90 },
-      { type: 'redness' as any, severity: 6.0, confidence: 0.85 },
-      { type: 'texture' as any, severity: 6.8, confidence: 0.88 },
-      { type: 'wrinkles' as any, severity: 5.2, confidence: 0.87 },
-      { type: 'fine_lines' as any, severity: 4.5, confidence: 0.82 },
-      { type: 'dullness' as any, severity: 5.5, confidence: 0.80 },
-    ],
-    recommendations: {
-      immediate: [],
-      shortTerm: [],
-      longTerm: [],
-    },
-    skinType: 'combination',
-    confidence: 0.88,
+  overallScore: {
+    spots: 6.5,
+    pores: 7.8,
+    wrinkles: 5.2,
+    texture: 6.8,
+    redness: 6.0,
+    pigmentation: 5.5,
   },
-  combinedScore: 62,
-  detectionMethod: 'hybrid',
-  processingTime: 2450,
+  percentiles: {
+    spots: 65,
+    pores: 72,
+    wrinkles: 58,
+    texture: 68,
+    redness: 61,
+    overall: 64,
+  },
+  confidence: 0.88,
+  recommendations: [
+    'Use sunscreen daily to prevent further dark spot formation',
+    'Consider retinoid treatment for enlarged pores',
+    'Apply vitamin C serum in the morning for brightening',
+    'Use gentle exfoliation 2-3 times per week'
+  ],
+  annotatedImages: {
+    spots: '/demo/annotated-spots.jpg',
+    pores: '/demo/annotated-pores.jpg',
+    wrinkles: '/demo/annotated-wrinkles.jpg',
+    redness: '/demo/annotated-redness.jpg',
+    combined: '/demo/annotated-combined.jpg',
+  },
 };
 
 export default function ConcernEducationDemoPage() {

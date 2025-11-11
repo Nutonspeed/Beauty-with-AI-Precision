@@ -33,15 +33,15 @@ export default function ActionPlanDemoPage() {
           en: 'Hyperpigmentation areas on skin',
           th: 'จุดด่างดำบนผิวหนัง'
         },
-        causes: ['Sun exposure', 'Aging'],
-        prevention: ['Use sunscreen', 'Avoid direct sun'],
+        causes: { en: ['Sun exposure', 'Aging'], th: ['แสงแดด', 'การแก่'] },
+        prevention: { en: ['Use sunscreen', 'Avoid direct sun'], th: ['ใช้ครีมกันแดด', 'หลีกเลี่ยงแสงแดดโดยตรง'] },
         treatment: {
           moderate: {
             description: 'Moderate treatment',
             options: ['Vitamin C serum', 'Niacinamide']
           }
         },
-        whenToSeeDermatologist: ['If spots grow', 'If color changes'],
+        whenToSeeDermatologist: { en: ['If spots grow', 'If color changes'], th: ['ถ้าจุดด่างขยาย', 'ถ้าสีเปลี่ยน'] },
         myths: [],
         ingredients: { recommended: ['Vitamin C'], avoid: ['Harsh acids'] },
         relatedConcerns: [],
@@ -64,15 +64,15 @@ export default function ActionPlanDemoPage() {
           en: 'Enlarged skin pores',
           th: 'รูขุมขนขยาย'
         },
-        causes: ['Genetics', 'Excess oil'],
-        prevention: ['Regular cleansing', 'Exfoliation'],
+        causes: { en: ['Genetics', 'Excess oil'], th: ['พันธุกรรม', 'น้ำมันส่วนเกิน'] },
+        prevention: { en: ['Regular cleansing', 'Exfoliation'], th: ['ทำความสะอาดเป็นประจำ', 'ขัดผิว'] },
         treatment: {
           severe: {
             description: 'Severe treatment',
             options: ['Niacinamide', 'Retinol']
           }
         },
-        whenToSeeDermatologist: ['If inflamed', 'If infected'],
+        whenToSeeDermatologist: { en: ['If inflamed', 'If infected'], th: ['ถ้าอักเสบ', 'ถ้าติดเชื้อ'] },
         myths: [],
         ingredients: { recommended: ['Niacinamide'], avoid: ['Heavy oils'] },
         relatedConcerns: [],
@@ -95,15 +95,15 @@ export default function ActionPlanDemoPage() {
           en: 'Skin redness or inflammation',
           th: 'ผิวแดงหรือการอักเสบ'
         },
-        causes: ['Sensitivity', 'Irritation'],
-        prevention: ['Gentle products', 'Avoid irritants'],
+        causes: { en: ['Sensitivity', 'Irritation'], th: ['ความไวต่อสิ่งกระตุ้น', 'การระคายเคือง'] },
+        prevention: { en: ['Gentle products', 'Avoid irritants'], th: ['ผลิตภัณฑ์อ่อนโยน', 'หลีกเลี่ยงสิ่งระคายเคือง'] },
         treatment: {
           moderate: {
             description: 'Moderate treatment',
             options: ['Calming serum', 'Moisturizer']
           }
         },
-        whenToSeeDermatologist: ['If persistent', 'If painful'],
+        whenToSeeDermatologist: { en: ['If persistent', 'If painful'], th: ['ถ้าปากบ่อย', 'ถ้าปวด'] },
         myths: [],
         ingredients: { recommended: ['Centella', 'Aloe'], avoid: ['Alcohol', 'Fragrance'] },
         relatedConcerns: [],

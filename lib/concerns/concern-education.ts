@@ -43,12 +43,12 @@ export interface ConcernEducation {
   icon: string;
   color: string;
   definition: ConcernDefinition;
-  causes: string[];
-  prevention: string[];
+  causes: Record<'en' | 'th', string[]>;
+  prevention: Record<'en' | 'th', string[]>;
   treatment: {
     [key: string]: TreatmentLevel; // mild, moderate, severe, or custom levels
   };
-  whenToSeeDermatologist: string[];
+  whenToSeeDermatologist?: Record<'en' | 'th', string[]>;
   relatedConcerns: string[];
   visualExamples: string[];
   statistics?: Record<string, string>;

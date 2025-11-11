@@ -5,7 +5,7 @@
  * Generates validation reports with accuracy metrics
  */
 
-import type {
+import {
   GroundTruthAnnotation,
   AIPredictionComparison,
   ValidationReport,
@@ -147,7 +147,8 @@ export function comparePredictionWithGroundTruth(
  */
 export function generateValidationReport(
   comparisons: AIPredictionComparison[],
-  model: ModelType
+  model: ModelType,
+  currentThreshold: number = 0.65
 ): ValidationReport {
   if (comparisons.length === 0) {
     throw new Error('No comparisons provided');
@@ -172,10 +173,10 @@ export function generateValidationReport(
 
   // Group by actual severity level (from ground truth)
   const bySeverity: Record<SeverityLevel, AIPredictionComparison[]> = {
-    clear: [],
-    mild: [],
-    moderate: [],
-    severe: [],
+    [SeverityLevel.CLEAR]: [],
+    [SeverityLevel.MILD]: [],
+    [SeverityLevel.MODERATE]: [],
+    [SeverityLevel.SEVERE]: [],
   };
 
   // Note: We need to load ground truth to get actual severity
@@ -183,10 +184,10 @@ export function generateValidationReport(
   for (const comp of comparisons) {
     const concernCount = comp.aiPrediction.concerns.length;
     let severity: SeverityLevel;
-    if (concernCount <= 5) severity = 'clear';
-    else if (concernCount <= 15) severity = 'mild';
-    else if (concernCount <= 30) severity = 'moderate';
-    else severity = 'severe';
+    if (concernCount <= 5) severity = SeverityLevel.CLEAR;
+    else if (concernCount <= 15) severity = SeverityLevel.MILD;
+    else if (concernCount <= 30) severity = SeverityLevel.MODERATE;
+    else severity = SeverityLevel.SEVERE;
     
     bySeverity[severity].push(comp);
   }
@@ -211,7 +212,7 @@ export function generateValidationReport(
 
   // Confusion matrix
   const confusionMatrix: ValidationReport['confusionMatrix'] = [];
-  const severityLevels: SeverityLevel[] = ['clear', 'mild', 'moderate', 'severe'];
+  const severityLevels: SeverityLevel[] = [SeverityLevel.CLEAR, SeverityLevel.MILD, SeverityLevel.MODERATE, SeverityLevel.SEVERE];
 
   for (const actual of severityLevels) {
     for (const predicted of severityLevels) {
@@ -265,13 +266,13 @@ export function generateValidationReport(
     );
   }
 
-  if (avgPrecision < 0.80) {
+  if (avgPrecision < 0.8) {
     recommendations.push(
       `Precision (${(avgPrecision * 100).toFixed(1)}%) is below target (80%). Model is detecting too many false positives. Increase confidence threshold.`
     );
   }
 
-  if (avgRecall < 0.80) {
+  if (avgRecall < 0.8) {
     recommendations.push(
       `Recall (${(avgRecall * 100).toFixed(1)}%) is below target (80%). Model is missing true concerns. Decrease confidence threshold or improve model sensitivity.`
     );
@@ -279,7 +280,7 @@ export function generateValidationReport(
 
   // Check for severe class-specific issues
   for (const [severity, metrics] of Object.entries(severityBreakdown)) {
-    if (metrics.sampleCount > 0 && metrics.accuracy < 0.70) {
+    if (metrics.sampleCount > 0 && metrics.accuracy < 0.7) {
       recommendations.push(
         `Low accuracy (${(metrics.accuracy * 100).toFixed(1)}%) for ${severity} severity. Review ${severity} training data quality.`
       );
@@ -287,9 +288,12 @@ export function generateValidationReport(
   }
 
   // Threshold suggestions (optimize for best F1)
-  const currentThreshold = DEFAULT_THRESHOLDS[model];
-  const thresholdSuggestions = {
-    currentThreshold,
+  const thresholdSuggestions: {
+    currentThreshold: number;
+    suggestedThreshold: number;
+    expectedImprovement: number;
+  } = {
+    currentThreshold: currentThreshold,
     suggestedThreshold: currentThreshold,
     expectedImprovement: 0,
   };
@@ -303,7 +307,7 @@ export function generateValidationReport(
       `Try increasing threshold to ${thresholdSuggestions.suggestedThreshold.toFixed(2)} to reduce false positives.`
     );
   } else if (avgRecall < avgPrecision - 0.1) {
-    thresholdSuggestions.suggestedThreshold = Math.max(0.50, currentThreshold - 0.05);
+    thresholdSuggestions.suggestedThreshold = Math.max(0.5, currentThreshold - 0.05);
     thresholdSuggestions.expectedImprovement = 0.05;
     recommendations.push(
       `Try decreasing threshold to ${thresholdSuggestions.suggestedThreshold.toFixed(2)} to catch more concerns.`
@@ -330,6 +334,15 @@ export function generateValidationReport(
 }
 
 /**
+ * Default threshold range for optimization
+ */
+const DEFAULT_THRESHOLD_RANGE = {
+  min: 0.5,
+  max: 0.95,
+  step: 0.05,
+};
+
+/**
  * Calculate optimal threshold for best F1 score
  */
 export function findOptimalThreshold(
@@ -344,11 +357,7 @@ export function findOptimalThreshold(
     severityLevel: SeverityLevel;
     model: ModelType;
   }>,
-  thresholdRange: { min: number; max: number; step: number } = {
-    min: 0.50,
-    max: 0.95,
-    step: 0.05,
-  }
+  thresholdRange: { min: number; max: number; step: number } = DEFAULT_THRESHOLD_RANGE
 ): { threshold: number; f1Score: number; precision: number; recall: number } {
   let bestThreshold = 0.65;
   let bestF1 = 0;

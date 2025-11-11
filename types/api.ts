@@ -86,6 +86,7 @@ export interface AnalysisHistoryItem {
   id: string
   imageUrl: string
   thumbnailUrl?: string
+  displayUrl?: string
   concerns: SkinConcern[]
   createdAt: string
   concernCount: {

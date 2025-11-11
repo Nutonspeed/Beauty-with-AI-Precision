@@ -8,14 +8,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { promises as fs } from 'fs';
 import path from 'path';
-import type { SeverityLevel, ConcernType } from '@/types/calibration';
+import { SeverityLevel, ConcernType } from '@/types/calibration';
 
 // Import AI analysis functions
 // TODO: Implement these analyzers or use existing HybridAnalyzer
 // import { analyzeImageWithMediaPipe } from '@/lib/ai/mediapipe-analyzer';
 // import { analyzeImageWithTensorFlow } from '@/lib/ai/tensorflow-analyzer';
 // import { analyzeImageWithHuggingFace } from '@/lib/ai/huggingface-analyzer';
-import { HybridAnalyzer } from '@/lib/ai/hybrid-analyzer';
+import { analyzeSkin } from '@/lib/ai/hybrid-skin-analyzer';
 
 const CALIBRATION_DIR = path.join(process.cwd(), 'test-images', 'calibration');
 
@@ -58,22 +58,18 @@ async function runPredictionOnImage(
   try {
     // Read image file
     const imageBuffer = await fs.readFile(imagePath);
-    const base64Image = imageBuffer.toString('base64');
-    const imageUrl = `data:image/jpeg;base64,${base64Image}`;
 
     let results: any;
 
     // Run appropriate model
     // TODO: Implement individual analyzers or route all to HybridAnalyzer
-    const analyzer = new HybridAnalyzer();
-    
     switch (model) {
       case 'mediapipe':
       case 'tensorflow':
       case 'huggingface':
       case 'ensemble':
         // For now, use HybridAnalyzer for all models
-        results = await analyzer.analyzeSkin(imageUrl);
+        results = await analyzeSkin(imageBuffer);
         break;
       default:
         throw new Error(`Unknown model: ${model}`);
@@ -99,10 +95,10 @@ async function runPredictionOnImage(
  * Calculate severity level based on concern count
  */
 function calculateSeverityLevel(concernCount: number): SeverityLevel {
-  if (concernCount <= 5) return 'clear';
-  if (concernCount <= 15) return 'mild';
-  if (concernCount <= 30) return 'moderate';
-  return 'severe';
+  if (concernCount <= 5) return SeverityLevel.CLEAR;
+  if (concernCount <= 15) return SeverityLevel.MILD;
+  if (concernCount <= 30) return SeverityLevel.MODERATE;
+  return SeverityLevel.SEVERE;
 }
 
 /**
@@ -114,7 +110,7 @@ async function findCalibrationImages(
   const images: Array<{ file: string; severity: SeverityLevel }> = [];
   const severityLevels: SeverityLevel[] = severityFilter 
     ? [severityFilter] 
-    : ['clear', 'mild', 'moderate', 'severe'];
+    : [SeverityLevel.CLEAR, SeverityLevel.MILD, SeverityLevel.MODERATE, SeverityLevel.SEVERE];
 
   for (const severity of severityLevels) {
     const dirPath = path.join(CALIBRATION_DIR, severity);

@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
       concerns,
       recommendations,
       analysisDate: analysis.created_at,
-      customerEmail: analysis.users?.email || '',
+      customerEmail: analysis.users?.[0]?.email || '',
     };
 
     // Create CRM client

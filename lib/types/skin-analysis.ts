@@ -165,6 +165,9 @@ export interface AnalysisOptions {
   };
 
   mode?: AnalysisMode;
+
+  // เปิดใช้งาน cache
+  useCache?: boolean;
 }
 
 // ประวัติการวิเคราะห์

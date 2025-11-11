@@ -146,10 +146,12 @@ export async function getCacheStats(): Promise<{
         resolve(event.data);
       };
       
-      registration.active.postMessage(
-        { type: 'GET_CACHE_SIZE' },
-        [messageChannel.port2]
-      );
+      if (registration.active) {
+        registration.active.postMessage(
+          { type: 'GET_CACHE_SIZE' },
+          [messageChannel.port2]
+        );
+      }
       
       // Timeout after 5 seconds
       setTimeout(() => resolve(null), 5000);

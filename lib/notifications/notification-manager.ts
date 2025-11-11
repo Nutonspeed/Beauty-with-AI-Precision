@@ -119,7 +119,7 @@ class NotificationManagerClass {
    * Show success notification
    */
   success(message: string, options?: NotificationOptions) {
-    return showSuccessToast(message, options);
+    return showSuccessToast(message, options as any);
   }
 
   /**

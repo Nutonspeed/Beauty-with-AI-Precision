@@ -14,14 +14,82 @@ import type { EnhancedPDFOptions, HistoricalAnalysisData } from '@/lib/presentat
 const mockAnalysis: HybridSkinAnalysis = {
   id: 'demo-analysis-001',
   userId: 'demo-user',
+  createdAt: new Date(),
   imageUrl: 'https://via.placeholder.com/800x600/8b5cf6/ffffff?text=After+Analysis',
-  percentiles: {
-    overall: 72,
-    spots: 68,
-    pores: 54,
-    wrinkles: 45,
-    texture: 80,
-    redness: 60,
+  timestamp: new Date(),
+  aiProvider: 'gemini',
+  ai: {
+    skinType: 'combination',
+    concerns: ['spots', 'pores', 'wrinkles', 'texture', 'redness'],
+    severity: {
+      spots: 7.5,
+      pores: 5.2,
+      wrinkles: 4.1,
+      texture: 8.3,
+      redness: 6.0,
+      acne: 0,
+      fine_lines: 0,
+      large_pores: 0,
+      dark_spots: 0,
+      dullness: 0,
+      blackheads: 0,
+      hyperpigmentation: 0
+    },
+    recommendations: [
+      {
+        category: 'cleanser',
+        product: 'Gentle Daily Cleanser',
+        reason: 'Removes impurities without stripping natural oils'
+      },
+      {
+        category: 'serum',
+        product: 'Vitamin C Brightening Serum',
+        reason: 'Helps reduce spots and even skin tone'
+      },
+      {
+        category: 'moisturizer',
+        product: 'Hydrating Moisturizer',
+        reason: 'Maintains skin barrier and prevents dryness'
+      }
+    ],
+    confidence: 0.94
+  },
+  cv: {
+    spots: {
+      count: 12,
+      severity: 7.5,
+      locations: [
+        { x: 0.45, y: 0.35, radius: 8 },
+        { x: 0.52, y: 0.38, radius: 6 },
+        { x: 0.48, y: 0.42, radius: 10 }
+      ]
+    },
+    pores: {
+      averageSize: 1.2,
+      enlargedCount: 45,
+      severity: 5.2
+    },
+    wrinkles: {
+      count: 8,
+      severity: 4.1,
+      locations: [
+        { x1: 0.35, y1: 0.25, x2: 0.42, y2: 0.26 },
+        { x1: 0.58, y1: 0.25, x2: 0.65, y2: 0.26 }
+      ]
+    },
+    redness: {
+      percentage: 15.5,
+      severity: 6.0,
+      areas: [
+        { x: 0.48, y: 0.45, width: 30, height: 25 },
+        { x: 0.52, y: 0.45, width: 28, height: 24 }
+      ]
+    },
+    texture: {
+      smoothness: 45,
+      roughness: 6.8,
+      score: 8.3
+    }
   },
   overallScore: {
     spots: 7.5,
@@ -29,46 +97,57 @@ const mockAnalysis: HybridSkinAnalysis = {
     wrinkles: 4.1,
     texture: 8.3,
     redness: 6.0,
+    pigmentation: 5.5
   },
-  scores: {
-    spots: [],
-    pores: [],
-    wrinkles: [],
-    texture: [],
-    redness: [],
+  percentiles: {
+    spots: 68,
+    pores: 54,
+    wrinkles: 45,
+    texture: 80,
+    redness: 60,
+    overall: 72
   },
-  aiModel: 'gpt-4-vision',
   confidence: 0.94,
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString(),
+  recommendations: [
+    'Use sunscreen daily to prevent further spot formation',
+    'Consider retinoid treatment for enlarged pores',
+    'Apply vitamin C serum in the morning for brightening'
+  ],
+  annotatedImages: {
+    spots: '/demo/annotated-spots.jpg',
+    pores: '/demo/annotated-pores.jpg',
+    wrinkles: '/demo/annotated-wrinkles.jpg',
+    redness: '/demo/annotated-redness.jpg'
+  }
 };
 
 const mockPreviousAnalysis: HybridSkinAnalysis = {
   ...mockAnalysis,
   id: 'demo-analysis-000',
-  imageUrl: 'https://via.placeholder.com/800x600/ef4444/ffffff?text=Before+Analysis',
-  percentiles: {
-    overall: 65,
-    spots: 60,
-    pores: 50,
-    wrinkles: 40,
-    texture: 75,
-    redness: 55,
-  },
+  createdAt: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000), // 45 days ago
+  timestamp: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000),
   overallScore: {
     spots: 6.8,
     pores: 4.5,
     wrinkles: 3.5,
     texture: 7.8,
     redness: 5.2,
+    pigmentation: 4.8
   },
-  createdAt: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString(), // 45 days ago
+  percentiles: {
+    spots: 60,
+    pores: 50,
+    wrinkles: 40,
+    texture: 75,
+    redness: 55,
+    overall: 65
+  }
 };
 
 const mockHistoricalData: HistoricalAnalysisData[] = [
   {
     date: new Date(Date.now() - 120 * 24 * 60 * 60 * 1000).toISOString(),
-    overallScore: 60,
+    overall: 60,
     spots: 55,
     pores: 48,
     wrinkles: 38,
@@ -77,7 +156,7 @@ const mockHistoricalData: HistoricalAnalysisData[] = [
   },
   {
     date: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString(),
-    overallScore: 63,
+    overall: 63,
     spots: 58,
     pores: 49,
     wrinkles: 39,
@@ -86,7 +165,7 @@ const mockHistoricalData: HistoricalAnalysisData[] = [
   },
   {
     date: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString(),
-    overallScore: 65,
+    overall: 65,
     spots: 60,
     pores: 50,
     wrinkles: 40,
@@ -95,7 +174,7 @@ const mockHistoricalData: HistoricalAnalysisData[] = [
   },
   {
     date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-    overallScore: 68,
+    overall: 68,
     spots: 64,
     pores: 52,
     wrinkles: 42,

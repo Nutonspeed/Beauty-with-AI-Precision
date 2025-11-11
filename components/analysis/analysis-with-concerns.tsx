@@ -75,10 +75,12 @@ export function AnalysisWithConcerns({
         const educationMap = await getMultipleConcernEducation(concernTypes);
 
         // Merge education data with concerns
-        const concernsWithEducation = concerns.map(concern => ({
-          ...concern,
-          education: educationMap.get(concern.type) || undefined,
-        }));
+        const concernsWithEducation = concerns
+          .map(concern => ({
+            ...concern,
+            education: educationMap.get(concern.type) || undefined,
+          }))
+          .filter(concern => concern.education !== undefined) as InteractiveConcern[];
 
         setInteractiveConcerns(concernsWithEducation);
 
@@ -217,10 +219,10 @@ export function AnalysisWithConcerns({
                     style={{
                       backgroundColor: getSeverityColor(
                         concern.averageSeverity > 7
-                          ? 'severe'
+                          ? 'high'
                           : concern.averageSeverity > 4
-                          ? 'moderate'
-                          : 'mild'
+                          ? 'medium'
+                          : 'low'
                       ),
                     }}
                     className="mb-2"
@@ -286,10 +288,10 @@ export function AnalysisWithConcerns({
                       style={{
                         backgroundColor: getSeverityColor(
                           concern.averageSeverity > 7
-                            ? 'severe'
+                            ? 'high'
                             : concern.averageSeverity > 4
-                            ? 'moderate'
-                            : 'mild'
+                            ? 'medium'
+                            : 'low'
                         ),
                       }}
                     />

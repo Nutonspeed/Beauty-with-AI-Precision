@@ -10,6 +10,17 @@ import type { HybridSkinAnalysis } from '@/lib/types/skin-analysis';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
+// Type for historical analysis data
+interface HistoricalAnalysisData {
+  date: string;
+  overall: number;
+  spots: number;
+  pores: number;
+  wrinkles: number;
+  texture: number;
+  redness: number;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
@@ -71,7 +82,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Fetch historical analyses for progress charts
-    let historicalAnalyses = [];
+    let historicalAnalyses: HistoricalAnalysisData[] = [];
     if (includeProgressCharts) {
       const { data: historical } = await supabase
         .from('skin_analyses')
@@ -83,7 +94,7 @@ export async function POST(request: NextRequest) {
       if (historical) {
         historicalAnalyses = historical.map((h: any) => ({
           date: h.created_at,
-          overallScore: h.percentiles?.overall || 0,
+          overall: h.percentiles?.overall || 0,
           spots: h.percentiles?.spots || 0,
           pores: h.percentiles?.pores || 0,
           wrinkles: h.percentiles?.wrinkles || 0,

@@ -9,13 +9,13 @@
  * 4. Re-engagement
  */
 
-import { Analysis } from '@/types';
+import { HybridSkinAnalysis } from '../types/skin-analysis';
 
 // ========================================
 // 1. WEEKLY PROGRESS DIGEST
 // ========================================
 
-interface WeeklyDigestData {
+export interface WeeklyDigestData {
   userName: string;
   weekStart: string;
   weekEnd: string;
@@ -143,11 +143,11 @@ export function generateWeeklyProgressDigest(data: WeeklyDigestData): string {
 // 2. AUTOMATED PROGRESS REPORT
 // ========================================
 
-interface ProgressReportData {
+export interface ProgressReportData {
   userName: string;
   reportPeriod: string;
-  currentAnalysis: Analysis;
-  previousAnalysis: Analysis;
+  currentAnalysis: HybridSkinAnalysis;
+  previousAnalysis: HybridSkinAnalysis;
   improvements: { concern: string; before: number; after: number; change: number }[];
   treatmentFollowed: number; // percentage
   recommendations: string[];
@@ -266,7 +266,7 @@ export function generateAutomatedProgressReport(data: ProgressReportData): strin
 // 3. GOAL ACHIEVEMENT
 // ========================================
 
-interface GoalAchievementData {
+export interface GoalAchievementData {
   userName: string;
   goalName: string;
   goalType: string;
@@ -389,7 +389,7 @@ export function generateGoalAchievement(data: GoalAchievementData): string {
 // 4. RE-ENGAGEMENT EMAIL
 // ========================================
 
-interface ReEngagementData {
+export interface ReEngagementData {
   userName: string;
   daysSinceLastAnalysis: number;
   lastAnalysisDate: string;

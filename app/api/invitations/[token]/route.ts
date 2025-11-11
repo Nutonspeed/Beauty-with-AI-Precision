@@ -22,26 +22,44 @@ export async function GET(
       )
     }
 
-    // Call validate_invitation function
-    const { data, error } = await supabase
-      .rpc('validate_invitation', { invitation_token: token })
+    // Query invitation directly instead of using RPC function
+    const { data: invitation, error } = await supabase
+      .from('invitations')
+      .select(`
+        id,
+        email,
+        invited_role,
+        clinic_id,
+        status,
+        expires_at,
+        invited_by,
+        metadata
+      `)
+      .eq('token', token)
+      .single()
 
-    if (error) {
+    if (error || !invitation) {
       console.error('Error validating invitation:', error)
-      return NextResponse.json(
-        { error: 'Failed to validate invitation' },
-        { status: 500 }
-      )
-    }
-
-    if (!data || data.length === 0) {
       return NextResponse.json(
         { error: 'Invitation not found' },
         { status: 404 }
       )
     }
 
-    const invitation = data[0]
+    // Validate invitation status and expiry
+    const now = new Date()
+    const expiresAt = new Date(invitation.expires_at)
+    const isExpired = expiresAt < now
+    const isValid = invitation.status === 'pending' && !isExpired
+
+    let errorMessage = null
+    if (invitation.status === 'accepted') {
+      errorMessage = 'Invitation already accepted'
+    } else if (invitation.status === 'revoked') {
+      errorMessage = 'Invitation has been revoked'
+    } else if (invitation.status === 'expired' || isExpired) {
+      errorMessage = 'Invitation has expired'
+    }
 
     // Get clinic name if clinic_id exists
     let clinicName = null
@@ -66,8 +84,8 @@ export async function GET(
         clinic_id: invitation.clinic_id,
         clinic_name: clinicName,
         status: invitation.status,
-        is_valid: invitation.is_valid,
-        error_message: invitation.error_message
+        is_valid: isValid,
+        error_message: errorMessage
       }
     })
 

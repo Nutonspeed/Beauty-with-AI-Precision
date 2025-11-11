@@ -54,7 +54,7 @@ export function ConcernDetailModal({
   if (!concern?.education) return null;
 
   const { education } = concern;
-  const severity = location?.severity || concern.averageSeverity > 7 ? 'severe' : concern.averageSeverity > 4 ? 'moderate' : 'mild';
+  const severity = location?.severity || concern.averageSeverity > 7 ? 'high' : concern.averageSeverity > 4 ? 'medium' : 'low';
   
   // Get treatment based on severity
   const getTreatmentOptions = () => {
@@ -260,7 +260,7 @@ export function ConcernDetailModal({
                   Recommended Treatment for Your {severity.toUpperCase()} Level
                 </h3>
                 <ul className="space-y-2">
-                  {getTreatmentOptions().map((option, index) => (
+                  {getTreatmentOptions().map((option: string, index: number) => (
                     <li key={index} className="flex items-start gap-3">
                       <span className="text-purple-600 font-bold mt-1">•</span>
                       <span>{option}</span>

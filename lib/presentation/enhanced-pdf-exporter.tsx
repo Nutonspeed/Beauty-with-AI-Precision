@@ -47,7 +47,7 @@ export interface EnhancedPDFOptions {
 
 export interface HistoricalAnalysisData {
   date: Date | string;
-  overallScore: number;
+  overall: number;
   spots: number;
   pores: number;
   wrinkles: number;
@@ -825,7 +825,7 @@ export class EnhancedPDFExporter {
     const chartY = this.drawCard(this.marginLeft, y, chartWidth, chartHeight + 15, this.t.overallProgress);
 
     // Draw line chart for overall score
-    const dataPoints = historicalData.map((d) => d.overallScore);
+    const dataPoints = historicalData.map((d) => d.overall);
     dataPoints.push(currentAnalysis.percentiles.overall);
 
     const maxScore = 100;
@@ -907,12 +907,12 @@ export class EnhancedPDFExporter {
 
     y += 10;
 
-    const concerns: Array<keyof typeof currentAnalysis.percentiles> = [
-      'spots',
-      'pores',
-      'wrinkles',
-      'texture',
-      'redness',
+    const concerns = [
+      'spots' as const,
+      'pores' as const,
+      'wrinkles' as const,
+      'texture' as const,
+      'redness' as const,
     ];
 
     concerns.forEach((concernKey) => {
