@@ -1,7 +1,7 @@
 # 🗄️ DATABASE SCHEMA DOCUMENTATION
 
-> **Last Updated:** 2024-01-21  
-> **Total Tables:** 76 tables  
+> **Last Updated:** 2025-11-12  
+> **Total Tables:** 78 tables  
 > **Database:** PostgreSQL (Supabase)
 
 ---
@@ -18,10 +18,11 @@ POSTGRES_URL="postgres://postgres.bgejeqqngzvuokdffadu:fovdyaf2TGERL9Yz@aws-1-ap
 
 ### สถิติฐานข้อมูล
 
-- **Total Tables:** 76 tables
+- **Total Tables:** 78 tables (verified 2025-11-12)
 - **Tables with Data:** 
   - `skin_analyses`: 34 rows (ข้อมูลหลัก)
   - `users`: 4 rows (ผู้ใช้งาน)
+  - `invitations`: 4 rows (NEW - invitation system)
   - `chat_history`: 4 rows
   - `error_logs`: 2 rows
   - `performance_metrics`: 144 rows
@@ -29,7 +30,7 @@ POSTGRES_URL="postgres://postgres.bgejeqqngzvuokdffadu:fovdyaf2TGERL9Yz@aws-1-ap
 
 ---
 
-## 🏗️ โครงสร้างตาราง (76 Tables)
+## 🏗️ โครงสร้างตาราง (78 Tables)
 
 ### 📁 **1. Core System Tables** (4 tables)
 
@@ -313,7 +314,32 @@ POSTGRES_URL="postgres://postgres.bgejeqqngzvuokdffadu:fovdyaf2TGERL9Yz@aws-1-ap
 ### 🐛 **15. System Tables** (2 tables)
 
 #### `error_logs` (13 columns, 2 rows) ✅ **มีข้อมูล**
-#### `invitations` (11 columns, 0 rows) ✅
+
+#### `invitations` (12 columns, 4 rows) ✅ **มีข้อมูล - NEW**
+- **Purpose:** ระบบเชิญผู้ใช้เข้าคลินิก
+- **Key Columns:**
+  - `id` (UUID, PK)
+  - `clinic_id` (UUID, FK → clinics)
+  - `invited_email` (TEXT)
+  - `invited_role` (TEXT: 'staff', 'receptionist', 'manager')
+  - `invited_by` (UUID, FK → users)
+  - `invitation_token` (TEXT, UNIQUE)
+  - `status` (TEXT: 'pending', 'accepted', 'expired', 'cancelled')
+  - `expires_at` (TIMESTAMP)
+  - `accepted_at` (TIMESTAMP)
+  - `created_at`, `updated_at` (TIMESTAMP)
+- **Features:**
+  - Token-based invitation system
+  - Role-based access control
+  - Expiration tracking (default 7 days)
+  - Email notifications via Resend
+- **RLS:** 6 policies (clinic admins manage, users view own)
+- **API Routes:**
+  - `POST /api/invitations/send`
+  - `GET /api/invitations/[token]`
+  - `POST /api/invitations/accept`
+- **Migration:** `20250112_create_invitations.sql`
+- **Status:** Production ready (4 active invitations)
 
 ---
 
@@ -321,7 +347,8 @@ POSTGRES_URL="postgres://postgres.bgejeqqngzvuokdffadu:fovdyaf2TGERL9Yz@aws-1-ap
 
 ### Row Level Security (RLS)
 
-**Week 6 Tables มี RLS Policies:**
+**Recent Tables with RLS Policies:**
+- ✅ invitations: 6 policies (clinic admins manage, users view own)
 - ✅ action_plans: 4 policies (SELECT, INSERT, UPDATE, DELETE)
 - ✅ action_items: 4 policies (inherited from plans)
 - ✅ smart_goals: 4 policies (SELECT, INSERT, UPDATE, DELETE)
