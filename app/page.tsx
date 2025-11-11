@@ -38,18 +38,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Before/After section (placeholder mode until assets are provided) */}
-        <section className="w-full py-12 md:py-20">
-          <div className="container px-4 md:px-6">
-            <div className="max-w-4xl mx-auto">
-              <h2 className="text-2xl md:text-3xl font-bold tracking-tight">ก่อน–หลัง แบบเปรียบเทียบ</h2>
-              <p className="mt-2 text-muted-foreground">แสดงผลลัพธ์ที่พิสูจน์ได้ เมื่อมีภาพจริงจะโชว์แบบสไลด์เปรียบเทียบทันที</p>
-              <div className="mt-6">
-                <BeforeAfter />
-              </div>
-            </div>
-          </div>
-        </section>
+        {/* Showcase sections moved to demo pages to keep homepage focused */}
 
         {/* Features Section */}
         <section className="w-full py-12 md:py-24 lg:py-32">
