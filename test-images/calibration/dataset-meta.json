@@ -1,0 +1,19 @@
+{
+  "version": "1.0.0",
+  "totalImages": 0,
+  "severityBreakdown": {
+    "clear": 0,
+    "mild": 0,
+    "moderate": 0,
+    "severe": 0
+  },
+  "annotators": [],
+  "statistics": {
+    "avgConcernsPerImage": 0,
+    "mostCommonConcern": null,
+    "totalConcerns": 0,
+    "verificationRate": 0
+  },
+  "lastUpdated": "2025-11-10T00:00:00Z",
+  "notes": "Calibration dataset for AI model validation. Target: 40+ images for Phase 1, 200+ for production. All images require expert dermatologist or certified aesthetician annotations following ANNOTATION_GUIDELINES.md."
+}

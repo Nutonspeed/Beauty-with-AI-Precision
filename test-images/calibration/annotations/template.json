@@ -1,0 +1,48 @@
+{
+  "$schema": "../ground-truth-schema.json",
+  "annotationId": "GT-YYYYMMDD-XXXXXXXX",
+  "imageFile": "severity-level/image-filename.jpg",
+  "severityLevel": "clear",
+  "concerns": [
+    {
+      "type": "enlarged_pores",
+      "location": {
+        "x": 0.50,
+        "y": 0.58,
+        "width": 0.08,
+        "height": 0.06
+      },
+      "confidence": 85,
+      "severity": 3,
+      "notes": "Visible pores on nose area, age-appropriate"
+    }
+  ],
+  "totalConcerns": 1,
+  "annotator": {
+    "id": "ANN-0001",
+    "qualification": "dermatologist",
+    "yearsExperience": 8,
+    "annotatedAt": "2025-11-10T10:30:00Z"
+  },
+  "angleSet": {
+    "setId": "SET-20251110-ABC123",
+    "angle": "front",
+    "otherAngles": [
+      "left/image-filename-left.jpg",
+      "right/image-filename-right.jpg"
+    ]
+  },
+  "metadata": {
+    "width": 1920,
+    "height": 1080,
+    "format": "jpg",
+    "capturedAt": "2025-11-10T09:00:00Z"
+  },
+  "qualityControl": {
+    "verified": false,
+    "imageQualityIssues": []
+  },
+  "schemaVersion": "1.0.0",
+  "createdAt": "2025-11-10T10:30:00Z",
+  "updatedAt": "2025-11-10T10:30:00Z"
+}

@@ -1,0 +1,237 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://beauty-with-ai.com/schemas/ground-truth-annotation.json",
+  "title": "Ground Truth Annotation",
+  "description": "Expert-annotated ground truth data for AI model validation",
+  "type": "object",
+  "required": [
+    "annotationId",
+    "imageFile",
+    "severityLevel",
+    "concerns",
+    "totalConcerns",
+    "annotator",
+    "metadata",
+    "qualityControl",
+    "schemaVersion",
+    "createdAt",
+    "updatedAt"
+  ],
+  "properties": {
+    "annotationId": {
+      "type": "string",
+      "pattern": "^GT-[0-9]{8}-[A-Z0-9]{8}$",
+      "description": "Unique annotation ID (format: GT-YYYYMMDD-XXXXXXXX)"
+    },
+    "imageFile": {
+      "type": "string",
+      "pattern": "^(clear|mild|moderate|severe)/.*\\.(jpg|jpeg|png|webp)$",
+      "description": "Image filename relative to calibration directory"
+    },
+    "severityLevel": {
+      "type": "string",
+      "enum": ["clear", "mild", "moderate", "severe"],
+      "description": "Overall severity level based on concern count"
+    },
+    "concerns": {
+      "type": "array",
+      "description": "List of all concerns detected by expert",
+      "items": {
+        "type": "object",
+        "required": ["type", "location", "confidence", "severity"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "acne",
+              "blackhead",
+              "whitehead",
+              "dark_spot",
+              "hyperpigmentation",
+              "melasma",
+              "rough_texture",
+              "enlarged_pores",
+              "uneven_texture",
+              "fine_lines",
+              "wrinkles",
+              "crow_feet",
+              "redness",
+              "dryness",
+              "oiliness",
+              "dark_circles"
+            ]
+          },
+          "location": {
+            "type": "object",
+            "required": ["x", "y"],
+            "properties": {
+              "x": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "Normalized X coordinate (0-1)"
+              },
+              "y": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "Normalized Y coordinate (0-1)"
+              },
+              "width": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "Normalized width (0-1)"
+              },
+              "height": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "Normalized height (0-1)"
+              }
+            }
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100,
+            "description": "Expert's confidence in this detection (0-100)"
+          },
+          "severity": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10,
+            "description": "Severity of this specific concern (1-10)"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Additional notes from expert"
+          }
+        }
+      }
+    },
+    "totalConcerns": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of concerns detected"
+    },
+    "annotator": {
+      "type": "object",
+      "required": ["id", "qualification", "yearsExperience", "annotatedAt"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^ANN-[0-9]{4}$",
+          "description": "Anonymized annotator ID (format: ANN-0001)"
+        },
+        "qualification": {
+          "type": "string",
+          "enum": ["dermatologist", "certified_aesthetician", "medical_student"]
+        },
+        "yearsExperience": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 50
+        },
+        "annotatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp"
+        }
+      }
+    },
+    "angleSet": {
+      "type": "object",
+      "description": "Multi-angle set information (if applicable)",
+      "required": ["setId", "angle", "otherAngles"],
+      "properties": {
+        "setId": {
+          "type": "string",
+          "pattern": "^SET-[0-9]{8}-[A-Z0-9]{6}$"
+        },
+        "angle": {
+          "type": "string",
+          "enum": ["front", "left", "right"]
+        },
+        "otherAngles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Filenames of other angles in this set"
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "required": ["width", "height", "format"],
+      "properties": {
+        "width": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "format": {
+          "type": "string",
+          "enum": ["jpg", "jpeg", "png", "webp"]
+        },
+        "capturedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "qualityControl": {
+      "type": "object",
+      "required": ["verified"],
+      "properties": {
+        "verified": {
+          "type": "boolean",
+          "description": "Is this annotation verified by a second expert?"
+        },
+        "verifiedBy": {
+          "type": "string",
+          "pattern": "^ANN-[0-9]{4}$",
+          "description": "Second annotator ID (if verified)"
+        },
+        "imageQualityIssues": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "poor_lighting",
+              "blurred",
+              "low_resolution",
+              "occlusion",
+              "wrong_angle",
+              "makeup_present",
+              "filters_applied"
+            ]
+          }
+        },
+        "agreementScore": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Inter-rater reliability score (0-1)"
+        }
+      }
+    },
+    "schemaVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "description": "Semantic version of annotation schema (e.g., 1.0.0)"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}
