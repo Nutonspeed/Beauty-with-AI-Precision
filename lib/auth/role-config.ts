@@ -5,6 +5,7 @@
 
 export type UserRole = 
   | 'public'
+  | 'guest'
   | 'customer'
   | 'customer_free'
   | 'customer_premium'
@@ -165,6 +166,7 @@ export const routePermissions: RoutePermission[] = [
  */
 export const roleHierarchy: Record<UserRole, number> = {
   public: 0,
+  guest: 0,
   customer: 1,
   customer_free: 1,
   free_user: 1,
@@ -187,6 +189,7 @@ export function hasPermission(userRole: UserRole | null, path: string): boolean 
   
   // If no user role, treat as public
   const role = userRole || 'public';
+  const effectiveRole = role === 'guest' ? 'public' : role;
 
   // Find matching route permission (check most specific first)
   const routePermission = routePermissions.find((rp) => {
@@ -203,7 +206,7 @@ export function hasPermission(userRole: UserRole | null, path: string): boolean 
   if (!routePermission) return true;
 
   // Check if user's role is in allowed roles
-  return routePermission.allowedRoles.includes(role);
+  return routePermission.allowedRoles.includes(effectiveRole);
 }
 
 /**
@@ -212,6 +215,7 @@ export function hasPermission(userRole: UserRole | null, path: string): boolean 
 export function getRedirectUrl(userRole: UserRole | null, path: string): string | null {
   const cleanPath = path.replace(/^\/(th|en|zh)/, '');
   const role = userRole || 'public';
+  const effectiveRole = role === 'guest' ? 'public' : role;
 
   const routePermission = routePermissions.find((rp) => {
     if (cleanPath === rp.path) return true;
@@ -220,7 +224,7 @@ export function getRedirectUrl(userRole: UserRole | null, path: string): string 
   });
 
   // If no permission found or user has access, no redirect needed
-  if (!routePermission || routePermission.allowedRoles.includes(role)) {
+  if (!routePermission || routePermission.allowedRoles.includes(effectiveRole)) {
     return null;
   }
 

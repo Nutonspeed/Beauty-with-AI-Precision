@@ -46,11 +46,11 @@ export function useUsers(filters?: {
     } finally {
       setLoading(false)
     }
-  }, [filters])
+  }, [filters, manager])
   
   useEffect(() => {
     loadUsers()
-  }, [loadUsers])
+  }, [loadUsers, manager])
   
   const createUser = useCallback(async (data: Omit<User, "id" | "createdAt" | "updatedAt" | "loginAttempts" | "accountLocked">) => {
     try {
@@ -61,7 +61,7 @@ export function useUsers(filters?: {
       setError(err instanceof Error ? err.message : "Failed to create user")
       throw err
     }
-  }, [loadUsers])
+  }, [loadUsers, manager])
   
   const updateUser = useCallback(async (userId: string, updates: Partial<User>) => {
     try {
@@ -72,7 +72,7 @@ export function useUsers(filters?: {
       setError(err instanceof Error ? err.message : "Failed to update user")
       throw err
     }
-  }, [loadUsers])
+  }, [loadUsers, manager])
   
   const lockAccount = useCallback(async (userId: string, duration?: number) => {
     try {
@@ -83,7 +83,7 @@ export function useUsers(filters?: {
       setError(err instanceof Error ? err.message : "Failed to lock account")
       throw err
     }
-  }, [loadUsers])
+  }, [loadUsers, manager])
   
   const unlockAccount = useCallback(async (userId: string) => {
     try {
@@ -94,7 +94,7 @@ export function useUsers(filters?: {
       setError(err instanceof Error ? err.message : "Failed to unlock account")
       throw err
     }
-  }, [loadUsers])
+  }, [loadUsers, manager])
   
   return {
     users,
@@ -108,7 +108,7 @@ export function useUsers(filters?: {
   }
 }
 
-export function useUser(userId: string) {
+export function useUser(userId?: string) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -118,6 +118,12 @@ export function useUser(userId: string) {
   const loadUser = useCallback(() => {
     try {
       setLoading(true)
+      if (!userId) {
+        // No userId provided; treat as no user loaded
+        setUser(null)
+        setError(null)
+        return
+      }
       const data = manager.getUser(userId)
       setUser(data || null)
       setError(null)
@@ -126,7 +132,7 @@ export function useUser(userId: string) {
     } finally {
       setLoading(false)
     }
-  }, [userId])
+  }, [userId, manager])
   
   useEffect(() => {
     loadUser()
@@ -134,6 +140,7 @@ export function useUser(userId: string) {
   
   const updateUser = useCallback(async (updates: Partial<User>) => {
     try {
+      if (!userId) return null
       const updated = manager.updateUser(userId, updates)
       if (updated) {
         setUser(updated)
@@ -143,7 +150,7 @@ export function useUser(userId: string) {
       setError(err instanceof Error ? err.message : "Failed to update user")
       throw err
     }
-  }, [userId])
+  }, [userId, manager])
   
   const grantPermission = useCallback(async (
     resource: Resource,
@@ -152,6 +159,7 @@ export function useUser(userId: string) {
     expiresAt?: Date
   ) => {
     try {
+      if (!userId) return false
       const success = manager.grantPermission(userId, resource, action, grantedBy, expiresAt)
       loadUser()
       return success
@@ -159,10 +167,11 @@ export function useUser(userId: string) {
       setError(err instanceof Error ? err.message : "Failed to grant permission")
       throw err
     }
-  }, [userId, loadUser])
+  }, [userId, loadUser, manager])
   
   const revokePermission = useCallback(async (permissionId: string) => {
     try {
+      if (!userId) return false
       const success = manager.revokePermission(userId, permissionId)
       loadUser()
       return success
@@ -170,7 +179,7 @@ export function useUser(userId: string) {
       setError(err instanceof Error ? err.message : "Failed to revoke permission")
       throw err
     }
-  }, [userId, loadUser])
+  }, [userId, loadUser, manager])
   
   return {
     user,
@@ -215,11 +224,11 @@ export function useSessions(filters?: { userId?: string; status?: Session["statu
     } finally {
       setLoading(false)
     }
-  }, [filters])
+  }, [filters, manager])
   
   useEffect(() => {
     loadSessions()
-  }, [loadSessions])
+  }, [loadSessions, manager])
   
   const revokeSession = useCallback(async (sessionId: string, revokedBy: string, reason: string) => {
     try {
@@ -230,7 +239,7 @@ export function useSessions(filters?: { userId?: string; status?: Session["statu
       setError(err instanceof Error ? err.message : "Failed to revoke session")
       throw err
     }
-  }, [loadSessions])
+  }, [loadSessions, manager])
   
   const revokeUserSessions = useCallback(async (userId: string, reason: string) => {
     try {
@@ -241,7 +250,7 @@ export function useSessions(filters?: { userId?: string; status?: Session["statu
       setError(err instanceof Error ? err.message : "Failed to revoke user sessions")
       throw err
     }
-  }, [loadSessions])
+  }, [loadSessions, manager])
   
   return {
     sessions,
@@ -283,11 +292,11 @@ export function useAuditLogs(filters?: {
     } finally {
       setLoading(false)
     }
-  }, [filters])
+  }, [filters, manager])
   
   useEffect(() => {
     loadLogs()
-  }, [loadLogs])
+  }, [loadLogs, manager])
   
   const logDataAccess = useCallback((
     userId: string,
@@ -304,7 +313,7 @@ export function useAuditLogs(filters?: {
       setError(err instanceof Error ? err.message : "Failed to log data access")
       throw err
     }
-  }, [loadLogs])
+  }, [loadLogs, manager])
   
   return {
     logs,
@@ -342,11 +351,11 @@ export function useSecurityAlerts(filters?: {
     } finally {
       setLoading(false)
     }
-  }, [filters])
+  }, [filters, manager])
   
   useEffect(() => {
     loadAlerts()
-  }, [loadAlerts])
+  }, [loadAlerts, manager])
   
   const resolveAlert = useCallback(async (alertId: string, resolvedBy: string, resolution: string) => {
     try {
@@ -357,7 +366,7 @@ export function useSecurityAlerts(filters?: {
       setError(err instanceof Error ? err.message : "Failed to resolve alert")
       throw err
     }
-  }, [loadAlerts])
+  }, [loadAlerts, manager])
   
   return {
     alerts,
@@ -390,11 +399,11 @@ export function useComplianceReports() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [manager])
   
   useEffect(() => {
     loadReports()
-  }, [loadReports])
+  }, [loadReports, manager])
   
   const generateReport = useCallback(async (
     reportType: ComplianceReport["reportType"],
@@ -410,7 +419,7 @@ export function useComplianceReports() {
       setError(err instanceof Error ? err.message : "Failed to generate report")
       throw err
     }
-  }, [loadReports])
+  }, [loadReports, manager])
   
   return {
     reports,
@@ -439,7 +448,7 @@ export function useComplianceReport(reportId: string) {
     } finally {
       setLoading(false)
     }
-  }, [reportId])
+  }, [reportId, manager])
   
   useEffect(() => {
     loadReport()
@@ -475,7 +484,7 @@ export function useSecurityMetrics() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [manager])
   
   useEffect(() => {
     loadMetrics()
@@ -513,12 +522,12 @@ export function usePermission(
       setLoading(true)
       const permitted = manager.hasPermission(userId, resource, action, context)
       setHasPermission(permitted)
-    } catch (err) {
+    } catch {
       setHasPermission(false)
     } finally {
       setLoading(false)
     }
-  }, [userId, resource, action, context])
+  }, [userId, resource, action, context, manager])
   
   return { hasPermission, loading }
 }
@@ -532,11 +541,11 @@ export function useEncryption() {
   
   const encrypt = useCallback((plaintext: string) => {
     return manager.encryptData(plaintext)
-  }, [])
+  }, [manager])
   
   const decrypt = useCallback((encrypted: ReturnType<typeof manager.encryptData>) => {
     return manager.decryptData(encrypted)
-  }, [])
+  }, [manager])
   
   return { encrypt, decrypt }
 }
@@ -544,7 +553,8 @@ export function useEncryption() {
 // Export useSecurity as a convenience hook that combines common security functionality
 export function useSecurity(userId?: string) {
   const { users } = useUsers()
-  const user = userId ? useUser(userId) : { user: null, loading: false, error: null }
+  // Always call hooks unconditionally to satisfy rules-of-hooks
+  const user = useUser(userId)
   const { metrics } = useSecurityMetrics()
   const { alerts } = useSecurityAlerts({ resolved: false })
   

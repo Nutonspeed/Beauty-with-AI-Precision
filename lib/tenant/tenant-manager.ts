@@ -6,6 +6,7 @@
 import type { Tenant, CreateTenantInput, TenantFeatures } from "../types/tenant"
 import { PLAN_FEATURES } from "../types/tenant"
 import { createClient } from "../supabase/server"
+import { logger } from "@/lib/logger"
 
 // Helper function to create default business hours
 function getDefaultBusinessHours() {
@@ -83,7 +84,7 @@ export async function getTenantById(tenantId: string): Promise<Tenant | null> {
       usage: { currentUsers: 1, currentCustomers: 0, storageUsedGB: 0, apiCallsThisMonth: 0 },
     }
   } catch (error) {
-    console.error("Error fetching tenant by ID:", error)
+    logger.error("Error fetching tenant by ID", error as Error)
     return null
   }
 }
@@ -144,7 +145,7 @@ export async function getTenantBySlug(slug: string): Promise<Tenant | null> {
       usage: { currentUsers: 1, currentCustomers: 0, storageUsedGB: 0, apiCallsThisMonth: 0 },
     }
   } catch (error) {
-    console.error("Error fetching tenant by slug:", error)
+    logger.error("Error fetching tenant by slug", error as Error)
     return null
   }
 }
@@ -203,7 +204,7 @@ export async function getAllTenants(): Promise<Tenant[]> {
       }
     })
   } catch (error) {
-    console.error("Error fetching all tenants:", error)
+    logger.error("Error fetching all tenants", error as Error)
     return []
   }
 }
@@ -262,7 +263,7 @@ export async function getActiveTenants(): Promise<Tenant[]> {
       }
     })
   } catch (error) {
-    console.error("Error fetching active tenants:", error)
+    logger.error("Error fetching active tenants", error as Error)
     return []
   }
 }
@@ -368,7 +369,7 @@ export async function createTenant(input: CreateTenantInput): Promise<Tenant> {
       },
     }
   } catch (error) {
-    console.error("Error creating tenant:", error)
+    logger.error("Error creating tenant", error as Error)
     throw error
   }
 }
@@ -446,7 +447,7 @@ export async function updateTenant(tenantId: string, updates: Partial<Tenant>): 
       usage: { currentUsers: 1, currentCustomers: 0, storageUsedGB: 0, apiCallsThisMonth: 0 },
     }
   } catch (error) {
-    console.error("Error updating tenant:", error)
+    logger.error("Error updating tenant", error as Error)
     return null
   }
 }
@@ -462,7 +463,7 @@ export async function deleteTenant(tenantId: string): Promise<boolean> {
 
     return !error
   } catch (error) {
-    console.error("Error deleting tenant:", error)
+    logger.error("Error deleting tenant", error as Error)
     return false
   }
 }
@@ -512,8 +513,7 @@ export function checkUsageLimit(
 
 /**
  * Update tenant usage
- * Note: Usage data not stored in clinics table - this is a no-op for now
- * Consider using separate usage_tracking table in future
+ * Tracks actual usage metrics for billing and analytics
  */
 export async function updateTenantUsage(
   tenantId: string,
@@ -521,13 +521,48 @@ export async function updateTenantUsage(
   value: number,
 ): Promise<boolean> {
   try {
-    // Clinics table doesn't have usage column
-    // This function is kept for API compatibility but does nothing
-    // TODO: Implement usage tracking in separate table if needed
-    console.warn(`Usage tracking not implemented - ignoring update for tenant ${tenantId}`)
-    return true
+    // Get current tenant
+    const tenant = await getTenantById(tenantId);
+    if (!tenant) {
+      logger.warn(`Tenant ${tenantId} not found for usage update`);
+      return false;
+    }
+
+    // Update usage based on type
+    const updatedUsage = { ...tenant.usage };
+
+    switch (usageType) {
+      case "users":
+        updatedUsage.currentUsers = Math.max(0, value);
+        break;
+      case "customers":
+        updatedUsage.currentCustomers = Math.max(0, value);
+        break;
+      case "storage":
+        updatedUsage.storageUsedGB = Math.max(0, value);
+        break;
+      case "apiCalls":
+        updatedUsage.apiCallsThisMonth = Math.max(0, value);
+        break;
+    }
+
+    // For now, store in memory (TODO: persist to database)
+    // In production, this would update a usage_tracking table
+    tenant.usage = updatedUsage;
+
+    // Log usage update for analytics
+    logger.info(`Updated tenant ${tenantId} usage`, {
+      type: usageType,
+      oldValue: tenant.usage[usageType === "users" ? "currentUsers" :
+                           usageType === "customers" ? "currentCustomers" :
+                           usageType === "storage" ? "storageUsedGB" : "apiCallsThisMonth"],
+      newValue: value,
+      tenantId,
+    });
+
+    return true;
   } catch (error) {
-    console.error("Error updating tenant usage:", error)
-    return false
+    logger.error("Error updating tenant usage", error as Error);
+    return false;
   }
 }

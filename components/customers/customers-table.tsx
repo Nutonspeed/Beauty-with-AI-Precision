@@ -121,25 +121,30 @@ export const columns: ColumnDef<Customer>[] = [
     id: 'actions',
     cell: ({ row }: { row: Row<Customer> }) => {
       const customer = row.original;
-      const router = useRouter();
 
-      return (
-        <div className="flex justify-end">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8"
-            onClick={() => router.push(`/admin/customers/${customer.id}`)}
-          >
-            <Pencil className="h-4 w-4" />
-            <span className="sr-only">แก้ไข</span>
-          </Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8 text-red-500">
-            <Trash2 className="h-4 w-4" />
-            <span className="sr-only">ลบ</span>
-          </Button>
-        </div>
-      );
+      // Delegate to a proper React component to allow using hooks safely
+      const Actions: React.FC<{ customer: Customer }> = ({ customer }) => {
+        const router = useRouter();
+        return (
+          <div className="flex justify-end">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => router.push(`/admin/customers/${customer.id}`)}
+            >
+              <Pencil className="h-4 w-4" />
+              <span className="sr-only">แก้ไข</span>
+            </Button>
+            <Button variant="ghost" size="icon" className="h-8 w-8 text-red-500">
+              <Trash2 className="h-4 w-4" />
+              <span className="sr-only">ลบ</span>
+            </Button>
+          </div>
+        );
+      };
+
+      return <Actions customer={customer} />;
     },
   },
 ];

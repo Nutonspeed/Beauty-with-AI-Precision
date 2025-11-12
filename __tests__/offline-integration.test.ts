@@ -179,11 +179,11 @@ describe('Offline Mode - Complete Workflow', () => {
     })
 
     it('should enforce max 50 analyses per staff', async () => {
-      vi.useFakeTimers()
       const baseTime = new Date('2024-01-01T00:00:00Z').getTime()
+      const dateNowSpy = vi.spyOn(Date, 'now')
 
       for (let i = 0; i < 60; i++) {
-        vi.setSystemTime(baseTime + i * 1000)
+        dateNowSpy.mockImplementation(() => baseTime + i * 1000)
         await indexedDB.saveAnalysis(
           createAnalysis({
             id: `analysis-${i}`,
@@ -193,7 +193,7 @@ describe('Offline Mode - Complete Workflow', () => {
         )
       }
 
-      vi.useRealTimers()
+      dateNowSpy.mockRestore()
 
       const analyses = await indexedDB.getAnalysesBySalesStaff(clinicId, salesStaffId, 100)
       expect(analyses.length).toBeLessThanOrEqual(50)
@@ -234,7 +234,6 @@ describe('Offline Mode - Complete Workflow', () => {
       const lead = createLead({
         id: 'lead-1',
         full_name: 'Test Lead',
-        phone: '+66812345678',
         email: 'test@example.com',
         status: 'hot',
         source: 'social_media',
@@ -267,10 +266,10 @@ describe('Offline Mode - Complete Workflow', () => {
     }, 30000)
 
     it('should process sync queue in FIFO order', async () => {
-      vi.useFakeTimers()
       const baseTime = new Date('2024-01-01T00:00:00Z').getTime()
+      const dateNowSpy = vi.spyOn(Date, 'now')
 
-      vi.setSystemTime(baseTime)
+      dateNowSpy.mockImplementation(() => baseTime)
       await indexedDB.addToSyncQueue({
         clinic_id: clinicId,
         sales_staff_id: salesStaffId,
@@ -280,7 +279,7 @@ describe('Offline Mode - Complete Workflow', () => {
         data: {},
       })
 
-      vi.setSystemTime(baseTime + 1000)
+      dateNowSpy.mockImplementation(() => baseTime + 1000)
       await indexedDB.addToSyncQueue({
         clinic_id: clinicId,
         sales_staff_id: salesStaffId,
@@ -290,7 +289,7 @@ describe('Offline Mode - Complete Workflow', () => {
         data: {},
       })
 
-      vi.setSystemTime(baseTime + 2000)
+      dateNowSpy.mockImplementation(() => baseTime + 2000)
       await indexedDB.addToSyncQueue({
         clinic_id: clinicId,
         sales_staff_id: salesStaffId,
@@ -299,8 +298,7 @@ describe('Offline Mode - Complete Workflow', () => {
         resource_id: 'lead-create',
         data: {},
       })
-
-      vi.useRealTimers()
+      dateNowSpy.mockRestore()
 
       const pending = await indexedDB.getPendingSyncActions()
       expect(pending.map((action) => action.resource_id)).toEqual([
@@ -488,11 +486,11 @@ describe('Offline Mode - Complete Workflow', () => {
 
   describe('Cleanup Operations', () => {
     it('should clean up old synced analyses after 24 hours', async () => {
-      vi.useFakeTimers()
       const baseTime = new Date('2024-01-15T00:00:00Z').getTime()
+      const dateNowSpy = vi.spyOn(Date, 'now')
 
       // Add old synced analysis (older than 24h)
-      vi.setSystemTime(baseTime - 25 * 60 * 60 * 1000)
+      dateNowSpy.mockImplementation(() => baseTime - 25 * 60 * 60 * 1000)
       await indexedDB.saveAnalysis(
         createAnalysis({
           id: 'old-analysis',
@@ -502,7 +500,7 @@ describe('Offline Mode - Complete Workflow', () => {
       )
 
       // Add recent unsynced analysis
-      vi.setSystemTime(baseTime)
+      dateNowSpy.mockImplementation(() => baseTime)
       await indexedDB.saveAnalysis(
         createAnalysis({
           id: 'new-analysis',
@@ -512,7 +510,7 @@ describe('Offline Mode - Complete Workflow', () => {
     )
 
     await triggerCleanup(indexedDB, salesStaffId, 1)
-      vi.useRealTimers()
+      dateNowSpy.mockRestore()
 
       const remaining = await indexedDB.getAnalysesBySalesStaff(clinicId, salesStaffId)
       

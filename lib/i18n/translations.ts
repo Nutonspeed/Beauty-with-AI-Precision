@@ -19,6 +19,8 @@ export const translations = {
       users: 'User Management',
       settings: 'Settings',
       admin: 'Admin Panel',
+      demo: 'Demo',
+      salesNarrative: 'Sales Narrative',
     },
     // Common
     common: {
@@ -33,11 +35,11 @@ export const translations = {
     },
     // Home Page
     home: {
-      heroTitle: 'Medical-Grade AI Skin Analysis',
-      heroSubtitle: 'for Professional Beauty Clinics',
-      heroDescription: '95-99% accuracy AI-powered skin analysis with personalized treatment recommendations and AR visualization',
+      heroTitle: 'AI for Clinics that Actually Converts',
+      heroSubtitle: 'From analysis to recommendations to revenue',
+      heroDescription: 'Evidence‑based AI skin analysis connected to your sales workflow — improve conversion and customer trust with medical‑grade insights and AR visualization.',
       startFreeAnalysis: 'Start Free Analysis',
-      watchDemo: 'Watch Demo',
+      watchDemo: 'See Interactive Demo',
       noCreditCard: 'No credit card required',
       freeTierAvailable: 'Free tier available',
       whyChooseTitle: 'Why Choose Our Platform',
@@ -167,6 +169,8 @@ export const translations = {
       users: 'จัดการผู้ใช้',
       settings: 'ตั้งค่า',
       admin: 'ผู้ดูแลระบบ',
+      demo: 'เดโม',
+      salesNarrative: 'สรุปคุณค่าทางธุรกิจ',
     },
     // Common
     common: {
@@ -181,11 +185,11 @@ export const translations = {
     },
     // Home Page
     home: {
-      heroTitle: 'ระบบวิเคราะห์ผิวหน้าด้วย AI ระดับการแพทย์',
-      heroSubtitle: 'สำหรับคลินิกความงามมืออาชีพ',
-      heroDescription: 'ระบบวิเคราะห์ผิวหน้าด้วย AI ความแม่นยำ 95-99% พร้อมคำแนะนำการรักษาเฉพาะบุคคลและ AR Visualization',
+      heroTitle: 'AI เพื่อคลินิก ที่ “ปิดการขาย” ได้จริง',
+      heroSubtitle: 'จากการวิเคราะห์ → แนะนำ → สู่รายได้ ในที่เดียว',
+      heroDescription: 'วิเคราะห์ผิวที่พิสูจน์ได้ เชื่อมต่อเวิร์กโฟลว์การขาย เพื่อเพิ่ม Conversion และความเชื่อมั่น ด้วยข้อมูลระดับการแพทย์และ AR Visualization',
       startFreeAnalysis: 'เริ่มวิเคราะห์ฟรี',
-      watchDemo: 'ดูตัวอย่าง',
+      watchDemo: 'ดูเดโมแบบโต้ตอบ',
       noCreditCard: 'ไม่ต้องใช้บัตรเครดิต',
       freeTierAvailable: 'มีแพ็กเกจฟรี',
       whyChooseTitle: 'ทำไมต้องเลือกเรา',

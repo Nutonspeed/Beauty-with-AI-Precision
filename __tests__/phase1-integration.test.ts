@@ -23,7 +23,7 @@ class ImageData {
 }
 
 // Make ImageData available globally
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 globalThis.ImageData = ImageData as any
 
 // Mock the AI components
@@ -110,7 +110,7 @@ vi.mock('@/lib/ai/google-vision-analyzer', () => ({
 
 describe('Phase 1 Integration Tests', () => {
   describe('Suite 1: Lighting Quality Checker Integration (4 tests)', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     let lightingChecker: any
 
     beforeEach(async () => {
@@ -163,7 +163,7 @@ describe('Phase 1 Integration Tests', () => {
   })
 
   describe('Suite 2: Multi-angle Analysis Integration (4 tests)', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     let multiAngleAnalyzer: any
 
     beforeEach(async () => {

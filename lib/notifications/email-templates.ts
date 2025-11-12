@@ -127,7 +127,7 @@ export function generateWeeklyProgressDigest(data: WeeklyDigestData): string {
           <!-- Footer -->
           <div style="background: #f9fafb; padding: 20px; text-align: center; border-top: 1px solid #e0e0e0;">
             <p style="margin: 0 0 10px 0; font-size: 14px; color: #666;">
-              © 2025 AI367 Beauty. All rights reserved.
+              © 2025 ClinicIQ. All rights reserved.
             </p>
             <p style="margin: 0; font-size: 12px; color: #999;">
               ไม่ต้องการรับอีเมลนี้? <a href="#" style="color: #667eea;">ยกเลิกการสมัคร</a>
@@ -250,7 +250,7 @@ export function generateAutomatedProgressReport(data: ProgressReportData): strin
           <!-- Footer -->
           <div style="background: #f9fafb; padding: 20px; text-align: center; border-top: 1px solid #e0e0e0;">
             <p style="margin: 0 0 10px 0; font-size: 14px; color: #666;">
-              © 2025 AI367 Beauty. All rights reserved.
+              © 2025 ClinicIQ. All rights reserved.
             </p>
             <p style="margin: 0; font-size: 12px; color: #999;">
               รายงานนี้ส่งอัตโนมัติทุก 2 สัปดาห์
@@ -373,7 +373,7 @@ export function generateGoalAchievement(data: GoalAchievementData): string {
           <!-- Footer -->
           <div style="background: #f9fafb; padding: 20px; text-align: center; border-top: 1px solid #e0e0e0;">
             <p style="margin: 0 0 10px 0; font-size: 14px; color: #666;">
-              © 2025 AI367 Beauty. All rights reserved.
+              © 2025 ClinicIQ. All rights reserved.
             </p>
             <p style="margin: 0; font-size: 12px; color: #999;">
               ขอบคุณที่ไว้วางใจและมุ่งมั่นในการดูแลผิว! 💜
@@ -519,7 +519,7 @@ export function generateReEngagement(data: ReEngagementData): string {
           <!-- Footer -->
           <div style="background: #f9fafb; padding: 20px; text-align: center; border-top: 1px solid #e0e0e0;">
             <p style="margin: 0 0 10px 0; font-size: 14px; color: #666;">
-              © 2025 AI367 Beauty. All rights reserved.
+              © 2025 ClinicIQ. All rights reserved.
             </p>
             <p style="margin: 0; font-size: 12px; color: #999;">
               ไม่ต้องการรับอีเมลนี้? <a href="#" style="color: #8b5cf6;">ยกเลิกการสมัคร</a>

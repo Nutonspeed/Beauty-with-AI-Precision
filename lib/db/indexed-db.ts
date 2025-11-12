@@ -72,7 +72,7 @@ export interface DBStats {
 // ============================================================================
 
 export class IndexedDBManager {
-  private dbName = 'ai367bar-multi-clinic';
+  private dbName = 'cliniciq-multi-clinic';
   private dbVersion = 2; // Increment for schema changes
   private db: IDBDatabase | null = null;
 
@@ -291,13 +291,33 @@ export class IndexedDBManager {
         // Sort by timestamp descending
         const sorted = analyses.sort((a, b) => b.offline_timestamp - a.offline_timestamp);
 
-        // Delete old ones (keep synced ones for 24h grace period)
-        const toDelete = sorted.slice(keepLast).filter((a) => {
-          const age = Date.now() - a.offline_timestamp;
-          return a.synced && age > 24 * 60 * 60 * 1000; // 24 hours
-        });
+        const now = Date.now();
+        const overflow = sorted.slice(keepLast);
 
-        const deletionPromises = toDelete.map((a) => {
+        const deletions: OfflineAnalysis[] = [];
+        const remainingOverflow: OfflineAnalysis[] = [];
+
+        for (const entry of overflow) {
+          const age = now - entry.offline_timestamp;
+          if (entry.synced && age > 24 * 60 * 60 * 1000) {
+            deletions.push(entry);
+          } else {
+            remainingOverflow.push(entry);
+          }
+        }
+
+        const stillOverCapacity = sorted.length - keepLast - deletions.length;
+        if (stillOverCapacity > 0) {
+          deletions.push(...remainingOverflow.slice(0, stillOverCapacity));
+        }
+
+        if (deletions.length === 0) {
+          console.log('[IndexedDB] Cleaned up 0 old analyses');
+          resolve();
+          return;
+        }
+
+        const deletionPromises = deletions.map((a) => {
           return new Promise<void>((res, rej) => {
             const deleteRequest = store.delete(a.id);
             deleteRequest.onsuccess = () => res();
@@ -307,7 +327,7 @@ export class IndexedDBManager {
 
         Promise.all(deletionPromises)
           .then(() => {
-            console.log(`[IndexedDB] Cleaned up ${toDelete.length} old analyses`);
+            console.log(`[IndexedDB] Cleaned up ${deletions.length} old analyses`);
             resolve();
           })
           .catch(reject);

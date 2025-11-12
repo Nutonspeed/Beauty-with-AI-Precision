@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 /**
  * TensorFlow.js Skin Analysis - Main Thread Version
  * 

@@ -1,4 +1,4 @@
-# 🏥 AI367 Beauty & Aesthetic Clinic Platform
+# 🏥 ClinicIQ — Intelligent Aesthetic Platform
 
 [![Next.js 16](https://img.shields.io/badge/Next.js-16.0-black?style=for-the-badge&logo=next.js)](https://nextjs.org)
 [![React 19](https://img.shields.io/badge/React-19.0-blue?style=for-the-badge&logo=react)](https://react.dev)
@@ -31,7 +31,7 @@
 
 ## 🎯 Overview
 
-AI367 Beauty Platform is a comprehensive, AI-powered beauty and aesthetic clinic management system featuring:
+ClinicIQ is a comprehensive, AI-powered aesthetic clinic platform featuring:
 
 - **Advanced AI Skin Analysis** - 468-point face landmark detection with multi-layer heatmaps
 - **Interactive 3D AR Viewer** - 360° treatment visualization with before/after comparison
@@ -40,8 +40,8 @@ AI367 Beauty Platform is a comprehensive, AI-powered beauty and aesthetic clinic
 - **Mobile-First Design** - Premium mobile experience with haptic feedback and 60 FPS animations
 - **PWA Support** - Offline-capable progressive web app
 
-**Live Development**: <http://localhost:3000>  
-**Mobile Testing Dashboard**: <http://localhost:3000/mobile-test>
+**Live Development**: [http://localhost:3000](http://localhost:3000)  
+**Mobile Testing Dashboard**: [http://localhost:3000/mobile-test](http://localhost:3000/mobile-test)
 
 ---
 
@@ -64,12 +64,14 @@ AI367 Beauty Platform is a comprehensive, AI-powered beauty and aesthetic clinic
 - **Responsive Design**: Portrait/landscape support with safe areas
 
 ### 🎨 AR/3D Features
+
 - **Interactive 3D Viewer**: Touch-enabled 360° model rotation
 - **Before/After Slider**: Drag comparison with haptic at midpoint
 - **Treatment Simulator**: Multi-treatment visualization with intensity control
 - **Auto-rotation**: Cinematic model presentation mode
 
 ### 💬 Sales & CRM
+
 - **Hot Leads Manager**: Real-time lead prioritization dashboard
 - **AI Chat**: Intelligent conversation with quick replies
 - **Voice Input**: Speech-to-text for faster responses
@@ -77,6 +79,7 @@ AI367 Beauty Platform is a comprehensive, AI-powered beauty and aesthetic clinic
 - **Floating Bottom Nav**: Quick access to key actions
 
 ### 🎯 Analytics & Reporting
+
 - **Performance Cards**: Revenue, conversion, satisfaction metrics
 - **Revenue Charts**: Interactive trend visualization
 - **Top Treatments**: Data-driven insights
@@ -87,39 +90,46 @@ AI367 Beauty Platform is a comprehensive, AI-powered beauty and aesthetic clinic
 ## 🛠️ Tech Stack
 
 ### Core
+
 - **Next.js 16.0.0** - App Router with Turbopack
 - **React 19.0.0** - Latest React features
 - **TypeScript 5.0.2** - Type-safe development
 - **Tailwind CSS 3.4.1** - Utility-first styling
 
 ### UI & Animations
+
 - **shadcn/ui** - Modern component library
 - **Framer Motion 11.x** - Advanced animations (60 FPS)
 - **Radix UI** - Accessible primitives
 - **Lucide Icons** - Beautiful icon set
 
 ### Backend & Database
+
 - **Supabase** - PostgreSQL database with RLS
 - **Supabase Auth** - JWT-based authentication
 - **Supabase Storage** - Image storage
 - **Row Level Security** - Enabled on all 78 tables
 
 ### State & Data
+
 - **React Context** - Global state management
 - **React Hooks** - Modern state patterns
 - **Server Actions** - Form handling
 
 ### Email & Notifications
+
 - **Resend** - Email delivery service
 - **Custom Templates** - HTML email templates
 
 ### Mobile & Performance
+
 - **Web Vibration API** - Haptic feedback
 - **RequestAnimationFrame** - FPS monitoring
 - **CSS touch-action** - Touch optimization
 - **Viewport API** - Mobile viewport configuration
 
 ### Development
+
 - **ESLint** - Code quality
 - **PostCSS** - CSS processing
 - **pnpm** - Fast package manager
@@ -130,12 +140,12 @@ AI367 Beauty Platform is a comprehensive, AI-powered beauty and aesthetic clinic
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - pnpm (recommended) or npm
 
 ### Installation
 
-\`\`\`bash
+```bash
 # Clone repository
 git clone https://github.com/Nutonspeed/Beauty-with-AI-Precision.git
 cd Beauty-with-AI-Precision
@@ -151,32 +161,44 @@ pnpm build
 
 # Start production server
 pnpm start
-\`\`\`
+```
 
 ### Environment Variables
 
 Create `.env.local`:
 
 \`\`\`env
-# Supabase
+// Supabase
 NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
-# Resend (Email)
+// ====================
+// Email Configuration (Resend)
+// ====================
 RESEND_API_KEY=your-resend-api-key
 
-# Application
-NEXT_PUBLIC_APP_URL=http://localhost:3000
+// ====================
+// Application Settings
+// ====================
+NEXT_PUBLIC_APP_URL=`http://localhost:3000`
+
+// ====================
+// Sentry Error Tracking
+// ====================
+NEXT_PUBLIC_SENTRY_DSN=`https://your-sentry-dsn@sentry.io/project-id`
+SENTRY_AUTH_TOKEN=your-sentry-auth-token
+SENTRY_ORG=your-org-slug
+SENTRY_PROJECT=your-project-slug
 \`\`\`
 
 ### Access Application
 
-- **Homepage**: http://localhost:3000
-- **Analysis**: http://localhost:3000/analysis
-- **AR Simulator**: http://localhost:3000/ar-simulator
-- **Mobile Testing**: http://localhost:3000/mobile-test
-- **Sales Dashboard**: http://localhost:3000/sales/dashboard
+- **Homepage**: [http://localhost:3000](http://localhost:3000)
+- **Analysis**: [http://localhost:3000/analysis](http://localhost:3000/analysis)
+- **AR Simulator**: [http://localhost:3000/ar-simulator](http://localhost:3000/ar-simulator)
+- **Mobile Testing**: [http://localhost:3000/mobile-test](http://localhost:3000/mobile-test)
+- **Sales Dashboard**: [http://localhost:3000/sales/dashboard](http://localhost:3000/sales/dashboard)
 
 ---
 
@@ -251,6 +273,7 @@ Beauty-with-AI-Precision/
 - ✅ Clinic management
 - ✅ Sales & CRM
 - ✅ Analytics & reports
+
 **UI Components** (85%)
 - ✅ shadcn/ui integrated
 - ✅ Responsive layouts
@@ -299,7 +322,7 @@ Beauty-with-AI-Precision/
 
 ### Quick Testing Commands
 
-\`\`\`bash
+```bash
 # TypeScript check
 npx tsc --noEmit
 
@@ -311,7 +334,7 @@ node check-db-schema.js
 
 # Invitation system test
 node scripts/test-invitation-system.mjs
-\`\`\`
+```
 
 ---
 
@@ -423,7 +446,7 @@ Currently in active development. Contributions welcome after Phase 10 completion
 
 ## 📄 License
 
-Proprietary - AI367 Beauty Platform  
+Proprietary - ClinicIQ Platform  
 © 2025 All Rights Reserved
 
 ---

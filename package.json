@@ -8,8 +8,8 @@
     "deploy:check": "pnpm type-check && pnpm check:db && pnpm verify",
     "dev": "next dev --turbo",
     "dev:webpack": "next dev --webpack",
-    "docker:build": "docker build -t ai367bar .",
-    "docker:run": "docker run -p 3000:3000 ai367bar",
+  "docker:build": "docker build -t cliniciq .",
+  "docker:run": "docker run -p 3000:3000 cliniciq",
     "health": "curl -f http://localhost:3000/api/health || exit 1",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -75,6 +75,7 @@
     "@radix-ui/react-visually-hidden": "^1.2.4",
     "@react-three/drei": "^10.7.6",
     "@react-three/fiber": "^9.4.0",
+    "@sentry/nextjs": "^10.25.0",
     "@supabase/auth-helpers-nextjs": "^0.10.0",
     "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.79.0",
@@ -161,6 +162,7 @@
     "uuid": "^13.0.0",
     "vaul": "^1.1.2",
     "vite": "^7.2.0",
+    "webgl-fluid": "^0.3.9",
     "ws": "^8.18.3",
     "xlsx": "^0.18.5",
     "yaml": "^2.8.1",
@@ -177,28 +179,42 @@
     "@types/react-dom": "^19",
     "@types/three": "^0.181.0",
     "@types/ws": "^8.18.1",
+    "@typescript-eslint/eslint-plugin": "^8.46.4",
+    "@typescript-eslint/parser": "^8.46.4",
     "@vitejs/plugin-react": "^4.7.0",
     "@vitest/ui": "^4.0.7",
     "autoprefixer": "^10.4.21",
     "dotenv": "^17.2.3",
     "eslint": "^9.39.1",
+    "eslint-plugin-react-hooks": "7.0.1",
     "fake-indexeddb": "^6.2.5",
     "happy-dom": "^20.0.10",
+    "import-in-the-middle": "^2.0.0",
     "jsdom": "^27.1.0",
     "pg": "^8.16.3",
     "playwright": "^1.56.1",
     "postcss": "^8.5.6",
     "postgres": "^3.4.7",
+    "require-in-the-middle": "^8.0.1",
     "tailwindcss": "3.4.17",
     "tsx": "^4.20.6",
     "tw-animate-css": "1.3.3",
     "typescript": "^5",
-    "vitest": "^4.0.7"
+    "vitest": "^4.0.7",
+    "webdriverio": "^9.20.0",
+    "webpack": "^5.102.1"
   },
-  "packageManager": "pnpm@9.12.2+sha512.22721b3a11f81661ae1ec68ce1a7b879425a1ca5b991c975b074ac220b187ce56c708fe5db69f4c962c989452eee76c82877f4ee80f474cebd61ee13461b6228",
+  "packageManager": "pnpm@9.12.2",
+  "engines": {
+    "node": ">=18.18 <23",
+    "pnpm": ">=9"
+  },
+  "preinstall": "npx -y only-allow pnpm",
   "pnpm": {
     "overrides": {
-      "sharp": "^0.34.4"
+      "sharp": "^0.34.4",
+      "import-in-the-middle": "1.15.0",
+      "require-in-the-middle": "7.5.2"
     }
   }
 }

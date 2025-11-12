@@ -19,14 +19,15 @@ async function checkTables() {
       'smart_goals',
       'goal_milestones',
       'goal_check_ins',
-      'goal_photos'
+      'goal_photos',
+      'analytics_events'
     ];
 
     console.log('\n=== Checking Database Tables ===\n');
     
     for (const table of tables) {
       try {
-        const { data, error, count } = await supabase
+  const { data: _data, error, count } = await supabase
           .from(table)
           .select('*', { count: 'exact', head: true });
         

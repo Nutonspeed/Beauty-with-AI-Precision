@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Fluid Simulation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    * { margin: 0; padding: 0; overflow: hidden; }
+    /* Subtle brand-friendly backdrop (rarely seen under full-canvas) */
+    body { background: linear-gradient(135deg, #ecfeff 0%, #e0faff 100%); }
+    #canvas { width: 100vw; height: 100vh; display: block; opacity: 1; }
+    /* Brand veil to tone the fluid subtly */
+        #veil {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      mix-blend-mode: soft-light;
+            /* ClinicIQ teal tones */
+            background: linear-gradient(30deg, rgba(6,182,212,0.18) 0%, rgba(8,145,178,0.12) 45%, rgba(255,255,255,0) 100%);
+      opacity: 0.85;
+    }
+    #ui, #footer, .instructions { display: none !important; }
+  </style>
+                                        try {
+                                            window.addEventListener('message', function(ev){
+                                                if (!ev || !ev.data || ev.origin !== globalThis.location.origin) return;
+                                                var d = ev.data;
+                                                if (d.type === 'fluid-mouse' && fluidBox && fluidBox.simulatorRenderer) {
+                                                    var fake = {
+                                                        clientX: d.clientX,
+                                                        clientY: d.clientY,
+                                                        preventDefault: function(){}
+                                                    };
+                                                    fluidBox.simulatorRenderer.onMouseMove(fake);
+                                                } else if (d.type === 'fluid-control') {
+                                                    try {
+                                                        if (typeof d.dampen === 'boolean' && typeof globalThis.__fluidApplyDamping === 'function') {
+                                                            globalThis.__fluidApplyDamping(d.dampen ? 1 : 0);
+                                                        }
+                                                        if (typeof d.veilOpacity === 'number' && typeof globalThis.__fluidSetVeilOpacity === 'function') {
+                                                            globalThis.__fluidSetVeilOpacity(d.veilOpacity);
+                                                        }
+                                                    } catch {}
+                                                }
+                                            });
+                                        } catch {}
+
+                                        // Accessibility and performance niceties:
+                                        // - Respect prefers-reduced-motion by increasing damping and softening visuals
+                                        // - When tab becomes hidden, heavily damp the motion to save resources
+                                        (function setupA11yAndVisibility(){
+                                            var deadline = Date.now() + 7000;
+                                            var savedLevel = 0; // last non-hidden damping level
+                                            function applyReducedMotionIfNeeded(){
+                                                try {
+                                                    var m = globalThis.matchMedia && globalThis.matchMedia('(prefers-reduced-motion: reduce)');
+                                                    if (m && m.matches) {
+                                                        savedLevel = Math.max(savedLevel, 0.7);
+                                                        if (typeof globalThis.__fluidApplyDamping === 'function') globalThis.__fluidApplyDamping(savedLevel);
+                                                        if (typeof globalThis.__fluidSetVeilOpacity === 'function') globalThis.__fluidSetVeilOpacity(0.25);
+                                                    }
+                                                    // React to changes in user preference
+                                                    if (m && typeof m.addEventListener === 'function') {
+                                                        m.addEventListener('change', function(e){
+                                                            if (e.matches) {
+                                                                savedLevel = Math.max(savedLevel, 0.7);
+                                                                if (typeof globalThis.__fluidApplyDamping === 'function') globalThis.__fluidApplyDamping(savedLevel);
+                                                                if (typeof globalThis.__fluidSetVeilOpacity === 'function') globalThis.__fluidSetVeilOpacity(0.25);
+                                                            } else {
+                                                                savedLevel = 0;
+                                                                if (typeof globalThis.__fluidApplyDamping === 'function') globalThis.__fluidApplyDamping(0);
+                                                                if (typeof globalThis.__fluidSetVeilOpacity === 'function') globalThis.__fluidSetVeilOpacity(0.85);
+                                                            }
+                                                        });
+                                                    }
+                                                } catch {}
+                                            }
+
+                                            (function waitForControls(){
+                                                if (typeof globalThis.__fluidApplyDamping === 'function') {
+                                                    // Initialize based on current preference
+                                                    applyReducedMotionIfNeeded();
+
+                                                    // Visibility throttling via damping (non-invasive)
+                                                    document.addEventListener('visibilitychange', function(){
+                                                        try {
+                                                            if (document.hidden) {
+                                                                // heavily damp when hidden
+                                                                if (typeof globalThis.__fluidApplyDamping === 'function') globalThis.__fluidApplyDamping(0.95);
+                                                                if (typeof globalThis.__fluidSetVeilOpacity === 'function') globalThis.__fluidSetVeilOpacity(0.95);
+                                                            } else {
+                                                                if (typeof globalThis.__fluidApplyDamping === 'function') globalThis.__fluidApplyDamping(savedLevel);
+                                                                if (typeof globalThis.__fluidSetVeilOpacity === 'function') globalThis.__fluidSetVeilOpacity(0.85);
+                                                            }
+                                                        } catch {}
+                                                    });
+                                                    return; // done
+                                                }
+                                                if (Date.now() < deadline) {
+                                                    <canvas id="canvas"></canvas>
+                                                    <div id="veil"></div>
+
+                                                    <!-- Minimal hidden UI stubs that the original demo expects -->
+                                                    <div id="ui">
+                                                        <button id="start-button"></button>
+                                                        <button id="preset-button"></button>
+                                                        <div id="density-slider"></div>
+                                                        <div id="fluidity-slider"></div>
+                                                        <div id="speed-slider"></div>
+                                                        <div id="particle-count"></div>
+                                                    </div>
+
+                                                    <script src="wrappedgl.js"></script>
+                                                    <script src="utilities.js"></script>
+                                                    <script src="camera.js"></script>
+                                                    <script src="boxeditor.js"></script>
+                                                    <script src="simulator.js"></script>
+                                                    <script src="renderer.js"></script>
+                                                    <script src="simulatorrenderer.js"></script>
+                                                    <script src="slider.js"></script>
+                                                    <script src="fluidparticles.js"></script>
+
+                                                    <script>
+                                                        // HiDPI-friendly canvas sizing
+                                                        var canvas = document.getElementById('canvas');
+                                                        function resizeCanvas() {
+                                                            var dpr = Math.min(2, (globalThis.devicePixelRatio || 1));
+                                                            canvas.style.width = globalThis.innerWidth + 'px';
+                                                            canvas.style.height = globalThis.innerHeight + 'px';
+                                                            canvas.width = Math.floor(globalThis.innerWidth * dpr);
+                                                            canvas.height = Math.floor(globalThis.innerHeight * dpr);
+                                                        }
+                                                        resizeCanvas();
+                                                        globalThis.addEventListener('resize', resizeCanvas);
+
+                                                        // Start fluid when WebGL + extensions available
+                                                        WrappedGL.checkWebGLSupportWithExtensions([
+                                                            'ANGLE_instanced_arrays', 'WEBGL_depth_texture', 'OES_texture_float',
+                                                            'OES_texture_float_linear', 'OES_texture_half_float', 'OES_texture_half_float_linear'
+                                                        ], function onOkay() {
+                                                            try {
+                                                                var fluidBox = new FluidParticles();
+                                                                var startDeadline = Date.now() + 5000;
+
+                                                                        // Helpers to keep logic simple
+                                                                                function applyPreset(box){
+                                                                                    try {
+                                                                                        box.currentPresetIndex = 2;
+                                                                                        if (box.presetButton) box.presetButton.click();
+                                                                                    } catch {}
+                                                                                }
+
+                                                                                function tuneParams(box, isMobile){
+                                                                                    try {
+                                                                                        box.gridCellDensity = isMobile ? 0.85 : 1;
+                                                                                        box.timeStep = isMobile ? 1/80 : 1/90;
+                                                                                        if (box.simulatorRenderer && box.simulatorRenderer.simulator) {
+                                                                                            box.simulatorRenderer.simulator.flipness = 0.9;
+                                                                                        }
+                                                                                        if (box.camera && typeof box.camera.distance === 'number') {
+                                                                                            box.camera.distance = isMobile ? 26 : 28;
+                                                                                            if (typeof box.camera.recomputeViewMatrix === 'function') {
+                                                                                                box.camera.recomputeViewMatrix();
+                                                                                            }
+                                                                                        }
+                                                                                    } catch {}
+                                                                                }
+
+                                                                                function getBase(box){
+                                                                                    return {
+                                                                                        timeStep: box.timeStep,
+                                                                                        gridCellDensity: box.gridCellDensity,
+                                                                                        sphereRadius: (box.simulatorRenderer && box.simulatorRenderer.renderer && box.simulatorRenderer.renderer.sphereRadius) || 1
+                                                                                    };
+                                                                                }
+
+                                                                                function startIfNeeded(box){
+                                                                                    if (box.state !== undefined && box.state !== 1) {
+                                                                                        try { box.startSimulation(); } catch {}
+                                                                                    }
+                                                                                }
+
+                                                                                function adjustSize(box, isMobile){
+                                                                                    try {
+                                                                                        var r = box.simulatorRenderer && box.simulatorRenderer.renderer;
+                                                                                        if (r && typeof r.sphereRadius === 'number') {
+                                                                                            r.sphereRadius = r.sphereRadius * (isMobile ? 1.25 : 1.15);
+                                                                                        }
+                                                                                    } catch {}
+                                                                                }
+
+                                                                                function exposeHooks(box, base){
+                                                                                    try {
+                                                                                        var clamp = function(x,a,b){ return Math.max(a, Math.min(b,x)); };
+                                                                                        globalThis.__fluidApplyDamping = function(level){
+                                                                                            if (!box) return;
+                                                                                            level = clamp(level||0, 0, 1);
+                                                                                            box.timeStep = base.timeStep * (1 + 0.6*level);
+                                                                                            box.gridCellDensity = base.gridCellDensity * (1 - 0.25*level);
+                                                                                            var rr = box.simulatorRenderer && box.simulatorRenderer.renderer;
+                                                                                            if (rr && typeof base.sphereRadius === 'number') {
+                                                                                                rr.sphereRadius = base.sphereRadius * (1 - 0.18*level);
+                                                                                            }
+                                                                                        };
+                                                                                        globalThis.__fluidSetVeilOpacity = function(op){
+                                                                                            var v = document.getElementById('veil');
+                                                                                            if (v) v.style.opacity = String(clamp(op, 0, 1));
+                                                                                        };
+                                                                                    } catch {}
+                                                                                }
+
+                                                                        function ensureRunning() {
+                                                                    var isMobile = Math.min(globalThis.innerWidth, globalThis.innerHeight) <= 768;
+                                                                    try {
+                                                                        var ready = fluidBox && fluidBox.boxEditor && fluidBox.boxEditor.boxes && fluidBox.boxEditor.boxes.length > 0 && typeof fluidBox.startSimulation === 'function';
+                                                                        if (ready) {
+                                                                                    applyPreset(fluidBox);
+                                                                                    tuneParams(fluidBox, isMobile);
+                                                                                    var base = getBase(fluidBox);
+                                                                                    startIfNeeded(fluidBox);
+                                                                                    adjustSize(fluidBox, isMobile);
+                                                                                    if (typeof fluidBox.update === 'function') fluidBox.update(0);
+                                                                                    exposeHooks(fluidBox, base);
+                                                                            return; // ready
+                                                                        }
+                                                                    } catch (e) { console.warn('Autoplay check error', e); }
+                                                                    if (Date.now() < startDeadline) requestAnimationFrame(ensureRunning); else {
+                                                                        var btn = document.getElementById('start-button'); try { if (btn) btn.click(); } catch {}
+                                                                    }
+                                                                }
+                                                                ensureRunning();
+
+                                                                // Host page interaction bridge
+                                                                globalThis.addEventListener('message', function(ev){
+                                                                    if (!ev || !ev.data || ev.origin !== globalThis.location.origin) return;
+                                                                    var d = ev.data;
+                                                                    if (d.type === 'fluid-mouse' && fluidBox && fluidBox.simulatorRenderer) {
+                                                                        var fake = { clientX: d.clientX, clientY: d.clientY, preventDefault: function(){} };
+                                                                        fluidBox.simulatorRenderer.onMouseMove(fake);
+                                                                    } else if (d.type === 'fluid-control') {
+                                                                        try {
+                                                                            if (typeof d.dampen === 'boolean' && typeof globalThis.__fluidApplyDamping === 'function') globalThis.__fluidApplyDamping(d.dampen ? 1 : 0);
+                                                                            if (typeof d.veilOpacity === 'number' && typeof globalThis.__fluidSetVeilOpacity === 'function') globalThis.__fluidSetVeilOpacity(d.veilOpacity);
+                                                                        } catch {}
+                                                                    }
+                                                                });
+
+                                                                // A11y + visibility tweaks
+                                                                (function setupA11y(){
+                                                                    var deadline = Date.now() + 7000; var savedLevel = 0;
+                                                                    function applyReduced(){
+                                                                        try { var m = globalThis.matchMedia && globalThis.matchMedia('(prefers-reduced-motion: reduce)');
+                                                                            if (m && m.matches) { savedLevel = Math.max(savedLevel, 0.7); globalThis.__fluidApplyDamping && globalThis.__fluidApplyDamping(savedLevel); globalThis.__fluidSetVeilOpacity && globalThis.__fluidSetVeilOpacity(0.25); }
+                                                                            if (m && typeof m.addEventListener === 'function') m.addEventListener('change', function(e){ if (e.matches) { savedLevel = Math.max(savedLevel, 0.7); globalThis.__fluidApplyDamping && globalThis.__fluidApplyDamping(savedLevel); globalThis.__fluidSetVeilOpacity && globalThis.__fluidSetVeilOpacity(0.25); } else { savedLevel = 0; globalThis.__fluidApplyDamping && globalThis.__fluidApplyDamping(0); globalThis.__fluidSetVeilOpacity && globalThis.__fluidSetVeilOpacity(0.85); } });
+                                                                        } catch {}
+                                                                    }
+                                                                    (function wait(){ if (typeof globalThis.__fluidApplyDamping === 'function') { applyReduced(); document.addEventListener('visibilitychange', function(){ try { if (document.hidden) { globalThis.__fluidApplyDamping && globalThis.__fluidApplyDamping(0.95); globalThis.__fluidSetVeilOpacity && globalThis.__fluidSetVeilOpacity(0.95); } else { globalThis.__fluidApplyDamping && globalThis.__fluidApplyDamping(savedLevel); globalThis.__fluidSetVeilOpacity && globalThis.__fluidSetVeilOpacity(0.85); } } catch {} }); return; } if (Date.now() < deadline) requestAnimationFrame(wait); })();
+                                                                })();
+
+                                                            } catch (e) { console.error('Error starting fluid simulation:', e); }
+                                                        }, function onFail(hasWebGL, unsupported){ console.error('WebGL not supported or missing extensions:', unsupported); });
+                                                    </script>
+</html>

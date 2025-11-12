@@ -454,11 +454,11 @@ BEGIN
     INSERT INTO public.sales_leads 
       (sales_user_id, name, email, phone, status, score, source, primary_concern, estimated_value, first_contact_at, last_contact_at)
     VALUES
-      (sales_user, 'นางสาวสมหญิง ใจดี', 'somying@example.com', '081-234-5678', 'hot', 85, 'website', 'สิวอักเสบ', 15000, NOW() - INTERVAL '3 days', NOW() - INTERVAL '1 day'),
-      (sales_user, 'คุณวิชัย มั่งมี', 'wichai@example.com', '082-345-6789', 'warm', 65, 'facebook', 'ฝ้า กระ จุดด่างดำ', 25000, NOW() - INTERVAL '5 days', NOW() - INTERVAL '2 days'),
-      (sales_user, 'นายประเสริฐ รุ่งเรือง', 'prasert@example.com', '083-456-7890', 'warm', 60, 'google_ads', 'ริ้วรอยแห่งวัย', 35000, NOW() - INTERVAL '7 days', NOW() - INTERVAL '3 days'),
-      (sales_user, 'คุณสุดา สวยงาม', 'suda@example.com', '084-567-8901', 'cold', 30, 'referral', 'รูขุมขนกว้าง', 8000, NOW() - INTERVAL '14 days', NOW() - INTERVAL '10 days'),
-      (sales_user, 'นางจิรา เจริญสุข', 'jira@example.com', '085-678-9012', 'new', 50, 'instagram', 'ผิวไม่เรียบเนียน', 12000, NOW() - INTERVAL '1 day', NOW() - INTERVAL '1 day')
+      (sales_user, 'นางสาวสมหญิง ใจดี', 'somying@example.com', NULL, 'hot', 85, 'website', 'สิวอักเสบ', 15000, NOW() - INTERVAL '3 days', NOW() - INTERVAL '1 day'),
+      (sales_user, 'คุณวิชัย มั่งมี', 'wichai@example.com', NULL, 'warm', 65, 'facebook', 'ฝ้า กระ จุดด่างดำ', 25000, NOW() - INTERVAL '5 days', NOW() - INTERVAL '2 days'),
+      (sales_user, 'นายประเสริฐ รุ่งเรือง', 'prasert@example.com', NULL, 'warm', 60, 'google_ads', 'ริ้วรอยแห่งวัย', 35000, NOW() - INTERVAL '7 days', NOW() - INTERVAL '3 days'),
+      (sales_user, 'คุณสุดา สวยงาม', 'suda@example.com', NULL, 'cold', 30, 'referral', 'รูขุมขนกว้าง', 8000, NOW() - INTERVAL '14 days', NOW() - INTERVAL '10 days'),
+      (sales_user, 'นางจิรา เจริญสุข', 'jira@example.com', NULL, 'new', 50, 'instagram', 'ผิวไม่เรียบเนียน', 12000, NOW() - INTERVAL '1 day', NOW() - INTERVAL '1 day')
     ON CONFLICT DO NOTHING;
     
     RAISE NOTICE '✅ Inserted demo sales leads';

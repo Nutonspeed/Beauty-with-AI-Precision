@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import defaultTheme from "tailwindcss/defaultTheme";
 
 const config: Config = {
   darkMode: ["class"],
@@ -9,6 +10,12 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        // Body: Thai-first stack
+        sans: ["var(--font-noto-thai)", ...defaultTheme.fontFamily.sans],
+        // Display: Headings use Kanit with Noto Sans Thai as fallback
+        display: ["var(--font-kanit)", "var(--font-noto-thai)", ...defaultTheme.fontFamily.sans],
+      },
       colors: {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",

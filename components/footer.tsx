@@ -52,6 +52,11 @@ export function Footer() {
             <h3 className="mb-4 text-sm font-semibold">{t.footer.company}</h3>
             <ul className="space-y-3 text-sm">
               <li>
+                <Link href="/case-studies" className="text-muted-foreground transition-colors hover:text-foreground">
+                  Case Studies
+                </Link>
+              </li>
+              <li>
                 <Link href="/about" className="text-muted-foreground transition-colors hover:text-foreground">
                   {t.footer.about}
                 </Link>
@@ -80,6 +85,11 @@ export function Footer() {
               <li>
                 <Link href="/terms" className="text-muted-foreground transition-colors hover:text-foreground">
                   {t.footer.terms}
+                </Link>
+              </li>
+              <li>
+                <Link href="/compliance" className="text-muted-foreground transition-colors hover:text-foreground">
+                  Compliance
                 </Link>
               </li>
               <li>

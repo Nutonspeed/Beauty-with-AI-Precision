@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="ClinicIQ Open Graph Image">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ecfeff" />
+      <stop offset="100%" stop-color="#f0f9ff" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <!-- Logo Mark -->
+  <g transform="translate(140, 180)">
+    <circle cx="80" cy="80" r="75" fill="#06b6d4" opacity="0.09" />
+    <circle cx="80" cy="80" r="62" fill="none" stroke="#06b6d4" stroke-width="10"/>
+    <path d="M120 120 L160 160" stroke="#06b6d4" stroke-width="10" stroke-linecap="round"/>
+    <path d="M80 55 v20 M70 80 h20" stroke="#06b6d4" stroke-width="8" stroke-linecap="round"/>
+  </g>
+  <!-- Wordmark -->
+  <g transform="translate(340, 180)" fill="#0f172a">
+    <text x="0" y="55" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans, 'Kanit', 'Noto Sans Thai', Arial, 'Apple Color Emoji', 'Segoe UI Emoji'" font-size="56" font-weight="800">ClinicIQ</text>
+    <text x="0" y="110" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans, 'Kanit', 'Noto Sans Thai', Arial, 'Apple Color Emoji', 'Segoe UI Emoji'" font-size="28" fill="#334155">Intelligent Aesthetic Platform</text>
+    <text x="0" y="146" font-family="'Kanit', 'Noto Sans Thai', Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans, Arial" font-size="24" fill="#64748b">แพลตฟอร์มความงามเชิงอัจฉริยะ</text>
+  </g>
+  <!-- Accent shapes -->
+  <circle cx="1080" cy="80" r="24" fill="#06b6d4" opacity="0.2"/>
+  <circle cx="70" cy="560" r="16" fill="#06b6d4" opacity="0.15"/>
+  <rect x="1030" y="520" width="80" height="6" rx="3" fill="#06b6d4" opacity="0.2"/>
+</svg>

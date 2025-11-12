@@ -52,45 +52,10 @@ export default function QueueDisplayPage() {
 
   // Fetch queue data every 5 seconds
   useEffect(() => {
-    const fetchQueue = async () => {
-      try {
-        setIsLoading(true)
-        
-        // Get clinicId from URL or localStorage
-        const urlParams = new URLSearchParams(window.location.search)
-        const clinicId = urlParams.get('clinicId') || localStorage.getItem('clinicId') || 'demo-clinic-1'
-        
-        const response = await fetch(`/api/clinic/queue/display?clinicId=${clinicId}&limit=3`)
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
-        
-        const data = await response.json()
-        
-        if (data.success) {
-          setCurrentServing(data.currentServing)
-          setNextInQueue(data.nextInQueue || [])
-          setIsOnline(true)
-          setLastUpdate(new Date())
-        } else {
-          console.error('API returned error:', data.error)
-          // Fallback to mock data
-          setIsOnline(false)
-          useMockData()
-        }
-      } catch (error) {
-        console.error('Failed to fetch queue:', error)
-        // Fallback to mock data on error
-        setIsOnline(false)
-        useMockData()
-      } finally {
-        setIsLoading(false)
-      }
-    }
+    let mounted = true
 
-    // Mock data fallback function
-    const useMockData = () => {
+    const setMockData = () => {
+      if (!mounted) return
       setCurrentServing({
         id: '1',
         queueNumber: 'A-015',
@@ -129,10 +94,43 @@ export default function QueueDisplayPage() {
       ])
     }
 
+    const fetchQueue = async () => {
+      try {
+        setIsLoading(true)
+        const urlParams = new URLSearchParams(window.location.search)
+        const clinicId = urlParams.get('clinicId') || localStorage.getItem('clinicId') || 'demo-clinic-1'
+        const response = await fetch(`/api/clinic/queue/display?clinicId=${clinicId}&limit=3`)
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
+        const data = await response.json()
+        if (mounted) {
+          if (data.success) {
+            setCurrentServing(data.currentServing)
+            setNextInQueue(data.nextInQueue || [])
+            setIsOnline(true)
+            setLastUpdate(new Date())
+          } else {
+            console.error('API returned error:', data.error)
+            setIsOnline(false)
+            setMockData()
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch queue:', error)
+        if (mounted) {
+          setIsOnline(false)
+          setMockData()
+        }
+      } finally {
+        mounted && setIsLoading(false)
+      }
+    }
+
     fetchQueue()
     const interval = setInterval(fetchQueue, 5000) // Refresh every 5 seconds
-
-    return () => clearInterval(interval)
+    return () => {
+      mounted = false
+      clearInterval(interval)
+    }
   }, [])
 
   // Fullscreen toggle

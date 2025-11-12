@@ -13,6 +13,7 @@ import { resizeImage, compressImage } from "@/lib/image-optimizer"
 import { CameraPositioningGuide } from "@/components/camera-positioning-guide"
 import { validateImageQuality, getQualityFeedback } from "@/lib/image-quality-validator"
 import { NotificationManager } from "@/lib/notifications/notification-manager"
+import { trackFeatureUsage, trackPerformance, trackError } from "@/lib/analytics/usage-tracker"
 import type { AnalysisMode } from "@/types"
 
 const MODE_PROGRESS: Record<AnalysisMode, string> = {
@@ -128,6 +129,21 @@ export function SkinAnalysisUpload({ isLoggedIn = false, analysisMode = "auto" }
     setIsAnalyzing(true)
     setError(null)
 
+    const startTime = Date.now()
+
+    // Track feature usage - AI analysis started
+    trackFeatureUsage({
+      feature: 'ai_analysis',
+      action: 'start',
+      success: true,
+      metadata: {
+        mode: analysisMode,
+        fileSize: selectedFile.size,
+        fileType: selectedFile.type,
+        source: selectedFile.name.includes('camera-capture') ? 'camera' : 'upload'
+      }
+    })
+
     try {
       // PHASE 1 ENHANCEMENT: Validate image quality BEFORE optimization
       setAnalysisProgress("Validating image quality...")
@@ -206,6 +222,28 @@ export function SkinAnalysisUpload({ isLoggedIn = false, analysisMode = "auto" }
       if (!analysisResponse.ok) {
         const errorMsg = `Hybrid analysis failed: ${analysisData.error || "Unknown error"}`
         setError(errorMsg)
+
+        const duration = Date.now() - startTime
+
+        // Track failed analysis
+        trackFeatureUsage({
+          feature: 'ai_analysis',
+          action: 'fail',
+          success: false,
+          duration,
+          metadata: {
+            error: analysisData.error,
+            mode: analysisMode,
+            processingTime: duration
+          }
+        })
+
+        // Track error
+        trackError(new Error(errorMsg), {
+          context: 'ai_analysis_api_call',
+          mode: analysisMode
+        })
+
         NotificationManager.error(
           locale === "th" ? "การวิเคราะห์ล้มเหลว" : "Analysis Failed",
           {
@@ -227,6 +265,28 @@ export function SkinAnalysisUpload({ isLoggedIn = false, analysisMode = "auto" }
       console.log("[HYBRID] 📊 Analysis ID:", analysisData.id)
       console.log("[HYBRID] 🎯 Overall Score:", analysisData.overall_score)
 
+      const duration = Date.now() - startTime
+
+      // Track successful analysis
+      trackFeatureUsage({
+        feature: 'ai_analysis',
+        action: 'complete',
+        success: true,
+        duration,
+        metadata: {
+          analysisId: analysisData.id,
+          overallScore: analysisData.overall_score,
+          mode: analysisMode,
+          processingTime: duration
+        }
+      })
+
+      // Track performance
+      trackPerformance('ai_analysis_duration', duration, {
+        mode: analysisMode,
+        fileSize: selectedFile.size
+      })
+
       // Show success notification
       NotificationManager.analysisSaved(
         analysisData.id,
@@ -240,12 +300,33 @@ export function SkinAnalysisUpload({ isLoggedIn = false, analysisMode = "auto" }
       console.error("[v0] ❌ === ANALYSIS ERROR ===")
       console.error("[v0] ❌ Error:", err)
 
+      const duration = Date.now() - startTime
+
       let errorMessage = "Unknown error"
       if (err instanceof Error) {
         errorMessage = err.message
       } else if (typeof err === "string") {
         errorMessage = err
       }
+
+      // Track analysis error
+      trackFeatureUsage({
+        feature: 'ai_analysis',
+        action: 'error',
+        success: false,
+        duration,
+        metadata: {
+          error: errorMessage,
+          mode: analysisMode,
+          processingTime: duration
+        }
+      })
+
+      // Track error
+      trackError(err instanceof Error ? err : new Error(errorMessage), {
+        context: 'ai_analysis_processing',
+        mode: analysisMode
+      })
 
       if (
         errorMessage.includes("Failed to fetch") ||

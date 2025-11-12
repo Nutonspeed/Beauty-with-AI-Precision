@@ -45,9 +45,10 @@ describe('Image Quality Validator', () => {
         maxAspectRatio: 2.0 
       });
 
-      expect(result.warnings).toContain(
-        expect.stringContaining('Unusual aspect ratio')
+      const hasWarning = result.warnings.some(warning =>
+        warning.includes('Unusual aspect ratio')
       );
+      expect(hasWarning).toBe(true);
     });
   });
 
@@ -60,9 +61,10 @@ describe('Image Quality Validator', () => {
       const result = await validateImageQuality(buffer, { requireFace: false });
 
       expect(result.isValid).toBe(false);
-      expect(result.issues).toContain(
-        expect.stringContaining('Image too dark')
+      const hasDarkIssue = result.issues.some(issue =>
+        issue.includes('Image too dark')
       );
+      expect(hasDarkIssue).toBe(true);
       expect(result.metrics.lighting.brightness).toBeLessThan(40);
     });
 
@@ -74,9 +76,10 @@ describe('Image Quality Validator', () => {
       const result = await validateImageQuality(buffer, { requireFace: false });
 
       expect(result.isValid).toBe(false);
-      expect(result.issues).toContain(
-        expect.stringContaining('Image too bright')
+      const hasBrightIssue = result.issues.some(issue =>
+        issue.includes('Image too bright')
       );
+      expect(hasBrightIssue).toBe(true);
       expect(result.metrics.lighting.brightness).toBeGreaterThan(220);
     });
 
@@ -106,9 +109,10 @@ describe('Image Quality Validator', () => {
 
       // Uniform images have very low Laplacian variance
       expect(result.metrics.sharpness.isSharp).toBe(false);
-      expect(result.issues).toContain(
-        expect.stringContaining('Image is blurry')
+      const hasBlurIssue = result.issues.some(issue =>
+        issue.includes('Image is blurry')
       );
+      expect(hasBlurIssue).toBe(true);
     });
 
     it('should accept sharp images with edges', async () => {
@@ -140,8 +144,8 @@ describe('Image Quality Validator', () => {
 
   describe('Face Detection', () => {
     it('should detect presence of skin-colored region', async () => {
-      // Create image with skin-colored center region
-      const image = new Jimp({ width: 800, height: 800, color: 0x404040ff }); // Dark background
+  // Create image with skin-colored center region
+  const image = new Jimp({ width: 512, height: 512, color: 0x404040ff }); // Dark background
       
       // Add skin-colored region in center (50% of image)
       const startX = 200;
@@ -149,14 +153,10 @@ describe('Image Quality Validator', () => {
       const endX = 600;
       const endY = 600;
       
-      for (let y = startY; y < endY; y++) {
-        for (let x = startX; x < endX; x++) {
-          // Skin tone: RGB(200, 150, 120)
-          image.setPixelColor(0xc89678ff, x, y);
-        }
-      }
+      const skinRegion = new Jimp({ width: endX - startX, height: endY - startY, color: 0xc89678ff });
+      image.composite(skinRegion, startX, startY);
 
-      const buffer = await image.getBuffer('image/jpeg');
+  const buffer = await image.getBuffer('image/png');
 
       const result = await validateImageQuality(buffer, { 
         requireFace: true,
@@ -168,9 +168,9 @@ describe('Image Quality Validator', () => {
     }, 10000); // Increase timeout to 10s
 
     it('should reject images without face when required', async () => {
-      // Create image with no skin tones (blue image)
-      const image = new Jimp({ width: 800, height: 800, color: 0x0000ffff });
-      const buffer = await image.getBuffer('image/jpeg');
+  // Create image with no skin tones (blue image)
+  const image = new Jimp({ width: 512, height: 512, color: 0x0000ffff });
+  const buffer = await image.getBuffer('image/png');
 
       const result = await validateImageQuality(buffer, { requireFace: true });
 
@@ -181,20 +181,24 @@ describe('Image Quality Validator', () => {
 
   describe('Overall Quality Score', () => {
     it('should give high score to perfect images', async () => {
-      // Create a good quality image with checkerboard pattern (sharp edges)
-      const image = new Jimp({ width: 1024, height: 1024 });
-      
+  // Create a good quality image with checkerboard pattern (sharp edges)
+      const image = new Jimp({ width: 600, height: 600 });
+
       // Add checkerboard pattern (sharp, high contrast)
-      for (let y = 0; y < 1024; y++) {
-        for (let x = 0; x < 1024; x++) {
-          const isBlack = (Math.floor(x / 128) + Math.floor(y / 128)) % 2 === 0;
+      const { data, width, height } = image.bitmap;
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          const isBlack = (Math.floor(x / 75) + Math.floor(y / 75)) % 2 === 0;
           const gray = isBlack ? 80 : 160; // Good contrast, medium brightness
-          const color = 0xff000000 | (gray << 16) | (gray << 8) | gray;
-          image.setPixelColor(color, x, y);
+          const idx = (y * width + x) * 4;
+          data[idx] = gray;
+          data[idx + 1] = gray;
+          data[idx + 2] = gray;
+          data[idx + 3] = 255;
         }
       }
 
-      const buffer = await image.getBuffer('image/jpeg');
+      const buffer = await image.getBuffer('image/png');
 
       const result = await validateImageQuality(buffer, { requireFace: false });
 

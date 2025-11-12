@@ -67,12 +67,17 @@ class Logger {
     if (this.shouldLog("error")) {
       console.error(this.formatMessage("error", message), error, ...args)
 
-      // TODO: Send to error tracking service (Sentry)
-      // if (typeof window !== 'undefined' && window.Sentry) {
-      //   window.Sentry.captureException(error, {
-      //     extra: { message, args },
-      //   })
-      // }
+      // Send to Sentry error tracking service
+      if (error && typeof window === 'undefined') {
+        // Server-side: use Sentry directly
+        import('@sentry/nextjs').then(({ captureException }) => {
+          captureException(error, {
+            extra: { message, args },
+          })
+        }).catch(() => {
+          // Fallback if Sentry import fails
+        })
+      }
     }
   }
 

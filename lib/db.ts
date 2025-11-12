@@ -3,10 +3,10 @@
   This avoids TypeScript compile errors in environments without a schema.prisma.
 */
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 let PrismaClientCtor: any
 try {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
+   
   const mod = require('@prisma/client')
   PrismaClientCtor = mod?.PrismaClient
 } catch {
@@ -17,13 +17,13 @@ try {
 }
 
 declare global {
-  // eslint-disable-next-line no-var, @typescript-eslint/no-explicit-any
+   
   var prisma: undefined | { $connect: () => Promise<void>; $disconnect: () => Promise<void> }
 }
 
 // Use a singleton instance in dev to avoid too many connections
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
+ 
 export const prisma: any = globalThis.prisma || new PrismaClientCtor({
   log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
 })

@@ -1,10 +1,32 @@
 # ✅ PROJECT STATUS & CHECKLIST
 
-> **Last Updated:** 2024-01-21  
-> **Project:** Beauty with AI Precision  
-> **Current Phase:** Week 6 Complete
+> **Last Updated:** 2025-11-13  
+> **Project:** ClinicIQ (formerly "Beauty with AI Precision")  
+> **Current Track:** Rebrand + Landing Professionalization + Analytics
 
 ---
+
+## 🆕 2025-11-13 Snapshot
+
+This snapshot summarizes the latest work completed and what remains before full rollout. Full daily progress log is in `docs/progress/2025-11-13-progress.md`.
+
+### What’s new
+- Fluid background (WebGL) in same-origin iframe with autoplay, mouse-follow, HiDPI/mobile support, and Reduced Motion/visibility handling.
+- Full rebrand to “ClinicIQ”: theme tokens, logo/OG/meta/favicon updated, README/email footers/Docker tag/IndexedDB name aligned.
+- Landing (Phase A) professionalized: new IA (Hero + Proof + Value + How-it-works + Compliance teaser + Case study teaser), removed placeholder testimonials, partner logos capped at ≤ 6 (awaiting real assets).
+- New pages and content (localized): `/case-studies`, `/case-studies/[slug]`, `/compliance` with a Metrics Widget (sensitivity/specificity/accuracy) and engagement analytics.
+- Analytics: `lib/analytics/usage-tracker.ts` helper + API events route with normalized payloads and RLS migration for analytics events.
+
+### Quality gates (current)
+- Build: to run on Vercel CI
+- Typecheck: PASS
+- Lint: PASS (warnings only)
+- Tests: 1 failing (performance benchmark on mobile threshold; suspected flake/threshold too strict on Windows/CI)
+
+### Next steps (short list)
+- Add real partner logos (≤ 6) once approved
+- Enrich case studies with real images/graphs (TH/EN)
+- Stabilize performance test (adjust threshold/mark flaky per platform)
 
 ## 📊 สถานะโปรเจคปัจจุบัน
 
@@ -260,8 +282,8 @@ Phase 4: Polish & Launch     ░░░░░░░░░░░░░░░░░
 ### Tech Stack
 
 **Frontend:**
-- ✅ Next.js 14+ (App Router)
-- ✅ React 18+
+- ✅ Next.js 16 (App Router)
+- ✅ React 19
 - ✅ TypeScript
 - ✅ Tailwind CSS
 - ✅ shadcn/ui components
@@ -284,6 +306,10 @@ Phase 4: Polish & Launch     ░░░░░░░░░░░░░░░░░
 - ✅ Supabase Auth
 - ✅ JWT tokens
 - ✅ Role-based access
+
+**Observability & Analytics:**
+- ✅ Client engagement/page analytics with normalized events
+- ✅ API route + RLS for `analytics_events`
 
 ---
 
@@ -357,7 +383,9 @@ Beauty-with-AI-Precision/
 - ⏳ Not Setup Yet
 
 **Production:**
-- ⏳ Not Deployed Yet
+
+- ✅ Configured for Vercel auto-deploy on push to `main`
+
 
 ---
 

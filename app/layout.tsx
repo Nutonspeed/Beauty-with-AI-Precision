@@ -1,6 +1,6 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Geist, Geist_Mono } from "next/font/google"
+import { Geist, Geist_Mono, Noto_Sans_Thai, Kanit } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { Toaster } from "sonner"
 import { Providers } from "@/components/providers"
@@ -13,25 +13,67 @@ import "./globals.css"
 
 import { ServiceWorkerRegistration } from "@/components/service-worker-registration"
 import { InstallPrompt } from "@/components/pwa/install-prompt"
+import { SessionTracker } from "@/components/session-tracker"
 
 const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
 
+// Thai-friendly typography: Noto Sans Thai for body, Kanit for display headings
+const _notoThai = Noto_Sans_Thai({
+  subsets: ["thai", "latin"],
+  weight: ["400", "500", "600"],
+  display: "swap",
+  variable: "--font-noto-thai",
+})
+const _kanit = Kanit({
+  subsets: ["thai", "latin"],
+  weight: ["600", "700", "800"],
+  display: "swap",
+  variable: "--font-kanit",
+})
+
 export const metadata: Metadata = {
-  title: "AI367 Beauty & Aesthetic Clinic",
-  description: "AI-powered beauty clinic platform with skin analysis, booking, and treatment recommendations",
+  title: "ClinicIQ — Intelligent Aesthetic Platform",
+  description: "ClinicIQ brings medical-grade AI to aesthetics: skin analysis, booking, treatment recommendations, and clinic operations.",
   generator: "Next.js",
   manifest: "/manifest.json",
+  openGraph: {
+    title: "ClinicIQ — Intelligent Aesthetic Platform",
+    description:
+      "ClinicIQ brings medical-grade AI to aesthetics: skin analysis, booking, treatment recommendations, and clinic operations.",
+    url: "https://cliniciq.example",
+    siteName: "ClinicIQ",
+    images: [
+      {
+        url: "/og-cliniciq.svg",
+        width: 1200,
+        height: 630,
+        alt: "ClinicIQ",
+        type: "image/svg+xml",
+      },
+    ],
+    locale: "th_TH",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    site: "@cliniciq",
+    creator: "@cliniciq",
+    title: "ClinicIQ — Intelligent Aesthetic Platform",
+    description:
+      "ClinicIQ brings medical-grade AI to aesthetics: skin analysis, booking, treatment recommendations, and clinic operations.",
+    images: ["/og-cliniciq.svg"],
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "AI367",
+    title: "ClinicIQ",
   },
   formatDetection: {
     telephone: false,
   },
   icons: {
-    icon: "/favicon.ico",
+    icon: "/favicon.svg",
     apple: [
       { url: "/icon-192.svg", sizes: "192x192", type: "image/svg+xml" },
       { url: "/icon-512.svg", sizes: "512x512", type: "image/svg+xml" },
@@ -42,8 +84,8 @@ export const metadata: Metadata = {
     "apple-mobile-web-app-capable": "yes",
     "apple-mobile-web-app-status-bar-style": "black-translucent",
   },
-  applicationName: "AI367 Beauty",
-  keywords: ["beauty", "skin analysis", "AI", "aesthetic clinic", "treatment"],
+  applicationName: "ClinicIQ",
+  keywords: ["cliniciq", "skin analysis", "AI", "aesthetic", "clinic", "treatment", "dermatology"],
 }
 
 export const viewport = {
@@ -53,8 +95,8 @@ export const viewport = {
   userScalable: true,
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#3b82f6" },
-    { media: "(prefers-color-scheme: dark)", color: "#1e40af" },
+    { media: "(prefers-color-scheme: light)", color: "#06b6d4" },
+    { media: "(prefers-color-scheme: dark)", color: "#0891b2" },
   ],
   colorScheme: "light dark",
 }
@@ -80,15 +122,16 @@ export default function RootLayout({
             `,
           }}
         />
-        <link rel="icon" href="/favicon.ico" />
+  <link rel="icon" href="/favicon.svg" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="color-scheme" content="light dark" />
         <meta httpEquiv="Permissions-Policy" content="camera=(self), microphone=(self)" />
       </head>
-      <body className={`font-sans antialiased`}>
+      <body className={`${_notoThai.variable} ${_kanit.variable} font-sans antialiased`}>
         <PerformanceInit />
         <ErrorBoundaryWrapper locale="th" showDetails={process.env.NODE_ENV === 'development'}>
           <Providers>
+            <SessionTracker />
             <ServiceWorkerRegistration />
             <InstallPrompt />
             {/* Global realtime announcements */}

@@ -13,12 +13,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Sparkles, Menu, Globe, User, LogOut, Building2 } from "lucide-react"
+import { Menu, Globe, User, LogOut, Building2 } from "lucide-react"
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet"
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { ClinicIQLogo } from "@/components/brand/logo"
+import { BRAND } from "@/lib/brand"
 
 export function Header() {
   // Safe auth access with fallback
@@ -39,11 +41,11 @@ export function Header() {
   // Get navigation items based on user role
   const getNavItems = () => {
     if (!user) {
+      // Landing page navigation - clean and professional
       return [
-        { href: "/features", label: t.nav.features || "Features" },
-        { href: "/pricing", label: t.nav.pricing || "Pricing" },
-        { href: "/analysis", label: t.nav.analysis },
-        { href: "/ar-simulator", label: t.nav.arSimulator },
+        { href: "/features", label: language === "th" ? "คุณสมบัติ" : "Features" },
+        { href: "/pricing", label: language === "th" ? "ราคา" : "Pricing" },
+        { href: "/demo/skin-analysis", label: language === "th" ? "ทดลองใช้" : "Try Demo" },
         { href: "/faq", label: "FAQ" },
       ]
     }
@@ -53,37 +55,37 @@ export function Header() {
     switch (role) {
       case "clinic_owner":
         return [
-          { href: "/clinic/dashboard", label: t.nav.dashboard },
-          { href: "/branches", label: "🏢 Branches" },
-          { href: "/clinic/analytics", label: t.nav.analytics },
-          { href: "/clinic/customers", label: t.nav.customers },
-          { href: "/ai-chat", label: "💬 AI Advisor" },
-          { href: "/clinic/settings/automation", label: "⚙️ Automation" },
+          { href: "/clinic/dashboard", label: language === "th" ? "ภาพรวม" : "Dashboard" },
+          { href: "/clinic/customers", label: language === "th" ? "ลูกค้า" : "Customers" },
+          { href: "/clinic/analytics", label: language === "th" ? "รายงาน" : "Analytics" },
+          { href: "/branches", label: language === "th" ? "สาขา" : "Branches" },
+          { href: "/ai-chat", label: language === "th" ? "AI ที่ปรึกษา" : "AI Advisor" },
         ]
       case "clinic_staff":
         return [
-          { href: "/clinic/staff/my-schedule", label: "📅 ตารางงานของฉัน" },
-          { href: "/clinic/reception", label: "🏥 Reception" },
-          { href: "/clinic/dashboard", label: "Dashboard" },
+          { href: "/clinic/reception", label: language === "th" ? "เคาน์เตอร์" : "Reception" },
+          { href: "/clinic/staff/my-schedule", label: language === "th" ? "ตารางงาน" : "Schedule" },
+          { href: "/demo/skin-analysis", label: language === "th" ? "วิเคราะห์ผิว" : "Analysis" },
         ]
       case "sales_staff":
         return [
-          { href: "/sales/dashboard", label: t.nav.dashboard },
-          { href: "/sales/leads", label: t.nav.leads },
-          { href: "/sales/presentations", label: t.nav.proposals },
+          { href: "/sales/dashboard", label: language === "th" ? "ภาพรวม" : "Dashboard" },
+          { href: "/sales/leads", label: language === "th" ? "ลีด" : "Leads" },
+          { href: "/sales/presentations", label: language === "th" ? "ข้อเสนอ" : "Proposals" },
+          { href: "/sales-narrative", label: language === "th" ? "เครื่องมือขาย" : "Sales Tool" },
         ]
       case "super_admin":
         return [
-          { href: "/super-admin", label: t.nav.tenants },
-          { href: "/users", label: t.nav.users },
-          { href: "/settings", label: t.nav.settings },
+          { href: "/super-admin", label: language === "th" ? "คลินิก" : "Clinics" },
+          { href: "/users", label: language === "th" ? "ผู้ใช้" : "Users" },
+          { href: "/settings", label: language === "th" ? "ตั้งค่า" : "Settings" },
         ]
       default:
+        // Customer navigation
         return [
-          { href: "/analysis", label: t.nav.analysis },
-          { href: "/ar-simulator", label: t.nav.arSimulator },
-          { href: "/ai-chat", label: "💬 AI Advisor" },
-          { href: "/booking", label: t.nav.booking },
+          { href: "/analysis", label: language === "th" ? "วิเคราะห์ผิว" : "Analysis" },
+          { href: "/ar-simulator", label: language === "th" ? "ลองผลลัพธ์" : "Try Results" },
+          { href: "/booking", label: language === "th" ? "จองคิว" : "Booking" },
         ]
     }
   }
@@ -113,12 +115,12 @@ export function Header() {
       <div className="container flex h-14 sm:h-16 items-center justify-between gap-2 px-4">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-shrink" aria-label="กลับสู่หน้าแรก">
-          <div className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-lg bg-primary flex-shrink-0">
-            <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-primary-foreground" aria-hidden="true" />
-          </div>
+          <ClinicIQLogo className="flex-shrink-0" />
           <div className="hidden md:flex flex-col">
-            <span className="text-base font-bold leading-tight">{t.brand}</span>
-            <span className="text-[10px] text-muted-foreground leading-tight hidden lg:inline">Medical-Grade AI</span>
+            <span className="text-base font-bold leading-tight">{BRAND.name}</span>
+            <span className="text-[10px] text-muted-foreground leading-tight hidden lg:inline">
+              {language === "th" ? BRAND.tagline.th : BRAND.tagline.en}
+            </span>
           </div>
         </Link>
 

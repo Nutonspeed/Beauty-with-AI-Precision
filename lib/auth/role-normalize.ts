@@ -5,6 +5,7 @@
 
 export type CanonicalRole =
   | 'public'
+  | 'guest'
   | 'customer_free'
   | 'customer_premium'
   | 'customer_clinical'
@@ -31,7 +32,7 @@ const LEGACY_MAP: Record<string, CanonicalRole> = {
   super_admin: 'super_admin',
   superadmin: 'super_admin',
   public: 'public',
-  guest: 'public',
+  guest: 'guest',
 }
 
 /**
@@ -56,7 +57,7 @@ export function normalizeRole(role: string | null | undefined): CanonicalRole {
  */
 export function isClinicRole(role: string | null | undefined): boolean {
   const r = normalizeRole(role)
-  return r === 'clinic_owner' || r === 'clinic_admin' || r === 'clinic_staff'
+  return r === 'clinic_owner' || r === 'clinic_admin' || r === 'clinic_staff' || r === 'sales_staff'
 }
 
 /**
@@ -86,6 +87,7 @@ export function roleToTier(role: string | null | undefined): AnalysisTier {
     case 'customer_free':
     case 'customer':
     case 'public':
+    case 'guest':
     default:
       return 'free'
   }
@@ -106,6 +108,7 @@ export function roleDisplayName(role: string | null | undefined): string {
     case 'sales_staff': return 'พนักงานขาย'
     case 'super_admin': return 'ซูเปอร์แอดมิน'
     case 'customer': return 'ผู้ใช้'
+    case 'guest': return 'ผู้เยี่ยมชมสาธารณะ'
     default: return 'สาธารณะ'
   }
 }
