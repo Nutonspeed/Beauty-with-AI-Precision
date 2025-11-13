@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: "0 3 * * *"  # nightly 03:00 UTC schema check
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-verify:
+    runs-on: ubuntu-latest
+    env:
+      # Set these in your repo Settings > Secrets and variables > Actions
+      POSTGRES_URL_NON_POOLING: ${{ secrets.SUPABASE_POSTGRES_URL_NON_POOLING }}
+      POSTGRES_URL: ${{ secrets.SUPABASE_POSTGRES_URL }}
+      POSTGRES_PRISMA_URL: ${{ secrets.SUPABASE_POSTGRES_PRISMA_URL }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          run_install: true
+
+      - name: Build + Lint + Typecheck + Schema Assert
+        run: |
+          pnpm -v
+          pnpm build:ci
+
+      - name: Schema Breakdown JSON (artifact)
+        if: always()
+        run: |
+          node scripts/schema-assert.mjs --tables 78 --views 2 || true
+          node scripts/schema-breakdown.mjs > schema-breakdown.txt || true
+
+      - name: Upload schema breakdown
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: schema-breakdown
+          path: schema-breakdown.txt
