@@ -1,0 +1,161 @@
+﻿{
+    "success":  true,
+    "analysis_type":  "multi_mode",
+    "spots":  {
+                  "success":  true,
+                  "analysis_type":  "spots",
+                  "detections":  [
+
+                                 ],
+                  "statistics":  {
+                                     "total_count":  0,
+                                     "average_confidence":  0.0,
+                                     "severity_score":  0.0,
+                                     "severity_level":  "mild"
+                                 },
+                  "image_dimensions":  {
+                                           "width":  200,
+                                           "height":  200
+                                       },
+                  "processing_time_ms":  null
+              },
+    "wrinkles":  {
+                     "success":  true,
+                     "analysis_type":  "wrinkles",
+                     "detections":  [
+                                        {
+                                            "bbox":  [
+                                                         302,
+                                                         747,
+                                                         411,
+                                                         7
+                                                     ],
+                                            "confidence":  0.5484880083420229,
+                                            "length_px":  411.0,
+                                            "depth_score":  0.27424400417101147
+                                        }
+                                    ],
+                     "statistics":  {
+                                        "total_count":  1,
+                                        "average_confidence":  0.548,
+                                        "severity_score":  3.0,
+                                        "severity_level":  "mild"
+                                    },
+                     "image_dimensions":  {
+                                              "width":  200,
+                                              "height":  200
+                                          },
+                     "processing_time_ms":  null
+                 },
+    "texture":  {
+                    "success":  true,
+                    "analysis_type":  "texture",
+                    "metrics":  {
+                                    "standard_deviation":  36.50116940630733,
+                                    "smoothness_score":  26.997661187385333,
+                                    "roughness_score":  0.122943115234375,
+                                    "entropy":  1.2212836742401123,
+                                    "overall_score":  63.43735903607548
+                                },
+                    "smoothness_score":  27.0,
+                    "roughness_score":  0.1,
+                    "image_dimensions":  {
+                                             "width":  200,
+                                             "height":  200
+                                         },
+                    "processing_time_ms":  null
+                },
+    "pores":  {
+                  "success":  true,
+                  "analysis_type":  "pores",
+                  "detections":  [
+
+                                 ],
+                  "statistics":  {
+                                     "total_count":  0,
+                                     "average_confidence":  0.0,
+                                     "severity_score":  0.0,
+                                     "severity_level":  "mild"
+                                 },
+                  "density_map":  null,
+                  "image_dimensions":  {
+                                           "width":  200,
+                                           "height":  200
+                                       },
+                  "processing_time_ms":  null
+              },
+    "uv_spots":  {
+                     "success":  true,
+                     "analysis_type":  "spots",
+                     "detections":  [
+
+                                    ],
+                     "statistics":  {
+                                        "total_count":  0,
+                                        "average_confidence":  0.0,
+                                        "severity_score":  0.0,
+                                        "severity_level":  "mild"
+                                    },
+                     "image_dimensions":  {
+                                              "width":  200,
+                                              "height":  200
+                                          },
+                     "processing_time_ms":  null
+                 },
+    "brown_spots":  {
+                        "success":  true,
+                        "analysis_type":  "spots",
+                        "detections":  [
+
+                                       ],
+                        "statistics":  {
+                                           "total_count":  0,
+                                           "average_confidence":  0.0,
+                                           "severity_score":  0.0,
+                                           "severity_level":  "mild"
+                                       },
+                        "image_dimensions":  {
+                                                 "width":  200,
+                                                 "height":  200
+                                             },
+                        "processing_time_ms":  null
+                    },
+    "red_areas":  {
+                      "success":  true,
+                      "analysis_type":  "spots",
+                      "detections":  [
+
+                                     ],
+                      "statistics":  {
+                                         "total_count":  0,
+                                         "average_confidence":  0.0,
+                                         "severity_score":  0.0,
+                                         "severity_level":  "mild"
+                                     },
+                      "image_dimensions":  {
+                                               "width":  200,
+                                               "height":  200
+                                           },
+                      "processing_time_ms":  null
+                  },
+    "porphyrins":  {
+                       "success":  true,
+                       "analysis_type":  "spots",
+                       "detections":  [
+
+                                      ],
+                       "statistics":  {
+                                          "total_count":  0,
+                                          "average_confidence":  0.0,
+                                          "severity_score":  0.0,
+                                          "severity_level":  "mild"
+                                      },
+                       "image_dimensions":  {
+                                                "width":  200,
+                                                "height":  200
+                                            },
+                       "processing_time_ms":  null
+                   },
+    "overall_score":  95.1,
+    "processing_time_ms":  570.58
+}
