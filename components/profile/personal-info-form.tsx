@@ -18,7 +18,6 @@ interface PersonalInfoFormProps {
 
 export function PersonalInfoForm({ user, profile }: PersonalInfoFormProps) {
   const router = useRouter()
-  const supabase = createBrowserClient()
 
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -37,6 +36,9 @@ export function PersonalInfoForm({ user, profile }: PersonalInfoFormProps) {
     setSuccess(false)
 
     try {
+      // Lazily create Supabase client in browser-only context
+      const supabase = createBrowserClient()
+
       // Validate
       if (!fullName || fullName.length < 2) {
         setError("กรุณากรอกชื่อ-นามสกุล (อย่างน้อย 2 ตัวอักษร)")
@@ -90,7 +92,7 @@ export function PersonalInfoForm({ user, profile }: PersonalInfoFormProps) {
         router.refresh()
       }, 1000)
     } catch (err: any) {
-  setError(err.message || "เกิดข้อผิดพลาดในการอัปเดตข้อมูล")
+      setError(err.message || "เกิดข้อผิดพลาดในการอัปเดตข้อมูล")
       toast.error("เกิดข้อผิดพลาด")
     } finally {
       setIsLoading(false)

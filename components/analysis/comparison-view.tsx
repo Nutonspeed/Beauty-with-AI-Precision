@@ -10,7 +10,7 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { TrendingUp, TrendingDown, Minus, ArrowRight, ImageIcon } from "lucide-react"
+import { TrendingUp, TrendingDown, Minus, ArrowRight, Image } from "lucide-react"
 import type { HybridSkinAnalysis } from "@/lib/types/skin-analysis"
 
 export interface ComparisonItem {
@@ -71,7 +71,7 @@ export function ComparisonView({ items, className = "" }: ComparisonViewProps) {
                     />
                   ) : (
                     <div className="w-full aspect-square bg-muted rounded-lg flex items-center justify-center">
-                      <ImageIcon className="w-12 h-12 text-muted-foreground" />
+                      <Image className="w-12 h-12 text-muted-foreground" />
                     </div>
                   )}
                   <div className="text-xs text-center text-muted-foreground">

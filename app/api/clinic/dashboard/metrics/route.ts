@@ -6,26 +6,24 @@ export async function GET(request: NextRequest) {
   try {
     const supabase = await createServerClient()
     const {
-      data: { session },
-    } = await supabase.auth.getSession()
+      data: { user },
+    } = await supabase.auth.getUser()
 
-    if (!session?.user?.id) {
+    if (!user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    // Use /api/user-profile to avoid RLS recursion
-    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/user-profile?userId=${session.user.id}`, {
-      headers: {
-        Authorization: `Bearer ${session.access_token}`,
-      },
-    })
+    // Load user's clinic and role directly via server client
+    const { data: userData, error: userErr } = await supabase
+      .from('users')
+      .select('clinic_id, role')
+      .eq('id', user.id)
+      .single()
 
-    if (!response.ok) {
-      console.error('[clinic/metrics] Failed to fetch user profile:', response.status)
+    if (userErr) {
+      console.error('[clinic/metrics] Failed to fetch user profile:', userErr)
       return NextResponse.json({ error: "Failed to fetch user profile" }, { status: 500 })
     }
-
-    const { data: userData } = await response.json()
 
     if (!userData || (userData.role !== "clinic_owner" && userData.role !== "clinic_staff")) {
       return NextResponse.json({ error: "Forbidden - Clinic access required" }, { status: 403 })
@@ -67,9 +65,9 @@ export async function GET(request: NextRequest) {
     // Fetch today's bookings
     const { data: todayBookings, error: todayError } = await supabaseAdmin
       .from('bookings')
-      .select('payment_amount, status, patient_id') // Note: patient_id will be renamed to customer_id in migration
-      .gte('appointment_date', todayStart.toISOString().split('T')[0])
-      .lt('appointment_date', new Date(todayStart.getTime() + 86400000).toISOString().split('T')[0])
+      .select('price, status, customer_id')
+      .gte('booking_date', todayStart.toISOString().split('T')[0])
+      .lt('booking_date', new Date(todayStart.getTime() + 86400000).toISOString().split('T')[0])
 
     if (todayError) {
       console.error('[clinic/metrics] Error fetching today bookings:', todayError)
@@ -78,9 +76,9 @@ export async function GET(request: NextRequest) {
     // Fetch yesterday's bookings
     const { data: yesterdayBookings, error: yesterdayError } = await supabaseAdmin
       .from('bookings')
-      .select('payment_amount, status, patient_id') // Note: patient_id will be renamed to customer_id in migration
-      .gte('appointment_date', yesterdayStart.toISOString().split('T')[0])
-      .lt('appointment_date', yesterdayEnd.toISOString().split('T')[0])
+      .select('price, status, customer_id')
+      .gte('booking_date', yesterdayStart.toISOString().split('T')[0])
+      .lt('booking_date', yesterdayEnd.toISOString().split('T')[0])
 
     if (yesterdayError) {
       console.error('[clinic/metrics] Error fetching yesterday bookings:', yesterdayError)
@@ -88,14 +86,14 @@ export async function GET(request: NextRequest) {
 
     // Calculate today's metrics
     const todayBookingsCount = todayBookings?.length || 0
-    const todayRevenue = todayBookings?.reduce((sum, b) => sum + (Number(b.payment_amount) || 0), 0) || 0
-    const todayUniqueCustomers = new Set(todayBookings?.map(b => b.patient_id) || []).size // Note: patient_id will be customer_id after migration
+    const todayRevenue = todayBookings?.reduce((sum, b: any) => sum + (Number(b.price) || 0), 0) || 0
+    const todayUniqueCustomers = new Set(todayBookings?.map(b => b.customer_id) || []).size
     const todayCompletedBookings = todayBookings?.filter(b => b.status === 'completed').length || 0
 
     // Calculate yesterday's metrics
     const yesterdayBookingsCount = yesterdayBookings?.length || 0
-    const yesterdayRevenue = yesterdayBookings?.reduce((sum, b) => sum + (Number(b.payment_amount) || 0), 0) || 0
-    const yesterdayUniqueCustomers = new Set(yesterdayBookings?.map(b => b.patient_id) || []).size // Note: patient_id will be customer_id after migration
+    const yesterdayRevenue = yesterdayBookings?.reduce((sum, b: any) => sum + (Number(b.price) || 0), 0) || 0
+    const yesterdayUniqueCustomers = new Set(yesterdayBookings?.map(b => b.customer_id) || []).size
     const yesterdayCompletedBookings = yesterdayBookings?.filter(b => b.status === 'completed').length || 0
 
     // Helper function to calculate percentage change

@@ -25,8 +25,8 @@ export async function register() {
     dsn,
     environment: process.env.NODE_ENV,
     // Keep sample rates conservative until production tuning
-    tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.2 : 1.0,
-    replaysSessionSampleRate: 0.0, // disabled by default
+    tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.2 : 1,
+    replaysSessionSampleRate: 0, // disabled by default
     replaysOnErrorSampleRate: 0.1,
   }
 

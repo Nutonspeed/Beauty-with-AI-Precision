@@ -11,9 +11,14 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useToast } from '@/components/ui/use-toast'
 import type { Tenant } from '@/lib/types/tenant'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Activity, Building2, Send, TrendingUp, Shield } from 'lucide-react'
+import { SystemHealthMonitor } from '@/components/admin/system-health-monitor'
+import RevenueAnalytics from '@/components/admin/revenue-analytics'
+import EnhancedClinicManagement from '@/components/admin/enhanced-clinic-management'
+import SecurityMonitoring from '@/components/admin/security-monitoring'
 
 // Force dynamic rendering for this page
 export const dynamic = 'force-dynamic'
@@ -253,7 +258,7 @@ function SuperAdminDashboardContent() {
           })
 
           if (inviteResponse.ok) {
-            const inviteData = await inviteResponse.json()
+            await inviteResponse.json()
             toast({
               title: '✅ Clinic Created Successfully',
               description: `Invitation email sent to ${formData.email}. Check the invitation link in the table below.`,
@@ -350,235 +355,55 @@ function SuperAdminDashboardContent() {
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2">Super Admin Dashboard</h1>
-          <p className="text-muted-foreground">Manage all clinic tenants from a single interface</p>
+          <p className="text-muted-foreground">Manage all clinic tenants and monitor system health</p>
         </div>
 
-        {/* Stats Overview */}
-        <div className="grid gap-4 md:grid-cols-4 mb-8">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Total Tenants</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{tenants.length}</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Active</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-green-500">
-                {tenants.filter((t) => t.isActive && t.subscription.status === 'active').length}
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Trial</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-blue-500">
-                {tenants.filter((t) => t.isTrial).length}
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Total Users</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {tenants.reduce((sum, t) => sum + t.usage.currentUsers, 0)}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        <Tabs defaultValue="overview" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-5 lg:w-auto lg:inline-grid">
+            <TabsTrigger value="overview" className="gap-2">
+              <Building2 className="w-4 h-4" />
+              Clinic Management
+            </TabsTrigger>
+            <TabsTrigger value="health" className="gap-2">
+              <Activity className="w-4 h-4" />
+              System Health
+            </TabsTrigger>
+            <TabsTrigger value="revenue" className="gap-2">
+              <TrendingUp className="w-4 h-4" />
+              Revenue & Billing
+            </TabsTrigger>
+            <TabsTrigger value="security" className="gap-2">
+              <Shield className="w-4 h-4" />
+              Security
+            </TabsTrigger>
+            <TabsTrigger value="invitations" className="gap-2">
+              <Send className="w-4 h-4" />
+              Invitations
+            </TabsTrigger>
+          </TabsList>
 
-        {/* Create Tenant Button */}
-        <div className="mb-6">
-          <Button onClick={() => setShowCreateForm(!showCreateForm)} size="lg">
-            {showCreateForm ? 'Cancel' : '+ Create New Tenant'}
-          </Button>
-        </div>
+          {/* Clinic Management Tab */}
+          <TabsContent value="overview" className="space-y-6">
+            <EnhancedClinicManagement />
+          </TabsContent>
 
-        {/* Create Tenant Form */}
-        {showCreateForm && (
-          <Card className="mb-8">
-            <CardHeader>
-              <CardTitle>Create New Tenant</CardTitle>
-              <CardDescription>Set up a new clinic in the platform</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleCreateTenant} className="space-y-4">
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div>
-                    <Label htmlFor="clinicName">Clinic Name *</Label>
-                    <Input
-                      id="clinicName"
-                      value={formData.clinicName}
-                      onChange={(e) => setFormData({ ...formData, clinicName: e.target.value })}
-                      required
-                      placeholder="Beauty Clinic Bangkok"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="slug">URL Slug *</Label>
-                    <Input
-                      id="slug"
-                      value={formData.slug}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-'),
-                        })
-                      }
-                      required
-                      placeholder="beauty-clinic-bkk"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="email">Email *</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      required
-                      placeholder="contact@clinic.com"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="phone">Phone *</Label>
-                    <Input
-                      id="phone"
-                      type="tel"
-                      value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      required
-                      placeholder="+66-2-123-4567"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="plan">Plan *</Label>
-                    <Select
-                      value={formData.plan}
-                      onValueChange={(value: 'starter' | 'professional' | 'enterprise') =>
-                        setFormData({ ...formData, plan: value })
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="starter">Starter - ฿2,900/mo</SelectItem>
-                        <SelectItem value="professional">Professional - ฿9,900/mo</SelectItem>
-                        <SelectItem value="enterprise">Enterprise - ฿29,900/mo</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="primaryColor">Primary Color</Label>
-                    <Input
-                      id="primaryColor"
-                      type="color"
-                      value={formData.primaryColor}
-                      onChange={(e) => setFormData({ ...formData, primaryColor: e.target.value })}
-                    />
-                  </div>
-                </div>
-                <Button type="submit" size="lg">
-                  Create Tenant
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
-        )}
+          {/* System Health Tab */}
+          <TabsContent value="health">
+            <SystemHealthMonitor />
+          </TabsContent>
 
-        {/* Tenants List */}
-        <div className="space-y-4">
-          <h2 className="text-2xl font-bold">All Tenants</h2>
-          {tenants.map((tenant) => (
-            <Card key={tenant.id}>
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div>
-                    <CardTitle className="flex items-center gap-2">
-                      {tenant.settings.clinicName}
-                      {getStatusBadge(tenant.subscription.status)}
-                      {getPlanBadge(tenant.subscription.plan)}
-                      {tenant.isTrial && <Badge variant="outline">TRIAL</Badge>}
-                    </CardTitle>
-                    <CardDescription>
-                      {tenant.slug} • {tenant.settings.email}
-                    </CardDescription>
-                  </div>
-                  <div
-                    className="w-8 h-8 rounded-full"
-                    style={{ backgroundColor: tenant.branding.primaryColor }}
-                  />
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="grid gap-4 md:grid-cols-4">
-                  <div>
-                    <div className="text-sm text-muted-foreground">Users</div>
-                    <div className="text-lg font-semibold">
-                      {tenant.usage.currentUsers}
-                      {tenant.features.maxUsers !== -1 && (
-                        <span className="text-sm text-muted-foreground">
-                          {' '}
-                          / {tenant.features.maxUsers}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-muted-foreground">Customers</div>
-                    <div className="text-lg font-semibold">
-                      {tenant.usage.currentCustomers}
-                      {tenant.features.maxCustomersPerMonth !== -1 && (
-                        <span className="text-sm text-muted-foreground">
-                          {' '}
-                          / {tenant.features.maxCustomersPerMonth}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-muted-foreground">Storage</div>
-                    <div className="text-lg font-semibold">
-                      {tenant.usage.storageUsedGB.toFixed(1)} GB
-                      <span className="text-sm text-muted-foreground">
-                        {' '}
-                        / {tenant.features.maxStorageGB} GB
-                      </span>
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-muted-foreground">API Calls</div>
-                    <div className="text-lg font-semibold">
-                      {tenant.usage.apiCallsThisMonth.toLocaleString()}
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-4 flex gap-2">
-                  <Button variant="outline" size="sm">
-                    View Details
-                  </Button>
-                  <Button variant="outline" size="sm">
-                    Edit Settings
-                  </Button>
-                  <Button variant="outline" size="sm">
-                    Manage Users
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+          {/* Revenue & Billing Tab */}
+          <TabsContent value="revenue">
+            <RevenueAnalytics />
+          </TabsContent>
 
-        {/* Invitation Management Section */}
+          {/* Security Monitoring Tab */}
+          <TabsContent value="security">
+            <SecurityMonitoring />
+          </TabsContent>
+
+          {/* Invitations Tab */}
+          <TabsContent value="invitations" className="space-y-6">{/* Invitation Management Section */}
         <div className="mb-8">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold">Invitation Management</h2>
@@ -756,6 +581,8 @@ function SuperAdminDashboardContent() {
             </div>
           )}
         </div>
+          </TabsContent>
+        </Tabs>
       </main>
       <Footer />
     </div>

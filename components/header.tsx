@@ -110,7 +110,7 @@ export function Header() {
   return (
     <header
       suppressHydrationWarning
-      className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+      className="sticky top-0 z-50 w-full border-b border-border bg-background/98 supports-[backdrop-filter]:bg-background/90 backdrop-blur-md mix-blend-normal"
     >
       <div className="container flex h-14 sm:h-16 items-center justify-between gap-2 px-4">
         {/* Logo */}

@@ -5,15 +5,15 @@ export async function GET(request: NextRequest) {
   try {
     const supabase = await createServerClient()
     const {
-      data: { session },
-    } = await supabase.auth.getSession()
+      data: { user },
+    } = await supabase.auth.getUser()
 
-    if (!session?.user?.id) {
+    if (!user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
     // Get user's clinic_id
-    const { data: userData } = await supabase.from("users").select("clinic_id, role").eq("id", session.user.id).single()
+    const { data: userData } = await supabase.from("users").select("clinic_id, role").eq("id", user.id).single()
 
     if (!userData || userData.role !== "clinic_owner") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     // Fetch customers grouped by lead status
     const { data: customers, error } = await supabase
       .from("customers")
-      .select("id, full_name, email, phone, lead_status, lead_score, created_at, assigned_to")
+      .select("id, full_name, email, phone, lead_status, lead_score, created_at")
       .eq("clinic_id", clinicId)
       .order("lead_score", { ascending: false })
       .limit(50)

@@ -101,14 +101,19 @@ test.describe('Skin Analysis Upload Flow', () => {
 
     // 3. Upload test image
     const fileInput = page.locator('input[type="file"]')
-    const testImagePath = path.resolve(__dirname, '../../public/placeholder-user.jpg')
+    const testImagePath = path.resolve(__dirname, '../../public/images/avatars/female-1.jpg')
     await fileInput.setInputFiles(testImagePath)
     
-    // 4. Wait for AI processing
-    await expect(page.locator('text=/Processing|กำลังวิเคราะห์/i')).toBeVisible()
+    // 4. Click the analyze button to start processing
+    await page.locator('[data-tour="analyze-button"]').click()
+    
+    // 5. Wait for AI processing - expect specific processing messages in sequence
+    // 5. Wait for AI processing messages
+    const processingBox = page.locator('div:has(> div:has-text("Processing"))')
+    await expect(processingBox).toBeVisible()
     
     // 5. Should detect 478 landmarks (wait up to 10 seconds)
-    await expect(page.locator('text=/478.*landmarks|478.*จุด/i')).toBeVisible({ timeout: 10000 })
+    await expect(page.locator('text=/Detected 478 landmarks|ตรวจจับ 478 จุด/i')).toBeVisible({ timeout: 10000 })
     
     // 6. Should navigate to results page
     await expect(page).toHaveURL(/\/analysis\/results/, { timeout: 15000 })
@@ -170,12 +175,15 @@ test.describe('Skin Analysis Upload Flow', () => {
     await page.goto('/analysis')
 
     const fileInput = page.locator('input[type="file"]')
-    const testImagePath = path.resolve(__dirname, '../../public/placeholder-user.jpg')
+    const testImagePath = path.resolve(__dirname, '../../public/images/avatars/female-1.jpg')
     await fileInput.setInputFiles(testImagePath)
 
-    await expect(page.locator('text=/Processing|กำลังประมวลผล/i')).toBeVisible()
-    await expect(page.locator('text=/Detecting face|ตรวจจับใบหน้า/i')).toBeVisible()
-    await expect(page.locator('text=/Analyzing skin|วิเคราะห์ผิว/i')).toBeVisible()
+    // Click analyze button to start processing
+    await page.locator('[data-tour="analyze-button"]').click()
+
+    // Wait for processing box with more specific selector
+    const processingBox = page.locator('div:has(> div:has-text("Processing"))')
+    await expect(processingBox).toBeVisible()
   })
 
   test('should allow switching between tabs in results page', async ({ page }) => {

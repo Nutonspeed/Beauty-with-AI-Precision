@@ -204,45 +204,50 @@ export default function HomePage() {
             /* Prefer the real david.li WebGL fluid; keep 2D as optional fallback if needed */
             <FluidWebGL dampen={fxDampen} className={`${fxDampen ? 'opacity-80' : 'opacity-95'}`} variant="simple" />
           )}
-          <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-background/60 via-background/25 to-transparent" />
+          {/* Single scrim for readability (light/dark adaptive) */}
+          <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-background/70 via-background/20 to-transparent" />
           <div className="container relative">
             <div className="absolute right-4 top-4 z-10">
               <Button size="sm" variant="outline" aria-pressed={fxOn} onClick={onToggleFx}>
                 {fxOn ? "ลดเอฟเฟกต์" : "เปิดเอฟเฟกต์"}
               </Button>
             </div>
-            <div className="mx-auto max-w-4xl text-center">
-            <Badge className="mb-6 bg-accent/10 text-accent hover:bg-accent/20" variant="secondary">
-              <Sparkles className="mr-1 h-3 w-3" />
-              Medical-Grade AI Technology
-            </Badge>
+            <div className="relative mx-auto max-w-[48rem] text-center">
+            {/* Glass card for modern, readable container */}
+            <div aria-hidden className="absolute inset-0 -z-10 rounded-2xl bg-white/55 md:bg-white/60 dark:bg-zinc-950/30 md:dark:bg-zinc-950/35 border border-black/5 dark:border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.08)] backdrop-blur-lg" />
 
-            <h1 className="mb-6 text-balance text-4xl font-bold tracking-tight md:text-6xl font-display">
+            <div className="px-6 py-8 md:px-10 md:py-10 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+              <Badge className="mb-6 bg-accent/15 text-accent hover:bg-accent/25 backdrop-blur-sm" variant="secondary">
+                <Sparkles className="mr-1 h-3 w-3 animate-pulse" />
+                Medical-Grade AI Technology
+              </Badge>
+            </div>
+
+            <h1 className="mb-6 text-balance text-5xl font-extrabold tracking-tight md:text-6xl font-display animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-150">
               {t.home.heroTitle}
               <br />
               <span className="text-primary">{t.home.heroSubtitle}</span>
             </h1>
 
-            <p className="mb-8 text-balance text-lg text-muted-foreground leading-relaxed md:text-xl">
+            <p className="mb-8 text-balance text-lg leading-relaxed md:text-xl animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300 text-foreground/85">
               {t.home.heroDescription}
             </p>
 
-            <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <div className="flex flex-col items-center justify-center gap-4 sm:flex-row animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-500">
               <div className="group relative w-full sm:w-auto">
-                <Button size="lg" asChild className="cta-primary w-full sm:w-auto">
+                <Button size="lg" asChild className="w-full sm:w-auto">
                   <Link href="/analysis" onClick={onHeroCta}>
                     {t.home.startFreeAnalysis}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
-                <div className="pointer-events-none absolute left-3 right-3 -bottom-1 h-1 rounded-full bg-gradient-to-r from-primary via-accent to-primary opacity-60 blur-[2px] transition-opacity duration-300 group-hover:opacity-90" />
               </div>
-              <Button size="lg" variant="outline" asChild className="w-full sm:w-auto border-foreground/25 text-foreground hover:bg-foreground/5 bg-transparent">
+              <Button size="lg" variant="outline" asChild className="w-full sm:w-auto border-foreground/25 text-foreground/90 hover:bg-foreground/5 bg-background/70 backdrop-blur-sm">
                 <Link href="/demo/skin-analysis" onClick={onDemoCta}>{t.home.watchDemo}</Link>
               </Button>
             </div>
 
-            <p className="mt-6 text-sm text-muted-foreground">
+            <p className="mt-6 text-sm animate-in fade-in duration-1000 delay-700 text-foreground/70">
               {t.home.noCreditCard} • {t.home.freeTierAvailable}
             </p>
             </div>

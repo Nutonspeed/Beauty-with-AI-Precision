@@ -3,9 +3,11 @@
  * Uses facial features and skin conditions to estimate biological age
  */
 
-import * as tf from "@tensorflow/tfjs"
+// Use dynamic imports to reduce initial bundle size
+let tf: any = null
 import type { FaceLandmark } from "./face-detection"
 import type { DetectionResult } from "./models/skin-concern-detector"
+import type * as tfTypes from '@tensorflow/tfjs'
 
 export interface AgeEstimationResult {
   estimatedAge: number
@@ -26,13 +28,16 @@ export interface AgeEstimationResult {
 }
 
 export class AgeEstimator {
-  private model: tf.GraphModel | null = null
+  private model: tfTypes.GraphModel | null = null
   private isInitialized = false
 
   async initialize(): Promise<void> {
     if (this.isInitialized) return
 
     try {
+      // Dynamic import for TensorFlow.js
+      if (!tf) tf = await import("@tensorflow/tfjs")
+      
       await tf.ready()
       // Try to load age estimation model
       this.model = await tf.loadGraphModel("/models/age-estimator/model.json")

@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { TrendingUp, TrendingDown, Target, Calendar, Award, LineChart, ImageIcon, Lightbulb } from "lucide-react"
+import { TrendingUp, TrendingDown, Target, Calendar, Award, LineChart, Image, Lightbulb } from "lucide-react"
 import type { HybridSkinAnalysis } from "@/lib/types/skin-analysis"
 import { ProgressCalculator } from "@/lib/utils/progress-calculator"
 import { ComparisonView } from "./comparison-view"
@@ -46,7 +46,7 @@ export function ProgressDashboard({ analyses, goals = [], className = "" }: Prog
   if (analyses.length === 0) {
     return (
       <Card className={`p-8 text-center ${className}`}>
-        <ImageIcon className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
+        <Image className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
         <h3 className="text-xl font-semibold mb-2">No Analysis Data</h3>
         <p className="text-muted-foreground mb-4">
           Start tracking your skin health progress by uploading your first analysis.

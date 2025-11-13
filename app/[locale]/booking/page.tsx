@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Calendar } from "@/components/ui/calendar"
 import { Badge } from "@/components/ui/badge"
-import { CalendarIcon, Clock, CheckCircle2, Loader2 } from "lucide-react"
+import { Calendar as CalendarIcon, Clock, CheckCircle2, Loader2 } from "lucide-react"
 import { format } from "date-fns"
 
 const treatments = [

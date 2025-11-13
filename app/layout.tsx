@@ -33,6 +33,7 @@ const _kanit = Kanit({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'),
   title: "ClinicIQ — Intelligent Aesthetic Platform",
   description: "ClinicIQ brings medical-grade AI to aesthetics: skin analysis, booking, treatment recommendations, and clinic operations.",
   generator: "Next.js",

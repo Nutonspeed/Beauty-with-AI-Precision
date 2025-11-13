@@ -15,6 +15,7 @@ import { Eye, EyeOff, Loader2, LogIn } from "lucide-react"
 import Link from "next/link"
 
 export default function LoginPage() {
+  const showDemo = typeof process !== 'undefined' && process.env.NEXT_PUBLIC_SHOW_DEMO_LOGINS === 'true'
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
@@ -205,66 +206,68 @@ export default function LoginPage() {
               กลับหน้าหลัก
             </Button>
 
-            {/* Demo accounts for testing */}
-            <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-800">
-              <div className="flex items-start gap-2">
-                <div className="text-2xl">🧪</div>
-                <div className="flex-1">
-                  <p className="text-blue-900 dark:text-blue-100 text-sm font-semibold mb-2">
-                    Demo Accounts (Password: password123)
-                  </p>
-                  <div className="text-blue-800 dark:text-blue-200 space-y-1.5 text-xs">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setEmail('admin@ai367bar.com')
-                        setPassword('password123')
-                      }}
-                      className="w-full text-left font-mono bg-white dark:bg-blue-900 p-2 rounded hover:bg-blue-100 dark:hover:bg-blue-800 transition-colors"
-                    >
-                      <div className="font-semibold text-orange-700 dark:text-orange-300">🔧 Super Admin</div>
-                      <div>admin@ai367bar.com</div>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setEmail('clinic-owner@example.com')
-                        setPassword('password123')
-                      }}
-                      className="w-full text-left font-mono bg-white dark:bg-blue-900 p-2 rounded hover:bg-blue-100 dark:hover:bg-blue-800 transition-colors"
-                    >
-                      <div className="font-semibold text-blue-700 dark:text-blue-300">🏥 Clinic Owner</div>
-                      <div>clinic-owner@example.com</div>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setEmail('sales@example.com')
-                        setPassword('password123')
-                      }}
-                      className="w-full text-left font-mono bg-white dark:bg-blue-900 p-2 rounded hover:bg-blue-100 dark:hover:bg-blue-800 transition-colors"
-                    >
-                      <div className="font-semibold text-green-700 dark:text-green-300">💼 Sales Staff</div>
-                      <div>sales@example.com</div>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setEmail('customer@example.com')
-                        setPassword('password123')
-                      }}
-                      className="w-full text-left font-mono bg-white dark:bg-blue-900 p-2 rounded hover:bg-blue-100 dark:hover:bg-blue-800 transition-colors"
-                    >
-                      <div className="font-semibold text-purple-700 dark:text-purple-300">👤 Customer</div>
-                      <div>customer@example.com</div>
-                    </button>
+            {/* Demo accounts for testing (hidden by default; enable with NEXT_PUBLIC_SHOW_DEMO_LOGINS=true) */}
+            {showDemo && (
+              <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-800">
+                <div className="flex items-start gap-2">
+                  <div className="text-2xl">🧪</div>
+                  <div className="flex-1">
+                    <p className="text-blue-900 dark:text-blue-100 text-sm font-semibold mb-2">
+                      Demo Accounts (Password: password123)
+                    </p>
+                    <div className="text-blue-800 dark:text-blue-200 space-y-1.5 text-xs">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEmail('admin@ai367bar.com')
+                          setPassword('password123')
+                        }}
+                        className="w-full text-left font-mono bg-white dark:bg-blue-900 p-2 rounded hover:bg-blue-100 dark:hover:bg-blue-800 transition-colors"
+                      >
+                        <div className="font-semibold text-orange-700 dark:text-orange-300">🔧 Super Admin</div>
+                        <div>admin@ai367bar.com</div>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEmail('clinic-owner@example.com')
+                          setPassword('password123')
+                        }}
+                        className="w-full text-left font-mono bg-white dark:bg-blue-900 p-2 rounded hover:bg-blue-100 dark:hover:bg-blue-800 transition-colors"
+                      >
+                        <div className="font-semibold text-blue-700 dark:text-blue-300">🏥 Clinic Owner</div>
+                        <div>clinic-owner@example.com</div>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEmail('sales@example.com')
+                          setPassword('password123')
+                        }}
+                        className="w-full text-left font-mono bg-white dark:bg-blue-900 p-2 rounded hover:bg-blue-100 dark:hover:bg-blue-800 transition-colors"
+                      >
+                        <div className="font-semibold text-green-700 dark:text-green-300">💼 Sales Staff</div>
+                        <div>sales@example.com</div>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEmail('customer@example.com')
+                          setPassword('password123')
+                        }}
+                        className="w-full text-left font-mono bg-white dark:bg-blue-900 p-2 rounded hover:bg-blue-100 dark:hover:bg-blue-800 transition-colors"
+                      >
+                        <div className="font-semibold text-purple-700 dark:text-purple-300">👤 Customer</div>
+                        <div>customer@example.com</div>
+                      </button>
+                    </div>
+                    <p className="mt-2 text-xs text-blue-700 dark:text-blue-300 italic">
+                      💡 คลิกเพื่อกรอกอัตโนมัติ (Demo presets only; no real accounts)
+                    </p>
                   </div>
-                  <p className="mt-2 text-xs text-blue-700 dark:text-blue-300 italic">
-                    💡 คลิกเพื่อกรอกอัตโนมัติ
-                  </p>
                 </div>
               </div>
-            </div>
+            )}
           </CardFooter>
         </form>
       </Card>

@@ -4,7 +4,9 @@
  * Phase 11+: Enhanced with Confidence Calibration
  */
 
-import * as tf from '@tensorflow/tfjs'
+// Use dynamic imports to reduce initial bundle size
+let tf: any = null
+import type * as tfTypes from '@tensorflow/tfjs'
 import { getConfidenceCalibrator } from './confidence-calibrator'
 
 export interface DetectionResult {
@@ -31,7 +33,7 @@ export interface ModelConfig {
  * Skin Concern Detector using TensorFlow.js
  */
 export class SkinConcernDetector {
-  private readonly models: Map<string, tf.GraphModel> = new Map()
+  private readonly models: Map<string, tfTypes.GraphModel> = new Map()
   private readonly modelConfigs: Map<string, ModelConfig> = new Map()
   private isInitialized = false
   private readonly calibrator = getConfidenceCalibrator()
@@ -83,6 +85,9 @@ export class SkinConcernDetector {
     console.log('🚀 Initializing Skin Concern Detection Models...')
 
     try {
+      // Dynamic import for TensorFlow.js
+      if (!tf) tf = await import('@tensorflow/tfjs')
+      
       // Set TensorFlow.js backend (WebGL for better performance)
       await tf.ready()
       await tf.setBackend('webgl')
@@ -323,7 +328,7 @@ export class SkinConcernDetector {
    * Run ML model detection
    */
   private async runModelDetection(
-    model: tf.GraphModel,
+    model: tfTypes.GraphModel,
     config: ModelConfig,
     imageData: ImageData,
     faceRegion?: { x: number; y: number; width: number; height: number }
@@ -333,7 +338,7 @@ export class SkinConcernDetector {
 
     try {
       // Run inference
-      const predictions = model.predict(tensor) as tf.Tensor
+      const predictions = model.predict(tensor) as tfTypes.Tensor
 
       // Process predictions
       const results = this.postprocessPredictions(
@@ -361,14 +366,14 @@ export class SkinConcernDetector {
     imageData: ImageData,
     targetSize: { width: number; height: number },
     faceRegion?: { x: number; y: number; width: number; height: number }
-  ): tf.Tensor3D {
+  ): tfTypes.Tensor3D {
     return tf.tidy(() => {
       // Convert ImageData to tensor
       let tensor = tf.browser.fromPixels(imageData)
 
       // Crop to face region if provided
       if (faceRegion) {
-        const expanded = tensor.expandDims(0) as tf.Tensor4D
+        const expanded = tensor.expandDims(0) as tfTypes.Tensor4D
         tensor = tf.image.cropAndResize(
           expanded,
           [[
@@ -379,7 +384,7 @@ export class SkinConcernDetector {
           ]],
           [0],
           [targetSize.height, targetSize.width]
-        ).squeeze([0]) as tf.Tensor3D
+        ).squeeze([0]) as tfTypes.Tensor3D
       } else {
         // Resize to target size
         tensor = tf.image.resizeBilinear(tensor, [targetSize.height, targetSize.width])
@@ -388,7 +393,7 @@ export class SkinConcernDetector {
       // Normalize to [0, 1]
       tensor = tensor.div(255.0)
 
-      return tensor as tf.Tensor3D
+      return tensor as tfTypes.Tensor3D
     })
   }
 
@@ -396,7 +401,7 @@ export class SkinConcernDetector {
    * Process model predictions into detection results
    */
   private postprocessPredictions(
-    predictions: tf.Tensor,
+    predictions: tfTypes.Tensor,
     config: ModelConfig,
     imageWidth: number,
     imageHeight: number,
@@ -411,7 +416,8 @@ export class SkinConcernDetector {
     // Simplified for demonstration - actual format depends on model architecture
 
     // For now, create sample detections based on prediction confidence
-    const avgConfidence = Array.from(data).reduce((a, b) => a + b, 0) / data.length
+    const dataArray = Array.from(data as Iterable<number>) as number[]
+    const avgConfidence = dataArray.reduce((a, b) => a + b, 0) / dataArray.length
 
     if (avgConfidence > config.threshold) {
       const offsetX = faceRegion?.x || 0
@@ -463,7 +469,7 @@ export class SkinConcernDetector {
    * Generate heatmap data from model predictions
    */
   private generateHeatmapFromPredictions(
-    predictions: tf.Tensor,
+    predictions: tfTypes.Tensor,
     config: ModelConfig
   ): number[][] {
     const data = predictions.dataSync()

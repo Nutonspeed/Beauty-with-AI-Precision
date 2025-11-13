@@ -3,6 +3,8 @@ import { withSentryConfig } from '@sentry/nextjs';
 
 const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
 
+const FAST_BUILD = process.env.FAST_BUILD === '1' || process.env.FAST_BUILD === 'true'
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // TypeScript - Enable type checking in production
@@ -49,6 +51,18 @@ const nextConfig = {
   // Performance optimizations
   compress: true,
   poweredByHeader: false,
+  
+  // Tree shaking and modular imports (Production only)
+  ...(process.env.NODE_ENV === 'production' && !FAST_BUILD && {
+    modularizeImports: {
+      '@radix-ui/react-icons': {
+        transform: '@radix-ui/react-icons/dist/{{member}}',
+      },
+      'lucide-react': {
+        transform: 'lucide-react/dist/esm/icons/{{kebabCase member}}',
+      },
+    },
+  }),
   
   // Development performance boost
   ...(process.env.NODE_ENV === 'development' && {
@@ -103,6 +117,8 @@ const nextConfig = {
   }),
 
   // Turbopack configuration
+  // Note: Turbopack has known issues with lucide-react module resolution in Next.js 16.0.1
+  // Use Webpack build for now until Next.js 16.1+ fixes this issue
   turbopack: {
     resolveAlias: {
       '@': './.',
@@ -123,8 +139,8 @@ const nextConfig = {
       }
     }
 
-    // Optimize bundle size in production
-    if (!dev && !isServer) {
+    // Optimize bundle size in production (skip for FAST_BUILD)
+    if (!dev && !isServer && !FAST_BUILD) {
       config.optimization = {
         ...config.optimization,
         splitChunks: {
@@ -154,14 +170,27 @@ const nextConfig = {
 
   // Experimental features
   experimental: {
-    // Reduce memory usage during build
+    // Disable workerThreads to avoid DataCloneError in config serialization
     workerThreads: false,
-    cpus: 1,
-    ...(process.env.NODE_ENV === 'production' && {
-      optimizePackageImports: ['@radix-ui/react-icons', 'lucide-react'],
+    ...(FAST_BUILD ? {} : { cpus: 1 }),
+    ...(process.env.NODE_ENV === 'production' && !FAST_BUILD && {
+      optimizePackageImports: [
+        '@radix-ui/react-icons', 
+        'lucide-react',
+        '@radix-ui/react-dialog',
+        '@radix-ui/react-dropdown-menu',
+        '@radix-ui/react-select',
+        '@radix-ui/react-tabs',
+        '@radix-ui/react-toast',
+      ],
       optimizeCss: true,
     }),
   },
+
+  // Output configuration for smaller builds
+  // Use 'standalone' only on Vercel to avoid Windows symlink errors locally (EPERM)
+  output:
+    process.env.NODE_ENV === 'production' && process.env.VERCEL ? 'standalone' : undefined,
 }
 
 export default withSentryConfig(withNextIntl(nextConfig), {

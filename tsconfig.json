@@ -17,6 +17,7 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "incremental": true,
+    "tsBuildInfoFile": ".next/cache/tsconfig.tsbuildinfo",
     "downlevelIteration": true,
     "forceConsistentCasingInFileNames": true,
     "plugins": [
@@ -37,11 +38,15 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",
     "scripts/**/*",
-    "scanning-project/**/*"
+    "scanning-project/**/*",
+    ".next",
+    "out",
+    "dist"
   ]
 }

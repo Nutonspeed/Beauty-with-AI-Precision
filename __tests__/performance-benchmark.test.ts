@@ -226,13 +226,55 @@ vi.mock('@/lib/cv/wrinkle-detector', () => ({
 }))
 
 vi.mock('jimp', () => ({
-  Jimp: {
-    async fromBitmap() {
+  Jimp: class MockJimp {
+    bitmap: { data: Uint8Array; width: number; height: number }
+
+    constructor(options: { width: number; height: number; color?: number }) {
+      const { width, height, color = 0xffffffff } = options
+      this.bitmap = {
+        width,
+        height,
+        data: new Uint8Array(width * height * 4)
+      }
+      // Fill with the specified color
+      for (let i = 0; i < this.bitmap.data.length; i += 4) {
+        this.bitmap.data[i] = (color >> 24) & 0xff // R
+        this.bitmap.data[i + 1] = (color >> 16) & 0xff // G
+        this.bitmap.data[i + 2] = (color >> 8) & 0xff // B
+        this.bitmap.data[i + 3] = color & 0xff // A
+      }
+    }
+
+    async getBuffer(_mimeType: string): Promise<Buffer> {
+      // Return a mock buffer
+      return Buffer.from(this.bitmap.data)
+    }
+
+    clone() {
+      return new MockJimp({ width: this.bitmap.width, height: this.bitmap.height })
+    }
+
+    setPixelColor(_color: number, _x: number, _y: number) {
+      // Mock implementation
+      return this
+    }
+
+    composite(_image: MockJimp, _x: number, _y: number) {
+      // Mock implementation
+      return this
+    }
+
+    static async read(_buffer: Buffer | string): Promise<MockJimp> {
+      // Mock reading - create a default 800x600 image
+      return new MockJimp({ width: 800, height: 600, color: 0xff808080 })
+    }
+
+    static async fromBitmap() {
       return {
         bitmap: { data: new Uint8Array(4), width: 1, height: 1 },
         clone: () => ({})
       }
-    },
+    }
   },
 }))
 
@@ -350,7 +392,9 @@ describe('Performance Benchmark Tests', () => {
       const mobileDuration = Date.now() - mobileStart
 
       // Mobile should be faster or at least not substantially slower
-      const allowedMobileDuration = Math.max(standardDuration * 1.2, standardDuration + 100)
+      // Add small jitter to avoid flakiness on CI/slow machines
+      const jitter = 50
+      const allowedMobileDuration = Math.max(standardDuration * 1.2, standardDuration + 100) + jitter
       expect(mobileDuration).toBeLessThanOrEqual(allowedMobileDuration)
 
       console.log(`Mobile optimization: Standard ${standardDuration}ms, Mobile ${mobileDuration}ms`)

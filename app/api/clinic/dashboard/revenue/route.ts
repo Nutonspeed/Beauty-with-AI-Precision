@@ -11,18 +11,27 @@ export async function GET(request: NextRequest) {
   try {
     const supabase = await createServerClient()
     const {
-      data: { session },
-    } = await supabase.auth.getSession()
+      data: { user },
+    } = await supabase.auth.getUser()
 
-    if (!session?.user?.id) {
+    if (!user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    // Get user's clinic_id
-    const { data: userData } = await supabase.from("users").select("clinic_id, role").eq("id", session.user.id).single()
+    // Get user's clinic_id and role
+    const { data: userData, error: userErr } = await supabase
+      .from("users")
+      .select("clinic_id, role")
+      .eq("id", user.id)
+      .single()
 
-    if (!userData || userData.role !== "clinic_owner") {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    if (userErr) {
+      console.error('[clinic/revenue] Failed to fetch user:', userErr)
+      return NextResponse.json({ error: "Failed to fetch user" }, { status: 500 })
+    }
+
+    if (!userData || (userData.role !== "clinic_owner" && userData.role !== "clinic_staff")) {
+      return NextResponse.json({ error: "Forbidden - Clinic access required" }, { status: 403 })
     }
 
     const clinicId = userData.clinic_id
@@ -44,7 +53,7 @@ export async function GET(request: NextRequest) {
     // Get all relevant bookings
     const { data: bookings, error } = await supabase
       .from("bookings")
-      .select("booking_date, price, status, payment_status, services:booking_services(service:services(name))")
+      .select("booking_date, price, status")
       .eq("clinic_id", clinicId)
       .gte("booking_date", toISOStringLocal(thirtyDaysAgo))
       .in("status", ["confirmed", "completed"])

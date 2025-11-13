@@ -1,7 +1,7 @@
 # 🗄️ DATABASE SCHEMA DOCUMENTATION
 
-> **Last Updated:** 2025-11-12  
-> **Total Tables:** 78 tables  
+> **Last Updated:** 2025-11-13  
+> **Total Objects:** 80 (78 tables + 2 views)  
 > **Database:** PostgreSQL (Supabase)
 
 ---
@@ -18,15 +18,18 @@ POSTGRES_URL="postgres://postgres.bgejeqqngzvuokdffadu:fovdyaf2TGERL9Yz@aws-1-ap
 
 ### สถิติฐานข้อมูล
 
-- **Total Tables:** 78 tables (verified 2025-11-12)
+- **Total Objects:** 80 (78 tables + 2 views) — verified 2025-11-13
 - **Tables with Data:** 
-  - `skin_analyses`: 34 rows (ข้อมูลหลัก)
+  - `skin_analyses`: 37 rows (ข้อมูลหลัก)
   - `users`: 4 rows (ผู้ใช้งาน)
   - `invitations`: 4 rows (NEW - invitation system)
   - `chat_history`: 4 rows
-  - `error_logs`: 2 rows
-  - `performance_metrics`: 144 rows
+  - `error_logs`: 6 rows
+  - `performance_metrics`: 173 rows
+  - `customers`: 4 rows
   - อื่น ๆ: พร้อมใช้งาน (0 rows)
+
+> Note: Supabase Dashboard displays only base tables. Our SQL audit counts objects in `public` schema, which includes 2 views: `active_invitations`, `profiles`.
 
 ---
 
@@ -71,7 +74,7 @@ POSTGRES_URL="postgres://postgres.bgejeqqngzvuokdffadu:fovdyaf2TGERL9Yz@aws-1-ap
 #### `analysis_history` (6 columns, 0 rows) ✅
 - **Purpose:** ประวัติการวิเคราะห์
 
-#### `analytics_events` (5 columns, 0 rows) ✅
+#### `analytics_events` (5 columns, 63 rows) ✅ **มีข้อมูล**
 - **Purpose:** Event tracking
 
 ---
@@ -209,7 +212,7 @@ POSTGRES_URL="postgres://postgres.bgejeqqngzvuokdffadu:fovdyaf2TGERL9Yz@aws-1-ap
 
 ### 🏥 **5. Clinic Management Tables** (3 tables)
 
-#### `clinics` (20 columns, 1 rows) ✅
+#### `clinics` (20 columns, 2 rows) ✅
 - **Purpose:** ข้อมูลคลินิก
 - **Status:** มีข้อมูล 1 คลินิก
 
@@ -275,7 +278,7 @@ POSTGRES_URL="postgres://postgres.bgejeqqngzvuokdffadu:fovdyaf2TGERL9Yz@aws-1-ap
 
 ### 👥 **11. Customer Management Tables** (4 tables)
 
-#### `customers` (24 columns, 0 rows) ✅
+#### `customers` (24 columns, 4 rows) ✅ **มีข้อมูล**
 #### `customer_segments` (8 columns, 0 rows) ✅
 #### `customer_notes` (18 columns, 0 rows) ✅
 
@@ -304,7 +307,7 @@ POSTGRES_URL="postgres://postgres.bgejeqqngzvuokdffadu:fovdyaf2TGERL9Yz@aws-1-ap
 
 ### 📊 **14. Analytics & Reporting Tables** (4 tables)
 
-#### `performance_metrics` (12 columns, 144 rows) ✅ **มีข้อมูล**
+#### `performance_metrics` (12 columns, 173 rows) ✅ **มีข้อมูล**
 #### `generated_reports` (10 columns, 0 rows) ✅
 #### `report_schedules` (9 columns, 0 rows) ✅
 #### `presentation_sessions` (13 columns, 1 rows) ✅
@@ -340,6 +343,15 @@ POSTGRES_URL="postgres://postgres.bgejeqqngzvuokdffadu:fovdyaf2TGERL9Yz@aws-1-ap
   - `POST /api/invitations/accept`
 - **Migration:** `20250112_create_invitations.sql`
 - **Status:** Production ready (4 active invitations)
+
+---
+
+### 👁️ Views (2)
+
+These objects appear in SQL object counts but not in the Dashboard's "Tables" metric.
+
+- `active_invitations` (VIEW) — convenience view for pending/active invites
+- `profiles` (VIEW) — user profile projection compatible with Supabase Auth
 
 ---
 
@@ -520,9 +532,9 @@ const { data, error } = await supabase
 
 ## 📊 Database Statistics
 
-- **Total Tables:** 76
-- **Tables with Data:** 11 tables
-- **Total Rows:** ~200 rows
+- **Total Objects:** 80 (78 tables + 2 views)
+- **Tables with Data:** 18 tables
+- **Total Rows:** 328
 - **Week 6 Tables:** 6 tables (ready to use)
 - **Indexes:** 60+ indexes
 - **RLS Policies:** 40+ policies

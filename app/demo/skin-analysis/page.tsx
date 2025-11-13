@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Slider } from "@/components/ui/slider"
 import { Badge } from "@/components/ui/badge"
-import { ImageIcon, Sparkles, Eraser, RotateCcw } from "lucide-react"
+import { Image as ImageIcon, Sparkles, Eraser, RotateCcw } from "lucide-react"
 
 export default function SkinAnalysisDemoPage() {
   const [imageUrl, setImageUrl] = useState<string | null>(null)

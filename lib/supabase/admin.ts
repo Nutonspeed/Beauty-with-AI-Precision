@@ -6,6 +6,7 @@
  * ⚠️ ห้ามใช้ใน production เด็ดขาด!
  */
 
+import 'server-only'
 import { createClient } from '@supabase/supabase-js'
 
 if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {

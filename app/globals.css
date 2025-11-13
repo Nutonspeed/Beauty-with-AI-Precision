@@ -23,9 +23,9 @@
   --muted: 210 40% 96.1%;
   --muted-foreground: 215.4 16.3% 46.9%;
 
-  /* Accent: Bright cyan for highlights */
-  --accent: 210 40% 96.1%;
-  --accent-foreground: 222.2 47.4% 11.2%;
+  /* Accent: Teal-cyan with real contrast (light mode) */
+  --accent: 189 88% 48%;
+  --accent-foreground: 210 40% 98%;
 
   --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 210 40% 98%;
@@ -67,7 +67,7 @@
   --secondary-foreground: 210 40% 98%;
   --muted: 217.2 32.6% 17.5%;
   --muted-foreground: 215 20.2% 65.1%;
-  --accent: 217.2 32.6% 17.5%;
+  --accent: 189 70% 50%;
   --accent-foreground: 210 40% 98%;
   --destructive: 0 62.8% 30.6%;
   --destructive-foreground: 210 40% 98%;
@@ -244,4 +244,147 @@ img {
 
 .ar-canvas-visible {
   display: block;
+}
+
+/* Hero text animations and effects */
+/* Contrast helpers for hero copy */
+.hero-contrast-plate{
+  position:absolute;
+  inset:-0.75rem;
+  border-radius:1.75rem;
+  pointer-events:none;
+  background:radial-gradient(closest-side, rgba(0,0,0,.28), rgba(0,0,0,.16) 60%, rgba(0,0,0,0) 100%);
+  filter:blur(18px);
+  opacity:.9;
+}
+.dark .hero-contrast-plate{
+  background:radial-gradient(closest-side, rgba(255,255,255,.10), rgba(255,255,255,.04) 60%, rgba(255,255,255,0) 100%);
+  filter:blur(14px);
+}
+
+.text-elevated{
+  text-shadow:0 1px 2px rgba(0,0,0,.22), 0 2px 8px rgba(0,0,0,.12);
+}
+.dark .text-elevated{
+  text-shadow:0 1px 2px rgba(0,0,0,.6), 0 2px 8px rgba(0,0,0,.45);
+}
+
+.text-stroke-contrast{
+  -webkit-text-stroke:0.35px rgba(0,0,0,.35);
+}
+.dark .text-stroke-contrast{
+  -webkit-text-stroke:0.35px rgba(255,255,255,.18);
+}
+
+@keyframes gradient-x {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-gradient-x {
+  background-size: 200% auto;
+  animation: gradient-x 8s ease infinite;
+}
+
+/* Radial gradient for better text readability */
+.bg-gradient-radial {
+  background: radial-gradient(ellipse at center, var(--tw-gradient-stops));
+}
+
+/* Smooth fade-in animations */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-from-bottom-4 {
+  from {
+    transform: translateY(1rem);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-from-bottom-6 {
+  from {
+    transform: translateY(1.5rem);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-from-bottom-8 {
+  from {
+    transform: translateY(2rem);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-from-bottom-10 {
+  from {
+    transform: translateY(2.5rem);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-in {
+  animation-fill-mode: both;
+}
+
+.fade-in {
+  animation-name: fade-in;
+}
+
+.slide-in-from-bottom-4 {
+  animation-name: slide-in-from-bottom-4;
+}
+
+.slide-in-from-bottom-6 {
+  animation-name: slide-in-from-bottom-6;
+}
+
+.slide-in-from-bottom-8 {
+  animation-name: slide-in-from-bottom-8;
+}
+
+.slide-in-from-bottom-10 {
+  animation-name: slide-in-from-bottom-10;
+}
+
+.delay-150 {
+  animation-delay: 150ms;
+}
+
+.delay-300 {
+  animation-delay: 300ms;
+}
+
+.delay-500 {
+  animation-delay: 500ms;
+}
+
+.delay-700 {
+  animation-delay: 700ms;
 }

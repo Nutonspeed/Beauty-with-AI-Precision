@@ -6,7 +6,9 @@
  * Processes skin metrics, concerns, and recommendations
  */
 
-import * as tf from '@tensorflow/tfjs'
+// Use dynamic imports to reduce initial bundle size
+let tf: any = null
+import type * as tfTypes from '@tensorflow/tfjs'
 
 let isInitialized = false
 
@@ -20,6 +22,9 @@ async function initializeTensorFlow() {
   console.log('🔧 Starting TensorFlow.js initialization...')
   
   try {
+    // Dynamic import for TensorFlow.js
+    if (!tf) tf = await import('@tensorflow/tfjs')
+    
     await tf.ready()
     console.log('✅ TensorFlow.js ready')
     
@@ -136,7 +141,7 @@ async function processSkinAnalysis(imageDataUrl: string, landmarks: any[]) {
 }
 
 // Helper: Create image tensor from data URL with fixed dimensions
-async function createImageTensor(dataUrl: string): Promise<tf.Tensor3D> {
+async function createImageTensor(dataUrl: string): Promise<tfTypes.Tensor3D> {
   const FIXED_WIDTH = 512
   const FIXED_HEIGHT = 512
 
@@ -167,7 +172,7 @@ async function createImageTensor(dataUrl: string): Promise<tf.Tensor3D> {
         console.log(`✅ Tensor resized successfully`)
       }
       
-      return tensor
+      return tensor as tfTypes.Tensor3D
     } finally {
       if (typeof bitmap.close === 'function') {
         bitmap.close()
@@ -181,7 +186,7 @@ async function createImageTensor(dataUrl: string): Promise<tf.Tensor3D> {
 }
 
 // Analysis functions (simplified for Web Worker)
-async function analyzeWrinkles(imageTensor: tf.Tensor3D, landmarks: any[]): Promise<number> {
+async function analyzeWrinkles(imageTensor: tfTypes.Tensor3D, landmarks: any[]): Promise<number> {
   return tf.tidy(() => {
     // Manual grayscale conversion (luminosity method)
     const [r, g, b] = tf.split(imageTensor, 3, 2)
@@ -205,7 +210,7 @@ async function analyzeWrinkles(imageTensor: tf.Tensor3D, landmarks: any[]): Prom
   })
 }
 
-async function analyzeSpots(imageTensor: tf.Tensor3D): Promise<number> {
+async function analyzeSpots(imageTensor: tfTypes.Tensor3D): Promise<number> {
   return tf.tidy(() => {
     // Simplified spot detection using color variance
     const normalized = tf.div(imageTensor, 255)
@@ -217,7 +222,7 @@ async function analyzeSpots(imageTensor: tf.Tensor3D): Promise<number> {
   })
 }
 
-async function analyzeTexture(imageTensor: tf.Tensor3D): Promise<number> {
+async function analyzeTexture(imageTensor: tfTypes.Tensor3D): Promise<number> {
   return tf.tidy(() => {
     // Manual grayscale conversion
     const [r, g, b] = tf.split(imageTensor, 3, 2)
@@ -235,7 +240,7 @@ async function analyzeTexture(imageTensor: tf.Tensor3D): Promise<number> {
   })
 }
 
-async function analyzePores(imageTensor: tf.Tensor3D): Promise<number> {
+async function analyzePores(imageTensor: tfTypes.Tensor3D): Promise<number> {
   return tf.tidy(() => {
     // Manual grayscale conversion
     const [r, g, b] = tf.split(imageTensor, 3, 2)
@@ -253,7 +258,7 @@ async function analyzePores(imageTensor: tf.Tensor3D): Promise<number> {
   })
 }
 
-async function analyzeEvenness(imageTensor: tf.Tensor3D): Promise<number> {
+async function analyzeEvenness(imageTensor: tfTypes.Tensor3D): Promise<number> {
   return tf.tidy(() => {
     // Color evenness - low variance across channels = even tone
     const moments = tf.moments(imageTensor)
@@ -265,7 +270,7 @@ async function analyzeEvenness(imageTensor: tf.Tensor3D): Promise<number> {
   })
 }
 
-async function analyzeFirmness(imageTensor: tf.Tensor3D, landmarks: any[]): Promise<number> {
+async function analyzeFirmness(imageTensor: tfTypes.Tensor3D, landmarks: any[]): Promise<number> {
   // Simplified firmness based on face shape
   if (landmarks.length < 100) return 60
   
@@ -276,7 +281,7 @@ async function analyzeFirmness(imageTensor: tf.Tensor3D, landmarks: any[]): Prom
   return Math.round(Math.max(40, 100 - avgY * 100))
 }
 
-async function analyzeRadiance(imageTensor: tf.Tensor3D): Promise<number> {
+async function analyzeRadiance(imageTensor: tfTypes.Tensor3D): Promise<number> {
   return tf.tidy(() => {
     // Average brightness = radiance
     const moments = tf.moments(imageTensor)
@@ -286,7 +291,7 @@ async function analyzeRadiance(imageTensor: tf.Tensor3D): Promise<number> {
   })
 }
 
-async function analyzeHydration(imageTensor: tf.Tensor3D): Promise<number> {
+async function analyzeHydration(imageTensor: tfTypes.Tensor3D): Promise<number> {
   return tf.tidy(() => {
     // Manual grayscale conversion for luminance
     const [r, g, b] = tf.split(imageTensor, 3, 2)

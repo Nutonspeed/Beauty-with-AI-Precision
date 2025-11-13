@@ -5,7 +5,9 @@
  * Phase 8.3: Processing Optimization
  */
 
-import * as tf from '@tensorflow/tfjs'
+// Use dynamic imports to reduce initial bundle size
+let tf: any = null
+import type * as tfTypes from '@tensorflow/tfjs'
 
 export interface ImageQualityReport {
   isGoodQuality: boolean
@@ -21,9 +23,21 @@ export interface ImageQualityReport {
 
 export class ImageProcessor {
   /**
+   * Initialize TensorFlow.js if needed
+   */
+  private async ensureTF(): Promise<void> {
+    if (!tf) {
+      tf = await import('@tensorflow/tfjs')
+      await tf.ready()
+    }
+  }
+
+  /**
    * Check image quality before analysis
    */
   async assessQuality(imageElement: HTMLImageElement): Promise<ImageQualityReport> {
+    await this.ensureTF()
+    
     const tensor = tf.browser.fromPixels(imageElement)
     
     try {
@@ -63,7 +77,7 @@ export class ImageProcessor {
   /**
    * Calculate blur score using Laplacian variance
    */
-  private async calculateBlur(imageTensor: tf.Tensor3D): Promise<number> {
+  private async calculateBlur(imageTensor: tfTypes.Tensor3D): Promise<number> {
     return tf.tidy(() => {
       // Convert to grayscale
       const grayscale = imageTensor.mean(2)
@@ -79,7 +93,7 @@ export class ImageProcessor {
       const kernelReshaped = kernel.expandDims(2).expandDims(3)
       
       // Apply Laplacian
-      const edges = tf.conv2d(reshaped as tf.Tensor4D, kernelReshaped as tf.Tensor4D, 1, 'same')
+      const edges = tf.conv2d(reshaped as tfTypes.Tensor4D, kernelReshaped as tfTypes.Tensor4D, 1, 'same')
       
       // Calculate variance
       const variance = tf.moments(edges).variance.arraySync() as number
@@ -93,7 +107,7 @@ export class ImageProcessor {
   /**
    * Calculate average brightness
    */
-  private async calculateBrightness(imageTensor: tf.Tensor3D): Promise<number> {
+  private async calculateBrightness(imageTensor: tfTypes.Tensor3D): Promise<number> {
     return tf.tidy(() => {
       const mean = imageTensor.mean().arraySync() as number
       return (mean / 255) * 100
@@ -103,7 +117,7 @@ export class ImageProcessor {
   /**
    * Calculate contrast score
    */
-  private async calculateContrast(imageTensor: tf.Tensor3D): Promise<number> {
+  private async calculateContrast(imageTensor: tfTypes.Tensor3D): Promise<number> {
     return tf.tidy(() => {
       const { variance } = tf.moments(imageTensor)
       const std = tf.sqrt(variance).arraySync() as number
@@ -116,7 +130,7 @@ export class ImageProcessor {
   /**
    * Calculate sharpness score
    */
-  private async calculateSharpness(imageTensor: tf.Tensor3D): Promise<number> {
+  private async calculateSharpness(imageTensor: tfTypes.Tensor3D): Promise<number> {
     return tf.tidy(() => {
       // Similar to blur but different thresholds
       const grayscale = imageTensor.mean(2)
@@ -130,7 +144,7 @@ export class ImageProcessor {
       const reshaped = grayscale.expandDims(0).expandDims(3)
       const kernelReshaped = kernel.expandDims(2).expandDims(3)
       
-      const edges = tf.conv2d(reshaped as tf.Tensor4D, kernelReshaped as tf.Tensor4D, 1, 'same')
+      const edges = tf.conv2d(reshaped as tfTypes.Tensor4D, kernelReshaped as tfTypes.Tensor4D, 1, 'same')
       const edgeStrength = edges.abs().mean().arraySync() as number
       
       return Math.min(100, edgeStrength * 500)

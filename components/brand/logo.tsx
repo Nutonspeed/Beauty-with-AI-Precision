@@ -7,45 +7,74 @@ type LogoProps = {
   title?: string
 }
 
-// Standalone mark: stylized Q with a subtle cross/plus to hint at clinical care
+// Modern medical-tech mark: sharp geometric design
 export function ClinicIQMark({ className, title }: LogoProps) {
   const ariaTitle = title || "ClinicIQ"
   return (
     <svg
       className={className}
-      viewBox="0 0 64 64"
+      viewBox="0 0 48 48"
       role="img"
       aria-label={ariaTitle}
       xmlns="http://www.w3.org/2000/svg"
+      shapeRendering="geometricPrecision"
     >
       <title>{ariaTitle}</title>
       <defs>
-        <linearGradient id="ciq_g" x1="0" y1="0" x2="1" y2="1">
+        <linearGradient id="ciq_grad_main" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" stopColor="hsl(var(--primary))" />
           <stop offset="100%" stopColor="hsl(var(--accent))" />
         </linearGradient>
+        <filter id="ciq_shadow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur in="SourceAlpha" stdDeviation="0.5"/>
+          <feOffset dx="0" dy="0.5" result="offsetblur"/>
+          <feComponentTransfer>
+            <feFuncA type="linear" slope="0.15"/>
+          </feComponentTransfer>
+          <feMerge>
+            <feMergeNode/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
       </defs>
-      <circle cx="32" cy="32" r="30" fill="url(#ciq_g)" opacity="0.12" />
-      <path
-        d="M32 50c9.941 0 18-8.059 18-18S41.941 14 32 14 14 22.059 14 32s8.059 18 18 18z"
-        fill="none"
-        stroke="hsl(var(--primary))"
-        strokeWidth="4"
+      
+      {/* Outer ring with solid fill for presence */}
+      <circle 
+        cx="24" 
+        cy="24" 
+        r="20" 
+        fill="url(#ciq_grad_main)" 
+        opacity="0.12"
       />
-      {/* Tail of Q */}
-      <path
-        d="M40.5 40.5L50 50"
-        stroke="hsl(var(--primary))"
-        strokeWidth="4"
-        strokeLinecap="round"
+      
+      {/* Main Q shape - bold and clean */}
+      <circle 
+        cx="24" 
+        cy="24" 
+        r="14" 
+        fill="none" 
+        stroke="url(#ciq_grad_main)" 
+        strokeWidth="3"
+        filter="url(#ciq_shadow)"
       />
-      {/* Subtle medical cross inside */}
-      <path
-        d="M32 23v6M29 32h6"
-        stroke="hsl(var(--primary))"
+      
+      {/* Q tail - strong diagonal */}
+      <line
+        x1="33"
+        y1="33"
+        x2="40"
+        y2="40"
+        stroke="url(#ciq_grad_main)"
         strokeWidth="3"
         strokeLinecap="round"
+        filter="url(#ciq_shadow)"
       />
+      
+      {/* Medical plus - modern and sharp */}
+      <g filter="url(#ciq_shadow)">
+        <rect x="22.5" y="18" width="3" height="12" rx="1" fill="hsl(var(--primary))" opacity="0.9"/>
+        <rect x="18" y="22.5" width="12" height="3" rx="1" fill="hsl(var(--primary))" opacity="0.9"/>
+      </g>
     </svg>
   )
 }
@@ -60,6 +89,7 @@ export function ClinicIQWordmark({ className, title }: LogoProps) {
       role="img"
       aria-label={ariaTitle}
       xmlns="http://www.w3.org/2000/svg"
+      shapeRendering="geometricPrecision"
     >
       <title>{ariaTitle}</title>
       <g fill="currentColor">

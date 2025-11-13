@@ -7,7 +7,7 @@ import { Calendar } from "@/components/ui/calendar"
 import { CalendarView } from "@/components/schedule/calendar-view"
 import { AvailabilityManager } from "@/components/schedule/availability-manager"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { CalendarIcon, Clock } from "lucide-react"
+import { Calendar as CalendarIcon, Clock } from "lucide-react"
 import { format, startOfWeek, endOfWeek } from "date-fns"
 
 export default function SchedulePage() {

@@ -11,7 +11,7 @@ import { Footer } from '@/components/footer'
 import { MultiModeViewer, type AnalysisMode } from '@/components/analysis/multi-mode-viewer'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Upload, ImageIcon, Loader2, AlertCircle } from 'lucide-react'
+import { Upload, Image, Loader2, AlertCircle } from 'lucide-react'
 import { analyzeMultiMode } from '@/lib/api/ai-analysis-service'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 
@@ -373,7 +373,7 @@ export default function MultiModeAnalysisPage() {
                         </>
                       ) : (
                         <>
-                          <ImageIcon className="mr-2 h-4 w-4" />
+                          <Image className="mr-2 h-4 w-4" />
                           Choose Image
                         </>
                       )}
