@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "next build --webpack",
+    "build": "node --max-old-space-size=8192 ./node_modules/next/dist/bin/next build --webpack",
+    "build:fast": "cross-env FAST_BUILD=1 node --max-old-space-size=8192 ./node_modules/next/dist/bin/next build --webpack",
     "check:db": "tsx scripts/check-database.ts",
     "deploy:check": "pnpm type-check && pnpm check:db && pnpm verify",
     "dev": "next dev --turbo",
@@ -24,6 +25,10 @@
     "test:e2e:ui": "playwright test --ui",
     "test:ui": "vitest --ui",
     "type-check": "tsc --noEmit",
+    "schema:breakdown": "node scripts/schema-breakdown.mjs",
+    "schema:verify": "node scripts/verify-postgres.mjs",
+    "schema:assert": "node scripts/schema-assert.mjs --tables 78 --views 2",
+    "build:ci": "pnpm lint && pnpm type-check && pnpm build && pnpm schema:assert",
     "users:first": "tsx scripts/print-first-user.ts",
     "verify": "tsx scripts/verify-deployment.ts",
     "verify:deploy": "node scripts/verify-deployment.mjs",
@@ -169,6 +174,7 @@
     "zod": "3.25.76"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "@playwright/test": "^1.56.1",
     "@rollup/rollup-win32-x64-msvc": "^4.52.5",
     "@testing-library/jest-dom": "^6.9.1",
