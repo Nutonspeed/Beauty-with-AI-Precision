@@ -1,206 +1,102 @@
-# 📚 Beauty AI Platform - Documentation Hub
+# 📚 Documentation Index
 
-**Last Updated:** November 10, 2025  
-**Project Status:** 70-75% Complete - Reality Check Complete  
-**Production Readiness:** 2.8/10 - NOT READY (needs 4-6 weeks)
+This directory contains all project documentation organized by category.
 
-> 🎯 **Current Focus:** Stabilization Phase - Fix critical issues before production launch
+## 📁 Directory Structure
 
----
+### 📊 Status & Progress
+- **[status/](./status/)** - Current project status and feature completeness
+  - `CURRENT_SYSTEM_STATUS.md` - **Primary status file** (most current, 85-90% complete)
+  - `FEATURES_COMPLETENESS_CHECKLIST.md` - Feature audit (90-95% complete)
+  - `FEATURES_SUMMARY_TH.md` - Thai feature summary
+  - `URGENT_MIGRATION_REQUIRED.md` - Migration status
 
-## 🎯 **START HERE - Master Document**
+### 🚀 Deployment
+- **[deployment/](./deployment/)** - Deployment guides and status
+  - `DEPLOYMENT_STATUS.md` - Current deployment guide (Vercel auto-deploy)
+  - `DEPLOYMENT_READINESS_2025.md` - Deployment readiness report
+  - `SUPABASE_STORAGE_SETUP.md` - Storage configuration
+  - `VERCEL_STAGING_SETUP.md` - Staging environment setup
 
-### ⭐ [PROJECT_REALITY_ANALYSIS_10_TASKS.md](current/PROJECT_REALITY_ANALYSIS_10_TASKS.md)
+### 📖 Guides & Tutorials
+- **[guides/](./guides/)** - User guides and tutorials
+  - `MIGRATION_GUIDE.md` - Database migration guide
+  - `QUICK_START_TESTING.md` - Testing quick start
+  - `USER_GUIDE.md` - User manual
+  - `DEPLOYMENT_GUIDE.md` - Deployment guide
 
-**This is the SINGLE SOURCE OF TRUTH for the current project state.**
+### 🔧 API Documentation
+- **[api/](./api/)** - API references and examples
+  - `analyze-api.md` - Analysis API documentation
+  - `API_SKIN_ANALYSIS.md` - Skin analysis API
+  - `ROUTES_QUICK_REFERENCE.md` - API routes reference
+  - `USER_API_POSTMAN_COLLECTION.json` - Postman collection
 
-Contains comprehensive analysis:
-- ✅ Task 1: Codebase Reality (122 pages, 213 APIs, 299 components)
-- ✅ Task 2: Core Features Testing (16 TypeScript errors found)
-- ✅ Task 3: Feature Inventory (25 Working, 12 Partial, 4 Missing)
-- ✅ Task 4: Technical Debt (94-165 hours to fix)
-- ✅ Task 5: Production Readiness (2.8/10 score)
-- ✅ Task 6: Priority Ranking (P0-P3 tasks)
-- ✅ Task 7: Realistic Roadmap (3 phases, 12 weeks)
-- ✅ Task 8: Build & Deployment Testing
-- ✅ Task 9: Risk Assessment
-- ✅ Task 10: Master Action Plan
+### 🏗️ Architecture
+- **[architecture/](./architecture/)** - System architecture docs
+  - System design documents and architecture decisions
 
-**Size:** 2,200+ lines | **Status:** Complete | **Priority:** 🔴 CRITICAL - READ FIRST
+### 🧪 Testing
+- **[testing/](./testing/)** - Testing documentation
+  - `SMOKE_TEST_CHECKLIST.md` - Smoke test checklist
+  - `POSTMAN_SETUP_GUIDE.md` - API testing setup
+  - Test reports and procedures
 
----
+### 🗄️ Database & Migrations
+- **[migrations/](./migrations/)** - Database migration docs
+  - Migration guides and checklists
+  - Database schema changes
 
-## 🚀 Quick Start (อ่านตามลำดับนี้)
+### ⚖️ Legal & Compliance
+- **[legal/](./legal/)** - Legal and compliance documentation
+  - `THIRD_PARTY_NOTICES.md` - Third party notices
 
-1. **[ROADMAP.md](./ROADMAP.md)** - แผนอนาคต Phase 12-50 (อ่านก่อน)
-2. **[reports/ACTUAL_PROJECT_STATUS.md](./reports/ACTUAL_PROJECT_STATUS.md)** - สถานะโปรเจคล่าสุด
-3. **[phases/PHASE11_QUICK_START_GUIDE.md](./phases/PHASE11_QUICK_START_GUIDE.md)** - งานที่ต้องทำต่อ (Phase 11)
-4. **[REALTIME_SYSTEM.md](./REALTIME_SYSTEM.md)** - ระบบ realtime ที่เพิ่งเพิ่ม (3 Nov 2025)
+### 📜 Archive & History
+- **[archive/](./archive/)** - Historical and archived documentation
+  - `status/legacy-project-status.md` - Old project status (outdated)
+  - `planning/` - Planning documents and roadmaps
+  - `reports/` - Historical reports and audits
 
----
+## 🔗 Quick Links
 
-## 📖 Core Documentation
+### Primary References
+- **[📊 Current System Status](../../CURRENT_SYSTEM_STATUS.md)** - Most up-to-date project status
+- **[🗄️ Database Schema](../../DATABASE_SCHEMA.md)** - Complete database reference
+- **[🚀 Deployment Status](./deployment/DEPLOYMENT_STATUS.md)** - Current deployment guide
 
-### Project Planning & Status
-| File | Purpose | Read When |
-|------|---------|-----------|
-| [ROADMAP.md](./ROADMAP.md) | แผนระยะยาว Phase 12-50 | ต้องการเห็นภาพรวมอนาคต |
-| [reports/ACTUAL_PROJECT_STATUS.md](./reports/ACTUAL_PROJECT_STATUS.md) | สถานะโปรเจคล่าสุด | ต้องการรู้ว่าทำถึงไหนแล้ว |
-| [REALTIME_SYSTEM.md](./REALTIME_SYSTEM.md) | ระบบ realtime (WebSocket, Managers) | ต้องการทำงานกับ realtime features |
-| [FAQ.md](./FAQ.md) | คำถามที่พบบ่อย (34 KB) | มีคำถามเกี่ยวกับโปรเจค |
+### Development Resources
+- **[📖 API Routes Reference](./api/ROUTES_QUICK_REFERENCE.md)** - All API endpoints
+- **[🧪 Testing Guide](./guides/QUICK_START_TESTING.md)** - How to run tests
+- **[🗄️ Migration Guide](./guides/MIGRATION_GUIDE.md)** - Database migrations
 
-### User & Deployment Guides
-| File | Purpose | Read When |
-|------|---------|-----------|
-| [guides/USER_GUIDE.md](./guides/USER_GUIDE.md) | คู่มือผู้ใช้ทั้งหมด | ต้องการสอนใช้ระบบ |
-| [guides/DEPLOYMENT_GUIDE.md](./guides/DEPLOYMENT_GUIDE.md) | คู่มือ deploy ทั้งหมด | ต้องการ deploy production |
-| [deployment/VERCEL_STAGING_SETUP.md](./deployment/VERCEL_STAGING_SETUP.md) | Deploy Vercel staging | ต้องการ deploy staging |
-| [deployment/SUPABASE_STORAGE_SETUP.md](./deployment/SUPABASE_STORAGE_SETUP.md) | Setup Supabase Storage | ต้องการตั้งค่า file upload |
+## � Documentation Standards
 
----
+### File Naming
+- Use `SCREAMING_SNAKE_CASE.md` for documentation files
+- Use descriptive names that indicate content and purpose
+- Include dates for time-sensitive documents (YYYY-MM-DD format)
 
-## 🏗️ Technical Documentation
+### Content Organization
+- Start with executive summary or overview
+- Include table of contents for long documents
+- Use consistent heading hierarchy (H1 → H2 → H3)
+- Include last updated dates and version information
 
-### Architecture
-| File | Purpose | Read When |
-|------|---------|-----------|
-| [architecture/ARCHITECTURE.md](./architecture/ARCHITECTURE.md) | โครงสร้างระบบทั้งหมด | ต้องการเข้าใจ tech stack |
-| [architecture/API_DOCUMENTATION.md](./architecture/API_DOCUMENTATION.md) | API endpoints ทั้งหมด | ต้องการเรียกใช้ API |
-| [analyze-api.md](./analyze-api.md) | API วิเคราะห์ภาพ | ต้องการทำงานกับ AI analysis |
+### Status Indicators
+- ✅ **Complete** - Fully implemented and tested
+- � **In Progress** - Currently being worked on
+- ⏳ **Planned** - Scheduled for future implementation
+- ❌ **Deprecated** - No longer maintained
 
-### Database & Migrations
-| File | Purpose | Read When |
-|------|---------|-----------|
-| [migrations/HOW_TO_RUN_SQL_MIGRATION.md](./migrations/HOW_TO_RUN_SQL_MIGRATION.md) | วิธีรัน SQL migration | ต้องการ migrate database |
-| [migrations/MIGRATION_INSTRUCTIONS.md](./migrations/MIGRATION_INSTRUCTIONS.md) | คำแนะนำ migration | ต้องการเข้าใจ migration flow |
-| migrations/PHASE7_ALL_MIGRATIONS.sql | SQL scripts ทั้งหมด | ต้องการดู schema |
-| migrations/SUPABASE_MIGRATION_*.sql | SQL สำหรับแต่ละ table | ต้องการ migrate แค่บางส่วน |
+## 🤝 Contributing to Documentation
 
----
-
-## � Current Phase Documentation (Phase 10-11)
-
-### Phase 10: Beta Recruitment (COMPLETE ✅)
-| File | Lines | Purpose |
-|------|-------|---------|
-| [phases/PHASE10_COMPLETION_REPORT.md](./phases/PHASE10_COMPLETION_REPORT.md) | 600 | สรุปงาน Phase 10 (อ่านก่อน) |
-| [phases/PHASE10_RECRUITMENT_PLAN.md](./phases/PHASE10_RECRUITMENT_PLAN.md) | 500 | แผนรับสมัคร beta testers |
-| [phases/PHASE10_BETA_TESTING_CHECKLIST.md](./phases/PHASE10_BETA_TESTING_CHECKLIST.md) | 500 | Checklist ทดสอบ (180 min) |
-| [phases/PHASE10_FEEDBACK_FORM_TEMPLATE.md](./phases/PHASE10_FEEDBACK_FORM_TEMPLATE.md) | 650 | แบบฟอร์มขอ feedback |
-| [phases/PHASE10_BETA_ONBOARDING_PACKAGE.md](./phases/PHASE10_BETA_ONBOARDING_PACKAGE.md) | 550 | คู่มือ onboard beta users |
-| [phases/PHASE10_SUPPORT_CHANNEL_SETUP.md](./phases/PHASE10_SUPPORT_CHANNEL_SETUP.md) | 400 | Setup Discord/Line/Email |
-| [phases/PHASE10_GOOGLE_FORMS_SETUP.md](./phases/PHASE10_GOOGLE_FORMS_SETUP.md) | 350 | สร้าง Google Forms |
-| [phases/PHASE10_SOCIAL_MEDIA_POSTS.md](./phases/PHASE10_SOCIAL_MEDIA_POSTS.md) | 600 | โพสต์โซเชียล 6 แพลตฟอร์ม |
-| [phases/PHASE10_EMAIL_TEMPLATES.md](./phases/PHASE10_EMAIL_TEMPLATES.md) | 650 | Email templates 9 แบบ |
-
-**Total:** 4,800+ lines covering complete beta recruitment workflow
-
-### Phase 11: Recruitment Execution (IN PROGRESS 🔄)
-| File | Purpose |
-|------|---------|
-| [phases/PHASE11_QUICK_START_GUIDE.md](./phases/PHASE11_QUICK_START_GUIDE.md) | Action plan วันนี้ (4 Nov) |
+1. **Update Status**: Keep status documents current with actual codebase
+2. **Organize Files**: Place new docs in appropriate subdirectories
+3. **Cross-Reference**: Link related documents for easy navigation
+4. **Version Control**: Use git for documentation changes
+5. **Review Process**: Have documentation reviewed by team members
 
 ---
 
-## 📊 Phase Reports (Previous Phases - สำหรับอ้างอิง)
-
-| File | Phase | Status |
-|------|-------|--------|
-| [phases/PHASE9_COMPLETION_REPORT.md](./phases/PHASE9_COMPLETION_REPORT.md) | Phase 9 | ✅ Testing & QA |
-| [phases/PHASE7_DATABASE_CHECKLIST.md](./phases/PHASE7_DATABASE_CHECKLIST.md) | Phase 7 | ✅ Database |
-| [phases/PHASE6_AI_ADVISOR_FREE.md](./phases/PHASE6_AI_ADVISOR_FREE.md) | Phase 6 | ✅ AI Advisor |
-| [phases/PHASE5_MANUAL_TEST.md](./phases/PHASE5_MANUAL_TEST.md) | Phase 5 | ✅ Testing |
-| [phases/PHASE3_BUG_LIST.md](./phases/PHASE3_BUG_LIST.md) | Phase 3 | ✅ Bug Fixes |
-| [phases/PHASE2_IMPLEMENTATION.md](./phases/PHASE2_IMPLEMENTATION.md) | Phase 2 | ✅ Implementation |
-| [phases/PHASE1_TESTING_GUIDE.md](./phases/PHASE1_TESTING_GUIDE.md) | Phase 1 | ✅ Initial |
-
----
-
-## 🗂️ Other Documentation
-
-### Setup & Configuration
-- [GET_GEMINI_API_KEY.md](./GET_GEMINI_API_KEY.md) - วิธีขอ Gemini API key
-- [ACTION_REQUIRED_OPENAI_KEY.md](./ACTION_REQUIRED_OPENAI_KEY.md) - การตั้งค่า OpenAI key
-- [NEXT_STEPS.md](./NEXT_STEPS.md) - ขั้นตอนถัดไป
-
-### Reports
-- [reports/TASK2_PUSH_NOTIFICATIONS_REPORT.md](./reports/TASK2_PUSH_NOTIFICATIONS_REPORT.md) - รายงาน push notifications
-
-### Maintenance
-- [DOCUMENTATION_AUDIT.md](./DOCUMENTATION_AUDIT.md) - รายงานตรวจสอบและลบเอกสารซ้ำซ้อน (4 Nov 2025)
-
----
-
-## 📦 Archived Documentation
-
-- **[archive/2025-01-previous-planning/](./archive/2025-01-previous-planning/)** (70+ files)
-  - เอกสาร Phase 1-14 เก่า (ทำเสร็จแล้ว)
-  - Deployment/Testing/Migration guides เก่า
-  - Complete/summary reports เก่า
-
-> 💡 **Tip:** ไม่ต้องอ่านเอกสารใน archive/ เว้นแต่ต้องการดูประวัติย้อนหลัง
-
----
-
-## 🎯 Navigation Tips
-
-### ถ้าคุณต้องการ...
-
-**� เริ่มทำงานต่อ:**
-1. อ่าน `phases/PHASE11_QUICK_START_GUIDE.md`
-2. เช็คสถานะล่าสุดที่ `reports/ACTUAL_PROJECT_STATUS.md`
-3. ทำตาม action items ใน PHASE11
-
-**📖 เข้าใจระบบ:**
-1. อ่าน `architecture/ARCHITECTURE.md`
-2. อ่าน `architecture/API_DOCUMENTATION.md`
-3. อ่าน `REALTIME_SYSTEM.md`
-
-**� Deploy โปรเจค:**
-1. อ่าน `guides/DEPLOYMENT_GUIDE.md`
-2. ตั้งค่า `deployment/VERCEL_STAGING_SETUP.md`
-3. ตั้งค่า `deployment/SUPABASE_STORAGE_SETUP.md`
-
-**�️ จัดการ Database:**
-1. อ่าน `migrations/MIGRATION_INSTRUCTIONS.md`
-2. รัน migration ตาม `migrations/HOW_TO_RUN_SQL_MIGRATION.md`
-
-**👥 Recruit Beta Testers:**
-1. อ่าน `phases/PHASE10_COMPLETION_REPORT.md` (ทำอะไรไปแล้วบ้าง)
-2. อ่าน `phases/PHASE11_QUICK_START_GUIDE.md` (ต้องทำอะไรต่อ)
-
----
-
-## 📊 Documentation Statistics
-
-**After Cleanup (4 Nov 2025):**
-- **Total Files:** ~50 files (จาก 150+)
-- **Deleted:** 100+ duplicate/outdated files
-- **Reduction:** 66% fewer files
-
----
-
-## ✅ Document Quality
-
-### ไม่มีเอกสารซ้ำซ้อนอีกต่อไป ✅
-- ~~ไม่มี STATUS ซ้ำกัน 5 ไฟล์~~ → เก็บแค่ ACTUAL_PROJECT_STATUS.md
-- ~~ไม่มี ROADMAP ซ้ำกัน 3 ไฟล์~~ → เก็บแค่ ROADMAP.md
-- ~~ไม่มี DEPLOYMENT_GUIDE ซ้ำกัน 9 ไฟล์~~ → เก็บแค่ DEPLOYMENT_GUIDE.md
-- ~~ไม่มี COMPLETE reports ซ้ำกัน 10+ ไฟล์~~ → Archive แล้ว
-
-### เอกสารที่เหลือ = จำเป็นจริง ✅
-- เน้นที่จะทำต่อ ไม่เน้นที่ทำไปแล้ว
-- ไม่มีแผนที่ขัดแย้งกัน (MASTER_PLAN vs ROADMAP vs FAST_TRACK)
-- ไม่มี design/mockup เก่าที่ไม่ได้ใช้
-
----
-
-**Need Help?**
-- 💬 Check [FAQ.md](./FAQ.md) first
-- 📖 Read [ROADMAP.md](./ROADMAP.md) for long-term plan
-- 🚀 Start with [phases/PHASE11_QUICK_START_GUIDE.md](./phases/PHASE11_QUICK_START_GUIDE.md)
-
----
-
-**📝 Maintained by:** AI367 Team  
-**📅 Last Audit:** 4 November 2025
+**Last Updated:** November 2025
+**Maintained by:** Development Team

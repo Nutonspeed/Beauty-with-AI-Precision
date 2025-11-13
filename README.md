@@ -182,6 +182,8 @@ RESEND_API_KEY=your-resend-api-key
 // Application Settings
 // ====================
 NEXT_PUBLIC_APP_URL=`http://localhost:3000`
+// Show demo login presets on the login page (hidden by default)
+NEXT_PUBLIC_SHOW_DEMO_LOGINS=false
 
 // ====================
 // Sentry Error Tracking
@@ -335,6 +337,11 @@ node check-db-schema.js
 # Invitation system test
 node scripts/test-invitation-system.mjs
 ```
+
+Note on demo accounts:
+- The login page includes optional demo account presets (email/password autofill) to speed up local testing.
+- These presets are hidden by default and will only render when `NEXT_PUBLIC_SHOW_DEMO_LOGINS=true` is set in the environment.
+- No real accounts are created by showing this section; it only fills the form fields for convenience.
 
 ---
 
