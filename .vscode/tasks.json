@@ -4,7 +4,13 @@
 		{
 			"label": "Next.js dev (background)",
 			"type": "shell",
-			"command": "pnpm"
+			"command": "pnpm",
+			"args": [
+				"run",
+				"dev:3001"
+			],
+			"isBackground": true,
+			"group": "build"
 		}
 	]
 }

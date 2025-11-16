@@ -5,7 +5,11 @@ import { motion, useInView } from 'framer-motion';
 import useMascotMotion from './useMascotMotion';
 import MascotSVG from './MascotSVG';
 
-const Mascot: React.FC = () => {
+type MascotProps = {
+  variant?: 'svg' | 'lottie' | 'rive';
+};
+
+const Mascot: React.FC<MascotProps> = ({ variant = 'svg' }) => {
   const { sectionRef, x, y, rotate, scale, eyeOffset, armWave, badgeTopY, badgeBottomY } = useMascotMotion();
   const inView = useInView(sectionRef, { amount: 0.2, margin: '-20% 0% -20% 0%' });
 
@@ -16,7 +20,7 @@ const Mascot: React.FC = () => {
         <div className="pointer-events-none absolute -top-24 -left-24 h-56 w-56 rounded-full bg-fuchsia-500/25 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-24 -right-24 h-56 w-56 rounded-full bg-cyan-400/20 blur-3xl" />
 
-        {inView && (
+        {inView && variant === 'svg' && (
           <motion.div style={{ x, y, rotate, scale }} className="relative" aria-hidden>
             <MascotSVG eyeOffset={eyeOffset} armWave={armWave} />
 
@@ -34,6 +38,13 @@ const Mascot: React.FC = () => {
               Scroll to Animate
             </motion.div>
           </motion.div>
+        )}
+
+        {inView && variant !== 'svg' && (
+          <div className="relative text-xs text-white/70">
+            {/* Placeholder for future Rive/Lottie variants */}
+            Animated mascot variant: {variant}
+          </div>
         )}
       </div>
     </section>

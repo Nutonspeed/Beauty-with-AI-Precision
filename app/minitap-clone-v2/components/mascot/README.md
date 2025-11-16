@@ -13,13 +13,19 @@ import Mascot from "./components/mascot";
 
 // In page layout
 <Mascot />
+
+// Optional variant prop (future support for rive/lottie)
+<Mascot variant="svg" />
 ```
 
 ## Notes
+
 - Uses `useInView` to avoid rendering when offscreen.
 - Respects `prefers-reduced-motion` via Framer Motion `useReducedMotion`.
 - Keep transforms GPU-friendly (translate/scale/rotate) and avoid heavy SVG filters for mobile.
 
 ## Future Variants
-- Add `variant="rive" | "lottie"` with dynamic import (`ssr:false`) and IO-based preloading.
+
+- Variant prop available: `variant="svg" | "rive" | "lottie"` (svg is default).
+- For rive/lottie, add dynamic import (`ssr:false`) and IO preloading in a follow-up.
 - Provide prop for amplitude tuning and disabling badges on mobile.
