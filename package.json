@@ -8,6 +8,7 @@
     "check:db": "tsx scripts/check-database.ts",
     "deploy:check": "pnpm type-check && pnpm check:db && pnpm verify",
     "dev": "next dev --turbo",
+    "dev:3001": "next dev --turbo -p 3001",
     "dev:webpack": "next dev --webpack",
   "docker:build": "docker build -t cliniciq .",
   "docker:run": "docker run -p 3000:3000 cliniciq",

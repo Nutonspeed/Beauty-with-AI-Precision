@@ -1,0 +1,10 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Next.js dev (background)",
+			"type": "shell",
+			"command": "pnpm"
+		}
+	]
+}
