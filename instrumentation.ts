@@ -24,6 +24,7 @@ export async function register() {
   const common = {
     dsn,
     environment: process.env.NODE_ENV,
+    release: process.env.NEXT_PUBLIC_RELEASE || process.env.VERCEL_GIT_COMMIT_SHA,
     // Keep sample rates conservative until production tuning
     tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.2 : 1,
     replaysSessionSampleRate: 0, // disabled by default

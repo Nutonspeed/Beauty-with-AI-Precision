@@ -1,0 +1,201 @@
+"use client"
+
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { trackEngagement } from "@/lib/analytics/usage-tracker"
+import { ArrowRight, Sparkles, Camera, BrainCircuit, Star } from "lucide-react"
+
+export default function BeautyLandingPage() {
+  const avatarGradients = [
+    'bg-avatar-1',
+    'bg-avatar-2',
+    'bg-avatar-3',
+    'bg-avatar-4',
+    'bg-avatar-5',
+  ]
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 text-white overflow-hidden">
+      {/* Animated Orbs Background */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        {/* Large Blue Orb - Top Left */}
+        <div
+          className="absolute -top-48 -left-48 w-96 h-96 rounded-full opacity-30 blur-3xl animate-float-slow bg-orb-blue"
+        />
+        
+        {/* Purple Orb - Top Right */}
+        <div
+          className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full opacity-25 blur-3xl animate-float-medium bg-orb-purple animate-delay-2000"
+        />
+        
+        {/* Pink Orb - Center */}
+        <div
+          className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full opacity-20 blur-3xl animate-float-slow bg-orb-pink animate-delay-4000"
+        />
+        
+        {/* Cyan Orb - Bottom Left */}
+        <div
+          className="absolute -bottom-40 -left-40 w-[450px] h-[450px] rounded-full opacity-25 blur-3xl animate-float-fast bg-orb-cyan animate-delay-1000"
+        />
+        
+        {/* Violet Orb - Bottom Right */}
+        <div
+          className="absolute -bottom-32 right-1/4 w-96 h-96 rounded-full opacity-30 blur-3xl animate-float-medium bg-orb-violet animate-delay-3000"
+        />
+
+        {/* Grain Texture Overlay */}
+        <div className="absolute inset-0 opacity-[0.03] grain-texture" />
+      </div>
+
+      {/* Navigation */}
+      <nav className="relative z-10 border-b border-white/10 backdrop-blur-sm bg-black/20">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-6 h-6 text-pink-400" />
+              <span className="text-xl font-bold bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 bg-clip-text text-transparent">
+                BeautyAI
+              </span>
+            </div>
+            <div className="flex items-center gap-6">
+              <Link href="/" className="text-sm text-gray-300 hover:text-white transition-colors">
+                หน้าแรก
+              </Link>
+              <Link href="/demo" className="text-sm text-gray-300 hover:text-white transition-colors">
+                ฟีเจอร์
+              </Link>
+              <Button aria-label="Learn more about AI beauty analysis" size="sm" className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 border-0"
+                onClick={() => trackEngagement('click', 'nav_get_started', { page: 'beauty-landing' })}
+              >
+                เริ่มใช้งาน
+              </Button>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <section className="relative z-10 container mx-auto px-4 pt-20 pb-32">
+        <div className="max-w-4xl mx-auto text-center space-y-8">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-purple-500/30 bg-purple-500/10 backdrop-blur-sm">
+            <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+            <span className="text-sm text-purple-200">อันดับ 1 ระบบวิเคราะห์ผิวด้วย AI</span>
+          </div>
+
+          {/* Main Headline */}
+          <h1 className="text-5xl md:text-7xl font-bold leading-tight">
+            <span className="block mb-2">เปิดโลก</span>
+            <span className="bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 bg-clip-text text-transparent">
+              ความงามด้วย AI
+            </span>
+          </h1>
+
+          {/* Subheadline */}
+          <p className="text-xl md:text-2xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
+            วิเคราะห์ผิวหน้า 8 ตัวชี้วัด พร้อม AR แสดงผลการรักษา
+            <br />
+            เพิ่มยอดขายคลินิกของคุณได้ถึง <span className="text-pink-400 font-semibold">65%</span>
+          </p>
+
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+            <Button aria-label="View pricing options"
+              size="lg" 
+              className="h-14 px-8 text-lg bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 border-0 shadow-lg shadow-purple-500/50"
+              onClick={() => trackEngagement('click', 'hero_try_free', { page: 'beauty-landing' })}
+            >
+              <Camera className="mr-2 h-5 w-5" />
+              ทดลองวิเคราะห์ฟรี
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+            <Button aria-label="Start free trial"
+              size="lg" 
+              variant="outline"
+              className="h-14 px-8 text-lg border-2 border-white/20 bg-white/5 hover:bg-white/10 backdrop-blur-sm"
+              onClick={() => trackEngagement('click', 'hero_view_examples', { page: 'beauty-landing' })}
+            >
+              ดูตัวอย่างผลงาน
+            </Button>
+          </div>
+
+          {/* Stats */}
+          <div className="flex flex-wrap items-center justify-center gap-8 pt-12 text-sm">
+            <div className="flex items-center gap-2">
+              <div className="flex -space-x-2">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div 
+                    key={i} 
+                    className={`w-8 h-8 rounded-full border-2 border-slate-950 ${avatarGradients[i-1]}`}
+                  />
+                ))}
+              </div>
+              <span className="text-gray-300">89+ คลินิกใช้งาน</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+              <span className="text-gray-300"><span className="font-semibold text-white">4.8/5</span> จากรีวิวจริง</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <BrainCircuit className="w-4 h-4 text-purple-400" />
+              <span className="text-gray-300">ความแม่นยำ <span className="font-semibold text-white">95.3%</span></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Grid */}
+      <section className="relative z-10 container mx-auto px-4 pb-32">
+        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          {/* Feature 1 */}
+          <div className="group relative p-8 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm hover:border-purple-500/50 hover:bg-white/10 transition-all">
+            <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="relative">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mb-4">
+                <Camera className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="text-xl font-bold mb-2">วิเคราะห์ผิว AI</h3>
+              <p className="text-gray-400">
+                ถ่ายภาพแค่ 3 วินาที รับผลวิเคราะห์ 8 ตัวชี้วัดทันที
+              </p>
+            </div>
+          </div>
+
+          {/* Feature 2 */}
+          <div className="group relative p-8 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm hover:border-blue-500/50 hover:bg-white/10 transition-all">
+            <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="relative">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mb-4">
+                <BrainCircuit className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="text-xl font-bold mb-2">AR แสดงผล</h3>
+              <p className="text-gray-400">
+                เห็นผลก่อน-หลังการรักษาแบบ Real-time บนใบหน้า
+              </p>
+            </div>
+          </div>
+
+          {/* Feature 3 */}
+          <div className="group relative p-8 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm hover:border-pink-500/50 hover:bg-white/10 transition-all">
+            <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-pink-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="relative">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center mb-4">
+                <Sparkles className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="text-xl font-bold mb-2">เพิ่มยอดขาย 65%</h3>
+              <p className="text-gray-400">
+                ลูกค้าตัดสินใจเร็วขึ้นเมื่อเห็นภาพผลลัพธ์ชัดเจน
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="relative z-10 border-t border-white/10 backdrop-blur-sm bg-black/20 py-8">
+        <div className="container mx-auto px-4 text-center text-gray-400 text-sm">
+          <p>© 2025 BeautyAI. ระบบอยู่ในช่วง Beta Testing</p>
+        </div>
+      </footer>
+    </div>
+  )
+}

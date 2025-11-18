@@ -193,6 +193,47 @@ export default function HomePage() {
     return () => io.disconnect()
   }, [])
 
+  // Structured data (Organization + WebSite). Since this page is a client component we hydrate on client; we still embed JSON-LD for crawlers.
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://example.com"
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Beauty with AI Precision",
+      "url": siteUrl,
+      "logo": `${siteUrl}/og-interactive-sphere.svg`,
+      "description": t?.home?.heroDescription || "AI-powered dermatology & aesthetic analysis platform",
+      "sameAs": []
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "url": siteUrl,
+      "name": "Beauty with AI Precision",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": `${siteUrl}/search?q={query}`,
+        "query-input": "required name=query"
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      "name": "AI Skin Analysis Free Tier",
+      "serviceType": "Skin analysis",
+      "provider": { "@type": "Organization", "name": "Beauty with AI Precision" },
+      "offers": { "@type": "Offer", "price": 0, "priceCurrency": "USD" }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      "name": "AI Skin Analysis Premium",
+      "serviceType": "Advanced skin and treatment planning analysis",
+      "provider": { "@type": "Organization", "name": "Beauty with AI Precision" },
+      "offers": { "@type": "Offer", "price": 49, "priceCurrency": "USD" }
+    }
+  ]
+
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
@@ -462,7 +503,7 @@ export default function HomePage() {
                       aria-label={item.name}
                       className="flex h-14 items-center justify-center rounded-md border border-border/70 bg-white/80 p-2"
                     >
-                      <img src={item.src} alt={item.name} className="max-h-10 object-contain opacity-90" />
+                      <img src={item.src} alt={item.name || 'partner logo'} loading="lazy" className="max-h-10 object-contain opacity-90" />
                     </Link>
                   ))}
               </div>

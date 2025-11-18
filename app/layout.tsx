@@ -14,6 +14,7 @@ import "./globals.css"
 import { ServiceWorkerRegistration } from "@/components/service-worker-registration"
 import { InstallPrompt } from "@/components/pwa/install-prompt"
 import { SessionTracker } from "@/components/session-tracker"
+import { AccessibilityToolbar } from "@/components/AccessibilityToolbar"
 
 const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
@@ -110,6 +111,8 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -129,6 +132,8 @@ export default function RootLayout({
         <meta httpEquiv="Permissions-Policy" content="camera=(self), microphone=(self)" />
       </head>
       <body className={`${_notoThai.variable} ${_kanit.variable} font-sans antialiased`}>
+        {/* Skip link for keyboard users */}
+        <a href="#main-content" className="skip-link">Skip to main content</a>
         <PerformanceInit />
         <ErrorBoundaryWrapper locale="th" showDetails={process.env.NODE_ENV === 'development'}>
           <Providers>
@@ -143,7 +148,10 @@ export default function RootLayout({
             </div>
             {/* Offline mode indicator with sync status */}
             <OfflineIndicator />
-            {children}
+            <AccessibilityToolbar />
+            <main id="main-content" role="main" aria-label="Primary content">
+              {children}
+            </main>
             <Toaster position="top-right" richColors closeButton />
           </Providers>
         </ErrorBoundaryWrapper>

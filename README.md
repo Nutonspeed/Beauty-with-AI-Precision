@@ -260,6 +260,10 @@ Beauty-with-AI-Precision/
 - ✅ **Subscription Management** - Plan tiers & limits
 - ✅ **TypeScript Cleanup** - All errors resolved
 - ✅ **Production Build** - Passing successfully
+- ✅ **Clinical Landing Upgrade** - Premium hero, trust, personalization
+- ✅ **WebGL Fallback & Timeline** - Graceful degradation + session snapshots
+- ✅ **Outcome Projection Widget** - Before/after simulated improvements
+- ✅ **Privacy-Safe Analytics (Opt-In)** - Consent-based, no raw images
 
 **Database** (100%)
 - ✅ 78 tables installed
@@ -294,12 +298,16 @@ Beauty-with-AI-Precision/
 3. ⏳ Complete documentation updates
 4. ⏳ QA testing
 5. ⏳ Performance optimization
+6. 🔄 Accessibility & Contrast Audit
+7. 🔄 Multi-lingual (TH/EN) parity rollout
 
 **Short-term (1-2 weeks)**
 - User acceptance testing
 - Security audit
 - Production deployment prep
 - Monitoring setup
+- Accessibility improvements & WCAG contrast verification
+- Base i18n resource extraction
 
 **For detailed status, see:**
 - 📖 [CURRENT_SYSTEM_STATUS.md](CURRENT_SYSTEM_STATUS.md) - Complete current status
@@ -435,6 +443,7 @@ Note on demo accounts:
   - Payment gateway (Stripe/Omise)
   - SMS service (Twilio)
   - LINE Messaging API
+  - Privacy analytics enhancement (server ingestion hardening)
 
 ### Long-term (Future Enhancements)
 

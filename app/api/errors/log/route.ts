@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
+import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
 
 interface ErrorLog {
   message: string;
@@ -21,6 +22,34 @@ interface ErrorLog {
 }
 
 export async function POST(request: NextRequest) {
+  // Rate limit: 20 error reports per minute per IP
+  const clientIp = getClientIp(request.headers);
+  const rateLimit = checkRateLimit(clientIp, {
+    limit: 20,
+    window: 60 * 1000, // 1 minute
+  });
+
+  if (!rateLimit.success) {
+    return NextResponse.json(
+      { 
+        success: false, 
+        error: { 
+          code: 'RATE_LIMIT_EXCEEDED', 
+          message: 'Too many error reports. Please try again later.' 
+        } 
+      },
+      {
+        status: 429,
+        headers: {
+          'X-RateLimit-Limit': rateLimit.limit.toString(),
+          'X-RateLimit-Remaining': rateLimit.remaining.toString(),
+          'X-RateLimit-Reset': new Date(rateLimit.reset).toISOString(),
+          'Retry-After': Math.ceil((rateLimit.reset - Date.now()) / 1000).toString(),
+        },
+      }
+    );
+  }
+
   try {
     const errorLog: ErrorLog = await request.json();
 

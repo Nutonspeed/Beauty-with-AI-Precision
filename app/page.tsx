@@ -9,7 +9,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ArrowRight, Bot, BrainCircuit, Camera, Star, Clock, CheckCircle2 } from "lucide-react"
 import { trackPageView } from "@/lib/analytics/usage-tracker"
-import { FluidSimulation } from "@/components/fluid-simulation"
+import { FloatingOrbs } from "@/components/floating-orbs"
+import { GradientMesh } from "@/components/gradient-mesh"
 
 export default function LandingPage() {
   useEffect(() => {
@@ -22,8 +23,8 @@ export default function LandingPage() {
 
       <main className="flex-1">
         {/* Hero Section - เน้นปัญหาและโซลูชัน */}
-        <section className="relative w-full py-16 md:py-24 lg:py-32 bg-white dark:bg-gray-950 border-b overflow-hidden">
-          <FluidSimulation />
+        <section className="relative w-full py-16 md:py-24 lg:py-32 bg-gradient-to-br from-white via-blue-50/20 to-purple-50/20 dark:from-gray-950 dark:via-blue-950/10 dark:to-purple-950/10 border-b overflow-hidden">
+          <FloatingOrbs />
           <div className="container relative z-10 px-4 md:px-6">
             <div className="grid gap-8 lg:grid-cols-2 lg:gap-16 items-center">
               <div className="space-y-6">

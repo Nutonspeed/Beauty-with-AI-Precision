@@ -26,7 +26,7 @@ const BackedBy = () => {
         </div>
         <div className="relative w-full overflow-hidden">
           <motion.div
-            className="flex items-center gap-16 min-w-max"
+            className="flex items-center gap-16 min-w-max will-change-transform"
             animate={{ x: ['0%', '-50%'] }}
             transition={{ duration: 22, ease: 'linear', repeat: Infinity }}
           >

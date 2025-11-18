@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="Interactive 3D AI Sphere">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ff6b9d" />
+      <stop offset="100%" stop-color="#9333ea" />
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.85" />
+      <stop offset="70%" stop-color="#ffffff" stop-opacity="0.08" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)" />
+  <!-- Soft vignette glow -->
+  <rect width="1200" height="630" fill="url(#glow)" />
+  <!-- Stylized icosahedron wireframe sphere -->
+  <g transform="translate(600 315)">
+    <circle r="180" fill="none" stroke="#ffffff" stroke-opacity="0.18" stroke-width="2" />
+    <circle r="155" fill="none" stroke="#ffffff" stroke-opacity="0.12" stroke-width="2" />
+    <g stroke="#ffffff" stroke-opacity="0.55" stroke-width="3" fill="none">
+      <path d="M0,-160 L138,-80 L138,80 L0,160 L-138,80 L-138,-80 Z" />
+      <path d="M0,-160 L0,160" stroke-opacity="0.35" />
+      <path d="M-138,-80 L138,80" stroke-opacity="0.35" />
+      <path d="M138,-80 L-138,80" stroke-opacity="0.35" />
+    </g>
+    <!-- rotating accent arcs (static representation) -->
+    <circle r="110" fill="none" stroke="#ffffff" stroke-dasharray="40 18" stroke-linecap="round" stroke-width="10" stroke-opacity="0.35" />
+  </g>
+  <!-- Heading Text -->
+  <text x="600" y="140" font-size="64" font-family="Inter, 'Kanit', sans-serif" font-weight="800" text-anchor="middle" fill="#ffffff" style="letter-spacing:3px">INTERACTIVE 3D AI SPHERE</text>
+  <text x="600" y="205" font-size="34" font-family="Inter, 'Kanit', sans-serif" text-anchor="middle" fill="#ffe9f2" style="letter-spacing:2px">Clinical Beauty Analysis Engine</text>
+  <text x="600" y="246" font-size="26" font-family="'Kanit', Inter, sans-serif" text-anchor="middle" fill="#fdf2f8" style="letter-spacing:1px">ระบบวิเคราะห์ความงามเชิงคลินิกด้วย AI</text>
+  <!-- Feature Bullets -->
+  <g fill="#fff" font-family="Inter, 'Kanit', sans-serif" font-size="24" font-weight="500" opacity="0.92" text-anchor="middle">
+    <text x="600" y="520">Real-time WebGL · Personalized Insights · Clinical Precision</text>
+  </g>
+  <!-- Accent particles -->
+  <circle cx="160" cy="90" r="12" fill="#ffffff" fill-opacity="0.42" />
+  <circle cx="1040" cy="560" r="10" fill="#ffffff" fill-opacity="0.38" />
+  <circle cx="1080" cy="140" r="16" fill="#ffffff" fill-opacity="0.30" />
+  <circle cx="200" cy="520" r="8" fill="#ffffff" fill-opacity="0.35" />
+</svg>

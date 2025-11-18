@@ -8,6 +8,9 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'happy-dom',
+    // Use thread pool instead of forks to avoid startup timeouts in constrained environments
+    pool: 'threads',
+    testTimeout: 30000,
     environmentOptions: {
       happyDOM: {
         // emulate a browser-like URL for APIs relying on location

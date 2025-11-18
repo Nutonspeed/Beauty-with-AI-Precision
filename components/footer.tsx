@@ -37,7 +37,7 @@ export function Footer() {
               </li>
               <li>
                 <Link href="/faq" className="text-muted-foreground transition-colors hover:text-foreground">
-                  FAQ
+                  {t.footer.faq}
                 </Link>
               </li>
               <li>
@@ -53,7 +53,7 @@ export function Footer() {
             <ul className="space-y-3 text-sm">
               <li>
                 <Link href="/case-studies" className="text-muted-foreground transition-colors hover:text-foreground">
-                  Case Studies
+                  {t.footer.caseStudies}
                 </Link>
               </li>
               <li>
@@ -89,7 +89,7 @@ export function Footer() {
               </li>
               <li>
                 <Link href="/compliance" className="text-muted-foreground transition-colors hover:text-foreground">
-                  Compliance
+                  {t.footer.compliance}
                 </Link>
               </li>
               <li>

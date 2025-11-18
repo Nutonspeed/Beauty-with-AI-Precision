@@ -32,6 +32,14 @@ export const translations = {
       notifications: 'Notifications',
       switchClinic: 'Switch Clinic',
       startAnalysis: 'Start Analysis',
+      viewFullSystem: 'View Full Clinic System',
+      status: {
+        initializing: 'INITIALIZING',
+        scanningBaseline: 'SCANNING FACIAL BASELINE',
+      },
+      messages: {
+        webglFallback: 'WebGL not available – showing optimized static preview.',
+      },
     },
     // Home Page
     home: {
@@ -127,20 +135,121 @@ export const translations = {
         },
       },
     },
+    badges: {
+      iso: { label: 'ISO 13485', tooltip: 'Medical device quality management' },
+      ethics: { label: 'AI Ethics', tooltip: 'Meets AI ethics criteria' },
+      secure: { label: 'Secure Data', tooltip: 'Encrypted and segmented data' },
+    },
+    trust: {
+      metrics: {
+        clarity: 'Clarity',
+        hydration: 'Hydration',
+        risk: 'Risk',
+      },
+      microLines: [
+        'We analyze only transformed embeddings, never store raw facial images.',
+        'Realtime integrity self-test passes every 5 minutes.',
+        'Your personalization settings stay local to this session.',
+      ],
+    },
+    timeline: {
+      capture: 'CAPTURE',
+      gallery: 'GALLERY',
+      title: 'SESSION SNAPSHOTS',
+      close: 'CLOSE',
+      empty: 'No snapshots yet.',
+      persona: 'Persona',
+      adaptiveReduced: 'Reduced Effects',
+      adaptiveFull: 'Full Fidelity',
+      lowPerfTooltip: 'Low perf adaptive',
+      stagePrefix: '',
+      atTime: 'captured at',
+    },
+    outcome: {
+      toggleShow: 'OUTCOME',
+      toggleHide: 'HIDE',
+      captureBaseline: 'CAPTURE BASELINE',
+      baselineReady: 'BASELINE READY',
+      modes: {
+        clarity: 'CLARITY',
+        firming: 'FIRMING',
+        hydration: 'HYDRATION',
+      },
+      intensity: 'INTENSITY',
+      before: 'BEFORE',
+      afterProjected: 'AFTER (PROJECTED)',
+      footer: 'SIMULATION ONLY • DOES NOT STORE RAW IMAGE',
+      needBaseline: 'Capture a baseline to generate a projected improvement preview.',
+    },
+    clinic: {
+      steps: [
+        {
+          eyebrow: 'STEP 01',
+          title: 'Precision AI Halo',
+          body:
+            'HALO renders real-time skin analysis with a volumetric scan beam to reveal subtle patterns without visual clutter.',
+        },
+        {
+          eyebrow: 'STEP 02',
+          title: 'Volumetric Scan',
+          body:
+            'A paced vertical scan communicates genuine data capture, enhancing perceived credibility for premium clinical experiences.',
+        },
+        {
+          eyebrow: 'STEP 03',
+          title: 'Adaptive Protocol',
+          body:
+            'AI-driven treatment protocol adapts live; user sliders for sensitivity/intensity instantly reflect via HALO feedback.',
+        },
+        {
+          eyebrow: 'STEP 04',
+          title: 'Outcome Forecast',
+          body:
+            'Forecast 30 / 60 / 90 day outcomes with confidence levels and percentile vs reference cohorts.',
+        },
+      ],
+    },
+    perf: {
+      fps: 'FPS',
+      frame: 'FRAME',
+      mem: 'MEM',
+      statusAdaptive: 'ADAPTIVE QUALITY',
+      statusStable: 'STABLE',
+    },
+    persona: {
+      title: 'PERSONALIZE',
+      tone: 'Skin Tone',
+      sensitivity: 'Sensitivity',
+      goal: 'Goal',
+      options: {
+        tone: { cool: 'Cool', neutral: 'Neutral', warm: 'Warm' },
+        sensitivity: { low: 'Low', medium: 'Medium', high: 'High' },
+        goal: { rejuvenate: 'Rejuvenate', firming: 'Firming', clarity: 'Clarity' },
+      },
+    },
+    consent: {
+      title: 'ANALYTICS CONSENT',
+      description: 'We collect aggregate interaction metrics only (no photos / PII). Allow logging?',
+      allow: 'ALLOW',
+      decline: 'DECLINE',
+    },
     // Footer
     footer: {
       description: 'Medical-grade AI skin analysis for professional beauty clinics',
       product: 'Product',
       features: 'Features',
       pricing: 'Pricing',
+      faq: 'FAQ',
       tryDemo: 'Try Demo',
       company: 'Company',
+      caseStudies: 'Case Studies',
       about: 'About',
       contact: 'Contact',
       careers: 'Careers',
       legal: 'Legal',
       privacy: 'Privacy',
       terms: 'Terms',
+      compliance: 'Compliance',
       pdpa: 'PDPA',
       copyright: '© 2025 AI Beauty Platform. All rights reserved.',
     },
@@ -182,6 +291,14 @@ export const translations = {
       notifications: 'การแจ้งเตือน',
       switchClinic: 'เปลี่ยนคลินิก',
       startAnalysis: 'เริ่มวิเคราะห์',
+      viewFullSystem: 'ดูระบบคลินิกเต็ม',
+      status: {
+        initializing: 'กำลังเริ่มระบบ',
+        scanningBaseline: 'กำลังสแกนค่าพื้นฐานผิว',
+      },
+      messages: {
+        webglFallback: 'อุปกรณ์นี้ไม่รองรับ WebGL – แสดงภาพตัวอย่างแบบปรับแต่งแทน',
+      },
     },
     // Home Page
     home: {
@@ -277,20 +394,121 @@ export const translations = {
         },
       },
     },
+    badges: {
+      iso: { label: 'ISO 13485', tooltip: 'มาตรฐานระบบเครื่องมือแพทย์' },
+      ethics: { label: 'AI Ethics', tooltip: 'ผ่านเกณฑ์จริยธรรม AI' },
+      secure: { label: 'Secure Data', tooltip: 'ข้อมูลถูกเข้ารหัสและแยกส่วน' },
+    },
+    trust: {
+      metrics: {
+        clarity: 'ความใส',
+        hydration: 'ความชุ่มชื้น',
+        risk: 'ความเสี่ยง',
+      },
+      microLines: [
+        'ระบบวิเคราะห์เฉพาะข้อมูลที่แปลงแล้ว ไม่บันทึกภาพใบหน้าดิบ',
+        'ตรวจสอบความสมบูรณ์ของระบบอัตโนมัติทุก 5 นาที',
+        'การปรับแต่งส่วนบุคคลถูกเก็บเฉพาะในเซสชันนี้',
+      ],
+    },
+    timeline: {
+      capture: 'บันทึก',
+      gallery: 'แกลเลอรี',
+      title: 'ภาพบันทึกในเซสชัน',
+      close: 'ปิด',
+      empty: 'ยังไม่มีภาพบันทึก',
+      persona: 'บุคลิกภาพ',
+      adaptiveReduced: 'ลดเอฟเฟกต์',
+      adaptiveFull: 'รายละเอียดเต็ม',
+      lowPerfTooltip: 'โหมดปรับตามประสิทธิภาพ',
+      stagePrefix: '',
+      atTime: 'เวลา',
+    },
+    outcome: {
+      toggleShow: 'คาดการณ์ผลลัพธ์',
+      toggleHide: 'ซ่อน',
+      captureBaseline: 'บันทึกค่าพื้นฐาน',
+      baselineReady: 'มีค่าพื้นฐานแล้ว',
+      modes: {
+        clarity: 'ความใส',
+        firming: 'ความกระชับ',
+        hydration: 'ความชุ่มชื้น',
+      },
+      intensity: 'ความเข้ม',
+      before: 'ก่อน',
+      afterProjected: 'หลัง (คาดการณ์)',
+      footer: 'เพื่อการจำลองเท่านั้น • ไม่เก็บภาพจริง',
+      needBaseline: 'บันทึกค่าพื้นฐานเพื่อสร้างภาพคาดการณ์การปรับปรุง',
+    },
+    clinic: {
+      steps: [
+        {
+          eyebrow: 'STEP 01',
+          title: 'Precision AI Halo',
+          body:
+            'ระบบ HALO แสดงการวิเคราะห์ผิวแบบเรียลไทม์ พร้อม volumetric beam สแกนสภาพชั้นผิวเพื่อให้แพทย์เห็น pattern ความผิดปกติอย่างนุ่มนวล ไม่รกตา',
+        },
+        {
+          eyebrow: 'STEP 02',
+          title: 'Volumetric Scan',
+          body:
+            'แสงสแกนแนวตั้งเลื่อนเป็นจังหวะ ทำให้ผู้ใช้เข้าใจว่ามีการจับข้อมูลจริง ไม่ใช่อนิเมชันลอยๆ เพิ่มความน่าเชื่อถือระดับคลินิกพรีเมียม',
+        },
+        {
+          eyebrow: 'STEP 03',
+          title: 'Adaptive Protocol',
+          body:
+            'โปรโตคอลการรักษาที่ปรับอัตโนมัติด้วยโมเดล AI ให้ลูกค้าปรับสไลเดอร์ ความไว/ความเข้มข้น แล้ว HALO เปลี่ยนสีตอบสนองทันที',
+        },
+        {
+          eyebrow: 'STEP 04',
+          title: 'Outcome Forecast',
+          body:
+            'คาดการณ์ผลลัพธ์หลังการรักษา 30 / 60 / 90 วัน พร้อมระดับความเชื่อมั่น และ percentile เทียบกลุ่มอ้างอิง',
+        },
+      ],
+    },
+    perf: {
+      fps: 'FPS',
+      frame: 'เวลาเฟรม',
+      mem: 'หน่วยความจำ',
+      statusAdaptive: 'ปรับคุณภาพอัตโนมัติ',
+      statusStable: 'เสถียร',
+    },
+    persona: {
+      title: 'ปรับให้เหมาะกับคุณ',
+      tone: 'โทนผิว',
+      sensitivity: 'ความไวผิว',
+      goal: 'เป้าหมาย',
+      options: {
+        tone: { cool: 'โทนเย็น', neutral: 'กลาง', warm: 'โทนร้อน' },
+        sensitivity: { low: 'ต่ำ', medium: 'ปานกลาง', high: 'สูง' },
+        goal: { rejuvenate: 'ฟื้นฟู', firming: 'ยกกระชับ', clarity: 'ความใส' },
+      },
+    },
+    consent: {
+      title: 'การยินยอมการวิเคราะห์',
+      description: 'เราบันทึกเฉพาะสถิติการใช้งานรวม (ไม่มีรูป/ข้อมูลส่วนบุคคล) อนุญาตหรือไม่?',
+      allow: 'อนุญาต',
+      decline: 'ปฏิเสธ',
+    },
     // Footer
     footer: {
       description: 'ระบบวิเคราะห์ผิวหน้าด้วย AI ระดับการแพทย์สำหรับคลินิกความงามมืออาชีพ',
       product: 'ผลิตภัณฑ์',
       features: 'คุณสมบัติ',
       pricing: 'ราคา',
+      faq: 'คำถามที่พบบ่อย',
       tryDemo: 'ทดลองใช้',
       company: 'บริษัท',
+      caseStudies: 'กรณีศึกษา',
       about: 'เกี่ยวกับ',
       contact: 'ติดต่อ',
       careers: 'ร่วมงาน',
       legal: 'กฎหมาย',
       privacy: 'ความเป็นส่วนตัว',
       terms: 'ข้อกำหนด',
+      compliance: 'การปฏิบัติตามข้อกำหนด',
       pdpa: 'พ.ร.บ.คุ้มครองข้อมูล',
       copyright: '© 2025 AI Beauty Platform สงวนลิขสิทธิ์',
     },
