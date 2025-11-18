@@ -30,9 +30,20 @@ class UsageTracker {
   private eventBatch: UsageEvent[] = [];
   private sessionStart: Date = new Date();
   private sessionStartTracked = false;
+  private unloadBound = false;
 
   private constructor() {
     // Session start will be tracked lazily on first event
+    // Attach flush-on-unload to improve delivery reliability
+    if (typeof window !== 'undefined' && !this.unloadBound) {
+      this.unloadBound = true;
+      const flush = () => this.flushOnUnload();
+      window.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') flush();
+      });
+      window.addEventListener('pagehide', flush);
+      window.addEventListener('beforeunload', flush);
+    }
   }
 
   static getInstance(): UsageTracker {
@@ -261,6 +272,48 @@ class UsageTracker {
       console.error('Failed to send usage events batch:', error);
       // Re-queue events for retry
       this.eventBatch.unshift(...eventsToSend);
+    }
+  }
+
+  /**
+   * Flush using navigator.sendBeacon during unload when possible.
+   * Fall back to fetch with keepalive.
+   */
+  private flushOnUnload(): void {
+    try {
+      // Push a session_end marker if not already added
+      try {
+        this.trackSessionEnd();
+      } catch {}
+
+      if (this.eventBatch.length === 0) return;
+
+      const eventsToSend = [...this.eventBatch];
+      this.eventBatch = [];
+
+      const payload = JSON.stringify(eventsToSend);
+      const url = '/api/analytics/events';
+
+      // Prefer sendBeacon for reliability on unload
+      if (typeof navigator !== 'undefined' && 'sendBeacon' in navigator) {
+        const blob = new Blob([payload], { type: 'application/json' });
+        const ok = (navigator as any).sendBeacon(url, blob);
+        if (!ok) {
+          // Fallback to keepalive fetch
+          fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: payload, keepalive: true }).catch(() => {
+            // Re-queue if failed
+            this.eventBatch.unshift(...eventsToSend);
+          });
+        }
+        return;
+      }
+
+      // Fallback if sendBeacon not available
+      fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: payload, keepalive: true }).catch(() => {
+        this.eventBatch.unshift(...eventsToSend);
+      });
+    } catch {
+      // swallow errors during unload
     }
   }
 }

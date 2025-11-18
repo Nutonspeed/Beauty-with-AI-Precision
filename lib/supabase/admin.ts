@@ -1,35 +1,50 @@
 /**
- * Temporary Supabase Admin Client
- * Uses SERVICE_ROLE_KEY to bypass RLS during development
- * 
- * ⚠️ WARNING: ใช้เฉพาะตอน development เท่านั้น!
- * ⚠️ ห้ามใช้ใน production เด็ดขาด!
+ * Supabase Admin Client (server-only, lazy)
+ * Uses SERVICE_ROLE_KEY to bypass RLS for server-side maintenance tasks.
+ *
+ * Do not use from Edge runtime or any client component.
  */
 
 import 'server-only'
-import { createClient } from '@supabase/supabase-js'
+import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 
-if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
-  throw new Error('Missing NEXT_PUBLIC_SUPABASE_URL')
-}
+let adminClient: SupabaseClient | undefined
 
-if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
-  throw new Error('Missing SUPABASE_SERVICE_ROLE_KEY')
-}
+/**
+ * Returns a singleton Supabase admin client.
+ * - Throws if called on the client or Edge runtime
+ * - Validates required environment variables
+ */
+export function getSupabaseAdmin(): SupabaseClient {
+  if (typeof window !== 'undefined') {
+    throw new Error('supabaseAdmin is server-only')
+  }
 
-// Admin client ที่ bypass RLS
-export const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY,
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false
+  // Prevent use in Edge runtime where secrets exposure risk is higher
+  if (process.env.NEXT_RUNTIME === 'edge') {
+    throw new Error('supabaseAdmin is not allowed in Edge runtime')
+  }
+
+  if (!adminClient) {
+    const url = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+    if (!url) {
+      throw new Error('Missing SUPABASE_URL or NEXT_PUBLIC_SUPABASE_URL')
+    }
+    if (!serviceKey) {
+      throw new Error('Missing SUPABASE_SERVICE_ROLE_KEY')
+    }
+
+    adminClient = createClient(url, serviceKey, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    })
+
+    if (process.env.NODE_ENV === 'production') {
+      // Log once on creation to aid audits; ensure server-only usage
+      console.warn('⚠️ supabaseAdmin created in production (server-only). Ensure proper access controls.')
     }
   }
-)
 
-// ⚠️ ใช้เฉพาะสำหรับ development
-if (process.env.NODE_ENV === 'production') {
-  console.warn('⚠️ WARNING: Using supabaseAdmin in production!')
+  return adminClient
 }
