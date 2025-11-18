@@ -97,7 +97,7 @@ const Features: React.FC = () => {
           {features.map((f, i) => (
             <motion.div
               key={f.title}
-              ref={(el) => (refs.current[i] = el)}
+              ref={(el) => { refs.current[i] = el; }}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: false, amount: 0.3 }}

@@ -55,7 +55,7 @@ export default function CaseStudyDetailPage() {
           </div>
 
           <div className="mb-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
-            {study.metrics.map((m) => (
+            {study.metrics.map((m: { label: Record<Locale, string>; value: string }) => (
               <div key={`${m.label[locale]}-${m.value}`} className="rounded-lg border border-border/60 p-4">
                 <div className="text-2xl font-semibold">{m.value}</div>
                 <div className="text-sm text-muted-foreground">{m.label[locale]}</div>
@@ -64,7 +64,7 @@ export default function CaseStudyDetailPage() {
           </div>
 
           <div className="prose prose-neutral max-w-none dark:prose-invert">
-            {study.content.map((section) => (
+            {study.content.map((section: { heading: Record<Locale, string>; body: Record<Locale, string> }) => (
               <section key={section.heading[locale]} className="mb-8">
                 <h2 className="mt-0">{section.heading[locale]}</h2>
                 <p>{section.body[locale]}</p>

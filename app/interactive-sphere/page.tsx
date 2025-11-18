@@ -32,9 +32,9 @@ export const metadata: Metadata = {
   },
 };
 
-export default function InteractiveSphere() {
+export default async function InteractiveSphere() {
   // Server-side A/B assignment
-  const ctaVariant = getServerAssignment("cta", ["A", "B"]) as "A" | "B";
+  const ctaVariant = (await getServerAssignment("cta", ["A", "B"])) as "A" | "B";
   
   return (
     <>

@@ -148,7 +148,7 @@ export function LandingHero({ onPrimary, onSecondary, ctaVariant = "A" }: Landin
             <spotLight position={[-6,-5,-6]} angle={0.5} penumbra={1} intensity={1.2} color="#c3a5ff" />
             <Suspense fallback={null}>
               <group position={[0,-0.2,0]}>
-                <ProceduralHalo colorA={haloColors[0]} colorB={haloColors[1]} distortScale={distortMod} opacity={0.5 * lowPerfFactor} intensity={intensityMod * lowPerfFactor} />
+                <ProceduralHalo innerColor={haloColors[0]} outerColor={haloColors[1]} distortScale={distortMod} opacity={0.5 * lowPerfFactor} intensity={intensityMod * lowPerfFactor} />
                 <HeroSphere active={stage==='active'} />
                 <VolumetricScanBeam color={haloColors[0]} sweepSpeed={(stage==='scanning'?1.1:0.18) * lowPerfFactor} opacity={stage==='active'?0.25*lowPerfFactor:0.38*lowPerfFactor} />
               </group>

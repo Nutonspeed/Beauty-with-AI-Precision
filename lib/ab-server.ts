@@ -2,11 +2,11 @@ import { cookies } from "next/headers";
 
 const EXP_PREFIX = "exp:";
 
-export function getServerAssignment(
+export async function getServerAssignment(
   experiment: string,
   variants: string[]
-): string {
-  const cookieStore = cookies();
+): Promise<string> {
+  const cookieStore = await cookies();
   const name = `${EXP_PREFIX}${experiment}`;
   const existing = cookieStore.get(name)?.value;
   if (existing && variants.includes(existing)) {

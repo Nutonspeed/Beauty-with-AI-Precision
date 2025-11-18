@@ -518,7 +518,7 @@ export default function HomePage() {
                 { label: "GDPR‑friendly" },
                 { label: "Data Encryption" },
                 { label: "Audit Logging" },
-              ]).map((b) => (
+              ]).map((b: { label: string }) => (
                 <span key={b.label} className="rounded-full border border-border/70 bg-muted/30 px-3 py-1 text-foreground/80">{b.label}</span>
               ))}
             </div>

@@ -35,7 +35,7 @@ export default function CaseStudiesPage() {
           </div>
 
           <ul className="grid gap-6 md:grid-cols-2">
-            {items.map((item) => (
+            {items.map((item: { slug: string; title: string; summary: string; metrics: { label: string; value: string }[] }) => (
               <li key={item.slug} className="rounded-lg border border-border/60 p-5 hover:border-primary/50">
                 <div className="mb-2 text-xs uppercase tracking-wide text-muted-foreground">
                   {isTH ? "เคสศึกษา" : "Case Study"}
@@ -47,7 +47,7 @@ export default function CaseStudiesPage() {
                 </h2>
                 <p className="mb-4 text-sm text-muted-foreground">{item.summary}</p>
                 <div className="mb-4 flex flex-wrap gap-3">
-                  {item.metrics.slice(0, 2).map((m) => (
+                  {item.metrics.slice(0, 2).map((m: { label: string; value: string }) => (
                     <div key={`${m.label}-${m.value}`} className="rounded-md bg-muted px-3 py-1 text-sm">
                       <span className="font-medium">{m.value}</span>
                       <span className="text-muted-foreground"> · {m.label}</span>

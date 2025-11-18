@@ -4,7 +4,7 @@ import React from "react";
 import { useScroll, useTransform, useSpring, useReducedMotion, MotionValue } from "framer-motion";
 
 export type MascotMotion = {
-  sectionRef: React.RefObject<HTMLDivElement>;
+  sectionRef: React.RefObject<HTMLDivElement | null>;
   x: MotionValue<string>;
   y: MotionValue<string>;
   rotate: MotionValue<string>;
