@@ -15,7 +15,8 @@ import {
   Plus,
   Trash2,
   Mic,
-  MicOff
+  MicOff,
+  Loader2
 } from "lucide-react"
 import { format } from "date-fns"
 import { 
@@ -32,6 +33,8 @@ import {
   type VoiceRecognitionError
 } from "@/lib/voice-recognition"
 import { offlineManager } from "@/lib/offline-manager"
+import { createClient } from "@/lib/supabase/client"
+import { toast } from "sonner"
 
 interface Message {
   id: string
@@ -54,18 +57,7 @@ interface ChatDrawerProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   customer: Customer
-  messages: Message[]
-  onSendMessage: (message: string) => void
-  onCall?: () => void
-  onVideoCall?: () => void
-}
-
-interface ChatDrawerProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  customer: Customer
-  messages: Message[]
-  onSendMessage: (message: string) => void
+  leadId?: string // Make API-driven
   onCall?: () => void
   onVideoCall?: () => void
 }
@@ -73,12 +65,12 @@ interface ChatDrawerProps {
 export function ChatDrawer({ 
   open, 
   onOpenChange, 
-  customer, 
-  messages,
-  onSendMessage,
+  customer,
+  leadId,
   onCall,
   onVideoCall
 }: Readonly<ChatDrawerProps>) {
+  const supabase = createClient()
   const [messageText, setMessageText] = useState("")
   const [selectedCategory, setSelectedCategory] = useState<QuickReplyCategory>('greetings')
   const [showAddCustom, setShowAddCustom] = useState(false)
@@ -86,6 +78,10 @@ export function ChatDrawer({
   const [, setQuickReplies] = useState(getAllQuickReplies())
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const categoryScrollRef = useRef<HTMLDivElement>(null)
+  
+  // API-driven messages
+  const [messages, setMessages] = useState<Message[]>([])
+  const [loadingMessages, setLoadingMessages] = useState(true)
   
   // Optimistic UI state
   const [optimisticMessages, setOptimisticMessages] = useState<Message[]>([])
@@ -112,6 +108,76 @@ export function ChatDrawer({
     return () => unsubscribe()
   }, [])
 
+  // Load messages from API when drawer opens
+  useEffect(() => {
+    if (open && leadId) {
+      loadMessages()
+      subscribeToMessages()
+    }
+  }, [open, leadId])
+
+  const loadMessages = async () => {
+    if (!leadId) return
+    
+    setLoadingMessages(true)
+    try {
+      const response = await fetch(`/api/sales/chat-messages?lead_id=${leadId}`)
+      if (response.ok) {
+        const data = await response.json()
+        
+        // Transform API messages to component format
+        const transformedMessages: Message[] = data.map((msg: any) => ({
+          id: msg.id,
+          text: msg.content,
+          sender: msg.sender_type === 'sales' ? 'sales' : 'customer',
+          timestamp: new Date(msg.sent_at),
+          isRead: msg.is_read || false
+        }))
+        
+        setMessages(transformedMessages)
+      }
+    } catch (error) {
+      console.error("Failed to load messages:", error)
+      toast.error("ไม่สามารถโหลดข้อความได้")
+    } finally {
+      setLoadingMessages(false)
+    }
+  }
+
+  const subscribeToMessages = () => {
+    if (!leadId) return
+
+    // Subscribe to new messages via Supabase Realtime
+    const channel = supabase
+      .channel(`sales_chat_messages:${leadId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'sales_chat_messages',
+          filter: `lead_id=eq.${leadId}`
+        },
+        (payload) => {
+          const newMsg = payload.new as any
+          const transformedMessage: Message = {
+            id: newMsg.id,
+            text: newMsg.content,
+            sender: newMsg.sender_type === 'sales' ? 'sales' : 'customer',
+            timestamp: new Date(newMsg.sent_at),
+            isRead: newMsg.is_read || false
+          }
+          
+          setMessages(prev => [...prev, transformedMessage])
+        }
+      )
+      .subscribe()
+
+    return () => {
+      channel.unsubscribe()
+    }
+  }
+
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -128,7 +194,7 @@ export function ChatDrawer({
   }, [open])
 
   const handleSend = async () => {
-    if (!messageText.trim() || isSending) return
+    if (!messageText.trim() || isSending || !leadId) return
 
     const tempId = `temp-${Date.now()}`
     const optimisticMessage: Message = {
@@ -147,24 +213,37 @@ export function ChatDrawer({
 
     try {
       if (isOnline) {
-        // Normal online message send
-        await onSendMessage(currentMessageText)
-        // Remove optimistic message after successful send
+        // Send via API
+        const response = await fetch('/api/sales/chat-messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            lead_id: leadId,
+            content: currentMessageText,
+            sender_type: 'sales',
+            sent_at: new Date().toISOString()
+          })
+        })
+
+        if (!response.ok) {
+          throw new Error('Failed to send message')
+        }
+
+        // Remove optimistic message (real message will come via Realtime)
         setOptimisticMessages(prev => prev.filter(m => m.id !== tempId))
       } else {
         // Queue message for offline sync
         await offlineManager.queueMessage({
-          leadId: customer.id,
+          leadId: leadId,
           leadName: customer.name,
           text: currentMessageText,
           timestamp: new Date()
         })
-        // Still call onSendMessage for optimistic UI update
-        await onSendMessage(currentMessageText)
         setOptimisticMessages(prev => prev.filter(m => m.id !== tempId))
       }
     } catch (error) {
       console.error("Failed to send message:", error)
+      toast.error("ไม่สามารถส่งข้อความได้")
       // Rollback: remove optimistic message and restore input
       setOptimisticMessages(prev => prev.filter(m => m.id !== tempId))
       setMessageText(currentMessageText)
@@ -174,7 +253,7 @@ export function ChatDrawer({
   }
 
   const handleQuickReply = async (replyText: string) => {
-    if (isSending) return
+    if (isSending || !leadId) return
 
     const tempId = `temp-${Date.now()}`
     const optimisticMessage: Message = {
@@ -191,20 +270,32 @@ export function ChatDrawer({
 
     try {
       if (isOnline) {
-        await onSendMessage(replyText)
+        const response = await fetch('/api/sales/chat-messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            lead_id: leadId,
+            content: replyText,
+            sender_type: 'sales',
+            sent_at: new Date().toISOString()
+          })
+        })
+
+        if (!response.ok) throw new Error('Failed to send')
+        
         setOptimisticMessages(prev => prev.filter(m => m.id !== tempId))
       } else {
         await offlineManager.queueMessage({
-          leadId: customer.id,
+          leadId: leadId,
           leadName: customer.name,
           text: replyText,
           timestamp: new Date()
         })
-        await onSendMessage(replyText)
         setOptimisticMessages(prev => prev.filter(m => m.id !== tempId))
       }
     } catch (error) {
       console.error("Failed to send quick reply:", error)
+      toast.error("ไม่สามารถส่งข้อความได้")
       setOptimisticMessages(prev => prev.filter(m => m.id !== tempId))
     } finally {
       setIsSending(false)
@@ -347,8 +438,13 @@ export function ChatDrawer({
 
         {/* Chat Messages - Scrollable */}
         <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
-          <div className="space-y-4">
-            {allMessages.map((message) => (
+          {loadingMessages ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {allMessages.map((message) => (
               <div
                 key={message.id}
                 className={`flex ${message.sender === "sales" ? "justify-end" : "justify-start"}`}
@@ -372,8 +468,9 @@ export function ChatDrawer({
                   </p>
                 </div>
               </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </ScrollArea>
 
         {/* Quick Replies - Category Tabs + Messages */}
