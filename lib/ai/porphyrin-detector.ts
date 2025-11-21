@@ -218,11 +218,6 @@ const ACNE_HISTORY_MULTIPLIER = {
 } as const;
 
 /**
- * Treatment impact (ลดคะแนน bacterial colonization ถ้ากำลังรักษา)
- */
-const TREATMENT_REDUCTION = 0.15; // -15% if on treatment
-
-/**
  * Skincare routine impact
  */
 const SKINCARE_ADJUSTMENT = {

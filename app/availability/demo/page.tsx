@@ -11,8 +11,7 @@ import { CalendarGrid } from '@/components/availability/calendar-grid';
 import { BookingForm } from '@/components/availability/booking-form';
 import { BookingStatsPanel } from '@/components/availability/booking-stats-panel';
 import { ScheduleControls } from '@/components/availability/schedule-controls';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { TimeSlot } from '@/lib/availability-manager';
 import {

@@ -59,6 +59,18 @@ export function usePWA(config?: PWAConfig): UsePWAReturn {
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
 
+  // Update all states
+  const updateStates = useCallback(() => {
+    const pwaManager = getPWAManager();
+    
+    setInstallState(pwaManager.getInstallPromptState());
+    setIsOnline(pwaManager.isOnline());
+    setNotificationState(pwaManager.getNotificationPermissionState());
+    setIsStandalone(pwaManager.isStandalone());
+    
+    pwaManager.getSyncStatus().then(setSyncStatus).catch(console.error);
+  }, []);
+
   // Initialize PWA Manager
   useEffect(() => {
     const pwaManager = getPWAManager({
@@ -95,19 +107,7 @@ export function usePWA(config?: PWAConfig): UsePWAReturn {
       clearInterval(interval);
       pwaManager.destroy();
     };
-  }, [config]);
-
-  // Update all states
-  const updateStates = useCallback(() => {
-    const pwaManager = getPWAManager();
-    
-    setInstallState(pwaManager.getInstallPromptState());
-    setIsOnline(pwaManager.isOnline());
-    setNotificationState(pwaManager.getNotificationPermissionState());
-    setIsStandalone(pwaManager.isStandalone());
-    
-    pwaManager.getSyncStatus().then(setSyncStatus).catch(console.error);
-  }, []);
+  }, [config, updateStates]);
 
   // Install Prompt
   const showInstallPrompt = useCallback(async () => {

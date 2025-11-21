@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { useLocalizePath } from '@/lib/i18n/locale-link'
 
 interface InvitationData {
   id: string
@@ -34,6 +35,7 @@ interface AcceptInvitationClientProps {
 
 export default function AcceptInvitationClient({ token }: AcceptInvitationClientProps) {
   const router = useRouter()
+  const lp = useLocalizePath()
 
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
@@ -119,13 +121,13 @@ export default function AcceptInvitationClient({ token }: AcceptInvitationClient
       await new Promise((resolve) => setTimeout(resolve, 1000))
 
       if (role === 'super_admin') {
-        router.push('/super-admin')
+        router.push(lp('/super-admin'))
       } else if (role === 'clinic_owner' || role === 'clinic_manager') {
-        router.push('/admin')
+        router.push(lp('/admin'))
       } else if (role === 'sales_staff' || role === 'customer') {
-        router.push('/booking')
+        router.push(lp('/booking'))
       } else {
-        router.push('/')
+        router.push(lp('/'))
       }
 
       router.refresh()
@@ -183,7 +185,7 @@ export default function AcceptInvitationClient({ token }: AcceptInvitationClient
               </ul>
             </div>
 
-            <Button className="w-full" onClick={() => router.push('/auth/login')}>
+            <Button className="w-full" onClick={() => router.push(lp('/auth/login'))}>
               กลับไปหน้าเข้าสู่ระบบ
             </Button>
           </CardContent>

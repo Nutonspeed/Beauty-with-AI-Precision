@@ -20,10 +20,8 @@ import {
   Clock,
   Star,
   Flame,
-  Camera,
   Plus,
   Pause,
-  Play,
   XCircle,
 } from 'lucide-react';
 import type { SmartGoal, CheckIn } from '@/lib/goals/smart-goals';
@@ -42,7 +40,7 @@ export default function GoalTracker({
   goals,
   onCheckIn,
   onUpdateGoal,
-  onDeleteGoal,
+  onDeleteGoal: _onDeleteGoal,
   editable = true,
 }: GoalTrackerProps) {
   const [selectedGoal, setSelectedGoal] = useState<SmartGoal | null>(null);
@@ -124,7 +122,7 @@ export default function GoalTracker({
   const renderGoalCard = (goal: SmartGoal) => {
     const progress = calculateGoalProgress(goal);
     const streak = getGoalStreak(goal);
-    const nextCheckIn = getNextCheckInDate(goal);
+    const _nextCheckIn = getNextCheckInDate(goal);
     const daysUntilEnd = Math.ceil(
       (new Date(goal.timeBound.endDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
     );

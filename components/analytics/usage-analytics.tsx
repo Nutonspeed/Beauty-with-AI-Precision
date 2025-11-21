@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Badge } from "@/components/ui/badge"
-import { Activity, Users, Eye, TrendingUp, Clock, AlertCircle } from "lucide-react"
+import { Activity, Eye, TrendingUp, Clock, AlertCircle } from "lucide-react"
 import { useUsageTracking } from "@/lib/analytics/usage-tracker"
 
 interface UsageMetrics {

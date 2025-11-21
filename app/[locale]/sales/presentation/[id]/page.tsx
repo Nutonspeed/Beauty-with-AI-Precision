@@ -5,14 +5,14 @@
  * Full sales demo mode with treatment packages and pricing
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { PresentationMode } from '@/components/presentation/presentation-mode';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, AlertCircle } from 'lucide-react';
 import type { HybridSkinAnalysis } from '@/lib/types/skin-analysis';
 import { exportPresentationToPDF } from '@/lib/presentation/pdf-exporter';
-import { shareAnalysis, printReport } from '@/lib/utils/export-report';
+import { shareAnalysis } from '@/lib/utils/export-report';
 
 // Same normalization functions from detail page
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -186,11 +186,7 @@ export default function SalesPresentationPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadAnalysis();
-  }, [analysisId]);
-
-  const loadAnalysis = async () => {
+  const loadAnalysis = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
@@ -235,7 +231,11 @@ export default function SalesPresentationPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [analysisId, locale]);
+
+  useEffect(() => {
+    loadAnalysis();
+  }, [loadAnalysis]);
 
   const handleExportPDF = async (format: 'pdf' | 'png') => {
     if (!analysis || format !== 'pdf') return;

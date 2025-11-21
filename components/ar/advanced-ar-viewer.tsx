@@ -35,65 +35,33 @@ export function AdvancedARViewer() {
   const [error, setError] = useState<string | null>(null)
 
   /**
-   * Start camera and AR system
+   * Draw AR overlays
    */
-  const startAR = useCallback(async () => {
-    if (!videoRef.current) return
+  const drawOverlays = useCallback((
+    ctx: CanvasRenderingContext2D,
+    result: ObjectRecognitionResult,
+    width: number,
+    height: number,
+  ) => {
+    // Draw detected objects
+    result.objects.forEach((obj) => {
+      drawObject(ctx, obj, width, height)
+    })
 
-    setIsInitializing(true)
-    setError(null)
+    // Draw skin conditions
+    result.skinConditions.forEach((condition) => {
+      drawSkinCondition(ctx, condition, width, height)
+    })
 
-    try {
-      console.log("[v0] 🎬 Starting AR system...")
-
-      // Get camera stream
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          width: { ideal: 1280 },
-          height: { ideal: 720 },
-          facingMode: "user",
-        },
-      })
-
-      videoRef.current.srcObject = stream
-      await videoRef.current.play()
-
-      // Initialize recognition system
-      const system = getObjectRecognitionSystem()
-      await system.initialize()
-
-      setIsActive(true)
-      processFrames()
-
-      console.log("[v0] ✅ AR system started")
-    } catch (err) {
-      console.error("[v0] ❌ Failed to start AR:", err)
-      setError(err instanceof Error ? err.message : "Failed to start AR system")
-    } finally {
-      setIsInitializing(false)
-    }
-  }, [])
-
-  /**
-   * Stop camera and AR system
-   */
-  const stopAR = useCallback(() => {
-    console.log("[v0] 🛑 Stopping AR system...")
-
-    if (videoRef.current?.srcObject) {
-      const stream = videoRef.current.srcObject as MediaStream
-      stream.getTracks().forEach((track) => track.stop())
-      videoRef.current.srcObject = null
-    }
-
-    if (animationFrameRef.current !== null) {
-      cancelAnimationFrame(animationFrameRef.current)
-      animationFrameRef.current = null
-    }
-
-    setIsActive(false)
-    setResult(null)
-  }, [])
+    // Draw performance info
+    ctx.fillStyle = "rgba(0, 0, 0, 0.7)"
+    ctx.fillRect(10, 10, 200, 80)
+    ctx.fillStyle = "#00ff00"
+    ctx.font = "14px monospace"
+    ctx.fillText(`FPS: ${fps}`, 20, 30)
+    ctx.fillText(`Objects: ${result.objects.length}`, 20, 50)
+    ctx.fillText(`Conditions: ${result.skinConditions.length}`, 20, 70)
+  }, [fps])
 
   /**
    * Process video frames
@@ -134,36 +102,68 @@ export function AdvancedARViewer() {
 
     // Continue loop
     animationFrameRef.current = requestAnimationFrame(processFrames)
-  }, [isActive])
+  }, [isActive, drawOverlays])
 
   /**
-   * Draw AR overlays
+   * Start camera and AR system
    */
-  const drawOverlays = (
-    ctx: CanvasRenderingContext2D,
-    result: ObjectRecognitionResult,
-    width: number,
-    height: number,
-  ) => {
-    // Draw detected objects
-    result.objects.forEach((obj) => {
-      drawObject(ctx, obj, width, height)
-    })
+  const startAR = useCallback(async () => {
+    if (!videoRef.current) return
 
-    // Draw skin conditions
-    result.skinConditions.forEach((condition) => {
-      drawSkinCondition(ctx, condition, width, height)
-    })
+    setIsInitializing(true)
+    setError(null)
 
-    // Draw performance info
-    ctx.fillStyle = "rgba(0, 0, 0, 0.7)"
-    ctx.fillRect(10, 10, 200, 80)
-    ctx.fillStyle = "#00ff00"
-    ctx.font = "14px monospace"
-    ctx.fillText(`FPS: ${fps}`, 20, 30)
-    ctx.fillText(`Objects: ${result.objects.length}`, 20, 50)
-    ctx.fillText(`Conditions: ${result.skinConditions.length}`, 20, 70)
-  }
+    try {
+      console.log("[v0] 🎬 Starting AR system...")
+
+      // Get camera stream
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+          facingMode: "user",
+        },
+      })
+
+      videoRef.current.srcObject = stream
+      await videoRef.current.play()
+
+      // Initialize recognition system
+      const system = getObjectRecognitionSystem()
+      await system.initialize()
+
+      setIsActive(true)
+      processFrames()
+
+      console.log("[v0] ✅ AR system started")
+    } catch (err) {
+      console.error("[v0] ❌ Failed to start AR:", err)
+      setError(err instanceof Error ? err.message : "Failed to start AR system")
+    } finally {
+      setIsInitializing(false)
+    }
+  }, [processFrames])
+
+  /**
+   * Stop camera and AR system
+   */
+  const stopAR = useCallback(() => {
+    console.log("[v0] 🛑 Stopping AR system...")
+
+    if (videoRef.current?.srcObject) {
+      const stream = videoRef.current.srcObject as MediaStream
+      stream.getTracks().forEach((track) => track.stop())
+      videoRef.current.srcObject = null
+    }
+
+    if (animationFrameRef.current !== null) {
+      cancelAnimationFrame(animationFrameRef.current)
+      animationFrameRef.current = null
+    }
+
+    setIsActive(false)
+    setResult(null)
+  }, [])
 
   /**
    * Draw detected object

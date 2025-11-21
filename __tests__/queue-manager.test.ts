@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { QueueManager, QueueEntry, QueuePriority } from '@/lib/queue-manager';
+import { QueueManager } from '@/lib/queue-manager';
 
 // Mock WebSocket Client
 vi.mock('@/lib/websocket-client', () => ({

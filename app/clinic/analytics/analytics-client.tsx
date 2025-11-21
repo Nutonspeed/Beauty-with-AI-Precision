@@ -52,7 +52,7 @@ export function AnalyticsClient({ initialData }: AnalyticsClientProps) {
   })
   const [isExporting, setIsExporting] = useState(false)
 
-  const handleExport = async (type: 'excel' | 'pdf') => {
+  const handleExport = async (_type: 'excel' | 'pdf') => {
     setIsExporting(true)
     try {
       if (!dateRange?.from || !dateRange?.to) {

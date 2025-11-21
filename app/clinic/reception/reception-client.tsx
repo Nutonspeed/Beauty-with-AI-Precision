@@ -22,7 +22,6 @@ import {
   Users,
   AlertCircle,
   Search,
-  QrCode,
   UserPlus,
   RefreshCw,
 } from "lucide-react";
@@ -47,11 +46,11 @@ export default function ReceptionClient({
   bookings: initialBookings,
   stats: initialStats,
 }: ReceptionClientProps) {
-  const [bookings, setBookings] = useState(initialBookings);
-  const [stats, setStats] = useState(initialStats);
+  const [bookings, _setBookings] = useState(initialBookings);
+  const [stats, _setStats] = useState(initialStats);
   const [searchQuery, setSearchQuery] = useState("");
   const [isChecking, setIsChecking] = useState(false);
-  const [selectedBooking, setSelectedBooking] = useState<any>(null);
+  const [_selectedBooking, _setSelectedBooking] = useState<any>(null);
 
   const handleCheckIn = async (bookingId: string) => {
     setIsChecking(true);
@@ -102,7 +101,7 @@ export default function ReceptionClient({
     (b) => b.status === "in_progress"
   );
 
-  const getCurrentTime = () => {
+  const _getCurrentTime = () => {
     return format(new Date(), "HH:mm");
   };
 

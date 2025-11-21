@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import WebSocketClient, { type LeadNotification } from '@/lib/websocket-client';
+import WebSocketClient from '@/lib/websocket-client';
 import type { ConnectionStatus } from '@/lib/reconnection-manager';
 
 export interface RealtimeAnalytics {

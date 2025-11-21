@@ -267,7 +267,7 @@ export class PDFReportGenerator {
       overallHealth: 'Overall Health',
     };
 
-    const startY = this.currentY;
+    const _startY = this.currentY;
     const rowHeight = 7;
     const col1X = this.margin;
     const col2X = this.margin + 60;

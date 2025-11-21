@@ -324,7 +324,7 @@ interface ProductDetailsPanelProps {
   readonly onClose: () => void;
 }
 
-function ProductDetailsPanel({ product, t, locale, onClose }: ProductDetailsPanelProps) {
+function ProductDetailsPanel({ product, t, locale: _locale, onClose }: ProductDetailsPanelProps) {
   if (!product) return null;
 
   return (

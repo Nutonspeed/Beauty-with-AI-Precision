@@ -329,7 +329,7 @@ export class ConfidenceCalibrator {
   /**
    * Update threshold based on historical performance
    */
-  adaptiveUpdateThreshold(modelType: string, targetAccuracy: number = 0.85): void {
+  adaptiveUpdateThreshold(modelType: string, _targetAccuracy: number = 0.85): void {
     const stats = this.getStatistics(modelType)
     if (!stats || stats.count < 20) return // Need sufficient data
 

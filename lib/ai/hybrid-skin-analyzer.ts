@@ -691,7 +691,7 @@ export async function analyzeSkin(
 
     // ⚡ Performance Optimization: Check cache first
     const optimizer = getPerformanceOptimizer();
-    const useCache = options.useCache !== false; // Default to true
+    const _useCache = options.useCache !== false; // Default to true
 
     let aiAnalysis: AIAnalysisResult | null = null;
     let aiProvider: AIProvider = 'local';

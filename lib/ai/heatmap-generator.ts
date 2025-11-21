@@ -69,8 +69,8 @@ export function generateRealHeatmap(
  */
 function concernsToHeatmapPoints(
   concerns: SkinConcernArea[],
-  imageWidth: number,
-  imageHeight: number
+  _imageWidth: number,
+  _imageHeight: number
 ): HeatmapPoint[] {
   const points: HeatmapPoint[] = []
 
@@ -251,7 +251,7 @@ function applyGaussianBlur(
 
   // Use CSS filter blur (fastest option in browser)
   // Note: This is applied to the canvas context, not individual operations
-  const imageData = ctx.getImageData(0, 0, width, height)
+  const _imageData = ctx.getImageData(0, 0, width, height)
   
   // For proper Gaussian blur, we'd implement a convolution kernel
   // For now, using browser's built-in filter is fastest

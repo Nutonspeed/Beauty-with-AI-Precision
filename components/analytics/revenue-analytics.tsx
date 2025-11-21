@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { TrendingUp, DollarSign } from "lucide-react"
@@ -34,11 +34,7 @@ export function RevenueAnalytics({ dateRange }: RevenueAnalyticsProps) {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    fetchData()
-  }, [dateRange])
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     if (!dateRange.from || !dateRange.to) return
 
     setIsLoading(true)
@@ -60,7 +56,11 @@ export function RevenueAnalytics({ dateRange }: RevenueAnalyticsProps) {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [dateRange])
+
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
 
   if (isLoading) {
     return (

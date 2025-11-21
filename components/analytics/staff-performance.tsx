@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Badge } from "@/components/ui/badge"
@@ -29,11 +29,7 @@ export function StaffPerformance({ dateRange }: StaffPerformanceProps) {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    fetchData()
-  }, [dateRange])
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     if (!dateRange.from || !dateRange.to) return
 
     setIsLoading(true)
@@ -55,7 +51,11 @@ export function StaffPerformance({ dateRange }: StaffPerformanceProps) {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [dateRange])
+
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
 
   const getRoleBadge = (role: string) => {
     const roleMap: Record<string, { label: string; color: string }> = {
@@ -252,7 +252,7 @@ export function StaffPerformance({ dateRange }: StaffPerformanceProps) {
                 </tr>
               </thead>
               <tbody>
-                {data.staffPerformance.map((member: any, index: number) => (
+                {data.staffPerformance.map((member: any, _index: number) => (
                   <tr key={member.id} className="border-b hover:bg-muted/50">
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-2">

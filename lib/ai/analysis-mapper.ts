@@ -86,7 +86,7 @@ export function getRadianceDescription(score: number, lang: "en" | "th"): string
 }
 
 // Map pre-analyzed browser result into API response shape
-export function mapBrowserResultToAnalysis(result: any, tier: string) {
+export function mapBrowserResultToAnalysis(result: any, _tier: string) {
   return {
     overall_score: result.skinAnalysis.overallScore,
     image_url: undefined,

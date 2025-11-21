@@ -24,7 +24,7 @@ export class PDFGenerator {
    * Generate PDF from analysis data
    */
   async generatePDF(analysis: HybridSkinAnalysis, options: PDFGeneratorOptions = {}): Promise<Blob> {
-    const { includeImages = true, includeCharts = true, includeRecommendations = true, clinicInfo, watermark } = options
+    const { includeImages: _includeImages = true, includeCharts: _includeCharts = true, includeRecommendations: _includeRecommendations = true, clinicInfo: _clinicInfo, watermark } = options
 
     // For now, we'll use the browser's print-to-PDF functionality
     const reportElement = document.getElementById("visia-report")

@@ -104,7 +104,7 @@ export class WebGLAccelerator {
   /**
    * Process texture with shader
    */
-  private processWithShader(texture: WebGLTexture, shaderType: string, params: any): ImageData {
+  private processWithShader(texture: WebGLTexture, shaderType: string, _params: any): ImageData {
     const gl = this.gl!
     const canvas = this.canvas!
 

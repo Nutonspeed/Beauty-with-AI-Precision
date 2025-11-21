@@ -6,7 +6,7 @@
  * Shows comprehensive progress dashboard for logged-in customers
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import CustomerProgressDashboard, {
   type AnalysisSnapshot,
@@ -110,11 +110,7 @@ export default function CustomerProgressPage({ params }: ProgressPageProps) {
   const locale = (urlParams.locale as string) || 'th';
   const t = TRANSLATIONS[locale as keyof typeof TRANSLATIONS] || TRANSLATIONS.th;
 
-  useEffect(() => {
-    loadAnalyses();
-  }, []);
-
-  const loadAnalyses = async () => {
+  const loadAnalyses = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
@@ -152,7 +148,11 @@ export default function CustomerProgressPage({ params }: ProgressPageProps) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [t]);
+
+  useEffect(() => {
+    loadAnalyses();
+  }, [loadAnalyses]);
 
   const handleExport = async () => {
     try {

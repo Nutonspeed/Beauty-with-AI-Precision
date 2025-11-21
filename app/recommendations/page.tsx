@@ -17,7 +17,6 @@ import {
   Calendar,
   ShoppingBag,
   Heart,
-  Star,
   Clock,
   DollarSign,
   ArrowRight,

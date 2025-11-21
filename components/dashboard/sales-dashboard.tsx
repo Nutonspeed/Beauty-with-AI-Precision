@@ -12,8 +12,10 @@ import {
   BarChart3
 } from 'lucide-react';
 import Link from 'next/link';
+import { useLocalizePath } from '@/lib/i18n/locale-link';
 
 export default function SalesDashboard() {
+  const lp = useLocalizePath();
   return (
     <div className="container mx-auto py-8 px-4 space-y-8">
       {/* Welcome Section */}
@@ -98,7 +100,7 @@ export default function SalesDashboard() {
               </p>
             </div>
             <Button asChild className="w-full">
-              <Link href="/sales/dashboard">
+              <Link href={lp('/sales/dashboard')}>
                 ดู Hot Leads ทั้งหมด
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
@@ -123,7 +125,7 @@ export default function SalesDashboard() {
               </p>
             </div>
             <Button asChild variant="outline" className="w-full">
-              <Link href="/chat">
+              <Link href={lp('/chat')}>
                 เปิด Chat
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
@@ -144,7 +146,7 @@ export default function SalesDashboard() {
           </CardHeader>
           <CardContent>
             <Button asChild variant="outline" className="w-full">
-              <Link href="/customer">
+              <Link href={lp('/customer')}>
                 ดูรายชื่อ
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
@@ -162,7 +164,7 @@ export default function SalesDashboard() {
           </CardHeader>
           <CardContent>
             <Button asChild variant="outline" className="w-full">
-              <Link href="/reports">
+              <Link href={lp('/reports')}>
                 ดูรายงาน
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>

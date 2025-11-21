@@ -51,7 +51,7 @@ interface ActionPlanDisplayProps {
 export function ActionPlanDisplay({
   plan,
   onActionUpdate,
-  onStartAction,
+  onStartAction: _onStartAction,
   editable = true,
 }: Readonly<ActionPlanDisplayProps>) {
   const [selectedAction, setSelectedAction] = useState<ActionItem | null>(null);

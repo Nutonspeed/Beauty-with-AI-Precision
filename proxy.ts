@@ -37,6 +37,30 @@ export async function proxy(request: NextRequest) {
   }
 
   // ============================================================================
+  // DEMO EXCLUSION (Production Only)
+  // ============================================================================
+  if (process.env.NODE_ENV === 'production' && process.env.EXCLUDE_DEMOS === 'true') {
+    const demoPatterns = [
+      '/robot-3d', '/robot-showcase', '/advanced-sphere', '/premium-scroll', 
+      '/scroll-demo', '/action-plan-demo', '/ai-chat-demo', '/booking-demo',
+      '/minitap-demo', '/mobile-test', '/test-ai', '/test-ai-huggingface',
+      '/test-ai-performance', '/ar-simulator', '/minitap-clone', '/minitap-clone-v2',
+      '/mobile-payments', '/beauty-ai-demo', '/ultra-modern-landing',
+      '/cinematic-beauty', '/test-sphere-performance', '/sphere-quality-test',
+      '/comparison', '/analytics-demo', '/ai-test'
+    ];
+    
+    const isDemo = demoPatterns.some(pattern => 
+      pathname.includes(pattern) || 
+      pathname.split('/').some(segment => segment === pattern.replace('/', ''))
+    );
+    
+    if (isDemo) {
+      return NextResponse.redirect(new URL('/', request.url));
+    }
+  }
+
+  // ============================================================================
   // RATE LIMITING (API Routes Only)
   // ============================================================================
   if (pathname.startsWith('/api')) {

@@ -4,12 +4,23 @@ import { fileURLToPath } from 'node:url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
+// Allow tuning the worker pool via env to avoid runner timeouts
+const poolEnv = process.env.VITEST_POOL
+const isCI = process.env.CI === 'true' || process.env.CI === '1'
+const resolvedPool = poolEnv || (isCI ? 'forks' : 'threads')
+const singleThread = process.env.VITEST_SINGLE_THREAD === '1' || isCI
+
 export default defineConfig({
   test: {
     globals: true,
     environment: 'happy-dom',
-    // Use thread pool instead of forks to avoid startup timeouts in constrained environments
-    pool: 'threads',
+    // Pool is configurable to mitigate startup issues in constrained environments
+    pool: resolvedPool,
+    poolOptions: {
+      threads: {
+        singleThread,
+      },
+    },
     testTimeout: 30000,
     environmentOptions: {
       happyDOM: {

@@ -597,8 +597,8 @@ function scoreProducts(
  */
 function scoreProcedures(
   concerns: Map<SkinConcernType, number>,
-  skinType: SkinTypeCategory,
-  patientHistory?: PatientHistory
+  _skinType: SkinTypeCategory,
+  _patientHistory?: PatientHistory
 ): ProcedureRecommendation[] {
   // Only recommend procedures if concerns are severe (score > 7)
   const hasSevereConcerns = Array.from(concerns.values()).some(
@@ -616,7 +616,7 @@ function scoreProcedures(
  */
 function generateLifestyleRecommendations(
   concerns: Map<SkinConcernType, number>,
-  skinType: SkinTypeCategory
+  _skinType: SkinTypeCategory
 ): RecommendationResult['lifestyle'] {
   const lifestyle: RecommendationResult['lifestyle'] = {
     diet: [

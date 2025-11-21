@@ -34,7 +34,7 @@ export function LightingQualityChecker() {
             setLightingQuality("fair")
             return
           }
-        } catch (permError) {
+        } catch {
           // Permissions API might not support camera query in all browsers
           // Silently continue
         }

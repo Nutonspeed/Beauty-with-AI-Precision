@@ -1,9 +1,13 @@
 "use client";
-import { Canvas } from '@react-three/fiber';
 import { Suspense, useRef, useState } from 'react';
-import { ProceduralHalo } from '@/components/three/ProceduralHalo';
-import { VolumetricScanBeam } from '@/components/three/VolumetricScanBeam';
-import { Environment, OrbitControls } from '@react-three/drei';
+import dynamic from 'next/dynamic';
+
+// Dynamic imports for 3D libraries to improve initial load performance
+const Canvas = dynamic(() => import('@react-three/fiber').then(mod => ({ default: mod.Canvas })), { ssr: false });
+const ProceduralHalo = dynamic(() => import('@/components/three/ProceduralHalo').then(mod => ({ default: mod.ProceduralHalo })), { ssr: false });
+const VolumetricScanBeam = dynamic(() => import('@/components/three/VolumetricScanBeam').then(mod => ({ default: mod.VolumetricScanBeam })), { ssr: false });
+const Environment = dynamic(() => import('@react-three/drei').then(mod => ({ default: mod.Environment })), { ssr: false });
+const OrbitControls = dynamic(() => import('@react-three/drei').then(mod => ({ default: mod.OrbitControls })), { ssr: false });
 import { Chapter } from '@/components/Chapter';
 import { AiMetricsPanel } from '@/components/ai-metrics-panel';
 import { TreatmentConfigurator, TreatmentSettings } from '@/components/TreatmentConfigurator';

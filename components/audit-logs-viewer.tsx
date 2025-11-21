@@ -34,8 +34,6 @@ import {
   Activity,
   AlertTriangle,
   Info,
-  Eye,
-  Calendar,
 } from "lucide-react"
 
 export default function AuditLogsViewer() {

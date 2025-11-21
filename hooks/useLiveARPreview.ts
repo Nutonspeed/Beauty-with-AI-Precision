@@ -156,9 +156,11 @@ export function useLiveARPreview(): UseLiveARPreviewReturn {
 
   // Cleanup on unmount
   useEffect(() => {
+    const manager = managerRef.current
+
     return () => {
       if (state.isActive) {
-        managerRef.current.stop()
+        manager.stop()
       }
     }
   }, [state.isActive])

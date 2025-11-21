@@ -15,7 +15,6 @@ import {
   showProfileUpdatedToast,
   showSettingsSavedToast,
 } from "@/components/ui/success-toast";
-import { AlertCircle, AlertTriangle, Info, XCircle } from "lucide-react";
 import { AnalysisError } from "@/lib/errors/analysis-errors";
 
 /**

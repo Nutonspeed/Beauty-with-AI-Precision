@@ -5,7 +5,7 @@ import { Wifi, WifiOff } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 export function ConnectionStatus() {
-  const [isOnline, setIsOnline] = useState(true);
+  const [_isOnline, setIsOnline] = useState(true);
   const [showOfflineAlert, setShowOfflineAlert] = useState(false);
   const [showOnlineAlert, setShowOnlineAlert] = useState(false);
 

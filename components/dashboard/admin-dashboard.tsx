@@ -12,12 +12,10 @@ import {
   BarChart3,
   Settings,
   FileText,
-  Clock,
-  CheckCircle2,
-  AlertTriangle,
   MoreHorizontal
 } from 'lucide-react';
 import Link from 'next/link';
+import { useLocalizePath } from '@/lib/i18n/locale-link';
 import type { UserRole } from '@/lib/auth/role-config';
 import { mockDashboardData, type DashboardData } from '@/lib/mock/dashboard-mock-data';
 
@@ -29,6 +27,7 @@ export default function AdminDashboard({ role }: AdminDashboardProps) {
   const [data, setData] = useState<DashboardData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const isSuperAdmin = role === 'super_admin';
+  const lp = useLocalizePath();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -145,7 +144,7 @@ export default function AdminDashboard({ role }: AdminDashboardProps) {
                 <CardTitle>นัดหมายล่าสุด</CardTitle>
               </div>
               <Button variant="ghost" size="sm" asChild>
-                <Link href="/admin/appointments">
+                <Link href={lp('/admin/appointments')}>
                   ดูทั้งหมด <ArrowRight className="ml-1 h-4 w-4" />
                 </Link>
               </Button>
@@ -188,7 +187,7 @@ export default function AdminDashboard({ role }: AdminDashboardProps) {
                 <CardTitle>สินค้าใกล้หมด</CardTitle>
               </div>
               <Button variant="ghost" size="sm" asChild>
-                <Link href="/admin/inventory">
+                <Link href={lp('/admin/inventory')}>
                   ดูทั้งหมด <ArrowRight className="ml-1 h-4 w-4" />
                 </Link>
               </Button>
@@ -257,7 +256,7 @@ export default function AdminDashboard({ role }: AdminDashboardProps) {
           </CardHeader>
           <CardContent>
             <Button asChild className="w-full">
-              <Link href="/admin/patients">
+              <Link href={lp('/admin/patients')}>
                 เปิดจัดการ
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
@@ -278,7 +277,7 @@ export default function AdminDashboard({ role }: AdminDashboardProps) {
           </CardHeader>
           <CardContent>
             <Button asChild className="w-full">
-              <Link href="/admin/staff">
+              <Link href={lp('/admin/staff')}>
                 เปิดจัดการ
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
@@ -299,7 +298,7 @@ export default function AdminDashboard({ role }: AdminDashboardProps) {
           </CardHeader>
           <CardContent>
             <Button asChild className="w-full">
-              <Link href="/admin/inventory">
+              <Link href={lp('/admin/inventory')}>
                 เปิดจัดการ
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
@@ -320,7 +319,7 @@ export default function AdminDashboard({ role }: AdminDashboardProps) {
           </CardHeader>
           <CardContent>
             <Button asChild variant="outline" className="w-full">
-              <Link href="/admin-dashboard/bookings">
+              <Link href={lp('/admin-dashboard/bookings')}>
                 ดูนัดหมาย
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
@@ -341,7 +340,7 @@ export default function AdminDashboard({ role }: AdminDashboardProps) {
           </CardHeader>
           <CardContent>
             <Button asChild variant="outline" className="w-full">
-              <Link href="/admin/reports">
+              <Link href={lp('/admin/reports')}>
                 ดูรายงาน
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
@@ -362,7 +361,7 @@ export default function AdminDashboard({ role }: AdminDashboardProps) {
           </CardHeader>
           <CardContent>
             <Button asChild variant="outline" className="w-full">
-              <Link href="/admin-dashboard/settings">
+              <Link href={lp('/admin-dashboard/settings')}>
                 ตั้งค่า
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
@@ -423,7 +422,7 @@ export default function AdminDashboard({ role }: AdminDashboardProps) {
           </CardHeader>
           <CardContent>
             <Button asChild className="w-full">
-              <Link href="/super-admin">
+              <Link href={lp('/super-admin')}>
                 เปิด Super Admin Panel
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>

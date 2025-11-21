@@ -12,7 +12,6 @@
 
 import { describe, it, expect, beforeAll, vi } from 'vitest'
 import { getHybridAnalyzer, type HybridAnalyzer } from '@/lib/ai/hybrid-analyzer'
-import sharp from 'sharp'
 
 // Mock AI analyzers to avoid loading actual models in test environment
 vi.mock('@/lib/ai/mediapipe-analyzer-phase1', () => ({

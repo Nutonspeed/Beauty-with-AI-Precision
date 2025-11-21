@@ -22,7 +22,7 @@ interface TreatmentPlanCardProps {
   onUpdate: () => void
 }
 
-export function TreatmentPlanCard({ plan, onUpdate }: TreatmentPlanCardProps) {
+export function TreatmentPlanCard({ plan, onUpdate: _onUpdate }: TreatmentPlanCardProps) {
   const totalSessions = plan.treatments.reduce((sum, t) => sum + t.sessions, 0)
   const completedSessions = 0 // This would come from sessions data
   const progress = (completedSessions / totalSessions) * 100

@@ -19,8 +19,6 @@ import {
   Activity,
   CheckCircle,
   XCircle,
-  Clock,
-  TrendingUp,
   Eye,
   FileText,
   AlertOctagon,
@@ -30,7 +28,7 @@ interface SecurityDashboardProps {
   userId?: string
 }
 
-export default function SecurityDashboard({ userId }: SecurityDashboardProps) {
+export default function SecurityDashboard({ userId: _userId }: SecurityDashboardProps) {
   const { metrics, loading: metricsLoading } = useSecurityMetrics()
   const { alerts } = useSecurityAlerts({ resolved: false })
   const { logs } = useAuditLogs({ 
@@ -47,7 +45,7 @@ export default function SecurityDashboard({ userId }: SecurityDashboardProps) {
   }
   
   const criticalAlerts = alerts.filter(a => a.severity === "critical").length
-  const highAlerts = alerts.filter(a => a.severity === "high").length
+  const _highAlerts = alerts.filter(a => a.severity === "high").length
   
   return (
     <div className="space-y-6">

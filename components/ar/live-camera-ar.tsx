@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { Camera, CameraOff, Loader2, AlertCircle, CheckCircle2, TrendingUp } from "lucide-react"
 import { getMediaPipeDetector, type FaceDetectionResult } from "@/lib/ai/mediapipe-detector"
-import { getFaceTrackingStabilizer, estimateFaceAngle } from "@/lib/ar/face-tracking-stabilizer"
+import { getFaceTrackingStabilizer } from "@/lib/ar/face-tracking-stabilizer"
 
 interface LiveCameraARProps {
   readonly treatment: string
@@ -51,7 +51,7 @@ export function LiveCameraAR({ treatment, intensity, onCapture }: LiveCameraARPr
         await detector.initialize()
 
         // Start AR processing loop
-        processFrame()
+        processFrameRef.current?.()
       }
     } catch (err) {
       console.error("Camera error:", err)
@@ -76,62 +76,68 @@ export function LiveCameraAR({ treatment, intensity, onCapture }: LiveCameraARPr
     setFaceDetected(false)
   }, [])
 
-  const processFrame = useCallback(async () => {
-    if (!videoRef.current || !canvasRef.current || !isStreaming) return
+  const processFrameRef = useRef<(() => void) | null>(null)
 
-    const video = videoRef.current
-    const canvas = canvasRef.current
-    const ctx = canvas.getContext("2d", {
-      alpha: false,
-      desynchronized: true, // Better real-time performance
-      willReadFrequently: false
-    })
-    if (!ctx) return
+  useEffect(() => {
+    const processFrame = async () => {
+      if (!videoRef.current || !canvasRef.current || !isStreaming) return
 
-    const startTime = performance.now()
+      const video = videoRef.current
+      const canvas = canvasRef.current
+      const ctx = canvas.getContext("2d", {
+        alpha: false,
+        desynchronized: true, // Better real-time performance
+        willReadFrequently: false
+      })
+      if (!ctx) return
 
-    // High-quality canvas setup
-    canvas.width = video.videoWidth
-    canvas.height = video.videoHeight
-    ctx.imageSmoothingEnabled = true
-    ctx.imageSmoothingQuality = 'high'
+      const startTime = performance.now()
 
-    // Draw video frame
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+      // High-quality canvas setup
+      canvas.width = video.videoWidth
+      canvas.height = video.videoHeight
+      ctx.imageSmoothingEnabled = true
+      ctx.imageSmoothingQuality = 'high'
 
-    try {
-      // Detect face with MediaPipe
-      const detector = getMediaPipeDetector()
-      const result = await detector.detectFace(video)
+      // Draw video frame
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
 
-      // ENHANCED: Apply stabilization
-      const stabilizer = getFaceTrackingStabilizer()
-      const stabilizedResult = stabilizer.stabilize(result)
+      try {
+        // Detect face with MediaPipe
+        const detector = getMediaPipeDetector()
+        const result = await detector.detectFace(video)
 
-      if (stabilizedResult) {
-        setFaceDetected(true)
-        setLastFaceResult(stabilizedResult)
-        setStabilityScore(stabilizedResult.stabilityScore)
-        setTrackingQuality(stabilizedResult.trackingQuality)
+        // ENHANCED: Apply stabilization
+        const stabilizer = getFaceTrackingStabilizer()
+        const stabilizedResult = stabilizer.stabilize(result)
 
-        // Draw face mesh
-        drawFaceMesh(ctx, stabilizedResult, canvas.width, canvas.height)
+        if (stabilizedResult) {
+          setFaceDetected(true)
+          setLastFaceResult(stabilizedResult)
+          setStabilityScore(stabilizedResult.stabilityScore)
+          setTrackingQuality(stabilizedResult.trackingQuality)
 
-        // Apply AR treatment effect
-        applyTreatmentEffect(ctx, stabilizedResult, treatment, intensity, canvas.width, canvas.height)
-      } else {
-        setFaceDetected(false)
+          // Draw face mesh
+          drawFaceMesh(ctx, stabilizedResult, canvas.width, canvas.height)
+
+          // Apply AR treatment effect
+          applyTreatmentEffect(ctx, stabilizedResult, treatment, intensity, canvas.width, canvas.height)
+        } else {
+          setFaceDetected(false)
+        }
+
+        // Calculate FPS
+        const processingTime = performance.now() - startTime
+        setFps(Math.round(1000 / processingTime))
+      } catch (err) {
+        console.error("Frame processing error:", err)
       }
 
-      // Calculate FPS
-      const processingTime = performance.now() - startTime
-      setFps(Math.round(1000 / processingTime))
-    } catch (err) {
-      console.error("Frame processing error:", err)
+      // Continue loop
+      animationFrameRef.current = requestAnimationFrame(processFrame)
     }
 
-    // Continue loop
-    animationFrameRef.current = requestAnimationFrame(processFrame)
+    processFrameRef.current = processFrame
   }, [isStreaming, treatment, intensity])
 
   const drawFaceMesh = (ctx: CanvasRenderingContext2D, result: FaceDetectionResult, width: number, height: number) => {

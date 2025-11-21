@@ -12,7 +12,7 @@
  * - Mobile-optimized layout
  */
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -76,14 +76,7 @@ export function AnalysisStep({
   const [progress, setProgress] = useState(0)
   const [error, setError] = useState<string | null>(null)
 
-  // Auto-start analysis if images exist but no results
-  useEffect(() => {
-    if (images.front && !analysisResults && !isAnalyzing && !error) {
-      startAnalysis()
-    }
-  }, [images.front, analysisResults, isAnalyzing, error])
-
-  const startAnalysis = async () => {
+  const startAnalysis = useCallback(async () => {
     if (!images.front) {
       setError('Front image is required for analysis')
       return
@@ -124,7 +117,7 @@ export function AnalysisStep({
     } finally {
       setIsAnalyzing(false)
     }
-  }
+  }, [images.front, onAnalysisComplete])
 
   // Loading state
   if (isAnalyzing) {

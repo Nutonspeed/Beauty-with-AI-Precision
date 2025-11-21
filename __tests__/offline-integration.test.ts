@@ -19,7 +19,7 @@ import 'fake-indexeddb/auto'
 // Import our offline modules
 import { getIndexedDB, resetIndexedDB } from '@/lib/db/indexed-db'
 import { getConflictResolver, resetConflictResolver } from '@/lib/sync/conflict-resolver'
-import { getBackgroundSyncManager, resetBackgroundSyncManager } from '@/lib/sync/background-sync'
+import { resetBackgroundSyncManager } from '@/lib/sync/background-sync'
 import type { MultiTenantSkinAnalysis, Lead } from '@/types/multi-tenant'
 import type { OfflineAnalysis, OfflineLead } from '@/lib/db/indexed-db'
 

@@ -15,6 +15,7 @@ import { validateImageQuality, getQualityFeedback } from "@/lib/image-quality-va
 import { NotificationManager } from "@/lib/notifications/notification-manager"
 import { trackFeatureUsage, trackPerformance, trackError } from "@/lib/analytics/usage-tracker"
 import type { AnalysisMode } from "@/types"
+import { useLocalizePath } from "@/lib/i18n/locale-link"
 
 const MODE_PROGRESS: Record<AnalysisMode, string> = {
   local: "Running local computer vision pipeline...",
@@ -47,6 +48,7 @@ export function SkinAnalysisUpload({ isLoggedIn = false, analysisMode = "auto" }
   const streamRef = useRef<MediaStream | null>(null)
   const router = useRouter()
   const pathname = usePathname()
+  const lp = useLocalizePath()
   const locale = (() => {
     const segments = pathname.split("/").filter(Boolean)
     const candidate = segments[0]?.toLowerCase()
@@ -361,11 +363,11 @@ export function SkinAnalysisUpload({ isLoggedIn = false, analysisMode = "auto" }
       // Show success notification and navigate to results page for E2E compatibility
       NotificationManager.analysisSaved(
         analysisData.id,
-        () => router.push('/analysis/results'),
+        () => router.push(lp('/analysis/results')),
         locale
       )
 
-      router.push('/analysis/results')
+      router.push(lp('/analysis/results'))
     } catch (err) {
       console.error("[v0] ❌ === ANALYSIS ERROR ===")
       console.error("[v0] ❌ Error:", err)

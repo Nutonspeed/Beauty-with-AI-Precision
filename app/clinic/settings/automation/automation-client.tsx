@@ -67,7 +67,7 @@ interface AutomationSettingsClientProps {
 export default function AutomationSettingsClient({
   initialSettings,
 }: AutomationSettingsClientProps) {
-  const [settings, setSettings] = useState<AutomationSettings>(initialSettings);
+  const [settings, _setSettings] = useState<AutomationSettings>(initialSettings);
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState("");
 
@@ -75,7 +75,7 @@ export default function AutomationSettingsClient({
     key: K,
     value: AutomationSettings[K]
   ) => {
-    setSettings((prev) => ({ ...prev, [key]: value }));
+    _setSettings((prev) => ({ ...prev, [key]: value }));
   };
 
   const toggleChannel = (
@@ -109,7 +109,7 @@ export default function AutomationSettingsClient({
       } else {
         setSaveMessage("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
       }
-    } catch (error) {
+    } catch {
       setSaveMessage("เกิดข้อผิดพลาดในการบันทึก");
     } finally {
       setIsSaving(false);

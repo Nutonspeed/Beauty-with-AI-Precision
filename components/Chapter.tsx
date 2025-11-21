@@ -3,7 +3,7 @@ import { ReactNode } from "react";
 import { motion } from "framer-motion";
 
 interface ChapterProps {
-  index: number;
+  index: number; // unused, retained for external API compatibility
   title: string;
   eyebrow?: string;
   children?: ReactNode;
@@ -17,7 +17,7 @@ const accentMap: Record<string,string> = {
   mint: 'from-green-400 via-emerald-400 to-teal-500'
 };
 
-export function Chapter({ index, title, eyebrow, children, accent='pink' }: ChapterProps) {
+export function Chapter({ index: _index, title, eyebrow, children, accent='pink' }: ChapterProps) {
   return (
     <section className="relative min-h-screen flex items-center justify-center px-6 py-32">
       <motion.div

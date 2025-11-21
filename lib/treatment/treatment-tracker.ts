@@ -752,7 +752,7 @@ export class TreatmentTracker {
       notes: "Patient is responding well to treatment. Minor redness after each session.",
     })
     
-    const treatment2 = this.createTreatment({
+    const _treatment2 = this.createTreatment({
       patientId: "PAT001",
       patientName: "Sarah Johnson",
       category: "facial",

@@ -1,8 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
+import { withClinicAuth } from "@/lib/auth/middleware"
 
 // GET /api/queue/entries - List queue entries with filters
-export async function GET(request: NextRequest) {
+export const GET = withClinicAuth(async (request: NextRequest, user) => {
   try {
     const { searchParams } = new URL(request.url)
     const clinic_id = searchParams.get("clinic_id")
@@ -67,10 +68,10 @@ export async function GET(request: NextRequest) {
       { status: 500 },
     )
   }
-}
+});
 
 // POST /api/queue/entries - Add customer to queue
-export async function POST(request: NextRequest) {
+export const POST = withClinicAuth(async (request: NextRequest, user: any) => {
   try {
     const body = await request.json()
 
@@ -137,4 +138,4 @@ export async function POST(request: NextRequest) {
       { status: 500 },
     )
   }
-}
+});

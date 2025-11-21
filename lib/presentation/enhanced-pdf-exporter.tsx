@@ -1013,7 +1013,7 @@ export class EnhancedPDFExporter {
       },
     ];
 
-    concerns.forEach((concern, index) => {
+    concerns.forEach((concern, _index) => {
       if (y + 22 > this.pageHeight - this.marginBottom - 15) {
         this.addNewPage();
         this.addHeader(clinicInfo, false);
@@ -1114,7 +1114,7 @@ export class EnhancedPDFExporter {
   public async generate(
     analysis: HybridSkinAnalysis,
     options: EnhancedPDFOptions,
-    filename: string = 'skin-analysis-report.pdf'
+    _filename: string = 'skin-analysis-report.pdf'
   ): Promise<Blob> {
     // Calculate total pages
     this.totalPages = 2; // Cover + Analysis details

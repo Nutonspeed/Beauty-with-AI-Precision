@@ -63,7 +63,7 @@ export function useSupabaseAuth() {
     })
 
     return () => subscription.unsubscribe()
-  }, [])
+  }, [supabase])
 
   return { data: session, status }
 }

@@ -43,11 +43,7 @@ interface LABColor {
   b: number; // -128 to 127 (Blue to Yellow)
 }
 
-interface RGBColor {
-  r: number; // 0-255
-  g: number; // 0-255
-  b: number; // 0-255
-}
+
 
 interface ColorClassification {
   isRed: boolean;

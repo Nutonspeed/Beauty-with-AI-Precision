@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import {
   Table,
@@ -39,7 +39,6 @@ import {
   Mail,
   Calendar,
   TrendingUp,
-  Filter,
   Loader2,
 } from "lucide-react"
 import { toast } from "sonner"
@@ -99,8 +98,8 @@ export default function LeadsListPage() {
     total_pages: 0,
   })
 
-  // Fetch leads
-  const fetchLeads = async () => {
+  // Fetch leads (stabilized for hook deps)
+  const fetchLeads = useCallback(async () => {
     setIsLoading(true)
 
     try {
@@ -133,24 +132,26 @@ export default function LeadsListPage() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [pagination.page, pagination.limit, search, statusFilter, sourceFilter])
 
   useEffect(() => {
     fetchLeads()
-  }, [pagination.page, statusFilter, sourceFilter])
+  }, [fetchLeads])
 
   // Handle search with debounce
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (pagination.page === 1) {
-        fetchLeads()
-      } else {
-        setPagination(prev => ({ ...prev, page: 1 }))
-      }
+      setPagination(prev => {
+        if (prev.page === 1) {
+          fetchLeads()
+          return prev
+        }
+        return { ...prev, page: 1 }
+      })
     }, 500)
 
     return () => clearTimeout(timer)
-  }, [search])
+  }, [search, fetchLeads])
 
   const handleViewLead = (leadId: string) => {
     router.push(`/sales/leads/${leadId}`)

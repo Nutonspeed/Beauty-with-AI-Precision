@@ -85,7 +85,7 @@ const MetricCard = ({
   changePercent,
   trend,
   color,
-  icon,
+  icon: _icon,
 }: {
   name: string;
   current: number;

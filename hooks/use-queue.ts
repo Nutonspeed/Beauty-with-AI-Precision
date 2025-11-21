@@ -7,8 +7,7 @@ import {
   QueueManager,
   QueueEntry,
   QueueStats,
-  QueueStatus,
-  QueuePriority
+  QueueStatus
 } from '@/lib/queue-manager';
 
 interface UseQueueProps {
@@ -44,6 +43,24 @@ export function useQueue({ clinicId, enabled = true }: UseQueueProps) {
         managerRef.current = null;
       }
     };
+  }, []);
+
+  /**
+   * Update entries from manager
+   */
+  const updateEntries = useCallback(() => {
+    if (!managerRef.current) return;
+    const allEntries = managerRef.current.getAllEntries();
+    setEntries(allEntries);
+  }, []);
+
+  /**
+   * Update stats from manager
+   */
+  const updateStats = useCallback(() => {
+    if (!managerRef.current) return;
+    const currentStats = managerRef.current.getStats();
+    setStats(currentStats);
   }, []);
 
   // Initialize queue
@@ -87,25 +104,7 @@ export function useQueue({ clinicId, enabled = true }: UseQueueProps) {
         managerRef.current.destroy();
       }
     };
-  }, [clinicId, enabled]);
-
-  /**
-   * Update entries from manager
-   */
-  const updateEntries = useCallback(() => {
-    if (!managerRef.current) return;
-    const allEntries = managerRef.current.getAllEntries();
-    setEntries(allEntries);
-  }, []);
-
-  /**
-   * Update stats from manager
-   */
-  const updateStats = useCallback(() => {
-    if (!managerRef.current) return;
-    const currentStats = managerRef.current.getStats();
-    setStats(currentStats);
-  }, []);
+  }, [clinicId, enabled, updateEntries, updateStats]);
 
   /**
    * Join queue

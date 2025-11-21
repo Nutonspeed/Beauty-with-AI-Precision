@@ -35,6 +35,77 @@ export function ARCamera({
   const animationFrameRef = useRef<number | null>(null);
 
   /**
+   * Draw face mesh overlay (moved before startDrawing)
+   */
+  const drawFaceMesh = useCallback(
+    (result: FaceMeshResult | null) => {
+      const canvas = canvasRef.current;
+      const video = videoRef.current;
+      if (!canvas || !video) return;
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      if (!result || !result.landmarks) return;
+
+      const width = canvas.width;
+      const height = canvas.height;
+
+      if (showMesh) {
+        ctx.strokeStyle = 'rgba(0, 255, 0, 0.5)';
+        ctx.lineWidth = 1;
+        drawPath(ctx, result.landmarks, FACE_LANDMARKS.SILHOUETTE, width, height, true);
+        ctx.strokeStyle = 'rgba(0, 200, 255, 0.6)';
+        drawPath(ctx, result.landmarks, FACE_LANDMARKS.LEFT_EYE, width, height, true);
+        drawPath(ctx, result.landmarks, FACE_LANDMARKS.RIGHT_EYE, width, height, true);
+        ctx.strokeStyle = 'rgba(255, 0, 150, 0.6)';
+        drawPath(ctx, result.landmarks, FACE_LANDMARKS.LIPS_OUTER, width, height, true);
+      }
+
+      if (showLandmarks) {
+        ctx.fillStyle = 'rgba(255, 255, 0, 0.8)';
+        const keyPoints = [
+          ...FACE_LANDMARKS.NOSE,
+          ...FACE_LANDMARKS.LEFT_EYE.slice(0, 3),
+          ...FACE_LANDMARKS.RIGHT_EYE.slice(0, 3),
+        ];
+        keyPoints.forEach((idx) => {
+          const landmark = result.landmarks[idx];
+          if (landmark) {
+            ctx.beginPath();
+            ctx.arc(landmark.x * width, landmark.y * height, 3, 0, 2 * Math.PI);
+            ctx.fill();
+          }
+        });
+      }
+    },
+    [showMesh, showLandmarks]
+  );
+
+  /**
+   * Start drawing loop (moved before startCamera)
+   */
+  const startDrawing = useCallback(() => {
+    if (!isActive) return;
+    
+    const faceMeshService = getFaceMeshService();
+    const result = (faceMeshService as any).getLatestResult?.() || null;
+    
+    drawFaceMesh(result);
+    setFaceMeshResult(result);
+    
+    if (onFaceMeshUpdate && result) {
+      onFaceMeshUpdate(result);
+    }
+    
+    animationFrameRef.current = requestAnimationFrame(startDrawing);
+  }, [isActive, drawFaceMesh, onFaceMeshUpdate]);
+
+  /**
    * Initialize and start camera
    */
   const startCamera = useCallback(async () => {
@@ -70,7 +141,7 @@ export function ARCamera({
     } finally {
       setIsInitializing(false);
     }
-  }, [onFaceMeshUpdate]);
+  }, [onFaceMeshUpdate, startDrawing]);
 
   /**
    * Stop camera
@@ -86,82 +157,6 @@ export function ARCamera({
     setIsActive(false);
     setFaceMeshResult(null);
   }, []);
-
-  /**
-   * Draw face mesh overlay
-   */
-  const drawFaceMesh = useCallback(
-    (result: FaceMeshResult | null) => {
-      const canvas = canvasRef.current;
-      const video = videoRef.current;
-      if (!canvas || !video) return;
-
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
-
-      // Match canvas size to video
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-
-      // Clear canvas
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      if (!result || !result.landmarks) return;
-
-      const width = canvas.width;
-      const height = canvas.height;
-
-      // Draw face mesh
-      if (showMesh) {
-        ctx.strokeStyle = 'rgba(0, 255, 0, 0.5)';
-        ctx.lineWidth = 1;
-
-        // Draw silhouette
-        drawPath(ctx, result.landmarks, FACE_LANDMARKS.SILHOUETTE, width, height, true);
-
-        // Draw eyes
-        ctx.strokeStyle = 'rgba(0, 200, 255, 0.6)';
-        drawPath(ctx, result.landmarks, FACE_LANDMARKS.LEFT_EYE, width, height, true);
-        drawPath(ctx, result.landmarks, FACE_LANDMARKS.RIGHT_EYE, width, height, true);
-
-        // Draw lips
-        ctx.strokeStyle = 'rgba(255, 0, 150, 0.6)';
-        drawPath(ctx, result.landmarks, FACE_LANDMARKS.LIPS_OUTER, width, height, true);
-      }
-
-      // Draw key landmarks
-      if (showLandmarks) {
-        ctx.fillStyle = 'rgba(255, 255, 0, 0.8)';
-        const keyPoints = [
-          ...FACE_LANDMARKS.NOSE,
-          result.landmarks[33].x, // Right eye center
-          result.landmarks[263].x, // Left eye center
-        ];
-
-        for (const index of keyPoints) {
-          if (typeof index === 'number' && result.landmarks[index]) {
-            const point = result.landmarks[index];
-            ctx.beginPath();
-            ctx.arc(point.x * width, point.y * height, 3, 0, 2 * Math.PI);
-            ctx.fill();
-          }
-        }
-      }
-
-      // Draw bounding box
-      if (result.boundingBox) {
-        ctx.strokeStyle = 'rgba(0, 255, 0, 0.8)';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(
-          result.boundingBox.xMin * width,
-          result.boundingBox.yMin * height,
-          result.boundingBox.width * width,
-          result.boundingBox.height * height
-        );
-      }
-    },
-    [showMesh, showLandmarks]
-  );
 
   /**
    * Helper: Draw path from landmark indices
@@ -190,17 +185,6 @@ export function ARCamera({
     }
     ctx.stroke();
   };
-
-  /**
-   * Animation loop for drawing
-   */
-  const startDrawing = useCallback(() => {
-    const draw = () => {
-      drawFaceMesh(faceMeshResult);
-      animationFrameRef.current = requestAnimationFrame(draw);
-    };
-    draw();
-  }, [faceMeshResult, drawFaceMesh]);
 
   /**
    * Capture current frame

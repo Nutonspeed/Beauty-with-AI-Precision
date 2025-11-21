@@ -3,7 +3,7 @@
  * Reusable skeleton components for various dashboard elements
  */
 
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 
 // Stat Card Skeleton

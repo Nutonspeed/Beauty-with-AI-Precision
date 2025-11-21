@@ -54,7 +54,7 @@ export function ProtectedRoute({
 }: ProtectedRouteProps) {
   const router = useRouter();
   const { user, isLoading, isAuthenticated } = useAuth();
-  const { shouldRedirect } = useRequireAuth();
+  const { shouldRedirect: _shouldRedirect } = useRequireAuth();
   const hasRequiredRole = useRequireRole(requireRoles || []);
 
   useEffect(() => {

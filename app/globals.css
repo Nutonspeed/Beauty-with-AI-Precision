@@ -736,3 +736,36 @@ img {
   }
   .transition-filter { transition: none !important; }
 }
+
+/* Mix blend mode for overlay canvas */
+.mix-blend-screen {
+  mix-blend-mode: screen;
+}
+
+/* Face 3D viewer styles */
+.face-3d-container {
+  cursor: grab;
+}
+
+.face-3d-container.dragging {
+  cursor: grabbing;
+}
+
+.face-3d-transform {
+  transform: perspective(1000px) rotateX(var(--rotate-x, 0deg)) rotateY(var(--rotate-y, 0deg));
+  transform-style: preserve-3d;
+  transition: transform 0.3s ease;
+}
+
+.face-3d-transform.dragging {
+  transition: none;
+}
+
+.face-3d-brightness {
+  filter: brightness(var(--brightness, 1));
+}
+
+/* Touch action utilities */
+.touch-none {
+  touch-action: none;
+}

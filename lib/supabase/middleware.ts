@@ -18,7 +18,7 @@ const PROTECTED_ROUTE_PATTERNS = [
   "/ar-simulator",
 ]
 
-function isPublicRoute(pathname: string): boolean {
+function _isPublicRoute(pathname: string): boolean {
   if (PUBLIC_ROUTES.has(pathname)) return true
   if (pathname.startsWith("/api/")) return true
   return false

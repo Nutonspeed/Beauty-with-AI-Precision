@@ -6,14 +6,14 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import * as THREE from 'three';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
-import { Box, RotateCcw, ZoomIn, ZoomOut } from 'lucide-react';
+import { Box, RotateCcw } from 'lucide-react';
 import type { FaceMeshResult } from '@/lib/ar/mediapipe-face-mesh';
 import type { HybridSkinAnalysis } from '@/lib/types/skin-analysis';
 
@@ -200,7 +200,7 @@ export function Face3DViewer({
 
   // Generate heatmap data from analysis
   const heatmapData = faceMesh?.landmarks
-    ? faceMesh.landmarks.map((_, index) => {
+    ? faceMesh.landmarks.map((_, _index) => {
         // Mock heatmap based on analysis severity
         // In real implementation, map actual severity to specific face regions
         const data = analysisData || analysis?.cv;
@@ -235,12 +235,6 @@ export function Face3DViewer({
       return () => clearInterval(interval);
     }
   }, [faceMesh, imageUrl, autoRotate]);
-
-  const resetCamera = () => {
-    if (controlsRef.current) {
-      controlsRef.current.reset();
-    }
-  };
 
   return (
     <Card className={className}>
@@ -282,7 +276,7 @@ export function Face3DViewer({
           ) : imageUrl ? (
             /* Fallback: 2D image with CSS 3D transform */
             <div 
-              className="relative w-full h-full flex items-center justify-center"
+              className={`relative w-full h-full flex items-center justify-center face-3d-container ${isDragging ? 'dragging' : ''}`}
               onMouseDown={(e) => {
                 setIsDragging(true);
                 setDragStart({ x: e.clientX, y: e.clientY });
@@ -299,7 +293,6 @@ export function Face3DViewer({
               }}
               onMouseUp={() => setIsDragging(false)}
               onMouseLeave={() => setIsDragging(false)}
-              style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
             >
               <div
                 style={{

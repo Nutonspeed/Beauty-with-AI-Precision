@@ -4,6 +4,7 @@ import { Fragment } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { ChevronRight, Home } from 'lucide-react';
+import { useLocalizePath } from '@/lib/i18n/locale-link';
 
 interface BreadcrumbsProps {
   className?: string;
@@ -62,6 +63,7 @@ const routeNames: Record<string, { th: string; en: string }> = {
  */
 export function Breadcrumbs({ className = '' }: BreadcrumbsProps) {
   const pathname = usePathname();
+  const lp = useLocalizePath();
   
   // Don't show breadcrumbs on homepage
   if (pathname === '/' || pathname === '/th' || pathname === '/en' || pathname === '/zh') {
@@ -102,14 +104,14 @@ export function Breadcrumbs({ className = '' }: BreadcrumbsProps) {
     <nav aria-label="Breadcrumb" className={`flex items-center space-x-1 text-sm ${className}`}>
       {/* Home Link */}
       <Link 
-        href="/dashboard" 
+        href={lp('/dashboard')} 
         className="flex items-center text-muted-foreground hover:text-foreground transition-colors"
       >
         <Home className="h-4 w-4" />
       </Link>
 
       {/* Breadcrumb Items */}
-      {breadcrumbs.map((item, index) => (
+      {breadcrumbs.map((item, _index) => (
         <Fragment key={item.path}>
           <ChevronRight className="h-4 w-4 text-muted-foreground" />
           {item.isLast ? (
@@ -118,7 +120,7 @@ export function Breadcrumbs({ className = '' }: BreadcrumbsProps) {
             </span>
           ) : (
             <Link
-              href={item.path}
+              href={lp(item.path)}
               className="text-muted-foreground hover:text-foreground transition-colors"
             >
               {item.name}
@@ -148,6 +150,7 @@ export function CustomBreadcrumbs({
   items: { name: string; path?: string }[];
   className?: string;
 }) {
+  const lp = useLocalizePath();
   if (!items || items.length === 0) {
     return null;
   }
@@ -166,7 +169,7 @@ export function CustomBreadcrumbs({
               </span>
             ) : (
               <Link
-                href={item.path}
+                href={lp(item.path)}
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 {item.name}

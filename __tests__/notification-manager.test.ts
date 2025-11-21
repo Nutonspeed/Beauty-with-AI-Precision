@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { NotificationManager, Notification, NotificationType, NotificationPriority } from '@/lib/notification-manager';
+import { NotificationManager } from '@/lib/notification-manager';
 
 // Mock WebSocketClient
 vi.mock('@/lib/websocket-client', () => ({

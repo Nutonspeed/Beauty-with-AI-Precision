@@ -18,7 +18,6 @@ import {
   Calendar,
   Grid3x3,
   List,
-  X,
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';

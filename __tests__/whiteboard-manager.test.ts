@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { WhiteboardManager, DrawingElement, UserCursor } from '@/lib/whiteboard-manager';
+import { WhiteboardManager } from '@/lib/whiteboard-manager';
 
 // Mock WebSocket Client
 vi.mock('@/lib/websocket-client', () => ({

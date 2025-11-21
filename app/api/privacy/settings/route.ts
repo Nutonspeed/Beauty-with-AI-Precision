@@ -7,7 +7,6 @@
 
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
-import type { EmailPreferences } from "@/types/privacy"
 
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"

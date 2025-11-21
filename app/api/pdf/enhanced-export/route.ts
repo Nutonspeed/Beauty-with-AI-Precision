@@ -5,7 +5,6 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import type { HybridSkinAnalysis } from '@/lib/types/skin-analysis';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';

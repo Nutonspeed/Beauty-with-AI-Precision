@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Slider } from "@/components/ui/slider"
-import { Play, Pause, RotateCcw, Download, Move } from "lucide-react"
+import { Play, Pause, RotateCcw, Move } from "lucide-react"
 import Image from "next/image"
 import { useHaptic } from "@/lib/hooks/use-haptic"
 

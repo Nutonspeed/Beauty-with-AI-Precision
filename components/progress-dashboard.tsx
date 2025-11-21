@@ -6,29 +6,29 @@
 'use client';
 
 import React, { useState } from 'react';
-import {
-  LineChart,
-  Line,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
-  Radar,
-} from 'recharts';
+import dynamic from 'next/dynamic';
 import { Card } from '@/components/ui/card';
+
+const LineChart = dynamic(() => import('recharts').then(mod => ({ default: mod.LineChart })), { ssr: false });
+const Line = dynamic(() => import('recharts').then(mod => ({ default: mod.Line })), { ssr: false });
+const BarChart = dynamic(() => import('recharts').then(mod => ({ default: mod.BarChart })), { ssr: false });
+const Bar = dynamic(() => import('recharts').then(mod => ({ default: mod.Bar })), { ssr: false });
+const XAxis = dynamic(() => import('recharts').then(mod => ({ default: mod.XAxis })), { ssr: false });
+const YAxis = dynamic(() => import('recharts').then(mod => ({ default: mod.YAxis })), { ssr: false });
+const CartesianGrid = dynamic(() => import('recharts').then(mod => ({ default: mod.CartesianGrid })), { ssr: false });
+const Tooltip = dynamic(() => import('recharts').then(mod => ({ default: mod.Tooltip })), { ssr: false });
+const Legend = dynamic(() => import('recharts').then(mod => ({ default: mod.Legend })), { ssr: false });
+const ResponsiveContainer = dynamic(() => import('recharts').then(mod => ({ default: mod.ResponsiveContainer })), { ssr: false });
+const RadarChart = dynamic(() => import('recharts').then(mod => ({ default: mod.RadarChart })), { ssr: false });
+const PolarGrid = dynamic(() => import('recharts').then(mod => ({ default: mod.PolarGrid })), { ssr: false });
+const PolarAngleAxis = dynamic(() => import('recharts').then(mod => ({ default: mod.PolarAngleAxis })), { ssr: false });
+const PolarRadiusAxis = dynamic(() => import('recharts').then(mod => ({ default: mod.PolarRadiusAxis })), { ssr: false });
+const Radar = dynamic(() => import('recharts').then(mod => ({ default: mod.Radar })), { ssr: false });
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { useProgressTracking } from '@/hooks/useProgressTracking';
-import { ProgressDataPoint, Milestone } from '@/lib/progress/progress-tracker';
+import { Milestone } from '@/lib/progress/progress-tracker';
 
 /**
  * Progress Dashboard Component
@@ -48,7 +48,7 @@ export const ProgressDashboard: React.FC = () => {
     getImprovementRates,
   } = useProgressTracking();
 
-  const [selectedMetric, setSelectedMetric] = useState<string>('overallHealth');
+  const [_selectedMetric, _setSelectedMetric] = useState<string>('overallHealth');
   const [showAllMetrics, setShowAllMetrics] = useState(false);
 
   // Prepare data for timeline chart

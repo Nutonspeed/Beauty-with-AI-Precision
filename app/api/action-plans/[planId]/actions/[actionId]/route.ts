@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { updateActionProgress } from '@/lib/action-plan/action-plan-generator';
 import type { ActionStatus } from '@/lib/action-plan/action-plan-generator';
 
 /**

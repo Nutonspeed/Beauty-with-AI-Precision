@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect, useMemo, useCallback } from "react"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { useDebounce } from "@/lib/hooks/use-debounce"
@@ -226,36 +226,36 @@ export default function SalesDashboardPage() {
   const debouncedSearchQuery = useDebounce(searchQuery, 500)
 
   // Fetch hot leads from API
-  useEffect(() => {
-    async function fetchHotLeads() {
-      try {
-        setIsLoadingLeads(true)
-        const response = await fetch('/api/sales/hot-leads?limit=50')
-        if (!response.ok) throw new Error('Failed to fetch hot leads')
-        const data = await response.json()
-        setHotLeads(data.leads || [])
-        // Set first lead as selected customer if available
-        if (data.leads && data.leads.length > 0 && !selectedCustomer) {
-          setSelectedCustomer(data.leads[0])
-        }
-      } catch (error) {
-        console.error('[SalesDashboard] Error fetching hot leads:', error)
-        toast.error('ไม่สามารถโหลดข้อมูล Hot Leads ได้')
-        // Fallback to mock data on error
-        setHotLeads(mockHotLeads)
-        if (!selectedCustomer) setSelectedCustomer(mockHotLeads[0])
-      } finally {
-        setIsLoadingLeads(false)
+  const fetchHotLeads = useCallback(async () => {
+    try {
+      setIsLoadingLeads(true)
+      const response = await fetch('/api/sales/hot-leads?limit=50')
+      if (!response.ok) throw new Error('Failed to fetch hot leads')
+      const data = await response.json()
+      setHotLeads(data.leads || [])
+      // Set first lead as selected customer if available
+      if (data.leads && data.leads.length > 0 && !selectedCustomer) {
+        setSelectedCustomer(data.leads[0])
       }
+    } catch (error) {
+      console.error('[SalesDashboard] Error fetching hot leads:', error)
+      toast.error('ไม่สามารถโหลดข้อมูล Hot Leads ได้')
+      // Fallback to mock data on error
+      setHotLeads(mockHotLeads)
+      if (!selectedCustomer) setSelectedCustomer(mockHotLeads[0])
+    } finally {
+      setIsLoadingLeads(false)
     }
+  }, [selectedCustomer])
 
+  useEffect(() => {
     fetchHotLeads()
     // Refresh every 5 minutes if auto-refresh is enabled
     const interval = autoRefreshEnabled ? setInterval(fetchHotLeads, 300000) : null
     return () => {
       if (interval) clearInterval(interval)
     }
-  }, [])
+  }, [fetchHotLeads, autoRefreshEnabled])
 
   // Auto-sort and filter leads using prioritization algorithm
   const sortedLeads = useMemo(() => {

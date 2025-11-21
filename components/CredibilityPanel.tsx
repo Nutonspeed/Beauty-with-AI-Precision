@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { colors, shadows } from '@/lib/design/tokens';
 
 interface Certification {
   id: string;

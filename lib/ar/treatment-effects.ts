@@ -236,8 +236,8 @@ export const microneedlingEffect: TreatmentEffect = {
  */
 export const threadLiftEffect: TreatmentEffect = {
   name: 'Thread Lift',
-  apply: (ctx, imageData, intensity, landmarks) => {
-    const data = imageData.data
+  apply: (ctx, imageData, intensity, _landmarks) => {
+    const _data = imageData.data
     const width = imageData.width
     const height = imageData.height
 

@@ -1,8 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import StaffScheduleClient from "@/app/clinic/staff/my-schedule/schedule-client";
-import { format, startOfDay, endOfDay } from "date-fns";
-import { th } from "date-fns/locale";
+import { format } from "date-fns";
 import { PageLayout } from "@/components/layouts/page-layout";
 
 async function requireStaffRole() {

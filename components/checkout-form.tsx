@@ -30,7 +30,7 @@ export function CheckoutForm({
   loading = false,
 }: CheckoutFormProps) {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('credit_card');
-  const [sameAsShipping, setSameAsShipping] = useState(true);
+  const [sameAsShipping, _setSameAsShipping] = useState(true);
   const [notes, setNotes] = useState('');
 
   const [shippingAddress, setShippingAddress] = useState<Address>({
@@ -44,7 +44,7 @@ export function CheckoutForm({
     phone: '',
   });
 
-  const [billingAddress, setBillingAddress] = useState<Address>({
+  const [billingAddress, _setBillingAddress] = useState<Address>({
     fullName: '',
     addressLine1: '',
     addressLine2: '',

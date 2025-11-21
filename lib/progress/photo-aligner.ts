@@ -15,8 +15,8 @@ export interface AlignmentResult {
  * @returns Promise with alignment result
  */
 export async function alignPhotos(
-  afterImageUrl: string,
-  beforeImageUrl: string
+  _afterImageUrl: string,
+  _beforeImageUrl: string
 ): Promise<AlignmentResult> {
   try {
     // For now, return a placeholder alignment score

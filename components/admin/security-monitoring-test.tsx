@@ -95,11 +95,11 @@ export default function SecurityMonitoring() {
   const { toast } = useToast()
   
   // Pagination state for each tab
-  const [eventsPage, setEventsPage] = useState(1)
-  const [failedLoginsPage, setFailedLoginsPage] = useState(1)
-  const [sessionsPage, setSessionsPage] = useState(1)
-  const [suspiciousPage, setSuspiciousPage] = useState(1)
-  const [pageSize, setPageSize] = useState(10)
+  const [eventsPage, _setEventsPage] = useState(1)
+  const [failedLoginsPage, _setFailedLoginsPage] = useState(1)
+  const [sessionsPage, _setSessionsPage] = useState(1)
+  const [suspiciousPage, _setSuspiciousPage] = useState(1)
+  const [pageSize, _setPageSize] = useState(10)
 
   const fetchSecurityData = async () => {
     try {
@@ -214,7 +214,7 @@ export default function SecurityMonitoring() {
     }
   }
 
-  function PaginationControls({ 
+  function _PaginationControls({ 
     page, 
     totalPages, 
     onPageChange, 

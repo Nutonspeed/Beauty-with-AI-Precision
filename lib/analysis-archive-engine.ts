@@ -468,7 +468,7 @@ export class AnalysisArchiveEngine {
   /**
    * Private: Export as CSV
    */
-  private static exportAsCSV(records: AnalysisRecord[], options: ExportOptions): string {
+  private static exportAsCSV(records: AnalysisRecord[], _options: ExportOptions): string {
     const headers = [
       'ID',
       'Date',

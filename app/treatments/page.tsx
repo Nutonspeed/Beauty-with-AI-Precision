@@ -18,7 +18,6 @@ import {
   Calendar,
   CheckCircle,
   Clock,
-  DollarSign,
   FileText,
   Image,
   Milestone,

@@ -367,7 +367,7 @@ export class AnalyticsEngine {
     };
   }
 
-  private async generateInventoryReport(filters?: ReportFilter) {
+  private async generateInventoryReport(_filters?: ReportFilter) {
     return {
       totalProducts: 450,
       lowStockProducts: 25,
@@ -386,7 +386,7 @@ export class AnalyticsEngine {
     };
   }
 
-  private async generatePerformanceReport(filters?: ReportFilter) {
+  private async generatePerformanceReport(_filters?: ReportFilter) {
     return {
       overallPerformance: 87.5,
       metrics: {
@@ -517,7 +517,7 @@ export class AnalyticsEngine {
   /**
    * Generate automated insights
    */
-  async generateInsights(filters?: ReportFilter): Promise<InsightData[]> {
+  async generateInsights(_filters?: ReportFilter): Promise<InsightData[]> {
     const insights: InsightData[] = [];
     const metrics = await this.getRealTimeMetrics();
 

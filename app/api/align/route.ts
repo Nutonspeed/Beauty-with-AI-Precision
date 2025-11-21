@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { alignPhotos } from '@/lib/progress/photo-aligner-server';
 import { createServerClient } from '@/lib/supabase/server';
-import { cookies } from 'next/headers';
 
 export async function POST(request: Request) {
   // Supabase server client manages cookies internally

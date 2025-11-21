@@ -3,18 +3,14 @@
  * Generates personalized skincare action plans based on analysis results
  */
 
-import type {
-  HybridSkinAnalysis,
-  SkinConcern,
-} from '@/lib/types/skin-analysis';
+
+
 import type {
   InteractiveConcern,
   ConcernType,
-  ConcernEducation,
 } from '@/lib/concerns/concern-education';
 import {
   getPriorityConcerns,
-  getTreatmentRecommendations,
   getSeverityLevel,
 } from '@/lib/concerns/concern-education';
 
@@ -355,7 +351,7 @@ export class ActionPlanGenerator {
    */
   private getImmediateActionsForConcern(concern: InteractiveConcern): ActionItem[] {
     const actions: ActionItem[] = [];
-    const severity = getSeverityLevel(concern.averageSeverity);
+    const _severity = getSeverityLevel(concern.averageSeverity);
 
     switch (concern.type) {
       case 'acne':

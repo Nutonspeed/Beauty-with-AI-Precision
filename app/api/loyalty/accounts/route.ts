@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { withClinicAuth } from '@/lib/auth/middleware';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -16,7 +17,7 @@ const supabase = createClient(
  * - tier_id (optional): Filter by tier
  * - is_active (optional): Filter by active status
  */
-export async function GET(request: NextRequest) {
+export const GET = withClinicAuth(async (request: NextRequest, user) => {
   try {
     const { searchParams } = new URL(request.url);
     const clinic_id = searchParams.get('clinic_id');
@@ -64,13 +65,13 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+});
 
 /**
  * POST /api/loyalty/accounts
  * Create a new loyalty account for beauty clinic customer
  */
-export async function POST(request: NextRequest) {
+export const POST = withClinicAuth(async (request: NextRequest, user: any) => {
   try {
     const body = await request.json();
     const { clinic_id, customer_id, notes } = body;
@@ -121,4 +122,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+});

@@ -7,7 +7,7 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import Image from 'next/image';
-import { X, ZoomIn, ZoomOut, Layers, Info, Eye, EyeOff } from 'lucide-react';
+import { X, ZoomIn, ZoomOut, Info, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -21,7 +21,6 @@ import type {
   InteractiveConcern,
   ConcernLocation,
   ConcernType,
-  MarkerInteraction,
 } from '@/lib/concerns/concern-education';
 import {
   formatConcernType,
@@ -60,7 +59,7 @@ export function InteractivePhotoMarkers({
   const [visibleLayers, setVisibleLayers] = useState<Set<ConcernType>>(
     new Set(concerns.map(c => c.type))
   );
-  const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
+  const [_imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
 
   const containerRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);

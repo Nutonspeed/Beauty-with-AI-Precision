@@ -17,7 +17,6 @@ import {
   Users, 
   Monitor, 
   Circle, 
-  Mic, 
   Phone,
   CheckCircle2 
 } from 'lucide-react';

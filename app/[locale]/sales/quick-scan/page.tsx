@@ -62,36 +62,7 @@ export default function QuickScanPage() {
     }
   }, [])
 
-  const capturePhoto = useCallback(async () => {
-    if (!videoRef.current || !canvasRef.current) return
-
-    const canvas = canvasRef.current
-    const video = videoRef.current
-    canvas.width = video.videoWidth
-    canvas.height = video.videoHeight
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-
-    ctx.drawImage(video, 0, 0)
-    const imageData = canvas.toDataURL('image/jpeg')
-
-    setCapturedImages(prev => ({
-      ...prev,
-      [currentAngle]: imageData
-    }))
-
-    // Auto-advance to next angle
-    if (currentAngle === 'front') {
-      setCurrentAngle('left')
-    } else if (currentAngle === 'left') {
-      setCurrentAngle('right')
-    } else {
-      // All photos captured, start analysis
-      await analyzePhotos({ ...capturedImages, right: imageData })
-    }
-  }, [currentAngle, capturedImages])
-
-  const analyzePhotos = async (images: typeof capturedImages) => {
+  const analyzePhotos = useCallback(async (images: typeof capturedImages) => {
     setIsAnalyzing(true)
 
     try {
@@ -164,7 +135,36 @@ export default function QuickScanPage() {
     } finally {
       setIsAnalyzing(false)
     }
-  }
+  }, [])
+
+  const capturePhoto = useCallback(async () => {
+    if (!videoRef.current || !canvasRef.current) return
+
+    const canvas = canvasRef.current
+    const video = videoRef.current
+    canvas.width = video.videoWidth
+    canvas.height = video.videoHeight
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    ctx.drawImage(video, 0, 0)
+    const imageData = canvas.toDataURL('image/jpeg')
+
+    setCapturedImages(prev => ({
+      ...prev,
+      [currentAngle]: imageData
+    }))
+
+    // Auto-advance to next angle
+    if (currentAngle === 'front') {
+      setCurrentAngle('left')
+    } else if (currentAngle === 'left') {
+      setCurrentAngle('right')
+    } else {
+      // All photos captured, start analysis
+      await analyzePhotos({ ...capturedImages, right: imageData })
+    }
+  }, [currentAngle, capturedImages, analyzePhotos])
 
   const angleInstructions = {
     front: 'มองตรงที่กล้อง',

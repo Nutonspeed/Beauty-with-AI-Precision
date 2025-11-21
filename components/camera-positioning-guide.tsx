@@ -6,7 +6,7 @@
  * Enhanced with MediaPipe Face Mesh for accurate detection
  */
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, useCallback } from "react"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { CheckCircle2, AlertCircle, Camera } from "lucide-react"
@@ -48,6 +48,108 @@ export function CameraPositioningGuide({
     }
   }
 
+  const checkLighting = useCallback((imageData: ImageData): "too-dark" | "too-bright" | "good" => {
+    const data = imageData.data
+    let sum = 0
+    const sampleSize = 1000
+
+    // Sample pixels
+    for (let i = 0; i < sampleSize; i++) {
+      const idx = Math.floor(Math.random() * (data.length / 4)) * 4
+      const brightness = (data[idx] + data[idx + 1] + data[idx + 2]) / 3
+      sum += brightness
+    }
+
+    const avgBrightness = sum / sampleSize
+
+    if (avgBrightness < 80) return "too-dark"
+    if (avgBrightness > 200) return "too-bright"
+    return "good"
+  }, [])
+
+  const checkDistance = useCallback((_imageData: ImageData): "too-close" | "too-far" | "good" => {
+    if (!faceLandmarks) {
+      return "good" // No face detected, assume neutral
+    }
+
+    // Calculate face bounding box from landmarks
+    let minX = 1,
+      maxX = 0,
+      minY = 1,
+      maxY = 0
+
+    for (const landmark of faceLandmarks) {
+      minX = Math.min(minX, landmark.x)
+      maxX = Math.max(maxX, landmark.x)
+      minY = Math.min(minY, landmark.y)
+      maxY = Math.max(maxY, landmark.y)
+    }
+
+    const faceWidth = maxX - minX
+    const faceHeight = maxY - minY
+    const faceArea = faceWidth * faceHeight
+
+    // Optimal face should occupy 25-45% of frame
+    if (faceArea > 0.45) return "too-close"
+    if (faceArea < 0.2) return "too-far"
+    return "good"
+  }, [faceLandmarks])
+
+  const checkAngle = useCallback((_imageData: ImageData): "left" | "right" | "up" | "down" | "good" => {
+    if (!faceLandmarks) {
+      return "good" // No face detected, assume neutral
+    }
+
+    // Use key landmarks for angle detection
+    // Nose tip: 1, Left eye: 33, Right eye: 263, Left mouth: 61, Right mouth: 291
+    const noseTip = faceLandmarks[1]
+    const leftEye = faceLandmarks[33]
+    const rightEye = faceLandmarks[263]
+    const leftMouth = faceLandmarks[61]
+    const rightMouth = faceLandmarks[291]
+
+    // Check horizontal rotation (left/right)
+    const eyeCenterX = (leftEye.x + rightEye.x) / 2
+    const horizontalOffset = noseTip.x - eyeCenterX
+    if (horizontalOffset > 0.03) return "right"
+    if (horizontalOffset < -0.03) return "left"
+
+    // Check vertical rotation (up/down)
+    const eyeCenterY = (leftEye.y + rightEye.y) / 2
+    const mouthCenterY = (leftMouth.y + rightMouth.y) / 2
+    const faceLength = mouthCenterY - eyeCenterY
+    const verticalOffset = noseTip.y - (eyeCenterY + faceLength * 0.4)
+
+    if (verticalOffset < -0.02) return "up"
+    if (verticalOffset > 0.02) return "down"
+
+    return "good"
+  }, [faceLandmarks])
+
+  // Check overall position status
+  const checkPosition = useCallback(() => {
+    if (!canvasRef.current || !videoRef.current) return
+
+    const canvas = canvasRef.current
+    const video = videoRef.current
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    // Get ImageData from video
+    canvas.width = video.videoWidth
+    canvas.height = video.videoHeight
+    ctx.drawImage(video, 0, 0)
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+
+    setPositionStatus({
+      lighting: checkLighting(imageData),
+      distance: checkDistance(imageData),
+      angle: checkAngle(imageData),
+      overall:
+        checkLighting(imageData) === "good" && checkDistance(imageData) === "good" && checkAngle(imageData) === "good",
+    })
+  }, [checkLighting, checkDistance, checkAngle])
+
   useEffect(() => {
     if (!videoStream || !videoRef.current) return
 
@@ -84,127 +186,14 @@ export function CameraPositioningGuide({
         faceMeshRef.current.close()
       }
     }
-  }, [videoStream])
+  }, [videoStream, checkPosition])
 
-  const checkPosition = async () => {
-    if (!videoRef.current || !canvasRef.current || !faceMeshRef.current) return
+  // Update position status when face landmarks change
+  useEffect(() => {
+    if (!faceLandmarks) return
 
-    const video = videoRef.current
-    const canvas = canvasRef.current
-    const ctx = canvas.getContext("2d")
-    if (!ctx) return
-
-    // Set canvas size to match video
-    canvas.width = video.videoWidth
-    canvas.height = video.videoHeight
-
-    // Draw current frame
-    ctx.drawImage(video, 0, 0)
-
-    // Send frame to MediaPipe for face detection
-    await faceMeshRef.current.send({ image: video })
-
-    // Get image data for lighting analysis
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
-
-    // Check lighting
-    const lighting = checkLighting(imageData)
-
-    // Check face size (distance) using landmarks
-    const distance = checkDistance(imageData)
-
-    // Check face angle using landmarks
-    const angle = checkAngle(imageData)
-
-    const overall = lighting === "good" && distance === "good" && angle === "good"
-
-    setPositionStatus({
-      distance,
-      angle,
-      lighting,
-      overall,
-    })
-
-    onPositionValid?.(overall)
-  }
-
-  const checkLighting = (imageData: ImageData): "too-dark" | "too-bright" | "good" => {
-    const data = imageData.data
-    let sum = 0
-    const sampleSize = 1000
-
-    // Sample pixels
-    for (let i = 0; i < sampleSize; i++) {
-      const idx = Math.floor(Math.random() * (data.length / 4)) * 4
-      const brightness = (data[idx] + data[idx + 1] + data[idx + 2]) / 3
-      sum += brightness
-    }
-
-    const avgBrightness = sum / sampleSize
-
-    if (avgBrightness < 80) return "too-dark"
-    if (avgBrightness > 200) return "too-bright"
-    return "good"
-  }
-
-  const checkDistance = (imageData: ImageData): "too-close" | "too-far" | "good" => {
-    if (!faceLandmarks) {
-      return "good" // No face detected, assume neutral
-    }
-
-    // Calculate face bounding box from landmarks
-    let minX = 1,
-      maxX = 0,
-      minY = 1,
-      maxY = 0
-
-    for (const landmark of faceLandmarks) {
-      minX = Math.min(minX, landmark.x)
-      maxX = Math.max(maxX, landmark.x)
-      minY = Math.min(minY, landmark.y)
-      maxY = Math.max(maxY, landmark.y)
-    }
-
-    const faceWidth = maxX - minX
-    const faceHeight = maxY - minY
-    const faceArea = faceWidth * faceHeight
-
-    // Optimal face should occupy 25-45% of frame
-    if (faceArea > 0.45) return "too-close"
-    if (faceArea < 0.2) return "too-far"
-    return "good"
-  }
-
-  const checkAngle = (imageData: ImageData): "left" | "right" | "up" | "down" | "good" => {
-    if (!faceLandmarks) {
-      return "good" // No face detected, assume neutral
-    }
-
-    // Use key landmarks for angle detection
-    // Nose tip: 1, Left eye: 33, Right eye: 263, Left mouth: 61, Right mouth: 291
-    const noseTip = faceLandmarks[1]
-    const leftEye = faceLandmarks[33]
-    const rightEye = faceLandmarks[263]
-    const leftMouth = faceLandmarks[61]
-    const rightMouth = faceLandmarks[291]
-
-    // Check horizontal rotation (left/right)
-    const eyeCenterX = (leftEye.x + rightEye.x) / 2
-    const horizontalOffset = noseTip.x - eyeCenterX
-    if (horizontalOffset > 0.03) return "right"
-    if (horizontalOffset < -0.03) return "left"
-
-    // Check vertical rotation (up/down)
-    const eyeCenterY = (leftEye.y + rightEye.y) / 2
-    const mouthCenterY = (leftMouth.y + rightMouth.y) / 2
-    const faceLength = mouthCenterY - eyeCenterY
-    const verticalOffset = noseTip.y - (eyeCenterY + faceLength * 0.4)
-
-    if (verticalOffset < -0.02) return "up"
-    if (verticalOffset > 0.02) return "down"
-
-    return "good"
-  }
+    checkPosition()
+  }, [faceLandmarks, checkPosition])
 
   return (
     <div className="relative">

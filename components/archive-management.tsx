@@ -9,7 +9,6 @@ import {
   SearchResult,
   ExportOptions,
 } from '@/lib/analysis-archive-engine';
-import { SkinConcern } from '@/types';
 import {
   Search,
   Filter,
@@ -17,7 +16,6 @@ import {
   Trash2,
   Tag,
   Calendar,
-  User,
   Building,
   TrendingUp,
   Archive,
@@ -153,17 +151,12 @@ export const ArchiveManagement: React.FC<Props> = ({ language = 'en' }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState<ArchiveFilter>({});
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
+  const [pageSize, _setPageSize] = useState(20);
   const [viewMode, setViewMode] = useState<ArchiveViewMode['type']>('list');
   const [selectedRecords, setSelectedRecords] = useState<Set<string>>(new Set());
   const [showFilters, setShowFilters] = useState(false);
   const [stats, setStats] = useState<ArchiveStats | null>(null);
   const [loading, setLoading] = useState(false);
-
-  // Load initial data
-  React.useEffect(() => {
-    loadArchiveData();
-  }, []);
 
   const loadArchiveData = useCallback(() => {
     setLoading(true);
@@ -174,6 +167,11 @@ export const ArchiveManagement: React.FC<Props> = ({ language = 'en' }) => {
       setLoading(false);
     }
   }, []);
+
+  // Load initial data
+  React.useEffect(() => {
+    loadArchiveData();
+  }, [loadArchiveData]);
 
   // Search and filter results
   const searchResults: SearchResult = useMemo(() => {
@@ -199,7 +197,7 @@ export const ArchiveManagement: React.FC<Props> = ({ language = 'en' }) => {
     setSelectedRecords(newSelected);
   };
 
-  const handleSelectAll = () => {
+  const _handleSelectAll = () => {
     if (selectedRecords.size === searchResults.records.length) {
       setSelectedRecords(new Set());
     } else {
@@ -438,6 +436,7 @@ export const ArchiveManagement: React.FC<Props> = ({ language = 'en' }) => {
                 setCurrentPage(1);
               }}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              aria-label={t.search}
             />
           </div>
           <button
@@ -489,6 +488,7 @@ export const ArchiveManagement: React.FC<Props> = ({ language = 'en' }) => {
                       }))
                     }
                     className="flex-1 px-3 py-2 border border-gray-300 rounded-lg"
+                    aria-label="Start date"
                   />
                   <input
                     type="date"
@@ -502,6 +502,7 @@ export const ArchiveManagement: React.FC<Props> = ({ language = 'en' }) => {
                       }))
                     }
                     className="flex-1 px-3 py-2 border border-gray-300 rounded-lg"
+                    aria-label="End date"
                   />
                 </div>
               </div>
@@ -521,6 +522,7 @@ export const ArchiveManagement: React.FC<Props> = ({ language = 'en' }) => {
                     }))
                   }
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                  aria-label={t.clinician}
                 />
               </div>
 
@@ -539,6 +541,7 @@ export const ArchiveManagement: React.FC<Props> = ({ language = 'en' }) => {
                     }))
                   }
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                  aria-label={t.tags}
                 />
               </div>
             </div>

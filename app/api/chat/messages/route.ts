@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server"
 import { createServerClient } from "@/lib/supabase/server"
+import { withAuth } from "@/lib/auth/middleware"
 
-export async function GET(request: Request) {
+export const GET = withAuth(async (request: Request, user) => {
   try {
     const supabase = await createServerClient()
     const { searchParams } = new URL(request.url)
@@ -9,15 +10,6 @@ export async function GET(request: Request) {
 
     if (!conversationId) {
       return NextResponse.json({ error: "conversation_id is required" }, { status: 400 })
-    }
-
-    // Get current user
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser()
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
     // Fetch messages
@@ -35,20 +27,15 @@ export async function GET(request: Request) {
     console.error("[v0] Error fetching messages:", error)
     return NextResponse.json({ error: "Failed to fetch messages" }, { status: 500 })
   }
-}
+});
 
-export async function POST(request: Request) {
+export const POST = withAuth(async (request: Request, user) => {
   try {
     const supabase = await createServerClient()
     const body = await request.json()
     const { conversation_id, content, message_type = "text", metadata } = body
 
-    // Get current user
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser()
-    if (authError || !user) {
+    if (!conversation_id || !content) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -82,22 +69,13 @@ export async function POST(request: Request) {
     console.error("[v0] Error sending message:", error)
     return NextResponse.json({ error: "Failed to send message" }, { status: 500 })
   }
-}
+});
 
-export async function PATCH(request: Request) {
+export const PATCH = withAuth(async (request: Request, user: any) => {
   try {
     const supabase = await createServerClient()
     const body = await request.json()
     const { message_ids } = body
-
-    // Get current user
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser()
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
 
     // Mark messages as read
     const { error } = await supabase
@@ -115,4 +93,4 @@ export async function PATCH(request: Request) {
     console.error("[v0] Error marking messages as read:", error)
     return NextResponse.json({ error: "Failed to mark messages as read" }, { status: 500 })
   }
-}
+});

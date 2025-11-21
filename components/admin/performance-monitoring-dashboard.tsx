@@ -10,16 +10,6 @@ interface CacheStats {
   total: number;
 }
 
-interface PerformanceMetrics {
-  cacheHitRate: number;
-  cacheHits: number;
-  cacheMisses: number;
-  totalRequests: number;
-  avgResponseTime: number;
-  initializationTime: number;
-  memoryUsage: number;
-}
-
 export function PerformanceMonitoringDashboard() {
   const [cacheStats, setCacheStats] = useState<CacheStats | null>(null);
   const [online, setOnline] = useState(true);

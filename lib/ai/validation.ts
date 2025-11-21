@@ -64,15 +64,6 @@ export function validateAnalysisResult(
 }
 
 /**
- * Calculate variance of an array of numbers
- */
-function calculateVariance(numbers: number[]): number {
-  const mean = numbers.reduce((sum, n) => sum + n, 0) / numbers.length
-  const squaredDiffs = numbers.map((n) => Math.pow(n - mean, 2))
-  return squaredDiffs.reduce((sum, n) => sum + n, 0) / numbers.length
-}
-
-/**
  * Compare two TensorFlow analysis results for consistency
  */
 export function compareAnalysisResults(

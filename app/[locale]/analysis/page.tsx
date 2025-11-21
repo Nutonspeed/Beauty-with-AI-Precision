@@ -1,25 +1,45 @@
+"use client"
+
 import { AIErrorBoundary } from "@/components/error-boundary"
 import { AnalysisTutorialWrapper } from "@/components/tutorial/analysis-tutorial-wrapper"
 import { Footer } from "@/components/footer"
 import { Header } from "@/components/header"
 import { LightingQualityChecker } from "@/components/lighting-quality-checker"
 import { AnalysisInteractionPanel } from "@/components/analysis-interaction-panel"
-import { SkinAnalysisUpload } from "@/components/skin-analysis-upload"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { createServerClient } from "@/lib/supabase/server"
 import { Info, Lightbulb } from "lucide-react"
 import Link from "next/link"
+import { useEffect, useState } from "react"
+import { createClient } from "@/lib/supabase/client"
 
-async function AnalysisContent({ locale }: Readonly<{ locale: string }>) {
-  // Check if user is logged in
-  const supabase = await createServerClient()
-  
-  // Use getUser() instead of getSession() for better security
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+function AnalysisContent() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
-  const isLoggedIn = !!user
+  useEffect(() => {
+    const checkAuth = async () => {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      setIsLoggedIn(!!user)
+      setIsLoading(false)
+    }
+    checkAuth()
+  }, [])
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen flex-col">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    )
+  }
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -140,16 +160,10 @@ async function AnalysisContent({ locale }: Readonly<{ locale: string }>) {
   )
 }
 
-export default async function AnalysisPage({
-  params,
-}: Readonly<{
-  params: Promise<{ locale: string }>
-}>) {
-  const { locale } = await params
-  
+export default function AnalysisPage() {
   return (
     <AIErrorBoundary>
-      <AnalysisContent locale={locale} />
+      <AnalysisContent />
     </AIErrorBoundary>
   )
 }

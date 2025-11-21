@@ -26,8 +26,8 @@ export async function analyzeColor(
 ): Promise<ColorAnalysisResult> {
   try {
     const image = await Jimp.read(imageBuffer);
-    const width = image.bitmap.width;
-    const height = image.bitmap.height;
+    const _width = image.bitmap.width;
+    const _height = image.bitmap.height;
 
     // แยกเฉดสีผิว
     const dominantTone = determineDominantTone(image);
@@ -149,7 +149,7 @@ function analyzePigmentation(image: JimpInstance): {
       }
 
       const avgWindowBrightness = windowBrightness / windowCount;
-      const diff = Math.abs(avgWindowBrightness - avgBrightness);
+      const _diff = Math.abs(avgWindowBrightness - avgBrightness);
 
       // จุดมืดกว่าปกติมาก
       if (avgWindowBrightness < avgBrightness - 30) {

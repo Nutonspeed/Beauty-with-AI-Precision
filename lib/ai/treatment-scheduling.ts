@@ -501,7 +501,7 @@ export class TreatmentSchedulingEngine {
     }
 
     // Bonus for staying within budget
-    const totalCost = schedule.reduce((sum, s) => sum + 1000, 0); // Placeholder cost
+    const totalCost = schedule.reduce((sum, _s) => sum + 1000, 0); // Placeholder cost
     if (totalCost <= constraints.budgetPerMonth * 3) {
       score += 10;
     }
@@ -633,7 +633,7 @@ export class TreatmentSchedulingEngine {
    */
   static calculateSkinRecovery(
     schedule: ScheduledTreatment[],
-    analysis: HybridSkinAnalysis
+    _analysis: HybridSkinAnalysis
   ): { stage: string; duration: number; recommendations: string[] }[] {
     const stages: { stage: string; duration: number; recommendations: string[] }[] = [];
     const maxDowntime = Math.max(...schedule.map((s) => s.downtime || 0));

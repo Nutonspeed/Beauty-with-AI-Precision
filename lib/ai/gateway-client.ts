@@ -8,8 +8,8 @@
 import { generateText } from "ai"
 
 // AI Gateway configuration
-const AI_GATEWAY_KEY =
-  process.env.VERCEL_AI_GATEWAY_KEY || "vck_21OTwoeeh20LtPP0R2aNrWJcF3XAE2H3hAzQuS9tTpdvEsXinR3l3m9I"
+// const AI_GATEWAY_KEY =
+//   process.env.VERCEL_AI_GATEWAY_KEY || "vck_21OTwoeeh20LtPP0R2aNrWJcF3XAE2H3hAzQuS9tTpdvEsXinR3l3m9I"
 
 export interface SkinAnalysisPrompt {
   imageBase64: string

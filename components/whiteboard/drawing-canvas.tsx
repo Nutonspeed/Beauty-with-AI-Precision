@@ -5,7 +5,7 @@
 
 'use client';
 
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { DrawingElement, UserCursor, Point } from '@/lib/whiteboard-manager';
 
 interface DrawingCanvasProps {
@@ -30,29 +30,6 @@ export function DrawingCanvas({
   className = ''
 }: DrawingCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [isDrawing, setIsDrawing] = useState(false);
-
-  // Draw elements on canvas
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    // Clear canvas
-    ctx.clearRect(0, 0, width, height);
-
-    // Draw all elements
-    for (const element of elements) {
-      drawElement(ctx, element);
-    }
-
-    // Draw user cursors
-    for (const user of activeUsers) {
-      drawCursor(ctx, user);
-    }
-  }, [elements, activeUsers, width, height]);
 
   /**
    * Draw a single element
@@ -139,6 +116,28 @@ export function DrawingCanvas({
     ctx.fillText(user.userName, user.x + 10, user.y - 10);
   };
 
+  // Draw elements on canvas
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Clear canvas
+    ctx.clearRect(0, 0, width, height);
+
+    // Draw all elements
+    for (const element of elements) {
+      drawElement(ctx, element);
+    }
+
+    // Draw user cursors
+    for (const user of activeUsers) {
+      drawCursor(ctx, user);
+    }
+  }, [elements, activeUsers, width, height]);
+
   /**
    * Get mouse position relative to canvas
    */
@@ -157,7 +156,6 @@ export function DrawingCanvas({
    * Handle mouse down
    */
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    setIsDrawing(true);
     const pos = getMousePos(e);
     if (onMouseDown) {
       onMouseDown(pos.x, pos.y);
@@ -178,7 +176,6 @@ export function DrawingCanvas({
    * Handle mouse up
    */
   const handleMouseUp = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    setIsDrawing(false);
     const pos = getMousePos(e);
     if (onMouseUp) {
       onMouseUp(pos.x, pos.y);
@@ -189,7 +186,7 @@ export function DrawingCanvas({
    * Handle mouse leave
    */
   const handleMouseLeave = () => {
-    setIsDrawing(false);
+    // intentionally left blank; consumers can handle leave via onMouseUp
   };
 
   return (

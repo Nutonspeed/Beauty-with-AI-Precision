@@ -5,7 +5,7 @@
  * Full VISIA report with AR viewer and export options
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { VISIAReport } from '@/components/analysis/visia-report';
 import AnalysisDetailClient from '@/components/analysis/AnalysisDetailClient';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -725,14 +725,7 @@ export default function AnalysisDetailPage({ params }: Readonly<AnalysisDetailPa
     checkAuth();
   }, []);
 
-  useEffect(() => {
-    params.then((resolvedParams) => {
-      setAnalysisId(resolvedParams.id);
-      loadAnalysis(resolvedParams.id);
-    });
-  }, [params]);
-
-  const loadAnalysis = async (id: string) => {
+  const loadAnalysis = useCallback(async (id: string) => {
     try {
       setIsLoading(true);
       setError(null);
@@ -756,11 +749,9 @@ export default function AnalysisDetailPage({ params }: Readonly<AnalysisDetailPa
       setAnalysis(normalizedAnalysis);
       setImageUrl(normalizedAnalysis.imageUrl || null);
       
-      // Calculate priority ranking
       const ranking = rankSkinConcernPriorities(normalizedAnalysis);
       setPriorityRanking(ranking);
       
-      // Generate treatment recommendations
       const skinType = normalizedAnalysis.ai.skinType || 'normal';
       const recommendations = generateTreatmentRecommendations(
         normalizedAnalysis,
@@ -768,12 +759,10 @@ export default function AnalysisDetailPage({ params }: Readonly<AnalysisDetailPa
       );
       setTreatmentRecs(recommendations);
       
-      // Get patient info from API or create fallback
       const patientInfoValue = isRecord(data.data) && 'patientInfo' in data.data
         ? (data.data as Record<string, unknown>).patientInfo ?? null
         : null;
       
-      // Create fallback patient info if not available
       const finalPatientInfo = patientInfoValue || {
         name: locale === 'th' ? 'ผู้รับบริการ' : 'Patient',
         skinType: normalizedAnalysis.ai.skinType || 'normal'
@@ -786,7 +775,14 @@ export default function AnalysisDetailPage({ params }: Readonly<AnalysisDetailPa
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [locale]);
+
+  useEffect(() => {
+    params.then((resolvedParams) => {
+      setAnalysisId(resolvedParams.id);
+      loadAnalysis(resolvedParams.id);
+    });
+  }, [params, loadAnalysis]);
 
   const handleExport = async (format: 'pdf' | 'png') => {
     try {

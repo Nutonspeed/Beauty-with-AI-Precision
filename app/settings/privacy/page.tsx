@@ -24,7 +24,7 @@ import {
   FileText,
   Clock
 } from "lucide-react"
-import type { EmailPreferences, PrivacySettings } from "@/types/privacy"
+import type { EmailPreferences } from "@/types/privacy"
 
 export default function PrivacySettingsPage() {
   const [loading, setLoading] = useState(true)

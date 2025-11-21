@@ -6,11 +6,13 @@
  */
 
 import { useAuth } from "@/lib/auth/context"
-import { UserRole, AnalysisTier, hasFeatureAccess } from "@/types/supabase"
+import { AnalysisTier, hasFeatureAccess } from "@/types/supabase"
 import { Lock, Sparkles } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { useLocalizePath } from "@/lib/i18n/locale-link"
+import { useRouter } from "next/navigation"
 
 interface FeatureGateProps {
   children: React.ReactNode
@@ -101,7 +103,7 @@ export function FeatureGate({
       return <>{upgradePromptComponent}</>
     }
 
-    return <DefaultUpgradePrompt tier={user.tier} feature={feature} />
+    return <DefaultUpgradePrompt _tier={user.tier} feature={feature} />
   }
 
   return null
@@ -110,7 +112,8 @@ export function FeatureGate({
 /**
  * Default Upgrade Prompt
  */
-function DefaultUpgradePrompt({ tier, feature }: { tier: AnalysisTier; feature: string }) {
+function DefaultUpgradePrompt({ _tier, feature }: { _tier: AnalysisTier; feature: string }) {
+  const lp = useLocalizePath()
   const featureNames: Record<string, string> = {
     'basic_analysis': 'การวิเคราะห์พื้นฐาน',
     'advanced_analysis': 'การวิเคราะห์ขั้นสูง',
@@ -144,13 +147,13 @@ function DefaultUpgradePrompt({ tier, feature }: { tier: AnalysisTier; feature: 
         </p>
         <div className="flex gap-2">
           <Button asChild size="sm" className="bg-amber-600 hover:bg-amber-700">
-            <Link href="/pricing">
+            <Link href={lp("/pricing")}>
               <Sparkles className="mr-2 h-4 w-4" />
               อัปเกรดเลย
             </Link>
           </Button>
           <Button asChild size="sm" variant="outline">
-            <Link href="/features">ดูฟีเจอร์ทั้งหมด</Link>
+            <Link href={lp("/features")}>ดูฟีเจอร์ทั้งหมด</Link>
           </Button>
         </div>
       </AlertDescription>
@@ -196,6 +199,8 @@ export function FeatureButton({
   className,
   variant = "default",
 }: FeatureButtonProps) {
+  const router = useRouter()
+  const lp = useLocalizePath()
   return (
     <FeatureGate
       feature={feature}
@@ -204,8 +209,7 @@ export function FeatureButton({
           variant={variant}
           className={className}
           onClick={() => {
-            // Navigate to pricing
-            window.location.href = "/pricing"
+            router.push(lp("/pricing"))
           }}
         >
           <Lock className="mr-2 h-4 w-4" />

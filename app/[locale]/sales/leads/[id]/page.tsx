@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { useParams } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -119,11 +119,7 @@ export default function LeadDetailPage() {
   })
 
   // Fetch lead details
-  useEffect(() => {
-    fetchLead()
-  }, [leadId])
-
-  const fetchLead = async () => {
+  const fetchLead = useCallback(async () => {
     setIsLoading(true)
 
     try {
@@ -159,7 +155,11 @@ export default function LeadDetailPage() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [leadId, updateForm, router])
+
+  useEffect(() => {
+    fetchLead()
+  }, [fetchLead])
 
   const handleUpdateLead = async (values: z.infer<typeof updateFormSchema>) => {
     setIsUpdating(true)

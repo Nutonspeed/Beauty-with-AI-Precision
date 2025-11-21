@@ -2,6 +2,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/lib/i18n/language-context';
+import { useRouter } from 'next/navigation';
+import { useLocalizePath } from '@/lib/i18n/locale-link';
 
 interface BadgeDef { id:string; icon:string; }
 const badges: BadgeDef[] = [
@@ -12,14 +14,18 @@ const badges: BadgeDef[] = [
 
 export function MiniTrustBadges() {
   const { t } = useLanguage();
+  const router = useRouter();
+  const lp = useLocalizePath();
   return (
     <div className="mini-trust-wrapper">
-      {badges.map((b,i) => (
+      {badges.map((b) => (
         <motion.button
           key={b.id}
           whileHover={{ y:-3 }}
           whileTap={{ scale:0.92 }}
-          onClick={()=>{ window.location.href='/clinic-experience'; }}
+          onClick={() => {
+            router.push(lp('/clinic-experience'));
+          }}
           className="mini-trust-badge"
           title={(t as any).badges?.[b.id]?.tooltip}
         >

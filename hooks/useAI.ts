@@ -1,9 +1,9 @@
 // React hooks for AI features
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { SkinDiseaseDetector, AnalysisResult, SkinCondition } from '@/lib/ai/skin-disease-detector';
-import { VirtualMakeupTryOn, TryOnResult, MakeupProduct, MakeupLook } from '@/lib/ai/virtual-makeup';
+import { VirtualMakeupTryOn, TryOnResult, MakeupProduct } from '@/lib/ai/virtual-makeup';
 import { SkincareRoutineGenerator, RoutineRecommendation } from '@/lib/ai/skincare-routine-generator';
 
 // Initialize AI services

@@ -543,7 +543,7 @@ export class PresentationPDFExporter {
 
     let y = startY + 15;
 
-    packages.forEach((pkg, index) => {
+    packages.forEach((pkg, _index) => {
       // Check if we need a new page
       if (y + 70 > this.pageHeight - this.marginBottom) {
         this.addNewPage();
@@ -613,7 +613,7 @@ export class PresentationPDFExporter {
       this.pdf.setFont('helvetica', 'normal');
 
       // Treatments list
-      pkg.treatments.forEach((treatment) => {
+      pkg.treatments.forEach((treatment: { name: { en: string; th: string }; sessions: number }) => {
         if (detailY < y + boxHeight - 5) {
           const text = `• ${treatment.name[this.locale]} (${treatment.sessions} ${this.t.session})`;
           this.pdf.text(text, this.marginLeft + 5, detailY);
@@ -688,7 +688,7 @@ export class PresentationPDFExporter {
       y += 12;
 
       // Treatment list
-      pkg.treatments.forEach((treatment, idx) => {
+      pkg.treatments.forEach((treatment, _idx) => {
         this.pdf.setFontSize(10);
         this.pdf.setTextColor(0, 0, 0);
 
@@ -822,7 +822,7 @@ export class PresentationPDFExporter {
   public async generate(
     analysis: HybridSkinAnalysis,
     options: PresentationPDFOptions,
-    filename: string = 'treatment-proposal.pdf'
+    _filename: string = 'treatment-proposal.pdf'
   ): Promise<void> {
     // Calculate total pages (approximate)
     this.totalPages = 2; // Cover + Analysis
@@ -861,7 +861,7 @@ export class PresentationPDFExporter {
     }
 
     // Save
-    this.pdf.save(filename);
+    this.pdf.save(_filename);
   }
 }
 

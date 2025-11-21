@@ -16,12 +16,6 @@ import {
   useReactTable,
   Row,
   HeaderGroup,
-  Cell,
-  ColumnDefTemplate,
-  HeaderContext,
-  CellContext,
-  RowData,
-  Table as TableType,
 } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -39,7 +33,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { ChevronDown, MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
+import { ChevronDown, Pencil, Trash2 } from 'lucide-react';
 
 export const columns: ColumnDef<Customer>[] = [
   {

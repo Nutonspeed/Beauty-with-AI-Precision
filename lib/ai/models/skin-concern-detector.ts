@@ -470,7 +470,7 @@ export class SkinConcernDetector {
    */
   private generateHeatmapFromPredictions(
     predictions: tfTypes.Tensor,
-    config: ModelConfig
+    _config: ModelConfig
   ): number[][] {
     const data = predictions.dataSync()
     const size = Math.sqrt(data.length)
@@ -495,6 +495,7 @@ export class SkinConcernDetector {
     imageData: ImageData,
     faceRegion?: { x: number; y: number; width: number; height: number }
   ): DetectionResult[] {
+    const _faceRegion = faceRegion
     const results: DetectionResult[] = []
     const width = imageData.width
     const height = imageData.height
@@ -544,6 +545,7 @@ export class SkinConcernDetector {
     imageData: ImageData,
     faceRegion?: { x: number; y: number; width: number; height: number }
   ): DetectionResult[] {
+    const _faceRegion = faceRegion
     const results: DetectionResult[] = []
     const width = imageData.width
     const height = imageData.height
@@ -618,6 +620,7 @@ export class SkinConcernDetector {
     imageData: ImageData,
     faceRegion?: { x: number; y: number; width: number; height: number }
   ): DetectionResult[] {
+    const _faceRegion = faceRegion
     const results: DetectionResult[] = []
     const width = imageData.width
     const height = imageData.height
@@ -663,6 +666,7 @@ export class SkinConcernDetector {
     imageData: ImageData,
     faceRegion?: { x: number; y: number; width: number; height: number }
   ): DetectionResult[] {
+    const _faceRegion = faceRegion
     const results: DetectionResult[] = []
     const width = imageData.width
     const height = imageData.height

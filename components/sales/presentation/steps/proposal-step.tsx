@@ -231,7 +231,7 @@ export function ProposalStep({
         </CardHeader>
 
         <CardContent className="space-y-3">
-          {items.map((item, index) => (
+          {items.map((item, _index) => (
             <Card key={item.id} className="bg-muted/30">
               <CardContent className="pt-4">
                 <div className="space-y-3">

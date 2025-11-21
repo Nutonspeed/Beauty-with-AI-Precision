@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Users, CheckCircle2, Clock, Coffee, XCircle } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { useLocalizePath } from "@/lib/i18n/locale-link"
 
 interface StaffMember {
   id: string
@@ -34,6 +35,7 @@ export function StaffAvailability() {
   const [data, setData] = useState<StaffAvailabilityData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const lp = useLocalizePath()
 
   useEffect(() => {
     fetchStaffAvailability()
@@ -179,7 +181,7 @@ export function StaffAvailability() {
             <Users className="h-5 w-5" />
             ทีมงานวันนี้
           </CardTitle>
-          <Link href="/clinic/staff">
+          <Link href={lp("/clinic/staff")}>
             <Button variant="ghost" size="sm">
               ดูทั้งหมด
             </Button>

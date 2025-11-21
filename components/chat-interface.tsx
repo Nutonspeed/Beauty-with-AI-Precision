@@ -6,7 +6,7 @@
  */
 
 import { useState, useRef, useEffect } from 'react';
-import { Send, Paperclip, Smile, MoreVertical, Search, Phone, Video, X, Image as ImageIcon } from 'lucide-react';
+import { Send, Paperclip, Smile, MoreVertical, Search, Phone, Video, X } from 'lucide-react';
 import { useMessages, useTyping, useOnlineStatus } from '@/hooks/useChat';
 import { getChatManager } from '@/lib/chat/chat-manager';
 import { Message } from '@/lib/chat/chat-manager';
@@ -52,7 +52,7 @@ export function ChatInterface({
     editMessage,
     deleteMessage,
     addReaction,
-    markAsRead,
+    markAsRead: _markAsRead,
     loadMore,
   } = useMessages(conversationId, userId);
 

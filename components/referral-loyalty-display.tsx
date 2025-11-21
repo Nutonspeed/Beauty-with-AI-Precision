@@ -103,7 +103,7 @@ export interface ReferralLoyaltyDisplayProps {
   readonly onReferralsChange?: (referrals: Referral[]) => void;
 }
 
-export default function ReferralLoyaltyDisplay({ language = 'en', onReferralsChange }: ReferralLoyaltyDisplayProps) {
+export default function ReferralLoyaltyDisplay({ language = 'en', onReferralsChange: _onReferralsChange }: ReferralLoyaltyDisplayProps) {
   const locale = language as Locale;
   const t = translations[locale] ?? translations.en;
 
@@ -429,7 +429,7 @@ export default function ReferralLoyaltyDisplay({ language = 'en', onReferralsCha
           <p className="text-center text-slate-600 py-8">{t.noReferrals}</p>
         ) : (
           <div className="space-y-3">
-            {referrals.map((referral, idx) => (
+            {referrals.map((referral, _idx) => (
               <div key={referral.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-200">
                 <div>
                   <p className="font-semibold text-slate-900">{referral.referredUserId}</p>

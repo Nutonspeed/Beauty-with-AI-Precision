@@ -10,8 +10,7 @@ import { createServerClient } from '@/lib/supabase/server'
 import { 
   generateShareToken, 
   generateShareUrl, 
-  calculateExpiryDate,
-  type ShareOptions 
+  calculateExpiryDate 
 } from '@/lib/utils/report-sharing'
 
 export async function POST(request: NextRequest) {

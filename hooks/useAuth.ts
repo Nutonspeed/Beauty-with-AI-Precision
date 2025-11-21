@@ -11,7 +11,7 @@
 
 'use client';
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { createBrowserClient } from '@supabase/ssr';
 import { type User } from '@supabase/supabase-js';
 import { type MultiTenantUser, type PermissionContext } from '@/types/multi-tenant';
@@ -60,7 +60,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 
   // Fetch user profile with clinic context via API to avoid RLS issues
-  async function fetchUserProfile(userId: string): Promise<MultiTenantUser | null> {
+  const fetchUserProfile = useCallback(async (userId: string): Promise<MultiTenantUser | null> => {
     try {
       // Get auth token for API call
       const { data: { session } } = await supabase.auth.getSession();
@@ -111,7 +111,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error('Error fetching user profile:', error);
       return null;
     }
-  }
+  }, [supabase]);
 
   // Initialize auth state
   useEffect(() => {
@@ -154,7 +154,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => {
       subscription.unsubscribe();
     };
-  }, [supabase]);
+  }, [supabase, fetchUserProfile]);
 
   // Sign in function
   async function signIn(email: string, password: string) {

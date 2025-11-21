@@ -93,7 +93,7 @@ export function TopTreatments() {
   }))
 
 // Mock data - replaced with real data from API
-const mockTopTreatments = [
+const _mockTopTreatments = [
   {
     name: "Complete Skin Renewal Package",
     revenue: 285000,

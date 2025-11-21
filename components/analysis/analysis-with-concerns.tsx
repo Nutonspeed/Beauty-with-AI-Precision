@@ -15,12 +15,10 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Info, TrendingUp, TrendingDown, AlertTriangle } from 'lucide-react';
 import type {
   HybridSkinAnalysis,
-  SkinConcern,
 } from '@/lib/types/skin-analysis';
 import type {
   InteractiveConcern,
   ConcernLocation,
-  ConcernType,
 } from '@/lib/concerns/concern-education';
 import {
   convertToInteractiveConcerns,

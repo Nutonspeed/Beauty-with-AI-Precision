@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import {
   Table,
   TableBody,
@@ -61,8 +61,8 @@ interface CustomersClientProps {
 }
 
 export function CustomersClient({ initialCustomers, initialStats }: CustomersClientProps) {
-  const [customers, setCustomers] = useState<Customer[]>(initialCustomers)
-  const [stats, setStats] = useState<Stats>(initialStats)
+  const [customers] = useState<Customer[]>(initialCustomers) // setter unused
+  const [stats] = useState<Stats>(initialStats) // setter unused
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [sourceFilter, setSourceFilter] = useState("all")

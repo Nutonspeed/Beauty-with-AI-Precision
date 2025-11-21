@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { PresenceManager, UserPresence, PresenceUpdate } from '@/lib/presence-manager';
+import { PresenceManager } from '@/lib/presence-manager';
 
 // Mock WebSocketClient - define functions inside factory to avoid hoisting issues
 const mockSend = vi.fn();

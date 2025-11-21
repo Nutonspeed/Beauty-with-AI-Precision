@@ -5,7 +5,7 @@
 
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, Navigation, Flag } from 'lucide-react';
@@ -19,7 +19,7 @@ interface LocationMapProps {
 
 export function LocationMap({ currentPosition, destination, className }: LocationMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
-  const [mapError, setMapError] = useState<string | null>(null);
+  const [_mapError, _setMapError] = useState<string | null>(null);
 
   // Simple coordinate display (replace with actual map library in production)
   const formatCoordinate = (value: number, isLatitude: boolean): string => {

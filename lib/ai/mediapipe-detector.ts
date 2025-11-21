@@ -132,7 +132,7 @@ export class MediaPipeFaceDetector {
         setTimeout(() => resolve(), 500)
       }
       
-      script.onerror = (error) => {
+      script.onerror = (_error) => {
         clearTimeout(timeout)
         script.remove()
         reject(new Error('Failed to load MediaPipe script from CDN'))

@@ -52,14 +52,14 @@ export async function createServerSupabaseClient() {
         set(name: string, value: string, options: any) {
           try {
             cookieStore.set({ name, value, ...options });
-          } catch (error) {
+          } catch {
             // Handle error when called from Server Component
           }
         },
         remove(name: string, options: any) {
           try {
             cookieStore.set({ name, value: '', ...options });
-          } catch (error) {
+          } catch {
             // Handle error when called from Server Component
           }
         },

@@ -106,7 +106,7 @@ function SystemSettingsContent() {
         
         if (response.ok) {
           const data = await response.json()
-          setSettings(data.settings || settings)
+          setSettings(s => data.settings || s)
         }
       } catch (err) {
         console.error('Failed to load settings:', err)

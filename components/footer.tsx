@@ -2,9 +2,11 @@
 
 import Link from "next/link"
 import { useLanguage } from "@/lib/i18n/language-context"
+import { useLocalizePath } from "@/lib/i18n/locale-link"
 
 export function Footer() {
   const { t } = useLanguage()
+  const lp = useLocalizePath()
 
   return (
     <footer className="border-t border-border bg-muted/30">
@@ -26,22 +28,22 @@ export function Footer() {
             <h3 className="mb-4 text-sm font-semibold">{t.footer.product}</h3>
             <ul className="space-y-3 text-sm">
               <li>
-                <Link href="/features" className="text-muted-foreground transition-colors hover:text-foreground">
+                <Link href={lp("/features")} className="text-muted-foreground transition-colors hover:text-foreground">
                   {t.footer.features}
                 </Link>
               </li>
               <li>
-                <Link href="/pricing" className="text-muted-foreground transition-colors hover:text-foreground">
+                <Link href={lp("/pricing")} className="text-muted-foreground transition-colors hover:text-foreground">
                   {t.footer.pricing}
                 </Link>
               </li>
               <li>
-                <Link href="/faq" className="text-muted-foreground transition-colors hover:text-foreground">
+                <Link href={lp("/faq")} className="text-muted-foreground transition-colors hover:text-foreground">
                   {t.footer.faq}
                 </Link>
               </li>
               <li>
-                <Link href="/analysis" className="text-muted-foreground transition-colors hover:text-foreground">
+                <Link href={lp("/analysis")} className="text-muted-foreground transition-colors hover:text-foreground">
                   {t.footer.tryDemo}
                 </Link>
               </li>
@@ -52,22 +54,22 @@ export function Footer() {
             <h3 className="mb-4 text-sm font-semibold">{t.footer.company}</h3>
             <ul className="space-y-3 text-sm">
               <li>
-                <Link href="/case-studies" className="text-muted-foreground transition-colors hover:text-foreground">
+                <Link href={lp("/case-studies")} className="text-muted-foreground transition-colors hover:text-foreground">
                   {t.footer.caseStudies}
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="text-muted-foreground transition-colors hover:text-foreground">
+                <Link href={lp("/about")} className="text-muted-foreground transition-colors hover:text-foreground">
                   {t.footer.about}
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-muted-foreground transition-colors hover:text-foreground">
+                <Link href={lp("/contact")} className="text-muted-foreground transition-colors hover:text-foreground">
                   {t.footer.contact}
                 </Link>
               </li>
               <li>
-                <Link href="/careers" className="text-muted-foreground transition-colors hover:text-foreground">
+                <Link href={lp("/careers")} className="text-muted-foreground transition-colors hover:text-foreground">
                   {t.footer.careers}
                 </Link>
               </li>
@@ -78,22 +80,22 @@ export function Footer() {
             <h3 className="mb-4 text-sm font-semibold">{t.footer.legal}</h3>
             <ul className="space-y-3 text-sm">
               <li>
-                <Link href="/privacy" className="text-muted-foreground transition-colors hover:text-foreground">
+                <Link href={lp("/privacy")} className="text-muted-foreground transition-colors hover:text-foreground">
                   {t.footer.privacy}
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="text-muted-foreground transition-colors hover:text-foreground">
+                <Link href={lp("/terms")} className="text-muted-foreground transition-colors hover:text-foreground">
                   {t.footer.terms}
                 </Link>
               </li>
               <li>
-                <Link href="/compliance" className="text-muted-foreground transition-colors hover:text-foreground">
+                <Link href={lp("/compliance")} className="text-muted-foreground transition-colors hover:text-foreground">
                   {t.footer.compliance}
                 </Link>
               </li>
               <li>
-                <Link href="/pdpa" className="text-muted-foreground transition-colors hover:text-foreground">
+                <Link href={lp("/pdpa")} className="text-muted-foreground transition-colors hover:text-foreground">
                   {t.footer.pdpa}
                 </Link>
               </li>

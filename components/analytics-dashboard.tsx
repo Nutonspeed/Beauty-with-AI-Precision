@@ -14,7 +14,6 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   TrendingUp,
-  TrendingDown,
   DollarSign,
   Users,
   Calendar,
@@ -30,7 +29,7 @@ import {
   Download,
   RefreshCw,
 } from 'lucide-react';
-import { Line, Bar, Doughnut } from 'react-chartjs-2';
+import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -60,7 +59,7 @@ ChartJS.register(
 );
 
 export function AnalyticsDashboard() {
-  const [dateRange, setDateRange] = useState({
+  const [dateRange, _setDateRange] = useState({
     startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
     endDate: new Date(),
     period: 'daily' as const,

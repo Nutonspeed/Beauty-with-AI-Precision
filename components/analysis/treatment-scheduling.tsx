@@ -184,10 +184,10 @@ function ConflictCard({ conflict }: { readonly conflict: TreatmentConflict }): R
   );
 }
 
-function RecoveryStageCard({
+function _RecoveryStageCard({
   stage,
   index,
-  locale,
+  locale: _locale,
   t,
 }: {
   readonly stage: { stage: string; duration: number; recommendations: string[] };
@@ -221,7 +221,7 @@ function RecoveryStageCard({
 function ScheduleItemCard({
   treatment,
   index,
-  locale,
+  locale: _locale,
   t,
   onReschedule,
 }: {

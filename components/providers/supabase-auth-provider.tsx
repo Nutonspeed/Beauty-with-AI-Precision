@@ -11,6 +11,7 @@ import { handleAuthError, clearAuthCookies } from '@/lib/supabase/auth-error-han
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import type { Session, User, AuthError } from '@supabase/supabase-js'
+import { useLocalizePath } from '@/lib/i18n/locale-link'
 
 interface AuthContextValue {
   user: User | null
@@ -21,7 +22,8 @@ interface AuthContextValue {
 
 export function SupabaseAuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter()
-  const [authState, setAuthState] = useState<AuthContextValue>({
+  const lp = useLocalizePath()
+  const [_authState, setAuthState] = useState<AuthContextValue>({
     user: null,
     session: null,
     isLoading: true,
@@ -69,7 +71,7 @@ export function SupabaseAuthProvider({ children }: { children: React.ReactNode }
             isLoading: false,
             error: errorDetails.userMessage,
           })
-          router.push('/auth/login')
+          router.push(lp('/auth/login'))
         } else {
           setAuthState((prev) => ({
             ...prev,
@@ -96,7 +98,7 @@ export function SupabaseAuthProvider({ children }: { children: React.ReactNode }
           isLoading: false,
           error: null,
         })
-        router.push('/auth/login')
+        router.push(lp('/auth/login'))
       } else if (event === 'TOKEN_REFRESHED') {
         setAuthState({
           user: session?.user ?? null,

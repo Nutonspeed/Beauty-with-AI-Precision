@@ -416,7 +416,7 @@ export class VirtualMakeupTryOn {
   /**
    * Detect face landmarks (simulated - in production use TensorFlow.js or backend ML)
    */
-  private async detectFaceLandmarks(imageData: string | File): Promise<FaceLandmarks | null> {
+  private async detectFaceLandmarks(_imageData: string | File): Promise<FaceLandmarks | null> {
     // Simulate landmark detection
     const width = 640;
     const height = 480;

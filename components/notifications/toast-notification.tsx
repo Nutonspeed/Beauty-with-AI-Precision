@@ -3,15 +3,14 @@
  * Floating toast notifications
  */
 
-import React, { useEffect, useState } from 'react';
-import { Notification, NotificationType, NotificationPriority } from '@/lib/notification-manager';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Notification, NotificationType } from '@/lib/notification-manager';
 import { 
   Calendar, 
   MessageSquare, 
   Bell, 
   AlertTriangle,
-  X,
-  CheckCircle2
+  X
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -79,6 +78,13 @@ export function ToastNotification({
   const colors = typeColors[notification.type];
   const positionClass = positionClasses[position];
 
+  const handleClose = useCallback(() => {
+    setIsLeaving(true);
+    setTimeout(() => {
+      onClose();
+    }, 300);
+  }, [onClose]);
+
   useEffect(() => {
     // Slide in animation
     setTimeout(() => setIsVisible(true), 10);
@@ -89,14 +95,7 @@ export function ToastNotification({
     }, duration);
 
     return () => clearTimeout(timer);
-  }, [duration]);
-
-  const handleClose = () => {
-    setIsLeaving(true);
-    setTimeout(() => {
-      onClose();
-    }, 300);
-  };
+  }, [duration, handleClose]);
 
   return (
     <div
@@ -167,7 +166,7 @@ export function ToastContainer({
 
   return (
     <>
-      {visibleToasts.map((notification, index) => (
+      {visibleToasts.map((notification, _index) => (
         <ToastNotification
           key={notification.id}
           notification={notification}

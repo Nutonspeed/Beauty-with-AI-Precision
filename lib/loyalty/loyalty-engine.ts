@@ -632,7 +632,7 @@ export class LoyaltyEngine {
     const customer = this.customers.get(customerId);
     if (!customer) return;
 
-    const tierConfig = this.getTierConfig(customer.tier);
+    const _tierConfig = this.getTierConfig(customer.tier);
     let bonusPoints = 100; // Bronze default
 
     if (customer.tier === 'Silver') bonusPoints = 250;

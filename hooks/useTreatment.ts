@@ -18,8 +18,6 @@ import TreatmentTracker, {
   type TreatmentReport,
   type PatientTreatmentSummary,
   type TreatmentStatus,
-  type SessionStatus,
-  type MilestoneStatus,
   type PhotoType,
   type TreatmentCategory,
 } from "@/lib/treatment/treatment-tracker"

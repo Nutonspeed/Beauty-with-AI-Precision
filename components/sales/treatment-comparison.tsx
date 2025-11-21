@@ -263,7 +263,7 @@ export function TreatmentComparison() {
                       <div className="mt-3">
                         <div className="text-xs font-medium mb-1">Benefits:</div>
                         <div className="flex flex-wrap gap-1">
-                          {treatment.benefits.slice(0, 2).map((benefit, index) => (
+                          {treatment.benefits.slice(0, 2).map((benefit, _index) => (
                             <Badge key={benefit} variant="secondary" className="text-xs">
                               {benefit}
                             </Badge>

@@ -1,14 +1,14 @@
 "use client"
 
 import { Suspense, useRef, useState, useEffect } from "react"
-import { Canvas, useFrame, useLoader } from "@react-three/fiber"
+import { Canvas, useFrame } from "@react-three/fiber"
 import { OrbitControls, PerspectiveCamera, useTexture } from "@react-three/drei"
 import * as THREE from "three"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Slider } from "@/components/ui/slider"
 import { Badge } from "@/components/ui/badge"
-import { Loader2, RotateCcw, ZoomIn, ZoomOut, Move3D } from "lucide-react"
+import { Loader2, RotateCcw, Move3D } from "lucide-react"
 
 interface Enhanced3DViewerProps {
   imageUrl: string

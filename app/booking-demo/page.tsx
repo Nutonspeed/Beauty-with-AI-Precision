@@ -15,7 +15,6 @@ import {
   Calendar,
   CheckCircle,
   Clock,
-  CreditCard,
   XCircle,
   AlertCircle,
   TrendingUp,

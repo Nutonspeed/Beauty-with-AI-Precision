@@ -405,7 +405,7 @@ export class ReviewAnalyzer {
 
     let recommendationScore = 0;
     let detractorCount = 0;
-    let passiveCount = 0;
+    let _passiveCount = 0;
     let promoterCount = 0;
 
     for (const review of reviews) {
@@ -414,7 +414,7 @@ export class ReviewAnalyzer {
         promoterCount += 1;
       } else if (review.rating === 3) {
         recommendationScore += 0;
-        passiveCount += 1;
+        _passiveCount += 1;
       } else {
         recommendationScore -= 2;
         detractorCount += 1;

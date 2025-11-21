@@ -86,7 +86,7 @@ const SKIN_ANALYSIS_PROMPT = `คุณเป็นผู้เชี่ยว�
  */
 export async function analyzeSkinWithAI(
   imageInput: string | Buffer,
-  options?: {
+  _options?: {
     language?: 'th' | 'en';
     detailLevel?: 'basic' | 'detailed';
   }

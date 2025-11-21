@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import { Notification, NotificationType, NotificationPriority } from '@/lib/notification-manager';
+import { Notification } from '@/lib/notification-manager';
 import { NotificationItem } from './notification-item';
 import { NotificationBadge } from './notification-badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,8 +16,7 @@ import {
   Trash2,
   Calendar,
   MessageSquare,
-  AlertTriangle,
-  Settings
+  AlertTriangle
 } from 'lucide-react';
 
 interface NotificationCenterProps {

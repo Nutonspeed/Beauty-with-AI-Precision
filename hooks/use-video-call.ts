@@ -63,6 +63,39 @@ export function useVideoCall(options: UseVideoCallOptions): UseVideoCallReturn {
   const durationIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   /**
+   * Stop duration timer
+   */
+  const stopDurationTimer = useCallback(() => {
+    if (durationIntervalRef.current) {
+      clearInterval(durationIntervalRef.current);
+      durationIntervalRef.current = null;
+    }
+    setCallDuration(0);
+  }, []);
+
+  /**
+   * Start duration timer
+   */
+  const startDurationTimer = useCallback(() => {
+    stopDurationTimer(); // Clear any existing timer
+    
+    durationIntervalRef.current = setInterval(() => {
+      if (managerRef.current) {
+        setCallDuration(managerRef.current.getCallDuration());
+      }
+    }, 1000);
+  }, [stopDurationTimer]);
+
+  /**
+   * Update call state from manager
+   */
+  const updateCallState = useCallback(() => {
+    if (managerRef.current) {
+      setCallState(managerRef.current.getCallState());
+    }
+  }, []);
+
+  /**
    * Initialize video call manager
    */
   const initialize = useCallback(async () => {
@@ -103,7 +136,7 @@ export function useVideoCall(options: UseVideoCallOptions): UseVideoCallReturn {
           console.log('[useVideoCall] Participant left:', participantId);
           updateCallState();
         },
-        onStreamReceived: (participantId, stream) => {
+        onStreamReceived: (participantId, _stream) => {
           console.log('[useVideoCall] Stream received from:', participantId);
           updateCallState();
         },
@@ -141,40 +174,7 @@ export function useVideoCall(options: UseVideoCallOptions): UseVideoCallReturn {
       setError((err as Error).message);
       setIsInitialized(false);
     }
-  }, [options.userId, options.userName, options.userRole, options.socketUrl]);
-
-  /**
-   * Update call state from manager
-   */
-  const updateCallState = useCallback(() => {
-    if (managerRef.current) {
-      setCallState(managerRef.current.getCallState());
-    }
-  }, []);
-
-  /**
-   * Start duration timer
-   */
-  const startDurationTimer = useCallback(() => {
-    stopDurationTimer(); // Clear any existing timer
-    
-    durationIntervalRef.current = setInterval(() => {
-      if (managerRef.current) {
-        setCallDuration(managerRef.current.getCallDuration());
-      }
-    }, 1000);
-  }, []);
-
-  /**
-   * Stop duration timer
-   */
-  const stopDurationTimer = useCallback(() => {
-    if (durationIntervalRef.current) {
-      clearInterval(durationIntervalRef.current);
-      durationIntervalRef.current = null;
-    }
-    setCallDuration(0);
-  }, []);
+  }, [options.userId, options.userName, options.userRole, options.socketUrl, updateCallState, startDurationTimer, stopDurationTimer]);
 
   /**
    * Start video call

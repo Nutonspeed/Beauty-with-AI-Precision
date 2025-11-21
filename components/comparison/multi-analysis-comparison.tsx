@@ -5,15 +5,14 @@
 
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BeforeAfterSlider } from '@/components/ar/before-after-slider';
-import { 
-  ArrowRight,
+import {
   Calendar,
   TrendingUp,
   TrendingDown,
@@ -151,11 +150,7 @@ export function MultiAnalysisComparison({
   const [metrics, setMetrics] = useState<ComparisonMetric[]>([]);
   const [summary, setSummary] = useState<any>(null);
 
-  useEffect(() => {
-    loadComparison();
-  }, [userId, analysisIds]);
-
-  const loadComparison = async () => {
+  const loadComparison = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -182,7 +177,11 @@ export function MultiAnalysisComparison({
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId, analysisIds]);
+
+  useEffect(() => {
+    loadComparison();
+  }, [userId, analysisIds, loadComparison]);
 
   const getTrendIcon = (trend: 'improving' | 'declining' | 'stable') => {
     if (trend === 'improving') return <TrendingUp className="w-4 h-4" />;

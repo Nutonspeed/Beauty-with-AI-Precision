@@ -6,7 +6,7 @@ import { useLanguage } from "@/lib/i18n/language-context"
 import Link from "next/link"
 import { useEffect, useMemo } from "react"
 import { usageTracker } from "@/lib/analytics/usage-tracker"
-import { getCaseStudies } from "@/data/case-studies"
+import { getCaseStudies } from "../../../data/case-studies"
 
 export default function CaseStudiesPage() {
   const { language } = useLanguage()

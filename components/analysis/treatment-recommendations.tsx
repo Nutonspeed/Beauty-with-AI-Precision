@@ -25,7 +25,6 @@ import {
   Leaf,
   AlertCircle,
   CheckCircle2,
-  ExternalLink,
   Heart,
   Star,
   ShoppingCart,

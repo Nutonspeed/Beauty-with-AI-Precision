@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, useState, useEffect, useMemo, type ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, useMemo, useCallback, type ReactNode } from 'react'
 import { translations, type Language } from './translations'
 
 interface LanguageContextType {
@@ -26,16 +26,16 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
     if (saved && (saved === 'en' || saved === 'th')) {
       setLanguageState(saved)
     }
-  }, [])
+  }, [setLanguageState])
 
-  const setLanguage = (lang: Language) => {
+  const setLanguage = useCallback((lang: Language) => {
     setLanguageState(lang)
     localStorage.setItem('language', lang)
-  }
+  }, [setLanguageState])
 
   const t = translations[language]
 
-  const value = useMemo(() => ({ language, setLanguage, t }), [language, t])
+  const value = useMemo(() => ({ language, setLanguage, t }), [language, t, setLanguage])
 
   return (
     <LanguageContext.Provider value={value}>
@@ -47,7 +47,8 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
 export function useLanguage() {
   const context = useContext(LanguageContext)
   if (!context) {
-    throw new Error('useLanguage must be used within LanguageProvider')
+    // Return default for prerender or when not in provider
+    return { language: 'en' as Language, setLanguage: () => {}, t: translations.en }
   }
   return context
 }

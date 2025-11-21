@@ -3,8 +3,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { ProductManager, Product, ProductFilter, ProductSort, AIRecommendation, ProductReview } from '@/lib/ecommerce/product-manager';
-import { CartManager, Cart, CartItem, ShippingOption, SHIPPING_OPTIONS } from '@/lib/ecommerce/cart-manager';
-import { OrderManager, Order, Address, PaymentMethod, OrderTimeline, OrderStats } from '@/lib/ecommerce/order-manager';
+import { CartManager, Cart, ShippingOption, SHIPPING_OPTIONS } from '@/lib/ecommerce/cart-manager';
+import { OrderManager, Order, Address, PaymentMethod } from '@/lib/ecommerce/order-manager';
 
 const productManager = new ProductManager();
 const cartManager = new CartManager();
@@ -36,7 +36,7 @@ export function useShop() {
     // Load cart from storage
     cartManager.loadFromStorage();
     updateCart();
-  }, []);
+  }, [updateCart]);
 
   // Update cart state
   const updateCart = useCallback(() => {

@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useEffect, useState } from "react"
+import { useRef, useEffect, useState, useCallback } from "react"
 import { FaceLandmarker, FilesetResolver } from "@mediapipe/tasks-vision"
 import { treatmentEffects, type TreatmentType } from "@/lib/ar/treatment-effects"
 
@@ -21,69 +21,7 @@ export function LiveARCamera({ treatment, intensity, onFaceDetected }: Readonly<
   const animationFrameRef = useRef<number | null>(null)
   const lastFrameTimeRef = useRef<number>(0)
 
-  // Initialize MediaPipe and camera
-  useEffect(() => {
-    let stream: MediaStream | null = null
-
-    const init = async () => {
-      try {
-        // 1. Initialize MediaPipe Face Landmarker
-        if (!faceLandmarker) {
-          const vision = await FilesetResolver.forVisionTasks(
-            "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm"
-          )
-
-          faceLandmarker = await FaceLandmarker.createFromOptions(vision, {
-            baseOptions: {
-              modelAssetPath: "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task",
-              delegate: "GPU"
-            },
-            runningMode: "VIDEO",
-            numFaces: 1,
-            minFaceDetectionConfidence: 0.5,
-            minTrackingConfidence: 0.5
-          })
-        }
-
-        // 2. Request camera access
-        stream = await navigator.mediaDevices.getUserMedia({
-          video: {
-            width: { ideal: 1280 },
-            height: { ideal: 720 },
-            facingMode: "user"
-          }
-        })
-
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream
-          await videoRef.current.play()
-          setIsLoading(false)
-          startProcessing()
-        }
-      } catch (err) {
-        console.error("Error initializing camera:", err)
-        setError(err instanceof Error ? err.message : "Failed to access camera")
-        setIsLoading(false)
-      }
-    }
-
-    init()
-
-    // Cleanup
-    return () => {
-      if (animationFrameRef.current) {
-        globalThis.cancelAnimationFrame?.(animationFrameRef.current)
-      }
-      if (stream) {
-        for (const track of stream.getTracks()) {
-          track.stop()
-        }
-      }
-    }
-  }, [])
-
-  // Process video frames
-  const startProcessing = () => {
+  const startProcessing = useCallback(() => {
     const processFrame = (timestamp: number) => {
       if (!videoRef.current || !canvasRef.current || !faceLandmarker) {
         animationFrameRef.current = globalThis.requestAnimationFrame?.(processFrame) ?? null
@@ -145,7 +83,68 @@ export function LiveARCamera({ treatment, intensity, onFaceDetected }: Readonly<
     }
 
     animationFrameRef.current = globalThis.requestAnimationFrame?.(processFrame) ?? null
-  }
+  }, [treatment, intensity, onFaceDetected])
+
+  // Initialize MediaPipe and camera
+  useEffect(() => {
+    let stream: MediaStream | null = null
+
+    const init = async () => {
+      try {
+        // 1. Initialize MediaPipe Face Landmarker
+        if (!faceLandmarker) {
+          const vision = await FilesetResolver.forVisionTasks(
+            "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm"
+          )
+
+          faceLandmarker = await FaceLandmarker.createFromOptions(vision, {
+            baseOptions: {
+              modelAssetPath: "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task",
+              delegate: "GPU"
+            },
+            runningMode: "VIDEO",
+            numFaces: 1,
+            minFaceDetectionConfidence: 0.5,
+            minTrackingConfidence: 0.5
+          })
+        }
+
+        // 2. Request camera access
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+            facingMode: "user"
+          }
+        })
+
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream
+          await videoRef.current.play()
+          setIsLoading(false)
+          startProcessing()
+        }
+      } catch (err) {
+        console.error("Error initializing camera:", err)
+        setError(err instanceof Error ? err.message : "Failed to access camera")
+        setIsLoading(false)
+      }
+    }
+
+    init()
+
+    // Cleanup
+    return () => {
+      if (animationFrameRef.current) {
+        globalThis.cancelAnimationFrame?.(animationFrameRef.current)
+      }
+      if (stream) {
+        for (const track of stream.getTracks()) {
+          track.stop()
+        }
+      }
+    }
+  }, [startProcessing])
 
   if (error) {
     return (
@@ -203,27 +202,4 @@ export function LiveARCamera({ treatment, intensity, onFaceDetected }: Readonly<
   )
 }
 
-/**
- * Helper: Draw facial landmarks (for debugging)
- */
-function drawLandmarks(
-  ctx: CanvasRenderingContext2D,
-  landmarks: Array<{ x: number; y: number; z: number }>,
-  width: number,
-  height: number
-) {
-  ctx.fillStyle = 'rgba(0, 255, 0, 0.5)'
-  
-  for (const [i, landmark] of landmarks.entries()) {
-    const x = landmark.x * width
-    const y = landmark.y * height
-    
-    // Draw different sizes for key landmarks
-    const isKeyPoint = [10, 50, 280, 152, 33, 263].includes(i)
-    const radius = isKeyPoint ? 3 : 1
-    
-    ctx.beginPath()
-    ctx.arc(x, y, radius, 0, Math.PI * 2)
-    ctx.fill()
-  }
-}
+

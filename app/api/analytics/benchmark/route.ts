@@ -11,10 +11,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
 import {
   calculateBenchmark,
-  determineAgeGroup,
   calculateMetricPercentile,
 } from '@/lib/analytics/benchmark-calculator';
-import { AgeGroup, BenchmarkResponse, MetricType } from '@/types/analytics';
+import { AgeGroup, MetricType } from '@/types/analytics';
 
 // =============================================
 // GET Handler

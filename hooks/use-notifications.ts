@@ -52,11 +52,26 @@ export function useNotifications({ userId, enabled = true }: UseNotificationsPro
     };
   }, []);
 
+  /**
+   * Update state from manager
+   */
+  const updateState = useCallback(() => {
+    if (!managerRef.current) return;
+
+    const allNotifications = managerRef.current.getAllNotifications();
+    const count = managerRef.current.getUnreadCount();
+    const currentStats = managerRef.current.getStats();
+
+    setNotifications(allNotifications);
+    setUnreadCount(count);
+    setStats(currentStats);
+  }, []);
+
   // Initialize notifications
   useEffect(() => {
     if (enabled && managerRef.current) {
       managerRef.current.initialize(userId, {
-        onNotificationReceived: (notification) => {
+        onNotificationReceived: (_notification) => {
           updateState();
         },
         onNotificationRead: () => {
@@ -72,22 +87,7 @@ export function useNotifications({ userId, enabled = true }: UseNotificationsPro
 
       updateState();
     }
-  }, [userId, enabled]);
-
-  /**
-   * Update state from manager
-   */
-  const updateState = useCallback(() => {
-    if (!managerRef.current) return;
-
-    const allNotifications = managerRef.current.getAllNotifications();
-    const count = managerRef.current.getUnreadCount();
-    const currentStats = managerRef.current.getStats();
-
-    setNotifications(allNotifications);
-    setUnreadCount(count);
-    setStats(currentStats);
-  }, []);
+  }, [userId, enabled, updateState]);
 
   /**
    * Add a notification

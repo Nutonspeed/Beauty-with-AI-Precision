@@ -343,10 +343,10 @@ export class CostROICalculator {
       consultation: 0.05,
     };
 
-    let totalAllocated = 0;
+    let _totalAllocated = 0;
     for (const type of treatmentTypes) {
       allocations[type] = monthlyBudget * percentages[type];
-      totalAllocated += allocations[type];
+      _totalAllocated += allocations[type];
     }
 
     for (const type of Object.keys(allocations)) {

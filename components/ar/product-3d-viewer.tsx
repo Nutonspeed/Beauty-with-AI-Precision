@@ -12,9 +12,21 @@
  */
 
 import { Suspense, useRef, useState, useEffect } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, PerspectiveCamera, Html } from '@react-three/drei';
-import * as THREE from 'three';
+import dynamic from 'next/dynamic';
+
+// Dynamic imports for heavy 3D libraries
+const Canvas = dynamic(() => import('@react-three/fiber').then(mod => ({ default: mod.Canvas })), { ssr: false });
+const OrbitControls = dynamic(() => import('@react-three/drei').then(mod => ({ default: mod.OrbitControls })), { ssr: false });
+const PerspectiveCamera = dynamic(() => import('@react-three/drei').then(mod => ({ default: mod.PerspectiveCamera })), { ssr: false });
+const Html = dynamic(() => import('@react-three/drei').then(mod => ({ default: mod.Html })), { ssr: false });
+
+// Import THREE and useFrame for type safety (loaded dynamically at runtime)
+let THREE: any;
+let useFrame: any;
+if (typeof window !== 'undefined') {
+  import('three').then(mod => { THREE = mod; });
+  import('@react-three/fiber').then(mod => { useFrame = mod.useFrame; });
+}
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -163,7 +175,7 @@ function ProductMesh({
 /**
  * Lighting Component
  */
-function ProductLighting({ intensity }: { intensity: number }) {
+function ProductLighting({ _intensity }: { _intensity: number }) {
   const lightGroupRef = useRef<THREE.Group>(null);
   
   useEffect(() => {
@@ -200,7 +212,7 @@ export function Product3DViewer({
   className = '',
   autoRotate = true,
   showIngredients = true,
-  showHotspots = true,
+  showHotspots: _showHotspots = true,
   arMode = false,
 }: Product3DViewerProps) {
   const controlsRef = useRef<any>(null);
@@ -272,7 +284,7 @@ export function Product3DViewer({
               maxDistance={8}
             />
             
-            <ProductLighting intensity={lightingIntensity[0] / 100} />
+            <ProductLighting _intensity={lightingIntensity[0] / 100} />
             
             <Suspense fallback={null}>
               <ProductMesh

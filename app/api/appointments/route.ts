@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
+import { withAuth } from "@/lib/auth/middleware"
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -13,7 +14,7 @@ const supabaseAdmin = createClient(
 )
 
 // GET /api/appointments - List appointments with filters
-export async function GET(request: NextRequest) {
+export const GET = withAuth(async (request: NextRequest, user) => {
   try {
     const { searchParams } = new URL(request.url)
     const clinicId = searchParams.get('clinic_id')
@@ -77,10 +78,10 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     )
   }
-}
+});
 
 // POST /api/appointments - Create new appointment
-export async function POST(request: NextRequest) {
+export const POST = withAuth(async (request: NextRequest, user) => {
   try {
     const body = await request.json()
 
@@ -180,7 +181,7 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     )
   }
-}
+});
 
 // Helper function to add minutes to time string
 function addMinutes(timeStr: string, minutes: number): string {

@@ -17,9 +17,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
 import { 
-  X, 
   Info, 
   AlertCircle, 
   ShieldCheck, 
@@ -27,10 +25,8 @@ import {
   Calendar,
   CheckCircle2,
   XCircle,
-  Printer,
-  Download
+  Printer
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import type { InteractiveConcern, ConcernLocation } from '@/lib/concerns/concern-education';
 import { formatConcernType, getSeverityColor } from '@/lib/concerns/concern-education';
 

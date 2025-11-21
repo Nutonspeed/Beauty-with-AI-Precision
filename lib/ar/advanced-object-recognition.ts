@@ -557,7 +557,7 @@ export class AdvancedObjectRecognitionSystem {
   /**
    * Get treatment recommendations for skin condition
    */
-  private getRecommendations(type: SkinCondition["type"], severity: number): string[] {
+  private getRecommendations(type: SkinCondition["type"], _severity: number): string[] {
     const recommendations: Record<SkinCondition["type"], string[]> = {
       acne: ["Use salicylic acid cleanser", "Apply benzoyl peroxide treatment", "Consider professional extraction"],
       wrinkle: ["Use retinol serum", "Apply hyaluronic acid moisturizer", "Consider Botox treatment"],

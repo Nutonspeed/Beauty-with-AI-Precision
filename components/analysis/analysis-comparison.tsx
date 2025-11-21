@@ -150,7 +150,7 @@ type ParameterKey = 'spots' | 'pores' | 'wrinkles' | 'texture' | 'redness' | 'ov
 export default function AnalysisComparison({
   sessions,
   locale = 'en',
-  onSelectSession,
+  onSelectSession: _onSelectSession,
   maxSessions = 4,
 }: Readonly<AnalysisComparisonProps>) {
   const t = TRANSLATIONS[locale];
@@ -690,7 +690,7 @@ export default function AnalysisComparison({
                             ))}
                           </div>
                           <div className="flex justify-between text-xs text-muted-foreground">
-                            {comparisonSessions.map((session, idx) => (
+                            {comparisonSessions.map((session, _idx) => (
                               <span key={session.id}>
                                 {session.date.toLocaleDateString(locale === 'th' ? 'th-TH' : 'en-US', {
                                   month: 'short',

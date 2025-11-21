@@ -100,7 +100,7 @@ const SUGGESTED_TAGS = [
 ];
 
 export function AddNoteForm({
-  customer_id,
+  customer_id: _customer_id,
   onSubmit,
   onCancel,
 }: AddNoteFormProps) {

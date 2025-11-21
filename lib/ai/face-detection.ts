@@ -259,7 +259,7 @@ export async function analyzeSkinConcerns(
  */
 async function analyzeSkinConcernsMock(
   imageData: ImageData,
-  faceResult: FaceDetectionResult,
+  _faceResult: FaceDetectionResult,
 ): Promise<SkinConcernArea[]> {
   // Simulate AI analysis
   await new Promise((resolve) => setTimeout(resolve, 500))

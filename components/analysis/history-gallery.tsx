@@ -1,37 +1,25 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
+import { useLocalizePath } from "@/lib/i18n/locale-link"
 import Image from "next/image"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Loader2, Calendar, TrendingUp, Eye } from "lucide-react"
-import { getAnalysisHistory } from "@/lib/api/analysis-client"
 import type { AnalysisHistoryItem } from "@/types/api"
 import { useAuth } from "@/lib/auth/context"
 
 export function AnalysisHistoryGallery() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
+  const lp = useLocalizePath()
   const [history, setHistory] = useState<AnalysisHistoryItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [pagination, setPagination] = useState({ total: 0, limit: 12, offset: 0 })
 
-  useEffect(() => {
-    if (authLoading) return
-
-    if (!user) {
-      router.push('/auth/login?callbackUrl=/analysis/history')
-      return
-    }
-
-    if (user?.id) {
-      loadHistory()
-    }
-  }, [authLoading, user, router])
-
-  const loadHistory = async () => {
+  const loadHistory = useCallback(async () => {
     if (!user?.id) {
       console.log('[HistoryGallery] No user ID, skipping load')
       return
@@ -63,7 +51,7 @@ export function AnalysisHistoryGallery() {
       // Check if it's an auth error
       if (errorMessage.includes('Unauthorized') || errorMessage.includes('401')) {
         console.log('[HistoryGallery] Auth error, redirecting to login')
-        router.push('/auth/login?callbackUrl=/analysis/history')
+        router.push(lp('/auth/login?callbackUrl=/analysis/history'))
         return
       }
       
@@ -71,7 +59,20 @@ export function AnalysisHistoryGallery() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [user?.id, router, lp, pagination.limit, pagination.offset])
+
+  useEffect(() => {
+    if (authLoading) return
+
+    if (!user) {
+      router.push(lp('/auth/login?callbackUrl=/analysis/history'))
+      return
+    }
+
+    if (user?.id) {
+      loadHistory()
+    }
+  }, [authLoading, user, router, lp, loadHistory])
 
   const handleViewAnalysis = (item: AnalysisHistoryItem) => {
     // Store analysis data in session storage for viewing
@@ -80,7 +81,7 @@ export function AnalysisHistoryGallery() {
       concerns: item.concerns,
       timestamp: item.createdAt,
     }))
-    router.push('/analysis/results')
+    router.push(lp('/analysis/results'))
   }
 
   const loadMore = () => {
@@ -122,7 +123,7 @@ export function AnalysisHistoryGallery() {
             <br />
             คุณยังไม่มีประวัติการวิเคราะห์ผิวหน้า
           </p>
-          <Button onClick={() => router.push('/analysis')}>
+          <Button onClick={() => router.push(lp('/analysis'))}>
             Start Analysis / เริ่มวิเคราะห์
           </Button>
         </CardContent>

@@ -11,8 +11,6 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
-  Calendar,
-  CheckCircle,
   Circle,
   FileText,
   Image,
@@ -122,7 +120,7 @@ export default function TreatmentTimelineComponent({ treatmentId }: TreatmentTim
 
         {/* Timeline entries */}
         <div className="space-y-6">
-          {timeline.map((entry, index) => (
+          {timeline.map((entry, _index) => (
             <div key={entry.id} className="relative pl-16">
               {/* Timeline dot */}
               <div

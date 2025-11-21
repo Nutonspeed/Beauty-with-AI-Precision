@@ -178,6 +178,7 @@ export class SkincareRoutineGenerator {
     timeOfDay: 'morning' | 'evening',
     budget: string
   ): RoutineStep {
+    const _budget = budget
     const cleansers = {
       dry: {
         name: 'Hydrating Cream Cleanser',
@@ -290,6 +291,7 @@ export class SkincareRoutineGenerator {
     timeOfDay: 'morning' | 'evening',
     budget: string
   ): RoutineStep {
+    const _budget = budget
     return {
       id: `toner-${timeOfDay}`,
       order: 2,
@@ -323,6 +325,7 @@ export class SkincareRoutineGenerator {
     timeOfDay: 'morning' | 'evening',
     budget: string
   ): RoutineStep[] {
+    const _budget = budget
     const serums: RoutineStep[] = [];
     let order = 3;
 
@@ -442,6 +445,8 @@ export class SkincareRoutineGenerator {
     timeOfDay: 'morning' | 'evening',
     budget: string
   ): RoutineStep {
+    const _concerns = concerns
+    const _budget = budget
     const order = timeOfDay === 'morning' ? 5 : 5;
 
     return {
@@ -476,6 +481,7 @@ export class SkincareRoutineGenerator {
     timeOfDay: 'morning' | 'evening',
     budget: string
   ): RoutineStep {
+    const _budget = budget
     const order = timeOfDay === 'morning' ? 6 : 6;
 
     const moisturizers = {
@@ -514,6 +520,7 @@ export class SkincareRoutineGenerator {
    * Get sunscreen step
    */
   private getSunscreen(budget: string): RoutineStep {
+    const _budget = budget
     return {
       id: 'sunscreen-morning',
       order: 7,
@@ -543,6 +550,7 @@ export class SkincareRoutineGenerator {
    * Get exfoliant for weekly treatment
    */
   private getExfoliant(skinType: string, budget: string): RoutineStep {
+    const _budget = budget
     const frequency = skinType.toLowerCase() === 'sensitive' ? 'weekly' : 'weekly';
 
     return {
@@ -577,6 +585,7 @@ export class SkincareRoutineGenerator {
    * Get mask for weekly treatment
    */
   private getMask(skinType: string, concerns: string[], budget: string): RoutineStep {
+    const _budget = budget
     let maskType = 'Hydrating Sheet Mask';
     let description = 'Intensive hydration boost';
 
@@ -758,6 +767,7 @@ export class SkincareRoutineGenerator {
    * Generate tips
    */
   private generateTips(skinType: string, concerns: string[]): string[] {
+    const _concerns = concerns
     return [
       'Consistency is key - stick to your routine for at least 4-6 weeks',
       'Always apply products from thinnest to thickest consistency',
@@ -774,6 +784,7 @@ export class SkincareRoutineGenerator {
    * Generate timeline phases
    */
   private generateTimeline(concerns: string[]): TimelinePhase[] {
+    const _concerns = concerns
     return [
       {
         week: 1,

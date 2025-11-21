@@ -8,8 +8,6 @@ import type { UserRole } from '@/lib/auth/role-config';
 
 // Import role-specific dashboards
 import CustomerDashboard from '@/components/dashboard/customer-dashboard';
-import SalesDashboard from '@/components/dashboard/sales-dashboard';
-import AdminDashboard from '@/components/dashboard/admin-dashboard';
 
 export default function DashboardPage() {
   const router = useRouter();

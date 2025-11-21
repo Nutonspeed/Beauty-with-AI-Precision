@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { X, Bell, AlertCircle, TrendingUp } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -20,6 +20,13 @@ export default function LeadNotificationToast({
   const [isVisible, setIsVisible] = useState(false);
   const [isLeaving, setIsLeaving] = useState(false);
 
+  const handleClose = useCallback(() => {
+    setIsLeaving(true);
+    setTimeout(() => {
+      onClose();
+    }, 300); // Match animation duration
+  }, [onClose]);
+
   useEffect(() => {
     // Slide in animation
     setTimeout(() => setIsVisible(true), 10);
@@ -30,14 +37,7 @@ export default function LeadNotificationToast({
     }, autoCloseDelay);
 
     return () => clearTimeout(timer);
-  }, [autoCloseDelay]);
-
-  const handleClose = () => {
-    setIsLeaving(true);
-    setTimeout(() => {
-      onClose();
-    }, 300); // Match animation duration
-  };
+  }, [autoCloseDelay, handleClose]);
 
   const getPriorityColor = () => {
     switch (notification.priority) {

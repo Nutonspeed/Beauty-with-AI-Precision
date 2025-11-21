@@ -14,14 +14,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   FileText,
   Download,
   Calendar as CalendarIcon,
-  Filter,
-  TrendingUp,
   Users,
   Package,
   Target,
@@ -39,7 +35,7 @@ export function ReportBuilder() {
   const [endDate, setEndDate] = useState<Date>(new Date());
   const [period, setPeriod] = useState<'daily' | 'weekly' | 'monthly'>('daily');
   const [branch, setBranch] = useState<string>('all');
-  const [service, setService] = useState<string>('all');
+  const [service, _setService] = useState<string>('all');
 
   const handleGenerateReport = async () => {
     await generateReport(reportType, {

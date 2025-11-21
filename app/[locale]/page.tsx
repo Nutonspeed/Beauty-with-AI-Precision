@@ -10,9 +10,9 @@ import { Sparkles, Shield, Zap, Users, BarChart3, Camera, CheckCircle2, ArrowRig
 import { useLanguage } from "@/lib/i18n/language-context"
 import { FluidWebGL } from "@/components/fluid-webgl"
 import RoiMiniCalculator from "@/components/roi/roi-mini-calculator"
-import { partnerLogos, complianceBadges } from "@/data/trust"
 import { useEffect, useRef, useState } from "react"
 import { usageTracker } from "@/lib/analytics/usage-tracker"
+import { partnerLogos, complianceBadges } from "@/data/trust"
 
 // Prefer a lightweight canvas fallback that always works
 // const FluidBackground = dynamic(() => import("@/components/visuals/fluid-background"), { ssr: false })

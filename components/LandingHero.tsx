@@ -1,11 +1,22 @@
 "use client";
 import React, { useEffect, useState, Suspense, useRef, useCallback, useMemo } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { Float, Environment } from '@react-three/drei';
-import * as THREE from 'three';
-import { ProceduralHalo } from '@/components/three/ProceduralHalo';
-import { VolumetricScanBeam } from '@/components/three/VolumetricScanBeam';
+import dynamic from 'next/dynamic';
 import { motion, AnimatePresence } from 'framer-motion';
+
+// Dynamic imports for heavy 3D libraries to reduce initial bundle
+const Canvas = dynamic(() => import('@react-three/fiber').then(mod => ({ default: mod.Canvas })), { ssr: false });
+const Float = dynamic(() => import('@react-three/drei').then(mod => ({ default: mod.Float })), { ssr: false });
+const Environment = dynamic(() => import('@react-three/drei').then(mod => ({ default: mod.Environment })), { ssr: false });
+const ProceduralHalo = dynamic(() => import('@/components/three/ProceduralHalo').then(mod => ({ default: mod.ProceduralHalo })), { ssr: false });
+const VolumetricScanBeam = dynamic(() => import('@/components/three/VolumetricScanBeam').then(mod => ({ default: mod.VolumetricScanBeam })), { ssr: false });
+
+// Import THREE and useFrame only when needed
+let THREE: any;
+let useFrame: any;
+if (typeof window !== 'undefined') {
+  import('three').then(mod => { THREE = mod; });
+  import('@react-three/fiber').then(mod => { useFrame = mod.useFrame; });
+}
 import { MiniTrustBadges } from '@/components/MiniTrustBadges';
 import { AdaptivePerfOverlay } from '@/components/AdaptivePerfOverlay';
 import { PersonalizationPanel, PersonaSettings } from '@/components/PersonalizationPanel';

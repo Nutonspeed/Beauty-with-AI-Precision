@@ -463,7 +463,7 @@ export class ChatManager {
   /**
    * Get all conversations for current user
    */
-  async getConversations(filter: ConversationFilter = { userId: this.userId }): Promise<Conversation[]> {
+  async getConversations(_filter: ConversationFilter = { userId: this.userId }): Promise<Conversation[]> {
     // In production, fetch from database with filters
     // For now, return empty array
     return [];

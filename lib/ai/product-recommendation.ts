@@ -506,7 +506,7 @@ export class ProductRecommendationEngine {
    */
   static generateRepurchaseRecommendations(
     userProducts: ProductWithIntegration[],
-    lastAnalysisDate: Date
+    _lastAnalysisDate: Date
   ): {
     shouldRepurchase: ProductWithIntegration[];
     timeline: Map<string, ProductWithIntegration[]>;

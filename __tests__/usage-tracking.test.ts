@@ -5,7 +5,6 @@
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { usageTracker, trackFeatureUsage, trackPageView, trackEngagement } from '@/lib/analytics/usage-tracker'
-import { createClient } from '@supabase/supabase-js'
 
 // Mock Supabase client
 vi.mock('@supabase/supabase-js', () => ({

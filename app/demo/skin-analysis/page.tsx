@@ -50,14 +50,12 @@ export default function SkinAnalysisDemoPage() {
     setLoading(true)
     img.src = imageUrl
     imgRef.current = img
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imageUrl])
 
   useEffect(() => {
     if (!canvasRef.current || !overlayRef.current) return
     const { width, height } = canvasRef.current
     if (width && height) analyze(width, height)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [intensity, threshold, showOverlay])
 
   const onFile = (f: File) => {
@@ -225,7 +223,7 @@ export default function SkinAnalysisDemoPage() {
                         กำลังประมวลผล...
                       </div>
                     )}
-                    <canvas ref={overlayRef} className="pointer-events-none absolute inset-0" style={{ mixBlendMode: "screen" }} />
+                    <canvas ref={overlayRef} className="pointer-events-none absolute inset-0 mix-blend-screen" />
                   </div>
                 </CardContent>
               </Card>

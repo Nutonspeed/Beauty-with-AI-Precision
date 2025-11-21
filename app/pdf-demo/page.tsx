@@ -6,7 +6,7 @@
 'use client';
 
 import { useState } from 'react';
-import { PDFExportButton, useEnhancedPDFExport } from '@/hooks/use-enhanced-pdf-export';
+import { useEnhancedPDFExport } from '@/hooks/use-enhanced-pdf-export';
 import type { HybridSkinAnalysis } from '@/lib/types/skin-analysis';
 import type { EnhancedPDFOptions, HistoricalAnalysisData } from '@/lib/presentation/enhanced-pdf-exporter';
 

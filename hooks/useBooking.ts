@@ -4,7 +4,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { BookingManager, Booking, BookingInput, TimeSlot, BookingStats } from '@/lib/booking/booking-manager';
 
 export function useBooking() {

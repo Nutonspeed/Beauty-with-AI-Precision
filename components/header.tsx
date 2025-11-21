@@ -21,22 +21,24 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { ClinicIQLogo } from "@/components/brand/logo"
 import { BRAND } from "@/lib/brand"
+import { useLocalizePath } from "@/lib/i18n/locale-link"
+
+// Safe hook wrapper for server-side rendering
+function useSafeAuth() {
+  try {
+    return useAuth();
+  } catch {
+    return { user: null, signOut: async () => {} };
+  }
+}
 
 export function Header() {
-  // Safe auth access with fallback
-  let user = null;
-  let handleSignOut = async () => {};
-  
-  try {
-    const auth = useAuth();
-    user = auth.user;
-    handleSignOut = auth.signOut;
-  } catch (error) {
-    // AuthProvider not available - component will render without user
-    console.warn('[Header] AuthProvider not available:', error);
-  }
+  const auth = useSafeAuth();
+  const user = auth.user;
+  const handleSignOut = auth.signOut;
   
   const { language, setLanguage, t } = useLanguage()
+  const lp = useLocalizePath()
 
   // Get navigation items based on user role
   const getNavItems = () => {
@@ -114,7 +116,7 @@ export function Header() {
     >
       <div className="container flex h-14 sm:h-16 items-center justify-between gap-2 px-4">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-shrink" aria-label="กลับสู่หน้าแรก">
+        <Link href={lp("/")} className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-shrink" aria-label="กลับสู่หน้าแรก">
           <ClinicIQLogo className="flex-shrink-0" />
           <div className="hidden md:flex flex-col">
             <span className="text-base font-bold leading-tight">{BRAND.name}</span>
@@ -129,7 +131,7 @@ export function Header() {
           {navItems.map((item) => (
             <Link
               key={item.href}
-              href={item.href}
+              href={lp(item.href)}
               className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary whitespace-nowrap"
             >
               {item.label}
@@ -217,7 +219,7 @@ export function Header() {
                   </>
                 )}
                 <DropdownMenuItem asChild>
-                  <Link href="/profile">
+                  <Link href={lp("/profile")}>
                     <User className="mr-2 h-4 w-4" />
                     <span>{t.common.profile}</span>
                   </Link>
@@ -232,10 +234,10 @@ export function Header() {
           ) : (
             <div className="hidden items-center gap-2 lg:flex">
               <Button variant="ghost" size="sm" asChild className="h-8 px-3">
-                <Link href="/auth/login" className="text-xs">{t.common.login}</Link>
+                <Link href={lp("/auth/login")} className="text-xs">{t.common.login}</Link>
               </Button>
               <Button size="sm" asChild className="h-8 px-3">
-                <Link href="/analysis" className="text-xs">{t.common.getStarted}</Link>
+                <Link href={lp("/analysis")} className="text-xs">{t.common.getStarted}</Link>
               </Button>
             </div>
           )}
@@ -255,7 +257,7 @@ export function Header() {
                 {navItems.map((item) => (
                   <Link
                     key={item.href}
-                    href={item.href}
+                    href={lp(item.href)}
                     className="text-base font-medium text-foreground hover:text-primary transition-colors py-2 px-3 rounded-md hover:bg-accent"
                   >
                     {item.label}
@@ -265,10 +267,10 @@ export function Header() {
                   <>
                     <div className="my-4 border-t" />
                     <Button variant="outline" asChild className="w-full">
-                      <Link href="/auth/login">{t.common.login}</Link>
+                      <Link href={lp("/auth/login")}>{t.common.login}</Link>
                     </Button>
                     <Button asChild className="w-full">
-                      <Link href="/analysis">{t.common.startAnalysis}</Link>
+                      <Link href={lp("/analysis")}>{t.common.startAnalysis}</Link>
                     </Button>
                   </>
                 )}

@@ -104,7 +104,7 @@ export class AgeEstimator {
   /**
    * Calculate age indicators from facial structure
    */
-  private calculateFacialStructureAge(landmarks: FaceLandmark[], width: number, height: number): number {
+  private calculateFacialStructureAge(landmarks: FaceLandmark[], _width: number, _height: number): number {
     // Analyze facial proportions that change with age
 
     // 1. Face length to width ratio (increases with age)

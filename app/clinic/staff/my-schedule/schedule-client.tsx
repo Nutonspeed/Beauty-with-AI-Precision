@@ -9,7 +9,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Calendar,
   Clock,
-  User,
   Phone,
   Mail,
   CheckCircle2,
@@ -21,7 +20,6 @@ import {
   Target,
   Award,
   PlayCircle,
-  PauseCircle,
 } from "lucide-react";
 import { format } from "date-fns";
 import { th } from "date-fns/locale";
@@ -52,7 +50,7 @@ export default function StaffScheduleClient({
   todayStats,
   monthlyStats,
 }: StaffScheduleClientProps) {
-  const [selectedAppointment, setSelectedAppointment] = useState<string | null>(
+  const [selectedAppointment, _setSelectedAppointment] = useState<string | null>(
     null
   );
   const [updatingStatus, setUpdatingStatus] = useState(false);

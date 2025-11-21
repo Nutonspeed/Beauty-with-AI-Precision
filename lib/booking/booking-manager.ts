@@ -399,7 +399,7 @@ export class BookingManager {
    * ส่ง Email ยืนยันการจอง
    */
   private async sendConfirmationEmail(booking: Booking): Promise<void> {
-    const emailContent = `
+    const _emailContent = `
       <h2>ยืนยันการจองนัดหมาย</h2>
       <p>สวัสดีคุณ ${booking.patientName},</p>
       <p>การจองนัดหมายของคุณได้รับการยืนยันแล้ว</p>
@@ -465,12 +465,12 @@ export class BookingManager {
   }
 
   private async sendReminderEmail(booking: Booking): Promise<void> {
-    const message = `เตือน: คุณมีนัดหมายพรุ่งนี้ ${booking.appointmentDate.toLocaleDateString('th-TH')} เวลา ${booking.startTime} กับ ${booking.doctorName}`;
+    const _message = `เตือน: คุณมีนัดหมายพรุ่งนี้ ${booking.appointmentDate.toLocaleDateString('th-TH')} เวลา ${booking.startTime} กับ ${booking.doctorName}`;
     console.log(`Sending reminder email to ${booking.patientEmail}`);
   }
 
   private async sendReminderSMS(booking: Booking): Promise<void> {
-    const message = `เตือน: นัดหมายพรุ่งนี้ ${booking.startTime} กับ ${booking.doctorName}. รหัส: ${booking.id}`;
+    const _message = `เตือน: นัดหมายพรุ่งนี้ ${booking.startTime} กับ ${booking.doctorName}. รหัส: ${booking.id}`;
     console.log(`Sending reminder SMS to ${booking.patientPhone}`);
   }
 
@@ -653,7 +653,7 @@ export class BookingManager {
     };
   }
 
-  private async processCreditCardPayment(booking: Booking): Promise<{ success: boolean; transactionId: string }> {
+  private async processCreditCardPayment(_booking: Booking): Promise<{ success: boolean; transactionId: string }> {
     // In real implementation, process via Stripe/Omise
     return {
       success: true,

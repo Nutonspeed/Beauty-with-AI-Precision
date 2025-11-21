@@ -409,7 +409,7 @@ export class OutcomePredictor {
    */
   private generateRecommendations(
     features: CustomerFeatures,
-    expectedImprovement: number
+    _expectedImprovement: number
   ): { en: string[]; th: string[] } {
     const en: string[] = [];
     const th: string[] = [];

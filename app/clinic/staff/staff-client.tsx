@@ -77,8 +77,8 @@ interface StaffClientProps {
 }
 
 export function StaffClient({ initialStaff, initialStats }: StaffClientProps) {
-  const [staff, setStaff] = useState<StaffMember[]>(initialStaff)
-  const [stats, setStats] = useState<StaffStats>(initialStats)
+  const [staff, _setStaff] = useState<StaffMember[]>(initialStaff)
+  const [stats, _setStats] = useState<StaffStats>(initialStats)
   const [searchQuery, setSearchQuery] = useState("")
   const [roleFilter, setRoleFilter] = useState("all")
   const [statusFilter, setStatusFilter] = useState("all")

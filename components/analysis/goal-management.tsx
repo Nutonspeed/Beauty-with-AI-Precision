@@ -223,8 +223,8 @@ const TRANSLATIONS = {
 export default function GoalManagement({
   goals,
   locale = 'en',
-  onAddGoal,
-  onUpdateGoal,
+  onAddGoal: _onAddGoal,
+  onUpdateGoal: _onUpdateGoal,
   onDeleteGoal,
 }: GoalManagementProps) {
   const t = locale === 'th' ? TRANSLATIONS.th : TRANSLATIONS.en;
@@ -240,7 +240,7 @@ export default function GoalManagement({
     [goals, selectedGoalId]
   );
 
-  const getParameterLabel = (param: GoalParameter): string => {
+  const _getParameterLabel = (param: GoalParameter): string => {
     const paramMap: Record<GoalParameter, string> = {
       spots: t.spots,
       pores: t.pores,
@@ -252,7 +252,7 @@ export default function GoalManagement({
     return paramMap[param];
   };
 
-  const getPriorityColor = (priority: string): string => {
+  const _getPriorityColor = (priority: string): string => {
     switch (priority) {
       case 'high':
         return 'bg-red-100 text-red-700';
@@ -263,7 +263,7 @@ export default function GoalManagement({
     }
   };
 
-  const getStatusColor = (status: string): string => {
+  const _getStatusColor = (status: string): string => {
     switch (status) {
       case 'achieved':
         return 'bg-green-100 text-green-700';
@@ -276,7 +276,7 @@ export default function GoalManagement({
     }
   };
 
-  const getTrendIcon = (trend: string) => {
+  const _getTrendIcon = (trend: string) => {
     switch (trend) {
       case 'accelerating':
         return <TrendingUp className="h-4 w-4 text-green-600" />;
@@ -289,7 +289,7 @@ export default function GoalManagement({
     }
   };
 
-  const getTrendLabel = (trend: string): string => {
+  const _getTrendLabel = (trend: string): string => {
     const trendMap: Record<string, string> = {
       accelerating: t.accelerating,
       steady: t.steady,
@@ -361,9 +361,9 @@ export default function GoalManagement({
                     onDelete={() => onDeleteGoal?.(goal.id)}
                     t={t}
                     locale={locale}
-                    getParameterLabel={getParameterLabel}
-                    getPriorityColor={getPriorityColor}
-                    getStatusColor={getStatusColor}
+                    getParameterLabel={_getParameterLabel}
+                    getPriorityColor={_getPriorityColor}
+                    getStatusColor={_getStatusColor}
                   />
                 ))}
               </div>
@@ -388,9 +388,9 @@ export default function GoalManagement({
                     onDelete={() => onDeleteGoal?.(goal.id)}
                     t={t}
                     locale={locale}
-                    getParameterLabel={getParameterLabel}
-                    getPriorityColor={getPriorityColor}
-                    getStatusColor={getStatusColor}
+                    getParameterLabel={_getParameterLabel}
+                    getPriorityColor={_getPriorityColor}
+                    getStatusColor={_getStatusColor}
                   />
                 ))}
               </div>
@@ -409,9 +409,9 @@ export default function GoalManagement({
                   onDelete={() => onDeleteGoal?.(goal.id)}
                   t={t}
                   locale={locale}
-                  getParameterLabel={getParameterLabel}
-                  getPriorityColor={getPriorityColor}
-                  getStatusColor={getStatusColor}
+                  getParameterLabel={_getParameterLabel}
+                  getPriorityColor={_getPriorityColor}
+                  getStatusColor={_getStatusColor}
                 />
               ))}
             </div>
@@ -425,11 +425,9 @@ export default function GoalManagement({
           goal={selectedGoal}
           t={t}
           locale={locale}
-          getParameterLabel={getParameterLabel}
-          getPriorityColor={getPriorityColor}
-          getStatusColor={getStatusColor}
-          getTrendIcon={getTrendIcon}
-          getTrendLabel={getTrendLabel}
+          getParameterLabel={_getParameterLabel}
+          getPriorityColor={_getPriorityColor}
+          getStatusColor={_getStatusColor}
           daysRemaining={daysRemaining}
         />
       )}
@@ -455,7 +453,7 @@ function GoalCard({
   onSelect,
   onDelete,
   t,
-  locale,
+  locale: _locale,
   getParameterLabel,
   getPriorityColor,
   getStatusColor,
@@ -579,8 +577,6 @@ interface GoalDetailsPanelProps {
   readonly getParameterLabel: (param: GoalParameter) => string;
   readonly getPriorityColor: (priority: string) => string;
   readonly getStatusColor: (status: string) => string;
-  readonly getTrendIcon: (trend: string) => React.ReactNode;
-  readonly getTrendLabel: (trend: string) => string;
   readonly daysRemaining: number;
 }
 
@@ -588,11 +584,9 @@ function GoalDetailsPanel({
   goal,
   t,
   locale,
-  getParameterLabel,
-  getPriorityColor,
-  getStatusColor,
-  getTrendIcon,
-  getTrendLabel,
+  getParameterLabel: _getParameterLabel,
+  getPriorityColor: _getPriorityColor,
+  getStatusColor: _getStatusColor,
   daysRemaining,
 }: GoalDetailsPanelProps) {
   const progress = Math.min(100, Math.max(0, goal.completionPercentage));
@@ -667,7 +661,7 @@ function GoalDetailsPanel({
               {t.milestone}s
             </h3>
             <div className="space-y-2">
-              {goal.milestones.map((milestone, idx) => (
+              {goal.milestones.map((milestone, _idx) => (
                 <div
                   key={milestone.id}
                   className="flex items-center gap-3 p-3 rounded-lg bg-muted"

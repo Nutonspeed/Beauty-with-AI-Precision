@@ -69,19 +69,6 @@ export function AddActivityModal({ open, onClose, onSuccess, leadId, activityTyp
     }
   }
 
-  const getActivityIcon = (type: string) => {
-    switch (type) {
-      case 'call':
-        return <Phone className="h-4 w-4" />
-      case 'email':
-        return <Mail className="h-4 w-4" />
-      case 'meeting':
-        return <Users className="h-4 w-4" />
-      default:
-        return <FileText className="h-4 w-4" />
-    }
-  }
-
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-lg">

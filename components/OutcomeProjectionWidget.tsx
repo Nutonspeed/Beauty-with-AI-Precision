@@ -15,7 +15,7 @@ export const OutcomeProjectionWidget: React.FC<OutcomeProjectionWidgetProps> = (
   const [mode, setMode] = useState<'clarity'|'firming'|'hydration'>('clarity');
   const { t } = useLanguage();
 
-  const improvedFilter = useMemo(() => {
+  const _improvedFilter = useMemo(() => {
     // Different enhancement presets by mode
     switch(mode){
       case 'firming':

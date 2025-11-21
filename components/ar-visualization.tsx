@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, useCallback } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Loader2 } from "lucide-react"
@@ -68,7 +68,7 @@ export function ARVisualization({
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
 
-  const applyViewModeTransform = (ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, mode: string) => {
+  const applyViewModeTransform = useCallback((ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, mode: string) => {
     // Apply zoom and pan first
     ctx.translate(pan.x, pan.y)
     ctx.scale(zoom, zoom)
@@ -89,15 +89,15 @@ export function ARVisualization({
         ctx.setTransform(zoom, 0, 0, zoom, pan.x, pan.y)
         break
     }
-  }
+  }, [pan.x, pan.y, zoom])
 
   // Handle mouse/touch zoom
-  const handleWheel = (e: WheelEvent) => {
+  const handleWheel = useCallback((e: WheelEvent) => {
     e.preventDefault()
     const delta = e.deltaY * -0.001
     const newZoom = Math.min(Math.max(0.5, zoom + delta), 3)
     setZoom(newZoom)
-  }
+  }, [zoom])
 
   // Handle pan start
   const handlePanStart = (e: React.MouseEvent | React.TouchEvent) => {
@@ -166,9 +166,9 @@ export function ARVisualization({
       canvas.removeEventListener('touchend', handleTouchEnd)
       canvas.removeEventListener('wheel', handleWheel)
     }
-  }, [zoom, pan])
+  }, [zoom, pan, handleWheel])
 
-  const applyAREffect = (imageSrc: string, selectedTreatment: string, effectIntensity: number, mode: string) => {
+  const applyAREffect = useCallback((imageSrc: string, selectedTreatment: string, effectIntensity: number, mode: string) => {
     const canvas = canvasRef.current
     if (!canvas) return
 
@@ -348,9 +348,9 @@ export function ARVisualization({
       }
     }
     img.src = imageSrc
-  }
+  }, [applyViewModeTransform])
 
-  const applyMultiTreatmentEffect = (imageSrc: string, treatments: string[], effectIntensity: number, mode: string) => {
+  const applyMultiTreatmentEffect = useCallback((imageSrc: string, treatments: string[], effectIntensity: number, mode: string) => {
     const canvas = canvasRef.current
     if (!canvas) return
 
@@ -415,7 +415,7 @@ export function ARVisualization({
       }
     }
     img.src = imageSrc
-  }
+  }, [applyViewModeTransform])
 
   useEffect(() => {
     if (!image || !canvasRef.current) return
@@ -451,7 +451,7 @@ export function ARVisualization({
     }
     
     requestAnimationFrame(animateTransition)
-  }, [image, treatment, intensity, viewMode, multiTreatment, zoom, pan])
+  }, [image, treatment, intensity, viewMode, multiTreatment, zoom, pan, applyAREffect, applyMultiTreatmentEffect])
 
   if (!image) {
     return (
@@ -477,7 +477,7 @@ export function ARVisualization({
 
         <canvas 
           ref={canvasRef} 
-          className="h-full w-full object-contain ar-canvas-high-quality ar-transition cursor-grab active:cursor-grabbing" 
+          className="h-full w-full object-contain ar-canvas-high-quality ar-transition cursor-grab active:cursor-grabbing touch-none" 
           onMouseDown={handlePanStart}
           onMouseMove={handlePanMove}
           onMouseUp={handlePanEnd}
@@ -485,7 +485,6 @@ export function ARVisualization({
           onTouchStart={handlePanStart}
           onTouchMove={handlePanMove}
           onTouchEnd={handlePanEnd}
-          style={{ touchAction: 'none' }}
         />
 
         {!compact && (

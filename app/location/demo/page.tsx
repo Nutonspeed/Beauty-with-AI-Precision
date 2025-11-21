@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Route, Position } from '@/lib/location-tracker';
+import { Route } from '@/lib/location-tracker';
 import {
   CheckCircle2,
   Users,

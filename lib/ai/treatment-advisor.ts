@@ -283,8 +283,8 @@ export class TreatmentAdvisor {
    * TODO: Integrate with AR visualization system
    */
   private async generateVisualComparison(
-    analysis: HybridSkinAnalysis,
-    treatment: any
+    _analysis: HybridSkinAnalysis,
+    _treatment: any
   ): Promise<{ before: string; after: string } | undefined> {
     // In production, this would:
     // 1. Get original image from analysis

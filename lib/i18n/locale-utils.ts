@@ -281,7 +281,7 @@ export function parseDate(dateString: string, locale: Locale = 'th'): Date | nul
     }
 
     return date;
-  } catch (error) {
+  } catch {
     return null;
   }
 }

@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { Plus, Copy, Trash2 } from "lucide-react"
 
 export function PromoCodeManager() {
-  const [promoCodes, setPromoCodes] = useState([
+  const [promoCodes, _setPromoCodes] = useState([
     {
       id: "1",
       code: "WELCOME20",

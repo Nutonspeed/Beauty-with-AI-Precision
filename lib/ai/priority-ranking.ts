@@ -461,7 +461,7 @@ function generateRecommendations(
     percentile: number;
   },
   priority: PriorityLevel,
-  analysis: HybridSkinAnalysis
+  _analysis: HybridSkinAnalysis
 ): string[] {
   const recs: string[] = [];
 

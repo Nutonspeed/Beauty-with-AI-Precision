@@ -126,7 +126,7 @@ export class DepthEstimator {
 
   private analyzeWrinkles(
     depthMap: DepthMap,
-    landmarks?: Array<{ x: number; y: number }>,
+    _landmarks?: Array<{ x: number; y: number }>,
   ): { count: number; averageDepth: number } {
     const { width, height, data } = depthMap
     const wrinkles: number[] = []
@@ -174,7 +174,7 @@ export class DepthEstimator {
     return 75 // Placeholder
   }
 
-  private calculateVolume(depthMap: DepthMap, landmarks?: Array<{ x: number; y: number }>): number {
+  private calculateVolume(depthMap: DepthMap, _landmarks?: Array<{ x: number; y: number }>): number {
     // Calculate relative volume (cheeks, under eyes)
     const { data } = depthMap
     const totalVolume = data.reduce((a, b) => a + b, 0)

@@ -1,4 +1,3 @@
-import { createServerClient } from "@/lib/supabase/server"
 import { NextRequest, NextResponse } from "next/server"
 // import * as XLSX from "xlsx" // TODO: Install xlsx package
 

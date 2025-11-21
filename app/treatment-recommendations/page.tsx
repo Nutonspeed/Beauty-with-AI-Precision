@@ -1,12 +1,11 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Slider } from "@/components/ui/slider"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Separator } from "@/components/ui/separator"
 import {
@@ -55,14 +54,7 @@ export default function TreatmentRecommendationsPage() {
     }
   }, [])
 
-  // Auto-generate recommendations when analysis ID is available
-  useEffect(() => {
-    if (analysisId) {
-      generateRecommendations()
-    }
-  }, [analysisId])
-
-  const generateRecommendations = async () => {
+  const generateRecommendations = useCallback(async () => {
     if (!analysisId) return
 
     setGenerating(true)
@@ -94,7 +86,14 @@ export default function TreatmentRecommendationsPage() {
       setGenerating(false)
       setLoading(false)
     }
-  }
+  }, [analysisId, budgetMax, maxDowntime, maxPain])
+
+  // Auto-generate recommendations when analysis ID is available
+  useEffect(() => {
+    if (analysisId) {
+      generateRecommendations()
+    }
+  }, [analysisId, generateRecommendations])
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('th-TH', {

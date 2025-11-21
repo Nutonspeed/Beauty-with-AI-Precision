@@ -175,7 +175,7 @@ export class ContextAwareChatManager {
    */
   private enrichMessage(
     message: ChatMessage,
-    context: ConversationContext
+    _context: ConversationContext
   ): ChatMessage {
     if (message.role !== 'user') {
       return message // Only enrich user messages

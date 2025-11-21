@@ -1,9 +1,11 @@
 import createNextIntlPlugin from 'next-intl/plugin';
 import { withSentryConfig } from '@sentry/nextjs';
+import withBundleAnalyzer from '@next/bundle-analyzer';
 
 const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
 
 const FAST_BUILD = process.env.FAST_BUILD === '1' || process.env.FAST_BUILD === 'true'
+const ANALYZE = process.env.ANALYZE === '1' || process.env.ANALYZE === 'true'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -193,7 +195,13 @@ const nextConfig = {
     process.env.NODE_ENV === 'production' && process.env.VERCEL ? 'standalone' : undefined,
 }
 
-export default withSentryConfig(withNextIntl(nextConfig), {
+// Bundle analyzer wrapper
+const bundleAnalyzer = withBundleAnalyzer({
+  enabled: ANALYZE,
+  openAnalyzer: true,
+})
+
+export default withSentryConfig(bundleAnalyzer(withNextIntl(nextConfig)), {
   silent: true,
   org: process.env.SENTRY_ORG,
   project: process.env.SENTRY_PROJECT,

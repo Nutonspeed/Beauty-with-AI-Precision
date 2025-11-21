@@ -18,7 +18,6 @@ import { useToast } from '@/components/ui/use-toast'
 import {
   Loader2,
   TrendingUp,
-  TrendingDown,
   DollarSign,
   Users,
   Building2,

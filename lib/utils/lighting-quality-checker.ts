@@ -168,7 +168,7 @@ export class LightingQualityChecker {
     // Ideal ranges
     const idealBrightness = 140
     const idealContrast = 50
-    const idealEvenness = 85
+    const _idealEvenness = 85
 
     // Calculate deviations
     const brightnessScore = Math.max(0, 100 - Math.abs(brightness - idealBrightness) / 1.4)

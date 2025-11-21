@@ -69,7 +69,7 @@ export function QueueDisplay({ entries, showEstimatedTime = true, className = ''
           </CardContent>
         </Card>
       ) : (
-        entries.map((entry, index) => (
+        entries.map((entry, _index) => (
           <Card key={entry.id} className="hover:shadow-md transition-shadow">
             <CardContent className="p-4">
               <div className="flex items-center justify-between gap-4">

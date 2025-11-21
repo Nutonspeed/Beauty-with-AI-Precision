@@ -466,7 +466,7 @@ export class VideoCallManager {
       // Replace video track in all peer connections
       const videoTrack = this.screenStream.getVideoTracks()[0];
       
-      for (const [userId, pc] of this.peerConnections) {
+      for (const [_userId, pc] of this.peerConnections) {
         const sender = pc.getSenders().find(s => s.track?.kind === 'video');
         if (sender) {
           await sender.replaceTrack(videoTrack);
@@ -499,7 +499,7 @@ export class VideoCallManager {
     if (this.localStream) {
       const videoTrack = this.localStream.getVideoTracks()[0];
       
-      for (const [userId, pc] of this.peerConnections) {
+      for (const [_userId, pc] of this.peerConnections) {
         const sender = pc.getSenders().find(s => s.track?.kind === 'video');
         if (sender) {
           await sender.replaceTrack(videoTrack);

@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { Slider } from "@/components/ui/slider"
 import Image from "next/image"
 import { ChevronLeft, ChevronRight, Maximize2, Download } from "lucide-react"
@@ -26,7 +25,7 @@ export function BeforeAfterSlider({
   const haptic = useHaptic()
   const [sliderPosition, setSliderPosition] = useState([50])
   const [isDragging, setIsDragging] = useState(false)
-  const [isFullscreen, setIsFullscreen] = useState(false)
+  const [_isFullscreen, setIsFullscreen] = useState(false)
 
   const handleMouseDown = () => {
     setIsDragging(true)

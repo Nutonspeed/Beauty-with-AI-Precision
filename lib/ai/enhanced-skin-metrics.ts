@@ -247,6 +247,7 @@ export class EnhancedMetricsCalculator {
    * วิเคราะห์รูขุมขนแบบละเอียด
    */
   private async analyzePores(imageData: ImageData): Promise<EnhancedMetricsResult['pores']> {
+    const _imageData = imageData
     // Implementation for pore detection
     // Similar to spots but looking for small dark circular patterns
     
@@ -267,6 +268,8 @@ export class EnhancedMetricsCalculator {
     imageData: ImageData, 
     landmarks?: Array<{ x: number; y: number; z?: number }>
   ): Promise<EnhancedMetricsResult['wrinkles']> {
+    const _imageData = imageData
+    const _landmarks = landmarks
     // Edge detection for wrinkle lines
     
     return {
@@ -374,6 +377,7 @@ export class EnhancedMetricsCalculator {
    * วิเคราะห์ความชุ่มชื้น
    */
   private async analyzeHydration(imageData: ImageData): Promise<EnhancedMetricsResult['hydration']> {
+    const _imageData = imageData
     // Analyze shininess and texture for hydration estimation
     
     return {
@@ -437,6 +441,8 @@ export class EnhancedMetricsCalculator {
     imageData: ImageData,
     landmarks?: Array<{ x: number; y: number; z?: number }>
   ): Promise<EnhancedMetricsResult['elasticity']> {
+    const _imageData = imageData
+    const _landmarks = landmarks
     // Analyze facial contours using landmarks
     
     return {

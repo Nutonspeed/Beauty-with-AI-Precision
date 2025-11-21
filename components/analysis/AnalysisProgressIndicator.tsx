@@ -37,7 +37,7 @@ export function AnalysisProgressIndicator({
     description,
     isComplete,
     timeElapsed,
-    start,
+    start: _start,
   } = useAnalysisProgress({
     onComplete,
     autoStart,

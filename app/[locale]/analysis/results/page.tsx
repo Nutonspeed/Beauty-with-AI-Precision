@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import dynamic from "next/dynamic"
 import { motion } from "framer-motion"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
@@ -25,10 +26,12 @@ import {
 } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
-import { SkinAnalysisRadarChart } from "@/components/skin-analysis-radar-chart"
-import { AdvancedHeatmap } from "@/components/ai/advanced-heatmap"
-import { BeforeAfterSlider } from "@/components/ar/before-after-slider"
-import { Interactive3DViewer } from "@/components/ar/interactive-3d-viewer"
+
+// Dynamic imports for heavy components to prevent SSR timeout
+const SkinAnalysisRadarChart = dynamic(() => import("@/components/skin-analysis-radar-chart").then(mod => ({ default: mod.SkinAnalysisRadarChart })), { ssr: false })
+const AdvancedHeatmap = dynamic(() => import("@/components/ai/advanced-heatmap").then(mod => ({ default: mod.AdvancedHeatmap })), { ssr: false })
+const BeforeAfterSlider = dynamic(() => import("@/components/ar/before-after-slider").then(mod => ({ default: mod.BeforeAfterSlider })), { ssr: false })
+const Interactive3DViewer = dynamic(() => import("@/components/ar/interactive-3d-viewer").then(mod => ({ default: mod.Interactive3DViewer })), { ssr: false })
 import { FaceLandmarksCanvas } from "@/components/ai/face-landmarks-canvas"
 
 interface AnalysisMetric {

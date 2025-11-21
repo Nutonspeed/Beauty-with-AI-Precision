@@ -80,7 +80,7 @@ export class SkinDiseaseDetector {
   /**
    * Assess image quality
    */
-  private async assessImageQuality(imageData: string | File): Promise<ImageQuality> {
+  private async assessImageQuality(_imageData: string | File): Promise<ImageQuality> {
     // Simulate image quality analysis
     const score = Math.random() * 30 + 70; // 70-100 for demo
     const issues: string[] = [];
@@ -125,7 +125,8 @@ export class SkinDiseaseDetector {
   /**
    * Detect skin conditions
    */
-  private async detectConditions(imageData: string | File): Promise<SkinCondition[]> {
+  private async detectConditions(_imageData: string | File): Promise<SkinCondition[]> {
+    // imageData currently unused in demo heuristic; prefixed to silence lint
     // Simulate AI detection (random selection for demo)
     const possibleConditions = Array.from(this.knownConditions.entries());
     const numConditions = Math.floor(Math.random() * 3) + 1; // 1-3 conditions
@@ -161,6 +162,7 @@ export class SkinDiseaseDetector {
    * Detect skin type
    */
   private async detectSkinType(imageData: string | File): Promise<SkinType> {
+    const _imageData = imageData
     const types: SkinType[] = ['normal', 'dry', 'oily', 'combination', 'sensitive'];
     return types[Math.floor(Math.random() * types.length)];
   }
@@ -169,6 +171,7 @@ export class SkinDiseaseDetector {
    * Detect skin concerns
    */
   private async detectSkinConcerns(imageData: string | File): Promise<string[]> {
+    const _imageData = imageData
     const allConcerns = [
       'Fine lines and wrinkles',
       'Dark spots and hyperpigmentation',
@@ -231,7 +234,7 @@ export class SkinDiseaseDetector {
   private generateRecommendations(
     conditions: SkinCondition[],
     skinType: SkinType,
-    concerns: string[]
+    _concerns: string[]
   ): string[] {
     const recommendations: string[] = [];
 

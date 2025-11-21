@@ -238,7 +238,7 @@ export function LiveChat() {
               <div className="mb-4">
                 <p className="text-sm font-medium mb-2">Quick Responses:</p>
                 <div className="flex flex-wrap gap-2">
-                  {quickResponses.map((response, index) => (
+                  {quickResponses.map((response, _index) => (
                     <Button
                       key={response}
                       size="sm"

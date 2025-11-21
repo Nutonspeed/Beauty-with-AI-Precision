@@ -5,7 +5,6 @@ import {
   EnhancedTreatmentSimulator,
   TreatmentDefinition,
   CombinedTreatmentPlan,
-  SkinConcern,
 } from '@/lib/enhanced-treatment-simulator';
 import {
   Play,
@@ -222,7 +221,7 @@ export const EnhancedTreatmentSimulatorComponent: React.FC<Props> = ({
     width: number,
     height: number,
     improvement: number,
-    baseOpacity: number
+    _baseOpacity: number
   ) => {
     // Draw skin tone base
     ctx.fillStyle = `rgba(220, 180, 150, ${0.3 + improvement * 0.002})`;

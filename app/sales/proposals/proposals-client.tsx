@@ -18,7 +18,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
 import { Search, FileText, Send, Edit, Eye, ArrowLeft, Plus, MoreVertical, Trash2, CheckCircle, XCircle } from "lucide-react"
 import Link from "next/link"
@@ -58,8 +57,8 @@ type ProposalsClientProps = {
 }
 
 export function ProposalsClient({ initialProposals, initialStats }: ProposalsClientProps) {
-  const [proposals, setProposals] = useState<Proposal[]>(initialProposals)
-  const [stats, setStats] = useState<Stats>(initialStats)
+  const [proposals, _setProposals] = useState<Proposal[]>(initialProposals)
+  const [stats, _setStats] = useState<Stats>(initialStats)
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   

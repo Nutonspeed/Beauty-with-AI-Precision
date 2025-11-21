@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { Plus, Send, Eye } from "lucide-react"
 
 export function CampaignManager() {
-  const [campaigns, setCampaigns] = useState([
+  const [campaigns, _setCampaigns] = useState([
     {
       id: "1",
       name: "Summer Promotion",

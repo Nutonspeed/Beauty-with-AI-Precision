@@ -32,7 +32,6 @@ export default function TreatmentTimeline({ photos, startDate }: TreatmentTimeli
   };
 
   // Get photo by type
-  const baselinePhoto = sortedPhotos.find((p) => p.photo_type === 'baseline');
   const latestPhoto = sortedPhotos[sortedPhotos.length - 1];
 
   // Calculate metrics trend
@@ -176,7 +175,12 @@ export default function TreatmentTimeline({ photos, startDate }: TreatmentTimeli
                     className={`relative rounded-lg overflow-hidden border-2 transition-all ${
                       isSelected ? 'border-blue-500 ring-2 ring-blue-200' : 'border-gray-200'
                     }`}
+                    aria-label={isSelected ? "ยกเลิกการเลือกภาพ" : "เลือกภาพเพื่อดูรายละเอียด"}
+                    title={isSelected ? "ยกเลิกการเลือกภาพ" : "เลือกภาพเพื่อดูรายละเอียด"}
                   >
+                    <span className="sr-only">
+                      {isSelected ? "ยกเลิกการเลือกภาพ" : "เลือกภาพเพื่อดูรายละเอียด"}
+                    </span>
                     <img
                       src={photo.thumbnail_url || photo.image_url}
                       alt="Progress photo"

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { addDays, subDays, format } from "date-fns";
+import { subDays, format } from "date-fns";
 import { th } from "date-fns/locale";
 
 export async function GET() {

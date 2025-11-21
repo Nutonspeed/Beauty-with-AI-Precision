@@ -9,9 +9,10 @@ export function AdaptivePerfOverlay({ onLowPerf, onRecover }: AdaptivePerfOverla
   const [avgFrame,setAvgFrame] = useState(0);
   const [mem,setMem] = useState<{used:number; total:number}|null>(null);
   const [low,setLow] = useState(false);
-  const frameCount = useRef(0); const lastTime = useRef(performance.now()); const frameTimes: number[] = [];
+  const frameCount = useRef(0); const lastTime = useRef(performance.now());
   useEffect(()=>{
     let mounted=true;
+    const frameTimes: number[] = [];
     function loop(){
       if(!mounted) return;
       const start=performance.now();

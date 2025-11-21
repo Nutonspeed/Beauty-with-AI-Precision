@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -39,11 +39,7 @@ export default function ChatPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    fetchConversations()
-  }, [])
-
-  const fetchConversations = async () => {
+  const fetchConversations = useCallback(async () => {
     try {
       const response = await fetch("/api/chat/conversations")
       const data = await response.json()
@@ -56,7 +52,11 @@ export default function ChatPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [selectedConversation])
+
+  useEffect(() => {
+    fetchConversations()
+  }, [fetchConversations])
 
   const filteredConversations = conversations.filter(
     (conv) =>

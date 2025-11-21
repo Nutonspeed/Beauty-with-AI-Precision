@@ -11,11 +11,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox"
 import { Loader2, Save, User, Bell, Palette } from "lucide-react"
 import type { UserProfileData, UpdateProfileRequest } from "@/types/api"
+import { useLocalizePath } from "@/lib/i18n/locale-link"
 
 export function UserProfileForm() {
-  const { data: session, status } = useSession()
+  const { data: _session, status } = useSession()
   const router = useRouter()
-  const [profile, setProfile] = useState<UserProfileData | null>(null)
+  const lp = useLocalizePath()
+  const [_profile, setProfile] = useState<UserProfileData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -31,7 +33,7 @@ export function UserProfileForm() {
 
   useEffect(() => {
     if (status === 'unauthenticated') {
-      router.push('/auth/login?callbackUrl=/profile')
+      router.push(lp('/auth/login?callbackUrl=/profile'))
       return
     }
 
@@ -285,7 +287,7 @@ export function UserProfileForm() {
 
       {/* Save Button */}
       <div className="flex justify-end gap-3">
-        <Button variant="outline" onClick={() => router.push('/analysis')}>
+        <Button variant="outline" onClick={() => router.push(lp('/analysis'))}>
           Cancel
         </Button>
         <Button onClick={handleSave} disabled={isSaving}>

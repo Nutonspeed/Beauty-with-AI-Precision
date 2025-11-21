@@ -12,7 +12,7 @@ interface UseLocationOptions {
   autoStart?: boolean;
 }
 
-export function useLocation(options: UseLocationOptions = {}) {
+export function useLocation(_options: UseLocationOptions = {}) {
   const [currentPosition, setCurrentPosition] = useState<Position | null>(null);
   const [currentRoute, setCurrentRoute] = useState<Route | null>(null);
   const [locationUpdate, setLocationUpdate] = useState<LocationUpdate | null>(null);

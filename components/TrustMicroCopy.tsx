@@ -11,7 +11,7 @@ const initialMetrics: Metric[] = [
 ];
 
 export function TrustMicroCopy() {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const [metrics,setMetrics] = useState(initialMetrics);
   useEffect(()=>{
     const id = setInterval(()=>{

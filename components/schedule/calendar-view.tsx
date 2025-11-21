@@ -29,7 +29,7 @@ interface CalendarViewProps {
   onRefresh: () => void
 }
 
-export function CalendarView({ date, view, bookings, loading, onRefresh }: CalendarViewProps) {
+export function CalendarView({ date, view, bookings, loading, onRefresh: _onRefresh }: CalendarViewProps) {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">

@@ -112,7 +112,7 @@ export function useAnalysisProgress(options: UseAnalysisProgressOptions = {}) {
     stages = DEFAULT_STAGES,
     onComplete,
     autoStart = false,
-    smoothTransition = true,
+    smoothTransition: _smoothTransition = true,
   } = options
 
   const [state, setState] = useState<AnalysisProgressState>({
@@ -235,13 +235,15 @@ export function useAnalysisProgress(options: UseAnalysisProgressOptions = {}) {
       start()
     }
 
+    const currentAnimationFrame = animationFrameRef.current
+
     // Cleanup on unmount
     return () => {
       for (const timeout of timeoutRefs.current) {
         clearTimeout(timeout)
       }
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current)
+      if (currentAnimationFrame) {
+        cancelAnimationFrame(currentAnimationFrame)
       }
     }
   }, [autoStart, start])

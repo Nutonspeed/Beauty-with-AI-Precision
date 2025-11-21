@@ -37,7 +37,7 @@ interface BeamProps {
   opacity?: number;
 }
 
-export function VolumetricScanBeam({ height=6, radius=1.4, color='#FF6B9D', position=[0,0,0], sweepSpeed=0.25, opacity=0.75 }: BeamProps){
+export function VolumetricScanBeam({ height=6, radius=1.4, color='#FF6B9D', position=[0,0,0], sweepSpeed=0.25, opacity: _opacity=0.75 }: BeamProps){
   const matRef = useRef<THREE.ShaderMaterial>(null);
   useFrame((_,dt)=>{ if(matRef.current) matRef.current.uniforms.uTime.value += dt * sweepSpeed; });
   useEffect(()=>{ if(matRef.current) matRef.current.uniforms.uColor.value = new THREE.Color(color); },[color]);

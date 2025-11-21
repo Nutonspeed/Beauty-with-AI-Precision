@@ -255,7 +255,7 @@ export default function SecurityMonitoring() {
       const matchesDate = filterByDateRange(event.timestamp)
       return matchesSeverity && matchesSearch && matchesDate
     })
-  }, [data, severityFilter, debouncedQuery, dateRange])
+  }, [data, severityFilter, debouncedQuery, filterByDateRange])
 
   const filteredFailedLogins = useMemo(() => {
     if (!data) return [] as FailedLoginStats[]
@@ -267,7 +267,7 @@ export default function SecurityMonitoring() {
       const matchesDate = filterByDateRange(login.lastAttempt)
       return matchesSearch && matchesDate
     })
-  }, [data, debouncedQuery, dateRange])
+  }, [data, debouncedQuery, filterByDateRange])
 
   const filteredSessions = useMemo(() => {
     if (!data) return [] as ActiveSessionData[]
@@ -280,7 +280,7 @@ export default function SecurityMonitoring() {
       const matchesDate = filterByDateRange(session.lastActivity)
       return matchesSearch && matchesDate
     })
-  }, [data, debouncedQuery, dateRange])
+  }, [data, debouncedQuery, filterByDateRange])
 
   const filteredSuspicious = useMemo(() => {
     if (!data) return [] as SuspiciousActivityData[]
@@ -293,7 +293,7 @@ export default function SecurityMonitoring() {
       const matchesDate = filterByDateRange(activity.timestamp)
       return matchesSearch && matchesDate
     })
-  }, [data, debouncedQuery, dateRange])
+  }, [data, debouncedQuery, filterByDateRange])
 
   if (loading) {
     return (

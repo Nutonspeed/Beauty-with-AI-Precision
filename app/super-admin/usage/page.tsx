@@ -18,7 +18,6 @@ import {
   Brain,
   AlertTriangle,
   Calendar,
-  TrendingUp,
 } from 'lucide-react'
 import Link from 'next/link'
 

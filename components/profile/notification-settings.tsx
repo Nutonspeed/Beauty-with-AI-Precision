@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Button } from "@/components/ui/button"
@@ -39,12 +39,7 @@ export function NotificationSettings({ userId }: NotificationSettingsProps) {
     push_notifications: false,
   })
 
-  // Load preferences
-  useEffect(() => {
-    loadPreferences()
-  }, [userId])
-
-  const loadPreferences = async () => {
+  const loadPreferences = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from("user_preferences")
@@ -64,7 +59,12 @@ export function NotificationSettings({ userId }: NotificationSettingsProps) {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [userId, preferences, supabase])
+
+  // Load preferences
+  useEffect(() => {
+    loadPreferences()
+  }, [userId, loadPreferences])
 
   const handleToggle = (key: keyof NotificationPreferences) => {
     setPreferences((prev) => ({

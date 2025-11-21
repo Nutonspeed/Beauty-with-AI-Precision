@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useCallback, useMemo, createContext, useContext } from 'react';
+import { useEffect, useRef, useCallback, useState, createContext, useContext } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/ui/use-toast';
@@ -48,9 +48,10 @@ export function useWebSocket({
   const reconnectAttempts = useRef(0);
   const reconnectTimeout = useRef<NodeJS.Timeout | null>(null);
   const isConnecting = useRef(false);
-  const router = useRouter();
+  const _router = useRouter();
   const { toast } = useToast();
   const callbacksRef = useRef(callbacks);
+  const [isConnected, setIsConnected] = useState(false);
   
   // Update callbacks ref when they change
   useEffect(() => {
@@ -91,6 +92,7 @@ export function useWebSocket({
         console.log('[WebSocket] Connected');
         reconnectAttempts.current = 0;
         isConnecting.current = false;
+        setIsConnected(true);
         callbacksRef.current.onReconnect?.(reconnectAttempts.current);
         
         if (showToasts) {
@@ -168,6 +170,7 @@ export function useWebSocket({
       socket.onclose = (event) => {
         console.log('[WebSocket] Disconnected', event.code, event.reason);
         isConnecting.current = false;
+        setIsConnected(false);
         callbacksRef.current.onClose?.(event);
         
         // Don't attempt to reconnect if closed normally
@@ -298,10 +301,7 @@ export function useWebSocket({
     return sendMessage('UNSUBSCRIBE', { channels: channelsArray });
   }, [sendMessage]);
   
-  // Connection status
-  const isConnected = useMemo(() => {
-    return ws.current?.readyState === WebSocket.OPEN;
-  }, [ws.current?.readyState]);
+  // Connection status is now managed by state above
   
   return { 
     // Connection

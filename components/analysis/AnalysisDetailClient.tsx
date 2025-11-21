@@ -31,6 +31,7 @@ import {
 import Link from 'next/link';
 import Image from 'next/image';
 import { formatDistanceToNow } from 'date-fns';
+import { useLocalizePath } from '@/lib/i18n/locale-link';
 
 interface Analysis {
   id: string;
@@ -107,14 +108,15 @@ const MODES = [
 
 export default function AnalysisDetailClient({
   analysis,
-  comparisonAnalysis,
-  availableAnalyses,
-  userProfile,
-  userId,
+  comparisonAnalysis: _comparisonAnalysis,
+  availableAnalyses: _availableAnalyses,
+  userProfile: _userProfile,
+  userId: _userId,
 }: AnalysisDetailClientProps) {
   const [activeTab, setActiveTab] = useState('overview');
   const [regenerating, setRegenerating] = useState(false);
   const [vizUrl, setVizUrl] = useState(analysis.visualization_url);
+  const lp = useLocalizePath();
   const analyzedAtDisplay = useMemo(() => {
     try {
       const analysisDate = new Date(analysis.analyzed_at);
@@ -182,7 +184,7 @@ export default function AnalysisDetailClient({
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
-            <Link href="/analysis">
+            <Link href={lp('/analysis')}>
               <Button variant="outline" size="sm">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Analyses

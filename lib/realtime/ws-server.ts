@@ -1,9 +1,7 @@
-import { WebSocket as WsWebSocket, WebSocketServer, type WebSocket as WebSocketType, type RawData } from 'ws';
+import { WebSocketServer, type WebSocket as WebSocketType, type RawData } from 'ws';
 import { createServer, type IncomingMessage, type Server as HttpServer, type ServerResponse } from 'http';
-import { type Server as HttpsServer } from 'https';
-import { parse } from 'url';
 import { v4 as uuidv4 } from 'uuid';
-import { verify, type JwtPayload } from 'jsonwebtoken';
+import { type JwtPayload } from 'jsonwebtoken';
 import { createClient } from '@supabase/supabase-js';
 import * as crypto from 'crypto';
 
@@ -48,12 +46,6 @@ interface BroadcastFilter {
   clinicIds?: string[];
   roles?: string[];
   channels?: string[];
-}
-
-// ประกาศ type สำหรับ channel permission
-interface ChannelPermission {
-  channel: string;
-  reason: string;
 }
 
 // ประกาศ type สำหรับ user role
@@ -179,7 +171,7 @@ export class WSServer {
       for await (const chunk of req) {
         bodyStr += chunk.toString('utf8');
       }
-    } catch (error) {
+    } catch {
       res.statusCode = 400;
       res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify({ error: 'Error reading request body' }));
@@ -189,7 +181,7 @@ export class WSServer {
     let body: Record<string, unknown>;
     try {
       body = bodyStr ? JSON.parse(bodyStr) : {};
-    } catch (error) {
+    } catch {
       res.statusCode = 400;
       res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify({ error: 'Invalid JSON' }));
@@ -537,7 +529,7 @@ export class WSServer {
           res.statusCode = 500;
           res.setHeader('Content-Type', 'application/json');
           res.end(JSON.stringify({ error: 'Internal server error' }));
-        } catch (e) {
+        } catch {
           // Ignore errors when sending error response
         }
       }

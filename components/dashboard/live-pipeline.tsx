@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Clock, Phone, MessageCircle, DollarSign } from "lucide-react"
+import { Clock, Phone, MessageCircle } from "lucide-react"
 
 interface Lead {
   id: string
@@ -43,7 +43,7 @@ export function LivePipeline() {
         // Transform pipeline data to leads format
         const allLeads: Lead[] = []
         if (result.pipeline) {
-          Object.entries(result.pipeline).forEach(([status, leads]) => {
+          Object.entries(result.pipeline).forEach(([_status, leads]) => {
             (leads as any[]).forEach((lead) => {
               allLeads.push({
                 id: lead.id,

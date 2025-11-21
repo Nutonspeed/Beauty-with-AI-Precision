@@ -6,11 +6,11 @@ import { Sparkles, TrendingUp, Clock, MessageSquare, Zap } from "lucide-react"
 import { PriorityScore } from "@/lib/lead-prioritization"
 
 interface PriorityScoreCardProps {
-  leadName: string
+  leadName: string // currently unused; retained for future display logic
   priorityScore: PriorityScore
 }
 
-export function PriorityScoreCard({ leadName, priorityScore }: PriorityScoreCardProps) {
+export function PriorityScoreCard({ leadName: _leadName, priorityScore }: PriorityScoreCardProps) {
   const { totalScore, breakdown, priorityLevel, badge } = priorityScore
 
   const getBadgeColor = () => {

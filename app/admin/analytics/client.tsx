@@ -72,7 +72,7 @@ function bucketByHour(timestamps: string[]) {
     counts[key] = (counts[key] || 0) + 1
   })
   const entries = Object.entries(counts).sort((a,b) => a[0] < b[0] ? -1 : 1)
-  return entries.map(([k, v], idx) => ({ x: idx, y: v }))
+  return entries.map(([_k, v], idx) => ({ x: idx, y: v }))
 }
 
 export default function AnalyticsClientPage() {
@@ -269,24 +269,24 @@ export default function AnalyticsClientPage() {
           <div className="rounded-lg border border-white/10 bg-white/5 p-4">
             <p className="text-xs text-gray-400">By type</p>
             <ul className="mt-2 space-y-1">
-              {perfStats?.stats && Object.entries(perfStats.stats.byType).map(([k, v]) => (
-                <li key={k} className="flex justify-between"><span>{k}</span><span className="opacity-80">{v}</span></li>
+              {perfStats?.stats && Object.entries(perfStats.stats.byType).map(([_k, v]) => (
+                <li key={_k} className="flex justify-between"><span>{_k}</span><span className="opacity-80">{v}</span></li>
               ))}
             </ul>
           </div>
           <div className="rounded-lg border border-white/10 bg-white/5 p-4">
             <p className="text-xs text-gray-400">By rating</p>
             <ul className="mt-2 space-y-1">
-              {perfStats?.stats && Object.entries(perfStats.stats.byRating).map(([k, v]) => (
-                <li key={k} className="flex justify-between"><span>{k}</span><span className="opacity-80">{v}</span></li>
+              {perfStats?.stats && Object.entries(perfStats.stats.byRating).map(([_k, v]) => (
+                <li key={_k} className="flex justify-between"><span>{_k}</span><span className="opacity-80">{v}</span></li>
               ))}
             </ul>
           </div>
           <div className="rounded-lg border border-white/10 bg-white/5 p-4">
             <p className="text-xs text-gray-400">Avg values</p>
             <ul className="mt-2 space-y-1">
-              {perfStats?.stats && Object.entries(perfStats.stats.averageValues).map(([k, v]) => (
-                <li key={k} className="flex justify-between"><span>{k}</span><span className="opacity-80">{Math.round(v)}</span></li>
+              {perfStats?.stats && Object.entries(perfStats.stats.averageValues).map(([_k, v]) => (
+                <li key={_k} className="flex justify-between"><span>{_k}</span><span className="opacity-80">{Math.round(v)}</span></li>
               ))}
             </ul>
           </div>

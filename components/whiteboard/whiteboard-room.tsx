@@ -5,7 +5,7 @@
 
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { useWhiteboard } from '@/hooks/use-whiteboard';
 import { DrawingCanvas } from './drawing-canvas';
 import { Toolbar } from './toolbar';
@@ -13,7 +13,6 @@ import { ActiveUsersPanel } from './active-users-panel';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { DrawingElement } from '@/lib/whiteboard-manager';
 import { AlertCircle, Lock } from 'lucide-react';
 
 interface WhiteboardRoomProps {
@@ -59,7 +58,6 @@ export function WhiteboardRoom({
     enabled: true
   });
 
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const [currentDrawingId, setCurrentDrawingId] = useState<string | null>(null);
   const [shapeStartPos, setShapeStartPos] = useState<{ x: number; y: number } | null>(null);
 

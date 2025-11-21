@@ -7,7 +7,7 @@
 
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { 
@@ -198,7 +198,7 @@ export function ProgressTrackingChart({
   const values = data.map(d => d.scores[selectedParameter]);
   const maxValue = Math.max(...values);
   const minValue = Math.min(...values);
-  const range = maxValue - minValue;
+  const _range = maxValue - minValue;
 
   const handleDownloadReport = () => {
     // Generate CSV report
@@ -493,7 +493,7 @@ function LineChart({ data, parameter, minValue, maxValue, locale, onPointClick }
         />
 
         {/* Points */}
-        {points.map((point, i) => (
+        {points.map((point, _i) => (
           <g key={point.id}>
             <circle
               cx={point.x}
@@ -546,11 +546,11 @@ function BarChartComponent({ data, parameter, maxValue, locale, onPointClick }: 
     <div className="w-full overflow-x-auto">
       <svg width={width} height={height} className="mx-auto">
         {/* Grid lines */}
-        {[0, 0.25, 0.5, 0.75, 1].map((fraction, i) => {
+        {[0, 0.25, 0.5, 0.75, 1].map((fraction, _i) => {
           const y = padding.top + chartHeight * (1 - fraction);
           const value = maxValue * fraction;
           return (
-            <g key={i}>
+            <g key={_i}>
               <line
                 x1={padding.left}
                 y1={y}

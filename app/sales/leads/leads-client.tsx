@@ -67,8 +67,8 @@ type LeadsClientProps = {
 }
 
 export function LeadsClient({ initialLeads, initialStats }: LeadsClientProps) {
-  const [leads, setLeads] = useState<Lead[]>(initialLeads)
-  const [stats, setStats] = useState<Stats>(initialStats)
+  const [leads, _setLeads] = useState<Lead[]>(initialLeads)
+  const [stats, _setStats] = useState<Stats>(initialStats)
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [sourceFilter, setSourceFilter] = useState("all")

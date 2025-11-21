@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
@@ -16,11 +16,7 @@ export default function SchedulePage() {
   const [bookings, setBookings] = useState([])
   const [loading, setLoading] = useState(false)
 
-  useEffect(() => {
-    fetchBookings()
-  }, [selectedDate, view])
-
-  const fetchBookings = async () => {
+  const fetchBookings = useCallback(async () => {
     setLoading(true)
     try {
       let startDate, endDate
@@ -44,7 +40,11 @@ export default function SchedulePage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [selectedDate, view])
+
+  useEffect(() => {
+    fetchBookings()
+  }, [fetchBookings])
 
   return (
     <div className="container mx-auto p-6">

@@ -1,7 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
+import { withClinicAuth } from "@/lib/auth/middleware"
 
-export async function GET(request: NextRequest) {
+export const GET = withClinicAuth(async (request: NextRequest, user) => {
   try {
     const { searchParams } = new URL(request.url)
     const lowStock = searchParams.get("low_stock") === "true"
@@ -131,9 +132,9 @@ export async function GET(request: NextRequest) {
       { status: 500 },
     )
   }
-}
+});
 
-export async function POST(request: NextRequest) {
+export const POST = withClinicAuth(async (request: NextRequest, user) => {
   try {
     const body = await request.json()
 
@@ -184,4 +185,4 @@ export async function POST(request: NextRequest) {
       { status: 500 },
     )
   }
-}
+});

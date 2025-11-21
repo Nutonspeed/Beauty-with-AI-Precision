@@ -20,6 +20,7 @@ import {
   Star
 } from 'lucide-react';
 import Link from 'next/link';
+import { useLocalizePath } from '@/lib/i18n/locale-link';
 import type { UserRole } from '@/lib/auth/role-config';
 
 interface CustomerDashboardProps {
@@ -29,6 +30,7 @@ interface CustomerDashboardProps {
 export default function CustomerDashboard({ role }: CustomerDashboardProps) {
   const isPremium = role === 'premium_customer';
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const lp = useLocalizePath();
 
   useEffect(() => {
     // Check if user has seen onboarding
@@ -65,7 +67,7 @@ export default function CustomerDashboard({ role }: CustomerDashboardProps) {
                 ข้ามไป
               </Button>
               <Button size="sm" asChild>
-                <Link href="/onboarding/customer">
+                <Link href={lp('/onboarding/customer')}>
                   ดูคู่มือ
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
@@ -103,7 +105,7 @@ export default function CustomerDashboard({ role }: CustomerDashboardProps) {
           </CardHeader>
           <CardContent>
             <Button asChild className="w-full group-hover:bg-primary/90">
-              <Link href="/analysis">
+              <Link href={lp('/analysis')}>
                 เริ่มวิเคราะห์
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
@@ -129,7 +131,7 @@ export default function CustomerDashboard({ role }: CustomerDashboardProps) {
           </CardHeader>
           <CardContent>
             <Button asChild variant="outline" className="w-full group-hover:bg-muted">
-              <Link href="/ar-simulator">
+              <Link href={lp('/ar-simulator')}>
                 เริ่มทดลอง
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
@@ -153,7 +155,7 @@ export default function CustomerDashboard({ role }: CustomerDashboardProps) {
           </CardHeader>
           <CardContent>
             <Button asChild className="w-full bg-amber-600 hover:bg-amber-700 dark:bg-amber-700 dark:hover:bg-amber-800">
-              <Link href="/recommendations">
+              <Link href={lp('/recommendations')}>
                 ดูคำแนะนำ
                 <Star className="ml-2 h-4 w-4" />
               </Link>
@@ -174,7 +176,7 @@ export default function CustomerDashboard({ role }: CustomerDashboardProps) {
           </CardHeader>
           <CardContent>
             <Button asChild variant="outline" className="w-full group-hover:bg-muted">
-              <Link href="/booking">
+              <Link href={lp('/booking')}>
                 จองเลย
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
@@ -195,7 +197,7 @@ export default function CustomerDashboard({ role }: CustomerDashboardProps) {
           </CardHeader>
           <CardContent>
             <Button asChild variant="outline" className="w-full group-hover:bg-muted">
-              <Link href="/analysis/progress">
+              <Link href={lp('/analysis/progress')}>
                 ดูความก้าวหน้า
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
@@ -216,7 +218,7 @@ export default function CustomerDashboard({ role }: CustomerDashboardProps) {
           </CardHeader>
           <CardContent>
             <Button asChild variant="outline" className="w-full group-hover:bg-muted">
-              <Link href="/analysis/history">
+              <Link href={lp('/analysis/history')}>
                 ดูประวัติ
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
@@ -237,7 +239,7 @@ export default function CustomerDashboard({ role }: CustomerDashboardProps) {
           </CardHeader>
           <CardContent>
             <Button asChild variant="outline" className="w-full group-hover:bg-muted">
-              <Link href="/analysis/results">
+              <Link href={lp('/analysis/results')}>
                 ดูผลลัพธ์
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
@@ -296,7 +298,7 @@ export default function CustomerDashboard({ role }: CustomerDashboardProps) {
 
           <div className="mt-6">
             <Button asChild variant="outline" className="w-full">
-              <Link href="/onboarding/customer">
+              <Link href={lp('/onboarding/customer')}>
                 ดูคู่มือการใช้งานแบบเต็ม
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
@@ -321,7 +323,7 @@ export default function CustomerDashboard({ role }: CustomerDashboardProps) {
             <p>ยังไม่มีประวัติการใช้งาน</p>
             <p className="text-sm mt-2">เริ่มต้นด้วยการวิเคราะห์ผิวหน้าครั้งแรกของคุณ!</p>
             <Button asChild className="mt-4">
-              <Link href="/analysis">
+              <Link href={lp('/analysis')}>
                 วิเคราะห์เลย
               </Link>
             </Button>
@@ -361,7 +363,7 @@ export default function CustomerDashboard({ role }: CustomerDashboardProps) {
               </li>
             </ul>
             <Button asChild className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">
-              <Link href="/pricing">
+              <Link href={lp('/pricing')}>
                 ดูแพ็กเกจ Premium
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>

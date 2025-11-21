@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -30,11 +30,7 @@ export default function ReportsPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [isExporting, setIsExporting] = useState(false)
 
-  useEffect(() => {
-    fetchReport()
-  }, [period])
-
-  async function fetchReport() {
+  const fetchReport = useCallback(async () => {
     setIsLoading(true)
     try {
       const response = await fetch(`/api/reports/overview?period=${period}`)
@@ -47,7 +43,11 @@ export default function ReportsPage() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [period])
+
+  useEffect(() => {
+    fetchReport()
+  }, [fetchReport])
 
   async function handleExport(type: string) {
     setIsExporting(true)

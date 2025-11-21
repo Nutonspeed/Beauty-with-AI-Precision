@@ -244,22 +244,6 @@ function calculateProgressMetrics(
 }
 
 /**
- * Calculate time difference in human-readable format
- */
-function getTimeDifference(date: Date, locale: 'th' | 'en' = 'th'): string {
-  const t = TRANSLATIONS[locale];
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-  if (diffDays === 0) return locale === 'th' ? 'วันนี้' : 'Today';
-  if (diffDays === 1) return locale === 'th' ? 'เมื่อวาน' : 'Yesterday';
-  if (diffDays < 7) return `${diffDays} ${t.days} ${t.ago}`;
-  if (diffDays < 30) return `${Math.floor(diffDays / 7)} ${t.weeks} ${t.ago}`;
-  return `${Math.floor(diffDays / 30)} ${t.months} ${t.ago}`;
-}
-
-/**
  * Get trend icon and color
  */
 function getTrendDisplay(trend: 'improving' | 'stable' | 'worsening') {

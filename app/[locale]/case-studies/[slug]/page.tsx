@@ -5,7 +5,7 @@ import { Footer } from "@/components/footer"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { useEffect, useMemo } from "react"
 import { usageTracker } from "@/lib/analytics/usage-tracker"
-import { getCaseStudyBySlug, type Locale } from "@/data/case-studies"
+import { getCaseStudyBySlug, type Locale } from "../../../../data/case-studies"
 import { useParams } from "next/navigation"
 import Link from "next/link"
 

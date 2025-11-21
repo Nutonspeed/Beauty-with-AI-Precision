@@ -8,7 +8,6 @@
 import { useState } from 'react';
 import { Search, Plus, MessageSquare, Archive, Settings } from 'lucide-react';
 import { useConversations } from '@/hooks/useChat';
-import { Conversation } from '@/lib/chat/chat-manager';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -32,7 +31,7 @@ export function ConversationsList({
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState<'all' | 'unread' | 'archived'>('all');
 
-  const { conversations, loading, error, createConversation, updateConversation, refresh } =
+  const { conversations, loading, error, createConversation: _createConversation, updateConversation, refresh: _refresh } =
     useConversations(userId);
 
   const formatTime = (date?: Date) => {
@@ -81,12 +80,12 @@ export function ConversationsList({
     await updateConversation(conversationId, { archived: true });
   };
 
-  const handlePin = async (e: React.MouseEvent, conversationId: string, pinned: boolean) => {
+  const _handlePin = async (e: React.MouseEvent, conversationId: string, pinned: boolean) => {
     e.stopPropagation();
     await updateConversation(conversationId, { pinned: !pinned });
   };
 
-  const handleMute = async (e: React.MouseEvent, conversationId: string, muted: boolean) => {
+  const _handleMute = async (e: React.MouseEvent, conversationId: string, muted: boolean) => {
     e.stopPropagation();
     await updateConversation(conversationId, { muted: !muted });
   };

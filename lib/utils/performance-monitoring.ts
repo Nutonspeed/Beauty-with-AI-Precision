@@ -117,7 +117,7 @@ export function observeWebVitals(): void {
       });
     });
     lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
-  } catch (e) {
+  } catch {
     console.warn('LCP observation not supported');
   }
 
@@ -137,7 +137,7 @@ export function observeWebVitals(): void {
       });
     });
     fidObserver.observe({ type: 'first-input', buffered: true });
-  } catch (e) {
+  } catch {
     console.warn('FID observation not supported');
   }
 
@@ -163,7 +163,7 @@ export function observeWebVitals(): void {
         timestamp: Date.now(),
       });
     });
-  } catch (e) {
+  } catch {
     console.warn('CLS observation not supported');
   }
 
@@ -181,7 +181,7 @@ export function observeWebVitals(): void {
       });
     });
     fcpObserver.observe({ type: 'paint', buffered: true });
-  } catch (e) {
+  } catch {
     console.warn('FCP observation not supported');
   }
 
@@ -329,7 +329,7 @@ export function observeLongTasks(callback: (duration: number) => void): void {
     });
 
     observer.observe({ type: 'longtask', buffered: true });
-  } catch (e) {
+  } catch {
     console.warn('Long task observation not supported');
   }
 }

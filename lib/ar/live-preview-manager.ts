@@ -291,8 +291,6 @@ export class LiveARPreviewManager {
       return
     }
 
-    const startTime = performance.now()
-
     try {
       // Draw video frame to canvas
       this.ctx.drawImage(
@@ -335,11 +333,11 @@ export class LiveARPreviewManager {
       const results = this.faceLandmarker.detectForVideo(this.videoElement, nowMs)
 
       if (results.faceLandmarks && results.faceLandmarks.length > 0) {
-        const landmarks = results.faceLandmarks[0]
+        const _landmarks = results.faceLandmarks[0]
         type NormalizedLandmark = { x: number; y: number; z: number }
 
         // Convert to our format
-        const landmarksArray: Array<{ x: number; y: number; z: number }> = landmarks.map(
+        const landmarksArray: Array<{ x: number; y: number; z: number }> = _landmarks.map(
           (lm: NormalizedLandmark) => ({
             x: lm.x * this.canvasElement!.width,
             y: lm.y * this.canvasElement!.height,
@@ -376,7 +374,7 @@ export class LiveARPreviewManager {
         // this.drawLandmarks(landmarksArray)
       }
 
-    } catch (error) {
+    } catch {
       // Silently fail - face might not be in frame
     }
   }

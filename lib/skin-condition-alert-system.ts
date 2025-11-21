@@ -330,7 +330,7 @@ export class SkinConditionAlertSystem {
     currentScore: number,
     history: AnalysisHistory[],
     standardDeviations: number,
-    rule: AlertRule
+    _rule: AlertRule
   ): SkinAlert[] {
     const alerts: SkinAlert[] = [];
 

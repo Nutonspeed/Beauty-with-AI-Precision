@@ -371,8 +371,8 @@ export class GoalSettingEngine {
    */
   private static generateMotivationalMessage(
     parameter: GoalParameter,
-    current: number,
-    target: number
+    _current: number,
+    _target: number
   ): string {
     const messages: Record<GoalParameter, string> = {
       spots: 'With consistent treatment, visible improvements can be seen within 6-8 weeks.',
@@ -432,7 +432,7 @@ export class GoalSettingEngine {
   private static calculateTrend(
     current: number,
     previous: number,
-    milestonesCount: number
+    _milestonesCount: number
   ): 'accelerating' | 'steady' | 'slowing' | 'declining' {
     const change = current - previous;
 
@@ -448,7 +448,7 @@ export class GoalSettingEngine {
   static getGoalRecommendations(
     userId: string,
     goals: SkinGoal[],
-    latestAnalysis: HybridSkinAnalysis
+    _latestAnalysis: HybridSkinAnalysis
   ): {
     summaryMessage: string;
     totalGoals: number;
@@ -458,7 +458,7 @@ export class GoalSettingEngine {
   } {
     const activeGoals = goals.filter((g) => g.status === 'active').length;
     const achievedGoals = goals.filter((g) => g.status === 'achieved').length;
-    const abandonedGoals = goals.filter((g) => g.status === 'abandoned').length;
+    // const abandonedGoals = goals.filter((g) => g.status === 'abandoned').length;
 
     let summaryMessage = '';
     if (achievedGoals === 0 && activeGoals === 0) {

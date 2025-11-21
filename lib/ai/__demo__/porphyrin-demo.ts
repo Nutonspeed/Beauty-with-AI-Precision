@@ -12,7 +12,6 @@ import {
   getPorphyrinDescription,
   getTreatmentUrgencyDescription,
   type PorphyrinDetectorInput,
-  type PorphyrinAnalysisResult,
 } from '../porphyrin-detector';
 
 // ========================= DEMO SCENARIOS =========================

@@ -156,7 +156,7 @@ export async function sendBookingReminder(to: string, bookingDetails: any) {
   return sendEmail({ to, subject, html })
 }
 
-export async function sendAnalysisComplete(to: string, analysisId: string) {
+export async function sendAnalysisComplete(to: string, _analysisId: string) {
   const subject = "Your AI Skin Analysis is Ready"
   const html = `
     <!DOCTYPE html>

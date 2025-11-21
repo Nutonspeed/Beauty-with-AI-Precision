@@ -21,14 +21,6 @@ interface CustomerScores {
   hydration: number;
 }
 
-interface AgeGroupData {
-  ageGroup: AgeGroup;
-  totalCustomers: number;
-  averages: CustomerScores;
-  medians: CustomerScores;
-  std: CustomerScores;
-}
-
 // =============================================
 // Age Group Utilities
 // =============================================

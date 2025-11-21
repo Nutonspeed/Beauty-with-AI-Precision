@@ -79,12 +79,6 @@ const leadsData = [
   }
 ]
 
-const getScoreColor = (score: number) => {
-  if (score >= 80) return "bg-red-500"
-  if (score >= 60) return "bg-orange-500"
-  if (score >= 40) return "bg-yellow-500"
-  return "bg-gray-500"
-}
 
 const getStatusBadge = (status: string) => {
   switch (status) {
@@ -286,7 +280,7 @@ export function LeadScoring() {
                       <div className="mb-3">
                         <div className="font-medium text-foreground text-sm mb-1">Interests</div>
                         <div className="flex flex-wrap gap-1">
-                          {lead.interests.map((interest, index) => (
+                          {lead.interests.map((interest, _index) => (
                             <Badge key={interest} variant="outline" className="text-xs">
                               {interest}
                             </Badge>

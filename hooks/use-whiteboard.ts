@@ -8,8 +8,7 @@ import {
   DrawingElement,
   UserCursor,
   DrawingTool,
-  DrawingColor,
-  Point
+  DrawingColor
 } from '@/lib/whiteboard-manager';
 
 interface UseWhiteboardProps {
@@ -54,11 +53,37 @@ export function useWhiteboard({
     };
   }, []);
 
+  /**
+   * Update elements from manager
+   */
+  const updateElements = useCallback(() => {
+    if (!managerRef.current) return;
+    const allElements = managerRef.current.getAllElements();
+    setElements(allElements);
+  }, []);
+
+  /**
+   * Update active users
+   */
+  const updateActiveUsers = useCallback(() => {
+    if (!managerRef.current) return;
+    const users = managerRef.current.getActiveUsers();
+    setActiveUsers(users);
+  }, []);
+
+  /**
+   * Update canDraw state
+   */
+  const updateCanDraw = useCallback(() => {
+    if (!managerRef.current) return;
+    setCanDraw(managerRef.current.canDraw());
+  }, []);
+
   // Join whiteboard
   useEffect(() => {
     if (enabled && managerRef.current) {
       managerRef.current.joinWhiteboard(whiteboardId, userId, userName, {
-        onElementAdded: (element) => {
+        onElementAdded: (_element) => {
           updateElements();
         },
         onElementRemoved: () => {
@@ -79,7 +104,7 @@ export function useWhiteboard({
         onWhiteboardCleared: () => {
           updateElements();
         },
-        onWhiteboardLocked: (userId, userName) => {
+        onWhiteboardLocked: (userId, _userName) => {
           setIsLocked(true);
           setLockedBy(userId);
           updateCanDraw();
@@ -108,33 +133,7 @@ export function useWhiteboard({
         clearInterval(userUpdateIntervalRef.current);
       }
     };
-  }, [whiteboardId, userId, userName, enabled]);
-
-  /**
-   * Update elements from manager
-   */
-  const updateElements = useCallback(() => {
-    if (!managerRef.current) return;
-    const allElements = managerRef.current.getAllElements();
-    setElements(allElements);
-  }, []);
-
-  /**
-   * Update active users
-   */
-  const updateActiveUsers = useCallback(() => {
-    if (!managerRef.current) return;
-    const users = managerRef.current.getActiveUsers();
-    setActiveUsers(users);
-  }, []);
-
-  /**
-   * Update canDraw state
-   */
-  const updateCanDraw = useCallback(() => {
-    if (!managerRef.current) return;
-    setCanDraw(managerRef.current.canDraw());
-  }, []);
+  }, [whiteboardId, userId, userName, enabled, updateElements, updateActiveUsers, updateCanDraw]);
 
   /**
    * Add element

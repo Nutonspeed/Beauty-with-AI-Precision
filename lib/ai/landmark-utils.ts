@@ -125,7 +125,7 @@ export function calculateFaceOrientation(landmarks: FaceLandmark[]): {
 /**
  * Filter landmarks by confidence threshold
  */
-export function filterLandmarksByConfidence(landmarks: FaceLandmark[], threshold = 0.5): FaceLandmark[] {
+export function filterLandmarksByConfidence(landmarks: FaceLandmark[], _threshold = 0.5): FaceLandmark[] {
   // MediaPipe doesn't provide per-landmark confidence, but we can filter by z-depth
   // Landmarks with extreme z values are likely less reliable
   return landmarks.filter((lm) => {

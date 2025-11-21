@@ -4,8 +4,10 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { trackEngagement } from "@/lib/analytics/usage-tracker"
 import { ArrowRight, Sparkles, Camera, BrainCircuit, Star } from "lucide-react"
+import { useLocalizePath } from "@/lib/i18n/locale-link"
 
 export default function BeautyLandingPage() {
+  const lp = useLocalizePath()
   const avatarGradients = [
     'bg-avatar-1',
     'bg-avatar-2',
@@ -57,10 +59,10 @@ export default function BeautyLandingPage() {
               </span>
             </div>
             <div className="flex items-center gap-6">
-              <Link href="/" className="text-sm text-gray-300 hover:text-white transition-colors">
+              <Link href={lp("/")} className="text-sm text-gray-300 hover:text-white transition-colors">
                 หน้าแรก
               </Link>
-              <Link href="/demo" className="text-sm text-gray-300 hover:text-white transition-colors">
+              <Link href={lp("/demo")} className="text-sm text-gray-300 hover:text-white transition-colors">
                 ฟีเจอร์
               </Link>
               <Button aria-label="Learn more about AI beauty analysis" size="sm" className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 border-0"

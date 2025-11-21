@@ -67,7 +67,7 @@ export async function exportToPDF(
  */
 export async function exportToPNG(
   elementId: string,
-  filename: string = 'skin-analysis-report.png',
+  _filename: string = 'skin-analysis-report.png',
   quality: number = 0.95
 ): Promise<Blob> {
   const element = document.getElementById(elementId);
@@ -441,7 +441,7 @@ export function printReport(elementId: string = 'visia-report'): void {
         return Array.from(styleSheet.cssRules)
           .map((rule) => rule.cssText)
           .join('\n');
-      } catch (e) {
+      } catch {
         return '';
       }
     })

@@ -101,7 +101,7 @@ export function RevenueChart() {
     ? Math.max(...revenueData.map(d => d.revenue)) 
     : data.summary.targets.daily
 
-  const minRevenue = revenueData.length > 0 
+  const _minRevenue = revenueData.length > 0 
     ? Math.min(...revenueData.map(d => d.revenue)) 
     : 0
 

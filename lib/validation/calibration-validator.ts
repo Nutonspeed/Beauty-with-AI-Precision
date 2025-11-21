@@ -396,7 +396,7 @@ export function findOptimalThreshold(
  * Load ground truth annotations from calibration dataset
  */
 export async function loadGroundTruthAnnotations(
-  directory: string = 'test-images/calibration/annotations'
+  _directory: string = 'test-images/calibration/annotations'
 ): Promise<GroundTruthAnnotation[]> {
   // This would load from filesystem in Node.js environment
   // For browser, we'll need an API endpoint

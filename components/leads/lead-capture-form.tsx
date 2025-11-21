@@ -32,10 +32,8 @@ import {
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Badge } from "@/components/ui/badge"
-import { Loader2, UserPlus, X } from "lucide-react"
+import { Loader2, UserPlus } from "lucide-react"
 import { toast } from "sonner"
-import type { LeadSource, LeadStatus } from "@/types/multi-tenant"
 
 const leadFormSchema = z.object({
   full_name: z.string().min(2, "Name must be at least 2 characters"),

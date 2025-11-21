@@ -13,7 +13,6 @@
 import { getIndexedDB } from '@/lib/db/indexed-db';
 import { getConflictResolver } from '@/lib/sync/conflict-resolver';
 import type { SyncAction } from '@/lib/db/indexed-db';
-import type { ConflictResolution } from '@/lib/sync/conflict-resolver';
 
 // ============================================================================
 // Types

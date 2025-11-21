@@ -650,7 +650,7 @@ export class PerformanceOptimizer {
       console.log('Low memory detected, using lightweight analysis');
 
       // Load only essential models
-      const [mpAnalyzer, tfAnalyzer] = await Promise.all([
+      const [_mpAnalyzer, _tfAnalyzer] = await Promise.all([
         this.lazyLoadMediaPipe(),
         this.lazyLoadTensorFlow()
       ]);

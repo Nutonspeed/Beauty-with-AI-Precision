@@ -1,8 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -38,12 +37,7 @@ export function PreferencesForm({ userId }: PreferencesFormProps) {
     currency: "THB",
   })
 
-  // Load preferences
-  useEffect(() => {
-    loadPreferences()
-  }, [userId])
-
-  const loadPreferences = async () => {
+  const loadPreferences = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from("user_preferences")
@@ -69,7 +63,12 @@ export function PreferencesForm({ userId }: PreferencesFormProps) {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [userId, supabase])
+
+  // Load preferences
+  useEffect(() => {
+    loadPreferences()
+  }, [userId, loadPreferences])
 
   const handleSave = async () => {
     setIsSaving(true)

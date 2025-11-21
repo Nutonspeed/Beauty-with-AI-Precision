@@ -5,7 +5,7 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import type { TreatmentRecommendation } from '@/lib/ai/treatment-recommender';
 
 interface UseRecommendationsOptions {
@@ -44,7 +44,7 @@ export function useRecommendations(
   /**
    * Load recommendations from API
    */
-  const loadRecommendations = async () => {
+  const loadRecommendations = useCallback(async () => {
     if (!analysisId && !userId) {
       return;
     }
@@ -86,12 +86,12 @@ export function useRecommendations(
     } finally {
       setLoading(false);
     }
-  };
+  }, [analysisId, userId]);
 
   /**
    * Generate new recommendations
    */
-  const generateRecommendations = async () => {
+  const generateRecommendations = useCallback(async () => {
     if (!analysisId) {
       setError('Analysis ID is required to generate recommendations');
       return;
@@ -127,7 +127,7 @@ export function useRecommendations(
     } finally {
       setGenerating(false);
     }
-  };
+  }, [analysisId, userProfile]);
 
   /**
    * Clear all recommendations for user
@@ -169,7 +169,7 @@ export function useRecommendations(
     if (analysisId || userId) {
       loadRecommendations();
     }
-  }, [analysisId, userId]);
+  }, [analysisId, userId, loadRecommendations]);
 
   /**
    * Auto-generate if enabled and no recommendations exist
@@ -178,7 +178,7 @@ export function useRecommendations(
     if (autoGenerate && analysisId && !loading && recommendations.length === 0 && !error) {
       generateRecommendations();
     }
-  }, [autoGenerate, analysisId, loading, recommendations.length, error]);
+  }, [autoGenerate, analysisId, loading, recommendations.length, error, generateRecommendations]);
 
   return {
     recommendations,

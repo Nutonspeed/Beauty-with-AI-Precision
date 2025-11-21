@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState, useRef, useCallback } from "react"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
@@ -28,6 +28,31 @@ export function ChatWindow({ conversation, onConversationUpdate }: ChatWindowPro
   const [sending, setSending] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
+  const fetchMessages = useCallback(async () => {
+    try {
+      const response = await fetch(`/api/chat/messages?conversation_id=${conversation.id}`)
+      const data = await response.json()
+      setMessages(data.messages || [])
+      scrollToBottom()
+
+      // Mark messages as read
+      const unreadIds = data.messages
+        ?.filter((m: ChatMessage) => !m.is_read && m.sender_type === "customer")
+        .map((m: ChatMessage) => m.id)
+
+      if (unreadIds?.length > 0) {
+        await fetch("/api/chat/messages", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message_ids: unreadIds }),
+        })
+        onConversationUpdate()
+      }
+    } catch (error) {
+      console.error("[v0] Error fetching messages:", error)
+    }
+  }, [conversation.id, onConversationUpdate])
+
   useEffect(() => {
     // Fetch initial messages
     fetchMessages()
@@ -53,32 +78,7 @@ export function ChatWindow({ conversation, onConversationUpdate }: ChatWindowPro
     return () => {
       unsubscribe()
     }
-  }, [conversation.id])
-
-  const fetchMessages = async () => {
-    try {
-      const response = await fetch(`/api/chat/messages?conversation_id=${conversation.id}`)
-      const data = await response.json()
-      setMessages(data.messages || [])
-      scrollToBottom()
-
-      // Mark messages as read
-      const unreadIds = data.messages
-        ?.filter((m: ChatMessage) => !m.is_read && m.sender_type === "customer")
-        .map((m: ChatMessage) => m.id)
-
-      if (unreadIds?.length > 0) {
-        await fetch("/api/chat/messages", {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message_ids: unreadIds }),
-        })
-        onConversationUpdate()
-      }
-    } catch (error) {
-      console.error("[v0] Error fetching messages:", error)
-    }
-  }
+  }, [conversation.id, fetchMessages])
 
   const scrollToBottom = () => {
     setTimeout(() => {

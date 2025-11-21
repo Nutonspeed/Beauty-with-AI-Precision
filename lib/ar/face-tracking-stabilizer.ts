@@ -462,7 +462,6 @@ export function estimateFaceAngle(landmarks: FaceLandmark[]): {
   const rightEye = landmarks[263]
   const nose = landmarks[1]
   const chin = landmarks[152]
-  const forehead = landmarks[10]
   
   // Calculate yaw (left-right rotation)
   const eyeDistance = Math.abs(rightEye.x - leftEye.x)

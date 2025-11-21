@@ -400,7 +400,7 @@ class CampaignManager {
     return this.segments.delete(id)
   }
 
-  private calculateSegmentSize(conditions: SegmentCondition[], operator: SegmentOperator): number {
+  private calculateSegmentSize(conditions: SegmentCondition[], _operator: SegmentOperator): number {
     // In real implementation, this would query the database
     // For demo, return simulated count based on conditions
     const baseCount = 1000

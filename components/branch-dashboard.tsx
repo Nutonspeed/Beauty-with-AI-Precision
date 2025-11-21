@@ -30,7 +30,6 @@ import {
   useBranchResources,
   useBranchReport,
 } from "@/hooks/useBranch"
-import type { Branch } from "@/lib/branch/branch-manager"
 
 interface BranchDashboardProps {
   branchId: string

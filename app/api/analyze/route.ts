@@ -5,9 +5,10 @@ import {
   mapBrowserResultToAnalysis,
   mapCloudEnsembleToAnalysis,
 } from "@/lib/ai/analysis-mapper"
+import { withAuth } from "@/lib/auth/middleware"
 
 // Accept pre-analyzed results from browser AI processing
-export async function POST(request: NextRequest) {
+export const POST = withAuth(async (request: NextRequest, user) => {
   try {
     const contentType = request.headers.get("content-type")
 
@@ -25,7 +26,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Invalid analysis result format" }, { status: 400 })
       }
 
-      console.log(`💾 Saving AI analysis (tier: ${tier}, time: ${result.totalProcessingTime.toFixed(0)}ms)...`)
+      console.log(`💾 Saving AI analysis for user ${user.id} (tier: ${tier}, time: ${result.totalProcessingTime.toFixed(0)}ms)...`)
 
       // Convert AI results to our analysis format (browser path)
       const analysis = mapBrowserResultToAnalysis(result, tier)
@@ -102,4 +103,4 @@ export async function POST(request: NextRequest) {
       { status: 500 },
     )
   }
-}
+});

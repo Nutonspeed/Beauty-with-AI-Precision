@@ -5,7 +5,7 @@
  */
 
 import jsPDF from 'jspdf';
-import { ProgressPhoto, ProgressComparison, ProgressReport } from '@/types/progress';
+import { ProgressReport } from '@/types/progress';
 import { formatTimeElapsed } from './metric-calculator';
 
 /**
