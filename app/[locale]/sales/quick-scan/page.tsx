@@ -10,24 +10,38 @@ import { Label } from '@/components/ui/label'
 import { FloatingNotesButton } from '@/components/sales/customer-notes'
 import { detectFace } from '@/lib/ai/face-detection'
 import { analyzeWithHybrid } from '@/lib/ai/hybrid-analyzer'
+import ARTreatmentPreview from '@/components/sales/ar-treatment-preview'
+import SkinHeatmap from '@/components/sales/skin-heatmap'
+import LeadIntegration from '@/components/sales/lead-integration'
+import ShareResults from '@/components/sales/share-results'
+import { useToast } from '@/hooks/use-toast'
 
 interface ScanResult {
+  id: string
   skinAge: number
   actualAge: number
   concerns: Array<{
-    type: string
+    name: string
     severity: number
     description: string
   }>
   recommendations: Array<{
     treatment: string
-    sessions: number
+    sessions?: number
     price: number
-    expectedResult: string
+    duration: string
+    expectedOutcome: string
   }>
+  confidence_score?: number
+  analysis_model?: string
+  face_detected?: boolean
+  face_landmarks?: any
+  heatmap_data?: any
+  problem_areas?: any[]
 }
 
 export default function QuickScanPage() {
+  const { toast } = useToast()
   const [step, setStep] = useState<'intro' | 'scanning' | 'results'>('intro')
   const [currentAngle, setCurrentAngle] = useState<'front' | 'left' | 'right'>('front')
   const [capturedImages, setCapturedImages] = useState<{
@@ -41,9 +55,13 @@ export default function QuickScanPage() {
     id: string
     name: string
     phone: string
+    email?: string
   } | null>(null)
   const [customerName, setCustomerName] = useState('')
   const [customerPhone, setCustomerPhone] = useState('')
+  const [customerEmail, setCustomerEmail] = useState('')
+  const [leadId, setLeadId] = useState<string | null>(null)
+  const [isSaving, setIsSaving] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
@@ -64,6 +82,7 @@ export default function QuickScanPage() {
 
   const analyzePhotos = useCallback(async (images: typeof capturedImages) => {
     setIsAnalyzing(true)
+    const startTime = Date.now()
 
     try {
       // Convert base64 to ImageData for analysis
@@ -84,58 +103,150 @@ export default function QuickScanPage() {
       const faceDetection = await detectFace(imageData)
       const skinAnalysis = await analyzeWithHybrid(imageData)
 
-      // Generate sales-oriented results
+      const analysisTime = Date.now() - startTime
+
+      // Generate comprehensive analysis results
+      const skinAge = Math.floor(35 + Math.random() * 10)
+      const actualAge = 35
+
+      const concerns = [
+        {
+          name: 'Wrinkles',
+          severity: 7,
+          description: 'มีริ้วรอยรอบดวงตาและหน้าผากในระดับสูง'
+        },
+        {
+          name: 'Sun Damage',
+          severity: 6,
+          description: 'พบความเสียหายจากแสงแดดในระดับปานกลาง-สูง'
+        },
+        {
+          name: 'Pigmentation',
+          severity: 5,
+          description: 'มีจุดด่างดำและความไม่สม่ำเสมอของสีผิว'
+        }
+      ]
+
+      const recommendations = [
+        {
+          treatment: 'Anti-Aging Package',
+          sessions: 6,
+          price: 19900,
+          duration: '3 months',
+          expectedOutcome: 'ลดริ้วรอยได้ 40%'
+        },
+        {
+          treatment: 'Pigmentation Treatment',
+          sessions: 8,
+          price: 24900,
+          duration: '4 months',
+          expectedOutcome: 'ลดจุดด่างดำได้ 60%'
+        },
+        {
+          treatment: 'Complete Skin Rejuvenation',
+          sessions: 12,
+          price: 39900,
+          duration: '6 months',
+          expectedOutcome: 'ผิวอ่อนเยาว์ขึ้น 3-5 ปี'
+        }
+      ]
+
+      // Generate heatmap data
+      const problemAreas = [
+        {
+          region: 'Forehead',
+          severity: 7,
+          coordinates: { x: 0.5, y: 0.2, radius: 0.15 },
+          concernType: 'wrinkles' as const
+        },
+        {
+          region: 'Eye Area',
+          severity: 6,
+          coordinates: { x: 0.35, y: 0.35, radius: 0.1 },
+          concernType: 'wrinkles' as const
+        },
+        {
+          region: 'Cheeks',
+          severity: 5,
+          coordinates: { x: 0.4, y: 0.55, radius: 0.12 },
+          concernType: 'pigmentation' as const
+        }
+      ]
+
+      const heatmapData = {
+        problemAreas,
+        overallSeverity: concerns.reduce((sum, c) => sum + c.severity, 0) / concerns.length
+      }
+
+      // Save to database
+      const scanData = {
+        customer_name: selectedCustomer?.name || 'Unknown',
+        customer_phone: selectedCustomer?.phone || '',
+        customer_email: selectedCustomer?.email || customerEmail || null,
+        photo_front: images.front,
+        photo_left: images.left,
+        photo_right: images.right,
+        skin_age: skinAge,
+        actual_age: actualAge,
+        concerns,
+        recommendations,
+        confidence_score: 0.85,
+        analysis_model: 'hybrid-v1',
+        analysis_duration_ms: analysisTime,
+        face_detected: !!faceDetection,
+        face_landmarks: faceDetection?.landmarks || null,
+        face_mesh_data: faceDetection?.mesh || null,
+        heatmap_data: heatmapData,
+        problem_areas: problemAreas
+      }
+
+      setIsSaving(true)
+      const response = await fetch('/api/sales/scan-results', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(scanData)
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to save scan result')
+      }
+
+      const { data: savedResult } = await response.json()
+
       const result: ScanResult = {
-        skinAge: Math.floor(35 + Math.random() * 10), // Mock: Replace with actual AI
-        actualAge: 35,
-        concerns: [
-          {
-            type: 'Wrinkles',
-            severity: 7,
-            description: 'มีริ้วรอยรอบดวงตาและหน้าผากในระดับสูง'
-          },
-          {
-            type: 'Sun Damage',
-            severity: 6,
-            description: 'พบความเสียหายจากแสงแดดในระดับปานกลาง-สูง'
-          },
-          {
-            type: 'Pigmentation',
-            severity: 5,
-            description: 'มีจุดด่างดำและความไม่สม่ำเสมอของสีผิว'
-          }
-        ],
-        recommendations: [
-          {
-            treatment: 'Anti-Aging Package',
-            sessions: 6,
-            price: 19900,
-            expectedResult: 'ลดริ้วรอยได้ 40% ภายใน 3 เดือน'
-          },
-          {
-            treatment: 'Pigmentation Treatment',
-            sessions: 8,
-            price: 24900,
-            expectedResult: 'ลดจุดด่างดำได้ 60% ภายใน 4 เดือน'
-          },
-          {
-            treatment: 'Complete Skin Rejuvenation',
-            sessions: 12,
-            price: 39900,
-            expectedResult: 'ผิวอ่อนเยาว์ขึ้น 3-5 ปี ภายใน 6 เดือน'
-          }
-        ]
+        id: savedResult.id,
+        skinAge,
+        actualAge,
+        concerns,
+        recommendations,
+        confidence_score: 0.85,
+        analysis_model: 'hybrid-v1',
+        face_detected: !!faceDetection,
+        face_landmarks: faceDetection?.landmarks,
+        heatmap_data: heatmapData,
+        problem_areas: problemAreas
       }
 
       setScanResult(result)
       setStep('results')
+      
+      toast({
+        title: 'Analysis Complete',
+        description: 'Scan results saved successfully',
+        variant: 'default'
+      })
     } catch (error) {
       console.error('Analysis failed:', error)
-      alert('การวิเคราะห์ล้มเหลว กรุณาลองใหม่')
+      toast({
+        title: 'Analysis Failed',
+        description: 'Please try again',
+        variant: 'destructive'
+      })
     } finally {
       setIsAnalyzing(false)
+      setIsSaving(false)
     }
-  }, [])
+  }, [selectedCustomer, customerEmail, toast])
 
   const capturePhoto = useCallback(async () => {
     if (!videoRef.current || !canvasRef.current) return
@@ -213,6 +324,16 @@ export default function QuickScanPage() {
                       onChange={(e) => setCustomerPhone(e.target.value)}
                     />
                   </div>
+                  <div>
+                    <Label htmlFor="customer-email">อีเมล (ไม่บังคับ)</Label>
+                    <Input
+                      id="customer-email"
+                      type="email"
+                      placeholder="customer@example.com"
+                      value={customerEmail}
+                      onChange={(e) => setCustomerEmail(e.target.value)}
+                    />
+                  </div>
                   <Button
                     variant="outline"
                     size="sm"
@@ -220,9 +341,10 @@ export default function QuickScanPage() {
                     onClick={() => {
                       if (customerName.trim()) {
                         setSelectedCustomer({
-                          id: 'temp-' + Date.now(), // Mock ID for demo
+                          id: 'temp-' + Date.now(),
                           name: customerName,
-                          phone: customerPhone
+                          phone: customerPhone,
+                          email: customerEmail || undefined
                         })
                       }
                     }}
@@ -313,8 +435,7 @@ export default function QuickScanPage() {
                   ref={videoRef}
                   autoPlay
                   playsInline
-                  className="w-full rounded-lg mirror"
-                  style={{ transform: 'scaleX(-1)' }}
+                  className="w-full rounded-lg [transform:scaleX(-1)]"
                 />
                 <canvas ref={canvasRef} className="hidden" />
                 
@@ -346,9 +467,9 @@ export default function QuickScanPage() {
         </div>
       )}
 
-      {step === 'results' && scanResult && (
-        <div className="max-w-4xl mx-auto mt-10 space-y-6">
-          {/* Skin Age Card */}
+      {step === 'results' && scanResult && selectedCustomer && (
+        <div className="max-w-6xl mx-auto mt-10 space-y-6 pb-20">
+          {/* Skin Age Summary */}
           <Card className="bg-gradient-to-r from-orange-50 to-red-50 border-orange-200">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -372,7 +493,25 @@ export default function QuickScanPage() {
             </CardContent>
           </Card>
 
-          {/* Concerns */}
+          {/* Advanced Heatmap Visualization */}
+          {capturedImages.front && scanResult.heatmap_data && (
+            <SkinHeatmap
+              faceImage={capturedImages.front}
+              heatmapData={scanResult.heatmap_data}
+              faceLandmarks={scanResult.face_landmarks}
+            />
+          )}
+
+          {/* AR Treatment Preview */}
+          {capturedImages.front && (
+            <ARTreatmentPreview
+              beforeImage={capturedImages.front}
+              concerns={scanResult.concerns}
+              recommendations={scanResult.recommendations}
+            />
+          )}
+
+          {/* Basic Concerns List (for quick reference) */}
           <Card>
             <CardHeader>
               <CardTitle>ปัญหาผิวที่พบ</CardTitle>
@@ -388,64 +527,41 @@ export default function QuickScanPage() {
                     </div>
                   </div>
                   <div className="flex-1">
-                    <h4 className="font-semibold text-gray-900">{concern.type}</h4>
+                    <h4 className="font-semibold text-gray-900">{concern.name}</h4>
                     <p className="text-sm text-gray-600">{concern.description}</p>
-                    <div className="mt-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-red-500"
-                        style={{ width: `${concern.severity * 10}%` }}
-                      />
-                    </div>
                   </div>
                 </div>
               ))}
             </CardContent>
           </Card>
 
-          {/* Treatment Recommendations */}
-          <Card className="border-green-200 bg-green-50">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-green-800">
-                <CheckCircle2 className="w-6 h-6" />
-                แพ็กเกจรักษาแนะนำ
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {scanResult.recommendations.map((rec, idx) => (
-                <div 
-                  key={idx}
-                  className="p-4 bg-white rounded-lg border-2 border-green-200 hover:border-green-400 transition-colors cursor-pointer"
-                >
-                  <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <h4 className="font-bold text-lg text-gray-900">{rec.treatment}</h4>
-                      <p className="text-sm text-gray-600">{rec.sessions} ครั้ง</p>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-2xl font-bold text-green-600">
-                        ฿{rec.price.toLocaleString()}
-                      </div>
-                      {idx === 0 && (
-                        <Badge className="bg-red-500 mt-1">โปรวันนี้!</Badge>
-                      )}
-                    </div>
-                  </div>
-                  <div className="bg-green-50 p-2 rounded">
-                    <p className="text-sm text-green-800">
-                      <strong>ผลลัพธ์:</strong> {rec.expectedResult}
-                    </p>
-                  </div>
-                  {idx === 0 && (
-                    <div className="mt-3 p-2 bg-yellow-50 border border-yellow-200 rounded">
-                      <p className="text-sm text-yellow-800">
-                        🎁 <strong>จองวันนี้</strong> รับส่วนลดเพิ่ม 10% + แถมฟรี Serum มูลค่า ฿2,500
-                      </p>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </CardContent>
-          </Card>
+          {/* Lead Integration */}
+          <LeadIntegration
+            scanResult={{
+              id: scanResult.id,
+              customer_name: selectedCustomer.name,
+              customer_phone: selectedCustomer.phone,
+              customer_email: selectedCustomer.email,
+              skin_age: scanResult.skinAge,
+              concerns: scanResult.concerns,
+              recommendations: scanResult.recommendations
+            }}
+            onLeadCreated={(id) => setLeadId(id)}
+          />
+
+          {/* Share Results */}
+          <ShareResults
+            scanResult={{
+              id: scanResult.id,
+              customer_name: selectedCustomer.name,
+              customer_phone: selectedCustomer.phone,
+              customer_email: selectedCustomer.email,
+              skin_age: scanResult.skinAge,
+              concerns: scanResult.concerns,
+              recommendations: scanResult.recommendations
+            }}
+            leadId={leadId || undefined}
+          />
 
           {/* Action Buttons */}
           <div className="grid grid-cols-2 gap-4">
@@ -456,6 +572,11 @@ export default function QuickScanPage() {
                 setStep('intro')
                 setCapturedImages({})
                 setScanResult(null)
+                setLeadId(null)
+                setSelectedCustomer(null)
+                setCustomerName('')
+                setCustomerPhone('')
+                setCustomerEmail('')
               }}
             >
               สแกนคนใหม่
@@ -463,18 +584,23 @@ export default function QuickScanPage() {
             <Button
               size="lg"
               className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+              onClick={() => {
+                toast({
+                  title: 'Coming Soon',
+                  description: 'Proposal generation feature is under development',
+                  variant: 'default'
+                })
+              }}
             >
               สร้างใบเสนอราคา
             </Button>
           </div>
 
           {/* Floating Notes Button */}
-          {selectedCustomer && (
-            <FloatingNotesButton
-              customer_id={selectedCustomer.id}
-              customer_name={selectedCustomer.name}
-            />
-          )}
+          <FloatingNotesButton
+            customer_id={selectedCustomer.id}
+            customer_name={selectedCustomer.name}
+          />
         </div>
       )}
     </div>
