@@ -118,27 +118,25 @@ export function EmailComposer({
     setSending(true)
 
     try {
-      // Track email
-      const response = await fetch("/api/sales/email-tracking", {
+      // Send email via Resend service
+      const response = await fetch("/api/sales/send-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          lead_id: leadId,
-          template_id: selectedTemplate?.id,
+          to: recipientEmail,
           subject,
-          content,
-          recipient_email: recipientEmail,
-          status: "sent",
-          sent_at: new Date().toISOString(),
+          html: content,
+          template_id: selectedTemplate?.id || null,
+          variables,
+          lead_id: leadId,
         }),
       })
 
-      if (!response.ok) {
-        throw new Error("Failed to track email")
-      }
+      const data = await response.json()
 
-      // TODO: Actually send email via email service (Resend/SendGrid)
-      // For now, just track it in database
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to send email")
+      }
 
       toast.success("ส่งอีเมลสำเร็จ!", {
         description: `ส่งไปยัง ${recipientEmail}`,
@@ -148,7 +146,9 @@ export function EmailComposer({
       onClose?.()
     } catch (error) {
       console.error("Failed to send email:", error)
-      toast.error("ไม่สามารถส่งอีเมลได้")
+      toast.error("ไม่สามารถส่งอีเมลได้", {
+        description: error instanceof Error ? error.message : "กรุณาลองใหม่อีกครั้ง"
+      })
     } finally {
       setSending(false)
     }
