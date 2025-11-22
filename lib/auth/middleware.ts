@@ -178,7 +178,7 @@ export function hasPermission(user: AuthenticatedUser, permission: string): bool
 /**
  * Extract user ID from request (for backward compatibility)
  */
-export async function getUserId(req: NextRequest): Promise<string | null> {
+export async function getUserId(_req: NextRequest): Promise<string | null> {
   try {
     const supabase = await createClient();
     const {

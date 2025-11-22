@@ -21,14 +21,32 @@ export async function GET(request: NextRequest) {
     const templateId = searchParams.get('template_id')
     const category = searchParams.get('category')
 
+    if (templateId) {
+      const { data, error } = await supabase
+        .from('sales_email_templates')
+        .select('*')
+        .eq('id', templateId)
+        .single()
+      
+      if (error) {
+        console.error('[email-templates] Error fetching template:', error)
+        return NextResponse.json(
+          { error: "Failed to fetch email template" },
+          { status: 500 }
+        )
+      }
+      return NextResponse.json({
+        templates: data,
+        timestamp: new Date().toISOString()
+      })
+    }
+
     let query = supabase
       .from('sales_email_templates')
       .select('*')
       .order('name', { ascending: true })
 
-    if (templateId) {
-      query = query.eq('id', templateId).single()
-    } else if (category) {
+    if (category) {
       query = query.eq('category', category)
     }
 

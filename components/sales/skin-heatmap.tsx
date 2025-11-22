@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   AlertCircle, 
   TrendingUp, 
@@ -118,7 +118,7 @@ export default function SkinHeatmap({ faceImage, heatmapData, faceLandmarks }: S
     img.src = faceImage;
   };
 
-  const getHeatmapColor = (type: string, severity: number): string => {
+  const getHeatmapColor = (type: string, _severity: number): string => {
     const colors: Record<string, string> = {
       wrinkles: '#9333EA', // Purple
       pigmentation: '#D97706', // Amber

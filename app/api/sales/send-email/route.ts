@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@/lib/supabase/server"
-import { sendEmail, sendTemplateEmail } from "@/lib/email/resend-service"
+import { sendEmail } from "@/lib/email/resend-service"
 
 export const dynamic = 'force-dynamic'
 
@@ -89,15 +89,14 @@ export async function POST(request: NextRequest) {
     let result
     if (template_id && Object.keys(variables).length > 0) {
       // Send with template variables
-      result = await sendTemplateEmail({
+      result = await sendEmail({
         to,
         subject: finalSubject,
-        templateContent: finalHtml,
-        variables,
+        html: finalHtml,
         cc,
         bcc,
         replyTo: reply_to
-      })
+      });
     } else {
       // Send plain email
       result = await sendEmail({

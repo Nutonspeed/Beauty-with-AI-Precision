@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import {
   Video,
   VideoOff,
@@ -69,7 +69,7 @@ export function VideoCallModal({
   const [videoEnabled, setVideoEnabled] = useState(true)
   const [audioEnabled, setAudioEnabled] = useState(true)
   const [callDuration, setCallDuration] = useState(0)
-  const [connectionQuality, setConnectionQuality] = useState<"excellent" | "good" | "poor">("good")
+  const [connectionQuality, _setConnectionQuality] = useState<"excellent" | "good" | "poor">("good")
 
   useEffect(() => {
     if (open && sessionId) {

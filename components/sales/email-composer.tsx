@@ -16,7 +16,6 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Loader2, Mail, Send, Eye, X, Sparkles } from "lucide-react"
 import { toast } from "sonner"
-import { createClient } from "@/lib/supabase/client"
 
 interface EmailTemplate {
   id: string
@@ -55,8 +54,6 @@ export function EmailComposer({
   const [subject, setSubject] = useState("")
   const [content, setContent] = useState("")
   const [variables, setVariables] = useState<Record<string, string>>({})
-
-  const supabase = createClient()
 
   // Load templates
   useEffect(() => {

@@ -28,21 +28,36 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    let query = supabase
+    if (emailId) {
+      const { data, error } = await supabase
+        .from('sales_email_tracking')
+        .select(`
+          *,
+          lead:sales_leads(id, name, email, phone),
+          sender:users!sales_email_tracking_sender_id_fkey(id, email, full_name)
+        `)
+        .eq('id', emailId)
+        .single()
+      
+      if (error) {
+        console.error('[email-tracking] Error fetching email:', error)
+        return NextResponse.json(
+          { error: "Failed to fetch email tracking data" },
+          { status: 500 }
+        )
+      }
+      return NextResponse.json(data)
+    }
+
+    const { data, error } = await supabase
       .from('sales_email_tracking')
       .select(`
         *,
         lead:sales_leads(id, name, email, phone),
         sender:users!sales_email_tracking_sender_id_fkey(id, email, full_name)
       `)
-
-    if (emailId) {
-      query = query.eq('id', emailId).single()
-    } else if (leadId) {
-      query = query.eq('lead_id', leadId).order('sent_at', { ascending: false })
-    }
-
-    const { data, error } = await query
+      .eq('lead_id', leadId!)
+      .order('sent_at', { ascending: false })
 
     if (error) {
       console.error('[email-tracking] Error fetching emails:', error)

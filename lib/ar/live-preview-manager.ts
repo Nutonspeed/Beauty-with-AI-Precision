@@ -436,7 +436,7 @@ export class LiveARPreviewManager {
     if (!this.ctx || !this.lastFaceResult) return
 
     // Blur forehead area to simulate botox effect
-    const { landmarks, boundingBox } = this.lastFaceResult
+    const { landmarks: _landmarks, boundingBox } = this.lastFaceResult
     
     // Get forehead region (top 1/3 of face)
     const foreheadY = boundingBox.y
