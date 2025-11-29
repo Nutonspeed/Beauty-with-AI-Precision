@@ -252,5 +252,230 @@
     "deleteSuccess": "Deleted successfully",
     "deleteError": "Failed to delete",
     "deleteConfirm": "Are you sure you want to delete this item?"
+  },
+  "founders-clone": {
+    "meta": {
+      "title": "ClinicIQ - AI Platform for Aesthetic Clinics",
+      "description": "Elevate your clinic with AI skin analysis, AR Simulator and intelligent CRM"
+    },
+    "nav": {
+      "features": "Features",
+      "howItWorks": "How It Works",
+      "portfolio": "Portfolio",
+      "pricing": "Pricing",
+      "about": "About",
+      "contact": "Contact",
+      "login": "Login",
+      "getStarted": "Get Started"
+    },
+    "hero": {
+      "badge": "#1 AI Platform for Aesthetic Clinics",
+      "title": "Elevate Your",
+      "titleHighlight": "Beauty",
+      "titleEnd": "Clinic with AI",
+      "description": "99.2% accurate AI skin analysis with AR Simulator and complete CRM. Trusted by 150+ leading clinics.",
+      "cta": "Try Free",
+      "demo": "Watch Demo",
+      "stats": {
+        "clinics": "Trusted Clinics",
+        "analyses": "Analyses Done",
+        "accuracy": "Accuracy"
+      }
+    },
+    "trust": {
+      "badge": "Enterprise-Grade Security",
+      "title": "Trusted by leading clinics",
+      "description": "Data security is our top priority. We maintain the highest standards.",
+      "badges": {
+        "hipaa": "HIPAA Compliant",
+        "soc2": "SOC 2 Type II",
+        "pdpa": "PDPA Ready",
+        "gdpr": "GDPR Friendly"
+      }
+    },
+    "services": {
+      "badge": "Powerful Features",
+      "title": "Everything you need to",
+      "titleHighlight": "transform",
+      "description": "Complete AI-powered toolkit for aesthetic clinics. Boost efficiency, sales, and patient experience.",
+      "items": {
+        "aiAnalysis": {
+          "title": "AI Skin Analysis",
+          "description": "Deep learning analyzes 50+ metrics including wrinkles, pores, pigmentation, hydration with medical-grade accuracy.",
+          "stats": "99.2% Accuracy"
+        },
+        "realtime": {
+          "title": "Real-time Detection",
+          "description": "468-point face landmark detection with instant feedback. Complete skin mapping in under 3 seconds.",
+          "stats": "<3s Processing"
+        },
+        "progress": {
+          "title": "Progress Tracking",
+          "description": "Before/after comparisons with quantified data. Track treatment efficacy over time.",
+          "stats": "Visual Timeline"
+        },
+        "ar": {
+          "title": "AR Simulator",
+          "description": "Show patients treatment previews with AR. Increase consultation conversion rates.",
+          "stats": "+35% Conversions"
+        },
+        "security": {
+          "title": "Enterprise Security",
+          "description": "HIPAA, PDPA and SOC 2 compliant. Data encrypted at rest and in transit.",
+          "stats": "HIPAA Compliant"
+        },
+        "reports": {
+          "title": "Instant Reports",
+          "description": "Generate PDF reports with treatment recommendations in one click. Perfect for consultations.",
+          "stats": "1-Click Export"
+        }
+      },
+      "cta": "Try All Features Free"
+    },
+    "howItWorks": {
+      "badge": "Simple Process",
+      "title": "How it works",
+      "description": "Get AI skin analysis in 3 simple steps. No appointments, no waiting.",
+      "steps": {
+        "capture": {
+          "subtitle": "Take a photo",
+          "title": "Capture",
+          "description": "Use our smart camera to capture a clear photo. Auto lighting adjustment. Works with any smartphone.",
+          "features": ["Auto lighting detection", "Face alignment guide", "Quality check"]
+        },
+        "analyze": {
+          "subtitle": "AI processes",
+          "title": "Analyze",
+          "description": "Our medical-grade AI analyzes 50+ skin metrics including wrinkles, pores, pigmentation in seconds.",
+          "features": ["468-point mapping", "50+ metrics", "<3 seconds"]
+        },
+        "results": {
+          "subtitle": "Get insights",
+          "title": "Results",
+          "description": "Receive detailed analysis with heat maps, personalized recommendations, and treatment plans.",
+          "features": ["Visual heat maps", "Treatment plans", "Progress tracking"]
+        }
+      },
+      "cta": "Try It Now — Free",
+      "demo": "Watch Demo"
+    },
+    "roi": {
+      "badge": "ROI Calculator",
+      "title": "Calculate your potential ROI",
+      "description": "See how much additional revenue ClinicIQ can generate for your clinic",
+      "inputs": {
+        "consultations": "Monthly Consultations",
+        "avgTicket": "Avg. Treatment Value (฿)",
+        "conversionRate": "Current Conversion Rate"
+      },
+      "results": {
+        "additionalRevenue": "Additional Monthly Revenue",
+        "conversionImprovement": "Conversion Improvement",
+        "timeSaved": "Time Saved",
+        "roi": "ROI vs Pro Plan"
+      },
+      "cta": "Start Free Trial"
+    },
+    "portfolio": {
+      "badge": "Success Stories",
+      "title": "Trusted by 150+ clinics",
+      "description": "See how leading clinics transformed their business with our platform",
+      "viewAll": "View All Cases"
+    },
+    "testimonials": {
+      "badge": "What Our Clients Say",
+      "title": "Loved by clinics",
+      "titleHighlight": "everywhere"
+    },
+    "pricing": {
+      "badge": "Simple Pricing",
+      "title": "Plans that",
+      "titleHighlight": "scale with you",
+      "description": "Start free, upgrade when ready. No hidden fees, cancel anytime.",
+      "monthly": "Monthly",
+      "yearly": "Yearly",
+      "save": "Save 17%",
+      "plans": {
+        "starter": {
+          "name": "Starter",
+          "description": "Perfect for trying out ClinicIQ",
+          "price": "Free",
+          "cta": "Start Free"
+        },
+        "pro": {
+          "name": "Professional",
+          "description": "For growing aesthetic clinics",
+          "price": "2,990",
+          "period": "month",
+          "cta": "Start 14-day Trial"
+        },
+        "enterprise": {
+          "name": "Enterprise",
+          "description": "For clinic chains & hospitals",
+          "price": "Contact Sales",
+          "cta": "Contact Sales"
+        }
+      },
+      "features": {
+        "analyses": "AI Analyses",
+        "metrics": "Skin Metrics",
+        "support": "Support",
+        "users": "Users",
+        "ar": "AR Visualization",
+        "crm": "CRM Dashboard",
+        "api": "API Access",
+        "whitelabel": "White-label"
+      }
+    },
+    "about": {
+      "badge": "Our Story",
+      "title": "Revolutionizing",
+      "titleHighlight": "aesthetic care",
+      "description": "We're on a mission to empower aesthetic clinics with AI technology that delivers exceptional patient experiences and business results.",
+      "story": "Building the future of beauty tech",
+      "values": {
+        "patient": {
+          "title": "Patient First",
+          "description": "Every feature is designed with patient outcomes in mind"
+        },
+        "security": {
+          "title": "Trust & Security",
+          "description": "Enterprise-grade security for sensitive medical data"
+        },
+        "innovation": {
+          "title": "Innovation",
+          "description": "Pushing boundaries with cutting-edge AI technology"
+        },
+        "accessibility": {
+          "title": "Accessibility",
+          "description": "Making advanced aesthetics accessible to everyone"
+        }
+      }
+    },
+    "team": {
+      "badge": "Our Team",
+      "title": "Meet the",
+      "titleHighlight": "experts",
+      "description": "A world-class team combining AI expertise with deep healthcare experience",
+      "cta": {
+        "title": "Join Our Mission",
+        "description": "We're looking for talented individuals passionate about transforming healthcare with AI",
+        "button": "View Open Positions"
+      }
+    },
+    "footer": {
+      "cta": {
+        "badge": "Start Your Journey",
+        "title": "Ready to transform your clinic?",
+        "description": "Join 150+ clinics already using ClinicIQ to deliver exceptional patient care",
+        "trial": "Start Free Trial",
+        "demo": "Book a Demo"
+      },
+      "product": "Product",
+      "company": "Company",
+      "resources": "Resources",
+      "legal": "Legal",
+      "copyright": "All rights reserved"
+    }
   }
 }

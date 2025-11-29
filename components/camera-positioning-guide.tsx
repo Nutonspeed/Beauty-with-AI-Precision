@@ -21,7 +21,7 @@ export interface CameraPositioningGuideProps {
 
 export function CameraPositioningGuide({
   videoStream,
-  onPositionValid,
+  onPositionValid: _onPositionValid,
   showOverlay = true,
 }: CameraPositioningGuideProps) {
   const videoRef = useRef<HTMLVideoElement>(null)

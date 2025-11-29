@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
+import { useAuth } from "@/lib/auth/context"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -14,7 +14,7 @@ import type { UserProfileData, UpdateProfileRequest } from "@/types/api"
 import { useLocalizePath } from "@/lib/i18n/locale-link"
 
 export function UserProfileForm() {
-  const { data: _session, status } = useSession()
+  const { user, loading } = useAuth()
   const router = useRouter()
   const lp = useLocalizePath()
   const [_profile, setProfile] = useState<UserProfileData | null>(null)
@@ -32,15 +32,16 @@ export function UserProfileForm() {
   const [theme, setTheme] = useState<string>('system')
 
   useEffect(() => {
-    if (status === 'unauthenticated') {
+    if (!loading && !user) {
       router.push(lp('/auth/login?callbackUrl=/profile'))
       return
     }
 
-    if (status === 'authenticated') {
+    if (!loading && user) {
       loadProfile()
     }
-  }, [status, router])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, user, router])
 
   const loadProfile = async () => {
     try {
@@ -122,7 +123,7 @@ export function UserProfileForm() {
     )
   }
 
-  if (status === 'loading' || isLoading) {
+  if (loading || isLoading) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />

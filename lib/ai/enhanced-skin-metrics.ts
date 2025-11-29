@@ -397,7 +397,7 @@ export class EnhancedMetricsCalculator {
    * วิเคราะห์สีผิว
    */
   private async analyzeSkinTone(imageData: ImageData): Promise<EnhancedMetricsResult['skinTone']> {
-    const { data, width, height } = imageData
+    const { data, width: _width, height: _height } = imageData
     
     // Calculate average skin tone
     let totalR = 0, totalG = 0, totalB = 0

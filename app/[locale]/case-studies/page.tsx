@@ -4,15 +4,17 @@ import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { useLanguage } from "@/lib/i18n/language-context"
 import Link from "next/link"
-import { useEffect, useMemo } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { usageTracker } from "@/lib/analytics/usage-tracker"
 import { getCaseStudies } from "../../../data/case-studies"
 
 export default function CaseStudiesPage() {
   const { language } = useLanguage()
   const isTH = language === "th"
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
     usageTracker.trackPageView("case-studies")
   }, [])
 

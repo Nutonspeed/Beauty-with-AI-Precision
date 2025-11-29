@@ -1,6 +1,5 @@
 "use client";
-import { useMemo } from "react";
-import { useLocale } from "next-intl";
+import { useMemo, useState, useEffect } from "react";
 import { locales, type Locale, defaultLocale } from "@/i18n/request";
 
 function normalizePath(path: string): string {
@@ -20,12 +19,18 @@ export function localizePath(path: string, locale: Locale = defaultLocale): stri
 }
 
 export function useLocalizePath() {
-  let locale: Locale;
-  try {
-    locale = useLocale() as Locale;
-  } catch {
-    locale = defaultLocale;
-  }
+  const [locale, setLocale] = useState<Locale>(defaultLocale);
+  
+  useEffect(() => {
+    // Get locale from URL path on client side
+    if (typeof window !== 'undefined') {
+      const pathLocale = window.location.pathname.split('/')[1] as Locale;
+      if ((locales as readonly string[]).includes(pathLocale)) {
+        setLocale(pathLocale);
+      }
+    }
+  }, []);
+  
   // Memoize a small wrapper to avoid recreating on every render
   return useMemo(() => {
     return (path: string) => localizePath(path, locale);

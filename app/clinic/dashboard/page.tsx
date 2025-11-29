@@ -19,19 +19,41 @@ import Link from "next/link"
 export default async function ClinicDashboardPage() {
   console.log('[ClinicDashboard] 📍 Page rendering...')
   
-  // ✅ Allow clinic_owner and clinic_staff
-  const { user, clinicId } = await checkUserRole(["clinic_owner", "clinic_staff", "admin"])
+  try {
+    // ✅ Allow clinic_owner and clinic_staff
+    const { user, clinicId } = await checkUserRole(["clinic_owner", "clinic_staff", "admin"])
 
-  if (!user || !clinicId) {
-    console.log('[ClinicDashboard] ❌ No user/clinic, redirecting to login')
-    redirect("/auth/login")
-  }
-  
-  console.log('[ClinicDashboard] ✅ User authorized:', user.email, 'Clinic:', clinicId)
+    if (!user || !clinicId) {
+      console.log('[ClinicDashboard] ❌ No user/clinic, redirecting to login')
+      redirect("/auth/login")
+    }
+    
+    console.log('[ClinicDashboard] ✅ User authorized:', user.email, 'Clinic:', clinicId)
+
+    // Fetch dashboard data
+    let dashboardData = null
+    try {
+      // Simulate data fetching - replace with actual data fetching logic
+      dashboardData = {
+        totalCustomers: 156,
+        todayAppointments: 12,
+        monthlyRevenue: 458900,
+        activeStaff: 8
+      }
+      console.log('[ClinicDashboard] ✅ Data fetched successfully')
+    } catch (dataError) {
+      console.error('[ClinicDashboard] ⚠️ Data fetch error:', dataError)
+      dashboardData = {
+        totalCustomers: 0,
+        todayAppointments: 0,
+        monthlyRevenue: 0,
+        activeStaff: 0
+      }
+    }
 
   return (
     <PageLayout>
-      <div className="flex min-h-screen flex-col bg-muted/30">
+      <div className="md:flex min-h-screen flex-col bg-muted/30">
         <Header />
 
       <main className="flex-1">
@@ -288,4 +310,8 @@ export default async function ClinicDashboardPage() {
       </div>
     </PageLayout>
   )
+  } catch (error) {
+    console.error('[ClinicDashboard] ❌ Critical error:', error)
+    redirect("/auth/login?error=dashboard_failed")
+  }
 }

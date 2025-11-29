@@ -5,14 +5,31 @@
  * งาน 4: Added Retry Logic with User Feedback
  */
 
-import { getSkinConcernDetector } from "./models/skin-concern-detector"
-import { getMediaPipeDetector } from "./mediapipe-detector"
-import {
-  retryWithBackoff,
-  MEDIAPIPE_RETRY_CONFIG,
-  createUserErrorMessage,
-  logRetryStats,
-} from "./retry-utils"
+// Use dynamic imports to avoid module resolution issues
+let skinConcernDetector: any = null;
+let mediaPipeDetector: any = null;
+let retryUtils: any = null;
+
+async function getSkinConcernDetector() {
+  if (!skinConcernDetector) {
+    skinConcernDetector = await import("./models/skin-concern-detector");
+  }
+  return skinConcernDetector;
+}
+
+async function getMediaPipeDetector() {
+  if (!mediaPipeDetector) {
+    mediaPipeDetector = await import("./mediapipe-detector");
+  }
+  return mediaPipeDetector;
+}
+
+async function getRetryUtils() {
+  if (!retryUtils) {
+    retryUtils = await import("./retry-utils");
+  }
+  return retryUtils;
+}
 
 export interface FaceLandmark {
   x: number
@@ -22,6 +39,7 @@ export interface FaceLandmark {
 
 export interface FaceDetectionResult {
   landmarks: FaceLandmark[]
+  mesh?: number[][]  // Face mesh data (optional)
   boundingBox: {
     xMin: number
     yMin: number
@@ -65,7 +83,8 @@ export async function detectFace(imageData: ImageData): Promise<FaceDetectionRes
     throw new Error('detectFace() is browser-only and cannot run on the server')
   }
 
-  const result = await retryWithBackoff(
+  const retryModule = await getRetryUtils()
+  const result = await retryModule.retryWithBackoff(
     async () => {
       // Convert ImageData to HTMLImageElement for MediaPipe
       const canvas = document.createElement("canvas")
@@ -88,7 +107,8 @@ export async function detectFace(imageData: ImageData): Promise<FaceDetectionRes
       })
 
       // Use real MediaPipe detector
-      const detector = getMediaPipeDetector()
+      const mediaPipeModule = await getMediaPipeDetector()
+      const detector = mediaPipeModule.getMediaPipeDetector()
       await detector.initialize()
 
       const detectionResult = await detector.detectFace(img)
@@ -102,7 +122,7 @@ export async function detectFace(imageData: ImageData): Promise<FaceDetectionRes
       const height = imageData.height
 
       return {
-        landmarks: detectionResult.landmarks.map((lm) => ({
+        landmarks: detectionResult.landmarks.map((lm: any) => ({
           x: lm.x * width,
           y: lm.y * height,
           z: lm.z,
@@ -118,15 +138,15 @@ export async function detectFace(imageData: ImageData): Promise<FaceDetectionRes
       }
     },
     {
-      ...MEDIAPIPE_RETRY_CONFIG,
-      onRetry: (attempt, error) => {
+      ...retryModule.MEDIAPIPE_RETRY_CONFIG,
+      onRetry: (attempt: any, error: any) => {
         console.warn(`🔄 Retrying face detection (attempt ${attempt}): ${error.message}`)
       },
     }
   )
 
   // Log retry statistics
-  logRetryStats("Face Detection", result)
+  retryModule.logRetryStats("Face Detection", result)
 
   if (result.success && result.data) {
     return result.data
@@ -134,7 +154,7 @@ export async function detectFace(imageData: ImageData): Promise<FaceDetectionRes
 
   // Show user-friendly error message
   if (result.error) {
-    const userMessage = createUserErrorMessage("การตรวจจับใบหนี้า", result.error, result.attempts)
+    const userMessage = retryModule.createUserErrorMessage("การตรวจจับใบหนี้า", result.error, result.attempts)
     console.error(userMessage)
   }
 
@@ -180,7 +200,8 @@ export async function analyzeSkinConcerns(
   imageData: ImageData,
   faceResult: FaceDetectionResult,
 ): Promise<SkinConcernArea[]> {
-  const result = await retryWithBackoff(
+  const retryModule = await getRetryUtils()
+  const result = await retryModule.retryWithBackoff(
     async () => {
       // Get detector instance (initializes models if needed)
       const detector = await getSkinConcernDetector()
@@ -225,18 +246,18 @@ export async function analyzeSkinConcerns(
     {
       maxAttempts: 2,
       delayMs: 500,
-      shouldRetry: (error) => {
+      shouldRetry: (error: any) => {
         const msg = error.message.toLowerCase()
         return msg.includes("detect") || msg.includes("model") || msg.includes("load")
       },
-      onRetry: (attempt, error) => {
+      onRetry: (attempt: any, error: any) => {
         console.warn(`🔄 Retrying skin analysis (attempt ${attempt}): ${error.message}`)
       },
     }
   )
 
   // Log retry statistics
-  logRetryStats("Skin Analysis", result)
+  retryModule.logRetryStats("Skin Analysis", result)
 
   if (result.success && result.data) {
     return result.data
@@ -244,7 +265,7 @@ export async function analyzeSkinConcerns(
 
   // Show user-friendly error message
   if (result.error) {
-    const userMessage = createUserErrorMessage("การวิเคราะห์ผิว", result.error, result.attempts)
+    const userMessage = retryModule.createUserErrorMessage("การวิเคราะห์ผิว", result.error, result.attempts)
     console.error(userMessage)
   }
 

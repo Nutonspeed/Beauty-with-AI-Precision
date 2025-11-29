@@ -41,11 +41,6 @@ export default function ARTreatmentPreview({
   const [selectedTreatment, setSelectedTreatment] = useState(0);
   const [afterImage, setAfterImage] = useState<string>('');
 
-  // Generate simulated "after" image based on concerns
-  useEffect(() => {
-    generateAfterImage();
-  }, [beforeImage, selectedTreatment, concerns]);
-
   const generateAfterImage = () => {
     // Create canvas to apply visual improvements
     const img = new Image();
@@ -104,6 +99,13 @@ export default function ARTreatmentPreview({
     };
     img.src = beforeImage;
   };
+
+  // Generate after image when dependencies change
+   
+  useEffect(() => {
+    generateAfterImage();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [beforeImage, selectedTreatment, concerns]);
 
   // Auto-animation effect
   useEffect(() => {

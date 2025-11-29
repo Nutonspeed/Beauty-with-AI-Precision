@@ -1,10 +1,9 @@
-import * as Sentry from '@sentry/nextjs'
+// instrumentation.ts - Safe Sentry initialization with lazy loading
+// Only loads Sentry SDK when a valid DSN is configured
 
-// Simple DSN validation: treat placeholder or empty as disabled
-function isValidDsn(dsn?: string) {
+function isValidDsn(dsn?: string): boolean {
   if (!dsn) return false
   if (dsn.includes('your-sentry-dsn') || dsn.startsWith('https://your-sentry-dsn')) return false
-  // Very basic pattern check (not exhaustive)
   return dsn.startsWith('http') && dsn.includes('@sentry.io/')
 }
 
@@ -12,49 +11,58 @@ export async function register() {
   const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN
   const enabled = isValidDsn(dsn)
 
-  // Avoid noisy invalid DSN errors during local dev
+  // Skip Sentry entirely if no valid DSN - prevents OpenTelemetry crash
   if (!enabled) {
     if (process.env.NODE_ENV === 'development') {
-      // Lightweight dev notice without throwing
-      console.warn('[sentry] Disabled (no valid DSN)')
+      console.info('[sentry] Disabled (no valid DSN configured)')
     }
     return
   }
 
-  const common = {
-    dsn,
-    environment: process.env.NODE_ENV,
-    release: process.env.NEXT_PUBLIC_RELEASE || process.env.VERCEL_GIT_COMMIT_SHA,
-    // Keep sample rates conservative until production tuning
-    tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.2 : 1,
-    replaysSessionSampleRate: 0, // disabled by default
-    replaysOnErrorSampleRate: 0.1,
-  }
+  // Only dynamically import Sentry when we have a valid DSN
+  try {
+    const Sentry = await import('@sentry/nextjs')
+    
+    const common = {
+      dsn,
+      environment: process.env.NODE_ENV,
+      release: process.env.NEXT_PUBLIC_RELEASE || process.env.VERCEL_GIT_COMMIT_SHA,
+      tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.2 : 1,
+      replaysSessionSampleRate: 0,
+      replaysOnErrorSampleRate: 0.1,
+    }
 
-  if (process.env.NEXT_RUNTIME === 'nodejs') {
-    Sentry.init({
-      ...common,
-      integrations: [],
-    })
-  }
+    if (process.env.NEXT_RUNTIME === 'nodejs') {
+      Sentry.init({
+        ...common,
+        integrations: [],
+      })
+    }
 
-  if (process.env.NEXT_RUNTIME === 'edge') {
-    Sentry.init({
-      ...common,
-    })
+    if (process.env.NEXT_RUNTIME === 'edge') {
+      Sentry.init({
+        ...common,
+      })
+    }
+  } catch (error) {
+    console.error('[sentry] Failed to initialize:', error)
   }
 }
 
-export const onRequestError = enabledCaptureRequestError()
-
-function enabledCaptureRequestError() {
+// Safe error handler that only uses Sentry when available
+export function onRequestError(error: unknown) {
   const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN
   if (!isValidDsn(dsn)) {
-    return (e: unknown) => {
-      if (process.env.NODE_ENV === 'development') {
-        console.warn('[sentry] captureRequestError skipped (no valid DSN)', e)
-      }
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('[sentry] Error not captured (no valid DSN):', error)
     }
+    return
   }
-  return Sentry.captureRequestError
+  
+  // Dynamically import and use Sentry for error capture
+  import('@sentry/nextjs').then((Sentry) => {
+    Sentry.captureException(error)
+  }).catch(() => {
+    console.error('[sentry] Failed to capture error:', error)
+  })
 }

@@ -8,7 +8,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   use: {
-    baseURL: 'http://localhost:3000',
+    baseURL: 'http://localhost:3004',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },
@@ -34,11 +34,11 @@ export default defineConfig({
       use: { ...devices['iPhone 12'] },
     },
   ],
-  webServer: {
-    // Use development server for testing to avoid production build issues
-    command: 'pnpm dev',
-    url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
-    timeout: 180000,
-  },
+  // webServer disabled - run 'pnpm dev --port 3004' manually before running tests
+  // webServer: {
+  //   command: 'pnpm dev --port 3004',
+  //   url: 'http://localhost:3004',
+  //   reuseExistingServer: true,
+  //   timeout: 180000,
+  // },
 })

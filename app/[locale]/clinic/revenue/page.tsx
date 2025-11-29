@@ -32,7 +32,7 @@ const XAxis = dynamic(() => import('recharts').then(mod => ({ default: mod.XAxis
 const YAxis = dynamic(() => import('recharts').then(mod => ({ default: mod.YAxis })), { ssr: false });
 const CartesianGrid = dynamic(() => import('recharts').then(mod => ({ default: mod.CartesianGrid })), { ssr: false });
 const Tooltip = dynamic(() => import('recharts').then(mod => ({ default: mod.Tooltip })), { ssr: false });
-const Legend = dynamic(() => import('recharts').then(mod => ({ default: mod.Legend })), { ssr: false });
+const Legend = dynamic(() => import('recharts').then(mod => ({ default: (mod as any).Legend })), { ssr: false });
 const ResponsiveContainer = dynamic(() => import('recharts').then(mod => ({ default: mod.ResponsiveContainer })), { ssr: false });
 
 interface RevenueData {
@@ -85,6 +85,7 @@ export default function ClinicRevenuePage() {
     }
 
     loadRevenueData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, authLoading, router, lp, period]);
 
   const loadRevenueData = async () => {
@@ -321,7 +322,7 @@ export default function ClinicRevenuePage() {
                   <YAxis yAxisId="left" tickFormatter={(value) => `฿${(value / 1000).toFixed(0)}k`} />
                   <YAxis yAxisId="right" orientation="right" />
                   <Tooltip
-                    formatter={(value: any, name: string) => {
+                    formatter={(value: any, name: any) => {
                       if (name === 'revenue') return [formatCurrency(value), 'รายได้'];
                       return [value, 'การจอง'];
                     }}

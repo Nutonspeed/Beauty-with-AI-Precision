@@ -87,6 +87,7 @@ export default function LeadsListPage() {
   const router = useRouter()
   const [leads, setLeads] = useState<Lead[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [search, setSearch] = useState("")
   const [statusFilter, setStatusFilter] = useState<LeadStatus | "all">("all")
   const [sourceFilter, setSourceFilter] = useState<LeadSource | "all">("all")
@@ -98,8 +99,28 @@ export default function LeadsListPage() {
     total_pages: 0,
   })
 
+  // Authentication check
+  useEffect(() => {
+    try {
+      const user = localStorage.getItem('user')
+      const token = localStorage.getItem('token')
+      
+      if (!user || !token) {
+        router.push('/auth/login')
+        return
+      }
+      
+      setIsAuthenticated(true)
+    } catch (error) {
+      console.error('[LeadsList] Authentication error:', error)
+      router.push('/auth/login')
+    }
+  }, [router])
+
   // Fetch leads (stabilized for hook deps)
   const fetchLeads = useCallback(async () => {
+    if (!isAuthenticated) return
+    
     setIsLoading(true)
 
     try {
@@ -132,11 +153,13 @@ export default function LeadsListPage() {
     } finally {
       setIsLoading(false)
     }
-  }, [pagination.page, pagination.limit, search, statusFilter, sourceFilter])
+  }, [pagination.page, pagination.limit, search, statusFilter, sourceFilter, isAuthenticated])
 
   useEffect(() => {
-    fetchLeads()
-  }, [fetchLeads])
+    if (isAuthenticated) {
+      fetchLeads()
+    }
+  }, [fetchLeads, isAuthenticated])
 
   // Handle search with debounce
   useEffect(() => {

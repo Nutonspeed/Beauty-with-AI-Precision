@@ -17,7 +17,7 @@ const XAxis = dynamic(() => import('recharts').then(mod => ({ default: mod.XAxis
 const YAxis = dynamic(() => import('recharts').then(mod => ({ default: mod.YAxis })), { ssr: false });
 const CartesianGrid = dynamic(() => import('recharts').then(mod => ({ default: mod.CartesianGrid })), { ssr: false });
 const Tooltip = dynamic(() => import('recharts').then(mod => ({ default: mod.Tooltip })), { ssr: false });
-const Legend = dynamic(() => import('recharts').then(mod => ({ default: mod.Legend })), { ssr: false });
+const Legend = dynamic(() => import('recharts').then(mod => ({ default: (mod as any).Legend })), { ssr: false });
 const ResponsiveContainer = dynamic(() => import('recharts').then(mod => ({ default: mod.ResponsiveContainer })), { ssr: false });
 const RadarChart = dynamic(() => import('recharts').then(mod => ({ default: mod.RadarChart })), { ssr: false });
 const PolarGrid = dynamic(() => import('recharts').then(mod => ({ default: mod.PolarGrid })), { ssr: false });
@@ -332,7 +332,7 @@ export const ProgressDashboard: React.FC = () => {
           <ResponsiveContainer width="100%" height={400}>
             <RadarChart data={radarChartData}>
               <PolarGrid />
-              <PolarAngleAxis dataKey="metric" />
+              <PolarAngleAxis dataKey="metric" reversed={false} scale="band" />
               <PolarRadiusAxis domain={[0, 100]} />
               <Radar
                 name="Score"

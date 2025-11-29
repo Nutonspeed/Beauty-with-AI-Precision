@@ -28,7 +28,7 @@ interface AuthContextType {
   user: AuthUser | null
   supabaseUser: User | null
   loading: boolean
-  signIn: (email: string, password: string) => Promise<{ error: Error | null }>
+  signIn: (email: string, password: string) => Promise<{ error: Error | null; role?: string | null }>
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: Error | null }>
   signOut: () => Promise<void>
   resetPassword: (email: string) => Promise<{ error: Error | null }>
@@ -41,7 +41,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null)
   const [supabaseUser, setSupabaseUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
-  const router = useRouter()
+  const _router = useRouter()
 
   // 🔧 Prevent duplicate loads with ref
   const loadingUserIdRef = useRef<string | null>(null)
@@ -93,6 +93,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => {
       subscription.unsubscribe()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const loadUserData = async (supabaseUser: User, sessionFromEvent?: any) => {
@@ -273,11 +274,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       console.log('[AuthContext] ✅ Login successful!')
       
-      // Just return success - let the auth state change handler and login page handle redirect
-      return { error: null }
+      // Fetch user profile immediately to get role for redirect
+      if (data.session?.access_token) {
+        try {
+          const profileRes = await fetch('/api/auth/me', {
+            headers: {
+              'Authorization': `Bearer ${data.session.access_token}`,
+            },
+          })
+          if (profileRes.ok) {
+            const profileData = await profileRes.json()
+            console.log('[AuthContext] 📦 Profile for redirect:', profileData.data?.role)
+            return { error: null, role: profileData.data?.role || 'customer' }
+          }
+        } catch (e) {
+          console.warn('[AuthContext] Could not fetch profile for redirect:', e)
+        }
+      }
+      
+      return { error: null, role: 'customer' }
     } catch (error) {
       console.error('[AuthContext] ❌ SignIn error:', error)
-      return { error: error as Error }
+      return { error: error as Error, role: null }
     }
   }
 
@@ -390,6 +408,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       resetPassword,
       updateProfile,
     }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [user, supabaseUser, loading]
   )
 

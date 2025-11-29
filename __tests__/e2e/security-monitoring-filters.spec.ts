@@ -1,16 +1,23 @@
 import { test, expect } from '@playwright/test'
 import { LoginPage } from './pages/login-page'
 
+/**
+ * Security Monitoring Filters & Pagination E2E Tests
+ * ⚠️ Requires: admin@example.com user in database
+ * Skip these tests if no test database is available
+ */
 test.describe('Security Monitoring - Filters & Pagination', () => {
   test.beforeEach(async ({ page }) => {
     const login = new LoginPage(page)
     await login.goto()
-    await login.login('admin@example.com', 'admin123')
+    await login.login('admin@ai367bar.com', 'password123')
 
     // Navigate to Super Admin and open Security tab
     await page.goto('/super-admin')
     await page.getByRole('tab', { name: /Security/i }).click()
-    await expect(page.getByRole('heading', { name: /Recent Security Events/i })).toBeVisible()
+    // Wait for security content to load
+    await page.waitForTimeout(2000)
+    await expect(page.getByRole('tab', { name: 'Recent Events' })).toBeVisible({ timeout: 10000 })
   })
 
   test('search shows empty state for no matches', async ({ page }) => {

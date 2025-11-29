@@ -56,7 +56,7 @@ export function SkinAnalysisRadarChart({ data }: SkinAnalysisRadarChartProps) {
               {/* <ChartTooltip content={<ChartTooltipContent />} /> */}
               <Tooltip />
               <PolarGrid strokeDasharray="3 3" />
-              <PolarAngleAxis dataKey="metric" tick={{ fill: "hsl(var(--foreground))", fontSize: 12 }} />
+              <PolarAngleAxis dataKey="metric" tick={{ fill: "hsl(var(--foreground))", fontSize: 12 }} reversed={false} scale="band" />
               <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fill: "hsl(var(--muted-foreground))" }} />
               <Radar
                 name="Score"

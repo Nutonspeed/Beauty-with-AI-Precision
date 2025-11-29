@@ -13,6 +13,7 @@
 
 import { Suspense, useRef, useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
+import * as THREE from 'three';
 
 // Dynamic imports for heavy 3D libraries
 const Canvas = dynamic(() => import('@react-three/fiber').then(mod => ({ default: mod.Canvas })), { ssr: false });
@@ -20,11 +21,9 @@ const OrbitControls = dynamic(() => import('@react-three/drei').then(mod => ({ d
 const PerspectiveCamera = dynamic(() => import('@react-three/drei').then(mod => ({ default: mod.PerspectiveCamera })), { ssr: false });
 const Html = dynamic(() => import('@react-three/drei').then(mod => ({ default: mod.Html })), { ssr: false });
 
-// Import THREE and useFrame for type safety (loaded dynamically at runtime)
-let THREE: any;
+// Import useFrame for type safety (loaded dynamically at runtime)
 let useFrame: any;
 if (typeof window !== 'undefined') {
-  import('three').then(mod => { THREE = mod; });
   import('@react-three/fiber').then(mod => { useFrame = mod.useFrame; });
 }
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -104,7 +103,7 @@ function ProductMesh({
   const material = Product3DModelGenerator.createPBRMaterial(product.materials);
   
   // Gentle rotation animation
-  useFrame((state) => {
+  useFrame((state: any) => {
     if (meshRef.current) {
       meshRef.current.rotation.y = state.clock.getElapsedTime() * 0.2;
     }

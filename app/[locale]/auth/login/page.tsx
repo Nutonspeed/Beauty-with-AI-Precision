@@ -66,25 +66,30 @@ export default function LoginPage() {
     try {
       console.log('[LoginPage] 🔐 Attempting login for:', email)
       
-      const { error } = await signIn(email, password)
+      const result = await signIn(email, password)
       
-      if (error) {
-        console.error('[LoginPage] ❌ Login error:', error)
-        if (error.message.includes('Invalid login credentials')) {
+      if (result.error) {
+        console.error('[LoginPage] ❌ Login error:', result.error)
+        if (result.error.message.includes('Invalid login credentials')) {
           setError('อีเมลหรือรหัสผ่านไม่ถูกต้อง')
-        } else if (error.message.includes('Email not confirmed')) {
+        } else if (result.error.message.includes('Email not confirmed')) {
           setError('กรุณายืนยันอีเมลก่อนเข้าสู่ระบบ')
         } else {
-          setError(error.message)
+          setError(result.error.message)
         }
         setLoading(false)
         return
       }
 
-      console.log('[LoginPage] ✅ Login successful! Waiting for auth context...')
+      console.log('[LoginPage] ✅ Login successful! Role:', result.role)
       
-      // Don't redirect here - let useEffect handle it when user context loads
-      // The useEffect will detect user change and redirect based on role
+      // Redirect immediately based on role from signIn response
+      const role = result.role || 'customer'
+      const redirectPath = getDefaultLandingPage(normalizeRole(role as any) as any)
+      console.log('[LoginPage] 🚀 Redirecting to:', redirectPath)
+      
+      // Use router.push for faster redirect
+      router.push(redirectPath)
     } catch (err) {
       setError('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง')
       console.error('[LoginPage] ❌ Unexpected error:', err)

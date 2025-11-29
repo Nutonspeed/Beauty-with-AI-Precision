@@ -1,0 +1,22 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "npm run build:api",
+  "outputDirectory": ".next",
+  "builds": [
+    {
+      "src": "app/api/**/*.ts",
+      "use": "@vercel/node"
+    }
+  ],
+  "functions": {
+    "app/api/**/*.js": {
+      "maxDuration": 30
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    }
+  ]
+}

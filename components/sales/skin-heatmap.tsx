@@ -36,8 +36,10 @@ export default function SkinHeatmap({ faceImage, heatmapData, faceLandmarks }: S
   const [selectedView, setSelectedView] = useState<'all' | 'wrinkles' | 'pigmentation' | 'acne' | 'dryness' | 'oiliness' | 'redness'>('all');
   const [hoveredArea, setHoveredArea] = useState<ProblemArea | null>(null);
 
+   
   useEffect(() => {
     renderHeatmap();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [faceImage, heatmapData, selectedView]);
 
   const renderHeatmap = () => {

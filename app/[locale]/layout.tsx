@@ -1,6 +1,8 @@
 import { notFound } from 'next/navigation';
-import { getTranslations } from 'next-intl/server';
 import { locales } from '@/i18n/request';
+
+// Disable static generation for dynamic pages
+export const dynamic = 'force-dynamic';
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -8,11 +10,10 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  const t = await getTranslations({ locale });
 
   return {
-    title: 'AI367 - AI-Powered Dental Analysis',
-    description: 'Advanced dental analysis using artificial intelligence',
+    title: 'ClinicIQ — Intelligent Aesthetic Platform',
+    description: 'ClinicIQ brings medical-grade AI to aesthetics: skin analysis, booking, treatment recommendations, and clinic operations.',
   };
 }
 

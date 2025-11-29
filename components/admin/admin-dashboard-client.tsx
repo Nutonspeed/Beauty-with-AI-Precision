@@ -1,4 +1,5 @@
 "use client"
+// responsive-design
 
 import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -56,21 +57,21 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
     switch (status) {
       case "confirmed":
         return (
-          <Badge className="bg-green-500/10 text-green-700 border-green-500/20" variant="outline">
+          <Badge className="bg-green-500/10 text-green md:text-green-700 border-green-500/20" variant="outline">
             <CheckCircle2 className="mr-1 h-3 w-3" />
             Confirmed
           </Badge>
         )
       case "pending":
         return (
-          <Badge className="bg-yellow-500/10 text-yellow-700 border-yellow-500/20" variant="outline">
+          <Badge className="bg-yellow-500/10 text-yellow md:text-yellow-700 border-yellow-500/20" variant="outline">
             <Clock className="mr-1 h-3 w-3" />
             Pending
           </Badge>
         )
       case "cancelled":
         return (
-          <Badge className="bg-red-500/10 text-red-700 border-red-500/20" variant="outline">
+          <Badge className="bg-red-500/10 text-red md:text-red-700 border-red-500/20" variant="outline">
             <XCircle className="mr-1 h-3 w-3" />
             Cancelled
           </Badge>
@@ -92,10 +93,10 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
         <div className="container py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold">Admin Dashboard</h1>
-              <p className="text-sm text-muted-foreground">แดชบอร์ดผู้ดูแลระบบ</p>
+              <h1 className="text-2xl md:text-2xl font-bold">Admin Dashboard</h1>
+              <p className="text-sm md:text-sm text-muted md:text-muted-foreground">แดชบอร์ดผู้ดูแลระบบ</p>
             </div>
-            <Badge className="bg-primary/10 text-primary" variant="secondary">
+            <Badge className="bg-primary/10 text-primary md:text-primary" variant="secondary">
               Admin Access
             </Badge>
           </div>
@@ -105,17 +106,17 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
       <div className="container py-8">
         {/* Admin Tools Quick Access */}
         <div className="mb-8">
-          <h2 className="text-lg font-semibold mb-4">Admin Tools / เครื่องมือผู้ดูแลระบบ</h2>
+          <h2 className="text-lg md:text-lg font-semibold mb-4">Admin Tools / เครื่องมือผู้ดูแลระบบ</h2>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <a href="/super-admin">
               <Card className="cursor-pointer border-2 border-transparent transition-all hover:border-primary/50 hover:shadow-md">
-                <CardContent className="flex items-center gap-3 p-4">
+                <CardContent className="flex items-center gap-3 md:gap-3 p-4">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500/10">
-                    <UserCog className="h-5 w-5 text-blue-500" />
+                    <UserCog className="h-5 w-5 text-blue md:text-blue-500" />
                   </div>
                   <div>
-                    <p className="font-semibold text-sm">Users</p>
-                    <p className="text-xs text-muted-foreground">จัดการผู้ใช้</p>
+                    <p className="font-semibold text-sm md:text-sm">Users</p>
+                    <p className="text-xs md:text-xs text-muted md:text-muted-foreground">จัดการผู้ใช้</p>
                   </div>
                 </CardContent>
               </Card>
@@ -123,13 +124,13 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
 
             <a href="/super-admin">
               <Card className="cursor-pointer border-2 border-transparent transition-all hover:border-primary/50 hover:shadow-md">
-                <CardContent className="flex items-center gap-3 p-4">
+                <CardContent className="flex items-center gap-3 md:gap-3 p-4">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-500/10">
-                    <Building2 className="h-5 w-5 text-purple-500" />
+                    <Building2 className="h-5 w-5 text-purple md:text-purple-500" />
                   </div>
                   <div>
-                    <p className="font-semibold text-sm">Clinics</p>
-                    <p className="text-xs text-muted-foreground">จัดการคลินิก</p>
+                    <p className="font-semibold text-sm md:text-sm">Clinics</p>
+                    <p className="text-xs md:text-xs text-muted md:text-muted-foreground">จัดการคลินิก</p>
                   </div>
                 </CardContent>
               </Card>
@@ -137,13 +138,13 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
 
             <a href="/security">
               <Card className="cursor-pointer border-2 border-transparent transition-all hover:border-primary/50 hover:shadow-md">
-                <CardContent className="flex items-center gap-3 p-4">
+                <CardContent className="flex items-center gap-3 md:gap-3 p-4">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-500/10">
-                    <Shield className="h-5 w-5 text-red-500" />
+                    <Shield className="h-5 w-5 text-red md:text-red-500" />
                   </div>
                   <div>
-                    <p className="font-semibold text-sm">Security</p>
-                    <p className="text-xs text-muted-foreground">ความปลอดภัย</p>
+                    <p className="font-semibold text-sm md:text-sm">Security</p>
+                    <p className="text-xs md:text-xs text-muted md:text-muted-foreground">ความปลอดภัย</p>
                   </div>
                 </CardContent>
               </Card>
@@ -151,13 +152,13 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
 
             <a href="/security/audit-logs">
               <Card className="cursor-pointer border-2 border-transparent transition-all hover:border-primary/50 hover:shadow-md">
-                <CardContent className="flex items-center gap-3 p-4">
+                <CardContent className="flex items-center gap-3 md:gap-3 p-4">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-500/10">
-                    <FileText className="h-5 w-5 text-green-500" />
+                    <FileText className="h-5 w-5 text-green md:text-green-500" />
                   </div>
                   <div>
-                    <p className="font-semibold text-sm">Audit Logs</p>
-                    <p className="text-xs text-muted-foreground">บันทึกการใช้งาน</p>
+                    <p className="font-semibold text-sm md:text-sm">Audit Logs</p>
+                    <p className="text-xs md:text-xs text-muted md:text-muted-foreground">บันทึกการใช้งาน</p>
                   </div>
                 </CardContent>
               </Card>
@@ -165,13 +166,13 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
 
             <a href="/admin/websocket">
               <Card className="cursor-pointer border-2 border-transparent transition-all hover:border-primary/50 hover:shadow-md">
-                <CardContent className="flex items-center gap-3 p-4">
+                <CardContent className="flex items-center gap-3 md:gap-3 p-4">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan-500/10">
-                    <Radio className="h-5 w-5 text-cyan-500" />
+                    <Radio className="h-5 w-5 text-cyan md:text-cyan-500" />
                   </div>
                   <div>
-                    <p className="font-semibold text-sm">WebSocket</p>
-                    <p className="text-xs text-muted-foreground">ตรวจสอบ realtime</p>
+                    <p className="font-semibold text-sm md:text-sm">WebSocket</p>
+                    <p className="text-xs md:text-xs text-muted md:text-muted-foreground">ตรวจสอบ realtime</p>
                   </div>
                 </CardContent>
               </Card>
@@ -179,28 +180,28 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
 
             <a href="/admin/fix-rls">
               <Card className="cursor-pointer border-2 border-transparent transition-all hover:border-primary/50 hover:shadow-md">
-                <CardContent className="flex items-center gap-3 p-4">
+                <CardContent className="flex items-center gap-3 md:gap-3 p-4">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-orange-500/10">
-                    <Wrench className="h-5 w-5 text-orange-500" />
+                    <Wrench className="h-5 w-5 text-orange md:text-orange-500" />
                   </div>
                   <div>
-                    <p className="font-semibold text-sm">Fix RLS</p>
-                    <p className="text-xs text-muted-foreground">แก้ไข database</p>
+                    <p className="font-semibold text-sm md:text-sm">Fix RLS</p>
+                    <p className="text-xs md:text-xs text-muted md:text-muted-foreground">แก้ไข database</p>
                   </div>
-                  <Badge className="ml-auto bg-orange-500 text-xs">Dev</Badge>
+                  <Badge className="ml-auto bg-orange-500 text-xs md:text-xs">Dev</Badge>
                 </CardContent>
               </Card>
             </a>
 
             <a href="/admin/broadcast">
               <Card className="cursor-pointer border-2 border-transparent transition-all hover:border-primary/50 hover:shadow-md">
-                <CardContent className="flex items-center gap-3 p-4">
+                <CardContent className="flex items-center gap-3 md:gap-3 p-4">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-pink-500/10">
-                    <Megaphone className="h-5 w-5 text-pink-500" />
+                    <Megaphone className="h-5 w-5 text-pink md:text-pink-500" />
                   </div>
                   <div>
-                    <p className="font-semibold text-sm">Broadcast</p>
-                    <p className="text-xs text-muted-foreground">ส่งข้อความทั่วระบบ</p>
+                    <p className="font-semibold text-sm md:text-sm">Broadcast</p>
+                    <p className="text-xs md:text-xs text-muted md:text-muted-foreground">ส่งข้อความทั่วระบบ</p>
                   </div>
                 </CardContent>
               </Card>
@@ -208,13 +209,13 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
 
             <a href="/analytics">
               <Card className="cursor-pointer border-2 border-transparent transition-all hover:border-primary/50 hover:shadow-md">
-                <CardContent className="flex items-center gap-3 p-4">
+                <CardContent className="flex items-center gap-3 md:gap-3 p-4">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-500/10">
-                    <TrendingUp className="h-5 w-5 text-indigo-500" />
+                    <TrendingUp className="h-5 w-5 text-indigo md:text-indigo-500" />
                   </div>
                   <div>
-                    <p className="font-semibold text-sm">Analytics</p>
-                    <p className="text-xs text-muted-foreground">วิเคราะห์ข้อมูล</p>
+                    <p className="font-semibold text-sm md:text-sm">Analytics</p>
+                    <p className="text-xs md:text-xs text-muted md:text-muted-foreground">วิเคราะห์ข้อมูล</p>
                   </div>
                 </CardContent>
               </Card>
@@ -228,11 +229,11 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Total Bookings</p>
-                  <p className="mt-1 text-2xl font-bold">{stats?.totalBookings || 0}</p>
+                  <p className="text-sm md:text-sm text-muted md:text-muted-foreground">Total Bookings</p>
+                  <p className="mt-1 text-2xl md:text-2xl font-bold">{stats?.totalBookings || 0}</p>
                 </div>
                 <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-500/10">
-                  <Calendar className="h-6 w-6 text-blue-600" />
+                  <Calendar className="h-6 w-6 text-blue md:text-blue-600" />
                 </div>
               </div>
             </CardContent>
@@ -242,11 +243,11 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Active Customers</p>
-                  <p className="mt-1 text-2xl font-bold">{stats?.activeCustomers || 0}</p>
+                  <p className="text-sm md:text-sm text-muted md:text-muted-foreground">Active Customers</p>
+                  <p className="mt-1 text-2xl md:text-2xl font-bold">{stats?.activeCustomers || 0}</p>
                 </div>
                 <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-500/10">
-                  <Users className="h-6 w-6 text-green-600" />
+                  <Users className="h-6 w-6 text-green md:text-green-600" />
                 </div>
               </div>
             </CardContent>
@@ -256,11 +257,11 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Revenue (Month)</p>
-                  <p className="mt-1 text-2xl font-bold">฿{(stats?.revenue || 0).toLocaleString()}</p>
+                  <p className="text-sm md:text-sm text-muted md:text-muted-foreground">Revenue (Month)</p>
+                  <p className="mt-1 text-2xl md:text-2xl font-bold">฿{(stats?.revenue || 0).toLocaleString()}</p>
                 </div>
                 <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-500/10">
-                  <DollarSign className="h-6 w-6 text-purple-600" />
+                  <DollarSign className="h-6 w-6 text-purple md:text-purple-600" />
                 </div>
               </div>
             </CardContent>
@@ -270,11 +271,11 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Conversion Rate</p>
-                  <p className="mt-1 text-2xl font-bold">{stats?.conversionRate || 0}%</p>
+                  <p className="text-sm md:text-sm text-muted md:text-muted-foreground">Conversion Rate</p>
+                  <p className="mt-1 text-2xl md:text-2xl font-bold">{stats?.conversionRate || 0}%</p>
                 </div>
                 <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-orange-500/10">
-                  <TrendingUp className="h-6 w-6 text-orange-600" />
+                  <TrendingUp className="h-6 w-6 text-orange md:text-orange-600" />
                 </div>
               </div>
             </CardContent>
@@ -282,8 +283,8 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
         </div>
 
         {/* Main Content Tabs */}
-        <Tabs defaultValue="users" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+        <Tabs defaultValue="users" className="w-full overflow-x-auto">
+          <TabsList className="grid w-full grid-cols-1 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-4">
             <TabsTrigger value="users">Users / ผู้ใช้</TabsTrigger>
             <TabsTrigger value="bookings">Bookings / การจอง</TabsTrigger>
             <TabsTrigger value="clinics">Clinics / คลินิก</TabsTrigger>
@@ -317,7 +318,7 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
                       <TableHead>Date</TableHead>
                       <TableHead>Time</TableHead>
                       <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
+                      <TableHead className="text-right md:text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -328,7 +329,7 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
                         <TableCell>{booking.booking_date}</TableCell>
                         <TableCell>{booking.booking_time}</TableCell>
                         <TableCell>{getStatusBadge(booking.status)}</TableCell>
-                        <TableCell className="text-right">
+                        <TableCell className="text-right md:text-right">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                               <Button variant="ghost" size="sm">
@@ -339,7 +340,7 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
                               <DropdownMenuItem>View Details</DropdownMenuItem>
                               <DropdownMenuItem>Edit</DropdownMenuItem>
                               <DropdownMenuItem>Confirm</DropdownMenuItem>
-                              <DropdownMenuItem className="text-red-600">Cancel</DropdownMenuItem>
+                              <DropdownMenuItem className="text-red md:text-red-600">Cancel</DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </TableCell>
@@ -357,9 +358,9 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
               <CardHeader>
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <CardTitle>Clinics / คลินิก</CardTitle>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 md:gap-2">
                     <div className="relative flex-1 sm:w-64">
-                      <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                      <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted md:text-muted-foreground" />
                       <Input placeholder="Search clinics..." className="pl-9" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
                     </div>
                     <Button>Add Clinic</Button>
@@ -368,7 +369,7 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
               </CardHeader>
               <CardContent>
                 {/* Placeholder for clinics data */}
-                <p className="text-sm text-muted-foreground">Clinics data will be displayed here.</p>
+                <p className="text-sm md:text-sm text-muted md:text-muted-foreground">Clinics data will be displayed here.</p>
               </CardContent>
             </Card>
           </TabsContent>
@@ -389,9 +390,9 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
                       { name: "Chemical Peel", count: 17, percentage: 13 },
                     ].map((treatment, index) => (
                       <div key={index}>
-                        <div className="mb-2 flex items-center justify-between text-sm">
+                        <div className="mb-2 flex items-center justify-between text-sm md:text-sm">
                           <span className="font-medium">{treatment.name}</span>
-                          <span className="text-muted-foreground">{treatment.count} bookings</span>
+                          <span className="text-muted md:text-muted-foreground">{treatment.count} bookings</span>
                         </div>
                         <div className="h-2 overflow-hidden rounded-full bg-muted">
                           <div
@@ -417,9 +418,9 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
                       { category: "Products", amount: "฿30K", percentage: 13 },
                     ].map((item, index) => (
                       <div key={index}>
-                        <div className="mb-2 flex items-center justify-between text-sm">
+                        <div className="mb-2 flex items-center justify-between text-sm md:text-sm">
                           <span className="font-medium">{item.category}</span>
-                          <span className="text-muted-foreground">{item.amount}</span>
+                          <span className="text-muted md:text-muted-foreground">{item.amount}</span>
                         </div>
                         <div className="h-2 overflow-hidden rounded-full bg-muted">
                           <div
@@ -451,9 +452,9 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
                       >
                         <div>
                           <p className="font-medium">{activity.action}</p>
-                          <p className="text-sm text-muted-foreground">{activity.customer}</p>
+                          <p className="text-sm md:text-sm text-muted md:text-muted-foreground">{activity.customer}</p>
                         </div>
-                        <span className="text-xs text-muted-foreground">{activity.time}</span>
+                        <span className="text-xs md:text-xs text-muted md:text-muted-foreground">{activity.time}</span>
                       </div>
                     ))}
                   </div>

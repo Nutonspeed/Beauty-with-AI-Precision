@@ -17,47 +17,52 @@ export default function DashboardPage() {
   useEffect(() => {
     if (authLoading) return;
 
-    if (!user) {
-      console.log('[Dashboard] No user, redirecting to login...');
+    try {
+      if (!user) {
+        console.log('[Dashboard] No user, redirecting to login...');
+        router.push('/auth/login');
+        return;
+      }
+
+      // Role-based redirects
+      const role = user.role;
+      console.log('[Dashboard] User role:', role);
+
+      if (role === 'super_admin') {
+        console.log('[Dashboard] Redirecting super_admin to /super-admin');
+        setRedirecting(true);
+        window.location.href = '/super-admin';
+        return;
+      }
+
+      if (role === 'clinic_owner') {
+        console.log('[Dashboard] Redirecting clinic_owner to /clinic');
+        setRedirecting(true);
+        window.location.href = '/clinic';
+        return;
+      }
+
+      if (role === 'sales_staff') {
+        console.log('[Dashboard] Redirecting sales_staff to /sales');
+        setRedirecting(true);
+        window.location.href = '/sales';
+        return;
+      }
+
+      // customer stays on /dashboard
+      console.log('[Dashboard] Customer staying on /dashboard');
+    } catch (error) {
+      console.error('[Dashboard] Error in useEffect:', error);
       router.push('/auth/login');
-      return;
     }
-
-    // Role-based redirects
-    const role = user.role;
-    console.log('[Dashboard] User role:', role);
-
-    if (role === 'super_admin') {
-      console.log('[Dashboard] Redirecting super_admin to /super-admin');
-      setRedirecting(true);
-      window.location.href = '/super-admin';
-      return;
-    }
-
-    if (role === 'clinic_owner') {
-      console.log('[Dashboard] Redirecting clinic_owner to /clinic');
-      setRedirecting(true);
-      window.location.href = '/clinic';
-      return;
-    }
-
-    if (role === 'sales_staff') {
-      console.log('[Dashboard] Redirecting sales_staff to /sales');
-      setRedirecting(true);
-      window.location.href = '/sales';
-      return;
-    }
-
-    // customer stays on /dashboard
-    console.log('[Dashboard] Customer staying on /dashboard');
   }, [user, authLoading, router]);
 
   if (authLoading || redirecting) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center space-y-4">
-          <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
-          <p className="text-muted-foreground">
+      <div className="flex min-h-screen md:min-h-screen items-center justify-center p-4">
+        <div className="text-center space-y-4 max-w-sm w-full">
+          <Loader2 className="h-8 w-8 md:h-12 md:w-12 animate-spin mx-auto text-primary" />
+          <p className="text-muted-foreground text-sm md:text-base">
             {redirecting ? 'กำลังเปลี่ยนหน้า...' : 'กำลังโหลด Dashboard...'}
           </p>
         </div>

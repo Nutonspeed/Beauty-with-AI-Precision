@@ -66,14 +66,6 @@ const nextConfig = {
     },
   }),
   
-  // Development performance boost
-  ...(process.env.NODE_ENV === 'development' && {
-    onDemandEntries: {
-      maxInactiveAge: 60 * 1000,
-      pagesBufferLength: 5,
-    },
-  }),
-
   // Security headers
   async headers() {
     return [

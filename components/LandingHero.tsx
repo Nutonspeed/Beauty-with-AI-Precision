@@ -11,10 +11,9 @@ const ProceduralHalo = dynamic(() => import('@/components/three/ProceduralHalo')
 const VolumetricScanBeam = dynamic(() => import('@/components/three/VolumetricScanBeam').then(mod => ({ default: mod.VolumetricScanBeam })), { ssr: false });
 
 // Import THREE and useFrame only when needed
-let THREE: any;
+import * as THREE from 'three';
 let useFrame: any;
 if (typeof window !== 'undefined') {
-  import('three').then(mod => { THREE = mod; });
   import('@react-three/fiber').then(mod => { useFrame = mod.useFrame; });
 }
 import { MiniTrustBadges } from '@/components/MiniTrustBadges';
@@ -31,7 +30,7 @@ import { useLanguage } from '@/lib/i18n/language-context';
 // Toned-down sphere
 function HeroSphere({ active }: { active: boolean }) {
   const ref = useRef<THREE.Mesh>(null);
-  useFrame((state) => {
+  useFrame((state: any) => {
     if (!ref.current) return;
     const t = state.clock.elapsedTime;
     // Subtle breathing

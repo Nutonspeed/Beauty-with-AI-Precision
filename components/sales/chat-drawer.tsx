@@ -58,8 +58,8 @@ interface ChatDrawerProps {
   onOpenChange: (open: boolean) => void
   customer: Customer
   leadId?: string // Make API-driven
-  onCall?: () => void
-  onVideoCall?: () => void
+  onCall?: (leadId: string) => void
+  onVideoCall?: (leadId: string) => void
 }
 
 export function ChatDrawer({ 
@@ -109,11 +109,13 @@ export function ChatDrawer({
   }, [])
 
   // Load messages from API when drawer opens
+   
   useEffect(() => {
     if (open && leadId) {
       loadMessages()
       subscribeToMessages()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, leadId])
 
   const loadMessages = async () => {
@@ -412,7 +414,7 @@ export function ChatDrawer({
                 variant="ghost" 
                 size="icon" 
                 className="h-9 w-9 text-primary-foreground hover:bg-primary-foreground/20"
-                onClick={onCall}
+                onClick={() => leadId && onCall?.(leadId)}
               >
                 <Phone className="h-4 w-4" />
               </Button>
@@ -420,7 +422,7 @@ export function ChatDrawer({
                 variant="ghost" 
                 size="icon" 
                 className="h-9 w-9 text-primary-foreground hover:bg-primary-foreground/20"
-                onClick={onVideoCall}
+                onClick={() => leadId && onVideoCall?.(leadId)}
               >
                 <Video className="h-4 w-4" />
               </Button>

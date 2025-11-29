@@ -241,5 +241,32 @@
     "deleteSuccess": "删除成功",
     "deleteError": "删除失败",
     "deleteConfirm": "您确定要删除此项吗？"
+  },
+  "analysis": {
+    "title": "AI皮肤分析",
+    "subtitle": "上传照片或自拍即可获得即时皮肤分析",
+    "report": "报告",
+    "3dView": "3D视图",
+    "simulator": "模拟器",
+    "backToHistory": "返回历史",
+    "notFound": "未找到分析",
+    "loading": "加载分析中...",
+    "error": "加载分析失败"
+  },
+  "founders-clone": {
+    "meta": {
+      "title": "BeautyIQ - AI驱动的美容诊所平台",
+      "description": "通过先进的AI皮肤分析、3D可视化和实时CRM改变您的诊所"
+    },
+    "hero": {
+      "title": "美容医学的未来",
+      "subtitle": "为现代诊所提供AI驱动的皮肤分析和治疗建议",
+      "cta": "开始使用",
+      "learnMore": "了解更多"
+    },
+    "features": {
+      "title": "您需要的一切",
+      "subtitle": "现代美容诊所的完整平台"
+    }
   }
 }

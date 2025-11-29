@@ -47,7 +47,7 @@ export default async function AnalyticsPage() {
   const isAdmin = profile?.role === 'admin' || profile?.role === 'super_admin';
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="md:container mx-auto px-4 py-8">
       {/* Welcome message */}
       {profile?.full_name && (
         <div className="mb-6">

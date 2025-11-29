@@ -412,6 +412,15 @@ export default function SalesDashboardPage() {
     toast.success(`📞 กำลังโทรหา ${lead.name}...`)
   }
 
+  const handleVideoCall = (leadId: string) => {
+    const lead = hotLeads.find((l) => l.id === leadId)
+    if (!lead) {
+      toast.error("ไม่พบข้อมูล Lead")
+      return
+    }
+    toast.info(`📹 กำลังเรียกวิดีโอหา ${lead.name}...`)
+  }
+
   const handleChat = (leadId: string) => {
     const lead = hotLeads.find((l) => l.id === leadId)
     if (!lead) {
@@ -917,6 +926,7 @@ export default function SalesDashboardPage() {
           <ChatDrawer
             open={chatOpen}
             onOpenChange={setChatOpen}
+            leadId={selectedCustomer.id}
             customer={{
               id: selectedCustomer.id,
               name: selectedCustomer.name,
@@ -925,10 +935,8 @@ export default function SalesDashboardPage() {
               isOnline: selectedCustomer.isOnline,
               isTyping: false,
             }}
-            messages={messages}
-            onSendMessage={handleSendMessage}
-            onCall={() => handleCall(selectedCustomer.id)}
-            onVideoCall={() => alert("📹 Starting video call...")}
+            onCall={handleCall}
+            onVideoCall={handleVideoCall}
           />
         )}
 

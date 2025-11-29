@@ -71,10 +71,12 @@ export function VideoCallModal({
   const [callDuration, setCallDuration] = useState(0)
   const [connectionQuality, _setConnectionQuality] = useState<"excellent" | "good" | "poor">("good")
 
+   
   useEffect(() => {
     if (open && sessionId) {
       loadSession()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, sessionId])
 
   // Call duration timer

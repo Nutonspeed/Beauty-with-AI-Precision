@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
-import { TrendingUp, Users, Clock, DollarSign, Award, Target } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { TrendingUp, Users, Clock, DollarSign, Award, Target, Sparkles, Heart, Eye, Flame, Scissors, Brain, Calculator, MessageSquare } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
@@ -30,6 +31,9 @@ interface SalesStats {
 }
 
 export default function SalesDashboard() {
+  const router = useRouter()
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState('')
   const [stats] = useState<SalesStats>({
     today: {
       scans: 12,
@@ -53,11 +57,57 @@ export default function SalesDashboard() {
     ]
   })
 
+  useEffect(() => {
+    try {
+      // Simulate authentication check
+      const user = localStorage.getItem('user')
+      if (!user) {
+        router.push('/auth/login')
+        return
+      }
+      
+      // Simulate data loading
+      const timer = setTimeout(() => {
+        setIsLoading(false)
+      }, 1000)
+
+      return () => clearTimeout(timer)
+    } catch (error) {
+      console.error('Sales Dashboard Error:', error)
+      setError('Failed to load dashboard')
+      setIsLoading(false)
+    }
+  }, [router])
+
   const conversionRate = ((stats.thisMonth.conversions / stats.thisMonth.scans) * 100).toFixed(1)
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center p-6">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading Sales Dashboard...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center p-6">
+        <div className="text-center">
+          <p className="text-red-600">Error: {error}</p>
+          <Button onClick={() => window.location.reload()} className="mt-4">
+            Retry
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 md:p-6">
+      <div className="max-w-7xl mx-auto space-y-4 md:space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
           <div>
@@ -76,7 +126,7 @@ export default function SalesDashboard() {
         </div>
 
         {/* Key Metrics */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Scans</CardTitle>
@@ -233,6 +283,94 @@ export default function SalesDashboard() {
           </CardContent>
         </Card>
 
+        {/* AR Tools Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-purple-600" />
+              AR Sales Tools
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {/* Mobile: Horizontal scroll, Desktop: Grid */}
+            <div className="flex md:grid md:grid-cols-5 gap-3 overflow-x-auto pb-2 md:pb-0 -mx-2 px-2 md:mx-0 md:px-0 snap-x snap-mandatory md:snap-none">
+              <Link href="/sales/ar-tools" className="block flex-shrink-0 w-[140px] md:w-auto snap-start">
+                <div className="p-3 md:p-4 rounded-xl bg-gradient-to-br from-pink-500/10 to-rose-500/10 border border-pink-500/20 hover:border-pink-500/50 active:scale-95 transition-all text-center min-h-[100px] flex flex-col items-center justify-center">
+                  <Heart className="w-7 h-7 md:w-8 md:h-8 text-pink-500 mb-2" />
+                  <p className="text-xs md:text-sm font-medium text-gray-700">Filler & Lips</p>
+                </div>
+              </Link>
+              <Link href="/sales/ar-tools" className="block flex-shrink-0 w-[140px] md:w-auto snap-start">
+                <div className="p-3 md:p-4 rounded-xl bg-gradient-to-br from-orange-500/10 to-red-500/10 border border-orange-500/20 hover:border-orange-500/50 active:scale-95 transition-all text-center min-h-[100px] flex flex-col items-center justify-center">
+                  <Flame className="w-7 h-7 md:w-8 md:h-8 text-orange-500 mb-2" />
+                  <p className="text-xs md:text-sm font-medium text-gray-700">Body</p>
+                </div>
+              </Link>
+              <Link href="/sales/ar-tools" className="block flex-shrink-0 w-[140px] md:w-auto snap-start">
+                <div className="p-3 md:p-4 rounded-xl bg-gradient-to-br from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 hover:border-emerald-500/50 active:scale-95 transition-all text-center min-h-[100px] flex flex-col items-center justify-center">
+                  <Scissors className="w-7 h-7 md:w-8 md:h-8 text-emerald-500 mb-2" />
+                  <p className="text-xs md:text-sm font-medium text-gray-700">Hair</p>
+                </div>
+              </Link>
+              <Link href="/sales/ar-tools" className="block flex-shrink-0 w-[140px] md:w-auto snap-start">
+                <div className="p-3 md:p-4 rounded-xl bg-gradient-to-br from-blue-500/10 to-indigo-500/10 border border-blue-500/20 hover:border-blue-500/50 active:scale-95 transition-all text-center min-h-[100px] flex flex-col items-center justify-center">
+                  <Eye className="w-7 h-7 md:w-8 md:h-8 text-blue-500 mb-2" />
+                  <p className="text-xs md:text-sm font-medium text-gray-700">Eye</p>
+                </div>
+              </Link>
+              <Link href="/sales/ar-tools" className="block flex-shrink-0 w-[140px] md:w-auto snap-start">
+                <div className="p-3 md:p-4 rounded-xl bg-gradient-to-br from-purple-500/10 to-violet-500/10 border border-purple-500/20 hover:border-purple-500/50 active:scale-95 transition-all text-center min-h-[100px] flex flex-col items-center justify-center">
+                  <Sparkles className="w-7 h-7 md:w-8 md:h-8 text-purple-500 mb-2" />
+                  <p className="text-xs md:text-sm font-medium text-gray-700">All Tools</p>
+                </div>
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* AI Sales Tools Section */}
+        <Card className="bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-purple-800">
+              <Brain className="w-5 h-5" />
+              AI Sales Tools
+              <span className="ml-2 px-2 py-0.5 bg-purple-600 text-white text-xs rounded-full">NEW</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <Link href="/sales/tools" className="block">
+                <div className="p-4 rounded-xl bg-white border border-purple-200 hover:border-purple-400 hover:shadow-md transition-all text-center">
+                  <Sparkles className="w-8 h-8 text-purple-600 mx-auto mb-2" />
+                  <p className="text-sm font-medium text-gray-800">AI Recommendations</p>
+                  <p className="text-xs text-gray-500 mt-1">แนะนำ treatment</p>
+                </div>
+              </Link>
+              <Link href="/sales/tools" className="block">
+                <div className="p-4 rounded-xl bg-white border border-green-200 hover:border-green-400 hover:shadow-md transition-all text-center">
+                  <Calculator className="w-8 h-8 text-green-600 mx-auto mb-2" />
+                  <p className="text-sm font-medium text-gray-800">Quick Quote</p>
+                  <p className="text-xs text-gray-500 mt-1">ใบเสนอราคา</p>
+                </div>
+              </Link>
+              <Link href="/sales/tools" className="block">
+                <div className="p-4 rounded-xl bg-white border border-blue-200 hover:border-blue-400 hover:shadow-md transition-all text-center">
+                  <Target className="w-8 h-8 text-blue-600 mx-auto mb-2" />
+                  <p className="text-sm font-medium text-gray-800">Conversion AI</p>
+                  <p className="text-xs text-gray-500 mt-1">วิเคราะห์โอกาส</p>
+                </div>
+              </Link>
+              <Link href="/sales/tools" className="block">
+                <div className="p-4 rounded-xl bg-white border border-emerald-200 hover:border-emerald-400 hover:shadow-md transition-all text-center">
+                  <MessageSquare className="w-8 h-8 text-emerald-600 mx-auto mb-2" />
+                  <p className="text-sm font-medium text-gray-800">Quick Message</p>
+                  <p className="text-xs text-gray-500 mt-1">LINE/WhatsApp</p>
+                </div>
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Link href="/sales/quick-scan" className="block">
@@ -259,13 +397,13 @@ export default function SalesDashboard() {
             </Card>
           </Link>
 
-          <Link href="/analytics" className="block">
+          <Link href="/sales/tools" className="block">
             <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 hover:shadow-lg transition-shadow cursor-pointer h-full">
               <CardContent className="pt-6">
                 <div className="text-center">
-                  <TrendingUp className="w-12 h-12 text-purple-600 mx-auto mb-3" />
-                  <h3 className="font-bold text-lg text-gray-900">Reports</h3>
-                  <p className="text-sm text-gray-600 mt-1">Detailed analytics</p>
+                  <Brain className="w-12 h-12 text-purple-600 mx-auto mb-3" />
+                  <h3 className="font-bold text-lg text-gray-900">AI Tools</h3>
+                  <p className="text-sm text-gray-600 mt-1">เครื่องมือ AI ทั้งหมด</p>
                 </div>
               </CardContent>
             </Card>
