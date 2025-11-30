@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { sendEmail } from '@/lib/notifications/email-service'
 
 /**
  * POST /api/users/invite
@@ -124,18 +125,37 @@ export async function POST(request: NextRequest) {
       }),
     }
 
-    // Send email (using Resend or similar service)
-    // TODO: Implement actual email sending
-    console.log('📧 Invitation email prepared:', emailContent)
+    // Send email using Resend
+    console.log('📧 Sending invitation email to:', email)
+    
+    const emailResult = await sendEmail({
+      to: email,
+      subject: emailContent.subject,
+      html: emailContent.html,
+    })
 
-    // For MVP: Return email content for manual sending
+    if (!emailResult.success) {
+      console.error('Failed to send invitation email:', emailResult.error)
+      // Still return success but note email failed
+      return NextResponse.json({
+        success: true,
+        message: 'User invited but email delivery failed. Please send manually.',
+        emailSent: false,
+        email: emailContent,
+        debug: {
+          setup_url: setupUrl,
+          temp_password: temp_password,
+          expires_at: expiresAt.toISOString(),
+        },
+      })
+    }
+
     return NextResponse.json({
       success: true,
-      message: 'Invitation prepared. Send this email to the user.',
-      email: emailContent,
+      message: 'Invitation email sent successfully',
+      emailSent: true,
       debug: {
         setup_url: setupUrl,
-        temp_password: temp_password,
         expires_at: expiresAt.toISOString(),
       },
     })
