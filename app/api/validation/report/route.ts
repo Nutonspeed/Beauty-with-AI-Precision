@@ -8,6 +8,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import type { ValidationReport } from '@/types/calibration';
 import type { ModelType } from '@/lib/validation/calibration-validator';
+import { createClient } from '@/lib/supabase/server';
 
 interface ReportRequest {
   model: ModelType;
@@ -106,10 +107,24 @@ export async function POST(request: NextRequest) {
     console.log(`\nTotal validation time: ${(totalTime / 1000).toFixed(1)}s`);
     console.log(`${'='.repeat(60)}\n`);
 
-    // Step 4: Save report (optional - would store in database)
+    // Step 4: Save report to database for historical tracking
     if (saveReport) {
-      // TODO: Save to database for historical tracking
-      console.log('Report saved to history');
+      try {
+        const supabase = await createClient();
+        await supabase.from('validation_reports').insert({
+          model,
+          accuracy: report.overallMetrics.accuracy,
+          precision: report.overallMetrics.avgPrecision,
+          recall: report.overallMetrics.avgRecall,
+          f1_score: report.overallMetrics.avgF1Score,
+          total_samples: report.overallMetrics.totalImages,
+          report_data: report,
+          created_at: new Date().toISOString(),
+        });
+        console.log('Report saved to database');
+      } catch (dbError) {
+        console.error('Failed to save report:', dbError);
+      }
     }
 
     // Determine status
