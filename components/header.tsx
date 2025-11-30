@@ -57,30 +57,30 @@ export function Header() {
     switch (role) {
       case "clinic_owner":
         return [
-          { href: "/clinic/dashboard", label: language === "th" ? "ภาพรวม" : "Dashboard" },
-          { href: "/clinic/customers", label: language === "th" ? "ลูกค้า" : "Customers" },
-          { href: "/clinic/analytics", label: language === "th" ? "รายงาน" : "Analytics" },
+          { href: "/clinic/revenue", label: language === "th" ? "ภาพรวม" : "Dashboard" },
+          { href: "/sales/leads", label: language === "th" ? "ลูกค้า" : "Customers" },
+          { href: "/analytics", label: language === "th" ? "รายงาน" : "Analytics" },
           { href: "/branches", label: language === "th" ? "สาขา" : "Branches" },
           { href: "/ai-chat", label: language === "th" ? "AI ที่ปรึกษา" : "AI Advisor" },
         ]
       case "clinic_staff":
         return [
-          { href: "/clinic/reception", label: language === "th" ? "เคาน์เตอร์" : "Reception" },
+          { href: "/booking", label: language === "th" ? "เคาน์เตอร์" : "Reception" },
           { href: "/clinic/staff/my-schedule", label: language === "th" ? "ตารางงาน" : "Schedule" },
-          { href: "/demo/skin-analysis", label: language === "th" ? "วิเคราะห์ผิว" : "Analysis" },
+          { href: "/analysis", label: language === "th" ? "วิเคราะห์ผิว" : "Analysis" },
         ]
       case "sales_staff":
         return [
           { href: "/sales/dashboard", label: language === "th" ? "ภาพรวม" : "Dashboard" },
           { href: "/sales/leads", label: language === "th" ? "ลีด" : "Leads" },
           { href: "/sales/presentations", label: language === "th" ? "ข้อเสนอ" : "Proposals" },
-          { href: "/sales-narrative", label: language === "th" ? "เครื่องมือขาย" : "Sales Tool" },
+          { href: "/sales/tools", label: language === "th" ? "เครื่องมือขาย" : "Sales Tool" },
         ]
       case "super_admin":
         return [
-          { href: "/super-admin", label: language === "th" ? "คลินิก" : "Clinics" },
-          { href: "/users", label: language === "th" ? "ผู้ใช้" : "Users" },
-          { href: "/settings", label: language === "th" ? "ตั้งค่า" : "Settings" },
+          { href: "/admin", label: language === "th" ? "แดชบอร์ด" : "Dashboard" },
+          { href: "/admin/system-status", label: language === "th" ? "สถานะระบบ" : "System" },
+          { href: "/clinic/settings", label: language === "th" ? "ตั้งค่า" : "Settings" },
         ]
       default:
         // Customer navigation
