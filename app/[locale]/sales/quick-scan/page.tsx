@@ -10,6 +10,8 @@ import { Label } from '@/components/ui/label'
 import { FloatingNotesButton } from '@/components/sales/customer-notes'
 import { detectFace } from '@/lib/ai/face-detection'
 import { analyzeWithHybrid } from '@/lib/ai/hybrid-analyzer'
+import { predictSkinFuture, type SkinAgePrediction } from '@/lib/ai/skin-age-predictor'
+import { SkinFuturePrediction } from '@/components/analysis/skin-future-prediction'
 import ARTreatmentPreview from '@/components/sales/ar-treatment-preview'
 import SkinHeatmap from '@/components/sales/skin-heatmap'
 import LeadIntegration from '@/components/sales/lead-integration'
@@ -38,6 +40,7 @@ interface ScanResult {
   face_landmarks?: any
   heatmap_data?: any
   problem_areas?: any[]
+  futurePrediction?: SkinAgePrediction
 }
 
 export default function QuickScanPage() {
@@ -213,6 +216,28 @@ export default function QuickScanPage() {
 
       const { data: savedResult } = await response.json()
 
+      // Generate Future Prediction (1-5 years)
+      const futurePrediction = await predictSkinFuture(
+        {
+          wrinkles: concerns.find(c => c.name === 'Wrinkles')?.severity ? concerns.find(c => c.name === 'Wrinkles')!.severity * 10 : 30,
+          spots: concerns.find(c => c.name === 'Pigmentation')?.severity ? concerns.find(c => c.name === 'Pigmentation')!.severity * 10 : 25,
+          pores: 35,
+          texture: 70,
+          elasticity: 75,
+          uvDamage: concerns.find(c => c.name === 'Sun Damage')?.severity ? concerns.find(c => c.name === 'Sun Damage')!.severity * 10 : 20
+        },
+        actualAge,
+        {
+          sunExposure: 'moderate',
+          smoking: false,
+          sleepHours: 7,
+          stressLevel: 'moderate',
+          hydrationLevel: 'adequate',
+          diet: 'average',
+          skinCareRoutine: 'basic'
+        }
+      )
+
       const result: ScanResult = {
         id: savedResult.id,
         skinAge,
@@ -224,7 +249,8 @@ export default function QuickScanPage() {
         face_detected: !!faceDetection,
         face_landmarks: faceDetection?.landmarks,
         heatmap_data: heatmapData,
-        problem_areas: problemAreas
+        problem_areas: problemAreas,
+        futurePrediction
       }
 
       setScanResult(result)
@@ -492,6 +518,14 @@ export default function QuickScanPage() {
               </p>
             </CardContent>
           </Card>
+
+          {/* Future Skin Prediction - ทำนายอนาคต 1-5 ปี */}
+          {scanResult.futurePrediction && (
+            <SkinFuturePrediction 
+              prediction={scanResult.futurePrediction}
+              locale="th"
+            />
+          )}
 
           {/* Advanced Heatmap Visualization */}
           {capturedImages.front && scanResult.heatmap_data && (

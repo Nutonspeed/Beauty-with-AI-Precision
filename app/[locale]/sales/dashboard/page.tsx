@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { TrendingUp, Users, Clock, DollarSign, Award, Target, Sparkles, Heart, Eye, Flame, Scissors, Brain, Calculator, MessageSquare } from 'lucide-react'
+import { TrendingUp, Users, Clock, DollarSign, Award, Target, Sparkles, Heart, Eye, Flame, Scissors, Brain, Calculator, MessageSquare, Camera, Wand2, BarChart3, History } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { ShimmerSkeleton } from '@/components/ui/modern-loader'
@@ -213,6 +213,63 @@ export default function SalesDashboard() {
             </CardContent>
           </Card>
         </div>
+
+        {/* AI Sales Tools */}
+        <Card className="bg-gradient-to-br from-purple-50 to-blue-50 border-purple-200">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Brain className="w-5 h-5 text-purple-600" />
+              AI Sales Tools
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <Link href="/sales/quick-scan">
+                <motion.div 
+                  whileHover={{ scale: 1.02 }}
+                  className="p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer border border-purple-100"
+                >
+                  <Camera className="w-8 h-8 text-blue-600 mb-2" />
+                  <h4 className="font-semibold text-sm">Quick Scan</h4>
+                  <p className="text-xs text-gray-500">วิเคราะห์ผิว AI</p>
+                </motion.div>
+              </Link>
+              
+              <Link href="/analysis/future">
+                <motion.div 
+                  whileHover={{ scale: 1.02 }}
+                  className="p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer border border-purple-100"
+                >
+                  <TrendingUp className="w-8 h-8 text-green-600 mb-2" />
+                  <h4 className="font-semibold text-sm">Future Predict</h4>
+                  <p className="text-xs text-gray-500">ทำนาย 1-5 ปี</p>
+                </motion.div>
+              </Link>
+              
+              <Link href="/ar-simulator">
+                <motion.div 
+                  whileHover={{ scale: 1.02 }}
+                  className="p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer border border-purple-100"
+                >
+                  <Wand2 className="w-8 h-8 text-purple-600 mb-2" />
+                  <h4 className="font-semibold text-sm">AR Simulator</h4>
+                  <p className="text-xs text-gray-500">ดูผลก่อนรักษา</p>
+                </motion.div>
+              </Link>
+              
+              <Link href="/sales/presentations">
+                <motion.div 
+                  whileHover={{ scale: 1.02 }}
+                  className="p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer border border-purple-100"
+                >
+                  <BarChart3 className="w-8 h-8 text-orange-600 mb-2" />
+                  <h4 className="font-semibold text-sm">Presentations</h4>
+                  <p className="text-xs text-gray-500">สร้างใบเสนอราคา</p>
+                </motion.div>
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Performance Chart */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
