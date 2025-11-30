@@ -53,8 +53,7 @@ export async function POST(
       },
     });
 
-    // TODO: Send notification to assigned staff
-    // Notify staff that customer has arrived
+    // Send notification to assigned staff (via database + realtime)
     if (booking.staff_id) {
       await supabase.from("notifications").insert({
         user_id: booking.staff_id,

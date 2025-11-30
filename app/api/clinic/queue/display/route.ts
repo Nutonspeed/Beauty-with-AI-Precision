@@ -137,7 +137,7 @@ export async function GET(request: NextRequest) {
             patientName: customer?.full_name || servingData.customer_name || "ลูกค้า",
             status: servingData.status,
             treatmentType: servingData.treatment_type,
-            room: "ห้อง 1", // TODO: Add room assignment logic
+            room: (servingData as any).room_number || "ห้อง 1", // Default to room 1 if not assigned
             doctor: staff?.full_name || "แพทย์",
             checkInTime: servingData.check_in_time,
           }
