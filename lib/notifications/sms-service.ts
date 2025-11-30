@@ -10,6 +10,13 @@ if (!accountSid || !authToken || !phoneNumber) {
 
 const client = accountSid && authToken ? twilio(accountSid, authToken) : null;
 
+/**
+ * Check if SMS is configured
+ */
+export function isSmsConfigured(): boolean {
+  return !!(accountSid && authToken && phoneNumber && client);
+}
+
 export interface SendSMSParams {
   to: string;
   message: string;

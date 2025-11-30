@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { createClient } from '@/lib/supabase/server';
 
 const PushSubscriptionSchema = z.object({
   endpoint: z.string().url(),
@@ -26,8 +27,10 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const subscription = PushSubscriptionSchema.parse(body);
 
-    // TODO: Get user ID from session/auth
-    const userId = request.headers.get('x-user-id') || 'anonymous';
+    // Get user ID from auth session
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    const userId = user?.id || request.headers.get('x-user-id') || 'anonymous';
 
     // Store subscription
     subscriptions.set(subscription.endpoint, {
@@ -97,7 +100,24 @@ export async function DELETE(request: NextRequest) {
  * Get all push subscriptions (admin only)
  */
 export async function GET() {
-  // TODO: Add admin authentication
+  // Check admin authentication
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  // Check if user is admin
+  const { data: profile } = await supabase
+    .from('users')
+    .select('role')
+    .eq('id', user.id)
+    .single();
+
+  if (!profile || !['super_admin', 'clinic_owner'].includes(profile.role)) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
 
   const subs = Array.from(subscriptions.entries()).map(([endpoint, data]) => ({
     endpoint,

@@ -3,6 +3,8 @@ import { createClient } from "@/lib/supabase/server";
 import { format } from "date-fns";
 import { th } from "date-fns/locale";
 import { sendBookingConfirmationEmail } from "@/lib/notifications/email-service";
+import { sendLineMessage, isLineConfigured } from "@/lib/notifications/line-messaging";
+import { sendBookingConfirmationSMS, isSmsConfigured } from "@/lib/notifications/sms-service";
 
 export async function POST(request: NextRequest) {
   try {
@@ -82,12 +84,18 @@ export async function POST(request: NextRequest) {
     for (const channel of confirmationSettings.channels) {
       try {
         if (channel === "line" && booking.customer?.line_id) {
-          // TODO: ต่อกับ LINE Messaging API
-          console.log("Sending LINE confirmation:", {
-            line_id: booking.customer.line_id,
-            message,
-          });
-          sentChannels.push("line");
+          // Send via LINE Messaging API
+          if (isLineConfigured()) {
+            const lineResult = await sendLineMessage(booking.customer.line_id, [
+              { type: 'text', text: message }
+            ]);
+            if (lineResult.success) {
+              sentChannels.push("line");
+            }
+            console.log("LINE confirmation result:", lineResult);
+          } else {
+            console.log("LINE not configured, skipping:", { line_id: booking.customer.line_id });
+          }
         }
 
         if (channel === "email" && booking.customer?.email) {
@@ -108,12 +116,24 @@ export async function POST(request: NextRequest) {
         }
 
         if (channel === "sms" && booking.customer?.phone) {
-          // TODO: ต่อกับ SMS Service (Twilio, AWS SNS)
-          console.log("Sending SMS confirmation:", {
-            phone: booking.customer.phone,
-            message,
-          });
-          sentChannels.push("sms");
+          // Send via Twilio SMS
+          if (isSmsConfigured()) {
+            const smsResult = await sendBookingConfirmationSMS({
+              to: booking.customer.phone,
+              customerName: booking.customer.name || "ลูกค้า",
+              bookingDate: appointmentDate,
+              bookingTime: booking.appointment_time,
+              treatment: booking.treatment_type,
+              clinicName: "AI367 Beauty Clinic",
+              bookingId: booking.id
+            });
+            if (smsResult.success) {
+              sentChannels.push("sms");
+            }
+            console.log("SMS confirmation result:", smsResult);
+          } else {
+            console.log("SMS not configured, skipping:", { phone: booking.customer.phone });
+          }
         }
       } catch (channelError) {
         console.error(`Error sending via ${channel}:`, channelError);
