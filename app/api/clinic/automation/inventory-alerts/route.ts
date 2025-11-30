@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { sendEmail } from "@/lib/notifications/email-service";
 
 interface InventoryAlert {
   id: string;
@@ -241,10 +242,15 @@ export async function POST() {
 </html>
     `;
 
-    // TODO: ส่งอีเมลจริงผ่าน Email Service (Resend, SendGrid, etc.)
-    // ตอนนี้แค่ log ไว้ก่อน
-    console.log("Sending inventory alert email to:", alertEmails);
-    console.log("Subject:", emailSubject);
+    // Send inventory alert emails via Resend
+    for (const email of alertEmails) {
+      await sendEmail({
+        to: email,
+        subject: emailSubject,
+        html: emailBody,
+      });
+    }
+    console.log("Sent inventory alert email to:", alertEmails);
     console.log("Low stock items:", lowStockItems.length);
 
     // บันทึก log การส่งแจ้งเตือน
