@@ -107,22 +107,23 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Check for performance issues and alert if needed
+    // Check for performance issues and log alerts
+    // Note: External monitoring (Sentry, DataDog) can be added when API keys are configured
     if (data.type === 'long-task' && data.duration && data.duration > 500) {
-      console.warn('Critical long task detected:', data.duration, 'ms');
-      // TODO: Send alert to monitoring service
+      console.warn('⚠️ Critical long task detected:', data.duration, 'ms');
+      // Alerts are logged to console - connect to Sentry/DataDog for production alerts
     }
 
     if (data.type === 'slow-api' && data.duration && data.duration > 5000) {
-      console.warn('Critical slow API detected:', data.endpoint, data.duration, 'ms');
-      // TODO: Send alert to monitoring service
+      console.warn('⚠️ Critical slow API detected:', data.endpoint, data.duration, 'ms');
+      // Alerts are logged to console - connect to Sentry/DataDog for production alerts
     }
 
     if (data.metrics) {
       const poorMetrics = data.metrics.filter(m => m.rating === 'poor');
       if (poorMetrics.length > 0) {
-        console.warn('Poor performance metrics detected:', poorMetrics);
-        // TODO: Send alert to monitoring service
+        console.warn('⚠️ Poor performance metrics detected:', poorMetrics);
+        // Alerts are logged to console - connect to Sentry/DataDog for production alerts
       }
     }
 
