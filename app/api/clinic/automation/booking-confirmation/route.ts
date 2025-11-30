@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { format } from "date-fns";
 import { th } from "date-fns/locale";
+import { sendBookingConfirmationEmail } from "@/lib/notifications/email-service";
 
 export async function POST(request: NextRequest) {
   try {
@@ -90,12 +91,20 @@ export async function POST(request: NextRequest) {
         }
 
         if (channel === "email" && booking.customer?.email) {
-          // TODO: ต่อกับ Email Service (Resend, SendGrid)
-          console.log("Sending Email confirmation:", {
-            email: booking.customer.email,
-            message,
+          // Send via Resend
+          const emailResult = await sendBookingConfirmationEmail({
+            to: booking.customer.email,
+            customerName: booking.customer.name || "ลูกค้า",
+            bookingDate: appointmentDate,
+            bookingTime: booking.appointment_time,
+            treatment: booking.treatment_type,
+            clinicName: "AI367 Beauty Clinic",
+            bookingId: booking.id,
           });
-          sentChannels.push("email");
+          if (emailResult.success) {
+            sentChannels.push("email");
+          }
+          console.log("Email confirmation result:", emailResult);
         }
 
         if (channel === "sms" && booking.customer?.phone) {
