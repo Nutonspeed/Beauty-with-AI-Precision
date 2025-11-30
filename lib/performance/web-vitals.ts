@@ -89,7 +89,7 @@ export async function initWebVitals() {
       return
     }
     
-    const { onCLS, onFID, onLCP, onFCP, onTTFB, onINP } = webVitals
+    const { onCLS, onLCP, onFCP, onTTFB, onINP } = webVitals
     
     const handleMetric = (name: string) => (metric: WebVitalsMetric) => {
       reportWebVitals({
@@ -99,7 +99,6 @@ export async function initWebVitals() {
     }
     
     onCLS?.(handleMetric('CLS'))
-    onFID?.(handleMetric('FID'))
     onLCP?.(handleMetric('LCP'))
     onFCP?.(handleMetric('FCP'))
     onTTFB?.(handleMetric('TTFB'))
