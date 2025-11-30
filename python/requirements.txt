@@ -1,0 +1,28 @@
+# DeepFace API Dependencies
+# =========================
+
+# Web framework
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+python-multipart==0.0.6
+
+# HTTP client
+httpx==0.26.0
+
+# DeepFace and dependencies
+deepface==0.0.89
+tensorflow>=2.13.0,<2.16.0
+keras>=2.13.0
+
+# Image processing
+Pillow>=10.0.0
+opencv-python>=4.8.0
+numpy>=1.24.0
+
+# Face detection backends (optional, install as needed)
+# dlib==19.24.2  # Requires cmake
+# mtcnn==0.1.1
+# retinaface==0.0.14
+
+# Utilities
+pydantic>=2.0.0
