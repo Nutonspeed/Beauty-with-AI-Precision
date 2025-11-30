@@ -10,7 +10,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Slider } from "@/components/ui/slider"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ArrowLeft, Sparkles, Download, Share2, Zap, Camera, Loader2, Layers, Activity } from "lucide-react"
+import { ArrowLeft, Sparkles, Download, Share2, Zap, Camera, Layers, Activity } from "lucide-react"
+import { GradientSpinner } from "@/components/ui/modern-loader"
 import { TreatmentSelector } from "@/components/treatment-selector"
 import { ARVisualization } from "@/components/ar-visualization"
 import { Interactive3DViewer } from "@/components/ar/interactive-3d-viewer"
@@ -24,11 +25,22 @@ import { useHaptic, HAPTIC_PATTERNS } from "@/lib/hooks/use-haptic"
 export default function ARSimulatorPage() {
   return (
     <Suspense fallback={
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="h-12 w-12 animate-spin mx-auto mb-4 text-primary" />
-          <p className="text-muted-foreground">Loading AR Simulator...</p>
-        </div>
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-background to-muted/30">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-center"
+        >
+          <GradientSpinner size="lg" className="mx-auto mb-6" />
+          <motion.p 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-muted-foreground"
+          >
+            กำลังโหลด AR Simulator...
+          </motion.p>
+        </motion.div>
       </div>
     }>
       <ARSimulatorContent />
@@ -74,11 +86,15 @@ function ARSimulatorContent() {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <div className="mb-4 h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-          <p className="text-muted-foreground">Loading AR Simulator...</p>
-        </div>
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-background to-muted/30">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-center"
+        >
+          <GradientSpinner size="lg" className="mx-auto mb-6" />
+          <p className="text-muted-foreground">กำลังโหลด AR Simulator...</p>
+        </motion.div>
       </div>
     )
   }
