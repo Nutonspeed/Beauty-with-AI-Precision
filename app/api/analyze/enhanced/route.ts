@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { analyzeWithVISIAEquivalent } from "@/lib/ai/phase2/visia-equivalent-pipeline"
+import { randomUUID } from "crypto"
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,7 +17,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "User ID required for clinical analysis" }, { status: 400 })
     }
 
-    console.log(`[v0] 🚀 Starting Phase 2 Clinical analysis for user ${userId}...`)
+    // Generate unique analysis ID
+    const analysisId = `ana_${randomUUID().replace(/-/g, '').slice(0, 16)}`
+
+    console.log(`[v0] 🚀 Starting Phase 2 Clinical analysis for user ${userId} (${analysisId})...`)
 
     // Run VISIA-equivalent analysis
     const startTime = Date.now()
@@ -28,7 +32,7 @@ export async function POST(request: NextRequest) {
     // Convert to API response format
     const response = {
       success: true,
-      analysisId: "temp", // TODO: Return actual analysis ID
+      analysisId,
       tier: "clinical",
       accuracy: result.accuracyEstimate.overall,
       processingTime,
