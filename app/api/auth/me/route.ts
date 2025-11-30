@@ -32,15 +32,33 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Get user profile from profiles table
-    const { data: profile, error } = await supabase
+    // Try profiles table first, fallback to users table
+    let profile = null
+    
+    // Try profiles table
+    const { data: profileData, error: profileError } = await supabase
       .from("profiles")
       .select("id, email, role, full_name, avatar_url, clinic_id, is_active")
       .eq("id", session.user.id)
       .single()
 
-    if (error) {
-      console.error("[/api/auth/me] Profile fetch error:", error)
+    if (!profileError && profileData) {
+      profile = profileData
+    } else {
+      // Fallback to users table
+      const { data: userData, error: userError } = await supabase
+        .from("users")
+        .select("id, email, role, full_name, avatar_url, clinic_id, is_active")
+        .eq("id", session.user.id)
+        .single()
+      
+      if (!userError && userData) {
+        profile = userData
+      }
+    }
+
+    if (!profile) {
+      console.error("[/api/auth/me] No profile found, using auth metadata")
       // Return basic info from auth user if profile not found
       return NextResponse.json({
         success: true,
