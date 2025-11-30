@@ -81,53 +81,34 @@ export async function initWebVitals() {
   if (typeof window === 'undefined') return
   
   try {
-    const { onCLS, onFID, onLCP, onFCP, onTTFB, onINP } = await import('web-vitals')
+    // Dynamic import web-vitals (optional dependency)
+    const webVitals = await import('web-vitals').catch(() => null)
     
-    onCLS((metric) => {
+    if (!webVitals) {
+      console.log('ℹ️ Web Vitals package not installed, skipping monitoring')
+      return
+    }
+    
+    const { onCLS, onFID, onLCP, onFCP, onTTFB, onINP } = webVitals
+    
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const handleMetric = (name: string) => (metric: any) => {
       reportWebVitals({
         ...metric,
-        rating: getRating('CLS', metric.value)
+        rating: getRating(name, metric.value)
       })
-    })
+    }
     
-    onFID((metric) => {
-      reportWebVitals({
-        ...metric,
-        rating: getRating('FID', metric.value)
-      })
-    })
-    
-    onLCP((metric) => {
-      reportWebVitals({
-        ...metric,
-        rating: getRating('LCP', metric.value)
-      })
-    })
-    
-    onFCP((metric) => {
-      reportWebVitals({
-        ...metric,
-        rating: getRating('FCP', metric.value)
-      })
-    })
-    
-    onTTFB((metric) => {
-      reportWebVitals({
-        ...metric,
-        rating: getRating('TTFB', metric.value)
-      })
-    })
-    
-    onINP((metric) => {
-      reportWebVitals({
-        ...metric,
-        rating: getRating('INP', metric.value)
-      })
-    })
+    onCLS?.(handleMetric('CLS'))
+    onFID?.(handleMetric('FID'))
+    onLCP?.(handleMetric('LCP'))
+    onFCP?.(handleMetric('FCP'))
+    onTTFB?.(handleMetric('TTFB'))
+    onINP?.(handleMetric('INP'))
     
     console.log('✅ Web Vitals monitoring initialized')
-  } catch (error) {
-    console.warn('⚠️ Web Vitals not available:', error)
+  } catch {
+    console.log('ℹ️ Web Vitals monitoring not available')
   }
 }
 
@@ -147,8 +128,8 @@ export function getPerformanceSummary() {
     ttfb: navigation.responseStart - navigation.requestStart,
     download: navigation.responseEnd - navigation.responseStart,
     domParse: navigation.domInteractive - navigation.responseEnd,
-    domReady: navigation.domContentLoadedEventEnd - navigation.navigationStart,
-    load: navigation.loadEventEnd - navigation.navigationStart,
+    domReady: navigation.domContentLoadedEventEnd - navigation.startTime,
+    load: navigation.loadEventEnd - navigation.startTime,
     total: navigation.loadEventEnd - navigation.fetchStart
   }
 }
