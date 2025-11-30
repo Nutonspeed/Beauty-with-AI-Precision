@@ -6,7 +6,7 @@ import { motion } from 'framer-motion'
 import { TrendingUp, Users, Clock, DollarSign, Award, Target, Sparkles, Heart, Eye, Flame, Scissors, Brain, Calculator, MessageSquare } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { GradientSpinner, ShimmerSkeleton } from '@/components/ui/modern-loader'
+import { ShimmerSkeleton } from '@/components/ui/modern-loader'
 import Link from 'next/link'
 
 interface SalesStats {
