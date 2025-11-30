@@ -6,11 +6,12 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
-import { Sparkles, Shield, Zap, Users, BarChart3, Camera, CheckCircle2, ArrowRight } from "lucide-react"
+import { Sparkles, Shield, Zap, Users, BarChart3, Camera, CheckCircle2, ArrowRight, Brain, Target, TrendingUp } from "lucide-react"
 import { useLanguage } from "@/lib/i18n/language-context"
 import RoiMiniCalculator from "@/components/roi/roi-mini-calculator"
 import { useEffect, useRef } from "react"
 import { usageTracker } from "@/lib/analytics/usage-tracker"
+import { motion } from "framer-motion"
 
 
 export default function HomePage() {
@@ -258,89 +259,141 @@ export default function HomePage() {
         </section>
 
         {/* Features Grid */}
-        <section className="border-y border-border bg-muted/30 py-20">
+        <section className="border-y border-border bg-gradient-to-b from-background to-muted/30 py-24">
           <div className="container">
-            <div className="mx-auto mb-12 max-w-2xl text-center">
+            <motion.div 
+              className="mx-auto mb-16 max-w-2xl text-center"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
+              <Badge variant="outline" className="mb-4 px-4 py-1">
+                <Sparkles className="mr-2 h-3 w-3" />
+                Features
+              </Badge>
               <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl font-display">
                 {t.home.whyChooseTitle}
               </h2>
-              <p className="text-balance text-muted-foreground leading-relaxed">
+              <p className="text-balance text-muted-foreground leading-relaxed text-lg">
                 {t.home.whyChooseSubtitle}
               </p>
-            </div>
+            </motion.div>
 
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              <Card className="border-2 border-border/70 shadow-sm transition-all hover:border-primary/50 hover:shadow-md">
-                <CardContent className="p-6">
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-                    <Sparkles className="h-6 w-6 text-primary" />
-                  </div>
-                  <h3 className="mb-2 text-xl font-semibold">{t.home.features.aiPowered.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {t.home.features.aiPowered.description}
-                  </p>
-                </CardContent>
-              </Card>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+              >
+                <Card className="h-full border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-cyan-500/5 to-blue-500/5 hover:-translate-y-1">
+                  <CardContent className="p-8">
+                    <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-500 shadow-lg">
+                      <Brain className="h-7 w-7 text-white" />
+                    </div>
+                    <h3 className="mb-3 text-xl font-bold">{t.home.features.aiPowered.title}</h3>
+                    <p className="text-muted-foreground leading-relaxed">
+                      {t.home.features.aiPowered.description}
+                    </p>
+                  </CardContent>
+                </Card>
+              </motion.div>
 
-              <Card className="border-2 border-border/70 shadow-sm transition-all hover:border-primary/50 hover:shadow-md">
-                <CardContent className="p-6">
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-accent/10">
-                    <Camera className="h-6 w-6 text-accent" />
-                  </div>
-                  <h3 className="mb-2 text-xl font-semibold">{t.home.features.arVisualization.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {t.home.features.arVisualization.description}
-                  </p>
-                </CardContent>
-              </Card>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+              >
+                <Card className="h-full border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-purple-500/5 to-pink-500/5 hover:-translate-y-1">
+                  <CardContent className="p-8">
+                    <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 shadow-lg">
+                      <Camera className="h-7 w-7 text-white" />
+                    </div>
+                    <h3 className="mb-3 text-xl font-bold">{t.home.features.arVisualization.title}</h3>
+                    <p className="text-muted-foreground leading-relaxed">
+                      {t.home.features.arVisualization.description}
+                    </p>
+                  </CardContent>
+                </Card>
+              </motion.div>
 
-              <Card className="border-2 border-border/70 shadow-sm transition-all hover:border-primary/50 hover:shadow-md">
-                <CardContent className="p-6">
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-                    <Shield className="h-6 w-6 text-primary" />
-                  </div>
-                  <h3 className="mb-2 text-xl font-semibold">{t.home.features.pdpaCompliant.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {t.home.features.pdpaCompliant.description}
-                  </p>
-                </CardContent>
-              </Card>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+              >
+                <Card className="h-full border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-emerald-500/5 to-teal-500/5 hover:-translate-y-1">
+                  <CardContent className="p-8">
+                    <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 shadow-lg">
+                      <Shield className="h-7 w-7 text-white" />
+                    </div>
+                    <h3 className="mb-3 text-xl font-bold">{t.home.features.pdpaCompliant.title}</h3>
+                    <p className="text-muted-foreground leading-relaxed">
+                      {t.home.features.pdpaCompliant.description}
+                    </p>
+                  </CardContent>
+                </Card>
+              </motion.div>
 
-              <Card className="border-2 border-border/70 shadow-sm transition-all hover:border-primary/50 hover:shadow-md">
-                <CardContent className="p-6">
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-accent/10">
-                    <BarChart3 className="h-6 w-6 text-accent" />
-                  </div>
-                  <h3 className="mb-2 text-xl font-semibold">{t.home.features.visiaStyle.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {t.home.features.visiaStyle.description}
-                  </p>
-                </CardContent>
-              </Card>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+              >
+                <Card className="h-full border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-orange-500/5 to-amber-500/5 hover:-translate-y-1">
+                  <CardContent className="p-8">
+                    <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 shadow-lg">
+                      <BarChart3 className="h-7 w-7 text-white" />
+                    </div>
+                    <h3 className="mb-3 text-xl font-bold">{t.home.features.visiaStyle.title}</h3>
+                    <p className="text-muted-foreground leading-relaxed">
+                      {t.home.features.visiaStyle.description}
+                    </p>
+                  </CardContent>
+                </Card>
+              </motion.div>
 
-              <Card className="border-2 border-border/70 shadow-sm transition-all hover:border-primary/50 hover:shadow-md">
-                <CardContent className="p-6">
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-                    <Zap className="h-6 w-6 text-primary" />
-                  </div>
-                  <h3 className="mb-2 text-xl font-semibold">{t.home.features.fastAccurate.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {t.home.features.fastAccurate.description}
-                  </p>
-                </CardContent>
-              </Card>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+              >
+                <Card className="h-full border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 hover:-translate-y-1">
+                  <CardContent className="p-8">
+                    <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-500 shadow-lg">
+                      <Zap className="h-7 w-7 text-white" />
+                    </div>
+                    <h3 className="mb-3 text-xl font-bold">{t.home.features.fastAccurate.title}</h3>
+                    <p className="text-muted-foreground leading-relaxed">
+                      {t.home.features.fastAccurate.description}
+                    </p>
+                  </CardContent>
+                </Card>
+              </motion.div>
 
-              <Card className="border-2 border-border/70 shadow-sm transition-all hover:border-primary/50 hover:shadow-md">
-                <CardContent className="p-6">
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-accent/10">
-                    <Users className="h-6 w-6 text-accent" />
-                  </div>
-                  <h3 className="mb-2 text-xl font-semibold">{t.home.features.multiClinic.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {t.home.features.multiClinic.description}
-                  </p>
-                </CardContent>
-              </Card>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.6 }}
+              >
+                <Card className="h-full border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-rose-500/5 to-red-500/5 hover:-translate-y-1">
+                  <CardContent className="p-8">
+                    <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-500 to-red-500 shadow-lg">
+                      <Users className="h-7 w-7 text-white" />
+                    </div>
+                    <h3 className="mb-3 text-xl font-bold">{t.home.features.multiClinic.title}</h3>
+                    <p className="text-muted-foreground leading-relaxed">
+                      {t.home.features.multiClinic.description}
+                    </p>
+                  </CardContent>
+                </Card>
+              </motion.div>
             </div>
           </div>
         </section>
