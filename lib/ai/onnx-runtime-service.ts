@@ -27,7 +27,7 @@ async function getOrt(): Promise<any> {
         ort.env.wasm.numThreads = navigator.hardwareConcurrency || 4
         ort.env.wasm.simd = true
       }
-    } catch (e) {
+    } catch {
       console.warn('[ONNX] onnxruntime-web not installed. Install with: pnpm add onnxruntime-web')
       throw new Error('ONNX Runtime not available')
     }
