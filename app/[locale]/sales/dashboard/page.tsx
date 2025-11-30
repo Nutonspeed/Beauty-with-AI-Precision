@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { motion } from 'framer-motion'
 import { TrendingUp, Users, Clock, DollarSign, Award, Target, Sparkles, Heart, Eye, Flame, Scissors, Brain, Calculator, MessageSquare } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { GradientSpinner, ShimmerSkeleton } from '@/components/ui/modern-loader'
 import Link from 'next/link'
 
 interface SalesStats {
@@ -83,10 +85,40 @@ export default function SalesDashboard() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center p-6">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading Sales Dashboard...</p>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 md:p-6">
+        <div className="max-w-7xl mx-auto space-y-6">
+          {/* Header Skeleton */}
+          <div className="flex justify-between items-center">
+            <div className="space-y-2">
+              <ShimmerSkeleton className="h-8 w-48" />
+              <ShimmerSkeleton className="h-4 w-32" />
+            </div>
+            <ShimmerSkeleton className="h-10 w-32 rounded-lg" />
+          </div>
+          
+          {/* Cards Skeleton */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[1, 2, 3, 4].map((i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+              >
+                <Card className="p-4">
+                  <ShimmerSkeleton className="h-4 w-20 mb-4" />
+                  <ShimmerSkeleton className="h-8 w-16 mb-2" />
+                  <ShimmerSkeleton className="h-3 w-24" />
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+          
+          {/* Main Content Skeleton */}
+          <div className="grid md:grid-cols-2 gap-6">
+            <ShimmerSkeleton className="h-64 rounded-xl" />
+            <ShimmerSkeleton className="h-64 rounded-xl" />
+          </div>
         </div>
       </div>
     )

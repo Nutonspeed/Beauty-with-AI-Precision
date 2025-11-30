@@ -11,6 +11,8 @@ import { Info, Lightbulb } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { createClient } from "@/lib/supabase/client"
+import { motion } from "framer-motion"
+import { GradientSpinner } from "@/components/ui/modern-loader"
 
 function AnalysisContent() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -28,13 +30,24 @@ function AnalysisContent() {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen flex-col">
+      <div className="flex min-h-screen flex-col bg-gradient-to-b from-background to-muted/30">
         <Header />
         <main className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Loading...</p>
-          </div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-center"
+          >
+            <GradientSpinner size="lg" className="mx-auto mb-6" />
+            <motion.p 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="text-muted-foreground"
+            >
+              กำลังโหลด...
+            </motion.p>
+          </motion.div>
         </main>
         <Footer />
       </div>
