@@ -1,38 +1,132 @@
 export const SUBSCRIPTION_PLANS = {
-  starter: {
-    name: 'Starter',
-    price: 2900,
-    maxUsers: 5,
-    maxCustomersPerMonth: 100,
-    maxStorageGB: 10,
-    features: ['Basic AI Analysis', 'Email Support', 'Mobile App'],
+  free: {
+    name: 'Free',
+    nameTH: 'ใช้ฟรี',
+    price: 0,
+    maxUsers: 1,
+    maxCustomersPerMonth: 10,
+    maxStorageGB: 1,
+    maxAnalysesPerMonth: 20,
+    trialDays: 0,
+    features: [
+      'Basic AI Skin Analysis',
+      '8 VISIA Metrics',
+      'Instant Results',
+    ],
+    featuresTH: [
+      'AI Skin Analysis พื้นฐาน',
+      '8 ตัวชี้วัด VISIA',
+      'ผลลัพธ์ทันที',
+    ],
   },
-  professional: {
-    name: 'Professional',
-    price: 9900,
-    maxUsers: 20,
-    maxCustomersPerMonth: -1,
+  premium: {
+    name: 'Premium',
+    nameTH: 'พรีเมียม',
+    price: 4900,
+    maxUsers: 10,
+    maxCustomersPerMonth: 500,
     maxStorageGB: 50,
+    maxAnalysesPerMonth: -1, // Unlimited
+    trialDays: 14,
     features: [
       'Advanced AI Analysis',
-      'Priority Support',
-      'Custom Branding',
-      'API Access',
-      'Advanced Reports',
+      'AR Treatment Simulator',
+      'Unlimited History',
+      'Before/After Comparison',
+      'AI Recommendations',
+      'Sales Dashboard',
+      'Reports & Analytics',
+      'Email Support',
+    ],
+    featuresTH: [
+      'AI Analysis ขั้นสูง',
+      'AR Treatment Simulator',
+      'บันทึกประวัติไม่จำกัด',
+      'เปรียบเทียบผลก่อน-หลัง',
+      'คำแนะนำส่วนตัว AI',
+      'Sales Dashboard',
+      'รายงานและ Analytics',
+      'Email Support',
     ],
   },
   enterprise: {
     name: 'Enterprise',
-    price: 29900,
-    maxUsers: -1,
-    maxCustomersPerMonth: -1,
-    maxStorageGB: 200,
+    nameTH: 'องค์กร',
+    price: -1, // Custom pricing
+    maxUsers: -1, // Unlimited
+    maxCustomersPerMonth: -1, // Unlimited
+    maxStorageGB: 500,
+    maxAnalysesPerMonth: -1, // Unlimited
+    trialDays: 30,
     features: [
-      'All Professional Features',
-      'Dedicated Support',
-      'Custom Integration',
+      'All Premium Features',
+      'Multi-Clinic Management',
+      'Custom Branding',
+      'API Integration',
+      'Dedicated Support 24/7',
+      'Custom Development',
+      'Training & Onboarding',
       'SLA Guarantee',
-      'Multi-location',
+    ],
+    featuresTH: [
+      'ฟีเจอร์ Premium ทั้งหมด',
+      'Multi-Clinic Management',
+      'Custom Branding',
+      'API Integration',
+      'Support 24/7',
+      'Custom Development',
+      'Training & Onboarding',
+      'SLA Guarantee',
     ],
   },
-} as const;
+} as const
+
+export type SubscriptionPlan = keyof typeof SUBSCRIPTION_PLANS
+
+/**
+ * Get plan by name
+ */
+export function getPlan(planName: SubscriptionPlan) {
+  return SUBSCRIPTION_PLANS[planName]
+}
+
+/**
+ * Check if plan allows feature
+ */
+export function canAccessFeature(planName: SubscriptionPlan, feature: string): boolean {
+  const plan = SUBSCRIPTION_PLANS[planName]
+  return (plan.features as readonly string[]).includes(feature)
+}
+
+/**
+ * Check if usage is within limits
+ */
+export function isWithinLimits(
+  planName: SubscriptionPlan,
+  usage: { users?: number; customers?: number; storage?: number; analyses?: number }
+): boolean {
+  const plan = SUBSCRIPTION_PLANS[planName]
+  const maxUsers = plan.maxUsers as number
+  const maxCustomers = plan.maxCustomersPerMonth as number
+  const maxStorage = plan.maxStorageGB as number
+  const maxAnalyses = plan.maxAnalysesPerMonth as number
+  
+  if (usage.users && maxUsers !== -1 && usage.users > maxUsers) return false
+  if (usage.customers && maxCustomers !== -1 && usage.customers > maxCustomers) return false
+  if (usage.storage && maxStorage !== -1 && usage.storage > maxStorage) return false
+  if (usage.analyses && maxAnalyses !== -1 && usage.analyses > maxAnalyses) return false
+  
+  return true
+}
+
+/**
+ * Format price for display
+ */
+export function formatPrice(planName: SubscriptionPlan, locale: 'th' | 'en' = 'th'): string {
+  const plan = SUBSCRIPTION_PLANS[planName]
+  
+  if (plan.price === 0) return locale === 'th' ? 'ฟรี' : 'Free'
+  if (plan.price === -1) return locale === 'th' ? 'ติดต่อเรา' : 'Contact Us'
+  
+  return `฿${plan.price.toLocaleString()}`
+}

@@ -13,85 +13,98 @@ import {
   TrendingUp,
   ArrowRight,
   Crown,
-  Building2
+  Building2,
+  Users,
+  HardDrive,
+  Zap,
+  Clock
 } from "lucide-react"
 import { useLanguage } from "@/lib/i18n/language-context"
+import { SUBSCRIPTION_PLANS, formatPrice } from "@/lib/subscriptions/plans"
 
 export default function PricingPage() {
   const { language } = useLanguage()
 
   const pricingTiers = [
     {
-      name: language === "th" ? "ใช้ฟรี" : "Free Tier",
+      planKey: 'free' as const,
+      name: language === "th" ? SUBSCRIPTION_PLANS.free.nameTH : SUBSCRIPTION_PLANS.free.name,
       badge: language === "th" ? "เริ่มต้นใช้งาน" : "Get Started",
       icon: Sparkles,
-      price: language === "th" ? "ฟรี" : "Free",
+      price: formatPrice('free', language as 'th' | 'en'),
       period: language === "th" ? "ตลอดไป" : "Forever",
+      limits: {
+        users: SUBSCRIPTION_PLANS.free.maxUsers,
+        storage: SUBSCRIPTION_PLANS.free.maxStorageGB,
+        analyses: SUBSCRIPTION_PLANS.free.maxAnalysesPerMonth,
+        trial: SUBSCRIPTION_PLANS.free.trialDays
+      },
       description: language === "th" 
         ? "เหมาะสำหรับผู้ที่ต้องการทดลองใช้ระบบ AI Skin Analysis"
         : "Perfect for trying out AI Skin Analysis",
-      features: [
-        { text: language === "th" ? "✅ AI Skin Analysis พื้นฐาน" : "✅ Basic AI Skin Analysis", included: true },
-        { text: language === "th" ? "✅ วิเคราะห์ 8 ตัวชี้วัดผิว (VISIA)" : "✅ 8 VISIA Skin Metrics", included: true },
-        { text: language === "th" ? "✅ ผลลัพธ์ทันที" : "✅ Instant Results", included: true },
-        { text: language === "th" ? "✅ ไม่ต้องลงทะเบียน" : "✅ No Registration Required", included: true },
-        { text: language === "th" ? "❌ ไม่บันทึกประวัติ" : "❌ No History Saved", included: false },
-        { text: language === "th" ? "❌ ไม่มี AR Simulator" : "❌ No AR Simulator", included: false },
-        { text: language === "th" ? "❌ ไม่มีการเปรียบเทียบผล" : "❌ No Result Comparison", included: false },
-        { text: language === "th" ? "❌ ไม่มีคำแนะนำส่วนตัว" : "❌ No Personalized Recommendations", included: false }
+      features: language === "th" ? SUBSCRIPTION_PLANS.free.featuresTH : SUBSCRIPTION_PLANS.free.features,
+      excludedFeatures: [
+        language === "th" ? "ไม่บันทึกประวัติ" : "No History Saved",
+        language === "th" ? "ไม่มี AR Simulator" : "No AR Simulator",
+        language === "th" ? "ไม่มีคำแนะนำส่วนตัว" : "No Personalized Recommendations"
       ],
       cta: language === "th" ? "เริ่มวิเคราะห์ฟรี" : "Start Free Analysis",
       href: "/analysis",
       variant: "outline" as const
     },
     {
-      name: language === "th" ? "Premium" : "Premium",
+      planKey: 'premium' as const,
+      name: language === "th" ? SUBSCRIPTION_PLANS.premium.nameTH : SUBSCRIPTION_PLANS.premium.name,
       badge: language === "th" ? "ยอดนิยม" : "Most Popular",
       icon: Crown,
-      price: language === "th" ? "฿4,900" : "฿4,900",
+      price: formatPrice('premium', language as 'th' | 'en'),
       period: language === "th" ? "ต่อเดือน" : "per month",
+      limits: {
+        users: SUBSCRIPTION_PLANS.premium.maxUsers,
+        storage: SUBSCRIPTION_PLANS.premium.maxStorageGB,
+        analyses: SUBSCRIPTION_PLANS.premium.maxAnalysesPerMonth,
+        trial: SUBSCRIPTION_PLANS.premium.trialDays
+      },
       description: language === "th" 
         ? "เหมาะสำหรับคลินิกขนาดเล็กถึงกลาง พร้อมฟีเจอร์ครบครัน"
         : "Perfect for small to medium clinics with full features",
-      features: [
-        { text: language === "th" ? "✅ AI Skin Analysis ขั้นสูง" : "✅ Advanced AI Skin Analysis", included: true },
-        { text: language === "th" ? "✅ AR Treatment Simulator" : "✅ AR Treatment Simulator", included: true },
-        { text: language === "th" ? "✅ บันทึกประวัติไม่จำกัด" : "✅ Unlimited History", included: true },
-        { text: language === "th" ? "✅ เปรียบเทียบผลก่อน-หลัง" : "✅ Before/After Comparison", included: true },
-        { text: language === "th" ? "✅ คำแนะนำส่วนตัว AI" : "✅ AI Personalized Recommendations", included: true },
-        { text: language === "th" ? "✅ Sales Dashboard" : "✅ Sales Dashboard", included: true },
-        { text: language === "th" ? "✅ รายงานและ Analytics" : "✅ Reports & Analytics", included: true },
-        { text: language === "th" ? "✅ Email Support" : "✅ Email Support", included: true }
-      ],
-      cta: language === "th" ? "เริ่มใช้งาน Premium" : "Get Premium",
-      href: "/contact",
+      features: language === "th" ? SUBSCRIPTION_PLANS.premium.featuresTH : SUBSCRIPTION_PLANS.premium.features,
+      excludedFeatures: [],
+      cta: language === "th" ? "ทดลองฟรี 14 วัน" : "Start 14-Day Free Trial",
+      href: "/auth/register?plan=premium",
       variant: "default" as const,
       popular: true
     },
     {
-      name: language === "th" ? "Enterprise" : "Enterprise",
+      planKey: 'enterprise' as const,
+      name: language === "th" ? SUBSCRIPTION_PLANS.enterprise.nameTH : SUBSCRIPTION_PLANS.enterprise.name,
       badge: language === "th" ? "หลายสาขา" : "Multi-Branch",
       icon: Building2,
-      price: language === "th" ? "ติดต่อเรา" : "Custom",
-      period: language === "th" ? "ราคาพิเศษ" : "Special Price",
+      price: formatPrice('enterprise', language as 'th' | 'en'),
+      period: language === "th" ? "ราคาพิเศษ" : "Custom Price",
+      limits: {
+        users: SUBSCRIPTION_PLANS.enterprise.maxUsers,
+        storage: SUBSCRIPTION_PLANS.enterprise.maxStorageGB,
+        analyses: SUBSCRIPTION_PLANS.enterprise.maxAnalysesPerMonth,
+        trial: SUBSCRIPTION_PLANS.enterprise.trialDays
+      },
       description: language === "th" 
         ? "สำหรับคลินิกหลายสาขา พร้อมการปรับแต่งและซัพพอร์ตเฉพาะทาง"
         : "For multi-branch clinics with customization and dedicated support",
-      features: [
-        { text: language === "th" ? "✅ ฟีเจอร์ Premium ทั้งหมด" : "✅ All Premium Features", included: true },
-        { text: language === "th" ? "✅ Multi-Clinic Management" : "✅ Multi-Clinic Management", included: true },
-        { text: language === "th" ? "✅ Custom Branding" : "✅ Custom Branding", included: true },
-        { text: language === "th" ? "✅ API Integration" : "✅ API Integration", included: true },
-        { text: language === "th" ? "✅ Dedicated Support 24/7" : "✅ Dedicated Support 24/7", included: true },
-        { text: language === "th" ? "✅ Custom Development" : "✅ Custom Development", included: true },
-        { text: language === "th" ? "✅ Training & Onboarding" : "✅ Training & Onboarding", included: true },
-        { text: language === "th" ? "✅ SLA Guarantee" : "✅ SLA Guarantee", included: true }
-      ],
-      cta: language === "th" ? "ติดต่อฝ่ายขาย" : "Contact Sales",
-      href: "/contact",
+      features: language === "th" ? SUBSCRIPTION_PLANS.enterprise.featuresTH : SUBSCRIPTION_PLANS.enterprise.features,
+      excludedFeatures: [],
+      cta: language === "th" ? "ทดลองฟรี 30 วัน" : "Start 30-Day Free Trial",
+      href: "/contact?plan=enterprise",
       variant: "outline" as const
     }
   ]
+
+  const formatLimit = (value: number, type: 'users' | 'storage' | 'analyses') => {
+    if (value === -1) return language === "th" ? "ไม่จำกัด" : "Unlimited"
+    if (type === 'storage') return `${value} GB`
+    if (type === 'analyses') return `${value}/${language === "th" ? "เดือน" : "mo"}`
+    return value.toString()
+  }
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -180,6 +193,16 @@ export default function PricingPage() {
                     </CardHeader>
 
                     <CardContent>
+                      {/* Trial Badge */}
+                      {tier.limits.trial > 0 && (
+                        <div className="mb-4 flex items-center gap-2 rounded-lg bg-emerald-500/10 px-3 py-2 text-sm text-emerald-600">
+                          <Clock className="h-4 w-4" />
+                          {language === "th" 
+                            ? `ทดลองฟรี ${tier.limits.trial} วัน`
+                            : `${tier.limits.trial}-day free trial`}
+                        </div>
+                      )}
+
                       <Button 
                         className="mb-6 w-full" 
                         variant={tier.variant}
@@ -191,20 +214,37 @@ export default function PricingPage() {
                         </Link>
                       </Button>
 
-                      <div className="space-y-3">
+                      {/* Limits */}
+                      <div className="mb-4 grid grid-cols-3 gap-2 rounded-lg bg-muted/50 p-3 text-center text-xs">
+                        <div>
+                          <Users className="mx-auto mb-1 h-4 w-4 text-muted-foreground" />
+                          <div className="font-semibold">{formatLimit(tier.limits.users, 'users')}</div>
+                          <div className="text-muted-foreground">{language === "th" ? "ผู้ใช้" : "Users"}</div>
+                        </div>
+                        <div>
+                          <HardDrive className="mx-auto mb-1 h-4 w-4 text-muted-foreground" />
+                          <div className="font-semibold">{formatLimit(tier.limits.storage, 'storage')}</div>
+                          <div className="text-muted-foreground">{language === "th" ? "พื้นที่" : "Storage"}</div>
+                        </div>
+                        <div>
+                          <Zap className="mx-auto mb-1 h-4 w-4 text-muted-foreground" />
+                          <div className="font-semibold">{formatLimit(tier.limits.analyses, 'analyses')}</div>
+                          <div className="text-muted-foreground">{language === "th" ? "วิเคราะห์" : "Analyses"}</div>
+                        </div>
+                      </div>
+
+                      {/* Features */}
+                      <div className="space-y-2">
                         {tier.features.map((feature, index) => (
-                          <div 
-                            key={index} 
-                            className={`flex items-start gap-2 text-sm ${
-                              !feature.included ? 'text-muted-foreground' : ''
-                            }`}
-                          >
-                            {feature.included ? (
-                              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                            ) : (
-                              <X className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
-                            )}
-                            <span>{feature.text}</span>
+                          <div key={index} className="flex items-start gap-2 text-sm">
+                            <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                            <span>{feature}</span>
+                          </div>
+                        ))}
+                        {tier.excludedFeatures.map((feature, index) => (
+                          <div key={`ex-${index}`} className="flex items-start gap-2 text-sm text-muted-foreground">
+                            <X className="mt-0.5 h-4 w-4 shrink-0" />
+                            <span>{feature}</span>
                           </div>
                         ))}
                       </div>
