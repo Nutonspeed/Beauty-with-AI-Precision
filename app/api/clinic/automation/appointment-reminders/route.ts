@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { addHours, isWithinInterval, startOfDay, endOfDay } from "date-fns";
+import { sendEmail } from "@/lib/notifications/email-service";
 
 interface AppointmentReminder {
   booking_id: string;
@@ -285,22 +286,47 @@ async function sendReminder(
   reminderType: "24h" | "1h",
   supabase: any
 ) {
-  // TODO: ต่อกับ SMS/LINE API จริง
-  console.log(`Sending ${reminderType} reminder:`, {
-    booking_id: booking.id,
-    customer: booking.customer?.name,
-    message,
-    channels,
-  });
+  const sentChannels: string[] = [];
+  
+  // Send email if customer has email
+  if (channels.includes("email") && booking.customer?.email) {
+    const emailResult = await sendEmail({
+      to: booking.customer.email,
+      subject: `🔔 เตือนนัดหมาย - ${booking.treatment_type}`,
+      html: `
+        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2>เตือนนัดหมาย</h2>
+          <p>สวัสดีคุณ ${booking.customer?.name || "ลูกค้า"},</p>
+          <p>${message}</p>
+          <p style="color: #666;">AI367 Beauty Clinic</p>
+        </div>
+      `,
+    });
+    if (emailResult.success) {
+      sentChannels.push("email");
+    }
+    console.log(`Email reminder (${reminderType}):`, emailResult);
+  }
+
+  // LINE and SMS - log only (requires API keys)
+  if (channels.includes("line") && booking.customer?.line_id) {
+    console.log(`LINE reminder (${reminderType}):`, booking.customer.line_id);
+    // sentChannels.push("line"); // Uncomment when LINE API is configured
+  }
+  
+  if (channels.includes("sms") && booking.customer?.phone) {
+    console.log(`SMS reminder (${reminderType}):`, booking.customer.phone);
+    // sentChannels.push("sms"); // Uncomment when SMS API is configured
+  }
 
   // บันทึก log การส่ง
   await supabase.from("notification_logs").insert({
     booking_id: booking.id,
     customer_id: booking.customer_id,
     notification_type: "appointment_reminder",
-    channels,
+    channels: sentChannels.length > 0 ? sentChannels : channels,
     message,
-    status: "sent",
+    status: sentChannels.length > 0 ? "sent" : "logged",
     sent_at: new Date().toISOString(),
   });
 }
