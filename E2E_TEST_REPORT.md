@@ -1,7 +1,7 @@
 # E2E Test Report - ClinicIQ
 
-**วันที่ทดสอบ:** 29 พฤศจิกายน 2025  
-**ระยะเวลาทดสอบ:** 3.9 นาที  
+**วันที่ทดสอบ:** 1 ธันวาคม 2025  
+**ระยะเวลาทดสอบ:** 2.1 นาที  
 **Test Users:** admin@ai367bar.com, clinic-owner@example.com, customer@example.com  
 **Build Mode:** Production  
 **Status:** ✅ PRODUCTION READY
@@ -12,9 +12,9 @@
 
 | สถานะ | จำนวน | เปอร์เซ็นต์ |
 |-------|-------|------------|
-| ✅ Passed | 49 | 84% |
-| ⏭️ Skipped | 9 | 16% |
-| **รวม** | 58 | 100% |
+| ✅ Passed | 54 | 91.5% |
+| ⏭️ Skipped | 5 | 8.5% |
+| **รวม** | 59 | 100% |
 
 **Exit Code: 0 (SUCCESS)**
 
