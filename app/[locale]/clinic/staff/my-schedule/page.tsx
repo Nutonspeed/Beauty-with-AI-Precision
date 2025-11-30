@@ -4,7 +4,7 @@ import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Calendar, Clock, User, MapPin } from "lucide-react"
+import { Calendar, User, MapPin } from "lucide-react"
 import { useLanguage } from "@/lib/i18n/language-context"
 
 export default function MySchedulePage() {
