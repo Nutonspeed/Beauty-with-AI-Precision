@@ -14,7 +14,7 @@
 
 // Dynamic import to avoid build errors if package not installed
 // Install: pnpm add onnxruntime-web
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 let ort: any = null
 
 async function getOrt(): Promise<any> {
@@ -88,7 +88,7 @@ export const ONNX_MODELS: Record<string, ONNXModel> = {
  * Manages model loading and inference
  */
 export class ONNXRuntimeService {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   private sessions: Map<string, any> = new Map()
   private isInitialized = false
 
@@ -171,7 +171,7 @@ export class ONNXRuntimeService {
       const tensor = await this.preprocessImage(imageData, model.inputShape)
 
       // Run inference
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       const feeds: Record<string, any> = { input: tensor }
       const results = await session.run(feeds)
 
@@ -224,7 +224,7 @@ export class ONNXRuntimeService {
   /**
    * Preprocess image for model input
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   private async preprocessImage(
     imageData: ImageData | HTMLCanvasElement | HTMLImageElement,
     inputShape: number[]

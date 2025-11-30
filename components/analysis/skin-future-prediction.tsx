@@ -3,23 +3,20 @@
 import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { 
   TrendingUp, 
-  TrendingDown, 
   Calendar, 
   AlertTriangle, 
   CheckCircle2,
   Sun,
-  Moon,
   Droplets,
   Activity,
   Sparkles
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
-import type { SkinAgePrediction, YearlyPrediction } from "@/lib/ai/skin-age-predictor"
+import type { SkinAgePrediction } from "@/lib/ai/skin-age-predictor"
 
 interface SkinFuturePredictionProps {
   prediction: SkinAgePrediction
