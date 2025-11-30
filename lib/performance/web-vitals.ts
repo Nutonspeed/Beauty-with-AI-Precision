@@ -91,8 +91,7 @@ export async function initWebVitals() {
     
     const { onCLS, onFID, onLCP, onFCP, onTTFB, onINP } = webVitals
     
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const handleMetric = (name: string) => (metric: any) => {
+    const handleMetric = (name: string) => (metric: WebVitalsMetric) => {
       reportWebVitals({
         ...metric,
         rating: getRating(name, metric.value)
