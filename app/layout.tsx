@@ -14,7 +14,6 @@ import "./globals.css"
 import { ServiceWorkerRegistration } from "@/components/service-worker-registration"
 import { InstallPrompt } from "@/components/pwa/install-prompt"
 import { SessionTracker } from "@/components/session-tracker"
-import { AccessibilityToolbar } from "@/components/AccessibilityToolbar"
 
 const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
@@ -148,7 +147,6 @@ export default function RootLayout({
             </div>
             {/* Offline mode indicator with sync status */}
             <OfflineIndicator />
-            <AccessibilityToolbar />
             <main id="main-content" role="main" aria-label="Primary content">
               {children}
             </main>

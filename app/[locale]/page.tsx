@@ -8,20 +8,13 @@ import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import { Sparkles, Shield, Zap, Users, BarChart3, Camera, CheckCircle2, ArrowRight } from "lucide-react"
 import { useLanguage } from "@/lib/i18n/language-context"
-import { FluidWebGL } from "@/components/fluid-webgl"
 import RoiMiniCalculator from "@/components/roi/roi-mini-calculator"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef } from "react"
 import { usageTracker } from "@/lib/analytics/usage-tracker"
-import { partnerLogos, complianceBadges } from "@/data/trust"
 
-// Prefer a lightweight canvas fallback that always works
-// const FluidBackground = dynamic(() => import("@/components/visuals/fluid-background"), { ssr: false })
 
 export default function HomePage() {
   const { t } = useLanguage()
-  const [fxOn, setFxOn] = useState(true)
-  const [fxDampen, setFxDampen] = useState(false)
-  const trustRef = useRef<HTMLElement | null>(null)
   const heroRef = useRef<HTMLElement | null>(null)
   const caseStudyRef = useRef<HTMLElement | null>(null)
 
@@ -30,23 +23,6 @@ export default function HomePage() {
     usageTracker.trackPageView("home")
   }, [])
 
-  // initialize toggle from storage or prefers-reduced-motion
-  useEffect(() => {
-    try {
-      const w = globalThis.window
-      if (!w) return
-      const saved = w.localStorage?.getItem("heroFxOn")
-      if (saved !== null) {
-        setFxOn(saved === "1")
-        return
-      }
-      if (w.matchMedia && w.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        setFxOn(false)
-      }
-    } catch {
-      // ignore storage errors
-    }
-  }, [])
 
   // Analytics: time in hero viewport -> usageTracker
   useEffect(() => {
@@ -106,44 +82,6 @@ export default function HomePage() {
     return () => globalThis.removeEventListener("scroll", onScroll as EventListener)
   }, [])
 
-  // persist toggle
-  useEffect(() => {
-    try {
-      const w = globalThis.window
-      if (w) {
-        w.localStorage?.setItem("heroFxOn", fxOn ? "1" : "0")
-      }
-    } catch {
-      // ignore storage errors
-    }
-  }, [fxOn])
-
-  // Observe Trust Wall to soften hero motion when visible
-  useEffect(() => {
-  if (globalThis.window === undefined) { return }
-    const el = trustRef.current
-    if (!el) return
-    const io = new IntersectionObserver(
-      (entries) => {
-        const vis = entries.some((e) => e.isIntersecting)
-        setFxDampen(vis)
-      },
-      { root: null, threshold: 0.15 }
-    )
-    io.observe(el)
-    return () => io.disconnect()
-  }, [])
-
-  const onToggleFx = () => {
-    setFxOn((v) => !v)
-    try {
-      const w = globalThis.window
-      if (w) {
-        const ev = new CustomEvent("hero:fx-toggle", { detail: { on: !fxOn, ts: Date.now() } })
-        globalThis.dispatchEvent(ev)
-      }
-    } catch {}
-  }
 
   const onHeroCta = () => {
     try {
@@ -239,58 +177,69 @@ export default function HomePage() {
       <Header />
 
       <main className="flex-1">
-        {/* Hero Section */}
-        <section ref={heroRef} className="relative overflow-hidden py-20 md:py-32">
-          {fxOn && (
-            /* Prefer the real david.li WebGL fluid; keep 2D as optional fallback if needed */
-            <FluidWebGL dampen={fxDampen} className={`${fxDampen ? 'opacity-80' : 'opacity-95'}`} variant="simple" />
-          )}
-          {/* Single scrim for readability (light/dark adaptive) */}
-          <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-background/70 via-background/20 to-transparent" />
-          <div className="container relative">
-            <div className="absolute right-4 top-4 z-10">
-              <Button size="sm" variant="outline" aria-pressed={fxOn} onClick={onToggleFx}>
-                {fxOn ? "ลดเอฟเฟกต์" : "เปิดเอฟเฟกต์"}
-              </Button>
-            </div>
-            <div className="relative mx-auto max-w-[48rem] text-center">
-            {/* Glass card for modern, readable container */}
-            <div aria-hidden className="absolute inset-0 -z-10 rounded-2xl bg-white/55 md:bg-white/60 dark:bg-zinc-950/30 md:dark:bg-zinc-950/35 border border-black/5 dark:border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.08)] backdrop-blur-lg" />
+        {/* Hero Section - Modern Minimal Design */}
+        <section ref={heroRef} className="relative min-h-[90vh] flex items-center overflow-hidden">
+          {/* Animated gradient background */}
+          <div className="absolute inset-0 -z-20 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950" />
+          <div className="absolute inset-0 -z-10 opacity-30">
+            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/30 rounded-full blur-[128px] animate-pulse" />
+            <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-cyan-500/20 rounded-full blur-[100px] animate-pulse delay-1000" />
+          </div>
+          
+          <div className="container relative py-20">
+            <div className="mx-auto max-w-4xl text-center">
+              {/* Subtle tag */}
+              <div className="inline-flex items-center gap-2 mb-8 px-4 py-2 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm animate-in fade-in duration-700">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="text-sm text-white/70">AI-Powered Aesthetic Analysis</span>
+              </div>
 
-            <div className="px-6 py-8 md:px-10 md:py-10 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-              <Badge className="mb-6 bg-accent/15 text-accent hover:bg-accent/25 backdrop-blur-sm" variant="secondary">
-                <Sparkles className="mr-1 h-3 w-3 animate-pulse" />
-                Medical-Grade AI Technology
-              </Badge>
-            </div>
+              {/* Main headline with gradient */}
+              <h1 className="mb-6 text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150">
+                <span className="text-white">เปลี่ยนการวิเคราะห์ผิว</span>
+                <br />
+                <span className="bg-gradient-to-r from-primary via-cyan-400 to-primary bg-clip-text text-transparent">
+                  ให้เป็นรายได้จริง
+                </span>
+              </h1>
 
-            <h1 className="mb-6 text-balance text-5xl font-extrabold tracking-tight md:text-6xl font-display animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-150">
-              {t.home.heroTitle}
-              <br />
-              <span className="text-primary">{t.home.heroSubtitle}</span>
-            </h1>
+              {/* Subtitle - cleaner */}
+              <p className="mb-10 text-lg md:text-xl text-white/60 max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-6 duration-700 delay-300">
+                ระบบ AI วิเคราะห์ผิวระดับการแพทย์ ที่เชื่อมต่อกับ workflow การขายของคุณ
+                <br className="hidden md:block" />
+                เพิ่ม conversion และความไว้วางใจจากลูกค้า
+              </p>
 
-            <p className="mb-8 text-balance text-lg leading-relaxed md:text-xl animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300 text-foreground/85">
-              {t.home.heroDescription}
-            </p>
-
-            <div className="flex flex-col items-center justify-center gap-4 sm:flex-row animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-500">
-              <div className="group relative w-full sm:w-auto">
-                <Button size="lg" asChild className="w-full sm:w-auto">
+              {/* CTAs */}
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-500">
+                <Button size="lg" asChild className="w-full sm:w-auto text-base px-8 py-6 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/25">
                   <Link href="/analysis" onClick={onHeroCta}>
-                    {t.home.startFreeAnalysis}
-                    <ArrowRight className="ml-2 h-4 w-4" />
+                    เริ่มวิเคราะห์ฟรี
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Link>
+                </Button>
+                <Button size="lg" variant="outline" asChild className="w-full sm:w-auto text-base px-8 py-6 border-white/20 text-white hover:bg-white/10">
+                  <Link href="/demo/skin-analysis" onClick={onDemoCta}>
+                    ดูตัวอย่าง
                   </Link>
                 </Button>
               </div>
-              <Button size="lg" variant="outline" asChild className="w-full sm:w-auto border-foreground/25 text-foreground/90 hover:bg-foreground/5 bg-background/70 backdrop-blur-sm">
-                <Link href="/demo/skin-analysis" onClick={onDemoCta}>{t.home.watchDemo}</Link>
-              </Button>
-            </div>
 
-            <p className="mt-6 text-sm animate-in fade-in duration-1000 delay-700 text-foreground/70">
-              {t.home.noCreditCard} • {t.home.freeTierAvailable}
-            </p>
+              {/* Trust indicators */}
+              <div className="mt-12 flex flex-wrap items-center justify-center gap-6 text-sm text-white/40 animate-in fade-in duration-700 delay-700">
+                <span className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                  ไม่ต้องใช้บัตรเครดิต
+                </span>
+                <span className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                  ทดลองใช้ฟรี
+                </span>
+                <span className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                  ตั้งค่าใน 5 นาที
+                </span>
+              </div>
             </div>
           </div>
         </section>
@@ -483,47 +432,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Trust Wall */}
-        <section ref={trustRef} className="border-y border-border/60 bg-background py-16">
-          <div className="container">
-            <div className="mx-auto mb-10 max-w-3xl text-center">
-              <h2 className="mb-3 text-2xl font-bold tracking-tight md:text-3xl">Trusted by clinics and partners</h2>
-              <p className="text-muted-foreground">เสียงจากผู้ใช้จริงและมาตรฐานความปลอดภัยที่คุณไว้วางใจ</p>
-            </div>
-            {/* Logos (real logos only, max 6) */}
-            {Array.isArray(partnerLogos) && partnerLogos.some((l) => !!l.src) && (
-              <div className="mx-auto grid max-w-5xl grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5">
-                {partnerLogos
-                  .filter((l) => !!l.src)
-                  .slice(0, 6)
-                  .map((item) => (
-                    <Link
-                      key={item.name}
-                      href={item.href || "#"}
-                      aria-label={item.name}
-                      className="flex h-14 items-center justify-center rounded-md border border-border/70 bg-white/80 p-2"
-                    >
-                      <img src={item.src} alt={item.name || 'partner logo'} loading="lazy" className="max-h-10 object-contain opacity-90" />
-                    </Link>
-                  ))}
-              </div>
-            )}
-
-            {/* Testimonials removed on home: replaced by case study teaser above */}
-
-            {/* Compliance */}
-            <div className="mx-auto mt-12 flex max-w-3xl flex-wrap items-center justify-center gap-3 text-xs">
-              {(complianceBadges && complianceBadges.length > 0 ? complianceBadges : [
-                { label: "PDPA‑ready" },
-                { label: "GDPR‑friendly" },
-                { label: "Data Encryption" },
-                { label: "Audit Logging" },
-              ]).map((b: { label: string }) => (
-                <span key={b.label} className="rounded-full border border-border/70 bg-muted/30 px-3 py-1 text-foreground/80">{b.label}</span>
-              ))}
-            </div>
-          </div>
-        </section>
 
         {/* CTA Section */}
         <section className="border-y border-border bg-primary py-20 text-primary-foreground">
