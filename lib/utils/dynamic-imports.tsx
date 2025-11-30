@@ -37,23 +37,14 @@ export const DynamicRevenueChart = dynamic(
   { loading: LoadingSpinner }
 )
 
-// PDF Export (jsPDF ~200KB)
-export const DynamicPDFExport = dynamic(
-  () => import('@/components/analysis/pdf-export-button'),
-  { loading: LoadingSpinner }
-)
+// PDF Export - use lib/utils/pdf-export.ts directly
+// export const DynamicPDFExport = dynamic(() => import('@/components/analysis/pdf-export-button'))
 
-// Video Call (WebRTC)
-export const DynamicVideoCall = dynamic(
-  () => import('@/components/realtime/video-call'),
-  { loading: LoadingSpinner, ssr: false }
-)
+// Video Call - use components/realtime/video-call-client.tsx
+// export const DynamicVideoCall = dynamic(() => import('@/components/realtime/video-call'))
 
-// Rich Text Editor
-export const DynamicRichEditor = dynamic(
-  () => import('@/components/ui/rich-text-editor'),
-  { loading: LoadingSpinner, ssr: false }
-)
+// Rich Text Editor - not implemented yet
+// export const DynamicRichEditor = dynamic(() => import('@/components/ui/rich-text-editor'))
 
 // Calendar (heavy date handling)
 export const DynamicCalendar = dynamic(
