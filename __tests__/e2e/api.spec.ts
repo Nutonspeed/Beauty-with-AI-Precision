@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test'
 
 test.describe('API Endpoints E2E Tests', () => {
-  const baseUrl = 'http://localhost:3000'
+  const baseUrl = process.env.BASE_URL || 'http://localhost:3004'
 
   test('GET /api/health should return healthy status', async ({ request }) => {
     const response = await request.get(`${baseUrl}/api/health`)
