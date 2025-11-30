@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { subDays, format } from "date-fns";
 import { th } from "date-fns/locale";
+import { sendEmail } from "@/lib/notifications/email-service";
 
 export async function GET() {
   try {
@@ -219,7 +220,20 @@ export async function POST() {
             })
           );
 
-        // TODO: ส่งข้อความจริงผ่าน LINE/SMS/Email
+        // Send follow-up email if customer has email
+        if (booking.customer?.email) {
+          await sendEmail({
+            to: booking.customer.email,
+            subject: "💬 ติดตามผลหลังการรักษา - AI367 Beauty",
+            html: `
+              <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2>ติดตามผลหลังการรักษา</h2>
+                <p>${message}</p>
+                <p style="color: #666;">AI367 Beauty Clinic</p>
+              </div>
+            `,
+          });
+        }
         console.log("Sending follow-up:", {
           customer: booking.customer?.name,
           message,
@@ -281,7 +295,20 @@ export async function POST() {
           customer.name || "ลูกค้า"
         );
 
-        // TODO: ส่งข้อความจริง
+        // Send inactive campaign email
+        if (customer.email) {
+          await sendEmail({
+            to: customer.email,
+            subject: "💝 คิดถึงคุณ - AI367 Beauty",
+            html: `
+              <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2>คิดถึงคุณ</h2>
+                <p>${message}</p>
+                <p style="color: #666;">AI367 Beauty Clinic</p>
+              </div>
+            `,
+          });
+        }
         console.log("Sending inactive campaign:", {
           customer: customer.name,
           message,
