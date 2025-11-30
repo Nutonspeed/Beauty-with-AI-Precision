@@ -9,7 +9,7 @@ type LogoProps = {
 }
 
 // Modern AI-powered clinic logo mark
-export function ClinicIQMark({ className, title, variant = 'default' }: LogoProps) {
+export function ClinicIQMark({ className, title, variant: _variant = 'default' }: LogoProps) {
   const ariaTitle = title || "ClinicIQ"
   
   return (

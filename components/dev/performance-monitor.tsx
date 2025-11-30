@@ -55,8 +55,8 @@ export function PerformanceMonitor({
 
     try {
       observer.observe({ entryTypes: ['paint', 'largest-contentful-paint', 'first-input', 'layout-shift'] })
-    } catch (e) {
-      // Some entry types may not be supported
+    } catch {
+      // Some entry types may not be supported in all browsers
     }
 
     // TTFB

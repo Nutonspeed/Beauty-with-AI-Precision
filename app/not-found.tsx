@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
-import { Home, ArrowLeft, Search, Sparkles } from 'lucide-react'
+import { Home, Sparkles } from 'lucide-react'
 import { ClinicIQMark } from '@/components/brand/logo'
 
 export default function NotFound() {

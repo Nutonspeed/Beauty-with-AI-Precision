@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
-import { Brain, Sparkles, Scan, Eye, Zap } from 'lucide-react'
+import { Brain, Sparkles, Scan, Eye } from 'lucide-react'
 
 interface AIScanningEffectProps {
   isScanning: boolean
@@ -22,13 +22,13 @@ export function AIScanningEffect({
   className,
   stage = 'กำลังวิเคราะห์...'
 }: AIScanningEffectProps) {
-  const [scanPosition, setScanPosition] = useState(0)
+  const [_scanPosition, setScanPosition] = useState(0)
 
   useEffect(() => {
     if (!isScanning) return
     
     const interval = setInterval(() => {
-      setScanPosition(prev => (prev + 1) % 100)
+      setScanPosition((prev: number) => (prev + 1) % 100)
     }, 30)
     
     return () => clearInterval(interval)
@@ -167,7 +167,7 @@ export function AIScanningEffect({
 /**
  * Analysis Stage Indicator - Shows current analysis stage with icons
  */
-export function AnalysisStageIndicator({ stage, total, current }: { stage: string; total: number; current: number }) {
+export function AnalysisStageIndicator({ stage: _stage, total, current }: { stage: string; total: number; current: number }) {
   const stages = [
     { icon: Scan, label: 'สแกนใบหน้า' },
     { icon: Eye, label: 'วิเคราะห์ผิว' },

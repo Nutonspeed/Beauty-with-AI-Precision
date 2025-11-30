@@ -149,7 +149,7 @@ export function QualityIndicator({ quality, isAnalyzing }: QualityIndicatorProps
             visible: { transition: { staggerChildren: 0.1 } }
           }}
         >
-          {metrics.map((metric, i) => (
+          {metrics.map((metric, _i) => (
             <motion.div
               key={metric.label}
               variants={{

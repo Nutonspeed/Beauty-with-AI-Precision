@@ -4,10 +4,10 @@ import Link from "next/link"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { useLocalizePath } from "@/lib/i18n/locale-link"
 import { ClinicIQLogoFull, ClinicIQMark } from "@/components/brand/logo"
-import { Mail, Phone, MapPin, Facebook, Instagram, Youtube, Linkedin } from "lucide-react"
+import { Mail, Phone, Facebook, Instagram, Youtube, Linkedin } from "lucide-react"
 
 export function Footer() {
-  const { t, language } = useLanguage()
+  const { t } = useLanguage()
   const lp = useLocalizePath()
 
   return (
