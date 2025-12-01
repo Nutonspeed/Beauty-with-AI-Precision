@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     })
 
     // Store in Supabase (if available)
-    const supabase = createClient()
+    const supabase = await createClient()
     
     try {
       const { error } = await supabase.from('error_logs').insert({
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     // Return recent errors (admin only)
-    const supabase = createClient()
+    const supabase = await createClient()
     
     const { data: errors, error } = await supabase
       .from('error_logs')
