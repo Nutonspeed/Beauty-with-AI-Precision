@@ -6,9 +6,6 @@
 
 import { Resend } from 'resend'
 
-// Initialize Resend
-const resend = new Resend(process.env.RESEND_API_KEY)
-
 interface SendInvitationEmailParams {
   to: string
   inviterName: string
@@ -40,6 +37,9 @@ export async function sendInvitationEmail({
   invitationLink,
   expiresAt
 }: SendInvitationEmailParams) {
+  // Initialize Resend only when needed
+  const resend = new Resend(process.env.RESEND_API_KEY)
+
   try {
     const roleName = roleNames[role] || role
     const expiryDate = new Date(expiresAt).toLocaleDateString('th-TH', {
