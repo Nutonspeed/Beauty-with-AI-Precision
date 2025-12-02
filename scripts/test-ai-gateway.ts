@@ -7,31 +7,43 @@
 
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import { config } from 'dotenv';
 import { analyzeSkinWithAIGateway } from '../lib/ai/ai-gateway-skin-analyzer';
+
+// Load environment variables
+config({ path: join(process.cwd(), '.env.local') });
 
 async function testAIGateway() {
   console.log('🧪 Testing AI Gateway Multi-Model Analysis\n');
 
   // Check API keys
-  const hasOpenAI = !!process.env.OPENAI_API_KEY;
-  const hasClaude = !!process.env.ANTHROPIC_API_KEY;
+  const hasOpenAI = !!process.env.OPENAI_API_KEY && !process.env.OPENAI_API_KEY?.includes('placeholder');
+  const hasClaude = !!process.env.ANTHROPIC_API_KEY && !process.env.ANTHROPIC_API_KEY?.includes('placeholder');
   const hasGemini = !!process.env.GEMINI_API_KEY;
+  const hasHuggingFace = !!process.env.HUGGINGFACE_TOKEN;
 
   console.log('📋 API Key Status:');
   console.log(`  OpenAI GPT-4o: ${hasOpenAI ? '✅' : '❌ Missing'}`);
   console.log(`  Anthropic Claude 3.5: ${hasClaude ? '✅' : '❌ Missing'}`);
   console.log(`  Google Gemini 2.0: ${hasGemini ? '✅' : '❌ Missing'}`);
+  console.log(`  Hugging Face: ${hasHuggingFace ? '✅' : '❌ Missing'}`);
   console.log('');
 
-  if (!hasOpenAI || !hasClaude) {
-    console.error('❌ Missing required API keys!');
-    console.error('📖 Please follow the guide: docs/AI_GATEWAY_SETUP.md');
+  if (!hasOpenAI && !hasClaude && !hasGemini && !hasHuggingFace) {
+    console.error('❌ No valid API keys found!');
+    console.error('📖 System supports hybrid AI analysis with any of: OpenAI, Anthropic, Gemini, or Hugging Face');
+    console.error('   Please configure at least one API key in .env.local');
     process.exit(1);
+  }
+
+  if (!hasGemini && !hasOpenAI && !hasClaude) {
+    console.log('⚠️  Only Hugging Face available - switching to local AI analysis mode');
+    console.log('   Note: This may have limited analysis capabilities');
   }
 
   try {
     // Load test image
-    const testImagePath = join(process.cwd(), 'public', 'test-face.jpg');
+    const testImagePath = join(process.cwd(), 'ai-service', 'test_images', 'face_sample.jpg');
     console.log(`📸 Loading test image: ${testImagePath}`);
     const imageBuffer = readFileSync(testImagePath);
     console.log(`✅ Image loaded (${(imageBuffer.length / 1024).toFixed(1)} KB)\n`);
