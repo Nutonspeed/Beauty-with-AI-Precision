@@ -1,0 +1,78 @@
+name: Promote Environment
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+      source_branch:
+        description: 'Source branch'
+        required: true
+        default: 'main'
+        type: string
+      create_release:
+        description: 'Create release tag'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  NODE_VERSION: '20.x'
+
+jobs:
+  promote:
+    name: Promote to ${{ github.event.inputs.environment }}
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.source_branch }}
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        
+      - name: Run pre-promotion checks
+        run: |
+          pnpm lint
+          pnpm test
+          pnpm build
+          
+      - name: Create release tag
+        if: github.event.inputs.create_release == 'true'
+        run: |
+          VERSION=v$(date +%Y.%m.%d-%H%M%S)
+          git tag $VERSION
+          git push origin $VERSION
+          echo "RELEASE_TAG=$VERSION" >> $GITHUB_ENV
+          
+      - name: Create GitHub Release
+        if: github.event.inputs.create_release == 'true'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.RELEASE_TAG }}
+          release_name: Release ${{ env.RELEASE_TAG }}
+          draft: false
+          prerelease: ${{ github.event.inputs.environment == 'staging' }}
+          
+      - name: Trigger deployment
+        run: |
+          echo "Promoting to ${{ github.event.inputs.environment }}"
+          # This would trigger the appropriate deployment workflow
