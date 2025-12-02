@@ -1,0 +1,30 @@
+{
+  "clinics": [
+    {
+      "id": 1,
+      "name": "Demo Clinic",
+      "status": "active"
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "email": "admin@democlinic.com",
+      "role": "admin"
+    }
+  ],
+  "treatments": [
+    {
+      "id": 1,
+      "name": "AI Skin Analysis",
+      "price": 15000,
+      "category": "ai_service"
+    },
+    {
+      "id": 2,
+      "name": "AR Treatment Preview",
+      "price": 5000,
+      "category": "ar_service"
+    }
+  ]
+}

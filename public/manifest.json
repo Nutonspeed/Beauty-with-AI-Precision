@@ -1,76 +1,168 @@
 {
-  "name": "AI367 Beauty & Aesthetic Clinic",
-  "short_name": "AI367",
-  "description": "AI-powered beauty clinic platform with skin analysis, booking, and treatment recommendations",
+  "name": "Beauty with AI Precision - Advanced Aesthetic Clinic Platform",
+  "short_name": "Beauty AI",
+  "description": "AI-powered aesthetic clinic platform with advanced skin analysis, 3D AR visualization, and comprehensive patient management",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#3b82f6",
+  "theme_color": "#ec4899",
   "orientation": "portrait-primary",
   "scope": "/",
-  "lang": "th",
+  "lang": "en",
   "dir": "ltr",
-  "categories": ["medical", "health", "beauty", "business", "productivity"],
+  "categories": ["medical", "health", "beauty", "lifestyle"],
   "icons": [
     {
-      "src": "/icons/icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any"
+      "src": "/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "maskable any"
     },
     {
-      "src": "/icon-192.svg",
+      "src": "/icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-192x192.png",
       "sizes": "192x192",
-      "type": "image/svg+xml",
-      "purpose": "any"
+      "type": "image/png",
+      "purpose": "maskable any"
     },
     {
-      "src": "/icon-512.svg",
+      "src": "/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
       "sizes": "512x512",
-      "type": "image/svg+xml",
-      "purpose": "maskable"
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/desktop-1.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Dashboard view with patient analytics"
+    },
+    {
+      "src": "/screenshots/mobile-1.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Mobile skin analysis interface"
+    },
+    {
+      "src": "/screenshots/desktop-2.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "3D AR treatment visualization"
+    },
+    {
+      "src": "/screenshots/mobile-2.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Patient management on mobile"
     }
   ],
   "shortcuts": [
     {
-      "name": "Skin Analysis",
-      "short_name": "Analyze",
-      "description": "Start AI skin analysis",
-      "url": "/th/analysis",
+      "name": "New Analysis",
+      "short_name": "Analysis",
+      "description": "Start a new AI skin analysis",
+      "url": "/analysis?source=pwa",
       "icons": [
         {
-          "src": "/icons/icon.svg",
-          "sizes": "any"
+          "src": "/icons/icon-96x96.png",
+          "sizes": "96x96"
         }
       ]
     },
     {
-      "name": "Book Treatment",
-      "short_name": "Book",
-      "description": "Book appointment",
-      "url": "/th/booking",
+      "name": "Appointments",
+      "short_name": "Calendar",
+      "description": "View and manage appointments",
+      "url": "/sales/appointments?source=pwa",
       "icons": [
         {
-          "src": "/icons/icon.svg",
-          "sizes": "any"
+          "src": "/icons/icon-96x96.png",
+          "sizes": "96x96"
         }
       ]
     },
     {
-      "name": "Analysis History",
-      "short_name": "History",
-      "description": "View past analyses",
-      "url": "/th/analysis/history",
+      "name": "Patients",
+      "short_name": "Patients",
+      "description": "Manage patient records",
+      "url": "/clinic/patients?source=pwa",
       "icons": [
         {
-          "src": "/icons/icon.svg",
-          "sizes": "any"
+          "src": "/icons/icon-96x96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "AR Simulator",
+      "short_name": "AR",
+      "description": "3D AR treatment visualization",
+      "url": "/ar-simulator?source=pwa",
+      "icons": [
+        {
+          "src": "/icons/icon-96x96.png",
+          "sizes": "96x96"
         }
       ]
     }
   ],
-  "screenshots": [],
+  "related_applications": [],
   "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
+  "protocol_handlers": [
+    {
+      "protocol": "web+beauty-ai",
+      "url": "/handle-protocol?type=%s"
+    }
+  ],
+  "file_handlers": [
+    {
+      "action": "/upload",
+      "accept": {
+        "image/*": [".jpg", ".jpeg", ".png", ".webp"]
+      }
+    }
+  ],
   "share_target": {
     "action": "/share",
     "method": "POST",
@@ -81,11 +173,10 @@
       "url": "url",
       "files": [
         {
-          "name": "image",
+          "name": "images",
           "accept": ["image/*"]
         }
       ]
     }
-  },
-  "display_override": ["window-controls-overlay", "standalone", "browser"]
+  }
 }
