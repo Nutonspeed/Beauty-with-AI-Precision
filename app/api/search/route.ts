@@ -1,56 +1,135 @@
-import { createServerClient } from "@/lib/supabase/server"
-import { NextResponse } from "next/server"
+// Universal Search API
+import { NextRequest, NextResponse } from 'next/server'
+import { patientSearchService } from '@/lib/elasticsearch/services/patient-search'
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
-    const supabase = await createServerClient()
     const { searchParams } = new URL(request.url)
-    const query = searchParams.get("q")
-    const type = searchParams.get("type") // 'all', 'users', 'bookings', 'analyses'
-
-    if (!query) {
-      return NextResponse.json({ error: "Query parameter is required" }, { status: 400 })
+    const query = searchParams.get('q') || ''
+    const type = searchParams.get('type') || 'patients'
+    const clinicId = searchParams.get('clinicId')
+    
+    if (!clinicId) {
+      return NextResponse.json(
+        { error: 'clinicId is required' },
+        { status: 400 }
+      )
     }
 
-    const results: any = {
-      users: [],
-      bookings: [],
-      analyses: [],
-      treatments: [],
+    // Parse filters
+    const filters: any = { clinicId }
+    
+    // Gender filter
+    const gender = searchParams.get('gender')
+    if (gender) filters.gender = gender
+
+    // Age range filter
+    const minAge = searchParams.get('minAge')
+    const maxAge = searchParams.get('maxAge')
+    if (minAge && maxAge) {
+      filters.ageRange = [parseInt(minAge), parseInt(maxAge)]
     }
 
-    // Search users
-    if (!type || type === "all" || type === "users") {
-      const { data: users } = await supabase
-        .from("users")
-        .select("id, name, email, role")
-        .or(`name.ilike.%${query}%,email.ilike.%${query}%`)
-        .limit(10)
-
-      results.users = users || []
+    // Tags filter
+    const tags = searchParams.get('tags')
+    if (tags) {
+      filters.tags = tags.split(',')
     }
 
-    // Search bookings
-    if (!type || type === "all" || type === "bookings") {
-      const { data: bookings } = await supabase
-        .from("bookings")
-        .select("*, customer:users!customer_id(name, email)")
-        .or(`treatment.ilike.%${query}%,notes.ilike.%${query}%`)
-        .limit(10)
-
-      results.bookings = bookings || []
+    // Treatment types filter
+    const treatmentTypes = searchParams.get('treatmentTypes')
+    if (treatmentTypes) {
+      filters.treatmentTypes = treatmentTypes.split(',')
     }
 
-    // Search analyses
-    if (!type || type === "all" || type === "analyses") {
-      const { data: analyses } = await supabase.from("analyses").select("*").limit(10)
-
-      results.analyses = analyses || []
+    // Score range filter
+    const minScore = searchParams.get('minScore')
+    const maxScore = searchParams.get('maxScore')
+    if (minScore && maxScore) {
+      filters.scoreRange = [parseInt(minScore), parseInt(maxScore)]
     }
 
-    return NextResponse.json({ results })
+    // Pagination
+    const from = parseInt(searchParams.get('from') || '0')
+    const size = Math.min(parseInt(searchParams.get('size') || '10'), 100)
+    const sort = searchParams.get('sort')
+
+    let results
+
+    switch (type) {
+      case 'patients':
+        results = await patientSearchService.searchPatients(query, filters, {
+          from,
+          size,
+          sort: sort || undefined
+        })
+        break
+      
+      default:
+        return NextResponse.json(
+          { error: 'Invalid search type' },
+          { status: 400 }
+        )
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: results,
+      query: {
+        q: query,
+        type,
+        filters,
+        from,
+        size,
+        sort
+      }
+    })
+
   } catch (error) {
-    console.error("Search error:", error)
-    return NextResponse.json({ error: "Search failed" }, { status: 500 })
+    console.error('Search API error:', error)
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const { query, type, filters, options } = body
+
+    if (!type) {
+      return NextResponse.json(
+        { error: 'Search type is required' },
+        { status: 400 }
+      )
+    }
+
+    let results
+
+    switch (type) {
+      case 'patients':
+        results = await patientSearchService.advancedSearch(query || {}, filters || {})
+        break
+      
+      default:
+        return NextResponse.json(
+          { error: 'Invalid search type' },
+          { status: 400 }
+        )
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: results
+    })
+
+  } catch (error) {
+    console.error('Advanced search API error:', error)
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
   }
 }

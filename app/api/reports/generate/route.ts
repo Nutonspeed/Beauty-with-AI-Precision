@@ -1,142 +1,155 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+// Generate Report API
+import { NextRequest, NextResponse } from 'next/server'
+import { AnalyticsReportGenerator } from '@/lib/reports/generators/analytics-generator'
+import { FinancialReportGenerator } from '@/lib/reports/generators/financial-generator'
+import { PatientReportGenerator } from '@/lib/reports/generators/patient-generator'
+import { ReportConfig } from '@/types/reports'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+const generators = {
+  analytics: new AnalyticsReportGenerator(),
+  financial: new FinancialReportGenerator(),
+  patient: new PatientReportGenerator()
+}
 
-// POST: Generate report from template
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const {
-      clinic_id,
-      template_id,
-      period_start,
-      period_end,
-      parameters,
-      filters,
-      generated_by_user_id,
-    } = body;
+    const body = await request.json()
+    const { type, config } = body
 
-    if (!clinic_id || !period_start || !period_end) {
+    if (!type || !config) {
       return NextResponse.json(
-        { error: 'Missing required fields: clinic_id, period_start, period_end' },
+        { error: 'Report type and config are required' },
         { status: 400 }
-      );
+      )
     }
 
-    const startTime = Date.now();
-
-    // Fetch template if template_id provided
-    let template = null;
-    if (template_id) {
-      const { data: templateData, error: templateError } = await supabase
-        .from('report_templates')
-        .select('*')
-        .eq('id', template_id)
-        .single();
-
-      if (templateError) {
-        console.error('Error fetching template:', templateError);
-        return NextResponse.json(
-          { error: 'Template not found' },
-          { status: 404 }
-        );
-      }
-
-      template = templateData;
-    }
-
-    // Generate report data based on template type or provided parameters
-    const reportType = template?.report_type || parameters?.report_type || 'revenue';
-    
-    let summaryData: any = {};
-    let detailedData: any = {};
-
-    // Generate different reports based on type
-    switch (reportType) {
-      case 'revenue': {
-        const { data: revenueMetrics } = await supabase
-          .rpc('calculate_revenue_metrics', {
-            p_clinic_id: clinic_id,
-            p_start_date: period_start,
-            p_end_date: period_end,
-          });
-        summaryData = revenueMetrics || {};
-        break;
-      }
-
-      case 'customer_analytics': {
-        const { data: customerMetrics } = await supabase
-          .rpc('calculate_customer_analytics', {
-            p_clinic_id: clinic_id,
-            p_start_date: period_start,
-            p_end_date: period_end,
-          });
-        summaryData = customerMetrics || {};
-        break;
-      }
-
-      case 'staff_performance': {
-        const { data: staffMetrics } = await supabase
-          .rpc('calculate_staff_performance', {
-            p_clinic_id: clinic_id,
-            p_start_date: period_start,
-            p_end_date: period_end,
-          });
-        summaryData = staffMetrics || {};
-        break;
-      }
-
-      default:
-        summaryData = { message: 'Report type not implemented yet' };
-    }
-
-    const generationTime = Date.now() - startTime;
-
-    // Save generated report
-    const { data: generatedReport, error: saveError } = await supabase
-      .from('generated_reports')
-      .insert({
-        clinic_id,
-        template_id,
-        report_name: template?.name || `${reportType} Report`,
-        report_type: reportType,
-        report_category: template?.report_category || 'general',
-        generated_by_user_id,
-        generation_type: 'manual',
-        period_start,
-        period_end,
-        parameters: parameters || template?.parameters || {},
-        filters: filters || template?.filters || {},
-        summary_data: summaryData,
-        detailed_data: detailedData,
-        chart_data: {},
-        generation_time_ms: generationTime,
-        status: 'completed',
-      })
-      .select()
-      .single();
-
-    if (saveError) {
-      console.error('Error saving generated report:', saveError);
+    const generator = generators[type as keyof typeof generators]
+    if (!generator) {
       return NextResponse.json(
-        { error: 'Failed to save generated report' },
-        { status: 500 }
-      );
+        { error: 'Invalid report type' },
+        { status: 400 }
+      )
     }
+
+    // Validate config
+    const validatedConfig = validateReportConfig(config)
+    
+    // Generate report
+    const reportData = await generator.generate(validatedConfig)
 
     return NextResponse.json({
-      report: generatedReport,
-      message: 'Report generated successfully',
-    }, { status: 201 });
+      success: true,
+      data: reportData
+    })
+
   } catch (error) {
-    console.error('Error generating report:', error);
+    console.error('Report generation failed:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Failed to generate report' },
       { status: 500 }
-    );
+    )
   }
+}
+
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url)
+  const type = searchParams.get('type')
+
+  if (!type) {
+    return NextResponse.json({
+      availableTypes: Object.keys(generators),
+      schemas: {
+        analytics: getAnalyticsSchema(),
+        financial: getFinancialSchema(),
+        patient: getPatientSchema()
+      }
+    })
+  }
+
+  const generator = generators[type as keyof typeof generators]
+  if (!generator) {
+    return NextResponse.json(
+      { error: 'Invalid report type' },
+      { status: 400 }
+    )
+  }
+
+  return NextResponse.json({
+    type,
+    schema: getReportSchema(type)
+  })
+}
+
+function validateReportConfig(config: any): ReportConfig {
+  // Basic validation
+  if (!config.title || typeof config.title !== 'string') {
+    throw new Error('Title is required and must be a string')
+  }
+
+  if (!config.dateRange || !config.dateRange.startDate || !config.dateRange.endDate) {
+    throw new Error('Date range with start and end dates is required')
+  }
+
+  if (!config.metrics || !Array.isArray(config.metrics) || config.metrics.length === 0) {
+    throw new Error('At least one metric is required')
+  }
+
+  return {
+    title: config.title,
+    dateRange: {
+      startDate: new Date(config.dateRange.startDate),
+      endDate: new Date(config.dateRange.endDate)
+    },
+    filters: config.filters || {},
+    metrics: config.metrics
+  }
+}
+
+function getAnalyticsSchema() {
+  return {
+    title: 'Analytics Report',
+    description: 'Comprehensive analytics and user behavior report',
+    metrics: ['users', 'sessions', 'features'],
+    filters: {
+      clinic_id: 'string',
+      user_type: 'string',
+      date_range: 'object'
+    }
+  }
+}
+
+function getFinancialSchema() {
+  return {
+    title: 'Financial Report',
+    description: 'Revenue, expenses, and profit analysis',
+    metrics: ['revenue', 'expenses', 'profit'],
+    filters: {
+      clinic_id: 'string',
+      category: 'string',
+      date_range: 'object'
+    }
+  }
+}
+
+function getPatientSchema() {
+  return {
+    title: 'Patient Report',
+    description: 'Patient demographics, treatments, and outcomes',
+    metrics: ['demographics', 'treatments', 'analyses', 'appointments'],
+    filters: {
+      clinic_id: 'string',
+      age_range: 'object',
+      gender: 'string',
+      date_range: 'object'
+    }
+  }
+}
+
+function getReportSchema(type: string) {
+  const schemas = {
+    analytics: getAnalyticsSchema(),
+    financial: getFinancialSchema(),
+    patient: getPatientSchema()
+  }
+  return schemas[type as keyof typeof schemas]
 }

@@ -14,12 +14,12 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { 
   Sparkles, 
-  TrendingUp, 
+  Zap, 
   Star, 
-  Clock,
+  ArrowRight, 
   ChevronRight,
-  Zap,
-  ArrowRight
+  TrendingUp,
+  Award
 } from 'lucide-react';
 
 interface CustomerProfile {
@@ -32,17 +32,19 @@ interface CustomerProfile {
 }
 
 interface Treatment {
-  id: string;
-  name: string;
-  nameTh: string;
-  category: string;
+  id?: string;
+  treatment: string; // เปลี่ยนจาก name เป็น treatment
+  name?: string;
+  nameTh?: string;
+  category?: string;
   price: number;
-  duration: string;
-  matchScore: number;
-  reasons: string[];
-  expectedOutcome: string;
-  popularity: number;
-  conversionRate: number;
+  duration?: string;
+  confidence: number; // เปลี่ยนจาก matchScore เป็น confidence
+  reasoning: string;
+  expectedResults: string;
+  risks: string;
+  alternatives: string[];
+  maintenance: string;
 }
 
 interface AISmartRecommendationsProps {
@@ -52,201 +54,18 @@ interface AISmartRecommendationsProps {
   className?: string;
 }
 
-// AI-powered treatment database
-const TREATMENTS_DATABASE: Treatment[] = [
-  {
-    id: 'botox_forehead',
-    name: 'Botox - Forehead',
-    nameTh: 'โบท็อกซ์ หน้าผาก',
-    category: 'Anti-Aging',
-    price: 8900,
-    duration: '15-20 นาที',
-    matchScore: 0,
-    reasons: [],
-    expectedOutcome: 'ลดริ้วรอยหน้าผาก 80-90%',
-    popularity: 95,
-    conversionRate: 78
-  },
-  {
-    id: 'filler_nasolabial',
-    name: 'Filler - Nasolabial',
-    nameTh: 'ฟิลเลอร์ ร่องแก้ม',
-    category: 'Volume Restoration',
-    price: 15900,
-    duration: '20-30 นาที',
-    matchScore: 0,
-    reasons: [],
-    expectedOutcome: 'เติมเต็มร่องแก้ม ใบหน้าดูอ่อนเยาว์',
-    popularity: 88,
-    conversionRate: 72
-  },
-  {
-    id: 'hifu_face',
-    name: 'HIFU Face Lift',
-    nameTh: 'ไฮฟู่ ยกกระชับ',
-    category: 'Skin Tightening',
-    price: 25900,
-    duration: '45-60 นาที',
-    matchScore: 0,
-    reasons: [],
-    expectedOutcome: 'กระชับผิว ยกหน้า ลดเหนียง',
-    popularity: 85,
-    conversionRate: 65
-  },
-  {
-    id: 'laser_pigment',
-    name: 'Laser Pigmentation',
-    nameTh: 'เลเซอร์ ฝ้า กระ',
-    category: 'Skin Correction',
-    price: 12900,
-    duration: '30-45 นาที',
-    matchScore: 0,
-    reasons: [],
-    expectedOutcome: 'ลดฝ้ากระ 60-80%',
-    popularity: 82,
-    conversionRate: 70
-  },
-  {
-    id: 'pdo_thread',
-    name: 'PDO Thread Lift',
-    nameTh: 'ร้อยไหม PDO',
-    category: 'Lifting',
-    price: 35900,
-    duration: '45-60 นาที',
-    matchScore: 0,
-    reasons: [],
-    expectedOutcome: 'ยกกระชับหน้า ผลลัพธ์ทันที',
-    popularity: 75,
-    conversionRate: 60
-  },
-  {
-    id: 'hydrafacial',
-    name: 'HydraFacial',
-    nameTh: 'ไฮดราเฟเชียล',
-    category: 'Skin Rejuvenation',
-    price: 4900,
-    duration: '45 นาที',
-    matchScore: 0,
-    reasons: [],
-    expectedOutcome: 'ผิวใส ชุ่มชื้น กระจ่างใส',
-    popularity: 92,
-    conversionRate: 85
-  },
-  {
-    id: 'prp_face',
-    name: 'PRP Facial',
-    nameTh: 'PRP ฟื้นฟูผิว',
-    category: 'Regenerative',
-    price: 18900,
-    duration: '45-60 นาที',
-    matchScore: 0,
-    reasons: [],
-    expectedOutcome: 'กระตุ้นคอลลาเจน ผิวเด้ง',
-    popularity: 78,
-    conversionRate: 62
-  },
-  {
-    id: 'coolsculpting',
-    name: 'CoolSculpting',
-    nameTh: 'สลายไขมันด้วยความเย็น',
-    category: 'Body Contouring',
-    price: 45900,
-    duration: '35-60 นาที',
-    matchScore: 0,
-    reasons: [],
-    expectedOutcome: 'ลดไขมัน 20-25% ต่อครั้ง',
-    popularity: 80,
-    conversionRate: 55
-  }
-];
+// Advanced AI Treatment Recommendations
+const recommender = new AdvancedTreatmentRecommender();
 
-// AI Scoring Algorithm
-function calculateRecommendations(
-  profile: CustomerProfile,
-  _skinResults?: any
-): Treatment[] {
-  const treatments = JSON.parse(JSON.stringify(TREATMENTS_DATABASE));
-  
-  treatments.forEach((treatment: Treatment) => {
-    let score = 50; // Base score
-    const reasons: string[] = [];
-    
-    // Age-based scoring
-    if (profile.age) {
-      if (profile.age >= 35 && treatment.category === 'Anti-Aging') {
-        score += 20;
-        reasons.push('เหมาะกับช่วงวัย');
-      }
-      if (profile.age >= 40 && treatment.category === 'Lifting') {
-        score += 25;
-        reasons.push('เหมาะสำหรับการยกกระชับ');
-      }
-      if (profile.age < 35 && treatment.category === 'Skin Rejuvenation') {
-        score += 15;
-        reasons.push('ดูแลผิวเชิงป้องกัน');
-      }
-    }
-    
-    // Concern-based scoring
-    if (profile.concerns) {
-      if (profile.concerns.includes('wrinkles') && 
-          ['Anti-Aging', 'Lifting'].includes(treatment.category)) {
-        score += 25;
-        reasons.push('ตรงกับปัญหาริ้วรอย');
-      }
-      if (profile.concerns.includes('pigmentation') && 
-          treatment.category === 'Skin Correction') {
-        score += 30;
-        reasons.push('ช่วยลดฝ้ากระ');
-      }
-      if (profile.concerns.includes('sagging') && 
-          ['Lifting', 'Skin Tightening'].includes(treatment.category)) {
-        score += 25;
-        reasons.push('กระชับผิวหย่อนคล้อย');
-      }
-      if (profile.concerns.includes('dull') && 
-          treatment.category === 'Skin Rejuvenation') {
-        score += 20;
-        reasons.push('เพิ่มความกระจ่างใส');
-      }
-    }
-    
-    // Budget-based scoring
-    if (profile.budget) {
-      if (profile.budget === 'low' && treatment.price <= 10000) {
-        score += 15;
-        reasons.push('เหมาะกับงบประมาณ');
-      }
-      if (profile.budget === 'medium' && treatment.price <= 25000) {
-        score += 10;
-        reasons.push('คุ้มค่าราคา');
-      }
-      if (profile.budget === 'high' && treatment.price <= 50000) {
-        score += 10;
-        reasons.push('ผลลัพธ์คุ้มค่า');
-      }
-      if (profile.budget === 'premium') {
-        score += 5;
-        reasons.push('ผลลัพธ์ระดับพรีเมียม');
-      }
-    }
-    
-    // Popularity boost
-    score += treatment.popularity * 0.1;
-    
-    // Conversion rate boost
-    score += treatment.conversionRate * 0.15;
-    
-    // Add randomness for variety (±5)
-    score += Math.random() * 10 - 5;
-    
-    // Cap at 100
-    treatment.matchScore = Math.min(Math.round(score), 100);
-    treatment.reasons = reasons.length > 0 ? reasons : ['แนะนำทั่วไป'];
-  });
-  
-  // Sort by score
-  return treatments.sort((a: Treatment, b: Treatment) => b.matchScore - a.matchScore);
+// Convert budget string to number
+function convertBudgetToNumber(budget: string): number {
+  switch (budget) {
+    case 'low': return 10000;
+    case 'medium': return 25000;
+    case 'high': return 50000;
+    case 'premium': return 100000;
+    default: return 25000;
+  }
 }
 
 export function AISmartRecommendations({
@@ -261,18 +80,34 @@ export function AISmartRecommendations({
   
   useEffect(() => {
     setIsAnalyzing(true);
-    
-    // Simulate AI processing
-    const timer = setTimeout(() => {
-      const results = calculateRecommendations(customerProfile, skinAnalysisResults);
-      setRecommendations(results);
-      setIsAnalyzing(false);
-    }, 1500);
-    
-    return () => clearTimeout(timer);
+
+    // Use real AI for recommendations
+    const getRecommendations = async () => {
+      try {
+        const budget = convertBudgetToNumber(customerProfile.budget || 'medium');
+        const goals = customerProfile.concerns || [];
+
+        const aiRecommendations = await recommender.recommendTreatments(
+          customerProfile,
+          skinAnalysisResults || {},
+          budget,
+          goals
+        );
+
+        setRecommendations(aiRecommendations);
+      } catch (error) {
+        console.error('AI Recommendation failed:', error);
+        // Fallback to basic recommendations
+        setRecommendations([]);
+      } finally {
+        setIsAnalyzing(false);
+      }
+    };
+
+    getRecommendations();
   }, [customerProfile, skinAnalysisResults]);
   
-  const categories = ['all', ...new Set(TREATMENTS_DATABASE.map(t => t.category))];
+  const categories = ['all'];
   
   const filteredRecommendations = selectedCategory === 'all'
     ? recommendations
@@ -329,36 +164,31 @@ export function AISmartRecommendations({
                   </Badge>
                 </div>
                 
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0">
-                    <div className="relative w-16 h-16 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
-                      <span className="text-2xl font-bold text-white">{topRecommendation.matchScore}</span>
+                <div className="flex items-center gap-3">
+                  {/* Confidence Circle */}
+                  <div className="relative flex-shrink-0">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
+                      <span className="text-2xl font-bold text-white">{topRecommendation.confidence}</span>
                       <span className="absolute -bottom-1 text-xs text-white bg-black/50 px-1 rounded">%</span>
                     </div>
                   </div>
                   
                   <div className="flex-1">
-                    <h3 className="text-lg font-bold text-white">{topRecommendation.nameTh}</h3>
-                    <p className="text-sm text-gray-400">{topRecommendation.name}</p>
+                    <h3 className="text-lg font-bold text-white">{topRecommendation.treatment}</h3>
+                    <p className="text-sm text-gray-400 mb-2">{topRecommendation.reasoning}</p>
                     
-                    <div className="flex flex-wrap gap-1 mt-2">
-                      {topRecommendation.reasons.map((reason, idx) => (
-                        <Badge key={idx} variant="outline" className="border-violet-500/50 text-violet-300 text-xs">
-                          {reason}
-                        </Badge>
-                      ))}
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      <Badge className="bg-green-500/20 text-green-400">
+                        ผลลัพธ์: {topRecommendation.expectedResults}
+                      </Badge>
+                      <Badge className="bg-yellow-500/20 text-yellow-400">
+                        ความเสี่ยง: {topRecommendation.risks}
+                      </Badge>
                     </div>
                     
-                    <div className="flex items-center gap-4 mt-3 text-sm">
+                    <div className="flex items-center gap-4 text-sm">
                       <span className="text-green-400 font-bold">฿{topRecommendation.price.toLocaleString()}</span>
-                      <span className="text-gray-400 flex items-center">
-                        <Clock className="w-3 h-3 mr-1" />
-                        {topRecommendation.duration}
-                      </span>
-                      <span className="text-yellow-400 flex items-center">
-                        <TrendingUp className="w-3 h-3 mr-1" />
-                        {topRecommendation.conversionRate}% conversion
-                      </span>
+                      <span className="text-blue-400">ดูแล: {topRecommendation.maintenance}</span>
                     </div>
                   </div>
                 </div>
@@ -405,13 +235,13 @@ export function AISmartRecommendations({
                     onClick={() => onSelectTreatment?.(treatment)}
                   >
                     <div className="flex items-center gap-3">
-                      {/* Score Circle */}
+                      {/* Confidence Circle */}
                       <div className="relative flex-shrink-0">
                         <div className="w-12 h-12 rounded-full bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center">
-                          <span className="text-lg font-bold text-white">{treatment.matchScore}</span>
+                          <span className="text-lg font-bold text-white">{treatment.confidence}</span>
                         </div>
                         <Progress 
-                          value={treatment.matchScore} 
+                          value={treatment.confidence} 
                           className="absolute inset-0 w-12 h-12 rounded-full [&>div]:rounded-full" 
                         />
                       </div>
@@ -419,16 +249,16 @@ export function AISmartRecommendations({
                       {/* Content */}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
-                          <h4 className="font-medium text-white truncate">{treatment.nameTh}</h4>
+                          <h4 className="font-medium text-white truncate">{treatment.treatment}</h4>
                           <span className="text-green-400 font-bold text-sm">
                             ฿{treatment.price.toLocaleString()}
                           </span>
                         </div>
                         <div className="flex items-center gap-2 mt-1">
                           <Badge variant="outline" className="border-white/20 text-gray-400 text-xs">
-                            {treatment.category}
+                            {treatment.reasoning.substring(0, 30)}...
                           </Badge>
-                          <span className="text-xs text-gray-500">{treatment.duration}</span>
+                          <span className="text-xs text-gray-500">ผล: {treatment.expectedResults.substring(0, 20)}...</span>
                         </div>
                       </div>
                       

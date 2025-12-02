@@ -40,11 +40,11 @@ export async function GET() {
         .single()
 
       if (createError) {
-        throw new Error(createError.message)
+        throw new Error(createError instanceof Error ? createError.message : 'Unknown error')
       }
       profile = newProfile
     } else if (error) {
-      throw new Error(error.message)
+      throw new Error(error instanceof Error ? error.message : 'Unknown error')
     }
 
     if (!profile) {

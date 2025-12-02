@@ -174,7 +174,7 @@ export async function POST(request: NextRequest) {
     if (createError) {
       console.error('Failed to create user:', createError)
       return NextResponse.json(
-        { error: 'Failed to create user', details: createError.message },
+        { error: 'Failed to create user', details: createError instanceof Error ? createError.message : 'Unknown error' },
         { status: 500 }
       )
     }
@@ -193,7 +193,7 @@ export async function POST(request: NextRequest) {
       // Rollback: delete auth user
       await supabase.auth.admin.deleteUser(newUser.user.id)
       return NextResponse.json(
-        { error: 'Failed to create user entry', details: userInsertError.message },
+        { error: 'Failed to create user entry', details: userInsertError instanceof Error ? userInsertError.message : 'Unknown error' },
         { status: 500 }
       )
     }

@@ -1,192 +1,169 @@
-import { type NextRequest, NextResponse } from "next/server"
-import { createServerClient } from "@/lib/supabase/server"
-import { format } from "date-fns"
+// Export Report API
+import { NextRequest, NextResponse } from 'next/server'
+import { jsPDF } from 'jspdf'
+import * as XLSX from 'xlsx'
+import { Parser } from 'json2csv'
 
-export async function GET(request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
-    const supabase = await createServerClient()
-    const {
-      data: { session },
-    } = await supabase.auth.getSession()
+    const body = await request.json()
+    const { reportData, format } = body
 
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    if (!reportData || !format) {
+      return NextResponse.json(
+        { error: 'Report data and format are required' },
+        { status: 400 }
+      )
     }
 
-    // Check if user has access
-    const { data: userProfile } = await supabase.from("users").select("role").eq("id", session.user.id).single()
+    let fileBuffer: Buffer
+    let contentType: string
+    let filename: string
 
-    if (!["admin", "clinic_staff"].includes(userProfile?.role || "")) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
-    }
-
-    const searchParams = request.nextUrl.searchParams
-    const type = searchParams.get("type") || "bookings" // bookings, payments, customers
-
-    let data: any[] = []
-    let headers: string[] = []
-
-    switch (type) {
-      case "bookings": {
-        const { data: bookings } = await supabase
-          .from("bookings")
-          .select(
-            `
-          *,
-          user:users(full_name, email, phone),
-          clinic:clinics(name)
-        `,
-          )
-          .order("created_at", { ascending: false })
-
-        data = bookings || []
-        headers = ["ID", "Customer", "Email", "Treatment", "Date", "Time", "Status", "Clinic", "Created"]
+    switch (format) {
+      case 'pdf':
+        fileBuffer = await generatePDF(reportData)
+        contentType = 'application/pdf'
+        filename = `${reportData.metadata.title.replace(/\s+/g, '_')}.pdf`
         break
-      }
 
-      case "payments": {
-        const { data: payments } = await supabase
-          .from("payments")
-          .select(
-            `
-          *,
-          user:users(full_name, email)
-        `,
-          )
-          .order("created_at", { ascending: false })
-
-        data = payments || []
-        headers = ["ID", "Customer", "Email", "Amount", "Currency", "Status", "Type", "Created"]
+      case 'excel':
+        fileBuffer = await generateExcel(reportData)
+        contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        filename = `${reportData.metadata.title.replace(/\s+/g, '_')}.xlsx`
         break
-      }
 
-      case "customers": {
-        const { data: customers } = await supabase
-          .from("users")
-          .select("*")
-          .in("role", ["customer", "customer_premium"])
-          .order("created_at", { ascending: false })
-
-        data = customers || []
-        headers = ["ID", "Name", "Email", "Phone", "Role", "Created"]
+      case 'csv':
+        fileBuffer = await generateCSV(reportData)
+        contentType = 'text/csv'
+        filename = `${reportData.metadata.title.replace(/\s+/g, '_')}.csv`
         break
-      }
+
+      default:
+        return NextResponse.json(
+          { error: 'Invalid export format' },
+          { status: 400 }
+        )
     }
 
-    // Convert to CSV
-    const csvRows = [headers.join(",")]
-
-    for (const row of data) {
-      const values = headers.map((header) => {
-        let value = ""
-
-        switch (type) {
-          case "bookings":
-            switch (header) {
-              case "ID":
-                value = row.id
-                break
-              case "Customer":
-                value = row.user?.full_name || "N/A"
-                break
-              case "Email":
-                value = row.user?.email || "N/A"
-                break
-              case "Treatment":
-                value = row.treatment_type
-                break
-              case "Date":
-                value = row.booking_date
-                break
-              case "Time":
-                value = row.booking_time
-                break
-              case "Status":
-                value = row.status
-                break
-              case "Clinic":
-                value = row.clinic?.name || "N/A"
-                break
-              case "Created":
-                value = format(new Date(row.created_at), "yyyy-MM-dd HH:mm")
-                break
-            }
-            break
-
-          case "payments":
-            switch (header) {
-              case "ID":
-                value = row.id
-                break
-              case "Customer":
-                value = row.user?.full_name || "N/A"
-                break
-              case "Email":
-                value = row.user?.email || "N/A"
-                break
-              case "Amount":
-                value = (row.amount / 100).toString()
-                break
-              case "Currency":
-                value = row.currency.toUpperCase()
-                break
-              case "Status":
-                value = row.status
-                break
-              case "Type":
-                value = row.payment_type
-                break
-              case "Created":
-                value = format(new Date(row.created_at), "yyyy-MM-dd HH:mm")
-                break
-            }
-            break
-
-          case "customers":
-            switch (header) {
-              case "ID":
-                value = row.id
-                break
-              case "Name":
-                value = row.full_name || "N/A"
-                break
-              case "Email":
-                value = row.email
-                break
-              case "Phone":
-                value = row.phone || "N/A"
-                break
-              case "Role":
-                value = row.role
-                break
-              case "Created":
-                value = format(new Date(row.created_at), "yyyy-MM-dd HH:mm")
-                break
-            }
-            break
-        }
-
-        // Escape commas and quotes
-        return `"${value.toString().replace(/"/g, '""')}"`
-      })
-
-      csvRows.push(values.join(","))
-    }
-
-    const csv = csvRows.join("\n")
-    const filename = `${type}-export-${format(new Date(), "yyyy-MM-dd")}.csv`
-
-    return new NextResponse(csv, {
+    return new NextResponse(fileBuffer as any, {
       headers: {
-        "Content-Type": "text/csv",
-        "Content-Disposition": `attachment; filename="${filename}"`,
-      },
+        'Content-Type': contentType,
+        'Content-Disposition': `attachment; filename="${filename}"`,
+        'Content-Length': fileBuffer.length.toString()
+      }
     })
+
   } catch (error) {
-    console.error("Error exporting data:", error)
+    console.error('Export failed:', error)
     return NextResponse.json(
-      { error: "Failed to export data", details: error instanceof Error ? error.message : "Unknown error" },
-      { status: 500 },
+      { error: 'Failed to export report' },
+      { status: 500 }
     )
   }
+}
+
+async function generatePDF(reportData: any): Promise<Buffer> {
+  const doc = new jsPDF()
+  
+  // Title
+  doc.setFontSize(20)
+  doc.text(reportData.metadata.title, 20, 30)
+  
+  // Metadata
+  doc.setFontSize(12)
+  doc.text(`Generated: ${new Date(reportData.metadata.generatedAt).toLocaleString()}`, 20, 50)
+  doc.text(`Date Range: ${new Date(reportData.metadata.dateRange.startDate).toLocaleDateString()} - ${new Date(reportData.metadata.dateRange.endDate).toLocaleDateString()}`, 20, 60)
+  
+  // Data section
+  let yPosition = 80
+  doc.setFontSize(14)
+  doc.text('Report Data', 20, yPosition)
+  yPosition += 10
+  
+  doc.setFontSize(10)
+  Object.entries(reportData.data).forEach(([key, value]) => {
+    if (yPosition > 270) {
+      doc.addPage()
+      yPosition = 20
+    }
+    
+    doc.text(`${key}: ${JSON.stringify(value)}`, 20, yPosition)
+    yPosition += 10
+  })
+  
+  // Insights
+  if (reportData.insights && reportData.insights.length > 0) {
+    yPosition += 10
+    doc.setFontSize(14)
+    doc.text('Insights', 20, yPosition)
+    yPosition += 10
+    
+    doc.setFontSize(10)
+    reportData.insights.forEach((insight: any) => {
+      if (yPosition > 270) {
+        doc.addPage()
+        yPosition = 20
+      }
+      
+      doc.text(`• ${insight.title}: ${insight.description}`, 20, yPosition)
+      yPosition += 10
+    })
+  }
+  
+  return Buffer.from(doc.output('arraybuffer'))
+}
+
+async function generateExcel(reportData: any): Promise<Buffer> {
+  const workbook = XLSX.utils.book_new()
+  
+  // Metadata sheet
+  const metadataData = [
+    ['Title', reportData.metadata.title],
+    ['Generated At', reportData.metadata.generatedAt],
+    ['Start Date', reportData.metadata.dateRange.startDate],
+    ['End Date', reportData.metadata.dateRange.endDate]
+  ]
+  
+  const metadataSheet = XLSX.utils.aoa_to_sheet(metadataData)
+  XLSX.utils.book_append_sheet(workbook, metadataSheet, 'Metadata')
+  
+  // Data sheet
+  const dataSheet = XLSX.utils.json_to_sheet(flattenObject(reportData.data))
+  XLSX.utils.book_append_sheet(workbook, dataSheet, 'Data')
+  
+  // Insights sheet
+  if (reportData.insights && reportData.insights.length > 0) {
+    const insightsSheet = XLSX.utils.json_to_sheet(reportData.insights)
+    XLSX.utils.book_append_sheet(workbook, insightsSheet, 'Insights')
+  }
+  
+  const excelBuffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' })
+  return Buffer.from(excelBuffer)
+}
+
+async function generateCSV(reportData: any): Promise<Buffer> {
+  const parser = new Parser()
+  const csvData = parser.parse(flattenObject(reportData.data))
+  return Buffer.from(csvData, 'utf-8')
+}
+
+function flattenObject(obj: any, prefix = ''): any[] {
+  const result: any[] = []
+  
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      const newKey = prefix ? `${prefix}.${key}` : key
+      
+      if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key])) {
+        result.push(...flattenObject(obj[key], newKey))
+      } else {
+        result.push({
+          [newKey]: typeof obj[key] === 'object' ? JSON.stringify(obj[key]) : obj[key]
+        })
+      }
+    }
+  }
+  
+  return result
 }

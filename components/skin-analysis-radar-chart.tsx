@@ -1,16 +1,15 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import dynamic from 'next/dynamic';
-// import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-
-const RadarChart = dynamic(() => import('recharts').then(mod => ({ default: mod.RadarChart })), { ssr: false });
-const PolarGrid = dynamic(() => import('recharts').then(mod => ({ default: mod.PolarGrid })), { ssr: false });
-const PolarAngleAxis = dynamic(() => import('recharts').then(mod => ({ default: mod.PolarAngleAxis })), { ssr: false });
-const PolarRadiusAxis = dynamic(() => import('recharts').then(mod => ({ default: mod.PolarRadiusAxis })), { ssr: false });
-const Radar = dynamic(() => import('recharts').then(mod => ({ default: mod.Radar })), { ssr: false });
-const ResponsiveContainer = dynamic(() => import('recharts').then(mod => ({ default: mod.ResponsiveContainer })), { ssr: false });
-const Tooltip = dynamic(() => import('recharts').then(mod => ({ default: mod.Tooltip })), { ssr: false });
+import {
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  Radar,
+  ResponsiveContainer,
+  Tooltip
+} from 'recharts';
 
 interface MetricData {
   name: string
@@ -56,7 +55,7 @@ export function SkinAnalysisRadarChart({ data }: SkinAnalysisRadarChartProps) {
               {/* <ChartTooltip content={<ChartTooltipContent />} /> */}
               <Tooltip />
               <PolarGrid strokeDasharray="3 3" />
-              <PolarAngleAxis dataKey="metric" tick={{ fill: "hsl(var(--foreground))", fontSize: 12 }} reversed={false} scale="band" />
+              <PolarAngleAxis dataKey="metric" tick={{ fill: "hsl(var(--foreground))", fontSize: 12 }} />
               <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fill: "hsl(var(--muted-foreground))" }} />
               <Radar
                 name="Score"

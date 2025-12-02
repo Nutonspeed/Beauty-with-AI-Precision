@@ -21,19 +21,19 @@ import { Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useToast } from '@/hooks/use-toast';
 
-const LineChart = dynamic(() => import('recharts').then(mod => ({ default: mod.LineChart })), { ssr: false });
-const Line = dynamic(() => import('recharts').then(mod => ({ default: mod.Line })), { ssr: false });
-const BarChart = dynamic(() => import('recharts').then(mod => ({ default: mod.BarChart })), { ssr: false });
-const Bar = dynamic(() => import('recharts').then(mod => ({ default: mod.Bar })), { ssr: false });
-const PieChart = dynamic(() => import('recharts').then(mod => ({ default: mod.PieChart })), { ssr: false });
-const Pie = dynamic(() => import('recharts').then(mod => ({ default: mod.Pie })), { ssr: false });
-const Cell = dynamic(() => import('recharts').then(mod => ({ default: mod.Cell })), { ssr: false });
-const XAxis = dynamic(() => import('recharts').then(mod => ({ default: mod.XAxis })), { ssr: false });
-const YAxis = dynamic(() => import('recharts').then(mod => ({ default: mod.YAxis })), { ssr: false });
-const CartesianGrid = dynamic(() => import('recharts').then(mod => ({ default: mod.CartesianGrid })), { ssr: false });
-const Tooltip = dynamic(() => import('recharts').then(mod => ({ default: mod.Tooltip })), { ssr: false });
-const Legend = dynamic(() => import('recharts').then(mod => ({ default: (mod as any).Legend })), { ssr: false });
-const ResponsiveContainer = dynamic(() => import('recharts').then(mod => ({ default: mod.ResponsiveContainer })), { ssr: false });
+const LineChart = dynamic(() => import('recharts').then(mod => ({ default: mod.LineChart as unknown as React.ComponentType<any> })), { ssr: false });
+const Line = dynamic(() => import('recharts').then(mod => ({ default: mod.Line as unknown as React.ComponentType<any> })), { ssr: false });
+const BarChart = dynamic(() => import('recharts').then(mod => ({ default: mod.BarChart as unknown as React.ComponentType<any> })), { ssr: false });
+const Bar = dynamic(() => import('recharts').then(mod => ({ default: mod.Bar as unknown as React.ComponentType<any> })), { ssr: false });
+const PieChart = dynamic(() => import('recharts').then(mod => ({ default: mod.PieChart as unknown as React.ComponentType<any> })), { ssr: false });
+const Pie = dynamic(() => import('recharts').then(mod => ({ default: mod.Pie as unknown as React.ComponentType<any> })), { ssr: false });
+const Cell = dynamic(() => import('recharts').then(mod => ({ default: mod.Cell as unknown as React.ComponentType<any> })), { ssr: false });
+const XAxis = dynamic(() => import('recharts').then(mod => ({ default: mod.XAxis as unknown as React.ComponentType<any> })), { ssr: false });
+const YAxis = dynamic(() => import('recharts').then(mod => ({ default: mod.YAxis as unknown as React.ComponentType<any> })), { ssr: false });
+const CartesianGrid = dynamic(() => import('recharts').then(mod => ({ default: mod.CartesianGrid as unknown as React.ComponentType<any> })), { ssr: false });
+const Tooltip = dynamic(() => import('recharts').then(mod => ({ default: mod.Tooltip as unknown as React.ComponentType<any> })), { ssr: false });
+const Legend = dynamic(() => import('recharts').then(mod => ({ default: mod.Legend as unknown as React.ComponentType<any> })), { ssr: false });
+const ResponsiveContainer = dynamic(() => import('recharts').then(mod => ({ default: mod.ResponsiveContainer as unknown as React.ComponentType<any> })), { ssr: false });
 
 interface RevenueData {
   summary: {
@@ -309,47 +309,41 @@ export default function ClinicRevenuePage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={400}>
-                <LineChart data={data.chartData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis
-                    dataKey="date"
-                    tickFormatter={(value) => {
-                      const date = new Date(value);
-                      return `${date.getDate()}/${date.getMonth() + 1}`;
-                    }}
-                  />
-                  <YAxis yAxisId="left" tickFormatter={(value) => `฿${(value / 1000).toFixed(0)}k`} />
-                  <YAxis yAxisId="right" orientation="right" />
-                  <Tooltip
-                    formatter={(value: any, name: any) => {
-                      if (name === 'revenue') return [formatCurrency(value), 'รายได้'];
-                      return [value, 'การจอง'];
-                    }}
-                    labelFormatter={(label) => {
-                      const date = new Date(label);
-                      return date.toLocaleDateString('th-TH');
-                    }}
-                  />
-                  <Legend />
-                  <Line
-                    yAxisId="left"
-                    type="monotone"
-                    dataKey="revenue"
-                    stroke="#8884d8"
-                    name="รายได้"
-                    strokeWidth={2}
-                  />
-                  <Line
-                    yAxisId="right"
-                    type="monotone"
-                    dataKey="bookings"
-                    stroke="#82ca9d"
-                    name="การจอง"
-                    strokeWidth={2}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+              <div className="w-full h-[400px]">
+                <ResponsiveContainer width="100%" height={400}>
+                  <LineChart data={data.chartData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis
+                      dataKey="date"
+                      tick={{ fontSize: 12 }}
+                      angle={-45}
+                      textAnchor="end"
+                      height={60}
+                    />
+                    <YAxis tick={{ fontSize: 12 }} />
+                    <Tooltip />
+                    <Legend />
+                    <Line
+                      type="monotone"
+                      dataKey="revenue"
+                      stroke="#8884d8"
+                      strokeWidth={2}
+                      dot={{ r: 4 }}
+                      activeDot={{ r: 6 }}
+                      name="รายได้"
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="bookings"
+                      stroke="#82ca9d"
+                      strokeWidth={2}
+                      dot={{ r: 4 }}
+                      activeDot={{ r: 6 }}
+                      name="จำนวนการจอง"
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -374,7 +368,7 @@ export default function ClinicRevenuePage() {
                       cx="50%"
                       cy="50%"
                       outerRadius={100}
-                      label={(entry) => `${entry.percentage}%`}
+                      label={(entry: any) => `${entry.percentage}%`}
                     >
                       {data.byTreatment.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -441,7 +435,7 @@ export default function ClinicRevenuePage() {
                 <BarChart data={data.byPaymentMethod}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="method" />
-                  <YAxis tickFormatter={(value) => `฿${(value / 1000).toFixed(0)}k`} />
+                  <YAxis tickFormatter={(value: any) => `฿${(value / 1000).toFixed(0)}k`} />
                   <Tooltip
                     formatter={(value: any) => formatCurrency(value)}
                     labelStyle={{ color: '#000' }}

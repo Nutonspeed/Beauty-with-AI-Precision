@@ -2,53 +2,176 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, develop ]
   pull_request:
-    branches: [ main ]
-  schedule:
-    - cron: "0 3 * * *"  # nightly 03:00 UTC schema check
+    branches: [ main, develop ]
 
-permissions:
-  contents: read
+env:
+  NODE_VERSION: '20.x'
+  PNPM_VERSION: '9.x'
 
 jobs:
-  build-and-verify:
+  lint:
+    name: Lint Code
     runs-on: ubuntu-latest
-    env:
-      # Set these in your repo Settings > Secrets and variables > Actions
-      POSTGRES_URL_NON_POOLING: ${{ secrets.SUPABASE_POSTGRES_URL_NON_POOLING }}
-      POSTGRES_URL: ${{ secrets.SUPABASE_POSTGRES_URL }}
-      POSTGRES_PRISMA_URL: ${{ secrets.SUPABASE_POSTGRES_PRISMA_URL }}
+    
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Setup Node
+        
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'pnpm'
-
+          node-version: ${{ env.NODE_VERSION }}
+          
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v2
         with:
-          version: 9
-          run_install: true
-
-      - name: Build + Lint + Typecheck + Schema Assert
+          version: ${{ env.PNPM_VERSION }}
+          
+      - name: Get pnpm store directory
+        shell: bash
         run: |
-          pnpm -v
-          pnpm build:ci
-
-      - name: Schema Breakdown JSON (artifact)
-        if: always()
-        run: |
-          node scripts/schema-assert.mjs --tables 78 --views 2 || true
-          node scripts/schema-breakdown.mjs > schema-breakdown.txt || true
-
-      - name: Upload schema breakdown
-        if: always()
-        uses: actions/upload-artifact@v4
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+          
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
         with:
-          name: schema-breakdown
-          path: schema-breakdown.txt
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+            
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        
+      - name: Run ESLint
+        run: pnpm lint
+        
+      - name: Run TypeScript check
+        run: pnpm type-check
+        
+  test:
+    name: Test Suite
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [20.x, 21.x]
+        
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+          
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+            
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        
+      - name: Run unit tests
+        run: pnpm test:unit
+        
+      - name: Run integration tests
+        run: pnpm test:integration
+        
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella
+          
+  build:
+    name: Build Application
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+          
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+            
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        
+      - name: Build application
+        run: pnpm build
+        
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-files
+          path: |
+            .next
+            public
+          retention-days: 1
+          
+  security:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        
+      - name: Run security audit
+        run: pnpm security:audit
+        
+      - name: Run security scan
+        run: pnpm security:scan

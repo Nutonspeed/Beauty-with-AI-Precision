@@ -13,7 +13,7 @@ export async function POST(request: Request) {
     const { data, error } = await supabase.auth.refreshSession({ refresh_token })
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 401 })
+      return NextResponse.json({ error: error instanceof Error ? error.message : 'Unknown error' }, { status: 401 })
     }
 
     return NextResponse.json({

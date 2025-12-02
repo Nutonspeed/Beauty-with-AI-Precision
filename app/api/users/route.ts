@@ -80,7 +80,7 @@ export async function GET(request: NextRequest) {
     if (usersError) {
       console.error('Error fetching users:', usersError)
       return NextResponse.json(
-        { error: 'Failed to fetch users', details: usersError.message },
+        { error: 'Failed to fetch users', details: usersError instanceof Error ? usersError.message : 'Unknown error' },
         { status: 500 }
       )
     }

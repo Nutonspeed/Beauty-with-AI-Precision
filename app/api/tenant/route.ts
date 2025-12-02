@@ -29,7 +29,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Error creating tenant:', error)
     if (error instanceof Error && error.message.includes('already exists')) {
-      return NextResponse.json({ error: error.message }, { status: 409 })
+      return NextResponse.json({ error: error instanceof Error ? error.message : 'Unknown error' }, { status: 409 })
     }
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }

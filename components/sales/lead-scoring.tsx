@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { TrendingUp, Target, Users, DollarSign } from "lucide-react"
+import { AILeadScorer, LeadData, AIScoreResult } from "@/lib/ai/lead-scorer"
+import { AIMarketingCampaignGenerator, GeneratedCampaign } from "@/lib/ai/campaign-generator"
 
 // Mock data - ในโปรดักชั่นจะดึงจาก API
 const leadsData = [
@@ -94,39 +95,69 @@ const getStatusBadge = (status: string) => {
 }
 
 export function LeadScoring() {
-  const [leads, setLeads] = useState(leadsData)
-  const [sortBy, setSortBy] = useState("score")
+  const [leads, setLeads] = useState<(LeadData & { aiScore?: AIScoreResult; campaign?: GeneratedCampaign })[]>(leadsData)
+  const [sortBy, setSortBy] = useState("aiScore")
   const [filterBy, setFilterBy] = useState("all")
+  const [isAnalyzing, setIsAnalyzing] = useState(true)
+  const [aiScorer] = useState(() => new AILeadScorer())
+  const [campaignGenerator] = useState(() => new AIMarketingCampaignGenerator())
+  const [selectedLead, setSelectedLead] = useState<(LeadData & { aiScore?: AIScoreResult }) | null>(null)
 
-  // Simulate real-time scoring updates
+  // AI-powered lead scoring and campaign generation
   useEffect(() => {
-    const updateScores = () => {
-      setLeads(prevLeads =>
-        prevLeads.map(lead => ({
-          ...lead,
-          score: Math.min(100, lead.score + Math.floor(Math.random() * 3) - 1)
-        }))
+    const analyzeLeads = async () => {
+      setIsAnalyzing(true)
+
+      const updatedLeads = await Promise.all(
+        leadsData.map(async (lead) => {
+          try {
+            // Get AI score
+            const aiScore = await aiScorer.scoreLead(lead)
+
+            // Generate personalized campaign
+            const campaign = await campaignGenerator.generateCampaign(lead, aiScore)
+
+            return {
+              ...lead,
+              aiScore,
+              campaign,
+              score: aiScore.overallScore, // Update legacy score field
+            }
+          } catch (error) {
+            console.error(`Failed to analyze lead ${lead.id}:`, error)
+            return {
+              ...lead,
+              aiScore: undefined,
+              campaign: undefined,
+            }
+          }
+        })
       )
+
+      setLeads(updatedLeads)
+      setIsAnalyzing(false)
     }
 
-    const interval = setInterval(updateScores, 5000)
-    return () => clearInterval(interval)
+    analyzeLeads()
   }, [])
 
   const filteredAndSortedLeads = leads
     .filter(lead => filterBy === "all" || lead.status === filterBy)
     .sort((a, b) => {
       switch (sortBy) {
-        case "score":
-          return b.score - a.score
+        case "aiScore":
+          return (b.aiScore?.overallScore || 0) - (a.aiScore?.overallScore || 0)
+        case "conversion":
+          return (b.aiScore?.conversionProbability || 0) - (a.aiScore?.conversionProbability || 0)
         case "value":
-          return b.predictedValue - a.predictedValue
-        case "probability":
-          return b.conversionProbability - a.conversionProbability
+          return (b.aiScore?.predictedValue || 0) - (a.aiScore?.predictedValue || 0)
+        case "urgency":
+          const urgencyOrder = { critical: 4, high: 3, medium: 2, low: 1 }
+          return (urgencyOrder[b.aiScore?.urgency || 'low'] || 1) - (urgencyOrder[a.aiScore?.urgency || 'low'] || 1)
         case "activity":
-          return a.lastActivity.localeCompare(b.lastActivity)
+          return b.lastActivity.getTime() - a.lastActivity.getTime()
         default:
-          return 0
+          return b.score - a.score
       }
     })
 
@@ -181,7 +212,7 @@ export function LeadScoring() {
               <div className="ml-2">
                 <p className="text-sm font-medium leading-none">Predicted Revenue</p>
                 <p className="text-2xl font-bold">
-                  ฿{leads.reduce((sum, lead) => sum + lead.predictedValue, 0).toLocaleString()}
+                  ฿{leads.reduce((sum, lead) => sum + (lead.aiScore?.predictedValue || lead.predictedValue), 0).toLocaleString()}
                 </p>
               </div>
             </div>
@@ -195,7 +226,7 @@ export function LeadScoring() {
               <div className="ml-2">
                 <p className="text-sm font-medium leading-none">Avg Conversion</p>
                 <p className="text-2xl font-bold">
-                  {Math.round(leads.reduce((sum, lead) => sum + lead.conversionProbability, 0) / leads.length)}%
+                  {Math.round(leads.reduce((sum, lead) => sum + (lead.aiScore?.conversionProbability || lead.conversionProbability), 0) / leads.length)}%
                 </p>
               </div>
             </div>
@@ -232,9 +263,10 @@ export function LeadScoring() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="score">คะแนนสูงสุด</SelectItem>
+                  <SelectItem value="aiScore">AI Score สูงสุด</SelectItem>
+                  <SelectItem value="conversion">โอกาสขายสูงสุด</SelectItem>
                   <SelectItem value="value">มูลค่าสูงสุด</SelectItem>
-                  <SelectItem value="probability">โอกาสการขายสูงสุด</SelectItem>
+                  <SelectItem value="urgency">ความเร่งด่วนสูงสุด</SelectItem>
                   <SelectItem value="activity">กิจกรรมล่าสุด</SelectItem>
                 </SelectContent>
               </Select>
@@ -286,9 +318,66 @@ export function LeadScoring() {
                             </Badge>
                           ))}
                         </div>
-                      </div>
+                      {/* AI Insights */}
+                      {lead.aiScore && (
+                        <div className="mb-3 p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                            <span className="text-sm font-medium text-blue-900">AI Insights</span>
+                          </div>
 
-                      {/* Engagement Metrics */}
+                          <div className="grid grid-cols-2 gap-2 text-xs">
+                            <div>
+                              <span className="text-gray-600">Urgency:</span>
+                              <Badge
+                                className={`ml-1 text-xs ${
+                                  lead.aiScore.urgency === 'critical' ? 'bg-red-100 text-red-800' :
+                                  lead.aiScore.urgency === 'high' ? 'bg-orange-100 text-orange-800' :
+                                  lead.aiScore.urgency === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                                  'bg-gray-100 text-gray-800'
+                                }`}
+                              >
+                                {lead.aiScore.urgency}
+                              </Badge>
+                            </div>
+                            <div>
+                              <span className="text-gray-600">Next Action:</span>
+                              <span className="ml-1 font-medium text-blue-700">
+                                {lead.aiScore.nextBestAction.length > 20
+                                  ? `${lead.aiScore.nextBestAction.substring(0, 20)}...`
+                                  : lead.aiScore.nextBestAction
+                                }
+                              </span>
+                            </div>
+                          </div>
+
+                          {lead.aiScore.insights.length > 0 && (
+                            <div className="mt-2">
+                              <span className="text-xs text-gray-600">Key Insight:</span>
+                              <p className="text-xs text-gray-800 mt-1">
+                                {lead.aiScore.insights[0]}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Campaign Preview */}
+                      {lead.campaign && (
+                        <div className="mb-3 p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                            <span className="text-sm font-medium text-green-900">Recommended Campaign</span>
+                          </div>
+
+                          <div className="text-xs">
+                            <div className="font-medium text-green-800">{lead.campaign.subjectLine}</div>
+                            <div className="text-gray-600 mt-1">
+                              Expected Response: {lead.campaign.expectedResponseRate}%
+                            </div>
+                          </div>
+                        </div>
+                      )}
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mb-3">
                         <div>
                           <div className="font-medium text-foreground">Website Visits</div>
@@ -314,18 +403,18 @@ export function LeadScoring() {
                   <div className="text-right min-w-[200px]">
                     <div className="mb-2">
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-sm font-medium">Lead Score</span>
-                        <span className="text-lg font-bold">{lead.score}/100</span>
+                        <span className="text-sm font-medium">AI Score</span>
+                        <span className="text-lg font-bold">{lead.aiScore?.overallScore || lead.score}/100</span>
                       </div>
-                      <Progress value={lead.score} className="h-2" />
+                      <Progress value={lead.aiScore?.overallScore || lead.score} className="h-2" />
                     </div>
 
                     <div className="text-sm text-muted-foreground mb-2">
-                      Predicted Value: ฿{lead.predictedValue.toLocaleString()}
+                      Predicted Value: ฿{(lead.aiScore?.predictedValue || lead.predictedValue).toLocaleString()}
                     </div>
 
                     <div className="text-sm text-muted-foreground mb-4">
-                      Conversion: {lead.conversionProbability}%
+                      Conversion: {lead.aiScore?.conversionProbability || lead.conversionProbability}%
                     </div>
 
                     <div className="flex gap-2">

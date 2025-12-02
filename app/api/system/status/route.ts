@@ -73,7 +73,7 @@ export async function GET() {
       services.push({
         name: 'PostgreSQL Database',
         status: 'down',
-        details: error.message
+        details: error instanceof Error ? error.message : 'Unknown error'
       })
     }
   } catch (error) {

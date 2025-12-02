@@ -71,12 +71,12 @@ export default function LoginPage() {
       
       if (result.error) {
         console.error('[LoginPage] ❌ Login error:', result.error)
-        if (result.error.message.includes('Invalid login credentials')) {
-          setError('อีเมลหรือรหัสผ่านไม่ถูกต้อง')
-        } else if (result.error.message.includes('Email not confirmed')) {
+        if (result.error instanceof Error && result.error.message.includes('Invalid login credentials')) {
+          setError('Invalid email or password')
+        } else if (result.error instanceof Error && result.error.message.includes('Email not confirmed')) {
           setError('กรุณายืนยันอีเมลก่อนเข้าสู่ระบบ')
         } else {
-          setError(result.error.message)
+          setError(result.error instanceof Error ? result.error.message : 'Unknown error')
         }
         setLoading(false)
         return

@@ -16,7 +16,7 @@ export async function POST(request: Request) {
     })
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 401 })
+      return NextResponse.json({ error: error instanceof Error ? error.message : 'Unknown error' }, { status: 401 })
     }
 
     // Get user profile
