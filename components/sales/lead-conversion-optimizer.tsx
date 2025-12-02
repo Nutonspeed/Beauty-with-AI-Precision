@@ -12,6 +12,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { AIObjectionHandler } from '@/lib/ai/objection-handler';
+import { useObjectionDetection } from '@/lib/hooks/use-objection-detection';
 import { 
   Target, 
   TrendingUp, 
@@ -35,7 +37,7 @@ interface LeadData {
   engagementScore: number;
   visitCount: number;
   treatmentInterest: string[];
-  budget?: string;
+  budget?: 'low' | 'medium' | 'high' | 'premium';
   urgency?: 'low' | 'medium' | 'high';
   objections?: string[];
 }
@@ -195,18 +197,63 @@ export function LeadConversionOptimizer({
   const [actions, setActions] = useState<ConversionAction[]>([]);
   const [selectedAction, setSelectedAction] = useState<ConversionAction | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(true);
+  const [aiObjections, setAiObjections] = useState<any[]>([]);
+  const [aiStrategies, setAiStrategies] = useState<string[]>([]);
+
+  const objectionHandler = new AIObjectionHandler();
+  
+  const { analyzeMessage } = useObjectionDetection({
+    enabled: true,
+    debounceMs: 500,
+  });
   
   useEffect(() => {
     setIsAnalyzing(true);
     
-    const timer = setTimeout(() => {
+    const analyzeLead = async () => {
       const prob = calculateConversionProbability(lead);
       setProbability(prob);
       setActions(generateActions(lead, prob));
+      
+      // AI-powered objection analysis
+      if (lead.objections && lead.objections.length > 0) {
+        const objectionAnalyses = [];
+        for (const objection of lead.objections) {
+          const analysis = await objectionHandler.detectObjection(
+            `ลูกค้ากังวลเรื่อง${objection === 'price' ? 'ราคา' : objection === 'time' ? 'เวลา' : objection}`,
+            {
+              customerProfile: {
+                name: lead.name,
+                concerns: lead.treatmentInterest,
+                budget: lead.budget as 'low' | 'medium' | 'high' | 'premium' | undefined,
+              },
+              treatmentInterest: lead.treatmentInterest,
+              leadScore: lead.engagementScore,
+              urgency: lead.urgency,
+            }
+          );
+          objectionAnalyses.push({ objection, analysis });
+        }
+        setAiObjections(objectionAnalyses);
+      }
+      
+      // Get AI conversion strategies
+      const strategies = await objectionHandler.getConversionStrategies({
+        customerProfile: {
+          name: lead.name,
+          concerns: lead.treatmentInterest,
+          budget: lead.budget,
+        },
+        treatmentInterest: lead.treatmentInterest,
+        leadScore: lead.engagementScore,
+        urgency: lead.urgency,
+      });
+      setAiStrategies(strategies);
+      
       setIsAnalyzing(false);
-    }, 1000);
+    };
     
-    return () => clearTimeout(timer);
+    analyzeLead();
   }, [lead]);
   
   const getProbabilityColor = () => {
@@ -399,6 +446,33 @@ export function LeadConversionOptimizer({
                   )}
                 </motion.div>
               ))}
+              
+              {/* AI Conversion Strategies */}
+              {aiStrategies.length > 0 && (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Zap className="w-4 h-4 text-purple-400" />
+                    <span className="text-white font-medium">AI Conversion Strategies</span>
+                  </div>
+                  
+                  {aiStrategies.slice(0, 3).map((strategy, idx) => (
+                    <motion.div
+                      key={idx}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: idx * 0.1 }}
+                      className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/30"
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="p-1 rounded-lg bg-purple-500/20 text-purple-400 mt-0.5">
+                          <Lightbulb className="w-4 h-4" />
+                        </div>
+                        <p className="text-sm text-gray-300">{strategy}</p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
             </div>
             
             {/* Quick Actions */}
