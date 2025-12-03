@@ -388,22 +388,52 @@ export const PRODUCTION_REFERENCE_DATA = {
 
 // Typed accessor to help TypeScript understand the shape during lookups
 type AnyMap = Record<string, any>;
-const PRD = PRODUCTION_REFERENCE_DATA as unknown as {
-  leadScoring: { patterns: Record<string, AnyMap> };
-  objectionResponses: Record<string, Record<string, AnyMap>>;
-  campaignTemplates: Record<string, AnyMap>;
+
+// Stronger typed shapes for production reference data accessors
+interface LeadPatternRef {
+  score: number;
+  conversionProbability: number;
+  urgency: string;
+  priority: string;
+  predictedValue: number;
+  predictedLTV: number;
+  insights: string[];
+  recommendations: string[];
+  nextBestAction?: string;
+  timeline?: string;
+}
+
+interface ObjectionRefEntry {
+  response: string;
+  strategy?: string;
+  followUpActions?: string[];
+  confidence?: number;
+}
+
+interface CampaignTemplateRef {
+  subject?: string;
+  content?: string;
+  callToAction?: { text?: string; type?: string; url?: string };
+  personalizationElements?: string[];
+  expectedResponseRate?: number;
+  provenResults?: { averageOrderValue?: number };
+}
+
+interface ProductionRef {
+  leadScoring: { patterns: Record<string, LeadPatternRef> };
+  objectionResponses: Record<string, Record<string, ObjectionRefEntry>>;
+  campaignTemplates: Record<string, CampaignTemplateRef>;
   skinAnalysis: Record<string, AnyMap>;
   performanceBenchmarks: AnyMap;
   customerSegments: Record<string, AnyMap>;
-};
+}
+
+const PRD = PRODUCTION_REFERENCE_DATA as unknown as ProductionRef;
 
 // Production AI Engine - uses reference data for instant results
 export class ProductionAI {
   static analyzeSkin(condition: string): any {
-    const analysis = PRODUCTION_REFERENCE_DATA.skinAnalysis[condition as keyof typeof PRODUCTION_REFERENCE_DATA.skinAnalysis];
-    if (!analysis) {
-      return PRODUCTION_REFERENCE_DATA.skinAnalysis.acne; // fallback
-    }
+    const analysis = PRD.skinAnalysis[condition] || PRD.skinAnalysis['acne'];
     return {
       ...analysis,
       timestamp: new Date(),
@@ -417,41 +447,42 @@ export class ProductionAI {
     const engagement = (leadData.engagement || {}) as Record<string, number>;
     const totalEngagement = Object.values(engagement).reduce((sum, val) => sum + (val || 0), 0);
 
-    let pattern: keyof typeof PRODUCTION_REFERENCE_DATA.leadScoring.patterns;
-    if (totalEngagement > 30) pattern = 'hot_lead';
-    else if (totalEngagement > 15) pattern = 'warm_lead';
-    else pattern = 'cold_lead';
+    let patternKey = 'cold_lead';
+    if (totalEngagement > 30) patternKey = 'hot_lead';
+    else if (totalEngagement > 15) patternKey = 'warm_lead';
 
-    const reference: any = PRD.leadScoring.patterns[pattern as string];
+    const reference = PRD.leadScoring?.patterns?.[patternKey] || PRD.leadScoring.patterns['cold_lead'];
+
+    const overallScore = Math.max(0, Math.min(100, (reference.score || 30) + Math.floor(Math.random() * 10 - 5)));
 
     return {
-      overallScore: reference.score + Math.floor(Math.random() * 10 - 5), // Add slight variation
-      confidence: reference.conversionProbability / 100,
-      conversionProbability: reference.conversionProbability,
-      predictedValue: reference.predictedValue,
-      predictedLTV: reference.predictedLTV,
-      urgency: reference.urgency as any,
-      priority: reference.priority as any,
-      insights: reference.insights,
-      recommendations: reference.recommendations,
+      overallScore,
+      confidence: (reference.conversionProbability || 50) / 100,
+      conversionProbability: reference.conversionProbability || 0,
+      predictedValue: reference.predictedValue || 0,
+      predictedLTV: reference.predictedLTV || 0,
+      urgency: (reference.urgency as any) || 'low',
+      priority: (reference.priority as any) || 'medium',
+      insights: reference.insights || [],
+      recommendations: reference.recommendations || [],
       riskFactors: [],
       opportunityFactors: ['High engagement potential', 'Growing market segment'],
-      nextBestAction: reference.nextBestAction,
-      suggestedTimeline: reference.timeline,
+      nextBestAction: reference.nextBestAction || 'Contact lead',
+      suggestedTimeline: reference.timeline || 'Within 3-5 days',
       segmentation: {
         segmentId: 'auto_generated',
-        segmentName: pattern.replace('_', ' ').toUpperCase(),
+        segmentName: patternKey.replace('_', ' ').toUpperCase(),
         confidence: 0.89
       }
-    };
+    } as AIScoreResult;
   }
 
   static handleObjection(objectionText: string, context: any): any {
     // Simple keyword matching for instant response
     const text = objectionText.toLowerCase();
 
-    let category: keyof typeof PRODUCTION_REFERENCE_DATA.objectionResponses;
-    let responseKey: string;
+    let category: string = 'timing';
+    let responseKey: string = 'not_ready';
 
     if (text.includes('แพง') || text.includes('ราคา') || text.includes('expensive')) {
       category = 'price';
@@ -468,7 +499,7 @@ export class ProductionAI {
       responseKey = 'not_ready';
     }
 
-    const reference = PRD.objectionResponses[category as string]?.[responseKey as string];
+    const reference = (PRD.objectionResponses?.[category] && PRD.objectionResponses[category][responseKey]) || undefined;
 
     return {
       objectionType: category,
@@ -483,16 +514,11 @@ export class ProductionAI {
 
   static generateCampaign(leadData: Partial<LeadData>, leadScore: AIScoreResult): GeneratedCampaign {
     // Select campaign template based on lead score
-    let templateKey: keyof typeof PRODUCTION_REFERENCE_DATA.campaignTemplates;
-    if (leadScore.overallScore >= 80) {
-      templateKey = 'new_customer';
-    } else if (leadScore.overallScore >= 50) {
-      templateKey = 'upsell';
-    } else {
-      templateKey = 'reengagement';
-    }
+    let templateKey = 'reengagement';
+    if (leadScore.overallScore >= 80) templateKey = 'new_customer';
+    else if (leadScore.overallScore >= 50) templateKey = 'upsell';
 
-    const template = PRD.campaignTemplates[templateKey as string];
+    const template = PRD.campaignTemplates?.[templateKey] || PRD.campaignTemplates['reengagement'];
 
     // Normalize template CTA types to the GeneratedCampaign shape
     const mapCtaType = (t: any): 'button' | 'link' | 'phone' | 'booking' => {
@@ -505,7 +531,7 @@ export class ProductionAI {
     };
 
     const cta = {
-      text: template.callToAction?.text || 'ติดต่อเรา',
+      text: (template.callToAction && template.callToAction.text) || 'ติดต่อเรา',
       url: template.callToAction?.url,
       type: mapCtaType(template.callToAction)
     } as {
@@ -523,13 +549,13 @@ export class ProductionAI {
       id: `campaign_${Date.now()}`,
       name: `${templateKey.replace('_', ' ').toUpperCase()} Campaign`,
       subjectLine: template.subject,
-      content: template.content,
+      content: template.content || '',
       callToAction: cta,
       personalizationElements: template.personalizationElements || [],
       urgencyTriggers: ['limited_time', 'high_demand'],
       followUpSequence,
       expectedResponseRate: template.expectedResponseRate || 0,
-      estimatedValue: template.provenResults?.averageOrderValue || leadScore.predictedValue || 0,
+      estimatedValue: (template.provenResults && template.provenResults.averageOrderValue) || leadScore.predictedValue || 0,
       optimizationSuggestions: [],
       targetLead: leadData.id || 'unknown',
       type: 'email',
