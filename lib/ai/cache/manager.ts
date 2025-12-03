@@ -4,13 +4,35 @@ import { createHash } from 'crypto'
 import { LRUCache } from 'lru-cache'
 
 // Redis client for distributed caching
-const redis = new Redis({
-  host: process.env.REDIS_HOST || 'localhost',
-  port: parseInt(process.env.REDIS_PORT || '6379'),
-  password: process.env.REDIS_PASSWORD,
-  maxRetriesPerRequest: 3,
-  lazyConnect: true
-})
+// Create Redis lazily to avoid attempting connections during `next build`
+let redis: Redis | null = null
+function getRedisClient(): Redis | null {
+  if (redis) return redis
+  // Prefer a single URL if provided, otherwise host/port
+  const redisUrl = process.env.REDIS_URL
+  const hasHost = !!(process.env.REDIS_HOST || process.env.REDIS_HOST === '')
+  if (!redisUrl && !process.env.REDIS_HOST && !process.env.REDIS_PORT && !process.env.REDIS_PASSWORD) {
+    // No Redis config supplied — do not initialize client during build/runtime where unavailable
+    return null
+  }
+
+  try {
+    redis = redisUrl
+      ? new Redis(redisUrl)
+      : new Redis({
+          host: process.env.REDIS_HOST || 'localhost',
+          port: parseInt(process.env.REDIS_PORT || '6379'),
+          password: process.env.REDIS_PASSWORD,
+          maxRetriesPerRequest: 3,
+          lazyConnect: true
+        })
+    return redis
+  } catch (err) {
+    console.warn('Failed to initialize Redis client:', err)
+    redis = null
+    return null
+  }
+}
 
 // In-memory LRU cache for frequently accessed data
 const memoryCache = new LRUCache<string, any>({
@@ -45,11 +67,11 @@ const CACHE_CONFIG = {
 
 export class AICacheManager {
   private static instance: AICacheManager
-  private redis: Redis
+  private redis: Redis | null
   private memoryCache: LRUCache<string, any>
 
   constructor() {
-    this.redis = redis
+    this.redis = getRedisClient()
     this.memoryCache = memoryCache
   }
 
@@ -81,17 +103,19 @@ export class AICacheManager {
         }
       }
 
-      // Try Redis cache
-      const redisResult = await this.redis.get(key)
-      if (redisResult) {
-        const parsed = JSON.parse(redisResult) as T
-        
-        // Store in memory cache if enabled
-        if (CACHE_CONFIG[type as keyof typeof CACHE_CONFIG].memory) {
-          this.memoryCache.set(key, parsed)
+      // Try Redis cache (only if client initialized)
+      if (this.redis) {
+        const redisResult = await this.redis.get(key)
+        if (redisResult) {
+          const parsed = JSON.parse(redisResult) as T
+
+          // Store in memory cache if enabled
+          if (CACHE_CONFIG[type as keyof typeof CACHE_CONFIG].memory) {
+            this.memoryCache.set(key, parsed)
+          }
+
+          return parsed
         }
-        
-        return parsed
       }
 
       return null
@@ -112,8 +136,10 @@ export class AICacheManager {
         this.memoryCache.set(key, value)
       }
 
-      // Store in Redis
-      await this.redis.setex(key, ttl, JSON.stringify(value))
+      // Store in Redis (no-op when not configured)
+      if (this.redis) {
+        await this.redis.setex(key, ttl, JSON.stringify(value))
+      }
     } catch (error) {
       console.error('Cache set error:', error)
     }
@@ -129,8 +155,10 @@ export class AICacheManager {
         this.memoryCache.delete(key)
       }
 
-      // Remove from Redis
-      await this.redis.del(key)
+      // Remove from Redis (no-op when not configured)
+      if (this.redis) {
+        await this.redis.del(key)
+      }
     } catch (error) {
       console.error('Cache delete error:', error)
     }
@@ -140,10 +168,11 @@ export class AICacheManager {
   async clearType(type: string): Promise<void> {
     try {
       const pattern = `${CACHE_CONFIG[type as keyof typeof CACHE_CONFIG].prefix}*`
-      const keys = await this.redis.keys(pattern)
-      
-      if (keys.length > 0) {
-        await this.redis.del(...keys)
+      if (this.redis) {
+        const keys = await this.redis.keys(pattern)
+        if (keys.length > 0) {
+          await this.redis.del(...keys)
+        }
       }
 
       // Clear memory cache for this type
@@ -158,14 +187,12 @@ export class AICacheManager {
   // Cache statistics
   async getStats(): Promise<CacheStats> {
     try {
-      const redisInfo = await this.redis.info('memory')
       const memoryUsage = this.memoryCache.size
-      
       return {
-        redisMemoryUsed: this.parseRedisMemory(redisInfo),
+        redisMemoryUsed: this.redis ? this.parseRedisMemory(await this.redis.info('memory')) : 0,
         memoryCacheSize: memoryUsage,
         memoryCacheMax: this.memoryCache.max,
-        hitRate: await this.calculateHitRate()
+        hitRate: this.redis ? await this.calculateHitRate() : 0
       }
     } catch (error) {
       console.error('Cache stats error:', error)
@@ -185,6 +212,7 @@ export class AICacheManager {
 
   private async calculateHitRate(): Promise<number> {
     try {
+      if (!this.redis) return 0
       const stats = await this.redis.info('stats')
       const hits = parseInt(stats.match(/keyspace_hits:(\d+)/)?.[1] || '0')
       const misses = parseInt(stats.match(/keyspace_misses:(\d+)/)?.[1] || '0')
