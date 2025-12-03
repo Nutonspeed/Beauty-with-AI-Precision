@@ -13,9 +13,8 @@ test.describe('Profile Page E2E Tests', () => {
     await page.locator('#email').fill('admin@ai367bar.com');
     await page.locator('#password').fill('password123');
     await page.locator('button[type="submit"]').click();
-    
-    // Wait for any redirect (login success)
-    await page.waitForTimeout(3000);
+    // Wait for navigation or page load after login - be tolerant if no navigation occurs
+    await page.waitForLoadState('domcontentloaded').catch(() => {})
     
     // Navigate to profile
     await page.goto('/th/profile');
