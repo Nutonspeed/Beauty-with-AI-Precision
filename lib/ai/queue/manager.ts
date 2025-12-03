@@ -30,11 +30,13 @@ const QUEUE_CONFIG = {
 export class AIQueueManager {
   private static instance: AIQueueManager
   private queues: Map<string, Bull.Queue> = new Map()
-  private redis: Redis
+  private redis: Redis | null = null
+  private initialized = false
+  private initializingPromise: Promise<void> | null = null
 
   constructor() {
-    this.redis = new Redis(QUEUE_CONFIG.REDIS)
-    this.initializeQueues()
+    // Intentionally avoid connecting to Redis or initializing queues here.
+    // Initialization will occur lazily when the manager is first used.
   }
 
   static getInstance(): AIQueueManager {
@@ -46,6 +48,10 @@ export class AIQueueManager {
 
   // Initialize all queues
   private initializeQueues(): void {
+    // If Redis isn't configured, skip initializing queues to avoid connection attempts
+    if (!process.env.REDIS_HOST && !process.env.REDIS_URL) {
+      return
+    }
     const queueTypes = [
       'skin-analysis',
       'face-detection', 
@@ -77,6 +83,22 @@ export class AIQueueManager {
     })
 
     console.log('✅ AI queues initialized')
+  }
+
+  private async ensureInitialized(): Promise<void> {
+    if (this.initialized) return
+    if (!this.initializingPromise) {
+      this.initializingPromise = (async () => {
+        // Initialize Redis only when configured
+        if (process.env.REDIS_HOST || process.env.REDIS_URL) {
+          this.redis = new Redis(QUEUE_CONFIG.REDIS)
+        }
+
+        this.initializeQueues()
+        this.initialized = true
+      })()
+    }
+    await this.initializingPromise
   }
 
   // Setup queue processor
@@ -132,6 +154,7 @@ export class AIQueueManager {
     data: any, 
     options: Bull.JobOptions = {}
   ): Promise<Bull.Job> {
+    await this.ensureInitialized()
     const queue = this.queues.get(type)
     if (!queue) {
       throw new Error(`Queue ${type} not found`)
@@ -246,6 +269,7 @@ export class AIQueueManager {
 
   // Get queue statistics
   async getQueueStats(type?: string): Promise<QueueStats[]> {
+    await this.ensureInitialized()
     const stats: QueueStats[] = []
     
     const queuesToCheck = type ? [type] : Array.from(this.queues.keys())
@@ -274,6 +298,7 @@ export class AIQueueManager {
 
   // Pause queue
   async pauseQueue(type: string): Promise<void> {
+    await this.ensureInitialized()
     const queue = this.queues.get(type)
     if (queue) {
       await queue.pause()
@@ -282,6 +307,7 @@ export class AIQueueManager {
 
   // Resume queue
   async resumeQueue(type: string): Promise<void> {
+    await this.ensureInitialized()
     const queue = this.queues.get(type)
     if (queue) {
       await queue.resume()
@@ -290,6 +316,7 @@ export class AIQueueManager {
 
   // Clear queue
   async clearQueue(type: string): Promise<void> {
+    await this.ensureInitialized()
     const queue = this.queues.get(type)
     if (queue) {
       await queue.clean(0, 'completed')
@@ -310,7 +337,7 @@ export class AIQueueManager {
     const closePromises = Array.from(this.queues.values()).map(queue => queue.close())
     await Promise.all(closePromises)
     
-    await this.redis.quit()
+    if (this.redis) await this.redis.quit()
     console.log('✅ AI queues shut down')
   }
 }
@@ -325,4 +352,14 @@ interface QueueStats {
   total: number
 }
 
-export const aiQueue = AIQueueManager.getInstance()
+// Export a lazy proxy so importing modules won't trigger Redis connections at build-time
+const qHandler: ProxyHandler<any> = {
+  get(_, prop) {
+    const inst = AIQueueManager.getInstance()
+    const val = (inst as any)[prop]
+    if (typeof val === 'function') return val.bind(inst)
+    return val
+  }
+}
+
+export const aiQueue = new Proxy({}, qHandler) as AIQueueManager

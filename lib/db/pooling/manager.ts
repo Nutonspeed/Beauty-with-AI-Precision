@@ -44,12 +44,15 @@ export class DatabaseConnectionManager {
   private static instance: DatabaseConnectionManager
   private supabasePool: any
   private postgresPool!: Pool
-  private redis!: Redis
+  private redis: Redis | null = null
   private metrics: ConnectionMetrics
+  private initialized = false
+  private initializingPromise: Promise<void> | null = null
 
   constructor() {
     this.metrics = new ConnectionMetrics()
-    this.initializePools()
+    // Do not initialize pools eagerly in constructor to avoid connecting to services
+    // during module import / build-time. Initialization will happen lazily.
   }
 
   static getInstance(): DatabaseConnectionManager {
@@ -61,26 +64,39 @@ export class DatabaseConnectionManager {
 
   private async initializePools(): Promise<void> {
     try {
-      // Initialize Redis for connection caching
-      this.redis = new Redis(POOL_CONFIG.REDIS)
-      
-      // Initialize PostgreSQL pool for complex queries
+      // Initialize Redis for connection caching only when explicitly configured
+      if (process.env.REDIS_HOST || process.env.REDIS_URL) {
+        this.redis = new Redis(POOL_CONFIG.REDIS)
+      }
+
+      // Initialize PostgreSQL pool for complex queries only when configured
       if (process.env.POSTGRES_HOST) {
         this.postgresPool = new Pool(POOL_CONFIG.POSTGRES)
-        
+
         this.postgresPool.on('connect', () => {
           this.metrics.recordConnection('postgres')
         })
-        
+
         this.postgresPool.on('error', (err) => {
           this.metrics.recordError('postgres', err)
         })
       }
-      
-      console.log('✅ Database connection pools initialized')
+
+      this.initialized = true
+      console.log('✅ Database connection pools initialized (lazy)')
     } catch (error) {
       console.error('❌ Failed to initialize connection pools:', error)
     }
+  }
+
+  private async ensureInitialized(): Promise<void> {
+    if (this.initialized) return
+    if (!this.initializingPromise) {
+      this.initializingPromise = this.initializePools().finally(() => {
+        this.initializingPromise = null
+      })
+    }
+    await this.initializingPromise
   }
 
   // Get optimized Supabase client
@@ -88,9 +104,10 @@ export class DatabaseConnectionManager {
     const startTime = Date.now()
     
     try {
+      await this.ensureInitialized()
       // Check connection cache
       const cacheKey = this.generateCacheKey('supabase', options)
-      const cached = await this.redis?.get(cacheKey)
+      const cached = this.redis ? await this.redis.get(cacheKey) : null
       
       if (cached && !options.forceNew) {
         this.metrics.recordCacheHit('supabase')
@@ -129,6 +146,7 @@ export class DatabaseConnectionManager {
     const startTime = Date.now()
     
     try {
+      await this.ensureInitialized()
       if (!this.postgresPool) {
         throw new Error('PostgreSQL pool not initialized')
       }
@@ -155,6 +173,7 @@ export class DatabaseConnectionManager {
     const queryHash = this.hashQuery(query, params)
     
     try {
+      await this.ensureInitialized()
       // Check query cache
       if (options.cache !== false) {
         const cached = await this.getQueryCache(queryHash)
@@ -221,6 +240,7 @@ export class DatabaseConnectionManager {
     const results: BatchResult<T>[] = []
     
     try {
+      await this.ensureInitialized()
       // Execute queries in parallel where possible
       const promises = queries.map(async (batchQuery, index) => {
         try {
@@ -261,6 +281,7 @@ export class DatabaseConnectionManager {
   // Connection pool health check
   async healthCheck(): Promise<PoolHealthStatus> {
     try {
+      await this.ensureInitialized()
       const supabaseHealth = await this.checkSupabaseHealth()
       const postgresHealth = await this.checkPostgresHealth()
       const redisHealth = await this.checkRedisHealth()
@@ -289,6 +310,7 @@ export class DatabaseConnectionManager {
   // Warm up connection pools
   async warmUpPools(): Promise<void> {
     try {
+      await this.ensureInitialized()
       console.log('🔥 Warming up database connection pools...')
       
       // Warm up Supabase connections
@@ -367,7 +389,7 @@ export class DatabaseConnectionManager {
 
   private async getQueryCache(hash: string): Promise<QueryResult<any> | null> {
     if (!this.redis) return null
-    
+
     try {
       const cached = await this.redis.get(`db:query:${hash}`)
       return cached ? JSON.parse(cached) : null
@@ -378,7 +400,7 @@ export class DatabaseConnectionManager {
 
   private async setQueryCache(hash: string, result: QueryResult<any>, ttl: number): Promise<void> {
     if (!this.redis) return
-    
+
     try {
       await this.redis.setex(`db:query:${hash}`, ttl, JSON.stringify(result))
     } catch (error) {
@@ -420,7 +442,7 @@ export class DatabaseConnectionManager {
       if (!this.redis) {
         return { healthy: false, error: 'Redis not initialized' }
       }
-      
+
       await this.redis.ping()
       return { healthy: true }
     } catch (error) {
@@ -571,4 +593,14 @@ interface BatchMetric {
   timestamp: number
 }
 
-export const dbConnectionManager = DatabaseConnectionManager.getInstance()
+// Export a lazy proxy that will initialize the singleton only when a method is accessed.
+const handler: ProxyHandler<any> = {
+  get(_, prop) {
+    const inst = DatabaseConnectionManager.getInstance()
+    const val = (inst as any)[prop]
+    if (typeof val === 'function') return val.bind(inst)
+    return val
+  }
+}
+
+export const dbConnectionManager = new Proxy({}, handler) as DatabaseConnectionManager
