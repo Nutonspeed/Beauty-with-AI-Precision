@@ -373,9 +373,6 @@ importers:
       path:
         specifier: ^0.12.7
         version: 0.12.7
-      pg:
-        specifier: ^8.11.3
-        version: 8.16.3
       pixi.js:
         specifier: ^8.14.0
         version: 8.14.0
@@ -599,6 +596,9 @@ importers:
       npm-audit-resolver:
         specifier: ^3.0.0-RC.0
         version: 3.0.0-RC.0
+      pg:
+        specifier: ^8.16.3
+        version: 8.16.3
       playwright:
         specifier: ^1.56.1
         version: 1.56.1
