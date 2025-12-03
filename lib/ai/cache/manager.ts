@@ -18,14 +18,24 @@ function getRedisClient(): Redis | null {
 
   try {
     redis = redisUrl
-      ? new Redis(redisUrl)
+      ? new Redis(redisUrl, {
+          lazyConnect: true,
+          enableOfflineQueue: false,
+          maxRetriesPerRequest: 3
+        })
       : new Redis({
           host: process.env.REDIS_HOST || 'localhost',
           port: parseInt(process.env.REDIS_PORT || '6379'),
           password: process.env.REDIS_PASSWORD,
           maxRetriesPerRequest: 3,
-          lazyConnect: true
+          lazyConnect: true,
+          enableOfflineQueue: false
         })
+
+    // Prevent unhandled errors from failing the process during build/test
+    redis.on('error', (err) => {
+      console.warn('Redis client error (ai cache):', err && err.message ? err.message : err)
+    })
     return redis
   } catch (err) {
     console.warn('Failed to initialize Redis client:', err)
@@ -188,11 +198,19 @@ export class AICacheManager {
   async getStats(): Promise<CacheStats> {
     try {
       const memoryUsage = this.memoryCache.size
+      const redisMemoryUsed = this.redis && this.redis.status === 'ready'
+        ? this.parseRedisMemory(await this.redis.info('memory'))
+        : 0
+
+      const hitRate = this.redis && this.redis.status === 'ready'
+        ? await this.calculateHitRate()
+        : 0
+
       return {
-        redisMemoryUsed: this.redis ? this.parseRedisMemory(await this.redis.info('memory')) : 0,
+        redisMemoryUsed,
         memoryCacheSize: memoryUsage,
         memoryCacheMax: this.memoryCache.max,
-        hitRate: this.redis ? await this.calculateHitRate() : 0
+        hitRate
       }
     } catch (error) {
       console.error('Cache stats error:', error)

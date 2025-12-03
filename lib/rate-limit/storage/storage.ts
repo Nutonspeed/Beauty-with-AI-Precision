@@ -322,7 +322,25 @@ export class StorageFactory {
       case 'redis':
         if (!this.redisInstance) {
           if (process.env.REDIS_URL) {
-            this.redisInstance = new Redis(process.env.REDIS_URL)
+            try {
+              this.redisInstance = new Redis(process.env.REDIS_URL, {
+                lazyConnect: true,
+                enableOfflineQueue: false,
+                maxRetriesPerRequest: 3
+              })
+
+              // Avoid unhandled error events bubbling up during build/test runs
+              this.redisInstance.on('error', (err) => {
+                console.warn('Redis client error (rate-limit):', err && err.message ? err.message : err)
+              })
+
+              // Try to connect; if it fails, fall back to memory storage
+              await this.redisInstance.connect()
+            } catch (err) {
+              console.warn('Redis connection failed, falling back to memory storage:', err)
+              this.redisInstance = null
+              return this.create('memory')
+            }
           } else {
             console.warn('Redis URL not found, falling back to memory storage')
             return this.create('memory')

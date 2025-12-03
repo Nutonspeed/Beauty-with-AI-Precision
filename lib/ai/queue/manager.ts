@@ -91,10 +91,35 @@ export class AIQueueManager {
       this.initializingPromise = (async () => {
         // Initialize Redis only when configured
         if (process.env.REDIS_HOST || process.env.REDIS_URL) {
-          this.redis = new Redis(QUEUE_CONFIG.REDIS)
+          try {
+            // Create a lazy Redis client and attempt connection. If connection fails, skip queue initialization.
+            this.redis = new Redis({
+              host: QUEUE_CONFIG.REDIS.host,
+              port: QUEUE_CONFIG.REDIS.port,
+              password: QUEUE_CONFIG.REDIS.password,
+              lazyConnect: true,
+              enableOfflineQueue: false,
+              maxRetriesPerRequest: 3
+            })
+
+            this.redis.on('error', (err) => {
+              console.warn('Redis client error (ai queue):', err && err.message ? err.message : err)
+            })
+
+            await this.redis.connect()
+          } catch (err) {
+            console.warn('Failed to connect to Redis for AI queues, skipping queue initialization:', err)
+            this.redis = null
+            this.initialized = true
+            return
+          }
         }
 
-        this.initializeQueues()
+        // Only initialize queues when Redis is connected/available
+        if (this.redis) {
+          this.initializeQueues()
+        }
+
         this.initialized = true
       })()
     }

@@ -66,7 +66,23 @@ export class DatabaseConnectionManager {
     try {
       // Initialize Redis for connection caching only when explicitly configured
       if (process.env.REDIS_HOST || process.env.REDIS_URL) {
-        this.redis = new Redis(POOL_CONFIG.REDIS)
+        try {
+          this.redis = new Redis({
+            host: POOL_CONFIG.REDIS.host,
+            port: POOL_CONFIG.REDIS.port,
+            password: POOL_CONFIG.REDIS.password,
+            maxRetriesPerRequest: POOL_CONFIG.REDIS.maxRetriesPerRequest,
+            lazyConnect: true,
+            enableOfflineQueue: false
+          })
+
+          this.redis.on('error', (err) => {
+            console.warn('Redis client error (db pool):', err && err.message ? err.message : err)
+          })
+        } catch (err) {
+          console.warn('Failed to create Redis client for connection pool caching:', err)
+          this.redis = null
+        }
       }
 
       // Initialize PostgreSQL pool for complex queries only when configured
