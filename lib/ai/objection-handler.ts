@@ -6,7 +6,7 @@
 
 import OpenAI from 'openai';
 
-interface ObjectionContext {
+export interface ObjectionContext {
   customerProfile?: {
     name?: string;
     age?: number;
@@ -253,7 +253,7 @@ Return JSON array of strategy strings in Thai.`
     };
 
     return `
-สร้างการตอบสนองสำหรับ objection: ${objectionTypes[objection.objectionType] || objection.objectionType}
+  สร้างการตอบสนองสำหรับ objection: ${(objectionTypes as any)[objection.objectionType] || objection.objectionType}
 
 รายละเอียด objection:
 - ประเภท: ${objection.objectionType}
@@ -329,7 +329,7 @@ Return JSON array of strategy strings in Thai.`
       },
     };
 
-    return fallbacks[objection.objectionType] || {
+    return (fallbacks as any)[objection.objectionType] || {
       response: 'เข้าใจค่ะ อยากให้ชี้แจงเพิ่มเติมไหมคะ?',
       strategy: 'acknowledge' as const,
       followUpActions: [],

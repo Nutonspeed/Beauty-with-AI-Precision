@@ -40,8 +40,8 @@ interface ABTest {
   startDate?: Date;
   endDate?: Date;
   winner?: string;
-  improvement: number;
-  statisticalSignificance: boolean;
+  improvement?: number;
+  statisticalSignificance?: boolean;
 }
 
 interface TestVariant {
@@ -383,7 +383,7 @@ export function ABTestingFramework() {
               <div>
                 <p className="text-sm font-medium">Avg Improvement</p>
                 <p className="text-2xl font-bold text-green-600">
-                  +{Math.round(tests.filter(t => t.status === 'completed').reduce((sum, t) => sum + t.improvement, 0) / Math.max(1, tests.filter(t => t.status === 'completed').length))}%
+                  +{Math.round(tests.filter(t => t.status === 'completed').reduce((sum, t) => sum + (t.improvement ?? 0), 0) / Math.max(1, tests.filter(t => t.status === 'completed').length))}%
                 </p>
               </div>
               <TrendingUp className="w-8 h-8 text-green-500" />

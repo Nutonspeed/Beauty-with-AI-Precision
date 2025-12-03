@@ -172,7 +172,13 @@ function applyThaiRegionalAdaptations(characteristics: any, location?: any) {
 
 // Generate Thai-specific beauty insights
 function generateThaiBeautyInsights(classificationResult: any, characteristics: any, location?: any) {
-  const insights = {
+  const insights: {
+    thaiBeautyStandards: string[];
+    regionalConsiderations: string[];
+    traditionalIngredientRecommendations: string[];
+    seasonalAdjustments: string[];
+    culturalPreferences: string[];
+  } = {
     thaiBeautyStandards: [],
     regionalConsiderations: [],
     traditionalIngredientRecommendations: [],
@@ -231,7 +237,21 @@ function generateThaiBeautyInsights(classificationResult: any, characteristics: 
 
 // Generate AR treatment visualization
 async function generateARTreatmentVisualization(analysis: any, treatmentType: string, userPreferences?: any) {
-  const arVisualization = {
+  const arVisualization: {
+    treatmentType: string
+    visualizationData: {
+      beforeImage: any
+      afterImage: any
+      treatmentZones: string[]
+      intensityLevels: Record<string, number>
+      duration: number
+      confidence: number
+    }
+    userPreferences: any
+    arInstructions: string[]
+    safetyWarnings: string[]
+    expectedResults: string[]
+  } = {
     treatmentType,
     visualizationData: {
       beforeImage: null, // Would contain processed image data
@@ -313,7 +333,14 @@ async function generateARTreatmentVisualization(analysis: any, treatmentType: st
 
 // Calculate treatment recommendations
 async function calculateTreatmentRecommendations(analysis: any, treatmentType: string, userPreferences?: any) {
-  const recommendations = {
+  const recommendations: {
+    primaryTreatments: string[]
+    complementaryProducts: string[]
+    treatmentPlan: { duration: number; frequency: string; sessions: number }
+    expectedOutcomes: string[]
+    precautions: string[]
+    thaiTraditionalAlternatives: string[]
+  } = {
     primaryTreatments: [],
     complementaryProducts: [],
     treatmentPlan: {
@@ -389,7 +416,13 @@ async function calculateTreatmentRecommendations(analysis: any, treatmentType: s
 
 // Generate sales enablement data
 async function generateSalesEnablementData(analysis: any, arTreatment: any, recommendations: any) {
-  const salesData = {
+  const salesData: {
+    conversionOpportunities: string[]
+    objectionHandlers: Array<{ objection: string; response: string; evidence?: string }>
+    upsellingSuggestions: string[]
+    customerEducation: string[]
+    followUpActions: string[]
+  } = {
     conversionOpportunities: [],
     objectionHandlers: [],
     upsellingSuggestions: [],

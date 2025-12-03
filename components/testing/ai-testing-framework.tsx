@@ -22,7 +22,8 @@ import {
   Target,
   BarChart3,
   Settings,
-  RefreshCw
+  RefreshCw,
+  Users
 } from 'lucide-react';
 
 interface TestResult {
@@ -40,7 +41,7 @@ interface TestSuite {
   id: string;
   name: string;
   description: string;
-  category: 'comprehensive' | 'smoke' | 'regression' | 'performance';
+  category: 'comprehensive' | 'smoke' | 'regression' | 'performance' | 'ui' | 'integration';
   tests: TestResult[];
   status: 'idle' | 'running' | 'completed';
   progress: number;

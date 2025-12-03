@@ -51,7 +51,46 @@ export class ProductionCampaignGenerator {
    * Generate campaign instantly using proven templates
    */
   async generateCampaign(leadData: LeadData, leadScore: LeadScore): Promise<CampaignData> {
-    return ProductionAI.generateCampaign(leadData, leadScore);
+    const gen = await ProductionAI.generateCampaign(leadData, leadScore);
+
+    // Normalize GeneratedCampaign -> CampaignData
+    const mapCta = (c: any) => ({
+      text: c?.text || 'ติดต่อเรา',
+      type: c?.type === 'button' ? 'primary' as const : 'secondary' as const,
+      urgency: c?.urgency || 'medium' as const
+    });
+
+    const followUps = Array.isArray(gen.followUpSequence) ? gen.followUpSequence.map((f: any) => ({
+      delay: f.delay || 24,
+      type: (f.type === 'email' || f.type === 'sms' || f.type === 'call') ? f.type : 'email',
+      content: f.content || ''
+    })) : [];
+
+    const categoryMap: Record<string, CampaignData['category']> = {
+      welcome: 'new_customer',
+      nurture: 'reengagement',
+      conversion: 'new_customer',
+      retention: 'upsell',
+      upsell: 'upsell',
+      reactivation: 'reengagement'
+    };
+
+    return {
+      id: gen.id,
+      name: gen.name,
+      subjectLine: gen.subjectLine || gen.headline || '',
+      content: gen.content || '',
+      callToAction: mapCta(gen.callToAction),
+      personalizationElements: gen.personalizationElements || [],
+      urgencyTriggers: gen.urgencyTriggers || [],
+      followUpSequence: followUps,
+      expectedResponseRate: gen.expectedResponseRate || 0,
+      targetLead: gen.targetLead || leadData.id,
+      type: (gen.type === 'email' || gen.type === 'sms' || gen.type === 'social') ? gen.type : 'email',
+      category: categoryMap[gen.category as string] || 'new_customer',
+      createdAt: gen.createdAt || new Date(),
+      status: gen.status === 'draft' ? 'draft' : gen.status === 'sent' ? 'sent' : 'ready'
+    };
   }
 
   /**

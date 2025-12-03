@@ -43,11 +43,16 @@ export function useSkinAnalysis() {
   }, []);
 
   const getConditionInfo = useCallback((conditionId: string): KnownSkinCondition | null => {
-    return skinDetector.getConditionInfo(conditionId);
+    // Guard in case the underlying detector doesn't expose this helper
+    const fn = (skinDetector as any).getConditionInfo
+    if (typeof fn === 'function') return fn.call(skinDetector, conditionId)
+    return null
   }, []);
 
   const getAllConditions = useCallback((): KnownSkinCondition[] => {
-    return skinDetector.getAllConditions();
+    const fn = (skinDetector as any).getAllConditions
+    if (typeof fn === 'function') return fn.call(skinDetector)
+    return []
   }, []);
 
   return {

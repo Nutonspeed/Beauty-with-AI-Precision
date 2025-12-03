@@ -31,7 +31,7 @@ export function EnhancedARViewer({
 }: EnhancedARViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const animationFrameRef = useRef<number>()
+  const animationFrameRef = useRef<number | null>(null)
   const lastFrameTimeRef = useRef<number>(0)
   const frameCountRef = useRef<number>(0)
   const fpsHistoryRef = useRef<number[]>([])
@@ -221,7 +221,7 @@ export function EnhancedARViewer({
               height={600}
               className="w-full h-full object-contain"
               style={{
-                imageRendering: 'optimizeSpeed',
+                imageRendering: 'auto',
                 touchAction: 'none' // Prevent scrolling on touch
               }}
             />

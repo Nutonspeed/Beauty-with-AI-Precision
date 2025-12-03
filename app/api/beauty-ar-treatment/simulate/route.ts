@@ -6,6 +6,68 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
+// --- Typed interfaces for simulation outputs ---
+interface ARLayer {
+  id: string
+  type: string
+  intensity: number
+  targetAreas: string[]
+  blendMode?: string
+}
+
+interface AnimationPhase {
+  phase: string
+  duration: number
+  effect?: string
+}
+
+interface AudioCue {
+  trigger: string
+  message: string
+  language?: string
+}
+
+interface HapticCue {
+  trigger: string
+  pattern: string
+  interval?: number
+}
+
+interface PerformanceMetrics {
+  rendering: string
+  latency: string
+  batteryImpact: string
+}
+
+interface SimulationData {
+  treatmentType: string
+  intensity: string
+  duration: number
+  targetAreas: string[]
+  arLayers: ARLayer[]
+  animationSequence: AnimationPhase[]
+  visualEffects: string[]
+  audioFeedback: AudioCue[]
+  hapticFeedback: HapticCue[]
+  performanceMetrics: PerformanceMetrics
+}
+
+interface FeedbackResult {
+  performanceIndicators: Array<Record<string, any>>
+  userGuidance: string[]
+  safetyAlerts: string[]
+  progressTracking: Array<Record<string, any>>
+  qualityMetrics: Array<Record<string, any>>
+}
+
+interface EngagementContent {
+  personalizedMessages: string[]
+  motivationContent: string[]
+  educationalContent: Array<Record<string, any>>
+  socialProof: string[]
+  nextSteps: string[]
+}
+
 // POST /api/beauty-ar-treatment/simulate - Simulate AR treatment
 export async function POST(request: NextRequest) {
   try {
@@ -84,8 +146,8 @@ async function generateARSimulation(
   targetAreas: string[],
   userPreferences?: any,
   deviceCapabilities?: any
-) {
-  const simulation = {
+): Promise<SimulationData> {
+  const simulation: SimulationData = {
     treatmentType,
     intensity,
     duration,
@@ -217,8 +279,8 @@ async function generateARSimulation(
 }
 
 // Calculate real-time feedback
-async function calculateRealTimeFeedback(simulationData: any, deviceCapabilities?: any) {
-  const feedback = {
+async function calculateRealTimeFeedback(simulationData: SimulationData, deviceCapabilities?: any): Promise<FeedbackResult> {
+  const feedback: FeedbackResult = {
     performanceIndicators: [],
     userGuidance: [],
     safetyAlerts: [],
@@ -226,19 +288,23 @@ async function calculateRealTimeFeedback(simulationData: any, deviceCapabilities
     qualityMetrics: []
   }
 
+  // parse numeric values safely (strip non-digits)
+  const renderingFps = parseInt(String(simulationData.performanceMetrics.rendering).replace(/\D/g, '')) || 0
+  const latencyMs = parseInt(String(simulationData.performanceMetrics.latency).replace(/\D/g, '')) || 0
+
   // Performance indicators
   feedback.performanceIndicators = [
     {
       metric: 'rendering_fps',
-      current: simulationData.performanceMetrics.rendering,
+      current: renderingFps,
       target: '60fps',
-      status: simulationData.performanceMetrics.rendering === '60fps' ? 'optimal' : 'acceptable'
+      status: renderingFps >= 60 ? 'optimal' : 'acceptable'
     },
     {
       metric: 'latency_ms',
-      current: parseInt(simulationData.performanceMetrics.latency),
+      current: latencyMs,
       target: '<50ms',
-      status: parseInt(simulationData.performanceMetrics.latency) < 50 ? 'optimal' : 'acceptable'
+      status: latencyMs > 0 && latencyMs < 50 ? 'optimal' : 'acceptable'
     }
   ]
 
@@ -297,8 +363,8 @@ async function calculateRealTimeFeedback(simulationData: any, deviceCapabilities
 }
 
 // Generate customer engagement content
-async function generateEngagementContent(simulationData: any, treatmentType: string, userPreferences?: any) {
-  const engagement = {
+async function generateEngagementContent(simulationData: SimulationData, treatmentType: string, userPreferences?: any): Promise<EngagementContent> {
+  const engagement: EngagementContent = {
     personalizedMessages: [],
     motivationContent: [],
     educationalContent: [],

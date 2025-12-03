@@ -1,6 +1,7 @@
 import { defineConfig, devices } from '@playwright/test'
 
 export default defineConfig({
+  timeout: 120000,
   testDir: './__tests__/e2e',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
@@ -11,7 +12,6 @@ export default defineConfig({
     baseURL: 'http://localhost:3004',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
-    timeout: 120000,
     actionTimeout: 30000,
     navigationTimeout: 60000,
   },

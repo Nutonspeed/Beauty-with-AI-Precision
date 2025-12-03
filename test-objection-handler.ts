@@ -3,7 +3,7 @@
  * Quick test to validate the objection detection and handling functionality
  */
 
-import { AIObjectionHandler } from './lib/ai/objection-handler';
+import { AIObjectionHandler, ObjectionContext } from './lib/ai/objection-handler';
 
 async function testObjectionHandler() {
   console.log('🧪 Testing AI Objection Handler...');
@@ -12,11 +12,11 @@ async function testObjectionHandler() {
 
   // Test objection detection
   const testMessage = "แพงไปค่ะ คุ้มไหมกับราคานี้";
-  const context = {
+  const context: ObjectionContext = {
     customerProfile: {
       name: "สมหญิง",
       concerns: ["ฝ้า", "จุดด่างดำ"],
-      budget: "medium"
+      budget: 'medium'
     },
     treatmentInterest: ["Laser Treatment"],
     currentTreatment: {

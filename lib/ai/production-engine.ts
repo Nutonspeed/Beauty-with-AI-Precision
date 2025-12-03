@@ -4,9 +4,9 @@
  * No user trials needed - sell immediately with proven results
  */
 
-import { LeadData, LeadScore } from '../lib/ai/lead-scorer';
-import { CampaignData } from '../lib/ai/campaign-generator';
-import { ObjectionData } from '../lib/ai/objection-handler';
+import { LeadData, AIScoreResult } from './lead-scorer';
+import { GeneratedCampaign } from './campaign-generator';
+import { ObjectionResponse } from './objection-handler';
 
 // Production-ready reference data - no user input required
 export const PRODUCTION_REFERENCE_DATA = {
@@ -386,6 +386,17 @@ export const PRODUCTION_REFERENCE_DATA = {
   }
 };
 
+// Typed accessor to help TypeScript understand the shape during lookups
+type AnyMap = Record<string, any>;
+const PRD = PRODUCTION_REFERENCE_DATA as unknown as {
+  leadScoring: { patterns: Record<string, AnyMap> };
+  objectionResponses: Record<string, Record<string, AnyMap>>;
+  campaignTemplates: Record<string, AnyMap>;
+  skinAnalysis: Record<string, AnyMap>;
+  performanceBenchmarks: AnyMap;
+  customerSegments: Record<string, AnyMap>;
+};
+
 // Production AI Engine - uses reference data for instant results
 export class ProductionAI {
   static analyzeSkin(condition: string): any {
@@ -401,17 +412,17 @@ export class ProductionAI {
     };
   }
 
-  static scoreLead(leadData: Partial<LeadData>): LeadScore {
+  static scoreLead(leadData: Partial<LeadData>): AIScoreResult {
     // Simulate lead scoring based on engagement patterns
-    const engagement = leadData.engagement || {};
-    const totalEngagement = Object.values(engagement).reduce((sum, val) => sum + (val as number), 0);
+    const engagement = (leadData.engagement || {}) as Record<string, number>;
+    const totalEngagement = Object.values(engagement).reduce((sum, val) => sum + (val || 0), 0);
 
     let pattern: keyof typeof PRODUCTION_REFERENCE_DATA.leadScoring.patterns;
     if (totalEngagement > 30) pattern = 'hot_lead';
     else if (totalEngagement > 15) pattern = 'warm_lead';
     else pattern = 'cold_lead';
 
-    const reference = PRODUCTION_REFERENCE_DATA.leadScoring.patterns[pattern];
+    const reference: any = PRD.leadScoring.patterns[pattern as string];
 
     return {
       overallScore: reference.score + Math.floor(Math.random() * 10 - 5), // Add slight variation
@@ -457,7 +468,7 @@ export class ProductionAI {
       responseKey = 'not_ready';
     }
 
-    const reference = PRODUCTION_REFERENCE_DATA.objectionResponses[category]?.[responseKey as keyof typeof PRODUCTION_REFERENCE_DATA.objectionResponses[keyof typeof PRODUCTION_REFERENCE_DATA.objectionResponses]];
+    const reference = PRD.objectionResponses[category as string]?.[responseKey as string];
 
     return {
       objectionType: category,
@@ -470,7 +481,7 @@ export class ProductionAI {
     };
   }
 
-  static generateCampaign(leadData: Partial<LeadData>, leadScore: LeadScore): CampaignData {
+  static generateCampaign(leadData: Partial<LeadData>, leadScore: AIScoreResult): GeneratedCampaign {
     // Select campaign template based on lead score
     let templateKey: keyof typeof PRODUCTION_REFERENCE_DATA.campaignTemplates;
     if (leadScore.overallScore >= 80) {
@@ -481,27 +492,51 @@ export class ProductionAI {
       templateKey = 'reengagement';
     }
 
-    const template = PRODUCTION_REFERENCE_DATA.campaignTemplates[templateKey];
+    const template = PRD.campaignTemplates[templateKey as string];
+
+    // Normalize template CTA types to the GeneratedCampaign shape
+    const mapCtaType = (t: any): 'button' | 'link' | 'phone' | 'booking' => {
+      const type = (t && t.type) || 'primary';
+      if (type === 'primary') return 'button';
+      if (type === 'secondary') return 'link';
+      if (type === 'phone') return 'phone';
+      if (type === 'booking') return 'booking';
+      return 'button';
+    };
+
+    const cta = {
+      text: template.callToAction?.text || 'ติดต่อเรา',
+      url: template.callToAction?.url,
+      type: mapCtaType(template.callToAction)
+    } as {
+      text: string;
+      url?: string;
+      type: 'button' | 'link' | 'phone' | 'booking';
+    };
+
+    const followUpSequence = [
+      { id: `fu_${Date.now()}_1`, delay: 2, type: 'email', content: 'Follow-up reminder' },
+      { id: `fu_${Date.now()}_2`, delay: 5, type: 'sms', content: 'Final call-to-action' }
+    ];
 
     return {
       id: `campaign_${Date.now()}`,
       name: `${templateKey.replace('_', ' ').toUpperCase()} Campaign`,
       subjectLine: template.subject,
       content: template.content,
-      callToAction: template.callToAction,
-      personalizationElements: template.personalizationElements,
+      callToAction: cta,
+      personalizationElements: template.personalizationElements || [],
       urgencyTriggers: ['limited_time', 'high_demand'],
-      followUpSequence: [
-        { delay: 2, type: 'email', content: 'Follow-up reminder' },
-        { delay: 5, type: 'sms', content: 'Final call-to-action' }
-      ],
-      expectedResponseRate: template.expectedResponseRate,
+      followUpSequence,
+      expectedResponseRate: template.expectedResponseRate || 0,
+      estimatedValue: template.provenResults?.averageOrderValue || leadScore.predictedValue || 0,
+      optimizationSuggestions: [],
       targetLead: leadData.id || 'unknown',
       type: 'email',
       category: templateKey as any,
       createdAt: new Date(),
-      status: 'ready'
-    };
+      status: 'draft'
+    } as GeneratedCampaign;
   }
 
   static getPerformanceMetrics(): any {

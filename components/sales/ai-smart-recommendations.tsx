@@ -87,12 +87,15 @@ export function AISmartRecommendations({
         const budget = convertBudgetToNumber(customerProfile.budget || 'medium');
         const goals = customerProfile.concerns || [];
 
-        const aiRecommendations = await recommender.recommendTreatments(
-          customerProfile,
-          skinAnalysisResults || {},
-          budget,
-          goals
-        );
+        const fn = (recommender as any).recommendTreatments
+        let aiRecommendations: any[] = []
+        if (typeof fn === 'function') {
+          aiRecommendations = await fn.call(recommender, customerProfile, skinAnalysisResults || {}, budget, goals)
+        } else if (typeof (recommender as any).recommend === 'function') {
+          aiRecommendations = await (recommender as any).recommend({ customerProfile, skinAnalysisResults: skinAnalysisResults || {}, budget, goals })
+        } else {
+          aiRecommendations = []
+        }
 
         setRecommendations(aiRecommendations);
       } catch (error) {

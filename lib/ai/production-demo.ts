@@ -358,13 +358,14 @@ export class ProductionDemoSystem {
           processingTime: scenario.provenResults.averageProcessingTime
         });
         console.log(`✅ ${scenario.name} - Success`);
-      } catch (error) {
+      } catch (error: any) {
+        const message = error?.message ?? String(error ?? 'Unknown error');
         results.push({
           scenario: scenario.name,
           status: 'failed',
-          error: error.message
+          error: message
         });
-        console.log(`❌ ${scenario.name} - Failed: ${error.message}`);
+        console.log(`❌ ${scenario.name} - Failed: ${message}`);
       }
     }
 

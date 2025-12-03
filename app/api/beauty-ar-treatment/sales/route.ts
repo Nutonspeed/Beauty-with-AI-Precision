@@ -6,6 +6,40 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
+// --- Sales types ---
+interface SalesStrategy {
+  approach: string
+  keyMessages: string[]
+  demonstrationPlan: string[]
+  timeline: string
+  riskMitigation: string[]
+  successMetrics: string[]
+}
+
+interface ObjectionHandler {
+  objection: string
+  responses: string[]
+  evidence?: string
+  priority?: string
+}
+
+interface Opportunity {
+  type: string
+  title: string
+  description: string
+  priceIncrease: string
+  valueProposition: string
+  conversionProbability: string
+}
+
+interface ClosingScript {
+  type: string
+  script: string
+  purpose: string
+  expectedResponse: string
+  followUp: string
+}
+
 // POST /api/beauty-ar-treatment/sales - Generate sales enablement data
 export async function POST(request: NextRequest) {
   try {
@@ -91,8 +125,8 @@ async function generatePersonalizedSalesStrategy(
   objections?: string[],
   budget?: any,
   urgency?: string
-) {
-  const strategy = {
+): Promise<SalesStrategy> {
+  const strategy: SalesStrategy = {
     approach: '',
     keyMessages: [],
     demonstrationPlan: [],
@@ -167,13 +201,13 @@ async function generatePersonalizedSalesStrategy(
 
 // Generate objection handlers
 async function generateObjectionHandlers(
-  objections: string[],
+  objections: string[] = [],
   customerProfile: any,
   treatmentInterest: string
-) {
-  const handlers = []
+): Promise<ObjectionHandler[]> {
+  const handlers: ObjectionHandler[] = []
 
-  const commonObjections = {
+  const commonObjections: Record<string, { objection: string; responses: string[]; evidence: string }> = {
     'expensive': {
       objection: 'แพงเกินไป',
       responses: [
@@ -243,8 +277,8 @@ async function generateUpsellingOpportunities(
   customerProfile: any,
   treatmentInterest: string,
   budget?: any
-) {
-  const opportunities = []
+): Promise<Opportunity[]> {
+  const opportunities: Opportunity[] = []
 
   // Base treatment upselling
   opportunities.push({
@@ -303,8 +337,8 @@ async function generateClosingScripts(
   customerProfile: any,
   treatmentInterest: string,
   urgency?: string
-) {
-  const scripts = []
+): Promise<ClosingScript[]> {
+  const scripts: ClosingScript[] = []
 
   // Trial close
   scripts.push({

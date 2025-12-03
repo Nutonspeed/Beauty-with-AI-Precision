@@ -20,7 +20,7 @@ export function usePerformanceMonitor(updateInterval = 1000) {
   const frameCountRef = useRef(0)
   const lastTimeRef = useRef(performance.now())
   const isMonitoringRef = useRef(false)
-  const intervalRef = useRef<NodeJS.Timeout>()
+  const intervalRef = useRef<NodeJS.Timeout | null>(null)
 
   const calculateMetrics = useCallback(() => {
     const now = performance.now()

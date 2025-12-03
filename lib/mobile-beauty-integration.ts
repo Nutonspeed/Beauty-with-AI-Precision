@@ -55,7 +55,7 @@ export class MobileBeautyIntegration {
     const beautyVoiceCommands = {
       'เริ่มสแกนผิว': () => this.startSkinScan(),
       'แสดงผลการรักษา': () => this.showTreatmentResults(),
-      'เริ่มจำลองการรักษา': () => this.startTreatmentSimulation(),
+      'เริ่มจำลองการรักษา': () => this.startTreatmentSimulationVoice(),
       'ช่วยขาย': () => this.showSalesTools(),
       'ออกจากระบบ': () => this.logoutUser()
     }
@@ -140,7 +140,8 @@ export class MobileBeautyIntegration {
       await offlineManager.queueLeadUpdate({
         leadId: 'simulation-session',
         leadName: 'Treatment Simulation',
-        data: { simulation, parameters }
+        data: { simulation, parameters },
+        timestamp: new Date()
       })
 
       return {
@@ -226,7 +227,8 @@ export class MobileBeautyIntegration {
       await offlineManager.queueLeadUpdate({
         leadId: 'beauty-analysis-cache',
         leadName: 'Beauty Analysis Results',
-        data: results
+        data: results,
+        timestamp: new Date()
       })
     } catch (error) {
       console.warn('[MobileBeautyIntegration] Failed to cache results:', error)
@@ -250,7 +252,7 @@ export class MobileBeautyIntegration {
     // Display treatment results
   }
 
-  private startTreatmentSimulation(): void {
+  private startTreatmentSimulationVoice(): void {
     console.log('[MobileBeautyIntegration] Starting treatment simulation via voice command')
     // Start AR simulation
   }

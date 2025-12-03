@@ -23,15 +23,19 @@ export interface ObjectionContext {
 }
 
 export interface ObjectionResponse {
-  objectionType: 'price' | 'trust' | 'timing' | 'other';
-  confidence: number;
-  severity: 'low' | 'medium' | 'high';
+  // Production reference responses may be partial; allow optional fields
+  objectionType?: 'price' | 'trust' | 'timing' | 'other';
+  confidence?: number;
+  severity?: 'low' | 'medium' | 'high';
   response: string;
   strategy: string;
-  followUpActions: string[];
-  alternativeApproaches: string[];
-  successRate: number;
-  averageRecovery: number;
+  followUpActions?: string[];
+  alternativeApproaches?: string[];
+  successRate?: number;
+  averageRecovery?: number;
+  // Backwards-compatible optional fields
+  conversionProbability?: number;
+  script?: string;
 }
 
 export class ProductionObjectionHandler {

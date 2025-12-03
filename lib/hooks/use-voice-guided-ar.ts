@@ -24,8 +24,8 @@ export function useVoiceGuidedAR(options: VoiceGuidanceOptions = {}) {
   const [isSupported, setIsSupported] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const recognitionRef = useRef<SpeechRecognition | null>(null)
-  const synthRef = useRef<SpeechSynthesis | null>(null)
+  const recognitionRef = useRef<any>(null)
+  const synthRef = useRef<any>(null)
 
   // Initialize speech recognition
   useEffect(() => {
@@ -165,7 +165,7 @@ export function useVoiceGuidedAR(options: VoiceGuidanceOptions = {}) {
     recognitionRef.current.stop()
   }, [])
 
-  const speak = useCallback((text: string, options: SpeechSynthesisUtterance = {}) => {
+  const speak = useCallback((text: string, options: any = {}) => {
     if (!synthRef.current) return
 
     const utterance = new SpeechSynthesisUtterance(text)
@@ -174,16 +174,16 @@ export function useVoiceGuidedAR(options: VoiceGuidanceOptions = {}) {
     if (language.startsWith('th')) {
       // Try to find Thai voice
       const voices = synthRef.current.getVoices()
-      const thaiVoice = voices.find(voice => voice.lang.includes('th') || voice.name.includes('Thai'))
+      const thaiVoice = voices.find((voice: any) => voice.lang.includes('th') || voice.name.includes('Thai'))
       if (thaiVoice) {
         utterance.voice = thaiVoice
       }
     }
 
     utterance.lang = language
-    utterance.rate = options.rate || 1
-    utterance.pitch = options.pitch || 1
-    utterance.volume = options.volume || 1
+    utterance.rate = options.rate ?? 1
+    utterance.pitch = options.pitch ?? 1
+    utterance.volume = options.volume ?? 1
 
     synthRef.current.speak(utterance)
   }, [language])

@@ -34,14 +34,14 @@ export interface LeadScore {
   predictedValue: number;
   predictedLTV: number;
   urgency: 'low' | 'medium' | 'high' | 'critical';
-  priority: 'low' | 'medium' | 'high';
+  priority: 'low' | 'medium' | 'high' | 'urgent';
   insights: string[];
   recommendations: string[];
   riskFactors: string[];
   opportunityFactors: string[];
   nextBestAction: string;
   suggestedTimeline: string;
-  segmentation: {
+  segmentation?: {
     segmentId: string;
     segmentName: string;
     confidence: number;
