@@ -14,7 +14,7 @@ import path from 'path'
 const ENV_VARS = {
   // Supabase
   'SUPABASE_URL': 'https://bgejeqqngzvuokdffadu.supabase.co',
-  'SUPABASE_ANON_KEY': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJnZWplcXFuZ3p2dW9rZGZmYWR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE2MzM3NTQsImV4cCI6MjA3NzIwOTc1NH0.gJxg9TikqhQ7oVN5GsIP4IOYyfH3R_CLz5S55VwMQEE',
+  'SUPABASE_ANON_KEY': process.env.SUPABASE_ANON_KEY || '<REDACTED_SUPABASE_ANON_KEY>',
 
   // NextAuth
   'NEXTAUTH_SECRET': 'oeQZ5kKzrilNOgGoAZeQKjqKILYWLoMPFB1bVr26jcY=',

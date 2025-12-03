@@ -9,7 +9,11 @@ Write-Host "=========================================" -ForegroundColor Cyan
 Write-Host ""
 
 $SUPABASE_URL = "https://bgejeqqngzvuokdffadu.supabase.co"
-$SERVICE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJnZWplcXFuZ3p2dW9rZGZmYWR1Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MTYzMzc1NCwiZXhwIjoyMDc3MjA5NzU0fQ.e6QXg-KmZpihUyuD81qeyORTgJtAzoaLTqAbIyamJ0o"
+$SERVICE_KEY = $env:SUPABASE_SERVICE_ROLE_KEY
+if (-not $SERVICE_KEY) {
+    Write-Error "SUPABASE_SERVICE_ROLE_KEY is not set. Set environment variable SUPABASE_SERVICE_ROLE_KEY to run this script. Aborting."
+    exit 1
+}
 
 $migration1 = "supabase\migrations\20241121_create_video_call_tables.sql"
 $migration2 = "supabase\migrations\20241121_create_email_tracking_templates.sql"

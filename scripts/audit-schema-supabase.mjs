@@ -9,7 +9,8 @@
 import { createClient } from '@supabase/supabase-js';
 
 const SUPABASE_URL = "https://bgejeqqngzvuokdffadu.supabase.co";
-const SUPABASE_SERVICE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJnZWplcXFuZ3p2dW9rZGZmYWR1Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MTYzMzc1NCwiZXhwIjoyMDc3MjA5NzU0fQ.e6QXg-KmZpihUyuD81qeyORTgJtAzoaLTqAbIyamJ0o";
+// Prefer reading the service role key from environment. If not set, use a redacted placeholder.
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY || '<REDACTED_SUPABASE_SERVICE_KEY>';
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 

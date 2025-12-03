@@ -10,12 +10,16 @@
 import { createClient } from '@supabase/supabase-js'
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://bgejeqqngzvuokdffadu.supabase.co'
-const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || 
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJnZWplcXFuZ3p2dW9rZGZmYWR1Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MTYzMzc1NCwiZXhwIjoyMDc3MjA5NzU0fQ.e6QXg-KmZpihUyuD81qeyORTgJtAzoaLTqAbIyamJ0o'
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '<REDACTED_SUPABASE_SERVICE_ROLE_KEY>'
 
 console.log('🔄 Initializing Supabase Admin Client...\n')
 
 // Create admin client
+if (SUPABASE_SERVICE_ROLE_KEY === '<REDACTED_SUPABASE_SERVICE_ROLE_KEY>') {
+  console.error('❌ SUPABASE_SERVICE_ROLE_KEY is not set. Set the environment variable to run this script. Aborting to avoid using a hard-coded key.');
+  process.exit(1);
+}
+
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
   auth: {
     autoRefreshToken: false,

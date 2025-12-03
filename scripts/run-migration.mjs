@@ -3,7 +3,12 @@ import { createClient } from '@supabase/supabase-js'
 import { readFileSync } from 'fs'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://bgejeqqngzvuokdffadu.supabase.co'
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJnZWplcXFuZ3p2dW9rZGZmYWR1Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MTYzMzc1NCwiZXhwIjoyMDc3MjA5NzU0fQ.e6QXg-KmZpihUyuD81qeyORTgJtAzoaLTqAbIyamJ0o'
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '<REDACTED_SUPABASE_SERVICE_ROLE_KEY>'
+
+if (supabaseKey === '<REDACTED_SUPABASE_SERVICE_ROLE_KEY>') {
+  console.error('❌ SUPABASE_SERVICE_ROLE_KEY is not set. Set the environment variable to run this script. Aborting to avoid using a hard-coded key.');
+  process.exit(1);
+}
 
 const supabase = createClient(supabaseUrl, supabaseKey)
 

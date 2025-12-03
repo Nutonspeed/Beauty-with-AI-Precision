@@ -3,7 +3,11 @@
 # =====================================================
 
 $SUPABASE_URL = "https://bgejeqqngzvuokdffadu.supabase.co"
-$ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJnZWplcXFuZ3p2dW9rZGZmYWR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE2MzM3NTQsImV4cCI6MjA3NzIwOTc1NH0.gJxg9TikqhQ7oVN5GsIP4IOYyfH3R_CLz5S55VwMQEE"
+$ANON_KEY = $env:SUPABASE_ANON_KEY
+if (-not $ANON_KEY) {
+    Write-Error "SUPABASE_ANON_KEY is not set. Set environment variable SUPABASE_ANON_KEY to run this script. Aborting."
+    exit 1
+}
 
 Write-Host ""
 Write-Host "=========================================" -ForegroundColor Cyan

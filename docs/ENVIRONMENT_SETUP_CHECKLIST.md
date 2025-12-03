@@ -17,8 +17,8 @@ Complete checklist for setting up all environment variables for production deplo
 **Environment Variables:**
 ```bash
 NEXT_PUBLIC_SUPABASE_URL="https://your-project.supabase.co"
-NEXT_PUBLIC_SUPABASE_ANON_KEY="eyJhbGc..."
-SUPABASE_SERVICE_ROLE_KEY="eyJhbGc..." # Server-side only
+NEXT_PUBLIC_SUPABASE_ANON_KEY="<REDACTED_SUPABASE_ANON_KEY>"
+SUPABASE_SERVICE_ROLE_KEY="<REDACTED_SUPABASE_SERVICE_ROLE_KEY>" # Server-side only
 ```
 
 **Get from:** https://app.supabase.com/project/YOUR_PROJECT/settings/api
