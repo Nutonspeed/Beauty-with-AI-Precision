@@ -1,6 +1,9 @@
 import { test, expect } from '@playwright/test'
 import path from 'node:path'
 
+// Set default timeout for all tests in this file
+test.setTimeout(300000) // 5 minutes for AI analysis tests
+
 /**
  * Skin Analysis Upload Flow E2E Tests
  * ⚠️ Requires: clinic-owner@example.com user in database

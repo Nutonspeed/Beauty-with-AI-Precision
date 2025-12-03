@@ -50,7 +50,7 @@ const nextConfig = {
 
   // TypeScript and ESLint optimizations
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false, // Enable to catch build errors
   },
   // eslint config removed - deprecated in Next.js 16
 
