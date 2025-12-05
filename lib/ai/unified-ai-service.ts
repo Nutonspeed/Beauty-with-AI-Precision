@@ -2,9 +2,9 @@
  * Unified AI Service with Fallback
  * 
  * Provides a single interface to multiple AI providers with automatic fallback:
- * 1. OpenAI GPT-4o (Primary)
- * 2. Anthropic Claude (Fallback 1)
- * 3. Google Gemini (Fallback 2)
+ * 1. Google Gemini (Primary - Free tier, 1,500 requests/day)
+ * 2. OpenAI GPT-4o (Fallback - user has no credits)
+ * 3. Anthropic Claude (Fallback 2)
  * 4. Local/Mock (Fallback 3 - for demo)
  */
 
@@ -49,18 +49,18 @@ export interface AnalysisResult {
 export function getAvailableProviders(): AIProvider[] {
   return [
     {
+      name: 'google',
+      available: !!process.env.GEMINI_API_KEY && !process.env.GEMINI_API_KEY.includes('your-'),
+      priority: 1  // Gemini as primary
+    },
+    {
       name: 'openai',
-      available: !!process.env.OPENAI_API_KEY && !process.env.OPENAI_API_KEY.includes('your-'),
-      priority: 1
+      available: !!process.env.OPENAI_API_KEY && !process.env.OPENAI_API_KEY.includes('your-') && !process.env.OPENAI_API_KEY.includes('dummy'),
+      priority: 2  // OpenAI as fallback (user has no credits)
     },
     {
       name: 'anthropic',
       available: !!process.env.ANTHROPIC_API_KEY && !process.env.ANTHROPIC_API_KEY.includes('your-'),
-      priority: 2
-    },
-    {
-      name: 'google',
-      available: !!process.env.GEMINI_API_KEY && !process.env.GEMINI_API_KEY.includes('your-'),
       priority: 3
     },
     {

@@ -75,21 +75,33 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json()
 
-    // Validation
-    if (!body.name || !body.email) {
+    const source = body.source || 'other'
+
+    // Validation: name ต้องมีเสมอ, email บังคับเฉพาะกรณีทั่วไป (ไม่ใช่ quick_scan)
+    if (!body.name) {
       return NextResponse.json(
-        { error: 'Name and email are required' },
+        { error: 'Name is required' },
         { status: 400 }
       )
     }
 
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(body.email)) {
-      return NextResponse.json(
-        { error: 'Invalid email format' },
-        { status: 400 }
-      )
+    // สำหรับ lead ที่มาจาก quick_scan อนุญาตให้ไม่มี email ได้ (ใช้โทรศัพท์เป็นหลัก)
+    if (source !== 'quick_scan') {
+      if (!body.email) {
+        return NextResponse.json(
+          { error: 'Email is required' },
+          { status: 400 }
+        )
+      }
+
+      // Email validation (เฉพาะกรณีที่ต้องมี email)
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!emailRegex.test(body.email)) {
+        return NextResponse.json(
+          { error: 'Invalid email format' },
+          { status: 400 }
+        )
+      }
     }
 
     // Phone validation (optional but if provided must be valid)
@@ -100,19 +112,42 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Basic score จาก body หรือจะคำนวณจาก metadata ถ้าไม่มีส่งมา
+    let computedScore: number = body.score || 0
+    if (!computedScore && body.metadata) {
+      try {
+        const meta = body.metadata
+        const estimatedValue = body.estimated_value || meta.estimated_value || 0
+        const concerns = meta.concerns || []
+        const maxSeverity = Array.isArray(concerns) && concerns.length
+          ? Math.max(...concerns.map((c: any) => Number(c.severity) || 0))
+          : 0
+
+        // คำนวณ score แบบง่าย ๆ: severity (0-10) + มูลค่าโดยประมาณ
+        let score = 0
+        score += Math.min(maxSeverity * 8, 40)              // สูงสุด 40 คะแนนจากความรุนแรง
+        score += Math.min(Math.floor(estimatedValue / 1000), 40) // สูงสุด 40 คะแนนจากมูลค่า (ต่อ 1k)
+        score += 20                                         // base score 20
+
+        computedScore = Math.max(0, Math.min(score, 100))
+      } catch {
+        computedScore = 0
+      }
+    }
+
     // Prepare lead data
     const leadData = {
       sales_user_id: user.id,
       name: body.name,
-      email: body.email,
+      email: body.email || null,
       phone: body.phone || null,
       status: body.status || 'cold',
-      source: body.source || 'other',
+      source,
       concern: body.concern || null,
       budget_min: body.budget_min || null,
       budget_max: body.budget_max || null,
       preferred_date: body.preferred_date || null,
-      score: body.score || 0,
+      score: computedScore,
       notes: body.notes || null,
       tags: body.tags || [],
       custom_fields: body.custom_fields || {},

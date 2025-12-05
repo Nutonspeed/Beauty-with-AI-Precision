@@ -15,8 +15,6 @@ import {
   TrendingDown,
   Target,
   Clock,
-  Users,
-  DollarSign,
   Calendar,
   BarChart3,
   Zap,

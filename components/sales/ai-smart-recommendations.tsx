@@ -17,9 +17,7 @@ import {
   Zap, 
   Star, 
   ArrowRight, 
-  ChevronRight,
-  TrendingUp,
-  Award
+  ChevronRight
 } from 'lucide-react';
 
 interface CustomerProfile {

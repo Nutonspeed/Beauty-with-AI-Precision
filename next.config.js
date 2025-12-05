@@ -45,7 +45,7 @@ const nextConfig = {
       'recharts',
     ],
     // Enable webpack build worker for proper static asset generation
-    webpackBuildWorker: true,
+    webpackBuildWorker: false,
   },
 
   // TypeScript and ESLint optimizations

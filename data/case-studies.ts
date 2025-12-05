@@ -1,86 +1,152 @@
-export type Locale = 'en' | 'th'
+export type Locale = 'th' | 'en' | 'zh';
+
+export interface CaseStudyMetric {
+  label: Record<Locale, string>;
+  value: string;
+}
+
+export interface CaseStudyContent {
+  heading: Record<Locale, string>;
+  body: Record<Locale, string>;
+}
 
 export interface CaseStudy {
-  id: string
-  slug: string
-  title: Record<Locale, string>
-  summary: Record<Locale, string>
-  description: {
-    en: string
-    th: string
-  }
-  content: Array<{
-    heading: Record<Locale, string>
-    body: Record<Locale, string>
-  }>
-  image?: string
-  category?: string
-  date?: string
-  metrics: Array<{
-    label: Record<Locale, string>
-    value: string
-  }>
-  disclaimer?: Record<Locale, string>
+  slug: string;
+  title: Record<Locale, string>;
+  summary: Record<Locale, string>;
+  metrics: CaseStudyMetric[];
+  content: CaseStudyContent[];
+  disclaimer?: Record<Locale, string>;
+}
+
+export interface LocalizedCaseStudy {
+  slug: string;
+  title: string;
+  summary: string;
+  metrics: { label: string; value: string }[];
 }
 
 const caseStudies: CaseStudy[] = [
   {
-    id: '1',
-    slug: 'ai-skin-analysis-success',
+    slug: 'ai-skin-insights',
     title: {
-      en: 'AI Skin Analysis Success Story',
-      th: 'เคสความสำเร็จการวิเคราะห์ผิวด้วย AI'
+      th: 'AI วิเคราะห์ผิวลึก',
+      en: 'AI-powered Skin Insights',
+      zh: 'AI 皮肤洞察'
     },
     summary: {
-      en: 'How AI-powered skin analysis transformed customer experience',
-      th: 'การวิเคราะห์ผิวด้วย AI เปลี่ยนแปลงประสบการณ์ลูกค้า'
+      th: 'วิเคราะห์ผิวหน้าจากรูปถ่ายพร้อมรายงานแนะนำการรักษาเฉพาะบุคคล',
+      en: 'Analyzing selfies to generate personalized treatment recommendations.',
+      zh: '分析自拍照，生成个性化的治疗建议。'
     },
-    description: {
-      en: 'How AI-powered skin analysis transformed customer experience',
-      th: 'การวิเคราะห์ผิวด้วย AI เปลี่ยนแปลงประสบการณ์ลูกค้า'
-    },
+    metrics: [
+      { label: { th: 'เวลา', en: 'Time', zh: '时间' }, value: '2 mins' },
+      { label: { th: 'แม่นยำ', en: 'Accuracy', zh: '准确度' }, value: '98%' },
+      { label: { th: 'ลูกค้า', en: 'Leads', zh: '潜在客户' }, value: '1,250' }
+    ],
     content: [
       {
-        heading: { en: 'Overview', th: 'ภาพรวม' },
-        body: { en: 'Detailed case study content...', th: 'เนื้อหาเคสศึกษาโดยละเอียด...' }
+        heading: {
+          th: 'การเก็บข้อมูล',
+          en: 'Data Capture',
+          zh: '数据采集'
+        },
+        body: {
+          th: 'ฟีเจอร์ AR ถ่ายภาพผิวพร้อมตรวจสอบแสงและมุมการถ่ายที่เหมาะสม',
+          en: 'AR capture guides users to ideal lighting and angles for reliable scans.',
+          zh: 'AR 捕捉指南，引导用户获得理想光线和角度，确保扫描可靠。'
+        }
       },
       {
-        heading: { en: 'Results', th: 'ผลลัพธ์' },
-        body: { en: 'More content here...', th: 'เนื้อหาเพิ่มเติม...' }
-      }
-    ],
-    metrics: [
-      { 
-        label: { en: 'Improvement', th: 'การปรับปรุง' },
-        value: '95%'
+        heading: {
+          th: 'การวิเคราะห์ AI',
+          en: 'AI Analysis',
+          zh: 'AI 分析'
+        },
+        body: {
+          th: 'โมเดล TensorFlow ประเมินริ้วรอย ฝ้า และรูขุมขน พร้อมคะแนนคุณภาพแสง',
+          en: 'TensorFlow models score wrinkles, pigmentation, and pores with lighting checks.',
+          zh: 'TensorFlow 模型对皱纹、色素和毛孔打分，并检测光线质量。'
+        }
       },
-      { 
-        label: { en: 'Satisfaction', th: 'ความพึงพอใจ' },
-        value: '98%'
+      {
+        heading: {
+          th: 'การแนะนำการรักษา',
+          en: 'Treatment Guidance',
+          zh: '治疗建议'
+        },
+        body: {
+          th: 'CRM จับคู่บริการที่เหมาะกับผิวลูกค้าแต่ละคนพร้อมแผน Follow-up',
+          en: 'CRM recommends treatments and follow-up reminders for each profile.',
+          zh: 'CRM 为每个轮廓推荐治疗方案并设置后续提醒。'
+        }
       }
     ],
     disclaimer: {
-      en: 'Results may vary',
-      th: 'ผลลัพธ์อาจแตกต่างกัน'
+      th: 'ข้อมูลจำลองเพื่อสาธิตฟีเจอร์ ไม่ใช่คำแนะนำทางการแพทย์',
+      en: 'Simulated data for demonstration only, not medical advice.',
+      zh: '仅为演示用模拟数据，不构成医疗建议。'
+    }
+  },
+  {
+    slug: 'omnichannel-scheduling',
+    title: {
+      th: 'ตารางนัดแบบ Omnichannel',
+      en: 'Omnichannel Scheduling',
+      zh: '全渠道排期'
     },
-    image: '/case-studies/ai-analysis.jpg',
-    category: 'AI Analysis',
-    date: '2024-01-15'
+    summary: {
+      th: 'ระบบตรงกับลูกค้าผ่านแชท วิดีโอ และเว็บ เพื่อรีบตีตั๋วการรักษา',
+      en: 'Unified scheduling triggered by chat, video consults, and web analytics.',
+      zh: '通过聊天、视频咨询和网页数据触发统一预约。'
+    },
+    metrics: [
+      { label: { th: 'อัตราการเข้ารับบริการ', en: 'Conversion', zh: '转化率' }, value: '28%' },
+      { label: { th: 'เวลาจอง', en: 'Booking Time', zh: '预约时间' }, value: '45s' },
+      { label: { th: 'CSAT', en: 'CSAT', zh: '满意度' }, value: '4.9/5' }
+    ],
+    content: [
+      {
+        heading: {
+          th: 'พูดคุยกับลูกค้า',
+          en: 'Customer Conversations',
+          zh: '客户对话'
+        },
+        body: {
+          th: 'Chatbot ไล่ถาม Concerns ก่อนเปิด Live Chat ให้พนักงาน',
+          en: 'Chatbot collects concerns ahead of agent-led live chat sessions.',
+          zh: '聊天机器人在人工会话前收集问题痛点。'
+        }
+      },
+      {
+        heading: {
+          th: 'การจองต่อเนื่อง',
+          en: 'Continuous Booking',
+          zh: '连续预约'
+        },
+        body: {
+          th: 'แจ้งเตือนผ่าน Push วิดีโอคอล และ SMS เมื่อเวลาว่างมีการเปลี่ยน',
+          en: 'Push, video call, and SMS alerts update leads when slots open.',
+          zh: '当空档出现时，通过推送、视频通话和短信通知潜在客户。'
+        }
+      }
+    ]
   }
-]
+];
 
-export function getCaseStudies(locale: Locale = 'en') {
-  return caseStudies.map(study => ({
-    slug: study.slug,
-    title: study.title[locale],
-    summary: study.summary[locale],
-    metrics: study.metrics.map(m => ({
-      label: m.label[locale],
-      value: m.value
+export function getCaseStudies(locale: Locale): LocalizedCaseStudy[] {
+  return caseStudies.map(({ slug, title, summary, metrics }) => ({
+    slug,
+    title: title[locale],
+    summary: summary[locale],
+    metrics: metrics.map((metric) => ({
+      label: metric.label[locale],
+      value: metric.value
     }))
-  }))
+  }));
 }
 
-export function getCaseStudyBySlug(slug: string): CaseStudy | undefined {
-  return caseStudies.find(study => study.slug === slug)
+export function getCaseStudyBySlug(slug?: string | null): CaseStudy | undefined {
+  if (!slug) return undefined;
+  return caseStudies.find((study) => study.slug === slug);
 }

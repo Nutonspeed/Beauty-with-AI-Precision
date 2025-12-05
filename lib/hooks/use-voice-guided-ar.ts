@@ -27,87 +27,6 @@ export function useVoiceGuidedAR(options: VoiceGuidanceOptions = {}) {
   const recognitionRef = useRef<any>(null)
   const synthRef = useRef<any>(null)
 
-  // Initialize speech recognition
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-
-    // Check for browser support
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
-
-    if (SpeechRecognition) {
-      setIsSupported(true)
-
-      const recognition = new SpeechRecognition()
-      recognition.lang = language
-      recognition.continuous = continuous
-      recognition.interimResults = true
-      recognition.maxAlternatives = 1
-
-      recognition.onstart = () => {
-        setIsListening(true)
-        setError(null)
-        if (enableFeedback) {
-          speak('เริ่มฟังคำสั่ง')
-        }
-      }
-
-      recognition.onresult = (event) => {
-        const results = event.results
-        const lastResult = results[results.length - 1]
-
-        if (lastResult.isFinal) {
-          const command = lastResult[0].transcript.trim()
-          const confidence = lastResult[0].confidence
-
-          setTranscript(command)
-
-          const voiceCommand: VoiceCommand = {
-            command: command.toLowerCase(),
-            confidence,
-            timestamp: Date.now()
-          }
-
-          setLastCommand(voiceCommand)
-          processVoiceCommand(voiceCommand)
-        } else {
-          // Interim results
-          setTranscript(lastResult[0].transcript)
-        }
-      }
-
-      recognition.onerror = (event) => {
-        setError(event.error)
-        setIsListening(false)
-        if (enableFeedback) {
-          speak(`เกิดข้อผิดพลาด: ${event.error}`)
-        }
-      }
-
-      recognition.onend = () => {
-        setIsListening(false)
-        if (continuous && !error) {
-          // Restart listening for continuous mode
-          setTimeout(() => startListening(), 1000)
-        }
-      }
-
-      recognitionRef.current = recognition
-    } else {
-      setError('Speech recognition not supported')
-    }
-
-    // Initialize speech synthesis
-    if ('speechSynthesis' in window) {
-      synthRef.current = window.speechSynthesis
-    }
-
-    return () => {
-      if (recognitionRef.current) {
-        recognitionRef.current.stop()
-      }
-    }
-  }, [language, continuous, enableFeedback, error])
-
   // Voice command processing
   const processVoiceCommand = useCallback((command: VoiceCommand) => {
     const cmd = command.command
@@ -192,6 +111,87 @@ export function useVoiceGuidedAR(options: VoiceGuidanceOptions = {}) {
     if (!synthRef.current) return []
     return synthRef.current.getVoices()
   }, [])
+
+  // Initialize speech recognition
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    // Check for browser support
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+
+    if (SpeechRecognition) {
+      setIsSupported(true)
+
+      const recognition = new SpeechRecognition()
+      recognition.lang = language
+      recognition.continuous = continuous
+      recognition.interimResults = true
+      recognition.maxAlternatives = 1
+
+      recognition.onstart = () => {
+        setIsListening(true)
+        setError(null)
+        if (enableFeedback) {
+          speak('เริ่มฟังคำสั่ง')
+        }
+      }
+
+      recognition.onresult = (event) => {
+        const results = event.results
+        const lastResult = results[results.length - 1]
+
+        if (lastResult.isFinal) {
+          const command = lastResult[0].transcript.trim()
+          const confidence = lastResult[0].confidence
+
+          setTranscript(command)
+
+          const voiceCommand: VoiceCommand = {
+            command: command.toLowerCase(),
+            confidence,
+            timestamp: Date.now()
+          }
+
+          setLastCommand(voiceCommand)
+          processVoiceCommand(voiceCommand)
+        } else {
+          // Interim results
+          setTranscript(lastResult[0].transcript)
+        }
+      }
+
+      recognition.onerror = (event) => {
+        setError(event.error)
+        setIsListening(false)
+        if (enableFeedback) {
+          speak(`เกิดข้อผิดพลาด: ${event.error}`)
+        }
+      }
+
+      recognition.onend = () => {
+        setIsListening(false)
+        if (continuous && !error) {
+          // Restart listening for continuous mode
+          setTimeout(() => startListening(), 1000)
+        }
+      }
+
+      recognitionRef.current = recognition
+    } else {
+      setError('Speech recognition not supported')
+    }
+
+    // Initialize speech synthesis
+    if ('speechSynthesis' in window) {
+      synthRef.current = window.speechSynthesis
+    }
+
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop()
+      }
+    }
+  }, [language, continuous, enableFeedback, error, processVoiceCommand, speak, startListening])
 
   return {
     // State

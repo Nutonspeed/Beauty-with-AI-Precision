@@ -25,9 +25,7 @@ import {
   DollarSign, 
   Zap, 
   Brain, 
-  Shield,
-  ArrowRight,
-  Lightbulb
+  Shield
 } from 'lucide-react';
 import { AIObjectionHandler, ObjectionAnalysis, ObjectionResponse } from '@/lib/ai/objection-handler';
 

@@ -47,6 +47,7 @@ export function Header() {
       return [
         { href: "/features", label: language === "th" ? "คุณสมบัติ" : "Features" },
         { href: "/pricing", label: language === "th" ? "ราคา" : "Pricing" },
+        { href: "/3d-models", label: language === "th" ? "3D Models" : "3D Models" },
         { href: "/demo/skin-analysis", label: language === "th" ? "ทดลองใช้" : "Try Demo" },
         { href: "/faq", label: "FAQ" },
       ]

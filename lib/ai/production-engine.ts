@@ -6,7 +6,6 @@
 
 import { LeadData, AIScoreResult } from './lead-scorer';
 import { GeneratedCampaign } from './campaign-generator';
-import { ObjectionResponse } from './objection-handler';
 
 // Production-ready reference data - no user input required
 export const PRODUCTION_REFERENCE_DATA = {

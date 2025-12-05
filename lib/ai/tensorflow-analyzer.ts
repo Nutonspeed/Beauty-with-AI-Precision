@@ -66,9 +66,11 @@ export class TensorFlowAnalyzer {
   await tf.setBackend('webgl')
   await tf.ready()
 
-      // Load MobileNetV3 for texture analysis
+      // Load MobileNet for texture analysis
+      // Note: @tensorflow-models/mobilenet เวอร์ชันปัจจุบันรองรับแค่ version 1 หรือ 2
+      // ถ้าตั้งเป็น 3 จะเกิด error: "Invalid version of MobileNet. Valid versions are: 1.00,2.00"
       this.mobileNetModel = await mobilenet.load({
-        version: 3 as any,
+        version: 2,
         alpha: 1,
       })
 

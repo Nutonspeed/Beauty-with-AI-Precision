@@ -76,7 +76,7 @@ export class AppErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundar
   }
 
   // Report error to external service
-  private reportError(error: Error, errorInfo: ErrorInfo) {
+  private reportError(error: Error, _errorInfo: ErrorInfo) {
     // This would integrate with services like Sentry, LogRocket, etc.
     try {
       // Example: Sentry.captureException(error, { contexts: { react: { componentStack: errorInfo.componentStack } } })
@@ -319,7 +319,7 @@ export function ErrorBoundaryProvider({ children, config }: ErrorBoundaryProvide
 
   return (
     <AppErrorBoundary
-      onError={(error, errorInfo) => {
+      onError={(error, _errorInfo) => {
         setGlobalError(error)
       }}
     >

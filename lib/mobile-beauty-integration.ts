@@ -5,7 +5,6 @@
 
 import { SkinTypeClassifier } from '@/lib/skin-type-classifier'
 import { offlineManager } from '@/lib/offline-manager'
-import { voiceRecognition } from '@/lib/voice-recognition'
 
 export class MobileBeautyIntegration {
   private static instance: MobileBeautyIntegration
@@ -51,15 +50,6 @@ export class MobileBeautyIntegration {
   }
 
   private initializeVoiceRecognition(): void {
-    // Setup voice commands for beauty treatments
-    const beautyVoiceCommands = {
-      'เริ่มสแกนผิว': () => this.startSkinScan(),
-      'แสดงผลการรักษา': () => this.showTreatmentResults(),
-      'เริ่มจำลองการรักษา': () => this.startTreatmentSimulationVoice(),
-      'ช่วยขาย': () => this.showSalesTools(),
-      'ออกจากระบบ': () => this.logoutUser()
-    }
-
     // Voice recognition is already initialized globally
     console.log('[MobileBeautyIntegration] Voice recognition integrated')
   }
@@ -125,11 +115,11 @@ export class MobileBeautyIntegration {
     }
   }
 
-  async startTreatmentSimulation(treatmentType: string, parameters: any = {}) {
+  async startTreatmentSimulation(treatmentType: string, _parameters: any = {}) {
     try {
       const simulation = {
         treatmentType,
-        arLayers: this.generateSimulationLayers(treatmentType, parameters),
+        arLayers: this.generateSimulationLayers(treatmentType, _parameters),
         audioGuidance: this.generateAudioGuidance(treatmentType),
         hapticFeedback: this.generateHapticFeedback(treatmentType),
         progressTracking: this.setupProgressTracking(treatmentType),
@@ -140,7 +130,7 @@ export class MobileBeautyIntegration {
       await offlineManager.queueLeadUpdate({
         leadId: 'simulation-session',
         leadName: 'Treatment Simulation',
-        data: { simulation, parameters },
+        data: { simulation, parameters: _parameters },
         timestamp: new Date()
       })
 
@@ -159,14 +149,14 @@ export class MobileBeautyIntegration {
     }
   }
 
-  async generateSalesPresentation(customerProfile: any, treatmentInterest: string) {
+  async generateSalesPresentation(_customerProfile: any, _treatmentInterest: string) {
     try {
       const presentation = {
-        customerAnalysis: this.analyzeCustomerProfile(customerProfile),
-        treatmentDemonstration: this.prepareTreatmentDemo(treatmentInterest),
-        objectionHandlers: this.prepareObjectionHandlers(treatmentInterest),
-        closingScripts: this.prepareClosingScripts(customerProfile, treatmentInterest),
-        followUpPlan: this.createFollowUpPlan(customerProfile)
+        customerAnalysis: this.analyzeCustomerProfile(_customerProfile),
+        treatmentDemonstration: this.prepareTreatmentDemo(_treatmentInterest),
+        objectionHandlers: this.prepareObjectionHandlers(_treatmentInterest),
+        closingScripts: this.prepareClosingScripts(_customerProfile, _treatmentInterest),
+        followUpPlan: this.createFollowUpPlan(_customerProfile)
       }
 
       return {
@@ -268,25 +258,25 @@ export class MobileBeautyIntegration {
   }
 
   // Additional helper methods would be implemented here
-  private generateSimulationLayers(treatmentType: string, parameters: any) { return [] }
-  private generateAudioGuidance(treatmentType: string) { return [] }
-  private generateHapticFeedback(treatmentType: string) { return [] }
-  private setupProgressTracking(treatmentType: string) { return {} }
-  private setupSafetyMonitoring(treatmentType: string) { return {} }
-  private getVoiceCommandsForSimulation(treatmentType: string) { return [] }
-  private analyzeCustomerProfile(customerProfile: any) { return {} }
-  private prepareTreatmentDemo(treatmentInterest: string) { return {} }
-  private prepareObjectionHandlers(treatmentInterest: string) { return [] }
-  private prepareClosingScripts(customerProfile: any, treatmentInterest: string) { return [] }
-  private createFollowUpPlan(customerProfile: any) { return {} }
-  private generateVoiceScriptsForSales(presentation: any) { return [] }
-  private generateARTreatmentLayers(analysis: any, userPreferences: any) { return [] }
-  private generateTreatmentVisualization(analysis: any) { return {} }
-  private generateTreatmentGuidance(analysis: any) { return [] }
-  private identifyConversionOpportunities(analysis: any, arTreatment: any) { return [] }
-  private generateSalesObjectionHandlers(analysis: any) { return [] }
-  private generateUpsellingSuggestions(analysis: any) { return [] }
-  private generateCustomerEducation(analysis: any) { return [] }
+  private generateSimulationLayers(_treatmentType: string, _parameters: any) { return [] }
+  private generateAudioGuidance(_treatmentType: string) { return [] }
+  private generateHapticFeedback(_treatmentType: string) { return [] }
+  private setupProgressTracking(_treatmentType: string) { return {} }
+  private setupSafetyMonitoring(_treatmentType: string) { return {} }
+  private getVoiceCommandsForSimulation(_treatmentType: string) { return [] }
+  private analyzeCustomerProfile(_customerProfile: any) { return {} }
+  private prepareTreatmentDemo(_treatmentInterest: string) { return {} }
+  private prepareObjectionHandlers(_treatmentInterest: string) { return [] }
+  private prepareClosingScripts(_customerProfile: any, _treatmentInterest: string) { return [] }
+  private createFollowUpPlan(_customerProfile: any) { return {} }
+  private generateVoiceScriptsForSales(_presentation: any) { return [] }
+  private generateARTreatmentLayers(_analysis: any, _userPreferences: any) { return [] }
+  private generateTreatmentVisualization(_analysis: any) { return {} }
+  private generateTreatmentGuidance(_analysis: any) { return [] }
+  private identifyConversionOpportunities(_analysis: any, _arTreatment: any) { return [] }
+  private generateSalesObjectionHandlers(_analysis: any) { return [] }
+  private generateUpsellingSuggestions(_analysis: any) { return [] }
+  private generateCustomerEducation(_analysis: any) { return [] }
 }
 
 // Export singleton instance

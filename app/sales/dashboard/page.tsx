@@ -1,12 +1,7 @@
 "use client"
 
-import type React from "react"
-
-import { useState, useEffect, useMemo, useCallback } from "react"
-import { toast } from "sonner"
+import { useState, useEffect, useCallback, useMemo } from "react"
 import { useRouter } from "next/navigation"
-import { useDebounce } from "@/lib/hooks/use-debounce"
-import { useInfiniteScroll } from "@/lib/hooks/use-infinite-scroll"
 import { PageLayout } from "@/components/layouts/page-layout"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
@@ -26,12 +21,17 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Phone, Mail, RefreshCw, Sparkles, Bell, BellOff, Search, Filter, Users, FileText, Megaphone, Zap, Gift, Presentation, Smartphone, StickyNote, BarChart3 } from "lucide-react"
+import { Phone, Mail, RefreshCw, Sparkles, Bell, BellOff, Search, Filter, Users, FileText, Megaphone, Zap, Gift, Presentation, Smartphone, StickyNote, BarChart3, Target } from "lucide-react"
 import Link from "next/link"
 import { sortLeadsByPriority, formatTimeAgo, type PriorityScore } from "@/lib/lead-prioritization"
-import wsClient, { type LeadNotification } from "@/lib/websocket-client"
-import notificationSound from "@/lib/notification-sound"
 import { SearchNoResultsState, NoDataState } from "@/components/ui/empty-state"
+import { LeadNotification } from "@/types/notifications"
+import { wsClient } from "@/lib/websocket/client"
+import notificationSound from "@/lib/notifications/sound"
+import { useDebounce } from "@/lib/hooks/use-debounce"
+import { useInfiniteScroll } from "@/lib/hooks/use-infinite-scroll"
+
+import { toast } from "sonner"
 
 // Mock hot leads data with prioritization fields
 const mockHotLeads = [
@@ -383,27 +383,27 @@ export default function SalesDashboardPage() {
       try {
         const response = await fetch("/api/auth/check-role")
         if (!response.ok) {
-          router.push("/auth/login")
+          window.location.href = "/auth/login"
           return
         }
         const data = await response.json()
         if (data.role !== "sales_staff" && data.role !== "admin") {
-          router.push("/auth/login")
+          window.location.href = "/auth/login"
           return
         }
         setUserEmail(data.email)
       } catch (error) {
         console.error("[v0] Auth check failed:", error)
-        router.push("/auth/login")
+        window.location.href = "/auth/login"
       } finally {
         setIsCheckingAuth(false)
       }
     }
     checkAuth()
-  }, [router])
+  }, [])
 
   const handleCall = (leadId: string) => {
-    const lead = hotLeads.find((l) => l.id === leadId)
+    const lead = hotLeads.find((l: typeof hotLeads[0]) => l.id === leadId)
     if (!lead) {
       toast.error("ไม่พบข้อมูล Lead")
       return
@@ -413,7 +413,7 @@ export default function SalesDashboardPage() {
   }
 
   const handleVideoCall = (leadId: string) => {
-    const lead = hotLeads.find((l) => l.id === leadId)
+    const lead = hotLeads.find((l: typeof hotLeads[0]) => l.id === leadId)
     if (!lead) {
       toast.error("ไม่พบข้อมูล Lead")
       return
@@ -422,7 +422,7 @@ export default function SalesDashboardPage() {
   }
 
   const handleChat = (leadId: string) => {
-    const lead = hotLeads.find((l) => l.id === leadId)
+    const lead = hotLeads.find((l: typeof hotLeads[0]) => l.id === leadId)
     if (!lead) {
       toast.error("ไม่พบข้อมูล Lead")
       return
@@ -432,7 +432,7 @@ export default function SalesDashboardPage() {
   }
 
   const handleEmail = (leadId: string) => {
-    const lead = hotLeads.find((l) => l.id === leadId)
+    const lead = hotLeads.find((l: typeof hotLeads[0]) => l.id === leadId)
     if (!lead) {
       toast.error("ไม่พบข้อมูล Lead")
       return
@@ -442,7 +442,7 @@ export default function SalesDashboardPage() {
   }
 
   const handleARDemo = (leadId: string) => {
-    const lead = hotLeads.find((l) => l.id === leadId)
+    const lead = hotLeads.find((l: typeof hotLeads[0]) => l.id === leadId)
     if (!lead) {
       toast.error("ไม่พบข้อมูล Lead")
       return
@@ -454,7 +454,7 @@ export default function SalesDashboardPage() {
   }
 
   const handleProposal = (leadId: string) => {
-    const lead = hotLeads.find((l) => l.id === leadId)
+    const lead = hotLeads.find((l: typeof hotLeads[0]) => l.id === leadId)
     if (!lead) {
       toast.error("ไม่พบข้อมูล Lead")
       return
@@ -558,85 +558,126 @@ export default function SalesDashboardPage() {
           </div>
 
           <div className="container py-6 space-y-6">
-            {/* Quick Navigation Menu */}
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
-              <Link href="/sales/leads">
-                <Button
-                  variant="outline"
-                  className="w-full justify-start gap-2 h-auto py-4"
-                >
-                  <Users className="h-5 w-5 text-blue-500" />
-                  <div className="text-left">
-                    <p className="font-semibold">All Leads</p>
-                    <p className="text-xs text-muted-foreground">จัดการลูกค้า</p>
-                  </div>
-                </Button>
-              </Link>
+            {/* Quick Navigation Menu - Mobile: Horizontal Scroll, Desktop: Grid */}
+            <div className="w-full">
+              <div className="flex gap-3 overflow-x-auto pb-3 scrollbar-hide md:hidden snap-x snap-mandatory">
+                {[
+                  { href: "/sales/leads", icon: Users, label: "All Leads", desc: "จัดการลูกค้า" },
+                  { href: "/sales/proposals", icon: FileText, label: "Proposals", desc: "ใบเสนอราคา" },
+                  { href: "/sales/quick-scan", icon: Target, label: "Quick Scan", desc: "สแกนผิวลูกค้า" },
+                  { href: "/sales/notes", icon: StickyNote, label: "Notes", desc: "บันทึกลูกค้า" },
+                  { href: "/marketing", icon: Megaphone, label: "Marketing", desc: "เครื่องมือการตลาด" },
+                  { href: "/campaign-automation", icon: Zap, label: "Campaigns", desc: "แคมเปญอัตโนมัติ" },
+                  { href: "/loyalty", icon: Gift, label: "Loyalty", desc: "โปรแกรมสะสมคะแนน" }
+                ].map((item, index) => (
+                  <Link key={item.href} href={item.href} className="flex-shrink-0 w-32 snap-center">
+                    <Button
+                      variant="outline"
+                      className="w-full h-auto py-4 flex flex-col gap-2 items-center justify-center min-h-[80px]"
+                    >
+                      <item.icon className="h-5 w-5 text-blue-500" />
+                      <div className="text-center">
+                        <p className="font-semibold text-xs leading-tight">{item.label}</p>
+                        <p className="text-[10px] text-muted-foreground leading-tight">{item.desc}</p>
+                      </div>
+                    </Button>
+                  </Link>
+                ))}
+              </div>
 
-              <Link href="/sales/proposals">
-                <Button
-                  variant="outline"
-                  className="w-full justify-start gap-2 h-auto py-4"
-                >
-                  <FileText className="h-5 w-5 text-green-500" />
-                  <div className="text-left">
-                    <p className="font-semibold">Proposals</p>
-                    <p className="text-xs text-muted-foreground">ใบเสนอราคา</p>
-                  </div>
-                </Button>
-              </Link>
+              {/* Desktop Grid Layout */}
+              <div className="hidden md:grid gap-3 md:grid-cols-3 lg:grid-cols-7">
+                <Link href="/sales/leads">
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start gap-2 h-auto py-4"
+                  >
+                    <Users className="h-5 w-5 text-blue-500" />
+                    <div className="text-left">
+                      <p className="font-semibold">All Leads</p>
+                      <p className="text-xs text-muted-foreground">จัดการลูกค้า</p>
+                    </div>
+                  </Button>
+                </Link>
 
-              <Link href="/sales/notes">
-                <Button
-                  variant="outline"
-                  className="w-full justify-start gap-2 h-auto py-4"
-                >
-                  <StickyNote className="h-5 w-5 text-yellow-500" />
-                  <div className="text-left">
-                    <p className="font-semibold">Customer Notes</p>
-                    <p className="text-xs text-muted-foreground">บันทึกลูกค้า</p>
-                  </div>
-                </Button>
-              </Link>
+                <Link href="/sales/quick-scan">
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start gap-2 h-auto py-4"
+                  >
+                    <Target className="h-5 w-5 text-indigo-500" />
+                    <div className="text-left">
+                      <p className="font-semibold">Quick Scan</p>
+                      <p className="text-xs text-muted-foreground">สแกนผิวลูกค้า</p>
+                    </div>
+                  </Button>
+                </Link>
 
-              <Link href="/marketing">
-                <Button
-                  variant="outline"
-                  className="w-full justify-start gap-2 h-auto py-4"
-                >
-                  <Megaphone className="h-5 w-5 text-purple-500" />
-                  <div className="text-left">
-                    <p className="font-semibold">Marketing</p>
-                    <p className="text-xs text-muted-foreground">เครื่องมือการตลาด</p>
-                  </div>
-                </Button>
-              </Link>
+                <Link href="/sales/proposals">
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start gap-2 h-auto py-4"
+                  >
+                    <FileText className="h-5 w-5 text-green-500" />
+                    <div className="text-left">
+                      <p className="font-semibold">Proposals</p>
+                      <p className="text-xs text-muted-foreground">ใบเสนอราคา</p>
+                    </div>
+                  </Button>
+                </Link>
 
-              <Link href="/campaign-automation">
-                <Button
-                  variant="outline"
-                  className="w-full justify-start gap-2 h-auto py-4"
-                >
-                  <Zap className="h-5 w-5 text-orange-500" />
-                  <div className="text-left">
-                    <p className="font-semibold">Campaigns</p>
-                    <p className="text-xs text-muted-foreground">แคมเปญอัตโนมัติ</p>
-                  </div>
-                </Button>
-              </Link>
+                <Link href="/sales/notes">
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start gap-2 h-auto py-4"
+                  >
+                    <StickyNote className="h-5 w-5 text-yellow-500" />
+                    <div className="text-left">
+                      <p className="font-semibold">Customer Notes</p>
+                      <p className="text-xs text-muted-foreground">บันทึกลูกค้า</p>
+                    </div>
+                  </Button>
+                </Link>
 
-              <Link href="/loyalty">
-                <Button
-                  variant="outline"
-                  className="w-full justify-start gap-2 h-auto py-4"
-                >
-                  <Gift className="h-5 w-5 text-pink-500" />
-                  <div className="text-left">
-                    <p className="font-semibold">Loyalty</p>
-                    <p className="text-xs text-muted-foreground">โปรแกรมสะสมคะแนน</p>
-                  </div>
-                </Button>
-              </Link>
+                <Link href="/marketing">
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start gap-2 h-auto py-4"
+                  >
+                    <Megaphone className="h-5 w-5 text-purple-500" />
+                    <div className="text-left">
+                      <p className="font-semibold">Marketing</p>
+                      <p className="text-xs text-muted-foreground">เครื่องมือการตลาด</p>
+                    </div>
+                  </Button>
+                </Link>
+
+                <Link href="/campaign-automation">
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start gap-2 h-auto py-4"
+                  >
+                    <Zap className="h-5 w-5 text-orange-500" />
+                    <div className="text-left">
+                      <p className="font-semibold">Campaigns</p>
+                      <p className="text-xs text-muted-foreground">แคมเปญอัตโนมัติ</p>
+                    </div>
+                  </Button>
+                </Link>
+
+                <Link href="/loyalty">
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start gap-2 h-auto py-4"
+                  >
+                    <Gift className="h-5 w-5 text-pink-500" />
+                    <div className="text-left">
+                      <p className="font-semibold">Loyalty</p>
+                      <p className="text-xs text-muted-foreground">โปรแกรมสะสมคะแนน</p>
+                    </div>
+                  </Button>
+                </Link>
+              </div>
             </div>
 
             {/* Sales Performance Overview */}
@@ -678,28 +719,28 @@ export default function SalesDashboardPage() {
               <PresentationStatsCards />
             </div>
 
-            {/* Field Presentation CTA - Prominent Button */}
-            <div className="bg-blue-600 border-b-4 border-blue-700 rounded-xl p-6 text-white shadow-lg">
-              <div className="flex items-center justify-between flex-wrap gap-4">
+            {/* Field Presentation CTA - Mobile: Prominent, Desktop: Standard */}
+            <div className="bg-blue-600 border-b-4 border-blue-700 rounded-xl p-4 md:p-6 text-white shadow-lg">
+              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-2">
-                    <Smartphone className="h-6 w-6" />
-                    <h3 className="text-xl font-bold">Mobile Field Presentation</h3>
+                    <Smartphone className="h-5 w-5 md:h-6 md:w-6" />
+                    <h3 className="text-lg md:text-xl font-bold">Mobile Field Presentation</h3>
                   </div>
-                  <p className="text-sm text-blue-50 mb-1">
+                  <p className="text-sm md:text-base text-blue-50 mb-1">
                     ระบบ AR/AI Analysis สำหรับเซลส์ พร้อมวิเคราะห์ผิวหน้าและปิดการขายได้ทันที
                   </p>
-                  <p className="text-xs text-blue-100">
+                  <p className="text-xs md:text-sm text-blue-100">
                     ✨ Scan → Analyze → AR Preview → Products → Proposal → Signature
                   </p>
                 </div>
-                <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex flex-col gap-2 md:flex-row md:gap-3 mt-4 md:mt-0">
                   <Link href={`/sales/wizard/new-${Date.now()}`}>
-                    <Button 
+                    <Button
                       size="lg"
-                      className="bg-white text-blue-600 hover:bg-blue-50 shadow-md h-14 px-8"
+                      className="w-full md:w-auto bg-white text-blue-600 hover:bg-blue-50 shadow-md h-12 md:h-14 px-6 md:px-8 text-base font-semibold"
                     >
-                      <Presentation className="h-5 w-5 mr-2" />
+                      <Presentation className="h-4 w-4 md:h-5 md:w-5 mr-2" />
                       เริ่ม Presentation ใหม่
                     </Button>
                   </Link>
@@ -719,7 +760,7 @@ export default function SalesDashboardPage() {
                     <Badge className="bg-red-100 text-red-800 text-xs">
                       {
                         sortedLeads.filter(
-                          (l) =>
+                          (l: typeof sortedLeads[0]) =>
                             l.priorityScore.priorityLevel === "critical" || l.priorityScore.priorityLevel === "high",
                         ).length
                       }{" "}
@@ -747,36 +788,65 @@ export default function SalesDashboardPage() {
                 </Button>
               </div>
 
-              {/* Search and Filter Bar */}
-              <div className="mb-4 flex flex-col sm:flex-row gap-3">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/50" />
-                  <Input
-                    type="text"
-                    placeholder="Search by name, concern, email, phone..."
-                    value={searchQuery}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
-                    className="pl-9"
-                  />
-                  {searchQuery && (
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
-                      {searchQuery === debouncedSearchQuery ? `${sortedLeads.length} found` : "Searching..."}
-                    </span>
-                  )}
+              {/* Search and Filter Bar - Mobile: Compact, Desktop: Full Width */}
+              <div className="space-y-3 md:space-y-4">
+                {/* Mobile: Compact single row */}
+                <div className="flex gap-2 md:hidden">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/50" />
+                    <Input
+                      type="text"
+                      placeholder="ค้นหาลูกค้า..."
+                      value={searchQuery}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
+                      className="pl-9 text-sm h-10"
+                    />
+                  </div>
+                  <Select value={filterPriority} onValueChange={setFilterPriority}>
+                    <SelectTrigger className="w-32 h-10">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">ทั้งหมด</SelectItem>
+                      <SelectItem value="critical">🔴 Critical</SelectItem>
+                      <SelectItem value="high">🟠 High</SelectItem>
+                      <SelectItem value="medium">🟡 Medium</SelectItem>
+                      <SelectItem value="low">🟢 Low</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
-                <Select value={filterPriority} onValueChange={setFilterPriority}>
-                  <SelectTrigger className="w-full sm:w-[180px]">
-                    <Filter className="h-4 w-4 mr-2" />
-                    <SelectValue placeholder="Filter by priority" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Priorities</SelectItem>
-                    <SelectItem value="critical">🔴 Critical</SelectItem>
-                    <SelectItem value="high">🟠 High</SelectItem>
-                    <SelectItem value="medium">🟡 Medium</SelectItem>
-                    <SelectItem value="low">🟢 Low</SelectItem>
-                  </SelectContent>
-                </Select>
+
+                {/* Desktop: Full width layout */}
+                <div className="hidden md:flex flex-col sm:flex-row gap-3">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/50" />
+                    <Input
+                      type="text"
+                      placeholder="Search by name, concern, email, phone..."
+                      value={searchQuery}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
+                      className="pl-9"
+                    />
+                    {searchQuery && (
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
+                        {searchQuery === debouncedSearchQuery ? `${sortedLeads.length} found` : "Searching..."}
+                      </span>
+                    )}
+                  </div>
+                  <Select value={filterPriority} onValueChange={setFilterPriority}>
+                    <SelectTrigger className="w-full sm:w-[180px]">
+                      <Filter className="h-4 w-4 mr-2" />
+                      <SelectValue placeholder="Filter by priority" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Priorities</SelectItem>
+                      <SelectItem value="critical">🔴 Critical</SelectItem>
+                      <SelectItem value="high">🟠 High</SelectItem>
+                      <SelectItem value="medium">🟡 Medium</SelectItem>
+                      <SelectItem value="low">🟢 Low</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
               {/* Lead Cards - Tablet Optimized with Priority Scores */}
@@ -807,7 +877,7 @@ export default function SalesDashboardPage() {
                 ) : (
                   <>
                     {/* Show actual lead cards when loaded */}
-                    {displayedLeads.map((lead) => (
+                    {displayedLeads.map((lead: typeof displayedLeads[0]) => (
                       <div key={lead.id} className="relative group">
                         {/* NEW Lead Indicator */}
                         {newLeadIds.has(lead.id) && (
@@ -950,29 +1020,52 @@ export default function SalesDashboardPage() {
           }}
         />
 
-        {/* Priority Score Detail Drawer */}
+        {/* Priority Score Detail Drawer - Mobile: Full Screen, Desktop: Side Panel */}
         {selectedLeadForScore && (
           <div className={`fixed inset-0 z-50 ${scoreDetailOpen ? "block" : "hidden"}`}>
-            <button
-              type="button"
-              className="absolute inset-0 bg-black/50 cursor-default"
+            {/* Backdrop */}
+            <div
+              className="absolute inset-0 bg-black/50 cursor-pointer"
               onClick={() => setScoreDetailOpen(false)}
               aria-label="Close priority score details"
             />
-            <div className="absolute right-0 top-0 bottom-0 w-full sm:w-96 bg-background shadow-xl transform transition-transform">
-              <div className="h-full overflow-y-auto p-6">
-                <div className="flex items-center justify-between mb-4">
+
+            {/* Modal Content - Mobile: Full screen, Desktop: Side panel */}
+            <div className="absolute inset-0 md:inset-y-0 md:right-0 md:left-auto md:w-96 bg-background shadow-xl transform transition-transform duration-300 ease-in-out">
+              {/* Mobile: Full screen content */}
+              <div className="h-full overflow-y-auto md:hidden">
+                <div className="flex items-center justify-between p-4 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-10">
                   <h3 className="text-lg font-semibold">Priority Score Details</h3>
                   <Button variant="ghost" size="sm" onClick={() => setScoreDetailOpen(false)}>
                     ✕
                   </Button>
                 </div>
-                {selectedLeadForScore && (
-                  <PriorityScoreCard
-                    leadName={selectedLeadForScore.name}
-                    priorityScore={selectedLeadForScore.priorityScore}
-                  />
-                )}
+                <div className="p-4">
+                  {selectedLeadForScore && (
+                    <PriorityScoreCard
+                      leadName={selectedLeadForScore.name}
+                      priorityScore={selectedLeadForScore.priorityScore}
+                    />
+                  )}
+                </div>
+              </div>
+
+              {/* Desktop: Side panel content */}
+              <div className="hidden md:block h-full overflow-y-auto">
+                <div className="flex items-center justify-between p-6 border-b">
+                  <h3 className="text-lg font-semibold">Priority Score Details</h3>
+                  <Button variant="ghost" size="sm" onClick={() => setScoreDetailOpen(false)}>
+                    ✕
+                  </Button>
+                </div>
+                <div className="p-6">
+                  {selectedLeadForScore && (
+                    <PriorityScoreCard
+                      leadName={selectedLeadForScore.name}
+                      priorityScore={selectedLeadForScore.priorityScore}
+                    />
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -982,12 +1075,12 @@ export default function SalesDashboardPage() {
         <OfflineIndicator />
 
         {/* Notification Toasts */}
-        {notifications.map((notification) => (
+        {notifications.map((notification: LeadNotification) => (
           <LeadNotificationToast
             key={notification.id}
             notification={notification}
             onClose={() => {
-              setNotifications((prev) => prev.filter((n) => n.id !== notification.id))
+              setNotifications((prev: LeadNotification[]) => prev.filter((n: LeadNotification) => n.id !== notification.id))
             }}
           />
         ))}

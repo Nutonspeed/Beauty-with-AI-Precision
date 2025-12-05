@@ -45,6 +45,7 @@
     "node_modules",
     "scripts/**/*",
     "scanning-project/**/*",
+    "mobile",
     ".next",
     "out",
     "dist"

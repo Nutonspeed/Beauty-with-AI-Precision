@@ -88,7 +88,7 @@ export function FloatingBottomNav({
                     <Badge 
                       className={`absolute -top-2 -right-2 h-5 min-w-[20px] rounded-full p-0 px-1 flex items-center justify-center text-xs ${item.badgeColor || 'bg-red-500'} text-white border-2 border-background ${item.pulseAnimation ? 'animate-pulse' : ''}`}
                     >
-                      {item.badge > 9 ? '9+' : item.badge}
+                      {item.badge > 99 ? '99+' : item.badge}
                     </Badge>
                   )}
                 </div>

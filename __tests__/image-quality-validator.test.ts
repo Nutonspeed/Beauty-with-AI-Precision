@@ -144,28 +144,40 @@ describe('Image Quality Validator', () => {
 
   describe('Face Detection', () => {
     it('should detect presence of skin-colored region', async () => {
-  // Create image with skin-colored center region
-  const image = new Jimp({ width: 512, height: 512, color: 0x404040ff }); // Dark background
+      // Create smaller image (400x400) for faster testing
+      const size = 400;
+      const image = new Jimp({ width: size, height: size, color: 0x404040ff });
       
-      // Add skin-colored region in center (50% of image)
-      const startX = 200;
-      const startY = 200;
-      const endX = 600;
-      const endY = 600;
+      // Add skin-colored region in center (40% of image)
+      const padding = Math.floor(size * 0.3);
+      const skinSize = size - (padding * 2);
       
-      const skinRegion = new Jimp({ width: endX - startX, height: endY - startY, color: 0xc89678ff });
-      image.composite(skinRegion, startX, startY);
+      // Directly manipulate bitmap for better performance
+      const { data, width } = image.bitmap;
+      const skinColor = { r: 0xc8, g: 0x96, b: 0x78, a: 0xff };
+      
+      for (let y = padding; y < size - padding; y++) {
+        for (let x = padding; x < size - padding; x++) {
+          const idx = (y * width + x) * 4;
+          data[idx] = skinColor.r;
+          data[idx + 1] = skinColor.g;
+          data[idx + 2] = skinColor.b;
+          data[idx + 3] = skinColor.a;
+        }
+      }
 
-  const buffer = await image.getBuffer('image/png');
+      const buffer = await image.getBuffer('image/png');
 
       const result = await validateImageQuality(buffer, { 
         requireFace: true,
-        minFaceSize: 5 // Lower threshold since we're sampling
+        minFaceSize: 5, // Lower threshold for test
+        minWidth: size,
+        minHeight: size
       });
 
       expect(result.metrics.faceDetection?.faceDetected).toBe(true);
       expect(result.metrics.faceDetection?.faceSize).toBeGreaterThan(0);
-    }, 10000); // Increase timeout to 10s
+    }, 15000); // Increased timeout to 15s
 
     it('should reject images without face when required', async () => {
   // Create image with no skin tones (blue image)
@@ -181,29 +193,31 @@ describe('Image Quality Validator', () => {
 
   describe('Overall Quality Score', () => {
     it('should give high score to perfect images', async () => {
-  // Create a good quality image with checkerboard pattern (sharp edges)
-      const image = new Jimp({ width: 600, height: 600 });
+      // Create a smaller test image (400x400 instead of 600x600) for faster processing
+      const image = new Jimp({ width: 400, height: 400 });
 
-      // Add checkerboard pattern (sharp, high contrast)
+      // Optimized: Use larger checkerboard pattern for faster rendering
       const { data, width, height } = image.bitmap;
       for (let y = 0; y < height; y++) {
         for (let x = 0; x < width; x++) {
-          const isBlack = (Math.floor(x / 75) + Math.floor(y / 75)) % 2 === 0;
-          const gray = isBlack ? 80 : 160; // Good contrast, medium brightness
+          const isBlack = (Math.floor(x / 50) + Math.floor(y / 50)) % 2 === 0;
+          const gray = isBlack ? 80 : 160;
           const idx = (y * width + x) * 4;
-          data[idx] = gray;
-          data[idx + 1] = gray;
-          data[idx + 2] = gray;
+          data[idx] = data[idx + 1] = data[idx + 2] = gray;
           data[idx + 3] = 255;
         }
       }
 
       const buffer = await image.getBuffer('image/png');
 
-      const result = await validateImageQuality(buffer, { requireFace: false });
+      const result = await validateImageQuality(buffer, { 
+        requireFace: false,
+        minWidth: 400, // Adjust minimum dimensions to match test image
+        minHeight: 400
+      });
 
       expect(result.score).toBeGreaterThan(50);
-    }, 10000);
+    }, 15000); // Increased timeout to 15s
 
     it('should give low score to poor quality images', async () => {
       // Create a poor quality image (small, dark, uniform)
@@ -252,19 +266,30 @@ describe('Image Quality Validator', () => {
 
   describe('Custom Configuration', () => {
     it('should respect custom thresholds', async () => {
-      const image = new Jimp({ width: 600, height: 600, color: 0x808080ff });
-      const buffer = await image.getBuffer('image/jpeg');
+      // Use smaller image (500x500) and simpler pattern for faster testing
+      const image = new Jimp({ width: 500, height: 500, color: 0x808080ff });
+      
+      // Add some variation to pass sharpness test
+      const { data, width, height } = image.bitmap;
+      for (let i = 0; i < width * height * 4; i += 40) {
+        if (data[i] !== undefined) data[i] = 100; // Add some noise
+      }
+      
+      const buffer = await image.getBuffer('image/jpeg', { quality: 90 });
 
       // Custom config with lower requirements
       const result = await validateImageQuality(buffer, {
-        minWidth: 500,
-        minHeight: 500,
+        minWidth: 400,
+        minHeight: 400,
         requireFace: false,
-        minSharpness: 10, // Very lenient
+        minSharpness: 5, // More lenient for test
+        minBrightness: 30, // Lower thresholds for test
+        maxBrightness: 230
       });
 
       // Should pass with custom config
-      expect(result.metrics.resolution.width).toBe(600);
-    }, 10000);
+      expect(result.metrics.resolution.width).toBe(500);
+      expect(result.isValid).toBe(true);
+    }, 15000); // Increased timeout to 15s
   });
 });

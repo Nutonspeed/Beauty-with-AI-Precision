@@ -336,25 +336,54 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = async () => {
     try {
       console.log('[AuthContext] 🚪 Starting sign out...')
+
       const supabase = createClient()
-      
+
       // Clear local state immediately for better UX
       setUser(null)
       setSupabaseUser(null)
       loadingUserIdRef.current = null
       loadedUserIdRef.current = null
-      
+
+      // Clear browser storage
+      if (typeof window !== 'undefined') {
+        localStorage.clear()
+        sessionStorage.clear()
+
+        // Clear any cached auth data
+        window.history.replaceState(null, '', '/auth/login')
+      }
+
       // Sign out from Supabase
       await supabase.auth.signOut()
-      
+
       console.log('[AuthContext] ✅ Signed out, redirecting to login...')
-      
-      // Use window.location.href for hard redirect (more reliable)
-      window.location.href = '/auth/login'
+
+      // Small delay to ensure state is cleared
+      setTimeout(() => {
+        // Use window.location.href for hard redirect (more reliable than router.push)
+        window.location.href = '/auth/login'
+      }, 100)
+
     } catch (error) {
       console.error('[AuthContext] ❌ SignOut error:', error)
+
+      // Clear state even on error
+      setUser(null)
+      setSupabaseUser(null)
+      loadingUserIdRef.current = null
+      loadedUserIdRef.current = null
+
+      // Clear browser storage on error too
+      if (typeof window !== 'undefined') {
+        localStorage.clear()
+        sessionStorage.clear()
+      }
+
       // Still redirect even if there's an error
-      window.location.href = '/auth/login'
+      setTimeout(() => {
+        window.location.href = '/auth/login'
+      }, 100)
     }
   }
 

@@ -4,6 +4,9 @@
  * Verifies Supabase database setup and connectivity
  */
 
+import * as dotenv from "dotenv"
+dotenv.config({ path: ".env.local" })
+
 import { createClient } from "@supabase/supabase-js"
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL

@@ -87,3 +87,32 @@ test-images/results/*.json
 !test-images/README.md
 !test-images/SAMPLE_IMAGES_GUIDE.md
 !test-images/TESTING_SUMMARY.md
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# ML models and data
+ml_models/
+data/processed/
+*.pkl
+*.h5
+*.onnx

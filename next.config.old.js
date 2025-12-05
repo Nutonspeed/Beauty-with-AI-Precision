@@ -12,8 +12,7 @@ const nextConfig = {
   images: {
     // unoptimized: true, // Not needed without static export
     remotePatterns: [
-      transform: '@radix-ui/react-icons/dist/{{member}}',
-    },
+    ],
   },
 
   // Experimental optimizations
