@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { withClinicAuth } from '@/lib/auth/middleware';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -13,7 +14,7 @@ const supabase = createClient(
  * Query parameters:
  * - room_id (required): Chat room ID
  */
-export async function GET(request: NextRequest) {
+export const GET = withClinicAuth(async (request: NextRequest) => {
   try {
     const { searchParams } = new URL(request.url);
     const room_id = searchParams.get('room_id');
@@ -49,7 +50,7 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+})
 
 /**
  * POST /api/chat/typing
@@ -60,7 +61,7 @@ export async function GET(request: NextRequest) {
  * - user_id (required): User ID
  * - is_typing (required): Typing status (true/false)
  */
-export async function POST(request: NextRequest) {
+export const POST = withClinicAuth(async (request: NextRequest) => {
   try {
     const body = await request.json();
     const { room_id, user_id, is_typing } = body;
@@ -112,4 +113,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+})

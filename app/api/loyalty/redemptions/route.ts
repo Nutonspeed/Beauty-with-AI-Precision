@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { withClinicAuth } from '@/lib/auth/middleware';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -17,7 +18,7 @@ const supabase = createClient(
  * - status (optional): Filter by status
  * - limit (optional): Limit results (default 100)
  */
-export async function GET(request: NextRequest) {
+export const GET = withClinicAuth(async (request: NextRequest) => {
   try {
     const { searchParams } = new URL(request.url);
     const clinic_id = searchParams.get('clinic_id');
@@ -75,4 +76,4 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+})

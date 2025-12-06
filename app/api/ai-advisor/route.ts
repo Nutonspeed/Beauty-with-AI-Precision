@@ -4,34 +4,35 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+import { withClinicAuth } from '@/lib/auth/middleware'
 import { getTreatmentAdvisor } from '@/lib/ai/treatment-advisor'
 import type { HybridSkinAnalysis } from '@/lib/types/skin-analysis'
 
-export async function POST(request: NextRequest) {
+async function handler(request: NextRequest) {
   try {
     const body = await request.json()
     const { analysis, options } = body
-    
+
     if (!analysis) {
       return NextResponse.json(
         { error: 'Missing skin analysis data' },
         { status: 400 }
       )
     }
-    
+
     // Get AI advisor
     const advisor = getTreatmentAdvisor()
-    
+
     // Generate intelligent recommendations
     const advice = await advisor.analyzeSkinAndRecommend(
       analysis as HybridSkinAnalysis,
       options
     )
-    
+
     // Calculate totals
     const totalCost = advisor.calculateTotalCost(advice)
     const timelineWeeks = advisor.estimateTimelineWeeks(advice)
-    
+
     return NextResponse.json({
       success: true,
       advice,
@@ -50,3 +51,5 @@ export async function POST(request: NextRequest) {
     )
   }
 }
+
+export const POST = withClinicAuth(handler)

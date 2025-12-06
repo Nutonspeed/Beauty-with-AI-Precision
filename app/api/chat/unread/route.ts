@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { withClinicAuth } from '@/lib/auth/middleware';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -14,7 +15,7 @@ const supabase = createClient(
  * - user_id (required): User ID
  * - room_id (optional): Specific room ID (if not provided, returns total across all rooms)
  */
-export async function GET(request: NextRequest) {
+export const GET = withClinicAuth(async (request: NextRequest) => {
   try {
     const { searchParams } = new URL(request.url);
     const user_id = searchParams.get('user_id');
@@ -47,4 +48,4 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+})

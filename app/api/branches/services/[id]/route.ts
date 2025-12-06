@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { withClinicAuth } from '@/lib/auth/middleware';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -10,68 +11,54 @@ const supabase = createClient(
  * PATCH /api/branches/services/[id]
  * Update branch service
  */
-export async function PATCH(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
-  try {
-    const params = await context.params;
-    const body = await request.json();
-    const updateData: Record<string, unknown> = {};
+export const PATCH = withClinicAuth(async (req, user) => {
+  const id = req.nextUrl.pathname.split('/').pop() || '';
+  const body = await req.json();
+  const updateData: Record<string, unknown> = {};
 
-    const allowedFields = [
-      'branch_price',
-      'use_clinic_price',
-      'daily_capacity',
-      'slots_per_day',
-      'requires_specialist',
-      'required_equipment',
-      'available_days',
-      'available_time_slots',
-      'is_available',
-      'available_from_date',
-      'available_until_date',
-    ];
+  const allowedFields = [
+    'branch_price',
+    'use_clinic_price',
+    'daily_capacity',
+    'slots_per_day',
+    'requires_specialist',
+    'required_equipment',
+    'available_days',
+    'available_time_slots',
+    'is_available',
+    'available_from_date',
+    'available_until_date',
+  ];
 
-    for (const field of allowedFields) {
-      if (body[field] !== undefined) {
-        updateData[field] = body[field];
-      }
+  for (const field of allowedFields) {
+    if (body[field] !== undefined) {
+      updateData[field] = body[field];
     }
-
-    const { data, error } = await supabase
-      .from('branch_services')
-      .update(updateData)
-      .eq('id', params.id)
-      .select()
-      .single();
-
-    if (error) throw error;
-
-    return NextResponse.json(data);
-  } catch (error) {
-    console.error('Error updating branch service:', error);
-    return NextResponse.json(
-      { error: 'Failed to update branch service' },
-      { status: 500 }
-    );
   }
-}
+
+  const { data, error } = await supabase
+    .from('branch_services')
+    .update(updateData)
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  return NextResponse.json(data);
+});
 
 /**
  * DELETE /api/branches/services/[id]
  * Remove service from branch (soft delete)
  */
-export async function DELETE(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export const DELETE = withClinicAuth(async (req: NextRequest, user: any) => {
   try {
-    const params = await context.params;
+    const id = req.nextUrl.pathname.split('/').pop() || '';
     const { data, error } = await supabase
       .from('branch_services')
       .update({ is_available: false })
-      .eq('id', params.id)
+      .eq('id', id)
       .select()
       .single();
 
@@ -85,4 +72,4 @@ export async function DELETE(
       { status: 500 }
     );
   }
-}
+})

@@ -5,6 +5,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+import { withClinicAuth } from '@/lib/auth/middleware'
 
 // Hugging Face API configuration
 const HUGGINGFACE_TOKEN = process.env.HUGGINGFACE_TOKEN
@@ -26,14 +27,15 @@ interface HuggingFaceRequest {
 /**
  * POST /api/ai/huggingface
  * Proxy request to Hugging Face Inference API
+ * Protected: requires authenticated clinic-related user
  */
-export async function POST(request: NextRequest) {
+async function postHandler(request: NextRequest) {
   try {
     // Validate token
     if (!HUGGINGFACE_TOKEN) {
       console.error('❌ HUGGINGFACE_TOKEN not configured')
       return NextResponse.json(
-        { 
+        {
           error: 'Server configuration error',
           message: 'HUGGINGFACE_TOKEN not found in environment variables'
         },
@@ -48,7 +50,7 @@ export async function POST(request: NextRequest) {
     // Validate task
     if (!task || !MODELS[task]) {
       return NextResponse.json(
-        { 
+        {
           error: 'Invalid task',
           message: `Task must be one of: ${Object.keys(MODELS).join(', ')}`
         },
@@ -86,7 +88,7 @@ export async function POST(request: NextRequest) {
     if (!response.ok) {
       const errorText = await response.text()
       console.error(`❌ Hugging Face API error (${response.status}):`, errorText)
-      
+
       // Check if model is loading
       if (response.status === 503) {
         return NextResponse.json(
@@ -141,7 +143,7 @@ export async function POST(request: NextRequest) {
  */
 export async function GET() {
   const isConfigured = Boolean(HUGGINGFACE_TOKEN)
-  
+
   return NextResponse.json({
     ok: isConfigured,
     configured: isConfigured,
@@ -151,3 +153,5 @@ export async function GET() {
     timestamp: new Date().toISOString(),
   })
 }
+
+export const POST = withClinicAuth(postHandler)

@@ -43,7 +43,7 @@ describe("analytics collect API", () => {
     expect(postJson.ok).toBe(true);
     expect(postJson.written).toBe(2);
 
-    const getRes = await GET();
+    const getRes = await GET({} as any);
     const getJson = await getRes.json();
     expect(getJson.ok).toBe(true);
     const result = getJson.result;

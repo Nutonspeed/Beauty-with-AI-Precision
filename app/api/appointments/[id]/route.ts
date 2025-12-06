@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
+import { withClinicAuth } from "@/lib/auth/middleware"
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -13,12 +14,9 @@ const supabaseAdmin = createClient(
 )
 
 // GET /api/appointments/[id] - Get single appointment
-export async function GET(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export const GET = withClinicAuth(async (req: NextRequest, user: any) => {
   try {
-    const { id } = await context.params
+    const id = req.nextUrl.pathname.split('/').pop() || ''
 
     const { data: appointment, error } = await supabaseAdmin
       .from('appointment_slots')
@@ -43,16 +41,13 @@ export async function GET(
       { status: 500 }
     )
   }
-}
+})
 
 // PATCH /api/appointments/[id] - Update appointment
-export async function PATCH(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export const PATCH = withClinicAuth(async (req: NextRequest, user: any) => {
   try {
-    const { id } = await context.params
-    const body = await request.json()
+    const id = req.nextUrl.pathname.split('/').pop() || ''
+    const body = await req.json()
 
     const {
       status,
@@ -115,15 +110,12 @@ export async function PATCH(
       { status: 500 }
     )
   }
-}
+})
 
 // DELETE /api/appointments/[id] - Delete appointment
-export async function DELETE(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export const DELETE = withClinicAuth(async (req: NextRequest, user: any) => {
   try {
-    const { id } = await context.params
+    const id = req.nextUrl.pathname.split('/').pop() || ''
 
     const { error } = await supabaseAdmin
       .from('appointment_slots')
@@ -147,4 +139,4 @@ export async function DELETE(
       { status: 500 }
     )
   }
-}
+})

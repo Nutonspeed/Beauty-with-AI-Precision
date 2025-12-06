@@ -1,8 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
+import { withClinicAuth } from "@/lib/auth/middleware"
 
 // GET /api/inventory/suppliers - List all suppliers
-export async function GET() {
+export const GET = withClinicAuth(async (request: NextRequest) => {
   try {
     const supabaseAdmin = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -34,10 +35,10 @@ export async function GET() {
       { status: 500 },
     )
   }
-}
+})
 
 // POST /api/inventory/suppliers - Create new supplier
-export async function POST(request: NextRequest) {
+export const POST = withClinicAuth(async (request: NextRequest) => {
   try {
     const body = await request.json()
 
@@ -80,4 +81,4 @@ export async function POST(request: NextRequest) {
       { status: 500 },
     )
   }
-}
+})

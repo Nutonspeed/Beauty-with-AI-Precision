@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
+import { withClinicAuth } from "@/lib/auth/middleware"
 
 // Use service role for admin operations
 const supabaseAdmin = createClient(
@@ -14,7 +15,7 @@ const supabaseAdmin = createClient(
 )
 
 // GET /api/appointments/slots - Get available time slots
-export async function GET(request: NextRequest) {
+export const GET = withClinicAuth(async (request: NextRequest) => {
   try {
     const { searchParams } = new URL(request.url)
     const clinicId = searchParams.get('clinic_id')
@@ -127,7 +128,7 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     )
   }
-}
+})
 
 // Helper function to add minutes to time string
 function addMinutes(timeStr: string, minutes: number): string {

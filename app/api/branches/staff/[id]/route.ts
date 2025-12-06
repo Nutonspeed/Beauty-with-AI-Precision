@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { withClinicAuth } from '@/lib/auth/middleware';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -10,13 +11,10 @@ const supabase = createClient(
  * PATCH /api/branches/staff/[id]
  * Update a staff assignment
  */
-export async function PATCH(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export const PATCH = withClinicAuth(async (req: NextRequest, user: any) => {
   try {
-    const params = await context.params;
-    const body = await request.json();
+    const id = req.nextUrl.pathname.split('/').pop() || '';
+    const body = await req.json();
     const updateData: Record<string, unknown> = {};
 
     const allowedFields = [
@@ -38,7 +36,7 @@ export async function PATCH(
     const { data, error } = await supabase
       .from('branch_staff_assignments')
       .update(updateData)
-      .eq('id', params.id)
+      .eq('id', id)
       .select()
       .single();
 
@@ -52,25 +50,22 @@ export async function PATCH(
       { status: 500 }
     );
   }
-}
+})
 
 /**
  * DELETE /api/branches/staff/[id]
  * Remove staff assignment (soft delete)
  */
-export async function DELETE(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export const DELETE = withClinicAuth(async (req: NextRequest, user: any) => {
   try {
-    const params = await context.params;
+    const id = req.nextUrl.pathname.split('/').pop() || '';
     const { data, error } = await supabase
       .from('branch_staff_assignments')
       .update({
         is_active: false,
         assignment_end_date: new Date().toISOString(),
       })
-      .eq('id', params.id)
+      .eq('id', id)
       .select()
       .single();
 
@@ -84,4 +79,4 @@ export async function DELETE(
       { status: 500 }
     );
   }
-}
+})

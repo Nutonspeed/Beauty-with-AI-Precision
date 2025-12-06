@@ -1,8 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { analyzeWithVISIAEquivalent } from "@/lib/ai/phase2/visia-equivalent-pipeline"
 import { randomUUID } from "crypto"
+import { withClinicAuth } from "@/lib/auth/middleware"
 
-export async function POST(request: NextRequest) {
+export const POST = withClinicAuth(async (request: NextRequest) => {
   try {
     const formData = await request.formData()
     const imageFile = formData.get("image") as File
@@ -83,4 +84,4 @@ export async function POST(request: NextRequest) {
       { status: 500 },
     )
   }
-}
+})

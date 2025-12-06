@@ -14,12 +14,13 @@ import {
   calculateMetricPercentile,
 } from '@/lib/analytics/benchmark-calculator';
 import { AgeGroup, MetricType } from '@/types/analytics';
+import { withClinicAuth } from '@/lib/auth/middleware';
 
 // =============================================
 // GET Handler
 // =============================================
 
-export async function GET(request: NextRequest) {
+export const GET = withClinicAuth(async (request: NextRequest) => {
   try {
     // Get query parameters
     const searchParams = request.nextUrl.searchParams;
@@ -112,7 +113,7 @@ export async function GET(request: NextRequest) {
     console.error('Unexpected error in benchmark API:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
-}
+})
 
 // =============================================
 // OPTIONS Handler (CORS)

@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@/lib/supabase/server"
-import { withAuth } from "@/lib/auth/middleware"
+import { withClinicAuth } from "@/lib/auth/middleware"
 
-export const GET = withAuth(async (request: Request, user) => {
+export const GET = withClinicAuth(async (request: NextRequest, user: any) => {
   try {
     const supabase = await createServerClient()
     const { searchParams } = new URL(request.url)
@@ -29,7 +29,7 @@ export const GET = withAuth(async (request: Request, user) => {
   }
 });
 
-export const POST = withAuth(async (request: Request, user) => {
+export const POST = withClinicAuth(async (request: NextRequest, user: any) => {
   try {
     const supabase = await createServerClient()
     const body = await request.json()
@@ -71,7 +71,7 @@ export const POST = withAuth(async (request: Request, user) => {
   }
 });
 
-export const PATCH = withAuth(async (request: Request, user: any) => {
+export const PATCH = withClinicAuth(async (request: NextRequest, user: any) => {
   try {
     const supabase = await createServerClient()
     const body = await request.json()

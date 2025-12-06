@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getCurrentUser } from '@/lib/auth';
+import { withAdminAuth } from '@/lib/auth/middleware';
 
 // In-memory rate limit store (use Redis in production)
 interface RateLimitEntry {
@@ -64,25 +64,19 @@ setInterval(() => {
   }
 }, 5 * 60 * 1000);
 
-export async function POST(req: NextRequest) {
+async function handler(req: NextRequest, user: any) {
   try {
-    // Check admin auth
-    const user = await getCurrentUser();
-    if (user?.role !== 'admin') {
-      return NextResponse.json({ error: 'Unauthorized: Admin access required' }, { status: 403 });
-    }
-
     // Check rate limit
     const rateLimit = checkRateLimit(user.id);
     if (!rateLimit.allowed) {
       const resetIn = Math.ceil((rateLimit.resetAt - Date.now()) / 1000);
       return NextResponse.json(
-        { 
+        {
           error: 'Rate limit exceeded',
           message: `Too many requests. Please try again in ${resetIn} seconds.`,
           resetAt: rateLimit.resetAt
         },
-        { 
+        {
           status: 429,
           headers: {
             'X-RateLimit-Limit': RATE_LIMIT_MAX_REQUESTS.toString(),
@@ -137,3 +131,5 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: (error as Error).message }, { status: 500 });
   }
 }
+
+export const POST = withAdminAuth(handler);

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { withClinicAuth } from '@/lib/auth/middleware';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -15,7 +16,7 @@ const supabase = createClient(
  * - service_id (optional): Filter by service
  * - is_available (optional): Filter by availability
  */
-export async function GET(request: NextRequest) {
+export const GET = withClinicAuth(async (request: NextRequest) => {
   try {
     const { searchParams } = new URL(request.url);
     const branch_id = searchParams.get('branch_id');
@@ -54,7 +55,7 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+})
 
 /**
  * POST /api/branches/services
@@ -68,7 +69,7 @@ export async function GET(request: NextRequest) {
  * - daily_capacity (optional): Daily capacity
  * - available_days (optional): Array of available days
  */
-export async function POST(request: NextRequest) {
+export const POST = withClinicAuth(async (request: NextRequest) => {
   try {
     const body = await request.json();
     const {
@@ -127,4 +128,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+})

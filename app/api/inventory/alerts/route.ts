@@ -1,8 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
+import { withClinicAuth } from "@/lib/auth/middleware"
 
 // GET /api/inventory/alerts - List active stock alerts
-export async function GET(request: NextRequest) {
+export const GET = withClinicAuth(async (request: NextRequest) => {
   try {
     const { searchParams } = new URL(request.url)
     const alert_type = searchParams.get("alert_type")
@@ -63,7 +64,7 @@ export async function GET(request: NextRequest) {
       { status: 500 },
     )
   }
-}
+})
 
 // PATCH /api/inventory/alerts/[id] - Resolve alert (future implementation)
 // This would be in a separate [id]/route.ts file

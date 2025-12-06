@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { sendEmail } from '@/lib/notifications/email';
+import { withClinicAuth } from '@/lib/auth/middleware';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -16,7 +17,7 @@ interface EmailRequest {
   text?: string;
 }
 
-export async function POST(request: NextRequest) {
+export const POST = withClinicAuth(async (request: NextRequest) => {
   try {
     const body: EmailRequest = await request.json();
     
@@ -64,4 +65,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+})

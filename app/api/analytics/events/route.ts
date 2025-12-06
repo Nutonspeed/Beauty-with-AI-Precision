@@ -7,6 +7,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
+import { withPublicAccess, withAdminAuth } from '@/lib/auth/middleware'
 
 interface UsageEvent {
   event: string
@@ -18,7 +19,7 @@ interface UsageEvent {
   sessionId?: string
 }
 
-export async function POST(request: NextRequest) {
+async function postHandler(request: NextRequest) {
   try {
     const events: UsageEvent[] = await request.json()
 
@@ -116,51 +117,25 @@ export async function POST(request: NextRequest) {
 /**
  * GET - Retrieve usage events (admin only)
  */
-export async function GET(request: NextRequest) {
+async function getHandler(request: NextRequest, user: any) {
   try {
-    // Create Supabase client
-    const cookieStore = await cookies()
+    // Create Supabase client with service role for admin access
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
       {
         cookies: {
-          getAll: () => cookieStore.getAll(),
-          setAll: (cookies) => {
-            cookies.forEach((cookie) => cookieStore.set(cookie))
-          },
+          getAll: () => [],
+          setAll: () => {},
         },
       }
     )
 
-    // Check authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
-    }
-
-    // Check user role
-    const { data: profile } = await supabase
-      .from('users')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-
-    if (!profile || !['super_admin', 'clinic_admin'].includes(profile.role)) {
-      return NextResponse.json(
-        { error: 'Forbidden' },
-        { status: 403 }
-      )
-    }
-
     // Parse query parameters
     const searchParams = request.nextUrl.searchParams
-    const limit = parseInt(searchParams.get('limit') || '100', 10)
-    const category = searchParams.get('category')
-    const eventName = searchParams.get('event')
+    const limit = Math.min(parseInt(searchParams.get('limit') || '100'), 1000)
+    const offset = parseInt(searchParams.get('offset') || '0')
+    const eventType = searchParams.get('eventType')
     const userId = searchParams.get('userId')
     const startDate = searchParams.get('startDate')
     const endDate = searchParams.get('endDate')
@@ -170,14 +145,10 @@ export async function GET(request: NextRequest) {
       .from('analytics_events')
       .select('*')
       .order('timestamp', { ascending: false })
-      .limit(limit)
+      .range(offset, offset + limit - 1)
 
-    if (category) {
-      query = query.eq('properties->>category', category)
-    }
-
-    if (eventName) {
-      query = query.eq('event_type', eventName)
+    if (eventType) {
+      query = query.eq('event_type', eventType)
     }
 
     if (userId) {
@@ -192,47 +163,32 @@ export async function GET(request: NextRequest) {
       query = query.lte('timestamp', endDate)
     }
 
-    const { data: events, error: queryError } = await query
+    const { data: events, error, count } = await query
 
-    if (queryError) {
-      console.error('Failed to fetch usage events:', queryError)
+    if (error) {
+      console.error('Failed to retrieve usage events:', error)
       return NextResponse.json(
-        { error: 'Failed to fetch events' },
+        { error: 'Failed to retrieve events' },
         { status: 500 }
       )
     }
 
-    // Calculate statistics
-    const stats = {
-      total: events?.length || 0,
-      byCategory: {} as Record<string, number>,
-      byEvent: {} as Record<string, number>,
-      uniqueUsers: new Set(events?.map(e => e.user_id).filter(Boolean)).size,
-      dateRange: {
-        start: events?.[events.length - 1]?.timestamp,
-        end: events?.[0]?.timestamp,
-      },
-    }
-
-    if (events) {
-      events.forEach(event => {
-        const category = event.properties?.category || 'unknown'
-        stats.byCategory[category] = (stats.byCategory[category] || 0) + 1
-        stats.byEvent[event.event_type] = (stats.byEvent[event.event_type] || 0) + 1
-      })
-    }
-
     return NextResponse.json({
       success: true,
-      events,
-      stats,
+      events: events || [],
+      total: count || 0,
+      limit,
+      offset,
     })
 
   } catch (error) {
-    console.error('Usage events GET error:', error)
+    console.error('Usage events GET API error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
     )
   }
 }
+
+export const POST = withPublicAccess(postHandler);
+export const GET = withAdminAuth(getHandler);

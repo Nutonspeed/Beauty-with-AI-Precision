@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
+import { withClinicAuth } from "@/lib/auth/middleware"
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -13,7 +14,7 @@ const supabaseAdmin = createClient(
 )
 
 // GET /api/appointments/availability/doctors - Get doctor availability
-export async function GET(request: NextRequest) {
+export const GET = withClinicAuth(async (request: NextRequest) => {
   try {
     const { searchParams } = new URL(request.url)
     const clinicId = searchParams.get('clinic_id')
@@ -55,10 +56,10 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     )
   }
-}
+})
 
 // POST /api/appointments/availability/doctors - Create doctor availability
-export async function POST(request: NextRequest) {
+export const POST = withClinicAuth(async (request: NextRequest) => {
   try {
     const body = await request.json()
 
@@ -120,4 +121,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     )
   }
-}
+})

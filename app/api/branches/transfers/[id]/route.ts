@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { withClinicAuth } from '@/lib/auth/middleware';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -10,12 +11,9 @@ const supabase = createClient(
  * GET /api/branches/transfers/[id]
  * Get transfer details
  */
-export async function GET(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export const GET = withClinicAuth(async (req: NextRequest, user: any) => {
   try {
-    const params = await context.params;
+    const id = req.nextUrl.pathname.split('/').pop() || '';
     const { data, error } = await supabase
       .from('branch_transfers')
       .select(`
@@ -31,7 +29,7 @@ export async function GET(
           product:inventory_products(id, product_code, product_name, unit, cost_price)
         )
       `)
-      .eq('id', params.id)
+      .eq('id', id)
       .single();
 
     if (error) throw error;
@@ -48,7 +46,7 @@ export async function GET(
       { status: 500 }
     );
   }
-}
+})
 
 /**
  * PATCH /api/branches/transfers/[id]
@@ -59,13 +57,10 @@ export async function GET(
  * - user_id (required): User performing action
  * - Additional fields based on action
  */
-export async function PATCH(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export const PATCH = withClinicAuth(async (req: NextRequest, user: any) => {
   try {
-    const params = await context.params;
-    const body = await request.json();
+    const id = req.nextUrl.pathname.split('/').pop() || '';
+    const body = await req.json();
     const { action, user_id } = body;
 
     if (!action || !user_id) {
@@ -79,7 +74,7 @@ export async function PATCH(
     const { data: transfer, error: fetchError } = await supabase
       .from('branch_transfers')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .single();
 
     if (fetchError) throw fetchError;
@@ -192,7 +187,7 @@ export async function PATCH(
     const { data, error } = await supabase
       .from('branch_transfers')
       .update(updateData)
-      .eq('id', params.id)
+      .eq('id', id)
       .select()
       .single();
 
@@ -206,4 +201,4 @@ export async function PATCH(
       { status: 500 }
     );
   }
-}
+})

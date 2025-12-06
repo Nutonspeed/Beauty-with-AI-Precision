@@ -34,7 +34,7 @@
     "type-check": "tsc --noEmit",
     "schema:breakdown": "node scripts/schema-breakdown.mjs",
     "schema:verify": "node scripts/verify-postgres.mjs",
-    "schema:assert": "node scripts/schema-assert.mjs --tables 78 --views 2",
+    "schema:assert": "node scripts/schema-assert.mjs --tables 94 --views 2",
     "build:ci": "pnpm lint && pnpm type-check && pnpm build && pnpm schema:assert",
     "users:first": "tsx scripts/print-first-user.ts",
     "verify": "tsx scripts/verify-deployment.ts",

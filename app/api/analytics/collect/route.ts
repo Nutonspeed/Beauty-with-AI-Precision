@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { promises as fs } from 'node:fs'
 import path from 'path'
 import { checkRateLimit, getClientIp } from '@/lib/rate-limit'
+import { withPublicAccess } from '@/lib/auth/middleware'
 
 export const runtime = 'nodejs'
 
@@ -23,7 +24,7 @@ async function ensureDataFile() {
   try { await fs.access(FILE_PATH) } catch { await fs.writeFile(FILE_PATH, '') }
 }
 
-export async function POST(req: NextRequest) {
+async function postHandler(req: NextRequest) {
   // Rate limit: 100 requests per minute per IP
   const clientIp = getClientIp(req.headers);
   const rateLimit = checkRateLimit(clientIp, {
@@ -33,8 +34,8 @@ export async function POST(req: NextRequest) {
 
   if (!rateLimit.success) {
     return NextResponse.json(
-      { 
-        ok: false, 
+      {
+        ok: false,
         error: 'Too many requests. Please try again later.',
       },
       {
@@ -76,7 +77,7 @@ export async function POST(req: NextRequest) {
 }
 
 // Simple aggregation for CTA experiment (debug/local dashboard use)
-export async function GET() {
+async function getHandler() {
   try {
     await ensureDataFile()
     const data = await fs.readFile(FILE_PATH, 'utf8')
@@ -131,3 +132,6 @@ export async function GET() {
     return NextResponse.json({ ok: false, error: (err as Error).message }, { status: 500 })
   }
 }
+
+export const POST = withPublicAccess(postHandler);
+export const GET = withPublicAccess(getHandler);

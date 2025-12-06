@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
+import { withClinicAuth } from "@/lib/auth/middleware"
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -12,8 +13,7 @@ const supabaseAdmin = createClient(
   }
 )
 
-// GET /api/appointments/reminders - Get pending reminders to send
-export async function GET(request: NextRequest) {
+export const GET = withClinicAuth(async (request: NextRequest) => {
   try {
     const { searchParams } = new URL(request.url)
     const status = searchParams.get('status') || 'pending'
@@ -45,22 +45,18 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
-    return NextResponse.json({
-      reminders: data || [],
-      total: data?.length || 0
-    })
-
+    return NextResponse.json(data);
   } catch (error) {
-    console.error('[appointments/reminders] Error:', error)
+    console.error('Error fetching appointment reminders:', error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Unknown error' },
+      { error: 'Failed to fetch appointment reminders' },
       { status: 500 }
-    )
+    );
   }
-}
+});
 
 // POST /api/appointments/reminders/send - Mark reminders as sent
-export async function POST(request: NextRequest) {
+export const POST = withClinicAuth(async (request: NextRequest) => {
   try {
     const body = await request.json()
     const { reminder_ids, status, failure_reason } = body
@@ -107,4 +103,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     )
   }
-}
+})

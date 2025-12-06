@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
+import { withPublicAccess, withAdminAuth } from '@/lib/auth/middleware';
 
 interface PerformanceMetric {
   name: string;
@@ -32,7 +33,7 @@ interface PerformanceData {
 /**
  * POST - Log performance metrics
  */
-export async function POST(request: NextRequest) {
+export const POST = withPublicAccess(async (request: NextRequest) => {
   try {
     const data: PerformanceData = await request.json();
 
@@ -147,12 +148,12 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+})
 
 /**
  * GET - Retrieve performance metrics (admin only)
  */
-export async function GET(request: NextRequest) {
+export const GET = withAdminAuth(async (request: NextRequest, user) => {
   try {
     // Create Supabase client with cookies
     const cookieStore = await cookies();
@@ -307,4 +308,4 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+})

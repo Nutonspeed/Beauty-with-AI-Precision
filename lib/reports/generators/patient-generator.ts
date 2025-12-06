@@ -247,7 +247,7 @@ export class PatientReportGenerator implements ReportGenerator {
   
   private async calculateTreatmentSuccessRate(treatments: any[]) {
     if (treatments.length === 0) return 0
-    const supabase = await createServerClient()
+    const _supabase = await createServerClient()
     const successful = treatments.filter(t => t.status === 'completed' && t.success).length
     return Math.round((successful / treatments.length) * 100)
   }
@@ -280,7 +280,7 @@ export class PatientReportGenerator implements ReportGenerator {
       .map(([concern, count]) => ({ concern, count }))
   }
   
-  private calculateImprovementRate(analyses: any[]) {
+  private calculateImprovementRate(_analyses: any[]) {
     // This would compare initial vs follow-up analysis scores
     // For now, return a placeholder
     return 75

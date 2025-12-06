@@ -1,7 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@/lib/supabase/server"
+import { withClinicAuth } from "@/lib/auth/middleware"
 
-export async function GET(request: NextRequest) {
+export const GET = withClinicAuth(async (request: NextRequest) => {
   try {
     const supabase = await createServerClient()
     const {
@@ -38,12 +39,12 @@ export async function GET(request: NextRequest) {
       throw error
     }
 
-    return NextResponse.json({ success: true, bookings })
+    return NextResponse.json({ success: true, bookings });
   } catch (error) {
-    console.error("[v0] Error fetching bookings:", error)
+    console.error("Error fetching bookings:", error);
     return NextResponse.json(
       { error: "Failed to fetch bookings", details: error instanceof Error ? error.message : "Unknown error" },
-      { status: 500 },
-    )
+      { status: 500 }
+    );
   }
-}
+});

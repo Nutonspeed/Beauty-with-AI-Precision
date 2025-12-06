@@ -8,11 +8,12 @@
 
 import { NextRequest, NextResponse } from "next/server"
 import { sendWeeklyProgressDigest, type WeeklyDigestData } from "@/lib/notifications/email"
+import { withClinicAuth } from "@/lib/auth/middleware"
 
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
 
-export async function POST(request: NextRequest) {
+export const POST = withClinicAuth(async (request: NextRequest) => {
   try {
     const body: { email: string; data: WeeklyDigestData } = await request.json()
 
@@ -60,6 +61,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
-    )
+    );
   }
-}
+})

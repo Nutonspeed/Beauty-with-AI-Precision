@@ -41,6 +41,9 @@ try {
 } catch {}
 
 const client = new pg.Client({ connectionString, ssl: { rejectUnauthorized: false } })
+client.on("error", (err) => {
+  console.warn("schema-assert client error (ignored):", err?.message || err)
+})
 
 try {
   await client.connect()

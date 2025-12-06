@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { withClinicAuth } from '@/lib/auth/middleware';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -10,12 +11,9 @@ const supabase = createClient(
  * GET /api/branches/[id]
  * Get a specific branch with details
  */
-export async function GET(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export const GET = withClinicAuth(async (req: NextRequest, user: any) => {
   try {
-    const params = await context.params;
+    const id = req.nextUrl.pathname.split('/').pop() || '';
     const { data, error } = await supabase
       .from('branches')
       .select(`
@@ -29,7 +27,7 @@ export async function GET(
           user:users(id, email, full_name, avatar_url)
         )
       `)
-      .eq('id', params.id)
+      .eq('id', id)
       .single();
 
     if (error) throw error;
@@ -40,7 +38,7 @@ export async function GET(
 
     // Get inventory summary
     const { data: inventorySummary } = await supabase.rpc('get_branch_inventory_summary', {
-      p_branch_id: params.id,
+      p_branch_id: id,
     });
 
     return NextResponse.json({
@@ -54,19 +52,16 @@ export async function GET(
       { status: 500 }
     );
   }
-}
+});
 
 /**
  * PATCH /api/branches/[id]
  * Update a branch
  */
-export async function PATCH(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export const PATCH = withClinicAuth(async (req: NextRequest, user: any) => {
   try {
-    const params = await context.params;
-    const body = await request.json();
+    const id = req.nextUrl.pathname.split('/').pop() || '';
+    const body = await req.json();
     const updateData: Record<string, unknown> = {};
 
     // List of allowed fields to update
@@ -108,7 +103,7 @@ export async function PATCH(
     const { data, error } = await supabase
       .from('branches')
       .update(updateData)
-      .eq('id', params.id)
+      .eq('id', id)
       .select()
       .single();
 
@@ -122,36 +117,26 @@ export async function PATCH(
       { status: 500 }
     );
   }
-}
+});
 
 /**
  * DELETE /api/branches/[id]
  * Delete a branch (soft delete by setting is_active to false)
  */
-export async function DELETE(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
-  try {
-    const params = await context.params;
-    const { data, error } = await supabase
-      .from('branches')
-      .update({
-        is_active: false,
-        closing_date: new Date().toISOString(),
-      })
-      .eq('id', params.id)
-      .select()
-      .single();
+export const DELETE = withClinicAuth(async (req, user) => {
+  const id = req.nextUrl.pathname.split('/').pop() || '';
 
-    if (error) throw error;
+  const { data, error } = await supabase
+    .from('branches')
+    .update({
+      is_active: false,
+      closing_date: new Date().toISOString(),
+    })
+    .eq('id', id)
+    .select()
+    .single();
 
-    return NextResponse.json({ success: true, data });
-  } catch (error) {
-    console.error('Error deleting branch:', error);
-    return NextResponse.json(
-      { error: 'Failed to delete branch' },
-      { status: 500 }
-    );
-  }
-}
+  if (error) throw error;
+
+  return NextResponse.json({ success: true, data });
+});

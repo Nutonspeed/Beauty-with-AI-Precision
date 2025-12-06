@@ -8,11 +8,12 @@
 
 import { NextRequest, NextResponse } from "next/server"
 import { sendReEngagementEmail, type ReEngagementData } from "@/lib/notifications/email"
+import { withClinicAuth } from "@/lib/auth/middleware"
 
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
 
-export async function POST(request: NextRequest) {
+export const POST = withClinicAuth(async (request: NextRequest) => {
   try {
     const body: { email: string; data: ReEngagementData } = await request.json()
 
@@ -62,4 +63,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     )
   }
-}
+})
