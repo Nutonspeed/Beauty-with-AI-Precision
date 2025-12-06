@@ -197,18 +197,18 @@ export default function HomePage() {
 
               {/* Main headline with gradient */}
               <h1 className="mb-6 text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150">
-                <span className="text-white">เปลี่ยนการวิเคราะห์ผิว</span>
+                <span className="text-white">จากการสแกนผิวหน้า</span>
                 <br />
                 <span className="bg-gradient-to-r from-primary via-cyan-400 to-primary bg-clip-text text-transparent">
-                  ให้เป็นรายได้จริง
+                  ถึงประสบการณ์คลินิกอัจฉริยะครบวงจร
                 </span>
               </h1>
 
-              {/* Subtitle - cleaner */}
+              {/* Subtitle - clearer platform positioning */}
               <p className="mb-10 text-lg md:text-xl text-white/60 max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-6 duration-700 delay-300">
-                ระบบ AI วิเคราะห์ผิวระดับการแพทย์ ที่เชื่อมต่อกับ workflow การขายของคุณ
+                แพลตฟอร์ม AI สำหรับคลินิกความงาม ที่รวมการวิเคราะห์ผิว 3D, AR จำลองผลลัพธ์ และเครื่องมือขายแบบเรียลไทม์
                 <br className="hidden md:block" />
-                เพิ่ม conversion และความไว้วางใจจากลูกค้า
+                เชื่อมต่อทีมแพทย์ เซลส์ และลูกค้า ให้อยู่ใน workflow เดียวกัน เพิ่ม conversion และความไว้วางใจในคลินิกของคุณ
               </p>
 
               {/* CTAs */}

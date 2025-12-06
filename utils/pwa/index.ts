@@ -318,7 +318,7 @@ export class NetworkUtils {
         cache: 'no-cache'
       })
       return response.ok
-    } catch (error) {
+    } catch {
       return false
     }
   }

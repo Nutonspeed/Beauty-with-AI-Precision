@@ -55,7 +55,7 @@ export class AuthBypassTester {
       const weakPasswords = ['password', '123456', 'admin', 'qwerty', 'letmein']
       let vulnerabilitiesFound = 0
 
-      for (const password of weakPasswords) {
+      for (const _password of weakPasswords) {
         // Simulate testing
         // const loginResult = await testLogin('test@example.com', password)
         // if (loginResult.success) vulnerabilitiesFound++
