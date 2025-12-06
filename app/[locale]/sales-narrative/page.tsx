@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
@@ -9,7 +9,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   MessageSquare,
@@ -20,12 +19,9 @@ import {
   TrendingUp,
   Sparkles,
   Copy,
-  Play,
   Save,
   FileText,
-  ArrowRight,
-  CheckCircle,
-  Lightbulb
+  CheckCircle
 } from "lucide-react"
 import { useLanguage } from "@/lib/i18n/language-context"
 

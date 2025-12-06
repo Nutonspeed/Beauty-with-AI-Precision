@@ -2,7 +2,7 @@
 
 import { useState, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Camera, Sparkles, TrendingUp, Users, Clock, CheckCircle2, UserPlus, Zap, Star, Award, ArrowRight } from 'lucide-react'
+import { Camera, Sparkles, TrendingUp, Users, CheckCircle2, UserPlus, Zap, Award, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'

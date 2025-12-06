@@ -20,7 +20,6 @@ import { useLanguage } from "@/lib/i18n/language-context"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { ClinicIQLogo } from "@/components/brand/logo"
-import { BRAND } from "@/lib/brand"
 import { useLocalizePath } from "@/lib/i18n/locale-link"
 
 // Safe hook wrapper for server-side rendering
@@ -116,15 +115,13 @@ export function Header() {
       className="sticky top-0 z-50 w-full border-b border-border bg-background/98 supports-[backdrop-filter]:bg-background/90 backdrop-blur-md mix-blend-normal"
     >
       <div className="container flex h-14 sm:h-16 items-center justify-between gap-2 px-4">
-        {/* Logo */}
-        <Link href={lp("/")} className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-shrink" aria-label="กลับสู่หน้าแรก">
+        {/* Logo - แสดงเฉพาะโลโก้หลัก ให้ดูสะอาดขึ้น */}
+        <Link
+          href={lp("/")}
+          className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-shrink"
+          aria-label="กลับสู่หน้าแรก"
+        >
           <ClinicIQLogo className="flex-shrink-0" />
-          <div className="hidden md:flex flex-col">
-            <span className="text-base font-bold leading-tight">{BRAND.name}</span>
-            <span className="text-[10px] text-muted-foreground leading-tight hidden lg:inline">
-              {language === "th" ? BRAND.tagline.th : BRAND.tagline.en}
-            </span>
-          </div>
         </Link>
 
         {/* Desktop Navigation */}
