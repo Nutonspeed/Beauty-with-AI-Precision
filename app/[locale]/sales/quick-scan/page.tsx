@@ -18,6 +18,11 @@ import LeadIntegration from '@/components/sales/lead-integration'
 import ShareResults from '@/components/sales/share-results'
 import { useToast } from '@/hooks/use-toast'
 
+// Build-time guard: avoid prerendering this interactive sales page to reduce
+// Vercel build duration (force runtime rendering instead of SSG/ISR).
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 interface ScanResult {
   id: string
   skinAge: number
