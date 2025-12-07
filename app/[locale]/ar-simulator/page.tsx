@@ -1,5 +1,9 @@
 "use client"
 
+// Build-time guard: render dynamically to avoid heavy prerendering on Vercel
+export const dynamic = "force-dynamic"
+export const revalidate = 0
+
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { TreatmentSimulator } from "@/components/ar/treatment-simulator"

@@ -1,5 +1,9 @@
 "use client"
 
+// Build-time guard: render dynamically to avoid heavy prerendering on Vercel
+export const dynamic = "force-dynamic"
+export const revalidate = 0
+
 import { AIErrorBoundary } from "@/components/error-boundary"
 import { AnalysisTutorialWrapper } from "@/components/tutorial/analysis-tutorial-wrapper"
 import { Footer } from "@/components/footer"

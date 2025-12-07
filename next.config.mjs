@@ -1,5 +1,4 @@
 import createNextIntlPlugin from 'next-intl/plugin';
-import { withSentryConfig } from '@sentry/nextjs';
 import withBundleAnalyzer from '@next/bundle-analyzer';
 
 const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
@@ -193,14 +192,4 @@ const bundleAnalyzer = withBundleAnalyzer({
   openAnalyzer: true,
 })
 
-export default withSentryConfig(bundleAnalyzer(withNextIntl(nextConfig)), {
-  silent: true,
-  org: process.env.SENTRY_ORG,
-  project: process.env.SENTRY_PROJECT,
-}, {
-  widenClientFileUpload: true,
-  transpileClientSDK: true,
-  tunnelRoute: '/monitoring',
-  hideSourceMaps: true,
-  disableLogger: true,
-});
+export default bundleAnalyzer(withNextIntl(nextConfig))

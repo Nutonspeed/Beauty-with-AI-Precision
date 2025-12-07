@@ -1,5 +1,9 @@
 'use client'
 
+// Build-time guard: render dynamically to avoid heavy prerendering on Vercel
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
