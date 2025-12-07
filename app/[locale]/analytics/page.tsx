@@ -11,6 +11,11 @@ import { redirect } from 'next/navigation';
 import CustomerDashboard from '@/components/analytics/customer-dashboard';
 import { Skeleton } from '@/components/ui/skeleton';
 
+// Build-time guard: render this data-heavy dashboard at runtime to avoid
+// prerendering per-locale during Vercel build.
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 // =============================================
 // Loading Component
 // =============================================
