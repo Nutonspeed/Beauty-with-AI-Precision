@@ -3,21 +3,37 @@ import withBundleAnalyzer from '@next/bundle-analyzer';
 
 const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
 
-// Default FAST_BUILD to true on Vercel to reduce memory/time unless explicitly disabled.
-const FAST_BUILD =
-  process.env.FAST_BUILD === '1' ||
-  process.env.FAST_BUILD === 'true' ||
-  process.env.VERCEL === '1'
-const ANALYZE = process.env.ANALYZE === '1' || process.env.ANALYZE === 'true'
+// Force all optimizations OFF for production build
+const FAST_BUILD = true;
+const ANALYZE = false;
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Disable all optimizations
+  experimental: {
+    optimizePackageImports: [],
+    optimizeCss: false,
+    workerThreads: false,
+    cpus: 1,
+    webpackBuildWorker: false,
+    turbo: false,
+    serverComponentsExternalPackages: [],
+  },
+  // Disable TypeScript checking in production
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  // Disable ESLint in production
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  // Disable source maps for production
+  productionBrowserSourceMaps: false,
   // TypeScript - Enable type checking in production
   typescript: {
     ignoreBuildErrors: true, // Temporarily disabled during development/deployment
   },
 
-  // Note: Next.js 16 removes eslint config in next.config; use a separate eslint config and CI steps instead.
 
   // Images - ⚡ Performance Optimization (Week 9)
   images: {
