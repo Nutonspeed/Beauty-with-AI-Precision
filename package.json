@@ -70,7 +70,7 @@
     "rate-limit:monitor": "node scripts/rate-limit/monitor-rate-limits.js",
     "rate-limit:setup": "node scripts/setup-rate-limiting.js",
     "security:scan": "node scripts/security/run-security-scan.js",
-    "security:audit": "npm audit",
+    "security:audit": "pnpm audit",
     "security:check": "node scripts/setup-security-audit.js",
     "security:monitor": "node scripts/security/monitor-security.js",
     "env:setup": "./scripts/environment.sh setup",
@@ -273,7 +273,7 @@
     "lru-cache": "^10.0.1",
     "lucide-react": "^0.454.0",
     "maath": "^0.10.8",
-    "next": "16.0.1",
+    "next": "16.0.7",
     "next-auth": "^4.24.13",
     "next-intl": "^4.4.0",
     "next-pwa": "^5.6.0",
@@ -328,7 +328,7 @@
     "zod": "3.25.76"
   },
   "devDependencies": {
-    "@next/bundle-analyzer": "^16.0.3",
+    "@next/bundle-analyzer": "^16.0.7",
     "@playwright/test": "^1.56.1",
     "@rollup/rollup-win32-x64-msvc": "^4.52.5",
     "@testing-library/jest-dom": "^6.9.1",
