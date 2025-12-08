@@ -3,7 +3,11 @@ import withBundleAnalyzer from '@next/bundle-analyzer';
 
 const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
 
-const FAST_BUILD = process.env.FAST_BUILD === '1' || process.env.FAST_BUILD === 'true'
+// Default FAST_BUILD to true on Vercel to reduce memory/time unless explicitly disabled.
+const FAST_BUILD =
+  process.env.FAST_BUILD === '1' ||
+  process.env.FAST_BUILD === 'true' ||
+  process.env.VERCEL === '1'
 const ANALYZE = process.env.ANALYZE === '1' || process.env.ANALYZE === 'true'
 
 /** @type {import('next').NextConfig} */
