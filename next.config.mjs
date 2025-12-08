@@ -1,38 +1,32 @@
-import createNextIntlPlugin from 'next-intl/plugin';
-import withBundleAnalyzer from '@next/bundle-analyzer';
+import createNextIntlPlugin from 'next-intl/plugin'
+import withBundleAnalyzer from '@next/bundle-analyzer'
 
-const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
+const withNextIntl = createNextIntlPlugin('./i18n/request.ts')
 
-// Force all optimizations OFF for production build
-const FAST_BUILD = true;
-const ANALYZE = false;
+const isVercel = process.env.VERCEL === '1'
+const envFast =
+  process.env.FAST_BUILD === '1' ||
+  process.env.FAST_BUILD === 'true' ||
+  process.env.FAST_BUILD === 'yes'
+const FAST_BUILD = envFast || isVercel
+const ANALYZE = process.env.ANALYZE === '1' || process.env.ANALYZE === 'true'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Disable all optimizations
-  experimental: {
-    optimizePackageImports: [],
-    optimizeCss: false,
-    workerThreads: false,
-    cpus: 1,
-    webpackBuildWorker: false,
-    turbo: false,
-    serverComponentsExternalPackages: [],
-  },
-  // Disable TypeScript checking in production
+  output: isVercel ? 'standalone' : undefined,
+  distDir: '.next',
+  compress: !FAST_BUILD,
+  poweredByHeader: false,
+
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: FAST_BUILD,
   },
-  // Disable ESLint in production
+
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: FAST_BUILD,
   },
-  // Disable source maps for production
-  productionBrowserSourceMaps: false,
-  // TypeScript - Enable type checking in production
-  typescript: {
-    ignoreBuildErrors: true, // Temporarily disabled during development/deployment
-  },
+
+  productionBrowserSourceMaps: !FAST_BUILD,
 
 
   // Images - ⚡ Performance Optimization (Week 9)
@@ -69,11 +63,6 @@ const nextConfig = {
     ],
   },
 
-  // Performance optimizations
-  compress: true,
-  poweredByHeader: false,
-  
-  // Tree shaking and modular imports (Production only)
   ...(process.env.NODE_ENV === 'production' && !FAST_BUILD && {
     modularizeImports: {
       '@radix-ui/react-icons': {
@@ -85,7 +74,6 @@ const nextConfig = {
     },
   }),
   
-  // Security headers
   async headers() {
     return [
       {
@@ -121,7 +109,7 @@ const nextConfig = {
     ]
   },
 
-  ...(process.env.NODE_ENV === 'production' && {
+  ...(process.env.NODE_ENV === 'production' && !FAST_BUILD && {
     compiler: {
       removeConsole: {
         exclude: ['error', 'warn'],
@@ -129,9 +117,6 @@ const nextConfig = {
     },
   }),
 
-  // Turbopack configuration
-  // Note: Turbopack has known issues with lucide-react module resolution in Next.js 16.0.1
-  // Use Webpack build for now until Next.js 16.1+ fixes this issue
   turbopack: {
     resolveAlias: {
       '@': './.',
@@ -139,8 +124,15 @@ const nextConfig = {
   },
 
   webpack: (config, { dev, isServer }) => {
+    config.ignoreWarnings = [
+      ...(config.ignoreWarnings || []),
+      {
+        module: /@opentelemetry[\\/]/,
+        message: /Critical dependency: the request of a dependency is an expression/,
+      },
+    ]
+
     if (!isServer) {
-      // Client-side: exclude server-only modules
       config.resolve.fallback = {
         ...config.resolve.fallback,
         fs: false,
@@ -152,7 +144,6 @@ const nextConfig = {
       }
     }
 
-    // Optimize bundle size in production (skip for FAST_BUILD)
     if (!dev && !isServer && !FAST_BUILD) {
       config.optimization = {
         ...config.optimization,
@@ -174,36 +165,25 @@ const nextConfig = {
     return config
   },
 
-  serverExternalPackages: [
-    '@prisma/client',
-    '@tensorflow/tfjs-node',
-    '@google-cloud/vision',
-    'sharp',
-  ],
-
-  // Experimental features
   experimental: {
-    // Disable workerThreads to avoid DataCloneError in config serialization
     workerThreads: false,
-    ...(FAST_BUILD ? {} : { cpus: 1 }),
-    ...(process.env.NODE_ENV === 'production' && !FAST_BUILD && {
-      optimizePackageImports: [
-        '@radix-ui/react-icons', 
-        'lucide-react',
-        '@radix-ui/react-dialog',
-        '@radix-ui/react-dropdown-menu',
-        '@radix-ui/react-select',
-        '@radix-ui/react-tabs',
-        '@radix-ui/react-toast',
-      ],
-      optimizeCss: true,
-    }),
+    cpus: FAST_BUILD ? 1 : undefined,
+    optimizePackageImports: FAST_BUILD
+      ? []
+      : [
+          '@radix-ui/react-icons',
+          'lucide-react',
+          '@radix-ui/react-dialog',
+          '@radix-ui/react-dropdown-menu',
+          '@radix-ui/react-select',
+          '@radix-ui/react-tabs',
+          '@radix-ui/react-toast',
+        ],
+    optimizeCss: !FAST_BUILD,
+    webpackBuildWorker: false,
+    turbo: false,
+    serverComponentsExternalPackages: ['@prisma/client', '@tensorflow/tfjs-node', '@google-cloud/vision', 'sharp'],
   },
-
-  // Output configuration for smaller builds
-  // Use 'standalone' only on Vercel to avoid Windows symlink errors locally (EPERM)
-  output:
-    process.env.NODE_ENV === 'production' && process.env.VERCEL ? 'standalone' : undefined,
 }
 
 // Bundle analyzer wrapper
