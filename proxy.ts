@@ -2,9 +2,9 @@ import createMiddleware from 'next-intl/middleware';
 import { locales, defaultLocale } from './i18n/request';
 import { NextRequest, NextResponse } from 'next/server';
 import { hasPermission, getRedirectUrl, type UserRole } from './lib/auth/role-config';
-import { createClient, createServiceClient } from '@/lib/supabase/server';
+import { createClient, createServiceClient } from './lib/supabase/server';
 import rateLimiter, { RATE_LIMITS, getRateLimitIdentifier, createRateLimitError } from './lib/rate-limit/limiter';
-import { STATIC_ASSETS, DEMO_PATTERNS, PUBLIC_PATHS, REQUIRES_AUTH_PATHS } from '@/lib/proxy/config';
+import { STATIC_ASSETS, DEMO_PATTERNS, PUBLIC_PATHS, REQUIRES_AUTH_PATHS } from './lib/proxy/config';
 
 // Create i18n middleware - DISABLED to avoid conflict
 // const intlMiddleware = createMiddleware({
