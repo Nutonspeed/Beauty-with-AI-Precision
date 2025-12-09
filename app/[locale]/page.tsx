@@ -16,7 +16,6 @@ import { motion } from "framer-motion"
 // Build-time guard: avoid prerendering this large, client-heavy landing page to reduce
 // Vercel build duration (force runtime rendering instead of SSG/ISR).
 export const dynamic = "force-dynamic"
-export const revalidate = 0
 
 
 export default function HomePage() {

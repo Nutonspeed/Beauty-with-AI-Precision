@@ -4,34 +4,71 @@ import { NextRequest, NextResponse } from 'next/server';
 import { hasPermission, getRedirectUrl, type UserRole } from './lib/auth/role-config';
 import { createClient, createServiceClient } from '@/lib/supabase/server';
 import rateLimiter, { RATE_LIMITS, getRateLimitIdentifier, createRateLimitError } from './lib/rate-limit/limiter';
+import { STATIC_ASSETS, DEMO_PATTERNS, PUBLIC_PATHS, REQUIRES_AUTH_PATHS } from '@/lib/proxy/config';
 
-// Create i18n middleware
-const intlMiddleware = createMiddleware({
-  // A list of all locales that are supported
-  locales,
+// Create i18n middleware - DISABLED to avoid conflict
+// const intlMiddleware = createMiddleware({
+//   // A list of all locales that are supported
+//   locales,
 
-  // Used when no locale matches
-  defaultLocale,
+//   // Used when no locale matches
+//   defaultLocale,
 
-  // Automatically redirect root path to default locale
-  localePrefix: 'always',
-  
-  // Redirect strategy: redirect root path to default locale
-  localeDetection: true,
-});
+//   // Automatically redirect root path to default locale
+//   localePrefix: 'always',
+//
+//   // Redirect strategy: redirect root path to default locale
+//   localeDetection: true,
+// });
+
+// Temporary: return NextResponse.next() instead of intlMiddleware
+const intlMiddleware = (request: NextRequest) => NextResponse.next();
+
+// ฟังก์ชันตรวจสอบและส่งคืนภาษาที่ต้องการใช้
+function getPreferredLocale(request: NextRequest): string {
+  // ตรวจสอบจาก cookie ก่อน
+  const cookieLocale = request.cookies.get('NEXT_LOCALE')?.value;
+  if (cookieLocale && locales.includes(cookieLocale as any)) {
+    return cookieLocale;
+  }
+
+  // ใช้ภาษาเริ่มต้น
+  return defaultLocale;
+}
 
 export async function proxy(request: NextRequest) {
-  // First, handle i18n routing
+  const { pathname } = request.nextUrl;
+
+  console.log('[DEBUG] Proxy middleware called with pathname:', pathname);
+
+  // จัดการการ redirect สำหรับ root path
+  if (pathname === '/') {
+    const locale = getPreferredLocale(request);
+    console.log('[DEBUG] Redirecting root to locale:', locale);
+    return NextResponse.redirect(new URL(`/${locale}`, request.url));
+  }
+
+  // ตรวจสอบว่า pathname เริ่มต้นด้วย locale ที่ถูกต้องหรือไม่
+  const pathSegments = pathname.split('/').filter(Boolean);
+  const firstSegment = pathSegments[0];
+
+  if (firstSegment && locales.includes(firstSegment as any)) {
+    // Path เริ่มต้นด้วย locale ที่ถูกต้อง (เช่น /th, /en, /zh)
+    console.log('[DEBUG] Path starts with valid locale:', firstSegment);
+  } else if (firstSegment && !locales.includes(firstSegment as any)) {
+    // Path เริ่มต้นด้วย locale ที่ไม่ถูกต้อง - redirect ไป default locale
+    console.log('[DEBUG] Path starts with invalid locale:', firstSegment, 'redirecting to default');
+    const locale = defaultLocale;
+    return NextResponse.redirect(new URL(`/${locale}${pathname}`, request.url));
+  }
+
+  // เรียกใช้ i18n middleware (ตอนนี้เป็น dummy)
   const intlResponse = intlMiddleware(request);
   
-  // Get the pathname
-  const { pathname } = request.nextUrl;
-  
-  // Skip middleware for static assets
+  // ข้าม middleware สำหรับ static assets
   if (
-    pathname.startsWith('/_next') ||
-    pathname.startsWith('/static') ||
-    pathname.includes('.') // Files with extensions
+    STATIC_ASSETS.some(asset => pathname.startsWith(asset)) ||
+    pathname.includes('.') // ไฟล์ที่มีนามสกุล
   ) {
     return intlResponse;
   }
@@ -40,17 +77,7 @@ export async function proxy(request: NextRequest) {
   // DEMO EXCLUSION (Production Only)
   // ============================================================================
   if (process.env.NODE_ENV === 'production' && process.env.EXCLUDE_DEMOS === 'true') {
-    const demoPatterns = [
-      '/robot-3d', '/robot-showcase', '/advanced-sphere', '/premium-scroll', 
-      '/scroll-demo', '/action-plan-demo', '/ai-chat-demo', '/booking-demo',
-      '/minitap-demo', '/mobile-test', '/test-ai', '/test-ai-huggingface',
-      '/test-ai-performance', '/ar-simulator', '/minitap-clone', '/minitap-clone-v2',
-      '/mobile-payments', '/beauty-ai-demo', '/ultra-modern-landing',
-      '/cinematic-beauty', '/test-sphere-performance', '/sphere-quality-test',
-      '/comparison', '/analytics-demo', '/ai-test'
-    ];
-    
-    const isDemo = demoPatterns.some(pattern => 
+    const isDemo = DEMO_PATTERNS.some(pattern => 
       pathname.includes(pattern) || 
       pathname.split('/').some(segment => segment === pattern.replace('/', ''))
     );
@@ -124,20 +151,11 @@ export async function proxy(request: NextRequest) {
   // ============================================================================
   
   // Skip auth check for public pages
-  if (
-    pathname.includes('/auth/') ||
-    pathname === '/' ||
-    /^\/(th|en|zh)\/?$/.test(pathname) ||
-    pathname.includes('/about') ||
-    pathname.includes('/contact') ||
-    pathname.includes('/pricing') ||
-    pathname.includes('/features') ||
-    pathname.includes('/faq') ||
-    pathname.includes('/privacy') ||
-    pathname.includes('/terms') ||
-    pathname.includes('/pdpa') ||
-    pathname.includes('/analysis')
-  ) {
+  const isPublic = PUBLIC_PATHS.some(path => 
+    typeof path === 'string' ? pathname.includes(path) : path.test(pathname)
+  );
+  
+  if (isPublic) {
     return intlResponse;
   }
 
@@ -185,13 +203,7 @@ export async function proxy(request: NextRequest) {
     } else {
       // ⚠️ No user - redirect to login if trying to access protected routes
       // Check if current path requires authentication
-      const requiresAuth = pathname.includes('/clinic') ||
-                          pathname.includes('/sales') ||
-                          pathname.includes('/admin') ||
-                          pathname.includes('/super-admin') ||
-                          pathname.includes('/dashboard') ||
-                          pathname.includes('/profile') ||
-                          pathname.includes('/settings');
+      const requiresAuth = REQUIRES_AUTH_PATHS.some(path => pathname.includes(path));
       
       if (requiresAuth) {
         console.log('[Proxy] No user, redirecting to login from:', pathname);

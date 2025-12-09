@@ -1,13 +1,11 @@
-const createNextIntlPlugin = require('next-intl/plugin');
-
-// Sentry is now initialized via instrumentation.ts with lazy loading
-const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
+// const createNextIntlPlugin = require('next-intl/plugin');
+// const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Remove static export for API routes compatibility
   // output: 'export',
-  trailingSlash: true,
+  trailingSlash: false,
   images: {
     // unoptimized: true, // Not needed without static export
     remotePatterns: [
@@ -90,4 +88,5 @@ const nextConfig = {
 
 // Enable next-intl for i18n support
 // Sentry is initialized via instrumentation.ts with lazy loading
-module.exports = withNextIntl(nextConfig);
+// module.exports = withNextIntl(nextConfig);
+module.exports = nextConfig;
