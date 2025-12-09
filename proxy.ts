@@ -5,8 +5,43 @@ import { hasPermission, getRedirectUrl, type UserRole } from './lib/auth/role-co
 import { createClient, createServiceClient } from './lib/supabase/server';
 import rateLimiter, { RATE_LIMITS, getRateLimitIdentifier, createRateLimitError } from './lib/rate-limit/limiter';
 
-// Import proxy config using require for Vercel compatibility
-const { STATIC_ASSETS, DEMO_PATTERNS, PUBLIC_PATHS, REQUIRES_AUTH_PATHS } = require('./lib/proxy/config');
+// Inline proxy config to avoid path resolution issues in Vercel build
+const STATIC_ASSETS = ['/_next', '/static'];
+
+const DEMO_PATTERNS = [
+  '/robot-3d', '/robot-showcase', '/advanced-sphere', '/premium-scroll',
+  '/scroll-demo', '/action-plan-demo', '/ai-chat-demo', '/booking-demo',
+  '/minitap-demo', '/mobile-test', '/test-ai', '/test-ai-huggingface',
+  '/test-ai-performance', '/ar-simulator', '/minitap-clone', '/minitap-clone-v2',
+  '/mobile-payments', '/beauty-ai-demo', '/ultra-modern-landing',
+  '/cinematic-beauty', '/test-sphere-performance', '/sphere-quality-test',
+  '/comparison', '/analytics-demo', '/ai-test'
+];
+
+const PUBLIC_PATHS = [
+  '/auth/',
+  '/',
+  /^\/(th|en|zh)\/?$/,
+  '/about',
+  '/contact',
+  '/pricing',
+  '/features',
+  '/faq',
+  '/privacy',
+  '/terms',
+  '/pdpa',
+  '/analysis'
+];
+
+const REQUIRES_AUTH_PATHS = [
+  '/clinic',
+  '/sales',
+  '/admin',
+  '/super-admin',
+  '/dashboard',
+  '/profile',
+  '/settings'
+];
 
 // Create i18n middleware - DISABLED to avoid conflict
 // const intlMiddleware = createMiddleware({
