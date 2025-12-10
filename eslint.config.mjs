@@ -15,6 +15,9 @@ export default [
       '**/playwright-report/**',
       '**/coverage/**',
       'scanning-project/**',
+      '**/.venv/**',
+      '**/venv/**',
+      '**/site-packages/**',
       // Reduce lint noise from static assets and generated JS
       'public/**',
       'types/**',

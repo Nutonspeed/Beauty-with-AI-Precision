@@ -1,4 +1,3 @@
-import { notFound } from 'next/navigation'
 import { locales } from '@/i18n/request'
 
 // Force runtime rendering for the entire locale subtree

@@ -1,36 +1,19 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Geist, Geist_Mono, Noto_Sans_Thai, Kanit } from "next/font/google"
-import { Analytics } from "@vercel/analytics/next"
-import { Toaster } from "sonner"
-import { Providers } from "@/components/providers"
+import { locales } from "@/i18n/request"
+import "./globals.css"
+import { Toaster } from "@/components/ui/sonner"
 import AnnouncementSubscriber from "@/components/realtime/AnnouncementSubscriber"
 import { ConnectionStatusIndicator } from "@/components/realtime/ConnectionStatusIndicator"
 import { OfflineIndicator } from "@/components/offline/offline-indicator"
 import { ErrorBoundaryWrapper } from "@/components/error/error-boundary"
 import { PerformanceInit } from "./performance-init"
-import "./globals.css"
-
 import { ServiceWorkerRegistration } from "@/components/service-worker-registration"
 import { InstallPrompt } from "@/components/pwa/install-prompt"
 import { SessionTracker } from "@/components/session-tracker"
-
-const _geist = Geist({ subsets: ["latin"] })
-const _geistMono = Geist_Mono({ subsets: ["latin"] })
-
-// Thai-friendly typography: Noto Sans Thai for body, Kanit for display headings
-const _notoThai = Noto_Sans_Thai({
-  subsets: ["thai", "latin"],
-  weight: ["400", "500", "600"],
-  display: "swap",
-  variable: "--font-noto-thai",
-})
-const _kanit = Kanit({
-  subsets: ["thai", "latin"],
-  weight: ["600", "700", "800"],
-  display: "swap",
-  variable: "--font-kanit",
-})
+import { Providers } from "@/components/providers"
+import { Analytics } from "@vercel/analytics/react"
+import { Noto_Sans_Thai, Kanit } from "next/font/google"
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'),
@@ -89,6 +72,21 @@ export const metadata: Metadata = {
   keywords: ["cliniciq", "skin analysis", "AI", "aesthetic", "clinic", "treatment", "dermatology"],
 }
 
+// Thai-friendly typography: Noto Sans Thai for body, Kanit for display headings
+const _notoThai = Noto_Sans_Thai({
+  subsets: ["thai", "latin"],
+  weight: ["400", "500", "600"],
+  display: "swap",
+  variable: "--font-noto-thai",
+})
+
+const _kanit = Kanit({
+  subsets: ["thai", "latin"],
+  weight: ["600", "700", "800"],
+  display: "swap",
+  variable: "--font-kanit",
+})
+
 export const viewport = {
   width: "device-width",
   initialScale: 1,
@@ -102,13 +100,27 @@ export const viewport = {
   colorScheme: "light dark",
 }
 
+// สร้าง static params สำหรับ generate static pages
+// ฟังก์ชันนี้จะถูกเรียกตอน build time
+// เพื่อสร้าง static pages สำหรับทุกภาษา
+// ฟังก์ชันนี้จะถูกเรียกตอน build time
+// เพื่อสร้าง static pages สำหรับทุกภาษา
+export function generateStaticParams() {
+  return locales.map((locale) => ({ locale }))
+}
+
 export default function RootLayout({
   children,
+  params: { locale }
 }: Readonly<{
   children: React.ReactNode
+  params: { locale: string }
 }>) {
+  // ใช้ default locale ถ้า locale ไม่ถูกต้อง
+  const validLocale = locales.includes(locale as any) ? locale : 'th'
+
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={validLocale} suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

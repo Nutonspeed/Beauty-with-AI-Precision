@@ -1,4 +1,3 @@
-import createMiddleware from 'next-intl/middleware';
 import { locales, defaultLocale } from './i18n/request';
 import { NextRequest, NextResponse } from 'next/server';
 import { hasPermission, getRedirectUrl, type UserRole } from './lib/auth/role-config';
@@ -43,24 +42,6 @@ const REQUIRES_AUTH_PATHS = [
   '/settings'
 ];
 
-// Create i18n middleware - DISABLED to avoid conflict
-// const intlMiddleware = createMiddleware({
-//   // A list of all locales that are supported
-//   locales,
-
-//   // Used when no locale matches
-//   defaultLocale,
-
-//   // Automatically redirect root path to default locale
-//   localePrefix: 'always',
-//
-//   // Redirect strategy: redirect root path to default locale
-//   localeDetection: true,
-// });
-
-// Temporary: return NextResponse.next() instead of intlMiddleware
-const intlMiddleware = (request: NextRequest) => NextResponse.next();
-
 // ฟังก์ชันตรวจสอบและส่งคืนภาษาที่ต้องการใช้
 function getPreferredLocale(request: NextRequest): string {
   // ตรวจสอบจาก cookie ก่อน
@@ -99,8 +80,8 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL(`/${locale}${pathname}`, request.url));
   }
 
-  // เรียกใช้ i18n middleware (ตอนนี้เป็น dummy)
-  const intlResponse = intlMiddleware(request);
+  // สร้าง response สำหรับ Intl (ตอนนี้ไม่ปรับแต่ง)
+  const intlResponse = NextResponse.next();
   
   // ข้าม middleware สำหรับ static assets
   if (
