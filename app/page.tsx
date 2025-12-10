@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation'
-import { defaultLocale } from '@/i18n/request'
+
+const defaultLocale = 'th'
 
 export default function RootPage() {
   redirect(`/${defaultLocale}`)
