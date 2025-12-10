@@ -13,7 +13,7 @@ export default function CaseStudyDetailPage() {
   const { language } = useLanguage()
   const { slug } = useParams<{ slug: string }>()
 
-  const study = useMemo(() => getCaseStudyBySlug(slug), [slug])
+  const study = useMemo(() => getCaseStudyBySlug(language, slug), [language, slug])
 
   useEffect(() => {
     if (slug) {
