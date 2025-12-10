@@ -44,6 +44,7 @@ google-credentials.json
 *.tsbuildinfo
 next-env.d.ts
 /lib/generated/prisma
+/lib/proxy/
 
 # IDE
 .vscode/*
@@ -115,6 +116,8 @@ data/processed/
 *.pkl
 *.h5
 *.onnx
+analysis-output/
+scripts/demo/
 
 # Mobile App (Expo/React Native)
 mobile/
