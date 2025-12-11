@@ -29,6 +29,7 @@ import Link from "next/link"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useToast } from "@/hooks/use-toast"
+import { ToastAction } from "@/components/ui/toast"
 
 // Dynamic imports for heavy components to prevent SSR timeout
 const SkinAnalysisRadarChart = dynamic(() => import("@/components/skin-analysis-radar-chart").then(mod => ({ default: mod.SkinAnalysisRadarChart })), { ssr: false })
@@ -263,10 +264,11 @@ export default function AnalysisResultsPage() {
       toast({
         title: "บันทึก Lead สำเร็จ",
         description: "ลูกค้าถูกเพิ่มเข้าไปใน Sales Pipeline แล้ว",
-        action: {
-          label: "ดู Sales Dashboard",
-          onClick: () => router.push("/sales/dashboard"),
-        },
+        action: (
+          <ToastAction altText="ดู Sales Dashboard" onClick={() => router.push("/sales/dashboard")}>
+            ดู Sales Dashboard
+          </ToastAction>
+        ),
       })
       setLeadName("")
       setLeadPhone("")

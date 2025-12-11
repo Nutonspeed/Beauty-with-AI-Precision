@@ -374,10 +374,9 @@
   },
   "packageManager": "pnpm@10.12.0",
   "engines": {
-    "node": "24.x",
+    "node": "22.x",
     "pnpm": ">=10.0.0"
   },
-  "preinstall": "npx -y only-allow pnpm",
   "pnpm": {
     "overrides": {
       "sharp": "^0.34.4",
