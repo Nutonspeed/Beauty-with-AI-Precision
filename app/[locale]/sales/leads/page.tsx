@@ -59,6 +59,7 @@ interface Lead {
   interested_treatments?: string[]
   budget_range?: string
   created_at: string
+  campaign?: string
   clinic?: {
     id: string
     name: string
@@ -91,6 +92,7 @@ export default function LeadsListPage() {
   const [search, setSearch] = useState("")
   const [statusFilter, setStatusFilter] = useState<LeadStatus | "all">("all")
   const [sourceFilter, setSourceFilter] = useState<LeadSource | "all">("all")
+  const [campaignFilter, setCampaignFilter] = useState<string>("")
   const [showCaptureForm, setShowCaptureForm] = useState(false)
   const [pagination, setPagination] = useState({
     page: 1,
@@ -132,6 +134,7 @@ export default function LeadsListPage() {
       if (search) params.append('search', search)
       if (statusFilter !== 'all') params.append('status', statusFilter)
       if (sourceFilter !== 'all') params.append('source', sourceFilter)
+      if (campaignFilter.trim()) params.append('campaign', campaignFilter.trim())
 
       const response = await fetch(`/api/leads?${params}`)
 
@@ -153,7 +156,7 @@ export default function LeadsListPage() {
     } finally {
       setIsLoading(false)
     }
-  }, [pagination.page, pagination.limit, search, statusFilter, sourceFilter, isAuthenticated])
+  }, [pagination.page, pagination.limit, search, statusFilter, sourceFilter, campaignFilter, isAuthenticated])
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -195,6 +198,14 @@ export default function LeadsListPage() {
           <p className="text-muted-foreground">
             Track and manage your sales leads
           </p>
+        </div>
+
+        <div className="w-full md:w-[200px]">
+          <Input
+            placeholder="Filter by campaign code..."
+            value={campaignFilter}
+            onChange={(e) => setCampaignFilter(e.target.value)}
+          />
         </div>
         <Button onClick={() => setShowCaptureForm(true)}>
           <UserPlus className="mr-2 h-4 w-4" />
@@ -300,7 +311,16 @@ export default function LeadsListPage() {
             <TableBody>
               {leads.map((lead) => (
                 <TableRow key={lead.id} className="cursor-pointer hover:bg-muted/50">
-                  <TableCell className="font-medium">{lead.full_name}</TableCell>
+                  <TableCell className="font-medium">
+                    <div className="flex flex-col gap-1">
+                      <span>{lead.full_name}</span>
+                      {lead.campaign && (
+                        <Badge variant="outline" className="w-fit text-xs">
+                          Campaign: {lead.campaign}
+                        </Badge>
+                      )}
+                    </div>
+                  </TableCell>
                   <TableCell>
                     <div className="flex flex-col gap-1 text-sm">
                       {lead.phone && (

@@ -43,6 +43,7 @@ export async function GET(request: NextRequest) {
     const source = searchParams.get('source') as LeadSource | null
     const salesStaffId = searchParams.get('sales_staff_id')
     const search = searchParams.get('search')
+    const campaign = searchParams.get('campaign')
     const page = parseInt(searchParams.get('page') || '1')
     const limit = parseInt(searchParams.get('limit') || '20')
     const offset = (page - 1) * limit
@@ -99,6 +100,10 @@ export async function GET(request: NextRequest) {
 
     if (source) {
       query = query.eq('source', source)
+    }
+
+    if (campaign) {
+      query = query.eq('campaign', campaign)
     }
 
     // Search by name, phone, or email

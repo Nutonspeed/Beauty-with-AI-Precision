@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
     if (clinic_id) {
       const { data: clinic } = await supabase
         .from('clinics')
-        .select('id')
+        .select('id, max_sales_users')
         .eq('id', clinic_id)
         .single()
 
@@ -117,6 +117,36 @@ export async function POST(request: NextRequest) {
           { error: 'Clinic not found' },
           { status: 404 }
         )
+      }
+
+      // Enforce sales user limit per clinic when creating sales staff
+      const normalizedRole = String(role).toLowerCase()
+      const isSalesRole = normalizedRole === 'sales' || normalizedRole === 'sales_staff'
+
+      if (isSalesRole) {
+        const maxSalesUsers = (clinic as any).max_sales_users ?? 1
+
+        const { count: existingSalesUsers, error: salesCountError } = await supabase
+          .from('clinic_staff')
+          .select('*', { count: 'exact', head: true })
+          .eq('clinic_id', clinic_id)
+          .eq('status', 'active')
+          .in('role', ['sales', 'sales_staff'])
+
+        if (salesCountError) {
+          console.error('Error checking existing sales users:', salesCountError)
+        } else if ((existingSalesUsers || 0) >= maxSalesUsers) {
+          return NextResponse.json(
+            {
+              error: 'Sales user limit reached for this clinic',
+              details: {
+                maxSalesUsers,
+                message: 'Your current plan allows only a limited number of sales users for this clinic. Please upgrade your plan to add more sales staff.',
+              },
+            },
+            { status: 403 }
+          )
+        }
       }
     }
 

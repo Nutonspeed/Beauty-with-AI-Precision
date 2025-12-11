@@ -16,6 +16,7 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams
     const status = searchParams.get("status")
     const search = searchParams.get("search")
+    const remoteConsultOnly = searchParams.get("remote_consult_only") === "true"
     const limit = Number.parseInt(searchParams.get("limit") || "50")
     const offset = Number.parseInt(searchParams.get("offset") || "0")
 
@@ -38,6 +39,10 @@ export async function GET(request: NextRequest) {
 
     if (search) {
       query = query.or(`name.ilike.%${search}%,email.ilike.%${search}%,phone.ilike.%${search}%`)
+    }
+
+    if (remoteConsultOnly) {
+      query = query.contains('metadata', { remote_consult_request: true })
     }
 
     const { data: leads, error, count } = await query

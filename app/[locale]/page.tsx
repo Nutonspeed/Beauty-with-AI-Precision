@@ -208,11 +208,11 @@ export default function HomePage() {
                 </span>
               </h1>
 
-              {/* Subtitle - clearer platform positioning */}
+              {/* Subtitle - clearer platform positioning for sales teams */}
               <p className="mb-10 text-lg md:text-xl text-white/60 max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-6 duration-700 delay-300">
-                แพลตฟอร์ม AI สำหรับคลินิกความงาม ที่รวมการวิเคราะห์ผิว 3D, AR จำลองผลลัพธ์ และเครื่องมือขายแบบเรียลไทม์
+                แพลตฟอร์ม AI / AR สำหรับคลินิกความงาม ที่ช่วยให้ทีมเซลสามารถวิเคราะห์ผิวและจำลองผลลัพธ์ให้ลูกค้าเห็นจากที่บ้านได้ทันที
                 <br className="hidden md:block" />
-                เชื่อมต่อทีมแพทย์ เซลส์ และลูกค้า ให้อยู่ใน workflow เดียวกัน เพิ่ม conversion และความไว้วางใจในคลินิกของคุณ
+                เชื่อมต่อทีมแพทย์ ทีมเซล และลูกค้า ให้อยู่ใน workflow เดียวกัน เพิ่ม conversion และปิดการขายได้มากขึ้นโดยไม่ต้องนัดเข้าคลินิกทุกครั้ง
               </p>
 
               {/* CTAs */}

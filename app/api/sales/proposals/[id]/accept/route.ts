@@ -68,11 +68,11 @@ export async function POST(
       return NextResponse.json({ error: updateError.message }, { status: 500 })
     }
 
-    // Update lead status to qualified
+    // Update lead status to converted (won deal)
     await supabase
       .from('sales_leads')
       .update({
-        status: 'qualified',
+        status: 'converted',
         updated_at: new Date().toISOString()
       })
       .eq('id', existing.lead_id)

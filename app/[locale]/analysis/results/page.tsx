@@ -26,6 +26,9 @@ import {
 } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { useToast } from "@/hooks/use-toast"
 
 // Dynamic imports for heavy components to prevent SSR timeout
 const SkinAnalysisRadarChart = dynamic(() => import("@/components/skin-analysis-radar-chart").then(mod => ({ default: mod.SkinAnalysisRadarChart })), { ssr: false })
@@ -86,7 +89,7 @@ interface AnalysisResults {
       issues: string[]
     }
   }
-}
+};
 
 export default function AnalysisResultsPage() {
   const router = useRouter()
@@ -94,6 +97,11 @@ export default function AnalysisResultsPage() {
   const [analysisResults, setAnalysisResults] = useState<AnalysisResults | null>(null)
   const [tier, setTier] = useState<string>("free")
   const [isLoading, setIsLoading] = useState(true)
+  const { toast } = useToast()
+  const [leadName, setLeadName] = useState("")
+  const [leadPhone, setLeadPhone] = useState("")
+  const [leadEmail, setLeadEmail] = useState("")
+  const [isSavingLead, setIsSavingLead] = useState(false)
 
   useEffect(() => {
     const storedImage = sessionStorage.getItem("analysisImage")
@@ -186,6 +194,181 @@ export default function AnalysisResultsPage() {
 
   const displayMetrics = getDisplayMetrics()
 
+  const handleSaveLead = async () => {
+    if (!analysisResults) return
+    if (!leadName.trim()) {
+      toast({
+        title: "กรุณากรอกชื่อลูกค้า",
+        description: "ต้องมีชื่อเพื่อบันทึก Lead",
+        variant: "destructive",
+      })
+      return
+    }
+
+    setIsSavingLead(true)
+    try {
+      const metricSummary = Object.entries(analysisResults.metrics)
+        .map(([key, value]) => `${key}: ${Math.round((value as any).score ?? 0)}`)
+        .join(', ')
+
+      const recommendationTitles = (analysisResults.recommendations || [])
+        .map((r) => r.title_th || r.title_en)
+        .filter(Boolean)
+        .join(', ')
+
+      let campaign: string | null = null
+      if (typeof window !== 'undefined') {
+        try {
+          const params = new URLSearchParams(window.location.search)
+          campaign = params.get('campaign')
+        } catch {
+          campaign = null
+        }
+      }
+
+      const res = await fetch("/api/sales/quick-lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: leadName.trim(),
+          phone: leadPhone.trim() || null,
+          email: leadEmail.trim() || null,
+          source: "analysis_results",
+          campaign: campaign || undefined,
+          notes: [
+            `Lead created from analysis results`,
+            `Overall score: ${Math.round(analysisResults.overall_score)}`,
+            `Skin type: ${analysisResults.skin_type}`,
+            `Skin age estimate: ${analysisResults.age_estimate} yrs`,
+            metricSummary ? `Key metrics: ${metricSummary}` : null,
+            recommendationTitles ? `AI recommendations: ${recommendationTitles}` : null,
+          ]
+            .filter(Boolean)
+            .join('\n'),
+          metadata: {
+            overall_score: analysisResults.overall_score,
+            skin_type: analysisResults.skin_type,
+            age_estimate: analysisResults.age_estimate,
+            metrics: analysisResults.metrics,
+            recommendations: analysisResults.recommendations,
+          },
+        }),
+      })
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        throw new Error(err.error || "ไม่สามารถบันทึก Lead ได้")
+      }
+
+      toast({
+        title: "บันทึก Lead สำเร็จ",
+        description: "ลูกค้าถูกเพิ่มเข้าไปใน Sales Pipeline แล้ว",
+        action: {
+          label: "ดู Sales Dashboard",
+          onClick: () => router.push("/sales/dashboard"),
+        },
+      })
+      setLeadName("")
+      setLeadPhone("")
+      setLeadEmail("")
+    } catch (error: any) {
+      console.error("Save lead from analysis failed:", error)
+      toast({
+        title: "บันทึก Lead ไม่สำเร็จ",
+        description: error?.message || "กรุณาลองใหม่อีกครั้ง",
+        variant: "destructive",
+      })
+    } finally {
+      setIsSavingLead(false)
+    }
+  }
+
+  const handleRequestRemoteConsult = async () => {
+    if (!analysisResults) return
+    if (!leadName.trim()) {
+      toast({
+        title: "กรุณากรอกชื่อลูกค้า",
+        description: "ต้องมีชื่อเพื่อส่งคำขอปรึกษาออนไลน์",
+        variant: "destructive",
+      })
+      return
+    }
+
+    setIsSavingLead(true)
+    try {
+      const metricSummary = Object.entries(analysisResults.metrics)
+        .map(([key, value]) => `${key}: ${Math.round((value as any).score ?? 0)}`)
+        .join(', ')
+
+      const recommendationTitles = (analysisResults.recommendations || [])
+        .map((r) => r.title_th || r.title_en)
+        .filter(Boolean)
+        .join(', ')
+
+      let campaign: string | null = null
+      if (typeof window !== 'undefined') {
+        try {
+          const params = new URLSearchParams(window.location.search)
+          campaign = params.get('campaign')
+        } catch {
+          campaign = null
+        }
+      }
+
+      const res = await fetch("/api/sales/quick-lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: leadName.trim(),
+          phone: leadPhone.trim() || null,
+          email: leadEmail.trim() || null,
+          source: "analysis_results_remote_consult",
+          campaign: campaign || undefined,
+          notes: [
+            `Remote online consult requested from analysis results`,
+            `Overall score: ${Math.round(analysisResults.overall_score)}`,
+            `Skin type: ${analysisResults.skin_type}`,
+            `Skin age estimate: ${analysisResults.age_estimate} yrs`,
+            metricSummary ? `Key metrics: ${metricSummary}` : null,
+            recommendationTitles ? `AI recommendations: ${recommendationTitles}` : null,
+          ]
+            .filter(Boolean)
+            .join('\n'),
+          metadata: {
+            overall_score: analysisResults.overall_score,
+            skin_type: analysisResults.skin_type,
+            age_estimate: analysisResults.age_estimate,
+            metrics: analysisResults.metrics,
+            recommendations: analysisResults.recommendations,
+            remote_consult_request: true,
+          },
+        }),
+      })
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        throw new Error(err.error || "ไม่สามารถส่งคำขอปรึกษาออนไลน์ได้")
+      }
+
+      toast({
+        title: "ส่งคำขอปรึกษาออนไลน์สำเร็จ",
+        description: "ทีมงานจะติดต่อกลับเพื่อยืนยันเวลานัดหมาย",
+      })
+      setLeadName("")
+      setLeadPhone("")
+      setLeadEmail("")
+    } catch (error: any) {
+      console.error("Request remote consult failed:", error)
+      toast({
+        title: "ส่งคำขอปรึกษาออนไลน์ไม่สำเร็จ",
+        description: error?.message || "กรุณาลองใหม่อีกครั้ง",
+        variant: "destructive",
+      })
+    } finally {
+      setIsSavingLead(false)
+    }
+  }
+
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
@@ -228,6 +411,72 @@ export default function AnalysisResultsPage() {
               </Button>
             </div>
           </div>
+
+          {/* Quick Lead Capture for Sales */}
+          <Card className="mb-6 border border-blue-200 bg-blue-50/60">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm sm:text-base flex items-center gap-2">
+                บันทึกเป็น Lead สำหรับทีมเซล
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3 text-sm">
+              <p className="text-xs sm:text-sm text-blue-800">
+                กรอกข้อมูลติดต่อของลูกค้าเพื่อบันทึกเป็น Lead ใน Sales Pipeline โดยใช้ผลการวิเคราะห์ชุดนี้เป็นพื้นฐาน
+              </p>
+              <div className="grid gap-3 sm:grid-cols-3">
+                <div className="space-y-1">
+                  <Label htmlFor="lead-name" className="text-xs sm:text-sm">ชื่อลูกค้า *</Label>
+                  <Input
+                    id="lead-name"
+                    value={leadName}
+                    onChange={(e) => setLeadName(e.target.value)}
+                    placeholder="ชื่อ-นามสกุล"
+                    className="h-9 text-sm"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="lead-phone" className="text-xs sm:text-sm">เบอร์โทรศัพท์</Label>
+                  <Input
+                    id="lead-phone"
+                    value={leadPhone}
+                    onChange={(e) => setLeadPhone(e.target.value)}
+                    placeholder="08X-XXX-XXXX"
+                    className="h-9 text-sm"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="lead-email" className="text-xs sm:text-sm">อีเมล (ไม่บังคับ)</Label>
+                  <Input
+                    id="lead-email"
+                    type="email"
+                    value={leadEmail}
+                    onChange={(e) => setLeadEmail(e.target.value)}
+                    placeholder="customer@example.com"
+                    className="h-9 text-sm"
+                  />
+                </div>
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-xs sm:text-sm"
+                  onClick={handleRequestRemoteConsult}
+                  disabled={isSavingLead}
+                >
+                  {isSavingLead ? "กำลังส่งคำขอ..." : "ขอปรึกษาออนไลน์"}
+                </Button>
+                <Button
+                  size="sm"
+                  className="text-xs sm:text-sm bg-blue-600 hover:bg-blue-700"
+                  onClick={handleSaveLead}
+                  disabled={isSavingLead}
+                >
+                  {isSavingLead ? "กำลังบันทึก..." : "บันทึกเป็น Lead"}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Main Results Card */}
           <Card className="mb-6 border-2">

@@ -19,7 +19,7 @@ export const GET = withAuth(async (request: NextRequest, user) => {
     const { searchParams } = new URL(request.url)
     const clinicId = searchParams.get('clinic_id')
     const customerId = searchParams.get('customer_id')
-    const doctorId = searchParams.get('doctor_id')
+    const rawDoctorId = searchParams.get('doctor_id')
     const status = searchParams.get('status')
     const dateFrom = searchParams.get('date_from')
     const dateTo = searchParams.get('date_to')
@@ -37,6 +37,8 @@ export const GET = withAuth(async (request: NextRequest, user) => {
     if (customerId) {
       query = query.eq('customer_id', customerId)
     }
+
+    const doctorId = rawDoctorId === 'me' ? user.id : rawDoctorId
 
     if (doctorId) {
       query = query.eq('doctor_id', doctorId)

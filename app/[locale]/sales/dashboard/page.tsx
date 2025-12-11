@@ -13,79 +13,142 @@ import { Button } from '@/components/ui/button'
 import { ShimmerSkeleton } from '@/components/ui/modern-loader'
 import Link from 'next/link'
 
-interface SalesStats {
-  today: {
-    scans: number
-    conversions: number
-    revenue: number
-  }
-  thisWeek: {
-    scans: number
-    conversions: number
-    revenue: number
-  }
-  thisMonth: {
-    scans: number
-    conversions: number
-    revenue: number
-  }
-  topPackages: Array<{
-    name: string
-    sold: number
-    revenue: number
-  }>
+interface MetricBlock {
+  today: number
+  yesterday: number
+  change: number
+  target: number
+}
+
+interface SalesMetricsResponse {
+  callsMade: MetricBlock
+  leadsContacted: MetricBlock
+  proposalsSent: MetricBlock
+  conversionRate: MetricBlock
+  revenueGenerated: MetricBlock
+  aiLeads: MetricBlock
+  aiProposals: MetricBlock
+  aiBookings: MetricBlock
+  aiBookingRevenue: MetricBlock
+  remoteConsultRequests: MetricBlock
+  remoteConsultConversion: MetricBlock
+}
+
+interface PeriodStats {
+  scans: number
+  revenue: number
+}
+
+interface TopPackage {
+  name: string
+  sold: number
+  revenue: number
+}
+
+interface SalesOverviewResponse {
+  today: PeriodStats
+  thisWeek: PeriodStats
+  thisMonth: PeriodStats
+  topPackages: TopPackage[]
+}
+
+interface FunnelStage {
+  name: string
+  count: number
+  value: number
+}
+
+interface ConversionRates {
+  leadsToQualified: number
+  qualifiedToProposals: number
+  proposalsToWon: number
+}
+
+interface SalesFunnelResponse {
+  range: string
+  stages: FunnelStage[]
+  conversionRates: ConversionRates
 }
 
 export default function SalesDashboard() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
-  const [stats] = useState<SalesStats>({
-    today: {
-      scans: 12,
-      conversions: 3,
-      revenue: 59700
-    },
-    thisWeek: {
-      scans: 87,
-      conversions: 21,
-      revenue: 418900
-    },
-    thisMonth: {
-      scans: 342,
-      conversions: 89,
-      revenue: 1774300
-    },
-    topPackages: [
-      { name: 'Anti-Aging Package', sold: 34, revenue: 676600 },
-      { name: 'Complete Rejuvenation', sold: 28, revenue: 1117200 },
-      { name: 'Pigmentation Treatment', sold: 27, revenue: 672300 }
-    ]
-  })
+  const [metrics, setMetrics] = useState<SalesMetricsResponse | null>(null)
+  const [overview, setOverview] = useState<SalesOverviewResponse | null>(null)
+  const [funnel, setFunnel] = useState<SalesFunnelResponse | null>(null)
+  const [range, setRange] = useState<'1d' | '7d' | '30d'>('7d')
 
   useEffect(() => {
-    try {
-      // Simulate authentication check
-      const user = localStorage.getItem('user')
-      if (!user) {
-        router.push('/auth/login')
-        return
+    let cancelled = false
+
+    const bootstrap = async () => {
+      try {
+        // Simple auth guard compatible with existing behavior
+        const user = typeof window !== 'undefined' ? localStorage.getItem('user') : null
+        if (!user) {
+          router.push('/auth/login')
+          return
+        }
+
+        const qs = `?range=${range}`
+        const [metricsRes, overviewRes, funnelRes] = await Promise.all([
+          fetch(`/sales/metrics${qs}`, { method: 'GET', headers: { Accept: 'application/json' } }),
+          fetch(`/sales/overview${qs}`, { method: 'GET', headers: { Accept: 'application/json' } }),
+          fetch(`/sales/funnel${qs}`, { method: 'GET', headers: { Accept: 'application/json' } }),
+        ])
+
+        if (!metricsRes.ok) {
+          throw new Error(`Failed to load sales metrics: ${metricsRes.status}`)
+        }
+        if (!overviewRes.ok) {
+          throw new Error(`Failed to load sales overview: ${overviewRes.status}`)
+        }
+        if (!funnelRes.ok) {
+          throw new Error(`Failed to load sales funnel: ${funnelRes.status}`)
+        }
+
+        const metricsData: SalesMetricsResponse = await metricsRes.json()
+        const overviewData: SalesOverviewResponse = await overviewRes.json()
+        const funnelData: SalesFunnelResponse = await funnelRes.json()
+        if (!cancelled) {
+          setMetrics(metricsData)
+          setOverview(overviewData)
+          setFunnel(funnelData)
+          setIsLoading(false)
+        }
+      } catch (err) {
+        console.error('Sales Dashboard Error:', err)
+        if (!cancelled) {
+          setError('Failed to load dashboard')
+          setIsLoading(false)
+        }
       }
-      
-      // Simulate data loading
-      const timer = setTimeout(() => {
-        setIsLoading(false)
-      }, 1000)
-
-      return () => clearTimeout(timer)
-    } catch (error) {
-      console.error('Sales Dashboard Error:', error)
-      setError('Failed to load dashboard')
-      setIsLoading(false)
     }
-  }, [router])
 
-  const conversionRate = ((stats.thisMonth.conversions / stats.thisMonth.scans) * 100).toFixed(1)
+    bootstrap()
+
+    return () => {
+      cancelled = true
+    }
+  }, [router, range])
+
+  const totalScansThisMonth = metrics?.leadsContacted.today ?? 0
+  const conversionsThisMonth = metrics?.proposalsSent.today ?? 0
+  const revenueThisMonth = metrics?.revenueGenerated.today ?? 0
+  const aiLeadsToday = metrics?.aiLeads.today ?? 0
+  const aiProposalsToday = metrics?.aiProposals.today ?? 0
+  const aiBookingsToday = metrics?.aiBookings.today ?? 0
+  const aiBookingRevenueToday = metrics?.aiBookingRevenue.today ?? 0
+  const remoteConsultRequestsToday = metrics?.remoteConsultRequests.today ?? 0
+  const remoteConsultConversionToday = (metrics?.remoteConsultConversion.today ?? 0).toFixed(1)
+  const conversionRate = (metrics?.conversionRate.today ?? 0).toFixed(1)
+  const stats = overview ?? {
+    today: { scans: 0, revenue: 0 },
+    thisWeek: { scans: 0, revenue: 0 },
+    thisMonth: { scans: 0, revenue: 0 },
+    topPackages: [],
+  }
 
   if (isLoading) {
     return (
@@ -217,6 +280,61 @@ export default function SalesDashboard() {
             </CardContent>
           </Card>
         </div>
+
+        {/* AI Funnel */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-purple-600" />
+              AI Funnel (วันนี้ / ช่วง {range})
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+              <div className="p-3 rounded-lg bg-purple-50 border border-purple-100">
+                <p className="text-xs text-purple-700 font-semibold uppercase">AI Leads</p>
+                <p className="text-2xl font-bold text-purple-900 mt-1">{aiLeadsToday}</p>
+                <p className="text-[11px] text-purple-700 mt-1">บันทึกจาก AI Scan</p>
+              </div>
+              <div className="p-3 rounded-lg bg-blue-50 border border-blue-100">
+                <p className="text-xs text-blue-700 font-semibold uppercase">AI Proposals</p>
+                <p className="text-2xl font-bold text-blue-900 mt-1">{aiProposalsToday}</p>
+                <p className="text-[11px] text-blue-700 mt-1">สร้างจาก AI Recommendations</p>
+              </div>
+              <div className="p-3 rounded-lg bg-green-50 border border-green-100">
+                <p className="text-xs text-green-700 font-semibold uppercase">AI Bookings</p>
+                <p className="text-2xl font-bold text-green-900 mt-1">{aiBookingsToday}</p>
+                <p className="text-[11px] text-green-700 mt-1">จองจาก Proposal ที่ AI สร้าง</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Remote Consult Summary */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm flex items-center gap-2">
+              <MessageSquare className="w-4 h-4 text-emerald-600" />
+              Remote Consult Requests (ช่วง {range})
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-baseline justify-between">
+              <div>
+                <p className="text-3xl font-bold text-emerald-700">{remoteConsultRequestsToday}</p>
+                <p className="text-xs text-gray-600 mt-1">คำขอจากลูกค้าที่กดขอปรึกษาออนไลน์</p>
+                <p className="text-[11px] text-emerald-700 mt-1">
+                  Conversion: {remoteConsultConversionToday}% ของคำขอที่ปิดเป็นลูกค้า
+                </p>
+              </div>
+              <Link href="/sales/remote-consults">
+                <Button variant="outline" size="sm" className="text-xs">
+                  ดูคิว Remote
+                </Button>
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* AI Sales Tools */}
         <Card className="bg-gradient-to-br from-purple-50 to-blue-50 border-purple-200">

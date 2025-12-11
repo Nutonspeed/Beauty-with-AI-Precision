@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -67,6 +68,7 @@ export default function StaffModal({
   editStaff,
   users = []
 }: StaffModalProps) {
+  const router = useRouter()
   const [loading, setLoading] = useState(false)
   
   // Form state
@@ -175,8 +177,27 @@ export default function StaffModal({
       })
 
       if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.error || 'Failed to save staff member')
+        let errorMessage = 'Failed to save staff member'
+        try {
+          const error = await response.json()
+          if (response.status === 403 && error?.error === 'Sales user limit reached for this clinic') {
+            const maxSalesUsers = error?.details?.maxSalesUsers ?? 1
+            toast.error(
+              `แพ็กเกจปัจจุบันของคลินิกนี้อนุญาตให้มี Sales User ได้สูงสุด ${maxSalesUsers} คน\nหากต้องการเพิ่มเซลมากกว่า ${maxSalesUsers} คน กรุณาอัปเกรดแพ็กเกจ`,
+              {
+                action: {
+                  label: 'ดูแพ็กเกจ',
+                  onClick: () => router.push('/clinic/plans'),
+                },
+              }
+            )
+            return
+          }
+          errorMessage = error?.error || errorMessage
+        } catch {
+          // ignore parse error
+        }
+        throw new Error(errorMessage)
       }
 
       toast.success(editStaff ? 'Staff member updated successfully' : 'Staff member created successfully')
