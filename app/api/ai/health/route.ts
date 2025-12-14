@@ -37,4 +37,4 @@ export const GET = withPublicAccess(async (request: NextRequest) => {
   } catch (err) {
     return NextResponse.json({ ok: false, error: (err as Error).message }, { status: 500 })
   }
-}, { rateLimitCategory: 'api' })
+})
