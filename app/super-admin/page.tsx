@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useToast } from '@/components/ui/use-toast'
 import type { Tenant } from '@/lib/types/tenant'
-import { Loader2, Activity, Building2, Send, TrendingUp, Shield, Brain, CreditCard, FileText, Users } from 'lucide-react'
+import { Loader2, Activity, Building2, Send, TrendingUp, Shield, Brain, CreditCard, FileText, Users, Settings } from 'lucide-react'
 import { SystemHealthMonitor } from '@/components/admin/system-health-monitor'
 import RevenueAnalytics from '@/components/admin/revenue-analytics'
 import EnhancedClinicManagement from '@/components/admin/enhanced-clinic-management'
@@ -21,6 +21,7 @@ import AIAnalyticsDashboard from '@/components/admin/ai-analytics-dashboard'
 import SubscriptionManagement from '@/components/admin/subscription-management'
 import ActivityLogsDashboard from '@/components/admin/activity-logs-dashboard'
 import GlobalUserManagement from '@/components/admin/global-user-management'
+import SystemSettingsManagement from '@/components/admin/system-settings-management'
 
 // Force dynamic rendering for this page
 export const dynamic = 'force-dynamic'
@@ -361,7 +362,7 @@ function SuperAdminDashboardContent() {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-9 lg:w-auto lg:inline-grid">
+          <TabsList className="grid w-full grid-cols-10 lg:w-auto lg:inline-grid">
             <TabsTrigger value="overview" className="gap-2">
               <Building2 className="w-4 h-4" />
               Clinic Management
@@ -397,6 +398,10 @@ function SuperAdminDashboardContent() {
             <TabsTrigger value="users" className="gap-2">
               <Users className="w-4 h-4" />
               Users
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="gap-2">
+              <Settings className="w-4 h-4" />
+              Settings
             </TabsTrigger>
           </TabsList>
 
@@ -438,6 +443,11 @@ function SuperAdminDashboardContent() {
           {/* Users Tab */}
           <TabsContent value="users">
             <GlobalUserManagement />
+          </TabsContent>
+
+          {/* Settings Tab */}
+          <TabsContent value="settings">
+            <SystemSettingsManagement />
           </TabsContent>
 
           {/* Invitations Tab */}
