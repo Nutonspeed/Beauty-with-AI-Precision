@@ -43,7 +43,9 @@ import {
   Trash2,
   Lock,
   Unlock,
+  Eye,
 } from 'lucide-react';
+import ClinicDetailModal from './clinic-detail-modal';
 
 interface ClinicData {
   id: string;
@@ -75,6 +77,15 @@ export default function EnhancedClinicManagement() {
   const [healthFilter, setHealthFilter] = useState<string>('all');
   const [sortBy, setSortBy] = useState<string>('name');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  
+  // Detail modal state
+  const [selectedClinicId, setSelectedClinicId] = useState<string | null>(null);
+  const [detailModalOpen, setDetailModalOpen] = useState(false);
+
+  const openClinicDetail = (clinicId: string) => {
+    setSelectedClinicId(clinicId);
+    setDetailModalOpen(true);
+  };
 
   useEffect(() => {
     fetchClinics();
@@ -480,7 +491,11 @@ export default function EnhancedClinicManagement() {
                   </TableRow>
                 ) : (
                   filteredClinics.map((clinic) => (
-                    <TableRow key={clinic.id}>
+                    <TableRow 
+                      key={clinic.id} 
+                      className="cursor-pointer hover:bg-muted/50"
+                      onClick={() => openClinicDetail(clinic.id)}
+                    >
                       <TableCell>
                         <Checkbox
                           checked={selectedClinics.has(clinic.id)}
@@ -528,7 +543,10 @@ export default function EnhancedClinicManagement() {
                           <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem>View Details</DropdownMenuItem>
+                            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); openClinicDetail(clinic.id); }}>
+                              <Eye className="h-4 w-4 mr-2" />
+                              View Details
+                            </DropdownMenuItem>
                             <DropdownMenuItem>Edit Clinic</DropdownMenuItem>
                             <DropdownMenuItem>View Users</DropdownMenuItem>
                             <DropdownMenuItem>Change Plan</DropdownMenuItem>
@@ -552,6 +570,13 @@ export default function EnhancedClinicManagement() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Clinic Detail Modal */}
+      <ClinicDetailModal
+        clinicId={selectedClinicId}
+        open={detailModalOpen}
+        onOpenChange={setDetailModalOpen}
+      />
     </div>
   );
 }
