@@ -13,7 +13,7 @@
 **UX/UI**: **Premium Modern Design**
 **TypeScript**: 0 Errors 
 
-> **[SALES PACKAGE →](SALES_PACKAGE.md)** | **[PRODUCTION VALIDATION →](scripts/production-demo-runner.ts)** | **[ZERO-CONFIG DEPLOY →](scripts/production-deploy.ts)**
+> **[SALES PACKAGE →](docs/SALES_PACKAGE.md)** | **[PRODUCTION VALIDATION →](scripts/production-demo-runner.ts)** | **[ZERO-CONFIG DEPLOY →](scripts/production-deploy.ts)**
 
 ---
 
@@ -284,16 +284,17 @@ Beauty-with-AI-Precision/
 │   ├── test-invitation-system.mjs # Invitation tests (NEW)
 │   └── ...
 └── docs/                        # Documentation
-    ├── CURRENT_SYSTEM_STATUS.md  # Current status (NEW)
+    ├── status/CURRENT_SYSTEM_STATUS.md  # Current status (NEW)
     ├── DATABASE_SCHEMA.md        # Database reference
     ├── README.md                 # Documentation index
     └── ...
-\`\`\`
+```
 
 ---
 
 ## 📊 System Status
 
+### Current Progress: **90% Complete** 
 ### Current Progress: **90% Complete** ✅
 
 **Core Platform** (100%)
@@ -361,8 +362,8 @@ Beauty-with-AI-Precision/
 - Base i18n resource extraction
 
 **For detailed status, see:**
-- 📖 [CURRENT_SYSTEM_STATUS.md](CURRENT_SYSTEM_STATUS.md) - Complete current status
-- 📖 [DATABASE_SCHEMA.md](DATABASE_SCHEMA.md) - Database documentation
+- 📖 [CURRENT_SYSTEM_STATUS.md](docs/status/CURRENT_SYSTEM_STATUS.md) - Complete current status
+- 📖 [DATABASE_SCHEMA.md](docs/DATABASE_SCHEMA.md) - Database documentation
 
 ---
 
@@ -409,18 +410,18 @@ Note on demo accounts:
 ### Primary Documentation
 
 **Current Status & Reference:**
-- **[CURRENT_SYSTEM_STATUS.md](CURRENT_SYSTEM_STATUS.md)** - Up-to-date system status (November 2025)
-- **[DATABASE_SCHEMA.md](DATABASE_SCHEMA.md)** - Complete database reference (78 tables)
+- **[CURRENT_SYSTEM_STATUS.md](docs/status/CURRENT_SYSTEM_STATUS.md)** - Up-to-date system status (November 2025)
+- **[DATABASE_SCHEMA.md](docs/DATABASE_SCHEMA.md)** - Complete database reference (78 tables)
 - **[README.md](README.md)** - This file (project overview)
 
 ### Additional Documentation
 
 **Developer Guides:**
-- Migration guides in `MIGRATION_GUIDE.md`
+- Migration guides in `docs/guides/MIGRATION_GUIDE.md`
 - Testing procedures in test scripts
 - API examples in route files
 
-**Note:** Historical planning documents exist in `docs/` but may contain outdated information. Always refer to `CURRENT_SYSTEM_STATUS.md` for accurate current state.
+**Note:** Historical planning documents exist in `docs/` but may contain outdated information. Always refer to `docs/status/CURRENT_SYSTEM_STATUS.md` for accurate current state.
 
 ---
 

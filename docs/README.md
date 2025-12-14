@@ -60,8 +60,8 @@ This directory contains all project documentation organized by category.
 ## 🔗 Quick Links
 
 ### Primary References
-- **[📊 Current System Status](../../CURRENT_SYSTEM_STATUS.md)** - Most up-to-date project status
-- **[🗄️ Database Schema](../../DATABASE_SCHEMA.md)** - Complete database reference
+- **[📊 Current System Status](./status/CURRENT_SYSTEM_STATUS.md)** - Most up-to-date project status
+- **[🗄️ Database Schema](./DATABASE_SCHEMA.md)** - Complete database reference
 - **[🚀 Deployment Status](./deployment/DEPLOYMENT_STATUS.md)** - Current deployment guide
 
 ### Development Resources
