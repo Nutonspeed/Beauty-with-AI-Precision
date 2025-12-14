@@ -103,18 +103,32 @@ export async function GET(request: NextRequest) {
         .eq('clinic_id', clinic.id)
         .gte('created_at', startOfMonth.toISOString())
 
-      // Count AI analyses this month
+      // Count AI analyses this month (from skin_analyses table)
       const { count: analysesCount } = await supabase
-        .from('analyses')
+        .from('skin_analyses')
         .select('*', { count: 'exact', head: true })
         .eq('clinic_id', clinic.id)
         .gte('created_at', startOfMonth.toISOString())
 
-      // Calculate storage used (mock for now - would need to query file storage)
-      const storageUsedGB = Math.random() * planLimits.maxStorageGB * 0.7 // Mock data
+      // Calculate storage used from treatment_photos (real data)
+      const { data: photoSizes } = await supabase
+        .from('treatment_photos')
+        .select('file_size_kb')
+        .eq('clinic_id', clinic.id)
+        .not('file_size_kb', 'is', null)
 
-      // Calculate API calls (mock for now - would need actual API logging)
-      const apiCallsThisMonth = Math.floor(Math.random() * 10000) // Mock data
+      const totalStorageKB = photoSizes?.reduce((sum, p) => sum + (p.file_size_kb || 0), 0) || 0
+      const storageUsedGB = totalStorageKB / (1024 * 1024) // Convert KB to GB
+
+      // Calculate API calls from activity (analyses + bookings + customer updates this month)
+      const { count: skinAnalysesTotal } = await supabase
+        .from('skin_analyses')
+        .select('*', { count: 'exact', head: true })
+        .eq('clinic_id', clinic.id)
+        .gte('created_at', startOfMonth.toISOString())
+
+      // Each analysis = ~5 API calls, each booking = ~3 API calls, base activity
+      const apiCallsThisMonth = ((skinAnalysesTotal || 0) * 5) + ((bookingsCount || 0) * 3) + ((customersCount || 0) * 2)
 
       // Check quota warnings
       const quotaWarnings: string[] = []
