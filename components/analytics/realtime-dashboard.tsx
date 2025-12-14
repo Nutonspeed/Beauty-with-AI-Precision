@@ -136,6 +136,29 @@ export default function RealTimeAnalyticsDashboard() {
     }
   }, [timeRange])
 
+  const updateMetrics = useCallback((data: MetricData) => {
+    setMetrics(prev => {
+      const updated = { ...prev }
+      
+      switch (data.type) {
+        case 'business_metrics':
+          updated.business = { ...updated.business, ...data.data }
+          break
+        case 'performance_metrics':
+          updated.performance = { ...updated.performance, ...data.data }
+          break
+        case 'ai_metrics':
+          updated.ai = { ...updated.ai, ...data.data }
+          break
+        case 'realtime_metrics':
+          updated.realTime = { ...updated.realTime, ...data.data }
+          break
+      }
+      
+      return updated
+    })
+  }, [])
+
   // Initialize WebSocket connection
   useEffect(() => {
     const newSocket = io(process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:3001', {
@@ -194,29 +217,6 @@ export default function RealTimeAnalyticsDashboard() {
       return () => clearInterval(interval)
     }
   }, [autoRefresh, fetchInitialData])
-
-  const updateMetrics = useCallback((data: MetricData) => {
-    setMetrics(prev => {
-      const updated = { ...prev }
-      
-      switch (data.type) {
-        case 'business_metrics':
-          updated.business = { ...updated.business, ...data.data }
-          break
-        case 'performance_metrics':
-          updated.performance = { ...updated.performance, ...data.data }
-          break
-        case 'ai_metrics':
-          updated.ai = { ...updated.ai, ...data.data }
-          break
-        case 'realtime_metrics':
-          updated.realTime = { ...updated.realTime, ...data.data }
-          break
-      }
-      
-      return updated
-    })
-  }, [])
 
   const formatNumber = (num: number): string => {
     return new Intl.NumberFormat().format(num)
