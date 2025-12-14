@@ -158,13 +158,21 @@ export class RateLimitMiddleware {
       return undefined
     }
 
-    const forwardedFor = getHeader('x-forwarded-for')
+    const forwardedFor =
+      getHeader('x-vercel-forwarded-for') ||
+      getHeader('x-forwarded-for')
     if (forwardedFor) return String(forwardedFor).split(',')[0].trim()
 
+    const requestIp = (request as any)?.ip
+
     return (
+      requestIp ||
       getHeader('x-real-ip') ||
+      getHeader('true-client-ip') ||
       getHeader('cf-connecting-ip') ||
-      '127.0.0.1'
+      getHeader('fastly-client-ip') ||
+      getHeader('x-client-ip') ||
+      'unknown'
     )
   }
 
@@ -334,10 +342,20 @@ export class DDoSProtection {
   }
 
   private getClientIP(request: NextRequest): string {
-    return request.headers.get('x-forwarded-for') ||
-           request.headers.get('x-real-ip') ||
-           request.headers.get('cf-connecting-ip') ||
-           'unknown'
+    const forwardedFor =
+      request.headers.get('x-vercel-forwarded-for') ||
+      request.headers.get('x-forwarded-for')
+    if (forwardedFor) return String(forwardedFor).split(',')[0].trim()
+
+    return (
+      (request as any)?.ip ||
+      request.headers.get('x-real-ip') ||
+      request.headers.get('true-client-ip') ||
+      request.headers.get('cf-connecting-ip') ||
+      request.headers.get('fastly-client-ip') ||
+      request.headers.get('x-client-ip') ||
+      'unknown'
+    )
   }
 
   private async analyzeRequest(request: NextRequest): Promise<boolean> {
