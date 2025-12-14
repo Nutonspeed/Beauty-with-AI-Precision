@@ -12,13 +12,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useToast } from '@/components/ui/use-toast'
 import type { Tenant } from '@/lib/types/tenant'
-import { Loader2, Activity, Building2, Send, TrendingUp, Shield, Brain, CreditCard } from 'lucide-react'
+import { Loader2, Activity, Building2, Send, TrendingUp, Shield, Brain, CreditCard, FileText } from 'lucide-react'
 import { SystemHealthMonitor } from '@/components/admin/system-health-monitor'
 import RevenueAnalytics from '@/components/admin/revenue-analytics'
 import EnhancedClinicManagement from '@/components/admin/enhanced-clinic-management'
 import SecurityMonitoring from '@/components/admin/security-monitoring'
 import AIAnalyticsDashboard from '@/components/admin/ai-analytics-dashboard'
 import SubscriptionManagement from '@/components/admin/subscription-management'
+import ActivityLogsDashboard from '@/components/admin/activity-logs-dashboard'
 
 // Force dynamic rendering for this page
 export const dynamic = 'force-dynamic'
@@ -359,7 +360,7 @@ function SuperAdminDashboardContent() {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-7 lg:w-auto lg:inline-grid">
+          <TabsList className="grid w-full grid-cols-8 lg:w-auto lg:inline-grid">
             <TabsTrigger value="overview" className="gap-2">
               <Building2 className="w-4 h-4" />
               Clinic Management
@@ -387,6 +388,10 @@ function SuperAdminDashboardContent() {
             <TabsTrigger value="invitations" className="gap-2">
               <Send className="w-4 h-4" />
               Invitations
+            </TabsTrigger>
+            <TabsTrigger value="activity-logs" className="gap-2">
+              <FileText className="w-4 h-4" />
+              Activity Logs
             </TabsTrigger>
           </TabsList>
 
@@ -418,6 +423,11 @@ function SuperAdminDashboardContent() {
           {/* Subscriptions Tab */}
           <TabsContent value="subscriptions">
             <SubscriptionManagement />
+          </TabsContent>
+
+          {/* Activity Logs Tab */}
+          <TabsContent value="activity-logs">
+            <ActivityLogsDashboard />
           </TabsContent>
 
           {/* Invitations Tab */}
