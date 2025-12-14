@@ -44,8 +44,10 @@ import {
   Lock,
   Unlock,
   Eye,
+  Plus,
 } from 'lucide-react';
 import ClinicDetailModal from './clinic-detail-modal';
+import ClinicOnboardingWizard from './clinic-onboarding-wizard';
 
 interface ClinicData {
   id: string;
@@ -81,6 +83,9 @@ export default function EnhancedClinicManagement() {
   // Detail modal state
   const [selectedClinicId, setSelectedClinicId] = useState<string | null>(null);
   const [detailModalOpen, setDetailModalOpen] = useState(false);
+  
+  // Onboarding wizard state
+  const [wizardOpen, setWizardOpen] = useState(false);
 
   const openClinicDetail = (clinicId: string) => {
     setSelectedClinicId(clinicId);
@@ -418,6 +423,11 @@ export default function EnhancedClinicManagement() {
                 <Download className="h-4 w-4 mr-2" />
                 Export
               </Button>
+
+              <Button onClick={() => setWizardOpen(true)}>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Clinic
+              </Button>
             </div>
           </div>
         </CardHeader>
@@ -576,6 +586,13 @@ export default function EnhancedClinicManagement() {
         clinicId={selectedClinicId}
         open={detailModalOpen}
         onOpenChange={setDetailModalOpen}
+      />
+
+      {/* Clinic Onboarding Wizard */}
+      <ClinicOnboardingWizard
+        open={wizardOpen}
+        onOpenChange={setWizardOpen}
+        onSuccess={fetchClinics}
       />
     </div>
   );
