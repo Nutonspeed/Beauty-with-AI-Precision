@@ -1,7 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server"
 import { testAIGateway } from "@/lib/ai/gateway-client"
+import { withPublicAccess } from "@/lib/auth/middleware"
 
-export async function GET(request: NextRequest) {
+export const GET = withPublicAccess(async (request: NextRequest) => {
   try {
     const url = new URL(request.url)
     const mode = url.searchParams.get("mode") // "deep" to run live model checks
@@ -36,4 +37,4 @@ export async function GET(request: NextRequest) {
   } catch (err) {
     return NextResponse.json({ ok: false, error: (err as Error).message }, { status: 500 })
   }
-}
+}, { rateLimitCategory: 'api' })

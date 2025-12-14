@@ -5,10 +5,11 @@
  * Used by dashboard to show which AI services are active
  */
 
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { getAvailableProviders } from '@/lib/ai/unified-ai-service'
+import { withPublicAccess } from '@/lib/auth/middleware'
 
-export async function GET() {
+export const GET = withPublicAccess(async (_request: NextRequest) => {
   try {
     const providers = getAvailableProviders()
     
@@ -60,4 +61,4 @@ export async function GET() {
       error: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 })
   }
-}
+}, { rateLimitCategory: 'api' })

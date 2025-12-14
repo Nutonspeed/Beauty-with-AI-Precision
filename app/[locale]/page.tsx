@@ -13,11 +13,6 @@ import { useEffect, useRef } from "react"
 import { usageTracker } from "@/lib/analytics/usage-tracker"
 import { motion } from "framer-motion"
 
-// Build-time guard: avoid prerendering this large, client-heavy landing page to reduce
-// Vercel build duration (force runtime rendering instead of SSG/ISR).
-export const dynamic = "force-dynamic"
-
-
 export default function HomePage() {
   const { t } = useLanguage()
   const heroRef = useRef<HTMLElement | null>(null)

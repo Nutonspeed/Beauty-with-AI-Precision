@@ -2,11 +2,12 @@ import { type NextRequest, NextResponse } from "next/server"
 import { MultiAngleAnalyzer } from "@/lib/ai/multi-angle-analyzer"
 import { saveAnalysisWithStorage } from "@/lib/api/analysis-storage"
 import { createServerClient } from "@/lib/supabase/server"
+import { withPublicAccess } from "@/lib/auth/middleware"
 
 export const runtime = 'nodejs'
 export const maxDuration = 60 // 60 seconds for AI processing + image upload
 
-export async function POST(request: NextRequest) {
+export const POST = withPublicAccess(async (request: NextRequest) => {
   try {
     const { views } = await request.json()
 
@@ -92,7 +93,7 @@ export async function POST(request: NextRequest) {
     console.error("[MultiAngle] Analysis error:", error)
     return NextResponse.json({ error: "Analysis failed" }, { status: 500 })
   }
-}
+}, { rateLimitCategory: 'ai' })
 
 // Helper functions
 async function loadImage(dataUrl: string): Promise<HTMLImageElement> {

@@ -6,6 +6,7 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
 import { analyzeSkin } from "@/lib/ai/hybrid-skin-analyzer"
+import { withPublicAccess } from "@/lib/auth/middleware"
 import type { AnalysisMode } from "@/types"
 import { parseAnalysisMode } from "@/types"
 
@@ -32,7 +33,7 @@ interface AnalyzeRequest {
   }
 }
 
-export async function POST(request: NextRequest) {
+export const POST = withPublicAccess(async (request: NextRequest) => {
   try {
     console.log("[v0] 🚀 === ANALYSIS API STARTED ===")
 
@@ -182,21 +183,16 @@ export async function POST(request: NextRequest) {
       analysisTime,
     })
   } catch (error) {
-    console.error("[v0] ❌ === ANALYSIS ERROR ===")
-    console.error("[v0] ❌ Error:", error)
-    console.error("[v0] ❌ Stack:", error instanceof Error ? error.stack : "No stack trace")
-
+    console.error("[v0] ❌ Analysis API error:", error)
     return NextResponse.json(
       {
+        error: error instanceof Error ? error.message : "Unknown error",
         success: false,
-        error: "Analysis failed",
-        message: error instanceof Error ? error.message : "Unknown error",
-        details: error instanceof Error ? error.stack : String(error),
       },
       { status: 500 },
     )
   }
-}
+}, { rateLimitCategory: 'ai' })
 
 /**
  * Process and validate image

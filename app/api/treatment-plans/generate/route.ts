@@ -7,6 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
+import { withPublicAccess } from '@/lib/auth/middleware';
 import {
   createTreatmentPlanner,
   type AnalysisData,
@@ -26,7 +27,7 @@ interface GenerateRequest {
 // POST Handler
 // =============================================
 
-export async function POST(request: NextRequest) {
+export const POST = withPublicAccess(async (request: NextRequest) => {
   try {
     // Parse request
     const body = (await request.json()) as GenerateRequest;
@@ -163,23 +164,18 @@ export async function POST(request: NextRequest) {
       {
         success: true,
         planId,
-        message: 'Treatment plan generated successfully',
         plan: treatmentPlan,
       },
       { status: 201 }
     );
   } catch (error) {
-    console.error('Treatment plan generation error:', error);
-
+    console.error('[Treatment Planner API] Error:', error);
     return NextResponse.json(
-      {
-        error: 'Failed to generate treatment plan',
-        details: error instanceof Error ? error.message : 'Unknown error',
-      },
+      { error: 'Failed to generate treatment plan' },
       { status: 500 }
     );
   }
-}
+}, { rateLimitCategory: 'ai' })
 
 // =============================================
 // GET Handler - Retrieve Plan

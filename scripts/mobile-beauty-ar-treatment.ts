@@ -699,7 +699,7 @@ class MobileBeautyARTreatmentSystem {
     this.beautyARTreatments.push({ category: 'Customer Engagement Platform', engagement: customerEngagement });
   }
 
-  private generateBeautyARTreatmentReport(): void {
+TypeScript error 26 จุด
     const report = {
       timestamp: new Date().toISOString(),
       environment: 'production',

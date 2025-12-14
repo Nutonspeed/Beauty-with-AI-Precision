@@ -24,6 +24,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getStorageManager, type ImageTier } from '@/lib/storage/image-storage';
 import { formatFileSize } from '@/lib/storage/image-optimizer';
+import { withPublicAccess } from '@/lib/auth/middleware';
 
 export const runtime = 'nodejs';
 export const maxDuration = 60; // 60 seconds max
@@ -31,7 +32,7 @@ export const maxDuration = 60; // 60 seconds max
 /**
  * POST /api/storage/upload
  */
-export async function POST(request: NextRequest) {
+export const POST = withPublicAccess(async (request: NextRequest) => {
   try {
     // Get form data
     const formData = await request.formData();
@@ -99,13 +100,13 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+}, { rateLimitCategory: 'upload' })
 
 /**
  * GET /api/storage/upload?path=xxx&tier=display
  * Get image URL
  */
-export async function GET(request: NextRequest) {
+export const GET = withPublicAccess(async (request: NextRequest) => {
   try {
     const searchParams = request.nextUrl.searchParams;
     const path = searchParams.get('path');
@@ -167,13 +168,13 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+}, { rateLimitCategory: 'api' })
 
 /**
  * DELETE /api/storage/upload?path=xxx
  * Delete image (all tiers)
  */
-export async function DELETE(request: NextRequest) {
+export const DELETE = withPublicAccess(async (request: NextRequest) => {
   try {
     const searchParams = request.nextUrl.searchParams;
     const path = searchParams.get('path');
@@ -207,4 +208,4 @@ export async function DELETE(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+}, { rateLimitCategory: 'upload' })

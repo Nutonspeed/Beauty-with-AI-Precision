@@ -163,8 +163,20 @@ ClinicIQ is a comprehensive, AI-powered aesthetic clinic platform featuring:
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js 20.19.0+
-- pnpm 8.0+ (required - enforced)
+- Node.js 24.x
+- pnpm 10.12.0 (required - enforced)
+
+### Windows: Switch to Node 24 (recommended)
+
+This repo pins Node via `.nvmrc`/`.node-version`. On Windows, the easiest way to match that is **nvm-windows**.
+
+```bash
+nvm install 24
+nvm use 24
+
+node -v
+pnpm -v
+```
 
 ### Quick Start - Production Ready
 ```bash

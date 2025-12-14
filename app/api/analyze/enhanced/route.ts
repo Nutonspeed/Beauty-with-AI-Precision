@@ -84,4 +84,4 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
       { status: 500 },
     )
   }
-})
+}, { rateLimitCategory: 'ai' })

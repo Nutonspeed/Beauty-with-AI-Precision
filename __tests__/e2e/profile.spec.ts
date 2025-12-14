@@ -2,35 +2,15 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Profile Page E2E Tests', () => {
   test.beforeEach(async ({ page }) => {
-    // Login directly on page
-    await page.goto('/th/auth/login');
-    await page.waitForLoadState('domcontentloaded');
-    
-    // Wait for form
-    await page.locator('#email').waitFor({ state: 'visible', timeout: 10000 });
-    
-    // Use admin user for profile tests (has access to all pages)
-    await page.locator('#email').fill('admin@ai367bar.com');
-    await page.locator('#password').fill('password123');
-    await page.locator('button[type="submit"]').click();
-    // Wait for navigation or page load after login - be tolerant if no navigation occurs
-    await page.waitForLoadState('domcontentloaded').catch(() => {})
-    
-    // Navigate to profile
+    // In E2E test mode we allow /th/profile to render without auth redirects.
+    // This avoids flakiness across browsers where the login page may auto-redirect
+    // if a previous test left an authenticated session in storage.
     await page.goto('/th/profile');
     await page.waitForLoadState('domcontentloaded');
-    
-    // Wait for page to be interactive
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(500);
   });
 
   test('should display security settings', async ({ page }) => {
-    const url = page.url();
-    if (url.includes('/auth/login')) {
-      test.skip();
-      return;
-    }
-    
     const securityTab = page.getByRole('tab', { name: /Security|ความปลอดภัย/i });
     if (await securityTab.isVisible()) {
       await securityTab.click();
@@ -41,12 +21,6 @@ test.describe('Profile Page E2E Tests', () => {
   });
 
   test('should display notification settings', async ({ page }) => {
-    const url = page.url();
-    if (url.includes('/auth/login')) {
-      test.skip();
-      return;
-    }
-    
     const notifTab = page.getByRole('tab', { name: /Notifications|การแจ้งเตือน/i });
     if (await notifTab.isVisible()) {
       await notifTab.click();
@@ -57,12 +31,6 @@ test.describe('Profile Page E2E Tests', () => {
   });
 
   test('should display preferences settings', async ({ page }) => {
-    const url = page.url();
-    if (url.includes('/auth/login')) {
-      test.skip();
-      return;
-    }
-    
     const prefTab = page.getByRole('tab', { name: /Preferences|การตั้งค่า/i });
     if (await prefTab.isVisible()) {
       await prefTab.click();

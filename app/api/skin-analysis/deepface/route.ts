@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { deepFaceClient, type FaceAnalysisResult } from '@/lib/ai/deepface-client'
 import { createClient } from '@/lib/supabase/server'
+import { withPublicAccess } from '@/lib/auth/middleware'
 
-export async function POST(request: NextRequest) {
+export const POST = withPublicAccess(async (request: NextRequest) => {
   try {
     const supabase = await createClient()
     const { data: { session }, error } = await supabase.auth.getSession()
@@ -109,9 +110,9 @@ export async function POST(request: NextRequest) {
       error: 'Analysis failed. Please try again.' 
     }, { status: 500 })
   }
-}
+}, { rateLimitCategory: 'ai' })
 
-export async function GET(request: NextRequest) {
+export const GET = withPublicAccess(async (request: NextRequest) => {
   try {
     // Verify authentication
     const supabase = await createClient()
@@ -144,7 +145,7 @@ export async function GET(request: NextRequest) {
       error: 'Health check failed' 
     }, { status: 500 })
   }
-}
+}, { rateLimitCategory: 'api' })
 
 function generateTreatmentRecommendations(analysis: FaceAnalysisResult) {
   const recommendations = []

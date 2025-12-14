@@ -102,7 +102,7 @@ export class LoginPage {
       
       // Click and wait for navigation
       const navigationPromise = this.page.waitForNavigation({ 
-        waitUntil: 'networkidle',
+        waitUntil: 'domcontentloaded',
         timeout: 30000 
       });
       
@@ -196,7 +196,7 @@ export class LoginPage {
       }
       
       // Final check to ensure we're logged in
-      await this.page.waitForLoadState('networkidle');
+      await this.page.waitForLoadState('domcontentloaded');
       console.log('Login flow completed successfully');
       
       // Take a screenshot after successful login

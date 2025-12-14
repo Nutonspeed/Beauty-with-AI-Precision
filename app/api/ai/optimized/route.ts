@@ -3,9 +3,10 @@ import { aiOptimizer } from '@/lib/ai/optimization/optimizer'
 import { aiCache } from '@/lib/ai/cache/manager'
 import { aiQueue } from '@/lib/ai/queue/manager'
 import { createServerClient } from '@/lib/supabase/server'
+import { withPublicAccess } from '@/lib/auth/middleware'
 
 // Optimized skin analysis endpoint
-export async function POST(request: NextRequest) {
+export const POST = withPublicAccess(async (request: NextRequest) => {
   try {
     // Verify authentication using Supabase
     const supabase = await createServerClient()
@@ -69,10 +70,10 @@ export async function POST(request: NextRequest) {
       error: 'Analysis failed. Please try again.' 
     }, { status: 500 })
   }
-}
+}, { rateLimitCategory: 'ai' })
 
 // Batch analysis endpoint
-export async function PATCH(request: NextRequest) {
+export const PATCH = withPublicAccess(async (request: NextRequest) => {
   try {
     const supabase = await createServerClient()
     const { data: { session }, error } = await supabase.auth.getSession()
@@ -112,10 +113,10 @@ export async function PATCH(request: NextRequest) {
       error: 'Batch analysis failed' 
     }, { status: 500 })
   }
-}
+}, { rateLimitCategory: 'ai' })
 
 // Get job status endpoint
-export async function GET(request: NextRequest) {
+export const GET = withPublicAccess(async (request: NextRequest) => {
   try {
     const supabase = await createServerClient()
     const { data: { session }, error } = await supabase.auth.getSession()
@@ -172,4 +173,4 @@ export async function GET(request: NextRequest) {
       error: 'Failed to get job status' 
     }, { status: 500 })
   }
-}
+}, { rateLimitCategory: 'ai' })

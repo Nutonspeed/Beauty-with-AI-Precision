@@ -1,7 +1,8 @@
 import { createServerClient } from "@/lib/supabase/server"
 import { NextResponse } from "next/server"
+import { withPublicAccess } from "@/lib/auth/middleware"
 
-export async function POST(request: Request) {
+export const POST = withPublicAccess(async (request: Request) => {
   try {
     const { email, password } = await request.json()
 
@@ -38,4 +39,4 @@ export async function POST(request: Request) {
     console.error("Login error:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
-}
+}, { rateLimitCategory: 'auth' })

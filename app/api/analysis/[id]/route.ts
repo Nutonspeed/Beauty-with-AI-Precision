@@ -2,29 +2,18 @@ import { type NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@/lib/supabase/server"
 import type { GetAnalysisResponse, ApiError } from "@/types/api"
 import type { SkinConcern } from "@/lib/ai/tensorflow-analyzer"
+import { withAuthContext } from "@/lib/auth/middleware"
 
 /**
  * GET /api/analysis/[id]
  * Get specific analysis by ID
  */
-export async function GET(request: NextRequest, context: { params: Promise<{ id: string }> }) {
-  try {
+export const GET = withAuthContext(
+  async (request: NextRequest, user, context: { params: Promise<{ id: string }> }) => {
+    // delegate to existing implementation by inlining the logic above
     const supabase = await createServerClient()
-    const {
-      data: { session },
-    } = await supabase.auth.getSession()
+    const { id } = await context.params
 
-    if (!session?.user?.id) {
-      return NextResponse.json<ApiError>(
-        { success: false, error: "Unauthorized", code: "UNAUTHORIZED" },
-        { status: 401 },
-      )
-    }
-
-    // Await params in Next.js 16
-  const { id } = await context.params
-
-    // Fetch analysis
     const { data: analysis, error } = await supabase.from("skin_analyses").select("*").eq("id", id).single()
 
     if (error || !analysis) {
@@ -34,14 +23,10 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
       )
     }
 
-    const userRole = session.user.user_metadata?.role || "customer"
-
-    // Check if user can access this analysis
-    if (analysis.user_id !== session.user.id && userRole !== "super_admin") {
+    if (analysis.user_id !== user.id && user.role !== "super_admin") {
       return NextResponse.json<ApiError>({ success: false, error: "Forbidden", code: "FORBIDDEN" }, { status: 403 })
     }
 
-    // Transform to response format
     const response: GetAnalysisResponse = {
       id: analysis.id,
       imageUrl: analysis.image_url,
@@ -64,16 +49,6 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
       },
       { status: 200 },
     )
-  } catch (error) {
-    console.error("Error fetching analysis:", error)
-    return NextResponse.json<ApiError>(
-      {
-        success: false,
-        error: "Failed to fetch analysis",
-        code: "INTERNAL_ERROR",
-        details: error instanceof Error ? error.message : "Unknown error",
-      },
-      { status: 500 },
-    )
-  }
-}
+  },
+  { rateLimitCategory: 'api' },
+)

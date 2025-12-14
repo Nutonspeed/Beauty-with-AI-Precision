@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -52,41 +52,11 @@ const SearchInterface: React.FC<SearchInterfaceProps> = ({
   const [loading, setLoading] = useState(false)
   const [total, setTotal] = useState(0)
   const [showFilters, setShowFilters] = useState(false)
-  const [activeTab, setActiveTab] = useState('all')
   
   const searchTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
   const abortControllerRef = useRef<AbortController | undefined>(undefined)
 
-  // Debounced search
-  useEffect(() => {
-    if (query.length < 2) {
-      setSuggestions([])
-      return
-    }
-
-    if (searchTimeoutRef.current) {
-      clearTimeout(searchTimeoutRef.current)
-    }
-
-    searchTimeoutRef.current = setTimeout(() => {
-      fetchSuggestions()
-    }, 300)
-
-    return () => {
-      if (searchTimeoutRef.current) {
-        clearTimeout(searchTimeoutRef.current)
-      }
-    }
-  }, [query])
-
-  // Search when query or filters change
-  useEffect(() => {
-    if (query.length >= 2 || Object.keys(filters).length > 0) {
-      performSearch()
-    }
-  }, [query, filters])
-
-  const fetchSuggestions = async () => {
+  const fetchSuggestions = useCallback(async () => {
     try {
       const response = await fetch(
         `/api/search/suggestions?q=${encodeURIComponent(query)}&type=patients&clinicId=${clinicId}`
@@ -99,9 +69,9 @@ const SearchInterface: React.FC<SearchInterfaceProps> = ({
     } catch (error) {
       console.error('Failed to fetch suggestions:', error)
     }
-  }
+  }, [clinicId, query])
 
-  const performSearch = async () => {
+  const performSearch = useCallback(async () => {
     setLoading(true)
     
     // Cancel previous request
@@ -160,7 +130,36 @@ const SearchInterface: React.FC<SearchInterfaceProps> = ({
     } finally {
       setLoading(false)
     }
-  }
+  }, [clinicId, filters, query])
+
+  // Debounced search
+  useEffect(() => {
+    if (query.length < 2) {
+      setSuggestions([])
+      return
+    }
+
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current)
+    }
+
+    searchTimeoutRef.current = setTimeout(() => {
+      fetchSuggestions()
+    }, 300)
+
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current)
+      }
+    }
+  }, [fetchSuggestions, query])
+
+  // Search when query or filters change
+  useEffect(() => {
+    if (query.length >= 2 || Object.keys(filters).length > 0) {
+      performSearch()
+    }
+  }, [filters, performSearch, query])
 
   const handleSearch = (searchQuery: string) => {
     setQuery(searchQuery)

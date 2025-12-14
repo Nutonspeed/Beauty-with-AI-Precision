@@ -2,7 +2,7 @@ import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { TrendingUp, Users, Award, DollarSign, Sparkles, MessageSquare, Target, Brain, Camera, Wand2, BarChart3 } from 'lucide-react'
+import { TrendingUp, Users, Award, DollarSign, Sparkles, MessageSquare, Target, Brain, BarChart3 } from 'lucide-react'
 import Link from 'next/link'
 
 interface EmbeddedSalesDashboardProps {

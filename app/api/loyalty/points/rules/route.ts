@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { withClinicAuth } from '@/lib/auth/middleware';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -15,7 +16,7 @@ const supabase = createClient(
  * - rule_type (optional): Filter by rule type
  * - is_active (optional): Filter by active status
  */
-export async function GET(request: NextRequest) {
+export const GET = withClinicAuth(async (request: NextRequest, user: any) => {
   try {
     const { searchParams } = new URL(request.url);
     const clinic_id = searchParams.get('clinic_id');
@@ -27,6 +28,10 @@ export async function GET(request: NextRequest) {
         { error: 'clinic_id is required' },
         { status: 400 }
       );
+    }
+
+    if (user?.clinic_id && clinic_id !== user.clinic_id) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     let query = supabase
@@ -57,15 +62,20 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+});
 
 /**
  * POST /api/loyalty/points/rules
  * Create a new points earning rule for beauty clinic
  */
-export async function POST(request: NextRequest) {
+export const POST = withClinicAuth(async (request: NextRequest, user: any) => {
   try {
-    const body = await request.json();
+    let body: any = null;
+    try {
+      body = await request.json();
+    } catch {
+      return new NextResponse(null, { status: 204 });
+    }
     const {
       clinic_id,
       rule_name,
@@ -101,6 +111,10 @@ export async function POST(request: NextRequest) {
         { error: 'clinic_id, rule_name, rule_type, points_calculation_method, and points_value are required' },
         { status: 400 }
       );
+    }
+
+    if (user?.clinic_id && clinic_id !== user.clinic_id) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     const { data, error } = await supabase
@@ -147,4 +161,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+});

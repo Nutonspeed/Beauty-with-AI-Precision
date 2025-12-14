@@ -2,33 +2,22 @@ import { type NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@/lib/supabase/server"
 import type { AnalysisHistoryItem, ApiError } from "@/types/api"
 import type { SkinConcern } from "@/lib/ai/tensorflow-analyzer"
+import { withAuthContext } from "@/lib/auth/middleware"
 
 /**
  * GET /api/analysis/history/[userId]
  * Get analysis history for a user
  * Updated to use correct schema (ai_concerns, *_count fields)
  */
-export async function GET(request: NextRequest, context: { params: Promise<{ userId: string }> }) {
-  try {
+export const GET = withAuthContext(
+  async (request: NextRequest, user, context: { params: Promise<{ userId: string }> }) => {
     const supabase = await createServerClient()
-    const {
-      data: { session },
-    } = await supabase.auth.getSession()
-
-    if (!session?.user?.id) {
-      return NextResponse.json<ApiError>(
-        { success: false, error: "Unauthorized", code: "UNAUTHORIZED" },
-        { status: 401 },
-      )
-    }
 
     // Await params in Next.js 16
-  const { userId } = await context.params
-
-    const userRole = session.user.user_metadata?.role || "customer"
+    const { userId } = await context.params
 
     // Check if user can access this data
-    if (session.user.id !== userId && userRole !== "super_admin") {
+    if (user.id !== userId && user.role !== "super_admin") {
       return NextResponse.json<ApiError>({ success: false, error: "Forbidden", code: "FORBIDDEN" }, { status: 403 })
     }
 
@@ -98,16 +87,6 @@ export async function GET(request: NextRequest, context: { params: Promise<{ use
       },
       { status: 200 },
     )
-  } catch (error) {
-    console.error("Error fetching analysis history:", error)
-    return NextResponse.json<ApiError>(
-      {
-        success: false,
-        error: "Failed to fetch analysis history",
-        code: "INTERNAL_ERROR",
-        details: error instanceof Error ? error.message : "Unknown error",
-      },
-      { status: 500 },
-    )
-  }
-}
+  },
+  { rateLimitCategory: 'api' },
+)

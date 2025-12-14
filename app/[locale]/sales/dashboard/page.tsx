@@ -1,8 +1,6 @@
 'use client'
 
 // Build-time guard: render dynamically to avoid heavy prerendering on Vercel
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
@@ -73,6 +71,7 @@ interface SalesFunnelResponse {
 export default function SalesDashboard() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
+  const [isCheckingRole, setIsCheckingRole] = useState(true)
   const [error, setError] = useState('')
   const [metrics, setMetrics] = useState<SalesMetricsResponse | null>(null)
   const [overview, setOverview] = useState<SalesOverviewResponse | null>(null)
@@ -84,18 +83,25 @@ export default function SalesDashboard() {
 
     const bootstrap = async () => {
       try {
-        // Simple auth guard compatible with existing behavior
-        const user = typeof window !== 'undefined' ? localStorage.getItem('user') : null
-        if (!user) {
+        // Role/auth guard via API
+        const roleRes = await fetch('/api/auth/check-role', { headers: { Accept: 'application/json' } })
+        if (!roleRes.ok) {
           router.push('/auth/login')
           return
         }
+        const roleData = await roleRes.json()
+        if (!['sales_staff', 'admin'].includes(roleData.role)) {
+          router.push('/auth/login')
+          return
+        }
+        if (cancelled) return
+        setIsCheckingRole(false)
 
         const qs = `?range=${range}`
         const [metricsRes, overviewRes, funnelRes] = await Promise.all([
-          fetch(`/sales/metrics${qs}`, { method: 'GET', headers: { Accept: 'application/json' } }),
-          fetch(`/sales/overview${qs}`, { method: 'GET', headers: { Accept: 'application/json' } }),
-          fetch(`/sales/funnel${qs}`, { method: 'GET', headers: { Accept: 'application/json' } }),
+          fetch(`/api/sales/metrics${qs}`, { method: 'GET', headers: { Accept: 'application/json' } }),
+          fetch(`/api/sales/overview${qs}`, { method: 'GET', headers: { Accept: 'application/json' } }),
+          fetch(`/api/sales/funnel${qs}`, { method: 'GET', headers: { Accept: 'application/json' } }),
         ])
 
         if (!metricsRes.ok) {
@@ -117,8 +123,8 @@ export default function SalesDashboard() {
           setFunnel(funnelData)
           setIsLoading(false)
         }
-      } catch (err) {
-        console.error('Sales Dashboard Error:', err)
+      } catch (error) {
+        console.error('Sales Dashboard Error:', error)
         if (!cancelled) {
           setError('Failed to load dashboard')
           setIsLoading(false)
@@ -134,23 +140,14 @@ export default function SalesDashboard() {
   }, [router, range])
 
   const totalScansThisMonth = metrics?.leadsContacted.today ?? 0
-  const conversionsThisMonth = metrics?.proposalsSent.today ?? 0
   const revenueThisMonth = metrics?.revenueGenerated.today ?? 0
   const aiLeadsToday = metrics?.aiLeads.today ?? 0
   const aiProposalsToday = metrics?.aiProposals.today ?? 0
   const aiBookingsToday = metrics?.aiBookings.today ?? 0
   const aiBookingRevenueToday = metrics?.aiBookingRevenue.today ?? 0
   const remoteConsultRequestsToday = metrics?.remoteConsultRequests.today ?? 0
-  const remoteConsultConversionToday = (metrics?.remoteConsultConversion.today ?? 0).toFixed(1)
-  const conversionRate = (metrics?.conversionRate.today ?? 0).toFixed(1)
-  const stats = overview ?? {
-    today: { scans: 0, revenue: 0 },
-    thisWeek: { scans: 0, revenue: 0 },
-    thisMonth: { scans: 0, revenue: 0 },
-    topPackages: [],
-  }
 
-  if (isLoading) {
+  if (isCheckingRole || isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 md:p-6">
         <div className="max-w-7xl mx-auto space-y-6">
@@ -232,9 +229,9 @@ export default function SalesDashboard() {
               <Users className="w-4 h-4 text-blue-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.thisMonth.scans}</div>
+              <div className="text-2xl font-bold">{totalScansThisMonth}</div>
               <p className="text-xs text-gray-600">
-                +{stats.today.scans} today
+                +{metrics?.leadsContacted.today ?? 0} today
               </p>
             </CardContent>
           </Card>
@@ -245,9 +242,9 @@ export default function SalesDashboard() {
               <Award className="w-4 h-4 text-green-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.thisMonth.conversions}</div>
+              <div className="text-2xl font-bold">{metrics?.proposalsSent.today ?? 0}</div>
               <p className="text-xs text-gray-600">
-                +{stats.today.conversions} today
+                vs previous: {(metrics?.proposalsSent.change ?? 0).toFixed(1)}%
               </p>
             </CardContent>
           </Card>
@@ -258,9 +255,9 @@ export default function SalesDashboard() {
               <TrendingUp className="w-4 h-4 text-purple-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{conversionRate}%</div>
+              <div className="text-2xl font-bold">{(metrics?.conversionRate.today ?? 0).toFixed(1)}%</div>
               <p className="text-xs text-gray-600">
-                {((stats.today.conversions / stats.today.scans) * 100).toFixed(1)}% today
+                {(metrics?.conversionRate.change ?? 0).toFixed(1)}% change
               </p>
             </CardContent>
           </Card>
@@ -272,10 +269,10 @@ export default function SalesDashboard() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                ฿{(stats.thisMonth.revenue / 1000).toFixed(0)}K
+                ฿{(revenueThisMonth / 1000).toFixed(0)}K
               </div>
               <p className="text-xs text-gray-600">
-                +฿{(stats.today.revenue / 1000).toFixed(0)}K today
+                +฿{(metrics?.revenueGenerated.today ?? 0).toLocaleString()} today
               </p>
             </CardContent>
           </Card>
@@ -324,7 +321,7 @@ export default function SalesDashboard() {
                 <p className="text-3xl font-bold text-emerald-700">{remoteConsultRequestsToday}</p>
                 <p className="text-xs text-gray-600 mt-1">คำขอจากลูกค้าที่กดขอปรึกษาออนไลน์</p>
                 <p className="text-[11px] text-emerald-700 mt-1">
-                  Conversion: {remoteConsultConversionToday}% ของคำขอที่ปิดเป็นลูกค้า
+                  Conversion: {(metrics?.remoteConsultConversion.today ?? 0).toFixed(1)}% ของคำขอที่ปิดเป็นลูกค้า
                 </p>
               </div>
               <Link href="/sales/remote-consults">
@@ -405,15 +402,11 @@ export default function SalesDashboard() {
             <CardContent className="space-y-2">
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Scans</span>
-                <span className="font-semibold">{stats.today.scans}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Conversions</span>
-                <span className="font-semibold">{stats.today.conversions}</span>
+                <span className="font-semibold">{metrics?.leadsContacted.today ?? 0}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Revenue</span>
-                <span className="font-semibold">฿{stats.today.revenue.toLocaleString()}</span>
+                <span className="font-semibold">฿{(metrics?.revenueGenerated.today ?? 0).toLocaleString()}</span>
               </div>
             </CardContent>
           </Card>
@@ -428,15 +421,11 @@ export default function SalesDashboard() {
             <CardContent className="space-y-2">
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Scans</span>
-                <span className="font-semibold">{stats.thisWeek.scans}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Conversions</span>
-                <span className="font-semibold">{stats.thisWeek.conversions}</span>
+                <span className="font-semibold">{metrics?.leadsContacted.yesterday ?? 0}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Revenue</span>
-                <span className="font-semibold">฿{stats.thisWeek.revenue.toLocaleString()}</span>
+                <span className="font-semibold">฿{(metrics?.revenueGenerated.yesterday ?? 0).toLocaleString()}</span>
               </div>
             </CardContent>
           </Card>
@@ -451,15 +440,11 @@ export default function SalesDashboard() {
             <CardContent className="space-y-2">
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Scans</span>
-                <span className="font-semibold">{stats.thisMonth.scans}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Conversions</span>
-                <span className="font-semibold">{stats.thisMonth.conversions}</span>
+                <span className="font-semibold">{metrics?.leadsContacted.target ?? 0}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Revenue</span>
-                <span className="font-semibold">฿{stats.thisMonth.revenue.toLocaleString()}</span>
+                <span className="font-semibold">฿{(metrics?.revenueGenerated.target ?? 0).toLocaleString()}</span>
               </div>
             </CardContent>
           </Card>
@@ -472,7 +457,7 @@ export default function SalesDashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {stats.topPackages.map((pkg, idx) => (
+              {(overview?.topPackages || []).map((pkg: TopPackage, idx: number) => (
                 <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">

@@ -104,11 +104,37 @@ export default function RealTimeAnalyticsDashboard() {
     }
   })
 
-  const [socket, setSocket] = useState<Socket | null>(null)
+  const [_socket, setSocket] = useState<Socket | null>(null)
   const [connected, setConnected] = useState(false)
   const [timeRange, setTimeRange] = useState('1h')
   const [autoRefresh, setAutoRefresh] = useState(true)
   const [historicalData, setHistoricalData] = useState<any[]>([])
+
+  const fetchInitialData = useCallback(async () => {
+    try {
+      const response = await fetch(`/api/analytics/dashboard?timeRange=${timeRange}`)
+      const data = await response.json()
+      
+      if (data.success) {
+        setMetrics(data.metrics)
+      }
+    } catch (error) {
+      console.error('Failed to fetch analytics data:', error)
+    }
+  }, [timeRange])
+
+  const fetchHistoricalData = useCallback(async () => {
+    try {
+      const response = await fetch(`/api/analytics/historical?timeRange=${timeRange}`)
+      const data = await response.json()
+      
+      if (data.success) {
+        setHistoricalData(data.data)
+      }
+    } catch (error) {
+      console.error('Failed to fetch historical data:', error)
+    }
+  }, [timeRange])
 
   // Initialize WebSocket connection
   useEffect(() => {
@@ -150,13 +176,13 @@ export default function RealTimeAnalyticsDashboard() {
     return () => {
       newSocket.close()
     }
-  }, [])
+  }, [updateMetrics])
 
   // Fetch initial data
   useEffect(() => {
     fetchInitialData()
     fetchHistoricalData()
-  }, [timeRange])
+  }, [fetchHistoricalData, fetchInitialData])
 
   // Auto-refresh
   useEffect(() => {
@@ -167,33 +193,7 @@ export default function RealTimeAnalyticsDashboard() {
 
       return () => clearInterval(interval)
     }
-  }, [autoRefresh, timeRange])
-
-  const fetchInitialData = async () => {
-    try {
-      const response = await fetch(`/api/analytics/dashboard?timeRange=${timeRange}`)
-      const data = await response.json()
-      
-      if (data.success) {
-        setMetrics(data.metrics)
-      }
-    } catch (error) {
-      console.error('Failed to fetch analytics data:', error)
-    }
-  }
-
-  const fetchHistoricalData = async () => {
-    try {
-      const response = await fetch(`/api/analytics/historical?timeRange=${timeRange}`)
-      const data = await response.json()
-      
-      if (data.success) {
-        setHistoricalData(data.data)
-      }
-    } catch (error) {
-      console.error('Failed to fetch historical data:', error)
-    }
-  }
+  }, [autoRefresh, fetchInitialData])
 
   const updateMetrics = useCallback((data: MetricData) => {
     setMetrics(prev => {

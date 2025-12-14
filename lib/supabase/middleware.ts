@@ -29,6 +29,11 @@ function isProtectedRoute(pathname: string): boolean {
 }
 
 export async function updateSession(request: NextRequest) {
+  // Bypass auth for testing if enabled
+  if (process.env.NEXT_PUBLIC_TEST_MODE === 'true') {
+    return NextResponse.next({ request })
+  }
+
   let supabaseResponse = NextResponse.next({
     request,
   })

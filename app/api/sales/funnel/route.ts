@@ -39,6 +39,7 @@ function getRangeCutoff(range: string): string {
 }
 
 export async function GET(request: NextRequest) {
+  const startedAt = Date.now()
   try {
     const supabase = await createServerClient()
     const {
@@ -47,6 +48,17 @@ export async function GET(request: NextRequest) {
 
     if (!user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    // Role guard
+    const service = createServiceClient()
+    const { data: userRow, error: userErr } = await service
+      .from('users')
+      .select('role, clinic_id')
+      .eq('id', user.id)
+      .single()
+    if (userErr || !userRow || !['sales_staff', 'admin'].includes(userRow.role)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
     const searchParams = request.nextUrl.searchParams
@@ -150,7 +162,13 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(payload)
   } catch (error) {
-    console.error("[sales/funnel] Unexpected error", error)
-    return NextResponse.json({ error: "Failed to load funnel" }, { status: 500 })
+    console.error("[v0] Error fetching sales funnel:", error)
+    return NextResponse.json(
+      { error: "Failed to fetch sales funnel", details: error instanceof Error ? error.message : "Unknown error" },
+      { status: 500 },
+    )
+  } finally {
+    const duration = Date.now() - startedAt
+    console.info("[sales/funnel][GET] done", { durationMs: duration })
   }
 }

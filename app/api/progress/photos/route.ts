@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { withPublicAccess } from '@/lib/auth/middleware';
 
 /**
  * GET /api/progress/photos
  * Get all progress photos for the current user
  */
-export async function GET(request: NextRequest) {
+export const GET = withPublicAccess(async (request: NextRequest) => {
   try {
     const supabase = await createClient();
     
@@ -46,13 +47,13 @@ export async function GET(request: NextRequest) {
     console.error('Error fetching photos:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
-}
+}, { rateLimitCategory: 'api' })
 
 /**
  * POST /api/progress/photos
  * Upload a new progress photo
  */
-export async function POST(request: NextRequest) {
+export const POST = withPublicAccess(async (request: NextRequest) => {
   try {
     const supabase = await createClient();
     
@@ -138,13 +139,13 @@ export async function POST(request: NextRequest) {
     console.error('Error uploading photo:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
-}
+}, { rateLimitCategory: 'upload' })
 
 /**
  * DELETE /api/progress/photos/:id
  * Delete a progress photo
  */
-export async function DELETE(request: NextRequest) {
+export const DELETE = withPublicAccess(async (request: NextRequest) => {
   try {
     const supabase = await createClient();
     
@@ -204,4 +205,4 @@ export async function DELETE(request: NextRequest) {
     console.error('Error deleting photo:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
-}
+}, { rateLimitCategory: 'upload' })

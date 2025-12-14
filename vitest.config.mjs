@@ -7,8 +7,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 // Allow tuning the worker pool via env to avoid runner timeouts
 const poolEnv = process.env.VITEST_POOL
 const isCI = process.env.CI === 'true' || process.env.CI === '1'
-const resolvedPool = poolEnv || (isCI ? 'forks' : 'threads')
-const singleThread = process.env.VITEST_SINGLE_THREAD === '1' || isCI
+const isWindows = process.platform === 'win32'
+const resolvedPool = poolEnv || (isCI || isWindows ? 'forks' : 'threads')
+const singleThread = process.env.VITEST_SINGLE_THREAD === '1' || isCI || isWindows
 
 export default defineConfig({
   test: {
@@ -16,12 +17,20 @@ export default defineConfig({
     environment: 'happy-dom',
     // Pool is configurable to mitigate startup issues in constrained environments
     pool: resolvedPool,
+    fileParallelism: !isWindows,
+    maxConcurrency: isWindows ? 1 : undefined,
+    sequence: {
+      concurrent: !isWindows,
+    },
     poolOptions: {
+      forks: {
+        singleFork: singleThread,
+      },
       threads: {
         singleThread,
       },
     },
-    testTimeout: 30000,
+    testTimeout: isWindows ? 60000 : 30000,
     environmentOptions: {
       happyDOM: {
         // emulate a browser-like URL for APIs relying on location

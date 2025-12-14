@@ -6,6 +6,7 @@ import { PageLayout } from "@/components/layouts/page-layout"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { SalesMetrics } from "@/components/sales/sales-metrics"
+import { SalesActivityFeed } from "@/components/sales/sales-activity-feed"
 import { HotLeadCard } from "@/components/sales/hot-lead-card"
 import { HotLeadCardSkeleton } from "@/components/sales/hot-lead-card-skeleton"
 import { ResumePresentations } from "@/components/sales/presentation/resume-presentations"
@@ -21,7 +22,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Phone, Mail, RefreshCw, Sparkles, Bell, BellOff, Search, Filter, Users, FileText, Megaphone, Zap, Gift, Presentation, Smartphone, StickyNote, BarChart3, Target } from "lucide-react"
+import { Phone, Mail, RefreshCw, Sparkles, Bell, BellOff, Search, Filter, Users, FileText, Megaphone, Zap, Gift, Presentation, Smartphone, StickyNote, BarChart3, Target, AlertTriangle } from "lucide-react"
 import Link from "next/link"
 import { sortLeadsByPriority, formatTimeAgo, type PriorityScore } from "@/lib/lead-prioritization"
 import { SearchNoResultsState, NoDataState } from "@/components/ui/empty-state"
@@ -33,134 +34,45 @@ import { useInfiniteScroll } from "@/lib/hooks/use-infinite-scroll"
 
 import { toast } from "sonner"
 
+type HotLead = {
+  id: string
+  customer_user_id?: string | null
+  name: string
+  age: number
+  photo?: string
+  initials: string
+  score: number
+  isOnline: boolean
+  topConcern: string
+  secondaryConcern?: string | null
+  estimatedValue: number
+  lastActivity: string
+  analysisTimestamp?: Date | string
+  engagementCount?: number
+  analysisData: {
+    wrinkles?: number
+    pigmentation?: number
+    pores?: number
+    hydration?: number
+  }
+  skinType?: string | null
+  email?: string | null
+  phone?: string | null
+}
+
+type ChatMessage = {
+  id: string
+  text: string
+  sender: "customer" | "sales"
+  timestamp: Date
+  isRead: boolean
+}
+
 // Mock hot leads data with prioritization fields
-const mockHotLeads = [
-  {
-    id: "1",
-    customer_user_id: undefined, // Mock lead not yet converted to customer
-    name: "Sarah Johnson",
-    age: 32,
-    photo: undefined,
-    initials: "SJ",
-    score: 65,
-    isOnline: true,
-    topConcern: "Wrinkles",
-    secondaryConcern: "Pigmentation",
-    estimatedValue: 45000,
-    lastActivity: "3 min ago",
-    analysisTimestamp: new Date(Date.now() - 1000 * 60 * 3), // 3 minutes ago
-    engagementCount: 5, // High engagement
-    analysisData: {
-      wrinkles: 72,
-      pigmentation: 75,
-      pores: 80,
-      hydration: 68,
-    },
-    skinType: "Combination",
-    email: "sarah.j@email.com",
-    phone: "081-234-5678",
-  },
-  {
-    id: "3",
-    customer_user_id: undefined, // Mock lead not yet converted to customer
-    name: "Emma Wilson",
-    age: 45,
-    photo: undefined,
-    initials: "EW",
-    score: 58,
-    isOnline: true,
-    topConcern: "Elasticity",
-    secondaryConcern: "Wrinkles",
-    estimatedValue: 55000,
-    lastActivity: "8 min ago",
-    analysisTimestamp: new Date(Date.now() - 1000 * 60 * 8), // 8 minutes ago
-    engagementCount: 3, // Medium engagement
-    analysisData: {
-      wrinkles: 60,
-      pigmentation: 65,
-      pores: 72,
-      hydration: 55,
-    },
-    skinType: "Dry",
-    email: "emma.w@email.com",
-    phone: "082-345-6789",
-  },
-  {
-    id: "2",
-    customer_user_id: undefined, // Mock lead not yet converted to customer
-    name: "Michael Chen",
-    age: 28,
-    photo: undefined,
-    initials: "MC",
-    score: 78,
-    isOnline: false,
-    topConcern: "Pores",
-    secondaryConcern: "Hydration",
-    estimatedValue: 35000,
-    lastActivity: "15 min ago",
-    analysisTimestamp: new Date(Date.now() - 1000 * 60 * 15), // 15 minutes ago
-    engagementCount: 1, // Low engagement
-    analysisData: {
-      wrinkles: 85,
-      pigmentation: 82,
-      pores: 68,
-      hydration: 70,
-    },
-    skinType: "Oily",
-    email: "michael.c@email.com",
-    phone: "083-456-7890",
-  },
-  {
-    id: "4",
-    customer_user_id: undefined, // Mock lead not yet converted to customer
-    name: "Lisa Anderson",
-    age: 38,
-    photo: undefined,
-    initials: "LA",
-    score: 55,
-    isOnline: true,
-    topConcern: "Pigmentation",
-    secondaryConcern: "Wrinkles",
-    estimatedValue: 85000,
-    lastActivity: "2 min ago",
-    analysisTimestamp: new Date(Date.now() - 1000 * 60 * 2), // 2 minutes ago
-    engagementCount: 7, // Very high engagement
-    analysisData: {
-      wrinkles: 58,
-      pigmentation: 55,
-      pores: 65,
-      hydration: 52,
-    },
-    skinType: "Combination",
-    email: "lisa.a@email.com",
-    phone: "084-567-8901",
-  },
-]
+const mockHotLeads: HotLead[] = []
 
 // Mock chat messages
-const initialMessages = [
-  {
-    id: "1",
-    text: "สวัสดีค่ะ ผมเพิ่งทำ skin analysis เสร็จครับ",
-    sender: "customer" as const,
-    timestamp: new Date(Date.now() - 1000 * 60 * 5),
-    isRead: true,
-  },
-  {
-    id: "2",
-    text: "สวัสดีค่ะคุณ Sarah ยินดีให้คำปรึกษาค่ะ 😊 ผลการวิเคราะห์ของคุณออกมาดีมากเลยค่ะ",
-    sender: "sales" as const,
-    timestamp: new Date(Date.now() - 1000 * 60 * 4),
-    isRead: true,
-  },
-  {
-    id: "3",
-    text: "ตอนนี้สนใจ treatment ไหนคะ?",
-    sender: "sales" as const,
-    timestamp: new Date(Date.now() - 1000 * 60 * 3),
-    isRead: true,
-  },
-]
+const initialMessages: ChatMessage[] = []
 
 export default function SalesDashboardPage() {
   const router = useRouter()
@@ -171,12 +83,15 @@ export default function SalesDashboardPage() {
   const [scoreDetailOpen, setScoreDetailOpen] = useState(false)
   
   // Hot leads state - fetch from API instead of mock
-  const [hotLeads, setHotLeads] = useState<typeof mockHotLeads>([])
-  const [selectedCustomer, setSelectedCustomer] = useState<typeof mockHotLeads[0] | null>(null)
-  const [selectedLead, setSelectedLead] = useState<(typeof mockHotLeads)[0] | null>(null)
-  const [selectedLeadForScore, setSelectedLeadForScore] = useState<(typeof mockHotLeads)[0] & { priorityScore: PriorityScore } | null>(null)
-  const [messages, setMessages] = useState<typeof initialMessages>([])
+  const [hotLeads, setHotLeads] = useState<HotLead[]>([])
+  const [selectedCustomer, setSelectedCustomer] = useState<HotLead | null>(null)
+  const [selectedLead, setSelectedLead] = useState<HotLead | null>(null)
+  const [selectedLeadForScore, setSelectedLeadForScore] = useState<(HotLead & { priorityScore: PriorityScore }) | null>(null)
+  const [messages, setMessages] = useState<ChatMessage[]>([])
   const [lastSortTime, setLastSortTime] = useState(new Date())
+  const [hotLeadsError, setHotLeadsError] = useState<string | null>(null)
+  const [isRefreshingLeads, setIsRefreshingLeads] = useState(false)
+  const [lastHotLeadsFetchedAt, setLastHotLeadsFetchedAt] = useState<Date | null>(null)
 
   // Fetch chat messages when chat opens
   useEffect(() => {
@@ -226,32 +141,62 @@ export default function SalesDashboardPage() {
   const debouncedSearchQuery = useDebounce(searchQuery, 500)
 
   // Fetch hot leads from API
-  const fetchHotLeads = useCallback(async () => {
-    try {
-      setIsLoadingLeads(true)
-      const response = await fetch('/api/sales/hot-leads?limit=50')
-      if (!response.ok) throw new Error('Failed to fetch hot leads')
-      const data = await response.json()
-      setHotLeads(data.leads || [])
-      // Set first lead as selected customer if available
-      if (data.leads && data.leads.length > 0 && !selectedCustomer) {
-        setSelectedCustomer(data.leads[0])
+  const fetchHotLeads = useCallback(
+    async (mode: "initial" | "refresh" = "refresh") => {
+      try {
+        if (mode === "initial") {
+          setIsLoadingLeads(true)
+        } else {
+          setIsRefreshingLeads(true)
+        }
+
+        setHotLeadsError(null)
+
+        const response = await fetch('/api/sales/hot-leads?limit=50')
+        if (!response.ok) {
+          throw new Error('ไม่สามารถโหลดข้อมูล Hot Leads ได้')
+        }
+
+        const data = await response.json()
+        const leads: HotLead[] = data.leads || []
+        setHotLeads(leads)
+
+        if (leads.length > 0) {
+          const isCurrentSelectedValid = selectedCustomer && leads.some((lead) => lead.id === selectedCustomer.id)
+          if (!isCurrentSelectedValid) {
+            setSelectedCustomer(leads[0])
+          }
+        } else if (mode === "initial") {
+          setSelectedCustomer(null)
+        }
+
+        const now = new Date()
+        setLastHotLeadsFetchedAt(now)
+        setLastSortTime(now)
+      } catch (error) {
+        console.error('[SalesDashboard] Error fetching hot leads:', error)
+        const message = error instanceof Error ? error.message : 'ไม่สามารถโหลดข้อมูล Hot Leads ได้'
+        setHotLeadsError(message)
+
+        if (mode === "initial") {
+          toast.error('ไม่สามารถโหลดข้อมูล Hot Leads ได้')
+          setHotLeads([])
+          setSelectedCustomer(null)
+        }
+      } finally {
+        if (mode === "initial") {
+          setIsLoadingLeads(false)
+        }
+        setIsRefreshingLeads(false)
       }
-    } catch (error) {
-      console.error('[SalesDashboard] Error fetching hot leads:', error)
-      toast.error('ไม่สามารถโหลดข้อมูล Hot Leads ได้')
-      // Fallback to mock data on error
-      setHotLeads(mockHotLeads)
-      if (!selectedCustomer) setSelectedCustomer(mockHotLeads[0])
-    } finally {
-      setIsLoadingLeads(false)
-    }
-  }, [selectedCustomer])
+    },
+    [selectedCustomer],
+  )
 
   useEffect(() => {
-    fetchHotLeads()
+    fetchHotLeads("initial")
     // Refresh every 5 minutes if auto-refresh is enabled
-    const interval = autoRefreshEnabled ? setInterval(fetchHotLeads, 300000) : null
+    const interval = autoRefreshEnabled ? setInterval(() => fetchHotLeads(), 300000) : null
     return () => {
       if (interval) clearInterval(interval)
     }
@@ -268,8 +213,8 @@ export default function SalesDashboardPage() {
         (lead) =>
           lead.name.toLowerCase().includes(query) ||
           lead.topConcern.toLowerCase().includes(query) ||
-          lead.email.toLowerCase().includes(query) ||
-          lead.phone.includes(query),
+          (lead.email ?? "").toLowerCase().includes(query) ||
+          (lead.phone ?? "").includes(query),
       )
     }
 
@@ -298,6 +243,10 @@ export default function SalesDashboardPage() {
       setDisplayCount((prev) => prev + ITEMS_PER_PAGE)
       setIsLoadingMore(false)
     }, 500)
+  }
+
+  const handleManualHotLeadRefresh = () => {
+    fetchHotLeads()
   }
 
   // Infinite scroll sentinel ref
@@ -403,7 +352,7 @@ export default function SalesDashboardPage() {
   }, [])
 
   const handleCall = (leadId: string) => {
-    const lead = hotLeads.find((l: typeof hotLeads[0]) => l.id === leadId)
+    const lead = hotLeads.find((l) => l.id === leadId)
     if (!lead) {
       toast.error("ไม่พบข้อมูล Lead")
       return
@@ -413,7 +362,7 @@ export default function SalesDashboardPage() {
   }
 
   const handleVideoCall = (leadId: string) => {
-    const lead = hotLeads.find((l: typeof hotLeads[0]) => l.id === leadId)
+    const lead = hotLeads.find((l) => l.id === leadId)
     if (!lead) {
       toast.error("ไม่พบข้อมูล Lead")
       return
@@ -422,7 +371,7 @@ export default function SalesDashboardPage() {
   }
 
   const handleChat = (leadId: string) => {
-    const lead = hotLeads.find((l: typeof hotLeads[0]) => l.id === leadId)
+    const lead = hotLeads.find((l) => l.id === leadId)
     if (!lead) {
       toast.error("ไม่พบข้อมูล Lead")
       return
@@ -432,7 +381,7 @@ export default function SalesDashboardPage() {
   }
 
   const handleEmail = (leadId: string) => {
-    const lead = hotLeads.find((l: typeof hotLeads[0]) => l.id === leadId)
+    const lead = hotLeads.find((l) => l.id === leadId)
     if (!lead) {
       toast.error("ไม่พบข้อมูล Lead")
       return
@@ -442,7 +391,7 @@ export default function SalesDashboardPage() {
   }
 
   const handleARDemo = (leadId: string) => {
-    const lead = hotLeads.find((l: typeof hotLeads[0]) => l.id === leadId)
+    const lead = hotLeads.find((l) => l.id === leadId)
     if (!lead) {
       toast.error("ไม่พบข้อมูล Lead")
       return
@@ -454,7 +403,7 @@ export default function SalesDashboardPage() {
   }
 
   const handleProposal = (leadId: string) => {
-    const lead = hotLeads.find((l: typeof hotLeads[0]) => l.id === leadId)
+    const lead = hotLeads.find((l) => l.id === leadId)
     if (!lead) {
       toast.error("ไม่พบข้อมูล Lead")
       return
@@ -680,24 +629,28 @@ export default function SalesDashboardPage() {
               </div>
             </div>
 
-            {/* Sales Performance Overview */}
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <Badge className="mb-2 bg-blue-100 text-blue-800">Live Performance</Badge>
-                  <h2 className="text-lg md:text-xl font-semibold">Today's Performance</h2>
-                  <p className="text-xs md:text-sm text-foreground/70">
-                    Last updated: {new Date().toLocaleTimeString()}
-                  </p>
+            {/* Sales Performance Overview + Activity Feed */}
+            <div className="grid gap-6 xl:grid-cols-[1.75fr_1fr]">
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <Badge className="mb-2 bg-blue-100 text-blue-800">Live Performance</Badge>
+                    <h2 className="text-lg md:text-xl font-semibold">Today's Performance</h2>
+                    <p className="text-xs md:text-sm text-foreground/70">
+                      Last updated: {new Date().toLocaleTimeString()}
+                    </p>
+                  </div>
+                  <Link href="/sales/performance">
+                    <Button variant="outline" size="sm">
+                      <BarChart3 className="h-4 w-4 mr-2" />
+                      Full Report
+                    </Button>
+                  </Link>
                 </div>
-                <Link href="/sales/performance">
-                  <Button variant="outline" size="sm">
-                    <BarChart3 className="h-4 w-4 mr-2" />
-                    Full Report
-                  </Button>
-                </Link>
+                <SalesMetrics />
               </div>
-              <SalesMetrics />
+
+              <SalesActivityFeed />
             </div>
 
             {/* Presentation Stats Cards */}
@@ -776,15 +729,32 @@ export default function SalesDashboardPage() {
                     <Sparkles className="h-3 w-3" />
                     Auto-sorted by AI • Last updated: {formatTimeAgo(lastSortTime)}
                   </p>
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground mt-1">
+                    {lastHotLeadsFetchedAt && (
+                      <span>Fetched {formatTimeAgo(lastHotLeadsFetchedAt)}</span>
+                    )}
+                    {isRefreshingLeads && <span className="flex items-center gap-1 text-primary"><RefreshCw className="h-3 w-3 animate-spin" /> Updating…</span>}
+                    {!autoRefreshEnabled && (
+                      <span className="flex items-center gap-1 text-amber-600">
+                        <AlertTriangle className="h-3 w-3" /> Auto-refresh disabled
+                      </span>
+                    )}
+                    {hotLeadsError && (
+                      <span className="flex items-center gap-1 text-destructive">
+                        <AlertTriangle className="h-3 w-3" /> {hotLeadsError}
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <Button
                   variant="ghost"
                   size="sm"
                   className="hidden md:flex"
-                  onClick={() => setLastSortTime(new Date())}
+                  onClick={handleManualHotLeadRefresh}
+                  disabled={isRefreshingLeads}
                 >
-                  <RefreshCw className="h-4 w-4 mr-2" />
-                  Refresh
+                  <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshingLeads ? "animate-spin" : ""}`} />
+                  {isRefreshingLeads ? "Refreshing" : "Refresh"}
                 </Button>
               </div>
 
@@ -851,96 +821,123 @@ export default function SalesDashboardPage() {
 
               {/* Lead Cards - Tablet Optimized with Priority Scores */}
               <div className="space-y-4">
-                {isLoadingLeads ? (
-                  // Show skeleton loaders while loading
-                  <>
-                    <HotLeadCardSkeleton />
-                    <HotLeadCardSkeleton />
-                    <HotLeadCardSkeleton />
-                  </>
-                ) : displayedLeads.length === 0 ? (
-                  // No results found
-                  searchQuery || filterPriority !== "all" ? (
-                    <SearchNoResultsState
-                      query={searchQuery || `Priority: ${filterPriority}`}
-                      onClear={() => {
-                        setSearchQuery("")
-                        setFilterPriority("all")
-                      }}
-                    />
-                  ) : (
-                    <NoDataState
-                      message="ยังไม่มี Hot Leads"
-                      description="รอลูกค้าทำ Skin Analysis หรือเพิ่มลูกค้าใหม่"
-                    />
-                  )
-                ) : (
-                  <>
-                    {/* Show actual lead cards when loaded */}
-                    {displayedLeads.map((lead: typeof displayedLeads[0]) => (
-                      <div key={lead.id} className="relative group">
-                        {/* NEW Lead Indicator */}
-                        {newLeadIds.has(lead.id) && (
-                          <div className="absolute -top-3 -left-3 z-20 animate-bounce">
-                            <Badge className="bg-green-600 border-2 border-green-700 text-white shadow-lg">
-                              ✨ NEW
+                {(() => {
+                  if (hotLeadsError && hotLeads.length === 0 && !isLoadingLeads) {
+                    return (
+                      <div className="rounded-xl border border-destructive/40 bg-destructive/5 p-6 text-center space-y-3">
+                        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10">
+                          <AlertTriangle className="h-6 w-6 text-destructive" />
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-sm font-medium text-destructive">ไม่สามารถโหลดรายชื่อ Hot Leads ได้</p>
+                          <p className="text-xs text-destructive/70">{hotLeadsError}</p>
+                        </div>
+                        <div className="flex justify-center gap-2">
+                          <Button variant="outline" size="sm" onClick={() => fetchHotLeads("initial")}>
+                            ลองโหลดใหม่
+                          </Button>
+                        </div>
+                      </div>
+                    )
+                  }
+
+                  if (isLoadingLeads) {
+                    return (
+                      <>
+                        <HotLeadCardSkeleton />
+                        <HotLeadCardSkeleton />
+                        <HotLeadCardSkeleton />
+                      </>
+                    )
+                  }
+
+                  if (displayedLeads.length === 0) {
+                    return searchQuery || filterPriority !== "all" ? (
+                      <SearchNoResultsState
+                        query={searchQuery || `Priority: ${filterPriority}`}
+                        onClear={() => {
+                          setSearchQuery("")
+                          setFilterPriority("all")
+                        }}
+                      />
+                    ) : (
+                      <NoDataState
+                        message="ยังไม่มี Hot Leads"
+                        description="รอลูกค้าทำ Skin Analysis หรือเพิ่มลูกค้าใหม่"
+                      />
+                    )
+                  }
+
+                  return (
+                    <>
+                      {displayedLeads.map((lead: typeof displayedLeads[0]) => (
+                        <div key={lead.id} className="relative group">
+                          {newLeadIds.has(lead.id) && (
+                            <div className="absolute -top-3 -left-3 z-20 animate-bounce">
+                              <Badge className="bg-green-600 border-2 border-green-700 text-white shadow-lg">
+                                ✨ NEW
+                              </Badge>
+                            </div>
+                          )}
+
+                          <button
+                            onClick={() => {
+                              setSelectedLeadForScore(lead)
+                              setScoreDetailOpen(true)
+                            }}
+                            className="absolute -top-2 -right-2 z-10 transition-transform hover:scale-110"
+                            aria-label={`View priority score for ${lead.name}`}
+                          >
+                            <Badge
+                              className={`${getPriorityBadgeClass(lead.priorityScore.priorityLevel)} text-white shadow-lg cursor-pointer`}
+                            >
+                              {lead.priorityScore.badge} ({lead.priorityScore.totalScore})
                             </Badge>
+                          </button>
+
+                          <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Link
+                              href={`/sales/wizard/${lead.id}?name=${encodeURIComponent(lead.name)}&phone=${encodeURIComponent(lead.phone || '')}&email=${encodeURIComponent(lead.email || '')}`}
+                            >
+                              <Button
+                                size="sm"
+                                className="bg-blue-600 hover:bg-blue-700 border-2 border-blue-700 text-white shadow-lg h-8 px-4"
+                              >
+                                <Smartphone className="h-3.5 w-3.5 mr-1.5" />
+                                Start Presentation
+                              </Button>
+                            </Link>
+                          </div>
+
+                          <HotLeadCard
+                            lead={{
+                              ...lead,
+                              customer_user_id: lead.customer_user_id ?? undefined,
+                              secondaryConcern: lead.secondaryConcern ?? undefined,
+                            }}
+                            onCall={handleCall}
+                            onChat={handleChat}
+                            onEmail={handleEmail}
+                            onARDemo={handleARDemo}
+                            onProposal={handleProposal}
+                          />
+                        </div>
+                      ))}
+
+                      <div ref={sentinelRef} className="h-20 flex items-center justify-center">
+                        {isLoadingMore && (
+                          <div className="flex items-center gap-2 text-foreground/70">
+                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                            <span className="text-sm">กำลังโหลดเพิ่มเติม...</span>
                           </div>
                         )}
-
-                        {/* Priority Badge Overlay - Clickable */}
-                        <button
-                          onClick={() => {
-                            setSelectedLeadForScore(lead)
-                            setScoreDetailOpen(true)
-                          }}
-                          className="absolute -top-2 -right-2 z-10 transition-transform hover:scale-110"
-                        >
-                          <Badge
-                            className={`${getPriorityBadgeClass(lead.priorityScore.priorityLevel)} text-white shadow-lg cursor-pointer`}
-                          >
-                            {lead.priorityScore.badge} ({lead.priorityScore.totalScore})
-                          </Badge>
-                        </button>
-                        
-                        {/* Start Presentation Button - Quick Action */}
-                        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Link href={`/sales/wizard/${lead.id}?name=${encodeURIComponent(lead.name)}&phone=${encodeURIComponent(lead.phone || '')}&email=${encodeURIComponent(lead.email || '')}`}>
-                            <Button 
-                              size="sm"
-                              className="bg-blue-600 hover:bg-blue-700 border-2 border-blue-700 text-white shadow-lg h-8 px-4"
-                            >
-                              <Smartphone className="h-3.5 w-3.5 mr-1.5" />
-                              Start Presentation
-                            </Button>
-                          </Link>
-                        </div>
-
-                        <HotLeadCard
-                          lead={lead}
-                          onCall={handleCall}
-                          onChat={handleChat}
-                          onEmail={handleEmail}
-                          onARDemo={handleARDemo}
-                          onProposal={handleProposal}
-                        />
+                        {!hasMore && sortedLeads.length > ITEMS_PER_PAGE && (
+                          <p className="text-sm text-foreground/70">แสดงครบทั้งหมด {sortedLeads.length} รายการแล้ว</p>
+                        )}
                       </div>
-                    ))}
-
-                    {/* Infinite scroll sentinel */}
-                    <div ref={sentinelRef} className="h-20 flex items-center justify-center">
-                      {isLoadingMore && (
-                        <div className="flex items-center gap-2 text-foreground/70">
-                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                          <span className="text-sm">กำลังโหลดเพิ่มเติม...</span>
-                        </div>
-                      )}
-                      {!hasMore && sortedLeads.length > ITEMS_PER_PAGE && (
-                        <p className="text-sm text-foreground/70">แสดงครบทั้งหมด {sortedLeads.length} รายการแล้ว</p>
-                      )}
-                    </div>
-                  </>
-                )}
+                    </>
+                  )
+                })()}
               </div>
             </div>
 
@@ -1014,7 +1011,25 @@ export default function SalesDashboardPage() {
         <QuickProposal
           open={proposalOpen}
           onOpenChange={setProposalOpen}
-          lead={selectedLead}
+          lead={
+            selectedLead
+              ? {
+                  ...selectedLead,
+                  secondaryConcern: selectedLead.secondaryConcern ?? undefined,
+                  email: selectedLead.email ?? undefined,
+                  phone: selectedLead.phone ?? undefined,
+                  skinType: selectedLead.skinType ?? undefined,
+                  analysisData: selectedLead.analysisData
+                    ? {
+                        wrinkles: selectedLead.analysisData.wrinkles ?? 0,
+                        pigmentation: selectedLead.analysisData.pigmentation ?? 0,
+                        pores: selectedLead.analysisData.pores ?? 0,
+                        hydration: selectedLead.analysisData.hydration ?? 0,
+                      }
+                    : undefined,
+                }
+              : null
+          }
           onSent={() => {
             alert(`✅ Proposal sent to ${selectedLead?.name}!`)
           }}

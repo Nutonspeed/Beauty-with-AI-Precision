@@ -1,6 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { createServerClient } from "@/lib/supabase/server"
-import { createClient } from "@supabase/supabase-js"
+import { createServerClient, createServiceClient } from "@/lib/supabase/server"
 
 export async function GET(request: NextRequest) {
   try {
@@ -51,21 +50,14 @@ export async function GET(request: NextRequest) {
     const yesterdayEnd = new Date(todayStart)
 
     // Use service role client to bypass RLS for aggregated metrics
-    const supabaseAdmin = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
-      {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false
-        }
-      }
-    )
+    const supabaseAdmin = createServiceClient()
 
     // Fetch today's bookings
     const { data: todayBookings, error: todayError } = await supabaseAdmin
       .from('bookings')
       .select('price, status, customer_id')
+      .eq('clinic_id', clinicId)
+      .in('status', ['confirmed', 'completed'])
       .gte('booking_date', todayStart.toISOString().split('T')[0])
       .lt('booking_date', new Date(todayStart.getTime() + 86400000).toISOString().split('T')[0])
 
@@ -77,6 +69,8 @@ export async function GET(request: NextRequest) {
     const { data: yesterdayBookings, error: yesterdayError } = await supabaseAdmin
       .from('bookings')
       .select('price, status, customer_id')
+      .eq('clinic_id', clinicId)
+      .in('status', ['confirmed', 'completed'])
       .gte('booking_date', yesterdayStart.toISOString().split('T')[0])
       .lt('booking_date', yesterdayEnd.toISOString().split('T')[0])
 

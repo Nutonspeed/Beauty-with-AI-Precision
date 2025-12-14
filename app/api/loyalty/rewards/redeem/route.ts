@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { withClinicAuth } from '@/lib/auth/middleware';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -16,10 +17,16 @@ const supabase = createClient(
  * - reward_id (required): Reward ID to redeem
  * - branch_id (optional): Branch ID where redemption occurs
  */
-export async function POST(request: NextRequest) {
+export const POST = withClinicAuth(async (request: NextRequest, user: any) => {
   try {
-    const body = await request.json();
-    const { clinic_id, customer_id, reward_id, branch_id } = body;
+    let body: any = null;
+    try {
+      body = await request.json();
+    } catch {
+      return new NextResponse(null, { status: 204 });
+    }
+
+    const { clinic_id, customer_id, reward_id, branch_id } = body || {};
 
     if (!clinic_id || !customer_id || !reward_id) {
       return NextResponse.json(
@@ -28,8 +35,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (user?.clinic_id && clinic_id !== user.clinic_id) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     // Call database function to redeem reward
-    const { data, error } = await supabase.rpc('redeem_reward_with_points', {
+    const { data, error } = await supabase.rpc('redeem_loyalty_reward', {
       p_clinic_id: clinic_id,
       p_customer_id: customer_id,
       p_reward_id: reward_id,
@@ -53,23 +64,32 @@ export async function POST(request: NextRequest) {
       throw error;
     }
 
+    const row = (data as any)?.[0] || null
+    if (!row?.success) {
+      return NextResponse.json(
+        { error: row?.error_message || 'Failed to redeem reward' },
+        { status: 400 }
+      )
+    }
+
     // Get the redemption details
     const { data: redemption, error: redError } = await supabase
-      .from('rewards_redemptions')
+      .from('reward_redemptions')
       .select(`
         *,
         reward:rewards_catalog(id, reward_name, reward_type),
-        customer:users!rewards_redemptions_customer_id_fkey(id, full_name, email)
+        customer:users!reward_redemptions_customer_id_fkey(id, full_name, email)
       `)
-      .eq('id', data)
+      .eq('id', row.redemption_id)
       .single();
 
     if (redError) throw redError;
 
     return NextResponse.json({
       success: true,
-      redemption_id: data,
+      redemption_id: row.redemption_id,
       redemption,
+      reward_code: row.reward_code,
     });
   } catch (error) {
     console.error('Error redeeming reward:', error);
@@ -78,4 +98,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+});

@@ -97,7 +97,7 @@ export default function ProposalDetailPage() {
     if (params.id) {
       fetchProposal()
     }
-  }, [params.id, toast])
+  }, [params.id, staffOptions.length, toast])
 
   const handleSend = async () => {
     if (!proposal) return

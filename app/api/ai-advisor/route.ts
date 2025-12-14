@@ -52,4 +52,4 @@ async function handler(request: NextRequest) {
   }
 }
 
-export const POST = withClinicAuth(handler)
+export const POST = withClinicAuth(handler, { rateLimitCategory: 'ai' })

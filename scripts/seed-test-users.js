@@ -8,24 +8,22 @@
  */
 
 const { Pool } = require('pg')
+require('dotenv').config({ path: '.env.local' })
 
 function missingEnv(msg) {
   console.error('Missing required env vars to run seed script:', msg)
-  console.error('Please set PGHOST, PGPORT, PGUSER, PGPASSWORD, PGDATABASE')
+  console.error('Please ensure DATABASE_URL is set in .env.local')
   process.exit(1)
 }
 
-const { PGHOST, PGPORT, PGUSER, PGPASSWORD, PGDATABASE } = process.env
-if (!PGHOST || !PGPORT || !PGUSER || !PGPASSWORD || !PGDATABASE) {
-  missingEnv('one or more PG* environment variables are empty')
+const databaseUrl = process.env.POSTGRES_URL_NON_POOLING
+if (!databaseUrl) {
+  missingEnv('POSTGRES_URL_NON_POOLING is required')
 }
 
 const pool = new Pool({
-  host: PGHOST,
-  port: Number(PGPORT),
-  user: PGUSER,
-  password: PGPASSWORD,
-  database: PGDATABASE,
+  connectionString: databaseUrl,
+  ssl: { rejectUnauthorized: false },
 })
 
 async function seed() {

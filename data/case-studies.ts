@@ -1,103 +1,135 @@
-export type Locale = 'en' | 'th' | 'zh'
+export type Locale = 'th' | 'en'
 
-export type CaseStudyMetric = {
-  label: string
+type LocalizedText = string | Record<Locale, string>
+
+type CaseStudyMetric = {
+  label: LocalizedText
   value: string
 }
 
-export type CaseStudyContentSection = {
-  heading: Record<Locale, string> | string
-  body: Record<Locale, string> | string
+type CaseStudyContentSection = {
+  heading: LocalizedText
+  body: LocalizedText
 }
 
 export type CaseStudy = {
   slug: string
-  title: string
-  summary: string
+  title: LocalizedText
+  summary: LocalizedText
   metrics: CaseStudyMetric[]
   content?: CaseStudyContentSection[]
-  disclaimer?: Record<Locale, string> | string
+  disclaimer?: LocalizedText
 }
 
-const caseStudiesByLocale: Record<string, CaseStudy[]> = {
-  en: [
-    {
-      slug: "bangkok-clinic-efficiency",
-      title: "Bangkok Clinic Cut Wait Times By 37%",
-      summary: "AI triage plus automated prep flows reduced the average waiting room time from 45 to 28 minutes in six weeks.",
-      metrics: [
-        { label: "Wait Time", value: "-37%" },
-        { label: "Conversion", value: "+18%" },
-        { label: "NPS", value: "+12" },
-      ],
+const CASE_STUDIES: CaseStudy[] = [
+  {
+    slug: 'queue-reduction-6-weeks',
+    title: {
+      th: 'ลดเวลารอคิวเฉลี่ย 37% ภายใน 6 สัปดาห์',
+      en: 'Reduced average waiting time by 37% in 6 weeks',
     },
-    {
-      slug: "phuket-premium-upsell",
-      title: "Phuket Flagship Added ฿1.2M Upsell Pipeline",
-      summary: "3D visualization during consults increased acceptance of premium treatment bundles for high-end tourists.",
-      metrics: [
-        { label: "AOV", value: "+32%" },
-        { label: "Upsell", value: "+44%" },
-        { label: "Time to Close", value: "-22%" },
-      ],
+    summary: {
+      th: 'คลินิก A, กรุงเทพฯ — ปรับ flow ด้วย AI pre-screen และการติดตามอัตโนมัติ',
+      en: 'Clinic A, Bangkok — improved flow using AI pre-screening and automated follow-ups',
     },
-    {
-      slug: "chiangmai-remote-followup",
-      title: "Chiang Mai Chain Digitized Remote Follow-ups",
-      summary: "Hybrid AR check-ins plus automation saved nurses 12 hours per week and kept retention above 92%.",
-      metrics: [
-        { label: "Retention", value: "92%" },
-        { label: "Hours Saved", value: "12h" },
-        { label: "Lead Response", value: "<5m" },
-      ],
+    metrics: [
+      { label: { th: 'เวลารอคิว', en: 'Waiting time' }, value: '-37%' },
+      { label: { th: 'อัตราปิดการขาย', en: 'Close rate' }, value: '+12%' },
+      { label: { th: 'เวลาตอบกลับลีด', en: 'Lead response time' }, value: '-42%' },
+    ],
+    content: [
+      {
+        heading: { th: 'สถานการณ์ก่อนใช้', en: 'Before' },
+        body: {
+          th: 'ลูกค้าต้องเข้าคลินิกก่อนถึงทราบปัญหาผิว ทำให้คิวแน่นและทีมต้องตอบคำถามซ้ำๆ',
+          en: 'Clients needed an in-clinic visit to understand skin concerns, causing long queues and repeated Q&A for staff.',
+        },
+      },
+      {
+        heading: { th: 'แนวทางที่ทำ', en: 'What we did' },
+        body: {
+          th: 'ใช้ AI วิเคราะห์เบื้องต้นจากบ้าน + ส่งข้อเสนอแนะ/นัดหมายอัตโนมัติ + ให้เซลมีข้อมูลครบก่อนคุย',
+          en: 'Used at-home AI pre-analysis + automated follow-ups/booking + ensured sales had context before outreach.',
+        },
+      },
+      {
+        heading: { th: 'ผลลัพธ์', en: 'Results' },
+        body: {
+          th: 'ลดเวลารอคิว เพิ่ม conversion และลดภาระงานทีมหน้าร้าน',
+          en: 'Reduced waiting time, increased conversion, and lowered front-desk workload.',
+        },
+      },
+    ],
+    disclaimer: {
+      th: 'เคสจำลองเพื่ออธิบายความสามารถของระบบ ไม่ใช่คำแนะนำทางการแพทย์',
+      en: 'Simulated case to demonstrate capabilities. Not medical advice.',
     },
-  ],
-  th: [
-    {
-      slug: "bangkok-clinic-efficiency",
-      title: "คลินิกกรุงเทพฯ ลดเวลารอคิวได้ 37%",
-      summary: "ใช้ AI ช่วยประเมินปัญหาผิวและจัดคิวอัตโนมัติ ทำให้เวลารอเฉลี่ยลดจาก 45 นาทีเหลือ 28 นาทีภายใน 6 สัปดาห์.",
-      metrics: [
-        { label: "เวลารอ", value: "-37%" },
-        { label: "Conversion", value: "+18%" },
-        { label: "NPS", value: "+12" },
-      ],
+  },
+  {
+    slug: 'conversion-boost-follow-up',
+    title: {
+      th: 'เพิ่ม conversion 18% ด้วย follow-up ที่ตรงประเด็น',
+      en: 'Boosted conversion by 18% with targeted follow-ups',
     },
-    {
-      slug: "phuket-premium-upsell",
-      title: "สาขาภูเก็ตเพิ่มยอดขายแพ็กเกจพรีเมียม 1.2 ล้าน",
-      summary: "การใช้โมเดล 3D ระหว่างให้คำปรึกษาทำให้ลูกค้าระดับไฮเอนด์ตัดสินใจซื้อแพ็กเกจพรีเมียมง่ายขึ้น.",
-      metrics: [
-        { label: "ตั๋วเฉลี่ย", value: "+32%" },
-        { label: "Upsell", value: "+44%" },
-        { label: "เวลาปิดการขาย", value: "-22%" },
-      ],
+    summary: {
+      th: 'คลินิก B — ใช้ segmentation จากผลวิเคราะห์ผิวเพื่อส่งข้อเสนอที่เหมาะกับลูกค้า',
+      en: 'Clinic B — used segmentation from skin analysis results to send relevant offers',
     },
-    {
-      slug: "chiangmai-remote-followup",
-      title: "เครือเชียงใหม่ดูแล follow-up ออนไลน์",
-      summary: "ใช้ AR ตรวจเช็กระยะไกลร่วมกับระบบอัตโนมัติ ช่วยประหยัดเวลาพยาบาล 12 ชั่วโมงต่อสัปดาห์และรักษา retention 92%.",
-      metrics: [
-        { label: "Retention", value: "92%" },
-        { label: "ชั่วโมงที่ประหยัด", value: "12h" },
-        { label: "ตอบกลับลีด", value: "<5m" },
-      ],
+    metrics: [
+      { label: { th: 'Conversion', en: 'Conversion' }, value: '+18%' },
+      { label: { th: 'อัตราตอบกลับ', en: 'Reply rate' }, value: '+25%' },
+      { label: { th: 'เวลาปิดดีล', en: 'Time to close' }, value: '-20%' },
+    ],
+    content: [
+      {
+        heading: { th: 'สิ่งที่ได้เรียนรู้', en: 'Key insight' },
+        body: {
+          th: 'ลูกค้าตอบสนองดีขึ้นเมื่อข้อความ follow-up อ้างอิงผลลัพธ์ที่เห็นในรายงานและมี next-step ชัดเจน',
+          en: 'Customers respond better when follow-ups reference their report and provide clear next steps.',
+        },
+      },
+      {
+        heading: { th: 'การนำไปใช้', en: 'Implementation' },
+        body: {
+          th: 'สร้าง template ข้อความตาม concern หลัก และกำหนด SLA ตอบกลับลีด',
+          en: 'Built message templates per primary concern and enforced lead response SLAs.',
+        },
+      },
+    ],
+    disclaimer: {
+      th: 'เคสจำลองเพื่ออธิบายความสามารถของระบบ ไม่ใช่คำแนะนำทางการแพทย์',
+      en: 'Simulated case to demonstrate capabilities. Not medical advice.',
     },
-  ],
+  },
+]
+
+function localize(value: LocalizedText, locale: Locale): string {
+  if (typeof value === 'string') return value
+  return value[locale] || value.th || value.en || ''
 }
 
-export function getCaseStudies(locale: Locale): CaseStudy[] {
-  if (caseStudiesByLocale[locale]) {
-    return caseStudiesByLocale[locale]
+export function getCaseStudies(locale: Locale): { slug: string; title: string; summary: string; metrics: { label: string; value: string }[] }[] {
+  return CASE_STUDIES.map((study) => ({
+    slug: study.slug,
+    title: localize(study.title, locale),
+    summary: localize(study.summary, locale),
+    metrics: study.metrics.map((m) => ({ label: localize(m.label, locale), value: m.value })),
+  }))
+}
+
+export function getCaseStudyBySlug(locale: Locale, slug: string): CaseStudy | null {
+  const study = CASE_STUDIES.find((s) => s.slug === slug)
+  if (!study) return null
+
+  return {
+    ...study,
+    title: localize(study.title, locale),
+    summary: localize(study.summary, locale),
+    metrics: study.metrics.map((m) => ({ label: localize(m.label, locale), value: m.value })),
+    content: (study.content || []).map((section) => ({
+      heading: localize(section.heading, locale),
+      body: localize(section.body, locale),
+    })),
+    disclaimer: study.disclaimer ? localize(study.disclaimer, locale) : undefined,
   }
-  // fallback to English
-  return caseStudiesByLocale.en
-}
-
-export function getCaseStudyBySlug(locale: Locale, slug: string): CaseStudy | undefined {
-  const list = caseStudiesByLocale[locale] ?? caseStudiesByLocale.en
-  const found = list.find((cs) => cs.slug === slug)
-  if (found) return found
-  // fallback to English if not found in locale
-  return caseStudiesByLocale.en.find((cs) => cs.slug === slug)
 }

@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { withPublicAccess } from '@/lib/auth/middleware'
 
 const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000'
 
-export async function POST(request: NextRequest) {
+export const POST = withPublicAccess(async (request: NextRequest) => {
   try {
     const supabase = await createClient()
     const body = await request.json().catch(() => ({}))
@@ -76,4 +77,4 @@ export async function POST(request: NextRequest) {
   } catch (err: any) {
     return NextResponse.json({ error: 'Internal server error', details: err.message }, { status: 500 })
   }
-}
+}, { rateLimitCategory: 'ai' })

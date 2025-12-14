@@ -2,8 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient, createServiceClient } from '@/lib/supabase/server';
 import { getChatAdvice } from '@/lib/ai/gemini-advisor';
 import { getChatManager, type ChatMessage, type ConversationContext } from '@/lib/ai/context-aware-chat-manager';
+import { withPublicAccess } from '@/lib/auth/middleware';
 
-export async function POST(req: NextRequest) {
+export const POST = withPublicAccess(async (req: NextRequest) => {
   try {
     // 1. Check authentication
     const supabase = await createClient();
@@ -130,10 +131,10 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
   }
-}
+}, { rateLimitCategory: 'ai' })
 
 // Get chat history
-export async function GET(req: NextRequest) {
+export const GET = withPublicAccess(async (req: NextRequest) => {
   try {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -157,4 +158,4 @@ export async function GET(req: NextRequest) {
     console.error('Get chat history error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
-}
+}, { rateLimitCategory: 'api' })

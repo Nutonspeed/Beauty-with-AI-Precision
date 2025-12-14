@@ -27,7 +27,7 @@ export async function register() {
     if (ReplayPkg && ReplayPkg.Replay) {
       integrations.push(new ReplayPkg.Replay({ maskAllText: true, blockAllMedia: true }));
     }
-  } catch (err) {
+  } catch {
     console.info('[sentry] Replay integration not installed or supported, skipping Replay integration');
   }
 

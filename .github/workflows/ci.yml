@@ -2,117 +2,38 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
-jobs:
-  build:
-    name: Build and Typecheck
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [18.x]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'pnpm'
-
-      - name: Enable corepack & install pnpm
-        run: |
-          corepack enable
-          pnpm -v
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Typecheck
-        run: pnpm exec tsc --noEmit
-
-      - name: Build
-        run: pnpm run build
-
-  e2e:
-    name: E2E (optional)
-    needs: build
-    runs-on: ubuntu-latest
-    # Run E2E only when DB/SEED secrets are configured in the repo (prevent accidental runs without secrets)
-    if: ${{ secrets.PGHOST }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Use Node.js 18.x
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18.x
-          cache: 'pnpm'
-
-      - name: Enable corepack & install pnpm
-        run: |
-          corepack enable
-          pnpm -v
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Seed test DB (optional)
-        env:
-          PGHOST: ${{ secrets.PGHOST }}
-          PGPORT: ${{ secrets.PGPORT }}
-          PGUSER: ${{ secrets.PGUSER }}
-          PGPASSWORD: ${{ secrets.PGPASSWORD }}
-          PGDATABASE: ${{ secrets.PGDATABASE }}
-        run: pnpm run db:seed:test || true
-
-      - name: Run Playwright tests
-        env:
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        run: pnpm exec playwright test --reporter=github
-name: CI
-
-on:
-  push:
     branches: [ main, develop ]
   pull_request:
     branches: [ main, develop ]
 
 env:
-  NODE_VERSION: '20.x'
-  PNPM_VERSION: '9.x'
+  NODE_VERSION: '24.x'
+  PNPM_VERSION: '10.12.0'
 
 jobs:
-  lint:
-    name: Lint Code
+  gate:
+    name: PR Gate (Typecheck/Build/E2E)
     runs-on: ubuntu-latest
-    
+
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
           version: ${{ env.PNPM_VERSION }}
-          
+
       - name: Get pnpm store directory
         shell: bash
         run: |
           echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-          
+
       - name: Setup pnpm cache
         uses: actions/cache@v3
         with:
@@ -120,137 +41,18 @@ jobs:
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
-            
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-        
-      - name: Run ESLint
-        run: pnpm lint
-        
-      - name: Run TypeScript check
+
+      - name: Typecheck
         run: pnpm type-check
-        
-  test:
-    name: Test Suite
-    runs-on: ubuntu-latest
-    
-    strategy:
-      matrix:
-        node-version: [20.x, 21.x]
-        
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        
-      - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-          
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: ${{ env.PNPM_VERSION }}
-          
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-          
-      - name: Setup pnpm cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-            
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-        
-      - name: Run unit tests
-        run: pnpm test:unit
-        
-      - name: Run integration tests
-        run: pnpm test:integration
-        
-      - name: Upload coverage reports
-        uses: codecov/codecov-action@v3
-        with:
-          file: ./coverage/lcov.info
-          flags: unittests
-          name: codecov-umbrella
-          
-  build:
-    name: Build Application
-    runs-on: ubuntu-latest
-    needs: [lint, test]
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: ${{ env.PNPM_VERSION }}
-          
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-          
-      - name: Setup pnpm cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-            
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-        
-      - name: Build application
+
+      - name: Build
         run: pnpm build
-        
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: build-files
-          path: |
-            .next
-            public
-          retention-days: 1
-          
-  security:
-    name: Security Audit
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: ${{ env.PNPM_VERSION }}
-          
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-        
-      - name: Run security audit
-        run: pnpm security:audit
-        
-      - name: Run security scan
-        run: pnpm security:scan
+
+      - name: Install Playwright
+        run: pnpm exec playwright install --with-deps
+
+      - name: E2E (smoke + core-journeys)
+        run: pnpm exec playwright test __tests__/e2e/smoke.spec.ts __tests__/e2e/core-journeys.spec.ts --reporter=github

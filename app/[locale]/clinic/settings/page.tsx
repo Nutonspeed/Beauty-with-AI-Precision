@@ -9,12 +9,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Building2, 
   Clock, 
   Bell, 
   CreditCard,
+  BarChart3,
   Save,
   Settings
 } from 'lucide-react';
@@ -54,6 +56,9 @@ export default function ClinicSettingsPage() {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [kpiTargetsText, setKpiTargetsText] = useState('');
+  const [isKpiLoading, setIsKpiLoading] = useState(true);
+  const [isKpiSaving, setIsKpiSaving] = useState(false);
   const [settings, setSettings] = useState<ClinicSettings>({
     clinic_name: '',
     clinic_email: '',
@@ -126,8 +131,83 @@ export default function ClinicSettingsPage() {
       }
     };
 
+    const loadKpiTargets = async () => {
+      try {
+        const res = await fetch('/api/clinic/kpi-targets', { method: 'GET' });
+        if (!res.ok) {
+          throw new Error(`Failed to load KPI targets (${res.status})`);
+        }
+
+        const data = await res.json();
+        const targets = data?.targets && typeof data.targets === 'object' ? data.targets : {};
+        setKpiTargetsText(JSON.stringify(targets, null, 2));
+      } catch (error) {
+        console.error('Error loading KPI targets:', error);
+        setKpiTargetsText('{}');
+      } finally {
+        setIsKpiLoading(false);
+      }
+    };
+
     loadSettings();
+    loadKpiTargets();
   }, [user, authLoading, router, lp, toast]);
+
+  const parseTargets = () => {
+    try {
+      const parsed = JSON.parse(kpiTargetsText || '{}');
+      if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+        return { ok: false as const, error: 'targets must be a JSON object' };
+      }
+      return { ok: true as const, value: parsed };
+    } catch {
+      return { ok: false as const, error: 'Invalid JSON format' };
+    }
+  };
+
+  const handleSaveKpiTargets = async () => {
+    const parsed = parseTargets();
+    if (!parsed.ok) {
+      toast({
+        title: 'เกิดข้อผิดพลาด',
+        description: parsed.error,
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setIsKpiSaving(true);
+    try {
+      const res = await fetch('/api/clinic/kpi-targets', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ targets: parsed.value }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data?.error || `Failed to save KPI targets (${res.status})`);
+      }
+
+      const data = await res.json().catch(() => null);
+      const targets = data?.targets && typeof data.targets === 'object' ? data.targets : parsed.value;
+      setKpiTargetsText(JSON.stringify(targets, null, 2));
+
+      toast({
+        title: 'บันทึกสำเร็จ',
+        description: 'KPI Targets ได้รับการบันทึกแล้ว',
+      });
+    } catch (error: any) {
+      console.error('Error saving KPI targets:', error);
+      toast({
+        title: 'เกิดข้อผิดพลาด',
+        description: error?.message || 'ไม่สามารถบันทึก KPI Targets ได้',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsKpiSaving(false);
+    }
+  };
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -187,7 +267,7 @@ export default function ClinicSettingsPage() {
       </div>
 
       <Tabs defaultValue="general" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="general">
             <Building2 className="h-4 w-4 mr-2" />
             ทั่วไป
@@ -203,6 +283,10 @@ export default function ClinicSettingsPage() {
           <TabsTrigger value="payment">
             <CreditCard className="h-4 w-4 mr-2" />
             การชำระเงิน
+          </TabsTrigger>
+          <TabsTrigger value="kpi">
+            <BarChart3 className="h-4 w-4 mr-2" />
+            KPI
           </TabsTrigger>
         </TabsList>
 
@@ -469,6 +553,54 @@ export default function ClinicSettingsPage() {
                   </div>
                 </div>
               </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="kpi">
+          <Card>
+            <CardHeader>
+              <CardTitle>KPI Targets</CardTitle>
+              <CardDescription>
+                กำหนดเป้าหมาย KPI ของคลินิก (เก็บเป็น JSON)
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {isKpiLoading ? (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  กำลังโหลด KPI Targets...
+                </div>
+              ) : (
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="kpi_targets">Targets (JSON)</Label>
+                    <Textarea
+                      id="kpi_targets"
+                      value={kpiTargetsText}
+                      onChange={(e) => setKpiTargetsText(e.target.value)}
+                      rows={14}
+                      className="font-mono text-sm"
+                    />
+                  </div>
+
+                  <div className="flex justify-end">
+                    <Button onClick={handleSaveKpiTargets} disabled={isKpiSaving}>
+                      {isKpiSaving ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          กำลังบันทึก...
+                        </>
+                      ) : (
+                        <>
+                          <Save className="mr-2 h-4 w-4" />
+                          บันทึก KPI Targets
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </>
+              )}
             </CardContent>
           </Card>
         </TabsContent>

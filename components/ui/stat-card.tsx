@@ -93,7 +93,7 @@ export function StatCard({
 // Skeleton สำหรับ StatCard
 export function StatCardSkeleton() {
   return (
-    <Card>
+    <Card data-testid="metric-skeleton">
       <CardContent className="p-6">
         <div className="flex items-center justify-between">
           <div className="space-y-2 flex-1">

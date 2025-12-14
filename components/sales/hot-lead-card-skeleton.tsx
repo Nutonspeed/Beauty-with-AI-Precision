@@ -5,7 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 export function HotLeadCardSkeleton() {
   return (
-    <Card className="p-4 hover:shadow-md transition-shadow">
+    <Card className="p-4 hover:shadow-md transition-shadow" data-testid="hot-lead-skeleton">
       <div className="flex items-start gap-3 mb-3">
         {/* Avatar Skeleton */}
         <Skeleton className="w-12 h-12 rounded-full" />

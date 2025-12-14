@@ -4,6 +4,10 @@ import { v4 as uuidv4 } from 'uuid';
 import { type JwtPayload } from 'jsonwebtoken';
 import { createClient } from '@supabase/supabase-js';
 import * as crypto from 'crypto';
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config({ path: '.env.local' });
 
 // Initialize Supabase client
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';

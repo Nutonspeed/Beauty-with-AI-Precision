@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
     // Get user's clinic_id
     const { data: userData } = await supabase.from("users").select("clinic_id, role").eq("id", user.id).single()
 
-    if (!userData || userData.role !== "clinic_owner") {
+    if (!userData || (userData.role !== "clinic_owner" && userData.role !== "clinic_staff")) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 

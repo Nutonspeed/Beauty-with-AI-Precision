@@ -7,7 +7,7 @@ export default function ARFaceTrackingTestPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [status, setStatus] = useState('กำลังโหลด...');
-  const [isTracking, setIsTracking] = useState(false);
+  const [_isTracking, setIsTracking] = useState(false);
   const [landmarks, setLandmarks] = useState<Array<{x: number, y: number, z: number}>>([]);
 
   useEffect(() => {

@@ -6,14 +6,15 @@ on:
   workflow_dispatch:
 
 env:
-  NODE_VERSION: '20.x'
-  PNPM_VERSION: '9.x'
+  NODE_VERSION: '24.x'
+  PNPM_VERSION: '10.12.0'
 
 jobs:
   deploy:
     name: Deploy to Staging
     runs-on: ubuntu-latest
-    environment: staging
+    environment:
+      name: staging
     
     steps:
       - name: Checkout code
@@ -85,5 +86,6 @@ jobs:
         with:
           status: ${{ job.status }}
           channel: '#deployments'
-          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
         if: always()

@@ -1,8 +1,9 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { StatCard, StatCardSkeleton } from "@/components/ui/stat-card"
-import { Users, DollarSign, Target, TrendingUp, CheckCircle } from "lucide-react"
+import { Users, DollarSign, Target, TrendingUp, CheckCircle, Clock3, BarChart, RefreshCw } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 interface SalesMetrics {
   callsMade: {
@@ -35,32 +36,58 @@ interface SalesMetrics {
     change: number
     target: number
   }
+  avgResponseMinutes: {
+    today: number
+    yesterday: number
+    change: number
+    target: number
+  }
+  winRateOverall: {
+    today: number
+    yesterday: number
+    change: number
+    target: number
+  }
 }
 
 export function SalesMetrics() {
   const [metrics, setMetrics] = useState<SalesMetrics | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [isRefreshing, setIsRefreshing] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    async function fetchMetrics() {
+  const fetchMetrics = useCallback(
+    async ({ mode = "refresh" }: { mode?: "initial" | "refresh" } = {}) => {
       try {
+        setError(null)
+        if (mode === "initial") {
+          setIsLoading(true)
+        } else {
+          setIsRefreshing(true)
+        }
+
         const response = await fetch("/api/sales/metrics")
-        if (!response.ok) throw new Error("Failed to fetch metrics")
+        if (!response.ok) throw new Error("ไม่สามารถโหลดข้อมูลสถิติได้")
         const data = await response.json()
         setMetrics(data)
       } catch (err) {
-        console.error("[v0] Error fetching sales metrics:", err)
-        setError(err instanceof Error ? err.message : "Failed to load metrics")
+        console.error("[sales-metrics] fetch failed", err)
+        setError(err instanceof Error ? err.message : "เกิดข้อผิดพลาดไม่ทราบสาเหตุ")
       } finally {
-        setIsLoading(false)
+        if (mode === "initial") {
+          setIsLoading(false)
+        }
+        setIsRefreshing(false)
       }
-    }
+    },
+    [],
+  )
 
-    fetchMetrics()
-    const interval = setInterval(fetchMetrics, 5 * 60 * 1000)
+  useEffect(() => {
+    fetchMetrics({ mode: "initial" })
+    const interval = setInterval(() => fetchMetrics(), 5 * 60 * 1000)
     return () => clearInterval(interval)
-  }, [])
+  }, [fetchMetrics])
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("th-TH", {
@@ -70,10 +97,19 @@ export function SalesMetrics() {
     }).format(amount)
   }
 
+  const formatMinutes = (minutes: number) => {
+    if (minutes < 60) return `${minutes.toFixed(0)} นาที`
+    const hours = minutes / 60
+    return `${hours.toFixed(1)} ชม.`
+  }
+
+  const handleRetry = () => fetchMetrics({ mode: "initial" })
+  const handleManualRefresh = () => fetchMetrics()
+
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-        {[...Array(5)].map((_, i) => (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-6">
+        {[...Array(7)].map((_, i) => (
           <StatCardSkeleton key={i} />
         ))}
       </div>
@@ -82,14 +118,37 @@ export function SalesMetrics() {
 
   if (error || !metrics) {
     return (
-      <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-center">
-        <p className="text-sm text-destructive">Failed to load sales metrics. Please try again.</p>
+      <div className="rounded-xl border border-destructive/40 bg-destructive/5 p-6 text-center space-y-3">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10">
+          <RefreshCw className="h-5 w-5 text-destructive" />
+        </div>
+        <div className="space-y-1">
+          <p className="text-sm font-medium text-destructive">ไม่สามารถโหลดสถิติการขายได้</p>
+          <p className="text-xs text-destructive/80">{error ?? "โปรดลองใหม่อีกครั้งในภายหลัง"}</p>
+        </div>
+        <Button variant="outline" size="sm" onClick={handleRetry} className="gap-2">
+          <RefreshCw className="h-4 w-4" /> ลองอีกครั้ง
+        </Button>
       </div>
     )
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+    <div className="space-y-3">
+      <div className="flex items-center justify-end gap-3 text-xs text-muted-foreground">
+        {isRefreshing ? (
+          <span className="flex items-center gap-2 text-primary">
+            <RefreshCw className="h-3.5 w-3.5 animate-spin" /> กำลังรีเฟรช...
+          </span>
+        ) : (
+          <span>อัปเดตอัตโนมัติทุก 5 นาที</span>
+        )}
+        <Button variant="outline" size="sm" className="gap-2" onClick={handleManualRefresh} disabled={isRefreshing}>
+          <RefreshCw className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`} /> รีเฟรช
+        </Button>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-6">
       {/* Hot Leads */}
       <StatCard
         title="Hot Leads"
@@ -154,6 +213,33 @@ export function SalesMetrics() {
         iconColor="text-amber-600"
         iconBackground="bg-amber-50"
       />
+
+      {/* Avg Response Time */}
+      <StatCard
+        title="Avg Response Time"
+        value={formatMinutes(metrics.avgResponseMinutes.today)}
+        icon={Clock3}
+        trend={{
+          value: metrics.avgResponseMinutes.change,
+          label: `target ${formatMinutes(metrics.avgResponseMinutes.target)}`,
+        }}
+        iconColor="text-indigo-600"
+        iconBackground="bg-indigo-50"
+      />
+
+      {/* Win Rate (Overall) */}
+      <StatCard
+        title="Win Rate (Overall)"
+        value={`${metrics.winRateOverall.today.toFixed(1)}%`}
+        icon={BarChart}
+        trend={{
+          value: metrics.winRateOverall.change,
+          label: "converted / total leads",
+        }}
+        iconColor="text-teal-600"
+        iconBackground="bg-teal-50"
+      />
+      </div>
     </div>
   )
 }

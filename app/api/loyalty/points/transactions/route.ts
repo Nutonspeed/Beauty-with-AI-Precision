@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { withClinicAuth } from '@/lib/auth/middleware';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -18,7 +19,7 @@ const supabase = createClient(
  * - status (optional): Filter by status
  * - limit (optional): Limit results (default 100)
  */
-export async function GET(request: NextRequest) {
+export const GET = withClinicAuth(async (request: NextRequest, user: any) => {
   try {
     const { searchParams } = new URL(request.url);
     const clinic_id = searchParams.get('clinic_id');
@@ -26,7 +27,7 @@ export async function GET(request: NextRequest) {
     const loyalty_account_id = searchParams.get('loyalty_account_id');
     const transaction_type = searchParams.get('transaction_type');
     const status = searchParams.get('status');
-    const limit = searchParams.get('limit');
+    const limitParam = searchParams.get('limit');
 
     if (!clinic_id) {
       return NextResponse.json(
@@ -34,6 +35,13 @@ export async function GET(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    if (user?.clinic_id && clinic_id !== user.clinic_id) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    const limitRaw = limitParam ? Number.parseInt(limitParam) : 100;
+    const limit = Number.isFinite(limitRaw) ? Math.min(Math.max(limitRaw, 1), 200) : 100;
 
     let query = supabase
       .from('points_transactions')
@@ -61,16 +69,9 @@ export async function GET(request: NextRequest) {
       query = query.eq('status', status);
     }
 
-    query = query.order('created_at', { ascending: false });
-
-    if (limit) {
-      query = query.limit(Number.parseInt(limit));
-    } else {
-      query = query.limit(100);
-    }
+    query = query.order('created_at', { ascending: false }).limit(limit);
 
     const { data, error } = await query;
-
     if (error) throw error;
 
     return NextResponse.json(data || []);
@@ -81,4 +82,4 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+});

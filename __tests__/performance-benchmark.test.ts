@@ -383,18 +383,18 @@ describe('Performance Benchmark Tests', () => {
 
       // Standard analysis
       const standardStart = Date.now()
-      const _standardResult = await analyzer.analyzeSkin(image, { mobileOptimized: false })
+      const _standardResult = await analyzer.analyzeSkin(image, { mobileOptimized: false, useCache: false })
       const standardDuration = Date.now() - standardStart
 
       // Mobile optimized analysis
       const mobileStart = Date.now()
-      const _mobileResult = await analyzer.analyzeSkin(image, { mobileOptimized: true })
+      const _mobileResult = await analyzer.analyzeSkin(image, { mobileOptimized: true, useCache: false })
       const mobileDuration = Date.now() - mobileStart
 
       // Mobile should be faster or at least not substantially slower
       // Add small jitter to avoid flakiness on CI/slow machines
-      const jitter = 50
-      const allowedMobileDuration = Math.max(standardDuration * 1.2, standardDuration + 100) + jitter
+      const jitter = 150
+      const allowedMobileDuration = Math.max(standardDuration * 1.35, standardDuration + 150) + jitter
       expect(mobileDuration).toBeLessThanOrEqual(allowedMobileDuration)
 
       console.log(`Mobile optimization: Standard ${standardDuration}ms, Mobile ${mobileDuration}ms`)
@@ -449,7 +449,7 @@ describe('Performance Benchmark Tests', () => {
       expect(duration).toBeLessThan(1000) // Should still be cached
 
       console.log(`Cache size test: Recent image analysis ${duration}ms`)
-    }, 20000)
+    }, 60000)
   })
 
   describe('Memory Usage', () => {

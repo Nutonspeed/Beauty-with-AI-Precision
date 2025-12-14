@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { createServerClient } from "@/lib/supabase/server"
+import { createServerClient, createServiceClient } from "@/lib/supabase/server"
 
 /**
  * POST /api/sales/quick-lead
@@ -7,6 +7,7 @@ import { createServerClient } from "@/lib/supabase/server"
  * ใช้โดยทีมเซลหลังจากได้ผล AI แล้ว
  */
 export async function POST(request: NextRequest) {
+  const startedAt = Date.now()
   try {
     const supabase = await createServerClient()
 
@@ -18,6 +19,17 @@ export async function POST(request: NextRequest) {
 
     if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    // Role guard
+    const service = createServiceClient()
+    const { data: userRow, error: userErr } = await service
+      .from('users')
+      .select('role, clinic_id')
+      .eq('id', user.id)
+      .single()
+    if (userErr || !userRow || !['sales_staff', 'admin'].includes(userRow.role)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
     const body = await request.json()
@@ -112,7 +124,7 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (error) {
-      console.error("[QuickLeadAPI] Error creating lead:", error)
+      console.error("Error creating quick lead:", error)
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
@@ -129,7 +141,13 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ data: newLead }, { status: 201 })
   } catch (error) {
-    console.error("[QuickLeadAPI] Unexpected error:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    console.error("[v0] Error creating quick lead:", error)
+    return NextResponse.json(
+      { error: "Failed to create quick lead", details: error instanceof Error ? error.message : "Unknown error" },
+      { status: 500 },
+    )
+  } finally {
+    const duration = Date.now() - startedAt
+    console.info("[sales/quick-lead][POST] done", { durationMs: duration })
   }
 }

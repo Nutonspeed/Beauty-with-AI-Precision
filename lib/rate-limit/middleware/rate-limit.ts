@@ -136,8 +136,11 @@ export class RateLimitMiddleware {
 
     // Default key generation
     const ip = this.getClientIP(request)
-    const userAgent = request.headers.get('user-agent') || 'unknown'
-    const path = new URL(request.url).pathname
+    const headers: any = (request as any)?.headers
+    const userAgent = (typeof headers?.get === 'function'
+      ? (headers.get('user-agent') || headers.get('User-Agent'))
+      : (headers?.['user-agent'] || headers?.['User-Agent'] || headers?.['USER-AGENT'])) || 'unknown'
+    const path = new URL((request as any)?.url || 'http://localhost').pathname
     
     // Create hash of IP + user agent for basic identification
     const identifier = `${ip}:${userAgent}`
@@ -147,10 +150,22 @@ export class RateLimitMiddleware {
 
   // Get client IP
   private getClientIP(request: NextRequest): string {
-    return request.headers.get('x-forwarded-for') ||
-           request.headers.get('x-real-ip') ||
-           request.headers.get('cf-connecting-ip') ||
-           'unknown'
+    const headers: any = (request as any)?.headers
+    const getHeader = (name: string) => {
+      if (!headers) return undefined
+      if (typeof headers.get === 'function') return headers.get(name) || headers.get(name.toLowerCase())
+      if (typeof headers === 'object') return headers[name] || headers[name.toLowerCase()] || headers[name.toUpperCase()]
+      return undefined
+    }
+
+    const forwardedFor = getHeader('x-forwarded-for')
+    if (forwardedFor) return String(forwardedFor).split(',')[0].trim()
+
+    return (
+      getHeader('x-real-ip') ||
+      getHeader('cf-connecting-ip') ||
+      '127.0.0.1'
+    )
   }
 
   // Hash string for consistent keys

@@ -35,10 +35,15 @@ interface PerformanceData {
  */
 export const POST = withPublicAccess(async (request: NextRequest) => {
   try {
-    const data: PerformanceData = await request.json();
+    let data: PerformanceData | null = null;
+    try {
+      data = (await request.json()) as PerformanceData;
+    } catch {
+      return new NextResponse(null, { status: 204 });
+    }
 
     // Validate required fields
-    if (!data.url || !data.timestamp) {
+    if (!data?.url || !data?.timestamp) {
       return NextResponse.json(
         {
           success: false,

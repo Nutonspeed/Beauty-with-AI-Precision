@@ -1,7 +1,8 @@
 import { createServerClient } from "@/lib/supabase/server"
 import { NextResponse } from "next/server"
+import { withPublicAccess } from "@/lib/auth/middleware"
 
-export async function POST(request: Request) {
+export const POST = withPublicAccess(async (request: Request) => {
   try {
     const { refresh_token } = await request.json()
 
@@ -27,4 +28,4 @@ export async function POST(request: Request) {
     console.error("Token refresh error:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
-}
+}, { rateLimitCategory: 'auth' })

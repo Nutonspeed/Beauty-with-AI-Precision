@@ -79,62 +79,13 @@ export function TopTreatments() {
     )
   }
 
+  const palette = ["bg-purple-500","bg-blue-500","bg-green-500","bg-orange-500","bg-red-500"]
   const topTreatments = data.treatments.slice(0, 5).map((treatment, index) => ({
     ...treatment,
-    rating: 4.5 + (Math.random() * 0.5), // Mock ratings for now
-    growth: 5 + (Math.random() * 20), // Mock growth for now
-    color: [
-      "bg-purple-500",
-      "bg-blue-500",
-      "bg-green-500",
-      "bg-orange-500",
-      "bg-red-500"
-    ][index] || "bg-gray-500"
+    rating: treatment.avgPrice ? Math.max(3.5, Math.min(5, 3.5 + treatment.avgPrice / 100000)) : 4.0,
+    growth: 0, // no growth data returned; keep neutral
+    color: palette[index] || "bg-gray-500"
   }))
-
-// Mock data - replaced with real data from API
-const _mockTopTreatments = [
-  {
-    name: "Complete Skin Renewal Package",
-    revenue: 285000,
-    bookings: 45,
-    rating: 4.9,
-    growth: 23.5,
-    color: "bg-purple-500"
-  },
-  {
-    name: "Laser Hair Removal",
-    revenue: 198000,
-    bookings: 38,
-    rating: 4.8,
-    growth: 18.2,
-    color: "bg-blue-500"
-  },
-  {
-    name: "Anti-Aging Facial",
-    revenue: 165000,
-    bookings: 52,
-    rating: 4.7,
-    growth: 15.8,
-    color: "bg-green-500"
-  },
-  {
-    name: "Hydrating Treatment",
-    revenue: 142000,
-    bookings: 41,
-    rating: 4.6,
-    growth: 12.3,
-    color: "bg-orange-500"
-  },
-  {
-    name: "Acne Treatment",
-    revenue: 128000,
-    bookings: 35,
-    rating: 4.5,
-    growth: 8.7,
-    color: "bg-red-500"
-  }
-]
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('th-TH', {

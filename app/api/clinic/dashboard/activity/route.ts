@@ -1,118 +1,129 @@
-import { createServerClient } from "@/lib/supabase/server"
-import { NextResponse } from "next/server"
+import { type NextRequest, NextResponse } from "next/server"
+import { createServerClient, createServiceClient } from "@/lib/supabase/server"
 
-// GET /api/clinic/dashboard/activity - Get recent activity feed
-export async function GET() {
+type ActivityType = "booking" | "staff" | "revenue"
+
+interface Activity {
+  id: string
+  type: ActivityType
+  title: string
+  description: string
+  timestamp: string
+  metadata?: Record<string, unknown>
+}
+
+export async function GET(_request: NextRequest) {
   try {
     const supabase = await createServerClient()
+    const { data: { user } } = await supabase.auth.getUser()
 
-    // Check authentication
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser()
-    if (authError || !user) {
+    if (!user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    // Fetch recent activities from multiple sources
-    const activities: any[] = []
+    const activities: Activity[] = []
 
-    // Recent bookings (last 24 hours)
-    const { data: bookings } = await supabase
+    // user profile
+    const { data: userData, error: userErr } = await supabase
+      .from("users")
+      .select("clinic_id, role, email")
+      .eq("id", user.id)
+      .single()
+
+    if (userErr) {
+      console.error("[clinic/activity] Failed to fetch user profile:", userErr)
+      return NextResponse.json({ error: "Failed to fetch user profile" }, { status: 500 })
+    }
+
+    if (!userData || (userData.role !== "clinic_owner" && userData.role !== "clinic_staff")) {
+      return NextResponse.json({ error: "Forbidden - Clinic access required" }, { status: 403 })
+    }
+
+    const clinicId = userData.clinic_id
+    if (!clinicId) {
+      return NextResponse.json({ error: "No clinic associated with user" }, { status: 400 })
+    }
+
+    const admin = createServiceClient()
+
+    // bookings
+    const { data: bookings, error: bookingErr } = await admin
       .from("bookings")
-      .select("id, created_at, customer_name, treatment_type, payment_amount, status")
-      .gte("created_at", new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
-      .order("created_at", { ascending: false })
-      .limit(5)
+      .select("id, booking_date, status, price")
+      .eq("clinic_id", clinicId)
+      .in("status", ["confirmed", "completed", "cancelled"])
+      .order("booking_date", { ascending: false })
+      .limit(20)
 
-    if (bookings) {
-      bookings.forEach((booking) => {
-        activities.push({
-          id: `booking-${booking.id}`,
-          type: "booking",
-          title: `นัดหมายใหม่: ${booking.treatment_type}`,
-          description: `${booking.customer_name} • ฿${booking.payment_amount?.toLocaleString() || 0}`,
-          timestamp: booking.created_at,
-          metadata: booking,
-        })
+    if (bookingErr) console.error("[clinic/activity] Error fetching bookings:", bookingErr)
+
+    bookings?.forEach((b) => {
+      activities.push({
+        id: String(b.id),
+        type: "booking",
+        title: `Booking ${b.status || "updated"}`,
+        description: `ยอด ${Number((b as any).price || 0).toLocaleString("th-TH", {
+          style: "currency",
+          currency: "THB",
+          minimumFractionDigits: 0,
+        })}`,
+        timestamp: (b as any).booking_date,
+        metadata: { status: (b as any).status, price: (b as any).price },
       })
-    }
+    })
 
-    // Recent customers (last 24 hours)
-    const { data: customers } = await supabase
-      .from("customers")
-      .select("id, created_at, name, email, lead_status")
-      .gte("created_at", new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
-      .order("created_at", { ascending: false })
-      .limit(5)
-
-    if (customers) {
-      customers.forEach((customer) => {
-        const statusText =
-          customer.lead_status === "hot"
-            ? "🔥 ลูกค้าศักยภาพสูง"
-            : customer.lead_status === "warm"
-              ? "⭐ ลูกค้าสนใจ"
-              : "📝 ลูกค้าใหม่"
-        activities.push({
-          id: `customer-${customer.id}`,
-          type: "customer",
-          title: `ลูกค้าใหม่: ${customer.name}`,
-          description: `${statusText} • ${customer.email}`,
-          timestamp: customer.created_at,
-          metadata: customer,
-        })
-      })
-    }
-
-    // Recent staff updates (last 24 hours)
-    const { data: staff } = await supabase
+    // staff (last 24h)
+    const { data: staff, error: staffErr } = await admin
       .from("clinic_staff")
-      .select("id, created_at, full_name, role, status")
+      .select("id, created_at, full_name, role, status, clinic_id")
+      .eq("clinic_id", clinicId)
       .gte("created_at", new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
       .order("created_at", { ascending: false })
       .limit(3)
 
-    if (staff) {
-      staff.forEach((member) => {
-        const roleText =
-          member.role === "doctor"
-            ? "👨‍⚕️ แพทย์"
-            : member.role === "nurse"
-              ? "👩‍⚕️ พยาบาล"
-              : member.role === "therapist"
-                ? "💆 นักบำบัด"
-                : "👔 ทีมงาน"
-        activities.push({
-          id: `staff-${member.id}`,
-          type: "staff",
-          title: `ทีมงานใหม่: ${member.full_name}`,
-          description: `${roleText} • สถานะ: ${member.status}`,
-          timestamp: member.created_at,
-          metadata: member,
-        })
-      })
-    }
+    if (staffErr) console.error("[clinic/activity] Error fetching staff:", staffErr)
 
-    // Recent revenue milestones (payments today)
+    staff?.forEach((member) => {
+      const roleText =
+        (member as any).role === "doctor"
+          ? "👨‍⚕️ แพทย์"
+          : (member as any).role === "nurse"
+            ? "👩‍⚕️ พยาบาล"
+            : (member as any).role === "therapist"
+              ? "💆 นักบำบัด"
+              : "👔 ทีมงาน"
+
+      activities.push({
+        id: `staff-${(member as any).id}`,
+        type: "staff",
+        title: `ทีมงานใหม่: ${(member as any).full_name}`,
+        description: `${roleText} • สถานะ: ${(member as any).status}`,
+        timestamp: (member as any).created_at,
+        metadata: member,
+      })
+    })
+
+    // revenue today
     const todayStart = new Date()
     todayStart.setHours(0, 0, 0, 0)
 
-    const { data: todayRevenue } = await supabase
+    const { data: todayRevenue, error: revErr } = await admin
       .from("bookings")
-      .select("payment_amount, payment_status")
+      .select("booking_date, price, status")
+      .eq("clinic_id", clinicId)
+      .in("status", ["completed", "confirmed"])
       .gte("booking_date", todayStart.toISOString())
-      .eq("payment_status", "paid")
+
+    if (revErr) console.error("[clinic/activity] Error fetching revenue:", revErr)
 
     if (todayRevenue && todayRevenue.length > 0) {
       const totalRevenue = todayRevenue.reduce(
-        (sum, booking) => sum + (booking.payment_amount || 0),
+        (sum, booking) => sum + (Number((booking as any).price) || 0),
         0
       )
       if (totalRevenue > 0) {
         activities.push({
-          id: `revenue-today`,
+          id: "revenue-today",
           type: "revenue",
           title: `รายได้วันนี้: ฿${totalRevenue.toLocaleString()}`,
           description: `${todayRevenue.length} รายการชำระเงินแล้ว`,
@@ -122,15 +133,17 @@ export async function GET() {
       }
     }
 
-    // Sort all activities by timestamp (newest first)
     activities.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
 
     return NextResponse.json({
-      activities: activities.slice(0, 10), // Return top 10
+      activities: activities.slice(0, 10),
       total: activities.length,
     })
   } catch (error) {
-    console.error("Error fetching activity:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    console.error("[clinic/activity] Unexpected error:", error)
+    return NextResponse.json(
+      { error: "Failed to fetch activity", details: error instanceof Error ? error.message : "Unknown error" },
+      { status: 500 },
+    )
   }
 }

@@ -9,6 +9,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { promises as fs } from 'fs';
 import path from 'path';
 import { SeverityLevel, ConcernType } from '@/types/calibration';
+import { withPublicAccess } from '@/lib/auth/middleware';
 
 // Using HybridAnalyzer for all model types (mediapipe, tensorflow, huggingface, ensemble)
 import { analyzeSkin } from '@/lib/ai/hybrid-skin-analyzer';
@@ -130,7 +131,7 @@ async function findCalibrationImages(
   return images;
 }
 
-export async function POST(request: NextRequest) {
+export const POST = withPublicAccess(async (request: NextRequest) => {
   try {
     const body: ValidationRequest = await request.json();
     const { model, severity, imageIds } = body;
@@ -244,4 +245,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+}, { rateLimitCategory: 'ai' })

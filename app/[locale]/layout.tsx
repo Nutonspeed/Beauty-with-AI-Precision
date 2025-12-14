@@ -3,18 +3,18 @@ import { locales } from '@/i18n/request'
 // Force runtime rendering for the entire locale subtree
 export const dynamic = 'force-dynamic'
 
-export default function LocaleLayout({
+export default async function LocaleLayout({
   children,
   params,
 }: {
   children: React.ReactNode
-  params: { locale: string }
+  params: Promise<{ locale: string }>
 }) {
-  const { locale } = params
+  const { locale } = await params
   console.log('[DEBUG] Locale layout called with locale:', locale, 'valid locales:', locales)
 
   if (process.env.NODE_ENV === 'development') {
-    console.log('[locale] layout params', params)
+    console.log('[locale] layout params', { locale })
   }
 
   // Temporarily disable notFound() to let middleware handle locale routing

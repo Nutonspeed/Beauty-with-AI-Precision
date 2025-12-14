@@ -18,6 +18,7 @@ import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { createClient } from '@/lib/supabase/server';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
+import { withPublicAccess } from '@/lib/auth/middleware';
 
 const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
 
@@ -34,7 +35,7 @@ interface AnalysisResult {
   overall_score?: number;
 }
 
-export async function POST(request: NextRequest) {
+export const POST = withPublicAccess(async (request: NextRequest) => {
   try {
     const supabase = createRouteHandlerClient({ cookies });
     
@@ -314,7 +315,7 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+}, { rateLimitCategory: 'ai' })
 
 /**
  * Generate personalized recommendations based on analysis results
@@ -451,7 +452,7 @@ function generateRecommendations(analysis: any) {
 }
 
 // GET method to retrieve analysis by ID
-export async function GET(request: NextRequest) {
+export const GET = withPublicAccess(async (request: NextRequest) => {
   try {
     const supabase = await createClient();
     const { searchParams } = new URL(request.url);
@@ -521,4 +522,4 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+}, { rateLimitCategory: 'api' });

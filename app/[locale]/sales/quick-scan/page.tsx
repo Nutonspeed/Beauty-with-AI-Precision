@@ -96,7 +96,7 @@ export default function QuickScanPage() {
         variant: 'default',
       })
     }
-  }, [])
+  }, [toast])
 
   const analyzePhotos = useCallback(async (images: typeof capturedImages) => {
     setIsAnalyzing(true)

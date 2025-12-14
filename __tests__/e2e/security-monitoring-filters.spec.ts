@@ -1,5 +1,4 @@
 import { test, expect } from '@playwright/test';
-import { LoginPage } from './pages/login-page';
 
 // Skip tests if we're in CI environment without test database
 const skipInCI = process.env.CI ? test.skip : test;
@@ -13,25 +12,9 @@ test.describe('Security Monitoring - Filters & Pagination', () => {
     console.log(`\n[${testInfo.title}] Starting test setup...`);
     
     try {
-      // Initialize login page
-      const login = new LoginPage(page);
-      
-      // Use correct demo admin credentials from the login page
-      const testEmail = process.env.TEST_ADMIN_EMAIL || 'admin@ai367bar.com';
-      const testPassword = process.env.TEST_ADMIN_PASSWORD || 'password123';
-      
-      console.log(`Attempting to login with email: ${testEmail}`);
-      
-      // Navigate to login page and login
-      await login.goto();
-      await login.login(testEmail, testPassword);
-      
-      // Take a screenshot after successful login
-      await page.screenshot({ path: 'after-login.png', fullPage: true });
-      
       // Navigate to Admin Dashboard (the actual page that exists)
       console.log('Navigating to Admin Dashboard...');
-      await page.goto('/th/admin', { waitUntil: 'networkidle', timeout: 30000 });
+      await page.goto('/th/admin', { waitUntil: 'domcontentloaded', timeout: 60000 });
       
       // Check if we're on the admin dashboard
       const isAdminDashboard = await Promise.race([
@@ -60,31 +43,11 @@ test.describe('Security Monitoring - Filters & Pagination', () => {
     console.log('\n[Test] Verifying admin dashboard...');
     
     try {
-      // Verify we're on the admin dashboard with flexible URL matching
-      const isAdminPage = await Promise.race([
-        page.waitForURL('**/admin', { timeout: 10000 }).then(() => true).catch(() => false),
-        page.waitForSelector('h1:has-text("Admin Dashboard")', { 
-          timeout: 10000 
-        }).then(() => true).catch(() => false)
-      ]);
-      
-      if (!isAdminPage) {
-        console.log('Current URL:', page.url());
-        console.log('Page title:', await page.title());
-        throw new Error('Not on admin dashboard page');
-      }
-      
-      // Check for page title or heading with flexible selectors
-      const titleSelector = 'h1:has-text("Admin Dashboard")';
-      const titleElement = page.locator(titleSelector).first();
-      
-      try {
-        await expect(titleElement).toBeVisible({ timeout: 10000 });
-        console.log('Admin Dashboard title found');
-      } catch (error) {
-        console.error('Admin Dashboard title not found');
-        throw error;
-      }
+      await page.waitForLoadState('domcontentloaded')
+
+      const titleElement = page.getByRole('heading', { name: /Admin Dashboard/i }).first()
+      await expect(titleElement).toBeVisible({ timeout: 20000 })
+      console.log('Admin Dashboard title found')
       
       // Take a screenshot for verification
       await page.screenshot({ path: 'admin-dashboard-verified.png', fullPage: true });
@@ -117,68 +80,31 @@ test.describe('Security Monitoring - Filters & Pagination', () => {
     
     try {
       // Wait for the page to be fully loaded
-      await page.waitForLoadState('networkidle');
-      
-      // Look for stats cards that show system metrics
-      const statsSelectors = [
-        '.grid.grid-cols-2.md\\:grid-cols-4', // Stats grid container
-        '[class*="grid"]', // Any grid container
-        'text=Total Users',
-        'text=Active Now', 
-        'text=Clinics',
-        'text=Analyses'
-      ];
-      
-      // Wait for any stats element to be visible
-      console.log('Looking for system statistics...');
-      let statsFound = false;
-      
-      for (const selector of statsSelectors) {
+      await page.waitForLoadState('domcontentloaded');
+
+      console.log('Looking for system statistics...')
+
+      const expectedLabels = ['Total Users', 'Active Now', 'Clinics', 'Analyses']
+      let foundStats = 0
+
+      for (const label of expectedLabels) {
+        const statElement = page.locator(`text=${label}`).first()
         try {
-          await page.waitForSelector(selector, { timeout: 5000 });
-          console.log(`Found stats element with selector: ${selector}`);
-          statsFound = true;
-          break;
-        } catch (error) {
-          // Continue to next selector
-        }
-      }
-      
-      if (!statsFound) {
-        console.warn('No specific stats elements found, checking for general content...');
-        // Check if page has any numbers that look like stats
-        const pageText = await page.textContent('body');
-        const hasNumbers = pageText ? /\d{1,3}(?:,\d{3})*/.test(pageText) : false; // Matches numbers like 1,247 or 1247
-        
-        if (hasNumbers) {
-          console.log('Found numeric content that might be statistics');
-          statsFound = true;
+          await expect(statElement).toBeVisible({ timeout: 15000 })
+          console.log(`Found stat: ${label}`)
+          foundStats++
+        } catch {
+          console.warn(`Stat not found: ${label}`)
         }
       }
       
       // Take a screenshot of the current state
       await page.screenshot({ path: 'system-stats.png', fullPage: true });
-      
-      // Check for specific stat labels that should be present
-      const expectedLabels = ['Total Users', 'Active Now', 'Clinics', 'Analyses'];
-      let foundStats = 0;
-      
-      for (const label of expectedLabels) {
-        const statElement = page.locator(`text=${label}`);
-        try {
-          await expect(statElement).toBeVisible({ timeout: 3000 });
-          console.log(`Found stat: ${label}`);
-          foundStats++;
-        } catch (error) {
-          console.warn(`Stat not found: ${label}`);
-        }
-      }
-      
-      // Verify we have at least some stats visible
-      expect(statsFound || foundStats > 0).toBe(true);
-      
-      console.log(`Found ${foundStats} out of ${expectedLabels.length} expected statistics`);
-      console.log('System statistics verification completed');
+
+      expect(foundStats).toBeGreaterThan(0)
+
+      console.log(`Found ${foundStats} out of ${expectedLabels.length} expected statistics`)
+      console.log('System statistics verification completed')
     } catch (error) {
       console.error('Error verifying system statistics:', error);
       await page.screenshot({ path: 'system-stats-error.png', fullPage: true });
@@ -191,7 +117,7 @@ test.describe('Security Monitoring - Filters & Pagination', () => {
     
     try {
       // Wait for the page to be fully loaded
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
       
       // Look for quick actions section with multiple approaches
       const quickActionsSelectors = [

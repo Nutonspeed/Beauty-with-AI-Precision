@@ -14,7 +14,9 @@ export async function checkUserRole(allowedRoles: UserRole[]) {
   }
 
   // Use /api/user-profile to avoid RLS infinite recursion
-  const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/user-profile?userId=${session.user.id}`, {
+  const defaultBaseUrl = process.env.NEXT_PUBLIC_TEST_MODE === 'true' ? 'http://localhost:3004' : 'http://localhost:3000'
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || defaultBaseUrl
+  const response = await fetch(`${baseUrl}/api/user-profile?userId=${session.user.id}`, {
     headers: {
       Authorization: `Bearer ${session.access_token}`,
     },

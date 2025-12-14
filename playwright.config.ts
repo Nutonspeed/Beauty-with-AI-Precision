@@ -37,11 +37,15 @@ export default defineConfig({
       use: { ...devices['iPhone 12'] },
     },
   ],
-  // webServer disabled - run 'pnpm dev --port 3004' manually before running tests
-  // webServer: {
-  //   command: 'pnpm dev --port 3004',
-  //   url: 'http://localhost:3004',
-  //   reuseExistingServer: true,
-  //   timeout: 180000,
-  // },
+  webServer: {
+    command: 'node node_modules/next/dist/bin/next dev --webpack -p 3004',
+    url: 'http://localhost:3004',
+    reuseExistingServer: !process.env.CI,
+    timeout: 300000,
+    stdout: 'ignore',
+    stderr: 'pipe',
+    env: {
+      NEXT_PUBLIC_TEST_MODE: 'true',
+    },
+  },
 })

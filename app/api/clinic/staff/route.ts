@@ -12,6 +12,24 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    // Role/clinic guard
+    const { data: userData, error: userErr } = await supabase
+      .from('users')
+      .select('clinic_id, role')
+      .eq('id', user.id)
+      .single()
+    if (userErr) {
+      console.error('[clinic/staff] Failed to fetch user profile:', userErr)
+      return NextResponse.json({ error: 'Failed to fetch user profile' }, { status: 500 })
+    }
+    if (!userData || (userData.role !== 'clinic_owner' && userData.role !== 'clinic_staff')) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
+    const clinicId = userData.clinic_id
+    if (!clinicId) {
+      return NextResponse.json({ error: 'No clinic associated' }, { status: 400 })
+    }
+
     // Get query parameters
     const searchParams = request.nextUrl.searchParams
     const role = searchParams.get('role')
@@ -27,6 +45,7 @@ export async function GET(request: NextRequest) {
         *,
         user:users(id, email, full_name)
       `, { count: 'exact' })
+      .eq('clinic_id', clinicId)
       .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1)
 
@@ -48,8 +67,16 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
+    const summary = {
+      total: staff?.length || 0,
+      available: staff?.filter((s) => s.status === 'available').length || 0,
+      busy: staff?.filter((s) => s.status === 'busy' || s.status === 'active').length || 0,
+      offline: staff?.filter((s) => s.status === 'offline' || s.status === 'on_leave').length || 0,
+    }
+
     return NextResponse.json({
       data: staff,
+      summary,
       pagination: {
         total: count || 0,
         limit,

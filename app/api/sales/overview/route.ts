@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server"
+import { type NextRequest, NextResponse } from "next/server"
 import { createServerClient, createServiceClient } from "@/lib/supabase/server"
 
 export const dynamic = "force-dynamic"
@@ -45,6 +45,7 @@ function getRangeCutoff(range: string) {
 }
 
 export async function GET(_request: NextRequest) {
+  const startedAt = Date.now()
   try {
     const supabase = await createServerClient()
     const {
@@ -53,6 +54,17 @@ export async function GET(_request: NextRequest) {
 
     if (!user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    // Role guard
+    const service = createServiceClient()
+    const { data: userRow, error: userErr } = await service
+      .from('users')
+      .select('role, clinic_id')
+      .eq('id', user.id)
+      .single()
+    if (userErr || !userRow || !['sales_staff', 'admin'].includes(userRow.role)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
     // Resolve clinic_id for this user (from public.users)
@@ -212,11 +224,14 @@ export async function GET(_request: NextRequest) {
     }
 
     return NextResponse.json(payload)
-  } catch (err) {
-    console.error("[sales/overview] Unexpected error", err)
+  } catch (error) {
+    console.error("[sales/overview] Failed to fetch overview", error)
     return NextResponse.json(
-      { error: "Failed to load sales overview" },
+      { error: "Failed to fetch overview", details: error instanceof Error ? error.message : "Unknown error" },
       { status: 500 },
     )
+  } finally {
+    const duration = Date.now() - startedAt
+    console.info("[sales/overview] done", { durationMs: duration })
   }
 }
