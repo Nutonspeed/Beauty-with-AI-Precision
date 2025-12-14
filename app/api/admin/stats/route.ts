@@ -27,14 +27,13 @@ export async function GET(request: NextRequest) {
 
     const uniqueCustomers = new Set(activeCustomers?.map((b) => b.user_id) || [])
 
-    // Get total revenue (sum of all completed bookings)
-    const { data: completedBookings } = await supabase
-      .from("bookings")
-      .select("treatment_type")
-      .eq("status", "completed")
+    // Get total revenue from paid invoices (real data)
+    const { data: paidInvoices } = await supabase
+      .from("billing_invoices")
+      .select("amount_paid")
+      .eq("status", "paid")
 
-    // Mock revenue calculation (in real app, you'd have a price field)
-    const revenue = (completedBookings?.length || 0) * 2500
+    const revenue = paidInvoices?.reduce((sum, inv) => sum + Number(inv.amount_paid || 0), 0) || 0
 
     // Get conversion rate (completed / total bookings)
     const { count: completedCount } = await supabase
