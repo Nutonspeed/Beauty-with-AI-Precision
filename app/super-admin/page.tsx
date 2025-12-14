@@ -12,11 +12,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useToast } from '@/components/ui/use-toast'
 import type { Tenant } from '@/lib/types/tenant'
-import { Loader2, Activity, Building2, Send, TrendingUp, Shield } from 'lucide-react'
+import { Loader2, Activity, Building2, Send, TrendingUp, Shield, Brain } from 'lucide-react'
 import { SystemHealthMonitor } from '@/components/admin/system-health-monitor'
 import RevenueAnalytics from '@/components/admin/revenue-analytics'
 import EnhancedClinicManagement from '@/components/admin/enhanced-clinic-management'
 import SecurityMonitoring from '@/components/admin/security-monitoring'
+import AIAnalyticsDashboard from '@/components/admin/ai-analytics-dashboard'
 
 // Force dynamic rendering for this page
 export const dynamic = 'force-dynamic'
@@ -357,7 +358,7 @@ function SuperAdminDashboardContent() {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5 lg:w-auto lg:inline-grid">
+          <TabsList className="grid w-full grid-cols-6 lg:w-auto lg:inline-grid">
             <TabsTrigger value="overview" className="gap-2">
               <Building2 className="w-4 h-4" />
               Clinic Management
@@ -373,6 +374,10 @@ function SuperAdminDashboardContent() {
             <TabsTrigger value="security" className="gap-2">
               <Shield className="w-4 h-4" />
               Security
+            </TabsTrigger>
+            <TabsTrigger value="ai-analytics" className="gap-2">
+              <Brain className="w-4 h-4" />
+              AI Analytics
             </TabsTrigger>
             <TabsTrigger value="invitations" className="gap-2">
               <Send className="w-4 h-4" />
@@ -398,6 +403,11 @@ function SuperAdminDashboardContent() {
           {/* Security Monitoring Tab */}
           <TabsContent value="security">
             <SecurityMonitoring />
+          </TabsContent>
+
+          {/* AI Analytics Tab */}
+          <TabsContent value="ai-analytics">
+            <AIAnalyticsDashboard />
           </TabsContent>
 
           {/* Invitations Tab */}
