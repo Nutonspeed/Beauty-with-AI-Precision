@@ -62,7 +62,7 @@ export function AddLeadModal({ open, onClose, onSuccess, editLead }: AddLeadModa
 
     try {
       const url = editLead ? `/api/sales/leads/${editLead.id}` : '/api/sales/leads'
-      const method = editLead ? 'PUT' : 'POST'
+      const method = editLead ? 'PATCH' : 'POST'
 
       const response = await fetch(url, {
         method,
@@ -164,7 +164,7 @@ export function AddLeadModal({ open, onClose, onSuccess, editLead }: AddLeadModa
                     <SelectItem value="website">🌐 Website</SelectItem>
                     <SelectItem value="facebook">📘 Facebook</SelectItem>
                     <SelectItem value="instagram">📸 Instagram</SelectItem>
-                    <SelectItem value="google">🔍 Google</SelectItem>
+                    <SelectItem value="google_ads">🔍 Google Ads</SelectItem>
                     <SelectItem value="referral">👥 Referral</SelectItem>
                     <SelectItem value="walk_in">🚶 Walk-in</SelectItem>
                     <SelectItem value="other">📋 Other</SelectItem>

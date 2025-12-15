@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
+import { useLocalizePath } from "@/lib/i18n/locale-link"
 import {
   Table,
   TableBody,
@@ -43,55 +44,54 @@ import {
 } from "lucide-react"
 import { toast } from "sonner"
 import { format } from "date-fns"
-import { LeadCaptureForm } from "@/components/leads/lead-capture-form"
-import type { LeadStatus, LeadSource } from "@/types/multi-tenant"
+import { AddLeadModal } from "@/components/sales/add-lead-modal"
+
+type SalesLeadStatus = 'new' | 'contacted' | 'qualified' | 'proposal_sent' | 'negotiation' | 'won' | 'lost' | 'cold' | 'warm' | 'hot'
+type SalesLeadSource = 'website' | 'facebook' | 'instagram' | 'google_ads' | 'referral' | 'walk_in' | 'phone' | 'email' | 'other' | 'ai_scan' | 'quick_scan'
 
 interface Lead {
   id: string
-  full_name: string
-  phone?: string
-  email?: string
-  status: LeadStatus
-  source?: LeadSource
-  lead_score: number
-  follow_up_date?: string
-  last_contact_date?: string
-  interested_treatments?: string[]
-  budget_range?: string
+  name: string
+  phone?: string | null
+  email?: string | null
+  status: SalesLeadStatus
+  source?: SalesLeadSource
+  score: number
+  next_follow_up_at?: string | null
+  last_contact_at?: string | null
+  interested_treatments?: string[] | null
+  budget_range_min?: number | null
+  budget_range_max?: number | null
   created_at: string
-  campaign?: string
-  clinic?: {
-    id: string
-    name: string
-  }
-  sales_staff?: {
-    id: string
-    full_name: string
-  }
-  analysis?: {
-    id: string
-    overall_score: number
-  }
+  metadata?: Record<string, any> | null
+  sales_user?: {
+    full_name?: string | null
+    email?: string | null
+  } | null
 }
 
-const STATUS_CONFIG: Record<LeadStatus, { label: string; color: string }> = {
+const STATUS_CONFIG: Record<SalesLeadStatus, { label: string; color: string }> = {
   new: { label: "New", color: "bg-blue-500" },
   contacted: { label: "Contacted", color: "bg-purple-500" },
-  hot: { label: "Hot", color: "bg-red-500" },
-  warm: { label: "Warm", color: "bg-orange-500" },
-  cold: { label: "Cold", color: "bg-gray-500" },
-  converted: { label: "Converted", color: "bg-green-500" },
+  qualified: { label: "Qualified", color: "bg-emerald-600" },
+  proposal_sent: { label: "Proposal Sent", color: "bg-indigo-600" },
+  negotiation: { label: "Negotiation", color: "bg-yellow-600" },
+  won: { label: "Won", color: "bg-green-600" },
   lost: { label: "Lost", color: "bg-gray-400" },
+  cold: { label: "Cold", color: "bg-gray-500" },
+  warm: { label: "Warm", color: "bg-orange-500" },
+  hot: { label: "Hot", color: "bg-red-500" },
 }
 
 export default function LeadsListPage() {
   const router = useRouter()
+  const lp = useLocalizePath()
   const [leads, setLeads] = useState<Lead[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [search, setSearch] = useState("")
-  const [statusFilter, setStatusFilter] = useState<LeadStatus | "all">("all")
-  const [sourceFilter, setSourceFilter] = useState<LeadSource | "all">("all")
+  const [statusFilter, setStatusFilter] = useState<SalesLeadStatus | "all">("all")
+  const [sourceFilter, setSourceFilter] = useState<SalesLeadSource | "all">("all")
   const [campaignFilter, setCampaignFilter] = useState<string>("")
   const [showCaptureForm, setShowCaptureForm] = useState(false)
   const [pagination, setPagination] = useState({
@@ -103,21 +103,30 @@ export default function LeadsListPage() {
 
   // Authentication check
   useEffect(() => {
-    try {
-      const user = localStorage.getItem('user')
-      const token = localStorage.getItem('token')
-      
-      if (!user || !token) {
-        router.push('/auth/login')
-        return
+    let cancelled = false
+    const check = async () => {
+      try {
+        const roleRes = await fetch('/api/auth/check-role', { headers: { Accept: 'application/json' } })
+        if (!roleRes.ok) {
+          router.push(lp('/auth/login'))
+          return
+        }
+        const roleData = await roleRes.json()
+        if (!['sales_staff', 'admin', 'super_admin'].includes(roleData.role)) {
+          router.push(lp('/unauthorized'))
+          return
+        }
+        if (!cancelled) setIsAuthenticated(true)
+      } catch (error) {
+        console.error('[LeadsList] Authentication error:', error)
+        router.push(lp('/auth/login'))
       }
-      
-      setIsAuthenticated(true)
-    } catch (error) {
-      console.error('[LeadsList] Authentication error:', error)
-      router.push('/auth/login')
     }
-  }, [router])
+    check()
+    return () => {
+      cancelled = true
+    }
+  }, [router, lp])
 
   // Fetch leads (stabilized for hook deps)
   const fetchLeads = useCallback(async () => {
@@ -126,9 +135,10 @@ export default function LeadsListPage() {
     setIsLoading(true)
 
     try {
+      const offset = (pagination.page - 1) * pagination.limit
       const params = new URLSearchParams({
-        page: pagination.page.toString(),
         limit: pagination.limit.toString(),
+        offset: offset.toString(),
       })
 
       if (search) params.append('search', search)
@@ -136,7 +146,7 @@ export default function LeadsListPage() {
       if (sourceFilter !== 'all') params.append('source', sourceFilter)
       if (campaignFilter.trim()) params.append('campaign', campaignFilter.trim())
 
-      const response = await fetch(`/api/leads?${params}`)
+      const response = await fetch(`/api/sales/leads?${params}`)
 
       if (!response.ok) {
         throw new Error('Failed to fetch leads')
@@ -144,12 +154,19 @@ export default function LeadsListPage() {
 
       const result = await response.json()
 
-      if (result.success) {
-        setLeads(result.data)
-        setPagination(result.pagination)
-      } else {
-        throw new Error(result.message)
-      }
+      const total = result?.pagination?.total ?? 0
+      const limit = result?.pagination?.limit ?? pagination.limit
+      const offsetFromApi = result?.pagination?.offset ?? offset
+      const totalPages = Math.max(1, Math.ceil(total / limit))
+
+      setLeads((result?.data || []) as Lead[])
+      setPagination((prev) => ({
+        ...prev,
+        total,
+        limit,
+        page: Math.floor(offsetFromApi / limit) + 1,
+        total_pages: totalPages,
+      }))
     } catch (error) {
       console.error('[LeadsListPage] Error fetching leads:', error)
       toast.error('Failed to load leads')
@@ -180,7 +197,7 @@ export default function LeadsListPage() {
   }, [search, fetchLeads])
 
   const handleViewLead = (leadId: string) => {
-    router.push(`/sales/leads/${leadId}`)
+    router.push(lp(`/sales/leads/${leadId}`))
   }
 
   const getScoreColor = (score: number) => {
@@ -245,12 +262,17 @@ export default function LeadsListPage() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Sources</SelectItem>
-            <SelectItem value="walk_in">Walk-in</SelectItem>
-            <SelectItem value="online">Online</SelectItem>
+            <SelectItem value="website">Website</SelectItem>
+            <SelectItem value="facebook">Facebook</SelectItem>
+            <SelectItem value="instagram">Instagram</SelectItem>
+            <SelectItem value="google_ads">Google Ads</SelectItem>
             <SelectItem value="referral">Referral</SelectItem>
-            <SelectItem value="event">Event</SelectItem>
-            <SelectItem value="social_media">Social Media</SelectItem>
+            <SelectItem value="walk_in">Walk-in</SelectItem>
+            <SelectItem value="phone">Phone</SelectItem>
+            <SelectItem value="email">Email</SelectItem>
             <SelectItem value="other">Other</SelectItem>
+            <SelectItem value="ai_scan">AI Scan</SelectItem>
+            <SelectItem value="quick_scan">Quick Scan</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -268,16 +290,16 @@ export default function LeadsListPage() {
           </div>
         </div>
         <div className="bg-card border rounded-lg p-4">
-          <div className="text-sm text-muted-foreground">Converted</div>
+          <div className="text-sm text-muted-foreground">Won</div>
           <div className="text-2xl font-bold text-green-600">
-            {leads.filter(l => l.status === 'converted').length}
+            {leads.filter(l => l.status === 'won').length}
           </div>
         </div>
         <div className="bg-card border rounded-lg p-4">
           <div className="text-sm text-muted-foreground">Avg. Score</div>
           <div className="text-2xl font-bold">
             {leads.length > 0 
-              ? Math.round(leads.reduce((sum, l) => sum + l.lead_score, 0) / leads.length)
+              ? Math.round(leads.reduce((sum, l) => sum + l.score, 0) / leads.length)
               : 0}
           </div>
         </div>
@@ -313,10 +335,10 @@ export default function LeadsListPage() {
                 <TableRow key={lead.id} className="cursor-pointer hover:bg-muted/50">
                   <TableCell className="font-medium">
                     <div className="flex flex-col gap-1">
-                      <span>{lead.full_name}</span>
-                      {lead.campaign && (
+                      <span>{lead.name}</span>
+                      {lead.metadata?.campaign && (
                         <Badge variant="outline" className="w-fit text-xs">
-                          Campaign: {lead.campaign}
+                          Campaign: {lead.metadata?.campaign}
                         </Badge>
                       )}
                     </div>
@@ -346,16 +368,16 @@ export default function LeadsListPage() {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <div className={`flex items-center gap-1 font-semibold ${getScoreColor(lead.lead_score)}`}>
+                    <div className={`flex items-center gap-1 font-semibold ${getScoreColor(lead.score)}`}>
                       <TrendingUp className="h-4 w-4" />
-                      {lead.lead_score}
+                      {lead.score}
                     </div>
                   </TableCell>
                   <TableCell>
-                    {lead.follow_up_date ? (
+                    {lead.next_follow_up_at ? (
                       <div className="flex items-center gap-1 text-sm">
                         <Calendar className="h-3 w-3" />
-                        {format(new Date(lead.follow_up_date), "MMM d, yyyy")}
+                        {format(new Date(lead.next_follow_up_at), "MMM d, yyyy")}
                       </div>
                     ) : (
                       <span className="text-muted-foreground text-sm">-</span>
@@ -369,7 +391,7 @@ export default function LeadsListPage() {
                     </div>
                   </TableCell>
                   <TableCell className="text-sm">
-                    {lead.sales_staff?.full_name || '-'}
+                    {lead.sales_user?.full_name || '-'}
                   </TableCell>
                   <TableCell className="text-sm text-muted-foreground">
                     {format(new Date(lead.created_at), "MMM d, yyyy")}
@@ -392,10 +414,10 @@ export default function LeadsListPage() {
                           <Edit className="mr-2 h-4 w-4" />
                           Edit Lead
                         </DropdownMenuItem>
-                        {lead.status !== 'converted' && (
+                        {lead.status !== 'won' && (
                           <DropdownMenuItem onClick={() => handleViewLead(lead.id)}>
                             <CheckCircle className="mr-2 h-4 w-4" />
-                            Convert to Customer
+                            Mark / View
                           </DropdownMenuItem>
                         )}
                       </DropdownMenuContent>
@@ -438,9 +460,9 @@ export default function LeadsListPage() {
       )}
 
       {/* Lead Capture Form */}
-      <LeadCaptureForm
+      <AddLeadModal
         open={showCaptureForm}
-        onOpenChange={setShowCaptureForm}
+        onClose={() => setShowCaptureForm(false)}
         onSuccess={() => fetchLeads()}
       />
     </div>

@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { useParams } from "next/navigation"
+import { useLocalizePath } from "@/lib/i18n/locale-link"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
@@ -47,56 +48,72 @@ import {
   Mail,
   Calendar,
   TrendingUp,
-  User,
-  Building,
   MessageSquare,
   CheckCircle,
   Loader2,
   Plus,
-  ExternalLink,
 } from "lucide-react"
 import { toast } from "sonner"
 import { format } from "date-fns"
-import type { Lead, LeadStatus } from "@/types/multi-tenant"
+
+type SalesLeadStatus = 'new' | 'contacted' | 'qualified' | 'proposal_sent' | 'negotiation' | 'won' | 'lost' | 'cold' | 'warm' | 'hot'
+
+type SalesLead = {
+  id: string
+  name: string
+  email: string
+  phone: string | null
+  status: SalesLeadStatus
+  score: number
+  source: string
+  primary_concern: string | null
+  interested_treatments?: string[] | null
+  budget_range_min?: number | null
+  budget_range_max?: number | null
+  notes: string | null
+  next_follow_up_at: string | null
+  created_at: string
+  sales_user?: { full_name?: string | null; email?: string | null } | null
+}
+
+type LeadActivity = {
+  id: string
+  type: string
+  subject: string
+  description: string | null
+  created_at: string
+}
 
 const updateFormSchema = z.object({
-  status: z.enum(['new', 'contacted', 'hot', 'warm', 'cold', 'converted', 'lost']),
-  follow_up_date: z.string().optional(),
-  next_action: z.string().optional(),
+  status: z.enum(['new', 'contacted', 'qualified', 'proposal_sent', 'negotiation', 'won', 'lost', 'cold', 'warm', 'hot']),
+  preferred_date: z.string().optional(),
   notes: z.string().optional(),
 })
 
 const interactionFormSchema = z.object({
-  type: z.enum(['call', 'email', 'message', 'meeting', 'demo', 'follow_up', 'other']),
-  notes: z.string().min(1, "Notes are required"),
-})
-
-const convertFormSchema = z.object({
-  create_user_account: z.boolean().default(false),
-  password: z.string().optional(),
-  send_welcome_email: z.boolean().default(false),
+  type: z.enum(['call', 'email', 'meeting', 'note', 'task']),
+  subject: z.string().min(1, 'Subject is required'),
+  description: z.string().min(1, 'Description is required'),
 })
 
 export default function LeadDetailPage() {
   const router = useRouter()
+  const lp = useLocalizePath()
   const params = useParams()
   const leadId = params.id as string
-  const locale = (params.locale as string) || 'en'
+  const [activities, setActivities] = useState<LeadActivity[]>([])
 
-  const [lead, setLead] = useState<Lead | null>(null)
+  const [lead, setLead] = useState<SalesLead | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isUpdating, setIsUpdating] = useState(false)
   const [showInteractionDialog, setShowInteractionDialog] = useState(false)
-  const [showConvertDialog, setShowConvertDialog] = useState(false)
-
-  const analysisId = lead?.analysis?.id ?? null
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   const updateForm = useForm<z.infer<typeof updateFormSchema>>({
     resolver: zodResolver(updateFormSchema),
     defaultValues: {
       status: 'new',
-      follow_up_date: '',
-      next_action: '',
+      preferred_date: '',
       notes: '',
     },
   })
@@ -105,57 +122,72 @@ export default function LeadDetailPage() {
     resolver: zodResolver(interactionFormSchema),
     defaultValues: {
       type: 'call',
-      notes: '',
+      subject: 'โทรติดตาม',
+      description: '',
     },
   })
 
-  const convertForm = useForm<z.infer<typeof convertFormSchema>>({
-    resolver: zodResolver(convertFormSchema),
-    defaultValues: {
-      create_user_account: false,
-      password: '',
-      send_welcome_email: false,
-    },
-  })
+  useEffect(() => {
+    let cancelled = false
+    const check = async () => {
+      try {
+        const roleRes = await fetch('/api/auth/check-role', { headers: { Accept: 'application/json' } })
+        if (!roleRes.ok) {
+          router.push(lp('/auth/login'))
+          return
+        }
+        const roleData = await roleRes.json()
+        if (!['sales_staff', 'admin', 'super_admin'].includes(roleData.role)) {
+          router.push(lp('/unauthorized'))
+          return
+        }
+        if (!cancelled) setIsAuthenticated(true)
+      } catch (error) {
+        console.error('[LeadDetailPage] Authentication error:', error)
+        router.push(lp('/auth/login'))
+      }
+    }
+    check()
+    return () => {
+      cancelled = true
+    }
+  }, [router, lp])
 
   // Fetch lead details
   const fetchLead = useCallback(async () => {
+    if (!isAuthenticated) return
+
     setIsLoading(true)
 
     try {
-      const response = await fetch(`/api/leads/${leadId}`)
+      const response = await fetch(`/api/sales/leads/${leadId}`)
 
       if (!response.ok) {
         throw new Error('Failed to fetch lead')
       }
 
-      const result = await response.json()
+      const result: SalesLead = await response.json()
+      setLead(result)
 
-      if (result.success) {
-        const leadData: Lead = {
-          ...result.data,
-          interaction_history: result.data.interaction_history ?? [],
-        }
-        setLead(leadData)
-        
-        // Set form defaults
-        updateForm.reset({
-          status: result.data.status,
-          follow_up_date: result.data.follow_up_date || '',
-          next_action: result.data.next_action || '',
-          notes: result.data.notes || '',
-        })
-      } else {
-        throw new Error(result.message)
+      updateForm.reset({
+        status: result.status,
+        preferred_date: result.next_follow_up_at ? result.next_follow_up_at.slice(0, 10) : '',
+        notes: result.notes || '',
+      })
+
+      const actRes = await fetch(`/api/sales/leads/${leadId}/activities`)
+      if (actRes.ok) {
+        const act = await actRes.json()
+        setActivities((act?.data || []) as LeadActivity[])
       }
     } catch (error) {
       console.error('[LeadDetailPage] Error fetching lead:', error)
       toast.error('Failed to load lead')
-      router.push('/sales/leads')
+      router.push(lp('/sales/leads'))
     } finally {
       setIsLoading(false)
     }
-  }, [leadId, updateForm, router])
+  }, [isAuthenticated, leadId, updateForm, router, lp])
 
   useEffect(() => {
     fetchLead()
@@ -165,7 +197,7 @@ export default function LeadDetailPage() {
     setIsUpdating(true)
 
     try {
-      const response = await fetch(`/api/leads/${leadId}`, {
+      const response = await fetch(`/api/sales/leads/${leadId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(values),
@@ -177,15 +209,17 @@ export default function LeadDetailPage() {
 
       const result = await response.json()
 
-      if (result.success) {
-        toast.success('Lead updated successfully')
+      if (result?.data) {
+        toast.success('อัปเดต Lead สำเร็จ')
+        setLead(result.data)
         fetchLead()
       } else {
-        throw new Error(result.message)
+        toast.success('อัปเดต Lead สำเร็จ')
+        fetchLead()
       }
     } catch (error) {
       console.error('[LeadDetailPage] Error updating lead:', error)
-      toast.error('Failed to update lead')
+      toast.error('อัปเดต Lead ไม่สำเร็จ')
     } finally {
       setIsUpdating(false)
     }
@@ -193,63 +227,23 @@ export default function LeadDetailPage() {
 
   const handleAddInteraction = async (values: z.infer<typeof interactionFormSchema>) => {
     try {
-      const response = await fetch(`/api/leads/${leadId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          add_interaction: values,
-        }),
-      })
-
-      if (!response.ok) {
-        throw new Error('Failed to add interaction')
-      }
-
-      const result = await response.json()
-
-      if (result.success) {
-        toast.success('Interaction added')
-        setShowInteractionDialog(false)
-        interactionForm.reset()
-        fetchLead()
-      } else {
-        throw new Error(result.message)
-      }
-    } catch (error) {
-      console.error('[LeadDetailPage] Error adding interaction:', error)
-      toast.error('Failed to add interaction')
-    }
-  }
-
-  const handleConvert = async (values: z.infer<typeof convertFormSchema>) => {
-    if (values.create_user_account && !values.password) {
-      toast.error('Password is required to create user account')
-      return
-    }
-
-    try {
-      const response = await fetch(`/api/leads/${leadId}/convert`, {
+      const response = await fetch(`/api/sales/leads/${leadId}/activities`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(values),
       })
 
       if (!response.ok) {
-        throw new Error('Failed to convert lead')
+        throw new Error('Failed to add interaction')
       }
 
-      const result = await response.json()
-
-      if (result.success) {
-        toast.success('Lead converted successfully!')
-        setShowConvertDialog(false)
-        fetchLead()
-      } else {
-        throw new Error(result.message)
-      }
+      toast.success('บันทึกกิจกรรมสำเร็จ')
+      setShowInteractionDialog(false)
+      interactionForm.reset({ type: 'call', subject: 'โทรติดตาม', description: '' })
+      fetchLead()
     } catch (error) {
-      console.error('[LeadDetailPage] Error converting lead:', error)
-      toast.error(error instanceof Error ? error.message : 'Failed to convert lead')
+      console.error('[LeadDetailPage] Error adding interaction:', error)
+      toast.error('บันทึกกิจกรรมไม่สำเร็จ')
     }
   }
 
@@ -265,14 +259,17 @@ export default function LeadDetailPage() {
     return null
   }
 
-  const STATUS_CONFIG: Record<LeadStatus, { label: string; color: string }> = {
+  const STATUS_CONFIG: Record<SalesLeadStatus, { label: string; color: string }> = {
     new: { label: "New", color: "bg-blue-500" },
     contacted: { label: "Contacted", color: "bg-purple-500" },
-    hot: { label: "Hot", color: "bg-red-500" },
-    warm: { label: "Warm", color: "bg-orange-500" },
-    cold: { label: "Cold", color: "bg-gray-500" },
-    converted: { label: "Converted", color: "bg-green-500" },
+    qualified: { label: "Qualified", color: "bg-emerald-600" },
+    proposal_sent: { label: "Proposal Sent", color: "bg-indigo-600" },
+    negotiation: { label: "Negotiation", color: "bg-yellow-600" },
+    won: { label: "Won", color: "bg-green-600" },
     lost: { label: "Lost", color: "bg-gray-400" },
+    cold: { label: "Cold", color: "bg-gray-500" },
+    warm: { label: "Warm", color: "bg-orange-500" },
+    hot: { label: "Hot", color: "bg-red-500" },
   }
 
   return (
@@ -280,11 +277,11 @@ export default function LeadDetailPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => router.push('/sales/leads')}>
+          <Button variant="ghost" size="icon" onClick={() => router.push(lp('/sales/leads'))}>
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-3xl font-bold">{lead.full_name}</h1>
+            <h1 className="text-3xl font-bold">{lead.name}</h1>
             <p className="text-muted-foreground">Lead ID: {lead.id.substring(0, 8)}</p>
           </div>
         </div>
@@ -293,10 +290,25 @@ export default function LeadDetailPage() {
             <Plus className="mr-2 h-4 w-4" />
             Add Interaction
           </Button>
-          {lead.status !== 'converted' && (
-            <Button onClick={() => setShowConvertDialog(true)}>
+          {lead.status !== 'won' && (
+            <Button
+              onClick={async () => {
+                try {
+                  const res = await fetch(`/api/sales/leads/${leadId}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: 'won' }),
+                  })
+                  if (!res.ok) throw new Error('Failed')
+                  toast.success('ปิดการขายสำเร็จ (Won)')
+                  fetchLead()
+                } catch {
+                  toast.error('ปิดการขายไม่สำเร็จ')
+                }
+              }}
+            >
               <CheckCircle className="mr-2 h-4 w-4" />
-              Convert to Customer
+              Mark as Won
             </Button>
           )}
         </div>
@@ -322,7 +334,7 @@ export default function LeadDetailPage() {
                   <div className="text-sm text-muted-foreground mb-1">Lead Score</div>
                   <div className="flex items-center gap-2">
                     <TrendingUp className="h-4 w-4" />
-                    <span className="font-semibold">{lead.lead_score}/100</span>
+                    <span className="font-semibold">{lead.score}/100</span>
                   </div>
                 </div>
               </div>
@@ -360,10 +372,14 @@ export default function LeadDetailPage() {
                 </div>
               )}
 
-              {lead.budget_range && (
+              {(lead.budget_range_min != null || lead.budget_range_max != null) && (
                 <div>
                   <div className="text-sm text-muted-foreground mb-1">Budget Range</div>
-                  <div>{lead.budget_range}</div>
+                  <div>
+                    {lead.budget_range_min != null ? `${lead.budget_range_min.toLocaleString()} ฿` : '-'}
+                    {' - '}
+                    {lead.budget_range_max != null ? `${lead.budget_range_max.toLocaleString()} ฿` : '-'}
+                  </div>
                 </div>
               )}
             </CardContent>
@@ -374,25 +390,25 @@ export default function LeadDetailPage() {
             <CardHeader>
               <CardTitle>Interaction History</CardTitle>
               <CardDescription>
-                {lead.interaction_history?.length || 0} interactions recorded
+                {activities.length} interactions recorded
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {lead.interaction_history && lead.interaction_history.length > 0 ? (
+              {activities.length > 0 ? (
                 <div className="space-y-4">
-                  {lead.interaction_history.map((interaction: any, index: number) => (
+                  {activities.map((interaction, index: number) => (
                     <div key={index} className="flex gap-3">
                       <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
                         <MessageSquare className="h-5 w-5 text-primary" />
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center justify-between mb-1">
-                          <span className="font-medium capitalize">{interaction.type.replace('_', ' ')}</span>
+                          <span className="font-medium capitalize">{String(interaction.type).replace('_', ' ')}</span>
                           <span className="text-sm text-muted-foreground">
-                            {format(new Date(interaction.date), "MMM d, yyyy 'at' h:mm a")}
+                            {format(new Date(interaction.created_at), "MMM d, yyyy 'at' h:mm a")}
                           </span>
                         </div>
-                        <p className="text-sm text-muted-foreground">{interaction.notes}</p>
+                        <p className="text-sm text-muted-foreground">{interaction.description || interaction.subject}</p>
                       </div>
                     </div>
                   ))}
@@ -443,26 +459,12 @@ export default function LeadDetailPage() {
 
                   <FormField
                     control={updateForm.control}
-                    name="follow_up_date"
+                    name="preferred_date"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Follow-up Date</FormLabel>
                         <FormControl>
                           <Input type="date" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={updateForm.control}
-                    name="next_action"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Next Action</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Call to schedule appointment" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -505,20 +507,9 @@ export default function LeadDetailPage() {
             </CardHeader>
             <CardContent className="space-y-3 text-sm">
               <div>
-                <div className="text-muted-foreground mb-1">Clinic</div>
-                <div className="flex items-center gap-2">
-                  <Building className="h-4 w-4" />
-                  {lead.clinic?.name || 'N/A'}
-                </div>
-              </div>
-
-              <Separator />
-
-              <div>
                 <div className="text-muted-foreground mb-1">Sales Staff</div>
                 <div className="flex items-center gap-2">
-                  <User className="h-4 w-4" />
-                  {lead.sales_staff?.full_name || 'N/A'}
+                  <span>{lead.sales_user?.full_name || 'N/A'}</span>
                 </div>
               </div>
 
@@ -531,23 +522,6 @@ export default function LeadDetailPage() {
                   {format(new Date(lead.created_at), "MMM d, yyyy")}
                 </div>
               </div>
-
-              {analysisId && (
-                <>
-                  <Separator />
-                  <div>
-                    <div className="text-muted-foreground mb-1">Skin Analysis</div>
-                    <Button
-                      variant="link"
-                      size="sm"
-                      className="p-0 h-auto"
-                      onClick={() => router.push(`/${locale}/analysis/detail/${analysisId}`)}
-                    >
-                      View Analysis <ExternalLink className="ml-1 h-3 w-3" />
-                    </Button>
-                  </div>
-                </>
-              )}
             </CardContent>
           </Card>
         </div>
@@ -571,7 +545,7 @@ export default function LeadDetailPage() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Type</FormLabel>
-                    <Select onValueChange={field.onChange}>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select type" />
@@ -580,11 +554,9 @@ export default function LeadDetailPage() {
                       <SelectContent>
                         <SelectItem value="call">Phone Call</SelectItem>
                         <SelectItem value="email">Email</SelectItem>
-                        <SelectItem value="message">Message</SelectItem>
                         <SelectItem value="meeting">Meeting</SelectItem>
-                        <SelectItem value="demo">Demo</SelectItem>
-                        <SelectItem value="follow_up">Follow-up</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
+                        <SelectItem value="note">Note</SelectItem>
+                        <SelectItem value="task">Task</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -594,10 +566,24 @@ export default function LeadDetailPage() {
 
               <FormField
                 control={interactionForm.control}
-                name="notes"
+                name="subject"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Notes</FormLabel>
+                    <FormLabel>Subject</FormLabel>
+                    <FormControl>
+                      <Input placeholder="หัวข้อกิจกรรม" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={interactionForm.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
                     <FormControl>
                       <Textarea
                         placeholder="What did you discuss?"
@@ -625,78 +611,6 @@ export default function LeadDetailPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Convert Dialog */}
-      <Dialog open={showConvertDialog} onOpenChange={setShowConvertDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Convert to Customer</DialogTitle>
-            <DialogDescription>
-              Mark this lead as converted and optionally create a user account
-            </DialogDescription>
-          </DialogHeader>
-
-          <Form {...convertForm}>
-            <form onSubmit={convertForm.handleSubmit(handleConvert)} className="space-y-4">
-              <FormField
-                control={convertForm.control}
-                name="create_user_account"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                    <FormControl>
-                      <input
-                        type="checkbox"
-                        checked={field.value}
-                        onChange={field.onChange}
-                        className="mt-1"
-                        aria-label="Create user account"
-                      />
-                    </FormControl>
-                    <div className="space-y-1 leading-none">
-                      <FormLabel>Create user account</FormLabel>
-                      <FormDescription>
-                        Allow customer to login and view their analyses
-                      </FormDescription>
-                    </div>
-                  </FormItem>
-                )}
-              />
-
-              {convertForm.watch('create_user_account') && (
-                <FormField
-                  control={convertForm.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Password *</FormLabel>
-                      <FormControl>
-                        <Input type="password" placeholder="Temporary password" {...field} />
-                      </FormControl>
-                      <FormDescription>
-                        Customer can change this after first login
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
-
-              <div className="flex justify-end gap-2 pt-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setShowConvertDialog(false)}
-                >
-                  Cancel
-                </Button>
-                <Button type="submit">
-                  <CheckCircle className="mr-2 h-4 w-4" />
-                  Convert Lead
-                </Button>
-              </div>
-            </form>
-          </Form>
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }

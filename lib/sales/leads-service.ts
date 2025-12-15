@@ -7,6 +7,7 @@ export type LeadsListParams = {
   clinicId: string | null
   status: string | null
   search: string | null
+  campaign: string | null
   remoteConsultOnly: boolean
   limit: number
   offset: number
@@ -112,6 +113,13 @@ export async function listLeads(params: LeadsListParams) {
   if (params.search) {
     const s = String(params.search).trim().slice(0, 120).replace(/[(),]/g, ' ')
     query = query.or(`name.ilike.%${s}%,email.ilike.%${s}%,phone.ilike.%${s}%`)
+  }
+
+  if (params.campaign) {
+    const c = String(params.campaign).trim().slice(0, 120)
+    if (c) {
+      query = query.eq('metadata->>campaign', c)
+    }
   }
 
   if (params.remoteConsultOnly) {

@@ -27,6 +27,7 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams
     const status = searchParams.get("status")
     const search = searchParams.get("search")
+    const campaign = searchParams.get("campaign")
     const remoteConsultOnly = searchParams.get("remote_consult_only") === "true"
     const limitRaw = Number.parseInt(searchParams.get("limit") || "50")
     const offsetRaw = Number.parseInt(searchParams.get("offset") || "0")
@@ -39,6 +40,7 @@ export async function GET(request: NextRequest) {
       clinicId: userRow.clinic_id ?? null,
       status,
       search,
+      campaign,
       remoteConsultOnly,
       limit,
       offset,
