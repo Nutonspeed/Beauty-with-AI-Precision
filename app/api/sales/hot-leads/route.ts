@@ -55,8 +55,10 @@ export async function GET(request: NextRequest) {
 
     // Get query parameters
     const searchParams = request.nextUrl.searchParams
-    const limit = Number.parseInt(searchParams.get('limit') || '20')
-    const offset = Number.parseInt(searchParams.get('offset') || '0')
+    const limitRaw = Number.parseInt(searchParams.get('limit') || '20')
+    const offsetRaw = Number.parseInt(searchParams.get('offset') || '0')
+    const limit = Number.isFinite(limitRaw) ? Math.min(Math.max(limitRaw, 1), 100) : 20
+    const offset = Number.isFinite(offsetRaw) ? Math.max(offsetRaw, 0) : 0
 
     // Role guard: allow only sales_staff/admin
     const service = createServiceClient()

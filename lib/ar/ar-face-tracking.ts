@@ -80,7 +80,6 @@ export class ARFaceTracker {
             const rawLandmarks =
               // tfjs MediaPipeFaceMesh (runtime: mediapipe) exposes keypoints
               // while some variants expose scaledMesh/mesh; try all in order.
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               ((predictions[0] as any).keypoints ??
                 (predictions[0] as any).scaledMesh ??
                 (predictions[0] as any).mesh ??

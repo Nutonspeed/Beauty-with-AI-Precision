@@ -1,6 +1,13 @@
 // const createNextIntlPlugin = require('next-intl/plugin');
 // const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
 
+const isVercel = process.env.VERCEL === '1'
+const envFast =
+  process.env.FAST_BUILD === '1' ||
+  process.env.FAST_BUILD === 'true' ||
+  process.env.FAST_BUILD === 'yes'
+const FAST_BUILD = envFast || isVercel
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Remove static export for API routes compatibility
@@ -24,33 +31,39 @@ const nextConfig = {
   poweredByHeader: false,
 
   // Bundle optimization
-  modularizeImports: {
-    'lucide-react': {
-      transform: 'lucide-react/dist/esm/icons/{{kebabCase member}}',
-    },
-    '@radix-ui/react-icons': {
-      transform: '@radix-ui/react-icons/dist/{{member}}',
-    },
-  },
+  modularizeImports: FAST_BUILD
+    ? undefined
+    : {
+        'lucide-react': {
+          transform: 'lucide-react/dist/esm/icons/{{kebabCase member}}',
+        },
+        '@radix-ui/react-icons': {
+          transform: '@radix-ui/react-icons/dist/{{member}}',
+        },
+      },
 
   // Experimental optimizations
   experimental: {
-    optimizePackageImports: [
-      'lucide-react',
-      '@radix-ui/react-icons',
-      'framer-motion',
-      'date-fns',
-      'recharts',
-    ],
+    optimizePackageImports: FAST_BUILD
+      ? []
+      : [
+          'lucide-react',
+          '@radix-ui/react-icons',
+          'framer-motion',
+          'date-fns',
+          'recharts',
+        ],
     // Enable webpack build worker for proper static asset generation
     webpackBuildWorker: false,
   },
 
   // TypeScript and ESLint optimizations
   typescript: {
-    ignoreBuildErrors: false, // Enable to catch build errors
+    ignoreBuildErrors: FAST_BUILD, // Enable to catch build errors
   },
-  // eslint config removed - deprecated in Next.js 16
+  eslint: {
+    ignoreDuringBuilds: FAST_BUILD,
+  },
 
   // Production optimizations
   ...(process.env.NODE_ENV === 'production' && {

@@ -175,7 +175,7 @@ const nextConfig = {
 
   experimental: {
     workerThreads: false,
-    cpus: FAST_BUILD ? 1 : undefined,
+    cpus: FAST_BUILD ? (isVercel ? 2 : 1) : undefined,
     optimizePackageImports: FAST_BUILD
       ? []
       : [

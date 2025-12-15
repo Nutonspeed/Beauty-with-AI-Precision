@@ -2,7 +2,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { usePathname, useRouter } from "next/navigation"
+import { usePathname } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -65,7 +65,6 @@ type ProposalsClientProps = {
 }
 
 export function ProposalsClient({ initialProposals, initialStats }: ProposalsClientProps) {
-  const router = useRouter()
   const pathname = usePathname()
 
   const [proposals, _setProposals] = useState<Proposal[]>(initialProposals)

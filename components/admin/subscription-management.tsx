@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -78,15 +78,7 @@ export default function SubscriptionManagement() {
   
   const { toast } = useToast();
 
-  useEffect(() => {
-    fetchSubscriptions();
-  }, []);
-
-  useEffect(() => {
-    filterSubscriptions();
-  }, [subscriptions, searchTerm, statusFilter, planFilter]);
-
-  const fetchSubscriptions = async () => {
+  const fetchSubscriptions = useCallback(async () => {
     try {
       const response = await fetch('/api/admin/subscriptions');
       if (!response.ok) throw new Error('Failed to fetch');
@@ -101,9 +93,9 @@ export default function SubscriptionManagement() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [toast]);
 
-  const filterSubscriptions = () => {
+  const filterSubscriptions = useCallback(() => {
     let filtered = [...subscriptions];
 
     if (searchTerm) {
@@ -124,7 +116,15 @@ export default function SubscriptionManagement() {
     }
 
     setFilteredSubs(filtered);
-  };
+  }, [subscriptions, searchTerm, statusFilter, planFilter]);
+
+  useEffect(() => {
+    fetchSubscriptions();
+  }, [fetchSubscriptions]);
+
+  useEffect(() => {
+    filterSubscriptions();
+  }, [filterSubscriptions]);
 
   const openEditModal = (sub: Subscription) => {
     setSelectedSub(sub);

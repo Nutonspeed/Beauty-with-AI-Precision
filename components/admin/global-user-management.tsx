@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -102,11 +102,7 @@ export default function GlobalUserManagement() {
   const [editUser, setEditUser] = useState<UserData | null>(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
 
-  useEffect(() => {
-    fetchUsers();
-  }, [roleFilter, clinicFilter, statusFilter, offset]);
-
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams({
@@ -132,7 +128,11 @@ export default function GlobalUserManagement() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [roleFilter, clinicFilter, statusFilter, offset, searchTerm, toast]);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
 
   const handleSearch = () => {
     setOffset(0);

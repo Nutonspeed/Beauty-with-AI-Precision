@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { 
   Users, 
@@ -86,18 +86,7 @@ export default function AdminUsersPage() {
   const totalPages = Math.ceil(total / limit)
   const page = Math.floor(offset / limit) + 1
 
-  useEffect(() => {
-    if (authLoading) return
-    
-    if (!user || user.role !== 'super_admin') {
-      router.push(lp('/unauthorized'))
-      return
-    }
-
-    loadUsers()
-  }, [user, authLoading, router, lp, roleFilter, searchQuery, offset, limit])
-
-  const loadUsers = async () => {
+  const loadUsers = useCallback(async () => {
     setIsLoading(true)
     try {
       const params = new URLSearchParams({
@@ -106,12 +95,12 @@ export default function AdminUsersPage() {
         limit: limit.toString(),
         offset: offset.toString(),
       })
-      
+
       const response = await fetch(`/api/admin/users/list?${params}`)
       if (!response.ok) {
         throw new Error('Failed to load users')
       }
-      
+
       const data: UsersResponse = await response.json()
       setUsers(data.users)
       setTotal(data.total)
@@ -121,7 +110,18 @@ export default function AdminUsersPage() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [roleFilter, searchQuery, limit, offset])
+
+  useEffect(() => {
+    if (authLoading) return
+    
+    if (!user || user.role !== 'super_admin') {
+      router.push(lp('/unauthorized'))
+      return
+    }
+
+    loadUsers()
+  }, [user, authLoading, router, lp, loadUsers])
 
   const handleRoleChange = async (userId: string, newRole: string) => {
     try {

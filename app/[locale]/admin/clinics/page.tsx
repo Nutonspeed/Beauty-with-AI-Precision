@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { 
   Building, 
@@ -94,18 +94,7 @@ export default function AdminClinicsPage() {
   const totalPages = Math.ceil(total / limit)
   const page = Math.floor(offset / limit) + 1
 
-  useEffect(() => {
-    if (authLoading) return
-    
-    if (!user || user.role !== 'super_admin') {
-      router.push(lp('/unauthorized'))
-      return
-    }
-
-    loadClinics()
-  }, [user, authLoading, router, lp, statusFilter, searchQuery, offset, limit])
-
-  const loadClinics = async () => {
+  const loadClinics = useCallback(async () => {
     setIsLoading(true)
     try {
       const params = new URLSearchParams({
@@ -114,12 +103,12 @@ export default function AdminClinicsPage() {
         limit: limit.toString(),
         offset: offset.toString(),
       })
-      
+
       const response = await fetch(`/api/admin/clinics/list?${params}`)
       if (!response.ok) {
         throw new Error('Failed to load clinics')
       }
-      
+
       const data: ClinicsResponse = await response.json()
       setClinics(data.clinics)
       setTotal(data.total)
@@ -129,7 +118,18 @@ export default function AdminClinicsPage() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [statusFilter, searchQuery, limit, offset])
+
+  useEffect(() => {
+    if (authLoading) return
+    
+    if (!user || user.role !== 'super_admin') {
+      router.push(lp('/unauthorized'))
+      return
+    }
+
+    loadClinics()
+  }, [user, authLoading, router, lp, loadClinics])
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('th-TH', {

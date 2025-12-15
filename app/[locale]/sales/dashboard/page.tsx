@@ -139,7 +139,7 @@ export default function SalesDashboard() {
     return () => {
       cancelled = true
     }
-  }, [router, range])
+  }, [router, range, lp])
 
   const totalScansThisMonth = metrics?.leadsContacted.today ?? 0
   const revenueThisMonth = metrics?.revenueGenerated.today ?? 0

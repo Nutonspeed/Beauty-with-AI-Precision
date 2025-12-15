@@ -27,8 +27,10 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams
     const status = searchParams.get('status')
     const search = searchParams.get('search')
-    const limit = parseInt(searchParams.get('limit') || '50')
-    const offset = parseInt(searchParams.get('offset') || '0')
+    const limitRaw = Number.parseInt(searchParams.get('limit') || '50')
+    const offsetRaw = Number.parseInt(searchParams.get('offset') || '0')
+    const limit = Number.isFinite(limitRaw) ? Math.min(Math.max(limitRaw, 1), 200) : 50
+    const offset = Number.isFinite(offsetRaw) ? Math.max(offsetRaw, 0) : 0
 
     const { listProposals } = await import('@/lib/sales/proposals-service')
     const payload = await listProposals({

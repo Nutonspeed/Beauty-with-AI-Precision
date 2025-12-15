@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -124,13 +124,7 @@ export default function ClinicDetailModal({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (open && clinicId) {
-      fetchClinicDetail();
-    }
-  }, [open, clinicId]);
-
-  const fetchClinicDetail = async () => {
+  const fetchClinicDetail = useCallback(async () => {
     if (!clinicId) return;
     
     setLoading(true);
@@ -148,7 +142,13 @@ export default function ClinicDetailModal({
     } finally {
       setLoading(false);
     }
-  };
+  }, [clinicId]);
+
+  useEffect(() => {
+    if (open && clinicId) {
+      fetchClinicDetail();
+    }
+  }, [open, clinicId, fetchClinicDetail]);
 
   const formatDate = (dateString: string) => {
     if (!dateString) return '-';
