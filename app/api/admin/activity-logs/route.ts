@@ -15,13 +15,13 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { data: profile } = await supabase
-      .from('profiles')
+    const { data: appUser } = await supabase
+      .from('users')
       .select('role')
       .eq('id', user.id)
       .single();
 
-    if (profile?.role !== 'super_admin') {
+    if (appUser?.role !== 'super_admin') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
         clinic_id,
         user_id,
         clinics(name),
-        profiles:user_id(full_name, email)
+        user:users!skin_analyses_user_id_fkey(full_name, email)
       `)
       .order('created_at', { ascending: false })
       .limit(20);
@@ -65,8 +65,8 @@ export async function GET(request: NextRequest) {
         action: 'skin_analysis_completed',
         description: `AI Skin Analysis completed (Score: ${a.overall_score || 'N/A'})`,
         userId: a.user_id,
-        userName: a.profiles?.full_name || 'Unknown',
-        userEmail: a.profiles?.email,
+        userName: a.user?.full_name || 'Unknown',
+        userEmail: a.user?.email,
         clinicId: a.clinic_id,
         clinicName: a.clinics?.name || 'Unknown',
         metadata: { overallScore: a.overall_score },

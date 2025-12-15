@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { promises as fs } from 'node:fs'
-import path from 'path'
+import path from 'node:path'
 import { checkRateLimit, getClientIp } from '@/lib/rate-limit'
 import { withPublicAccess } from '@/lib/auth/middleware'
 
@@ -16,8 +16,12 @@ type IncomingBody = {
   events?: IncomingEvent[]
 }
 
-const DATA_DIR = path.join(process.cwd(), 'data')
-const FILE_PATH = path.join(DATA_DIR, 'analytics-events.ndjson')
+const safeJoin = (...segments: string[]) =>
+  path.posix.join(...segments.filter(Boolean))
+
+const ROOT = process.cwd() || __dirname
+const DATA_DIR = safeJoin(ROOT, 'data')
+const FILE_PATH = safeJoin(DATA_DIR, 'analytics-events.ndjson')
 
 async function ensureDataFile() {
   try { await fs.mkdir(DATA_DIR, { recursive: true }) } catch {}

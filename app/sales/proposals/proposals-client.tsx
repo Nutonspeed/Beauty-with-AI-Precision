@@ -2,6 +2,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { usePathname, useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -23,6 +24,13 @@ import { Search, FileText, Send, Edit, Eye, ArrowLeft, Plus, MoreVertical, Trash
 import Link from "next/link"
 import { createBrowserClient } from "@/lib/supabase/client"
 import { ProposalModal } from "@/components/sales/proposal-modal"
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { toast } from "sonner"
 
 type Proposal = {
@@ -57,6 +65,9 @@ type ProposalsClientProps = {
 }
 
 export function ProposalsClient({ initialProposals, initialStats }: ProposalsClientProps) {
+  const router = useRouter()
+  const pathname = usePathname()
+
   const [proposals, _setProposals] = useState<Proposal[]>(initialProposals)
   const [stats, _setStats] = useState<Stats>(initialStats)
   const [searchQuery, setSearchQuery] = useState("")
@@ -66,6 +77,19 @@ export function ProposalsClient({ initialProposals, initialStats }: ProposalsCli
   const [showProposalModal, setShowProposalModal] = useState(false)
   const [editingProposal, setEditingProposal] = useState<Proposal | null>(null)
   const [leads, setLeads] = useState<any[]>([])
+
+  // Booking modal states (appointment creation)
+  const [showBookingModal, setShowBookingModal] = useState(false)
+  const [bookingProposalId, setBookingProposalId] = useState<string | null>(null)
+  const [clinicServices, setClinicServices] = useState<any[]>([])
+  const [clinicStaff, setClinicStaff] = useState<any[]>([])
+  const [bookingDate, setBookingDate] = useState("")
+  const [bookingTime, setBookingTime] = useState("")
+  const [bookingServiceId, setBookingServiceId] = useState("")
+  const [bookingStaffId, setBookingStaffId] = useState("")
+  const [customerNotes, setCustomerNotes] = useState("")
+  const [internalNotes, setInternalNotes] = useState("")
+  const [isBookingSubmitting, setIsBookingSubmitting] = useState(false)
 
   // Fetch leads for proposal creation
   useEffect(() => {
@@ -81,6 +105,42 @@ export function ProposalsClient({ initialProposals, initialStats }: ProposalsCli
       }
     }
     fetchLeads()
+  }, [])
+
+  // Fetch clinic services for booking dropdown
+  useEffect(() => {
+    const fetchClinicServices = async () => {
+      const supabase = createBrowserClient()
+      const { data } = await supabase
+        .from("clinic_services")
+        .select("id, name")
+        .order("name")
+
+      if (data) setClinicServices(data)
+    }
+    fetchClinicServices()
+  }, [])
+
+  // If there are available services and none selected, preselect first one
+  useEffect(() => {
+    if (!bookingServiceId && clinicServices.length > 0) {
+      setBookingServiceId(clinicServices[0].id)
+    }
+  }, [bookingServiceId, clinicServices])
+
+  // Fetch staff members for optional assignment
+  useEffect(() => {
+    const fetchClinicStaff = async () => {
+      const supabase = createBrowserClient()
+      const { data } = await supabase
+        .from("staff_members")
+        .select("user_id, full_name")
+        .eq("status", "active")
+        .order("full_name")
+
+      if (data) setClinicStaff(data)
+    }
+    fetchClinicStaff()
   }, [])
 
   // Set up real-time subscription
@@ -177,10 +237,126 @@ export function ProposalsClient({ initialProposals, initialStats }: ProposalsCli
       }
 
       toast.success('ยอมรับ proposal สำเร็จ!')
-      handleRefresh()
+
+      // Prompt booking details after acceptance
+      setBookingProposalId(proposalId)
+      if (!bookingDate) {
+        const d = new Date()
+        setBookingDate(d.toISOString().slice(0, 10))
+      }
+      if (!bookingTime) {
+        const d = new Date()
+        const originalDate = d.toISOString().slice(0, 10)
+        const minutes = d.getMinutes()
+        const rounded = Math.ceil(minutes / 15) * 15
+        d.setMinutes(rounded, 0, 0)
+        // If rounding pushes us into the next day (e.g. 23:53 -> 00:00 next day),
+        // roll booking date forward to match the computed time.
+        const roundedDate = d.toISOString().slice(0, 10)
+        if (bookingDate ? bookingDate === originalDate : true) {
+          if (roundedDate !== originalDate) {
+            setBookingDate(roundedDate)
+          }
+        }
+        const hh = String(d.getHours()).padStart(2, "0")
+        const mm = String(d.getMinutes()).padStart(2, "0")
+        setBookingTime(`${hh}:${mm}`)
+      }
+      setShowBookingModal(true)
     } catch (error) {
       console.error('Error accepting proposal:', error)
       toast.error('ไม่สามารถยอมรับ proposal ได้')
+    }
+  }
+
+  const closeBookingModal = () => {
+    setShowBookingModal(false)
+    setBookingProposalId(null)
+    setBookingDate("")
+    setBookingTime("")
+    setBookingServiceId("")
+    setBookingStaffId("")
+    setCustomerNotes("")
+    setInternalNotes("")
+    setIsBookingSubmitting(false)
+  }
+
+  const handleCreateAppointment = async () => {
+    if (!bookingProposalId) return
+    if (!bookingDate || !bookingTime || !bookingServiceId) {
+      toast.error("กรุณากรอกวัน/เวลา/บริการให้ครบ")
+      return
+    }
+
+    setIsBookingSubmitting(true)
+    try {
+      // API expects HH:MM:SS
+      const normalizedTime = /^\d{2}:\d{2}$/.test(bookingTime) ? `${bookingTime}:00` : bookingTime
+
+      const response = await fetch(`/api/sales/proposals/${bookingProposalId}/book`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          booking_date: bookingDate,
+          booking_time: normalizedTime,
+          service_id: bookingServiceId,
+          staff_id: bookingStaffId || undefined,
+          customer_notes: customerNotes.trim() || undefined,
+          internal_notes: internalNotes.trim() || undefined,
+        }),
+      })
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}))
+        throw new Error(err.error || "Failed to create appointment")
+      }
+
+      const created = await response.json().catch(() => null)
+      const appointmentId = created?.id as string | undefined
+      const paymentAmount = created?.payment_amount as number | undefined
+
+      // Best-effort: open PromptPay QR in new tab (clinic_id required)
+      const clinicIdFromResponse = created?.clinic_id as string | undefined
+
+      const details = appointmentId
+        ? `Appointment ID: ${appointmentId} (คลิกข้อความนี้เพื่อคัดลอก)`
+        : undefined
+
+      toast.success(appointmentId ? `สร้างนัดหมายสำเร็จ! (#${appointmentId})` : "สร้างนัดหมายสำเร็จ!", {
+        description: details,
+        onClick: async () => {
+          if (!appointmentId) return
+          try {
+            await navigator.clipboard.writeText(appointmentId)
+            toast.success("คัดลอก Appointment ID แล้ว")
+          } catch {
+            toast.error("ไม่สามารถคัดลอกได้")
+          }
+        },
+        action: {
+          label: paymentAmount && clinicIdFromResponse ? "จ่าย PromptPay" : "ดูนัดหมาย",
+          onClick: () => {
+            const locale = pathname?.split("/")[1]
+            const isLocale = !!locale && /^[a-z]{2}(-[A-Z]{2})?$/.test(locale)
+
+            if (paymentAmount && clinicIdFromResponse) {
+              const qrUrl = `/api/payments/promptpay/qr?clinic_id=${encodeURIComponent(clinicIdFromResponse)}&amount=${encodeURIComponent(String(paymentAmount))}`
+              globalThis.open(qrUrl, "_blank")
+              return
+            }
+
+            const target = isLocale ? `/${locale}/clinic/appointments` : "/clinic/appointments"
+            globalThis.open(target, "_blank")
+          },
+        },
+      })
+
+      closeBookingModal()
+      handleRefresh()
+    } catch (error: any) {
+      console.error("Error creating appointment:", error)
+      toast.error(error.message || "ไม่สามารถสร้างนัดหมายได้")
+      setIsBookingSubmitting(false)
     }
   }
 
@@ -365,7 +541,12 @@ export function ProposalsClient({ initialProposals, initialStats }: ProposalsCli
                         <CardTitle className="text-lg">{proposal.title}</CardTitle>
                         <CardDescription className="mt-1">For: {leadName}</CardDescription>
                       </div>
-                      {getStatusBadge(proposal.status)}
+                      <div className="flex items-center gap-2">
+                        {proposal?.metadata?.appointment_id ? (
+                          <Badge className="bg-emerald-600">📅 Booked</Badge>
+                        ) : null}
+                        {getStatusBadge(proposal.status)}
+                      </div>
                     </div>
                   </CardHeader>
                   <CardContent>
@@ -395,6 +576,28 @@ export function ProposalsClient({ initialProposals, initialStats }: ProposalsCli
                           </div>
                         </div>
                       )}
+
+                      {proposal?.metadata?.appointment_id ? (
+                        <div className="text-sm">
+                          <div className="text-muted-foreground">Appointment ID</div>
+                          <div className="font-mono text-xs break-all">{proposal.metadata.appointment_id}</div>
+                          <div className="mt-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => {
+                                const locale = pathname?.split("/")[1]
+                                const isLocale = !!locale && /^[a-z]{2}(-[A-Z]{2})?$/.test(locale)
+                                const base = isLocale ? `/${locale}/clinic/appointments` : "/clinic/appointments"
+                                const url = `${base}?appointment_id=${encodeURIComponent(proposal.metadata.appointment_id)}`
+                                globalThis.open(url, "_blank")
+                              }}
+                            >
+                              เปิดนัดหมาย
+                            </Button>
+                          </div>
+                        </div>
+                      ) : null}
 
                       {/* Dates */}
                       <div className="grid grid-cols-2 gap-2 text-sm">
@@ -487,6 +690,82 @@ export function ProposalsClient({ initialProposals, initialStats }: ProposalsCli
       editProposal={editingProposal || undefined}
       leads={leads}
     />
+
+    <Dialog open={showBookingModal} onOpenChange={(open) => (open ? setShowBookingModal(true) : closeBookingModal())}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>สร้างนัดหมาย (Appointment)</DialogTitle>
+        </DialogHeader>
+
+        <div className="space-y-4">
+          <div>
+            <div className="text-sm text-muted-foreground mb-2">วันที่</div>
+            <Input type="date" value={bookingDate} onChange={(e) => setBookingDate(e.target.value)} />
+          </div>
+
+          <div>
+            <div className="text-sm text-muted-foreground mb-2">เวลา</div>
+            <Input
+              type="time"
+              value={bookingTime}
+              onChange={(e) => setBookingTime(e.target.value)}
+            />
+            <div className="mt-1 text-xs text-muted-foreground">ระบบจะส่งเป็นรูปแบบ HH:MM:SS อัตโนมัติ</div>
+          </div>
+
+          <div>
+            <div className="text-sm text-muted-foreground mb-2">บริการ</div>
+            <Select value={bookingServiceId} onValueChange={setBookingServiceId}>
+              <SelectTrigger>
+                <SelectValue placeholder="เลือกบริการ" />
+              </SelectTrigger>
+              <SelectContent>
+                {clinicServices.map((s) => (
+                  <SelectItem key={s.id} value={s.id}>
+                    {s.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <div className="text-sm text-muted-foreground mb-2">พนักงาน (ไม่บังคับ)</div>
+            <Select value={bookingStaffId} onValueChange={setBookingStaffId}>
+              <SelectTrigger>
+                <SelectValue placeholder="ไม่ระบุพนักงาน" />
+              </SelectTrigger>
+              <SelectContent>
+                {clinicStaff.map((s) => (
+                  <SelectItem key={s.user_id} value={s.user_id}>
+                    {s.full_name || s.user_id}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <div className="text-sm text-muted-foreground mb-2">หมายเหตุถึงลูกค้า (ไม่บังคับ)</div>
+            <Input value={customerNotes} onChange={(e) => setCustomerNotes(e.target.value)} placeholder="เช่น กรุณามาก่อน 10 นาที" />
+          </div>
+
+          <div>
+            <div className="text-sm text-muted-foreground mb-2">หมายเหตุภายใน (ไม่บังคับ)</div>
+            <Input value={internalNotes} onChange={(e) => setInternalNotes(e.target.value)} placeholder="เช่น ข้อมูลสำหรับทีมงาน" />
+          </div>
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={closeBookingModal} disabled={isBookingSubmitting}>
+            ข้ามไปก่อน
+          </Button>
+          <Button onClick={handleCreateAppointment} disabled={isBookingSubmitting}>
+            {isBookingSubmitting ? "กำลังสร้าง..." : "สร้างนัดหมาย"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   </>
   )
 }

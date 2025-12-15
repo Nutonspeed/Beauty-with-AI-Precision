@@ -942,7 +942,7 @@ export async function bookFromProposal(
       .from("customers")
       .insert({
         clinic_id: effectiveClinicId,
-        full_name: lead?.name ?? "Unknown",
+        name: lead?.name ?? "Unknown",
         email: lead?.email ?? null,
         phone: lead?.phone ?? null,
         created_by: userId,
@@ -959,70 +959,92 @@ export async function bookFromProposal(
     customerId = newCustomer.id as string
   }
 
-  // 3) Validate staff belongs to this clinic and is active
-  if (staff_id) {
-    const { data: staffRow, error: staffError } = await supabase
-      .from("clinic_staff")
-      .select("id")
-      .eq("user_id", staff_id)
-      .eq("clinic_id", effectiveClinicId)
-      .eq("status", "active")
-      .maybeSingle()
-
-    if (staffError) {
-      const err: any = new Error("Failed to validate staff for this clinic")
-      err.status = 500
-      throw err
-    }
-
-    if (!staffRow) {
-      const err: any = new Error("Invalid staff for this clinic or staff is not active")
-      err.status = 400
-      throw err
-    }
-  }
-
-  // 4) Load the service to derive price / duration
-  const { data: service, error: serviceError } = await supabase
-    .from("services")
-    .select("id, treatment_type, price, duration_minutes")
+  // 3) Load the clinic service to derive price / duration
+  const { data: clinicService, error: serviceError } = await supabase
+    .from("clinic_services")
+    .select("id, name, price, duration_minutes")
     .eq("id", service_id)
     .eq("clinic_id", effectiveClinicId)
     .single()
 
-  if (serviceError || !service) {
+  if (serviceError || !clinicService) {
     const err: any = new Error("Service not found for this clinic")
     err.status = 404
     throw err
   }
 
-  const durationMinutes = service.duration_minutes || 60
-  const price = Number(service.price ?? proposal.total_value ?? 0)
+  const durationMinutes = Number(clinicService.duration_minutes ?? 60)
 
-  // 5) Create booking record
-  const { data: booking, error: bookingError } = await supabase
-    .from("bookings")
+  // 4) Create appointment record (canonical booking)
+  const bookingTimeHHMM = booking_time.slice(0, 5)
+  const { data: appointment, error: appointmentError } = await supabase
+    .from("appointments")
     .insert({
       clinic_id: effectiveClinicId,
       customer_id: customerId,
-      service_id: service.id,
-      treatment_type: service.treatment_type || "treatment",
-      booking_date,
-      booking_time,
-      duration_minutes: durationMinutes,
-      price,
-      status: "pending",
       staff_id: staff_id ?? null,
-      customer_notes: customer_notes ?? null,
-      internal_notes: internal_notes ?? `Created from accepted proposal ${proposal.id} by ${userId}`,
+      service_type: clinicService.name,
+      appointment_date: booking_date,
+      appointment_time: bookingTimeHHMM,
+      duration_minutes: durationMinutes,
+      status: "scheduled",
+      notes: [customer_notes, internal_notes].filter(Boolean).join("\n\n") || null,
+      created_by: userId,
     })
     .select("*")
     .single()
 
-  if (bookingError || !booking) {
-    const err: any = new Error("Failed to create booking")
+  if (appointmentError || !appointment) {
+    const err: any = new Error("Failed to create appointment")
     err.status = 500
     throw err
+  }
+
+  // 5) Create pending payment record (PromptPay) (best-effort)
+  let paymentId: string | null = null
+  let paymentAmount: number | null = null
+  try {
+    const amount = Number(clinicService.price ?? proposal.total_value ?? 0)
+    if (Number.isFinite(amount) && amount > 0) {
+      paymentAmount = amount
+      const { data: payment, error: paymentError } = await supabase
+        .from("booking_payments")
+        .insert({
+          clinic_id: effectiveClinicId,
+          appointment_id: appointment.id,
+          amount,
+          payment_method: "promptpay",
+          payment_status: "pending",
+          notes: "Created from proposal booking",
+          updated_at: new Date().toISOString(),
+        })
+        .select("id")
+        .single()
+
+      if (!paymentError && payment?.id) {
+        paymentId = payment.id as string
+      }
+    }
+  } catch (e) {
+    console.error("Failed to create booking_payment for appointment:", e)
+  }
+
+  // Best-effort: persist appointment linkage on proposal metadata
+  try {
+    const baseMeta = (proposal as any)?.metadata && typeof (proposal as any).metadata === "object" ? (proposal as any).metadata : {}
+    const nextMeta = {
+      ...baseMeta,
+      appointment_id: appointment.id,
+      booked_at: new Date().toISOString(),
+    }
+
+    await supabase
+      .from("sales_proposals")
+      .update({ appointment_id: appointment.id, metadata: nextMeta, updated_at: new Date().toISOString() })
+      .eq("id", proposal.id)
+      .eq("sales_user_id", userId)
+  } catch (e) {
+    console.error("Failed to persist appointment_id on proposal metadata:", e)
   }
 
   try {
@@ -1037,7 +1059,7 @@ export async function bookFromProposal(
           total_value: Number(proposal.total_value ?? 0),
           win_probability: Number((proposal as any).win_probability ?? 0),
           new_status: proposal.status,
-          metadata: { booking_id: booking.id },
+          metadata: { appointment_id: appointment.id },
         },
         {
           user_id: userId,
@@ -1050,36 +1072,9 @@ export async function bookFromProposal(
     console.error("Failed to publish proposal.booked event:", eventError)
   }
 
-  // Best-effort: create a matching appointment row for this booking
-  try {
-    const startDateTime = new Date(`${booking_date}T${booking_time}`)
-    const endDateTime = new Date(startDateTime.getTime() + durationMinutes * 60000)
-
-    const startTime = `${startDateTime.getHours().toString().padStart(2, "0")}:${startDateTime
-      .getMinutes()
-      .toString()
-      .padStart(2, "0")}:00`
-    const endTime = `${endDateTime.getHours().toString().padStart(2, "0")}:${endDateTime
-      .getMinutes()
-      .toString()
-      .padStart(2, "0")}:00`
-
-    await supabase.from("appointments").insert({
-      appointment_number: `APT-${Date.now()}`,
-      customer_id: customerId,
-      clinic_id: effectiveClinicId,
-      staff_id: staff_id ?? null,
-      appointment_date: booking_date,
-      start_time: startTime,
-      end_time: endTime,
-      duration: durationMinutes,
-      status: "scheduled",
-      customer_notes,
-      staff_notes: internal_notes,
-    })
-  } catch (error) {
-    console.error("Failed to create appointment from booking:", error)
+  return {
+    ...(appointment as any),
+    payment_id: paymentId,
+    payment_amount: paymentAmount,
   }
-
-  return booking
 }

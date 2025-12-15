@@ -5,7 +5,7 @@ import { Footer } from "@/components/footer"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { useEffect, useMemo } from "react"
 import { usageTracker } from "@/lib/analytics/usage-tracker"
-import { getCaseStudyBySlug, type Locale } from "@/data/case-studies"
+import { getCaseStudyBySlug, type Locale } from "@/lib/data/case-studies"
 import { useParams } from "next/navigation"
 import Link from "next/link"
 
@@ -63,7 +63,7 @@ export default function CaseStudyDetailPage() {
           </div>
 
           <div className="mb-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
-            {study.metrics.map((m) => (
+            {study.metrics.map((m: any) => (
               <div key={`${localizeText((m as any).label, locale)}-${(m as any).value}`} className="rounded-lg border border-border/60 p-4">
                 <div className="text-2xl font-semibold">{m.value}</div>
                 <div className="text-sm text-muted-foreground">{localizeText((m as any).label, locale)}</div>
@@ -72,7 +72,7 @@ export default function CaseStudyDetailPage() {
           </div>
 
           <div className="prose prose-neutral max-w-none dark:prose-invert">
-            {(study.content || []).map((section) => (
+            {(study.content || []).map((section: any) => (
               <section key={localizeText((section as any).heading, locale)} className="mb-8">
                 <h2 className="mt-0">{localizeText((section as any).heading, locale)}</h2>
                 <p>{localizeText((section as any).body, locale)}</p>

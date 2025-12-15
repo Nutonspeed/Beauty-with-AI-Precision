@@ -93,13 +93,13 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { data: profile } = await supabase
-      .from('profiles')
+    const { data: appUser } = await supabase
+      .from('users')
       .select('role')
       .eq('id', user.id)
       .single();
 
-    if (profile?.role !== 'super_admin') {
+    if (appUser?.role !== 'super_admin') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
@@ -145,13 +145,13 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { data: profile } = await supabase
-      .from('profiles')
+    const { data: appUser } = await supabase
+      .from('users')
       .select('role, full_name')
       .eq('id', user.id)
       .single();
 
-    if (profile?.role !== 'super_admin') {
+    if (appUser?.role !== 'super_admin') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
@@ -169,7 +169,7 @@ export async function PUT(request: NextRequest) {
         id: 'global',
         settings,
         updated_at: new Date().toISOString(),
-        updated_by: profile?.full_name || user.email,
+        updated_by: appUser?.full_name || user.email,
       });
 
     if (error) {
@@ -181,7 +181,7 @@ export async function PUT(request: NextRequest) {
       success: true,
       settings,
       updatedAt: new Date().toISOString(),
-      updatedBy: profile?.full_name || user.email,
+      updatedBy: appUser?.full_name || user.email,
     });
   } catch (error) {
     console.error('Error saving settings:', error);

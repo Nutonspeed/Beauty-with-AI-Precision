@@ -100,14 +100,12 @@ export const viewport = {
   colorScheme: "light dark",
 }
 
-// สร้าง static params สำหรับ generate static pages
-// ฟังก์ชันนี้จะถูกเรียกตอน build time
-// เพื่อสร้าง static pages สำหรับทุกภาษา
-// ฟังก์ชันนี้จะถูกเรียกตอน build time
-// เพื่อสร้าง static pages สำหรับทุกภาษา
-export function generateStaticParams() {
-  return locales.map((locale) => ({ locale }))
-}
+// Dynamic rendering for locales to avoid build timeout
+// Force dynamic to prevent SSG generation at build time
+export const dynamic = 'force-dynamic'
+
+// Remove generateStaticParams to prevent static generation
+// All pages will be rendered dynamically
 
 export default function RootLayout({
   children,

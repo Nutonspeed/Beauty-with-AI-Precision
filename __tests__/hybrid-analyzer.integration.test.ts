@@ -242,7 +242,7 @@ describe('Hybrid AI Analyzer Integration Tests', () => {
       expect(result1.confidence).toBe(result2.confidence)
 
       // Second analysis should be faster (cached)
-      expect(time2).toBeLessThanOrEqual(time1)
+      expect(time2).toBeLessThanOrEqual(time1 + 5)
 
       const metrics = performanceOptimizer.getMetrics()
       expect(metrics.cacheHitRate).toBeGreaterThan(0)

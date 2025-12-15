@@ -23,6 +23,8 @@
     "prod:start": "NODE_ENV=production pnpm start",
     "start": "next start",
     "test": "vitest",
+    "test:run": "vitest --run",
+    "test:stable": "cross-env VITEST_POOL=threads VITEST_SINGLE_THREAD=1 vitest --run",
     "test:coverage": "vitest --coverage",
     "test:e2e": "playwright test",
     "test:e2e:debug": "playwright test --debug",

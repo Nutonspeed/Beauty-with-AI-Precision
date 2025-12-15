@@ -67,7 +67,7 @@ async function checkConnection() {
 }
 
 async function checkTables() {
-  const requiredTables = ["users", "tenants", "user_profiles", "skin_analyses", "treatment_plans", "bookings"]
+  const requiredTables = ["users", "clinics", "user_profiles", "skin_analyses", "treatment_plans", "bookings"]
 
   const tableStatus: Record<string, boolean> = {}
 
@@ -113,25 +113,52 @@ async function checkTables() {
 
 async function checkRLS() {
   try {
-    // Try to query without auth - should fail if RLS is working
-    const anonClient = createClient(supabaseUrl!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || supabaseKey!)
-
-    const { data, error } = await anonClient.from("users").select("*")
-
-    if (error || (data && data.length === 0)) {
-      results.push({
-        name: "Row Level Security",
-        status: "pass",
-        message: "RLS is properly configured",
-      })
-    } else {
+    // Try to query with ANON key (unauthenticated). Service role bypasses RLS and cannot be used for this check.
+    const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    if (!anonKey) {
       results.push({
         name: "Row Level Security",
         status: "warn",
-        message: "RLS may not be configured correctly",
-        details: "Unauthenticated query returned data",
+        message: "Could not verify RLS",
+        details: "Missing NEXT_PUBLIC_SUPABASE_ANON_KEY",
       })
+      return
     }
+
+    const anonClient = createClient(supabaseUrl!, anonKey)
+
+    // Use limit(1) instead of head:true to properly test if data is actually returned
+    const usersRes = await anonClient.from("users").select("id").limit(1)
+
+    if (usersRes.error || (usersRes.data && usersRes.data.length === 0)) {
+      // If users is blocked, double-check another core table to differentiate "users-only" vs "global" policies.
+      const clinicsRes = await anonClient.from("clinics").select("id").limit(1)
+
+      if (clinicsRes.error || (clinicsRes.data && clinicsRes.data.length === 0)) {
+        results.push({
+          name: "Row Level Security",
+          status: "pass",
+          message: "RLS appears to be enabled (anon cannot read core tables)",
+          details: { users: usersRes.error?.message || "no data returned", clinics: clinicsRes.error?.message || "no data returned" },
+        })
+        return
+      }
+
+      results.push({
+        name: "Row Level Security",
+        status: "pass",
+        message: "RLS appears to be enabled for users table (anon cannot read users)",
+        details: { users: usersRes.error?.message || "no data returned" },
+      })
+      return
+    }
+
+    results.push({
+      name: "Row Level Security",
+      status: "warn",
+      message: "RLS may not be configured correctly",
+      details: "Anon can read from users (query returned data)",
+    })
   } catch (error) {
     results.push({
       name: "Row Level Security",

@@ -77,12 +77,18 @@ export class ARFaceTracker {
           );
 
           if (predictions.length > 0) {
-            // Use keypoints instead of scaledMesh as it's the correct property in newer versions
-            const keypoints = predictions[0].keypoints || [];
-            const formattedLandmarks = keypoints.map(point => ({
+            const rawLandmarks =
+              // tfjs MediaPipeFaceMesh (runtime: mediapipe) exposes keypoints
+              // while some variants expose scaledMesh/mesh; try all in order.
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              ((predictions[0] as any).keypoints ??
+                (predictions[0] as any).scaledMesh ??
+                (predictions[0] as any).mesh ??
+                []);
+            const formattedLandmarks = rawLandmarks.map((point: any) => ({
               x: point.x,
               y: point.y,
-              z: point.z || 0
+              z: point.z ?? 0
             }));
             
             this.onFaceDetected(formattedLandmarks);

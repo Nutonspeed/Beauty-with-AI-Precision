@@ -47,15 +47,32 @@ interface RevenueData {
     revenue: number;
     bookings: number;
   }>;
-  byTreatment: Array<{
-    name: string;
-    revenue: number;
-    percentage: number;
-  }>;
   byPaymentMethod: Array<{
     method: string;
     amount: number;
     count: number;
+  }>;
+}
+
+interface AppointmentAnalytics {
+  summary: {
+    totalAppointments: number;
+    completedAppointments: number;
+    paidAppointments: number;
+    completionRate: number;
+    paymentRate: number;
+    paymentAfterCompletionRate: number;
+  };
+  statusBreakdown: Array<{
+    status: string;
+    count: number;
+    percentage: number;
+  }>;
+  dailyData: Array<{
+    date: string;
+    total: number;
+    completed: number;
+    paid: number;
   }>;
 }
 
@@ -69,6 +86,8 @@ export default function ClinicRevenuePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [period, setPeriod] = useState<'7d' | '30d' | '90d'>('30d');
   const [data, setData] = useState<RevenueData | null>(null);
+  const [appointmentData, setAppointmentData] = useState<AppointmentAnalytics | null>(null);
+  const [activeTab, setActiveTab] = useState<'trend' | 'payment' | 'appointments'>('trend');
 
   useEffect(() => {
     if (authLoading) return;
@@ -85,39 +104,41 @@ export default function ClinicRevenuePage() {
     }
 
     loadRevenueData();
+    
+    // Load appointment data if appointments tab is active
+    if (activeTab === 'appointments') {
+      loadAppointmentData();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, authLoading, router, lp, period]);
+  }, [user, authLoading, router, lp, period, activeTab]);
+
+  const loadAppointmentData = async () => {
+    try {
+      const response = await fetch(`/api/clinic/appointments/analytics?period=${period}`);
+      if (!response.ok) {
+        throw new Error(`Failed to load appointment data: ${response.status}`);
+      }
+      const result = await response.json();
+      setAppointmentData(result);
+    } catch (error) {
+      console.error('Error loading appointment data:', error);
+      toast({
+        title: 'เกิดข้อผิดพลาด',
+        description: 'ไม่สามารถโหลดข้อมูลการนัดหมายได้',
+        variant: 'destructive'
+      });
+    }
+  };
 
   const loadRevenueData = async () => {
     setIsLoading(true);
     try {
-      // TODO: Replace with actual API call
-      // const response = await fetch(`/api/clinic/revenue?period=${period}`);
-      // const result = await response.json();
-      // setData(result);
-      
-      // Mock data for now
-      setData({
-        summary: {
-          totalRevenue: 1250000,
-          totalBookings: 156,
-          averageOrderValue: 8013,
-          growthRate: 12.5
-        },
-        chartData: generateMockChartData(period),
-        byTreatment: [
-          { name: 'Laser Treatment', revenue: 450000, percentage: 36 },
-          { name: 'Anti-Aging Facial', revenue: 350000, percentage: 28 },
-          { name: 'Acne Treatment', revenue: 200000, percentage: 16 },
-          { name: 'Pigmentation', revenue: 150000, percentage: 12 },
-          { name: 'Other', revenue: 100000, percentage: 8 }
-        ],
-        byPaymentMethod: [
-          { method: 'Cash', amount: 500000, count: 62 },
-          { method: 'Credit Card', amount: 450000, count: 56 },
-          { method: 'PromptPay', amount: 300000, count: 38 }
-        ]
-      });
+      const response = await fetch(`/api/clinic/revenue?period=${period}`);
+      if (!response.ok) {
+        throw new Error(`Failed to load revenue data: ${response.status}`);
+      }
+      const result = await response.json();
+      setData(result);
     } catch (error) {
       console.error('Error loading revenue data:', error);
       toast({
@@ -130,30 +151,73 @@ export default function ClinicRevenuePage() {
     }
   };
 
-  const generateMockChartData = (period: string) => {
-    const days = period === '7d' ? 7 : period === '30d' ? 30 : 90;
-    const data = [];
-    const now = new Date();
-    
-    for (let i = days - 1; i >= 0; i--) {
-      const date = new Date(now);
-      date.setDate(date.getDate() - i);
-      data.push({
-        date: date.toISOString().split('T')[0],
-        revenue: Math.floor(Math.random() * 50000) + 30000,
-        bookings: Math.floor(Math.random() * 10) + 3
-      });
+  const handleExport = (format: 'pdf' | 'excel') => {
+    if (format === 'excel') {
+      exportCsv();
+    } else {
+      // For PDF, use browser print functionality
+      window.print();
     }
-    
-    return data;
   };
 
-  const handleExport = (format: 'pdf' | 'excel') => {
+  const exportCsv = () => {
+    if (!data) return;
+
+    // Create CSV content
+    const header = [
+      'Revenue Report',
+      `Period: ${period === '7d' ? 'Last 7 days' : period === '30d' ? 'Last 30 days' : 'Last 90 days'}`,
+      '',
+      'Summary',
+      `Total Revenue,${data.summary.totalRevenue}`,
+      `Total Bookings,${data.summary.totalBookings}`,
+      `Average Order Value,${data.summary.averageOrderValue}`,
+      `Growth Rate,${data.summary.growthRate}%`,
+      '',
+      'Daily Revenue',
+      'Date,Revenue,Bookings'
+    ];
+
+    // Add daily data
+    const dailyRows = data.chartData.map(row => 
+      `${row.date},${row.revenue},${row.bookings}`
+    );
+
+    // Add payment methods section
+    const paymentHeader = [
+      '',
+      'Payment Methods',
+      'Method,Amount,Count,Average'
+    ];
+
+    const paymentRows = data.byPaymentMethod.map(method => 
+      `${method.method},${method.amount},${method.count},${method.amount / method.count}`
+    );
+
+    // Combine all sections
+    const csvContent = [
+      ...header,
+      ...dailyRows,
+      ...paymentHeader,
+      ...paymentRows
+    ].join('\n');
+
+    // Create and download file
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const stamp = new Date().toISOString().slice(0, 10);
+    a.href = url;
+    a.download = `revenue-report-${period}-${stamp}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+
     toast({
-      title: 'กำลังส่งออก',
-      description: `กำลังสร้างรายงาน ${format.toUpperCase()}...`
+      title: 'ส่งออกสำเร็จ',
+      description: 'ดาวน์โหลดรายงาน CSV เรียบร้อยแล้ว'
     });
-    // TODO: Implement export functionality
   };
 
   const formatCurrency = (amount: number) => {
@@ -180,19 +244,52 @@ export default function ClinicRevenuePage() {
   }
 
   return (
-    <div className="container mx-auto py-8 px-4 space-y-8">
+    <div className="container mx-auto py-8 px-4 space-y-8 print:py-4 print:px-2">
+      {/* Print Styles */}
+      <style jsx global>{`
+        @media print {
+          .print\\:hidden {
+            display: none !important;
+          }
+          .print\\:break-before {
+            page-break-before: always;
+          }
+          .print\\:break-after {
+            page-break-after: always;
+          }
+          .print\\:text-xs {
+            font-size: 0.75rem !important;
+          }
+          .print\\:text-sm {
+            font-size: 0.875rem !important;
+          }
+          .print\\:p-4 {
+            padding: 1rem !important;
+          }
+          .print\\:border {
+            border: 1px solid #e5e7eb !important;
+          }
+        }
+      `}</style>
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between print:hidden">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <DollarSign className="h-8 w-8" />
-            <h1 className="text-3xl font-bold">รายงานรายได้</h1>
+            <DollarSign className="h-8 w-8 print:h-6 print:w-6" />
+            <h1 className="text-3xl font-bold print:text-2xl">รายงานรายได้</h1>
           </div>
-          <p className="text-muted-foreground">
+          <p className="text-muted-foreground print:text-sm">
             รายงานการเงินและวิเคราะห์รายได้ของคลินิก
+          </p>
+          <p className="text-sm text-muted-foreground print:text-xs">
+            ช่วงเวลา: {period === '7d' ? '7 วันล่าสุด' : period === '30d' ? '30 วันล่าสุด' : '90 วันล่าสุด'} | 
+            วันที่ส่งออก: {new Date().toLocaleDateString('th-TH')}
           </p>
         </div>
         <div className="flex gap-2">
+          <Button variant="outline" onClick={() => router.push(lp('/clinic/payments'))}>
+            Payments
+          </Button>
           <Button variant="outline" onClick={() => handleExport('pdf')}>
             <Download className="mr-2 h-4 w-4" />
             Export PDF
@@ -204,8 +301,19 @@ export default function ClinicRevenuePage() {
         </div>
       </div>
 
+      {/* Print Header - Only visible when printing */}
+      <div className="hidden print:block text-center mb-6">
+        <h1 className="text-2xl font-bold">รายงานรายได้คลินิก</h1>
+        <p className="text-sm text-gray-600">
+          ช่วงเวลา: {period === '7d' ? '7 วันล่าสุด' : period === '30d' ? '30 วันล่าสุด' : '90 วันล่าสุด'}
+        </p>
+        <p className="text-xs text-gray-500">
+          วันที่ส่งออก: {new Date().toLocaleDateString('th-TH')}
+        </p>
+      </div>
+
       {/* Period Selector */}
-      <div className="flex gap-2">
+      <div className="flex gap-2 print:hidden">
         <Button
           variant={period === '7d' ? 'default' : 'outline'}
           onClick={() => setPeriod('7d')}
@@ -292,11 +400,11 @@ export default function ClinicRevenuePage() {
         </Card>
       </div>
 
-      <Tabs defaultValue="trend" className="space-y-6">
-        <TabsList>
+      <Tabs defaultValue="trend" className="space-y-6" value={activeTab} onValueChange={(value: any) => setActiveTab(value)}>
+        <TabsList className="print:hidden">
           <TabsTrigger value="trend">แนวโน้มรายได้</TabsTrigger>
-          <TabsTrigger value="treatment">รายได้ตามทรีตเมนต์</TabsTrigger>
           <TabsTrigger value="payment">วิธีการชำระเงิน</TabsTrigger>
+          <TabsTrigger value="appointments">การนัดหมาย</TabsTrigger>
         </TabsList>
 
         {/* Revenue Trend Chart */}
@@ -309,9 +417,283 @@ export default function ClinicRevenuePage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="w-full h-[400px]">
+              {/* Chart - Hidden when printing */}
+              <div className="print:hidden">
+                <div className="w-full h-[400px]">
+                  <ResponsiveContainer width="100%" height={400}>
+                    <LineChart data={data.chartData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis
+                        dataKey="date"
+                        tick={{ fontSize: 12 }}
+                        angle={-45}
+                        textAnchor="end"
+                        height={60}
+                      />
+                      <YAxis tick={{ fontSize: 12 }} />
+                      <Tooltip />
+                      <Legend />
+                      <Line
+                        type="monotone"
+                        dataKey="revenue"
+                        stroke="#8884d8"
+                        strokeWidth={2}
+                        dot={{ r: 4 }}
+                        activeDot={{ r: 6 }}
+                        name="รายได้"
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="bookings"
+                        stroke="#82ca9d"
+                        strokeWidth={2}
+                        dot={{ r: 4 }}
+                        activeDot={{ r: 6 }}
+                        name="จำนวนการจอง"
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              {/* Table - Only visible when printing */}
+              <div className="hidden print:block">
+                <table className="w-full text-sm print:text-xs">
+                  <thead>
+                    <tr className="border-b">
+                      <th className="text-left py-2">วันที่</th>
+                      <th className="text-right py-2">รายได้</th>
+                      <th className="text-right py-2">จำนวนการจอง</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data.chartData.map((row, index) => (
+                      <tr key={row.date} className="border-b print:border">
+                        <td className="py-2">{row.date}</td>
+                        <td className="text-right py-2">{formatCurrency(row.revenue)}</td>
+                        <td className="text-right py-2">{row.bookings}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  <tfoot>
+                    <tr className="font-bold">
+                      <td className="pt-2">รวม</td>
+                      <td className="text-right pt-2">{formatCurrency(data.summary.totalRevenue)}</td>
+                      <td className="text-right pt-2">{data.summary.totalBookings}</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Payment Methods */}
+        <TabsContent value="payment" className="print:break-before">
+          <Card>
+            <CardHeader>
+              <CardTitle>รายได้ตามวิธีการชำระเงิน</CardTitle>
+              <CardDescription>
+                แยกตามประเภทการชำระเงิน
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {/* Chart - Hidden when printing */}
+              <div className="print:hidden">
                 <ResponsiveContainer width="100%" height={400}>
-                  <LineChart data={data.chartData}>
+                  <BarChart data={data.byPaymentMethod}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="method" />
+                    <YAxis tickFormatter={(value: any) => `฿${(value / 1000).toFixed(0)}k`} />
+                    <Tooltip
+                      formatter={(value: any) => formatCurrency(value)}
+                      labelStyle={{ color: '#000' }}
+                    />
+                    <Legend />
+                    <Bar dataKey="amount" fill="#8884d8" name="รายได้" />
+                  </BarChart>
+                </ResponsiveContainer>
+
+                <div className="mt-6 space-y-3">
+                  {data.byPaymentMethod.map((method) => (
+                    <div key={method.method} className="flex items-center justify-between p-3 border rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <CreditCard className="h-5 w-5 text-muted-foreground" />
+                        <div>
+                          <p className="font-medium">{method.method}</p>
+                          <p className="text-sm text-muted-foreground">{method.count} รายการ</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-semibold">{formatCurrency(method.amount)}</p>
+                        <p className="text-sm text-muted-foreground">
+                          ค่าเฉลี่ย {formatCurrency(method.amount / method.count)}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Table - Only visible when printing */}
+              <div className="hidden print:block">
+                <table className="w-full text-sm print:text-xs">
+                  <thead>
+                    <tr className="border-b">
+                      <th className="text-left py-2">วิธีการชำระเงิน</th>
+                      <th className="text-right py-2">จำนวนรายการ</th>
+                      <th className="text-right py-2">รายได้รวม</th>
+                      <th className="text-right py-2">ค่าเฉลี่ย</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data.byPaymentMethod.map((method) => (
+                      <tr key={method.method} className="border-b print:border">
+                        <td className="py-2">{method.method}</td>
+                        <td className="text-right py-2">{method.count}</td>
+                        <td className="text-right py-2">{formatCurrency(method.amount)}</td>
+                        <td className="text-right py-2">{formatCurrency(method.amount / method.count)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  <tfoot>
+                    <tr className="font-bold">
+                      <td className="pt-2">รวม</td>
+                      <td className="text-right pt-2">{data.byPaymentMethod.reduce((sum, m) => sum + m.count, 0)}</td>
+                      <td className="text-right pt-2">{formatCurrency(data.summary.totalRevenue)}</td>
+                      <td className="text-right pt-2">{formatCurrency(data.summary.averageOrderValue)}</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Appointments Analytics */}
+        <TabsContent value="appointments">
+          <div className="grid gap-6 md:grid-cols-3 mb-6">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">การนัดหมายทั้งหมด</CardTitle>
+                <Calendar className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{appointmentData?.summary.totalAppointments || 0}</div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  ในช่วง {period === '7d' ? '7 วัน' : period === '30d' ? '30 วัน' : '90 วัน'} ที่ผ่านมา
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">อัตราการเสร็จสิ้น</CardTitle>
+                <DollarSign className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{appointmentData?.summary.completionRate || 0}%</div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {appointmentData?.summary.completedAppointments || 0} จาก {appointmentData?.summary.totalAppointments || 0} การนัดหมาย
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">อัตราการชำระเงิน</CardTitle>
+                <CreditCard className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{appointmentData?.summary.paymentRate || 0}%</div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {appointmentData?.summary.paidAppointments || 0} จาก {appointmentData?.summary.totalAppointments || 0} การชำระเงิน
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>สถานะการนัดหมาย</CardTitle>
+                <CardDescription>
+                  สัดส่วนของแต่ละสถานะ
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={appointmentData?.statusBreakdown || []}
+                      dataKey="count"
+                      nameKey="status"
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={100}
+                      label={(entry: any) => `${entry.percentage}%`}
+                    >
+                      {(appointmentData?.statusBreakdown || []).map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>รายละเอียดสถานะ</CardTitle>
+                <CardDescription>
+                  จำนวนและสัดส่วนของแต่ละสถานะ
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {(appointmentData?.statusBreakdown || []).map((status, index) => (
+                    <div key={status.status} className="flex items-center gap-4">
+                      <div
+                        className="h-4 w-4 rounded"
+                        style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                      />
+                      <div className="flex-1">
+                        <div className="flex justify-between items-center mb-1">
+                          <span className="font-medium">{status.status}</span>
+                          <span className="text-sm text-muted-foreground">
+                            {status.count} รายการ
+                          </span>
+                        </div>
+                        <div className="w-full bg-muted rounded-full h-2">
+                          <div
+                            className="h-2 rounded-full"
+                            style={{
+                              width: `${status.percentage}%`,
+                              backgroundColor: COLORS[index % COLORS.length]
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Card className="mt-6">
+            <CardHeader>
+              <CardTitle>แนวโน้มการนัดหมายรายวัน</CardTitle>
+              <CardDescription>
+                จำนวนการนัดหมายและการชำระเงินตามช่วงเวลา
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="print:hidden">
+                <ResponsiveContainer width="100%" height={400}>
+                  <LineChart data={appointmentData?.dailyData || []}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis
                       dataKey="date"
@@ -325,144 +707,57 @@ export default function ClinicRevenuePage() {
                     <Legend />
                     <Line
                       type="monotone"
-                      dataKey="revenue"
+                      dataKey="total"
                       stroke="#8884d8"
                       strokeWidth={2}
                       dot={{ r: 4 }}
                       activeDot={{ r: 6 }}
-                      name="รายได้"
+                      name="ทั้งหมด"
                     />
                     <Line
                       type="monotone"
-                      dataKey="bookings"
+                      dataKey="completed"
                       stroke="#82ca9d"
                       strokeWidth={2}
                       dot={{ r: 4 }}
                       activeDot={{ r: 6 }}
-                      name="จำนวนการจอง"
+                      name="เสร็จสิ้น"
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="paid"
+                      stroke="#ffc658"
+                      strokeWidth={2}
+                      dot={{ r: 4 }}
+                      activeDot={{ r: 6 }}
+                      name="ชำระเงิน"
                     />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
 
-        {/* Revenue by Treatment */}
-        <TabsContent value="treatment">
-          <div className="grid gap-6 md:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>รายได้ตามประเภททรีตเมนต์</CardTitle>
-                <CardDescription>
-                  สัดส่วนรายได้จากแต่ละทรีตเมนต์
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <PieChart>
-                    <Pie
-                      data={data.byTreatment}
-                      dataKey="revenue"
-                      nameKey="name"
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={100}
-                      label={(entry: any) => `${entry.percentage}%`}
-                    >
-                      {data.byTreatment.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip formatter={(value: any) => formatCurrency(value)} />
-                    <Legend />
-                  </PieChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>รายละเอียดทรีตเมนต์</CardTitle>
-                <CardDescription>
-                  รายได้และสัดส่วนของแต่ละทรีตเมนต์
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {data.byTreatment.map((treatment, index) => (
-                    <div key={treatment.name} className="flex items-center gap-4">
-                      <div
-                        className="h-4 w-4 rounded"
-                        style={{ backgroundColor: COLORS[index % COLORS.length] }}
-                      />
-                      <div className="flex-1">
-                        <div className="flex justify-between items-center mb-1">
-                          <span className="font-medium">{treatment.name}</span>
-                          <span className="text-sm text-muted-foreground">
-                            {formatCurrency(treatment.revenue)}
-                          </span>
-                        </div>
-                        <div className="w-full bg-muted rounded-full h-2">
-                          <div
-                            className="h-2 rounded-full"
-                            style={{
-                              width: `${treatment.percentage}%`,
-                              backgroundColor: COLORS[index % COLORS.length]
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
-        {/* Payment Methods */}
-        <TabsContent value="payment">
-          <Card>
-            <CardHeader>
-              <CardTitle>รายได้ตามวิธีการชำระเงิน</CardTitle>
-              <CardDescription>
-                แยกตามประเภทการชำระเงิน
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={400}>
-                <BarChart data={data.byPaymentMethod}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="method" />
-                  <YAxis tickFormatter={(value: any) => `฿${(value / 1000).toFixed(0)}k`} />
-                  <Tooltip
-                    formatter={(value: any) => formatCurrency(value)}
-                    labelStyle={{ color: '#000' }}
-                  />
-                  <Legend />
-                  <Bar dataKey="amount" fill="#8884d8" name="รายได้" />
-                </BarChart>
-              </ResponsiveContainer>
-
-              <div className="mt-6 space-y-3">
-                {data.byPaymentMethod.map((method) => (
-                  <div key={method.method} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <CreditCard className="h-5 w-5 text-muted-foreground" />
-                      <div>
-                        <p className="font-medium">{method.method}</p>
-                        <p className="text-sm text-muted-foreground">{method.count} รายการ</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-semibold">{formatCurrency(method.amount)}</p>
-                      <p className="text-sm text-muted-foreground">
-                        ค่าเฉลี่ย {formatCurrency(method.amount / method.count)}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+              {/* Print Table */}
+              <div className="hidden print:block">
+                <table className="w-full text-sm print:text-xs">
+                  <thead>
+                    <tr className="border-b">
+                      <th className="text-left py-2">วันที่</th>
+                      <th className="text-right py-2">ทั้งหมด</th>
+                      <th className="text-right py-2">เสร็จสิ้น</th>
+                      <th className="text-right py-2">ชำระเงิน</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(appointmentData?.dailyData || []).map((row, index) => (
+                      <tr key={row.date} className="border-b print:border">
+                        <td className="py-2">{row.date}</td>
+                        <td className="text-right py-2">{row.total}</td>
+                        <td className="text-right py-2">{row.completed}</td>
+                        <td className="text-right py-2">{row.paid}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </CardContent>
           </Card>

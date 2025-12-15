@@ -4,6 +4,20 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
+type AppUserRow = {
+  id: string;
+  email: string;
+  role: string;
+  full_name: string | null;
+  phone: string | null;
+  avatar_url: string | null;
+  clinic_id: string | null;
+  created_at: string;
+  updated_at: string;
+  last_login_at: string | null;
+  email_verified: boolean;
+};
+
 export async function GET(request: NextRequest) {
   try {
     await cookies();
@@ -15,13 +29,13 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { data: profile } = await supabase
-      .from('profiles')
+    const { data: appUser } = await supabase
+      .from('users')
       .select('role')
       .eq('id', user.id)
       .single();
 
-    if (profile?.role !== 'super_admin') {
+    if (appUser?.role !== 'super_admin') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
@@ -35,17 +49,17 @@ export async function GET(request: NextRequest) {
 
     // Build query
     let query = supabase
-      .from('profiles')
+      .from('users')
       .select(`
         id,
         email,
         full_name,
         role,
         clinic_id,
-        avatar_url,
         phone,
-        is_active,
-        last_seen_at,
+        avatar_url,
+        last_login_at,
+        email_verified,
         created_at,
         updated_at,
         clinics(id, name)
@@ -59,11 +73,7 @@ export async function GET(request: NextRequest) {
     if (clinicId && clinicId !== 'all') {
       query = query.eq('clinic_id', clinicId);
     }
-    if (status === 'active') {
-      query = query.eq('is_active', true);
-    } else if (status === 'inactive') {
-      query = query.eq('is_active', false);
-    }
+    // Note: public.users does not have is_active in current DB (per schema/check:db)
     if (search) {
       query = query.or(`full_name.ilike.%${search}%,email.ilike.%${search}%`);
     }
@@ -76,25 +86,23 @@ export async function GET(request: NextRequest) {
     if (error) throw error;
 
     // Calculate stats
-    const { data: allProfiles } = await supabase
-      .from('profiles')
-      .select('role, is_active, last_seen_at');
+    const { data: allUsers } = await supabase
+      .from('users')
+      .select('role, last_login_at');
 
     const now = new Date();
     const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
     const stats = {
-      total: allProfiles?.length || 0,
-      active: allProfiles?.filter(p => p.is_active).length || 0,
-      inactive: allProfiles?.filter(p => !p.is_active).length || 0,
-      recentlyActive: allProfiles?.filter(p => p.last_seen_at && new Date(p.last_seen_at) >= oneWeekAgo).length || 0,
+      total: allUsers?.length || 0,
+      recentlyActive: allUsers?.filter((u: any) => u.last_login_at && new Date(u.last_login_at) >= oneWeekAgo).length || 0,
       byRole: {
-        super_admin: allProfiles?.filter(p => p.role === 'super_admin').length || 0,
-        clinic_owner: allProfiles?.filter(p => p.role === 'clinic_owner').length || 0,
-        clinic_admin: allProfiles?.filter(p => p.role === 'clinic_admin').length || 0,
-        staff: allProfiles?.filter(p => p.role === 'staff').length || 0,
-        beautician: allProfiles?.filter(p => p.role === 'beautician').length || 0,
-        customer: allProfiles?.filter(p => p.role === 'customer').length || 0,
+        super_admin: allUsers?.filter((u: any) => u.role === 'super_admin').length || 0,
+        clinic_owner: allUsers?.filter((u: any) => u.role === 'clinic_owner').length || 0,
+        clinic_admin: allUsers?.filter((u: any) => u.role === 'clinic_admin').length || 0,
+        clinic_staff: allUsers?.filter((u: any) => u.role === 'clinic_staff').length || 0,
+        sales_staff: allUsers?.filter((u: any) => u.role === 'sales_staff').length || 0,
+        customer: allUsers?.filter((u: any) => String(u.role || '').startsWith('customer') || u.role === 'free_user' || u.role === 'premium_customer').length || 0,
       },
     };
 
@@ -136,13 +144,13 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { data: profile } = await supabase
-      .from('profiles')
+    const { data: appUser } = await supabase
+      .from('users')
       .select('role')
       .eq('id', user.id)
       .single();
 
-    if (profile?.role !== 'super_admin') {
+    if (appUser?.role !== 'super_admin') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
@@ -156,9 +164,6 @@ export async function PATCH(request: NextRequest) {
     let updateData: Record<string, any> = {};
 
     switch (action) {
-      case 'toggle_active':
-        updateData.is_active = value;
-        break;
       case 'change_role':
         updateData.role = value;
         break;
@@ -172,10 +177,10 @@ export async function PATCH(request: NextRequest) {
     updateData.updated_at = new Date().toISOString();
 
     const { data: updatedUser, error } = await supabase
-      .from('profiles')
+      .from('users')
       .update(updateData)
       .eq('id', userId)
-      .select()
+      .select('id, email, full_name, phone, role, clinic_id, avatar_url, created_at, updated_at, last_login_at, email_verified')
       .single();
 
     if (error) throw error;

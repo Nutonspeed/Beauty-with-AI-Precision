@@ -1,12 +1,16 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { promises as fs } from "node:fs";
-import path from "path";
+import path from "node:path";
 
 // Import route handlers
 import { POST, GET } from "@/app/api/analytics/collect/route";
 
-const DATA_DIR = path.join(process.cwd(), "data");
-const FILE_PATH = path.join(DATA_DIR, "analytics-events.ndjson");
+const safeJoin = (...segments: string[]) =>
+  path.posix.join(...segments.filter(Boolean))
+
+const ROOT = process.cwd() || __dirname
+const DATA_DIR = safeJoin(ROOT, "data")
+const FILE_PATH = safeJoin(DATA_DIR, "analytics-events.ndjson")
 
 async function safeUnlink(p: string) {
   try { await fs.unlink(p); } catch {}

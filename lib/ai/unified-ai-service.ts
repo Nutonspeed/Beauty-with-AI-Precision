@@ -51,17 +51,7 @@ export function getAvailableProviders(): AIProvider[] {
     {
       name: 'google',
       available: !!process.env.GEMINI_API_KEY && !process.env.GEMINI_API_KEY.includes('your-'),
-      priority: 1  // Gemini as primary
-    },
-    {
-      name: 'openai',
-      available: !!process.env.OPENAI_API_KEY && !process.env.OPENAI_API_KEY.includes('your-') && !process.env.OPENAI_API_KEY.includes('dummy'),
-      priority: 2  // OpenAI as fallback (user has no credits)
-    },
-    {
-      name: 'anthropic',
-      available: !!process.env.ANTHROPIC_API_KEY && !process.env.ANTHROPIC_API_KEY.includes('your-'),
-      priority: 3
+      priority: 1  // Gemini as primary (free tier)
     },
     {
       name: 'demo',
@@ -147,17 +137,11 @@ async function analyzeWithProvider(
     let responseText: string
 
     switch (providerName) {
-      case 'openai':
-        responseText = await callOpenAI(imageBase64, prompt)
-        break
-      case 'anthropic':
-        responseText = await callAnthropic(imageBase64, prompt)
-        break
       case 'google':
         responseText = await callGemini(imageBase64, prompt)
         break
       default:
-        throw new Error(`Unknown provider: ${providerName}`)
+        throw new Error(`Unknown or disabled provider: ${providerName}`)
     }
 
     // Parse JSON response

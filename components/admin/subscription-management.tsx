@@ -37,7 +37,6 @@ import {
   Edit,
   Clock,
   CheckCircle2,
-  XCircle,
   Search,
   Filter,
 } from 'lucide-react';
@@ -93,7 +92,7 @@ export default function SubscriptionManagement() {
       if (!response.ok) throw new Error('Failed to fetch');
       const data = await response.json();
       setSubscriptions(data.subscriptions || []);
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to load subscriptions',
@@ -158,7 +157,7 @@ export default function SubscriptionManagement() {
 
       setEditModalOpen(false);
       fetchSubscriptions();
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to update subscription',

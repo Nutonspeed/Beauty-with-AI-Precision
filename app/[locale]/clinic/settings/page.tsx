@@ -11,6 +11,13 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { 
   Building2, 
   Clock, 
@@ -56,6 +63,9 @@ export default function ClinicSettingsPage() {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [promptPayId, setPromptPayId] = useState('');
+  const [promptPayType, setPromptPayType] = useState<'mobile' | 'citizen_id'>('mobile');
+  const [isPromptPaySaving, setIsPromptPaySaving] = useState(false);
   const [kpiTargetsText, setKpiTargetsText] = useState('');
   const [isKpiLoading, setIsKpiLoading] = useState(true);
   const [isKpiSaving, setIsKpiSaving] = useState(false);
@@ -131,6 +141,20 @@ export default function ClinicSettingsPage() {
       }
     };
 
+    const loadPromptPay = async () => {
+      try {
+        const res = await fetch('/api/clinic/settings/promptpay', { method: 'GET' });
+        if (!res.ok) {
+          return;
+        }
+        const data = await res.json().catch(() => ({}));
+        setPromptPayId(typeof data.promptpay_id === 'string' ? data.promptpay_id : '');
+        setPromptPayType(data.promptpay_type === 'citizen_id' ? 'citizen_id' : 'mobile');
+      } catch {
+        // ignore
+      }
+    };
+
     const loadKpiTargets = async () => {
       try {
         const res = await fetch('/api/clinic/kpi-targets', { method: 'GET' });
@@ -151,7 +175,40 @@ export default function ClinicSettingsPage() {
 
     loadSettings();
     loadKpiTargets();
+    loadPromptPay();
   }, [user, authLoading, router, lp, toast]);
+
+  const handleSavePromptPay = async () => {
+    setIsPromptPaySaving(true);
+    try {
+      const res = await fetch('/api/clinic/settings/promptpay', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          promptpay_id: promptPayId,
+          promptpay_type: promptPayType,
+        }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data?.error || `Failed to save (${res.status})`);
+      }
+
+      toast({
+        title: 'บันทึกสำเร็จ',
+        description: 'ตั้งค่า PromptPay ได้รับการบันทึกแล้ว',
+      });
+    } catch (error: any) {
+      toast({
+        title: 'เกิดข้อผิดพลาด',
+        description: error?.message || 'ไม่สามารถบันทึก PromptPay ได้',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsPromptPaySaving(false);
+    }
+  };
 
   const parseTargets = () => {
     try {
@@ -479,6 +536,57 @@ export default function ClinicSettingsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
+              <div className="rounded-lg border border-border/60 p-4">
+                <div className="mb-3">
+                  <div className="font-medium">PromptPay (พร้อมเพย์)</div>
+                  <div className="text-sm text-muted-foreground">
+                    ใช้สำหรับสร้าง QR ให้ลูกค้าสแกนชำระเงิน
+                  </div>
+                </div>
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="promptpay_id">PromptPay ID</Label>
+                    <Input
+                      id="promptpay_id"
+                      value={promptPayId}
+                      onChange={(e) => setPromptPayId(e.target.value)}
+                      placeholder="เบอร์มือถือ 10 หลัก หรือเลขบัตร 13 หลัก"
+                    />
+                    <div className="text-xs text-muted-foreground">ใส่เฉพาะตัวเลขได้ (ระบบจะ normalize ให้)</div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>ประเภท</Label>
+                    <Select value={promptPayType} onValueChange={(v: 'mobile' | 'citizen_id') => setPromptPayType(v)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="เลือกประเภท" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="mobile">เบอร์มือถือ</SelectItem>
+                        <SelectItem value="citizen_id">เลขบัตรประชาชน</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="mt-4 flex justify-end">
+                  <Button onClick={handleSavePromptPay} disabled={isPromptPaySaving}>
+                    {isPromptPaySaving ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        กำลังบันทึก...
+                      </>
+                    ) : (
+                      <>
+                        <Save className="mr-2 h-4 w-4" />
+                        บันทึก PromptPay
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <Label>ต้องการเงินมัดจำ</Label>
