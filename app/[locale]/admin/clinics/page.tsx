@@ -5,18 +5,15 @@ import { motion } from 'framer-motion'
 import { 
   Building, 
   Search, 
-  Filter, 
   Mail, 
   Phone, 
   MapPin,
-  Calendar,
   DollarSign,
   Users,
   Shield,
   MoreHorizontal,
   Edit,
   Eye,
-  ChevronDown
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'

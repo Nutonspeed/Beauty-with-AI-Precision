@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth/context"
 import { getDefaultLandingPage } from "@/lib/auth/role-config"
 import { normalizeRole } from "@/lib/auth/role-normalize"
+import { useLocalizePath } from "@/lib/i18n/locale-link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -25,6 +26,7 @@ export default function LoginPage() {
   
   const { signIn, user } = useAuth()
   const router = useRouter()
+  const lp = useLocalizePath()
 
   // Auto-redirect if already logged in (use canonical normalization + default landing)
   useEffect(() => {
@@ -32,13 +34,13 @@ export default function LoginPage() {
       try {
         const normalized = normalizeRole(user.role as any)
         const redirectPath = getDefaultLandingPage(normalized as any)
-        globalThis.location.href = redirectPath
+        globalThis.location.href = lp(redirectPath)
       } catch (e) {
         console.warn('[LoginPage] Failed to resolve landing page, fallback to /dashboard', e)
-        globalThis.location.href = '/dashboard'
+        globalThis.location.href = lp('/dashboard')
       }
     }
-  }, [user])
+  }, [user, lp])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -90,7 +92,7 @@ export default function LoginPage() {
       console.log('[LoginPage] 🚀 Redirecting to:', redirectPath)
       
       // Use router.push for faster redirect
-      router.push(redirectPath)
+      router.push(lp(redirectPath))
     } catch (err) {
       setError('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง')
       console.error('[LoginPage] ❌ Unexpected error:', err)
@@ -160,7 +162,7 @@ export default function LoginPage() {
       <div className="flex-1 flex items-center justify-center p-6 sm:p-12 bg-gradient-to-br from-background to-muted/30">
         {/* Back to Home Button - Top Left */}
         <Link 
-          href="/"
+          href={lp("/")}
           className="fixed top-4 left-4 z-10 inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-accent lg:text-white lg:hover:bg-white/20"
         >
           <ArrowLeft className="w-4 h-4" />
@@ -230,7 +232,7 @@ export default function LoginPage() {
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">รหัสผ่าน</Label>
                 <Link 
-                  href="/auth/forgot-password" 
+                  href={lp("/auth/forgot-password")} 
                   className="text-sm text-primary hover:underline"
                 >
                   ลืมรหัสผ่าน?

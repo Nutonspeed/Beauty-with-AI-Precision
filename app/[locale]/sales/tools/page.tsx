@@ -22,6 +22,7 @@ import {
   Users
 } from 'lucide-react';
 import Link from 'next/link';
+import { useLocalizePath } from '@/lib/i18n/locale-link';
 
 // Import new AI components
 import { AISmartRecommendations } from '@/components/sales/ai-smart-recommendations';
@@ -54,6 +55,7 @@ const SAMPLE_PROFILE = {
 
 export default function SalesToolsPage() {
   const [activeTab, setActiveTab] = useState('recommendations');
+  const lp = useLocalizePath();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
@@ -62,7 +64,7 @@ export default function SalesToolsPage() {
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Link href="/sales/dashboard">
+              <Link href={lp('/sales/dashboard')}>
                 <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
                   <ArrowLeft className="w-5 h-5" />
                 </Button>

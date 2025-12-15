@@ -1,3 +1,5 @@
+ import { redirect } from "next/navigation"
+ import { defaultLocale } from "@/i18n/request"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { createServerClient } from "@/lib/supabase/server"
@@ -67,6 +69,7 @@ async function getLeadsStats() {
 }
 
 export default async function LeadsPage() {
+  redirect(`/${defaultLocale}/sales/leads`)
   // Require sales or admin role
   await requireRole(['sales_staff', 'super_admin'])
   

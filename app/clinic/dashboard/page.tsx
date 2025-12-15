@@ -21,7 +21,7 @@ export default async function ClinicDashboardPage() {
   
   try {
     // ✅ Allow clinic_owner and clinic_staff
-    const { user, clinicId } = await checkUserRole(["clinic_owner", "clinic_staff", "admin"])
+    const { user, clinicId } = await checkUserRole(["clinic_owner", "clinic_staff", "clinic_admin", "super_admin"])
 
     if (!user || !clinicId) {
       console.log('[ClinicDashboard] ❌ No user/clinic, redirecting to login')

@@ -52,6 +52,8 @@ interface BookingPayment {
   notes: string | null
 }
 
+const EMPTY_APPOINTMENTS: AppointmentSlot[] = []
+
 export default function ClinicAppointmentsPage() {
   const router = useRouter()
   const lp = useLocalizePath()
@@ -233,35 +235,7 @@ export default function ClinicAppointmentsPage() {
     }
   }
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 md:p-6">
-        <div className="max-w-6xl mx-auto space-y-4">
-          <div className="flex justify-between items-center">
-            <div className="space-y-2">
-              <ShimmerSkeleton className="h-8 w-48" />
-              <ShimmerSkeleton className="h-4 w-32" />
-            </div>
-            <ShimmerSkeleton className="h-10 w-32 rounded-lg" />
-          </div>
-          <ShimmerSkeleton className="h-64 rounded-xl" />
-        </div>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center p-6">
-        <div className="text-center space-y-4">
-          <p className="text-red-600 text-sm md:text-base">{error}</p>
-          <Button onClick={() => router.refresh()}>ลองใหม่อีกครั้ง</Button>
-        </div>
-      </div>
-    )
-  }
-
-  const appointments = data?.appointments || []
+  const appointments = data?.appointments ?? EMPTY_APPOINTMENTS
 
   const filteredAppointments = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -289,6 +263,34 @@ export default function ClinicAppointmentsPage() {
     const exists = filteredAppointments.some((a) => a.id === highlightAppointmentId)
     return exists ? highlightAppointmentId : null
   }, [filteredAppointments, highlightAppointmentId])
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 md:p-6">
+        <div className="max-w-6xl mx-auto space-y-4">
+          <div className="flex justify-between items-center">
+            <div className="space-y-2">
+              <ShimmerSkeleton className="h-8 w-48" />
+              <ShimmerSkeleton className="h-4 w-32" />
+            </div>
+            <ShimmerSkeleton className="h-10 w-32 rounded-lg" />
+          </div>
+          <ShimmerSkeleton className="h-64 rounded-xl" />
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center p-6">
+        <div className="text-center space-y-4">
+          <p className="text-red-600 text-sm md:text-base">{error}</p>
+          <Button onClick={() => router.refresh()}>ลองใหม่อีกครั้ง</Button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 md:p-6">

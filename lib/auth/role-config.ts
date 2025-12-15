@@ -3,6 +3,8 @@
  * Defines which roles can access which routes
  */
 
+import { normalizeRole } from '@/lib/auth/role-normalize';
+
 export type UserRole = 
   | 'public'
   | 'guest'
@@ -240,7 +242,7 @@ export function getDefaultLandingPage(userRole: UserRole): string {
     case 'super_admin':
       return '/super-admin';
     case 'clinic_admin':
-      return '/admin-dashboard';
+      return '/admin';
     case 'clinic_owner':
       return '/clinic/dashboard';
     case 'sales_staff':
@@ -257,4 +259,11 @@ export function getDefaultLandingPage(userRole: UserRole): string {
     default:
       return '/';
   }
+}
+
+export const SALES_ALLOWED_ROLES: UserRole[] = ['sales_staff', 'clinic_owner', 'clinic_admin', 'super_admin'];
+
+export function canAccessSales(role: string | null | undefined): boolean {
+  const canonical = normalizeRole(role);
+  return SALES_ALLOWED_ROLES.includes(canonical as unknown as UserRole);
 }

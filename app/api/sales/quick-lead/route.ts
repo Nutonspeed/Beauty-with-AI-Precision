@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createServerClient, createServiceClient } from "@/lib/supabase/server"
+import { canAccessSales } from "@/lib/auth/role-config"
 
 /**
  * POST /api/sales/quick-lead
@@ -28,7 +29,7 @@ export async function POST(request: NextRequest) {
       .select('role, clinic_id')
       .eq('id', user.id)
       .single()
-    if (userErr || !userRow || !['sales_staff', 'admin'].includes(userRow.role)) {
+    if (userErr || !userRow || !canAccessSales(userRow.role)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 

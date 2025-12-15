@@ -17,7 +17,6 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -137,7 +136,7 @@ export default function LeadDetailPage() {
           return
         }
         const roleData = await roleRes.json()
-        if (!['sales_staff', 'admin', 'super_admin'].includes(roleData.role)) {
+        if (!['sales_staff', 'clinic_admin', 'clinic_owner', 'super_admin'].includes(roleData.role)) {
           router.push(lp('/unauthorized'))
           return
         }

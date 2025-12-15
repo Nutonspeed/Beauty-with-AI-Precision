@@ -24,6 +24,7 @@ import {
 import Link from "next/link"
 import { formatDistanceToNow } from "date-fns"
 import { th } from "date-fns/locale"
+import { useLocalizePath } from "@/lib/i18n/locale-link"
 
 interface PresentationRecord {
   customerId: string
@@ -50,6 +51,7 @@ const STEP_NAMES = [
 ]
 
 export default function PresentationsPage() {
+  const lp = useLocalizePath()
   const [presentations, setPresentations] = useState<PresentationRecord[]>([])
   const [searchQuery, setSearchQuery] = useState("")
   const [filterStatus, setFilterStatus] = useState<string>("all")
@@ -199,7 +201,7 @@ export default function PresentationsPage() {
         <div className="border-b bg-background">
           <div className="container py-6">
             <div className="flex items-center gap-4 mb-4">
-              <Link href="/sales/dashboard">
+              <Link href={lp('/sales/dashboard')}>
                 <Button variant="ghost" size="sm">
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Dashboard

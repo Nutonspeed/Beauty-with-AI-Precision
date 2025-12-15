@@ -22,7 +22,7 @@ export async function POST(
       .select("role, clinic_id")
       .eq("id", user.id)
       .single()
-    if (userErr || !userRow || !["sales_staff", "admin"].includes(userRow.role)) {
+    if (userErr || !userRow || !["sales_staff", "clinic_admin", "clinic_owner", "super_admin", "admin"].includes(userRow.role)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 

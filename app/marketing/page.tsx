@@ -6,7 +6,7 @@ import { CampaignManager } from "@/components/marketing/campaign-manager"
 import { checkUserRole } from "@/lib/auth/check-role"
 
 export default async function MarketingPage() {
-  await checkUserRole(["admin", "sales_staff"])
+  await checkUserRole(["super_admin", "sales_staff"])
 
   return (
     <div className="container mx-auto p-6 space-y-6">

@@ -22,6 +22,7 @@ import {
   Scan
 } from 'lucide-react';
 import Link from 'next/link';
+import { useLocalizePath } from '@/lib/i18n/locale-link';
 
 // Import Simulators
 import { FillerLipSimulator } from '@/components/sales/filler-lip-simulator';
@@ -73,6 +74,7 @@ const TOOLS = [
 ];
 
 export default function ARToolsPage() {
+  const lp = useLocalizePath();
   const [selectedTool, setSelectedTool] = useState<string>('filler');
   const [customerImage, setCustomerImage] = useState<string>('');
   const [showUpload, setShowUpload] = useState(true);
@@ -113,7 +115,7 @@ export default function ARToolsPage() {
         <div className="max-w-7xl mx-auto px-3 md:px-4 py-3 md:py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 md:gap-4">
-              <Link href="/sales/dashboard">
+              <Link href={lp('/sales/dashboard')}>
                 <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 h-9 w-9 md:h-10 md:w-10">
                   <ArrowLeft className="w-4 h-4 md:w-5 md:h-5" />
                 </Button>

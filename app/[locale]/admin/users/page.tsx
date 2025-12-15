@@ -5,16 +5,13 @@ import { motion } from 'framer-motion'
 import { 
   Users, 
   Search, 
-  Filter, 
   Shield, 
   Mail, 
   Phone, 
-  Calendar,
   Building,
   MoreHorizontal,
   Edit,
   Trash2,
-  ChevronDown
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'

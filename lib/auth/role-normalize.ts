@@ -24,6 +24,8 @@ const LEGACY_MAP: Record<string, CanonicalRole> = {
   customer_premium: 'customer_premium',
   customer_clinical: 'customer_clinical',
   customer: 'customer',
+  admin: 'super_admin',
+  manager: 'clinic_admin',
   clinic_staff: 'clinic_staff',
   clinic_owner: 'clinic_owner',
   clinic_admin: 'clinic_admin',

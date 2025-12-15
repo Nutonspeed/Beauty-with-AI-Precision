@@ -1,7 +1,8 @@
-import { createServerClient } from "@/lib/supabase/server"
+import { createServerClient, createServiceClient } from "@/lib/supabase/server"
+import { normalizeRole, type CanonicalRole } from "@/lib/auth/role-normalize"
 import { redirect } from "next/navigation"
 
-export type UserRole = "admin" | "clinic_owner" | "clinic_staff" | "sales_staff" | "customer"
+export type UserRole = CanonicalRole
 
 export async function checkUserRole(allowedRoles: UserRole[]) {
   const supabase = await createServerClient()
@@ -14,32 +15,25 @@ export async function checkUserRole(allowedRoles: UserRole[]) {
   }
 
   // Use /api/user-profile to avoid RLS infinite recursion
-  const defaultBaseUrl = process.env.NEXT_PUBLIC_TEST_MODE === 'true' ? 'http://localhost:3004' : 'http://localhost:3000'
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || defaultBaseUrl
-  const response = await fetch(`${baseUrl}/api/user-profile?userId=${session.user.id}`, {
-    headers: {
-      Authorization: `Bearer ${session.access_token}`,
-    },
-  })
+  const serviceClient = createServiceClient()
+  const { data: userData, error: userError } = await serviceClient
+    .from("users")
+    .select("role, clinic_id")
+    .eq("id", session.user.id)
+    .single()
 
-  if (!response.ok) {
-    console.error('[checkUserRole] Failed to fetch user profile:', response.status)
+  if (userError || !userData) {
+    console.error('[checkUserRole] Failed to fetch user record:', userError)
     redirect("/auth/login")
   }
 
-  const { data: userData } = await response.json()
-
-  if (!userData) {
-    redirect("/auth/login")
-  }
-
-  const userRole = userData.role as UserRole
+  const userRole = normalizeRole(userData.role) as UserRole
 
   if (!allowedRoles.includes(userRole)) {
     // Redirect to appropriate dashboard based on role
-    if (userRole === "admin") {
+    if (userRole === "super_admin") {
       redirect("/admin")
-    } else if (userRole === "clinic_owner" || userRole === "clinic_staff") {
+    } else if (userRole === "clinic_owner" || userRole === "clinic_admin" || userRole === "clinic_staff") {
       redirect("/clinic/dashboard")
     } else if (userRole === "sales_staff") {
       redirect("/sales/dashboard")

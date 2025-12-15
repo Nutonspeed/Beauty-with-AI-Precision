@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createServerClient, createServiceClient } from "@/lib/supabase/server"
+import { canAccessSales } from "@/lib/auth/role-config"
 
 export const dynamic = "force-dynamic"
 
@@ -63,7 +64,7 @@ export async function GET(_request: NextRequest) {
       .select('role, clinic_id')
       .eq('id', user.id)
       .single()
-    if (userErr || !userRow || !['sales_staff', 'admin'].includes(userRow.role)) {
+    if (userErr || !userRow || !canAccessSales(userRow.role)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 

@@ -9,6 +9,7 @@ import { Progress } from "@/components/ui/progress"
 import { ArrowLeft, Sparkles, FileText } from "lucide-react"
 import Link from "next/link"
 import { useToast } from "@/hooks/use-toast"
+ import { useLocalizePath } from "@/lib/i18n/locale-link"
 
 interface Lead {
   id: string
@@ -40,11 +41,19 @@ export default function LeadDetailPage() {
   const params = useParams<{ id: string }>()
   const router = useRouter()
   const { toast } = useToast()
+  const lp = useLocalizePath()
   const [lead, setLead] = useState<Lead | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isCreatingProposal, setIsCreatingProposal] = useState(false)
 
   useEffect(() => {
+    if (!params.id) return
+    const target = lp(`/sales/leads/${params.id}`)
+    if (typeof window !== "undefined" && window.location.pathname !== target) {
+      router.replace(target)
+      return
+    }
+
     const fetchLead = async () => {
       try {
         const res = await fetch(`/api/sales/leads/${params.id}`)
@@ -68,7 +77,7 @@ export default function LeadDetailPage() {
     if (params.id) {
       fetchLead()
     }
-  }, [params.id, toast])
+  }, [params.id, toast, router, lp])
 
   const handleCreateProposal = async () => {
     if (!lead) return

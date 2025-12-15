@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { ShimmerSkeleton } from '@/components/ui/modern-loader'
 import Link from 'next/link'
+import { useLocalizePath } from '@/lib/i18n/locale-link'
 
 interface MetricBlock {
   today: number
@@ -70,6 +71,7 @@ interface SalesFunnelResponse {
 
 export default function SalesDashboard() {
   const router = useRouter()
+  const lp = useLocalizePath()
   const [isLoading, setIsLoading] = useState(true)
   const [isCheckingRole, setIsCheckingRole] = useState(true)
   const [error, setError] = useState('')
@@ -86,12 +88,12 @@ export default function SalesDashboard() {
         // Role/auth guard via API
         const roleRes = await fetch('/api/auth/check-role', { headers: { Accept: 'application/json' } })
         if (!roleRes.ok) {
-          router.push('/auth/login')
+          router.push(lp('/auth/login'))
           return
         }
         const roleData = await roleRes.json()
-        if (!['sales_staff', 'admin'].includes(roleData.role)) {
-          router.push('/auth/login')
+        if (!['sales_staff', 'clinic_admin', 'clinic_owner', 'super_admin'].includes(roleData.role)) {
+          router.push(lp('/unauthorized'))
           return
         }
         if (cancelled) return
@@ -210,7 +212,7 @@ export default function SalesDashboard() {
             <h1 className="text-3xl font-bold text-gray-900">Sales Dashboard</h1>
             <p className="text-gray-600 mt-1">Track your sales performance</p>
           </div>
-          <Link href="/sales/quick-scan" className="w-full sm:w-auto">
+          <Link href={lp('/sales/quick-scan')} className="w-full sm:w-auto">
             <Button 
               size="lg"
               className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
@@ -324,7 +326,7 @@ export default function SalesDashboard() {
                   Conversion: {(metrics?.remoteConsultConversion.today ?? 0).toFixed(1)}% ของคำขอที่ปิดเป็นลูกค้า
                 </p>
               </div>
-              <Link href="/sales/remote-consults">
+              <Link href={lp('/sales/leads')}>
                 <Button variant="outline" size="sm" className="text-xs">
                   ดูคิว Remote
                 </Button>
@@ -343,7 +345,7 @@ export default function SalesDashboard() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <Link href="/sales/quick-scan">
+              <Link href={lp('/sales/quick-scan')}>
                 <motion.div 
                   whileHover={{ scale: 1.02 }}
                   className="p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer border border-purple-100"
@@ -376,7 +378,7 @@ export default function SalesDashboard() {
                 </motion.div>
               </Link>
               
-              <Link href="/sales/presentations">
+              <Link href={lp('/sales/presentations')}>
                 <motion.div 
                   whileHover={{ scale: 1.02 }}
                   className="p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer border border-purple-100"
@@ -490,31 +492,31 @@ export default function SalesDashboard() {
           <CardContent>
             {/* Mobile: Horizontal scroll, Desktop: Grid */}
             <div className="flex md:grid md:grid-cols-5 gap-3 overflow-x-auto pb-2 md:pb-0 -mx-2 px-2 md:mx-0 md:px-0 snap-x snap-mandatory md:snap-none">
-              <Link href="/sales/ar-tools" className="block flex-shrink-0 w-[140px] md:w-auto snap-start">
+              <Link href={lp('/sales/ar-tools')} className="block flex-shrink-0 w-[140px] md:w-auto snap-start">
                 <div className="p-3 md:p-4 rounded-xl bg-gradient-to-br from-pink-500/10 to-rose-500/10 border border-pink-500/20 hover:border-pink-500/50 active:scale-95 transition-all text-center min-h-[100px] flex flex-col items-center justify-center">
                   <Heart className="w-7 h-7 md:w-8 md:h-8 text-pink-500 mb-2" />
                   <p className="text-xs md:text-sm font-medium text-gray-700">Filler & Lips</p>
                 </div>
               </Link>
-              <Link href="/sales/ar-tools" className="block flex-shrink-0 w-[140px] md:w-auto snap-start">
+              <Link href={lp('/sales/ar-tools')} className="block flex-shrink-0 w-[140px] md:w-auto snap-start">
                 <div className="p-3 md:p-4 rounded-xl bg-gradient-to-br from-orange-500/10 to-red-500/10 border border-orange-500/20 hover:border-orange-500/50 active:scale-95 transition-all text-center min-h-[100px] flex flex-col items-center justify-center">
                   <Flame className="w-7 h-7 md:w-8 md:h-8 text-orange-500 mb-2" />
                   <p className="text-xs md:text-sm font-medium text-gray-700">Body</p>
                 </div>
               </Link>
-              <Link href="/sales/ar-tools" className="block flex-shrink-0 w-[140px] md:w-auto snap-start">
+              <Link href={lp('/sales/ar-tools')} className="block flex-shrink-0 w-[140px] md:w-auto snap-start">
                 <div className="p-3 md:p-4 rounded-xl bg-gradient-to-br from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 hover:border-emerald-500/50 active:scale-95 transition-all text-center min-h-[100px] flex flex-col items-center justify-center">
                   <Scissors className="w-7 h-7 md:w-8 md:h-8 text-emerald-500 mb-2" />
                   <p className="text-xs md:text-sm font-medium text-gray-700">Hair</p>
                 </div>
               </Link>
-              <Link href="/sales/ar-tools" className="block flex-shrink-0 w-[140px] md:w-auto snap-start">
+              <Link href={lp('/sales/ar-tools')} className="block flex-shrink-0 w-[140px] md:w-auto snap-start">
                 <div className="p-3 md:p-4 rounded-xl bg-gradient-to-br from-blue-500/10 to-indigo-500/10 border border-blue-500/20 hover:border-blue-500/50 active:scale-95 transition-all text-center min-h-[100px] flex flex-col items-center justify-center">
                   <Eye className="w-7 h-7 md:w-8 md:h-8 text-blue-500 mb-2" />
                   <p className="text-xs md:text-sm font-medium text-gray-700">Eye</p>
                 </div>
               </Link>
-              <Link href="/sales/ar-tools" className="block flex-shrink-0 w-[140px] md:w-auto snap-start">
+              <Link href={lp('/sales/ar-tools')} className="block flex-shrink-0 w-[140px] md:w-auto snap-start">
                 <div className="p-3 md:p-4 rounded-xl bg-gradient-to-br from-purple-500/10 to-violet-500/10 border border-purple-500/20 hover:border-purple-500/50 active:scale-95 transition-all text-center min-h-[100px] flex flex-col items-center justify-center">
                   <Sparkles className="w-7 h-7 md:w-8 md:h-8 text-purple-500 mb-2" />
                   <p className="text-xs md:text-sm font-medium text-gray-700">All Tools</p>
@@ -535,28 +537,28 @@ export default function SalesDashboard() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <Link href="/sales/tools" className="block">
+              <Link href={lp('/sales/tools')} className="block">
                 <div className="p-4 rounded-xl bg-white border border-purple-200 hover:border-purple-400 hover:shadow-md transition-all text-center">
                   <Sparkles className="w-8 h-8 text-purple-600 mx-auto mb-2" />
                   <p className="text-sm font-medium text-gray-800">AI Recommendations</p>
                   <p className="text-xs text-gray-500 mt-1">แนะนำ treatment</p>
                 </div>
               </Link>
-              <Link href="/sales/tools" className="block">
+              <Link href={lp('/sales/tools')} className="block">
                 <div className="p-4 rounded-xl bg-white border border-green-200 hover:border-green-400 hover:shadow-md transition-all text-center">
                   <Calculator className="w-8 h-8 text-green-600 mx-auto mb-2" />
                   <p className="text-sm font-medium text-gray-800">Quick Quote</p>
                   <p className="text-xs text-gray-500 mt-1">ใบเสนอราคา</p>
                 </div>
               </Link>
-              <Link href="/sales/tools" className="block">
+              <Link href={lp('/sales/tools')} className="block">
                 <div className="p-4 rounded-xl bg-white border border-blue-200 hover:border-blue-400 hover:shadow-md transition-all text-center">
                   <Target className="w-8 h-8 text-blue-600 mx-auto mb-2" />
                   <p className="text-sm font-medium text-gray-800">Conversion AI</p>
                   <p className="text-xs text-gray-500 mt-1">วิเคราะห์โอกาส</p>
                 </div>
               </Link>
-              <Link href="/sales/tools" className="block">
+              <Link href={lp('/sales/tools')} className="block">
                 <div className="p-4 rounded-xl bg-white border border-emerald-200 hover:border-emerald-400 hover:shadow-md transition-all text-center">
                   <MessageSquare className="w-8 h-8 text-emerald-600 mx-auto mb-2" />
                   <p className="text-sm font-medium text-gray-800">Quick Message</p>
@@ -569,7 +571,7 @@ export default function SalesDashboard() {
 
         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Link href="/sales/quick-scan" className="block">
+          <Link href={lp('/sales/quick-scan')} className="block">
             <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 hover:shadow-lg transition-shadow cursor-pointer h-full">
               <CardContent className="pt-6">
                 <div className="text-center">
@@ -593,7 +595,7 @@ export default function SalesDashboard() {
             </Card>
           </Link>
 
-          <Link href="/sales/tools" className="block">
+          <Link href={lp('/sales/tools')} className="block">
             <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 hover:shadow-lg transition-shadow cursor-pointer h-full">
               <CardContent className="pt-6">
                 <div className="text-center">

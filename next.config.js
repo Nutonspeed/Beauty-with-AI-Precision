@@ -84,6 +84,14 @@ const nextConfig = {
       },
     ];
   },
+
+  async redirects() {
+    return [
+      { source: '/leads', destination: '/th/sales/leads', permanent: true },
+      { source: '/sales/leads', destination: '/th/sales/leads', permanent: true },
+      { source: '/sales/leads/:id', destination: '/th/sales/leads/:id', permanent: true },
+    ];
+  },
 };
 
 // Enable next-intl for i18n support

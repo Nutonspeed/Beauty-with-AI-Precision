@@ -19,7 +19,15 @@ export function localizePath(path: string, locale: Locale = defaultLocale): stri
 }
 
 export function useLocalizePath() {
-  const [locale, setLocale] = useState<Locale>(defaultLocale);
+  const [locale, setLocale] = useState<Locale>(() => {
+    if (typeof window !== 'undefined') {
+      const pathLocale = window.location.pathname.split('/')[1] as Locale;
+      if ((locales as readonly string[]).includes(pathLocale)) {
+        return pathLocale;
+      }
+    }
+    return defaultLocale;
+  });
   
   useEffect(() => {
     // Get locale from URL path on client side
