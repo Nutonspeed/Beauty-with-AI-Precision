@@ -1,6 +1,6 @@
 {
   "framework": "nextjs",
-  "buildCommand": "pnpm build",
+  "buildCommand": "pnpm build:fast",
   "installCommand": "pnpm install",
   "outputDirectory": ".next",
   "functions": {
