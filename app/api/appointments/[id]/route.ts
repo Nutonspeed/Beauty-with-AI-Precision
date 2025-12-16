@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 import { withClinicAuth } from "@/lib/auth/middleware"
+import { getSubscriptionStatus } from "@/lib/subscriptions/check-subscription"
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -48,6 +49,40 @@ export const PATCH = withClinicAuth(async (req: NextRequest, user: any) => {
   try {
     const id = req.nextUrl.pathname.split('/').pop() || ''
     const body = await req.json()
+
+    const { data: existing, error: existingError } = await supabaseAdmin
+      .from('appointment_slots')
+      .select('id, clinic_id')
+      .eq('id', id)
+      .single()
+
+    if (existingError || !existing) {
+      return NextResponse.json({ error: 'Appointment not found' }, { status: 404 })
+    }
+
+    const isGlobalAdmin = ["super_admin", "admin"].includes(user.role)
+    if (!isGlobalAdmin && existing.clinic_id !== user.clinic_id) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
+
+    if (!isGlobalAdmin) {
+      const subStatus = await getSubscriptionStatus(existing.clinic_id)
+      if (!subStatus.isActive || subStatus.isTrialExpired) {
+        const statusCode = subStatus.subscriptionStatus === 'past_due' || subStatus.isTrialExpired ? 402 : 403
+        return NextResponse.json(
+          {
+            error: subStatus.message,
+            subscription: {
+              status: subStatus.subscriptionStatus,
+              plan: subStatus.plan,
+              isTrial: subStatus.isTrial,
+              isTrialExpired: subStatus.isTrialExpired,
+            },
+          },
+          { status: statusCode },
+        )
+      }
+    }
 
     const {
       status,
@@ -116,6 +151,40 @@ export const PATCH = withClinicAuth(async (req: NextRequest, user: any) => {
 export const DELETE = withClinicAuth(async (req: NextRequest, user: any) => {
   try {
     const id = req.nextUrl.pathname.split('/').pop() || ''
+
+    const { data: existing, error: existingError } = await supabaseAdmin
+      .from('appointment_slots')
+      .select('id, clinic_id')
+      .eq('id', id)
+      .single()
+
+    if (existingError || !existing) {
+      return NextResponse.json({ error: 'Appointment not found' }, { status: 404 })
+    }
+
+    const isGlobalAdmin = ["super_admin", "admin"].includes(user.role)
+    if (!isGlobalAdmin && existing.clinic_id !== user.clinic_id) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
+
+    if (!isGlobalAdmin) {
+      const subStatus = await getSubscriptionStatus(existing.clinic_id)
+      if (!subStatus.isActive || subStatus.isTrialExpired) {
+        const statusCode = subStatus.subscriptionStatus === 'past_due' || subStatus.isTrialExpired ? 402 : 403
+        return NextResponse.json(
+          {
+            error: subStatus.message,
+            subscription: {
+              status: subStatus.subscriptionStatus,
+              plan: subStatus.plan,
+              isTrial: subStatus.isTrial,
+              isTrialExpired: subStatus.isTrialExpired,
+            },
+          },
+          { status: statusCode },
+        )
+      }
+    }
 
     const { error } = await supabaseAdmin
       .from('appointment_slots')

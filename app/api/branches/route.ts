@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { withClinicAuth } from '@/lib/auth/middleware';
+import { getSubscriptionStatus } from '@/lib/subscriptions/check-subscription';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -28,6 +29,11 @@ export const GET = withClinicAuth(async (request: NextRequest, user) => {
         { error: 'clinic_id is required' },
         { status: 400 }
       );
+    }
+
+    const isGlobalAdmin = ['super_admin', 'admin'].includes(user.role);
+    if (!isGlobalAdmin && clinic_id !== user.clinic_id) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     let query = supabase
@@ -118,6 +124,30 @@ export const POST = withClinicAuth(async (request: NextRequest, user) => {
         { error: 'clinic_id, branch_code, branch_name, address, city, and province are required' },
         { status: 400 }
       );
+    }
+
+    const isGlobalAdmin = ['super_admin', 'admin'].includes(user.role);
+    if (!isGlobalAdmin && clinic_id !== user.clinic_id) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    if (!isGlobalAdmin) {
+      const subStatus = await getSubscriptionStatus(clinic_id)
+      if (!subStatus.isActive || subStatus.isTrialExpired) {
+        const statusCode = subStatus.subscriptionStatus === 'past_due' || subStatus.isTrialExpired ? 402 : 403
+        return NextResponse.json(
+          {
+            error: subStatus.message,
+            subscription: {
+              status: subStatus.subscriptionStatus,
+              plan: subStatus.plan,
+              isTrial: subStatus.isTrial,
+              isTrialExpired: subStatus.isTrialExpired,
+            },
+          },
+          { status: statusCode },
+        );
+      }
     }
 
     const { data, error } = await supabase

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createServiceClient } from "@/lib/supabase/server"
 import { withAuth } from "@/lib/auth/middleware"
+import { getSubscriptionStatus } from "@/lib/subscriptions/check-subscription"
 
 export const dynamic = "force-dynamic"
 
@@ -43,6 +44,25 @@ export const POST = withAuth(
 
       if (existing.payment_status === "paid") {
         return NextResponse.json({ success: true, payment: existing })
+      }
+
+      if (!["super_admin", "admin"].includes(user.role)) {
+        const subStatus = await getSubscriptionStatus(existing.clinic_id)
+        if (!subStatus.isActive || subStatus.isTrialExpired) {
+          const statusCode = subStatus.subscriptionStatus === 'past_due' || subStatus.isTrialExpired ? 402 : 403
+          return NextResponse.json(
+            {
+              error: subStatus.message,
+              subscription: {
+                status: subStatus.subscriptionStatus,
+                plan: subStatus.plan,
+                isTrial: subStatus.isTrial,
+                isTrialExpired: subStatus.isTrialExpired,
+              },
+            },
+            { status: statusCode },
+          )
+        }
       }
 
       const nowIso = new Date().toISOString()

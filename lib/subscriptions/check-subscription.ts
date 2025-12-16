@@ -11,10 +11,13 @@ import {
   isClinicWithinLimits,
 } from './plans'
 
+export type SubscriptionLifecycleStatus = 'trial' | 'active' | 'past_due' | 'suspended' | 'cancelled'
+
 export interface SubscriptionStatus {
   isActive: boolean
   isTrial: boolean
   isTrialExpired: boolean
+  subscriptionStatus: SubscriptionLifecycleStatus
   plan: ClinicSubscriptionPlan
   planDetails: typeof CLINIC_SUBSCRIPTION_PLANS[ClinicSubscriptionPlan]
   daysRemaining: number | null
@@ -65,6 +68,8 @@ export async function getSubscriptionStatus(clinicId: string): Promise<Subscript
     ? Math.ceil((trialEndsAt.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
     : null
 
+  const subscriptionStatus = normalizeSubscriptionStatus(clinic.subscription_status)
+
   // Check subscription end date
   const subscriptionEndsAt = clinic.subscription_ends_at ? new Date(clinic.subscription_ends_at) : null
   const daysRemaining = subscriptionEndsAt
@@ -72,9 +77,9 @@ export async function getSubscriptionStatus(clinicId: string): Promise<Subscript
     : null
 
   // Determine if subscription is active
-  const isActive = 
-    clinic.subscription_status === 'active' ||
-    (isTrial && !isTrialExpired)
+  const isActive =
+    subscriptionStatus === 'active' ||
+    (subscriptionStatus === 'trial' && isTrial && !isTrialExpired)
 
   // Get current usage (simplified - would need actual counting in production)
   const usage = await getClinicUsage(supabase, clinicId)
@@ -85,7 +90,15 @@ export async function getSubscriptionStatus(clinicId: string): Promise<Subscript
   // Generate status message
   let message = ''
   if (!isActive) {
-    message = 'Subscription is not active'
+    if (subscriptionStatus === 'past_due') {
+      message = 'Payment is past due'
+    } else if (subscriptionStatus === 'suspended') {
+      message = 'Subscription is suspended'
+    } else if (subscriptionStatus === 'cancelled') {
+      message = 'Subscription is cancelled'
+    } else {
+      message = 'Subscription is not active'
+    }
   } else if (isTrialExpired) {
     message = 'Trial period has expired'
   } else if (isTrial && trialDaysRemaining !== null) {
@@ -100,6 +113,7 @@ export async function getSubscriptionStatus(clinicId: string): Promise<Subscript
     isActive,
     isTrial,
     isTrialExpired,
+    subscriptionStatus,
     plan,
     planDetails,
     daysRemaining,
@@ -117,6 +131,16 @@ function normalizeClinicPlan(plan: string): ClinicSubscriptionPlan {
   if (p === 'premium') return 'professional'
   if (p === 'free') return 'starter'
   return 'starter'
+}
+
+function normalizeSubscriptionStatus(status: unknown): SubscriptionLifecycleStatus {
+  const s = String(status || '').trim().toLowerCase()
+  if (s === 'active') return 'active'
+  if (s === 'trial') return 'trial'
+  if (s === 'past_due') return 'past_due'
+  if (s === 'suspended') return 'suspended'
+  if (s === 'cancelled' || s === 'canceled') return 'cancelled'
+  return 'trial'
 }
 
 /**
@@ -141,6 +165,15 @@ export async function canPerformAction(
   const status = await getSubscriptionStatus(clinicId)
 
   if (!status.isActive) {
+    if (status.subscriptionStatus === 'past_due') {
+      return { allowed: false, reason: 'Payment is past due' }
+    }
+    if (status.subscriptionStatus === 'suspended') {
+      return { allowed: false, reason: 'Subscription is suspended' }
+    }
+    if (status.subscriptionStatus === 'cancelled') {
+      return { allowed: false, reason: 'Subscription is cancelled' }
+    }
     return { allowed: false, reason: 'Subscription is not active' }
   }
 
@@ -218,6 +251,7 @@ function createDefaultStatus(plan: ClinicSubscriptionPlan, message: string): Sub
     isActive: false,
     isTrial: false,
     isTrialExpired: false,
+    subscriptionStatus: 'suspended',
     plan,
     planDetails: CLINIC_SUBSCRIPTION_PLANS[plan],
     daysRemaining: null,

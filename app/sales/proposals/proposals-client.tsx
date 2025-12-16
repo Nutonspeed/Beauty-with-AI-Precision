@@ -90,6 +90,18 @@ export function ProposalsClient({ initialProposals, initialStats }: ProposalsCli
   const [internalNotes, setInternalNotes] = useState("")
   const [isBookingSubmitting, setIsBookingSubmitting] = useState(false)
 
+  type ClinicSubscriptionStatus = {
+    isActive: boolean
+    isTrial: boolean
+    isTrialExpired: boolean
+    subscriptionStatus: 'trial' | 'active' | 'past_due' | 'suspended' | 'cancelled'
+    plan: string
+    message: string
+  }
+
+  const [subscription, setSubscription] = useState<ClinicSubscriptionStatus | null>(null)
+  const [subscriptionLoading, setSubscriptionLoading] = useState(true)
+
   // Fetch leads for proposal creation
   useEffect(() => {
     const fetchLeads = async () => {
@@ -105,6 +117,28 @@ export function ProposalsClient({ initialProposals, initialStats }: ProposalsCli
     }
     fetchLeads()
   }, [])
+
+  useEffect(() => {
+    const fetchSubscription = async () => {
+      try {
+        setSubscriptionLoading(true)
+        const res = await fetch('/api/clinic/subscription-status')
+        if (!res.ok) {
+          setSubscription(null)
+          return
+        }
+        const data = await res.json()
+        setSubscription(data?.subscription || null)
+      } catch {
+        setSubscription(null)
+      } finally {
+        setSubscriptionLoading(false)
+      }
+    }
+    fetchSubscription()
+  }, [])
+
+  const canWrite = subscriptionLoading ? false : (subscription?.isActive ?? true)
 
   // Fetch clinic services for booking dropdown
   useEffect(() => {
@@ -172,11 +206,19 @@ export function ProposalsClient({ initialProposals, initialStats }: ProposalsCli
   }
 
   const handleEditProposal = (proposal: Proposal) => {
+    if (!canWrite) {
+      toast.error(subscription?.message || 'Subscription is not active')
+      return
+    }
     setEditingProposal(proposal)
     setShowProposalModal(true)
   }
 
   const handleDeleteProposal = async (proposalId: string) => {
+    if (!canWrite) {
+      toast.error(subscription?.message || 'Subscription is not active')
+      return
+    }
     if (!confirm('คุณแน่ใจหรือไม่ที่จะลบ proposal นี้? (เฉพาะ draft เท่านั้น)')) {
       return
     }
@@ -200,6 +242,10 @@ export function ProposalsClient({ initialProposals, initialStats }: ProposalsCli
   }
 
   const handleSendProposal = async (proposalId: string) => {
+    if (!canWrite) {
+      toast.error(subscription?.message || 'Subscription is not active')
+      return
+    }
     if (!confirm('ส่ง proposal นี้ให้ลูกค้า?')) {
       return
     }
@@ -222,6 +268,10 @@ export function ProposalsClient({ initialProposals, initialStats }: ProposalsCli
   }
 
   const handleAcceptProposal = async (proposalId: string) => {
+    if (!canWrite) {
+      toast.error(subscription?.message || 'Subscription is not active')
+      return
+    }
     if (!confirm('ยืนยันว่าลูกค้ายอมรับ proposal นี้?')) {
       return
     }
@@ -281,6 +331,10 @@ export function ProposalsClient({ initialProposals, initialStats }: ProposalsCli
   }
 
   const handleCreateAppointment = async () => {
+    if (!canWrite) {
+      toast.error(subscription?.message || 'Subscription is not active')
+      return
+    }
     if (!bookingProposalId) return
     if (!bookingDate || !bookingTime || !bookingServiceId) {
       toast.error("กรุณากรอกวัน/เวลา/บริการให้ครบ")
@@ -360,6 +414,10 @@ export function ProposalsClient({ initialProposals, initialStats }: ProposalsCli
   }
 
   const handleRejectProposal = async (proposalId: string) => {
+    if (!canWrite) {
+      toast.error(subscription?.message || 'Subscription is not active')
+      return
+    }
     const reason = prompt('เหตุผลที่ปฏิเสธ (ถ้ามี):')
     if (reason === null) return // User cancelled
 
@@ -435,7 +493,7 @@ export function ProposalsClient({ initialProposals, initialStats }: ProposalsCli
                 <p className="text-sm text-muted-foreground">จัดการข้อเสนอทั้งหมด</p>
               </div>
             </div>
-            <Button onClick={() => setShowProposalModal(true)}>
+            <Button onClick={() => setShowProposalModal(true)} disabled={!canWrite}>
               <Plus className="h-4 w-4 mr-2" />
               Create Proposal
             </Button>
@@ -444,6 +502,17 @@ export function ProposalsClient({ initialProposals, initialStats }: ProposalsCli
       </div>
 
       <div className="container py-8">
+        {!subscriptionLoading && subscription && !subscription.isActive ? (
+          <Card className="mb-6 border-yellow-200 bg-yellow-50">
+            <CardContent className="p-4">
+              <div className="flex flex-col gap-1">
+                <div className="text-sm font-medium text-yellow-900">Subscription จำกัดการใช้งาน</div>
+                <div className="text-sm text-yellow-800">{subscription.message}</div>
+              </div>
+            </CardContent>
+          </Card>
+        ) : null}
+
         {/* Stats Cards */}
         <div className="mb-6 grid gap-4 md:grid-cols-4 lg:grid-cols-6">
           <Card>
@@ -618,11 +687,11 @@ export function ProposalsClient({ initialProposals, initialStats }: ProposalsCli
                       <div className="flex gap-2 pt-2">
                         {proposal.status === "draft" ? (
                           <>
-                            <Button size="sm" className="flex-1" onClick={() => handleEditProposal(proposal)}>
+                            <Button size="sm" className="flex-1" onClick={() => handleEditProposal(proposal)} disabled={!canWrite}>
                               <Edit className="h-4 w-4 mr-1" />
                               Edit
                             </Button>
-                            <Button size="sm" variant="outline" className="flex-1" onClick={() => handleSendProposal(proposal.id)}>
+                            <Button size="sm" variant="outline" className="flex-1" onClick={() => handleSendProposal(proposal.id)} disabled={!canWrite}>
                               <Send className="h-4 w-4 mr-1" />
                               Send
                             </Button>
@@ -633,7 +702,7 @@ export function ProposalsClient({ initialProposals, initialStats }: ProposalsCli
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => handleDeleteProposal(proposal.id)} className="text-red-600">
+                                <DropdownMenuItem onClick={() => handleDeleteProposal(proposal.id)} className="text-red-600" disabled={!canWrite}>
                                   <Trash2 className="mr-2 h-4 w-4" />
                                   ลบ Draft
                                 </DropdownMenuItem>
@@ -642,7 +711,7 @@ export function ProposalsClient({ initialProposals, initialStats }: ProposalsCli
                           </>
                         ) : proposal.status === "sent" ? (
                           <>
-                            <Button size="sm" variant="outline" className="flex-1" onClick={() => handleEditProposal(proposal)}>
+                            <Button size="sm" variant="outline" className="flex-1" onClick={() => handleEditProposal(proposal)} disabled={!canWrite}>
                               <Eye className="h-4 w-4 mr-1" />
                               View
                             </Button>
@@ -653,11 +722,11 @@ export function ProposalsClient({ initialProposals, initialStats }: ProposalsCli
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => handleAcceptProposal(proposal.id)}>
+                                <DropdownMenuItem onClick={() => handleAcceptProposal(proposal.id)} disabled={!canWrite}>
                                   <CheckCircle className="mr-2 h-4 w-4 text-green-600" />
                                   ยอมรับ
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleRejectProposal(proposal.id)}>
+                                <DropdownMenuItem onClick={() => handleRejectProposal(proposal.id)} disabled={!canWrite}>
                                   <XCircle className="mr-2 h-4 w-4 text-red-600" />
                                   ปฏิเสธ
                                 </DropdownMenuItem>
@@ -759,7 +828,7 @@ export function ProposalsClient({ initialProposals, initialStats }: ProposalsCli
           <Button variant="outline" onClick={closeBookingModal} disabled={isBookingSubmitting}>
             ข้ามไปก่อน
           </Button>
-          <Button onClick={handleCreateAppointment} disabled={isBookingSubmitting}>
+          <Button onClick={handleCreateAppointment} disabled={isBookingSubmitting || !canWrite}>
             {isBookingSubmitting ? "กำลังสร้าง..." : "สร้างนัดหมาย"}
           </Button>
         </DialogFooter>

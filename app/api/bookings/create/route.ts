@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@/lib/supabase/server"
 import { sendBookingConfirmation } from "@/lib/notifications/email"
 import { sendSMS } from "@/lib/notifications/sms"
+import { getSubscriptionStatus } from "@/lib/subscriptions/check-subscription"
 
 interface BookingRequest {
   firstName: string
@@ -46,6 +47,22 @@ export async function POST(request: NextRequest) {
 
     if (treatmentError || !treatment) {
       return NextResponse.json({ error: "Invalid treatment selected" }, { status: 400 })
+    }
+
+    const subStatus = await getSubscriptionStatus(treatment.clinic_id)
+    if (subStatus.subscriptionStatus === 'suspended' || subStatus.subscriptionStatus === 'cancelled') {
+      return NextResponse.json(
+        {
+          error: subStatus.message,
+          subscription: {
+            status: subStatus.subscriptionStatus,
+            plan: subStatus.plan,
+            isTrial: subStatus.isTrial,
+            isTrialExpired: subStatus.isTrialExpired,
+          },
+        },
+        { status: 403 },
+      )
     }
 
     // Check if customer exists or create new one

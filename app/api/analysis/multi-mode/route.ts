@@ -19,6 +19,7 @@ import { createClient } from '@/lib/supabase/server';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 import { withPublicAccess } from '@/lib/auth/middleware';
+import { getSubscriptionStatus } from '@/lib/subscriptions/check-subscription';
 
 const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
 
@@ -46,6 +47,40 @@ export const POST = withPublicAccess(async (request: NextRequest) => {
         { error: 'Unauthorized' },
         { status: 401 }
       );
+    }
+
+    // Subscription gating (clinic users only)
+    const { data: userProfile, error: userProfileErr } = await supabase
+      .from('users')
+      .select('clinic_id')
+      .eq('id', user.id)
+      .single();
+
+    if (userProfileErr) {
+      console.error('[Analysis] Failed to fetch user profile:', userProfileErr);
+      return NextResponse.json(
+        { error: 'Failed to fetch user profile' },
+        { status: 500 }
+      );
+    }
+
+    if (userProfile?.clinic_id) {
+      const subStatus = await getSubscriptionStatus(userProfile.clinic_id)
+      if (!subStatus.isActive || subStatus.isTrialExpired) {
+        const statusCode = subStatus.subscriptionStatus === 'past_due' || subStatus.isTrialExpired ? 402 : 403
+        return NextResponse.json(
+          {
+            error: subStatus.message,
+            subscription: {
+              status: subStatus.subscriptionStatus,
+              plan: subStatus.plan,
+              isTrial: subStatus.isTrial,
+              isTrialExpired: subStatus.isTrialExpired,
+            },
+          },
+          { status: statusCode }
+        );
+      }
     }
 
     // Parse form data

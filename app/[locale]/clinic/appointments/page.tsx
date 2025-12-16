@@ -11,6 +11,7 @@ import { ShimmerSkeleton } from "@/components/ui/modern-loader"
 import { Textarea } from "@/components/ui/textarea"
 import { Calendar, Clock, User, Stethoscope } from "lucide-react"
 import { useLocalizePath } from "@/lib/i18n/locale-link"
+import { useToast } from "@/hooks/use-toast"
 
 interface AppointmentSlot {
   id?: string
@@ -54,15 +55,28 @@ interface BookingPayment {
 
 const EMPTY_APPOINTMENTS: AppointmentSlot[] = []
 
+type ClinicSubscriptionStatus = {
+  isActive: boolean
+  isTrial: boolean
+  isTrialExpired: boolean
+  subscriptionStatus: 'trial' | 'active' | 'past_due' | 'suspended' | 'cancelled'
+  plan: string
+  message: string
+}
+
 export default function ClinicAppointmentsPage() {
   const router = useRouter()
   const lp = useLocalizePath()
+  const { toast } = useToast()
   const searchParams = useSearchParams()
   const highlightAppointmentId = searchParams.get("appointment_id")
   const currentSearch = useMemo(() => searchParams.toString(), [searchParams])
   const [data, setData] = useState<AppointmentsResponse | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+  const [subscription, setSubscription] = useState<ClinicSubscriptionStatus | null>(null)
+  const [subscriptionLoading, setSubscriptionLoading] = useState(true)
   const [paymentsByAppointmentId, setPaymentsByAppointmentId] = useState<Record<string, BookingPayment | undefined>>({})
   const [markPaidLoadingId, setMarkPaidLoadingId] = useState<string | null>(null)
   const [markPaidOpen, setMarkPaidOpen] = useState(false)
@@ -79,6 +93,27 @@ export default function ClinicAppointmentsPage() {
     setMineOnly(false)
     setStatusFilter('all')
   }, [highlightAppointmentId])
+
+  useEffect(() => {
+    const fetchSubscription = async () => {
+      try {
+        setSubscriptionLoading(true)
+        const res = await fetch('/api/clinic/subscription-status')
+        if (!res.ok) {
+          setSubscription(null)
+          return
+        }
+        const result = await res.json()
+        setSubscription(result?.subscription || null)
+      } catch {
+        setSubscription(null)
+      } finally {
+        setSubscriptionLoading(false)
+      }
+    }
+
+    fetchSubscription()
+  }, [])
 
   // Auto-scroll highlighted appointment into view (after data is loaded)
   useEffect(() => {
@@ -194,6 +229,14 @@ export default function ClinicAppointmentsPage() {
   }
 
   const openMarkPaidDialog = (payment: BookingPayment) => {
+    if (!canManagePayments) {
+      toast({
+        title: 'Subscription จำกัดการใช้งาน',
+        description: subscription?.message || 'Subscription is not active',
+        variant: 'destructive',
+      })
+      return
+    }
     setMarkPaidPayment(payment)
     setMarkPaidTransactionId(payment.transaction_id || "")
     setMarkPaidNotes(payment.notes || "")
@@ -203,6 +246,15 @@ export default function ClinicAppointmentsPage() {
   const submitMarkPaid = async () => {
     const payment = markPaidPayment
     if (!payment?.id) return
+
+    if (!canManagePayments) {
+      toast({
+        title: 'Subscription จำกัดการใช้งาน',
+        description: subscription?.message || 'Subscription is not active',
+        variant: 'destructive',
+      })
+      return
+    }
 
     try {
       setMarkPaidLoadingId(payment.id)
@@ -236,6 +288,8 @@ export default function ClinicAppointmentsPage() {
   }
 
   const appointments = data?.appointments ?? EMPTY_APPOINTMENTS
+
+  const canManagePayments = subscriptionLoading ? false : (subscription?.isActive ?? true)
 
   const filteredAppointments = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -343,7 +397,7 @@ export default function ClinicAppointmentsPage() {
               </Button>
               <Button
                 onClick={submitMarkPaid}
-                disabled={!markPaidPayment?.id || markPaidLoadingId === markPaidPayment.id}
+                disabled={!markPaidPayment?.id || !canManagePayments || markPaidLoadingId === markPaidPayment.id}
               >
                 {markPaidLoadingId && markPaidPayment?.id && markPaidLoadingId === markPaidPayment.id ? "Saving..." : "Confirm paid"}
               </Button>
@@ -383,6 +437,17 @@ export default function ClinicAppointmentsPage() {
               </Button>
             </div>
           </div>
+        ) : null}
+
+        {!subscriptionLoading && subscription && !subscription.isActive ? (
+          <Card className="border-yellow-200 bg-yellow-50">
+            <CardContent className="p-4">
+              <div className="flex flex-col gap-1">
+                <div className="text-sm font-medium text-yellow-900">Subscription จำกัดการใช้งาน</div>
+                <div className="text-sm text-yellow-800">{subscription.message}</div>
+              </div>
+            </CardContent>
+          </Card>
         ) : null}
 
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -436,7 +501,22 @@ export default function ClinicAppointmentsPage() {
             >
               {mineOnly ? "แสดงเฉพาะนัดของฉัน" : "แสดงนัดของทุกคน"}
             </Button>
-            <Button variant="outline" size="sm" onClick={() => router.push(lp("/clinic/payments"))}>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={!canManagePayments}
+              onClick={() => {
+                if (!canManagePayments) {
+                  toast({
+                    title: 'Subscription จำกัดการใช้งาน',
+                    description: subscription?.message || 'Subscription is not active',
+                    variant: 'destructive',
+                  })
+                  return
+                }
+                router.push(lp("/clinic/payments"))
+              }}
+            >
               Payments
             </Button>
             <Button variant="outline" onClick={() => router.push("/sales/dashboard")}>กลับไป Sales Dashboard</Button>
@@ -550,7 +630,18 @@ export default function ClinicAppointmentsPage() {
                                     <Button
                                       size="sm"
                                       variant="outline"
-                                      onClick={() => handleOpenPromptPayQr(payment.clinic_id, Number(payment.amount || 0))}
+                                      onClick={() => {
+                                        if (!canManagePayments) {
+                                          toast({
+                                            title: 'Subscription จำกัดการใช้งาน',
+                                            description: subscription?.message || 'Subscription is not active',
+                                            variant: 'destructive',
+                                          })
+                                          return
+                                        }
+                                        handleOpenPromptPayQr(payment.clinic_id, Number(payment.amount || 0))
+                                      }}
+                                      disabled={!canManagePayments}
                                     >
                                       Open QR
                                     </Button>
@@ -559,7 +650,7 @@ export default function ClinicAppointmentsPage() {
                                     <Button
                                       size="sm"
                                       onClick={() => openMarkPaidDialog(payment)}
-                                      disabled={markPaidLoadingId === payment.id}
+                                      disabled={!canManagePayments || markPaidLoadingId === payment.id}
                                     >
                                       {markPaidLoadingId === payment.id ? "Saving..." : "Mark paid"}
                                     </Button>

@@ -104,6 +104,18 @@ export default function AnalysisResultsPage() {
   const [leadEmail, setLeadEmail] = useState("")
   const [isSavingLead, setIsSavingLead] = useState(false)
 
+  type ClinicSubscriptionStatus = {
+    isActive: boolean
+    isTrial: boolean
+    isTrialExpired: boolean
+    subscriptionStatus: 'trial' | 'active' | 'past_due' | 'suspended' | 'cancelled'
+    plan: string
+    message: string
+  }
+
+  const [subscription, setSubscription] = useState<ClinicSubscriptionStatus | null>(null)
+  const [subscriptionLoading, setSubscriptionLoading] = useState(true)
+
   useEffect(() => {
     const storedImage = sessionStorage.getItem("analysisImage")
     const storedResults = sessionStorage.getItem("analysisResults")
@@ -119,6 +131,26 @@ export default function AnalysisResultsPage() {
     setTier(storedTier || "free")
     setIsLoading(false)
   }, [router])
+
+  useEffect(() => {
+    const fetchSubscription = async () => {
+      try {
+        setSubscriptionLoading(true)
+        const res = await fetch('/api/clinic/subscription-status')
+        if (!res.ok) {
+          setSubscription(null)
+          return
+        }
+        const data = await res.json()
+        setSubscription(data?.subscription || null)
+      } catch {
+        setSubscription(null)
+      } finally {
+        setSubscriptionLoading(false)
+      }
+    }
+    fetchSubscription()
+  }, [])
 
   const getDisplayMetrics = () => {
     if (!analysisResults) return []
@@ -195,8 +227,18 @@ export default function AnalysisResultsPage() {
 
   const displayMetrics = getDisplayMetrics()
 
+  const canCreateLead = subscriptionLoading ? false : (subscription?.isActive ?? true)
+
   const handleSaveLead = async () => {
     if (!analysisResults) return
+    if (!canCreateLead) {
+      toast({
+        title: "Subscription จำกัดการใช้งาน",
+        description: subscription?.message || "Subscription is not active",
+        variant: "destructive",
+      })
+      return
+    }
     if (!leadName.trim()) {
       toast({
         title: "กรุณากรอกชื่อลูกค้า",
@@ -287,6 +329,14 @@ export default function AnalysisResultsPage() {
 
   const handleRequestRemoteConsult = async () => {
     if (!analysisResults) return
+    if (!canCreateLead) {
+      toast({
+        title: "Subscription จำกัดการใช้งาน",
+        description: subscription?.message || "Subscription is not active",
+        variant: "destructive",
+      })
+      return
+    }
     if (!leadName.trim()) {
       toast({
         title: "กรุณากรอกชื่อลูกค้า",
@@ -416,6 +466,19 @@ export default function AnalysisResultsPage() {
 
           {/* Quick Lead Capture for Sales */}
           <Card className="mb-6 border border-blue-200 bg-blue-50/60">
+            {subscriptionLoading ? null : !subscription?.isActive ? (
+              <Card className="border-yellow-200 bg-yellow-50">
+                <CardContent className="p-3">
+                  <div className="flex flex-col gap-1">
+                    <div className="text-sm font-medium text-yellow-900">
+                      Subscription จำกัดการใช้งาน
+                    </div>
+                    <div className="text-sm text-yellow-800">{subscription?.message}</div>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : null}
+
             <CardHeader className="pb-3">
               <CardTitle className="text-sm sm:text-base flex items-center gap-2">
                 บันทึกเป็น Lead สำหรับทีมเซล
@@ -464,7 +527,7 @@ export default function AnalysisResultsPage() {
                   size="sm"
                   className="text-xs sm:text-sm"
                   onClick={handleRequestRemoteConsult}
-                  disabled={isSavingLead}
+                  disabled={isSavingLead || !canCreateLead}
                 >
                   {isSavingLead ? "กำลังส่งคำขอ..." : "ขอปรึกษาออนไลน์"}
                 </Button>
@@ -472,7 +535,7 @@ export default function AnalysisResultsPage() {
                   size="sm"
                   className="text-xs sm:text-sm bg-blue-600 hover:bg-blue-700"
                   onClick={handleSaveLead}
-                  disabled={isSavingLead}
+                  disabled={isSavingLead || !canCreateLead}
                 >
                   {isSavingLead ? "กำลังบันทึก..." : "บันทึกเป็น Lead"}
                 </Button>
