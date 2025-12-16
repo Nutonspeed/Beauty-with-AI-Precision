@@ -1,6 +1,7 @@
 "use server"
 
-import { createServerClient } from "@/lib/supabase/server"
+import { createServerClient, createServiceClient } from "@/lib/supabase/server"
+import { normalizeRole } from "@/lib/auth/role-normalize"
 import { redirect } from "next/navigation"
 
 export async function getSession() {
@@ -56,9 +57,54 @@ export async function requireRole(allowedRoles: string[]) {
     redirect("/auth/login")
   }
 
-  const userRole = user.user_metadata?.role || "customer"
+  const allowedCanonical = allowedRoles.map((role) => normalizeRole(role))
 
-  if (!allowedRoles.includes(userRole)) {
+  let roleValue: string | null | undefined
+  try {
+    const service = createServiceClient()
+    const { data: userRow } = await service
+      .from("users")
+      .select("role")
+      .eq("id", user.id)
+      .maybeSingle()
+
+    roleValue = (userRow as any)?.role
+
+    if (!roleValue) {
+      // Do NOT auto-provision roles in production.
+      // In dev/test only, allow creating a minimal users row with a safe default role.
+      const allowAutoCreate =
+        process.env.NODE_ENV !== 'production' && process.env.NEXT_PUBLIC_TEST_MODE === 'true'
+
+      if (!allowAutoCreate) {
+        redirect('/unauthorized')
+      }
+
+      const { data: createdUser } = await service
+        .from("users")
+        .insert({
+          id: user.id,
+          email: user.email,
+          role: "free_user",
+          full_name: user.email?.split("@")[0].replace("-", " ") || "Demo User",
+        })
+        .select("role")
+        .single()
+
+      roleValue = (createdUser as any)?.role
+    }
+  } catch (error) {
+    console.error("[supabase-auth] Failed to load role from users table:", error)
+    redirect('/unauthorized')
+  }
+
+  if (!roleValue) {
+    redirect('/unauthorized')
+  }
+
+  const canonicalRole = normalizeRole(roleValue)
+
+  if (!allowedCanonical.includes(canonicalRole)) {
     redirect("/unauthorized")
   }
 

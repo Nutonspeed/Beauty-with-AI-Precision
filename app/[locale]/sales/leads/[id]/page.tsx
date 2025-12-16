@@ -72,6 +72,7 @@ type SalesLead = {
   notes: string | null
   next_follow_up_at: string | null
   created_at: string
+  metadata?: Record<string, any> | null
   sales_user?: { full_name?: string | null; email?: string | null } | null
 }
 
@@ -107,6 +108,7 @@ export default function LeadDetailPage() {
   const [isUpdating, setIsUpdating] = useState(false)
   const [showInteractionDialog, setShowInteractionDialog] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [isCreatingProposal, setIsCreatingProposal] = useState(false)
 
   const updateForm = useForm<z.infer<typeof updateFormSchema>>({
     resolver: zodResolver(updateFormSchema),
@@ -151,6 +153,64 @@ export default function LeadDetailPage() {
       cancelled = true
     }
   }, [router, lp])
+
+  const handleCreateProposal = async () => {
+    if (!lead) return
+    setIsCreatingProposal(true)
+    try {
+      const recs = (lead.metadata as any)?.recommendations
+      const treatmentsRaw = Array.isArray(recs) ? recs : []
+      const treatments = treatmentsRaw.length
+        ? treatmentsRaw.map((r: any) => ({
+            name: r?.title_th || r?.title_en || r?.name || "Treatment",
+            price: Number(r?.price || 0),
+            sessions: Number(r?.sessions || 1),
+            description: r?.description_th || r?.description_en || r?.description || "",
+            service_id: r?.service_id ?? null,
+          }))
+        : [
+            {
+              name: "Consultation",
+              price: 0,
+              sessions: 1,
+              description: lead.primary_concern ? `Concern: ${lead.primary_concern}` : "",
+              service_id: null,
+            },
+          ]
+
+      const subtotal = treatments.reduce((sum: number, t: any) => sum + (Number(t.price) || 0), 0)
+
+      const res = await fetch("/api/sales/proposals", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          lead_id: lead.id,
+          title: `Proposal for ${lead.name}`,
+          treatments,
+          subtotal,
+          discount_percent: 0,
+          discount_amount: 0,
+          total_value: subtotal,
+        }),
+      })
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        throw new Error(err.error || "Failed to create proposal")
+      }
+
+      const proposal = await res.json()
+      toast.success("สร้าง Proposal สำเร็จ")
+      if (proposal?.id) {
+        router.push(`/sales/proposals/${proposal.id}`)
+      }
+    } catch (error) {
+      console.error("Create proposal failed:", error)
+      toast.error(error instanceof Error ? error.message : "สร้าง Proposal ไม่สำเร็จ")
+    } finally {
+      setIsCreatingProposal(false)
+    }
+  }
 
   // Fetch lead details
   const fetchLead = useCallback(async () => {
@@ -288,6 +348,14 @@ export default function LeadDetailPage() {
           <Button variant="outline" onClick={() => setShowInteractionDialog(true)}>
             <Plus className="mr-2 h-4 w-4" />
             Add Interaction
+          </Button>
+          <Button variant="outline" onClick={handleCreateProposal} disabled={isCreatingProposal}>
+            {isCreatingProposal ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Plus className="mr-2 h-4 w-4" />
+            )}
+            Create Proposal
           </Button>
           {lead.status !== 'won' && (
             <Button

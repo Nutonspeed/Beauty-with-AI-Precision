@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { createServerClient } from "@/lib/supabase/server"
+import { createServerClient, createServiceClient } from "@/lib/supabase/server"
+import { canAccessSales } from "@/lib/auth/role-config"
 import { sendEmail } from "@/lib/email/resend-service"
 
 export const dynamic = 'force-dynamic'
@@ -28,6 +29,17 @@ export async function POST(request: NextRequest) {
 
     if (!user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    const service = createServiceClient()
+    const { data: userRow, error: userErr } = await service
+      .from('users')
+      .select('role, clinic_id')
+      .eq('id', user.id)
+      .single()
+
+    if (userErr || !userRow || !canAccessSales(userRow.role)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
     const body = await request.json()

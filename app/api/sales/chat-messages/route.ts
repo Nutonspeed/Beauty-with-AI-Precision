@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { createServerClient } from "@/lib/supabase/server"
+import { createServerClient, createServiceClient } from "@/lib/supabase/server"
+import { canAccessSales } from "@/lib/auth/role-config"
 
 export const dynamic = 'force-dynamic'
 
@@ -12,6 +13,17 @@ export async function GET(request: NextRequest) {
 
     if (!user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    const service = createServiceClient()
+    const { data: userRow, error: userErr } = await service
+      .from('users')
+      .select('role, clinic_id')
+      .eq('id', user.id)
+      .single()
+
+    if (userErr || !userRow || !canAccessSales(userRow.role)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
     // Get query parameters
@@ -156,6 +168,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
+    const service = createServiceClient()
+    const { data: userRow, error: userErr } = await service
+      .from('users')
+      .select('role, clinic_id')
+      .eq('id', user.id)
+      .single()
+
+    if (userErr || !userRow || !canAccessSales(userRow.role)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    }
+
     const body = await request.json()
     const {
       room_id,
@@ -245,13 +268,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Determine sender type based on user role
-    const { data: userData } = await supabase
-      .from('users')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-
-    const senderType = userData?.role === 'sales_staff' ? 'staff' : 'customer'
+    const senderType = canAccessSales(userRow.role) ? 'staff' : 'customer'
 
     // Insert message
     const { data: newMessage, error: insertError } = await supabase

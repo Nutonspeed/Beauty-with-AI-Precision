@@ -4,6 +4,7 @@
  */
 
 import { createClient } from '@/lib/supabase/server';
+import { canAccessSales } from '@/lib/auth/role-config';
 import { NextRequest, NextResponse } from 'next/server';
 import { logApiRequest, logError } from '@/lib/utils/logger';
 import { rateLimitMiddleware } from '@/lib/rate-limit/middleware/rate-limit';
@@ -79,7 +80,7 @@ export function withAuth(
       }
 
       // Bypass auth for testing if enabled
-      if (process.env.NEXT_PUBLIC_TEST_MODE === 'true') {
+      if (process.env.NEXT_PUBLIC_TEST_MODE === 'true' && process.env.NODE_ENV !== 'production') {
         const testUser: AuthenticatedUser = {
           id: 'test-user-id',
           email: 'test@example.com',
@@ -224,7 +225,7 @@ export function withAuthContext<TContext>(
         }
       }
 
-      if (process.env.NEXT_PUBLIC_TEST_MODE === 'true') {
+      if (process.env.NEXT_PUBLIC_TEST_MODE === 'true' && process.env.NODE_ENV !== 'production') {
         const testUser: AuthenticatedUser = {
           id: 'test-user-id',
           email: 'test@example.com',
@@ -371,8 +372,19 @@ export function withSalesAuth(
   handler: (req: NextRequest, user: AuthenticatedUser) => Promise<Response>,
   options: Omit<AuthMiddlewareOptions, 'allowedRoles' | 'requireClinicId' | 'requireAuth'> = {}
 ) {
-  return withAuth(handler, {
-    allowedRoles: ['super_admin', 'clinic_admin', 'sales_staff'],
+  return withAuth(async (req, user) => {
+    if (!canAccessSales(user.role)) {
+      return NextResponse.json(
+        {
+          error: 'Forbidden',
+          message: 'Access denied. Sales role required',
+        },
+        { status: 403 }
+      );
+    }
+
+    return handler(req, user);
+  }, {
     requireClinicId: true,
     ...options,
   });

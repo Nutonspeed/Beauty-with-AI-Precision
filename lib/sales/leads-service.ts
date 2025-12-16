@@ -208,8 +208,36 @@ export async function createLead(userId: string, clinicId: string | null, body: 
     )
     .single()
 
-  if (error) throw error
-  return newLead
+  if (!error) return newLead
+
+  const message = String((error as any)?.message || '')
+  if (message.includes('lead_source') && message.toLowerCase().includes('enum')) {
+    const fallbackLeadData: any = {
+      ...leadData,
+      source: 'other',
+      metadata: {
+        ...(leadData?.metadata || {}),
+        source_raw: leadData?.source,
+      },
+    }
+
+    const { data: fallbackLead, error: fallbackError } = await supabase
+      .from('sales_leads')
+      .insert([fallbackLeadData])
+      .select(
+        `
+          *,
+          sales_user:users!sales_leads_sales_user_id_fkey(full_name, email),
+          customer:users!sales_leads_customer_user_id_fkey(full_name, email)
+        `,
+      )
+      .single()
+
+    if (fallbackError) throw fallbackError
+    return fallbackLead
+  }
+
+  throw error
 }
 
 export async function getLeadById(userId: string, clinicId: string | null, id: string) {

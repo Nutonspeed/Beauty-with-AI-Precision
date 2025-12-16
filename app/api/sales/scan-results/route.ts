@@ -1,16 +1,27 @@
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
+import { createServerClient, createServiceClient } from '@/lib/supabase/server';
+import { canAccessSales } from '@/lib/auth/role-config';
 
 // POST /api/sales/scan-results - Create new scan result
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = await createServerClient();
     
     // Check authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const service = createServiceClient();
+    const { data: userRow, error: userErr } = await service
+      .from('users')
+      .select('role, clinic_id')
+      .eq('id', user.id)
+      .single();
+
+    if (userErr || !userRow || !canAccessSales(userRow.role)) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     const body = await request.json();
@@ -95,12 +106,23 @@ export async function POST(request: NextRequest) {
 // GET /api/sales/scan-results - List scan results
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = await createServerClient();
     
     // Check authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const service = createServiceClient();
+    const { data: userRow, error: userErr } = await service
+      .from('users')
+      .select('role, clinic_id')
+      .eq('id', user.id)
+      .single();
+
+    if (userErr || !userRow || !canAccessSales(userRow.role)) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     // Get query parameters

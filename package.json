@@ -33,6 +33,7 @@
     "test:ar:unit": "pnpm test:ci --run __tests__/unit/ar-face-tracker.test.ts",
     "test:ar:e2e": "pnpm test:e2e --grep \"AR Face Tracking\"",
     "test:quick-scan": "pnpm test:e2e --grep \"Quick Scan\"",
+    "test:sales:smoke": "tsx scripts/test-sales-smoke.ts",
     "type-check": "tsc --noEmit",
     "schema:breakdown": "node scripts/schema-breakdown.mjs",
     "schema:verify": "node scripts/verify-postgres.mjs",

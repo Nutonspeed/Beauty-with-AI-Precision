@@ -1,6 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createServerClient, createServiceClient } from "@/lib/supabase/server"
 import { canAccessSales } from "@/lib/auth/role-config"
+import { createLead } from "@/lib/sales/leads-service"
+import { logLeadSystemActivity } from "@/lib/sales/lead-activities-service"
 
 /**
  * POST /api/sales/quick-lead
@@ -33,120 +35,87 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
-    const body = await request.json()
+    let body: any = null
+    try {
+      body = await request.json()
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON" }, { status: 400 })
+    }
 
-    const {
-      name,
-      email,
-      phone,
-      status = "cold",
-      source = "quick_scan",
-      concern,
-      budget_min,
-      budget_max,
-      preferred_date,
-      estimated_value,
-      metadata,
-      notes,
-      tags,
-      custom_fields,
-      campaign,
-    } = body
+    const name = body?.name
+    const email = body?.email
+    const phone = body?.phone
+    const campaign = body?.campaign
 
     if (!name) {
       return NextResponse.json({ error: "Name is required" }, { status: 400 })
     }
 
-    // Phone validation (optional)
-    if (phone && !/^[0-9-+() ]+$/.test(phone)) {
+    if (phone && !/^[0-9-+() ]+$/.test(String(phone))) {
       return NextResponse.json({ error: "Invalid phone format" }, { status: 400 })
     }
 
-    // Email validation (optional; quick_scan ไม่บังคับ)
     if (email) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-      if (!emailRegex.test(email)) {
+      if (!emailRegex.test(String(email))) {
         return NextResponse.json({ error: "Invalid email format" }, { status: 400 })
       }
     }
 
-    // คำนวณ score จาก metadata ของ AI ถ้ามี (โครงเหมือน /api/sales/leads)
-    let computedScore: number = body.score || 0
-    if (!computedScore && metadata) {
-      try {
-        const meta = metadata as any
-        const estValue = estimated_value ?? meta.estimated_value ?? 0
-        const concerns = meta.concerns || []
-        const maxSeverity = Array.isArray(concerns) && concerns.length
-          ? Math.max(...concerns.map((c: any) => Number(c.severity) || 0))
-          : 0
+    const requestedSource = body?.source ?? "quick_scan"
+    const requestedStatus = body?.status ?? "cold"
 
-        let score = 0
-        score += Math.min(maxSeverity * 8, 40) // สูงสุด 40 จากความรุนแรง
-        score += Math.min(Math.floor(estValue / 1000), 40) // สูงสุด 40 จากมูลค่า
-        score += 20 // base score
+    const mergedMetadata = {
+      ...(body?.metadata || {}),
+      ...(campaign ? { campaign } : {}),
+    }
 
-        computedScore = Math.max(0, Math.min(score, 100))
-      } catch {
-        computedScore = 0
+    const payload = {
+      ...body,
+      status: requestedStatus,
+      source: requestedSource,
+      metadata: mergedMetadata,
+    }
+
+    let newLead: any
+    try {
+      newLead = await createLead(user.id, userRow.clinic_id ?? null, payload)
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error)
+      if (message.includes("lead_source") && message.includes("enum")) {
+        const fallbackPayload = {
+          ...payload,
+          source: "other",
+          metadata: {
+            ...(payload?.metadata || {}),
+            source_raw: requestedSource,
+          },
+        }
+        newLead = await createLead(user.id, userRow.clinic_id ?? null, fallbackPayload)
+      } else {
+        throw error
       }
     }
 
-    const leadData = {
-      sales_user_id: user.id,
-      name,
-      email: email || null,
-      phone: phone || null,
-      status,
-      source,
-      concern: concern || null,
-      budget_min: budget_min ?? null,
-      budget_max: budget_max ?? null,
-      preferred_date: preferred_date || null,
-      score: computedScore,
-      notes: notes || null,
-      tags: tags || [],
-      custom_fields: custom_fields || {},
-      metadata: {
-        ...(metadata || {}),
+    await logLeadSystemActivity(
+      user.id,
+      userRow.clinic_id ?? null,
+      newLead.id,
+      "Lead Created from Quick Scan",
+      `Lead "${newLead.name}" was created from quick skin analysis`,
+      {
+        source: newLead.source,
+        ...(newLead.source !== requestedSource ? { source_raw: requestedSource } : {}),
+        from: "quick_lead",
         ...(campaign ? { campaign } : {}),
       },
-    }
-
-    const { data: newLead, error } = await supabase
-      .from("sales_leads")
-      .insert([leadData])
-      .select(
-        `*,
-        sales_user:users!sales_leads_sales_user_id_fkey(full_name, email),
-        customer:users!sales_leads_customer_user_id_fkey(full_name, email)
-      `,
-      )
-      .single()
-
-    if (error) {
-      console.error("Error creating quick lead:", error)
-      return NextResponse.json({ error: error.message }, { status: 500 })
-    }
-
-    await supabase.from("sales_activities").insert([
-      {
-        lead_id: newLead.id,
-        user_id: user.id,
-        type: "note",
-        title: "Lead Created from Quick Scan",
-        description: `Lead "${name}" was created from quick skin analysis`,
-        metadata: { source, from: "quick_lead", ...(campaign ? { campaign } : {}) },
-      },
-    ])
+    )
 
     return NextResponse.json({ data: newLead }, { status: 201 })
   } catch (error) {
-    console.error("[v0] Error creating quick lead:", error)
-    return NextResponse.json(
-      { error: "Failed to create quick lead", details: error instanceof Error ? error.message : "Unknown error" },
-      { status: 500 },
-    )
+    const status = (error as any)?.status
+    const message = error instanceof Error ? error.message : "Failed to create quick lead"
+    return NextResponse.json({ error: message }, { status: typeof status === "number" ? status : 500 })
   } finally {
     const duration = Date.now() - startedAt
     console.info("[sales/quick-lead][POST] done", { durationMs: duration })
