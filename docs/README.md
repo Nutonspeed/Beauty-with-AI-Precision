@@ -65,6 +65,7 @@ This directory contains all project documentation organized by category.
 - **[🗄️ Database Schema](./DATABASE_SCHEMA.md)** - Complete database reference
 - **[🚀 Deployment Status](./deployment/DEPLOYMENT_STATUS.md)** - Current deployment guide
 - **[🏗️ Repository Structure](./REPO_STRUCTURE.md)** - Overview of repo layout and subprojects
+- **[🧯 Legacy Branches](./LEGACY_BRANCHES.md)** - Branches kept for reference and do-not-merge rules
 
 ### Development Resources
 - **[📖 API Routes Reference](./api/ROUTES_QUICK_REFERENCE.md)** - All API endpoints
