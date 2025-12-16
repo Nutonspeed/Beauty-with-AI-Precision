@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { z } from 'zod'
-import { SUBSCRIPTION_PLANS } from '@/lib/subscriptions/plans'
+import { CLINIC_SUBSCRIPTION_PLANS } from '@/lib/subscriptions/plans'
 
 const updateSubscriptionSchema = z.object({
   clinicId: z.string(),
   plan: z.enum(['starter', 'professional', 'enterprise']),
-  status: z.enum(['active', 'trial', 'suspended', 'cancelled']).optional(),
+  status: z.enum(['active', 'trial', 'past_due', 'suspended', 'cancelled']).optional(),
   trialEndsAt: z.string().optional(),
 })
 
@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
 
     // Enrich with plan details
     const subscriptions = clinics.map((clinic) => {
-      const plan = SUBSCRIPTION_PLANS[clinic.subscription_plan as keyof typeof SUBSCRIPTION_PLANS]
+      const plan = CLINIC_SUBSCRIPTION_PLANS[clinic.subscription_plan as keyof typeof CLINIC_SUBSCRIPTION_PLANS]
       return {
         ...clinic,
         planDetails: plan,
@@ -121,6 +121,19 @@ export async function PATCH(request: NextRequest) {
     if (trialEndsAt) {
       updateData.trial_ends_at = trialEndsAt
       updateData.is_trial = true
+    }
+
+    if (status === 'trial') {
+      updateData.is_trial = true
+    }
+
+    if (status === 'active') {
+      updateData.is_trial = false
+      updateData.trial_ends_at = null
+    }
+
+    if (status === 'past_due' || status === 'suspended' || status === 'cancelled') {
+      updateData.is_trial = false
     }
 
     // Update subscription status to 'active' if changing from trial

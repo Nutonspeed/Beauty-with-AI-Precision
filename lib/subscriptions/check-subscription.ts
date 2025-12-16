@@ -5,14 +5,18 @@
  */
 
 import { createClient } from '@/lib/supabase/server'
-import { SUBSCRIPTION_PLANS, SubscriptionPlan, isWithinLimits } from './plans'
+import {
+  CLINIC_SUBSCRIPTION_PLANS,
+  type ClinicSubscriptionPlan,
+  isClinicWithinLimits,
+} from './plans'
 
 export interface SubscriptionStatus {
   isActive: boolean
   isTrial: boolean
   isTrialExpired: boolean
-  plan: SubscriptionPlan
-  planDetails: typeof SUBSCRIPTION_PLANS[SubscriptionPlan]
+  plan: ClinicSubscriptionPlan
+  planDetails: typeof CLINIC_SUBSCRIPTION_PLANS[ClinicSubscriptionPlan]
   daysRemaining: number | null
   trialDaysRemaining: number | null
   usage: {
@@ -45,11 +49,12 @@ export async function getSubscriptionStatus(clinicId: string): Promise<Subscript
     .single()
 
   if (error || !clinic) {
-    return createDefaultStatus('free', 'Clinic not found')
+    return createDefaultStatus('starter', 'Clinic not found')
   }
 
-  const plan = (clinic.subscription_plan || 'free') as SubscriptionPlan
-  const planDetails = SUBSCRIPTION_PLANS[plan]
+  const rawPlan = (clinic.subscription_plan || 'starter') as string
+  const plan = normalizeClinicPlan(rawPlan)
+  const planDetails = CLINIC_SUBSCRIPTION_PLANS[plan]
   const now = new Date()
 
   // Check trial status
@@ -75,7 +80,7 @@ export async function getSubscriptionStatus(clinicId: string): Promise<Subscript
   const usage = await getClinicUsage(supabase, clinicId)
 
   // Check if within limits
-  const withinLimits = isWithinLimits(plan, usage)
+  const withinLimits = isClinicWithinLimits(plan, usage)
 
   // Generate status message
   let message = ''
@@ -103,6 +108,15 @@ export async function getSubscriptionStatus(clinicId: string): Promise<Subscript
     withinLimits,
     message
   }
+}
+
+function normalizeClinicPlan(plan: string): ClinicSubscriptionPlan {
+  const p = String(plan || '').trim().toLowerCase()
+  if (p === 'professional') return 'professional'
+  if (p === 'enterprise') return 'enterprise'
+  if (p === 'premium') return 'professional'
+  if (p === 'free') return 'starter'
+  return 'starter'
 }
 
 /**
@@ -199,13 +213,13 @@ async function getClinicUsage(
 /**
  * Create default status for error cases
  */
-function createDefaultStatus(plan: SubscriptionPlan, message: string): SubscriptionStatus {
+function createDefaultStatus(plan: ClinicSubscriptionPlan, message: string): SubscriptionStatus {
   return {
     isActive: false,
     isTrial: false,
     isTrialExpired: false,
     plan,
-    planDetails: SUBSCRIPTION_PLANS[plan],
+    planDetails: CLINIC_SUBSCRIPTION_PLANS[plan],
     daysRemaining: null,
     trialDaysRemaining: null,
     usage: { users: 0, storage: 0, analyses: 0 },
@@ -217,11 +231,14 @@ function createDefaultStatus(plan: SubscriptionPlan, message: string): Subscript
 /**
  * Start trial for a clinic
  */
-export async function startTrial(clinicId: string, plan: SubscriptionPlan = 'premium'): Promise<boolean> {
+export async function startTrial(
+  clinicId: string,
+  plan: ClinicSubscriptionPlan = 'starter'
+): Promise<boolean> {
   const supabase = await createClient()
-  const planDetails = SUBSCRIPTION_PLANS[plan]
+  const planDetails = CLINIC_SUBSCRIPTION_PLANS[plan]
   
-  if (planDetails.trialDays === 0) {
+  if (Number(planDetails.trialDays) <= 0) {
     return false // No trial for this plan
   }
 
@@ -247,7 +264,7 @@ export async function startTrial(clinicId: string, plan: SubscriptionPlan = 'pre
  */
 export async function upgradeSubscription(
   clinicId: string, 
-  plan: SubscriptionPlan
+  plan: ClinicSubscriptionPlan
 ): Promise<{ success: boolean; error?: string }> {
   const supabase = await createClient()
 

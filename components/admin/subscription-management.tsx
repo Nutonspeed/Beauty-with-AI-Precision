@@ -185,6 +185,7 @@ export default function SubscriptionManagement() {
     const variants: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
       active: 'default',
       trial: 'secondary',
+      past_due: 'secondary',
       suspended: 'destructive',
       cancelled: 'outline',
     };
@@ -209,6 +210,7 @@ export default function SubscriptionManagement() {
     total: subscriptions.length,
     active: subscriptions.filter((s) => s.subscription_status === 'active').length,
     trial: subscriptions.filter((s) => s.subscription_status === 'trial').length,
+    pastDue: subscriptions.filter((s) => s.subscription_status === 'past_due').length,
     expiredTrials: subscriptions.filter((s) => s.isTrialExpired).length,
     byPlan: {
       starter: subscriptions.filter((s) => s.subscription_plan === 'starter').length,
@@ -260,6 +262,18 @@ export default function SubscriptionManagement() {
               <div>
                 <p className="text-2xl font-bold">{stats.trial}</p>
                 <p className="text-xs text-muted-foreground">On Trial</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="pt-4">
+            <div className="flex items-center gap-3">
+              <AlertTriangle className="w-10 h-10 p-2 rounded-full bg-orange-100 text-orange-600" />
+              <div>
+                <p className="text-2xl font-bold">{stats.pastDue}</p>
+                <p className="text-xs text-muted-foreground">Past Due</p>
               </div>
             </div>
           </CardContent>
@@ -342,6 +356,7 @@ export default function SubscriptionManagement() {
                   <SelectItem value="all">All Status</SelectItem>
                   <SelectItem value="active">Active</SelectItem>
                   <SelectItem value="trial">Trial</SelectItem>
+                  <SelectItem value="past_due">Past Due</SelectItem>
                   <SelectItem value="suspended">Suspended</SelectItem>
                   <SelectItem value="cancelled">Cancelled</SelectItem>
                 </SelectContent>
@@ -451,6 +466,7 @@ export default function SubscriptionManagement() {
                 <SelectContent>
                   <SelectItem value="active">Active</SelectItem>
                   <SelectItem value="trial">Trial</SelectItem>
+                  <SelectItem value="past_due">Past Due</SelectItem>
                   <SelectItem value="suspended">Suspended</SelectItem>
                   <SelectItem value="cancelled">Cancelled</SelectItem>
                 </SelectContent>
