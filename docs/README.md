@@ -64,6 +64,7 @@ This directory contains all project documentation organized by category.
 - **[📊 Current System Status](./status/CURRENT_SYSTEM_STATUS.md)** - Most up-to-date project status
 - **[🗄️ Database Schema](./DATABASE_SCHEMA.md)** - Complete database reference
 - **[🚀 Deployment Status](./deployment/DEPLOYMENT_STATUS.md)** - Current deployment guide
+- **[🏗️ Repository Structure](./REPO_STRUCTURE.md)** - Overview of repo layout and subprojects
 
 ### Development Resources
 - **[📖 API Routes Reference](./api/ROUTES_QUICK_REFERENCE.md)** - All API endpoints
