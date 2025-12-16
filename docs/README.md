@@ -15,6 +15,7 @@ This directory contains all project documentation organized by category.
 - **[deployment/](./deployment/)** - Deployment guides and status
   - `DEPLOYMENT_STATUS.md` - Current deployment guide (Vercel auto-deploy)
   - `DEPLOYMENT_READINESS_2025.md` - Deployment readiness report
+  - `DOCKER_COMPOSE_USAGE.md` - Docker Compose commands and file locations
   - `SUPABASE_STORAGE_SETUP.md` - Storage configuration
   - `VERCEL_STAGING_SETUP.md` - Staging environment setup
 
