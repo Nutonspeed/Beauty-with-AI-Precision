@@ -234,7 +234,7 @@ npx web-push generate-vapid-keys
 **ไฟล์**:
 - `/components/sales/video-call-modal.tsx` - UI
 - `/supabase/migrations/20241121_create_video_call_tables.sql` - Schema
-- `/server/signaling-server.js` - Signaling server
+- `/services/server/signaling-server.js` - Signaling server
 
 **ปัญหา**:
 1. **TURN Server** - ยังไม่ได้ setup

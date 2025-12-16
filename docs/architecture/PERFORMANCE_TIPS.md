@@ -103,7 +103,7 @@ Extensions ที่อาจทำให้ช้า:
 ❌ ไม่ต้องเปิด:
 ├── node_modules/
 ├── .next/
-├── ai-service/           (แยก project)
+├── services/ai-service/  (แยก project)
 └── docs/                 (เปิดเวลาต้องการ)
 ```
 

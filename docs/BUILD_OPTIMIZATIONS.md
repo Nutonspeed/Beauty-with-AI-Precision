@@ -63,7 +63,7 @@ Expanded `exclude` to skip unnecessary directories:
   "exclude": [
     "node_modules",
     "scripts/**/*",
-    "scanning-project/**/*",
+    "apps/scanning-project/**/*",
     ".next",
     "out",
     "dist"

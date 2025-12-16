@@ -161,7 +161,7 @@ processor = AutoProcessor.from_pretrained("microsoft/Florence-2-large")
 ```
 Files to create:
 ├── lib/ai/deepface-service.ts     # TypeScript client
-├── api/python/deepface_api.py     # Python FastAPI server
+├── services/python/deepface_api.py # Python FastAPI server
 ├── docker/deepface.Dockerfile     # Docker container
 └── components/analysis/age-gender-result.tsx
 ```

@@ -16,7 +16,7 @@ The Python AI service provides advanced skin analysis using MediaPipe, TensorFlo
 
 #### 1. Prepare Repository
 ```bash
-cd ai-service/
+cd services/ai-service/
 
 # Ensure Dockerfile exists (already created)
 # Ensure requirements.txt exists (already created)
@@ -27,7 +27,7 @@ cd ai-service/
 2. Sign up with GitHub
 3. Click "New Project" → "Deploy from GitHub repo"
 4. Select your repository
-5. Railway auto-detects `Dockerfile` in `ai-service/`
+5. Railway auto-detects `Dockerfile` in `services/ai-service/`
 6. Click "Deploy"
 
 #### 3. Configure Environment Variables

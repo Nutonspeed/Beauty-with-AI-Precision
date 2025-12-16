@@ -116,7 +116,7 @@ docker run -d --name beauty-deepface -p 5000:5000 beauty-deepface
 ### 2. Deploy AI Service (Optional)
 ```bash
 # Build Python AI service
-docker build -f python/Dockerfile -t beauty-ai .
+docker build -f services/ai-service/Dockerfile -t beauty-ai .
 docker run -d --name beauty-ai -p 8000:8000 beauty-ai
 ```
 
