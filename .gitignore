@@ -5,8 +5,8 @@
 /node_modules_backup
 /.pnp
 .pnp.js
-scanning-project/node_modules/
-scanning-project/package-lock.json
+apps/scanning-project/node_modules/
+apps/scanning-project/package-lock.json
 
 # testing
 /coverage
