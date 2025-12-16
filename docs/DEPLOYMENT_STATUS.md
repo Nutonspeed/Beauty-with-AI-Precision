@@ -59,7 +59,7 @@ This document tracks the current implementation status and remaining tasks for p
 - [x] Documentation (`docs/EMAIL_SMS_SETUP_GUIDE.md`)
 
 ### 6. AI Service Configuration ✅ **NEW**
-- [x] Python FastAPI service (`ai-service/`)
+- [x] Python FastAPI service (`services/ai-service/`)
 - [x] Docker configuration
 - [x] MediaPipe integration
 - [x] TensorFlow/Hugging Face models

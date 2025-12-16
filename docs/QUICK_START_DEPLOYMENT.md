@@ -81,7 +81,7 @@ SUPABASE_SERVICE_ROLE_KEY="eyJ..."
 
 #### 1. Prepare AI Service
 ```powershell
-cd ai-service/
+cd services/ai-service/
 
 # Verify files exist
 ls Dockerfile, requirements.txt, main.py
@@ -90,7 +90,7 @@ ls Dockerfile, requirements.txt, main.py
 #### 2. Push to GitHub
 ```powershell
 # Make sure ai-service is committed
-git add ai-service/
+git add services/ai-service/
 git commit -m "Add AI service for deployment"
 git push origin main
 ```
@@ -100,8 +100,8 @@ git push origin main
 2. Click "New Project"
 3. Select "Deploy from GitHub repo"
 4. Choose your repository
-5. Railway auto-detects `Dockerfile` in `ai-service/`
-6. **Important:** Set root directory to `ai-service`
+5. Railway auto-detects `Dockerfile` in `services/ai-service/`
+6. **Important:** Set root directory to `services/ai-service`
 7. Click "Deploy"
 
 #### 4. Add Environment Variables in Railway
