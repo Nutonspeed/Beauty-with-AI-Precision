@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { canManageClinicSettings } from "@/lib/auth/clinic-permissions";
 
 export async function GET() {
   try {
@@ -13,10 +14,28 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // ดึงการตั้งค่า automation
-    const { data: settings, error } = await supabase
+    // Get user's role and clinic_id
+    const service = createServiceClient();
+    const { data: userRow, error: userErr } = await service
+      .from("users")
+      .select("role, clinic_id")
+      .eq("id", user.id)
+      .single();
+
+    if (userErr || !userRow?.clinic_id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    // Check canonical RBAC
+    if (!canManageClinicSettings(userRow.role)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    // ดึงการตั้งค่า automation สำหรับ clinic นี้เท่านั้น
+    const { data: settings, error } = await service
       .from("clinic_settings")
       .select("*")
+      .eq("clinic_id", userRow.clinic_id)
       .eq("setting_type", "automation")
       .maybeSingle();
 
@@ -47,12 +66,30 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Get user's role and clinic_id
+    const service = createServiceClient();
+    const { data: userRow, error: userErr } = await service
+      .from("users")
+      .select("role, clinic_id")
+      .eq("id", user.id)
+      .single();
+
+    if (userErr || !userRow?.clinic_id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    // Check canonical RBAC
+    if (!canManageClinicSettings(userRow.role)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
     const settings = await request.json();
 
-    // ตรวจสอบว่ามีการตั้งค่าอยู่แล้วหรือไม่
-    const { data: existing } = await supabase
+    // ตรวจสอบว่ามีการตั้งค่าอยู่แล้วหรือไม่ (สำหรับ clinic นี้)
+    const { data: existing } = await service
       .from("clinic_settings")
       .select("id")
+      .eq("clinic_id", userRow.clinic_id)
       .eq("setting_type", "automation")
       .maybeSingle();
 

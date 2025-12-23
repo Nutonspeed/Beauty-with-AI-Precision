@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createServerClient, createServiceClient } from "@/lib/supabase/server"
+import { canManageClinicSettings } from "@/lib/auth/clinic-permissions"
 
 export const dynamic = "force-dynamic"
 
@@ -23,7 +24,8 @@ export async function GET() {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
-    if (!['clinic_owner', 'clinic_admin', 'manager', 'admin', 'super_admin'].includes(userRow.role)) {
+    // Use canonical RBAC - only normalized roles allowed
+    if (!canManageClinicSettings(userRow.role)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
@@ -68,7 +70,8 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
-    if (!['clinic_owner', 'clinic_admin', 'manager', 'admin', 'super_admin'].includes(userRow.role)) {
+    // Use canonical RBAC - only normalized roles allowed
+    if (!canManageClinicSettings(userRow.role)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 

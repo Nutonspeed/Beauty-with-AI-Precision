@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createServiceClient } from "@/lib/supabase/server"
 import { withAuth } from "@/lib/auth/middleware"
+import { canManageClinicSettings } from "@/lib/auth/clinic-permissions"
 
 export const dynamic = "force-dynamic"
 
@@ -11,7 +12,8 @@ export const GET = withAuth(
         return NextResponse.json({ error: "Forbidden" }, { status: 403 })
       }
 
-      if (!["super_admin", "admin", "clinic_owner", "clinic_admin", "manager"].includes(user.role)) {
+      // Use canonical RBAC - only normalized roles for financial data
+      if (!canManageClinicSettings(user.role)) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 })
       }
 
