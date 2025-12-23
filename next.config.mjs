@@ -189,9 +189,9 @@ const nextConfig = {
         ],
     optimizeCss: !FAST_BUILD,
     webpackBuildWorker: false,
-    turbo: false,
-    serverComponentsExternalPackages: ['@prisma/client', '@tensorflow/tfjs-node', '@google-cloud/vision', 'sharp'],
   },
+
+  serverExternalPackages: ['@prisma/client', '@tensorflow/tfjs-node', '@google-cloud/vision', 'sharp'],
 }
 
 // Bundle analyzer wrapper

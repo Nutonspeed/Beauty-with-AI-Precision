@@ -2,19 +2,29 @@
  * Vercel AI Gateway Client
  *
  * Multi-model AI analysis using Vercel AI Gateway
- * Supports GPT-4o, Claude 3.5 Sonnet, and Gemini 2.0 Flash
+ * Cost-optimized: Gemini 1.5 Flash (free) -> GPT-4o-mini -> Claude 3.5 Haiku -> GPT-4o/Claude Sonnet
  */
 
 import { generateText } from "ai"
+import { createOpenAI } from "@ai-sdk/openai"
+import { createAnthropic } from "@ai-sdk/anthropic"
+import { google } from "@ai-sdk/google"
+
+// Initialize providers
+const openai = createOpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+})
+
+const anthropic = createAnthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY,
+})
 
 // AI Gateway configuration
-// const AI_GATEWAY_KEY =
-//   process.env.VERCEL_AI_GATEWAY_KEY || "vck_21OTwoeeh20LtPP0R2aNrWJcF3XAE2H3hAzQuS9tTpdvEsXinR3l3m9I"
-
 export interface SkinAnalysisPrompt {
   imageBase64: string
   language: "en" | "th"
   analysisType: "quick" | "detailed" | "medical"
+  complexity?: "simple" | "moderate" | "complex"
 }
 
 export interface AIModelResponse {
@@ -40,6 +50,181 @@ export interface AIModelResponse {
   overallScore: number
   processingTime: number
   rawResponse: string
+  cost?: number // Estimated cost in USD
+}
+
+/**
+ * Smart Model Router - Chooses the most cost-effective model based on task complexity
+ */
+export async function analyzeWithSmartRouter(prompt: SkinAnalysisPrompt): Promise<AIModelResponse> {
+  const complexity = prompt.complexity || (prompt.analysisType === "medical" ? "complex" : "simple")
+  
+  // Route to appropriate model based on complexity
+  switch (complexity) {
+    case "simple":
+      console.log("[AI Router] Using Gemini 1.5 Flash (free) for simple analysis")
+      return await analyzeWithGeminiFlash(prompt)
+    case "moderate":
+      console.log("[AI Router] Using GPT-4o-mini for moderate analysis")
+      return await analyzeWithGPT4oMini(prompt)
+    case "complex":
+      console.log("[AI Router] Using GPT-4o for complex analysis")
+      return await analyzeWithGPT4o(prompt)
+    default:
+      console.log("[AI Router] Defaulting to Gemini 1.5 Flash")
+      return await analyzeWithGeminiFlash(prompt)
+  }
+}
+
+/**
+ * Gemini 1.5 Flash - FREE model (1,500 requests/day)
+ */
+export async function analyzeWithGeminiFlash(prompt: SkinAnalysisPrompt): Promise<AIModelResponse> {
+  const startTime = performance.now()
+
+  try {
+    const systemPrompt = `You are an expert dermatologist AI analyzing facial skin images. Provide detailed analysis in ${prompt.language === "th" ? "Thai" : "English"}.
+
+Analyze the image for these 8 VISIA metrics (score 0-100):
+1. Wrinkles (รอยเหี่ยวย่น) - Fine lines and deep wrinkles
+2. Spots/Pigmentation (จุดด่างดำ) - Dark spots, age spots, melasma
+3. Pores (รูขุมขน) - Pore size and visibility
+4. Texture (พื้นผิว) - Skin smoothness and roughness
+5. Evenness (ความสม่ำเสมอ) - Skin tone uniformity
+6. Firmness (ความกระชับ) - Skin elasticity and sagging
+7. Radiance (ความกระจ่างใส) - Skin brightness and glow
+8. Hydration (ความชุ่มชื้น) - Skin moisture level
+
+For each concern found, provide:
+- Type (acne, wrinkles, pigmentation, redness, dryness, etc.)
+- Severity (mild/moderate/severe)
+- Confidence (0-100%)
+- Location on face
+- Brief description
+
+Also provide 3-5 personalized recommendations.
+
+Return response in this JSON format:
+{
+  "concerns": [{"type": "...", "severity": "...", "confidence": 0.95, "location": "...", "description": "..."}],
+  "visiaScores": {"wrinkles": 85, "spots": 78, ...},
+  "recommendations": ["...", "..."],
+  "overallScore": 82
+}`
+
+    const { text } = await generateText({
+      model: google("gemini-1.5-flash"),
+      messages: [
+        {
+          role: "system",
+          content: systemPrompt,
+        },
+        {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text: `Analyze this facial skin image in detail. Analysis type: ${prompt.analysisType}`,
+            },
+            {
+              type: "image",
+              image: prompt.imageBase64,
+            },
+          ],
+        },
+      ],
+      temperature: 0.3,
+    })
+
+    const processingTime = performance.now() - startTime
+
+    // Parse JSON response
+    const jsonMatch = text.match(/\{[\s\S]*\}/)
+    if (!jsonMatch) {
+      throw new Error("Failed to parse JSON from Gemini Flash response")
+    }
+
+    const parsed = JSON.parse(jsonMatch[0])
+
+    return {
+      model: "gemini-1.5-flash",
+      concerns: parsed.concerns || [],
+      visiaScores: parsed.visiaScores || {},
+      recommendations: parsed.recommendations || [],
+      overallScore: parsed.overallScore || 0,
+      processingTime,
+      rawResponse: text,
+      cost: 0, // FREE!
+    }
+  } catch (error) {
+    console.error("Gemini Flash analysis failed:", error)
+    // Fallback to GPT-4o-mini
+    console.log("[AI Router] Falling back to GPT-4o-mini")
+    return await analyzeWithGPT4oMini(prompt)
+  }
+}
+
+/**
+ * GPT-4o Mini - Cost-effective for moderate analysis ($0.15/1M input)
+ */
+export async function analyzeWithGPT4oMini(prompt: SkinAnalysisPrompt): Promise<AIModelResponse> {
+  const startTime = performance.now()
+
+  try {
+    const systemPrompt = `You are an expert dermatologist AI analyzing facial skin images. Provide detailed analysis in ${prompt.language === "th" ? "Thai" : "English"}.
+
+Analyze the image for these 8 VISIA metrics (score 0-100):
+1. Wrinkles, 2. Spots, 3. Pores, 4. Texture, 5. Evenness, 6. Firmness, 7. Radiance, 8. Hydration.
+
+Return JSON with concerns, visiaScores, recommendations, overallScore.`
+
+    const { text } = await generateText({
+      model: openai("gpt-4o-mini"),
+      messages: [
+        {
+          role: "system",
+          content: systemPrompt,
+        },
+        {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text: `Analyze this facial skin image. Analysis type: ${prompt.analysisType}`,
+            },
+            {
+              type: "image",
+              image: prompt.imageBase64,
+            },
+          ],
+        },
+      ],
+      temperature: 0.3,
+    })
+
+    const processingTime = performance.now() - startTime
+
+    const jsonMatch = text.match(/\{[\s\S]*\}/)
+    if (!jsonMatch) {
+      throw new Error("Failed to parse JSON from GPT-4o-mini response")
+    }
+
+    const parsed = JSON.parse(jsonMatch[0])
+
+    return {
+      model: "gpt-4o-mini",
+      concerns: parsed.concerns || [],
+      visiaScores: parsed.visiaScores || {},
+      recommendations: parsed.recommendations || [],
+      overallScore: parsed.overallScore || 0,
+      processingTime,
+      rawResponse: text,
+      cost: 0.00015, // Estimated cost per request
+    }
+  } catch (error) {
+    console.error("GPT-4o-mini analysis failed:", error)
+    throw error
+  }
 }
 
 /**
