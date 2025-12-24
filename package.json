@@ -9,6 +9,7 @@
     "check:db": "tsx scripts/check-database.ts",
     "deploy:check": "pnpm type-check && pnpm check:db && pnpm verify",
     "dev": "next dev --webpack -p 3004",
+    "seed:dev": "node ./scripts/seed-dev.js",
     "db:seed:test": "node ./scripts/seed-test-users.js",
     "dev:3005": "next dev --webpack -p 3005",
     "dev:webpack": "next dev --webpack",
