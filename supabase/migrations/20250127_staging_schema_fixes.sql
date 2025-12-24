@@ -16,7 +16,7 @@ ALTER TABLE payments
 ADD COLUMN IF NOT EXISTS notes TEXT;
 
 -- Update payment_type constraint to allow common values
-DROP CONSTRAINT IF EXISTS payments_payment_type_check ON payments;
+ALTER TABLE payments DROP CONSTRAINT IF EXISTS payments_payment_type_check;
 ALTER TABLE payments 
 ADD CONSTRAINT payments_payment_type_check 
 CHECK (payment_type IN ('full', 'partial', 'refund'));
