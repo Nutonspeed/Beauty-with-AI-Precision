@@ -7,7 +7,7 @@
 -- Create audit_logs table
 CREATE TABLE IF NOT EXISTS public.audit_logs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES public.auth.users(id) ON DELETE SET NULL NOT NULL,
+  user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL NOT NULL,
   action TEXT NOT NULL, -- e.g., 'created', 'updated', 'deleted', 'login', 'subscription_updated'
   resource_type TEXT NOT NULL, -- e.g., 'clinic', 'user', 'subscription', 'payment'
   resource_id UUID, -- ID of the resource that was acted upon
@@ -97,7 +97,7 @@ SELECT
   u.email as user_email,
   u.raw_user_meta_data->>'name' as user_name
 FROM public.audit_logs al
-LEFT JOIN public.auth.users u ON al.user_id = u.id
+LEFT JOIN auth.users u ON al.user_id = u.id
 ORDER BY al.created_at DESC
 LIMIT 100;
 
