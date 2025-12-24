@@ -5,7 +5,7 @@
   "scripts": {
     "build": "node --max-old-space-size=8192 ./node_modules/next/dist/bin/next build --webpack",
     "build:analyze": "ANALYZE=true pnpm build",
-    "build:fast": "cross-env FAST_BUILD=1 node --max-old-space-size=8192 ./node_modules/next/dist/bin/next build --webpack",
+    "build:fast": "cross-env FAST_BUILD=1 node --max-old-space-size=6144 ./node_modules/next/dist/bin/next build --webpack",
     "check:db": "tsx scripts/check-database.ts",
     "deploy:check": "pnpm type-check && pnpm check:db && pnpm verify",
     "dev": "next dev --webpack -p 3004",

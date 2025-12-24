@@ -175,7 +175,7 @@ const nextConfig = {
 
   experimental: {
     workerThreads: false,
-    cpus: FAST_BUILD ? (isVercel ? 2 : 1) : undefined,
+    cpus: FAST_BUILD ? 1 : undefined, // Reduce to 1 CPU for Vercel
     optimizePackageImports: FAST_BUILD
       ? []
       : [
@@ -189,6 +189,7 @@ const nextConfig = {
         ],
     optimizeCss: !FAST_BUILD,
     webpackBuildWorker: false,
+    serverMinification: true, // Enable server minification
   },
 
   serverExternalPackages: ['@prisma/client', '@tensorflow/tfjs-node', '@google-cloud/vision', 'sharp'],
