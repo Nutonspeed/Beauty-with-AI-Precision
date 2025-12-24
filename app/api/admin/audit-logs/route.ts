@@ -35,10 +35,7 @@ export async function GET(request: NextRequest) {
     // Build query
     let query = supabase
       .from('audit_logs')
-      .select(`
-        *,
-        auth.users(email)
-      `, count: 'exact')
+      .select('*', { count: 'exact' })
 
     // Apply filters
     if (userId) {
@@ -72,7 +69,7 @@ export async function GET(request: NextRequest) {
       supabase.from('audit_logs').select('resource_type').not('resource_type', 'is', null),
       supabase
         .from('audit_logs')
-        .select('user_id, auth.users(email)')
+        .select('user_id')
         .not('user_id', 'is', null)
         .limit(100)
     ])
@@ -81,7 +78,7 @@ export async function GET(request: NextRequest) {
     const resourceTypes = [...new Set(resourceTypesResult.data?.map((r: any) => r.resource_type) || [])]
     const users = usersResult.data?.map((u: any) => ({
       id: u.user_id,
-      email: u.auth.users?.email
+      email: null // Will be fetched separately if needed
     })) || []
 
     return NextResponse.json({
