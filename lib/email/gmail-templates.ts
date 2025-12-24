@@ -196,7 +196,24 @@ export async function sendUserInvitationEmail(params: {
     return { success: true, messageId: info.messageId }
   } catch (error) {
     console.error('❌ Failed to send invitation email:', error)
+    throw error
+  }
+}
 
+/**
+ * Password Reset Email
+ */
+export async function sendPasswordResetEmail(params: {
+  to: string
+  userName?: string
+  resetUrl: string
+}) {
+  const { to, userName, resetUrl } = params
+  
+  const content = `
+    <div class="content">
+      <h2>🔐 รีเซ็ตรหัสผ่าน</h2>
+      
       <p>สวัสดี${userName ? ` คุณ${userName}` : ''},</p>
       
       <p>เราได้รับคำขอให้รีเซ็ตรหัสผ่านสำหรับบัญชีของคุณ</p>

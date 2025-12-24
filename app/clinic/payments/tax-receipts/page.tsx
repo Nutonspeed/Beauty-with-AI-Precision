@@ -393,16 +393,15 @@ export default function TaxReceiptPage() {
           <h2 className="text-2xl font-bold">จัดการใบเสร็จรับเงิน/ใบกำกับภาษี</h2>
           <p className="text-gray-600">สร้างและจัดการใบเสร็จเพื่อวัตถุประสงค์ทางภาษี</p>
         </div>
+        <Button onClick={() => setCreateDialogOpen(true)}>
+          <Plus className="w-4 h-4 mr-2" />
+          สร้างใบเสร็จใหม่
+        </Button>
         <CreateReceiptDialog
           open={createDialogOpen}
           onOpenChange={setCreateDialogOpen}
           onSuccess={fetchReceipts}
-        >
-          <Button>
-            <Plus className="w-4 h-4 mr-2" />
-            สร้างใบเสร็จใหม่
-          </Button>
-        </CreateReceiptDialog>
+        />
       </div>
 
       {/* Filters */}

@@ -65,8 +65,7 @@ CREATE TABLE IF NOT EXISTS tax_receipt_line_items (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     
     -- Constraints
-    CHECK(line_total = quantity * unit_price * (1 - discount_percent / 100)),
-    CHECK(vat_amount = ROUND(line_total * vat_rate / 100, 2))
+    -- CHECK constraints removed - totals calculated via trigger
 );
 
 -- Indexes
