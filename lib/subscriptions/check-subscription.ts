@@ -5,11 +5,11 @@
  */
 
 import { createClient } from '@/lib/supabase/server'
-import {
-  CLINIC_SUBSCRIPTION_PLANS,
-  type ClinicSubscriptionPlan,
-  isClinicWithinLimits,
-} from './plans'
+import { 
+  getPricingPlan, 
+  isWithinPlanLimits,
+  type PricingPlanView 
+} from './pricing-service'
 
 export type SubscriptionLifecycleStatus = 'trial' | 'active' | 'past_due' | 'suspended' | 'cancelled'
 
@@ -18,8 +18,8 @@ export interface SubscriptionStatus {
   isTrial: boolean
   isTrialExpired: boolean
   subscriptionStatus: SubscriptionLifecycleStatus
-  plan: ClinicSubscriptionPlan
-  planDetails: typeof CLINIC_SUBSCRIPTION_PLANS[ClinicSubscriptionPlan]
+  plan: string
+  planDetails: PricingPlanView
   daysRemaining: number | null
   trialDaysRemaining: number | null
   usage: {
@@ -52,12 +52,26 @@ export async function getSubscriptionStatus(clinicId: string): Promise<Subscript
     .single()
 
   if (error || !clinic) {
-    return createDefaultStatus('starter', 'Clinic not found')
+    // Get default plan from database
+    const defaultPlan = await getPricingPlan('starter')
+    if (!defaultPlan) {
+      throw new Error('Default starter plan not found in database')
+    }
+    return createDefaultStatus(defaultPlan, 'Clinic not found')
   }
 
   const rawPlan = (clinic.subscription_plan || 'starter') as string
-  const plan = normalizeClinicPlan(rawPlan)
-  const planDetails = CLINIC_SUBSCRIPTION_PLANS[plan]
+  const planDetails = await getPricingPlan(rawPlan)
+  
+  if (!planDetails) {
+    // Fallback to starter plan if plan not found
+    const defaultPlan = await getPricingPlan('starter')
+    if (!defaultPlan) {
+      throw new Error('Default starter plan not found in database')
+    }
+    return createDefaultStatus(defaultPlan, `Plan ${rawPlan} not found`)
+  }
+  
   const now = new Date()
 
   // Check trial status
@@ -84,8 +98,8 @@ export async function getSubscriptionStatus(clinicId: string): Promise<Subscript
   // Get current usage (simplified - would need actual counting in production)
   const usage = await getClinicUsage(supabase, clinicId)
 
-  // Check if within limits
-  const withinLimits = isClinicWithinLimits(plan, usage)
+  // Check if within limits using new service
+  const withinLimits = isWithinPlanLimits(planDetails, usage)
 
   // Generate status message
   let message = ''
@@ -114,7 +128,7 @@ export async function getSubscriptionStatus(clinicId: string): Promise<Subscript
     isTrial,
     isTrialExpired,
     subscriptionStatus,
-    plan,
+    plan: rawPlan,
     planDetails,
     daysRemaining,
     trialDaysRemaining,
@@ -124,7 +138,7 @@ export async function getSubscriptionStatus(clinicId: string): Promise<Subscript
   }
 }
 
-function normalizeClinicPlan(plan: string): ClinicSubscriptionPlan {
+function normalizeClinicPlan(plan: string): string {
   const p = String(plan || '').trim().toLowerCase()
   if (p === 'professional') return 'professional'
   if (p === 'enterprise') return 'enterprise'
@@ -151,8 +165,8 @@ export async function canAccessFeature(clinicId: string, feature: string): Promi
   
   if (!status.isActive) return false
   
-  const features = status.planDetails.features as readonly string[]
-  return features.includes(feature)
+  // Use pricing service to check feature access
+  return status.planDetails.features.includes(feature)
 }
 
 /**
@@ -184,9 +198,9 @@ export async function canPerformAction(
   const plan = status.planDetails
   const usage = status.usage
 
-  const maxAnalyses = plan.maxAnalysesPerMonth as number
-  const maxUsers = plan.maxUsers as number
-  const maxStorage = plan.maxStorageGB as number
+  const maxAnalyses = plan.max_analyses_per_month
+  const maxUsers = plan.max_users
+  const maxStorage = plan.max_storage_gb
 
   switch (action) {
     case 'analysis':
@@ -246,14 +260,14 @@ async function getClinicUsage(
 /**
  * Create default status for error cases
  */
-function createDefaultStatus(plan: ClinicSubscriptionPlan, message: string): SubscriptionStatus {
+function createDefaultStatus(plan: PricingPlanView, message: string): SubscriptionStatus {
   return {
     isActive: false,
     isTrial: false,
     isTrialExpired: false,
     subscriptionStatus: 'suspended',
-    plan,
-    planDetails: CLINIC_SUBSCRIPTION_PLANS[plan],
+    plan: plan.slug,
+    planDetails: plan,
     daysRemaining: null,
     trialDaysRemaining: null,
     usage: { users: 0, storage: 0, analyses: 0 },
@@ -267,22 +281,27 @@ function createDefaultStatus(plan: ClinicSubscriptionPlan, message: string): Sub
  */
 export async function startTrial(
   clinicId: string,
-  plan: ClinicSubscriptionPlan = 'starter'
+  planSlug: string = 'starter'
 ): Promise<boolean> {
   const supabase = await createClient()
-  const planDetails = CLINIC_SUBSCRIPTION_PLANS[plan]
   
-  if (Number(planDetails.trialDays) <= 0) {
+  // Get plan details from database
+  const planDetails = await getPricingPlan(planSlug)
+  if (!planDetails) {
+    throw new Error(`Plan ${planSlug} not found`)
+  }
+  
+  if (planDetails.trial_days <= 0) {
     return false // No trial for this plan
   }
 
   const trialEndsAt = new Date()
-  trialEndsAt.setDate(trialEndsAt.getDate() + planDetails.trialDays)
+  trialEndsAt.setDate(trialEndsAt.getDate() + planDetails.trial_days)
 
   const { error } = await supabase
     .from('clinics')
     .update({
-      subscription_plan: plan,
+      subscription_plan: planSlug,
       subscription_status: 'trial',
       is_trial: true,
       trial_ends_at: trialEndsAt.toISOString(),
@@ -298,9 +317,15 @@ export async function startTrial(
  */
 export async function upgradeSubscription(
   clinicId: string, 
-  plan: ClinicSubscriptionPlan
+  planSlug: string
 ): Promise<{ success: boolean; error?: string }> {
   const supabase = await createClient()
+
+  // Validate plan exists
+  const planDetails = await getPricingPlan(planSlug)
+  if (!planDetails) {
+    return { success: false, error: `Plan ${planSlug} not found` }
+  }
 
   // Calculate subscription end date (1 month from now)
   const subscriptionEndsAt = new Date()
@@ -309,7 +334,7 @@ export async function upgradeSubscription(
   const { error } = await supabase
     .from('clinics')
     .update({
-      subscription_plan: plan,
+      subscription_plan: planSlug,
       subscription_status: 'active',
       is_trial: false,
       trial_ends_at: null,

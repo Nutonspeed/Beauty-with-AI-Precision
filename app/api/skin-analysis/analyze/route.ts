@@ -56,6 +56,18 @@ export const POST = withPublicAccess(async (request: NextRequest) => {
     const userId = user?.id || "demo-user-" + Date.now()
     console.log("[v0] 👤 User ID:", userId)
 
+    // Get clinic_id for rate limiting
+    let clinicId = null
+    if (user?.id) {
+      const { data: userData } = await supabase
+        .from('users')
+        .select('clinic_id')
+        .eq('id', user.id)
+        .single()
+      clinicId = userData?.clinic_id
+    }
+    console.log("[v0] 🏥 Clinic ID:", clinicId)
+
     // Decode base64 image
     console.log("[v0] 🖼️ Decoding base64 image...")
     const base64Data = body.image.replace(/^data:image\/\w+;base64,/, "")
@@ -77,6 +89,7 @@ export const POST = withPublicAccess(async (request: NextRequest) => {
     const analysis = await analyzeSkin(processedImage, {
       mode: requestMode,
       qualityMetrics: body.qualityMetrics, // Phase 1: Pass quality metrics to analyzer
+      clinicId: clinicId // Pass clinicId for rate limiting
     })
 
     const analysisTime = Date.now() - startTime

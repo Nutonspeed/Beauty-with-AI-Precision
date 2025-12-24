@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
@@ -38,6 +38,13 @@ interface NarrativeTemplate {
   variables: string[]
 }
 
+interface SalesMetrics {
+  conversionRate: number
+  conversionChange: number
+  engagementRate: number
+  salesGrowth: number
+}
+
 export default function SalesNarrativePage() {
   const { language } = useLanguage()
   const router = useRouter()
@@ -48,7 +55,34 @@ export default function SalesNarrativePage() {
   const [treatmentType, setTreatmentType] = useState("")
   const [painPoints, setPainPoints] = useState("")
   const [generatedNarrative, setGeneratedNarrative] = useState("")
+  const [metrics, setMetrics] = useState<SalesMetrics | null>(null)
+  const [loadingMetrics, setLoadingMetrics] = useState(true)
   const [isGenerating, setIsGenerating] = useState(false)
+
+  // Fetch sales metrics
+  useEffect(() => {
+    const fetchMetrics = async () => {
+      try {
+        setLoadingMetrics(true)
+        const response = await fetch('/api/sales/metrics?period=month')
+        if (response.ok) {
+          const data = await response.json()
+          setMetrics({
+            conversionRate: data.conversionRate?.today?.change || 0,
+            conversionChange: data.conversionRate?.today?.change || 0,
+            engagementRate: 94, // TODO: Calculate from actual data
+            salesGrowth: data.revenueGenerated?.today?.change || 0
+          })
+        }
+      } catch (error) {
+        console.error('Failed to fetch metrics:', error)
+      } finally {
+        setLoadingMetrics(false)
+      }
+    }
+
+    fetchMetrics()
+  }, [])
 
   const narrativeTemplates: NarrativeTemplate[] = [
     {
@@ -385,9 +419,19 @@ export default function SalesNarrativePage() {
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className="text-3xl font-bold text-primary">87%</div>
+                      <div className="text-3xl font-bold text-primary">
+                        {metrics?.conversionRate || '--'}%
+                      </div>
                       <p className="text-sm text-muted-foreground">
-                        {language === "th" ? "เพิ่มขึ้น 12% จากเดือนที่แล้ว" : "+12% from last month"}
+                        {metrics?.conversionChange ? (
+                          metrics.conversionChange > 0 ? (
+                            language === "th" ? `เพิ่มขึ้น ${metrics.conversionChange}% จากเดือนที่แล้ว` : `+${metrics.conversionChange}% from last month`
+                          ) : (
+                            language === "th" ? `ลดลง ${Math.abs(metrics.conversionChange)}% จากเดือนที่แล้ว` : `-${Math.abs(metrics.conversionChange)}% from last month`
+                          )
+                        ) : (
+                          language === "th" ? "กำลังโหลดข้อมูล..." : "Loading data..."
+                        )}
                       </p>
                     </CardContent>
                   </Card>
@@ -400,7 +444,9 @@ export default function SalesNarrativePage() {
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className="text-3xl font-bold text-primary">94%</div>
+                      <div className="text-3xl font-bold text-primary">
+                        {metrics?.engagementRate || '--'}%
+                      </div>
                       <p className="text-sm text-muted-foreground">
                         {language === "th" ? "ลูกค้าตอบสนองต่อเรื่องราว" : "Customer response to narratives"}
                       </p>
@@ -415,7 +461,13 @@ export default function SalesNarrativePage() {
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className="text-3xl font-bold text-primary">+23%</div>
+                      <div className="text-3xl font-bold text-primary">
+                        {metrics?.salesGrowth ? (
+                          metrics.salesGrowth > 0 ? `+${metrics.salesGrowth}%` : `${metrics.salesGrowth}%`
+                        ) : (
+                          '--'
+                        )}
+                      </div>
                       <p className="text-sm text-muted-foreground">
                         {language === "th" ? "เพิ่มขึ้นจาก storytelling" : "Increase from storytelling"}
                       </p>

@@ -168,6 +168,9 @@ export interface AnalysisOptions {
 
   // เปิดใช้งาน cache
   useCache?: boolean;
+
+  // Clinic ID for rate limiting
+  clinicId?: string;
 }
 
 // ประวัติการวิเคราะห์

@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { z } from 'zod'
-import { CLINIC_SUBSCRIPTION_PLANS } from '@/lib/subscriptions/plans'
+import { getB2BPlans } from '@/lib/subscriptions/pricing-service'
 
 const updateSubscriptionSchema = z.object({
   clinicId: z.string(),
-  plan: z.enum(['starter', 'professional', 'enterprise']),
+  plan: z.string(), // Will validate against available plans
   status: z.enum(['active', 'trial', 'past_due', 'suspended', 'cancelled']).optional(),
   trialEndsAt: z.string().optional(),
 })
@@ -59,8 +59,11 @@ export async function GET(request: NextRequest) {
     }
 
     // Enrich with plan details
+    const availablePlans = await getB2BPlans()
+    const planMap = new Map(availablePlans.map(p => [p.slug, p]))
+    
     const subscriptions = clinics.map((clinic) => {
-      const plan = CLINIC_SUBSCRIPTION_PLANS[clinic.subscription_plan as keyof typeof CLINIC_SUBSCRIPTION_PLANS]
+      const plan = planMap.get(clinic.subscription_plan)
       return {
         ...clinic,
         planDetails: plan,
@@ -107,6 +110,14 @@ export async function PATCH(request: NextRequest) {
     }
 
     const { clinicId, plan, status, trialEndsAt } = validation.data
+
+    // Validate plan exists in database
+    const availablePlans = await getB2BPlans()
+    const planExists = availablePlans.some(p => p.slug === plan)
+    
+    if (!planExists) {
+      return NextResponse.json({ error: 'Invalid plan' }, { status: 400 })
+    }
 
     // Prepare update data
     const updateData: Record<string, any> = {

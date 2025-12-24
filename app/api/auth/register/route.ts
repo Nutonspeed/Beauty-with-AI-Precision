@@ -4,6 +4,9 @@ import { getSupabaseAdmin } from '@/lib/supabase/admin'
 /**
  * POST /api/auth/register
  * Register a new user with Supabase Auth + custom users table
+ * 
+ * SECURITY: Only allows 'customer' role registration
+ * Other roles must be created via invitation system with proper permissions
  */
 export async function POST(request: NextRequest) {
   const supabaseAdmin = getSupabaseAdmin()
@@ -14,19 +17,19 @@ export async function POST(request: NextRequest) {
     console.log('[Register API] 📝 Registration attempt:', { email, role })
 
     // Validation
-    if (!email || !password || !fullName || !role) {
+    if (!email || !password || !fullName) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
       )
     }
 
-    // Validate role
-    const validRoles = ['customer', 'sales_staff', 'clinic_owner', 'admin', 'super_admin']
-    if (!validRoles.includes(role)) {
+    // SECURITY: Only allow customer role for public registration
+    // Other roles require invitation with proper permissions
+    if (role && role !== 'customer') {
       return NextResponse.json(
-        { error: 'Invalid role' },
-        { status: 400 }
+        { error: 'Invalid role. Only customer registration allowed. Please contact your clinic administrator.' },
+        { status: 403 }
       )
     }
 

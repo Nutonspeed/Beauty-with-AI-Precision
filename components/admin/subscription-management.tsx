@@ -41,6 +41,7 @@ import {
   Filter,
 } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
+import { formatPrice, type PricingPlanView } from '@/lib/subscriptions/pricing-service-client';
 
 interface Subscription {
   id: string;
@@ -68,6 +69,7 @@ export default function SubscriptionManagement() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [planFilter, setPlanFilter] = useState('all');
+  const [availablePlans, setAvailablePlans] = useState<PricingPlanView[]>([]);
   
   // Edit modal state
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -77,6 +79,21 @@ export default function SubscriptionManagement() {
   const [saving, setSaving] = useState(false);
   
   const { toast } = useToast();
+
+  // Load available plans
+  useEffect(() => {
+    async function loadPlans() {
+      try {
+        const response = await fetch('/api/pricing/plans?type=b2b')
+        if (!response.ok) throw new Error('Failed to fetch plans')
+        const data = await response.json()
+        setAvailablePlans(data.plans || [])
+      } catch (error) {
+        console.error('Failed to load plans:', error);
+      }
+    }
+    loadPlans();
+  }, []);
 
   const fetchSubscriptions = useCallback(async () => {
     try {
@@ -367,9 +384,11 @@ export default function SubscriptionManagement() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Plans</SelectItem>
-                  <SelectItem value="starter">Starter</SelectItem>
-                  <SelectItem value="professional">Professional</SelectItem>
-                  <SelectItem value="enterprise">Enterprise</SelectItem>
+                  {availablePlans.map((plan) => (
+                    <SelectItem key={plan.slug} value={plan.slug}>
+                      {plan.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -451,9 +470,11 @@ export default function SubscriptionManagement() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="starter">Starter</SelectItem>
-                  <SelectItem value="professional">Professional</SelectItem>
-                  <SelectItem value="enterprise">Enterprise</SelectItem>
+                  {availablePlans.map((plan) => (
+                    <SelectItem key={plan.slug} value={plan.slug}>
+                      {plan.name} - ฿{plan.price_amount.toLocaleString()}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>

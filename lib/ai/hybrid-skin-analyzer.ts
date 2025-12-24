@@ -18,8 +18,13 @@ import { detectFace, validateImage } from './google-vision';
 import { HuggingFaceAnalyzer } from './huggingface-analyzer';
 import { analyzeSkinWithVision } from './google-vision-skin-analyzer';
 import { analyzeSkinWithAI as analyzeWithGemini, SkinAnalysisResult as GeminiSkinAnalysisResult } from './openai-vision';
-import { PerformanceOptimizer } from './performance-optimizer';
-
+import { createClient } from '@/lib/supabase/client';
+import { getPerformanceOptimizer as getOptimizer } from './performance-optimizer';
+import { 
+  analyzeWithSmartRouter,
+  type AIModelResponse,
+  type SkinAnalysisPrompt 
+} from './gateway-client';
 import { detectSpots } from '../cv/spot-detector';
 import { analyzePores } from '../cv/pore-analyzer';
 import { detectWrinkles } from '../cv/wrinkle-detector';
@@ -345,6 +350,92 @@ function normalizeGeminiResult(raw: GeminiSkinAnalysisResult): AIAnalysisResult 
 }
 
 /**
+ * Adapter function to convert AIModelResponse to GeminiSkinAnalysisResult
+ */
+function adaptAIModelResponseToGemini(aiResponse: AIModelResponse): GeminiSkinAnalysisResult {
+  // Determine skin type from concerns and scores
+  const skinType = determineSkinType(aiResponse.visiaScores, aiResponse.concerns);
+  
+  // Convert concerns to expected format
+  const normalizedConcerns = aiResponse.concerns.map((c: any) => {
+    const concernType = normalizeConcernValue(c.type);
+    // Only return concerns that match the expected types
+    if (concernType && ['acne', 'wrinkles', 'dark_spots', 'large_pores', 'redness', 'dullness'].includes(concernType)) {
+      return concernType;
+    }
+    return null;
+  }).filter((c): c is 'acne' | 'wrinkles' | 'dark_spots' | 'large_pores' | 'redness' | 'dullness' => c !== null);
+  
+  // Calculate severity from concerns
+  const severity = calculateSeverity(aiResponse.concerns);
+  
+  // Convert recommendations to proper format
+  const normalizedRecommendations = aiResponse.recommendations.map((rec: string) => ({
+    category: 'treatment' as const,
+    product: rec,
+    reason: 'AI recommendation based on skin analysis'
+  }));
+  
+  return {
+    skinType: skinType as 'normal' | 'oily' | 'dry' | 'combination' | 'sensitive',
+    concerns: normalizedConcerns,
+    severity,
+    recommendations: normalizedRecommendations,
+    treatmentPlan: generateTreatmentPlan(aiResponse.concerns, aiResponse.recommendations),
+    confidence: aiResponse.confidence || aiResponse.overallScore / 100
+  };
+}
+
+/**
+ * Determine skin type from VISIA scores and concerns
+ */
+function determineSkinType(scores: any, concerns: any[]): 'normal' | 'oily' | 'dry' | 'combination' | 'sensitive' {
+  if (!scores) return 'normal';
+  
+  // Simple logic - can be enhanced
+  if (scores.hydration < 50) return 'dry';
+  if (scores.pores > 70) return 'oily';
+  if (scores.evenness < 60) return 'combination';
+  if (concerns.some((c: any) => c.type === 'redness')) return 'sensitive';
+  return 'normal';
+}
+
+/**
+ * Calculate overall severity from concerns
+ */
+function calculateSeverity(concerns: any[]): any {
+  const severityMap: Record<string, number> = {
+    mild: 1,
+    moderate: 2,
+    severe: 3
+  };
+  
+  const totalSeverity = concerns.reduce((sum, c) => sum + (severityMap[c.severity] || 0), 0);
+  const avgSeverity = totalSeverity / concerns.length || 0;
+  
+  return {
+    overall: avgSeverity,
+    byType: concerns.reduce((acc, c) => {
+      acc[c.type] = severityMap[c.severity] || 0;
+      return acc;
+    }, {} as Record<string, number>)
+  };
+}
+
+/**
+ * Generate treatment plan from concerns and recommendations
+ */
+function generateTreatmentPlan(concerns: any[], recommendations: string[]): any {
+  return {
+    immediate: recommendations.slice(0, 2),
+    shortTerm: recommendations.slice(2, 4),
+    longTerm: recommendations.slice(4),
+    frequency: 'monthly',
+    duration: '6 months'
+  };
+}
+
+/**
  * Convert Buffer to mock ImageData for Hugging Face API
  */
 function bufferToMockImageData(buffer: Buffer): ImageData {
@@ -443,14 +534,31 @@ async function analyzeWithHuggingFace(imageBuffer: Buffer): Promise<any> {
   }
 }
 
-async function resolveAIAnalysis(buffer: Buffer, mode: AnalysisMode): Promise<{ analysis: AIAnalysisResult; provider: RemoteAIProvider }> {
+async function resolveAIAnalysis(
+  buffer: Buffer, 
+  mode: AnalysisMode,
+  clinicId?: string
+): Promise<{ analysis: AIAnalysisResult; provider: RemoteAIProvider }> {
   const providers: Array<{ id: RemoteAIProvider; run: () => Promise<AIAnalysisResult> }> = [];
 
   if (mode !== 'hf') {
     providers.push(
       {
         id: 'gemini',
-        run: async () => normalizeGeminiResult(await analyzeWithGemini(buffer)),
+        run: async () => {
+          // Import here to avoid circular dependency
+          const { analyzeWithSmartRouter } = await import('./gateway-client');
+          const prompt = {
+            imageBase64: buffer.toString('base64'),
+            language: 'th' as const,
+            analysisType: 'detailed' as const,
+            complexity: 'moderate' as const,
+            userId: undefined // Will be set by caller
+          };
+          const result = await analyzeWithSmartRouter(prompt, clinicId);
+          const adaptedResult = adaptAIModelResponseToGemini(result);
+          return normalizeGeminiResult(adaptedResult);
+        },
       },
       {
         id: 'google-vision',
@@ -494,48 +602,23 @@ async function resolveAIAnalysis(buffer: Buffer, mode: AnalysisMode): Promise<{ 
       if (settled || remaining > 0) {
         return;
       }
-
-      const errorSummary = errors
-        .map((entry) => `${PROVIDER_LABELS[entry.provider]} (${entry.message})`)
-        .join(' → ');
       settled = true;
-      reject(new Error(`All AI providers failed. ${errorSummary}`));
+      reject(new Error(`All AI providers failed. Errors: ${errors.map(e => `${e.provider}: ${e.message}`).join(', ')}`));
     };
 
-    const runWithTimeout = async (provider: typeof providers[number]) => {
-      return new Promise<AIAnalysisResult>((resolveProvider, rejectProvider) => {
-        const timer = setTimeout(() => {
-          rejectProvider(new Error('Timeout'));
-        }, timeoutMs);
-
-        provider
-          .run()
-          .then((analysis) => {
-            clearTimeout(timer);
-            resolveProvider(analysis);
-          })
-          .catch((error) => {
-            clearTimeout(timer);
-            rejectProvider(error);
-          });
+    providers.forEach(({ id, run }) => {
+      Promise.race([
+        run().then((analysis) => tryResolve({ analysis, provider: id })),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Timeout')), timeoutMs)
+        )
+      ])
+      .catch((error) => {
+        console.warn(`❌ ${PROVIDER_LABELS[id]} failed:`, error);
+        errors.push({ provider: id, message: error instanceof Error ? error.message : 'Unknown error' });
+        remaining--;
+        tryReject();
       });
-    };
-
-    providers.forEach((provider) => {
-      runWithTimeout(provider)
-        .then((analysis) => {
-          console.log(`✅ ${PROVIDER_LABELS[provider.id]} responded successfully`);
-          tryResolve({ analysis, provider: provider.id });
-        })
-        .catch((error) => {
-          const message = (error as Error)?.message ?? 'Unknown error';
-          console.warn(`⚠️ ${PROVIDER_LABELS[provider.id]} failed: ${message}`);
-          errors.push({ provider: provider.id, message });
-        })
-        .finally(() => {
-          remaining -= 1;
-          tryReject();
-        });
     });
   });
 }
@@ -646,16 +729,6 @@ function buildLocalAIAnalysis(cv: CVAnalysisResult): AIAnalysisResult {
   };
 }
 
-// Singleton Performance Optimizer instance
-let performanceOptimizer: PerformanceOptimizer | null = null;
-
-function getPerformanceOptimizer(): PerformanceOptimizer {
-  if (!performanceOptimizer) {
-    performanceOptimizer = new PerformanceOptimizer();
-  }
-  return performanceOptimizer;
-}
-
 /**
  * วิเคราะห์ผิวหน้าด้วยระบบ Hybrid (AI + CV)
  */
@@ -690,7 +763,7 @@ export async function analyzeSkin(
       : imageBuffer;
 
     // ⚡ Performance Optimization: Check cache first
-    const optimizer = getPerformanceOptimizer();
+    const optimizer = getOptimizer();
     const _useCache = options.useCache !== false; // Default to true
 
     let aiAnalysis: AIAnalysisResult | null = null;
@@ -700,7 +773,8 @@ export async function analyzeSkin(
     if (analysisMode !== 'local') {
       const aiStart = Date.now();
       try {
-        const remoteResult = await resolveAIAnalysis(buffer, analysisMode);
+        // Pass clinicId to AI analysis for rate limiting
+        const remoteResult = await resolveAIAnalysis(buffer, analysisMode, options.clinicId);
         aiProcessingTime = Date.now() - aiStart;
         aiAnalysis = remoteResult.analysis;
         aiProvider = remoteResult.provider;
