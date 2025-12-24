@@ -11,12 +11,13 @@ const getCredentials = () => {
   // For Vercel: use GOOGLE_CREDENTIALS_JSON environment variable
   if (process.env.GOOGLE_CREDENTIALS_JSON) {
     try {
+      const parsed = JSON.parse(process.env.GOOGLE_CREDENTIALS_JSON);
       return {
-        credentials: JSON.parse(process.env.GOOGLE_CREDENTIALS_JSON),
+        credentials: parsed,
       };
     } catch (error) {
       console.error('Failed to parse GOOGLE_CREDENTIALS_JSON:', error);
-      throw new Error('Invalid GOOGLE_CREDENTIALS_JSON format');
+      return null;
     }
   }
   
@@ -27,10 +28,23 @@ const getCredentials = () => {
     };
   }
   
-  throw new Error('Missing Google Cloud credentials. Set either GOOGLE_CREDENTIALS_JSON or GOOGLE_APPLICATION_CREDENTIALS');
+  return null;
 };
 
-const client = new vision.ImageAnnotatorClient(getCredentials());
+const credentials = getCredentials();
+let client: vision.ImageAnnotatorClient | null = null;
+
+if (credentials) {
+  try {
+    client = new vision.ImageAnnotatorClient(credentials);
+    console.log('✅ Google Vision client initialized');
+  } catch (error) {
+    console.error('❌ Failed to initialize Google Vision client:', error);
+    client = null;
+  }
+} else {
+  console.warn('⚠️ Google Cloud credentials not provided. Vision API disabled.');
+}
 
 export interface FaceDetectionResult {
   hasFace: boolean;

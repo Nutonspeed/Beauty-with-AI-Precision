@@ -13,7 +13,7 @@ const ANALYZE = process.env.ANALYZE === '1' || process.env.ANALYZE === 'true'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: isVercel ? 'standalone' : undefined,
+  // output: isVercel ? 'standalone' : undefined, // Removed to fix Windows symlink issues
   distDir: '.next',
   compress: !FAST_BUILD,
   poweredByHeader: false,
