@@ -200,6 +200,13 @@ export default function BookingPage() {
 
       if (data.success) {
         setMessage({ type: 'success', text: 'จองนัดหมายสำเร็จแล้ว' })
+        
+        // Show invoice if created
+        if (data.invoice) {
+          // TODO: Open invoice dialog or redirect to payment
+          console.log('Invoice created:', data.invoice)
+        }
+        
         setIsBookingDialogOpen(false)
         setBookingForm({
           customer_id: '',

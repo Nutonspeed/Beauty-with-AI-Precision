@@ -334,6 +334,86 @@ export async function sendWelcomeEmail(params: {
 }
 
 /**
+ * Invoice Email
+ */
+export async function sendInvoiceEmail(params: {
+  to: string
+  invoiceNumber: string
+  customerName: string
+  totalAmount: number
+  dueDate: string
+  downloadUrl: string
+}) {
+  const { to, invoiceNumber, customerName, totalAmount, dueDate, downloadUrl } = params
+  
+  const content = `
+    <div class="header">
+      <h1>📄 ใบแจ้งหนี้</h1>
+      <p>ใบแจ้งหนี้ของคุณพร้อมแล้ว</p>
+    </div>
+    
+    <div class="content">
+      <p>สวัสดีครับ/ค่ะ <strong>${customerName}</strong>,</p>
+      
+      <p>ใบแจ้งหนี้ของคุณได้รับการสร้างเรียบร้อยแล้ว รายละเอียดดังนี้:</p>
+      
+      <div class="info-box">
+        <strong>📄 เลขที่ใบแจ้งหนี้:</strong>
+        <p>${invoiceNumber}</p>
+        
+        <strong>💰 จำนวนเงิน:</strong>
+        <p style="font-size: 18px; color: #667eea; font-weight: bold;">฿${totalAmount.toFixed(2)}</p>
+        
+        <strong>📅 วันครบกำหนดชำระ:</strong>
+        <p>${dueDate}</p>
+      </div>
+      
+      <center>
+        <a href="${downloadUrl}" class="button">ดาวน์โหลดใบแจ้งหนี้</a>
+      </center>
+      
+      <p style="margin-top: 30px;"><strong>วิธีการชำระเงิน:</strong></p>
+      <ul style="padding-left: 20px;">
+        <li>โอนเงินผ่านธนาคาร</li>
+        <li>ชำระผ่านบัตรเครดิต</li>
+        <li>ชำระเงินสดที่คลินิก</li>
+        <li>QR Code PromptPay</li>
+      </ul>
+      
+      <p style="margin-top: 20px; color: #666; font-size: 14px;">
+        หากมีข้อสอบถามเกี่ยวกับใบแจ้งหนี้ กรุณาติดต่อเรา
+      </p>
+    </div>
+    
+    <div class="footer">
+      <p><strong>Beauty AI Precision</strong></p>
+      <p>ขอบคุณสำหรับการใช้บริการ</p>
+      <p style="margin-top: 15px;">
+        © ${new Date().getFullYear()} All rights reserved.
+      </p>
+      <p style="margin-top: 10px; font-size: 12px; color: #999;">
+        Email นี้เป็นการแจ้งเตือนใบแจ้งหนี้อัตโนมัติ<br>
+        หากคุณไม่ได้มีนัดหมาย กรุณาติดต่อเรา
+      </p>
+    </div>
+  `
+
+  try {
+    const info = await transporter.sendMail({
+      from: emailFrom,
+      to,
+      subject: `📄 ใบแจ้งหนี้ ${invoiceNumber}`,
+      html: getBaseTemplate(content),
+    })
+    console.log('✅ Invoice email sent:', info.messageId)
+    return { success: true, messageId: info.messageId }
+  } catch (error) {
+    console.error('❌ Failed to send invoice email:', error)
+    throw error
+  }
+}
+
+/**
  * Test all email templates
  */
 export async function testAllEmailTemplates(testEmail: string) {

@@ -121,10 +121,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Get service details for duration
+    // Get service details for duration and price
     const { data: service, error: serviceError } = await supabase
       .from('services')
-      .select('duration')
+      .select('name, duration, price')
       .eq('id', service_id)
       .single()
 
@@ -212,12 +212,29 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Get customer details for invoice
+    const { data: customer } = await supabase
+      .from('customers')
+      .select('full_name')
+      .eq('id', customer_id)
+      .single()
+
     // Send confirmation email (optional)
     // TODO: Implement email notification
+
+    // Create invoice for the appointment
+    const { createInvoiceForAppointment } = await import('@/lib/payment/invoice-creator')
+    const invoiceData = await createInvoiceForAppointment(
+      appointment.id,
+      service,
+      customer || { id: customer_id, full_name: 'Unknown Customer' },
+      clinic_id
+    )
 
     return NextResponse.json({
       success: true,
       appointment,
+      invoice: invoiceData,
       message: 'Appointment created successfully'
     })
 
