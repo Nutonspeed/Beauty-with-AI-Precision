@@ -27,6 +27,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { format, subDays, startOfMonth, endOfMonth } from 'date-fns'
 import { th } from 'date-fns/locale'
 import Link from 'next/link'
+import RevenueChart from '@/components/payments/revenue-chart'
 
 interface DashboardStats {
   totalRevenue: number
@@ -67,6 +68,7 @@ export default function PaymentDashboardPage() {
   const [loading, setLoading] = useState(true)
   const [dateRange, setDateRange] = useState('30')
   const [statusFilter, setStatusFilter] = useState('all')
+  const [clinicId, setClinicId] = useState<string | null>(null)
 
   useEffect(() => {
     fetchDashboardData()
@@ -87,6 +89,9 @@ export default function PaymentDashboardPage() {
         .single()
 
       if (!userData?.clinic_id) return
+
+      // Set clinic_id for chart
+      setClinicId(userData.clinic_id)
 
       // Calculate date range
       const endDate = new Date()
@@ -340,6 +345,9 @@ export default function PaymentDashboardPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Revenue Chart */}
+      <RevenueChart clinicId={clinicId} />
 
       {/* Tabs */}
       <Tabs defaultValue="invoices" className="space-y-4">
