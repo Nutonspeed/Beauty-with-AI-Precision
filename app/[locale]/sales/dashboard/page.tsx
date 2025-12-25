@@ -80,6 +80,20 @@ export default function SalesDashboard() {
   const [funnel, setFunnel] = useState<SalesFunnelResponse | null>(null)
   const [range, setRange] = useState<'1d' | '7d' | '30d'>('7d')
 
+  type ClinicSubscriptionStatus = {
+    isActive: boolean
+    isTrial: boolean
+    isTrialExpired: boolean
+    subscriptionStatus: 'trial' | 'active' | 'past_due' | 'suspended' | 'cancelled'
+    plan: string
+    message: string
+  }
+
+  const [subscription, setSubscription] = useState<ClinicSubscriptionStatus | null>(null)
+  const [subscriptionLoading, setSubscriptionLoading] = useState(true)
+
+  const canWrite = subscriptionLoading ? false : (subscription?.isActive ?? true)
+
   useEffect(() => {
     let cancelled = false
 
@@ -140,6 +154,26 @@ export default function SalesDashboard() {
       cancelled = true
     }
   }, [router, range, lp])
+
+  useEffect(() => {
+    const fetchSubscription = async () => {
+      try {
+        setSubscriptionLoading(true)
+        const res = await fetch('/api/clinic/subscription-status')
+        if (!res.ok) {
+          setSubscription(null)
+          return
+        }
+        const data = await res.json()
+        setSubscription(data?.subscription || null)
+      } catch {
+        setSubscription(null)
+      } finally {
+        setSubscriptionLoading(false)
+      }
+    }
+    fetchSubscription()
+  }, [])
 
   const totalScansThisMonth = metrics?.leadsContacted.today ?? 0
   const revenueThisMonth = metrics?.revenueGenerated.today ?? 0
@@ -206,21 +240,37 @@ export default function SalesDashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 md:p-6">
       <div className="max-w-7xl mx-auto space-y-4 md:space-y-6">
+        {!subscriptionLoading && subscription && !subscription.isActive ? (
+          <Card className="border-yellow-200 bg-yellow-50">
+            <CardContent className="p-4">
+              <div className="flex flex-col gap-1">
+                <div className="text-sm font-medium text-yellow-900">Subscription จำกัดการใช้งาน</div>
+                <div className="text-sm text-yellow-800">{subscription.message}</div>
+              </div>
+            </CardContent>
+          </Card>
+        ) : null}
+
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Sales Dashboard</h1>
             <p className="text-gray-600 mt-1">Track your sales performance</p>
           </div>
-          <Link href={lp('/sales/quick-scan')} className="w-full sm:w-auto">
-            <Button 
-              size="lg"
-              className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-            >
-              <Target className="w-5 h-5 mr-2" />
-              Quick Scan
-            </Button>
-          </Link>
+          <Button
+            size="lg"
+            className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+            disabled={!canWrite}
+            onClick={() => {
+              if (!canWrite) {
+                return
+              }
+              router.push(lp('/sales/quick-scan'))
+            }}
+          >
+            <Target className="w-5 h-5 mr-2" />
+            Quick Scan
+          </Button>
         </div>
 
         {/* Key Metrics */}

@@ -22,10 +22,33 @@ function getDefaultBusinessHours() {
 }
 
 // Helper function to calculate subscription amount
-function getSubscriptionAmount(tier: string): number {
-  if (tier === "starter") return 2900
-  if (tier === "professional") return 9900
+function getSubscriptionAmount(plan: string): number {
+  const p = normalizeClinicPlan(plan)
+  if (p === "starter") return 2900
+  if (p === "professional") return 9900
   return 29900
+}
+
+function normalizeClinicPlan(plan: string): "starter" | "professional" | "enterprise" {
+  const p = String(plan || "").trim().toLowerCase()
+  if (p === "professional") return "professional"
+  if (p === "enterprise") return "enterprise"
+  // Backwards-compat mapping
+  if (p === "premium") return "professional"
+  if (p === "free") return "starter"
+  return "starter"
+}
+
+function normalizeSubscriptionStatus(
+  status: string | null | undefined
+): "trial" | "active" | "past_due" | "suspended" | "cancelled" {
+  const s = String(status || "").trim().toLowerCase()
+  if (s === "active") return "active"
+  if (s === "trial") return "trial"
+  if (s === "past_due") return "past_due"
+  if (s === "suspended") return "suspended"
+  if (s === "cancelled" || s === "canceled") return "cancelled"
+  return "trial"
 }
 
 /**
@@ -42,9 +65,26 @@ export async function getTenantById(tenantId: string): Promise<Tenant | null> {
 
     if (error || !clinic) return null
 
+    const rawPlan =
+      (clinic.subscription_plan as string | undefined) ??
+      (clinic.subscription_tier as string | undefined) ??
+      "starter"
+    const plan = normalizeClinicPlan(rawPlan)
+
     // Map clinics table to Tenant type (same as createTenant)
-    const features = PLAN_FEATURES[clinic.subscription_tier as keyof typeof PLAN_FEATURES] || PLAN_FEATURES.starter
-    const subscriptionAmount = getSubscriptionAmount(clinic.subscription_tier)
+    const features = PLAN_FEATURES[plan as keyof typeof PLAN_FEATURES] || PLAN_FEATURES.starter
+    const subscriptionAmount = getSubscriptionAmount(plan)
+
+    const rawStatus =
+      (clinic.subscription_status as string | undefined) ??
+      (clinic.subscription_tier ? (clinic.subscription_tier === "starter" ? "trial" : "active") : undefined)
+    const status = normalizeSubscriptionStatus(rawStatus)
+
+    const isTrial = Boolean(clinic.is_trial) || status === "trial"
+    const startDate = clinic.subscription_started_at ? new Date(clinic.subscription_started_at) : new Date()
+    const endDate = clinic.subscription_ends_at
+      ? new Date(clinic.subscription_ends_at)
+      : (clinic.trial_ends_at ? new Date(clinic.trial_ends_at) : undefined)
 
     return {
       id: clinic.id,
@@ -67,10 +107,10 @@ export async function getTenantById(tenantId: string): Promise<Tenant | null> {
       branding: { primaryColor: "#8B5CF6", secondaryColor: "#EC4899" },
       features: features as TenantFeatures,
       subscription: {
-        plan: clinic.subscription_tier,
-        status: clinic.subscription_tier === "starter" ? "trial" : "active",
-        startDate: new Date(),
-        endDate: clinic.subscription_tier === "starter" ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) : undefined,
+        plan,
+        status: status as any,
+        startDate,
+        endDate,
         billingCycle: "monthly",
         amount: subscriptionAmount,
         currency: "THB",
@@ -79,7 +119,7 @@ export async function getTenantById(tenantId: string): Promise<Tenant | null> {
       updatedAt: clinic.updated_at || new Date().toISOString(),
       createdBy: "",
       isActive: clinic.is_active ?? true,
-      isTrial: clinic.subscription_tier === "starter",
+      isTrial,
       isolationStrategy: "shared_schema",
       usage: { currentUsers: 1, currentCustomers: 0, storageUsedGB: 0, apiCallsThisMonth: 0 },
     }
@@ -103,9 +143,26 @@ export async function getTenantBySlug(slug: string): Promise<Tenant | null> {
 
     if (error || !clinic) return null
 
+    const rawPlan =
+      (clinic.subscription_plan as string | undefined) ??
+      (clinic.subscription_tier as string | undefined) ??
+      "starter"
+    const plan = normalizeClinicPlan(rawPlan)
+
     // Map clinics table to Tenant type
-    const features = PLAN_FEATURES[clinic.subscription_tier as keyof typeof PLAN_FEATURES] || PLAN_FEATURES.starter
-    const subscriptionAmount = getSubscriptionAmount(clinic.subscription_tier)
+    const features = PLAN_FEATURES[plan as keyof typeof PLAN_FEATURES] || PLAN_FEATURES.starter
+    const subscriptionAmount = getSubscriptionAmount(plan)
+
+    const rawStatus =
+      (clinic.subscription_status as string | undefined) ??
+      (clinic.subscription_tier ? (clinic.subscription_tier === "starter" ? "trial" : "active") : undefined)
+    const status = normalizeSubscriptionStatus(rawStatus)
+
+    const isTrial = Boolean(clinic.is_trial) || status === "trial"
+    const startDate = clinic.subscription_started_at ? new Date(clinic.subscription_started_at) : new Date()
+    const endDate = clinic.subscription_ends_at
+      ? new Date(clinic.subscription_ends_at)
+      : (clinic.trial_ends_at ? new Date(clinic.trial_ends_at) : undefined)
 
     return {
       id: clinic.id,
@@ -128,10 +185,10 @@ export async function getTenantBySlug(slug: string): Promise<Tenant | null> {
       branding: { primaryColor: "#8B5CF6", secondaryColor: "#EC4899" },
       features: features as TenantFeatures,
       subscription: {
-        plan: clinic.subscription_tier,
-        status: clinic.subscription_tier === "starter" ? "trial" : "active",
-        startDate: new Date(),
-        endDate: clinic.subscription_tier === "starter" ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) : undefined,
+        plan,
+        status: status as any,
+        startDate,
+        endDate,
         billingCycle: "monthly",
         amount: subscriptionAmount,
         currency: "THB",
@@ -140,7 +197,7 @@ export async function getTenantBySlug(slug: string): Promise<Tenant | null> {
       updatedAt: clinic.updated_at || new Date().toISOString(),
       createdBy: "",
       isActive: clinic.is_active ?? true,
-      isTrial: clinic.subscription_tier === "starter",
+      isTrial,
       isolationStrategy: "shared_schema",
       usage: { currentUsers: 1, currentCustomers: 0, storageUsedGB: 0, apiCallsThisMonth: 0 },
     }
@@ -162,8 +219,25 @@ export async function getAllTenants(): Promise<Tenant[]> {
 
     // Map clinics table to Tenant type
     return clinics.map((clinic: any) => {
-      const features = PLAN_FEATURES[clinic.subscription_tier as keyof typeof PLAN_FEATURES] || PLAN_FEATURES.starter
-      const subscriptionAmount = getSubscriptionAmount(clinic.subscription_tier)
+      const rawPlan =
+        (clinic.subscription_plan as string | undefined) ??
+        (clinic.subscription_tier as string | undefined) ??
+        "starter"
+      const plan = normalizeClinicPlan(rawPlan)
+
+      const features = PLAN_FEATURES[plan as keyof typeof PLAN_FEATURES] || PLAN_FEATURES.starter
+      const subscriptionAmount = getSubscriptionAmount(plan)
+
+      const rawStatus =
+        (clinic.subscription_status as string | undefined) ??
+        (clinic.subscription_tier ? (clinic.subscription_tier === "starter" ? "trial" : "active") : undefined)
+      const status = normalizeSubscriptionStatus(rawStatus)
+
+      const isTrial = Boolean(clinic.is_trial) || status === "trial"
+      const startDate = clinic.subscription_started_at ? new Date(clinic.subscription_started_at) : new Date()
+      const endDate = clinic.subscription_ends_at
+        ? new Date(clinic.subscription_ends_at)
+        : (clinic.trial_ends_at ? new Date(clinic.trial_ends_at) : undefined)
 
       return {
         id: clinic.id,
@@ -186,10 +260,10 @@ export async function getAllTenants(): Promise<Tenant[]> {
         branding: { primaryColor: "#8B5CF6", secondaryColor: "#EC4899" },
         features: features as TenantFeatures,
         subscription: {
-          plan: clinic.subscription_tier,
-          status: clinic.subscription_tier === "starter" ? "trial" : "active",
-          startDate: new Date(),
-          endDate: clinic.subscription_tier === "starter" ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) : undefined,
+          plan,
+          status: status as any,
+          startDate,
+          endDate,
           billingCycle: "monthly",
           amount: subscriptionAmount,
           currency: "THB",
@@ -198,7 +272,7 @@ export async function getAllTenants(): Promise<Tenant[]> {
         updatedAt: clinic.updated_at || new Date().toISOString(),
         createdBy: "",
         isActive: clinic.is_active ?? true,
-        isTrial: clinic.subscription_tier === "starter",
+        isTrial,
         isolationStrategy: "shared_schema",
         usage: { currentUsers: 1, currentCustomers: 0, storageUsedGB: 0, apiCallsThisMonth: 0 },
       }
@@ -221,8 +295,25 @@ export async function getActiveTenants(): Promise<Tenant[]> {
 
     // Map clinics table to Tenant type
     return clinics.map((clinic: any) => {
-      const features = PLAN_FEATURES[clinic.subscription_tier as keyof typeof PLAN_FEATURES] || PLAN_FEATURES.starter
-      const subscriptionAmount = getSubscriptionAmount(clinic.subscription_tier)
+      const rawPlan =
+        (clinic.subscription_plan as string | undefined) ??
+        (clinic.subscription_tier as string | undefined) ??
+        "starter"
+      const plan = normalizeClinicPlan(rawPlan)
+
+      const features = PLAN_FEATURES[plan as keyof typeof PLAN_FEATURES] || PLAN_FEATURES.starter
+      const subscriptionAmount = getSubscriptionAmount(plan)
+
+      const rawStatus =
+        (clinic.subscription_status as string | undefined) ??
+        (clinic.subscription_tier ? (clinic.subscription_tier === "starter" ? "trial" : "active") : undefined)
+      const status = normalizeSubscriptionStatus(rawStatus)
+
+      const isTrial = Boolean(clinic.is_trial) || status === "trial"
+      const startDate = clinic.subscription_started_at ? new Date(clinic.subscription_started_at) : new Date()
+      const endDate = clinic.subscription_ends_at
+        ? new Date(clinic.subscription_ends_at)
+        : (clinic.trial_ends_at ? new Date(clinic.trial_ends_at) : undefined)
 
       return {
         id: clinic.id,
@@ -245,10 +336,10 @@ export async function getActiveTenants(): Promise<Tenant[]> {
         branding: { primaryColor: "#8B5CF6", secondaryColor: "#EC4899" },
         features: features as TenantFeatures,
         subscription: {
-          plan: clinic.subscription_tier,
-          status: clinic.subscription_tier === "starter" ? "trial" : "active",
-          startDate: new Date(),
-          endDate: clinic.subscription_tier === "starter" ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) : undefined,
+          plan,
+          status: status as any,
+          startDate,
+          endDate,
           billingCycle: "monthly",
           amount: subscriptionAmount,
           currency: "THB",
@@ -257,7 +348,7 @@ export async function getActiveTenants(): Promise<Tenant[]> {
         updatedAt: clinic.updated_at || new Date().toISOString(),
         createdBy: "",
         isActive: clinic.is_active ?? true,
-        isTrial: clinic.subscription_tier === "starter",
+        isTrial,
         isolationStrategy: "shared_schema",
         usage: { currentUsers: 1, currentCustomers: 0, storageUsedGB: 0, apiCallsThisMonth: 0 },
       }
@@ -280,19 +371,24 @@ export async function createTenant(input: CreateTenantInput): Promise<Tenant> {
     }
 
     const tenantId = crypto.randomUUID()
+    const plan = normalizeClinicPlan(input.plan)
     const features = {
-      ...(PLAN_FEATURES[input.plan] as TenantFeatures),
+      ...(PLAN_FEATURES[plan as keyof typeof PLAN_FEATURES] as TenantFeatures),
       ...input.customFeatures,
     }
 
     // Determine subscription amount based on plan
-    const subscriptionAmount = getSubscriptionAmount(input.plan)
+    const subscriptionAmount = getSubscriptionAmount(plan)
 
     const supabase = await createClient()
 
     // Insert into clinics table (using actual schema)
-    const maxStaff = input.plan === "starter" ? 5 : input.plan === "professional" ? 15 : 50
-    const maxAnalyses = input.plan === "starter" ? 100 : input.plan === "professional" ? 500 : 10000
+    const maxStaff = plan === "starter" ? 5 : plan === "professional" ? 15 : 50
+    const maxAnalyses = plan === "starter" ? 100 : plan === "professional" ? 500 : 10000
+
+    const trialEndsAt = new Date()
+    trialEndsAt.setDate(trialEndsAt.getDate() + 14)
+    const startedAt = new Date()
 
     const { data: tenant, error } = await supabase
       .from("clinics")
@@ -303,7 +399,14 @@ export async function createTenant(input: CreateTenantInput): Promise<Tenant> {
         clinic_name: input.clinicName,
         email: input.email,
         phone: input.phone,
-        subscription_tier: input.plan,
+        // New source-of-truth
+        subscription_plan: plan,
+        subscription_status: "trial",
+        is_trial: true,
+        trial_ends_at: trialEndsAt.toISOString(),
+        subscription_started_at: startedAt.toISOString(),
+        // Backwards-compat
+        subscription_tier: plan,
         max_sales_staff: maxStaff,
         max_analyses_per_month: maxAnalyses,
         is_active: true,
@@ -347,10 +450,10 @@ export async function createTenant(input: CreateTenantInput): Promise<Tenant> {
       },
       features: features,
       subscription: {
-        plan: input.plan,
-        status: input.plan === "starter" ? "trial" : "active",
-        startDate: new Date(),
-        endDate: input.plan === "starter" ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) : undefined,
+        plan,
+        status: "trial",
+        startDate: startedAt,
+        endDate: trialEndsAt,
         billingCycle: "monthly",
         amount: subscriptionAmount,
         currency: "THB",
@@ -359,7 +462,7 @@ export async function createTenant(input: CreateTenantInput): Promise<Tenant> {
       updatedAt: tenant.updated_at || new Date().toISOString(),
       createdBy: input.ownerId,
       isActive: tenant.is_active ?? true,
-      isTrial: input.plan === "starter",
+      isTrial: true,
       isolationStrategy: "shared_schema",
       usage: {
         currentUsers: 1,
@@ -388,7 +491,24 @@ export async function updateTenant(tenantId: string, updates: Partial<Tenant>): 
     if (updates.settings?.clinicName) updateData.name = updates.settings.clinicName
     if (updates.settings?.email) updateData.email = updates.settings.email
     if (updates.settings?.phone) updateData.phone = updates.settings.phone
-    if (updates.subscription?.plan) updateData.subscription_tier = updates.subscription.plan
+    if (updates.subscription?.plan) {
+      const plan = normalizeClinicPlan(updates.subscription.plan)
+      updateData.subscription_plan = plan
+      // Backwards-compat
+      updateData.subscription_tier = plan
+    }
+    if (updates.subscription?.status) {
+      const status = normalizeSubscriptionStatus(updates.subscription.status as any)
+      updateData.subscription_status = status
+      // If explicitly setting active, ensure trial flags are off
+      if (status === "active") {
+        updateData.is_trial = false
+        updateData.trial_ends_at = null
+      }
+      if (status === "trial") {
+        updateData.is_trial = true
+      }
+    }
     if (updates.isActive !== undefined) updateData.is_active = updates.isActive
 
     // Only update if there's data to update
@@ -405,9 +525,26 @@ export async function updateTenant(tenantId: string, updates: Partial<Tenant>): 
 
     if (error || !updatedClinic) return null
 
+    const rawPlan =
+      (updatedClinic.subscription_plan as string | undefined) ??
+      (updatedClinic.subscription_tier as string | undefined) ??
+      "starter"
+    const plan = normalizeClinicPlan(rawPlan)
+
     // Map back to Tenant type
-    const features = PLAN_FEATURES[updatedClinic.subscription_tier as keyof typeof PLAN_FEATURES] || PLAN_FEATURES.starter
-    const subscriptionAmount = getSubscriptionAmount(updatedClinic.subscription_tier)
+    const features = PLAN_FEATURES[plan as keyof typeof PLAN_FEATURES] || PLAN_FEATURES.starter
+    const subscriptionAmount = getSubscriptionAmount(plan)
+
+    const rawStatus =
+      (updatedClinic.subscription_status as string | undefined) ??
+      (updatedClinic.subscription_tier ? (updatedClinic.subscription_tier === "starter" ? "trial" : "active") : undefined)
+    const status = normalizeSubscriptionStatus(rawStatus)
+
+    const isTrial = Boolean(updatedClinic.is_trial) || status === "trial"
+    const startDate = updatedClinic.subscription_started_at ? new Date(updatedClinic.subscription_started_at) : new Date()
+    const endDate = updatedClinic.subscription_ends_at
+      ? new Date(updatedClinic.subscription_ends_at)
+      : (updatedClinic.trial_ends_at ? new Date(updatedClinic.trial_ends_at) : undefined)
 
     return {
       id: updatedClinic.id,
@@ -430,10 +567,10 @@ export async function updateTenant(tenantId: string, updates: Partial<Tenant>): 
       branding: { primaryColor: "#8B5CF6", secondaryColor: "#EC4899" },
       features: features as TenantFeatures,
       subscription: {
-        plan: updatedClinic.subscription_tier,
-        status: updatedClinic.subscription_tier === "starter" ? "trial" : "active",
-        startDate: new Date(),
-        endDate: updatedClinic.subscription_tier === "starter" ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) : undefined,
+        plan,
+        status: status as any,
+        startDate,
+        endDate,
         billingCycle: "monthly",
         amount: subscriptionAmount,
         currency: "THB",
@@ -442,7 +579,7 @@ export async function updateTenant(tenantId: string, updates: Partial<Tenant>): 
       updatedAt: updatedClinic.updated_at || new Date().toISOString(),
       createdBy: "",
       isActive: updatedClinic.is_active ?? true,
-      isTrial: updatedClinic.subscription_tier === "starter",
+      isTrial,
       isolationStrategy: "shared_schema",
       usage: { currentUsers: 1, currentCustomers: 0, storageUsedGB: 0, apiCallsThisMonth: 0 },
     }

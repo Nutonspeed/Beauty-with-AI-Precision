@@ -76,17 +76,49 @@ interface StaffClientProps {
   initialStats: StaffStats
 }
 
+type ClinicSubscriptionStatus = {
+  isActive: boolean
+  isTrial: boolean
+  isTrialExpired: boolean
+  subscriptionStatus: 'trial' | 'active' | 'past_due' | 'suspended' | 'cancelled'
+  plan: string
+  message: string
+}
+
 export function StaffClient({ initialStaff, initialStats }: StaffClientProps) {
   const [staff, _setStaff] = useState<StaffMember[]>(initialStaff)
   const [stats, _setStats] = useState<StaffStats>(initialStats)
   const [searchQuery, setSearchQuery] = useState("")
   const [roleFilter, setRoleFilter] = useState("all")
   const [statusFilter, setStatusFilter] = useState("all")
+
+  const [subscription, setSubscription] = useState<ClinicSubscriptionStatus | null>(null)
+  const [subscriptionLoading, setSubscriptionLoading] = useState(true)
   
   // Modal states
   const [showStaffModal, setShowStaffModal] = useState(false)
   const [editingStaff, setEditingStaff] = useState<StaffMember | null>(null)
   const [users, setUsers] = useState<Array<{ id: string; email: string; full_name: string }>>([])
+
+  useEffect(() => {
+    const fetchSubscription = async () => {
+      try {
+        setSubscriptionLoading(true)
+        const res = await fetch('/api/clinic/subscription-status')
+        if (!res.ok) {
+          setSubscription(null)
+          return
+        }
+        const data = await res.json()
+        setSubscription(data?.subscription || null)
+      } catch (e) {
+        setSubscription(null)
+      } finally {
+        setSubscriptionLoading(false)
+      }
+    }
+    fetchSubscription()
+  }, [])
 
   // Fetch users for dropdown
   useEffect(() => {
@@ -133,11 +165,19 @@ export function StaffClient({ initialStaff, initialStats }: StaffClientProps) {
   }
 
   const handleEditStaff = (staffMember: StaffMember) => {
+    if (!canManageStaff) {
+      toast.error(subscription?.message || 'Subscription is not active')
+      return
+    }
     setEditingStaff(staffMember)
     setShowStaffModal(true)
   }
 
   const handleDeleteStaff = async (staffId: string) => {
+    if (!canManageStaff) {
+      toast.error(subscription?.message || 'Subscription is not active')
+      return
+    }
     if (!confirm('Are you sure you want to terminate this staff member?')) return
 
     try {
@@ -159,6 +199,10 @@ export function StaffClient({ initialStaff, initialStats }: StaffClientProps) {
   }
 
   const handleUpdateStatus = async (staffId: string, newStatus: string) => {
+    if (!canManageStaff) {
+      toast.error(subscription?.message || 'Subscription is not active')
+      return
+    }
     try {
       const response = await fetch(`/api/clinic/staff/${staffId}/status`, {
         method: 'PUT',
@@ -227,6 +271,8 @@ export function StaffClient({ initialStaff, initialStats }: StaffClientProps) {
     }
   }
 
+  const canManageStaff = subscriptionLoading ? false : (subscription?.isActive ?? true)
+
   return (
     <>
       <main className="flex-1">
@@ -246,7 +292,16 @@ export function StaffClient({ initialStaff, initialStats }: StaffClientProps) {
                 <p className="text-sm text-muted-foreground">จัดการทีมงาน</p>
               </div>
             </div>
-            <Button onClick={() => setShowStaffModal(true)}>
+            <Button
+              onClick={() => {
+                if (!canManageStaff) {
+                  toast.error(subscription?.message || 'Subscription is not active')
+                  return
+                }
+                setShowStaffModal(true)
+              }}
+              disabled={!canManageStaff}
+            >
               <UserPlus className="h-4 w-4 mr-2" />
               Add Staff
             </Button>
@@ -255,6 +310,21 @@ export function StaffClient({ initialStaff, initialStats }: StaffClientProps) {
       </div>
 
       <div className="container py-8">
+        {!subscriptionLoading && subscription && !subscription.isActive ? (
+          <Card className="mb-6 border-yellow-200 bg-yellow-50 dark:border-yellow-900/50 dark:bg-yellow-950/30">
+            <CardContent className="p-4">
+              <div className="flex flex-col gap-1">
+                <div className="text-sm font-medium text-yellow-900 dark:text-yellow-200">
+                  Subscription 제한การใช้งาน
+                </div>
+                <div className="text-sm text-yellow-800 dark:text-yellow-300">
+                  {subscription.message}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ) : null}
+
         {/* Stats Cards */}
         <div className="mb-6 grid gap-4 md:grid-cols-5">
           <Card>
@@ -408,15 +478,22 @@ export function StaffClient({ initialStaff, initialStats }: StaffClientProps) {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => handleEditStaff(staffMember)}>
+                            <DropdownMenuItem onClick={() => handleEditStaff(staffMember)} disabled={!canManageStaff}>
                               <Edit className="mr-2 h-4 w-4" />
                               แก้ไขโปรไฟล์
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleUpdateStatus(staffMember.id, staffMember.status === 'active' ? 'on_leave' : 'active')}>
+                            <DropdownMenuItem
+                              onClick={() => handleUpdateStatus(staffMember.id, staffMember.status === 'active' ? 'on_leave' : 'active')}
+                              disabled={!canManageStaff}
+                            >
                               <UserCog className="mr-2 h-4 w-4" />
                               {staffMember.status === 'active' ? 'Set On Leave' : 'Set Active'}
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="text-red-600" onClick={() => handleDeleteStaff(staffMember.id)}>
+                            <DropdownMenuItem
+                              className="text-red-600"
+                              onClick={() => handleDeleteStaff(staffMember.id)}
+                              disabled={!canManageStaff}
+                            >
                               <Trash2 className="mr-2 h-4 w-4" />
                               ลบออก
                             </DropdownMenuItem>

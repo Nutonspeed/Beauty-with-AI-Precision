@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/auth/session';
+import { getSubscriptionStatus } from '@/lib/subscriptions/check-subscription';
 
 /**
  * GET /api/customer-notes
@@ -95,7 +96,7 @@ export async function POST(request: NextRequest) {
     // Get user info
     const { data: userInfo } = await supabase
       .from('users')
-      .select('full_name, clinic_id')
+      .select('full_name, clinic_id, role')
       .eq('id', user.id)
       .single();
 
@@ -104,6 +105,26 @@ export async function POST(request: NextRequest) {
         { error: 'User clinic information not found' },
         { status: 400 }
       );
+    }
+
+    const isGlobalAdmin = ['super_admin', 'admin'].includes(userInfo.role);
+    if (!isGlobalAdmin) {
+      const subStatus = await getSubscriptionStatus(userInfo.clinic_id)
+      if (!subStatus.isActive || subStatus.isTrialExpired) {
+        const statusCode = subStatus.subscriptionStatus === 'past_due' || subStatus.isTrialExpired ? 402 : 403
+        return NextResponse.json(
+          {
+            error: subStatus.message,
+            subscription: {
+              status: subStatus.subscriptionStatus,
+              plan: subStatus.plan,
+              isTrial: subStatus.isTrial,
+              isTrialExpired: subStatus.isTrialExpired,
+            },
+          },
+          { status: statusCode },
+        );
+      }
     }
 
     const body = await request.json();
@@ -207,12 +228,38 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    // Get user info for audit
     const { data: userInfo } = await supabase
       .from('users')
-      .select('full_name')
+      .select('full_name, clinic_id, role')
       .eq('id', user.id)
       .single();
+
+    if (!userInfo?.clinic_id) {
+      return NextResponse.json(
+        { error: 'User clinic information not found' },
+        { status: 400 }
+      );
+    }
+
+    const isGlobalAdmin = ['super_admin', 'admin'].includes(userInfo.role);
+    if (!isGlobalAdmin) {
+      const subStatus = await getSubscriptionStatus(userInfo.clinic_id)
+      if (!subStatus.isActive || subStatus.isTrialExpired) {
+        const statusCode = subStatus.subscriptionStatus === 'past_due' || subStatus.isTrialExpired ? 402 : 403
+        return NextResponse.json(
+          {
+            error: subStatus.message,
+            subscription: {
+              status: subStatus.subscriptionStatus,
+              plan: subStatus.plan,
+              isTrial: subStatus.isTrial,
+              isTrialExpired: subStatus.isTrialExpired,
+            },
+          },
+          { status: statusCode },
+        );
+      }
+    }
 
     // Add audit info
     const updateData = {

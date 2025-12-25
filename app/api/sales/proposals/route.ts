@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient, createServiceClient } from '@/lib/supabase/server'
 import { canAccessSales } from '@/lib/auth/role-config'
+import { getSubscriptionStatus } from '@/lib/subscriptions/check-subscription'
 
 export async function GET(request: NextRequest) {
   const startedAt = Date.now()
@@ -21,6 +22,30 @@ export async function GET(request: NextRequest) {
       .single()
     if (userErr || !userRow || !canAccessSales(userRow.role)) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
+
+    const isGlobalAdmin = ['super_admin', 'admin'].includes(userRow.role)
+    if (!isGlobalAdmin) {
+      if (!userRow.clinic_id) {
+        return NextResponse.json({ error: 'No clinic associated with user' }, { status: 400 })
+      }
+
+      const subStatus = await getSubscriptionStatus(userRow.clinic_id)
+      if (!subStatus.isActive || subStatus.isTrialExpired) {
+        const statusCode = subStatus.subscriptionStatus === 'past_due' || subStatus.isTrialExpired ? 402 : 403
+        return NextResponse.json(
+          {
+            error: subStatus.message,
+            subscription: {
+              status: subStatus.subscriptionStatus,
+              plan: subStatus.plan,
+              isTrial: subStatus.isTrial,
+              isTrialExpired: subStatus.isTrialExpired,
+            },
+          },
+          { status: statusCode },
+        )
+      }
     }
 
     // Get query parameters

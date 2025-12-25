@@ -6,6 +6,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
+import { canViewClinicAnalytics } from '@/lib/auth/clinic-permissions'
 import type { 
   DashboardStats, 
   RevenueChartData, 
@@ -58,9 +59,8 @@ export async function GET(request: Request) {
       )
     }
 
-    // Verify user has appropriate role
-    const allowedRoles = ['clinic_admin', 'clinic_owner', 'manager', 'super_admin']
-    if (!allowedRoles.includes(userData.role)) {
+    // Use canonical RBAC - only normalized roles for analytics
+    if (!canViewClinicAnalytics(userData.role)) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
         { status: 403 }

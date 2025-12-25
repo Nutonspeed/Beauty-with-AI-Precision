@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 import { withClinicAuth } from "@/lib/auth/middleware"
+import { getSubscriptionStatus } from "@/lib/subscriptions/check-subscription"
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -54,6 +55,30 @@ async function handler(req: NextRequest, user: any) {
       { error: 'Appointment not found' },
       { status: 404 }
     )
+  }
+
+  const isGlobalAdmin = ["super_admin", "admin"].includes(user.role)
+  if (!isGlobalAdmin && currentAppointment.clinic_id !== user.clinic_id) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
+
+  if (!isGlobalAdmin) {
+    const subStatus = await getSubscriptionStatus(currentAppointment.clinic_id)
+    if (!subStatus.isActive || subStatus.isTrialExpired) {
+      const statusCode = subStatus.subscriptionStatus === 'past_due' || subStatus.isTrialExpired ? 402 : 403
+      return NextResponse.json(
+        {
+          error: subStatus.message,
+          subscription: {
+            status: subStatus.subscriptionStatus,
+            plan: subStatus.plan,
+            isTrial: subStatus.isTrial,
+            isTrialExpired: subStatus.isTrialExpired,
+          },
+        },
+        { status: statusCode },
+      )
+    }
   }
 
   // Calculate new end time

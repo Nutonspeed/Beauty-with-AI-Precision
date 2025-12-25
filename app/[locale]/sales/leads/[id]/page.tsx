@@ -110,6 +110,18 @@ export default function LeadDetailPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isCreatingProposal, setIsCreatingProposal] = useState(false)
 
+  type ClinicSubscriptionStatus = {
+    isActive: boolean
+    isTrial: boolean
+    isTrialExpired: boolean
+    subscriptionStatus: 'trial' | 'active' | 'past_due' | 'suspended' | 'cancelled'
+    plan: string
+    message: string
+  }
+
+  const [subscription, setSubscription] = useState<ClinicSubscriptionStatus | null>(null)
+  const [subscriptionLoading, setSubscriptionLoading] = useState(true)
+
   const updateForm = useForm<z.infer<typeof updateFormSchema>>({
     resolver: zodResolver(updateFormSchema),
     defaultValues: {
@@ -154,8 +166,34 @@ export default function LeadDetailPage() {
     }
   }, [router, lp])
 
+  useEffect(() => {
+    const fetchSubscription = async () => {
+      try {
+        setSubscriptionLoading(true)
+        const res = await fetch('/api/clinic/subscription-status')
+        if (!res.ok) {
+          setSubscription(null)
+          return
+        }
+        const data = await res.json()
+        setSubscription(data?.subscription || null)
+      } catch {
+        setSubscription(null)
+      } finally {
+        setSubscriptionLoading(false)
+      }
+    }
+    fetchSubscription()
+  }, [])
+
+  const canWrite = subscriptionLoading ? false : (subscription?.isActive ?? true)
+
   const handleCreateProposal = async () => {
     if (!lead) return
+    if (!canWrite) {
+      toast.error(subscription?.message || 'Subscription is not active')
+      return
+    }
     setIsCreatingProposal(true)
     try {
       const recs = (lead.metadata as any)?.recommendations
@@ -253,6 +291,10 @@ export default function LeadDetailPage() {
   }, [fetchLead])
 
   const handleUpdateLead = async (values: z.infer<typeof updateFormSchema>) => {
+    if (!canWrite) {
+      toast.error(subscription?.message || 'Subscription is not active')
+      return
+    }
     setIsUpdating(true)
 
     try {
@@ -285,6 +327,10 @@ export default function LeadDetailPage() {
   }
 
   const handleAddInteraction = async (values: z.infer<typeof interactionFormSchema>) => {
+    if (!canWrite) {
+      toast.error(subscription?.message || 'Subscription is not active')
+      return
+    }
     try {
       const response = await fetch(`/api/sales/leads/${leadId}/activities`, {
         method: 'POST',
@@ -333,6 +379,17 @@ export default function LeadDetailPage() {
 
   return (
     <div className="container mx-auto py-8 space-y-6">
+      {!subscriptionLoading && subscription && !subscription.isActive ? (
+        <Card className="border-yellow-200 bg-yellow-50">
+          <CardContent className="p-4">
+            <div className="flex flex-col gap-1">
+              <div className="text-sm font-medium text-yellow-900">Subscription จำกัดการใช้งาน</div>
+              <div className="text-sm text-yellow-800">{subscription.message}</div>
+            </div>
+          </CardContent>
+        </Card>
+      ) : null}
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
@@ -345,11 +402,11 @@ export default function LeadDetailPage() {
           </div>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => setShowInteractionDialog(true)}>
+          <Button variant="outline" onClick={() => setShowInteractionDialog(true)} disabled={!canWrite}>
             <Plus className="mr-2 h-4 w-4" />
             Add Interaction
           </Button>
-          <Button variant="outline" onClick={handleCreateProposal} disabled={isCreatingProposal}>
+          <Button variant="outline" onClick={handleCreateProposal} disabled={isCreatingProposal || !canWrite}>
             {isCreatingProposal ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (
@@ -360,6 +417,10 @@ export default function LeadDetailPage() {
           {lead.status !== 'won' && (
             <Button
               onClick={async () => {
+                if (!canWrite) {
+                  toast.error(subscription?.message || 'Subscription is not active')
+                  return
+                }
                 try {
                   const res = await fetch(`/api/sales/leads/${leadId}`, {
                     method: 'PATCH',
@@ -373,6 +434,7 @@ export default function LeadDetailPage() {
                   toast.error('ปิดการขายไม่สำเร็จ')
                 }
               }}
+              disabled={!canWrite}
             >
               <CheckCircle className="mr-2 h-4 w-4" />
               Mark as Won
@@ -552,7 +614,7 @@ export default function LeadDetailPage() {
                     )}
                   />
 
-                  <Button type="submit" className="w-full" disabled={isUpdating}>
+                  <Button type="submit" className="w-full" disabled={isUpdating || !canWrite}>
                     {isUpdating ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />

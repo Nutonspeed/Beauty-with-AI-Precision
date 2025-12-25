@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { normalizeRole } from '@/lib/auth/role-normalize'
+import { getSubscriptionStatus } from '@/lib/subscriptions/check-subscription'
 
 interface RouteContext {
   params: Promise<{
@@ -177,6 +178,28 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
 
     const convertibleRes = verifyConvertible(lead, salesStaff)
     if ('response' in convertibleRes) return convertibleRes.response
+
+    const staffRole = convertibleRes.staffRole
+    const isGlobalAdmin = ['super_admin', 'admin'].includes(staffRole)
+    if (!isGlobalAdmin) {
+      const subStatus = await getSubscriptionStatus(lead.clinic_id)
+      if (!subStatus.isActive || subStatus.isTrialExpired) {
+        const statusCode = subStatus.subscriptionStatus === 'past_due' || subStatus.isTrialExpired ? 402 : 403
+        return NextResponse.json(
+          {
+            success: false,
+            message: subStatus.message,
+            subscription: {
+              status: subStatus.subscriptionStatus,
+              plan: subStatus.plan,
+              isTrial: subStatus.isTrial,
+              isTrialExpired: subStatus.isTrialExpired,
+            },
+          },
+          { status: statusCode },
+        )
+      }
+    }
 
     const body = await request.json()
     const { create_user_account = false, password, send_welcome_email = false } = body

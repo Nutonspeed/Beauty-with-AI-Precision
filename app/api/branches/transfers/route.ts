@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { withClinicAuth } from '@/lib/auth/middleware';
+import { getSubscriptionStatus } from '@/lib/subscriptions/check-subscription';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -17,7 +18,7 @@ const supabase = createClient(
  * - to_branch_id (optional): Filter by destination branch
  * - status (optional): Filter by status
  */
-export const GET = withClinicAuth(async (request: NextRequest) => {
+export const GET = withClinicAuth(async (request: NextRequest, user: any) => {
   try {
     const { searchParams } = new URL(request.url);
     const clinic_id = searchParams.get('clinic_id');
@@ -42,6 +43,14 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
           product:inventory_products(id, product_code, product_name, unit)
         )
       `);
+
+    const isGlobalAdmin = ['super_admin', 'admin'].includes(user.role);
+    if (!isGlobalAdmin) {
+      if (clinic_id && clinic_id !== user.clinic_id) {
+        return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+      }
+      query = query.eq('clinic_id', user.clinic_id);
+    }
 
     if (clinic_id) {
       query = query.eq('clinic_id', clinic_id);
@@ -106,6 +115,45 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
         { error: 'clinic_id, from_branch_id, to_branch_id, requested_by_user_id, and items are required' },
         { status: 400 }
       );
+    }
+
+    const { data: authData, error: authError } = await supabase.auth.getUser();
+    if (authError || !authData?.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { data: userRow, error: userErr } = await supabase
+      .from('users')
+      .select('role, clinic_id')
+      .eq('id', authData.user.id)
+      .single();
+
+    if (userErr || !userRow) {
+      return NextResponse.json({ error: 'Failed to fetch user profile' }, { status: 500 });
+    }
+
+    const isGlobalAdmin = ['super_admin', 'admin'].includes(userRow.role);
+    if (!isGlobalAdmin && clinic_id !== userRow.clinic_id) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    if (!isGlobalAdmin) {
+      const subStatus = await getSubscriptionStatus(clinic_id)
+      if (!subStatus.isActive || subStatus.isTrialExpired) {
+        const statusCode = subStatus.subscriptionStatus === 'past_due' || subStatus.isTrialExpired ? 402 : 403
+        return NextResponse.json(
+          {
+            error: subStatus.message,
+            subscription: {
+              status: subStatus.subscriptionStatus,
+              plan: subStatus.plan,
+              isTrial: subStatus.isTrial,
+              isTrialExpired: subStatus.isTrialExpired,
+            },
+          },
+          { status: statusCode },
+        );
+      }
     }
 
     if (from_branch_id === to_branch_id) {

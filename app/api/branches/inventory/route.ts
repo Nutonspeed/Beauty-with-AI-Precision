@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { withClinicAuth } from '@/lib/auth/middleware';
+import { getSubscriptionStatus } from '@/lib/subscriptions/check-subscription';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -15,7 +16,7 @@ const supabase = createClient(
  * - branch_id (required): Branch ID
  * - low_stock (optional): Filter low stock items only
  */
-export const GET = withClinicAuth(async (request: NextRequest) => {
+export const GET = withClinicAuth(async (request: NextRequest, user: any) => {
   try {
     const { searchParams } = new URL(request.url);
     const branch_id = searchParams.get('branch_id');
@@ -26,6 +27,21 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
         { error: 'branch_id is required' },
         { status: 400 }
       );
+    }
+
+    const { data: branchRow, error: branchErr } = await supabase
+      .from('branches')
+      .select('id, clinic_id')
+      .eq('id', branch_id)
+      .single();
+
+    if (branchErr || !branchRow) {
+      return NextResponse.json({ error: 'Branch not found' }, { status: 404 });
+    }
+
+    const isGlobalAdmin = ['super_admin', 'admin'].includes(user.role);
+    if (!isGlobalAdmin && branchRow.clinic_id !== user.clinic_id) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     let query = supabase
@@ -79,8 +95,11 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
  * - minimum_stock (optional): Minimum stock level
  * - reorder_point (optional): Reorder point
  * - storage_location (optional): Storage location
+ * - bin_location (optional): Storage location
+ * - auto_reorder_enabled (optional): Enable auto reorder
+ * - reorder_quantity (optional): Reorder quantity
  */
-export const POST = withClinicAuth(async (request: NextRequest) => {
+export const POST = withClinicAuth(async (request: NextRequest, user: any) => {
   try {
     const body = await request.json();
     const {
@@ -101,6 +120,40 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
         { error: 'branch_id and product_id are required' },
         { status: 400 }
       );
+    }
+
+    const { data: branchRow, error: branchErr } = await supabase
+      .from('branches')
+      .select('id, clinic_id')
+      .eq('id', branch_id)
+      .single();
+
+    if (branchErr || !branchRow) {
+      return NextResponse.json({ error: 'Branch not found' }, { status: 404 });
+    }
+
+    const isGlobalAdmin = ['super_admin', 'admin'].includes(user.role);
+    if (!isGlobalAdmin && branchRow.clinic_id !== user.clinic_id) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    if (!isGlobalAdmin) {
+      const subStatus = await getSubscriptionStatus(branchRow.clinic_id)
+      if (!subStatus.isActive || subStatus.isTrialExpired) {
+        const statusCode = subStatus.subscriptionStatus === 'past_due' || subStatus.isTrialExpired ? 402 : 403
+        return NextResponse.json(
+          {
+            error: subStatus.message,
+            subscription: {
+              status: subStatus.subscriptionStatus,
+              plan: subStatus.plan,
+              isTrial: subStatus.isTrial,
+              isTrialExpired: subStatus.isTrialExpired,
+            },
+          },
+          { status: statusCode },
+        );
+      }
     }
 
     const { data, error } = await supabase

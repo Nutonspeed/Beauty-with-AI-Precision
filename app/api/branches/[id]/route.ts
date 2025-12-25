@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { withClinicAuth } from '@/lib/auth/middleware';
+import { getSubscriptionStatus } from '@/lib/subscriptions/check-subscription';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -14,6 +15,8 @@ const supabase = createClient(
 export const GET = withClinicAuth(async (req: NextRequest, user: any) => {
   try {
     const id = req.nextUrl.pathname.split('/').pop() || '';
+    const isGlobalAdmin = ['super_admin', 'admin'].includes(user.role);
+
     const { data, error } = await supabase
       .from('branches')
       .select(`
@@ -34,6 +37,10 @@ export const GET = withClinicAuth(async (req: NextRequest, user: any) => {
 
     if (!data) {
       return NextResponse.json({ error: 'Branch not found' }, { status: 404 });
+    }
+
+    if (!isGlobalAdmin && data.clinic_id !== user.clinic_id) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     // Get inventory summary
@@ -63,6 +70,40 @@ export const PATCH = withClinicAuth(async (req: NextRequest, user: any) => {
     const id = req.nextUrl.pathname.split('/').pop() || '';
     const body = await req.json();
     const updateData: Record<string, unknown> = {};
+
+    const { data: existing, error: existingError } = await supabase
+      .from('branches')
+      .select('id, clinic_id')
+      .eq('id', id)
+      .single();
+
+    if (existingError || !existing) {
+      return NextResponse.json({ error: 'Branch not found' }, { status: 404 });
+    }
+
+    const isGlobalAdmin = ['super_admin', 'admin'].includes(user.role);
+    if (!isGlobalAdmin && existing.clinic_id !== user.clinic_id) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    if (!isGlobalAdmin) {
+      const subStatus = await getSubscriptionStatus(existing.clinic_id)
+      if (!subStatus.isActive || subStatus.isTrialExpired) {
+        const statusCode = subStatus.subscriptionStatus === 'past_due' || subStatus.isTrialExpired ? 402 : 403
+        return NextResponse.json(
+          {
+            error: subStatus.message,
+            subscription: {
+              status: subStatus.subscriptionStatus,
+              plan: subStatus.plan,
+              isTrial: subStatus.isTrial,
+              isTrialExpired: subStatus.isTrialExpired,
+            },
+          },
+          { status: statusCode },
+        );
+      }
+    }
 
     // List of allowed fields to update
     const allowedFields = [
@@ -124,19 +165,61 @@ export const PATCH = withClinicAuth(async (req: NextRequest, user: any) => {
  * Delete a branch (soft delete by setting is_active to false)
  */
 export const DELETE = withClinicAuth(async (req, user) => {
-  const id = req.nextUrl.pathname.split('/').pop() || '';
+  try {
+    const id = req.nextUrl.pathname.split('/').pop() || '';
 
-  const { data, error } = await supabase
-    .from('branches')
-    .update({
-      is_active: false,
-      closing_date: new Date().toISOString(),
-    })
-    .eq('id', id)
-    .select()
-    .single();
+    const { data: existing, error: existingError } = await supabase
+      .from('branches')
+      .select('id, clinic_id')
+      .eq('id', id)
+      .single();
 
-  if (error) throw error;
+    if (existingError || !existing) {
+      return NextResponse.json({ error: 'Branch not found' }, { status: 404 });
+    }
 
-  return NextResponse.json({ success: true, data });
+    const isGlobalAdmin = ['super_admin', 'admin'].includes(user.role);
+    if (!isGlobalAdmin && existing.clinic_id !== user.clinic_id) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    if (!isGlobalAdmin) {
+      const subStatus = await getSubscriptionStatus(existing.clinic_id)
+      if (!subStatus.isActive || subStatus.isTrialExpired) {
+        const statusCode = subStatus.subscriptionStatus === 'past_due' || subStatus.isTrialExpired ? 402 : 403
+        return NextResponse.json(
+          {
+            error: subStatus.message,
+            subscription: {
+              status: subStatus.subscriptionStatus,
+              plan: subStatus.plan,
+              isTrial: subStatus.isTrial,
+              isTrialExpired: subStatus.isTrialExpired,
+            },
+          },
+          { status: statusCode },
+        );
+      }
+    }
+
+    const { data, error } = await supabase
+      .from('branches')
+      .update({
+        is_active: false,
+        closing_date: new Date().toISOString(),
+      })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    return NextResponse.json({ success: true, data });
+  } catch (error) {
+    console.error('Error deleting branch:', error);
+    return NextResponse.json(
+      { error: 'Failed to delete branch' },
+      { status: 500 }
+    );
+  }
 });

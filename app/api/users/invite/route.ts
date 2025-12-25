@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { sendEmail } from '@/lib/notifications/email-service'
+import { sendUserInvitationEmail } from '@/lib/email/gmail-templates'
 
 /**
  * POST /api/users/invite
@@ -105,45 +105,36 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Prepare email content
-    const setupUrl = `${process.env.NEXT_PUBLIC_APP_URL}/auth/setup?token=${setupToken}`
-    const emailContent = {
-      to: targetUser.email,
-      subject: `Welcome to AI367 Beauty - ${getRoleDisplayName(targetUser.role)}`,
-      html: generateInvitationEmail({
-        recipientName: targetUser.full_name,
-        inviterName: profile.full_name,
-        role: targetUser.role,
-        email: targetUser.email,
-        tempPassword: temp_password,
-        setupUrl,
-        expiresAt: expiresAt.toLocaleDateString('th-TH', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-        }),
-      }),
+    // Get clinic name for email
+    let clinicName = undefined
+    if (targetUser.clinic_id) {
+      const { data: clinic } = await supabase
+        .from('clinics')
+        .select('name')
+        .eq('id', targetUser.clinic_id)
+        .single()
+      clinicName = clinic?.name
     }
 
-    // Send email using Resend
+    // Send professional invitation email
     console.log('📧 Sending invitation email to:', email)
     
-    const emailResult = await sendEmail({
-      to: email,
-      subject: emailContent.subject,
-      html: emailContent.html,
-    })
-
-    if (!emailResult.success) {
-      console.error('Failed to send invitation email:', emailResult.error)
-      // Still return success but note email failed
+    try {
+      await sendUserInvitationEmail({
+        to: targetUser.email,
+        invitedBy: profile.full_name,
+        role: targetUser.role,
+        tempPassword: temp_password,
+        clinicName,
+        inviteUrl: `${process.env.NEXT_PUBLIC_APP_URL}/auth/login`,
+      })
+    } catch (emailError) {
+      console.error('Failed to send invitation email:', emailError)
       return NextResponse.json({
         success: true,
         message: 'User invited but email delivery failed. Please send manually.',
         emailSent: false,
-        email: emailContent,
         debug: {
-          setup_url: setupUrl,
           temp_password: temp_password,
           expires_at: expiresAt.toISOString(),
         },
@@ -155,7 +146,6 @@ export async function POST(request: NextRequest) {
       message: 'Invitation email sent successfully',
       emailSent: true,
       debug: {
-        setup_url: setupUrl,
         expires_at: expiresAt.toISOString(),
       },
     })

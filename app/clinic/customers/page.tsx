@@ -5,8 +5,8 @@ import { Footer } from "@/components/footer"
 import { CustomersClient } from "./customers-client"
 
 export default async function CustomersPage() {
-  // Authentication check
-  const user = await requireRole(['clinic_owner', 'super_admin'])
+  // Authentication check - allow sales_staff, clinic_admin, clinic_owner, super_admin
+  const user = await requireRole(['sales_staff', 'clinic_admin', 'clinic_owner', 'super_admin'])
   const supabase = await createServerClient()
 
   // Query customers data with their latest booking

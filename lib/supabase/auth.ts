@@ -12,6 +12,8 @@ import { createClient } from './server';
 export type UserRole = 
   | 'customer'
   | 'staff'
+  | 'sales_staff'
+  | 'clinic_admin'
   | 'clinic_owner'
   | 'admin'
   | 'super_admin';

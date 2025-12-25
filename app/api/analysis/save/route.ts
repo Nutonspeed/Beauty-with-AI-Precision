@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@/lib/supabase/server"
+import { getSubscriptionStatus } from "@/lib/subscriptions/check-subscription"
 import type { SaveAnalysisRequest, SaveAnalysisResponse, ApiError } from "@/types/api"
 
 /**
@@ -18,6 +19,35 @@ export async function POST(request: NextRequest) {
         { success: false, error: "Unauthorized", code: "UNAUTHORIZED" },
         { status: 401 },
       )
+    }
+
+    const { data: userProfile, error: userProfileErr } = await supabase
+      .from('users')
+      .select('clinic_id')
+      .eq('id', session.user.id)
+      .single()
+
+    if (userProfileErr) {
+      console.error('[analysis/save] Failed to fetch user profile:', userProfileErr)
+      return NextResponse.json<ApiError>(
+        { success: false, error: 'Failed to fetch user profile', code: 'INTERNAL_ERROR' },
+        { status: 500 },
+      )
+    }
+
+    if (userProfile?.clinic_id) {
+      const subStatus = await getSubscriptionStatus(userProfile.clinic_id)
+      if (!subStatus.isActive || subStatus.isTrialExpired) {
+        const statusCode = subStatus.subscriptionStatus === 'past_due' || subStatus.isTrialExpired ? 402 : 403
+        return NextResponse.json<ApiError>(
+          {
+            success: false,
+            error: subStatus.message,
+            code: 'SUBSCRIPTION_REQUIRED',
+          },
+          { status: statusCode },
+        )
+      }
     }
 
     // Parse request body

@@ -66,9 +66,21 @@ export default function AdminDashboard() {
 
   const loadDashboardData = async () => {
     try {
-      const response = await fetch('/api/admin/clinics/performance?period=30d')
+      // Use credentials: 'include' to send cookies automatically
+      const response = await fetch('/api/admin/clinics/performance?period=30d', {
+        credentials: 'include'
+      })
+      
+      // Log detailed error information
       if (!response.ok) {
-        throw new Error('Failed to load dashboard data')
+        const errorText = await response.text()
+        console.error('Dashboard API Error:', {
+          status: response.status,
+          statusText: response.statusText,
+          url: response.url,
+          body: errorText
+        })
+        throw new Error(`Failed to load dashboard data (${response.status}: ${response.statusText})`)
       }
       const result = await response.json()
       setData(result)

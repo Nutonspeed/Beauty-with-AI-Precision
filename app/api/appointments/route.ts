@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 import { withAuth } from "@/lib/auth/middleware"
+import { getSubscriptionStatus } from "@/lib/subscriptions/check-subscription"
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -111,6 +112,30 @@ export const POST = withAuth(async (request: NextRequest, user) => {
         { error: 'Missing required fields' },
         { status: 400 }
       )
+    }
+
+    const isGlobalAdmin = ["super_admin", "admin"].includes(user.role)
+    if (!isGlobalAdmin) {
+      if (!user.clinic_id || user.clinic_id !== clinic_id) {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+      }
+
+      const subStatus = await getSubscriptionStatus(clinic_id)
+      if (!subStatus.isActive || subStatus.isTrialExpired) {
+        const statusCode = subStatus.subscriptionStatus === 'past_due' || subStatus.isTrialExpired ? 402 : 403
+        return NextResponse.json(
+          {
+            error: subStatus.message,
+            subscription: {
+              status: subStatus.subscriptionStatus,
+              plan: subStatus.plan,
+              isTrial: subStatus.isTrial,
+              isTrialExpired: subStatus.isTrialExpired,
+            },
+          },
+          { status: statusCode },
+        )
+      }
     }
 
     // Calculate end time

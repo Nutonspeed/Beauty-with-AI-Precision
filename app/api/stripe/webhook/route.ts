@@ -34,6 +34,7 @@ export async function POST(request: NextRequest) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session
         const userId = session.metadata?.userId || session.client_reference_id
+        const clinicId = session.metadata?.clinicId
 
         if (!userId) {
           console.error("No user ID in session metadata")
@@ -42,15 +43,43 @@ export async function POST(request: NextRequest) {
 
         // Update user subscription status
         if (session.mode === "subscription") {
+          // Update user record
           await supabase
             .from("users")
             .update({
-              role: "customer_premium",
               stripe_customer_id: session.customer as string,
               stripe_subscription_id: session.subscription as string,
               updated_at: new Date().toISOString(),
             })
             .eq("id", userId)
+
+          // Update clinic subscription if clinicId provided
+          if (clinicId) {
+            // Get subscription plan from metadata or default to professional
+            const planName = session.metadata?.planName || 'professional'
+            
+            // Find the plan in subscription_plans table
+            const { data: plan } = await supabase
+              .from("subscription_plans")
+              .select("id")
+              .ilike("name", `%${planName}%`)
+              .single()
+
+            if (plan) {
+              // Update or create clinic_subscriptions record
+              await supabase
+                .from("clinic_subscriptions")
+                .upsert({
+                  clinic_id: clinicId,
+                  plan_id: plan.id,
+                  status: "active",
+                  current_period_start: new Date().toISOString(),
+                  current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days
+                  updated_at: new Date().toISOString(),
+                })
+                .eq("clinic_id", clinicId)
+            }
+          }
 
           console.log(`User ${userId} upgraded to premium`)
         }

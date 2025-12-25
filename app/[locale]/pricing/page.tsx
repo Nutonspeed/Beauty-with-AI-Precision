@@ -20,84 +20,87 @@ import {
   Clock
 } from "lucide-react"
 import { useLanguage } from "@/lib/i18n/language-context"
-import { SUBSCRIPTION_PLANS, formatPrice } from "@/lib/subscriptions/plans"
+import { formatPrice, type PricingPlanView } from "@/lib/subscriptions/pricing-service-client"
+import { useEffect, useState } from "react"
 
 export default function PricingPage() {
   const { language } = useLanguage()
+  const [plans, setPlans] = useState<PricingPlanView[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const pricingTiers = [
-    {
-      planKey: 'free' as const,
-      name: language === "th" ? SUBSCRIPTION_PLANS.free.nameTH : SUBSCRIPTION_PLANS.free.name,
-      badge: language === "th" ? "เริ่มต้นใช้งาน" : "Get Started",
-      icon: Sparkles,
-      price: formatPrice('free', language as 'th' | 'en'),
-      period: language === "th" ? "ตลอดไป" : "Forever",
+  useEffect(() => {
+    async function loadPlans() {
+      try {
+        const response = await fetch('/api/pricing/plans?type=b2c')
+        if (!response.ok) throw new Error('Failed to fetch plans')
+        const data = await response.json()
+        setPlans(data.plans || [])
+      } catch (error) {
+        console.error('Failed to load pricing plans:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadPlans()
+  }, [])
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>
+  }
+
+  const pricingTiers = plans.map(plan => {
+    const planKey = plan.slug as 'free' | 'premium' | 'premium_plus'
+    
+    return {
+      planKey,
+      name: language === "th" ? plan.name_th : plan.name,
+      badge: planKey === 'free' 
+        ? (language === "th" ? "เริ่มต้นใช้งาน" : "Get Started")
+        : planKey === 'premium'
+        ? (language === "th" ? "ยอดนิยม" : "Popular")
+        : (language === "th" ? "พรีเมียม" : "Premium"),
+      icon: planKey === 'free' ? Sparkles : planKey === 'premium' ? Crown : Building2,
+      price: formatPrice(plan, language as 'th' | 'en'),
+      period: plan.price_amount === 0 
+        ? (language === "th" ? "ตลอดไป" : "Forever")
+        : (language === "th" ? "ต่อเดือน" : "/month"),
       limits: {
-        users: SUBSCRIPTION_PLANS.free.maxUsers,
-        storage: SUBSCRIPTION_PLANS.free.maxStorageGB,
-        analyses: SUBSCRIPTION_PLANS.free.maxAnalysesPerMonth,
-        trial: SUBSCRIPTION_PLANS.free.trialDays
+        users: plan.max_users,
+        storage: plan.max_storage_gb,
+        analyses: plan.max_analyses_per_month,
+        trial: plan.trial_days
       },
       description: language === "th" 
-        ? "เหมาะสำหรับผู้ที่ต้องการทดลองใช้ระบบ AI Skin Analysis"
-        : "Perfect for trying out AI Skin Analysis",
-      features: language === "th" ? SUBSCRIPTION_PLANS.free.featuresTH : SUBSCRIPTION_PLANS.free.features,
-      excludedFeatures: [
+        ? planKey === 'free' 
+          ? "เหมาะสำหรับผู้ที่ต้องการทดลองใช้ระบบ AI Skin Analysis"
+          : planKey === 'premium'
+          ? "เหมาะสำหรับผู้ที่ต้องการการวิเคราะห์ผิวหน้าขั้นสูงพร้อม AR Simulator"
+          : "เหมาะสำหรับคลินิกหรือผู้ที่ต้องการฟีเจอร์ครบถ้วนสูงสุด"
+        : planKey === 'free'
+          ? "Perfect for trying out AI Skin Analysis"
+          : planKey === 'premium'
+          ? "Perfect for advanced skin analysis with AR Simulator"
+          : "Perfect for clinics or users needing all premium features",
+      features: language === "th" ? plan.features_th : plan.features,
+      excludedFeatures: planKey === 'free' ? [
         language === "th" ? "ไม่บันทึกประวัติ" : "No History Saved",
         language === "th" ? "ไม่มี AR Simulator" : "No AR Simulator",
         language === "th" ? "ไม่มีคำแนะนำส่วนตัว" : "No Personalized Recommendations"
-      ],
-      cta: language === "th" ? "เริ่มวิเคราะห์ฟรี" : "Start Free Analysis",
-      href: "/analysis",
-      variant: "outline" as const
-    },
-    {
-      planKey: 'premium' as const,
-      name: language === "th" ? SUBSCRIPTION_PLANS.premium.nameTH : SUBSCRIPTION_PLANS.premium.name,
-      badge: language === "th" ? "ยอดนิยม" : "Most Popular",
-      icon: Crown,
-      price: formatPrice('premium', language as 'th' | 'en'),
-      period: language === "th" ? "ต่อเดือน" : "per month",
-      limits: {
-        users: SUBSCRIPTION_PLANS.premium.maxUsers,
-        storage: SUBSCRIPTION_PLANS.premium.maxStorageGB,
-        analyses: SUBSCRIPTION_PLANS.premium.maxAnalysesPerMonth,
-        trial: SUBSCRIPTION_PLANS.premium.trialDays
-      },
-      description: language === "th" 
-        ? "เหมาะสำหรับคลินิกขนาดเล็กถึงกลาง พร้อมฟีเจอร์ครบครัน"
-        : "Perfect for small to medium clinics with full features",
-      features: language === "th" ? SUBSCRIPTION_PLANS.premium.featuresTH : SUBSCRIPTION_PLANS.premium.features,
-      excludedFeatures: [],
-      cta: language === "th" ? "ทดลองฟรี 14 วัน" : "Start 14-Day Free Trial",
-      href: "/auth/register?plan=premium",
-      variant: "default" as const,
-      popular: true
-    },
-    {
-      planKey: 'enterprise' as const,
-      name: language === "th" ? SUBSCRIPTION_PLANS.enterprise.nameTH : SUBSCRIPTION_PLANS.enterprise.name,
-      badge: language === "th" ? "หลายสาขา" : "Multi-Branch",
-      icon: Building2,
-      price: formatPrice('enterprise', language as 'th' | 'en'),
-      period: language === "th" ? "ราคาพิเศษ" : "Custom Price",
-      limits: {
-        users: SUBSCRIPTION_PLANS.enterprise.maxUsers,
-        storage: SUBSCRIPTION_PLANS.enterprise.maxStorageGB,
-        analyses: SUBSCRIPTION_PLANS.enterprise.maxAnalysesPerMonth,
-        trial: SUBSCRIPTION_PLANS.enterprise.trialDays
-      },
-      description: language === "th" 
-        ? "สำหรับคลินิกหลายสาขา พร้อมการปรับแต่งและซัพพอร์ตเฉพาะทาง"
-        : "For multi-branch clinics with customization and dedicated support",
-      features: language === "th" ? SUBSCRIPTION_PLANS.enterprise.featuresTH : SUBSCRIPTION_PLANS.enterprise.features,
-      excludedFeatures: [],
-      cta: language === "th" ? "ทดลองฟรี 30 วัน" : "Start 30-Day Free Trial",
-      href: "/contact?plan=enterprise",
-      variant: "outline" as const
+      ] : [],
+      cta: planKey === 'free' 
+        ? (language === "th" ? "เริ่มวิเคราะห์ฟรี" : "Start Free Analysis")
+        : planKey === 'premium'
+        ? (language === "th" ? "ทดลองฟรี 14 วัน" : "Start 14-Day Free Trial")
+        : (language === "th" ? "ติดต่อเรา" : "Contact Us"),
+      href: planKey === 'free' 
+        ? "/analysis"
+        : planKey === 'premium'
+        ? "/auth/register?plan=premium"
+        : "/contact?plan=premium_plus",
+      variant: planKey === 'premium' ? "default" as const : "outline" as const,
+      popular: planKey === 'premium'
     }
-  ]
+  })
 
   const formatLimit = (value: number, type: 'users' | 'storage' | 'analyses') => {
     if (value === -1) return language === "th" ? "ไม่จำกัด" : "Unlimited"

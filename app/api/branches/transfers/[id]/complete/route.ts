@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { withClinicAuth } from '@/lib/auth/middleware';
+import { getSubscriptionStatus } from '@/lib/subscriptions/check-subscription';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -13,14 +15,46 @@ const supabase = createClient(
  * This endpoint calls the complete_branch_transfer database function
  * which handles deducting from source, adding to destination, and logging
  */
-export async function POST(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export const POST = withClinicAuth(async (request: NextRequest, user: any) => {
   try {
-    const params = await context.params;
+    const transferId = request.nextUrl.pathname.split('/').at(-2) || '';
+    const isGlobalAdmin = ['super_admin', 'admin'].includes(user.role);
+
+    const { data: transferRow, error: transferErr } = await supabase
+      .from('branch_transfers')
+      .select('id, clinic_id')
+      .eq('id', transferId)
+      .single();
+
+    if (transferErr || !transferRow) {
+      return NextResponse.json({ error: 'Transfer not found' }, { status: 404 });
+    }
+
+    if (!isGlobalAdmin && transferRow.clinic_id !== user.clinic_id) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    if (!isGlobalAdmin) {
+      const subStatus = await getSubscriptionStatus(transferRow.clinic_id)
+      if (!subStatus.isActive || subStatus.isTrialExpired) {
+        const statusCode = subStatus.subscriptionStatus === 'past_due' || subStatus.isTrialExpired ? 402 : 403
+        return NextResponse.json(
+          {
+            error: subStatus.message,
+            subscription: {
+              status: subStatus.subscriptionStatus,
+              plan: subStatus.plan,
+              isTrial: subStatus.isTrial,
+              isTrialExpired: subStatus.isTrialExpired,
+            },
+          },
+          { status: statusCode },
+        );
+      }
+    }
+
     const { data: result, error } = await supabase.rpc('complete_branch_transfer', {
-      p_transfer_id: params.id,
+      p_transfer_id: transferId,
     });
 
     if (error) throw error;
@@ -44,7 +78,7 @@ export async function POST(
           product:inventory_products(id, product_code, product_name)
         )
       `)
-      .eq('id', params.id)
+      .eq('id', transferId)
       .single();
 
     return NextResponse.json({
@@ -59,4 +93,4 @@ export async function POST(
       { status: 500 }
     );
   }
-}
+});

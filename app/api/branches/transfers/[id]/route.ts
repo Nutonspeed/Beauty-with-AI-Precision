@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { withClinicAuth } from '@/lib/auth/middleware';
+import { getSubscriptionStatus } from '@/lib/subscriptions/check-subscription';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -14,6 +15,8 @@ const supabase = createClient(
 export const GET = withClinicAuth(async (req: NextRequest, user: any) => {
   try {
     const id = req.nextUrl.pathname.split('/').pop() || '';
+    const isGlobalAdmin = ['super_admin', 'admin'].includes(user.role);
+
     const { data, error } = await supabase
       .from('branch_transfers')
       .select(`
@@ -36,6 +39,10 @@ export const GET = withClinicAuth(async (req: NextRequest, user: any) => {
 
     if (!data) {
       return NextResponse.json({ error: 'Transfer not found' }, { status: 404 });
+    }
+
+    if (!isGlobalAdmin && data.clinic_id !== user.clinic_id) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     return NextResponse.json(data);
@@ -63,6 +70,11 @@ export const PATCH = withClinicAuth(async (req: NextRequest, user: any) => {
     const body = await req.json();
     const { action, user_id } = body;
 
+    const isGlobalAdmin = ['super_admin', 'admin'].includes(user.role);
+    if (!isGlobalAdmin && user_id && user_id !== user.id) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     if (!action || !user_id) {
       return NextResponse.json(
         { error: 'action and user_id are required' },
@@ -80,6 +92,29 @@ export const PATCH = withClinicAuth(async (req: NextRequest, user: any) => {
     if (fetchError) throw fetchError;
     if (!transfer) {
       return NextResponse.json({ error: 'Transfer not found' }, { status: 404 });
+    }
+
+    if (!isGlobalAdmin && transfer.clinic_id !== user.clinic_id) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    if (!isGlobalAdmin) {
+      const subStatus = await getSubscriptionStatus(transfer.clinic_id)
+      if (!subStatus.isActive || subStatus.isTrialExpired) {
+        const statusCode = subStatus.subscriptionStatus === 'past_due' || subStatus.isTrialExpired ? 402 : 403
+        return NextResponse.json(
+          {
+            error: subStatus.message,
+            subscription: {
+              status: subStatus.subscriptionStatus,
+              plan: subStatus.plan,
+              isTrial: subStatus.isTrial,
+              isTrialExpired: subStatus.isTrialExpired,
+            },
+          },
+          { status: statusCode },
+        );
+      }
     }
 
     let updateData: Record<string, unknown> = {};

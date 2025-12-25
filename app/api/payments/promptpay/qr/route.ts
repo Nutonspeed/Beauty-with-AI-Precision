@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import QRCode from "qrcode"
-import { createServiceClient } from "@/lib/supabase/server"
+import { createServerClient, createServiceClient } from "@/lib/supabase/server"
+import { getSubscriptionStatus } from "@/lib/subscriptions/check-subscription"
 
 function normalizePromptPayId(input: string): string {
   return String(input ?? "").replace(/[^0-9]/g, "")
@@ -97,7 +98,46 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "amount must be > 0" }, { status: 400 })
     }
 
+    const supabase = await createServerClient()
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    if (authError || !user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
     const service = createServiceClient()
+    const { data: userRow, error: userErr } = await service
+      .from('users')
+      .select('role, clinic_id')
+      .eq('id', user.id)
+      .single()
+
+    if (userErr || !userRow) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    }
+
+    const isGlobalAdmin = ['super_admin', 'admin'].includes(userRow.role)
+    if (!isGlobalAdmin) {
+      if (!userRow.clinic_id || userRow.clinic_id !== clinic_id) {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+      }
+
+      const subStatus = await getSubscriptionStatus(clinic_id)
+      if (!subStatus.isActive || subStatus.isTrialExpired) {
+        const statusCode = subStatus.subscriptionStatus === 'past_due' || subStatus.isTrialExpired ? 402 : 403
+        return NextResponse.json(
+          {
+            error: subStatus.message,
+            subscription: {
+              status: subStatus.subscriptionStatus,
+              plan: subStatus.plan,
+              isTrial: subStatus.isTrial,
+              isTrialExpired: subStatus.isTrialExpired,
+            },
+          },
+          { status: statusCode },
+        )
+      }
+    }
     const { data: clinic, error: clinicError } = await service
       .from("clinics")
       .select("id, promptpay_id")

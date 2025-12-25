@@ -34,7 +34,7 @@ interface Subscription {
   name: string
   slug: string
   subscription_plan: 'starter' | 'professional' | 'enterprise'
-  subscription_status: 'active' | 'trial' | 'suspended' | 'cancelled'
+  subscription_status: 'active' | 'trial' | 'past_due' | 'suspended' | 'cancelled'
   trial_ends_at: string | null
   is_trial: boolean
   created_at: string
@@ -61,7 +61,7 @@ export default function SubscriptionsPage() {
   const [editingSubscription, setEditingSubscription] = useState<Subscription | null>(null)
   const [editForm, setEditForm] = useState({
     plan: 'starter' as 'starter' | 'professional' | 'enterprise',
-    status: 'active' as 'active' | 'trial' | 'suspended' | 'cancelled',
+    status: 'active' as 'active' | 'trial' | 'past_due' | 'suspended' | 'cancelled',
     trialEndsAt: '',
   })
   const [isSaving, setIsSaving] = useState(false)
@@ -182,6 +182,7 @@ export default function SubscriptionsPage() {
   const activeCount = subscriptions.filter((s) => s.subscription_status === 'active').length
   const trialCount = subscriptions.filter((s) => s.is_trial).length
   const suspendedCount = subscriptions.filter((s) => s.subscription_status === 'suspended').length
+  const pastDueCount = subscriptions.filter((s) => s.subscription_status === 'past_due').length
   const totalRevenue = subscriptions
     .filter((s) => s.subscription_status === 'active')
     .reduce((sum, s) => sum + s.planDetails.price, 0)
@@ -212,6 +213,7 @@ export default function SubscriptionsPage() {
     const colors = {
       active: 'bg-green-500/10 text-green-500 border-green-500/20',
       trial: 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20',
+      past_due: 'bg-orange-500/10 text-orange-500 border-orange-500/20',
       suspended: 'bg-red-500/10 text-red-500 border-red-500/20',
       cancelled: 'bg-gray-500/10 text-gray-500 border-gray-500/20',
     } as const
@@ -292,6 +294,18 @@ export default function SubscriptionsPage() {
             <CardContent>
               <div className="text-2xl font-bold text-red-600">{suspendedCount}</div>
               <p className="text-xs text-muted-foreground">Need attention</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Past Due
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-orange-600">{pastDueCount}</div>
+              <p className="text-xs text-muted-foreground">Payment required</p>
             </CardContent>
           </Card>
         </div>
@@ -431,7 +445,7 @@ export default function SubscriptionsPage() {
               <Label htmlFor="status">Status</Label>
               <Select
                 value={editForm.status}
-                onValueChange={(value: 'active' | 'trial' | 'suspended' | 'cancelled') =>
+                onValueChange={(value: 'active' | 'trial' | 'past_due' | 'suspended' | 'cancelled') =>
                   setEditForm({ ...editForm, status: value })
                 }
               >
@@ -441,6 +455,7 @@ export default function SubscriptionsPage() {
                 <SelectContent>
                   <SelectItem value="active">Active</SelectItem>
                   <SelectItem value="trial">Trial</SelectItem>
+                  <SelectItem value="past_due">Past Due</SelectItem>
                   <SelectItem value="suspended">Suspended</SelectItem>
                   <SelectItem value="cancelled">Cancelled</SelectItem>
                 </SelectContent>

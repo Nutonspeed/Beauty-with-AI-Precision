@@ -1,5 +1,6 @@
 import { createServerClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
+import { getSubscriptionStatus } from '@/lib/subscriptions/check-subscription'
 
 // GET /api/clinic/staff/[id] - Get single staff member
 export async function GET(
@@ -14,6 +15,36 @@ export async function GET(
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // Resolve staff clinic_id and ensure user belongs to same clinic
+    const { data: staffClinic, error: staffClinicErr } = await supabase
+      .from('clinic_staff')
+      .select('clinic_id')
+      .eq('id', id)
+      .single()
+
+    if (staffClinicErr || !staffClinic?.clinic_id) {
+      return NextResponse.json({ error: 'Staff member not found' }, { status: 404 })
+    }
+
+    const { data: userData, error: userErr } = await supabase
+      .from('users')
+      .select('clinic_id, role')
+      .eq('id', user.id)
+      .single()
+
+    if (userErr) {
+      console.error('[clinic/staff/[id]] Failed to fetch user profile:', userErr)
+      return NextResponse.json({ error: 'Failed to fetch user profile' }, { status: 500 })
+    }
+
+    if (!userData || (userData.role !== 'clinic_owner' && userData.role !== 'clinic_staff')) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
+
+    if (!userData.clinic_id || userData.clinic_id !== staffClinic.clinic_id) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
     const { data: staff, error } = await supabase
@@ -52,6 +83,54 @@ export async function PUT(
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // Resolve staff clinic_id and ensure user belongs to same clinic
+    const { data: staffClinic, error: staffClinicErr } = await supabase
+      .from('clinic_staff')
+      .select('clinic_id')
+      .eq('id', id)
+      .single()
+
+    if (staffClinicErr || !staffClinic?.clinic_id) {
+      return NextResponse.json({ error: 'Staff member not found' }, { status: 404 })
+    }
+
+    const { data: userData, error: userErr } = await supabase
+      .from('users')
+      .select('clinic_id, role')
+      .eq('id', user.id)
+      .single()
+
+    if (userErr) {
+      console.error('[clinic/staff/[id]] Failed to fetch user profile:', userErr)
+      return NextResponse.json({ error: 'Failed to fetch user profile' }, { status: 500 })
+    }
+
+    if (!userData || (userData.role !== 'clinic_owner' && userData.role !== 'clinic_staff')) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
+
+    if (!userData.clinic_id || userData.clinic_id !== staffClinic.clinic_id) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
+
+    // Subscription gating (writes)
+    const subStatus = await getSubscriptionStatus(staffClinic.clinic_id)
+    if (!subStatus.isActive || subStatus.isTrialExpired) {
+      const code = subStatus.subscriptionStatus === 'past_due' || subStatus.isTrialExpired ? 402 : 403
+      return NextResponse.json(
+        {
+          error: subStatus.message,
+          subscription: {
+            status: subStatus.subscriptionStatus,
+            plan: subStatus.plan,
+            isTrial: subStatus.isTrial,
+            isTrialExpired: subStatus.isTrialExpired,
+          },
+        },
+        { status: code },
+      )
     }
 
     const body = await request.json()
@@ -137,6 +216,54 @@ export async function DELETE(
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // Resolve staff clinic_id and ensure user belongs to same clinic
+    const { data: staffClinic, error: staffClinicErr } = await supabase
+      .from('clinic_staff')
+      .select('clinic_id')
+      .eq('id', id)
+      .single()
+
+    if (staffClinicErr || !staffClinic?.clinic_id) {
+      return NextResponse.json({ error: 'Staff member not found' }, { status: 404 })
+    }
+
+    const { data: userData, error: userErr } = await supabase
+      .from('users')
+      .select('clinic_id, role')
+      .eq('id', user.id)
+      .single()
+
+    if (userErr) {
+      console.error('[clinic/staff/[id]] Failed to fetch user profile:', userErr)
+      return NextResponse.json({ error: 'Failed to fetch user profile' }, { status: 500 })
+    }
+
+    if (!userData || (userData.role !== 'clinic_owner' && userData.role !== 'clinic_staff')) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
+
+    if (!userData.clinic_id || userData.clinic_id !== staffClinic.clinic_id) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
+
+    // Subscription gating (writes)
+    const subStatus = await getSubscriptionStatus(staffClinic.clinic_id)
+    if (!subStatus.isActive || subStatus.isTrialExpired) {
+      const code = subStatus.subscriptionStatus === 'past_due' || subStatus.isTrialExpired ? 402 : 403
+      return NextResponse.json(
+        {
+          error: subStatus.message,
+          subscription: {
+            status: subStatus.subscriptionStatus,
+            plan: subStatus.plan,
+            isTrial: subStatus.isTrial,
+            isTrialExpired: subStatus.isTrialExpired,
+          },
+        },
+        { status: code },
+      )
     }
 
     // Soft delete: set status to offline and terminated_date

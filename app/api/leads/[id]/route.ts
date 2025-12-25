@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { normalizeRole } from '@/lib/auth/role-normalize'
+import { getSubscriptionStatus } from '@/lib/subscriptions/check-subscription'
 
 interface RouteContext {
   params: Promise<{
@@ -185,6 +186,27 @@ export async function PATCH(
       )
     }
 
+    const isGlobalAdmin = ['super_admin', 'admin'].includes(staffRole2)
+    if (!isGlobalAdmin) {
+      const subStatus = await getSubscriptionStatus(existingLead.clinic_id)
+      if (!subStatus.isActive || subStatus.isTrialExpired) {
+        const statusCode = subStatus.subscriptionStatus === 'past_due' || subStatus.isTrialExpired ? 402 : 403
+        return NextResponse.json(
+          {
+            success: false,
+            message: subStatus.message,
+            subscription: {
+              status: subStatus.subscriptionStatus,
+              plan: subStatus.plan,
+              isTrial: subStatus.isTrial,
+              isTrialExpired: subStatus.isTrialExpired,
+            },
+          },
+          { status: statusCode },
+        )
+      }
+    }
+
     // Parse request body
     const body = await request.json()
     const {
@@ -341,6 +363,27 @@ export async function DELETE(
         { success: false, message: 'You do not have permission to delete this lead' },
         { status: 403 }
       )
+    }
+
+    const isGlobalAdmin = ['super_admin', 'admin'].includes(staffRole3)
+    if (!isGlobalAdmin) {
+      const subStatus = await getSubscriptionStatus(existingLead.clinic_id)
+      if (!subStatus.isActive || subStatus.isTrialExpired) {
+        const statusCode = subStatus.subscriptionStatus === 'past_due' || subStatus.isTrialExpired ? 402 : 403
+        return NextResponse.json(
+          {
+            success: false,
+            message: subStatus.message,
+            subscription: {
+              status: subStatus.subscriptionStatus,
+              plan: subStatus.plan,
+              isTrial: subStatus.isTrial,
+              isTrialExpired: subStatus.isTrialExpired,
+            },
+          },
+          { status: statusCode },
+        )
+      }
     }
 
     // Hard delete (only for admins)

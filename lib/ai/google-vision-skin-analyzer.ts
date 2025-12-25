@@ -7,10 +7,23 @@ import vision from '@google-cloud/vision';
 import path from 'path';
 
 // Initialize Vision API client with credentials
-const credentialsPath = path.join(process.cwd(), 'google-credentials.json');
-const client = new vision.ImageAnnotatorClient({
-  keyFilename: credentialsPath,
-});
+let client: vision.ImageAnnotatorClient | null = null;
+
+try {
+  const credentialsJson = process.env.GOOGLE_CREDENTIALS_JSON;
+  if (!credentialsJson || credentialsJson.trim() === '') {
+    console.warn('⚠️ Google Cloud credentials not provided. Vision API disabled.');
+  } else {
+    const credentials = JSON.parse(credentialsJson);
+    client = new vision.ImageAnnotatorClient({
+      credentials: credentials,
+    });
+    console.log('✅ Google Vision client initialized');
+  }
+} catch (error) {
+  console.error('❌ Failed to initialize Google Vision client:', error);
+  client = null;
+}
 
 export interface VisionSkinAnalysis {
   skinType: 'oily' | 'dry' | 'combination' | 'normal' | 'sensitive';
@@ -38,6 +51,18 @@ export interface VisionSkinAnalysis {
 export async function analyzeSkinWithVision(
   imageBuffer: Buffer | string
 ): Promise<VisionSkinAnalysis> {
+  // Check if Vision client is available
+  if (!client) {
+    console.warn('⚠️ Google Vision not available. Returning mock analysis.');
+    return {
+      skinType: 'normal',
+      concerns: [],
+      severity: {},
+      recommendations: [],
+      confidence: 0,
+    };
+  }
+
   try {
     console.log('🔍 Analyzing skin with Google Vision API...');
 

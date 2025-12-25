@@ -81,6 +81,20 @@ export default function SalesDashboardPage() {
   const [chatOpen, setChatOpen] = useState(false)
   const [proposalOpen, setProposalOpen] = useState(false)
   const [scoreDetailOpen, setScoreDetailOpen] = useState(false)
+
+  type ClinicSubscriptionStatus = {
+    isActive: boolean
+    isTrial: boolean
+    isTrialExpired: boolean
+    subscriptionStatus: 'trial' | 'active' | 'past_due' | 'suspended' | 'cancelled'
+    plan: string
+    message: string
+  }
+
+  const [subscription, setSubscription] = useState<ClinicSubscriptionStatus | null>(null)
+  const [subscriptionLoading, setSubscriptionLoading] = useState(true)
+
+  const canWrite = subscriptionLoading ? false : (subscription?.isActive ?? true)
   
   // Hot leads state - fetch from API instead of mock
   const [hotLeads, setHotLeads] = useState<HotLead[]>([])
@@ -351,6 +365,26 @@ export default function SalesDashboardPage() {
     checkAuth()
   }, [])
 
+  useEffect(() => {
+    const fetchSubscription = async () => {
+      try {
+        setSubscriptionLoading(true)
+        const res = await fetch('/api/clinic/subscription-status')
+        if (!res.ok) {
+          setSubscription(null)
+          return
+        }
+        const data = await res.json()
+        setSubscription(data?.subscription || null)
+      } catch {
+        setSubscription(null)
+      } finally {
+        setSubscriptionLoading(false)
+      }
+    }
+    fetchSubscription()
+  }, [])
+
   const handleCall = (leadId: string) => {
     const lead = hotLeads.find((l) => l.id === leadId)
     if (!lead) {
@@ -507,6 +541,13 @@ export default function SalesDashboardPage() {
           </div>
 
           <div className="container py-6 space-y-6">
+            {!subscriptionLoading && subscription && !subscription.isActive ? (
+              <div className="border border-yellow-200 bg-yellow-50 rounded-lg p-4">
+                <div className="text-sm font-medium text-yellow-900">Subscription จำกัดการใช้งาน</div>
+                <div className="text-sm text-yellow-800">{subscription.message}</div>
+              </div>
+            ) : null}
+
             {/* Quick Navigation Menu - Mobile: Horizontal Scroll, Desktop: Grid */}
             <div className="w-full">
               <div className="flex gap-3 overflow-x-auto pb-3 scrollbar-hide md:hidden snap-x snap-mandatory">
@@ -519,10 +560,15 @@ export default function SalesDashboardPage() {
                   { href: "/campaign-automation", icon: Zap, label: "Campaigns", desc: "แคมเปญอัตโนมัติ" },
                   { href: "/loyalty", icon: Gift, label: "Loyalty", desc: "โปรแกรมสะสมคะแนน" }
                 ].map((item, index) => (
-                  <Link key={item.href} href={item.href} className="flex-shrink-0 w-32 snap-center">
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`flex-shrink-0 w-32 snap-center ${!canWrite && (item.href.startsWith('/sales/quick-scan') || item.href.startsWith('/sales/proposals') || item.href.startsWith('/sales/wizard')) ? 'pointer-events-none opacity-60' : ''}`}
+                  >
                     <Button
                       variant="outline"
                       className="w-full h-auto py-4 flex flex-col gap-2 items-center justify-center min-h-[80px]"
+                      disabled={!canWrite && (item.href.startsWith('/sales/quick-scan') || item.href.startsWith('/sales/proposals') || item.href.startsWith('/sales/wizard'))}
                     >
                       <item.icon className="h-5 w-5 text-blue-500" />
                       <div className="text-center">
@@ -688,15 +734,21 @@ export default function SalesDashboardPage() {
                   </p>
                 </div>
                 <div className="flex flex-col gap-2 md:flex-row md:gap-3 mt-4 md:mt-0">
-                  <Link href={`/sales/wizard/new-${Date.now()}`}>
-                    <Button
-                      size="lg"
-                      className="w-full md:w-auto bg-white text-blue-600 hover:bg-blue-50 shadow-md h-12 md:h-14 px-6 md:px-8 text-base font-semibold"
-                    >
-                      <Presentation className="h-4 w-4 md:h-5 md:w-5 mr-2" />
-                      เริ่ม Presentation ใหม่
-                    </Button>
-                  </Link>
+                  <Button
+                    size="lg"
+                    className="w-full md:w-auto bg-white text-blue-600 hover:bg-blue-50 shadow-md h-12 md:h-14 px-6 md:px-8 text-base font-semibold"
+                    disabled={!canWrite}
+                    onClick={() => {
+                      if (!canWrite) {
+                        toast.error(subscription?.message || 'Subscription is not active')
+                        return
+                      }
+                      router.push(`/sales/wizard/new-${Date.now()}`)
+                    }}
+                  >
+                    <Presentation className="h-4 w-4 md:h-5 md:w-5 mr-2" />
+                    เริ่ม Presentation ใหม่
+                  </Button>
                 </div>
               </div>
             </div>

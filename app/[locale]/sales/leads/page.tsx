@@ -101,6 +101,18 @@ export default function LeadsListPage() {
     total_pages: 0,
   })
 
+  type ClinicSubscriptionStatus = {
+    isActive: boolean
+    isTrial: boolean
+    isTrialExpired: boolean
+    subscriptionStatus: 'trial' | 'active' | 'past_due' | 'suspended' | 'cancelled'
+    plan: string
+    message: string
+  }
+
+  const [subscription, setSubscription] = useState<ClinicSubscriptionStatus | null>(null)
+  const [subscriptionLoading, setSubscriptionLoading] = useState(true)
+
   // Authentication check
   useEffect(() => {
     let cancelled = false
@@ -127,6 +139,28 @@ export default function LeadsListPage() {
       cancelled = true
     }
   }, [router, lp])
+
+  useEffect(() => {
+    const fetchSubscription = async () => {
+      try {
+        setSubscriptionLoading(true)
+        const res = await fetch('/api/clinic/subscription-status')
+        if (!res.ok) {
+          setSubscription(null)
+          return
+        }
+        const data = await res.json()
+        setSubscription(data?.subscription || null)
+      } catch {
+        setSubscription(null)
+      } finally {
+        setSubscriptionLoading(false)
+      }
+    }
+    fetchSubscription()
+  }, [])
+
+  const canWrite = subscriptionLoading ? false : (subscription?.isActive ?? true)
 
   // Fetch leads (stabilized for hook deps)
   const fetchLeads = useCallback(async () => {
@@ -208,6 +242,13 @@ export default function LeadsListPage() {
 
   return (
     <div className="container mx-auto py-8 space-y-6">
+      {!subscriptionLoading && subscription && !subscription.isActive ? (
+        <div className="border border-yellow-200 bg-yellow-50 rounded-lg p-4">
+          <div className="text-sm font-medium text-yellow-900">Subscription จำกัดการใช้งาน</div>
+          <div className="text-sm text-yellow-800">{subscription.message}</div>
+        </div>
+      ) : null}
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -224,7 +265,16 @@ export default function LeadsListPage() {
             onChange={(e) => setCampaignFilter(e.target.value)}
           />
         </div>
-        <Button onClick={() => setShowCaptureForm(true)}>
+        <Button
+          onClick={() => {
+            if (!canWrite) {
+              toast.error(subscription?.message || 'Subscription is not active')
+              return
+            }
+            setShowCaptureForm(true)
+          }}
+          disabled={!canWrite}
+        >
           <UserPlus className="mr-2 h-4 w-4" />
           Capture New Lead
         </Button>

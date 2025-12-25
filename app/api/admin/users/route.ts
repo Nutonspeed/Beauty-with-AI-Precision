@@ -55,35 +55,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Forbidden - Admin access required" }, { status: 403 })
     }
 
-    const body = await request.json()
-    const { email, password, full_name, phone, role } = body
-
-    // Create user in auth.users
-    const { data: authUser, error: authError } = await supabase.auth.admin.createUser({
-      email,
-      password,
-      email_confirm: true,
-      user_metadata: { role },
-    })
-
-    if (authError) throw authError
-
-    // Create user profile
-    const { data: user, error: profileError } = await supabase
-      .from("users")
-      .insert({
-        id: authUser.user.id,
-        email,
-        full_name,
-        phone,
-        role,
-      })
-      .select()
-      .single()
-
-    if (profileError) throw profileError
-
-    return NextResponse.json({ success: true, user }, { status: 201 })
+    // SECURITY: Admin should use invitation system, not direct creation
+    // This endpoint is deprecated for user creation
+    return NextResponse.json(
+      { 
+        error: "Direct user creation is deprecated. Please use the invitation system (/api/users/invite) with proper role permissions.",
+        alternatives: [
+          "Use /api/users/create with proper permissions",
+          "Use /api/invitations to send invitations"
+        ]
+      }, 
+      { status: 410 }
+    )
   } catch (error) {
     console.error("Error creating user:", error)
     return NextResponse.json(

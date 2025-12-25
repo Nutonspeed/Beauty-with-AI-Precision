@@ -9,7 +9,8 @@ import { normalizeRole } from '@/lib/auth/role-normalize'
  * Canonical Roles & Permissions (normalized via normalizeRole):
  * - super_admin: can create clinic_owner OR clinic_admin (staff management at top-level)
  * - clinic_admin: can create sales_staff (within same clinic)
- * - other roles: no creation rights (future phases may add sales_staff -> customer creation)
+ * - sales_staff: can create customer (within same clinic)
+ * - other roles: no creation rights
  */
 
 type ParsedRequest = {
@@ -52,9 +53,19 @@ function validatePermissions(
     return { ok: true }
   }
 
-  if (actorRole === 'clinic_admin') {
+  if (actorRole === 'clinic_admin' || actorRole === 'clinic_owner') {
     if (targetRole !== 'sales_staff') {
-      return { ok: false, status: 403, message: 'clinic_admin can only create sales_staff' }
+      return { ok: false, status: 403, message: `${actorRole} can only create sales_staff` }
+    }
+    if (clinic_id && clinic_id !== (actorClinicId ?? undefined)) {
+      return { ok: false, status: 403, message: 'Cannot create users in other clinics' }
+    }
+    return { ok: true }
+  }
+
+  if (actorRole === 'sales_staff') {
+    if (targetRole !== 'customer') {
+      return { ok: false, status: 403, message: 'sales_staff can only create customer' }
     }
     if (clinic_id && clinic_id !== (actorClinicId ?? undefined)) {
       return { ok: false, status: 403, message: 'Cannot create users in other clinics' }

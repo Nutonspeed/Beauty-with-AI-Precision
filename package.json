@@ -5,10 +5,11 @@
   "scripts": {
     "build": "node --max-old-space-size=8192 ./node_modules/next/dist/bin/next build --webpack",
     "build:analyze": "ANALYZE=true pnpm build",
-    "build:fast": "cross-env FAST_BUILD=1 node --max-old-space-size=8192 ./node_modules/next/dist/bin/next build --webpack",
+    "build:fast": "cross-env FAST_BUILD=1 node --max-old-space-size=6144 ./node_modules/next/dist/bin/next build --webpack",
     "check:db": "tsx scripts/check-database.ts",
     "deploy:check": "pnpm type-check && pnpm check:db && pnpm verify",
     "dev": "next dev --webpack -p 3004",
+    "seed:dev": "node ./scripts/seed-dev.js",
     "db:seed:test": "node ./scripts/seed-test-users.js",
     "dev:3005": "next dev --webpack -p 3005",
     "dev:webpack": "next dev --webpack",
@@ -161,6 +162,9 @@
     "reports:schedule": "node scripts/reports/schedule-reports.js"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^3.0.1",
+    "@ai-sdk/google": "^3.0.1",
+    "@ai-sdk/openai": "^3.0.1",
     "@auth/core": "^0.34.3",
     "@edge-runtime/vm": "^5.0.0",
     "@elastic/elasticsearch": "^8.11.0",
@@ -219,7 +223,7 @@
     "@tensorflow-models/face-detection": "^1.0.3",
     "@tensorflow-models/face-landmarks-detection": "^1.0.6",
     "@tensorflow-models/mobilenet": "2.0.5",
-    "@tensorflow/tfjs": "^3.21.0",
+    "@tensorflow/tfjs": "^4.22.0",
     "@tensorflow/tfjs-backend-webgl": "^4.22.0",
     "@tensorflow/tfjs-converter": "^4.22.0",
     "@tensorflow/tfjs-core": "^4.22.0",
@@ -234,7 +238,7 @@
     "@vitest/browser-preview": "^4.0.7",
     "@vitest/browser-webdriverio": "^4.0.7",
     "@xenova/transformers": "^2.17.2",
-    "ai": "^5.0.87",
+    "ai": "^5.0.116",
     "bcryptjs": "^2.4.3",
     "bufferutil": "^4.0.9",
     "bull": "^4.12.2",
@@ -340,6 +344,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/jspdf": "^2.0.0",
     "@types/node": "^22.12.0",
+    "@types/nodemailer": "^7.0.4",
     "@types/react": "^19.1.1",
     "@types/react-dom": "^19",
     "@types/three": "^0.181.0",
@@ -377,7 +382,7 @@
   },
   "packageManager": "pnpm@10.12.0",
   "engines": {
-    "node": "24.x",
+    "node": "22.x",
     "pnpm": ">=10.0.0"
   },
   "pnpm": {

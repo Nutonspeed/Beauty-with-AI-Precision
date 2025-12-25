@@ -13,7 +13,7 @@ const ANALYZE = process.env.ANALYZE === '1' || process.env.ANALYZE === 'true'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: isVercel ? 'standalone' : undefined,
+  // output: isVercel ? 'standalone' : undefined, // Removed to fix Windows symlink issues
   distDir: '.next',
   compress: !FAST_BUILD,
   poweredByHeader: false,
@@ -175,7 +175,7 @@ const nextConfig = {
 
   experimental: {
     workerThreads: false,
-    cpus: FAST_BUILD ? (isVercel ? 2 : 1) : undefined,
+    cpus: FAST_BUILD ? 1 : undefined, // Reduce to 1 CPU for Vercel
     optimizePackageImports: FAST_BUILD
       ? []
       : [
@@ -189,9 +189,10 @@ const nextConfig = {
         ],
     optimizeCss: !FAST_BUILD,
     webpackBuildWorker: false,
-    turbo: false,
-    serverComponentsExternalPackages: ['@prisma/client', '@tensorflow/tfjs-node', '@google-cloud/vision', 'sharp'],
+    serverMinification: true, // Enable server minification
   },
+
+  serverExternalPackages: ['@prisma/client', '@tensorflow/tfjs-node', '@google-cloud/vision', 'sharp'],
 }
 
 // Bundle analyzer wrapper

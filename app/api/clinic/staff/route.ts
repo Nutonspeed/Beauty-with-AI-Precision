@@ -1,5 +1,6 @@
 import { createServerClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
+import { getSubscriptionStatus } from '@/lib/subscriptions/check-subscription'
 
 // GET /api/clinic/staff - List all staff with filters and search
 export async function GET(request: NextRequest) {
@@ -104,10 +105,45 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    // Role/clinic guard
+    const { data: userData, error: userErr } = await supabase
+      .from('users')
+      .select('clinic_id, role')
+      .eq('id', user.id)
+      .single()
+    if (userErr) {
+      console.error('[clinic/staff] Failed to fetch user profile:', userErr)
+      return NextResponse.json({ error: 'Failed to fetch user profile' }, { status: 500 })
+    }
+    if (!userData || (userData.role !== 'clinic_owner' && userData.role !== 'clinic_staff')) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
+    const clinicId = userData.clinic_id
+    if (!clinicId) {
+      return NextResponse.json({ error: 'No clinic associated' }, { status: 400 })
+    }
+
+    // Subscription gating
+    const subStatus = await getSubscriptionStatus(clinicId)
+    if (!subStatus.isActive || subStatus.isTrialExpired) {
+      const code = subStatus.subscriptionStatus === 'past_due' || subStatus.isTrialExpired ? 402 : 403
+      return NextResponse.json(
+        {
+          error: subStatus.message,
+          subscription: {
+            status: subStatus.subscriptionStatus,
+            plan: subStatus.plan,
+            isTrial: subStatus.isTrial,
+            isTrialExpired: subStatus.isTrialExpired,
+          },
+        },
+        { status: code },
+      )
+    }
+
     const body = await request.json()
     const {
       user_id,
-      clinic_id,
       role,
       specialty,
       full_name,
@@ -131,56 +167,54 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Verify clinic exists (if provided)
-    if (clinic_id) {
-      const { data: clinic } = await supabase
-        .from('clinics')
-        .select('id, max_sales_users')
-        .eq('id', clinic_id)
-        .single()
+    // Verify clinic exists
+    const { data: clinic } = await supabase
+      .from('clinics')
+      .select('id, max_sales_users')
+      .eq('id', clinicId)
+      .single()
 
-      if (!clinic) {
+    if (!clinic) {
+      return NextResponse.json(
+        { error: 'Clinic not found' },
+        { status: 404 }
+      )
+    }
+
+    // Enforce sales user limit per clinic when creating sales staff
+    const normalizedRole = String(role).toLowerCase()
+    const isSalesRole = normalizedRole === 'sales' || normalizedRole === 'sales_staff'
+
+    if (isSalesRole) {
+      const maxSalesUsers = (clinic as any).max_sales_users ?? 1
+
+      const { count: existingSalesUsers, error: salesCountError } = await supabase
+        .from('clinic_staff')
+        .select('*', { count: 'exact', head: true })
+        .eq('clinic_id', clinicId)
+        .eq('status', 'active')
+        .in('role', ['sales', 'sales_staff'])
+
+      if (salesCountError) {
+        console.error('Error checking existing sales users:', salesCountError)
+      } else if ((existingSalesUsers || 0) >= maxSalesUsers) {
         return NextResponse.json(
-          { error: 'Clinic not found' },
-          { status: 404 }
-        )
-      }
-
-      // Enforce sales user limit per clinic when creating sales staff
-      const normalizedRole = String(role).toLowerCase()
-      const isSalesRole = normalizedRole === 'sales' || normalizedRole === 'sales_staff'
-
-      if (isSalesRole) {
-        const maxSalesUsers = (clinic as any).max_sales_users ?? 1
-
-        const { count: existingSalesUsers, error: salesCountError } = await supabase
-          .from('clinic_staff')
-          .select('*', { count: 'exact', head: true })
-          .eq('clinic_id', clinic_id)
-          .eq('status', 'active')
-          .in('role', ['sales', 'sales_staff'])
-
-        if (salesCountError) {
-          console.error('Error checking existing sales users:', salesCountError)
-        } else if ((existingSalesUsers || 0) >= maxSalesUsers) {
-          return NextResponse.json(
-            {
-              error: 'Sales user limit reached for this clinic',
-              details: {
-                maxSalesUsers,
-                message: 'Your current plan allows only a limited number of sales users for this clinic. Please upgrade your plan to add more sales staff.',
-              },
+          {
+            error: 'Sales user limit reached for this clinic',
+            details: {
+              maxSalesUsers,
+              message: 'Your current plan allows only a limited number of sales users for this clinic. Please upgrade your plan to add more sales staff.',
             },
-            { status: 403 }
-          )
-        }
+          },
+          { status: 403 }
+        )
       }
     }
 
     // Create staff member
     const staffData: any = {
       user_id,
-      clinic_id,
+      clinic_id: clinicId,
       role,
       full_name,
       email,

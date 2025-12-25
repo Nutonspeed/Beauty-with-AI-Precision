@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import type { LeadStatus, LeadSource } from '@/types/multi-tenant'
+import { getSubscriptionStatus } from '@/lib/subscriptions/check-subscription'
 
 /**
  * GET /api/leads
@@ -35,6 +36,27 @@ export async function GET(request: NextRequest) {
         { success: false, message: 'Sales staff profile not found' },
         { status: 403 }
       )
+    }
+
+    const isGlobalAdmin = ['super_admin', 'admin'].includes(String(salesStaff.role))
+    if (!isGlobalAdmin) {
+      const subStatus = await getSubscriptionStatus(salesStaff.clinic_id)
+      if (!subStatus.isActive || subStatus.isTrialExpired) {
+        const statusCode = subStatus.subscriptionStatus === 'past_due' || subStatus.isTrialExpired ? 402 : 403
+        return NextResponse.json(
+          {
+            success: false,
+            message: subStatus.message,
+            subscription: {
+              status: subStatus.subscriptionStatus,
+              plan: subStatus.plan,
+              isTrial: subStatus.isTrial,
+              isTrialExpired: subStatus.isTrialExpired,
+            },
+          },
+          { status: statusCode },
+        )
+      }
     }
 
     // Parse query parameters

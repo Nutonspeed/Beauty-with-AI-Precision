@@ -78,6 +78,15 @@ interface AppointmentAnalytics {
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
+type ClinicSubscriptionStatus = {
+  isActive: boolean
+  isTrial: boolean
+  isTrialExpired: boolean
+  subscriptionStatus: 'trial' | 'active' | 'past_due' | 'suspended' | 'cancelled'
+  plan: string
+  message: string
+}
+
 export default function ClinicRevenuePage() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
@@ -88,6 +97,9 @@ export default function ClinicRevenuePage() {
   const [data, setData] = useState<RevenueData | null>(null);
   const [appointmentData, setAppointmentData] = useState<AppointmentAnalytics | null>(null);
   const [activeTab, setActiveTab] = useState<'trend' | 'payment' | 'appointments'>('trend');
+
+  const [subscription, setSubscription] = useState<ClinicSubscriptionStatus | null>(null)
+  const [subscriptionLoading, setSubscriptionLoading] = useState(true)
 
   useEffect(() => {
     if (authLoading) return;
@@ -111,6 +123,29 @@ export default function ClinicRevenuePage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, authLoading, router, lp, period, activeTab]);
+
+  useEffect(() => {
+    const fetchSubscription = async () => {
+      try {
+        setSubscriptionLoading(true)
+        const res = await fetch('/api/clinic/subscription-status')
+        if (!res.ok) {
+          setSubscription(null)
+          return
+        }
+        const result = await res.json()
+        setSubscription(result?.subscription || null)
+      } catch (_e) {
+        setSubscription(null)
+      } finally {
+        setSubscriptionLoading(false)
+      }
+    }
+
+    if (!authLoading && user) {
+      fetchSubscription()
+    }
+  }, [authLoading, user])
 
   const loadAppointmentData = async () => {
     try {
@@ -152,6 +187,14 @@ export default function ClinicRevenuePage() {
   };
 
   const handleExport = (format: 'pdf' | 'excel') => {
+    if (!canUsePaidFeatures) {
+      toast({
+        title: 'Subscription จำกัดการใช้งาน',
+        description: subscription?.message || 'Subscription is not active',
+        variant: 'destructive'
+      })
+      return
+    }
     if (format === 'excel') {
       exportCsv();
     } else {
@@ -228,6 +271,8 @@ export default function ClinicRevenuePage() {
     }).format(amount);
   };
 
+  const canUsePaidFeatures = subscriptionLoading ? false : (subscription?.isActive ?? true)
+
   if (authLoading || isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -287,19 +332,48 @@ export default function ClinicRevenuePage() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => router.push(lp('/clinic/payments'))}>
+          <Button
+            variant="outline"
+            disabled={!canUsePaidFeatures}
+            onClick={() => {
+              if (!canUsePaidFeatures) {
+                toast({
+                  title: 'Subscription จำกัดการใช้งาน',
+                  description: subscription?.message || 'Subscription is not active',
+                  variant: 'destructive'
+                })
+                return
+              }
+              router.push(lp('/clinic/payments'))
+            }}
+          >
             Payments
           </Button>
-          <Button variant="outline" onClick={() => handleExport('pdf')}>
+          <Button variant="outline" onClick={() => handleExport('pdf')} disabled={!canUsePaidFeatures}>
             <Download className="mr-2 h-4 w-4" />
             Export PDF
           </Button>
-          <Button variant="outline" onClick={() => handleExport('excel')}>
+          <Button variant="outline" onClick={() => handleExport('excel')} disabled={!canUsePaidFeatures}>
             <Download className="mr-2 h-4 w-4" />
             Export Excel
           </Button>
         </div>
       </div>
+
+      {!subscriptionLoading && subscription && !subscription.isActive ? (
+        <Card className="border-yellow-200 bg-yellow-50 dark:border-yellow-900/50 dark:bg-yellow-950/30 print:hidden">
+          <CardContent className="p-4">
+            <div className="flex flex-col gap-1">
+              <div className="text-sm font-medium text-yellow-900 dark:text-yellow-200">
+                Subscription จำกัดการใช้งาน
+              </div>
+              <div className="text-sm text-yellow-800 dark:text-yellow-300">
+                {subscription.message}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ) : null}
 
       {/* Print Header - Only visible when printing */}
       <div className="hidden print:block text-center mb-6">
