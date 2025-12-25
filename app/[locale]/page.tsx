@@ -195,16 +195,16 @@ export default function HomePage() {
               </div>
 
               {/* Main headline with gradient */}
-              <h1 className="mb-6 text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150">
-                <span className="text-white">จากการสแกนผิวหน้า</span>
+              <h1 className="mb-6 text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150 font-display">
+                <span className="text-white font-thai-mobile">จากการสแกนผิวหน้า</span>
                 <br />
-                <span className="bg-gradient-to-r from-primary via-cyan-400 to-primary bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-primary via-cyan-400 to-primary bg-clip-text text-transparent font-thai-mobile">
                   ถึงประสบการณ์คลินิกอัจฉริยะครบวงจร
                 </span>
               </h1>
 
               {/* Subtitle - clearer platform positioning for sales teams */}
-              <p className="mb-10 text-lg md:text-xl text-white/60 max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-6 duration-700 delay-300">
+              <p className="mb-10 text-base md:text-lg lg:text-xl text-white/60 max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-6 duration-700 delay-300 font-thai-mobile">
                 แพลตฟอร์ม AI / AR สำหรับคลินิกความงาม ที่ช่วยให้ทีมเซลสามารถวิเคราะห์ผิวและจำลองผลลัพธ์ให้ลูกค้าเห็นจากที่บ้านได้ทันที
                 <br className="hidden md:block" />
                 เชื่อมต่อทีมแพทย์ ทีมเซล และลูกค้า ให้อยู่ใน workflow เดียวกัน เพิ่ม conversion และปิดการขายได้มากขึ้นโดยไม่ต้องนัดเข้าคลินิกทุกครั้ง

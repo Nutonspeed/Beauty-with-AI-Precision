@@ -490,33 +490,33 @@ export default function SalesDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {/* Mobile: Horizontal scroll, Desktop: Grid */}
-            <div className="flex md:grid md:grid-cols-5 gap-3 overflow-x-auto pb-2 md:pb-0 -mx-2 px-2 md:mx-0 md:px-0 snap-x snap-mandatory md:snap-none">
-              <Link href={lp('/sales/ar-tools')} className="block flex-shrink-0 w-[140px] md:w-auto snap-start">
+            {/* Mobile: Vertical grid, Desktop: Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+              <Link href={lp('/sales/ar-tools')} className="block">
                 <div className="p-3 md:p-4 rounded-xl bg-gradient-to-br from-pink-500/10 to-rose-500/10 border border-pink-500/20 hover:border-pink-500/50 active:scale-95 transition-all text-center min-h-[100px] flex flex-col items-center justify-center">
                   <Heart className="w-7 h-7 md:w-8 md:h-8 text-pink-500 mb-2" />
                   <p className="text-xs md:text-sm font-medium text-gray-700">Filler & Lips</p>
                 </div>
               </Link>
-              <Link href={lp('/sales/ar-tools')} className="block flex-shrink-0 w-[140px] md:w-auto snap-start">
+              <Link href={lp('/sales/ar-tools')} className="block">
                 <div className="p-3 md:p-4 rounded-xl bg-gradient-to-br from-orange-500/10 to-red-500/10 border border-orange-500/20 hover:border-orange-500/50 active:scale-95 transition-all text-center min-h-[100px] flex flex-col items-center justify-center">
                   <Flame className="w-7 h-7 md:w-8 md:h-8 text-orange-500 mb-2" />
                   <p className="text-xs md:text-sm font-medium text-gray-700">Body</p>
                 </div>
               </Link>
-              <Link href={lp('/sales/ar-tools')} className="block flex-shrink-0 w-[140px] md:w-auto snap-start">
+              <Link href={lp('/sales/ar-tools')} className="block">
                 <div className="p-3 md:p-4 rounded-xl bg-gradient-to-br from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 hover:border-emerald-500/50 active:scale-95 transition-all text-center min-h-[100px] flex flex-col items-center justify-center">
                   <Scissors className="w-7 h-7 md:w-8 md:h-8 text-emerald-500 mb-2" />
                   <p className="text-xs md:text-sm font-medium text-gray-700">Hair</p>
                 </div>
               </Link>
-              <Link href={lp('/sales/ar-tools')} className="block flex-shrink-0 w-[140px] md:w-auto snap-start">
+              <Link href={lp('/sales/ar-tools')} className="block">
                 <div className="p-3 md:p-4 rounded-xl bg-gradient-to-br from-blue-500/10 to-indigo-500/10 border border-blue-500/20 hover:border-blue-500/50 active:scale-95 transition-all text-center min-h-[100px] flex flex-col items-center justify-center">
                   <Eye className="w-7 h-7 md:w-8 md:h-8 text-blue-500 mb-2" />
                   <p className="text-xs md:text-sm font-medium text-gray-700">Eye</p>
                 </div>
               </Link>
-              <Link href={lp('/sales/ar-tools')} className="block flex-shrink-0 w-[140px] md:w-auto snap-start">
+              <Link href={lp('/sales/ar-tools')} className="block md:col-span-5">
                 <div className="p-3 md:p-4 rounded-xl bg-gradient-to-br from-purple-500/10 to-violet-500/10 border border-purple-500/20 hover:border-purple-500/50 active:scale-95 transition-all text-center min-h-[100px] flex flex-col items-center justify-center">
                   <Sparkles className="w-7 h-7 md:w-8 md:h-8 text-purple-500 mb-2" />
                   <p className="text-xs md:text-sm font-medium text-gray-700">All Tools</p>

@@ -2,6 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Thai font optimization for mobile */
+@media (max-width: 640px) {
+  html {
+    font-size: 14px;
+  }
+  
+  /* Thai text adjustments */
+  .font-thai-mobile {
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+  
+  /* Ensure Thai fonts are readable on small screens */
+  body {
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+}
+
 /* Orb radial gradient backgrounds */
 .bg-orb-blue {
   background: radial-gradient(circle, rgba(59, 130, 246, 0.6) 0%, rgba(59, 130, 246, 0.2) 50%, transparent 100%);

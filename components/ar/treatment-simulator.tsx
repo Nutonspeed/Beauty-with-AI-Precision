@@ -208,11 +208,13 @@ export function TreatmentSimulator({
         </h3>
 
         {/* Canvas */}
-        <div className="mb-6 bg-black rounded-lg overflow-hidden">
-          <canvas
-            ref={canvasRef}
-            className="w-full h-auto"
-          />
+        <div className="mb-4 sm:mb-6 bg-black rounded-lg overflow-hidden">
+          <div className="relative aspect-[4/3] sm:aspect-[16/9]">
+            <canvas
+              ref={canvasRef}
+              className="absolute inset-0 w-full h-full object-contain"
+            />
+          </div>
         </div>
 
         {/* Controls */}
@@ -223,7 +225,7 @@ export function TreatmentSimulator({
             applyPreset(value as 'mild' | 'moderate' | 'intensive');
           }
         }}>
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 gap-1 sm:gap-0">
             <TabsTrigger value="custom">{t.custom}</TabsTrigger>
             <TabsTrigger value="mild">{t.mild}</TabsTrigger>
             <TabsTrigger value="moderate">{t.moderate}</TabsTrigger>
@@ -360,7 +362,7 @@ export function TreatmentSimulator({
         </Tabs>
 
         {/* Actions */}
-        <div className="flex gap-2 mt-6">
+        <div className="flex flex-col sm:flex-row gap-2 mt-4 sm:mt-6">
           <Button onClick={resetEffects} variant="outline" className="flex-1 gap-2">
             <RefreshCw className="w-4 h-4" />
             {t.reset}
