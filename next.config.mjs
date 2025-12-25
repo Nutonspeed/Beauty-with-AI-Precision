@@ -22,9 +22,7 @@ const nextConfig = {
     ignoreBuildErrors: FAST_BUILD,
   },
 
-  eslint: {
-    ignoreDuringBuilds: FAST_BUILD,
-  },
+  // Note: ESLint is now configured via .eslintrc.json
 
   productionBrowserSourceMaps: !FAST_BUILD,
 
@@ -125,11 +123,14 @@ const nextConfig = {
     },
   }),
 
-  turbopack: {
-    resolveAlias: {
-      '@': './.',
-    },
-  },
+  serverExternalPackages: ['@prisma/client', '@tensorflow/tfjs-node', '@google-cloud/vision', 'sharp'],
+  
+  // Legacy experimental options (deprecated)
+  // turbopack: {
+  //   resolveAlias: {
+  //     '@': './.',
+  //   },
+  // },
 
   webpack: (config, { dev, isServer }) => {
     config.ignoreWarnings = [
@@ -189,8 +190,7 @@ const nextConfig = {
         ],
     optimizeCss: !FAST_BUILD,
     webpackBuildWorker: false,
-    turbo: false,
-    serverComponentsExternalPackages: ['@prisma/client', '@tensorflow/tfjs-node', '@google-cloud/vision', 'sharp'],
+    // Note: serverExternalPackages has been moved to root level
   },
 }
 
