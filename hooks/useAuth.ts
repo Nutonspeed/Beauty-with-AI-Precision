@@ -77,6 +77,51 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       if (!response.ok) {
         console.error('Failed to fetch user profile: HTTP', response.status);
+        // If 404, try to create a new profile
+        if (response.status === 404) {
+          console.log('User not found, attempting to create new profile...');
+          const createResponse = await fetch('/api/user-profile', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${session.access_token}`
+            },
+            body: JSON.stringify({
+              userId: userId,
+              updates: {
+                id: userId,
+                email: session.user?.email || '',
+                full_name: session.user?.user_metadata?.full_name || session.user?.email?.split('@')[0] || 'User',
+                role: 'customer',
+                tier: 'free',
+                is_active: true
+              }
+            })
+          });
+
+          if (createResponse.ok) {
+            const newProfileResult = await createResponse.json();
+            if (newProfileResult.data) {
+              console.log('New profile created successfully:', newProfileResult.data);
+              return {
+                id: newProfileResult.data.id,
+                email: newProfileResult.data.email,
+                role: newProfileResult.data.role,
+                tier: newProfileResult.data.tier,
+                full_name: newProfileResult.data.full_name,
+                avatar_url: newProfileResult.data.avatar_url,
+                phone: newProfileResult.data.phone,
+                clinic_id: newProfileResult.data.clinic_id,
+                is_active: newProfileResult.data.is_active,
+                email_verified: newProfileResult.data.email_verified || false,
+                created_at: newProfileResult.data.created_at || new Date().toISOString(),
+                updated_at: newProfileResult.data.updated_at || new Date().toISOString()
+              };
+            }
+          } else {
+            console.error('Failed to create new profile:', createResponse.status);
+          }
+        }
         return null;
       }
 

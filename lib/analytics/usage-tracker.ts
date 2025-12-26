@@ -78,7 +78,7 @@ class UsageTracker {
     this.sendToAnalytics(fullEvent);
 
     // Log for debugging
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV !== 'production') {
       console.log('Usage Event:', fullEvent);
     }
   }
@@ -236,7 +236,7 @@ class UsageTracker {
         await this.flushEventBatch();
       } else if (this.eventBatch.length === 1) {
         // Start timer for delayed send
-        setTimeout(() => this.flushEventBatch(), 5000);
+        setTimeout(() => this.flushEventBatch(), 30000); // Changed from 5000 to 30000
       }
     } catch (error) {
       console.error('Failed to queue usage event:', error);
@@ -246,7 +246,13 @@ class UsageTracker {
   /**
    * Flush batched events to API
    */
-  private async flushEventBatch(): Promise<void> {
+  private async flushEventBatch() {
+    // Disable analytics for development
+    if (process.env.NODE_ENV !== 'production') {
+      this.eventBatch = [];
+      return;
+    }
+
     if (this.eventBatch.length === 0) return;
 
     const eventsToSend = [...this.eventBatch];
@@ -265,7 +271,7 @@ class UsageTracker {
         throw new Error(`API responded with status: ${response.status}`);
       }
 
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV !== 'production') {
         console.log(`Sent ${eventsToSend.length} usage events to database`);
       }
     } catch (error) {

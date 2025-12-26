@@ -1,16 +1,7 @@
 /**
  * POST /api/invitations/[token]/accept - Accept invitation and create account
  * 
- * Body:
- * - full_name: string (required)
- * - password: string (required, min 8 characters)
- * 
- * Flow:
- * 1. Validate invitation token
- * 2. Create auth user with email + password
- * 3. Create user record in users table
- * 4. Call accept_invitation() to assign clinic & role
- * 5. Return success with user data
+ * Updated to use hardened database functions for security and consistency
  */
 
 import { createClient } from '@/lib/supabase/server'
@@ -51,9 +42,10 @@ export async function POST(
       )
     }
 
-    // Step 1: Validate invitation token
-    const { data: validationData, error: validationError } = await supabase
-      .rpc('validate_invitation', { invitation_token: token })
+    // First validate the invitation
+    const { data: validationData, error: validationError } = await supabase.rpc('api_validate_invitation', {
+      p_token: token
+    })
 
     if (validationError) {
       console.error('Error validating invitation:', validationError)
@@ -63,16 +55,15 @@ export async function POST(
       )
     }
 
-    if (!validationData || validationData.length === 0) {
+    if (!validationData?.success || !validationData?.data || validationData.data.length === 0) {
       return NextResponse.json(
-        { error: 'Invitation not found' },
+        { error: 'Invalid or expired invitation' },
         { status: 404 }
       )
     }
 
-    const invitation = validationData[0]
+    const invitation = validationData.data[0]
 
-    // Check if invitation is valid
     if (!invitation.is_valid) {
       return NextResponse.json(
         { error: invitation.error_message || 'Invitation is not valid' },
@@ -80,7 +71,7 @@ export async function POST(
       )
     }
 
-    // Step 2: Create auth user
+    // Create auth user
     const { data: authData, error: signUpError } = await supabase.auth.signUp({
       email: invitation.email,
       password: password,
@@ -94,7 +85,6 @@ export async function POST(
     if (signUpError) {
       console.error('Error creating auth user:', signUpError)
       
-      // Handle specific error cases
       if (signUpError.message.includes('already registered')) {
         return NextResponse.json(
           { error: 'An account with this email already exists' },
@@ -115,35 +105,11 @@ export async function POST(
       )
     }
 
-    // Step 3: Create user record in users table
-    // Note: This might be handled by a trigger on auth.users insert
-    // But we'll do it explicitly to ensure it's created with correct data
-    const { error: userInsertError } = await supabase
-      .from('users')
-      .insert({
-        id: authData.user.id,
-        email: invitation.email,
-        full_name: full_name,
-        role: invitation.invited_role,
-        clinic_id: invitation.clinic_id,
-        created_at: new Date().toISOString()
-      })
-
-    if (userInsertError) {
-      // If user record already exists (from trigger), that's OK
-      if (!userInsertError.message.includes('duplicate key')) {
-        console.error('Error creating user record:', userInsertError)
-        // Continue anyway - the accept_invitation function will update it
-      }
-    }
-
-    // Step 4: Call accept_invitation function to mark invitation as accepted
-    // and ensure user's clinic_id and role are set correctly
-    const { data: acceptData, error: acceptError } = await supabase
-      .rpc('accept_invitation', {
-        invitation_token: token,
-        user_id: authData.user.id
-      })
+    // Accept the invitation (this will create/update the user record)
+    const { data: acceptData, error: acceptError } = await supabase.rpc('api_accept_invitation', {
+      p_token: token,
+      p_user_id: authData.user.id
+    })
 
     if (acceptError) {
       console.error('Error accepting invitation:', acceptError)

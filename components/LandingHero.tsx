@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState, Suspense, useRef, useCallback, useMemo } from 'react';
 import dynamic from 'next/dynamic';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 // Dynamic imports for heavy 3D libraries to reduce initial bundle
 const Canvas = dynamic(() => import('@react-three/fiber').then(mod => ({ default: mod.Canvas })), { ssr: false });
@@ -17,15 +17,9 @@ if (typeof window !== 'undefined') {
   import('@react-three/fiber').then(mod => { useFrame = mod.useFrame; });
 }
 import { MiniTrustBadges } from '@/components/MiniTrustBadges';
-import { AdaptivePerfOverlay } from '@/components/AdaptivePerfOverlay';
-import { PersonalizationPanel, PersonaSettings } from '@/components/PersonalizationPanel';
-import { TrustMicroCopy } from '@/components/TrustMicroCopy';
-import { SessionTimeline, Snapshot } from '@/components/SessionTimeline';
-import { OutcomeProjectionWidget } from '@/components/OutcomeProjectionWidget';
+import { PersonaSettings } from '@/components/PersonalizationPanel';
+import { Snapshot } from '@/components/SessionTimeline';
 import { analytics } from '@/lib/analytics';
-import { PrivacyConsent } from '@/components/PrivacyConsent';
-import { CtaAbTest } from '@/components/CtaAbTest';
-import { useLanguage } from '@/lib/i18n/language-context';
 
 // Toned-down sphere
 function HeroSphere({ active }: { active: boolean }) {
@@ -62,7 +56,6 @@ interface LandingHeroProps {
 }
 
 export function LandingHero({ onPrimary, onSecondary, ctaVariant = "A" }: LandingHeroProps) {
-  const { t } = useLanguage();
   const [stage, setStage] = useState<'intro'|'scanning'|'active'>('intro');
   const [perfLow, setPerfLow] = useState(false);
   const [persona, setPersona] = useState<PersonaSettings>({ tone:'Neutral', sensitivity:'Medium', goal:'Rejuvenate' });
@@ -183,7 +176,7 @@ export function LandingHero({ onPrimary, onSecondary, ctaVariant = "A" }: Landin
           animate={{ opacity:1, y:0 }}
           transition={{ duration:0.9, ease:'easeOut' }}
           className="text-center font-semibold tracking-[0.12em] leading-tight text-[clamp(2.4rem,6vw,4.4rem)]"
-          aria-label={t.home.heroTitle}
+          aria-label="Clinical AI Aesthetic Engine"
         >
           <span className="block bg-gradient-to-r from-pink-500 via-rose-500 to-purple-500 bg-clip-text text-transparent">CLINICAL AI AESTHETIC ENGINE</span>
         </motion.h1>
@@ -193,49 +186,9 @@ export function LandingHero({ onPrimary, onSecondary, ctaVariant = "A" }: Landin
           transition={{ delay:0.6, duration:0.8 }}
           className="mt-8 text-center text-gray-600 text-lg tracking-wider"
         >
-          {t.home.heroSubtitle}
+          AI-powered skin analysis and treatment simulation platform
         </motion.p>
-        <CtaAbTest variant={ctaVariant} onPrimary={onPrimary} onSecondary={onSecondary} />
-        <AnimatePresence>
-          {stage!=='active' && (
-            <motion.div
-              key={stage}
-              initial={{ opacity:0 }}
-              animate={{ opacity:0.9 }}
-              exit={{ opacity:0 }}
-              className="absolute bottom-12 left-1/2 -translate-x-1/2 text-[11px] tracking-[0.3em] text-gray-600"
-              aria-live="polite"
-              aria-atomic="true"
-            >
-              {stage==='intro' && t.common.status.initializing}
-              {stage==='scanning' && t.common.status.scanningBaseline}
-            </motion.div>
-          )}
-        </AnimatePresence>
         <MiniTrustBadges />
-        {!webglSupported && (
-          <p className="mt-6 text-xs text-gray-500 tracking-wide">
-                {t.common.messages.webglFallback}
-          </p>
-        )}
-        <AdaptivePerfOverlay onLowPerf={()=>setPerfLow(true)} onRecover={()=>setPerfLow(false)} />
-        <PersonalizationPanel value={persona} onChange={setPersona} />
-        <TrustMicroCopy />
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[min(100%-2rem,960px)]">
-          <SessionTimeline
-            snapshots={snapshots}
-            onRequestCapture={()=>captureSnapshot(stage)}
-            onRemove={(id)=>setSnapshots(s=>s.filter(x=>x.id!==id))}
-          />
-          <div className="mt-3">
-            <OutcomeProjectionWidget
-              baselineUrl={baseline?.dataUrl}
-              onCaptureBaseline={()=>captureSnapshot(stage)}
-              disabled={!webglSupported}
-            />
-          </div>
-        </div>
-        <PrivacyConsent />
       </div>
     </div>
   );

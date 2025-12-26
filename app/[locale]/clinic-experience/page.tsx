@@ -12,10 +12,12 @@ import { Chapter } from '@/components/Chapter';
 import { AiMetricsPanel } from '@/components/ai-metrics-panel';
 import { TreatmentConfigurator, TreatmentSettings } from '@/components/TreatmentConfigurator';
 import { useLanguage } from '@/lib/i18n/language-context';
+import { useTranslations } from 'next-intl';
 import { CredibilityPanel } from '@/components/CredibilityPanel';
 
 export default function ClinicExperience(){
   const { t } = useLanguage();
+  const t2 = useTranslations();
   const containerRef = useRef<HTMLDivElement>(null);
   const [settings, setSettings] = useState<TreatmentSettings>({
     innerColor: '#FF6B9D',
@@ -54,17 +56,17 @@ export default function ClinicExperience(){
         <CredibilityPanel />
       </div>
 
-      <Chapter index={0} eyebrow={t.clinic.steps[0].eyebrow} title={t.clinic.steps[0].title} accent="pink">
-        {t.clinic.steps[0].body}
+      <Chapter index={0} eyebrow={t2('clinic.steps.0.eyebrow')} title={t2('clinic.steps.0.title')} accent="pink">
+        {t2('clinic.steps.0.body')}
       </Chapter>
-      <Chapter index={1} eyebrow={t.clinic.steps[1].eyebrow} title={t.clinic.steps[1].title} accent="purple">
-        {t.clinic.steps[1].body}
+      <Chapter index={1} eyebrow={t2('clinic.steps.1.eyebrow')} title={t2('clinic.steps.1.title')} accent="purple">
+        {t2('clinic.steps.1.body')}
       </Chapter>
-      <Chapter index={2} eyebrow={t.clinic.steps[2].eyebrow} title={t.clinic.steps[2].title} accent="yellow">
-        {t.clinic.steps[2].body}
+      <Chapter index={2} eyebrow={t2('clinic.steps.2.eyebrow')} title={t2('clinic.steps.2.title')} accent="yellow">
+        {t2('clinic.steps.2.body')}
       </Chapter>
-      <Chapter index={3} eyebrow={t.clinic.steps[3].eyebrow} title={t.clinic.steps[3].title} accent="mint">
-        {t.clinic.steps[3].body}
+      <Chapter index={3} eyebrow={t2('clinic.steps.3.eyebrow')} title={t2('clinic.steps.3.title')} accent="mint">
+        {t2('clinic.steps.3.body')}
       </Chapter>
     </div>
   );

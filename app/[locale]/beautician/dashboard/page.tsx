@@ -51,36 +51,18 @@ export default function BeauticianDashboard() {
     // Load appointment data
     const loadData = async () => {
       try {
-        // TODO: Replace with actual API call
-        // const response = await fetch('/api/beautician/appointments');
-        // const data = await response.json();
+        const today = new Date().toISOString().split('T')[0];
+        const response = await fetch(`/api/beautician/appointments?date=${today}`);
         
-        // Mock data for now
-        setTodayAppointments([
-          {
-            id: '1',
-            patientName: 'คุณสมศรี ใจดี',
-            treatment: 'Acne Treatment',
-            time: '10:00',
-            status: 'scheduled'
-          },
-          {
-            id: '2',
-            patientName: 'คุณจิรา สวยงาม',
-            treatment: 'Anti-Aging Facial',
-            time: '11:30',
-            status: 'in-progress'
-          },
-          {
-            id: '3',
-            patientName: 'คุณนิตยา ผิวขาว',
-            treatment: 'Pigmentation Treatment',
-            time: '14:00',
-            status: 'scheduled'
-          }
-        ]);
+        if (!response.ok) {
+          throw new Error('Failed to fetch appointments');
+        }
+        
+        const data = await response.json();
+        setTodayAppointments(data.appointments || []);
       } catch (error) {
         console.error('Error loading appointment data:', error);
+        setTodayAppointments([]);
       } finally {
         setIsLoading(false);
       }

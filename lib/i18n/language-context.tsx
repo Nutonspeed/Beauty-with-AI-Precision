@@ -1,12 +1,11 @@
 "use client"
 
-import { createContext, useContext, useState, useEffect, useMemo, useCallback, type ReactNode } from 'react'
-import { translations, type Language } from './translations'
+import { createContext, useContext, type ReactNode } from 'react'
 
 interface LanguageContextType {
-  language: Language
-  setLanguage: (lang: Language) => void
-  t: typeof translations.en | typeof translations.th
+  language: 'en' | 'th' | 'zh'
+  setLanguage: (lang: 'en' | 'th' | 'zh') => void
+  t: (key: string) => string
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined)
@@ -16,26 +15,12 @@ interface LanguageProviderProps {
 }
 
 export function LanguageProvider({ children }: LanguageProviderProps) {
-  // Default to English for Medical-grade SaaS feel
-  const languageState = useState<Language>('en')
-  const [language, setLanguageState] = languageState
-
-  // Load language from localStorage on mount
-  useEffect(() => {
-    const saved = localStorage.getItem('language') as Language
-    if (saved && (saved === 'en' || saved === 'th')) {
-      setLanguageState(saved)
-    }
-  }, [setLanguageState])
-
-  const setLanguage = useCallback((lang: Language) => {
-    setLanguageState(lang)
-    localStorage.setItem('language', lang)
-  }, [setLanguageState])
-
-  const t = translations[language]
-
-  const value = useMemo(() => ({ language, setLanguage, t }), [language, t, setLanguage])
+  // Placeholder values - actual language handling is done by next-intl
+  const value = { 
+    language: 'th' as const, 
+    setLanguage: () => {}, 
+    t: (key: string) => key 
+  }
 
   return (
     <LanguageContext.Provider value={value}>
@@ -47,8 +32,12 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
 export function useLanguage() {
   const context = useContext(LanguageContext)
   if (!context) {
-    // Return default for prerender or when not in provider
-    return { language: 'en' as Language, setLanguage: () => {}, t: translations.en }
+    // Return default values
+    return { 
+      language: 'th' as const, 
+      setLanguage: () => {}, 
+      t: (key: string) => key
+    }
   }
   return context
 }

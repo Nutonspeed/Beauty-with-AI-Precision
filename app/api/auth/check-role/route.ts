@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
       const defaultRole = user.email?.includes("admin") ? "super_admin" 
                        : user.email?.includes("clinic-owner") ? "clinic_owner"  // Changed from clinic_owner
                        : user.email?.includes("sales") ? "sales_staff"
-                       : "free_user"  // Changed from customer_free
+                       : "customer"
 
       const { data: newUser, error: insertError } = await serviceClient
         .from("users")

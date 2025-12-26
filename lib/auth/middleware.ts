@@ -3,7 +3,7 @@
  * Centralized authentication and authorization
  */
 
-import { createClient } from '@/lib/supabase/server';
+import { createClient, createServiceClient } from '@/lib/supabase/server';
 import { canAccessSales } from '@/lib/auth/role-config';
 import { NextRequest, NextResponse } from 'next/server';
 import { logApiRequest, logError } from '@/lib/utils/logger';
@@ -119,20 +119,79 @@ export function withAuth(
       }
 
       // Fetch user details including role and clinic_id
-      const { data: userData, error: userError } = await supabase
+      let { data: userData, error: userError } = await supabase
         .from('users')
         .select('id, email, role, clinic_id, branch_id')
         .eq('id', authUser.id)
         .single();
 
       if (userError || !userData) {
-        const nextRes = NextResponse.json(
-          { error: 'User not found', message: 'User profile not found in database' },
-          { status: 404 }
-        );
-        nextRes.headers.set('X-Request-Id', requestId);
-        logApiRequest(req.method, url.pathname, nextRes.status, Date.now() - startedAt, authUser.id);
-        return nextRes;
+        try {
+          const service = createServiceClient()
+
+          const rawRole =
+            (authUser.user_metadata as any)?.role ||
+            (authUser.app_metadata as any)?.role
+
+          const allowedRoles = new Set([
+            'public',
+            'customer',
+            'free_user',
+            'premium_customer',
+            'clinic_staff',
+            'clinic_admin',
+            'clinic_owner',
+            'sales_staff',
+            'super_admin',
+          ])
+
+          const safeRole = allowedRoles.has(rawRole) ? rawRole : 'customer'
+          const safeEmail = authUser.email || (authUser.user_metadata as any)?.email || null
+          if (!safeEmail) {
+            throw new Error('Authenticated user is missing email')
+          }
+
+          const { data: createdUser, error: createError } = await service
+            .from('users')
+            .upsert(
+              {
+                id: authUser.id,
+                email: safeEmail,
+                role: safeRole,
+                tier: 'free',
+                email_verified: !!(authUser.email_confirmed_at as any),
+              },
+              { onConflict: 'id' }
+            )
+            .select('id, email, role, clinic_id, branch_id')
+            .single()
+
+          if (createError || !createdUser) {
+            console.error('[withAuth] Failed to auto-create user profile:', {
+              requestId,
+              userId: authUser.id,
+              createError,
+            })
+            throw createError || new Error('Failed to create user profile')
+          }
+
+          userData = createdUser
+          userError = null
+        } catch (_e: any) {
+          console.error('[withAuth] Auto-create user profile failed:', {
+            requestId,
+            userId: authUser.id,
+            error: _e,
+          })
+          const message = _e?.message || 'Failed to provision user profile'
+          const nextRes = NextResponse.json(
+            { error: 'Failed to provision user profile', message },
+            { status: 500 }
+          );
+          nextRes.headers.set('X-Request-Id', requestId);
+          logApiRequest(req.method, url.pathname, nextRes.status, Date.now() - startedAt, authUser.id);
+          return nextRes;
+        }
       }
 
       const user: AuthenticatedUser = {

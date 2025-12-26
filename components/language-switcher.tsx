@@ -6,8 +6,7 @@
 'use client';
 
 import React from 'react';
-import { useLocale } from 'next-intl';
-import { useRouter, usePathname } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -16,6 +15,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Globe } from 'lucide-react';
+import { useLocale } from 'next-intl';
+import { Link } from '@/i18n/routing';
 
 const languages = [
   { code: 'th', name: 'ไทย', flag: '🇹🇭' },
@@ -25,30 +26,7 @@ const languages = [
 
 export function LanguageSwitcher() {
   const locale = useLocale();
-  const router = useRouter();
   const pathname = usePathname();
-
-  const handleLanguageChange = (newLocale: string) => {
-    // Remove current locale from pathname
-    const segments = pathname.split('/');
-    const currentLocale = segments[1];
-    
-    // Check if first segment is a locale
-    const isLocaleInPath = ['th', 'en', 'zh'].includes(currentLocale);
-    
-    let newPathname;
-    if (isLocaleInPath) {
-      // Replace current locale with new locale
-      segments[1] = newLocale;
-      newPathname = segments.join('/');
-    } else {
-      // Add new locale to path
-      newPathname = `/${newLocale}${pathname}`;
-    }
-
-    router.push(newPathname);
-    router.refresh();
-  };
 
   const currentLanguage = languages.find(lang => lang.code === locale) || languages[0];
 
@@ -63,17 +41,21 @@ export function LanguageSwitcher() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         {languages.map(language => (
-          <DropdownMenuItem
+          <Link
             key={language.code}
-            onClick={() => handleLanguageChange(language.code)}
-            className="gap-2 cursor-pointer"
+            href={pathname}
+            locale={language.code}
           >
-            <span className="text-lg">{language.flag}</span>
-            <span>{language.name}</span>
-            {locale === language.code && (
-              <span className="ml-auto text-primary">✓</span>
-            )}
-          </DropdownMenuItem>
+            <DropdownMenuItem
+              className="gap-2 cursor-pointer"
+            >
+              <span className="text-lg">{language.flag}</span>
+              <span>{language.name}</span>
+              {locale === language.code && (
+                <span className="ml-auto text-primary">✓</span>
+              )}
+            </DropdownMenuItem>
+          </Link>
         ))}
       </DropdownMenuContent>
     </DropdownMenu>

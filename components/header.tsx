@@ -17,6 +17,7 @@ import { Menu, Globe, User, LogOut, Building2 } from "lucide-react"
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet"
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 import { useLanguage } from "@/lib/i18n/language-context"
+import { useLocale } from "next-intl"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { ClinicIQLogo } from "@/components/brand/logo"
@@ -31,24 +32,46 @@ function useSafeAuth() {
   }
 }
 
+// Safe hook wrapper for language context
+function useSafeLanguage() {
+  try {
+    return useLanguage();
+  } catch {
+    return { language: 'th', setLanguage: () => {}, t: (key: string) => key };
+  }
+}
+
 export function Header() {
   const auth = useSafeAuth();
   const user = auth.user;
   const handleSignOut = auth.signOut;
   
-  const { language, setLanguage, t } = useLanguage()
+  const locale = useLocale()
+  const isThaiLocale = locale === 'th'
   const lp = useLocalizePath()
+
+  const roleLabels: Record<string, { th: string; en: string }> = {
+    super_admin: { th: 'ผู้ดูแลระบบสูงสุด', en: 'Super Admin' },
+    clinic_owner: { th: 'เจ้าของคลินิก', en: 'Clinic Owner' },
+    clinic_admin: { th: 'ผู้ดูแลคลินิก', en: 'Clinic Admin' },
+    clinic_staff: { th: 'พนักงานคลินิก', en: 'Clinic Staff' },
+    sales_staff: { th: 'พนักงานขาย', en: 'Sales Staff' },
+    premium_customer: { th: 'ลูกค้าพรีเมียม', en: 'Premium Customer' },
+    free_user: { th: 'ผู้ใช้ฟรี', en: 'Free User' },
+    public: { th: 'ผู้ใช้ทั่วไป', en: 'Public' },
+    customer: { th: 'ลูกค้า', en: 'Customer' },
+  }
 
   // Get navigation items based on user role
   const getNavItems = () => {
     if (!user) {
       // Landing page navigation - clean and professional
       return [
-        { href: "/features", label: language === "th" ? "คุณสมบัติ" : "Features" },
-        { href: "/pricing", label: language === "th" ? "ราคา" : "Pricing" },
-        { href: "/3d-models", label: language === "th" ? "3D Models" : "3D Models" },
-        { href: "/demo/skin-analysis", label: language === "th" ? "ทดลองใช้" : "Try Demo" },
-        { href: "/faq", label: "FAQ" },
+        { href: "/features", label: isThaiLocale ? "คุณสมบัติ" : "Features" },
+        { href: "/pricing", label: isThaiLocale ? "ราคา" : "Pricing" },
+        { href: "/3d-models", label: isThaiLocale ? "3D Models" : "3D Models" },
+        { href: "/demo/skin-analysis", label: isThaiLocale ? "ทดลองใช้" : "Try Demo" },
+        { href: "/faq", label: isThaiLocale ? "คำถามที่พบบ่อย" : "FAQ" },
       ]
     }
 
@@ -57,37 +80,37 @@ export function Header() {
     switch (role) {
       case "clinic_owner":
         return [
-          { href: "/clinic/revenue", label: language === "th" ? "ภาพรวม" : "Dashboard" },
-          { href: "/sales/leads", label: language === "th" ? "ลูกค้า" : "Customers" },
-          { href: "/analytics", label: language === "th" ? "รายงาน" : "Analytics" },
-          { href: "/branches", label: language === "th" ? "สาขา" : "Branches" },
-          { href: "/ai-chat", label: language === "th" ? "AI ที่ปรึกษา" : "AI Advisor" },
+          { href: "/clinic/revenue", label: isThaiLocale ? "ภาพรวม" : "Dashboard" },
+          { href: "/sales/leads", label: isThaiLocale ? "ลูกค้า" : "Customers" },
+          { href: "/analytics", label: isThaiLocale ? "รายงาน" : "Analytics" },
+          { href: "/branches", label: isThaiLocale ? "สาขา" : "Branches" },
+          { href: "/ai-chat", label: isThaiLocale ? "AI ที่ปรึกษา" : "AI Advisor" },
         ]
       case "clinic_staff":
         return [
-          { href: "/booking", label: language === "th" ? "เคาน์เตอร์" : "Reception" },
-          { href: "/clinic/staff/my-schedule", label: language === "th" ? "ตารางงาน" : "Schedule" },
-          { href: "/analysis", label: language === "th" ? "วิเคราะห์ผิว" : "Analysis" },
+          { href: "/booking", label: isThaiLocale ? "เคาน์เตอร์" : "Reception" },
+          { href: "/clinic/staff/my-schedule", label: isThaiLocale ? "ตารางงาน" : "Schedule" },
+          { href: "/analysis", label: isThaiLocale ? "วิเคราะห์ผิว" : "Analysis" },
         ]
       case "sales_staff":
         return [
-          { href: "/sales/dashboard", label: language === "th" ? "ภาพรวม" : "Dashboard" },
-          { href: "/sales/leads", label: language === "th" ? "ลีด" : "Leads" },
-          { href: "/sales/presentations", label: language === "th" ? "ข้อเสนอ" : "Proposals" },
-          { href: "/sales/tools", label: language === "th" ? "เครื่องมือขาย" : "Sales Tool" },
+          { href: "/sales/dashboard", label: isThaiLocale ? "ภาพรวม" : "Dashboard" },
+          { href: "/sales/leads", label: isThaiLocale ? "ลีด" : "Leads" },
+          { href: "/sales/presentations", label: isThaiLocale ? "ข้อเสนอ" : "Proposals" },
+          { href: "/sales/tools", label: isThaiLocale ? "เครื่องมือขาย" : "Sales Tool" },
         ]
       case "super_admin":
         return [
-          { href: "/admin", label: language === "th" ? "แดชบอร์ด" : "Dashboard" },
-          { href: "/admin/system-status", label: language === "th" ? "สถานะระบบ" : "System" },
-          { href: "/clinic/settings", label: language === "th" ? "ตั้งค่า" : "Settings" },
+          { href: "/admin", label: isThaiLocale ? "แดชบอร์ด" : "Dashboard" },
+          { href: "/admin/system-status", label: isThaiLocale ? "สถานะระบบ" : "System" },
+          { href: "/clinic/settings", label: isThaiLocale ? "ตั้งค่า" : "Settings" },
         ]
       default:
         // Customer navigation
         return [
-          { href: "/analysis", label: language === "th" ? "วิเคราะห์ผิว" : "Analysis" },
-          { href: "/ar-simulator", label: language === "th" ? "ลองผลลัพธ์" : "Try Results" },
-          { href: "/booking", label: language === "th" ? "จองคิว" : "Booking" },
+          { href: "/analysis", label: isThaiLocale ? "วิเคราะห์ผิว" : "Analysis" },
+          { href: "/ar-simulator", label: isThaiLocale ? "ลองผลลัพธ์" : "Try Results" },
+          { href: "/booking", label: isThaiLocale ? "จองคิว" : "Booking" },
         ]
     }
   }
@@ -149,25 +172,25 @@ export function Header() {
                 variant="ghost" 
                 size="sm" 
                 className="h-8 sm:h-9 gap-1 px-2 sm:px-3"
-                aria-label={language === "en" ? "Switch language to Thai" : "เปลี่ยนภาษาเป็นอังกฤษ"}
+                aria-label={isThaiLocale ? "เปลี่ยนภาษาเป็นอังกฤษ" : "Switch language to Thai"}
               >
                 <Globe className="h-3.5 w-3.5 sm:h-4 sm:w-4" aria-hidden="true" />
-                <span className="text-xs font-medium hidden sm:inline">{language === "en" ? "🇬🇧 EN" : "🇹🇭 TH"}</span>
-                <span className="text-xs font-medium sm:hidden">{language === "en" ? "EN" : "TH"}</span>
+                <span className="text-xs font-medium hidden sm:inline">{isThaiLocale ? "🇹🇭 TH" : "🇬🇧 EN"}</span>
+                <span className="text-xs font-medium sm:hidden">{isThaiLocale ? "TH" : "EN"}</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>{t.common.language}</DropdownMenuLabel>
+              <DropdownMenuLabel>{isThaiLocale ? 'ภาษา' : 'Language'}</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setLanguage("en")} className="gap-2">
+              <DropdownMenuItem className="gap-2">
                 <span>🇬🇧</span>
                 <span>English</span>
-                {language === "en" && <span className="ml-auto text-primary">✓</span>}
+                {!isThaiLocale && <span className="ml-auto text-primary">✓</span>}
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setLanguage("th")} className="gap-2">
+              <DropdownMenuItem className="gap-2">
                 <span>🇹🇭</span>
                 <span>ไทย</span>
-                {language === "th" && <span className="ml-auto text-primary">✓</span>}
+                {isThaiLocale && <span className="ml-auto text-primary">✓</span>}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -193,7 +216,7 @@ export function Header() {
                         variant="secondary"
                         className={`h-4 px-1.5 text-[10px] ${getRoleBadgeColor(user.role)}`}
                       >
-                        {t.roles[user.role as keyof typeof t.roles]}
+                        {(isThaiLocale ? roleLabels[user.role]?.th : roleLabels[user.role]?.en) || user.role}
                       </Badge>
                     )}
                   </div>
@@ -211,7 +234,7 @@ export function Header() {
                   <>
                     <DropdownMenuItem>
                       <Building2 className="mr-2 h-4 w-4" />
-                      <span>{t.common.switchClinic}</span>
+                      <span>{isThaiLocale ? 'สลับคลินิก' : 'Switch Clinic'}</span>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                   </>
@@ -219,23 +242,23 @@ export function Header() {
                 <DropdownMenuItem asChild>
                   <Link href={lp("/profile")}>
                     <User className="mr-2 h-4 w-4" />
-                    <span>{t.common.profile}</span>
+                    <span>{isThaiLocale ? 'โปรไฟล์' : 'Profile'}</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => handleSignOut()} className="text-destructive">
                   <LogOut className="mr-2 h-4 w-4" />
-                  <span>{t.common.logout}</span>
+                  <span>{isThaiLocale ? 'ออกจากระบบ' : 'Logout'}</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
             <div className="hidden items-center gap-2 lg:flex">
               <Button variant="ghost" size="sm" asChild className="h-8 px-3">
-                <Link href={lp("/auth/login")} className="text-xs">{t.common.login}</Link>
+                <Link href={lp("/auth/login")} className="text-xs">{isThaiLocale ? 'เข้าสู่ระบบ' : 'Login'}</Link>
               </Button>
               <Button size="sm" asChild className="h-8 px-3">
-                <Link href={lp("/analysis")} className="text-xs">{t.common.getStarted}</Link>
+                <Link href={lp("/analysis")} className="text-xs">{isThaiLocale ? 'เริ่มใช้งาน' : 'Get Started'}</Link>
               </Button>
             </div>
           )}
@@ -265,10 +288,10 @@ export function Header() {
                   <>
                     <div className="my-4 border-t" />
                     <Button variant="outline" asChild className="w-full">
-                      <Link href={lp("/auth/login")}>{t.common.login}</Link>
+                      <Link href={lp("/auth/login")}>{isThaiLocale ? 'เข้าสู่ระบบ' : 'Login'}</Link>
                     </Button>
                     <Button asChild className="w-full">
-                      <Link href={lp("/analysis")}>{t.common.startAnalysis}</Link>
+                      <Link href={lp("/analysis")}>{isThaiLocale ? 'เริ่มวิเคราะห์' : 'Start Analysis'}</Link>
                     </Button>
                   </>
                 )}

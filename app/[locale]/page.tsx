@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import { Sparkles, Shield, Zap, Users, BarChart3, Camera, CheckCircle2, ArrowRight, Brain } from "lucide-react"
 import { useLanguage } from "@/lib/i18n/language-context"
+import { useLocale } from "next-intl"
 import RoiMiniCalculator from "@/components/roi/roi-mini-calculator"
 import { useEffect, useRef } from "react"
 import { usageTracker } from "@/lib/analytics/usage-tracker"
@@ -15,6 +16,8 @@ import { motion } from "framer-motion"
 
 export default function HomePage() {
   const { t } = useLanguage()
+  const locale = useLocale()
+  const isThaiLocale = locale === 'th'
   const heroRef = useRef<HTMLElement | null>(null)
   const caseStudyRef = useRef<HTMLElement | null>(null)
 
@@ -140,7 +143,7 @@ export default function HomePage() {
       "name": "Beauty with AI Precision",
       "url": siteUrl,
       "logo": `${siteUrl}/og-interactive-sphere.svg`,
-      "description": t?.home?.heroDescription || "AI-powered dermatology & aesthetic analysis platform",
+      "description": isThaiLocale ? "แพลตฟอร์มวิเคราะห์ผิวและความงามด้วย AI" : "AI-powered dermatology & aesthetic analysis platform",
       "sameAs": []
     },
     {
@@ -196,31 +199,39 @@ export default function HomePage() {
 
               {/* Main headline with gradient */}
               <h1 className="mb-6 text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150 font-display">
-                <span className="text-white font-thai-mobile">จากการสแกนผิวหน้า</span>
+                <span className="text-white font-thai-mobile">
+                  {isThaiLocale ? 'จากการสแกนผิวหน้า' : 'From Facial Scans'}
+                </span>
                 <br />
                 <span className="bg-gradient-to-r from-primary via-cyan-400 to-primary bg-clip-text text-transparent font-thai-mobile">
-                  ถึงประสบการณ์คลินิกอัจฉริยะครบวงจร
+                  {isThaiLocale ? 'ถึงประสบการณ์คลินิกอัจฉริยะครบวงจร' : 'To Intelligent Clinic Experience'}
                 </span>
               </h1>
 
               {/* Subtitle - clearer platform positioning for sales teams */}
               <p className="mb-10 text-base md:text-lg lg:text-xl text-white/60 max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-6 duration-700 delay-300 font-thai-mobile">
-                แพลตฟอร์ม AI / AR สำหรับคลินิกความงาม ที่ช่วยให้ทีมเซลสามารถวิเคราะห์ผิวและจำลองผลลัพธ์ให้ลูกค้าเห็นจากที่บ้านได้ทันที
+                {isThaiLocale 
+                  ? 'แพลตฟอร์ม AI / AR สำหรับคลินิกความงาม ที่ช่วยให้ทีมเซลสามารถวิเคราะห์ผิวและจำลองผลลัพธ์ให้ลูกค้าเห็นจากที่บ้านได้ทันที'
+                  : 'AI/AR platform for aesthetic clinics that helps sales teams analyze skin and simulate results for customers remotely'
+                }
                 <br className="hidden md:block" />
-                เชื่อมต่อทีมแพทย์ ทีมเซล และลูกค้า ให้อยู่ใน workflow เดียวกัน เพิ่ม conversion และปิดการขายได้มากขึ้นโดยไม่ต้องนัดเข้าคลินิกทุกครั้ง
+                {isThaiLocale 
+                  ? 'เชื่อมต่อทีมแพทย์ ทีมเซล และลูกค้า ให้อยู่ใน workflow เดียวกัน เพิ่ม conversion และปิดการขายได้มากขึ้นโดยไม่ต้องนัดเข้าคลินิกทุกครั้ง'
+                  : 'Connect doctors, sales teams, and customers in one workflow, increase conversion and close sales without requiring clinic visits every time'
+                }
               </p>
 
               {/* CTAs */}
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-500">
                 <Button size="lg" asChild className="w-full sm:w-auto text-base px-8 py-6 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/25">
                   <Link href="/analysis" onClick={onHeroCta}>
-                    เริ่มวิเคราะห์ฟรี
+                    {isThaiLocale ? 'เริ่มวิเคราะห์ฟรี' : 'Start Free Analysis'}
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Link>
                 </Button>
                 <Button size="lg" variant="outline" asChild className="w-full sm:w-auto text-base px-8 py-6 border-white/20 text-white hover:bg-white/10">
                   <Link href="/demo/skin-analysis" onClick={onDemoCta}>
-                    ดูตัวอย่าง
+                    {isThaiLocale ? 'ดูตัวอย่าง' : 'View Demo'}
                   </Link>
                 </Button>
               </div>
@@ -229,17 +240,17 @@ export default function HomePage() {
               <div className="mt-12 flex flex-wrap items-center justify-center gap-6 text-sm text-white/40 animate-in fade-in duration-700 delay-700">
                 <span className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                  ไม่ต้องใช้บัตรเครดิต
+                  {isThaiLocale ? 'ไม่ต้องใช้บัตรเครดิต' : 'No credit card required'}
                 </span>
                 <span className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                  ทดลองใช้ฟรี
+                  {isThaiLocale ? 'ทดลองใช้ฟรี' : 'Free trial available'}
                 </span>
                 <span className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                  ตั้งค่าใน 5 นาที
+                  {isThaiLocale ? 'ตั้งค่าใน 5 นาที' : 'Setup in 5 minutes'}
                 </span>
-              </div>
+                </div>
             </div>
           </div>
         </section>
@@ -248,8 +259,12 @@ export default function HomePage() {
         <section className="py-8 md:py-10">
           <div className="container">
             <div className="mx-auto mb-6 max-w-3xl text-center">
-              <h3 className="text-xl font-semibold tracking-tight md:text-2xl">ประเมินมูลค่าเพิ่มใน 10 วินาที</h3>
-              <p className="text-sm text-muted-foreground">ใส่ตัวเลขของคลินิกคุณเพื่อดูผลกระทบโดยประมาณจาก AI</p>
+              <h3 className="text-xl font-semibold tracking-tight md:text-2xl">
+                {isThaiLocale ? 'ประเมินมูลค่าเพิ่มใน 10 วินาที' : 'Assess Added Value in 10 Seconds'}
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                {isThaiLocale ? 'ใส่ตัวเลขของคลินิกคุณเพื่อดูผลกระทบโดยประมาณจาก AI' : 'Enter your clinic numbers to see estimated AI impact'}
+              </p>
             </div>
             <div className="mx-auto max-w-5xl">
               <RoiMiniCalculator />
@@ -272,10 +287,10 @@ export default function HomePage() {
                 Features
               </Badge>
               <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl font-display">
-                {t.home.whyChooseTitle}
+                {isThaiLocale ? 'ทำไมต้องเลือกเรา' : 'Why Choose Our Platform'}
               </h2>
               <p className="text-balance text-muted-foreground leading-relaxed text-lg">
-                {t.home.whyChooseSubtitle}
+                {isThaiLocale ? 'เครื่องมือระดับมืออาชีพสำหรับคลินิกความงาม' : 'Professional Tools for Aesthetic Clinics'}
               </p>
             </motion.div>
 
@@ -286,14 +301,19 @@ export default function HomePage() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.1 }}
               >
-                <Card className="h-full border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-cyan-500/5 to-blue-500/5 hover:-translate-y-1">
+                <Card className="h-full border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 hover:-translate-y-1">
                   <CardContent className="p-8">
-                    <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-500 shadow-lg">
+                    <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-500 shadow-lg">
                       <Brain className="h-7 w-7 text-white" />
                     </div>
-                    <h3 className="mb-3 text-xl font-bold">{t.home.features.aiPowered.title}</h3>
+                    <h3 className="mb-3 text-xl font-bold">
+                      {isThaiLocale ? 'วิเคราะห์ด้วย AI' : 'AI-Powered Analysis'}
+                    </h3>
                     <p className="text-muted-foreground leading-relaxed">
-                      {t.home.features.aiPowered.description}
+                      {isThaiLocale 
+                        ? 'วิเคราะห์ผิว 8 จุด ความแม่นยำระดับการแพทย์ 95-99%'
+                        : '8-point comprehensive skin analysis with 95-99% medical-grade accuracy'
+                      }
                     </p>
                   </CardContent>
                 </Card>
@@ -310,9 +330,14 @@ export default function HomePage() {
                     <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 shadow-lg">
                       <Camera className="h-7 w-7 text-white" />
                     </div>
-                    <h3 className="mb-3 text-xl font-bold">{t.home.features.arVisualization.title}</h3>
+                    <h3 className="mb-3 text-xl font-bold">
+                      {isThaiLocale ? 'จำลองด้วย AR' : 'AR Visualization'}
+                    </h3>
                     <p className="text-muted-foreground leading-relaxed">
-                      {t.home.features.arVisualization.description}
+                      {isThaiLocale 
+                        ? 'ดูผลลัพธ์การรักษาแบบ real-time ก่อนทำจริง'
+                        : 'Real-time AR preview of treatment results before actual procedures'
+                      }
                     </p>
                   </CardContent>
                 </Card>
@@ -329,9 +354,14 @@ export default function HomePage() {
                     <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 shadow-lg">
                       <Shield className="h-7 w-7 text-white" />
                     </div>
-                    <h3 className="mb-3 text-xl font-bold">{t.home.features.pdpaCompliant.title}</h3>
+                    <h3 className="mb-3 text-xl font-bold">
+                      {isThaiLocale ? 'ปฏิบัติตาม PDPA' : 'PDPA Compliant'}
+                    </h3>
                     <p className="text-muted-foreground leading-relaxed">
-                      {t.home.features.pdpaCompliant.description}
+                      {isThaiLocale 
+                        ? 'จัดการข้อมูลเข้ารหัสปลอดภัย ตามกฎหมายคุ้มครองข้อมูลส่วนบุคคล'
+                        : 'Secure, encrypted data management following Thai personal data protection laws'
+                      }
                     </p>
                   </CardContent>
                 </Card>
@@ -348,9 +378,14 @@ export default function HomePage() {
                     <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 shadow-lg">
                       <BarChart3 className="h-7 w-7 text-white" />
                     </div>
-                    <h3 className="mb-3 text-xl font-bold">{t.home.features.visiaStyle.title}</h3>
+                    <h3 className="mb-3 text-xl font-bold">
+                      {isThaiLocale ? 'แดชบอร์ดระดับ VISIA' : 'VISIA-Style Dashboard'}
+                    </h3>
                     <p className="text-muted-foreground leading-relaxed">
-                      {t.home.features.visiaStyle.description}
+                      {isThaiLocale 
+                        ? 'รายงานระดับมืออาชีพ เทียบเท่าอุปกรณ์ VISIA มูลค่าหลายล้าน'
+                        : 'Professional reporting comparable to million-dollar VISIA equipment'
+                      }
                     </p>
                   </CardContent>
                 </Card>
@@ -367,9 +402,14 @@ export default function HomePage() {
                     <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-500 shadow-lg">
                       <Zap className="h-7 w-7 text-white" />
                     </div>
-                    <h3 className="mb-3 text-xl font-bold">{t.home.features.fastAccurate.title}</h3>
+                    <h3 className="mb-3 text-xl font-bold">
+                      {isThaiLocale ? 'รวดเร็ว & แม่นยำ' : 'Fast & Accurate'}
+                    </h3>
                     <p className="text-muted-foreground leading-relaxed">
-                      {t.home.features.fastAccurate.description}
+                      {isThaiLocale 
+                        ? 'วิเคราะห์สำเร็จใน 3-5 วินาที พร้อมคำแนะนำส่วนตัว'
+                        : 'Complete analysis in 3-5 seconds with personalized recommendations'
+                      }
                     </p>
                   </CardContent>
                 </Card>
@@ -386,9 +426,14 @@ export default function HomePage() {
                     <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-500 to-red-500 shadow-lg">
                       <Users className="h-7 w-7 text-white" />
                     </div>
-                    <h3 className="mb-3 text-xl font-bold">{t.home.features.multiClinic.title}</h3>
+                    <h3 className="mb-3 text-xl font-bold">
+                      {isThaiLocale ? 'รองรับหลายคลินิก' : 'Multi-Clinic Support'}
+                    </h3>
                     <p className="text-muted-foreground leading-relaxed">
-                      {t.home.features.multiClinic.description}
+                      {isThaiLocale 
+                        ? 'รองรับหลายสาขาพร้อม CRM และระบบนัดหมาย'
+                        : 'Multi-branch support with integrated CRM and appointment system'
+                      }
                     </p>
                   </CardContent>
                 </Card>
@@ -402,10 +447,13 @@ export default function HomePage() {
           <div className="container">
             <div className="mx-auto mb-12 max-w-2xl text-center">
               <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl font-display">
-                {t.home.howItWorks.title}
+                {isThaiLocale ? 'วิธีการทำงาน' : 'How It Works'}
               </h2>
               <p className="text-balance text-muted-foreground leading-relaxed">
-                {t.home.howItWorks.subtitle}
+                {isThaiLocale 
+                  ? 'ขั้นตอนง่ายๆ เพื่อเริ่มวิเคราะห์ผิวหน้า'
+                  : 'Simple 3-step process to get professional skin analysis'
+                }
               </p>
             </div>
 
@@ -414,9 +462,14 @@ export default function HomePage() {
                 <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-2xl font-bold text-primary-foreground">
                   1
                 </div>
-                <h3 className="mb-2 text-xl font-semibold">{t.home.howItWorks.step1.title}</h3>
+                <h3 className="mb-2 text-xl font-semibold">
+                  {isThaiLocale ? 'อัปโหลดรูปภาพ' : 'Upload Photo'}
+                </h3>
                 <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
-                  {t.home.howItWorks.step1.description}
+                  {isThaiLocale 
+                    ? 'ถ่ายหรืออัปโหลดรูปใบหน้า\นำรองรับทุกอุปกรณ์'
+                    : 'Capture or upload facial photo\nSupports all devices'
+                  }
                 </p>
               </div>
 
@@ -424,9 +477,14 @@ export default function HomePage() {
                 <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-accent text-2xl font-bold text-accent-foreground">
                   2
                 </div>
-                <h3 className="mb-2 text-xl font-semibold">{t.home.howItWorks.step2.title}</h3>
+                <h3 className="mb-2 text-xl font-semibold">
+                  {isThaiLocale ? 'วิเคราะห์ด้วย AI' : 'AI Analysis'}
+                </h3>
                 <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
-                  {t.home.howItWorks.step2.description}
+                  {isThaiLocale 
+                    ? 'วิเคราะห์ผิว 8 จุดด้วย AI\nเสร็จใน 3-5 วินาที'
+                    : '8-point AI skin analysis\nCompletes in 3-5 seconds'
+                  }
                 </p>
               </div>
 
@@ -434,9 +492,14 @@ export default function HomePage() {
                 <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-2xl font-bold text-primary-foreground">
                   3
                 </div>
-                <h3 className="mb-2 text-xl font-semibold">{t.home.howItWorks.step3.title}</h3>
+                <h3 className="mb-2 text-xl font-semibold">
+                  {isThaiLocale ? 'รับผลลัพธ์' : 'Get Results'}
+                </h3>
                 <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
-                  {t.home.howItWorks.step3.description}
+                  {isThaiLocale 
+                    ? 'รับรายงานละเอียดและคำแนะนำ\นำพร้อมจำลองด้วย AR'
+                    : 'Receive detailed report and recommendations\nwith AR Visualization'
+                  }
                 </p>
               </div>
             </div>
@@ -489,14 +552,19 @@ export default function HomePage() {
         <section className="border-y border-border bg-primary py-20 text-primary-foreground">
           <div className="container">
             <div className="mx-auto max-w-3xl text-center">
-              <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl font-display">{t.home.cta.title}</h2>
+              <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl font-display">
+                {isThaiLocale ? 'พร้อมเปลี่ยนแปลงคลินิกของคุณ?' : 'Ready to Transform Your Clinic?'}
+              </h2>
               <p className="mb-8 text-balance text-lg text-primary-foreground/90 leading-relaxed">
-                {t.home.cta.description}
+                {isThaiLocale 
+                  ? 'เริ่มต้นใช้งานวันนี้ ไม่ต้องใช้บัตรเครดิต'
+                  : 'Start Today with No Credit Card Required'
+                }
               </p>
               <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
                 <Button size="lg" variant="secondary" asChild className="w-full sm:w-auto">
                   <Link href="/analysis">
-                    {t.home.cta.startFreeAnalysis}
+                    {isThaiLocale ? 'เริ่มวิเคราะห์ฟรี' : 'Start Free Analysis'}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
@@ -506,7 +574,9 @@ export default function HomePage() {
                   asChild
                   className="w-full border-primary-foreground/20 bg-transparent text-primary-foreground hover:bg-primary-foreground/10 sm:w-auto"
                 >
-                  <Link href="/contact">{t.home.cta.contactSales}</Link>
+                  <Link href="/contact">
+                    {isThaiLocale ? 'ติดต่อขาย' : 'Contact Sales'}
+                  </Link>
                 </Button>
               </div>
             </div>
@@ -518,10 +588,13 @@ export default function HomePage() {
           <div className="container">
             <div className="mx-auto mb-12 max-w-2xl text-center">
               <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl font-display">
-                {t.home.pricing.title}
+                {isThaiLocale ? 'ราคาที่เข้าใจง่าย' : 'Simple Pricing'}
               </h2>
               <p className="text-balance text-muted-foreground leading-relaxed">
-                {t.home.pricing.subtitle}
+                {isThaiLocale 
+                  ? 'เลือกแผนที่เหมาะกับคลินิกของคุณ'
+                  : 'Choose the plan that works for your clinic'
+                }
               </p>
             </div>
 
@@ -529,47 +602,75 @@ export default function HomePage() {
               <Card className="border-2 border-border/70 shadow-sm">
                 <CardContent className="p-8">
                   <Badge className="mb-4" variant="secondary">
-                    {t.home.pricing.freeTier.badge}
+                    {isThaiLocale ? 'วิเคราะห์ฟรี' : 'Free Analysis'}
                   </Badge>
-                  <h3 className="mb-2 text-2xl font-bold">{t.home.pricing.freeTier.title}</h3>
-                  <p className="mb-6 text-sm text-muted-foreground">{t.home.pricing.freeTier.description}</p>
+                  <h3 className="mb-2 text-2xl font-bold">
+                    {isThaiLocale ? 'วิเคราะห์ฟรี' : 'Free Analysis'}
+                  </h3>
+                  <p className="mb-6 text-sm text-muted-foreground">
+                    {isThaiLocale 
+                      ? 'วิเคราะห์ผิว 8 จุด พร้อมรายงานพื้นฐาน'
+                      : '8-point skin analysis with basic report'
+                    }
+                  </p>
                   <div className="mb-6">
-                    <span className="text-4xl font-bold">{t.home.pricing.freeTier.price}</span>
-                    <span className="text-muted-foreground"> / {t.home.pricing.freeTier.period}</span>
+                    <span className="text-4xl font-bold">฿0</span>
+                    <span className="text-muted-foreground"> / {isThaiLocale ? 'การวิเคราะห์' : 'analysis'}</span>
                   </div>
                   <ul className="mb-8 space-y-3">
-                    {t.home.pricing.freeTier.features.map((feature) => (
-                      <li key={feature} className="flex items-start gap-2">
-                        <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
-                        <span className="text-sm">{feature}</span>
-                      </li>
-                    ))}
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      {isThaiLocale ? 'วิเคราะห์ผิว 8 จุด' : '8-point skin analysis'}
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      {isThaiLocale ? 'รายงานพื้นฐาน' : 'Basic report'}
+                    </li>
                   </ul>
-                  <Button variant="outline" asChild className="w-full bg-transparent">
-                    <Link href="/analysis">{t.home.pricing.freeTier.cta}</Link>
+                  <Button asChild className="w-full">
+                    <Link href="/analysis">
+                      {isThaiLocale ? 'เริ่มวิเคราะห์ฟรี' : 'Start Free Analysis'}
+                    </Link>
                   </Button>
                 </CardContent>
               </Card>
 
               <Card className="border-2 border-primary shadow-md">
                 <CardContent className="p-8">
-                  <Badge className="mb-4 bg-primary text-primary-foreground">{t.home.pricing.premium.badge}</Badge>
-                  <h3 className="mb-2 text-2xl font-bold">{t.home.pricing.premium.title}</h3>
-                  <p className="mb-6 text-sm text-muted-foreground">{t.home.pricing.premium.description}</p>
+                  <Badge className="mb-4 bg-primary text-primary-foreground">
+                    {isThaiLocale ? 'ยอดนิยม' : 'Popular'}
+                  </Badge>
+                  <h3 className="mb-2 text-2xl font-bold">
+                    {isThaiLocale ? 'ระดับการแพทย์' : 'Medical-Grade'}
+                  </h3>
+                  <p className="mb-6 text-sm text-muted-foreground">
+                    {isThaiLocale 
+                      ? 'วิเคราะห์ไม่จำกัด พร้อมจำลอง AR และ CRM'
+                      : 'Unlimited analysis with AR simulation and CRM'
+                    }
+                  </p>
                   <div className="mb-6">
-                    <span className="text-4xl font-bold">{t.home.pricing.premium.price}</span>
-                    <span className="text-muted-foreground"> / {t.home.pricing.premium.period}</span>
+                    <span className="text-4xl font-bold">฿1,500</span>
+                    <span className="text-muted-foreground"> / {isThaiLocale ? 'เดือน' : 'month'}</span>
                   </div>
                   <ul className="mb-8 space-y-3">
-                    {t.home.pricing.premium.features.map((feature) => (
-                      <li key={feature} className="flex items-start gap-2">
-                        <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
-                        <span className="text-sm">{feature}</span>
-                      </li>
-                    ))}
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+                      <span className="text-sm">{isThaiLocale ? 'วิเคราะห์ไม่จำกัด' : 'Unlimited analysis'}</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+                      <span className="text-sm">{isThaiLocale ? 'จำลอง AR' : 'AR simulation'}</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+                      <span className="text-sm">{isThaiLocale ? 'CRM แบบบูรณาการ' : 'Integrated CRM'}</span>
+                    </li>
                   </ul>
                   <Button asChild className="w-full">
-                    <Link href="/contact">{t.home.pricing.premium.cta}</Link>
+                    <Link href="/contact">
+                      {isThaiLocale ? 'ติดต่อขาย' : 'Contact Sales'}
+                    </Link>
                   </Button>
                 </CardContent>
               </Card>

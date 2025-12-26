@@ -1,13 +1,14 @@
 "use client"
 
 import Link from "next/link"
-import { useLanguage } from "@/lib/i18n/language-context"
+import { useLocale } from "next-intl"
 import { useLocalizePath } from "@/lib/i18n/locale-link"
 import { ClinicIQLogoFull, ClinicIQMark } from "@/components/brand/logo"
 import { Mail, Phone, Facebook, Instagram, Youtube, Linkedin } from "lucide-react"
 
 export function Footer() {
-  const { t } = useLanguage()
+  const locale = useLocale();
+  const isThaiLocale = locale === 'th';
   const lp = useLocalizePath()
 
   return (
@@ -18,7 +19,10 @@ export function Footer() {
           <div className="lg:col-span-2 space-y-6">
             <ClinicIQLogoFull />
             <p className="text-sm text-muted-foreground leading-relaxed max-w-sm">
-              {t.footer.description}
+              {isThaiLocale 
+                ? 'แพลตฟอร์ม AI สำหรับคลินิกความงาม ช่วยเพิ่มประสิทธิภาพการวิเคราะห์ผิวและจัดการลูกค้า'
+                : 'AI platform for aesthetic clinics to enhance skin analysis and customer management'
+              }
             </p>
             
             {/* Social Links */}
@@ -51,78 +55,78 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="mb-4 text-sm font-semibold">{t.footer.product}</h3>
+            <h3 className="mb-4 text-sm font-semibold">{isThaiLocale ? 'ผลิตภัณฑ์' : 'Product'}</h3>
             <ul className="space-y-3 text-sm">
               <li>
                 <Link href={lp("/features")} className="text-muted-foreground transition-colors hover:text-foreground">
-                  {t.footer.features}
+                  {isThaiLocale ? 'คุณสมบัติ' : 'Features'}
                 </Link>
               </li>
               <li>
                 <Link href={lp("/pricing")} className="text-muted-foreground transition-colors hover:text-foreground">
-                  {t.footer.pricing}
+                  {isThaiLocale ? 'ราคา' : 'Pricing'}
                 </Link>
               </li>
               <li>
                 <Link href={lp("/faq")} className="text-muted-foreground transition-colors hover:text-foreground">
-                  {t.footer.faq}
+                  {isThaiLocale ? 'คำถามที่พบบ่อย' : 'FAQ'}
                 </Link>
               </li>
               <li>
                 <Link href={lp("/analysis")} className="text-muted-foreground transition-colors hover:text-foreground">
-                  {t.footer.tryDemo}
+                  {isThaiLocale ? 'ลองใช้งาน' : 'Try Demo'}
                 </Link>
               </li>
             </ul>
           </div>
 
           <div>
-            <h3 className="mb-4 text-sm font-semibold">{t.footer.company}</h3>
+            <h3 className="mb-4 text-sm font-semibold">{isThaiLocale ? 'บริษัท' : 'Company'}</h3>
             <ul className="space-y-3 text-sm">
               <li>
                 <Link href={lp("/case-studies")} className="text-muted-foreground transition-colors hover:text-foreground">
-                  {t.footer.caseStudies}
+                  {isThaiLocale ? 'กรณีศึกษา' : 'Case Studies'}
                 </Link>
               </li>
               <li>
                 <Link href={lp("/about")} className="text-muted-foreground transition-colors hover:text-foreground">
-                  {t.footer.about}
+                  {isThaiLocale ? 'เกี่ยวกับเรา' : 'About'}
                 </Link>
               </li>
               <li>
                 <Link href={lp("/contact")} className="text-muted-foreground transition-colors hover:text-foreground">
-                  {t.footer.contact}
+                  {isThaiLocale ? 'ติดต่อ' : 'Contact'}
                 </Link>
               </li>
               <li>
                 <Link href={lp("/careers")} className="text-muted-foreground transition-colors hover:text-foreground">
-                  {t.footer.careers}
+                  {isThaiLocale ? 'ร่วมงานกับเรา' : 'Careers'}
                 </Link>
               </li>
             </ul>
           </div>
 
           <div>
-            <h3 className="mb-4 text-sm font-semibold">{t.footer.legal}</h3>
+            <h3 className="mb-4 text-sm font-semibold">{isThaiLocale ? 'ข้อกำหนดทางกฎหมาย' : 'Legal'}</h3>
             <ul className="space-y-3 text-sm">
               <li>
                 <Link href={lp("/privacy")} className="text-muted-foreground transition-colors hover:text-foreground">
-                  {t.footer.privacy}
+                  {isThaiLocale ? 'ความเป็นส่วนตัว' : 'Privacy'}
                 </Link>
               </li>
               <li>
                 <Link href={lp("/terms")} className="text-muted-foreground transition-colors hover:text-foreground">
-                  {t.footer.terms}
+                  {isThaiLocale ? 'เงื่อนไขการใช้งาน' : 'Terms'}
                 </Link>
               </li>
               <li>
                 <Link href={lp("/compliance")} className="text-muted-foreground transition-colors hover:text-foreground">
-                  {t.footer.compliance}
+                  {isThaiLocale ? 'การปฏิบัติตาม' : 'Compliance'}
                 </Link>
               </li>
               <li>
                 <Link href={lp("/pdpa")} className="text-muted-foreground transition-colors hover:text-foreground">
-                  {t.footer.pdpa}
+                  {isThaiLocale ? 'PDPA' : 'PDPA'}
                 </Link>
               </li>
             </ul>
@@ -134,7 +138,7 @@ export function Footer() {
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-2">
               <ClinicIQMark className="h-6 w-6" />
-              <p className="text-sm text-muted-foreground">{t.footer.copyright}</p>
+              <p className="text-sm text-muted-foreground">{isThaiLocale ? '© 2024 ClinicIQ. สงวนลิขสิทธิ์' : '© 2024 ClinicIQ. All rights reserved'}</p>
             </div>
             <div className="flex items-center gap-4 text-xs text-muted-foreground">
               <span className="flex items-center gap-1">

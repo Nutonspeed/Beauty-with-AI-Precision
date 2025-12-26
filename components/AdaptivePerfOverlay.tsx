@@ -1,10 +1,8 @@
 "use client";
 import React, { useEffect, useRef, useState } from 'react';
-import { useLanguage } from '@/lib/i18n/language-context';
 
 interface AdaptivePerfOverlayProps { onLowPerf?:()=>void; onRecover?:()=>void; }
 export function AdaptivePerfOverlay({ onLowPerf, onRecover }: AdaptivePerfOverlayProps) {
-  const { t } = useLanguage();
   const [fps,setFps] = useState(0);
   const [avgFrame,setAvgFrame] = useState(0);
   const [mem,setMem] = useState<{used:number; total:number}|null>(null);
@@ -38,10 +36,10 @@ export function AdaptivePerfOverlay({ onLowPerf, onRecover }: AdaptivePerfOverla
   },[low,onLowPerf,onRecover]);
   return (
     <div className="perf-overlay">
-      <div><span className="label">{t.perf.fps}</span> {fps}</div>
-      <div><span className="label">{t.perf.frame}</span> {avgFrame}ms</div>
-      {mem && <div><span className="label">{t.perf.mem}</span> { (mem.used/1e6).toFixed(1) } / { (mem.total/1e6).toFixed(0) } MB</div>}
-      <div className={low?"status low":"status ok"}>{low?t.perf.statusAdaptive : t.perf.statusStable}</div>
+      <div><span className="label">FPS</span> {fps}</div>
+      <div><span className="label">Frame</span> {avgFrame}ms</div>
+      {mem && <div><span className="label">Memory</span> { (mem.used/1e6).toFixed(1) } / { (mem.total/1e6).toFixed(0) } MB</div>}
+      <div className={low?"status low":"status ok"}>{low?"Low Performance" : "Stable"}</div>
     </div>
   );
 }

@@ -21,6 +21,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
 import { useAuth } from '@/lib/auth/context'
+import { createClient } from '@/lib/supabase/client'
 
 interface SystemStats {
   totalUsers: number
@@ -52,7 +53,17 @@ export default function AdminDashboard() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (authLoading) return
+    // If auth never resolves, stop spinning and surface an actionable error
+    if (authLoading && !user) {
+      const timeoutId = window.setTimeout(() => {
+        setError('Auth loading timeout — กรุณาลองออกจากระบบแล้วล็อกอินใหม่อีกครั้ง')
+        setIsLoading(false)
+      }, 8000)
+
+      return () => window.clearTimeout(timeoutId)
+    }
+
+    if (authLoading && !user) return
     
     // Only super_admin can access this dashboard
     if (!user || user.role !== 'super_admin') {
@@ -66,15 +77,34 @@ export default function AdminDashboard() {
 
   const loadDashboardData = async () => {
     try {
-      const response = await fetch('/api/admin/clinics/performance?period=30d')
+      setIsLoading(true)
+      const supabase = createClient()
+      const { data: sessionData } = await supabase.auth.getSession()
+      const accessToken = sessionData?.session?.access_token
+
+      if (!accessToken) {
+        throw new Error('No session token available (please login again)')
+      }
+
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 10000)
+
+      const response = await fetch('/api/admin/clinics/performance?period=30d', {
+        headers: { Authorization: `Bearer ${accessToken}` },
+        cache: 'no-store',
+        signal: controller.signal,
+      })
+
+      clearTimeout(timeoutId)
       if (!response.ok) {
-        throw new Error('Failed to load dashboard data')
+        const errorText = await response.text().catch(() => '')
+        throw new Error(`Failed to load dashboard data (HTTP ${response.status})${errorText ? `: ${errorText}` : ''}`)
       }
       const result = await response.json()
       setData(result)
     } catch (err) {
       console.error('Dashboard loading error:', err)
-      setError('Failed to load dashboard data')
+      setError(err instanceof Error ? err.message : 'Failed to load dashboard data')
     } finally {
       setIsLoading(false)
     }
@@ -101,17 +131,6 @@ export default function AdminDashboard() {
     { name: 'AI Service', status: 'operational', latency: '120ms' },
     { name: 'Storage', status: 'operational', latency: '8ms' },
   ]
-
-  if (authLoading || isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4" />
-          <p className="text-muted-foreground">Loading Admin Dashboard...</p>
-        </div>
-      </div>
-    )
-  }
 
   if (error) {
     return (

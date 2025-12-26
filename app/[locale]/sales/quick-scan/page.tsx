@@ -8,15 +8,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { FloatingNotesButton } from '@/components/sales/customer-notes'
+// import { FloatingNotesButton } from '@/components/sales/customer-notes'
 import { analyzeSkinWithGemini } from '@/lib/ai/gemini-advisor'
-import { predictSkinFuture, type SkinAgePrediction } from '@/lib/ai/skin-age-predictor'
-import { SkinFuturePrediction } from '@/components/analysis/skin-future-prediction'
-import ARTreatmentPreview from '@/components/sales/ar-treatment-preview'
-import SkinHeatmap from '@/components/sales/skin-heatmap'
-import LeadIntegration from '@/components/sales/lead-integration'
-import ShareResults from '@/components/sales/share-results'
-import { useToast } from '@/hooks/use-toast'
+// import { predictSkinFuture, type SkinAgePrediction } from '@/lib/ai/skin-age-predictor'
+// import ARTreatmentPreview from '@/components/sales/ar-treatment-preview'
+// import SkinHeatmap from '@/components/sales/skin-heatmap'
+// import LeadIntegration from '@/components/sales/lead-integration'
+// import ShareResults from '@/components/sales/share-results'
+// import { useToast } from '@/hooks/use-toast'
 
 // Build-time guard: avoid prerendering this interactive sales page to reduce
 // Vercel build duration (force runtime rendering instead of SSG/ISR).
@@ -45,11 +44,11 @@ interface ScanResult {
   face_landmarks?: any
   heatmap_data?: any
   problem_areas?: any[]
-  futurePrediction?: SkinAgePrediction
+  // futurePrediction?: SkinAgePrediction
 }
 
 export default function QuickScanPage() {
-  const { toast } = useToast()
+  // const { toast } = useToast()
   const [step, setStep] = useState<'intro' | 'scanning' | 'results'>('intro')
   const [currentAngle, setCurrentAngle] = useState<'front' | 'left' | 'right'>('front')
   const [capturedImages, setCapturedImages] = useState<{
@@ -90,13 +89,13 @@ export default function QuickScanPage() {
       setIsUploadMode(true)
       setUploadedImage(null)
       setStep('intro')
-      toast({
-        title: 'ไม่พบกล้องบนอุปกรณ์',
-        description: 'สลับไปใช้โหมดอัปโหลดรูปแทนการใช้กล้อง',
-        variant: 'default',
-      })
+      // toast({
+      //   title: 'ไม่พบกล้องบนอุปกรณ์',
+      //   description: 'สลับไปใช้โหมดอัปโหลดรูปแทนการใช้กล้อง',
+      //   variant: 'default',
+      // })
     }
-  }, [toast])
+  }, [])
 
   const analyzePhotos = useCallback(async (images: typeof capturedImages) => {
     setIsAnalyzing(true)
@@ -267,26 +266,26 @@ export default function QuickScanPage() {
       const { data: savedResult } = await response.json()
 
       // Generate Future Prediction (1-5 years)
-      const futurePrediction = await predictSkinFuture(
-        {
-          wrinkles: concerns.find(c => c.name === 'Wrinkles')?.severity ? concerns.find(c => c.name === 'Wrinkles')!.severity * 10 : 30,
-          spots: concerns.find(c => c.name === 'Pigmentation')?.severity ? concerns.find(c => c.name === 'Pigmentation')!.severity * 10 : 25,
-          pores: 35,
-          texture: 70,
-          elasticity: 75,
-          uvDamage: concerns.find(c => c.name === 'Sun Damage')?.severity ? concerns.find(c => c.name === 'Sun Damage')!.severity * 10 : 20
-        },
-        actualAge,
-        {
-          sunExposure: 'moderate',
-          smoking: false,
-          sleepHours: 7,
-          stressLevel: 'moderate',
-          hydrationLevel: 'adequate',
-          diet: 'average',
-          skinCareRoutine: 'basic'
-        }
-      )
+      // const futurePrediction = await predictSkinFuture(
+        //   {
+        //     wrinkles: concerns.find(c => c.name === 'Wrinkles')?.severity ? concerns.find(c => c.name === 'Wrinkles')!.severity * 10 : 30,
+        //     spots: concerns.find(c => c.name === 'Pigmentation')?.severity ? concerns.find(c => c.name === 'Pigmentation')!.severity * 10 : 25,
+        //     pores: 35,
+        //     texture: 70,
+        //     elasticity: 75,
+        //     uvDamage: concerns.find(c => c.name === 'Sun Damage')?.severity ? concerns.find(c => c.name === 'Sun Damage')!.severity * 10 : 20
+        //   },
+        //   actualAge,
+        //   {
+        //     sunExposure: 'moderate',
+        //     smoking: false,
+        //     sleepHours: 7,
+        //     stressLevel: 'moderate',
+        //     hydrationLevel: 'adequate',
+        //     diet: 'average',
+        //     skinCareRoutine: 'basic'
+        //   }
+        // )
 
       const result: ScanResult = {
         id: savedResult.id,
@@ -300,29 +299,29 @@ export default function QuickScanPage() {
         face_landmarks: faceDetection?.landmarks,
         heatmap_data: heatmapData,
         problem_areas: problemAreas,
-        futurePrediction
+        // futurePrediction
       }
 
       setScanResult(result)
       setStep('results')
       
-      toast({
-        title: 'Analysis Complete',
-        description: 'Scan results saved successfully',
-        variant: 'default'
-      })
+      // toast({
+      //   title: 'Analysis Complete',
+      //   description: 'Scan results saved successfully',
+      //   variant: 'default'
+      // })
     } catch (error: any) {
       console.error('Analysis failed:', error)
-      toast({
-        title: 'Analysis Failed',
-        description: error?.message || 'Please try again',
-        variant: 'destructive'
-      })
+      // toast({
+      //   title: 'Analysis Failed',
+      //   description: error?.message || 'Please try again',
+      //   variant: 'destructive'
+      // })
     } finally {
       setIsAnalyzing(false)
       setIsSaving(false)
     }
-  }, [selectedCustomer, customerEmail, toast])
+  }, [selectedCustomer, customerEmail])
 
   const capturePhoto = useCallback(async () => {
     if (!videoRef.current || !canvasRef.current) return
@@ -860,30 +859,30 @@ export default function QuickScanPage() {
           </Card>
 
           {/* Future Skin Prediction - ทำนายอนาคต 1-5 ปี */}
-          {scanResult.futurePrediction && (
+          {/* {scanResult.futurePrediction && (
             <SkinFuturePrediction 
               prediction={scanResult.futurePrediction}
               locale="th"
             />
-          )}
+          )} */}
 
           {/* Advanced Heatmap Visualization */}
-          {capturedImages.front && scanResult.heatmap_data && (
+          {/* {capturedImages.front && scanResult.heatmap_data && (
             <SkinHeatmap
               faceImage={capturedImages.front}
               heatmapData={scanResult.heatmap_data}
               faceLandmarks={scanResult.face_landmarks}
             />
-          )}
+          )} */}
 
           {/* AR Treatment Preview */}
-          {capturedImages.front && (
+          {/* {capturedImages.front && (
             <ARTreatmentPreview
               beforeImage={capturedImages.front}
               concerns={scanResult.concerns}
               recommendations={scanResult.recommendations}
             />
-          )}
+          )} */}
 
           {/* Basic Concerns List (for quick reference) */}
           <Card>
@@ -910,7 +909,7 @@ export default function QuickScanPage() {
           </Card>
 
           {/* Lead Integration */}
-          <LeadIntegration
+          {/* <LeadIntegration
             scanResult={{
               id: scanResult.id,
               customer_name: selectedCustomer.name,
@@ -921,10 +920,10 @@ export default function QuickScanPage() {
               recommendations: scanResult.recommendations
             }}
             onLeadCreated={(id) => setLeadId(id)}
-          />
+          /> */}
 
           {/* Share Results */}
-          <ShareResults
+          {/* <ShareResults
             scanResult={{
               id: scanResult.id,
               customer_name: selectedCustomer.name,
@@ -935,7 +934,7 @@ export default function QuickScanPage() {
               recommendations: scanResult.recommendations
             }}
             leadId={leadId || undefined}
-          />
+          /> */}
 
           {/* Action Buttons */}
           <div className="grid grid-cols-2 gap-4">
@@ -959,21 +958,21 @@ export default function QuickScanPage() {
               size="lg"
               className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
               onClick={() => {
-                toast({
-                  title: 'Coming Soon',
-                  description: 'Proposal generation feature is under development',
-                  variant: 'default'
-                })
+                // toast({
+              //   title: 'Coming Soon',
+              //   description: 'Proposal generation feature is under development',
+              //   variant: 'default'
+              // })
               }}
             >
               สร้างใบเสนอราคา
             </Button>
           </div>
 
-          <FloatingNotesButton
+          {/* <FloatingNotesButton
             customer_id={selectedCustomer.id}
             customer_name={selectedCustomer.name}
-          />
+          /> */}
         </motion.div>
       )}
     </div>

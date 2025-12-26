@@ -1,5 +1,7 @@
 import type React from "react"
 import type { Metadata } from "next"
+import { NextIntlClientProvider } from 'next-intl'
+import { getMessages } from 'next-intl/server'
 import { locales } from "@/i18n/request"
 import "./globals.css"
 import { Toaster } from "@/components/ui/sonner"
@@ -107,7 +109,7 @@ export const dynamic = 'force-dynamic'
 // Remove generateStaticParams to prevent static generation
 // All pages will be rendered dynamically
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
   params: { locale }
 }: Readonly<{
@@ -116,6 +118,9 @@ export default function RootLayout({
 }>) {
   // ใช้ default locale ถ้า locale ไม่ถูกต้อง
   const validLocale = locales.includes(locale as any) ? locale : 'th'
+  
+  // Get messages for next-intl
+  const messages = await getMessages()
 
   return (
     <html lang={validLocale} suppressHydrationWarning>
@@ -123,6 +128,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <script
+          suppressHydrationWarning
           dangerouslySetInnerHTML={{
             __html: `
               try {
@@ -145,23 +151,25 @@ export default function RootLayout({
         <a href="#main-content" className="skip-link">Skip to main content</a>
         <PerformanceInit />
         <ErrorBoundaryWrapper locale="th" showDetails={process.env.NODE_ENV === 'development'}>
-          <Providers>
-            <SessionTracker />
-            <ServiceWorkerRegistration />
-            <InstallPrompt />
-            {/* Global realtime announcements */}
-            <AnnouncementSubscriber />
-            {/* Connection status indicator (fixed bottom-right) */}
-            <div className="fixed bottom-4 right-4 z-50">
-              <ConnectionStatusIndicator variant="badge" />
-            </div>
-            {/* Offline mode indicator with sync status */}
-            <OfflineIndicator />
-            <main id="main-content" role="main" aria-label="Primary content">
-              {children}
-            </main>
-            <Toaster position="top-right" richColors closeButton />
-          </Providers>
+          <NextIntlClientProvider messages={messages}>
+            <Providers>
+              <SessionTracker />
+              <ServiceWorkerRegistration />
+              <InstallPrompt />
+              {/* Global realtime announcements */}
+              <AnnouncementSubscriber />
+              {/* Connection status indicator (fixed bottom-right) */}
+              <div className="fixed bottom-4 right-4 z-50">
+                <ConnectionStatusIndicator variant="badge" />
+              </div>
+              {/* Offline mode indicator with sync status */}
+              <OfflineIndicator />
+              <main id="main-content" role="main" aria-label="Primary content">
+                {children}
+              </main>
+              <Toaster position="top-right" richColors closeButton />
+            </Providers>
+          </NextIntlClientProvider>
         </ErrorBoundaryWrapper>
         <Analytics />
       </body>

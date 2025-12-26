@@ -90,8 +90,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-  const body = await request.json()
-  const { userId, updates = {} } = body
+    const body = await request.json()
+    const { userId, updates = {} } = body
 
     if (!userId) {
       return NextResponse.json(
@@ -128,13 +128,59 @@ export async function POST(request: NextRequest) {
       'avatar_url',
       'permissions',
       'role',
+      'tier',
       'clinic_id',
       'last_login_at',
       'is_active',
       'updated_at',
       'email',
+      'created_at',
     ])
 
+    // Check if user exists, if not create new one
+    const { data: existingUser, error: checkError } = await supabaseAdmin
+      .from('users')
+      .select('id')
+      .eq('id', userId)
+      .single()
+
+    if (checkError && checkError.code === 'PGRST116') {
+      // User doesn't exist, create new one
+      console.log('[user-profile] Creating new user...')
+      
+      // Set default values for required fields
+      const createData = {
+        id: userId,
+        email: updates.email || '',
+        full_name: updates.full_name || '',
+        role: updates.role || 'customer',
+        tier: 'free',
+        is_active: updates.is_active !== undefined ? updates.is_active : true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        ...Object.fromEntries(
+          Object.entries(updates).filter(([key]) => allowedFields.has(key))
+        )
+      }
+
+      const { data: newUser, error: createError } = await supabaseAdmin
+        .from('users')
+        .insert(createData)
+        .select()
+        .single()
+
+      if (createError) {
+        console.error('[user-profile] Error creating user:', createError)
+        return NextResponse.json(
+          { error: createError instanceof Error ? createError.message : 'Failed to create user' },
+          { status: 500 }
+        )
+      }
+
+      return NextResponse.json({ data: newUser })
+    }
+
+    // Update existing user
     const sanitizedUpdates = Object.fromEntries(
       Object.entries(updates).filter(([key]) => allowedFields.has(key))
     )

@@ -5,12 +5,14 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth/context';
 import { Loader2 } from 'lucide-react';
 import type { UserRole } from '@/lib/auth/role-config';
+import { useLocalizePath } from '@/lib/i18n/locale-link';
 
 // Import role-specific dashboards
 import CustomerDashboard from '@/components/dashboard/customer-dashboard';
 
 export default function DashboardPage() {
   const router = useRouter();
+  const lp = useLocalizePath();
   const { user, loading: authLoading } = useAuth();
   const [redirecting, setRedirecting] = useState(false);
 
@@ -20,7 +22,7 @@ export default function DashboardPage() {
     try {
       if (!user) {
         console.log('[Dashboard] No user, redirecting to login...');
-        router.push('/auth/login');
+        router.push(lp('/auth/login'));
         return;
       }
 
@@ -31,21 +33,21 @@ export default function DashboardPage() {
       if (role === 'super_admin') {
         console.log('[Dashboard] Redirecting super_admin to /super-admin');
         setRedirecting(true);
-        window.location.href = '/super-admin';
+        window.location.href = lp('/super-admin');
         return;
       }
 
       if (role === 'clinic_owner') {
         console.log('[Dashboard] Redirecting clinic_owner to /clinic');
         setRedirecting(true);
-        window.location.href = '/clinic';
+        window.location.href = lp('/clinic');
         return;
       }
 
       if (role === 'sales_staff') {
         console.log('[Dashboard] Redirecting sales_staff to /sales');
         setRedirecting(true);
-        window.location.href = '/sales';
+        window.location.href = lp('/sales');
         return;
       }
 
@@ -53,9 +55,9 @@ export default function DashboardPage() {
       console.log('[Dashboard] Customer staying on /dashboard');
     } catch (error) {
       console.error('[Dashboard] Error in useEffect:', error);
-      router.push('/auth/login');
+      router.push(lp('/auth/login'));
     }
-  }, [user, authLoading, router]);
+  }, [user, authLoading, router, lp]);
 
   if (authLoading || redirecting) {
     return (

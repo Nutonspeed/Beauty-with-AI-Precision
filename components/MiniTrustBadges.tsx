@@ -27,10 +27,10 @@ export function MiniTrustBadges() {
             router.push(lp('/clinic-experience'));
           }}
           className="mini-trust-badge"
-          title={(t as any).badges?.[b.id]?.tooltip}
+          title={b.id}
         >
           <span className="text-lg leading-none">{b.icon}</span>
-          <span className="text-[10px] font-medium tracking-wide">{(t as any).badges?.[b.id]?.label}</span>
+          <span className="text-[10px] font-medium tracking-wide">{b.id}</span>
         </motion.button>
       ))}
     </div>

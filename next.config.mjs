@@ -188,7 +188,7 @@ const nextConfig = {
           '@radix-ui/react-tabs',
           '@radix-ui/react-toast',
         ],
-    optimizeCss: !FAST_BUILD,
+    optimizeCss: false, // Disable CSS optimization to fix critters error
     webpackBuildWorker: false,
     // Note: serverExternalPackages has been moved to root level
   },

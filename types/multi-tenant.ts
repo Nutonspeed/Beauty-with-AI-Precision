@@ -98,6 +98,7 @@ export interface MultiTenantUser {
   
   // Status
   email_verified: boolean;
+  is_active?: boolean;
   last_login_at?: string;
   
   // Timestamps

@@ -101,12 +101,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // If already loading this user, skip
     if (loadingUserIdRef.current === supabaseUser.id) {
       console.log(`[AuthContext] ⏭️ Already loading user ${supabaseUser.id}, skipping...`)
+      setLoading(false)
       return
     }
     
     // If user already loaded and data is fresh, skip
     if (loadedUserIdRef.current === supabaseUser.id && user?.id === supabaseUser.id) {
       console.log(`[AuthContext] ✅ User ${supabaseUser.id} already loaded, skipping...`)
+      setLoading(false)
       return
     }
 
@@ -207,10 +209,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               loadingUserIdRef.current = null
               setLoading(false)
               return
+            } else {
+              console.error('[AuthContext] ❌ Failed to create profile:', createResponse.status)
             }
           }
-          loadingUserIdRef.current = null
           setLoading(false)
+          loadingUserIdRef.current = null
           return
         }
 
