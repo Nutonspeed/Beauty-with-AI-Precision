@@ -55,3 +55,59 @@ export function getAvailableAIProviders(): string[] {
   
   return providers
 }
+
+// API Key getters
+export function getOpenAIApiKey(): string | undefined {
+  return process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'placeholder' 
+    ? process.env.OPENAI_API_KEY 
+    : undefined
+}
+
+export function getAnthropicApiKey(): string | undefined {
+  return process.env.ANTHROPIC_API_KEY && process.env.ANTHROPIC_API_KEY !== 'placeholder'
+    ? process.env.ANTHROPIC_API_KEY
+    : undefined
+}
+
+export function getGeminiApiKey(): string | undefined {
+  return process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'placeholder'
+    ? process.env.GEMINI_API_KEY
+    : undefined
+}
+
+export function getDeepFaceApiUrl(): string | undefined {
+  return process.env.DEEPFACE_API_URL && process.env.DEEPFACE_API_URL !== 'placeholder'
+    ? process.env.DEEPFACE_API_URL
+    : undefined
+}
+
+export function getGoogleCredentialsConfig(): any {
+  try {
+    const creds = process.env.GOOGLE_CREDENTIALS_JSON
+    if (!creds || creds === 'placeholder') return null
+    return JSON.parse(creds)
+  } catch {
+    return null
+  }
+}
+
+// API Key checkers
+export function hasOpenAIApiKey(): boolean {
+  return AI_CONFIG.openai.enabled
+}
+
+export function hasAnthropicApiKey(): boolean {
+  return AI_CONFIG.anthropic.enabled
+}
+
+export function hasGeminiApiKey(): boolean {
+  return AI_CONFIG.gemini.enabled
+}
+
+export function hasVercelAIGatewayKey(): boolean {
+  return !!process.env.VERCEL_AI_GATEWAY_KEY && process.env.VERCEL_AI_GATEWAY_KEY !== 'placeholder'
+}
+
+export function hasDeepFaceApiUrl(): boolean {
+  return !!process.env.DEEPFACE_API_URL && process.env.DEEPFACE_API_URL !== 'placeholder'
+}
