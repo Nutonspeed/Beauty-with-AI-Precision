@@ -32,6 +32,16 @@ lerna-debug.log*
 .env*.local
 .env.development
 .env.production
+.env.production.local
+
+# Build outputs
+.next/
+.vercel/
+test-results/
+playwright-report/
+analysis-output/
+__pycache__/
+node_modules_backup/
 
 # Google Cloud credentials
 google-credentials.json
