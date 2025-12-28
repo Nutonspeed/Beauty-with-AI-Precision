@@ -5,27 +5,37 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38bdf8?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com)
 
-**Status**: **✅ PRODUCTION READY** (100% Complete)
+**Status**: **🚀 PRODUCTION READY** (95% - Ready for Launch)
 **Version**: 1.0.0
-**Last Updated**: December 28, 2025
+**Last Updated**: January 29, 2025
 **Live URL**: https://beauty-with-ai-precision-jdts4lzu2-nuttapongs-projects-6ab11a57.vercel.app
 **UI**: Custom Beauty Theme with Modern Icons 2025
 **TypeScript**: 0 Errors | 0 Warnings
 
 ---
 
+## 🚀 Quick Start (Production)
+
+**Ready to launch?** Start here:
+1. 📖 [**LAUNCH_READY.md**](./LAUNCH_READY.md) - Launch summary & status
+2. 🔑 [**API_KEYS_SETUP.md**](./API_KEYS_SETUP.md) - Get Stripe, Resend, Gemini keys
+3. 🚀 [**DEPLOYMENT_GUIDE.md**](./DEPLOYMENT_GUIDE.md) - Deploy to Vercel
+4. ✅ [**PRODUCTION_CHECKLIST.md**](./PRODUCTION_CHECKLIST.md) - Pre-launch checklist
+
+**Development?** See [Getting Started](#getting-started) below.
+
+---
+
 ## 📋 Table of Contents
 
+- [Quick Start (Production)](#-quick-start-production)
 - [Overview](#overview)
 - [Key Features](#key-features)
 - [Tech Stack](#tech-stack)
 - [Getting Started](#getting-started)
 - [Project Structure](#project-structure)
-- [Development Phases](#development-phases)
-- [Testing](#testing)
 - [Documentation](#documentation)
 - [Performance](#performance)
-- [Roadmap](#roadmap)
 
 ---
 

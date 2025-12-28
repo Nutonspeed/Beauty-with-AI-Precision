@@ -29,68 +29,84 @@ export default function PricingPage() {
 
   const pricingTiers = [
     {
-      planKey: 'free' as const,
-      name: language === "th" ? SUBSCRIPTION_PLANS.free.nameTH : SUBSCRIPTION_PLANS.free.name,
-      badge: t('pricing.free.badge'),
+      planKey: 'starter' as const,
+      name: language === "th" ? SUBSCRIPTION_PLANS.starter.nameTH : SUBSCRIPTION_PLANS.starter.name,
+      badge: t('pricing.plans.starter.badge'),
       icon: Sparkles,
-      price: formatPrice('free', language as 'th' | 'en'),
-      period: t('pricing.free.period'),
+      price: formatPrice('starter', language as 'th' | 'en'),
+      period: t('pricing.plans.starter.period'),
       limits: {
-        users: SUBSCRIPTION_PLANS.free.maxUsers,
-        storage: SUBSCRIPTION_PLANS.free.maxStorageGB,
-        analyses: SUBSCRIPTION_PLANS.free.maxAnalysesPerMonth,
-        trial: SUBSCRIPTION_PLANS.free.trialDays
+        users: SUBSCRIPTION_PLANS.starter.maxUsers,
+        storage: SUBSCRIPTION_PLANS.starter.maxStorageGB,
+        analyses: SUBSCRIPTION_PLANS.starter.maxAnalysesPerMonth,
+        trial: SUBSCRIPTION_PLANS.starter.trialDays
       },
-      description: t('pricing.free.description'),
-      features: language === "th" ? SUBSCRIPTION_PLANS.free.featuresTH : SUBSCRIPTION_PLANS.free.features,
-      excludedFeatures: [
-        t('pricing.free.excludedFeatures.noHistory'),
-        t('pricing.free.excludedFeatures.noAR'),
-        t('pricing.free.excludedFeatures.noRecommendations')
-      ],
-      cta: t('pricing.free.cta'),
-      href: "/analysis",
+      description: t('pricing.plans.starter.description'),
+      features: language === "th" ? SUBSCRIPTION_PLANS.starter.featuresTH : SUBSCRIPTION_PLANS.starter.features,
+      excludedFeatures: language === "th" ? SUBSCRIPTION_PLANS.starter.limitationsTH || [] : SUBSCRIPTION_PLANS.starter.limitations || [],
+      cta: t('pricing.plans.starter.cta'),
+      href: "/contact",
       variant: "outline" as const
     },
     {
-      planKey: 'premium' as const,
-      name: language === "th" ? SUBSCRIPTION_PLANS.premium.nameTH : SUBSCRIPTION_PLANS.premium.name,
-      badge: t('pricing.premium.badge'),
+      planKey: 'professional' as const,
+      name: language === "th" ? SUBSCRIPTION_PLANS.professional.nameTH : SUBSCRIPTION_PLANS.professional.name,
+      badge: t('pricing.plans.professional.badge'),
       icon: Crown,
-      price: formatPrice('premium', language as 'th' | 'en'),
-      period: t('pricing.premium.period'),
+      price: formatPrice('professional', language as 'th' | 'en'),
+      period: t('pricing.plans.professional.period'),
       limits: {
-        users: SUBSCRIPTION_PLANS.premium.maxUsers,
-        storage: SUBSCRIPTION_PLANS.premium.maxStorageGB,
-        analyses: SUBSCRIPTION_PLANS.premium.maxAnalysesPerMonth,
-        trial: SUBSCRIPTION_PLANS.premium.trialDays
+        users: SUBSCRIPTION_PLANS.professional.maxUsers,
+        storage: SUBSCRIPTION_PLANS.professional.maxStorageGB,
+        analyses: SUBSCRIPTION_PLANS.professional.maxAnalysesPerMonth,
+        trial: SUBSCRIPTION_PLANS.professional.trialDays
       },
-      description: t('pricing.premium.description'),
-      features: language === "th" ? SUBSCRIPTION_PLANS.premium.featuresTH : SUBSCRIPTION_PLANS.premium.features,
+      description: t('pricing.plans.professional.description'),
+      features: language === "th" ? SUBSCRIPTION_PLANS.professional.featuresTH : SUBSCRIPTION_PLANS.professional.features,
       excludedFeatures: [],
-      cta: t('pricing.premium.cta'),
-      href: "/auth/register?plan=premium",
+      cta: t('pricing.plans.professional.cta'),
+      href: "/contact",
       variant: "default" as const,
       popular: true
     },
     {
       planKey: 'enterprise' as const,
       name: language === "th" ? SUBSCRIPTION_PLANS.enterprise.nameTH : SUBSCRIPTION_PLANS.enterprise.name,
-      badge: t('pricing.enterprise.badge'),
+      badge: t('pricing.plans.enterprise.badge'),
       icon: Building2,
       price: formatPrice('enterprise', language as 'th' | 'en'),
-      period: t('pricing.enterprise.period'),
+      period: t('pricing.plans.enterprise.period'),
       limits: {
         users: SUBSCRIPTION_PLANS.enterprise.maxUsers,
         storage: SUBSCRIPTION_PLANS.enterprise.maxStorageGB,
         analyses: SUBSCRIPTION_PLANS.enterprise.maxAnalysesPerMonth,
         trial: SUBSCRIPTION_PLANS.enterprise.trialDays
       },
-      description: t('pricing.enterprise.description'),
+      description: t('pricing.plans.enterprise.description'),
       features: language === "th" ? SUBSCRIPTION_PLANS.enterprise.featuresTH : SUBSCRIPTION_PLANS.enterprise.features,
       excludedFeatures: [],
-      cta: t('pricing.enterprise.cta'),
+      cta: t('pricing.plans.enterprise.cta'),
       href: "/contact?plan=enterprise",
+      variant: "outline" as const
+    },
+    {
+      planKey: 'platinum' as const,
+      name: language === "th" ? SUBSCRIPTION_PLANS.platinum.nameTH : SUBSCRIPTION_PLANS.platinum.name,
+      badge: t('pricing.plans.platinum.badge'),
+      icon: Crown,
+      price: formatPrice('platinum', language as 'th' | 'en'),
+      period: t('pricing.plans.platinum.period'),
+      limits: {
+        users: SUBSCRIPTION_PLANS.platinum.maxUsers,
+        storage: SUBSCRIPTION_PLANS.platinum.maxStorageGB,
+        analyses: SUBSCRIPTION_PLANS.platinum.maxAnalysesPerMonth,
+        trial: SUBSCRIPTION_PLANS.platinum.trialDays
+      },
+      description: t('pricing.plans.platinum.description'),
+      features: language === "th" ? SUBSCRIPTION_PLANS.platinum.featuresTH : SUBSCRIPTION_PLANS.platinum.features,
+      excludedFeatures: [],
+      cta: t('pricing.plans.platinum.cta'),
+      href: "/contact?plan=platinum",
       variant: "outline" as const
     }
   ]

@@ -1,0 +1,29 @@
+{
+  "name": "ClinicIQ - AI Beauty & Skin Analysis",
+  "short_name": "ClinicIQ",
+  "description": "AI-powered skin analysis and clinic management platform for beauty clinics",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#8B5CF6",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["health", "medical", "business", "productivity"],
+  "lang": "th",
+  "dir": "ltr",
+  "scope": "/",
+  "prefer_related_applications": false
+}

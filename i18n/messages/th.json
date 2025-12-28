@@ -648,7 +648,7 @@
       "perMonth": "เดือน"
     },
     "trial": {
-      "freeTrial": "ทดลองฟรี {{days}} วัน"
+      "freeTrial": "ทดลองฟรี {days} วัน"
     },
     "comparison": {
       "title": "เปรียบเทียบฟีเจอร์",
@@ -686,10 +686,14 @@
   },
   "home": {
     "hero": {
+      "badge": "AI เพื่อคลินิกความงาม",
       "title": "ความงามและการดูแลผิวด้วย AI",
       "subtitle": "เปลี่ยนผิวของคุณด้วยเทคโนโลยี AR และการวิเคราะห์ AI ขั้นสูง",
+      "description": "วิเคราะห์ผิวที่พิสูจน์ได้ เชื่อมต่อเวิร์กโฟลว์การขาย เพื่อเพิ่ม Conversion และความเชื่อมั่น ด้วยข้อมูลระดับการแพทย์และ AR Visualization",
       "cta": "เริ่มต้นใช้งาน",
-      "learnMore": "เรียนรู้เพิ่มเติม"
+      "learnMore": "เรียนรู้เพิ่มเติม",
+      "noCreditCard": "ไม่ต้องใช้บัตรเครดิต",
+      "freeTierAvailable": "มีแพ็กเกจฟรี"
     },
     "heroTitle": "AI เพื่อคลินิก ที่ \"ปิดการขาย\" ได้จริง",
     "heroSubtitle": "จากการวิเคราะห์ → แนะนำ → สู่รายได้ ในที่เดียว",
@@ -762,47 +766,81 @@
       "contactSales": "ติดต่อฝ่ายขาย"
     },
     "pricing": {
-      "title": "ราคาที่เหมาะสม",
-      "subtitle": "เลือกแพ็กเกจที่เหมาะกับคลินิกของคุณ",
-      "freeTier": {
-        "badge": "Free Tier",
-        "title": "Free Analysis",
-        "description": "ทดลองใช้ฟรี ไม่ต้องสมัครสมาชิก",
-        "price": "฿0",
-        "period": "ต่อการวิเคราะห์",
-        "features": [
-          "ความแม่นยำ 85-90%",
-          "วิเคราะห์ 8 จุดพื้นฐาน",
-          "แสดง 3 ปัญหาหลัก",
-          "คำแนะนำทั่วไป"
-        ],
-        "cta": "ทดลองฟรี"
-      },
-      "premium": {
-        "badge": "ยอดนิยม",
-        "title": "ระดับการแพทย์",
-        "description": "วิเคราะห์ไม่จำกัด พร้อมจำลอง AR และ CRM",
-        "price": "฿1,500",
+      "title": "แพ็กเกจที่เหมาะกับทุกขนาดคลินิก",
+      "subtitle": "เริ่มต้น 9,900 บาท/เดือน - ยิ่งซื้อสูง ยิ่งคุ้ม",
+      "starter": {
+        "badge": "เริ่มต้น",
+        "title": "Starter",
+        "description": "สำหรับคลินิกขนาดเล็ก 1 สาขา",
+        "price": "฿9,900",
         "period": "เดือน",
+        "salesUsers": "1 Sales User",
         "features": [
-          "ความแม่นยำระดับการแพทย์ 95-99%",
-          "วิเคราะห์ครบทุกมิติ",
-          "ตรวจสอบโดยผู้เชี่ยวชาญ",
-          "แผนการรักษาเฉพาะบุคคล",
-          "แสดงผล AR",
-          "ระบบ CRM และนัดหมาย"
+          "AI Skin Analysis (100 ครั้ง/เดือน)",
+          "CRM & Lead Management",
+          "ระบบนัดหมาย",
+          "Customer Database",
+          "รายงานพื้นฐาน",
+          "PDPA Compliant"
         ],
-        "cta": "ติดต่อฝ่ายขาย"
+        "cta": "เริ่มใช้งาน"
+      },
+      "professional": {
+        "badge": "ยอดนิยม",
+        "title": "Professional",
+        "description": "สำหรับคลินิกที่กำลังเติบโต - ประหยัด 30%",
+        "price": "฿19,900",
+        "period": "เดือน",
+        "salesUsers": "3 Sales Users",
+        "originalPrice": "29,700",
+        "savings": "ประหยัด ฿9,800/เดือน",
+        "features": [
+          "AI Analysis ไม่จำกัด",
+          "AR Before/After Simulator",
+          "CRM Advanced + Pipeline",
+          "ระบบนัดหมาย + Queue",
+          "Treatment Plans",
+          "Inventory Management",
+          "Email & SMS Marketing",
+          "Loyalty Points",
+          "Advanced Analytics",
+          "Multi-branch (3 สาขา)",
+          "Video Call",
+          "Priority Support"
+        ],
+        "cta": "ทดลอง 14 วัน"
+      },
+      "enterprise": {
+        "badge": "คุ้มค่าสุด",
+        "title": "Enterprise",
+        "description": "เครือคลินิก - ประหยัด 60%",
+        "price": "฿39,900",
+        "period": "เดือน",
+        "salesUsers": "10 Sales Users",
+        "originalPrice": "99,000",
+        "savings": "ประหยัด ฿59,100/เดือน",
+        "features": [
+          "ทุกอย่างใน Professional",
+          "Unlimited Sales Users",
+          "Multi-branch ไม่จำกัด",
+          "Marketing Automation",
+          "Custom Reports",
+          "API Access",
+          "Dedicated Account Manager",
+          "24/7 Support"
+        ],
+        "cta": "ติดต่อทีมขาย"
       }
     },
     "roi": {
       "title": "ประเมินมูลค่าเพิ่มใน 10 วินาที",
       "description": "ใส่ตัวเลขของคลินิกคุณเพื่อดูผลกระทบโดยประมาณจาก AI"
+    },
+    "caseStudy": {
+      "title": "เคสศึกษา",
+      "subtitle": "ลดเวลารอคิวเฉลี่ย 37% ภายใน 6 สัปดาห์",
+      "description": "คลินิก A, กรุงเทพฯ — ใช้การวิเคราะห์ผิวอัตโนมัติและเวิร์กโฟลว์ใหม่"
     }
-  },
-  "caseStudy": {
-    "title": "ลดเวลารอคิวเฉลี่ย 37% ภายใน 6 สัปดาห์",
-    "description": "คลินิก A, กรุงเทพฯ — ใช้การวิเคราะห์ผิวอัตโนมัติและเวิร์กโฟลว์ใหม่"
   },
   "demoCta": {
     "title": "ลองเดโมแบบโต้ตอบภายใน 1 นาที",
@@ -1253,30 +1291,95 @@
     },
     "pricing": {
       "badge": "ราคาเรียบง่าย",
-      "title": "แผนที่ขยายได้",
-      "titleHighlight": "ตามธุรกิจคุณ",
-      "description": "เริ่มฟรี อัปเกรดเมื่อพร้อม ไม่มีค่าธรรมเนียมแอบแฝง ยกเลิกได้ตลอดเวลา",
-      "monthly": "รายเดือน",
-      "yearly": "รายปี",
-      "save": "ประหยัด 17%",
       "plans": {
         "starter": {
           "name": "Starter",
-          "description": "เหมาะสำหรับทดลองใช้",
-          "price": "ฟรี",
-          "cta": "เริ่มฟรี"
-        },
-        "pro": {
-          "name": "Professional",
-          "description": "สำหรับคลินิกที่กำลังเติบโต",
-          "price": "2,990",
+          "badge": "เริ่มต้น",
+          "description": "สำหรับคลินิกขนาดเล็ก 1 สาขา",
+          "price": "9,900",
           "period": "เดือน",
+          "salesUsers": "1 Sales User",
+          "features": [
+            "AI Skin Analysis (100 ครั้ง/เดือน)",
+            "CRM & Lead Management พื้นฐาน",
+            "ระบบนัดหมาย",
+            "Customer Database",
+            "รายงานพื้นฐาน",
+            "PDPA Compliant"
+          ],
+          "limitations": [
+            "1 สาขา",
+            "จำกัด 100 การวิเคราะห์/เดือน",
+            "ไม่มี AR Simulator",
+            "ไม่มี Marketing Automation"
+          ],
+          "cta": "เริ่มใช้งาน"
+        },
+        "professional": {
+          "name": "Professional",
+          "badge": "ยอดนิยม",
+          "description": "สำหรับคลินิกที่กำลังเติบโต",
+          "price": "19,900",
+          "period": "เดือน",
+          "salesUsers": "3 Sales Users",
+          "features": [
+            "AI Skin Analysis (ไม่จำกัด)",
+            "AR Before/After Simulator",
+            "CRM Advanced + Sales Pipeline",
+            "ระบบนัดหมาย + Queue",
+            "Treatment Plans & History",
+            "Inventory Management",
+            "Email & SMS Marketing",
+            "Loyalty Points System",
+            "Advanced Analytics",
+            "Multi-branch (สูงสุด 3 สาขา)",
+            "Video Call Consultation",
+            "Priority Support"
+          ],
+          "savings": "ประหยัด 30% ต่อ sales user",
           "cta": "ทดลอง 14 วัน"
         },
         "enterprise": {
           "name": "Enterprise",
-          "description": "สำหรับเครือคลินิกและโรงพยาบาล",
-          "price": "ติดต่อทีมขาย",
+          "badge": "คุ้มค่าสุด",
+          "description": "สำหรับเครือคลินิก & โรงพยาบาล",
+          "price": "39,900",
+          "period": "เดือน",
+          "salesUsers": "10 Sales Users",
+          "features": [
+            "ทุกอย่างใน Professional",
+            "Unlimited Sales Users (10+)",
+            "Multi-branch (ไม่จำกัด)",
+            "Marketing Automation",
+            "Custom Reports & Dashboards",
+            "API Access",
+            "Advanced Integrations",
+            "Dedicated Account Manager",
+            "Custom Training",
+            "24/7 Priority Support"
+          ],
+          "savings": "ประหยัด 60% ต่อ sales user",
+          "cta": "ติดต่อทีมขาย"
+        },
+        "platinum": {
+          "name": "Platinum",
+          "badge": "Premium",
+          "description": "White-label & Custom Solutions",
+          "price": "69,900",
+          "period": "เดือน",
+          "salesUsers": "Unlimited",
+          "features": [
+            "ทุกอย่างใน Enterprise",
+            "White-label Solution",
+            "Custom Domain & Branding",
+            "Custom AI Model Training",
+            "Dedicated Server Option",
+            "Custom Feature Development",
+            "SLA 99.9% Uptime",
+            "On-site Training",
+            "Consulting Services"
+          ],
+          "savings": "ประหยัด 75% + ROI สูงสุด",
           "cta": "ติดต่อทีมขาย"
         }
       },

@@ -648,7 +648,7 @@
       "perMonth": "月"
     },
     "trial": {
-      "freeTrial": "{{days}}天免费试用"
+      "freeTrial": "{days}天免费试用"
     },
     "comparison": {
       "title": "功能对比",
@@ -686,10 +686,14 @@
   },
   "home": {
     "hero": {
+      "badge": "AI美容诊所",
       "title": "AI驱动的美容与护肤",
       "subtitle": "通过先进的AR可视化和AI分析改变您的肌肤",
+      "description": "基于证据的AI皮肤分析连接到您的销售工作流程 - 通过医疗级见解和AR可视化提高转化率和客户信任",
       "cta": "开始使用",
-      "learnMore": "了解更多"
+      "learnMore": "了解更多",
+      "noCreditCard": "无需信用卡",
+      "freeTierAvailable": "有免费套餐"
     },
     "heroTitle": "真正转化的AI诊所",
     "heroSubtitle": "从分析到建议到收入",
@@ -762,35 +766,68 @@
       "contactSales": "联系销售"
     },
     "pricing": {
-      "title": "简单定价",
-      "subtitle": "选择适合您诊所需求的计划",
-      "freeTier": {
-        "badge": "免费套餐",
-        "title": "免费分析",
-        "description": "免费试用，无需注册",
-        "price": "฿0",
-        "period": "每次分析",
-        "features": [
-          "85-90%准确率",
-          "基础8点分析",
-          "仅前3个问题",
-          "通用建议"
-        ],
-        "cta": "免费试用"
-      },
-      "premium": {
-        "badge": "热门",
-        "title": "医疗级",
-        "description": "无限分析，AR模拟和CRM",
-        "price": "฿1,500",
+      "title": "适合各种规模诊所的套餐",
+      "subtitle": "从฿9,900/月起 - 层级越高越划算",
+      "starter": {
+        "badge": "入门版",
+        "title": "Starter",
+        "description": "适合单店小型诊所",
+        "price": "฿9,900",
         "period": "月",
+        "salesUsers": "1位销售用户",
         "features": [
-          "95-99%医疗级准确率",
-          "完整综合分析",
-          "专家HITL验证",
-          "个性化治疗计划",
-          "AR可视化",
-          "CRM和预约系统"
+          "AI皮肤分析（100次/月）",
+          "CRM与潜客管理",
+          "预约系统",
+          "客户数据库",
+          "基础报告",
+          "PDPA合规"
+        ],
+        "cta": "立即开始"
+      },
+      "professional": {
+        "badge": "最受欢迎",
+        "title": "Professional",
+        "description": "适合成长型诊所 - 省30%",
+        "price": "฿19,900",
+        "period": "月",
+        "salesUsers": "3位销售用户",
+        "originalPrice": "29,700",
+        "savings": "节省฿9,800/月",
+        "features": [
+          "无限AI分析",
+          "AR前后对比模拟器",
+          "高级CRM+销售管道",
+          "预约+排队系统",
+          "治疗方案",
+          "库存管理",
+          "邮件与短信营销",
+          "积分系统",
+          "高级分析",
+          "多店支持（最多3家）",
+          "视频通话",
+          "优先支持"
+        ],
+        "cta": "开始14天试用"
+      },
+      "enterprise": {
+        "badge": "最超值",
+        "title": "Enterprise",
+        "description": "适合连锁诊所 - 省60%",
+        "price": "฿39,900",
+        "period": "月",
+        "salesUsers": "10位销售用户",
+        "originalPrice": "99,000",
+        "savings": "节省฿59,100/月",
+        "features": [
+          "Professional所有功能",
+          "无限销售用户",
+          "无限多店支持",
+          "营销自动化",
+          "定制报告",
+          "API访问",
+          "专属客户经理",
+          "24/7支持"
         ],
         "cta": "联系销售"
       }
@@ -798,11 +835,12 @@
     "roi": {
       "title": "10秒内评估附加价值",
       "description": "输入您的诊所数据，查看AI的预估影响"
+    },
+    "caseStudy": {
+      "title": "案例研究",
+      "subtitle": "6周内平均排队时间减少37%",
+      "description": "曼谷A诊所 — 使用自动皮肤分析和新工作流程"
     }
-  },
-  "caseStudy": {
-    "title": "6周内平均排队时间减少37%",
-    "description": "曼谷A诊所 — 使用自动皮肤分析和新工作流程"
   },
   "demoCta": {
     "title": "1分钟内试用互动演示",
@@ -1255,28 +1293,99 @@
       "badge": "简单定价",
       "title": "随您扩展的",
       "titleHighlight": "计划",
-      "description": "免费开始，准备好时升级。无隐藏费用，随时取消",
+      "description": "从฿9,900/月起 - 层级越高越划算。无隐藏费用，随时取消",
       "monthly": "每月",
       "yearly": "每年",
       "save": "节省17%",
       "plans": {
         "starter": {
-          "name": "入门版",
-          "description": "非常适合试用ClinicIQ",
-          "price": "免费",
-          "cta": "免费开始"
-        },
-        "pro": {
-          "name": "专业版",
-          "description": "适用于成长中的美容诊所",
-          "price": "2,990",
+          "name": "Starter",
+          "badge": "入门版",
+          "description": "适合单店小型诊所",
+          "price": "9,900",
           "period": "月",
+          "salesUsers": "1位销售用户",
+          "features": [
+            "AI皮肤分析（100次/月）",
+            "CRM与潜客管理",
+            "预约系统",
+            "客户数据库",
+            "基础报告",
+            "PDPA合规"
+          ],
+          "limitations": [
+            "仅限1家店",
+            "限制100次分析/月",
+            "无AR模拟器",
+            "无营销自动化"
+          ],
+          "cta": "立即开始"
+        },
+        "professional": {
+          "name": "Professional",
+          "badge": "最受欢迎",
+          "description": "适合成长型诊所",
+          "price": "19,900",
+          "period": "月",
+          "salesUsers": "3位销售用户",
+          "features": [
+            "无限AI分析",
+            "AR前后对比模拟器",
+            "高级CRM+销售管道",
+            "预约+排队系统",
+            "治疗方案与历史记录",
+            "库存管理",
+            "邮件与短信营销",
+            "积分系统",
+            "高级分析",
+            "多店支持（最多3家）",
+            "视频通话咨询",
+            "优先支持"
+          ],
+          "savings": "每位销售用户省30%",
           "cta": "开始14天试用"
         },
         "enterprise": {
-          "name": "企业版",
-          "description": "适用于诊所连锁和医院",
-          "price": "联系销售",
+          "name": "Enterprise",
+          "badge": "最超值",
+          "description": "适合连锁诊所与医院",
+          "price": "39,900",
+          "period": "月",
+          "salesUsers": "10位销售用户",
+          "features": [
+            "Professional所有功能",
+            "无限销售用户（10+）",
+            "无限多店支持",
+            "营销自动化",
+            "定制报告与仪表板",
+            "API访问",
+            "高级集成",
+            "专属客户经理",
+            "定制培训",
+            "24/7优先支持"
+          ],
+          "savings": "每位销售用户省60%",
+          "cta": "联系销售"
+        },
+        "platinum": {
+          "name": "Platinum",
+          "badge": "Premium",
+          "description": "白标与定制解决方案",
+          "price": "69,900",
+          "period": "月",
+          "salesUsers": "无限制",
+          "features": [
+            "Enterprise所有功能",
+            "白标解决方案",
+            "定制域名与品牌",
+            "定制AI模型训练",
+            "专用服务器选项",
+            "定制功能开发",
+            "SLA 99.9%正常运行时间",
+            "现场培训",
+            "咨询服务"
+          ],
+          "savings": "省75% + 最大ROI",
           "cta": "联系销售"
         }
       },

@@ -648,7 +648,7 @@
       "perMonth": "mo"
     },
     "trial": {
-      "freeTrial": "{{days}}-day free trial"
+      "freeTrial": "{days}-day free trial"
     },
     "comparison": {
       "title": "Feature Comparison",
@@ -686,10 +686,14 @@
   },
   "home": {
     "hero": {
+      "badge": "AI for Beauty Clinics",
       "title": "AI-Powered Beauty & Skin Care",
       "subtitle": "Transform your skin with advanced AR visualization and AI analysis",
+      "description": "Evidence‑based AI skin analysis connected to your sales workflow — improve conversion and customer trust with medical‑grade insights and AR visualization.",
       "cta": "Get Started",
-      "learnMore": "Learn More"
+      "learnMore": "Learn More",
+      "noCreditCard": "No credit card required",
+      "freeTierAvailable": "Free tier available"
     },
     "heroTitle": "AI for Clinics that Actually Converts",
     "heroSubtitle": "From analysis to recommendations to revenue",
@@ -762,35 +766,68 @@
       "contactSales": "Contact Sales"
     },
     "pricing": {
-      "title": "Simple Pricing",
-      "subtitle": "Choose the plan that fits your clinic needs",
-      "freeTier": {
-        "badge": "Free Tier",
-        "title": "Free Analysis",
-        "description": "Try for free, no registration required",
-        "price": "฿0",
-        "period": "per analysis",
-        "features": [
-          "85-90% accuracy",
-          "Basic 8-point analysis",
-          "Top 3 concerns only",
-          "Generic recommendations"
-        ],
-        "cta": "Try Free"
-      },
-      "premium": {
-        "badge": "Popular",
-        "title": "Medical-Grade",
-        "description": "Unlimited analysis with AR simulation and CRM",
-        "price": "฿1,500",
+      "title": "Plans for Every Clinic Size",
+      "subtitle": "Starting at ฿9,900/month - Better value at higher tiers",
+      "starter": {
+        "badge": "Starter",
+        "title": "Starter",
+        "description": "For small clinics with 1 branch",
+        "price": "฿9,900",
         "period": "month",
+        "salesUsers": "1 Sales User",
         "features": [
-          "95-99% medical-grade accuracy",
-          "Complete comprehensive analysis",
-          "HITL validation by experts",
-          "Personalized treatment plans",
-          "AR visualization",
-          "CRM & booking system"
+          "AI Skin Analysis (100/month)",
+          "CRM & Lead Management",
+          "Appointment System",
+          "Customer Database",
+          "Basic Reports",
+          "PDPA Compliant"
+        ],
+        "cta": "Get Started"
+      },
+      "professional": {
+        "badge": "Most Popular",
+        "title": "Professional",
+        "description": "For growing clinics - Save 30%",
+        "price": "฿19,900",
+        "period": "month",
+        "salesUsers": "3 Sales Users",
+        "originalPrice": "29,700",
+        "savings": "Save ฿9,800/month",
+        "features": [
+          "Unlimited AI Analysis",
+          "AR Before/After Simulator",
+          "CRM Advanced + Pipeline",
+          "Appointment + Queue System",
+          "Treatment Plans",
+          "Inventory Management",
+          "Email & SMS Marketing",
+          "Loyalty Points",
+          "Advanced Analytics",
+          "Multi-branch (up to 3)",
+          "Video Call",
+          "Priority Support"
+        ],
+        "cta": "Start 14-day Trial"
+      },
+      "enterprise": {
+        "badge": "Best Value",
+        "title": "Enterprise",
+        "description": "For clinic chains - Save 60%",
+        "price": "฿39,900",
+        "period": "month",
+        "salesUsers": "10 Sales Users",
+        "originalPrice": "99,000",
+        "savings": "Save ฿59,100/month",
+        "features": [
+          "Everything in Professional",
+          "Unlimited Sales Users",
+          "Unlimited Multi-branch",
+          "Marketing Automation",
+          "Custom Reports",
+          "API Access",
+          "Dedicated Account Manager",
+          "24/7 Support"
         ],
         "cta": "Contact Sales"
       }
@@ -798,11 +835,12 @@
     "roi": {
       "title": "Assess Added Value in 10 Seconds",
       "description": "Enter your clinic numbers to see estimated AI impact"
+    },
+    "caseStudy": {
+      "title": "Case Study",
+      "subtitle": "Reduced Average Queue Time by 37% in 6 Weeks",
+      "description": "Clinic A, Bangkok — Using automated skin analysis and new workflow"
     }
-  },
-  "caseStudy": {
-    "title": "Reduced Average Queue Time by 37% in 6 Weeks",
-    "description": "Clinic A, Bangkok — Using automated skin analysis and new workflow"
   },
   "demoCta": {
     "title": "Try Interactive Demo in 1 Minute",
@@ -1255,28 +1293,99 @@
       "badge": "Simple Pricing",
       "title": "Plans that",
       "titleHighlight": "scale with you",
-      "description": "Start free, upgrade when ready. No hidden fees, cancel anytime.",
+      "description": "Start at ฿9,900/month - Better value at higher tiers. No hidden fees, cancel anytime.",
       "monthly": "Monthly",
       "yearly": "Yearly",
       "save": "Save 17%",
       "plans": {
         "starter": {
           "name": "Starter",
-          "description": "Perfect for trying out ClinicIQ",
-          "price": "Free",
-          "cta": "Start Free"
-        },
-        "pro": {
-          "name": "Professional",
-          "description": "For growing aesthetic clinics",
-          "price": "2,990",
+          "badge": "Starter",
+          "description": "For small clinics with 1 branch",
+          "price": "9,900",
           "period": "month",
+          "salesUsers": "1 Sales User",
+          "features": [
+            "AI Skin Analysis (100/month)",
+            "CRM & Lead Management",
+            "Appointment System",
+            "Customer Database",
+            "Basic Reports",
+            "PDPA Compliant"
+          ],
+          "limitations": [
+            "1 branch only",
+            "Limited 100 analyses/month",
+            "No AR Simulator",
+            "No Marketing Automation"
+          ],
+          "cta": "Get Started"
+        },
+        "professional": {
+          "name": "Professional",
+          "badge": "Most Popular",
+          "description": "For growing clinics",
+          "price": "19,900",
+          "period": "month",
+          "salesUsers": "3 Sales Users",
+          "features": [
+            "Unlimited AI Analysis",
+            "AR Before/After Simulator",
+            "CRM Advanced + Sales Pipeline",
+            "Appointment + Queue System",
+            "Treatment Plans & History",
+            "Inventory Management",
+            "Email & SMS Marketing",
+            "Loyalty Points System",
+            "Advanced Analytics",
+            "Multi-branch (up to 3)",
+            "Video Call Consultation",
+            "Priority Support"
+          ],
+          "savings": "Save 30% per sales user",
           "cta": "Start 14-day Trial"
         },
         "enterprise": {
           "name": "Enterprise",
+          "badge": "Best Value",
           "description": "For clinic chains & hospitals",
-          "price": "Contact Sales",
+          "price": "39,900",
+          "period": "month",
+          "salesUsers": "10 Sales Users",
+          "features": [
+            "Everything in Professional",
+            "Unlimited Sales Users (10+)",
+            "Unlimited Multi-branch",
+            "Marketing Automation",
+            "Custom Reports & Dashboards",
+            "API Access",
+            "Advanced Integrations",
+            "Dedicated Account Manager",
+            "Custom Training",
+            "24/7 Priority Support"
+          ],
+          "savings": "Save 60% per sales user",
+          "cta": "Contact Sales"
+        },
+        "platinum": {
+          "name": "Platinum",
+          "badge": "Premium",
+          "description": "White-label & Custom Solutions",
+          "price": "69,900",
+          "period": "month",
+          "salesUsers": "Unlimited",
+          "features": [
+            "Everything in Enterprise",
+            "White-label Solution",
+            "Custom Domain & Branding",
+            "Custom AI Model Training",
+            "Dedicated Server Option",
+            "Custom Feature Development",
+            "SLA 99.9% Uptime",
+            "On-site Training",
+            "Consulting Services"
+          ],
+          "savings": "Save 75% + Maximum ROI",
           "cta": "Contact Sales"
         }
       },
