@@ -5,10 +5,12 @@ import { Footer } from "@/components/footer"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { FileText, CheckCircle2, XCircle, Scale, AlertTriangle, UserX, Shield } from "lucide-react"
-import { useLanguage } from "@/lib/i18n/language-context"
+import { useTranslations, useLocale } from "next-intl"
 
 export default function TermsOfServicePage() {
-  const { language } = useLanguage()
+  const t = useTranslations()
+  const locale = useLocale()
+  const language = locale as 'th' | 'en'
 
   const sections = [
     {

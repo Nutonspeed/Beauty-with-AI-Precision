@@ -53,6 +53,28 @@ export interface ConflictDetail {
 // ============================================================================
 
 export class ConflictResolver {
+  private getTimestamp(value: unknown): number {
+    if (typeof value === 'number' && Number.isFinite(value)) {
+      return value;
+    }
+
+    if (typeof value === 'string' && value.trim() !== '') {
+      const parsed = new Date(value).getTime();
+      if (Number.isFinite(parsed)) {
+        return parsed;
+      }
+    }
+
+    if (value instanceof Date) {
+      const parsed = value.getTime();
+      if (Number.isFinite(parsed)) {
+        return parsed;
+      }
+    }
+
+    return Date.now();
+  }
+
   /**
    * Resolve conflicts for Lead
    */
@@ -189,8 +211,13 @@ export class ConflictResolver {
     const resolvedAnalysis = { ...serverAnalysis };
 
     // Get timestamps
-    const serverTimestamp = new Date(serverAnalysis.updated_at).getTime();
-    const clientTimestamp = clientAnalysis.offline_timestamp;
+    const serverTimestamp = this.getTimestamp(
+      (serverAnalysis as any).updated_at ??
+        (serverAnalysis as any).updatedAt ??
+        (serverAnalysis as any).created_at ??
+        (serverAnalysis as any).createdAt
+    );
+    const clientTimestamp = this.getTimestamp((clientAnalysis as any).offline_timestamp);
 
     // Check editable fields for conflicts
     for (const field of editableFields) {

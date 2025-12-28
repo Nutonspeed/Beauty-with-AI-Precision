@@ -10,6 +10,7 @@ const envFast =
   process.env.FAST_BUILD === 'yes'
 const FAST_BUILD = envFast || isVercel
 const ANALYZE = process.env.ANALYZE === '1' || process.env.ANALYZE === 'true'
+const allowLocalImages = process.env.NODE_ENV !== 'production'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -38,10 +39,14 @@ const nextConfig = {
     contentDispositionType: 'attachment',
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     remotePatterns: [
-      {
-        protocol: 'http',
-        hostname: 'localhost',
-      },
+      ...(allowLocalImages
+        ? [
+            {
+              protocol: 'http',
+              hostname: 'localhost',
+            },
+          ]
+        : []),
       {
         protocol: 'https',
         hostname: '**',
@@ -91,7 +96,7 @@ const nextConfig = {
           },
           {
             key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocation=()',
+            value: 'camera=(self), microphone=(), geolocation=()',
           },
         ],
       },

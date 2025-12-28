@@ -3,6 +3,7 @@ import { createServerClient } from "@/lib/supabase/server"
 import type { AnalysisHistoryItem, ApiError } from "@/types/api"
 import type { SkinConcern } from "@/lib/ai/tensorflow-analyzer"
 import { withAuthContext } from "@/lib/auth/middleware"
+import { getSkinAnalysesHistory } from "@/lib/api/skin-analyses-history"
 
 /**
  * GET /api/analysis/history/[userId]
@@ -26,23 +27,13 @@ export const GET = withAuthContext(
     const limit = Number.parseInt(searchParams.get("limit") || "10")
     const offset = Number.parseInt(searchParams.get("offset") || "0")
 
-    // Fetch analysis history
-    const { data: analyses, error } = await supabase
-      .from("skin_analyses")
-      .select("id, image_url, ai_concerns, spots_count, pores_count, wrinkles_count, redness_count, created_at")
-      .eq("user_id", userId)
-      .order("created_at", { ascending: false })
-      .range(offset, offset + limit - 1)
-
-    if (error) {
-      throw new Error(error.message)
-    }
-
-    // Get total count
-    const { count } = await supabase
-      .from("skin_analyses")
-      .select("*", { count: "exact", head: true })
-      .eq("user_id", userId)
+    const { rows: analyses, total: count } = await getSkinAnalysesHistory(supabase, {
+      userId,
+      limit,
+      offset,
+      sortBy: "created_at",
+      sortOrder: "desc",
+    })
 
     // Transform to response format
     const history: AnalysisHistoryItem[] = (analyses || []).map((analysis) => {
@@ -85,7 +76,14 @@ export const GET = withAuthContext(
           offset,
         },
       },
-      { status: 200 },
+      {
+        status: 200,
+        headers: {
+          Deprecation: 'true',
+          'X-Deprecated': 'true',
+          Link: '</api/analysis/history>; rel="successor-version"',
+        },
+      },
     )
   },
   { rateLimitCategory: 'api' },

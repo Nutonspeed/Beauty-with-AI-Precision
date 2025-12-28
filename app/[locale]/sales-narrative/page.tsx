@@ -23,7 +23,7 @@ import {
   FileText,
   CheckCircle
 } from "lucide-react"
-import { useLanguage } from "@/lib/i18n/language-context"
+import { useTranslations, useLocale } from "next-intl"
 
 interface NarrativeTemplate {
   id: string
@@ -39,7 +39,9 @@ interface NarrativeTemplate {
 }
 
 export default function SalesNarrativePage() {
-  const { language } = useLanguage()
+  const t = useTranslations()
+  const locale = useLocale()
+  const language = locale as 'th' | 'en'
   const router = useRouter()
 
   const [selectedTemplate, setSelectedTemplate] = useState<NarrativeTemplate | null>(null)
@@ -147,21 +149,19 @@ export default function SalesNarrativePage() {
             <div className="mx-auto max-w-4xl text-center">
               <Badge className="mb-6 bg-primary/10 text-primary" variant="secondary">
                 <MessageSquare className="mr-2 h-3 w-3" />
-                {language === "th" ? "เครื่องมือเล่าเรื่องการขาย" : "Sales Storytelling Tools"}
+                {t('salesNarrativePage.badge')}
               </Badge>
 
               <h1 className="mb-6 text-4xl font-bold tracking-tight md:text-6xl">
-                {language === "th" ? "สร้างเรื่องราว" : "Craft"}
+                {t('salesNarrativePage.title')}
                 <br />
                 <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
-                  {language === "th" ? "ที่ขายได้" : "That Sells"}
+                  {t('salesNarrativePage.titleHighlight')}
                 </span>
               </h1>
 
               <p className="mb-8 text-balance text-lg text-muted-foreground leading-relaxed">
-                {language === "th"
-                  ? "ใช้ AI และเทมเพลตที่พิสูจน์แล้วเพื่อสร้างเรื่องราวการขายที่เข้าถึงหัวใจลูกค้า"
-                  : "Use AI and proven templates to create compelling sales stories that connect with customers"}
+                {t('salesNarrativePage.description')}
               </p>
             </div>
           </div>
@@ -174,15 +174,15 @@ export default function SalesNarrativePage() {
               <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="templates">
                   <BookOpen className="w-4 h-4 mr-2" />
-                  {language === "th" ? "เทมเพลต" : "Templates"}
+                  {t('salesNarrativePage.tabs.templates')}
                 </TabsTrigger>
                 <TabsTrigger value="builder">
                   <Wand2 className="w-4 h-4 mr-2" />
-                  {language === "th" ? "สร้างเอง" : "Builder"}
+                  {t('salesNarrativePage.tabs.builder')}
                 </TabsTrigger>
                 <TabsTrigger value="analytics">
                   <TrendingUp className="w-4 h-4 mr-2" />
-                  {language === "th" ? "วิเคราะห์" : "Analytics"}
+                  {t('salesNarrativePage.tabs.analytics')}
                 </TabsTrigger>
               </TabsList>
 
@@ -192,7 +192,7 @@ export default function SalesNarrativePage() {
                   {/* Template Selection */}
                   <div className="space-y-4">
                     <h3 className="text-xl font-semibold">
-                      {language === "th" ? "เลือกเทมเพลต" : "Choose Template"}
+                      {t('salesNarrativePage.chooseTemplate')}
                     </h3>
                     {narrativeTemplates.map((template) => (
                       <Card
@@ -233,7 +233,7 @@ export default function SalesNarrativePage() {
                     {selectedTemplate ? (
                       <>
                         <h3 className="text-xl font-semibold">
-                          {language === "th" ? "ปรับแต่งและสร้าง" : "Customize & Generate"}
+                          {t('salesNarrativePage.customizeGenerate')}
                         </h3>
 
                         <Card>
@@ -247,12 +247,12 @@ export default function SalesNarrativePage() {
                             {selectedTemplate.variables.includes("customer_name") && (
                               <div>
                                 <label className="text-sm font-medium">
-                                  {language === "th" ? "ชื่อลูกค้า" : "Customer Name"}
+                                  {t('salesNarrativePage.customerName')}
                                 </label>
                                 <Input
                                   value={customerName}
                                   onChange={(e) => setCustomerName(e.target.value)}
-                                  placeholder={language === "th" ? "เช่น สาระ" : "e.g. Sarah"}
+                                  placeholder={t('salesNarrativePage.customerNamePlaceholder')}
                                 />
                               </div>
                             )}
@@ -260,12 +260,12 @@ export default function SalesNarrativePage() {
                             {selectedTemplate.variables.includes("treatment_type") && (
                               <div>
                                 <label className="text-sm font-medium">
-                                  {language === "th" ? "ประเภทการรักษา" : "Treatment Type"}
+                                  {t('salesNarrativePage.treatmentType')}
                                 </label>
                                 <Input
                                   value={treatmentType}
                                   onChange={(e) => setTreatmentType(e.target.value)}
-                                  placeholder={language === "th" ? "เช่น Botox" : "e.g. Botox"}
+                                  placeholder={t('salesNarrativePage.treatmentTypePlaceholder')}
                                 />
                               </div>
                             )}
@@ -274,12 +274,12 @@ export default function SalesNarrativePage() {
                               selectedTemplate.variables.includes("pain_point")) && (
                               <div>
                                 <label className="text-sm font-medium">
-                                  {language === "th" ? "ปัญหาหลัก" : "Main Concern"}
+                                  {t('salesNarrativePage.mainConcern')}
                                 </label>
                                 <Input
                                   value={painPoints}
                                   onChange={(e) => setPainPoints(e.target.value)}
-                                  placeholder={language === "th" ? "เช่น รอยเหี่ยวย่น" : "e.g. wrinkles"}
+                                  placeholder={t('salesNarrativePage.mainConcernPlaceholder')}
                                 />
                               </div>
                             )}
@@ -292,12 +292,12 @@ export default function SalesNarrativePage() {
                               {isGenerating ? (
                                 <>
                                   <Sparkles className="w-4 h-4 mr-2 animate-spin" />
-                                  {language === "th" ? "กำลังสร้าง..." : "Generating..."}
+                                  {t('salesNarrativePage.generating')}
                                 </>
                               ) : (
                                 <>
                                   <Wand2 className="w-4 h-4 mr-2" />
-                                  {language === "th" ? "สร้างเรื่องราว" : "Generate Narrative"}
+                                  {t('salesNarrativePage.generateNarrative')}
                                 </>
                               )}
                             </Button>

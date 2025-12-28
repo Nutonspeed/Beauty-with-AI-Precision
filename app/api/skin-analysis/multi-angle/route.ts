@@ -7,6 +7,17 @@ import { withPublicAccess } from "@/lib/auth/middleware"
 export const runtime = 'nodejs'
 export const maxDuration = 60 // 60 seconds for AI processing + image upload
 
+function getGrade(score: number): string {
+  if (score >= 95) return 'A+'
+  if (score >= 90) return 'A'
+  if (score >= 85) return 'B+'
+  if (score >= 80) return 'B'
+  if (score >= 75) return 'C+'
+  if (score >= 70) return 'C'
+  if (score >= 60) return 'D'
+  return 'F'
+}
+
 export const POST = withPublicAccess(async (request: NextRequest) => {
   try {
     const { views } = await request.json()
@@ -78,8 +89,56 @@ export const POST = withPublicAccess(async (request: NextRequest) => {
       right: Object.keys(storageResult.imageUrls.right || {}).length + ' tiers',
     })
 
+    // Create a canonical skin_analyses row so analysis detail page can load it
+    const frontDisplayUrl =
+      storageResult.imageUrls.front?.display ||
+      storageResult.imageUrls.front?.original ||
+      null
+
+    if (!frontDisplayUrl) {
+      return NextResponse.json({ error: 'Failed to generate display image URL' }, { status: 500 })
+    }
+
+    const overallScore = Math.max(0, Math.min(100, Number((result.combinedScore * 100).toFixed(2))))
+    const textureScore = Math.max(0, Math.min(100, Number((result.texture.score * 100).toFixed(2))))
+    const poresScore = Math.max(0, Math.min(100, Number((result.pores.score * 100).toFixed(2))))
+    const wrinklesScore = Math.max(0, Math.min(100, Number((result.wrinkles.score * 100).toFixed(2))))
+
+    const { data: skinAnalysis, error: skinAnalysisError } = await supabase
+      .from('skin_analyses')
+      .insert({
+        user_id: user.id,
+        image_url: frontDisplayUrl,
+        analyzed_at: new Date().toISOString(),
+        analysis_version: 'multi-angle-v1',
+        overall_score: overallScore,
+        skin_health_grade: getGrade(overallScore),
+        texture_score: textureScore,
+        pores_score: poresScore,
+        wrinkles_score: wrinklesScore,
+        // Store multi-angle payloads for future use
+        texture_analysis: {
+          multiAngle: result,
+          storage: {
+            analysis_id: storageResult.id,
+            imageUrls: storageResult.imageUrls,
+            storagePaths: storageResult.storagePaths,
+          },
+        },
+        processing_time_ms: 0,
+        status: 'completed',
+      })
+      .select('id')
+      .single()
+
+    if (skinAnalysisError || !skinAnalysis) {
+      console.error('[MultiAngle] Failed to create skin_analyses row:', skinAnalysisError)
+      return NextResponse.json({ error: 'Failed to save analysis to database' }, { status: 500 })
+    }
+
     return NextResponse.json({
-      id: storageResult.id,
+      id: skinAnalysis.id,
+      storageId: storageResult.id,
       result,
       imageUrls: {
         // Return display URLs for immediate viewing

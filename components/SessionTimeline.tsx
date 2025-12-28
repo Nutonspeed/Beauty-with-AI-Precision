@@ -1,7 +1,7 @@
 "use client";
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useLanguage } from '@/lib/i18n/language-context';
+import { useTranslations } from 'next-intl';
 
 export interface Snapshot {
   id: string;
@@ -20,7 +20,7 @@ interface SessionTimelineProps {
 
 export const SessionTimeline: React.FC<SessionTimelineProps> = ({ snapshots, onRequestCapture, onRemove }) => {
   const [open, setOpen] = React.useState(false);
-  const { t } = useLanguage();
+  const t = useTranslations();
 
   return (
     <div className="session-timeline-wrapper">
@@ -28,19 +28,19 @@ export const SessionTimeline: React.FC<SessionTimelineProps> = ({ snapshots, onR
         <button
           onClick={onRequestCapture}
           className="text-[10px] tracking-wider px-3 py-1 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow hover:brightness-110"
-        >{(t as any).timeline?.capture}</button>
+        >{t('timeline.capture')}</button>
         <div className="flex items-center gap-2">
           {snapshots.map(s => (
             <div key={s.id} className="relative group">
               <img
                 src={s.dataUrl}
-                alt={`${(t as any).timeline?.stagePrefix} ${s.stage} ${(t as any).timeline?.atTime} ${new Date(s.timestamp).toLocaleTimeString()}`}
+                alt={`${t('timeline.stagePrefix')} ${s.stage} ${t('timeline.atTime')} ${new Date(s.timestamp).toLocaleTimeString()}`}
                 className="h-12 w-12 object-cover rounded-md ring-1 ring-pink-200/50 cursor-pointer"
                 onClick={()=>setOpen(true)}
               />
               <div className="absolute -top-1 -right-1 flex gap-1">
                 <span title={s.stage} className="text-[9px] px-1 py-[2px] rounded bg-pink-500/80 text-white leading-none">{s.stage[0].toUpperCase()}</span>
-                {s.perfLow && <span title={(t as any).timeline?.lowPerfTooltip} className="text-[9px] px-1 py-[2px] rounded bg-yellow-500/80 text-white leading-none">A</span>}
+                {s.perfLow && <span title={t('timeline.lowPerfTooltip')} className="text-[9px] px-1 py-[2px] rounded bg-yellow-500/80 text-white leading-none">A</span>}
               </div>
               <button
                 onClick={()=>onRemove && onRemove(s.id)}
@@ -53,7 +53,7 @@ export const SessionTimeline: React.FC<SessionTimelineProps> = ({ snapshots, onR
           <button
             onClick={()=>setOpen(true)}
             className="ml-auto text-[10px] tracking-wider px-3 py-1 rounded-full bg-white/70 backdrop-blur border border-pink-200 text-pink-600 hover:bg-white"
-          >{(t as any).timeline?.gallery}</button>
+          >{t('timeline.gallery')}</button>
         )}
       </div>
       <AnimatePresence>
@@ -71,11 +71,11 @@ export const SessionTimeline: React.FC<SessionTimelineProps> = ({ snapshots, onR
               className="w-[min(100%-2rem,880px)] max-h-[80vh] overflow-y-auto rounded-2xl bg-white/85 backdrop-blur-xl border border-pink-200/60 shadow-xl p-6"
             >
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-sm font-semibold tracking-wide text-pink-600">{(t as any).timeline?.title}</h3>
-                <button onClick={()=>setOpen(false)} className="text-xs px-3 py-1 rounded-full bg-pink-500 text-white">{(t as any).timeline?.close}</button>
+                <h3 className="text-sm font-semibold tracking-wide text-pink-600">{t('timeline.title')}</h3>
+                <button onClick={()=>setOpen(false)} className="text-xs px-3 py-1 rounded-full bg-pink-500 text-white">{t('timeline.close')}</button>
               </div>
               {snapshots.length === 0 && (
-                <p className="text-xs text-gray-500">{(t as any).timeline?.empty}</p>
+                <p className="text-xs text-gray-500">{t('timeline.empty')}</p>
               )}
               <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
                 {snapshots.map(s => (
@@ -87,8 +87,8 @@ export const SessionTimeline: React.FC<SessionTimelineProps> = ({ snapshots, onR
                         <span>{new Date(s.timestamp).toLocaleTimeString()}</span>
                       </div>
                       <div className="text-[10px] text-gray-600 leading-relaxed">
-                        {(t as any).timeline?.persona}: {s.persona.tone}/{s.persona.sensitivity}/{s.persona.goal}<br />
-                        {s.perfLow ? (t as any).timeline?.adaptiveReduced : (t as any).timeline?.adaptiveFull}
+                        {t('timeline.persona')}: {s.persona.tone}/{s.persona.sensitivity}/{s.persona.goal}<br />
+                        {s.perfLow ? t('timeline.adaptiveReduced') : t('timeline.adaptiveFull')}
                       </div>
                     </div>
                   </div>

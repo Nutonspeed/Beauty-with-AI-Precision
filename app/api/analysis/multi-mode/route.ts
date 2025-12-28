@@ -19,8 +19,7 @@ import { createClient } from '@/lib/supabase/server';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 import { withPublicAccess } from '@/lib/auth/middleware';
-
-const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
+ import { getAIServiceUrl } from '@/lib/config/ai';
 
 interface AnalysisResult {
   spots: any;
@@ -37,6 +36,7 @@ interface AnalysisResult {
 
 export const POST = withPublicAccess(async (request: NextRequest) => {
   try {
+    const AI_SERVICE_URL = getAIServiceUrl();
     const supabase = createRouteHandlerClient({ cookies });
     
     // Check authentication
@@ -267,6 +267,7 @@ export const POST = withPublicAccess(async (request: NextRequest) => {
     // Return comprehensive results
     return NextResponse.json({
       success: true,
+      rawResults: analysisResults,
       analysis: {
         id: analysisData.id,
         overall_score: analysisData.overall_score,
@@ -454,6 +455,7 @@ function generateRecommendations(analysis: any) {
 // GET method to retrieve analysis by ID
 export const GET = withPublicAccess(async (request: NextRequest) => {
   try {
+    const AI_SERVICE_URL = getAIServiceUrl();
     const supabase = await createClient();
     const { searchParams } = new URL(request.url);
     const analysisId = searchParams.get('id');

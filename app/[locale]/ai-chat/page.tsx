@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Bot, Send, Sparkles, User } from "lucide-react"
 import { useState } from "react"
-import { useLanguage } from "@/lib/i18n/language-context"
+import { useTranslations } from "next-intl"
 
 interface Message {
   role: "user" | "assistant"
@@ -16,28 +16,21 @@ interface Message {
 }
 
 export default function AIChatPage() {
-  const { language } = useLanguage()
+  const t = useTranslations()
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: language === "th" 
-        ? "สวัสดีครับ! ผมคือ AI Advisor ของ ClinicIQ พร้อมช่วยเหลือคุณในเรื่องการบริหารคลินิก การวิเคราะห์ข้อมูล และให้คำปรึกษาทางธุรกิจครับ 🏥"
-        : "Hello! I'm ClinicIQ AI Advisor, ready to help you with clinic management, data analysis, and business consulting! 🏥"
+      content: t('aiChat.initialMessage')
     }
   ])
   const [input, setInput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
 
-  const suggestedQuestions = language === "th" ? [
-    "วิเคราะห์ยอดขายเดือนนี้",
-    "แนะนำวิธีเพิ่มลูกค้าใหม่",
-    "สรุปผลการรักษายอดนิยม",
-    "วิเคราะห์ประสิทธิภาพพนักงาน"
-  ] : [
-    "Analyze this month's sales",
-    "Suggest ways to get new customers",
-    "Summarize popular treatments",
-    "Analyze staff performance"
+  const suggestedQuestions = [
+    t('aiChat.suggestions.sales'),
+    t('aiChat.suggestions.customers'),
+    t('aiChat.suggestions.treatments'),
+    t('aiChat.suggestions.staff')
   ]
 
   const handleSend = async () => {
@@ -52,9 +45,7 @@ export default function AIChatPage() {
     setTimeout(() => {
       const aiResponse: Message = {
         role: "assistant",
-        content: language === "th"
-          ? `ขอบคุณสำหรับคำถามครับ! นี่คือการวิเคราะห์เบื้องต้น:\n\n📊 จากข้อมูลของคลินิก พบว่า:\n- ยอดขายเฉลี่ยต่อเดือน: ฿450,000\n- การรักษายอดนิยม: Botox (35%), Filler (28%)\n- อัตราการกลับมาใช้บริการ: 72%\n\nแนะนำ: ควรเพิ่มโปรโมชั่นสำหรับลูกค้าใหม่และโปรแกรม Loyalty`
-          : `Thank you for your question! Here's my initial analysis:\n\n📊 Based on your clinic data:\n- Average monthly revenue: ฿450,000\n- Popular treatments: Botox (35%), Filler (28%)\n- Return rate: 72%\n\nRecommendation: Consider adding promotions for new customers and a loyalty program`
+        content: t('aiChat.aiResponse')
       }
       setMessages(prev => [...prev, aiResponse])
       setIsLoading(false)
@@ -74,12 +65,10 @@ export default function AIChatPage() {
               AI Advisor
             </Badge>
             <h1 className="text-3xl font-bold mb-2">
-              {language === "th" ? "AI ที่ปรึกษาธุรกิจ" : "Business AI Advisor"}
+              {t('aiChat.title')}
             </h1>
             <p className="text-muted-foreground">
-              {language === "th" 
-                ? "ถามคำถามเกี่ยวกับธุรกิจ การตลาด หรือขอคำแนะนำจาก AI"
-                : "Ask questions about business, marketing, or get AI recommendations"}
+              {t('aiChat.description')}
             </p>
           </div>
 
@@ -139,7 +128,7 @@ export default function AIChatPage() {
           {/* Input Area */}
           <div className="flex gap-2">
             <Input
-              placeholder={language === "th" ? "พิมพ์คำถามของคุณ..." : "Type your question..."}
+              placeholder={t('aiChat.placeholder')}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSend()}

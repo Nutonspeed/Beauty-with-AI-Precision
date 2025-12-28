@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { useLanguage } from '@/lib/i18n/language-context';
+import { useTranslations } from 'next-intl';
 
 interface Metric { key:'clarity'|'hydration'|'risk'; value:number; unit?:string; }
 const initialMetrics: Metric[] = [
@@ -11,7 +11,7 @@ const initialMetrics: Metric[] = [
 ];
 
 export function TrustMicroCopy() {
-  const { t } = useLanguage();
+  const t = useTranslations();
   const [metrics,setMetrics] = useState(initialMetrics);
   useEffect(()=>{
     const id = setInterval(()=>{
@@ -30,7 +30,7 @@ export function TrustMicroCopy() {
       <div className="micro-ribbon">
         {metrics.map(m => (
           <div key={m.key} className="metric-item">
-            <span className="metric-label">{(t as any).trust?.metrics?.[m.key]}</span>
+            <span className="metric-label">{t(`trust.metrics.${m.key}`)}</span>
             <span className="metric-value">{m.value}{m.unit}</span>
           </div>
         ))}
@@ -40,7 +40,7 @@ export function TrustMicroCopy() {
         animate={{ opacity:0.95, y:0 }}
         className="micro-copy-block"
       >
-        {(t as any).trust?.microLines?.map((line:string, idx:number)=> (
+        {t.raw('trust.microLines').map((line:string, idx:number)=> (
           <p key={idx} className="micro-line">{line}</p>
         ))}
       </motion.div>

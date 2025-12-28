@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useLanguage } from '@/lib/i18n/language-context';
+import { useTranslations } from 'next-intl';
 
 interface OutcomeProjectionWidgetProps {
   baselineUrl?: string; // snapshot baseline
@@ -13,7 +13,7 @@ export const OutcomeProjectionWidget: React.FC<OutcomeProjectionWidgetProps> = (
   const [open, setOpen] = useState(false);
   const [intensity, setIntensity] = useState(0.6); // 0..1
   const [mode, setMode] = useState<'clarity'|'firming'|'hydration'>('clarity');
-  const { t } = useLanguage();
+  const t = useTranslations();
 
   const _improvedFilter = useMemo(() => {
     // Different enhancement presets by mode
@@ -35,16 +35,16 @@ export const OutcomeProjectionWidget: React.FC<OutcomeProjectionWidgetProps> = (
           onClick={() => setOpen(o=>!o)}
           disabled={disabled}
           className="text-[10px] tracking-wider px-3 py-1 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow hover:brightness-110 disabled:opacity-40"
-        >{open? (t as any).outcome?.toggleHide : (t as any).outcome?.toggleShow}</button>
+        >{open? t('outcome.toggleHide') : t('outcome.toggleShow')}</button>
         {!baselineUrl && (
           <button
             onClick={onCaptureBaseline}
             disabled={disabled}
             className="text-[10px] tracking-wider px-3 py-1 rounded-full bg-white/80 backdrop-blur border border-pink-200 text-pink-600 hover:bg-white disabled:opacity-40"
-          >{(t as any).outcome?.captureBaseline}</button>
+          >{t('outcome.captureBaseline')}</button>
         )}
         {baselineUrl && (
-          <span className="text:[10px] tracking-wider text-gray-600">{(t as any).outcome?.baselineReady}</span>
+          <span className="text:[10px] tracking-wider text-gray-600">{t('outcome.baselineReady')}</span>
         )}
       </div>
       <AnimatePresence>
@@ -62,15 +62,15 @@ export const OutcomeProjectionWidget: React.FC<OutcomeProjectionWidgetProps> = (
                     key={m}
                     onClick={()=>setMode(m)}
                     className={`text-[10px] px-3 py-1 rounded-full border ${mode===m? 'bg-gradient-to-r from-pink-500 to-purple-500 text-white border-transparent shadow' : 'bg-white/60 text-pink-600 border-pink-200 hover:bg-white'}`}
-                  >{(t as any).outcome?.modes?.[m]}</button>
+                  >{t(`outcome.modes.${m}`)}</button>
                 ))}
               </div>
               <div className="flex items-center gap-2 text-[10px] tracking-wider text-gray-600">
-                {(t as any).outcome?.intensity}
-                <label className="sr-only" htmlFor="outcome-intensity">{(t as any).outcome?.intensity}</label>
+                {t('outcome.intensity')}
+                <label className="sr-only" htmlFor="outcome-intensity">{t('outcome.intensity')}</label>
                 <input
                   id="outcome-intensity"
-                  aria-label={(t as any).outcome?.intensity}
+                  aria-label={t('outcome.intensity')}
                   type="range"
                   min={0}
                   max={1}
@@ -84,18 +84,18 @@ export const OutcomeProjectionWidget: React.FC<OutcomeProjectionWidgetProps> = (
             <div className="relative w-full overflow-hidden rounded-lg border border-pink-200/60 bg-black/5">
               <div className="flex w-full">
                 <div className="flex-1 p-2 flex flex-col gap-1">
-                  <p className="text-[10px] font-semibold tracking-wider text-pink-600">{(t as any).outcome?.before}</p>
-                  <img src={baselineUrl} alt={(t as any).outcome?.before} className="rounded-md w-full object-cover" />
+                  <p className="text-[10px] font-semibold tracking-wider text-pink-600">{t('outcome.before')}</p>
+                  <img src={baselineUrl} alt={t('outcome.before')} className="rounded-md w-full object-cover" />
                 </div>
                 <div className="flex-1 p-2 flex flex-col gap-1">
-                  <p className="text-[10px] font-semibold tracking-wider text-pink-600">{(t as any).outcome?.afterProjected}</p>
+                  <p className="text-[10px] font-semibold tracking-wider text-pink-600">{t('outcome.afterProjected')}</p>
                   <div className="relative">
-                    <img src={baselineUrl} alt={(t as any).outcome?.afterProjected} className={`rounded-md w-full object-cover projection-img transition-filter`} data-mode={mode} data-intensity={intensity} />
+                    <img src={baselineUrl} alt={t('outcome.afterProjected')} className={`rounded-md w-full object-cover projection-img transition-filter`} data-mode={mode} data-intensity={intensity} />
                     <div className="absolute inset-0 rounded-md pointer-events-none projection-overlay" data-intensity={intensity} />
                   </div>
                 </div>
               </div>
-              <div className="absolute bottom-1 right-2 text-[9px] tracking-wider text-gray-500">{(t as any).outcome?.footer}</div>
+              <div className="absolute bottom-1 right-2 text-[9px] tracking-wider text-gray-500">{t('outcome.footer')}</div>
             </div>
           </motion.div>
         )}
@@ -106,7 +106,7 @@ export const OutcomeProjectionWidget: React.FC<OutcomeProjectionWidgetProps> = (
             exit={{ opacity:0, y:20 }}
             className="mt-3 rounded-xl bg-white/80 backdrop-blur-xl border border-pink-100 shadow p-4 text-[11px] text-gray-600"
           >
-            {(t as any).outcome?.needBaseline}
+            {t('outcome.needBaseline')}
           </motion.div>
         )}
       </AnimatePresence>

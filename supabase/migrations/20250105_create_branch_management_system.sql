@@ -10,7 +10,7 @@
 -- Table: branches
 -- Purpose: Individual branch/location information for multi-location clinics
 CREATE TABLE IF NOT EXISTS branches (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid()::uuid,
     clinic_id UUID NOT NULL REFERENCES clinics(id) ON DELETE CASCADE,
     
     -- Branch information
@@ -90,7 +90,7 @@ COMMENT ON COLUMN branches.max_daily_customers IS 'Maximum beauty clinic custome
 -- Table: branch_staff_assignments
 -- Purpose: Assign staff members to specific branches
 CREATE TABLE IF NOT EXISTS branch_staff_assignments (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid()::uuid,
     branch_id UUID NOT NULL REFERENCES branches(id) ON DELETE CASCADE,
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     
@@ -128,7 +128,7 @@ COMMENT ON TABLE branch_staff_assignments IS 'Staff assignments to branch locati
 -- Table: branch_inventory
 -- Purpose: Track inventory levels at each branch
 CREATE TABLE IF NOT EXISTS branch_inventory (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid()::uuid,
     branch_id UUID NOT NULL REFERENCES branches(id) ON DELETE CASCADE,
     product_id UUID NOT NULL REFERENCES inventory_products(id) ON DELETE CASCADE,
     
@@ -169,7 +169,7 @@ COMMENT ON TABLE branch_inventory IS 'Inventory stock levels per branch location
 -- Table: branch_transfers
 -- Purpose: Track inventory transfers between branches
 CREATE TABLE IF NOT EXISTS branch_transfers (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid()::uuid,
     clinic_id UUID NOT NULL REFERENCES clinics(id) ON DELETE CASCADE,
     
     -- Transfer details
@@ -226,7 +226,7 @@ COMMENT ON TABLE branch_transfers IS 'Inventory transfers between branch locatio
 -- Table: branch_transfer_items
 -- Purpose: Individual items in a branch transfer
 CREATE TABLE IF NOT EXISTS branch_transfer_items (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid()::uuid,
     transfer_id UUID NOT NULL REFERENCES branch_transfers(id) ON DELETE CASCADE,
     product_id UUID NOT NULL REFERENCES inventory_products(id) ON DELETE RESTRICT,
     
@@ -259,7 +259,7 @@ COMMENT ON TABLE branch_transfer_items IS 'Items included in branch transfers';
 -- Table: branch_services
 -- Purpose: Services offered at specific branches (some branches may not offer all services)
 CREATE TABLE IF NOT EXISTS branch_services (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid()::uuid,
     branch_id UUID NOT NULL REFERENCES branches(id) ON DELETE CASCADE,
     service_id UUID NOT NULL REFERENCES services(id) ON DELETE CASCADE,
     
@@ -308,7 +308,7 @@ COMMENT ON COLUMN branch_services.booking_count IS 'Number of customer bookings 
 -- Table: branch_revenue
 -- Purpose: Track revenue per branch for financial reporting
 CREATE TABLE IF NOT EXISTS branch_revenue (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid()::uuid,
     branch_id UUID NOT NULL REFERENCES branches(id) ON DELETE CASCADE,
     
     -- Time period

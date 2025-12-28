@@ -25,7 +25,7 @@ export function Providers({ children }: ProvidersProps) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem storageKey="ai-beauty-theme">
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem storageKey="ai-beauty-theme" disableTransitionOnChange>
         {/* TODO: Migrate from OldAuthProvider to NewAuthProvider */}
         <OldAuthProvider>
           <LanguageProvider>{children}</LanguageProvider>

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { createServiceClient } from "@/lib/supabase/server"
+import { hasGeminiApiKey, hasOpenAIApiKey } from "@/lib/config/ai"
 
 interface ServiceStatus {
   name: string
@@ -97,9 +98,9 @@ export async function GET() {
   })
 
   // 3. Check AI Services
-  const geminiConfigured = !!process.env.GEMINI_API_KEY
+  const geminiConfigured = hasGeminiApiKey()
   const huggingfaceConfigured = !!process.env.HUGGINGFACE_TOKEN
-  const openaiConfigured = process.env.OPENAI_API_KEY !== 'your_real_openai_key_here'
+  const openaiConfigured = hasOpenAIApiKey()
   
   const aiOperational = geminiConfigured || huggingfaceConfigured
   services.push({

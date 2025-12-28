@@ -2,7 +2,7 @@
 
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
-import { useLanguage } from "@/lib/i18n/language-context"
+import { useTranslations, useLocale } from "next-intl"
 import { useEffect, useMemo } from "react"
 import { usageTracker } from "@/lib/analytics/usage-tracker"
 import { getCaseStudyBySlug, type Locale } from "@/lib/data/case-studies"
@@ -18,7 +18,10 @@ function localizeText(value: unknown, locale: Locale): string {
 }
 
 export default function CaseStudyDetailPage() {
-  const { language } = useLanguage()
+  const t = useTranslations()
+  const localeStr = useLocale()
+  const language = localeStr as 'th' | 'en'
+  const locale = language as Locale
   const { slug } = useParams<{ slug: string }>()
 
   const study = useMemo(() => getCaseStudyBySlug(language, slug), [language, slug])
@@ -36,9 +39,9 @@ export default function CaseStudyDetailPage() {
         <Header />
         <main className="container flex-1 py-16">
           <div className="mx-auto max-w-3xl">
-            <h1 className="mb-4 text-2xl font-bold">{language === "th" ? "ไม่พบเคสศึกษา" : "Case study not found"}</h1>
+            <h1 className="mb-4 text-2xl font-bold">{t('caseStudies.notFound')}</h1>
             <Link href="/case-studies" className="text-primary underline underline-offset-2">
-              {language === "th" ? "กลับไปหน้าเคสศึกษา" : "Back to case studies"}
+              {t('caseStudies.backToCaseStudies')}
             </Link>
           </div>
         </main>
@@ -47,8 +50,6 @@ export default function CaseStudyDetailPage() {
     )
   }
 
-  const locale = language as Locale
-
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
@@ -56,7 +57,7 @@ export default function CaseStudyDetailPage() {
         <article className="mx-auto max-w-3xl">
           <div className="mb-8">
             <div className="mb-2 text-xs uppercase tracking-wide text-muted-foreground">
-              {language === "th" ? "เคสศึกษา" : "Case Study"}
+              {t('caseStudies.caseStudyLabel')}
             </div>
             <h1 className="text-3xl font-bold tracking-tight md:text-4xl font-display">{localizeText(study.title, locale)}</h1>
             <p className="mt-3 text-muted-foreground">{localizeText(study.summary, locale)}</p>
@@ -88,7 +89,7 @@ export default function CaseStudyDetailPage() {
 
           <div className="mt-10">
             <Link href="/case-studies" className="text-primary underline underline-offset-2">
-              {language === "th" ? "กลับไปหน้าเคสศึกษา" : "Back to case studies"}
+              {t('caseStudies.backToCaseStudies')}
             </Link>
           </div>
         </article>

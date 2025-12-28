@@ -257,6 +257,23 @@ Return JSON with concerns, scores, recommendations, overall score.`
   }
 }
 
+async function probeModelConnectivity(model: string): Promise<void> {
+  const { text } = await generateText({
+    model,
+    messages: [
+      {
+        role: "user",
+        content: "Reply with exactly: OK",
+      },
+    ],
+    temperature: 0,
+  })
+
+  if (typeof text !== "string" || text.trim().toUpperCase() !== "OK") {
+    throw new Error(`Unexpected probe response: ${String(text).slice(0, 200)}`)
+  }
+}
+
 /**
  * Test AI Gateway connection
  */
@@ -271,19 +288,9 @@ export async function testAIGateway(): Promise<{
     errors: [] as string[],
   }
 
-  // Test image (1x1 white pixel)
-  const testImage =
-    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg=="
-
-  const testPrompt: SkinAnalysisPrompt = {
-    imageBase64: testImage,
-    language: "en",
-    analysisType: "quick",
-  }
-
   // Test GPT-4o
   try {
-    await analyzeWithGPT4o(testPrompt)
+    await probeModelConnectivity("openai/gpt-4o")
     results.models.push("gpt-4o")
   } catch (error) {
     results.success = false
@@ -292,7 +299,7 @@ export async function testAIGateway(): Promise<{
 
   // Test Claude
   try {
-    await analyzeWithClaude(testPrompt)
+    await probeModelConnectivity("anthropic/claude-3-5-sonnet-20241022")
     results.models.push("claude-3.5-sonnet")
   } catch (error) {
     results.success = false
@@ -301,7 +308,7 @@ export async function testAIGateway(): Promise<{
 
   // Test Gemini
   try {
-    await analyzeWithGemini(testPrompt)
+    await probeModelConnectivity("google/gemini-2.5-flash-image")
     results.models.push("gemini-2.0-flash")
   } catch (error) {
     results.success = false

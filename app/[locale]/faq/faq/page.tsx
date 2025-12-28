@@ -21,10 +21,12 @@ import {
   Users,
   ArrowRight
 } from "lucide-react"
-import { useLanguage } from "@/lib/i18n/language-context"
+import { useTranslations, useLocale } from "next-intl"
 
 export default function FAQPage() {
-  const { language } = useLanguage()
+  const t = useTranslations()
+  const locale = useLocale()
+  const language = locale as 'th' | 'en'
   const [searchQuery, setSearchQuery] = useState("")
   const [openIndex, setOpenIndex] = useState<string | null>(null)
 
@@ -215,21 +217,19 @@ export default function FAQPage() {
             <div className="mx-auto max-w-4xl text-center">
               <Badge className="mb-6 bg-primary/10 text-primary" variant="secondary">
                 <HelpCircle className="mr-2 h-3 w-3" />
-                {language === "th" ? "คำถามที่พบบ่อย" : "FAQ"}
+                {t('faqPage.badge')}
               </Badge>
 
               <h1 className="mb-6 text-4xl font-bold tracking-tight md:text-6xl">
-                {language === "th" ? "มีคำถามอะไร?" : "Have Questions?"}
+                {t('faqPage.title')}
                 <br />
                 <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
-                  {language === "th" ? "เราพร้อมตอบ" : "We Have Answers"}
+                  {t('faqPage.titleHighlight')}
                 </span>
               </h1>
 
               <p className="mb-8 text-balance text-lg text-muted-foreground leading-relaxed">
-                {language === "th" 
-                  ? "ค้นหาคำตอบสำหรับคำถามที่พบบ่อยเกี่ยวกับ AI367BAR"
-                  : "Find answers to frequently asked questions about AI367BAR"}
+                {t('faqPage.description')}
               </p>
 
               {/* Search Bar */}
@@ -237,7 +237,7 @@ export default function FAQPage() {
                 <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   type="text"
-                  placeholder={language === "th" ? "ค้นหาคำถาม..." : "Search questions..."}
+                  placeholder={t('faqPage.searchPlaceholder')}
                   className="h-14 pl-12 text-base"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -254,9 +254,7 @@ export default function FAQPage() {
               /* Search Results */
               <div className="mx-auto max-w-4xl">
                 <p className="mb-6 text-sm text-muted-foreground">
-                  {language === "th" 
-                    ? `พบ ${filteredFAQs.length} คำถาม`
-                    : `Found ${filteredFAQs.length} questions`}
+                  {t('faqPage.foundQuestions', { count: filteredFAQs.length })}
                 </p>
                 <div className="space-y-4">
                   {filteredFAQs.map((faq, index) => {
@@ -358,22 +356,20 @@ export default function FAQPage() {
           <div className="container">
             <div className="mx-auto max-w-3xl text-center">
               <h2 className="mb-4 text-3xl font-bold tracking-tight">
-                {language === "th" ? "ยังมีคำถามอยู่?" : "Still Have Questions?"}
+                {t('faqPage.stillHaveQuestions')}
               </h2>
               <p className="mb-8 text-balance text-muted-foreground leading-relaxed">
-                {language === "th" 
-                  ? "ติดต่อทีมงานของเราเพื่อคำตอบที่ละเอียดยิ่งขึ้น"
-                  : "Contact our team for more detailed answers"}
+                {t('faqPage.stillHaveQuestionsDesc')}
               </p>
               <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
                 <Button size="lg" asChild>
                   <Link href="/contact">
-                    {language === "th" ? "ติดต่อเรา" : "Contact Us"}
+                    {t('faqPage.contactUs')}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
                 <Button size="lg" variant="outline" asChild>
-                  <Link href="/demo">{language === "th" ? "ดูตัวอย่าง" : "View Demo"}</Link>
+                  <Link href="/demo">{t('faqPage.viewDemo')}</Link>
                 </Button>
               </div>
             </div>
@@ -385,7 +381,7 @@ export default function FAQPage() {
           <div className="container">
             <div className="mx-auto mb-12 max-w-2xl text-center">
               <h2 className="mb-4 text-3xl font-bold tracking-tight">
-                {language === "th" ? "ลิงก์ที่เป็นประโยชน์" : "Helpful Links"}
+                {t('faqPage.helpfulLinks')}
               </h2>
             </div>
 
@@ -393,16 +389,14 @@ export default function FAQPage() {
               <Card className="border-2 transition-all hover:border-primary hover:shadow-lg">
                 <CardHeader>
                   <Sparkles className="mb-2 h-8 w-8 text-primary" />
-                  <CardTitle>{language === "th" ? "เริ่มใช้งาน" : "Getting Started"}</CardTitle>
+                  <CardTitle>{t('faqPage.gettingStarted')}</CardTitle>
                   <CardDescription>
-                    {language === "th" 
-                      ? "ทดลองวิเคราะห์ผิวฟรี"
-                      : "Try free skin analysis"}
+                    {t('faqPage.gettingStartedDesc')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <Button variant="outline" asChild className="w-full">
-                    <Link href="/analysis">{language === "th" ? "เริ่มเลย" : "Start Now"}</Link>
+                    <Link href="/analysis">{t('faqPage.startNow')}</Link>
                   </Button>
                 </CardContent>
               </Card>
@@ -410,16 +404,14 @@ export default function FAQPage() {
               <Card className="border-2 transition-all hover:border-primary hover:shadow-lg">
                 <CardHeader>
                   <CreditCard className="mb-2 h-8 w-8 text-primary" />
-                  <CardTitle>{language === "th" ? "แพ็กเกจราคา" : "Pricing"}</CardTitle>
+                  <CardTitle>{t('faqPage.pricingTitle')}</CardTitle>
                   <CardDescription>
-                    {language === "th" 
-                      ? "ดูราคาและฟีเจอร์"
-                      : "View pricing and features"}
+                    {t('faqPage.pricingDesc')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <Button variant="outline" asChild className="w-full">
-                    <Link href="/pricing">{language === "th" ? "ดูราคา" : "View Pricing"}</Link>
+                    <Link href="/pricing">{t('faqPage.viewPricing')}</Link>
                   </Button>
                 </CardContent>
               </Card>
@@ -427,16 +419,14 @@ export default function FAQPage() {
               <Card className="border-2 transition-all hover:border-primary hover:shadow-lg">
                 <CardHeader>
                   <Users className="mb-2 h-8 w-8 text-primary" />
-                  <CardTitle>{language === "th" ? "เกี่ยวกับเรา" : "About Us"}</CardTitle>
+                  <CardTitle>{t('faqPage.aboutUsTitle')}</CardTitle>
                   <CardDescription>
-                    {language === "th" 
-                      ? "รู้จักทีมและเทคโนโลยี"
-                      : "Meet our team and technology"}
+                    {t('faqPage.aboutUsDesc')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <Button variant="outline" asChild className="w-full">
-                    <Link href="/about">{language === "th" ? "อ่านเพิ่มเติม" : "Learn More"}</Link>
+                    <Link href="/about">{t('faqPage.learnMore')}</Link>
                   </Button>
                 </CardContent>
               </Card>

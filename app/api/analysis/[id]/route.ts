@@ -14,7 +14,23 @@ export const GET = withAuthContext(
     const supabase = await createServerClient()
     const { id } = await context.params
 
-    const { data: analysis, error } = await supabase.from("skin_analyses").select("*").eq("id", id).single()
+    const { data: analysis, error } = await supabase
+      .from("skin_analyses")
+      .select(`
+        id,
+        user_id,
+        image_url,
+        thumbnail_url,
+        concerns,
+        heatmap_data,
+        metrics,
+        ai_version,
+        created_at,
+        updated_at,
+        analysis_data
+      `)
+      .eq("id", id)
+      .single()
 
     if (error || !analysis) {
       return NextResponse.json<ApiError>(
@@ -51,4 +67,105 @@ export const GET = withAuthContext(
     )
   },
   { rateLimitCategory: 'api' },
+)
+
+export const PATCH = withAuthContext(
+  async (request: NextRequest, user, context: { params: Promise<{ id: string }> }) => {
+    try {
+      const supabase = await createServerClient()
+      const { id } = await context.params
+
+      const body = (await request.json().catch(() => ({}))) as Record<string, unknown>
+      const hasNotes = Object.prototype.hasOwnProperty.call(body, "notes")
+      const hasRecommendations = Object.prototype.hasOwnProperty.call(body, "recommendations")
+
+      if (!hasNotes && !hasRecommendations) {
+        return NextResponse.json<ApiError>(
+          {
+            success: false,
+            error: "Missing fields to update",
+            code: "VALIDATION_ERROR",
+          },
+          { status: 400 },
+        )
+      }
+
+      if (hasNotes && body.notes !== null && typeof body.notes !== "string") {
+        return NextResponse.json<ApiError>(
+          {
+            success: false,
+            error: "Invalid notes",
+            code: "VALIDATION_ERROR",
+          },
+          { status: 400 },
+        )
+      }
+
+      if (
+        hasRecommendations &&
+        body.recommendations !== null &&
+        !(Array.isArray(body.recommendations) && body.recommendations.every((v) => typeof v === "string"))
+      ) {
+        return NextResponse.json<ApiError>(
+          {
+            success: false,
+            error: "Invalid recommendations",
+            code: "VALIDATION_ERROR",
+          },
+          { status: 400 },
+        )
+      }
+
+      const updatePayload: Record<string, unknown> = {
+        updated_at: new Date().toISOString(),
+      }
+
+      if (hasNotes) {
+        updatePayload.notes = body.notes
+      }
+
+      if (hasRecommendations) {
+        updatePayload.recommendations = body.recommendations
+      }
+
+      const { data: analysis, error } = await supabase
+        .from("skin_analyses")
+        .update(updatePayload)
+        .eq("id", id)
+        .eq("user_id", user.id)
+        .select("id")
+        .single()
+
+      if (error || !analysis) {
+        return NextResponse.json<ApiError>(
+          {
+            success: false,
+            error: error?.message || "Failed to update analysis",
+            code: "DATABASE_ERROR",
+          },
+          { status: 500 },
+        )
+      }
+
+      return NextResponse.json(
+        {
+          success: true,
+          data: {
+            id: analysis.id,
+          },
+        },
+        { status: 200 },
+      )
+    } catch (error) {
+      return NextResponse.json<ApiError>(
+        {
+          success: false,
+          error: error instanceof Error ? error.message : "Unknown error",
+          code: "INTERNAL_ERROR",
+        },
+        { status: 500 },
+      )
+    }
+  },
+  { rateLimitCategory: "api" },
 )

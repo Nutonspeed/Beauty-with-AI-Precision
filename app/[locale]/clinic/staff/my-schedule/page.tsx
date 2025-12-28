@@ -5,10 +5,11 @@ import { Footer } from "@/components/footer"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Calendar, User, MapPin } from "lucide-react"
-import { useLanguage } from "@/lib/i18n/language-context"
+import { useTranslations, useLocale } from "next-intl"
 
 export default function MySchedulePage() {
-  const { language } = useLanguage()
+  const t = useTranslations()
+  const locale = useLocale()
 
   // Mock schedule data
   const todaySchedule = [
@@ -28,12 +29,10 @@ export default function MySchedulePage() {
           {/* Header */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold mb-2">
-              {language === "th" ? "ตารางงานของฉัน" : "My Schedule"}
+              {t('mySchedule.title')}
             </h1>
             <p className="text-muted-foreground">
-              {language === "th" 
-                ? `วันนี้ ${new Date().toLocaleDateString('th-TH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}`
-                : `Today ${new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}`}
+              {t('mySchedule.today')} {new Date().toLocaleDateString(locale === 'th' ? 'th-TH' : 'en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
             </p>
           </div>
 
@@ -43,7 +42,7 @@ export default function MySchedulePage() {
               <CardContent className="pt-6 text-center">
                 <div className="text-3xl font-bold text-primary">{todaySchedule.length}</div>
                 <div className="text-sm text-muted-foreground">
-                  {language === "th" ? "นัดหมายวันนี้" : "Today's Appointments"}
+                  {t('mySchedule.todayAppointments')}
                 </div>
               </CardContent>
             </Card>
@@ -51,7 +50,7 @@ export default function MySchedulePage() {
               <CardContent className="pt-6 text-center">
                 <div className="text-3xl font-bold text-emerald-500">2</div>
                 <div className="text-sm text-muted-foreground">
-                  {language === "th" ? "เสร็จแล้ว" : "Completed"}
+                  {t('mySchedule.completed')}
                 </div>
               </CardContent>
             </Card>
@@ -59,7 +58,7 @@ export default function MySchedulePage() {
               <CardContent className="pt-6 text-center">
                 <div className="text-3xl font-bold text-amber-500">3</div>
                 <div className="text-sm text-muted-foreground">
-                  {language === "th" ? "รอดำเนินการ" : "Pending"}
+                  {t('mySchedule.pending')}
                 </div>
               </CardContent>
             </Card>
@@ -70,7 +69,7 @@ export default function MySchedulePage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Calendar className="h-5 w-5" />
-                {language === "th" ? "ตารางนัดหมาย" : "Appointment Schedule"}
+                {t('mySchedule.scheduleTitle')}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -100,8 +99,8 @@ export default function MySchedulePage() {
                     
                     <Badge variant={index < 2 ? "secondary" : "outline"}>
                       {index < 2 
-                        ? (language === "th" ? "เสร็จแล้ว" : "Done")
-                        : (language === "th" ? "รอ" : "Pending")}
+                        ? t('mySchedule.done')
+                        : t('mySchedule.pending')}
                     </Badge>
                   </div>
                 ))}

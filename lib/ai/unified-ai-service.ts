@@ -17,6 +17,8 @@ export interface AIProvider {
   priority: number
 }
 
+import { getAnthropicApiKey, getGeminiApiKey, getOpenAIApiKey, hasGeminiApiKey } from '@/lib/config/ai'
+
 export interface AnalysisResult {
   provider: string
   success: boolean
@@ -50,7 +52,7 @@ export function getAvailableProviders(): AIProvider[] {
   return [
     {
       name: 'google',
-      available: !!process.env.GEMINI_API_KEY && !process.env.GEMINI_API_KEY.includes('your-'),
+      available: hasGeminiApiKey() && !getGeminiApiKey().includes('your-'),
       priority: 1  // Gemini as primary (free tier)
     },
     {
@@ -180,7 +182,7 @@ async function callOpenAI(imageBase64: string, prompt: string): Promise<string> 
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
+      'Authorization': `Bearer ${getOpenAIApiKey()}`
     },
     body: JSON.stringify({
       model: 'gpt-4o',
@@ -205,7 +207,7 @@ async function callAnthropic(imageBase64: string, prompt: string): Promise<strin
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'x-api-key': process.env.ANTHROPIC_API_KEY || '',
+      'x-api-key': getAnthropicApiKey(),
       'anthropic-version': '2023-06-01'
     },
     body: JSON.stringify({
@@ -228,7 +230,7 @@ async function callAnthropic(imageBase64: string, prompt: string): Promise<strin
 
 async function callGemini(imageBase64: string, prompt: string): Promise<string> {
   const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${process.env.GEMINI_API_KEY}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${getGeminiApiKey()}`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

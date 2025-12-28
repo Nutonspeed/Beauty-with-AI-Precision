@@ -8,20 +8,25 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAvailableProviders } from '@/lib/ai/unified-ai-service'
 import { withPublicAccess } from '@/lib/auth/middleware'
+import { getDeepFaceApiUrl, hasDeepFaceApiUrl } from '@/lib/config/ai'
 
 export const GET = withPublicAccess(async (_request: NextRequest) => {
   try {
     const providers = getAvailableProviders()
     
     // Check DeepFace service
+    const deepfaceUrl =
+      hasDeepFaceApiUrl() ? getDeepFaceApiUrl() : process.env.NODE_ENV === 'production' ? undefined : 'http://localhost:8001'
     let deepfaceStatus = {
       name: 'deepface',
       available: false,
-      endpoint: process.env.DEEPFACE_API_URL || 'http://localhost:5000'
+      endpoint: deepfaceUrl
     }
     
     try {
-      const deepfaceUrl = process.env.DEEPFACE_API_URL || 'http://localhost:5000'
+      if (!deepfaceUrl) {
+        throw new Error('DeepFace not configured')
+      }
       const response = await fetch(`${deepfaceUrl}/health`, {
         signal: AbortSignal.timeout(3000)
       })

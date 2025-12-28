@@ -12,7 +12,6 @@ import { MultiModeViewer, type AnalysisMode } from '@/components/analysis/multi-
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Upload, Image, Loader2, AlertCircle } from 'lucide-react'
-import { analyzeMultiMode } from '@/lib/api/ai-analysis-service'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 
 // Static mock data - แก้ไข hydration mismatch โดยใช้ค่าคงที่แทน Math.random()
@@ -222,6 +221,19 @@ export default function MultiModeAnalysisPage() {
   const [error, setError] = useState<string | null>(null)
   const [useRealAPI, setUseRealAPI] = useState(false)
 
+  const extractDetections = (section: any): Array<{ x: number; y: number; width: number; height: number }> => {
+    if (!section) return []
+    if (Array.isArray(section.detections)) return section.detections
+    if (section.detections && Array.isArray(section.detections.detections)) return section.detections.detections
+    return []
+  }
+
+  const getTextureScore = (raw: any): number => {
+    const texture = raw?.texture
+    const value = texture?.overall_score ?? texture?.metrics?.overall_score
+    return typeof value === 'number' ? value : 0
+  }
+
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
@@ -240,23 +252,42 @@ export default function MultiModeAnalysisPage() {
     // If real API is enabled, analyze the image
     if (useRealAPI) {
       setIsAnalyzing(true)
+
       try {
-        const result = await analyzeMultiMode(file)
-        
-        // Update detection data - convert from API format to UI format
+        const formData = new FormData()
+        formData.append('image', file)
+
+        const response = await fetch('/api/analysis/multi-mode', {
+          method: 'POST',
+          body: formData,
+        })
+
+        const payload = await response.json().catch(() => ({}))
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            throw new Error('Unauthorized: Please login to run multi-mode analysis')
+          }
+
+          throw new Error(payload?.error || payload?.details || 'Failed to analyze image')
+        }
+
+        const rawResults = payload?.rawResults ?? {}
+        const analysis = payload?.analysis
+
         setDetectionData({
-          spots: result.spots.detections.map(s => ({ 
-            x: s.x + s.width / 2, 
-            y: s.y + s.height / 2, 
-            radius: Math.max(s.width, s.height) / 2 
+          spots: extractDetections(rawResults.spots).map((s: any) => ({
+            x: s.x + s.width / 2,
+            y: s.y + s.height / 2,
+            radius: Math.max(s.width, s.height) / 2,
           })),
-          wrinkles: result.wrinkles.detections.map(w => ({
+          wrinkles: extractDetections(rawResults.wrinkles).map((w: any) => ({
             x1: w.x,
             y1: w.y,
             x2: w.x + w.width,
             y2: w.y + w.height,
           })),
-          pores: result.pores.detections.map(p => ({
+          pores: extractDetections(rawResults.pores).map((p: any) => ({
             x: p.x + p.width / 2,
             y: p.y + p.height / 2,
             size: Math.max(p.width, p.height),
@@ -264,22 +295,28 @@ export default function MultiModeAnalysisPage() {
           redness: [],
         })
 
-        // Update analysis counts
-        setAnalysisData(prev => prev.map(mode => {
-          if (mode.id === 'spots') return { ...mode, count: result.spots.statistics.total_count }
-          if (mode.id === 'wrinkles') return { ...mode, count: result.wrinkles.statistics.total_count }
-          if (mode.id === 'pores') return { ...mode, count: result.pores.statistics.total_count }
-          if (mode.id === 'texture') return { ...mode, count: Math.round(result.texture.metrics.overall_score * 100) }
-          return mode
-        }))
+        setAnalysisData((prev) =>
+          prev.map((mode) => {
+            if (mode.id === 'spots') {
+              return { ...mode, count: analysis?.counts?.spots ?? extractDetections(rawResults.spots).length }
+            }
+            if (mode.id === 'wrinkles') {
+              return { ...mode, count: analysis?.counts?.wrinkles ?? extractDetections(rawResults.wrinkles).length }
+            }
+            if (mode.id === 'pores') {
+              return { ...mode, count: analysis?.counts?.pores ?? extractDetections(rawResults.pores).length }
+            }
+            if (mode.id === 'texture') {
+              const score = analysis?.scores?.texture ?? getTextureScore(rawResults)
+              return { ...mode, count: Math.round((Number(score) || 0) * 100) }
+            }
+            return mode
+          }),
+        )
 
         console.log('✅ Analysis complete:', {
-          spots: result.spots.statistics.total_count,
-          wrinkles: result.wrinkles.statistics.total_count,
-          pores: result.pores.statistics.total_count,
-          texture: result.texture.metrics.overall_score,
-          overall_score: result.overall_score,
-          processing_time: result.processing_time_ms + 'ms'
+          overall_score: analysis?.overall_score,
+          processing_time: analysis?.processing_time_ms,
         })
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Failed to analyze image'

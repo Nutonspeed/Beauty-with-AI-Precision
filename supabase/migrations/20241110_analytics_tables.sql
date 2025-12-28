@@ -5,7 +5,7 @@
 
 -- Create customer_analysis_metrics table for aggregated analytics
 CREATE TABLE IF NOT EXISTS customer_analysis_metrics (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid()::uuid,
   customer_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   
   -- Aggregated scores (rolling average from recent analyses)
@@ -80,7 +80,7 @@ COMMENT ON COLUMN customer_analysis_metrics.improvement_rate IS
 -- =============================================
 
 CREATE TABLE IF NOT EXISTS analysis_history (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid()::uuid,
   customer_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   analysis_id UUID NOT NULL REFERENCES skin_analyses(id) ON DELETE CASCADE,
   

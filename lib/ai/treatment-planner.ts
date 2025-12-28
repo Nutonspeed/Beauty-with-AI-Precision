@@ -7,6 +7,7 @@
 
 import { createServerClient } from '@/lib/supabase/server';
 import OpenAI from 'openai';
+import { getOpenAIApiKey } from '@/lib/config/ai';
 
 // =============================================
 // Types
@@ -88,9 +89,13 @@ export interface AnalysisData {
 // OpenAI Client
 // =============================================
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+let openai: OpenAI | null = null;
+
+function getOpenAIClient(): OpenAI {
+  if (openai) return openai;
+  openai = new OpenAI({ apiKey: getOpenAIApiKey() });
+  return openai;
+}
 
 // =============================================
 // Treatment Plan Generator
@@ -109,7 +114,7 @@ export class TreatmentPlanner {
 
     try {
       // Call OpenAI
-      const completion = await openai.chat.completions.create({
+      const completion = await getOpenAIClient().chat.completions.create({
         model: 'gpt-4-turbo-preview',
         messages: [
           {

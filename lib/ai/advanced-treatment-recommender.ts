@@ -2,10 +2,15 @@
 // ใช้ GPT-4 วิเคราะห์และแนะนำ treatment จริงๆ ไม่ใช่ rule-based
 
 import { OpenAI } from 'openai';
+import { getOpenAIApiKey } from '@/lib/config/ai';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+let openai: OpenAI | null = null;
+
+function getOpenAIClient(): OpenAI {
+  if (openai) return openai;
+  openai = new OpenAI({ apiKey: getOpenAIApiKey() });
+  return openai;
+}
 
 interface TreatmentRecommendation {
   treatment: string;
@@ -65,7 +70,7 @@ export class AdvancedTreatmentRecommender {
     `;
 
     try {
-      const response = await openai.chat.completions.create({
+      const response = await getOpenAIClient().chat.completions.create({
         model: "gpt-4",
         messages: [{ role: "user", content: prompt }],
         temperature: 0.3,

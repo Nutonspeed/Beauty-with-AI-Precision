@@ -18,39 +18,31 @@ import {
   BarChart3,
   ArrowRight
 } from "lucide-react"
-import { useLanguage } from "@/lib/i18n/language-context"
+import { useTranslations } from "next-intl"
 
 export default function AboutPage() {
-  const { language } = useLanguage()
+  const t = useTranslations()
 
   const coreValues = [
     {
       icon: Brain,
-      title: language === "th" ? "นวัตกรรม AI" : "AI Innovation",
-      description: language === "th" 
-        ? "พัฒนาเทคโนโลยี AI ที่ล้ำสมัยเพื่อการวิเคราะห์ผิวที่แม่นยำ"
-        : "Developing cutting-edge AI technology for accurate skin analysis"
+      title: t('about.coreValues.innovation.title'),
+      description: t('about.coreValues.innovation.description')
     },
     {
       icon: Shield,
-      title: language === "th" ? "ความปลอดภัย" : "Security",
-      description: language === "th" 
-        ? "ปกป้องข้อมูลส่วนบุคคลตามมาตรฐาน PDPA"
-        : "Protecting personal data according to PDPA standards"
+      title: t('about.coreValues.security.title'),
+      description: t('about.coreValues.security.description')
     },
     {
       icon: TrendingUp,
-      title: language === "th" ? "การเติบโต" : "Growth",
-      description: language === "th" 
-        ? "ช่วยให้ธุรกิจคลินิกเติบโตด้วยเทคโนโลยีที่ทันสมัย"
-        : "Helping clinic businesses grow with modern technology"
+      title: t('about.coreValues.growth.title'),
+      description: t('about.coreValues.growth.description')
     },
     {
       icon: Award,
-      title: language === "th" ? "คุณภาพ" : "Quality",
-      description: language === "th" 
-        ? "มาตรฐานระดับการแพทย์ เทียบเท่า VISIA"
-        : "Medical-grade standards comparable to VISIA"
+      title: t('about.coreValues.quality.title'),
+      description: t('about.coreValues.quality.description')
     }
   ]
 
@@ -58,61 +50,45 @@ export default function AboutPage() {
     {
       icon: Brain,
       title: "MediaPipe Face Detection",
-      description: language === "th" 
-        ? "AI ตรวจจับใบหน้าที่แม่นยำด้วย 468 จุดสังเกต"
-        : "Accurate face detection AI with 468 landmarks"
+      description: t('about.techStack.mediapipe.description')
     },
     {
       icon: Zap,
       title: "TensorFlow.js",
-      description: language === "th" 
-        ? "วิเคราะห์ผิวด้วย Machine Learning บนเบราว์เซอร์"
-        : "Browser-based machine learning for skin analysis"
+      description: t('about.techStack.tensorflow.description')
     },
     {
       icon: Camera,
       title: "AR Visualization",
-      description: language === "th" 
-        ? "แสดงผลการรักษาแบบ AR ก่อนตัดสินใจ"
-        : "AR visualization of treatment results before decision"
+      description: t('about.techStack.ar.description')
     },
     {
       icon: BarChart3,
       title: "VISIA Metrics",
-      description: language === "th" 
-        ? "วัดผล 8 ตัวชี้วัดตามมาตรฐาน VISIA"
-        : "8 metrics measured by VISIA standards"
+      description: t('about.techStack.visia.description')
     }
   ]
 
   const milestones = [
     {
       year: "2024 Q1",
-      title: language === "th" ? "ก่อตั้งบริษัท" : "Company Founded",
-      description: language === "th" 
-        ? "เริ่มต้นพัฒนาระบบ AI สำหรับคลินิกความงาม"
-        : "Started developing AI system for aesthetic clinics"
+      title: t('about.milestones.q1_2024.title'),
+      description: t('about.milestones.q1_2024.description')
     },
     {
       year: "2024 Q2",
-      title: language === "th" ? "ทดสอบ AI Model" : "AI Model Testing",
-      description: language === "th" 
-        ? "ทดสอบความแม่นยำของ AI กับข้อมูลจริง 10,000+ ภาพ"
-        : "Tested AI accuracy with 10,000+ real images"
+      title: t('about.milestones.q2_2024.title'),
+      description: t('about.milestones.q2_2024.description')
     },
     {
       year: "2024 Q3",
       title: "Beta Launch",
-      description: language === "th" 
-        ? "เปิดให้คลินิกนำร่องทดสอบระบบ"
-        : "Launched beta testing with pilot clinics"
+      description: t('about.milestones.q3_2024.description')
     },
     {
       year: "2025 Q1",
       title: "Official Launch",
-      description: language === "th" 
-        ? "เปิดให้บริการอย่างเป็นทางการพร้อม Free Tier"
-        : "Official launch with Free Tier availability"
+      description: t('about.milestones.q1_2025.description')
     }
   ]
 
@@ -127,32 +103,30 @@ export default function AboutPage() {
             <div className="mx-auto max-w-4xl text-center">
               <Badge className="mb-6 bg-primary/10 text-primary" variant="secondary">
                 <Sparkles className="mr-2 h-3 w-3" />
-                {language === "th" ? "เกี่ยวกับเรา" : "About Us"}
+                {t('about.hero.badge')}
               </Badge>
 
               <h1 className="mb-6 text-4xl font-bold tracking-tight md:text-6xl">
-                {language === "th" ? "ผู้นำด้านเทคโนโลยี AI" : "AI Technology Leader"}
+                {t('about.hero.title')}
                 <br />
                 <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
-                  {language === "th" ? "สำหรับคลินิกความงาม" : "for Aesthetic Clinics"}
+                  {t('about.hero.subtitle')}
                 </span>
               </h1>
 
               <p className="mb-8 text-balance text-lg text-muted-foreground leading-relaxed">
-                {language === "th" 
-                  ? "AI367BAR คือแพลตฟอร์ม B2B2C ที่รวมเทคโนโลยี AI ขั้นสูง การวิเคราะห์ผิวระดับการแพทย์ และระบบจัดการคลินิกครบวงจร เพื่อช่วยให้ธุรกิจคลินิกความงามเติบโตอย่างยั่งยืน"
-                  : "AI367BAR is a B2B2C platform combining advanced AI technology, medical-grade skin analysis, and comprehensive clinic management systems to help aesthetic clinic businesses grow sustainably."}
+                {t('about.hero.description')}
               </p>
 
               <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
                 <Button size="lg" asChild>
                   <Link href="/analysis">
-                    {language === "th" ? "ทดลองใช้ฟรี" : "Try for Free"}
+                    {t('about.hero.tryFree')}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
                 <Button size="lg" variant="outline" asChild>
-                  <Link href="/contact">{language === "th" ? "ติดต่อเรา" : "Contact Us"}</Link>
+                  <Link href="/contact">{t('about.hero.contactUs')}</Link>
                 </Button>
               </div>
             </div>
@@ -169,12 +143,10 @@ export default function AboutPage() {
                     <Target className="h-6 w-6 text-primary" />
                   </div>
                   <h2 className="mb-4 text-2xl font-bold">
-                    {language === "th" ? "วิสัยทัศน์" : "Vision"}
+                    {t('about.vision.title')}
                   </h2>
                   <p className="text-muted-foreground leading-relaxed">
-                    {language === "th" 
-                      ? "เป็นแพลตฟอร์ม AI ชั้นนำในเอเชียสำหรับการวิเคราะห์ผิวและการจัดการคลินิกความงาม ที่ช่วยให้ธุรกิจเข้าถึงเทคโนโลยีระดับโลกได้ในราคาที่เหมาะสม"
-                      : "To be the leading AI platform in Asia for skin analysis and aesthetic clinic management, making world-class technology accessible and affordable for businesses."}
+                    {t('about.vision.description')}
                   </p>
                 </CardContent>
               </Card>
@@ -185,12 +157,10 @@ export default function AboutPage() {
                     <Sparkles className="h-6 w-6 text-accent" />
                   </div>
                   <h2 className="mb-4 text-2xl font-bold">
-                    {language === "th" ? "พันธกิจ" : "Mission"}
+                    {t('about.mission.title')}
                   </h2>
                   <p className="text-muted-foreground leading-relaxed">
-                    {language === "th" 
-                      ? "พัฒนาเทคโนโลยี AI ที่แม่นยำ ปลอดภัย และเข้าถึงได้ง่าย เพื่อยกระดับมาตรฐานการให้บริการของคลินิกความงาม และสร้างประสบการณ์ที่ดีที่สุดให้กับลูกค้า"
-                      : "Develop accurate, secure, and accessible AI technology to elevate aesthetic clinic service standards and create the best customer experience."}
+                    {t('about.mission.description')}
                   </p>
                 </CardContent>
               </Card>
@@ -203,12 +173,10 @@ export default function AboutPage() {
           <div className="container">
             <div className="mx-auto mb-12 max-w-2xl text-center">
               <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
-                {language === "th" ? "ค่านิยมหลัก" : "Core Values"}
+                {t('about.coreValues.title')}
               </h2>
               <p className="text-balance text-muted-foreground leading-relaxed">
-                {language === "th" 
-                  ? "หลักการที่ขับเคลื่อนการพัฒนาผลิตภัณฑ์และบริการของเรา"
-                  : "Principles that drive our product and service development"}
+                {t('about.coreValues.subtitle')}
               </p>
             </div>
 
@@ -238,12 +206,10 @@ export default function AboutPage() {
           <div className="container">
             <div className="mx-auto mb-12 max-w-2xl text-center">
               <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
-                {language === "th" ? "เทคโนโลยีที่ใช้" : "Technology Stack"}
+                {t('about.techStack.title')}
               </h2>
               <p className="text-balance text-muted-foreground leading-relaxed">
-                {language === "th" 
-                  ? "AI และเทคโนโลยีขั้นสูงที่ขับเคลื่อนระบบของเรา"
-                  : "Advanced AI and technologies powering our system"}
+                {t('about.techStack.subtitle')}
               </p>
             </div>
 
@@ -273,12 +239,10 @@ export default function AboutPage() {
           <div className="container">
             <div className="mx-auto mb-12 max-w-2xl text-center">
               <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
-                {language === "th" ? "เส้นทางการเติบโต" : "Growth Milestones"}
+                {t('about.milestones.title')}
               </h2>
               <p className="text-balance text-muted-foreground leading-relaxed">
-                {language === "th" 
-                  ? "ก้าวสำคัญในการพัฒนาผลิตภัณฑ์"
-                  : "Key steps in product development"}
+                {t('about.milestones.subtitle')}
               </p>
             </div>
 
@@ -315,25 +279,25 @@ export default function AboutPage() {
               <div className="text-center">
                 <div className="mb-2 text-4xl font-bold text-primary">10K+</div>
                 <p className="text-sm text-muted-foreground">
-                  {language === "th" ? "ภาพวิเคราะห์" : "Analyzed Images"}
+                  {t('about.stats.images')}
                 </p>
               </div>
               <div className="text-center">
                 <div className="mb-2 text-4xl font-bold text-primary">95%+</div>
                 <p className="text-sm text-muted-foreground">
-                  {language === "th" ? "ความแม่นยำ" : "Accuracy Rate"}
+                  {t('about.stats.accuracy')}
                 </p>
               </div>
               <div className="text-center">
                 <div className="mb-2 text-4xl font-bold text-primary">&lt;2s</div>
                 <p className="text-sm text-muted-foreground">
-                  {language === "th" ? "เวลาวิเคราะห์" : "Analysis Time"}
+                  {t('about.stats.time')}
                 </p>
               </div>
               <div className="text-center">
                 <div className="mb-2 text-4xl font-bold text-primary">8</div>
                 <p className="text-sm text-muted-foreground">
-                  {language === "th" ? "ตัวชี้วัดผิว" : "Skin Metrics"}
+                  {t('about.stats.metrics')}
                 </p>
               </div>
             </div>
@@ -345,17 +309,15 @@ export default function AboutPage() {
           <div className="container">
             <div className="mx-auto max-w-3xl text-center">
               <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
-                {language === "th" ? "พร้อมที่จะเริ่มต้นแล้วหรือยัง?" : "Ready to Get Started?"}
+                {t('about.cta.title')}
               </h2>
               <p className="mb-8 text-balance text-lg text-primary-foreground/90 leading-relaxed">
-                {language === "th" 
-                  ? "ทดลองใช้ระบบวิเคราะห์ผิว AI ฟรี หรือติดต่อเราเพื่อขอข้อมูลเพิ่มเติม"
-                  : "Try our AI skin analysis for free or contact us for more information"}
+                {t('about.cta.description')}
               </p>
               <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
                 <Button size="lg" variant="secondary" asChild>
                   <Link href="/analysis">
-                    {language === "th" ? "ทดลองใช้ฟรี" : "Try for Free"}
+                    {t('about.cta.tryFree')}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
@@ -365,7 +327,7 @@ export default function AboutPage() {
                   asChild
                   className="border-primary-foreground/20 bg-transparent text-primary-foreground hover:bg-primary-foreground/10"
                 >
-                  <Link href="/contact">{language === "th" ? "ติดต่อเรา" : "Contact Us"}</Link>
+                  <Link href="/contact">{t('about.cta.contactUs')}</Link>
                 </Button>
               </div>
             </div>

@@ -1,15 +1,20 @@
 import OpenAI from 'openai'
+import { getOpenAIApiKey } from '@/lib/config/ai'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+let openai: OpenAI | null = null
+
+function getOpenAIClient(): OpenAI {
+  if (openai) return openai
+  openai = new OpenAI({ apiKey: getOpenAIApiKey() })
+  return openai
+}
 
 export async function generateTreatmentRecommendation(
   skinAnalysis: any,
   userPreferences: any
 ) {
   try {
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAIClient().chat.completions.create({
       model: "gpt-4",
       messages: [
         {
@@ -34,7 +39,7 @@ export async function generateTreatmentRecommendation(
 
 export async function analyzeSkinImage(imageBase64: string) {
   try {
-    const response = await openai.chat.completions.create({
+    const response = await getOpenAIClient().chat.completions.create({
       model: "gpt-4-vision-preview",
       messages: [
         {

@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { deepFaceClient, type FaceAnalysisResult } from '@/lib/ai/deepface-client'
+import { getDeepFaceClient, type FaceAnalysisResult } from '@/lib/ai/deepface-client'
 import { createClient } from '@/lib/supabase/server'
 import { withPublicAccess } from '@/lib/auth/middleware'
 
 export const POST = withPublicAccess(async (request: NextRequest) => {
   try {
+    const deepFaceClient = getDeepFaceClient()
     const supabase = await createClient()
     const { data: { session }, error } = await supabase.auth.getSession()
     
@@ -114,6 +115,7 @@ export const POST = withPublicAccess(async (request: NextRequest) => {
 
 export const GET = withPublicAccess(async (request: NextRequest) => {
   try {
+    const deepFaceClient = getDeepFaceClient()
     // Verify authentication
     const supabase = await createClient()
     const { data: { session }, error } = await supabase.auth.getSession()

@@ -19,69 +19,61 @@ import {
   Camera,
   Cpu,
 } from "lucide-react"
-import { useLanguage } from "@/lib/i18n/language-context"
+import { useTranslations } from "next-intl"
 import Link from "next/link"
 
 export default function FeaturesPage() {
-  const { language } = useLanguage()
+  const t = useTranslations()
 
   const mainFeatures = [
     {
       icon: Sparkles,
-      title: language === "th" ? "AI วิเคราะห์ผิวหน้า 8 จุด" : "8-Point AI Skin Analysis",
-      desc: language === "th"
-        ? "วิเคราะห์ปัญหาผิว 8 ด้านด้วย AI ความแม่นยำระดับ VISIA: ริ้วรอย จุดด่างดำ รูขุมขน สิว ความชุ่มชื้น ความยืดหยุ่น เนื้อสัมผัส และโทนสีผิว"
-        : "Analyze 8 skin concerns with VISIA-grade AI accuracy: wrinkles, dark spots, pores, acne, moisture, elasticity, texture, and skin tone",
+      title: t('features.main.aiAnalysis.title'),
+      desc: t('features.main.aiAnalysis.desc'),
       features: [
-        language === "th" ? "✓ ความแม่นยำ 95%+ เทียบเท่า VISIA" : "✓ 95%+ accuracy comparable to VISIA",
-        language === "th" ? "✓ วิเคราะห์เสร็จภายใน 3 วินาที" : "✓ Analysis completed in 3 seconds",
-        language === "th" ? "✓ รองรับ 468 Face Landmarks" : "✓ Supports 468 face landmarks",
-        language === "th" ? "✓ คะแนนแต่ละจุด 0-100" : "✓ Score each point 0-100",
+        t('features.main.aiAnalysis.feature1'),
+        t('features.main.aiAnalysis.feature2'),
+        t('features.main.aiAnalysis.feature3'),
+        t('features.main.aiAnalysis.feature4'),
       ],
       color: "from-violet-500/10 to-purple-500/10",
       iconColor: "text-violet-600",
     },
     {
       icon: Eye,
-      title: language === "th" ? "AR Visualization & 3D Face Model" : "AR Visualization & 3D Face Model",
-      desc: language === "th"
-        ? "ทดลองดูผลทรีตเมนต์แบบ Real-time ด้วย AR และ 3D Face Modeling ให้คุณเห็นภาพ Before/After ก่อนตัดสินใจทำจริง"
-        : "Preview treatment results in real-time with AR and 3D Face Modeling. See Before/After visualization before committing",
+      title: t('features.main.arVisualization.title'),
+      desc: t('features.main.arVisualization.desc'),
       features: [
-        language === "th" ? "✓ ทดลอง AR แบบ Real-time" : "✓ Real-time AR preview",
-        language === "th" ? "✓ 3D Face Model ละเอียด" : "✓ Detailed 3D face model",
-        language === "th" ? "✓ เปรียบเทียบ Before/After" : "✓ Before/After comparison",
-        language === "th" ? "✓ แชร์ผลได้ทันที" : "✓ Instant sharing",
+        t('features.main.arVisualization.feature1'),
+        t('features.main.arVisualization.feature2'),
+        t('features.main.arVisualization.feature3'),
+        t('features.main.arVisualization.feature4'),
       ],
       color: "from-blue-500/10 to-cyan-500/10",
       iconColor: "text-blue-600",
     },
     {
       icon: Boxes,
-      title: language === "th" ? "Multi-Clinic Management" : "Multi-Clinic Management",
-      desc: language === "th"
-        ? "ระบบจัดการหลายสาขาในที่เดียว ติดตามผลลูกค้า จัดการทีม และวิเคราะห์ยอดขายแบบ Real-time Dashboard"
-        : "Manage multiple clinics in one place. Track customer results, manage teams, and analyze sales with real-time dashboards",
+      title: t('features.main.multiClinic.title'),
+      desc: t('features.main.multiClinic.desc'),
       features: [
-        language === "th" ? "✓ จัดการไม่จำกัดสาขา" : "✓ Unlimited clinic management",
-        language === "th" ? "✓ Role-based Access Control" : "✓ Role-based access control",
-        language === "th" ? "✓ Real-time Analytics" : "✓ Real-time analytics",
-        language === "th" ? "✓ ข้อมูลซิงค์ทุกสาขา" : "✓ Data sync across branches",
+        t('features.main.multiClinic.feature1'),
+        t('features.main.multiClinic.feature2'),
+        t('features.main.multiClinic.feature3'),
+        t('features.main.multiClinic.feature4'),
       ],
       color: "from-emerald-500/10 to-green-500/10",
       iconColor: "text-emerald-600",
     },
     {
       icon: Shield,
-      title: language === "th" ? "PDPA & GDPR Compliant" : "PDPA & GDPR Compliant",
-      desc: language === "th"
-        ? "ระบบรักษาความปลอดภัยข้อมูลตามมาตรฐานสากล เข้ารหัส SSL/TLS 256-bit และปฏิบัติตามกฎหมาย PDPA ของไทยอย่างเคร่งครัด"
-        : "Industry-standard security with SSL/TLS 256-bit encryption. Fully compliant with Thailand's PDPA and GDPR regulations",
+      title: t('features.main.security.title'),
+      desc: t('features.main.security.desc'),
       features: [
-        language === "th" ? "✓ SSL/TLS 256-bit Encryption" : "✓ SSL/TLS 256-bit encryption",
-        language === "th" ? "✓ ผ่านมาตรฐาน PDPA" : "✓ PDPA certified",
-        language === "th" ? "✓ Backup ทุกวันอัตโนมัติ" : "✓ Daily automated backups",
-        language === "th" ? "✓ Access Control & Audit Logs" : "✓ Access control & audit logs",
+        t('features.main.security.feature1'),
+        t('features.main.security.feature2'),
+        t('features.main.security.feature3'),
+        t('features.main.security.feature4'),
       ],
       color: "from-orange-500/10 to-red-500/10",
       iconColor: "text-orange-600",
@@ -91,79 +83,79 @@ export default function FeaturesPage() {
   const additionalFeatures = [
     {
       icon: Zap,
-      title: language === "th" ? "ประมวลผลเร็วสุด 3 วินาที" : "Ultra-fast 3-second Processing",
-      desc: language === "th" ? "AI ประมวลผลภาพและวิเคราะห์เสร็จภายใน 3 วินาที" : "AI processes and analyzes images in just 3 seconds",
+      title: t('features.additional.ultraFast.title'),
+      desc: t('features.additional.ultraFast.desc'),
     },
     {
       icon: Users,
-      title: language === "th" ? "Customer Database" : "Customer Database",
-      desc: language === "th" ? "จัดเก็บประวัติลูกค้าแบบ Timeline พร้อมเปรียบเทียบผล" : "Store customer history as timeline with comparison",
+      title: t('features.additional.customerDb.title'),
+      desc: t('features.additional.customerDb.desc'),
     },
     {
       icon: BarChart3,
-      title: language === "th" ? "Sales Analytics Dashboard" : "Sales Analytics Dashboard",
-      desc: language === "th" ? "วิเคราะห์ยอดขาย Conversion Rate แบบ Real-time" : "Analyze sales and conversion rates in real-time",
+      title: t('features.additional.salesAnalytics.title'),
+      desc: t('features.additional.salesAnalytics.desc'),
     },
     {
       icon: Calendar,
-      title: language === "th" ? "Booking & Appointment" : "Booking & Appointment",
-      desc: language === "th" ? "ระบบจองคิวออนไลน์ มีการแจ้งเตือนอัตโนมัติ" : "Online booking system with automated notifications",
+      title: t('features.additional.booking.title'),
+      desc: t('features.additional.booking.desc'),
     },
     {
       icon: MessageSquare,
-      title: language === "th" ? "Treatment Recommendations" : "Treatment Recommendations",
-      desc: language === "th" ? "แนะนำทรีตเมนต์ที่เหมาะสมจาก AI Analysis" : "AI-powered treatment recommendations based on analysis",
+      title: t('features.additional.recommendations.title'),
+      desc: t('features.additional.recommendations.desc'),
     },
     {
       icon: Camera,
-      title: language === "th" ? "Before/After Gallery" : "Before/After Gallery",
-      desc: language === "th" ? "แกลเลอรี่เปรียบเทียบผลลูกค้าแบบ Interactive" : "Interactive before/after customer result gallery",
+      title: t('features.additional.gallery.title'),
+      desc: t('features.additional.gallery.desc'),
     },
     {
       icon: Cpu,
-      title: language === "th" ? "MediaPipe + TensorFlow.js" : "MediaPipe + TensorFlow.js",
-      desc: language === "th" ? "ใช้เทคโนโลยี AI ล่าสุดจาก Google" : "Powered by Google's latest AI technology",
+      title: t('features.additional.technology.title'),
+      desc: t('features.additional.technology.desc'),
     },
     {
       icon: Scan,
-      title: language === "th" ? "468 Face Landmarks" : "468 Face Landmarks",
-      desc: language === "th" ? "วิเคราะห์ใบหน้าด้วย 468 จุดอ้างอิงความละเอียดสูง" : "Analyze face with 468 high-precision landmarks",
+      title: t('features.additional.landmarks.title'),
+      desc: t('features.additional.landmarks.desc'),
     },
   ]
 
   const comparisonData = [
     {
-      feature: language === "th" ? "ความแม่นยำ" : "Accuracy",
+      feature: t('features.comparison.accuracy'),
       ours: "95%+",
       competitor: "85-90%",
     },
     {
-      feature: language === "th" ? "ความเร็ว" : "Speed",
+      feature: t('features.comparison.speed'),
       ours: "3 วินาที / 3 sec",
       competitor: "10-15 วินาที / sec",
     },
     {
-      feature: language === "th" ? "จุดวิเคราะห์" : "Analysis Points",
+      feature: t('features.comparison.analysisPoints'),
       ours: "8 จุด / points",
       competitor: "5-6 จุด / points",
     },
     {
-      feature: language === "th" ? "AR Simulator" : "AR Simulator",
+      feature: t('features.comparison.arSimulator'),
       ours: "✓",
       competitor: "✗",
     },
     {
-      feature: language === "th" ? "Multi-Clinic" : "Multi-Clinic",
+      feature: t('features.comparison.multiClinic'),
       ours: "✓ Unlimited",
       competitor: "Limited",
     },
     {
-      feature: language === "th" ? "PDPA Compliant" : "PDPA Compliant",
+      feature: t('features.comparison.pdpaCompliant'),
       ours: "✓ Full",
       competitor: "Partial",
     },
     {
-      feature: language === "th" ? "ราคา" : "Price",
+      feature: t('features.comparison.price'),
       ours: "฿990/เดือน / ฿990/mo",
       competitor: "฿2,000+/เดือน / ฿2,000+/mo",
     },
@@ -180,31 +172,28 @@ export default function FeaturesPage() {
             <div className="mx-auto max-w-4xl text-center">
               <Badge className="mb-4 bg-primary/10 text-primary" variant="secondary">
                 <Sparkles className="mr-1 h-3 w-3" />
-                {language === "th" ? "คุณสมบัติครบครัน" : "Complete Feature Set"}
+                {t('features.hero.badge')}
               </Badge>
               <h1 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl">
-                {language === "th" ? "ฟีเจอร์ที่ทรงพลัง" : "Powerful Features"}
+                {t('features.hero.title')}
                 <span className="block mt-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                  {language === "th" ? "สำหรับคลินิกความงามยุคใหม่" : "For Modern Beauty Clinics"}
+                  {t('features.hero.subtitle')}
                 </span>
               </h1>
               <p className="mb-8 text-base sm:text-lg text-muted-foreground leading-relaxed">
-                {language === "th"
-                  ? "ระบบวิเคราะห์ผิวด้วย AI ที่ทันสมัยที่สุด พร้อมฟีเจอร์ครบครันสำหรับการจัดการคลินิกความงาม"
-                  : "The most advanced AI-powered skin analysis system with comprehensive features for beauty clinic management"
-                }
+                {t('features.hero.description')}
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Link href="/analysis">
                   <Button size="lg" className="w-full sm:w-auto">
                     <Scan className="mr-2 h-5 w-5" />
-                    {language === "th" ? "ทดลองฟรี" : "Try Free"}
+                    {t('features.hero.tryFree')}
                   </Button>
                 </Link>
                 <Link href="/pricing">
                   <Button size="lg" variant="outline" className="w-full sm:w-auto">
                     <BarChart3 className="mr-2 h-5 w-5" />
-                    {language === "th" ? "ดูแพ็กเกจ" : "View Pricing"}
+                    {t('features.hero.viewPricing')}
                   </Button>
                 </Link>
               </div>
@@ -218,13 +207,10 @@ export default function FeaturesPage() {
             <div className="mx-auto max-w-6xl">
               <div className="mb-12 text-center">
                 <h2 className="mb-3 text-2xl sm:text-3xl lg:text-4xl font-bold">
-                  {language === "th" ? "ฟีเจอร์หลัก 4 ด้าน" : "4 Core Features"}
+                  {t('features.main.title')}
                 </h2>
                 <p className="text-sm sm:text-base text-muted-foreground">
-                  {language === "th"
-                    ? "เทคโนโลยีชั้นนำที่ทำให้คุณแตกต่างจากคู่แข่ง"
-                    : "Leading technology that sets you apart from competitors"
-                  }
+                  {t('features.main.subtitle')}
                 </p>
               </div>
 
@@ -260,13 +246,10 @@ export default function FeaturesPage() {
             <div className="mx-auto max-w-6xl">
               <div className="mb-12 text-center">
                 <h2 className="mb-3 text-2xl sm:text-3xl lg:text-4xl font-bold">
-                  {language === "th" ? "ฟีเจอร์เพิ่มเติม" : "Additional Features"}
+                  {t('features.additional.title')}
                 </h2>
                 <p className="text-sm sm:text-base text-muted-foreground">
-                  {language === "th"
-                    ? "ความสามารถอื่นๆ ที่ช่วยเพิ่มประสิทธิภาพการทำงาน"
-                    : "More capabilities to enhance your workflow efficiency"
-                  }
+                  {t('features.additional.subtitle')}
                 </p>
               </div>
 
@@ -295,13 +278,10 @@ export default function FeaturesPage() {
             <div className="mx-auto max-w-4xl">
               <div className="mb-12 text-center">
                 <h2 className="mb-3 text-2xl sm:text-3xl lg:text-4xl font-bold">
-                  {language === "th" ? "เปรียบเทียบกับคู่แข่ง" : "Competitor Comparison"}
+                  {t('features.comparison.title')}
                 </h2>
                 <p className="text-sm sm:text-base text-muted-foreground">
-                  {language === "th"
-                    ? "ดูว่าเราดีกว่าอย่างไร"
-                    : "See how we outperform the competition"
-                  }
+                  {t('features.comparison.subtitle')}
                 </p>
               </div>
 
@@ -311,13 +291,13 @@ export default function FeaturesPage() {
                     <thead className="bg-muted">
                       <tr>
                         <th className="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold">
-                          {language === "th" ? "ฟีเจอร์" : "Feature"}
+                          {t('features.comparison.feature')}
                         </th>
                         <th className="px-4 sm:px-6 py-3 sm:py-4 text-center text-xs sm:text-sm font-semibold bg-primary/5">
-                          {language === "th" ? "เรา" : "Our Platform"}
+                          {t('features.comparison.ourPlatform')}
                         </th>
                         <th className="px-4 sm:px-6 py-3 sm:py-4 text-center text-xs sm:text-sm font-semibold">
-                          {language === "th" ? "คู่แข่ง" : "Competitors"}
+                          {t('features.comparison.competitors')}
                         </th>
                       </tr>
                     </thead>
@@ -348,25 +328,22 @@ export default function FeaturesPage() {
           <div className="container">
             <div className="mx-auto max-w-3xl text-center">
               <h2 className="mb-4 text-2xl sm:text-3xl lg:text-4xl font-bold">
-                {language === "th" ? "พร้อมเริ่มต้นแล้วหรือยัง?" : "Ready to Get Started?"}
+                {t('features.cta.title')}
               </h2>
               <p className="mb-8 text-sm sm:text-base text-muted-foreground">
-                {language === "th"
-                  ? "ลองใช้ฟรีวันนี้ ไม่ต้องใช้บัตรเครดิต"
-                  : "Try it free today. No credit card required."
-                }
+                {t('features.cta.description')}
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Link href="/analysis">
                   <Button size="lg" className="w-full sm:w-auto">
                     <Sparkles className="mr-2 h-5 w-5" />
-                    {language === "th" ? "วิเคราะห์ผิวฟรี" : "Free Skin Analysis"}
+                    {t('features.cta.freeSkinAnalysis')}
                   </Button>
                 </Link>
                 <Link href="/contact">
                   <Button size="lg" variant="outline" className="w-full sm:w-auto">
                     <MessageSquare className="mr-2 h-5 w-5" />
-                    {language === "th" ? "ติดต่อขอข้อมูล" : "Contact Sales"}
+                    {t('features.cta.contactSales')}
                   </Button>
                 </Link>
               </div>

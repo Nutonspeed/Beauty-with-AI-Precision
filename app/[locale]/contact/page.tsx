@@ -20,10 +20,10 @@ import {
   Users,
   Sparkles
 } from "lucide-react"
-import { useLanguage } from "@/lib/i18n/language-context"
+import { useTranslations } from "next-intl"
 
 export default function ContactPage() {
-  const { t, language } = useLanguage()
+  const t = useTranslations()
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -64,15 +64,13 @@ export default function ContactPage() {
           <div className="mb-12 text-center">
             <Badge className="mb-4 bg-primary/10 text-primary" variant="secondary">
               <Sparkles className="mr-2 h-3 w-3" />
-              {language === "th" ? "ติดต่อเรา" : "Contact Us"}
+              {t('contact.hero.badge')}
             </Badge>
             <h1 className="mb-4 text-4xl font-bold tracking-tight md:text-5xl">
-              {language === "th" ? "พร้อมเริ่มต้นกับ AI367BAR?" : "Ready to Start with AI367BAR?"}
+              {t('contact.hero.title')}
             </h1>
             <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-              {language === "th" 
-                ? "ติดต่อทีมงานของเราเพื่อปรึกษาการใช้งานระบบ หรือสอบถามข้อมูลเพิ่มเติม"
-                : "Contact our team for consultation or more information about the system"}
+              {t('contact.hero.description')}
             </p>
           </div>
 
@@ -82,12 +80,10 @@ export default function ContactPage() {
               <Card className="border-2">
                 <CardHeader>
                   <CardTitle className="text-2xl">
-                    {language === "th" ? "ส่งข้อความถึงเรา" : "Send us a Message"}
+                    {t('contact.form.title')}
                   </CardTitle>
                   <CardDescription>
-                    {language === "th" 
-                      ? "กรอกข้อมูลด้านล่าง เราจะติดต่อกลับภายใน 24 ชั่วโมง"
-                      : "Fill in the form below and we'll get back to you within 24 hours"}
+                    {t('contact.form.description')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -96,12 +92,12 @@ export default function ContactPage() {
                       <div className="grid gap-4 sm:grid-cols-2">
                         <div className="space-y-2">
                           <Label htmlFor="name">
-                            {language === "th" ? "ชื่อ-นามสกุล" : "Full Name"} *
+                            {t('contact.form.fullName')} *
                           </Label>
                           <Input
                             id="name"
                             name="name"
-                            placeholder={language === "th" ? "คุณสมชาย ใจดี" : "John Doe"}
+                            placeholder={t('contact.form.namePlaceholder')}
                             value={formData.name}
                             onChange={handleChange}
                             required
@@ -109,7 +105,7 @@ export default function ContactPage() {
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="email">
-                            {language === "th" ? "อีเมล" : "Email"} *
+                            {t('contact.form.email')} *
                           </Label>
                           <Input
                             id="email"
@@ -126,7 +122,7 @@ export default function ContactPage() {
                       <div className="grid gap-4 sm:grid-cols-2">
                         <div className="space-y-2">
                           <Label htmlFor="phone">
-                            {language === "th" ? "เบอร์โทรศัพท์" : "Phone Number"}
+                            {t('contact.form.phone')}
                           </Label>
                           <Input
                             id="phone"
@@ -139,12 +135,12 @@ export default function ContactPage() {
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="clinicName">
-                            {language === "th" ? "ชื่อคลินิก/บริษัท" : "Clinic/Company Name"}
+                            {t('contact.form.clinicName')}
                           </Label>
                           <Input
                             id="clinicName"
                             name="clinicName"
-                            placeholder={language === "th" ? "คลินิกความงาม ABC" : "ABC Beauty Clinic"}
+                            placeholder={t('contact.form.clinicPlaceholder')}
                             value={formData.clinicName}
                             onChange={handleChange}
                           />
@@ -153,7 +149,7 @@ export default function ContactPage() {
 
                       <div className="space-y-2">
                         <Label htmlFor="interest">
-                          {language === "th" ? "สนใจแพ็กเกจ" : "Package Interest"}
+                          {t('contact.form.packageInterest')}
                         </Label>
                         <select
                           id="interest"
@@ -163,23 +159,21 @@ export default function ContactPage() {
                           onChange={(e) => setFormData({ ...formData, interest: e.target.value })}
                           className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                         >
-                          <option value="free">{language === "th" ? "Free Tier - ใช้งานฟรี" : "Free Tier"}</option>
-                          <option value="premium">{language === "th" ? "Premium - แพ็กเกจเต็มรูปแบบ" : "Premium Package"}</option>
-                          <option value="enterprise">{language === "th" ? "Enterprise - หลายคลินิก" : "Enterprise - Multi-Clinic"}</option>
-                          <option value="consultation">{language === "th" ? "ปรึกษาข้อมูลทั่วไป" : "General Consultation"}</option>
+                          <option value="free">{t('contact.form.packages.free')}</option>
+                          <option value="premium">{t('contact.form.packages.premium')}</option>
+                          <option value="enterprise">{t('contact.form.packages.enterprise')}</option>
+                          <option value="consultation">{t('contact.form.packages.consultation')}</option>
                         </select>
                       </div>
 
                       <div className="space-y-2">
                         <Label htmlFor="message">
-                          {language === "th" ? "ข้อความ" : "Message"} *
+                          {t('contact.form.message')} *
                         </Label>
                         <Textarea
                           id="message"
                           name="message"
-                          placeholder={language === "th" 
-                            ? "บอกเราเกี่ยวกับความต้องการของคุณ..."
-                            : "Tell us about your needs..."}
+                          placeholder={t('contact.form.messagePlaceholder')}
                           value={formData.message}
                           onChange={handleChange}
                           rows={5}
@@ -191,12 +185,12 @@ export default function ContactPage() {
                         {loading ? (
                           <>
                             <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                            {language === "th" ? "กำลังส่ง..." : "Sending..."}
+                            {t('contact.form.sending')}
                           </>
                         ) : (
                           <>
                             <Send className="mr-2 h-4 w-4" />
-                            {language === "th" ? "ส่งข้อความ" : "Send Message"}
+                            {t('contact.form.sendMessage')}
                           </>
                         )}
                       </Button>
@@ -207,15 +201,13 @@ export default function ContactPage() {
                         <CheckCircle2 className="h-8 w-8 text-green-500" />
                       </div>
                       <h3 className="mb-2 text-2xl font-bold">
-                        {language === "th" ? "ส่งข้อความสำเร็จ!" : "Message Sent Successfully!"}
+                        {t('contact.form.success.title')}
                       </h3>
                       <p className="mb-6 text-muted-foreground">
-                        {language === "th" 
-                          ? "ขอบคุณที่ติดต่อเรา ทีมงานจะติดต่อกลับภายใน 24 ชั่วโมง"
-                          : "Thank you for contacting us. Our team will get back to you within 24 hours"}
+                        {t('contact.form.success.description')}
                       </p>
                       <Button onClick={() => setSubmitted(false)} variant="outline">
-                        {language === "th" ? "ส่งข้อความอีกครั้ง" : "Send Another Message"}
+                        {t('contact.form.success.sendAnother')}
                       </Button>
                     </div>
                   )}
@@ -229,7 +221,7 @@ export default function ContactPage() {
               <Card>
                 <CardHeader>
                   <CardTitle>
-                    {language === "th" ? "ข้อมูลติดต่อ" : "Contact Information"}
+                    {t('contact.info.title')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -246,7 +238,7 @@ export default function ContactPage() {
                     <Phone className="mt-1 h-5 w-5 text-primary" />
                     <div>
                       <div className="font-semibold">
-                        {language === "th" ? "โทรศัพท์" : "Phone"}
+                        {t('contact.info.phone')}
                       </div>
                       <a href="tel:+66123456789" className="text-sm text-muted-foreground hover:text-primary">
                         +66 (0) 12-345-6789
@@ -257,12 +249,10 @@ export default function ContactPage() {
                     <MapPin className="mt-1 h-5 w-5 text-primary" />
                     <div>
                       <div className="font-semibold">
-                        {language === "th" ? "ที่อยู่" : "Address"}
+                        {t('contact.info.address')}
                       </div>
                       <p className="text-sm text-muted-foreground">
-                        {language === "th" 
-                          ? "123 ถนนสุขุมวิท แขวงคลองเตย เขตคลองเตย กรุงเทพฯ 10110"
-                          : "123 Sukhumvit Road, Klong Toey, Bangkok 10110"}
+                        {t('contact.info.addressText')}
                       </p>
                     </div>
                   </div>
@@ -270,12 +260,10 @@ export default function ContactPage() {
                     <Clock className="mt-1 h-5 w-5 text-primary" />
                     <div>
                       <div className="font-semibold">
-                        {language === "th" ? "เวลาทำการ" : "Business Hours"}
+                        {t('contact.info.businessHours')}
                       </div>
                       <p className="text-sm text-muted-foreground">
-                        {language === "th" 
-                          ? "จันทร์-ศุกร์: 9:00 - 18:00"
-                          : "Mon-Fri: 9:00 AM - 6:00 PM"}
+                        {t('contact.info.hoursText')}
                       </p>
                     </div>
                   </div>
@@ -287,32 +275,26 @@ export default function ContactPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Building2 className="h-5 w-5" />
-                    {language === "th" ? "ลูกค้าองค์กร" : "Enterprise Customers"}
+                    {t('contact.enterprise.title')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="flex items-start gap-2 text-sm">
                     <Users className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                     <span>
-                      {language === "th" 
-                        ? "มีส่วนลดพิเศษสำหรับคลินิกหลายสาขา"
-                        : "Special discount for multi-branch clinics"}
+                      {t('contact.enterprise.discount')}
                     </span>
                   </div>
                   <div className="flex items-start gap-2 text-sm">
                     <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                     <span>
-                      {language === "th" 
-                        ? "รองรับการปรับแต่งตามความต้องการ"
-                        : "Custom configuration support"}
+                      {t('contact.enterprise.customization')}
                     </span>
                   </div>
                   <div className="flex items-start gap-2 text-sm">
                     <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                     <span>
-                      {language === "th" 
-                        ? "ทีมซัพพอร์ตเฉพาะทาง 24/7"
-                        : "Dedicated 24/7 support team"}
+                      {t('contact.enterprise.support')}
                     </span>
                   </div>
                 </CardContent>

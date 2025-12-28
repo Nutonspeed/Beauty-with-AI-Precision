@@ -5,10 +5,12 @@ import { Footer } from "@/components/footer"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Shield, Lock, Eye, Database, UserCheck, FileText, AlertCircle, Clock } from "lucide-react"
-import { useLanguage } from "@/lib/i18n/language-context"
+import { useTranslations, useLocale } from "next-intl"
 
 export default function PrivacyPolicyPage() {
-  const { language } = useLanguage()
+  const t = useTranslations()
+  const locale = useLocale()
+  const language = locale as 'th' | 'en'
 
   const sections = [
     {

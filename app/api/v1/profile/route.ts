@@ -13,7 +13,11 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const { data: profile, error } = await supabase.from("users").select("*").eq("id", user.id).single()
+    const { data: profile, error } = await supabase
+      .from("users")
+      .select("id, email, full_name, role, clinic_id, created_at")
+      .eq("id", user.id)
+      .single()
 
     if (error) {
       return NextResponse.json({ error: "Profile not found" }, { status: 404 })

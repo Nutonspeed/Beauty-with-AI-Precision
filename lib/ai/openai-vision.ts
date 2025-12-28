@@ -4,15 +4,12 @@
  */
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { getGeminiApiKey } from '@/lib/config/ai';
 
 const GEMINI_MODEL_ID = 'gemini-2.0-flash-exp';
 
 function createGeminiModel() {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    throw new Error('GEMINI_API_KEY is not set. Please configure the Gemini API key before calling analyzeSkinWithAI.');
-  }
-
+  const apiKey = getGeminiApiKey();
   const genAI = new GoogleGenerativeAI(apiKey);
   return genAI.getGenerativeModel({
     model: GEMINI_MODEL_ID,

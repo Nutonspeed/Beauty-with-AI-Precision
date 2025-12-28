@@ -25,6 +25,19 @@ export default [
       'scripts/codemods/**',
       // Ignore embedded Python venv artifacts
       'ai-service/**/venv/**',
+      // Vercel and build outputs
+      '.vercel/**',
+      '.vercel/output/**',
+      '.output/**',
+      'out/**',
+      // Generated files
+      '.next/cache/**',
+      '.next/server/**',
+      // Temporary and cache
+      '.turbo/**',
+      '.cache/**',
+      'tmp/**',
+      'temp/**',
     ],
   },
   {

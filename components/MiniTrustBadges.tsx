@@ -1,7 +1,7 @@
 "use client";
 import React from 'react';
 import { motion } from 'framer-motion';
-import { useLanguage } from '@/lib/i18n/language-context';
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useLocalizePath } from '@/lib/i18n/locale-link';
 
@@ -13,7 +13,7 @@ const badges: BadgeDef[] = [
 ];
 
 export function MiniTrustBadges() {
-  const { t } = useLanguage();
+  const t = useTranslations();
   const router = useRouter();
   const lp = useLocalizePath();
   return (

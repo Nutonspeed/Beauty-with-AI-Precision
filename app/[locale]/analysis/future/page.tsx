@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ArrowLeft, Sparkles, Calendar, TrendingUp } from "lucide-react"
 import Link from "next/link"
-import { useLanguage } from "@/lib/i18n/language-context"
+import { useTranslations, useLocale } from "next-intl"
 
 import { LifestyleQuestionnaire } from "@/components/analysis/lifestyle-questionnaire"
 import { SkinFuturePrediction } from "@/components/analysis/skin-future-prediction"
@@ -16,8 +16,8 @@ import { SkinComparisonTimeline } from "@/components/analysis/skin-comparison-ti
 import { predictSkinFuture, type SkinAgePrediction, type LifestyleFactors } from "@/lib/ai/skin-age-predictor"
 
 export default function FuturePredictionPage() {
-  const { language } = useLanguage()
-  const locale = language as 'th' | 'en'
+  const t = useTranslations()
+  const locale = useLocale() as 'th' | 'en'
   
   const [step, setStep] = useState<'questionnaire' | 'prediction' | 'history'>('questionnaire')
   const [prediction, setPrediction] = useState<SkinAgePrediction | null>(null)
@@ -80,29 +80,6 @@ export default function FuturePredictionPage() {
     setStep('prediction')
   }
 
-  const t = {
-    th: {
-      title: "ทำนายสภาพผิวในอนาคต",
-      subtitle: "วิเคราะห์แนวโน้มและวางแผนการดูแลผิวของคุณ",
-      back: "กลับ",
-      tabs: {
-        questionnaire: "แบบสอบถาม",
-        prediction: "ทำนายอนาคต",
-        history: "ประวัติ"
-      }
-    },
-    en: {
-      title: "Future Skin Prediction",
-      subtitle: "Analyze trends and plan your skincare journey",
-      back: "Back",
-      tabs: {
-        questionnaire: "Questionnaire",
-        prediction: "Prediction",
-        history: "History"
-      }
-    }
-  }[locale]
-
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
@@ -112,7 +89,7 @@ export default function FuturePredictionPage() {
           {/* Back Button */}
           <Link href="/analysis" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6">
             <ArrowLeft className="h-4 w-4" />
-            {t.back}
+            {t('analysisFuture.back')}
           </Link>
 
           {/* Header */}
@@ -121,8 +98,8 @@ export default function FuturePredictionPage() {
               <Sparkles className="mr-2 h-3 w-3" />
               AI Prediction
             </Badge>
-            <h1 className="text-3xl font-bold mb-2">{t.title}</h1>
-            <p className="text-muted-foreground">{t.subtitle}</p>
+            <h1 className="text-3xl font-bold mb-2">{t('analysisFuture.title')}</h1>
+            <p className="text-muted-foreground">{t('analysisFuture.subtitle')}</p>
           </div>
 
           {/* Tabs */}
@@ -130,15 +107,15 @@ export default function FuturePredictionPage() {
             <TabsList className="grid w-full grid-cols-3 mb-6">
               <TabsTrigger value="questionnaire" className="flex items-center gap-2">
                 <Sparkles className="h-4 w-4" />
-                {t.tabs.questionnaire}
+                {t('analysisFuture.tabs.questionnaire')}
               </TabsTrigger>
               <TabsTrigger value="prediction" disabled={!prediction} className="flex items-center gap-2">
                 <TrendingUp className="h-4 w-4" />
-                {t.tabs.prediction}
+                {t('analysisFuture.tabs.prediction')}
               </TabsTrigger>
               <TabsTrigger value="history" className="flex items-center gap-2">
                 <Calendar className="h-4 w-4" />
-                {t.tabs.history}
+                {t('analysisFuture.tabs.history')}
               </TabsTrigger>
             </TabsList>
 
@@ -172,7 +149,7 @@ export default function FuturePredictionPage() {
               <CardContent className="pt-4">
                 <div className="text-3xl font-bold text-primary mb-1">1-5</div>
                 <div className="text-sm text-muted-foreground">
-                  {locale === 'th' ? 'ทำนายล่วงหน้า (ปี)' : 'Years Ahead'}
+                  {t('analysisFuture.features.yearsAhead')}
                 </div>
               </CardContent>
             </Card>
@@ -180,7 +157,7 @@ export default function FuturePredictionPage() {
               <CardContent className="pt-4">
                 <div className="text-3xl font-bold text-primary mb-1">7</div>
                 <div className="text-sm text-muted-foreground">
-                  {locale === 'th' ? 'ปัจจัยวิเคราะห์' : 'Lifestyle Factors'}
+                  {t('analysisFuture.features.lifestyleFactors')}
                 </div>
               </CardContent>
             </Card>
@@ -188,7 +165,7 @@ export default function FuturePredictionPage() {
               <CardContent className="pt-4">
                 <div className="text-3xl font-bold text-primary mb-1">95%</div>
                 <div className="text-sm text-muted-foreground">
-                  {locale === 'th' ? 'ความแม่นยำ' : 'Accuracy'}
+                  {t('analysisFuture.features.accuracy')}
                 </div>
               </CardContent>
             </Card>

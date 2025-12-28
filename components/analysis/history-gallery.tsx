@@ -86,7 +86,6 @@ export function AnalysisHistoryGallery() {
 
   const loadMore = () => {
     setPagination((prev) => ({ ...prev, offset: prev.offset + prev.limit }))
-    loadHistory()
   }
 
   if (authLoading || isLoading) {

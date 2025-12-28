@@ -4,13 +4,43 @@
  */
 
 import vision from '@google-cloud/vision';
-import path from 'path';
+import type { ImageAnnotatorClient } from '@google-cloud/vision';
+import { getGoogleCredentialsConfig } from '@/lib/config/ai';
 
 // Initialize Vision API client with credentials
-const credentialsPath = path.join(process.cwd(), 'google-credentials.json');
-const client = new vision.ImageAnnotatorClient({
-  keyFilename: credentialsPath,
-});
+// Support both file-based (dev) and JSON-based (production) credentials
+const getCredentials = () => {
+  const { googleCredentialsJson, googleApplicationCredentials } = getGoogleCredentialsConfig();
+
+  // For Vercel: use GOOGLE_CREDENTIALS_JSON environment variable
+  if (googleCredentialsJson) {
+    try {
+      return {
+        credentials: JSON.parse(googleCredentialsJson),
+      };
+    } catch (error) {
+      console.error('Failed to parse GOOGLE_CREDENTIALS_JSON:', error);
+      throw new Error('Invalid GOOGLE_CREDENTIALS_JSON format');
+    }
+  }
+
+  // For local dev: use GOOGLE_APPLICATION_CREDENTIALS file path
+  if (googleApplicationCredentials) {
+    return {
+      keyFilename: googleApplicationCredentials,
+    };
+  }
+
+  throw new Error('Missing Google Cloud credentials. Set either GOOGLE_CREDENTIALS_JSON or GOOGLE_APPLICATION_CREDENTIALS');
+};
+
+let client: ImageAnnotatorClient | null = null;
+
+function getVisionClient(): ImageAnnotatorClient {
+  if (client) return client;
+  client = new vision.ImageAnnotatorClient(getCredentials());
+  return client;
+}
 
 export interface VisionSkinAnalysis {
   skinType: 'oily' | 'dry' | 'combination' | 'normal' | 'sensitive';
@@ -54,9 +84,9 @@ export async function analyzeSkinWithVision(
 
     // Run multiple Vision API detections in parallel
     const [faceDetection, labelDetection, imageProperties] = await Promise.all([
-      client.faceDetection(buffer),
-      client.labelDetection(buffer),
-      client.imageProperties(buffer),
+      getVisionClient().faceDetection(buffer),
+      getVisionClient().labelDetection(buffer),
+      getVisionClient().imageProperties(buffer),
     ]);
 
     // Extract results

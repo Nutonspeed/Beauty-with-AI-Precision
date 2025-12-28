@@ -10,7 +10,7 @@
 -- Table: chat_rooms
 -- Purpose: Chat conversation rooms between customers and clinic staff
 CREATE TABLE IF NOT EXISTS chat_rooms (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid()::uuid,
     clinic_id UUID NOT NULL REFERENCES clinics(id) ON DELETE CASCADE,
     
     -- Participants
@@ -69,7 +69,7 @@ COMMENT ON COLUMN chat_rooms.assigned_staff_id IS 'Clinic staff member assigned 
 -- Table: chat_messages
 -- Purpose: Individual messages in chat rooms
 CREATE TABLE IF NOT EXISTS chat_messages (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid()::uuid,
     room_id UUID NOT NULL REFERENCES chat_rooms(id) ON DELETE CASCADE,
     
     -- Message sender
@@ -114,7 +114,7 @@ COMMENT ON COLUMN chat_messages.sender_type IS 'Type of sender: customer (beauty
 -- Table: chat_typing_indicators
 -- Purpose: Real-time typing indicators (short-lived records)
 CREATE TABLE IF NOT EXISTS chat_typing_indicators (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid()::uuid,
     room_id UUID NOT NULL REFERENCES chat_rooms(id) ON DELETE CASCADE,
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     
@@ -140,7 +140,7 @@ COMMENT ON TABLE chat_typing_indicators IS 'Real-time typing indicators for chat
 -- Table: chat_participants
 -- Purpose: Track all participants in a chat room (for group chats)
 CREATE TABLE IF NOT EXISTS chat_participants (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid()::uuid,
     room_id UUID NOT NULL REFERENCES chat_rooms(id) ON DELETE CASCADE,
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     
@@ -180,7 +180,7 @@ COMMENT ON TABLE chat_participants IS 'Participants in chat rooms with read stat
 -- Table: chat_file_uploads
 -- Purpose: Track file uploads in chat
 CREATE TABLE IF NOT EXISTS chat_file_uploads (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid()::uuid,
     room_id UUID NOT NULL REFERENCES chat_rooms(id) ON DELETE CASCADE,
     message_id UUID REFERENCES chat_messages(id) ON DELETE CASCADE,
     
@@ -232,7 +232,7 @@ COMMENT ON TABLE chat_file_uploads IS 'File attachments in chat messages';
 -- Table: chat_auto_replies
 -- Purpose: Automated reply templates for common questions
 CREATE TABLE IF NOT EXISTS chat_auto_replies (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid()::uuid,
     clinic_id UUID NOT NULL REFERENCES clinics(id) ON DELETE CASCADE,
     
     -- Trigger configuration

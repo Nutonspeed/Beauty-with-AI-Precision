@@ -5,6 +5,7 @@
  */
 
 import OpenAI from 'openai';
+import { getOpenAIApiKey } from '@/lib/config/ai';
 
 export interface ObjectionContext {
   customerProfile?: {
@@ -51,7 +52,7 @@ export class AIObjectionHandler {
 
   constructor() {
     this.openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY!,
+      apiKey: getOpenAIApiKey(),
     });
   }
 

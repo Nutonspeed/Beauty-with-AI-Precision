@@ -13,10 +13,12 @@ import { Badge } from "@/components/ui/badge"
 import { Upload, Sparkles, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { useState, useRef } from "react"
-import { useLanguage } from "@/lib/i18n/language-context"
+import { useTranslations, useLocale } from "next-intl"
 
 export default function ARSimulatorPage() {
-  const { language } = useLanguage()
+  const t = useTranslations()
+  const locale = useLocale()
+  const language = locale as 'th' | 'en'
   const [uploadedImage, setUploadedImage] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -40,22 +42,20 @@ export default function ARSimulatorPage() {
           {/* Back Button */}
           <Link href="/analysis" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6">
             <ArrowLeft className="h-4 w-4" />
-            {language === "th" ? "กลับไปวิเคราะห์ผิว" : "Back to Analysis"}
+            {t('arSimulator.backToAnalysis')}
           </Link>
 
           {/* Header */}
           <div className="text-center mb-8">
             <Badge className="mb-4 bg-primary/10 text-primary">
               <Sparkles className="mr-2 h-3 w-3" />
-              {language === "th" ? "AR Treatment Simulator" : "AR Treatment Simulator"}
+              {t('arSimulator.badge')}
             </Badge>
             <h1 className="text-3xl font-bold mb-4">
-              {language === "th" ? "จำลองผลลัพธ์การรักษา" : "Treatment Result Simulator"}
+              {t('arSimulator.title')}
             </h1>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              {language === "th" 
-                ? "อัพโหลดรูปภาพของคุณและดูผลลัพธ์การรักษาแบบ Real-time ด้วยเทคโนโลยี AR"
-                : "Upload your photo and see treatment results in real-time with AR technology"}
+              {t('arSimulator.description')}
             </p>
           </div>
 
@@ -64,7 +64,7 @@ export default function ARSimulatorPage() {
             <Card className="max-w-xl mx-auto">
               <CardHeader>
                 <CardTitle className="text-center">
-                  {language === "th" ? "อัพโหลดรูปภาพ" : "Upload Image"}
+                  {t('arSimulator.uploadImage')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -74,10 +74,10 @@ export default function ARSimulatorPage() {
                 >
                   <Upload className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
                   <p className="text-lg font-medium mb-2">
-                    {language === "th" ? "คลิกเพื่ออัพโหลด" : "Click to upload"}
+                    {t('arSimulator.clickToUpload')}
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    {language === "th" ? "รองรับ JPG, PNG (สูงสุด 10MB)" : "Supports JPG, PNG (max 10MB)"}
+                    {t('arSimulator.supports')}
                   </p>
                   <input
                     ref={fileInputRef}
@@ -90,13 +90,13 @@ export default function ARSimulatorPage() {
                 
                 <div className="mt-6 text-center">
                   <p className="text-sm text-muted-foreground mb-4">
-                    {language === "th" ? "หรือใช้รูปตัวอย่าง" : "Or use sample image"}
+                    {t('arSimulator.orUseSample')}
                   </p>
                   <Button 
                     variant="outline"
                     onClick={() => setUploadedImage("/images/samples/face-sample.jpg")}
                   >
-                    {language === "th" ? "ใช้รูปตัวอย่าง" : "Use Sample Image"}
+                    {t('arSimulator.useSampleImage')}
                   </Button>
                 </div>
               </CardContent>
@@ -125,7 +125,7 @@ onExport={(image) => {
                   variant="outline"
                   onClick={() => setUploadedImage(null)}
                 >
-                  {language === "th" ? "อัพโหลดรูปใหม่" : "Upload New Image"}
+                  {t('arSimulator.uploadNewImage')}
                 </Button>
               </div>
             </div>

@@ -116,7 +116,7 @@ export default function CustomerProgressPage({ params }: ProgressPageProps) {
       setError(null);
 
       // Fetch user's analysis history
-      const response = await fetch('/api/skin-analysis/history');
+      const response = await fetch('/api/analysis/history?limit=50&offset=0');
 
       if (!response.ok) {
         throw new Error('Failed to load analyses');
@@ -124,15 +124,21 @@ export default function CustomerProgressPage({ params }: ProgressPageProps) {
 
       const data = await response.json();
 
-      if (!data.success) {
+      if (data?.error) {
         throw new Error(data.error || 'Failed to load analyses');
       }
 
+      const items = Array.isArray(data?.data)
+        ? data.data
+        : Array.isArray(data?.analyses)
+          ? data.analyses
+          : [];
+
       // Transform API data to AnalysisSnapshot format
-      const snapshots: AnalysisSnapshot[] = (data.data || data.analyses || []).map(
+      const snapshots: AnalysisSnapshot[] = items.map(
         (item: any, index: number) => ({
           id: item.id,
-          date: new Date(item.createdAt || item.created_at),
+          date: new Date(item.createdAt || item.created_at || item.timestamp),
           analysis: buildHybridAnalysis(item, item.id),
           imageUrl: item.imageUrl || item.image_url,
           thumbnailUrl: item.thumbnailUrl || item.thumbnail_url,

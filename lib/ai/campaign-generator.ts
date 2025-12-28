@@ -6,6 +6,7 @@
 
 import OpenAI from 'openai';
 import { LeadData, AIScoreResult } from './lead-scorer';
+import { getOpenAIApiKey } from '@/lib/config/ai';
 
 export interface CampaignTemplate {
   id: string;
@@ -79,7 +80,7 @@ export class AIMarketingCampaignGenerator {
 
   constructor() {
     this.openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY!,
+      apiKey: getOpenAIApiKey(),
     });
   }
 

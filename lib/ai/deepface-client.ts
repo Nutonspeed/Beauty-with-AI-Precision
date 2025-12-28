@@ -1,10 +1,12 @@
 // DeepFace API Client for Beauty with AI Precision
 
+import { getDeepFaceApiUrl } from '@/lib/config/ai'
+
 class DeepFaceClient {
   private baseUrl: string
   private timeout: number
 
-  constructor(baseUrl: string = process.env.DEEPFACE_API_URL || 'http://localhost:8001', timeout: number = 30000) {
+  constructor(baseUrl: string, timeout: number = 30000) {
     this.baseUrl = baseUrl
     this.timeout = timeout
   }
@@ -139,5 +141,7 @@ interface FaceComparisonResult {
   similarity_metric: string
 }
 
-export const deepFaceClient = new DeepFaceClient()
+export function getDeepFaceClient(): DeepFaceClient {
+  return new DeepFaceClient(getDeepFaceApiUrl())
+}
 export type { FaceAnalysisResult, BatchAnalysisResult, FaceComparisonResult }

@@ -4,13 +4,15 @@
 
 -- Enable UUID extension if not already enabled
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+-- Alternative: use built-in gen_random_uuid()
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 -- =============================================================================
 -- Privacy Settings Table
 -- Stores user privacy preferences and consent tracking
 -- =============================================================================
 CREATE TABLE IF NOT EXISTS privacy_settings (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   
   -- Email Preferences (JSONB for flexibility)
@@ -58,7 +60,7 @@ CREATE INDEX IF NOT EXISTS idx_privacy_settings_user_id ON privacy_settings(user
 -- GDPR Right to Data Portability
 -- =============================================================================
 CREATE TABLE IF NOT EXISTS data_export_requests (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   
   -- Request Status
@@ -94,7 +96,7 @@ CREATE INDEX IF NOT EXISTS idx_data_export_requests_expires_at ON data_export_re
 -- GDPR Right to Erasure (Right to be Forgotten)
 -- =============================================================================
 CREATE TABLE IF NOT EXISTS account_deletion_requests (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   
   -- Request Status
@@ -133,7 +135,7 @@ CREATE INDEX IF NOT EXISTS idx_account_deletion_requests_scheduled_for ON accoun
 -- Audit trail for all privacy-related actions
 -- =============================================================================
 CREATE TABLE IF NOT EXISTS privacy_logs (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   
   -- Action Details

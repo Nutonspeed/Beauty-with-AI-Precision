@@ -2,15 +2,16 @@
 
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
-import { useLanguage } from "@/lib/i18n/language-context"
+import { useTranslations, useLocale } from "next-intl"
 import Link from "next/link"
 import { useEffect, useMemo, useState } from "react"
 import { usageTracker } from "@/lib/analytics/usage-tracker"
 import { getCaseStudies } from "@/lib/data/case-studies"
 
 export default function CaseStudiesPage() {
-  const { language } = useLanguage()
-  const isTH = language === "th"
+  const t = useTranslations()
+  const locale = useLocale()
+  const language = locale as 'th' | 'en'
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -27,12 +28,10 @@ export default function CaseStudiesPage() {
         <div className="mx-auto max-w-4xl">
           <div className="mb-10">
             <h1 className="mb-2 text-3xl font-bold tracking-tight md:text-4xl font-display">
-              {isTH ? "เคสศึกษา" : "Case Studies"}
+              {t('caseStudies.title')}
             </h1>
             <p className="text-muted-foreground">
-              {isTH
-                ? "ตัวอย่างเคส (จำลอง) เพื่ออธิบายศักยภาพของ ClinicIQ — ไม่ใช่คำแนะนำทางการแพทย์"
-                : "Simulated examples to illustrate ClinicIQ capabilities — not medical advice."}
+              {t('caseStudies.description')}
             </p>
           </div>
 
@@ -40,7 +39,7 @@ export default function CaseStudiesPage() {
             {items.map((item: { slug: string; title: string; summary: string; metrics: { label: string; value: string }[] }) => (
               <li key={item.slug} className="rounded-lg border border-border/60 p-5 hover:border-primary/50">
                 <div className="mb-2 text-xs uppercase tracking-wide text-muted-foreground">
-                  {isTH ? "เคสศึกษา" : "Case Study"}
+                  {t('caseStudies.caseStudyLabel')}
                 </div>
                 <h2 className="mb-2 text-xl font-semibold">
                   <Link href={`/case-studies/${item.slug}`} className="hover:underline">
@@ -57,7 +56,7 @@ export default function CaseStudiesPage() {
                   ))}
                 </div>
                 <Link href={`/case-studies/${item.slug}`} className="text-primary underline underline-offset-2">
-                  {isTH ? "อ่านรายละเอียด" : "Read more"}
+                  {t('caseStudies.readMore')}
                 </Link>
               </li>
             ))}
@@ -65,7 +64,7 @@ export default function CaseStudiesPage() {
 
           <div className="mt-10">
             <Link href="/" className="text-primary underline underline-offset-2">
-              {isTH ? "กลับสู่หน้าแรก" : "Back to home"}
+              {t('caseStudies.backToHome')}
             </Link>
           </div>
         </div>

@@ -1,6 +1,8 @@
 {
+  "brand": "AI Beauty Platform",
   "common": {
     "appName": "AI Beauty Clinic",
+    "appDescription": "AI-powered dermatology & aesthetic analysis platform",
     "loading": "Loading...",
     "error": "Error",
     "success": "Success",
@@ -18,18 +20,23 @@
     "back": "Back",
     "next": "Next",
     "previous": "Previous",
-    "selectLanguage": "Select Language"
-  },
-  "analysis": {
-    "title": "AI Skin Analysis",
-    "subtitle": "Upload a photo or take a selfie to get instant skin analysis",
-    "report": "Report",
-    "3dView": "3D View",
-    "simulator": "Simulator",
-    "backToHistory": "Back to History",
-    "notFound": "Analysis not found",
-    "loading": "Loading analysis...",
-    "error": "Failed to load analysis"
+    "selectLanguage": "Select Language",
+    "login": "Sign In",
+    "logout": "Sign Out",
+    "getStarted": "Get Started",
+    "profile": "Profile",
+    "language": "Language",
+    "notifications": "Notifications",
+    "switchClinic": "Switch Clinic",
+    "startAnalysis": "Start Analysis",
+    "viewFullSystem": "View Full Clinic System",
+    "status": {
+      "initializing": "INITIALIZING",
+      "scanningBaseline": "SCANNING FACIAL BASELINE"
+    },
+    "messages": {
+      "webglFallback": "WebGL not available – showing optimized static preview."
+    }
   },
   "nav": {
     "home": "Home",
@@ -41,7 +48,641 @@
     "admin": "Admin",
     "profile": "Profile",
     "logout": "Logout",
-    "login": "Login"
+    "login": "Login",
+    "analysis": "Analysis",
+    "arSimulator": "AR Simulator",
+    "customers": "Customers",
+    "analytics": "Analytics",
+    "leads": "Leads",
+    "proposals": "Proposals",
+    "tenants": "Clinic Management",
+    "users": "User Management",
+    "settings": "Settings",
+    "demo": "Demo",
+    "salesNarrative": "Sales Narrative",
+    "pricing": "Pricing",
+    "faq": "FAQ",
+    "caseStudies": "Case Studies"
+  },
+  "outcome": {
+    "toggleShow": "Show Projection",
+    "toggleHide": "Hide",
+    "captureBaseline": "Capture Baseline",
+    "baselineReady": "✓ Ready",
+    "intensity": "Intensity",
+    "before": "Before",
+    "afterProjected": "After (Projected)",
+    "footer": "Simulated outcome",
+    "needBaseline": "Capture a baseline image first",
+    "modes": {
+      "clarity": "Clarity",
+      "firming": "Firming",
+      "hydration": "Hydration"
+    }
+  },
+  "timeline": {
+    "capture": "+ Capture",
+    "stagePrefix": "Stage",
+    "atTime": "at",
+    "lowPerfTooltip": "Adaptive quality",
+    "gallery": "Gallery",
+    "title": "Session Timeline",
+    "close": "Close",
+    "empty": "No snapshots yet",
+    "persona": "Persona",
+    "adaptiveReduced": "Adaptive: reduced quality",
+    "adaptiveFull": "Adaptive: full quality"
+  },
+  "trust": {
+    "metrics": {
+      "clarity": "Clarity",
+      "hydration": "Hydration",
+      "risk": "Risk"
+    },
+    "microLines": [
+      "ISO-certified analysis pipeline",
+      "Ethical AI guidelines respected",
+      "Data encrypted in transit and at rest"
+    ]
+  },
+  "privacyPage": {
+    "badge": "Privacy Policy",
+    "title": "Privacy Policy",
+    "lastUpdated": "Last Updated",
+    "effectiveDate": "Effective Date"
+  },
+  "termsPage": {
+    "badge": "Terms of Service",
+    "title": "Terms of Service",
+    "lastUpdated": "Last Updated",
+    "effectiveDate": "Effective Date"
+  },
+  "faqPage": {
+    "badge": "FAQ",
+    "title": "Have Questions?",
+    "titleHighlight": "We Have Answers",
+    "description": "Find answers to frequently asked questions about AI367BAR",
+    "searchPlaceholder": "Search questions...",
+    "foundQuestions": "Found {{count}} questions",
+    "stillHaveQuestions": "Still Have Questions?",
+    "stillHaveQuestionsDesc": "Contact our team for more detailed answers",
+    "contactUs": "Contact Us",
+    "viewDemo": "View Demo",
+    "helpfulLinks": "Helpful Links",
+    "gettingStarted": "Getting Started",
+    "gettingStartedDesc": "Try free skin analysis",
+    "startNow": "Start Now",
+    "pricingTitle": "Pricing",
+    "pricingDesc": "View pricing and features",
+    "viewPricing": "View Pricing",
+    "aboutUsTitle": "About Us",
+    "aboutUsDesc": "Meet our team and technology",
+    "learnMore": "Learn More",
+    "categories": {
+      "aboutSystem": "About System",
+      "aiSkinAnalysis": "AI Skin Analysis",
+      "securityPrivacy": "Security & Privacy",
+      "pricingPackages": "Pricing & Packages",
+      "usage": "Usage",
+      "support": "Support"
+    }
+  },
+  "salesNarrativePage": {
+    "badge": "Sales Storytelling Tools",
+    "title": "Craft",
+    "titleHighlight": "That Sells",
+    "description": "Use AI and proven templates to create compelling sales stories that connect with customers",
+    "tabs": {
+      "templates": "Templates",
+      "builder": "Builder",
+      "analytics": "Analytics"
+    },
+    "chooseTemplate": "Choose Template",
+    "customizeGenerate": "Customize & Generate",
+    "customerName": "Customer Name",
+    "customerNamePlaceholder": "e.g. Sarah",
+    "treatmentType": "Treatment Type",
+    "treatmentTypePlaceholder": "e.g. Botox",
+    "mainConcern": "Main Concern",
+    "mainConcernPlaceholder": "e.g. wrinkles",
+    "generating": "Generating...",
+    "generateNarrative": "Generate Narrative",
+    "generatedNarrative": "Generated Narrative",
+    "copy": "Copy",
+    "save": "Save",
+    "copied": "Copied!"
+  },
+  "mySchedule": {
+    "title": "My Schedule",
+    "today": "Today",
+    "todayAppointments": "Today's Appointments",
+    "completed": "Completed",
+    "pending": "Pending",
+    "scheduleTitle": "Appointment Schedule",
+    "done": "Done"
+  },
+  "analysisFuture": {
+    "title": "Future Skin Prediction",
+    "subtitle": "Analyze trends and plan your skincare journey",
+    "back": "Back",
+    "badge": "AI Prediction",
+    "tabs": {
+      "questionnaire": "Questionnaire",
+      "prediction": "Prediction",
+      "history": "History"
+    },
+    "features": {
+      "yearsAhead": "Years Ahead",
+      "lifestyleFactors": "Lifestyle Factors",
+      "accuracy": "Accuracy"
+    }
+  },
+  "compliance": {
+    "title": "Privacy & Compliance",
+    "description": "Overview of patient data privacy, security measures, and AI model validation.",
+    "dataPrivacy": {
+      "title": "Data Privacy (PDPA/GDPR)",
+      "item1": "Purpose-limited data collection and use with explicit consent.",
+      "item2": "Encryption in transit and at rest.",
+      "item3": "Role-based access control and audit logging."
+    },
+    "modelValidation": {
+      "title": "Model Validation",
+      "description": "We publish internal model evaluation metrics (e.g., sensitivity, specificity, overall accuracy). Results may vary based on real‑world usage context.",
+      "metricsLabel": "Sample model metrics (simulated)",
+      "sensitivity": "Sensitivity",
+      "specificity": "Specificity",
+      "accuracy": "Overall accuracy",
+      "disclaimer": "Numbers are simulated for communication purposes, not clinical test results; real‑world performance may vary."
+    },
+    "medicalDisclaimer": {
+      "title": "Medical Disclaimer",
+      "description": "This system supports professional decision‑making and is not a substitute for diagnosis or treatment by licensed clinicians."
+    },
+    "contact": {
+      "title": "Contact",
+      "description": "For detailed security and compliance documentation, contact our team."
+    }
+  },
+  "aiChat": {
+    "badge": "AI Advisor",
+    "title": "Business AI Advisor",
+    "description": "Ask questions about business, marketing, or get AI recommendations",
+    "initialMessage": "Hello! I'm ClinicIQ AI Advisor, ready to help you with clinic management, data analysis, and business consulting! 🏥",
+    "aiResponse": "Thank you for your question! Here's my initial analysis:\n\n📊 Based on your clinic data:\n- Average monthly revenue: ฿450,000\n- Popular treatments: Botox (35%), Filler (28%)\n- Return rate: 72%\n\nRecommendation: Consider adding promotions for new customers and a loyalty program",
+    "suggestions": {
+      "sales": "Analyze this month's sales",
+      "customers": "Suggest ways to get new customers",
+      "treatments": "Summarize popular treatments",
+      "staff": "Analyze staff performance"
+    },
+    "placeholder": "Type your question..."
+  },
+  "arSimulator": {
+    "backToAnalysis": "Back to Analysis",
+    "badge": "AR Treatment Simulator",
+    "title": "Treatment Result Simulator",
+    "description": "Upload your photo and see treatment results in real-time with AR technology",
+    "uploadImage": "Upload Image",
+    "clickToUpload": "Click to upload",
+    "supports": "Supports JPG, PNG (max 10MB)",
+    "orUseSample": "Or use sample image",
+    "useSampleImage": "Use Sample Image",
+    "uploadNewImage": "Upload New Image"
+  },
+  "branches": {
+    "title": "Branch Management",
+    "total": "Total",
+    "totalBranches": "branches",
+    "addBranch": "Add Branch",
+    "active": "Active",
+    "closed": "Closed",
+    "staffMembers": "staff members",
+    "edit": "Edit",
+    "details": "Details"
+  },
+  "pdpa": {
+    "hero": {
+      "badge": "Personal Data Protection Act B.E. 2562 (2019)",
+      "title": "Personal Data Protection Policy",
+      "subtitle": "PDPA",
+      "description": "We are committed to protecting your rights under the Personal Data Protection Act B.E. 2562 (2019). You have the right to control your personal data."
+    },
+    "rights": {
+      "title": "Your Rights Under PDPA",
+      "subtitle": "You have 8 fundamental rights to control your personal data",
+      "access": {
+        "title": "Right to Access",
+        "desc": "You have the right to access your personal data that we collect and use."
+      },
+      "rectification": {
+        "title": "Right to Rectification",
+        "desc": "You can request correction of inaccurate, incomplete, or misleading data."
+      },
+      "erasure": {
+        "title": "Right to Erasure",
+        "desc": "You can request deletion or destruction of your personal data, or anonymization."
+      },
+      "restriction": {
+        "title": "Right to Restriction",
+        "desc": "You can request temporary suspension of personal data use."
+      },
+      "portability": {
+        "title": "Right to Data Portability",
+        "desc": "You can request your data in a commonly used format and transfer it to another controller."
+      },
+      "object": {
+        "title": "Right to Object",
+        "desc": "You can object to the collection, use, or disclosure of your personal data."
+      },
+      "withdraw": {
+        "title": "Right to Withdraw Consent",
+        "desc": "You can withdraw consent for data collection, use, or disclosure at any time."
+      },
+      "complaint": {
+        "title": "Right to Complaint",
+        "desc": "You can file a complaint with the Personal Data Protection Committee if you believe data handling is unlawful."
+      }
+    },
+    "exercise": {
+      "title": "How to Exercise Your Rights",
+      "subtitle": "Follow these simple steps to exercise your rights",
+      "step1": {
+        "title": "Contact Us",
+        "desc": "Send request via email, phone, or online form"
+      },
+      "step2": {
+        "title": "Verify Identity",
+        "desc": "Provide ID verification for security"
+      },
+      "step3": {
+        "title": "Wait for Processing",
+        "desc": "We will process within 30 days"
+      },
+      "step4": {
+        "title": "Receive Result",
+        "desc": "Receive notification via email"
+      }
+    },
+    "contact": {
+      "email": "Email",
+      "phone": "Phone",
+      "office": "Office Address",
+      "emailResponse": "Response within 24 hours",
+      "phoneHours": "Mon-Fri 9:00-18:00",
+      "officeAddress": "123 Sukhumvit Road, Khlong Toei, Bangkok 10110"
+    },
+    "dpo": {
+      "title": "Data Protection Officer",
+      "description": "If you have questions or need assistance regarding personal data protection, please contact our Data Protection Officer.",
+      "name": "Name:",
+      "nameValue": "Mr. Somchai Jaidee",
+      "email": "Email:",
+      "phone": "Phone:",
+      "contactDpo": "Contact DPO",
+      "privacyPolicy": "Privacy Policy"
+    },
+    "authority": {
+      "title": "Regulatory Authority",
+      "description": "Personal Data Protection Committee"
+    }
+  },
+  "caseStudies": {
+    "title": "Case Studies",
+    "description": "Simulated examples to illustrate ClinicIQ capabilities — not medical advice.",
+    "caseStudyLabel": "Case Study",
+    "readMore": "Read more",
+    "backToHome": "Back to home",
+    "notFound": "Case study not found",
+    "backToCaseStudies": "Back to case studies"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions (FAQ)",
+    "questions": {
+      "accuracy": {
+        "q": "How accurate is the AI skin analysis?",
+        "a": "The model has been tested with diverse samples and is continuously improved. It undergoes clinical validation."
+      },
+      "privacy": {
+        "q": "How are image data stored?",
+        "a": "Encrypted during transmission, with the option not to permanently save images, and compliant with PDPA/GDPR."
+      },
+      "device": {
+        "q": "Do I need any special equipment?",
+        "a": "Use standard camera equipment with adequate resolution. Supports both web and mobile."
+      }
+    }
+  },
+  "contact": {
+    "hero": {
+      "badge": "Contact Us",
+      "title": "Ready to Start with AI367BAR?",
+      "description": "Contact our team for consultation or more information about the system"
+    },
+    "form": {
+      "title": "Send us a Message",
+      "description": "Fill in the form below and we'll get back to you within 24 hours",
+      "fullName": "Full Name",
+      "email": "Email",
+      "phone": "Phone Number",
+      "clinicName": "Clinic/Company Name",
+      "packageInterest": "Package Interest",
+      "message": "Message",
+      "namePlaceholder": "John Doe",
+      "clinicPlaceholder": "ABC Beauty Clinic",
+      "messagePlaceholder": "Tell us about your needs...",
+      "sending": "Sending...",
+      "sendMessage": "Send Message",
+      "packages": {
+        "free": "Free Tier",
+        "premium": "Premium Package",
+        "enterprise": "Enterprise - Multi-Clinic",
+        "consultation": "General Consultation"
+      },
+      "success": {
+        "title": "Message Sent Successfully!",
+        "description": "Thank you for contacting us. Our team will get back to you within 24 hours",
+        "sendAnother": "Send Another Message"
+      }
+    },
+    "info": {
+      "title": "Contact Information",
+      "phone": "Phone",
+      "address": "Address",
+      "addressText": "123 Sukhumvit Road, Klong Toey, Bangkok 10110",
+      "businessHours": "Business Hours",
+      "hoursText": "Mon-Fri: 9:00 AM - 6:00 PM"
+    },
+    "enterprise": {
+      "title": "Enterprise Customers",
+      "discount": "Special discount for multi-branch clinics",
+      "customization": "Custom configuration support",
+      "support": "Dedicated 24/7 support team"
+    }
+  },
+  "about": {
+    "hero": {
+      "badge": "About Us",
+      "title": "AI Technology Leader",
+      "subtitle": "for Aesthetic Clinics",
+      "description": "AI367BAR is a B2B2C platform combining advanced AI technology, medical-grade skin analysis, and comprehensive clinic management systems to help aesthetic clinic businesses grow sustainably.",
+      "tryFree": "Try for Free",
+      "contactUs": "Contact Us"
+    },
+    "vision": {
+      "title": "Vision",
+      "description": "To be the leading AI platform in Asia for skin analysis and aesthetic clinic management, making world-class technology accessible and affordable for businesses."
+    },
+    "mission": {
+      "title": "Mission",
+      "description": "Develop accurate, secure, and accessible AI technology to elevate aesthetic clinic service standards and create the best customer experience."
+    },
+    "coreValues": {
+      "title": "Core Values",
+      "subtitle": "Principles that drive our product and service development",
+      "innovation": {
+        "title": "AI Innovation",
+        "description": "Developing cutting-edge AI technology for accurate skin analysis"
+      },
+      "security": {
+        "title": "Security",
+        "description": "Protecting personal data according to PDPA standards"
+      },
+      "growth": {
+        "title": "Growth",
+        "description": "Helping clinic businesses grow with modern technology"
+      },
+      "quality": {
+        "title": "Quality",
+        "description": "Medical-grade standards comparable to VISIA"
+      }
+    },
+    "techStack": {
+      "title": "Technology Stack",
+      "subtitle": "Advanced AI and technologies powering our system",
+      "mediapipe": {
+        "description": "Accurate face detection AI with 468 landmarks"
+      },
+      "tensorflow": {
+        "description": "Browser-based machine learning for skin analysis"
+      },
+      "ar": {
+        "description": "AR visualization of treatment results before decision"
+      },
+      "visia": {
+        "description": "8 metrics measured by VISIA standards"
+      }
+    },
+    "milestones": {
+      "title": "Growth Milestones",
+      "subtitle": "Key steps in product development",
+      "q1_2024": {
+        "title": "Company Founded",
+        "description": "Started developing AI system for aesthetic clinics"
+      },
+      "q2_2024": {
+        "title": "AI Model Testing",
+        "description": "Tested AI accuracy with 10,000+ real images"
+      },
+      "q3_2024": {
+        "title": "Beta Launch",
+        "description": "Launched beta testing with pilot clinics"
+      },
+      "q1_2025": {
+        "title": "Official Launch",
+        "description": "Official launch with Free Tier availability"
+      }
+    },
+    "stats": {
+      "images": "Analyzed Images",
+      "accuracy": "Accuracy Rate",
+      "time": "Analysis Time",
+      "metrics": "Skin Metrics"
+    },
+    "cta": {
+      "title": "Ready to Get Started?",
+      "description": "Try our AI skin analysis for free or contact us for more information",
+      "tryFree": "Try for Free",
+      "contactUs": "Contact Us"
+    }
+  },
+  "features": {
+    "hero": {
+      "badge": "Complete Feature Set",
+      "title": "Powerful Features",
+      "subtitle": "For Modern Beauty Clinics",
+      "description": "The most advanced AI-powered skin analysis system with comprehensive features for beauty clinic management",
+      "tryFree": "Try Free",
+      "viewPricing": "View Pricing"
+    },
+    "main": {
+      "title": "4 Core Features",
+      "subtitle": "Leading technology that sets you apart from competitors",
+      "aiAnalysis": {
+        "title": "8-Point AI Skin Analysis",
+        "desc": "Analyze 8 skin concerns with VISIA-grade AI accuracy: wrinkles, dark spots, pores, acne, moisture, elasticity, texture, and skin tone",
+        "feature1": "✓ 95%+ accuracy comparable to VISIA",
+        "feature2": "✓ Analysis completed in 3 seconds",
+        "feature3": "✓ Supports 468 face landmarks",
+        "feature4": "✓ Score each point 0-100"
+      },
+      "arVisualization": {
+        "title": "AR Visualization & 3D Face Model",
+        "desc": "Preview treatment results in real-time with AR and 3D Face Modeling. See Before/After visualization before committing",
+        "feature1": "✓ Real-time AR preview",
+        "feature2": "✓ Detailed 3D face model",
+        "feature3": "✓ Before/After comparison",
+        "feature4": "✓ Instant sharing"
+      },
+      "multiClinic": {
+        "title": "Multi-Clinic Management",
+        "desc": "Manage multiple clinics in one place. Track customer results, manage teams, and analyze sales with real-time dashboards",
+        "feature1": "✓ Unlimited clinic management",
+        "feature2": "✓ Role-based access control",
+        "feature3": "✓ Real-time analytics",
+        "feature4": "✓ Data sync across branches"
+      },
+      "security": {
+        "title": "PDPA & GDPR Compliant",
+        "desc": "Industry-standard security with SSL/TLS 256-bit encryption. Fully compliant with Thailand's PDPA and GDPR regulations",
+        "feature1": "✓ SSL/TLS 256-bit encryption",
+        "feature2": "✓ PDPA certified",
+        "feature3": "✓ Daily automated backups",
+        "feature4": "✓ Access control & audit logs"
+      }
+    },
+    "additional": {
+      "title": "Additional Features",
+      "subtitle": "More capabilities to enhance your workflow efficiency",
+      "ultraFast": {
+        "title": "Ultra-fast 3-second Processing",
+        "desc": "AI processes and analyzes images in just 3 seconds"
+      },
+      "customerDb": {
+        "title": "Customer Database",
+        "desc": "Store customer history as timeline with comparison"
+      },
+      "salesAnalytics": {
+        "title": "Sales Analytics Dashboard",
+        "desc": "Analyze sales and conversion rates in real-time"
+      },
+      "booking": {
+        "title": "Booking & Appointment",
+        "desc": "Online booking system with automated notifications"
+      },
+      "recommendations": {
+        "title": "Treatment Recommendations",
+        "desc": "AI-powered treatment recommendations based on analysis"
+      },
+      "gallery": {
+        "title": "Before/After Gallery",
+        "desc": "Interactive before/after customer result gallery"
+      },
+      "technology": {
+        "title": "MediaPipe + TensorFlow.js",
+        "desc": "Powered by Google's latest AI technology"
+      },
+      "landmarks": {
+        "title": "468 Face Landmarks",
+        "desc": "Analyze face with 468 high-precision landmarks"
+      }
+    },
+    "comparison": {
+      "title": "Competitor Comparison",
+      "subtitle": "See how we outperform the competition",
+      "feature": "Feature",
+      "ourPlatform": "Our Platform",
+      "competitors": "Competitors",
+      "accuracy": "Accuracy",
+      "speed": "Speed",
+      "analysisPoints": "Analysis Points",
+      "arSimulator": "AR Simulator",
+      "multiClinic": "Multi-Clinic",
+      "pdpaCompliant": "PDPA Compliant",
+      "price": "Price"
+    },
+    "cta": {
+      "title": "Ready to Get Started?",
+      "description": "Try it free today. No credit card required.",
+      "freeSkinAnalysis": "Free Skin Analysis",
+      "contactSales": "Contact Sales"
+    }
+  },
+  "pricing": {
+    "hero": {
+      "badge": "Pricing Plans",
+      "title": "Choose the Plan",
+      "subtitle": "That Fits Your Business",
+      "description": "Start free and upgrade when you're ready. No hidden fees.",
+      "freeTrial": "Free trial without credit card",
+      "cancelAnytime": "Cancel anytime"
+    },
+    "free": {
+      "badge": "Get Started",
+      "description": "Perfect for trying out AI Skin Analysis",
+      "period": "Forever",
+      "cta": "Start Free Analysis",
+      "excludedFeatures": {
+        "noHistory": "No History Saved",
+        "noAR": "No AR Simulator",
+        "noRecommendations": "No Personalized Recommendations"
+      }
+    },
+    "premium": {
+      "badge": "Most Popular",
+      "description": "Perfect for small to medium clinics with full features",
+      "period": "per month",
+      "cta": "Start 14-Day Free Trial"
+    },
+    "enterprise": {
+      "badge": "Multi-Branch",
+      "description": "For multi-branch clinics with customization and dedicated support",
+      "period": "Custom Price",
+      "cta": "Start 30-Day Free Trial"
+    },
+    "limits": {
+      "unlimited": "Unlimited",
+      "users": "Users",
+      "storage": "Storage",
+      "analyses": "Analyses",
+      "perMonth": "mo"
+    },
+    "trial": {
+      "freeTrial": "{{days}}-day free trial"
+    },
+    "comparison": {
+      "title": "Feature Comparison",
+      "description": "See all features available in each package",
+      "features": "Features",
+      "aiAnalysis": "AI Skin Analysis",
+      "visiaMetrics": "8 VISIA Metrics",
+      "saveHistory": "Save History",
+      "arSimulator": "AR Simulator",
+      "dashboard": "Dashboard & Analytics",
+      "multiBranch": "Multi-Branch",
+      "support247": "Support 24/7"
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "q1": {
+        "question": "What are the limitations of Free Tier?",
+        "answer": "Free Tier allows unlimited skin analysis but doesn't save history, include AR Simulator, or personal features"
+      },
+      "q2": {
+        "question": "Can I cancel anytime?",
+        "answer": "Yes, you can cancel anytime without penalty and continue using until the end of billing period"
+      },
+      "q3": {
+        "question": "Who is Enterprise Package for?",
+        "answer": "Perfect for multi-branch clinics, those needing custom branding, or dedicated support"
+      }
+    },
+    "cta": {
+      "title": "Ready to Get Started?",
+      "description": "Start free today, no credit card required",
+      "startFree": "Start Free Analysis",
+      "contactSales": "Contact Sales"
+    }
   },
   "home": {
     "hero": {
@@ -50,6 +691,15 @@
       "cta": "Get Started",
       "learnMore": "Learn More"
     },
+    "heroTitle": "AI for Clinics that Actually Converts",
+    "heroSubtitle": "From analysis to recommendations to revenue",
+    "heroDescription": "Evidence‑based AI skin analysis connected to your sales workflow — improve conversion and customer trust with medical‑grade insights and AR visualization.",
+    "startFreeAnalysis": "Start Free Analysis",
+    "watchDemo": "See Interactive Demo",
+    "noCreditCard": "No credit card required",
+    "freeTierAvailable": "Free tier available",
+    "whyChooseTitle": "Why Choose Our Platform",
+    "whyChooseSubtitle": "Professional-grade tools designed specifically for beauty clinics and dermatologists",
     "features": {
       "title": "Our Features",
       "ar": {
@@ -63,8 +713,210 @@
       "booking": {
         "title": "Online Booking",
         "description": "Book appointments easily with our smart scheduling system"
+      },
+      "aiPowered": {
+        "title": "AI-Powered Analysis",
+        "description": "8-point comprehensive skin analysis with 95-99% medical-grade accuracy"
+      },
+      "arVisualization": {
+        "title": "AR Visualization",
+        "description": "Real-time AR preview of treatment results before actual procedures"
+      },
+      "pdpaCompliant": {
+        "title": "PDPA Compliant",
+        "description": "Secure, encrypted data management following Thai personal data protection laws"
+      },
+      "visiaStyle": {
+        "title": "VISIA-Style Dashboard",
+        "description": "Professional reporting comparable to million-dollar VISIA equipment"
+      },
+      "fastAccurate": {
+        "title": "Fast & Accurate",
+        "description": "Complete analysis in 3-5 seconds with personalized recommendations"
+      },
+      "multiClinic": {
+        "title": "Multi-Clinic Support",
+        "description": "Multi-branch support with integrated CRM and appointment system"
+      }
+    },
+    "howItWorks": {
+      "title": "How It Works",
+      "subtitle": "Simple 3-step process to get professional skin analysis",
+      "step1": {
+        "title": "Upload Photo",
+        "description": "Capture or upload facial photo\nSupports all devices"
+      },
+      "step2": {
+        "title": "AI Analysis",
+        "description": "8-point AI skin analysis\nCompletes in 3-5 seconds"
+      },
+      "step3": {
+        "title": "Get Results",
+        "description": "Receive detailed report and recommendations\nwith AR Visualization"
+      }
+    },
+    "cta": {
+      "title": "Ready to Transform Your Clinic?",
+      "description": "Start today with no credit card required",
+      "startFreeAnalysis": "Start Free Analysis",
+      "contactSales": "Contact Sales"
+    },
+    "pricing": {
+      "title": "Simple Pricing",
+      "subtitle": "Choose the plan that fits your clinic needs",
+      "freeTier": {
+        "badge": "Free Tier",
+        "title": "Free Analysis",
+        "description": "Try for free, no registration required",
+        "price": "฿0",
+        "period": "per analysis",
+        "features": [
+          "85-90% accuracy",
+          "Basic 8-point analysis",
+          "Top 3 concerns only",
+          "Generic recommendations"
+        ],
+        "cta": "Try Free"
+      },
+      "premium": {
+        "badge": "Popular",
+        "title": "Medical-Grade",
+        "description": "Unlimited analysis with AR simulation and CRM",
+        "price": "฿1,500",
+        "period": "month",
+        "features": [
+          "95-99% medical-grade accuracy",
+          "Complete comprehensive analysis",
+          "HITL validation by experts",
+          "Personalized treatment plans",
+          "AR visualization",
+          "CRM & booking system"
+        ],
+        "cta": "Contact Sales"
+      }
+    },
+    "roi": {
+      "title": "Assess Added Value in 10 Seconds",
+      "description": "Enter your clinic numbers to see estimated AI impact"
+    }
+  },
+  "caseStudy": {
+    "title": "Reduced Average Queue Time by 37% in 6 Weeks",
+    "description": "Clinic A, Bangkok — Using automated skin analysis and new workflow"
+  },
+  "demoCta": {
+    "title": "Try Interactive Demo in 1 Minute",
+    "description": "Upload an image or use samples to see the actual system before talking further",
+    "button": "View Interactive Demo"
+  },
+  "caseStudyTeaser": {
+    "title": "View Case Example",
+    "description": "Real results from clinics using our system",
+    "button": "Open Case Study"
+  },
+  "footer": {
+    "description": "AI platform for aesthetic clinics to enhance skin analysis and customer management",
+    "product": "Product",
+    "tryDemo": "Try Demo",
+    "company": "Company",
+    "careers": "Careers",
+    "legal": "Legal",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "compliance": "Compliance",
+    "pdpa": "PDPA",
+    "copyright": "© 2025 AI Beauty Platform. All rights reserved"
+  },
+  "badges": {
+    "iso": {
+      "label": "ISO 13485",
+      "tooltip": "Medical device quality management"
+    },
+    "ethics": {
+      "label": "AI Ethics",
+      "tooltip": "Meets AI ethics criteria"
+    },
+    "secure": {
+      "label": "Secure Data",
+      "tooltip": "Encrypted and segmented data"
+    }
+  },
+  "clinic": {
+    "steps": [
+      {
+        "eyebrow": "STEP 01",
+        "title": "Precision AI Halo",
+        "body": "HALO renders real-time skin analysis with a volumetric scan beam to reveal subtle patterns without visual clutter."
+      },
+      {
+        "eyebrow": "STEP 02",
+        "title": "Volumetric Scan",
+        "body": "A paced vertical scan communicates genuine data capture, enhancing perceived credibility for premium clinical experiences."
+      },
+      {
+        "eyebrow": "STEP 03",
+        "title": "Adaptive Protocol",
+        "body": "AI-driven treatment protocol adapts live; user sliders for sensitivity/intensity instantly reflect via HALO feedback."
+      },
+      {
+        "eyebrow": "STEP 04",
+        "title": "Outcome Forecast",
+        "body": "Forecast 30 / 60 / 90 day outcomes with confidence levels and percentile vs reference cohorts."
+      }
+    ]
+  },
+  "perf": {
+    "fps": "FPS",
+    "frame": "FRAME",
+    "mem": "MEM",
+    "statusAdaptive": "ADAPTIVE QUALITY",
+    "statusStable": "STABLE"
+  },
+  "persona": {
+    "title": "PERSONALIZE",
+    "tone": "Skin Tone",
+    "sensitivity": "Sensitivity",
+    "goal": "Goal",
+    "options": {
+      "tone": {
+        "cool": "Cool",
+        "neutral": "Neutral",
+        "warm": "Warm"
+      },
+      "sensitivity": {
+        "low": "Low",
+        "medium": "Medium",
+        "high": "High"
+      },
+      "goal": {
+        "rejuvenate": "Rejuvenate",
+        "firming": "Firming",
+        "clarity": "Clarity"
       }
     }
+  },
+  "consent": {
+    "title": "ANALYTICS CONSENT",
+    "description": "We collect aggregate interaction metrics only (no photos / PII). Allow logging?",
+    "allow": "ALLOW",
+    "decline": "DECLINE"
+  },
+  "roles": {
+    "customer": "Customer",
+    "clinic_owner": "Clinic Owner",
+    "sales_staff": "Sales Staff",
+    "super_admin": "Super Admin"
+  },
+  "analysis": {
+    "title": "AI Skin Analysis",
+    "subtitle": "Upload a photo or take a selfie to get instant skin analysis",
+    "report": "Report",
+    "3dView": "3D View",
+    "simulator": "Simulator",
+    "backToHistory": "Back to History",
+    "notFound": "Analysis not found",
+    "loading": "Loading analysis...",
+    "error": "Failed to load analysis"
   },
   "booking": {
     "title": "Book Appointment",
@@ -341,19 +1193,31 @@
           "subtitle": "Take a photo",
           "title": "Capture",
           "description": "Use our smart camera to capture a clear photo. Auto lighting adjustment. Works with any smartphone.",
-          "features": ["Auto lighting detection", "Face alignment guide", "Quality check"]
+          "features": [
+            "Auto lighting detection",
+            "Face alignment guide",
+            "Quality check"
+          ]
         },
         "analyze": {
           "subtitle": "AI processes",
           "title": "Analyze",
           "description": "Our medical-grade AI analyzes 50+ skin metrics including wrinkles, pores, pigmentation in seconds.",
-          "features": ["468-point mapping", "50+ metrics", "<3 seconds"]
+          "features": [
+            "468-point mapping",
+            "50+ metrics",
+            "<3 seconds"
+          ]
         },
         "results": {
           "subtitle": "Get insights",
           "title": "Results",
           "description": "Receive detailed analysis with heat maps, personalized recommendations, and treatment plans.",
-          "features": ["Visual heat maps", "Treatment plans", "Progress tracking"]
+          "features": [
+            "Visual heat maps",
+            "Treatment plans",
+            "Progress tracking"
+          ]
         }
       },
       "cta": "Try It Now — Free",

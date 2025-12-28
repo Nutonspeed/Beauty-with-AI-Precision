@@ -12,7 +12,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- ============================================================================
 CREATE TABLE IF NOT EXISTS queue_entries (
     -- Primary identification
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid()::uuid,
     queue_number INTEGER NOT NULL,
     
     -- Customer information
@@ -72,7 +72,7 @@ CREATE INDEX idx_queue_entries_priority ON queue_entries(priority, check_in_time
 -- ============================================================================
 CREATE TABLE IF NOT EXISTS queue_settings (
     -- Primary identification
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid()::uuid,
     clinic_id UUID NOT NULL UNIQUE,
     
     -- Service time settings
@@ -111,7 +111,7 @@ CREATE INDEX idx_queue_settings_clinic ON queue_settings(clinic_id);
 -- ============================================================================
 CREATE TABLE IF NOT EXISTS queue_notifications (
     -- Primary identification
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid()::uuid,
     queue_entry_id UUID NOT NULL REFERENCES queue_entries(id) ON DELETE CASCADE,
     
     -- Notification details
@@ -140,7 +140,7 @@ CREATE INDEX idx_queue_notifications_status ON queue_notifications(status);
 -- ============================================================================
 CREATE TABLE IF NOT EXISTS queue_statistics (
     -- Primary identification
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid()::uuid,
     clinic_id UUID NOT NULL,
     date DATE NOT NULL,
     

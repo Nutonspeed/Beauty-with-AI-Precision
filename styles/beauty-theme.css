@@ -1,0 +1,167 @@
+/* 
+ * Beauty AI Custom Theme
+ * ธีมเฉพาะสำหรับ Beauty with AI Precision
+ */
+
+:root {
+  /* Brand Colors */
+  --beauty-rose-50: #fff1f2;
+  --beauty-rose-100: #ffe4e6;
+  --beauty-rose-200: #fecdd3;
+  --beauty-rose-300: #fda4af;
+  --beauty-rose-400: #fb7185;
+  --beauty-rose-500: #f43f5e;
+  --beauty-rose-600: #e11d48;
+  --beauty-rose-700: #be123c;
+  --beauty-rose-800: #9f1239;
+  --beauty-rose-900: #881337;
+
+  /* AI/Tech Colors */
+  --ai-purple-50: #f5f3ff;
+  --ai-purple-100: #ede9fe;
+  --ai-purple-500: #8b5cf6;
+  --ai-purple-600: #7c3aed;
+  --ai-purple-700: #6d28d9;
+
+  /* Beauty Accent Colors */
+  --beauty-peach: #fb923c;
+  --beauty-gold: #f59e0b;
+  --beauty-pink: #ec4899;
+
+  /* Glass Effect */
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+
+  /* Custom Gradients */
+  --gradient-beauty: linear-gradient(135deg, #f43f5e 0%, #8b5cf6 100%);
+  --gradient-rose: linear-gradient(135deg, #fb7185 0%, #e11d48 100%);
+  --gradient-ai: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
+  --gradient-gold: linear-gradient(135deg, #f59e0b 0%, #f43f5e 100%);
+
+  /* Custom Shadows */
+  --shadow-beauty: 0 4px 20px rgba(244, 63, 94, 0.15);
+  --shadow-ai: 0 4px 20px rgba(139, 92, 246, 0.15);
+  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+/* Glass Card Effect */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  box-shadow: var(--shadow-glass);
+}
+
+/* Beauty Button */
+.btn-beauty {
+  background: var(--gradient-beauty);
+  color: white;
+  padding: 12px 28px;
+  border-radius: 50px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-beauty);
+}
+
+.btn-beauty:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(244, 63, 94, 0.3);
+}
+
+/* AI Glow Effect */
+.ai-glow {
+  position: relative;
+  overflow: hidden;
+}
+
+.ai-glow::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: var(--gradient-ai);
+  opacity: 0.1;
+  animation: rotate 4s linear infinite;
+}
+
+@keyframes rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Custom Scrollbar */
+.beauty-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.beauty-scrollbar::-webkit-scrollbar-track {
+  background: var(--beauty-rose-50);
+  border-radius: 10px;
+}
+
+.beauty-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--gradient-rose);
+  border-radius: 10px;
+}
+
+/* Loading Animation - Flower Bloom */
+@keyframes bloom {
+  0% {
+    transform: scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1) rotate(180deg);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1) rotate(360deg);
+    opacity: 1;
+  }
+}
+
+.loading-flower {
+  animation: bloom 1.5s ease-in-out infinite;
+}
+
+/* Custom Typography */
+.beauty-title {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  background: var(--gradient-beauty);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.beauty-subtitle {
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  color: var(--beauty-rose-600);
+}
+
+/* Card Hover Effects */
+.beauty-card {
+  transition: all 0.3s ease;
+  border: 1px solid var(--beauty-rose-100);
+}
+
+.beauty-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-beauty);
+  border-color: var(--beauty-rose-200);
+}
+
+/* Custom Checkbox */
+.beauty-checkbox:checked {
+  background-color: var(--beauty-rose-500);
+  border-color: var(--beauty-rose-500);
+}
+
+.beauty-checkbox:checked::before {
+  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='m13.854 3.646-7.5 7.5a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6 10.293l7.146-7.147a.5.5 0 0 1 .708.708z'/%3e%3c/svg%3e");
+}

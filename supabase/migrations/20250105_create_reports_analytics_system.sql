@@ -10,7 +10,7 @@
 -- Table: report_templates
 -- Purpose: Store customizable report templates for different types of analytics
 CREATE TABLE IF NOT EXISTS report_templates (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid()::uuid,
     clinic_id UUID NOT NULL REFERENCES clinics(id) ON DELETE CASCADE,
     name VARCHAR(200) NOT NULL,
     description TEXT,
@@ -67,7 +67,7 @@ COMMENT ON COLUMN report_templates.dimensions IS 'Dimensions for grouping data (
 -- Table: generated_reports
 -- Purpose: Store generated report results and metadata
 CREATE TABLE IF NOT EXISTS generated_reports (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid()::uuid,
     clinic_id UUID NOT NULL REFERENCES clinics(id) ON DELETE CASCADE,
     template_id UUID REFERENCES report_templates(id) ON DELETE SET NULL,
     
@@ -133,7 +133,7 @@ COMMENT ON COLUMN generated_reports.detailed_data IS 'Full detailed data for dri
 -- Table: dashboard_widgets
 -- Purpose: Customizable dashboard widgets for real-time analytics
 CREATE TABLE IF NOT EXISTS dashboard_widgets (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid()::uuid,
     clinic_id UUID NOT NULL REFERENCES clinics(id) ON DELETE CASCADE,
     
     -- Widget metadata
@@ -192,7 +192,7 @@ COMMENT ON COLUMN dashboard_widgets.data_source IS 'Source of data: revenue, boo
 -- Table: report_schedules
 -- Purpose: Track scheduled report execution history
 CREATE TABLE IF NOT EXISTS report_schedules (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid()::uuid,
     clinic_id UUID NOT NULL REFERENCES clinics(id) ON DELETE CASCADE,
     template_id UUID NOT NULL REFERENCES report_templates(id) ON DELETE CASCADE,
     
@@ -233,7 +233,7 @@ COMMENT ON TABLE report_schedules IS 'Execution history for scheduled reports';
 -- Table: analytics_snapshots
 -- Purpose: Store periodic snapshots of key metrics for trend analysis
 CREATE TABLE IF NOT EXISTS analytics_snapshots (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid()::uuid,
     clinic_id UUID NOT NULL REFERENCES clinics(id) ON DELETE CASCADE,
     
     -- Snapshot metadata
@@ -305,7 +305,7 @@ COMMENT ON COLUMN analytics_snapshots.new_customers IS 'New beauty clinic custom
 -- Table: export_jobs
 -- Purpose: Track report export tasks (PDF, Excel, CSV)
 CREATE TABLE IF NOT EXISTS export_jobs (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid()::uuid,
     clinic_id UUID NOT NULL REFERENCES clinics(id) ON DELETE CASCADE,
     report_id UUID REFERENCES generated_reports(id) ON DELETE CASCADE,
     

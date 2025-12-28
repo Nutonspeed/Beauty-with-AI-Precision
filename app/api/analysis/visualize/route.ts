@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { withPublicAccess } from '@/lib/auth/middleware'
-
-const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000'
+import { getAIServiceUrl } from '@/lib/config/ai'
 
 export const POST = withPublicAccess(async (request: NextRequest) => {
   try {
+    const AI_SERVICE_URL = getAIServiceUrl()
     const supabase = await createClient()
     const body = await request.json().catch(() => ({}))
     const id = body?.id || new URL(request.url).searchParams.get('id')

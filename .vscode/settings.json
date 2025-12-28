@@ -56,5 +56,21 @@
   // File Watcher (แก้ให้เป็น array ตามสคีมา VS Code)
   "files.watcherInclude": [
     "**/*.{ts,tsx,js,jsx,json,css}"
-  ]
+  ],
+
+  // Tailwind CSS Settings
+  "css.validate": false,
+  "scss.validate": false,
+  "less.validate": false,
+  "tailwindCSS.includeLanguages": {
+    "typescript": "html",
+    "typescriptreact": "html"
+  },
+  "tailwindCSS.experimental.classRegex": [
+    ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
+    ["cx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
+  ],
+  "files.associations": {
+    "*.css": "tailwindcss"
+  }
 }

@@ -6,10 +6,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Building2, MapPin, Phone, Users, Plus } from "lucide-react"
-import { useLanguage } from "@/lib/i18n/language-context"
+import { useTranslations } from "next-intl"
 
 export default function BranchesPage() {
-  const { language } = useLanguage()
+  const t = useTranslations()
 
   // Mock branches data
   const branches = [
@@ -49,17 +49,15 @@ export default function BranchesPage() {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="text-3xl font-bold mb-2">
-                {language === "th" ? "จัดการสาขา" : "Branch Management"}
+                {t('branches.title')}
               </h1>
               <p className="text-muted-foreground">
-                {language === "th" 
-                  ? `ทั้งหมด ${branches.length} สาขา`
-                  : `Total ${branches.length} branches`}
+                {t('branches.total')} {branches.length} {t('branches.totalBranches')}
               </p>
             </div>
             <Button>
               <Plus className="h-4 w-4 mr-2" />
-              {language === "th" ? "เพิ่มสาขา" : "Add Branch"}
+              {t('branches.addBranch')}
             </Button>
           </div>
 
@@ -77,8 +75,8 @@ export default function BranchesPage() {
                         <CardTitle className="text-lg">{branch.name}</CardTitle>
                         <Badge variant="secondary" className="mt-1">
                           {branch.status === "active" 
-                            ? (language === "th" ? "เปิดให้บริการ" : "Active")
-                            : (language === "th" ? "ปิด" : "Closed")}
+                            ? t('branches.active')
+                            : t('branches.closed')}
                         </Badge>
                       </div>
                     </div>
@@ -95,14 +93,14 @@ export default function BranchesPage() {
                   </div>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Users className="h-4 w-4" />
-                    {branch.staff} {language === "th" ? "พนักงาน" : "staff members"}
+                    {branch.staff} {t('branches.staffMembers')}
                   </div>
                   <div className="pt-4 flex gap-2">
                     <Button variant="outline" size="sm" className="flex-1">
-                      {language === "th" ? "แก้ไข" : "Edit"}
+                      {t('branches.edit')}
                     </Button>
                     <Button variant="outline" size="sm" className="flex-1">
-                      {language === "th" ? "ดูรายละเอียด" : "Details"}
+                      {t('branches.details')}
                     </Button>
                   </div>
                 </CardContent>

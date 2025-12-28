@@ -6,107 +6,75 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Shield, FileText, Lock, UserCheck, Mail, Phone, Building2, CheckCircle2 } from "lucide-react"
-import { useLanguage } from "@/lib/i18n/language-context"
+import { useTranslations } from "next-intl"
 import Link from "next/link"
 
 export default function PDPAPage() {
-  const { language } = useLanguage()
+  const t = useTranslations()
 
   const rights = [
     {
       icon: FileText,
-      title: language === "th" ? "สิทธิในการเข้าถึงข้อมูล" : "Right to Access",
-      titleTh: "สิทธิในการเข้าถึงข้อมูล",
-      desc: language === "th"
-        ? "คุณมีสิทธิ์ขอเข้าถึงข้อมูลส่วนบุคคลของคุณที่เราเก็บรวบรวมและใช้งาน"
-        : "You have the right to access your personal data that we collect and use.",
+      title: t('pdpa.rights.access.title'),
+      desc: t('pdpa.rights.access.desc'),
     },
     {
       icon: UserCheck,
-      title: language === "th" ? "สิทธิในการแก้ไขข้อมูล" : "Right to Rectification",
-      titleTh: "สิทธิในการแก้ไขข้อมูล",
-      desc: language === "th"
-        ? "คุณสามารถขอแก้ไขข้อมูลที่ไม่ถูกต้อง ไม่สมบูรณ์ หรือทำให้เข้าใจผิด"
-        : "You can request correction of inaccurate, incomplete, or misleading data.",
+      title: t('pdpa.rights.rectification.title'),
+      desc: t('pdpa.rights.rectification.desc'),
     },
     {
       icon: Lock,
-      title: language === "th" ? "สิทธิในการลบข้อมูล" : "Right to Erasure",
-      titleTh: "สิทธิในการลบข้อมูล",
-      desc: language === "th"
-        ? "คุณสามารถขอให้ลบหรือทำลายข้อมูลส่วนบุคคลของคุณ หรือทำให้ข้อมูลเป็นข้อมูลที่ไม่สามารถระบุตัวบุคคลได้"
-        : "You can request deletion or destruction of your personal data, or anonymization.",
+      title: t('pdpa.rights.erasure.title'),
+      desc: t('pdpa.rights.erasure.desc'),
     },
     {
       icon: Shield,
-      title: language === "th" ? "สิทธิในการระงับการใช้ข้อมูล" : "Right to Restriction",
-      titleTh: "สิทธิในการระงับการใช้ข้อมูล",
-      desc: language === "th"
-        ? "คุณสามารถขอให้ระงับการใช้ข้อมูลส่วนบุคคลของคุณชั่วคราว"
-        : "You can request temporary suspension of personal data use.",
+      title: t('pdpa.rights.restriction.title'),
+      desc: t('pdpa.rights.restriction.desc'),
     },
     {
       icon: FileText,
-      title: language === "th" ? "สิทธิในการโอนย้ายข้อมูล" : "Right to Data Portability",
-      titleTh: "สิทธิในการโอนย้ายข้อมูล",
-      desc: language === "th"
-        ? "คุณสามารถขอรับข้อมูลส่วนบุคคลในรูปแบบที่สามารถอ่านหรือใช้งานได้ทั่วไป และส่งต่อข้อมูลนั้นไปยังผู้ควบคุมข้อมูลอื่น"
-        : "You can request your data in a commonly used format and transfer it to another controller.",
+      title: t('pdpa.rights.portability.title'),
+      desc: t('pdpa.rights.portability.desc'),
     },
     {
       icon: UserCheck,
-      title: language === "th" ? "สิทธิในการคัดค้าน" : "Right to Object",
-      titleTh: "สิทธิในการคัดค้าน",
-      desc: language === "th"
-        ? "คุณสามารถคัดค้านการเก็บรวบรวม ใช้ หรือเปิดเผยข้อมูลส่วนบุคคลของคุณ"
-        : "You can object to the collection, use, or disclosure of your personal data.",
+      title: t('pdpa.rights.object.title'),
+      desc: t('pdpa.rights.object.desc'),
     },
     {
       icon: Shield,
-      title: language === "th" ? "สิทธิในการถอนความยินยอม" : "Right to Withdraw Consent",
-      titleTh: "สิทธิในการถอนความยินยอม",
-      desc: language === "th"
-        ? "คุณสามารถถอนความยินยอมในการเก็บรวบรวม ใช้ หรือเปิดเผยข้อมูลส่วนบุคคลได้ทุกเมื่อ"
-        : "You can withdraw consent for data collection, use, or disclosure at any time.",
+      title: t('pdpa.rights.withdraw.title'),
+      desc: t('pdpa.rights.withdraw.desc'),
     },
     {
       icon: FileText,
-      title: language === "th" ? "สิทธิในการร้องเรียน" : "Right to Complaint",
-      titleTh: "สิทธิในการร้องเรียน",
-      desc: language === "th"
-        ? "คุณมีสิทธิ์ยื่นเรื่องร้องเรียนต่อคณะกรรมการคุ้มครองข้อมูลส่วนบุคคล หากเชื่อว่าการเก็บรวบรวม ใช้ หรือเปิดเผยข้อมูลผิดกฎหมาย"
-        : "You can file a complaint with the Personal Data Protection Committee if you believe data handling is unlawful.",
+      title: t('pdpa.rights.complaint.title'),
+      desc: t('pdpa.rights.complaint.desc'),
     },
   ]
 
   const steps = [
     {
       step: "1",
-      title: language === "th" ? "ติดต่อเรา" : "Contact Us",
-      desc: language === "th"
-        ? "ส่งคำขอผ่านอีเมล โทรศัพท์ หรือแบบฟอร์มออนไลน์"
-        : "Send request via email, phone, or online form",
+      title: t('pdpa.exercise.step1.title'),
+      desc: t('pdpa.exercise.step1.desc'),
     },
     {
       step: "2",
-      title: language === "th" ? "ยืนยันตัวตน" : "Verify Identity",
-      desc: language === "th"
-        ? "แสดงเอกสารยืนยันตัวตนเพื่อความปลอดภัย"
-        : "Provide ID verification for security",
+      title: t('pdpa.exercise.step2.title'),
+      desc: t('pdpa.exercise.step2.desc'),
     },
     {
       step: "3",
-      title: language === "th" ? "รอการดำเนินการ" : "Wait for Processing",
-      desc: language === "th"
-        ? "เราจะดำเนินการภายใน 30 วัน"
-        : "We will process within 30 days",
+      title: t('pdpa.exercise.step3.title'),
+      desc: t('pdpa.exercise.step3.desc'),
     },
     {
       step: "4",
-      title: language === "th" ? "รับผลลัพธ์" : "Receive Result",
-      desc: language === "th"
-        ? "รับแจ้งผลการดำเนินการทางอีเมล"
-        : "Receive notification via email",
+      title: t('pdpa.exercise.step4.title'),
+      desc: t('pdpa.exercise.step4.desc'),
     },
   ]
 
@@ -121,17 +89,14 @@ export default function PDPAPage() {
             <div className="mx-auto max-w-3xl text-center">
               <Badge className="mb-4 bg-primary/10 text-primary" variant="secondary">
                 <Shield className="mr-1 h-3 w-3" />
-                {language === "th" ? "พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562" : "Personal Data Protection Act B.E. 2562 (2019)"}
+                {t('pdpa.hero.badge')}
               </Badge>
               <h1 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
-                {language === "th" ? "นโยบายคุ้มครองข้อมูลส่วนบุคคล" : "Personal Data Protection Policy"}
-                <span className="block text-2xl sm:text-3xl md:text-4xl mt-2 text-primary">PDPA</span>
+                {t('pdpa.hero.title')}
+                <span className="block text-2xl sm:text-3xl md:text-4xl mt-2 text-primary">{t('pdpa.hero.subtitle')}</span>
               </h1>
               <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-                {language === "th"
-                  ? "เรายึดมั่นในการปกป้องสิทธิ์ของคุณตาม พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 คุณมีสิทธิ์ในการควบคุมข้อมูลส่วนบุคคลของคุณเอง"
-                  : "We are committed to protecting your rights under the Personal Data Protection Act B.E. 2562 (2019). You have the right to control your personal data."
-                }
+                {t('pdpa.hero.description')}
               </p>
             </div>
           </div>
@@ -143,13 +108,10 @@ export default function PDPAPage() {
             <div className="mx-auto max-w-5xl">
               <div className="mb-8 text-center">
                 <h2 className="mb-3 text-2xl sm:text-3xl font-bold">
-                  {language === "th" ? "สิทธิ์ของคุณภายใต้ PDPA" : "Your Rights Under PDPA"}
+                  {t('pdpa.rights.title')}
                 </h2>
                 <p className="text-sm sm:text-base text-muted-foreground">
-                  {language === "th"
-                    ? "คุณมีสิทธิ์ 8 ประการในการควบคุมข้อมูลส่วนบุคคลของคุณ"
-                    : "You have 8 fundamental rights to control your personal data"
-                  }
+                  {t('pdpa.rights.subtitle')}
                 </p>
               </div>
 
@@ -180,13 +142,10 @@ export default function PDPAPage() {
             <div className="mx-auto max-w-5xl">
               <div className="mb-8 text-center">
                 <h2 className="mb-3 text-2xl sm:text-3xl font-bold">
-                  {language === "th" ? "วิธีการใช้สิทธิ์" : "How to Exercise Your Rights"}
+                  {t('pdpa.exercise.title')}
                 </h2>
                 <p className="text-sm sm:text-base text-muted-foreground">
-                  {language === "th"
-                    ? "ทำตามขั้นตอนง่ายๆ เพื่อใช้สิทธิ์ของคุณ"
-                    : "Follow these simple steps to exercise your rights"
-                  }
+                  {t('pdpa.exercise.subtitle')}
                 </p>
               </div>
 
@@ -216,7 +175,7 @@ export default function PDPAPage() {
                       <Mail className="h-6 w-6 text-primary" />
                     </div>
                     <h3 className="mb-2 text-lg font-semibold">
-                      {language === "th" ? "อีเมล" : "Email"}
+                      {t('pdpa.contact.email')}
                     </h3>
                     <a
                       href="mailto:pdpa@aibeautyplatform.com"
@@ -225,7 +184,7 @@ export default function PDPAPage() {
                       pdpa@aibeautyplatform.com
                     </a>
                     <p className="mt-2 text-xs text-muted-foreground">
-                      {language === "th" ? "ตอบกลับภายใน 24 ชั่วโมง" : "Response within 24 hours"}
+                      {t('pdpa.contact.emailResponse')}
                     </p>
                   </CardContent>
                 </Card>
@@ -237,13 +196,13 @@ export default function PDPAPage() {
                       <Phone className="h-6 w-6 text-primary" />
                     </div>
                     <h3 className="mb-2 text-lg font-semibold">
-                      {language === "th" ? "โทรศัพท์" : "Phone"}
+                      {t('pdpa.contact.phone')}
                     </h3>
                     <a href="tel:+66-2-xxx-xxxx" className="text-sm text-primary hover:underline">
                       +66 2 XXX XXXX
                     </a>
                     <p className="mt-2 text-xs text-muted-foreground">
-                      {language === "th" ? "จันทร์-ศุกร์ 9:00-18:00" : "Mon-Fri 9:00-18:00"}
+                      {t('pdpa.contact.phoneHours')}
                     </p>
                   </CardContent>
                 </Card>
@@ -255,13 +214,10 @@ export default function PDPAPage() {
                       <Building2 className="h-6 w-6 text-primary" />
                     </div>
                     <h3 className="mb-2 text-lg font-semibold">
-                      {language === "th" ? "ที่อยู่สำนักงาน" : "Office Address"}
+                      {t('pdpa.contact.office')}
                     </h3>
                     <p className="text-sm text-muted-foreground">
-                      {language === "th"
-                        ? "123 ถนนสุขุมวิท แขวงคลองเตย เขตคลองเตย กรุงเทพฯ 10110"
-                        : "123 Sukhumvit Road, Khlong Toei, Bangkok 10110"
-                      }
+                      {t('pdpa.contact.officeAddress')}
                     </p>
                   </CardContent>
                 </Card>
@@ -282,27 +238,24 @@ export default function PDPAPage() {
                     </div>
                     <div className="flex-1">
                       <h2 className="mb-3 text-xl sm:text-2xl font-bold">
-                        {language === "th" ? "เจ้าหน้าที่คุ้มครองข้อมูลส่วนบุคคล" : "Data Protection Officer"}
+                        {t('pdpa.dpo.title')}
                         <span className="ml-2 text-primary">(DPO)</span>
                       </h2>
                       <p className="mb-4 text-sm sm:text-base text-muted-foreground leading-relaxed">
-                        {language === "th"
-                          ? "หากคุณมีคำถามหรือต้องการความช่วยเหลือเกี่ยวกับการคุ้มครองข้อมูลส่วนบุคคล สามารถติดต่อเจ้าหน้าที่คุ้มครองข้อมูลส่วนบุคคลของเราได้"
-                          : "If you have questions or need assistance regarding personal data protection, please contact our Data Protection Officer."
-                        }
+                        {t('pdpa.dpo.description')}
                       </p>
                       <div className="space-y-2 text-sm sm:text-base mb-6">
                         <p>
-                          <strong>{language === "th" ? "ชื่อ:" : "Name:"}</strong> คุณสมชาย ใจดี (Mr. Somchai Jaidee)
+                          <strong>{t('pdpa.dpo.name')}</strong> {t('pdpa.dpo.nameValue')}
                         </p>
                         <p>
-                          <strong>{language === "th" ? "อีเมล:" : "Email:"}</strong>{" "}
+                          <strong>{t('pdpa.dpo.email')}</strong>{" "}
                           <a href="mailto:dpo@aibeautyplatform.com" className="text-primary hover:underline">
                             dpo@aibeautyplatform.com
                           </a>
                         </p>
                         <p>
-                          <strong>{language === "th" ? "โทรศัพท์:" : "Phone:"}</strong>{" "}
+                          <strong>{t('pdpa.dpo.phone')}</strong>{" "}
                           <a href="tel:+66-2-xxx-xxxx" className="text-primary hover:underline">
                             +66 2 XXX XXXX ต่อ 101
                           </a>
@@ -312,13 +265,13 @@ export default function PDPAPage() {
                         <Link href="/contact">
                           <Button className="w-full sm:w-auto">
                             <Mail className="mr-2 h-4 w-4" />
-                            {language === "th" ? "ติดต่อ DPO" : "Contact DPO"}
+                            {t('pdpa.dpo.contactDpo')}
                           </Button>
                         </Link>
                         <Link href="/privacy">
                           <Button variant="outline" className="w-full sm:w-auto">
                             <Shield className="mr-2 h-4 w-4" />
-                            {language === "th" ? "นโยบายความเป็นส่วนตัว" : "Privacy Policy"}
+                            {t('pdpa.dpo.privacyPolicy')}
                           </Button>
                         </Link>
                       </div>
@@ -342,13 +295,10 @@ export default function PDPAPage() {
                     </div>
                   </div>
                   <h3 className="mb-2 text-lg sm:text-xl font-bold">
-                    {language === "th" ? "หน่วยงานกำกับดูแล" : "Regulatory Authority"}
+                    {t('pdpa.authority.title')}
                   </h3>
                   <p className="mb-4 text-sm sm:text-base text-muted-foreground">
-                    {language === "th"
-                      ? "คณะกรรมการคุ้มครองข้อมูลส่วนบุคคล (Personal Data Protection Committee)"
-                      : "Personal Data Protection Committee"
-                    }
+                    {t('pdpa.authority.description')}
                   </p>
                   <a
                     href="https://www.pdpc.or.th"

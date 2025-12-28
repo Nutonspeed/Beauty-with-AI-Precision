@@ -3,14 +3,25 @@
 
 import OpenAI from 'openai';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { getGeminiApiKey, getOpenAIApiKey } from '@/lib/config/ai';
 
 // Primary: GPT-4 Turbo (highest accuracy)
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+let openai: OpenAI | null = null;
+
+function getOpenAIClient(): OpenAI {
+  if (openai) return openai;
+  openai = new OpenAI({ apiKey: getOpenAIApiKey() });
+  return openai;
+}
 
 // Fallback: Gemini (free tier)
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+let genAI: GoogleGenerativeAI | null = null;
+
+function getGeminiClient(): GoogleGenerativeAI {
+  if (genAI) return genAI;
+  genAI = new GoogleGenerativeAI(getGeminiApiKey());
+  return genAI;
+}
 
 export class RealSkinDiseaseDetector {
   private knownConditions: Map<string, any>;
@@ -108,7 +119,7 @@ Return ONLY valid JSON:
 
 Be medically precise and conservative in diagnoses.`;
 
-    const response = await openai.chat.completions.create({
+    const response = await getOpenAIClient().chat.completions.create({
       model: "gpt-4-turbo",
       messages: [
         {
@@ -140,7 +151,7 @@ Be medically precise and conservative in diagnoses.`;
   }
 
   private async analyzeWithGemini(base64Image: string, options?: any): Promise<any> {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = getGeminiClient().getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const prompt = `Analyze this skin image as a dermatologist AI.
 

@@ -4,15 +4,19 @@
  */
 
 import vision from '@google-cloud/vision';
+import type { ImageAnnotatorClient } from '@google-cloud/vision';
+import { getGoogleCredentialsConfig } from '@/lib/config/ai';
 
 // Initialize Google Cloud Vision client
 // Support both file-based (dev) and JSON-based (production) credentials
 const getCredentials = () => {
+  const { googleCredentialsJson, googleApplicationCredentials } = getGoogleCredentialsConfig();
+
   // For Vercel: use GOOGLE_CREDENTIALS_JSON environment variable
-  if (process.env.GOOGLE_CREDENTIALS_JSON) {
+  if (googleCredentialsJson) {
     try {
       return {
-        credentials: JSON.parse(process.env.GOOGLE_CREDENTIALS_JSON),
+        credentials: JSON.parse(googleCredentialsJson),
       };
     } catch (error) {
       console.error('Failed to parse GOOGLE_CREDENTIALS_JSON:', error);
@@ -21,16 +25,22 @@ const getCredentials = () => {
   }
   
   // For local dev: use GOOGLE_APPLICATION_CREDENTIALS file path
-  if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+  if (googleApplicationCredentials) {
     return {
-      keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
+      keyFilename: googleApplicationCredentials,
     };
   }
   
   throw new Error('Missing Google Cloud credentials. Set either GOOGLE_CREDENTIALS_JSON or GOOGLE_APPLICATION_CREDENTIALS');
 };
 
-const client = new vision.ImageAnnotatorClient(getCredentials());
+let client: ImageAnnotatorClient | null = null;
+
+function getVisionClient(): ImageAnnotatorClient {
+  if (client) return client;
+  client = new vision.ImageAnnotatorClient(getCredentials());
+  return client;
+}
 
 export interface FaceDetectionResult {
   hasFace: boolean;
@@ -57,7 +67,7 @@ export interface FaceDetectionResult {
  */
 export async function detectFace(imageBuffer: Buffer | string): Promise<FaceDetectionResult> {
   try {
-    const [result] = await client.faceDetection(imageBuffer);
+    const [result] = await getVisionClient().faceDetection(imageBuffer);
     const faces = result.faceAnnotations || [];
 
     if (faces.length === 0) {
@@ -92,7 +102,7 @@ export async function detectFace(imageBuffer: Buffer | string): Promise<FaceDete
                    face.underExposedLikelihood === 'VERY_LIKELY';
 
     // แปลง landmarks
-    const landmarks = face.landmarks?.map(landmark => ({
+    const landmarks = face.landmarks?.map((landmark: any) => ({
       type: String(landmark.type || 'UNKNOWN'),
       position: {
         x: landmark.position?.x || 0,

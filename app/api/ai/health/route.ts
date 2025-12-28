@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server"
 import { testAIGateway } from "@/lib/ai/gateway-client"
 import { withPublicAccess } from "@/lib/auth/middleware"
+import { hasAnthropicApiKey, hasGeminiApiKey, hasOpenAIApiKey, hasVercelAIGatewayKey } from "@/lib/config/ai"
 
 export const GET = withPublicAccess(async (request: NextRequest) => {
   try {
@@ -8,10 +9,10 @@ export const GET = withPublicAccess(async (request: NextRequest) => {
     const mode = url.searchParams.get("mode") // "deep" to run live model checks
 
     const configuredProviders = [
-      Boolean(process.env.OPENAI_API_KEY) && "openai",
-      Boolean(process.env.ANTHROPIC_API_KEY) && "anthropic",
-      Boolean(process.env.GOOGLE_GENERATIVE_AI_API_KEY) && "google",
-      Boolean(process.env.VERCEL_AI_GATEWAY_KEY) && "vercel-gateway",
+      hasOpenAIApiKey() && "openai",
+      hasAnthropicApiKey() && "anthropic",
+      hasGeminiApiKey() && "google",
+      hasVercelAIGatewayKey() && "vercel-gateway",
     ].filter(Boolean)
 
     if (mode === "deep") {

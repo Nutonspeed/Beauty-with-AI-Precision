@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import Beauty AI Custom Styles */
+@import '../styles/beauty-theme.css';
+@import '../styles/beauty-animations.css';
+
 /* Thai font optimization for mobile */
 @media (max-width: 640px) {
   html {
@@ -320,14 +324,14 @@
 
 /* Outcome Projection Widget */
 .projection-img { filter: brightness(1) contrast(1) saturate(1); }
-.projection-img[data-mode="clarity"] { /* clarity base adjustments via intensity */ }
-.projection-img[data-mode="firming"] { /* firming base - stronger contrast */ }
-.projection-img[data-mode="hydration"] { /* hydration base - softer with mild blur */ }
+.projection-img[data-mode="clarity"] { filter: brightness(1) contrast(1) saturate(1); }
+.projection-img[data-mode="firming"] { filter: brightness(1.05) contrast(1.1) saturate(0.95); }
+.projection-img[data-mode="hydration"] { filter: brightness(1.02) contrast(0.98) saturate(1.05); }
 .projection-img.transition-filter { transition: filter .4s ease; }
 .projection-overlay { pointer-events:none; }
 .projection-overlay[data-intensity] { background: linear-gradient(135deg, rgba(255,107,157,0.15), rgba(192,132,252,0.12)); }
 @supports (filter: brightness(1.1)) {
-  .projection-img[data-intensity] { /* intensity-driven dynamic */ }
+  .projection-img[data-intensity] { filter: brightness(calc(1 + var(--intensity, 0) * 0.1)); }
 }
 /* Progressive intensity using attribute selectors */
 /* Using multiple coarse steps to avoid inline styles */

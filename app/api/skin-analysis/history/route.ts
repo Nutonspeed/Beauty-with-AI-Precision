@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { getSkinAnalysesHistory } from '@/lib/api/skin-analyses-history';
 
 export const runtime = 'nodejs';
 
@@ -33,20 +34,16 @@ export async function GET(request: NextRequest) {
     const validatedLimit = Math.min(Math.max(1, limit), 100);
     const offset = (validatedPage - 1) * validatedLimit;
 
-    // Query analyses
-    const query = supabase
-      .from('skin_analyses')
-      .select('*', { count: 'exact' })
-      .eq('user_id', user.id)
-      .order(sortBy, { ascending: sortOrder === 'asc' })
-      .range(offset, offset + validatedLimit - 1);
+    const safeSortBy = sortBy === 'updated_at' ? 'updated_at' : 'created_at'
+    const safeSortOrder = sortOrder === 'asc' ? 'asc' : 'desc'
 
-    const { data: analyses, error: queryError, count } = await query;
-
-    if (queryError) {
-      console.error('Query error:', queryError);
-      throw new Error('Failed to fetch history');
-    }
+    const { rows: analyses, total: count } = await getSkinAnalysesHistory(supabase, {
+      userId: user.id,
+      limit: validatedLimit,
+      offset,
+      sortBy: safeSortBy,
+      sortOrder: safeSortOrder,
+    })
 
     // Format response
     const formattedAnalyses = analyses?.map((analysis) => ({
@@ -101,6 +98,12 @@ export async function GET(request: NextRequest) {
         limit: validatedLimit,
         total: count || 0,
         totalPages: Math.ceil((count || 0) / validatedLimit),
+      },
+    }, {
+      headers: {
+        Deprecation: 'true',
+        'X-Deprecated': 'true',
+        Link: '</api/analysis/history>; rel="successor-version"',
       },
     });
   } catch (error) {
