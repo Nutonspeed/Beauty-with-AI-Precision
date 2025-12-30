@@ -52,7 +52,10 @@ class MetricsCollector {
   private collectionInterval: NodeJS.Timeout | null = null
 
   constructor() {
-    this.startSystemMetricsCollection()
+    // Only start collecting in runtime, not during build
+    if (typeof window !== 'undefined' || process.env.NODE_ENV === 'development') {
+      this.startSystemMetricsCollection()
+    }
   }
 
   // Start collecting system metrics

@@ -22,7 +22,6 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 
 // Force dynamic rendering for this page
 export const dynamic = 'force-dynamic'
-export const runtime = 'edge'
 
 interface User {
   id: string
