@@ -267,7 +267,7 @@ export default function LoginPage() {
             <Button 
               type="submit" 
               className="w-full" 
-              disabled={loading}
+              disabled={loading || !email || !password || !email.includes('@') || password.length < 6}
             >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {loading ? 'กำลังเข้าสู่ระบบ...' : 'เข้าสู่ระบบ'}
