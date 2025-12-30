@@ -243,8 +243,13 @@ class MetricsCollector {
     metadata: Record<string, any>
   }) {
     try {
+      // Get base URL from environment or use default
+      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.VERCEL_URL 
+        ? `https://${process.env.VERCEL_URL}` 
+        : 'http://localhost:3000'
+      
       // Send to monitoring service
-      await fetch('/api/monitoring/alerts', {
+      await fetch(`${baseUrl}/api/monitoring/alerts`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
