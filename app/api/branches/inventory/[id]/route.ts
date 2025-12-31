@@ -2,12 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { withClinicAuth } from '@/lib/auth/middleware';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
-/**
  * PATCH /api/branches/inventory/[id]
  * Update branch inventory item
  */
@@ -36,6 +30,17 @@ export const PATCH = withClinicAuth(async (req: NextRequest, user: any) => {
         updateData[field] = body[field];
       }
     }
+
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
+    )
 
     const { data, error } = await supabase
       .from('branch_inventory')

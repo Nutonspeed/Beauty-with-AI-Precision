@@ -2,12 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { withClinicAuth } from '@/lib/auth/middleware';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
-/**
  * GET /api/branches/revenue
  * Get revenue report for branches
  * 
@@ -24,6 +18,17 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
     const period_type = searchParams.get('period_type');
     const start_date = searchParams.get('start_date');
     const end_date = searchParams.get('end_date');
+
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
+    )
 
     let query = supabase
       .from('branch_revenue')
@@ -107,6 +112,17 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
     // Calculate net profit and profit margin
     const net_profit = total_revenue - total_expenses;
     const profit_margin = total_revenue > 0 ? (net_profit / total_revenue) * 100 : 0;
+
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
+    )
 
     const { data, error } = await supabase
       .from('branch_revenue')

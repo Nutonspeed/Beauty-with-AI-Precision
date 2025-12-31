@@ -2,18 +2,24 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { withClinicAuth } from '@/lib/auth/middleware';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
-/**
  * GET /api/branches/[id]
  * Get a specific branch with details
  */
 export const GET = withClinicAuth(async (req: NextRequest, user: any) => {
   try {
     const id = req.nextUrl.pathname.split('/').pop() || '';
+
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
+    )
+
     const { data, error } = await supabase
       .from('branches')
       .select(`
@@ -100,6 +106,17 @@ export const PATCH = withClinicAuth(async (req: NextRequest, user: any) => {
       }
     }
 
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
+    )
+
     const { data, error } = await supabase
       .from('branches')
       .update(updateData)
@@ -125,6 +142,17 @@ export const PATCH = withClinicAuth(async (req: NextRequest, user: any) => {
  */
 export const DELETE = withClinicAuth(async (req, user) => {
   const id = req.nextUrl.pathname.split('/').pop() || '';
+
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    }
+  )
 
   const { data, error } = await supabase
     .from('branches')

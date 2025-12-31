@@ -2,12 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { withClinicAuth } from '@/lib/auth/middleware';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
-/**
  * GET /api/branches/staff
  * List staff assignments for branches
  * 
@@ -22,6 +16,17 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
     const branch_id = searchParams.get('branch_id');
     const user_id = searchParams.get('user_id');
     const is_active = searchParams.get('is_active');
+
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
+    )
 
     let query = supabase
       .from('branch_staff_assignments')
@@ -90,6 +95,17 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
         { status: 400 }
       );
     }
+
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
+    )
 
     const { data, error } = await supabase
       .from('branch_staff_assignments')

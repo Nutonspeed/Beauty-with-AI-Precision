@@ -2,12 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { withClinicAuth } from '@/lib/auth/middleware';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
-/**
  * GET /api/branches
  * List branches for a clinic
  * 
@@ -22,6 +16,17 @@ export const GET = withClinicAuth(async (request: NextRequest, user) => {
     const clinic_id = searchParams.get('clinic_id');
     const is_active = searchParams.get('is_active');
     const province = searchParams.get('province');
+
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
+    )
 
     if (!clinic_id) {
       return NextResponse.json(
@@ -112,6 +117,17 @@ export const POST = withClinicAuth(async (request: NextRequest, user) => {
       description,
       opening_date,
     } = body;
+
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
+    )
 
     if (!clinic_id || !branch_code || !branch_name || !address || !city || !province) {
       return NextResponse.json(

@@ -1,12 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
-/**
  * POST /api/branches/transfers/[id]/complete
  * Complete a transfer (update inventories)
  * 
@@ -19,6 +13,18 @@ export async function POST(
 ) {
   try {
     const params = await context.params;
+
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
+    )
+
     const { data: result, error } = await supabase.rpc('complete_branch_transfer', {
       p_transfer_id: params.id,
     });
