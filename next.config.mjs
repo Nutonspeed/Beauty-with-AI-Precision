@@ -14,7 +14,7 @@ const allowLocalImages = process.env.NODE_ENV !== 'production'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: isVercel ? 'standalone' : undefined,
+  output: undefined, // Disable standalone completely
   distDir: '.next',
   compress: !FAST_BUILD,
   poweredByHeader: false,

@@ -1,6 +1,6 @@
 // Analytics Report Generator
 import { ReportGenerator, ReportConfig, ReportData } from '@/types/reports'
-import { supabase } from '@/lib/supabase'
+import { createServiceClient } from '@/lib/supabase/server'
 
 export class AnalyticsReportGenerator implements ReportGenerator {
   async generate(config: ReportConfig): Promise<ReportData> {
@@ -39,9 +39,10 @@ export class AnalyticsReportGenerator implements ReportGenerator {
   
   private async fetchAnalyticsData(dateRange: any, filters: any) {
     const { startDate, endDate } = dateRange
+    const supabase = createServiceClient()
     
     // Fetch user analytics
-    const { data: userAnalytics } = await supabase()
+    const { data: userAnalytics } = await supabase
       .from('user_analytics')
       .select('*')
       .gte('created_at', startDate)
@@ -49,7 +50,7 @@ export class AnalyticsReportGenerator implements ReportGenerator {
       .match(filters)
     
     // Fetch session data
-    const { data: sessionData } = await supabase()
+    const { data: sessionData } = await supabase
       .from('user_sessions')
       .select('*')
       .gte('created_at', startDate)
@@ -57,7 +58,7 @@ export class AnalyticsReportGenerator implements ReportGenerator {
       .match(filters)
     
     // Fetch feature usage
-    const { data: featureUsage } = await supabase()
+    const { data: featureUsage } = await supabase
       .from('feature_usage')
       .select('*')
       .gte('created_at', startDate)

@@ -1,6 +1,6 @@
 // Financial Report Generator
 import { ReportGenerator, ReportConfig, ReportData } from '@/types/reports'
-import { supabase } from '@/lib/supabase'
+import { createServiceClient } from '@/lib/supabase/server'
 
 export class FinancialReportGenerator implements ReportGenerator {
   async generate(config: ReportConfig): Promise<ReportData> {
@@ -39,35 +39,36 @@ export class FinancialReportGenerator implements ReportGenerator {
   
   private async fetchFinancialData(dateRange: any, filters: any) {
     const { startDate, endDate } = dateRange
+    const supabase = createServiceClient()
     
     // Fetch revenue data
-    const { data: revenue } = await supabase()
+    const { data: revenueData } = await supabase
       .from('revenue')
       .select('*')
       .gte('created_at', startDate)
       .lte('created_at', endDate)
       .match(filters)
     
-    // Fetch expenses
-    const { data: expenses } = await supabase()
+    // Fetch expense data
+    const { data: expenseData } = await supabase
       .from('expenses')
       .select('*')
       .gte('created_at', startDate)
       .lte('created_at', endDate)
       .match(filters)
     
-    // Fetch invoices
-    const { data: invoices } = await supabase()
-      .from('invoices')
+    // Fetch transaction data
+    const { data: transactionData } = await supabase
+      .from('transactions')
       .select('*')
       .gte('created_at', startDate)
       .lte('created_at', endDate)
       .match(filters)
     
     return {
-      revenue: revenue || [],
-      expenses: expenses || [],
-      invoices: invoices || []
+      revenue: revenueData || [],
+      expenses: expenseData || [],
+      transactions: transactionData || []
     }
   }
   

@@ -1,6 +1,6 @@
 // Patient Report Generator
 import { ReportGenerator, ReportConfig, ReportData } from '@/types/reports'
-import { createServerClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/server'
 
 export class PatientReportGenerator implements ReportGenerator {
   async generate(config: ReportConfig): Promise<ReportData> {
@@ -38,7 +38,7 @@ export class PatientReportGenerator implements ReportGenerator {
   }
   
   private async fetchPatientData(dateRange: any, filters: any) {
-    const supabase = await createServerClient()
+    const supabase = createServiceClient()
     const { startDate, endDate } = dateRange
     
     // Fetch patient demographics
