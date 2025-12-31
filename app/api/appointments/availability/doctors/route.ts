@@ -2,16 +2,6 @@ import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 import { withClinicAuth } from "@/lib/auth/middleware"
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false
-    }
-  }
-)
 
 // GET /api/appointments/availability/doctors - Get doctor availability
 export const GET = withClinicAuth(async (request: NextRequest) => {
@@ -26,6 +16,17 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
         { status: 400 }
       )
     }
+
+    const supabaseAdmin = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
+    )
 
     let query = supabaseAdmin
       .from('doctor_availability')

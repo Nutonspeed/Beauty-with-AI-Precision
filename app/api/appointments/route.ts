@@ -2,16 +2,6 @@ import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 import { withAuth } from "@/lib/auth/middleware"
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false
-    }
-  }
-)
 
 // GET /api/appointments - List appointments with filters
 export const GET = withAuth(async (request: NextRequest, user) => {
@@ -25,6 +15,17 @@ export const GET = withAuth(async (request: NextRequest, user) => {
     const dateTo = searchParams.get('date_to')
     const limit = Number.parseInt(searchParams.get('limit') || '50')
     const offset = Number.parseInt(searchParams.get('offset') || '0')
+
+    const supabaseAdmin = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
+    )
 
     let query = supabaseAdmin
       .from('appointment_slots')
@@ -104,6 +105,17 @@ export const POST = withAuth(async (request: NextRequest, user) => {
       customer_notes,
       special_requirements
     } = body
+
+    const supabaseAdmin = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
+    )
 
     // Validate required fields
     if (!clinic_id || !customer_id || !appointment_date || !start_time || !duration_minutes || !customer_name || !customer_phone || !service_name) {

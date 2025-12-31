@@ -2,21 +2,22 @@ import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 import { withClinicAuth } from "@/lib/auth/middleware"
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false
-    }
-  }
-)
 
 // GET /api/appointments/[id] - Get single appointment
 export const GET = withClinicAuth(async (req: NextRequest, user: any) => {
   try {
     const id = req.nextUrl.pathname.split('/').pop() || ''
+
+    const supabaseAdmin = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
+    )
 
     const { data: appointment, error } = await supabaseAdmin
       .from('appointment_slots')
@@ -48,6 +49,17 @@ export const PATCH = withClinicAuth(async (req: NextRequest, user: any) => {
   try {
     const id = req.nextUrl.pathname.split('/').pop() || ''
     const body = await req.json()
+
+    const supabaseAdmin = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
+    )
 
     const {
       status,
@@ -116,6 +128,17 @@ export const PATCH = withClinicAuth(async (req: NextRequest, user: any) => {
 export const DELETE = withClinicAuth(async (req: NextRequest, user: any) => {
   try {
     const id = req.nextUrl.pathname.split('/').pop() || ''
+
+    const supabaseAdmin = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
+    )
 
     const { error } = await supabaseAdmin
       .from('appointment_slots')

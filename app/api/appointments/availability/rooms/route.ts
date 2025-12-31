@@ -2,19 +2,20 @@ import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 import { withClinicAuth } from "@/lib/auth/middleware"
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false
-    }
-  }
-)
 
 // GET /api/appointments/availability/rooms - Get room availability and list
 export const GET = withClinicAuth(async (request: NextRequest) => {
+  const supabaseAdmin = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    }
+  )
+
   try {
     const { searchParams } = new URL(request.url)
     const clinicId = searchParams.get('clinic_id')
@@ -86,6 +87,18 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
 export const POST = withClinicAuth(async (request: NextRequest) => {
   try {
     const body = await request.json()
+
+    const supabaseAdmin = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
+    )
+
     const { action } = body
 
     if (action === 'create_room') {

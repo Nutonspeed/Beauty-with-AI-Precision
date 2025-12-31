@@ -2,17 +2,6 @@ import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 import { withClinicAuth } from "@/lib/auth/middleware"
 
-// Use service role for admin operations
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false
-    }
-  }
-)
 
 // GET /api/appointments/slots - Get available time slots
 export const GET = withClinicAuth(async (request: NextRequest) => {
@@ -29,8 +18,19 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
       )
     }
 
-    // Get day of week (0 = Sunday)
+    // Get day of week
     const dayOfWeek = new Date(date).getDay()
+
+    const supabaseAdmin = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
+    )
 
     // Get doctor availability for this day
     let doctorAvailabilityQuery = supabaseAdmin
