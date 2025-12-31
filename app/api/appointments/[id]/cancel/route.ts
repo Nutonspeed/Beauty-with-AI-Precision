@@ -2,16 +2,6 @@ import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 import { withClinicAuth } from "@/lib/auth/middleware"
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false
-    }
-  }
-)
 
 async function handler(req: NextRequest, user: any) {
   const id = req.nextUrl.pathname.split('/').pop() || '';
@@ -24,6 +14,16 @@ async function handler(req: NextRequest, user: any) {
     cancellation_type,
     reschedule_offered
   } = body;
+  const supabaseAdmin = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    }
+  );
 
   // Validate required fields
   if (!cancelled_by_user_id || !cancelled_by_role || !cancellation_reason || !cancellation_type) {

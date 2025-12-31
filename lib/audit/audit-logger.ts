@@ -65,14 +65,20 @@ class AuditLogger {
 
   constructor() {
     this.config = auditConfig
-    this.supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    )
     
     if (this.config.buffer.enabled) {
       this.startBufferFlush()
     }
+  }
+
+  private getSupabase() {
+    if (!this.supabase) {
+      this.supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+      )
+    }
+    return this.supabase
   }
 
   // Log audit event
@@ -201,7 +207,7 @@ class AuditLogger {
   // Query audit logs
   async query(query: AuditQuery) {
     try {
-      let supabaseQuery = this.supabase
+      let supabaseQuery = this.getSupabase()
         .from('audit_logs')
         .select('*', { count: 'exact' })
 
@@ -283,7 +289,7 @@ class AuditLogger {
   // Get audit statistics
   async getStatistics(filter?: AuditFilter) {
     try {
-      let supabaseQuery = this.supabase
+      let supabaseQuery = this.getSupabase()
         .from('audit_logs')
         .select('*')
 
@@ -375,7 +381,7 @@ class AuditLogger {
       const events = [...this.buffer]
       this.buffer = []
 
-      this.supabase
+      this.getSupabase()
         .from('audit_logs')
         .insert(events.map(event => ({
           id: event.id,
@@ -416,7 +422,7 @@ class AuditLogger {
   // Write single event to database
   private async writeEvent(event: AuditEvent) {
     try {
-      await this.supabase
+      await this.getSupabase()
         .from('audit_logs')
         .insert({
           id: event.id,
@@ -536,7 +542,7 @@ class AuditLogger {
       const cutoffDate = new Date()
       cutoffDate.setDate(cutoffDate.getDate() - days)
 
-      const { data, error } = await this.supabase
+      const { data, error } = await this.getSupabase()
         .from('audit_logs')
         .delete()
         .lt('timestamp', cutoffDate.toISOString())
@@ -562,7 +568,7 @@ class AuditLogger {
       cutoffDate.setDate(cutoffDate.getDate() - days)
 
       // Get events to archive
-      const { data: events, error: fetchError } = await this.supabase
+      const { data: events, error: fetchError } = await this.getSupabase()
         .from('audit_logs')
         .select('*')
         .lt('timestamp', cutoffDate.toISOString())
@@ -583,7 +589,7 @@ class AuditLogger {
       console.log(`Archived ${events.length} audit events to ${archiveFile}`)
 
       // Delete archived events from main table
-      const { error: deleteError } = await this.supabase
+      const { error: deleteError } = await this.getSupabase()
         .from('audit_logs')
         .delete()
         .lt('timestamp', cutoffDate.toISOString())
