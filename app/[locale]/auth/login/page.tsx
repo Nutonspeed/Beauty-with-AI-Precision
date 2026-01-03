@@ -314,14 +314,14 @@ export default function LoginPage() {
                   <div className="text-2xl">🧪</div>
                   <div className="flex-1">
                     <p className="text-blue-900 dark:text-blue-100 text-sm font-semibold mb-2">
-                      Demo Accounts (Password: password123)
+                      Demo Accounts (Admin Pass: Admin123!)
                     </p>
                     <div className="text-blue-800 dark:text-blue-200 space-y-1.5 text-xs">
                       <button
                         type="button"
                         onClick={() => {
                           setEmail('admin@ai367bar.com')
-                          setPassword('password123')
+                          setPassword('Admin123!')
                         }}
                         className="w-full text-left font-mono bg-white dark:bg-blue-900 p-2 rounded hover:bg-blue-100 dark:hover:bg-blue-800 transition-colors"
                       >
