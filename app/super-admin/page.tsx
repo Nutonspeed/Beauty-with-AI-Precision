@@ -67,11 +67,28 @@ function SuperAdminDashboardContent() {
   })
 
   useEffect(() => {
-    if (!loading && !user) {
-      router.push('/auth/login')
-    } else if (!loading && user && user.role !== 'super_admin') {
-      router.push('/customer/dashboard')
+    if (loading) return
+    const enforceRole = async () => {
+      if (!user) {
+        router.push('/auth/login')
+        return
+      }
+      try {
+        const res = await fetch('/api/auth/check-role', { headers: { Accept: 'application/json' } })
+        if (!res.ok) {
+          router.push('/unauthorized')
+          return
+        }
+        const data = await res.json()
+        if (data.role !== 'super_admin') {
+          router.push('/unauthorized')
+        }
+      } catch (err) {
+        console.error('role check error', err)
+        router.push('/unauthorized')
+      }
     }
+    enforceRole()
   }, [loading, user, router])
 
   useEffect(() => {

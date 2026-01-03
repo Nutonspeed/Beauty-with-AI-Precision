@@ -27,16 +27,11 @@ export const GET = withAuthContext(
     const limit = Number.parseInt(searchParams.get("limit") || "10")
     const offset = Number.parseInt(searchParams.get("offset") || "0")
 
-    const { rows: analyses, total: count } = await getSkinAnalysesHistory(supabase, {
-      userId,
-      limit,
-      offset,
-      sortBy: "created_at",
-      sortOrder: "desc",
-    })
+    const analyses = await getSkinAnalysesHistory(userId, limit)
+    const count = analyses.length
 
     // Transform to response format
-    const history: AnalysisHistoryItem[] = (analyses || []).map((analysis) => {
+    const history: AnalysisHistoryItem[] = (analyses || []).map((analysis: any) => {
       // Convert ai_concerns array to SkinConcern format
       const aiConcerns = (analysis.ai_concerns || []) as string[]
       const concerns: SkinConcern[] = aiConcerns.map((type) => ({

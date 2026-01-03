@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState, Suspense, useRef, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, Suspense, useRef, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
 
@@ -18,7 +18,6 @@ if (typeof window !== 'undefined') {
 }
 import { MiniTrustBadges } from '@/components/MiniTrustBadges';
 import { PersonaSettings } from '@/components/PersonalizationPanel';
-import { Snapshot } from '@/components/SessionTimeline';
 import { analytics } from '@/lib/analytics';
 
 // Toned-down sphere
@@ -50,20 +49,26 @@ function HeroSphere({ active }: { active: boolean }) {
 }
 
 interface LandingHeroProps {
-  onPrimary?: () => void;
-  onSecondary?: () => void;
+  _onPrimary?: () => void;
+  _onSecondary?: () => void;
+  _ctaVariant?: "A" | "B";
   ctaVariant?: "A" | "B";
 }
 
-export function LandingHero({ onPrimary, onSecondary, ctaVariant = "A" }: LandingHeroProps) {
+export function LandingHero({ _onPrimary, _onSecondary, _ctaVariant, ctaVariant }: LandingHeroProps) {
+  const selectedCtaVariant = _ctaVariant ?? ctaVariant ?? "A";
   const [stage, setStage] = useState<'intro'|'scanning'|'active'>('intro');
-  const [perfLow, setPerfLow] = useState(false);
-  const [persona, setPersona] = useState<PersonaSettings>({ tone:'Neutral', sensitivity:'Medium', goal:'Rejuvenate' });
+  const [perfLow, _setPerfLow] = useState(false);
+  const [persona, _setPersona] = useState<PersonaSettings>({ tone:'Neutral', sensitivity:'Medium', goal:'Rejuvenate' });
   const [webglSupported, setWebglSupported] = useState<boolean>(true);
-  const [snapshots, setSnapshots] = useState<Snapshot[]>([]);
-  const baseline = useMemo(() => snapshots.find(s=>s.stage==='scanning') || snapshots[0], [snapshots]);
-
-  // Map persona to visual parameters
+  const [snapshots, setSnapshots] = useState<Array<{
+    id: string;
+    stage: string;
+    timestamp: number;
+    dataUrl: string;
+    perfLow: boolean;
+    persona: PersonaSettings;
+  }>>([]);
   const haloColors = (() => {
     switch(persona.tone){
       case 'Cool': return ['#b3d6ff','#c084fc'];

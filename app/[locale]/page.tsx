@@ -600,7 +600,7 @@ export default function HomePage() {
                     {t('home.pricing.premium.description')}
                   </p>
                   <div className="mb-6">
-                    <span className="text-4xl font-bold">฿1,500</span>
+                    <span className="text-4xl font-bold">฿19,900</span>
                     <span className="text-muted-foreground"> / {t('home.pricing.premium.period')}</span>
                   </div>
                   <ul className="mb-8 space-y-3">

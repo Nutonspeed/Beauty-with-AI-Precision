@@ -2,9 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { withClinicAuth } from '@/lib/auth/middleware';
 
+/**
  * GET /api/branches/revenue
  * Get revenue report for branches
- * 
+ *
  * Query parameters:
  * - branch_id (optional): Filter by branch
  * - period_type (optional): Filter by period type (daily, weekly, monthly, yearly)
@@ -19,7 +20,7 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
     const start_date = searchParams.get('start_date');
     const end_date = searchParams.get('end_date');
 
-    const supabase = createClient(
+    function getSupabaseClient() { return createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!,
       {
@@ -28,9 +29,11 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
           persistSession: false
         }
       }
-    )
+    );
+    }
 
-    let query = supabase
+    const supabaseClient = getSupabaseClient();
+    let query = supabaseClient
       .from('branch_revenue')
       .select(`
         *,
@@ -113,7 +116,7 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
     const net_profit = total_revenue - total_expenses;
     const profit_margin = total_revenue > 0 ? (net_profit / total_revenue) * 100 : 0;
 
-    const supabase = createClient(
+    function getSupabaseClient() { return createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!,
       {
@@ -122,9 +125,11 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
           persistSession: false
         }
       }
-    )
+    );
+    }
 
-    const { data, error } = await supabase
+    const supabaseClient = getSupabaseClient();
+    const { data, error } = await supabaseClient
       .from('branch_revenue')
       .upsert(
         {
@@ -168,3 +173,4 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
     );
   }
 });
+

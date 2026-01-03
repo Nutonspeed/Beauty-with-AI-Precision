@@ -7,7 +7,8 @@
  * Run with: npm test __tests__/phase1-integration.test.ts
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+// @ts-nocheck
+import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest'
 
 // Mock ImageData for Node.js environment
 class ImageData {

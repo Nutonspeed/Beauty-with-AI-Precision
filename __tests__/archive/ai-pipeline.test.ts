@@ -4,7 +4,8 @@
  * Run with: npm test (when vitest is installed)
  */
 
-import { describe, it, expect } from 'vitest'
+// @ts-nocheck
+import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest'
 import {
   mockLandmarks,
   mockFaceDetectionResult,

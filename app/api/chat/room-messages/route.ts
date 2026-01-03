@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 /**
  * GET /api/chat/room-messages
@@ -31,6 +33,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    const supabase = getSupabaseClient();
     let query = supabase
       .from('chat_messages')
       .select(`
@@ -44,7 +47,8 @@ export async function GET(request: NextRequest) {
 
     if (before_id) {
       // Get messages before a specific message (for pagination)
-      const { data: beforeMessage } = await supabase
+      const supabaseClient = getSupabaseClient();
+      const { data: beforeMessage } = await supabaseClient
         .from('chat_messages')
         .select('created_at')
         .eq('id', before_id)
@@ -114,6 +118,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create the message
+    const supabase = getSupabaseClient();
     const { data: message, error: messageError } = await supabase
       .from('chat_messages')
       .insert({
@@ -153,7 +158,8 @@ export async function POST(request: NextRequest) {
 
           if (hasKeyword) {
             // Send auto-reply
-            await supabase.from('chat_messages').insert({
+            const supabaseClient = getSupabaseClient();
+            await supabaseClient.from('chat_messages').insert({
               room_id,
               sender_id,
               sender_type: 'system',
@@ -163,7 +169,7 @@ export async function POST(request: NextRequest) {
             });
 
             // Update trigger count
-            await supabase
+            await supabaseClient
               .from('chat_auto_replies')
               .update({
                 triggered_count: reply.triggered_count + 1,

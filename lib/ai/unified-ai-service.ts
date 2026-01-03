@@ -52,7 +52,7 @@ export function getAvailableProviders(): AIProvider[] {
   return [
     {
       name: 'google',
-      available: hasGeminiApiKey() && !getGeminiApiKey().includes('your-'),
+      available: hasGeminiApiKey() && getGeminiApiKey() !== undefined && !getGeminiApiKey()!.includes('your-'),
       priority: 1  // Gemini as primary (free tier)
     },
     {
@@ -203,11 +203,16 @@ async function callOpenAI(imageBase64: string, prompt: string): Promise<string> 
 }
 
 async function callAnthropic(imageBase64: string, prompt: string): Promise<string> {
+  const apiKey = getAnthropicApiKey();
+  if (!apiKey) {
+    throw new Error('Anthropic API key is not configured');
+  }
+  
   const response = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'x-api-key': getAnthropicApiKey(),
+      'x-api-key': apiKey,
       'anthropic-version': '2023-06-01'
     },
     body: JSON.stringify({

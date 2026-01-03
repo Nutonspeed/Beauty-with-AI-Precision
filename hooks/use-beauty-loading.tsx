@@ -92,7 +92,7 @@ export function useBeautyLoading(initialState = false) {
 // Hook สำหรับ Async Loading with Beauty Components
 export function useAsyncBeautyLoading<T>(
   asyncFn: () => Promise<T>,
-  loadingMessage = 'กำลังดำเนินการ...'
+  _loadingMessage = 'กำลังดำเนินการ...'
 ) {
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<Error | null>(null);

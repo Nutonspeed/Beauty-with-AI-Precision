@@ -7,7 +7,7 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { BeautyAILogo, RoseIcon, AIStarIcon } from '@/components/icons/beauty-icons';
+import { BeautyAILogo, RoseIcon } from '@/components/icons/beauty-icons';
 import { LanguageSwitcher } from '@/components/language-switcher';
 import { ThemeToggle } from '@/components/theme-toggle';
 import Link from 'next/link';

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { expect } from '@playwright/test'
 
 export class TestHelpers {
   /**
@@ -12,7 +12,7 @@ export class TestHelpers {
       try {
         // Strategy 2: waitForFunction
         await page.waitForFunction(
-          (sel) => document.querySelector(sel) !== null,
+          (sel: string) => document.querySelector(sel) !== null,
           selector,
           { timeout }
         )
@@ -85,7 +85,7 @@ export class TestHelpers {
    * Mock slow connection
    */
   static async simulateSlowConnection(page: any) {
-    await page.route('**/*', (route) => {
+    await page.route('**/*', (route: any) => {
       // Slow down API calls
       if (route.request().url().includes('/api/')) {
         setTimeout(() => route.continue(), 2000)
@@ -99,7 +99,7 @@ export class TestHelpers {
    * Mock network error
    */
   static async simulateNetworkError(page: any, urlPattern: string) {
-    await page.route(urlPattern, (route) => {
+    await page.route(urlPattern, (route: any) => {
       route.abort()
     })
   }

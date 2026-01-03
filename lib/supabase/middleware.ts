@@ -32,6 +32,29 @@ function stripLocaleFromPathname(pathname: string): string {
   return rest === "" ? "/" : rest
 }
 
+function withLocalePath(path: string, locale: string | null) {
+  if (!locale) return path
+  if (path === "/") return `/${locale}`
+  return `/${locale}${path.startsWith("/") ? "" : "/"}${path.replace(/^\//, "")}`
+}
+
+function getRoleDashboardPath(role?: string | null, locale?: string | null) {
+  switch (role) {
+    case "super_admin":
+      return withLocalePath("/super-admin", locale ?? null)
+    case "clinic_owner":
+    case "clinic_staff":
+    case "clinic_admin":
+      return withLocalePath("/clinic/dashboard", locale ?? null)
+    case "sales_staff":
+      return withLocalePath("/sales/dashboard", locale ?? null)
+    case "customer":
+      return withLocalePath("/customer/dashboard", locale ?? null)
+    default:
+      return withLocalePath("/dashboard", locale ?? null)
+  }
+}
+
 function _isPublicRoute(pathname: string): boolean {
   if (PUBLIC_ROUTES.has(pathname)) return true
   if (pathname.startsWith("/api/")) return true
@@ -87,7 +110,6 @@ export async function updateSession(request: NextRequest, response?: NextRespons
     const locale = getLocaleFromPathname(originalPathname)
     const normalizedPathname = stripLocaleFromPathname(pathnameForChecks)
     const loginPath = locale ? `/${locale}/auth/login` : "/auth/login"
-    const dashboardPath = locale ? `/${locale}/dashboard` : "/dashboard"
     
     if (error) {
       console.error('Auth error in middleware:', error.message)
@@ -113,6 +135,8 @@ export async function updateSession(request: NextRequest, response?: NextRespons
 
     if (user && isProtectedRoute(normalizedPathname)) {
       const { data: userProfile } = await supabase.from("users").select("role, clinic_id").eq("id", user.id).single()
+      const resolvedRole = userProfile?.role ?? (user.user_metadata as any)?.role ?? null
+      const roleDashboardPath = getRoleDashboardPath(resolvedRole, locale)
 
       if (userProfile) {
         // Clinic and branches routes require clinic_owner or clinic_staff
@@ -121,14 +145,14 @@ export async function updateSession(request: NextRequest, response?: NextRespons
             userProfile.role !== "clinic_staff" &&
             userProfile.role !== "clinic_admin") {
           const url = request.nextUrl.clone()
-          url.pathname = dashboardPath
+          url.pathname = roleDashboardPath
           return NextResponse.redirect(url)
         }
 
         // Sales routes require sales_staff
         if (normalizedPathname.startsWith("/sales") && userProfile.role !== "sales_staff") {
           const url = request.nextUrl.clone()
-          url.pathname = dashboardPath
+          url.pathname = roleDashboardPath
           return NextResponse.redirect(url)
         }
 
@@ -138,7 +162,7 @@ export async function updateSession(request: NextRequest, response?: NextRespons
              normalizedPathname.startsWith("/settings")) && 
             userProfile.role !== "super_admin") {
           const url = request.nextUrl.clone()
-          url.pathname = dashboardPath
+          url.pathname = roleDashboardPath
           return NextResponse.redirect(url)
         }
 
@@ -147,9 +171,16 @@ export async function updateSession(request: NextRequest, response?: NextRespons
             userProfile.role !== "clinic_owner" && 
             userProfile.role !== "super_admin") {
           const url = request.nextUrl.clone()
-          url.pathname = dashboardPath
+          url.pathname = roleDashboardPath
           return NextResponse.redirect(url)
         }
+      }
+
+      // If user is on generic /dashboard or root but has specific role, route them accordingly
+      if (normalizedPathname === "/dashboard" || normalizedPathname === "/") {
+        const url = request.nextUrl.clone()
+        url.pathname = getRoleDashboardPath(resolvedRole, locale)
+        return NextResponse.redirect(url)
       }
     }
   } catch (err) {

@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 // GET: Get report template by ID
 export async function GET(
@@ -14,7 +16,8 @@ export async function GET(
   try {
     const { id } = await context.params;
 
-    const { data, error } = await supabase
+    const supabaseClient = getSupabaseClient();
+    const { data, error } = await supabaseClient
       .from('report_templates')
       .select('*')
       .eq('id', id)
@@ -46,6 +49,7 @@ export async function PATCH(
   try {
     const { id } = await context.params;
     const body = await request.json();
+    const supabaseClient = getSupabaseClient();
 
     const updateData: any = {};
     
@@ -69,7 +73,7 @@ export async function PATCH(
     if (body.email_message !== undefined) updateData.email_message = body.email_message;
     if (body.is_active !== undefined) updateData.is_active = body.is_active;
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from('report_templates')
       .update(updateData)
       .eq('id', id)
@@ -102,7 +106,8 @@ export async function DELETE(
   try {
     const { id } = await context.params;
 
-    const { error } = await supabase
+    const supabaseClient = getSupabaseClient();
+    const { error } = await supabaseClient
       .from('report_templates')
       .delete()
       .eq('id', id);

@@ -75,10 +75,10 @@ export function getGeminiApiKey(): string | undefined {
     : undefined
 }
 
-export function getDeepFaceApiUrl(): string | undefined {
+export function getDeepFaceApiUrl(): string {
   return process.env.DEEPFACE_API_URL && process.env.DEEPFACE_API_URL !== 'placeholder'
     ? process.env.DEEPFACE_API_URL
-    : undefined
+    : 'http://localhost:8000'
 }
 
 export function getGoogleCredentialsConfig(): any {

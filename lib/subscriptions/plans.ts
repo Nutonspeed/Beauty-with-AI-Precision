@@ -198,8 +198,6 @@ export function isWithinLimits(
 export function formatPrice(planName: SubscriptionPlan, locale: 'th' | 'en' = 'th'): string {
   const plan = SUBSCRIPTION_PLANS[planName]
   
-  if (plan.price === 0) return locale === 'th' ? 'ฟรี' : 'Free'
-  if (plan.price === -1) return locale === 'th' ? 'ติดต่อเรา' : 'Contact Us'
-  
-  return `฿${plan.price.toLocaleString()}`
+  // All plans have prices > 0, so no need for free/contact checks
+  return locale === 'th' ? `฿${plan.price.toLocaleString()}` : `$${(plan.price / 100).toFixed(2)}`
 }

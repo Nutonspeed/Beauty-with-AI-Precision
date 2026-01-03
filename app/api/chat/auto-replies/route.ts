@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 /**
  * GET /api/chat/auto-replies
@@ -27,7 +29,8 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    let query = supabase
+    const supabaseClient = getSupabaseClient();
+    let query = supabaseClient
       .from('chat_auto_replies')
       .select('*')
       .eq('clinic_id', clinic_id)
@@ -97,7 +100,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { data, error } = await supabase
+    const supabaseClient = getSupabaseClient();
+    const { data, error } = await supabaseClient
       .from('chat_auto_replies')
       .insert({
         clinic_id,

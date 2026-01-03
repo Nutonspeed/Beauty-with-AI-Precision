@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 // GET: Generate staff performance report
 export async function GET(request: NextRequest) {
@@ -21,8 +23,10 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    const supabaseClient = getSupabaseClient();
+
     // Call database function for staff performance
-    const { data: performance, error: performanceError } = await supabase
+    const { data: performance, error: performanceError } = await supabaseClient
       .rpc('calculate_staff_performance', {
         p_clinic_id: clinicId,
         p_start_date: startDate,
@@ -38,7 +42,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get additional metrics from appointments
-    const { data: appointments } = await supabase
+    const { data: appointments } = await supabaseClient
       .from('appointment_slots')
       .select('doctor_id, status, appointment_date, duration_minutes')
       .eq('clinic_id', clinicId)
@@ -97,3 +101,4 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+

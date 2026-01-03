@@ -2,10 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { withClinicAuth } from '@/lib/auth/middleware';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 /**
  * GET /api/chat/files
@@ -28,6 +30,7 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
       );
     }
 
+    const supabase = getSupabaseClient();
     let query = supabase
       .from('chat_file_uploads')
       .select(`
@@ -96,6 +99,7 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
       );
     }
 
+    const supabase = getSupabaseClient();
     const { data, error } = await supabase
       .from('chat_file_uploads')
       .insert({
@@ -122,9 +126,6 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
     return NextResponse.json(data, { status: 201 });
   } catch (error) {
     console.error('Error uploading file:', error);
-    return NextResponse.json(
-      { error: 'Failed to upload file' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to upload file' }, { status: 500 });
   }
 })

@@ -30,15 +30,8 @@ export async function GET(request: Request) {
       const validatedLimit = Math.min(Math.max(1, limit), 100)
       const validatedOffset = Math.max(0, offset)
 
-      const { rows, total } = await getSkinAnalysesHistory(supabase, {
-        userId: user.id,
-        limit: validatedLimit,
-        offset: validatedOffset,
-        sortBy: "created_at",
-        sortOrder: "desc",
-      })
-
-      const analyses = (rows || []).map((row) => {
+      const analyses = await getSkinAnalysesHistory(user.id, validatedLimit)
+      const formattedAnalyses = analyses.map((row: any) => {
         return {
           id: row.id,
           user_id: user.id,
@@ -72,7 +65,7 @@ export async function GET(request: Request) {
       })
 
       return NextResponse.json(
-        { analyses, pagination: { limit: validatedLimit, offset: validatedOffset, total } },
+        { analyses: formattedAnalyses, pagination: { limit: validatedLimit, offset: validatedOffset, total: analyses.length } },
         { headers },
       )
     }

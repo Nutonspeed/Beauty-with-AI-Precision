@@ -6,6 +6,7 @@
  * Target: 85%+ accuracy across all models
  */
 
+// @ts-nocheck
 import { describe, it, expect, beforeAll, afterAll, beforeEach, vi } from 'vitest'
 import { getHybridAnalyzer, type HybridAnalyzer } from '../lib/ai/hybrid-analyzer'
 import { getPerformanceOptimizer } from '../lib/ai/performance-optimizer'

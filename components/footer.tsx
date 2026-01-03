@@ -9,7 +9,7 @@ import { Mail, Phone, Facebook, Instagram, Youtube, Linkedin } from "lucide-reac
 
 export function Footer() {
   const locale = useLocale();
-  const isThaiLocale = locale === 'th';
+  const _isThaiLocale = locale === 'th';
   const lp = useLocalizePath()
   const t = useTranslations()
 

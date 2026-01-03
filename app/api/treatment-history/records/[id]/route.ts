@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 /**
  * GET /api/treatment-history/records/[id]
@@ -16,7 +18,8 @@ export async function GET(
 ) {
   try {
     const params = await context.params;
-    const { data, error } = await supabase
+    const supabaseClient = getSupabaseClient();
+    const { data, error } = await supabaseClient
       .from('treatment_records')
       .select(`
         *,
@@ -51,9 +54,10 @@ export async function PATCH(
 ) {
   try {
     const params = await context.params;
+    const supabaseClient = getSupabaseClient();
     const body = await request.json();
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from('treatment_records')
       .update(body)
       .eq('id', params.id)
@@ -83,7 +87,8 @@ export async function DELETE(
 ) {
   try {
     const params = await context.params;
-    const { data, error } = await supabase
+    const supabaseClient = getSupabaseClient();
+    const { data, error } = await supabaseClient
       .from('treatment_records')
       .update({ is_deleted: true })
       .eq('id', params.id)

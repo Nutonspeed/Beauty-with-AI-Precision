@@ -20,11 +20,8 @@ export default function ARFaceTrackingComponent() {
       try {
         if (!videoRef.current || !canvasRef.current) return;
 
-        // Set up camera
-        const cameraReady = await setupCamera(videoRef.current);
-        if (!cameraReady) {
-          throw new Error('Failed to access camera');
-        }
+        // Set up camera (returns MediaStream; throws on failure)
+        await setupCamera(videoRef.current);
 
         // Initialize face tracker
         const faceTracker = new ARFaceTracker((landmarks) => {

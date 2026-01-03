@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 /**
  * POST /api/marketing/promo-codes/validate
@@ -43,8 +45,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const supabaseClient = getSupabaseClient();
+
     // Call database function to validate
-    const { data, error } = await supabase.rpc('validate_promo_code', {
+    const { data, error } = await supabaseClient.rpc('validate_promo_code', {
       p_code: code.toUpperCase(),
       p_customer_id: customer_id,
       p_purchase_amount: purchase_amount,
@@ -72,3 +76,4 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+

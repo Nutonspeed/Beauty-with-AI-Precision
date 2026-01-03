@@ -38,34 +38,6 @@ export default async function InteractiveSphere() {
   
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'WebApplication',
-            name: 'Interactive 3D AI Beauty Analysis Sphere',
-            url: `${siteUrl}/interactive-sphere`,
-            description: 'Advanced 3D interactive visualization for clinical-grade beauty and skin analysis powered by AI technology',
-            applicationCategory: 'HealthApplication',
-            operatingSystem: 'Any',
-            offers: {
-              '@type': 'Offer',
-              price: '0',
-              priceCurrency: 'USD',
-            },
-            featureList: [
-              'Real-time 3D WebGL rendering',
-              'AI-powered skin analysis',
-              'Clinical-grade precision',
-              'Personalized insights',
-              'Interactive visualization',
-              'Performance monitoring'
-            ],
-            browserRequirements: 'Requires WebGL-enabled browser',
-          }),
-        }}
-      />
       <LandingHero ctaVariant={ctaVariant} />
     </>
   );

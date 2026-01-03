@@ -16,7 +16,7 @@ export interface SkinAnalysis {
 }
 
 export async function getSkinAnalysesHistory(userId: string, limit = 10) {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   const { data, error } = await supabase
     .from('skin_analyses')
@@ -33,7 +33,7 @@ export async function getSkinAnalysesHistory(userId: string, limit = 10) {
 }
 
 export async function getSkinAnalysisById(analysisId: string) {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   const { data, error } = await supabase
     .from('skin_analyses')
@@ -49,7 +49,7 @@ export async function getSkinAnalysisById(analysisId: string) {
 }
 
 export async function deleteSkinAnalysis(analysisId: string) {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   const { error } = await supabase
     .from('skin_analyses')
@@ -64,7 +64,7 @@ export async function deleteSkinAnalysis(analysisId: string) {
 }
 
 export async function getClinicAnalyses(clinicId: string, limit = 50) {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   const { data, error } = await supabase
     .from('skin_analyses')

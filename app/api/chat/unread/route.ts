@@ -2,10 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { withClinicAuth } from '@/lib/auth/middleware';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 /**
  * GET /api/chat/unread
@@ -28,6 +30,7 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
       );
     }
 
+    const supabase = getSupabaseClient();
     // Call the database function to get unread count
     const { data, error } = await supabase.rpc('get_unread_message_count', {
       p_user_id: user_id,

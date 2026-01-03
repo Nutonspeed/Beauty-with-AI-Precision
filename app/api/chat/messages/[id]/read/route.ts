@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 /**
  * POST /api/chat/messages/[id]/read
@@ -30,7 +32,8 @@ export async function POST(
     }
 
     // Call the database function to mark as read
-    const { data, error } = await supabase.rpc('mark_message_as_read', {
+    const supabaseClient = getSupabaseClient();
+    const { data, error } = await supabaseClient.rpc('mark_message_as_read', {
       p_message_id: params.id,
       p_user_id: user_id,
     });

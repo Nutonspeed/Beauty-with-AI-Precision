@@ -197,7 +197,7 @@ export function withAuth(
       const user: AuthenticatedUser = {
         id: userData.id,
         email: userData.email,
-        role: userData.role,
+        role: authUser.user_metadata?.role || userData.role || 'customer',
         clinic_id: userData.clinic_id,
         branch_id: userData.branch_id,
       };
@@ -339,7 +339,7 @@ export function withAuthContext<TContext>(
       const user: AuthenticatedUser = {
         id: userData.id,
         email: userData.email,
-        role: userData.role,
+        role: authUser.user_metadata?.role || userData.role || 'customer',
         clinic_id: userData.clinic_id,
         branch_id: userData.branch_id,
       };

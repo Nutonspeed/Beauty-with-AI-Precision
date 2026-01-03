@@ -247,7 +247,7 @@ export class PatientReportGenerator implements ReportGenerator {
   
   private async calculateTreatmentSuccessRate(treatments: any[]) {
     if (treatments.length === 0) return 0
-    const _supabase = await createServerClient()
+    const _supabase = createServiceClient()
     const successful = treatments.filter(t => t.status === 'completed' && t.success).length
     return Math.round((successful / treatments.length) * 100)
   }

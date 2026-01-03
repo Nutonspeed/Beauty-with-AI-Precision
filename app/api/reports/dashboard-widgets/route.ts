@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 // GET: List dashboard widgets
 export async function GET(request: NextRequest) {
@@ -20,7 +22,8 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    let query = supabase
+    const supabaseClient = getSupabaseClient();
+    let query = supabaseClient
       .from('dashboard_widgets')
       .select('*')
       .eq('clinic_id', clinicId)
@@ -89,7 +92,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Create widget
-    const { data, error } = await supabase
+    const supabaseClient = getSupabaseClient();
+    const { data, error } = await supabaseClient
       .from('dashboard_widgets')
       .insert({
         clinic_id,
@@ -136,3 +140,4 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+

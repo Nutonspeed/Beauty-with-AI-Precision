@@ -2,9 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { withClinicAuth } from '@/lib/auth/middleware';
 
+/**
  * GET /api/branches/inventory
  * Get inventory for a branch
- * 
+ *
  * Query parameters:
  * - branch_id (required): Branch ID
  * - low_stock (optional): Filter low stock items only
@@ -22,7 +23,7 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
       );
     }
 
-    const supabase = createClient(
+    function getSupabaseClient() { return createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!,
       {
@@ -31,9 +32,11 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
           persistSession: false
         }
       }
-    )
+    );
+    }
 
-    let query = supabase
+    const supabaseClient = getSupabaseClient();
+    let query = supabaseClient
       .from('branch_inventory')
       .select(`
         *,
@@ -108,7 +111,7 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
       );
     }
 
-    const supabase = createClient(
+    function getSupabaseClient() { return createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!,
       {
@@ -117,9 +120,11 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
           persistSession: false
         }
       }
-    )
+    );
+    }
 
-    const { data, error } = await supabase
+    const supabaseClient = getSupabaseClient();
+    const { data, error } = await supabaseClient
       .from('branch_inventory')
       .upsert(
         {
@@ -156,3 +161,4 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
     );
   }
 })
+

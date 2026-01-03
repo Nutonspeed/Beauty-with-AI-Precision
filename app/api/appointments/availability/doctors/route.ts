@@ -86,6 +86,17 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
       )
     }
 
+    const supabaseAdmin = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
+    )
+
     const { data, error } = await supabaseAdmin
       .from('doctor_availability')
       .insert({

@@ -7,7 +7,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist",
-    "types": ["jest", "node"]
+    "types": ["node"]
   },
   "include": [
     "src/**/*",

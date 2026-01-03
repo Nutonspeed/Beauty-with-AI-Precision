@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 /**
  * GET /api/marketing/segments/[id]/members
@@ -18,8 +20,8 @@ export async function GET(
     const params = await context.params;
     const { searchParams } = new URL(request.url);
     const is_active = searchParams.get('is_active');
-
-    let query = supabase
+    const supabaseClient = getSupabaseClient();
+    let query = supabaseClient
       .from('customer_segment_members')
       .select(`
         *,
@@ -68,6 +70,7 @@ export async function POST(
     const params = await context.params;
     const body = await request.json();
     const { customer_ids, added_by_user_id } = body;
+    const supabaseClient = getSupabaseClient();
 
     if (!customer_ids || !Array.isArray(customer_ids) || customer_ids.length === 0) {
       return NextResponse.json(
@@ -84,7 +87,7 @@ export async function POST(
       is_active: true,
     }));
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from('customer_segment_members')
       .upsert(members, {
         onConflict: 'segment_id,customer_id',
@@ -95,8 +98,8 @@ export async function POST(
     if (error) throw error;
 
     // Update segment customer count
-    await supabase.rpc('update_segment_customer_count', {
-  p_segment_id: params.id,
+    await supabaseClient.rpc('update_segment_customer_count', {
+      p_segment_id: params.id,
     });
 
     return NextResponse.json({
@@ -128,6 +131,7 @@ export async function DELETE(
     const params = await context.params;
     const body = await request.json();
     const { customer_ids } = body;
+    const supabaseClient = getSupabaseClient();
 
     if (!customer_ids || !Array.isArray(customer_ids) || customer_ids.length === 0) {
       return NextResponse.json(
@@ -137,7 +141,7 @@ export async function DELETE(
     }
 
     // Soft delete by setting is_active to false
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from('customer_segment_members')
       .update({ is_active: false })
       .eq('segment_id', params.id)
@@ -147,8 +151,8 @@ export async function DELETE(
     if (error) throw error;
 
     // Update segment customer count
-    await supabase.rpc('update_segment_customer_count', {
-  p_segment_id: params.id,
+    await supabaseClient.rpc('update_segment_customer_count', {
+      p_segment_id: params.id,
     });
 
     return NextResponse.json({

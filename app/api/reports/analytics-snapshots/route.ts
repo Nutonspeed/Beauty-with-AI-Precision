@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 // GET: List analytics snapshots for trend analysis
 export async function GET(request: NextRequest) {
@@ -22,7 +24,8 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    let query = supabase
+    const supabaseClient = getSupabaseClient();
+    let query = supabaseClient
       .from('analytics_snapshots')
       .select('*')
       .eq('clinic_id', clinicId)
@@ -84,7 +87,9 @@ export async function POST(request: NextRequest) {
     endOfDay.setHours(23, 59, 59, 999);
 
     // Revenue metrics
-    const { data: revenue } = await supabase
+    const supabaseClient = getSupabaseClient();
+
+    const { data: revenue } = await supabaseClient
       .from('bookings')
       .select('total_amount')
       .eq('clinic_id', clinic_id)
@@ -97,7 +102,7 @@ export async function POST(request: NextRequest) {
     const avgTransactionValue = totalTransactions > 0 ? totalRevenue / totalTransactions : 0;
 
     // Customer metrics (beauty clinic customers, NOT patients)
-    const { data: customers } = await supabase
+    const { data: customers } = await supabaseClient
       .from('bookings')
       .select('user_id')
       .eq('clinic_id', clinic_id)
@@ -107,7 +112,7 @@ export async function POST(request: NextRequest) {
     const uniqueCustomers = new Set(customers?.map(c => c.user_id)).size;
 
     // Appointment metrics
-    const { data: appointments } = await supabase
+    const { data: appointments } = await supabaseClient
       .from('appointment_slots')
       .select('status')
       .eq('clinic_id', clinic_id)
@@ -122,7 +127,7 @@ export async function POST(request: NextRequest) {
       : 0;
 
     // Create or update snapshot
-    const { data: snapshot, error: snapshotError } = await supabase
+    const { data: snapshot, error: snapshotError } = await supabaseClient
       .from('analytics_snapshots')
       .upsert({
         clinic_id,
@@ -160,3 +165,4 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+

@@ -1,21 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 /**
  * GET /api/chat/rooms/[id]
  * Get a specific chat room with details
  */
 export async function GET(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  _request: NextRequest,
+  { params }: { params: { id: string } }
 ) {
   try {
-    const params = await context.params;
+    const supabase = getSupabaseClient();
     const { data, error } = await supabase
       .from('chat_rooms')
       .select(`
@@ -63,10 +65,9 @@ export async function GET(
  */
 export async function PATCH(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const params = await context.params;
     const body = await request.json();
     const {
       assigned_staff_id,
@@ -86,6 +87,7 @@ export async function PATCH(
 
       // Add staff as participant
       if (assigned_staff_id) {
+        const supabase = getSupabaseClient();
         await supabase
           .from('chat_participants')
           .insert({
@@ -132,6 +134,7 @@ export async function PATCH(
       updateData.satisfaction_comment = satisfaction_comment;
     }
 
+    const supabase = getSupabaseClient();
     const { data, error } = await supabase
       .from('chat_rooms')
       .update(updateData)
@@ -162,7 +165,8 @@ export async function DELETE(
   try {
     const params = await context.params;
     // Soft delete by setting status to archived
-    const { data, error } = await supabase
+    const supabaseClient = getSupabaseClient();
+    const { data, error } = await supabaseClient
       .from('chat_rooms')
       .update({
         status: 'archived',

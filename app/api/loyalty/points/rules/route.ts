@@ -2,10 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { withClinicAuth } from '@/lib/auth/middleware';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 /**
  * GET /api/loyalty/points/rules
@@ -34,7 +36,8 @@ export const GET = withClinicAuth(async (request: NextRequest, user: any) => {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    let query = supabase
+    const supabaseClient = getSupabaseClient();
+    let query = supabaseClient
       .from('points_earning_rules')
       .select(`
         *,
@@ -117,7 +120,8 @@ export const POST = withClinicAuth(async (request: NextRequest, user: any) => {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const { data, error } = await supabase
+    const supabaseClient = getSupabaseClient();
+    const { data, error } = await supabaseClient
       .from('points_earning_rules')
       .insert({
         clinic_id,
@@ -162,3 +166,4 @@ export const POST = withClinicAuth(async (request: NextRequest, user: any) => {
     );
   }
 });
+

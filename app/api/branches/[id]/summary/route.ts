@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { withClinicAuth } from '@/lib/auth/middleware';
 
+/**
  * GET /api/branches/[id]/summary
  * Get comprehensive branch summary including inventory, staff, services, and revenue
  */

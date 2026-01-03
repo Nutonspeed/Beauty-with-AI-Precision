@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 // GET: Generate revenue report
 export async function GET(request: NextRequest) {
@@ -21,8 +23,10 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    const supabaseClient = getSupabaseClient();
+
     // Call database function for revenue metrics
-    const { data: metrics, error: metricsError } = await supabase
+    const { data: metrics, error: metricsError } = await supabaseClient
       .rpc('calculate_revenue_metrics', {
         p_clinic_id: clinicId,
         p_start_date: startDate,
@@ -38,7 +42,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get detailed revenue breakdown by service
-    const { data: serviceRevenue, error: serviceError } = await supabase
+    const { data: serviceRevenue, error: serviceError } = await supabaseClient
       .from('bookings')
       .select('service_id, service_name, total_amount')
       .eq('clinic_id', clinicId)
@@ -61,7 +65,7 @@ export async function GET(request: NextRequest) {
     }, {});
 
     // Get revenue by doctor (if appointments table exists)
-    const { data: doctorRevenue, error: doctorError } = await supabase
+    const { data: doctorRevenue, error: doctorError } = await supabaseClient
       .from('appointment_slots')
       .select('doctor_id, service_price')
       .eq('clinic_id', clinicId)
@@ -106,3 +110,4 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+

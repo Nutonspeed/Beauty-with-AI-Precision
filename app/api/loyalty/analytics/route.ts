@@ -2,10 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { withClinicAuth } from '@/lib/auth/middleware';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 /**
  * GET /api/loyalty/analytics
@@ -30,8 +32,10 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
       );
     }
 
+    const supabaseClient = getSupabaseClient();
+
     // Get tier distribution
-    const { data: tierDistribution } = await supabase
+    const { data: tierDistribution } = await supabaseClient
       .from('customer_loyalty_accounts')
       .select('current_tier_id, loyalty_tiers(tier_name, tier_level)')
       .eq('clinic_id', clinic_id)
@@ -47,14 +51,14 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
     }, {});
 
     // Get total active members
-    const { count: totalMembers } = await supabase
+    const { count: totalMembers } = await supabaseClient
       .from('customer_loyalty_accounts')
       .select('*', { count: 'exact', head: true })
       .eq('clinic_id', clinic_id)
       .eq('is_active', true);
 
     // Get points transactions summary
-    let pointsQuery = supabase
+    let pointsQuery = supabaseClient
       .from('points_transactions')
       .select('transaction_type, points_amount, status')
       .eq('clinic_id', clinic_id);
@@ -82,7 +86,7 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
       .reduce((sum: number, tx: any) => sum + Math.abs(tx.points_amount || 0), 0);
 
     // Get redemptions summary
-    let redemptionsQuery = supabase
+    let redemptionsQuery = supabaseClient
       .from('rewards_redemptions')
       .select('status, points_used')
       .eq('clinic_id', clinic_id);
@@ -102,7 +106,7 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
     const completedRedemptions = (redemptions || []).filter((r: any) => r.status === 'used').length;
 
     // Get top customers by points
-    const { data: topCustomers } = await supabase
+    const { data: topCustomers } = await supabaseClient
       .from('customer_loyalty_accounts')
       .select(`
         customer_id,
@@ -117,7 +121,7 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
       .limit(10);
 
     // Get popular rewards
-    const { data: popularRewards } = await supabase
+    const { data: popularRewards } = await supabaseClient
       .from('rewards_redemptions')
       .select(`
         reward_id,
@@ -165,3 +169,4 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
     );
   }
 })
+

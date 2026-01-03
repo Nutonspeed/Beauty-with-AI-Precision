@@ -3,6 +3,7 @@
  * Tests Tasks 5-7 implementations in isolation
  */
 
+// @ts-nocheck
 import { describe, it, expect } from 'vitest'
 import { analyzeRBXColors } from '../lib/ai/color-separation'
 import { predictUVDamage } from '../lib/ai/uv-predictor'

@@ -2,10 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { withClinicAuth } from '@/lib/auth/middleware';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 /**
  * GET /api/chat/typing
@@ -25,6 +27,8 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
         { status: 400 }
       );
     }
+
+    const supabase = getSupabaseClient();
 
     // Clean up expired indicators first
     await supabase.rpc('cleanup_expired_typing_indicators');
@@ -75,6 +79,7 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
 
     if (is_typing) {
       // Upsert typing indicator (will update if exists, insert if not)
+      const supabase = getSupabaseClient();
       const { data, error } = await supabase
         .from('chat_typing_indicators')
         .upsert(
@@ -96,6 +101,7 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
       return NextResponse.json(data);
     } else {
       // Remove typing indicator
+      const supabase = getSupabaseClient();
       const { error } = await supabase
         .from('chat_typing_indicators')
         .delete()

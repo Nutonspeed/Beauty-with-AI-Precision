@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
+/**
  * POST /api/branches/transfers/[id]/complete
  * Complete a transfer (update inventories)
- * 
+ *
  * This endpoint calls the complete_branch_transfer database function
  * which handles deducting from source, adding to destination, and logging
  */

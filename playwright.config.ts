@@ -9,7 +9,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   use: {
-    baseURL: 'http://localhost:3004',
+    baseURL: 'https://beauty-with-ai-precision.vercel.app',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     actionTimeout: 30000,
@@ -37,15 +37,5 @@ export default defineConfig({
       use: { ...devices['iPhone 12'] },
     },
   ],
-  webServer: {
-    command: 'node node_modules/next/dist/bin/next dev --webpack -p 3004',
-    url: 'http://localhost:3004',
-    reuseExistingServer: !process.env.CI,
-    timeout: 300000,
-    stdout: 'ignore',
-    stderr: 'pipe',
-    env: {
-      NEXT_PUBLIC_TEST_MODE: 'true',
-    },
-  },
+  webServer: undefined,
 })

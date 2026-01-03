@@ -2,9 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { withClinicAuth } from '@/lib/auth/middleware';
 
+/**
  * GET /api/branches/services
  * List branch services
- * 
+ *
  * Query parameters:
  * - branch_id (optional): Filter by branch
  * - service_id (optional): Filter by service
@@ -17,7 +18,7 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
     const service_id = searchParams.get('service_id');
     const is_available = searchParams.get('is_available');
 
-    const supabase = createClient(
+    function getSupabaseClient() { return createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!,
       {
@@ -26,9 +27,11 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
           persistSession: false
         }
       }
-    )
+    );
+    }
 
-    let query = supabase
+    const supabaseClient = getSupabaseClient();
+    let query = supabaseClient
       .from('branch_services')
       .select(`
         *,
@@ -99,7 +102,7 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
       );
     }
 
-    const supabase = createClient(
+    function getSupabaseClient() { return createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!,
       {
@@ -108,9 +111,11 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
           persistSession: false
         }
       }
-    )
+    );
+    }
 
-    const { data, error } = await supabase
+    const supabaseClient = getSupabaseClient();
+    const { data, error } = await supabaseClient
       .from('branch_services')
       .insert({
         branch_id,
@@ -145,3 +150,4 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
     );
   }
 })
+

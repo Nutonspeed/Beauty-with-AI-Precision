@@ -10,6 +10,9 @@ const GEMINI_MODEL_ID = 'gemini-2.0-flash-exp';
 
 function createGeminiModel() {
   const apiKey = getGeminiApiKey();
+  if (!apiKey) {
+    throw new Error('Gemini API key is not configured');
+  }
   const genAI = new GoogleGenerativeAI(apiKey);
   return genAI.getGenerativeModel({
     model: GEMINI_MODEL_ID,

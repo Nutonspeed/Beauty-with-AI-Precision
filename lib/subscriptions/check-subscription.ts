@@ -45,10 +45,10 @@ export async function getSubscriptionStatus(clinicId: string): Promise<Subscript
     .single()
 
   if (error || !clinic) {
-    return createDefaultStatus('free', 'Clinic not found')
+    return createDefaultStatus('starter', 'Clinic not found')
   }
 
-  const plan = (clinic.subscription_plan || 'free') as SubscriptionPlan
+  const plan = (clinic.subscription_plan || 'starter') as SubscriptionPlan
   const planDetails = SUBSCRIPTION_PLANS[plan]
   const now = new Date()
 
@@ -217,14 +217,10 @@ function createDefaultStatus(plan: SubscriptionPlan, message: string): Subscript
 /**
  * Start trial for a clinic
  */
-export async function startTrial(clinicId: string, plan: SubscriptionPlan = 'premium'): Promise<boolean> {
+export async function startTrial(clinicId: string, plan: SubscriptionPlan = 'starter'): Promise<boolean> {
   const supabase = await createClient()
   const planDetails = SUBSCRIPTION_PLANS[plan]
   
-  if (planDetails.trialDays === 0) {
-    return false // No trial for this plan
-  }
-
   const trialEndsAt = new Date()
   trialEndsAt.setDate(trialEndsAt.getDate() + planDetails.trialDays)
 

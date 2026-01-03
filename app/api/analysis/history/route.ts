@@ -32,15 +32,10 @@ export async function GET(request: NextRequest) {
     const validatedLimit = Math.min(Math.max(1, limit), 100)
     const validatedOffset = Math.max(0, offset)
 
-    const { rows, total } = await getSkinAnalysesHistory(supabase, {
-      userId: targetUserId,
-      limit: validatedLimit,
-      offset: validatedOffset,
-      sortBy: 'created_at',
-      sortOrder: 'desc',
-    })
+    const analyses = await getSkinAnalysesHistory(targetUserId, validatedLimit)
+    const total = analyses.length
 
-    const data = (rows || []).map((row: any) => {
+    const data = (analyses || []).map((row: any) => {
       const concernCount = {
         wrinkle: row.wrinkles_count || 0,
         pigmentation: row.spots_count || 0,

@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 // POST: Create export job for a report
 export async function POST(request: NextRequest) {
@@ -33,8 +35,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const supabaseClient = getSupabaseClient();
+
     // Fetch report data
-    const { data: report, error: reportError } = await supabase
+    const { data: report, error: reportError } = await supabaseClient
       .from('generated_reports')
       .select('*')
       .eq('id', report_id)
@@ -53,7 +57,7 @@ export async function POST(request: NextRequest) {
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + 30); // Expire after 30 days
 
-    const { data: exportJob, error: exportError } = await supabase
+    const { data: exportJob, error: exportError } = await supabaseClient
       .from('export_jobs')
       .insert({
         clinic_id,
@@ -77,7 +81,7 @@ export async function POST(request: NextRequest) {
 
     // In a real implementation, you would trigger an async job here to generate the file
     // For now, we'll immediately update status to processing
-    await supabase
+    await supabaseClient
       .from('export_jobs')
       .update({
         status: 'processing',
@@ -93,7 +97,7 @@ export async function POST(request: NextRequest) {
     const completedAt = new Date().toISOString();
     const processingTime = Date.now() - new Date(exportJob.created_at).getTime();
 
-    await supabase
+    await supabaseClient
       .from('export_jobs')
       .update({
         status: 'completed',
@@ -166,7 +170,8 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    let query = supabase
+    const supabaseClient = getSupabaseClient();
+    let query = supabaseClient
       .from('export_jobs')
       .select('*')
       .eq('clinic_id', clinicId)
@@ -199,3 +204,4 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+

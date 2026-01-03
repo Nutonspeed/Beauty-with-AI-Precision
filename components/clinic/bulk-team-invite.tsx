@@ -16,7 +16,7 @@ interface Props {
 }
 
 export default function BulkTeamInvite({ open, onOpenChange, onSuccess }: Props) {
-  const [file, setFile] = useState<File | null>(null);
+  const [_file, setFile] = useState<File | null>(null);
   const [parseResult, setParseResult] = useState<CSVParseResult<TeamMemberCSVRow> | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadResult, setUploadResult] = useState<any>(null);

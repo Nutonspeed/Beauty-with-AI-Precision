@@ -10,8 +10,8 @@ async function main() {
   }
   const supabase = createClient(url, anonKey)
   const { data, error } = await supabase.auth.signInWithPassword({
-    email: 'nuttapong161@gmail.com',
-    password: 'password123',
+    email: 'admin@ai367bar.com',
+    password: 'Admin123!',
   })
   console.log('data:', data)
   console.log('error:', error)

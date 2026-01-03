@@ -17,6 +17,9 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
+    // Prefer role from user_metadata if present
+    const metaRole = (user.user_metadata as any)?.role as string | undefined
+
     // Use service client to bypass RLS for SELECT
     const serviceClient = createServiceClient()
     let { data: userData } = await serviceClient
@@ -25,12 +28,15 @@ export async function GET(request: NextRequest) {
       .eq("id", user.id)
       .single()
 
-    // Auto-create user record if doesn't exist (for demo accounts)
+    // Auto-create user record if doesn't exist (for demo/demo accounts)
     if (!userData) {
-      const defaultRole = user.email?.includes("admin") ? "super_admin" 
-                       : user.email?.includes("clinic-owner") ? "clinic_owner"  // Changed from clinic_owner
-                       : user.email?.includes("sales") ? "sales_staff"
-                       : "customer"
+      const email = user.email || ""
+      const defaultRole = metaRole
+        ?? (email.includes("superadmin") || email.includes("admin") ? "super_admin"
+          : (email.includes("clinicowner") || email.includes("clinic-owner")) ? "clinic_owner"
+          : email.includes("sales") ? "sales_staff"
+          : email.includes("customer") ? "customer"
+          : "customer")
 
       const { data: newUser, error: insertError } = await serviceClient
         .from("users")
@@ -56,7 +62,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 })
     }
 
-    const canonicalRole = normalizeRole(userData.role)
+    const canonicalRole = normalizeRole(metaRole ?? userData.role)
 
     return NextResponse.json({
       role: canonicalRole,

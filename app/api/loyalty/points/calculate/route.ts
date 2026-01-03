@@ -2,10 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { withClinicAuth } from '@/lib/auth/middleware';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 /**
  * POST /api/loyalty/points/calculate
@@ -41,7 +43,8 @@ export const POST = withClinicAuth(async (request: NextRequest, user: any) => {
     );
   }
 
-  const { data, error } = await supabase.rpc('calculate_points_earned', {
+  const supabaseClient = getSupabaseClient();
+  const { data, error } = await supabaseClient.rpc('calculate_points_earned', {
     p_earning_rule_id: earning_rule_id,
     p_transaction_amount: transaction_amount,
     p_customer_tier_id: customer_tier_id,
@@ -62,3 +65,4 @@ export const POST = withClinicAuth(async (request: NextRequest, user: any) => {
     customer_tier_id,
   });
 });
+

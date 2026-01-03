@@ -2,17 +2,20 @@ import { createClient } from "@supabase/supabase-js"
 import { NextResponse } from "next/server"
 import { withAdminAuth } from "@/lib/auth/middleware"
 
+function getSupabaseClient() {
+  return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+  })
+}
+
 async function handler() {
   try {
     console.log("[v0] Starting RLS policy fix...")
 
-    // Create admin client with service role key
-    const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
-      },
-    })
+    const supabaseClient = getSupabaseClient()
 
     // Drop problematic policies that cause infinite recursion
     const dropPolicies = [
@@ -25,7 +28,7 @@ async function handler() {
 
     // Execute drop policies
     for (const policy of dropPolicies) {
-      const { error } = await supabase.rpc('exec_sql', { sql: policy })
+      const { error } = await supabaseClient.rpc('exec_sql', { sql: policy })
       if (error) {
         console.warn(`Failed to drop policy: ${policy}`, error.message)
       }
@@ -72,7 +75,7 @@ async function handler() {
 
     // Execute create policies
     for (const policy of createPolicies) {
-      const { error } = await supabase.rpc('exec_sql', { sql: policy })
+      const { error } = await supabaseClient.rpc('exec_sql', { sql: policy })
       if (error) {
         console.error(`Failed to create policy:`, error.message)
         return NextResponse.json({ error: `Failed to create policy: ${error.message}` }, { status: 500 })
@@ -98,3 +101,4 @@ async function handler() {
 }
 
 export const POST = withAdminAuth(handler)
+

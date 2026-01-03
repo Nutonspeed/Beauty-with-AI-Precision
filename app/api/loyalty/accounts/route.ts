@@ -2,10 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { withClinicAuth } from '@/lib/auth/middleware';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 /**
  * GET /api/loyalty/accounts
@@ -32,7 +34,8 @@ export const GET = withClinicAuth(async (request: NextRequest, user) => {
       );
     }
 
-    let query = supabase
+    const supabaseClient = getSupabaseClient();
+    let query = supabaseClient
       .from('customer_loyalty_accounts')
       .select(`
         *,
@@ -84,7 +87,8 @@ export const POST = withClinicAuth(async (request: NextRequest, user: any) => {
     }
 
     // Check if account already exists
-    const { data: existing } = await supabase
+    const supabaseClient = getSupabaseClient();
+    const { data: existing } = await supabaseClient
       .from('customer_loyalty_accounts')
       .select('id')
       .eq('clinic_id', clinic_id)
@@ -101,7 +105,7 @@ export const POST = withClinicAuth(async (request: NextRequest, user: any) => {
     // Generate membership number
     const membership_number = 'LOYAL-' + Math.random().toString(36).substring(2, 10).toUpperCase();
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from('customer_loyalty_accounts')
       .insert({
         clinic_id,
@@ -123,3 +127,4 @@ export const POST = withClinicAuth(async (request: NextRequest, user: any) => {
     );
   }
 });
+

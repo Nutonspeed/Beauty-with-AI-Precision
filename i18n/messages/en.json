@@ -768,6 +768,27 @@
     "pricing": {
       "title": "Plans for Every Clinic Size",
       "subtitle": "Starting at ฿9,900/month - Better value at higher tiers",
+      "premium": {
+        "badge": "Most Popular",
+        "title": "Professional",
+        "description": "For growing clinics - Save 30%",
+        "period": "per month",
+        "cta": "Start 14-Day Free Trial",
+        "features": [
+          "Unlimited AI Analysis",
+          "AR Before/After Simulator",
+          "CRM Advanced + Pipeline",
+          "Appointment + Queue System",
+          "Treatment Plans",
+          "Inventory Management",
+          "Email & SMS Marketing",
+          "Loyalty Points",
+          "Advanced Analytics",
+          "Multi-branch (up to 3)",
+          "Video Call",
+          "Priority Support"
+        ]
+      },
       "starter": {
         "badge": "Starter",
         "title": "Starter",

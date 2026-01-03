@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 /**
  * POST /api/marketing/promo-codes/apply
@@ -43,8 +45,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const supabaseClient = getSupabaseClient();
+
     // Call database function to apply promo code
-    const { data: applied, error: applyError } = await supabase.rpc('apply_promo_code', {
+    const { data: applied, error: applyError } = await supabaseClient.rpc('apply_promo_code', {
       p_promo_code_id: promo_code_id,
       p_customer_id: customer_id,
       p_booking_id: booking_id,
@@ -63,7 +67,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get the usage record that was just created
-    const { data: usage, error: usageError } = await supabase
+    const { data: usage, error: usageError } = await supabaseClient
       .from('promo_code_usage')
       .select('*')
       .eq('promo_code_id', promo_code_id)
@@ -87,3 +91,4 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+

@@ -7,7 +7,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { BeautyAILogo, AIStarIcon, BeautyGemIcon } from '@/components/icons/beauty-icons';
+import { AIStarIcon, BeautyGemIcon } from '@/components/icons/beauty-icons';
 import Link from 'next/link';
 
 export function BeautyHero() {

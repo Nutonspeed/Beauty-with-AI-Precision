@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 /**
  * GET /api/treatment-history/timeline
@@ -29,7 +31,8 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const { data, error } = await supabase.rpc('get_customer_treatment_timeline', {
+    const supabaseClient = getSupabaseClient();
+    const { data, error } = await supabaseClient.rpc('get_customer_treatment_timeline', {
       p_clinic_id: clinic_id,
       p_customer_id: customer_id,
       p_limit: limit ? Number.parseInt(limit) : 50,
@@ -46,3 +49,4 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+

@@ -13,7 +13,7 @@ const badges: BadgeDef[] = [
 ];
 
 export function MiniTrustBadges() {
-  const t = useTranslations();
+  const _t = useTranslations();
   const router = useRouter();
   const lp = useLocalizePath();
   return (

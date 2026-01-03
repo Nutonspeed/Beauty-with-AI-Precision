@@ -5,6 +5,7 @@
  * Ensures the analyzer is ready for production deployment
  */
 
+// @ts-nocheck
 import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest'
 
 vi.mock('../lib/ai/mediapipe-analyzer-phase1', () => ({

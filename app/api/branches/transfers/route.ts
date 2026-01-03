@@ -2,10 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { withClinicAuth } from '@/lib/auth/middleware';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 /**
  * GET /api/branches/transfers
@@ -25,7 +27,8 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
     const to_branch_id = searchParams.get('to_branch_id');
     const status = searchParams.get('status');
 
-    let query = supabase
+    const supabaseClient = getSupabaseClient();
+    let query = supabaseClient
       .from('branch_transfers')
       .select(`
         *,
@@ -124,7 +127,8 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
 
     // Validate each item has enough stock
     for (const item of items) {
-      const { data: isValid } = await supabase.rpc('validate_branch_transfer', {
+      const supabaseClient = getSupabaseClient();
+      const { data: isValid } = await supabaseClient.rpc('validate_branch_transfer', {
         p_from_branch_id: from_branch_id,
         p_to_branch_id: to_branch_id,
         p_product_id: item.product_id,
@@ -143,7 +147,8 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
     const transferNumber = `TRF-${Date.now()}`;
 
     // Create transfer
-    const { data: transfer, error: transferError } = await supabase
+    const supabaseClient = getSupabaseClient();
+    const { data: transfer, error: transferError } = await supabaseClient
       .from('branch_transfers')
       .insert({
         clinic_id,
@@ -170,14 +175,14 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
       notes: item.notes,
     }));
 
-    const { error: itemsError } = await supabase
+    const { error: itemsError } = await supabaseClient
       .from('branch_transfer_items')
       .insert(transferItems);
 
     if (itemsError) throw itemsError;
 
     // Fetch complete transfer with items
-    const { data: completeTransfer } = await supabase
+    const { data: completeTransfer } = await supabaseClient
       .from('branch_transfers')
       .select(`
         *,

@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 // GET: Get dashboard widget by ID with live data
 export async function GET(
@@ -14,7 +16,8 @@ export async function GET(
   try {
     const { id } = await context.params;
 
-    const { data: widget, error } = await supabase
+    const supabaseClient = getSupabaseClient();
+    const { data: widget, error } = await supabaseClient
       .from('dashboard_widgets')
       .select('*')
       .eq('id', id)
@@ -32,7 +35,7 @@ export async function GET(
     let liveData: any = null;
 
     if (widget.data_source === 'revenue') {
-      const { data: revenue } = await supabase
+      const { data: revenue } = await supabaseClient
         .from('bookings')
         .select('total_amount')
         .eq('clinic_id', widget.clinic_id)
@@ -44,7 +47,7 @@ export async function GET(
     }
 
     // Update last_refreshed_at
-    await supabase
+    await supabaseClient
       .from('dashboard_widgets')
       .update({ last_refreshed_at: new Date().toISOString() })
       .eq('id', id);
@@ -71,6 +74,7 @@ export async function PATCH(
   try {
     const { id } = await context.params;
     const body = await request.json();
+    const supabaseClient = getSupabaseClient();
 
     const updateData: any = {};
     
@@ -85,7 +89,7 @@ export async function PATCH(
     if (body.chart_config !== undefined) updateData.chart_config = body.chart_config;
     if (body.is_active !== undefined) updateData.is_active = body.is_active;
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from('dashboard_widgets')
       .update(updateData)
       .eq('id', id)
@@ -118,7 +122,8 @@ export async function DELETE(
   try {
     const { id } = await context.params;
 
-    const { error } = await supabase
+    const supabaseClient = getSupabaseClient();
+    const { error } = await supabaseClient
       .from('dashboard_widgets')
       .delete()
       .eq('id', id);

@@ -1,22 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { withClinicAuth } from '@/lib/auth/middleware';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 /**
  * GET /api/loyalty/redemptions/[id]
  * Get redemption details for beauty clinic customer
  */
-export async function GET(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export const GET = withClinicAuth(async (request: NextRequest, _user: any) => {
   try {
-    const params = await context.params;
-    const { data, error } = await supabase
+    const paramsId = request.nextUrl.pathname.split('/').pop() || '';
+
+    const supabaseClient = getSupabaseClient();
+    let query = supabaseClient
       .from('rewards_redemptions')
       .select(`
         *,
@@ -26,8 +28,10 @@ export async function GET(
         approved_by:users!rewards_redemptions_approved_by_user_id_fkey(id, full_name),
         cancelled_by:users!rewards_redemptions_cancelled_by_user_id_fkey(id, full_name)
       `)
-      .eq('id', params.id)
+      .eq('id', paramsId)
       .single();
+
+    const { data, error } = await query;
 
     if (error) throw error;
 
@@ -39,26 +43,27 @@ export async function GET(
       { status: 500 }
     );
   }
-}
+});
 
 /**
  * PATCH /api/loyalty/redemptions/[id]
  * Update redemption status for beauty clinic (approve, mark as used, etc.)
  */
-export async function PATCH(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export const PATCH = withClinicAuth(async (request: NextRequest, _user: any) => {
   try {
-    const params = await context.params;
+    const paramsId = request.nextUrl.pathname.split('/').pop() || '';
+
     const body = await request.json();
 
-    const { data, error } = await supabase
+    const supabaseClient = getSupabaseClient();
+    let query = supabaseClient
       .from('rewards_redemptions')
       .update(body)
-      .eq('id', params.id)
+      .eq('id', paramsId)
       .select()
       .single();
+
+    const { data, error } = await query;
 
     if (error) throw error;
 
@@ -70,4 +75,4 @@ export async function PATCH(
       { status: 500 }
     );
   }
-}
+});

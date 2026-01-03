@@ -10,7 +10,11 @@ let openai: OpenAI | null = null;
 
 function getOpenAIClient(): OpenAI {
   if (openai) return openai;
-  openai = new OpenAI({ apiKey: getOpenAIApiKey() });
+  const apiKey = getOpenAIApiKey();
+  if (!apiKey) {
+    throw new Error('OpenAI API key is not configured');
+  }
+  openai = new OpenAI({ apiKey });
   return openai;
 }
 
@@ -19,7 +23,11 @@ let genAI: GoogleGenerativeAI | null = null;
 
 function getGeminiClient(): GoogleGenerativeAI {
   if (genAI) return genAI;
-  genAI = new GoogleGenerativeAI(getGeminiApiKey());
+  const apiKey = getGeminiApiKey();
+  if (!apiKey) {
+    throw new Error('Gemini API key is not configured');
+  }
+  genAI = new GoogleGenerativeAI(apiKey);
   return genAI;
 }
 

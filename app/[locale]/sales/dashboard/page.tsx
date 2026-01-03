@@ -12,6 +12,9 @@ import { ShimmerSkeleton } from '@/components/ui/modern-loader'
 import Link from 'next/link'
 import { useLocalizePath } from '@/lib/i18n/locale-link'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 interface MetricBlock {
   today: number
   yesterday: number

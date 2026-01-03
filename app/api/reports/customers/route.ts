@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 // GET: Generate customer analytics report
 // IMPORTANT: This is for BEAUTY CLINIC customers (ลูกค้า), NOT patients
@@ -23,8 +25,10 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    const supabaseClient = getSupabaseClient();
+
     // Call database function for customer analytics
-    const { data: analytics, error: analyticsError } = await supabase
+    const { data: analytics, error: analyticsError } = await supabaseClient
       .rpc('calculate_customer_analytics', {
         p_clinic_id: clinicId,
         p_start_date: startDate,
@@ -40,7 +44,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get top customers by revenue
-    const { data: topCustomers } = await supabase
+    const { data: topCustomers } = await supabaseClient
       .from('bookings')
       .select('user_id, customer_name, customer_email, total_amount')
       .eq('clinic_id', clinicId)
@@ -73,7 +77,7 @@ export async function GET(request: NextRequest) {
       .slice(0, 10);
 
     // Get customer retention metrics
-    const { data: retentionData } = await supabase
+    const { data: retentionData } = await supabaseClient
       .from('bookings')
       .select('user_id, created_at')
       .eq('clinic_id', clinicId)
@@ -118,3 +122,4 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+

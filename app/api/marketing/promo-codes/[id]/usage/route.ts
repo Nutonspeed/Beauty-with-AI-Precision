@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 /**
  * GET /api/marketing/promo-codes/[id]/usage
@@ -16,8 +18,9 @@ export async function GET(
 ) {
   try {
     const params = await context.params;
+    const supabaseClient = getSupabaseClient();
     // Get promo code details
-    const { data: promoCode, error: codeError } = await supabase
+    const { data: promoCode, error: codeError } = await supabaseClient
       .from('promo_codes')
       .select('*')
       .eq('id', params.id)
@@ -26,7 +29,7 @@ export async function GET(
     if (codeError) throw codeError;
 
     // Get usage records
-    const { data: usageRecords, error: usageError } = await supabase
+    const { data: usageRecords, error: usageError } = await supabaseClient
       .from('promo_code_usage')
       .select(`
         *,

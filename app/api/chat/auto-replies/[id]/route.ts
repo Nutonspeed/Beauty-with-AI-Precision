@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 /**
  * GET /api/chat/auto-replies/[id]
@@ -12,10 +14,10 @@ const supabase = createClient(
  */
 export async function GET(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const params = await context.params;
+    const supabase = getSupabaseClient();
     const { data, error } = await supabase
       .from('chat_auto_replies')
       .select('*')
@@ -44,10 +46,9 @@ export async function GET(
  */
 export async function PATCH(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const params = await context.params;
     const body = await request.json();
     const {
       trigger_keywords,
@@ -74,6 +75,7 @@ export async function PATCH(
     if (priority !== undefined) updateData.priority = priority;
     if (is_active !== undefined) updateData.is_active = is_active;
 
+    const supabase = getSupabaseClient();
     const { data, error } = await supabase
       .from('chat_auto_replies')
       .update(updateData)
@@ -98,11 +100,11 @@ export async function PATCH(
  * Delete an auto-reply template
  */
 export async function DELETE(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  _request: NextRequest,
+  { params }: { params: { id: string } }
 ) {
   try {
-    const params = await context.params;
+    const supabase = getSupabaseClient();
     const { error } = await supabase
       .from('chat_auto_replies')
       .delete()

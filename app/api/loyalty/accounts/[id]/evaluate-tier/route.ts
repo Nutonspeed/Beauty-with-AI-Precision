@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 /**
  * POST /api/loyalty/accounts/[id]/evaluate-tier
@@ -18,14 +20,15 @@ export async function POST(
 ) {
   try {
     const params = await context.params;
-    const { data, error } = await supabase.rpc('evaluate_customer_tier', {
+    const supabaseClient = getSupabaseClient();
+    const { data, error } = await supabaseClient.rpc('evaluate_customer_tier', {
       p_loyalty_account_id: params.id,
     });
 
     if (error) throw error;
 
     // Get updated account details
-    const { data: account, error: accountError } = await supabase
+    const { data: account, error: accountError } = await supabaseClient
       .from('customer_loyalty_accounts')
       .select(`
         *,

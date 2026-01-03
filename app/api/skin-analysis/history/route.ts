@@ -37,57 +37,52 @@ export async function GET(request: NextRequest) {
     const safeSortBy = sortBy === 'updated_at' ? 'updated_at' : 'created_at'
     const safeSortOrder = sortOrder === 'asc' ? 'asc' : 'desc'
 
-    const { rows: analyses, total: count } = await getSkinAnalysesHistory(supabase, {
-      userId: user.id,
-      limit: validatedLimit,
-      offset,
-      sortBy: safeSortBy,
-      sortOrder: safeSortOrder,
-    })
+    const analyses = await getSkinAnalysesHistory(user.id, validatedLimit)
+    const count = analyses.length
 
     // Format response
-    const formattedAnalyses = analyses?.map((analysis) => ({
+    const formattedAnalyses = analyses?.map((analysis: any) => ({
       id: analysis.id,
       timestamp: new Date(analysis.created_at),
       imageUrl: analysis.image_url,
-      overallScore: analysis.overall_score,
-      confidence: analysis.confidence,
+      overallScore: analysis.overall_score || 0,
+      confidence: analysis.confidence || 0,
       percentiles: {
-        spots: analysis.spots_percentile,
-        pores: analysis.pores_percentile,
-        wrinkles: analysis.wrinkles_percentile,
-        texture: analysis.texture_percentile,
-        redness: analysis.redness_percentile,
-        overall: analysis.overall_percentile,
+        spots: analysis.spots_percentile || 0,
+        pores: analysis.pores_percentile || 0,
+        wrinkles: analysis.wrinkles_percentile || 0,
+        texture: analysis.texture_percentile || 0,
+        redness: analysis.redness_percentile || 0,
+        overall: analysis.overall_percentile || 0,
       },
-      cvAnalysis: {
+      concerns: {
         spots: {
-          severity: analysis.spots_severity,
-          count: analysis.spots_count,
+          severity: analysis.spots_severity || 0,
+          count: analysis.spots_count || 0,
         },
         pores: {
-          severity: analysis.pores_severity,
-          count: analysis.pores_count,
+          severity: analysis.pores_severity || 0,
+          count: analysis.pores_count || 0,
         },
         wrinkles: {
-          severity: analysis.wrinkles_severity,
-          count: analysis.wrinkles_count,
+          severity: analysis.wrinkles_severity || 0,
+          count: analysis.wrinkles_count || 0,
         },
         texture: {
-          severity: analysis.texture_severity,
+          severity: analysis.texture_severity || 0,
         },
         redness: {
-          severity: analysis.redness_severity,
-          count: analysis.redness_count,
+          severity: analysis.redness_severity || 0,
+          count: analysis.redness_count || 0,
         },
       },
-      patientInfo: {
-        name: analysis.patient_name,
-        age: analysis.patient_age,
-        gender: analysis.patient_gender,
-        skinType: analysis.patient_skin_type,
+      patient: {
+        name: analysis.patient_name || 'Unknown',
+        age: analysis.patient_age || null,
+        gender: analysis.patient_gender || null,
+        skinType: analysis.patient_skin_type || null,
       },
-      notes: analysis.notes,
+      notes: analysis.notes || null,
     }));
 
     return NextResponse.json({

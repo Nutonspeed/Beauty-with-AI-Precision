@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 /**
  * GET /api/marketing/campaigns/[id]/stats
@@ -22,8 +24,9 @@ export async function GET(
 ) {
   try {
     const params = await context.params;
+    const supabaseClient = getSupabaseClient();
     // Get campaign data
-    const { data: campaign, error: campaignError } = await supabase
+    const { data: campaign, error: campaignError } = await supabaseClient
       .from('marketing_campaigns')
       .select('*')
       .eq('id', params.id)
@@ -32,7 +35,7 @@ export async function GET(
     if (campaignError) throw campaignError;
 
     // Get promo code usage for this campaign
-    const { data: promoCodes, error: promoError } = await supabase
+    const { data: promoCodes, error: promoError } = await supabaseClient
       .from('promo_codes')
       .select(`
         id,

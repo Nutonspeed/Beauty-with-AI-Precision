@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 /**
  * POST /api/marketing/messages/[id]/send
@@ -19,8 +21,9 @@ export async function POST(
 ) {
   try {
     const params = await context.params;
+    const supabaseClient = getSupabaseClient();
     // Get message details
-    const { data: message, error: messageError } = await supabase
+    const { data: message, error: messageError } = await supabaseClient
       .from('campaign_messages')
       .select('*, target_segment:customer_segments(customer_count)')
       .eq('id', params.id)
@@ -38,7 +41,7 @@ export async function POST(
     // Get segment members if targeting a segment
     let recipientCount = 0;
     if (message.target_segment_id) {
-      const { data: members, error: membersError } = await supabase
+      const { data: members, error: membersError } = await supabaseClient
         .from('customer_segment_members')
         .select('customer_id')
         .eq('segment_id', message.target_segment_id)
@@ -57,7 +60,7 @@ export async function POST(
           delivery_status: 'pending',
         }));
 
-        const { error: recipientsError } = await supabase
+        const { error: recipientsError } = await supabaseClient
           .from('campaign_message_recipients')
           .insert(recipients);
 
@@ -66,7 +69,7 @@ export async function POST(
     }
 
     // Update message status
-    const { data: updatedMessage, error: updateError } = await supabase
+    const { data: updatedMessage, error: updateError } = await supabaseClient
       .from('campaign_messages')
       .update({
         status: 'sending',

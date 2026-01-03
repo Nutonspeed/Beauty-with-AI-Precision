@@ -1,15 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
+function getSupabaseClient() { return createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
+}
 
 export async function GET(request: NextRequest) {
   try {
     // Call health check function
-    const { data, error } = await supabase.rpc('check_database_health');
+    const { data, error } = await getSupabaseClient().rpc('check_database_health');
 
     if (error) {
       console.error('Health check error:', error);
@@ -58,3 +59,4 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+

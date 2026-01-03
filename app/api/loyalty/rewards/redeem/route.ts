@@ -2,15 +2,17 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { withClinicAuth } from '@/lib/auth/middleware';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 /**
  * POST /api/loyalty/rewards/redeem
  * Redeem a reward with loyalty points for beauty clinic customer
- * 
+ *
  * Body:
  * - clinic_id (required): Clinic ID
  * - customer_id (required): Customer ID
@@ -39,8 +41,10 @@ export const POST = withClinicAuth(async (request: NextRequest, user: any) => {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
+    const supabaseClient = getSupabaseClient();
+
     // Call database function to redeem reward
-    const { data, error } = await supabase.rpc('redeem_loyalty_reward', {
+    const { data, error } = await supabaseClient.rpc('redeem_loyalty_reward', {
       p_clinic_id: clinic_id,
       p_customer_id: customer_id,
       p_reward_id: reward_id,
@@ -48,12 +52,8 @@ export const POST = withClinicAuth(async (request: NextRequest, user: any) => {
     });
 
     if (error) {
-      // Handle specific error messages from the function
       if (error.message.includes('Insufficient points')) {
-        return NextResponse.json(
-          { error: error.message },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: error.message }, { status: 400 });
       }
       if (error.message.includes('out of stock')) {
         return NextResponse.json(
@@ -64,16 +64,16 @@ export const POST = withClinicAuth(async (request: NextRequest, user: any) => {
       throw error;
     }
 
-    const row = (data as any)?.[0] || null
+    const row = (data as any)?.[0] || null;
     if (!row?.success) {
       return NextResponse.json(
         { error: row?.error_message || 'Failed to redeem reward' },
         { status: 400 }
-      )
+      );
     }
 
     // Get the redemption details
-    const { data: redemption, error: redError } = await supabase
+    const { data: redemption, error: redError } = await supabaseClient
       .from('reward_redemptions')
       .select(`
         *,
@@ -99,3 +99,4 @@ export const POST = withClinicAuth(async (request: NextRequest, user: any) => {
     );
   }
 });
+

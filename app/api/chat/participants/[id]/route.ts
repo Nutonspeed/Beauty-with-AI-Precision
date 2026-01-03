@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 /**
  * PATCH /api/chat/participants/[id]
@@ -41,7 +43,8 @@ export async function PATCH(
       updateData.muted_until = muted_until;
     }
 
-    const { data, error } = await supabase
+    const supabaseClient = getSupabaseClient();
+    const { data, error } = await supabaseClient
       .from('chat_participants')
       .update(updateData)
       .eq('id', params.id)
@@ -71,7 +74,8 @@ export async function DELETE(
   try {
     const params = await context.params;
     // Soft delete by marking as inactive
-    const { data, error } = await supabase
+    const supabaseClient = getSupabaseClient();
+    const { data, error } = await supabaseClient
       .from('chat_participants')
       .update({
         is_active: false,
