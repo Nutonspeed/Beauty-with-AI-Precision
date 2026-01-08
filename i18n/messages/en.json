@@ -948,14 +948,14 @@
   },
   "home": {
     "hero": {
-      "badge": "AI for Beauty Clinics",
-      "title": "AI-Powered Beauty & Skin Care",
-      "subtitle": "Transform your skin with advanced AR visualization and AI analysis",
-      "description": "Evidence‑based AI skin analysis connected to your sales workflow — improve conversion and customer trust with medical‑grade insights and AR visualization.",
-      "cta": "Start AI Analysis",
-      "learnMore": "Learn More",
-      "noCreditCard": "No credit card required",
-      "freeTierAvailable": "Free tier available"
+      "badge": "Medical-Grade AI Precision",
+      "title": "THE FUTURE OF AESTHETIC ANALYSIS",
+      "subtitle": "AI-Driven Clinical Excellence",
+      "description": "The elite diagnostic ecosystem for premium clinics. 468-point facial mapping meets medical-grade precision.",
+      "cta": "Deploy in Your Clinic",
+      "learnMore": "Live Demo",
+      "noCreditCard": "Enterprise Ready",
+      "freeTierAvailable": "Certified Infrastructure"
     },
     "heroTitle": "AI for Clinics that Actually Converts",
     "heroSubtitle": "From analysis to recommendations to revenue",

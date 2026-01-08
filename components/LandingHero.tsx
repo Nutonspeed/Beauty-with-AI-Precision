@@ -19,32 +19,60 @@ if (typeof window !== 'undefined') {
 import { MiniTrustBadges } from '@/components/MiniTrustBadges';
 import { PersonaSettings } from '@/components/PersonalizationPanel';
 import { analytics } from '@/lib/analytics';
+import { useTranslations } from "next-intl";
 
-// Toned-down sphere
-function HeroSphere({ active }: { active: boolean }) {
-  const ref = useRef<THREE.Mesh>(null);
+// High-fidelity Clinical Mesh
+function MedicalScanningMesh({ active }: { active: boolean }) {
+  const ref = useRef<THREE.Group>(null);
+  const pointsRef = useRef<THREE.Points>(null);
+  
   useFrame((state: any) => {
     if (!ref.current) return;
     const t = state.clock.elapsedTime;
-    // Subtle breathing
-    const s = 1 + Math.sin(t * 1.5) * 0.04;
-    ref.current.scale.setScalar(s);
-    // Slow rotation only when active
-    ref.current.rotation.y += active ? 0.002 : 0.0005;
+    
+    // Smooth clinical rotation
+    ref.current.rotation.y += active ? 0.003 : 0.001;
+    
+    // Subtle breathing effect for the point cloud
+    if (pointsRef.current) {
+      const s = 1 + Math.sin(t * 1.2) * 0.02;
+      pointsRef.current.scale.setScalar(s);
+    }
   });
+
   return (
-    <Float floatIntensity={0.6} rotationIntensity={0.2}>
-      <mesh ref={ref}>
-        <icosahedronGeometry args={[1.25, 3]} />
-        <meshStandardMaterial
-          color="#ff6b9d"
-          metalness={0.45}
-          roughness={0.15}
-          transparent
-          opacity={0.92}
-        />
-      </mesh>
-    </Float>
+    <group ref={ref}>
+      <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
+        {/* Core Point Cloud - Sells the "AI Scanning" look */}
+        <points ref={pointsRef}>
+          <sphereGeometry args={[1.4, 64, 64]} />
+          <pointsMaterial 
+            size={0.015} 
+            color="#ff6b9d" 
+            transparent 
+            opacity={0.4} 
+            sizeAttenuation 
+          />
+        </points>
+
+        {/* Wireframe Shell - Clinical structure */}
+        <mesh>
+          <sphereGeometry args={[1.39, 32, 32]} />
+          <meshStandardMaterial 
+            wireframe 
+            color="#c084fc" 
+            transparent 
+            opacity={0.1} 
+          />
+        </mesh>
+
+        {/* Dynamic Scanning Ring */}
+        <mesh rotation={[Math.PI / 2, 0, 0]}>
+          <torusGeometry args={[1.6, 0.005, 16, 100]} />
+          <meshBasicMaterial color="#ff6b9d" transparent opacity={0.3} />
+        </mesh>
+      </Float>
+    </group>
   );
 }
 
@@ -56,6 +84,7 @@ interface LandingHeroProps {
 }
 
 export function LandingHero({ _onPrimary, _onSecondary, _ctaVariant, ctaVariant }: LandingHeroProps) {
+  const t = useTranslations();
   const selectedCtaVariant = _ctaVariant ?? ctaVariant ?? "A";
   const [stage, setStage] = useState<'intro'|'scanning'|'active'>('intro');
   const [perfLow, _setPerfLow] = useState(false);
@@ -157,7 +186,7 @@ export function LandingHero({ _onPrimary, _onSecondary, _ctaVariant, ctaVariant 
             <Suspense fallback={null}>
               <group position={[0,-0.2,0]}>
                 <ProceduralHalo innerColor={haloColors[0]} outerColor={haloColors[1]} distortScale={distortMod} opacity={0.5 * lowPerfFactor} intensity={intensityMod * lowPerfFactor} />
-                <HeroSphere active={stage==='active'} />
+                <MedicalScanningMesh active={stage==='active'} />
                 <VolumetricScanBeam color={haloColors[0]} sweepSpeed={(stage==='scanning'?1.1:0.18) * lowPerfFactor} opacity={stage==='active'?0.25*lowPerfFactor:0.38*lowPerfFactor} />
               </group>
               <Environment preset="studio" />
@@ -175,25 +204,85 @@ export function LandingHero({ _onPrimary, _onSecondary, _ctaVariant, ctaVariant 
           </div>
         </div>
       )}
-      <div className="relative h-screen flex flex-col items-center justify-center px-6">
-        <motion.h1
-          initial={{ opacity:0, y:40 }}
-          animate={{ opacity:1, y:0 }}
-          transition={{ duration:0.9, ease:'easeOut' }}
-          className="text-center font-semibold tracking-[0.12em] leading-tight text-[clamp(2.4rem,6vw,4.4rem)]"
-          aria-label="Clinical AI Aesthetic Engine"
+      <div className="relative h-screen flex flex-col items-center justify-center px-6 text-center">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="mb-6 inline-flex items-center gap-2 rounded-full border border-pink-500/20 bg-pink-500/5 px-4 py-1.5 backdrop-blur-md"
         >
-          <span className="block bg-gradient-to-r from-pink-500 via-rose-500 to-purple-500 bg-clip-text text-transparent">CLINICAL AI AESTHETIC ENGINE</span>
+          <span className="relative flex h-2 w-2">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-pink-500 opacity-75"></span>
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-pink-500"></span>
+          </span>
+          <span className="text-[10px] font-bold tracking-[0.2em] text-pink-500 uppercase">
+            {t('home.hero.badge')}
+          </span>
+        </motion.div>
+
+        <motion.h1
+          initial={{ opacity:0, y:30 }}
+          animate={{ opacity:1, y:0 }}
+          transition={{ duration:1, ease:[0.16, 1, 0.3, 1] }}
+          className="max-w-4xl font-bold tracking-tight text-[clamp(2.5rem,8vw,5.5rem)] leading-[1.1]"
+          aria-label={t('home.hero.title')}
+        >
+          <span className="block text-white mb-2">{t('home.hero.title')}</span>
+          <span className="bg-gradient-to-r from-pink-500 via-rose-500 to-purple-600 bg-clip-text text-transparent">
+            {t('home.hero.subtitle')}
+          </span>
         </motion.h1>
+
         <motion.p
           initial={{ opacity:0, y:20 }}
           animate={{ opacity:1, y:0 }}
-          transition={{ delay:0.6, duration:0.8 }}
-          className="mt-8 text-center text-gray-600 text-lg tracking-wider"
+          transition={{ delay:0.4, duration:0.8, ease:[0.16, 1, 0.3, 1] }}
+          className="mt-8 max-w-2xl text-lg text-gray-400 font-light tracking-wide leading-relaxed"
         >
-          AI-powered skin analysis and treatment simulation platform
+          {t('home.hero.description')}
         </motion.p>
-        <MiniTrustBadges />
+
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7, duration: 0.8 }}
+          className="mt-12 flex flex-col sm:flex-row items-center gap-6"
+        >
+          <button 
+            onClick={_onPrimary}
+            className="group relative h-14 px-10 rounded-full bg-pink-600 text-white font-semibold overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-xl shadow-pink-600/20"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-pink-500 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <span className="relative z-10 flex items-center gap-2 tracking-wide">
+              {t('home.hero.cta')}
+            </span>
+          </button>
+
+          <button 
+            onClick={_onSecondary}
+            className="group h-14 px-10 rounded-full border border-white/10 bg-white/5 backdrop-blur-md text-white/80 font-medium hover:bg-white/10 transition-all hover:text-white"
+          >
+            <span className="flex items-center gap-2 tracking-wide">
+              {t('home.hero.learnMore')}
+            </span>
+          </button>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.2, duration: 1 }}
+          className="mt-16 flex items-center gap-8 text-[10px] font-medium tracking-[0.2em] text-gray-500 uppercase"
+        >
+          <span className="flex items-center gap-2">
+            <div className="h-1 w-1 rounded-full bg-pink-500" />
+            {t('home.hero.noCreditCard')}
+          </span>
+          <span className="flex items-center gap-2">
+            <div className="h-1 w-1 rounded-full bg-pink-500" />
+            {t('home.hero.freeTierAvailable')}
+          </span>
+        </motion.div>
       </div>
     </div>
   );
