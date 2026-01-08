@@ -103,18 +103,80 @@ interface FillerSimulatorProps {
   className?: string;
 }
 
+import { useTranslations, useLocale } from "next-intl"
+
 export function FillerLipSimulator({
   beforeImage,
   onExport,
   onGenerateProposal,
-  className = ''
+  className = ""
 }: FillerSimulatorProps) {
-  const _canvasRef = useRef<HTMLCanvasElement>(null);
-  const [selectedArea, setSelectedArea] = useState<string>('lips');
-  const [selectedProduct, setSelectedProduct] = useState<string>('juvederm');
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [comparison, setComparison] = useState(50);
-  const [isAnimating, setIsAnimating] = useState(false);
+  const t = useTranslations()
+  const locale = useLocale()
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const [selectedArea, setSelectedArea] = useState<string>("lips")
+  const [selectedProduct, setSelectedProduct] = useState<string>("juvederm")
+  const [isProcessing, setIsProcessing] = useState(false)
+  const [comparison, setComparison] = useState(50)
+  const [isAnimating, setIsAnimating] = useState(false)
+
+  // Filler injection areas
+  const FILLER_AREAS = {
+    lips: {
+      id: "lips",
+      name: t('fillerLipSimulator.areas.lips.name'),
+      subAreas: ["upper_lip", "lower_lip", "lip_border", "cupids_bow"],
+      priceRange: "8,000 - 25,000",
+      duration: locale === 'th' ? "30-45 นาที" : "30-45 min",
+      recovery: t('fillerLipSimulator.areas.lips.recovery'),
+      results: t('fillerLipSimulator.areas.lips.results')
+    },
+    cheeks: {
+      id: "cheeks",
+      name: t('fillerLipSimulator.areas.cheeks.name'),
+      subAreas: ["apple_cheeks", "cheekbone", "midface"],
+      priceRange: "15,000 - 35,000",
+      duration: locale === 'th' ? "30-45 นาที" : "30-45 min",
+      recovery: t('fillerLipSimulator.areas.cheeks.recovery'),
+      results: t('fillerLipSimulator.areas.cheeks.results')
+    },
+    chin: {
+      id: "chin",
+      name: t('fillerLipSimulator.areas.chin.name'),
+      subAreas: ["chin_projection", "jawline"],
+      priceRange: "12,000 - 28,000",
+      duration: locale === 'th' ? "20-30 นาที" : "20-30 min",
+      recovery: t('fillerLipSimulator.areas.chin.recovery'),
+      results: t('fillerLipSimulator.areas.chin.results')
+    },
+    nose: {
+      id: "nose",
+      name: t('fillerLipSimulator.areas.nose.name'),
+      subAreas: ["nose_bridge", "nose_tip"],
+      priceRange: "10,000 - 20,000",
+      duration: locale === 'th' ? "15-30 นาที" : "15-30 min",
+      recovery: t('fillerLipSimulator.areas.nose.recovery'),
+      results: t('fillerLipSimulator.areas.nose.results')
+    },
+    nasolabial: {
+      id: "nasolabial",
+      name: t('fillerLipSimulator.areas.nasolabial.name'),
+      subAreas: ["smile_lines"],
+      priceRange: "12,000 - 25,000",
+      duration: locale === 'th' ? "20-30 นาที" : "20-30 min",
+      recovery: t('fillerLipSimulator.areas.nasolabial.recovery'),
+      results: t('fillerLipSimulator.areas.nasolabial.results')
+    },
+    undereye: {
+      id: "undereye",
+      name: t('fillerLipSimulator.areas.undereye.name'),
+      subAreas: ["tear_trough", "dark_circles"],
+      priceRange: "15,000 - 30,000",
+      duration: locale === 'th' ? "20-30 นาที" : "20-30 min",
+      recovery: t('fillerLipSimulator.areas.undereye.recovery'),
+      results: t('fillerLipSimulator.areas.undereye.results')
+    }
+  }
   
   // Enhancement levels for each area
   const [enhancements, setEnhancements] = useState({
@@ -317,8 +379,8 @@ export function FillerLipSimulator({
               <Heart className="w-5 h-5 text-white" />
             </div>
             <div>
-              <CardTitle className="text-white">Filler & Lip Simulator</CardTitle>
-              <p className="text-sm text-gray-400">จำลองผลลัพธ์การฉีดฟิลเลอร์แบบ Real-time</p>
+              <CardTitle className="text-white">{t('fillerLipSimulator.title')}</CardTitle>
+              <p className="text-sm text-gray-400">{t('fillerLipSimulator.subtitle')}</p>
             </div>
           </div>
           <Badge variant="outline" className="border-pink-500/50 text-pink-400">
@@ -330,7 +392,7 @@ export function FillerLipSimulator({
       <CardContent className="space-y-6">
         {/* Area Selection */}
         <div className="space-y-3">
-          <Label className="text-white">เลือกบริเวณที่ต้องการเสริม</Label>
+          <Label className="text-white">{t('fillerLipSimulator.selectArea')}</Label>
           <div className="grid grid-cols-3 gap-2">
             {Object.entries(FILLER_AREAS).map(([key, area]) => (
               <Button
@@ -386,10 +448,10 @@ export function FillerLipSimulator({
               
               {/* Labels */}
               <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-black/60 text-white text-sm">
-                Before
+                {t('fillerLipSimulator.before')}
               </div>
               <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-gradient-to-r from-pink-600 to-rose-600 text-white text-sm">
-                After
+                {t('fillerLipSimulator.after')}
               </div>
               
               {/* Processing indicator */}
@@ -397,7 +459,7 @@ export function FillerLipSimulator({
                 <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
                   <div className="flex items-center gap-2 text-white">
                     <Sparkles className="w-5 h-5 animate-spin" />
-                    <span>กำลังประมวลผล...</span>
+                    <span>{t('fillerLipSimulator.processing')}</span>
                   </div>
                 </div>
               )}
@@ -408,7 +470,7 @@ export function FillerLipSimulator({
         {/* Comparison Slider */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label className="text-white">เปรียบเทียบ Before/After</Label>
+            <Label className="text-white">{t('fillerLipSimulator.compareBeforeAfter')}</Label>
             <div className="flex gap-2">
               <Button
                 size="sm"
@@ -441,9 +503,9 @@ export function FillerLipSimulator({
         {/* Enhancement Controls */}
         <Tabs defaultValue="volume" className="w-full">
           <TabsList className="grid grid-cols-3 bg-white/5">
-            <TabsTrigger value="volume">Volume</TabsTrigger>
-            <TabsTrigger value="product">Product</TabsTrigger>
-            <TabsTrigger value="info">Info</TabsTrigger>
+            <TabsTrigger value="volume">{t('fillerLipSimulator.tabs.volume')}</TabsTrigger>
+            <TabsTrigger value="product">{t('fillerLipSimulator.tabs.product')}</TabsTrigger>
+            <TabsTrigger value="info">{t('fillerLipSimulator.tabs.info')}</TabsTrigger>
           </TabsList>
           
           <TabsContent value="volume" className="space-y-4 mt-4">
@@ -451,7 +513,7 @@ export function FillerLipSimulator({
               <>
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <Label className="text-gray-300">Lip Volume</Label>
+                    <Label className="text-gray-300">{t('fillerLipSimulator.controls.lipVolume')}</Label>
                     <span className="text-pink-400 font-mono">{enhancements.lips_volume}%</span>
                   </div>
                   <Slider
@@ -464,7 +526,7 @@ export function FillerLipSimulator({
                 </div>
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <Label className="text-gray-300">Lip Definition</Label>
+                    <Label className="text-gray-300">{t('fillerLipSimulator.controls.lipDefinition')}</Label>
                     <span className="text-pink-400 font-mono">{enhancements.lips_definition}%</span>
                   </div>
                   <Slider
@@ -481,7 +543,7 @@ export function FillerLipSimulator({
             {selectedArea === 'cheeks' && (
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <Label className="text-gray-300">Cheek Volume</Label>
+                  <Label className="text-gray-300">{t('fillerLipSimulator.controls.cheekVolume')}</Label>
                   <span className="text-pink-400 font-mono">{enhancements.cheeks_volume}%</span>
                 </div>
                 <Slider
@@ -497,7 +559,7 @@ export function FillerLipSimulator({
             {selectedArea === 'chin' && (
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <Label className="text-gray-300">Chin Projection</Label>
+                  <Label className="text-gray-300">{t('fillerLipSimulator.controls.chinProjection')}</Label>
                   <span className="text-pink-400 font-mono">{enhancements.chin_projection}%</span>
                 </div>
                 <Slider
@@ -513,7 +575,7 @@ export function FillerLipSimulator({
             {selectedArea === 'nose' && (
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <Label className="text-gray-300">Nose Bridge Height</Label>
+                  <Label className="text-gray-300">{t('fillerLipSimulator.controls.noseBridgeHeight')}</Label>
                   <span className="text-pink-400 font-mono">{enhancements.nose_bridge}%</span>
                 </div>
                 <Slider
@@ -528,7 +590,7 @@ export function FillerLipSimulator({
           </TabsContent>
           
           <TabsContent value="product" className="space-y-4 mt-4">
-            <Label className="text-white">เลือกผลิตภัณฑ์ฟิลเลอร์</Label>
+            <Label className="text-white">{t('fillerLipSimulator.selectProduct')}</Label>
             <div className="space-y-2">
               {FILLER_PRODUCTS.map(product => (
                 <motion.div
@@ -569,19 +631,19 @@ export function FillerLipSimulator({
                   <h4 className="font-medium text-white mb-3">{selectedAreaInfo.name}</h4>
                   <div className="grid grid-cols-2 gap-3 text-sm">
                     <div>
-                      <p className="text-gray-400">ราคา</p>
-                      <p className="text-white font-medium">฿{selectedAreaInfo.priceRange}</p>
+                      <p className="text-gray-400">{t('fillerLipSimulator.infoLabels.price')}</p>
+                      <p className="text-white font-medium">{t('format.currency', { amount: selectedAreaInfo.priceRange })}</p>
                     </div>
                     <div>
-                      <p className="text-gray-400">ระยะเวลา</p>
+                      <p className="text-gray-400">{t('fillerLipSimulator.infoLabels.duration')}</p>
                       <p className="text-white font-medium">{selectedAreaInfo.duration}</p>
                     </div>
                     <div>
-                      <p className="text-gray-400">ฟื้นตัว</p>
+                      <p className="text-gray-400">{t('fillerLipSimulator.infoLabels.recovery')}</p>
                       <p className="text-white font-medium">{selectedAreaInfo.recovery}</p>
                     </div>
                     <div>
-                      <p className="text-gray-400">ผลลัพธ์</p>
+                      <p className="text-gray-400">{t('fillerLipSimulator.infoLabels.results')}</p>
                       <p className="text-white font-medium">{selectedAreaInfo.results}</p>
                     </div>
                   </div>
@@ -594,12 +656,12 @@ export function FillerLipSimulator({
         {/* Estimated Cost */}
         <div className="p-4 rounded-xl bg-gradient-to-r from-pink-600/20 to-rose-600/20 border border-pink-500/30">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-gray-300">ประมาณการใช้ฟิลเลอร์</span>
-            <span className="text-white font-bold">{estimatedUnits} ml</span>
+            <span className="text-gray-300">{t('fillerLipSimulator.estimatedUsage')}</span>
+            <span className="text-white font-bold">{estimatedUnits} {t('fillerLipSimulator.ml')}</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-gray-300">ราคาประมาณ</span>
-            <span className="text-2xl font-bold text-pink-400">฿{estimatedCost.toLocaleString()}</span>
+            <span className="text-gray-300">{t('fillerLipSimulator.estimatedPrice')}</span>
+            <span className="text-2xl font-bold text-pink-400">{t('format.currency', { amount: estimatedCost.toLocaleString() })}</span>
           </div>
         </div>
 
@@ -617,7 +679,7 @@ export function FillerLipSimulator({
             }}
           >
             <Download className="w-4 h-4 mr-2" />
-            บันทึกภาพ
+            {t('fillerLipSimulator.saveImage')}
           </Button>
           <Button
             className="bg-gradient-to-r from-pink-600 to-rose-600 text-white"
@@ -635,7 +697,7 @@ export function FillerLipSimulator({
             }}
           >
             <Sparkles className="w-4 h-4 mr-2" />
-            สร้างใบเสนอราคา
+            {t('fillerLipSimulator.createProposal')}
           </Button>
         </div>
       </CardContent>

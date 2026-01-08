@@ -15,11 +15,14 @@ interface VoiceGuidedARProps {
   enableAudioFeedback?: boolean
 }
 
+import { useTranslations } from "next-intl"
+
 export function VoiceGuidedAR({
   onVoiceCommand,
   language = 'th-TH',
   enableAudioFeedback = true
 }: VoiceGuidedARProps) {
+  const t = useTranslations()
   const [isActive, setIsActive] = useState(false)
   const [lastAction, setLastAction] = useState<string>('')
 
@@ -60,28 +63,22 @@ export function VoiceGuidedAR({
   const getFeedbackText = (command: any): string => {
     switch (command.action) {
       case 'rotate':
-        return 'หมุนโมเดลเรียบร้อยแล้ว'
+        return t('voiceGuidedAR.feedback.rotate')
       case 'zoom':
-        return `ซูม${command.direction === 'in' ? 'เข้า' : 'ออก'}เรียบร้อยแล้ว`
+        return t('voiceGuidedAR.feedback.zoom', { direction: t(`voiceGuidedAR.directions.${command.direction}` as any) })
       case 'pan':
-        return `เลื่อนไปทาง${getDirectionText(command.direction)}เรียบร้อยแล้ว`
+        return t('voiceGuidedAR.feedback.pan', { direction: t(`voiceGuidedAR.directions.${command.direction}` as any) })
       case 'reset':
-        return 'รีเซ็ตตำแหน่งเรียบร้อยแล้ว'
+        return t('voiceGuidedAR.feedback.reset')
       case 'screenshot':
-        return 'ถ่ายภาพหน้าจอเรียบร้อยแล้ว'
+        return t('voiceGuidedAR.feedback.screenshot')
       default:
-        return 'คำสั่งไม่เข้าใจ'
+        return t('voiceGuidedAR.feedback.unknown')
     }
   }
 
   const getDirectionText = (direction: string): string => {
-    switch (direction) {
-      case 'left': return 'ซ้าย'
-      case 'right': return 'ขวา'
-      case 'up': return 'ขึ้น'
-      case 'down': return 'ลง'
-      default: return ''
-    }
+    return t(`voiceGuidedAR.directions.${direction}` as any)
   }
 
   const toggleVoiceControl = () => {
@@ -90,14 +87,14 @@ export function VoiceGuidedAR({
       setIsActive(false)
       haptic.trigger(HAPTIC_PATTERNS.BUTTON_TAP)
       if (enableAudioFeedback) {
-        speak('ปิดการควบคุมด้วยเสียง')
+        speak(t('voiceGuidedAR.controls.speakOff'))
       }
     } else {
       startListening()
       setIsActive(true)
       haptic.trigger(HAPTIC_PATTERNS.SUCCESS)
       if (enableAudioFeedback) {
-        speak('เปิดการควบคุมด้วยเสียงแล้ว พูดคำสั่งได้เลย')
+        speak(t('voiceGuidedAR.controls.speakOn'))
       }
     }
   }
@@ -109,9 +106,9 @@ export function VoiceGuidedAR({
   }
 
   const getStatusText = () => {
-    if (error) return 'เกิดข้อผิดพลาด'
-    if (isListening) return 'กำลังฟัง...'
-    return 'พร้อมใช้งาน'
+    if (error) return t('voiceGuidedAR.status.error')
+    if (isListening) return t('voiceGuidedAR.status.listening')
+    return t('voiceGuidedAR.status.ready')
   }
 
   return (
@@ -124,7 +121,7 @@ export function VoiceGuidedAR({
             ) : (
               <MicOff className="w-5 h-5 text-gray-400" />
             )}
-            Voice-Guided AR
+            {t('voiceGuidedAR.title')}
           </div>
 
           <Badge variant={getStatusColor()}>
@@ -146,12 +143,12 @@ export function VoiceGuidedAR({
               {isActive ? (
                 <>
                   <Mic className="w-5 h-5 mr-2" />
-                  ปิด Voice Control
+                  {t('voiceGuidedAR.controls.turnOff')}
                 </>
               ) : (
                 <>
                   <MicOff className="w-5 h-5 mr-2" />
-                  เปิด Voice Control
+                  {t('voiceGuidedAR.controls.turnOn')}
                 </>
               )}
             </Button>
@@ -160,39 +157,39 @@ export function VoiceGuidedAR({
           {/* Status Information */}
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
-              <div className="font-medium text-muted-foreground">Transcript</div>
+              <div className="font-medium text-muted-foreground">{t('voiceGuidedAR.transcript')}</div>
               <div className="mt-1 p-2 bg-muted rounded text-sm min-h-[2rem] flex items-center">
-                {transcript || 'ยังไม่มีคำพูด...'}
+                {transcript || t('voiceGuidedAR.noSpeech')}
               </div>
             </div>
 
             <div>
-              <div className="font-medium text-muted-foreground">Last Action</div>
+              <div className="font-medium text-muted-foreground">{t('voiceGuidedAR.lastAction')}</div>
               <div className="mt-1 p-2 bg-muted rounded text-sm min-h-[2rem] flex items-center">
-                {lastAction || 'ยังไม่มีคำสั่ง...'}
+                {lastAction || t('voiceGuidedAR.noCommand')}
               </div>
             </div>
           </div>
 
           {/* Voice Commands Guide */}
           <div className="border rounded-lg p-4">
-            <h4 className="font-medium mb-3">คำสั่งเสียงที่รองรับ</h4>
+            <h4 className="font-medium mb-3">{t('voiceGuidedAR.guide.title')}</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
               <div>
-                <div className="font-medium text-green-600 mb-1">การเคลื่อนไหว</div>
+                <div className="font-medium text-green-600 mb-1">{t('voiceGuidedAR.guide.movement')}</div>
                 <ul className="space-y-1 text-muted-foreground">
-                  <li>• "หมุน" - หมุนโมเดล</li>
-                  <li>• "ซูมเข้า/ออก" - ซูม</li>
-                  <li>• "เลื่อนซ้าย/ขวา" - เลื่อนตำแหน่ง</li>
+                  <li>• "{t('voiceGuidedAR.guide.rotate')}" - {t('voiceGuidedAR.feedback.rotate')}</li>
+                  <li>• "{t('voiceGuidedAR.guide.zoom')}" - {t('voiceGuidedAR.feedback.zoom', { direction: '' })}</li>
+                  <li>• "{t('voiceGuidedAR.guide.pan')}" - {t('voiceGuidedAR.feedback.pan', { direction: '' })}</li>
                 </ul>
               </div>
 
               <div>
-                <div className="font-medium text-blue-600 mb-1">การควบคุม</div>
+                <div className="font-medium text-blue-600 mb-1">{t('voiceGuidedAR.guide.control')}</div>
                 <ul className="space-y-1 text-muted-foreground">
-                  <li>• "รีเซ็ต" - รีเซ็ตตำแหน่ง</li>
-                  <li>• "ถ่ายรูป" - ถ่ายภาพหน้าจอ</li>
-                  <li>• "หยุด" - หยุดฟังคำสั่ง</li>
+                  <li>• "{t('voiceGuidedAR.guide.reset')}" - {t('voiceGuidedAR.guide.reset')}</li>
+                  <li>• "{t('voiceGuidedAR.guide.screenshot')}" - {t('voiceGuidedAR.guide.screenshot')}</li>
+                  <li>• "{t('voiceGuidedAR.guide.stop')}" - {t('voiceGuidedAR.guide.stop')}</li>
                 </ul>
               </div>
             </div>
@@ -210,13 +207,13 @@ export function VoiceGuidedAR({
 
           {/* Audio Feedback Toggle */}
           <div className="flex items-center justify-between">
-            <span className="text-sm">เสียงตอบกลับ</span>
+            <span className="text-sm">{t('voiceGuidedAR.controls.audioFeedback')}</span>
             <Button
               variant="ghost"
               size="sm"
               onClick={() => {
                 if (enableAudioFeedback) {
-                  speak('ปิดเสียงตอบกลับ')
+                  speak(t('voiceGuidedAR.controls.speakOff'))
                 }
               }}
             >

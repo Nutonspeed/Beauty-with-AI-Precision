@@ -15,11 +15,12 @@
  * - Mobile-friendly touch controls
  */
 
-import { useState, useRef, useCallback, useEffect, type ChangeEvent } from 'react'
+import { useState, useRef, useCallback, useEffect, type ChangeEvent, useMemo } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { useTranslations } from 'next-intl'
 import { 
   Camera, 
   RotateCcw, 
@@ -42,14 +43,16 @@ interface ScanStepProps {
 
 type AngleType = 'front' | 'left' | 'right'
 
-const ANGLES: { key: AngleType; label: string; icon: string }[] = [
-  { key: 'front', label: 'Front View', icon: '😊' },
-  { key: 'left', label: 'Left Profile', icon: '👈' },
-  { key: 'right', label: 'Right Profile', icon: '👉' },
-]
-
 export function ScanStep({ images, onUpdate, customerName }: ScanStepProps) {
+  const t = useTranslations()
   const [currentAngle, setCurrentAngle] = useState<AngleType>('front')
+
+  const ANGLES: { key: AngleType; label: string; icon: string }[] = useMemo(() => [
+    { key: 'front', label: t('salesWizard.steps.summary.angleFront'), icon: '😊' },
+    { key: 'left', label: t('salesWizard.steps.summary.angleLeft'), icon: '👈' },
+    { key: 'right', label: t('salesWizard.steps.summary.angleRight'), icon: '👉' },
+  ], [t])
+
   const [isCameraActive, setIsCameraActive] = useState(false)
   const [isCameraLoading, setIsCameraLoading] = useState(false)
   const [cameraError, setCameraError] = useState<string | null>(null)
@@ -65,9 +68,7 @@ export function ScanStep({ images, onUpdate, customerName }: ScanStepProps) {
       (!window.isSecureContext && window.location.hostname !== 'localhost')
     ) {
       setCameraUnavailable(true)
-      setCameraError(
-        'Camera access requires a secure connection (HTTPS) or localhost. Use the upload option instead.'
-      )
+      setCameraError(t('salesWizard.steps.scan.cameraSecureError'))
       return
     }
 
@@ -92,12 +93,12 @@ export function ScanStep({ images, onUpdate, customerName }: ScanStepProps) {
       }
     } catch (error) {
       console.error('Camera access error:', error)
-      setCameraError('Unable to access camera. Please grant camera permissions.')
+      setCameraError(t('salesWizard.steps.scan.cameraAccessError'))
       setCameraUnavailable(true)
     } finally {
       setIsCameraLoading(false)
     }
-  }, [])
+  }, [t])
 
   // Stop camera
   const stopCamera = useCallback(() => {
@@ -201,8 +202,7 @@ export function ScanStep({ images, onUpdate, customerName }: ScanStepProps) {
       <Alert className="bg-blue-50 dark:bg-blue-950/20 border-blue-200">
         <AlertCircle className="h-4 w-4 text-blue-600" />
         <AlertDescription className="text-sm text-blue-900 dark:text-blue-100">
-          Capture 3 photos of {customerName}'s face: Front, Left profile, and Right profile.
-          Ensure good lighting and the face is clearly visible.
+          {t('salesWizard.steps.scan.alertDesc', { name: customerName })}
         </AlertDescription>
       </Alert>
 
@@ -244,7 +244,7 @@ export function ScanStep({ images, onUpdate, customerName }: ScanStepProps) {
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-gradient-to-b from-slate-900/90 to-slate-950/90">
               <User className="h-20 w-20 text-slate-400" />
               <p className="text-slate-300 text-center px-4">
-                Position {customerName}'s face in the frame
+                {t('salesWizard.steps.scan.positionFace', { name: customerName })}
               </p>
               <Button
                 size="lg"
@@ -255,12 +255,12 @@ export function ScanStep({ images, onUpdate, customerName }: ScanStepProps) {
                 {isCameraLoading ? (
                   <>
                     <Loader2 className="h-5 w-5 animate-spin" />
-                    Starting Camera...
+                    {t('salesWizard.steps.scan.startingCamera')}
                   </>
                 ) : (
                   <>
                     <Camera className="h-5 w-5" />
-                    Start Camera
+                    {t('salesWizard.steps.scan.startCamera')}
                   </>
                 )}
               </Button>
@@ -276,7 +276,7 @@ export function ScanStep({ images, onUpdate, customerName }: ScanStepProps) {
                 <Button asChild variant="secondary" className="gap-2">
                   <label className="cursor-pointer">
                     <Camera className="h-5 w-5" />
-                    Upload from Camera Roll
+                    {t('salesWizard.steps.scan.uploadFromCameraRoll')}
                     <input
                       ref={(node) => {
                         if (node) {
@@ -333,7 +333,7 @@ export function ScanStep({ images, onUpdate, customerName }: ScanStepProps) {
                 onClick={stopCamera}
                 className="absolute top-4 right-4"
               >
-                Cancel
+                {t('common.cancel')}
               </Button>
             </>
           )}
@@ -343,10 +343,10 @@ export function ScanStep({ images, onUpdate, customerName }: ScanStepProps) {
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-gradient-to-b from-green-900/90 to-green-950/90">
               <CheckCircle2 className="h-20 w-20 text-green-400" />
               <p className="text-white text-xl font-semibold">
-                All Photos Captured!
+                {t('salesWizard.steps.scan.allCapturedTitle')}
               </p>
               <p className="text-green-200 text-center px-4">
-                3 angles captured successfully. Proceed to analysis.
+                {t('salesWizard.steps.scan.allCapturedDesc')}
               </p>
             </div>
           )}
@@ -359,7 +359,7 @@ export function ScanStep({ images, onUpdate, customerName }: ScanStepProps) {
       {/* Captured Photos Preview */}
       {(images.front || images.left || images.right) && (
         <div className="space-y-3">
-          <h3 className="text-sm font-semibold">Captured Photos</h3>
+          <h3 className="text-sm font-semibold">{t('salesWizard.steps.scan.capturedPhotosTitle')}</h3>
           <div className="grid grid-cols-3 gap-3">
             {ANGLES.map((angle) => (
               <Card key={angle.key} className="overflow-hidden">

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Clock, Phone, MessageCircle } from "lucide-react"
+import { useTranslations } from "next-intl"
 
 interface Lead {
   id: string
@@ -27,6 +28,7 @@ interface PipelineData {
 }
 
 export function LivePipeline() {
+  const t = useTranslations()
   const [data, setData] = useState<PipelineData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -96,12 +98,12 @@ export function LivePipeline() {
     const diffMs = now.getTime() - date.getTime()
     const diffMins = Math.floor(diffMs / 60000)
     
-    if (diffMins < 1) return "เมื่อสักครู่"
-    if (diffMins < 60) return `${diffMins} นาทีที่แล้ว`
+    if (diffMins < 1) return t('dashboard.livePipeline.justNow')
+    if (diffMins < 60) return t('dashboard.livePipeline.minsAgo', { count: diffMins })
     const diffHours = Math.floor(diffMins / 60)
-    if (diffHours < 24) return `${diffHours} ชั่วโมงที่แล้ว`
+    if (diffHours < 24) return t('dashboard.livePipeline.hoursAgo', { count: diffHours })
     const diffDays = Math.floor(diffHours / 24)
-    return `${diffDays} วันที่แล้ว`
+    return t('dashboard.livePipeline.daysAgo', { count: diffDays })
   }
 
   const calculatePotentialValue = (score: number): number => {
@@ -140,7 +142,7 @@ export function LivePipeline() {
   if (error || !data) {
     return (
       <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-center">
-        <p className="text-sm text-destructive">Failed to load pipeline. Please try again.</p>
+        <p className="text-sm text-destructive">{t('dashboard.revenueChart.error')}</p>
       </div>
     )
   }
@@ -160,10 +162,10 @@ export function LivePipeline() {
 
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case "hot": return "🔥 Hot Lead"
-      case "warm": return "🌡️ Warm Lead"
-      case "new": return "🆕 New Lead"
-      default: return "Unknown"
+      case "hot": return t('dashboard.livePipeline.status.hot')
+      case "warm": return t('dashboard.livePipeline.status.warm')
+      case "new": return t('dashboard.livePipeline.status.new')
+      default: return t('dashboard.livePipeline.status.unknown')
     }
   }
 
@@ -181,15 +183,15 @@ export function LivePipeline() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            🔥 Hot Leads Pipeline
+            {t('dashboard.livePipeline.title')}
             <Badge className="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100">{hotLeads.length}</Badge>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {hotLeads.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
-              <p>ไม่มี hot leads ในขณะนี้</p>
-              <p className="text-sm mt-2">ติดต่อลูกค้าใหม่เพื่อสร้างโอกาส</p>
+              <p>{t('dashboard.livePipeline.empty')}</p>
+              <p className="text-sm mt-2">{t('dashboard.livePipeline.emptyDesc')}</p>
             </div>
           ) : (
             hotLeads.map((lead) => (
@@ -213,7 +215,7 @@ export function LivePipeline() {
               </div>
               <div className="text-right">
                 <div className="font-semibold text-green-600">{formatCurrency(lead.potentialValue)}</div>
-                <div className="text-sm text-muted-foreground">Score: {lead.score}%</div>
+                <div className="text-sm text-muted-foreground">{t('salesLeadDetail.score')}: {lead.score}%</div>
                 <div className="flex gap-1 mt-2">
                   <Button size="sm" variant="outline">
                     <Phone className="h-3 w-3" />
@@ -232,14 +234,14 @@ export function LivePipeline() {
       {/* Pipeline Overview */}
       <Card>
         <CardHeader>
-          <CardTitle>📊 Pipeline Overview</CardTitle>
+          <CardTitle>{t('dashboard.livePipeline.performance') || '📊 Pipeline Overview'}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             {/* Pipeline Stages */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">New Leads</span>
+                <span className="text-sm font-medium">{t('dashboard.livePipeline.status.new')}</span>
                 <div className="flex items-center gap-2">
                   <div className="w-20 bg-muted rounded-full h-2">
                     <div 
@@ -252,7 +254,7 @@ export function LivePipeline() {
               </div>
 
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Warm Leads</span>
+                <span className="text-sm font-medium">{t('dashboard.livePipeline.status.warm')}</span>
                 <div className="flex items-center gap-2">
                   <div className="w-20 bg-muted rounded-full h-2">
                     <div 
@@ -265,7 +267,7 @@ export function LivePipeline() {
               </div>
 
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Hot Leads</span>
+                <span className="text-sm font-medium">{t('dashboard.livePipeline.status.hot')}</span>
                 <div className="flex items-center gap-2">
                   <div className="w-20 bg-muted rounded-full h-2">
                     <div 
@@ -281,13 +283,13 @@ export function LivePipeline() {
             {/* Total Pipeline Value */}
             <div className="pt-4 border-t">
               <div className="flex items-center justify-between">
-                <span className="font-medium">Total Pipeline Value</span>
+                <span className="font-medium">{t('salesPresentations.stats.totalValue')}</span>
                 <span className="text-lg font-bold text-green-600 dark:text-green-400">
                   {formatCurrency(data.totalValue)}
                 </span>
               </div>
               <div className="text-sm text-muted-foreground mt-1">
-                Average deal size: {formatCurrency(Math.round(data.averageValue))}
+                {t('dashboard.livePipeline.averageDeal') || 'Average deal size'}: {formatCurrency(Math.round(data.averageValue))}
               </div>
             </div>
 
@@ -296,11 +298,11 @@ export function LivePipeline() {
               <div className="grid grid-cols-2 gap-2">
                 <Button size="sm" variant="outline">
                   <Phone className="h-4 w-4 mr-2" />
-                  Call Hot Lead
+                  {t('hotLeadCard.call')}
                 </Button>
                 <Button size="sm" variant="outline">
                   <MessageCircle className="h-4 w-4 mr-2" />
-                  Send Proposal
+                  {t('hotLeadCard.chat')}
                 </Button>
               </div>
             </div>

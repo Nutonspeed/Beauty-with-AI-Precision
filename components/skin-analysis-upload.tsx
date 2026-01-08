@@ -17,16 +17,18 @@ import { trackFeatureUsage, trackPerformance, trackError } from "@/lib/analytics
 import type { AnalysisMode } from "@/types"
 import { useLocalizePath } from "@/lib/i18n/locale-link"
 
+import { useTranslations, useLocale } from "next-intl"
+
 const MODE_PROGRESS: Record<AnalysisMode, string> = {
-  local: "Running local computer vision pipeline...",
-  hf: "Running Hugging Face enhanced analysis...",
-  auto: "Selecting fastest analysis pipeline...",
+  local: "analysisUpload.modes.local",
+  hf: "analysisUpload.modes.hf",
+  auto: "analysisUpload.modes.auto",
 }
 
 const MODE_LABEL: Record<AnalysisMode, string> = {
-  local: "Start Local Analysis / เริ่มวิเคราะห์แบบออฟไลน์",
-  hf: "Start AI Analysis / เริ่มวิเคราะห์ด้วย AI",
-  auto: "Start Analysis / เริ่มการวิเคราะห์",
+  local: "analysisUpload.labels.local",
+  hf: "analysisUpload.labels.hf",
+  auto: "analysisUpload.labels.auto",
 }
 
 interface SkinAnalysisUploadProps {
@@ -35,6 +37,8 @@ interface SkinAnalysisUploadProps {
 }
 
 export function SkinAnalysisUpload({ isLoggedIn = false, analysisMode = "auto" }: Readonly<SkinAnalysisUploadProps>) {
+  const t = useTranslations()
+  const currentLocale = useLocale()
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
@@ -49,7 +53,7 @@ export function SkinAnalysisUpload({ isLoggedIn = false, analysisMode = "auto" }
   const router = useRouter()
   const pathname = usePathname()
   const lp = useLocalizePath()
-  const locale = (() => {
+  const derivedLocale = (() => {
     const segments = pathname.split("/").filter(Boolean)
     const candidate = segments[0]?.toLowerCase()
     const supportedLocales = new Set(["th", "en"])
@@ -61,7 +65,7 @@ export function SkinAnalysisUpload({ isLoggedIn = false, analysisMode = "auto" }
     if (file) {
       // Validate file type
       if (!file.type.startsWith('image/')) {
-        setError('Error: Please select a valid image file (PNG, JPG, JPEG).')
+        setError(t('analysisUpload.errors.invalidFile'))
         return
       }
       
@@ -87,7 +91,7 @@ export function SkinAnalysisUpload({ isLoggedIn = false, analysisMode = "auto" }
       }
     } catch (error) {
       console.error("Error accessing camera:", error)
-      alert("Unable to access camera. Please check permissions.")
+      alert(t('analysisUpload.errors.cameraAccess'))
     }
   }
 
@@ -130,7 +134,7 @@ export function SkinAnalysisUpload({ isLoggedIn = false, analysisMode = "auto" }
 
     const maxBytes = 10 * 1024 * 1024
     if (selectedFile.size > maxBytes) {
-      setError("File is too large. Please choose an image under 10MB.")
+      setError(t('analysisUpload.errors.fileTooLarge'))
       return
     }
 
@@ -158,7 +162,7 @@ export function SkinAnalysisUpload({ isLoggedIn = false, analysisMode = "auto" }
       const isE2eTest = selectedFile.name.includes('female-1') || selectedFile.name.includes('placeholder')
       console.log('[QUALITY] File name:', selectedFile.name, 'isE2eTest:', isE2eTest)
       if (!isE2eTest) {
-        setAnalysisProgress("Processing... Validating image quality")
+        setAnalysisProgress(t('analysisUpload.progress.validating'))
         
         const img = document.createElement("img")
         img.src = selectedImage
@@ -181,7 +185,7 @@ export function SkinAnalysisUpload({ isLoggedIn = false, analysisMode = "auto" }
       }
 
       // Step 1: Optimize image (resize + compress)
-      setAnalysisProgress("Processing... Optimizing image")
+      setAnalysisProgress(t('analysisUpload.progress.optimizing'))
       console.log("[OPTIMIZER] 🛠️ === OPTIMIZING IMAGE ===")
       console.log("[OPTIMIZER] 📊 Original:", {
         size: `${(selectedFile.size / 1024).toFixed(2)} KB`,
@@ -211,9 +215,9 @@ export function SkinAnalysisUpload({ isLoggedIn = false, analysisMode = "auto" }
 
       // Use new Hybrid AI API (Phase 1: MediaPipe + TensorFlow + HuggingFace + 6 CV algorithms)
       // Indicate face detection starting per E2E expectations
-      setAnalysisProgress("Processing... Detecting face")
+      setAnalysisProgress(t('analysisUpload.progress.detectingFace'))
       // Then indicate analysis phase
-      setTimeout(() => setAnalysisProgress("Analyzing skin..."), 200)
+      setTimeout(() => setAnalysisProgress(t('analysisUpload.progress.analyzing')), 200)
       console.log("[HYBRID] 🔬 Using Phase 1 Hybrid Pipeline (MediaPipe 35% + TensorFlow 40% + HuggingFace 25%)...")
 
       const analysisResponse = await fetch("/api/skin-analysis/analyze", {
@@ -261,11 +265,11 @@ export function SkinAnalysisUpload({ isLoggedIn = false, analysisMode = "auto" }
         })
 
         NotificationManager.error(
-          locale === "th" ? "การวิเคราะห์ล้มเหลว" : "Analysis Failed",
+          t('analysisUpload.errors.analysisFailed'),
           {
             description: analysisData.error || "Unknown error",
             action: {
-              label: locale === "th" ? "ลองอีกครั้ง" : "Retry",
+              label: t('analysisUpload.actions.retry'),
               onClick: () => {
                 setError(null)
                 setIsAnalyzing(false)
@@ -304,7 +308,7 @@ export function SkinAnalysisUpload({ isLoggedIn = false, analysisMode = "auto" }
       })
 
       // Update progress to display detected landmarks count for E2E visibility
-      setAnalysisProgress("Detected 478 landmarks")
+      setAnalysisProgress(t('analysisUpload.progress.detectedLandmarks', { count: 478 }))
 
       // Persist minimal results for results page consumption
       try {
@@ -364,7 +368,7 @@ export function SkinAnalysisUpload({ isLoggedIn = false, analysisMode = "auto" }
       NotificationManager.analysisSaved(
         analysisData.id,
         () => router.push(lp('/analysis/results')),
-        locale
+        currentLocale
       )
 
       router.push(lp('/analysis/results'))
@@ -405,22 +409,21 @@ export function SkinAnalysisUpload({ isLoggedIn = false, analysisMode = "auto" }
         errorMessage.includes("NetworkError") ||
         errorMessage.includes("load MediaPipe")
       ) {
-        errorMessage =
-          "❌ Network Error - Cannot load AI models\n\nPlease check your internet connection.\nMediaPipe and TensorFlow need to download models from CDN.\n\n---\n\n❌ ข้อผิดพลาดเครือข่าย - ไม่สามารถโหลดโมเดล AI\n\nกรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต\nMediaPipe และ TensorFlow ต้องดาวน์โหลดโมเดลจาก CDN"
+        errorMessage = t('analysisUpload.errors.networkError')
         
         // Show network error notification
-        NotificationManager.networkError(locale, () => {
+        NotificationManager.networkError(currentLocale, () => {
           setError(null)
           setIsAnalyzing(false)
         })
       } else {
         // Show generic error notification
         NotificationManager.error(
-          locale === "th" ? "เกิดข้อผิดพลาด" : "An Error Occurred",
+          t('common.error'),
           {
             description: errorMessage,
             action: {
-              label: locale === "th" ? "ลองอีกครั้ง" : "Retry",
+              label: t('analysisUpload.actions.retry'),
               onClick: () => {
                 setError(null)
                 setIsAnalyzing(false)
@@ -471,11 +474,11 @@ export function SkinAnalysisUpload({ isLoggedIn = false, analysisMode = "auto" }
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="upload" onClick={stopCamera}>
                 <Upload className="mr-2 h-4 w-4" />
-                Upload / อัปโหลด
+                {t('analysisUpload.tabs.upload')}
               </TabsTrigger>
               <TabsTrigger value="camera" onClick={() => !selectedImage && startCamera()}>
                 <Camera className="mr-2 h-4 w-4" />
-                Camera / กล้อง
+                {t('analysisUpload.tabs.camera')}
               </TabsTrigger>
             </TabsList>
 
@@ -498,14 +501,10 @@ export function SkinAnalysisUpload({ isLoggedIn = false, analysisMode = "auto" }
                 >
                   <Upload className="mb-4 h-12 w-12 text-muted-foreground" />
                   <p className="mb-2 text-center text-sm font-medium">
-                    Click to upload or drag and drop
-                    <br />
-                    คลิกเพื่ออัปโหลดหรือลากและวาง
+                    {t('analysisUpload.actions.clickToUpload')}
                   </p>
                   <p className="text-center text-xs text-muted-foreground">
-                    PNG, JPG or JPEG (MAX. 10MB)
-                    <br />
-                    PNG, JPG หรือ JPEG (สูงสุด 10MB)
+                    {t('analysisUpload.actions.fileLimit')}
                   </p>
                 </button>
               )}
@@ -549,7 +548,7 @@ export function SkinAnalysisUpload({ isLoggedIn = false, analysisMode = "auto" }
                           disabled={!isPositionValid}
                         >
                           <Camera className="mr-2 h-5 w-5" />
-                          {isPositionValid ? "Capture / ถ่ายภาพ" : "Adjust Position / จัดท่า"}
+                          {isPositionValid ? t('analysisUpload.actions.capture') : t('analysisUpload.actions.adjustPosition')}
                         </Button>
                       </div>
                     </div>
@@ -557,13 +556,11 @@ export function SkinAnalysisUpload({ isLoggedIn = false, analysisMode = "auto" }
                     <div className="flex h-[400px] flex-col items-center justify-center">
                       <Camera className="mb-4 h-12 w-12 text-muted-foreground" />
                       <p className="mb-4 text-center text-sm text-muted-foreground">
-                        Camera not active
-                        <br />
-                        กล้องยังไม่เปิด
+                        {t('analysisUpload.actions.cameraNotActive')}
                       </p>
                       <Button onClick={startCamera}>
                         <Camera className="mr-2 h-4 w-4" />
-                        Start Camera / เปิดกล้อง
+                        {t('analysisUpload.actions.startCamera')}
                       </Button>
                     </div>
                   )}
@@ -579,11 +576,11 @@ export function SkinAnalysisUpload({ isLoggedIn = false, analysisMode = "auto" }
                 {isAnalyzing ? (
                   <>
                     <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    {MODE_PROGRESS[analysisMode]}
+                    {t(MODE_PROGRESS[analysisMode])}
                   </>
                 ) : (
                   <>
-                    {MODE_LABEL[analysisMode]}
+                    {t(MODE_LABEL[analysisMode])}
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </>
                 )}
@@ -595,7 +592,7 @@ export function SkinAnalysisUpload({ isLoggedIn = false, analysisMode = "auto" }
                 disabled={isAnalyzing}
                 className="bg-transparent"
               >
-                Choose Different Photo / เลือกรูปใหม่
+                {t('analysisUpload.actions.chooseDifferent')}
               </Button>
             </div>
           )}

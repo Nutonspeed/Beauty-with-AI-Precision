@@ -4,6 +4,7 @@ import { useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
+import { useTranslations } from "next-intl"
 import { Sparkles, Send, MessageSquare, Mail, Check, ArrowLeft, Zap } from "lucide-react"
 
 // Interface สำหรับข้อมูลลีด
@@ -46,6 +47,7 @@ interface QuickProposalProps {
 }
 
 export function QuickProposal({ open, onOpenChange, lead, onSent }: QuickProposalProps) {
+  const t = useTranslations("quickProposal")
   const [step, setStep] = useState<"select" | "preview" | "sent">("select")
   const [selectedPackage, setSelectedPackage] = useState<string | null>(null)
   const [sendMethod, setSendMethod] = useState<"line" | "email" | null>(null)
@@ -156,25 +158,20 @@ export function QuickProposal({ open, onOpenChange, lead, onSent }: QuickProposa
       ? selectedPkg.price * (1 - selectedPkg.discount / 100)
       : selectedPkg.price
 
-    return `สวัสดีค่ะคุณ${lead.name} 😊
+    const pkgPriceStr = selectedPkg.price.toLocaleString()
+    const finalPriceStr = finalPrice.toLocaleString()
 
-จากการวิเคราะห์ผิวของคุณ เราพบว่าคุณมีความกังวลเรื่อง: ${lead.topConcern}${lead.secondaryConcern ? `, ${lead.secondaryConcern}` : ""}
-
-🎯 **เราขอแนะนำ: ${selectedPkg.name}**
-
-✨ ประกอบด้วย:
-${selectedPkg.treatments.map(t => `• ${t}`).join('\n')}
-
-💰 ราคา: ${selectedPkg.price.toLocaleString()} บาท
-${selectedPkg.discount ? `🎁 ส่วนลด ${selectedPkg.discount}% = ${finalPrice.toLocaleString()} บาท` : ""}
-
-📌 ${selectedPkg.description}
-
-📞 ติดต่อจองคิว: 02-123-4567
-🏥 หรือ Walk-in ที่คลินิก
-
-ด้วยความเคารพ ❤️
-ทีมงาน AI367BAR`
+    return t('template.greeting', { name: lead.name }) + '\n\n' +
+           t('template.intro', { concerns: `${lead.topConcern}${lead.secondaryConcern ? `, ${lead.secondaryConcern}` : ""}` }) + '\n\n' +
+           t('template.recommend', { package: selectedPkg.name }) + '\n\n' +
+           t('template.includes') + '\n' +
+           selectedPkg.treatments.map(tr => `• ${tr}`).join('\n') + '\n\n' +
+           t('template.price', { price: pkgPriceStr }) + '\n' +
+           (selectedPkg.discount ? t('template.discount', { percent: selectedPkg.discount, finalPrice: finalPriceStr }) : "") + '\n\n' +
+           selectedPkg.description + '\n\n' +
+           t('template.contact') + '\n' +
+           t('template.walkin') + '\n\n' +
+           t('template.closing');
   }
 
   // ส่ง proposal
@@ -215,10 +212,10 @@ ${selectedPkg.discount ? `🎁 ส่วนลด ${selectedPkg.discount}% = ${f
         <SheetHeader className="p-6 border-b bg-gradient-to-r from-purple-500 to-pink-500 text-white">
           <SheetTitle className="text-white flex items-center gap-2">
             <Sparkles className="h-5 w-5" />
-            AI Proposal Generator
+            {t('title')}
           </SheetTitle>
           <p className="text-sm text-white/90">
-            สำหรับ: {lead.name}, {lead.age} ปี
+            {t('subtitle', { name: lead.name, age: lead.age })}
           </p>
         </SheetHeader>
 
@@ -233,16 +230,16 @@ ${selectedPkg.discount ? `🎁 ส่วนลด ${selectedPkg.discount}% = ${f
                     <Sparkles className="h-5 w-5 text-purple-600" />
                   </div>
                   <div className="flex-1">
-                    <h4 className="font-semibold text-sm mb-1">AI Analysis</h4>
+                    <h4 className="font-semibold text-sm mb-1">{t('analysis')}</h4>
                     <p className="text-sm text-muted-foreground">
-                      ความกังวลหลัก: <span className="font-medium text-foreground">{lead.topConcern}</span>
+                      {t('topConcern')} <span className="font-medium text-foreground">{lead.topConcern}</span>
                     </p>
                     {lead.analysisData && (
                       <div className="mt-2 grid grid-cols-2 gap-2 text-xs">
-                        <div>ริ้วรอย: {lead.analysisData.wrinkles}/100</div>
-                        <div>จุดด่างดำ: {lead.analysisData.pigmentation}/100</div>
-                        <div>รูขุมขน: {lead.analysisData.pores}/100</div>
-                        <div>ความชุ่มชื้น: {lead.analysisData.hydration}/100</div>
+                        <div>{t('wrinkles')}: {lead.analysisData.wrinkles}/100</div>
+                        <div>{t('pigmentation')}: {lead.analysisData.pigmentation}/100</div>
+                        <div>{t('pores')}: {lead.analysisData.pores}/100</div>
+                        <div>{t('hydration')}: {lead.analysisData.hydration}/100</div>
                       </div>
                     )}
                   </div>
@@ -253,7 +250,7 @@ ${selectedPkg.discount ? `🎁 ส่วนลด ${selectedPkg.discount}% = ${f
               <div className="space-y-3">
                 <h3 className="font-semibold flex items-center gap-2">
                   <Zap className="h-4 w-4 text-orange-500" />
-                  เลือกแพ็คเกจ (1-Tap)
+                  {t('selectPackage')}
                 </h3>
                 
                 {packages.map((pkg) => (
@@ -276,7 +273,7 @@ ${selectedPkg.discount ? `🎁 ส่วนลด ${selectedPkg.discount}% = ${f
                           {pkg.recommended && (
                             <Badge className="bg-purple-600">
                               <Sparkles className="h-3 w-3 mr-1" />
-                              AI แนะนำ
+                              {t('aiRecommended')}
                             </Badge>
                           )}
                         </h4>
@@ -288,7 +285,7 @@ ${selectedPkg.discount ? `🎁 ส่วนลด ${selectedPkg.discount}% = ${f
 
                     <div className="flex items-end justify-between mt-3">
                       <div className="text-sm text-muted-foreground">
-                        {pkg.treatments.length} ทรีตเมนต์
+                        {t('treatmentCount', { count: pkg.treatments.length })}
                       </div>
                       <div className="text-right">
                         {pkg.discount && (
@@ -321,12 +318,12 @@ ${selectedPkg.discount ? `🎁 ส่วนลด ${selectedPkg.discount}% = ${f
                 className="mb-2"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                เลือกแพ็คเกจใหม่
+                {t('newPackage')}
               </Button>
 
               {/* Preview */}
               <div className="p-4 bg-muted rounded-lg">
-                <h4 className="font-semibold mb-3">ตัวอย่าง Proposal</h4>
+                <h4 className="font-semibold mb-3">{t('preview')}</h4>
                 <pre className="whitespace-pre-wrap text-sm font-sans leading-relaxed">
                   {generateProposalText()}
                 </pre>
@@ -334,7 +331,7 @@ ${selectedPkg.discount ? `🎁 ส่วนลด ${selectedPkg.discount}% = ${f
 
               {/* Send Method Selection */}
               <div className="space-y-3">
-                <h4 className="font-semibold">เลือกวิธีส่ง (1-Tap)</h4>
+                <h4 className="font-semibold">{t('sendMethod')}</h4>
                 
                 <button
                   onClick={() => {
@@ -348,8 +345,8 @@ ${selectedPkg.discount ? `🎁 ส่วนลด ${selectedPkg.discount}% = ${f
                       <MessageSquare className="h-6 w-6" />
                     </div>
                     <div className="text-left">
-                      <div className="font-semibold text-green-900">ส่งผ่าน LINE</div>
-                      <div className="text-xs text-green-700">ส่งตรงถึงลูกค้าทันที</div>
+                      <div className="font-semibold text-green-900">{t('sendLine')}</div>
+                      <div className="text-xs text-green-700">{t('sendLineDesc')}</div>
                     </div>
                   </div>
                   <Send className="h-5 w-5 text-green-600 group-hover:translate-x-1 transition-transform" />
@@ -367,7 +364,7 @@ ${selectedPkg.discount ? `🎁 ส่วนลด ${selectedPkg.discount}% = ${f
                       <Mail className="h-6 w-6" />
                     </div>
                     <div className="text-left">
-                      <div className="font-semibold text-blue-900">ส่งผ่าน Email</div>
+                      <div className="font-semibold text-blue-900">{t('sendEmail')}</div>
                       <div className="text-xs text-blue-700">
                         {lead.email || "sales@ai367bar.com"}
                       </div>
@@ -384,13 +381,13 @@ ${selectedPkg.discount ? `🎁 ส่วนลด ${selectedPkg.discount}% = ${f
               <div className="w-20 h-20 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-4">
                 <Check className="h-10 w-10 text-green-600" />
               </div>
-              <h3 className="text-xl font-bold mb-2">ส่ง Proposal สำเร็จ! 🎉</h3>
+              <h3 className="text-xl font-bold mb-2">{t('successTitle')}</h3>
               <p className="text-muted-foreground mb-4">
-                ส่งไปยัง {lead.name} ผ่าน {sendMethod === "line" ? "LINE" : "Email"}
+                {t('successDesc', { name: lead.name, method: sendMethod === "line" ? "LINE" : "Email" })}
               </p>
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-50 rounded-full text-sm text-green-700">
                 <Sparkles className="h-4 w-4" />
-                แพ็คเกจ: {selectedPkg?.name}
+                {t('packageLabel', { name: selectedPkg?.name || '' })}
               </div>
             </div>
           )}

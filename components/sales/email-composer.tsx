@@ -16,6 +16,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Loader2, Mail, Send, Eye, X, Sparkles } from "lucide-react"
 import { toast } from "sonner"
+import { useTranslations } from "next-intl"
 
 interface EmailTemplate {
   id: string
@@ -43,6 +44,7 @@ export function EmailComposer({
   onClose,
   onSent,
 }: EmailComposerProps) {
+  const t = useTranslations()
   const [templates, setTemplates] = useState<EmailTemplate[]>([])
   const [selectedTemplate, setSelectedTemplate] = useState<EmailTemplate | null>(null)
   const [loading, setLoading] = useState(true)
@@ -83,7 +85,7 @@ export function EmailComposer({
       }
     } catch (error) {
       console.error("Failed to load templates:", error)
-      toast.error("ไม่สามารถโหลดเทมเพลตได้")
+      toast.error(t("dashboard.emailComposer.loadError"))
     } finally {
       setLoading(false)
     }
@@ -108,7 +110,7 @@ export function EmailComposer({
 
   const handleSend = async () => {
     if (!recipientEmail || !subject || !content) {
-      toast.error("กรุณากรอกข้อมูลให้ครบถ้วน")
+      toast.error(t("dashboard.emailComposer.fillRequired"))
       return
     }
 
@@ -132,19 +134,19 @@ export function EmailComposer({
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to send email")
+        throw new Error(data.error || t("dashboard.emailComposer.sendError"))
       }
 
-      toast.success("ส่งอีเมลสำเร็จ!", {
-        description: `ส่งไปยัง ${recipientEmail}`,
+      toast.success(t("dashboard.emailComposer.sendSuccess"), {
+        description: t("dashboard.emailComposer.sendSuccessDesc", { email: recipientEmail }),
       })
 
       onSent?.()
       onClose?.()
     } catch (error) {
       console.error("Failed to send email:", error)
-      toast.error("ไม่สามารถส่งอีเมลได้", {
-        description: error instanceof Error ? error.message : "กรุณาลองใหม่อีกครั้ง"
+      toast.error(t("dashboard.emailComposer.sendError"), {
+        description: error instanceof Error ? error.message : t("dashboard.emailComposer.sendErrorDesc")
       })
     } finally {
       setSending(false)
@@ -168,7 +170,7 @@ export function EmailComposer({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Mail className="h-5 w-5 text-primary" />
-            <h3 className="text-lg font-semibold">ส่งอีเมลถึงลูกค้า</h3>
+            <h3 className="text-lg font-semibold">{t("dashboard.emailComposer.sendEmail")}</h3>
           </div>
           {onClose && (
             <Button variant="ghost" size="icon" onClick={onClose}>
@@ -179,11 +181,11 @@ export function EmailComposer({
 
         {/* Template Selector */}
         <div className="space-y-2">
-          <Label>เลือกเทมเพลต (ไม่บังคับ)</Label>
+          <Label>{t("dashboard.emailComposer.selectTemplate")}</Label>
           <div className="flex gap-2">
             <Select onValueChange={handleTemplateSelect}>
               <SelectTrigger>
-                <SelectValue placeholder="-- เลือกเทมเพลต --" />
+                <SelectValue placeholder={t("dashboard.emailComposer.templatePlaceholder")} />
               </SelectTrigger>
               <SelectContent>
                 {templates.map((template) => (
@@ -215,14 +217,14 @@ export function EmailComposer({
           {selectedTemplate && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Sparkles className="h-4 w-4" />
-              <span>ใช้งาน {selectedTemplate.usage_count} ครั้ง</span>
+              <span>{t("dashboard.emailComposer.usageCount", { count: selectedTemplate.usage_count })}</span>
             </div>
           )}
         </div>
 
         {/* Recipient */}
         <div className="space-y-2">
-          <Label htmlFor="recipient">ผู้รับ *</Label>
+          <Label htmlFor="recipient">{t("dashboard.emailComposer.recipient")} *</Label>
           <Input
             id="recipient"
             type="email"
@@ -234,10 +236,10 @@ export function EmailComposer({
 
         {/* Subject */}
         <div className="space-y-2">
-          <Label htmlFor="subject">หัวข้อ *</Label>
+          <Label htmlFor="subject">{t("dashboard.emailComposer.subject")} *</Label>
           <Input
             id="subject"
-            placeholder="หัวข้ออีเมล"
+            placeholder={t("dashboard.emailComposer.subjectPlaceholder")}
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
           />
@@ -245,10 +247,10 @@ export function EmailComposer({
 
         {/* Content */}
         <div className="space-y-2">
-          <Label htmlFor="content">เนื้อหา *</Label>
+          <Label htmlFor="content">{t("dashboard.emailComposer.content")} *</Label>
           <Textarea
             id="content"
-            placeholder="เนื้อหาอีเมล..."
+            placeholder={t("dashboard.emailComposer.contentPlaceholder")}
             value={content}
             onChange={(e) => setContent(e.target.value)}
             rows={12}
@@ -256,7 +258,7 @@ export function EmailComposer({
           />
           {selectedTemplate && selectedTemplate.variables.length > 0 && (
             <p className="text-xs text-muted-foreground">
-              ตัวแปรที่ใช้ได้: {selectedTemplate.variables.map((v) => `{{${v}}}`).join(", ")}
+              {t("dashboard.emailComposer.availableVariables")} {selectedTemplate.variables.map((v) => `{{${v}}}`).join(", ")}
             </p>
           )}
         </div>
@@ -264,13 +266,13 @@ export function EmailComposer({
         {/* Preview Mode */}
         {preview && (
           <div className="rounded-lg border bg-muted/50 p-4">
-            <h4 className="mb-2 font-medium">ตัวอย่างอีเมล</h4>
+            <h4 className="mb-2 font-medium">{t("dashboard.emailComposer.preview")}</h4>
             <div className="space-y-2 text-sm">
               <div>
-                <strong>ถึง:</strong> {recipientEmail}
+                <strong>{t("dashboard.emailComposer.to")}</strong> {recipientEmail}
               </div>
               <div>
-                <strong>หัวข้อ:</strong> {subject}
+                <strong>{t("dashboard.emailComposer.subjectLabel")}</strong> {subject}
               </div>
               <div className="mt-4 rounded border bg-white p-4">
                 <div dangerouslySetInnerHTML={{ __html: content }} />
@@ -289,12 +291,12 @@ export function EmailComposer({
             {sending ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                กำลังส่ง...
+                {t("dashboard.emailComposer.sending")}
               </>
             ) : (
               <>
                 <Send className="mr-2 h-4 w-4" />
-                ส่งอีเมล
+                {t("dashboard.emailComposer.send")}
               </>
             )}
           </Button>
@@ -304,14 +306,14 @@ export function EmailComposer({
             disabled={!content}
           >
             <Eye className="mr-2 h-4 w-4" />
-            {preview ? "ซ่อนตัวอย่าง" : "ดูตัวอย่าง"}
+            {preview ? t("dashboard.emailComposer.hidePreview") : t("dashboard.emailComposer.showPreview")}
           </Button>
         </div>
 
         {/* Info */}
         <div className="rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-blue-800">
           <p>
-            💡 <strong>หมายเหตุ:</strong> อีเมลจะถูกบันทึกลงในระบบ และสามารถติดตามสถานะการเปิด/คลิกได้
+            💡 <strong>{t("dashboard.emailComposer.note")}</strong> {t("dashboard.emailComposer.noteDescription")}
           </p>
         </div>
       </div>

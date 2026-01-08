@@ -7,6 +7,8 @@ import { SkinAnalysisUpload } from "@/components/skin-analysis-upload"
 import { useAnalysisMode } from "@/hooks/use-analysis-mode"
 import type { AnalysisMode } from "@/types"
 import { cn } from "@/lib/utils"
+import { useTranslations } from "next-intl"
+import { useLocalizePath } from "@/lib/i18n/locale-link"
 import { Sparkles, ShieldCheck, Brain } from "lucide-react"
 
 interface AnalysisInteractionPanelProps {
@@ -15,18 +17,18 @@ interface AnalysisInteractionPanelProps {
 
 const MODE_METADATA: Record<AnalysisMode, { label: string; description: string; icon: ComponentType<{ className?: string }> }> = {
   local: {
-    label: "Local Only",
-    description: "Runs computer vision algorithms without external AI providers.",
+    label: "analysis.modes.local.label",
+    description: "analysis.modes.local.description",
     icon: ShieldCheck,
   },
   hf: {
-    label: "AI Enhanced",
-    description: "Prefers Hugging Face inference for deeper AI insights.",
+    label: "analysis.modes.hf.label",
+    description: "analysis.modes.hf.description",
     icon: Brain,
   },
   auto: {
-    label: "Auto",
-    description: "Chooses the fastest available provider and falls back to local if needed.",
+    label: "analysis.modes.auto.label",
+    description: "analysis.modes.auto.description",
     icon: Sparkles,
   },
 }
@@ -34,7 +36,9 @@ const MODE_METADATA: Record<AnalysisMode, { label: string; description: string; 
 const MODE_ORDER: AnalysisMode[] = ["local", "auto", "hf"]
 
 export function AnalysisInteractionPanel({ isLoggedIn }: AnalysisInteractionPanelProps) {
+  const t = useTranslations()
   const { mode, setMode } = useAnalysisMode()
+  const lp = useLocalizePath()
 
   const activeMeta = MODE_METADATA[mode]
 
@@ -45,12 +49,12 @@ export function AnalysisInteractionPanel({ isLoggedIn }: AnalysisInteractionPane
           <div className="space-y-1.5">
             <div className="flex items-center gap-2">
               <Badge variant="outline" className="border-primary/30 bg-primary/10 text-primary">
-                Mode: {activeMeta.label}
+                {t('analysis.mode')}: {t(activeMeta.label)}
               </Badge>
-              <span className="text-xs text-muted-foreground">Switch anytime without leaving the page.</span>
+              <span className="text-xs text-muted-foreground">{t('analysis.switchHint')}</span>
             </div>
             <p className="text-sm text-muted-foreground md:text-xs">
-              {activeMeta.description}
+              {t(activeMeta.description)}
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -70,7 +74,7 @@ export function AnalysisInteractionPanel({ isLoggedIn }: AnalysisInteractionPane
                 >
                   <OptionIcon className="h-4 w-4" />
                   <span className="text-sm font-medium">
-                    {MODE_METADATA[option].label}
+                    {t(MODE_METADATA[option].label)}
                   </span>
                 </Button>
               )

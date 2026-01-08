@@ -31,7 +31,10 @@ interface SkinHeatmapProps {
   faceLandmarks?: any; // MediaPipe face landmarks
 }
 
+import { useTranslations } from 'next-intl';
+
 export default function SkinHeatmap({ faceImage, heatmapData, faceLandmarks }: SkinHeatmapProps) {
+  const t = useTranslations();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [selectedView, setSelectedView] = useState<'all' | 'wrinkles' | 'pigmentation' | 'acne' | 'dryness' | 'oiliness' | 'redness'>('all');
   const [hoveredArea, setHoveredArea] = useState<ProblemArea | null>(null);
@@ -175,23 +178,23 @@ export default function SkinHeatmap({ faceImage, heatmapData, faceLandmarks }: S
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Eye className="w-5 h-5 text-blue-500" />
-          Advanced Skin Analysis Heatmap
+          {t('skinHeatmap.title')}
         </CardTitle>
         <CardDescription>
-          Interactive visualization of skin problem areas with severity levels
+          {t('skinHeatmap.description')}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Filter Tabs */}
         <Tabs value={selectedView} onValueChange={(v: any) => setSelectedView(v)}>
           <TabsList className="grid grid-cols-7 w-full">
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="wrinkles">Wrinkles</TabsTrigger>
-            <TabsTrigger value="pigmentation">Pigment</TabsTrigger>
-            <TabsTrigger value="acne">Acne</TabsTrigger>
-            <TabsTrigger value="dryness">Dry</TabsTrigger>
-            <TabsTrigger value="oiliness">Oily</TabsTrigger>
-            <TabsTrigger value="redness">Red</TabsTrigger>
+            <TabsTrigger value="all">{t('skinHeatmap.tabs.all')}</TabsTrigger>
+            <TabsTrigger value="wrinkles">{t('skinHeatmap.tabs.wrinkles')}</TabsTrigger>
+            <TabsTrigger value="pigmentation">{t('skinHeatmap.tabs.pigmentation')}</TabsTrigger>
+            <TabsTrigger value="acne">{t('skinHeatmap.tabs.acne')}</TabsTrigger>
+            <TabsTrigger value="dryness">{t('skinHeatmap.tabs.dryness')}</TabsTrigger>
+            <TabsTrigger value="oiliness">{t('skinHeatmap.tabs.oiliness')}</TabsTrigger>
+            <TabsTrigger value="redness">{t('skinHeatmap.tabs.redness')}</TabsTrigger>
           </TabsList>
         </Tabs>
 
@@ -212,11 +215,11 @@ export default function SkinHeatmap({ faceImage, heatmapData, faceLandmarks }: S
               </div>
               <div className="space-y-1 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Region:</span>
-                  <span className="font-medium">{hoveredArea.region}</span>
+                  <span className="text-muted-foreground">{t('common.department')}:</span>
+                  <span className="font-medium">{t(`skinHeatmap.regions.${hoveredArea.region.toLowerCase()}` as any) || hoveredArea.region}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Severity:</span>
+                  <span className="text-muted-foreground">{t('common.status')}:</span>
                   <Badge variant={hoveredArea.severity >= 7 ? 'destructive' : hoveredArea.severity >= 4 ? 'secondary' : 'default'}>
                     {hoveredArea.severity}/10
                   </Badge>
@@ -230,27 +233,27 @@ export default function SkinHeatmap({ faceImage, heatmapData, faceLandmarks }: S
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           <div className="flex items-center gap-2 text-sm">
             <div className="w-4 h-4 rounded" style={{ backgroundColor: '#9333EA' }}></div>
-            <span>Wrinkles</span>
+            <span>{t('skinHeatmap.tabs.wrinkles')}</span>
           </div>
           <div className="flex items-center gap-2 text-sm">
             <div className="w-4 h-4 rounded" style={{ backgroundColor: '#D97706' }}></div>
-            <span>Pigmentation</span>
+            <span>{t('skinHeatmap.tabs.pigmentation')}</span>
           </div>
           <div className="flex items-center gap-2 text-sm">
             <div className="w-4 h-4 rounded" style={{ backgroundColor: '#DC2626' }}></div>
-            <span>Acne</span>
+            <span>{t('skinHeatmap.tabs.acne')}</span>
           </div>
           <div className="flex items-center gap-2 text-sm">
             <div className="w-4 h-4 rounded" style={{ backgroundColor: '#0891B2' }}></div>
-            <span>Dryness</span>
+            <span>{t('skinHeatmap.tabs.dryness')}</span>
           </div>
           <div className="flex items-center gap-2 text-sm">
             <div className="w-4 h-4 rounded" style={{ backgroundColor: '#65A30D' }}></div>
-            <span>Oiliness</span>
+            <span>{t('skinHeatmap.tabs.oiliness')}</span>
           </div>
           <div className="flex items-center gap-2 text-sm">
             <div className="w-4 h-4 rounded" style={{ backgroundColor: '#F43F5E' }}></div>
-            <span>Redness</span>
+            <span>{t('skinHeatmap.tabs.redness')}</span>
           </div>
         </div>
 
@@ -258,7 +261,7 @@ export default function SkinHeatmap({ faceImage, heatmapData, faceLandmarks }: S
         <div className="grid gap-4 md:grid-cols-2">
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium">Overall Severity</CardTitle>
+              <CardTitle className="text-sm font-medium">{t('skinHeatmap.overallSeverity')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">
@@ -275,12 +278,12 @@ export default function SkinHeatmap({ faceImage, heatmapData, faceLandmarks }: S
 
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium">Problem Areas Detected</CardTitle>
+              <CardTitle className="text-sm font-medium">{t('skinHeatmap.areasDetected')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">{heatmapData.problemAreas.length}</div>
               <div className="text-sm text-muted-foreground mt-1">
-                {Object.keys(areasByConcern).length} different concern types
+                {t('skinHeatmap.concernTypes', { count: Object.keys(areasByConcern).length })}
               </div>
             </CardContent>
           </Card>
@@ -288,7 +291,7 @@ export default function SkinHeatmap({ faceImage, heatmapData, faceLandmarks }: S
 
         {/* Detailed Breakdown */}
         <div className="space-y-2">
-          <h4 className="font-semibold text-sm">Concern Breakdown:</h4>
+          <h4 className="font-semibold text-sm">{t('skinHeatmap.breakdown')}</h4>
           <div className="space-y-2">
             {Object.entries(areasByConcern).map(([type, areas]) => {
               const avgSeverity = areas.reduce((sum, a) => sum + a.severity, 0) / areas.length;
@@ -297,15 +300,15 @@ export default function SkinHeatmap({ faceImage, heatmapData, faceLandmarks }: S
                   <div className="flex items-center gap-3">
                     {getConcernIcon(type)}
                     <div>
-                      <div className="font-medium text-sm capitalize">{type}</div>
+                      <div className="font-medium text-sm capitalize">{t(`skinHeatmap.tabs.${type}` as any) || type}</div>
                       <div className="text-xs text-muted-foreground">
-                        {areas.length} area{areas.length > 1 ? 's' : ''} detected
+                        {t('skinHeatmap.detectedCount', { count: areas.length })}
                       </div>
                     </div>
                   </div>
                   <div className="text-right">
                     <div className="font-semibold text-sm">{avgSeverity.toFixed(1)}/10</div>
-                    <div className="text-xs text-muted-foreground">Avg severity</div>
+                    <div className="text-xs text-muted-foreground">{t('skinHeatmap.avgSeverity')}</div>
                   </div>
                 </div>
               );
@@ -315,19 +318,19 @@ export default function SkinHeatmap({ faceImage, heatmapData, faceLandmarks }: S
 
         {/* Severity Scale Guide */}
         <div className="space-y-2 pt-4 border-t">
-          <h4 className="font-semibold text-sm">Severity Scale:</h4>
+          <h4 className="font-semibold text-sm">{t('skinHeatmap.scale')}</h4>
           <div className="grid gap-2 text-xs">
             <div className="flex items-center gap-2">
               <Badge variant="default">1-3</Badge>
-              <span>Mild - Minimal intervention needed</span>
+              <span>{t('skinHeatmap.mild')}</span>
             </div>
             <div className="flex items-center gap-2">
               <Badge variant="secondary">4-6</Badge>
-              <span>Moderate - Recommended treatment</span>
+              <span>{t('skinHeatmap.moderate')}</span>
             </div>
             <div className="flex items-center gap-2">
               <Badge variant="destructive">7-10</Badge>
-              <span>Severe - Immediate attention recommended</span>
+              <span>{t('skinHeatmap.severe')}</span>
             </div>
           </div>
         </div>

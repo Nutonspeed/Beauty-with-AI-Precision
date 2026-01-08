@@ -1,11 +1,11 @@
-'use client';
+"use client"
 
 /**
- * Sales Tools Hub - รวมทุกเครื่องมือ AI สำหรับทีมขาย
+ * Sales Tools Hub - AI Sales Tools aggregator
  * Competitive features: AI Recommendations, Quote Calculator, Conversion Optimizer
  */
 
-import { useState } from 'react';
+import { useState } from "react"
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useLocalizePath } from '@/lib/i18n/locale-link';
+import { useTranslations } from 'next-intl';
 
 // Import new AI components
 import { AISmartRecommendations } from '@/components/sales/ai-smart-recommendations';
@@ -30,9 +31,9 @@ import { QuickQuoteCalculator } from '@/components/sales/quick-quote-calculator'
 import { LeadConversionOptimizer } from '@/components/sales/lead-conversion-optimizer';
 
 // Sample lead data for demo
-const SAMPLE_LEAD = {
+const getSampleLead = (t: any) => ({
   id: 'lead_001',
-  name: 'คุณสมหญิง',
+  name: t('salesLeads.modal.namePlaceholder') || 'Customer',
   source: 'Facebook Ads',
   lastContact: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
   engagementScore: 65,
@@ -41,21 +42,51 @@ const SAMPLE_LEAD = {
   budget: 'medium' as const,
   urgency: 'medium' as const,
   objections: ['price']
-};
+});
 
 // Sample customer profile
-const SAMPLE_PROFILE = {
+const getSampleProfile = (t: any) => ({
   age: 35,
   gender: 'female' as const,
   skinType: 'combination' as const,
   concerns: ['wrinkles', 'pigmentation'],
   budget: 'medium' as const,
   previousTreatments: ['HydraFacial']
-};
+});
 
 export default function SalesToolsPage() {
+  const t = useTranslations();
   const [activeTab, setActiveTab] = useState('recommendations');
   const lp = useLocalizePath();
+  
+  const sampleLead = {
+    id: 'lead_001',
+    name: t('salesLeads.modal.namePlaceholder') || 'Customer',
+    source: t('salesTools.sources.facebook'),
+    lastContact: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
+    engagementScore: 65,
+    visitCount: 3,
+    treatmentInterest: [t('booking.treatments.botox'), t('booking.treatments.filler')],
+    budget: 'medium' as const,
+    urgency: 'medium' as const,
+    objections: ['price']
+  };
+
+  const sampleProfile = {
+    age: 35,
+    gender: 'female' as const,
+    skinType: 'combination' as const,
+    concerns: ['wrinkles', 'pigmentation'],
+    budget: 'medium' as const,
+    previousTreatments: ['HydraFacial']
+  };
+
+  const leadQueue = [
+    { name: `${t('roles.customer')} 1`, score: 78, interest: `${t('booking.treatments.botox')}, ${t('booking.treatments.filler')}`, status: 'hot' },
+    { name: `${t('roles.customer')} 2`, score: 65, interest: t('booking.treatments.skin_tightening'), status: 'warm' },
+    { name: `${t('roles.customer')} 3`, score: 52, interest: t('booking.treatments.laser'), status: 'warm' },
+    { name: `${t('roles.customer')} 4`, score: 45, interest: t('booking.treatments.facial'), status: 'cold' },
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
@@ -72,14 +103,14 @@ export default function SalesToolsPage() {
               <div>
                 <h1 className="text-2xl font-bold text-white flex items-center gap-2">
                   <Brain className="w-6 h-6 text-purple-400" />
-                  AI Sales Tools
+                  {t('salesTools.title')}
                 </h1>
-                <p className="text-sm text-gray-400">เครื่องมือ AI เพิ่มประสิทธิภาพการขาย</p>
+                <p className="text-sm text-gray-400">{t('salesTools.subtitle')}</p>
               </div>
             </div>
             <Badge className="bg-gradient-to-r from-purple-600 to-pink-600">
               <Zap className="w-3 h-3 mr-1" />
-              AI Powered
+              {t('salesTools.badge')}
             </Badge>
           </div>
         </div>
@@ -90,20 +121,20 @@ export default function SalesToolsPage() {
         <div className="max-w-7xl mx-auto px-4 py-3">
           <div className="flex items-center justify-around">
             <div className="text-center">
-              <p className="text-2xl font-bold text-white">+35%</p>
-              <p className="text-xs text-gray-400">Conversion Rate</p>
+              <p className="text-2xl font-bold text-white">{t('salesTools.stats.conversionValue')}</p>
+              <p className="text-xs text-gray-400">{t('salesTools.stats.conversion')}</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-green-400">฿2.4M</p>
-              <p className="text-xs text-gray-400">Revenue This Month</p>
+              <p className="text-2xl font-bold text-green-400">{t('salesTools.stats.revenueValue')}</p>
+              <p className="text-xs text-gray-400">{t('salesTools.stats.revenue')}</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-purple-400">89</p>
-              <p className="text-xs text-gray-400">Active Leads</p>
+              <p className="text-2xl font-bold text-purple-400">{t('salesTools.stats.leadsValue')}</p>
+              <p className="text-xs text-gray-400">{t('salesTools.stats.leads')}</p>
             </div>
             <div className="text-center hidden md:block">
-              <p className="text-2xl font-bold text-blue-400">4.8</p>
-              <p className="text-xs text-gray-400">Avg Rating</p>
+              <p className="text-2xl font-bold text-blue-400">{t('salesTools.stats.ratingValue')}</p>
+              <p className="text-xs text-gray-400">{t('salesTools.stats.rating')}</p>
             </div>
           </div>
         </div>
@@ -118,24 +149,24 @@ export default function SalesToolsPage() {
               className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-pink-600 rounded-lg"
             >
               <Sparkles className="w-4 h-4 mr-2" />
-              <span className="hidden sm:inline">AI Recommendations</span>
-              <span className="sm:hidden">Recommend</span>
+              <span className="hidden sm:inline">{t('salesTools.tabs.recommendations')}</span>
+              <span className="sm:hidden">{t('salesTools.tabs.recommendShort')}</span>
             </TabsTrigger>
             <TabsTrigger 
               value="quote"
               className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-600 data-[state=active]:to-emerald-600 rounded-lg"
             >
               <Calculator className="w-4 h-4 mr-2" />
-              <span className="hidden sm:inline">Quick Quote</span>
-              <span className="sm:hidden">Quote</span>
+              <span className="hidden sm:inline">{t('salesTools.tabs.quote')}</span>
+              <span className="sm:hidden">{t('salesTools.tabs.quoteShort')}</span>
             </TabsTrigger>
             <TabsTrigger 
               value="optimizer"
               className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-indigo-600 rounded-lg"
             >
               <Target className="w-4 h-4 mr-2" />
-              <span className="hidden sm:inline">Conversion Optimizer</span>
-              <span className="sm:hidden">Optimizer</span>
+              <span className="hidden sm:inline">{t('salesTools.tabs.optimizer')}</span>
+              <span className="sm:hidden">{t('salesTools.tabs.optimizerShort')}</span>
             </TabsTrigger>
           </TabsList>
 
@@ -146,26 +177,26 @@ export default function SalesToolsPage() {
                 <CardContent className="p-4 space-y-4">
                   <h3 className="text-white font-medium flex items-center gap-2">
                     <Users className="w-4 h-4 text-purple-400" />
-                    Customer Profile
+                    {t('salesTools.profile.title')}
                   </h3>
                   
                   <div className="space-y-3 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-gray-400">Age</span>
-                      <span className="text-white">{SAMPLE_PROFILE.age} ปี</span>
+                      <span className="text-gray-400">{t('salesTools.profile.age')}</span>
+                      <span className="text-white">{sampleProfile.age} {t('salesTools.profile.years')}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-400">Skin Type</span>
-                      <span className="text-white capitalize">{SAMPLE_PROFILE.skinType}</span>
+                      <span className="text-gray-400">{t('salesTools.profile.skinType')}</span>
+                      <span className="text-white capitalize">{sampleProfile.skinType}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-400">Budget</span>
-                      <Badge className="bg-yellow-500/20 text-yellow-400 capitalize">{SAMPLE_PROFILE.budget}</Badge>
+                      <span className="text-gray-400">{t('salesTools.profile.budget')}</span>
+                      <Badge className="bg-yellow-500/20 text-yellow-400 capitalize">{sampleProfile.budget}</Badge>
                     </div>
                     <div>
-                      <span className="text-gray-400 block mb-2">Concerns</span>
+                      <span className="text-gray-400 block mb-2">{t('salesTools.profile.concerns')}</span>
                       <div className="flex flex-wrap gap-1">
-                        {SAMPLE_PROFILE.concerns.map((c, i) => (
+                        {sampleProfile.concerns.map((c, i) => (
                           <Badge key={i} variant="outline" className="border-purple-500/50 text-purple-300 text-xs capitalize">
                             {c}
                           </Badge>
@@ -176,7 +207,7 @@ export default function SalesToolsPage() {
                   
                   <Button className="w-full bg-purple-600 hover:bg-purple-700">
                     <Sparkles className="w-4 h-4 mr-2" />
-                    Update Profile
+                    {t('salesTools.profile.update')}
                   </Button>
                 </CardContent>
               </Card>
@@ -184,7 +215,7 @@ export default function SalesToolsPage() {
               {/* AI Recommendations */}
               <div className="lg:col-span-2">
                 <AISmartRecommendations 
-                  customerProfile={SAMPLE_PROFILE}
+                  customerProfile={sampleProfile}
                   onSelectTreatment={(treatment) => {
                     console.log('Selected:', treatment);
                     setActiveTab('quote');
@@ -199,7 +230,7 @@ export default function SalesToolsPage() {
               <QuickQuoteCalculator 
                 onSendQuote={(quote) => {
                   console.log('Quote sent:', quote);
-                  alert(`ส่งใบเสนอราคา ฿${quote.total.toLocaleString()} สำเร็จ!`);
+                  alert(t('salesTools.messages.quoteSuccess', { amount: quote.total.toLocaleString() }));
                 }}
               />
               
@@ -208,7 +239,7 @@ export default function SalesToolsPage() {
                 <CardContent className="p-4 space-y-4">
                   <h3 className="text-white font-medium flex items-center gap-2">
                     <TrendingUp className="w-4 h-4 text-green-400" />
-                    Tips เพิ่มยอดขาย
+                    {t('salesTools.tips.title')}
                   </h3>
                   
                   <div className="space-y-3">
@@ -217,8 +248,8 @@ export default function SalesToolsPage() {
                       animate={{ opacity: 1, x: 0 }}
                       className="p-3 rounded-xl bg-green-500/10 border border-green-500/20"
                     >
-                      <p className="text-sm text-green-400 font-medium">💡 Bundle Discount</p>
-                      <p className="text-xs text-gray-400 mt-1">เสนอ package 3 treatment ลด 20% - เพิ่ม conversion 35%</p>
+                      <p className="text-sm text-green-400 font-medium">💡 {t('salesTools.tips.bundle')}</p>
+                      <p className="text-xs text-gray-400 mt-1">{t('salesTools.tips.bundleDesc')}</p>
                     </motion.div>
                     
                     <motion.div 
@@ -227,8 +258,8 @@ export default function SalesToolsPage() {
                       transition={{ delay: 0.1 }}
                       className="p-3 rounded-xl bg-yellow-500/10 border border-yellow-500/20"
                     >
-                      <p className="text-sm text-yellow-400 font-medium">⏰ Urgency Works</p>
-                      <p className="text-xs text-gray-400 mt-1">โปรหมดเขตวันนี้ เพิ่ม conversion 28%</p>
+                      <p className="text-sm text-yellow-400 font-medium">⏰ {t('salesTools.tips.urgency')}</p>
+                      <p className="text-xs text-gray-400 mt-1">{t('salesTools.tips.urgencyDesc')}</p>
                     </motion.div>
                     
                     <motion.div 
@@ -237,8 +268,8 @@ export default function SalesToolsPage() {
                       transition={{ delay: 0.2 }}
                       className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20"
                     >
-                      <p className="text-sm text-blue-400 font-medium">💳 ผ่อน 0%</p>
-                      <p className="text-xs text-gray-400 mt-1">เสนอผ่อนชำระ - ลด objection เรื่องราคา 45%</p>
+                      <p className="text-sm text-blue-400 font-medium">💳 {t('salesTools.tips.installment')}</p>
+                      <p className="text-xs text-gray-400 mt-1">{t('salesTools.tips.installmentDesc')}</p>
                     </motion.div>
                     
                     <motion.div 
@@ -247,8 +278,8 @@ export default function SalesToolsPage() {
                       transition={{ delay: 0.3 }}
                       className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20"
                     >
-                      <p className="text-sm text-purple-400 font-medium">🎁 Free Consultation</p>
-                      <p className="text-xs text-gray-400 mt-1">ปรึกษาฟรี + Before/After preview เพิ่ม trust 52%</p>
+                      <p className="text-sm text-purple-400 font-medium">🎁 {t('salesTools.tips.consult')}</p>
+                      <p className="text-xs text-gray-400 mt-1">{t('salesTools.tips.consultDesc')}</p>
                     </motion.div>
                   </div>
                 </CardContent>
@@ -259,7 +290,7 @@ export default function SalesToolsPage() {
           <TabsContent value="optimizer" className="space-y-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <LeadConversionOptimizer 
-                lead={SAMPLE_LEAD}
+                lead={sampleLead}
                 onActionTaken={(action) => {
                   console.log('Action taken:', action);
                 }}
@@ -270,16 +301,11 @@ export default function SalesToolsPage() {
                 <CardContent className="p-4 space-y-4">
                   <h3 className="text-white font-medium flex items-center gap-2">
                     <Users className="w-4 h-4 text-blue-400" />
-                    Hot Leads Queue
+                    {t('salesTools.queue.title')}
                   </h3>
                   
                   <div className="space-y-2">
-                    {[
-                      { name: 'คุณสมหญิง', score: 78, interest: 'Botox, Filler', status: 'hot' },
-                      { name: 'คุณนภา', score: 65, interest: 'HIFU', status: 'warm' },
-                      { name: 'คุณวิภา', score: 52, interest: 'Laser', status: 'warm' },
-                      { name: 'คุณพิมพ์', score: 45, interest: 'HydraFacial', status: 'cold' },
-                    ].map((lead, idx) => (
+                    {leadQueue.map((lead, idx) => (
                       <motion.div
                         key={idx}
                         initial={{ opacity: 0, y: 10 }}
@@ -308,14 +334,14 @@ export default function SalesToolsPage() {
                           lead.status === 'hot' ? 'bg-red-500' :
                           lead.status === 'warm' ? 'bg-yellow-500 text-black' : 'bg-blue-500'
                         }>
-                          {lead.status}
+                          {lead.status === 'hot' ? t('salesLeads.status.hot') : lead.status === 'warm' ? t('salesLeads.status.warm') : t('salesLeads.status.cold')}
                         </Badge>
                       </motion.div>
                     ))}
                   </div>
                   
                   <Button variant="outline" className="w-full border-white/20 text-white">
-                    View All Leads
+                    {t('salesTools.queue.viewAll')}
                   </Button>
                 </CardContent>
               </Card>

@@ -6,7 +6,8 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
+import { useTranslations, useLocale } from "next-intl"
 import { PresentationMode } from '@/components/presentation/presentation-mode';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, AlertCircle } from 'lucide-react';
@@ -175,9 +176,11 @@ const buildHybridAnalysis = (raw: unknown, fallbackId: string): HybridSkinAnalys
 };
 
 export default function SalesPresentationPage() {
+  const t = useTranslations()
+  const currentLocale = useLocale()
   const params = useParams();
   const router = useRouter();
-  const locale = (params.locale as string) || 'en';
+  const localeFromParams = (params.locale as string) || 'en';
   const analysisId = params.id as string;
 
   const [analysis, setAnalysis] = useState<HybridSkinAnalysis | null>(null);
@@ -195,15 +198,15 @@ export default function SalesPresentationPage() {
 
       if (!response.ok) {
         if (response.status === 404) {
-          throw new Error('Analysis not found');
+          throw new Error(t('analysis.notFound'));
         }
-        throw new Error('Failed to load analysis');
+        throw new Error(t('analysis.error'));
       }
 
       const data = await response.json();
 
       if (!data.success) {
-        throw new Error('Failed to load analysis');
+        throw new Error(t('analysis.error'));
       }
 
       const normalizedAnalysis = buildHybridAnalysis(data.data, analysisId);
@@ -216,7 +219,7 @@ export default function SalesPresentationPage() {
           : null;
 
       const finalPatientInfo = patientInfoValue || {
-        name: locale === 'th' ? 'ผู้รับบริการ' : 'Patient',
+        name: t('roles.customer'),
         skinType: normalizedAnalysis.ai.skinType || 'normal',
       };
 
@@ -225,13 +228,14 @@ export default function SalesPresentationPage() {
       // Try to load previous analysis for comparison
       // This would require an API endpoint that returns user's analysis history
       // For now, we'll leave it null
+      // @ts-ignore
     } catch (err) {
       console.error('Load analysis error:', err);
       setError(err instanceof Error ? err.message : 'Failed to load analysis');
     } finally {
       setIsLoading(false);
     }
-  }, [analysisId, locale]);
+  }, [analysisId, currentLocale, t]);
 
   useEffect(() => {
     loadAnalysis();
@@ -244,7 +248,7 @@ export default function SalesPresentationPage() {
       await exportPresentationToPDF(
         analysis,
         {
-          locale: locale as 'th' | 'en',
+          locale: currentLocale as 'th' | 'en',
           patientInfo: patientInfo
             ? {
                 name: patientInfo.name,
@@ -255,13 +259,11 @@ export default function SalesPresentationPage() {
               }
             : undefined,
           clinicInfo: {
-            name: 'AI367 Skin Clinic',
-            nameTh: 'คลินิก AI367',
-            address: '123 Medical Plaza, Bangkok, Thailand',
-            addressTh: '123 อาคารแมดิคัล พลาซ่า กรุงเทพฯ',
-            phone: '+66 2 XXX XXXX',
-            email: 'info@ai367clinic.com',
-            website: 'www.ai367clinic.com',
+            name: currentLocale === 'th' ? t('common.clinic.name') : t('common.clinic.name'),
+            address: currentLocale === 'th' ? t('common.clinic.address') : t('common.clinic.address'),
+            phone: t('common.clinic.phone'),
+            email: t('common.clinic.email'),
+            website: t('common.clinic.website'),
             brandColor: '#6366f1',
           },
           includePricing: true,
@@ -272,7 +274,7 @@ export default function SalesPresentationPage() {
       );
     } catch (err) {
       console.error('Export error:', err);
-      alert('Failed to export PDF');
+      alert(t('common.error'));
     }
   };
 
@@ -280,11 +282,11 @@ export default function SalesPresentationPage() {
     if (!analysis) return;
     try {
       await shareAnalysis(analysis, {
-        title: 'Treatment Proposal',
+        title: t('salesPresentations.steps.proposal'),
       });
     } catch (err) {
       console.error('Share error:', err);
-      alert('Sharing not supported on this device');
+      alert(t('common.error'));
     }
   };
 
@@ -293,7 +295,7 @@ export default function SalesPresentationPage() {
   };
 
   const handleClose = () => {
-    router.push(`/${locale}/analysis/detail/${analysisId}`);
+    router.push(`/${currentLocale}/analysis/detail/${analysisId}`);
   };
 
   if (isLoading) {
@@ -312,7 +314,7 @@ export default function SalesPresentationPage() {
         <Alert variant="destructive" className="mb-4">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            {error || (locale === 'th' ? 'ไม่พบข้อมูล' : 'Analysis not found')}
+            {error || t('analysis.notFound')}
           </AlertDescription>
         </Alert>
       </div>
@@ -326,11 +328,11 @@ export default function SalesPresentationPage() {
         comparisonAnalysis={comparisonAnalysis || undefined}
         patientInfo={patientInfo}
         clinicInfo={{
-          name: 'AI367 Skin Clinic',
+          name: t('common.clinic.name'),
           logo: '/logo.png',
           brandColor: '#6366f1',
         }}
-        locale={locale as 'th' | 'en'}
+        locale={currentLocale as 'th' | 'en'}
         onExport={handleExportPDF}
         onShare={handleShare}
         onPrint={handlePrint}

@@ -1,152 +1,140 @@
-// React hooks for AI features
+// React hooks for AI features - Professional Enterprise Version
 'use client';
 
-import { useState, useCallback } from 'react';
-import { SkinDiseaseDetector, AnalysisResult, SkinCondition } from '@/lib/ai/skin-disease-detector';
+import { useState, useCallback, useMemo } from 'react';
+import { SkinDiseaseDetector, AnalysisResult } from '@/lib/ai/skin-disease-detector';
 import { VirtualMakeupTryOn, TryOnResult, MakeupProduct } from '@/lib/ai/virtual-makeup';
 import { SkincareRoutineGenerator, RoutineRecommendation } from '@/lib/ai/skincare-routine-generator';
 
-// Initialize AI services
+// Persistent AI Service Instances (Singleton Pattern for performance)
 const skinDetector = new SkinDiseaseDetector();
 const makeupTryOn = new VirtualMakeupTryOn();
 const routineGenerator = new SkincareRoutineGenerator();
 
-export interface UseAIState {
-  loading: boolean;
+export interface UseAIState<T> {
+  isLoading: boolean;
+  isProcessing: boolean;
   error: string | null;
-  result: AnalysisResult | TryOnResult | RoutineRecommendation | null;
+  result: T | null;
+  lastRunAt: number | null;
 }
 
+const createInitialState = <T>(): UseAIState<T> => ({
+  isLoading: false,
+  isProcessing: false,
+  error: null,
+  result: null,
+  lastRunAt: null,
+});
+
 /**
- * Hook for skin disease detection
+ * Hook for high-precision skin disease detection
  */
 export function useSkinAnalysis() {
-  type KnownSkinCondition = Omit<SkinCondition, 'confidence' | 'severity'>;
-  const [state, setState] = useState<UseAIState>({
-    loading: false,
-    error: null,
-    result: null,
-  });
+  const [state, setState] = useState<UseAIState<AnalysisResult>>(createInitialState());
 
   const analyzeImage = useCallback(async (imageData: string | File) => {
-    setState({ loading: true, error: null, result: null });
+    setState(prev => ({ ...prev, isProcessing: true, error: null }));
+    const startTime = Date.now();
     
     try {
+      // In professional grade, we might add pre-validation or image optimization here
       const result = await skinDetector.analyzeImage(imageData);
-      setState({ loading: false, error: null, result });
+      
+      setState({
+        isLoading: false,
+        isProcessing: false,
+        error: null,
+        result,
+        lastRunAt: Date.now(),
+      });
+      
+      console.log(`[AI] Skin analysis completed in ${Date.now() - startTime}ms`);
       return result;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Analysis failed';
-      setState({ loading: false, error: errorMessage, result: null });
+      const errorMessage = error instanceof Error ? error.message : 'AI Analysis failed';
+      setState(prev => ({ ...prev, isProcessing: false, error: errorMessage }));
       throw error;
     }
   }, []);
 
-  const getConditionInfo = useCallback((conditionId: string): KnownSkinCondition | null => {
-    // Guard in case the underlying detector doesn't expose this helper
-    const fn = (skinDetector as any).getConditionInfo
-    if (typeof fn === 'function') return fn.call(skinDetector, conditionId)
-    return null
-  }, []);
-
-  const getAllConditions = useCallback((): KnownSkinCondition[] => {
-    const fn = (skinDetector as any).getAllConditions
-    if (typeof fn === 'function') return fn.call(skinDetector)
-    return []
-  }, []);
+  const reset = useCallback(() => setState(createInitialState()), []);
 
   return {
     ...state,
     analyzeImage,
-  getConditionInfo,
-  getAllConditions,
-    result: state.result as AnalysisResult | null,
+    reset,
+    getConditionInfo: (id: string) => (skinDetector as any).getConditionInfo?.(id),
+    getAllConditions: () => (skinDetector as any).getAllConditions?.() || [],
   };
 }
 
 /**
- * Hook for virtual makeup try-on
+ * Hook for professional virtual makeup try-on
  */
 export function useVirtualMakeup() {
-  const [state, setState] = useState<UseAIState>({
-    loading: false,
-    error: null,
-    result: null,
-  });
+  const [state, setState] = useState<UseAIState<TryOnResult>>(createInitialState());
 
   const applyMakeup = useCallback(async (
     imageData: string | File,
     products: MakeupProduct[]
   ) => {
-    setState({ loading: true, error: null, result: null });
+    setState(prev => ({ ...prev, isProcessing: true, error: null }));
     
     try {
       const result = await makeupTryOn.applyMakeup(imageData, products);
-      setState({ loading: false, error: null, result });
+      setState({
+        isLoading: false,
+        isProcessing: false,
+        error: null,
+        result,
+        lastRunAt: Date.now(),
+      });
       return result;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Makeup application failed';
-      setState({ loading: false, error: errorMessage, result: null });
+      const errorMessage = error instanceof Error ? error.message : 'Visual simulation failed';
+      setState(prev => ({ ...prev, isProcessing: false, error: errorMessage }));
       throw error;
     }
-  }, []);
-
-  const getProduct = useCallback((productId: string) => {
-    return makeupTryOn.getProduct(productId);
-  }, []);
-
-  const getProductsByCategory = useCallback((category: any) => {
-    return makeupTryOn.getProductsByCategory(category);
-  }, []);
-
-  const getAllProducts = useCallback(() => {
-    return makeupTryOn.getAllProducts();
-  }, []);
-
-  const getLook = useCallback((lookId: string) => {
-    return makeupTryOn.getLook(lookId);
-  }, []);
-
-  const getAllLooks = useCallback(() => {
-    return makeupTryOn.getAllLooks();
   }, []);
 
   return {
     ...state,
     applyMakeup,
-    getProduct,
-    getProductsByCategory,
-    getAllProducts,
-    getLook,
-    getAllLooks,
-    result: state.result as TryOnResult | null,
+    getProduct: makeupTryOn.getProduct.bind(makeupTryOn),
+    getProductsByCategory: makeupTryOn.getProductsByCategory.bind(makeupTryOn),
+    getAllProducts: makeupTryOn.getAllProducts.bind(makeupTryOn),
+    getLook: makeupTryOn.getLook.bind(makeupTryOn),
+    getAllLooks: makeupTryOn.getAllLooks.bind(makeupTryOn),
   };
 }
 
 /**
- * Hook for skincare routine generation
+ * Hook for advanced skincare routine generation
  */
 export function useSkincareRoutine() {
-  const [state, setState] = useState<UseAIState>({
-    loading: false,
-    error: null,
-    result: null,
-  });
+  const [state, setState] = useState<UseAIState<RoutineRecommendation>>(createInitialState());
 
   const generateRoutine = useCallback((
     skinType: string,
     concerns: string[],
     budget: 'low' | 'medium' | 'high' = 'medium'
   ) => {
-    setState({ loading: true, error: null, result: null });
+    setState(prev => ({ ...prev, isProcessing: true, error: null }));
     
     try {
       const result = routineGenerator.generateRoutine(skinType, concerns, budget);
-      setState({ loading: false, error: null, result });
+      setState({
+        isLoading: false,
+        isProcessing: false,
+        error: null,
+        result,
+        lastRunAt: Date.now(),
+      });
       return result;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Routine generation failed';
-      setState({ loading: false, error: errorMessage, result: null });
+      setState(prev => ({ ...prev, isProcessing: false, error: errorMessage }));
       throw error;
     }
   }, []);
@@ -154,21 +142,27 @@ export function useSkincareRoutine() {
   return {
     ...state,
     generateRoutine,
-    result: state.result as RoutineRecommendation | null,
   };
 }
 
 /**
- * Combined hook for all AI features
+ * Orchestrator hook for unified AI capabilities
  */
 export function useAI() {
   const skinAnalysis = useSkinAnalysis();
   const virtualMakeup = useVirtualMakeup();
   const skincareRoutine = useSkincareRoutine();
 
+  const isAnyLoading = useMemo(() => 
+    skinAnalysis.isProcessing || virtualMakeup.isProcessing || skincareRoutine.isProcessing,
+    [skinAnalysis.isProcessing, virtualMakeup.isProcessing, skincareRoutine.isProcessing]
+  );
+
   return {
     skinAnalysis,
     virtualMakeup,
     skincareRoutine,
+    isAnyLoading,
   };
 }
+

@@ -22,12 +22,16 @@ import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, Wifi, WifiOff } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { useLocalizePath } from '@/lib/i18n/locale-link'
+import { useTranslations } from 'next-intl'
 
 export default function SalesPresentationWizardPage() {
+  const t = useTranslations()
   const params = useParams()
   const router = useRouter()
   const searchParams = useSearchParams()
   const customerId = params.customerId as string
+  const lp = useLocalizePath()
   const [isOnline, setIsOnline] = useState(true)
   
   // Get customer data from URL params (if provided from leads)
@@ -68,9 +72,9 @@ export default function SalesPresentationWizardPage() {
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <div>
-              <h1 className="text-lg font-bold">Sales Presentation</h1>
+              <h1 className="text-lg font-bold">{t('salesWizard.title')}</h1>
               <p className="text-xs text-muted-foreground">
-                {isNewCustomer ? 'New Customer' : `Customer ID: ${customerId.slice(0, 8)}`}
+                {isNewCustomer ? t('salesWizard.newCustomer') : `${t('salesWizard.customerId')}: ${customerId.slice(0, 8)}`}
               </p>
             </div>
           </div>
@@ -84,12 +88,12 @@ export default function SalesPresentationWizardPage() {
               {isOnline ? (
                 <>
                   <Wifi className="h-3 w-3 mr-1" />
-                  Online
+                  {t('salesWizard.online')}
                 </>
               ) : (
                 <>
                   <WifiOff className="h-3 w-3 mr-1" />
-                  Offline
+                  {t('salesWizard.offline')}
                 </>
               )}
             </Badge>
@@ -106,10 +110,10 @@ export default function SalesPresentationWizardPage() {
               <WifiOff className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
               <div className="space-y-1">
                 <p className="text-sm font-medium text-amber-900 dark:text-amber-100">
-                  Offline Mode
+                  {t('salesWizard.offlineWarning.title')}
                 </p>
                 <p className="text-xs text-amber-700 dark:text-amber-300">
-                  You're currently offline. Data will be saved locally and synced when connection is restored.
+                  {t('salesWizard.offlineWarning.description')}
                 </p>
               </div>
             </div>

@@ -18,6 +18,7 @@ import { Badge } from '@/components/ui/badge'
 import { Slider } from '@/components/ui/slider'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useTranslations } from 'next-intl'
 import { 
   Sparkles, 
   AlertCircle,
@@ -48,6 +49,7 @@ export function ARPreviewStep({
   onUpdate,
   customerName,
 }: ARPreviewStepProps) {
+  const t = useTranslations()
   const [intensity, setIntensity] = useState(70)
   const [viewMode, setViewMode] = useState<'ar' | 'comparison'>('ar')
   const [processedImage, setProcessedImage] = useState<string | null>(null)
@@ -151,7 +153,7 @@ export function ARPreviewStep({
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            No image available for AR preview. Please go back to the scan step.
+            {t('salesWizard.steps.ar.frontImageRequired')}
           </AlertDescription>
         </Alert>
       </div>
@@ -163,22 +165,21 @@ export function ARPreviewStep({
       {/* Instructions */}
       <Alert className="bg-purple-50 dark:bg-purple-950/20 border-purple-200">
         <Sparkles className="h-4 w-4 text-purple-600" />
-        <AlertDescription className="text-sm text-purple-900 dark:text-purple-100">
-          Select treatments and adjust intensity to preview results for {customerName}. 
-          Drag the slider in comparison mode to see before/after.
+        <AlertDescription className="text-sm text-purple-900 dark:text-blue-100">
+          {t('salesWizard.steps.ar.instructions', { name: customerName })}
         </AlertDescription>
       </Alert>
 
       {/* View Mode Tabs */}
-  <Tabs value={viewMode} onValueChange={handleViewModeChange}>
+      <Tabs value={viewMode} onValueChange={handleViewModeChange}>
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="ar" className="gap-2">
             <Eye className="h-4 w-4" />
-            AR Preview
+            {t('salesWizard.steps.ar.arPreviewTab')}
           </TabsTrigger>
           <TabsTrigger value="comparison" className="gap-2">
             <Sparkles className="h-4 w-4" />
-            Compare
+            {t('salesWizard.steps.ar.compareTab')}
           </TabsTrigger>
         </TabsList>
 
@@ -190,7 +191,7 @@ export function ARPreviewStep({
                 <div className="flex flex-col items-center justify-center py-12 text-center">
                   <Eye className="h-16 w-16 text-muted-foreground mb-4" />
                   <p className="text-muted-foreground">
-                    Select at least one treatment below to preview
+                    {t('salesWizard.steps.ar.selectTreatmentPrompt')}
                   </p>
                 </div>
               ) : (
@@ -215,15 +216,15 @@ export function ARPreviewStep({
                 <div className="flex flex-col items-center justify-center py-12 text-center">
                   <Sparkles className="h-16 w-16 text-muted-foreground mb-4" />
                   <p className="text-muted-foreground">
-                    Select treatments to see before/after comparison
+                    {t('salesWizard.steps.ar.comparePrompt')}
                   </p>
                 </div>
               ) : (
                 <BeforeAfterSlider
                   beforeImage={image}
                   afterImage={processedImage || image}
-                  title="Treatment Preview"
-                  description="Drag to compare before and after"
+                  title={t('salesWizard.steps.ar.sliderTitle')}
+                  description={t('salesWizard.steps.ar.sliderDesc')}
                 />
               )}
             </CardContent>
@@ -237,16 +238,16 @@ export function ARPreviewStep({
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
               <Zap className="h-5 w-5 text-yellow-600" />
-              Treatment Intensity
+              {t('salesWizard.steps.ar.intensityTitle')}
             </CardTitle>
             <CardDescription>
-              Adjust the intensity of selected treatments
+              {t('salesWizard.steps.ar.intensityDesc')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <div className="flex justify-between items-center">
-                <span className="text-sm font-medium">Intensity</span>
+                <span className="text-sm font-medium">{t('salesWizard.steps.ar.intensityLabel')}</span>
                 <Badge variant="secondary" className="text-base px-3 py-1">
                   {intensity}%
                 </Badge>
@@ -260,9 +261,9 @@ export function ARPreviewStep({
                 className="py-4"
               />
               <div className="flex justify-between text-xs text-muted-foreground">
-                <span>Subtle</span>
-                <span>Natural</span>
-                <span>Dramatic</span>
+                <span>{t('salesWizard.steps.ar.intensitySubtle')}</span>
+                <span>{t('salesWizard.steps.ar.intensityNatural')}</span>
+                <span>{t('salesWizard.steps.ar.intensityDramatic')}</span>
               </div>
             </div>
 
@@ -274,7 +275,7 @@ export function ARPreviewStep({
                 onClick={() => setIntensity(30)}
                 className="flex-1"
               >
-                Mild (30%)
+                {t('salesWizard.steps.ar.presetMild')}
               </Button>
               <Button 
                 variant="outline" 
@@ -282,7 +283,7 @@ export function ARPreviewStep({
                 onClick={() => setIntensity(60)}
                 className="flex-1"
               >
-                Moderate (60%)
+                {t('salesWizard.steps.ar.presetModerate')}
               </Button>
               <Button 
                 variant="outline" 
@@ -290,7 +291,7 @@ export function ARPreviewStep({
                 onClick={() => setIntensity(90)}
                 className="flex-1"
               >
-                Intensive (90%)
+                {t('salesWizard.steps.ar.presetIntensive')}
               </Button>
             </div>
           </CardContent>
@@ -300,9 +301,9 @@ export function ARPreviewStep({
       {/* Treatment Selection */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Select Treatments</CardTitle>
+          <CardTitle className="text-lg">{t('salesWizard.steps.ar.selectTreatmentsTitle')}</CardTitle>
           <CardDescription>
-            Choose up to 3 treatments (recommended treatments highlighted)
+            {t('salesWizard.steps.ar.selectTreatmentsDesc')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -332,7 +333,7 @@ export function ARPreviewStep({
                       className="absolute top-2 right-2 bg-green-500 text-white"
                     >
                       <Sparkles className="h-3 w-3 mr-1" />
-                      Recommended
+                      {t('salesWizard.steps.ar.recommendedBadge')}
                     </Badge>
                   )}
 
@@ -374,9 +375,9 @@ export function ARPreviewStep({
 
           {/* Selection Counter */}
           <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200">
-            <p className="text-sm text-blue-900 dark:text-blue-100 text-center">
-              <strong>{selectedTreatments.length}</strong> of 3 treatments selected
-            </p>
+            <p className="text-sm text-blue-900 dark:text-blue-100 text-center" dangerouslySetInnerHTML={{ 
+              __html: t('salesWizard.steps.ar.selectionCounter', { count: selectedTreatments.length }) 
+            }} />
           </div>
         </CardContent>
       </Card>
@@ -387,7 +388,7 @@ export function ARPreviewStep({
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
               <CheckCircle2 className="h-5 w-5 text-green-600" />
-              Selected Treatments
+              {t('salesWizard.steps.ar.selectedSummaryTitle')}
             </CardTitle>
           </CardHeader>
           <CardContent>

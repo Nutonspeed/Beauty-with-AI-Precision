@@ -18,6 +18,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { useTranslations } from 'next-intl'
 import { 
   Loader2, 
   Sparkles, 
@@ -72,13 +73,14 @@ export function AnalysisStep({
   customerName,
   isOnline,
 }: AnalysisStepProps) {
+  const t = useTranslations()
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [progress, setProgress] = useState(0)
   const [error, setError] = useState<string | null>(null)
 
   const startAnalysis = useCallback(async () => {
     if (!images.front) {
-      setError('Front image is required for analysis')
+      setError(t('salesWizard.steps.analysis.frontImageRequired'))
       return
     }
 
@@ -113,11 +115,11 @@ export function AnalysisStep({
       onAnalysisComplete(results)
     } catch (err) {
       console.error('Analysis failed:', err)
-      setError(err instanceof Error ? err.message : 'Analysis failed')
+      setError(err instanceof Error ? err.message : t('common.error'))
     } finally {
       setIsAnalyzing(false)
     }
-  }, [images.front, onAnalysisComplete])
+  }, [images.front, onAnalysisComplete, t])
 
   // Loading state
   if (isAnalyzing) {
@@ -131,15 +133,15 @@ export function AnalysisStep({
                 <Sparkles className="h-6 w-6 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-yellow-500" />
               </div>
               <div className="text-center space-y-2">
-                <h3 className="text-lg font-semibold">Analyzing {customerName}'s Skin</h3>
+                <h3 className="text-lg font-semibold">{t('salesWizard.steps.analysis.analyzingTitle', { name: customerName })}</h3>
                 <p className="text-sm text-muted-foreground">
-                  AI is processing facial features and skin conditions...
+                  {t('salesWizard.steps.analysis.analyzingDesc')}
                 </p>
               </div>
               <div className="w-full max-w-sm space-y-2">
                 <Progress value={progress} className="h-2" />
                 <p className="text-xs text-center text-muted-foreground">
-                  {progress}% complete
+                  {t('salesWizard.steps.analysis.percentComplete', { percent: progress })}
                 </p>
               </div>
             </div>
@@ -159,7 +161,7 @@ export function AnalysisStep({
         </Alert>
         <Button onClick={startAnalysis} className="w-full gap-2">
           <Sparkles className="h-4 w-4" />
-          Retry Analysis
+          {t('salesWizard.steps.analysis.retryAnalysis')}
         </Button>
       </div>
     )
@@ -172,12 +174,12 @@ export function AnalysisStep({
         <Alert className="bg-blue-50 dark:bg-blue-950/20 border-blue-200">
           <AlertCircle className="h-4 w-4 text-blue-600" />
           <AlertDescription className="text-sm text-blue-900 dark:text-blue-100">
-            Ready to analyze {customerName}'s skin. This will take 10-15 seconds.
+            {t('salesWizard.steps.analysis.readyAlert', { name: customerName })}
           </AlertDescription>
         </Alert>
         <Button onClick={startAnalysis} className="w-full gap-2" size="lg">
           <Sparkles className="h-5 w-5" />
-          Start AI Analysis
+          {t('salesWizard.steps.analysis.startAIAnalysis')}
         </Button>
       </div>
     )
@@ -207,14 +209,14 @@ export function AnalysisStep({
             {overallScore.toFixed(1)}/100
           </CardTitle>
           <CardDescription className="text-base">
-            Overall Skin Health Score
+            {t('salesWizard.steps.analysis.healthScoreTitle')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 gap-4 text-center">
             <div>
               <p className="text-2xl font-bold">{skinAge}</p>
-              <p className="text-xs text-muted-foreground">Skin Age</p>
+              <p className="text-xs text-muted-foreground">{t('salesWizard.steps.analysis.skinAgeLabel')}</p>
             </div>
             <div>
               <div className="flex items-center justify-center gap-1">
@@ -226,7 +228,7 @@ export function AnalysisStep({
                 )}
               </div>
               <p className="text-xs text-muted-foreground">
-                {ageDifference > 0 ? 'Years Older' : 'Years Younger'}
+                {ageDifference > 0 ? t('salesWizard.steps.analysis.yearsOlder') : t('salesWizard.steps.analysis.yearsYounger')}
               </p>
             </div>
           </div>
@@ -236,7 +238,7 @@ export function AnalysisStep({
       {/* Skin Condition */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Skin Condition</CardTitle>
+          <CardTitle className="text-lg">{t('salesWizard.steps.analysis.skinConditionTitle')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="flex items-center justify-between">
@@ -244,12 +246,12 @@ export function AnalysisStep({
               {skinCondition}
             </Badge>
             <Badge variant="secondary">
-              {(confidence * 100).toFixed(0)}% confidence
+              {t('salesWizard.steps.analysis.confidenceLabel', { percent: (confidence * 100).toFixed(0) })}
             </Badge>
           </div>
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
-              <span>Severity</span>
+              <span>{t('salesWizard.steps.analysis.severityLabel')}</span>
               <span className="font-medium">{severity}/10</span>
             </div>
             <Progress value={severity * 10} className="h-2" />
@@ -262,23 +264,23 @@ export function AnalysisStep({
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
             <Gauge className="h-5 w-5" />
-            VISIA Skin Metrics
+            {t('salesWizard.steps.analysis.visiaTitle')}
           </CardTitle>
           <CardDescription>
-            8-point professional skin analysis
+            {t('salesWizard.steps.analysis.visiaDesc')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-3">
             {[
-              { key: 'spots', label: 'Spots', icon: '⚫' },
-              { key: 'wrinkles', label: 'Wrinkles', icon: '📏' },
-              { key: 'texture', label: 'Texture', icon: '🔲' },
-              { key: 'pores', label: 'Pores', icon: '🔴' },
-              { key: 'uvSpots', label: 'UV Damage', icon: '☀️' },
-              { key: 'redAreas', label: 'Redness', icon: '🔴' },
-              { key: 'hydration', label: 'Hydration', icon: '💧' },
-              { key: 'evenness', label: 'Evenness', icon: '✨' },
+              { key: 'spots', label: t('analysis.modes.spots'), icon: '⚫' },
+              { key: 'wrinkles', label: t('analysis.modes.wrinkles'), icon: '📏' },
+              { key: 'texture', label: t('analysis.modes.texture'), icon: '🔲' },
+              { key: 'pores', label: t('analysis.modes.pores'), icon: '🔴' },
+              { key: 'uvSpots', label: t('analysis.modes.uv_spots'), icon: '☀️' },
+              { key: 'redAreas', label: t('analysis.modes.red_areas'), icon: '🔴' },
+              { key: 'hydration', label: t('analysis.results.hydration'), icon: '💧' },
+              { key: 'evenness', label: t('analysis.results.evenness'), icon: '✨' },
             ].map((metric) => {
               const value = visiaMetrics[metric.key as keyof typeof visiaMetrics]
               return (
@@ -311,10 +313,10 @@ export function AnalysisStep({
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
             <CheckCircle2 className="h-5 w-5 text-green-600" />
-            Treatment Recommendations
+            {t('salesWizard.steps.analysis.recommendationsTitle')}
           </CardTitle>
           <CardDescription>
-            Personalized suggestions for {customerName}
+            {t('salesWizard.steps.analysis.recommendationsDesc', { name: customerName })}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -358,7 +360,7 @@ export function AnalysisStep({
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription className="text-sm">
-            You are offline. Results are saved locally and will sync when online.
+            {t('salesWizard.steps.analysis.offlineWarning')}
           </AlertDescription>
         </Alert>
       )}
@@ -366,7 +368,7 @@ export function AnalysisStep({
       {/* Export Button */}
       <Button variant="outline" className="w-full gap-2">
         <FileText className="h-4 w-4" />
-        Export Analysis Report (PDF)
+        {t('salesWizard.steps.analysis.exportReport')}
       </Button>
     </div>
   )

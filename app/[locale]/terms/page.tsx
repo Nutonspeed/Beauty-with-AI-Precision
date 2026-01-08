@@ -15,159 +15,138 @@ export default function TermsOfServicePage() {
   const sections = [
     {
       icon: CheckCircle2,
-      title: language === "th" ? "การยอมรับข้อกำหนด" : "Acceptance of Terms",
-      titleTh: "การยอมรับข้อกำหนด",
-      content: language === "th"
-        ? "การเข้าใช้งานหรือใช้บริการของเราถือว่าคุณยอมรับและตกลงที่จะปฏิบัติตามข้อกำหนดการให้บริการนี้ทั้งหมด หากคุณไม่ยอมรับข้อกำหนดเหล่านี้ กรุณาอย่าใช้บริการของเรา"
-        : "By accessing or using our service, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our service.",
+      title: t('terms.sections.acceptance.title'),
+      content: t('terms.sections.acceptance.content'),
       items: [
         {
-          label: language === "th" ? "อายุขั้นต่ำ" : "Minimum Age",
-          desc: language === "th" ? "ผู้ใช้งานต้องมีอายุอย่างน้อย 18 ปีบริบูรณ์" : "Users must be at least 18 years old"
+          label: t('terms.sections.acceptance.items.age.label'),
+          desc: t('terms.sections.acceptance.items.age.desc')
         },
         {
-          label: language === "th" ? "ความรับผิดชอบ" : "Responsibility",
-          desc: language === "th" ? "คุณรับผิดชอบในการรักษาความลับของบัญชีของคุณ" : "You are responsible for maintaining account confidentiality"
+          label: t('terms.sections.acceptance.items.responsibility.label'),
+          desc: t('terms.sections.acceptance.items.responsibility.desc')
         },
         {
-          label: language === "th" ? "การใช้งานที่ถูกต้อง" : "Proper Use",
-          desc: language === "th" ? "ใช้บริการตามวัตถุประสงค์ที่กำหนดเท่านั้น" : "Use service only for its intended purpose"
+          label: t('terms.sections.acceptance.items.properUse.label'),
+          desc: t('terms.sections.acceptance.items.properUse.desc')
         },
       ]
     },
     {
       icon: FileText,
-      title: language === "th" ? "การให้บริการ" : "Service Description",
-      titleTh: "การให้บริการ",
-      content: language === "th"
-        ? "แพลตฟอร์มของเราให้บริการวิเคราะห์ผิวหน้าด้วย AI, การจำลอง AR สำหรับทรีตเมนต์, และการจัดการข้อมูลลูกค้าสำหรับคลินิกความงาม บริการอาจมีการเปลี่ยนแปลงหรือปรับปรุงโดยไม่ต้องแจ้งให้ทราบล่วงหน้า"
-        : "Our platform provides AI-powered facial skin analysis, AR treatment simulation, and customer management for beauty clinics. Services may be modified or updated without prior notice.",
+      title: t('terms.sections.service.title'),
+      content: t('terms.sections.service.content'),
       items: [
         {
-          label: language === "th" ? "Free Tier" : "Free Tier",
-          desc: language === "th" ? "วิเคราะห์ผิวฟรี, ข้อมูลพื้นฐาน, จำกัด 5 ครั้ง/เดือน" : "Free analysis, basic data, 5 times/month limit"
+          label: t('terms.sections.service.items.free.label'),
+          desc: t('terms.sections.service.items.free.desc')
         },
         {
-          label: language === "th" ? "Premium Tier" : "Premium Tier",
-          desc: language === "th" ? "วิเคราะห์ไม่จำกัด, AI ขั้นสูง, AR Simulator" : "Unlimited analysis, advanced AI, AR Simulator"
+          label: t('terms.sections.service.items.premium.label'),
+          desc: t('terms.sections.service.items.premium.desc')
         },
         {
-          label: language === "th" ? "Enterprise" : "Enterprise",
-          desc: language === "th" ? "Multi-clinic, API Integration, Custom Features" : "Multi-clinic, API Integration, Custom Features"
+          label: t('terms.sections.service.items.enterprise.label'),
+          desc: t('terms.sections.service.items.enterprise.desc')
         },
       ]
     },
     {
       icon: XCircle,
-      title: language === "th" ? "ข้อห้ามในการใช้งาน" : "Prohibited Uses",
-      titleTh: "ข้อห้ามในการใช้งาน",
-      content: language === "th"
-        ? "ห้ามใช้บริการเพื่อวัตถุประสงค์ที่ผิดกฎหมาย ทำลายระบบ คัดลอกเนื้อหา หรือละเมิดทรัพย์สินทางปัญญา การกระทำที่ผิดกฎอาจถูกระงับบัญชีทันทีโดยไม่ต้องแจ้งให้ทราบล่วงหน้า"
-        : "Do not use the service for illegal purposes, system disruption, content copying, or intellectual property violation. Violations may result in immediate account suspension.",
+      title: t('terms.sections.prohibited.title'),
+      content: t('terms.sections.prohibited.content'),
       items: [
         {
-          label: language === "th" ? "การใช้งานผิดวัตถุประสงค์" : "Misuse",
-          desc: language === "th" ? "ห้ามใช้เพื่อวัตถุประสงค์อื่นนอกเหนือจากการวิเคราะห์ผิว" : "Prohibited for purposes other than skin analysis"
+          label: t('terms.sections.prohibited.items.misuse.label'),
+          desc: t('terms.sections.prohibited.items.misuse.desc')
         },
         {
-          label: language === "th" ? "การคัดลอกข้อมูล" : "Data Scraping",
-          desc: language === "th" ? "ห้าม scrape, crawl หรือคัดลอกข้อมูลโดยอัตโนมัติ" : "No automated scraping, crawling, or copying"
+          label: t('terms.sections.prohibited.items.scraping.label'),
+          desc: t('terms.sections.prohibited.items.scraping.desc')
         },
         {
-          label: language === "th" ? "การแอบอ้าง" : "Impersonation",
-          desc: language === "th" ? "ห้ามแอบอ้างเป็นบุคคลหรือองค์กรอื่น" : "No impersonation of others or organizations"
+          label: t('terms.sections.prohibited.items.impersonation.label'),
+          desc: t('terms.sections.prohibited.items.impersonation.desc')
         },
         {
-          label: language === "th" ? "Reverse Engineering" : "Reverse Engineering",
-          desc: language === "th" ? "ห้ามถอดรหัสหรือวิศวกรรมย้อนกลับระบบ" : "No reverse engineering of the system"
+          label: t('terms.sections.prohibited.items.reverse.label'),
+          desc: t('terms.sections.prohibited.items.reverse.desc')
         },
       ]
     },
     {
       icon: Scale,
-      title: language === "th" ? "ทรัพย์สินทางปัญญา" : "Intellectual Property",
-      titleTh: "ทรัพย์สินทางปัญญา",
-      content: language === "th"
-        ? "เนื้อหา AI Models, ซอฟต์แวร์ โลโก้ และทรัพย์สินทางปัญญาอื่นๆ ทั้งหมดเป็นของบริษัทเรา ห้ามคัดลอก ดัดแปลง หรือใช้งานโดยไม่ได้รับอนุญาต คุณมีสิทธิ์ในข้อมูลที่คุณอัปโหลดเท่านั้น"
-        : "All content, AI models, software, logos, and intellectual property belong to our company. Copying, modification, or use without permission is prohibited. You retain rights to your uploaded data.",
+      title: t('terms.sections.ip.title'),
+      content: t('terms.sections.ip.content'),
       items: [
         {
-          label: language === "th" ? "เนื้อหาของเรา" : "Our Content",
-          desc: language === "th" ? "AI Models, ซอฟต์แวร์, UI/UX Design เป็นของบริษัท" : "AI models, software, UI/UX design are company property"
+          label: t('terms.sections.ip.items.ourContent.label'),
+          desc: t('terms.sections.ip.items.ourContent.desc')
         },
         {
-          label: language === "th" ? "เนื้อหาของคุณ" : "Your Content",
-          desc: language === "th" ? "คุณเป็นเจ้าของภาพและข้อมูลที่อัปโหลด" : "You own photos and data you upload"
+          label: t('terms.sections.ip.items.yourContent.label'),
+          desc: t('terms.sections.ip.items.yourContent.desc')
         },
         {
-          label: language === "th" ? "สิทธิ์การใช้งาน" : "License Grant",
-          desc: language === "th" ? "คุณให้สิทธิ์เราใช้ข้อมูลเพื่อให้บริการ" : "You grant us license to use data for service delivery"
+          label: t('terms.sections.ip.items.license.label'),
+          desc: t('terms.sections.ip.items.license.desc')
         },
       ]
     },
     {
       icon: AlertTriangle,
-      title: language === "th" ? "ข้อจำกัดความรับผิด" : "Limitation of Liability",
-      titleTh: "ข้อจำกัดความรับผิด",
-      content: language === "th"
-        ? "บริการของเราให้ผลการวิเคราะห์เพื่อการอ้างอิงเท่านั้น ไม่ใช่คำวินิจฉัยทางการแพทย์ เราไม่รับผิดชอบต่อความเสียหายใดๆ ที่เกิดจากการใช้บริการ รวมถึงความเสียหายทางอ้อม โดยบังเอิญ หรือพิเศษ"
-        : "Our service provides analysis for reference only, not medical diagnosis. We are not liable for any damages from service use, including indirect, incidental, or special damages.",
+      title: t('terms.sections.liability.title'),
+      content: t('terms.sections.liability.content'),
       items: [
         {
-          label: language === "th" ? "ไม่ใช่คำแนะนำทางการแพทย์" : "Not Medical Advice",
-          desc: language === "th" ? "ผลวิเคราะห์เพื่อการอ้างอิงเท่านั้น" : "Analysis results are for reference only"
+          label: t('terms.sections.liability.items.notMedical.label'),
+          desc: t('terms.sections.liability.items.notMedical.desc')
         },
         {
-          label: language === "th" ? "ความถูกต้อง" : "Accuracy",
-          desc: language === "th" ? "เราพยายามให้ความแม่นยำสูงสุด แต่ไม่รับประกัน 100%" : "We strive for accuracy but cannot guarantee 100%"
+          label: t('terms.sections.liability.items.accuracy.label'),
+          desc: t('terms.sections.liability.items.accuracy.desc')
         },
         {
-          label: language === "th" ? "ปรึกษาผู้เชี่ยวชาญ" : "Consult Experts",
-          desc: language === "th" ? "ควรปรึกษาแพทย์หรือผู้เชี่ยวชาญก่อนตัดสินใจทรีตเมนต์" : "Consult medical professionals before treatment decisions"
+          label: t('terms.sections.liability.items.consult.label'),
+          desc: t('terms.sections.liability.items.consult.desc')
         },
       ]
     },
     {
       icon: UserX,
-      title: language === "th" ? "การยกเลิกบัญชี" : "Account Termination",
-      titleTh: "การยกเลิกบัญชี",
-      content: language === "th"
-        ? "คุณสามารถยกเลิกบัญชีได้ทุกเมื่อผ่านการตั้งค่า เราขอสงวนสิทธิ์ในการระงับหรือยกเลิกบัญชีที่ละเมิดข้อกำหนดโดยไม่ต้องแจ้งให้ทราบล่วงหน้า ข้อมูลจะถูกลบตามนโยบายความเป็นส่วนตัว"
-        : "You can cancel your account anytime through settings. We reserve the right to suspend or terminate accounts that violate terms without notice. Data will be deleted per privacy policy.",
+      title: t('terms.sections.termination.title'),
+      content: t('terms.sections.termination.content'),
       items: [
         {
-          label: language === "th" ? "การยกเลิกโดยผู้ใช้" : "User Cancellation",
-          desc: language === "th" ? "ยกเลิกได้ทุกเมื่อผ่านหน้าตั้งค่าบัญชี" : "Cancel anytime through account settings"
+          label: t('terms.sections.termination.items.userCancel.label'),
+          desc: t('terms.sections.termination.items.userCancel.desc')
         },
         {
-          label: language === "th" ? "การระงับโดยระบบ" : "System Suspension",
-          desc: language === "th" ? "หากตรวจพบการใช้งานผิดกฎ" : "For violations of terms"
+          label: t('terms.sections.termination.items.systemSuspend.label'),
+          desc: t('terms.sections.termination.items.systemSuspend.desc')
         },
         {
-          label: language === "th" ? "การลบข้อมูล" : "Data Deletion",
-          desc: language === "th" ? "ข้อมูลจะถูกลบภายใน 30 วันหลังยกเลิก" : "Data deleted within 30 days after cancellation"
+          label: t('terms.sections.termination.items.deletion.label'),
+          desc: t('terms.sections.termination.items.deletion.desc')
         },
       ]
     },
     {
       icon: Shield,
-      title: language === "th" ? "การเปลี่ยนแปลงข้อกำหนด" : "Changes to Terms",
-      titleTh: "การเปลี่ยนแปลงข้อกำหนด",
-      content: language === "th"
-        ? "เราขอสงวนสิทธิ์ในการแก้ไขข้อกำหนดการให้บริการนี้ได้ทุกเมื่อ การเปลี่ยนแปลงที่สำคัญจะแจ้งให้ทราบผ่านอีเมลหรือการแจ้งเตือนในระบบ การใช้บริการต่อไปถือว่ายอมรับข้อกำหนดที่แก้ไขแล้ว"
-        : "We reserve the right to modify these terms at any time. Significant changes will be notified via email or system notification. Continued use constitutes acceptance of revised terms.",
+      title: t('terms.sections.changes.title'),
+      content: t('terms.sections.changes.content'),
       items: [
         {
-          label: language === "th" ? "การแจ้งเตือน" : "Notification",
-          desc: language === "th" ? "แจ้งผ่านอีเมลและระบบอย่างน้อย 7 วันล่วงหน้า" : "Notify via email and system at least 7 days in advance"
+          label: t('terms.sections.changes.items.notification.label'),
+          desc: t('terms.sections.changes.items.notification.desc')
         },
         {
-          label: language === "th" ? "การทบทวน" : "Review",
-          desc: language === "th" ? "ทบทวนข้อกำหนดเป็นประจำทุก 6 เดือน" : "Review terms every 6 months"
+          label: t('terms.sections.changes.items.review.label'),
+          desc: t('terms.sections.changes.items.review.desc')
         },
         {
-          label: language === "th" ? "เวอร์ชัน" : "Versioning",
-          desc: language === "th" ? "เก็บประวัติการเปลี่ยนแปลงทุกครั้ง" : "Archive all version changes"
+          label: t('terms.sections.changes.items.versioning.label'),
+          desc: t('terms.sections.changes.items.versioning.desc')
         },
       ]
     },
@@ -184,16 +163,13 @@ export default function TermsOfServicePage() {
             <div className="mx-auto max-w-3xl text-center">
               <Badge className="mb-4 bg-accent/10 text-accent" variant="secondary">
                 <FileText className="mr-1 h-3 w-3" />
-                {language === "th" ? "มีผลบังคับใช้: 31 ตุลาคม 2025" : "Effective Date: October 31, 2025"}
+                {t('terms.effectiveDate')}
               </Badge>
               <h1 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
-                {language === "th" ? "เงื่อนไขการให้บริการ" : "Terms of Service"}
+                {t('terms.title')}
               </h1>
               <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-                {language === "th"
-                  ? "กรุณาอ่านข้อกำหนดการให้บริการเหล่านี้อย่างละเอียดก่อนใช้งานแพลตฟอร์มของเรา การใช้งานถือว่าคุณยอมรับและตกลงตามข้อกำหนดทั้งหมด"
-                  : "Please read these Terms of Service carefully before using our platform. By using our service, you agree to be bound by these terms."
-                }
+                {t('terms.description')}
               </p>
             </div>
           </div>
@@ -209,7 +185,7 @@ export default function TermsOfServicePage() {
                   href={`#section-${index}`}
                   className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors px-3 py-1.5 rounded-md hover:bg-muted"
                 >
-                  {section.titleTh}
+                  {section.title}
                 </a>
               ))}
             </div>
@@ -266,26 +242,23 @@ export default function TermsOfServicePage() {
                     </div>
                     <div className="flex-1">
                       <h2 className="mb-2 text-lg sm:text-xl font-bold">
-                        {language === "th" ? "กฎหมายที่ใช้บังคับ" : "Governing Law"}
+                        {t('terms.governingLaw.title')}
                       </h2>
                       <p className="text-sm sm:text-base text-muted-foreground leading-relaxed mb-4">
-                        {language === "th"
-                          ? "ข้อกำหนดการให้บริการนี้อยู่ภายใต้และตีความตามกฎหมายของประเทศไทย ข้อพิพาทใดๆ จะอยู่ในเขตอำนาจศาลไทย"
-                          : "These Terms of Service are governed by and construed in accordance with the laws of Thailand. Any disputes shall be under the jurisdiction of Thai courts."
-                        }
+                        {t('terms.governingLaw.description')}
                       </p>
                       <div className="flex flex-col sm:flex-row gap-3 text-sm">
                         <a
                           href="/contact"
                           className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90 transition-colors"
                         >
-                          {language === "th" ? "ติดต่อเรา" : "Contact Us"}
+                          {t('nav.contact')}
                         </a>
                         <a
                           href="/privacy"
                           className="inline-flex items-center justify-center rounded-md border border-primary px-4 py-2 text-primary hover:bg-primary/10 transition-colors"
                         >
-                          {language === "th" ? "นโยบายความเป็นส่วนตัว" : "Privacy Policy"}
+                          {t('footer.privacy')}
                         </a>
                       </div>
                     </div>

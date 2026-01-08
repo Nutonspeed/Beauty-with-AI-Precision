@@ -9,6 +9,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Card } from '@/components/ui/card'
+import { useTranslations } from 'next-intl'
 import { WizardProgress } from './wizard-progress'
 import { WizardNavigation } from './wizard-navigation'
 import { CustomerInfoStep } from './steps/customer-info-step'
@@ -36,16 +37,6 @@ interface PresentationWizardProps {
     email?: string
   }
 }
-
-const STEPS = [
-  { id: 1, name: 'Customer Info', key: 'customer' },
-  { id: 2, name: 'Scan', key: 'scan' },
-  { id: 3, name: 'Analysis', key: 'analysis' },
-  { id: 4, name: 'AR Preview', key: 'ar' },
-  { id: 5, name: 'Products', key: 'products' },
-  { id: 6, name: 'Proposal', key: 'proposal' },
-  { id: 7, name: 'Summary', key: 'summary' },
-] as const
 
 const STORAGE_DEBOUNCE_MS = 500
 
@@ -108,6 +99,18 @@ export function PresentationWizard({
   isOnline,
   initialCustomerData,
 }: Readonly<PresentationWizardProps>) {
+  const t = useTranslations()
+  
+  const STEPS = useMemo(() => [
+    { id: 1, name: t('salesPresentations.steps.customerInfo'), key: 'customer' },
+    { id: 2, name: t('salesPresentations.steps.scan'), key: 'scan' },
+    { id: 3, name: t('salesPresentations.steps.analysis'), key: 'analysis' },
+    { id: 4, name: t('salesPresentations.steps.arPreview'), key: 'ar' },
+    { id: 5, name: t('salesPresentations.steps.products'), key: 'products' },
+    { id: 6, name: t('salesPresentations.steps.proposal'), key: 'proposal' },
+    { id: 7, name: t('salesPresentations.steps.signature'), key: 'summary' },
+  ], [t]) as any
+
   const [currentStep, setCurrentStep] = useState(() => (isNewCustomer ? 1 : 2))
   const [data, setData] = useState<PresentationData>(() =>
     createInitialPresentationData({ customerId, initialCustomerData })
@@ -267,10 +270,10 @@ export function PresentationWizard({
 
   const completedSteps = useMemo(
     () =>
-      STEPS.filter((step) => step.id !== currentStep && isStepComplete(step.id as number)).map(
-        (step) => step.id
+      STEPS.filter((step: { id: number }) => step.id !== currentStep && isStepComplete(step.id)).map(
+        (step: { id: number }) => step.id
       ),
-    [currentStep, isStepComplete]
+    [currentStep, isStepComplete, STEPS]
   )
 
   const renderStepContent = () => {
@@ -358,7 +361,7 @@ export function PresentationWizard({
         <div className="mb-6">
           <h2 className="text-2xl font-bold mb-2">{STEPS[currentStep - 1].name}</h2>
           <p className="text-sm text-muted-foreground">
-            Step {currentStep} of {STEPS.length}
+            {t('salesWizard.stepCounter', { current: currentStep, total: STEPS.length })}
           </p>
         </div>
 

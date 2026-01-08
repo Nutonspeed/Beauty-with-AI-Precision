@@ -31,7 +31,10 @@ interface PerformanceData {
   }
 }
 
+import { useTranslations } from "next-intl"
+
 export function PerformanceCards() {
+  const t = useTranslations()
   const [data, setData] = useState<PerformanceData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -86,7 +89,7 @@ export function PerformanceCards() {
   if (error || !data) {
     return (
       <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-center">
-        <p className="text-sm text-destructive">Failed to load performance metrics. Please try again.</p>
+        <p className="text-sm text-destructive">{t('dashboard.performanceCards.error')}</p>
       </div>
     )
   }
@@ -95,12 +98,12 @@ export function PerformanceCards() {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {/* Revenue Card */}
       <StatCard
-        title="Today's Revenue"
+        title={t('dashboard.performanceCards.revenue')}
         value={formatCurrency(data.revenue.today)}
         icon={DollarSign}
         trend={{
           value: data.revenue.change,
-          label: "vs yesterday"
+          label: t('dashboard.performanceCards.vsYesterday')
         }}
         iconColor="text-green-600"
         iconBackground="bg-green-50"
@@ -108,12 +111,12 @@ export function PerformanceCards() {
 
       {/* Customers Card */}
       <StatCard
-        title="New Customers"
+        title={t('dashboard.performanceCards.customers')}
         value={data.customers.today}
         icon={Users}
         trend={{
           value: data.customers.change,
-          label: "vs yesterday"
+          label: t('dashboard.performanceCards.vsYesterday')
         }}
         iconColor="text-blue-600"
         iconBackground="bg-blue-50"
@@ -121,12 +124,12 @@ export function PerformanceCards() {
 
       {/* Bookings Card */}
       <StatCard
-        title="Bookings Today"
+        title={t('dashboard.performanceCards.bookings')}
         value={data.bookings.today}
         icon={Calendar}
         trend={{
           value: data.bookings.change,
-          label: "vs yesterday"
+          label: t('dashboard.performanceCards.vsYesterday')
         }}
         iconColor="text-purple-600"
         iconBackground="bg-purple-50"
@@ -134,12 +137,12 @@ export function PerformanceCards() {
 
       {/* Conversion Rate Card */}
       <StatCard
-        title="Conversion Rate"
+        title={t('dashboard.performanceCards.conversion')}
         value={`${data.conversion.today}%`}
         icon={Target}
         trend={{
           value: data.conversion.change,
-          label: "vs yesterday"
+          label: t('dashboard.performanceCards.vsYesterday')
         }}
         iconColor="text-orange-600"
         iconBackground="bg-orange-50"

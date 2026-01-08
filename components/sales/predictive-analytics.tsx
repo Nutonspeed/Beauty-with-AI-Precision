@@ -23,6 +23,7 @@ import {
   Activity
 } from 'lucide-react';
 import { AILeadScorer, LeadData } from '@/lib/ai/lead-scorer';
+import { useTranslations } from 'next-intl';
 
 interface PredictionResult {
   leadId: string;
@@ -57,6 +58,7 @@ interface AnalyticsSummary {
 }
 
 export function PredictiveAnalytics() {
+  const t = useTranslations();
   const [leads, setLeads] = useState<LeadData[]>([]);
   const [predictions, setPredictions] = useState<PredictionResult[]>([]);
   const [analytics, setAnalytics] = useState<AnalyticsSummary | null>(null);
@@ -139,29 +141,29 @@ export function PredictiveAnalytics() {
               longTermConversion: Math.random() * 100,
               churnRisk: Math.random() * 100,
               engagementTrend: ['increasing', 'stable', 'decreasing'][Math.floor(Math.random() * 3)] as any,
-              bestContactTime: ['เช้า 9:00-11:00', 'บ่าย 13:00-15:00', 'เย็น 18:00-20:00'][Math.floor(Math.random() * 3)],
+              bestContactTime: [t('dashboard.predictiveAnalytics.metrics.trends.up'), t('dashboard.predictiveAnalytics.metrics.trends.stable'), t('dashboard.predictiveAnalytics.metrics.trends.down')][Math.floor(Math.random() * 3)],
               preferredChannel: ['email', 'phone', 'chat', 'social'][Math.floor(Math.random() * 4)] as any,
               priceSensitivity: ['low', 'medium', 'high'][Math.floor(Math.random() * 3)] as any,
               brandLoyalty: Math.random() * 100,
               recommendationLikelihood: Math.random() * 100,
             },
             insights: [
-              'ลูกค้ามีแนวโน้มการซื้อสูงในระยะสั้น',
-              'การตอบสนองต่อแคมเปญอีเมลดีเยี่ยม',
-              'ความเสี่ยงการหลุดออกต่ำ'
+              t('dashboard.predictiveAnalytics.insights.title'),
+              t('dashboard.predictiveAnalytics.insights.recommendations'),
+              t('dashboard.predictiveAnalytics.card.opportunities')
             ],
             recommendations: [
-              'ติดต่อภายใน 24 ชั่วโมง',
-              'เสนอแพ็คเกจพิเศษ',
-              'นัดหมายปรึกษาฟรี'
+              t('dashboard.predictiveAnalytics.insights.recommendations'),
+              t('dashboard.predictiveAnalytics.card.opportunities'),
+              t('dashboard.predictiveAnalytics.empty.title')
             ],
             riskFactors: [
-              'ยังไม่ได้นัดหมายปรึกษา',
-              'การแข่งขันจากคลินิกอื่น'
+              t('dashboard.predictiveAnalytics.card.risks'),
+              t('dashboard.predictiveAnalytics.card.churnRisk')
             ],
             opportunities: [
-              'มีโอกาสซื้อแพ็คเกจพรีเมียม',
-              'น่าจะแนะนำบริการให้เพื่อน'
+              t('dashboard.predictiveAnalytics.card.opportunities'),
+              t('dashboard.predictiveAnalytics.card.referralChance')
             ],
           };
 
@@ -235,8 +237,8 @@ export function PredictiveAnalytics() {
                 <BarChart3 className="w-5 h-5 text-white" />
               </div>
               <div>
-                <CardTitle>AI Predictive Analytics</CardTitle>
-                <p className="text-sm text-gray-600">คาดการณ์พฤติกรรมลูกค้าและโอกาสการขาย</p>
+                <CardTitle>{t('dashboard.predictiveAnalytics.title')}</CardTitle>
+                <p className="text-sm text-gray-600">{t('dashboard.predictiveAnalytics.subtitle')}</p>
               </div>
             </div>
             <Button
@@ -247,12 +249,12 @@ export function PredictiveAnalytics() {
               {isAnalyzing ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  กำลังวิเคราะห์...
+                  {t('dashboard.predictiveAnalytics.analyzing')}
                 </>
               ) : (
                 <>
                   <Zap className="w-4 h-4 mr-2" />
-                  วิเคราะห์พฤติกรรม
+                  {t('dashboard.predictiveAnalytics.analyzeButton')}
                 </>
               )}
             </Button>
@@ -268,7 +270,7 @@ export function PredictiveAnalytics() {
               <div className="flex items-center">
                 <TrendingUp className="h-4 w-4 text-muted-foreground" />
                 <div className="ml-2">
-                  <p className="text-sm font-medium leading-none">แนวโน้ม Conversion</p>
+                  <p className="text-sm font-medium leading-none">{t('dashboard.predictiveAnalytics.metrics.conversionTrend')}</p>
                   <div className="flex items-center gap-2 mt-1">
                     {analytics.overallConversionTrend === 'up' ? (
                       <TrendingUp className="h-4 w-4 text-green-500" />
@@ -278,8 +280,8 @@ export function PredictiveAnalytics() {
                       <Activity className="h-4 w-4 text-gray-500" />
                     )}
                     <p className="text-lg font-bold capitalize">
-                      {analytics.overallConversionTrend === 'up' ? 'เพิ่มขึ้น' :
-                       analytics.overallConversionTrend === 'down' ? 'ลดลง' : 'คงที่'}
+                      {analytics.overallConversionTrend === 'up' ? t('dashboard.predictiveAnalytics.metrics.trends.up') :
+                       analytics.overallConversionTrend === 'down' ? t('dashboard.predictiveAnalytics.metrics.trends.down') : t('dashboard.predictiveAnalytics.metrics.trends.stable')}
                     </p>
                   </div>
                 </div>
@@ -292,8 +294,8 @@ export function PredictiveAnalytics() {
               <div className="flex items-center">
                 <Clock className="h-4 w-4 text-muted-foreground" />
                 <div className="ml-2">
-                  <p className="text-sm font-medium leading-none">เวลาการแปลงเฉลี่ย</p>
-                  <p className="text-2xl font-bold">{analytics.averageConversionTime} วัน</p>
+                  <p className="text-sm font-medium leading-none">{t('dashboard.predictiveAnalytics.metrics.avgConversionTime')}</p>
+                  <p className="text-2xl font-bold">{t('dashboard.predictiveAnalytics.metrics.days', { count: analytics.averageConversionTime })}</p>
                 </div>
               </div>
             </CardContent>
@@ -304,9 +306,9 @@ export function PredictiveAnalytics() {
               <div className="flex items-center">
                 <Target className="h-4 w-4 text-muted-foreground" />
                 <div className="ml-2">
-                  <p className="text-sm font-medium leading-none">รายได้คาดการณ์ (เดือนหน้า)</p>
-                  <p className="text-2xl font-bold">฿{analytics.revenueForecast.nextMonth.toLocaleString()}</p>
-                  <p className="text-xs text-gray-500">ความมั่นใจ {analytics.revenueForecast.confidence}%</p>
+                  <p className="text-sm font-medium leading-none">{t('dashboard.predictiveAnalytics.metrics.revenueForecastMonth')}</p>
+                  <p className="text-2xl font-bold">{t('format.currency', { amount: analytics.revenueForecast.nextMonth.toLocaleString() })}</p>
+                  <p className="text-xs text-gray-500">{t('dashboard.predictiveAnalytics.metrics.confidence', { percent: analytics.revenueForecast.confidence })}</p>
                 </div>
               </div>
             </CardContent>
@@ -317,9 +319,9 @@ export function PredictiveAnalytics() {
               <div className="flex items-center">
                 <Calendar className="h-4 w-4 text-muted-foreground" />
                 <div className="ml-2">
-                  <p className="text-sm font-medium leading-none">รายได้คาดการณ์ (ไตรมาสหน้า)</p>
-                  <p className="text-2xl font-bold">฿{analytics.revenueForecast.nextQuarter.toLocaleString()}</p>
-                  <p className="text-xs text-gray-500">ความมั่นใจ {analytics.revenueForecast.confidence}%</p>
+                  <p className="text-sm font-medium leading-none">{t('dashboard.predictiveAnalytics.metrics.revenueForecastQuarter')}</p>
+                  <p className="text-2xl font-bold">{t('format.currency', { amount: analytics.revenueForecast.nextQuarter.toLocaleString() })}</p>
+                  <p className="text-xs text-gray-500">{t('dashboard.predictiveAnalytics.metrics.confidence', { percent: analytics.revenueForecast.confidence })}</p>
                 </div>
               </div>
             </CardContent>
@@ -331,9 +333,9 @@ export function PredictiveAnalytics() {
       {predictions.length > 0 && (
         <Tabs defaultValue="predictions" className="space-y-4">
           <TabsList>
-            <TabsTrigger value="predictions">คาดการณ์ลูกค้า</TabsTrigger>
-            <TabsTrigger value="insights">ข้อมูลเชิงลึก</TabsTrigger>
-            <TabsTrigger value="opportunities">โอกาสและความเสี่ยง</TabsTrigger>
+            <TabsTrigger value="predictions">{t('dashboard.predictiveAnalytics.tabs.predictions')}</TabsTrigger>
+            <TabsTrigger value="insights">{t('dashboard.predictiveAnalytics.tabs.insights')}</TabsTrigger>
+            <TabsTrigger value="opportunities">{t('dashboard.predictiveAnalytics.tabs.opportunities')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="predictions" className="space-y-4">
@@ -354,19 +356,19 @@ export function PredictiveAnalytics() {
                                      lead.status === 'warm' ? 'bg-orange-100 text-orange-800' :
                                      'bg-gray-100 text-gray-800'}
                           >
-                            {lead.status === 'hot' ? 'Hot' : lead.status === 'warm' ? 'Warm' : 'Cold'}
+                            {lead.status === 'hot' ? t('salesLeads.status.hot') : lead.status === 'warm' ? t('salesLeads.status.warm') : t('salesLeads.status.cold')}
                           </Badge>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                           {/* Conversion Predictions */}
                           <div className="space-y-4">
-                            <h4 className="font-medium text-gray-900">โอกาสการแปลงเป็นลูกค้า</h4>
+                            <h4 className="font-medium text-gray-900">{t('dashboard.predictiveAnalytics.card.conversionChance')}</h4>
 
                             <div className="space-y-3">
                               <div>
                                 <div className="flex justify-between text-sm mb-1">
-                                  <span>ระยะสั้น (7 วัน)</span>
+                                  <span>{t('dashboard.predictiveAnalytics.card.shortTerm')}</span>
                                   <span className="font-medium">{prediction.predictions.shortTermConversion.toFixed(0)}%</span>
                                 </div>
                                 <Progress value={prediction.predictions.shortTermConversion} className="h-2" />
@@ -374,7 +376,7 @@ export function PredictiveAnalytics() {
 
                               <div>
                                 <div className="flex justify-between text-sm mb-1">
-                                  <span>ระยะกลาง (30 วัน)</span>
+                                  <span>{t('dashboard.predictiveAnalytics.card.mediumTerm')}</span>
                                   <span className="font-medium">{prediction.predictions.mediumTermConversion.toFixed(0)}%</span>
                                 </div>
                                 <Progress value={prediction.predictions.mediumTermConversion} className="h-2" />
@@ -382,7 +384,7 @@ export function PredictiveAnalytics() {
 
                               <div>
                                 <div className="flex justify-between text-sm mb-1">
-                                  <span>ระยะยาว (90 วัน)</span>
+                                  <span>{t('dashboard.predictiveAnalytics.card.longTerm')}</span>
                                   <span className="font-medium">{prediction.predictions.longTermConversion.toFixed(0)}%</span>
                                 </div>
                                 <Progress value={prediction.predictions.longTermConversion} className="h-2" />
@@ -392,38 +394,38 @@ export function PredictiveAnalytics() {
 
                           {/* Behavior Insights */}
                           <div className="space-y-4">
-                            <h4 className="font-medium text-gray-900">พฤติกรรมและความชอบ</h4>
+                            <h4 className="font-medium text-gray-900">{t('dashboard.predictiveAnalytics.card.behavior')}</h4>
 
                             <div className="space-y-3">
                               <div className="flex items-center justify-between">
-                                <span className="text-sm">แนวโน้มการมีส่วนร่วม</span>
+                                <span className="text-sm">{t('dashboard.predictiveAnalytics.card.engagementTrend')}</span>
                                 <div className="flex items-center gap-1">
                                   {getTrendIcon(prediction.predictions.engagementTrend)}
                                   <span className={`text-sm font-medium ${getTrendColor(prediction.predictions.engagementTrend)}`}>
-                                    {prediction.predictions.engagementTrend === 'increasing' ? 'เพิ่มขึ้น' :
-                                     prediction.predictions.engagementTrend === 'decreasing' ? 'ลดลง' : 'คงที่'}
+                                    {prediction.predictions.engagementTrend === 'increasing' ? t('dashboard.predictiveAnalytics.metrics.trends.up') :
+                                     prediction.predictions.engagementTrend === 'decreasing' ? t('dashboard.predictiveAnalytics.metrics.trends.down') : t('dashboard.predictiveAnalytics.metrics.trends.stable')}
                                   </span>
                                 </div>
                               </div>
 
                               <div className="flex items-center justify-between">
-                                <span className="text-sm">ช่องทางติดต่อที่ดีที่สุด</span>
+                                <span className="text-sm">{t('dashboard.predictiveAnalytics.card.bestChannel')}</span>
                                 <Badge variant="outline" className="text-xs">
-                                  {prediction.predictions.preferredChannel === 'email' ? 'อีเมล' :
-                                   prediction.predictions.preferredChannel === 'phone' ? 'โทรศัพท์' :
-                                   prediction.predictions.preferredChannel === 'chat' ? 'แชท' : 'โซเชียล'}
+                                  {prediction.predictions.preferredChannel === 'email' ? t('dashboard.predictiveAnalytics.card.channels.email') :
+                                   prediction.predictions.preferredChannel === 'phone' ? t('dashboard.predictiveAnalytics.card.channels.phone') :
+                                   prediction.predictions.preferredChannel === 'chat' ? t('dashboard.predictiveAnalytics.card.channels.chat') : t('dashboard.predictiveAnalytics.card.channels.social')}
                                 </Badge>
                               </div>
 
                               <div className="flex items-center justify-between">
-                                <span className="text-sm">เวลาติดต่อที่ดีที่สุด</span>
+                                <span className="text-sm">{t('dashboard.predictiveAnalytics.card.bestTime')}</span>
                                 <span className="text-sm font-medium text-blue-600">
                                   {prediction.predictions.bestContactTime}
                                 </span>
                               </div>
 
                               <div className="flex items-center justify-between">
-                                <span className="text-sm">ความไวต่อราคา</span>
+                                <span className="text-sm">{t('dashboard.predictiveAnalytics.card.priceSensitivity')}</span>
                                 <Badge
                                   className={`text-xs ${
                                     prediction.predictions.priceSensitivity === 'low' ? 'bg-green-100 text-green-800' :
@@ -431,8 +433,8 @@ export function PredictiveAnalytics() {
                                     'bg-red-100 text-red-800'
                                   }`}
                                 >
-                                  {prediction.predictions.priceSensitivity === 'low' ? 'ต่ำ' :
-                                   prediction.predictions.priceSensitivity === 'medium' ? 'ปานกลาง' : 'สูง'}
+                                  {prediction.predictions.priceSensitivity === 'low' ? t('dashboard.predictiveAnalytics.card.sensitivity.low') :
+                                   prediction.predictions.priceSensitivity === 'medium' ? t('dashboard.predictiveAnalytics.card.sensitivity.medium') : t('dashboard.predictiveAnalytics.card.sensitivity.high')}
                                 </Badge>
                               </div>
                             </div>
@@ -440,12 +442,12 @@ export function PredictiveAnalytics() {
 
                           {/* Loyalty & Risk */}
                           <div className="space-y-4">
-                            <h4 className="font-medium text-gray-900">ความภักดีและความเสี่ยง</h4>
+                            <h4 className="font-medium text-gray-900">{t('dashboard.predictiveAnalytics.card.loyalty')}</h4>
 
                             <div className="space-y-3">
                               <div>
                                 <div className="flex justify-between text-sm mb-1">
-                                  <span>ความภักดีต่อแบรนด์</span>
+                                  <span>{t('dashboard.predictiveAnalytics.card.brandLoyalty')}</span>
                                   <span className="font-medium">{prediction.predictions.brandLoyalty.toFixed(0)}%</span>
                                 </div>
                                 <Progress value={prediction.predictions.brandLoyalty} className="h-2" />
@@ -453,7 +455,7 @@ export function PredictiveAnalytics() {
 
                               <div>
                                 <div className="flex justify-between text-sm mb-1">
-                                  <span>โอกาสแนะนำบริการ</span>
+                                  <span>{t('dashboard.predictiveAnalytics.card.referralChance')}</span>
                                   <span className="font-medium">{prediction.predictions.recommendationLikelihood.toFixed(0)}%</span>
                                 </div>
                                 <Progress value={prediction.predictions.recommendationLikelihood} className="h-2" />
@@ -461,7 +463,7 @@ export function PredictiveAnalytics() {
 
                               <div>
                                 <div className="flex justify-between text-sm mb-1">
-                                  <span>ความเสี่ยงการหลุดออก</span>
+                                  <span>{t('dashboard.predictiveAnalytics.card.churnRisk')}</span>
                                   <span className="font-medium text-red-600">{prediction.predictions.churnRisk.toFixed(0)}%</span>
                                 </div>
                                 <Progress value={prediction.predictions.churnRisk} className="h-2" />
@@ -477,13 +479,13 @@ export function PredictiveAnalytics() {
                             size="sm"
                             onClick={() => setSelectedLead(selectedLead === lead.id ? null : lead.id)}
                           >
-                            {selectedLead === lead.id ? 'ซ่อนรายละเอียด' : 'แสดงรายละเอียดเพิ่มเติม'}
+                            {selectedLead === lead.id ? t('dashboard.predictiveAnalytics.card.showLess') : t('dashboard.predictiveAnalytics.card.showMore')}
                           </Button>
 
                           {selectedLead === lead.id && (
                             <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                               <div className="space-y-2">
-                                <h5 className="font-medium text-green-900">โอกาส</h5>
+                                <h5 className="font-medium text-green-900">{t('dashboard.predictiveAnalytics.card.opportunities')}</h5>
                                 {prediction.opportunities.map((opp, idx) => (
                                   <div key={idx} className="flex items-start gap-2 text-sm">
                                     <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
@@ -493,7 +495,7 @@ export function PredictiveAnalytics() {
                               </div>
 
                               <div className="space-y-2">
-                                <h5 className="font-medium text-red-900">ความเสี่ยง</h5>
+                                <h5 className="font-medium text-red-900">{t('dashboard.predictiveAnalytics.card.risks')}</h5>
                                 {prediction.riskFactors.map((risk, idx) => (
                                   <div key={idx} className="flex items-start gap-2 text-sm">
                                     <AlertTriangle className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" />
@@ -525,7 +527,7 @@ export function PredictiveAnalytics() {
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div>
-                        <h4 className="font-medium text-gray-900 mb-2">ข้อมูลเชิงลึก</h4>
+                        <h4 className="font-medium text-gray-900 mb-2">{t('dashboard.predictiveAnalytics.insights.title')}</h4>
                         <div className="space-y-2">
                           {prediction.insights.map((insight, idx) => (
                             <div key={idx} className="flex items-start gap-2 text-sm">
@@ -537,7 +539,7 @@ export function PredictiveAnalytics() {
                       </div>
 
                       <div>
-                        <h4 className="font-medium text-gray-900 mb-2">คำแนะนำ</h4>
+                        <h4 className="font-medium text-gray-900 mb-2">{t('dashboard.predictiveAnalytics.insights.recommendations')}</h4>
                         <div className="space-y-2">
                           {prediction.recommendations.map((rec, idx) => (
                             <div key={idx} className="flex items-start gap-2 text-sm">
@@ -559,8 +561,8 @@ export function PredictiveAnalytics() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Top Predictors</CardTitle>
-                    <p className="text-sm text-gray-600">ปัจจัยที่มีผลต่อการคาดการณ์มากที่สุด</p>
+                    <CardTitle>{t('dashboard.predictiveAnalytics.opportunitiesTab.predictors')}</CardTitle>
+                    <p className="text-sm text-gray-600">{t('dashboard.predictiveAnalytics.opportunitiesTab.predictorsDesc')}</p>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
@@ -576,8 +578,8 @@ export function PredictiveAnalytics() {
 
                 <Card>
                   <CardHeader>
-                    <CardTitle>Segment Performance</CardTitle>
-                    <p className="text-sm text-gray-600">ประสิทธิภาพการคาดการณ์แยกตามกลุ่ม</p>
+                    <CardTitle>{t('dashboard.predictiveAnalytics.opportunitiesTab.segmentPerformance')}</CardTitle>
+                    <p className="text-sm text-gray-600">{t('dashboard.predictiveAnalytics.opportunitiesTab.segmentPerformanceDesc')}</p>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
@@ -607,9 +609,9 @@ export function PredictiveAnalytics() {
               <TrendingUp className="w-8 h-8 text-gray-400" />
             </div>
             <div>
-              <h3 className="text-lg font-medium text-gray-900">พร้อมสำหรับการคาดการณ์</h3>
+              <h3 className="text-lg font-medium text-gray-900">{t('dashboard.predictiveAnalytics.empty.title')}</h3>
               <p className="text-gray-600 mt-1">
-                คลิก "วิเคราะห์พฤติกรรม" เพื่อให้ AI คาดการณ์พฤติกรรมลูกค้าและโอกาสการขาย
+                {t('dashboard.predictiveAnalytics.empty.description')}
               </p>
             </div>
             <Button
@@ -617,7 +619,7 @@ export function PredictiveAnalytics() {
               className="bg-gradient-to-r from-green-600 to-teal-600"
             >
               <BarChart3 className="w-4 h-4 mr-2" />
-              วิเคราะห์พฤติกรรม
+              {t('dashboard.predictiveAnalytics.analyzeButton')}
             </Button>
           </div>
         </Card>

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useTranslations } from "next-intl"
 import { Send, Phone, Mail, MessageCircle, User } from "lucide-react"
 
 // Mock data - ในโปรดักชั่นจะดึงจาก API
@@ -70,6 +71,7 @@ const quickResponses = [
 ]
 
 export function LiveChat() {
+  const t = useTranslations("liveChat")
   const [selectedChat, setSelectedChat] = useState(activeChats[0])
   const [newMessage, setNewMessage] = useState("")
   const [isTyping, setIsTyping] = useState(false)
@@ -97,9 +99,9 @@ export function LiveChat() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <MessageCircle className="h-5 w-5" />
-            Active Chats
+            {t("activeChats")}
             <Badge className="bg-blue-100 text-blue-800">
-              {activeChats.filter(c => c.unread > 0).length} unread
+              {t("unread", { count: activeChats.filter(c => c.unread > 0).length })}
             </Badge>
           </CardTitle>
         </CardHeader>
@@ -133,7 +135,7 @@ export function LiveChat() {
                       <p className="text-sm text-muted-foreground truncate">{chat.lastMessage}</p>
                       {chat.unread > 0 && (
                         <Badge className="mt-1 bg-red-100 text-red-800 text-xs">
-                          {chat.unread} new
+                          {t("new", { count: chat.unread })}
                         </Badge>
                       )}
                     </div>
@@ -160,7 +162,7 @@ export function LiveChat() {
                   <div className={`w-2 h-2 rounded-full ${
                     selectedChat.customer.status === 'online' ? 'bg-green-500' : 'bg-yellow-500'
                   }`} />
-                  {selectedChat.customer.status === 'online' ? 'Online' : 'Away'}
+                  {selectedChat.customer.status === 'online' ? t("online") : t("away")}
                 </p>
               </div>
             </div>
@@ -177,8 +179,8 @@ export function LiveChat() {
         <CardContent className="p-0">
           <Tabs defaultValue="chat" className="w-full">
             <TabsList className="grid w-full grid-cols-2 rounded-none border-b">
-              <TabsTrigger value="chat" className="rounded-none">Chat</TabsTrigger>
-              <TabsTrigger value="profile" className="rounded-none">Profile</TabsTrigger>
+              <TabsTrigger value="chat" className="rounded-none">{t("chat")}</TabsTrigger>
+              <TabsTrigger value="profile" className="rounded-none">{t("profile")}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="chat" className="p-4">
@@ -236,7 +238,7 @@ export function LiveChat() {
 
               {/* Quick Responses */}
               <div className="mb-4">
-                <p className="text-sm font-medium mb-2">Quick Responses:</p>
+                <p className="text-sm font-medium mb-2">{t("quickResponses")}:</p>
                 <div className="flex flex-wrap gap-2">
                   {quickResponses.map((response, _index) => (
                     <Button
@@ -255,7 +257,7 @@ export function LiveChat() {
               {/* Message Input */}
               <div className="flex gap-2">
                 <Textarea
-                  placeholder="พิมพ์ข้อความ..."
+                  placeholder={t("placeholder")}
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                   className="min-h-[60px] resize-none"
@@ -281,7 +283,7 @@ export function LiveChat() {
                   </Avatar>
                   <div>
                     <h3 className="font-medium text-lg">{selectedChat.customer.name}</h3>
-                    <p className="text-muted-foreground">Premium Customer</p>
+                    <p className="text-muted-foreground">{t("premium")}</p>
                   </div>
                 </div>
 
@@ -295,17 +297,17 @@ export function LiveChat() {
                     <p className="text-sm text-muted-foreground">customer@email.com</p>
                   </div>
                   <div>
-                    <div className="text-sm font-medium">Last Visit</div>
+                    <div className="text-sm font-medium">{t("lastVisit")}</div>
                     <p className="text-sm text-muted-foreground">2 สัปดาห์ที่แล้ว</p>
                   </div>
                   <div>
-                    <div className="text-sm font-medium">Total Spent</div>
+                    <div className="text-sm font-medium">{t("totalSpent")}</div>
                     <p className="text-sm text-muted-foreground">฿45,000</p>
                   </div>
                 </div>
 
                 <div>
-                  <div className="text-sm font-medium">Notes</div>
+                  <div className="text-sm font-medium">{t("notes")}</div>
                   <p className="text-sm text-muted-foreground mt-1">
                     ลูกค้าประจำ สนใจทรีตเมนต์ขั้นสูง คุยง่าย ตัดสินใจเร็ว
                   </p>

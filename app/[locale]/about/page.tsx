@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
+import { useTranslations } from "next-intl"
+import { useLocalizePath } from "@/lib/i18n/locale-link"
 import { 
   Sparkles, 
   Target, 
@@ -18,10 +20,10 @@ import {
   BarChart3,
   ArrowRight
 } from "lucide-react"
-import { useTranslations } from "next-intl"
 
 export default function AboutPage() {
   const t = useTranslations()
+  const lp = useLocalizePath()
 
   const coreValues = [
     {
@@ -49,45 +51,45 @@ export default function AboutPage() {
   const techStack = [
     {
       icon: Brain,
-      title: "MediaPipe Face Detection",
+      title: t('about.techStack.mediapipe.title'),
       description: t('about.techStack.mediapipe.description')
     },
     {
       icon: Zap,
-      title: "TensorFlow.js",
+      title: t('about.techStack.tensorflow.title'),
       description: t('about.techStack.tensorflow.description')
     },
     {
       icon: Camera,
-      title: "AR Visualization",
+      title: t('about.techStack.ar.title'),
       description: t('about.techStack.ar.description')
     },
     {
       icon: BarChart3,
-      title: "VISIA Metrics",
+      title: t('about.techStack.visia.title'),
       description: t('about.techStack.visia.description')
     }
   ]
 
   const milestones = [
     {
-      year: "2024 Q1",
+      year: t('about.milestones.q1_2024.year'),
       title: t('about.milestones.q1_2024.title'),
       description: t('about.milestones.q1_2024.description')
     },
     {
-      year: "2024 Q2",
+      year: t('about.milestones.q2_2024.year'),
       title: t('about.milestones.q2_2024.title'),
       description: t('about.milestones.q2_2024.description')
     },
     {
-      year: "2024 Q3",
-      title: "Beta Launch",
+      year: t('about.milestones.q3_2024.year'),
+      title: t('about.milestones.q3_2024.title'),
       description: t('about.milestones.q3_2024.description')
     },
     {
-      year: "2025 Q1",
-      title: "Official Launch",
+      year: t('about.milestones.q1_2025.year'),
+      title: t('about.milestones.q1_2025.title'),
       description: t('about.milestones.q1_2025.description')
     }
   ]
@@ -120,13 +122,13 @@ export default function AboutPage() {
 
               <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
                 <Button size="lg" asChild>
-                  <Link href="/analysis">
+                  <Link href={lp('/analysis')}>
                     {t('about.hero.tryFree')}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
                 <Button size="lg" variant="outline" asChild>
-                  <Link href="/contact">{t('about.hero.contactUs')}</Link>
+                  <Link href={lp('/contact')}>{t('about.hero.contactUs')}</Link>
                 </Button>
               </div>
             </div>
@@ -277,25 +279,25 @@ export default function AboutPage() {
           <div className="container">
             <div className="grid gap-8 md:grid-cols-4">
               <div className="text-center">
-                <div className="mb-2 text-4xl font-bold text-primary">10K+</div>
+                <div className="mb-2 text-4xl font-bold text-primary">{t('about.stats.imagesVal')}</div>
                 <p className="text-sm text-muted-foreground">
                   {t('about.stats.images')}
                 </p>
               </div>
               <div className="text-center">
-                <div className="mb-2 text-4xl font-bold text-primary">95%+</div>
+                <div className="mb-2 text-4xl font-bold text-primary">{t('about.stats.accuracyVal')}</div>
                 <p className="text-sm text-muted-foreground">
                   {t('about.stats.accuracy')}
                 </p>
               </div>
               <div className="text-center">
-                <div className="mb-2 text-4xl font-bold text-primary">&lt;2s</div>
+                <div className="mb-2 text-4xl font-bold text-primary">{t('about.stats.timeVal')}</div>
                 <p className="text-sm text-muted-foreground">
                   {t('about.stats.time')}
                 </p>
               </div>
               <div className="text-center">
-                <div className="mb-2 text-4xl font-bold text-primary">8</div>
+                <div className="mb-2 text-4xl font-bold text-primary">{t('about.stats.metricsVal')}</div>
                 <p className="text-sm text-muted-foreground">
                   {t('about.stats.metrics')}
                 </p>
@@ -316,7 +318,7 @@ export default function AboutPage() {
               </p>
               <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
                 <Button size="lg" variant="secondary" asChild>
-                  <Link href="/analysis">
+                  <Link href={lp('/analysis')}>
                     {t('about.cta.tryFree')}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
@@ -327,7 +329,7 @@ export default function AboutPage() {
                   asChild
                   className="border-primary-foreground/20 bg-transparent text-primary-foreground hover:bg-primary-foreground/10"
                 >
-                  <Link href="/contact">{t('about.cta.contactUs')}</Link>
+                  <Link href={lp('/contact')}>{t('about.cta.contactUs')}</Link>
                 </Button>
               </div>
             </div>

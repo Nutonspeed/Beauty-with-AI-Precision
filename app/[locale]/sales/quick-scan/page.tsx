@@ -16,6 +16,7 @@ import { analyzeSkinWithGemini } from '@/lib/ai/gemini-advisor'
 // import LeadIntegration from '@/components/sales/lead-integration'
 // import ShareResults from '@/components/sales/share-results'
 // import { useToast } from '@/hooks/use-toast'
+import { useTranslations } from "next-intl"
 
 // Build-time guard: avoid prerendering this interactive sales page to reduce
 // Vercel build duration (force runtime rendering instead of SSG/ISR).
@@ -48,6 +49,7 @@ interface ScanResult {
 }
 
 export default function QuickScanPage() {
+  const t = useTranslations()
   // const { toast } = useToast()
   const [step, setStep] = useState<'intro' | 'scanning' | 'results'>('intro')
   const [currentAngle, setCurrentAngle] = useState<'front' | 'left' | 'right'>('front')
@@ -85,15 +87,9 @@ export default function QuickScanPage() {
       setStep('scanning')
     } catch (error) {
       console.error('Camera access denied:', error)
-      // ถ้าเปิดกล้องไม่ได้ ให้สลับไปโหมดอัปโหลดรูปแทน
       setIsUploadMode(true)
       setUploadedImage(null)
       setStep('intro')
-      // toast({
-      //   title: 'ไม่พบกล้องบนอุปกรณ์',
-      //   description: 'สลับไปใช้โหมดอัปโหลดรูปแทนการใช้กล้อง',
-      //   variant: 'default',
-      // })
     }
   }, [])
 
@@ -103,7 +99,7 @@ export default function QuickScanPage() {
 
     try {
       if (!images.front) {
-        throw new Error('ไม่พบภาพด้านหน้า กรุณาถ่ายหรืออัปโหลดรูปก่อน')
+        throw new Error(t('salesQuickScan.errors.noFrontImage'))
       }
       const frontImage = images.front
 
@@ -119,13 +115,8 @@ export default function QuickScanPage() {
       if (!ctx) throw new Error('Canvas context not available')
       
       ctx.drawImage(img, 0, 0)
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
-
-      // ปิดการเรียกใช้ AI ลึก (Mediapipe/TensorFlow) ชั่วคราวเพื่อความเสถียร
-      // ใช้ผล mock ด้านล่างแทน
+      
       const faceDetection: any = null
-      const skinAnalysis: any = null
-
       const analysisTime = Date.now() - startTime
 
       // Use Gemini AI for real skin analysis
@@ -133,7 +124,7 @@ export default function QuickScanPage() {
       let geminiAnalysis;
       try {
         geminiAnalysis = await analyzeSkinWithGemini(frontImage, {
-          name: selectedCustomer?.name || 'ลูกค้า',
+          name: selectedCustomer?.name || t('roles.customer'),
           age: 35 // Default age, can be enhanced later
         });
         console.log('Gemini analysis completed:', geminiAnalysis);
@@ -143,42 +134,42 @@ export default function QuickScanPage() {
           skinAge: Math.floor(35 + Math.random() * 10),
           concerns: [
             {
-              name: 'Wrinkles',
+              name: t('skinHeatmap.tabs.wrinkles'),
               severity: 7,
-              description: 'มีริ้วรอยรอบดวงตาและหน้าผากในระดับสูง'
+              description: t('salesQuickScan.fallback.wrinklesDesc')
             },
             {
-              name: 'Sun Damage',
+              name: t('analysis.metrics.uvDamage'),
               severity: 6,
-              description: 'พบความเสียหายจากแสงแดดในระดับปานกลาง-สูง'
+              description: t('salesQuickScan.fallback.uvDamageDesc')
             },
             {
-              name: 'Pigmentation',
+              name: t('skinHeatmap.tabs.pigmentation'),
               severity: 5,
-              description: 'มีจุดด่างดำและความไม่สม่ำเสมอของสีผิว'
+              description: t('salesQuickScan.fallback.pigmentationDesc')
             }
           ],
           recommendations: [
             {
-              treatment: 'Anti-Aging Package',
+              treatment: t('packages.basic.name'),
               sessions: 6,
               price: 19900,
               duration: '3 months',
-              expectedOutcome: 'ลดริ้วรอยได้ 40%'
+              expectedOutcome: t('salesQuickScan.fallback.outcome1')
             },
             {
-              treatment: 'Pigmentation Treatment',
+              treatment: t('packages.premium.name'),
               sessions: 8,
               price: 24900,
               duration: '4 months',
-              expectedOutcome: 'ลดจุดด่างดำได้ 60%'
+              expectedOutcome: t('salesQuickScan.fallback.outcome2')
             },
             {
-              treatment: 'Complete Skin Rejuvenation',
+              treatment: t('packages.vip.name'),
               sessions: 12,
               price: 39900,
               duration: '6 months',
-              expectedOutcome: 'ผิวอ่อนเยาว์ขึ้น 3-5 ปี'
+              expectedOutcome: t('salesQuickScan.fallback.outcome3')
             }
           ]
         };
@@ -194,19 +185,19 @@ export default function QuickScanPage() {
       // Generate heatmap data
       const problemAreas = [
         {
-          region: 'Forehead',
+          region: t('salesQuickScan.results.forehead'),
           severity: 7,
           coordinates: { x: 0.5, y: 0.2, radius: 0.15 },
           concernType: 'wrinkles' as const
         },
         {
-          region: 'Eye Area',
+          region: t('salesQuickScan.results.eyeArea'),
           severity: 6,
           coordinates: { x: 0.35, y: 0.35, radius: 0.1 },
           concernType: 'wrinkles' as const
         },
         {
-          region: 'Cheeks',
+          region: t('salesQuickScan.results.cheeks'),
           severity: 5,
           coordinates: { x: 0.4, y: 0.55, radius: 0.12 },
           concernType: 'pigmentation' as const
@@ -220,7 +211,7 @@ export default function QuickScanPage() {
 
       // Save to database
       const scanData = {
-        customer_name: selectedCustomer?.name || 'Guest Customer',
+        customer_name: selectedCustomer?.name || t('salesQuickScan.guestCustomer'),
         customer_phone: selectedCustomer?.phone || '0000000000',
         customer_email: customerEmail || null,
         photo_front: images.front,
@@ -353,9 +344,9 @@ export default function QuickScanPage() {
   }, [currentAngle, capturedImages, analyzePhotos])
 
   const angleInstructions = {
-    front: 'มองตรงที่กล้อง',
-    left: 'หันซ้าย 45 องศา',
-    right: 'หันขวา 45 องศา'
+    front: t('salesQuickScan.scanning.front'),
+    left: t('salesQuickScan.scanning.left'),
+    right: t('salesQuickScan.scanning.right')
   }
 
   return (
@@ -395,11 +386,11 @@ export default function QuickScanPage() {
                       <Sparkles className="w-8 h-8 text-white" />
                     </div>
                     <CardTitle className="text-3xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent mb-2">
-                      AI Skin Analysis
+                      {t('salesQuickScan.title')}
                     </CardTitle>
                     <p className="text-gray-600 text-lg leading-relaxed">
-                      วิเคราะห์ผิวด้วย AI ขั้นสูง<br />
-                      <span className="font-semibold text-purple-600">ได้ผลลัพธ์ทันที</span>
+                      {t('salesQuickScan.subtitle')}<br />
+                      <span className="font-semibold text-purple-600">{t('common.startAnalysis')}</span>
                     </p>
                   </motion.div>
                 </CardHeader>
@@ -416,7 +407,7 @@ export default function QuickScanPage() {
                       <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
                         <UserPlus className="w-4 h-4 text-white" />
                       </div>
-                      ข้อมูลลูกค้า
+                      {t('salesQuickScan.customerInfo')}
                     </div>
 
                     <motion.div
@@ -426,31 +417,31 @@ export default function QuickScanPage() {
                       className="space-y-3"
                     >
                       <div className="space-y-2">
-                        <Label htmlFor="customer-name" className="text-sm font-medium text-gray-700">ชื่อลูกค้า</Label>
+                        <Label htmlFor="customer-name" className="text-sm font-medium text-gray-700">{t('salesQuickScan.name')}</Label>
                         <Input
                           id="customer-name"
-                          placeholder="ชื่อ-นามสกุล"
+                          placeholder={t('salesQuickScan.namePlaceholder')}
                           value={customerName}
                           onChange={(e) => setCustomerName(e.target.value)}
                           className="h-12 border-2 border-gray-200 focus:border-purple-400 focus:ring-purple-400/20 rounded-xl transition-all duration-200"
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="customer-phone" className="text-sm font-medium text-gray-700">เบอร์โทรศัพท์</Label>
+                        <Label htmlFor="customer-phone" className="text-sm font-medium text-gray-700">{t('salesQuickScan.phone')}</Label>
                         <Input
                           id="customer-phone"
-                          placeholder="08X-XXX-XXXX"
+                          placeholder={t('salesQuickScan.phonePlaceholder')}
                           value={customerPhone}
                           onChange={(e) => setCustomerPhone(e.target.value)}
                           className="h-12 border-2 border-gray-200 focus:border-purple-400 focus:ring-purple-400/20 rounded-xl transition-all duration-200"
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="customer-email" className="text-sm font-medium text-gray-700">อีเมล <span className="text-gray-400">(ไม่บังคับ)</span></Label>
+                        <Label htmlFor="customer-email" className="text-sm font-medium text-gray-700">{t('salesQuickScan.emailOptional')}</Label>
                         <Input
                           id="customer-email"
                           type="email"
-                          placeholder="customer@example.com"
+                          placeholder={t('salesQuickScan.emailPlaceholder')}
                           value={customerEmail}
                           onChange={(e) => setCustomerEmail(e.target.value)}
                           className="h-12 border-2 border-gray-200 focus:border-purple-400 focus:ring-purple-400/20 rounded-xl transition-all duration-200"
@@ -479,7 +470,7 @@ export default function QuickScanPage() {
                           disabled={!customerName.trim()}
                         >
                           <CheckCircle2 className="w-5 h-5 mr-2" />
-                          ยืนยันข้อมูล
+                          {t('salesQuickScan.confirmInfo')}
                         </Button>
                       </motion.div>
                     </motion.div>
@@ -513,7 +504,8 @@ export default function QuickScanPage() {
                             onClick={() => setSelectedCustomer(null)}
                             className="h-8 w-8 p-0 hover:bg-green-100 rounded-lg transition-colors duration-200"
                           >
-                            ✕
+                            <span className="sr-only">{t('common.close')}</span>
+                            <span aria-hidden="true">×</span>
                           </Button>
                         </div>
                       </motion.div>
@@ -531,22 +523,22 @@ export default function QuickScanPage() {
                       <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
                         <Camera className="w-5 h-5 text-white" />
                       </div>
-                      <p className="text-xs font-semibold text-blue-800">3 มุมภาพ</p>
-                      <p className="text-xs text-blue-600">360° Analysis</p>
+                      <p className="text-xs font-semibold text-blue-800">{t('salesQuickScan.features.angles')}</p>
+                      <p className="text-xs text-blue-600">{t('salesQuickScan.features.anglesDesc')}</p>
                     </div>
                     <div className="flex flex-col items-center text-center space-y-2 p-3 rounded-xl bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 hover:shadow-md transition-all duration-300">
                       <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
                         <Zap className="w-5 h-5 text-white" />
                       </div>
-                      <p className="text-xs font-semibold text-purple-800">AI ขั้นสูง</p>
-                      <p className="text-xs text-purple-600">Gemini 1.5 Flash</p>
+                      <p className="text-xs font-semibold text-purple-800">{t('salesQuickScan.features.advanced')}</p>
+                      <p className="text-xs text-purple-600">{t('salesQuickScan.features.advancedDesc')}</p>
                     </div>
                     <div className="flex flex-col items-center text-center space-y-2 p-3 rounded-xl bg-gradient-to-br from-green-50 to-green-100 border border-green-200 hover:shadow-md transition-all duration-300">
                       <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
                         <TrendingUp className="w-5 h-5 text-white" />
                       </div>
-                      <p className="text-xs font-semibold text-green-800">ทันที</p>
-                      <p className="text-xs text-green-600">5 วินาที</p>
+                      <p className="text-xs font-semibold text-green-800">{t('salesQuickScan.features.instant')}</p>
+                      <p className="text-xs text-green-600">{t('salesQuickScan.features.instantDesc')}</p>
                     </div>
                   </motion.div>
 
@@ -567,7 +559,7 @@ export default function QuickScanPage() {
                       disabled={!selectedCustomer}
                     >
                       <Camera className="w-5 h-5 mr-2" />
-                      เริ่มสแกนด้วยกล้อง
+                      {t('salesQuickScan.actions.startCamera')}
                     </Button>
                     {!isUploadMode && (
                       <Button
@@ -578,7 +570,7 @@ export default function QuickScanPage() {
                         disabled={!selectedCustomer}
                         onClick={() => setIsUploadMode(true)}
                       >
-                        ใช้งานโหมดอัปโหลดรูปแทนกล้อง
+                        {t('salesQuickScan.actions.useUpload')}
                       </Button>
                     )}
                   </motion.div>
@@ -596,10 +588,10 @@ export default function QuickScanPage() {
                         <div className="text-sm font-medium text-gray-700 bg-gradient-to-r from-orange-50 to-amber-50 p-3 rounded-xl border border-orange-200">
                           <div className="flex items-center gap-2">
                             <Award className="w-4 h-4 text-orange-600" />
-                            อัปโหลดรูปจากไฟล์
+                            {t('salesQuickScan.actions.uploadFile')}
                           </div>
                           <p className="text-xs text-orange-700 mt-1">
-                            ใช้ได้บนคอมพิวเตอร์ที่ไม่มีกล้องในตัว
+                            {t('salesQuickScan.actions.uploadFileDesc')}
                           </p>
                         </div>
 
@@ -624,7 +616,7 @@ export default function QuickScanPage() {
                             className="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-colors duration-200"
                           />
                           <p className="text-xs text-gray-500 bg-gray-50 p-2 rounded-lg">
-                            💡 แนะนำ: ใช้รูปใบหน้าตรง แสงสว่างเพียงพอ เพื่อให้ AI วิเคราะห์ได้ชัดเจน
+                            {t('salesQuickScan.actions.uploadHint')}
                           </p>
 
                           <motion.div
@@ -644,12 +636,12 @@ export default function QuickScanPage() {
                               {isAnalyzing ? (
                                 <>
                                   <Sparkles className="w-5 h-5 mr-2 animate-spin" />
-                                  กำลังวิเคราะห์ด้วย AI...
+                                  {t('salesQuickScan.actions.analyzing')}
                                 </>
                               ) : (
                                 <>
                                   <ArrowRight className="w-5 h-5 mr-2" />
-                                  เริ่มวิเคราะห์จากรูปนี้
+                                  {t('salesQuickScan.actions.startAnalysis')}
                                 </>
                               )}
                             </Button>
@@ -668,15 +660,15 @@ export default function QuickScanPage() {
                   >
                     <div className="flex items-center justify-center gap-1 text-green-600">
                       <CheckCircle2 className="w-4 h-4" />
-                      <span className="text-sm font-medium">วิเคราะห์ 8 ตัวชี้วัดผิว</span>
+                      <span className="text-sm font-medium">{t('analysis.metrics.synthesisActive')}</span>
                     </div>
                     <div className="flex items-center justify-center gap-1 text-blue-600">
                       <CheckCircle2 className="w-4 h-4" />
-                      <span className="text-sm font-medium">แนะนำคอร์สรักษาอัตโนมัติ</span>
+                      <span className="text-sm font-medium">{t('booking.selectTreatment')}</span>
                     </div>
                     <div className="flex items-center justify-center gap-1 text-purple-600">
                       <CheckCircle2 className="w-4 h-4" />
-                      <span className="text-sm font-medium">สร้างใบเสนอราคาทันที</span>
+                      <span className="text-sm font-medium">{t('salesQuickScan.actions.createProposal')}</span>
                     </div>
                   </motion.div>
                 </CardContent>
@@ -712,7 +704,7 @@ export default function QuickScanPage() {
                       transition={{ duration: 0.2 }}
                     >
                       <Badge variant={currentAngle === 'front' ? 'default' : 'outline'} className="px-3 py-1">
-                        หน้าตรง
+                        {t('salesQuickScan.scanning.frontLabel')}
                       </Badge>
                     </motion.div>
                     <motion.div
@@ -720,7 +712,7 @@ export default function QuickScanPage() {
                       transition={{ duration: 0.2 }}
                     >
                       <Badge variant={currentAngle === 'left' ? 'default' : 'outline'} className="px-3 py-1">
-                        ซ้าย
+                        {t('salesQuickScan.scanning.leftLabel')}
                       </Badge>
                     </motion.div>
                     <motion.div
@@ -728,7 +720,7 @@ export default function QuickScanPage() {
                       transition={{ duration: 0.2 }}
                     >
                       <Badge variant={currentAngle === 'right' ? 'default' : 'outline'} className="px-3 py-1">
-                        ขวา
+                        {t('salesQuickScan.scanning.rightLabel')}
                       </Badge>
                     </motion.div>
                   </div>
@@ -766,7 +758,7 @@ export default function QuickScanPage() {
                   <div className="absolute top-4 left-4 right-4">
                     <div className="bg-black/50 backdrop-blur-sm rounded-full px-3 py-2">
                       <div className="flex justify-between items-center text-xs text-white">
-                        <span>การถ่ายภาพ</span>
+                        <span>{t('salesQuickScan.scanning.status')}</span>
                         <span>{Object.keys(capturedImages).length}/3</span>
                       </div>
                       <div className="w-full bg-white/20 rounded-full h-1 mt-1">
@@ -799,7 +791,7 @@ export default function QuickScanPage() {
                         className="flex items-center"
                       >
                         <Sparkles className="w-6 h-6 mr-3" />
-                        กำลังวิเคราะห์ด้วย AI...
+                        {t('salesQuickScan.actions.analyzing')}
                       </motion.div>
                     ) : (
                       <motion.div
@@ -808,7 +800,7 @@ export default function QuickScanPage() {
                         className="flex items-center"
                       >
                         <Camera className="w-6 h-6 mr-3" />
-                        ถ่ายภาพ
+                        {t('salesQuickScan.actions.capture')}
                       </motion.div>
                     )}
                   </Button>
@@ -816,7 +808,7 @@ export default function QuickScanPage() {
 
                 <div className="text-center">
                   <p className="text-sm text-gray-500">
-                    วางใบหน้าให้อยู่ภายในกรอบและกดถ่ายภาพ
+                    {t('salesQuickScan.scanning.guide')}
                   </p>
                 </div>
               </CardContent>
@@ -839,7 +831,7 @@ export default function QuickScanPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Users className="w-6 h-6 text-orange-600" />
-                อายุผิวของคุณ
+                {t('salesQuickScan.results.skinAgeTitle')}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -847,18 +839,18 @@ export default function QuickScanPage() {
                 <span className="text-5xl font-bold text-orange-600">
                   {scanResult.skinAge}
                 </span>
-                <span className="text-2xl text-gray-600">ปี</span>
+                <span className="text-2xl text-gray-600">{t('salesQuickScan.results.years')}</span>
                 <span className="text-gray-500 ml-4">
-                  (อายุจริง {scanResult.actualAge} ปี)
+                  ({t('salesQuickScan.results.actualAge', { age: scanResult.actualAge })})
                 </span>
               </div>
               <p className="text-orange-700 mt-2 font-medium">
-                ผิวของคุณแก่กว่าวัยจริง {scanResult.skinAge - scanResult.actualAge} ปี!
+                {t('salesQuickScan.results.comparison', { diff: scanResult.skinAge - scanResult.actualAge })}
               </p>
             </CardContent>
           </Card>
 
-          {/* Future Skin Prediction - ทำนายอนาคต 1-5 ปี */}
+          {/* Future Skin Prediction - AI-powered aging simulation */}
           {/* {scanResult.futurePrediction && (
             <SkinFuturePrediction 
               prediction={scanResult.futurePrediction}
@@ -887,7 +879,7 @@ export default function QuickScanPage() {
           {/* Basic Concerns List (for quick reference) */}
           <Card>
             <CardHeader>
-              <CardTitle>ปัญหาผิวที่พบ</CardTitle>
+              <CardTitle>{t('salesQuickScan.results.concernsTitle')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               {scanResult.concerns.map((concern, idx) => (
@@ -952,7 +944,7 @@ export default function QuickScanPage() {
                 setCustomerEmail('')
               }}
             >
-              สแกนคนใหม่
+              {t('salesQuickScan.actions.newScan')}
             </Button>
             <Button
               size="lg"
@@ -965,7 +957,7 @@ export default function QuickScanPage() {
               // })
               }}
             >
-              สร้างใบเสนอราคา
+              {t('salesQuickScan.actions.createProposal')}
             </Button>
           </div>
 

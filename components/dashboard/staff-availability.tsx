@@ -9,6 +9,7 @@ import { Users, CheckCircle2, Clock, Coffee, XCircle } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { useLocalizePath } from "@/lib/i18n/locale-link"
+import { useTranslations } from "next-intl"
 
 interface StaffMember {
   id: string
@@ -32,6 +33,7 @@ interface StaffAvailabilityData {
 }
 
 export function StaffAvailability() {
+  const t = useTranslations()
   const [data, setData] = useState<StaffAvailabilityData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -87,26 +89,26 @@ export function StaffAvailability() {
       case "available":
         return (
           <Badge variant="outline" className="bg-green-500/10 text-green-600 dark:text-green-400">
-            ว่าง
+            {t('dashboard.staffAvailability.available')}
           </Badge>
         )
       case "busy":
       case "active":
         return (
           <Badge variant="outline" className="bg-orange-500/10 text-orange-600 dark:text-orange-400">
-            ไม่ว่าง
+            {t('dashboard.staffAvailability.busy')}
           </Badge>
         )
       case "on_leave":
         return (
           <Badge variant="outline" className="bg-blue-500/10 text-blue-600 dark:text-blue-400">
-            ลา
+            {t('dashboard.staffAvailability.onLeave')}
           </Badge>
         )
       default:
         return (
           <Badge variant="outline" className="bg-gray-500/10 text-gray-600 dark:text-gray-400">
-            ออฟไลน์
+            {t('dashboard.staffAvailability.offline')}
           </Badge>
         )
     }
@@ -115,15 +117,15 @@ export function StaffAvailability() {
   const getRoleBadge = (role: string) => {
     switch (role) {
       case "doctor":
-        return "👨‍⚕️ แพทย์"
+        return t('dashboard.staffAvailability.roles.doctor')
       case "nurse":
-        return "👩‍⚕️ พยาบาล"
+        return t('dashboard.staffAvailability.roles.nurse')
       case "therapist":
-        return "💆 นักบำบัด"
+        return t('dashboard.staffAvailability.roles.therapist')
       case "admin":
-        return "👔 ผู้จัดการ"
+        return t('dashboard.staffAvailability.roles.admin')
       case "receptionist":
-        return "📋 ต้อนรับ"
+        return t('dashboard.staffAvailability.roles.receptionist')
       default:
         return role
     }
@@ -135,7 +137,7 @@ export function StaffAvailability() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Users className="h-5 w-5" />
-            ทีมงานวันนี้
+            {t('dashboard.staffAvailability.title')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -161,12 +163,12 @@ export function StaffAvailability() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Users className="h-5 w-5" />
-            ทีมงานวันนี้
+            {t('dashboard.staffAvailability.title')}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground text-center py-8">
-            ไม่สามารถโหลดข้อมูลได้
+            {t('dashboard.staffAvailability.error')}
           </p>
         </CardContent>
       </Card>
@@ -179,11 +181,11 @@ export function StaffAvailability() {
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <Users className="h-5 w-5" />
-            ทีมงานวันนี้
+            {t('dashboard.staffAvailability.title')}
           </CardTitle>
           <Link href={lp("/clinic/staff")}>
             <Button variant="ghost" size="sm">
-              ดูทั้งหมด
+              {t('dashboard.staffAvailability.viewAll')}
             </Button>
           </Link>
         </div>
@@ -192,15 +194,15 @@ export function StaffAvailability() {
         {/* Summary */}
         <div className="grid grid-cols-3 gap-2 mb-4 p-3 bg-muted/50 rounded-lg">
           <div className="text-center">
-            <div className="text-xs text-muted-foreground">ว่าง</div>
+            <div className="text-xs text-muted-foreground">{t('dashboard.staffAvailability.available')}</div>
             <div className="text-lg font-bold text-green-600">{data.summary.available}</div>
           </div>
           <div className="text-center">
-            <div className="text-xs text-muted-foreground">ไม่ว่าง</div>
+            <div className="text-xs text-muted-foreground">{t('dashboard.staffAvailability.busy')}</div>
             <div className="text-lg font-bold text-orange-600">{data.summary.busy}</div>
           </div>
           <div className="text-center">
-            <div className="text-xs text-muted-foreground">ออฟไลน์</div>
+            <div className="text-xs text-muted-foreground">{t('dashboard.staffAvailability.offline')}</div>
             <div className="text-lg font-bold text-gray-600">{data.summary.offline}</div>
           </div>
         </div>
@@ -224,7 +226,7 @@ export function StaffAvailability() {
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <span>{getRoleBadge(member.role)}</span>
                   <span>•</span>
-                  <span>👥 {member.patients_today} คน</span>
+                  <span>{t('dashboard.staffAvailability.patientsCount', { count: member.patients_today })}</span>
                 </div>
               </div>
               <div>{getStatusBadge(member.status)}</div>
@@ -234,7 +236,7 @@ export function StaffAvailability() {
 
         {data.staff.length === 0 && (
           <p className="text-sm text-muted-foreground text-center py-8">
-            ยังไม่มีทีมงานในระบบ
+            {t('dashboard.staffAvailability.noStaff')}
           </p>
         )}
       </CardContent>

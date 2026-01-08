@@ -1,17 +1,18 @@
-'use client';
+"use client"
 
 /**
  * AI Smart Recommendations
- * แนะนำ treatment อัตโนมัติตาม customer profile และ skin analysis
+ * Recommends treatments automatically based on customer profile and skin analysis
  * Competitive advantage: Real-time AI-powered suggestions
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { useTranslations } from 'next-intl';
 import { 
   Sparkles, 
   Zap, 
@@ -72,6 +73,7 @@ export function AISmartRecommendations({
   onSelectTreatment,
   className = ''
 }: AISmartRecommendationsProps) {
+  const t = useTranslations();
   const [recommendations, setRecommendations] = useState<Treatment[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -125,13 +127,13 @@ export function AISmartRecommendations({
               <Sparkles className="w-5 h-5 text-white" />
             </div>
             <div>
-              <CardTitle className="text-white">AI Smart Recommendations</CardTitle>
-              <p className="text-sm text-gray-400">แนะนำ treatment ที่เหมาะกับลูกค้า</p>
+              <CardTitle className="text-white">{t('salesTools.recommendations.title')}</CardTitle>
+              <p className="text-sm text-gray-400">{t('salesTools.recommendations.subtitle')}</p>
             </div>
           </div>
           <Badge className="bg-gradient-to-r from-violet-600 to-purple-600">
             <Zap className="w-3 h-3 mr-1" />
-            AI Powered
+            {t('salesTools.badge')}
           </Badge>
         </div>
       </CardHeader>
@@ -146,8 +148,8 @@ export function AISmartRecommendations({
             >
               <Sparkles className="w-12 h-12 text-purple-400" />
             </motion.div>
-            <p className="text-white font-medium">AI กำลังวิเคราะห์...</p>
-            <p className="text-sm text-gray-400 mt-1">กำลังประมวลผลข้อมูลลูกค้า</p>
+            <p className="text-white font-medium">{t('salesTools.recommendations.analyzing')}</p>
+            <p className="text-sm text-gray-400 mt-1">{t('salesTools.recommendations.processing')}</p>
           </div>
         ) : (
           <>
@@ -161,7 +163,7 @@ export function AISmartRecommendations({
                 <div className="absolute top-3 right-3">
                   <Badge className="bg-yellow-500 text-black">
                     <Star className="w-3 h-3 mr-1" />
-                    Top Pick
+                    {t('salesTools.recommendations.topPick')}
                   </Badge>
                 </div>
                 
@@ -180,16 +182,16 @@ export function AISmartRecommendations({
                     
                     <div className="flex flex-wrap gap-2 mb-3">
                       <Badge className="bg-green-500/20 text-green-400">
-                        ผลลัพธ์: {topRecommendation.expectedResults}
+                        {t('salesTools.recommendations.resultsLabel', { text: topRecommendation.expectedResults })}
                       </Badge>
                       <Badge className="bg-yellow-500/20 text-yellow-400">
-                        ความเสี่ยง: {topRecommendation.risks}
+                        {t('salesTools.recommendations.risksLabel', { text: topRecommendation.risks })}
                       </Badge>
                     </div>
                     
                     <div className="flex items-center gap-4 text-sm">
-                      <span className="text-green-400 font-bold">฿{topRecommendation.price.toLocaleString()}</span>
-                      <span className="text-blue-400">ดูแล: {topRecommendation.maintenance}</span>
+                      <span className="text-green-400 font-bold">{t('salesTools.recommendations.priceLabel', { amount: topRecommendation.price.toLocaleString() })}</span>
+                      <span className="text-blue-400">{t('salesTools.recommendations.maintenanceLabel', { text: topRecommendation.maintenance })}</span>
                     </div>
                   </div>
                 </div>
@@ -198,7 +200,7 @@ export function AISmartRecommendations({
                   className="w-full mt-4 bg-gradient-to-r from-violet-600 to-purple-600"
                   onClick={() => onSelectTreatment?.(topRecommendation)}
                 >
-                  เลือก Treatment นี้
+                  {t('salesTools.recommendations.selectButton')}
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </motion.div>
@@ -217,7 +219,7 @@ export function AISmartRecommendations({
                     : 'border-white/20 text-gray-300'
                   }
                 >
-                  {cat === 'all' ? 'ทั้งหมด' : cat}
+                  {cat === 'all' ? t('salesTools.recommendations.allCategories') : cat}
                 </Button>
               ))}
             </div>
@@ -252,14 +254,14 @@ export function AISmartRecommendations({
                         <div className="flex items-center justify-between">
                           <h4 className="font-medium text-white truncate">{treatment.treatment}</h4>
                           <span className="text-green-400 font-bold text-sm">
-                            ฿{treatment.price.toLocaleString()}
+                            {t('salesTools.recommendations.priceLabel', { amount: treatment.price.toLocaleString() })}
                           </span>
                         </div>
                         <div className="flex items-center gap-2 mt-1">
                           <Badge variant="outline" className="border-white/20 text-gray-400 text-xs">
                             {treatment.reasoning.substring(0, 30)}...
                           </Badge>
-                          <span className="text-xs text-gray-500">ผล: {treatment.expectedResults.substring(0, 20)}...</span>
+                          <span className="text-xs text-gray-500">{t('salesTools.recommendations.resultShort', { text: treatment.expectedResults.substring(0, 20) })}...</span>
                         </div>
                       </div>
                       

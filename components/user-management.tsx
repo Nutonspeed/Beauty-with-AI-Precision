@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -15,6 +16,7 @@ import { useUsers } from '@/hooks/useSecurity'
 import { UserRole } from '@/lib/security/security-manager'
 
 export default function UserManagement() {
+  const t = useTranslations()
   const { users, loading, error, createUser, updateUser, lockAccount, unlockAccount } = useUsers()
   const [searchTerm, setSearchTerm] = useState('')
   const [roleFilter, setRoleFilter] = useState<UserRole | 'all'>('all')
@@ -46,7 +48,7 @@ export default function UserManagement() {
 
   const handleCreateUser = async () => {
     if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match')
+      alert(t('userManagement.alerts.passwordsNoMatch'))
       return
     }
 
@@ -63,7 +65,7 @@ export default function UserManagement() {
       setIsCreateDialogOpen(false)
       resetForm()
     } catch (err) {
-      alert('Failed to create user: ' + (err as Error).message)
+      alert(t('userManagement.alerts.createFailed', { error: (err as Error).message }))
     }
   }
 
@@ -81,7 +83,7 @@ export default function UserManagement() {
       setSelectedUser(null)
       resetForm()
     } catch (err) {
-      alert('Failed to update user: ' + (err as Error).message)
+      alert(t('userManagement.alerts.updateFailed', { error: (err as Error).message }))
     }
   }
 
@@ -89,7 +91,7 @@ export default function UserManagement() {
     try {
       await lockAccount(userId)
     } catch (err) {
-      alert('Failed to lock account: ' + (err as Error).message)
+      alert(t('userManagement.alerts.lockFailed', { error: (err as Error).message }))
     }
   }
 
@@ -97,7 +99,7 @@ export default function UserManagement() {
     try {
       await unlockAccount(userId)
     } catch (err) {
-      alert('Failed to unlock account: ' + (err as Error).message)
+      alert(t('userManagement.alerts.unlockFailed', { error: (err as Error).message }))
     }
   }
 
@@ -143,7 +145,7 @@ export default function UserManagement() {
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
-          <p className="text-muted-foreground">Loading users...</p>
+          <p className="text-muted-foreground">{t('userManagement.alerts.loading')}</p>
         </div>
       </div>
     )
@@ -165,28 +167,28 @@ export default function UserManagement() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">User Management</h2>
+          <h2 className="text-3xl font-bold tracking-tight">{t('userManagement.title')}</h2>
           <p className="text-muted-foreground mt-2">
-            Manage user accounts, roles, and access permissions
+            {t('userManagement.description')}
           </p>
         </div>
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger asChild>
             <Button>
               <Plus className="h-4 w-4 mr-2" />
-              Add User
+              {t('userManagement.addUser')}
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle>Create New User</DialogTitle>
+              <DialogTitle>{t('userManagement.createUser')}</DialogTitle>
               <DialogDescription>
-                Add a new user to the system with appropriate role and permissions.
+                {t('userManagement.createDesc')}
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="email" className="text-right">Email</Label>
+                <Label htmlFor="email" className="text-right">{t('userManagement.form.email')}</Label>
                 <Input
                   id="email"
                   type="email"
@@ -196,7 +198,7 @@ export default function UserManagement() {
                 />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="name" className="text-right">Name</Label>
+                <Label htmlFor="name" className="text-right">{t('userManagement.form.name')}</Label>
                 <Input
                   id="name"
                   className="col-span-3"
@@ -205,35 +207,35 @@ export default function UserManagement() {
                 />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="role" className="text-right">Role</Label>
+                <Label htmlFor="role" className="text-right">{t('userManagement.form.role')}</Label>
                 <Select value={formData.role} onValueChange={(value: UserRole) => setFormData({...formData, role: value})}>
                   <SelectTrigger className="col-span-3">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="super_admin">Super Admin</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="doctor">Doctor</SelectItem>
-                    <SelectItem value="nurse">Nurse</SelectItem>
-                    <SelectItem value="receptionist">Receptionist</SelectItem>
-                    <SelectItem value="patient">Patient</SelectItem>
-                    <SelectItem value="customer">Customer</SelectItem>
+                    <SelectItem value="super_admin">{t('userManagement.roles.super_admin')}</SelectItem>
+                    <SelectItem value="admin">{t('userManagement.roles.admin')}</SelectItem>
+                    <SelectItem value="doctor">{t('userManagement.roles.doctor')}</SelectItem>
+                    <SelectItem value="nurse">{t('userManagement.roles.nurse')}</SelectItem>
+                    <SelectItem value="receptionist">{t('userManagement.roles.receptionist')}</SelectItem>
+                    <SelectItem value="patient">{t('userManagement.roles.patient')}</SelectItem>
+                    <SelectItem value="customer">{t('userManagement.roles.customer')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="department" className="text-right">Department</Label>
+                <Label htmlFor="department" className="text-right">{t('userManagement.form.department')}</Label>
                 <Input
                   id="department"
                   className="col-span-3"
                   value={formData.department}
                   onChange={(e) => setFormData({...formData, department: e.target.value})}
-                  placeholder="Optional"
+                  placeholder={t('userManagement.form.optional')}
                 />
               </div>
             </div>
             <DialogFooter>
-              <Button type="submit" onClick={handleCreateUser}>Create User</Button>
+              <Button type="submit" onClick={handleCreateUser}>{t('userManagement.form.create')}</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -247,7 +249,7 @@ export default function UserManagement() {
               <div className="relative">
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search users..."
+                  placeholder={t('userManagement.filters.search')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-8"
@@ -256,27 +258,27 @@ export default function UserManagement() {
             </div>
             <Select value={roleFilter} onValueChange={(value: any) => setRoleFilter(value)}>
               <SelectTrigger className="w-40">
-                <SelectValue placeholder="Filter by role" />
+                <SelectValue placeholder={t('userManagement.filters.allRoles')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Roles</SelectItem>
-                <SelectItem value="super_admin">Super Admin</SelectItem>
-                <SelectItem value="admin">Admin</SelectItem>
-                <SelectItem value="doctor">Doctor</SelectItem>
-                <SelectItem value="nurse">Nurse</SelectItem>
-                <SelectItem value="receptionist">Receptionist</SelectItem>
-                <SelectItem value="patient">Patient</SelectItem>
-                <SelectItem value="customer">Customer</SelectItem>
+                <SelectItem value="all">{t('userManagement.filters.allRoles')}</SelectItem>
+                <SelectItem value="super_admin">{t('userManagement.roles.super_admin')}</SelectItem>
+                <SelectItem value="admin">{t('userManagement.roles.admin')}</SelectItem>
+                <SelectItem value="doctor">{t('userManagement.roles.doctor')}</SelectItem>
+                <SelectItem value="nurse">{t('userManagement.roles.nurse')}</SelectItem>
+                <SelectItem value="receptionist">{t('userManagement.roles.receptionist')}</SelectItem>
+                <SelectItem value="patient">{t('userManagement.roles.patient')}</SelectItem>
+                <SelectItem value="customer">{t('userManagement.roles.customer')}</SelectItem>
               </SelectContent>
             </Select>
             <Select value={statusFilter} onValueChange={(value: any) => setStatusFilter(value)}>
               <SelectTrigger className="w-32">
-                <SelectValue placeholder="Status" />
+                <SelectValue placeholder={t('userManagement.filters.allStatus')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="locked">Locked</SelectItem>
+                <SelectItem value="all">{t('userManagement.filters.allStatus')}</SelectItem>
+                <SelectItem value="active">{t('userManagement.filters.active')}</SelectItem>
+                <SelectItem value="locked">{t('userManagement.filters.locked')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -286,21 +288,21 @@ export default function UserManagement() {
       {/* Users Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Users ({filteredUsers.length})</CardTitle>
+          <CardTitle>{t('userManagement.title')} ({filteredUsers.length})</CardTitle>
           <CardDescription>
-            Manage user accounts and permissions
+            {t('userManagement.description')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>User</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Department</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Last Login</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead>{t('userManagement.table.user')}</TableHead>
+                <TableHead>{t('userManagement.table.role')}</TableHead>
+                <TableHead>{t('userManagement.table.department')}</TableHead>
+                <TableHead>{t('userManagement.table.status')}</TableHead>
+                <TableHead>{t('userManagement.table.lastLogin')}</TableHead>
+                <TableHead>{t('userManagement.table.actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -319,16 +321,16 @@ export default function UserManagement() {
                   </TableCell>
                   <TableCell>
                     <Badge className={getRoleBadgeColor(user.role)}>
-                      {user.role.replace('_', ' ').toUpperCase()}
+                      {t(`userManagement.roles.${user.role}`)}
                     </Badge>
                   </TableCell>
                   <TableCell>{user.department || '-'}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       {user.accountLocked ? (
-                        <Badge variant="destructive">Locked</Badge>
+                        <Badge variant="destructive">{t('userManagement.table.locked')}</Badge>
                       ) : (
-                        <Badge variant="default">Active</Badge>
+                        <Badge variant="default">{t('userManagement.table.active')}</Badge>
                       )}
                       {user.mfaEnabled && (
                         <Shield className="h-4 w-4 text-green-600" />
@@ -341,7 +343,7 @@ export default function UserManagement() {
                         {new Date(user.lastLogin).toLocaleDateString()}
                       </div>
                     ) : (
-                      <span className="text-muted-foreground">Never</span>
+                      <span className="text-muted-foreground">{t('userManagement.table.never')}</span>
                     )}
                   </TableCell>
                   <TableCell>
@@ -370,16 +372,15 @@ export default function UserManagement() {
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
-                              <AlertDialogTitle>Lock Account</AlertDialogTitle>
+                              <AlertDialogTitle>{t('userManagement.confirm.lockTitle')}</AlertDialogTitle>
                               <AlertDialogDescription>
-                                Are you sure you want to lock the account for {user.name}?
-                                This will prevent them from logging in.
+                                {t('userManagement.confirm.lockDesc', { name: user.name })}
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogCancel>{t('userManagement.confirm.cancel')}</AlertDialogCancel>
                               <AlertDialogAction onClick={() => handleLockAccount(user.id)}>
-                                Lock Account
+                                {t('userManagement.confirm.confirm')}
                               </AlertDialogAction>
                             </AlertDialogFooter>
                           </AlertDialogContent>
@@ -398,14 +399,14 @@ export default function UserManagement() {
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Edit User</DialogTitle>
+            <DialogTitle>{t('userManagement.editUser')}</DialogTitle>
             <DialogDescription>
-              Update user information and role assignments.
+              {t('userManagement.editDesc')}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="edit-email" className="text-right">Email</Label>
+              <Label htmlFor="edit-email" className="text-right">{t('userManagement.form.email')}</Label>
               <Input
                 id="edit-email"
                 type="email"
@@ -415,7 +416,7 @@ export default function UserManagement() {
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="edit-name" className="text-right">Name</Label>
+              <Label htmlFor="edit-name" className="text-right">{t('userManagement.form.name')}</Label>
               <Input
                 id="edit-name"
                 className="col-span-3"
@@ -424,35 +425,35 @@ export default function UserManagement() {
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="edit-role" className="text-right">Role</Label>
+              <Label htmlFor="edit-role" className="text-right">{t('userManagement.form.role')}</Label>
               <Select value={formData.role} onValueChange={(value: UserRole) => setFormData({...formData, role: value})}>
                 <SelectTrigger className="col-span-3">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="super_admin">Super Admin</SelectItem>
-                  <SelectItem value="admin">Admin</SelectItem>
-                  <SelectItem value="doctor">Doctor</SelectItem>
-                  <SelectItem value="nurse">Nurse</SelectItem>
-                  <SelectItem value="receptionist">Receptionist</SelectItem>
-                  <SelectItem value="patient">Patient</SelectItem>
-                  <SelectItem value="customer">Customer</SelectItem>
+                  <SelectItem value="super_admin">{t('userManagement.roles.super_admin')}</SelectItem>
+                  <SelectItem value="admin">{t('userManagement.roles.admin')}</SelectItem>
+                  <SelectItem value="doctor">{t('userManagement.roles.doctor')}</SelectItem>
+                  <SelectItem value="nurse">{t('userManagement.roles.nurse')}</SelectItem>
+                  <SelectItem value="receptionist">{t('userManagement.roles.receptionist')}</SelectItem>
+                  <SelectItem value="patient">{t('userManagement.roles.patient')}</SelectItem>
+                  <SelectItem value="customer">{t('userManagement.roles.customer')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="edit-department" className="text-right">Department</Label>
+              <Label htmlFor="edit-department" className="text-right">{t('userManagement.form.department')}</Label>
               <Input
                 id="edit-department"
                 className="col-span-3"
                 value={formData.department}
                 onChange={(e) => setFormData({...formData, department: e.target.value})}
-                placeholder="Optional"
+                placeholder={t('userManagement.form.optional')}
               />
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit" onClick={handleEditUser}>Update User</Button>
+            <Button type="submit" onClick={handleEditUser}>{t('userManagement.form.update')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

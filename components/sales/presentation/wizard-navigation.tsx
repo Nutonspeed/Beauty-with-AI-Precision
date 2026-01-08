@@ -10,6 +10,7 @@
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, ArrowRight, Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 interface WizardNavigationProps {
   currentStep: number
@@ -26,6 +27,7 @@ export function WizardNavigation({
   onNext,
   onPrev,
 }: WizardNavigationProps) {
+  const t = useTranslations()
   const isFirstStep = currentStep === 1
   const isLastStep = currentStep === totalSteps
 
@@ -44,12 +46,12 @@ export function WizardNavigation({
           )}
         >
           <ArrowLeft className="h-5 w-5 mr-2" />
-          Back
+          {t('salesWizard.navigation.back')}
         </Button>
 
         {/* Progress Text (hidden on mobile) */}
         <div className="hidden md:block text-sm text-muted-foreground">
-          Step {currentStep} of {totalSteps}
+          {t('salesWizard.stepCounter', { current: currentStep, total: totalSteps })}
         </div>
 
         {/* Next Button */}
@@ -62,11 +64,11 @@ export function WizardNavigation({
           {isLastStep ? (
             <>
               <Check className="h-5 w-5 mr-2" />
-              Complete
+              {t('salesWizard.navigation.complete')}
             </>
           ) : (
             <>
-              Next
+              {t('salesWizard.navigation.next')}
               <ArrowRight className="h-5 w-5 ml-2" />
             </>
           )}
@@ -76,7 +78,7 @@ export function WizardNavigation({
       {/* Helpful hint */}
       {!canGoNext && (
         <p className="text-xs text-center text-muted-foreground mt-3 md:hidden">
-          Complete this step to continue
+          {t('salesWizard.navigation.hint')}
         </p>
       )}
     </div>

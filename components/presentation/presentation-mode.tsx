@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useTranslations } from 'next-intl';
 import {
   Maximize2,
   Minimize2,
@@ -51,112 +52,6 @@ interface PresentationModeProps {
   onClose?: () => void;
 }
 
-const TRANSLATIONS = {
-  en: {
-    presentationMode: 'Presentation Mode',
-    exitFullscreen: 'Exit Fullscreen',
-    enterFullscreen: 'Enter Fullscreen',
-    overview: 'Overview',
-    comparison: 'Comparison',
-    treatments: 'Treatments',
-    pricing: 'Pricing',
-    timeline: 'Timeline',
-    close: 'Close',
-    previous: 'Previous',
-    next: 'Next',
-    exportPDF: 'Export PDF',
-    share: 'Share',
-    print: 'Print',
-    skinHealthScore: 'Skin Health Score',
-    concerns: 'Skin Concerns',
-    recommendations: 'Recommendations',
-    expectedResults: 'Expected Results',
-    treatmentPlan: 'Treatment Plan',
-    estimatedCost: 'Estimated Cost',
-    duration: 'Duration',
-    sessions: 'Sessions',
-    improvement: 'Improvement',
-    high: 'High',
-    medium: 'Medium',
-    low: 'Low',
-    spots: 'Spots',
-    pores: 'Pores',
-    wrinkles: 'Wrinkles',
-    texture: 'Texture',
-    redness: 'Redness',
-    overall: 'Overall',
-    weeks: 'weeks',
-    months: 'months',
-    baht: 'THB',
-    perSession: 'per session',
-    total: 'Total',
-    recommended: 'Recommended',
-    package: 'Package',
-    save: 'Save',
-    popular: 'Popular',
-    best: 'Best Value',
-    comprehensive: 'Comprehensive',
-    sideBySide: 'Side by Side Comparison',
-    before: 'Before',
-    after: 'After',
-    current: 'Current',
-    baseline: 'Baseline',
-    progress: 'Progress',
-  },
-  th: {
-    presentationMode: 'โหมดนำเสนอ',
-    exitFullscreen: 'ออกจากเต็มหน้าจอ',
-    enterFullscreen: 'เต็มหน้าจอ',
-    overview: 'ภาพรวม',
-    comparison: 'เปรียบเทียบ',
-    treatments: 'การรักษา',
-    pricing: 'ราคา',
-    timeline: 'ระยะเวลา',
-    close: 'ปิด',
-    previous: 'ก่อนหน้า',
-    next: 'ถัดไป',
-    exportPDF: 'ส่งออก PDF',
-    share: 'แชร์',
-    print: 'พิมพ์',
-    skinHealthScore: 'คะแนนสุขภาพผิว',
-    concerns: 'ปัญหาผิว',
-    recommendations: 'คำแนะนำ',
-    expectedResults: 'ผลลัพธ์ที่คาดหวัง',
-    treatmentPlan: 'แผนการรักษา',
-    estimatedCost: 'ค่าใช้จ่ายโดยประมาณ',
-    duration: 'ระยะเวลา',
-    sessions: 'ครั้ง',
-    improvement: 'การปรับปรุง',
-    high: 'สูง',
-    medium: 'ปานกลาง',
-    low: 'ต่ำ',
-    spots: 'จุดด่างดำ',
-    pores: 'รูขุมขน',
-    wrinkles: 'ริ้วรอย',
-    texture: 'เนื้อผิว',
-    redness: 'รอยแดง',
-    overall: 'โดยรวม',
-    weeks: 'สัปดาห์',
-    months: 'เดือน',
-    baht: '฿',
-    perSession: 'ต่อครั้ง',
-    total: 'รวม',
-    recommended: 'แนะนำ',
-    package: 'แพ็คเกจ',
-    save: 'ประหยัด',
-    popular: 'ยอดนิยม',
-    best: 'คุ้มค่าที่สุด',
-    comprehensive: 'ครบวงจร',
-    sideBySide: 'เปรียบเทียบแบบเคียงข้าง',
-    before: 'ก่อน',
-    after: 'หลัง',
-    current: 'ปัจจุบัน',
-    baseline: 'พื้นฐาน',
-    progress: 'ความคืบหน้า',
-  },
-};
-
-// Treatment packages data
 const TREATMENT_PACKAGES = [
   {
     id: 'basic',
@@ -230,9 +125,9 @@ export function PresentationMode({
   onPrint,
   onClose,
 }: PresentationModeProps) {
+  const t = useTranslations();
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [currentTab, setCurrentTab] = useState('overview');
-  const t = TRANSLATIONS[locale];
 
   // Handle fullscreen toggle
   const toggleFullscreen = useCallback(() => {
@@ -285,9 +180,9 @@ export function PresentationMode({
 
   // Concern severity mapping
   const getConcernLevel = (score: number): { level: string; color: string } => {
-    if (score >= 7) return { level: t.high, color: 'text-red-500' };
-    if (score >= 4) return { level: t.medium, color: 'text-yellow-500' };
-    return { level: t.low, color: 'text-green-500' };
+    if (score >= 7) return { level: t('presentationMode.high'), color: 'text-red-500' };
+    if (score >= 4) return { level: t('presentationMode.medium'), color: 'text-yellow-500' };
+    return { level: t('presentationMode.low'), color: 'text-green-500' };
   };
 
   const renderClinicBranding = () => (
@@ -320,7 +215,7 @@ export function PresentationMode({
         <div className="flex items-center gap-4">
           {renderClinicBranding()}
           <Badge variant="secondary" className="ml-4">
-            {t.presentationMode}
+            {t('presentationMode.title')}
           </Badge>
         </div>
 
@@ -328,31 +223,31 @@ export function PresentationMode({
           {onExport && (
             <Button variant="outline" size="sm" onClick={() => onExport('pdf')}>
               <Download className="w-4 h-4 mr-2" />
-              {t.exportPDF}
+              {t('presentationMode.exportPDF')}
             </Button>
           )}
           {onShare && (
             <Button variant="outline" size="sm" onClick={onShare}>
               <Share2 className="w-4 h-4 mr-2" />
-              {t.share}
+              {t('presentationMode.share')}
             </Button>
           )}
           {onPrint && (
             <Button variant="outline" size="sm" onClick={onPrint}>
               <Printer className="w-4 h-4 mr-2" />
-              {t.print}
+              {t('presentationMode.print')}
             </Button>
           )}
           <Button variant="outline" size="sm" onClick={toggleFullscreen}>
             {isFullscreen ? (
               <>
                 <Minimize2 className="w-4 h-4 mr-2" />
-                {t.exitFullscreen}
+                {t('presentationMode.exitFullscreen')}
               </>
             ) : (
               <>
                 <Maximize2 className="w-4 h-4 mr-2" />
-                {t.enterFullscreen}
+                {t('presentationMode.enterFullscreen')}
               </>
             )}
           </Button>
@@ -373,22 +268,22 @@ export function PresentationMode({
         >
           {patientInfo.name && (
             <div>
-              <span className="text-muted-foreground">{locale === 'th' ? 'ชื่อ' : 'Name'}:</span>{' '}
+              <span className="text-muted-foreground">{t('common.name')}:</span>{' '}
               <span className="font-medium">{patientInfo.name}</span>
             </div>
           )}
           {patientInfo.age && (
             <div>
-              <span className="text-muted-foreground">{locale === 'th' ? 'อายุ' : 'Age'}:</span>{' '}
+              <span className="text-muted-foreground">{t('patient.age')}:</span>{' '}
               <span className="font-medium">
-                {patientInfo.age} {locale === 'th' ? 'ปี' : 'years'}
+                {patientInfo.age} {t('common.years')}
               </span>
             </div>
           )}
           {patientInfo.skinType && (
             <div>
               <span className="text-muted-foreground">
-                {locale === 'th' ? 'ประเภทผิว' : 'Skin Type'}:
+                {t('patient.skinType.label')}:
               </span>{' '}
               <span className="font-medium capitalize">{patientInfo.skinType}</span>
             </div>
@@ -403,11 +298,11 @@ export function PresentationMode({
       <div className={`flex-1 overflow-auto ${isFullscreen ? 'px-8 py-6' : 'p-4'}`}>
         <Tabs value={currentTab} onValueChange={setCurrentTab} className="h-full">
           <TabsList className={`grid w-full ${isFullscreen ? 'max-w-3xl' : 'max-w-2xl'} mx-auto grid-cols-5 mb-6`}>
-            <TabsTrigger value="overview">{t.overview}</TabsTrigger>
-            <TabsTrigger value="comparison">{t.comparison}</TabsTrigger>
-            <TabsTrigger value="treatments">{t.treatments}</TabsTrigger>
-            <TabsTrigger value="pricing">{t.pricing}</TabsTrigger>
-            <TabsTrigger value="timeline">{t.timeline}</TabsTrigger>
+            <TabsTrigger value="overview">{t('presentationMode.overview')}</TabsTrigger>
+            <TabsTrigger value="comparison">{t('presentationMode.comparison')}</TabsTrigger>
+            <TabsTrigger value="treatments">{t('presentationMode.treatments')}</TabsTrigger>
+            <TabsTrigger value="pricing">{t('presentationMode.pricing')}</TabsTrigger>
+            <TabsTrigger value="timeline">{t('presentationMode.timeline')}</TabsTrigger>
           </TabsList>
 
           {/* Overview Tab */}
@@ -418,7 +313,7 @@ export function PresentationMode({
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <TrendingUp className="w-5 h-5" />
-                    {t.skinHealthScore}
+                    {t('presentationMode.skinHealthScore')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -427,11 +322,11 @@ export function PresentationMode({
                       {analysis.percentiles.overall}
                     </div>
                     <div className="text-sm text-muted-foreground">
-                      {locale === 'th' ? 'จาก 100 คะแนน' : 'out of 100'}
+                      {t('analysis.rawCount')}
                     </div>
                     <div className="mt-4 pt-4 border-t">
                       <div className="text-sm text-muted-foreground mb-2">
-                        {locale === 'th' ? 'ความมั่นใจ' : 'Confidence'}
+                        {t('analysis.metrics.confidence')}
                       </div>
                       <div className="text-2xl font-semibold">
                         {Math.round(analysis.confidence * 100)}%
@@ -446,7 +341,7 @@ export function PresentationMode({
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Eye className="w-5 h-5" />
-                    {t.concerns}
+                    {t('presentationMode.concerns')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
@@ -454,7 +349,7 @@ export function PresentationMode({
                     const { level, color } = getConcernLevel(value);
                     return (
                       <div key={key} className="flex items-center justify-between">
-                        <span className="capitalize">{t[key as keyof typeof t] || key}</span>
+                        <span className="capitalize">{t(`common.${key}`)}</span>
                         <div className="flex items-center gap-2">
                           <div className="w-24 h-2 bg-muted rounded-full overflow-hidden">
                             <div
@@ -475,7 +370,7 @@ export function PresentationMode({
             {analysis.imageUrl && (
               <Card>
                 <CardHeader>
-                  <CardTitle>{locale === 'th' ? 'ภาพถ่ายผิว' : 'Skin Photos'}</CardTitle>
+                  <CardTitle>{t('analysis.inputAsset')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="relative aspect-[4/3] rounded-lg overflow-hidden">
@@ -497,18 +392,14 @@ export function PresentationMode({
               <>
                 <Card>
                   <CardHeader>
-                    <CardTitle>{t.sideBySide}</CardTitle>
+                    <CardTitle>{t('presentationMode.sideBySide')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <BeforeAfterSlider
                       beforeImage={comparisonAnalysis.imageUrl}
                       afterImage={analysis.imageUrl}
-                      title={locale === 'th' ? 'เปรียบเทียบผลลัพธ์' : 'Results Comparison'}
-                      description={
-                        locale === 'th'
-                          ? 'ลากแถบเพื่อเปรียบเทียบผล'
-                          : 'Drag to compare results'
-                      }
+                      title={t('presentationMode.comparison')}
+                      description={t('presentationMode.progress')}
                     />
                   </CardContent>
                 </Card>
@@ -516,7 +407,7 @@ export function PresentationMode({
                 {/* Score Comparison */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>{t.progress}</CardTitle>
+                    <CardTitle>{t('presentationMode.progress')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="grid gap-4 md:grid-cols-2">
@@ -536,16 +427,16 @@ export function PresentationMode({
                             className="p-4 rounded-lg border bg-gradient-to-r from-muted/30 to-muted/10"
                           >
                             <div className="text-sm font-medium mb-2 capitalize">
-                              {t[key as keyof typeof t] || key}
+                              {t(`common.${key}`)}
                             </div>
                             <div className="flex items-end gap-4">
                               <div>
-                                <div className="text-xs text-muted-foreground">{t.before}</div>
+                                <div className="text-xs text-muted-foreground">{t('presentationMode.before')}</div>
                                 <div className="text-2xl font-bold">{previousValue.toFixed(1)}</div>
                               </div>
                               <div className="text-2xl text-muted-foreground">→</div>
                               <div>
-                                <div className="text-xs text-muted-foreground">{t.current}</div>
+                                <div className="text-xs text-muted-foreground">{t('presentationMode.current')}</div>
                                 <div className="text-2xl font-bold text-primary">
                                   {currentValue.toFixed(1)}
                                 </div>
@@ -568,9 +459,7 @@ export function PresentationMode({
             ) : (
               <Card>
                 <CardContent className="py-12 text-center text-muted-foreground">
-                  {locale === 'th'
-                    ? 'ไม่มีข้อมูลเปรียบเทียบ กรุณาทำการวิเคราะห์อีกครั้งเพื่อดูความคืบหน้า'
-                    : 'No comparison data available. Perform another analysis to see progress.'}
+                  {t('analysis.noData')}
                 </CardContent>
               </Card>
             )}
@@ -594,12 +483,12 @@ export function PresentationMode({
                   <CardHeader>
                     <CardTitle>{pkg.name[locale]}</CardTitle>
                     <div className="text-3xl font-bold text-primary">
-                      {locale === 'th' ? '฿' : 'THB '}
+                      {t('presentationMode.baht')}
                       {pkg.price.toLocaleString()}
                     </div>
                     {pkg.discount && (
                       <div className="text-sm text-muted-foreground line-through">
-                        {locale === 'th' ? '฿' : 'THB '}
+                        {t('presentationMode.baht')}
                         {pkg.originalPrice?.toLocaleString()}
                       </div>
                     )}
@@ -610,7 +499,7 @@ export function PresentationMode({
                         <div key={idx} className="flex justify-between text-sm">
                           <span>{treatment.name[locale]}</span>
                           <span className="text-muted-foreground">
-                            {treatment.sessions} {t.sessions}
+                            {treatment.sessions} {t('presentationMode.sessions')}
                           </span>
                         </div>
                       ))}
@@ -620,16 +509,16 @@ export function PresentationMode({
                       <div className="flex items-center justify-between text-sm">
                         <span className="flex items-center gap-2">
                           <Clock className="w-4 h-4" />
-                          {t.duration}
+                          {t('presentationMode.duration')}
                         </span>
                         <span className="font-medium">
-                          {pkg.duration.weeks} {t.weeks}
+                          {pkg.duration.weeks} {t('presentationMode.weeks')}
                         </span>
                       </div>
                       <div className="flex items-center justify-between text-sm">
                         <span className="flex items-center gap-2">
                           <Zap className="w-4 h-4" />
-                          {t.improvement}
+                          {t('presentationMode.improvement')}
                         </span>
                         <span className="font-medium text-green-600">+{pkg.improvement}%</span>
                       </div>
@@ -637,17 +526,17 @@ export function PresentationMode({
                         <div className="flex items-center justify-between text-sm">
                           <span className="flex items-center gap-2">
                             <DollarSign className="w-4 h-4" />
-                            {t.save}
+                            {t('presentationMode.save')}
                           </span>
                           <span className="font-medium text-green-600">
-                            {pkg.discount}% ({locale === 'th' ? '฿' : 'THB '}
+                            {pkg.discount}% ({t('presentationMode.baht')}
                             {(pkg.originalPrice! - pkg.price).toLocaleString()})
                           </span>
                         </div>
                       )}
                     </div>
 
-                    <Button className="w-full">{t.recommended}</Button>
+                    <Button className="w-full">{t('presentationMode.recommended')}</Button>
                   </CardContent>
                 </Card>
               ))}
@@ -658,7 +547,7 @@ export function PresentationMode({
           <TabsContent value="pricing" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>{t.estimatedCost}</CardTitle>
+                <CardTitle>{t('presentationMode.estimatedCost')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -671,17 +560,17 @@ export function PresentationMode({
                         <div>
                           <div className="font-semibold text-lg">{pkg.name[locale]}</div>
                           <div className="text-sm text-muted-foreground">
-                            {pkg.sessions} {t.sessions} • {pkg.duration.weeks} {t.weeks}
+                            {pkg.sessions} {t('presentationMode.sessions')} • {pkg.duration.weeks} {t('presentationMode.weeks')}
                           </div>
                         </div>
                         <div className="text-right">
                           <div className="text-2xl font-bold text-primary">
-                            {locale === 'th' ? '฿' : 'THB '}
+                            {t('presentationMode.baht')}
                             {pkg.price.toLocaleString()}
                           </div>
                           {pkg.discount && (
                             <Badge variant="default" className="bg-green-500 mt-1">
-                              {t.save} {pkg.discount}%
+                              {t('presentationMode.save')} {pkg.discount}%
                             </Badge>
                           )}
                         </div>
@@ -691,7 +580,7 @@ export function PresentationMode({
                         {Object.entries(pkg.effectiveness).map(([key, value]) => (
                           <div key={key} className="text-center">
                             <div className="text-xs text-muted-foreground mb-1 capitalize">
-                              {t[key as keyof typeof t] || key}
+                              {t(`common.${key}`)}
                             </div>
                             <div className="font-semibold text-green-600">{value}%</div>
                           </div>
@@ -708,7 +597,7 @@ export function PresentationMode({
           <TabsContent value="timeline" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>{t.treatmentPlan}</CardTitle>
+                <CardTitle>{t('presentationMode.treatmentPlan')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-8">
@@ -721,7 +610,7 @@ export function PresentationMode({
                         <div>
                           <div className="font-semibold">{pkg.name[locale]}</div>
                           <div className="text-sm text-muted-foreground">
-                            {pkg.duration.months} {t.months} {t.timeline}
+                            {pkg.duration.months} {t('presentationMode.months')} {t('presentationMode.timeline')}
                           </div>
                         </div>
                       </div>
@@ -739,7 +628,7 @@ export function PresentationMode({
                               <div className="font-medium">{treatment.name[locale]}</div>
                             </div>
                             <div className="text-sm text-muted-foreground">
-                              {treatment.sessions} {t.sessions}
+                              {treatment.sessions} {t('presentationMode.sessions')}
                             </div>
                           </div>
                         ))}
@@ -747,10 +636,10 @@ export function PresentationMode({
                         <div className="p-3 rounded-lg bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/30">
                           <div className="flex items-center justify-between">
                             <span className="text-sm font-medium">
-                              {t.expectedResults}
+                              {t('presentationMode.expectedResults')}
                             </span>
                             <span className="text-lg font-bold text-green-600">
-                              +{pkg.improvement}% {t.improvement}
+                              +{pkg.improvement}% {t('presentationMode.improvement')}
                             </span>
                           </div>
                         </div>
@@ -782,13 +671,11 @@ export function PresentationMode({
           disabled={currentTab === 'overview'}
         >
           <ChevronLeft className="w-4 h-4 mr-2" />
-          {t.previous}
+          {t('presentationMode.previous')}
         </Button>
 
         <div className="text-sm text-muted-foreground">
-          {locale === 'th'
-            ? 'ใช้ลูกศรซ้าย/ขวา เพื่อนำทาง'
-            : 'Use arrow keys to navigate'}
+          {t('presentationMode.navigationHint')}
         </div>
 
         <Button
@@ -802,7 +689,7 @@ export function PresentationMode({
           }}
           disabled={currentTab === 'timeline'}
         >
-          {t.next}
+          {t('presentationMode.next')}
           <ChevronRight className="w-4 h-4 ml-2" />
         </Button>
       </div>

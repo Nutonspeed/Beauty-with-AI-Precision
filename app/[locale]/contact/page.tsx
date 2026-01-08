@@ -21,9 +21,11 @@ import {
   Sparkles
 } from "lucide-react"
 import { useTranslations } from "next-intl"
+import { useLocalizePath } from "@/lib/i18n/locale-link"
 
 export default function ContactPage() {
   const t = useTranslations()
+  const lp = useLocalizePath()
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -111,7 +113,7 @@ export default function ContactPage() {
                             id="email"
                             name="email"
                             type="email"
-                            placeholder="your@email.com"
+                            placeholder={t('contact.form.emailPlaceholder')}
                             value={formData.email}
                             onChange={handleChange}
                             required
@@ -128,7 +130,7 @@ export default function ContactPage() {
                             id="phone"
                             name="phone"
                             type="tel"
-                            placeholder="08X-XXX-XXXX"
+                            placeholder={t('contact.form.phonePlaceholder')}
                             value={formData.phone}
                             onChange={handleChange}
                           />
@@ -228,9 +230,9 @@ export default function ContactPage() {
                   <div className="flex items-start gap-3">
                     <Mail className="mt-1 h-5 w-5 text-primary" />
                     <div>
-                      <div className="font-semibold">Email</div>
-                      <a href="mailto:contact@ai367bar.com" className="text-sm text-muted-foreground hover:text-primary">
-                        contact@ai367bar.com
+                      <div className="font-semibold">{t('contact.info.email')}</div>
+                      <a href="mailto:contact@cliniciq.ai" className="text-sm text-muted-foreground hover:text-primary">
+                        contact@cliniciq.ai
                       </a>
                     </div>
                   </div>
@@ -240,8 +242,8 @@ export default function ContactPage() {
                       <div className="font-semibold">
                         {t('contact.info.phone')}
                       </div>
-                      <a href="tel:+66123456789" className="text-sm text-muted-foreground hover:text-primary">
-                        +66 (0) 12-345-6789
+                      <a href="tel:+6620000000" className="text-sm text-muted-foreground hover:text-primary">
+                        +66 (0) 2-000-0000
                       </a>
                     </div>
                   </div>

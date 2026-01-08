@@ -8,7 +8,7 @@
  */
 
 // @ts-nocheck
-import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 
 // Mock ImageData for Node.js environment
 class ImageData {

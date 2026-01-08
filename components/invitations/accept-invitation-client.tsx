@@ -21,21 +21,24 @@ interface InvitationData {
   error_message: string | null
 }
 
-const roleNames: Record<string, string> = {
-  clinic_owner: 'เจ้าของคลินิก',
-  clinic_manager: 'ผู้จัดการคลินิก',
-  clinic_staff: 'พนักงานคลินิก',
-  sales_staff: 'พนักงานขาย',
-  customer: 'ลูกค้า',
-}
+import { useTranslations } from 'next-intl'
 
 interface AcceptInvitationClientProps {
   token: string
 }
 
 export default function AcceptInvitationClient({ token }: AcceptInvitationClientProps) {
+  const t = useTranslations()
   const router = useRouter()
   const lp = useLocalizePath()
+
+  const roleNames: Record<string, string> = {
+    clinic_owner: t('roles.clinic_owner'),
+    clinic_manager: t('roles.clinic_manager'),
+    clinic_staff: t('roles.clinic_staff'),
+    sales_staff: t('roles.sales_staff'),
+    customer: t('roles.customer'),
+  }
 
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
@@ -57,11 +60,11 @@ export default function AcceptInvitationClient({ token }: AcceptInvitationClient
         const data = await response.json()
 
         if (!response.ok) {
-          throw new Error(data.error || 'Failed to validate invitation')
+          throw new Error(data.error || t('acceptInvitation.errors.validateFailed'))
         }
 
         if (!data.success || !data.invitation.is_valid) {
-          throw new Error(data.invitation.error_message || 'Invitation is not valid')
+          throw new Error(data.invitation.error_message || t('acceptInvitation.errors.validateFailed'))
         }
 
         setInvitation(data.invitation)
@@ -81,17 +84,17 @@ export default function AcceptInvitationClient({ token }: AcceptInvitationClient
     setFormError(null)
 
     if (!fullName.trim()) {
-      setFormError('กรุณากรอกชื่อ-นามสกุล')
+      setFormError(t('acceptInvitation.errors.fullNameRequired'))
       return
     }
 
     if (password.length < 8) {
-      setFormError('รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร')
+      setFormError(t('acceptInvitation.errors.passwordTooShort'))
       return
     }
 
     if (password !== confirmPassword) {
-      setFormError('รหัสผ่านไม่ตรงกัน')
+      setFormError(t('acceptInvitation.errors.passwordMismatch'))
       return
     }
 
@@ -113,7 +116,7 @@ export default function AcceptInvitationClient({ token }: AcceptInvitationClient
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to create account')
+        throw new Error(data.error || t('acceptInvitation.errors.createFailed'))
       }
 
       const role = data.user.role
@@ -133,7 +136,7 @@ export default function AcceptInvitationClient({ token }: AcceptInvitationClient
       router.refresh()
     } catch (err: any) {
       console.error('Error accepting invitation:', err)
-      setFormError(err.message || 'เกิดข้อผิดพลาดในการสร้างบัญชี')
+      setFormError(err.message || t('acceptInvitation.errors.createFailed'))
     } finally {
       setSubmitting(false)
     }
@@ -145,7 +148,7 @@ export default function AcceptInvitationClient({ token }: AcceptInvitationClient
         <Card className="w-full max-w-md">
           <CardContent className="flex flex-col items-center justify-center py-12">
             <Loader2 className="w-12 h-12 text-blue-600 animate-spin mb-4" />
-            <p className="text-gray-600">กำลังตรวจสอบคำเชิญ...</p>
+            <p className="text-gray-600">{t('acceptInvitation.checking')}</p>
           </CardContent>
         </Card>
       </div>
@@ -162,31 +165,31 @@ export default function AcceptInvitationClient({ token }: AcceptInvitationClient
                 <XCircle className="w-8 h-8 text-red-600" />
               </div>
             </div>
-            <CardTitle className="text-2xl font-bold text-red-600">คำเชิญไม่ถูกต้อง</CardTitle>
-            <CardDescription className="text-base mt-2">Invalid Invitation</CardDescription>
+            <CardTitle className="text-2xl font-bold text-red-600">{t('acceptInvitation.invalidTitle')}</CardTitle>
+            <CardDescription className="text-base mt-2">{t('acceptInvitation.invalidSubtitle')}</CardDescription>
           </CardHeader>
 
           <CardContent className="space-y-4">
             <Alert className="bg-red-50 border-red-200">
               <AlertDescription className="text-red-900">
-                {error || 'ไม่พบคำเชิญหรือคำเชิญหมดอายุแล้ว'}
+                {error || t('acceptInvitation.errors.validateFailed')}
               </AlertDescription>
             </Alert>
 
             <div className="text-sm text-gray-600 space-y-2">
               <p>
-                <strong>สาเหตุที่เป็นไปได้:</strong>
+                <strong>{t('acceptInvitation.reasons.title')}</strong>
               </p>
               <ul className="list-disc list-inside pl-2 space-y-1">
-                <li>ลิงก์คำเชิญหมดอายุ (7 วัน)</li>
-                <li>คำเชิญถูกยกเลิกแล้ว</li>
-                <li>บัญชีถูกสร้างไปแล้ว</li>
-                <li>ลิงก์ไม่ถูกต้อง</li>
+                <li>{t('acceptInvitation.reasons.expired')}</li>
+                <li>{t('acceptInvitation.reasons.cancelled')}</li>
+                <li>{t('acceptInvitation.reasons.alreadyCreated')}</li>
+                <li>{t('acceptInvitation.reasons.invalidLink')}</li>
               </ul>
             </div>
 
             <Button className="w-full" onClick={() => router.push(lp('/auth/login'))}>
-              กลับไปหน้าเข้าสู่ระบบ
+              {t('acceptInvitation.backToLogin')}
             </Button>
           </CardContent>
         </Card>
@@ -203,8 +206,8 @@ export default function AcceptInvitationClient({ token }: AcceptInvitationClient
               <CheckCircle2 className="w-8 h-8 text-white" />
             </div>
           </div>
-          <CardTitle className="text-2xl font-bold">ยินดีต้อนรับ!</CardTitle>
-          <CardDescription className="text-base mt-2">สร้างบัญชีของคุณ</CardDescription>
+          <CardTitle className="text-2xl font-bold">{t('acceptInvitation.title')}</CardTitle>
+          <CardDescription className="text-base mt-2">{t('acceptInvitation.subtitle')}</CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-6">
@@ -213,16 +216,16 @@ export default function AcceptInvitationClient({ token }: AcceptInvitationClient
             <AlertDescription className="text-blue-900">
               <div className="space-y-2">
                 <div>
-                  <strong className="block text-sm">อีเมล:</strong>
+                  <strong className="block text-sm">{t('acceptInvitation.emailLabel')}</strong>
                   <p className="text-sm">{invitation.email}</p>
                 </div>
                 <div>
-                  <strong className="block text-sm">บทบาท:</strong>
+                  <strong className="block text-sm">{t('acceptInvitation.roleLabel')}</strong>
                   <p className="text-sm">{roleNames[invitation.invited_role] || invitation.invited_role}</p>
                 </div>
                 {invitation.clinic_name && (
                   <div>
-                    <strong className="block text-sm">คลินิก:</strong>
+                    <strong className="block text-sm">{t('acceptInvitation.clinicLabel')}</strong>
                     <p className="text-sm">{invitation.clinic_name}</p>
                   </div>
                 )}
@@ -239,12 +242,12 @@ export default function AcceptInvitationClient({ token }: AcceptInvitationClient
 
             <div className="space-y-2">
               <Label htmlFor="fullName">
-                ชื่อ-นามสกุล <span className="text-red-500">*</span>
+                {t('acceptInvitation.fullNameLabel')} <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="fullName"
                 type="text"
-                placeholder="กรอกชื่อ-นามสกุล"
+                placeholder={t('acceptInvitation.fullNamePlaceholder')}
                 value={fullName}
                 onChange={(event) => setFullName(event.target.value)}
                 required
@@ -254,12 +257,12 @@ export default function AcceptInvitationClient({ token }: AcceptInvitationClient
 
             <div className="space-y-2">
               <Label htmlFor="password">
-                รหัสผ่าน <span className="text-red-500">*</span>
+                {t('acceptInvitation.passwordLabel')} <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="password"
                 type="password"
-                placeholder="อย่างน้อย 8 ตัวอักษร"
+                placeholder={t('acceptInvitation.passwordHint')}
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 required
@@ -270,12 +273,12 @@ export default function AcceptInvitationClient({ token }: AcceptInvitationClient
 
             <div className="space-y-2">
               <Label htmlFor="confirmPassword">
-                ยืนยันรหัสผ่าน <span className="text-red-500">*</span>
+                {t('acceptInvitation.confirmPasswordLabel')} <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="confirmPassword"
                 type="password"
-                placeholder="กรอกรหัสผ่านอีกครั้ง"
+                placeholder={t('acceptInvitation.confirmPasswordPlaceholder')}
                 value={confirmPassword}
                 onChange={(event) => setConfirmPassword(event.target.value)}
                 required
@@ -288,16 +291,16 @@ export default function AcceptInvitationClient({ token }: AcceptInvitationClient
               {submitting ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  กำลังสร้างบัญชี...
+                  {t('acceptInvitation.submitting')}
                 </>
               ) : (
-                'สร้างบัญชีและเข้าสู่ระบบ'
+                t('acceptInvitation.submit')
               )}
             </Button>
           </form>
 
           <div className="text-center text-xs text-gray-500">
-            <p>เมื่อสร้างบัญชี คุณจะถูกนำเข้าสู่ระบบโดยอัตโนมัติ</p>
+            <p>{t('acceptInvitation.autoLoginHint')}</p>
           </div>
         </CardContent>
       </Card>

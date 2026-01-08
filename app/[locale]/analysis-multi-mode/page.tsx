@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Upload, Image, Loader2, AlertCircle } from 'lucide-react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { useTranslations } from 'next-intl'
 
 // Static mock data - แก้ไข hydration mismatch โดยใช้ค่าคงที่แทน Math.random()
 const MOCK_DETECTION_DATA = {
@@ -214,6 +215,7 @@ const INITIAL_ANALYSIS_DATA: AnalysisMode[] = [
 ]
 
 export default function MultiModeAnalysisPage() {
+  const t = useTranslations()
   const [selectedImage, setSelectedImage] = useState<string>('/test-face.jpg')
   const [analysisData, setAnalysisData] = useState<AnalysisMode[]>(INITIAL_ANALYSIS_DATA)
   const [detectionData, setDetectionData] = useState(MOCK_DETECTION_DATA)
@@ -338,14 +340,13 @@ export default function MultiModeAnalysisPage() {
             {/* Hero Section */}
             <div className="text-center space-y-4">
               <h1 className="text-4xl font-bold tracking-tight">
-                Multi-Mode Skin Analysis
+                {t('analysis.multiMode.title')}
               </h1>
               <p className="text-xl text-primary">
-                การวิเคราะห์ผิว 8 โหมด
+                {t('analysis.multiMode.subtitle')}
               </p>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                ระบบวิเคราะห์ผิวหน้าแบบครบวงจร ด้วย AI และ Computer Vision 
-                แสดงผลใน 8 โหมดต่างๆ เพื่อการวิเคราะห์ที่ละเอียดและแม่นยำ
+                {t('analysis.multiMode.description')}
               </p>
             </div>
 
@@ -354,7 +355,7 @@ export default function MultiModeAnalysisPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Upload className="h-5 w-5" />
-                  Upload Image / อัพโหลดรูปภาพ
+                  {t('analysis.multiMode.uploadTitle')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -369,12 +370,12 @@ export default function MultiModeAnalysisPage() {
                         className="w-4 h-4 cursor-pointer"
                       />
                       <span className="text-sm font-medium">
-                        🚀 Use Real AI Analysis (Python FastAPI)
+                        {t('analysis.multiMode.useRealApi')}
                       </span>
                     </label>
                     {!useRealAPI && (
                       <span className="text-xs text-muted-foreground">
-                        (Currently using mock data)
+                        {t('analysis.multiMode.usingMockData')}
                       </span>
                     )}
                   </div>
@@ -406,19 +407,19 @@ export default function MultiModeAnalysisPage() {
                       {isAnalyzing ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Analyzing...
+                          {t('analysis.multiMode.analyzing')}
                         </>
                       ) : (
                         <>
                           <Image className="mr-2 h-4 w-4" />
-                          Choose Image
+                          {t('analysis.multiMode.chooseImage')}
                         </>
                       )}
                     </Button>
                     <div className="text-sm text-muted-foreground">
                       {isAnalyzing 
-                        ? '🔬 AI is analyzing your image...' 
-                        : 'หรือใช้ภาพตัวอย่างด้านล่าง'
+                        ? t('analysis.multiMode.analyzingState')
+                        : t('analysis.multiMode.useSampleBelow')
                       }
                     </div>
                   </div>
@@ -434,7 +435,7 @@ export default function MultiModeAnalysisPage() {
                     <div className="text-3xl font-bold text-yellow-600">
                       {analysisData.find(m => m.id === 'spots')?.count || 0}
                     </div>
-                    <div className="text-sm text-muted-foreground">Spots Detected</div>
+                    <div className="text-sm text-muted-foreground">{t('analysis.multiMode.spotsDetected')}</div>
                   </div>
                 </CardContent>
               </Card>
@@ -444,7 +445,7 @@ export default function MultiModeAnalysisPage() {
                     <div className="text-3xl font-bold text-green-600">
                       {analysisData.find(m => m.id === 'wrinkles')?.count || 0}
                     </div>
-                    <div className="text-sm text-muted-foreground">Wrinkles Detected</div>
+                    <div className="text-sm text-muted-foreground">{t('analysis.multiMode.wrinklesDetected')}</div>
                   </div>
                 </CardContent>
               </Card>
@@ -454,7 +455,7 @@ export default function MultiModeAnalysisPage() {
                     <div className="text-3xl font-bold text-purple-600">
                       {analysisData.find(m => m.id === 'pores')?.count || 0}
                     </div>
-                    <div className="text-sm text-muted-foreground">Pores Detected</div>
+                    <div className="text-sm text-muted-foreground">{t('analysis.multiMode.poresDetected')}</div>
                   </div>
                 </CardContent>
               </Card>
@@ -464,7 +465,7 @@ export default function MultiModeAnalysisPage() {
                     <div className="text-3xl font-bold text-red-600">
                       {analysisData.find(m => m.id === 'red_areas')?.count || 0}
                     </div>
-                    <div className="text-sm text-muted-foreground">Red Areas</div>
+                    <div className="text-sm text-muted-foreground">{t('analysis.multiMode.redAreas')}</div>
                   </div>
                 </CardContent>
               </Card>
@@ -480,12 +481,12 @@ export default function MultiModeAnalysisPage() {
             {/* Information */}
             <Card className="bg-primary/5 border-primary/20">
               <CardContent className="pt-6">
-                <h3 className="font-semibold mb-2">🔬 เทคโนโลยีที่ใช้</h3>
+                <h3 className="font-semibold mb-2">{t('analysis.multiMode.techTitle')}</h3>
                 <ul className="space-y-1 text-sm text-muted-foreground">
-                  <li>• <strong>Computer Vision:</strong> 6 algorithms สำหรับ spots, pores, wrinkles, texture, color, redness</li>
-                  <li>• <strong>AI Analysis:</strong> Hugging Face + Google Vision + Gemini 2.0</li>
-                  <li>• <strong>UV Detection:</strong> Spectral analysis สำหรับจุดใต้ผิว</li>
-                  <li>• <strong>Porphyrins Detection:</strong> Fluorescence detection สำหรับแบคทีเรีย</li>
+                  <li>• <strong>Computer Vision:</strong> {t('analysis.multiMode.techItems.cv')}</li>
+                  <li>• <strong>AI Analysis:</strong> {t('analysis.multiMode.techItems.ai')}</li>
+                  <li>• <strong>UV Detection:</strong> {t('analysis.multiMode.techItems.uv')}</li>
+                  <li>• <strong>Porphyrins Detection:</strong> {t('analysis.multiMode.techItems.porphyrins')}</li>
                 </ul>
               </CardContent>
             </Card>

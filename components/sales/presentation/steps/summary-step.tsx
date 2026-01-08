@@ -15,6 +15,8 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { useTranslations, useLocale } from 'next-intl'
+import { th, enUS } from 'date-fns/locale'
 import {
   Accordion,
   AccordionContent,
@@ -52,6 +54,9 @@ export function SummaryStep({
   onComplete,
   isOnline,
 }: SummaryStepProps) {
+  const t = useTranslations()
+  const locale = useLocale()
+  const dateLocale = locale === 'th' ? th : enUS
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [isDrawing, setIsDrawing] = useState(false)
   const [signature, setSignature] = useState<string | null>(data.signature)
@@ -204,7 +209,7 @@ export function SummaryStep({
   // Complete presentation
   const handleComplete = () => {
     if (!signature) {
-      alert('Please provide your signature before completing.')
+      alert(t('salesWizard.steps.summary.signAlert'))
       return
     }
 
@@ -217,7 +222,7 @@ export function SummaryStep({
       <Alert className="bg-green-50 dark:bg-green-950/20 border-green-200">
         <CheckCircle2 className="h-4 w-4 text-green-600" />
         <AlertDescription className="text-sm text-green-900 dark:text-green-100">
-          Review the complete proposal and sign to finalize the agreement.
+          {t('salesWizard.steps.summary.instructions')}
         </AlertDescription>
       </Alert>
 
@@ -226,7 +231,7 @@ export function SummaryStep({
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription className="text-sm">
-            You're offline. Data will be saved locally and can be sent when you're back online.
+            {t('salesWizard.steps.summary.offlineWarning')}
           </AlertDescription>
         </Alert>
       )}
@@ -236,9 +241,9 @@ export function SummaryStep({
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
             <FileText className="h-5 w-5" />
-            Presentation Summary
+            {t('salesWizard.steps.summary.summaryTitle')}
           </CardTitle>
-          <CardDescription>Review all captured information</CardDescription>
+          <CardDescription>{t('salesWizard.steps.summary.summaryDesc')}</CardDescription>
         </CardHeader>
 
         <CardContent>
@@ -248,15 +253,15 @@ export function SummaryStep({
               <AccordionTrigger className="text-sm font-medium">
                 <div className="flex items-center gap-2">
                   <Badge>1</Badge>
-                  Customer Information
+                  {t('salesWizard.steps.summary.sectionCustomerInfo')}
                 </div>
               </AccordionTrigger>
               <AccordionContent>
                 <div className="space-y-2 text-sm pl-8">
-                  <p><strong>Name:</strong> {data.customer.name}</p>
-                  <p><strong>Phone:</strong> {data.customer.phone}</p>
+                  <p><strong>{t('common.name')}:</strong> {data.customer.name}</p>
+                  <p><strong>{t('common.phone')}:</strong> {data.customer.phone}</p>
                   {data.customer.email && (
-                    <p><strong>Email:</strong> {data.customer.email}</p>
+                    <p><strong>{t('common.email')}:</strong> {data.customer.email}</p>
                   )}
                 </div>
               </AccordionContent>
@@ -267,28 +272,28 @@ export function SummaryStep({
               <AccordionTrigger className="text-sm font-medium">
                 <div className="flex items-center gap-2">
                   <Badge>2</Badge>
-                  Scanned Images
-                  <Badge variant="secondary">{Object.values(data.scannedImages).filter(Boolean).length} photos</Badge>
+                  {t('salesWizard.steps.summary.sectionScannedImages')}
+                  <Badge variant="secondary">{t('salesWizard.steps.summary.photosCount', { count: Object.values(data.scannedImages).filter(Boolean).length })}</Badge>
                 </div>
               </AccordionTrigger>
               <AccordionContent>
                 <div className="grid grid-cols-3 gap-2 pl-8">
                   {data.scannedImages.front && (
                     <div>
-                      <img src={data.scannedImages.front} alt="Front" className="w-full rounded aspect-square object-cover" />
-                      <p className="text-xs text-center mt-1">Front</p>
+                      <img src={data.scannedImages.front} alt={t('salesWizard.steps.summary.angleFront')} className="w-full rounded aspect-square object-cover" />
+                      <p className="text-xs text-center mt-1">{t('salesWizard.steps.summary.angleFront')}</p>
                     </div>
                   )}
                   {data.scannedImages.left && (
                     <div>
-                      <img src={data.scannedImages.left} alt="Left" className="w-full rounded aspect-square object-cover" />
-                      <p className="text-xs text-center mt-1">Left</p>
+                      <img src={data.scannedImages.left} alt={t('salesWizard.steps.summary.angleLeft')} className="w-full rounded aspect-square object-cover" />
+                      <p className="text-xs text-center mt-1">{t('salesWizard.steps.summary.angleLeft')}</p>
                     </div>
                   )}
                   {data.scannedImages.right && (
                     <div>
-                      <img src={data.scannedImages.right} alt="Right" className="w-full rounded aspect-square object-cover" />
-                      <p className="text-xs text-center mt-1">Right</p>
+                      <img src={data.scannedImages.right} alt={t('salesWizard.steps.summary.angleRight')} className="w-full rounded aspect-square object-cover" />
+                      <p className="text-xs text-center mt-1">{t('salesWizard.steps.summary.angleRight')}</p>
                     </div>
                   )}
                 </div>
@@ -301,7 +306,7 @@ export function SummaryStep({
                 <AccordionTrigger className="text-sm font-medium">
                   <div className="flex items-center gap-2">
                     <Badge>3</Badge>
-                    AI Analysis Results
+                    {t('salesWizard.steps.summary.sectionAIAnalysis')}
                   </div>
                 </AccordionTrigger>
                 <AccordionContent>
@@ -309,16 +314,16 @@ export function SummaryStep({
                     {analysisSummary && (
                       <div className="text-sm space-y-1">
                         <p>
-                          <strong>Skin Age:</strong> {analysisSummary.skinAge} years
+                          <strong>{t('salesWizard.steps.summary.skinAge')}:</strong> {analysisSummary.skinAge} {t('salesQuickScan.results.years')}
                         </p>
                         <p>
-                          <strong>Condition:</strong> {analysisSummary.skinCondition}
+                          <strong>{t('salesWizard.steps.summary.condition')}:</strong> {analysisSummary.skinCondition}
                         </p>
                         <p>
-                          <strong>Age Difference:</strong> {analysisSummary.ageDifference > 0 ? '+' : ''}{analysisSummary.ageDifference} years
+                          <strong>{t('salesWizard.steps.summary.ageDiff')}:</strong> {analysisSummary.ageDifference > 0 ? '+' : ''}{analysisSummary.ageDifference} {t('salesQuickScan.results.years')}
                         </p>
                         <p>
-                          <strong>Recommendations:</strong> {analysisSummary.recommendationsCount} personalized tips
+                          <strong>{t('salesWizard.steps.summary.personalizedTips')}:</strong> {t('salesWizard.steps.summary.personalizedTips', { count: analysisSummary.recommendationsCount })}
                         </p>
                       </div>
                     )}
@@ -332,8 +337,8 @@ export function SummaryStep({
               <AccordionTrigger className="text-sm font-medium">
                 <div className="flex items-center gap-2">
                   <Badge>4</Badge>
-                  Selected Treatments
-                  <Badge variant="secondary">{data.selectedTreatments.length} items</Badge>
+                  {t('salesWizard.steps.summary.sectionTreatments')}
+                  <Badge variant="secondary">{t('salesWizard.steps.summary.itemsCount', { count: data.selectedTreatments.length })}</Badge>
                 </div>
               </AccordionTrigger>
               <AccordionContent>
@@ -353,8 +358,8 @@ export function SummaryStep({
               <AccordionTrigger className="text-sm font-medium">
                 <div className="flex items-center gap-2">
                   <Badge>5</Badge>
-                  Selected Products
-                  <Badge variant="secondary">{data.selectedProducts.length} items</Badge>
+                  {t('salesWizard.steps.summary.sectionProducts')}
+                  <Badge variant="secondary">{t('salesWizard.steps.summary.itemsCount', { count: data.selectedProducts.length })}</Badge>
                 </div>
               </AccordionTrigger>
               <AccordionContent>
@@ -375,20 +380,20 @@ export function SummaryStep({
                 <AccordionTrigger className="text-sm font-medium">
                   <div className="flex items-center gap-2">
                     <Badge>6</Badge>
-                    Pricing Proposal
+                    {t('salesWizard.steps.summary.sectionProposal')}
                   </div>
                 </AccordionTrigger>
                 <AccordionContent>
                   <div className="space-y-2 pl-8">
                     <div className="text-sm">
-                      <strong>Subtotal:</strong> ฿{data.proposal.subtotal.toLocaleString()}
+                      <strong>{t('salesWizard.steps.proposal.subtotalLabel')}</strong> ฿{data.proposal.subtotal.toLocaleString()}
                       <br />
-                      <strong>Discount:</strong> -฿{data.proposal.discountAmount.toLocaleString()}
+                      <strong>{t('salesWizard.steps.proposal.discountLabel')}:</strong> -฿{data.proposal.discountAmount.toLocaleString()}
                       <br />
-                      <strong className="text-lg text-primary">Total: ฿{data.proposal.total.toLocaleString()}</strong>
+                      <strong className="text-lg text-primary">{t('salesWizard.steps.proposal.totalFinalLabel')} ฿{data.proposal.total.toLocaleString()}</strong>
                     </div>
                     <div className="text-sm text-muted-foreground">
-                      Payment Terms: {data.proposal.paymentTerms}
+                      {t('salesWizard.steps.summary.paymentTerms')}: {data.proposal.paymentTerms}
                     </div>
                   </div>
                 </AccordionContent>
@@ -403,12 +408,12 @@ export function SummaryStep({
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-lg">E-Signature</CardTitle>
-              <CardDescription>Please sign here with your finger or mouse</CardDescription>
+              <CardTitle className="text-lg">{t('salesWizard.steps.summary.signatureTitle')}</CardTitle>
+              <CardDescription>{t('salesWizard.steps.summary.signatureDesc')}</CardDescription>
             </div>
             <Button variant="outline" size="sm" onClick={clearSignature}>
               <RotateCcw className="h-4 w-4 mr-1" />
-              Clear
+              {t('salesWizard.steps.summary.clearButton')}
             </Button>
           </div>
         </CardHeader>
@@ -434,7 +439,7 @@ export function SummaryStep({
             
             {!signature && (
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <p className="text-sm text-muted-foreground">Sign here</p>
+                <p className="text-sm text-muted-foreground">{t('salesWizard.steps.summary.signHerePrompt')}</p>
               </div>
             )}
           </div>
@@ -444,8 +449,8 @@ export function SummaryStep({
       {/* Action Buttons */}
       <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
         <CardHeader>
-          <CardTitle className="text-lg">Next Steps</CardTitle>
-          <CardDescription>Choose how to proceed with this proposal</CardDescription>
+          <CardTitle className="text-lg">{t('salesWizard.steps.summary.nextStepsTitle')}</CardTitle>
+          <CardDescription>{t('salesWizard.steps.summary.nextStepsDesc')}</CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-3">
@@ -458,7 +463,7 @@ export function SummaryStep({
               className="h-auto py-4 flex-col gap-2"
             >
               <MessageSquare className="h-6 w-6 text-green-600" />
-              <span className="text-xs">Send via LINE</span>
+              <span className="text-xs">{t('salesWizard.steps.summary.sendLine')}</span>
             </Button>
 
             {/* Send via Email */}
@@ -469,7 +474,7 @@ export function SummaryStep({
               className="h-auto py-4 flex-col gap-2"
             >
               <Mail className="h-6 w-6 text-blue-600" />
-              <span className="text-xs">Send via Email</span>
+              <span className="text-xs">{t('salesWizard.steps.summary.sendEmail')}</span>
             </Button>
 
             {/* Download PDF */}
@@ -480,7 +485,7 @@ export function SummaryStep({
               className="h-auto py-4 flex-col gap-2"
             >
               <Download className="h-6 w-6 text-purple-600" />
-              <span className="text-xs">Download PDF</span>
+              <span className="text-xs">{t('salesWizard.steps.summary.downloadPDF')}</span>
             </Button>
 
             {/* Schedule Appointment */}
@@ -491,7 +496,7 @@ export function SummaryStep({
               className="h-auto py-4 flex-col gap-2"
             >
               <Calendar className="h-6 w-6 text-orange-600" />
-              <span className="text-xs">Schedule Visit</span>
+              <span className="text-xs">{t('salesWizard.steps.summary.scheduleVisit')}</span>
             </Button>
           </div>
 
@@ -505,7 +510,7 @@ export function SummaryStep({
               className="gap-2"
             >
               <Save className="h-4 w-4" />
-              Save to Notes
+              {t('salesWizard.steps.summary.saveToNotes')}
             </Button>
 
             {/* Complete */}
@@ -516,7 +521,7 @@ export function SummaryStep({
               className="gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
             >
               <Send className="h-4 w-4" />
-              Complete
+              {t('salesWizard.steps.summary.completeButton')}
             </Button>
           </div>
         </CardContent>
@@ -527,7 +532,7 @@ export function SummaryStep({
         <Alert className="bg-green-50 dark:bg-green-950/20 border-green-300">
           <CheckCircle2 className="h-4 w-4 text-green-600" />
           <AlertDescription className="text-sm text-green-900 dark:text-green-100">
-            <strong>Completed!</strong> Presentation finalized on {data.completedAt.toLocaleString()}
+            {t('salesWizard.steps.summary.completedAlert', { date: data.completedAt.toLocaleString() })}
           </AlertDescription>
         </Alert>
       )}
@@ -537,7 +542,7 @@ export function SummaryStep({
         <Alert>
           <AlertCircle className="h-4 w-4" />
           <AlertDescription className="text-sm">
-            E-signature is required to complete the presentation. Please sign in the canvas above.
+            {t('salesWizard.steps.summary.signatureRequired')}
           </AlertDescription>
         </Alert>
       )}

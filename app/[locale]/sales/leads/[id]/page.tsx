@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { useParams } from "next/navigation"
 import { useLocalizePath } from "@/lib/i18n/locale-link"
+import { useTranslations } from "next-intl"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
@@ -97,6 +98,7 @@ const interactionFormSchema = z.object({
 })
 
 export default function LeadDetailPage() {
+  const t = useTranslations()
   const router = useRouter()
   const lp = useLocalizePath()
   const params = useParams()
@@ -123,7 +125,7 @@ export default function LeadDetailPage() {
     resolver: zodResolver(interactionFormSchema),
     defaultValues: {
       type: 'call',
-      subject: 'โทรติดตาม',
+      subject: t('salesLeadDetail.dialog.types.call'),
       description: '',
     },
   })
@@ -162,7 +164,7 @@ export default function LeadDetailPage() {
       const treatmentsRaw = Array.isArray(recs) ? recs : []
       const treatments = treatmentsRaw.length
         ? treatmentsRaw.map((r: any) => ({
-            name: r?.title_th || r?.title_en || r?.name || "Treatment",
+            name: r?.title_th || r?.title_en || r?.name || t('common.treatment'),
             price: Number(r?.price || 0),
             sessions: Number(r?.sessions || 1),
             description: r?.description_th || r?.description_en || r?.description || "",
@@ -170,10 +172,10 @@ export default function LeadDetailPage() {
           }))
         : [
             {
-              name: "Consultation",
+              name: t('salesArTools.tools.skin.name'),
               price: 0,
               sessions: 1,
-              description: lead.primary_concern ? `Concern: ${lead.primary_concern}` : "",
+              description: lead.primary_concern ? `${t('salesTools.profile.concerns')}: ${lead.primary_concern}` : "",
               service_id: null,
             },
           ]
@@ -185,7 +187,7 @@ export default function LeadDetailPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           lead_id: lead.id,
-          title: `Proposal for ${lead.name}`,
+          title: t('salesProposalGenerator.generatedTitle'),
           treatments,
           subtotal,
           discount_percent: 0,
@@ -196,17 +198,17 @@ export default function LeadDetailPage() {
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}))
-        throw new Error(err.error || "Failed to create proposal")
+        throw new Error(err.error || t('salesLeadDetail.messages.proposalError'))
       }
 
       const proposal = await res.json()
-      toast.success("สร้าง Proposal สำเร็จ")
+      toast.success(t('salesLeadDetail.messages.proposalSuccess'))
       if (proposal?.id) {
         router.push(`/sales/proposals/${proposal.id}`)
       }
     } catch (error) {
       console.error("Create proposal failed:", error)
-      toast.error(error instanceof Error ? error.message : "สร้าง Proposal ไม่สำเร็จ")
+      toast.error(error instanceof Error ? error.message : t('salesLeadDetail.messages.proposalError'))
     } finally {
       setIsCreatingProposal(false)
     }
@@ -222,7 +224,7 @@ export default function LeadDetailPage() {
       const response = await fetch(`/api/sales/leads/${leadId}`)
 
       if (!response.ok) {
-        throw new Error('Failed to fetch lead')
+        throw new Error(t('salesLeadDetail.messages.updateError'))
       }
 
       const result: SalesLead = await response.json()
@@ -241,7 +243,7 @@ export default function LeadDetailPage() {
       }
     } catch (error) {
       console.error('[LeadDetailPage] Error fetching lead:', error)
-      toast.error('Failed to load lead')
+      toast.error(t('salesLeadDetail.messages.updateError'))
       router.push(lp('/sales/leads'))
     } finally {
       setIsLoading(false)
@@ -263,22 +265,22 @@ export default function LeadDetailPage() {
       })
 
       if (!response.ok) {
-        throw new Error('Failed to update lead')
+        throw new Error(t('salesLeadDetail.messages.updateError'))
       }
 
       const result = await response.json()
 
       if (result?.data) {
-        toast.success('อัปเดต Lead สำเร็จ')
+        toast.success(t('salesLeadDetail.messages.updateSuccess'))
         setLead(result.data)
         fetchLead()
       } else {
-        toast.success('อัปเดต Lead สำเร็จ')
+        toast.success(t('salesLeadDetail.messages.updateSuccess'))
         fetchLead()
       }
     } catch (error) {
       console.error('[LeadDetailPage] Error updating lead:', error)
-      toast.error('อัปเดต Lead ไม่สำเร็จ')
+      toast.error(t('salesLeadDetail.messages.updateError'))
     } finally {
       setIsUpdating(false)
     }
@@ -293,16 +295,16 @@ export default function LeadDetailPage() {
       })
 
       if (!response.ok) {
-        throw new Error('Failed to add interaction')
+        throw new Error(t('salesLeadDetail.messages.interactionError'))
       }
 
-      toast.success('บันทึกกิจกรรมสำเร็จ')
+      toast.success(t('salesLeadDetail.messages.interactionSuccess'))
       setShowInteractionDialog(false)
-      interactionForm.reset({ type: 'call', subject: 'โทรติดตาม', description: '' })
+      interactionForm.reset({ type: 'call', subject: t('salesLeadDetail.dialog.types.call'), description: '' })
       fetchLead()
     } catch (error) {
       console.error('[LeadDetailPage] Error adding interaction:', error)
-      toast.error('บันทึกกิจกรรมไม่สำเร็จ')
+      toast.error(t('salesLeadDetail.messages.interactionError'))
     }
   }
 
@@ -319,16 +321,16 @@ export default function LeadDetailPage() {
   }
 
   const STATUS_CONFIG: Record<SalesLeadStatus, { label: string; color: string }> = {
-    new: { label: "New", color: "bg-blue-500" },
-    contacted: { label: "Contacted", color: "bg-purple-500" },
-    qualified: { label: "Qualified", color: "bg-emerald-600" },
-    proposal_sent: { label: "Proposal Sent", color: "bg-indigo-600" },
-    negotiation: { label: "Negotiation", color: "bg-yellow-600" },
-    won: { label: "Won", color: "bg-green-600" },
-    lost: { label: "Lost", color: "bg-gray-400" },
-    cold: { label: "Cold", color: "bg-gray-500" },
-    warm: { label: "Warm", color: "bg-orange-500" },
-    hot: { label: "Hot", color: "bg-red-500" },
+    new: { label: t('salesLeads.status.new'), color: "bg-blue-500" },
+    contacted: { label: t('salesLeads.status.contacted'), color: "bg-purple-500" },
+    qualified: { label: t('salesLeads.status.qualified'), color: "bg-emerald-600" },
+    proposal_sent: { label: t('salesLeads.status.proposal_sent'), color: "bg-indigo-600" },
+    negotiation: { label: t('salesLeads.status.negotiation'), color: "bg-yellow-600" },
+    won: { label: t('salesLeads.status.won'), color: "bg-green-600" },
+    lost: { label: t('salesLeads.status.lost'), color: "bg-gray-400" },
+    cold: { label: t('salesLeads.status.cold'), color: "bg-gray-500" },
+    warm: { label: t('salesLeads.status.warm'), color: "bg-orange-500" },
+    hot: { label: t('salesLeads.status.hot'), color: "bg-red-500" },
   }
 
   return (
@@ -341,13 +343,13 @@ export default function LeadDetailPage() {
           </Button>
           <div>
             <h1 className="text-3xl font-bold">{lead.name}</h1>
-            <p className="text-muted-foreground">Lead ID: {lead.id.substring(0, 8)}</p>
+            <p className="text-muted-foreground">{t('salesLeadDetail.leadId')}: {lead.id.substring(0, 8)}</p>
           </div>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => setShowInteractionDialog(true)}>
             <Plus className="mr-2 h-4 w-4" />
-            Add Interaction
+            {t('salesLeadDetail.addInteraction')}
           </Button>
           <Button variant="outline" onClick={handleCreateProposal} disabled={isCreatingProposal}>
             {isCreatingProposal ? (
@@ -355,7 +357,7 @@ export default function LeadDetailPage() {
             ) : (
               <Plus className="mr-2 h-4 w-4" />
             )}
-            Create Proposal
+            {t('salesLeadDetail.createProposal')}
           </Button>
           {lead.status !== 'won' && (
             <Button
@@ -367,15 +369,15 @@ export default function LeadDetailPage() {
                     body: JSON.stringify({ status: 'won' }),
                   })
                   if (!res.ok) throw new Error('Failed')
-                  toast.success('ปิดการขายสำเร็จ (Won)')
+                  toast.success(t('salesLeadDetail.wonSuccess'))
                   fetchLead()
                 } catch {
-                  toast.error('ปิดการขายไม่สำเร็จ')
+                  toast.error(t('salesLeadDetail.wonError'))
                 }
               }}
             >
               <CheckCircle className="mr-2 h-4 w-4" />
-              Mark as Won
+              {t('salesLeadDetail.markAsWon')}
             </Button>
           )}
         </div>
@@ -387,18 +389,18 @@ export default function LeadDetailPage() {
           {/* Lead Information */}
           <Card>
             <CardHeader>
-              <CardTitle>Lead Information</CardTitle>
+              <CardTitle>{t('salesLeadDetail.information')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <div className="text-sm text-muted-foreground mb-1">Status</div>
+                  <div className="text-sm text-muted-foreground mb-1">{t('salesLeadDetail.status')}</div>
                   <Badge className={`${STATUS_CONFIG[lead.status].color} text-white`}>
                     {STATUS_CONFIG[lead.status].label}
                   </Badge>
                 </div>
                 <div>
-                  <div className="text-sm text-muted-foreground mb-1">Lead Score</div>
+                  <div className="text-sm text-muted-foreground mb-1">{t('salesLeadDetail.score')}</div>
                   <div className="flex items-center gap-2">
                     <TrendingUp className="h-4 w-4" />
                     <span className="font-semibold">{lead.score}/100</span>
@@ -408,7 +410,7 @@ export default function LeadDetailPage() {
 
               {lead.phone && (
                 <div>
-                  <div className="text-sm text-muted-foreground mb-1">Phone</div>
+                  <div className="text-sm text-muted-foreground mb-1">{t('salesLeadDetail.phone')}</div>
                   <div className="flex items-center gap-2">
                     <Phone className="h-4 w-4" />
                     {lead.phone}
@@ -418,7 +420,7 @@ export default function LeadDetailPage() {
 
               {lead.email && (
                 <div>
-                  <div className="text-sm text-muted-foreground mb-1">Email</div>
+                  <div className="text-sm text-muted-foreground mb-1">{t('salesLeadDetail.email')}</div>
                   <div className="flex items-center gap-2">
                     <Mail className="h-4 w-4" />
                     {lead.email}
@@ -428,7 +430,7 @@ export default function LeadDetailPage() {
 
               {lead.interested_treatments && lead.interested_treatments.length > 0 && (
                 <div>
-                  <div className="text-sm text-muted-foreground mb-2">Interested Treatments</div>
+                  <div className="text-sm text-muted-foreground mb-2">{t('salesLeadDetail.interestedTreatments')}</div>
                   <div className="flex flex-wrap gap-2">
                     {lead.interested_treatments.map((treatment: string) => (
                       <Badge key={treatment} variant="secondary">
@@ -441,11 +443,11 @@ export default function LeadDetailPage() {
 
               {(lead.budget_range_min != null || lead.budget_range_max != null) && (
                 <div>
-                  <div className="text-sm text-muted-foreground mb-1">Budget Range</div>
+                  <div className="text-sm text-muted-foreground mb-1">{t('salesLeadDetail.budgetRange')}</div>
                   <div>
-                    {lead.budget_range_min != null ? `${lead.budget_range_min.toLocaleString()} ฿` : '-'}
+                    {lead.budget_range_min != null ? t('format.currency', { amount: lead.budget_range_min.toLocaleString() }) : '-'}
                     {' - '}
-                    {lead.budget_range_max != null ? `${lead.budget_range_max.toLocaleString()} ฿` : '-'}
+                    {lead.budget_range_max != null ? t('format.currency', { amount: lead.budget_range_max.toLocaleString() }) : '-'}
                   </div>
                 </div>
               )}
@@ -455,9 +457,9 @@ export default function LeadDetailPage() {
           {/* Interaction History */}
           <Card>
             <CardHeader>
-              <CardTitle>Interaction History</CardTitle>
+              <CardTitle>{t('salesLeadDetail.interactionHistory')}</CardTitle>
               <CardDescription>
-                {activities.length} interactions recorded
+                {t('salesLeadDetail.interactionsCount', { count: activities.length })}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -482,7 +484,7 @@ export default function LeadDetailPage() {
                 </div>
               ) : (
                 <div className="text-center py-8 text-muted-foreground">
-                  No interactions recorded yet
+                  {t('salesLeadDetail.noInteractions')}
                 </div>
               )}
             </CardContent>
@@ -494,7 +496,7 @@ export default function LeadDetailPage() {
           {/* Update Form */}
           <Card>
             <CardHeader>
-              <CardTitle>Update Lead</CardTitle>
+              <CardTitle>{t('salesLeadDetail.updateLead')}</CardTitle>
             </CardHeader>
             <CardContent>
               <Form {...updateForm}>
@@ -504,7 +506,7 @@ export default function LeadDetailPage() {
                     name="status"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Status</FormLabel>
+                        <FormLabel>{t('salesLeadDetail.status')}</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
                             <SelectTrigger>
@@ -529,7 +531,7 @@ export default function LeadDetailPage() {
                     name="preferred_date"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Follow-up Date</FormLabel>
+                        <FormLabel>{t('salesLeadDetail.followUpDate')}</FormLabel>
                         <FormControl>
                           <Input type="date" {...field} />
                         </FormControl>
@@ -543,7 +545,7 @@ export default function LeadDetailPage() {
                     name="notes"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Notes</FormLabel>
+                        <FormLabel>{t('salesLeadDetail.notes')}</FormLabel>
                         <FormControl>
                           <Textarea {...field} className="min-h-[100px]" />
                         </FormControl>
@@ -556,10 +558,10 @@ export default function LeadDetailPage() {
                     {isUpdating ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Updating...
+                        {t('salesLeadDetail.updating')}
                       </>
                     ) : (
-                      'Update Lead'
+                      t('salesLeadDetail.updateLead')
                     )}
                   </Button>
                 </form>
@@ -570,11 +572,11 @@ export default function LeadDetailPage() {
           {/* Metadata */}
           <Card>
             <CardHeader>
-              <CardTitle>Details</CardTitle>
+              <CardTitle>{t('salesLeadDetail.details')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-sm">
               <div>
-                <div className="text-muted-foreground mb-1">Sales Staff</div>
+                <div className="text-muted-foreground mb-1">{t('salesLeadDetail.salesStaff')}</div>
                 <div className="flex items-center gap-2">
                   <span>{lead.sales_user?.full_name || 'N/A'}</span>
                 </div>
@@ -583,7 +585,7 @@ export default function LeadDetailPage() {
               <Separator />
 
               <div>
-                <div className="text-muted-foreground mb-1">Created</div>
+                <div className="text-muted-foreground mb-1">{t('salesLeadDetail.created')}</div>
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4" />
                   {format(new Date(lead.created_at), "MMM d, yyyy")}
@@ -598,9 +600,9 @@ export default function LeadDetailPage() {
       <Dialog open={showInteractionDialog} onOpenChange={setShowInteractionDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add Interaction</DialogTitle>
+            <DialogTitle>{t('salesLeadDetail.dialog.title')}</DialogTitle>
             <DialogDescription>
-              Record a new interaction with this lead
+              {t('salesLeadDetail.dialog.description')}
             </DialogDescription>
           </DialogHeader>
 
@@ -611,19 +613,19 @@ export default function LeadDetailPage() {
                 name="type"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Type</FormLabel>
+                    <FormLabel>{t('salesLeadDetail.dialog.type')}</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select type" />
+                          <SelectValue placeholder={t('salesLeadDetail.dialog.selectType')} />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="call">Phone Call</SelectItem>
-                        <SelectItem value="email">Email</SelectItem>
-                        <SelectItem value="meeting">Meeting</SelectItem>
-                        <SelectItem value="note">Note</SelectItem>
-                        <SelectItem value="task">Task</SelectItem>
+                        <SelectItem value="call">{t('salesLeadDetail.dialog.types.call')}</SelectItem>
+                        <SelectItem value="email">{t('salesLeadDetail.dialog.types.email')}</SelectItem>
+                        <SelectItem value="meeting">{t('salesLeadDetail.dialog.types.meeting')}</SelectItem>
+                        <SelectItem value="note">{t('salesLeadDetail.dialog.types.note')}</SelectItem>
+                        <SelectItem value="task">{t('salesLeadDetail.dialog.types.task')}</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -636,9 +638,9 @@ export default function LeadDetailPage() {
                 name="subject"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Subject</FormLabel>
+                    <FormLabel>{t('salesLeadDetail.dialog.subject')}</FormLabel>
                     <FormControl>
-                      <Input placeholder="หัวข้อกิจกรรม" {...field} />
+                      <Input placeholder={t('salesLeadDetail.dialog.subjectPlaceholder')} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -650,10 +652,10 @@ export default function LeadDetailPage() {
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description</FormLabel>
+                    <FormLabel>{t('salesLeadDetail.dialog.descriptionLabel')}</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="What did you discuss?"
+                        placeholder={t('salesLeadDetail.dialog.descriptionPlaceholder')}
                         className="min-h-[100px]"
                         {...field}
                       />
@@ -669,9 +671,9 @@ export default function LeadDetailPage() {
                   variant="outline"
                   onClick={() => setShowInteractionDialog(false)}
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </Button>
-                <Button type="submit">Add Interaction</Button>
+                <Button type="submit">{t('salesLeadDetail.addInteraction')}</Button>
               </div>
             </form>
           </Form>

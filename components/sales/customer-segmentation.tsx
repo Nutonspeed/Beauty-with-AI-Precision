@@ -21,6 +21,7 @@ import {
   Filter
 } from 'lucide-react';
 import { AILeadScorer, LeadData, LeadSegmentation } from '@/lib/ai/lead-scorer';
+import { useTranslations } from 'next-intl';
 
 interface SegmentationResult {
   segments: LeadSegmentation[];
@@ -35,6 +36,7 @@ interface SegmentationResult {
 }
 
 export function CustomerSegmentation() {
+  const t = useTranslations();
   const [leads, setLeads] = useState<LeadData[]>([]);
   const [segmentation, setSegmentation] = useState<SegmentationResult | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -210,14 +212,14 @@ export function CustomerSegmentation() {
         segments,
         segmentDistribution,
         insights: [
-          'กลุ่มลูกค้าระดับพรีเมียมมีแนวโน้มการซื้อสูงที่สุด',
-          'ลูกค้าที่มีส่วนร่วมทางโซเชียลตอบสนองต่อแคมเปญได้ดี',
-          'กลุ่มลูกค้าใหม่ต้องการการศึกษาเรื่องการรักษามากที่สุด'
+          t('dashboard.customerSegmentation.insightsTab.recommendations'),
+          t('dashboard.customerSegmentation.insightsTab.title'),
+          t('dashboard.customerSegmentation.subtitle')
         ],
         recommendations: [
-          'เพิ่มแคมเปญส่วนบุคคลสำหรับกลุ่ม High-Value',
-          'สร้างเนื้อหาการศึกษาสำหรับกลุ่ม Cold Leads',
-          'ใช้โซเชียลมีเดียในการเข้าถึงกลุ่ม Engaged Browsers'
+          t('dashboard.customerSegmentation.insightsTab.recommendations'),
+          t('dashboard.customerSegmentation.empty.description'),
+          t('dashboard.customerSegmentation.card.strategy')
         ],
         performanceMetrics: {
           segmentDiversity: 85,
@@ -256,8 +258,8 @@ export function CustomerSegmentation() {
                 <Brain className="w-5 h-5 text-white" />
               </div>
               <div>
-                <CardTitle>AI Customer Segmentation</CardTitle>
-                <p className="text-sm text-gray-600">แบ่งกลุ่มลูกค้าอัจฉริยะด้วย AI</p>
+                <CardTitle>{t('dashboard.customerSegmentation.title')}</CardTitle>
+                <p className="text-sm text-gray-600">{t('dashboard.customerSegmentation.subtitle')}</p>
               </div>
             </div>
             <Button
@@ -268,12 +270,12 @@ export function CustomerSegmentation() {
               {isAnalyzing ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  กำลังวิเคราะห์...
+                  {t('dashboard.customerSegmentation.analyzing')}
                 </>
               ) : (
                 <>
                   <Zap className="w-4 h-4 mr-2" />
-                  เริ่มการแบ่งกลุ่ม
+                  {t('dashboard.customerSegmentation.analyzeButton')}
                 </>
               )}
             </Button>
@@ -289,7 +291,7 @@ export function CustomerSegmentation() {
               <div className="flex items-center">
                 <PieChart className="h-4 w-4 text-muted-foreground" />
                 <div className="ml-2">
-                  <p className="text-sm font-medium leading-none">จำนวนกลุ่ม</p>
+                  <p className="text-sm font-medium leading-none">{t('dashboard.customerSegmentation.stats.groupCount')}</p>
                   <p className="text-2xl font-bold">{segmentation.segments.length}</p>
                 </div>
               </div>
@@ -301,7 +303,7 @@ export function CustomerSegmentation() {
               <div className="flex items-center">
                 <BarChart3 className="h-4 w-4 text-muted-foreground" />
                 <div className="ml-2">
-                  <p className="text-sm font-medium leading-none">ความหลากหลาย</p>
+                  <p className="text-sm font-medium leading-none">{t('dashboard.customerSegmentation.stats.diversity')}</p>
                   <p className="text-2xl font-bold">{segmentation.performanceMetrics.segmentDiversity}%</p>
                 </div>
               </div>
@@ -313,7 +315,7 @@ export function CustomerSegmentation() {
               <div className="flex items-center">
                 <Target className="h-4 w-4 text-muted-foreground" />
                 <div className="ml-2">
-                  <p className="text-sm font-medium leading-none">ประสิทธิภาพการ targeting</p>
+                  <p className="text-sm font-medium leading-none">{t('dashboard.customerSegmentation.stats.targetingEfficiency')}</p>
                   <p className="text-2xl font-bold">{segmentation.performanceMetrics.targetingEfficiency}%</p>
                 </div>
               </div>
@@ -325,7 +327,7 @@ export function CustomerSegmentation() {
               <div className="flex items-center">
                 <TrendingUp className="h-4 w-4 text-muted-foreground" />
                 <div className="ml-2">
-                  <p className="text-sm font-medium leading-none">Conversion Lift</p>
+                  <p className="text-sm font-medium leading-none">{t('dashboard.customerSegmentation.stats.conversionLift')}</p>
                   <p className="text-2xl font-bold">+{segmentation.performanceMetrics.conversionLift}%</p>
                 </div>
               </div>
@@ -338,9 +340,9 @@ export function CustomerSegmentation() {
       {segmentation && (
         <Tabs defaultValue="segments" className="space-y-4">
           <TabsList>
-            <TabsTrigger value="segments">กลุ่มลูกค้า</TabsTrigger>
-            <TabsTrigger value="insights">ข้อมูลเชิงลึก</TabsTrigger>
-            <TabsTrigger value="distribution">การกระจาย</TabsTrigger>
+            <TabsTrigger value="segments">{t('dashboard.customerSegmentation.tabs.segments')}</TabsTrigger>
+            <TabsTrigger value="insights">{t('dashboard.customerSegmentation.tabs.insights')}</TabsTrigger>
+            <TabsTrigger value="distribution">{t('dashboard.customerSegmentation.tabs.distribution')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="segments" className="space-y-4">
@@ -359,7 +361,7 @@ export function CustomerSegmentation() {
                     <div className="flex items-center justify-between">
                       <CardTitle className="text-lg">{segment.segment}</CardTitle>
                       <Badge className={getSegmentColor(segment.segment)}>
-                        {segmentation.segmentDistribution[segment.segment]} คน
+                        {t('dashboard.customerSegmentation.card.count', { count: segmentation.segmentDistribution[segment.segment] })}
                       </Badge>
                     </div>
                     <p className="text-sm text-gray-600">{segment.description}</p>
@@ -367,21 +369,21 @@ export function CustomerSegmentation() {
                   <CardContent className="space-y-4">
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
-                        <span>Conversion Rate</span>
+                        <span>{t('dashboard.customerSegmentation.card.conversionRate')}</span>
                         <span className="font-medium">{segment.conversionRate}%</span>
                       </div>
                       <Progress value={segment.conversionRate} className="h-2" />
                     </div>
 
                     <div className="text-sm">
-                      <div className="font-medium text-gray-900 mb-1">มูลค่าเฉลี่ย</div>
+                      <div className="font-medium text-gray-900 mb-1">{t('dashboard.customerSegmentation.card.avgValue')}</div>
                       <div className="text-lg font-bold text-green-600">
-                        ฿{segment.averageValue.toLocaleString()}
+                        {t('format.currency', { amount: segment.averageValue.toLocaleString() })}
                       </div>
                     </div>
 
                     <div className="space-y-1">
-                      <div className="font-medium text-gray-900 text-sm">ลักษณะสำคัญ</div>
+                      <div className="font-medium text-gray-900 text-sm">{t('dashboard.customerSegmentation.card.characteristics')}</div>
                       <div className="flex flex-wrap gap-1">
                         {segment.characteristics.slice(0, 3).map((char, idx) => (
                           <Badge key={idx} variant="outline" className="text-xs">
@@ -393,7 +395,7 @@ export function CustomerSegmentation() {
 
                     {selectedSegment === segment.segment && (
                       <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-                        <div className="font-medium text-gray-900 text-sm mb-2">กลยุทธ์แนะนำ</div>
+                        <div className="font-medium text-gray-900 text-sm mb-2">{t('dashboard.customerSegmentation.card.strategy')}</div>
                         <p className="text-sm text-gray-700">{segment.recommendedStrategy}</p>
                       </div>
                     )}
@@ -409,7 +411,7 @@ export function CustomerSegmentation() {
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
                     <Brain className="w-5 h-5 text-indigo-600" />
-                    ข้อมูลเชิงลึก
+                    {t('dashboard.customerSegmentation.insightsTab.title')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
@@ -426,7 +428,7 @@ export function CustomerSegmentation() {
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
                     <Target className="w-5 h-5 text-green-600" />
-                    คำแนะนำ
+                    {t('dashboard.customerSegmentation.insightsTab.recommendations')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
@@ -444,8 +446,8 @@ export function CustomerSegmentation() {
           <TabsContent value="distribution" className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle>การกระจายกลุ่มลูกค้า</CardTitle>
-                <p className="text-sm text-gray-600">จำนวนลูกค้าในแต่ละกลุ่ม</p>
+                <CardTitle>{t('dashboard.customerSegmentation.distributionTab.title')}</CardTitle>
+                <p className="text-sm text-gray-600">{t('dashboard.customerSegmentation.distributionTab.subtitle')}</p>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -455,7 +457,7 @@ export function CustomerSegmentation() {
                       <div key={segment} className="space-y-2">
                         <div className="flex justify-between text-sm">
                           <span className="font-medium">{segment}</span>
-                          <span>{count} คน ({percentage.toFixed(1)}%)</span>
+                          <span>{t('dashboard.customerSegmentation.card.count', { count })} ({percentage.toFixed(1)}%)</span>
                         </div>
                         <Progress value={percentage} className="h-3" />
                       </div>
@@ -476,9 +478,9 @@ export function CustomerSegmentation() {
               <Users className="w-8 h-8 text-gray-400" />
             </div>
             <div>
-              <h3 className="text-lg font-medium text-gray-900">พร้อมสำหรับการแบ่งกลุ่ม</h3>
+              <h3 className="text-lg font-medium text-gray-900">{t('dashboard.customerSegmentation.empty.title')}</h3>
               <p className="text-gray-600 mt-1">
-                คลิก "เริ่มการแบ่งกลุ่ม" เพื่อให้ AI วิเคราะห์และแบ่งกลุ่มลูกค้าของคุณ
+                {t('dashboard.customerSegmentation.empty.description')}
               </p>
             </div>
             <Button
@@ -486,7 +488,7 @@ export function CustomerSegmentation() {
               className="bg-gradient-to-r from-indigo-600 to-purple-600"
             >
               <Filter className="w-4 h-4 mr-2" />
-              เริ่มการแบ่งกลุ่ม
+              {t('dashboard.customerSegmentation.analyzeButton')}
             </Button>
           </div>
         </Card>

@@ -14,6 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle, Lock } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface WhiteboardRoomProps {
   whiteboardId: string;
@@ -28,6 +29,7 @@ export function WhiteboardRoom({
   userName,
   className = ''
 }: WhiteboardRoomProps) {
+  const t = useTranslations()
   const {
     elements,
     activeUsers,
@@ -199,13 +201,13 @@ export function WhiteboardRoom({
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center justify-between">
-              <span>Whiteboard</span>
+              <span>{t('whiteboard.title')}</span>
               <div className="flex items-center gap-2">
-                <Badge variant="outline">{elements.length} elements</Badge>
+                <Badge variant="outline">{t('whiteboard.elements', { count: elements.length })}</Badge>
                 {isLocked && (
                   <Badge variant="secondary" className="flex items-center gap-1">
                     <Lock className="w-3 h-3" />
-                    Locked
+                    {t('whiteboard.locked')}
                   </Badge>
                 )}
               </div>

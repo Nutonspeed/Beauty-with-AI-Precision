@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { useTranslations } from 'next-intl'
 import { 
   Sparkles, 
   AlertCircle,
@@ -44,6 +45,7 @@ export function ProductShowcaseStep({
   onUpdate,
   customerName,
 }: ProductShowcaseStepProps) {
+  const t = useTranslations()
   const manager = getProduct3DManager()
   const allProducts = manager.getAllProducts()
   
@@ -118,7 +120,7 @@ export function ProductShowcaseStep({
       <Alert className="bg-blue-50 dark:bg-blue-950/20 border-blue-200">
         <Package className="h-4 w-4 text-blue-600" />
         <AlertDescription className="text-sm text-blue-900 dark:text-blue-100">
-          Browse and select products for {customerName}. Recommended products are highlighted based on AI analysis.
+          {t('salesWizard.steps.products.instructions', { name: customerName })}
         </AlertDescription>
       </Alert>
 
@@ -131,13 +133,13 @@ export function ProductShowcaseStep({
                 {isRecommended(currentProduct.id) && (
                   <Badge className="bg-green-500 text-white">
                     <Sparkles className="h-3 w-3 mr-1" />
-                    Recommended
+                    {t('salesWizard.steps.products.recommendedBadge')}
                   </Badge>
                 )}
                 {currentProduct.name}
               </CardTitle>
               <CardDescription>
-                {currentProduct.category.toUpperCase()} • {currentProductIndex + 1} of {allProducts.length}
+                {currentProduct.category.toUpperCase()} • {t('salesWizard.steps.products.countOf', { current: currentProductIndex + 1, total: allProducts.length })}
               </CardDescription>
             </div>
             <Button
@@ -145,7 +147,7 @@ export function ProductShowcaseStep({
               size="sm"
               onClick={() => setView3D(!view3D)}
             >
-              {view3D ? "Card View" : "3D View"}
+              {view3D ? t('salesWizard.steps.products.cardView') : t('salesWizard.steps.products.view3D')}
             </Button>
           </div>
         </CardHeader>
@@ -175,7 +177,7 @@ export function ProductShowcaseStep({
                 <div>
                   <h4 className="text-sm font-semibold mb-2 flex items-center gap-2">
                     <Info className="h-4 w-4" />
-                    Key Ingredients
+                    {t('salesWizard.steps.products.ingredientsTitle')}
                   </h4>
                   <div className="grid grid-cols-2 gap-2">
                     {currentProduct.ingredients.slice(0, 4).map((ingredient) => (
@@ -196,7 +198,7 @@ export function ProductShowcaseStep({
                 <div>
                   <h4 className="text-sm font-semibold mb-2 flex items-center gap-2">
                     <Sparkles className="h-4 w-4" />
-                    Benefits
+                    {t('salesWizard.steps.products.benefitsTitle')}
                   </h4>
                   <div className="space-y-1">
                     {currentProduct.benefits.slice(0, 4).map((benefit) => (
@@ -220,7 +222,7 @@ export function ProductShowcaseStep({
               className="flex-1 max-w-[120px]"
             >
               <ChevronLeft className="h-5 w-5 mr-1" />
-              Previous
+              {t('common.previous')}
             </Button>
 
             {/* Selection Button */}
@@ -235,12 +237,12 @@ export function ProductShowcaseStep({
               {selectedProducts.includes(currentProduct.id) ? (
                 <>
                   <CheckCircle2 className="h-5 w-5" />
-                  Selected
+                  {t('salesWizard.steps.products.selectedBadge')}
                 </>
               ) : (
                 <>
                   <Plus className="h-5 w-5" />
-                  Add to Proposal
+                  {t('salesWizard.steps.products.addToProposal')}
                 </>
               )}
             </Button>
@@ -251,7 +253,7 @@ export function ProductShowcaseStep({
               onClick={nextProduct}
               className="flex-1 max-w-[120px]"
             >
-              Next
+              {t('common.next')}
               <ChevronRight className="h-5 w-5 ml-1" />
             </Button>
           </div>
@@ -280,10 +282,10 @@ export function ProductShowcaseStep({
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-yellow-600" />
-            Recommended for {customerName}
+            {t('salesWizard.steps.products.recommendedFor', { name: customerName })}
           </CardTitle>
           <CardDescription>
-            Based on AI skin analysis
+            {t('salesWizard.steps.products.basedOnAI')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -323,7 +325,7 @@ export function ProductShowcaseStep({
                     {isSelected && (
                       <div className="mt-2 flex items-center gap-1 text-green-600">
                         <CheckCircle2 className="h-4 w-4" />
-                        <span className="text-xs font-medium">Added</span>
+                        <span className="text-xs font-medium">{t('salesWizard.steps.products.addedBadge')}</span>
                       </div>
                     )}
                   </button>
@@ -336,7 +338,7 @@ export function ProductShowcaseStep({
             <div className="text-center py-8">
               <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
               <p className="text-sm text-muted-foreground">
-                No specific product recommendations yet. Browse all products above.
+                {t('salesWizard.steps.products.noRecommendations')}
               </p>
             </div>
           )}
@@ -349,7 +351,7 @@ export function ProductShowcaseStep({
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
               <CheckCircle2 className="h-5 w-5 text-green-600" />
-              Selected Products ({selectedProducts.length})
+              {t('salesWizard.steps.products.selectedProductsTitle', { count: selectedProducts.length })}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -396,7 +398,7 @@ export function ProductShowcaseStep({
         <Alert>
           <AlertCircle className="h-4 w-4" />
           <AlertDescription className="text-sm">
-            No products selected yet. Browse and add products to include in the proposal.
+            {t('salesWizard.steps.products.emptyState')}
           </AlertDescription>
         </Alert>
       )}

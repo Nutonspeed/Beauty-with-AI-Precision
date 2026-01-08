@@ -14,36 +14,43 @@ import { Calendar } from "@/components/ui/calendar"
 import { Badge } from "@/components/ui/badge"
 import { Calendar as CalendarIcon, Clock, CheckCircle2, Loader2 } from "lucide-react"
 import { format } from "date-fns"
-
-const treatments = [
-  { id: "consultation", name: "Free Consultation", duration: "30 min", price: "Free", priceValue: 0 },
-  { id: "botox", name: "Botox Treatment", duration: "45 min", price: "฿8,000", priceValue: 8000 },
-  { id: "filler", name: "Dermal Filler", duration: "60 min", price: "฿12,000", priceValue: 12000 },
-  { id: "laser", name: "Laser Treatment", duration: "45 min", price: "฿6,000", priceValue: 6000 },
-  { id: "peel", name: "Chemical Peel", duration: "60 min", price: "฿5,000", priceValue: 5000 },
-  { id: "microneedling", name: "Microneedling", duration: "60 min", price: "฿7,000", priceValue: 7000 },
-]
-
-const timeSlots = [
-  "09:00",
-  "09:30",
-  "10:00",
-  "10:30",
-  "11:00",
-  "11:30",
-  "13:00",
-  "13:30",
-  "14:00",
-  "14:30",
-  "15:00",
-  "15:30",
-  "16:00",
-  "16:30",
-  "17:00",
-  "17:30",
-]
+import { th, enUS } from "date-fns/locale"
+import { useTranslations, useLocale } from "next-intl"
+import { useLocalizePath } from "@/lib/i18n/locale-link"
 
 export default function BookingPage() {
+  const t = useTranslations()
+  const locale = useLocale()
+  const lp = useLocalizePath()
+
+  const treatmentsData = [
+    { id: "consultation", name: t('booking.treatments.consultation'), duration: t('booking.duration.min30'), price: t('booking.priceFree'), priceValue: 0 },
+    { id: "botox", name: t('booking.treatments.botox'), duration: t('booking.duration.min45'), price: t('format.currency', { amount: '8,000' }), priceValue: 8000 },
+    { id: "filler", name: t('booking.treatments.filler'), duration: t('booking.duration.min60'), price: t('format.currency', { amount: '12,000' }), priceValue: 12000 },
+    { id: "laser", name: t('booking.treatments.laser'), duration: t('booking.duration.min45'), price: t('format.currency', { amount: '6,000' }), priceValue: 6000 },
+    { id: "peel", name: t('booking.treatments.peel'), duration: t('booking.duration.min60'), price: t('format.currency', { amount: '5,000' }), priceValue: 5000 },
+    { id: "microneedling", name: t('booking.treatments.microneedling'), duration: t('booking.duration.min60'), price: t('format.currency', { amount: '7,000' }), priceValue: 7000 },
+  ]
+
+  const timeSlots = [
+    "09:00",
+    "09:30",
+    "10:00",
+    "10:30",
+    "11:00",
+    "11:30",
+    "13:00",
+    "13:30",
+    "14:00",
+    "14:30",
+    "15:00",
+    "15:30",
+    "16:00",
+    "16:30",
+    "17:00",
+    "17:30",
+  ]
+
   const [date, setDate] = useState<Date | undefined>(new Date())
   const [selectedTreatment, setSelectedTreatment] = useState("")
   const [selectedTime, setSelectedTime] = useState("")
@@ -82,20 +89,22 @@ export default function BookingPage() {
       })
 
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || "Failed to create booking")
+        if (response.status === 404) {
+          throw new Error(t('analysis.notFound'));
+        }
+        throw new Error(t('booking.error'));
       }
 
-      const result = await response.json()
-      console.log("[v0] Booking created:", result)
-      setIsSubmitted(true)
+      const data = await response.json();
+      console.log("[v0] Booking created:", data);
+      setIsSubmitted(true);
     } catch (err) {
-      console.error("[v0] Booking error:", err)
-      setError(err instanceof Error ? err.message : "Failed to create booking. Please try again.")
+      console.error("[v0] Booking error:", err);
+      setError(err instanceof Error ? err.message : t('booking.error'));
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   if (isSubmitted) {
     return (
@@ -109,25 +118,22 @@ export default function BookingPage() {
                   <CheckCircle2 className="h-8 w-8 text-primary" />
                 </div>
               </div>
-              <h2 className="mb-2 text-2xl font-bold">Booking Confirmed!</h2>
-              <p className="mb-1 text-lg text-primary">การจองสำเร็จ!</p>
+              <h2 className="mb-2 text-2xl font-bold">{t('booking.success.title')}</h2>
               <p className="mb-6 text-sm text-muted-foreground leading-relaxed">
-                Your appointment has been scheduled. We've sent a confirmation email with all the details.
-                <br />
-                การนัดหมายของคุณได้รับการจัดเวลาแล้ว เราได้ส่งอีเมลยืนยันพร้อมรายละเอียดทั้งหมด
+                {t('booking.success.description')}
               </p>
               <div className="mb-6 space-y-2 rounded-lg bg-muted/50 p-4 text-left">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Date:</span>
-                  <span className="font-medium">{date && format(date, "PPP")}</span>
+                  <span className="text-muted-foreground">{t('booking.details.date')}:</span>
+                  <span className="font-medium">{date && format(date, "PPP", { locale: locale === 'th' ? th : enUS })}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Time:</span>
+                  <span className="text-muted-foreground">{t('booking.details.time')}:</span>
                   <span className="font-medium">{selectedTime}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Treatment:</span>
-                  <span className="font-medium">{treatments.find((t) => t.id === selectedTreatment)?.name}</span>
+                  <span className="text-muted-foreground">{t('booking.details.treatment')}:</span>
+                  <span className="font-medium">{treatmentsData.find((t) => t.id === selectedTreatment)?.name}</span>
                 </div>
               </div>
               <Button
@@ -140,7 +146,7 @@ export default function BookingPage() {
                   setDate(new Date())
                 }}
               >
-                Book Another Appointment / จองอีกครั้ง
+                {t('booking.bookAnother')}
               </Button>
             </CardContent>
           </Card>
@@ -158,10 +164,9 @@ export default function BookingPage() {
         <div className="container py-12">
           <div className="mx-auto max-w-5xl">
             <div className="mb-8 text-center">
-              <h1 className="mb-2 text-3xl font-bold">Book an Appointment</h1>
-              <p className="text-lg text-primary">จองนัดหมาย</p>
+              <h1 className="mb-2 text-3xl font-bold">{t('booking.title')}</h1>
               <p className="mt-2 text-sm text-muted-foreground">
-                Schedule your consultation or treatment with our expert team
+                {t('booking.subtitle')}
               </p>
             </div>
 
@@ -177,10 +182,10 @@ export default function BookingPage() {
                 <div className="lg:col-span-1">
                   <Card>
                     <CardHeader>
-                      <CardTitle className="text-lg">Select Treatment / เลือกการรักษา</CardTitle>
+                      <CardTitle className="text-lg">{t('booking.selectTreatment')}</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-3">
-                      {treatments.map((treatment) => (
+                      {treatmentsData.map((treatment) => (
                         <Card
                           key={treatment.id}
                           className={`cursor-pointer transition-all hover:shadow-md ${
@@ -210,11 +215,11 @@ export default function BookingPage() {
                 <div className="space-y-6 lg:col-span-2">
                   <Card>
                     <CardHeader>
-                      <CardTitle className="text-lg">Select Date & Time / เลือกวันและเวลา</CardTitle>
+                      <CardTitle className="text-lg">{t('booking.selectDate')} & {t('booking.selectTime')}</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-6">
                       <div>
-                        <Label className="mb-2 block">Choose Date / เลือกวัน</Label>
+                        <Label className="mb-2 block">{t('booking.chooseDate')}</Label>
                         <Calendar
                           mode="single"
                           selected={date}
@@ -225,7 +230,7 @@ export default function BookingPage() {
                       </div>
 
                       <div>
-                        <Label className="mb-2 block">Choose Time / เลือกเวลา</Label>
+                        <Label className="mb-2 block">{t('booking.chooseTime')}</Label>
                         <div className="grid grid-cols-4 gap-2">
                           {timeSlots.map((time) => (
                             <Button
@@ -246,25 +251,25 @@ export default function BookingPage() {
 
                   <Card>
                     <CardHeader>
-                      <CardTitle className="text-lg">Your Information / ข้อมูลของคุณ</CardTitle>
+                      <CardTitle className="text-lg">{t('booking.patientInfo')}</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div className="grid gap-4 sm:grid-cols-2">
                         <div className="space-y-2">
-                          <Label htmlFor="firstName">First Name / ชื่อ</Label>
+                          <Label htmlFor="firstName">{t('booking.firstName')}</Label>
                           <Input
                             id="firstName"
-                            placeholder="John"
+                            placeholder={t('booking.firstName')}
                             required
                             value={formData.firstName}
                             onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="lastName">Last Name / นามสกุล</Label>
+                          <Label htmlFor="lastName">{t('booking.lastName')}</Label>
                           <Input
                             id="lastName"
-                            placeholder="Doe"
+                            placeholder={t('booking.lastName')}
                             required
                             value={formData.lastName}
                             onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
@@ -273,11 +278,11 @@ export default function BookingPage() {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="email">Email / อีเมล</Label>
+                        <Label htmlFor="email">{t('booking.email')}</Label>
                         <Input
                           id="email"
                           type="email"
-                          placeholder="john@example.com"
+                          placeholder={t('booking.email')}
                           required
                           value={formData.email}
                           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -285,11 +290,11 @@ export default function BookingPage() {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="phone">Phone / เบอร์โทร</Label>
+                        <Label htmlFor="phone">{t('booking.phone')}</Label>
                         <Input
                           id="phone"
                           type="tel"
-                          placeholder="08X-XXX-XXXX"
+                          placeholder={t('booking.phone')}
                           required
                           value={formData.phone}
                           onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
@@ -297,10 +302,10 @@ export default function BookingPage() {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="notes">Additional Notes / หมายเหตุเพิ่มเติม (Optional)</Label>
+                        <Label htmlFor="notes">{t('booking.notes')} ({t('booking.optional')})</Label>
                         <Textarea
                           id="notes"
-                          placeholder="Any specific concerns or questions..."
+                          placeholder={t('booking.notesPlaceholder')}
                           rows={3}
                           value={formData.notes}
                           onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
@@ -316,12 +321,12 @@ export default function BookingPage() {
                         {isSubmitting ? (
                           <>
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Creating Booking...
+                            {t('booking.confirming')}
                           </>
                         ) : (
                           <>
                             <CalendarIcon className="mr-2 h-4 w-4" />
-                            Confirm Booking / ยืนยันการจอง
+                            {t('booking.confirm')}
                           </>
                         )}
                       </Button>

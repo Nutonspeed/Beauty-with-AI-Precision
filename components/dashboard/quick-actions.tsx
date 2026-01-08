@@ -15,69 +15,74 @@ import {
   Upload,
   Zap
 } from "lucide-react"
-
-const quickActions = [
-  {
-    title: "View All Customers",
-    description: "Browse customer database and profiles",
-    icon: Users,
-    color: "bg-blue-500",
-    action: "view-customers"
-  },
-  {
-    title: "Generate Report",
-    description: "Create monthly performance report",
-    icon: FileText,
-    color: "bg-green-500",
-    action: "generate-report"
-  },
-  {
-    title: "Contact Hot Leads",
-    description: "Reach out to high-potential customers",
-    icon: Phone,
-    color: "bg-red-500",
-    action: "contact-leads",
-    badge: "3 urgent"
-  },
-  {
-    title: "Schedule Appointments",
-    description: "Manage booking calendar",
-    icon: Calendar,
-    color: "bg-purple-500",
-    action: "schedule-appointments"
-  },
-  {
-    title: "Live Chat",
-    description: "Monitor customer conversations",
-    icon: MessageSquare,
-    color: "bg-orange-500",
-    action: "live-chat",
-    badge: "2 active"
-  },
-  {
-    title: "Analytics Dashboard",
-    description: "Deep dive into performance metrics",
-    icon: BarChart3,
-    color: "bg-indigo-500",
-    action: "analytics-dashboard"
-  },
-  {
-    title: "Export Data",
-    description: "Download customer and sales data",
-    icon: Download,
-    color: "bg-teal-500",
-    action: "export-data"
-  },
-  {
-    title: "Import Customers",
-    description: "Bulk import customer information",
-    icon: Upload,
-    color: "bg-pink-500",
-    action: "import-customers"
-  }
-]
+import { useLocalizePath } from "@/lib/i18n/locale-link"
+import { useTranslations } from "next-intl"
 
 export function QuickActions() {
+  const t = useTranslations()
+  const lp = useLocalizePath()
+
+  const quickActions = [
+    {
+      title: t('dashboard.quickActions.actions.viewCustomers.title'),
+      description: t('dashboard.quickActions.actions.viewCustomers.description'),
+      icon: Users,
+      color: "bg-blue-500",
+      action: "view-customers"
+    },
+    {
+      title: t('dashboard.quickActions.actions.generateReport.title'),
+      description: t('dashboard.quickActions.actions.generateReport.description'),
+      icon: FileText,
+      color: "bg-green-500",
+      action: "generate-report"
+    },
+    {
+      title: t('dashboard.quickActions.actions.contactLeads.title'),
+      description: t('dashboard.quickActions.actions.contactLeads.description'),
+      icon: Phone,
+      color: "bg-red-500",
+      action: "contact-leads",
+      badge: `3 ${t('dashboard.quickActions.urgent')}`
+    },
+    {
+      title: t('dashboard.quickActions.actions.scheduleAppointments.title'),
+      description: t('dashboard.quickActions.actions.scheduleAppointments.description'),
+      icon: Calendar,
+      color: "bg-purple-500",
+      action: "schedule-appointments"
+    },
+    {
+      title: t('dashboard.quickActions.actions.liveChat.title'),
+      description: t('dashboard.quickActions.actions.liveChat.description'),
+      icon: MessageSquare,
+      color: "bg-orange-500",
+      action: "live-chat",
+      badge: `2 ${t('dashboard.quickActions.active')}`
+    },
+    {
+      title: t('dashboard.quickActions.actions.analyticsDashboard.title'),
+      description: t('dashboard.quickActions.actions.analyticsDashboard.description'),
+      icon: BarChart3,
+      color: "bg-indigo-500",
+      action: "analytics-dashboard"
+    },
+    {
+      title: t('dashboard.quickActions.actions.exportData.title'),
+      description: t('dashboard.quickActions.actions.exportData.description'),
+      icon: Download,
+      color: "bg-teal-500",
+      action: "export-data"
+    },
+    {
+      title: t('dashboard.quickActions.actions.importCustomers.title'),
+      description: t('dashboard.quickActions.actions.importCustomers.description'),
+      icon: Upload,
+      color: "bg-pink-500",
+      action: "import-customers"
+    }
+  ]
+
   const handleAction = (action: string) => {
     // ในโปรดักชั่นจะมี logic จริง
     console.log(`Executing action: ${action}`)
@@ -88,8 +93,8 @@ export function QuickActions() {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          ⚡ Quick Actions
-          <Badge className="bg-blue-100 text-blue-800">8 Available</Badge>
+          ⚡ {t('dashboard.quickActions.title')}
+          <Badge className="bg-blue-100 text-blue-800">{t('dashboard.quickActions.available', { count: 8 })}</Badge>
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -124,35 +129,35 @@ export function QuickActions() {
         <div className="mt-6 pt-6 border-t">
           <h4 className="font-medium mb-4 flex items-center gap-2">
             <Zap className="h-4 w-4" />
-            Power Actions
+            {t('dashboard.quickActions.powerActions')}
           </h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <Button className="justify-start" variant="outline">
               <Settings className="h-4 w-4 mr-2" />
-              Clinic Settings & Configuration
+              {t('dashboard.quickActions.clinicSettings')}
             </Button>
             <Button className="justify-start" variant="outline">
               <BarChart3 className="h-4 w-4 mr-2" />
-              Advanced Analytics & Insights
+              {t('dashboard.quickActions.advancedAnalytics')}
             </Button>
           </div>
         </div>
 
         {/* Recent Activity */}
         <div className="mt-6 pt-6 border-t">
-          <h4 className="font-medium mb-4">Recent Activity</h4>
+          <h4 className="font-medium mb-4">{t('dashboard.quickActions.recentActivity')}</h4>
           <div className="space-y-2 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-green-500 rounded-full" />
-              <span>New customer "นางสาว สมใจ รักสวย" booked Complete Skin Renewal</span>
+              <span>{t('dashboard.quickActions.activity.newCustomer', { name: "นางสาว สมใจ รักสวย", treatment: "Complete Skin Renewal" })}</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-blue-500 rounded-full" />
-              <span>Revenue target achieved for the month (+5.2%)</span>
+              <span>{t('dashboard.quickActions.activity.targetAchieved', { percent: "+5.2%" })}</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-orange-500 rounded-full" />
-              <span>3 hot leads require immediate follow-up</span>
+              <span>{t('dashboard.quickActions.activity.hotLeadsFollowup', { count: 3 })}</span>
             </div>
           </div>
         </div>

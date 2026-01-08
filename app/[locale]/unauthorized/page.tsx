@@ -8,8 +8,10 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { ShieldAlert, Home, ArrowLeft, Crown } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
 
 export default function UnauthorizedPage() {
+  const t = useTranslations()
   const router = useRouter()
   const lp = useLocalizePath()
   const { user, loading } = useAuth()
@@ -18,7 +20,7 @@ export default function UnauthorizedPage() {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center space-y-4">
-          <p className="text-muted-foreground">กำลังตรวจสอบสิทธิ์...</p>
+          <p className="text-muted-foreground">{t('unauthorized.checking')}</p>
         </div>
       </div>
     )
@@ -33,9 +35,9 @@ export default function UnauthorizedPage() {
               <ShieldAlert className="h-8 w-8 text-red-600" />
             </div>
           </div>
-          <CardTitle className="text-2xl">ไม่มีสิทธิ์เข้าถึง</CardTitle>
+          <CardTitle className="text-2xl">{t('unauthorized.title')}</CardTitle>
           <CardDescription>
-            คุณไม่มีสิทธิ์เข้าถึงหน้านี้ กรุณาตรวจสอบสิทธิ์การเข้าถึงของคุณ
+            {t('unauthorized.description')}
           </CardDescription>
         </CardHeader>
 
@@ -45,13 +47,13 @@ export default function UnauthorizedPage() {
               <AlertDescription>
                 <div className="space-y-2">
                   <p className="font-medium">
-                    คุณกำลังเข้าสู่ระบบในฐานะ: <strong>{user.email}</strong>
+                    {t('unauthorized.loggedInAs')} <strong>{user.email}</strong>
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    บทบาท: <span className="font-mono bg-muted px-2 py-1 rounded">{user.role}</span>
+                    {t('unauthorized.role')} <span className="font-mono bg-muted px-2 py-1 rounded">{user.role}</span>
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    แพ็กเกจ: <span className="font-mono bg-muted px-2 py-1 rounded">{user.tier}</span>
+                    {t('unauthorized.tier')} <span className="font-mono bg-muted px-2 py-1 rounded">{user.tier}</span>
                   </p>
                 </div>
               </AlertDescription>
@@ -59,18 +61,18 @@ export default function UnauthorizedPage() {
           ) : (
             <Alert variant="destructive">
               <AlertDescription>
-                คุณยังไม่ได้เข้าสู่ระบบ กรุณาเข้าสู่ระบบเพื่อเข้าถึงหน้านี้
+                {t('unauthorized.notLoggedIn')}
               </AlertDescription>
             </Alert>
           )}
 
           <div className="rounded-lg border bg-muted/50 p-4 space-y-2">
-            <h3 className="font-semibold text-sm">เหตุผลที่อาจทำให้คุณไม่สามารถเข้าถึงหน้านี้:</h3>
+            <h3 className="font-semibold text-sm">{t('unauthorized.reasons.title')}</h3>
             <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
-              <li>หน้านี้ต้องการบทบาทหรือสิทธิ์พิเศษ</li>
-              <li>แพ็กเกจของคุณไม่รองรับฟีเจอร์นี้</li>
-              <li>คุณต้องอัพเกรดเป็นแพ็กเกจที่สูงกว่า</li>
-              <li>หน้านี้เฉพาะสำหรับบุคลากรของคลินิก หรือแอดมิน</li>
+              <li>{t('unauthorized.reasons.item1')}</li>
+              <li>{t('unauthorized.reasons.item2')}</li>
+              <li>{t('unauthorized.reasons.item3')}</li>
+              <li>{t('unauthorized.reasons.item4')}</li>
             </ul>
           </div>
         </CardContent>
@@ -79,12 +81,12 @@ export default function UnauthorizedPage() {
           <div className="grid grid-cols-2 gap-3 w-full">
             <Button variant="outline" onClick={() => router.back()} className="w-full">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              ย้อนกลับ
+              {t('common.back')}
             </Button>
             <Button asChild className="w-full">
               <Link href={lp("/")}> 
                 <Home className="mr-2 h-4 w-4" />
-                หน้าแรก
+                {t('nav.home')}
               </Link>
             </Button>
           </div>
@@ -97,14 +99,14 @@ export default function UnauthorizedPage() {
             >
               <Link href={lp("/pricing")}>
                 <Crown className="mr-2 h-4 w-4" />
-                อัพเกรดเพื่อปลดล็อคฟีเจอร์
+                {t('unauthorized.upgradeToUnlock')}
               </Link>
             </Button>
           )}
 
           {!user && (
             <Button asChild variant="default" className="w-full">
-              <Link href={lp("/auth/login")}>เข้าสู่ระบบ</Link>
+              <Link href={lp("/auth/login")}>{t('common.login')}</Link>
             </Button>
           )}
         </CardFooter>
@@ -112,12 +114,12 @@ export default function UnauthorizedPage() {
 
       <div className="mt-8 text-center text-sm text-muted-foreground max-w-md space-y-2">
         <p>
-          <strong>ต้องการความช่วยเหลือ?</strong>
+          <strong>{t('unauthorized.help.title')}</strong>
         </p>
         <p>
-          หากคุณคิดว่านี่เป็นข้อผิดพลาด กรุณา{" "}
+          {t('unauthorized.help.description')}{" "}
           <Link href={lp("/contact")} className="text-primary hover:underline">
-            ติดต่อเรา
+            {t('nav.contact')}
           </Link>
         </p>
       </div>

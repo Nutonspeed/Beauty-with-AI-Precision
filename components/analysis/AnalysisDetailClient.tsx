@@ -12,10 +12,9 @@
  */
 
 import { useMemo, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Download,
@@ -27,11 +26,29 @@ import {
   Calendar,
   Clock,
   User,
+  Brain,
+  Shield,
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { formatDistanceToNow } from 'date-fns';
 import { useLocalizePath } from '@/lib/i18n/locale-link';
+import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
+
+interface RecommendationItem {
+  name?: string;
+  category?: string;
+  description: string;
+  priority?: 'low' | 'medium' | 'high' | 'critical';
+}
+
+interface AnalysisRecommendations {
+  treatments: RecommendationItem[];
+  products: RecommendationItem[];
+  lifestyle: RecommendationItem[];
+}
 
 interface Analysis {
   id: string;
@@ -73,7 +90,7 @@ interface Analysis {
   
   // Metadata
   processing_time_ms: number;
-  recommendations?: any;
+  recommendations?: AnalysisRecommendations;
   is_baseline: boolean;
 }
 
@@ -113,6 +130,7 @@ export default function AnalysisDetailClient({
   userProfile: _userProfile,
   userId: _userId,
 }: AnalysisDetailClientProps) {
+  const t = useTranslations();
   const [activeTab, setActiveTab] = useState('overview');
   const [regenerating, setRegenerating] = useState(false);
   const [vizUrl, setVizUrl] = useState(analysis.visualization_url);
@@ -121,14 +139,14 @@ export default function AnalysisDetailClient({
     try {
       const analysisDate = new Date(analysis.analyzed_at);
       if (Number.isNaN(analysisDate.getTime())) {
-        return 'Analysis time unavailable';
+        return t('analysis.error');
       }
       return formatDistanceToNow(analysisDate, { addSuffix: true });
     } catch (error) {
       console.warn('[AnalysisDetailClient] Failed to format analysis date:', error);
-      return 'Analysis time unavailable';
+      return t('analysis.error');
     }
-  }, [analysis.analyzed_at]);
+  }, [analysis.analyzed_at, t]);
 
   const getSeverityColor = (severity: string) => {
     switch (severity?.toLowerCase()) {
@@ -155,11 +173,15 @@ export default function AnalysisDetailClient({
   };
 
   const getModeData = (mode: string) => {
+    const scoreKey = `${mode}_score` as keyof Analysis;
+    const countKey = `${mode}_count` as keyof Analysis;
+    const severityKey = `${mode}_severity` as keyof Analysis;
+
     return {
-      score: analysis[`${mode}_score` as keyof Analysis] as number,
-      count: analysis[`${mode}_count` as keyof Analysis] as number || 
-             (mode === 'red_areas' ? analysis.red_areas_percentage : 0),
-      severity: analysis[`${mode}_severity` as keyof Analysis] as string,
+      score: (analysis[scoreKey] as number) || 0,
+      count: (analysis[countKey] as number) || 
+             (mode === 'red_areas' ? analysis.red_areas_percentage : 0) || 0,
+      severity: (analysis[severityKey] as string) || 'Unknown',
     };
   };
 
@@ -179,98 +201,132 @@ export default function AnalysisDetailClient({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-950 dark:to-blue-950">
-      <div className="container max-w-7xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-4">
-            <Link href={lp('/analysis')}>
-              <Button variant="outline" size="sm">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Analyses
-              </Button>
-            </Link>
-            <div>
-              <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">
-                Skin Analysis Results
-              </h1>
-              <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-                <Calendar className="inline w-4 h-4 mr-1" />
-                {analyzedAtDisplay}
-                {analysis.is_baseline && (
-                  <Badge variant="outline" className="ml-2">
-                    Baseline
-                  </Badge>
-                )}
-              </p>
+    <div className="min-h-screen bg-[#020617] text-slate-200 p-4 md:p-8">
+      <div className="container max-w-7xl mx-auto px-4 py-8 space-y-10">
+        {/* Header - Executive Report Style */}
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 pb-8 border-b border-white/5">
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              <Link href={lp('/analysis')}>
+                <Button variant="glass" size="icon" className="h-10 w-10 rounded-full border-white/10">
+                  <ArrowLeft className="w-5 h-5" />
+                </Button>
+              </Link>
+            <Badge variant="premium" className="px-4 py-1">{t('analysis.reportTypes.clinical')}</Badge>
+          </div>
+          <div>
+            <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white leading-tight">
+              {t('analysis.title')} <span className="text-primary text-elevated">{t('analysis.reportTypes.intelligence')}</span>
+            </h1>
+            <div className="flex flex-wrap items-center gap-6 text-slate-500 mt-4 uppercase tracking-[0.15em] text-[10px] font-bold">
+              <span className="flex items-center gap-2">
+                <Calendar className="w-3.5 h-3.5 text-primary" />
+                {t('common.atTime')}: {analyzedAtDisplay}
+              </span>
+              <span className="flex items-center gap-2">
+                <Activity className="w-3.5 h-3.5 text-primary" />
+                Neural Hash: {analysis.id.slice(0, 12)}
+              </span>
+              {analysis.is_baseline && (
+                <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 rounded-md h-5 px-2">
+                  {t('analysis.baselineReference')}
+                </Badge>
+              )}
             </div>
           </div>
+          </div>
           
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm">
-              <Share2 className="w-4 h-4 mr-2" />
-              Share
+          <div className="flex gap-3">
+            <Button variant="glass" className="h-12 px-6 border-white/10 text-xs font-bold uppercase tracking-widest hover:border-primary/30">
+              <Share2 className="w-4 h-4 mr-3" />
+              Secure Share
             </Button>
-            <Button variant="outline" size="sm">
-              <Download className="w-4 h-4 mr-2" />
-              Export PDF
+            <Button variant="premium" className="h-12 px-8 text-xs font-black uppercase tracking-widest shadow-glow-primary">
+              <Download className="w-4 h-4 mr-3" />
+              Export Full PDF
             </Button>
           </div>
         </div>
 
-        {/* Overall Score Card */}
-        <Card className="mb-8 border-2 shadow-lg">
-          <CardContent className="p-4 md:p-8">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
-              {/* Score */}
-              <div className="text-center">
-                <div className="mb-2 text-sm md:text-base text-slate-600 dark:text-slate-400">
-                  Overall Skin Score
+        {/* Executive Summary Dashboard */}
+        <div className="grid lg:grid-cols-12 gap-8">
+          {/* Main Score & Grade */}
+          <div className="lg:col-span-4">
+            <Card className="glass-panel border-white/5 h-full overflow-hidden flex flex-col justify-center text-center p-10 relative group">
+              <div className="absolute inset-0 bg-primary/5 blur-[100px] rounded-full pointer-events-none group-hover:bg-primary/10 transition-colors" />
+              <div className="space-y-8 relative z-10">
+                <p className="text-[11px] uppercase font-black tracking-[0.3em] text-slate-500">{t('analysis.metrics.globalIndex')}</p>
+                <div className="relative inline-flex items-center justify-center">
+                  <svg className="h-48 w-48 -rotate-90">
+                    <circle cx="96" cy="96" r="88" fill="none" stroke="currentColor" strokeWidth="4" className="text-white/5" />
+                    <circle
+                      cx="96" cy="96" r="88" fill="none" stroke="var(--primary)" strokeWidth="8"
+                      strokeDasharray={552.9}
+                      strokeDashoffset={552.9 - (552.9 * analysis.overall_score) / 100}
+                      className="transition-all duration-1000 ease-out shadow-glow-primary"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <span className={cn("text-6xl font-black tracking-tighter", getScoreColor(analysis.overall_score))}>
+                      {analysis.overall_score.toFixed(0)}
+                    </span>
+                    <span className="text-[10px] uppercase font-bold text-slate-500 tracking-widest">{t('analysis.metrics.aggregate')}</span>
+                  </div>
                 </div>
-                <div className={`text-4xl md:text-6xl font-bold ${getScoreColor(analysis.overall_score)}`}>
-                  {analysis.overall_score.toFixed(1)}
-                </div>
-                <div className="mt-2">
-                  <Badge className={`text-sm md:text-lg px-3 md:px-4 py-0.5 md:py-1 ${getSeverityColor('low')}`}>
-                    {analysis.skin_health_grade}
+                <div className="space-y-2">
+                  <Badge className={cn("text-lg px-8 py-1.5 rounded-full border-0 shadow-lg uppercase tracking-[0.2em] font-black", getSeverityColor('low'))}>
+                    GRADE {analysis.skin_health_grade}
                   </Badge>
+                  <p className="text-xs text-slate-500 font-medium uppercase tracking-widest pt-2">{t('analysis.metrics.clinicalClassification')}</p>
                 </div>
               </div>
+            </Card>
+          </div>
 
-              {/* Image Comparison */}
-              <div className="md:col-span-2">
-                <div className="grid grid-cols-2 gap-2 md:gap-4">
-                  <div>
-                    <div className="text-xs md:text-sm font-medium text-slate-600 dark:text-slate-400 mb-1 md:mb-2">
-                      Original Image
-                    </div>
-                    <div className="relative aspect-square rounded-lg overflow-hidden border-2 border-slate-200 dark:border-slate-700">
-                      <Image
-                        src={analysis.image_url}
-                        alt="Original"
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
+          {/* Visual Asset Comparison */}
+          <div className="lg:col-span-8">
+            <Card className="glass-panel border-white/5 h-full overflow-hidden p-8">
+              <div className="flex items-center justify-between mb-8">
+                <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-slate-400">{t('analysis.metrics.multiSpectrum')}</h3>
+                <div className="flex gap-2">
+                  <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+                  <span className="text-[10px] uppercase font-bold text-slate-500">{t('analysis.metrics.synthesisActive')}</span>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-6 md:gap-10">
+                <div className="space-y-4">
+                  <div className="flex justify-between items-end px-1">
+                    <span className="text-[10px] uppercase font-black tracking-widest text-slate-500">{t('analysis.metrics.inputAsset')}</span>
+                    <span className="text-[9px] text-slate-600">{t('analysis.metrics.standardRgb')}</span>
                   </div>
-                  <div>
-                    <div className="text-xs md:text-sm font-medium text-slate-600 dark:text-slate-400 mb-1 md:mb-2">
-                      Analysis Visualization
-                    </div>
-                    <div className="relative aspect-square rounded-lg overflow-hidden border-2 border-slate-200 dark:border-slate-700">
-                      {vizUrl ? (
-                        <Image
-                          src={vizUrl}
-                          alt="Visualization"
-                          fill
-                          className="object-cover"
-                        />
-                      ) : (
-                        <div className="flex flex-col items-center justify-center h-full bg-slate-100 dark:bg-slate-800 p-4 text-center gap-2">
-                          <p className="text-slate-500 text-sm">Visualization not available</p>
-                          <Button
-                            size="sm"
-                            variant="outline"
+                  <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden border border-white/10 shadow-2xl group">
+                    <Image src={analysis.image_url} alt="Input" fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-end px-1">
+                    <span className="text-[10px] uppercase font-black tracking-widest text-primary">{t('analysis.metrics.neuralOverlay')}</span>
+                    <span className="text-[9px] text-slate-600">{t('analysis.metrics.crossSpectrum')}</span>
+                  </div>
+                  <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden border border-primary/20 shadow-[0_0_40px_rgba(var(--primary-rgb),0.1)] group">
+                    {vizUrl ? (
+                      <>
+                        <Image src={vizUrl} alt="Synthesis" fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-primary/20 via-transparent to-transparent" />
+                      </>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center h-full bg-white/5 p-8 text-center gap-6">
+                        <div className="relative h-16 w-16">
+                          <Brain className="h-16 w-16 text-white/5" />
+                          <div className="absolute inset-0 bg-primary/10 blur-xl rounded-full animate-pulse" />
+                        </div>
+                        <div className="space-y-2">
+                          <p className="text-slate-400 text-xs font-medium uppercase tracking-widest leading-relaxed">{t('analysis.metrics.pendingSynthesis')}</p>
+                          <Button 
+                            variant="premium" 
+                            size="sm" 
                             disabled={regenerating}
                             onClick={async () => {
                               setRegenerating(true);
@@ -282,143 +338,144 @@ export default function AnalysisDetailClient({
                                 });
                                 if (resp.ok) {
                                   const json = await resp.json();
-                                  if (json.visualization_url) {
-                                    setVizUrl(json.visualization_url);
-                                  }
+                                  if (json.visualization_url) setVizUrl(json.visualization_url);
                                 }
                               } finally {
                                 setRegenerating(false);
                               }
                             }}
+                            className="h-10 px-6 text-[10px] font-black"
                           >
-                            {regenerating ? 'Generating...' : 'Generate Visualization'}
+                            {regenerating ? t('analysis.metrics.calibrating') : t('analysis.metrics.initSynthesis')}
                           </Button>
                         </div>
-                      )}
-                    </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
-            </div>
+            </Card>
+          </div>
+        </div>
 
-            {/* Processing Info */}
-            <div className="mt-4 md:mt-6 pt-4 md:pt-6 border-t border-slate-200 dark:border-slate-700 flex flex-col md:flex-row items-start md:items-center justify-between gap-2 text-xs md:text-sm text-slate-600 dark:text-slate-400">
-              <div className="flex items-center gap-2 md:gap-4 flex-wrap">
-                <span className="flex items-center gap-1">
-                  <Clock className="w-3 h-3 md:w-4 md:h-4" />
-                  Processing: {analysis.processing_time_ms}ms
-                </span>
-                <span className="flex items-center gap-1">
-                  <Activity className="w-3 h-3 md:w-4 md:h-4" />
-                  8-Mode Analysis
-                </span>
+        {/* Detailed Analytics Grid */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-10">
+          <div className="flex items-center justify-between border-b border-white/5 pb-2">
+            <TabsList className="bg-white/5 border border-white/10 p-1.5 rounded-2xl h-14">
+              <TabsTrigger value="overview" className="rounded-xl px-8 data-[state=active]:bg-primary data-[state=active]:text-white font-bold uppercase tracking-widest text-[11px]">{t('analysis.tabs.summary')}</TabsTrigger>
+              <TabsTrigger value="details" className="rounded-xl px-8 data-[state=active]:bg-primary data-[state=active]:text-white font-bold uppercase tracking-widest text-[11px]">{t('analysis.tabs.portfolio')}</TabsTrigger>
+              <TabsTrigger value="recommendations" className="rounded-xl px-8 data-[state=active]:bg-primary data-[state=active]:text-white font-bold uppercase tracking-widest text-[11px]">{t('analysis.tabs.protocol')}</TabsTrigger>
+            </TabsList>
+            <div className="hidden md:flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
+              <div className="flex items-center gap-2">
+                <Clock className="w-3.5 h-3.5 text-primary" />
+                Processing: {analysis.processing_time_ms}ms
               </div>
-              <span className="text-xs">ID: {analysis.id.slice(0, 8)}</span>
+              <div className="h-1 w-1 rounded-full bg-slate-700" />
+              <div className="flex items-center gap-2">
+                <Activity className="w-3.5 h-3.5 text-primary" />
+                Neural Precision: High
+              </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
 
-        {/* Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-3 mb-8">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="details">Detailed Results</TabsTrigger>
-            <TabsTrigger value="recommendations">Recommendations</TabsTrigger>
-          </TabsList>
-
-          {/* Overview Tab */}
-          <TabsContent value="overview" className="space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
-              {MODES.map((mode) => {
+          <TabsContent value="overview" className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {MODES.map((mode, i) => {
                 const data = getModeData(mode.id);
                 return (
-                  <Card key={mode.id} className="border-2 hover:shadow-lg transition-shadow">
-                    <CardHeader className="pb-2">
-                      <div className="flex items-start justify-between gap-2 mb-1">
-                        <span className="flex items-center gap-1.5 min-w-0">
-                          <span className="text-xl shrink-0">{mode.icon}</span>
-                          <span className="font-semibold text-sm truncate">{mode.label}</span>
-                        </span>
-                        <Badge className={`${getSeverityColor(data.severity)} shrink-0 text-xs`}>
-                          {data.severity}
-                        </Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="pt-0">
-                      <div className="space-y-2">
-                        <div className="flex items-baseline justify-between gap-2">
-                          <span className="text-xs text-slate-600 dark:text-slate-400">
-                            Score
-                          </span>
-                          <span className={`text-xl md:text-2xl font-bold ${getScoreColor(data.score)}`}>
-                            {data.score.toFixed(1)}
-                          </span>
+                  <motion.div
+                    key={mode.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.05 }}
+                  >
+                    <Card className="glass-panel border-white/5 hover:border-primary/20 transition-all group overflow-hidden">
+                      <CardHeader className="pb-4">
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="h-10 w-10 rounded-xl bg-white/5 flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition-transform">{mode.icon}</div>
+                            <span className="font-bold text-sm tracking-tight text-white">{t(`analysis.modes.${mode.id}`)}</span>
+                          </div>
+                          <Badge className={cn("px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-tighter", getSeverityColor(data.severity))}>
+                            {data.severity}
+                          </Badge>
                         </div>
-                        <div className="flex items-baseline justify-between gap-2">
-                          <span className="text-xs text-slate-600 dark:text-slate-400">
-                            {mode.id === 'red_areas' ? 'Coverage' : 'Count'}
-                          </span>
-                          <span className="text-base md:text-lg font-semibold">
-                            {mode.id === 'red_areas' 
-                              ? `${data.count.toFixed(1)}%` 
-                              : data.count}
-                          </span>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-4">
+                          <div className="flex items-end justify-between">
+                            <div className="space-y-1">
+                              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{t('analysis.metrics.healthIndex')}</p>
+                              <p className={cn("text-3xl font-black tracking-tighter", getScoreColor(data.score))}>{data.score.toFixed(0)}</p>
+                            </div>
+                            <div className="text-right space-y-1">
+                              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{mode.id === 'red_areas' ? t('analysis.metrics.coverage') : t('analysis.metrics.rawCount')}</p>
+                              <p className="text-lg font-bold text-slate-200">
+                                {mode.id === 'red_areas' ? `${data.count.toFixed(1)}%` : data.count}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
+                            <div 
+                              className={cn("h-full transition-all duration-1000", getProgressBarColor(data.score))} 
+                              style={{ width: `${data.score}%` }} 
+                            />
+                          </div>
                         </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
                 );
               })}
             </div>
           </TabsContent>
 
-          {/* Details Tab */}
-          <TabsContent value="details" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Comprehensive Analysis Details</CardTitle>
+          {/* Metric Portfolio Tab */}
+          <TabsContent value="details" className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <Card className="glass-panel border-white/5 overflow-hidden">
+              <CardHeader className="bg-white/5 border-b border-white/5 p-8">
+                <CardTitle className="text-2xl font-bold tracking-tight text-white">{t('analysis.metrics.fullPortfolio')}</CardTitle>
+                <CardDescription className="text-slate-400 font-light text-base">{t('analysis.metrics.portfolioDesc')}</CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-6">
+              <CardContent className="p-0">
+                <div className="divide-y divide-white/5">
                   {MODES.map((mode) => {
                     const data = getModeData(mode.id);
                     return (
-                      <div
-                        key={mode.id}
-                        className="pb-6 border-b border-slate-200 dark:border-slate-700 last:border-0"
-                      >
-                        <div className="flex items-start justify-between mb-4">
-                          <div className="flex items-center gap-3">
-                            <span className="text-3xl">{mode.icon}</span>
-                            <div>
-                              <h3 className="text-lg font-semibold">{mode.label}</h3>
-                              <p className="text-sm text-slate-600 dark:text-slate-400">
-                                Detected: {mode.id === 'red_areas' 
-                                  ? `${data.count.toFixed(1)}% coverage` 
-                                  : `${data.count} ${mode.id}`}
-                              </p>
+                      <div key={mode.id} className="p-8 hover:bg-white/5 transition-colors group">
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
+                          <div className="flex items-center gap-6">
+                            <div className="h-16 w-16 rounded-[1.25rem] bg-white/5 flex items-center justify-center text-4xl shadow-2xl border border-white/5 group-hover:border-primary/30 transition-all">
+                              {mode.icon}
+                            </div>
+                            <div className="space-y-1">
+                              <h3 className="text-xl font-bold text-white tracking-tight">{t(`analysis.modes.${mode.id}`)}</h3>
+                              <div className="flex items-center gap-3">
+                                <Badge className={cn("px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest", getSeverityColor(data.severity))}>
+                                  {data.severity} SEVERITY
+                                </Badge>
+                                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">
+                                  {mode.id === 'red_areas' ? `DENSITY: ${data.count.toFixed(1)}%` : `COUNT: ${data.count}`}
+                                </span>
+                              </div>
                             </div>
                           </div>
-                          <Badge className={getSeverityColor(data.severity)}>
-                            {data.severity} severity
-                          </Badge>
-                        </div>
-                        
-                        {/* Progress Bar */}
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between text-sm">
-                            <span className="text-slate-600 dark:text-slate-400">
-                              Health Score
-                            </span>
-                            <span className={`font-semibold ${getScoreColor(data.score)}`}>
-                              {data.score.toFixed(1)}/100
-                            </span>
+                          
+                          <div className="flex-1 max-w-md space-y-3">
+                            <div className="flex items-center justify-between">
+                              <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.25em]">{t('analysis.metrics.subMetricScore')}</span>
+                              <span className={cn("text-2xl font-black tracking-tighter", getScoreColor(data.score))}>{data.score.toFixed(1)}</span>
+                            </div>
+                            <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
+                              <motion.div
+                                initial={{ width: 0 }}
+                                animate={{ width: `${data.score}%` }}
+                                transition={{ duration: 1.5, ease: "easeOut" }}
+                                className={cn("h-full rounded-full", getProgressBarColor(data.score))}
+                              />
+                            </div>
                           </div>
-                          <Progress
-                            value={Math.round(data.score)}
-                            className="h-2 bg-slate-200 dark:bg-slate-700"
-                            indicatorClassName={getProgressBarColor(data.score)}
-                          />
                         </div>
                       </div>
                     );
@@ -428,116 +485,76 @@ export default function AnalysisDetailClient({
             </Card>
           </TabsContent>
 
-          {/* Recommendations Tab */}
-          <TabsContent value="recommendations" className="space-y-6">
+          {/* Treatment Protocol Tab */}
+          <TabsContent value="recommendations" className="animate-in fade-in slide-in-from-bottom-4 duration-700">
             {analysis.recommendations ? (
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Treatments */}
-                {analysis.recommendations.treatments?.length > 0 && (
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Activity className="w-5 h-5" />
-                        Recommended Treatments
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Protocol Card Mixin */}
+                {[
+                  { id: 'treatments', title: t('analysis.protocols.interventions'), icon: Activity, data: analysis.recommendations.treatments, color: "text-primary" },
+                  { id: 'products', title: t('analysis.protocols.regimen'), icon: CheckCircle, data: analysis.recommendations.products, color: "text-emerald-400" },
+                  { id: 'lifestyle', title: t('analysis.protocols.optimization'), icon: User, data: analysis.recommendations.lifestyle, color: "text-amber-400" }
+                ].map((sec) => (
+                  <Card key={sec.id} className="glass-panel border-white/5 overflow-hidden flex flex-col">
+                    <CardHeader className="bg-white/5 border-b border-white/5 p-6">
+                      <CardTitle className="text-sm font-bold uppercase tracking-[0.2em] flex items-center gap-3">
+                        <sec.icon className={cn("w-5 h-5", sec.color)} />
+                        {sec.title}
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-4">
-                      {analysis.recommendations.treatments.map((treatment: any) => (
-                        <div
-                          key={treatment.name || treatment.description}
-                          className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700"
-                        >
-                          <div className="flex items-start justify-between mb-2">
-                            <h4 className="font-semibold">{treatment.name}</h4>
-                            {treatment.priority && (
-                              <Badge
-                                variant={treatment.priority === 'high' ? 'destructive' : 'secondary'}
-                              >
-                                {treatment.priority}
+                    <CardContent className="p-6 space-y-4 flex-1">
+                      {sec.data?.length > 0 ? sec.data.map((item: RecommendationItem, i: number) => (
+                        <div key={i} className="p-5 rounded-2xl bg-white/5 border border-white/5 hover:border-white/10 transition-all group/item">
+                          <div className="flex items-start justify-between mb-3">
+                            <h4 className="font-bold text-white group-hover/item:text-primary transition-colors leading-snug capitalize">{item.name || item.category}</h4>
+                            {item.priority && (
+                              <Badge className={cn("px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-tighter", getPriorityBadgeVariant(item.priority))}>
+                                {item.priority}
                               </Badge>
                             )}
                           </div>
-                          <p className="text-sm text-slate-600 dark:text-slate-400">
-                            {treatment.description}
+                          <p className="text-xs text-slate-400 font-light leading-relaxed group-hover/item:text-slate-300 transition-colors">
+                            {item.description}
                           </p>
                         </div>
-                      ))}
-                    </CardContent>
-                  </Card>
-                )}
-
-                {/* Products */}
-                {analysis.recommendations.products?.length > 0 && (
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <CheckCircle className="w-5 h-5" />
-                        Recommended Products
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      {analysis.recommendations.products.map((product: any) => (
-                        <div
-                          key={product.name || product.category}
-                          className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700"
-                        >
-                          <h4 className="font-semibold mb-1">{product.name}</h4>
-                          <p className="text-xs text-slate-500 mb-2">{product.category}</p>
-                          <p className="text-sm text-slate-600 dark:text-slate-400">
-                            {product.description}
-                          </p>
+                      )) : (
+                        <div className="h-full flex flex-col items-center justify-center text-center opacity-30 py-10">
+                          <sec.icon className="w-12 h-12 mb-4" />
+                          <p className="text-[10px] uppercase font-bold tracking-widest">{t('analysis.protocols.noData')}</p>
                         </div>
-                      ))}
+                      )}
                     </CardContent>
                   </Card>
-                )}
-
-                {/* Lifestyle */}
-                {analysis.recommendations.lifestyle?.length > 0 && (
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <User className="w-5 h-5" />
-                        Lifestyle Tips
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      {analysis.recommendations.lifestyle.map((tip: any) => (
-                        <div
-                          key={tip.category || tip.description}
-                          className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700"
-                        >
-                          <div className="flex items-start justify-between mb-2">
-                            <h4 className="font-semibold capitalize">{tip.category}</h4>
-                            {tip.priority && (
-                              <Badge
-                                variant={getPriorityBadgeVariant(tip.priority)}
-                              >
-                                {tip.priority}
-                              </Badge>
-                            )}
-                          </div>
-                          <p className="text-sm text-slate-600 dark:text-slate-400">
-                            {tip.description}
-                          </p>
-                        </div>
-                      ))}
-                    </CardContent>
-                  </Card>
-                )}
+                ))}
               </div>
             ) : (
-              <Card>
-                <CardContent className="py-12 text-center">
-                  <AlertCircle className="w-12 h-12 mx-auto mb-4 text-slate-400" />
-                  <p className="text-slate-600 dark:text-slate-400">
-                    No recommendations available for this analysis.
-                  </p>
+              <Card className="glass-panel border-white/5">
+                <CardContent className="py-24 text-center space-y-6">
+                  <AlertCircle className="w-16 h-16 mx-auto text-slate-700 animate-pulse" />
+                  <div className="space-y-2">
+                    <h3 className="text-xl font-bold tracking-tight text-white">{t('analysis.protocols.pendingTitle')}</h3>
+                    <p className="text-slate-500 font-light max-w-sm mx-auto">{t('analysis.protocols.pendingDesc')}</p>
+                  </div>
+                  <Button variant="outline" className="glass uppercase tracking-widest font-black text-[10px]">{t('analysis.protocols.retry')}</Button>
                 </CardContent>
               </Card>
             )}
           </TabsContent>
         </Tabs>
+
+        {/* Global Disclosure Footer */}
+        <div className="mt-20 pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-8 opacity-50 grayscale hover:opacity-100 hover:grayscale-0 transition-all">
+          <div className="flex items-center gap-4">
+            <Shield className="w-10 h-10 text-slate-600" />
+            <div className="space-y-1">
+              <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400">{t('analysis.footer.disclaimerTitle')}</p>
+              <p className="text-[9px] text-slate-500 leading-relaxed max-w-2xl font-light">
+                {t('analysis.footer.disclaimerDesc')}
+              </p>
+            </div>
+          </div>
+          <p className="text-[9px] font-black uppercase tracking-widest text-slate-600">{t('analysis.footer.verified')}</p>
+        </div>
       </div>
     </div>
   );

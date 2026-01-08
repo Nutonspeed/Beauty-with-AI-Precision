@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useTranslations } from "next-intl"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -8,58 +9,58 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { FileText, Sparkles, Download, Send, Eye, Edit } from "lucide-react"
 
-// Mock data - ในโปรดักชั่นจะดึงจาก API
-const treatmentPackages = [
-  {
-    id: "basic",
-    name: "แพ็คเกจพื้นฐาน",
-    price: 15000,
-    treatments: ["HydraFacial", "Chemical Peel", "LED Therapy"],
-    description: "เหมาะสำหรับผู้เริ่มต้นที่ต้องการดูแลผิวอย่างครบครัน"
-  },
-  {
-    id: "premium",
-    name: "แพ็คเกจพรีเมี่ยม",
-    price: 35000,
-    treatments: ["HydraFacial", "Chemical Peel", "LED Therapy", "Microdermabrasion", "RF Skin Tightening"],
-    description: "สำหรับผู้ที่ต้องการผลลัพธ์ที่เห็นได้ชัดและยั่งยืน"
-  },
-  {
-    id: "vip",
-    name: "แพ็คเกจ VIP",
-    price: 75000,
-    treatments: ["ทุกทรีตเมนต์ที่มี", "ปรึกษาแพทย์เฉพาะ", "Home Care Kit", "Follow-up 6 เดือน"],
-    description: "แพ็คเกจครบครันสำหรับผู้ที่ต้องการการดูแลระดับมืออาชีพ"
-  }
-]
-
-const aiSuggestions = [
-  {
-    id: "1",
-    customerName: "นางสาว สมใจ รักสวย",
-    skinType: "ผิวมัน",
-    concerns: ["สิว", "รูขุมขนกว้าง"],
-    recommendedPackage: "premium",
-    confidence: 92,
-    reasoning: "ลูกค้าอายุ 25 ปี มีปัญหาผิวมันและสิว ควรใช้แพ็คเกจพรีเมี่ยมที่มี Chemical Peel และ Microdermabrasion"
-  },
-  {
-    id: "2",
-    customerName: "นาย วิชัย ใจดี",
-    skinType: "ผิวแห้ง",
-    concerns: ["ริ้วรอย", "ผิวไม่กระชับ"],
-    recommendedPackage: "vip",
-    confidence: 88,
-    reasoning: "ลูกค้าอายุ 45 ปี มีปัญหาผิวแห้งและริ้วรอย ควรใช้แพ็คเกจ VIP ที่มี RF Skin Tightening"
-  }
-]
-
 export function AIProposalGenerator() {
+  const t = useTranslations()
   const [selectedCustomer, setSelectedCustomer] = useState("")
   const [selectedPackage, setSelectedPackage] = useState("")
   const [customMessage, setCustomMessage] = useState("")
   const [generatedProposal, setGeneratedProposal] = useState("")
   const [isGenerating, setIsGenerating] = useState(false)
+
+  const treatmentPackages = [
+    {
+      id: "basic",
+      name: t('salesProposalGenerator.packages.basic.name'),
+      price: 15000,
+      treatments: ["HydraFacial", "Chemical Peel", "LED Therapy"],
+      description: t('salesProposalGenerator.packages.basic.description')
+    },
+    {
+      id: "premium",
+      name: t('salesProposalGenerator.packages.premium.name'),
+      price: 35000,
+      treatments: ["HydraFacial", "Chemical Peel", "LED Therapy", "Microdermabrasion", "RF Skin Tightening"],
+      description: t('salesProposalGenerator.packages.premium.description')
+    },
+    {
+      id: "vip",
+      name: t('salesProposalGenerator.packages.vip.name'),
+      price: 75000,
+      treatments: ["ทุกทรีตเมนต์ที่มี", "ปรึกษาแพทย์เฉพาะ", "Home Care Kit", "Follow-up 6 เดือน"],
+      description: t('salesProposalGenerator.packages.vip.description')
+    }
+  ]
+
+  const aiSuggestions = [
+    {
+      id: "1",
+      customerName: "นางสาว สมใจ รักสวย",
+      skinType: t('patient.skinType.oily'),
+      concerns: [t('treatmentComparison.concerns.acne'), t('treatmentComparison.concerns.pigmentation')],
+      recommendedPackage: "premium",
+      confidence: 92,
+      reasoning: "ลูกค้าอายุ 25 ปี มีปัญหาผิวมันและสิว ควรใช้แพ็คเกจพรีเมี่ยมที่มี Chemical Peel และ Microdermabrasion"
+    },
+    {
+      id: "2",
+      customerName: "นาย วิชัย ใจดี",
+      skinType: t('patient.skinType.dry'),
+      concerns: [t('treatmentComparison.concerns.anti_aging'), t('treatmentComparison.concerns.dryness')],
+      recommendedPackage: "vip",
+      confidence: 88,
+      reasoning: "ลูกค้าอายุ 45 ปี มีปัญหาผิวแห้งและริ้วรอย ควรใช้แพ็คเกจ VIP ที่มี RF Skin Tightening"
+    }
+  ]
 
   const handleGenerateProposal = async () => {
     if (!selectedCustomer || !selectedPackage) return
@@ -72,21 +73,14 @@ export function AIProposalGenerator() {
       const package_ = treatmentPackages.find(p => p.id === selectedPackage)
 
       if (customer && package_) {
-        const proposal = `เรียน ${customer.customerName}
-
-จากการวิเคราะห์ผิวของคุณ เราพบว่าคุณมีปัญหา: ${customer.concerns.join(", ")}
-
-เราขอแนะนำ **${package_.name}** ราคา ${package_.price.toLocaleString()} บาท
-ประกอบด้วย: ${package_.treatments.join(", ")}
-
-${package_.description}
-
-${customMessage ? `ข้อความเพิ่มเติม: ${customMessage}` : ""}
-
-ติดต่อเราได้ที่ 02-123-4567 หรือ Walk-in ที่คลินิก
-
-ด้วยความเคารพ
-ทีมงาน AI367BAR`
+        const proposal = `${t('salesProposalGenerator.template.greeting', { name: customer.customerName })}\n\n` +
+          `${t('salesProposalGenerator.template.intro', { concerns: customer.concerns.join(", ") })}\n\n` +
+          `${t('salesProposalGenerator.template.recommend', { package: t(`salesProposalGenerator.packages.${package_.id}.name`), price: package_.price.toLocaleString() })}\n` +
+          `${t('salesProposalGenerator.template.includes', { items: package_.treatments.join(", ") })}\n\n` +
+          `${t(`salesProposalGenerator.packages.${package_.id}.description`)}\n\n` +
+          `${customMessage ? `${t('salesProposalGenerator.customMessage')}: ${customMessage}` : ""}\n\n` +
+          `${t('salesProposalGenerator.template.contact')}\n\n` +
+          `${t('salesProposalGenerator.template.closing')}`
 
         setGeneratedProposal(proposal)
       }
@@ -98,7 +92,7 @@ ${customMessage ? `ข้อความเพิ่มเติม: ${customMes
   const handleSendProposal = () => {
     // ในโปรดักชั่นจะส่งไปยัง API
     console.log("Sending proposal:", generatedProposal)
-    alert("ส่ง proposal สำเร็จ!")
+    alert(t('salesProposalGenerator.sendSuccess'))
   }
 
   const handleDownloadProposal = () => {
@@ -120,16 +114,16 @@ ${customMessage ? `ข้อความเพิ่มเติม: ${customMes
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5" />
-            AI Proposal Generator
+            {t('salesProposalGenerator.title')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Customer Selection */}
           <div>
-            <div className="text-sm font-medium mb-2 block">เลือกลูกค้า</div>
+            <div className="text-sm font-medium mb-2 block">{t('salesProposalGenerator.customerSelection')}</div>
             <Select value={selectedCustomer} onValueChange={setSelectedCustomer}>
               <SelectTrigger>
-                <SelectValue placeholder="เลือกลูกค้า..." />
+                <SelectValue placeholder={t('salesProposalGenerator.customerPlaceholder')} />
               </SelectTrigger>
               <SelectContent>
                 {aiSuggestions.map((customer) => (
@@ -144,7 +138,7 @@ ${customMessage ? `ข้อความเพิ่มเติม: ${customMes
           {/* AI Recommendations */}
           {selectedCustomer && (
             <div className="p-4 bg-muted rounded-lg">
-              <h4 className="font-medium mb-2">AI แนะนำ</h4>
+              <h4 className="font-medium mb-2">{t('salesProposalGenerator.aiRecommendation')}</h4>
               {(() => {
                 const customer = aiSuggestions.find(c => c.id === selectedCustomer)
                 if (!customer) return null
@@ -154,11 +148,11 @@ ${customMessage ? `ข้อความเพิ่มเติม: ${customMes
                     <div className="flex items-center gap-2">
                       <Badge variant="secondary">{customer.skinType}</Badge>
                       <Badge className="bg-blue-100 text-blue-800">
-                        ความมั่นใจ {customer.confidence}%
+                        {t('salesProposalGenerator.confidenceLabel', { percent: customer.confidence })}
                       </Badge>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      ปัญหา: {customer.concerns.join(", ")}
+                      {t('salesProposalGenerator.concernsLabel', { text: customer.concerns.join(", ") })}
                     </p>
                     <p className="text-sm">{customer.reasoning}</p>
                   </div>
@@ -169,15 +163,15 @@ ${customMessage ? `ข้อความเพิ่มเติม: ${customMes
 
           {/* Package Selection */}
           <div>
-            <div className="text-sm font-medium mb-2 block">เลือกแพ็คเกจ</div>
+            <div className="text-sm font-medium mb-2 block">{t('salesProposalGenerator.packageSelection')}</div>
             <Select value={selectedPackage} onValueChange={setSelectedPackage}>
               <SelectTrigger>
-                <SelectValue placeholder="เลือกแพ็คเกจ..." />
+                <SelectValue placeholder={t('salesProposalGenerator.packagePlaceholder')} />
               </SelectTrigger>
               <SelectContent>
                 {treatmentPackages.map((pkg) => (
                   <SelectItem key={pkg.id} value={pkg.id}>
-                    {pkg.name} - ฿{pkg.price.toLocaleString()}
+                    {t(`salesProposalGenerator.packages.${pkg.id}.name`)} - ฿{pkg.price.toLocaleString()}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -186,9 +180,9 @@ ${customMessage ? `ข้อความเพิ่มเติม: ${customMes
 
           {/* Custom Message */}
           <div>
-            <div className="text-sm font-medium mb-2 block">ข้อความเพิ่มเติม (ไม่บังคับ)</div>
+            <div className="text-sm font-medium mb-2 block">{t('salesProposalGenerator.customMessage')}</div>
             <Textarea
-              placeholder="เพิ่มข้อความส่วนตัวหรือเงื่อนไขพิเศษ..."
+              placeholder={t('salesProposalGenerator.customMessagePlaceholder')}
               value={customMessage}
               onChange={(e) => setCustomMessage(e.target.value)}
               rows={3}
@@ -204,12 +198,12 @@ ${customMessage ? `ข้อความเพิ่มเติม: ${customMes
             {isGenerating ? (
               <>
                 <Sparkles className="h-4 w-4 mr-2 animate-spin" />
-                กำลังสร้าง Proposal...
+                {t('salesProposalGenerator.generating')}
               </>
             ) : (
               <>
                 <Sparkles className="h-4 w-4 mr-2" />
-                สร้าง Proposal ด้วย AI
+                {t('salesProposalGenerator.generateButton')}
               </>
             )}
           </Button>
@@ -222,7 +216,7 @@ ${customMessage ? `ข้อความเพิ่มเติม: ${customMes
           <CardTitle className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <FileText className="h-5 w-5" />
-              Generated Proposal
+              {t('salesProposalGenerator.generatedTitle')}
             </div>
             {generatedProposal && (
               <div className="flex gap-2">
@@ -248,18 +242,18 @@ ${customMessage ? `ข้อความเพิ่มเติม: ${customMes
               <div className="flex gap-2">
                 <Button variant="outline" size="sm" className="flex-1">
                   <Edit className="h-4 w-4 mr-2" />
-                  แก้ไข
+                  {t('salesProposalGenerator.edit')}
                 </Button>
                 <Button variant="outline" size="sm" className="flex-1">
                   <Eye className="h-4 w-4 mr-2" />
-                  ดูตัวอย่าง
+                  {t('salesProposalGenerator.preview')}
                 </Button>
               </div>
             </div>
           ) : (
             <div className="text-center py-8 text-muted-foreground">
               <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>เลือกข้อมูลลูกค้าและแพ็คเกจเพื่อสร้าง Proposal</p>
+              <p>{t('salesProposalGenerator.emptyState')}</p>
             </div>
           )}
         </CardContent>

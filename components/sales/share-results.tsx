@@ -40,7 +40,10 @@ interface ShareResultsProps {
   onShared?: (method: 'email' | 'chat') => void;
 }
 
+import { useTranslations } from 'next-intl';
+
 export default function ShareResults({ scanResult, leadId, onShared }: ShareResultsProps) {
+  const t = useTranslations();
   const { toast } = useToast();
   const [isSending, setIsSending] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
@@ -49,8 +52,8 @@ export default function ShareResults({ scanResult, leadId, onShared }: ShareResu
   const handleSendEmail = async () => {
     if (!scanResult.customer_email) {
       toast({
-        title: 'Email Required',
-        description: 'Please add an email address for the customer first.',
+        title: t('shareResults.email.required'),
+        description: t('shareResults.email.requiredDesc'),
         variant: 'destructive'
       });
       return;
@@ -65,7 +68,7 @@ export default function ShareResults({ scanResult, leadId, onShared }: ShareResu
         body: JSON.stringify({
           lead_id: leadId || null,
           template_id: null, // Will use custom template
-          subject: `Your Skin Analysis Results - ${scanResult.customer_name}`,
+          subject: `${t('shareResults.email.yourResults')} - ${scanResult.customer_name}`,
           recipient_email: scanResult.customer_email,
           recipient_name: scanResult.customer_name,
           content: generateEmailContent(),
@@ -77,7 +80,7 @@ export default function ShareResults({ scanResult, leadId, onShared }: ShareResu
       });
 
       if (!response.ok) {
-        throw new Error('Failed to send email');
+        throw new Error(t('shareResults.email.error'));
       }
 
       // Update scan result
@@ -93,8 +96,8 @@ export default function ShareResults({ scanResult, leadId, onShared }: ShareResu
 
       setEmailSent(true);
       toast({
-        title: 'Email Sent Successfully',
-        description: `Analysis results sent to ${scanResult.customer_email}`,
+        title: t('shareResults.email.sent'),
+        description: t('shareResults.email.sentDesc', { email: scanResult.customer_email }),
         variant: 'default'
       });
 
@@ -104,8 +107,8 @@ export default function ShareResults({ scanResult, leadId, onShared }: ShareResu
     } catch (error) {
       console.error('Error sending email:', error);
       toast({
-        title: 'Error Sending Email',
-        description: 'Failed to send email. Please try again.',
+        title: t('shareResults.email.error'),
+        description: t('shareResults.email.errorDesc'),
         variant: 'destructive'
       });
     } finally {
@@ -116,8 +119,8 @@ export default function ShareResults({ scanResult, leadId, onShared }: ShareResu
   const handleSendChat = async () => {
     if (!leadId) {
       toast({
-        title: 'Lead Required',
-        description: 'Please convert to lead first before sending via chat.',
+        title: t('shareResults.chat.required'),
+        description: t('shareResults.chat.requiredDesc'),
         variant: 'destructive'
       });
       return;
@@ -141,7 +144,7 @@ export default function ShareResults({ scanResult, leadId, onShared }: ShareResu
       });
 
       if (!response.ok) {
-        throw new Error('Failed to send chat message');
+        throw new Error(t('shareResults.chat.error'));
       }
 
       // Update scan result
@@ -157,8 +160,8 @@ export default function ShareResults({ scanResult, leadId, onShared }: ShareResu
 
       setChatSent(true);
       toast({
-        title: 'Message Sent Successfully',
-        description: 'Analysis results sent via chat',
+        title: t('shareResults.chat.sent'),
+        description: t('shareResults.chat.sentDesc'),
         variant: 'default'
       });
 
@@ -168,8 +171,8 @@ export default function ShareResults({ scanResult, leadId, onShared }: ShareResu
     } catch (error) {
       console.error('Error sending chat:', error);
       toast({
-        title: 'Error Sending Message',
-        description: 'Failed to send chat message. Please try again.',
+        title: t('shareResults.chat.error'),
+        description: t('shareResults.chat.errorDesc'),
         variant: 'destructive'
       });
     } finally {
@@ -181,48 +184,46 @@ export default function ShareResults({ scanResult, leadId, onShared }: ShareResu
     return `
 <html>
 <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-  <h1 style="color: #2563eb;">Your Skin Analysis Results</h1>
+  <h1 style="color: #2563eb;">${t('shareResults.email.yourResults')}</h1>
   
-  <p>Dear ${scanResult.customer_name},</p>
-  
-  <p>Thank you for your consultation with us. Here are your personalized skin analysis results:</p>
+  <p>${t('shareResults.chat.dear', { name: scanResult.customer_name })}</p>
   
   <div style="background: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
-    <h2 style="color: #1f2937; margin-top: 0;">Analysis Summary</h2>
-    <p><strong>Skin Age:</strong> ${scanResult.skin_age} years</p>
+    <h2 style="color: #1f2937; margin-top: 0;">${t('analysis.summary.title')}</h2>
+    <p><strong>${t('analysis.summary.skinAge')}:</strong> ${scanResult.skin_age} ${t('analysis.summary.years')}</p>
   </div>
   
-  <h3 style="color: #1f2937;">Identified Concerns:</h3>
+  <h3 style="color: #1f2937;">${t('shareResults.chat.concerns')}</h3>
   <ul>
     ${scanResult.concerns.map(c => `
       <li style="margin: 10px 0;">
-        <strong>${c.name}</strong> (Severity: ${c.severity}/10)
+        <strong>${c.name}</strong> (${t('skinHeatmap.avgSeverity')}: ${c.severity}/10)
         <br>
         <span style="color: #6b7280;">${c.description}</span>
       </li>
     `).join('')}
   </ul>
   
-  <h3 style="color: #1f2937;">Recommended Treatments:</h3>
+  <h3 style="color: #1f2937;">${t('shareResults.chat.recommendations')}</h3>
   <div style="margin: 20px 0;">
     ${scanResult.recommendations.map(r => `
       <div style="border: 1px solid #e5e7eb; padding: 15px; border-radius: 8px; margin: 10px 0;">
         <h4 style="margin: 0 0 10px 0; color: #2563eb;">${r.treatment}</h4>
-        <p style="margin: 5px 0;"><strong>Price:</strong> ฿${r.price.toLocaleString()}</p>
-        <p style="margin: 5px 0;"><strong>Duration:</strong> ${r.duration}</p>
-        <p style="margin: 5px 0;"><strong>Expected Outcome:</strong> ${r.expectedOutcome}</p>
+        <p style="margin: 5px 0;"><strong>${t('treatmentComparison.table.price')}:</strong> ฿${r.price.toLocaleString()}</p>
+        <p style="margin: 5px 0;"><strong>${t('treatmentComparison.table.duration')}:</strong> ${r.duration}</p>
+        <p style="margin: 5px 0;"><strong>${t('presentationMode.expectedResults')}:</strong> ${r.expectedOutcome}</p>
       </div>
     `).join('')}
   </div>
   
   <div style="background: #dbeafe; padding: 20px; border-radius: 8px; margin: 20px 0;">
-    <p style="margin: 0;"><strong>Next Steps:</strong></p>
-    <p>We recommend scheduling a consultation to discuss these treatments in detail and create a personalized treatment plan for you.</p>
+    <p style="margin: 0;"><strong>${t('common.nextSteps')}:</strong></p>
+    <p>${t('shareResults.chat.nextSteps')}</p>
   </div>
   
-  <p>If you have any questions, please don't hesitate to contact us.</p>
+  <p>${t('common.contactUsPrompt')}</p>
   
-  <p>Best regards,<br>Your Beauty Clinic Team</p>
+  <p>${t('common.bestRegards')},<br>${t('common.clinicTeam')}</p>
 </body>
 </html>
     `.trim();
@@ -230,19 +231,19 @@ export default function ShareResults({ scanResult, leadId, onShared }: ShareResu
 
   const generateChatMessage = () => {
     return `
-🔍 **Your Skin Analysis Results**
+🔍 **${t('shareResults.email.yourResults')}**
 
-Hi ${scanResult.customer_name}! Here are your personalized skin analysis results:
+${t('shareResults.chat.dear', { name: scanResult.customer_name })}
 
-**Skin Age:** ${scanResult.skin_age} years
+**${t('shareResults.chat.age', { age: scanResult.skin_age })}**
 
-**Identified Concerns:**
-${scanResult.concerns.map((c, i) => `${i + 1}. ${c.name} - Severity: ${c.severity}/10\n   ${c.description}`).join('\n')}
+**${t('shareResults.chat.concerns')}**
+${scanResult.concerns.map((c, i) => `${i + 1}. ${c.name} - ${t('skinHeatmap.avgSeverity')}: ${c.severity}/10\n   ${c.description}`).join('\n')}
 
-**Recommended Treatments:**
-${scanResult.recommendations.map((r, i) => `${i + 1}. **${r.treatment}**\n   💰 Price: ฿${r.price.toLocaleString()}\n   ⏱️ Duration: ${r.duration}\n   ✨ Expected: ${r.expectedOutcome}`).join('\n\n')}
+**${t('shareResults.chat.recommendations')}**
+${scanResult.recommendations.map((r, i) => `${i + 1}. **${r.treatment}**\n   💰 ${t('treatmentComparison.table.price')}: ฿${r.price.toLocaleString()}\n   ⏱️ ${t('treatmentComparison.table.duration')}: ${r.duration}\n   ✨ ${t('presentationMode.expectedResults')}: ${r.expectedOutcome}`).join('\n\n')}
 
-Would you like to schedule a consultation to discuss these treatments?
+${t('shareResults.chat.nextSteps')}
     `.trim();
   };
 
@@ -251,26 +252,26 @@ Would you like to schedule a consultation to discuss these treatments?
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Send className="w-5 h-5 text-green-500" />
-          Share Analysis Results
+          {t('shareResults.title')}
         </CardTitle>
         <CardDescription>
-          Send scan results to customer via email or chat
+          {t('shareResults.description')}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <Tabs defaultValue="email" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="email">Email</TabsTrigger>
-            <TabsTrigger value="chat">Chat</TabsTrigger>
+            <TabsTrigger value="email">{t('shareResults.tabs.email')}</TabsTrigger>
+            <TabsTrigger value="chat">{t('shareResults.tabs.chat')}</TabsTrigger>
           </TabsList>
           
           <TabsContent value="email" className="space-y-4 mt-4">
             {emailSent ? (
               <div className="p-6 bg-green-50 border border-green-200 rounded-lg text-center">
                 <CheckCircle2 className="w-8 h-8 text-green-600 mx-auto mb-2" />
-                <h4 className="font-semibold">Email Sent!</h4>
+                <h4 className="font-semibold">{t('shareResults.email.sent')}</h4>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Results sent to {scanResult.customer_email}
+                  {t('shareResults.email.sentDesc', { email: scanResult.customer_email ?? '' })}
                 </p>
               </div>
             ) : (
@@ -280,15 +281,17 @@ Would you like to schedule a consultation to discuss these treatments?
                     <div className="p-4 bg-muted/50 rounded-lg">
                       <div className="flex items-center gap-2 mb-2">
                         <Mail className="w-4 h-4 text-blue-600" />
-                        <span className="font-medium text-sm">Email Preview</span>
+                        <span className="font-medium text-sm">{t('shareResults.email.preview')}</span>
                       </div>
                       <div className="text-sm space-y-2">
-                        <div><strong>To:</strong> {scanResult.customer_email}</div>
-                        <div><strong>Subject:</strong> Your Skin Analysis Results</div>
+                        <div><strong>{t('shareResults.email.to')}:</strong> {scanResult.customer_email}</div>
+                        <div><strong>{t('shareResults.email.subject')}:</strong> {t('shareResults.email.yourResults')}</div>
                         <div className="pt-2 border-t">
                           <p className="text-muted-foreground">
-                            Personalized analysis with {scanResult.concerns.length} concerns identified 
-                            and {scanResult.recommendations.length} treatment recommendations.
+                            {t('shareResults.email.summary', { 
+                              concernCount: scanResult.concerns.length,
+                              recommendationCount: scanResult.recommendations.length
+                            })}
                           </p>
                         </div>
                       </div>
@@ -303,12 +306,12 @@ Would you like to schedule a consultation to discuss these treatments?
                       {isSending ? (
                         <>
                           <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          Sending Email...
+                          {t('shareResults.email.sending')}
                         </>
                       ) : (
                         <>
                           <Mail className="w-4 h-4 mr-2" />
-                          Send Email
+                          {t('shareResults.email.send')}
                         </>
                       )}
                     </Button>
@@ -316,9 +319,9 @@ Would you like to schedule a consultation to discuss these treatments?
                 ) : (
                   <div className="p-6 bg-amber-50 border border-amber-200 rounded-lg text-center">
                     <AlertCircle className="w-8 h-8 text-amber-600 mx-auto mb-2" />
-                    <h4 className="font-semibold">Email Address Required</h4>
+                    <h4 className="font-semibold">{t('shareResults.email.required')}</h4>
                     <p className="text-sm text-muted-foreground mt-1">
-                      Please add an email address to the customer profile first.
+                      {t('shareResults.email.requiredDesc')}
                     </p>
                   </div>
                 )}
@@ -330,9 +333,9 @@ Would you like to schedule a consultation to discuss these treatments?
             {chatSent ? (
               <div className="p-6 bg-green-50 border border-green-200 rounded-lg text-center">
                 <CheckCircle2 className="w-8 h-8 text-green-600 mx-auto mb-2" />
-                <h4 className="font-semibold">Message Sent!</h4>
+                <h4 className="font-semibold">{t('shareResults.chat.sent')}</h4>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Results sent via chat to the customer
+                  {t('shareResults.chat.sentDesc')}
                 </p>
               </div>
             ) : (
@@ -342,10 +345,10 @@ Would you like to schedule a consultation to discuss these treatments?
                     <div className="p-4 bg-muted/50 rounded-lg">
                       <div className="flex items-center gap-2 mb-2">
                         <MessageSquare className="w-4 h-4 text-green-600" />
-                        <span className="font-medium text-sm">Chat Message Preview</span>
+                        <span className="font-medium text-sm">{t('shareResults.chat.preview')}</span>
                       </div>
                       <div className="text-sm space-y-2">
-                        <div><strong>To:</strong> {scanResult.customer_name}</div>
+                        <div><strong>{t('shareResults.email.to')}:</strong> {scanResult.customer_name}</div>
                         <div className="pt-2 border-t">
                           <div className="bg-white p-3 rounded border text-xs whitespace-pre-wrap max-h-48 overflow-y-auto">
                             {generateChatMessage()}
@@ -363,12 +366,12 @@ Would you like to schedule a consultation to discuss these treatments?
                       {isSending ? (
                         <>
                           <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          Sending Message...
+                          {t('shareResults.chat.sending')}
                         </>
                       ) : (
                         <>
                           <MessageSquare className="w-4 h-4 mr-2" />
-                          Send Chat Message
+                          {t('shareResults.chat.send')}
                         </>
                       )}
                     </Button>
@@ -376,9 +379,9 @@ Would you like to schedule a consultation to discuss these treatments?
                 ) : (
                   <div className="p-6 bg-amber-50 border border-amber-200 rounded-lg text-center">
                     <AlertCircle className="w-8 h-8 text-amber-600 mx-auto mb-2" />
-                    <h4 className="font-semibold">Lead Required</h4>
+                    <h4 className="font-semibold">{t('shareResults.chat.required')}</h4>
                     <p className="text-sm text-muted-foreground mt-1">
-                      Please convert to lead first before sending via chat.
+                      {t('shareResults.chat.requiredDesc')}
                     </p>
                   </div>
                 )}
@@ -392,13 +395,13 @@ Would you like to schedule a consultation to discuss these treatments?
           {emailSent && (
             <Badge variant="default" className="gap-1">
               <CheckCircle2 className="w-3 h-3" />
-              Email Sent
+              {t('shareResults.status.emailSent')}
             </Badge>
           )}
           {chatSent && (
             <Badge variant="default" className="gap-1">
               <CheckCircle2 className="w-3 h-3" />
-              Chat Sent
+              {t('shareResults.status.chatSent')}
             </Badge>
           )}
         </div>

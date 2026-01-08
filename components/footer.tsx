@@ -14,139 +14,126 @@ export function Footer() {
   const t = useTranslations()
 
   return (
-    <footer className="border-t border-border bg-gradient-to-b from-background to-muted/50">
-      <div className="container py-16">
-        <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-5">
-          {/* Brand Section */}
-          <div className="lg:col-span-2 space-y-6">
-            <ClinicIQLogoFull />
-            <p className="text-sm text-muted-foreground leading-relaxed max-w-sm">
-              {t('footer.description')}
-            </p>
-            
-            {/* Social Links */}
-            <div className="flex items-center gap-3">
-              <a href="#" className="p-2 rounded-lg bg-muted hover:bg-primary hover:text-white transition-colors">
-                <Facebook className="h-4 w-4" />
-              </a>
-              <a href="#" className="p-2 rounded-lg bg-muted hover:bg-pink-500 hover:text-white transition-colors">
-                <Instagram className="h-4 w-4" />
-              </a>
-              <a href="#" className="p-2 rounded-lg bg-muted hover:bg-red-500 hover:text-white transition-colors">
-                <Youtube className="h-4 w-4" />
-              </a>
-              <a href="#" className="p-2 rounded-lg bg-muted hover:bg-blue-600 hover:text-white transition-colors">
-                <Linkedin className="h-4 w-4" />
-              </a>
+    <footer className="border-t border-white/5 bg-[#020617] pt-20 pb-10">
+      <div className="container px-6">
+        <div className="grid grid-cols-1 gap-16 md:grid-cols-2 lg:grid-cols-12">
+          {/* Brand Portfolio Section */}
+          <div className="lg:col-span-4 space-y-8">
+            <div className="flex flex-col gap-6">
+              <ClinicIQLogoFull />
+              <p className="text-sm text-slate-400 font-light leading-relaxed max-w-sm">
+                {t('footer.description')}
+              </p>
             </div>
             
-            {/* Contact Info */}
-            <div className="space-y-2 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <Mail className="h-4 w-4" />
-                <span>contact@cliniciq.ai</span>
+            {/* Social Intelligence Links */}
+            <div className="flex items-center gap-4">
+              {[Facebook, Instagram, Youtube, Linkedin].map((Icon, i) => (
+                <a key={i} href="#" aria-label="Social Link" className="h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-primary hover:border-primary/30 hover:bg-primary/5 transition-all group">
+                  <Icon className="h-5 w-5 transition-transform group-hover:scale-110" />
+                </a>
+              ))}
+            </div>
+            
+            {/* Global Communication Channels */}
+            <div className="space-y-3 pt-4">
+              <div className="flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-slate-500">
+                <Mail className="h-4 w-4 text-primary" />
+                <span>ops@cliniciq.ai</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Phone className="h-4 w-4" />
-                <span>+66 2-XXX-XXXX</span>
+              <div className="flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-slate-500">
+                <Phone className="h-4 w-4 text-primary" />
+                <span>+66 2-000-0000</span>
               </div>
             </div>
           </div>
 
-          <div>
-            <h3 className="mb-4 text-sm font-semibold">{t('footer.product')}</h3>
-            <ul className="space-y-3 text-sm">
-              <li>
-                <Link href={lp("/features")} className="text-muted-foreground transition-colors hover:text-foreground">
-                  {t('nav.features')}
-                </Link>
-              </li>
-              <li>
-                <Link href={lp("/pricing")} className="text-muted-foreground transition-colors hover:text-foreground">
-                  {t('nav.pricing')}
-                </Link>
-              </li>
-              <li>
-                <Link href={lp("/faq")} className="text-muted-foreground transition-colors hover:text-foreground">
-                  {t('nav.faq')}
-                </Link>
-              </li>
-              <li>
-                <Link href={lp("/analysis")} className="text-muted-foreground transition-colors hover:text-foreground">
-                  {t('footer.tryDemo')}
-                </Link>
-              </li>
-            </ul>
-          </div>
+          <div className="lg:col-span-8 grid grid-cols-2 md:grid-cols-3 gap-12">
+            <div className="space-y-6">
+              <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-white">{t('footer.product')}</h3>
+              <ul className="space-y-4">
+                {[
+                  { href: "/features", label: t('nav.features') },
+                  { href: "/pricing", label: t('nav.pricing') },
+                  { href: "/faq", label: t('nav.faq') },
+                  { href: "/analysis", label: t('footer.tryDemo') }
+                ].map((link) => (
+                  <li key={link.href}>
+                    <Link href={lp(link.href)} className="text-sm text-slate-400 font-light transition-colors hover:text-primary flex items-center group">
+                      <span className="h-px w-0 bg-primary mr-0 group-hover:w-3 group-hover:mr-2 transition-all" />
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          <div>
-            <h3 className="mb-4 text-sm font-semibold">{t('footer.company')}</h3>
-            <ul className="space-y-3 text-sm">
-              <li>
-                <Link href={lp("/case-studies")} className="text-muted-foreground transition-colors hover:text-foreground">
-                  {t('nav.caseStudies')}
-                </Link>
-              </li>
-              <li>
-                <Link href={lp("/about")} className="text-muted-foreground transition-colors hover:text-foreground">
-                  {t('nav.about')}
-                </Link>
-              </li>
-              <li>
-                <Link href={lp("/contact")} className="text-muted-foreground transition-colors hover:text-foreground">
-                  {t('nav.contact')}
-                </Link>
-              </li>
-              <li>
-                <Link href={lp("/careers")} className="text-muted-foreground transition-colors hover:text-foreground">
-                  {t('footer.careers')}
-                </Link>
-              </li>
-            </ul>
-          </div>
+            <div className="space-y-6">
+              <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-white">{t('footer.company')}</h3>
+              <ul className="space-y-4">
+                {[
+                  { href: "/case-studies", label: t('nav.caseStudies') },
+                  { href: "/about", label: t('nav.about') },
+                  { href: "/contact", label: t('nav.contact') },
+                  { href: "/careers", label: t('footer.careers') }
+                ].map((link) => (
+                  <li key={link.href}>
+                    <Link href={lp(link.href)} className="text-sm text-slate-400 font-light transition-colors hover:text-primary flex items-center group">
+                      <span className="h-px w-0 bg-primary mr-0 group-hover:w-3 group-hover:mr-2 transition-all" />
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          <div>
-            <h3 className="mb-4 text-sm font-semibold">{t('footer.legal')}</h3>
-            <ul className="space-y-3 text-sm">
-              <li>
-                <Link href={lp("/privacy")} className="text-muted-foreground transition-colors hover:text-foreground">
-                  {t('footer.privacy')}
-                </Link>
-              </li>
-              <li>
-                <Link href={lp("/terms")} className="text-muted-foreground transition-colors hover:text-foreground">
-                  {t('footer.terms')}
-                </Link>
-              </li>
-              <li>
-                <Link href={lp("/compliance")} className="text-muted-foreground transition-colors hover:text-foreground">
-                  {t('footer.compliance')}
-                </Link>
-              </li>
-              <li>
-                <Link href={lp("/pdpa")} className="text-muted-foreground transition-colors hover:text-foreground">
-                  {t('footer.pdpa')}
-                </Link>
-              </li>
-            </ul>
+            <div className="space-y-6">
+              <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-white">{t('footer.legal')}</h3>
+              <ul className="space-y-4">
+                {[
+                  { href: "/privacy", label: t('footer.privacy') },
+                  { href: "/terms", label: t('footer.terms') },
+                  { href: "/compliance", label: t('footer.compliance') },
+                  { href: "/pdpa", label: t('footer.pdpa') }
+                ].map((link) => (
+                  <li key={link.href}>
+                    <Link href={lp(link.href)} className="text-sm text-slate-400 font-light transition-colors hover:text-primary flex items-center group">
+                      <span className="h-px w-0 bg-primary mr-0 group-hover:w-3 group-hover:mr-2 transition-all" />
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="mt-12 border-t border-border pt-8">
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-2">
-              <ClinicIQMark className="h-6 w-6" />
-              <p className="text-sm text-muted-foreground">{t('footer.copyright')}</p>
+        {/* Global Compliance Bar */}
+        <div className="mt-24 pt-8 border-t border-white/5">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-8">
+            <div className="flex items-center gap-4">
+              <div className="h-8 w-8 rounded-lg bg-white/5 flex items-center justify-center">
+                <ClinicIQMark className="h-4 w-4 opacity-50" />
+              </div>
+              <p className="text-[10px] uppercase font-bold tracking-widest text-slate-500">
+                {t('footer.copyright')}
+              </p>
             </div>
-            <div className="flex items-center gap-4 text-xs text-muted-foreground">
-              <span className="flex items-center gap-1">
-                🇹🇭 Made in Thailand
+            
+            <div className="flex flex-wrap justify-center items-center gap-8 text-[9px] font-black uppercase tracking-[0.25em] text-slate-600">
+              <span className="flex items-center gap-2 hover:text-slate-400 transition-colors cursor-default">
+                <div className="h-1 w-1 rounded-full bg-primary" />
+                {t('footer.engineeringExcellence')}
               </span>
-              <span>•</span>
-              <span>PDPA Compliant</span>
-              <span>•</span>
-              <span>ISO 27001</span>
+              <span className="flex items-center gap-2 hover:text-slate-400 transition-colors cursor-default">
+                <div className="h-1 w-1 rounded-full bg-emerald-500" />
+                {t('footer.pdpaCertified')}
+              </span>
+              <span className="flex items-center gap-2 hover:text-slate-400 transition-colors cursor-default">
+                <div className="h-1 w-1 rounded-full bg-blue-500" />
+                {t('footer.isoCloud')}
+              </span>
+              <span className="text-slate-700/50 hidden sm:inline">{t('footer.madeInThailand')}</span>
             </div>
           </div>
         </div>

@@ -7,6 +7,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 import { useRouter, useParams } from 'next/navigation';
 import CustomerProgressDashboard, {
   type AnalysisSnapshot,
@@ -20,34 +21,6 @@ import type { HybridSkinAnalysis } from '@/lib/types/skin-analysis';
 // Translation Constants
 // ============================================================================
 
-const TRANSLATIONS = {
-  en: {
-    title: 'My Progress',
-    loading: 'Loading your progress...',
-    error: 'Failed to load progress data',
-    backToDashboard: 'Back to Dashboard',
-    noAnalyses: 'No analyses found',
-    startJourney: 'Start your skin journey by taking your first analysis',
-    takeAnalysis: 'Take Analysis',
-  },
-  th: {
-    title: 'ความคืบหน้าของฉัน',
-    loading: 'กำลังโหลดข้อมูล...',
-    error: 'ไม่สามารถโหลดข้อมูลได้',
-    backToDashboard: 'กลับไปแดชบอร์ด',
-    noAnalyses: 'ไม่พบข้อมูลการวิเคราะห์',
-    startJourney: 'เริ่มต้นเส้นทางผิวสวยด้วยการวิเคราะห์ครั้งแรก',
-    takeAnalysis: 'ทำการวิเคราะห์',
-  },
-};
-
-// ============================================================================
-// Helper Functions
-// ============================================================================
-
-/**
- * Build HybridSkinAnalysis from API data (reuse from detail page)
- */
 function buildHybridAnalysis(data: any, id: string): HybridSkinAnalysis {
   // Simplified version - adapt based on your actual API response structure
   return {
@@ -102,13 +75,13 @@ interface ProgressPageProps {
 }
 
 export default function CustomerProgressPage({ params }: ProgressPageProps) {
+  const t = useTranslations();
   const [analyses, setAnalyses] = useState<AnalysisSnapshot[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const urlParams = useParams();
   const locale = (urlParams.locale as string) || 'th';
-  const t = TRANSLATIONS[locale as keyof typeof TRANSLATIONS] || TRANSLATIONS.th;
 
   const loadAnalyses = useCallback(async () => {
     try {
@@ -119,13 +92,13 @@ export default function CustomerProgressPage({ params }: ProgressPageProps) {
       const response = await fetch('/api/analysis/history?limit=50&offset=0');
 
       if (!response.ok) {
-        throw new Error('Failed to load analyses');
+        throw new Error(t('progress.error'));
       }
 
       const data = await response.json();
 
       if (data?.error) {
-        throw new Error(data.error || 'Failed to load analyses');
+        throw new Error(data.error || t('progress.error'));
       }
 
       const items = Array.isArray(data?.data)
@@ -150,7 +123,7 @@ export default function CustomerProgressPage({ params }: ProgressPageProps) {
       setAnalyses(snapshots);
     } catch (err) {
       console.error('Load analyses error:', err);
-      setError(err instanceof Error ? err.message : t.error);
+      setError(err instanceof Error ? err.message : t('progress.error'));
     } finally {
       setIsLoading(false);
     }
@@ -180,14 +153,14 @@ export default function CustomerProgressPage({ params }: ProgressPageProps) {
       // Share via Web Share API or copy link
       if (navigator.share) {
         await navigator.share({
-          title: t.title,
-          text: 'Check out my skin analysis progress!',
+          title: t('progress.title'),
+          text: t('progress.shareText'),
           url: globalThis.location.href,
         });
       } else {
         // Fallback: Copy link to clipboard
         await navigator.clipboard.writeText(globalThis.location.href);
-        alert('Link copied to clipboard!');
+        alert(t('progress.linkCopied'));
       }
     } catch (err) {
       console.error('Share error:', err);
@@ -203,7 +176,7 @@ export default function CustomerProgressPage({ params }: ProgressPageProps) {
       <div className="container mx-auto py-8 px-4">
         <div className="flex items-center justify-center min-h-[400px]">
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
-          <span className="ml-3 text-muted-foreground">{t.loading}</span>
+          <span className="ml-3 text-muted-foreground">{t('progress.loading')}</span>
         </div>
       </div>
     );
@@ -218,7 +191,7 @@ export default function CustomerProgressPage({ params }: ProgressPageProps) {
         </Alert>
         <Button onClick={() => router.push(`/${locale}/dashboard`)}>
           <ArrowLeft className="w-4 h-4 mr-2" />
-          {t.backToDashboard}
+          {t('progress.backToDashboard')}
         </Button>
       </div>
     );
@@ -232,18 +205,18 @@ export default function CustomerProgressPage({ params }: ProgressPageProps) {
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
               <div className="space-y-4">
-                <p className="font-semibold">{t.noAnalyses}</p>
-                <p>{t.startJourney}</p>
+                <p className="font-semibold">{t('progress.noAnalyses')}</p>
+                <p>{t('progress.startJourney')}</p>
                 <div className="flex gap-2 mt-4">
                   <Button onClick={() => router.push(`/${locale}/analysis`)}>
-                    {t.takeAnalysis}
+                    {t('progress.takeAnalysis')}
                   </Button>
                   <Button
                     variant="outline"
                     onClick={() => router.push(`/${locale}/dashboard`)}
                   >
                     <ArrowLeft className="w-4 h-4 mr-2" />
-                    {t.backToDashboard}
+                    {t('progress.backToDashboard')}
                   </Button>
                 </div>
               </div>
@@ -263,7 +236,7 @@ export default function CustomerProgressPage({ params }: ProgressPageProps) {
           className="gap-2"
         >
           <ArrowLeft className="w-4 h-4" />
-          {t.backToDashboard}
+          {t('progress.backToDashboard')}
         </Button>
       </div>
 

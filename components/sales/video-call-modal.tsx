@@ -56,13 +56,16 @@ interface VideoCallModalProps {
   sessionId?: string
 }
 
+import { useTranslations } from "next-intl"
+
 export function VideoCallModal({
   open,
   onOpenChange,
   leadId,
-  leadName = "ลูกค้า",
+  leadName = "Customer",
   sessionId,
 }: VideoCallModalProps) {
+  const t = useTranslations()
   const [session, setSession] = useState<VideoCallSession | null>(null)
   const [loading, setLoading] = useState(false)
   const [inCall, setInCall] = useState(false)
@@ -103,7 +106,7 @@ export function VideoCallModal({
       }
     } catch (error) {
       console.error("Failed to load session:", error)
-      toast.error("ไม่สามารถโหลดข้อมูล video call ได้")
+      toast.error(t('videoCall.errors.loadFailed'))
     } finally {
       setLoading(false)
     }
@@ -126,7 +129,7 @@ export function VideoCallModal({
           }),
         })
 
-        if (!response.ok) throw new Error("Failed to create session")
+        if (!response.ok) throw new Error(t('videoCall.errors.startFailed'))
         currentSession = await response.json()
         setSession(currentSession)
       }
@@ -142,14 +145,14 @@ export function VideoCallModal({
         }),
       })
 
-      if (!response.ok) throw new Error("Failed to start call")
+      if (!response.ok) throw new Error(t('videoCall.errors.startFailed'))
 
       setInCall(true)
       setCallDuration(0)
-      toast.success("เริ่มต้น video call แล้ว")
+      toast.success(t('videoCall.success.started'))
     } catch (error) {
       console.error("Failed to start call:", error)
-      toast.error("ไม่สามารถเริ่ม video call ได้")
+      toast.error(t('videoCall.errors.startFailed'))
     } finally {
       setLoading(false)
     }
@@ -170,11 +173,11 @@ export function VideoCallModal({
         }),
       })
 
-      if (!response.ok) throw new Error("Failed to end call")
+      if (!response.ok) throw new Error(t('videoCall.errors.endFailed'))
 
       setInCall(false)
-      toast.success("สิ้นสุด video call แล้ว", {
-        description: `ระยะเวลา ${formatDuration(callDuration)}`,
+      toast.success(t('videoCall.success.ended'), {
+        description: t('videoCall.success.duration', { time: formatDuration(callDuration) }),
       })
 
       // Close modal after 1 second
@@ -183,7 +186,7 @@ export function VideoCallModal({
       }, 1000)
     } catch (error) {
       console.error("Failed to end call:", error)
-      toast.error("ไม่สามารถสิ้นสุด video call ได้")
+      toast.error(t('videoCall.errors.endFailed'))
     } finally {
       setLoading(false)
     }
@@ -211,13 +214,13 @@ export function VideoCallModal({
   const getQualityLabel = (quality: string) => {
     switch (quality) {
       case "excellent":
-        return "ดีเยี่ยม"
+        return t('videoCall.quality.excellent')
       case "good":
-        return "ดี"
+        return t('videoCall.quality.good')
       case "poor":
-        return "อ่อน"
+        return t('videoCall.quality.poor')
       default:
-        return "ปานกลาง"
+        return t('videoCall.quality.moderate')
     }
   }
 
@@ -227,10 +230,10 @@ export function VideoCallModal({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Video className="h-5 w-5 text-primary" />
-            Video Call - {leadName}
+            {t('videoCall.title')} - {leadName}
           </DialogTitle>
           <DialogDescription>
-            {inCall ? "กำลังสนทนากับลูกค้า" : "เริ่มต้น video call กับลูกค้า"}
+            {inCall ? t('videoCall.inCall') : t('videoCall.description')}
           </DialogDescription>
         </DialogHeader>
 
@@ -280,8 +283,8 @@ export function VideoCallModal({
               <div className="flex h-full items-center justify-center">
                 <div className="text-center text-white">
                   <Video className="mx-auto mb-4 h-20 w-20 opacity-50" />
-                  <p className="mb-2 text-lg font-medium">พร้อมที่จะเริ่มต้น?</p>
-                  <p className="text-sm opacity-75">กดปุ่มด้านล่างเพื่อเริ่ม video call</p>
+                  <p className="mb-2 text-lg font-medium">{t('videoCall.ready')}</p>
+                  <p className="text-sm opacity-75">{t('videoCall.pressToStart')}</p>
                 </div>
               </div>
             )}
@@ -292,7 +295,7 @@ export function VideoCallModal({
             <div className="rounded-lg border p-3">
               <div className="mb-2 flex items-center gap-2 text-sm font-medium">
                 <Users className="h-4 w-4" />
-                ผู้เข้าร่วม ({session.participants.length})
+                {t('videoCall.participants', { count: session.participants.length })}
               </div>
               <div className="space-y-2">
                 {session.participants.map((participant) => (
@@ -308,7 +311,7 @@ export function VideoCallModal({
                         <p className="text-sm font-medium">{participant.user_name}</p>
                         {participant.duration_minutes && (
                           <p className="text-xs text-muted-foreground">
-                            {participant.duration_minutes} นาที
+                            {t('videoCall.duration', { mins: participant.duration_minutes })}
                           </p>
                         )}
                       </div>
@@ -374,17 +377,14 @@ export function VideoCallModal({
                 ) : (
                   <Phone className="mr-2 h-5 w-5" />
                 )}
-                เริ่ม Video Call
+                {t('videoCall.startCall')}
               </Button>
             )}
           </div>
 
           {/* Info */}
           <div className="rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-blue-800">
-            <p>
-              💡 <strong>หมายเหตุ:</strong> เซสชัน video call จะถูกบันทึกลงในระบบ
-              รวมถึงระยะเวลาและคุณภาพการเชื่อมต่อ (ต้องเชื่อมต่อกับ video service เช่น Agora, Twilio)
-            </p>
+            <div dangerouslySetInnerHTML={{ __html: t('videoCall.notes') }} />
           </div>
         </div>
       </DialogContent>

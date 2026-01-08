@@ -5,7 +5,7 @@
 
 // Skin & Face
 export { default as FillerLipSimulator } from '../filler-lip-simulator';
-export { default as EyeEnhancementSimulator } from '../eye-enhancement-simulator';
+export { EyeEnhancementSimulator } from '../eye-enhancement-simulator';
 export { default as ARTreatmentPreview } from '../ar-treatment-preview';
 
 // Body

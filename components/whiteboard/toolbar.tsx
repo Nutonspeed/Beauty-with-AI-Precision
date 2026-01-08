@@ -17,10 +17,12 @@ import {
   MousePointer2,
   Trash2,
   Download,
-  Upload,
   Lock,
-  Unlock
+  Unlock,
+  Undo2,
+  Redo2
 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface ToolbarProps {
   currentTool: DrawingTool;
@@ -36,6 +38,8 @@ interface ToolbarProps {
   onExportJSON?: () => void;
   onImportJSON?: () => void;
   onToggleLock?: () => void;
+  onUndo?: () => void;
+  onRedo?: () => void;
   className?: string;
 }
 
@@ -82,13 +86,37 @@ export function Toolbar({
   onExportJSON,
   onImportJSON,
   onToggleLock,
+  onUndo,
+  onRedo,
   className = ''
 }: ToolbarProps) {
+  const t = useTranslations();
+
+  const tools: { type: DrawingTool; icon: IconComponent; label: string }[] = [
+    { type: 'pen', icon: Pencil, label: t('whiteboard.tools.pencil') },
+    { type: 'eraser', icon: Eraser, label: t('whiteboard.tools.eraser') },
+    { type: 'line', icon: Minus, label: t('whiteboard.tools.line') },
+    { type: 'rectangle', icon: Square, label: t('whiteboard.tools.rectangle') },
+    { type: 'circle', icon: Circle, label: t('whiteboard.tools.circle') },
+    { type: 'text', icon: Type, label: t('whiteboard.tools.text') },
+    { type: 'select', icon: MousePointer2, label: t('whiteboard.tools.select') },
+  ];
+
+  const colors: { value: DrawingColor; hex: string; label: string }[] = [
+    { value: 'black', hex: '#000000', label: t('whiteboard.colors.black') },
+    { value: 'red', hex: '#ef4444', label: t('whiteboard.colors.red') },
+    { value: 'green', hex: '#22c55e', label: t('whiteboard.colors.green') },
+    { value: 'blue', hex: '#3b82f6', label: t('whiteboard.colors.blue') },
+    { value: 'yellow', hex: '#eab308', label: t('whiteboard.colors.yellow') },
+    { value: '#a855f7' as DrawingColor, hex: '#a855f7', label: t('whiteboard.colors.purple') },
+    { value: '#f97316' as DrawingColor, hex: '#f97316', label: t('whiteboard.colors.orange') },
+  ];
+
   return (
     <div className={`flex flex-col gap-4 p-4 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg ${className}`}>
       {/* Tools */}
       <div>
-        <Label className="mb-2 block text-sm font-semibold">Tools</Label>
+        <Label className="mb-2 block text-sm font-semibold">{t('whiteboard.tools.label')}</Label>
         <div className="grid grid-cols-4 gap-2">
           {tools.map(({ type, icon: Icon, label }) => (
             <Button
@@ -109,7 +137,7 @@ export function Toolbar({
 
       {/* Colors */}
       <div>
-        <Label className="mb-2 block text-sm font-semibold">Color</Label>
+        <Label className="mb-2 block text-sm font-semibold">{t('whiteboard.colors.label')}</Label>
         <div className="grid grid-cols-7 gap-2">
           {colors.map(({ value, hex, label }) => (
             <button
@@ -161,49 +189,28 @@ export function Toolbar({
           className="w-full justify-start"
         >
           {isLocked ? <Unlock className="w-4 h-4 mr-2" /> : <Lock className="w-4 h-4 mr-2" />}
-          {isLocked ? 'Unlock Board' : 'Lock Board'}
+          {isLocked ? t('whiteboard.actions.unlock') : t('whiteboard.actions.lock')}
         </Button>
 
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={onClear}
-          disabled={!canDraw}
-          className="w-full justify-start text-red-600 hover:text-red-700"
-        >
-          <Trash2 className="w-4 h-4 mr-2" />
-          Clear All
-        </Button>
-
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={onExportImage}
-          className="w-full justify-start"
-        >
-          <Download className="w-4 h-4 mr-2" />
-          Export PNG
-        </Button>
-
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={onExportJSON}
-          className="w-full justify-start"
-        >
-          <Download className="w-4 h-4 mr-2" />
-          Export JSON
-        </Button>
-
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={onImportJSON}
-          className="w-full justify-start"
-        >
-          <Upload className="w-4 h-4 mr-2" />
-          Import JSON
-        </Button>
+        <div className="flex flex-col gap-2">
+          <Button variant="outline" size="sm" onClick={onUndo} className="justify-start gap-2">
+            <Undo2 className="h-4 w-4" />
+            {t('whiteboard.actions.undo')}
+          </Button>
+          <Button variant="outline" size="sm" onClick={onRedo} className="justify-start gap-2">
+            <Redo2 className="h-4 w-4" />
+            {t('whiteboard.actions.redo')}
+          </Button>
+          <div className="h-px bg-border my-1" />
+          <Button variant="outline" size="sm" onClick={onExportImage} className="justify-start gap-2">
+            <Download className="h-4 w-4" />
+            {t('whiteboard.actions.export')}
+          </Button>
+          <Button variant="destructive" size="sm" onClick={onClear} disabled={isLocked && !canDraw} className="justify-start gap-2">
+            <Trash2 className="h-4 w-4" />
+            {t('whiteboard.actions.clear')}
+          </Button>
+        </div>
       </div>
     </div>
   );

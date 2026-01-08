@@ -28,20 +28,15 @@ import { useTranslations, useLocale } from "next-intl"
 interface NarrativeTemplate {
   id: string
   title: string
-  titleTH: string
   description: string
-  descriptionTH: string
   category: string
-  categoryTH: string
   content: string
-  contentTH: string
   variables: string[]
 }
 
 export default function SalesNarrativePage() {
   const t = useTranslations()
   const locale = useLocale()
-  const language = locale as 'th' | 'en'
   const router = useRouter()
 
   const [selectedTemplate, setSelectedTemplate] = useState<NarrativeTemplate | null>(null)
@@ -55,50 +50,34 @@ export default function SalesNarrativePage() {
   const narrativeTemplates: NarrativeTemplate[] = [
     {
       id: "confidence-booster",
-      title: "Confidence Builder",
-      titleTH: "สร้างความมั่นใจ",
-      description: "Build customer confidence through success stories",
-      descriptionTH: "สร้างความมั่นใจให้ลูกค้าผ่านเรื่องราวความสำเร็จ",
-      category: "Motivation",
-      categoryTH: "แรงบันดาลใจ",
-      content: "Imagine waking up every morning feeling confident and beautiful. That's exactly what happened to Sarah after her treatment with us. She came in feeling self-conscious about her skin, but now she glows with confidence. You deserve to feel that same transformation.",
-      contentTH: "ลองนึกภาพว่าตื่นมาในทุกเช้าด้วยความมั่นใจและความงาม นั่นคือสิ่งที่เกิดขึ้นกับซาร่าหลังการรักษากับเรา เธอเข้ามาโดยรู้สึกไม่มั่นใจในผิวของตัวเอง แต่ตอนนี้เธอเปล่งประกายด้วยความมั่นใจ คุณก็สมควรได้สัมผัสการเปลี่ยนแปลงแบบเดียวกันนี้เช่นกัน",
+      title: t('salesNarrativePage.templates.confidence.title'),
+      description: t('salesNarrativePage.templates.confidence.description'),
+      category: t('salesNarrativePage.templates.confidence.category'),
+      content: t('salesNarrativePage.templates.confidence.content'),
       variables: ["customer_name", "treatment_type", "pain_point"]
     },
     {
       id: "problem-solution",
-      title: "Problem-Solution",
-      titleTH: "ปัญหา-โซลูชั่น",
-      description: "Address pain points and present solutions",
-      descriptionTH: "แก้ไขปัญหาและนำเสนอทางออก",
-      category: "Education",
-      categoryTH: "การศึกษา",
-      content: "I understand your concerns about [pain_points]. Many of our clients felt the same way before discovering our advanced [treatment_type]. The technology we use targets these specific issues, providing long-lasting results that traditional methods simply can't match.",
-      contentTH: "ฉันเข้าใจความกังวลของคุณเกี่ยวกับ [pain_points] ลูกค้าจำนวนมากของเรารู้สึกแบบเดียวกันก่อนที่จะค้นพบ [treatment_type] ขั้นสูงของเรา เทคโนโลยีที่เราใช้จะจัดการกับปัญหาเฉพาะเหล่านี้อย่างตรงจุด ให้ผลลัพธ์ที่ยาวนานซึ่งวิธีการแบบดั้งเดิมไม่สามารถเทียบเคียงได้",
+      title: t('salesNarrativePage.templates.problem.title'),
+      description: t('salesNarrativePage.templates.problem.description'),
+      category: t('salesNarrativePage.templates.problem.category'),
+      content: t('salesNarrativePage.templates.problem.content'),
       variables: ["pain_points", "treatment_type"]
     },
     {
       id: "social-proof",
-      title: "Social Proof",
-      titleTH: "หลักฐานทางสังคม",
-      description: "Leverage testimonials and success metrics",
-      descriptionTH: "ใช้คำรับรองและเมตริกความสำเร็จ",
-      category: "Trust",
-      categoryTH: "ความน่าเชื่อถือ",
-      content: "Don't just take my word for it. Over 2,000 satisfied customers have experienced similar transformations. Our [treatment_type] has a 95% satisfaction rate, with clients seeing visible improvements within the first two weeks.",
-      contentTH: "อย่าเชื่อคำพูดของฉันเพียงอย่างเดียว ลูกค้าที่พึงพอใจมากกว่า 2,000 คนได้สัมผัสการเปลี่ยนแปลงแบบเดียวกัน [treatment_type] ของเรามีอัตราการพึงพอใจ 95% โดยลูกค้าจะเห็นการปรับปรุงที่ชัดเจนภายในสองสัปดาห์แรก",
+      title: t('salesNarrativePage.templates.social.title'),
+      description: t('salesNarrativePage.templates.social.description'),
+      category: t('salesNarrativePage.templates.social.category'),
+      content: t('salesNarrativePage.templates.social.content'),
       variables: ["treatment_type"]
     },
     {
       id: "urgency-scarcity",
-      title: "Urgency & Scarcity",
-      titleTH: "ความเร่งด่วนและความหายาก",
-      description: "Create time-sensitive opportunities",
-      descriptionTH: "สร้างโอกาสที่มีจำกัดเวลา",
-      category: "Conversion",
-      categoryTH: "การเปลี่ยนใจ",
-      content: "This exclusive offer is only available for the next 48 hours. We're limiting participation to ensure personalized attention for each client. Spaces fill up quickly - let's secure your spot today.",
-      contentTH: "ข้อเสนอพิเศษนี้มีให้เฉพาะในอีก 48 ชั่วโมงข้างหน้า เราได้จำกัดจำนวนผู้เข้าร่วมเพื่อให้แน่ใจว่าทุกคนจะได้รับการดูแลเป็นการส่วนตัว ช่องว่างเต็มเร็วมาก - มาจองที่ของคุณกันวันนี้เลย",
+      title: t('salesNarrativePage.templates.urgency.title'),
+      description: t('salesNarrativePage.templates.urgency.description'),
+      category: t('salesNarrativePage.templates.urgency.category'),
+      content: t('salesNarrativePage.templates.urgency.content'),
       variables: []
     }
   ]
@@ -112,14 +91,14 @@ export default function SalesNarrativePage() {
       // Simulate AI generation with template replacement
       await new Promise(resolve => setTimeout(resolve, 1500))
 
-      let narrative = language === "th" ? selectedTemplate.contentTH : selectedTemplate.content
+      let narrative = selectedTemplate.content
 
       // Replace variables
       narrative = narrative
-        .replace(/\[customer_name\]/g, customerName || "[ชื่อลูกค้า]")
-        .replace(/\[treatment_type\]/g, treatmentType || "[ประเภทการรักษา]")
-        .replace(/\[pain_points\]/g, painPoints || "[ปัญหา]")
-        .replace(/\[pain_point\]/g, painPoints || "[ปัญหา]")
+        .replace(/\[customer_name\]/g, customerName || t('salesNarrativePage.placeholders.customerName'))
+        .replace(/\[treatment_type\]/g, treatmentType || t('salesNarrativePage.placeholders.treatmentType'))
+        .replace(/\[pain_points\]/g, painPoints || t('salesNarrativePage.placeholders.painPoints'))
+        .replace(/\[pain_point\]/g, painPoints || t('salesNarrativePage.placeholders.painPoint'))
 
       setGeneratedNarrative(narrative)
     } catch (error) {
@@ -208,10 +187,10 @@ export default function SalesNarrativePage() {
                           <div className="flex items-start justify-between">
                             <div>
                               <CardTitle className="text-lg">
-                                {language === "th" ? template.titleTH : template.title}
+                                {template.title}
                               </CardTitle>
                               <Badge variant="outline" className="mt-1">
-                                {language === "th" ? template.categoryTH : template.category}
+                                {template.category}
                               </Badge>
                             </div>
                             {selectedTemplate?.id === template.id && (
@@ -221,7 +200,7 @@ export default function SalesNarrativePage() {
                         </CardHeader>
                         <CardContent>
                           <p className="text-sm text-muted-foreground">
-                            {language === "th" ? template.descriptionTH : template.description}
+                            {template.description}
                           </p>
                         </CardContent>
                       </Card>
@@ -239,7 +218,7 @@ export default function SalesNarrativePage() {
                         <Card>
                           <CardHeader>
                             <CardTitle>
-                              {language === "th" ? selectedTemplate.titleTH : selectedTemplate.title}
+                              {selectedTemplate.title}
                             </CardTitle>
                           </CardHeader>
                           <CardContent className="space-y-4">
@@ -310,7 +289,7 @@ export default function SalesNarrativePage() {
                             <CardHeader>
                               <div className="flex items-center justify-between">
                                 <CardTitle className="text-lg">
-                                  {language === "th" ? "เรื่องราวที่สร้าง" : "Generated Narrative"}
+                                  {t('salesNarrativePage.generatedNarrative')}
                                 </CardTitle>
                                 <Button
                                   variant="outline"
@@ -318,7 +297,7 @@ export default function SalesNarrativePage() {
                                   onClick={() => copyToClipboard(generatedNarrative)}
                                 >
                                   <Copy className="w-4 h-4 mr-2" />
-                                  {language === "th" ? "คัดลอก" : "Copy"}
+                                  {t('salesNarrativePage.copy')}
                                 </Button>
                               </div>
                             </CardHeader>
@@ -334,7 +313,7 @@ export default function SalesNarrativePage() {
                       <div className="flex items-center justify-center h-64 text-muted-foreground">
                         <div className="text-center">
                           <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                          <p>{language === "th" ? "เลือกเทมเพลตเพื่อเริ่มต้น" : "Select a template to get started"}</p>
+                          <p>{t('salesNarrativePage.selectTemplate')}</p>
                         </div>
                       </div>
                     )}
@@ -347,14 +326,12 @@ export default function SalesNarrativePage() {
                 <Card>
                   <CardHeader>
                     <CardTitle>
-                      {language === "th" ? "สร้างเรื่องราวการขายด้วยตัวเอง" : "Build Your Own Sales Narrative"}
+                      {t('salesNarrativePage.buildOwnTitle')}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <Textarea
-                      placeholder={language === "th"
-                        ? "เขียนเรื่องราวการขายของคุณที่นี่..."
-                        : "Write your sales narrative here..."}
+                      placeholder={t('salesNarrativePage.writeNarrativePlaceholder')}
                       value={customNarrative}
                       onChange={(e) => setCustomNarrative(e.target.value)}
                       rows={10}
@@ -363,11 +340,11 @@ export default function SalesNarrativePage() {
                     <div className="flex gap-2">
                       <Button variant="outline">
                         <Save className="w-4 h-4 mr-2" />
-                        {language === "th" ? "บันทึก" : "Save"}
+                        {t('salesNarrativePage.save')}
                       </Button>
                       <Button variant="outline">
                         <Copy className="w-4 h-4 mr-2" />
-                        {language === "th" ? "คัดลอก" : "Copy"}
+                        {t('salesNarrativePage.copy')}
                       </Button>
                     </div>
                   </CardContent>
@@ -381,13 +358,13 @@ export default function SalesNarrativePage() {
                     <CardHeader>
                       <CardTitle className="text-lg flex items-center gap-2">
                         <Target className="w-5 h-5" />
-                        {language === "th" ? "อัตราการปิดการขาย" : "Conversion Rate"}
+                        {t('salesNarrativePage.conversionRate')}
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="text-3xl font-bold text-primary">87%</div>
                       <p className="text-sm text-muted-foreground">
-                        {language === "th" ? "เพิ่มขึ้น 12% จากเดือนที่แล้ว" : "+12% from last month"}
+                        {t('salesNarrativePage.increaseFromLastMonth')}
                       </p>
                     </CardContent>
                   </Card>
@@ -396,13 +373,13 @@ export default function SalesNarrativePage() {
                     <CardHeader>
                       <CardTitle className="text-lg flex items-center gap-2">
                         <Users className="w-5 h-5" />
-                        {language === "th" ? "การมีส่วนร่วม" : "Engagement"}
+                        {t('salesNarrativePage.engagement')}
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="text-3xl font-bold text-primary">94%</div>
                       <p className="text-sm text-muted-foreground">
-                        {language === "th" ? "ลูกค้าตอบสนองต่อเรื่องราว" : "Customer response to narratives"}
+                        {t('salesNarrativePage.customerResponse')}
                       </p>
                     </CardContent>
                   </Card>
@@ -411,13 +388,13 @@ export default function SalesNarrativePage() {
                     <CardHeader>
                       <CardTitle className="text-lg flex items-center gap-2">
                         <TrendingUp className="w-5 h-5" />
-                        {language === "th" ? "มูลค่าการขาย" : "Sales Value"}
+                        {t('salesNarrativePage.salesValue')}
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="text-3xl font-bold text-primary">+23%</div>
                       <p className="text-sm text-muted-foreground">
-                        {language === "th" ? "เพิ่มขึ้นจาก storytelling" : "Increase from storytelling"}
+                        {t('salesNarrativePage.increaseFromStorytelling')}
                       </p>
                     </CardContent>
                   </Card>
@@ -426,7 +403,7 @@ export default function SalesNarrativePage() {
                 <Card>
                   <CardHeader>
                     <CardTitle>
-                      {language === "th" ? "เทมเพลตยอดนิยม" : "Popular Templates"}
+                      {t('salesNarrativePage.popularTemplates')}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -435,10 +412,10 @@ export default function SalesNarrativePage() {
                         <div key={template.id} className="flex items-center justify-between p-4 border rounded-lg">
                           <div>
                             <h4 className="font-medium">
-                              {language === "th" ? template.titleTH : template.title}
+                              {template.title}
                             </h4>
                             <p className="text-sm text-muted-foreground">
-                              {language === "th" ? template.descriptionTH : template.description}
+                              {template.description}
                             </p>
                           </div>
                           <div className="text-right">
@@ -446,7 +423,7 @@ export default function SalesNarrativePage() {
                               {85 + index * 5}%
                             </div>
                             <p className="text-xs text-muted-foreground">
-                              {language === "th" ? "อัตราการใช้" : "Usage Rate"}
+                              {t('salesNarrativePage.usageRate')}
                             </p>
                           </div>
                         </div>

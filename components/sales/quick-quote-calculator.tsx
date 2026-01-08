@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useTranslations, useLocale } from 'next-intl';
 import { 
   Calculator, 
   Plus, 
@@ -64,55 +65,58 @@ interface QuoteResult {
   validUntil: Date;
 }
 
-// Available promotions
-const PROMOTIONS: Promotion[] = [
-  {
-    id: 'first_time',
-    name: 'ลูกค้าใหม่',
-    type: 'percentage',
-    value: 15,
-    code: 'NEW15'
-  },
-  {
-    id: 'bundle_3',
-    name: 'ซื้อ 3 ลด 20%',
-    type: 'percentage',
-    value: 20,
-    minPurchase: 3
-  },
-  {
-    id: 'flash_sale',
-    name: 'Flash Sale',
-    type: 'percentage',
-    value: 25,
-    validUntil: new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
-  },
-  {
-    id: 'cash_discount',
-    name: 'ชำระเงินสด',
-    type: 'fixed',
-    value: 1000,
-    minPurchase: 10000
-  }
-];
-
-// Treatment catalog
-const TREATMENT_CATALOG = [
-  { id: 'botox', name: 'Botox', nameTh: 'โบท็อกซ์', basePrice: 8900, category: 'Anti-Aging' },
-  { id: 'filler', name: 'Filler', nameTh: 'ฟิลเลอร์', basePrice: 15900, category: 'Volume' },
-  { id: 'hifu', name: 'HIFU', nameTh: 'ไฮฟู่', basePrice: 25900, category: 'Lifting' },
-  { id: 'laser', name: 'Laser', nameTh: 'เลเซอร์', basePrice: 12900, category: 'Skin' },
-  { id: 'thread', name: 'Thread Lift', nameTh: 'ร้อยไหม', basePrice: 35900, category: 'Lifting' },
-  { id: 'hydra', name: 'HydraFacial', nameTh: 'ไฮดราเฟเชียล', basePrice: 4900, category: 'Facial' },
-  { id: 'prp', name: 'PRP', nameTh: 'PRP', basePrice: 18900, category: 'Regenerative' },
-  { id: 'coolsculpt', name: 'CoolSculpting', nameTh: 'สลายไขมัน', basePrice: 45900, category: 'Body' },
-];
-
 export function QuickQuoteCalculator({
   initialItems = [],
   onSendQuote,
   className = ''
 }: QuickQuoteProps) {
+  const t = useTranslations();
+  const locale = useLocale();
+
+  // Available promotions moved inside component to use translations
+  const PROMOTIONS: Promotion[] = [
+    {
+      id: 'first_time',
+      name: t('salesTools.quote.promotions.firstTime'),
+      type: 'percentage',
+      value: 15,
+      code: 'NEW15'
+    },
+    {
+      id: 'bundle_3',
+      name: t('salesTools.quote.promotions.bundle3'),
+      type: 'percentage',
+      value: 20,
+      minPurchase: 3
+    },
+    {
+      id: 'flash_sale',
+      name: 'Flash Sale',
+      type: 'percentage',
+      value: 25,
+      validUntil: new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
+    },
+    {
+      id: 'cash_discount',
+      name: t('salesTools.quote.promotions.cash'),
+      type: 'fixed',
+      value: 1000,
+      minPurchase: 10000
+    }
+  ];
+
+  // Treatment catalog moved inside component
+  const TREATMENT_CATALOG = [
+    { id: 'botox', name: 'Botox', nameTh: 'โบท็อกซ์', basePrice: 8900, category: 'Anti-Aging' },
+    { id: 'filler', name: 'Filler', nameTh: 'ฟิลเลอร์', basePrice: 15900, category: 'Volume' },
+    { id: 'hifu', name: 'HIFU', nameTh: 'ไฮฟู่', basePrice: 25900, category: 'Lifting' },
+    { id: 'laser', name: 'Laser', nameTh: 'เลเซอร์', basePrice: 12900, category: 'Skin' },
+    { id: 'thread', name: 'Thread Lift', nameTh: 'ร้อยไหม', basePrice: 35900, category: 'Lifting' },
+    { id: 'hydra', name: 'HydraFacial', nameTh: 'ไฮดราเฟเชียล', basePrice: 4900, category: 'Facial' },
+    { id: 'prp', name: 'PRP', nameTh: 'PRP', basePrice: 18900, category: 'Regenerative' },
+    { id: 'coolsculpt', name: 'CoolSculpting', nameTh: 'สลายไขมัน', basePrice: 45900, category: 'Body' },
+  ];
+
   const [items, setItems] = useState<TreatmentItem[]>(initialItems);
   const [promoCode, setPromoCode] = useState('');
   const [appliedPromo, setAppliedPromo] = useState<Promotion | null>(null);
@@ -199,6 +203,7 @@ export function QuickQuoteCalculator({
   const handleSendQuote = () => {
     if (onSendQuote) {
       onSendQuote(quote);
+      alert(t('salesTools.messages.quoteSuccess', { amount: quote.total.toLocaleString() }));
     }
   };
 
@@ -211,14 +216,14 @@ export function QuickQuoteCalculator({
               <Calculator className="w-5 h-5 text-white" />
             </div>
             <div>
-              <CardTitle className="text-white">Quick Quote</CardTitle>
-              <p className="text-sm text-gray-400">คำนวณราคาและส่งใบเสนอราคา</p>
+              <CardTitle className="text-white">{t('salesTools.quote.title')}</CardTitle>
+              <p className="text-sm text-gray-400">{t('salesTools.quote.subtitle')}</p>
             </div>
           </div>
           {urgencyEnabled && (
             <Badge className="bg-red-500 animate-pulse">
               <Clock className="w-3 h-3 mr-1" />
-              Limited Time
+              {t('salesTools.quote.limitedTime')}
             </Badge>
           )}
         </div>
@@ -227,11 +232,11 @@ export function QuickQuoteCalculator({
       <CardContent className="space-y-4">
         {/* Customer Name */}
         <div className="space-y-2">
-          <Label className="text-gray-300">ชื่อลูกค้า</Label>
+          <Label className="text-gray-300">{t('salesTools.quote.customerName')}</Label>
           <Input
             value={customerName}
             onChange={(e) => setCustomerName(e.target.value)}
-            placeholder="กรอกชื่อลูกค้า"
+            placeholder={t('salesTools.quote.namePlaceholder')}
             className="bg-white/5 border-white/20 text-white"
           />
         </div>
@@ -239,7 +244,7 @@ export function QuickQuoteCalculator({
         {/* Items List */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label className="text-gray-300">รายการ Treatment</Label>
+            <Label className="text-gray-300">{t('salesTools.quote.treatmentList')}</Label>
             <Button
               size="sm"
               variant="outline"
@@ -247,7 +252,7 @@ export function QuickQuoteCalculator({
               className="border-white/20 text-white"
             >
               <Plus className="w-4 h-4 mr-1" />
-              เพิ่ม
+              {t('salesTools.quote.add')}
             </Button>
           </div>
           
@@ -266,8 +271,8 @@ export function QuickQuoteCalculator({
                     onClick={() => addItem(item)}
                     className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-left transition-all"
                   >
-                    <p className="text-sm font-medium text-white">{item.nameTh}</p>
-                    <p className="text-xs text-green-400">฿{item.basePrice.toLocaleString()}</p>
+                    <p className="text-sm font-medium text-white">{t(`booking.treatments.${item.id}`)}</p>
+                    <p className="text-xs text-green-400">{t('format.currency', { amount: item.basePrice.toLocaleString() })}</p>
                   </button>
                 ))}
               </motion.div>
@@ -278,7 +283,7 @@ export function QuickQuoteCalculator({
           <div className="space-y-2">
             {items.length === 0 ? (
               <div className="p-4 rounded-xl bg-white/5 text-center">
-                <p className="text-gray-400 text-sm">ยังไม่มีรายการ</p>
+                <p className="text-gray-400 text-sm">{t('salesTools.quote.empty')}</p>
               </div>
             ) : (
               items.map(item => (
@@ -291,8 +296,8 @@ export function QuickQuoteCalculator({
                   className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10"
                 >
                   <div className="flex-1">
-                    <p className="font-medium text-white">{item.nameTh}</p>
-                    <p className="text-sm text-green-400">฿{item.basePrice.toLocaleString()}</p>
+                    <p className="font-medium text-white">{t(`booking.treatments.${item.id}`)}</p>
+                    <p className="text-sm text-green-400">{t('format.currency', { amount: item.basePrice.toLocaleString() })}</p>
                   </div>
                   
                   <div className="flex items-center gap-2">
@@ -322,12 +327,12 @@ export function QuickQuoteCalculator({
         
         {/* Promo Code */}
         <div className="space-y-2">
-          <Label className="text-gray-300">โค้ดส่วนลด</Label>
+          <Label className="text-gray-300">{t('salesTools.quote.promoCode')}</Label>
           <div className="flex gap-2">
             <Input
               value={promoCode}
               onChange={(e) => setPromoCode(e.target.value)}
-              placeholder="กรอกโค้ดส่วนลด"
+              placeholder={t('salesTools.quote.promoPlaceholder')}
               className="bg-white/5 border-white/20 text-white"
             />
             <Button
@@ -341,14 +346,14 @@ export function QuickQuoteCalculator({
           {appliedPromo && (
             <div className="flex items-center gap-2 text-green-400 text-sm">
               <CheckCircle className="w-4 h-4" />
-              <span>{appliedPromo.name} - ลด {appliedPromo.value}{appliedPromo.type === 'percentage' ? '%' : '฿'}</span>
+              <span>{t('salesTools.quote.applied', { name: appliedPromo.name, value: appliedPromo.value, type: appliedPromo.type === 'percentage' ? '%' : '฿' })}</span>
             </div>
           )}
         </div>
         
         {/* Available Promotions */}
         <div className="space-y-2">
-          <Label className="text-gray-300">โปรโมชั่นที่ใช้ได้</Label>
+          <Label className="text-gray-300">{t('salesTools.quote.availablePromos')}</Label>
           <div className="flex flex-wrap gap-2">
             {PROMOTIONS.filter(p => !p.minPurchase || quote.subtotal >= (p.minPurchase * 1000)).map(promo => (
               <Badge
@@ -371,21 +376,21 @@ export function QuickQuoteCalculator({
         {/* Quote Summary */}
         <div className="p-4 rounded-xl bg-gradient-to-r from-green-600/20 to-emerald-600/20 border border-green-500/30 space-y-2">
           <div className="flex justify-between text-gray-300">
-            <span>ราคาปกติ</span>
-            <span>฿{quote.subtotal.toLocaleString()}</span>
+            <span>{t('salesTools.quote.subtotal')}</span>
+            <span>{t('format.currency', { amount: quote.subtotal.toLocaleString() })}</span>
           </div>
           
           {quote.discount > 0 && (
             <div className="flex justify-between text-green-400">
-              <span>ส่วนลด</span>
-              <span>-฿{quote.discount.toLocaleString()}</span>
+              <span>{t('salesTools.quote.discount')}</span>
+              <span>-{t('format.currency', { amount: quote.discount.toLocaleString() })}</span>
             </div>
           )}
           
           <div className="border-t border-white/10 pt-2">
             <div className="flex justify-between">
-              <span className="text-white font-bold text-lg">รวมทั้งสิ้น</span>
-              <span className="text-2xl font-bold text-green-400">฿{quote.total.toLocaleString()}</span>
+              <span className="text-white font-bold text-lg">{t('salesTools.quote.total')}</span>
+              <span className="text-2xl font-bold text-green-400">{t('format.currency', { amount: quote.total.toLocaleString() })}</span>
             </div>
           </div>
           
@@ -393,7 +398,7 @@ export function QuickQuoteCalculator({
             <div className="text-center">
               <Badge className="bg-yellow-500 text-black">
                 <Sparkles className="w-3 h-3 mr-1" />
-                ประหยัด ฿{quote.savings.toLocaleString()}
+                {t('salesTools.quote.savings', { amount: t('format.currency', { amount: quote.savings.toLocaleString() }) })}
               </Badge>
             </div>
           )}
@@ -404,7 +409,7 @@ export function QuickQuoteCalculator({
           <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-center">
             <p className="text-red-400 text-sm flex items-center justify-center">
               <AlertCircle className="w-4 h-4 mr-2" />
-              ราคาพิเศษนี้ใช้ได้ถึง {quote.validUntil.toLocaleDateString('th-TH')}
+              {t('salesTools.quote.validUntil', { date: quote.validUntil.toLocaleDateString(locale === 'th' ? 'th-TH' : 'en-US') })}
             </p>
           </div>
         )}
@@ -428,12 +433,12 @@ export function QuickQuoteCalculator({
             disabled={items.length === 0}
           >
             <Send className="w-4 h-4 mr-2" />
-            ส่งใบเสนอราคา
+            {t('salesTools.quote.sendQuote')}
           </Button>
         </div>
       </CardContent>
     </Card>
   );
-}
+};
 
 export default QuickQuoteCalculator;

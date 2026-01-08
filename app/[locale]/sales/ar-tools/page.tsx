@@ -1,11 +1,11 @@
-'use client';
+"use client"
 
 /**
- * AR Tools Hub - เครื่องมือ AR/AI สำหรับ Sales Team
- * ครอบคลุมทุกสาขาคลินิกเสริมความงาม
+ * AR Tools Hub - AR/AI tools for Sales Team
+ * Covers all aesthetic clinic branches
  */
 
-import { useState } from 'react';
+import { useState } from "react"
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useLocalizePath } from '@/lib/i18n/locale-link';
+import { useTranslations } from 'next-intl';
 
 // Import Simulators
 import { FillerLipSimulator } from '@/components/sales/filler-lip-simulator';
@@ -30,54 +31,50 @@ import { BodyContouringSimulator } from '@/components/sales/body-contouring-simu
 import { HairRestorationSimulator } from '@/components/sales/hair-restoration-simulator';
 import { EyeEnhancementSimulator } from '@/components/sales/eye-enhancement-simulator';
 
-const TOOLS = [
-  {
-    id: 'skin',
-    name: 'Skin Analysis',
-    nameTh: 'วิเคราะห์ผิว',
-    icon: Scan,
-    color: 'from-violet-600 to-purple-600',
-    description: 'AI 8-mode skin analysis'
-  },
-  {
-    id: 'filler',
-    name: 'Filler & Lips',
-    nameTh: 'ฟิลเลอร์และปาก',
-    icon: Heart,
-    color: 'from-pink-600 to-rose-600',
-    description: 'Lip augmentation simulator'
-  },
-  {
-    id: 'body',
-    name: 'Body Contouring',
-    nameTh: 'กระชับสัดส่วน',
-    icon: Flame,
-    color: 'from-orange-600 to-red-600',
-    description: 'Fat reduction preview'
-  },
-  {
-    id: 'hair',
-    name: 'Hair Restoration',
-    nameTh: 'ปลูกผม',
-    icon: Scissors,
-    color: 'from-emerald-600 to-teal-600',
-    description: 'Hair transplant preview'
-  },
-  {
-    id: 'eye',
-    name: 'Eye Enhancement',
-    nameTh: 'ทำตา',
-    icon: Eye,
-    color: 'from-blue-600 to-indigo-600',
-    description: 'Double eyelid simulator'
-  },
-];
-
 export default function ARToolsPage() {
+  const t = useTranslations();
   const lp = useLocalizePath();
   const [selectedTool, setSelectedTool] = useState<string>('filler');
   const [customerImage, setCustomerImage] = useState<string>('');
   const [showUpload, setShowUpload] = useState(true);
+
+  const TOOLS = [
+    {
+      id: 'skin',
+      name: t('salesArTools.tools.skin.name'),
+      icon: Scan,
+      color: 'from-violet-600 to-purple-600',
+      description: t('salesArTools.tools.skin.description')
+    },
+    {
+      id: 'filler',
+      name: t('salesArTools.tools.filler.name'),
+      icon: Heart,
+      color: 'from-pink-600 to-rose-600',
+      description: t('salesArTools.tools.filler.description')
+    },
+    {
+      id: 'body',
+      name: t('salesArTools.tools.body.name'),
+      icon: Flame,
+      color: 'from-orange-600 to-red-600',
+      description: t('salesArTools.tools.body.description')
+    },
+    {
+      id: 'hair',
+      name: t('salesArTools.tools.hair.name'),
+      icon: Scissors,
+      color: 'from-emerald-600 to-teal-600',
+      description: t('salesArTools.tools.hair.description')
+    },
+    {
+      id: 'eye',
+      name: t('salesArTools.tools.eye.name'),
+      icon: Eye,
+      color: 'from-blue-600 to-indigo-600',
+      description: t('salesArTools.tools.eye.description')
+    },
+  ];
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -103,7 +100,7 @@ export default function ARToolsPage() {
   const handleGenerateProposal = (data: any) => {
     console.log('Generate Proposal:', data);
     // TODO: Integrate with proposal generator
-    alert('กำลังสร้างใบเสนอราคา...');
+    alert(t('salesArTools.generatingProposal'));
   };
 
   const selectedToolInfo = TOOLS.find(t => t.id === selectedTool);
@@ -123,10 +120,10 @@ export default function ARToolsPage() {
               <div>
                 <h1 className="text-lg md:text-2xl font-bold text-white flex items-center gap-2">
                   <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-purple-400" />
-                  <span className="hidden sm:inline">AR Sales Tools</span>
-                  <span className="sm:hidden">AR Tools</span>
+                  <span className="hidden sm:inline">{t('salesArTools.title')}</span>
+                  <span className="sm:hidden">{t('salesArTools.mobileTitle')}</span>
                 </h1>
-                <p className="text-xs md:text-sm text-gray-400 hidden sm:block">เครื่องมือจำลองผลลัพธ์สำหรับทีมขาย</p>
+                <p className="text-xs md:text-sm text-gray-400 hidden sm:block">{t('salesArTools.subtitle')}</p>
               </div>
             </div>
             <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-xs md:text-sm">
@@ -151,7 +148,7 @@ export default function ARToolsPage() {
               }`}
             >
               <tool.icon className="w-4 h-4" />
-              <span className="text-sm font-medium whitespace-nowrap">{tool.nameTh}</span>
+              <span className="text-sm font-medium whitespace-nowrap">{tool.name}</span>
             </motion.button>
           ))}
         </div>
@@ -163,7 +160,7 @@ export default function ARToolsPage() {
           <div className="hidden lg:block lg:col-span-1 space-y-4">
             <Card className="bg-white/5 border-white/10">
               <CardHeader>
-                <CardTitle className="text-white text-sm">Select Tool</CardTitle>
+                <CardTitle className="text-white text-sm">{t('salesArTools.selectTool')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
                 {TOOLS.map((tool) => (
@@ -180,8 +177,8 @@ export default function ARToolsPage() {
                   >
                     <tool.icon className="w-5 h-5" />
                     <div className="text-left">
-                      <p className="font-medium text-sm">{tool.nameTh}</p>
-                      <p className="text-xs opacity-70">{tool.name}</p>
+                      <p className="font-medium text-sm">{tool.name}</p>
+                      <p className="text-xs opacity-70">{tool.description}</p>
                     </div>
                   </motion.button>
                 ))}
@@ -191,7 +188,7 @@ export default function ARToolsPage() {
             {/* Image Upload - Desktop only */}
             <Card className="bg-white/5 border-white/10">
               <CardHeader className="pb-2">
-                <CardTitle className="text-white text-sm">Customer Photo</CardTitle>
+                <CardTitle className="text-white text-sm">{t('salesArTools.customerPhoto')}</CardTitle>
               </CardHeader>
               <CardContent>
                 {customerImage ? (
@@ -210,15 +207,15 @@ export default function ARToolsPage() {
                         setShowUpload(true);
                       }}
                     >
-                      Change Photo
+                      {t('salesArTools.changePhoto')}
                     </Button>
                   </div>
                 ) : (
                   <label className="block">
                     <div className="border-2 border-dashed border-white/20 rounded-xl p-4 text-center cursor-pointer hover:border-purple-500/50 active:bg-white/5 transition-colors">
                       <Upload className="w-6 h-6 text-gray-400 mx-auto mb-2" />
-                      <p className="text-sm text-gray-400">Upload photo</p>
-                      <p className="text-xs text-gray-500 mt-1">JPG, PNG</p>
+                      <p className="text-sm text-gray-400">{t('salesArTools.uploadPhoto')}</p>
+                      <p className="text-xs text-gray-500 mt-1">{t('salesArTools.formats')}</p>
                     </div>
                     <input
                       type="file"
@@ -239,15 +236,15 @@ export default function ARToolsPage() {
                 <CardContent className="text-center px-4">
                   <Camera className="w-12 h-12 md:w-16 md:h-16 text-gray-500 mx-auto mb-3 md:mb-4" />
                   <h3 className="text-lg md:text-xl font-semibold text-white mb-2">
-                    Upload Customer Photo
+                    {t('salesArTools.uploadPrompt')}
                   </h3>
                   <p className="text-sm md:text-base text-gray-400 mb-4">
-                    อัปโหลดรูปภาพลูกค้าเพื่อจำลองผลลัพธ์
+                    {t('salesArTools.uploadDesc')}
                   </p>
                   <label>
                     <Button className="bg-gradient-to-r from-purple-600 to-pink-600">
                       <Upload className="w-4 h-4 mr-2" />
-                      Select Photo
+                      {t('salesArTools.selectPhoto')}
                     </Button>
                     <input
                       type="file"
@@ -297,15 +294,15 @@ export default function ARToolsPage() {
                     <CardContent className="p-8 text-center">
                       <Scan className="w-16 h-16 text-purple-400 mx-auto mb-4" />
                       <h3 className="text-xl font-semibold text-white mb-2">
-                        AI Skin Analysis
+                        {t('salesArTools.tools.skin.title')}
                       </h3>
                       <p className="text-gray-400 mb-6">
-                        ใช้ระบบวิเคราะห์ผิว AI แบบเต็มรูปแบบ
+                        {t('salesArTools.tools.skin.desc')}
                       </p>
-                      <Link href="/analysis">
+                      <Link href={lp('/analysis')}>
                         <Button className="bg-gradient-to-r from-violet-600 to-purple-600">
                           <Sparkles className="w-4 h-4 mr-2" />
-                          Go to Skin Analysis
+                          {t('salesArTools.tools.skin.action')}
                         </Button>
                       </Link>
                     </CardContent>
@@ -332,7 +329,7 @@ export default function ARToolsPage() {
                 }}
               >
                 <Camera className="w-4 h-4 mr-2" />
-                Change
+                {t('salesArTools.change')}
               </Button>
               <Button 
                 size="sm"
@@ -340,7 +337,7 @@ export default function ARToolsPage() {
                 onClick={() => handleGenerateProposal({ tool: selectedTool, image: customerImage })}
               >
                 <Sparkles className="w-4 h-4 mr-2" />
-                Proposal
+                {t('salesArTools.proposal')}
               </Button>
             </>
           ) : (
@@ -350,7 +347,7 @@ export default function ARToolsPage() {
                 className="w-full bg-gradient-to-r from-purple-600 to-pink-600 h-12"
               >
                 <Upload className="w-5 h-5 mr-2" />
-                Upload Photo
+                {t('salesArTools.uploadPhoto')}
               </Button>
               <input
                 type="file"

@@ -16,6 +16,7 @@ import { TreatmentSimulator } from '@/components/ar/treatment-simulator';
 import PriorityRankingCard from '@/components/analysis/priority-ranking-card';
 import TreatmentRecommendations from '@/components/analysis/treatment-recommendations';
 import { Loader2, AlertCircle, ArrowLeft, Globe, Check, Presentation, LineChart } from 'lucide-react';
+import { useTranslations, useLocale } from 'next-intl';
 import { useRouter, useParams } from 'next/navigation';
 import { downloadAnalysisPDF } from '@/lib/utils/pdf-export';
 import { exportToPNG, shareAnalysis, printReport } from '@/lib/utils/export-report';
@@ -39,41 +40,6 @@ import type {
 } from '@/lib/types/skin-analysis';
 import { useAuth } from '@/lib/auth/context';
 import { normalizeRole } from '@/lib/auth/role-normalize';
-
-const TRANSLATIONS = {
-  en: {
-    report: 'Report',
-    '3dView': '3D View',
-    simulator: 'Simulator',
-    priorities: 'Priorities',
-    recommendations: 'Recommendations',
-    advanced: 'Advanced',
-    backToHistory: 'Back to History',
-    analyzeAnother: 'Analyze Another Photo',
-    backToHome: 'Back to Home',
-    notFound: 'Analysis not found',
-    loading: 'Loading analysis...',
-    language: 'Language',
-    presentationMode: 'Sales Presentation',
-    compareProgress: 'Compare Progress'
-  },
-  th: {
-    report: 'รายงาน',
-    '3dView': 'มุมมอง 3D',
-    simulator: 'จำลองผล',
-    priorities: 'ความสำคัญ',
-    recommendations: 'คำแนะนำการรักษา',
-    advanced: 'ขั้นสูง',
-    backToHistory: 'กลับไปประวัติ',
-    analyzeAnother: 'วิเคราะห์รูปใหม่',
-    backToHome: 'กลับหน้าแรก',
-    notFound: 'ไม่พบข้อมูลการวิเคราะห์',
-    loading: 'กำลังโหลดข้อมูล...',
-    language: 'ภาษา',
-    presentationMode: 'โหมดนำเสนอขาย',
-    compareProgress: 'เปรียบเทียบความคืบหน้า'
-  }
-};
 
 const LANGUAGES = [
   { code: 'th', name: 'ไทย', flag: '🇹🇭' },
@@ -691,6 +657,8 @@ function AdvancedAnalysisTab({ analysisId, locale }: Readonly<{ analysisId: stri
 }
 
 export default function AnalysisDetailPage({ params }: Readonly<AnalysisDetailPageProps>) {
+  const t = useTranslations();
+  const locale = useLocale();
   const [analysis, setAnalysis] = useState<HybridSkinAnalysis | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [patientInfo, setPatientInfo] = useState<any>(null);
@@ -702,8 +670,6 @@ export default function AnalysisDetailPage({ params }: Readonly<AnalysisDetailPa
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter();
   const urlParams = useParams();
-  const locale = (urlParams.locale as string) || 'en';
-  const t = TRANSLATIONS[locale as keyof typeof TRANSLATIONS] || TRANSLATIONS.en;
   
   // Get user role for permission checks
   const { user } = useAuth();
@@ -734,15 +700,15 @@ export default function AnalysisDetailPage({ params }: Readonly<AnalysisDetailPa
 
       if (!response.ok) {
         if (response.status === 404) {
-          throw new Error('Analysis not found');
+          throw new Error(t('analysis.notFound'));
         }
-        throw new Error('Failed to load analysis');
+        throw new Error(t('analysis.error'));
       }
 
       const data = await response.json();
 
       if (!data.success) {
-        throw new Error('Failed to load analysis');
+        throw new Error(t('analysis.error'));
       }
 
       const normalizedAnalysis = buildHybridAnalysis(data.data, id);
@@ -764,18 +730,18 @@ export default function AnalysisDetailPage({ params }: Readonly<AnalysisDetailPa
         : null;
       
       const finalPatientInfo = patientInfoValue || {
-        name: locale === 'th' ? 'ผู้รับบริการ' : 'Patient',
+        name: t('roles.customer'),
         skinType: normalizedAnalysis.ai.skinType || 'normal'
       };
       
       setPatientInfo(finalPatientInfo);
     } catch (err) {
       console.error('Load analysis error:', err);
-      setError(err instanceof Error ? err.message : 'Failed to load analysis');
+      setError(err instanceof Error ? err.message : t('analysis.error'));
     } finally {
       setIsLoading(false);
     }
-  }, [locale]);
+  }, [locale, t]);
 
   useEffect(() => {
     params.then((resolvedParams) => {
@@ -868,11 +834,11 @@ export default function AnalysisDetailPage({ params }: Readonly<AnalysisDetailPa
       <div className="container mx-auto py-8 px-4">
         <Alert variant="destructive" className="mb-4">
           <AlertCircle className="h-4 w-4" />
-          <AlertDescription>{error || t.notFound}</AlertDescription>
+          <AlertDescription>{error || t('analysis.notFound')}</AlertDescription>
         </Alert>
-        <Button onClick={() => router.push(`/${urlParams.locale}`)}>
+        <Button onClick={() => router.push(`/${locale}`)}>
           <ArrowLeft className="w-4 h-4 mr-2" />
-          {t.backToHome}
+          {t('analysis.backToHome')}
         </Button>
       </div>
     );
@@ -884,16 +850,16 @@ export default function AnalysisDetailPage({ params }: Readonly<AnalysisDetailPa
         <Button
           onClick={() => {
             if (isAuthenticated) {
-              router.push(`/${urlParams.locale}/analysis/history`);
+              router.push(`/${locale}/analysis/history`);
             } else {
-              router.push(`/${urlParams.locale}`);
+              router.push(`/${locale}`);
             }
           }}
           variant="ghost"
           className="gap-2"
         >
           <ArrowLeft className="w-4 h-4" />
-          {isAuthenticated ? t.backToHistory : t.analyzeAnother}
+          {isAuthenticated ? t('analysis.backToHistory') : t('analysis.analyzeAnother')}
         </Button>
 
         {canAccessSalesPresentation && (
@@ -904,7 +870,7 @@ export default function AnalysisDetailPage({ params }: Readonly<AnalysisDetailPa
             className="gap-2"
           >
             <Presentation className="w-4 h-4" />
-            <span className="hidden sm:inline">{t.presentationMode}</span>
+            <span className="hidden sm:inline">{t('analysis.presentationMode')}</span>
           </Button>
         )}
 
@@ -919,7 +885,7 @@ export default function AnalysisDetailPage({ params }: Readonly<AnalysisDetailPa
           className="gap-2"
         >
           <LineChart className="w-4 h-4" />
-          <span className="hidden sm:inline">{t.compareProgress}</span>
+          <span className="hidden sm:inline">{t('analysis.compareProgress')}</span>
         </Button>
 
         <DropdownMenu>
@@ -958,12 +924,12 @@ export default function AnalysisDetailPage({ params }: Readonly<AnalysisDetailPa
 
       <Tabs defaultValue="report" className="space-y-6">
         <TabsList className="grid w-full max-w-3xl grid-cols-6">
-          <TabsTrigger value="report">{t.report}</TabsTrigger>
-          <TabsTrigger value="priorities">{t.priorities}</TabsTrigger>
-          <TabsTrigger value="recommendations">{t.recommendations}</TabsTrigger>
-          <TabsTrigger value="advanced">{t.advanced}</TabsTrigger>
-          <TabsTrigger value="3d">{t['3dView']}</TabsTrigger>
-          <TabsTrigger value="simulator">{t.simulator}</TabsTrigger>
+          <TabsTrigger value="report">{t('analysis.report')}</TabsTrigger>
+          <TabsTrigger value="priorities">{t('analysis.priorities')}</TabsTrigger>
+          <TabsTrigger value="recommendations">{t('analysis.recommendations')}</TabsTrigger>
+          <TabsTrigger value="advanced">{t('analysis.advanced')}</TabsTrigger>
+          <TabsTrigger value="3d">{t('analysis.3dView')}</TabsTrigger>
+          <TabsTrigger value="simulator">{t('analysis.simulator')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="report">

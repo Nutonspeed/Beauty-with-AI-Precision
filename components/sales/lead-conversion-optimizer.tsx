@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { useTranslations } from 'next-intl';
 import { AIObjectionHandler } from '@/lib/ai/objection-handler';
 import { useObjectionDetection } from '@/lib/hooks/use-objection-detection';
 import { 
@@ -100,22 +101,21 @@ function calculateConversionProbability(lead: LeadData): number {
 }
 
 // Generate recommended actions
-function generateActions(lead: LeadData, probability: number): ConversionAction[] {
+function generateActions(lead: LeadData, probability: number, t: any): ConversionAction[] {
   const actions: ConversionAction[] = [];
   
   // Based on recency
   if (lead.lastContact) {
     const daysSince = Math.floor((Date.now() - lead.lastContact.getTime()) / (1000 * 60 * 60 * 24));
-    
-    if (daysSince >= 3) {
+        if (daysSince >= 3) {
       actions.push({
         id: 'followup_call',
         type: 'call',
-        title: 'โทรติดตาม',
-        description: `ไม่ได้ติดต่อมา ${daysSince} วัน - ควรโทรติดตาม`,
+        title: t('leadConversionOptimizer.actions.followup.title'),
+        description: t('leadConversionOptimizer.actions.followup.description', { days: daysSince }),
         impact: 'high',
         priority: 1,
-        script: `สวัสดีค่ะ คุณ${lead.name} นี่คือ [ชื่อ] จาก [คลินิก] โทรมาติดตามเรื่องที่สนใจ [${lead.treatmentInterest[0]}] ค่ะ ตอนนี้สะดวกคุยไหมคะ?`
+        script: t('leadConversionOptimizer.actions.followup.script', { name: lead.name, treatment: lead.treatmentInterest[0] })
       });
     }
   }
@@ -125,11 +125,11 @@ function generateActions(lead: LeadData, probability: number): ConversionAction[
     actions.push({
       id: 'send_content',
       type: 'message',
-      title: 'ส่ง Content เพิ่ม',
-      description: 'ส่งข้อมูลเพิ่มเติมเกี่ยวกับ treatment ที่สนใจ',
+      title: t('leadConversionOptimizer.actions.content.title'),
+      description: t('leadConversionOptimizer.actions.content.description'),
       impact: 'medium',
       priority: 2,
-      script: `สวัสดีค่ะ คุณ${lead.name} 📸\n\nเราขอส่งรีวิวจากลูกค้าจริงที่ทำ [${lead.treatmentInterest[0]}] มาให้ดูค่ะ ผลลัพธ์สวยมากเลย!\n\n[แนบรูป Before/After]\n\nสนใจนัดคิวปรึกษาฟรีไหมคะ? 💕`
+      script: t('leadConversionOptimizer.actions.content.script', { name: lead.name, treatment: lead.treatmentInterest[0] })
     });
   }
   
@@ -138,11 +138,11 @@ function generateActions(lead: LeadData, probability: number): ConversionAction[
     actions.push({
       id: 'offer_discount',
       type: 'offer',
-      title: 'เสนอโปรโมชั่นพิเศษ',
-      description: 'ลูกค้ากังวลเรื่องราคา - เสนอส่วนลดหรือผ่อนชำระ',
+      title: t('leadConversionOptimizer.actions.discount.title'),
+      description: t('leadConversionOptimizer.actions.discount.description'),
       impact: 'high',
       priority: 1,
-      script: `คุณ${lead.name}คะ เรามีโปรโมชั่นพิเศษสำหรับลูกค้าที่สนใจค่ะ\n\n✅ ลด 20% สำหรับการจองวันนี้\n✅ ผ่อน 0% 6 เดือน\n✅ ฟรีปรึกษาแพทย์\n\nสนใจรายละเอียดเพิ่มเติมไหมคะ?`
+      script: t('leadConversionOptimizer.actions.discount.script', { name: lead.name })
     });
   }
   
@@ -150,11 +150,11 @@ function generateActions(lead: LeadData, probability: number): ConversionAction[
     actions.push({
       id: 'flexible_booking',
       type: 'message',
-      title: 'เสนอเวลาที่ยืดหยุ่น',
-      description: 'ลูกค้าไม่มีเวลา - เสนอนัดนอกเวลา',
+      title: t('leadConversionOptimizer.actions.flexible.title'),
+      description: t('leadConversionOptimizer.actions.flexible.description'),
       impact: 'medium',
       priority: 2,
-      script: `คุณ${lead.name}คะ เข้าใจว่าคุณยุ่งมากค่ะ\n\nเรามีเปิดให้บริการ:\n📅 เสาร์-อาทิตย์\n🌙 หลัง 6 โมงเย็น\n⏰ Lunch time 12:00-13:00\n\nสะดวกช่วงไหนคะ?`
+      script: t('leadConversionOptimizer.actions.flexible.script', { name: lead.name })
     });
   }
   
@@ -163,11 +163,11 @@ function generateActions(lead: LeadData, probability: number): ConversionAction[
     actions.push({
       id: 'close_deal',
       type: 'call',
-      title: 'ปิดการขาย',
-      description: 'โอกาสสูง! ควรโทรนัดวันและเวลา',
+      title: t('leadConversionOptimizer.actions.close.title'),
+      description: t('leadConversionOptimizer.actions.close.description'),
       impact: 'high',
       priority: 1,
-      script: `คุณ${lead.name}คะ จากที่คุยกันมา ดูเหมือนว่า [${lead.treatmentInterest[0]}] ตรงกับความต้องการเลยค่ะ\n\nเรามีคิวว่างวันพุธที่ XX และศุกร์ที่ XX ค่ะ\n\nสะดวกวันไหนคะ? 😊`
+      script: t('leadConversionOptimizer.actions.close.script', { name: lead.name, treatment: lead.treatmentInterest[0] })
     });
   }
   
@@ -176,11 +176,11 @@ function generateActions(lead: LeadData, probability: number): ConversionAction[
     actions.push({
       id: 'upsell',
       type: 'upsell',
-      title: 'เสนอ Package เพิ่ม',
-      description: 'แนะนำ treatment เสริมที่เข้ากัน',
+      title: t('leadConversionOptimizer.actions.upsell.title'),
+      description: t('leadConversionOptimizer.actions.upsell.description'),
       impact: 'medium',
       priority: 3,
-      script: `คุณ${lead.name}คะ นอกจาก [${lead.treatmentInterest[0]}] แล้ว\n\nลูกค้าหลายท่านนิยมทำร่วมกับ [XXX] ด้วยค่ะ ผลลัพธ์ดีขึ้นมากเลย!\n\nถ้าทำ Package คู่กัน จะได้ส่วนลดพิเศษ 15% ค่ะ`
+      script: t('leadConversionOptimizer.actions.upsell.script', { name: lead.name, treatment: lead.treatmentInterest[0] })
     });
   }
   
@@ -193,6 +193,7 @@ export function LeadConversionOptimizer({
   onActionTaken,
   className = ''
 }: LeadConversionProps) {
+  const t = useTranslations();
   const [probability, setProbability] = useState(0);
   const [actions, setActions] = useState<ConversionAction[]>([]);
   const [selectedAction, setSelectedAction] = useState<ConversionAction | null>(null);
@@ -213,7 +214,7 @@ export function LeadConversionOptimizer({
     const analyzeLead = async () => {
       const prob = calculateConversionProbability(lead);
       setProbability(prob);
-      setActions(generateActions(lead, prob));
+      setActions(generateActions(lead, prob, t));
       
       // AI-powered objection analysis
       if (lead.objections && lead.objections.length > 0) {
@@ -303,8 +304,8 @@ export function LeadConversionOptimizer({
               <Target className="w-5 h-5 text-white" />
             </div>
             <div>
-              <CardTitle className="text-white">Conversion Optimizer</CardTitle>
-              <p className="text-sm text-gray-400">วิเคราะห์โอกาสปิดการขาย</p>
+              <CardTitle className="text-white">{t('leadConversionOptimizer.title')}</CardTitle>
+              <p className="text-sm text-gray-400">{t('leadConversionOptimizer.subtitle')}</p>
             </div>
           </div>
           <Badge className="bg-gradient-to-r from-blue-600 to-indigo-600">
@@ -324,7 +325,7 @@ export function LeadConversionOptimizer({
             >
               <BarChart3 className="w-10 h-10 text-blue-400" />
             </motion.div>
-            <p className="text-white">กำลังวิเคราะห์...</p>
+            <p className="text-white">{t('common.loading')}</p>
           </div>
         ) : (
           <>
@@ -348,7 +349,7 @@ export function LeadConversionOptimizer({
             {/* Conversion Probability */}
             <div className={`p-4 rounded-xl bg-gradient-to-r ${getProbabilityBgColor()} border`}>
               <div className="flex items-center justify-between mb-3">
-                <span className="text-white font-medium">โอกาสปิดการขาย</span>
+                <span className="text-white font-medium">{t('salesTools.optimizer.probability')}</span>
                 <span className={`text-3xl font-bold ${getProbabilityColor()}`}>
                   {probability}%
                 </span>
@@ -373,11 +374,11 @@ export function LeadConversionOptimizer({
                 <div className="flex items-start gap-2">
                   <AlertTriangle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="font-medium text-yellow-400">ข้อกังวลของลูกค้า</p>
+                    <p className="font-medium text-yellow-400">{t('leadConversionOptimizer.concerns')}</p>
                     <div className="flex flex-wrap gap-1 mt-1">
                       {lead.objections.map((obj, idx) => (
                         <Badge key={idx} variant="outline" className="border-yellow-500/50 text-yellow-400 text-xs">
-                          {obj === 'price' ? 'ราคา' : obj === 'time' ? 'เวลา' : obj}
+                          {obj === 'price' ? t('salesLeadDetail.dialog.types.call') : obj === 'time' ? t('salesWizard.steps.summary.paymentTerms') : obj}
                         </Badge>
                       ))}
                     </div>
@@ -390,7 +391,7 @@ export function LeadConversionOptimizer({
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <Lightbulb className="w-4 h-4 text-yellow-400" />
-                <span className="text-white font-medium">แนะนำ Actions</span>
+                <span className="text-white font-medium">{t('leadConversionOptimizer.recommendations')}</span>
               </div>
               
               {actions.slice(0, 4).map((action, idx) => (
@@ -430,7 +431,7 @@ export function LeadConversionOptimizer({
                       animate={{ opacity: 1, height: 'auto' }}
                       className="mt-3 p-3 rounded-lg bg-black/30 border border-white/10"
                     >
-                      <p className="text-xs text-gray-400 mb-1">Script แนะนำ:</p>
+                      <p className="text-xs text-gray-400 mb-1">{t('leadConversionOptimizer.scripts')}</p>
                       <p className="text-sm text-white whitespace-pre-line">{action.script}</p>
                       <Button
                         size="sm"
@@ -440,7 +441,7 @@ export function LeadConversionOptimizer({
                           onActionTaken?.(action);
                         }}
                       >
-                        คัดลอก Script
+                        {t('leadConversionOptimizer.copyScript')}
                       </Button>
                     </motion.div>
                   )}
@@ -452,7 +453,7 @@ export function LeadConversionOptimizer({
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <Zap className="w-4 h-4 text-purple-400" />
-                    <span className="text-white font-medium">AI Conversion Strategies</span>
+                    <span className="text-white font-medium">{t('leadConversionOptimizer.strategies')}</span>
                   </div>
                   
                   {aiStrategies.slice(0, 3).map((strategy, idx) => (
@@ -482,14 +483,14 @@ export function LeadConversionOptimizer({
                 className="border-green-500/50 text-green-400 hover:bg-green-500/20"
               >
                 <ThumbsUp className="w-4 h-4 mr-2" />
-                Mark Won
+                {t('leadConversionOptimizer.markWon')}
               </Button>
               <Button
                 variant="outline"
                 className="border-red-500/50 text-red-400 hover:bg-red-500/20"
               >
                 <ThumbsDown className="w-4 h-4 mr-2" />
-                Mark Lost
+                {t('leadConversionOptimizer.markLost')}
               </Button>
             </div>
           </>

@@ -24,11 +24,13 @@ interface AuthContextType {
   user: MultiTenantUser | null;
   authUser: User | null;
   isLoading: boolean;
+  error: Error | null;
   isAuthenticated: boolean;
   permissionContext: PermissionContext | null;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   refreshUser: () => Promise<void>;
+  clearError: () => void;
 }
 
 // ============================================================================
@@ -39,11 +41,13 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   authUser: null,
   isLoading: true,
+  error: null,
   isAuthenticated: false,
   permissionContext: null,
   signIn: async () => {},
   signOut: async () => {},
   refreshUser: async () => {},
+  clearError: () => {},
 });
 
 // ============================================================================
@@ -54,32 +58,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<MultiTenantUser | null>(null);
   const [authUser, setAuthUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+  
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
+  const clearError = useCallback(() => setError(null), []);
+
   // Fetch user profile with clinic context via API to avoid RLS issues
   const fetchUserProfile = useCallback(async (userId: string): Promise<MultiTenantUser | null> => {
     try {
-      // Get auth token for API call
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError) throw sessionError;
+      
       if (!session) {
-        console.error('No session available for API call');
+        console.warn('No active session for profile fetch');
         return null;
       }
 
       const response = await fetch(`/api/user-profile?userId=${userId}`, {
         headers: {
-          'Authorization': `Bearer ${session.access_token}`
+          'Authorization': `Bearer ${session.access_token}`,
+          'X-Client-Info': 'beauty-with-ai-precision-v1'
         }
       });
       
       if (!response.ok) {
-        console.error('Failed to fetch user profile: HTTP', response.status);
-        // If 404, try to create a new profile
         if (response.status === 404) {
-          console.log('User not found, attempting to create new profile...');
+          // Auto-provision profile for first-time login
           const createResponse = await fetch('/api/user-profile', {
             method: 'POST',
             headers: {
@@ -87,11 +95,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               'Authorization': `Bearer ${session.access_token}`
             },
             body: JSON.stringify({
-              userId: userId,
+              userId,
               updates: {
                 id: userId,
                 email: session.user?.email || '',
-                full_name: session.user?.user_metadata?.full_name || session.user?.email?.split('@')[0] || 'User',
+                full_name: session.user?.user_metadata?.full_name || 'New Professional',
                 role: 'customer',
                 tier: 'free',
                 is_active: true
@@ -100,159 +108,125 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           });
 
           if (createResponse.ok) {
-            const newProfileResult = await createResponse.json();
-            if (newProfileResult.data) {
-              console.log('New profile created successfully:', newProfileResult.data);
-              return {
-                id: newProfileResult.data.id,
-                email: newProfileResult.data.email,
-                role: newProfileResult.data.role,
-                tier: newProfileResult.data.tier,
-                full_name: newProfileResult.data.full_name,
-                avatar_url: newProfileResult.data.avatar_url,
-                phone: newProfileResult.data.phone,
-                clinic_id: newProfileResult.data.clinic_id,
-                is_active: newProfileResult.data.is_active,
-                email_verified: newProfileResult.data.email_verified || false,
-                created_at: newProfileResult.data.created_at || new Date().toISOString(),
-                updated_at: newProfileResult.data.updated_at || new Date().toISOString()
-              };
-            }
-          } else {
-            console.error('Failed to create new profile:', createResponse.status);
+            const { data } = await createResponse.json();
+            return data;
           }
         }
-        return null;
+        throw new Error(`Profile sync failed: ${response.statusText}`);
       }
 
-      const result = await response.json();
-      
-      // API returns { data: profile } format
-      if (!result.data || result.error) {
-        console.error('Failed to fetch user profile:', result?.error);
-        return null;
-      }
-
-      const data = result.data;
-
-      return {
-        id: data.id,
-        email: data.email,
-        role: data.role,
-        tier: data.tier,
-        full_name: data.full_name,
-        avatar_url: data.avatar_url,
-        phone: data.phone,
-        created_at: data.created_at,
-        updated_at: data.updated_at,
-        last_login_at: data.last_login_at,
-        email_verified: data.email_verified,
-        metadata: data.metadata || {},
-        clinic_id: data.clinic_id,
-        branch_id: data.branch_id,
-        clinic: data.clinic || undefined,
-      };
-    } catch (error) {
-      console.error('Error fetching user profile:', error);
+      const { data } = await response.json();
+      return data;
+    } catch (err) {
+      console.error('[Auth] Profile sync error:', err);
+      setError(err instanceof Error ? err : new Error('Unknown authentication error'));
       return null;
     }
   }, [supabase]);
 
-  // Initialize auth state
+  // Unified Auth State Management
   useEffect(() => {
-    async function initAuth() {
+    let mounted = true;
+
+    async function syncAuthState() {
       try {
+        setIsLoading(true);
         const { data: { session } } = await supabase.auth.getSession();
         
-        if (session?.user) {
+        if (session?.user && mounted) {
           setAuthUser(session.user);
           const profile = await fetchUserProfile(session.user.id);
-          setUser(profile);
+          if (mounted) setUser(profile);
         }
-      } catch (error) {
-        console.error('Auth initialization error:', error);
+      } catch (err) {
+        if (mounted) setError(err instanceof Error ? err : new Error('Auth sync failed'));
       } finally {
-        setIsLoading(false);
+        if (mounted) setIsLoading(false);
       }
     }
 
-    initAuth();
+    syncAuthState();
 
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state changed:', event);
+        if (!mounted) return;
         
         if (session?.user) {
           setAuthUser(session.user);
           const profile = await fetchUserProfile(session.user.id);
-          setUser(profile);
+          if (mounted) setUser(profile);
         } else {
           setAuthUser(null);
           setUser(null);
         }
-        
         setIsLoading(false);
       }
     );
 
     return () => {
+      mounted = false;
       subscription.unsubscribe();
     };
   }, [supabase, fetchUserProfile]);
 
-  // Sign in function
-  async function signIn(email: string, password: string) {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+  const signIn = async (email: string, password: string) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+      if (signInError) throw signInError;
 
-    if (error) {
-      throw error;
+      if (data.user) {
+        setAuthUser(data.user);
+        const profile = await fetchUserProfile(data.user.id);
+        setUser(profile);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Sign in failed'));
+      throw err;
+    } finally {
+      setIsLoading(false);
     }
+  };
 
-    if (data.user) {
-      setAuthUser(data.user);
-      const profile = await fetchUserProfile(data.user.id);
-      setUser(profile);
+  const signOut = async () => {
+    try {
+      setIsLoading(true);
+      await supabase.auth.signOut();
+      setAuthUser(null);
+      setUser(null);
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Sign out failed'));
+    } finally {
+      setIsLoading(false);
     }
-  }
+  };
 
-  // Sign out function
-  async function signOut() {
-    await supabase.auth.signOut();
-    setAuthUser(null);
-    setUser(null);
-  }
-
-  // Refresh user profile
-  async function refreshUser() {
+  const refreshUser = async () => {
     if (authUser) {
       const profile = await fetchUserProfile(authUser.id);
       setUser(profile);
     }
-  }
+  };
 
-  // Build permission context
-  const permissionContext: PermissionContext | null = user
-    ? {
-        userId: user.id,
-        role: user.role,
-        clinicId: user.clinic_id,
-        branchId: user.branch_id,
-      }
-    : null;
+  const permissionContext: PermissionContext | null = user ? {
+    userId: user.id,
+    role: user.role,
+    clinicId: user.clinic_id,
+    branchId: user.branch_id,
+  } : null;
 
   const value: AuthContextType = {
     user,
     authUser,
     isLoading,
+    error,
     isAuthenticated: !!user,
     permissionContext,
     signIn,
     signOut,
     refreshUser,
+    clearError,
   };
 
   return React.createElement(AuthContext.Provider, { value }, children);

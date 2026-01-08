@@ -15,21 +15,24 @@ interface ActiveUsersPanelProps {
   className?: string;
 }
 
+import { useTranslations } from 'next-intl';
+
 export function ActiveUsersPanel({ users, lockedBy, className = '' }: ActiveUsersPanelProps) {
+  const t = useTranslations();
   return (
     <Card className={className}>
       <CardHeader className="pb-3">
         <CardTitle className="text-sm font-medium flex items-center gap-2">
           <Users className="w-4 h-4" />
-          Active Users
+          {t('whiteboard.activeUsers.title')}
           <Badge variant="secondary" className="ml-auto">
-            {users.length}
+            {t('whiteboard.activeUsers.online', { count: users.length })}
           </Badge>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-2">
         {users.length === 0 ? (
-          <p className="text-sm text-gray-500 dark:text-gray-400">No other users online</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">{t('whiteboard.activeUsers.noOtherUsers')}</p>
         ) : (
           users.map(user => (
             <div
@@ -43,7 +46,7 @@ export function ActiveUsersPanel({ users, lockedBy, className = '' }: ActiveUser
               <span className="text-sm font-medium flex-1">{user.userName}</span>
               {lockedBy === user.userId && (
                 <Badge variant="outline" className="text-xs">
-                  Drawing
+                  {t('whiteboard.locked')}
                 </Badge>
               )}
             </div>

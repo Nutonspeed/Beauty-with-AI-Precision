@@ -19,6 +19,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { useTranslations } from 'next-intl'
 import {
   Select,
   SelectContent,
@@ -66,6 +67,7 @@ export function ProposalStep({
   customerName,
   isOnline,
 }: ProposalStepProps) {
+  const t = useTranslations()
   const manager = getProduct3DManager()
 
   // Initialize proposal data
@@ -186,7 +188,7 @@ export function ProposalStep({
   const addCustomItem = () => {
     const newItem: ProposalItem = {
       id: `custom-${Date.now()}`,
-      name: 'Custom Item',
+      name: t('salesWizard.steps.proposal.customItemName'),
       type: 'treatment',
       quantity: 1,
       pricePerUnit: 0,
@@ -201,7 +203,7 @@ export function ProposalStep({
       <Alert className="bg-blue-50 dark:bg-blue-950/20 border-blue-200">
         <FileText className="h-4 w-4 text-blue-600" />
         <AlertDescription className="text-sm text-blue-900 dark:text-blue-100">
-          Review and adjust the proposal for {customerName}. You can edit quantities, prices, and add custom items.
+          {t('salesWizard.steps.proposal.instructions', { name: customerName })}
         </AlertDescription>
       </Alert>
 
@@ -210,7 +212,7 @@ export function ProposalStep({
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription className="text-sm">
-            You're offline. Proposal will be saved locally and can be sent when you're back online.
+            {t('salesWizard.steps.proposal.offlineWarning')}
           </AlertDescription>
         </Alert>
       )}
@@ -220,12 +222,12 @@ export function ProposalStep({
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-lg">Proposal Items</CardTitle>
-              <CardDescription>{items.length} items selected</CardDescription>
+              <CardTitle className="text-lg">{t('salesWizard.steps.proposal.itemsTitle')}</CardTitle>
+              <CardDescription>{t('salesWizard.steps.proposal.itemsCount', { count: items.length })}</CardDescription>
             </div>
             <Button variant="outline" size="sm" onClick={addCustomItem}>
               <Plus className="h-4 w-4 mr-1" />
-              Add Item
+              {t('salesWizard.steps.proposal.addItem')}
             </Button>
           </div>
         </CardHeader>
@@ -253,7 +255,7 @@ export function ProposalStep({
                         />
                       </div>
                       <Badge variant="secondary" className="text-xs">
-                        {item.type === 'treatment' ? 'Treatment' : 'Product'}
+                        {item.type === 'treatment' ? t('nav.analysis') : t('nav.features')}
                       </Badge>
                     </div>
                     
@@ -274,7 +276,7 @@ export function ProposalStep({
                   <div className="grid grid-cols-3 gap-3">
                     {/* Quantity */}
                     <div className="space-y-1">
-                      <Label className="text-xs">Qty</Label>
+                      <Label className="text-xs">{t('salesWizard.steps.proposal.qtyLabel')}</Label>
                       <Input
                         type="number"
                         min="1"
@@ -286,7 +288,7 @@ export function ProposalStep({
 
                     {/* Price Per Unit */}
                     <div className="space-y-1">
-                      <Label className="text-xs">Price</Label>
+                      <Label className="text-xs">{t('salesWizard.steps.proposal.priceLabel')}</Label>
                       <Input
                         type="number"
                         min="0"
@@ -299,7 +301,7 @@ export function ProposalStep({
 
                     {/* Total */}
                     <div className="space-y-1">
-                      <Label className="text-xs">Total</Label>
+                      <Label className="text-xs">{t('salesWizard.steps.proposal.totalLabel')}</Label>
                       <div className="h-9 px-3 flex items-center bg-blue-50 dark:bg-blue-950/20 rounded-md">
                         <span className="text-sm font-semibold text-blue-600">
                           ฿{item.total.toLocaleString()}
@@ -319,20 +321,20 @@ export function ProposalStep({
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
             <DollarSign className="h-5 w-5 text-green-600" />
-            Pricing Summary
+            {t('salesWizard.steps.proposal.pricingSummaryTitle')}
           </CardTitle>
         </CardHeader>
 
         <CardContent className="space-y-4">
           {/* Subtotal */}
           <div className="flex justify-between text-lg">
-            <span>Subtotal:</span>
+            <span>{t('salesWizard.steps.proposal.subtotalLabel')}</span>
             <span className="font-semibold">฿{subtotal.toLocaleString()}</span>
           </div>
 
           {/* Discount */}
           <div className="space-y-2">
-            <Label>Discount</Label>
+            <Label>{t('salesWizard.steps.proposal.discountLabel')}</Label>
             <div className="flex gap-2">
               {/* Discount Type Toggle */}
               <Select value={discountType} onValueChange={(v: 'percent' | 'fixed') => setDiscountType(v)}>
@@ -368,7 +370,7 @@ export function ProposalStep({
 
           {/* Total */}
           <div className="flex justify-between text-2xl font-bold pt-4 border-t-2 border-primary/30">
-            <span>Total:</span>
+            <span>{t('salesWizard.steps.proposal.totalFinalLabel')}</span>
             <span className="text-primary">฿{total.toLocaleString()}</span>
           </div>
         </CardContent>
@@ -379,24 +381,24 @@ export function ProposalStep({
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
             <CreditCard className="h-5 w-5" />
-            Payment Terms
+            {t('salesWizard.steps.proposal.paymentTermsTitle')}
           </CardTitle>
         </CardHeader>
 
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label>Payment Method</Label>
+            <Label>{t('salesWizard.steps.proposal.paymentMethodLabel')}</Label>
             <Select value={paymentTerms} onValueChange={setPaymentTerms}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="full">Full Payment (ชำระเต็มจำนวน)</SelectItem>
-                <SelectItem value="installment-3">3 Installments (ผ่อน 3 งวด)</SelectItem>
-                <SelectItem value="installment-6">6 Installments (ผ่อน 6 งวด)</SelectItem>
-                <SelectItem value="installment-12">12 Installments (ผ่อน 12 งวด)</SelectItem>
-                <SelectItem value="deposit-50">50% Deposit (มัดจำ 50%)</SelectItem>
-                <SelectItem value="custom">Custom (กำหนดเอง)</SelectItem>
+                <SelectItem value="full">{t('salesWizard.steps.proposal.paymentTerms.full')}</SelectItem>
+                <SelectItem value="installment-3">{t('salesWizard.steps.proposal.paymentTerms.installment3')}</SelectItem>
+                <SelectItem value="installment-6">{t('salesWizard.steps.proposal.paymentTerms.installment6')}</SelectItem>
+                <SelectItem value="installment-12">{t('salesWizard.steps.proposal.paymentTerms.installment12')}</SelectItem>
+                <SelectItem value="deposit-50">{t('salesWizard.steps.proposal.paymentTerms.deposit50')}</SelectItem>
+                <SelectItem value="custom">{t('salesWizard.steps.proposal.paymentTerms.custom')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -408,7 +410,7 @@ export function ProposalStep({
                 {(() => {
                   const months = Number.parseInt(paymentTerms.split('-')[1])
                   const perMonth = Math.ceil(total / months)
-                  return `${months} payments of ฿${perMonth.toLocaleString()} per month`
+                  return t('salesWizard.steps.proposal.installmentDetail', { months, amount: perMonth.toLocaleString() })
                 })()}
               </AlertDescription>
             </Alert>
@@ -417,18 +419,21 @@ export function ProposalStep({
           {paymentTerms === 'deposit-50' && (
             <Alert className="bg-green-50 dark:bg-green-950/20 border-green-200">
               <AlertDescription className="text-sm">
-                Deposit: ฿{Math.ceil(total * 0.5).toLocaleString()} | Balance: ฿{Math.floor(total * 0.5).toLocaleString()}
+                {t('salesWizard.steps.proposal.depositDetail', { 
+                  deposit: Math.ceil(total * 0.5).toLocaleString(), 
+                  balance: Math.floor(total * 0.5).toLocaleString() 
+                })}
               </AlertDescription>
             </Alert>
           )}
 
           {/* Notes */}
           <div className="space-y-2">
-            <Label>Additional Notes</Label>
+            <Label>{t('salesWizard.steps.proposal.additionalNotesLabel')}</Label>
             <Textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Special conditions, warranties, or instructions..."
+              placeholder={t('salesWizard.steps.proposal.notesPlaceholder')}
               rows={4}
               className={cn(
                 "resize-none",
@@ -444,7 +449,7 @@ export function ProposalStep({
         <Alert>
           <AlertCircle className="h-4 w-4" />
           <AlertDescription className="text-sm">
-            No items in proposal. Please go back and select treatments or products.
+            {t('salesWizard.steps.proposal.emptyProposal')}
           </AlertDescription>
         </Alert>
       )}

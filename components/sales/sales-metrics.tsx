@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react"
 import { StatCard, StatCardSkeleton } from "@/components/ui/stat-card"
 import { Users, DollarSign, Target, TrendingUp, CheckCircle, Clock3, BarChart, RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useTranslations } from "next-intl"
 
 interface SalesMetrics {
   callsMade: {
@@ -51,6 +52,7 @@ interface SalesMetrics {
 }
 
 export function SalesMetrics() {
+  const t = useTranslations()
   const [metrics, setMetrics] = useState<SalesMetrics | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isRefreshing, setIsRefreshing] = useState(false)
@@ -67,12 +69,12 @@ export function SalesMetrics() {
         }
 
         const response = await fetch("/api/sales/metrics")
-        if (!response.ok) throw new Error("ไม่สามารถโหลดข้อมูลสถิติได้")
+        if (!response.ok) throw new Error(t('dashboard.salesMetrics.fetchError'))
         const data = await response.json()
         setMetrics(data)
       } catch (err) {
         console.error("[sales-metrics] fetch failed", err)
-        setError(err instanceof Error ? err.message : "เกิดข้อผิดพลาดไม่ทราบสาเหตุ")
+        setError(err instanceof Error ? err.message : t('dashboard.salesMetrics.unknownError'))
       } finally {
         if (mode === "initial") {
           setIsLoading(false)
@@ -98,9 +100,9 @@ export function SalesMetrics() {
   }
 
   const formatMinutes = (minutes: number) => {
-    if (minutes < 60) return `${minutes.toFixed(0)} นาที`
+    if (minutes < 60) return t('dashboard.salesMetrics.mins', { count: minutes.toFixed(0) })
     const hours = minutes / 60
-    return `${hours.toFixed(1)} ชม.`
+    return t('dashboard.salesMetrics.hours', { count: hours.toFixed(1) })
   }
 
   const handleRetry = () => fetchMetrics({ mode: "initial" })
@@ -123,11 +125,11 @@ export function SalesMetrics() {
           <RefreshCw className="h-5 w-5 text-destructive" />
         </div>
         <div className="space-y-1">
-          <p className="text-sm font-medium text-destructive">ไม่สามารถโหลดสถิติการขายได้</p>
-          <p className="text-xs text-destructive/80">{error ?? "โปรดลองใหม่อีกครั้งในภายหลัง"}</p>
+          <p className="text-sm font-medium text-destructive">{t('dashboard.salesMetrics.loadError')}</p>
+          <p className="text-xs text-destructive/80">{error ?? t('dashboard.salesMetrics.unknownError')}</p>
         </div>
         <Button variant="outline" size="sm" onClick={handleRetry} className="gap-2">
-          <RefreshCw className="h-4 w-4" /> ลองอีกครั้ง
+          <RefreshCw className="h-4 w-4" /> {t('dashboard.salesMetrics.retry')}
         </Button>
       </div>
     )
@@ -138,25 +140,25 @@ export function SalesMetrics() {
       <div className="flex items-center justify-end gap-3 text-xs text-muted-foreground">
         {isRefreshing ? (
           <span className="flex items-center gap-2 text-primary">
-            <RefreshCw className="h-3.5 w-3.5 animate-spin" /> กำลังรีเฟรช...
+            <RefreshCw className="h-3.5 w-3.5 animate-spin" /> {t('dashboard.salesMetrics.refreshing')}
           </span>
         ) : (
-          <span>อัปเดตอัตโนมัติทุก 5 นาที</span>
+          <span>{t('dashboard.salesMetrics.autoUpdate')}</span>
         )}
         <Button variant="outline" size="sm" className="gap-2" onClick={handleManualRefresh} disabled={isRefreshing}>
-          <RefreshCw className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`} /> รีเฟรช
+          <RefreshCw className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`} /> {t('dashboard.salesMetrics.manualRefresh')}
         </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-6">
       {/* Hot Leads */}
       <StatCard
-        title="Hot Leads"
+        title={t('dashboard.sales.actions.hotLeads')}
         value={metrics.callsMade.today}
         icon={Target}
         trend={{
           value: 0, // Hot leads don't show trend, just target progress
-          label: `${Math.round((metrics.callsMade.today / metrics.callsMade.target) * 100)}% of target`
+          label: t('dashboard.topTreatments.ofTarget', { percent: Math.round((metrics.callsMade.today / metrics.callsMade.target) * 100) })
         }}
         iconColor="text-red-600"
         iconBackground="bg-red-50"
@@ -164,12 +166,12 @@ export function SalesMetrics() {
 
       {/* Leads Contacted */}
       <StatCard
-        title="Leads Contacted"
+        title={t('dashboard.sales.actions.messages')}
         value={metrics.leadsContacted.today}
         icon={Users}
         trend={{
           value: metrics.leadsContacted.change,
-          label: "vs yesterday"
+          label: t('dashboard.performanceCards.vsYesterday')
         }}
         iconColor="text-blue-600"
         iconBackground="bg-blue-50"
@@ -177,12 +179,12 @@ export function SalesMetrics() {
 
       {/* Qualified Leads */}
       <StatCard
-        title="Qualified Leads"
+        title={t('salesLeads.status.qualified')}
         value={metrics.proposalsSent.today}
         icon={CheckCircle}
         trend={{
           value: metrics.proposalsSent.change,
-          label: "vs yesterday"
+          label: t('dashboard.performanceCards.vsYesterday')
         }}
         iconColor="text-purple-600"
         iconBackground="bg-purple-50"
@@ -190,12 +192,12 @@ export function SalesMetrics() {
 
       {/* Conversion Rate */}
       <StatCard
-        title="Conversion Rate"
+        title={t('dashboard.sales.stats.conversionRate')}
         value={`${metrics.conversionRate.today.toFixed(1)}%`}
         icon={TrendingUp}
         trend={{
           value: metrics.conversionRate.change,
-          label: "vs yesterday"
+          label: t('dashboard.performanceCards.vsYesterday')
         }}
         iconColor="text-green-600"
         iconBackground="bg-green-50"
@@ -203,12 +205,12 @@ export function SalesMetrics() {
 
       {/* Potential Revenue */}
       <StatCard
-        title="Potential Revenue"
+        title={t('salesDashboard.metrics.revenue')}
         value={formatCurrency(metrics.revenueGenerated.today)}
         icon={DollarSign}
         trend={{
           value: metrics.revenueGenerated.change,
-          label: "from qualified leads"
+          label: t('dashboard.livePipeline.potential')
         }}
         iconColor="text-amber-600"
         iconBackground="bg-amber-50"
@@ -216,12 +218,12 @@ export function SalesMetrics() {
 
       {/* Avg Response Time */}
       <StatCard
-        title="Avg Response Time"
+        title={t('dashboard.sales.stats.respondWithin')}
         value={formatMinutes(metrics.avgResponseMinutes.today)}
         icon={Clock3}
         trend={{
           value: metrics.avgResponseMinutes.change,
-          label: `target ${formatMinutes(metrics.avgResponseMinutes.target)}`,
+          label: `${t('dashboard.revenueChart.target')} ${formatMinutes(metrics.avgResponseMinutes.target)}`,
         }}
         iconColor="text-indigo-600"
         iconBackground="bg-indigo-50"
@@ -229,12 +231,12 @@ export function SalesMetrics() {
 
       {/* Win Rate (Overall) */}
       <StatCard
-        title="Win Rate (Overall)"
+        title={t('salesLeads.stats.won')}
         value={`${metrics.winRateOverall.today.toFixed(1)}%`}
         icon={BarChart}
         trend={{
           value: metrics.winRateOverall.change,
-          label: "converted / total leads",
+          label: t('dashboard.livePipeline.averageDeal'),
         }}
         iconColor="text-teal-600"
         iconBackground="bg-teal-50"

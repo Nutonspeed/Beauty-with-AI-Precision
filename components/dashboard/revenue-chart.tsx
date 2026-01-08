@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { TrendingUp, TrendingDown } from "lucide-react"
+import { useTranslations } from "next-intl"
 
 interface RevenueDataPoint {
   date: string
@@ -32,6 +33,7 @@ interface RevenueChartData {
 }
 
 export function RevenueChart() {
+  const t = useTranslations()
   const [data, setData] = useState<RevenueChartData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -79,7 +81,7 @@ export function RevenueChart() {
   if (error || !data) {
     return (
       <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-center">
-        <p className="text-sm text-destructive">Failed to load revenue chart. Please try again.</p>
+        <p className="text-sm text-destructive">{t('dashboard.revenueChart.error')}</p>
       </div>
     )
   }
@@ -121,13 +123,13 @@ export function RevenueChart() {
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle>Revenue Trends (This Month)</CardTitle>
+          <CardTitle>{t('dashboard.revenueChart.title')}</CardTitle>
           <div className="flex items-center gap-2">
             <Badge className={achievement >= 100 ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100" : "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-100"}>
-              {achievement >= 100 ? "🎯 Target Achieved" : "📈 On Track"}
+              {achievement >= 100 ? t('dashboard.revenueChart.targetAchieved') : t('dashboard.revenueChart.onTrack')}
             </Badge>
             <div className="text-right">
-              <div className="text-sm font-medium">{achievement.toFixed(1)}% of target</div>
+              <div className="text-sm font-medium">{t('dashboard.revenueChart.ofTarget', { percent: achievement.toFixed(1) })}</div>
               <div className="text-xs text-muted-foreground">
                 {formatCurrency(totalRevenue)} / {formatCurrency(totalTarget)}
               </div>
@@ -138,8 +140,8 @@ export function RevenueChart() {
       <CardContent>
         {revenueData.length === 0 ? (
           <div className="text-center py-16 text-muted-foreground">
-            <p>ยังไม่มีข้อมูลรายได้ในเดือนนี้</p>
-            <p className="text-sm mt-2">ข้อมูลจะแสดงเมื่อมีการจองหรือชำระเงิน</p>
+            <p>{t('dashboard.revenueChart.empty')}</p>
+            <p className="text-sm mt-2">{t('dashboard.revenueChart.emptyDesc')}</p>
           </div>
         ) : (
           <>
@@ -173,11 +175,11 @@ export function RevenueChart() {
           <div className="flex items-center justify-center gap-6 text-sm">
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 bg-blue-500 rounded" />
-              <span>Revenue</span>
+              <span>{t('dashboard.revenueChart.revenue')}</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-3 h-0.5 bg-orange-400 border-t-2 border-dashed" />
-              <span>Target</span>
+              <span>{t('dashboard.revenueChart.target')}</span>
             </div>
           </div>
         </div>
@@ -186,11 +188,11 @@ export function RevenueChart() {
         <div className="grid grid-cols-3 gap-4 mt-6 pt-6 border-t">
           <div className="text-center">
             <div className="text-2xl font-bold text-green-600">{formatCurrency(maxRevenue)}</div>
-            <div className="text-sm text-muted-foreground">Best Day</div>
+            <div className="text-sm text-muted-foreground">{t('dashboard.revenueChart.bestDay')}</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{formatCurrency(Math.round(avgRevenue))}</div>
-            <div className="text-sm text-muted-foreground">Daily Average</div>
+            <div className="text-sm text-muted-foreground">{t('dashboard.revenueChart.dailyAverage')}</div>
           </div>
           <div className="text-center">
             <div className="flex items-center justify-center gap-1">
@@ -203,7 +205,7 @@ export function RevenueChart() {
                 {(achievement - 100).toFixed(1)}%
               </div>
             </div>
-            <div className="text-sm text-muted-foreground">vs Target</div>
+            <div className="text-sm text-muted-foreground">{t('dashboard.revenueChart.vsTarget')}</div>
           </div>
         </div>
             </>

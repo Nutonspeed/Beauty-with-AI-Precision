@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useTranslations } from 'next-intl';
 import { Upload, FileText, CheckCircle2, XCircle, AlertTriangle, Download, Loader2, Phone, Mail } from 'lucide-react';
 import { parseCustomerCSV, type CSVParseResult, type CustomerCSVRow } from '@/lib/utils/csv-parser';
 
@@ -16,6 +17,7 @@ interface Props {
 }
 
 export default function BulkCustomerImport({ open, onOpenChange, onSuccess }: Props) {
+  const t = useTranslations('bulkCustomerImport');
   const [file, setFile] = useState<File | null>(null);
   const [parseResult, setParseResult] = useState<CSVParseResult<CustomerCSVRow> | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -53,7 +55,7 @@ export default function BulkCustomerImport({ open, onOpenChange, onSuccess }: Pr
       });
 
       if (!response.ok) {
-        throw new Error('Upload failed');
+        throw new Error(t('errors.uploadFailed'));
       }
 
       const result = await response.json();
@@ -96,9 +98,9 @@ export default function BulkCustomerImport({ open, onOpenChange, onSuccess }: Pr
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Bulk Customer Import</DialogTitle>
+          <DialogTitle>{t('dialogTitle')}</DialogTitle>
           <DialogDescription>
-            Upload a CSV file to invite multiple customers at once
+            {t('dialogDescription')}
           </DialogDescription>
         </DialogHeader>
 
@@ -108,15 +110,15 @@ export default function BulkCustomerImport({ open, onOpenChange, onSuccess }: Pr
             <Alert>
               <FileText className="h-4 w-4" />
               <AlertDescription>
-                CSV must have columns: <strong>email</strong>, <strong>name</strong>, <strong>phone</strong> (optional)
+                {t('instructions.csvCols')}
                 <br />
-                Maximum 100 customers per upload
+                {t('instructions.maxLimit')}
               </AlertDescription>
             </Alert>
 
             <Button variant="outline" onClick={downloadTemplate} className="w-full">
               <Download className="h-4 w-4 mr-2" />
-              Download CSV Template
+              {t('download.button')}
             </Button>
 
             <Card>
@@ -124,7 +126,7 @@ export default function BulkCustomerImport({ open, onOpenChange, onSuccess }: Pr
                 <div className="border-2 border-dashed rounded-lg p-8 text-center">
                   <Upload className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
                   <p className="text-sm text-muted-foreground mb-4">
-                    Drag and drop or click to upload CSV file
+                    {t('upload.dropzone')}
                   </p>
                   <input
                     type="file"
@@ -135,7 +137,7 @@ export default function BulkCustomerImport({ open, onOpenChange, onSuccess }: Pr
                   />
                   <Button asChild>
                     <label htmlFor="csv-upload-customer" className="cursor-pointer">
-                      Choose File
+                      {t('upload.choose')}
                     </label>
                   </Button>
                 </div>
@@ -146,15 +148,15 @@ export default function BulkCustomerImport({ open, onOpenChange, onSuccess }: Pr
               <Alert variant="destructive">
                 <XCircle className="h-4 w-4" />
                 <AlertDescription>
-                  <p className="font-semibold">Found {parseResult.errors.length} errors:</p>
+                  <p className="font-semibold">{t('errors.found', { count: parseResult.errors.length })}</p>
                   <ul className="list-disc list-inside mt-2 space-y-1">
                     {parseResult.errors.slice(0, 5).map((err, i) => (
                       <li key={i} className="text-sm">
-                        Row {err.row}: {err.message}
+                        {t('errors.rowError', { row: err.row, message: err.message })}
                       </li>
                     ))}
                     {parseResult.errors.length > 5 && (
-                      <li className="text-sm">...and {parseResult.errors.length - 5} more</li>
+                      <li className="text-sm">{t('preview.more', { count: parseResult.errors.length - 5 })}</li>
                     )}
                   </ul>
                 </AlertDescription>
@@ -169,7 +171,7 @@ export default function BulkCustomerImport({ open, onOpenChange, onSuccess }: Pr
             <Alert>
               <CheckCircle2 className="h-4 w-4" />
               <AlertDescription>
-                Found {parseResult.validRows} valid customers
+                {t('preview.validRows', { count: parseResult.validRows })}
               </AlertDescription>
             </Alert>
 
@@ -193,12 +195,12 @@ export default function BulkCustomerImport({ open, onOpenChange, onSuccess }: Pr
                           )}
                         </div>
                       </div>
-                      <Badge variant="outline">Customer</Badge>
+                      <Badge variant="outline">{t('preview.customer') || 'Customer'}</Badge>
                     </div>
                   ))}
                   {parseResult.data.length > 10 && (
                     <p className="text-sm text-muted-foreground text-center pt-2">
-                      ...and {parseResult.data.length - 10} more
+                      {t('preview.more', { count: parseResult.data.length - 10 })}
                     </p>
                   )}
                 </div>
@@ -207,16 +209,16 @@ export default function BulkCustomerImport({ open, onOpenChange, onSuccess }: Pr
 
             <div className="flex gap-2">
               <Button variant="outline" onClick={() => setStep('upload')} className="flex-1">
-                Back
+                {t('preview.back') || 'Back'}
               </Button>
               <Button onClick={handleUpload} disabled={uploading} className="flex-1">
                 {uploading ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Sending Invitations...
+                    {t('preview.sending')}
                   </>
                 ) : (
-                  <>Send {parseResult.data.length} Invitations</>
+                  <>{t('preview.sendCount', { count: parseResult.data.length })}</>
                 )}
               </Button>
             </div>
@@ -231,7 +233,7 @@ export default function BulkCustomerImport({ open, onOpenChange, onSuccess }: Pr
                 <CardContent className="pt-6 text-center">
                   <CheckCircle2 className="h-8 w-8 mx-auto mb-2 text-green-500" />
                   <p className="text-2xl font-bold">{uploadResult.summary.successful}</p>
-                  <p className="text-sm text-muted-foreground">Successful</p>
+                  <p className="text-sm text-muted-foreground">{t('result.successful')}</p>
                 </CardContent>
               </Card>
 
@@ -239,7 +241,7 @@ export default function BulkCustomerImport({ open, onOpenChange, onSuccess }: Pr
                 <CardContent className="pt-6 text-center">
                   <XCircle className="h-8 w-8 mx-auto mb-2 text-red-500" />
                   <p className="text-2xl font-bold">{uploadResult.summary.failed}</p>
-                  <p className="text-sm text-muted-foreground">Failed</p>
+                  <p className="text-sm text-muted-foreground">{t('result.failed')}</p>
                 </CardContent>
               </Card>
 
@@ -247,7 +249,7 @@ export default function BulkCustomerImport({ open, onOpenChange, onSuccess }: Pr
                 <CardContent className="pt-6 text-center">
                   <AlertTriangle className="h-8 w-8 mx-auto mb-2 text-yellow-500" />
                   <p className="text-2xl font-bold">{uploadResult.summary.duplicate}</p>
-                  <p className="text-sm text-muted-foreground">Duplicate</p>
+                  <p className="text-sm text-muted-foreground">{t('result.duplicate')}</p>
                 </CardContent>
               </Card>
             </div>
@@ -256,7 +258,7 @@ export default function BulkCustomerImport({ open, onOpenChange, onSuccess }: Pr
               <Alert variant="destructive">
                 <XCircle className="h-4 w-4" />
                 <AlertDescription>
-                  <p className="font-semibold">Failed invitations:</p>
+                  <p className="font-semibold">{t('result.failedList')}</p>
                   <ul className="list-disc list-inside mt-2 space-y-1">
                     {uploadResult.results.failed.map((f: any, i: number) => (
                       <li key={i} className="text-sm">
@@ -272,14 +274,13 @@ export default function BulkCustomerImport({ open, onOpenChange, onSuccess }: Pr
               <Alert>
                 <CheckCircle2 className="h-4 w-4" />
                 <AlertDescription>
-                  Successfully imported {uploadResult.summary.successful} customers!
-                  Invitation emails have been sent. Customers have 30 days to accept.
+                  {t('result.successAlert', { count: uploadResult.summary.successful })}
                 </AlertDescription>
               </Alert>
             )}
 
             <Button onClick={handleClose} className="w-full">
-              Done
+              {t('result.close') || 'Close'}
             </Button>
           </div>
         )}

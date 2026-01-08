@@ -140,7 +140,7 @@ export default function HomePage() {
     {
       "@context": "https://schema.org",
       "@type": "Organization",
-      "name": "Beauty with AI Precision",
+      "name": t('common.appName'),
       "url": siteUrl,
       "logo": `${siteUrl}/og-interactive-sphere.svg`,
       "description": t('common.appDescription'),
@@ -150,7 +150,7 @@ export default function HomePage() {
       "@context": "https://schema.org",
       "@type": "WebSite",
       "url": siteUrl,
-      "name": "Beauty with AI Precision",
+      "name": t('common.appName'),
       "potentialAction": {
         "@type": "SearchAction",
         "target": `${siteUrl}/search?q={query}`,
@@ -162,16 +162,16 @@ export default function HomePage() {
       "@type": "Service",
       "name": t('home.pricing.freeTier.title'),
       "serviceType": t('home.pricing.freeTier.description'),
-      "provider": { "@type": "Organization", "name": "Beauty with AI Precision" },
-      "offers": { "@type": "Offer", "price": 0, "priceCurrency": "USD" }
+      "provider": { "@type": "Organization", "name": t('common.appName') },
+      "offers": { "@type": "Offer", "price": 0, "priceCurrency": "THB" }
     },
     {
       "@context": "https://schema.org",
       "@type": "Service",
       "name": t('home.pricing.premium.title'),
       "serviceType": t('home.pricing.premium.description'),
-      "provider": { "@type": "Organization", "name": "Beauty with AI Precision" },
-      "offers": { "@type": "Offer", "price": 49, "priceCurrency": "USD" }
+      "provider": { "@type": "Organization", "name": t('common.appName') },
+      "offers": { "@type": "Offer", "price": 19900, "priceCurrency": "THB" }
     }
   ]
 
@@ -180,238 +180,151 @@ export default function HomePage() {
       <Header />
 
       <main className="flex-1">
-        {/* Hero Section - Modern Minimal Design */}
-        <section ref={heroRef} className="relative min-h-[90vh] flex items-center overflow-hidden">
-          {/* Animated gradient background */}
-          <div className="absolute inset-0 -z-20 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950" />
-          <div className="absolute inset-0 -z-10 opacity-30">
-            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/30 rounded-full blur-[128px] animate-pulse" />
-            <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-cyan-500/20 rounded-full blur-[100px] animate-pulse delay-1000" />
+        {/* Hero Section - High-end AI Aesthetic */}
+        <section ref={heroRef} className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+          {/* Advanced Background Layers */}
+          <div className="absolute inset-0 -z-20 bg-[#020617]" />
+          <div className="absolute inset-0 -z-10 overflow-hidden">
+            <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-primary/20 rounded-full blur-[120px] animate-glow-pulse" />
+            <div className="absolute bottom-[10%] right-[-5%] w-[45%] h-[45%] bg-cyan-500/10 rounded-full blur-[100px] animate-float" />
+            <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:radial-gradient(white,transparent)] opacity-20" />
           </div>
           
-          <div className="container relative py-20">
-            <div className="mx-auto max-w-4xl text-center">
-              {/* Subtle tag */}
-              <div className="inline-flex items-center gap-2 mb-8 px-4 py-2 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm animate-in fade-in duration-700">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="text-sm text-white/70">{t('home.hero.badge')}</span>
-              </div>
+          <div className="container relative z-10">
+            <div className="mx-auto max-w-5xl text-center">
+              {/* Premium Badge */}
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5 }}
+                className="inline-flex items-center gap-3 mb-10 px-6 py-2 rounded-full glass-panel"
+              >
+                <div className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                </div>
+                <span className="text-xs font-semibold tracking-[0.2em] text-white/80 uppercase">
+                  {t('home.hero.badge')}
+                </span>
+              </motion.div>
 
-              {/* Main headline with gradient */}
-              <h1 className="mb-6 text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150 font-display">
-                <span className="text-white font-thai-mobile">
+              {/* High-end Typography Headline */}
+              <h1 className="mb-8 text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-150">
+                <span className="block text-white mb-2">
                   {t('home.hero.title')}
                 </span>
-                <br />
-                <span className="bg-gradient-to-r from-primary via-cyan-400 to-primary bg-clip-text text-transparent font-thai-mobile">
+                <span className="bg-gradient-to-r from-primary via-cyan-400 to-primary bg-clip-text text-transparent animate-gradient-x inline-block">
                   {t('home.hero.subtitle')}
                 </span>
               </h1>
 
-              {/* Subtitle - clearer platform positioning for sales teams */}
-              <p className="mb-10 text-base md:text-lg lg:text-xl text-white/60 max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-6 duration-700 delay-300 font-thai-mobile">
+              {/* Sophisticated Description */}
+              <p className="mb-12 text-lg md:text-xl text-white/50 max-w-2xl mx-auto leading-relaxed font-light tracking-wide animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-300">
                 {t('home.hero.description')}
               </p>
 
-              {/* CTAs */}
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-500">
-                <Button size="lg" asChild className="w-full sm:w-auto text-base px-8 py-6 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/25">
+              {/* Premium CTAs */}
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-6 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-500">
+                <Button size="lg" variant="premium" asChild className="w-full sm:w-auto text-lg h-14 px-10">
                   <Link href="/analysis" onClick={onHeroCta}>
-                    {isThaiLocale ? 'เริ่มวิเคราะห์ฟรี' : 'Start Free Analysis'}
-                    <ArrowRight className="ml-2 h-5 w-5" />
+                    {t('home.hero.cta')}
+                    <ArrowRight className="ml-3 h-5 w-5" />
                   </Link>
                 </Button>
-                <Button size="lg" variant="outline" asChild className="w-full sm:w-auto text-base px-8 py-6 border-white/20 text-white hover:bg-white/10">
+                <Button size="lg" variant="outline" asChild className="w-full sm:w-auto text-lg h-14 px-10 glass">
                   <Link href="/demo/skin-analysis" onClick={onDemoCta}>
                     {t('home.hero.learnMore')}
                   </Link>
                 </Button>
               </div>
 
-              {/* Trust indicators */}
-              <div className="mt-12 flex flex-wrap items-center justify-center gap-6 text-sm text-white/40 animate-in fade-in duration-700 delay-700">
-                <span className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+              {/* Enterprise Trust Indicators */}
+              <div className="mt-20 flex flex-wrap items-center justify-center gap-10 text-xs tracking-[0.15em] font-medium text-white/30 uppercase animate-in fade-in duration-1000 delay-700">
+                <span className="flex items-center gap-3 hover:text-white/50 transition-colors cursor-default group">
+                  <Shield className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" />
                   {t('home.hero.noCreditCard')}
                 </span>
-                <span className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                <span className="flex items-center gap-3 hover:text-white/50 transition-colors cursor-default group">
+                  <Zap className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" />
                   {t('home.freeTierAvailable')}
                 </span>
-                <span className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                <span className="flex items-center gap-3 hover:text-white/50 transition-colors cursor-default group">
+                  <CheckCircle2 className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" />
                   {t('common.getStarted')}
                 </span>
-                </div>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* ROI Mini-Calculator */}
-        <section className="py-8 md:py-10">
+        {/* ROI Section - Data Driven Look */}
+        <section className="py-24 relative overflow-hidden bg-white dark:bg-slate-950">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-border to-transparent" />
           <div className="container">
-            <div className="mx-auto mb-6 max-w-3xl text-center">
-              <h3 className="text-xl font-semibold tracking-tight md:text-2xl">
+            <div className="mx-auto mb-16 max-w-3xl text-center">
+              <Badge variant="outline" className="mb-6 px-5 py-1.5 rounded-full border-primary/30 text-primary">
+                {t('home.roi.performanceAnalytics')}
+              </Badge>
+              <h2 className="text-3xl font-bold tracking-tight md:text-5xl mb-6">
                 {t('home.roi.title')}
-              </h3>
-              <p className="text-sm text-muted-foreground">
+              </h2>
+              <p className="text-lg text-muted-foreground leading-relaxed">
                 {t('home.roi.description')}
               </p>
             </div>
-            <div className="mx-auto max-w-5xl">
+            <div className="mx-auto max-w-5xl premium-card rounded-[2.5rem] bg-white dark:bg-slate-900/50 p-1">
               <RoiMiniCalculator />
             </div>
           </div>
         </section>
 
-        {/* Features Grid */}
-        <section className="border-y border-border bg-gradient-to-b from-background to-muted/30 py-24">
+        {/* Features Grid - Clean & Modern */}
+        <section className="py-32 relative bg-slate-50 dark:bg-[#020617]">
           <div className="container">
-            <motion.div 
-              className="mx-auto mb-16 max-w-2xl text-center"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-            >
-              <Badge variant="outline" className="mb-4 px-4 py-1">
-                <Sparkles className="mr-2 h-3 w-3" />
+            <div className="mx-auto mb-24 max-w-2xl text-center">
+              <Badge variant="secondary" className="mb-6 px-4 py-1.5 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
+                <Sparkles className="mr-2 h-4 w-4" />
                 {t('home.features.title')}
               </Badge>
-              <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl font-display">
+              <h2 className="mb-6 text-4xl font-bold tracking-tight md:text-6xl">
                 {t('home.whyChooseTitle')}
               </h2>
-              <p className="text-balance text-muted-foreground leading-relaxed text-lg">
+              <p className="text-xl text-muted-foreground font-light">
                 {t('home.whyChooseSubtitle')}
               </p>
-            </motion.div>
+            </div>
 
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-              >
-                <Card className="h-full border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 hover:-translate-y-1">
-                  <CardContent className="p-8">
-                    <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-500 shadow-lg">
-                      <Brain className="h-7 w-7 text-white" />
-                    </div>
-                    <h3 className="mb-3 text-xl font-bold">
-                      {t('home.features.aiPowered.title')}
-                    </h3>
-                    <p className="text-muted-foreground leading-relaxed">
-                      {t('home.features.aiPowered.description')}
-                    </p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              >
-                <Card className="h-full border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-purple-500/5 to-pink-500/5 hover:-translate-y-1">
-                  <CardContent className="p-8">
-                    <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 shadow-lg">
-                      <Camera className="h-7 w-7 text-white" />
-                    </div>
-                    <h3 className="mb-3 text-xl font-bold">
-                      {t('home.features.arVisualization.title')}
-                    </h3>
-                    <p className="text-muted-foreground leading-relaxed">
-                      {t('home.features.arVisualization.description')}
-                    </p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-              >
-                <Card className="h-full border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-emerald-500/5 to-teal-500/5 hover:-translate-y-1">
-                  <CardContent className="p-8">
-                    <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 shadow-lg">
-                      <Shield className="h-7 w-7 text-white" />
-                    </div>
-                    <h3 className="mb-3 text-xl font-bold">
-                      {t('home.features.pdpaCompliant.title')}
-                    </h3>
-                    <p className="text-muted-foreground leading-relaxed">
-                      {t('home.features.pdpaCompliant.description')}
-                    </p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.4 }}
-              >
-                <Card className="h-full border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-orange-500/5 to-amber-500/5 hover:-translate-y-1">
-                  <CardContent className="p-8">
-                    <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 shadow-lg">
-                      <BarChart3 className="h-7 w-7 text-white" />
-                    </div>
-                    <h3 className="mb-3 text-xl font-bold">
-                      {t('home.features.visiaStyle.title')}
-                    </h3>
-                    <p className="text-muted-foreground leading-relaxed">
-                      {t('home.features.visiaStyle.description')}
-                    </p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.5 }}
-              >
-                <Card className="h-full border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 hover:-translate-y-1">
-                  <CardContent className="p-8">
-                    <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-500 shadow-lg">
-                      <Zap className="h-7 w-7 text-white" />
-                    </div>
-                    <h3 className="mb-3 text-xl font-bold">
-                      {t('home.features.fastAccurate.title')}
-                    </h3>
-                    <p className="text-muted-foreground leading-relaxed">
-                      {t('home.features.fastAccurate.description')}
-                    </p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.6 }}
-              >
-                <Card className="h-full border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-rose-500/5 to-red-500/5 hover:-translate-y-1">
-                  <CardContent className="p-8">
-                    <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-500 to-red-500 shadow-lg">
-                      <Users className="h-7 w-7 text-white" />
-                    </div>
-                    <h3 className="mb-3 text-xl font-bold">
-                      {t('home.features.multiClinic.title')}
-                    </h3>
-                    <p className="text-muted-foreground leading-relaxed">
-                      {t('home.features.multiClinic.description')}
-                    </p>
-                  </CardContent>
-                </Card>
-              </motion.div>
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+              {[
+                { icon: Brain, color: "from-blue-500 to-indigo-600", title: 'home.features.aiPowered.title', desc: 'home.features.aiPowered.description', delay: 0.1 },
+                { icon: Camera, color: "from-purple-500 to-pink-600", title: 'home.features.arVisualization.title', desc: 'home.features.arVisualization.description', delay: 0.2 },
+                { icon: Shield, color: "from-emerald-500 to-teal-600", title: 'home.features.pdpaCompliant.title', desc: 'home.features.pdpaCompliant.description', delay: 0.3 },
+                { icon: BarChart3, color: "from-orange-500 to-amber-600", title: 'home.features.visiaStyle.title', desc: 'home.features.visiaStyle.description', delay: 0.4 },
+                { icon: Zap, color: "from-blue-400 to-cyan-500", title: 'home.features.fastAccurate.title', desc: 'home.features.fastAccurate.description', delay: 0.5 },
+                { icon: Users, color: "from-rose-500 to-red-600", title: 'home.features.multiClinic.title', desc: 'home.features.multiClinic.description', delay: 0.6 }
+              ].map((feature, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: feature.delay }}
+                >
+                  <Card className="h-full border-border/40 bg-white/50 dark:bg-slate-900/40 backdrop-blur-sm premium-card group">
+                    <CardContent className="p-10">
+                      <div className={`mb-8 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${feature.color} shadow-lg shadow-black/10 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3`}>
+                        <feature.icon className="h-8 w-8 text-white" />
+                      </div>
+                      <h3 className="mb-4 text-2xl font-bold tracking-tight">
+                        {t(feature.title)}
+                      </h3>
+                      <p className="text-muted-foreground leading-relaxed text-[17px] font-light">
+                        {t(feature.desc)}
+                      </p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
             </div>
           </div>
         </section>
@@ -567,7 +480,7 @@ export default function HomePage() {
                     {t('home.pricing.freeTier.description')}
                   </p>
                   <div className="mb-6">
-                    <span className="text-4xl font-bold">฿0</span>
+                    <span className="text-4xl font-bold">{t('format.currency', { amount: 0 })}</span>
                     <span className="text-muted-foreground"> / {t('home.pricing.freeTier.period')}</span>
                   </div>
                   <ul className="mb-8 space-y-3">
@@ -600,7 +513,7 @@ export default function HomePage() {
                     {t('home.pricing.premium.description')}
                   </p>
                   <div className="mb-6">
-                    <span className="text-4xl font-bold">฿19,900</span>
+                    <span className="text-4xl font-bold">{t('format.currency', { amount: '19,900' })}</span>
                     <span className="text-muted-foreground"> / {t('home.pricing.premium.period')}</span>
                   </div>
                   <ul className="mb-8 space-y-3">

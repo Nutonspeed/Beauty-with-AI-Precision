@@ -5,8 +5,11 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Slider } from "@/components/ui/slider"
+import { useTranslations, useLocale } from "next-intl"
 
 export default function RoiMiniCalculator() {
+  const t = useTranslations()
+  const locale = useLocale()
   const [leads, setLeads] = useState(120)
   const [avgBill, setAvgBill] = useState(4500)
   const [conv, setConv] = useState(12)
@@ -33,13 +36,13 @@ export default function RoiMiniCalculator() {
   return (
     <Card className="border-2">
       <CardHeader>
-        <CardTitle className="text-xl">ROI (ประมาณการ)</CardTitle>
-        <CardDescription>ลองใส่ตัวเลขของคลินิกคุณ ผลลัพธ์นี้เป็นการประมาณการเบื้องต้น</CardDescription>
+        <CardTitle className="text-xl">{t('roi.title')}</CardTitle>
+        <CardDescription>{t('roi.description')}</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4 md:grid-cols-2">
         <div className="space-y-4">
           <div className="grid gap-2">
-            <Label htmlFor="leads">จำนวนลีดต่อเดือน</Label>
+            <Label htmlFor="leads">{t('roi.leadsPerMonth')}</Label>
             <Input
               id="leads"
               type="number"
@@ -53,7 +56,7 @@ export default function RoiMiniCalculator() {
             />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="avg">บิลเฉลี่ย (บาท)</Label>
+            <Label htmlFor="avg">{t('roi.avgBill', { currency: locale === 'th' ? 'บาท' : 'THB' })}</Label>
             <Input
               id="avg"
               type="number"
@@ -68,7 +71,7 @@ export default function RoiMiniCalculator() {
           </div>
           <div className="grid gap-2">
             <div className="flex items-center justify-between">
-              <Label htmlFor="conv">Conversion ปัจจุบัน (%)</Label>
+              <Label htmlFor="conv">{t('roi.currentConversion')}</Label>
               <span className="text-xs text-muted-foreground">{conv}%</span>
             </div>
             <Slider
@@ -84,7 +87,7 @@ export default function RoiMiniCalculator() {
           </div>
           <div className="grid gap-2">
             <div className="flex items-center justify-between">
-              <Label htmlFor="improve">คาดว่าเพิ่มขึ้นด้วย AI (%)</Label>
+              <Label htmlFor="improve">{t('roi.expectedImprovement')}</Label>
               <span className="text-xs text-muted-foreground">{improve}%</span>
             </div>
             <Slider
@@ -101,18 +104,18 @@ export default function RoiMiniCalculator() {
         </div>
         <div className="grid content-center gap-4 rounded-lg border bg-muted/30 p-4">
           <div className="flex items-baseline justify-between">
-            <span className="text-sm text-muted-foreground">Conversion ใหม่</span>
+            <span className="text-sm text-muted-foreground">{t('roi.newConversion')}</span>
             <span className="text-2xl font-bold text-primary">{Math.round(newConv * 100)}%</span>
           </div>
           <div className="flex items-baseline justify-between">
-            <span className="text-sm text-muted-foreground">ดีลที่เพิ่มขึ้น/เดือน</span>
+            <span className="text-sm text-muted-foreground">{t('roi.addedDeals')}</span>
             <span className="text-2xl font-bold">{addedDeals}</span>
           </div>
           <div className="flex items-baseline justify-between">
-            <span className="text-sm text-muted-foreground">รายได้เพิ่ม/เดือน</span>
+            <span className="text-sm text-muted-foreground">{t('roi.addedRevenue')}</span>
             <span className="text-2xl font-bold text-foreground">฿{addedRevenue.toLocaleString()}</span>
           </div>
-          <div className="text-xs text-muted-foreground">ขึ้นกับจำนวนลีด/บิลเฉลี่ย/อัตราเปลี่ยนแปลงจริงของแต่ละคลินิก</div>
+          <div className="text-xs text-muted-foreground">{t('roi.disclaimer')}</div>
         </div>
       </CardContent>
     </Card>

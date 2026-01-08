@@ -5,12 +5,15 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { TrendingUp, Users, Clock, DollarSign, Award, Target, Sparkles, Heart, Eye, Flame, Scissors, Brain, Calculator, MessageSquare, Camera, Wand2, BarChart3 } from 'lucide-react'
+import { TrendingUp, Users, DollarSign, Award, Target, Sparkles, Heart, Eye, Flame, Scissors, Brain, MessageSquare, Camera, Wand2, BarChart3, CheckCircle2 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import { ShimmerSkeleton } from '@/components/ui/modern-loader'
 import Link from 'next/link'
 import { useLocalizePath } from '@/lib/i18n/locale-link'
+import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -73,6 +76,7 @@ interface SalesFunnelResponse {
 }
 
 export default function SalesDashboard() {
+  const t = useTranslations()
   const router = useRouter()
   const lp = useLocalizePath()
   const [isLoading, setIsLoading] = useState(true)
@@ -197,9 +201,9 @@ export default function SalesDashboard() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center p-6">
         <div className="text-center">
-          <p className="text-red-600">Error: {error}</p>
+          <p className="text-red-600">{t('common.error')}: {error}</p>
           <Button onClick={() => window.location.reload()} className="mt-4">
-            Retry
+            {t('common.reset')}
           </Button>
         </div>
       </div>
@@ -207,276 +211,94 @@ export default function SalesDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 md:p-6">
-      <div className="max-w-7xl mx-auto space-y-4 md:space-y-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Sales Dashboard</h1>
-            <p className="text-gray-600 mt-1">Track your sales performance</p>
+    <div className="min-h-screen bg-[#020617] text-slate-200 p-4 md:p-8">
+      <div className="max-w-7xl mx-auto space-y-8">
+        {/* Header - Enterprise Style */}
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-6 pb-6 border-b border-white/5">
+          <div className="space-y-1">
+            <Badge variant="outline" className="mb-2 border-primary/30 text-primary bg-primary/5">
+              {t('salesDashboard.intelligenceBadge')}
+            </Badge>
+            <h1 className="text-4xl font-bold tracking-tight text-white">{t('salesDashboard.title')} <span className="text-primary text-elevated">{t('salesDashboard.titleHighlight')}</span></h1>
+            <p className="text-slate-400 font-light tracking-wide">{t('salesDashboard.subtitle')}</p>
           </div>
-          <Link href={lp('/sales/quick-scan')} className="w-full sm:w-auto">
-            <Button 
-              size="lg"
-              className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-            >
-              <Target className="w-5 h-5 mr-2" />
-              Quick Scan
-            </Button>
-          </Link>
+          <div className="flex items-center gap-3">
+            <div className="flex bg-white/5 p-1 rounded-xl border border-white/10">
+              {(['1d', '7d', '30d'] as const).map((r) => (
+                <button
+                  key={r}
+                  onClick={() => setRange(r)}
+                  className={cn(
+                    "px-4 py-1.5 text-xs font-bold uppercase tracking-widest rounded-lg transition-all",
+                    range === r ? "bg-primary text-white shadow-glow-primary" : "text-slate-500 hover:text-slate-300"
+                  )}
+                >
+                  {r}
+                </button>
+              ))}
+            </div>
+            <Link href={lp('/sales/quick-scan')}>
+              <Button 
+                variant="premium"
+                size="lg"
+                className="shadow-glow-primary"
+              >
+                <Target className="w-5 h-5 mr-2" />
+                {t('salesDashboard.initializeScan')}
+              </Button>
+            </Link>
+          </div>
         </div>
 
-        {/* Key Metrics */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Scans</CardTitle>
-              <Users className="w-4 h-4 text-blue-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalScansThisMonth}</div>
-              <p className="text-xs text-gray-600">
-                +{metrics?.leadsContacted.today ?? 0} today
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Conversions</CardTitle>
-              <Award className="w-4 h-4 text-green-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{metrics?.proposalsSent.today ?? 0}</div>
-              <p className="text-xs text-gray-600">
-                vs previous: {(metrics?.proposalsSent.change ?? 0).toFixed(1)}%
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Conversion Rate</CardTitle>
-              <TrendingUp className="w-4 h-4 text-purple-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{(metrics?.conversionRate.today ?? 0).toFixed(1)}%</div>
-              <p className="text-xs text-gray-600">
-                {(metrics?.conversionRate.change ?? 0).toFixed(1)}% change
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Revenue</CardTitle>
-              <DollarSign className="w-4 h-4 text-orange-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                ฿{(revenueThisMonth / 1000).toFixed(0)}K
-              </div>
-              <p className="text-xs text-gray-600">
-                +฿{(metrics?.revenueGenerated.today ?? 0).toLocaleString()} today
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* AI Funnel */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-purple-600" />
-              AI Funnel (วันนี้ / ช่วง {range})
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
-              <div className="p-3 rounded-lg bg-purple-50 border border-purple-100">
-                <p className="text-xs text-purple-700 font-semibold uppercase">AI Leads</p>
-                <p className="text-2xl font-bold text-purple-900 mt-1">{aiLeadsToday}</p>
-                <p className="text-[11px] text-purple-700 mt-1">บันทึกจาก AI Scan</p>
-              </div>
-              <div className="p-3 rounded-lg bg-blue-50 border border-blue-100">
-                <p className="text-xs text-blue-700 font-semibold uppercase">AI Proposals</p>
-                <p className="text-2xl font-bold text-blue-900 mt-1">{aiProposalsToday}</p>
-                <p className="text-[11px] text-blue-700 mt-1">สร้างจาก AI Recommendations</p>
-              </div>
-              <div className="p-3 rounded-lg bg-green-50 border border-green-100">
-                <p className="text-xs text-green-700 font-semibold uppercase">AI Bookings</p>
-                <p className="text-2xl font-bold text-green-900 mt-1">{aiBookingsToday}</p>
-                <p className="text-[11px] text-green-700 mt-1">จองจาก Proposal ที่ AI สร้าง</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Remote Consult Summary */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm flex items-center gap-2">
-              <MessageSquare className="w-4 h-4 text-emerald-600" />
-              Remote Consult Requests (ช่วง {range})
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-baseline justify-between">
-              <div>
-                <p className="text-3xl font-bold text-emerald-700">{remoteConsultRequestsToday}</p>
-                <p className="text-xs text-gray-600 mt-1">คำขอจากลูกค้าที่กดขอปรึกษาออนไลน์</p>
-                <p className="text-[11px] text-emerald-700 mt-1">
-                  Conversion: {(metrics?.remoteConsultConversion.today ?? 0).toFixed(1)}% ของคำขอที่ปิดเป็นลูกค้า
-                </p>
-              </div>
-              <Link href={lp('/sales/leads')}>
-                <Button variant="outline" size="sm" className="text-xs">
-                  ดูคิว Remote
-                </Button>
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* AI Sales Tools */}
-        <Card className="bg-gradient-to-br from-purple-50 to-blue-50 border-purple-200">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Brain className="w-5 h-5 text-purple-600" />
-              AI Sales Tools
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <Link href={lp('/sales/quick-scan')}>
-                <motion.div 
-                  whileHover={{ scale: 1.02 }}
-                  className="p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer border border-purple-100"
-                >
-                  <Camera className="w-8 h-8 text-blue-600 mb-2" />
-                  <h4 className="font-semibold text-sm">Quick Scan</h4>
-                  <p className="text-xs text-gray-500">วิเคราะห์ผิว AI</p>
-                </motion.div>
-              </Link>
-              
-              <Link href="/analysis/future">
-                <motion.div 
-                  whileHover={{ scale: 1.02 }}
-                  className="p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer border border-purple-100"
-                >
-                  <TrendingUp className="w-8 h-8 text-green-600 mb-2" />
-                  <h4 className="font-semibold text-sm">Future Predict</h4>
-                  <p className="text-xs text-gray-500">ทำนาย 1-5 ปี</p>
-                </motion.div>
-              </Link>
-              
-              <Link href="/ar-simulator">
-                <motion.div 
-                  whileHover={{ scale: 1.02 }}
-                  className="p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer border border-purple-100"
-                >
-                  <Wand2 className="w-8 h-8 text-purple-600 mb-2" />
-                  <h4 className="font-semibold text-sm">AR Simulator</h4>
-                  <p className="text-xs text-gray-500">ดูผลก่อนรักษา</p>
-                </motion.div>
-              </Link>
-              
-              <Link href={lp('/sales/presentations')}>
-                <motion.div 
-                  whileHover={{ scale: 1.02 }}
-                  className="p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer border border-purple-100"
-                >
-                  <BarChart3 className="w-8 h-8 text-orange-600 mb-2" />
-                  <h4 className="font-semibold text-sm">Presentations</h4>
-                  <p className="text-xs text-gray-500">สร้างใบเสนอราคา</p>
-                </motion.div>
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Performance Chart */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-sm flex items-center gap-2">
-                <Clock className="w-4 h-4" />
-                Today
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Scans</span>
-                <span className="font-semibold">{metrics?.leadsContacted.today ?? 0}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Revenue</span>
-                <span className="font-semibold">฿{(metrics?.revenueGenerated.today ?? 0).toLocaleString()}</span>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-sm flex items-center gap-2">
-                <Clock className="w-4 h-4" />
-                This Week
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Scans</span>
-                <span className="font-semibold">{metrics?.leadsContacted.yesterday ?? 0}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Revenue</span>
-                <span className="font-semibold">฿{(metrics?.revenueGenerated.yesterday ?? 0).toLocaleString()}</span>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-sm flex items-center gap-2">
-                <Clock className="w-4 h-4" />
-                This Month
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Scans</span>
-                <span className="font-semibold">{metrics?.leadsContacted.target ?? 0}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Revenue</span>
-                <span className="font-semibold">฿{(metrics?.revenueGenerated.target ?? 0).toLocaleString()}</span>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Top Packages */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Top Selling Packages</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {(overview?.topPackages || []).map((pkg: TopPackage, idx: number) => (
-                <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                      <span className="text-xl font-bold text-blue-600">#{idx + 1}</span>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-gray-900">{pkg.name}</h4>
-                      <p className="text-sm text-gray-600">{pkg.sold} packages sold</p>
-                    </div>
+        {/* Executive Summary Metrics */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+          {[
+            { label: t('salesDashboard.metrics.acquisition'), val: totalScansThisMonth, sub: t('salesDashboard.metrics.today', { count: metrics?.leadsContacted.today ?? 0 }), icon: Users, color: "text-blue-400", bg: "bg-blue-500/10" },
+            { label: t('salesDashboard.metrics.conversions'), val: metrics?.proposalsSent.today ?? 0, sub: t('salesDashboard.metrics.vsPrev', { percent: (metrics?.proposalsSent.change ?? 0).toFixed(1) }), icon: Award, color: "text-emerald-400", bg: "bg-emerald-500/10" },
+            { label: t('salesDashboard.metrics.retention'), val: `${(metrics?.conversionRate.today ?? 0).toFixed(1)}%`, sub: t('salesDashboard.metrics.delta', { percent: (metrics?.conversionRate.change ?? 0).toFixed(1) }), icon: TrendingUp, color: "text-purple-400", bg: "bg-purple-500/10" },
+            { label: t('salesDashboard.metrics.revenue'), val: t('format.currency', { amount: `${(revenueThisMonth / 1000).toFixed(0)}K` }), sub: `+${t('format.currency', { amount: (metrics?.revenueGenerated.today ?? 0).toLocaleString() })}`, icon: DollarSign, color: "text-amber-400", bg: "bg-amber-500/10" }
+          ].map((m, i) => (
+            <Card key={i} className="glass-panel border-white/5 hover:border-white/10 transition-all group overflow-hidden">
+              <CardContent className="p-6 relative">
+                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                  <m.icon className="w-12 h-12" />
+                </div>
+                <div className="space-y-3 relative z-10">
+                  <p className="text-[10px] uppercase font-bold tracking-[0.2em] text-slate-500">{m.label}</p>
+                  <div className="text-3xl font-bold text-white tracking-tight">{m.val}</div>
+                  <div className="flex items-center gap-2">
+                    <span className={cn("text-[10px] font-bold px-2 py-0.5 rounded-md", m.bg, m.color)}>{m.sub}</span>
                   </div>
-                  <div className="text-right">
-                    <p className="text-lg font-bold text-green-600">
-                      ฿{pkg.revenue.toLocaleString()}
-                    </p>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {/* AI Conversion Pipeline - High-tech visual */}
+        <Card className="glass-panel border-primary/10 overflow-hidden">
+          <CardHeader className="bg-primary/5 border-b border-white/5 flex flex-row items-center justify-between">
+            <CardTitle className="text-sm font-bold uppercase tracking-[0.2em] flex items-center gap-3">
+              <Sparkles className="w-5 h-5 text-primary animate-pulse" />
+              {t('salesDashboard.pipeline.title')}
+            </CardTitle>
+            <Badge variant="premium" className="text-[9px]">{t('salesDashboard.pipeline.badge')}</Badge>
+          </CardHeader>
+          <CardContent className="p-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {[
+                { label: t('salesDashboard.pipeline.acquisition'), val: aiLeadsToday, desc: t('salesDashboard.pipeline.acquisitionDesc'), icon: Camera, color: "text-purple-500 to-indigo-600" },
+                { label: t('salesDashboard.pipeline.proposals'), val: aiProposalsToday, desc: t('salesDashboard.pipeline.proposalsDesc'), icon: Brain, color: "text-blue-500 to-cyan-600" },
+                { label: t('salesDashboard.pipeline.bookings'), val: aiBookingsToday, desc: t('salesDashboard.pipeline.bookingsDesc'), icon: CheckCircle2, color: "text-emerald-500 to-teal-600" }
+              ].map((s, i) => (
+                <div key={i} className="relative group p-6 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all">
+                  <div className={cn("absolute -top-3 -left-3 h-10 w-10 rounded-xl bg-gradient-to-br flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform", s.color)}>
+                    <s.icon className="w-5 h-5 text-white" />
+                  </div>
+                  <div className="mt-4 space-y-1">
+                    <p className="text-[10px] uppercase font-bold text-slate-500 tracking-widest">{s.label}</p>
+                    <p className="text-4xl font-black text-white">{s.val}</p>
+                    <p className="text-xs text-slate-400 font-light mt-2">{s.desc}</p>
                   </div>
                 </div>
               ))}
@@ -484,132 +306,153 @@ export default function SalesDashboard() {
           </CardContent>
         </Card>
 
-        {/* AR Tools Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-purple-600" />
-              AR Sales Tools
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {/* Mobile: Vertical grid, Desktop: Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-              <Link href={lp('/sales/ar-tools')} className="block">
-                <div className="p-3 md:p-4 rounded-xl bg-gradient-to-br from-pink-500/10 to-rose-500/10 border border-pink-500/20 hover:border-pink-500/50 active:scale-95 transition-all text-center min-h-[100px] flex flex-col items-center justify-center">
-                  <Heart className="w-7 h-7 md:w-8 md:h-8 text-pink-500 mb-2" />
-                  <p className="text-xs md:text-sm font-medium text-gray-700">Filler & Lips</p>
-                </div>
-              </Link>
-              <Link href={lp('/sales/ar-tools')} className="block">
-                <div className="p-3 md:p-4 rounded-xl bg-gradient-to-br from-orange-500/10 to-red-500/10 border border-orange-500/20 hover:border-orange-500/50 active:scale-95 transition-all text-center min-h-[100px] flex flex-col items-center justify-center">
-                  <Flame className="w-7 h-7 md:w-8 md:h-8 text-orange-500 mb-2" />
-                  <p className="text-xs md:text-sm font-medium text-gray-700">Body</p>
-                </div>
-              </Link>
-              <Link href={lp('/sales/ar-tools')} className="block">
-                <div className="p-3 md:p-4 rounded-xl bg-gradient-to-br from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 hover:border-emerald-500/50 active:scale-95 transition-all text-center min-h-[100px] flex flex-col items-center justify-center">
-                  <Scissors className="w-7 h-7 md:w-8 md:h-8 text-emerald-500 mb-2" />
-                  <p className="text-xs md:text-sm font-medium text-gray-700">Hair</p>
-                </div>
-              </Link>
-              <Link href={lp('/sales/ar-tools')} className="block">
-                <div className="p-3 md:p-4 rounded-xl bg-gradient-to-br from-blue-500/10 to-indigo-500/10 border border-blue-500/20 hover:border-blue-500/50 active:scale-95 transition-all text-center min-h-[100px] flex flex-col items-center justify-center">
-                  <Eye className="w-7 h-7 md:w-8 md:h-8 text-blue-500 mb-2" />
-                  <p className="text-xs md:text-sm font-medium text-gray-700">Eye</p>
-                </div>
-              </Link>
-              <Link href={lp('/sales/ar-tools')} className="block md:col-span-5">
-                <div className="p-3 md:p-4 rounded-xl bg-gradient-to-br from-purple-500/10 to-violet-500/10 border border-purple-500/20 hover:border-purple-500/50 active:scale-95 transition-all text-center min-h-[100px] flex flex-col items-center justify-center">
-                  <Sparkles className="w-7 h-7 md:w-8 md:h-8 text-purple-500 mb-2" />
-                  <p className="text-xs md:text-sm font-medium text-gray-700">All Tools</p>
-                </div>
-              </Link>
+        {/* Two Column Section */}
+        <div className="grid lg:grid-cols-12 gap-8">
+          {/* Main AI Toolset */}
+          <div className="lg:col-span-8 space-y-8">
+            <div className="flex items-center justify-between px-2">
+              <h3 className="text-xl font-bold tracking-tight text-white flex items-center gap-3">
+                <Wand2 className="w-6 h-6 text-primary" />
+                {t('salesDashboard.toolset.title')}
+              </h3>
+              <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">{t('salesDashboard.toolset.optimization')}</p>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* AI Sales Tools Section */}
-        <Card className="bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200">
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-purple-800">
-              <Brain className="w-5 h-5" />
-              AI Sales Tools
-              <span className="ml-2 px-2 py-0.5 bg-purple-600 text-white text-xs rounded-full">NEW</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <Link href={lp('/sales/tools')} className="block">
-                <div className="p-4 rounded-xl bg-white border border-purple-200 hover:border-purple-400 hover:shadow-md transition-all text-center">
-                  <Sparkles className="w-8 h-8 text-purple-600 mx-auto mb-2" />
-                  <p className="text-sm font-medium text-gray-800">AI Recommendations</p>
-                  <p className="text-xs text-gray-500 mt-1">แนะนำ treatment</p>
-                </div>
-              </Link>
-              <Link href={lp('/sales/tools')} className="block">
-                <div className="p-4 rounded-xl bg-white border border-green-200 hover:border-green-400 hover:shadow-md transition-all text-center">
-                  <Calculator className="w-8 h-8 text-green-600 mx-auto mb-2" />
-                  <p className="text-sm font-medium text-gray-800">Quick Quote</p>
-                  <p className="text-xs text-gray-500 mt-1">ใบเสนอราคา</p>
-                </div>
-              </Link>
-              <Link href={lp('/sales/tools')} className="block">
-                <div className="p-4 rounded-xl bg-white border border-blue-200 hover:border-blue-400 hover:shadow-md transition-all text-center">
-                  <Target className="w-8 h-8 text-blue-600 mx-auto mb-2" />
-                  <p className="text-sm font-medium text-gray-800">Conversion AI</p>
-                  <p className="text-xs text-gray-500 mt-1">วิเคราะห์โอกาส</p>
-                </div>
-              </Link>
-              <Link href={lp('/sales/tools')} className="block">
-                <div className="p-4 rounded-xl bg-white border border-emerald-200 hover:border-emerald-400 hover:shadow-md transition-all text-center">
-                  <MessageSquare className="w-8 h-8 text-emerald-600 mx-auto mb-2" />
-                  <p className="text-sm font-medium text-gray-800">Quick Message</p>
-                  <p className="text-xs text-gray-500 mt-1">LINE/WhatsApp</p>
-                </div>
-              </Link>
+            
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[
+                { icon: Camera, title: t('salesDashboard.toolset.precisionScan'), desc: t('salesDashboard.toolset.precisionScanDesc'), href: '/sales/quick-scan', color: "text-blue-400" },
+                { icon: TrendingUp, title: t('salesDashboard.toolset.futureForecast'), desc: t('salesDashboard.toolset.futureForecastDesc'), href: "/analysis/future", color: "text-emerald-400" },
+                { icon: Wand2, title: t('salesDashboard.toolset.arSimulation'), desc: t('salesDashboard.toolset.arSimulationDesc'), href: "/ar-simulator", color: "text-purple-400" },
+                { icon: BarChart3, title: t('salesDashboard.toolset.presentation'), desc: t('salesDashboard.toolset.presentationDesc'), href: '/sales/presentations', color: "text-amber-400" }
+              ].map((tool, i) => (
+                <Link key={i} href={lp(tool.href)}>
+                  <Card className="glass-panel border-white/5 hover:border-primary/20 hover:bg-primary/5 transition-all cursor-pointer group text-center h-full">
+                    <CardContent className="p-6 space-y-4">
+                      <div className="mx-auto h-14 w-14 rounded-2xl bg-white/5 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+                        <tool.icon className={cn("w-7 h-7", tool.color)} />
+                      </div>
+                      <div className="space-y-1">
+                        <h4 className="font-bold text-sm text-white">{tool.title}</h4>
+                        <p className="text-[10px] text-slate-500 uppercase tracking-tighter">{tool.desc}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
             </div>
-          </CardContent>
-        </Card>
 
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Link href={lp('/sales/quick-scan')} className="block">
-            <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 hover:shadow-lg transition-shadow cursor-pointer h-full">
-              <CardContent className="pt-6">
-                <div className="text-center">
-                  <Target className="w-12 h-12 text-blue-600 mx-auto mb-3" />
-                  <h3 className="font-bold text-lg text-gray-900">Quick Scan</h3>
-                  <p className="text-sm text-gray-600 mt-1">Start new customer scan</p>
+            {/* Specialized AR Tools */}
+            <Card className="glass-panel border-white/5 overflow-hidden">
+              <CardHeader className="bg-white/5 border-b border-white/5">
+                <CardTitle className="text-sm font-bold uppercase tracking-widest text-slate-400">{t('salesDashboard.arModules.title')}</CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {[
+                    { icon: Heart, label: t('salesDashboard.arModules.filler'), bg: "from-pink-500/20 to-rose-500/20", border: "border-pink-500/20", color: "text-pink-400" },
+                    { icon: Flame, label: t('salesDashboard.arModules.body'), bg: "from-orange-500/20 to-red-500/20", border: "border-orange-500/20", color: "text-orange-400" },
+                    { icon: Scissors, label: t('salesDashboard.arModules.hair'), bg: "from-emerald-500/20 to-teal-500/20", border: "border-emerald-500/20", color: "text-emerald-400" },
+                    { icon: Eye, label: t('salesDashboard.arModules.eye'), bg: "from-blue-500/20 to-indigo-500/20", border: "border-blue-500/20", color: "text-blue-400" }
+                  ].map((art, i) => (
+                    <Link key={i} href={lp('/sales/ar-tools')} className="block">
+                      <div className={cn("p-6 rounded-2xl border transition-all hover:scale-[1.03] active:scale-95 text-center flex flex-col items-center justify-center gap-3 bg-gradient-to-br", art.bg, art.border)}>
+                        <art.icon className={cn("w-8 h-8", art.color)} />
+                        <p className="text-xs font-bold text-slate-200">{art.label}</p>
+                      </div>
+                    </Link>
+                  ))}
                 </div>
               </CardContent>
             </Card>
-          </Link>
+          </div>
 
-          <Link href="/customer" className="block">
-            <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200 hover:shadow-lg transition-shadow cursor-pointer h-full">
-              <CardContent className="pt-6">
-                <div className="text-center">
-                  <Users className="w-12 h-12 text-green-600 mx-auto mb-3" />
-                  <h3 className="font-bold text-lg text-gray-900">Customers</h3>
-                  <p className="text-sm text-gray-600 mt-1">View customer database</p>
+          {/* Right Column - Secondary Insights */}
+          <div className="lg:col-span-4 space-y-8">
+            {/* Remote Consult Card */}
+            <Card className="glass-panel border-emerald-500/20 overflow-hidden relative group">
+              <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:rotate-12 transition-transform">
+                <MessageSquare className="w-24 h-24 text-emerald-500" />
+              </div>
+              <CardHeader>
+                <CardTitle className="text-sm font-bold uppercase tracking-widest text-emerald-400 flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                  {t('salesDashboard.remoteConsult.title')}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6 relative z-10 space-y-6">
+                <div className="space-y-1">
+                  <p className="text-5xl font-black text-white">{remoteConsultRequestsToday}</p>
+                  <p className="text-xs text-slate-400 font-light">{t('salesDashboard.remoteConsult.requests')}</p>
                 </div>
+                <div className="p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/10">
+                  <div className="flex justify-between items-baseline mb-1">
+                    <span className="text-[10px] uppercase font-bold text-emerald-500 tracking-widest">{t('salesDashboard.remoteConsult.efficiency')}</span>
+                    <span className="text-sm font-bold text-white">{(metrics?.remoteConsultConversion.today ?? 0).toFixed(1)}%</span>
+                  </div>
+                  <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                    <div className="h-full bg-emerald-500 transition-all duration-1000" style={{ width: `${metrics?.remoteConsultConversion.today ?? 0}%` }} />
+                  </div>
+                </div>
+                <Button variant="outline" className="w-full glass text-xs tracking-widest font-bold uppercase">
+                  {t('salesDashboard.remoteConsult.manageQueue')}
+                </Button>
               </CardContent>
             </Card>
-          </Link>
 
-          <Link href={lp('/sales/tools')} className="block">
-            <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 hover:shadow-lg transition-shadow cursor-pointer h-full">
-              <CardContent className="pt-6">
-                <div className="text-center">
-                  <Brain className="w-12 h-12 text-purple-600 mx-auto mb-3" />
-                  <h3 className="font-bold text-lg text-gray-900">AI Tools</h3>
-                  <p className="text-sm text-gray-600 mt-1">เครื่องมือ AI ทั้งหมด</p>
-                </div>
+            {/* Performance Snapshot */}
+            <Card className="glass-panel border-white/5">
+              <CardHeader>
+                <CardTitle className="text-sm font-bold uppercase tracking-widest text-slate-400">{t('salesDashboard.snapshot.title')}</CardTitle>
+              </CardHeader>
+              <CardContent className="p-6 space-y-6">
+                {[
+                  { label: t('salesDashboard.snapshot.today'), scans: metrics?.leadsContacted.today, rev: metrics?.revenueGenerated.today },
+                  { label: t('salesDashboard.snapshot.weekly'), scans: metrics?.leadsContacted.yesterday, rev: metrics?.revenueGenerated.yesterday },
+                  { label: t('salesDashboard.snapshot.monthly'), scans: metrics?.leadsContacted.target, rev: metrics?.revenueGenerated.target }
+                ].map((p, i) => (
+                  <div key={i} className="flex items-center justify-between pb-4 border-b border-white/5 last:border-0 last:pb-0">
+                    <div className="space-y-1">
+                      <p className="text-xs font-bold text-white">{p.label}</p>
+                      <p className="text-[10px] text-slate-500 uppercase tracking-tighter">{p.scans} {t('salesDashboard.snapshot.cycles')}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-black text-primary">{t('format.currency', { amount: p.rev?.toLocaleString() || '0' })}</p>
+                      <p className="text-[9px] text-slate-500 uppercase font-bold">{t('salesDashboard.snapshot.volume')}</p>
+                    </div>
+                  </div>
+                ))}
               </CardContent>
             </Card>
-          </Link>
+          </div>
         </div>
+
+        {/* Top Assets */}
+        <Card className="glass-panel border-white/5 overflow-hidden">
+          <CardHeader className="bg-white/5 border-b border-white/5">
+            <CardTitle className="text-sm font-bold uppercase tracking-widest text-slate-400">{t('salesDashboard.topAssets.title')}</CardTitle>
+          </CardHeader>
+          <CardContent className="p-6">
+            <div className="grid md:grid-cols-3 gap-4">
+              {(overview?.topPackages || []).map((pkg: TopPackage, idx: number) => (
+                <div key={idx} className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-white/10 transition-all group">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:bg-primary group-hover:text-white transition-all">
+                      <span className="text-lg font-black">#{idx + 1}</span>
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-white group-hover:text-primary transition-colors">{pkg.name}</h4>
+                      <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">{pkg.sold} {t('salesDashboard.topAssets.units')}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-lg font-black text-white">{t('format.currency', { amount: pkg.revenue.toLocaleString() })}</p>
+                    <p className="text-[9px] text-slate-500 uppercase font-bold tracking-tighter">{t('salesDashboard.topAssets.gross')}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   )

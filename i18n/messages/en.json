@@ -35,7 +35,21 @@
       "scanningBaseline": "SCANNING FACIAL BASELINE"
     },
     "messages": {
-      "webglFallback": "WebGL not available – showing optimized static preview."
+      "webglFallback": "WebGL not available – showing optimized static preview.",
+      "bestRegards": "Best regards",
+      "clinicTeam": "Your Beauty Clinic Team",
+      "contactUsPrompt": "If you have any questions, please don't hesitate to contact us.",
+      "nextSteps": "Next Steps",
+      "department": "Region",
+      "status": "Severity",
+      "error": "Error"
+    },
+    "clinic": {
+      "name": "AI367 Skin Clinic",
+      "address": "123 Medical Plaza, Bangkok, Thailand",
+      "phone": "+66 2 XXX XXXX",
+      "email": "info@ai367clinic.com",
+      "website": "www.ai367clinic.com"
     }
   },
   "nav": {
@@ -59,10 +73,21 @@
     "users": "User Management",
     "settings": "Settings",
     "demo": "Demo",
-    "salesNarrative": "Sales Narrative",
+    "salesNarrative": "Business Value Summary",
     "pricing": "Pricing",
+    "presentation": "Presentation",
     "faq": "FAQ",
-    "caseStudies": "Case Studies"
+    "caseStudies": "Case Studies",
+    "3dModels": "3D Models",
+    "tryDemo": "Try Demo",
+    "overview": "Overview",
+    "branches": "Branches",
+    "aiAdvisor": "AI Advisor",
+    "reception": "Reception",
+    "schedule": "Schedule",
+    "salesTool": "Sales Tool",
+    "systemStatus": "System Status",
+    "tryResults": "Try Results"
   },
   "outcome": {
     "toggleShow": "Show Projection",
@@ -105,17 +130,176 @@
       "Data encrypted in transit and at rest"
     ]
   },
-  "privacyPage": {
-    "badge": "Privacy Policy",
-    "title": "Privacy Policy",
-    "lastUpdated": "Last Updated",
-    "effectiveDate": "Effective Date"
+  "unauthorized": {
+    "title": "Access Denied",
+    "description": "You do not have permission to access this page. Please check your access rights.",
+    "checking": "Checking permissions...",
+    "loggedInAs": "You are logged in as:",
+    "role": "Role:",
+    "tier": "Tier:",
+    "notLoggedIn": "You are not logged in. Please sign in to access this page.",
+    "reasons": {
+      "title": "Possible reasons why you cannot access this page:",
+      "item1": "This page requires a specific role or permission.",
+      "item2": "Your current plan does not support this feature.",
+      "item3": "You need to upgrade to a higher tier.",
+      "item4": "This page is restricted to clinic staff or administrators."
+    },
+    "upgradeToUnlock": "Upgrade to unlock features",
+    "help": {
+      "title": "Need help?",
+      "description": "If you believe this is an error, please"
+    }
   },
-  "termsPage": {
-    "badge": "Terms of Service",
+  "privacy": {
+    "title": "Privacy Policy",
+    "description": "We value your privacy and data security. This policy explains how we collect, use, and protect your personal information.",
+    "lastUpdated": "Last Updated: October 31, 2025",
+    "contact": {
+      "title": "Contact Us",
+      "description": "If you have questions about this privacy policy or wish to exercise your rights, please contact us:",
+      "email": "Email:",
+      "phone": "Phone:",
+      "address": "Address:",
+      "addressText": "123 Sukhumvit Road, Khlong Toei, Bangkok 10110, Thailand"
+    },
+    "sections": {
+      "collection": {
+        "title": "Information We Collect",
+        "content": "We collect information you provide directly, such as name, email, phone number, and facial photos for skin analysis. We also collect usage data including analysis history, results, and settings.",
+        "items": {
+          "personal": { "label": "Personal Information", "desc": "Name, email, phone number" },
+          "analysis": { "label": "Analysis Data", "desc": "Facial photos, skin analysis results" },
+          "usage": { "label": "Usage Data", "desc": "IP address, browser, device, access time" },
+          "cookies": { "label": "Cookies", "desc": "To improve user experience" }
+        }
+      },
+      "usage": {
+        "title": "How We Use Your Data",
+        "content": "We use your data to provide AI-powered skin analysis, improve system accuracy, send relevant notifications, and maintain system security. We do not sell or share your data with third parties without your consent.",
+        "items": {
+          "delivery": { "label": "Service Delivery", "desc": "Process and analyze skin with AI" },
+          "improvement": { "label": "System Improvement", "desc": "Improve AI model accuracy" },
+          "communication": { "label": "Communication", "desc": "Send analysis results and important updates" },
+          "security": { "label": "Security", "desc": "Prevent unauthorized access" }
+        }
+      },
+      "security": {
+        "title": "Data Security",
+        "content": "We implement industry-standard security measures including SSL/TLS encryption, data encryption, access controls, and automatic backups to protect your data from unauthorized access, loss, or unintentional disclosure.",
+        "items": {
+          "encryption": { "label": "Encryption", "desc": "SSL/TLS 256-bit for data transmission" },
+          "access": { "label": "Access Control", "desc": "Restricted access to authorized personnel" },
+          "backup": { "label": "Data Backup", "desc": "Automated daily backups" },
+          "audit": { "label": "Audit Logs", "desc": "Log all access and data modifications" }
+        }
+      },
+      "rights": {
+        "title": "Your Rights",
+        "content": "You have the right to access, correct, delete, or restrict the use of your personal data. You can request a copy of your data, withdraw consent, or transfer your data in accordance with PDPA and GDPR laws.",
+        "items": {
+          "access": { "label": "Right to Access", "desc": "Request to view your stored data" },
+          "rectification": { "label": "Right to Rectification", "desc": "Correct inaccurate information" },
+          "erasure": { "label": "Right to Erasure", "desc": "Request data deletion" },
+          "portability": { "label": "Right to Portability", "desc": "Transfer data to another service" }
+        }
+      },
+      "sharing": {
+        "title": "Data Sharing",
+        "content": "We will not sell, rent, or share your personal data with third parties except when legally required or to provide services you requested, such as sharing data with clinics where you book appointments.",
+        "items": {
+          "noSale": { "label": "No Sale", "desc": "We never sell your data" },
+          "partners": { "label": "Essential Partners", "desc": "Only essential service providers" },
+          "legal": { "label": "Legal Requirements", "desc": "When required by government authorities" },
+          "consent": { "label": "With Consent", "desc": "Only with your explicit consent" }
+        }
+      },
+      "retention": {
+        "title": "Data Retention",
+        "content": "We retain your data for as long as necessary to provide services or as required by law. Analysis data is kept for 2 years and then automatically deleted. You can request deletion at any time.",
+        "items": {
+          "accounts": { "label": "User Accounts", "desc": "Active period + 30 days after deletion" },
+          "analysis": { "label": "Analysis Data", "desc": "Stored for 2 years, then auto-deleted" },
+          "logs": { "label": "Log Files", "desc": "Retained for 90 days" },
+          "backup": { "label": "Backup Data", "desc": "Retained for 30 days" }
+        }
+      }
+    }
+  },
+  "terms": {
     "title": "Terms of Service",
-    "lastUpdated": "Last Updated",
-    "effectiveDate": "Effective Date"
+    "description": "Please read these Terms of Service carefully before using our platform. By using our service, you agree to be bound by these terms.",
+    "effectiveDate": "Effective Date: October 31, 2025",
+    "governingLaw": {
+      "title": "Governing Law",
+      "description": "These Terms of Service are governed by and construed in accordance with the laws of Thailand. Any disputes shall be under the jurisdiction of Thai courts."
+    },
+    "sections": {
+      "acceptance": {
+        "title": "Acceptance of Terms",
+        "content": "By accessing or using our service, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our service.",
+        "items": {
+          "age": { "label": "Minimum Age", "desc": "Users must be at least 18 years old" },
+          "responsibility": { "label": "Responsibility", "desc": "You are responsible for maintaining account confidentiality" },
+          "properUse": { "label": "Proper Use", "desc": "Use service only for its intended purpose" }
+        }
+      },
+      "service": {
+        "title": "Service Description",
+        "content": "Our platform provides AI-powered facial skin analysis, AR treatment simulation, and customer management for beauty clinics. Services may be modified or updated without prior notice.",
+        "items": {
+          "free": { "label": "Free Tier", "desc": "Free analysis, basic data, 5 times/month limit" },
+          "premium": { "label": "Premium Tier", "desc": "Unlimited analysis, advanced AI, AR Simulator" },
+          "enterprise": { "label": "Enterprise", "desc": "Multi-clinic, API Integration, Custom Features" }
+        }
+      },
+      "prohibited": {
+        "title": "Prohibited Uses",
+        "content": "Do not use the service for illegal purposes, system disruption, content copying, or intellectual property violation. Violations may result in immediate account suspension.",
+        "items": {
+          "misuse": { "label": "Misuse", "desc": "Prohibited for purposes other than skin analysis" },
+          "scraping": { "label": "Data Scraping", "desc": "No automated scraping, crawling, or copying" },
+          "impersonation": { "label": "Impersonation", "desc": "No impersonation of others or organizations" },
+          "reverse": { "label": "Reverse Engineering", "desc": "No reverse engineering of the system" }
+        }
+      },
+      "ip": {
+        "title": "Intellectual Property",
+        "content": "All content, AI models, software, logos, and intellectual property belong to our company. Copying, modification, or use without permission is prohibited. You retain rights to your uploaded data.",
+        "items": {
+          "ourContent": { "label": "Our Content", "desc": "AI models, software, UI/UX design are company property" },
+          "yourContent": { "label": "Your Content", "desc": "You own photos and data you upload" },
+          "license": { "label": "License Grant", "desc": "You grant us license to use data for service delivery" }
+        }
+      },
+      "liability": {
+        "title": "Limitation of Liability",
+        "content": "Our service provides analysis for reference only, not medical diagnosis. We are not liable for any damages from service use, including indirect, incidental, or special damages.",
+        "items": {
+          "notMedical": { "label": "Not Medical Advice", "desc": "Analysis results are for reference only" },
+          "accuracy": { "label": "Accuracy", "desc": "We strive for accuracy but cannot guarantee 100%" },
+          "consult": { "label": "Consult Experts", "desc": "Consult medical professionals before treatment decisions" }
+        }
+      },
+      "termination": {
+        "title": "Account Termination",
+        "content": "You can cancel your account anytime through settings. We reserve the right to suspend or terminate accounts that violate terms without notice. Data will be deleted per privacy policy.",
+        "items": {
+          "userCancel": { "label": "User Cancellation", "desc": "Cancel anytime through account settings" },
+          "systemSuspend": { "label": "System Suspension", "desc": "For violations of terms" },
+          "deletion": { "label": "Data Deletion", "desc": "Data deleted within 30 days after cancellation" }
+        }
+      },
+      "changes": {
+        "title": "Changes to Terms",
+        "content": "We reserve the right to modify these terms at any time. Significant changes will be notified via email or system notification. Continued use constitutes acceptance of revised terms.",
+        "items": {
+          "notification": { "label": "Notification", "desc": "Notify via email and system at least 7 days in advance" },
+          "review": { "label": "Review", "desc": "Review terms every 6 months" },
+          "versioning": { "label": "Versioning", "desc": "Archive all version changes" }
+        }
+      }
+    }
   },
   "faqPage": {
     "badge": "FAQ",
@@ -170,7 +354,40 @@
     "generatedNarrative": "Generated Narrative",
     "copy": "Copy",
     "save": "Save",
-    "copied": "Copied!"
+    "copied": "Copied!",
+    "selectTemplate": "Select a template to get started",
+    "buildOwnTitle": "Build Your Own Sales Narrative",
+    "writeNarrativePlaceholder": "Write your sales narrative here...",
+    "conversionRate": "Conversion Rate",
+    "increaseFromLastMonth": "+12% from last month",
+    "engagement": "Engagement",
+    "customerResponse": "Customer response to narratives",
+    "salesValue": "Sales Value",
+    "increaseFromStorytelling": "Increase from storytelling",
+    "popularTemplates": "Popular Templates",
+    "usageRate": "Usage Rate",
+    "templates": {
+      "confidence": {
+        "title": "Confidence Builder",
+        "description": "Build customer confidence through success stories",
+        "category": "Motivation"
+      },
+      "problem": {
+        "title": "Problem-Solution",
+        "description": "Address pain points and present solutions",
+        "category": "Education"
+      },
+      "social": {
+        "title": "Social Proof",
+        "description": "Leverage testimonials and success metrics",
+        "category": "Trust"
+      },
+      "urgency": {
+        "title": "Urgency & Scarcity",
+        "description": "Create time-sensitive opportunities",
+        "category": "Conversion"
+      }
+    }
   },
   "mySchedule": {
     "title": "My Schedule",
@@ -248,7 +465,11 @@
     "supports": "Supports JPG, PNG (max 10MB)",
     "orUseSample": "Or use sample image",
     "useSampleImage": "Use Sample Image",
-    "uploadNewImage": "Upload New Image"
+    "uploadNewImage": "Upload New Image",
+    "assetSynthesisDesc": "Input visual asset for augmented synthesis",
+    "calibrationProtocol": "Calibration Protocol",
+    "finalizeTreatment": "Finalize Treatment Plan",
+    "clinicalAr": "Clinical AR Simulator"
   },
   "branches": {
     "title": "Branch Management",
@@ -384,7 +605,9 @@
       "description": "Fill in the form below and we'll get back to you within 24 hours",
       "fullName": "Full Name",
       "email": "Email",
+      "emailPlaceholder": "your@email.com",
       "phone": "Phone Number",
+      "phonePlaceholder": "08X-XXX-XXXX",
       "clinicName": "Clinic/Company Name",
       "packageInterest": "Package Interest",
       "message": "Message",
@@ -408,6 +631,7 @@
     "info": {
       "title": "Contact Information",
       "phone": "Phone",
+      "email": "Email",
       "address": "Address",
       "addressText": "123 Sukhumvit Road, Klong Toey, Bangkok 10110",
       "businessHours": "Business Hours",
@@ -461,15 +685,19 @@
       "title": "Technology Stack",
       "subtitle": "Advanced AI and technologies powering our system",
       "mediapipe": {
+        "title": "MediaPipe Face Detection",
         "description": "Accurate face detection AI with 468 landmarks"
       },
       "tensorflow": {
+        "title": "TensorFlow.js",
         "description": "Browser-based machine learning for skin analysis"
       },
       "ar": {
+        "title": "AR Visualization",
         "description": "AR visualization of treatment results before decision"
       },
       "visia": {
+        "title": "VISIA Metrics",
         "description": "8 metrics measured by VISIA standards"
       }
     },
@@ -477,18 +705,22 @@
       "title": "Growth Milestones",
       "subtitle": "Key steps in product development",
       "q1_2024": {
+        "year": "2024 Q1",
         "title": "Company Founded",
         "description": "Started developing AI system for aesthetic clinics"
       },
       "q2_2024": {
+        "year": "2024 Q2",
         "title": "AI Model Testing",
         "description": "Tested AI accuracy with 10,000+ real images"
       },
       "q3_2024": {
+        "year": "2024 Q3",
         "title": "Beta Launch",
         "description": "Launched beta testing with pilot clinics"
       },
       "q1_2025": {
+        "year": "2025 Q1",
         "title": "Official Launch",
         "description": "Official launch with Free Tier availability"
       }
@@ -497,7 +729,11 @@
       "images": "Analyzed Images",
       "accuracy": "Accuracy Rate",
       "time": "Analysis Time",
-      "metrics": "Skin Metrics"
+      "metrics": "Skin Metrics",
+      "imagesVal": "10K+",
+      "accuracyVal": "95%+",
+      "timeVal": "<2s",
+      "metricsVal": "8"
     },
     "cta": {
       "title": "Ready to Get Started?",
@@ -599,7 +835,33 @@
       "arSimulator": "AR Simulator",
       "multiClinic": "Multi-Clinic",
       "pdpaCompliant": "PDPA Compliant",
-      "price": "Price"
+      "price": "Price",
+      "values": {
+        "accuracy": {
+          "ours": "95%+",
+          "competitor": "85-90%"
+        },
+        "speed": {
+          "ours": "3 seconds",
+          "competitor": "10-15 seconds"
+        },
+        "points": {
+          "ours": "8 points",
+          "competitor": "5-6 points"
+        },
+        "multiClinic": {
+          "ours": "✓ Unlimited",
+          "competitor": "Limited"
+        },
+        "pdpa": {
+          "ours": "✓ Full",
+          "competitor": "Partial"
+        },
+        "price": {
+          "ours": "฿9,900/mo",
+          "competitor": "฿20,000+/mo"
+        }
+      }
     },
     "cta": {
       "title": "Ready to Get Started?",
@@ -690,7 +952,7 @@
       "title": "AI-Powered Beauty & Skin Care",
       "subtitle": "Transform your skin with advanced AR visualization and AI analysis",
       "description": "Evidence‑based AI skin analysis connected to your sales workflow — improve conversion and customer trust with medical‑grade insights and AR visualization.",
-      "cta": "Get Started",
+      "cta": "Start AI Analysis",
       "learnMore": "Learn More",
       "noCreditCard": "No credit card required",
       "freeTierAvailable": "Free tier available"
@@ -768,6 +1030,17 @@
     "pricing": {
       "title": "Plans for Every Clinic Size",
       "subtitle": "Starting at ฿9,900/month - Better value at higher tiers",
+      "freeTier": {
+        "badge": "Get Started",
+        "title": "Essential Analysis",
+        "description": "Perfect for individual users exploring AI skin health.",
+        "period": "Forever",
+        "features": [
+          "Core AI Analysis",
+          "Basic Visualization"
+        ],
+        "cta": "Start Free Analysis"
+      },
       "premium": {
         "badge": "Most Popular",
         "title": "Professional",
@@ -855,7 +1128,8 @@
     },
     "roi": {
       "title": "Assess Added Value in 10 Seconds",
-      "description": "Enter your clinic numbers to see estimated AI impact"
+      "description": "Enter your clinic numbers to see estimated AI impact",
+      "performanceAnalytics": "Performance Analytics"
     },
     "caseStudy": {
       "title": "Case Study",
@@ -884,7 +1158,11 @@
     "terms": "Terms",
     "compliance": "Compliance",
     "pdpa": "PDPA",
-    "copyright": "© 2025 AI Beauty Platform. All rights reserved"
+    "copyright": " 2025 AI Beauty Platform. All rights reserved",
+    "engineeringExcellence": "Engineering Excellence",
+    "pdpaCertified": "PDPA Certified",
+    "isoCloud": "ISO 27001 Cloud",
+    "madeInThailand": "Made in Thailand"
   },
   "badges": {
     "iso": {
@@ -923,6 +1201,2101 @@
         "body": "Forecast 30 / 60 / 90 day outcomes with confidence levels and percentile vs reference cohorts."
       }
     ]
+  },
+  "salesDashboard": {
+    "title": "Sales Executive Dashboard",
+    "titleHighlight": "Dashboard",
+    "subtitle": "Real-time performance metrics and AI-driven growth insights",
+    "intelligenceBadge": "Sales Intelligence",
+    "initializeScan": "Initialize Scan",
+    "metrics": {
+      "acquisition": "Gross Acquisition",
+      "conversions": "Successful Conversions",
+      "retention": "Retention Rate",
+      "revenue": "Revenue Attributed",
+      "today": "+{count} today",
+      "vsPrev": "{percent}% vs prev",
+      "delta": "{percent}% delta",
+      "attribution": "Gross Attribution"
+    },
+    "pipeline": {
+      "title": "AI-Augmented Conversion Pipeline",
+      "badge": "Neural Data active",
+      "acquisition": "AI Lead Acquisition",
+      "proposals": "AI-Generated Proposals",
+      "bookings": "Confirmed AI Bookings",
+      "acquisitionDesc": "Sourced via AI Vision Scanning",
+      "proposalsDesc": "Autonomous Treatment Synthesis",
+      "bookingsDesc": "Closed via Digital Consultation"
+    },
+    "toolset": {
+      "title": "Strategic AI Toolset",
+      "optimization": "Optimization Layer",
+      "precisionScan": "Precision Scan",
+      "futureForecast": "Future Forecast",
+      "arSimulation": "AR Simulation",
+      "presentation": "Presentation",
+      "precisionScanDesc": "Vision Diagnostic",
+      "futureForecastDesc": "Aging Projection",
+      "arSimulationDesc": "Result Projection",
+      "presentationDesc": "Dynamic Quoting"
+    },
+    "arModules": {
+      "title": "Specialized AR Clinical Modules",
+      "filler": "Filler & Lips",
+      "body": "Body Contour",
+      "hair": "Trichology",
+      "eye": "Ocular Esthetic"
+    },
+    "remoteConsult": {
+      "title": "Remote Inquiries",
+      "requests": "Pending digital consultation requests",
+      "efficiency": "Efficiency Rate",
+      "manageQueue": "Manage Virtual Queue"
+    },
+    "snapshot": {
+      "title": "Performance Snapshot",
+      "today": "Today",
+      "weekly": "Weekly Average",
+      "monthly": "Monthly Objective",
+      "cycles": "Analytical Cycles",
+      "volume": "Volume"
+    },
+    "topAssets": {
+      "title": "Top Performing Service Assets",
+      "units": "Units Deployed",
+      "gross": "Gross Attribution"
+    }
+  },
+  "salesImport": {
+    "title": "Import Customers",
+    "subtitle": "Bulk import customers via CSV",
+    "dialogTitle": "Bulk Customer Import",
+    "dialogDescription": "Upload a CSV file to invite multiple customers at once",
+    "instructions": {
+      "title": "How to Import Customers",
+      "description": "Follow these steps to import your customers",
+      "step1": "Download the CSV template below",
+      "step2": "Fill in your customer information (email, name, phone)",
+      "step3": "Save the file and upload it",
+      "step4": "Review the preview and confirm",
+      "step5": "Invitation emails will be sent automatically",
+      "formatLabel": "CSV Format:",
+      "csvCols": "CSV must have columns: email, name, phone (optional)",
+      "maxLimit": "Maximum 100 customers per upload"
+    },
+    "download": {
+      "title": "Step 1: Download Template",
+      "description": "Get the CSV template with correct format",
+      "button": "Download CSV Template"
+    },
+    "upload": {
+      "title": "Step 2: Upload Customers",
+      "description": "Upload your filled CSV file",
+      "button": "Upload CSV File",
+      "dropzone": "Drag and drop or click to upload CSV file",
+      "choose": "Choose File"
+    },
+    "preview": {
+      "validRows": "Found {count} valid customers",
+      "sending": "Sending Invitations...",
+      "sendCount": "Send {count} Invitations",
+      "more": "...and {count} more"
+    },
+    "result": {
+      "successful": "Successful",
+      "failed": "Failed",
+      "duplicate": "Duplicate",
+      "failedList": "Failed invitations:",
+      "successAlert": "Successfully imported {count} customers! Invitation emails have been sent. Customers have 30 days to accept."
+    },
+    "errors": {
+      "found": "Found {count} errors:",
+      "rowError": "Row {row}: {message}",
+      "uploadFailed": "Upload failed"
+    },
+    "tips": {
+      "title": "Tips",
+      "item1": "Maximum 100 customers per import",
+      "item2": "Email addresses must be valid and unique",
+      "item3": "Phone numbers are optional",
+      "item4": "Customers will receive invitation emails automatically",
+      "item5": "They have 30 days to accept the invitation",
+      "item6": "You can track their status in your dashboard"
+    }
+  },
+  "salesWizard": {
+    "title": "Sales Presentation",
+    "newCustomer": "New Customer",
+    "customerId": "Customer ID",
+    "online": "Online",
+    "offline": "Offline",
+    "offlineWarning": {
+      "title": "Offline Mode",
+      "description": "You're currently offline. Data will be saved locally and synced when connection is restored."
+    },
+    "stepCounter": "Step {current} of {total}",
+    "steps": {
+      "customer": {
+        "nameRequired": "Name is required",
+        "phoneRequired": "Phone number is required",
+        "phoneInvalid": "Invalid phone number (use 0X-XXXX-XXXX format)",
+        "emailInvalid": "Invalid email address",
+        "alertDesc": "Enter customer information to begin the presentation. All data is saved automatically.",
+        "nameLabel": "Full Name",
+        "namePlaceholder": "Enter customer's full name",
+        "phoneLabel": "Phone Number",
+        "phoneDesc": "Thai phone number format (10 digits)",
+        "emailLabel": "Email Address",
+        "emailPlaceholder": "customer@example.com",
+        "emailDesc": "Used for sending proposal and follow-up",
+        "saveSuccess": "✓ Customer information saved",
+        "offlineNotice": "Working offline. Customer data will be synced when connection is restored."
+      },
+      "scan": {
+        "cameraSecureError": "Camera access requires a secure connection (HTTPS) or localhost. Use the upload option instead.",
+        "cameraAccessError": "Unable to access camera. Please grant camera permissions.",
+        "alertDesc": "Capture 3 photos of {name}'s face: Front, Left profile, and Right profile. Ensure good lighting and the face is clearly visible.",
+        "positionFace": "Position {name}'s face in the frame",
+        "startingCamera": "Starting Camera...",
+        "startCamera": "Start Camera",
+        "uploadFromCameraRoll": "Upload from Camera Roll",
+        "allCapturedTitle": "All Photos Captured!",
+        "allCapturedDesc": "3 angles captured successfully. Proceed to analysis.",
+        "capturedPhotosTitle": "Captured Photos"
+      },
+      "analysis": {
+        "frontImageRequired": "Front image is required for analysis",
+        "analyzingTitle": "Analyzing {name}'s Skin",
+        "analyzingDesc": "AI is processing facial features and skin conditions...",
+        "percentComplete": "{percent}% complete",
+        "retryAnalysis": "Retry Analysis",
+        "readyAlert": "Ready to analyze {name}'s skin. This will take 10-15 seconds.",
+        "startAIAnalysis": "Start AI Analysis",
+        "healthScoreTitle": "Overall Skin Health Score",
+        "skinAgeLabel": "Skin Age",
+        "yearsOlder": "Years Older",
+        "yearsYounger": "Years Younger",
+        "skinConditionTitle": "Skin Condition",
+        "confidenceLabel": "{percent}% confidence",
+        "severityLabel": "Severity",
+        "visiaTitle": "VISIA Skin Metrics",
+        "visiaDesc": "8-point professional skin analysis",
+        "recommendationsTitle": "Treatment Recommendations",
+        "recommendationsDesc": "Personalized suggestions for {name}",
+        "offlineWarning": "You are offline. Results are saved locally and will sync when online.",
+        "exportReport": "Export Analysis Report (PDF)"
+      },
+      "ar": {
+        "frontImageRequired": "No image available for AR preview. Please go back to the scan step.",
+        "instructions": "Select treatments and adjust intensity to preview results for {name}. Drag the slider in comparison mode to see before/after.",
+        "arPreviewTab": "AR Preview",
+        "compareTab": "Compare",
+        "selectTreatmentPrompt": "Select at least one treatment below to preview",
+        "comparePrompt": "Select treatments to see before/after comparison",
+        "sliderTitle": "Treatment Preview",
+        "sliderDesc": "Drag to compare before and after",
+        "intensityTitle": "Treatment Intensity",
+        "intensityDesc": "Adjust the intensity of selected treatments",
+        "intensityLabel": "Intensity",
+        "intensitySubtle": "Subtle",
+        "intensityNatural": "Natural",
+        "intensityDramatic": "Dramatic",
+        "presetMild": "Mild (30%)",
+        "presetModerate": "Moderate (60%)",
+        "presetIntensive": "Intensive (90%)",
+        "selectTreatmentsTitle": "Select Treatments",
+        "selectTreatmentsDesc": "Choose up to 3 treatments (recommended treatments highlighted)",
+        "recommendedBadge": "Recommended",
+        "selectionCounter": "<strong>{count}</strong> of 3 treatments selected",
+        "selectedSummaryTitle": "Selected Treatments"
+      },
+      "products": {
+        "instructions": "Browse and select products for {name}. Recommended products are highlighted based on AI analysis.",
+        "recommendedBadge": "Recommended",
+        "countOf": "{current} of {total}",
+        "cardView": "Card View",
+        "view3D": "3D View",
+        "ingredientsTitle": "Key Ingredients",
+        "benefitsTitle": "Benefits",
+        "addToProposal": "Add to Proposal",
+        "selectedBadge": "Selected",
+        "recommendedFor": "Recommended for {name}",
+        "basedOnAI": "Based on AI skin analysis",
+        "addedBadge": "Added",
+        "noRecommendations": "No specific product recommendations yet. Browse all products above.",
+        "selectedProductsTitle": "Selected Products ({count})",
+        "emptyState": "No products selected yet. Browse and add products to include in the proposal."
+      },
+      "proposal": {
+        "instructions": "Review and adjust the proposal for {name}. You can edit quantities, prices, and add custom items.",
+        "offlineWarning": "You're offline. Proposal will be saved locally and can be sent when you're back online.",
+        "itemsTitle": "Proposal Items",
+        "itemsCount": "{count} items selected",
+        "addItem": "Add Item",
+        "customItemName": "Custom Item",
+        "qtyLabel": "Qty",
+        "priceLabel": "Price",
+        "totalLabel": "Total",
+        "pricingSummaryTitle": "Pricing Summary",
+        "subtotalLabel": "Subtotal:",
+        "discountLabel": "Discount",
+        "totalFinalLabel": "Total:",
+        "paymentTermsTitle": "Payment Terms",
+        "paymentMethodLabel": "Payment Method",
+        "paymentTerms": {
+          "full": "Full Payment (ชำระเต็มจำนวน)",
+          "installment3": "3 Installments (ผ่อน 3 งวด)",
+          "installment6": "6 Installments (ผ่อน 6 งวด)",
+          "installment12": "12 Installments (ผ่อน 12 งวด)",
+          "deposit50": "50% Deposit (มัดจำ 50%)",
+          "custom": "Custom (กำหนดเอง)"
+        },
+        "installmentDetail": "{months} payments of ฿{amount} per month",
+        "depositDetail": "Deposit: ฿{deposit} | Balance: ฿{balance}",
+        "additionalNotesLabel": "Additional Notes",
+        "notesPlaceholder": "Special conditions, warranties, or instructions...",
+        "emptyProposal": "No items in proposal. Please go back and select treatments or products."
+      },
+      "summary": {
+        "instructions": "Review the complete proposal and sign to finalize the agreement.",
+        "offlineWarning": "You're offline. Data will be saved locally and can be sent when you're back online.",
+        "summaryTitle": "Presentation Summary",
+        "summaryDesc": "Review all captured information",
+        "sectionCustomerInfo": "Customer Information",
+        "sectionScannedImages": "Scanned Images",
+        "photosCount": "{count} photos",
+        "angleFront": "Front",
+        "angleLeft": "Left",
+        "angleRight": "Right",
+        "sectionAIAnalysis": "AI Analysis Results",
+        "skinAge": "Skin Age",
+        "condition": "Condition",
+        "ageDiff": "Age Difference",
+        "personalizedTips": "{count} personalized tips",
+        "sectionTreatments": "Selected Treatments",
+        "itemsCount": "{count} items",
+        "sectionProducts": "Selected Products",
+        "sectionProposal": "Pricing Proposal",
+        "paymentTerms": "Payment Terms",
+        "signatureTitle": "E-Signature",
+        "signatureDesc": "Please sign here with your finger or mouse",
+        "clearButton": "Clear",
+        "signHerePrompt": "Sign here",
+        "nextStepsTitle": "Next Steps",
+        "nextStepsDesc": "Choose how to proceed with this proposal",
+        "sendLine": "Send via LINE",
+        "sendEmail": "Send via Email",
+        "downloadPDF": "Download PDF",
+        "scheduleVisit": "Schedule Visit",
+        "saveToNotes": "Save to Notes",
+        "completeButton": "Complete",
+        "completedAlert": "Completed! Presentation finalized on {date}",
+        "signatureRequired": "E-signature is required to complete the presentation. Please sign in the canvas above.",
+        "signAlert": "Please provide your signature before completing."
+      }
+    },
+    "navigation": {
+      "back": "Back",
+      "next": "Next",
+      "complete": "Complete",
+      "hint": "Complete this step to continue"
+    }
+  },
+  "presentationMode": {
+    "title": "Presentation Mode",
+    "exitFullscreen": "Exit Fullscreen",
+    "enterFullscreen": "Enter Fullscreen",
+    "overview": "Overview",
+    "comparison": "Comparison",
+    "treatments": "Treatments",
+    "pricing": "Pricing",
+    "timeline": "Timeline",
+    "skinHealthScore": "Skin Health Score",
+    "concerns": "Skin Concerns",
+    "expectedResults": "Expected Results",
+    "treatmentPlan": "Treatment Plan",
+    "estimatedCost": "Estimated Cost",
+    "duration": "Duration",
+    "sessions": "Sessions",
+    "improvement": "Improvement",
+    "weeks": "weeks",
+    "months": "months",
+    "baht": "THB",
+    "perSession": "per session",
+    "total": "Total",
+    "recommended": "Recommended",
+    "package": "Package",
+    "popular": "Popular",
+    "bestValue": "Best Value",
+    "comprehensive": "Comprehensive",
+    "sideBySide": "Side by Side Comparison",
+    "before": "Before",
+    "after": "After",
+    "current": "Current",
+    "baseline": "Baseline",
+    "progress": "Progress",
+    "navigationHint": "Use arrow keys or click to navigate between sections"
+  },
+  "comparison": {
+    "tabs": {
+      "chart": "Progress Chart",
+      "comparison": "Comparison",
+      "gallery": "Photo Gallery"
+    }
+  },
+  "progress": {
+    "title": "My Progress",
+    "loading": "Loading your progress...",
+    "error": "Failed to load progress data",
+    "backToDashboard": "Back to Dashboard",
+    "noAnalyses": "No analyses found",
+    "startJourney": "Start your skin journey by taking your first analysis",
+    "takeAnalysis": "Take Analysis",
+    "shareText": "Check out my skin analysis progress!",
+    "linkCopied": "Link copied to clipboard!"
+  },
+  "whiteboard": {
+    "title": "Whiteboard",
+    "elements": "{count} elements",
+    "locked": "Locked",
+    "unlocked": "Unlocked",
+    "tools": {
+      "label": "Tools",
+      "select": "Select",
+      "rectangle": "Rectangle",
+      "circle": "Circle",
+      "line": "Line",
+      "arrow": "Arrow",
+      "pencil": "Pencil",
+      "text": "Text",
+      "eraser": "Eraser"
+    },
+    "colors": {
+      "label": "Color",
+      "black": "Black",
+      "red": "Red",
+      "green": "Green",
+      "blue": "Blue",
+      "yellow": "Yellow",
+      "purple": "Purple",
+      "orange": "Orange"
+    },
+    "activeUsers": {
+      "title": "Active Users",
+      "online": "{count} online",
+      "noOtherUsers": "No other users online",
+      "me": "Me"
+    },
+    "actions": {
+      "clear": "Clear Board",
+      "export": "Export as PNG",
+      "undo": "Undo",
+      "redo": "Redo"
+    }
+  },
+  "userManagement": {
+    "title": "User Management",
+    "description": "Manage user accounts, roles, and access permissions",
+    "addUser": "Add User",
+    "createUser": "Create New User",
+    "editUser": "Edit User",
+    "createDesc": "Add a new user to the system with appropriate role and permissions.",
+    "editDesc": "Update user information and role assignments.",
+    "form": {
+      "email": "Email",
+      "name": "Name",
+      "role": "Role",
+      "department": "Department",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "optional": "Optional",
+      "update": "Update User",
+      "create": "Create User"
+    },
+    "table": {
+      "user": "User",
+      "role": "Role",
+      "department": "Department",
+      "status": "Status",
+      "lastLogin": "Last Login",
+      "actions": "Actions",
+      "never": "Never",
+      "active": "Active",
+      "locked": "Locked"
+    },
+    "filters": {
+      "search": "Search users...",
+      "allRoles": "All Roles",
+      "allStatus": "All Status",
+      "active": "Active",
+      "locked": "Locked"
+    },
+    "roles": {
+      "super_admin": "Super Admin",
+      "admin": "Admin",
+      "doctor": "Doctor",
+      "nurse": "Nurse",
+      "receptionist": "Receptionist",
+      "patient": "Patient",
+      "customer": "Customer"
+    },
+    "alerts": {
+      "passwordsNoMatch": "Passwords do not match",
+      "createFailed": "Failed to create user: {error}",
+      "updateFailed": "Failed to update user: {error}",
+      "lockFailed": "Failed to lock account: {error}",
+      "unlockFailed": "Failed to unlock account: {error}",
+      "loading": "Loading users..."
+    },
+    "confirm": {
+      "lockTitle": "Lock Account",
+      "lockDesc": "Are you sure you want to lock the account for {name}? This will prevent them from logging in.",
+      "cancel": "Cancel",
+      "confirm": "Lock Account"
+    }
+  },
+  "workflowBuilder": {
+    "title": "Workflow Details",
+    "description": "Define your automation workflow",
+    "nameLabel": "Workflow Name",
+    "namePlaceholder": "e.g., Post-Treatment Follow-up",
+    "descLabel": "Description",
+    "descPlaceholder": "Describe what this workflow does...",
+    "triggerType": "Trigger Type",
+    "eventLabel": "Event",
+    "stepsTitle": "Workflow Steps",
+    "stepsDescription": "Build your automation sequence",
+    "triggerLabel": "Trigger",
+    "addStep": "Add Step",
+    "stepCount": "{count} {count, plural, one {step} other {steps}} in workflow",
+    "save": "Save Workflow",
+    "alerts": {
+      "enterName": "Please enter a workflow name",
+      "addStep": "Please add at least one step",
+      "selectEvent": "Please select an event for this trigger type"
+    },
+    "stepTypes": {
+      "send_email": "Send Email",
+      "send_sms": "Send SMS",
+      "wait": "Wait",
+      "condition": "Check Condition",
+      "tag": "Add Tag",
+      "update_field": "Update Field"
+    },
+    "triggerTypes": {
+      "immediate": "Immediate",
+      "scheduled": "Scheduled",
+      "event-based": "Event-Based",
+      "behavioral": "Behavioral"
+    },
+    "eventTypes": {
+      "signup": "User Signup",
+      "purchase": "Purchase",
+      "booking": "Booking Made",
+      "treatment_complete": "Treatment Completed",
+      "birthday": "Birthday",
+      "anniversary": "Anniversary",
+      "abandoned_cart": "Abandoned Cart",
+      "inactivity": "Inactivity Period"
+    },
+    "config": {
+      "emailSubject": "Email subject",
+      "emailBody": "Email body",
+      "smsMessage": "SMS message (max 160 characters)",
+      "duration": "Duration",
+      "unit": "Unit",
+      "field": "Field",
+      "operator": "Operator",
+      "value": "Value",
+      "tagName": "Tag name",
+      "fieldName": "Field name",
+      "newValue": "New value",
+      "units": {
+        "minutes": "Minutes",
+        "hours": "Hours",
+        "days": "Days"
+      },
+      "operators": {
+        "equals": "Equals",
+        "not_equals": "Not Equals",
+        "greater_than": "Greater Than",
+        "less_than": "Less Than"
+      }
+    }
+  },
+  "analysisUpload": {
+    "modes": {
+      "local": "Running local computer vision pipeline...",
+      "hf": "Running Hugging Face enhanced analysis...",
+      "auto": "Selecting fastest analysis pipeline..."
+    },
+    "labels": {
+      "local": "Start Local Analysis",
+      "hf": "Start AI Analysis",
+      "auto": "Start Analysis"
+    },
+    "tabs": {
+      "upload": "Upload",
+      "camera": "Camera"
+    },
+    "actions": {
+      "clickToUpload": "Click to upload or drag and drop",
+      "fileLimit": "PNG, JPG or JPEG (MAX. 10MB)",
+      "capture": "Capture",
+      "adjustPosition": "Adjust Position",
+      "cameraNotActive": "Camera not active",
+      "startCamera": "Start Camera",
+      "chooseDifferent": "Choose Different Photo",
+      "retry": "Retry"
+    },
+    "progress": {
+      "validating": "Processing... Validating image quality",
+      "optimizing": "Processing... Optimizing image",
+      "detectingFace": "Processing... Detecting face",
+      "analyzing": "Analyzing skin...",
+      "detectedLandmarks": "Detected {count} landmarks"
+    },
+    "errors": {
+      "invalidFile": "Error: Please select a valid image file (PNG, JPG, JPEG).",
+      "cameraAccess": "Unable to access camera. Please check permissions.",
+      "fileTooLarge": "File is too large. Please choose an image under 10MB.",
+      "analysisFailed": "Analysis Failed",
+      "networkError": "❌ Network Error - Cannot load AI models\n\nPlease check your internet connection.\nMediaPipe and TensorFlow need to download models from CDN."
+    }
+  },
+  "treatmentTimeline": {
+    "loading": "Loading timeline...",
+    "empty": "No timeline entries yet",
+    "loadMore": "Load More",
+    "at": "at",
+    "types": {
+      "session": "Session",
+      "milestone": "Milestone",
+      "photo": "Photo",
+      "note": "Note",
+      "status_change": "Status Change"
+    }
+  },
+  "socialProof": {
+    "stats": {
+      "customers": "Customers",
+      "rating": "Rating",
+      "reviews": "Reviews",
+      "repeatRate": "Repeat Rate"
+    },
+    "verified": "Verified Purchase",
+    "actions": {
+      "booking": "{name} booked {treatment} {time} ago",
+      "purchase": "{name} purchased {package} {time} ago",
+      "consultation": "{name} consulted about {treatment} {time} ago"
+    },
+    "reviews": {
+      "names": {
+        "prae": "Prae",
+        "nid": "Nid",
+        "aim": "Aim",
+        "por": "Por",
+        "somsri": "Somsri",
+        "wipa": "Wipa",
+        "napha": "Napha"
+      },
+      "review1": "Great results! Look 5 years younger!",
+      "review2": "Expert doctors, very gentle!",
+      "review3": "V-shape face achieved, highly recommend!",
+      "review4": "Pigmentation faded a lot, worth it!"
+    },
+    "times": {
+      "2daysAgo": "2 days ago",
+      "3daysAgo": "3 days ago",
+      "1weekAgo": "1 week ago",
+      "2mins": "2 mins",
+      "5mins": "5 mins",
+      "8mins": "8 mins"
+    }
+  },
+  "skinHeatmap": {
+    "title": "Advanced Skin Analysis Heatmap",
+    "description": "Interactive visualization of skin problem areas with severity levels",
+    "overallSeverity": "Overall Severity",
+    "areasDetected": "Problem Areas Detected",
+    "concernTypes": "{count} different concern types",
+    "breakdown": "Concern Breakdown:",
+    "detectedCount": "{count} {count, plural, one {area} other {areas}} detected",
+    "avgSeverity": "Avg severity",
+    "scale": "Severity Scale:",
+    "mild": "Mild - Minimal intervention needed",
+    "moderate": "Moderate - Recommended treatment",
+    "severe": "Severe - Immediate attention recommended",
+    "tabs": {
+      "all": "All",
+      "wrinkles": "Wrinkles",
+      "pigmentation": "Pigment",
+      "acne": "Acne",
+      "dryness": "Dry",
+      "oiliness": "Oily",
+      "redness": "Red"
+    },
+    "regions": {
+      "forehead": "Forehead",
+      "cheeks": "Cheeks",
+      "nose": "Nose",
+      "chin": "Chin",
+      "eyes": "Eyes"
+    }
+  },
+  "treatmentComparison": {
+    "title": "Treatment Comparison",
+    "aiTitle": "AI Treatment Recommendation",
+    "skinConcernLabel": "Primary Skin Concern",
+    "budgetLabel": "Budget",
+    "getRecommendation": "Get AI Recommendation",
+    "recommended": "Recommended",
+    "savings": "Save {amount}",
+    "choosePackage": "Select this package",
+    "gridView": "Grid View",
+    "comparisonView": "Comparison View",
+    "noSelection": "Select at least 1 treatment to compare",
+    "summaryTitle": "Selected Treatments Summary",
+    "selectedCount": "{count} treatments selected",
+    "total": "Total {amount}",
+    "bookNow": "Book Treatment",
+    "table": {
+      "treatment": "Treatment",
+      "price": "Price",
+      "duration": "Duration",
+      "effectiveness": "Effectiveness",
+      "recovery": "Recovery",
+      "rating": "Rating"
+    },
+    "concerns": {
+      "acne": "Acne & Pores",
+      "pigmentation": "Dark Spots",
+      "anti_aging": "Wrinkles & Aging",
+      "dryness": "Dry Skin"
+    },
+    "budgets": {
+      "low": "Low (3,000-8,000 THB)",
+      "medium": "Medium (8,000-15,000 THB)",
+      "high": "High (15,000+ THB)"
+    }
+  },
+  "videoCall": {
+    "title": "Video Call",
+    "description": "Start a video call with the customer",
+    "inCall": "In conversation with customer",
+    "ready": "Ready to start?",
+    "pressToStart": "Press the button below to start the video call",
+    "startCall": "Start Video Call",
+    "participants": "Participants ({count})",
+    "quality": {
+      "excellent": "Excellent",
+      "good": "Good",
+      "poor": "Poor",
+      "moderate": "Fair"
+    },
+    "duration": "{mins} mins",
+    "notes": "💡 <strong>Note:</strong> Video call sessions are recorded in the system, including duration and connection quality (requires integration with video services like Agora, Twilio).",
+    "errors": {
+      "loadFailed": "Failed to load video call information",
+      "startFailed": "Failed to start video call",
+      "endFailed": "Failed to end video call"
+    },
+    "success": {
+      "started": "Video call started",
+      "ended": "Video call ended",
+      "duration": "Duration: {time}"
+    }
+  },
+  "photoComparison": {
+    "tabs": {
+      "comparison": "Before/After",
+      "progress": "Progress Photos",
+      "gallery": "Gallery"
+    },
+    "slider": {
+      "title": "Comparison Slider",
+      "before": "Before",
+      "after": "After"
+    },
+    "sideBySide": {
+      "title": "Side by Side Comparison",
+      "before": "Before",
+      "after": "After"
+    },
+    "empty": {
+      "title": "No photos available yet",
+      "description": "Photos will appear here as treatment progresses",
+      "noBefore": "No before photos available",
+      "noAfter": "No after photos available yet",
+      "noProgress": "No progress photos available yet"
+    },
+    "photoInfo": {
+      "before": "Before Photo",
+      "after": "After Photo",
+      "progress": "Progress Photo",
+      "of": "of"
+    }
+  },
+  "treatmentConfigurator": {
+    "title": "TREATMENT CONFIGURATOR",
+    "presets": {
+      "rejuvenate": "Rejuvenate",
+      "detox": "Detox",
+      "whitening": "Whitening",
+      "firming": "Firming"
+    },
+    "controls": {
+      "distort": "Halo Distort",
+      "opacity": "Halo Opacity",
+      "intensity": "Halo Intensity",
+      "beamSpeed": "Beam Speed",
+      "innerColor": "Inner Color",
+      "outerColor": "Outer Color",
+      "beamColor": "Beam Color"
+    }
+  },
+  "treatments": {
+    "hydrafacial": {
+      "description": "Deep cleansing with special solutions"
+    },
+    "chemical_peel": {
+      "description": "Exfoliates old skin cells with mild acid"
+    },
+    "rf_tightening": {
+      "description": "Stimulates collagen with radio frequency"
+    },
+    "microneedling": {
+      "description": "Stimulates collagen production with tiny needles"
+    },
+    "sideEffects": {
+      "minimal": "Minimal",
+      "redness": "Temporary redness",
+      "heat": "Temporary warmth",
+      "swelling": "Temporary swelling"
+    },
+    "recovery": {
+      "none": "No recovery needed",
+      "short": "1-2 days",
+      "moderate": "2-3 days"
+    },
+    "suitability": {
+      "all": "All skin types",
+      "oily": "Oily skin",
+      "combination": "Combination skin",
+      "dull": "Dull skin",
+      "spots": "Dark spots",
+      "fine_lines": "Fine lines",
+      "sagging": "Sagging skin",
+      "wrinkles": "Wrinkles",
+      "aging": "Aging skin",
+      "deep_lines": "Deep lines",
+      "uneven": "Uneven skin"
+    }
+  },
+  "packages": {
+    "basic": {
+      "name": "Basic Package",
+      "description": "Perfect for beginners"
+    },
+    "premium": {
+      "name": "Premium Package",
+      "description": "Comprehensive for best results"
+    },
+    "vip": {
+      "name": "VIP Package",
+      "description": "Professional all-in-one package"
+    }
+  },
+  "shareResults": {
+    "title": "Share Analysis Results",
+    "description": "Send scan results to customer via email or chat",
+    "tabs": {
+      "email": "Email",
+      "chat": "Chat"
+    },
+    "email": {
+      "required": "Email Required",
+      "requiredDesc": "Please add an email address for the customer first.",
+      "sent": "Email Sent!",
+      "sentDesc": "Results sent to {email}",
+      "preview": "Email Preview",
+      "to": "To",
+      "subject": "Subject",
+      "yourResults": "Your Skin Analysis Results",
+      "summary": "Personalized analysis with {concernCount} concerns identified and {recommendationCount} treatment recommendations.",
+      "sending": "Sending Email...",
+      "send": "Send Email",
+      "error": "Error Sending Email",
+      "errorDesc": "Failed to send email. Please try again."
+    },
+    "chat": {
+      "required": "Lead Required",
+      "requiredDesc": "Please convert to lead first before sending via chat.",
+      "sent": "Message Sent!",
+      "sentDesc": "Results sent via chat to the customer",
+      "preview": "Chat Message Preview",
+      "sending": "Sending Message...",
+      "send": "Send Chat Message",
+      "error": "Error Sending Message",
+      "errorDesc": "Failed to send chat message. Please try again.",
+      "dear": "Hi {name}! Here are your personalized skin analysis results:",
+      "age": "Skin Age: {age} years",
+      "concerns": "Identified Concerns:",
+      "recommendations": "Recommended Treatments:",
+      "nextSteps": "Would you like to schedule a consultation to discuss these treatments?"
+    },
+    "status": {
+      "emailSent": "Email Sent",
+      "chatSent": "Chat Sent"
+    }
+  },
+  "voiceGuidedAR": {
+    "title": "Voice-Guided AR",
+    "status": {
+      "error": "Error Occurred",
+      "listening": "Listening...",
+      "ready": "Ready"
+    },
+    "controls": {
+      "turnOff": "Turn Off Voice Control",
+      "turnOn": "Turn On Voice Control",
+      "audioFeedback": "Audio Feedback",
+      "speakOff": "Audio feedback turned off",
+      "speakOn": "Voice control activated. You can speak commands now."
+    },
+    "feedback": {
+      "rotate": "Model rotated successfully",
+      "zoom": "Zoomed {direction} successfully",
+      "pan": "Moved {direction} successfully",
+      "reset": "Position reset successfully",
+      "screenshot": "Screenshot captured successfully",
+      "unknown": "Command not recognized"
+    },
+    "directions": {
+      "left": "left",
+      "right": "right",
+      "up": "up",
+      "down": "down",
+      "in": "in",
+      "out": "out"
+    },
+    "guide": {
+      "title": "Supported Voice Commands",
+      "movement": "Movement",
+      "control": "Control",
+      "rotate": "Rotate",
+      "zoom": "Zoom In/Out",
+      "pan": "Move Left/Right",
+      "reset": "Reset Position",
+      "screenshot": "Take Photo",
+      "stop": "Stop Listening"
+    },
+    "transcript": "Transcript",
+    "lastAction": "Last Action",
+    "noSpeech": "No speech yet...",
+    "noCommand": "No command yet..."
+  },
+  "campaignManager": {
+    "categories": {
+      "welcome": "Welcome",
+      "nurture": "Nurture",
+      "conversion": "Conversion",
+      "retention": "Retention",
+      "upsell": "Upsell",
+      "reactivate": "Reactivate"
+    },
+    "ctaTypes": {
+      "button": "Button",
+      "link": "Link",
+      "phone": "Phone",
+      "booking": "Booking"
+    },
+    "emptyState": "Please select a customer to generate a campaign.",
+    "listTab": "Campaign",
+    "optimizerTab": "A/B Variants",
+    "insightsTab": "Insights"
+  },
+  "acceptInvitation": {
+    "title": "Welcome!",
+    "subtitle": "Create your account",
+    "invalidTitle": "Invalid Invitation",
+    "invalidSubtitle": "Invitation is not valid or has expired",
+    "checking": "Checking invitation...",
+    "emailLabel": "Email:",
+    "roleLabel": "Role:",
+    "clinicLabel": "Clinic:",
+    "fullNameLabel": "Full Name",
+    "passwordLabel": "Password",
+    "confirmPasswordLabel": "Confirm Password",
+    "passwordHint": "At least 8 characters",
+    "confirmPasswordPlaceholder": "Enter password again",
+    "fullNamePlaceholder": "Enter your full name",
+    "submitting": "Creating account...",
+    "submit": "Create Account & Login",
+    "autoLoginHint": "When you create an account, you will be logged in automatically.",
+    "backToLogin": "Back to Login",
+    "reasons": {
+      "title": "Possible reasons why you cannot access this page:",
+      "expired": "Invitation link expired (7 days)",
+      "cancelled": "Invitation was cancelled",
+      "alreadyCreated": "Account already created",
+      "invalidLink": "Invalid link"
+    },
+    "errors": {
+      "fullNameRequired": "Please enter your full name",
+      "passwordTooShort": "Password must be at least 8 characters",
+      "passwordMismatch": "Passwords do not match",
+      "validateFailed": "Failed to validate invitation",
+      "createFailed": "Failed to create account"
+    }
+  },
+  "dashboard": {
+    "predictiveAnalytics": {
+      "title": "AI Predictive Analytics",
+      "subtitle": "Forecast customer behavior and sales opportunities",
+      "analyzing": "Analyzing...",
+      "analyzeButton": "Analyze Behavior",
+      "tabs": {
+        "predictions": "Customer Predictions",
+        "insights": "Insights",
+        "opportunities": "Opportunities & Risks"
+      },
+      "metrics": {
+        "conversionTrend": "Conversion Trend",
+        "avgConversionTime": "Avg. Conversion Time",
+        "revenueForecastMonth": "Revenue Forecast (Next Month)",
+        "revenueForecastQuarter": "Revenue Forecast (Next Quarter)",
+        "confidence": "Confidence {percent}%",
+        "days": "{count} days",
+        "trends": {
+          "up": "Increasing",
+          "down": "Decreasing",
+          "stable": "Stable"
+        }
+      },
+      "card": {
+        "conversionChance": "Conversion Probability",
+        "shortTerm": "Short Term (7 days)",
+        "mediumTerm": "Medium Term (30 days)",
+        "longTerm": "Long Term (90 days)",
+        "behavior": "Behavior & Preferences",
+        "engagementTrend": "Engagement Trend",
+        "bestChannel": "Best Contact Channel",
+        "bestTime": "Best Contact Time",
+        "priceSensitivity": "Price Sensitivity",
+        "loyalty": "Loyalty & Risk",
+        "brandLoyalty": "Brand Loyalty",
+        "referralChance": "Recommendation Likelihood",
+        "churnRisk": "Churn Risk",
+        "showMore": "Show More Details",
+        "showLess": "Hide Details",
+        "opportunities": "Opportunities",
+        "risks": "Risk Factors",
+        "channels": {
+          "email": "Email",
+          "phone": "Phone",
+          "chat": "Chat",
+          "social": "Social"
+        },
+        "sensitivity": {
+          "low": "Low",
+          "medium": "Medium",
+          "high": "High"
+        }
+      },
+      "insights": {
+        "title": "Insights",
+        "recommendations": "Recommendations"
+      },
+      "opportunitiesTab": {
+        "predictors": "Top Predictors",
+        "predictorsDesc": "Factors with highest impact on predictions",
+        "segmentPerformance": "Segment Performance",
+        "segmentPerformanceDesc": "Prediction efficiency by group"
+      },
+      "empty": {
+        "title": "Ready for Prediction",
+        "description": "Click \"Analyze Behavior\" to let AI forecast customer behavior and sales opportunities"
+      }
+    },
+    "arTreatmentPreview": {
+      "title": "AR Treatment Preview",
+      "description": "See the expected results after treatment",
+      "expectedImprovements": "Expected Improvements:",
+      "improvement": "{percent}% improvement",
+      "severity": "Severity: {value}/10",
+      "disclaimer": "* Results shown are simulated based on typical outcomes. Actual results may vary depending on individual skin condition and treatment response.",
+      "shareComingSoon": "Share functionality coming soon!",
+      "before": "Before",
+      "after": "After"
+    },
+    "bodyContouringSimulator": {
+      "title": "Body Contouring Simulator",
+      "subtitle": "Fat reduction and body sculpting simulation",
+      "selectArea": "Select Area",
+      "before": "Before",
+      "after": "After",
+      "processing": "Processing...",
+      "priceRange": "Price Range",
+      "sessions": "{count} sessions",
+      "estimatedCost": "Estimated Price",
+      "saveImage": "Save Image",
+      "createProposal": "Create Proposal",
+      "tabs": {
+        "reduction": "Reduction",
+        "tech": "Technology"
+      },
+      "controls": {
+        "fatReduction": "Fat Reduction",
+        "skinTightening": "Skin Tightening",
+        "muscleTone": "Muscle Tone"
+      },
+      "areas": {
+        "abdomen": "Abdomen",
+        "waist": "Waist",
+        "thighs": "Thighs",
+        "arms": "Arms",
+        "chin": "Chin",
+        "back": "Back"
+      },
+      "techLabels": {
+        "effectiveness": "Effectiveness: {percent}%"
+      }
+    },
+    "hairRestorationSimulator": {
+      "title": "Hair Restoration Simulator",
+      "subtitle": "Hair transplant and density simulation",
+      "density": "Density",
+      "hairline": "Hairline",
+      "crown": "Crown",
+      "grafts": "Estimated Grafts",
+      "saveImage": "Save Image",
+      "createProposal": "Create Proposal"
+    },
+    "eyeEnhancementSimulator": {
+      "title": "Eye Enhancement Simulator",
+      "subtitle": "Double eyelid and eye shape simulation",
+      "crease": "Crease Height",
+      "shape": "Eye Shape",
+      "lateral": "Lateral Canthoplasty",
+      "saveImage": "Save Image",
+      "createProposal": "Create Proposal",
+      "selectProcedure": "Select Procedure",
+      "procedures": {
+        "double_eyelid": {
+          "name": "Double Eyelid",
+          "recovery": "7-14 days",
+          "results": "Permanent"
+        },
+        "eye_bag": {
+          "name": "Eye Bag Removal",
+          "recovery": "7-14 days",
+          "results": "5-10 years"
+        },
+        "ptosis": {
+          "name": "Ptosis Correction",
+          "recovery": "14-21 days",
+          "results": "Permanent"
+        },
+        "epicanthoplasty": {
+          "name": "Epicanthoplasty",
+          "recovery": "7-14 days",
+          "results": "Permanent"
+        },
+        "brow_lift": {
+          "name": "Brow Lift",
+          "recovery": "7-14 days",
+          "results": "3-10 years"
+        },
+        "dark_circles": {
+          "name": "Dark Circles",
+          "recovery": "1-3 days",
+          "results": "6-18 months"
+        }
+      },
+      "styles": {
+        "natural": "Natural",
+        "in_fold": "In-Fold",
+        "out_fold": "Out-Fold",
+        "parallel": "Parallel",
+        "tapered": "Tapered"
+      },
+      "settings": {
+        "creaseHeight": "Crease Height",
+        "eyeOpening": "Eye Opening",
+        "eyeBagReduction": "Eye Bag Reduction",
+        "browLiftHeight": "Brow Lift Height",
+        "darkCircleReduction": "Dark Circle Reduction"
+      }
+    },
+    "fillerLipSimulator": {
+      "title": "Filler & Lip Simulator",
+      "subtitle": "Real-time filler injection simulation",
+      "selectArea": "Select treatment area",
+      "compareBeforeAfter": "Compare Before/After",
+      "processing": "Processing...",
+      "estimatedUsage": "Estimated Filler Usage",
+      "estimatedPrice": "Estimated Price",
+      "saveImage": "Save Image",
+      "createProposal": "Create Proposal",
+      "before": "Before",
+      "after": "After",
+      "ml": "ml",
+      "tabs": {
+        "volume": "Volume",
+        "product": "Product",
+        "info": "Info"
+      },
+      "controls": {
+        "lipVolume": "Lip Volume",
+        "lipDefinition": "Lip Definition",
+        "cheekVolume": "Cheek Volume",
+        "chinProjection": "Chin Projection",
+        "noseBridgeHeight": "Nose Bridge Height"
+      },
+      "areas": {
+        "lips": {
+          "name": "Lips",
+          "recovery": "3-5 days",
+          "results": "6-12 months"
+        },
+        "cheeks": {
+          "name": "Cheeks",
+          "recovery": "3-7 days",
+          "results": "12-18 months"
+        },
+        "chin": {
+          "name": "Chin",
+          "recovery": "3-5 days",
+          "results": "12-18 months"
+        },
+        "nose": {
+          "name": "Nose",
+          "recovery": "1-3 days",
+          "results": "12-18 months"
+        },
+        "nasolabial": {
+          "name": "Nasolabial Folds",
+          "recovery": "2-5 days",
+          "results": "9-12 months"
+        },
+        "undereye": {
+          "name": "Under Eye",
+          "recovery": "5-7 days",
+          "results": "9-12 months"
+        }
+      },
+      "selectProduct": "Select Filler Product",
+      "infoLabels": {
+        "price": "Price",
+        "duration": "Duration",
+        "recovery": "Recovery",
+        "results": "Results"
+      }
+    },
+    "salesMetrics": {
+      "loadError": "Unable to load sales metrics",
+      "fetchError": "Could not load statistics",
+      "unknownError": "An unknown error occurred",
+      "retry": "Try Again",
+      "refreshing": "Refreshing...",
+      "autoUpdate": "Auto-updates every 5 minutes",
+      "manualRefresh": "Refresh",
+      "mins": "{count} mins",
+      "hours": "{count} hrs"
+    },
+    "chatDrawer": {
+      "title": "Customer Chat",
+      "subtitle": "Real-time communication with your leads",
+      "placeholder": "Type a message...",
+      "send": "Send",
+      "noMessages": "No messages yet. Start the conversation!",
+      "online": "Online",
+      "offline": "Offline"
+    },
+    "customerSegmentation": {
+      "title": "AI Customer Segmentation",
+      "subtitle": "Intelligent lead categorization and targeting",
+      "analyzeButton": "Perform Segmentation",
+      "analyzing": "Analyzing...",
+      "stats": {
+        "groupCount": "Group Count",
+        "diversity": "Diversity",
+        "targetingEfficiency": "Targeting Efficiency",
+        "conversionLift": "Conversion Lift"
+      },
+      "tabs": {
+        "segments": "Customer Segments",
+        "insights": "Insights",
+        "distribution": "Distribution"
+      },
+      "card": {
+        "conversionRate": "Conversion Rate",
+        "avgValue": "Average Value",
+        "characteristics": "Key Characteristics",
+        "strategy": "Recommended Strategy",
+        "count": "{count} customers"
+      },
+      "insightsTab": {
+        "title": "Intelligent Insights",
+        "recommendations": "Recommendations"
+      },
+      "distributionTab": {
+        "title": "Segment Distribution",
+        "subtitle": "Number of customers per segment"
+      },
+      "empty": {
+        "title": "Ready for Segmentation",
+        "description": "Click \"Perform Segmentation\" to let AI analyze and categorize your customers"
+      }
+    },
+    "emailComposer": {
+      "title": "Email Composer",
+      "sendEmail": "Send Email to Customer",
+      "selectTemplate": "Select Template (Optional)",
+      "templatePlaceholder": "-- Select Template --",
+      "usageCount": "Used {count} times",
+      "recipient": "Recipient",
+      "subject": "Subject",
+      "subjectPlaceholder": "Email subject",
+      "content": "Content",
+      "contentPlaceholder": "Email content...",
+      "availableVariables": "Available variables:",
+      "preview": "Email Preview",
+      "to": "To:",
+      "subjectLabel": "Subject:",
+      "sending": "Sending...",
+      "send": "Send Email",
+      "showPreview": "Show Preview",
+      "hidePreview": "Hide Preview",
+      "note": "Note:",
+      "noteDescription": "Emails will be recorded in the system and open/click status can be tracked.",
+      "loadError": "Failed to load templates",
+      "fillRequired": "Please fill in all required fields",
+      "sendSuccess": "Email sent successfully!",
+      "sendSuccessDesc": "Sent to {email}",
+      "sendError": "Failed to send email",
+      "sendErrorDesc": "Please try again"
+    },
+    "leadConversionOptimizer": {
+      "title": "Lead Conversion Optimizer",
+      "subtitle": "AI-powered sales conversion strategy",
+      "probability": "Conversion Probability",
+      "concerns": "Customer Concerns",
+      "recommendations": "Recommended Actions",
+      "scripts": "Suggested Scripts",
+      "copyScript": "Copy Script",
+      "noLead": "No lead selected for optimization",
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "veryHigh": "Very High",
+      "actions": {
+        "followup": {
+          "title": "Follow-up Call",
+          "description": "Not contacted for {days} days - should follow up",
+          "script": "Hello {name}, this is [Name] from [Clinic] calling to follow up on your interest in {treatment}. Is now a good time to chat?"
+        },
+        "content": {
+          "title": "Send Extra Content",
+          "description": "Send more information about the interested treatment",
+          "script": "Hello {name} 📸\n\nWe'd like to share some real customer reviews for {treatment}. The results are amazing!\n\n[Attach Before/After]\n\nWould you like to schedule a free consultation? 💕"
+        },
+        "discount": {
+          "title": "Offer Special Promotion",
+          "description": "Customer concerned about price - offer discount or installment",
+          "script": "Dear {name}, we have a special promotion for you:\n\n✅ 20% off for booking today\n✅ 0% installment for 6 months\n✅ Free doctor consultation\n\nWould you like more details?"
+        },
+        "flexible": {
+          "title": "Offer Flexible Timing",
+          "description": "Customer has no time - offer off-hour appointments",
+          "script": "Dear {name}, we understand you're busy.\n\nWe're available:\n📅 Sat-Sun\n🌙 After 6 PM\n⏰ Lunch time 12:00-13:00\n\nWhich slot works best for you?"
+        },
+        "close": {
+          "title": "Close Deal",
+          "description": "High probability! Should call to book date and time",
+          "script": "Dear {name}, based on our chat, it seems {treatment} is exactly what you need.\n\nWe have slots available this Wednesday at XX and Friday at XX.\n\nWhich day is convenient for you? 😊"
+        },
+        "upsell": {
+          "title": "Offer Package Upgrade",
+          "description": "Recommend complementary treatments",
+          "script": "Dear {name}, in addition to {treatment},\n\nmany of our customers also get [XXX] for even better results!\n\nIf you book them together, you'll get a special 15% discount."
+        }
+      },
+      "strategies": "AI Conversion Strategies",
+      "markWon": "Mark Won",
+      "markLost": "Mark Lost"
+    },
+    "liveChat": {
+      "activeChats": "Active Chats",
+      "unread": "{count} unread",
+      "new": "{count} new",
+      "online": "Online",
+      "away": "Away",
+      "typing": "Typing...",
+      "quickResponses": "Quick Responses",
+      "placeholder": "Type a message...",
+      "chat": "Chat",
+      "profile": "Profile",
+      "lastVisit": "Last Visit",
+      "totalSpent": "Total Spent",
+      "notes": "Notes",
+      "premium": "Premium Customer",
+      "regular": "Regular Customer"
+    },
+    "quickProposal": {
+      "title": "AI Proposal Generator",
+      "subtitle": "For: {name}, {age} years",
+      "analysis": "AI Analysis",
+      "topConcern": "Top Concern:",
+      "wrinkles": "Wrinkles",
+      "pigmentation": "Pigmentation",
+      "pores": "Pores",
+      "hydration": "Hydration",
+      "selectPackage": "Select Package (1-Tap)",
+      "aiRecommended": "AI Recommended",
+      "treatmentCount": "{count} treatments",
+      "newPackage": "Select New Package",
+      "preview": "Proposal Preview",
+      "sendMethod": "Choose Send Method (1-Tap)",
+      "sendLine": "Send via LINE",
+      "sendLineDesc": "Send directly to customer",
+      "sendEmail": "Send via Email",
+      "successTitle": "Proposal Sent Successfully! 🎉",
+      "successDesc": "Sent to {name} via {method}",
+      "packageLabel": "Package: {name}",
+      "template": {
+        "greeting": "Hello {name} 😊",
+        "intro": "Based on our analysis, we found your concerns: {concerns}",
+        "recommend": "🎯 **We recommend: {package}**",
+        "includes": "✨ Including:",
+        "price": "💰 Price: {price} Baht",
+        "discount": "🎁 Discount {percent}% = {finalPrice} Baht",
+        "contact": "📞 Contact: 02-123-4567",
+        "walkin": "🏥 Or Walk-in at the clinic",
+        "closing": "Sincerely, ❤️\nAI Beauty Team"
+      }
+    },
+    "bulkCustomerImport": {
+      "dialogTitle": "Bulk Customer Import",
+      "dialogDescription": "Upload a CSV file to import multiple customers at once.",
+      "instructions": {
+        "csvCols": "Required columns: name, email, phone (optional)",
+        "maxLimit": "Maximum 500 rows per upload"
+      },
+      "download": {
+        "button": "Download Template"
+      },
+      "upload": {
+        "dropzone": "Drag and drop CSV file here or click to choose",
+        "choose": "Choose File"
+      },
+      "preview": {
+        "validRows": "{count} valid rows found",
+        "more": "And {count} more...",
+        "sending": "Importing...",
+        "sendCount": "Import {count} Customers"
+      },
+      "result": {
+        "successful": "Successful",
+        "failed": "Failed",
+        "duplicate": "Duplicates",
+        "failedList": "Failed Items",
+        "successAlert": "Successfully imported {count} customers"
+      },
+      "errors": {
+        "uploadFailed": "Failed to upload file",
+        "found": "{count} errors found",
+        "rowError": "Row {row}: {message}"
+      }
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "available": "{count} Available",
+      "powerActions": "Power Actions",
+      "clinicSettings": "Clinic Settings & Configuration",
+      "advancedAnalytics": "Advanced Analytics & Insights",
+      "recentActivity": "Recent Activity",
+      "urgent": "urgent",
+      "active": "active",
+      "activity": {
+        "newCustomer": "New customer \"{name}\" booked {treatment}",
+        "targetAchieved": "Revenue target achieved for the month ({percent})",
+        "hotLeadsFollowup": "{count} hot leads require immediate follow-up"
+      },
+      "actions": {
+        "viewCustomers": {
+          "title": "View All Customers",
+          "description": "Browse customer database and profiles"
+        },
+        "generateReport": {
+          "title": "Generate Report",
+          "description": "Create monthly performance report"
+        },
+        "contactLeads": {
+          "title": "Contact Hot Leads",
+          "description": "Reach out to high-potential customers"
+        },
+        "scheduleAppointments": {
+          "title": "Schedule Appointments",
+          "description": "Manage booking calendar"
+        },
+        "liveChat": {
+          "title": "Live Chat",
+          "description": "Monitor customer conversations"
+        },
+        "analyticsDashboard": {
+          "title": "Analytics Dashboard",
+          "description": "Deep dive into performance metrics"
+        },
+        "exportData": {
+          "title": "Export Data",
+          "description": "Download customer and sales data"
+        },
+        "importCustomers": {
+          "title": "Import Customers",
+          "description": "Bulk import customer information"
+        }
+      }
+    },
+    "livePipeline": {
+      "title": "🔥 Hot Leads Pipeline",
+      "performance": "📊 Pipeline Overview",
+      "empty": "No hot leads at the moment",
+      "emptyDesc": "Contact new customers to create opportunities",
+      "justNow": "Just now",
+      "minsAgo": "{count} mins ago",
+      "hoursAgo": "{count} hours ago",
+      "daysAgo": "{count} days ago",
+      "potential": "Potential",
+      "viewLead": "View Lead",
+      "averageDeal": "Average deal size",
+      "status": {
+        "hot": "🔥 Hot Lead",
+        "warm": "🌡️ Warm Lead",
+        "new": "🆕 New Lead",
+        "unknown": "Unknown"
+      }
+    },
+    "staffAvailability": {
+      "title": "Staff Today",
+      "viewAll": "View All",
+      "available": "Available",
+      "busy": "Busy",
+      "onLeave": "On Leave",
+      "offline": "Offline",
+      "patientsCount": "👥 {count} patients",
+      "noStaff": "No staff members in the system",
+      "error": "Failed to load staff data",
+      "roles": {
+        "doctor": "👨‍⚕️ Doctor",
+        "nurse": "👩‍⚕️ Nurse",
+        "therapist": "💆 Therapist",
+        "admin": "👔 Manager",
+        "receptionist": "📋 Receptionist"
+      }
+    },
+    "performanceCards": {
+      "revenue": "Today's Revenue",
+      "customers": "New Customers",
+      "bookings": "Bookings Today",
+      "conversion": "Conversion Rate",
+      "vsYesterday": "vs yesterday",
+      "error": "Failed to load performance metrics. Please try again."
+    },
+    "revenueChart": {
+      "title": "Revenue Trends (This Month)",
+      "targetAchieved": "🎯 Target Achieved",
+      "onTrack": "📈 On Track",
+      "ofTarget": "{percent}% of target",
+      "empty": "No revenue data this month yet",
+      "emptyDesc": "Data will appear when there are bookings or payments",
+      "revenue": "Revenue",
+      "target": "Target",
+      "bestDay": "Best Day",
+      "dailyAverage": "Daily Average",
+      "vsTarget": "vs Target",
+      "error": "Failed to load revenue chart. Please try again."
+    },
+    "recentActivity": {
+      "title": "Recent Activity",
+      "empty": "No recent activity",
+      "error": "Failed to load activity data",
+      "justNow": "Just now",
+      "types": {
+        "booking": "Booking",
+        "customer": "Customer",
+        "inventory": "Inventory",
+        "staff": "Staff",
+        "revenue": "Revenue",
+        "other": "Other"
+      }
+    },
+    "topTreatments": {
+      "title": "🏆 Top Performing Treatments",
+      "performance": "📊 Treatment Performance",
+      "thisMonth": "This Month",
+      "empty": "No treatment data yet",
+      "emptyDesc": "Data will appear when there are bookings",
+      "bookings": "{count} bookings",
+      "revenue": "Revenue Distribution",
+      "growth": "🚀 Growth Leaders",
+      "rating": "⭐ Average Rating",
+      "reviews": "Based on {count} customer reviews",
+      "error": "Failed to load treatments. Please try again."
+    },
+    "sales": {
+      "title": "Sales Dashboard",
+      "subtitle": "Manage customers and track your sales",
+      "stats": {
+        "hotLeadsToday": "Hot Leads Today",
+        "revenueMonth": "Revenue This Month",
+        "conversionRate": "Conversion Rate",
+        "pendingMessages": "Pending Messages",
+        "fromYesterday": "{count} from yesterday",
+        "fromLastMonth": "{percent} from last month",
+        "respondWithin": "Respond within 1 hr"
+      },
+      "actions": {
+        "hotLeads": "Hot Leads",
+        "hotLeadsDesc": "Customers with high Lead Score, ready to contact",
+        "hotLeadsCount": "{count} customers with Lead Score > 80 waiting",
+        "viewAllHotLeads": "View All Hot Leads",
+        "messages": "Customer Messages",
+        "messagesDesc": "Chat with customers in real-time",
+        "messagesCount": "{count} new messages waiting for reply",
+        "openChat": "Open Chat",
+        "customerList": "Customer List",
+        "customerListDesc": "View and search all customers",
+        "viewList": "View List",
+        "salesReport": "Sales Report",
+        "salesReportDesc": "View statistics and performance",
+        "viewReport": "View Report",
+        "monthlyGoal": "Monthly Goal",
+        "monthlyGoalDesc": "Track progress",
+        "progress": "Progress"
+      },
+      "tips": {
+        "title": "💡 Sales Tips",
+        "item1": "Reply to chat within 5 minutes to increase conversion rate",
+        "item2": "Use Quick Replies for common questions",
+        "item3": "Create AI Proposal for customers to close sales faster",
+        "item4": "Follow-up with customers within 24 hours after analysis"
+      }
+    }
+  },
+  "salesPresentations": {
+    "title": "Presentation History",
+    "subtitle": "All presentation records",
+    "stats": {
+      "total": "Total",
+      "completed": "Completed",
+      "incomplete": "Incomplete",
+      "completionRate": "Completion Rate",
+      "totalValue": "Total Value"
+    },
+    "filters": {
+      "searchPlaceholder": "Search by name, phone, or email...",
+      "allStatus": "All Status",
+      "completed": "Completed",
+      "incomplete": "Incomplete",
+      "sortBy": {
+        "dateDesc": "Date (Newest First)",
+        "dateAsc": "Date (Oldest First)",
+        "valueDesc": "Value (High to Low)",
+        "valueAsc": "Value (Low to High)",
+        "nameAsc": "Name (A-Z)"
+      }
+    },
+    "list": {
+      "showing": "Showing {count} items from {total} total items",
+      "noData": "No data found",
+      "noDataDesc": "Try changing filters or search terms",
+      "empty": "No presentations in the system yet"
+    },
+    "card": {
+      "progress": "Progress",
+      "step": "Step {current}/{total}",
+      "completedAt": "Completed {time}",
+      "createdAt": "Created {time}",
+      "view": "View",
+      "continue": "Continue",
+      "deleteConfirm": "Are you sure you want to delete this presentation?"
+    },
+    "steps": {
+      "customerInfo": "Customer Info",
+      "scan": "Face Scan",
+      "analysis": "AI Analysis",
+      "arPreview": "AR Preview",
+      "products": "Select Products",
+      "proposal": "Create Proposal",
+      "signature": "Sign Contract",
+      "start": "Start"
+    }
+  },
+  "salesQuickScan": {
+    "title": "AI Skin Analysis",
+    "subtitle": "Advanced AI skin analysis with instant results",
+    "customerInfo": "Customer Information",
+    "name": "Customer Name",
+    "namePlaceholder": "Full Name",
+    "phone": "Phone Number",
+    "phonePlaceholder": "08X-XXX-XXXX",
+    "email": "Email",
+    "emailOptional": "Email (Optional)",
+    "emailPlaceholder": "customer@example.com",
+    "confirmInfo": "Confirm Information",
+    "features": {
+      "angles": "3 Angles",
+      "anglesDesc": "360° Analysis",
+      "advanced": "Advanced AI",
+      "advancedDesc": "Gemini 1.5 Flash",
+      "instant": "Instant",
+      "instantDesc": "5 Seconds"
+    },
+    "actions": {
+      "startCamera": "Start Camera Scan",
+      "useUpload": "Use upload mode instead of camera",
+      "uploadFile": "Upload from file",
+      "uploadFileDesc": "Use for computers without a camera",
+      "uploadHint": "💡 Tip: Use a straight face with good lighting for clear AI analysis",
+      "startAnalysis": "Start Analysis",
+      "analyzing": "Analyzing with AI...",
+      "capture": "Capture Photo",
+      "newScan": "New Scan",
+      "createProposal": "Create Proposal"
+    },
+    "scanning": {
+      "front": "Look straight at the camera",
+      "left": "Turn left 45 degrees",
+      "right": "Turn right 45 degrees",
+      "status": "Capturing",
+      "guide": "Place your face within the frame and press capture"
+    },
+    "results": {
+      "skinAgeTitle": "Your Skin Age",
+      "years": "years",
+      "actualAge": "actual age {age} years",
+      "comparison": "Your skin is {diff} years older than your actual age!",
+      "concernsTitle": "Detected Skin Concerns",
+      "eyeArea": "Eye Area",
+      "forehead": "Forehead",
+      "cheeks": "Cheeks"
+    },
+    "guestCustomer": "Guest Customer"
+  },
+  "salesTools": {
+    "title": "AI Sales Tools",
+    "subtitle": "AI tools to boost sales efficiency",
+    "badge": "AI Powered",
+    "stats": {
+      "conversion": "Conversion Rate",
+      "revenue": "Revenue This Month",
+      "leads": "Active Leads",
+      "rating": "Avg Rating",
+      "conversionValue": "+35%",
+      "revenueValue": "฿2.4M",
+      "leadsValue": "89",
+      "ratingValue": "4.8"
+    },
+    "tabs": {
+      "recommendations": "AI Recommendations",
+      "quote": "Quick Quote",
+      "optimizer": "Conversion Optimizer",
+      "recommendShort": "Recommend",
+      "quoteShort": "Quote",
+      "optimizerShort": "Optimizer"
+    },
+    "profile": {
+      "title": "Customer Profile",
+      "age": "Age",
+      "years": "years",
+      "skinType": "Skin Type",
+      "budget": "Budget",
+      "concerns": "Concerns",
+      "update": "Update Profile"
+    },
+    "tips": {
+      "title": "Sales Boosting Tips",
+      "bundle": "Bundle Discount",
+      "bundleDesc": "Offer 3 treatment package 20% off - increases conversion 35%",
+      "urgency": "Urgency Works",
+      "urgencyDesc": "Offer expires today - increases conversion 28%",
+      "installment": "0% Installment",
+      "installmentDesc": "Offer payment plan - reduces price objections by 45%",
+      "consult": "Free Consultation",
+      "consultDesc": "Free consultation + Before/After preview increases trust 52%"
+    },
+    "queue": {
+      "title": "Hot Leads Queue",
+      "viewAll": "View All Leads"
+    },
+    "messages": {
+      "quoteSuccess": "Quote for ฿{amount} sent successfully!"
+    },
+    "recommendations": {
+      "title": "AI Smart Recommendations",
+      "subtitle": "Recommended treatments for customer",
+      "analyzing": "AI is analyzing...",
+      "processing": "Processing customer data",
+      "topPick": "Top Pick",
+      "resultsLabel": "Results: {text}",
+      "risksLabel": "Risks: {text}",
+      "priceLabel": "฿{amount}",
+      "maintenanceLabel": "Maintenance: {text}",
+      "selectButton": "Select this Treatment",
+      "allCategories": "All",
+      "resultShort": "Res: {text}"
+    },
+    "quote": {
+      "title": "Quick Quote",
+      "subtitle": "Calculate and send quotation",
+      "limitedTime": "Limited Time",
+      "customerName": "Customer Name",
+      "namePlaceholder": "Enter customer name",
+      "treatmentList": "Treatment Items",
+      "add": "Add",
+      "empty": "No items yet",
+      "promoCode": "Promo Code",
+      "promoPlaceholder": "Enter promo code",
+      "applied": "{name} - Save {value}{type}",
+      "availablePromos": "Available Promotions",
+      "subtotal": "Subtotal",
+      "discount": "Discount",
+      "total": "Grand Total",
+      "savings": "Save {amount}",
+      "validUntil": "Special price valid until {date}",
+      "sendQuote": "Send Quote",
+      "promotions": {
+        "firstTime": "New Customer",
+        "bundle3": "Buy 3 Save 20%",
+        "cash": "Cash Discount"
+      }
+    },
+    "optimizer": {
+      "title": "Conversion Optimizer",
+      "subtitle": "Analyze sales opportunities",
+      "probability": "Conversion Probability",
+      "concerns": "Customer Concerns",
+      "recommendActions": "Recommended Actions",
+      "scriptLabel": "Recommended Script:",
+      "copyScript": "Copy Script",
+      "strategies": "AI Conversion Strategies",
+      "markWon": "Mark Won",
+      "markLost": "Mark Lost"
+    },
+    "sources": {
+      "website": "🌐 Website",
+      "facebook": "📘 Facebook",
+      "instagram": "📸 Instagram",
+      "google_ads": "🔍 Google Ads",
+      "referral": "👥 Referral",
+      "walk_in": "🚶 Walk-in",
+      "other": "📋 Other"
+    }
+  },
+  "salesActivityFeed": {
+    "title": "Recent Sales Activities",
+    "latest": "Latest update {time}",
+    "noActivity": "No activities yet",
+    "rangeLabel": "Time Range",
+    "ranges": {
+      "24h": "Last 24 hours",
+      "7d": "Last 7 days",
+      "30d": "Last 30 days",
+      "90d": "Last 90 days"
+    },
+    "refresh": "Refresh",
+    "refreshing": "Refreshing...",
+    "totalActivities": "Total Activities",
+    "uniqueLeads": "Unique Leads",
+    "pendingTask": "Pending Task",
+    "completed": "Completed",
+    "emptyTitle": "No recent activities",
+    "emptyDesc": "Record activities like calls or proposals to see your timeline here.",
+    "errorTitle": "Unable to load activities",
+    "retry": "Try Again",
+    "contactMethod": "Channel",
+    "duration": "Duration",
+    "durationMins": "{mins} mins",
+    "dueDate": "Due Date",
+    "score": "Score"
+  },
+  "aiSalesCompanion": {
+    "title": "AI Sales Companion",
+    "subtitle": "Smart assistant with objection handling",
+    "conversion": "Conversion",
+    "engagement": "Engagement",
+    "objectionHandling": "Objection Handling",
+    "found": "Found",
+    "resolved": "Resolved",
+    "typing": "AI is analyzing...",
+    "placeholder": "Type your message...",
+    "copyScript": "Copy Script",
+    "suggestedScript": "Suggested Script:",
+    "strategy": "Strategy:",
+    "scheduleConsult": "Schedule Consultation",
+    "sendProposal": "Send Proposal",
+    "error": "Sorry, there was a system error. Please try again. 🙏",
+    "welcome": "Hello {name} 👋\n\nThank you for your interest in {interests}.\n\nI am here to assist you in every step. 💕\nHow can I help you today?",
+    "welcomeWithTreatment": "Hello {name} 👋\n\nThank you for your interest in {interests}.\n\nFor **{treatment}**:\n💰 Price: ฿{price}\n🎯 Confidence: {confidence}%\n\nI am here to assist you in every step. 💕\nHow can I help you today?",
+    "responses": {
+      "price": "The price for {treatment} starts at ฿{price}.\n\nWe also have promotions and installment plans available. 💳",
+      "time": "We have various time slots available:\n\n📅 Mon-Fri: 10:00-19:00\n🌅 Sat-Sun: 10:00-18:00\n⏰ Lunch time: 12:00-13:00\n\nWhich day works for you?",
+      "doctor": "Our doctors are certified Dermatology specialists.\n\n✅ Board certified\n✅ 10+ years of experience\n✅ World-class technology\n\nWould you like to see their certificates and work?",
+      "default": "I understand. {message}\n\nWhat would you like more information about?\n• Price & Promotions 💰\n• Treatment Process ⚕️\n• Results & Reviews ⭐\n• Appointments 📅"
+    }
+  },
+  "salesLeads": {
+    "title": "Lead Management",
+    "subtitle": "Track and manage your sales leads",
+    "campaignFilter": "Filter by campaign code...",
+    "captureNew": "Capture New Lead",
+    "searchPlaceholder": "Search by name, phone, or email...",
+    "filterStatus": "Filter by status",
+    "allStatuses": "All Statuses",
+    "filterSource": "Filter by source",
+    "allSources": "All Sources",
+    "stats": {
+      "total": "Total Leads",
+      "hot": "Hot Leads",
+      "won": "Won",
+      "avgScore": "Avg. Score"
+    },
+    "noLeads": "No leads found. Create your first lead to get started.",
+    "table": {
+      "name": "Name",
+      "contact": "Contact",
+      "status": "Status",
+      "score": "Score",
+      "followUp": "Follow-up",
+      "interests": "Interests",
+      "salesStaff": "Sales Staff",
+      "created": "Created",
+      "campaign": "Campaign",
+      "actions": "Actions"
+    },
+    "actions": {
+      "view": "View Details",
+      "edit": "Edit Lead",
+      "mark": "Mark / View"
+    },
+    "pagination": {
+      "showing": "Showing",
+      "to": "to",
+      "of": "of",
+      "leads": "leads",
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "status": {
+      "new": "New",
+      "contacted": "Contacted",
+      "qualified": "Qualified",
+      "proposal_sent": "Proposal Sent",
+      "negotiation": "Negotiation",
+      "won": "Won",
+      "lost": "Lost",
+      "cold": "Cold",
+      "warm": "Warm",
+      "hot": "Hot"
+    },
+    "modal": {
+      "editTitle": "Edit Lead",
+      "addTitle": "Add New Lead",
+      "nameLabel": "Full Name *",
+      "namePlaceholder": "John Doe",
+      "emailLabel": "Email *",
+      "emailPlaceholder": "john@example.com",
+      "phoneLabel": "Phone Number",
+      "phonePlaceholder": "08X-XXX-XXXX",
+      "statusLabel": "Status",
+      "sourceLabel": "Source",
+      "concernLabel": "Interest / Concern",
+      "concernPlaceholder": "e.g., Botox, Wrinkles, Facial",
+      "budgetMinLabel": "Min Budget (฿)",
+      "budgetMaxLabel": "Max Budget (฿)",
+      "preferredDateLabel": "Preferred Appointment Date",
+      "scoreLabel": "Lead Score (0-100)",
+      "notesLabel": "Notes",
+      "notesPlaceholder": "Additional information...",
+      "cancel": "Cancel",
+      "save": "Save Changes",
+      "add": "Add Lead",
+      "updateSuccess": "Lead updated successfully!",
+      "createSuccess": "Lead created successfully!",
+      "saveError": "Failed to save lead"
+    }
+  },
+  "salesProposalGenerator": {
+    "title": "AI Proposal Generator",
+    "customerSelection": "Select Customer",
+    "customerPlaceholder": "Select customer...",
+    "aiRecommendation": "AI Recommendation",
+    "confidenceLabel": "Confidence {percent}%",
+    "concernsLabel": "Concerns: {text}",
+    "packageSelection": "Select Package",
+    "packagePlaceholder": "Select package...",
+    "customMessage": "Custom Message (Optional)",
+    "customMessagePlaceholder": "Add personal message or special conditions...",
+    "generating": "Generating Proposal...",
+    "generateButton": "Generate AI Proposal",
+    "generatedTitle": "Generated Proposal",
+    "emptyState": "Select customer and package to generate proposal",
+    "edit": "Edit",
+    "preview": "Preview",
+    "sendSuccess": "Proposal sent successfully!",
+    "packages": {
+      "basic": {
+        "name": "Basic Package",
+        "description": "Ideal for beginners starting skin care"
+      },
+      "premium": {
+        "name": "Premium Package",
+        "description": "For those seeking visible and sustainable results"
+      },
+      "vip": {
+        "name": "VIP Package",
+        "description": "Complete package for professional care"
+      }
+    },
+    "template": {
+      "greeting": "Dear {name}",
+      "intro": "Based on our skin analysis, we found your concerns: {concerns}",
+      "recommend": "We recommend **{package}** price {price} Baht",
+      "includes": "Including: {items}",
+      "contact": "Contact us at 02-123-4567 or walk-in at the clinic",
+      "closing": "Sincerely,\nAI Beauty Team"
+    }
+  },
+  "hotLeadCard": {
+    "estValue": "Est. Value",
+    "topConcern": "Top Concern",
+    "lastActivity": "Last Activity",
+    "detailedAnalysis": "Detailed Analysis:",
+    "latestNote": "Latest Note",
+    "followupAlert": "Follow-up required: {count} items",
+    "call": "Call",
+    "chat": "Chat",
+    "email": "Email",
+    "arDemo": "AR Demo",
+    "proposal": "Proposal",
+    "viewAllNotes": "View all notes ({count})",
+    "highPriority": "High Priority",
+    "priorityDesc": "Low skin score indicates strong treatment need"
+  },
+  "hotLeadsManager": {
+    "searchPlaceholder": "Search name or treatment...",
+    "status": "Status",
+    "priority": "Priority",
+    "allStatus": "All Statuses",
+    "allPriority": "All Priorities",
+    "listTab": "List",
+    "kanbanTab": "Kanban",
+    "score": "Lead Score: {percent}%",
+    "nextFollowup": "Next Follow-up",
+    "notesLabel": "Notes:",
+    "emptyKanban": "No leads in this stage",
+    "priorities": {
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    }
+  },
+  "salesLeadDetail": {
+    "title": "Lead Details",
+    "leadId": "Lead ID",
+    "addInteraction": "Add Interaction",
+    "createProposal": "Create Proposal",
+    "markAsWon": "Mark as Won",
+    "wonSuccess": "Sale closed successfully (Won)",
+    "wonError": "Failed to close sale",
+    "information": "Lead Information",
+    "status": "Status",
+    "score": "Lead Score",
+    "phone": "Phone",
+    "email": "Email",
+    "interestedTreatments": "Interested Treatments",
+    "budgetRange": "Budget Range",
+    "interactionHistory": "Interaction History",
+    "interactionsCount": "{count} interactions recorded",
+    "noInteractions": "No interactions recorded yet",
+    "updateLead": "Update Lead",
+    "followUpDate": "Follow-up Date",
+    "notes": "Notes",
+    "updating": "Updating...",
+    "details": "Details",
+    "salesStaff": "Sales Staff",
+    "created": "Created",
+    "dialog": {
+      "title": "Add Interaction",
+      "description": "Record a new interaction with this lead",
+      "type": "Type",
+      "selectType": "Select type",
+      "types": {
+        "call": "Phone Call",
+        "email": "Email",
+        "meeting": "Meeting",
+        "note": "Note",
+        "task": "Task"
+      },
+      "subject": "Subject",
+      "subjectPlaceholder": "Interaction subject",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "What did you discuss?"
+    },
+    "messages": {
+      "proposalSuccess": "Proposal created successfully",
+      "proposalError": "Failed to create proposal",
+      "updateSuccess": "Lead updated successfully",
+      "updateError": "Failed to update lead",
+      "interactionSuccess": "Interaction recorded successfully",
+      "interactionError": "Failed to record interaction",
+      "subjectRequired": "Subject is required",
+      "descriptionRequired": "Description is required"
+    }
+  },
+  "salesArTools": {
+    "title": "AR Sales Tools",
+    "mobileTitle": "AR Tools",
+    "subtitle": "Result simulation tools for sales team",
+    "selectTool": "Select Tool",
+    "customerPhoto": "Customer Photo",
+    "changePhoto": "Change Photo",
+    "uploadPhoto": "Upload Photo",
+    "formats": "JPG, PNG",
+    "uploadPrompt": "Upload Customer Photo",
+    "uploadDesc": "Upload customer photo to simulate results",
+    "selectPhoto": "Select Photo",
+    "proposal": "Proposal",
+    "change": "Change",
+    "generatingProposal": "Generating proposal...",
+    "tools": {
+      "skin": {
+        "name": "Skin Analysis",
+        "description": "AI 8-mode skin analysis",
+        "title": "AI Skin Analysis",
+        "desc": "Use full-scale AI skin analysis system",
+        "action": "Go to Skin Analysis"
+      },
+      "filler": {
+        "name": "Filler & Lips",
+        "description": "Lip augmentation simulator"
+      },
+      "body": {
+        "name": "Body Contouring",
+        "description": "Fat reduction preview"
+      },
+      "hair": {
+        "name": "Hair Restoration",
+        "description": "Hair transplant preview"
+      },
+      "eye": {
+        "name": "Eye Enhancement",
+        "description": "Double eyelid simulator"
+      }
+    }
   },
   "perf": {
     "fps": "FPS",
@@ -964,35 +3337,186 @@
     "customer": "Customer",
     "clinic_owner": "Clinic Owner",
     "sales_staff": "Sales Staff",
-    "super_admin": "Super Admin"
+    "super_admin": "Super Admin",
+    "clinic_admin": "Clinic Admin",
+    "clinic_staff": "Clinic Staff",
+    "premium_customer": "Premium Customer",
+    "free_user": "Free User",
+    "public": "Public"
   },
   "analysis": {
     "title": "AI Skin Analysis",
     "subtitle": "Upload a photo or take a selfie to get instant skin analysis",
     "report": "Report",
+    "heroBadge": "Next-Gen Diagnostic",
+    "description": "Utilizing high-precision computer vision to map 468 facial landmarks and detect dermatological patterns in real-time.",
+    "authNow": "Authenticate Now",
     "3dView": "3D View",
     "simulator": "Simulator",
     "backToHistory": "Back to History",
     "notFound": "Analysis not found",
     "loading": "Loading analysis...",
-    "error": "Failed to load analysis"
+    "error": "Failed to load analysis",
+    "mode": "Mode",
+    "switchHint": "Switch anytime without leaving the page.",
+    "advanced": "Advanced",
+    "analyzeAnother": "Analyze Another Photo",
+    "backToHome": "Back to Home",
+    "language": "Language",
+    "presentationMode": "Sales Presentation",
+    "compareProgress": "Compare Progress",
+    "priorities": "Priorities",
+    "recommendations": "Recommendations",
+    "modes": {
+      "local": {
+        "label": "Local Only",
+        "description": "Runs computer vision algorithms without external AI providers."
+      },
+      "hf": {
+        "label": "AI Enhanced",
+        "description": "Prefers Hugging Face inference for deeper AI insights."
+      },
+      "auto": {
+        "label": "Auto",
+        "description": "Chooses the fastest available provider and falls back to local if needed."
+      }
+    },
+    "trialMode": {
+      "badge": "Trial Mode Active",
+      "title": "Trial Mode Active",
+      "description": "You are currently in guest mode. Results will not be archived in your clinical history."
+    },
+    "guidance": {
+      "title": "Optimal Positioning Guide",
+      "items": {
+        "orientation": "Direct facial orientation",
+        "radius": "Maintain 30-50cm radius",
+        "tension": "Neutral muscle tension",
+        "optical": "Remove optical wear"
+      }
+    },
+    "reportTypes": {
+      "clinical": "Clinical Diagnostic Report",
+      "intelligence": "Analysis Intelligence"
+    },
+    "metrics": {
+      "globalIndex": "Global Wellness Index",
+      "aggregate": "Aggregate",
+      "clinicalClassification": "Clinical Classification",
+      "multiSpectrum": "Multi-Spectrum Visualization",
+      "synthesisActive": "8-Mode Synthesis Active",
+      "inputAsset": "Input Asset",
+      "standardRgb": "Standard RGB",
+      "neuralOverlay": "Neural Overlay",
+      "crossSpectrum": "Cross-Spectrum",
+      "pendingSynthesis": "Synthesis Layer Not Persistent",
+      "calibrating": "CALIBRATING...",
+      "initSynthesis": "INITIALIZE SYNTHESIS",
+      "healthIndex": "Health Index",
+      "coverage": "Coverage",
+      "rawCount": "Raw Count",
+      "subMetricScore": "Sub-Metric Score",
+      "fullPortfolio": "Full Metric Portfolio Analysis",
+      "portfolioDesc": "Deep-dive assessment into granular skin health indicators."
+    },
+    "tabs": {
+      "summary": "Executive Summary",
+      "portfolio": "Metric Portfolio",
+      "protocol": "Treatment Protocol"
+    },
+    "protocols": {
+      "interventions": "Clinical Interventions",
+      "regimen": "Homecare Regimen",
+      "optimization": "Biometric Optimization",
+      "pendingTitle": "Synthesis Layer Pending",
+      "pendingDesc": "Neural engine requires additional calibration to generate personalized treatment protocols for this specific profile.",
+      "retry": "Retry Synthesis",
+      "noData": "No data mapped"
+    },
+    "footer": {
+      "disclaimerTitle": "Clinical Screening Disclaimer",
+      "disclaimerDesc": "This diagnostic summary utilizes proprietary computer vision algorithms for informational assessment only. Results are not medical diagnoses. Full clinical verification by a board-certified professional is required before initiating medical interventions.",
+      "verified": "Verified by Beauty Intelligence Engine v4.2"
+    },
+    "bestPractices": {
+      "title": "Clinical Best Practices",
+      "items": {
+        "illumination": {
+          "title": "Neutral Illumination",
+          "desc": "Ensure even lighting without harsh shadows for optimal pattern detection."
+        },
+        "preparation": {
+          "title": "Surface Preparation",
+          "desc": "Clean skin surface from heavy cosmetics or optical obstructions."
+        },
+        "consistency": {
+          "title": "Temporal Consistency",
+          "desc": "Perform assessments at similar times of day for accurate longitudinal tracking."
+        },
+        "verification": {
+          "title": "Expert Verification",
+          "desc": "AI results serve as a decision-support tool for clinical consultation."
+        }
+      }
+    },
+    "multiMode": {
+      "title": "Multi-Mode Skin Analysis",
+      "subtitle": "8-Mode Comprehensive Analysis",
+      "description": "A comprehensive facial analysis system using AI and Computer Vision, displaying results in 8 different modes for detailed and accurate assessment.",
+      "uploadTitle": "Upload Image",
+      "useRealApi": "🚀 Use Real AI Analysis (Python FastAPI)",
+      "usingMockData": "(Currently using mock data)",
+      "analyzingState": "🔬 AI is analyzing your image...",
+      "useSampleBelow": "Or use sample image below",
+      "chooseImage": "Choose Image",
+      "analyzing": "Analyzing...",
+      "spotsDetected": "Spots Detected",
+      "wrinklesDetected": "Wrinkles Detected",
+      "poresDetected": "Pores Detected",
+      "redAreas": "Red Areas",
+      "techTitle": "🔬 Technology Stack",
+      "techItems": {
+        "cv": "Computer Vision: 6 algorithms for spots, pores, wrinkles, texture, color, redness",
+        "ai": "AI Analysis: Hugging Face + Google Vision + Gemini 2.0",
+        "uv": "UV Detection: Spectral analysis for sub-surface spots",
+        "porphyrins": "Porphyrins Detection: Fluorescence detection for bacteria"
+      }
+    }
   },
   "booking": {
     "title": "Book Appointment",
+    "subtitle": "Schedule your consultation or treatment with our expert team",
     "selectDoctor": "Select Doctor",
     "selectTreatment": "Select Treatment",
     "selectDate": "Select Date",
     "selectTime": "Select Time",
+    "chooseDate": "Choose Date",
+    "chooseTime": "Choose Time",
     "patientInfo": "Patient Information",
+    "firstName": "First Name",
+    "lastName": "Last Name",
     "name": "Full Name",
     "email": "Email Address",
     "phone": "Phone Number",
     "notes": "Additional Notes",
+    "notesPlaceholder": "Any specific concerns or questions...",
+    "optional": "Optional",
     "payment": "Payment",
     "paymentMethod": "Payment Method",
-    "bookingConfirmed": "Booking Confirmed!",
-    "bookingFailed": "Booking Failed",
+    "confirm": "Confirm Booking",
+    "confirming": "Creating Booking...",
+    "bookAnother": "Book Another Appointment",
+    "success": {
+      "title": "Booking Confirmed!",
+      "description": "Your appointment has been scheduled. We've sent a confirmation email with all the details."
+    },
+    "details": {
+      "date": "Date",
+      "time": "Time",
+      "treatment": "Treatment"
+    },
     "treatments": {
+      "consultation": "Free Consultation",
       "botox": "Botox Injection",
       "filler": "Dermal Filler",
       "laser": "Laser Treatment",
@@ -1003,8 +3527,16 @@
       "acne_treatment": "Acne Treatment",
       "pigmentation": "Pigmentation Treatment",
       "anti_aging": "Anti-Aging Treatment",
-      "skin_tightening": "Skin Tightening"
+      "skin_tightening": "Skin Tightening",
+      "peel": "Chemical Peel",
+      "microneedling": "Microneedling"
     },
+    "duration": {
+      "min30": "30 min",
+      "min45": "45 min",
+      "min60": "60 min"
+    },
+    "priceFree": "Free",
     "status": {
       "pending": "Pending",
       "confirmed": "Confirmed",
@@ -1163,6 +3695,94 @@
     "deleteSuccess": "Deleted successfully",
     "deleteError": "Failed to delete",
     "deleteConfirm": "Are you sure you want to delete this item?"
+  },
+  "revenue": {
+    "title": "Revenue Executive Summary",
+    "subtitle": "Consolidated financial reporting and AI-powered revenue projections for clinic operations.",
+    "activePeriod": "Active period:",
+    "periods": {
+      "7d": "Last 7 Days",
+      "30d": "Last 30 Days",
+      "90d": "Last Quarter"
+    },
+    "export": {
+      "pdf": "Export PDF",
+      "excel": "Raw Data (.xlsx)",
+      "success": "Export Success",
+      "csvDownloaded": "CSV report downloaded successfully"
+    },
+    "auditReport": "Revenue Audit Report",
+    "enterpriseCloud": "Beauty with AI Precision - Enterprise Cloud",
+    "metrics": {
+      "totalRevenue": "Total Gross Revenue",
+      "confirmedBookings": "Confirmed Bookings",
+      "avgTransactionValue": "Avg. Transaction Value",
+      "clientRetention": "Client Retention",
+      "operationalCycle": "Operational cycle",
+      "ticketYield": "Ticket yield",
+      "uniquePayors": "Unique payors",
+      "delta": "delta"
+    },
+    "tabs": {
+      "momentum": "Revenue Momentum",
+      "inflow": "Capital Inflow Type",
+      "utilization": "Service Utilization",
+      "realtimeActive": "Real-time Data Streaming active"
+    },
+    "dynamics": {
+      "title": "Revenue Dynamics Portfolio",
+      "desc": "Temporal analysis of gross revenue against booking volume.",
+      "grossRevenue": "Gross Revenue",
+      "cycleVolume": "Cycle Volume"
+    },
+    "table": {
+      "timeline": "Timeline",
+      "revenueAttributed": "Revenue Attributed",
+      "volume": "Volume"
+    },
+    "optimization": {
+      "title": "Inflow Optimization",
+      "desc": "Analysis of capital inflow by settlement channel.",
+      "grossFlow": "Gross Flow"
+    },
+    "performance": {
+      "title": "Channel Performance",
+      "transactionsVerified": "Transactions Verified",
+      "yield": "Yield:"
+    },
+    "operational": {
+      "throughput": "Analytical Throughput",
+      "efficiency": "Service Completion Efficiency",
+      "velocity": "Payment Capture Velocity",
+      "historicalLoad": "Historical load",
+      "executionRate": "Execution rate",
+      "cashflowHealth": "Cashflow health",
+      "statusMatrix": "Operational Status Matrix",
+      "statusIndex": "Status Composition Index",
+      "operationalCycles": "Operational Cycles"
+    },
+    "loading": "Loading revenue report...",
+    "errors": {
+      "loadAppointments": "Failed to load appointment data",
+      "loadRevenue": "Failed to load revenue data"
+    },
+    "financialIntelligence": "Financial Intelligence",
+    "csv": {
+      "reportTitle": "Revenue Report",
+      "periodLabel": "Period:",
+      "summary": "Summary",
+      "dailyRevenue": "Daily Revenue",
+      "paymentMethods": "Payment Methods",
+      "columns": {
+        "date": "Date",
+        "revenue": "Revenue",
+        "bookings": "Bookings",
+        "method": "Method",
+        "amount": "Amount",
+        "count": "Count",
+        "average": "Average"
+      }
+    }
   },
   "founders-clone": {
     "meta": {

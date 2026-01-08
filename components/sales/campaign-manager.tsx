@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useTranslations } from 'next-intl';
 import {
   Mail,
   MessageSquare,
@@ -32,6 +33,7 @@ interface CampaignManagerProps {
 }
 
 export function CampaignManager({ leads = [], onCampaignCreated }: CampaignManagerProps) {
+  const t = useTranslations();
   const [selectedLead, setSelectedLead] = useState<LeadData | null>(null);
   const [leadScore, setLeadScore] = useState<AIScoreResult | null>(null);
   const [generatedCampaign, setGeneratedCampaign] = useState<GeneratedCampaign | null>(null);
@@ -176,8 +178,8 @@ export function CampaignManager({ leads = [], onCampaignCreated }: CampaignManag
                 <Sparkles className="w-5 h-5 text-white" />
               </div>
               <div>
-                <CardTitle>AI Campaign Generator</CardTitle>
-                <p className="text-sm text-gray-600">สร้างแคมเปญการตลาดส่วนบุคคลด้วย AI</p>
+                <CardTitle>{t('salesProposalGenerator.title')}</CardTitle>
+                <p className="text-sm text-gray-600">{t('salesTools.subtitle')}</p>
               </div>
             </div>
           </div>
@@ -189,7 +191,7 @@ export function CampaignManager({ leads = [], onCampaignCreated }: CampaignManag
         <div className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">เลือก Lead</CardTitle>
+              <CardTitle className="text-lg">{t('salesProposalGenerator.customerSelection')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               {leads.map((lead) => (
@@ -214,11 +216,11 @@ export function CampaignManager({ leads = [], onCampaignCreated }: CampaignManag
                         'bg-gray-100 text-gray-800'
                       }
                     >
-                      {lead.status === 'hot' ? 'Hot' : lead.status === 'warm' ? 'Warm' : 'Cold'}
+                      {lead.status === 'hot' ? t('salesLeads.status.hot') : lead.status === 'warm' ? t('salesLeads.status.warm') : t('salesLeads.status.cold')}
                     </Badge>
                   </div>
                   <div className="mt-2 text-xs text-gray-500">
-                    Interests: {lead.interests.join(', ')}
+                    {t('salesLeads.table.interests')}: {lead.interests.join(', ')}
                   </div>
                 </div>
               ))}
@@ -231,14 +233,14 @@ export function CampaignManager({ leads = [], onCampaignCreated }: CampaignManag
           {isGenerating ? (
             <Card className="p-12 text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
-              <p className="text-gray-600">กำลังสร้างแคมเปญส่วนบุคคล...</p>
+              <p className="text-gray-600">{t('salesProposalGenerator.generating')}</p>
             </Card>
           ) : generatedCampaign ? (
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
               <TabsList>
-                <TabsTrigger value="create">แคมเปญหลัก</TabsTrigger>
-                <TabsTrigger value="variants">ตัวเลือก A/B</TabsTrigger>
-                <TabsTrigger value="insights">ข้อมูลเชิงลึก</TabsTrigger>
+                <TabsTrigger value="create">{t('campaignManager.listTab')}</TabsTrigger>
+                <TabsTrigger value="variants">{t('campaignManager.optimizerTab')}</TabsTrigger>
+                <TabsTrigger value="insights">{t('campaignManager.insightsTab')}</TabsTrigger>
               </TabsList>
 
               <TabsContent value="create" className="space-y-4">
@@ -249,16 +251,12 @@ export function CampaignManager({ leads = [], onCampaignCreated }: CampaignManag
                       <div className="flex items-center gap-2">
                         <Badge className={getChannelColor(generatedCampaign.type)}>
                           {getChannelIcon(generatedCampaign.type)}
-                          {generatedCampaign.type === 'email' ? 'อีเมล' :
+                          {generatedCampaign.type === 'email' ? t('salesLeadDetail.dialog.types.email') :
                            generatedCampaign.type === 'sms' ? 'SMS' :
-                           generatedCampaign.type === 'social' ? 'โซเชียล' : 'อื่นๆ'}
+                           generatedCampaign.type === 'social' ? (t('nav.socialTool') || 'Social') : t('salesLeadDetail.dialog.types.note')}
                         </Badge>
                         <Badge variant="outline">
-                          {generatedCampaign.category === 'welcome' ? 'ต้อนรับ' :
-                           generatedCampaign.category === 'nurture' ? 'พัฒนา' :
-                           generatedCampaign.category === 'conversion' ? 'เปลี่ยนใจ' :
-                           generatedCampaign.category === 'retention' ? 'รักษา' :
-                           generatedCampaign.category === 'upsell' ? 'ขายเพิ่ม' : 'เรียกคืน'}
+                          {t(`campaignManager.categories.${generatedCampaign.category}` as any)}
                         </Badge>
                       </div>
                     </div>
@@ -271,7 +269,7 @@ export function CampaignManager({ leads = [], onCampaignCreated }: CampaignManag
                         <div className="text-lg font-bold text-blue-600">
                           {generatedCampaign.expectedResponseRate}%
                         </div>
-                        <div className="text-xs text-blue-600">อัตราการตอบสนอง</div>
+                        <div className="text-xs text-blue-600">{t('salesTools.stats.conversion')}</div>
                       </div>
 
                       <div className="text-center p-3 bg-green-50 rounded-lg">
@@ -279,7 +277,7 @@ export function CampaignManager({ leads = [], onCampaignCreated }: CampaignManag
                         <div className="text-lg font-bold text-green-600">
                           ฿{generatedCampaign.estimatedValue.toLocaleString()}
                         </div>
-                        <div className="text-xs text-green-600">มูลค่าคาดการณ์</div>
+                        <div className="text-xs text-green-600">{t('salesDashboard.metrics.attribution')}</div>
                       </div>
 
                       <div className="text-center p-3 bg-purple-50 rounded-lg">
@@ -287,7 +285,7 @@ export function CampaignManager({ leads = [], onCampaignCreated }: CampaignManag
                         <div className="text-lg font-bold text-purple-600">
                           {generatedCampaign.followUpSequence.length}
                         </div>
-                        <div className="text-xs text-purple-600">Follow-ups</div>
+                        <div className="text-xs text-purple-600">{t('salesLeads.table.followUp')}</div>
                       </div>
 
                       <div className="text-center p-3 bg-orange-50 rounded-lg">
@@ -295,7 +293,7 @@ export function CampaignManager({ leads = [], onCampaignCreated }: CampaignManag
                         <div className="text-lg font-bold text-orange-600">
                           {leadScore?.conversionProbability.toFixed(0)}%
                         </div>
-                        <div className="text-xs text-orange-600">โอกาสขาย</div>
+                        <div className="text-xs text-orange-600">{t('salesTools.optimizer.probability')}</div>
                       </div>
                     </div>
 
@@ -303,7 +301,7 @@ export function CampaignManager({ leads = [], onCampaignCreated }: CampaignManag
                     <div className="space-y-4">
                       {generatedCampaign.subjectLine && (
                         <div>
-                          <label className="text-sm font-medium text-gray-700">หัวข้อ</label>
+                          <label className="text-sm font-medium text-gray-700">{t('salesLeadDetail.dialog.subject')}</label>
                           <div className="mt-1 p-3 bg-gray-50 rounded-lg">
                             {generatedCampaign.subjectLine}
                           </div>
@@ -312,7 +310,7 @@ export function CampaignManager({ leads = [], onCampaignCreated }: CampaignManag
 
                       {generatedCampaign.headline && (
                         <div>
-                          <label className="text-sm font-medium text-gray-700">หัวเรื่อง</label>
+                          <label className="text-sm font-medium text-gray-700">{t('salesLeadDetail.dialog.subject')}</label>
                           <div className="mt-1 p-3 bg-gray-50 rounded-lg font-medium">
                             {generatedCampaign.headline}
                           </div>
@@ -320,7 +318,7 @@ export function CampaignManager({ leads = [], onCampaignCreated }: CampaignManag
                       )}
 
                       <div>
-                        <label className="text-sm font-medium text-gray-700">เนื้อหา</label>
+                        <label className="text-sm font-medium text-gray-700">{t('salesLeadDetail.dialog.descriptionLabel')}</label>
                         <div className="mt-1 p-4 bg-gray-50 rounded-lg whitespace-pre-wrap text-sm">
                           {generatedCampaign.content}
                         </div>
@@ -328,19 +326,17 @@ export function CampaignManager({ leads = [], onCampaignCreated }: CampaignManag
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          <label className="text-sm font-medium text-gray-700">Call-to-Action</label>
+                          <label className="text-sm font-medium text-gray-700">{t('salesTools.tips.urgency')}</label>
                           <div className="mt-1 p-3 bg-green-50 border border-green-200 rounded-lg">
                             <div className="font-medium text-green-800">{generatedCampaign.callToAction.text}</div>
                             <div className="text-xs text-green-600 mt-1">
-                              ประเภท: {generatedCampaign.callToAction.type === 'button' ? 'ปุ่ม' :
-                                     generatedCampaign.callToAction.type === 'link' ? 'ลิงก์' :
-                                     generatedCampaign.callToAction.type === 'phone' ? 'โทร' : 'นัดหมาย'}
+                              {t('salesLeadDetail.dialog.type')}: {t(`campaignManager.ctaTypes.${generatedCampaign.callToAction.type}` as any)}
                             </div>
                           </div>
                         </div>
 
                         <div>
-                          <label className="text-sm font-medium text-gray-700">องค์ประกอบส่วนบุคคล</label>
+                          <label className="text-sm font-medium text-gray-700">{t('salesTools.profile.concerns')}</label>
                           <div className="mt-1 flex flex-wrap gap-1">
                             {generatedCampaign.personalizationElements.map((element, idx) => (
                               <Badge key={idx} variant="outline" className="text-xs">
@@ -356,18 +352,18 @@ export function CampaignManager({ leads = [], onCampaignCreated }: CampaignManag
                     <div className="flex gap-3 pt-4 border-t">
                       <Button className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600">
                         <Send className="w-4 h-4 mr-2" />
-                        ส่งแคมเปญ
+                        {t('salesWizard.steps.summary.sendEmail')}
                       </Button>
                       <Button variant="outline" onClick={generateABVariants} disabled={isOptimizing}>
                         {isOptimizing ? (
                           <>
                             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-purple-600 mr-2"></div>
-                            กำลังสร้าง...
+                            {t('salesProposalGenerator.generating')}
                           </>
                         ) : (
                           <>
                             <Target className="w-4 h-4 mr-2" />
-                            สร้าง A/B Test
+                            {t('salesTools.optimizer.strategies')}
                           </>
                         )}
                       </Button>
@@ -383,16 +379,16 @@ export function CampaignManager({ leads = [], onCampaignCreated }: CampaignManag
                       <Card key={index}>
                         <CardHeader>
                           <div className="flex items-center justify-between">
-                            <CardTitle className="text-lg">ตัวเลือก {index + 1}: {variant.name}</CardTitle>
+                            <CardTitle className="text-lg">{t('salesTools.optimizer.strategies')} {index + 1}: {variant.name}</CardTitle>
                             <Badge variant="outline">
-                              คาดการณ์: {variant.expectedPerformance}%
+                              {t('salesTools.optimizer.probability')}: {variant.expectedPerformance}%
                             </Badge>
                           </div>
                         </CardHeader>
                         <CardContent className="space-y-4">
                           {variant.subjectLine && (
                             <div>
-                              <label className="text-sm font-medium text-gray-700">หัวข้อ</label>
+                              <label className="text-sm font-medium text-gray-700">{t('salesLeadDetail.dialog.subject')}</label>
                               <div className="mt-1 p-3 bg-gray-50 rounded-lg">
                                 {variant.subjectLine}
                               </div>
@@ -400,7 +396,7 @@ export function CampaignManager({ leads = [], onCampaignCreated }: CampaignManag
                           )}
 
                           <div>
-                            <label className="text-sm font-medium text-gray-700">เนื้อหา</label>
+                            <label className="text-sm font-medium text-gray-700">{t('salesLeadDetail.dialog.descriptionLabel')}</label>
                             <div className="mt-1 p-4 bg-gray-50 rounded-lg whitespace-pre-wrap text-sm">
                               {variant.content}
                             </div>
@@ -416,9 +412,9 @@ export function CampaignManager({ leads = [], onCampaignCreated }: CampaignManag
                         <Target className="w-8 h-8 text-gray-400" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-medium text-gray-900">ยังไม่มีตัวเลือก A/B</h3>
+                        <h3 className="text-lg font-medium text-gray-900">{t('salesActivityFeed.noActivity')}</h3>
                         <p className="text-gray-600 mt-1">
-                          คลิก "สร้าง A/B Test" เพื่อสร้างตัวเลือกการทดสอบ
+                          {t('salesActivityFeed.emptyDesc')}
                         </p>
                       </div>
                     </div>
@@ -430,7 +426,7 @@ export function CampaignManager({ leads = [], onCampaignCreated }: CampaignManag
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Card>
                     <CardHeader>
-                      <CardTitle className="text-lg">จุดแข็งของแคมเปญ</CardTitle>
+                      <CardTitle className="text-lg">{t('salesTools.tips.title')}</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-2">
                       {generatedCampaign.optimizationSuggestions.slice(0, 3).map((suggestion, idx) => (
@@ -444,7 +440,7 @@ export function CampaignManager({ leads = [], onCampaignCreated }: CampaignManag
 
                   <Card>
                     <CardHeader>
-                      <CardTitle className="text-lg">องค์ประกอบดึงดูด</CardTitle>
+                      <CardTitle className="text-lg">{t('salesTools.tips.urgency')}</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-2">
                       {generatedCampaign.urgencyTriggers.map((trigger, idx) => (
@@ -461,7 +457,7 @@ export function CampaignManager({ leads = [], onCampaignCreated }: CampaignManag
           ) : selectedLead ? (
             <Card className="p-12 text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
-              <p className="text-gray-600">กำลังวิเคราะห์และสร้างแคมเปญ...</p>
+              <p className="text-gray-600">{t('salesProposalGenerator.generating')}</p>
             </Card>
           ) : (
             <Card className="p-12 text-center">
@@ -470,9 +466,9 @@ export function CampaignManager({ leads = [], onCampaignCreated }: CampaignManag
                   <Mail className="w-8 h-8 text-gray-400" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-medium text-gray-900">เลือก Lead เพื่อสร้างแคมเปญ</h3>
+                  <h3 className="text-lg font-medium text-gray-900">{t('salesProposalGenerator.customerSelection')}</h3>
                   <p className="text-gray-600 mt-1">
-                    เลือก Lead จากด้านซ้ายเพื่อให้ AI สร้างแคมเปญการตลาดส่วนบุคคล
+                    {t('campaignManager.emptyState')}
                   </p>
                 </div>
               </div>

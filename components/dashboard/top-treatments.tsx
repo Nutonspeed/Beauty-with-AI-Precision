@@ -19,7 +19,10 @@ interface TreatmentsData {
   totalTreatments: number
 }
 
+import { useTranslations } from "next-intl"
+
 export function TopTreatments() {
+  const t = useTranslations()
   const [data, setData] = useState<TreatmentsData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -74,7 +77,7 @@ export function TopTreatments() {
   if (error || !data) {
     return (
       <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-center">
-        <p className="text-sm text-destructive">Failed to load treatments. Please try again.</p>
+        <p className="text-sm text-destructive">{t('dashboard.topTreatments.error')}</p>
       </div>
     )
   }
@@ -105,15 +108,15 @@ export function TopTreatments() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            🏆 Top Performing Treatments
-            <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">This Month</Badge>
+            {t('dashboard.topTreatments.title')}
+            <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">{t('dashboard.topTreatments.thisMonth')}</Badge>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {topTreatments.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
-              <p>ยังไม่มีข้อมูลทรีตเมนต์</p>
-              <p className="text-sm mt-2">ข้อมูลจะแสดงเมื่อมีการจองบริการ</p>
+              <p>{t('dashboard.topTreatments.empty')}</p>
+              <p className="text-sm mt-2">{t('dashboard.topTreatments.emptyDesc')}</p>
             </div>
           ) : (
             topTreatments.map((treatment, index) => (
@@ -132,7 +135,7 @@ export function TopTreatments() {
                   </div>
                 </div>
                 <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
-                  <span>{treatment.bookings} bookings</span>
+                  <span>{t('dashboard.topTreatments.bookings', { count: treatment.bookings })}</span>
                   <span className="flex items-center gap-1 text-green-600">
                     <TrendingUp className="h-3 w-3" />
                     +{treatment.growth}%
@@ -157,13 +160,13 @@ export function TopTreatments() {
       {/* Treatment Performance Overview */}
       <Card>
         <CardHeader>
-          <CardTitle>📊 Treatment Performance</CardTitle>
+          <CardTitle>{t('dashboard.topTreatments.performance')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
             {/* Revenue Distribution */}
             <div>
-              <h4 className="font-medium mb-4">Revenue Distribution</h4>
+              <h4 className="font-medium mb-4">{t('dashboard.topTreatments.revenue')}</h4>
               <div className="space-y-3">
                 {topTreatments.slice(0, 3).map((treatment) => (
                   <div key={treatment.name} className="flex items-center justify-between">
@@ -186,7 +189,7 @@ export function TopTreatments() {
 
             {/* Growth Leaders */}
             <div>
-              <h4 className="font-medium mb-4">🚀 Growth Leaders</h4>
+              <h4 className="font-medium mb-4">{t('dashboard.topTreatments.growth')}</h4>
               <div className="space-y-2">
                 {topTreatments
                   .sort((a, b) => b.growth - a.growth)
@@ -207,7 +210,7 @@ export function TopTreatments() {
 
             {/* Average Rating */}
             <div>
-              <h4 className="font-medium mb-4">⭐ Average Rating</h4>
+              <h4 className="font-medium mb-4">{t('dashboard.topTreatments.rating')}</h4>
               <div className="flex items-center gap-2">
                 <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
                 <span className="text-lg font-bold">
@@ -216,7 +219,7 @@ export function TopTreatments() {
                 <span className="text-sm text-muted-foreground">/ 5.0</span>
               </div>
               <p className="text-xs text-muted-foreground mt-1">
-                Based on {topTreatments.reduce((sum, t) => sum + t.bookings, 0)} customer reviews
+                {t('dashboard.topTreatments.reviews', { count: topTreatments.reduce((sum, t) => sum + t.bookings, 0) })}
               </p>
             </div>
           </div>

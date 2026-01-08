@@ -1,4 +1,4 @@
-import { test, expect, waitForLoading, takeScreenshot, testUsers } from '../test-setup';
+import { test, waitForLoading, takeScreenshot, testUsers } from '../test-setup';
 
 test.describe('Super Admin Dashboard', () => {
   test.skip(({ browserName }) => browserName === 'webkit', 'Safari/WebKit redirects to undefined/admin (Supabase cookie issue)');

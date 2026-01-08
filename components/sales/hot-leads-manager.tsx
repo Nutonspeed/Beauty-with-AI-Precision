@@ -9,75 +9,47 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Clock, Phone, MessageSquare, Mail, Search } from "lucide-react"
-
-// Mock data - ในโปรดักชั่นจะดึงจาก API
-const hotLeads = [
-  {
-    id: "1",
-    name: "นางสาว สมใจ รักสวย",
-    phone: "081-234-5678",
-    email: "somjai@email.com",
-    status: "hot",
-    priority: "high",
-    score: 95,
-    lastActivity: "2 นาทีที่แล้ว",
-    potentialValue: 25000,
-    avatar: "/avatars/01.png",
-    treatment: "Laser Treatment + Facial",
-    notes: "สนใจแพ็คเกจครบครัน ต้องการปรึกษาเรื่องราคา",
-    nextFollowUp: "วันนี้ 14:00"
-  },
-  {
-    id: "2",
-    name: "นาย วิชัย ใจดี",
-    phone: "089-876-5432",
-    email: "wichai@email.com",
-    status: "warm",
-    priority: "medium",
-    score: 78,
-    lastActivity: "15 นาทีที่แล้ว",
-    potentialValue: 15000,
-    avatar: "/avatars/02.png",
-    treatment: "Anti-Aging Package",
-    notes: "ส่ง proposal แล้ว รอการติดต่อกลับ",
-    nextFollowUp: "พรุ่งนี้ 10:00"
-  },
-  {
-    id: "3",
-    name: "นาง วรรณา สวยงาม",
-    phone: "086-543-2109",
-    email: "wanna@email.com",
-    status: "hot",
-    priority: "high",
-    score: 92,
-    lastActivity: "5 นาทีที่แล้ว",
-    potentialValue: 35000,
-    avatar: "/avatars/03.png",
-    treatment: "Complete Skin Renewal",
-    notes: "พร้อมทำสัญญา ต้องการเริ่มทรีตเมนต์สัปดาห์หน้า",
-    nextFollowUp: "วันนี้ 16:00"
-  },
-  {
-    id: "4",
-    name: "นาย สมชาย มั่นคง",
-    phone: "082-345-6789",
-    email: "somchai@email.com",
-    status: "new",
-    priority: "low",
-    score: 65,
-    lastActivity: "1 ชั่วโมงที่แล้ว",
-    potentialValue: 12000,
-    avatar: "/avatars/04.png",
-    treatment: "Basic Facial",
-    notes: "เพิ่งสมัครใช้งาน ยังไม่ได้ติดต่อ",
-    nextFollowUp: "พรุ่งนี้ 14:00"
-  }
-]
+import { useTranslations } from "next-intl"
 
 export function HotLeadsManager() {
+  const t = useTranslations()
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [priorityFilter, setPriorityFilter] = useState("all")
+
+  // Mock data - moved inside to use translations
+  const hotLeads = [
+    {
+      id: "1",
+      name: "นางสาว สมใจ รักสวย",
+      phone: "081-234-5678",
+      email: "somjai@email.com",
+      status: "hot",
+      priority: "high",
+      score: 95,
+      lastActivity: t('socialProof.times.2minsAgo') || "2 mins ago",
+      potentialValue: 25000,
+      avatar: "/avatars/01.png",
+      treatment: "Laser Treatment + Facial",
+      notes: "สนใจแพ็คเกจครบครัน ต้องการปรึกษาเรื่องราคา",
+      nextFollowUp: `${t('dashboard.staffAvailability.available')} 14:00`
+    },
+    {
+      id: "2",
+      name: "นาย วิชัย ใจดี",
+      phone: "089-876-5432",
+      email: "wichai@email.com",
+      status: "warm",
+      priority: "medium",
+      score: 78,
+      lastActivity: t('socialProof.times.15minsAgo') || "15 mins ago",
+      potentialValue: 15000,
+      avatar: "/avatars/02.png",
+      treatment: "Anti-Aging Package",
+      notes: "ส่ง proposal แล้ว รอการติดต่อกลับ",
+      nextFollowUp: `${t('dashboard.staffAvailability.available')} 10:00`
+    }
+  ]
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -91,11 +63,20 @@ export function HotLeadsManager() {
 
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case "hot": return "🔥 Hot Lead"
-      case "warm": return "🌡️ Warm Lead"
-      case "new": return "🆕 New Lead"
-      case "cold": return "❄️ Cold Lead"
-      default: return "Unknown"
+      case "hot": return `🔥 ${t('salesLeads.status.hot')}`
+      case "warm": return `🌡️ ${t('salesLeads.status.warm')}`
+      case "new": return `🆕 ${t('salesLeads.status.new')}`
+      case "cold": return `❄️ ${t('salesLeads.status.cold')}`
+      default: return t('common.error')
+    }
+  }
+
+  const getPriorityLabel = (priority: string) => {
+    switch (priority) {
+      case "high": return t('hotLeadsManager.priorities.high')
+      case "medium": return t('hotLeadsManager.priorities.medium')
+      case "low": return t('hotLeadsManager.priorities.low')
+      default: return priority
     }
   }
 
@@ -109,11 +90,7 @@ export function HotLeadsManager() {
   }
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('th-TH', {
-      style: 'currency',
-      currency: 'THB',
-      minimumFractionDigits: 0
-    }).format(amount)
+    return t('format.currency', { amount: amount.toLocaleString() })
   }
 
   const filteredLeads = hotLeads.filter(lead => {
@@ -134,7 +111,7 @@ export function HotLeadsManager() {
               <div className="relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="ค้นหาชื่อหรือทรีตเมนต์..."
+                  placeholder={t('hotLeadsManager.searchPlaceholder')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
@@ -143,25 +120,25 @@ export function HotLeadsManager() {
             </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-full md:w-40">
-                <SelectValue placeholder="สถานะ" />
+                <SelectValue placeholder={t('hotLeadsManager.status')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">ทุกสถานะ</SelectItem>
-                <SelectItem value="hot">Hot Lead</SelectItem>
-                <SelectItem value="warm">Warm Lead</SelectItem>
-                <SelectItem value="new">New Lead</SelectItem>
-                <SelectItem value="cold">Cold Lead</SelectItem>
+                <SelectItem value="all">{t('hotLeadsManager.allStatus')}</SelectItem>
+                <SelectItem value="hot">{t('salesLeads.status.hot')}</SelectItem>
+                <SelectItem value="warm">{t('salesLeads.status.warm')}</SelectItem>
+                <SelectItem value="new">{t('salesLeads.status.new')}</SelectItem>
+                <SelectItem value="cold">{t('salesLeads.status.cold')}</SelectItem>
               </SelectContent>
             </Select>
             <Select value={priorityFilter} onValueChange={setPriorityFilter}>
               <SelectTrigger className="w-full md:w-40">
-                <SelectValue placeholder="ความสำคัญ" />
+                <SelectValue placeholder={t('hotLeadsManager.priority')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">ทุกความสำคัญ</SelectItem>
-                <SelectItem value="high">สูง</SelectItem>
-                <SelectItem value="medium">กลาง</SelectItem>
-                <SelectItem value="low">ต่ำ</SelectItem>
+                <SelectItem value="all">{t('hotLeadsManager.allPriority')}</SelectItem>
+                <SelectItem value="high">{t('hotLeadsManager.priorities.high')}</SelectItem>
+                <SelectItem value="medium">{t('hotLeadsManager.priorities.medium')}</SelectItem>
+                <SelectItem value="low">{t('hotLeadsManager.priorities.low')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -171,8 +148,8 @@ export function HotLeadsManager() {
       {/* Leads List */}
       <Tabs defaultValue="list" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="list">รายการ</TabsTrigger>
-          <TabsTrigger value="kanban">Kanban</TabsTrigger>
+          <TabsTrigger value="list">{t('hotLeadsManager.listTab')}</TabsTrigger>
+          <TabsTrigger value="kanban">{t('hotLeadsManager.kanbanTab')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="list" className="space-y-4">
@@ -189,7 +166,7 @@ export function HotLeadsManager() {
                       <div className="flex items-center gap-2 mb-1">
                         <h3 className="font-semibold truncate">{lead.name}</h3>
                         <Badge className={getStatusColor(lead.status)}>{getStatusLabel(lead.status)}</Badge>
-                        <Badge className={getPriorityColor(lead.priority)}>{lead.priority}</Badge>
+                        <Badge className={getPriorityColor(lead.priority)}>{getPriorityLabel(lead.priority)}</Badge>
                       </div>
                       <p className="text-sm text-muted-foreground mb-2">{lead.treatment}</p>
                       <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3">
@@ -209,16 +186,16 @@ export function HotLeadsManager() {
                       <div className="flex items-center justify-between">
                         <div>
                           <div className="font-semibold text-green-600">{formatCurrency(lead.potentialValue)}</div>
-                          <div className="text-sm text-muted-foreground">Lead Score: {lead.score}%</div>
+                          <div className="text-sm text-muted-foreground">{t('hotLeadsManager.score', { percent: lead.score })}</div>
                         </div>
                         <div className="text-right">
-                          <div className="text-sm font-medium">Next Follow-up</div>
+                          <div className="text-sm font-medium">{t('hotLeadsManager.nextFollowup')}</div>
                           <div className="text-sm text-muted-foreground">{lead.nextFollowUp}</div>
                         </div>
                       </div>
                       {lead.notes && (
                         <div className="mt-3 p-3 bg-muted/50 rounded text-sm">
-                          <strong>Notes:</strong> {lead.notes}
+                          <strong>{t('hotLeadsManager.notesLabel')}</strong> {lead.notes}
                         </div>
                       )}
                     </div>
@@ -226,15 +203,15 @@ export function HotLeadsManager() {
                   <div className="flex flex-col gap-2 ml-4">
                     <Button size="sm" className="w-full">
                       <Phone className="h-3 w-3 mr-1" />
-                      Call
+                      {t('hotLeadCard.call')}
                     </Button>
                     <Button size="sm" variant="outline" className="w-full">
                       <MessageSquare className="h-3 w-3 mr-1" />
-                      Chat
+                      {t('hotLeadCard.chat')}
                     </Button>
                     <Button size="sm" variant="outline" className="w-full">
                       <Mail className="h-3 w-3 mr-1" />
-                      Email
+                      {t('hotLeadCard.email')}
                     </Button>
                   </div>
                 </div>
@@ -268,10 +245,15 @@ export function HotLeadsManager() {
                         <p className="text-xs text-muted-foreground mb-2">{lead.treatment}</p>
                         <div className="flex items-center justify-between text-xs">
                           <span className="font-medium text-green-600">{formatCurrency(lead.potentialValue)}</span>
-                          <span>Score: {lead.score}%</span>
+                          <span>{t('salesLeadDetail.score')}: {lead.score}%</span>
                         </div>
                       </Card>
                     ))}
+                  {filteredLeads.filter(lead => lead.status === status).length === 0 && (
+                    <div className="text-center py-8 text-muted-foreground text-xs italic">
+                      {t('hotLeadsManager.emptyKanban')}
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

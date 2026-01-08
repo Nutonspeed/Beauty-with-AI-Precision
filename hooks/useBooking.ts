@@ -4,231 +4,160 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { BookingManager, Booking, BookingInput, TimeSlot, BookingStats } from '@/lib/booking/booking-manager';
+
+interface BookingState {
+  bookings: Booking[];
+  currentBooking: Booking | null;
+  availableSlots: TimeSlot[];
+  stats: BookingStats | null;
+  isLoading: boolean;
+  isProcessing: boolean;
+  error: string | null;
+  lastSyncAt: number | null;
+}
+
+const createInitialState = (): BookingState => ({
+  bookings: [],
+  currentBooking: null,
+  availableSlots: [],
+  stats: null,
+  isLoading: false,
+  isProcessing: false,
+  error: null,
+  lastSyncAt: null,
+});
 
 export function useBooking() {
   const [bookingManager] = useState(() => new BookingManager());
-  const [bookings, setBookings] = useState<Booking[]>([]);
-  const [currentBooking, setCurrentBooking] = useState<Booking | null>(null);
-  const [availableSlots, setAvailableSlots] = useState<TimeSlot[]>([]);
-  const [stats, setStats] = useState<BookingStats | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [state, setState] = useState<BookingState>(createInitialState());
 
-  // ===== Create Booking =====
+  const handleError = useCallback((err: unknown, defaultMessage: string) => {
+    const message = err instanceof Error ? err.message : defaultMessage;
+    setState(prev => ({ ...prev, error: message, isProcessing: false, isLoading: false }));
+    console.error(`[Booking System] Error: ${message}`, err);
+    throw err;
+  }, []);
+
   const createBooking = async (input: BookingInput): Promise<Booking | null> => {
-    setIsLoading(true);
-    setError(null);
-
+    setState(prev => ({ ...prev, isProcessing: true, error: null }));
+    const startTime = Date.now();
+    
     try {
       const booking = await bookingManager.createBooking(input);
-      setCurrentBooking(booking);
       
-      // Refresh bookings list
+      setState(prev => ({
+        ...prev,
+        currentBooking: booking,
+        isProcessing: false,
+        lastSyncAt: Date.now()
+      }));
+
+      // Auto-refresh patient history if relevant
       if (input.patientId) {
         await loadPatientBookings(input.patientId);
       }
 
+      console.log(`[Booking] Cycle created in ${Date.now() - startTime}ms`);
       return booking;
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to create booking';
-      setError(message);
-      return null;
-    } finally {
-      setIsLoading(false);
+      return handleError(err, 'Booking acquisition failed');
     }
   };
 
-  // ===== Update Booking =====
-  const updateBooking = async (
-    bookingId: string,
-    updates: Partial<Booking>
-  ): Promise<Booking | null> => {
-    setIsLoading(true);
-    setError(null);
-
+  const updateBooking = async (bookingId: string, updates: Partial<Booking>): Promise<Booking | null> => {
+    setState(prev => ({ ...prev, isProcessing: true, error: null }));
     try {
       const booking = await bookingManager.updateBooking(bookingId, updates);
-      setCurrentBooking(booking);
       
-      // Update in list
-      setBookings(prev =>
-        prev.map(b => (b.id === bookingId ? booking : b))
-      );
+      setState(prev => ({
+        ...prev,
+        currentBooking: booking,
+        bookings: prev.bookings.map(b => b.id === bookingId ? booking : b),
+        isProcessing: false
+      }));
 
       return booking;
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to update booking';
-      setError(message);
-      return null;
-    } finally {
-      setIsLoading(false);
+      return handleError(err, 'Operational update failed');
     }
   };
 
-  // ===== Cancel Booking =====
   const cancelBooking = async (bookingId: string, reason?: string): Promise<boolean> => {
-    setIsLoading(true);
-    setError(null);
-
+    setState(prev => ({ ...prev, isProcessing: true, error: null }));
     try {
       await bookingManager.cancelBooking(bookingId, reason);
       
-      // Update in list
-      setBookings(prev =>
-        prev.map(b =>
+      setState(prev => ({
+        ...prev,
+        bookings: prev.bookings.map(b => 
           b.id === bookingId ? { ...b, status: 'cancelled' as const } : b
-        )
-      );
+        ),
+        isProcessing: false
+      }));
 
       return true;
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to cancel booking';
-      setError(message);
+      handleError(err, 'Resource cancellation failed');
       return false;
-    } finally {
-      setIsLoading(false);
     }
   };
 
-  // ===== Load Patient Bookings =====
   const loadPatientBookings = async (patientId: string): Promise<void> => {
-    setIsLoading(true);
-    setError(null);
-
+    setState(prev => ({ ...prev, isLoading: true, error: null }));
     try {
       const data = await bookingManager.getPatientBookings(patientId);
-      setBookings(data);
+      setState(prev => ({ ...prev, bookings: data, isLoading: false, lastSyncAt: Date.now() }));
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to load bookings';
-      setError(message);
-    } finally {
-      setIsLoading(false);
+      handleError(err, 'Data retrieval failed');
     }
   };
 
-  // ===== Load Doctor Bookings =====
-  const loadDoctorBookings = async (doctorId: string, date?: Date): Promise<void> => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const data = await bookingManager.getDoctorBookings(doctorId, date);
-      setBookings(data);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to load doctor bookings';
-      setError(message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // ===== Load Available Slots =====
-  const loadAvailableSlots = async (
-    doctorId: string,
-    date: Date,
-    duration: number = 60
-  ): Promise<void> => {
-    setIsLoading(true);
-    setError(null);
-
+  const loadAvailableSlots = async (doctorId: string, date: Date, duration: number = 60): Promise<void> => {
+    setState(prev => ({ ...prev, isLoading: true, error: null }));
     try {
       const slots = await bookingManager.getAvailableSlots(doctorId, date, duration);
-      setAvailableSlots(slots);
+      setState(prev => ({ ...prev, availableSlots: slots, isLoading: false }));
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to load available slots';
-      setError(message);
-    } finally {
-      setIsLoading(false);
+      handleError(err, 'Availability lookup failed');
     }
   };
 
-  // ===== Process Payment =====
   const processPayment = async (
-    bookingId: string,
+    bookingId: string, 
     paymentMethod: 'promptpay' | 'credit_card' | 'cash'
   ): Promise<{ success: boolean; transactionId?: string }> => {
-    setIsLoading(true);
-    setError(null);
-
+    setState(prev => ({ ...prev, isProcessing: true, error: null }));
     try {
       const result = await bookingManager.processPayment(bookingId, paymentMethod);
       
       if (result.success) {
-        // Update booking status
         await updateBooking(bookingId, {
           paymentStatus: 'paid',
           status: 'confirmed',
         });
       }
 
+      setState(prev => ({ ...prev, isProcessing: false }));
       return result;
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to process payment';
-      setError(message);
+      handleError(err, 'Transaction settlement failed');
       return { success: false };
-    } finally {
-      setIsLoading(false);
     }
   };
 
-  // ===== Load Statistics =====
-  const loadStats = async (startDate?: Date, endDate?: Date): Promise<void> => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const data = await bookingManager.getBookingStats(startDate, endDate);
-      setStats(data);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to load statistics';
-      setError(message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // ===== Send Reminders =====
-  const sendReminders = async (): Promise<void> => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      await bookingManager.sendReminders();
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to send reminders';
-      setError(message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // ===== Clear Error =====
-  const clearError = () => {
-    setError(null);
-  };
+  const clearError = useCallback(() => setState(prev => ({ ...prev, error: null })), []);
 
   return {
-    // State
-    bookings,
-    currentBooking,
-    availableSlots,
-    stats,
-    isLoading,
-    error,
-
-    // Actions
+    ...state,
     createBooking,
     updateBooking,
     cancelBooking,
     loadPatientBookings,
-    loadDoctorBookings,
     loadAvailableSlots,
     processPayment,
-    loadStats,
-    sendReminders,
     clearError,
-    setCurrentBooking,
+    setCurrentBooking: (booking: Booking | null) => setState(prev => ({ ...prev, currentBooking: booking })),
   };
 }

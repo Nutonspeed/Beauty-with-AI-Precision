@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Progress } from '@/components/ui/progress';
+import { useTranslations } from 'next-intl';
 import { 
   MessageSquare, 
   Send, 
@@ -69,10 +70,11 @@ export function AISalesCompanion({
   treatmentInterest = [],
   currentTreatment,
   leadScore = 50,
-  urgency = 'medium',
+  urgency: childUrgency = 'medium',
   onConversionAction,
   className = ''
 }: AISalesCompanionProps) {
+  const t = useTranslations();
   const [messages, setMessages] = useState<ConversationMessage[]>([]);
   const [currentMessage, setCurrentMessage] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -109,22 +111,23 @@ export function AISalesCompanion({
     interests: string[],
     treatment?: Treatment
   ): string => {
-    const name = profile.name ? `คุณ${profile.name}` : 'คุณลูกค้า';
-    const interestsText = interests.length > 0 ? interests.join(', ') : 'การดูแลผิว';
-
-    let message = `สวัสดีค่ะ ${name} 👋\n\n`;
-    message += `ขอบคุณที่สนใจ${interestsText} ของเรา\n\n`;
+    const name = profile.name ? `คุณ${profile.name}` : t('roles.customer');
+    const interestsText = interests.length > 0 ? interests.join(', ') : t('salesWizard.steps.summary.sectionAIAnalysis');
 
     if (treatment) {
-      message += `สำหรับ **${treatment.name}** ที่คุณสนใจ:\n`;
-      message += `💰 ราคา: ฿${treatment.price.toLocaleString()}\n`;
-      message += `🎯 ความมั่นใจ: ${(treatment.confidence || 0) * 100}%\n\n`;
+      return t('aiSalesCompanion.welcomeWithTreatment', {
+        name,
+        interests: interestsText,
+        treatment: treatment.name,
+        price: treatment.price.toLocaleString(),
+        confidence: (treatment.confidence || 0) * 100
+      });
     }
 
-    message += `ฉันพร้อมช่วยเหลือคุณในทุกขั้นตอนค่ะ 💕\n`;
-    message += `มีอะไรให้ช่วยไหมคะ?`;
-
-    return message;
+    return t('aiSalesCompanion.welcome', {
+      name,
+      interests: interestsText
+    });
   };
 
   const handleSendMessage = async () => {
@@ -148,7 +151,7 @@ export function AISalesCompanion({
         treatmentInterest,
         currentTreatment,
         leadScore,
-        urgency,
+        urgency: childUrgency,
         conversationHistory: messages,
       };
 
@@ -201,7 +204,7 @@ export function AISalesCompanion({
       const errorMessage: ConversationMessage = {
         id: `error_${Date.now()}`,
         role: 'assistant',
-        content: 'ขออภัยค่ะ ระบบขัดข้องเล็กน้อย กรุณาลองใหม่อีกครั้งนะคะ 🙏',
+        content: t('aiSalesCompanion.error'),
         timestamp: new Date(),
       };
 
@@ -216,18 +219,21 @@ export function AISalesCompanion({
     const lowerMessage = message.toLowerCase();
 
     if (lowerMessage.includes('ราคา') || lowerMessage.includes('price')) {
-      return `ค่ะ ราคา${context.currentTreatment?.name || 'ทรีทเมนท์'}อยู่ที่ ฿${context.currentTreatment?.price?.toLocaleString() || 'ตามแพ็คเกจ'}\n\nเรามีโปรโมชั่นและการผ่อนชำระให้เลือกด้วยค่ะ 💳`;
+      return t('aiSalesCompanion.responses.price', {
+        treatment: context.currentTreatment?.name || t('nav.analysis'),
+        price: context.currentTreatment?.price?.toLocaleString() || t('salesTools.quote.treatmentList')
+      });
     }
 
     if (lowerMessage.includes('เวลา') || lowerMessage.includes('time') || lowerMessage.includes('นัด')) {
-      return `ค่ะ เรามีเวลาการให้บริการที่หลากหลาย:\n\n📅 จันทร์-ศุกร์: 10:00-19:00\n🌅 เสาร์-อาทิตย์: 10:00-18:00\n⏰ Lunch time: 12:00-13:00\n\nสะดวกวันไหนคะ?`;
+      return t('aiSalesCompanion.responses.time');
     }
 
     if (lowerMessage.includes('แพทย์') || lowerMessage.includes('doctor') || lowerMessage.includes('ปลอดภัย')) {
-      return `ค่ะ แพทย์ของเราเป็นผู้เชี่ยวชาญด้าน Dermatology ที่ได้รับการรับรอง\n\n✅ วุฒิแพทย์จากไทยและต่างประเทศ\n✅ ประสบการณ์กว่า 10 ปี\n✅ ใช้เครื่องมือและเทคโนโลยีมาตรฐานสากล\n\nอยากให้ดูใบประกาศและผลงานไหมคะ?`;
+      return t('aiSalesCompanion.responses.doctor');
     }
 
-    return `เข้าใจค่ะ ${message}\n\nอยากให้ข้อมูลเพิ่มเติมเรื่องไหนคะ?\n• ราคาและโปรโมชั่น 💰\n• กระบวนการรักษา ⚕️\n• ผลลัพธ์และรีวิว ⭐\n• การนัดหมาย 📅`;
+    return t('aiSalesCompanion.responses.default', { message });
   };
 
   const getObjectionBadgeColor = (type: string): string => {
@@ -262,8 +268,8 @@ export function AISalesCompanion({
               <Brain className="w-5 h-5 text-white" />
             </div>
             <div>
-              <CardTitle className="text-white">AI Sales Companion</CardTitle>
-              <p className="text-sm text-gray-400">ผู้ช่วยขายอัจฉริยะพร้อมจัดการ objection</p>
+              <CardTitle className="text-white">{t('aiSalesCompanion.title')}</CardTitle>
+              <p className="text-sm text-gray-400">{t('aiSalesCompanion.subtitle')}</p>
             </div>
           </div>
           <Badge className="bg-gradient-to-r from-blue-600 to-indigo-600">
@@ -279,7 +285,7 @@ export function AISalesCompanion({
           <div className="p-3 rounded-xl bg-white/5 border border-white/10">
             <div className="flex items-center gap-2 mb-2">
               <Target className="w-4 h-4 text-green-400" />
-              <span className="text-sm text-gray-400">Conversion</span>
+              <span className="text-sm text-gray-400">{t('aiSalesCompanion.conversion')}</span>
             </div>
             <div className="text-2xl font-bold text-green-400">
               {(conversionMetrics.conversionProbability * 100).toFixed(0)}%
@@ -290,7 +296,7 @@ export function AISalesCompanion({
           <div className="p-3 rounded-xl bg-white/5 border border-white/10">
             <div className="flex items-center gap-2 mb-2">
               <TrendingUp className="w-4 h-4 text-blue-400" />
-              <span className="text-sm text-gray-400">Engagement</span>
+              <span className="text-sm text-gray-400">{t('aiSalesCompanion.engagement')}</span>
             </div>
             <div className="text-2xl font-bold text-blue-400">
               {conversionMetrics.engagementScore}
@@ -304,11 +310,11 @@ export function AISalesCompanion({
           <div className="p-3 rounded-xl bg-yellow-500/10 border border-yellow-500/30">
             <div className="flex items-center gap-2 mb-2">
               <AlertTriangle className="w-4 h-4 text-yellow-400" />
-              <span className="text-sm font-medium text-yellow-400">Objection Handling</span>
+              <span className="text-sm font-medium text-yellow-400">{t('aiSalesCompanion.objectionHandling')}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-gray-400">พบ: {conversionMetrics.objectionCount}</span>
-              <span className="text-green-400">แก้ไข: {conversionMetrics.handledCount}</span>
+              <span className="text-gray-400">{t('aiSalesCompanion.found')}: {conversionMetrics.objectionCount}</span>
+              <span className="text-green-400">{t('aiSalesCompanion.resolved')}: {conversionMetrics.handledCount}</span>
             </div>
           </div>
         )}
@@ -352,7 +358,7 @@ export function AISalesCompanion({
                     <div className="mt-2 pt-2 border-t border-white/20">
                       <div className="flex items-center gap-2 text-xs text-gray-400">
                         <CheckCircle className="w-3 h-3 text-green-400" />
-                        Strategy: {message.objectionResponse.strategy}
+                        {t('aiSalesCompanion.strategy')} {message.objectionResponse.strategy}
                       </div>
                     </div>
                   )}
@@ -382,7 +388,7 @@ export function AISalesCompanion({
                     <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
                     <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
                   </div>
-                  <span className="text-sm text-gray-400">AI กำลังวิเคราะห์...</span>
+                  <span className="text-sm text-gray-400">{t('aiSalesCompanion.typing')}</span>
                 </div>
               </div>
             </motion.div>
@@ -396,7 +402,7 @@ export function AISalesCompanion({
           <Textarea
             value={currentMessage}
             onChange={(e) => setCurrentMessage(e.target.value)}
-            placeholder="พิมพ์ข้อความของคุณ..."
+            placeholder={t('aiSalesCompanion.placeholder')}
             className="flex-1 bg-white/5 border-white/20 text-white placeholder-gray-400 resize-none"
             rows={2}
             onKeyPress={(e) => {
@@ -424,7 +430,7 @@ export function AISalesCompanion({
             onClick={() => onConversionAction?.('schedule_consultation')}
           >
             <Users className="w-4 h-4 mr-2" />
-            นัดปรึกษาฟรี
+            {t('aiSalesCompanion.scheduleConsult')}
           </Button>
           <Button
             variant="outline"
@@ -433,7 +439,7 @@ export function AISalesCompanion({
             onClick={() => onConversionAction?.('send_proposal')}
           >
             <MessageSquare className="w-4 h-4 mr-2" />
-            ส่ง Proposal
+            {t('aiSalesCompanion.sendProposal')}
           </Button>
         </div>
       </CardContent>

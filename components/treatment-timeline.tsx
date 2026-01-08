@@ -19,6 +19,7 @@ import {
   TrendingUp,
   Clock,
 } from "lucide-react"
+import { useTranslations, useLocale } from "next-intl"
 import { useTreatmentTimeline } from "@/hooks/useTreatment"
 import type { TreatmentTimeline } from "@/lib/treatment/treatment-tracker"
 
@@ -27,12 +28,14 @@ interface TreatmentTimelineProps {
 }
 
 export default function TreatmentTimelineComponent({ treatmentId }: TreatmentTimelineProps) {
+  const t = useTranslations()
+  const locale = useLocale()
   const { timeline, loading } = useTreatmentTimeline(treatmentId)
 
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="text-gray-500">Loading timeline...</div>
+        <div className="text-gray-500">{t('treatmentTimeline.loading')}</div>
       </div>
     )
   }
@@ -41,7 +44,7 @@ export default function TreatmentTimelineComponent({ treatmentId }: TreatmentTim
     return (
       <div className="text-center py-12">
         <Clock className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-        <p className="text-gray-500">No timeline entries yet</p>
+        <p className="text-gray-500">{t('treatmentTimeline.empty')}</p>
       </div>
     )
   }
@@ -83,22 +86,22 @@ export default function TreatmentTimelineComponent({ treatmentId }: TreatmentTim
   const getTypeLabel = (type: TreatmentTimeline["type"]) => {
     switch (type) {
       case "session":
-        return "Session"
+        return t('treatmentTimeline.types.session')
       case "milestone":
-        return "Milestone"
+        return t('treatmentTimeline.types.milestone')
       case "photo":
-        return "Photo"
+        return t('treatmentTimeline.types.photo')
       case "note":
-        return "Note"
+        return t('treatmentTimeline.types.note')
       case "status_change":
-        return "Status Change"
+        return t('treatmentTimeline.types.status_change')
       default:
         return type
     }
   }
 
   const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString("en-US", {
+    return new Date(date).toLocaleDateString(locale === 'th' ? "th-TH" : "en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",
@@ -106,7 +109,7 @@ export default function TreatmentTimelineComponent({ treatmentId }: TreatmentTim
   }
 
   const formatTime = (date: Date) => {
-    return new Date(date).toLocaleTimeString("en-US", {
+    return new Date(date).toLocaleTimeString(locale === 'th' ? "th-TH" : "en-US", {
       hour: "2-digit",
       minute: "2-digit",
     })
@@ -141,7 +144,7 @@ export default function TreatmentTimelineComponent({ treatmentId }: TreatmentTim
                           {getTypeLabel(entry.type)}
                         </Badge>
                         <span className="text-xs text-gray-500">
-                          {formatDate(entry.date)} at {formatTime(entry.date)}
+                          {formatDate(entry.date)} {t('treatmentTimeline.at')} {formatTime(entry.date)}
                         </span>
                       </div>
                       <h4 className="font-semibold text-gray-900">{entry.title}</h4>
@@ -169,7 +172,7 @@ export default function TreatmentTimelineComponent({ treatmentId }: TreatmentTim
       {timeline.length > 10 && (
         <div className="text-center pt-4">
           <Button variant="outline" size="sm">
-            Load More
+            {t('treatmentTimeline.loadMore')}
           </Button>
         </div>
       )}

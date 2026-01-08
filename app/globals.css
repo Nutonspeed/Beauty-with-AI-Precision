@@ -72,7 +72,12 @@
 
   /* Primary: ClinicIQ teal */
   --primary: 187 92% 43%;
+  --primary-rgb: 9, 182, 212;
   --primary-foreground: 210 40% 98%;
+
+  /* Premium Elevations */
+  --shadow-premium: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
+  --shadow-glow: 0 0 20px rgba(9, 182, 212, 0.2);
 
   /* Secondary: Light blue accent */
   --secondary: 210 40% 96.1%;
@@ -100,7 +105,7 @@
   --chart-4: 210 98% 78%;
   --chart-5: 212 97% 87%;
 
-  --radius: 0.75rem;
+  --radius: 0.85rem;
 
   --sidebar: 0 0% 98%;
   --sidebar-foreground: 240 5.3% 26.1%;
@@ -116,9 +121,9 @@
   --bc-bg-alt: #FEF3F4;
   --bc-surface: #FFFFFF;
   --bc-surface-muted: #F7F7F8;
-  --bc-text-primary: #343A40;
-  --bc-text-secondary: #6A6F73;
-  --bc-text-faint: #9EA2A6;
+  --bc-text-primary: #1A1C1E;
+  --bc-text-secondary: #42474E;
+  --bc-text-faint: #72777F;
   --bc-accent-pink: #FF6B9D;
   --bc-accent-petal: #F9D4E6;
   --bc-accent-purple: #C084FC;
@@ -132,25 +137,26 @@
 }
 
 .dark {
-  --background: 222.2 84% 4.9%;
-  --foreground: 210 40% 98%;
-  --card: 222.2 84% 4.9%;
-  --card-foreground: 210 40% 98%;
-  --popover: 222.2 84% 4.9%;
-  --popover-foreground: 210 40% 98%;
+  --background: 224 71% 4%;
+  --foreground: 213 31% 91%;
+  --card: 224 71% 4%;
+  --card-foreground: 213 31% 91%;
+  --popover: 224 71% 4%;
+  --popover-foreground: 215 20.2% 65.1%;
   /* Dark primary adjusted to deeper teal */
   --primary: 189 84% 39%;
+  --primary-rgb: 13, 148, 172;
   --primary-foreground: 222.2 47.4% 11.2%;
-  --secondary: 217.2 32.6% 17.5%;
+  --secondary: 222.2 47.4% 11.2%;
   --secondary-foreground: 210 40% 98%;
-  --muted: 217.2 32.6% 17.5%;
-  --muted-foreground: 215 20.2% 65.1%;
-  --accent: 189 70% 50%;
+  --muted: 223 47% 11%;
+  --muted-foreground: 215.4 16.3% 56.9%;
+  --accent: 216 34% 17%;
   --accent-foreground: 210 40% 98%;
   --destructive: 0 62.8% 30.6%;
   --destructive-foreground: 210 40% 98%;
-  --border: 217.2 32.6% 17.5%;
-  --input: 217.2 32.6% 17.5%;
+  --border: 216 34% 17%;
+  --input: 216 34% 17%;
   --ring: 189 84% 39%;
   --chart-1: 220 70% 50%;
   --chart-2: 160 60% 45%;
@@ -166,6 +172,26 @@
   --sidebar-border: 240 3.7% 15.9%;
   --sidebar-ring: 189 84% 39%;
 }
+
+/* Glassmorphism Classes */
+.glass-panel {
+  @apply bg-white/5 backdrop-blur-xl border border-white/10 shadow-glass;
+}
+
+.premium-card {
+  @apply transition-all duration-500 hover:shadow-premium-hover border border-border/50 hover:border-primary/20;
+}
+
+.glow-on-hover {
+  @apply transition-all duration-300 hover:shadow-glow-primary hover:scale-[1.02];
+}
+
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display tracking-tight;
+  }
+}
+
 
 /* AI Metrics Panel utility classes */
 .aimetrics-panel {

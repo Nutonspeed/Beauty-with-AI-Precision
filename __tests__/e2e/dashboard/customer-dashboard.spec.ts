@@ -1,4 +1,4 @@
-import { test, expect, waitForLoading, takeScreenshot, testUsers } from '../test-setup';
+import { test, waitForLoading, takeScreenshot, testUsers } from '../test-setup';
 
 test.describe('Customer Dashboard', () => {
   test.skip(({ browserName }) => browserName === 'webkit', 'Safari/WebKit redirects back to login with Supabase cookies');

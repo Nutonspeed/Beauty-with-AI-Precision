@@ -16,6 +16,7 @@ import {
 
 interface UseChatState {
   connected: boolean;
+  isConnecting: boolean;
   error: string | null;
   loading: boolean;
 }
@@ -41,50 +42,58 @@ interface UseOnlineStatusState {
   onlineUsers: Map<string, OnlineStatus>; // userId -> OnlineStatus
 }
 
+const createInitialState = (): UseChatState => ({
+  connected: false,
+  isConnecting: false,
+  error: null,
+  loading: true,
+});
+
 /**
- * Main chat hook - manages connection and provides chat manager
+ * Main chat hook - manages professional WebSocket connection
  */
 export function useChat(userId: string) {
-  const [state, setState] = useState<UseChatState>({
-    connected: false,
-    error: null,
-    loading: true,
-  });
-
+  const [state, setState] = useState<UseChatState>(createInitialState());
   const chatManagerRef = useRef<ChatManager | null>(null);
+
+  const connect = useCallback(async () => {
+    if (!chatManagerRef.current) return;
+    
+    setState(prev => ({ ...prev, isConnecting: true, error: null }));
+    const startTime = Date.now();
+    
+    try {
+      await chatManagerRef.current.connect();
+      setState(prev => ({ ...prev, connected: true, isConnecting: false, loading: false }));
+      console.log(`[Chat] Connection established in ${Date.now() - startTime}ms`);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Secure connection failed';
+      setState(prev => ({ ...prev, connected: false, isConnecting: false, error: message, loading: false }));
+      console.error('[Chat] WebSocket error:', err);
+    }
+  }, []);
 
   useEffect(() => {
     const chatManager = getChatManager(userId);
     chatManagerRef.current = chatManager;
 
-    // Connect to WebSocket
-    chatManager.connect()
-      .then(() => {
-        setState({ connected: true, error: null, loading: false });
-      })
-      .catch((error) => {
-        setState({ connected: false, error: error.message, loading: false });
-      });
+    connect();
 
-    // Handle disconnection
     const handleDisconnect = () => {
-      setState({ connected: false, error: 'Disconnected from server', loading: false });
+      setState(prev => ({ ...prev, connected: false, error: 'Link terminated unexpectedly' }));
     };
 
     window.addEventListener('chat:disconnected', handleDisconnect);
 
-    // Cleanup
     return () => {
       window.removeEventListener('chat:disconnected', handleDisconnect);
-      // Don't disconnect here - keep connection alive
     };
-  }, [userId]);
+  }, [userId, connect]);
 
   return {
     chatManager: chatManagerRef.current,
-    connected: state.connected,
-    error: state.error,
-    loading: state.loading,
+    ...state,
+    reconnect: connect,
   };
 }
 

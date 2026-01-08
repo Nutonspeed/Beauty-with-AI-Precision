@@ -7,99 +7,103 @@ import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CheckCircle, Star, Clock, DollarSign } from "lucide-react"
-
-// Mock data - ในโปรดักชั่นจะดึงจาก API
-const treatments = [
-  {
-    id: "hydrafacial",
-    name: "HydraFacial",
-    category: "cleansing",
-    price: 4500,
-    duration: "45 นาที",
-    description: "ทำความสะอาดผิวล้ำลึกด้วยน้ำยาพิเศษ",
-    benefits: ["ลดสิว", "ลดรูขุมขน", "เพิ่มความชุ่มชื้น"],
-    suitability: ["ทุกสภาพผิว", "ผิวมัน", "ผิวผสม"],
-    rating: 4.8,
-    reviews: 245,
-    effectiveness: 85,
-    sideEffects: "น้อยมาก",
-    recoveryTime: "ไม่ต้องพักฟื้น"
-  },
-  {
-    id: "chemical_peel",
-    name: "Chemical Peel",
-    category: "exfoliation",
-    price: 3200,
-    duration: "30 นาที",
-    description: "ผลัดเซลล์ผิวเก่าด้วยกรดอ่อน",
-    benefits: ["ลดจุดด่างดำ", "ปรับสีผิว", "ลดริ้วรอยเล็กน้อย"],
-    suitability: ["ผิวหมองคล้ำ", "จุดด่างดำ", "ริ้วรอยเริ่มต้น"],
-    rating: 4.6,
-    reviews: 189,
-    effectiveness: 78,
-    sideEffects: "ผิวแดงชั่วคราว",
-    recoveryTime: "1-2 วัน"
-  },
-  {
-    id: "rf_tightening",
-    name: "RF Skin Tightening",
-    category: "anti-aging",
-    price: 8500,
-    duration: "60 นาที",
-    description: "กระตุ้นคอลลาเจนด้วยคลื่นวิทยุ",
-    benefits: ["ยกกระชับผิว", "ลดริ้วรอย", "เพิ่มความยืดหยุ่น"],
-    suitability: ["ผิวหย่อนคล้อย", "ริ้วรอย", "ผิวแก่"],
-    rating: 4.9,
-    reviews: 156,
-    effectiveness: 92,
-    sideEffects: "ร้อนผิวชั่วคราว",
-    recoveryTime: "ไม่ต้องพักฟื้น"
-  },
-  {
-    id: "microneedling",
-    name: "Microneedling",
-    category: "anti-aging",
-    price: 5500,
-    duration: "50 นาที",
-    description: "กระตุ้นการสร้างคอลลาเจนด้วยเข็มเล็ก",
-    benefits: ["ลดร่องลึก", "เพิ่มความหนาแน่น", "ปรับผิวให้เรียบ"],
-    suitability: ["ร่องลึก", "ผิวไม่เรียบ", "ผิวแก่"],
-    rating: 4.7,
-    reviews: 98,
-    effectiveness: 88,
-    sideEffects: "แดงบวมชั่วคราว",
-    recoveryTime: "2-3 วัน"
-  }
-]
-
-const packages = [
-  {
-    id: "basic",
-    name: "แพ็คเกจพื้นฐาน",
-    treatments: ["hydrafacial", "chemical_peel"],
-    totalPrice: 7700,
-    savings: 0,
-    description: "เหมาะสำหรับผู้เริ่มต้น"
-  },
-  {
-    id: "premium",
-    name: "แพ็คเกจพรีเมี่ยม",
-    treatments: ["hydrafacial", "chemical_peel", "rf_tightening"],
-    totalPrice: 16200,
-    savings: 1800,
-    description: "ครบครันสำหรับผลลัพธ์ที่ดีที่สุด"
-  },
-  {
-    id: "vip",
-    name: "แพ็คเกจ VIP",
-    treatments: ["hydrafacial", "chemical_peel", "rf_tightening", "microneedling"],
-    totalPrice: 21700,
-    savings: 4300,
-    description: "แพ็คเกจครบครันระดับมืออาชีพ"
-  }
-]
+import { useTranslations, useLocale } from "next-intl"
 
 export function TreatmentComparison() {
+  const t = useTranslations()
+  const locale = useLocale()
+  
+  // Localized mock data
+  const treatments = [
+    {
+      id: "hydrafacial",
+      name: "HydraFacial",
+      category: "cleansing",
+      price: 4500,
+      duration: t('treatments.durations.min45'),
+      description: t('treatments.hydrafacial.description'),
+      benefits: [t('treatments.hydrafacial.benefit1'), t('treatments.hydrafacial.benefit2'), t('treatments.hydrafacial.benefit3')],
+      suitability: [t('treatments.suitability.all'), t('treatments.suitability.oily'), t('treatments.suitability.combination')],
+      rating: 4.8,
+      reviews: 245,
+      effectiveness: 85,
+      sideEffects: t('treatments.sideEffects.minimal'),
+      recoveryTime: t('treatments.recovery.none')
+    },
+    {
+      id: "chemical_peel",
+      name: "Chemical Peel",
+      category: "exfoliation",
+      price: 3200,
+      duration: t('treatments.durations.min30'),
+      description: t('treatments.chemical_peel.description'),
+      benefits: [t('treatments.chemical_peel.benefit1'), t('treatments.chemical_peel.benefit2'), t('treatments.chemical_peel.benefit3')],
+      suitability: [t('treatments.suitability.dull'), t('treatments.suitability.spots'), t('treatments.suitability.fine_lines')],
+      rating: 4.6,
+      reviews: 189,
+      effectiveness: 78,
+      sideEffects: t('treatments.sideEffects.redness'),
+      recoveryTime: t('treatments.recovery.short')
+    },
+    {
+      id: "rf_tightening",
+      name: "RF Skin Tightening",
+      category: "anti-aging",
+      price: 8500,
+      duration: t('treatments.durations.min60'),
+      description: t('treatments.rf_tightening.description'),
+      benefits: [t('treatments.rf_tightening.benefit1'), t('treatments.rf_tightening.benefit2'), t('treatments.rf_tightening.benefit3')],
+      suitability: [t('treatments.suitability.sagging'), t('treatments.suitability.wrinkles'), t('treatments.suitability.aging')],
+      rating: 4.9,
+      reviews: 156,
+      effectiveness: 92,
+      sideEffects: t('treatments.sideEffects.heat'),
+      recoveryTime: t('treatments.recovery.none')
+    },
+    {
+      id: "microneedling",
+      name: "Microneedling",
+      category: "anti-aging",
+      price: 5500,
+      duration: t('treatments.durations.min50'),
+      description: t('treatments.microneedling.description'),
+      benefits: [t('treatments.microneedling.benefit1'), t('treatments.microneedling.benefit2'), t('treatments.microneedling.benefit3')],
+      suitability: [t('treatments.suitability.deep_lines'), t('treatments.suitability.uneven'), t('treatments.suitability.aging')],
+      rating: 4.7,
+      reviews: 98,
+      effectiveness: 88,
+      sideEffects: t('treatments.sideEffects.swelling'),
+      recoveryTime: t('treatments.recovery.moderate')
+    }
+  ]
+
+  const packages = [
+    {
+      id: "basic",
+      name: t('packages.basic.name'),
+      treatments: ["hydrafacial", "chemical_peel"],
+      totalPrice: 7700,
+      savings: 0,
+      description: t('packages.basic.description')
+    },
+    {
+      id: "premium",
+      name: t('packages.premium.name'),
+      treatments: ["hydrafacial", "chemical_peel", "rf_tightening"],
+      totalPrice: 16200,
+      savings: 1800,
+      description: t('packages.premium.description')
+    },
+    {
+      id: "vip",
+      name: t('packages.vip.name'),
+      treatments: ["hydrafacial", "chemical_peel", "rf_tightening", "microneedling"],
+      totalPrice: 21700,
+      savings: 4300,
+      description: t('packages.vip.description')
+    }
+  ]
+
   const [selectedTreatments, setSelectedTreatments] = useState<string[]>([])
   const [skinConcern, setSkinConcern] = useState("")
   const [budget, setBudget] = useState("")
@@ -114,7 +118,6 @@ export function TreatmentComparison() {
   }
 
   const handleGetRecommendation = () => {
-    // Simple AI recommendation logic
     if (skinConcern === "anti-aging" && budget === "high") {
       setRecommendedPackage(packages.find(p => p.id === "vip") || null)
     } else if (skinConcern === "anti-aging" || budget === "medium") {
@@ -134,36 +137,36 @@ export function TreatmentComparison() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Star className="h-5 w-5" />
-            AI Treatment Recommendation
+            {t('treatmentComparison.aiTitle')}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <div>
-              <div className="text-sm font-medium mb-2">ปัญหาผิวหลัก</div>
+              <div className="text-sm font-medium mb-2">{t('treatmentComparison.skinConcernLabel')}</div>
               <Select value={skinConcern} onValueChange={setSkinConcern}>
                 <SelectTrigger>
-                  <SelectValue placeholder="เลือกปัญหาผิว..." />
+                  <SelectValue placeholder={t('treatmentComparison.concerns.acne')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="acne">สิวและรูขุมขน</SelectItem>
-                  <SelectItem value="pigmentation">จุดด่างดำ</SelectItem>
-                  <SelectItem value="anti-aging">ริ้วรอยและผิวแก่</SelectItem>
-                  <SelectItem value="dryness">ผิวแห้ง</SelectItem>
+                  <SelectItem value="acne">{t('treatmentComparison.concerns.acne')}</SelectItem>
+                  <SelectItem value="pigmentation">{t('treatmentComparison.concerns.pigmentation')}</SelectItem>
+                  <SelectItem value="anti-aging">{t('treatmentComparison.concerns.anti_aging')}</SelectItem>
+                  <SelectItem value="dryness">{t('treatmentComparison.concerns.dryness')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div>
-              <div className="text-sm font-medium mb-2">งบประมาณ</div>
+              <div className="text-sm font-medium mb-2">{t('treatmentComparison.budgetLabel')}</div>
               <Select value={budget} onValueChange={setBudget}>
                 <SelectTrigger>
-                  <SelectValue placeholder="เลือกงบประมาณ..." />
+                  <SelectValue placeholder={t('treatmentComparison.budgets.low')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="low">ต่ำ (3,000-8,000 บาท)</SelectItem>
-                  <SelectItem value="medium">กลาง (8,000-15,000 บาท)</SelectItem>
-                  <SelectItem value="high">สูง (15,000+ บาท)</SelectItem>
+                  <SelectItem value="low">{t('treatmentComparison.budgets.low')}</SelectItem>
+                  <SelectItem value="medium">{t('treatmentComparison.budgets.medium')}</SelectItem>
+                  <SelectItem value="high">{t('treatmentComparison.budgets.high')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -171,7 +174,7 @@ export function TreatmentComparison() {
             <div className="flex items-end">
               <Button onClick={handleGetRecommendation} className="w-full">
                 <Star className="h-4 w-4 mr-2" />
-                รับคำแนะนำจาก AI
+                {t('treatmentComparison.getRecommendation')}
               </Button>
             </div>
           </div>
@@ -182,7 +185,7 @@ export function TreatmentComparison() {
                 <div className="flex items-start justify-between">
                   <div>
                     <h3 className="font-medium text-blue-900 mb-2">
-                      แนะนำ: {recommendedPackage.name}
+                      {t('treatmentComparison.recommended')}: {recommendedPackage.name}
                     </h3>
                     <p className="text-sm text-blue-700 mb-2">
                       {recommendedPackage.description}
@@ -190,17 +193,17 @@ export function TreatmentComparison() {
                     <div className="flex items-center gap-4 text-sm">
                       <span className="flex items-center gap-1">
                         <DollarSign className="h-4 w-4" />
-                        ฿{recommendedPackage.totalPrice.toLocaleString()}
+                        {t('format.currency', { amount: recommendedPackage.totalPrice.toLocaleString() })}
                       </span>
                       {recommendedPackage.savings > 0 && (
                         <span className="text-green-600 font-medium">
-                          ประหยัด ฿{recommendedPackage.savings.toLocaleString()}
+                          {t('treatmentComparison.savings', { amount: t('format.currency', { amount: recommendedPackage.savings.toLocaleString() }) })}
                         </span>
                       )}
                     </div>
                   </div>
                   <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
-                    เลือกแพ็คเกจนี้
+                    {t('treatmentComparison.choosePackage')}
                   </Button>
                 </div>
               </CardContent>
@@ -212,13 +215,13 @@ export function TreatmentComparison() {
       {/* Treatment Comparison */}
       <Card>
         <CardHeader>
-          <CardTitle>Treatment Comparison</CardTitle>
+          <CardTitle>{t('treatmentComparison.title')}</CardTitle>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="grid" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="grid">Grid View</TabsTrigger>
-              <TabsTrigger value="comparison">Comparison View</TabsTrigger>
+              <TabsTrigger value="grid">{t('treatmentComparison.gridView')}</TabsTrigger>
+              <TabsTrigger value="comparison">{t('treatmentComparison.comparisonView')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="grid" className="space-y-4">
@@ -248,7 +251,7 @@ export function TreatmentComparison() {
                       <div className="space-y-2 text-sm">
                         <div className="flex items-center gap-2">
                           <DollarSign className="h-4 w-4" />
-                          ฿{treatment.price.toLocaleString()}
+                          {t('format.currency', { amount: treatment.price.toLocaleString() })}
                         </div>
                         <div className="flex items-center gap-2">
                           <Clock className="h-4 w-4" />
@@ -261,7 +264,7 @@ export function TreatmentComparison() {
                       </div>
 
                       <div className="mt-3">
-                        <div className="text-xs font-medium mb-1">Benefits:</div>
+                        <div className="text-xs font-medium mb-1">{t('treatmentComparison.table.effectiveness')}:</div>
                         <div className="flex flex-wrap gap-1">
                           {treatment.benefits.slice(0, 2).map((benefit, _index) => (
                             <Badge key={benefit} variant="secondary" className="text-xs">
@@ -284,26 +287,26 @@ export function TreatmentComparison() {
             <TabsContent value="comparison" className="space-y-4">
               {selectedTreatmentData.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
-                  เลือกทรีตเมนต์อย่างน้อย 1 อย่างเพื่อเปรียบเทียบ
+                  {t('treatmentComparison.noSelection')}
                 </div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full border-collapse">
                     <thead>
                       <tr className="border-b">
-                        <th className="text-left p-2 font-medium">Treatment</th>
-                        <th className="text-left p-2 font-medium">Price</th>
-                        <th className="text-left p-2 font-medium">Duration</th>
-                        <th className="text-left p-2 font-medium">Effectiveness</th>
-                        <th className="text-left p-2 font-medium">Recovery</th>
-                        <th className="text-left p-2 font-medium">Rating</th>
+                        <th className="text-left p-2 font-medium">{t('treatmentComparison.table.treatment')}</th>
+                        <th className="text-left p-2 font-medium">{t('treatmentComparison.table.price')}</th>
+                        <th className="text-left p-2 font-medium">{t('treatmentComparison.table.duration')}</th>
+                        <th className="text-left p-2 font-medium">{t('treatmentComparison.table.effectiveness')}</th>
+                        <th className="text-left p-2 font-medium">{t('treatmentComparison.table.recovery')}</th>
+                        <th className="text-left p-2 font-medium">{t('treatmentComparison.table.rating')}</th>
                       </tr>
                     </thead>
                     <tbody>
                       {selectedTreatmentData.map((treatment) => (
                         <tr key={treatment.id} className="border-b">
                           <td className="p-2 font-medium">{treatment.name}</td>
-                          <td className="p-2">฿{treatment.price.toLocaleString()}</td>
+                          <td className="p-2">{t('format.currency', { amount: treatment.price.toLocaleString() })}</td>
                           <td className="p-2">{treatment.duration}</td>
                           <td className="p-2">{treatment.effectiveness}%</td>
                           <td className="p-2">{treatment.recoveryTime}</td>
@@ -326,20 +329,20 @@ export function TreatmentComparison() {
       {selectedTreatmentData.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>Selected Treatments Summary</CardTitle>
+            <CardTitle>{t('treatmentComparison.summaryTitle')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between mb-4">
               <div>
                 <p className="text-sm text-muted-foreground">
-                  เลือกแล้ว {selectedTreatmentData.length} ทรีตเมนต์
+                  {t('treatmentComparison.selectedCount', { count: selectedTreatmentData.length })}
                 </p>
                 <p className="text-2xl font-bold">
-                  รวม ฿{totalPrice.toLocaleString()}
+                  {t('treatmentComparison.total', { amount: t('format.currency', { amount: totalPrice.toLocaleString() }) })}
                 </p>
               </div>
               <Button size="lg">
-                จองทรีตเมนต์
+                {t('treatmentComparison.bookNow')}
               </Button>
             </div>
 
@@ -348,9 +351,9 @@ export function TreatmentComparison() {
                 <div key={treatment.id} className="p-3 border rounded-lg">
                   <h4 className="font-medium mb-2">{treatment.name}</h4>
                   <div className="text-sm text-muted-foreground space-y-1">
-                    <div>ราคา: ฿{treatment.price.toLocaleString()}</div>
-                    <div>ระยะเวลา: {treatment.duration}</div>
-                    <div>ประสิทธิภาพ: {treatment.effectiveness}%</div>
+                    <div>{t('treatmentComparison.table.price')}: {t('format.currency', { amount: treatment.price.toLocaleString() })}</div>
+                    <div>{t('treatmentComparison.table.duration')}: {treatment.duration}</div>
+                    <div>{t('treatmentComparison.table.effectiveness')}: {treatment.effectiveness}%</div>
                   </div>
                 </div>
               ))}

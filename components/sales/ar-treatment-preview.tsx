@@ -31,11 +31,14 @@ interface TreatmentPreviewProps {
   }>;
 }
 
+import { useTranslations } from "next-intl"
+
 export default function ARTreatmentPreview({ 
   beforeImage, 
   concerns, 
   recommendations 
 }: TreatmentPreviewProps) {
+  const t = useTranslations()
   const [comparison, setComparison] = useState(50); // 0-100 slider
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedTreatment, setSelectedTreatment] = useState(0);
@@ -155,8 +158,8 @@ export default function ARTreatmentPreview({
         ctx.fillStyle = '#000000';
         ctx.font = 'bold 24px Arial';
         ctx.textAlign = 'center';
-        ctx.fillText('Before', beforeImg.width / 2 + 20, 40);
-        ctx.fillText('After', beforeImg.width * 1.5 + 40, 40);
+        ctx.fillText(t('arTreatmentPreview.before'), beforeImg.width / 2 + 20, 40);
+        ctx.fillText(t('arTreatmentPreview.after'), beforeImg.width * 1.5 + 40, 40);
         
         // Download
         const link = document.createElement('a');
@@ -176,10 +179,10 @@ export default function ARTreatmentPreview({
           <div>
             <CardTitle className="flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-purple-500" />
-              AR Treatment Preview
+              {t('arTreatmentPreview.title')}
             </CardTitle>
             <CardDescription>
-              See the expected results after treatment
+              {t('arTreatmentPreview.description')}
             </CardDescription>
           </div>
           <div className="flex gap-2">
@@ -209,7 +212,7 @@ export default function ARTreatmentPreview({
               size="sm"
               onClick={() => {
                 // TODO: Implement share functionality
-                alert('Share functionality coming soon!');
+                alert(t('arTreatmentPreview.shareComingSoon'));
               }}
             >
               <Share2 className="w-4 h-4" />
@@ -231,15 +234,15 @@ export default function ARTreatmentPreview({
             <TabsContent key={idx} value={idx.toString()} className="space-y-4">
               <div className="grid grid-cols-3 gap-4 text-sm">
                 <div>
-                  <div className="text-muted-foreground">Price</div>
-                  <div className="font-semibold text-lg">฿{rec.price.toLocaleString()}</div>
+                  <div className="text-muted-foreground">{t('fillerLipSimulator.infoLabels.price')}</div>
+                  <div className="font-semibold text-lg">{t('format.currency', { amount: rec.price.toLocaleString() })}</div>
                 </div>
                 <div>
-                  <div className="text-muted-foreground">Duration</div>
+                  <div className="text-muted-foreground">{t('fillerLipSimulator.infoLabels.duration')}</div>
                   <div className="font-semibold">{rec.duration}</div>
                 </div>
                 <div>
-                  <div className="text-muted-foreground">Expected Result</div>
+                  <div className="text-muted-foreground">{t('salesPresentations.card.progress')}</div>
                   <Badge variant="secondary">{rec.expectedOutcome}</Badge>
                 </div>
               </div>
@@ -282,19 +285,19 @@ export default function ARTreatmentPreview({
           
           {/* Labels */}
           <div className="absolute top-4 left-4 bg-black/50 text-white px-3 py-1 rounded-full text-sm font-medium">
-            Before
+            {t('arTreatmentPreview.before')}
           </div>
           <div className="absolute top-4 right-4 bg-black/50 text-white px-3 py-1 rounded-full text-sm font-medium">
-            After
+            {t('arTreatmentPreview.after')}
           </div>
         </div>
 
         {/* Slider Control */}
         <div className="space-y-2">
           <div className="flex justify-between text-sm text-muted-foreground">
-            <span>Before</span>
+            <span>{t('arTreatmentPreview.before')}</span>
             <span>{comparison}%</span>
-            <span>After</span>
+            <span>{t('arTreatmentPreview.after')}</span>
           </div>
           <Slider
             value={[comparison]}
@@ -307,7 +310,7 @@ export default function ARTreatmentPreview({
 
         {/* Improvements List */}
         <div className="space-y-2">
-          <h4 className="font-semibold text-sm">Expected Improvements:</h4>
+          <h4 className="font-semibold text-sm">{t('arTreatmentPreview.expectedImprovements')}</h4>
           <div className="grid gap-2">
             {concerns.map((concern, idx) => {
               const improvement = Math.min(100, Math.round((10 - concern.severity) * 10 + 30));
@@ -316,11 +319,11 @@ export default function ARTreatmentPreview({
                   <div className="flex-1">
                     <div className="font-medium text-sm">{concern.name}</div>
                     <div className="text-xs text-muted-foreground">
-                      Severity: {concern.severity}/10
+                      {t('arTreatmentPreview.severity', { value: concern.severity })}
                     </div>
                   </div>
                   <Badge variant={improvement >= 60 ? 'default' : 'secondary'}>
-                    {improvement}% improvement
+                    {t('arTreatmentPreview.improvement', { percent: improvement })}
                   </Badge>
                 </div>
               );
@@ -330,7 +333,7 @@ export default function ARTreatmentPreview({
 
         {/* Disclaimer */}
         <p className="text-xs text-muted-foreground italic">
-          * Results shown are simulated based on typical outcomes. Actual results may vary depending on individual skin condition and treatment response.
+          {t('arTreatmentPreview.disclaimer')}
         </p>
       </CardContent>
     </Card>

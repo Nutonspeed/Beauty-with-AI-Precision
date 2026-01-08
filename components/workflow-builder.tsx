@@ -8,6 +8,7 @@
  */
 
 import { useState } from "react"
+import { useTranslations } from "next-intl"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -54,48 +55,49 @@ interface WorkflowBuilderProps {
   }
 }
 
-const STEP_TYPES = [
-  { value: "send_email", label: "Send Email", icon: Mail, color: "bg-blue-100 text-blue-700" },
-  {
-    value: "send_sms",
-    label: "Send SMS",
-    icon: MessageSquare,
-    color: "bg-green-100 text-green-700",
-  },
-  { value: "wait", label: "Wait", icon: Clock, color: "bg-yellow-100 text-yellow-700" },
-  { value: "condition", label: "Condition", icon: GitBranch, color: "bg-purple-100 text-purple-700" },
-  { value: "tag", label: "Add Tag", icon: Tag, color: "bg-pink-100 text-pink-700" },
-  {
-    value: "update_field",
-    label: "Update Field",
-    icon: Edit,
-    color: "bg-orange-100 text-orange-700",
-  },
-]
+  const STEP_TYPES = [
+    { value: "send_email", label: t('workflowBuilder.stepTypes.send_email'), icon: Mail, color: "bg-blue-100 text-blue-700" },
+    {
+      value: "send_sms",
+      label: t('workflowBuilder.stepTypes.send_sms'),
+      icon: MessageSquare,
+      color: "bg-green-100 text-green-700",
+    },
+    { value: "wait", label: t('workflowBuilder.stepTypes.wait'), icon: Clock, color: "bg-yellow-100 text-yellow-700" },
+    { value: "condition", label: t('workflowBuilder.stepTypes.condition'), icon: GitBranch, color: "bg-purple-100 text-purple-700" },
+    { value: "tag", label: t('workflowBuilder.stepTypes.tag'), icon: Tag, color: "bg-pink-100 text-pink-700" },
+    {
+      value: "update_field",
+      label: t('workflowBuilder.stepTypes.update_field'),
+      icon: Edit,
+      color: "bg-orange-100 text-orange-700",
+    },
+  ]
 
-const TRIGGER_TYPES: { value: TriggerType; label: string }[] = [
-  { value: "immediate", label: "Immediate" },
-  { value: "scheduled", label: "Scheduled" },
-  { value: "event-based", label: "Event-Based" },
-  { value: "behavioral", label: "Behavioral" },
-]
+  const TRIGGER_TYPES: { value: TriggerType; label: string }[] = [
+    { value: "immediate", label: t('workflowBuilder.triggerTypes.immediate') },
+    { value: "scheduled", label: t('workflowBuilder.triggerTypes.scheduled') },
+    { value: "event-based", label: t('workflowBuilder.triggerTypes.event-based') },
+    { value: "behavioral", label: t('workflowBuilder.triggerTypes.behavioral') },
+  ]
 
-const EVENT_TYPES: { value: EventType; label: string }[] = [
-  { value: "signup", label: "User Signup" },
-  { value: "purchase", label: "Purchase" },
-  { value: "booking", label: "Booking Made" },
-  { value: "treatment_complete", label: "Treatment Completed" },
-  { value: "birthday", label: "Birthday" },
-  { value: "anniversary", label: "Anniversary" },
-  { value: "abandoned_cart", label: "Abandoned Cart" },
-  { value: "inactivity", label: "Inactivity Period" },
-]
+  const EVENT_TYPES: { value: EventType; label: string }[] = [
+    { value: "signup", label: t('workflowBuilder.eventTypes.signup') },
+    { value: "purchase", label: t('workflowBuilder.eventTypes.purchase') },
+    { value: "booking", label: t('workflowBuilder.eventTypes.booking') },
+    { value: "treatment_complete", label: t('workflowBuilder.eventTypes.treatment_complete') },
+    { value: "birthday", label: t('workflowBuilder.eventTypes.birthday') },
+    { value: "anniversary", label: t('workflowBuilder.eventTypes.anniversary') },
+    { value: "abandoned_cart", label: t('workflowBuilder.eventTypes.abandoned_cart') },
+    { value: "inactivity", label: t('workflowBuilder.eventTypes.inactivity') },
+  ]
 
 export default function WorkflowBuilder({
   onSave,
   onCancel,
   initialData,
 }: WorkflowBuilderProps) {
+  const t = useTranslations()
   const [name, setName] = useState(initialData?.name || "")
   const [description, setDescription] = useState(initialData?.description || "")
   const [trigger, setTrigger] = useState<TriggerType>(initialData?.trigger || "event-based")
@@ -116,11 +118,11 @@ export default function WorkflowBuilder({
   const addStep = (type: WorkflowStep["type"]) => {
     const defaultConfigs: Record<WorkflowStep["type"], unknown> = {
       send_email: {
-        subject: "Email Subject",
-        body: "Email body content...",
+        subject: t('workflowBuilder.config.emailSubject'),
+        body: t('workflowBuilder.config.emailBody'),
       },
       send_sms: {
-        message: "SMS message content...",
+        message: t('workflowBuilder.config.smsMessage'),
       },
       wait: {
         duration: 24,
@@ -141,12 +143,12 @@ export default function WorkflowBuilder({
     }
 
     const stepNames: Record<WorkflowStep["type"], string> = {
-      send_email: "Send Email",
-      send_sms: "Send SMS",
-      wait: "Wait",
-      condition: "Check Condition",
-      tag: "Add Tag",
-      update_field: "Update Field",
+      send_email: t('workflowBuilder.stepTypes.send_email'),
+      send_sms: t('workflowBuilder.stepTypes.send_sms'),
+      wait: t('workflowBuilder.stepTypes.wait'),
+      condition: t('workflowBuilder.stepTypes.condition'),
+      tag: t('workflowBuilder.stepTypes.tag'),
+      update_field: t('workflowBuilder.stepTypes.update_field'),
     }
 
     setSteps([
@@ -183,15 +185,15 @@ export default function WorkflowBuilder({
 
   const handleSave = () => {
     if (!name.trim()) {
-      alert("Please enter a workflow name")
+      alert(t('workflowBuilder.alerts.enterName'))
       return
     }
     if (steps.length === 0) {
-      alert("Please add at least one step")
+      alert(t('workflowBuilder.alerts.addStep'))
       return
     }
     if ((trigger === "event-based" || trigger === "behavioral") && !event) {
-      alert("Please select an event for this trigger type")
+      alert(t('workflowBuilder.alerts.selectEvent'))
       return
     }
 
@@ -219,24 +221,24 @@ export default function WorkflowBuilder({
       {/* Workflow Details */}
       <Card>
         <CardHeader>
-          <CardTitle>Workflow Details</CardTitle>
-          <CardDescription>Define your automation workflow</CardDescription>
+          <CardTitle>{t('workflowBuilder.title')}</CardTitle>
+          <CardDescription>{t('workflowBuilder.description')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="workflow-name">Workflow Name</Label>
+            <Label htmlFor="workflow-name">{t('workflowBuilder.nameLabel')}</Label>
             <Input
               id="workflow-name"
-              placeholder="e.g., Post-Treatment Follow-up"
+              placeholder={t('workflowBuilder.namePlaceholder')}
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="workflow-description">Description</Label>
+            <Label htmlFor="workflow-description">{t('workflowBuilder.descLabel')}</Label>
             <Textarea
               id="workflow-description"
-              placeholder="Describe what this workflow does..."
+              placeholder={t('workflowBuilder.descPlaceholder')}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
@@ -244,7 +246,7 @@ export default function WorkflowBuilder({
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Trigger Type</Label>
+              <Label>{t('workflowBuilder.triggerType')}</Label>
               <Select value={trigger} onValueChange={(value) => setTrigger(value as TriggerType)}>
                 <SelectTrigger>
                   <SelectValue />
@@ -260,7 +262,7 @@ export default function WorkflowBuilder({
             </div>
             {(trigger === "event-based" || trigger === "behavioral") && (
               <div className="space-y-2">
-                <Label>Event</Label>
+                <Label>{t('workflowBuilder.eventLabel')}</Label>
                 <Select
                   value={event}
                   onValueChange={(value) => setEvent(value as EventType)}
@@ -285,16 +287,16 @@ export default function WorkflowBuilder({
       {/* Workflow Steps */}
       <Card>
         <CardHeader>
-          <CardTitle>Workflow Steps</CardTitle>
-          <CardDescription>Build your automation sequence</CardDescription>
+          <CardTitle>{t('workflowBuilder.stepsTitle')}</CardTitle>
+          <CardDescription>{t('workflowBuilder.stepsDescription')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Trigger Indicator */}
-          <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border-2 border-blue-200">
+          <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border-2 border-blue-200 text-blue-900">
             <Play className="w-6 h-6 text-blue-600" />
             <div>
-              <p className="font-semibold text-gray-900">Trigger</p>
-              <p className="text-sm text-gray-600">
+              <p className="font-semibold">{t('workflowBuilder.triggerLabel')}</p>
+              <p className="text-sm opacity-80">
                 {TRIGGER_TYPES.find((t) => t.value === trigger)?.label}
                 {event && ` - ${EVENT_TYPES.find((e) => e.value === event)?.label}`}
               </p>
@@ -326,7 +328,7 @@ export default function WorkflowBuilder({
                             value={step.name}
                             onChange={(e) => updateStep(index, { name: e.target.value })}
                             className="font-medium"
-                            placeholder="Step name"
+                            placeholder={t('workflowBuilder.config.stepName')}
                           />
                           <Badge variant="outline" className="mt-1">
                             {STEP_TYPES.find((s) => s.value === step.type)?.label}
@@ -347,12 +349,12 @@ export default function WorkflowBuilder({
                         {step.type === "send_email" && (
                           <>
                             <Input
-                              placeholder="Email subject"
+                              placeholder={t('workflowBuilder.config.emailSubject')}
                               value={(step.config as { subject?: string }).subject || ""}
                               onChange={(e) => updateStepConfig(index, "subject", e.target.value)}
                             />
                             <Textarea
-                              placeholder="Email body"
+                              placeholder={t('workflowBuilder.config.emailBody')}
                               value={(step.config as { body?: string }).body || ""}
                               onChange={(e) => updateStepConfig(index, "body", e.target.value)}
                               rows={3}
@@ -361,7 +363,7 @@ export default function WorkflowBuilder({
                         )}
                         {step.type === "send_sms" && (
                           <Textarea
-                            placeholder="SMS message (max 160 characters)"
+                            placeholder={t('workflowBuilder.config.smsMessage')}
                             value={(step.config as { message?: string }).message || ""}
                             onChange={(e) => updateStepConfig(index, "message", e.target.value)}
                             rows={2}
@@ -370,76 +372,100 @@ export default function WorkflowBuilder({
                         )}
                         {step.type === "wait" && (
                           <div className="grid grid-cols-2 gap-2">
-                            <Input
-                              type="number"
-                              placeholder="Duration"
-                              value={(step.config as { duration?: number }).duration || 0}
-                              onChange={(e) =>
-                                updateStepConfig(index, "duration", parseInt(e.target.value))
-                              }
-                            />
-                            <Select
-                              value={(step.config as { unit?: string }).unit || "hours"}
-                              onValueChange={(value) => updateStepConfig(index, "unit", value)}
-                            >
-                              <SelectTrigger>
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="minutes">Minutes</SelectItem>
-                                <SelectItem value="hours">Hours</SelectItem>
-                                <SelectItem value="days">Days</SelectItem>
-                              </SelectContent>
-                            </Select>
+                            <div className="space-y-1">
+                              <Label className="text-xs">{t('workflowBuilder.config.duration')}</Label>
+                              <Input
+                                type="number"
+                                placeholder={t('workflowBuilder.config.duration')}
+                                value={(step.config as { duration?: number }).duration || 0}
+                                onChange={(e) =>
+                                  updateStepConfig(index, "duration", parseInt(e.target.value))
+                                }
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <Label className="text-xs">{t('workflowBuilder.config.unit')}</Label>
+                              <Select
+                                value={(step.config as { unit?: string }).unit || "hours"}
+                                onValueChange={(value) => updateStepConfig(index, "unit", value)}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="minutes">{t('workflowBuilder.config.units.minutes')}</SelectItem>
+                                  <SelectItem value="hours">{t('workflowBuilder.config.units.hours')}</SelectItem>
+                                  <SelectItem value="days">{t('workflowBuilder.config.units.days')}</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
                           </div>
                         )}
                         {step.type === "condition" && (
                           <div className="grid grid-cols-3 gap-2">
-                            <Input
-                              placeholder="Field"
-                              value={(step.config as { field?: string }).field || ""}
-                              onChange={(e) => updateStepConfig(index, "field", e.target.value)}
-                            />
-                            <Select
-                              value={(step.config as { operator?: string }).operator || "equals"}
-                              onValueChange={(value) => updateStepConfig(index, "operator", value)}
-                            >
-                              <SelectTrigger>
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="equals">Equals</SelectItem>
-                                <SelectItem value="not_equals">Not Equals</SelectItem>
-                                <SelectItem value="greater_than">Greater Than</SelectItem>
-                                <SelectItem value="less_than">Less Than</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <Input
-                              placeholder="Value"
-                              value={(step.config as { value?: string }).value || ""}
-                              onChange={(e) => updateStepConfig(index, "value", e.target.value)}
-                            />
+                            <div className="space-y-1">
+                              <Label className="text-xs">{t('workflowBuilder.config.field')}</Label>
+                              <Input
+                                placeholder={t('workflowBuilder.config.field')}
+                                value={(step.config as { field?: string }).field || ""}
+                                onChange={(e) => updateStepConfig(index, "field", e.target.value)}
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <Label className="text-xs">{t('workflowBuilder.config.operator')}</Label>
+                              <Select
+                                value={(step.config as { operator?: string }).operator || "equals"}
+                                onValueChange={(value) => updateStepConfig(index, "operator", value)}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="equals">{t('workflowBuilder.config.operators.equals')}</SelectItem>
+                                  <SelectItem value="not_equals">{t('workflowBuilder.config.operators.not_equals')}</SelectItem>
+                                  <SelectItem value="greater_than">{t('workflowBuilder.config.operators.greater_than')}</SelectItem>
+                                  <SelectItem value="less_than">{t('workflowBuilder.config.operators.less_than')}</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            <div className="space-y-1">
+                              <Label className="text-xs">{t('workflowBuilder.config.value')}</Label>
+                              <Input
+                                placeholder={t('workflowBuilder.config.value')}
+                                value={(step.config as { value?: string }).value || ""}
+                                onChange={(e) => updateStepConfig(index, "value", e.target.value)}
+                              />
+                            </div>
                           </div>
                         )}
                         {step.type === "tag" && (
-                          <Input
-                            placeholder="Tag name"
-                            value={(step.config as { tag?: string }).tag || ""}
-                            onChange={(e) => updateStepConfig(index, "tag", e.target.value)}
-                          />
+                          <div className="space-y-1">
+                            <Label className="text-xs">{t('workflowBuilder.config.tagName')}</Label>
+                            <Input
+                              placeholder={t('workflowBuilder.config.tagName')}
+                              value={(step.config as { tag?: string }).tag || ""}
+                              onChange={(e) => updateStepConfig(index, "tag", e.target.value)}
+                            />
+                          </div>
                         )}
                         {step.type === "update_field" && (
                           <div className="grid grid-cols-2 gap-2">
-                            <Input
-                              placeholder="Field name"
-                              value={(step.config as { field?: string }).field || ""}
-                              onChange={(e) => updateStepConfig(index, "field", e.target.value)}
-                            />
-                            <Input
-                              placeholder="New value"
-                              value={(step.config as { value?: string }).value || ""}
-                              onChange={(e) => updateStepConfig(index, "value", e.target.value)}
-                            />
+                            <div className="space-y-1">
+                              <Label className="text-xs">{t('workflowBuilder.config.fieldName')}</Label>
+                              <Input
+                                placeholder={t('workflowBuilder.config.fieldName')}
+                                value={(step.config as { field?: string }).field || ""}
+                                onChange={(e) => updateStepConfig(index, "field", e.target.value)}
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <Label className="text-xs">{t('workflowBuilder.config.newValue')}</Label>
+                              <Input
+                                placeholder={t('workflowBuilder.config.newValue')}
+                                value={(step.config as { value?: string }).value || ""}
+                                onChange={(e) => updateStepConfig(index, "value", e.target.value)}
+                              />
+                            </div>
                           </div>
                         )}
                       </div>
@@ -452,7 +478,7 @@ export default function WorkflowBuilder({
 
           {/* Add Step Buttons */}
           <div className="pt-4">
-            <p className="text-sm font-medium text-gray-700 mb-2">Add Step</p>
+            <p className="text-sm font-medium text-gray-700 mb-2">{t('workflowBuilder.addStep')}</p>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
               {STEP_TYPES.map((stepType) => {
                 const Icon = stepType.icon
@@ -476,18 +502,18 @@ export default function WorkflowBuilder({
       {/* Actions */}
       <div className="flex items-center justify-between">
         <p className="text-sm text-gray-600">
-          {steps.length} {steps.length === 1 ? "step" : "steps"} in workflow
+          {t('workflowBuilder.stepCount', { count: steps.length })}
         </p>
         <div className="flex gap-2">
           {onCancel && (
             <Button variant="outline" onClick={onCancel}>
               <X className="w-4 h-4 mr-2" />
-              Cancel
+              {t('common.cancel')}
             </Button>
           )}
           <Button onClick={handleSave}>
             <Save className="w-4 h-4 mr-2" />
-            Save Workflow
+            {t('workflowBuilder.save')}
           </Button>
         </div>
       </div>

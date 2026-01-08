@@ -6,6 +6,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ProgressTrackingChart } from '@/components/comparison/progress-tracking-chart';
 import { MultiAnalysisComparison } from '@/components/comparison/multi-analysis-comparison';
@@ -39,30 +40,13 @@ interface ComparisonPageClientProps {
   initialAnalyses: Analysis[];
 }
 
-const TRANSLATIONS = {
-  en: {
-    tabs: {
-      chart: 'Progress Chart',
-      comparison: 'Comparison',
-      gallery: 'Photo Gallery'
-    }
-  },
-  th: {
-    tabs: {
-      chart: 'กราฟความคืบหน้า',
-      comparison: 'เปรียบเทียบ',
-      gallery: 'แกลเลอรี่รูปภาพ'
-    }
-  }
-};
-
 export function ComparisonPageClient({
   userId,
   analysisIds,
   locale,
   initialAnalyses
 }: ComparisonPageClientProps) {
-  const t = TRANSLATIONS[locale];
+  const t = useTranslations();
   const [activeTab, setActiveTab] = useState('chart');
 
   // Transform analyses to chart data format
@@ -102,15 +86,15 @@ export function ComparisonPageClient({
       <TabsList className="grid w-full grid-cols-3 mb-6">
         <TabsTrigger value="chart" className="flex items-center gap-2">
           <BarChart3 className="w-4 h-4" />
-          {t.tabs.chart}
+          {t('comparison.tabs.chart')}
         </TabsTrigger>
         <TabsTrigger value="comparison" className="flex items-center gap-2">
           <Grid3x3 className="w-4 h-4" />
-          {t.tabs.comparison}
+          {t('comparison.tabs.comparison')}
         </TabsTrigger>
         <TabsTrigger value="gallery" className="flex items-center gap-2">
           <ImageIcon className="w-4 h-4" />
-          {t.tabs.gallery}
+          {t('comparison.tabs.gallery')}
         </TabsTrigger>
       </TabsList>
 

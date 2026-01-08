@@ -126,18 +126,18 @@ export default function FeaturesPage() {
   const comparisonData = [
     {
       feature: t('features.comparison.accuracy'),
-      ours: "95%+",
-      competitor: "85-90%",
+      ours: t('features.comparison.values.accuracy.ours'),
+      competitor: t('features.comparison.values.accuracy.competitor'),
     },
     {
       feature: t('features.comparison.speed'),
-      ours: "3 วินาที / 3 sec",
-      competitor: "10-15 วินาที / sec",
+      ours: t('features.comparison.values.speed.ours'),
+      competitor: t('features.comparison.values.speed.competitor'),
     },
     {
       feature: t('features.comparison.analysisPoints'),
-      ours: "8 จุด / points",
-      competitor: "5-6 จุด / points",
+      ours: t('features.comparison.values.points.ours'),
+      competitor: t('features.comparison.values.points.competitor'),
     },
     {
       feature: t('features.comparison.arSimulator'),
@@ -146,18 +146,18 @@ export default function FeaturesPage() {
     },
     {
       feature: t('features.comparison.multiClinic'),
-      ours: "✓ Unlimited",
-      competitor: "Limited",
+      ours: t('features.comparison.values.multiClinic.ours'),
+      competitor: t('features.comparison.values.multiClinic.competitor'),
     },
     {
       feature: t('features.comparison.pdpaCompliant'),
-      ours: "✓ Full",
-      competitor: "Partial",
+      ours: t('features.comparison.values.pdpa.ours'),
+      competitor: t('features.comparison.values.pdpa.competitor'),
     },
     {
       feature: t('features.comparison.price'),
-      ours: "฿990/เดือน / ฿990/mo",
-      competitor: "฿2,000+/เดือน / ฿2,000+/mo",
+      ours: t('features.comparison.values.price.ours'),
+      competitor: t('features.comparison.values.price.competitor'),
     },
   ]
 

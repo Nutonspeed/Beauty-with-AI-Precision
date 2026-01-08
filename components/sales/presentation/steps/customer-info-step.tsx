@@ -16,6 +16,7 @@ import { Label } from '@/components/ui/label'
 import { Card } from '@/components/ui/card'
 import { User, Phone, Mail, AlertCircle } from 'lucide-react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { useTranslations } from 'next-intl'
 
 interface CustomerInfoStepProps {
   customer: {
@@ -29,6 +30,7 @@ interface CustomerInfoStepProps {
 }
 
 export function CustomerInfoStep({ customer, onUpdate, isOnline }: CustomerInfoStepProps) {
+  const t = useTranslations()
   const [localCustomer, setLocalCustomer] = useState(customer)
   const [errors, setErrors] = useState<Record<string, string>>({})
 
@@ -52,17 +54,17 @@ export function CustomerInfoStep({ customer, onUpdate, isOnline }: CustomerInfoS
       const newErrors: Record<string, string> = {}
       
       if (!localCustomer.name.trim()) {
-        newErrors.name = 'Name is required'
+        newErrors.name = t('salesWizard.steps.customer.nameRequired')
       }
       
       if (!localCustomer.phone.trim()) {
-        newErrors.phone = 'Phone number is required'
+        newErrors.phone = t('salesWizard.steps.customer.phoneRequired')
       } else if (!validatePhone(localCustomer.phone)) {
-        newErrors.phone = 'Invalid phone number (use 0X-XXXX-XXXX format)'
+        newErrors.phone = t('salesWizard.steps.customer.phoneInvalid')
       }
       
       if (localCustomer.email && !validateEmail(localCustomer.email)) {
-        newErrors.email = 'Invalid email address'
+        newErrors.email = t('salesWizard.steps.customer.emailInvalid')
       }
       
       setErrors(newErrors)
@@ -74,7 +76,7 @@ export function CustomerInfoStep({ customer, onUpdate, isOnline }: CustomerInfoS
     }, 500)
 
     return () => clearTimeout(timeoutId)
-  }, [localCustomer, onUpdate])
+  }, [localCustomer, onUpdate, t])
 
   const handleChange = (field: keyof typeof localCustomer, value: string) => {
     setLocalCustomer(prev => ({
@@ -88,7 +90,7 @@ export function CustomerInfoStep({ customer, onUpdate, isOnline }: CustomerInfoS
       <Alert className="bg-blue-50 dark:bg-blue-950/20 border-blue-200">
         <AlertCircle className="h-4 w-4 text-blue-600" />
         <AlertDescription className="text-sm text-blue-900 dark:text-blue-100">
-          Enter customer information to begin the presentation. All data is saved automatically.
+          {t('salesWizard.steps.customer.alertDesc')}
         </AlertDescription>
       </Alert>
 
@@ -98,12 +100,12 @@ export function CustomerInfoStep({ customer, onUpdate, isOnline }: CustomerInfoS
         <div className="space-y-2">
           <Label htmlFor="customer-name" className="flex items-center gap-2">
             <User className="h-4 w-4" />
-            Full Name <span className="text-red-500">*</span>
+            {t('salesWizard.steps.customer.nameLabel')} <span className="text-red-500">*</span>
           </Label>
           <Input
             id="customer-name"
             type="text"
-            placeholder="Enter customer's full name"
+            placeholder={t('salesWizard.steps.customer.namePlaceholder')}
             value={localCustomer.name}
             onChange={(e) => handleChange('name', e.target.value)}
             className={errors.name ? 'border-red-500' : ''}
@@ -118,12 +120,12 @@ export function CustomerInfoStep({ customer, onUpdate, isOnline }: CustomerInfoS
         <div className="space-y-2">
           <Label htmlFor="customer-phone" className="flex items-center gap-2">
             <Phone className="h-4 w-4" />
-            Phone Number <span className="text-red-500">*</span>
+            {t('salesWizard.steps.customer.phoneLabel')} <span className="text-red-500">*</span>
           </Label>
           <Input
             id="customer-phone"
             type="tel"
-            placeholder="08X-XXXX-XXXX"
+            placeholder={t('salesWizard.steps.customer.phonePlaceholder')}
             value={localCustomer.phone}
             onChange={(e) => handleChange('phone', e.target.value)}
             className={errors.phone ? 'border-red-500' : ''}
@@ -133,7 +135,7 @@ export function CustomerInfoStep({ customer, onUpdate, isOnline }: CustomerInfoS
             <p className="text-xs text-red-500 mt-1">{errors.phone}</p>
           )}
           <p className="text-xs text-muted-foreground">
-            Thai phone number format (10 digits)
+            {t('salesWizard.steps.customer.phoneDesc')}
           </p>
         </div>
 
@@ -141,12 +143,12 @@ export function CustomerInfoStep({ customer, onUpdate, isOnline }: CustomerInfoS
         <div className="space-y-2">
           <Label htmlFor="customer-email" className="flex items-center gap-2">
             <Mail className="h-4 w-4" />
-            Email Address <span className="text-xs text-muted-foreground">(optional)</span>
+            {t('salesWizard.steps.customer.emailLabel')} <span className="text-xs text-muted-foreground">({t('common.optional')})</span>
           </Label>
           <Input
             id="customer-email"
             type="email"
-            placeholder="customer@example.com"
+            placeholder={t('salesWizard.steps.customer.emailPlaceholder')}
             value={localCustomer.email || ''}
             onChange={(e) => handleChange('email', e.target.value)}
             className={errors.email ? 'border-red-500' : ''}
@@ -156,7 +158,7 @@ export function CustomerInfoStep({ customer, onUpdate, isOnline }: CustomerInfoS
             <p className="text-xs text-red-500 mt-1">{errors.email}</p>
           )}
           <p className="text-xs text-muted-foreground">
-            Used for sending proposal and follow-up
+            {t('salesWizard.steps.customer.emailDesc')}
           </p>
         </div>
       </div>
@@ -165,13 +167,13 @@ export function CustomerInfoStep({ customer, onUpdate, isOnline }: CustomerInfoS
       {localCustomer.name && localCustomer.phone && Object.keys(errors).length === 0 && (
         <Card className="p-4 bg-green-50 dark:bg-green-950/20 border-green-200">
           <p className="text-sm font-medium text-green-900 dark:text-green-100 mb-2">
-            ✓ Customer information saved
+            {t('salesWizard.steps.customer.saveSuccess')}
           </p>
           <div className="space-y-1 text-sm text-green-700 dark:text-green-300">
-            <p><strong>Name:</strong> {localCustomer.name}</p>
-            <p><strong>Phone:</strong> {localCustomer.phone}</p>
+            <p><strong>{t('common.name')}:</strong> {localCustomer.name}</p>
+            <p><strong>{t('common.phone')}:</strong> {localCustomer.phone}</p>
             {localCustomer.email && (
-              <p><strong>Email:</strong> {localCustomer.email}</p>
+              <p><strong>{t('common.email')}:</strong> {localCustomer.email}</p>
             )}
           </div>
         </Card>
@@ -182,7 +184,7 @@ export function CustomerInfoStep({ customer, onUpdate, isOnline }: CustomerInfoS
         <Alert variant="default" className="bg-amber-50 dark:bg-amber-950/20 border-amber-200">
           <AlertCircle className="h-4 w-4 text-amber-600" />
           <AlertDescription className="text-sm text-amber-900 dark:text-amber-100">
-            Working offline. Customer data will be synced when connection is restored.
+            {t('salesWizard.steps.customer.offlineNotice')}
           </AlertDescription>
         </Alert>
       )}

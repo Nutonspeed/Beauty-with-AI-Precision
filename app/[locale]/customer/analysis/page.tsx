@@ -7,17 +7,11 @@ import {
   Upload, 
   Play, 
   CheckCircle, 
-  AlertCircle,
-  TrendingUp,
-  Droplets,
-  Sun,
-  Heart,
-  Activity
+  AlertCircle
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Progress } from '@/components/ui/progress'
 import { useAuth } from '@/lib/auth/context'
 
 export default function SkinAnalysisPage() {

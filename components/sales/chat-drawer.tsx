@@ -35,6 +35,7 @@ import {
 import { offlineManager } from "@/lib/offline-manager"
 import { createClient } from "@/lib/supabase/client"
 import { toast } from "sonner"
+import { useTranslations } from "next-intl"
 
 interface Message {
   id: string
@@ -70,6 +71,7 @@ export function ChatDrawer({
   onCall,
   onVideoCall
 }: Readonly<ChatDrawerProps>) {
+  const t = useTranslations()
   const supabase = createClient()
   const [messageText, setMessageText] = useState("")
   const [selectedCategory, setSelectedCategory] = useState<QuickReplyCategory>('greetings')
@@ -140,7 +142,7 @@ export function ChatDrawer({
       }
     } catch (error) {
       console.error("Failed to load messages:", error)
-      toast.error("ไม่สามารถโหลดข้อความได้")
+      toast.error(t('dashboard.chatDrawer.loadError'))
     } finally {
       setLoadingMessages(false)
     }
@@ -245,7 +247,7 @@ export function ChatDrawer({
       }
     } catch (error) {
       console.error("Failed to send message:", error)
-      toast.error("ไม่สามารถส่งข้อความได้")
+      toast.error(t('dashboard.chatDrawer.sendError'))
       // Rollback: remove optimistic message and restore input
       setOptimisticMessages(prev => prev.filter(m => m.id !== tempId))
       setMessageText(currentMessageText)
@@ -297,7 +299,7 @@ export function ChatDrawer({
       }
     } catch (error) {
       console.error("Failed to send quick reply:", error)
-      toast.error("ไม่สามารถส่งข้อความได้")
+      toast.error(t('dashboard.chatDrawer.sendError'))
       setOptimisticMessages(prev => prev.filter(m => m.id !== tempId))
     } finally {
       setIsSending(false)
@@ -329,7 +331,7 @@ export function ChatDrawer({
   // Voice recognition handlers
   const handleStartVoice = () => {
     if (!isVoiceSupported) {
-      alert('เบราว์เซอร์นี้ไม่รองรับการพูดเป็นข้อความ กรุณาใช้ Chrome, Edge หรือ Safari')
+      alert(t('dashboard.chatDrawer.voiceNotSupported'))
       return
     }
 
@@ -380,7 +382,7 @@ export function ChatDrawer({
         className="w-full sm:w-[400px] p-0 flex flex-col"
       >
         <SheetTitle className="sr-only">
-          Chat with {customer.name}
+          {t('dashboard.chatDrawer.title')} {customer.name}
         </SheetTitle>
         
         {/* Chat Header - Sticky */}
@@ -399,11 +401,11 @@ export function ChatDrawer({
                 {customer.isOnline && (
                   <div className="flex items-center gap-1">
                     <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                    <span>Online</span>
+                    <span>{t('dashboard.chatDrawer.online')}</span>
                   </div>
                 )}
                 {customer.isTyping && (
-                  <span className="italic">Typing...</span>
+                  <span className="italic">{t('dashboard.chatDrawer.typing')}</span>
                 )}
               </div>
             </div>
@@ -530,7 +532,7 @@ export function ChatDrawer({
               {showAddCustom ? (
                 <div className="flex-1 min-w-full flex gap-2">
                   <Input
-                    placeholder="พิมพ์ข้อความที่ต้องการบันทึก..."
+                    placeholder={t('dashboard.chatDrawer.addCustomPlaceholder')}
                     value={customReplyText}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCustomReplyText(e.target.value)}
                     onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -549,7 +551,7 @@ export function ChatDrawer({
                     onClick={handleSaveCustomReply}
                     disabled={!customReplyText.trim()}
                   >
-                    บันทึก
+                    {t('common.save')}
                   </Button>
                   <Button
                     size="sm"
@@ -570,7 +572,7 @@ export function ChatDrawer({
                   onClick={() => setShowAddCustom(true)}
                 >
                   <Plus className="h-4 w-4 mr-1" />
-                  <span className="text-xs">เพิ่มข้อความ</span>
+                  <span className="text-xs">{t('dashboard.chatDrawer.addCustomButton')}</span>
                 </Button>
               )}
             </div>
@@ -585,7 +587,7 @@ export function ChatDrawer({
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
                 <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
-                  {voiceStatus === 'listening' ? 'กำลังฟัง...' : 'กำลังประมวลผล...'}
+                  {voiceStatus === 'listening' ? t('dashboard.chatDrawer.listening') : t('dashboard.chatDrawer.processing')}
                 </span>
               </div>
               {interimTranscript && (
@@ -606,7 +608,7 @@ export function ChatDrawer({
             </Button>
 
             <Input
-              placeholder={isVoiceActive ? "กำลังฟังเสียง..." : "Type your message..."}
+              placeholder={isVoiceActive ? t('dashboard.chatDrawer.voiceActivePlaceholder') : t('dashboard.chatDrawer.placeholder')}
               value={messageText}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMessageText(e.target.value)}
               onKeyDown={handleKeyPress}
@@ -621,7 +623,7 @@ export function ChatDrawer({
                 size="icon"
                 className="shrink-0"
                 onClick={isVoiceActive ? handleStopVoice : handleStartVoice}
-                title={isVoiceActive ? "หยุดบันทึกเสียง" : "บันทึกเสียง (Thai)"}
+                title={isVoiceActive ? t('dashboard.chatDrawer.stopVoice') : t('dashboard.chatDrawer.startVoice')}
               >
                 {isVoiceActive ? (
                   <MicOff className="h-5 w-5" />

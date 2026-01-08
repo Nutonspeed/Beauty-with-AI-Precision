@@ -13,8 +13,6 @@ import {
   Filter, 
   Calendar,
   User,
-  CheckCircle2,
-  Clock,
   FileText,
   Eye,
   Trash2,
@@ -23,8 +21,9 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { formatDistanceToNow } from "date-fns"
-import { th } from "date-fns/locale"
+import { th, enUS } from "date-fns/locale"
 import { useLocalizePath } from "@/lib/i18n/locale-link"
+import { useTranslations, useLocale } from "next-intl"
 
 interface PresentationRecord {
   customerId: string
@@ -40,18 +39,22 @@ interface PresentationRecord {
   signature: string | null
 }
 
-const STEP_NAMES = [
-  "ข้อมูลลูกค้า",
-  "สแกนใบหน้า", 
-  "วิเคราะห์ AI",
-  "ดู AR Preview",
-  "เลือกผลิตภัณฑ์",
-  "สร้างใบเสนอราคา",
-  "เซ็นสัญญา"
-]
-
 export default function PresentationsPage() {
+  const t = useTranslations()
+  const locale = useLocale()
   const lp = useLocalizePath()
+  const dateLocale = locale === 'th' ? th : enUS
+
+  const STEP_NAMES = [
+    t('salesPresentations.steps.customerInfo'),
+    t('salesPresentations.steps.scan'),
+    t('salesPresentations.steps.analysis'),
+    t('salesPresentations.steps.arPreview'),
+    t('salesPresentations.steps.products'),
+    t('salesPresentations.steps.proposal'),
+    t('salesPresentations.steps.signature')
+  ]
+
   const [presentations, setPresentations] = useState<PresentationRecord[]>([])
   const [searchQuery, setSearchQuery] = useState("")
   const [filterStatus, setFilterStatus] = useState<string>("all")
@@ -115,7 +118,7 @@ export default function PresentationsPage() {
   }
 
   const handleDelete = (customerId: string) => {
-    if (confirm('ต้องการลบ presentation นี้ใช่หรือไม่?')) {
+    if (confirm(t('salesPresentations.card.deleteConfirm'))) {
       localStorage.removeItem(`sales-presentation-${customerId}`)
       loadPresentations()
     }
@@ -183,7 +186,7 @@ export default function PresentationsPage() {
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-              <p className="text-muted-foreground">กำลังโหลดข้อมูล...</p>
+              <p className="text-muted-foreground">{t('common.loading')}</p>
             </div>
           </div>
         </main>
@@ -204,14 +207,14 @@ export default function PresentationsPage() {
               <Link href={lp('/sales/dashboard')}>
                 <Button variant="ghost" size="sm">
                   <ArrowLeft className="h-4 w-4 mr-2" />
-                  Dashboard
+                  {t('salesDashboard.titleHighlight')}
                 </Button>
               </Link>
             </div>
             <div>
-              <h1 className="text-3xl font-bold">Presentation History</h1>
+              <h1 className="text-3xl font-bold">{t('salesPresentations.title')}</h1>
               <p className="text-muted-foreground mt-1">
-                รายการ presentations ทั้งหมด
+                {t('salesPresentations.subtitle')}
               </p>
             </div>
           </div>
@@ -222,33 +225,33 @@ export default function PresentationsPage() {
           <div className="grid gap-4 md:grid-cols-5 mb-6">
             <Card>
               <CardContent className="p-4">
-                <div className="text-sm text-muted-foreground">Total</div>
+                <div className="text-sm text-muted-foreground">{t('salesPresentations.stats.total')}</div>
                 <div className="text-2xl font-bold">{stats.total}</div>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-4">
-                <div className="text-sm text-muted-foreground">✅ Completed</div>
+                <div className="text-sm text-muted-foreground">{t('salesPresentations.stats.completed')}</div>
                 <div className="text-2xl font-bold text-green-600">{stats.completed}</div>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-4">
-                <div className="text-sm text-muted-foreground">⏱️ Incomplete</div>
+                <div className="text-sm text-muted-foreground">{t('salesPresentations.stats.incomplete')}</div>
                 <div className="text-2xl font-bold text-orange-600">{stats.incomplete}</div>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-4">
-                <div className="text-sm text-muted-foreground">Completion Rate</div>
+                <div className="text-sm text-muted-foreground">{t('salesPresentations.stats.completionRate')}</div>
                 <div className="text-2xl font-bold text-blue-600">{stats.completionRate}%</div>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-4">
-                <div className="text-sm text-muted-foreground">Total Value</div>
+                <div className="text-sm text-muted-foreground">{t('salesPresentations.stats.totalValue')}</div>
                 <div className="text-2xl font-bold text-purple-600">
-                  ฿{stats.totalValue.toLocaleString()}
+                  {t('format.currency', { amount: stats.totalValue.toLocaleString() })}
                 </div>
               </CardContent>
             </Card>
@@ -263,7 +266,7 @@ export default function PresentationsPage() {
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     type="text"
-                    placeholder="Search by name, phone, or email..."
+                    placeholder={t('salesPresentations.filters.searchPlaceholder')}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="pl-9"
@@ -277,9 +280,9 @@ export default function PresentationsPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Status</SelectItem>
-                    <SelectItem value="completed">✅ Completed</SelectItem>
-                    <SelectItem value="incomplete">⏱️ Incomplete</SelectItem>
+                    <SelectItem value="all">{t('salesPresentations.filters.allStatus')}</SelectItem>
+                    <SelectItem value="completed">{t('salesPresentations.filters.completed')}</SelectItem>
+                    <SelectItem value="incomplete">{t('salesPresentations.filters.incomplete')}</SelectItem>
                   </SelectContent>
                 </Select>
 
@@ -290,11 +293,11 @@ export default function PresentationsPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="date-desc">Date (Newest First)</SelectItem>
-                    <SelectItem value="date-asc">Date (Oldest First)</SelectItem>
-                    <SelectItem value="value-desc">Value (High to Low)</SelectItem>
-                    <SelectItem value="value-asc">Value (Low to High)</SelectItem>
-                    <SelectItem value="name-asc">Name (A-Z)</SelectItem>
+                    <SelectItem value="date-desc">{t('salesPresentations.filters.sortBy.dateDesc')}</SelectItem>
+                    <SelectItem value="date-asc">{t('salesPresentations.filters.sortBy.dateAsc')}</SelectItem>
+                    <SelectItem value="value-desc">{t('salesPresentations.filters.sortBy.valueDesc')}</SelectItem>
+                    <SelectItem value="value-asc">{t('salesPresentations.filters.sortBy.valueAsc')}</SelectItem>
+                    <SelectItem value="name-asc">{t('salesPresentations.filters.sortBy.nameAsc')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -303,7 +306,7 @@ export default function PresentationsPage() {
 
           {/* Results Count */}
           <div className="mb-4 text-sm text-muted-foreground">
-            แสดง {filteredPresentations.length} รายการจาก {presentations.length} รายการทั้งหมด
+            {t('salesPresentations.list.showing', { count: filteredPresentations.length, total: presentations.length })}
           </div>
 
           {/* Presentations List */}
@@ -312,11 +315,11 @@ export default function PresentationsPage() {
               <Card>
                 <CardContent className="p-12 text-center">
                   <FileText className="h-16 w-16 mx-auto mb-4 text-muted-foreground/50" />
-                  <h3 className="text-lg font-medium mb-2">ไม่พบข้อมูล</h3>
+                  <h3 className="text-lg font-medium mb-2">{t('salesPresentations.list.noData')}</h3>
                   <p className="text-sm text-muted-foreground">
                     {searchQuery || filterStatus !== 'all' 
-                      ? 'ลองเปลี่ยนตัวกรองหรือคำค้นหา'
-                      : 'ยังไม่มี presentation ในระบบ'}
+                      ? t('salesPresentations.list.noDataDesc')
+                      : t('salesPresentations.list.empty')}
                   </p>
                 </CardContent>
               </Card>
@@ -338,31 +341,29 @@ export default function PresentationsPage() {
                               >
                                 {presentation.status === 'completed' ? (
                                   <>
-                                    <CheckCircle2 className="h-3 w-3 mr-1" />
-                                    Completed
+                                    {t('salesPresentations.filters.completed')}
                                   </>
                                 ) : (
                                   <>
-                                    <Clock className="h-3 w-3 mr-1" />
-                                    Step {presentation.currentStep}/7
+                                    {t('salesPresentations.card.step', { current: presentation.currentStep, total: 7 })}
                                   </>
                                 )}
                               </Badge>
                             </div>
                             <div className="text-sm text-muted-foreground space-y-1">
                               {presentation.customerPhone && (
-                                <div>📞 {presentation.customerPhone}</div>
+                                <div><span className="mr-1">Phone:</span> {presentation.customerPhone}</div>
                               )}
                               {presentation.customerEmail && (
-                                <div>✉️ {presentation.customerEmail}</div>
+                                <div><span className="mr-1">Email:</span> {presentation.customerEmail}</div>
                               )}
                               {presentation.status === 'incomplete' && (
                                 <div className="text-xs mt-2">
                                   <Badge variant="outline" className="text-xs">
-                                    {STEP_NAMES[presentation.currentStep - 1] || 'เริ่มต้น'}
+                                    {STEP_NAMES[presentation.currentStep - 1] || t('salesPresentations.steps.start')}
                                   </Badge>
                                   <span className="ml-2 text-muted-foreground">
-                                    → ต่อไป: {STEP_NAMES[presentation.currentStep] || 'เสร็จสิ้น'}
+                                    {t('common.next')}: {STEP_NAMES[presentation.currentStep] || t('common.success')}
                                   </span>
                                 </div>
                               )}
@@ -374,7 +375,7 @@ export default function PresentationsPage() {
                         {presentation.status === 'incomplete' && (
                           <div className="mb-3">
                             <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
-                              <span>Progress</span>
+                              <span>{t('salesPresentations.card.progress')}</span>
                               <span>{Math.round((presentation.currentStep / 7) * 100)}%</span>
                             </div>
                             <div className="h-2 bg-secondary rounded-full overflow-hidden">
@@ -390,13 +391,13 @@ export default function PresentationsPage() {
                         <div className="flex items-center gap-4 text-sm">
                           {presentation.status === 'completed' && (
                             <div className="font-medium text-green-600">
-                              ฿{presentation.totalValue.toLocaleString()}
+                              {t('format.currency', { amount: presentation.totalValue.toLocaleString() })}
                             </div>
                           )}
                           <div className="text-muted-foreground">
                             {presentation.completedAt 
-                              ? `เสร็จเมื่อ ${formatDistanceToNow(presentation.completedAt, { addSuffix: true, locale: th })}`
-                              : `สร้างเมื่อ ${formatDistanceToNow(presentation.createdAt, { addSuffix: true, locale: th })}`
+                              ? t('salesPresentations.card.completedAt', { time: formatDistanceToNow(presentation.completedAt, { addSuffix: true, locale: dateLocale }) })
+                              : t('salesPresentations.card.createdAt', { time: formatDistanceToNow(presentation.createdAt, { addSuffix: true, locale: dateLocale }) })
                             }
                           </div>
                         </div>
@@ -407,7 +408,7 @@ export default function PresentationsPage() {
                         <Link href={`/sales/wizard/${presentation.customerId}`}>
                           <Button size="sm" className="w-full">
                             <Eye className="h-4 w-4 mr-1" />
-                            {presentation.status === 'completed' ? 'ดู' : 'ทำต่อ'}
+                            {presentation.status === 'completed' ? t('salesPresentations.card.view') : t('salesPresentations.card.continue')}
                           </Button>
                         </Link>
                         {presentation.status === 'completed' && (

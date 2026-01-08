@@ -18,7 +18,11 @@ interface PhotoComparisonProps {
   treatmentId: string
 }
 
+import { useTranslations, useLocale } from "next-intl"
+
 export default function PhotoComparison({ treatmentId }: PhotoComparisonProps) {
+  const t = useTranslations()
+  const locale = useLocale()
   const { photos: beforePhotos } = useTreatmentPhotos(treatmentId, { type: "before" })
   const { photos: afterPhotos } = useTreatmentPhotos(treatmentId, { type: "after" })
   const { photos: progressPhotos } = useTreatmentPhotos(treatmentId, { type: "progress" })
@@ -31,7 +35,7 @@ export default function PhotoComparison({ treatmentId }: PhotoComparisonProps) {
   const afterPhoto = afterPhotos[selectedAfterIndex]
 
   const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString("en-US", {
+    return new Date(date).toLocaleDateString(locale === 'th' ? "th-TH" : "en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",
@@ -60,9 +64,9 @@ export default function PhotoComparison({ treatmentId }: PhotoComparisonProps) {
         <CardContent className="py-12">
           <div className="text-center">
             <Image className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-500">No photos available yet</p>
+            <p className="text-gray-500">{t('photoComparison.empty.title')}</p>
             <p className="text-sm text-gray-400 mt-2">
-              Photos will appear here as treatment progresses
+              {t('photoComparison.empty.description')}
             </p>
           </div>
         </CardContent>
@@ -74,9 +78,9 @@ export default function PhotoComparison({ treatmentId }: PhotoComparisonProps) {
     <div className="space-y-6">
       <Tabs defaultValue="comparison" className="w-full">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="comparison">Before/After</TabsTrigger>
-          <TabsTrigger value="progress">Progress Photos</TabsTrigger>
-          <TabsTrigger value="gallery">Gallery</TabsTrigger>
+          <TabsTrigger value="comparison">{t('photoComparison.tabs.comparison')}</TabsTrigger>
+          <TabsTrigger value="progress">{t('photoComparison.tabs.progress')}</TabsTrigger>
+          <TabsTrigger value="gallery">{t('photoComparison.tabs.gallery')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="comparison" className="space-y-4">
@@ -87,7 +91,7 @@ export default function PhotoComparison({ treatmentId }: PhotoComparisonProps) {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Image className="w-5 h-5" />
-                    Comparison Slider
+                    {t('photoComparison.slider.title')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -98,10 +102,10 @@ export default function PhotoComparison({ treatmentId }: PhotoComparisonProps) {
                       style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
                     >
                       <div className="relative w-full h-full bg-gray-200 flex items-center justify-center">
-                        <span className="text-gray-400">Before Photo</span>
+                        <span className="text-gray-400">{t('photoComparison.photoInfo.before')}</span>
                       </div>
                       <div className="absolute top-4 left-4">
-                        <Badge className="bg-blue-500">Before</Badge>
+                        <Badge className="bg-blue-500">{t('photoComparison.slider.before')}</Badge>
                       </div>
                     </div>
 
@@ -111,10 +115,10 @@ export default function PhotoComparison({ treatmentId }: PhotoComparisonProps) {
                       style={{ clipPath: `inset(0 0 0 ${sliderPosition}%)` }}
                     >
                       <div className="relative w-full h-full bg-gray-300 flex items-center justify-center">
-                        <span className="text-gray-400">After Photo</span>
+                        <span className="text-gray-400">{t('photoComparison.photoInfo.after')}</span>
                       </div>
                       <div className="absolute top-4 right-4">
-                        <Badge className="bg-green-500">After</Badge>
+                        <Badge className="bg-green-500">{t('photoComparison.slider.after')}</Badge>
                       </div>
                     </div>
 
@@ -150,7 +154,7 @@ export default function PhotoComparison({ treatmentId }: PhotoComparisonProps) {
                   {beforePhoto && afterPhoto && (
                     <div className="grid grid-cols-2 gap-4 mt-4">
                       <div className="text-sm">
-                        <p className="font-medium text-gray-700">Before</p>
+                        <p className="font-medium text-gray-700">{t('photoComparison.sideBySide.before')}</p>
                         <p className="text-gray-500">
                           {formatDate(beforePhoto.capturedDate)}
                         </p>
@@ -159,7 +163,7 @@ export default function PhotoComparison({ treatmentId }: PhotoComparisonProps) {
                         </p>
                       </div>
                       <div className="text-sm">
-                        <p className="font-medium text-gray-700">After</p>
+                        <p className="font-medium text-gray-700">{t('photoComparison.sideBySide.after')}</p>
                         <p className="text-gray-500">{formatDate(afterPhoto.capturedDate)}</p>
                         <p className="text-gray-500">
                           {afterPhoto.area} - {afterPhoto.angle}
@@ -173,7 +177,7 @@ export default function PhotoComparison({ treatmentId }: PhotoComparisonProps) {
               {/* Side by Side View */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Side by Side Comparison</CardTitle>
+                  <CardTitle>{t('photoComparison.sideBySide.title')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -181,10 +185,10 @@ export default function PhotoComparison({ treatmentId }: PhotoComparisonProps) {
                     <div className="space-y-2">
                       <div className="relative aspect-video bg-gray-100 rounded-lg overflow-hidden">
                         <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                          <span className="text-gray-400">Before Photo</span>
+                          <span className="text-gray-400">{t('photoComparison.photoInfo.before')}</span>
                         </div>
                         <div className="absolute top-2 left-2">
-                          <Badge className="bg-blue-500">Before</Badge>
+                          <Badge className="bg-blue-500">{t('photoComparison.sideBySide.before')}</Badge>
                         </div>
                         <div className="absolute bottom-2 right-2 flex gap-2">
                           <Button
@@ -223,10 +227,10 @@ export default function PhotoComparison({ treatmentId }: PhotoComparisonProps) {
                     <div className="space-y-2">
                       <div className="relative aspect-video bg-gray-100 rounded-lg overflow-hidden">
                         <div className="w-full h-full flex items-center justify-center bg-gray-300">
-                          <span className="text-gray-400">After Photo</span>
+                          <span className="text-gray-400">{t('photoComparison.photoInfo.after')}</span>
                         </div>
                         <div className="absolute top-2 left-2">
-                          <Badge className="bg-green-500">After</Badge>
+                          <Badge className="bg-green-500">{t('photoComparison.sideBySide.after')}</Badge>
                         </div>
                         <div className="absolute bottom-2 right-2 flex gap-2">
                           <Button
@@ -264,8 +268,8 @@ export default function PhotoComparison({ treatmentId }: PhotoComparisonProps) {
 
                   <div className="text-center mt-4">
                     <span className="text-sm text-gray-500">
-                      {selectedBeforeIndex + 1} of {beforePhotos.length} | {selectedAfterIndex + 1}{" "}
-                      of {afterPhotos.length}
+                      {selectedBeforeIndex + 1} {t('photoComparison.photoInfo.of')} {beforePhotos.length} | {selectedAfterIndex + 1}{" "}
+                      {t('photoComparison.photoInfo.of')} {afterPhotos.length}
                     </span>
                   </div>
                 </CardContent>
@@ -275,8 +279,8 @@ export default function PhotoComparison({ treatmentId }: PhotoComparisonProps) {
             <Card>
               <CardContent className="py-12">
                 <div className="text-center text-gray-500">
-                  {beforePhotos.length === 0 && <p>No before photos available</p>}
-                  {afterPhotos.length === 0 && <p>No after photos available yet</p>}
+                  {beforePhotos.length === 0 && <p>{t('photoComparison.empty.noBefore')}</p>}
+                  {afterPhotos.length === 0 && <p>{t('photoComparison.empty.noAfter')}</p>}
                 </div>
               </CardContent>
             </Card>
@@ -291,10 +295,10 @@ export default function PhotoComparison({ treatmentId }: PhotoComparisonProps) {
                   <CardContent className="p-4">
                     <div className="relative aspect-video bg-gray-100 rounded-lg overflow-hidden mb-2">
                       <div className="w-full h-full flex items-center justify-center">
-                        <span className="text-gray-400">Progress Photo</span>
+                        <span className="text-gray-400">{t('photoComparison.photoInfo.progress')}</span>
                       </div>
                       <div className="absolute top-2 left-2">
-                        <Badge className="bg-purple-500">Progress</Badge>
+                        <Badge className="bg-purple-500">{t('photoComparison.tabs.progress')}</Badge>
                       </div>
                       <Button
                         size="sm"
@@ -320,7 +324,7 @@ export default function PhotoComparison({ treatmentId }: PhotoComparisonProps) {
           ) : (
             <Card>
               <CardContent className="py-12">
-                <div className="text-center text-gray-500">No progress photos available yet</div>
+                <div className="text-center text-gray-500">{t('photoComparison.empty.noProgress')}</div>
               </CardContent>
             </Card>
           )}

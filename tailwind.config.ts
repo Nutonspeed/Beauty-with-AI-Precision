@@ -30,6 +30,7 @@ const config: Config = {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          glow: "rgba(var(--primary-rgb), 0.35)",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -57,8 +58,22 @@ const config: Config = {
           "4": "hsl(var(--chart-4))",
           "5": "hsl(var(--chart-5))",
         },
+        // Premium AI Palette
+        glass: {
+          white: "rgba(255, 255, 255, 0.03)",
+          border: "rgba(255, 255, 255, 0.08)",
+        }
+      },
+      boxShadow: {
+        'premium': '0 10px 30px -10px rgba(0, 0, 0, 0.3)',
+        'premium-hover': '0 20px 40px -15px rgba(0, 0, 0, 0.4)',
+        'glow-primary': '0 0 20px rgba(var(--primary-rgb), 0.3)',
+        'glass': 'inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 8px 32px 0 rgba(0, 0, 0, 0.37)',
       },
       borderRadius: {
+        xl: "1rem",
+        '2xl': "1.5rem",
+        '3xl': "2rem",
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
@@ -72,10 +87,24 @@ const config: Config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        "shimmer": {
+          "100%": { transform: "translateX(100%)" },
+        },
+        "float": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-10px)" },
+        },
+        "glow-pulse": {
+          "0%, 100%": { opacity: "1", transform: "scale(1)" },
+          "50%": { opacity: "0.8", transform: "scale(1.02)" },
+        }
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "shimmer": "shimmer 2s infinite",
+        "float": "float 5s ease-in-out infinite",
+        "glow-pulse": "glow-pulse 3s ease-in-out infinite",
       },
     },
   },

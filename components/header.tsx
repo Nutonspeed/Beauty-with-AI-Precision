@@ -4,7 +4,6 @@
 import Link from "next/link"
 import { useAuth } from "@/lib/auth/context"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -43,16 +42,16 @@ export function Header() {
   const isThaiLocale = locale === 'th'
   const lp = useLocalizePath()
 
-  const roleLabels: Record<string, { th: string; en: string }> = {
-    super_admin: { th: t('roles.super_admin'), en: 'Super Admin' },
-    clinic_owner: { th: t('roles.clinic_owner'), en: 'Clinic Owner' },
-    clinic_admin: { th: 'ผู้ดูแลคลินิก', en: 'Clinic Admin' },
-    clinic_staff: { th: 'พนักงานคลินิก', en: 'Clinic Staff' },
-    sales_staff: { th: t('roles.sales_staff'), en: 'Sales Staff' },
-    premium_customer: { th: 'ลูกค้าพรีเมียม', en: 'Premium Customer' },
-    free_user: { th: 'ผู้ใช้ฟรี', en: 'Free User' },
-    public: { th: 'ผู้ใช้ทั่วไป', en: 'Public' },
-    customer: { th: t('roles.customer'), en: 'Customer' },
+  const roleLabels: Record<string, string> = {
+    super_admin: t('roles.super_admin'),
+    clinic_owner: t('roles.clinic_owner'),
+    clinic_admin: t('roles.clinic_admin'),
+    clinic_staff: t('roles.clinic_staff'),
+    sales_staff: t('roles.sales_staff'),
+    premium_customer: t('roles.premium_customer'),
+    free_user: t('roles.free_user'),
+    public: t('roles.public'),
+    customer: t('roles.customer'),
   }
 
   // Get navigation items based on user role
@@ -62,9 +61,9 @@ export function Header() {
       return [
         { href: "/features", label: t('nav.features') },
         { href: "/pricing", label: t('nav.pricing') },
-        { href: "/3d-models", label: "3D Models" },
-        { href: "/demo/skin-analysis", label: isThaiLocale ? "ทดลองใช้" : "Try Demo" },
-        { href: "/faq", label: isThaiLocale ? "คำถามที่พบบ่อย" : "FAQ" },
+        { href: "/3d-models", label: t('nav.3dModels') },
+        { href: "/demo/skin-analysis", label: t('nav.tryDemo') },
+        { href: "/faq", label: t('nav.faq') },
       ]
     }
 
@@ -73,36 +72,36 @@ export function Header() {
     switch (role) {
       case "clinic_owner":
         return [
-          { href: "/clinic/revenue", label: isThaiLocale ? "ภาพรวม" : "Dashboard" },
+          { href: "/clinic/revenue", label: t('nav.overview') },
           { href: "/sales/leads", label: t('nav.customers') },
-          { href: "/analytics", label: isThaiLocale ? "รายงาน" : "Analytics" },
-          { href: "/branches", label: isThaiLocale ? "สาขา" : "Branches" },
-          { href: "/ai-chat", label: isThaiLocale ? "AI ที่ปรึกษา" : "AI Advisor" },
+          { href: "/analytics", label: t('nav.analytics') },
+          { href: "/branches", label: t('nav.branches') },
+          { href: "/ai-chat", label: t('nav.aiAdvisor') },
         ]
       case "clinic_staff":
         return [
-          { href: "/booking", label: isThaiLocale ? "เคาน์เตอร์" : "Reception" },
-          { href: "/clinic/staff/my-schedule", label: isThaiLocale ? "ตารางงาน" : "Schedule" },
+          { href: "/booking", label: t('nav.reception') },
+          { href: "/clinic/staff/my-schedule", label: t('nav.schedule') },
           { href: "/analysis", label: t('nav.analysis') },
         ]
       case "sales_staff":
         return [
-          { href: "/sales/dashboard", label: isThaiLocale ? "ภาพรวม" : "Dashboard" },
+          { href: "/sales/dashboard", label: t('nav.overview') },
           { href: "/sales/leads", label: t('nav.leads') },
-          { href: "/sales/presentations", label: isThaiLocale ? "ข้อเสนอ" : "Proposals" },
-          { href: "/sales/tools", label: isThaiLocale ? "เครื่องมือขาย" : "Sales Tool" },
+          { href: "/sales/presentations", label: t('nav.proposals') },
+          { href: "/sales/tools", label: t('nav.salesTool') },
         ]
       case "super_admin":
         return [
           { href: "/admin", label: t('nav.admin') },
-          { href: "/admin/system-status", label: isThaiLocale ? "สถานะระบบ" : "System" },
-          { href: "/clinic/settings", label: isThaiLocale ? "ตั้งค่า" : "Settings" },
+          { href: "/admin/system-status", label: t('nav.systemStatus') },
+          { href: "/clinic/settings", label: t('nav.settings') },
         ]
       default:
         // Customer navigation
         return [
           { href: "/analysis", label: t('nav.analysis') },
-          { href: "/ar-simulator", label: isThaiLocale ? "ลองผลลัพธ์" : "Try Results" },
+          { href: "/ar-simulator", label: t('nav.tryResults') },
           { href: "/booking", label: t('nav.booking') },
         ]
     }
@@ -128,140 +127,149 @@ export function Header() {
   return (
     <header
       suppressHydrationWarning
-      className="sticky top-0 z-50 w-full border-b border-border bg-background/98 supports-[backdrop-filter]:bg-background/90 backdrop-blur-md mix-blend-normal"
+      className="sticky top-0 z-50 w-full border-b border-white/5 bg-[#020617]/80 backdrop-blur-xl supports-[backdrop-filter]:bg-[#020617]/60"
     >
-      <div className="container flex h-14 sm:h-16 items-center justify-between gap-2 px-4">
-        {/* Logo - แสดงเฉพาะโลโก้หลัก ให้ดูสะอาดขึ้น */}
+      <div className="container flex h-16 sm:h-20 items-center justify-between gap-4 px-6">
+        {/* Logo - Premium Clinical Branding */}
         <Link
           href={lp("/")}
-          className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-shrink"
-          aria-label="กลับสู่หน้าแรก"
+          className="flex items-center gap-3 min-w-0 flex-shrink transition-transform hover:scale-[1.02] active:scale-95"
+          aria-label={t('common.home')}
         >
-          <ClinicIQLogo className="flex-shrink-0" />
+          <div className="relative">
+            <div className="absolute inset-0 bg-primary/20 blur-md rounded-full animate-pulse" />
+            <ClinicIQLogo className="relative flex-shrink-0" />
+          </div>
         </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden items-center gap-4 lg:gap-6 lg:flex">
+        {/* Desktop Navigation - High-end Spacing */}
+        <nav className="hidden items-center gap-8 lg:flex">
           {navItems.map((item) => (
             <Link
               key={item.href}
               href={lp(item.href)}
-              className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary whitespace-nowrap"
+              className="text-[13px] font-bold uppercase tracking-[0.15em] text-slate-400 transition-all hover:text-primary hover:tracking-[0.2em]"
             >
               {item.label}
             </Link>
           ))}
         </nav>
 
-        {/* Right Section */}
-        <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
-          {/* Language Switcher */}
-          <LanguageSwitcher />
+        {/* Right Section - Functional Sophistication */}
+        <div className="flex items-center gap-3 flex-shrink-0">
+          <div className="hidden sm:flex items-center gap-2 mr-2">
+            <LanguageSwitcher />
+            <div className="h-4 w-px bg-white/10 mx-1" />
+            <ThemeToggle />
+          </div>
 
-          {/* Theme Toggle */}
-          <ThemeToggle />
-
-          {/* User Menu or CTA */}
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button 
-                  variant="ghost" 
+                  variant="glass" 
                   size="sm" 
-                  className="h-8 sm:h-9 gap-1.5 sm:gap-2 px-1.5 sm:px-3"
-                  aria-label={isThaiLocale ? "เปิดเมนูผู้ใช้" : t('nav.profile')}
+                  className="h-10 gap-3 px-2 pr-4 rounded-full border-white/10 hover:border-primary/30 transition-all group"
                 >
-                  <Avatar className="h-6 w-6 sm:h-7 sm:w-7">
-                    <AvatarImage src={user.avatar_url || ""} alt={user.full_name || "User avatar"} />
-                    <AvatarFallback className="text-xs">{user.full_name?.charAt(0) || user.email?.charAt(0) || "U"}</AvatarFallback>
-                  </Avatar>
+                  <div className="relative">
+                    <Avatar className="h-7 w-7 border border-white/20">
+                      <AvatarImage src={user.avatar_url || ""} alt={user.full_name || ""} />
+                      <AvatarFallback className="bg-primary/10 text-primary text-[10px]">
+                        {user.full_name?.charAt(0) || "U"}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-500 border-2 border-[#020617] shadow-sm" />
+                  </div>
                   <div className="hidden flex-col items-start xl:flex">
-                    <span className="text-xs font-medium leading-tight">{user.full_name || user.email}</span>
-                    {user.role && (
-                      <Badge
-                        variant="secondary"
-                        className={`h-4 px-1.5 text-[10px] ${getRoleBadgeColor(user.role)}`}
-                      >
-                        {(isThaiLocale ? roleLabels[user.role]?.th : roleLabels[user.role]?.en) || user.role}
-                      </Badge>
-                    )}
+                    <span className="text-xs font-bold text-white tracking-tight">{user.full_name || t('common.profile')}</span>
+                    <span className="text-[9px] uppercase font-black text-primary tracking-widest leading-none">
+                      {roleLabels[user.role] || user.role?.replace('_', ' ').toUpperCase()}
+                    </span>
                   </div>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel>
+              <DropdownMenuContent align="end" className="w-64 glass-panel border-white/10 p-2">
+                <DropdownMenuLabel className="px-4 py-3">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium">{user.full_name || user.email}</p>
-                    <p className="text-xs text-muted-foreground">{user.email}</p>
+                    <p className="text-sm font-bold text-white">{user.full_name || t('common.profile')}</p>
+                    <p className="text-[10px] text-slate-500 uppercase font-medium tracking-tighter">{user.email}</p>
                   </div>
                 </DropdownMenuLabel>
-                <DropdownMenuSeparator />
+                <DropdownMenuSeparator className="bg-white/5" />
                 {user.clinic_id && (
-                  <>
-                    <DropdownMenuItem>
-                      <Building2 className="mr-2 h-4 w-4" />
-                      <span>{t('common.switchClinic')}</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                  </>
+                  <DropdownMenuItem className="rounded-lg py-2 cursor-pointer focus:bg-primary/10 focus:text-primary">
+                    <Building2 className="mr-3 h-4 w-4" />
+                    <span className="text-xs font-bold uppercase tracking-wider">{t('common.switchClinic')}</span>
+                  </DropdownMenuItem>
                 )}
-                <DropdownMenuItem asChild>
-                  <Link href={lp("/profile")}>
-                    <User className="mr-2 h-4 w-4" />
-                    <span>{t('nav.profile')}</span>
+                <DropdownMenuItem asChild className="rounded-lg py-2 cursor-pointer focus:bg-primary/10 focus:text-primary">
+                  <Link href={lp("/profile")} className="flex items-center w-full">
+                    <User className="mr-3 h-4 w-4" />
+                    <span className="text-xs font-bold uppercase tracking-wider">{t('nav.profile')}</span>
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => handleSignOut()} className="text-destructive">
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>{t('common.logout')}</span>
+                <DropdownMenuSeparator className="bg-white/5" />
+                <DropdownMenuItem onClick={() => handleSignOut()} className="rounded-lg py-2 cursor-pointer text-rose-400 focus:bg-rose-500/10 focus:text-rose-400">
+                  <LogOut className="mr-3 h-4 w-4" />
+                  <span className="text-xs font-bold uppercase tracking-wider">{t('common.logout')}</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <div className="hidden items-center gap-2 lg:flex">
-              <Button variant="ghost" size="sm" asChild className="h-8 px-3">
-                <Link href={lp("/auth/login")} className="text-xs">{t('common.login')}</Link>
+            <div className="flex items-center gap-3">
+              <Button variant="ghost" size="sm" asChild className="h-10 px-5 text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-white hover:bg-white/5">
+                <Link href={lp("/auth/login")}>{t('common.login')}</Link>
               </Button>
-              <Button size="sm" asChild className="h-8 px-3">
-                <Link href={lp("/analysis")} className="text-xs">{t('common.getStarted')}</Link>
+              <Button variant="premium" size="sm" asChild className="h-10 px-6 text-[11px] font-black uppercase tracking-[0.15em] shadow-glow-primary">
+                <Link href={lp("/analysis")}>{t('common.getStarted')}</Link>
               </Button>
             </div>
           )}
 
-          {/* Mobile Menu */}
+          {/* Mobile Navigator */}
           <Sheet>
             <SheetTrigger asChild className="lg:hidden">
-              <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-9 sm:w-9">
-                <Menu className="h-4 w-4 sm:h-5 sm:w-5" />
+              <Button variant="glass" size="icon" className="h-10 w-10 border-white/10">
+                <Menu className="h-5 w-5 text-slate-300" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] sm:w-[400px] bg-background">
+            <SheetContent side="right" className="w-full sm:w-[400px] bg-[#020617] border-white/5 p-8">
               <VisuallyHidden>
-                <SheetTitle>Navigation Menu</SheetTitle>
+                <SheetTitle>Navigation Portfolio</SheetTitle>
               </VisuallyHidden>
-              <nav className="flex flex-col gap-4 mt-6">
-                {navItems.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={lp(item.href)}
-                    className="text-base font-medium text-foreground hover:text-primary transition-colors py-2 px-3 rounded-md hover:bg-accent"
-                  >
-                    {item.label}
-                  </Link>
-                ))}
-                {!user && (
-                  <>
-                    <div className="my-4 border-t" />
-                    <Button variant="outline" asChild className="w-full">
-                      <Link href={lp("/auth/login")}>{isThaiLocale ? 'เข้าสู่ระบบ' : 'Login'}</Link>
-                    </Button>
-                    <Button asChild className="w-full">
-                      <Link href={lp("/analysis")}>{isThaiLocale ? 'เริ่มวิเคราะห์' : 'Start Analysis'}</Link>
-                    </Button>
-                  </>
-                )}
-              </nav>
+              <div className="flex flex-col h-full">
+                <div className="pb-8 border-b border-white/5">
+                  <ClinicIQLogo />
+                </div>
+                <nav className="flex flex-col gap-6 mt-10">
+                  {navItems.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={lp(item.href)}
+                      className="text-lg font-bold text-white hover:text-primary transition-all flex items-center group"
+                    >
+                      <span className="mr-4 h-1 w-1 rounded-full bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
+                      {item.label}
+                    </Link>
+                  ))}
+                </nav>
+                <div className="mt-auto space-y-4">
+                  {!user && (
+                    <>
+                      <Button variant="premium" asChild className="w-full h-14 uppercase tracking-widest font-black">
+                        <Link href={lp("/analysis")}>{t('common.getStarted')}</Link>
+                      </Button>
+                      <Button variant="outline" asChild className="w-full h-14 glass uppercase tracking-widest font-bold">
+                        <Link href={lp("/auth/login")}>{t('common.login')}</Link>
+                      </Button>
+                    </>
+                  )}
+                  <div className="flex items-center justify-center gap-6 pt-6 border-t border-white/5">
+                    <LanguageSwitcher />
+                    <ThemeToggle />
+                  </div>
+                </div>
+              </div>
             </SheetContent>
           </Sheet>
         </div>

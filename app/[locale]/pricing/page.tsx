@@ -284,15 +284,14 @@ export default function PricingPage() {
                       <th className="px-6 py-4 text-left font-semibold">
                         {t('pricing.comparison.features')}
                       </th>
-                      <th className="px-6 py-4 text-center font-semibold">Free</th>
-                      <th className="px-6 py-4 text-center font-semibold">Premium</th>
-                      <th className="px-6 py-4 text-center font-semibold">Enterprise</th>
+                      <th className="px-6 py-4 text-center font-semibold">{t('pricing.tiers.free')}</th>
+                      <th className="px-6 py-4 text-center font-semibold">{t('pricing.tiers.premium')}</th>
+                      <th className="px-6 py-4 text-center font-semibold">{t('pricing.tiers.enterprise')}</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr className="border-b">
                       <td className="px-6 py-4">{t('pricing.comparison.aiAnalysis')}</td>
-                      <td className="px-6 py-4 text-center"><CheckCircle2 className="mx-auto h-5 w-5 text-primary" /></td>
                       <td className="px-6 py-4 text-center"><CheckCircle2 className="mx-auto h-5 w-5 text-primary" /></td>
                       <td className="px-6 py-4 text-center"><CheckCircle2 className="mx-auto h-5 w-5 text-primary" /></td>
                     </tr>

@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { useLocalizePath } from "@/lib/i18n/locale-link"
+import { useTranslations } from "next-intl"
 import {
   Table,
   TableBody,
@@ -70,22 +71,24 @@ interface Lead {
   } | null
 }
 
-const STATUS_CONFIG: Record<SalesLeadStatus, { label: string; color: string }> = {
-  new: { label: "New", color: "bg-blue-500" },
-  contacted: { label: "Contacted", color: "bg-purple-500" },
-  qualified: { label: "Qualified", color: "bg-emerald-600" },
-  proposal_sent: { label: "Proposal Sent", color: "bg-indigo-600" },
-  negotiation: { label: "Negotiation", color: "bg-yellow-600" },
-  won: { label: "Won", color: "bg-green-600" },
-  lost: { label: "Lost", color: "bg-gray-400" },
-  cold: { label: "Cold", color: "bg-gray-500" },
-  warm: { label: "Warm", color: "bg-orange-500" },
-  hot: { label: "Hot", color: "bg-red-500" },
-}
-
 export default function LeadsListPage() {
+  const t = useTranslations()
   const router = useRouter()
   const lp = useLocalizePath()
+
+  const STATUS_CONFIG: Record<SalesLeadStatus, { label: string; color: string }> = {
+    new: { label: t('salesLeads.status.new'), color: "bg-blue-500" },
+    contacted: { label: t('salesLeads.status.contacted'), color: "bg-purple-500" },
+    qualified: { label: t('salesLeads.status.qualified'), color: "bg-emerald-600" },
+    proposal_sent: { label: t('salesLeads.status.proposal_sent'), color: "bg-indigo-600" },
+    negotiation: { label: t('salesLeads.status.negotiation'), color: "bg-yellow-600" },
+    won: { label: t('salesLeads.status.won'), color: "bg-green-600" },
+    lost: { label: t('salesLeads.status.lost'), color: "bg-gray-400" },
+    cold: { label: t('salesLeads.status.cold'), color: "bg-gray-500" },
+    warm: { label: t('salesLeads.status.warm'), color: "bg-orange-500" },
+    hot: { label: t('salesLeads.status.hot'), color: "bg-red-500" },
+  }
+
   const [leads, setLeads] = useState<Lead[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -211,22 +214,22 @@ export default function LeadsListPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Lead Management</h1>
+          <h1 className="text-3xl font-bold">{t('salesLeads.title')}</h1>
           <p className="text-muted-foreground">
-            Track and manage your sales leads
+            {t('salesLeads.subtitle')}
           </p>
         </div>
 
         <div className="w-full md:w-[200px]">
           <Input
-            placeholder="Filter by campaign code..."
+            placeholder={t('salesLeads.campaignFilter')}
             value={campaignFilter}
             onChange={(e) => setCampaignFilter(e.target.value)}
           />
         </div>
         <Button onClick={() => setShowCaptureForm(true)}>
           <UserPlus className="mr-2 h-4 w-4" />
-          Capture New Lead
+          {t('salesLeads.captureNew')}
         </Button>
       </div>
 
@@ -235,7 +238,7 @@ export default function LeadsListPage() {
         <div className="flex-1 relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search by name, phone, or email..."
+            placeholder={t('salesLeads.searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-10"
@@ -244,10 +247,10 @@ export default function LeadsListPage() {
 
         <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as any)}>
           <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Filter by status" />
+            <SelectValue placeholder={t('salesLeads.filterStatus')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Statuses</SelectItem>
+            <SelectItem value="all">{t('salesLeads.allStatuses')}</SelectItem>
             {Object.entries(STATUS_CONFIG).map(([status, config]) => (
               <SelectItem key={status} value={status}>
                 {config.label}
@@ -258,10 +261,10 @@ export default function LeadsListPage() {
 
         <Select value={sourceFilter} onValueChange={(v) => setSourceFilter(v as any)}>
           <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Filter by source" />
+            <SelectValue placeholder={t('salesLeads.filterSource')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Sources</SelectItem>
+            <SelectItem value="all">{t('salesLeads.allSources')}</SelectItem>
             <SelectItem value="website">Website</SelectItem>
             <SelectItem value="facebook">Facebook</SelectItem>
             <SelectItem value="instagram">Instagram</SelectItem>
@@ -280,23 +283,23 @@ export default function LeadsListPage() {
       {/* Summary Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="bg-card border rounded-lg p-4">
-          <div className="text-sm text-muted-foreground">Total Leads</div>
+          <div className="text-sm text-muted-foreground">{t('salesLeads.stats.total')}</div>
           <div className="text-2xl font-bold">{pagination.total}</div>
         </div>
         <div className="bg-card border rounded-lg p-4">
-          <div className="text-sm text-muted-foreground">Hot Leads</div>
+          <div className="text-sm text-muted-foreground">{t('salesLeads.stats.hot')}</div>
           <div className="text-2xl font-bold text-red-600">
             {leads.filter(l => l.status === 'hot').length}
           </div>
         </div>
         <div className="bg-card border rounded-lg p-4">
-          <div className="text-sm text-muted-foreground">Won</div>
+          <div className="text-sm text-muted-foreground">{t('salesLeads.stats.won')}</div>
           <div className="text-2xl font-bold text-green-600">
             {leads.filter(l => l.status === 'won').length}
           </div>
         </div>
         <div className="bg-card border rounded-lg p-4">
-          <div className="text-sm text-muted-foreground">Avg. Score</div>
+          <div className="text-sm text-muted-foreground">{t('salesLeads.stats.avgScore')}</div>
           <div className="text-2xl font-bold">
             {leads.length > 0 
               ? Math.round(leads.reduce((sum, l) => sum + l.score, 0) / leads.length)
@@ -313,20 +316,20 @@ export default function LeadsListPage() {
           </div>
         ) : leads.length === 0 ? (
           <div className="text-center py-12 text-muted-foreground">
-            No leads found. Create your first lead to get started.
+            {t('salesLeads.noLeads')}
           </div>
         ) : (
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Contact</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Score</TableHead>
-                <TableHead>Follow-up</TableHead>
-                <TableHead>Interests</TableHead>
-                <TableHead>Sales Staff</TableHead>
-                <TableHead>Created</TableHead>
+                <TableHead>{t('salesLeads.table.name')}</TableHead>
+                <TableHead>{t('salesLeads.table.contact')}</TableHead>
+                <TableHead>{t('salesLeads.table.status')}</TableHead>
+                <TableHead>{t('salesLeads.table.score')}</TableHead>
+                <TableHead>{t('salesLeads.table.followUp')}</TableHead>
+                <TableHead>{t('salesLeads.table.interests')}</TableHead>
+                <TableHead>{t('salesLeads.table.salesStaff')}</TableHead>
+                <TableHead>{t('salesLeads.table.created')}</TableHead>
                 <TableHead className="w-[70px]"></TableHead>
               </TableRow>
             </TableHeader>
@@ -338,7 +341,7 @@ export default function LeadsListPage() {
                       <span>{lead.name}</span>
                       {lead.metadata?.campaign && (
                         <Badge variant="outline" className="w-fit text-xs">
-                          Campaign: {lead.metadata?.campaign}
+                          {t('salesLeads.table.campaign')}: {lead.metadata?.campaign}
                         </Badge>
                       )}
                     </div>
@@ -404,20 +407,20 @@ export default function LeadsListPage() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuLabel>{t('salesLeads.table.actions')}</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => handleViewLead(lead.id)}>
                           <Eye className="mr-2 h-4 w-4" />
-                          View Details
+                          {t('salesLeads.actions.view')}
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleViewLead(lead.id)}>
                           <Edit className="mr-2 h-4 w-4" />
-                          Edit Lead
+                          {t('salesLeads.actions.edit')}
                         </DropdownMenuItem>
                         {lead.status !== 'won' && (
                           <DropdownMenuItem onClick={() => handleViewLead(lead.id)}>
                             <CheckCircle className="mr-2 h-4 w-4" />
-                            Mark / View
+                            {t('salesLeads.actions.mark')}
                           </DropdownMenuItem>
                         )}
                       </DropdownMenuContent>
@@ -434,9 +437,9 @@ export default function LeadsListPage() {
       {pagination.total_pages > 1 && (
         <div className="flex items-center justify-between">
           <div className="text-sm text-muted-foreground">
-            Showing {((pagination.page - 1) * pagination.limit) + 1} to{' '}
-            {Math.min(pagination.page * pagination.limit, pagination.total)} of{' '}
-            {pagination.total} leads
+            {t('salesLeads.pagination.showing')} {((pagination.page - 1) * pagination.limit) + 1} {t('salesLeads.pagination.to')}{' '}
+            {Math.min(pagination.page * pagination.limit, pagination.total)} {t('salesLeads.pagination.of')}{' '}
+            {pagination.total} {t('salesLeads.pagination.leads')}
           </div>
           <div className="flex gap-2">
             <Button
@@ -445,7 +448,7 @@ export default function LeadsListPage() {
               onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
               disabled={pagination.page === 1}
             >
-              Previous
+              {t('salesLeads.pagination.previous')}
             </Button>
             <Button
               variant="outline"
@@ -453,7 +456,7 @@ export default function LeadsListPage() {
               onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
               disabled={pagination.page === pagination.total_pages}
             >
-              Next
+              {t('salesLeads.pagination.next')}
             </Button>
           </div>
         </div>

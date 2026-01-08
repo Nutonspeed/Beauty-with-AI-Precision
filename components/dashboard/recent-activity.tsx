@@ -7,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Clock, User, Calendar, Package, TrendingUp } from "lucide-react"
 import { formatDistanceToNow } from "date-fns"
 import { th } from "date-fns/locale"
+import { useTranslations, useLocale } from "next-intl"
 
 interface Activity {
   id: string
@@ -23,6 +24,8 @@ interface RecentActivityData {
 }
 
 export function RecentActivity() {
+  const t = useTranslations()
+  const locale = useLocale()
   const [data, setData] = useState<RecentActivityData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -69,28 +72,29 @@ export function RecentActivity() {
   const getActivityBadge = (type: string) => {
     switch (type) {
       case "booking":
-        return <Badge variant="outline" className="bg-blue-500/10 text-blue-600 dark:text-blue-400">การนัด</Badge>
+        return <Badge variant="outline" className="bg-blue-500/10 text-blue-600 dark:text-blue-400">{t('dashboard.recentActivity.types.booking')}</Badge>
       case "customer":
-        return <Badge variant="outline" className="bg-green-500/10 text-green-600 dark:text-green-400">ลูกค้า</Badge>
+        return <Badge variant="outline" className="bg-green-500/10 text-green-600 dark:text-green-400">{t('dashboard.recentActivity.types.customer')}</Badge>
       case "inventory":
-        return <Badge variant="outline" className="bg-orange-500/10 text-orange-600 dark:text-orange-400">สต็อก</Badge>
+        return <Badge variant="outline" className="bg-orange-500/10 text-orange-600 dark:text-orange-400">{t('dashboard.recentActivity.types.inventory')}</Badge>
       case "staff":
-        return <Badge variant="outline" className="bg-purple-500/10 text-purple-600 dark:text-purple-400">ทีมงาน</Badge>
+        return <Badge variant="outline" className="bg-purple-500/10 text-purple-600 dark:text-purple-400">{t('dashboard.recentActivity.types.staff')}</Badge>
       case "revenue":
-        return <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">รายได้</Badge>
+        return <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">{t('dashboard.recentActivity.types.revenue')}</Badge>
       default:
-        return <Badge variant="outline">อื่นๆ</Badge>
+        return <Badge variant="outline">{t('dashboard.recentActivity.types.other')}</Badge>
     }
   }
 
-  const formatTime = (timestamp: string) => {
+  const formatTime = (dateStr: string) => {
     try {
-      return formatDistanceToNow(new Date(timestamp), {
+      const date = new Date(dateStr)
+      return formatDistanceToNow(date, {
         addSuffix: true,
-        locale: th,
+        locale: locale === 'th' ? th : undefined,
       })
     } catch {
-      return "เมื่อสักครู่"
+      return t('dashboard.recentActivity.justNow')
     }
   }
 
@@ -100,7 +104,7 @@ export function RecentActivity() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Clock className="h-5 w-5" />
-            กิจกรรมล่าสุด
+            {t('dashboard.recentActivity.title')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -120,36 +124,36 @@ export function RecentActivity() {
     )
   }
 
-  if (error) {
+  if (error || !data) {
     return (
       <Card className="h-full">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Clock className="h-5 w-5" />
-            กิจกรรมล่าสุด
+            {t('dashboard.recentActivity.title')}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground text-center py-8">
-            ไม่สามารถโหลดข้อมูลได้
+            {t('dashboard.recentActivity.error')}
           </p>
         </CardContent>
       </Card>
     )
   }
 
-  if (!data || data.activities.length === 0) {
+  if (data.activities.length === 0) {
     return (
       <Card className="h-full">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Clock className="h-5 w-5" />
-            กิจกรรมล่าสุด
+            {t('dashboard.recentActivity.title')}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground text-center py-8">
-            ยังไม่มีกิจกรรม
+            {t('dashboard.recentActivity.empty')}
           </p>
         </CardContent>
       </Card>
@@ -161,7 +165,7 @@ export function RecentActivity() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Clock className="h-5 w-5" />
-          กิจกรรมล่าสุด
+          {t('dashboard.recentActivity.title')}
         </CardTitle>
       </CardHeader>
       <CardContent>
