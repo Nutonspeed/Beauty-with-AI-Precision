@@ -299,6 +299,97 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* Interactive Experience Selector - NEW SECTION */}
+        <section className="py-32 lg:py-64 relative bg-white/[0.01] border-b border-white/5 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-pink-500/5 via-transparent to-cyan-500/5 pointer-events-none" />
+          <div className="container relative z-10">
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="mx-auto mb-32 max-w-4xl text-center space-y-10"
+            >
+              <Badge variant="outline" className="px-6 py-2 rounded-full border-cyan-500/30 text-cyan-400 bg-cyan-500/5 backdrop-blur-md uppercase tracking-[0.3em] text-[10px] font-black">
+                <Sparkles className="mr-3 h-3.5 w-3.5" />
+                Zero-Friction Access
+              </Badge>
+              <h2 className="text-5xl md:text-9xl font-bold tracking-tighter text-white leading-tight italic">
+                Choose Your<br />
+                <span className="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 bg-clip-text text-transparent not-italic">Interface</span>
+              </h2>
+              <p className="text-xl text-slate-500 font-light tracking-[0.2em] italic max-w-2xl mx-auto leading-relaxed">
+                Experience the platform from two distinct perspectives. No registration required for interactive simulations.
+              </p>
+            </motion.div>
+
+            <div className="grid md:grid-cols-2 gap-12 max-w-6xl mx-auto">
+              {/* AI Analysis Demo Card */}
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8 }}
+              >
+                <Link href={lp("/analysis")}>
+                  <Card className="h-full border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3.5rem] overflow-hidden group hover:border-pink-500/30 transition-all duration-700 shadow-2xl relative">
+                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/20 to-transparent" />
+                    <div className="p-12 space-y-10">
+                      <div className="h-20 w-20 rounded-3xl bg-pink-500/10 flex items-center justify-center border border-pink-500/20 group-hover:scale-110 group-hover:bg-pink-500 group-hover:text-white transition-all duration-700">
+                        <Brain className="h-10 w-10 text-pink-500 group-hover:text-white" />
+                      </div>
+                      <div className="space-y-4">
+                        <h3 className="text-4xl font-bold text-white italic group-hover:text-pink-400 transition-colors tracking-tighter">
+                          AI_Dermatology_Engine
+                        </h3>
+                        <p className="text-xl text-slate-500 font-light italic leading-relaxed group-hover:text-slate-300 transition-colors">
+                          Upload or capture a face scan to receive instant clinical-grade skin analysis and treatment recommendations.
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-4 pt-4">
+                        <div className="h-px flex-1 bg-white/5" />
+                        <span className="text-[10px] font-black uppercase tracking-[0.3em] text-pink-500 animate-pulse">LAUNCH_ANALYSIS_SIM</span>
+                        <ArrowRight className="h-5 w-5 text-pink-500 group-hover:translate-x-2 transition-transform" />
+                      </div>
+                    </div>
+                  </Card>
+                </Link>
+              </motion.div>
+
+              {/* Clinic Management Demo Card */}
+              <motion.div
+                initial={{ opacity: 0, x: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8 }}
+              >
+                <Link href={lp("/demo/clinic")}>
+                  <Card className="h-full border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3.5rem] overflow-hidden group hover:border-cyan-500/30 transition-all duration-700 shadow-2xl relative">
+                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
+                    <div className="p-12 space-y-10">
+                      <div className="h-20 w-20 rounded-3xl bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20 group-hover:scale-110 group-hover:bg-cyan-500 group-hover:text-white transition-all duration-700">
+                        <Activity className="h-10 w-10 text-cyan-500 group-hover:text-white" />
+                      </div>
+                      <div className="space-y-4">
+                        <h3 className="text-4xl font-bold text-white italic group-hover:text-cyan-400 transition-colors tracking-tighter">
+                          Revenue_Control_Terminal
+                        </h3>
+                        <p className="text-xl text-slate-500 font-light italic leading-relaxed group-hover:text-slate-300 transition-colors">
+                          Step into the command center. Monitor financial inflow, operational yield, and predictive analytics in real-time.
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-4 pt-4">
+                        <div className="h-px flex-1 bg-white/5" />
+                        <span className="text-[10px] font-black uppercase tracking-[0.3em] text-cyan-500 animate-pulse">ENTER_COMMAND_CENTER</span>
+                        <ArrowRight className="h-5 w-5 text-cyan-500 group-hover:translate-x-2 transition-transform" />
+                      </div>
+                    </div>
+                  </Card>
+                </Link>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+
         {/* Clinical Intelligence Grid - Infrastructure Modules */}
         <SectionScanner color="rgba(14, 165, 233, 0.6)">
           <section className="py-32 lg:py-64 relative">

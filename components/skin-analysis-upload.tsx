@@ -18,6 +18,10 @@ import type { AnalysisMode } from "@/types"
 import { useLocalizePath } from "@/lib/i18n/locale-link"
 
 import { useTranslations, useLocale } from "next-intl"
+import { LaserScanner } from "@/components/effects/LaserScanner"
+import { LiveTelemetry } from "@/components/effects/LiveTelemetry"
+import { motion } from "framer-motion"
+import { cn } from "@/lib/utils"
 
 const MODE_PROGRESS: Record<AnalysisMode, string> = {
   local: "analysisUpload.modes.local",
@@ -455,33 +459,61 @@ export function SkinAnalysisUpload({ isLoggedIn = false, analysisMode = "auto" }
           )}
 
           {analysisProgress && (
-            <div className="mb-4 rounded-lg border border-blue-500/20 bg-blue-500/10 p-4 text-sm text-blue-700">
-              <div className="flex items-center gap-2">
-                <Loader2 className="h-4 w-4 animate-spin" />
-                {analysisProgress}
+            <div className="mb-4 rounded-xl border border-blue-500/20 bg-blue-500/5 p-6 text-sm overflow-hidden relative group">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-transparent to-transparent pointer-events-none" />
+              <div className="flex flex-col md:flex-row gap-6 relative z-10">
+                <div className="flex-1 space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="relative">
+                      <Loader2 className="h-5 w-5 animate-spin text-blue-500" />
+                      <div className="absolute inset-0 blur-sm bg-blue-500/20 animate-pulse rounded-full" />
+                    </div>
+                    <span className="font-bold text-blue-400 uppercase tracking-widest text-[10px]">
+                      {analysisProgress}
+                    </span>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-[8px] font-black uppercase tracking-widest text-slate-500">
+                      <span>Neural_Processing_Load</span>
+                      <span>{Math.round(Math.random() * 20 + 70)}%</span>
+                    </div>
+                    <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: "85%" }}
+                        transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
+                        className="h-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="w-full md:w-48 shrink-0 border-l border-white/5 md:pl-6">
+                  <LiveTelemetry className="!space-y-1.5" />
+                </div>
               </div>
             </div>
           )}
 
           <Tabs defaultValue="upload" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="upload" onClick={stopCamera}>
-                <Upload className="mr-2 h-4 w-4" />
+            <TabsList className="grid w-full grid-cols-2 bg-white/5 p-1 rounded-xl h-12">
+              <TabsTrigger value="upload" onClick={stopCamera} className="rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-white transition-all uppercase tracking-widest text-[10px] font-bold">
+                <Upload className="mr-2 h-3.5 w-3.5" />
                 {t('analysisUpload.tabs.upload')}
               </TabsTrigger>
-              <TabsTrigger value="camera" onClick={() => !selectedImage && startCamera()}>
-                <Camera className="mr-2 h-4 w-4" />
+              <TabsTrigger value="camera" onClick={() => !selectedImage && startCamera()} className="rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-white transition-all uppercase tracking-widest text-[10px] font-bold">
+                <Camera className="mr-2 h-3.5 w-3.5" />
                 {t('analysisUpload.tabs.camera')}
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="upload" className="mt-6">
               {selectedImage ? (
-                <div className="relative">
-                  <div className="relative aspect-[4/3] overflow-hidden rounded-lg">
+                <div className="relative group rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
+                  <div className="relative aspect-[4/3] overflow-hidden">
                     <Image src={selectedImage || "/placeholder.svg"} alt="Selected" fill className="object-contain" />
+                    {isAnalyzing && <LaserScanner color="rgba(59, 130, 246, 0.6)" duration={2.5} />}
                   </div>
-                  <Button variant="destructive" size="icon" className="absolute right-2 top-2" onClick={clearImage}>
+                  <Button variant="destructive" size="icon" className="absolute right-4 top-4 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 backdrop-blur-md border border-white/10" onClick={clearImage} disabled={isAnalyzing}>
                     <X className="h-4 w-4" />
                   </Button>
                 </div>
@@ -513,18 +545,19 @@ export function SkinAnalysisUpload({ isLoggedIn = false, analysisMode = "auto" }
 
             <TabsContent value="camera" className="mt-6">
               {selectedImage ? (
-                <div className="relative">
-                  <div className="relative aspect-[4/3] overflow-hidden rounded-lg">
+                <div className="relative group rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
+                  <div className="relative aspect-[4/3] overflow-hidden">
                     <Image src={selectedImage || "/placeholder.svg"} alt="Captured" fill className="object-contain" />
+                    {isAnalyzing && <LaserScanner color="rgba(59, 130, 246, 0.6)" duration={2.5} />}
                   </div>
-                  <Button variant="destructive" size="icon" className="absolute right-2 top-2" onClick={clearImage}>
+                  <Button variant="destructive" size="icon" className="absolute right-4 top-4 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 backdrop-blur-md border border-white/10" onClick={clearImage} disabled={isAnalyzing}>
                     <X className="h-4 w-4" />
                   </Button>
                 </div>
               ) : (
-                <div className="relative min-h-[400px] overflow-hidden rounded-lg bg-black">
+                <div className="relative min-h-[400px] overflow-hidden rounded-3xl bg-black border border-white/5 shadow-2xl group">
                   {isCameraActive ? (
-                    <div className="relative">
+                    <div className="relative h-full">
                       {/* Hidden video for positioning guide */}
                       <video ref={videoRef} autoPlay playsInline muted className="hidden" />
                       
@@ -533,26 +566,39 @@ export function SkinAnalysisUpload({ isLoggedIn = false, analysisMode = "auto" }
                         onPositionValid={setIsPositionValid}
                         showOverlay={true}
                       />
-                      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10">
+                      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 w-full px-8 max-w-sm">
                         <Button 
-                          size="lg" 
+                          size="xl" 
                           onClick={capturePhoto} 
-                          className="rounded-full"
+                          className={cn(
+                            "w-full h-16 rounded-2xl shadow-2xl transition-all duration-500 uppercase tracking-widest text-xs font-black",
+                            isPositionValid 
+                              ? "bg-pink-600 hover:bg-pink-500 text-white shadow-pink-500/30" 
+                              : "bg-white/5 text-slate-500 border border-white/10 backdrop-blur-xl"
+                          )}
                           disabled={!isPositionValid}
                         >
-                          <Camera className="mr-2 h-5 w-5" />
+                          <Camera className="mr-3 h-5 w-5" />
                           {isPositionValid ? t('analysisUpload.actions.capture') : t('analysisUpload.actions.adjustPosition')}
                         </Button>
                       </div>
                     </div>
                   ) : (
-                    <div className="flex h-[400px] flex-col items-center justify-center">
-                      <Camera className="mb-4 h-12 w-12 text-muted-foreground" />
-                      <p className="mb-4 text-center text-sm text-muted-foreground">
-                        {t('analysisUpload.actions.cameraNotActive')}
-                      </p>
-                      <Button onClick={startCamera}>
-                        <Camera className="mr-2 h-4 w-4" />
+                    <div className="flex h-[400px] flex-col items-center justify-center space-y-8 bg-gradient-to-br from-white/[0.02] to-transparent">
+                      <div className="relative">
+                        <div className="absolute inset-0 bg-pink-500/20 blur-3xl rounded-full" />
+                        <Camera className="relative h-16 w-16 text-slate-600" />
+                      </div>
+                      <div className="text-center space-y-2">
+                        <p className="text-sm font-black uppercase tracking-[0.3em] text-slate-500">
+                          Sensor_Initialization_Required
+                        </p>
+                        <p className="text-xs text-slate-600 font-light italic">
+                          {t('analysisUpload.actions.cameraNotActive')}
+                        </p>
+                      </div>
+                      <Button onClick={startCamera} size="lg" className="h-14 px-10 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all uppercase tracking-widest text-[10px] font-black">
+                        <Camera className="mr-3 h-4 w-4 text-pink-500" />
                         {t('analysisUpload.actions.startCamera')}
                       </Button>
                     </div>
@@ -564,26 +610,26 @@ export function SkinAnalysisUpload({ isLoggedIn = false, analysisMode = "auto" }
           </Tabs>
 
           {selectedImage && (
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-              <Button size="lg" className="flex-1" onClick={handleAnalyze} disabled={isAnalyzing} data-tour="analyze-button">
+            <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+              <Button size="xl" className="flex-1 h-16 rounded-2xl bg-pink-600 hover:bg-pink-500 text-white shadow-2xl shadow-pink-500/20 border-none uppercase tracking-[0.3em] text-xs font-black transition-all hover:scale-[1.02] active:scale-95 group" onClick={handleAnalyze} disabled={isAnalyzing} data-tour="analyze-button">
                 {isAnalyzing ? (
                   <>
-                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    <Loader2 className="mr-3 h-5 w-5 animate-spin" />
                     {t(MODE_PROGRESS[analysisMode])}
                   </>
                 ) : (
                   <>
                     {t(MODE_LABEL[analysisMode])}
-                    <ArrowRight className="ml-2 h-5 w-5" />
+                    <ArrowRight className="ml-3 h-5 w-5 transition-transform group-hover:translate-x-1" />
                   </>
                 )}
               </Button>
               <Button
-                size="lg"
+                size="xl"
                 variant="outline"
                 onClick={clearImage}
                 disabled={isAnalyzing}
-                className="bg-transparent"
+                className="h-16 px-8 rounded-2xl bg-white/5 border border-white/10 text-slate-400 hover:bg-white/10 transition-all uppercase tracking-widest text-[10px] font-black"
               >
                 {t('analysisUpload.actions.chooseDifferent')}
               </Button>

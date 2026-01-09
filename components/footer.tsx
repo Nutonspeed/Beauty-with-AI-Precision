@@ -86,6 +86,7 @@ export function Footer() {
                   { href: "/features", label: t('nav.features') },
                   { href: "/pricing", label: t('nav.pricing') },
                   { href: "/faq", label: t('nav.faq') },
+                  { href: "/demo/clinic", label: "Clinic Demo" },
                   { href: "/analysis", label: t('footer.tryDemo') },
                   { href: "/auth/login", label: t('common.login') }
                 ].map((link) => (
