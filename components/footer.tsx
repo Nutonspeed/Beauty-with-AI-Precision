@@ -86,7 +86,8 @@ export function Footer() {
                   { href: "/features", label: t('nav.features') },
                   { href: "/pricing", label: t('nav.pricing') },
                   { href: "/faq", label: t('nav.faq') },
-                  { href: "/analysis", label: t('footer.tryDemo') }
+                  { href: "/analysis", label: t('footer.tryDemo') },
+                  { href: "/auth/login", label: t('common.login') }
                 ].map((link) => (
                   <li key={link.href}>
                     <Link href={lp(link.href)} className="text-[13px] text-slate-400 font-bold uppercase tracking-widest transition-all hover:text-white flex items-center group">

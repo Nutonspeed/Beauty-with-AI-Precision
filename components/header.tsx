@@ -236,7 +236,7 @@ export function Header() {
             </DropdownMenu>
           ) : (
             <div className="flex items-center gap-4">
-              <Button variant="ghost" size="sm" asChild className="hidden sm:flex h-11 px-6 text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-white hover:bg-white/5 rounded-full transition-all">
+              <Button variant="outline" size="sm" asChild className="hidden sm:flex h-11 px-6 text-[11px] font-black uppercase tracking-[0.2em] text-white border-white/10 hover:border-pink-500/50 hover:bg-pink-500/5 rounded-full transition-all">
                 <Link href={lp("/auth/login")}>{t('common.login')}</Link>
               </Button>
               <Button variant="premium" size="sm" asChild className="h-11 px-8 text-[11px] font-black uppercase tracking-[0.2em] shadow-2xl shadow-pink-500/20 rounded-full hover:scale-105 active:scale-95 transition-all">
