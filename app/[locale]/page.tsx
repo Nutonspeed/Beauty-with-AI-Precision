@@ -518,6 +518,7 @@ export default function HomePage() {
               </p>
             </motion.div>
 
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 {[
                   { key: 'starter', code: 'PRT-NODE-01' },
                   { key: 'professional', code: 'PRT-NODE-PRO' },
@@ -590,6 +591,7 @@ export default function HomePage() {
                     </motion.div>
                   )
                 })}
+            </div>
           </div>
         </section>
       </div>
@@ -597,5 +599,5 @@ export default function HomePage() {
 
     <Footer />
   </>
-)
+  )
 }

@@ -75,12 +75,14 @@ export function Header() {
           { href: "/analytics", label: t('nav.analytics') },
           { href: "/branches", label: t('nav.branches') },
           { href: "/ai-chat", label: t('nav.aiAdvisor') },
+          { href: "/auth/login", label: t('common.login') },
         ]
       case "clinic_staff":
         return [
           { href: "/booking", label: t('nav.reception') },
           { href: "/clinic/staff/my-schedule", label: t('nav.schedule') },
           { href: "/analysis", label: t('nav.analysis') },
+          { href: "/auth/login", label: t('common.login') },
         ]
       case "sales_staff":
         return [
@@ -88,12 +90,14 @@ export function Header() {
           { href: "/sales/leads", label: t('nav.leads') },
           { href: "/sales/presentations", label: t('nav.proposals') },
           { href: "/sales/tools", label: t('nav.salesTool') },
+          { href: "/auth/login", label: t('common.login') },
         ]
       case "super_admin":
         return [
           { href: "/admin", label: t('nav.admin') },
           { href: "/admin/system-status", label: t('nav.systemStatus') },
           { href: "/clinic/settings", label: t('nav.settings') },
+          { href: "/auth/login", label: t('common.login') },
         ]
       default:
         // Customer navigation
@@ -101,6 +105,7 @@ export function Header() {
           { href: "/analysis", label: t('nav.analysis') },
           { href: "/ar-simulator", label: t('nav.tryResults') },
           { href: "/booking", label: t('nav.booking') },
+          { href: "/auth/login", label: t('common.login') },
         ]
     }
   }

@@ -78,10 +78,10 @@ export function Footer() {
             </div>
           </div>
 
-          <div className="lg:col-span-7 grid grid-cols-2 md:grid-cols-3 gap-16">
-            <div className="space-y-8">
+          <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-12 sm:gap-16">
+            <div className="space-y-6 sm:space-y-8">
               <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-pink-500">{t('footer.product')}</h3>
-              <ul className="space-y-5">
+              <ul className="space-y-4 sm:space-y-5">
                 {[
                   { href: "/features", label: t('nav.features') },
                   { href: "/pricing", label: t('nav.pricing') },
@@ -99,13 +99,14 @@ export function Footer() {
               </ul>
             </div>
 
-            <div className="space-y-8">
+            <div className="space-y-6 sm:space-y-8">
               <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-pink-500">{t('footer.company')}</h3>
-              <ul className="space-y-5">
+              <ul className="space-y-4 sm:space-y-5">
                 {[
                   { href: "/case-studies", label: t('nav.caseStudies') },
                   { href: "/about", label: t('nav.about') },
                   { href: "/contact", label: t('nav.contact') },
+                  { href: "/3d-showcase", label: t('nav.3dModels') }
                 ].map((link) => (
                   <li key={link.href}>
                     <Link href={lp(link.href)} className="text-[13px] text-slate-400 font-bold uppercase tracking-widest transition-all hover:text-white flex items-center group">
@@ -117,9 +118,9 @@ export function Footer() {
               </ul>
             </div>
 
-            <div className="space-y-8">
+            <div className="space-y-6 sm:space-y-8">
               <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-pink-500">{t('footer.legal')}</h3>
-              <ul className="space-y-5">
+              <ul className="space-y-4 sm:space-y-5">
                 {[
                   { href: "/privacy", label: t('footer.privacy') },
                   { href: "/terms", label: t('footer.terms') },

@@ -333,42 +333,20 @@ export function LandingHero(props: LandingHeroProps) {
           initial={{ opacity:0, y:30 }}
           animate={{ opacity:1, y:0 }}
           transition={{ duration:1, ease:[0.16, 1, 0.3, 1] }}
-          className="max-w-5xl font-bold tracking-tight text-[clamp(2.5rem,8vw,6.5rem)] leading-[0.95] italic"
+          className="max-w-5xl font-bold tracking-tight text-[clamp(2rem,7vw,6.5rem)] leading-[1.1] md:leading-[0.95] italic"
           aria-label={t('home.hero.title')}
         >
-          <span className="block text-white mb-4 drop-shadow-[0_0_30px_rgba(255,255,255,0.3)]">{t('home.hero.title')}</span>
-          <span className="bg-gradient-to-r from-pink-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent not-italic block pb-4 drop-shadow-[0_0_20px_rgba(192,132,252,0.2)]">
+          <span className="block text-white mb-2 md:mb-4 drop-shadow-[0_0_30px_rgba(255,255,255,0.3)]">{t('home.hero.title')}</span>
+          <span className="bg-gradient-to-r from-pink-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent not-italic block pb-2 md:pb-4 drop-shadow-[0_0_20px_rgba(192,132,252,0.2)]">
             {t('home.hero.subtitle')}
           </span>
         </motion.h1>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-          className="grid grid-cols-3 gap-12 mt-12 mb-12 max-w-3xl mx-auto hidden md:grid"
-        >
-          {[
-            { icon: Dna, label: 'Genetic Precision', val: '99.8%' },
-            { icon: Target, label: 'Target Analysis', val: 'Real-time' },
-            { icon: ActivityIcon, label: 'Vital Sync', val: 'Active' }
-          ].map((item, i) => (
-            <div key={i} className="flex flex-col items-center gap-2 group">
-              <div className="h-12 w-12 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center group-hover:border-pink-500/50 group-hover:bg-pink-500/5 transition-all shadow-2xl relative">
-                <div className="absolute inset-0 bg-pink-500/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity rounded-full" />
-                <item.icon className="h-6 w-6 text-pink-500/60 group-hover:text-pink-400 relative z-10" />
-              </div>
-              <span className="text-[9px] font-black uppercase tracking-[0.4em] text-slate-400 font-mono group-hover:text-pink-500/60 transition-colors">{item.label}</span>
-              <span className="text-lg font-black text-white italic tracking-tighter group-hover:text-pink-400 transition-colors">{item.val}</span>
-            </div>
-          ))}
-        </motion.div>
 
         <motion.p
           initial={{ opacity:0, y:20 }}
           animate={{ opacity:1, y:0 }}
           transition={{ delay:0.4, duration:0.8, ease:[0.16, 1, 0.3, 1] }}
-          className="mt-4 max-w-2xl text-xl text-slate-400 font-light tracking-widest leading-relaxed italic"
+          className="mt-4 max-w-2xl text-base md:text-xl text-slate-400 font-light tracking-normal md:tracking-widest leading-relaxed italic"
         >
           {t('home.hero.description')}
         </motion.p>
@@ -377,26 +355,26 @@ export function LandingHero(props: LandingHeroProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8, duration: 0.8 }}
-          className="mt-16 flex flex-col sm:flex-row items-center gap-10"
+          className="mt-10 md:mt-16 flex flex-col sm:flex-row items-center gap-4 md:gap-10 w-full sm:w-auto px-4 sm:px-0"
         >
           <button 
             onClick={_onPrimary}
-            className="group relative h-20 px-16 rounded-[2rem] bg-white text-[#020617] font-black overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-[0_0_50px_rgba(255,255,255,0.1)] border"
+            className="group relative h-16 md:h-20 w-full sm:w-auto px-10 md:px-16 rounded-2xl md:rounded-[2rem] bg-white text-[#020617] font-black overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-[0_0_50px_rgba(255,255,255,0.1)] border"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-pink-500 to-purple-600 opacity-0 group-hover:opacity-10 transition-opacity" />
-            <span className="relative z-10 flex items-center gap-3 text-xs uppercase tracking-[0.4em] italic">
+            <span className="relative z-10 flex items-center justify-center gap-3 text-[10px] md:text-xs uppercase tracking-[0.2em] md:tracking-[0.4em] italic">
               {t('home.hero.cta')}
-              <Scan className="h-5 w-5 animate-pulse" />
+              <Scan className="h-4 w-4 md:h-5 md:w-5 animate-pulse" />
             </span>
           </button>
 
           <button 
             onClick={_onSecondary}
-            className="group h-20 px-16 rounded-[2rem] border border-white/5 bg-white/[0.02] backdrop-blur-3xl text-white/40 font-black hover:bg-white/[0.05] transition-all hover:text-white"
+            className="group h-16 md:h-20 w-full sm:w-auto px-10 md:px-16 rounded-2xl md:rounded-[2rem] border border-white/5 bg-white/[0.02] backdrop-blur-3xl text-white/40 font-black hover:bg-white/[0.05] transition-all hover:text-white"
           >
-            <span className="flex items-center gap-3 text-xs uppercase tracking-[0.4em] italic">
+            <span className="flex items-center justify-center gap-3 text-[10px] md:text-xs uppercase tracking-[0.2em] md:tracking-[0.4em] italic">
               {t('home.hero.learnMore')}
-              <ShieldCheck className="h-5 w-5 text-cyan-500/40 group-hover:text-cyan-400" />
+              <ShieldCheck className="h-4 w-4 md:h-5 md:w-5 text-cyan-500/40 group-hover:text-cyan-400" />
             </span>
           </button>
         </motion.div>
