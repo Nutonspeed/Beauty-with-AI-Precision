@@ -33,7 +33,7 @@ import Link from "next/link"
 import StaffModal from "@/components/clinic/staff-modal"
 import { toast } from "sonner"
 
-interface StaffMember {
+export interface StaffMember {
   id: string
   user_id: string
   clinic_id: string | null
@@ -61,7 +61,7 @@ interface StaffMember {
   }
 }
 
-interface StaffStats {
+export interface StaffStats {
   total: number
   active: number
   on_leave: number

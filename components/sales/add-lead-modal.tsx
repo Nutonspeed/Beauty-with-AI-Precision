@@ -16,22 +16,7 @@ import {
 import { Loader2 } from "lucide-react"
 import { toast } from "sonner"
 import { useTranslations } from "next-intl"
-
-interface Lead {
-  id?: string
-  name: string
-  email: string
-  phone?: string
-  status: string
-  source: string
-  concern?: string
-  budget_min?: number
-  budget_max?: number
-  preferred_date?: string
-  score: number
-  notes?: string
-  tags?: string[]
-}
+import type { Lead } from "@/app/sales/leads/leads-client"
 
 interface AddLeadModalProps {
   open: boolean
@@ -43,13 +28,13 @@ interface AddLeadModalProps {
 export function AddLeadModal({ open, onClose, onSuccess, editLead }: AddLeadModalProps) {
   const t = useTranslations()
   const [loading, setLoading] = useState(false)
-  const [formData, setFormData] = useState<Lead>({
+  const [formData, setFormData] = useState<Partial<Lead>>({
     name: editLead?.name || "",
     email: editLead?.email || "",
     phone: editLead?.phone || "",
     status: editLead?.status || "cold",
     source: editLead?.source || "website",
-    concern: editLead?.concern || "",
+    primary_concern: editLead?.primary_concern || "",
     budget_min: editLead?.budget_min || undefined,
     budget_max: editLead?.budget_max || undefined,
     preferred_date: editLead?.preferred_date || "",
@@ -131,7 +116,7 @@ export function AddLeadModal({ open, onClose, onSuccess, editLead }: AddLeadModa
                 <Label htmlFor="phone">{t('salesLeads.modal.phoneLabel')}</Label>
                 <Input
                   id="phone"
-                  value={formData.phone}
+                  value={formData.phone ?? ""}
                   onChange={(e) => handleChange('phone', e.target.value)}
                   placeholder={t('salesLeads.modal.phonePlaceholder')}
                 />

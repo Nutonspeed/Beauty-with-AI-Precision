@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
@@ -23,7 +23,11 @@ import {
   Loader2,
   Sparkles,
   Building2,
+  Shield,
+  Layers
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from '@/lib/utils';
 
 interface AIAnalyticsData {
   overview: {
@@ -96,13 +100,13 @@ export default function AIAnalyticsDashboard() {
 
   const getSkinTypeBadgeColor = (type: string) => {
     const colors: Record<string, string> = {
-      oily: 'bg-yellow-100 text-yellow-800',
-      dry: 'bg-orange-100 text-orange-800',
-      combination: 'bg-purple-100 text-purple-800',
-      normal: 'bg-green-100 text-green-800',
-      sensitive: 'bg-red-100 text-red-800',
+      oily: 'bg-yellow-500/10 text-yellow-400',
+      dry: 'bg-orange-500/10 text-orange-400',
+      combination: 'bg-purple-500/10 text-purple-400',
+      normal: 'bg-green-500/10 text-green-400',
+      sensitive: 'bg-red-500/10 text-red-400',
     };
-    return colors[type.toLowerCase()] || 'bg-gray-100 text-gray-800';
+    return colors[type.toLowerCase()] || 'bg-white/5 text-slate-400';
   };
 
   if (loading) {
@@ -127,88 +131,67 @@ export default function AIAnalyticsDashboard() {
   const maxDailyCount = Math.max(...data.dailyTrend.map((d) => d.count), 1);
 
   return (
-    <div className="space-y-6">
-      {/* Overview Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="pt-4">
-            <div className="flex items-center gap-3">
-              <Brain className="w-10 h-10 p-2 rounded-full bg-purple-100 text-purple-600" />
-              <div>
-                <p className="text-2xl font-bold">{data.overview.totalAnalyses.toLocaleString()}</p>
-                <p className="text-xs text-muted-foreground">Total Analyses</p>
+    <div className="space-y-10 animate-in fade-in duration-700">
+      {/* Overview Metrics Grid - Operational Hub */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {[
+          { label: 'Total Neural Analyses', val: data.overview.totalAnalyses.toLocaleString(), sub: 'Global Synapse Load', icon: Brain, color: 'text-purple-400', bg: 'bg-purple-500/10' },
+          { label: 'Active Cycle Load', val: data.overview.analysesThisMonth.toLocaleString(), sub: 'MTD Processing', icon: Activity, color: 'text-blue-400', bg: 'bg-blue-500/10', growth: data.overview.momGrowth },
+          { label: 'Mean Integrity Index', val: data.overview.avgOverallScore.toString(), sub: 'Composite Quality Score', icon: Sparkles, color: 'text-yellow-400', bg: 'bg-yellow-500/10' },
+          { label: 'Verified Entities', val: data.overview.uniqueUsers.toLocaleString(), sub: 'Unique Identity Nodes', icon: Users, color: 'text-emerald-400', bg: 'bg-emerald-500/10' }
+        ].map((node, i) => (
+          <Card key={i} className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2rem] hover:bg-white/[0.03] transition-all duration-500 group shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+              <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 italic">{node.label}</CardTitle>
+              <div className={cn("p-2 rounded-lg border border-white/5 shadow-inner group-hover:scale-110 transition-transform duration-700", node.bg)}>
+                <node.icon className={cn("h-4 w-4", node.color)} />
               </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="pt-4">
-            <div className="flex items-center gap-3">
-              <Activity className="w-10 h-10 p-2 rounded-full bg-blue-100 text-blue-600" />
-              <div>
-                <div className="flex items-center gap-2">
-                  <p className="text-2xl font-bold">{data.overview.analysesThisMonth}</p>
-                  {data.overview.momGrowth !== 0 && (
-                    <Badge className={data.overview.momGrowth > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}>
-                      {data.overview.momGrowth > 0 ? <TrendingUp className="w-3 h-3 mr-1" /> : <TrendingDown className="w-3 h-3 mr-1" />}
-                      {Math.abs(data.overview.momGrowth)}%
-                    </Badge>
-                  )}
-                </div>
-                <p className="text-xs text-muted-foreground">This Month</p>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center gap-3">
+                <div className="text-3xl font-black text-white tracking-tighter italic">{node.val}</div>
+                {node.growth !== undefined && node.growth !== 0 && (
+                  <Badge className={cn("px-2 py-0.5 rounded-full border-none shadow-inner text-[8px] font-black italic", node.growth > 0 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400')}>
+                    {node.growth > 0 ? <TrendingUp className="w-2 h-2 mr-1" /> : <TrendingDown className="w-2 h-2 mr-1" />}
+                    {Math.abs(node.growth)}%
+                  </Badge>
+                )}
               </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="pt-4">
-            <div className="flex items-center gap-3">
-              <Sparkles className="w-10 h-10 p-2 rounded-full bg-yellow-100 text-yellow-600" />
-              <div>
-                <p className="text-2xl font-bold">{data.overview.avgOverallScore}</p>
-                <p className="text-xs text-muted-foreground">Avg Score</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="pt-4">
-            <div className="flex items-center gap-3">
-              <Users className="w-10 h-10 p-2 rounded-full bg-green-100 text-green-600" />
-              <div>
-                <p className="text-2xl font-bold">{data.overview.uniqueUsers}</p>
-                <p className="text-xs text-muted-foreground">Unique Users</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+              <p className="text-[9px] font-black uppercase tracking-widest mt-2 text-slate-500 italic">{node.sub}</p>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
-      {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Monthly Trend */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <BarChart3 className="w-5 h-5" />
-              Monthly Trend (12 Months)
+      {/* Analytical Visualizations */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        {/* Temporal Trend Mapping */}
+        <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group">
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent" />
+          <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
+            <CardTitle className="text-2xl font-bold text-white tracking-tight italic flex items-center gap-4">
+              <BarChart3 className="h-6 w-6 text-purple-400" />
+              Temporal Trend Matrix
             </CardTitle>
+            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">12-Month cyclical analysis volume mapping</CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="flex items-end gap-1 h-40">
+          <CardContent className="p-10 lg:p-16">
+            <div className="flex items-end gap-2 h-48">
               {data.monthlyTrend.map((item, idx) => {
                 const height = (item.count / maxMonthlyCount) * 100;
                 return (
-                  <div key={idx} className="flex-1 flex flex-col items-center gap-1">
-                    <span className="text-xs font-medium">{item.count}</span>
-                    <div
-                      className="w-full bg-purple-500/80 rounded-t transition-all hover:bg-purple-600"
-                      style={{ height: `${Math.max(height, 4)}%` }}
-                    />
-                    <span className="text-[10px] text-muted-foreground rotate-[-45deg] origin-center whitespace-nowrap">
+                  <div key={idx} className="flex-1 flex flex-col items-center gap-4 group/bar">
+                    <div className="relative w-full flex items-end justify-center h-32">
+                      <motion.div 
+                        initial={{ height: 0 }}
+                        animate={{ height: `${Math.max(height, 4)}%` }}
+                        transition={{ duration: 1, delay: idx * 0.05 }}
+                        className="w-full bg-white/[0.03] border border-white/5 rounded-t-xl group-hover/bar:bg-purple-600/20 group-hover/bar:border-purple-500/30 transition-all duration-500 relative cursor-pointer"
+                        title={`${item.month}: ${item.count}`}
+                      />
+                    </div>
+                    <span className="text-[8px] font-black uppercase tracking-widest text-slate-600 transform -rotate-45 origin-top-left group-hover/bar:text-white transition-colors">
                       {item.month}
                     </span>
                   </div>
@@ -218,204 +201,229 @@ export default function AIAnalyticsDashboard() {
           </CardContent>
         </Card>
 
-        {/* Score Distribution */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Sparkles className="w-5 h-5" />
-              Score Distribution
+        {/* Neural Score Distribution */}
+        <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group">
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/20 to-transparent" />
+          <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
+            <CardTitle className="text-2xl font-bold text-white tracking-tight italic flex items-center gap-4">
+              <Shield className="h-6 w-6 text-pink-400" />
+              Quality Vector Distribution
             </CardTitle>
+            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">System-wide integrity score allocation</CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {[
-                { label: 'Excellent (80-100)', value: data.scoreDistribution.excellent, color: 'bg-green-500' },
-                { label: 'Good (60-79)', value: data.scoreDistribution.good, color: 'bg-blue-500' },
-                { label: 'Fair (40-59)', value: data.scoreDistribution.fair, color: 'bg-yellow-500' },
-                { label: 'Poor (0-39)', value: data.scoreDistribution.poor, color: 'bg-red-500' },
-              ].map((item) => {
-                const total = data.scoreDistribution.excellent + data.scoreDistribution.good + data.scoreDistribution.fair + data.scoreDistribution.poor;
-                const percentage = total > 0 ? (item.value / total) * 100 : 0;
-                return (
-                  <div key={item.label} className="space-y-1">
-                    <div className="flex justify-between text-sm">
-                      <span>{item.label}</span>
-                      <span className="font-medium">{item.value} ({percentage.toFixed(1)}%)</span>
-                    </div>
-                    <div className="h-2 bg-muted rounded-full overflow-hidden">
-                      <div
-                        className={`h-full ${item.color} transition-all`}
-                        style={{ width: `${percentage}%` }}
-                      />
-                    </div>
+          <CardContent className="p-10 lg:p-12 space-y-8">
+            {[
+              { label: 'High Integrity (80-100)', val: data.scoreDistribution.excellent, color: 'from-emerald-500 to-teal-600', shadow: 'rgba(16,185,129,0.3)' },
+              { label: 'Optimal Status (60-79)', val: data.scoreDistribution.good, color: 'from-blue-500 to-indigo-600', shadow: 'rgba(59,130,246,0.3)' },
+              { label: 'Nominal State (40-59)', val: data.scoreDistribution.fair, color: 'from-yellow-500 to-amber-600', shadow: 'rgba(245,158,11,0.3)' },
+              { label: 'Critical Variance (0-39)', val: data.scoreDistribution.poor, color: 'from-rose-500 to-red-600', shadow: 'rgba(244,63,94,0.3)' },
+            ].map((item, i) => {
+              const total = data.scoreDistribution.excellent + data.scoreDistribution.good + data.scoreDistribution.fair + data.scoreDistribution.poor;
+              const percentage = total > 0 ? (item.val / total) * 100 : 0;
+              return (
+                <div key={item.label} className="space-y-3 group/item">
+                  <div className="flex justify-between items-end">
+                    <span className="text-[10px] font-black text-slate-400 group-hover/item:text-white transition-colors uppercase tracking-widest italic">{item.label}</span>
+                    <span className="text-lg font-black text-white italic tracking-tighter">{item.val} <span className="text-[10px] text-slate-600 not-italic ml-1">({percentage.toFixed(1)}%)</span></span>
                   </div>
-                );
-              })}
-            </div>
+                  <div className="relative h-1.5 w-full bg-white/[0.02] rounded-full overflow-hidden border border-white/5">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${percentage}%` }}
+                      transition={{ duration: 1.5, delay: i * 0.1 }}
+                      className={cn("h-full rounded-full", `bg-gradient-to-r ${item.color}`)}
+                      style={{ boxShadow: `0 0 15px ${item.shadow}` }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
           </CardContent>
         </Card>
       </div>
 
-      {/* Tabs Section */}
-      <Tabs defaultValue="daily" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="daily" className="gap-1">
-            <Calendar className="w-4 h-4" />
-            Daily (30d)
-          </TabsTrigger>
-          <TabsTrigger value="skinTypes" className="gap-1">
-            <Activity className="w-4 h-4" />
-            Skin Types
-          </TabsTrigger>
-          <TabsTrigger value="topClinics" className="gap-1">
-            <Building2 className="w-4 h-4" />
-            Top Clinics
-          </TabsTrigger>
-          <TabsTrigger value="recent" className="gap-1">
-            <Brain className="w-4 h-4" />
-            Recent
-          </TabsTrigger>
-        </TabsList>
+      {/* Advanced Telemetry Interface - Dynamic Modules */}
+      <div className="pt-10">
+        <Tabs defaultValue="daily" className="space-y-10">
+          <div className="flex items-center justify-center">
+            <TabsList className="bg-white/[0.02] border border-white/5 p-1.5 rounded-2xl h-auto gap-2">
+              {[
+                { value: 'daily', icon: Calendar, label: 'DAILY_SYNC' },
+                { value: 'skinTypes', icon: Layers, label: 'DERMAL_MATRIX' },
+                { value: 'topClinics', icon: Building2, label: 'NODE_RANKING' },
+                { value: 'recent', icon: Brain, label: 'LATEST_INFERENCE' }
+              ].map((tab) => (
+                <TabsTrigger 
+                  key={tab.value} 
+                  value={tab.value} 
+                  className="rounded-xl px-8 py-3 data-[state=active]:bg-pink-600 data-[state=active]:text-white transition-all font-black uppercase tracking-[0.15em] text-[10px] italic h-full"
+                >
+                  <tab.icon className="w-4 h-4 mr-3" />
+                  {tab.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </div>
 
-        {/* Daily Trend Tab */}
-        <TabsContent value="daily">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Daily Analyses (Last 30 Days)</CardTitle>
-              <p className="text-sm text-muted-foreground">
-                Average: {data.overview.avgPerDay} analyses per day
-              </p>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-end gap-[2px] h-32">
-                {data.dailyTrend.map((item, idx) => {
-                  const height = (item.count / maxDailyCount) * 100;
-                  return (
-                    <div
-                      key={idx}
-                      className="flex-1 bg-blue-500/80 rounded-t transition-all hover:bg-blue-600 cursor-pointer"
-                      style={{ height: `${Math.max(height, 2)}%` }}
-                      title={`${item.date}: ${item.count} analyses`}
-                    />
-                  );
-                })}
-              </div>
-              <div className="flex justify-between mt-2 text-xs text-muted-foreground">
-                <span>{data.dailyTrend[0]?.date}</span>
-                <span>{data.dailyTrend[data.dailyTrend.length - 1]?.date}</span>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Skin Types Tab */}
-        <TabsContent value="skinTypes">
-          <Card>
-            <CardContent className="pt-6">
-              {data.skinTypeDistribution.length === 0 ? (
-                <p className="text-center text-muted-foreground py-4">No data available</p>
-              ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                  {data.skinTypeDistribution.map((item) => (
-                    <div
-                      key={item.type}
-                      className="p-4 rounded-lg border text-center hover:shadow-md transition-shadow"
-                    >
-                      <Badge className={getSkinTypeBadgeColor(item.type)}>
-                        {item.type}
-                      </Badge>
-                      <p className="text-2xl font-bold mt-2">{item.count}</p>
-                      <p className="text-sm text-muted-foreground">{item.percentage}%</p>
+          <AnimatePresence mode="wait">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+              {/* Daily Sync Tab */}
+              <TabsContent value="daily" className="mt-0 outline-none">
+                <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative">
+                  <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/20 to-transparent" />
+                  <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
+                    <CardTitle className="text-2xl font-bold text-white tracking-tight italic flex items-center gap-4">
+                      <Activity className="h-6 w-6 text-blue-400" />
+                      Temporal Synchronicity (30d)
+                    </CardTitle>
+                    <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Mean velocity: {data.overview.avgPerDay} inferences / cycle</CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-10 lg:p-16">
+                    <div className="flex items-end gap-[3px] h-48">
+                      {data.dailyTrend.map((item, idx) => {
+                        const height = (item.count / maxDailyCount) * 100;
+                        return (
+                          <motion.div
+                            key={idx}
+                            initial={{ height: 0 }}
+                            animate={{ height: `${Math.max(height, 2)}%` }}
+                            transition={{ duration: 0.8, delay: idx * 0.02 }}
+                            className="flex-1 bg-blue-500/20 border-t border-blue-500/30 hover:bg-blue-500/40 transition-all cursor-pointer relative group/daily"
+                            title={`${item.date}: ${item.count} analyses`}
+                          >
+                            <div className="absolute -top-8 left-1/2 -translate-x-1/2 hidden group-hover/daily:block text-[8px] font-black text-blue-400">{item.count}</div>
+                          </motion.div>
+                        );
+                      })}
                     </div>
+                    <div className="flex justify-between mt-8 text-[9px] font-black uppercase tracking-[0.3em] text-slate-600 italic">
+                      <span>STAMP_START: {data.dailyTrend[0]?.date}</span>
+                      <span>STAMP_END: {data.dailyTrend[data.dailyTrend.length - 1]?.date}</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              {/* Dermal Matrix Tab */}
+              <TabsContent value="skinTypes" className="mt-0 outline-none">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                  {data.skinTypeDistribution.map((item, idx) => (
+                    <motion.div
+                      key={item.type}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: idx * 0.1 }}
+                    >
+                      <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2.5rem] hover:bg-white/[0.03] transition-all duration-500 group shadow-xl overflow-hidden relative text-center p-8">
+                        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                        <Badge className={cn("px-4 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border-none shadow-inner mb-6", getSkinTypeBadgeColor(item.type))}>
+                          {item.type} Node
+                        </Badge>
+                        <div className="text-4xl font-black text-white tracking-tighter italic mb-2">{item.count}</div>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600 italic">{item.percentage}% Sector Density</p>
+                      </Card>
+                    </motion.div>
                   ))}
                 </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
+              </TabsContent>
 
-        {/* Top Clinics Tab */}
-        <TabsContent value="topClinics">
-          <Card>
-            <CardContent className="pt-6">
-              {data.topClinics.length === 0 ? (
-                <p className="text-center text-muted-foreground py-4">No clinic data available</p>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-12">#</TableHead>
-                      <TableHead>Clinic Name</TableHead>
-                      <TableHead className="text-right">Analyses</TableHead>
-                      <TableHead className="text-right">Share</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {data.topClinics.map((clinic, idx) => (
-                      <TableRow key={clinic.id}>
-                        <TableCell>
-                          <Badge variant={idx === 0 ? 'default' : 'outline'}>
-                            {idx + 1}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="font-medium">{clinic.name}</TableCell>
-                        <TableCell className="text-right font-mono">
-                          {clinic.analysisCount.toLocaleString()}
-                        </TableCell>
-                        <TableCell className="text-right text-muted-foreground">
-                          {((clinic.analysisCount / data.overview.totalAnalyses) * 100).toFixed(1)}%
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
+              {/* Node Ranking Tab */}
+              <TabsContent value="topClinics" className="mt-0 outline-none">
+                <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative">
+                  <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent" />
+                  <CardContent className="p-0">
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="bg-white/[0.02] border-b border-white/5">
+                          <TableHead className="w-20 px-10 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Rank</TableHead>
+                          <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Clinical Uplink</TableHead>
+                          <TableHead className="px-8 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Cycle Count</TableHead>
+                          <TableHead className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Global Share</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {data.topClinics.map((clinic, idx) => (
+                          <TableRow key={clinic.id} className="group/row transition-all duration-500 hover:bg-white/[0.03] border-white/5">
+                            <TableCell className="px-10 py-8">
+                              <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center font-black italic shadow-inner border border-white/5", idx === 0 ? 'bg-pink-600 text-white shadow-pink-600/40' : 'bg-white/[0.03] text-slate-500')}>
+                                0{idx + 1}
+                              </div>
+                            </TableCell>
+                            <TableCell className="px-8 py-8">
+                              <span className="text-lg font-bold text-white italic group-hover/row:text-pink-400 transition-colors uppercase tracking-tight">{clinic.name}</span>
+                            </TableCell>
+                            <TableCell className="px-8 py-8 text-right font-black text-white italic tracking-tighter text-xl">
+                              {clinic.analysisCount.toLocaleString()}
+                            </TableCell>
+                            <TableCell className="px-10 py-8 text-right">
+                              <Badge variant="outline" className="bg-white/[0.02] border-white/10 text-emerald-400 text-[10px] font-black rounded-lg px-4 py-1 italic">
+                                {((clinic.analysisCount / data.overview.totalAnalyses) * 100).toFixed(1)}% Δ
+                              </Badge>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </CardContent>
+                </Card>
+              </TabsContent>
 
-        {/* Recent Analyses Tab */}
-        <TabsContent value="recent">
-          <Card>
-            <CardContent className="pt-6">
-              {data.recentAnalyses.length === 0 ? (
-                <p className="text-center text-muted-foreground py-4">No recent analyses</p>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Clinic</TableHead>
-                      <TableHead>Skin Type</TableHead>
-                      <TableHead>Score</TableHead>
-                      <TableHead>Date</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {data.recentAnalyses.map((analysis) => (
-                      <TableRow key={analysis.id}>
-                        <TableCell className="font-medium">{analysis.clinicName}</TableCell>
-                        <TableCell>
-                          <Badge className={getSkinTypeBadgeColor(analysis.skinType)}>
-                            {analysis.skinType}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <span className={`font-semibold ${getScoreColor(analysis.overallScore)}`}>
-                            {analysis.overallScore}
-                          </span>
-                        </TableCell>
-                        <TableCell className="text-muted-foreground">
-                          {formatDate(analysis.createdAt)}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+              {/* Latest Inference Tab */}
+              <TabsContent value="recent" className="mt-0 outline-none">
+                <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative">
+                  <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
+                  <CardContent className="p-0">
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="bg-white/[0.02] border-b border-white/5">
+                          <TableHead className="px-10 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Origin Node</TableHead>
+                          <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Dermal Type</TableHead>
+                          <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Integrity Index</TableHead>
+                          <TableHead className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Temporal Stamp</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {data.recentAnalyses.map((analysis, idx) => (
+                          <motion.tr 
+                            key={analysis.id}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: idx * 0.05 }}
+                            className="group/row transition-all duration-500 hover:bg-white/[0.03] border-white/5"
+                          >
+                            <TableCell className="px-10 py-8">
+                              <span className="text-base font-bold text-white italic group-hover/row:text-cyan-400 transition-colors">{analysis.clinicName}</span>
+                            </TableCell>
+                            <TableCell className="px-8 py-8">
+                              <Badge className={cn("px-3 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest border-none shadow-inner", getSkinTypeBadgeColor(analysis.skinType))}>
+                                {analysis.skinType}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="px-8 py-8">
+                              <div className="flex items-center gap-3">
+                                <div className={cn("h-2 w-2 rounded-full animate-pulse", getScoreColor(analysis.overallScore).replace('text-', 'bg-'))} />
+                                <span className={cn("text-xl font-black italic tracking-tighter", getScoreColor(analysis.overallScore))}>
+                                  {analysis.overallScore}
+                                </span>
+                              </div>
+                            </TableCell>
+                            <TableCell className="px-10 py-8 text-right">
+                              <div className="space-y-1">
+                                <div className="text-sm font-bold text-slate-300 italic">{formatDate(analysis.createdAt).split(',')[0]}</div>
+                                <p className="text-[9px] font-black uppercase tracking-widest text-slate-600 italic">{formatDate(analysis.createdAt).split(',')[1]}</p>
+                              </div>
+                            </TableCell>
+                          </motion.tr>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </motion.div>
+          </AnimatePresence>
+        </Tabs>
+      </div>
     </div>
   );
 }

@@ -31,7 +31,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import {
   Search,
-  Filter,
   MoreVertical,
   CheckCircle2,
   XCircle,
@@ -45,7 +44,11 @@ import {
   Unlock,
   Eye,
   Plus,
+  Edit,
+  CreditCard
 } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { cn } from '@/lib/utils';
 import ClinicDetailModal from './clinic-detail-modal';
 import ClinicOnboardingWizard from './clinic-onboarding-wizard';
 
@@ -75,10 +78,10 @@ export default function EnhancedClinicManagement() {
   // Filters
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [planFilter, setPlanFilter] = useState<string>('all');
-  const [healthFilter, setHealthFilter] = useState<string>('all');
-  const [sortBy, setSortBy] = useState<string>('name');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [planFilter, _setPlanFilter] = useState<string>('all');
+  const [healthFilter, _setHealthFilter] = useState<string>('all');
+  const [sortBy, _setSortBy] = useState<string>('name');
+  const [sortOrder, _setSortOrder] = useState<'asc' | 'desc'>('asc');
   
   // Detail modal state
   const [selectedClinicId, setSelectedClinicId] = useState<string | null>(null);
@@ -290,279 +293,248 @@ export default function EnhancedClinicManagement() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header with Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Total Clinics</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+    <div className="space-y-8 animate-in fade-in duration-700">
+      {/* Header with Stats - Operational Hub */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2rem] hover:bg-white/[0.03] transition-all duration-500 group shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 italic">Total Clinics</CardTitle>
+            <div className="p-2 rounded-lg bg-blue-500/10 border border-white/5 shadow-inner group-hover:scale-110 transition-transform duration-700">
+              <Users className="h-4 w-4 text-blue-400" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{clinics.length}</div>
+            <div className="text-3xl font-black text-white tracking-tighter italic">{clinics.length}</div>
+            <p className="text-[9px] font-black uppercase tracking-widest mt-2 text-slate-500 italic">Global Infrastructure Nodes</p>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Active</CardTitle>
-            <CheckCircle2 className="h-4 w-4 text-green-500" />
+        <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2rem] hover:bg-white/[0.03] transition-all duration-500 group shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 italic">Active</CardTitle>
+            <div className="p-2 rounded-lg bg-green-500/10 border border-white/5 shadow-inner group-hover:scale-110 transition-transform duration-700">
+              <CheckCircle2 className="h-4 w-4 text-green-400" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">
+            <div className="text-3xl font-black text-green-400 tracking-tighter italic">
               {clinics.filter((c) => c.status === 'active').length}
             </div>
+            <p className="text-[9px] font-black uppercase tracking-widest mt-2 text-slate-500 italic">Operational Cycles</p>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Avg Health Score</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+        <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2rem] hover:bg-white/[0.03] transition-all duration-500 group shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 italic">Avg Health</CardTitle>
+            <div className="p-2 rounded-lg bg-pink-500/10 border border-white/5 shadow-inner group-hover:scale-110 transition-transform duration-700">
+              <TrendingUp className="h-4 w-4 text-pink-400" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-3xl font-black text-white tracking-tighter italic">
               {clinics.length > 0
                 ? Math.round(clinics.reduce((sum, c) => sum + c.healthScore, 0) / clinics.length)
                 : 0}
             </div>
+            <p className="text-[9px] font-black uppercase tracking-widest mt-2 text-slate-500 italic">Integrity Index</p>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Total Users</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+        <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2rem] hover:bg-white/[0.03] transition-all duration-500 group shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 italic">Total Users</CardTitle>
+            <div className="p-2 rounded-lg bg-cyan-500/10 border border-white/5 shadow-inner group-hover:scale-110 transition-transform duration-700">
+              <Users className="h-4 w-4 text-cyan-400" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {clinics.reduce((sum, c) => sum + c.users, 0)}
+            <div className="text-3xl font-black text-white tracking-tighter italic">
+              {clinics.reduce((sum, c) => sum + c.users, 0).toLocaleString()}
             </div>
+            <p className="text-[9px] font-black uppercase tracking-widest mt-2 text-slate-500 italic">Registered Entities</p>
           </CardContent>
         </Card>
       </div>
 
       {/* Filters and Actions */}
-      <Card>
-        <CardHeader>
-          <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
-            <div className="flex-1 w-full md:w-auto">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search by name, email, or slug..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-            </div>
-
-            <div className="flex gap-2 flex-wrap">
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-[140px]">
-                  <Filter className="h-4 w-4 mr-2" />
-                  <SelectValue placeholder="Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="trial">Trial</SelectItem>
-                  <SelectItem value="inactive">Inactive</SelectItem>
-                  <SelectItem value="suspended">Suspended</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <Select value={planFilter} onValueChange={setPlanFilter}>
-                <SelectTrigger className="w-[140px]">
-                  <SelectValue placeholder="Plan" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Plans</SelectItem>
-                  <SelectItem value="Starter">Starter</SelectItem>
-                  <SelectItem value="Professional">Professional</SelectItem>
-                  <SelectItem value="Enterprise">Enterprise</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <Select value={healthFilter} onValueChange={setHealthFilter}>
-                <SelectTrigger className="w-[140px]">
-                  <SelectValue placeholder="Health" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Health</SelectItem>
-                  <SelectItem value="excellent">Excellent (80+)</SelectItem>
-                  <SelectItem value="good">Good (60-79)</SelectItem>
-                  <SelectItem value="fair">Fair (40-59)</SelectItem>
-                  <SelectItem value="poor">Poor (&lt;40)</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="w-[140px]">
-                  <SelectValue placeholder="Sort by" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="name">Name</SelectItem>
-                  <SelectItem value="users">Users</SelectItem>
-                  <SelectItem value="revenue">Revenue</SelectItem>
-                  <SelectItem value="health">Health</SelectItem>
-                  <SelectItem value="created">Created Date</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-              >
-                {sortOrder === 'asc' ? '↑' : '↓'}
-              </Button>
-
-              <Button variant="outline" onClick={exportData}>
-                <Download className="h-4 w-4 mr-2" />
-                Export
-              </Button>
-
-              <Button onClick={() => setWizardOpen(true)}>
-                <Plus className="h-4 w-4 mr-2" />
-                Add Clinic
-              </Button>
-            </div>
+      <div className="flex flex-col md:flex-row gap-6 items-center">
+        <div className="flex-1 w-full md:w-auto relative group">
+          <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none">
+            <Search className="h-5 w-5 text-slate-600 group-focus-within:text-pink-500 transition-colors" />
           </div>
-        </CardHeader>
+          <Input
+            placeholder="Search clinical nodes by name, email, or identifier..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="h-16 pl-16 pr-8 rounded-2xl border-white/5 bg-white/[0.03] text-white placeholder:text-slate-700 focus:border-pink-500/30 focus:ring-pink-500/20 transition-all text-sm font-bold italic"
+          />
+        </div>
 
-        <CardContent>
+        <div className="flex gap-3 flex-wrap justify-center">
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="h-16 w-[160px] rounded-2xl border border-white/5 bg-white/[0.03] px-6 text-[10px] font-black uppercase tracking-widest text-white focus:ring-pink-500/20 appearance-none transition-all italic">
+              <SelectValue placeholder="Status Node" />
+            </SelectTrigger>
+            <SelectContent className="bg-[#020617] border-white/10 rounded-2xl">
+              <SelectItem value="all" className="text-[10px] font-black uppercase tracking-widest italic">GLOBAL</SelectItem>
+              <SelectItem value="active" className="text-[10px] font-black uppercase tracking-widest italic">ACTIVE</SelectItem>
+              <SelectItem value="trial" className="text-[10px] font-black uppercase tracking-widest italic">TRIAL</SelectItem>
+              <SelectItem value="inactive" className="text-[10px] font-black uppercase tracking-widest italic">INACTIVE</SelectItem>
+              <SelectItem value="suspended" className="text-[10px] font-black uppercase tracking-widest italic text-rose-500">SUSPENDED</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Button
+            variant="outline"
+            className="h-16 px-8 rounded-2xl border-white/10 bg-white/5 hover:bg-white/10 text-[10px] font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95"
+            onClick={exportData}
+          >
+            <Download className="mr-3 h-4 w-4" />
+            Export Schema
+          </Button>
+
+          <Button 
+            variant="premium" 
+            className="h-16 px-10 rounded-2xl shadow-2xl shadow-pink-500/20 text-[10px] font-black uppercase tracking-[0.3em] transition-all hover:scale-105 active:scale-95 border"
+            onClick={() => setWizardOpen(true)}
+          >
+            <Plus className="mr-3 h-5 w-5" />
+            Initialize Node
+          </Button>
+        </div>
+      </div>
+
+      <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative">
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+        <CardContent className="p-0">
           {/* Bulk Actions */}
           {selectedClinics.size > 0 && (
-            <div className="mb-4 p-4 bg-blue-50 rounded-lg flex items-center justify-between">
-              <span className="font-medium">
-                {selectedClinics.size} clinic(s) selected
+            <motion.div 
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="p-6 bg-pink-600/10 border-b border-pink-500/20 flex items-center justify-between"
+            >
+              <span className="text-xs font-black uppercase tracking-widest text-pink-400">
+                {selectedClinics.size} NODE(S) SELECTED FOR GLOBAL OVERRIDE
               </span>
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleBulkAction('activate')}
-                >
-                  <Unlock className="h-4 w-4 mr-2" />
-                  Activate
+              <div className="flex gap-3">
+                <Button variant="outline" size="sm" className="rounded-xl border-white/10 bg-white/5 text-[9px] font-black uppercase tracking-widest" onClick={() => handleBulkAction('activate')}>
+                  <Unlock className="h-3 w-3 mr-2" /> Activate
                 </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleBulkAction('suspend')}
-                >
-                  <Lock className="h-4 w-4 mr-2" />
-                  Suspend
+                <Button variant="outline" size="sm" className="rounded-xl border-white/10 bg-white/5 text-[9px] font-black uppercase tracking-widest" onClick={() => handleBulkAction('suspend')}>
+                  <Lock className="h-3 w-3 mr-2" /> Suspend
                 </Button>
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={() => handleBulkAction('delete')}
-                >
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Delete
+                <Button variant="destructive" size="sm" className="rounded-xl text-[9px] font-black uppercase tracking-widest" onClick={() => handleBulkAction('delete')}>
+                  <Trash2 className="h-3 w-3 mr-2" /> Decommission
                 </Button>
               </div>
-            </div>
+            </motion.div>
           )}
 
-          {/* Clinics Table */}
-          <div className="border rounded-lg">
+          <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead className="w-12">
+                <TableRow className="bg-white/[0.02] border-b border-white/5">
+                  <TableHead className="w-16 px-10">
                     <Checkbox
-                      checked={
-                        selectedClinics.size === filteredClinics.length &&
-                        filteredClinics.length > 0
-                      }
+                      checked={selectedClinics.size === filteredClinics.length && filteredClinics.length > 0}
                       onCheckedChange={toggleSelectAll}
+                      className="border-white/20 data-[state=checked]:bg-pink-600 data-[state=checked]:border-pink-600"
                     />
                   </TableHead>
-                  <TableHead>Clinic</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Plan</TableHead>
-                  <TableHead>Users</TableHead>
-                  <TableHead>MRR</TableHead>
-                  <TableHead>Health</TableHead>
-                  <TableHead>Last Active</TableHead>
-                  <TableHead className="w-12"></TableHead>
+                  <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Clinical Uplink</TableHead>
+                  <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Protocol Access</TableHead>
+                  <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Plan Vector</TableHead>
+                  <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Users</TableHead>
+                  <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Integrity</TableHead>
+                  <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Last Sync</TableHead>
+                  <TableHead className="px-10 py-8 text-right w-[70px]"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredClinics.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={9} className="text-center py-8 text-muted-foreground">
-                      No clinics found matching your filters
+                    <TableCell colSpan={8} className="text-center py-20 text-slate-600 uppercase tracking-[0.4em] font-black text-[10px] italic">
+                      NO_NODES_DETECTED_IN_SECTOR
                     </TableCell>
                   </TableRow>
                 ) : (
                   filteredClinics.map((clinic) => (
                     <TableRow 
                       key={clinic.id} 
-                      className="cursor-pointer hover:bg-muted/50"
+                      className="group/row cursor-pointer transition-all duration-500 hover:bg-white/[0.03] border-white/5"
                       onClick={() => openClinicDetail(clinic.id)}
                     >
-                      <TableCell>
+                      <TableCell className="px-10" onClick={(e) => e.stopPropagation()}>
                         <Checkbox
                           checked={selectedClinics.has(clinic.id)}
                           onCheckedChange={() => toggleSelect(clinic.id)}
+                          className="border-white/20 data-[state=checked]:bg-pink-600 data-[state=checked]:border-pink-600"
                         />
                       </TableCell>
-                      <TableCell>
-                        <div>
-                          <div className="font-medium">{clinic.name}</div>
-                          <div className="text-sm text-muted-foreground">{clinic.email}</div>
+                      <TableCell className="px-8 py-8">
+                        <div className="space-y-1">
+                          <div className="text-lg font-bold text-white tracking-tight italic group-hover/row:text-pink-400 transition-colors">{clinic.name}</div>
+                          <div className="text-[10px] font-black uppercase tracking-widest text-slate-600 italic">{clinic.email}</div>
                         </div>
                       </TableCell>
-                      <TableCell>
-                        <Badge className={getStatusColor(clinic.status)}>
-                          {clinic.status.toUpperCase()}
+                      <TableCell className="px-8 py-8">
+                        <Badge className={cn("px-4 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border-none shadow-inner", getStatusColor(clinic.status).replace('bg-', 'bg-opacity-10 text-').replace('500', '400'))}>
+                          {clinic.status}
                         </Badge>
                       </TableCell>
-                      <TableCell>{clinic.subscription.plan}</TableCell>
-                      <TableCell>{clinic.users}</TableCell>
-                      <TableCell>฿{clinic.subscription.mrr.toLocaleString()}</TableCell>
-                      <TableCell>
+                      <TableCell className="px-8 py-8 text-sm font-bold text-slate-300 italic uppercase tracking-widest">{clinic.subscription.plan}</TableCell>
+                      <TableCell className="px-8 py-8">
                         <div className="flex items-center gap-2">
-                          {getHealthIcon(clinic.healthScore)}
-                          <span className={getHealthColor(clinic.healthScore)}>
+                          <Users className="h-3.5 w-3.5 text-slate-600" />
+                          <span className="text-sm font-black text-white italic">{clinic.users}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="px-8 py-8">
+                        <div className="flex items-center gap-3">
+                          <div className={cn("p-1.5 rounded-lg border border-white/5 shadow-inner", getHealthColor(clinic.healthScore).replace('text-', 'bg-opacity-5 bg-'))}>
+                            {getHealthIcon(clinic.healthScore)}
+                          </div>
+                          <span className={cn("text-sm font-black italic tracking-tighter", getHealthColor(clinic.healthScore))}>
                             {clinic.healthScore}
                           </span>
                         </div>
                       </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                          <Calendar className="h-3 w-3" />
-                          {new Date(clinic.lastActivity).toLocaleDateString('th-TH', {
-                            month: 'short',
-                            day: 'numeric',
-                          })}
+                      <TableCell className="px-8 py-8">
+                        <div className="flex items-center gap-3 text-slate-500 italic">
+                          <Calendar className="h-3.5 w-3.5" />
+                          <span className="text-[10px] font-black uppercase tracking-widest">
+                            {new Date(clinic.lastActivity).toLocaleDateString('th-TH', { month: 'short', day: 'numeric' })}
+                          </span>
                         </div>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="px-10 text-right" onClick={(e) => e.stopPropagation()}>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                              <MoreVertical className="h-4 w-4" />
+                            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl hover:bg-white/10 text-slate-500">
+                              <MoreVertical className="h-5 w-5" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); openClinicDetail(clinic.id); }}>
-                              <Eye className="h-4 w-4 mr-2" />
-                              View Details
+                          <DropdownMenuContent align="end" className="bg-[#020617] border-white/10 rounded-2xl p-2 min-w-[180px]">
+                            <DropdownMenuLabel className="px-4 py-2 text-[9px] font-black uppercase tracking-[0.2em] text-slate-500 italic">Node Control</DropdownMenuLabel>
+                            <DropdownMenuSeparator className="bg-white/5" />
+                            <DropdownMenuItem className="rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-pink-600 focus:text-white transition-colors" onClick={() => openClinicDetail(clinic.id)}>
+                              <Eye className="mr-3 h-4 w-4" /> View Vector
                             </DropdownMenuItem>
-                            <DropdownMenuItem>Edit Clinic</DropdownMenuItem>
-                            <DropdownMenuItem>View Users</DropdownMenuItem>
-                            <DropdownMenuItem>Change Plan</DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem className="text-red-600">
-                              Suspend Clinic
+                            <DropdownMenuItem className="rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-pink-600 focus:text-white transition-colors">
+                              <Edit className="mr-3 h-4 w-4" /> Refine Parameters
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-pink-600 focus:text-white transition-colors">
+                              <CreditCard className="mr-3 h-4 w-4" /> Reallocate Plan
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator className="bg-white/5" />
+                            <DropdownMenuItem className="rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-rose-600 focus:text-white transition-colors text-rose-500">
+                              <Trash2 className="mr-3 h-4 w-4" /> Decommission Unit
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
@@ -572,11 +544,6 @@ export default function EnhancedClinicManagement() {
                 )}
               </TableBody>
             </Table>
-          </div>
-
-          {/* Results Count */}
-          <div className="mt-4 text-sm text-muted-foreground">
-            Showing {filteredClinics.length} of {clinics.length} clinics
           </div>
         </CardContent>
       </Card>

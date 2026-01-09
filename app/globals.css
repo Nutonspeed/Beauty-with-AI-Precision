@@ -292,7 +292,7 @@
 
 /* Landing Hero */
 .landing-hero-wrapper {
-  background: radial-gradient(circle at 50% 30%, #ffe3ed 0%, #faf7ff 55%, #ffffff 75%);
+  background: #020617 !important;
   min-height: 100vh;
   position: relative;
   overflow: hidden;
@@ -300,9 +300,9 @@
 .landing-hero-wrapper:before {
   content:"";
   position:absolute; inset:0;
-  -webkit-backdrop-filter: saturate(140%);
-  backdrop-filter: saturate(140%);
+  background: radial-gradient(circle at 50% 30%, rgba(236, 72, 153, 0.03) 0%, rgba(2, 6, 23, 0) 70%) !important;
   pointer-events:none;
+  z-index: 1;
 }
 
 /* Mini Trust Badges */
@@ -394,6 +394,32 @@
     @apply bg-background text-foreground;
     margin: 0;
     padding: 0;
+  }
+
+  /* Custom Futuristic Scrollbar */
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #020617;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #0ea5e9, #ec4899);
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(14, 165, 233, 0.5);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(to bottom, #38bdf8, #f472b6);
+    box-shadow: 0 0 15px rgba(14, 165, 233, 0.8);
+  }
+
+  /* Firefox */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #0ea5e9 #020617;
   }
 }
 

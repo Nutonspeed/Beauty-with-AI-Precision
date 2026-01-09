@@ -23,7 +23,16 @@ import {
   Save,
   RefreshCw,
   AlertTriangle,
+  Loader2,
+  Brain,
+  Clock,
+  Building2,
+  Users,
+  Sparkles,
+  Database
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from '@/lib/utils';
 import { useToast } from '@/components/ui/use-toast';
 
 interface SystemSettings {
@@ -172,216 +181,315 @@ export default function SystemSettingsManagement() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold flex items-center gap-2">
-            <Settings className="h-6 w-6" /> System Settings
+    <div className="space-y-10 animate-in fade-in duration-700">
+      <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-8 border-b border-white/5">
+        <div className="space-y-2 text-center md:text-left">
+          <h2 className="text-3xl font-bold text-white tracking-tight italic flex items-center justify-center md:justify-start gap-4">
+            <Settings className="h-8 w-8 text-pink-500 animate-pulse" />
+            System Configuration Matrix
           </h2>
           {lastUpdated && (
-            <p className="text-sm text-muted-foreground">
-              Last updated: {new Date(lastUpdated).toLocaleString('th-TH')} by {updatedBy}
+            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">
+              Terminal Last Sync: {new Date(lastUpdated).toLocaleString('th-TH')} <span className="mx-2">::</span> Sector Operator: {updatedBy}
             </p>
           )}
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={fetchSettings}>
-            <RefreshCw className="h-4 w-4 mr-2" /> Refresh
+        <div className="flex gap-3 flex-wrap justify-center">
+          <Button variant="outline" className="h-14 px-8 rounded-2xl border-white/10 bg-white/5 hover:bg-white/10 text-[10px] font-black uppercase tracking-widest transition-all" onClick={fetchSettings}>
+            <RefreshCw className={cn("mr-3 h-4 w-4", loading && "animate-spin")} />
+            SCHEMA_SYNC
           </Button>
-          <Button onClick={saveSettings} disabled={saving}>
-            <Save className="h-4 w-4 mr-2" /> {saving ? 'Saving...' : 'Save Changes'}
+          <Button 
+            variant="premium" 
+            className="h-14 px-10 rounded-2xl shadow-2xl shadow-pink-500/20 text-[10px] font-black uppercase tracking-[0.3em] transition-all hover:scale-105 active:scale-95 border" 
+            onClick={saveSettings} 
+            disabled={saving}
+          >
+            {saving ? <Loader2 className="mr-3 h-4 w-4 animate-spin" /> : <Save className="mr-3 h-4 w-4" />}
+            COMMIT_CHANGES
           </Button>
         </div>
       </div>
 
-      <Tabs defaultValue="general" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="general"><Globe className="h-4 w-4 mr-2" />General</TabsTrigger>
-          <TabsTrigger value="features"><Zap className="h-4 w-4 mr-2" />Features</TabsTrigger>
-          <TabsTrigger value="limits"><Settings className="h-4 w-4 mr-2" />Limits</TabsTrigger>
-          <TabsTrigger value="security"><Shield className="h-4 w-4 mr-2" />Security</TabsTrigger>
-          <TabsTrigger value="billing"><CreditCard className="h-4 w-4 mr-2" />Billing</TabsTrigger>
-        </TabsList>
+      <Tabs defaultValue="general" className="space-y-10">
+        <div className="flex items-center justify-center">
+          <TabsList className="bg-white/[0.02] border border-white/5 p-1.5 rounded-2xl h-auto gap-2 flex-wrap justify-center">
+            {[
+              { value: 'general', icon: Globe, label: 'CORE_PARAMETERS' },
+              { value: 'features', icon: Zap, label: 'FUNCTIONAL_MODULES' },
+              { value: 'limits', icon: Settings, label: 'RESOURCE_LIMITS' },
+              { value: 'security', icon: Shield, label: 'SECURITY_PROTOCOL' },
+              { value: 'billing', icon: CreditCard, label: 'FINANCIAL_SCHEMA' }
+            ].map((tab) => (
+              <TabsTrigger 
+                key={tab.value} 
+                value={tab.value} 
+                className="rounded-xl px-6 py-3 data-[state=active]:bg-pink-600 data-[state=active]:text-white transition-all font-black uppercase tracking-[0.15em] text-[10px] italic h-full"
+              >
+                <tab.icon className="w-4 h-4 mr-3" />
+                {tab.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </div>
 
-        <TabsContent value="general">
-          <Card>
-            <CardHeader>
-              <CardTitle>General Settings</CardTitle>
-              <CardDescription>Basic system configuration</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Site Name</Label>
-                  <Input value={settings.general.siteName} onChange={(e) => updateSetting('general', 'siteName', e.target.value)} />
-                </div>
-                <div className="space-y-2">
-                  <Label>Site URL</Label>
-                  <Input value={settings.general.siteUrl} onChange={(e) => updateSetting('general', 'siteUrl', e.target.value)} />
-                </div>
-                <div className="space-y-2">
-                  <Label>Support Email</Label>
-                  <Input value={settings.general.supportEmail} onChange={(e) => updateSetting('general', 'supportEmail', e.target.value)} />
-                </div>
-                <div className="space-y-2">
-                  <Label>Default Language</Label>
-                  <Select value={settings.general.defaultLanguage} onValueChange={(v) => updateSetting('general', 'defaultLanguage', v)}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="th">Thai</SelectItem>
-                      <SelectItem value="en">English</SelectItem>
-                      <SelectItem value="zh">Chinese</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <div className="flex items-center justify-between p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-                <div className="flex items-center gap-2">
-                  <AlertTriangle className="h-5 w-5 text-yellow-600" />
-                  <div>
-                    <p className="font-medium">Maintenance Mode</p>
-                    <p className="text-sm text-muted-foreground">Disable access for non-admins</p>
+        <AnimatePresence mode="wait">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+            {/* General Tab */}
+            <TabsContent value="general" className="mt-0 outline-none">
+              <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group">
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
+                  <CardTitle className="text-2xl font-bold text-white tracking-tight italic uppercase tracking-widest">Base Environment</CardTitle>
+                  <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Core system identity and global accessibility vectors</CardDescription>
+                </CardHeader>
+                <CardContent className="p-10 lg:p-12 space-y-10">
+                  <div className="grid md:grid-cols-2 gap-8">
+                    {[
+                      { label: 'Platform Identifier', value: settings.general.siteName, key: 'siteName' },
+                      { label: 'Infrastructure URL', value: settings.general.siteUrl, key: 'siteUrl' },
+                      { label: 'Emergency Support Node', value: settings.general.supportEmail, key: 'supportEmail' }
+                    ].map((field) => (
+                      <div key={field.key} className="space-y-3">
+                        <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic ml-4">{field.label}</Label>
+                        <Input 
+                          value={field.value} 
+                          onChange={(e) => updateSetting('general', field.key as any, e.target.value)}
+                          className="h-14 px-6 rounded-2xl border-white/5 bg-white/[0.03] text-white focus:border-pink-500/30 focus:ring-pink-500/20 transition-all font-bold italic"
+                        />
+                      </div>
+                    ))}
+                    <div className="space-y-3">
+                      <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic ml-4">Primary Linguistic Protocol</Label>
+                      <Select value={settings.general.defaultLanguage} onValueChange={(v) => updateSetting('general', 'defaultLanguage', v)}>
+                        <SelectTrigger className="h-14 rounded-2xl border-white/5 bg-white/[0.03] text-white focus:ring-pink-500/20 appearance-none transition-all italic px-6">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-[#020617] border-white/10 rounded-2xl">
+                          <SelectItem value="th" className="text-[10px] font-black uppercase tracking-widest italic">THAI_TH</SelectItem>
+                          <SelectItem value="en" className="text-[10px] font-black uppercase tracking-widest italic">ENGLISH_US</SelectItem>
+                          <SelectItem value="zh" className="text-[10px] font-black uppercase tracking-widest italic">CHINESE_ZH</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
-                </div>
-                <Switch checked={settings.general.maintenanceMode} onCheckedChange={(v) => updateSetting('general', 'maintenanceMode', v)} />
-              </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-medium">Allow New Registrations</p>
-                  <p className="text-sm text-muted-foreground">Enable user self-registration</p>
-                </div>
-                <Switch checked={settings.general.allowNewRegistrations} onCheckedChange={(v) => updateSetting('general', 'allowNewRegistrations', v)} />
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
 
-        <TabsContent value="features">
-          <Card>
-            <CardHeader>
-              <CardTitle>Feature Toggles</CardTitle>
-              <CardDescription>Enable or disable platform features</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {[
-                { key: 'aiAnalysisEnabled', label: 'AI Skin Analysis', desc: 'Enable AI-powered skin analysis' },
-                { key: 'arSimulatorEnabled', label: 'AR Simulator', desc: 'Enable AR treatment preview' },
-                { key: 'videoCallEnabled', label: 'Video Calls', desc: 'Enable video consultation' },
-                { key: 'emailNotifications', label: 'Email Notifications', desc: 'Send email alerts' },
-                { key: 'smsNotifications', label: 'SMS Notifications', desc: 'Send SMS alerts' },
-                { key: 'pushNotifications', label: 'Push Notifications', desc: 'Send push alerts' },
-              ].map(({ key, label, desc }) => (
-                <div key={key} className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">{label}</p>
-                    <p className="text-sm text-muted-foreground">{desc}</p>
+                  <div className="p-8 rounded-[2.5rem] bg-rose-500/[0.03] border border-rose-500/20 flex items-center justify-between group/alert">
+                    <div className="flex items-center gap-6">
+                      <div className="h-12 w-12 rounded-2xl bg-rose-500/10 flex items-center justify-center shadow-inner group-hover/alert:scale-110 transition-transform duration-700">
+                        <AlertTriangle className="h-6 w-6 text-rose-500 animate-pulse" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-black text-white italic uppercase tracking-widest">Maintenance Protocol</p>
+                        <p className="text-[10px] text-slate-500 font-light mt-1">Restrict global sector access to administrative entities only</p>
+                      </div>
+                    </div>
+                    <Switch 
+                      checked={settings.general.maintenanceMode} 
+                      onCheckedChange={(v) => updateSetting('general', 'maintenanceMode', v)}
+                      className="data-[state=checked]:bg-rose-500"
+                    />
                   </div>
-                  <Switch checked={settings.features[key as keyof typeof settings.features]} onCheckedChange={(v) => updateSetting('features', key as keyof typeof settings.features, v)} />
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        </TabsContent>
 
-        <TabsContent value="limits">
-          <Card>
-            <CardHeader>
-              <CardTitle>System Limits</CardTitle>
-              <CardDescription>Set resource limits</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-4">
-                {[
-                  { key: 'maxClinicsPerOwner', label: 'Max Clinics per Owner' },
-                  { key: 'maxStaffPerClinic', label: 'Max Staff per Clinic' },
-                  { key: 'maxAnalysesPerDay', label: 'Max Analyses per Day' },
-                  { key: 'maxStoragePerClinicMB', label: 'Max Storage (MB)' },
-                  { key: 'sessionTimeoutMinutes', label: 'Session Timeout (min)' },
-                ].map(({ key, label }) => (
-                  <div key={key} className="space-y-2">
-                    <Label>{label}</Label>
-                    <Input type="number" value={settings.limits[key as keyof typeof settings.limits]} onChange={(e) => updateSetting('limits', key as keyof typeof settings.limits, parseInt(e.target.value) || 0)} />
+                  <div className="flex items-center justify-between p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/5">
+                    <div className="space-y-1">
+                      <p className="text-sm font-black text-white italic uppercase tracking-widest">Public Ingestion</p>
+                      <p className="text-[10px] text-slate-500 font-light">Allow autonomous entity self-registration within the network</p>
+                    </div>
+                    <Switch 
+                      checked={settings.general.allowNewRegistrations} 
+                      onCheckedChange={(v) => updateSetting('general', 'allowNewRegistrations', v)}
+                      className="data-[state=checked]:bg-emerald-500"
+                    />
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+                </CardContent>
+              </Card>
+            </TabsContent>
 
-        <TabsContent value="security">
-          <Card>
-            <CardHeader>
-              <CardTitle>Security Settings</CardTitle>
-              <CardDescription>Authentication and access control</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-medium">Require Email Verification</p>
-                  <p className="text-sm text-muted-foreground">Users must verify email</p>
-                </div>
-                <Switch checked={settings.security.requireEmailVerification} onCheckedChange={(v) => updateSetting('security', 'requireEmailVerification', v)} />
-              </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-medium">Require 2FA</p>
-                  <p className="text-sm text-muted-foreground">Force two-factor auth</p>
-                </div>
-                <Switch checked={settings.security.require2FA} onCheckedChange={(v) => updateSetting('security', 'require2FA', v)} />
-              </div>
-              <div className="grid grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <Label>Min Password Length</Label>
-                  <Input type="number" value={settings.security.passwordMinLength} onChange={(e) => updateSetting('security', 'passwordMinLength', parseInt(e.target.value) || 8)} />
-                </div>
-                <div className="space-y-2">
-                  <Label>Max Login Attempts</Label>
-                  <Input type="number" value={settings.security.maxLoginAttempts} onChange={(e) => updateSetting('security', 'maxLoginAttempts', parseInt(e.target.value) || 5)} />
-                </div>
-                <div className="space-y-2">
-                  <Label>Lockout Duration (min)</Label>
-                  <Input type="number" value={settings.security.lockoutDurationMinutes} onChange={(e) => updateSetting('security', 'lockoutDurationMinutes', parseInt(e.target.value) || 15)} />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+            {/* Feature Toggles Tab */}
+            <TabsContent value="features" className="mt-0 outline-none">
+              <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative">
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/20 to-transparent" />
+                <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
+                  <CardTitle className="text-2xl font-bold text-white tracking-tight italic uppercase tracking-widest">Functional Modules</CardTitle>
+                  <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Active state orchestration for platform sub-systems</CardDescription>
+                </CardHeader>
+                <CardContent className="p-10 lg:p-12">
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {[
+                      { key: 'aiAnalysisEnabled', label: 'Neural Diagnostics', desc: 'Active AI-driven dermal analysis pipeline', icon: Brain },
+                      { key: 'arSimulatorEnabled', label: 'AR Simulation Matrix', desc: 'Real-time augmented reality treatment preview', icon: Sparkles },
+                      { key: 'videoCallEnabled', label: 'Tele-Clinical Uplink', desc: 'Secure RTC video consultation channels', icon: Globe },
+                      { key: 'emailNotifications', label: 'SMTP Dissemination', desc: 'Automated electronic mail alerting', icon: Globe },
+                      { key: 'smsNotifications', label: 'Cellular Node Alerts', desc: 'Global SMS notification vector', icon: Globe },
+                      { key: 'pushNotifications', label: 'Protocol Push Stream', desc: 'System-wide active push telemetry', icon: Globe },
+                    ].map(({ key, label, desc, icon: Icon }, idx) => (
+                      <motion.div 
+                        key={key}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: idx * 0.05 }}
+                        className="flex items-center justify-between p-6 rounded-[2rem] bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all duration-500 group/feature"
+                      >
+                        <div className="flex items-center gap-5">
+                          <div className="h-10 w-10 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-center shadow-inner group-hover/feature:scale-110 transition-transform">
+                            <Icon className="h-5 w-5 text-slate-500 group-hover/feature:text-pink-400 transition-colors" />
+                          </div>
+                          <div>
+                            <p className="text-xs font-black text-white italic uppercase tracking-widest">{label}</p>
+                            <p className="text-[9px] text-slate-600 font-light mt-0.5">{desc}</p>
+                          </div>
+                        </div>
+                        <Switch 
+                          checked={settings.features[key as keyof typeof settings.features]} 
+                          onCheckedChange={(v) => updateSetting('features', key as keyof typeof settings.features, v)}
+                          className="data-[state=checked]:bg-pink-600"
+                        />
+                      </motion.div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
 
-        <TabsContent value="billing">
-          <Card>
-            <CardHeader>
-              <CardTitle>Billing Settings</CardTitle>
-              <CardDescription>Payment and subscription config</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Currency</Label>
-                  <Select value={settings.billing.currency} onValueChange={(v) => updateSetting('billing', 'currency', v)}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="THB">THB (Thai Baht)</SelectItem>
-                      <SelectItem value="USD">USD (US Dollar)</SelectItem>
-                      <SelectItem value="EUR">EUR (Euro)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label>Tax Rate (%)</Label>
-                  <Input type="number" value={settings.billing.taxRate} onChange={(e) => updateSetting('billing', 'taxRate', parseFloat(e.target.value) || 0)} />
-                </div>
-                <div className="space-y-2">
-                  <Label>Free Trial Days</Label>
-                  <Input type="number" value={settings.billing.freeTrialDays} onChange={(e) => updateSetting('billing', 'freeTrialDays', parseInt(e.target.value) || 0)} />
-                </div>
-                <div className="space-y-2">
-                  <Label>Grace Period Days</Label>
-                  <Input type="number" value={settings.billing.gracePeriodDays} onChange={(e) => updateSetting('billing', 'gracePeriodDays', parseInt(e.target.value) || 0)} />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+            {/* Limits Tab */}
+            <TabsContent value="limits" className="mt-0 outline-none">
+              <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative">
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
+                <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
+                  <CardTitle className="text-2xl font-bold text-white tracking-tight italic uppercase tracking-widest">Resource Thresholds</CardTitle>
+                  <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Allocation limits for infrastructure entities</CardDescription>
+                </CardHeader>
+                <CardContent className="p-10 lg:p-12">
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {[
+                      { key: 'maxClinicsPerOwner', label: 'Clinical Node Limit (Owner)', icon: Building2 },
+                      { key: 'maxStaffPerClinic', label: 'Operator Limit (Sector)', icon: Users },
+                      { key: 'maxAnalysesPerDay', label: 'Inference Threshold (24h)', icon: Brain },
+                      { key: 'maxStoragePerClinicMB', label: 'Storage Allocation (MB)', icon: Database },
+                      { key: 'sessionTimeoutMinutes', label: 'Temporal Session Expiry', icon: Clock },
+                    ].map(({ key, label, icon: Icon }) => (
+                      <div key={key} className="space-y-4 p-6 rounded-[2rem] bg-white/[0.02] border border-white/5">
+                        <div className="flex items-center gap-3">
+                          <Icon className="h-4 w-4 text-cyan-500" />
+                          <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 italic">{label}</Label>
+                        </div>
+                        <Input 
+                          type="number" 
+                          value={settings.limits[key as keyof typeof settings.limits]} 
+                          onChange={(e) => updateSetting('limits', key as keyof typeof settings.limits, parseInt(e.target.value) || 0)}
+                          className="h-14 px-6 rounded-2xl border-white/5 bg-white/[0.03] text-white focus:border-cyan-500/30 transition-all font-black italic text-xl tracking-tighter"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Security Tab */}
+            <TabsContent value="security" className="mt-0 outline-none">
+              <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative">
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-rose-500/20 to-transparent" />
+                <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
+                  <CardTitle className="text-2xl font-bold text-white tracking-tight italic uppercase tracking-widest">Defensive Protocols</CardTitle>
+                  <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Authentication integrity and access mitigation</CardDescription>
+                </CardHeader>
+                <CardContent className="p-10 lg:p-12 space-y-10">
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="flex items-center justify-between p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/5">
+                      <div>
+                        <p className="text-sm font-black text-white italic uppercase tracking-widest">Origin Validation</p>
+                        <p className="text-[10px] text-slate-500 font-light mt-1">Force mandatory electronic mail verification sequence</p>
+                      </div>
+                      <Switch checked={settings.security.requireEmailVerification} onCheckedChange={(v) => updateSetting('security', 'requireEmailVerification', v)} className="data-[state=checked]:bg-pink-600" />
+                    </div>
+                    <div className="flex items-center justify-between p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/5">
+                      <div>
+                        <p className="text-sm font-black text-white italic uppercase tracking-widest">Multi-Factor Matrix</p>
+                        <p className="text-[10px] text-slate-500 font-light mt-1">Initialize secondary authentication vector enforcement</p>
+                      </div>
+                      <Switch checked={settings.security.require2FA} onCheckedChange={(v) => updateSetting('security', 'require2FA', v)} className="data-[state=checked]:bg-pink-600" />
+                    </div>
+                  </div>
+
+                  <div className="grid md:grid-cols-3 gap-8">
+                    {[
+                      { key: 'passwordMinLength', label: 'Cipher Minimum Entropy' },
+                      { key: 'maxLoginAttempts', label: 'Auth Failure Threshold' },
+                      { key: 'lockoutDurationMinutes', label: 'Lockout Temporal Vector' },
+                    ].map(({ key, label }) => (
+                      <div key={key} className="space-y-4 p-6 rounded-[2rem] bg-white/[0.02] border border-white/5">
+                        <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 italic ml-4">{label}</Label>
+                        <Input 
+                          type="number" 
+                          value={settings.security[key as 'passwordMinLength' | 'maxLoginAttempts' | 'lockoutDurationMinutes']} 
+                          onChange={(e) => updateSetting('security', key as any, parseInt(e.target.value) || 8)}
+                          className="h-14 px-6 rounded-2xl border-white/5 bg-white/[0.03] text-white focus:border-rose-500/30 transition-all font-black italic text-xl tracking-tighter"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Billing Tab */}
+            <TabsContent value="billing" className="mt-0 outline-none">
+              <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative">
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent" />
+                <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
+                  <CardTitle className="text-2xl font-bold text-white tracking-tight italic uppercase tracking-widest">Financial Schema</CardTitle>
+                  <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Monetary parameters and fiscal cycle controls</CardDescription>
+                </CardHeader>
+                <CardContent className="p-10 lg:p-12 space-y-10">
+                  <div className="grid md:grid-cols-2 gap-8">
+                    <div className="space-y-3">
+                      <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic ml-4">Currency Ingestion Protocol</Label>
+                      <Select value={settings.billing.currency} onValueChange={(v) => updateSetting('billing', 'currency', v)}>
+                        <SelectTrigger className="h-14 rounded-2xl border-white/5 bg-white/[0.03] text-white focus:ring-pink-500/20 appearance-none transition-all italic px-6">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-[#020617] border-white/10 rounded-2xl">
+                          <SelectItem value="THB" className="text-[10px] font-black uppercase tracking-widest italic">THAI_BAHT_THB</SelectItem>
+                          <SelectItem value="USD" className="text-[10px] font-black uppercase tracking-widest italic">US_DOLLAR_USD</SelectItem>
+                          <SelectItem value="EUR" className="text-[10px] font-black uppercase tracking-widest italic">EURO_EUR</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-3">
+                      <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic ml-4">Fiscal Tax Percentage</Label>
+                      <Input 
+                        type="number" 
+                        value={settings.billing.taxRate} 
+                        onChange={(e) => updateSetting('billing', 'taxRate', parseFloat(e.target.value) || 0)} 
+                        className="h-14 px-6 rounded-2xl border-white/5 bg-white/[0.03] text-white focus:border-emerald-500/30 transition-all font-black italic text-xl tracking-tighter"
+                      />
+                    </div>
+                    <div className="space-y-3">
+                      <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic ml-4">Trial Temporal Window (Days)</Label>
+                      <Input 
+                        type="number" 
+                        value={settings.billing.freeTrialDays} 
+                        onChange={(e) => updateSetting('billing', 'freeTrialDays', parseInt(e.target.value) || 0)}
+                        className="h-14 px-6 rounded-2xl border-white/5 bg-white/[0.03] text-white focus:border-emerald-500/30 transition-all font-black italic text-xl tracking-tighter"
+                      />
+                    </div>
+                    <div className="space-y-3">
+                      <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic ml-4">Grace Inflow Period (Days)</Label>
+                      <Input 
+                        type="number" 
+                        value={settings.billing.gracePeriodDays} 
+                        onChange={(e) => updateSetting('billing', 'gracePeriodDays', parseInt(e.target.value) || 0)}
+                        className="h-14 px-6 rounded-2xl border-white/5 bg-white/[0.03] text-white focus:border-emerald-500/30 transition-all font-black italic text-xl tracking-tighter"
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </motion.div>
+        </AnimatePresence>
       </Tabs>
     </div>
   );

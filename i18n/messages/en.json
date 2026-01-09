@@ -1023,44 +1023,25 @@
     },
     "cta": {
       "title": "Ready to Transform Your Clinic?",
-      "description": "Start today with no credit card required",
-      "startFreeAnalysis": "Start Free Analysis",
+      "description": "Join 100+ clinics using AI to boost their results.",
       "contactSales": "Contact Sales"
     },
     "pricing": {
-      "title": "Plans for Every Clinic Size",
-      "subtitle": "Starting at ฿9,900/month - Better value at higher tiers",
+      "title": "Clinical-Grade Ecosystem",
+      "subtitle": "Elite diagnostic infrastructure for premium clinics",
       "freeTier": {
-        "badge": "Get Started",
-        "title": "Essential Analysis",
-        "description": "Perfect for individual users exploring AI skin health.",
-        "period": "Forever",
-        "features": [
-          "Core AI Analysis",
-          "Basic Visualization"
-        ],
-        "cta": "Start Free Analysis"
+        "badge": "Entry",
+        "title": "Starter Plan",
+        "description": "Essential AI diagnostics for single-branch excellence",
+        "period": "mo",
+        "cta": "Start Deployment"
       },
       "premium": {
-        "badge": "Most Popular",
-        "title": "Professional",
-        "description": "For growing clinics - Save 30%",
-        "period": "per month",
-        "cta": "Start 14-Day Free Trial",
-        "features": [
-          "Unlimited AI Analysis",
-          "AR Before/After Simulator",
-          "CRM Advanced + Pipeline",
-          "Appointment + Queue System",
-          "Treatment Plans",
-          "Inventory Management",
-          "Email & SMS Marketing",
-          "Loyalty Points",
-          "Advanced Analytics",
-          "Multi-branch (up to 3)",
-          "Video Call",
-          "Priority Support"
-        ]
+        "badge": "Recommended",
+        "title": "Professional Plan",
+        "description": "Full-scale AI intelligence for rapid clinical growth",
+        "period": "mo",
+        "cta": "Contact Sales"
       },
       "starter": {
         "badge": "Starter",
@@ -3931,7 +3912,7 @@
       "titleHighlight": "everywhere"
     },
     "pricing": {
-      "badge": "Simple Pricing",
+      "badge": "Clinical Plans",
       "title": "Plans that",
       "titleHighlight": "scale with you",
       "description": "Start at ฿9,900/month - Better value at higher tiers. No hidden fees, cancel anytime.",
@@ -3941,14 +3922,14 @@
       "plans": {
         "starter": {
           "name": "Starter",
-          "badge": "Starter",
-          "description": "For small clinics with 1 branch",
+          "badge": "Entry",
+          "description": "Essential AI diagnostics for single clinics",
           "price": "9,900",
-          "period": "month",
+          "period": "mo",
           "salesUsers": "1 Sales User",
           "features": [
-            "AI Skin Analysis (100/month)",
-            "CRM & Lead Management",
+            "AI Skin Analysis (100/mo)",
+            "Basic CRM & Lead Management",
             "Appointment System",
             "Customer Database",
             "Basic Reports",
@@ -3960,14 +3941,14 @@
             "No AR Simulator",
             "No Marketing Automation"
           ],
-          "cta": "Get Started"
+          "cta": "Start Deployment"
         },
         "professional": {
           "name": "Professional",
-          "badge": "Most Popular",
-          "description": "For growing clinics",
+          "badge": "Recommended",
+          "description": "Full power for growing clinics",
           "price": "19,900",
-          "period": "month",
+          "period": "mo",
           "salesUsers": "3 Sales Users",
           "features": [
             "Unlimited AI Analysis",
@@ -3983,19 +3964,18 @@
             "Video Call Consultation",
             "Priority Support"
           ],
-          "savings": "Save 30% per sales user",
-          "cta": "Start 14-day Trial"
+          "cta": "Start 14-Day Trial"
         },
         "enterprise": {
           "name": "Enterprise",
           "badge": "Best Value",
           "description": "For clinic chains & hospitals",
           "price": "39,900",
-          "period": "month",
+          "period": "mo",
           "salesUsers": "10 Sales Users",
           "features": [
             "Everything in Professional",
-            "Unlimited Sales Users (10+)",
+            "Unlimited Sales Users",
             "Unlimited Multi-branch",
             "Marketing Automation",
             "Custom Reports & Dashboards",
@@ -4005,15 +3985,14 @@
             "Custom Training",
             "24/7 Priority Support"
           ],
-          "savings": "Save 60% per sales user",
           "cta": "Contact Sales"
         },
         "platinum": {
           "name": "Platinum",
-          "badge": "Premium",
-          "description": "White-label & Custom Solutions",
+          "badge": "Elite",
+          "description": "White-label & Custom AI Solutions",
           "price": "69,900",
-          "period": "month",
+          "period": "mo",
           "salesUsers": "Unlimited",
           "features": [
             "Everything in Enterprise",
@@ -4026,8 +4005,7 @@
             "On-site Training",
             "Consulting Services"
           ],
-          "savings": "Save 75% + Maximum ROI",
-          "cta": "Contact Sales"
+          "cta": "Deploy Custom Solution"
         }
       },
       "features": {

@@ -1,4 +1,3 @@
-// @ts-nocheck
 "use client"
 
 import { useState, useEffect } from "react"
@@ -35,7 +34,7 @@ import { AddLeadModal } from "@/components/sales/add-lead-modal"
 import { AddActivityModal } from "@/components/sales/add-activity-modal"
 import { toast } from "sonner"
 
-type Lead = {
+export type Lead = {
   id: string
   name: string
   email: string

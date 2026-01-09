@@ -51,8 +51,6 @@ export function WhiteboardRoom({
     lockWhiteboard,
     unlockWhiteboard,
     exportAsImage,
-    exportAsJSON,
-    importFromJSON
   } = useWhiteboard({
     whiteboardId,
     userId,
@@ -128,43 +126,6 @@ export function WhiteboardRoom({
   };
 
   /**
-   * Handle export JSON
-   */
-  const handleExportJSON = () => {
-    const json = exportAsJSON();
-    const blob = new Blob([json], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.download = `whiteboard-${whiteboardId}-${Date.now()}.json`;
-    link.href = url;
-    link.click();
-    URL.revokeObjectURL(url);
-  };
-
-  /**
-   * Handle import JSON
-   */
-  const handleImportJSON = () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'application/json';
-    input.onchange = (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const json = e.target?.result as string;
-        if (json) {
-          importFromJSON(json);
-        }
-      };
-      reader.readAsText(file);
-    };
-    input.click();
-  };
-
-  /**
    * Handle toggle lock
    */
   const handleToggleLock = () => {
@@ -190,8 +151,6 @@ export function WhiteboardRoom({
           onWidthChange={setCurrentWidth}
           onClear={clearWhiteboard}
           onExportImage={handleExportImage}
-          onExportJSON={handleExportJSON}
-          onImportJSON={handleImportJSON}
           onToggleLock={handleToggleLock}
         />
       </div>

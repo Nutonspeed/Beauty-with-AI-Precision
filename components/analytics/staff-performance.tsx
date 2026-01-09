@@ -1,11 +1,20 @@
 "use client"
 
 import { useEffect, useState, useCallback } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Users, Star, Trophy } from "lucide-react"
+import { 
+  Users, 
+  Star, 
+  Trophy, 
+  TrendingUp, 
+  Activity, 
+  DollarSign
+} from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
+import { cn } from "@/lib/utils"
 import {
   BarChart,
   Bar,
@@ -100,197 +109,223 @@ export function StaffPerformance({ dateRange }: StaffPerformanceProps) {
   if (!data) return null
 
   return (
-    <div className="space-y-6">
-      {/* Summary Cards */}
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card>
-          <CardContent className="pt-6">
-            <div className="text-sm text-muted-foreground">ทีมงานทั้งหมด</div>
-            <div className="text-2xl font-bold">{data.summary.totalStaff}</div>
-            <div className="text-xs text-muted-foreground mt-1">สมาชิกทีม</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="pt-6">
-            <div className="text-sm text-muted-foreground">รายได้รวม</div>
-            <div className="text-2xl font-bold">฿{data.summary.totalRevenue.toLocaleString()}</div>
-            <div className="text-xs text-muted-foreground mt-1">ทีมทั้งหมด</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="pt-6">
-            <div className="text-sm text-muted-foreground">การนัดทั้งหมด</div>
-            <div className="text-2xl font-bold">{data.summary.totalAppointments}</div>
-            <div className="text-xs text-muted-foreground mt-1">นัดหมาย</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="pt-6">
-            <div className="text-sm text-muted-foreground">Average Revenue</div>
-            <div className="text-2xl font-bold">
-              ฿{data.summary.averageRevenuePerStaff.toLocaleString()}
-            </div>
-            <div className="text-xs text-muted-foreground mt-1">ต่อทีมงาน</div>
-          </CardContent>
-        </Card>
+    <div className="space-y-12">
+      {/* Summary Nodes - Operational Metrics */}
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        {[
+          { label: 'ทีมงานทั้งหมด', val: data.summary.totalStaff, sub: 'Active Personnel', icon: Users, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+          { label: 'รายได้รวม', val: `฿${data.summary.totalRevenue.toLocaleString()}`, sub: 'Cumulative Yield', icon: DollarSign, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+          { label: 'การนัดทั้งหมด', val: data.summary.totalAppointments, sub: 'Temporal Cycles', icon: Activity, color: 'text-pink-400', bg: 'bg-pink-500/10' },
+          { label: 'Average Yield', val: `฿${data.summary.averageRevenuePerStaff.toLocaleString()}`, sub: 'Per Operator', icon: TrendingUp, color: 'text-cyan-400', bg: 'bg-cyan-500/10' }
+        ].map((stat, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.1 }}
+          >
+            <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2rem] hover:bg-white/[0.03] transition-all duration-500 group shadow-2xl relative overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+                <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 italic">{stat.label}</CardTitle>
+                <div className={cn("p-2 rounded-lg border border-white/5 shadow-inner transition-transform duration-700 group-hover:scale-110", stat.bg)}>
+                  <stat.icon className={cn("h-4 w-4", stat.color)} />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-black text-white tracking-tighter italic">{stat.val}</div>
+                <p className="text-[9px] font-black uppercase tracking-widest mt-2 text-slate-500 italic">
+                  {stat.sub}
+                </p>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
       </div>
 
-      {/* Top Performers */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Trophy className="h-5 w-5 text-yellow-500" />
-            Top 5 Performers
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {data.topPerformers.map((member: any, index: number) => (
-              <div
-                key={member.id}
-                className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
-              >
-                <div className="flex items-center gap-4">
-                  <div
-                    className={`flex h-12 w-12 items-center justify-center rounded-full font-bold text-white ${
-                      index === 0
-                        ? "bg-yellow-500"
-                        : index === 1
-                          ? "bg-gray-400"
-                          : index === 2
-                            ? "bg-orange-600"
-                            : "bg-gray-300 text-gray-700"
-                    }`}
-                  >
-                    #{index + 1}
-                  </div>
-                  <Avatar>
-                    <AvatarFallback>{member.name.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <h3 className="font-semibold">{member.name}</h3>
-                    <div className="flex items-center gap-2 mt-1">
-                      {getRoleBadge(member.role)}
-                      {member.rating > 0 && (
-                        <div className="flex items-center gap-1 text-sm">
-                          <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                          <span>{member.rating.toFixed(1)}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="font-bold text-lg">฿{member.revenue.toLocaleString()}</div>
-                  <div className="text-sm text-muted-foreground">
-                    {member.appointments} นัดหมาย
-                  </div>
-                  <div className="text-xs text-muted-foreground mt-1">
-                    ฿{member.averageRevenuePerAppointment.toLocaleString()} / นัด
-                  </div>
-                </div>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        {/* Top Performers Hub */}
+        <div className="lg:col-span-7">
+          <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group">
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/20 to-transparent" />
+            <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5 flex flex-row items-center justify-between">
+              <div className="space-y-2">
+                <CardTitle className="text-3xl font-bold text-white tracking-tight italic flex items-center gap-4">
+                  <Trophy className="h-8 w-8 text-pink-500" />
+                  Elite Performers
+                </CardTitle>
+                <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Top 5 personnel productivity</CardDescription>
               </div>
-            ))}
+            </CardHeader>
+            <CardContent className="p-10 lg:p-12 space-y-6">
+              <AnimatePresence>
+                {data.topPerformers.map((member: any, index: number) => (
+                  <motion.div
+                    key={member.id}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="group/item flex items-center justify-between p-8 rounded-[2.5rem] border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] hover:border-pink-500/20 transition-all duration-500 relative overflow-hidden"
+                  >
+                    <div className="absolute top-0 left-0 bottom-0 w-1 bg-pink-600/20 group-hover/item:bg-pink-600 transition-colors" />
+                    
+                    <div className="flex items-center gap-8">
+                      <div className={cn(
+                        "h-14 w-14 rounded-2xl flex items-center justify-center font-black italic shadow-inner group-hover/item:scale-110 transition-all duration-700",
+                        index === 0 ? "bg-yellow-500 text-white" :
+                        index === 1 ? "bg-slate-400 text-white" :
+                        index === 2 ? "bg-orange-600 text-white" :
+                        "bg-white/[0.03] text-slate-500 border border-white/10"
+                      )}>
+                        #{index + 1}
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-4">
+                          <p className="text-2xl font-bold text-white tracking-tight italic group-hover:text-pink-400 transition-colors">{member.name}</p>
+                          {member.rating > 0 && (
+                            <Badge variant="outline" className="bg-white/[0.03] border-white/10 text-amber-400 h-6 px-3 flex items-center gap-1.5 font-black text-[10px] italic">
+                              <Star className="h-2.5 w-2.5 fill-current" />
+                              {member.rating.toFixed(1)}
+                            </Badge>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-3">
+                          {getRoleBadge(member.role)}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="text-right space-y-1">
+                      <p className="text-2xl font-black text-white tracking-tighter italic">฿{member.revenue.toLocaleString()}</p>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-600 italic">
+                        {member.appointments} Cycles • Yield: ฿{member.averageRevenuePerAppointment.toLocaleString()}
+                      </p>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Role Dynamics Column */}
+        <div className="lg:col-span-5 space-y-10">
+          <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative h-full">
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
+            <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
+              <CardTitle className="text-2xl font-bold text-white tracking-tight italic">Protocol Breakdown</CardTitle>
+              <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Revenue distribution by clinical role</CardDescription>
+            </CardHeader>
+            <CardContent className="p-10 lg:p-12">
+              <div className="h-[400px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={data.roleBreakdown} margin={{ top: 20, right: 0, left: 0, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
+                    <XAxis 
+                      dataKey="role" 
+                      tick={{ fill: '#475569', fontSize: 9, fontWeight: 'bold' }} 
+                      axisLine={false} 
+                      dy={15}
+                      tickFormatter={(label) => {
+                        const roleMap: Record<string, string> = {
+                          doctor: "DOC",
+                          nurse: "NRS",
+                          therapist: "THR",
+                          admin: "MGR",
+                          receptionist: "RCP",
+                        }
+                        return roleMap[label] || label.toUpperCase()
+                      }}
+                    />
+                    <YAxis tick={{ fill: '#475569', fontSize: 9, fontWeight: 'bold' }} axisLine={false} tickFormatter={(v: number) => `฿${v/1000}k`} dx={-10} />
+                    <Tooltip
+                      cursor={{ fill: 'rgba(255,255,255,0.02)' }}
+                      contentStyle={{ backgroundColor: '#020617', border: 'none', borderRadius: '24px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }}
+                      itemStyle={{ fontSize: '10px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.1em' }}
+                    />
+                    <Legend iconType="circle" wrapperStyle={{ fontSize: '9px', fontWeight: 'black', textTransform: 'uppercase', letterSpacing: '0.2em', opacity: 0.6, paddingTop: '30px' }} />
+                    <Bar dataKey="totalRevenue" fill="#ec4899" radius={[8, 8, 0, 0]} name="Gross Inflow" />
+                    <Bar dataKey="averageRevenuePerStaff" fill="#06b6d4" radius={[8, 8, 0, 0]} name="Node Yield" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* Global Personnel Matrix */}
+      <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative">
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+        <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5 flex flex-row items-center justify-between">
+          <div className="space-y-2">
+            <CardTitle className="text-3xl font-bold text-white tracking-tight italic flex items-center gap-4">
+              <Users className="h-8 w-8 text-pink-500" />
+              Global Personnel Matrix
+            </CardTitle>
+            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Authorized operator efficiency index</CardDescription>
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Role Breakdown Chart */}
-      <Card>
-        <CardHeader>
-          <CardTitle>รายได้แยกตามตำแหน่ง</CardTitle>
         </CardHeader>
-        <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={data.roleBreakdown}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="role" />
-              <YAxis tickFormatter={(value) => `฿${(value / 1000).toFixed(0)}k`} />
-              <Tooltip
-                formatter={(value: any) => `฿${value.toLocaleString()}`}
-                labelFormatter={(label) => {
-                  const roleMap: Record<string, string> = {
-                    doctor: "👨‍⚕️ แพทย์",
-                    nurse: "👩‍⚕️ พยาบาล",
-                    therapist: "💆 นักบำบัด",
-                    admin: "👔 ผู้จัดการ",
-                    receptionist: "📋 ต้อนรับ",
-                  }
-                  return roleMap[label] || label
-                }}
-              />
-              <Legend />
-              <Bar dataKey="totalRevenue" fill="#8884d8" name="รายได้รวม" />
-              <Bar dataKey="averageRevenuePerStaff" fill="#82ca9d" name="เฉลี่ยต่อคน" />
-            </BarChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
-
-      {/* All Staff Performance Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5" />
-            ประสิทธิภาพทีมงานทั้งหมด
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+        <CardContent className="p-0">
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="w-full border-collapse">
               <thead>
-                <tr className="border-b">
-                  <th className="text-left py-2 px-4">ชื่อ</th>
-                  <th className="text-left py-2 px-4">ตำแหน่ง</th>
-                  <th className="text-right py-2 px-4">Rating</th>
-                  <th className="text-right py-2 px-4">การนัด</th>
-                  <th className="text-right py-2 px-4">รายได้</th>
-                  <th className="text-right py-2 px-4">เฉลี่ย/นัด</th>
+                <tr className="bg-white/[0.02] border-b border-white/5">
+                  <th className="px-10 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Identity Node</th>
+                  <th className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Protocol Access</th>
+                  <th className="px-8 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Sentiment Index</th>
+                  <th className="px-8 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Temporal Cycles</th>
+                  <th className="px-8 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Cumulative Yield</th>
+                  <th className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Efficiency Yield</th>
                 </tr>
               </thead>
-              <tbody>
-                {data.staffPerformance.map((member: any, _index: number) => (
-                  <tr key={member.id} className="border-b hover:bg-muted/50">
-                    <td className="py-3 px-4">
-                      <div className="flex items-center gap-2">
-                        <Avatar className="h-8 w-8">
-                          <AvatarFallback className="text-xs">
+              <tbody className="divide-y divide-white/5">
+                {data.staffPerformance.map((member: any, index: number) => (
+                  <motion.tr
+                    key={member.id}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: index * 0.05 }}
+                    className="group transition-all duration-500 hover:bg-white/[0.03]"
+                  >
+                    <td className="px-10 py-8">
+                      <div className="flex items-center gap-6">
+                        <Avatar className="h-12 w-12 rounded-2xl border border-white/10 group-hover:border-pink-500/30 transition-all shadow-inner">
+                          <AvatarFallback className="bg-white/[0.03] text-slate-500 font-black italic">
                             {member.name.charAt(0)}
                           </AvatarFallback>
                         </Avatar>
-                        <div>
-                          <div className="font-medium">{member.name}</div>
-                          <div className="text-xs text-muted-foreground">{member.email}</div>
+                        <div className="space-y-1">
+                          <p className="text-lg font-bold text-white tracking-tight italic group-hover:text-pink-400 transition-colors">{member.name}</p>
+                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-600 italic">{member.email}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="py-3 px-4">{getRoleBadge(member.role)}</td>
-                    <td className="text-right py-3 px-4">
+                    <td className="px-8 py-8">
+                      {getRoleBadge(member.role)}
+                    </td>
+                    <td className="px-8 py-8 text-right">
                       {member.rating > 0 ? (
-                        <div className="flex items-center justify-end gap-1">
-                          <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                          <span>{member.rating.toFixed(1)}</span>
+                        <div className="flex items-center justify-end gap-3">
+                          <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                          <span className="text-xl font-black text-white italic tracking-tighter">{member.rating.toFixed(1)}</span>
                         </div>
                       ) : (
-                        <span className="text-muted-foreground">-</span>
+                        <span className="text-[10px] font-black text-slate-700 tracking-widest italic">NOT_INDEXED</span>
                       )}
                     </td>
-                    <td className="text-right py-3 px-4">
-                      <div>{member.appointments}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {member.totalAppointments} ทั้งหมด
-                      </div>
+                    <td className="px-8 py-8 text-right">
+                      <div className="text-lg font-black text-white italic tracking-tighter">{member.appointments}</div>
+                      <p className="text-[9px] font-black uppercase text-slate-600 tracking-widest italic">{member.totalAppointments} AGGREGATE</p>
                     </td>
-                    <td className="text-right py-3 px-4 font-semibold">
-                      ฿{member.revenue.toLocaleString()}
+                    <td className="px-8 py-8 text-right">
+                      <span className="text-xl font-black text-white italic tracking-tighter group-hover:text-emerald-400 transition-colors">฿{member.revenue.toLocaleString()}</span>
                     </td>
-                    <td className="text-right py-3 px-4 text-sm text-muted-foreground">
-                      ฿{member.averageRevenuePerAppointment.toLocaleString()}
+                    <td className="px-10 py-8 text-right">
+                      <span className="text-sm font-bold text-slate-400 italic group-hover:text-pink-400 transition-colors">฿{member.averageRevenuePerAppointment.toLocaleString()}</span>
                     </td>
-                  </tr>
+                  </motion.tr>
                 ))}
               </tbody>
             </table>

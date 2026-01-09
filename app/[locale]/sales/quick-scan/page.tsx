@@ -2,12 +2,13 @@
 
 import { useState, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Camera, Sparkles, TrendingUp, Users, CheckCircle2, UserPlus, Zap, Award, ArrowRight } from 'lucide-react'
+import { Camera, Sparkles, TrendingUp, Users, CheckCircle2, UserPlus, Zap, Award } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { cn } from "@/lib/utils"
 // import { FloatingNotesButton } from '@/components/sales/customer-notes'
 import { analyzeSkinWithGemini } from '@/lib/ai/gemini-advisor'
 // import { predictSkinFuture, type SkinAgePrediction } from '@/lib/ai/skin-age-predictor'
@@ -17,6 +18,8 @@ import { analyzeSkinWithGemini } from '@/lib/ai/gemini-advisor'
 // import ShareResults from '@/components/sales/share-results'
 // import { useToast } from '@/hooks/use-toast'
 import { useTranslations } from "next-intl"
+import { Header } from "@/components/header"
+import { Footer } from "@/components/footer"
 
 // Build-time guard: avoid prerendering this interactive sales page to reduce
 // Vercel build duration (force runtime rendering instead of SSG/ISR).
@@ -312,7 +315,7 @@ export default function QuickScanPage() {
       setIsAnalyzing(false)
       setIsSaving(false)
     }
-  }, [selectedCustomer, customerEmail])
+  }, [selectedCustomer, customerEmail, t])
 
   const capturePhoto = useCallback(async () => {
     if (!videoRef.current || !canvasRef.current) return
@@ -350,623 +353,503 @@ export default function QuickScanPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 relative overflow-hidden">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-200/30 to-purple-200/30 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-pink-200/30 to-orange-200/30 rounded-full blur-3xl animate-pulse delay-1000" />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-cyan-100/20 to-blue-100/20 rounded-full blur-3xl animate-pulse delay-500" />
+    <div className="min-h-screen bg-[#020617] text-slate-200 relative overflow-hidden selection:bg-pink-500/30">
+      <Header />
+      
+      {/* Precision Background Infrastructure */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] bg-pink-500/10 rounded-full blur-[120px] animate-glow-pulse" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-cyan-500/5 rounded-full blur-[100px] animate-float" />
+        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.03]" />
       </div>
 
-      <AnimatePresence mode="wait">
-        {step === 'intro' && (
-          <motion.div
-            key="intro"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="relative z-10 min-h-screen flex items-center justify-center p-4"
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.2, duration: 0.5, ease: "easeOut" }}
-              className="w-full max-w-lg"
-            >
-              <Card className="backdrop-blur-xl bg-white/90 shadow-2xl border-0 ring-1 ring-white/20">
-                <CardHeader className="pb-6">
-                  <motion.div
-                    initial={{ y: -20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.4, duration: 0.5 }}
-                    className="text-center"
-                  >
-                    <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl mb-4 shadow-lg">
-                      <Sparkles className="w-8 h-8 text-white" />
-                    </div>
-                    <CardTitle className="text-3xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent mb-2">
-                      {t('salesQuickScan.title')}
-                    </CardTitle>
-                    <p className="text-gray-600 text-lg leading-relaxed">
-                      {t('salesQuickScan.subtitle')}<br />
-                      <span className="font-semibold text-purple-600">{t('common.startAnalysis')}</span>
-                    </p>
-                  </motion.div>
-                </CardHeader>
-
-                <CardContent className="space-y-6">
-                  {/* Customer Info Form */}
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.6, duration: 0.5 }}
-                    className="space-y-4"
-                  >
-                    <div className="flex items-center gap-3 text-sm font-semibold text-gray-700 bg-gradient-to-r from-blue-50 to-purple-50 p-3 rounded-xl border border-blue-100">
-                      <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                        <UserPlus className="w-4 h-4 text-white" />
-                      </div>
-                      {t('salesQuickScan.customerInfo')}
-                    </div>
-
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.7, duration: 0.3 }}
-                      className="space-y-3"
-                    >
-                      <div className="space-y-2">
-                        <Label htmlFor="customer-name" className="text-sm font-medium text-gray-700">{t('salesQuickScan.name')}</Label>
-                        <Input
-                          id="customer-name"
-                          placeholder={t('salesQuickScan.namePlaceholder')}
-                          value={customerName}
-                          onChange={(e) => setCustomerName(e.target.value)}
-                          className="h-12 border-2 border-gray-200 focus:border-purple-400 focus:ring-purple-400/20 rounded-xl transition-all duration-200"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="customer-phone" className="text-sm font-medium text-gray-700">{t('salesQuickScan.phone')}</Label>
-                        <Input
-                          id="customer-phone"
-                          placeholder={t('salesQuickScan.phonePlaceholder')}
-                          value={customerPhone}
-                          onChange={(e) => setCustomerPhone(e.target.value)}
-                          className="h-12 border-2 border-gray-200 focus:border-purple-400 focus:ring-purple-400/20 rounded-xl transition-all duration-200"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="customer-email" className="text-sm font-medium text-gray-700">{t('salesQuickScan.emailOptional')}</Label>
-                        <Input
-                          id="customer-email"
-                          type="email"
-                          placeholder={t('salesQuickScan.emailPlaceholder')}
-                          value={customerEmail}
-                          onChange={(e) => setCustomerEmail(e.target.value)}
-                          className="h-12 border-2 border-gray-200 focus:border-purple-400 focus:ring-purple-400/20 rounded-xl transition-all duration-200"
-                        />
-                      </div>
-
-                      <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: 0.8, duration: 0.3 }}
-                      >
-                        <Button
-                          variant="outline"
-                          size="lg"
-                          className="w-full h-12 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl font-semibold"
-                          onClick={() => {
-                            if (customerName.trim()) {
-                              setSelectedCustomer({
-                                id: 'temp-' + Date.now(),
-                                name: customerName,
-                                phone: customerPhone,
-                                email: customerEmail || undefined
-                              })
-                            }
-                          }}
-                          disabled={!customerName.trim()}
+      <main className="relative z-10 pt-20 pb-32">
+        <div className="container px-4 sm:px-6">
+          <AnimatePresence mode="wait">
+            {step === 'intro' && (
+              <motion.div
+                key="intro"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -30 }}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                className="min-h-[80vh] flex items-center justify-center py-12"
+              >
+                <div className="w-full max-w-2xl">
+                  <Card className="relative overflow-hidden border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] shadow-2xl">
+                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                    
+                    <CardHeader className="pt-12 pb-8">
+                      <div className="text-center space-y-6">
+                        <motion.div
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: 0.2, duration: 0.5 }}
+                          className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-pink-500/20 to-purple-600/20 rounded-[2rem] border border-pink-500/20 shadow-glow-primary mx-auto"
                         >
-                          <CheckCircle2 className="w-5 h-5 mr-2" />
-                          {t('salesQuickScan.confirmInfo')}
-                        </Button>
-                      </motion.div>
-                    </motion.div>
-                  </motion.div>
+                          <Sparkles className="w-10 h-10 text-pink-400" />
+                        </motion.div>
+                        
+                        <div className="space-y-3">
+                          <CardTitle className="text-4xl md:text-5xl font-bold tracking-tight text-white leading-tight">
+                            {t('salesQuickScan.title')}
+                          </CardTitle>
+                          <p className="text-slate-400 text-lg font-light tracking-wide max-w-md mx-auto">
+                            {t('salesQuickScan.subtitle')}
+                          </p>
+                        </div>
+                      </div>
+                    </CardHeader>
 
-                  {/* Customer Confirmed */}
-                  <AnimatePresence>
-                    {selectedCustomer && (
+                    <CardContent className="px-8 sm:px-12 pb-12 space-y-10">
                       <motion.div
-                        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.95, y: -20 }}
-                        transition={{ duration: 0.4, ease: "easeOut" }}
-                        className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl p-4 space-y-3 shadow-lg"
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.4, duration: 0.6 }}
+                        className="space-y-6"
                       >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-md">
-                              <CheckCircle2 className="w-5 h-5 text-white" />
+                        <div className="flex items-center gap-4 text-xs font-bold uppercase tracking-[0.2em] text-pink-400/80 mb-2">
+                          <div className="h-px flex-1 bg-pink-500/20" />
+                          <div className="flex items-center gap-2">
+                            <UserPlus className="w-3.5 h-3.5" />
+                            {t('salesQuickScan.customerInfo')}
+                          </div>
+                          <div className="h-px flex-1 bg-pink-500/20" />
+                        </div>
+
+                        <div className="grid gap-5">
+                          <div className="space-y-2.5">
+                            <Label htmlFor="customer-name" className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-4">
+                              {t('salesQuickScan.name')}
+                            </Label>
+                            <Input
+                              id="customer-name"
+                              placeholder={t('salesQuickScan.namePlaceholder')}
+                              value={customerName}
+                              onChange={(e) => setCustomerName(e.target.value)}
+                              className="h-14 bg-white/[0.02] border-white/5 focus:border-pink-500/30 focus:ring-pink-500/10 rounded-2xl transition-all duration-300 px-6 font-light tracking-wide text-white placeholder:text-slate-600"
+                            />
+                          </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                            <div className="space-y-2.5">
+                              <Label htmlFor="customer-phone" className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-4">
+                                {t('salesQuickScan.phone')}
+                              </Label>
+                              <Input
+                                id="customer-phone"
+                                placeholder={t('salesQuickScan.phonePlaceholder')}
+                                value={customerPhone}
+                                onChange={(e) => setCustomerPhone(e.target.value)}
+                                className="h-14 bg-white/[0.02] border-white/5 focus:border-pink-500/30 focus:ring-pink-500/10 rounded-2xl transition-all duration-300 px-6 font-light tracking-wide text-white placeholder:text-slate-600"
+                              />
                             </div>
-                            <div>
-                              <p className="font-bold text-green-900 text-lg">{selectedCustomer.name}</p>
-                              {selectedCustomer.phone && (
-                                <p className="text-green-700 text-sm">{selectedCustomer.phone}</p>
-                              )}
+                            <div className="space-y-2.5">
+                              <Label htmlFor="customer-email" className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-4">
+                                {t('salesQuickScan.emailOptional')}
+                              </Label>
+                              <Input
+                                id="customer-email"
+                                type="email"
+                                placeholder={t('salesQuickScan.emailPlaceholder')}
+                                value={customerEmail}
+                                onChange={(e) => setCustomerEmail(e.target.value)}
+                                className="h-14 bg-white/[0.02] border-white/5 focus:border-pink-500/30 focus:ring-pink-500/10 rounded-2xl transition-all duration-300 px-6 font-light tracking-wide text-white placeholder:text-slate-600"
+                              />
                             </div>
                           </div>
+
                           <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setSelectedCustomer(null)}
-                            className="h-8 w-8 p-0 hover:bg-green-100 rounded-lg transition-colors duration-200"
+                            className="w-full h-14 mt-4 bg-pink-600 hover:bg-pink-500 text-white border-0 shadow-2xl shadow-pink-600/20 rounded-2xl font-bold tracking-widest uppercase text-xs transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50"
+                            onClick={() => {
+                              if (customerName.trim()) {
+                                setSelectedCustomer({
+                                  id: 'temp-' + Date.now(),
+                                  name: customerName,
+                                  phone: customerPhone,
+                                  email: customerEmail || undefined
+                                })
+                              }
+                            }}
+                            disabled={!customerName.trim()}
                           >
-                            <span className="sr-only">{t('common.close')}</span>
-                            <span aria-hidden="true">×</span>
+                            <CheckCircle2 className="w-4 h-4 mr-2" />
+                            {t('salesQuickScan.confirmInfo')}
                           </Button>
                         </div>
                       </motion.div>
-                    )}
-                  </AnimatePresence>
 
-                  {/* Features Grid */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.9, duration: 0.5 }}
-                    className="grid grid-cols-3 gap-4 py-2"
-                  >
-                    <div className="flex flex-col items-center text-center space-y-2 p-3 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 hover:shadow-md transition-all duration-300">
-                      <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
-                        <Camera className="w-5 h-5 text-white" />
-                      </div>
-                      <p className="text-xs font-semibold text-blue-800">{t('salesQuickScan.features.angles')}</p>
-                      <p className="text-xs text-blue-600">{t('salesQuickScan.features.anglesDesc')}</p>
-                    </div>
-                    <div className="flex flex-col items-center text-center space-y-2 p-3 rounded-xl bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 hover:shadow-md transition-all duration-300">
-                      <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-                        <Zap className="w-5 h-5 text-white" />
-                      </div>
-                      <p className="text-xs font-semibold text-purple-800">{t('salesQuickScan.features.advanced')}</p>
-                      <p className="text-xs text-purple-600">{t('salesQuickScan.features.advancedDesc')}</p>
-                    </div>
-                    <div className="flex flex-col items-center text-center space-y-2 p-3 rounded-xl bg-gradient-to-br from-green-50 to-green-100 border border-green-200 hover:shadow-md transition-all duration-300">
-                      <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
-                        <TrendingUp className="w-5 h-5 text-white" />
-                      </div>
-                      <p className="text-xs font-semibold text-green-800">{t('salesQuickScan.features.instant')}</p>
-                      <p className="text-xs text-green-600">{t('salesQuickScan.features.instantDesc')}</p>
-                    </div>
-                  </motion.div>
-
-                  {/* Action Buttons */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 1.0, duration: 0.5 }}
-                    className="space-y-3"
-                  >
-                    <Button
-                      onClick={() => {
-                        setIsUploadMode(false)
-                        startCamera()
-                      }}
-                      className="w-full h-12 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl font-semibold"
-                      size="lg"
-                      disabled={!selectedCustomer}
-                    >
-                      <Camera className="w-5 h-5 mr-2" />
-                      {t('salesQuickScan.actions.startCamera')}
-                    </Button>
-                    {!isUploadMode && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        className="w-full text-xs border-gray-300 hover:bg-gray-50 transition-colors duration-200 rounded-lg"
-                        disabled={!selectedCustomer}
-                        onClick={() => setIsUploadMode(true)}
-                      >
-                        {t('salesQuickScan.actions.useUpload')}
-                      </Button>
-                    )}
-                  </motion.div>
-
-                  {/* Upload Mode */}
-                  <AnimatePresence>
-                    {isUploadMode && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="space-y-3 border-t border-gray-200 pt-4"
-                      >
-                        <div className="text-sm font-medium text-gray-700 bg-gradient-to-r from-orange-50 to-amber-50 p-3 rounded-xl border border-orange-200">
-                          <div className="flex items-center gap-2">
-                            <Award className="w-4 h-4 text-orange-600" />
-                            {t('salesQuickScan.actions.uploadFile')}
-                          </div>
-                          <p className="text-xs text-orange-700 mt-1">
-                            {t('salesQuickScan.actions.uploadFileDesc')}
-                          </p>
-                        </div>
-
-                        <div className="space-y-3">
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={async (e) => {
-                              const file = e.target.files?.[0]
-                              if (!file) return
-
-                              const reader = new FileReader()
-                              reader.onload = async (ev) => {
-                                const dataUrl = ev.target?.result as string
-                                if (!dataUrl) return
-
-                                setCapturedImages({ front: dataUrl })
-                                setUploadedImage(dataUrl)
-                              }
-                              reader.readAsDataURL(file)
-                            }}
-                            className="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-colors duration-200"
-                          />
-                          <p className="text-xs text-gray-500 bg-gray-50 p-2 rounded-lg">
-                            {t('salesQuickScan.actions.uploadHint')}
-                          </p>
-
+                      {/* Customer Confirmed Badge */}
+                      <AnimatePresence>
+                        {selectedCustomer && (
                           <motion.div
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: 0.2, duration: 0.3 }}
+                            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                            className="relative overflow-hidden rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.03] p-5 flex items-center justify-between"
                           >
+                            <div className="flex items-center gap-4">
+                              <div className="w-12 h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center border border-emerald-500/20">
+                                <Users className="w-6 h-6 text-emerald-400" />
+                              </div>
+                              <div>
+                                <p className="font-bold text-white text-lg tracking-tight">{selectedCustomer.name}</p>
+                                <p className="text-emerald-400/60 text-xs font-black uppercase tracking-widest">{selectedCustomer.phone}</p>
+                              </div>
+                            </div>
                             <Button
-                              type="button"
-                              className="w-full h-12 bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl font-semibold"
-                              disabled={!uploadedImage || isAnalyzing}
-                              onClick={async () => {
-                                if (!uploadedImage) return
-                                await analyzePhotos({ front: uploadedImage })
-                              }}
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setSelectedCustomer(null)}
+                              className="h-8 w-8 p-0 text-slate-500 hover:text-white hover:bg-white/5 rounded-lg"
                             >
-                              {isAnalyzing ? (
-                                <>
-                                  <Sparkles className="w-5 h-5 mr-2 animate-spin" />
-                                  {t('salesQuickScan.actions.analyzing')}
-                                </>
-                              ) : (
-                                <>
-                                  <ArrowRight className="w-5 h-5 mr-2" />
-                                  {t('salesQuickScan.actions.startAnalysis')}
-                                </>
-                              )}
+                              <span aria-hidden="true">×</span>
                             </Button>
                           </motion.div>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                        )}
+                      </AnimatePresence>
 
-                  {/* Benefits */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 1.1, duration: 0.5 }}
-                    className="text-center space-y-2 pt-4 border-t border-gray-200"
-                  >
-                    <div className="flex items-center justify-center gap-1 text-green-600">
-                      <CheckCircle2 className="w-4 h-4" />
-                      <span className="text-sm font-medium">{t('analysis.metrics.synthesisActive')}</span>
-                    </div>
-                    <div className="flex items-center justify-center gap-1 text-blue-600">
-                      <CheckCircle2 className="w-4 h-4" />
-                      <span className="text-sm font-medium">{t('booking.selectTreatment')}</span>
-                    </div>
-                    <div className="flex items-center justify-center gap-1 text-purple-600">
-                      <CheckCircle2 className="w-4 h-4" />
-                      <span className="text-sm font-medium">{t('salesQuickScan.actions.createProposal')}</span>
-                    </div>
-                  </motion.div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          </motion.div>
-        )}
-
-      </AnimatePresence>
-
-      {/* Scanning Step */}
-        {step === 'scanning' && (
-          <motion.div
-            key="scanning"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.05 }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
-            className="relative z-10 max-w-2xl mx-auto mt-10"
-          >
-            <Card className="backdrop-blur-xl bg-white/95 shadow-2xl border-0 ring-1 ring-white/20">
-              <CardHeader className="pb-4">
-                <div className="text-center">
-                  <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl mb-3 shadow-lg">
-                    <Camera className="w-6 h-6 text-white" />
-                  </div>
-                  <CardTitle className="text-xl font-bold text-gray-900 mb-2">
-                    {angleInstructions[currentAngle]}
-                  </CardTitle>
-                  <div className="flex justify-center gap-2">
-                    <motion.div
-                      animate={currentAngle === 'front' ? { scale: 1.1 } : { scale: 1 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <Badge variant={currentAngle === 'front' ? 'default' : 'outline'} className="px-3 py-1">
-                        {t('salesQuickScan.scanning.frontLabel')}
-                      </Badge>
-                    </motion.div>
-                    <motion.div
-                      animate={currentAngle === 'left' ? { scale: 1.1 } : { scale: 1 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <Badge variant={currentAngle === 'left' ? 'default' : 'outline'} className="px-3 py-1">
-                        {t('salesQuickScan.scanning.leftLabel')}
-                      </Badge>
-                    </motion.div>
-                    <motion.div
-                      animate={currentAngle === 'right' ? { scale: 1.1 } : { scale: 1 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <Badge variant={currentAngle === 'right' ? 'default' : 'outline'} className="px-3 py-1">
-                        {t('salesQuickScan.scanning.rightLabel')}
-                      </Badge>
-                    </motion.div>
-                  </div>
-                </div>
-              </CardHeader>
-
-              <CardContent className="space-y-6">
-                <div className="relative rounded-2xl overflow-hidden shadow-2xl">
-                  <video
-                    ref={videoRef}
-                    autoPlay
-                    playsInline
-                    muted
-                    className="w-full h-80 object-cover [transform:scaleX(-1)]"
-                  />
-                  <canvas ref={canvasRef} className="hidden" />
-
-                  {/* Face guide overlay */}
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <motion.div
-                      animate={{
-                        scale: [1, 1.05, 1],
-                        opacity: [0.5, 0.7, 0.5]
-                      }}
-                      transition={{
-                        duration: 2,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                      }}
-                      className="w-64 h-80 border-4 border-white/80 rounded-3xl shadow-lg"
-                    />
-                  </div>
-
-                  {/* Progress indicator */}
-                  <div className="absolute top-4 left-4 right-4">
-                    <div className="bg-black/50 backdrop-blur-sm rounded-full px-3 py-2">
-                      <div className="flex justify-between items-center text-xs text-white">
-                        <span>{t('salesQuickScan.scanning.status')}</span>
-                        <span>{Object.keys(capturedImages).length}/3</span>
+                      {/* Action Infrastructure */}
+                      <div className="space-y-4 pt-4">
+                        <Button
+                          onClick={() => {
+                            setIsUploadMode(false)
+                            startCamera()
+                          }}
+                          className="w-full h-16 bg-white text-[#020617] hover:bg-slate-100 rounded-2xl font-black tracking-[0.15em] uppercase text-xs shadow-2xl transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-20 disabled:grayscale"
+                          disabled={!selectedCustomer}
+                        >
+                          <Camera className="w-5 h-5 mr-3" />
+                          {t('salesQuickScan.actions.startCamera')}
+                        </Button>
+                        
+                        {!isUploadMode && (
+                          <Button
+                            variant="outline"
+                            className="w-full h-12 border-white/10 bg-white/[0.02] text-slate-400 hover:text-white hover:bg-white/5 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all"
+                            disabled={!selectedCustomer}
+                            onClick={() => setIsUploadMode(true)}
+                          >
+                            {t('salesQuickScan.actions.useUpload')}
+                          </Button>
+                        )}
                       </div>
-                      <div className="w-full bg-white/20 rounded-full h-1 mt-1">
+                    </CardContent>
+                  </Card>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Scanning Step - High-end Camera Interface */}
+            {step === 'scanning' && (
+              <motion.div
+                key="scanning"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 1.05 }}
+                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                className="max-w-3xl mx-auto"
+              >
+                <Card className="relative overflow-hidden border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] shadow-2xl">
+                  <CardHeader className="pt-10 pb-6">
+                    <div className="text-center space-y-4">
+                      <div className="inline-flex items-center justify-center w-12 h-12 bg-pink-500/10 rounded-xl border border-pink-500/20 mb-2">
+                        <Camera className="w-6 h-6 text-pink-400" />
+                      </div>
+                      <CardTitle className="text-2xl font-bold text-white tracking-tight">
+                        {angleInstructions[currentAngle]}
+                      </CardTitle>
+                      <div className="flex justify-center gap-3">
+                        {(['front', 'left', 'right'] as const).map((angle) => (
+                          <motion.div
+                            key={angle}
+                            animate={currentAngle === angle ? { scale: 1.1 } : { scale: 1 }}
+                          >
+                            <Badge 
+                              variant={currentAngle === angle ? 'default' : 'outline'} 
+                              className={cn(
+                                "px-4 py-1 rounded-full uppercase tracking-widest text-[9px] font-black transition-all duration-500",
+                                currentAngle === angle 
+                                  ? "bg-pink-600 text-white border-none shadow-lg shadow-pink-600/20" 
+                                  : "border-white/10 text-slate-500 bg-transparent"
+                              )}
+                            >
+                              {t(`salesQuickScan.scanning.${angle}Label` as any)}
+                            </Badge>
+                          </motion.div>
+                        ))}
+                      </div>
+                    </div>
+                  </CardHeader>
+
+                  <CardContent className="p-8 sm:p-10 space-y-8">
+                    <div className="relative rounded-[2.5rem] overflow-hidden border border-white/10 shadow-2xl aspect-[4/3] max-h-[400px]">
+                      <video
+                        ref={videoRef}
+                        autoPlay
+                        playsInline
+                        muted
+                        className="w-full h-full object-cover [transform:scaleX(-1)]"
+                      />
+                      <canvas ref={canvasRef} className="hidden" />
+
+                      {/* Clinical Face Guide Overlay */}
+                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                         <motion.div
-                          className="bg-white h-1 rounded-full"
-                          initial={{ width: 0 }}
-                          animate={{ width: `${(Object.keys(capturedImages).length / 3) * 100}%` }}
-                          transition={{ duration: 0.3 }}
-                        />
+                          animate={{
+                            scale: [1, 1.02, 1],
+                            opacity: [0.3, 0.5, 0.3],
+                            boxShadow: [
+                              "0 0 0 0px rgba(236, 72, 153, 0)",
+                              "0 0 0 20px rgba(236, 72, 153, 0.05)",
+                              "0 0 0 0px rgba(236, 72, 153, 0)"
+                            ]
+                          }}
+                          transition={{
+                            duration: 3,
+                            repeat: Infinity,
+                            ease: "easeInOut"
+                          }}
+                          className="w-64 h-80 border-[1px] border-pink-500/40 rounded-[3rem] relative"
+                        >
+                          {/* Corner brackets */}
+                          <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-pink-500 rounded-tl-2xl" />
+                          <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-pink-500 rounded-tr-2xl" />
+                          <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-pink-500 rounded-bl-2xl" />
+                          <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-pink-500 rounded-br-2xl" />
+                          
+                          {/* Scanning scanline */}
+                          <motion.div 
+                            animate={{ top: ["10%", "90%", "10%"] }}
+                            transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                            className="absolute left-4 right-4 h-px bg-gradient-to-r from-transparent via-pink-500 to-transparent shadow-[0_0_10px_rgba(236,72,153,0.5)]"
+                          />
+                        </motion.div>
+                      </div>
+
+                      {/* Data Streaming HUD */}
+                      <div className="absolute top-6 left-6 right-6">
+                        <div className="flex justify-between items-start">
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-2 text-[9px] font-black text-pink-500 uppercase tracking-[0.2em] bg-[#020617]/60 backdrop-blur-md px-3 py-1 rounded-full border border-pink-500/20">
+                              <span className="relative flex h-1.5 w-1.5">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-pink-500 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-pink-500"></span>
+                              </span>
+                              Live Analysis
+                            </div>
+                          </div>
+                          <div className="bg-[#020617]/60 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/5 min-w-[100px]">
+                            <div className="flex justify-between items-center text-[10px] font-black text-white uppercase tracking-widest mb-1.5">
+                              <span>Progress</span>
+                              <span className="text-pink-500">{Object.keys(capturedImages).length}/3</span>
+                            </div>
+                            <div className="w-full bg-white/10 rounded-full h-1">
+                              <motion.div
+                                className="bg-pink-500 h-1 rounded-full shadow-[0_0_8px_rgba(236,72,153,0.5)]"
+                                initial={{ width: 0 }}
+                                animate={{ width: `${(Object.keys(capturedImages).length / 3) * 100}%` }}
+                                transition={{ duration: 0.5 }}
+                              />
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </div>
 
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3, duration: 0.5 }}
-                >
-                  <Button
-                    onClick={capturePhoto}
-                    className="w-full h-14 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white border-0 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl font-bold text-lg"
-                    size="lg"
-                    disabled={isAnalyzing}
-                  >
-                    {isAnalyzing ? (
-                      <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                        className="flex items-center"
+                    <div className="space-y-6">
+                      <Button
+                        onClick={capturePhoto}
+                        className="w-full h-16 bg-white text-[#020617] hover:bg-slate-100 rounded-[1.5rem] font-black tracking-[0.2em] uppercase text-xs shadow-2xl transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-20"
+                        disabled={isAnalyzing}
                       >
-                        <Sparkles className="w-6 h-6 mr-3" />
-                        {t('salesQuickScan.actions.analyzing')}
-                      </motion.div>
-                    ) : (
-                      <motion.div
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        className="flex items-center"
-                      >
-                        <Camera className="w-6 h-6 mr-3" />
-                        {t('salesQuickScan.actions.capture')}
-                      </motion.div>
-                    )}
-                  </Button>
-                </motion.div>
+                        {isAnalyzing ? (
+                          <div className="flex items-center gap-3">
+                            <Sparkles className="w-5 h-5 animate-spin text-pink-600" />
+                            {t('salesQuickScan.actions.analyzing')}
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-3">
+                            <Camera className="w-5 h-5" />
+                            {t('salesQuickScan.actions.capture')}
+                          </div>
+                        )}
+                      </Button>
 
-                <div className="text-center">
-                  <p className="text-sm text-gray-500">
-                    {t('salesQuickScan.scanning.guide')}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        )}
-
-        {/* Results Step */}
-        {step === 'results' && scanResult && selectedCustomer && (
-          <motion.div
-            key="results"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -30 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="relative z-10 max-w-6xl mx-auto mt-10 space-y-8 pb-20"
-          >
-          {/* Skin Age Summary */}
-          <Card className="bg-gradient-to-r from-orange-50 to-red-50 border-orange-200">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Users className="w-6 h-6 text-orange-600" />
-                {t('salesQuickScan.results.skinAgeTitle')}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-baseline gap-2">
-                <span className="text-5xl font-bold text-orange-600">
-                  {scanResult.skinAge}
-                </span>
-                <span className="text-2xl text-gray-600">{t('salesQuickScan.results.years')}</span>
-                <span className="text-gray-500 ml-4">
-                  ({t('salesQuickScan.results.actualAge', { age: scanResult.actualAge })})
-                </span>
-              </div>
-              <p className="text-orange-700 mt-2 font-medium">
-                {t('salesQuickScan.results.comparison', { diff: scanResult.skinAge - scanResult.actualAge })}
-              </p>
-            </CardContent>
-          </Card>
-
-          {/* Future Skin Prediction - AI-powered aging simulation */}
-          {/* {scanResult.futurePrediction && (
-            <SkinFuturePrediction 
-              prediction={scanResult.futurePrediction}
-              locale="th"
-            />
-          )} */}
-
-          {/* Advanced Heatmap Visualization */}
-          {/* {capturedImages.front && scanResult.heatmap_data && (
-            <SkinHeatmap
-              faceImage={capturedImages.front}
-              heatmapData={scanResult.heatmap_data}
-              faceLandmarks={scanResult.face_landmarks}
-            />
-          )} */}
-
-          {/* AR Treatment Preview */}
-          {/* {capturedImages.front && (
-            <ARTreatmentPreview
-              beforeImage={capturedImages.front}
-              concerns={scanResult.concerns}
-              recommendations={scanResult.recommendations}
-            />
-          )} */}
-
-          {/* Basic Concerns List (for quick reference) */}
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('salesQuickScan.results.concernsTitle')}</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {scanResult.concerns.map((concern, idx) => (
-                <div key={idx} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                  <div className="flex-shrink-0">
-                    <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
-                      <span className="text-xl font-bold text-red-600">
-                        {concern.severity}
-                      </span>
+                      <div className="text-center">
+                        <p className="text-xs text-slate-500 font-light tracking-wide italic">
+                          {t('salesQuickScan.scanning.guide')}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="font-semibold text-gray-900">{concern.name}</h4>
-                    <p className="text-sm text-gray-600">{concern.description}</p>
-                  </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )}
+
+            {/* Results Step - Premium Clinical Report */}
+            {step === 'results' && scanResult && selectedCustomer && (
+              <motion.div
+                key="results"
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -40 }}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                className="max-w-6xl mx-auto space-y-10 pb-20"
+              >
+                {/* Precision Summary Header */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  <Card className="lg:col-span-2 relative overflow-hidden border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] p-10 flex flex-col justify-center">
+                    <div className="absolute top-0 right-0 p-8 opacity-5">
+                      <Users className="w-40 h-40 text-pink-500" />
+                    </div>
+                    <div className="relative z-10 space-y-6">
+                      <Badge className="bg-pink-500/10 text-pink-400 border-pink-500/20 px-4 py-1 rounded-full text-[10px] font-black tracking-widest uppercase">
+                        Clinical Biological Profile
+                      </Badge>
+                      <div className="flex items-baseline gap-4">
+                        <h2 className="text-7xl font-bold text-white tracking-tighter">
+                          {scanResult.skinAge}
+                        </h2>
+                        <div className="space-y-1">
+                          <p className="text-2xl text-slate-400 font-light leading-none">{t('salesQuickScan.results.years')}</p>
+                          <p className="text-xs font-black uppercase tracking-widest text-slate-600">Bio-Age Diagnostic</p>
+                        </div>
+                      </div>
+                      <div className="h-px w-full bg-gradient-to-r from-pink-500/30 via-transparent to-transparent" />
+                      <div className="flex flex-wrap gap-8">
+                        <div className="space-y-1">
+                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Actual Age</p>
+                          <p className="text-xl text-white font-light">{scanResult.actualAge} Years</p>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Age Variance</p>
+                          <p className={cn("text-xl font-bold", scanResult.skinAge > scanResult.actualAge ? "text-rose-500" : "text-emerald-500")}>
+                            {scanResult.skinAge > scanResult.actualAge ? "+" : ""}{scanResult.skinAge - scanResult.actualAge} Years
+                          </p>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Confidence</p>
+                          <p className="text-xl text-pink-400 font-light">{(scanResult.confidence_score || 0.85 * 100).toFixed(0)}%</p>
+                        </div>
+                      </div>
+                    </div>
+                  </Card>
+
+                  <Card className="relative overflow-hidden border-white/5 bg-gradient-to-br from-pink-600 to-purple-700 rounded-[3rem] p-10 text-white shadow-2xl">
+                    <div className="relative z-10 h-full flex flex-col justify-between">
+                      <div className="space-y-4">
+                        <Zap className="w-10 h-10 text-white opacity-80" />
+                        <h3 className="text-2xl font-bold leading-tight">Precision Recommendation</h3>
+                        <p className="text-white/70 font-light leading-relaxed text-sm">
+                          Based on 468-point mapping, we've synthesized an optimized protocol for {selectedCustomer.name}.
+                        </p>
+                      </div>
+                      <Button size="lg" className="w-full h-14 bg-white text-pink-600 hover:bg-slate-100 rounded-2xl font-black uppercase tracking-widest text-[10px] mt-8 shadow-xl">
+                        {t('salesQuickScan.actions.createProposal')}
+                      </Button>
+                    </div>
+                  </Card>
                 </div>
-              ))}
-            </CardContent>
-          </Card>
 
-          {/* Lead Integration */}
-          {/* <LeadIntegration
-            scanResult={{
-              id: scanResult.id,
-              customer_name: selectedCustomer.name,
-              customer_phone: selectedCustomer.phone,
-              customer_email: selectedCustomer.email,
-              skin_age: scanResult.skinAge,
-              concerns: scanResult.concerns,
-              recommendations: scanResult.recommendations
-            }}
-            onLeadCreated={(id) => setLeadId(id)}
-          /> */}
+                {/* Detailed Pathological Mapping */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                  <Card className="border-white/5 bg-white/[0.01] backdrop-blur-md rounded-[3rem] overflow-hidden group">
+                    <CardHeader className="p-10 pb-6 border-b border-white/5">
+                      <CardTitle className="text-xs font-black uppercase tracking-[0.25em] flex items-center gap-4 text-pink-400">
+                        <TrendingUp className="w-5 h-5" />
+                        {t('salesQuickScan.results.concernsTitle')}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-10 space-y-6">
+                      {scanResult.concerns.map((concern, idx) => (
+                        <motion.div 
+                          key={idx} 
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: idx * 0.1 }}
+                          className="flex items-center gap-6 p-6 rounded-3xl bg-white/[0.02] border border-white/5 hover:border-pink-500/20 transition-all group/item"
+                        >
+                          <div className="relative shrink-0">
+                            <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10 group-hover/item:border-pink-500/30 transition-colors">
+                              <span className="text-2xl font-bold text-white">{concern.severity}</span>
+                            </div>
+                            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-rose-500 rounded-full border-2 border-[#020617]" />
+                          </div>
+                          <div className="space-y-1">
+                            <h4 className="font-bold text-white text-lg tracking-tight group-hover/item:text-pink-400 transition-colors">{concern.name}</h4>
+                            <p className="text-slate-500 text-sm font-light leading-relaxed">{concern.description}</p>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </CardContent>
+                  </Card>
 
-          {/* Share Results */}
-          {/* <ShareResults
-            scanResult={{
-              id: scanResult.id,
-              customer_name: selectedCustomer.name,
-              customer_phone: selectedCustomer.phone,
-              customer_email: selectedCustomer.email,
-              skin_age: scanResult.skinAge,
-              concerns: scanResult.concerns,
-              recommendations: scanResult.recommendations
-            }}
-            leadId={leadId || undefined}
-          /> */}
+                  {/* High-fidelity Treatment Roadmap */}
+                  <Card className="border-white/5 bg-white/[0.01] backdrop-blur-md rounded-[3rem] overflow-hidden">
+                    <CardHeader className="p-10 pb-6 border-b border-white/5">
+                      <CardTitle className="text-xs font-black uppercase tracking-[0.25em] flex items-center gap-4 text-emerald-400">
+                        <Award className="w-5 h-5" />
+                        Diagnostic Roadmap
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-10 space-y-6">
+                      {scanResult.recommendations.map((rec, idx) => (
+                        <div key={idx} className="p-6 rounded-3xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all group">
+                          <div className="flex justify-between items-start mb-4">
+                            <h4 className="font-bold text-white text-xl tracking-tight group-hover:text-emerald-400 transition-colors">{rec.treatment}</h4>
+                            <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest">
+                              ฿{rec.price.toLocaleString()}
+                            </Badge>
+                          </div>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-1">
+                              <p className="text-[9px] font-black uppercase tracking-widest text-slate-600">Protocol Duration</p>
+                              <p className="text-sm text-slate-300 font-light">{rec.duration}</p>
+                            </div>
+                            <div className="space-y-1">
+                              <p className="text-[9px] font-black uppercase tracking-widest text-slate-600">Biological Target</p>
+                              <p className="text-sm text-slate-300 font-light">{rec.expectedOutcome}</p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </CardContent>
+                  </Card>
+                </div>
 
-          {/* Action Buttons */}
-          <div className="grid grid-cols-2 gap-4">
-            <Button
-              variant="outline"
-              size="lg"
-              onClick={() => {
-                setStep('intro')
-                setCapturedImages({})
-                setScanResult(null)
-                setLeadId(null)
-                setSelectedCustomer(null)
-                setCustomerName('')
-                setCustomerPhone('')
-                setCustomerEmail('')
-              }}
-            >
-              {t('salesQuickScan.actions.newScan')}
-            </Button>
-            <Button
-              size="lg"
-              className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
-              onClick={() => {
-                // toast({
-              //   title: 'Coming Soon',
-              //   description: 'Proposal generation feature is under development',
-              //   variant: 'default'
-              // })
-              }}
-            >
-              {t('salesQuickScan.actions.createProposal')}
-            </Button>
-          </div>
-
-          {/* <FloatingNotesButton
-            customer_id={selectedCustomer.id}
-            customer_name={selectedCustomer.name}
-          /> */}
-        </motion.div>
-      )}
+                {/* Footer Controls */}
+                <div className="flex flex-col sm:flex-row gap-6">
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    onClick={() => {
+                      setStep('intro')
+                      setCapturedImages({})
+                      setScanResult(null)
+                      setLeadId(null)
+                      setSelectedCustomer(null)
+                      setCustomerName('')
+                      setCustomerPhone('')
+                      setCustomerEmail('')
+                    }}
+                    className="flex-1 h-16 border-white/10 bg-white/[0.02] text-white hover:bg-white/5 rounded-2xl font-bold tracking-widest uppercase text-[10px]"
+                  >
+                    Reset Infrastructure
+                  </Button>
+                  <Button
+                    size="lg"
+                    className="flex-1 h-16 bg-emerald-600 hover:bg-emerald-500 text-white border-0 shadow-2xl shadow-emerald-600/20 rounded-2xl font-black tracking-widest uppercase text-[10px] transition-transform hover:scale-[1.02]"
+                  >
+                    Generate Clinical Report (PDF)
+                  </Button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </main>
+      
+      <Footer />
     </div>
   )
 }

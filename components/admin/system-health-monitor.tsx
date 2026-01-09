@@ -1,9 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Progress } from '@/components/ui/progress'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { 
   Activity, 
   Database, 
@@ -12,9 +11,12 @@ import {
   CheckCircle2, 
   Users, 
   TrendingUp,
-  Clock,
-  Zap
+  Zap,
+  Brain,
+  Shield
 } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { cn } from '@/lib/utils'
 
 type HealthStatus = 'healthy' | 'degraded' | 'down'
 
@@ -122,249 +124,162 @@ export function SystemHealthMonitor() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold flex items-center gap-2">
-            <Activity className="w-6 h-6" />
-            System Health Monitor
+    <div className="space-y-10 animate-in fade-in duration-700">
+      {/* Telemetry Header */}
+      <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-8 border-b border-white/5">
+        <div className="space-y-2 text-center md:text-left">
+          <h2 className="text-3xl font-bold text-white tracking-tight italic flex items-center justify-center md:justify-start gap-4">
+            <Activity className="w-8 h-8 text-pink-500 animate-pulse" />
+            System Health Telemetry
           </h2>
-          <p className="text-sm text-muted-foreground mt-1">
-            Last updated: {lastUpdate.toLocaleTimeString('th-TH')}
+          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">
+            Temporal Synchronization: {lastUpdate.toLocaleTimeString('th-TH')}
           </p>
         </div>
-        <Badge className={getStatusColor(metrics.api.status)}>
+        <Badge className={cn("px-6 py-2 rounded-full border-none shadow-inner text-[10px] font-black uppercase tracking-widest italic", getStatusColor(metrics.api.status))}>
           {getStatusIcon(metrics.api.status)}
-          <span className="ml-1">System {metrics.api.status.toUpperCase()}</span>
+          <span className="ml-2">Status: {metrics.api.status.toUpperCase()}</span>
         </Badge>
       </div>
 
-      {/* Core Services Status */}
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <Server className="w-4 h-4" />
-              API Server
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">Status</span>
-                <Badge className={getStatusColor(metrics.api.status)} variant="outline">
-                  {metrics.api.status}
+      {/* Core Services Status - Infrastructure Nodes */}
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        {[
+          { label: 'API Server Node', status: metrics.api.status, val: `${metrics.api.responseTime}ms`, sub: formatUptime(metrics.api.uptime), icon: Server, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+          { label: 'Database Matrix', status: metrics.database.status, val: `${metrics.database.queryTime}ms`, sub: `${metrics.database.connections} Active Connects`, icon: Database, color: 'text-purple-400', bg: 'bg-purple-500/10' },
+          { label: 'Neural AI Core', status: metrics.services.ai, val: 'Active', sub: 'Optimized Inference', icon: Zap, color: 'text-pink-400', bg: 'bg-pink-500/10' },
+          { label: 'Entity Registry', status: 'healthy', val: metrics.activeUsers.current.toLocaleString(), sub: `${metrics.activeUsers.peak24h} Peak Sync`, icon: Users, color: 'text-cyan-400', bg: 'bg-cyan-500/10' }
+        ].map((node, i) => (
+          <Card key={i} className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2rem] hover:bg-white/[0.03] transition-all duration-500 group shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+              <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{node.label}</CardTitle>
+              <div className={cn("p-2 rounded-lg border border-white/5 shadow-inner group-hover:scale-110 transition-transform duration-700", node.bg)}>
+                <node.icon className={cn("h-4 w-4", node.color)} />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center gap-3">
+                <div className="text-3xl font-black text-white tracking-tighter italic">{node.val}</div>
+                <Badge variant="outline" className={cn("px-2 py-0 h-5 border-none rounded-full text-[8px] font-black uppercase tracking-tighter", getStatusColor(node.status as HealthStatus))}>
+                  {node.status}
                 </Badge>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">Uptime</span>
-                <span className="text-xs font-medium">{formatUptime(metrics.api.uptime)}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">Response</span>
-                <span className="text-xs font-medium">{metrics.api.responseTime}ms</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <Database className="w-4 h-4" />
-              Database
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">Status</span>
-                <Badge className={getStatusColor(metrics.database.status)} variant="outline">
-                  {metrics.database.status}
-                </Badge>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">Connections</span>
-                <span className="text-xs font-medium">
-                  {metrics.database.connections}/{metrics.database.maxConnections}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">Query Time</span>
-                <span className="text-xs font-medium">{metrics.database.queryTime}ms</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <Zap className="w-4 h-4" />
-              AI Service
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">Status</span>
-                <Badge className={getStatusColor(metrics.services.ai)} variant="outline">
-                  {metrics.services.ai}
-                </Badge>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">Storage</span>
-                <Badge className={getStatusColor(metrics.services.storage)} variant="outline">
-                  {metrics.services.storage}
-                </Badge>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">Email</span>
-                <Badge className={getStatusColor(metrics.services.email)} variant="outline">
-                  {metrics.services.email}
-                </Badge>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <Users className="w-4 h-4" />
-              Active Users
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <div className="text-2xl font-bold">{metrics.activeUsers.current}</div>
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-muted-foreground">Peak (24h)</span>
-                <span className="font-medium">{metrics.activeUsers.peak24h}</span>
-              </div>
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-muted-foreground">Authenticated</span>
-                <span className="font-medium">{metrics.activeUsers.authenticated}</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+              <p className="text-[9px] font-black uppercase tracking-widest mt-2 text-slate-600 italic">
+                {node.sub}
+              </p>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
-      {/* Performance Metrics */}
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">CPU Usage</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
+      {/* Performance Telemetry Bars */}
+      <div className="grid gap-6 md:grid-cols-3">
+        {[
+          { label: 'CPU Load Factor', val: metrics.performance.cpuUsage, icon: Activity },
+          { label: 'Neural Memory Allocation', val: metrics.performance.memoryUsage, icon: Brain },
+          { label: 'Storage Sector Integrity', val: metrics.performance.diskUsage, icon: Database }
+        ].map((item, i) => (
+          <Card key={i} className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2.5rem] shadow-2xl overflow-hidden relative group">
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+            <CardContent className="p-8 space-y-6">
               <div className="flex items-center justify-between">
-                <span className="text-2xl font-bold">{metrics.performance.cpuUsage}%</span>
-                {metrics.performance.cpuUsage > 80 && (
-                  <AlertTriangle className="w-4 h-4 text-yellow-500" />
-                )}
+                <div className="flex items-center gap-4">
+                  <div className="h-10 w-10 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-center shadow-inner group-hover:border-pink-500/30 transition-all duration-700">
+                    <item.icon className="h-5 w-5 text-slate-500 group-hover:text-pink-400 transition-colors" />
+                  </div>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 italic">{item.label}</span>
+                </div>
+                <div className="text-right">
+                  <span className={cn("text-2xl font-black italic tracking-tighter", item.val > 80 ? 'text-rose-500' : 'text-emerald-400')}>
+                    {item.val}%
+                  </span>
+                </div>
               </div>
-              <Progress value={metrics.performance.cpuUsage} className="h-2" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">Memory Usage</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-2xl font-bold">{metrics.performance.memoryUsage}%</span>
-                {metrics.performance.memoryUsage > 80 && (
-                  <AlertTriangle className="w-4 h-4 text-yellow-500" />
-                )}
+              <div className="relative h-2 w-full bg-white/[0.02] rounded-full overflow-hidden border border-white/5">
+                <motion.div 
+                  initial={{ width: 0 }}
+                  animate={{ width: `${item.val}%` }}
+                  transition={{ duration: 1.5, delay: i * 0.1 }}
+                  className={cn("h-full rounded-full transition-all duration-1000", item.val > 80 ? 'bg-gradient-to-r from-rose-500 to-rose-600 shadow-[0_0_15px_rgba(244,63,94,0.5)]' : 'bg-gradient-to-r from-emerald-500 to-teal-600 shadow-[0_0_15px_rgba(16,185,129,0.5)]')} 
+                />
               </div>
-              <Progress value={metrics.performance.memoryUsage} className="h-2" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">Disk Usage</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-2xl font-bold">{metrics.performance.diskUsage}%</span>
-                {metrics.performance.diskUsage > 80 && (
-                  <AlertTriangle className="w-4 h-4 text-yellow-500" />
-                )}
-              </div>
-              <Progress value={metrics.performance.diskUsage} className="h-2" />
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
-      {/* API Metrics */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <TrendingUp className="w-5 h-5" />
-            API Performance
-          </CardTitle>
-          <CardDescription>Real-time API metrics and error tracking</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 md:grid-cols-4">
-            <div>
-              <div className="text-sm text-muted-foreground mb-1">Requests/min</div>
-              <div className="text-2xl font-bold">{metrics.api.requestsPerMinute}</div>
-            </div>
-            <div>
-              <div className="text-sm text-muted-foreground mb-1">Avg Response Time</div>
-              <div className="text-2xl font-bold">{metrics.api.responseTime}ms</div>
-            </div>
-            <div>
-              <div className="text-sm text-muted-foreground mb-1">Error Rate</div>
-              <div className={`text-2xl font-bold ${metrics.api.errorRate > 5 ? 'text-red-500' : 'text-green-500'}`}>
-                {metrics.api.errorRate.toFixed(2)}%
+      <div className="grid gap-8 lg:grid-cols-2">
+        {/* API Performance Detailed */}
+        <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group">
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
+          <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
+            <CardTitle className="text-2xl font-bold text-white tracking-tight italic flex items-center gap-4">
+              <TrendingUp className="h-6 w-6 text-cyan-400" />
+              Real-time Throughput
+            </CardTitle>
+            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Vector analysis of system inflow</CardDescription>
+          </CardHeader>
+          <CardContent className="p-10 lg:p-12">
+            <div className="grid grid-cols-2 gap-8">
+              <div className="space-y-2">
+                <p className="text-[9px] font-black uppercase tracking-widest text-slate-600 italic">Requests Intensity</p>
+                <div className="text-4xl font-black text-white tracking-tighter italic">{metrics.api.requestsPerMinute} <span className="text-[10px] uppercase text-slate-500 not-italic font-black tracking-widest ml-2">RPM</span></div>
+              </div>
+              <div className="space-y-2">
+                <p className="text-[9px] font-black uppercase tracking-widest text-slate-600 italic">Exception Delta</p>
+                <div className={cn("text-4xl font-black tracking-tighter italic", metrics.api.errorRate > 5 ? 'text-rose-500' : 'text-emerald-400')}>
+                  {metrics.api.errorRate.toFixed(2)}%
+                </div>
+              </div>
+              <div className="col-span-2 space-y-4 pt-4">
+                <div className="flex justify-between items-center">
+                  <p className="text-[9px] font-black uppercase tracking-widest text-slate-600 italic">Database Pool Saturation</p>
+                  <span className="text-sm font-black text-white italic">{metrics.database.poolUtilization}%</span>
+                </div>
+                <div className="h-1.5 w-full bg-white/[0.02] rounded-full overflow-hidden border border-white/5">
+                  <motion.div 
+                    initial={{ width: 0 }}
+                    animate={{ width: `${metrics.database.poolUtilization}%` }}
+                    className="h-full bg-gradient-to-r from-cyan-500 to-blue-600 shadow-[0_0_15px_rgba(6,182,212,0.5)]" 
+                  />
+                </div>
               </div>
             </div>
-            <div>
-              <div className="text-sm text-muted-foreground mb-1">DB Pool Usage</div>
-              <div className="space-y-1">
-                <div className="text-lg font-bold">{metrics.database.poolUtilization}%</div>
-                <Progress value={metrics.database.poolUtilization} className="h-1" />
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
 
-      {/* Service Status Grid */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <Clock className="w-5 h-5" />
-            Service Health
-          </CardTitle>
-          <CardDescription>Status of all platform services</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-3 md:grid-cols-2">
-            {Object.entries(metrics.services).map(([service, status]) => (
-              <div key={service} className="flex items-center justify-between p-3 rounded-lg border">
-                <span className="font-medium capitalize">{service}</span>
-                <Badge className={getStatusColor(status)}>
-                  {getStatusIcon(status)}
-                  <span className="ml-1">{status}</span>
+        {/* Service Health Registry */}
+        <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group">
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent" />
+          <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
+            <CardTitle className="text-2xl font-bold text-white tracking-tight italic flex items-center gap-4">
+              <Shield className="h-6 w-6 text-purple-400" />
+              Protocol Integrity Index
+            </CardTitle>
+            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Nominal state of platform modules</CardDescription>
+          </CardHeader>
+          <CardContent className="p-10 lg:p-12 space-y-4">
+            {Object.entries(metrics.services).map(([service, status], idx) => (
+              <motion.div 
+                key={service} 
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: idx * 0.1 }}
+                className="flex items-center justify-between p-5 rounded-2xl bg-white/[0.02] border border-white/5 group/svc hover:bg-white/[0.04] transition-all duration-500"
+              >
+                <div className="flex items-center gap-4">
+                  <div className={cn("h-2 w-2 rounded-full animate-pulse shadow-lg", status === 'healthy' ? 'bg-emerald-500 shadow-emerald-500/50' : 'bg-rose-500 shadow-rose-500/50')} />
+                  <span className="text-sm font-bold text-slate-300 group-hover/svc:text-white transition-colors uppercase tracking-widest italic">{service} Control Node</span>
+                </div>
+                <Badge className={cn("px-4 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border-none shadow-inner", getStatusColor(status as HealthStatus))}>
+                  {status}
                 </Badge>
-              </div>
+              </motion.div>
             ))}
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
     </div>
-  )
+  );
 }

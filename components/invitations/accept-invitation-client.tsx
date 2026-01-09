@@ -77,7 +77,7 @@ export default function AcceptInvitationClient({ token }: AcceptInvitationClient
     }
 
     validateToken()
-  }, [token])
+  }, [token, t])
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()

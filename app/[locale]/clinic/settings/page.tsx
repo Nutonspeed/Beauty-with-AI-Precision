@@ -7,7 +7,25 @@ import { useLocalizePath } from '@/lib/i18n/locale-link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Header } from '@/components/header';
+import { Footer } from '@/components/footer';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/utils';
+import { 
+  Building2, 
+  Clock, 
+  Bell, 
+  CreditCard, 
+  BarChart3, 
+  Save, 
+  Settings,
+  MessageSquare,
+  DollarSign,
+  Zap
+} from 'lucide-react';
+import { useTranslations, useLocale } from 'next-intl';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -18,15 +36,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { 
-  Building2, 
-  Clock, 
-  Bell, 
-  CreditCard,
-  BarChart3,
-  Save,
-  Settings
-} from 'lucide-react';
 import { Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -57,6 +66,9 @@ interface ClinicSettings {
 }
 
 export default function ClinicSettingsPage() {
+  const t = useTranslations();
+  const locale = useLocale();
+  const isThaiLocale = locale === 'th';
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
   const lp = useLocalizePath();
@@ -311,425 +323,450 @@ export default function ClinicSettingsPage() {
   }
 
   return (
-    <div className="container mx-auto py-8 px-4 space-y-8">
-      {/* Header */}
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
-          <Settings className="h-8 w-8" />
-          <h1 className="text-3xl font-bold">ตั้งค่าคลินิก</h1>
+    <div className="flex min-h-screen flex-col bg-[#020617] text-slate-200 selection:bg-pink-500/30">
+      <Header />
+      
+      <main className="flex-1 relative overflow-hidden flex flex-col">
+        {/* Infrastructure Background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-pink-500/5 rounded-full blur-[120px] animate-glow-pulse" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-500/5 rounded-full blur-[100px] animate-float" />
+          <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.02]" />
         </div>
-        <p className="text-muted-foreground">
-          จัดการการตั้งค่าและการกำหนดค่าคลินิกของคุณ
-        </p>
-      </div>
 
-      <Tabs defaultValue="general" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="general">
-            <Building2 className="h-4 w-4 mr-2" />
-            ทั่วไป
-          </TabsTrigger>
-          <TabsTrigger value="booking">
-            <Clock className="h-4 w-4 mr-2" />
-            การจอง
-          </TabsTrigger>
-          <TabsTrigger value="notifications">
-            <Bell className="h-4 w-4 mr-2" />
-            การแจ้งเตือน
-          </TabsTrigger>
-          <TabsTrigger value="payment">
-            <CreditCard className="h-4 w-4 mr-2" />
-            การชำระเงิน
-          </TabsTrigger>
-          <TabsTrigger value="kpi">
-            <BarChart3 className="h-4 w-4 mr-2" />
-            KPI
-          </TabsTrigger>
-        </TabsList>
-
-        {/* General Settings */}
-        <TabsContent value="general">
-          <Card>
-            <CardHeader>
-              <CardTitle>ข้อมูลคลินิก</CardTitle>
-              <CardDescription>
-                ข้อมูลพื้นฐานและรายละเอียดติดต่อคลินิก
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="clinic_name">ชื่อคลินิก</Label>
-                <Input
-                  id="clinic_name"
-                  value={settings.clinic_name}
-                  onChange={(e) => setSettings({...settings, clinic_name: e.target.value})}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="clinic_email">อีเมล</Label>
-                <Input
-                  id="clinic_email"
-                  type="email"
-                  value={settings.clinic_email}
-                  onChange={(e) => setSettings({...settings, clinic_email: e.target.value})}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="clinic_phone">เบอร์โทรศัพท์</Label>
-                <Input
-                  id="clinic_phone"
-                  value={settings.clinic_phone}
-                  onChange={(e) => setSettings({...settings, clinic_phone: e.target.value})}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="clinic_address">ที่อยู่</Label>
-                <Input
-                  id="clinic_address"
-                  value={settings.clinic_address}
-                  onChange={(e) => setSettings({...settings, clinic_address: e.target.value})}
-                />
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Booking Settings */}
-        <TabsContent value="booking">
-          <Card>
-            <CardHeader>
-              <CardTitle>การตั้งค่าการจอง</CardTitle>
-              <CardDescription>
-                กำหนดกฎและข้อจำกัดสำหรับการจองออนไลน์
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label>เปิดการจองออนไลน์</Label>
-                  <p className="text-sm text-muted-foreground">
-                    อนุญาตให้ลูกค้าจองนัดหมายผ่านเว็บไซต์
-                  </p>
-                </div>
-                <Switch
-                  checked={settings.allow_online_booking}
-                  onCheckedChange={(checked) => setSettings({...settings, allow_online_booking: checked})}
-                />
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label>ยืนยันอัตโนมัติ</Label>
-                  <p className="text-sm text-muted-foreground">
-                    ยืนยันการจองโดยอัตโนมัติโดยไม่ต้องตรวจสอบ
-                  </p>
-                </div>
-                <Switch
-                  checked={settings.auto_confirm}
-                  onCheckedChange={(checked) => setSettings({...settings, auto_confirm: checked})}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="cancellation_hours">เวลายกเลิกล่วงหน้า (ชั่วโมง)</Label>
-                <Input
-                  id="cancellation_hours"
-                  type="number"
-                  value={settings.cancellation_hours}
-                  onChange={(e) => setSettings({...settings, cancellation_hours: parseInt(e.target.value)})}
-                />
-                <p className="text-sm text-muted-foreground">
-                  ลูกค้าต้องยกเลิกการจองล่วงหน้าอย่างน้อย
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="buffer_time">เวลาบัฟเฟอร์ระหว่างนัดหมาย (นาที)</Label>
-                <Input
-                  id="buffer_time"
-                  type="number"
-                  value={settings.buffer_time_minutes}
-                  onChange={(e) => setSettings({...settings, buffer_time_minutes: parseInt(e.target.value)})}
-                />
-                <p className="text-sm text-muted-foreground">
-                  เวลาว่างระหว่างนัดหมายแต่ละรายการ
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Notification Settings */}
-        <TabsContent value="notifications">
-          <Card>
-            <CardHeader>
-              <CardTitle>การตั้งค่าการแจ้งเตือน</CardTitle>
-              <CardDescription>
-                กำหนดวิธีการแจ้งเตือนลูกค้าและพนักงาน
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label>การแจ้งเตือนทางอีเมล</Label>
-                  <p className="text-sm text-muted-foreground">
-                    ส่งการยืนยันและเตือนความจำทางอีเมล
-                  </p>
-                </div>
-                <Switch
-                  checked={settings.email_notifications}
-                  onCheckedChange={(checked) => setSettings({...settings, email_notifications: checked})}
-                />
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label>การแจ้งเตือนทาง SMS</Label>
-                  <p className="text-sm text-muted-foreground">
-                    ส่งข้อความเตือนความจำทาง SMS
-                  </p>
-                </div>
-                <Switch
-                  checked={settings.sms_notifications}
-                  onCheckedChange={(checked) => setSettings({...settings, sms_notifications: checked})}
-                />
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label>เตือนความจำการจอง</Label>
-                  <p className="text-sm text-muted-foreground">
-                    ส่งการเตือนความจำก่อนนัดหมาย
-                  </p>
-                </div>
-                <Switch
-                  checked={settings.booking_reminders}
-                  onCheckedChange={(checked) => setSettings({...settings, booking_reminders: checked})}
-                />
-              </div>
-
-              {settings.booking_reminders && (
-                <div className="space-y-2">
-                  <Label htmlFor="reminder_hours">เตือนก่อนนัดหมาย (ชั่วโมง)</Label>
-                  <Input
-                    id="reminder_hours"
-                    type="number"
-                    value={settings.reminder_hours_before}
-                    onChange={(e) => setSettings({...settings, reminder_hours_before: parseInt(e.target.value)})}
-                  />
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Payment Settings */}
-        <TabsContent value="payment">
-          <Card>
-            <CardHeader>
-              <CardTitle>การตั้งค่าการชำระเงิน</CardTitle>
-              <CardDescription>
-                กำหนดวิธีการชำระเงินและนโยบายเงินมัดจำ
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="rounded-lg border border-border/60 p-4">
-                <div className="mb-3">
-                  <div className="font-medium">PromptPay (พร้อมเพย์)</div>
-                  <div className="text-sm text-muted-foreground">
-                    ใช้สำหรับสร้าง QR ให้ลูกค้าสแกนชำระเงิน
+        <div className="container relative z-10 py-12 md:py-20 px-6 space-y-16 max-w-7xl mx-auto flex-1">
+          {/* Settings Header Interface */}
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-12 pb-12 border-b border-white/5">
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="space-y-6"
+            >
+              <Badge variant="outline" className="px-4 py-1 rounded-full border-pink-500/30 text-pink-400 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.2em] text-[10px] font-black shadow-2xl shadow-pink-500/10">
+                <Settings className="mr-3 h-3.5 w-3.5 animate-spin-slow" />
+                Clinical Parameter Configuration
+              </Badge>
+              <h1 className="text-5xl md:text-8xl font-bold tracking-tighter text-white leading-[0.9] italic">
+                System<br />
+                <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent not-italic">Settings</span>
+              </h1>
+              <p className="text-xl text-slate-500 font-light tracking-widest max-w-2xl italic leading-relaxed">
+                Orchestrate clinical protocols and define system-wide diagnostic parameters.
+              </p>
+            </motion.div>
+            
+            <div className="shrink-0">
+              <Button size="xl" variant="premium" className="h-16 px-12 rounded-[2rem] shadow-2xl shadow-pink-500/20 text-[10px] font-black uppercase tracking-[0.3em] transition-all hover:scale-105 active:scale-95 border" onClick={handleSave} disabled={isSaving}>
+                {isSaving ? (
+                  <div className="flex items-center gap-3">
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    Syncing...
                   </div>
-                </div>
-
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="promptpay_id">PromptPay ID</Label>
-                    <Input
-                      id="promptpay_id"
-                      value={promptPayId}
-                      onChange={(e) => setPromptPayId(e.target.value)}
-                      placeholder="เบอร์มือถือ 10 หลัก หรือเลขบัตร 13 หลัก"
-                    />
-                    <div className="text-xs text-muted-foreground">ใส่เฉพาะตัวเลขได้ (ระบบจะ normalize ให้)</div>
+                ) : (
+                  <div className="flex items-center gap-3">
+                    <Save className="h-5 w-5" />
+                    Commit Changes
                   </div>
+                )}
+              </Button>
+            </div>
+          </div>
 
-                  <div className="space-y-2">
-                    <Label>ประเภท</Label>
-                    <Select value={promptPayType} onValueChange={(v: 'mobile' | 'citizen_id') => setPromptPayType(v)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="เลือกประเภท" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="mobile">เบอร์มือถือ</SelectItem>
-                        <SelectItem value="citizen_id">เลขบัตรประชาชน</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
+          <Tabs defaultValue="general" className="space-y-12">
+            <div className="flex items-center justify-between border-b border-white/5 pb-4">
+              <TabsList className="bg-white/[0.02] border border-white/5 p-1.5 rounded-2xl h-auto gap-2">
+                <TabsTrigger value="general" className="rounded-xl px-8 py-3 data-[state=active]:bg-pink-600 data-[state=active]:text-white transition-all font-black uppercase tracking-[0.15em] text-[10px] italic">
+                  <Building2 className="h-4 w-4 mr-3" />
+                  General
+                </TabsTrigger>
+                <TabsTrigger value="booking" className="rounded-xl px-8 py-3 data-[state=active]:bg-pink-600 data-[state=active]:text-white transition-all font-black uppercase tracking-[0.15em] text-[10px] italic">
+                  <Clock className="h-4 w-4 mr-3" />
+                  Temporal
+                </TabsTrigger>
+                <TabsTrigger value="notifications" className="rounded-xl px-8 py-3 data-[state=active]:bg-pink-600 data-[state=active]:text-white transition-all font-black uppercase tracking-[0.15em] text-[10px] italic">
+                  <Bell className="h-4 w-4 mr-3" />
+                  Alerts
+                </TabsTrigger>
+                <TabsTrigger value="payment" className="rounded-xl px-8 py-3 data-[state=active]:bg-pink-600 data-[state=active]:text-white transition-all font-black uppercase tracking-[0.15em] text-[10px] italic">
+                  <CreditCard className="h-4 w-4 mr-3" />
+                  Financial
+                </TabsTrigger>
+                <TabsTrigger value="kpi" className="rounded-xl px-8 py-3 data-[state=active]:bg-pink-600 data-[state=active]:text-white transition-all font-black uppercase tracking-[0.15em] text-[10px] italic">
+                  <BarChart3 className="h-4 w-4 mr-3" />
+                  KPI Nodes
+                </TabsTrigger>
+              </TabsList>
+            </div>
 
-                <div className="mt-4 flex justify-end">
-                  <Button onClick={handleSavePromptPay} disabled={isPromptPaySaving}>
-                    {isPromptPaySaving ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        กำลังบันทึก...
-                      </>
-                    ) : (
-                      <>
-                        <Save className="mr-2 h-4 w-4" />
-                        บันทึก PromptPay
-                      </>
-                    )}
-                  </Button>
-                </div>
-              </div>
+            <AnimatePresence mode="wait">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                {/* General Settings Infrastructure */}
+                <TabsContent value="general" className="mt-0 outline-none">
+                  <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group">
+                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                    <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
+                      <CardTitle className="text-3xl font-bold text-white tracking-tight italic">Clinical Identity</CardTitle>
+                      <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Establish clinical node parameters</CardDescription>
+                    </CardHeader>
+                    <CardContent className="p-10 lg:p-12 space-y-10">
+                      <div className="grid gap-10 md:grid-cols-2">
+                        <div className="space-y-3">
+                          <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">Clinic Name</Label>
+                          <Input
+                            className="h-14 rounded-2xl border-white/5 bg-white/[0.03] text-white placeholder:text-slate-700 focus:border-pink-500/30 focus:ring-pink-500/20 transition-all px-6"
+                            value={settings.clinic_name}
+                            onChange={(e) => setSettings({...settings, clinic_name: e.target.value})}
+                          />
+                        </div>
+                        <div className="space-y-3">
+                          <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">Authorized Email</Label>
+                          <Input
+                            className="h-14 rounded-2xl border-white/5 bg-white/[0.03] text-white placeholder:text-slate-700 focus:border-pink-500/30 focus:ring-pink-500/20 transition-all px-6"
+                            type="email"
+                            value={settings.clinic_email}
+                            onChange={(e) => setSettings({...settings, clinic_email: e.target.value})}
+                          />
+                        </div>
+                      </div>
+                      <div className="grid gap-10 md:grid-cols-2">
+                        <div className="space-y-3">
+                          <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">Clinical Line (Phone)</Label>
+                          <Input
+                            className="h-14 rounded-2xl border-white/5 bg-white/[0.03] text-white placeholder:text-slate-700 focus:border-pink-500/30 focus:ring-pink-500/20 transition-all px-6"
+                            value={settings.clinic_phone}
+                            onChange={(e) => setSettings({...settings, clinic_phone: e.target.value})}
+                          />
+                        </div>
+                        <div className="space-y-3">
+                          <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">Clinical Node Location</Label>
+                          <Input
+                            className="h-14 rounded-2xl border-white/5 bg-white/[0.03] text-white placeholder:text-slate-700 focus:border-pink-500/30 focus:ring-pink-500/20 transition-all px-6"
+                            value={settings.clinic_address}
+                            onChange={(e) => setSettings({...settings, clinic_address: e.target.value})}
+                          />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
 
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label>ต้องการเงินมัดจำ</Label>
-                  <p className="text-sm text-muted-foreground">
-                    ต้องการเงินมัดจำเมื่อจองนัดหมาย
-                  </p>
-                </div>
-                <Switch
-                  checked={settings.require_deposit}
-                  onCheckedChange={(checked) => setSettings({...settings, require_deposit: checked})}
-                />
-              </div>
+                {/* Booking Settings Infrastructure */}
+                <TabsContent value="booking" className="mt-0 outline-none">
+                  <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group">
+                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                    <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
+                      <CardTitle className="text-3xl font-bold text-white tracking-tight italic">Temporal Protocols</CardTitle>
+                      <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Define reservation and cycle constraints</CardDescription>
+                    </CardHeader>
+                    <CardContent className="p-10 lg:p-12 space-y-12">
+                      <div className="grid gap-10 md:grid-cols-2">
+                        <div className="flex items-center justify-between p-8 rounded-[2rem] border border-white/5 bg-white/[0.02] shadow-inner group/toggle">
+                          <div className="space-y-2">
+                            <Label className="text-lg font-bold text-white italic transition-colors group-hover/toggle:text-pink-400">Online Reservation Inflow</Label>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600 italic">Allow decentralized bookings</p>
+                          </div>
+                          <Switch
+                            className="data-[state=checked]:bg-pink-600"
+                            checked={settings.allow_online_booking}
+                            onCheckedChange={(checked) => setSettings({...settings, allow_online_booking: checked})}
+                          />
+                        </div>
+                        <div className="flex items-center justify-between p-8 rounded-[2rem] border border-white/5 bg-white/[0.02] shadow-inner group/toggle">
+                          <div className="space-y-2">
+                            <Label className="text-lg font-bold text-white italic transition-colors group-hover/toggle:text-pink-400">Autonomous Confirmation</Label>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600 italic">Bypass clinical verification nodes</p>
+                          </div>
+                          <Switch
+                            className="data-[state=checked]:bg-pink-600"
+                            checked={settings.auto_confirm}
+                            onCheckedChange={(checked) => setSettings({...settings, auto_confirm: checked})}
+                          />
+                        </div>
+                      </div>
 
-              {settings.require_deposit && (
-                <div className="space-y-2">
-                  <Label htmlFor="deposit_percentage">เปอร์เซ็นต์เงินมัดจำ (%)</Label>
-                  <Input
-                    id="deposit_percentage"
-                    type="number"
-                    min="0"
-                    max="100"
-                    value={settings.deposit_percentage}
-                    onChange={(e) => setSettings({...settings, deposit_percentage: parseInt(e.target.value)})}
-                  />
-                </div>
-              )}
+                      <div className="grid gap-10 md:grid-cols-2">
+                        <div className="space-y-3">
+                          <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">Cancellation Buffer (Hours)</Label>
+                          <Input
+                            className="h-14 rounded-2xl border-white/5 bg-white/[0.03] text-white placeholder:text-slate-700 focus:border-pink-500/30 focus:ring-pink-500/20 transition-all px-6"
+                            type="number"
+                            value={settings.cancellation_hours}
+                            onChange={(e) => setSettings({...settings, cancellation_hours: parseInt(e.target.value)})}
+                          />
+                        </div>
+                        <div className="space-y-3">
+                          <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">Inter-Cycle Buffer (Minutes)</Label>
+                          <Input
+                            className="h-14 rounded-2xl border-white/5 bg-white/[0.03] text-white placeholder:text-slate-700 focus:border-pink-500/30 focus:ring-pink-500/20 transition-all px-6"
+                            type="number"
+                            value={settings.buffer_time_minutes}
+                            onChange={(e) => setSettings({...settings, buffer_time_minutes: parseInt(e.target.value)})}
+                          />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
 
-              <div className="space-y-2">
-                <Label>วิธีการชำระเงินที่รับ</Label>
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      id="cash"
-                      checked={settings.accepted_payment_methods.includes('cash')}
-                      onChange={(e) => {
-                        const methods = e.target.checked
-                          ? [...settings.accepted_payment_methods, 'cash']
-                          : settings.accepted_payment_methods.filter(m => m !== 'cash');
-                        setSettings({...settings, accepted_payment_methods: methods});
-                      }}
-                    />
-                    <label htmlFor="cash" className="text-sm">เงินสด</label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      id="credit_card"
-                      checked={settings.accepted_payment_methods.includes('credit_card')}
-                      onChange={(e) => {
-                        const methods = e.target.checked
-                          ? [...settings.accepted_payment_methods, 'credit_card']
-                          : settings.accepted_payment_methods.filter(m => m !== 'credit_card');
-                        setSettings({...settings, accepted_payment_methods: methods});
-                      }}
-                    />
-                    <label htmlFor="credit_card" className="text-sm">บัตรเครดิต/เดบิต</label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      id="promptpay"
-                      checked={settings.accepted_payment_methods.includes('promptpay')}
-                      onChange={(e) => {
-                        const methods = e.target.checked
-                          ? [...settings.accepted_payment_methods, 'promptpay']
-                          : settings.accepted_payment_methods.filter(m => m !== 'promptpay');
-                        setSettings({...settings, accepted_payment_methods: methods});
-                      }}
-                    />
-                    <label htmlFor="promptpay" className="text-sm">พร้อมเพย์</label>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+                {/* Notification Settings Infrastructure */}
+                <TabsContent value="notifications" className="mt-0 outline-none">
+                  <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group">
+                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                    <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
+                      <CardTitle className="text-3xl font-bold text-white tracking-tight italic">Alert Infrastructures</CardTitle>
+                      <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Configure real-time communication nodes</CardDescription>
+                    </CardHeader>
+                    <CardContent className="p-10 lg:p-12 space-y-12">
+                      <div className="grid gap-10 md:grid-cols-3">
+                        <div className="flex flex-col items-center gap-6 p-10 rounded-[2.5rem] border border-white/5 bg-white/[0.02] shadow-inner group/alert">
+                          <div className="h-16 w-16 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 group-hover/alert:scale-110 transition-transform duration-700">
+                            <Bell className="h-8 w-8" />
+                          </div>
+                          <div className="text-center space-y-2">
+                            <Label className="text-lg font-bold text-white italic">Email Protocol</Label>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600 italic">Sync via SMTP nodes</p>
+                          </div>
+                          <Switch
+                            className="data-[state=checked]:bg-blue-600"
+                            checked={settings.email_notifications}
+                            onCheckedChange={(checked) => setSettings({...settings, email_notifications: checked})}
+                          />
+                        </div>
+                        <div className="flex flex-col items-center gap-6 p-10 rounded-[2.5rem] border border-white/5 bg-white/[0.02] shadow-inner group/alert">
+                          <div className="h-16 w-16 rounded-2xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-pink-400 group-hover/alert:scale-110 transition-transform duration-700">
+                            <MessageSquare className="h-8 w-8" />
+                          </div>
+                          <div className="text-center space-y-2">
+                            <Label className="text-lg font-bold text-white italic">SMS Protocol</Label>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600 italic">Direct carrier transmission</p>
+                          </div>
+                          <Switch
+                            className="data-[state=checked]:bg-pink-600"
+                            checked={settings.sms_notifications}
+                            onCheckedChange={(checked) => setSettings({...settings, sms_notifications: checked})}
+                          />
+                        </div>
+                        <div className="flex flex-col items-center gap-6 p-10 rounded-[2.5rem] border border-white/5 bg-white/[0.02] shadow-inner group/alert">
+                          <div className="h-16 w-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 group-hover/alert:scale-110 transition-transform duration-700">
+                            <Clock className="h-8 w-8" />
+                          </div>
+                          <div className="text-center space-y-2">
+                            <Label className="text-lg font-bold text-white italic">Reminder Sync</Label>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600 italic">Temporal alert automation</p>
+                          </div>
+                          <Switch
+                            className="data-[state=checked]:bg-cyan-600"
+                            checked={settings.booking_reminders}
+                            onCheckedChange={(checked) => setSettings({...settings, booking_reminders: checked})}
+                          />
+                        </div>
+                      </div>
 
-        <TabsContent value="kpi">
-          <Card>
-            <CardHeader>
-              <CardTitle>KPI Targets</CardTitle>
-              <CardDescription>
-                กำหนดเป้าหมาย KPI ของคลินิก (เก็บเป็น JSON)
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {isKpiLoading ? (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  กำลังโหลด KPI Targets...
-                </div>
-              ) : (
-                <>
-                  <div className="space-y-2">
-                    <Label htmlFor="kpi_targets">Targets (JSON)</Label>
-                    <Textarea
-                      id="kpi_targets"
-                      value={kpiTargetsText}
-                      onChange={(e) => setKpiTargetsText(e.target.value)}
-                      rows={14}
-                      className="font-mono text-sm"
-                    />
-                  </div>
-
-                  <div className="flex justify-end">
-                    <Button onClick={handleSaveKpiTargets} disabled={isKpiSaving}>
-                      {isKpiSaving ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          กำลังบันทึก...
-                        </>
-                      ) : (
-                        <>
-                          <Save className="mr-2 h-4 w-4" />
-                          บันทึก KPI Targets
-                        </>
+                      {settings.booking_reminders && (
+                        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="space-y-3 max-w-md mx-auto">
+                          <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic text-center block">Transmission Lead Time (Hours)</Label>
+                          <Input
+                            className="h-14 rounded-2xl border-white/5 bg-white/[0.03] text-white placeholder:text-slate-700 focus:border-cyan-500/30 focus:ring-cyan-500/20 transition-all px-6 text-center text-lg font-bold"
+                            type="number"
+                            value={settings.reminder_hours_before}
+                            onChange={(e) => setSettings({...settings, reminder_hours_before: parseInt(e.target.value)})}
+                          />
+                        </motion.div>
                       )}
-                    </Button>
-                  </div>
-                </>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
 
-      {/* Save Button */}
-      <div className="flex justify-end">
-        <Button onClick={handleSave} disabled={isSaving} size="lg">
-          {isSaving ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              กำลังบันทึก...
-            </>
-          ) : (
-            <>
-              <Save className="mr-2 h-4 w-4" />
-              บันทึกการตั้งค่า
-            </>
-          )}
-        </Button>
-      </div>
+                {/* Payment Settings Infrastructure */}
+                <TabsContent value="payment" className="mt-0 outline-none">
+                  <div className="space-y-10">
+                    <Card className="border-pink-500/20 bg-pink-500/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group">
+                      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/20 to-transparent" />
+                      <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5 flex flex-row items-center justify-between">
+                        <div className="space-y-2">
+                          <CardTitle className="text-3xl font-bold text-white tracking-tight italic flex items-center gap-4">
+                            <CreditCard className="h-8 w-8 text-pink-400" />
+                            PromptPay Gateway Node
+                          </CardTitle>
+                          <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Authorized inflow vector synchronization</CardDescription>
+                        </div>
+                        <Button 
+                          variant="premium" 
+                          size="lg" 
+                          className="h-14 px-8 rounded-2xl shadow-2xl shadow-pink-500/20 text-[9px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all"
+                          onClick={handleSavePromptPay} 
+                          disabled={isPromptPaySaving}
+                        >
+                          {isPromptPaySaving ? (
+                            <div className="flex items-center gap-3">
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                              Syncing Node...
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-3">
+                              <Save className="h-4 w-4" />
+                              Authorize Node
+                            </div>
+                          )}
+                        </Button>
+                      </CardHeader>
+                      <CardContent className="p-10 lg:p-12 space-y-10">
+                        <div className="grid gap-10 md:grid-cols-2">
+                          <div className="space-y-3">
+                            <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">PromptPay Node ID</Label>
+                            <Input
+                              className="h-14 rounded-2xl border-white/5 bg-white/[0.03] text-white placeholder:text-slate-700 focus:border-pink-500/30 focus:ring-pink-500/20 transition-all px-6 font-mono text-xs"
+                              value={promptPayId}
+                              onChange={(e) => setPromptPayId(e.target.value)}
+                              placeholder="10-digit mobile or 13-digit ID"
+                            />
+                          </div>
+                          <div className="space-y-3">
+                            <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">Identification Vector</Label>
+                            <Select value={promptPayType} onValueChange={(v: 'mobile' | 'citizen_id') => setPromptPayType(v)}>
+                              <SelectTrigger className="h-14 rounded-2xl border-white/5 bg-white/[0.03] text-white focus:ring-pink-500/20 focus:border-pink-500/30 transition-all px-6 text-[10px] font-black uppercase tracking-widest italic">
+                                <SelectValue placeholder="Node Type" />
+                              </SelectTrigger>
+                              <SelectContent className="bg-[#020617] border-white/10 rounded-2xl">
+                                <SelectItem value="mobile" className="text-[10px] font-black uppercase tracking-widest italic">Mobile Infrastructure</SelectItem>
+                                <SelectItem value="citizen_id" className="text-[10px] font-black uppercase tracking-widest italic">Citizen ID Hub</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group">
+                      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                      <CardContent className="p-10 lg:p-12 space-y-12">
+                        <div className="flex items-center justify-between p-8 rounded-[2rem] border border-white/5 bg-white/[0.02] shadow-inner group/toggle">
+                          <div className="space-y-2">
+                            <Label className="text-lg font-bold text-white italic transition-colors group-hover/toggle:text-pink-400">Pre-Authorization Deposit</Label>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600 italic">Require financial commitment at reservation</p>
+                          </div>
+                          <Switch
+                            className="data-[state=checked]:bg-pink-600"
+                            checked={settings.require_deposit}
+                            onCheckedChange={(checked) => setSettings({...settings, require_deposit: checked})}
+                          />
+                        </div>
+
+                        {settings.require_deposit && (
+                          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="space-y-3 max-w-md mx-auto">
+                            <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic text-center block">Deposit Vector Intensity (%)</Label>
+                            <Input
+                              className="h-14 rounded-2xl border-white/5 bg-white/[0.03] text-white focus:border-pink-500/30 focus:ring-pink-500/20 transition-all px-6 text-center text-lg font-bold"
+                              type="number"
+                              min="0"
+                              max="100"
+                              value={settings.deposit_percentage}
+                              onChange={(e) => setSettings({...settings, deposit_percentage: parseInt(e.target.value)})}
+                            />
+                          </motion.div>
+                        )}
+
+                        <div className="space-y-6">
+                          <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">Authorized Inflow Methods</Label>
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {[
+                              { id: 'cash', label: 'Fiat (Cash)', icon: DollarSign, color: 'text-blue-400' },
+                              { id: 'credit_card', label: 'Credit Infrastructure', icon: CreditCard, color: 'text-purple-400' },
+                              { id: 'promptpay', label: 'PromptPay Node', icon: Zap, color: 'text-pink-400' }
+                            ].map((method) => (
+                              <div 
+                                key={method.id} 
+                                className={cn(
+                                  "flex items-center gap-6 p-6 rounded-2xl border transition-all duration-500 cursor-pointer group/method",
+                                  settings.accepted_payment_methods.includes(method.id) 
+                                    ? "bg-white/[0.03] border-pink-500/30 shadow-inner" 
+                                    : "bg-white/[0.01] border-white/5 hover:border-white/10"
+                                )}
+                                onClick={() => {
+                                  const methods = settings.accepted_payment_methods.includes(method.id)
+                                    ? settings.accepted_payment_methods.filter(m => m !== method.id)
+                                    : [...settings.accepted_payment_methods, method.id];
+                                  setSettings({...settings, accepted_payment_methods: methods});
+                                }}
+                              >
+                                <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center border border-white/5 shadow-inner transition-all duration-500", settings.accepted_payment_methods.includes(method.id) ? "bg-pink-600/20 text-pink-400" : "bg-white/5 text-slate-600")}>
+                                  <method.icon className="h-5 w-5" />
+                                </div>
+                                <span className={cn("text-[10px] font-black uppercase tracking-widest italic", settings.accepted_payment_methods.includes(method.id) ? "text-white" : "text-slate-600")}>{method.label}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </TabsContent>
+
+                {/* KPI Settings Infrastructure */}
+                <TabsContent value="kpi" className="mt-0 outline-none">
+                  <Card className="border-cyan-500/20 bg-cyan-500/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group">
+                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
+                    <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5 flex flex-row items-center justify-between">
+                      <div className="space-y-2">
+                        <CardTitle className="text-3xl font-bold text-white tracking-tight italic flex items-center gap-4">
+                          <BarChart3 className="h-8 w-8 text-cyan-400" />
+                          Performance Benchmark Nodes
+                        </CardTitle>
+                        <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Define global performance intelligence parameters</CardDescription>
+                      </div>
+                      <Button 
+                        variant="premium" 
+                        size="lg" 
+                        className="h-14 px-8 rounded-2xl shadow-2xl shadow-cyan-500/20 text-[9px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all bg-cyan-600 border-none"
+                        onClick={handleSaveKpiTargets} 
+                        disabled={isKpiSaving}
+                      >
+                        {isKpiSaving ? (
+                          <div className="flex items-center gap-3">
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            Syncing KPI...
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-3">
+                            <Save className="h-4 w-4" />
+                            Authorize KPI
+                          </div>
+                        )}
+                      </Button>
+                    </CardHeader>
+                    <CardContent className="p-10 lg:p-12">
+                      {isKpiLoading ? (
+                        <div className="py-20 text-center space-y-6">
+                          <Loader2 className="mx-auto h-12 w-12 text-cyan-500 animate-spin" />
+                          <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-600 animate-pulse">Initializing KPI Nodes...</p>
+                        </div>
+                      ) : (
+                        <div className="space-y-6">
+                          <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">Intelligence Hash (JSON Node)</Label>
+                          <div className="relative group">
+                            <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-[2rem] blur opacity-20 group-focus-within:opacity-100 transition duration-1000" />
+                            <Textarea
+                              className="rounded-[2rem] border-white/5 bg-white/[0.03] text-cyan-400 placeholder:text-slate-700 px-8 py-8 resize-none font-mono text-xs leading-relaxed min-h-[400px] focus:border-cyan-500/30 transition-all relative z-10"
+                              value={kpiTargetsText}
+                              onChange={(e) => setKpiTargetsText(e.target.value)}
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              </motion.div>
+            </AnimatePresence>
+          </Tabs>
+        </div>
+      </main>
+
+      <Footer />
     </div>
   );
 }

@@ -23,14 +23,14 @@ import { Card, CardContent } from "@/components/ui/card"
 import { toast } from "sonner"
 import { Plus, Trash2, Loader2 } from "lucide-react"
 
-type Treatment = {
+export type Treatment = {
   name: string
   price: number
   sessions: number
   description?: string
 }
 
-type Proposal = {
+export type Proposal = {
   id: string
   lead_id: string
   title: string
@@ -39,10 +39,21 @@ type Proposal = {
   discount_percent: number
   discount_amount: number
   total_value: number
-  valid_until?: string
-  payment_terms?: string
-  terms_and_conditions?: string
-  notes?: string
+  valid_until?: string | null
+  payment_terms?: string | null
+  terms_and_conditions?: string | null
+  notes?: string | null
+  status?: string
+  sent_at?: string | null
+  win_probability?: number
+  created_at?: string
+  metadata?: {
+    appointment_id?: string
+    [key: string]: any
+  }
+  sales_leads?: {
+    name: string
+  } | null
 }
 
 type Lead = {

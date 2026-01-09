@@ -1,13 +1,19 @@
 import Stripe from 'stripe';
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('STRIPE_SECRET_KEY is not set in environment variables');
-}
+let stripeInstance: Stripe | null = null;
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2025-10-29.clover',
-  typescript: true,
-});
+export function getStripe() {
+  if (!process.env.STRIPE_SECRET_KEY) {
+    throw new Error('STRIPE_SECRET_KEY is not set in environment variables');
+  }
+  if (!stripeInstance) {
+    stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: '2025-10-29.clover',
+      typescript: true,
+    });
+  }
+  return stripeInstance;
+}
 
 export interface CreatePaymentIntentParams {
   amount: number; // Amount in THB
@@ -23,6 +29,7 @@ export async function createPaymentIntent({
   description,
 }: CreatePaymentIntentParams) {
   try {
+    const stripe = getStripe();
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(amount * 100), // Convert THB to satang
       currency,
@@ -49,6 +56,7 @@ export async function createPaymentIntent({
 
 export async function retrievePaymentIntent(paymentIntentId: string) {
   try {
+    const stripe = getStripe();
     const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
     return {
       success: true,
@@ -65,6 +73,7 @@ export async function retrievePaymentIntent(paymentIntentId: string) {
 
 export async function cancelPaymentIntent(paymentIntentId: string) {
   try {
+    const stripe = getStripe();
     const paymentIntent = await stripe.paymentIntents.cancel(paymentIntentId);
     return {
       success: true,

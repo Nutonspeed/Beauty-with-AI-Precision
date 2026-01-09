@@ -8,6 +8,8 @@ import { useTranslations } from "next-intl"
 import { Sparkles, Send, MessageSquare, Mail, Check, ArrowLeft, Zap } from "lucide-react"
 
 // Interface สำหรับข้อมูลลีด
+import { SUBSCRIPTION_PLANS } from "@/lib/subscriptions/plans"
+
 interface Lead {
   id: string
   name: string
@@ -64,46 +66,39 @@ export function QuickProposal({ open, onOpenChange, lead, onSent }: QuickProposa
     // แพ็คเกจพื้นฐาน - สำหรับคะแนนดี (>80)
     const basicPackage: TreatmentPackage = {
       id: "basic",
-      name: "Maintenance Care",
-      price: 15000,
+      name: "Starter Maintenance",
+      price: SUBSCRIPTION_PLANS.starter.price,
       treatments: ["HydraFacial", "LED Therapy", "Vitamin Serum"],
-      description: "บำรุงรักษาผิวที่มีสุขภาพดีอยู่แล้ว",
+      description: "บำรุงรักษาผิวขั้นพื้นฐานสำหรับ 1 สาขา",
       recommended: avgScore > 80,
-      discount: 10
     }
 
-    // แพ็คเกจกลาง - สำหรับคะแนนปานกลาง (60-80)
     const premiumPackage: TreatmentPackage = {
       id: "premium",
-      name: "Deep Renewal",
-      price: 35000,
+      name: "Professional Renewal",
+      price: SUBSCRIPTION_PLANS.professional.price,
       treatments: [
         "HydraFacial",
         "Chemical Peel",
         "Microdermabrasion",
         "RF Skin Tightening",
-        "LED Therapy"
       ],
-      description: "ฟื้นฟูผิวที่มีปัญหาปานกลาง เห็นผลชัดเจน",
-      recommended: avgScore >= 60 && avgScore <= 80,
-      discount: 15
+      description: "แพ็คเกจยอดนิยมเพื่อการฟื้นฟูผิวอย่างเต็มรูปแบบ",
+      recommended: avgScore <= 80 && avgScore > 50,
     }
 
-    // แพ็คเกจสูง - สำหรับคะแนนต่ำ (<60) หรือมีปัญหามาก
     const vipPackage: TreatmentPackage = {
       id: "vip",
-      name: "Total Transformation",
-      price: 75000,
+      name: "Enterprise Transformation",
+      price: SUBSCRIPTION_PLANS.enterprise.price,
       treatments: [
         "ทุกทรีตเมนต์",
         "Laser Treatment",
-        "ปรึกษาแพทย์ผิวหนัง",
-        "Home Care Kit",
-        "Follow-up 6 เดือน"
+        "ปรึกษาแพทย์พิเศษ",
+        "Premium Home Care Kit",
       ],
-      description: "แก้ปัญหาผิวอย่างครบวงจร พร้อมติดตามผล",
-      recommended: avgScore < 60,
-      discount: 20
+      description: "การดูแลระดับสูงสุดสำหรับเครือคลินิกหรือเคสซับซ้อน",
+      recommended: avgScore <= 50,
     }
 
     // เรียงตาม recommended ก่อน
@@ -119,31 +114,28 @@ export function QuickProposal({ open, onOpenChange, lead, onSent }: QuickProposa
     return [
       {
         id: "premium",
-        name: "Deep Renewal",
-        price: 35000,
+        name: "Professional Renewal",
+        price: SUBSCRIPTION_PLANS.professional.price,
         treatments: ["HydraFacial", "Chemical Peel", "Microdermabrasion", "RF Skin Tightening"],
-        description: "แพ็คเกจยอดนิยม เหมาะกับทุกสภาพผิว",
+        description: "แพ็คเกจยอดนิยมเพื่อการฟื้นฟูผิวอย่างเต็มรูปแบบ",
         recommended: true,
-        discount: 15
       },
       {
         id: "basic",
-        name: "Maintenance Care",
-        price: 15000,
+        name: "Starter Maintenance",
+        price: SUBSCRIPTION_PLANS.starter.price,
         treatments: ["HydraFacial", "LED Therapy", "Vitamin Serum"],
-        description: "ดูแลรักษาสภาพผิว",
+        description: "บำรุงรักษาผิวขั้นพื้นฐาน",
         recommended: false,
-        discount: 10
       },
       {
         id: "vip",
-        name: "Total Transformation",
-        price: 75000,
-        treatments: ["ทุกทรีตเมนต์", "Laser", "ปรึกษาแพทย์", "Home Care Kit"],
-        description: "แก้ปัญหาอย่างครบวงจร",
+        name: "Enterprise Transformation",
+        price: SUBSCRIPTION_PLANS.enterprise.price,
+        treatments: ["ทุกทรีตเมนต์", "Laser", "ปรึกษาแพทย์พิเศษ", "Premium Home Care Kit"],
+        description: "การดูแลระดับสูงสุด ครบวงจร",
         recommended: false,
-        discount: 20
-      }
+      },
     ]
   }
 

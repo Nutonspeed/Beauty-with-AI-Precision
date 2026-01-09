@@ -15,7 +15,15 @@ import {
   Link as LinkIcon,
   AlertCircle,
   TrendingUp,
+  Zap,
+  Shield,
+  Layers,
+  Users,
+  Building2,
+  Brain
 } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { cn } from '@/lib/utils';
 
 interface HealthCheck {
   count: number;
@@ -104,32 +112,6 @@ export default function DatabaseHealthDashboard() {
     }
   };
 
-  const getStatusBadge = (status: string) => {
-    const variants: Record<string, 'default' | 'destructive' | 'outline' | 'secondary'> = {
-      ok: 'default',
-      healthy: 'default',
-      warning: 'outline',
-      needs_attention: 'outline',
-      error: 'destructive',
-      critical: 'destructive',
-    };
-    
-    const colors: Record<string, string> = {
-      ok: 'bg-green-500',
-      healthy: 'bg-green-500',
-      warning: 'bg-yellow-500',
-      needs_attention: 'bg-yellow-500',
-      error: 'bg-red-500',
-      critical: 'bg-red-500',
-    };
-
-    return (
-      <Badge variant={variants[status] || 'secondary'} className={colors[status]}>
-        {status.toUpperCase().replace('_', ' ')}
-      </Badge>
-    );
-  };
-
   if (loading && !health) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -168,249 +150,178 @@ export default function DatabaseHealthDashboard() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Database Health Monitor</h1>
-          <p className="text-muted-foreground">
-            ตรวจสอบสุขภาพและประสิทธิภาพของฐานข้อมูล
+    <div className="space-y-10 animate-in fade-in duration-700">
+      {/* Telemetry Header */}
+      <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-8 border-b border-white/5">
+        <div className="space-y-2 text-center md:text-left">
+          <h2 className="text-3xl font-bold text-white tracking-tight italic flex items-center justify-center md:justify-start gap-4">
+            <Database className="w-8 h-8 text-cyan-500 animate-pulse" />
+            Database Core Integrity
+          </h2>
+          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">
+            Temporal Synchronization: {lastUpdate?.toLocaleTimeString('th-TH') || '-'}
           </p>
         </div>
-        <Button onClick={fetchHealth} disabled={loading}>
-          <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-          รีเฟรช
-        </Button>
+        <div className="flex gap-3">
+          <Button variant="outline" className="h-14 px-8 rounded-2xl border-white/10 bg-white/5 hover:bg-white/10 text-[10px] font-black uppercase tracking-widest transition-all" onClick={fetchHealth} disabled={loading}>
+            <RefreshCw className={cn("mr-3 h-4 w-4", loading && "animate-spin")} />
+            SCHEMA_SYNC
+          </Button>
+        </div>
       </div>
 
-      {/* Overall Status */}
-      <Card className="border-2">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+      {/* Overall Integrity Matrix */}
+      <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group">
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
+        <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5 flex flex-row items-center justify-between">
+          <div className="flex items-center gap-6">
+            <div className={cn("p-4 rounded-3xl border border-white/5 shadow-inner transition-transform duration-700 group-hover:scale-110", health.health_status === 'healthy' ? 'bg-emerald-500/10' : 'bg-rose-500/10')}>
               {getStatusIcon(health.health_status)}
-              <div>
-                <CardTitle>สถานะโดยรวม</CardTitle>
-                <CardDescription>
-                  อัพเดตล่าสุด: {lastUpdate?.toLocaleString('th-TH') || '-'}
-                </CardDescription>
-              </div>
             </div>
-            {getStatusBadge(health.health_status)}
+            <div className="space-y-1">
+              <CardTitle className="text-2xl font-bold text-white tracking-tight italic">Global Health Status</CardTitle>
+              <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 italic">Integrity verification across all operational sectors</CardDescription>
+            </div>
           </div>
+          <Badge className={cn("px-6 py-2 rounded-full border-none shadow-inner text-[10px] font-black uppercase tracking-widest italic", health.health_status === 'healthy' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400')}>
+            {health.health_status.toUpperCase()}
+          </Badge>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="flex items-center gap-2">
-              <HardDrive className="h-5 w-5 text-muted-foreground" />
-              <div>
-                <p className="text-sm text-muted-foreground">ขนาดฐานข้อมูล</p>
-                <p className="text-lg font-semibold">{health.database_size}</p>
+        <CardContent className="p-10 lg:p-12">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {[
+              { label: 'Infrastructure Size', val: health.database_size, icon: HardDrive, color: 'text-blue-400' },
+              { label: 'Foreign Key Clusters', val: health.checks.foreign_keys.count, icon: LinkIcon, color: 'text-purple-400' },
+              { label: 'Optimization Indices', val: health.checks.indexes.count, icon: TrendingUp, color: 'text-cyan-400' },
+              { label: 'Sector Status', val: 'ACTIVE_LINK', icon: Activity, color: 'text-emerald-400' }
+            ].map((stat, i) => (
+              <div key={i} className="space-y-3 group/stat">
+                <div className="flex items-center gap-3">
+                  <stat.icon className={cn("h-4 w-4", stat.color)} />
+                  <p className="text-[9px] font-black uppercase tracking-widest text-slate-600 italic">{stat.label}</p>
+                </div>
+                <div className="text-2xl font-black text-white italic tracking-tighter group-hover/stat:text-pink-400 transition-colors">{stat.val}</div>
               </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <LinkIcon className="h-5 w-5 text-muted-foreground" />
-              <div>
-                <p className="text-sm text-muted-foreground">Foreign Keys</p>
-                <p className="text-lg font-semibold">{health.checks.foreign_keys.count}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-muted-foreground" />
-              <div>
-                <p className="text-sm text-muted-foreground">Indexes</p>
-                <p className="text-lg font-semibold">{health.checks.indexes.count}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Activity className="h-5 w-5 text-muted-foreground" />
-              <div>
-                <p className="text-sm text-muted-foreground">สถานะ</p>
-                <p className="text-lg font-semibold text-green-500">Active</p>
-              </div>
-            </div>
+            ))}
           </div>
         </CardContent>
       </Card>
 
-      {/* Health Checks */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {/* Foreign Keys */}
-        <Card>
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-base">Foreign Keys</CardTitle>
-              {getStatusIcon(health.checks.foreign_keys.status)}
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold mb-2">
-              {health.checks.foreign_keys.count}
-            </div>
-            <p className="text-sm text-muted-foreground">
-              ความสัมพันธ์ของตารางทั้งหมด
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Indexes */}
-        <Card>
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-base">Indexes</CardTitle>
-              {getStatusIcon(health.checks.indexes.status)}
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold mb-2">
-              {health.checks.indexes.count}
-            </div>
-            <p className="text-sm text-muted-foreground">
-              ดัชนีสำหรับเพิ่มประสิทธิภาพ
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Orphaned Analyses */}
-        <Card>
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-base">Orphaned Analyses</CardTitle>
-              {getStatusIcon(health.checks.orphaned_analyses.status)}
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold mb-2">
-              {health.checks.orphaned_analyses.count}
-            </div>
-            <p className="text-sm text-muted-foreground">
-              วิเคราะห์ที่ไม่มีเจ้าของ
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Orphaned Leads */}
-        <Card>
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-base">Orphaned Leads</CardTitle>
-              {getStatusIcon(health.checks.orphaned_leads.status)}
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold mb-2">
-              {health.checks.orphaned_leads.count}
-            </div>
-            <p className="text-sm text-muted-foreground">
-              ลีดที่ไม่มีเจ้าของ
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Duplicate Invitations */}
-        <Card>
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-base">Duplicate Invitations</CardTitle>
-              {getStatusIcon(health.checks.duplicate_invitations.status)}
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold mb-2">
-              {health.checks.duplicate_invitations.count}
-            </div>
-            <p className="text-sm text-muted-foreground">
-              คำเชิญที่ซ้ำกัน
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Invalid User Refs */}
-        <Card>
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-base">Invalid User Refs</CardTitle>
-              {getStatusIcon(health.checks.invalid_user_refs.status)}
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold mb-2">
-              {health.checks.invalid_user_refs.count}
-            </div>
-            <p className="text-sm text-muted-foreground">
-              การอ้างอิงผู้ใช้ที่ไม่ถูกต้อง
-            </p>
-          </CardContent>
-        </Card>
+      {/* Anomaly Detection Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {[
+          { label: 'Relational Integrity', key: 'foreign_keys', desc: 'Cross-table node mapping' },
+          { label: 'Access Optimization', key: 'indexes', desc: 'Query performance vectors' },
+          { label: 'Neural Variance', key: 'orphaned_analyses', desc: 'Unlinked inference nodes' },
+          { label: 'Entity Drift', key: 'orphaned_leads', desc: 'Unassigned operational leads' },
+          { label: 'Protocol Collisions', key: 'duplicate_invitations', desc: 'Overlapping access vectors' },
+          { label: 'Reference Faults', key: 'invalid_user_refs', desc: 'Non-existent identity links' }
+        ].map((check, i) => (
+          <motion.div
+            key={check.key}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.05 }}
+          >
+            <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2.5rem] hover:bg-white/[0.03] transition-all duration-500 group shadow-xl relative overflow-hidden h-full">
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+              <CardHeader className="flex flex-row items-center justify-between pb-4 space-y-0">
+                <div className="space-y-1">
+                  <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 italic">{check.label}</CardTitle>
+                  <p className="text-[8px] font-black text-slate-700 uppercase tracking-widest">{check.desc}</p>
+                </div>
+                <div className={cn("p-2 rounded-lg border border-white/5 shadow-inner group-hover:scale-110 transition-transform duration-700", (health.checks[check.key as keyof typeof health.checks] as HealthCheck).status === 'ok' ? 'bg-emerald-500/10' : 'bg-rose-500/10')}>
+                  {getStatusIcon((health.checks[check.key as keyof typeof health.checks] as HealthCheck).status)}
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-4xl font-black text-white tracking-tighter italic">{(health.checks[check.key as keyof typeof health.checks] as HealthCheck).count}</div>
+                <Badge variant="outline" className={cn("mt-4 px-3 py-0 h-5 border-none rounded-full text-[8px] font-black uppercase italic tracking-tighter", (health.checks[check.key as keyof typeof health.checks] as HealthCheck).status === 'ok' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400')}>
+                  {(health.checks[check.key as keyof typeof health.checks] as HealthCheck).status === 'ok' ? 'NOMINAL' : 'VARIANCE_DETECTED'}
+                </Badge>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
       </div>
 
-      {/* Table Counts */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Database className="h-5 w-5" />
-            จำนวนข้อมูลในตาราง
+      {/* Sector Population Map */}
+      <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group">
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent" />
+        <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
+          <CardTitle className="text-2xl font-bold text-white tracking-tight italic flex items-center gap-4">
+            <Layers className="h-6 w-6 text-purple-400" />
+            Entity Population Map
           </CardTitle>
-          <CardDescription>
-            จำนวนแถวข้อมูลในตารางสำคัญ
-          </CardDescription>
+          <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Active row intensity across primary infrastructure tables</CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            <div className="text-center p-4 bg-muted rounded-lg">
-              <p className="text-sm text-muted-foreground mb-1">Users</p>
-              <p className="text-2xl font-bold">{health.table_counts.users}</p>
-            </div>
-            <div className="text-center p-4 bg-muted rounded-lg">
-              <p className="text-sm text-muted-foreground mb-1">Clinics</p>
-              <p className="text-2xl font-bold">{health.table_counts.clinics}</p>
-            </div>
-            <div className="text-center p-4 bg-muted rounded-lg">
-              <p className="text-sm text-muted-foreground mb-1">Invitations</p>
-              <p className="text-2xl font-bold">{health.table_counts.invitations}</p>
-            </div>
-            <div className="text-center p-4 bg-muted rounded-lg">
-              <p className="text-sm text-muted-foreground mb-1">Sales Leads</p>
-              <p className="text-2xl font-bold">{health.table_counts.sales_leads}</p>
-            </div>
-            <div className="text-center p-4 bg-muted rounded-lg">
-              <p className="text-sm text-muted-foreground mb-1">Appointments</p>
-              <p className="text-2xl font-bold">{health.table_counts.appointments}</p>
-            </div>
-            <div className="text-center p-4 bg-muted rounded-lg">
-              <p className="text-sm text-muted-foreground mb-1">Skin Analyses</p>
-              <p className="text-2xl font-bold">{health.table_counts.skin_analyses}</p>
-            </div>
+        <CardContent className="p-10 lg:p-12">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+            {[
+              { label: 'Identity Nodes', val: health.table_counts.users, icon: Users, color: 'blue' },
+              { label: 'Clinical Uplinks', val: health.table_counts.clinics, icon: Building2, color: 'emerald' },
+              { label: 'Access Vectors', val: health.table_counts.invitations, icon: Shield, color: 'amber' },
+              { label: 'Sales Leads', val: health.table_counts.sales_leads, icon: TrendingUp, color: 'cyan' },
+              { label: 'Process Cycles', val: health.table_counts.appointments, icon: Activity, color: 'indigo' },
+              { label: 'Neural Outputs', val: health.table_counts.skin_analyses, icon: Brain, color: 'purple' },
+            ].map((sector, i) => (
+              <div key={i} className="flex flex-col items-center gap-4 p-6 rounded-[2rem] bg-white/[0.02] border border-white/5 hover:border-pink-500/20 transition-all duration-500 group/sector text-center">
+                <div className={cn("p-3 rounded-2xl border border-white/5 shadow-inner transition-transform duration-700 group-hover/sector:scale-110", `bg-${sector.color}-500/10`)}>
+                  <sector.icon className={cn("h-6 w-6", `text-${sector.color}-400`)} />
+                </div>
+                <div>
+                  <div className="text-2xl font-black text-white italic tracking-tighter">{sector.val.toLocaleString()}</div>
+                  <div className="text-[8px] font-black text-slate-600 uppercase tracking-widest mt-1 italic">{sector.label}</div>
+                </div>
+              </div>
+            ))}
           </div>
         </CardContent>
       </Card>
 
-      {/* Recommendations */}
+      {/* Mitigation Recommendations */}
       {health.health_status !== 'healthy' && (
-        <Card className="border-yellow-500 bg-yellow-50 dark:bg-yellow-950">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-yellow-700 dark:text-yellow-300">
-              <AlertTriangle className="h-5 w-5" />
-              คำแนะนำ
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="list-disc list-inside space-y-1 text-sm">
-              {health.checks.orphaned_analyses.count > 0 && (
-                <li>พบข้อมูลวิเคราะห์ที่ไม่มีเจ้าของ ({health.checks.orphaned_analyses.count} รายการ)</li>
-              )}
-              {health.checks.orphaned_leads.count > 0 && (
-                <li>พบลีดที่ไม่มีเจ้าของ ({health.checks.orphaned_leads.count} รายการ)</li>
-              )}
-              {health.checks.duplicate_invitations.count > 0 && (
-                <li>พบคำเชิญที่ซ้ำกัน ({health.checks.duplicate_invitations.count} รายการ)</li>
-              )}
-              {health.checks.invalid_user_refs.count > 0 && (
-                <li>พบการอ้างอิงผู้ใช้ที่ไม่ถูกต้อง ({health.checks.invalid_user_refs.count} รายการ)</li>
-              )}
-            </ul>
-          </CardContent>
-        </Card>
+        <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }}>
+          <Card className="border-amber-500/20 bg-amber-500/[0.02] backdrop-blur-3xl rounded-[3rem] shadow-2xl relative overflow-hidden group">
+            <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:scale-110 transition-transform duration-1000">
+              <AlertTriangle className="w-32 h-32 text-amber-500" />
+            </div>
+            <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
+              <CardTitle className="text-2xl font-bold text-white tracking-tight italic flex items-center gap-4 text-amber-400">
+                <Zap className="h-6 w-6 animate-pulse" />
+                Mitigation Protocols
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-10 lg:p-12">
+              <ul className="space-y-6">
+                {health.checks.orphaned_analyses.count > 0 && (
+                  <li className="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.02] border border-white/5">
+                    <div className="h-2 w-2 rounded-full bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)]" />
+                    <span className="text-sm font-bold text-slate-300 italic uppercase tracking-tight">Orphaned Neural Matrices Detected: {health.checks.orphaned_analyses.count} nodes requires cleanup</span>
+                  </li>
+                )}
+                {health.checks.orphaned_leads.count > 0 && (
+                  <li className="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.02] border border-white/5">
+                    <div className="h-2 w-2 rounded-full bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)]" />
+                    <span className="text-sm font-bold text-slate-300 italic uppercase tracking-tight">Unassigned operational leads drift identified: {health.checks.orphaned_leads.count} nodes</span>
+                  </li>
+                )}
+                {health.checks.duplicate_invitations.count > 0 && (
+                  <li className="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.02] border border-white/5">
+                    <div className="h-2 w-2 rounded-full bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)]" />
+                    <span className="text-sm font-bold text-slate-300 italic uppercase tracking-tight">Protocol Access Collisions: {health.checks.duplicate_invitations.count} duplicate invitations detected</span>
+                  </li>
+                )}
+                {health.checks.invalid_user_refs.count > 0 && (
+                  <li className="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.02] border border-white/5">
+                    <div className="h-2 w-2 rounded-full bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)]" />
+                    <span className="text-sm font-bold text-slate-300 italic uppercase tracking-tight">Integrity Reference Faults: {health.checks.invalid_user_refs.count} invalid identity links</span>
+                  </li>
+                )}
+              </ul>
+            </CardContent>
+          </Card>
+        </motion.div>
       )}
     </div>
   );

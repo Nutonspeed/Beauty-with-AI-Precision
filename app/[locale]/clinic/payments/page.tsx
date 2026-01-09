@@ -3,17 +3,29 @@
 import { useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth/context"
+import { useLocale, useTranslations } from "next-intl"
 import { useLocalizePath } from "@/lib/i18n/locale-link"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { 
+  CreditCard, 
+  Search, 
+  Loader2, 
+  XCircle 
+} from "lucide-react"
+import { motion } from "framer-motion"
+import { cn } from "@/lib/utils"
+import { Header } from "@/components/header"
+import { Footer } from "@/components/footer"
+import Link from "next/link"
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
 import {
   Pagination,
   PaginationContent,
   PaginationItem,
-  PaginationLink,
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
@@ -40,6 +52,9 @@ interface PaymentsResponse {
 }
 
 export default function ClinicPaymentsPage() {
+  const t = useTranslations()
+  const locale = useLocale()
+  const isThaiLocale = locale === 'th'
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const lp = useLocalizePath()
@@ -345,403 +360,355 @@ export default function ClinicPaymentsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 md:p-6">
-      <div className="max-w-6xl mx-auto space-y-4">
-        <Dialog
-          open={markPaidOpen}
-          onOpenChange={(open) => {
-            setMarkPaidOpen(open)
-            if (!open) setMarkPaidPayment(null)
-          }}
-        >
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>ยืนยันการรับเงิน</DialogTitle>
-            </DialogHeader>
+    <div className="flex min-h-screen flex-col bg-[#020617] text-slate-200 selection:bg-pink-500/30">
+      <Header />
+      
+      <main className="flex-1 relative overflow-hidden flex flex-col">
+        {/* Infrastructure Background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-pink-500/5 rounded-full blur-[120px] animate-glow-pulse" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-500/5 rounded-full blur-[100px] animate-float" />
+          <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.02]" />
+        </div>
 
-            <div className="space-y-3">
-              <div className="text-sm text-gray-600">
-                {markPaidPayment ? (
-                  <>
-                    Payment ID: <span className="font-mono text-xs">{markPaidPayment.id}</span>
-                    <br />
-                    Amount: <span className="font-medium">฿{Number(markPaidPayment.amount || 0).toLocaleString()}</span>
-                  </>
-                ) : null}
+        <div className="container relative z-10 py-12 md:py-20 px-6 space-y-12 max-w-7xl mx-auto flex-1">
+          {/* Header - Financial Command Interface */}
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 pb-12 border-b border-white/5">
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="space-y-6"
+            >
+              <Badge variant="outline" className="px-4 py-1 rounded-full border-pink-500/30 text-pink-400 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.2em] text-[10px] font-black shadow-2xl shadow-pink-500/10">
+                <CreditCard className="mr-3 h-3.5 w-3.5 animate-pulse" />
+                Financial Reconciliation Node
+              </Badge>
+              <h1 className="text-5xl md:text-7xl font-bold tracking-tighter text-white leading-[0.9] italic">
+                Payment<br />
+                <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent not-italic">Ledger</span>
+              </h1>
+              <p className="text-xl text-slate-500 font-light tracking-widest max-w-2xl italic leading-relaxed">
+                Comprehensive clinical inflow tracking and financial node synchronization.
+              </p>
+            </motion.div>
+            
+            <div className="flex flex-wrap items-center gap-4 shrink-0">
+              <div className="flex gap-3">
+                <Button variant="outline" className="h-14 px-8 rounded-2xl border-white/10 bg-white/5 hover:bg-white/10 text-[10px] font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95" onClick={exportCsv} disabled={!data?.payments?.length || loading}>
+                  Export Node
+                </Button>
+                <Button variant="premium" className="h-14 px-8 rounded-2xl shadow-2xl shadow-pink-500/20 text-[10px] font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95" onClick={exportCsvAll} disabled={loading || exportAllLoading}>
+                  {exportAllLoading ? "Syncing CSV..." : "Export Global"}
+                </Button>
               </div>
-
-              <div className="space-y-1">
-                <div className="text-xs text-gray-600">Transaction ID (optional)</div>
-                <Input value={markPaidTransactionId} onChange={(e) => setMarkPaidTransactionId(e.target.value)} />
-              </div>
-
-              <div className="space-y-1">
-                <div className="text-xs text-gray-600">Notes (optional)</div>
-                <Textarea value={markPaidNotes} onChange={(e) => setMarkPaidNotes(e.target.value)} />
-              </div>
+              <Button variant="outline" className="h-14 px-8 rounded-2xl border-white/10 bg-white/5 hover:bg-white/10 text-[10px] font-black uppercase tracking-widest transition-all" onClick={() => router.push(lp("/clinic/appointments"))}>
+                Temporal Map
+              </Button>
             </div>
+          </div>
 
-            <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setMarkPaidOpen(false)
-                  setMarkPaidPayment(null)
-                }}
+          {/* Financial Metrics Summary Nodes */}
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            {[
+              { label: 'Total Inflow', val: data?.payments?.reduce((sum, p) => sum + Number(p.amount || 0), 0).toLocaleString(), count: data?.payments?.length, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+              { label: 'Verified (Paid)', val: data?.payments?.filter(p => p.payment_status === "paid").reduce((sum, p) => sum + Number(p.amount || 0), 0).toLocaleString(), count: data?.payments?.filter(p => p.payment_status === "paid").length, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+              { label: 'Pending Auth', val: data?.payments?.filter(p => p.payment_status === "pending").reduce((sum, p) => sum + Number(p.amount || 0), 0).toLocaleString(), count: data?.payments?.filter(p => p.payment_status === "pending").length, color: 'text-amber-400', bg: 'bg-amber-500/10' },
+              { label: 'Refunded', val: data?.payments?.filter(p => p.payment_status === "refunded").reduce((sum, p) => sum + Number(p.amount || 0), 0).toLocaleString(), count: data?.payments?.filter(p => p.payment_status === "refunded").length, color: 'text-rose-400', bg: 'bg-rose-500/10' },
+              { label: 'Cancelled', val: data?.payments?.filter(p => p.payment_status === "cancelled").reduce((sum, p) => sum + Number(p.amount || 0), 0).toLocaleString(), count: data?.payments?.filter(p => p.payment_status === "cancelled").length, color: 'text-slate-400', bg: 'bg-white/5' }
+            ].map((stat, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.05 }}
               >
-                Cancel
-              </Button>
-              <Button onClick={submitMarkPaid} disabled={!markPaidPayment?.id || markPaidSaving}>
-                {markPaidSaving ? "Saving..." : "Confirm paid"}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        <div className="flex items-center justify-between gap-3 flex-wrap">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">ชำระเงิน / Reconciliation</h1>
-            <p className="text-gray-600 text-sm md:text-base mt-1">รวมรายการชำระเงินทั้งหมดของคลินิก พร้อมเครื่องมือกระทบยอด</p>
+                <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[1.5rem] hover:bg-white/[0.03] transition-all duration-500 group shadow-2xl relative overflow-hidden">
+                  <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+                  <CardContent className="p-6">
+                    <p className="text-[8px] font-black uppercase tracking-[0.2em] text-slate-600 mb-3 italic">{stat.label}</p>
+                    <div className={cn("text-xl font-black tracking-tighter italic mb-1", stat.color)}>฿{stat.val}</div>
+                    <p className="text-[8px] font-black uppercase tracking-widest text-slate-700">{stat.count} CYCLES</p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
           </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={exportCsv} disabled={!data?.payments?.length || loading}>
-              Export CSV
-            </Button>
-            <Button variant="outline" onClick={exportCsvAll} disabled={loading || exportAllLoading}>
-              {exportAllLoading ? "Exporting..." : "Export CSV (All)"}
-            </Button>
-            <Button variant="outline" onClick={() => router.push(lp("/clinic/appointments"))}>
-              ไปหน้าตารางนัดหมาย
-            </Button>
-          </div>
-        </div>
 
-        {/* Summary Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-          <Card className="bg-white">
-            <CardContent className="p-4">
-              <div className="text-xs text-gray-600 mb-1">Total</div>
-              <div className="text-lg md:text-xl font-bold text-blue-600">
-                {data?.payments?.reduce((sum, p) => sum + Number(p.amount || 0), 0).toLocaleString()}
-              </div>
-              <div className="text-[11px] text-gray-500">
-                {data?.payments?.length} รายการ
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="bg-white">
-            <CardContent className="p-4">
-              <div className="text-xs text-gray-600 mb-1">Paid</div>
-              <div className="text-lg md:text-xl font-bold text-green-600">
-                {data?.payments?.filter(p => p.payment_status === "paid").reduce((sum, p) => sum + Number(p.amount || 0), 0).toLocaleString()}
-              </div>
-              <div className="text-[11px] text-gray-500">
-                {data?.payments?.filter(p => p.payment_status === "paid").length} รายการ
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="bg-white">
-            <CardContent className="p-4">
-              <div className="text-xs text-gray-600 mb-1">Pending</div>
-              <div className="text-lg md:text-xl font-bold text-orange-600">
-                {data?.payments?.filter(p => p.payment_status === "pending").reduce((sum, p) => sum + Number(p.amount || 0), 0).toLocaleString()}
-              </div>
-              <div className="text-[11px] text-gray-500">
-                {data?.payments?.filter(p => p.payment_status === "pending").length} รายการ
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="bg-white">
-            <CardContent className="p-4">
-              <div className="text-xs text-gray-600 mb-1">Refunded</div>
-              <div className="text-lg md:text-xl font-bold text-red-600">
-                {data?.payments?.filter(p => p.payment_status === "refunded").reduce((sum, p) => sum + Number(p.amount || 0), 0).toLocaleString()}
-              </div>
-              <div className="text-[11px] text-gray-500">
-                {data?.payments?.filter(p => p.payment_status === "refunded").length} รายการ
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="bg-white">
-            <CardContent className="p-4">
-              <div className="text-xs text-gray-600 mb-1">Cancelled</div>
-              <div className="text-lg md:text-xl font-bold text-gray-600">
-                {data?.payments?.filter(p => p.payment_status === "cancelled").reduce((sum, p) => sum + Number(p.amount || 0), 0).toLocaleString()}
-              </div>
-              <div className="text-[11px] text-gray-500">
-                {data?.payments?.filter(p => p.payment_status === "cancelled").length} รายการ
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm md:text-base">ตัวกรอง</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-col md:flex-row md:items-end gap-3">
-              <div className="space-y-1">
-                <div className="text-xs text-gray-600">Status</div>
-                <select className="rounded border bg-white px-2 py-2 text-sm" value={status} onChange={(e) => setStatus(e.target.value as any)}>
-                  <option value="all">All</option>
-                  <option value="pending">Pending</option>
-                  <option value="paid">Paid</option>
-                  <option value="refunded">Refunded</option>
-                  <option value="cancelled">Cancelled</option>
-                </select>
-              </div>
-
-              <div className="space-y-1">
-                <div className="text-xs text-gray-600">Method</div>
-                <select className="rounded border bg-white px-2 py-2 text-sm" value={method} onChange={(e) => setMethod(e.target.value as any)}>
-                  <option value="all">All</option>
-                  <option value="promptpay">PromptPay</option>
-                  <option value="cash">Cash</option>
-                  <option value="credit_card">Credit card</option>
-                  <option value="bank_transfer">Bank transfer</option>
-                  <option value="other">Other</option>
-                </select>
-              </div>
-
-              <div className="flex-1 space-y-1">
-                <div className="text-xs text-gray-600">Search (payment_id / transaction_id / notes)</div>
-                <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="ค้นหา: ID, transaction ID, หรือ notes..." />
-              </div>
-
-              <div className="space-y-1">
-                <div className="text-xs text-gray-600">Date from</div>
-                <Input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
-              </div>
-
-              <div className="space-y-1">
-                <div className="text-xs text-gray-600">Date to</div>
-                <Input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
-              </div>
-
-              <div className="space-y-1">
-                <div className="text-xs text-gray-600">Per page</div>
-                <select
-                  className="rounded border bg-white px-2 py-2 text-sm"
-                  value={limit}
-                  onChange={(e) => setLimit(Number(e.target.value) || 50)}
-                >
-                  <option value={25}>25</option>
-                  <option value={50}>50</option>
-                  <option value={100}>100</option>
-                  <option value={200}>200</option>
-                </select>
-              </div>
+          {/* Filtering & Search Interface */}
+          <div className="grid gap-6 md:grid-cols-12 items-end">
+            <div className="md:col-span-2 space-y-2">
+              <Label className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">Status Filter</Label>
+              <select className="h-12 w-full rounded-xl border border-white/5 bg-white/[0.03] px-4 text-[10px] font-bold text-white focus:outline-none focus:ring-2 focus:ring-pink-500/20 appearance-none transition-all cursor-pointer" value={status} onChange={(e) => setStatus(e.target.value as any)}>
+                <option value="all" className="bg-[#020617]">GLOBAL</option>
+                <option value="pending" className="bg-[#020617]">PENDING</option>
+                <option value="paid" className="bg-[#020617]">VERIFIED</option>
+                <option value="refunded" className="bg-[#020617]">REFUNDED</option>
+                <option value="cancelled" className="bg-[#020617]">CANCELLED</option>
+              </select>
             </div>
-          </CardContent>
-        </Card>
 
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm md:text-base">รายการชำระเงิน</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {loading ? (
-              <div className="py-10">
-                <div className="text-sm text-gray-600">กำลังโหลด...</div>
+            <div className="md:col-span-2 space-y-2">
+              <Label className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">Method</Label>
+              <select className="h-12 w-full rounded-xl border border-white/5 bg-white/[0.03] px-4 text-[10px] font-bold text-white focus:outline-none focus:ring-2 focus:ring-pink-500/20 appearance-none transition-all cursor-pointer" value={method} onChange={(e) => setMethod(e.target.value as any)}>
+                <option value="all" className="bg-[#020617]">ALL METHODS</option>
+                <option value="promptpay" className="bg-[#020617]">PROMPTPAY</option>
+                <option value="cash" className="bg-[#020617]">CASH</option>
+                <option value="credit_card" className="bg-[#020617]">CREDIT CARD</option>
+                <option value="bank_transfer" className="bg-[#020617]">TRANSFER</option>
+                <option value="other" className="bg-[#020617]">OTHER</option>
+              </select>
+            </div>
+
+            <div className="md:col-span-4 space-y-2">
+              <Label className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">Diagnostic Search</Label>
+              <Input className="h-12 rounded-xl border-white/5 bg-white/[0.03] text-white placeholder:text-slate-700 focus:border-pink-500/30 transition-all px-6 text-xs" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search Ledger ID / Hash / Notes..." />
+            </div>
+
+            <div className="md:col-span-2 space-y-2">
+              <Label className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">Start Node</Label>
+              <Input type="date" className="h-12 rounded-xl border-white/5 bg-white/[0.03] text-white focus:border-pink-500/30 transition-all px-4 text-[10px] font-bold" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
+            </div>
+
+            <div className="md:col-span-2 space-y-2">
+              <Label className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">End Node</Label>
+              <Input type="date" className="h-12 rounded-xl border-white/5 bg-white/[0.03] text-white focus:border-pink-500/30 transition-all px-4 text-[10px] font-bold" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
+            </div>
+          </div>
+
+          {/* Ledger Interface Table */}
+          <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative">
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+            <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5 flex flex-row items-center justify-between">
+              <div className="space-y-2">
+                <CardTitle className="text-3xl font-bold text-white tracking-tight italic flex items-center gap-4">
+                  <CreditCard className="h-8 w-8 text-pink-500" />
+                  Transaction Ledger ({total.toLocaleString()})
+                </CardTitle>
+                <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Live inflow node synchronization</CardDescription>
               </div>
-            ) : error ? (
-              <div className="py-4">
-                <div className="text-sm text-red-600">{error}</div>
+              <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-widest text-slate-600 italic">
+                Page {page} / {totalPages}
               </div>
-            ) : (data?.payments?.length || 0) === 0 ? (
-              <div className="py-8 text-sm text-gray-600">ไม่พบรายการ</div>
-            ) : (
-              <>
-                {/* Desktop Table View */}
-                <div className="hidden md:block overflow-x-auto -mx-2 md:mx-0">
-                  <div className="mb-3 flex items-center justify-between gap-2 flex-wrap text-xs text-gray-600">
-                    <div>
-                      Total: <span className="font-medium">{total.toLocaleString()}</span>
-                    </div>
-                    <div>
-                      Page <span className="font-medium">{page}</span> / <span className="font-medium">{totalPages}</span>
-                    </div>
-                  </div>
-                  <table className="min-w-full text-xs md:text-sm">
+            </CardHeader>
+            <CardContent className="p-0">
+              {loading ? (
+                <div className="py-40 text-center space-y-6">
+                  <Loader2 className="mx-auto h-12 w-12 text-pink-500 animate-spin" />
+                  <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-600 animate-pulse">Synchronizing Nodes...</p>
+                </div>
+              ) : error ? (
+                <div className="py-40 text-center space-y-6">
+                  <XCircle className="mx-auto h-12 w-12 text-rose-500" />
+                  <p className="text-lg font-bold text-rose-400 italic">{error}</p>
+                </div>
+              ) : (data?.payments || []).length === 0 ? (
+                <div className="py-40 text-center space-y-6">
+                  <CreditCard className="mx-auto h-12 w-12 text-slate-700 animate-pulse" />
+                  <p className="text-xl font-bold text-slate-500 italic">Ledger Empty</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full border-collapse">
                     <thead>
-                      <tr className="border-b text-gray-500">
-                        <th className="px-2 py-2 text-left font-medium">Created</th>
-                        <th className="px-2 py-2 text-left font-medium">Appointment</th>
-                        <th className="px-2 py-2 text-left font-medium">Amount</th>
-                        <th className="px-2 py-2 text-left font-medium">Method</th>
-                        <th className="px-2 py-2 text-left font-medium">Status</th>
-                        <th className="px-2 py-2 text-left font-medium">Actions</th>
+                      <tr className="bg-white/[0.02] border-b border-white/5">
+                        <th className="px-8 py-6 text-left text-[9px] font-black uppercase tracking-[0.3em] text-slate-600">Sync Date</th>
+                        <th className="px-8 py-6 text-left text-[9px] font-black uppercase tracking-[0.3em] text-slate-600">Appointment Node</th>
+                        <th className="px-8 py-6 text-left text-[9px] font-black uppercase tracking-[0.3em] text-slate-600">Inflow Amount</th>
+                        <th className="px-8 py-6 text-left text-[9px] font-black uppercase tracking-[0.3em] text-slate-600">Method Vector</th>
+                        <th className="px-8 py-6 text-left text-[9px] font-black uppercase tracking-[0.3em] text-slate-600">Auth Status</th>
+                        <th className="px-8 py-6 text-left text-[9px] font-black uppercase tracking-[0.3em] text-slate-600">Control</th>
                       </tr>
                     </thead>
-                    <tbody>
-                      {(data?.payments || []).map((p) => (
-                        <tr key={p.id} className="border-b last:border-0 hover:bg-white/60">
-                          <td className="px-2 py-2 align-top whitespace-nowrap">
-                            <div className="text-[11px] text-gray-600">{String(p.created_at || "").slice(0, 10)}</div>
-                            <div className="font-mono text-[10px] text-gray-500">{p.id.slice(0, 8)}...</div>
+                    <tbody className="divide-y divide-white/5">
+                      {data?.payments.map((p) => (
+                        <motion.tr
+                          key={p.id}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          className="group transition-all duration-500 hover:bg-white/[0.03]"
+                        >
+                          <td className="px-8 py-8 align-top">
+                            <div className="text-white font-bold tracking-tighter italic">{String(p.created_at || "").slice(0, 10)}</div>
+                            <div className="text-[9px] font-mono text-slate-600 uppercase mt-1 tracking-widest">{p.id.slice(0, 12)}...</div>
                           </td>
-                          <td className="px-2 py-2 align-top whitespace-nowrap">
-                            <a
+                          <td className="px-8 py-8 align-top">
+                            <Link
                               href={lp(`/clinic/appointments?appointment_id=${p.appointment_id}`)}
-                              className="font-mono text-xs hover:underline hover:text-blue-600"
+                              className="inline-flex items-center gap-2 group/link"
                             >
-                              {p.appointment_id.slice(0, 8)}...
-                            </a>
+                              <div className="h-8 w-8 rounded-lg bg-white/[0.03] border border-white/10 flex items-center justify-center shrink-0 group-hover/link:border-pink-500/30 transition-all">
+                                <Search className="w-3.5 h-3.5 text-slate-500 group-hover/link:text-pink-400" />
+                              </div>
+                              <span className="font-mono text-xs text-slate-400 group-hover/link:text-white transition-colors">{p.appointment_id.slice(0, 8)}...</span>
+                            </Link>
                           </td>
-                          <td className="px-2 py-2 align-top whitespace-nowrap">
-                            ฿{Number(p.amount || 0).toLocaleString()}
+                          <td className="px-8 py-8 align-top">
+                            <span className="text-xl font-black text-white italic tracking-tighter">฿{Number(p.amount || 0).toLocaleString()}</span>
                           </td>
-                          <td className="px-2 py-2 align-top">
-                            <span className="text-xs">{p.payment_method || "-"}</span>
+                          <td className="px-8 py-8 align-top">
+                            <Badge variant="outline" className="bg-white/[0.02] text-[8px] font-black text-slate-500 border-white/5 uppercase tracking-widest px-3 py-1 rounded-lg">
+                              {p.payment_method || "UNSPECIFIED"}
+                            </Badge>
                           </td>
-                          <td className="px-2 py-2 align-top">
-                            <Badge variant={p.payment_status === "paid" ? "default" : p.payment_status === "pending" ? "outline" : "destructive"}>
+                          <td className="px-8 py-8 align-top">
+                            <Badge className={cn(
+                              "px-4 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border-none shadow-inner",
+                              p.payment_status === "paid" ? "bg-emerald-500/10 text-emerald-400" : p.payment_status === "pending" ? "bg-amber-500/10 text-amber-400" : "bg-rose-500/10 text-rose-400"
+                            )}>
                               {p.payment_status}
                             </Badge>
                           </td>
-                          <td className="px-2 py-2 align-top">
-                            <div className="flex items-center gap-2 flex-wrap">
-                              {p.payment_method === "promptpay" ? (
-                                <Button size="sm" variant="outline" onClick={() => openPromptPayQr(p.clinic_id, Number(p.amount || 0))}>
-                                  Open QR
+                          <td className="px-8 py-8 align-top">
+                            <div className="flex items-center gap-3">
+                              {p.payment_method === "promptpay" && (
+                                <Button size="sm" variant="outline" className="h-10 rounded-xl border-white/10 bg-white/5 hover:bg-white/10 text-[9px] font-black uppercase tracking-widest transition-all" onClick={() => openPromptPayQr(p.clinic_id, Number(p.amount || 0))}>
+                                  Gateway
                                 </Button>
-                              ) : null}
-                              {p.payment_status === "pending" ? (
-                                <Button size="sm" onClick={() => openMarkPaid(p)}>
-                                  Mark paid
+                              )}
+                              {p.payment_status === "pending" && (
+                                <Button size="sm" variant="premium" className="h-10 rounded-xl shadow-2xl shadow-pink-500/20 text-[9px] font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95" onClick={() => openMarkPaid(p)}>
+                                  Verify Inflow
                                 </Button>
-                              ) : null}
+                              )}
                             </div>
                           </td>
-                        </tr>
+                        </motion.tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
+              )}
+            </CardContent>
+            
+            {/* Ledger Pagination Infrastructure */}
+            <div className="p-8 lg:p-10 border-t border-white/5 bg-white/[0.01]">
+              <Pagination>
+                <PaginationContent className="gap-4">
+                  <PaginationItem>
+                    <PaginationPrevious
+                      href="#"
+                      className={cn(
+                        "rounded-xl border-white/10 bg-white/5 hover:bg-white/10 text-[9px] font-black uppercase tracking-widest h-12 px-6 transition-all",
+                        !canPrev && "opacity-20 pointer-events-none"
+                      )}
+                      onClick={(e) => {
+                        e.preventDefault()
+                        if (canPrev) setOffset(Math.max(0, offset - limit))
+                      }}
+                    />
+                  </PaginationItem>
 
-                {/* Mobile Card View */}
-                <div className="md:hidden space-y-3">
-                  <div className="mb-3 text-xs text-gray-600">
-                    Total: <span className="font-medium">{total.toLocaleString()}</span> • 
-                    Page <span className="font-medium">{page}</span> / <span className="font-medium">{totalPages}</span>
-                  </div>
-                  {(data?.payments || []).map((p) => (
-                    <Card key={p.id} className="bg-white">
-                      <CardContent className="p-4">
-                        <div className="space-y-3">
-                          <div className="flex items-start justify-between gap-2">
-                            <div className="space-y-1">
-                              <div className="text-[11px] text-gray-600">{String(p.created_at || "").slice(0, 10)}</div>
-                              <div className="font-mono text-[10px] text-gray-500">{p.id.slice(0, 8)}...</div>
-                            </div>
-                            <Badge variant={p.payment_status === "paid" ? "default" : p.payment_status === "pending" ? "outline" : "destructive"}>
-                              {p.payment_status}
-                            </Badge>
-                          </div>
-                          
-                          <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                              <span className="text-xs text-gray-600">Appointment</span>
-                              <a
-                                href={lp(`/clinic/appointments?appointment_id=${p.appointment_id}`)}
-                                className="font-mono text-xs hover:underline hover:text-blue-600"
-                              >
-                                {p.appointment_id.slice(0, 8)}...
-                              </a>
-                            </div>
-                            
-                            <div className="flex items-center justify-between">
-                              <span className="text-xs text-gray-600">Amount</span>
-                              <span className="font-medium">฿{Number(p.amount || 0).toLocaleString()}</span>
-                            </div>
-                            
-                            <div className="flex items-center justify-between">
-                              <span className="text-xs text-gray-600">Method</span>
-                              <span className="text-xs">{p.payment_method || "-"}</span>
-                            </div>
-                            
-                            {(p.transaction_id || p.notes) && (
-                              <div className="space-y-1">
-                                {p.transaction_id && (
-                                  <div className="text-xs">
-                                    <span className="text-gray-600">Transaction ID: </span>
-                                    <span className="font-mono">{p.transaction_id}</span>
-                                  </div>
-                                )}
-                                {p.notes && (
-                                  <div className="text-xs">
-                                    <span className="text-gray-600">Notes: </span>
-                                    <span>{p.notes}</span>
-                                  </div>
-                                )}
-                              </div>
-                            )}
-                          </div>
-                          
-                          <div className="flex items-center gap-2 pt-2 border-t">
-                            {p.payment_method === "promptpay" ? (
-                              <Button size="sm" variant="outline" onClick={() => openPromptPayQr(p.clinic_id, Number(p.amount || 0))}>
-                                Open QR
-                              </Button>
-                            ) : null}
-                            {p.payment_status === "pending" ? (
-                              <Button size="sm" onClick={() => openMarkPaid(p)}>
-                                Mark paid
-                              </Button>
-                            ) : null}
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
+                  <PaginationItem>
+                    <div className="h-12 px-6 flex items-center justify-center rounded-xl bg-pink-600 text-white shadow-2xl shadow-pink-600/40 font-black text-xs italic">
+                      Node {page}
+                    </div>
+                  </PaginationItem>
+
+                  <PaginationItem>
+                    <PaginationNext
+                      href="#"
+                      className={cn(
+                        "rounded-xl border-white/10 bg-white/5 hover:bg-white/10 text-[9px] font-black uppercase tracking-widest h-12 px-6 transition-all",
+                        !canNext && "opacity-20 pointer-events-none"
+                      )}
+                      onClick={(e) => {
+                        e.preventDefault()
+                        if (canNext) setOffset(offset + limit)
+                      }}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
+          </Card>
+        </div>
+      </main>
+
+      {/* Dialog UI Upgrade - Clinical Precision */}
+      <Dialog
+        open={markPaidOpen}
+        onOpenChange={(open) => {
+          setMarkPaidOpen(open)
+          if (!open) setMarkPaidPayment(null)
+        }}
+      >
+        <DialogContent className="glass-panel border-white/10 p-10 rounded-[3rem] shadow-2xl max-w-lg bg-[#020617]/90 backdrop-blur-3xl overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/30 to-transparent" />
+          <DialogHeader className="space-y-4 text-center">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-pink-500/10 border border-pink-500/20 shadow-inner mb-2">
+              <CreditCard className="h-8 w-8 text-pink-400" />
+            </div>
+            <DialogTitle className="text-3xl font-bold text-white tracking-tight italic">Verify Inflow Node</DialogTitle>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Authorize clinical financial synchronization</p>
+          </DialogHeader>
+
+          <div className="space-y-10 py-8">
+            {markPaidPayment && (
+              <div className="grid grid-cols-2 gap-6 p-6 rounded-2xl bg-white/[0.02] border border-white/5 shadow-inner">
+                <div className="space-y-1">
+                  <p className="text-[8px] font-black uppercase tracking-widest text-slate-600">Payment Vector ID</p>
+                  <p className="font-mono text-xs text-slate-400 truncate">{markPaidPayment.id}</p>
                 </div>
-
-                {/* Pagination - visible on both desktop and mobile */}
-                <div className="mt-4">
-                  <Pagination>
-                    <PaginationContent>
-                      <PaginationItem>
-                        <PaginationPrevious
-                          href="#"
-                          onClick={(e) => {
-                            e.preventDefault()
-                            if (!canPrev) return
-                            setOffset(Math.max(0, offset - limit))
-                          }}
-                        />
-                      </PaginationItem>
-
-                      <PaginationItem>
-                        <PaginationLink
-                          href="#"
-                          isActive
-                          onClick={(e) => {
-                            e.preventDefault()
-                          }}
-                        >
-                          {page}
-                        </PaginationLink>
-                      </PaginationItem>
-
-                      <PaginationItem>
-                        <PaginationNext
-                          href="#"
-                          onClick={(e) => {
-                            e.preventDefault()
-                            if (!canNext) return
-                            setOffset(offset + limit)
-                          }}
-                        />
-                      </PaginationItem>
-                    </PaginationContent>
-                  </Pagination>
+                <div className="space-y-1 text-right">
+                  <p className="text-[8px] font-black uppercase tracking-widest text-slate-600">Authorized Amount</p>
+                  <p className="text-2xl font-black text-pink-400 italic tracking-tighter">฿{Number(markPaidPayment.amount || 0).toLocaleString()}</p>
                 </div>
-              </>
+              </div>
             )}
-          </CardContent>
-        </Card>
-      </div>
+
+            <div className="space-y-6">
+              <div className="space-y-3">
+                <Label className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">Reference Hash (Transaction ID)</Label>
+                <Input 
+                  className="h-14 rounded-2xl border-white/5 bg-white/[0.03] text-white placeholder:text-slate-700 px-6 font-mono text-xs" 
+                  value={markPaidTransactionId} 
+                  onChange={(e) => setMarkPaidTransactionId(e.target.value)} 
+                  placeholder="TXN-GLOBAL-SYNC-NODE-001"
+                />
+              </div>
+
+              <div className="space-y-3">
+                <Label className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">Diagnostic Notes</Label>
+                <Textarea 
+                  className="rounded-2xl border-white/5 bg-white/[0.03] text-white placeholder:text-slate-700 px-6 py-4 resize-none italic font-light" 
+                  value={markPaidNotes} 
+                  onChange={(e) => setMarkPaidNotes(e.target.value)} 
+                  placeholder="Optional clinical synchronization parameters..."
+                  rows={4}
+                />
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter className="flex flex-col sm:flex-row gap-4 pt-4">
+            <Button
+              variant="outline"
+              className="flex-1 h-14 rounded-2xl border-white/10 bg-white/5 hover:bg-white/10 text-[10px] font-black uppercase tracking-widest"
+              onClick={() => {
+                setMarkPaidOpen(false)
+                setMarkPaidPayment(null)
+              }}
+            >
+              Abort SYNC
+            </Button>
+            <Button
+              variant="premium"
+              className="flex-1 h-14 rounded-2xl shadow-2xl shadow-pink-500/20 text-[10px] font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95"
+              onClick={submitMarkPaid}
+              disabled={!markPaidPayment?.id || markPaidSaving}
+            >
+              {markPaidSaving ? (
+                <div className="flex items-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  SYNCING...
+                </div>
+              ) : "Authorize Sync"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Footer />
     </div>
   )
 }

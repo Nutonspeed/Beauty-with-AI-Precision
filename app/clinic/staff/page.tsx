@@ -1,40 +1,9 @@
-// @ts-nocheck
 import { createServerClient } from "@/lib/supabase/server"
 import { requireRole } from "@/lib/supabase/auth"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { StaffClient } from "./staff-client"
-
-// TypeScript interfaces
-interface StaffMember {
-  id: string
-  user_id: string
-  role: string
-  specialty: string | null
-  email: string
-  phone: string | null
-  status: string
-  rating: number | null
-  patients_today: number
-  appointments_today: number
-  join_date: string
-  avatar_url: string | null
-  full_name: string
-  user?: {
-    full_name: string
-    email: string
-  }
-}
-
-interface StaffStats {
-  total: number
-  active: number
-  on_leave: number
-  doctors: number
-  nurses: number
-  therapists: number
-  admins: number
-}
+import type { StaffMember, StaffStats } from "./staff-client"
 
 export default async function StaffPage() {
   // Authentication check
@@ -103,6 +72,7 @@ export default async function StaffPage() {
   const staff: StaffMember[] = (staffData || []).map((s: any) => ({
     id: s.id,
     user_id: s.user_id,
+    clinic_id: s.clinic_id,
     role: s.role,
     specialty: s.specialty,
     email: s.email,
@@ -114,6 +84,13 @@ export default async function StaffPage() {
     join_date: s.join_date,
     avatar_url: s.avatar_url,
     full_name: s.user?.full_name || s.email,
+    working_hours: s.working_hours || null,
+    days_off: s.days_off || [],
+    hired_date: s.hired_date || s.join_date,
+    bio: s.bio || null,
+    certifications: s.certifications || [],
+    languages: s.languages || [],
+    metadata: s.metadata || {},
     user: s.user,
   }))
 

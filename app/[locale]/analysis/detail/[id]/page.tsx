@@ -741,7 +741,7 @@ export default function AnalysisDetailPage({ params }: Readonly<AnalysisDetailPa
     } finally {
       setIsLoading(false);
     }
-  }, [locale, t]);
+  }, [t]);
 
   useEffect(() => {
     params.then((resolvedParams) => {

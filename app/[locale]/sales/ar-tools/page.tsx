@@ -5,25 +5,32 @@
  * Covers all aesthetic clinic branches
  */
 
+import { Header } from "@/components/header";
+import { Footer } from "@/components/footer";
 import { useState } from "react"
-import { motion } from 'framer-motion';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
-  Sparkles, 
-  Heart, 
-  Flame, 
-  Scissors, 
-  Eye,
+  Camera, 
+  Download, 
   ArrowLeft,
-  Camera,
+  Sparkles,
+  Zap,
+  Video,
   Upload,
-  Scan
-} from 'lucide-react';
+  Maximize2,
+  Box,
+  Heart
+} from "lucide-react"
 import Link from 'next/link';
 import { useLocalizePath } from '@/lib/i18n/locale-link';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 // Import Simulators
 import { FillerLipSimulator } from '@/components/sales/filler-lip-simulator';
@@ -33,16 +40,20 @@ import { EyeEnhancementSimulator } from '@/components/sales/eye-enhancement-simu
 
 export default function ARToolsPage() {
   const t = useTranslations();
+  const locale = useLocale();
   const lp = useLocalizePath();
+  const isThaiLocale = locale === 'th';
   const [selectedTool, setSelectedTool] = useState<string>('filler');
   const [customerImage, setCustomerImage] = useState<string>('');
   const [showUpload, setShowUpload] = useState(true);
+  const [intensity, setIntensity] = useState([50]);
+  const [showBeforeAfter, setShowBeforeAfter] = useState(false);
 
   const TOOLS = [
     {
       id: 'skin',
       name: t('salesArTools.tools.skin.name'),
-      icon: Scan,
+      icon: Sparkles,
       color: 'from-violet-600 to-purple-600',
       description: t('salesArTools.tools.skin.description')
     },
@@ -56,21 +67,21 @@ export default function ARToolsPage() {
     {
       id: 'body',
       name: t('salesArTools.tools.body.name'),
-      icon: Flame,
+      icon: Zap,
       color: 'from-orange-600 to-red-600',
       description: t('salesArTools.tools.body.description')
     },
     {
       id: 'hair',
       name: t('salesArTools.tools.hair.name'),
-      icon: Scissors,
+      icon: Video,
       color: 'from-emerald-600 to-teal-600',
       description: t('salesArTools.tools.hair.description')
     },
     {
       id: 'eye',
       name: t('salesArTools.tools.eye.name'),
-      icon: Eye,
+      icon: Upload,
       color: 'from-blue-600 to-indigo-600',
       description: t('salesArTools.tools.eye.description')
     },
@@ -99,220 +110,220 @@ export default function ARToolsPage() {
 
   const handleGenerateProposal = (data: any) => {
     console.log('Generate Proposal:', data);
-    // TODO: Integrate with proposal generator
     alert(t('salesArTools.generatingProposal'));
+  };
+
+  const handleCapture = () => {
+    console.log('Capture sequence initiated');
   };
 
   const selectedToolInfo = TOOLS.find(t => t.id === selectedTool);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black pb-20 lg:pb-6">
-      {/* Header - Mobile optimized */}
-      <div className="sticky top-0 z-50 bg-black/80 backdrop-blur-xl border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-3 md:px-4 py-3 md:py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 md:gap-4">
+    <div className="flex min-h-screen flex-col bg-[#020617] text-slate-200 selection:bg-pink-500/30">
+      <Header />
+      
+      <main className="flex-1 relative overflow-hidden flex flex-col">
+        {/* Infrastructure Background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-pink-500/5 rounded-full blur-[120px] animate-glow-pulse" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-500/5 rounded-full blur-[100px] animate-float" />
+          <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.02]" />
+        </div>
+
+        <div className="container relative z-10 py-12 md:py-20 px-6 space-y-16 max-w-7xl mx-auto flex-1">
+          {/* AR Tools Header Interface */}
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-12 pb-12 border-b border-white/5">
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="space-y-6"
+            >
+              <Badge variant="outline" className="px-4 py-1 rounded-full border-pink-500/30 text-pink-400 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.2em] text-[10px] font-black shadow-2xl shadow-pink-500/10">
+                <Box className="mr-3 h-3.5 w-3.5 animate-pulse" />
+                Dimensional Visualization Hub
+              </Badge>
+              <h1 className="text-5xl md:text-8xl font-bold tracking-tighter text-white leading-[0.9] italic">
+                AR Simulator<br />
+                <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent not-italic">Nodes</span>
+              </h1>
+              <p className="text-xl text-slate-500 font-light tracking-widest max-w-2xl italic leading-relaxed">
+                Synchronize clinical transformations through real-time dimensional rendering engines.
+              </p>
+            </motion.div>
+            
+            <div className="shrink-0">
               <Link href={lp('/sales/dashboard')}>
-                <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 h-9 w-9 md:h-10 md:w-10">
-                  <ArrowLeft className="w-4 h-4 md:w-5 md:h-5" />
+                <Button size="xl" variant="outline" className="h-16 px-10 rounded-2xl border-white/5 bg-white/[0.03] text-[10px] font-black uppercase tracking-[0.3em] transition-all hover:bg-white/10 italic">
+                  <ArrowLeft className="mr-3 h-5 w-5" />
+                  Terminal Dashboard
                 </Button>
               </Link>
-              <div>
-                <h1 className="text-lg md:text-2xl font-bold text-white flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-purple-400" />
-                  <span className="hidden sm:inline">{t('salesArTools.title')}</span>
-                  <span className="sm:hidden">{t('salesArTools.mobileTitle')}</span>
-                </h1>
-                <p className="text-xs md:text-sm text-gray-400 hidden sm:block">{t('salesArTools.subtitle')}</p>
-              </div>
             </div>
-            <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-xs md:text-sm">
-              AI
-            </Badge>
           </div>
-        </div>
-      </div>
 
-      {/* Mobile Tool Selector - Horizontal scroll */}
-      <div className="lg:hidden sticky top-[57px] z-40 bg-black/60 backdrop-blur-lg border-b border-white/10">
-        <div className="flex gap-2 overflow-x-auto px-3 py-3 snap-x snap-mandatory">
-          {TOOLS.map((tool) => (
-            <motion.button
-              key={tool.id}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setSelectedTool(tool.id)}
-              className={`flex-shrink-0 px-4 py-2 rounded-full flex items-center gap-2 snap-start transition-all ${
-                selectedTool === tool.id
-                  ? `bg-gradient-to-r ${tool.color} text-white`
-                  : 'bg-white/10 text-gray-300'
-              }`}
-            >
-              <tool.icon className="w-4 h-4" />
-              <span className="text-sm font-medium whitespace-nowrap">{tool.name}</span>
-            </motion.button>
-          ))}
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-3 md:px-4 py-4 md:py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 md:gap-6">
-          {/* Tool Selector Sidebar - Desktop only */}
-          <div className="hidden lg:block lg:col-span-1 space-y-4">
-            <Card className="bg-white/5 border-white/10">
-              <CardHeader>
-                <CardTitle className="text-white text-sm">{t('salesArTools.selectTool')}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                {TOOLS.map((tool) => (
-                  <motion.button
-                    key={tool.id}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => setSelectedTool(tool.id)}
-                    className={`w-full p-3 rounded-xl flex items-center gap-3 transition-all ${
-                      selectedTool === tool.id
-                        ? `bg-gradient-to-r ${tool.color} text-white`
-                        : 'bg-white/5 text-gray-300 hover:bg-white/10'
-                    }`}
-                  >
-                    <tool.icon className="w-5 h-5" />
-                    <div className="text-left">
-                      <p className="font-medium text-sm">{tool.name}</p>
-                      <p className="text-xs opacity-70">{tool.description}</p>
+          <div className="grid gap-10 lg:grid-cols-12">
+            {/* Control Hub Node */}
+            <div className="lg:col-span-4 space-y-8">
+              <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group">
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
+                  <CardTitle className="text-2xl font-bold text-white tracking-tight italic flex items-center gap-4">
+                    <Maximize2 className="h-6 w-6 text-pink-500" />
+                    Operational Control
+                  </CardTitle>
+                  <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Initialize diagnostic rendering parameters</CardDescription>
+                </CardHeader>
+                <CardContent className="p-10 lg:p-12 space-y-8">
+                  <div className="space-y-6">
+                    <div className="space-y-3">
+                      <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">Dimensional Target</Label>
+                      <Select value={selectedTool} onValueChange={setSelectedTool}>
+                        <SelectTrigger className="h-14 rounded-2xl border-white/5 bg-white/[0.03] text-white focus:ring-pink-500/20 focus:border-pink-500/30 transition-all px-6 text-[10px] font-black uppercase tracking-widest italic">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-[#020617] border-white/10 rounded-2xl">
+                          <SelectItem value="lip-filler" className="text-[10px] font-black uppercase tracking-widest italic">Lip Augmentation Sync</SelectItem>
+                          <SelectItem value="skin-tightening" className="text-[10px] font-black uppercase tracking-widest italic">Dermal Elasticity Mapping</SelectItem>
+                          <SelectItem value="jawline" className="text-[10px] font-black uppercase tracking-widest italic">Mandibular Definition</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
-                  </motion.button>
-                ))}
-              </CardContent>
-            </Card>
 
-            {/* Image Upload - Desktop only */}
-            <Card className="bg-white/5 border-white/10">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-white text-sm">{t('salesArTools.customerPhoto')}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {customerImage ? (
-                  <div className="space-y-3">
-                    <img 
-                      src={customerImage} 
-                      alt="Customer" 
-                      className="w-full aspect-square object-cover rounded-xl"
-                    />
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="w-full border-white/20 text-white"
-                      onClick={() => {
-                        setCustomerImage('');
-                        setShowUpload(true);
-                      }}
-                    >
-                      {t('salesArTools.changePhoto')}
+                    <div className="space-y-6">
+                      <div className="flex justify-between items-center">
+                        <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">Intensity Vector</Label>
+                        <span className="text-pink-400 font-black italic">{intensity[0]}%</span>
+                      </div>
+                      <Slider
+                        value={intensity}
+                        onValueChange={setIntensity}
+                        max={100}
+                        step={1}
+                        className="py-4"
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between p-6 rounded-2xl border border-white/5 bg-white/[0.02] shadow-inner group/toggle">
+                      <div className="space-y-1">
+                        <Label className="text-sm font-bold text-white italic group-hover/toggle:text-pink-400 transition-colors">Temporal Comparison</Label>
+                        <p className="text-[9px] font-black uppercase tracking-widest text-slate-600">Dual-node visualization</p>
+                      </div>
+                      <Switch
+                        className="data-[state=checked]:bg-pink-600"
+                        checked={showBeforeAfter}
+                        onCheckedChange={setShowBeforeAfter}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="pt-6 space-y-4">
+                    <Button size="xl" variant="premium" className="w-full h-16 rounded-2xl shadow-2xl shadow-pink-500/20 text-[10px] font-black uppercase tracking-[0.2em] transition-all hover:scale-105 border" onClick={handleCapture}>
+                      <Camera className="mr-3 h-4 w-4" />
+                      Capture Sequence
+                    </Button>
+                    <Button size="xl" variant="outline" className="w-full h-16 rounded-2xl border-white/5 bg-white/[0.03] text-[10px] font-black uppercase tracking-[0.2em] transition-all hover:bg-white/10 italic">
+                      <Download className="mr-3 h-4 w-4" />
+                      Export Render
                     </Button>
                   </div>
-                ) : (
-                  <label className="block">
-                    <div className="border-2 border-dashed border-white/20 rounded-xl p-4 text-center cursor-pointer hover:border-purple-500/50 active:bg-white/5 transition-colors">
-                      <Upload className="w-6 h-6 text-gray-400 mx-auto mb-2" />
-                      <p className="text-sm text-gray-400">{t('salesArTools.uploadPhoto')}</p>
-                      <p className="text-xs text-gray-500 mt-1">{t('salesArTools.formats')}</p>
-                    </div>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      className="hidden"
-                    />
-                  </label>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Main Simulator Area */}
-          <div className="lg:col-span-3 col-span-1">
-            {!customerImage ? (
-              <Card className="bg-white/5 border-white/10 h-full min-h-[400px] md:min-h-[600px] flex items-center justify-center">
-                <CardContent className="text-center px-4">
-                  <Camera className="w-12 h-12 md:w-16 md:h-16 text-gray-500 mx-auto mb-3 md:mb-4" />
-                  <h3 className="text-lg md:text-xl font-semibold text-white mb-2">
-                    {t('salesArTools.uploadPrompt')}
-                  </h3>
-                  <p className="text-sm md:text-base text-gray-400 mb-4">
-                    {t('salesArTools.uploadDesc')}
-                  </p>
-                  <label>
-                    <Button className="bg-gradient-to-r from-purple-600 to-pink-600">
-                      <Upload className="w-4 h-4 mr-2" />
-                      {t('salesArTools.selectPhoto')}
-                    </Button>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      className="hidden"
-                    />
-                  </label>
                 </CardContent>
               </Card>
-            ) : (
-              <>
-                {selectedTool === 'filler' && (
-                  <FillerLipSimulator
-                    beforeImage={customerImage}
-                    onExport={handleExport}
-                    onGenerateProposal={handleGenerateProposal}
-                  />
-                )}
+            </div>
+
+            {/* Rendering Engine Hub */}
+            <div className="lg:col-span-8 space-y-10">
+              <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3.5rem] overflow-hidden shadow-2xl relative min-h-[600px] flex items-center justify-center group/render">
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/20 to-transparent" />
                 
-                {selectedTool === 'body' && (
-                  <BodyContouringSimulator
-                    beforeImage={customerImage}
-                    onExport={handleExport}
-                    onGenerateProposal={handleGenerateProposal}
-                  />
-                )}
-                
-                {selectedTool === 'hair' && (
-                  <HairRestorationSimulator
-                    beforeImage={customerImage}
-                    onExport={handleExport}
-                    onGenerateProposal={handleGenerateProposal}
-                  />
-                )}
-                
-                {selectedTool === 'eye' && (
-                  <EyeEnhancementSimulator
-                    beforeImage={customerImage}
-                    onExport={handleExport}
-                    onGenerateProposal={handleGenerateProposal}
-                  />
-                )}
-                
-                {selectedTool === 'skin' && (
-                  <Card className="bg-white/5 border-white/10">
-                    <CardContent className="p-8 text-center">
-                      <Scan className="w-16 h-16 text-purple-400 mx-auto mb-4" />
-                      <h3 className="text-xl font-semibold text-white mb-2">
-                        {t('salesArTools.tools.skin.title')}
-                      </h3>
-                      <p className="text-gray-400 mb-6">
-                        {t('salesArTools.tools.skin.desc')}
-                      </p>
-                      <Link href={lp('/analysis')}>
-                        <Button className="bg-gradient-to-r from-violet-600 to-purple-600">
-                          <Sparkles className="w-4 h-4 mr-2" />
-                          {t('salesArTools.tools.skin.action')}
-                        </Button>
-                      </Link>
-                    </CardContent>
-                  </Card>
-                )}
-              </>
-            )}
+                <AnimatePresence mode="wait">
+                  {!customerImage ? (
+                    <motion.div 
+                      key="upload"
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 1.05 }}
+                      className="text-center space-y-8 p-12"
+                    >
+                      <div className="mx-auto h-24 w-24 rounded-3xl bg-white/[0.03] border border-white/10 flex items-center justify-center shadow-inner group-hover/render:border-pink-500/30 transition-all duration-700 animate-pulse">
+                        <Upload className="h-10 w-10 text-slate-500" />
+                      </div>
+                      <div className="space-y-3">
+                        <h3 className="text-2xl font-bold text-white italic">Awaiting Dermal Ingestion</h3>
+                        <p className="text-slate-500 text-sm font-black uppercase tracking-[0.2em]">Synchronize client visual data node</p>
+                      </div>
+                      <label className="inline-block cursor-pointer">
+                        <div className="h-16 px-10 rounded-2xl bg-pink-600 hover:bg-pink-500 shadow-2xl shadow-pink-500/20 text-white flex items-center justify-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] transition-all hover:scale-105 border border-pink-500/30">
+                          <Upload className="h-5 w-5" />
+                          Initialize Uplink
+                        </div>
+                        <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+                      </label>
+                    </motion.div>
+                  ) : (
+                    <motion.div 
+                      key="simulator"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="w-full h-full p-8"
+                    >
+                      {selectedTool === 'filler' && (
+                        <FillerLipSimulator 
+                          beforeImage={customerImage}
+                          onExport={handleExport}
+                          onGenerateProposal={handleGenerateProposal}
+                        />
+                      )}
+                      
+                      {selectedTool === 'body' && (
+                        <BodyContouringSimulator
+                          beforeImage={customerImage}
+                          onExport={handleExport}
+                          onGenerateProposal={handleGenerateProposal}
+                        />
+                      )}
+                      
+                      {selectedTool === 'hair' && (
+                        <HairRestorationSimulator
+                          beforeImage={customerImage}
+                          onExport={handleExport}
+                          onGenerateProposal={handleGenerateProposal}
+                        />
+                      )}
+                      
+                      {selectedTool === 'eye' && (
+                        <EyeEnhancementSimulator
+                          beforeImage={customerImage}
+                          onExport={handleExport}
+                          onGenerateProposal={handleGenerateProposal}
+                        />
+                      )}
+                      
+                      {selectedTool === 'skin' && (
+                        <div className="flex flex-col items-center justify-center h-full space-y-8 text-center">
+                          <div className="h-20 w-20 rounded-full bg-purple-500/10 flex items-center justify-center border border-purple-500/20">
+                            <Sparkles className="h-10 w-10 text-purple-400" />
+                          </div>
+                          <div className="space-y-4 max-w-md">
+                            <h3 className="text-2xl font-bold text-white italic">{t('salesArTools.tools.skin.title')}</h3>
+                            <p className="text-slate-400">{t('salesArTools.tools.skin.desc')}</p>
+                            <Link href={lp('/analysis')}>
+                              <Button className="h-14 px-8 rounded-xl bg-purple-600 hover:bg-purple-500 shadow-xl shadow-purple-500/20">
+                                <Sparkles className="w-4 h-4 mr-2" />
+                                {t('salesArTools.tools.skin.action')}
+                              </Button>
+                            </Link>
+                          </div>
+                        </div>
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </Card>
+            </div>
           </div>
         </div>
-      </div>
+      </main>
 
       {/* Mobile Bottom Action Bar */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-black/90 backdrop-blur-xl border-t border-white/10 p-3 z-50">
@@ -359,6 +370,8 @@ export default function ARToolsPage() {
           )}
         </div>
       </div>
+      
+      <Footer />
     </div>
   );
 }

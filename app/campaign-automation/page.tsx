@@ -1,4 +1,3 @@
-// @ts-nocheck
 "use client"
 
 /**
@@ -31,7 +30,7 @@ import SegmentBuilder from "@/components/segment-builder"
 import ABTestResults from "@/components/ab-test-results"
 import WorkflowBuilder from "@/components/workflow-builder"
 import { useOverallAnalytics, useSegments, useWorkflows, useTemplates, useCampaigns } from "@/hooks/useMarketing"
-import { CampaignManager } from "@/lib/marketing/campaign-manager"
+import { CampaignManager, SegmentOperator, SegmentCondition, TriggerType, EventType, WorkflowStep } from "@/lib/marketing/campaign-manager"
 
 export default function CampaignAutomationPage() {
   const [activeTab, setActiveTab] = useState("overview")
@@ -57,15 +56,15 @@ export default function CampaignAutomationPage() {
   const handleSaveSegment = async (segmentData: {
     name: string
     description: string
-    conditions: unknown[]
-    operator: "AND" | "OR"
+    conditions: SegmentCondition[]
+    operator: SegmentOperator
   }) => {
     try {
       await createSegment({
         name: segmentData.name,
         description: segmentData.description,
         conditions: segmentData.conditions,
-        operator: segmentData.operator.toLowerCase() as "and" | "or",
+        operator: segmentData.operator,
         createdBy: "current-user", // TODO: Get from auth context
         createdByName: "Admin User" // TODO: Get from auth context
       })
@@ -77,9 +76,22 @@ export default function CampaignAutomationPage() {
     }
   }
 
-  const handleSaveWorkflow = async (workflowData: Parameters<typeof createWorkflow>[0]) => {
+  const handleSaveWorkflow = async (workflowData: {
+    name: string
+    description: string
+    trigger: TriggerType
+    event?: EventType
+    steps: WorkflowStep[]
+  }) => {
     try {
-      await createWorkflow(workflowData)
+      await createWorkflow({
+        ...workflowData,
+        status: "draft",
+        triggerType: workflowData.trigger,
+        eventType: workflowData.event,
+        createdBy: "current-user",
+        createdByName: "Admin User"
+      })
       setShowWorkflowBuilder(false)
       refreshWorkflows()
       alert("Workflow created successfully!")
@@ -375,8 +387,8 @@ export default function CampaignAutomationPage() {
                     <CardHeader>
                       <div className="flex items-center justify-between">
                         <CardTitle className="text-lg">{workflow.name}</CardTitle>
-                        <Badge variant={workflow.active ? "default" : "outline"}>
-                          {workflow.active ? "Active" : "Inactive"}
+                        <Badge variant={workflow.status === "active" ? "default" : "outline"}>
+                          {workflow.status === "active" ? "Active" : "Inactive"}
                         </Badge>
                       </div>
                       <CardDescription>{workflow.description}</CardDescription>
@@ -385,10 +397,10 @@ export default function CampaignAutomationPage() {
                       <div className="flex items-center gap-2 text-sm">
                         <Target className="w-4 h-4 text-purple-600" />
                         <span className="text-gray-600">Trigger:</span>
-                        <span className="font-medium capitalize">{workflow.trigger}</span>
-                        {workflow.event && (
+                        <span className="font-medium capitalize">{workflow.triggerType}</span>
+                        {workflow.eventType && (
                           <Badge variant="outline" className="text-xs capitalize">
-                            {workflow.event}
+                            {workflow.eventType}
                           </Badge>
                         )}
                       </div>
@@ -400,7 +412,7 @@ export default function CampaignAutomationPage() {
                       <div className="flex items-center gap-2 text-sm">
                         <TrendingUp className="w-4 h-4 text-green-600" />
                         <span className="text-gray-600">Executions:</span>
-                        <span className="font-medium">{workflow.executionCount}</span>
+                        <span className="font-medium">{workflow.totalExecutions}</span>
                       </div>
                     </CardContent>
                   </Card>
@@ -475,10 +487,10 @@ export default function CampaignAutomationPage() {
               </div>
               <div className="grid grid-cols-1 gap-4">
                 {campaigns
-                  .filter((c) => c.abTestId)
+                  .filter((c) => c.abTest)
                   .map((campaign) => {
                     const manager = CampaignManager.getInstance()
-                    const test = manager.getABTest(campaign.abTestId!)
+                    const test = manager.getABTest(campaign.abTest!.id)
                     if (!test) return null
 
                     return (

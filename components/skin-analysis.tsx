@@ -49,12 +49,6 @@ export default function SkinAnalysisComponent() {
     }
   };
 
-  const getHealthScoreColor = (score: number) => {
-    if (score >= 80) return 'text-green-600';
-    if (score >= 60) return 'text-yellow-600';
-    return 'text-red-600';
-  };
-
   return (
     <div className="max-w-7xl mx-auto p-6 space-y-10">
       {/* Header - Professional AI Branding */}

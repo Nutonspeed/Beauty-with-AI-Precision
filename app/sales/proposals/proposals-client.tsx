@@ -1,4 +1,3 @@
-// @ts-nocheck
 "use client"
 
 import { useState, useEffect } from "react"
@@ -33,20 +32,37 @@ import {
 } from "@/components/ui/dialog"
 import { toast } from "sonner"
 
-type Proposal = {
+type Treatment = {
+  name: string
+  price: number
+  sessions: number
+  description?: string
+}
+
+export type Proposal = {
   id: string
   lead_id: string
   title: string
   status: string
   total_value: number
+  subtotal: number
+  discount_percent: number
+  discount_amount: number
   sent_at: string | null
   valid_until: string | null
-  treatments: any[]
+  treatments: Treatment[]
   win_probability: number
   created_at: string
+  metadata?: {
+    appointment_id?: string
+    [key: string]: any
+  }
   sales_leads: {
     name: string
   } | null
+  payment_terms?: string | null
+  terms_and_conditions?: string | null
+  notes?: string | null
 }
 
 type Stats = {
@@ -323,15 +339,6 @@ export function ProposalsClient({ initialProposals, initialStats }: ProposalsCli
 
       toast.success(appointmentId ? `สร้างนัดหมายสำเร็จ! (#${appointmentId})` : "สร้างนัดหมายสำเร็จ!", {
         description: details,
-        onClick: async () => {
-          if (!appointmentId) return
-          try {
-            await navigator.clipboard.writeText(appointmentId)
-            toast.success("คัดลอก Appointment ID แล้ว")
-          } catch {
-            toast.error("ไม่สามารถคัดลอกได้")
-          }
-        },
         action: {
           label: paymentAmount && clinicIdFromResponse ? "จ่าย PromptPay" : "ดูนัดหมาย",
           onClick: () => {
@@ -576,7 +583,7 @@ export function ProposalsClient({ initialProposals, initialStats }: ProposalsCli
                         </div>
                       )}
 
-                      {proposal?.metadata?.appointment_id ? (
+                      {proposal.metadata?.appointment_id ? (
                         <div className="text-sm">
                           <div className="text-muted-foreground">Appointment ID</div>
                           <div className="font-mono text-xs break-all">{proposal.metadata.appointment_id}</div>
@@ -588,8 +595,11 @@ export function ProposalsClient({ initialProposals, initialStats }: ProposalsCli
                                 const locale = pathname?.split("/")[1]
                                 const isLocale = !!locale && /^[a-z]{2}(-[A-Z]{2})?$/.test(locale)
                                 const base = isLocale ? `/${locale}/clinic/appointments` : "/clinic/appointments"
-                                const url = `${base}?appointment_id=${encodeURIComponent(proposal.metadata.appointment_id)}`
-                                globalThis.open(url, "_blank")
+                                const appointmentId = proposal.metadata?.appointment_id
+                                if (appointmentId) {
+                                  const url = `${base}?appointment_id=${encodeURIComponent(appointmentId)}`
+                                  globalThis.open(url, "_blank")
+                                }
                               }}
                             >
                               เปิดนัดหมาย

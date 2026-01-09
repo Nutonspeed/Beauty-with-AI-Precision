@@ -7,18 +7,29 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Label } from '@/components/ui/label';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { 
   AlertTriangle, 
   AlertCircle, 
   Info, 
-  CheckCircle, 
   RefreshCw,
   Download,
   Filter,
-  X
+  X,
+  Zap,
+  Activity,
+  Shield,
+  Layers,
+  Search,
+  Eye,
+  FileText,
+  Globe
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from '@/lib/utils';
 
 interface ErrorLog {
   id: string;
@@ -161,7 +172,7 @@ export function ErrorDashboard({ locale = 'th' }: ErrorDashboardProps) {
   const [logs, setLogs] = useState<ErrorLog[]>([]);
   const [stats, setStats] = useState<ErrorStats | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [_error, setError] = useState<string | null>(null);
   const [selectedLog, setSelectedLog] = useState<ErrorLog | null>(null);
 
   // Filters
@@ -211,19 +222,6 @@ export function ErrorDashboard({ locale = 'th' }: ErrorDashboardProps) {
     }
   };
 
-  const getSeverityColor = (severity: string) => {
-    switch (severity) {
-      case 'error':
-        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
-      case 'warning':
-        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
-      case 'info':
-        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
-      default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200';
-    }
-  };
-
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat(locale, {
@@ -256,284 +254,261 @@ export function ErrorDashboard({ locale = 'th' }: ErrorDashboardProps) {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold">{t.title}</h1>
-          <p className="text-muted-foreground">{t.description}</p>
+    <div className="space-y-10 animate-in fade-in duration-700">
+      {/* Telemetry Header */}
+      <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-8 border-b border-white/5">
+        <div className="space-y-2 text-center md:text-left">
+          <h2 className="text-3xl font-bold text-white tracking-tight italic flex items-center justify-center md:justify-start gap-4">
+            <Activity className="w-8 h-8 text-rose-500 animate-pulse" />
+            Anomaly Telemetry Stream
+          </h2>
+          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">
+            Global exception ledger and fault analysis
+          </p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={() => setShowFilters(!showFilters)}>
-            <Filter className="h-4 w-4 mr-2" />
-            {t.filters.title}
+        <div className="flex gap-3 flex-wrap justify-center">
+          <Button variant="outline" className="h-14 px-8 rounded-2xl border-white/10 bg-white/5 hover:bg-white/10 text-[10px] font-black uppercase tracking-widest transition-all" onClick={() => setShowFilters(!showFilters)}>
+            <Filter className="mr-3 h-4 w-4" />
+            {t.filters.title.toUpperCase()}
           </Button>
-          <Button variant="outline" onClick={fetchLogs}>
-            <RefreshCw className="h-4 w-4 mr-2" />
-            {t.actions.refresh}
+          <Button variant="outline" className="h-14 px-8 rounded-2xl border-white/10 bg-white/5 hover:bg-white/10 text-[10px] font-black uppercase tracking-widest transition-all" onClick={fetchLogs}>
+            <RefreshCw className={cn("mr-3 h-4 w-4", loading && "animate-spin")} />
+            {t.actions.refresh.toUpperCase()}
           </Button>
-          <Button variant="outline" onClick={exportToCSV} disabled={logs.length === 0}>
-            <Download className="h-4 w-4 mr-2" />
-            {t.actions.export}
+          <Button variant="premium" className="h-14 px-8 rounded-2xl shadow-2xl shadow-pink-500/20 text-[10px] font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95 border" onClick={exportToCSV} disabled={logs.length === 0}>
+            <Download className="mr-3 h-4 w-4" />
+            SCHEMA_EXPORT
           </Button>
         </div>
       </div>
 
-      {/* Statistics */}
+      {/* Overview Metrics Grid - Operational Nodes */}
       {stats && (
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                {t.stats.total}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.total}</div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                {t.stats.last24h}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.last24h}</div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                <AlertTriangle className="h-4 w-4 text-red-500" />
-                {t.stats.errors}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-red-500">{stats.bySeverity.error || 0}</div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                <AlertCircle className="h-4 w-4 text-yellow-500" />
-                {t.stats.warnings}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-yellow-500">{stats.bySeverity.warning || 0}</div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                <Info className="h-4 w-4 text-blue-500" />
-                {t.stats.info}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-blue-500">{stats.bySeverity.info || 0}</div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
-
-      {/* Filters */}
-      {showFilters && (
-        <Card>
-          <CardHeader>
-            <CardTitle>{t.filters.title}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex gap-4 items-end">
-              <div className="flex-1">
-                <label className="text-sm font-medium mb-2 block">
-                  {t.filters.severity}
-                </label>
-                <select
-                  value={severityFilter}
-                  onChange={(e) => setSeverityFilter(e.target.value)}
-                  className="w-full border rounded-md px-3 py-2"
-                >
-                  <option value="all">{t.filters.all}</option>
-                  <option value="error">{t.filters.error}</option>
-                  <option value="warning">{t.filters.warning}</option>
-                  <option value="info">{t.filters.info}</option>
-                </select>
-              </div>
-              <Button variant="outline" onClick={() => setSeverityFilter('all')}>
-                <X className="h-4 w-4 mr-2" />
-                {t.filters.clear}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Error State */}
-      {error && (
-        <Alert variant="destructive">
-          <AlertTriangle className="h-4 w-4" />
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
-
-      {/* Loading State */}
-      {loading && (
-        <div className="text-center py-12">
-          <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-4" />
-          <p>{t.actions.loading}</p>
-        </div>
-      )}
-
-      {/* Error Logs Table */}
-      {!loading && !error && (
-        <Card>
-          <CardHeader>
-            <CardTitle>{t.table.timestamp}</CardTitle>
-            <CardDescription>
-              {logs.length} {logs.length === 1 ? 'error' : 'errors'}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {logs.length === 0 ? (
-              <div className="text-center py-12">
-                <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-4" />
-                <p className="text-lg font-medium">{t.table.noErrors}</p>
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="border-b">
-                    <tr className="text-left">
-                      <th className="py-3 px-4">{t.table.timestamp}</th>
-                      <th className="py-3 px-4">{t.table.severity}</th>
-                      <th className="py-3 px-4">{t.table.message}</th>
-                      <th className="py-3 px-4">{t.table.url}</th>
-                      <th className="py-3 px-4">{t.table.user}</th>
-                      <th className="py-3 px-4">{t.table.actions}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {logs.map((log) => (
-                      <tr key={log.id} className="border-b hover:bg-muted/50">
-                        <td className="py-3 px-4 text-sm">
-                          {formatDate(log.created_at)}
-                        </td>
-                        <td className="py-3 px-4">
-                          <div className="flex items-center gap-2">
-                            {getSeverityIcon(log.severity)}
-                            <span className={`text-xs px-2 py-1 rounded-full ${getSeverityColor(log.severity)}`}>
-                              {log.severity}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="py-3 px-4 max-w-md truncate" title={log.error_message}>
-                          {log.error_message}
-                        </td>
-                        <td className="py-3 px-4 max-w-xs truncate text-sm" title={log.url}>
-                          {log.url}
-                        </td>
-                        <td className="py-3 px-4 text-sm">
-                          {log.user_id || 'Anonymous'}
-                        </td>
-                        <td className="py-3 px-4">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setSelectedLog(log)}
-                          >
-                            {t.table.viewDetails}
-                          </Button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Error Details Modal */}
-      {selectedLog && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card className="max-w-4xl w-full max-h-[90vh] overflow-auto">
-            <CardHeader>
-              <div className="flex justify-between items-start">
-                <div>
-                  <CardTitle className="flex items-center gap-2">
-                    {getSeverityIcon(selectedLog.severity)}
-                    {t.details.title}
-                  </CardTitle>
-                  <CardDescription>{formatDate(selectedLog.created_at)}</CardDescription>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+          {[
+            { label: 'Cumulative Variance', val: stats.total, sub: 'Global Error Registry', icon: Activity, color: 'text-white', bg: 'bg-white/5' },
+            { label: 'Temporal Peak (24h)', val: stats.last24h, sub: 'Cycle Fault Velocity', icon: Zap, color: 'text-rose-400', bg: 'bg-rose-500/10' },
+            { label: 'Critical Breaches', val: stats.bySeverity.error || 0, sub: 'Mitigation Required', icon: AlertTriangle, color: 'text-red-500', bg: 'bg-red-500/10' },
+            { label: 'State Warnings', val: stats.bySeverity.warning || 0, sub: 'Sector Fluctuations', icon: AlertCircle, color: 'text-yellow-400', bg: 'bg-yellow-500/10' },
+            { label: 'Nominal Logs', val: stats.bySeverity.info || 0, sub: 'Sync Intelligence', icon: Info, color: 'text-blue-400', bg: 'bg-blue-500/10' }
+          ].map((node, i) => (
+            <Card key={i} className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2rem] hover:bg-white/[0.03] transition-all duration-500 group shadow-2xl relative overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+                <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 italic">{node.label}</CardTitle>
+                <div className={cn("p-2 rounded-lg border border-white/5 shadow-inner group-hover:scale-110 transition-transform duration-700", node.bg)}>
+                  <node.icon className={cn("h-4 w-4", node.color)} />
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setSelectedLog(null)}
-                >
-                  <X className="h-4 w-4" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-black text-white tracking-tighter italic">{node.val.toLocaleString()}</div>
+                <p className="text-[9px] font-black uppercase tracking-widest mt-2 text-slate-500 italic">{node.sub}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      {/* Filters Section */}
+      <AnimatePresence>
+        {showFilters && (
+          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
+            <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] shadow-2xl relative group">
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
+              <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
+                <CardTitle className="text-xl font-bold text-white tracking-tight italic flex items-center gap-4">
+                  <Search className="h-5 w-5 text-cyan-400" />
+                  Sector Filtering
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-10 lg:p-12 flex gap-8 items-end">
+                <div className="flex-1 space-y-4">
+                  <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic ml-4">Severity Vector</Label>
+                  <select
+                    value={severityFilter}
+                    onChange={(e) => setSeverityFilter(e.target.value)}
+                    className="h-16 w-full rounded-2xl border border-white/5 bg-white/[0.03] px-8 text-sm font-bold italic text-white focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500/30 appearance-none transition-all cursor-pointer"
+                  >
+                    <option value="all" className="bg-[#020617]">{t.filters.all.toUpperCase()}_PROTOCOL</option>
+                    <option value="error" className="bg-[#020617] text-red-400">{t.filters.error.toUpperCase()}_BREACH</option>
+                    <option value="warning" className="bg-[#020617] text-yellow-400">{t.filters.warning.toUpperCase()}_VARIANCE</option>
+                    <option value="info" className="bg-[#020617] text-blue-400">{t.filters.info.toUpperCase()}_TELEMETRY</option>
+                  </select>
+                </div>
+                <Button variant="outline" className="h-16 px-8 rounded-2xl border-white/10 bg-white/5 hover:bg-white/10 text-[9px] font-black uppercase tracking-widest italic" onClick={() => setSeverityFilter('all')}>
+                  <X className="h-4 w-4 mr-2" />
+                  {t.filters.clear.toUpperCase()}
                 </Button>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <h4 className="font-medium mb-2">{t.details.message}</h4>
-                <p className="text-sm bg-muted p-3 rounded">{selectedLog.error_message}</p>
-              </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-              {selectedLog.error_stack && (
-                <div>
-                  <h4 className="font-medium mb-2">{t.details.stack}</h4>
-                  <pre className="text-xs bg-muted p-3 rounded overflow-x-auto">
-                    {selectedLog.error_stack}
-                  </pre>
-                </div>
-              )}
+      {/* Primary Log Stream */}
+      <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3.5rem] overflow-hidden shadow-2xl relative">
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+        <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5 flex flex-row items-center justify-between">
+          <div className="space-y-2">
+            <CardTitle className="text-3xl font-bold text-white tracking-tight italic">Global Fault Ledger</CardTitle>
+            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Live immutable stream: {logs.length} vectors detected</CardDescription>
+          </div>
+        </CardHeader>
+        <CardContent className="p-0">
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-white/[0.02] border-b border-white/5">
+                  <TableHead className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Temporal Stamp</TableHead>
+                  <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Severity</TableHead>
+                  <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Exception Message</TableHead>
+                  <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Source Node</TableHead>
+                  <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Entity</TableHead>
+                  <TableHead className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic"></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody className="divide-y divide-white/5">
+                {logs.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center py-32 text-slate-600 uppercase tracking-[0.4em] font-black text-[10px] italic">
+                      NO_ANOMALIES_DETECTED_IN_SECTOR
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  logs.map((log, idx) => (
+                    <motion.tr 
+                      key={log.id}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: idx * 0.05 }}
+                      className="group/row transition-all duration-500 hover:bg-white/[0.03] border-white/5"
+                    >
+                      <TableCell className="px-10 py-8">
+                        <div className="space-y-1">
+                          <div className="text-sm font-bold text-slate-300 italic">{formatDate(log.created_at).split(',')[0]}</div>
+                          <p className="text-[9px] font-black uppercase tracking-widest text-slate-600">{formatDate(log.created_at).split(',')[1]}</p>
+                        </div>
+                      </TableCell>
+                      <TableCell className="px-8 py-8">
+                        <div className="flex items-center gap-3">
+                          {getSeverityIcon(log.severity)}
+                          <Badge className={cn("px-4 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border-none shadow-inner", 
+                            log.severity === 'error' ? 'bg-red-500/10 text-red-400' : 
+                            log.severity === 'warning' ? 'bg-yellow-500/10 text-yellow-400' : 'bg-blue-500/10 text-blue-400'
+                          )}>
+                            {log.severity.toUpperCase()}
+                          </Badge>
+                        </div>
+                      </TableCell>
+                      <TableCell className="px-8 py-8">
+                        <span className="text-sm font-bold text-white italic group-hover/row:text-pink-400 transition-colors leading-relaxed line-clamp-2 max-w-md">{log.error_message}</span>
+                      </TableCell>
+                      <TableCell className="px-8 py-8 font-mono text-[10px] text-slate-500 group-hover/row:text-cyan-400 transition-colors">{log.url}</TableCell>
+                      <TableCell className="px-8 py-8 text-xs font-black text-slate-400 italic">{log.user_id || 'ANONYMOUS_ENTITY'}</TableCell>
+                      <TableCell className="px-10 py-8 text-right">
+                        <Button variant="outline" size="sm" className="h-10 rounded-xl border-white/10 bg-white/5 text-[9px] font-black uppercase tracking-widest italic hover:bg-white hover:text-[#020617] transition-all" onClick={() => setSelectedLog(log)}>
+                          <Eye className="mr-2 h-3.5 w-3.5" />
+                          {t.table.viewDetails.toUpperCase()}
+                        </Button>
+                      </TableCell>
+                    </motion.tr>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
 
-              {selectedLog.component_stack && (
-                <div>
-                  <h4 className="font-medium mb-2">{t.details.componentStack}</h4>
-                  <pre className="text-xs bg-muted p-3 rounded overflow-x-auto">
-                    {selectedLog.component_stack}
-                  </pre>
-                </div>
-              )}
+      {/* Advanced Error Details Modal */}
+      <AnimatePresence>
+        {selectedLog && (
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-2xl flex items-center justify-center z-[100] p-6 animate-in fade-in duration-500">
+            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="max-w-5xl w-full max-h-[90vh] overflow-hidden">
+              <Card className="border-white/10 bg-[#020617] rounded-[3rem] shadow-[0_0_100px_rgba(0,0,0,0.8)] flex flex-col h-full relative group">
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/30 to-transparent" />
+                <CardHeader className="p-12 border-b border-white/5 shrink-0">
+                  <div className="flex justify-between items-start">
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-4">
+                        <div className={cn("p-3 rounded-2xl border border-white/5 shadow-inner", 
+                          selectedLog.severity === 'error' ? 'bg-red-500/10' : 
+                          selectedLog.severity === 'warning' ? 'bg-yellow-500/10' : 'bg-blue-500/10'
+                        )}>
+                          {getSeverityIcon(selectedLog.severity)}
+                        </div>
+                        <Badge className={cn("px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.2em] border-none shadow-inner",
+                          selectedLog.severity === 'error' ? 'bg-red-500/10 text-red-400' : 
+                          selectedLog.severity === 'warning' ? 'bg-yellow-500/10 text-yellow-400' : 'bg-blue-500/10 text-blue-400'
+                        )}>
+                          {selectedLog.severity.toUpperCase()}_PROTOCOL
+                        </Badge>
+                      </div>
+                      <CardTitle className="text-4xl font-black text-white italic tracking-tighter">{t.details.title.toUpperCase()}</CardTitle>
+                      <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">TEMPORAL_STAMP: {formatDate(selectedLog.created_at)}</p>
+                    </div>
+                    <Button variant="ghost" size="icon" className="h-14 w-14 rounded-2xl hover:bg-white/5 text-slate-500" onClick={() => setSelectedLog(null)}>
+                      <X className="h-8 w-8" />
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent className="p-12 space-y-12 overflow-y-auto scrollbar-hide">
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <AlertCircle className="h-4 w-4 text-pink-500" />
+                      <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t.details.message.toUpperCase()}</h4>
+                    </div>
+                    <div className="p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/5 shadow-inner text-lg font-bold text-white italic leading-relaxed break-words">{selectedLog.error_message}</div>
+                  </div>
 
-              <div>
-                <h4 className="font-medium mb-2">{t.details.url}</h4>
-                <p className="text-sm bg-muted p-3 rounded break-all">{selectedLog.url}</p>
-              </div>
+                  {selectedLog.error_stack && (
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-3">
+                        <Layers className="h-4 w-4 text-cyan-500" />
+                        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t.details.stack.toUpperCase()}</h4>
+                      </div>
+                      <pre className="p-8 rounded-[2.5rem] bg-[#010409] border border-white/5 text-[11px] font-mono text-slate-400 overflow-x-auto leading-relaxed scrollbar-hide select-all">{selectedLog.error_stack}</pre>
+                    </div>
+                  )}
 
-              <div>
-                <h4 className="font-medium mb-2">{t.details.userAgent}</h4>
-                <p className="text-sm bg-muted p-3 rounded break-all">{selectedLog.user_agent}</p>
-              </div>
+                  <div className="grid md:grid-cols-2 gap-10">
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-3">
+                        <Globe className="h-4 w-4 text-blue-500" />
+                        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">SOURCE_VECTOR</h4>
+                      </div>
+                      <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 font-mono text-[10px] text-slate-300 break-all">{selectedLog.url}</div>
+                    </div>
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-3">
+                        <Shield className="h-4 w-4 text-emerald-500" />
+                        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">AGENT_UPLINK</h4>
+                      </div>
+                      <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 font-mono text-[10px] text-slate-300 leading-relaxed">{selectedLog.user_agent}</div>
+                    </div>
+                  </div>
 
-              {Object.keys(selectedLog.context).length > 0 && (
-                <div>
-                  <h4 className="font-medium mb-2">{t.details.context}</h4>
-                  <pre className="text-xs bg-muted p-3 rounded overflow-x-auto">
-                    {JSON.stringify(selectedLog.context, null, 2)}
-                  </pre>
-                </div>
-              )}
+                  {Object.keys(selectedLog.context).length > 0 && (
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-3">
+                        <FileText className="h-4 w-4 text-purple-500" />
+                        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">DYNAMIC_CONTEXT_METADATA</h4>
+                      </div>
+                      <pre className="p-8 rounded-[2.5rem] bg-[#010409] border border-white/5 text-[11px] font-mono text-pink-400/80 overflow-x-auto scrollbar-hide select-all">{JSON.stringify(selectedLog.context, null, 2)}</pre>
+                    </div>
+                  )}
 
-              <div className="flex justify-end gap-2 pt-4 border-t">
-                <Button variant="outline" onClick={() => setSelectedLog(null)}>
-                  {t.details.close}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+                  <div className="pt-8 flex justify-end">
+                    <Button variant="outline" className="h-16 px-12 rounded-[2rem] border-white/10 bg-white/5 text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-white hover:text-[#020617] transition-all" onClick={() => setSelectedLog(null)}>
+                      CLOSE_TERMINAL
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

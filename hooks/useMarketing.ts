@@ -366,6 +366,7 @@ export function useOverallAnalytics() {
     totalRevenue: number
     averageOpenRate: number
     averageClickRate: number
+    averageConversionRate: number
     averageROI: number
   } | null>(null)
   const [loading, setLoading] = useState(true)

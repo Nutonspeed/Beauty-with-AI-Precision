@@ -12,6 +12,9 @@ import { useRouter, useParams } from 'next/navigation';
 import CustomerProgressDashboard, {
   type AnalysisSnapshot,
 } from '@/components/customer/progress-dashboard';
+import { Header } from '@/components/header';
+import { Footer } from '@/components/footer';
+import { motion } from 'framer-motion';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Loader2, AlertCircle, ArrowLeft } from 'lucide-react';
@@ -228,25 +231,46 @@ export default function CustomerProgressPage({ params }: ProgressPageProps) {
   }
 
   return (
-    <div className="container mx-auto py-8 px-4 max-w-7xl">
-      <div className="mb-6">
-        <Button
-          onClick={() => router.push(`/${locale}/dashboard`)}
-          variant="ghost"
-          className="gap-2"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          {t('progress.backToDashboard')}
-        </Button>
-      </div>
+    <div className="flex min-h-screen flex-col bg-[#020617] text-slate-200 selection:bg-pink-500/30">
+      <Header />
+      
+      <main className="flex-1 relative overflow-hidden flex flex-col">
+        {/* Infrastructure Background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-pink-500/5 rounded-full blur-[120px] animate-glow-pulse" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-500/5 rounded-full blur-[100px] animate-float" />
+          <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.02]" />
+        </div>
 
-      <CustomerProgressDashboard
-        analyses={analyses}
-        locale={locale as 'th' | 'en'}
-        onExport={handleExport}
-        onShare={handleShare}
-        onBookFollowup={handleBookFollowup}
-      />
+        <div className="container relative z-10 py-12 md:py-20 px-6 space-y-12 max-w-7xl mx-auto flex-1">
+          <div className="mb-12">
+            <Button
+              onClick={() => router.push(`/${locale}/dashboard`)}
+              variant="ghost"
+              className="group gap-4 text-slate-500 hover:text-pink-400 transition-all px-6 py-3 rounded-2xl bg-white/[0.03] border border-white/5 backdrop-blur-xl"
+            >
+              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+              <span className="text-[10px] font-black uppercase tracking-[0.3em]">{t('progress.backToDashboard')}</span>
+            </Button>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <CustomerProgressDashboard
+              analyses={analyses}
+              locale={locale as 'th' | 'en'}
+              onExport={handleExport}
+              onShare={handleShare}
+              onBookFollowup={handleBookFollowup}
+            />
+          </motion.div>
+        </div>
+      </main>
+
+      <Footer />
     </div>
   );
 }

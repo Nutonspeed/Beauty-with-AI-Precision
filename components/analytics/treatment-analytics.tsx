@@ -1,10 +1,20 @@
 "use client"
 
 import { useEffect, useState, useCallback } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Badge } from "@/components/ui/badge"
-import { Activity, TrendingUp, TrendingDown } from "lucide-react"
+import { 
+  Activity, 
+  ArrowUpRight, 
+  ArrowDownRight, 
+  Package, 
+  DollarSign,
+  Target,
+  BarChart3 as BarIcon
+} from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
+import { cn } from "@/lib/utils"
 import {
   BarChart,
   Bar,
@@ -81,164 +91,224 @@ export function TreatmentAnalytics({ dateRange }: TreatmentAnalyticsProps) {
 
   if (!data) return null
 
+  const summaryStats = [
+    { label: 'Treatment ทั้งหมด', val: data.summary.totalTreatments, sub: 'Active Protocols', icon: Package, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+    { label: 'การนัดรวม', val: data.summary.totalBookings, sub: 'Temporal Cycles', icon: Activity, color: 'text-pink-400', bg: 'bg-pink-500/10' },
+    { label: 'รายได้รวม', val: `฿${data.summary.totalRevenue.toLocaleString()}`, sub: 'Cumulative Yield', icon: DollarSign, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+    { label: 'Average Yield', val: `฿${data.summary.averageRevenuePerTreatment.toLocaleString()}`, sub: 'Per Protocol', icon: Target, color: 'text-cyan-400', bg: 'bg-cyan-500/10' }
+  ];
+
   return (
-    <div className="space-y-6">
-      {/* Summary Cards */}
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card>
-          <CardContent className="pt-6">
-            <div className="text-sm text-muted-foreground">Treatment ทั้งหมด</div>
-            <div className="text-2xl font-bold">{data.summary.totalTreatments}</div>
-            <div className="text-xs text-muted-foreground mt-1">ประเภท</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="pt-6">
-            <div className="text-sm text-muted-foreground">การนัดรวม</div>
-            <div className="text-2xl font-bold">{data.summary.totalBookings}</div>
-            <div className="text-xs text-muted-foreground mt-1">นัดหมาย</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="pt-6">
-            <div className="text-sm text-muted-foreground">รายได้รวม</div>
-            <div className="text-2xl font-bold">฿{data.summary.totalRevenue.toLocaleString()}</div>
-            <div className="text-xs text-muted-foreground mt-1">จากทุก Treatment</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="pt-6">
-            <div className="text-sm text-muted-foreground">Average Revenue</div>
-            <div className="text-2xl font-bold">
-              ฿{data.summary.averageRevenuePerTreatment.toLocaleString()}
-            </div>
-            <div className="text-xs text-muted-foreground mt-1">ต่อ Treatment</div>
-          </CardContent>
-        </Card>
+    <div className="space-y-12">
+      {/* Summary Nodes - Operational Metrics */}
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        {summaryStats.map((stat, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.1 }}
+          >
+            <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2rem] hover:bg-white/[0.03] transition-all duration-500 group shadow-2xl relative overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+                <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 italic">{stat.label}</CardTitle>
+                <div className={cn("p-2 rounded-lg border border-white/5 shadow-inner transition-transform duration-700 group-hover:scale-110", stat.bg)}>
+                  <stat.icon className={cn("h-4 w-4", stat.color)} />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-black text-white tracking-tighter italic">{stat.val}</div>
+                <p className="text-[9px] font-black uppercase tracking-widest mt-2 text-slate-500 italic">
+                  {stat.sub}
+                </p>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
       </div>
 
-      {/* Top Treatments */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Activity className="h-5 w-5" />
-            Top 5 Treatments ยอดนิยม
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {data.topTreatments.map((item: any, index: number) => (
-              <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
-                <div className="flex items-center gap-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 font-bold text-primary">
-                    #{index + 1}
-                  </div>
-                  <div>
-                    <h3 className="font-semibold">{item.treatment}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {item.bookings} การนัด • {item.uniqueCustomers} ลูกค้า
-                    </p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="font-bold text-lg">฿{item.revenue.toLocaleString()}</div>
-                  <div className="flex items-center gap-1 text-sm">
-                    {item.growthRate > 0 ? (
-                      <>
-                        <TrendingUp className="h-4 w-4 text-green-500" />
-                        <span className="text-green-500">+{item.growthRate.toFixed(1)}%</span>
-                      </>
-                    ) : item.growthRate < 0 ? (
-                      <>
-                        <TrendingDown className="h-4 w-4 text-red-500" />
-                        <span className="text-red-500">{item.growthRate.toFixed(1)}%</span>
-                      </>
-                    ) : (
-                      <span className="text-muted-foreground">ไม่เปลี่ยนแปลง</span>
-                    )}
-                  </div>
-                </div>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        {/* Top Treatments Hub */}
+        <div className="lg:col-span-7">
+          <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group h-full">
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/20 to-transparent" />
+            <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5 flex flex-row items-center justify-between">
+              <div className="space-y-2">
+                <CardTitle className="text-3xl font-bold text-white tracking-tight italic flex items-center gap-4">
+                  <Activity className="h-8 w-8 text-pink-500" />
+                  Elite Protocols
+                </CardTitle>
+                <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Top 5 treatments by clinical yield</CardDescription>
               </div>
-            ))}
+            </CardHeader>
+            <CardContent className="p-10 lg:p-12 space-y-6">
+              <AnimatePresence>
+                {data.topTreatments.map((item: any, index: number) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="group/item flex items-center justify-between p-8 rounded-[2.5rem] border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] hover:border-pink-500/20 transition-all duration-500 relative overflow-hidden"
+                  >
+                    <div className="absolute top-0 left-0 bottom-0 w-1 bg-pink-600/20 group-hover/item:bg-pink-600 transition-colors" />
+                    
+                    <div className="flex items-center gap-8">
+                      <div className={cn(
+                        "h-14 w-14 rounded-2xl flex items-center justify-center font-black italic shadow-inner group-hover/item:scale-110 transition-all duration-700",
+                        index === 0 ? "bg-yellow-500 text-white" :
+                        index === 1 ? "bg-slate-400 text-white" :
+                        index === 2 ? "bg-orange-600 text-white" :
+                        "bg-white/[0.03] text-slate-500 border border-white/10"
+                      )}>
+                        #{index + 1}
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <p className="text-2xl font-bold text-white tracking-tight italic group-hover:text-pink-400 transition-colors">{item.treatment}</p>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600 italic">
+                          {item.bookings} Cycles • {item.uniqueCustomers} Authorized Units
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="text-right space-y-2">
+                      <p className="text-2xl font-black text-white tracking-tighter italic">฿{item.revenue.toLocaleString()}</p>
+                      <div className="flex items-center justify-end gap-2">
+                        {item.growthRate > 0 ? (
+                          <Badge className="bg-emerald-500/10 text-emerald-400 border-none rounded-full px-3 py-0.5 text-[9px] font-black italic">
+                            <ArrowUpRight className="h-2.5 w-2.5 mr-1" />
+                            {item.growthRate.toFixed(1)}%
+                          </Badge>
+                        ) : item.growthRate < 0 ? (
+                          <Badge className="bg-rose-500/10 text-rose-400 border-none rounded-full px-3 py-0.5 text-[9px] font-black italic">
+                            <ArrowDownRight className="h-2.5 w-2.5 mr-1" />
+                            {item.growthRate.toFixed(1)}%
+                          </Badge>
+                        ) : (
+                          <Badge variant="outline" className="text-slate-600 border-white/5 text-[8px] font-black italic">NOMINAL</Badge>
+                        )}
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Comparison Column */}
+        <div className="lg:col-span-5 space-y-10">
+          <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative h-full group">
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
+            <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
+              <CardTitle className="text-2xl font-bold text-white tracking-tight italic">Protocol Velocity</CardTitle>
+              <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Cycle load comparison by protocol</CardDescription>
+            </CardHeader>
+            <CardContent className="p-10 lg:p-12">
+              <div className="h-[400px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={data.treatments.slice(0, 10)} margin={{ top: 20, right: 0, left: 0, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
+                    <XAxis 
+                      dataKey="treatment" 
+                      tick={{ fill: '#475569', fontSize: 9, fontWeight: 'bold' }} 
+                      axisLine={false} 
+                      dy={15}
+                      angle={-45}
+                      textAnchor="end"
+                      height={80}
+                    />
+                    <YAxis tick={{ fill: '#475569', fontSize: 9, fontStyle: 'bold' }} axisLine={false} dx={-10} />
+                    <Tooltip
+                      cursor={{ fill: 'rgba(255,255,255,0.02)' }}
+                      contentStyle={{ backgroundColor: '#020617', border: 'none', borderRadius: '24px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }}
+                      itemStyle={{ fontSize: '10px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.1em' }}
+                    />
+                    <Legend iconType="circle" wrapperStyle={{ fontSize: '9px', fontWeight: 'black', textTransform: 'uppercase', letterSpacing: '0.2em', opacity: 0.6, paddingTop: '30px' }} />
+                    <Bar dataKey="bookings" fill="#ec4899" radius={[8, 8, 0, 0]} name="Total Cycles" />
+                    <Bar dataKey="paidCount" fill="#06b6d4" radius={[8, 8, 0, 0]} name="Verified Nodes" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* Global Protocol Matrix */}
+      <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative">
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/20 to-transparent" />
+        <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5 flex flex-row items-center justify-between">
+          <div className="space-y-2">
+            <CardTitle className="text-3xl font-bold text-white tracking-tight italic flex items-center gap-4">
+              <BarIcon className="h-8 w-8 text-pink-500" />
+              Global Protocol Matrix
+            </CardTitle>
+            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Authorized treatment efficiency index</CardDescription>
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Bookings Comparison Chart */}
-      <Card>
-        <CardHeader>
-          <CardTitle>เปรียบเทียบจำนวนการนัด</CardTitle>
         </CardHeader>
-        <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={data.treatments.slice(0, 10)}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="treatment" angle={-45} textAnchor="end" height={100} />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="bookings" fill="#8884d8" name="การนัดทั้งหมด" />
-              <Bar dataKey="paidCount" fill="#82ca9d" name="ชำระแล้ว" />
-            </BarChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
-
-      {/* All Treatments Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>รายละเอียดทุก Treatment</CardTitle>
-        </CardHeader>
-        <CardContent>
+        <CardContent className="p-0">
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="w-full border-collapse">
               <thead>
-                <tr className="border-b">
-                  <th className="text-left py-2 px-4">Treatment</th>
-                  <th className="text-right py-2 px-4">การนัด</th>
-                  <th className="text-right py-2 px-4">รายได้</th>
-                  <th className="text-right py-2 px-4">ราคาเฉลี่ย</th>
-                  <th className="text-right py-2 px-4">ลูกค้า</th>
-                  <th className="text-right py-2 px-4">Growth</th>
+                <tr className="bg-white/[0.02] border-b border-white/5">
+                  <th className="px-10 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Protocol Identifier</th>
+                  <th className="px-8 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Cycle Density</th>
+                  <th className="px-8 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Cumulative Yield</th>
+                  <th className="px-8 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Average Yield</th>
+                  <th className="px-8 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Unit Reach</th>
+                  <th className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Momentum Vector</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-white/5">
                 {data.treatments.map((item: any, index: number) => (
-                  <tr key={index} className="border-b hover:bg-muted/50">
-                    <td className="py-3 px-4 font-medium">{item.treatment}</td>
-                    <td className="text-right py-3 px-4">
-                      <div>{item.bookings}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {item.bookingPercentage.toFixed(1)}%
+                  <motion.tr
+                    key={index}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: index * 0.05 }}
+                    className="group transition-all duration-500 hover:bg-white/[0.03]"
+                  >
+                    <td className="px-10 py-8">
+                      <div className="flex items-center gap-6">
+                        <div className="h-10 w-10 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-center shrink-0 group-hover:border-pink-500/30 transition-all">
+                          <Package className="h-5 w-5 text-slate-500 group-hover:text-pink-400 transition-colors" />
+                        </div>
+                        <p className="text-lg font-bold text-white tracking-tight italic group-hover:text-pink-400 transition-colors">{item.treatment}</p>
                       </div>
                     </td>
-                    <td className="text-right py-3 px-4">
-                      <div className="font-semibold">฿{item.revenue.toLocaleString()}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {item.revenuePercentage.toFixed(1)}%
-                      </div>
+                    <td className="px-8 py-8 text-right">
+                      <div className="text-lg font-black text-white italic tracking-tighter">{item.bookings}</div>
+                      <p className="text-[9px] font-black uppercase text-slate-600 tracking-widest italic">{item.bookingPercentage.toFixed(1)}% LOAD</p>
                     </td>
-                    <td className="text-right py-3 px-4">฿{item.averagePrice.toLocaleString()}</td>
-                    <td className="text-right py-3 px-4">{item.uniqueCustomers}</td>
-                    <td className="text-right py-3 px-4">
+                    <td className="px-8 py-8 text-right">
+                      <span className="text-xl font-black text-white italic tracking-tighter group-hover:text-emerald-400 transition-colors">฿{item.revenue.toLocaleString()}</span>
+                      <p className="text-[9px] font-black uppercase text-slate-600 tracking-widest italic">{item.revenuePercentage.toFixed(1)}% YIELD</p>
+                    </td>
+                    <td className="px-8 py-8 text-right">
+                      <span className="text-sm font-bold text-slate-400 italic">฿{item.averagePrice.toLocaleString()}</span>
+                    </td>
+                    <td className="px-8 py-8 text-right">
+                      <span className="text-lg font-black text-white italic tracking-tighter">{item.uniqueCustomers}</span>
+                    </td>
+                    <td className="px-10 py-8 text-right">
                       {item.growthRate > 0 ? (
-                        <Badge className="bg-green-500">
-                          <TrendingUp className="h-3 w-3 mr-1" />
+                        <Badge className="bg-emerald-500/10 text-emerald-400 border-none rounded-full px-4 py-1 text-[9px] font-black uppercase tracking-widest italic shadow-inner">
+                          <ArrowUpRight className="h-2.5 w-2.5 mr-1.5" />
                           +{item.growthRate.toFixed(0)}%
                         </Badge>
                       ) : item.growthRate < 0 ? (
-                        <Badge className="bg-red-500">
-                          <TrendingDown className="h-3 w-3 mr-1" />
+                        <Badge className="bg-rose-500/10 text-rose-400 border-none rounded-full px-4 py-1 text-[9px] font-black uppercase tracking-widest italic shadow-inner">
+                          <ArrowDownRight className="h-2.5 w-2.5 mr-1.5" />
                           {item.growthRate.toFixed(0)}%
                         </Badge>
                       ) : (
-                        <Badge variant="outline">0%</Badge>
+                        <Badge variant="outline" className="border-white/5 bg-white/[0.02] text-[8px] font-black text-slate-700 italic">0% DELTA</Badge>
                       )}
                     </td>
-                  </tr>
+                  </motion.tr>
                 ))}
               </tbody>
             </table>

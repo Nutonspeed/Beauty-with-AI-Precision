@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Upload, Camera, X, Loader2, ArrowRight } from "lucide-react"
 import Image from "next/image"
-import { usePathname, useRouter } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { resizeImage, compressImage } from "@/lib/image-optimizer"
 import { CameraPositioningGuide } from "@/components/camera-positioning-guide"
 import { validateImageQuality, getQualityFeedback } from "@/lib/image-quality-validator"
@@ -51,15 +51,8 @@ export function SkinAnalysisUpload({ isLoggedIn = false, analysisMode = "auto" }
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const streamRef = useRef<MediaStream | null>(null)
   const router = useRouter()
-  const pathname = usePathname()
   const lp = useLocalizePath()
-  const derivedLocale = (() => {
-    const segments = pathname.split("/").filter(Boolean)
-    const candidate = segments[0]?.toLowerCase()
-    const supportedLocales = new Set(["th", "en"])
-    return candidate && supportedLocales.has(candidate) ? candidate : "th"
-  })()
-
+  
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file) {

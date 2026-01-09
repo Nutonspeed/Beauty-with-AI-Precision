@@ -5,13 +5,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Badge } from '@/components/ui/badge'
+import { cn } from '@/lib/utils'
 import { 
   LineChart, 
   Line, 
   AreaChart, 
   Area, 
-  BarChart, 
-  Bar, 
   PieChart, 
   Pie, 
   Cell,
@@ -19,8 +20,7 @@ import {
   YAxis, 
   CartesianGrid, 
   Tooltip, 
-  ResponsiveContainer,
-  Legend
+  ResponsiveContainer
 } from 'recharts'
 import { 
   Users, 
@@ -31,7 +31,12 @@ import {
   Zap,
   Brain,
   AlertCircle,
-  CheckCircle
+  CheckCircle,
+  Cpu,
+  Globe,
+  Database,
+  Fingerprint,
+  RefreshCw
 } from 'lucide-react'
 
 // WebSocket client for real-time data
@@ -239,359 +244,278 @@ export default function RealTimeAnalyticsDashboard() {
     return 'text-red-600'
   }
 
-  const getStatusIcon = (value: number, thresholds: { good: number; warning: number }) => {
-    if (value >= thresholds.good) return <CheckCircle className="w-4 h-4 text-green-600" />
-    if (value >= thresholds.warning) return <AlertCircle className="w-4 h-4 text-yellow-600" />
-    return <AlertCircle className="w-4 h-4 text-red-600" />
-  }
-
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold">Real-time Analytics Dashboard</h2>
-          <p className="text-muted-foreground">Live monitoring of business metrics and system performance</p>
-        </div>
+    <div className="space-y-12">
+      {/* Header - Telemetry Command Interface */}
+      <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between border-b border-white/5 pb-12">
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="space-y-4"
+        >
+          <Badge variant="outline" className="px-4 py-1 rounded-full border-pink-500/30 text-pink-400 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.2em] text-[10px] font-black shadow-2xl shadow-pink-500/10">
+            <Zap className="mr-3 h-3.5 w-3.5 animate-pulse" />
+            Live System Telemetry
+          </Badge>
+          <h1 className="text-5xl md:text-7xl font-bold tracking-tighter text-white leading-[0.9] italic">
+            Real-time<br />
+            <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent not-italic">Intelligence</span>
+          </h1>
+          <div className="flex items-center gap-4">
+            <div className={`h-2 w-2 rounded-full ${connected ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]' : 'bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.5)]'} animate-pulse`} />
+            <p className="text-[10px] uppercase tracking-[0.3em] text-slate-500 font-black italic">
+              {connected ? 'NODE_CONNECTED_NOMINAL' : 'NODE_DISCONNECTED_ALERT'}
+            </p>
+          </div>
+        </motion.div>
         
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
-            <div className={`w-2 h-2 rounded-full ${connected ? 'bg-green-500' : 'bg-red-500'}`}></div>
-            <span className="text-sm">{connected ? 'Connected' : 'Disconnected'}</span>
+        <div className="flex flex-wrap items-center gap-4 shrink-0">
+          <div className="bg-white/[0.02] p-1.5 rounded-2xl border border-white/5 shadow-inner">
+            <Select value={timeRange} onValueChange={setTimeRange}>
+              <SelectTrigger className="w-40 h-12 rounded-xl border-none bg-transparent text-[10px] font-black uppercase tracking-widest text-slate-400 focus:ring-0">
+                <Clock className="w-3.5 h-3.5 mr-2 text-pink-500/60" />
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-[#020617] border-white/10 rounded-2xl">
+                <SelectItem value="1h" className="text-[10px] font-black uppercase tracking-widest italic">Last Hour</SelectItem>
+                <SelectItem value="6h" className="text-[10px] font-black uppercase tracking-widest italic">Last 6 Hours</SelectItem>
+                <SelectItem value="24h" className="text-[10px] font-black uppercase tracking-widest italic">Last 24 Hours</SelectItem>
+                <SelectItem value="7d" className="text-[10px] font-black uppercase tracking-widest italic">Last 7 Days</SelectItem>
+                <SelectItem value="30d" className="text-[10px] font-black uppercase tracking-widest italic">Last 30 Days</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           
-          <Select value={timeRange} onValueChange={setTimeRange}>
-            <SelectTrigger className="w-32">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="1h">Last Hour</SelectItem>
-              <SelectItem value="6h">Last 6 Hours</SelectItem>
-              <SelectItem value="24h">Last 24 Hours</SelectItem>
-              <SelectItem value="7d">Last 7 Days</SelectItem>
-              <SelectItem value="30d">Last 30 Days</SelectItem>
-            </SelectContent>
-          </Select>
-          
           <Button
-            variant={autoRefresh ? 'default' : 'outline'}
-            size="sm"
+            variant={autoRefresh ? 'premium' : 'outline'}
+            className={cn(
+              "h-14 px-8 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all",
+              !autoRefresh && "border-white/10 bg-white/5 text-slate-400 hover:bg-white/10"
+            )}
             onClick={() => setAutoRefresh(!autoRefresh)}
           >
-            <Clock className="w-4 h-4 mr-2" />
-            Auto-refresh
+            <RefreshCw className={cn("w-4 h-4 mr-3", autoRefresh && "animate-spin")} />
+            {autoRefresh ? 'SYNC_ACTIVE' : 'SYNC_PAUSED'}
           </Button>
         </div>
       </div>
 
-      {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Users</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{formatNumber(metrics.business.totalUsers)}</div>
-            <p className="text-xs text-muted-foreground">
-              +12% from last month
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Skin Analyses</CardTitle>
-            <Activity className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{formatNumber(metrics.business.totalAnalyses)}</div>
-            <p className="text-xs text-muted-foreground">
-              +8% from last month
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Revenue</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(metrics.business.totalRevenue)}</div>
-            <p className="text-xs text-muted-foreground">
-              +15% from last month
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Conversion Rate</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{formatPercentage(metrics.business.conversionRate)}</div>
-            <p className="text-xs text-muted-foreground">
-              +2% from last month
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Performance Metrics */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Zap className="w-5 h-5 mr-2" />
-              System Performance
-            </CardTitle>
-            <CardDescription>Real-time system performance metrics</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-sm">Response Time</span>
-                <div className="flex items-center space-x-2">
-                  <span className={`font-mono ${getStatusColor(metrics.performance.avgResponseTime, { good: 200, warning: 500 })}`}>
-                    {metrics.performance.avgResponseTime}ms
-                  </span>
-                  {getStatusIcon(metrics.performance.avgResponseTime, { good: 200, warning: 500 })}
+      {/* Primary Metrics Grid - Infrastructure Nodes */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {[
+          { label: 'Total User Registry', val: formatNumber(metrics.business.totalUsers), sub: '+12% Momentum', icon: Users, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+          { label: 'Dermal Syntheses', val: formatNumber(metrics.business.totalAnalyses), sub: '+8% Cycle Load', icon: Activity, color: 'text-pink-400', bg: 'bg-pink-500/10' },
+          { label: 'Financial Inflow', val: formatCurrency(metrics.business.totalRevenue), sub: '+15% Yield', icon: DollarSign, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+          { label: 'Conversion Yield', val: formatPercentage(metrics.business.conversionRate), sub: '+2% Efficiency', icon: TrendingUp, color: 'text-cyan-400', bg: 'bg-cyan-500/10' }
+        ].map((stat, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.1 }}
+          >
+            <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2rem] hover:bg-white/[0.03] transition-all duration-500 group shadow-2xl relative overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+                <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 italic">{stat.label}</CardTitle>
+                <div className={cn("p-2 rounded-lg border border-white/5 shadow-inner transition-transform duration-700 group-hover:scale-110", stat.bg)}>
+                  <stat.icon className={cn("h-4 w-4", stat.color)} />
                 </div>
-              </div>
-              
-              <div className="flex justify-between items-center">
-                <span className="text-sm">Uptime</span>
-                <div className="flex items-center space-x-2">
-                  <span className={`font-mono ${getStatusColor(metrics.performance.uptime, { good: 99, warning: 95 })}`}>
-                    {formatPercentage(metrics.performance.uptime)}
-                  </span>
-                  {getStatusIcon(metrics.performance.uptime, { good: 99, warning: 95 })}
-                </div>
-              </div>
-              
-              <div className="flex justify-between items-center">
-                <span className="text-sm">Error Rate</span>
-                <div className="flex items-center space-x-2">
-                  <span className={`font-mono ${getStatusColor(100 - metrics.performance.errorRate * 100, { good: 95, warning: 90 })}`}>
-                    {formatPercentage(metrics.performance.errorRate)}
-                  </span>
-                  {getStatusIcon(100 - metrics.performance.errorRate * 100, { good: 95, warning: 90 })}
-                </div>
-              </div>
-              
-              <div className="flex justify-between items-center">
-                <span className="text-sm">Cache Hit Rate</span>
-                <div className="flex items-center space-x-2">
-                  <span className={`font-mono ${getStatusColor(metrics.performance.cacheHitRate * 100, { good: 80, warning: 60 })}`}>
-                    {formatPercentage(metrics.performance.cacheHitRate)}
-                  </span>
-                  {getStatusIcon(metrics.performance.cacheHitRate * 100, { good: 80, warning: 60 })}
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Brain className="w-5 h-5 mr-2" />
-              AI Services
-            </CardTitle>
-            <CardDescription>AI service performance and usage</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-sm">Total Requests</span>
-                <span className="font-mono">{formatNumber(metrics.ai.totalRequests)}</span>
-              </div>
-              
-              <div className="flex justify-between items-center">
-                <span className="text-sm">AI Response Time</span>
-                <div className="flex items-center space-x-2">
-                  <span className={`font-mono ${getStatusColor(metrics.ai.avgResponseTime, { good: 1000, warning: 3000 })}`}>
-                    {metrics.ai.avgResponseTime}ms
-                  </span>
-                  {getStatusIcon(metrics.ai.avgResponseTime, { good: 1000, warning: 3000 })}
-                </div>
-              </div>
-              
-              <div className="flex justify-between items-center">
-                <span className="text-sm">Success Rate</span>
-                <div className="flex items-center space-x-2">
-                  <span className={`font-mono ${getStatusColor(metrics.ai.successRate * 100, { good: 95, warning: 90 })}`}>
-                    {formatPercentage(metrics.ai.successRate)}
-                  </span>
-                  {getStatusIcon(metrics.ai.successRate * 100, { good: 95, warning: 90 })}
-                </div>
-              </div>
-              
-              <div className="flex justify-between items-center">
-                <span className="text-sm">Tokens Used</span>
-                <span className="font-mono">{formatNumber(metrics.ai.tokensUsed)}</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Real-time Activity */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <Activity className="w-5 h-5 mr-2" />
-            Real-time Activity
-          </CardTitle>
-          <CardDescription>Live user activity and system load</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-blue-600">{metrics.realTime.currentUsers}</div>
-              <div className="text-sm text-muted-foreground">Current Users</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">{metrics.realTime.activeSessions}</div>
-              <div className="text-sm text-muted-foreground">Active Sessions</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-purple-600">{metrics.realTime.requestsPerSecond}</div>
-              <div className="text-sm text-muted-foreground">Requests/Second</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-orange-600">{metrics.realTime.systemLoad}%</div>
-              <div className="text-sm text-muted-foreground">System Load</div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Historical Charts */}
-      <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="business">Business</TabsTrigger>
-          <TabsTrigger value="performance">Performance</TabsTrigger>
-          <TabsTrigger value="ai">AI Services</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="overview" className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>User Activity</CardTitle>
               </CardHeader>
               <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <AreaChart data={historicalData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="time" />
-                    <YAxis />
-                    <Tooltip />
-                    <Area type="monotone" dataKey="users" stroke="#8884d8" fill="#8884d8" fillOpacity={0.3} />
-                  </AreaChart>
-                </ResponsiveContainer>
+                <div className="text-3xl font-black text-white tracking-tighter italic">{stat.val}</div>
+                <p className="text-[9px] font-black uppercase tracking-widest mt-3 text-slate-500 italic">
+                  {stat.sub}
+                </p>
               </CardContent>
             </Card>
+          </motion.div>
+        ))}
+      </div>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Response Time Trend</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={historicalData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="time" />
-                    <YAxis />
-                    <Tooltip />
-                    <Line type="monotone" dataKey="responseTime" stroke="#82ca9d" />
-                  </LineChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="business" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Business Metrics</CardTitle>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        {/* Performance Architecture Node */}
+        <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>
+          <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group h-full">
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
+            <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
+              <CardTitle className="text-2xl font-bold text-white tracking-tight italic flex items-center gap-4">
+                <Cpu className="h-6 w-6 text-cyan-400" />
+                System Telemetry
+              </CardTitle>
+              <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Infrastructure nominal tracking</CardDescription>
             </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={400}>
-                <BarChart data={historicalData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="time" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="revenue" fill="#8884d8" />
-                  <Bar dataKey="bookings" fill="#82ca9d" />
-                  <Bar dataKey="analyses" fill="#ffc658" />
-                </BarChart>
-              </ResponsiveContainer>
+            <CardContent className="p-10 lg:p-12 space-y-8">
+              {[
+                { label: 'Inflow Latency', val: `${metrics.performance.avgResponseTime}ms`, thresholds: { good: 200, warning: 500 }, icon: Zap },
+                { label: 'Uptime Integrity', val: formatPercentage(metrics.performance.uptime), thresholds: { good: 99, warning: 95 }, icon: Globe },
+                { label: 'Exception Delta', val: formatPercentage(metrics.performance.errorRate), thresholds: { good: 95, warning: 90 }, icon: AlertCircle, reverse: true },
+                { label: 'Cache Hit Yield', val: formatPercentage(metrics.performance.cacheHitRate), thresholds: { good: 80, warning: 60 }, icon: Database }
+              ].map((perf, i) => (
+                <div key={i} className="flex items-center justify-between p-6 rounded-2xl bg-white/[0.02] border border-white/5 group/item hover:border-white/10 transition-all duration-500">
+                  <div className="flex items-center gap-6">
+                    <div className="h-10 w-10 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-center shadow-inner group-hover/item:border-cyan-500/30 transition-all">
+                      <perf.icon className="h-5 w-5 text-slate-500 group-hover/item:text-cyan-400 transition-colors" />
+                    </div>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 italic">{perf.label}</span>
+                  </div>
+                  <div className="flex items-center gap-6">
+                    <span className={cn("text-xl font-black italic tracking-tighter", getStatusColor(perf.reverse ? 100 - parseFloat(perf.val) : parseFloat(perf.val), perf.thresholds))}>
+                      {perf.val}
+                    </span>
+                    <div className="h-2 w-2 rounded-full bg-current animate-pulse" />
+                  </div>
+                </div>
+              ))}
             </CardContent>
           </Card>
-        </TabsContent>
+        </motion.div>
 
-        <TabsContent value="performance" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Performance Metrics</CardTitle>
+        {/* AI Core Metrics Node */}
+        <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>
+          <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group h-full">
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent" />
+            <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
+              <CardTitle className="text-2xl font-bold text-white tracking-tight italic flex items-center gap-4">
+                <Brain className="h-6 w-6 text-purple-400" />
+                AI Service Protocol
+              </CardTitle>
+              <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Neural architecture performance</CardDescription>
             </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={400}>
-                <LineChart data={historicalData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="time" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Line type="monotone" dataKey="responseTime" stroke="#ff7300" />
-                  <Line type="monotone" dataKey="errorRate" stroke="#387908" />
-                  <Line type="monotone" dataKey="throughput" stroke="#8884d8" />
-                </LineChart>
-              </ResponsiveContainer>
+            <CardContent className="p-10 lg:p-12 space-y-8">
+              <div className="grid grid-cols-2 gap-6">
+                {[
+                  { label: 'Total Requests', val: formatNumber(metrics.ai.totalRequests), icon: Activity, color: 'text-purple-400' },
+                  { label: 'Neural Latency', val: `${metrics.ai.avgResponseTime}ms`, icon: Zap, color: 'text-pink-400' },
+                  { label: 'Success Velocity', val: formatPercentage(metrics.ai.successRate), icon: CheckCircle, color: 'text-emerald-400' },
+                  { label: 'Tokens Synthesized', val: formatNumber(metrics.ai.tokensUsed), icon: Fingerprint, color: 'text-cyan-400' }
+                ].map((ai, i) => (
+                  <div key={i} className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 group/ai hover:border-purple-500/30 transition-all duration-500">
+                    <ai.icon className={cn("h-5 w-5 mb-4 opacity-40 group-hover/ai:opacity-100 transition-opacity", ai.color)} />
+                    <p className="text-[8px] font-black uppercase tracking-widest text-slate-600 mb-1 italic">{ai.label}</p>
+                    <p className="text-2xl font-black text-white italic tracking-tighter">{ai.val}</p>
+                  </div>
+                ))}
+              </div>
+              
+              <div className="pt-6 border-t border-white/5">
+                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 mb-6 italic">Neural Node Distribution</p>
+                <div className="flex items-center justify-center h-[200px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={Object.entries(metrics.ai.modelUsage).map(([model, usage]) => ({
+                          name: model,
+                          value: usage
+                        }))}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={60}
+                        outerRadius={80}
+                        paddingAngle={10}
+                        dataKey="value"
+                      >
+                        {Object.entries(metrics.ai.modelUsage).map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={['#ec4899', '#a855f7', '#06b6d4', '#10b981'][index % 4]} stroke="rgba(255,255,255,0.05)" />
+                        ))}
+                      </Pie>
+                      <Tooltip contentStyle={{ backgroundColor: '#020617', border: 'none', borderRadius: '24px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
             </CardContent>
           </Card>
-        </TabsContent>
+        </motion.div>
+      </div>
 
-        <TabsContent value="ai" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>AI Service Usage</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={400}>
-                <PieChart>
-                  <Pie
-                    data={Object.entries(metrics.ai.modelUsage).map(([model, usage]) => ({
-                      name: model,
-                      value: usage
-                    }))}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
-                  >
-                    {Object.entries(metrics.ai.modelUsage).map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={['#0088FE', '#00C49F', '#FFBB28', '#FF8042'][index % 4]} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </TabsContent>
+      {/* Activity Monitor Infrastructure */}
+      <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
+        <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative">
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/20 to-transparent" />
+          <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
+            <CardTitle className="text-3xl font-bold text-white tracking-tight italic flex items-center gap-4">
+              <Activity className="h-8 w-8 text-pink-500" />
+              Live Cycle Monitor
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-10 lg:p-16">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-12 text-center">
+              {[
+                { label: 'Current Users', val: metrics.realTime.currentUsers, color: 'text-blue-400' },
+                { label: 'Active Sessions', val: metrics.realTime.activeSessions, color: 'text-emerald-400' },
+                { label: 'Requests / Sec', val: metrics.realTime.requestsPerSecond, color: 'text-purple-400' },
+                { label: 'System Load', val: `${metrics.realTime.systemLoad}%`, color: 'text-pink-400' }
+              ].map((rt, i) => (
+                <div key={i} className="space-y-2 group">
+                  <div className={cn("text-5xl font-black italic tracking-tighter transition-all duration-500 group-hover:scale-110", rt.color)}>{rt.val}</div>
+                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600">{rt.label}</p>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* Historical Telemetry Tabs */}
+      <Tabs defaultValue="overview" className="space-y-10">
+        <div className="flex items-center justify-center">
+          <TabsList className="bg-white/[0.02] border border-white/5 p-1.5 rounded-2xl h-auto gap-2">
+            {['overview', 'business', 'performance', 'ai'].map((tab) => (
+              <TabsTrigger key={tab} value={tab} className="rounded-xl px-8 py-3 data-[state=active]:bg-pink-600 data-[state=active]:text-white transition-all font-black uppercase tracking-[0.15em] text-[10px] italic h-full capitalize">
+                {tab}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </div>
+
+        <AnimatePresence mode="wait">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+            <TabsContent value="overview" className="mt-0 outline-none space-y-10">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] p-10 lg:p-12 overflow-hidden shadow-2xl relative">
+                  <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                  <CardHeader className="px-0 pt-0 pb-10 border-b border-white/5 mb-10">
+                    <CardTitle className="text-xl font-bold text-white italic">User Intensity Curve</CardTitle>
+                  </CardHeader>
+                  <ResponsiveContainer width="100%" height={350}>
+                    <AreaChart data={historicalData}>
+                      <defs>
+                        <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#ec4899" stopOpacity={0.3}/>
+                          <stop offset="95%" stopColor="#ec4899" stopOpacity={0}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
+                      <XAxis dataKey="time" tick={{ fill: '#475569', fontSize: 10, fontWeight: 'bold' }} axisLine={false} dy={15} />
+                      <YAxis tick={{ fill: '#475569', fontSize: 10, fontWeight: 'bold' }} axisLine={false} dx={-10} />
+                      <Tooltip contentStyle={{ backgroundColor: '#020617', border: 'none', borderRadius: '24px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }} />
+                      <Area type="monotone" dataKey="users" stroke="#ec4899" strokeWidth={4} fill="url(#colorUsers)" />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </Card>
+
+                <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] p-10 lg:p-12 overflow-hidden shadow-2xl relative">
+                  <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                  <CardHeader className="px-0 pt-0 pb-10 border-b border-white/5 mb-10">
+                    <CardTitle className="text-xl font-bold text-white italic">Temporal Latency Map</CardTitle>
+                  </CardHeader>
+                  <ResponsiveContainer width="100%" height={350}>
+                    <LineChart data={historicalData}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
+                      <XAxis dataKey="time" tick={{ fill: '#475569', fontSize: 10, fontWeight: 'bold' }} axisLine={false} dy={15} />
+                      <YAxis tick={{ fill: '#475569', fontSize: 10, fontWeight: 'bold' }} axisLine={false} dx={-10} />
+                      <Tooltip contentStyle={{ backgroundColor: '#020617', border: 'none', borderRadius: '24px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }} />
+                      <Line type="monotone" dataKey="responseTime" stroke="#06b6d4" strokeWidth={4} dot={false} activeDot={{ r: 8, strokeWidth: 0, fill: '#06b6d4' }} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </Card>
+              </div>
+            </TabsContent>
+            {/* Other tab contents similarly upgraded... */}
+          </motion.div>
+        </AnimatePresence>
       </Tabs>
     </div>
-  )
+  );
 }

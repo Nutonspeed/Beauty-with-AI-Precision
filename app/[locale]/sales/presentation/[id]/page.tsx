@@ -235,7 +235,7 @@ export default function SalesPresentationPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [analysisId, currentLocale, t]);
+  }, [analysisId, t]);
 
   useEffect(() => {
     loadAnalysis();

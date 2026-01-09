@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -30,8 +30,12 @@ import {
   RefreshCw,
   ChevronLeft,
   ChevronRight,
-  Filter,
+  Zap,
+  Layers,
+  TrendingUp
 } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { cn } from '@/lib/utils';
 
 interface ActivityLog {
   id: string;
@@ -145,223 +149,212 @@ export default function ActivityLogsDashboard() {
   );
 
   return (
-    <div className="space-y-6">
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Total Activities</CardTitle>
-            <Activity className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats?.totalActivities || 0}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Today</CardTitle>
-            <Calendar className="h-4 w-4 text-blue-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-blue-600">{stats?.todayActivities || 0}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">This Week</CardTitle>
-            <Activity className="h-4 w-4 text-green-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">{stats?.weekActivities || 0}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">AI Analyses</CardTitle>
-            <Brain className="h-4 w-4 text-purple-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-purple-600">{stats?.byType?.ai_analysis || 0}</div>
-          </CardContent>
-        </Card>
+    <div className="space-y-10 animate-in fade-in duration-700">
+      {/* Overview Metrics Grid - Operational Nodes */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {[
+          { label: 'Total Event Registry', val: stats?.totalActivities || 0, sub: 'Global Activity Nodes', icon: Activity, color: 'text-white', bg: 'bg-white/5' },
+          { label: 'Temporal Cycles (Today)', val: stats?.todayActivities || 0, sub: 'Real-time Throughput', icon: Zap, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+          { label: 'Weekly Delta', val: stats?.weekActivities || 0, sub: '7d Cumulative Flow', icon: TrendingUp, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+          { label: 'Neural Inferences', val: stats?.byType?.ai_analysis || 0, sub: 'AI Core Processing', icon: Brain, color: 'text-purple-400', bg: 'bg-purple-500/10' }
+        ].map((node, i) => (
+          <Card key={i} className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2rem] hover:bg-white/[0.03] transition-all duration-500 group shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+              <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 italic">{node.label}</CardTitle>
+              <div className={cn("p-2 rounded-lg border border-white/5 shadow-inner group-hover:scale-110 transition-transform duration-700", node.bg)}>
+                <node.icon className={cn("h-4 w-4", node.color)} />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-black text-white tracking-tighter italic">{node.val.toLocaleString()}</div>
+              <p className="text-[9px] font-black uppercase tracking-widest mt-2 text-slate-500 italic">{node.sub}</p>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
-      {/* Activity Type Breakdown */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Activity Breakdown</CardTitle>
+      {/* Activity Sector Distribution */}
+      <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group">
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
+        <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
+          <CardTitle className="text-2xl font-bold text-white tracking-tight italic flex items-center gap-4">
+            <Layers className="h-6 w-6 text-cyan-400" />
+            Event Sector Matrix
+          </CardTitle>
+          <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Operational breakdown of system-wide identity interactions</CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="flex items-center gap-3 p-3 bg-purple-50 rounded-lg">
-              <Brain className="h-8 w-8 text-purple-500" />
-              <div>
-                <div className="text-2xl font-bold">{stats?.byType?.ai_analysis || 0}</div>
-                <div className="text-sm text-muted-foreground">AI Analyses</div>
+        <CardContent className="p-10 lg:p-12">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { type: 'ai_analysis', label: 'Neural Inferences', icon: Brain, color: 'purple', val: stats?.byType?.ai_analysis || 0 },
+              { type: 'booking', label: 'Clinical Cycles', icon: Calendar, color: 'blue', val: stats?.byType?.booking || 0 },
+              { type: 'user', label: 'Entity Registry', icon: Users, color: 'green', val: stats?.byType?.user || 0 },
+              { type: 'clinic', label: 'Node Allocation', icon: Building2, color: 'orange', val: stats?.byType?.clinic || 0 },
+            ].map(({ type, label, icon: Icon, color, val }) => (
+              <div key={type} className="flex flex-col items-center gap-4 p-6 rounded-[2rem] bg-white/[0.02] border border-white/5 hover:border-cyan-500/20 transition-all duration-500 group/sector">
+                <div className={cn("p-3 rounded-2xl border border-white/5 shadow-inner transition-transform duration-700 group-hover/sector:scale-110", `bg-${color}-500/10`)}>
+                  <Icon className={cn("h-6 w-6", `text-${color}-400`)} />
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-black text-white italic tracking-tighter">{val.toLocaleString()}</div>
+                  <div className="text-[8px] font-black text-slate-600 uppercase tracking-widest mt-1">{label}</div>
+                </div>
               </div>
-            </div>
-            <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
-              <Calendar className="h-8 w-8 text-blue-500" />
-              <div>
-                <div className="text-2xl font-bold">{stats?.byType?.booking || 0}</div>
-                <div className="text-sm text-muted-foreground">Bookings</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
-              <Users className="h-8 w-8 text-green-500" />
-              <div>
-                <div className="text-2xl font-bold">{stats?.byType?.user || 0}</div>
-                <div className="text-sm text-muted-foreground">User Registrations</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 p-3 bg-orange-50 rounded-lg">
-              <Building2 className="h-8 w-8 text-orange-500" />
-              <div>
-                <div className="text-2xl font-bold">{stats?.byType?.clinic || 0}</div>
-                <div className="text-sm text-muted-foreground">Clinics Created</div>
-              </div>
-            </div>
+            ))}
           </div>
         </CardContent>
       </Card>
 
-      {/* Filters and Activity Log */}
-      <Card>
-        <CardHeader>
-          <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
-            <CardTitle className="text-lg">Activity Log</CardTitle>
-            <div className="flex gap-2 flex-wrap">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+      {/* Primary Log Registry */}
+      <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative">
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+        <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
+          <div className="flex flex-col lg:flex-row gap-8 items-center justify-between">
+            <div className="space-y-2">
+              <CardTitle className="text-3xl font-bold text-white tracking-tight italic">Temporal Log Stream</CardTitle>
+              <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Global immutable activity ledger</CardDescription>
+            </div>
+            
+            <div className="flex gap-3 flex-wrap justify-center">
+              <div className="relative group">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-600 group-focus-within:text-pink-500 transition-colors" />
                 <Input
-                  placeholder="Search..."
+                  placeholder="Search Vector Stream..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 w-[200px]"
+                  className="h-14 pl-12 pr-6 rounded-2xl border-white/5 bg-white/[0.03] text-white placeholder:text-slate-700 focus:border-pink-500/30 focus:ring-pink-500/20 transition-all text-sm font-bold italic w-[240px]"
                 />
               </div>
 
               <Select value={typeFilter} onValueChange={(v) => { setTypeFilter(v); setOffset(0); }}>
-                <SelectTrigger className="w-[150px]">
-                  <Filter className="h-4 w-4 mr-2" />
-                  <SelectValue placeholder="Type" />
+                <SelectTrigger className="h-14 w-[160px] rounded-2xl border border-white/5 bg-white/[0.03] px-6 text-[10px] font-black uppercase tracking-widest text-white focus:ring-pink-500/20 appearance-none transition-all italic">
+                  <SelectValue placeholder="Filter Protocol" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Types</SelectItem>
-                  <SelectItem value="ai_analysis">AI Analysis</SelectItem>
-                  <SelectItem value="booking">Booking</SelectItem>
-                  <SelectItem value="user">User</SelectItem>
-                  <SelectItem value="clinic">Clinic</SelectItem>
+                <SelectContent className="bg-[#020617] border-white/10 rounded-2xl">
+                  <SelectItem value="all" className="text-[10px] font-black uppercase tracking-widest italic">GLOBAL_STREAM</SelectItem>
+                  <SelectItem value="ai_analysis" className="text-[10px] font-black uppercase tracking-widest italic">NEURAL_INFERENCE</SelectItem>
+                  <SelectItem value="booking" className="text-[10px] font-black uppercase tracking-widest italic">CLINICAL_CYCLE</SelectItem>
+                  <SelectItem value="user" className="text-[10px] font-black uppercase tracking-widest italic">IDENTITY_AUTH</SelectItem>
+                  <SelectItem value="clinic" className="text-[10px] font-black uppercase tracking-widest italic">NODE_ALLOCATION</SelectItem>
                 </SelectContent>
               </Select>
 
               <Select value={clinicFilter} onValueChange={(v) => { setClinicFilter(v); setOffset(0); }}>
-                <SelectTrigger className="w-[180px]">
-                  <Building2 className="h-4 w-4 mr-2" />
-                  <SelectValue placeholder="Clinic" />
+                <SelectTrigger className="h-14 w-[180px] rounded-2xl border border-white/5 bg-white/[0.03] px-6 text-[10px] font-black uppercase tracking-widest text-white focus:ring-pink-500/20 appearance-none transition-all italic">
+                  <SelectValue placeholder="Origin Node" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Clinics</SelectItem>
+                <SelectContent className="bg-[#020617] border-white/10 rounded-2xl max-h-[300px]">
+                  <SelectItem value="all" className="text-[10px] font-black uppercase tracking-widest italic">ANY_SOURCE</SelectItem>
                   {clinics.map((c) => (
-                    <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                    <SelectItem key={c.id} value={c.id} className="text-[10px] font-black uppercase tracking-widest italic">{c.name}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
 
-              <Button variant="outline" size="icon" onClick={fetchActivities}>
-                <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+              <Button variant="outline" size="icon" className="h-14 w-14 rounded-2xl border-white/10 bg-white/5 hover:bg-white/10" onClick={fetchActivities}>
+                <RefreshCw className={cn("h-4 w-4 text-slate-400", loading && "animate-spin")} />
               </Button>
             </div>
           </div>
         </CardHeader>
 
-        <CardContent>
-          {loading ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-500"></div>
-            </div>
-          ) : (
-            <>
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-[50px]">Type</TableHead>
-                      <TableHead>Activity</TableHead>
-                      <TableHead>User</TableHead>
-                      <TableHead>Clinic</TableHead>
-                      <TableHead className="text-right">Time</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredActivities.length === 0 ? (
-                      <TableRow>
-                        <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
-                          No activities found
-                        </TableCell>
-                      </TableRow>
-                    ) : (
-                      filteredActivities.map((activity) => (
-                        <TableRow key={activity.id}>
-                          <TableCell>{getTypeIcon(activity.type)}</TableCell>
-                          <TableCell>
-                            <div className="flex flex-col gap-1">
-                              <span className="font-medium">{activity.description}</span>
-                              <Badge className={`w-fit ${getTypeBadge(activity.type)}`}>
-                                {activity.action.replace(/_/g, ' ')}
-                              </Badge>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex flex-col">
-                              <span className="font-medium">{activity.userName}</span>
-                              {activity.userEmail && (
-                                <span className="text-xs text-muted-foreground">{activity.userEmail}</span>
-                              )}
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <span className="text-sm">{activity.clinicName}</span>
-                          </TableCell>
-                          <TableCell className="text-right text-sm text-muted-foreground">
-                            {formatDate(activity.createdAt)}
-                          </TableCell>
-                        </TableRow>
-                      ))
-                    )}
-                  </TableBody>
-                </Table>
-              </div>
+        <CardContent className="p-0">
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-white/[0.02] border-b border-white/5">
+                  <TableHead className="w-20 px-10 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Type</TableHead>
+                  <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Event Description</TableHead>
+                  <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Entity Origin</TableHead>
+                  <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Source Node</TableHead>
+                  <TableHead className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Temporal Stamp</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody className="divide-y divide-white/5">
+                {filteredActivities.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center py-20 text-slate-600 uppercase tracking-[0.4em] font-black text-[10px] italic">
+                      NO_EVENTS_DETECTED_IN_SECTOR
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredActivities.map((activity, idx) => (
+                    <motion.tr 
+                      key={activity.id}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: idx * 0.05 }}
+                      className="group/row transition-all duration-500 hover:bg-white/[0.03]"
+                    >
+                      <TableCell className="px-10 py-8">
+                        <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center border border-white/5 shadow-inner transition-transform duration-700 group-hover/row:scale-110", getTypeBadge(activity.type).replace('text-', 'bg-opacity-10 bg-'))}>
+                          {getTypeIcon(activity.type)}
+                        </div>
+                      </TableCell>
+                      <TableCell className="px-8 py-8">
+                        <div className="space-y-2">
+                          <span className="text-sm font-bold text-white italic group-hover/row:text-pink-400 transition-colors leading-relaxed">{activity.description}</span>
+                          <Badge className={cn("block w-fit px-3 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest border-none shadow-inner", getTypeBadge(activity.type).replace('bg-', 'bg-opacity-10 text-').replace('100', '400'))}>
+                            {activity.action.replace(/_/g, ' ')}
+                          </Badge>
+                        </div>
+                      </TableCell>
+                      <TableCell className="px-8 py-8">
+                        <div className="flex flex-col gap-1">
+                          <span className="text-sm font-bold text-slate-300 italic group-hover/row:text-white transition-colors">{activity.userName}</span>
+                          {activity.userEmail && (
+                            <span className="text-[9px] font-black uppercase tracking-widest text-slate-600">{activity.userEmail}</span>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell className="px-8 py-8">
+                        <div className="flex items-center gap-2">
+                          <Building2 className="h-3.5 w-3.5 text-slate-600" />
+                          <span className="text-xs font-black text-slate-400 italic uppercase tracking-tighter">{activity.clinicName}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="px-10 py-8 text-right">
+                        <div className="space-y-1">
+                          <div className="text-sm font-bold text-slate-300 italic">{formatDate(activity.createdAt).split(',')[0]}</div>
+                          <p className="text-[9px] font-black uppercase tracking-widest text-slate-600">{formatDate(activity.createdAt).split(',')[1]}</p>
+                        </div>
+                      </TableCell>
+                    </motion.tr>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
 
-              {/* Pagination */}
-              <div className="flex items-center justify-between mt-4">
-                <div className="text-sm text-muted-foreground">
-                  Showing {offset + 1}-{Math.min(offset + limit, total)} of {total}
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setOffset(Math.max(0, offset - limit))}
-                    disabled={offset === 0}
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setOffset(offset + limit)}
-                    disabled={offset + limit >= total}
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </>
-          )}
+          {/* Pagination Telemetry */}
+          <div className="p-10 border-t border-white/5 flex items-center justify-between">
+            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 italic">
+              Streaming Identity Matrix: {offset + 1} — {Math.min(offset + limit, total)} <span className="mx-2">::</span> Sector Total: {total}
+            </p>
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-xl border-white/10 bg-white/5 h-12 px-6 hover:bg-white/10 transition-all"
+                onClick={() => setOffset(Math.max(0, offset - limit))}
+                disabled={offset === 0}
+              >
+                <ChevronLeft className="h-4 w-4 mr-2" />
+                <span className="text-[9px] font-black uppercase tracking-widest">Previous_Sector</span>
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-xl border-white/10 bg-white/5 h-12 px-6 hover:bg-white/10 transition-all"
+                onClick={() => setOffset(offset + limit)}
+                disabled={offset + limit >= total}
+              >
+                <span className="text-[9px] font-black uppercase tracking-widest">Next_Sector</span>
+                <ChevronRight className="h-4 w-4 ml-2" />
+              </Button>
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>

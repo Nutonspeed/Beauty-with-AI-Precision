@@ -6,17 +6,20 @@ import { useState } from "react"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Calendar } from "@/components/ui/calendar"
 import { Badge } from "@/components/ui/badge"
-import { Calendar as CalendarIcon, Clock, CheckCircle2, Loader2 } from "lucide-react"
+import { CalendarIcon, Clock, CheckCircle2, Loader2, User } from "lucide-react"
 import { format } from "date-fns"
 import { th, enUS } from "date-fns/locale"
 import { useTranslations, useLocale } from "next-intl"
 import { useLocalizePath } from "@/lib/i18n/locale-link"
+import { motion, AnimatePresence } from "framer-motion"
+import { cn } from "@/lib/utils"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
 export default function BookingPage() {
   const t = useTranslations()
@@ -108,36 +111,57 @@ export default function BookingPage() {
 
   if (isSubmitted) {
     return (
-      <div className="flex min-h-screen flex-col">
+      <div className="flex min-h-screen flex-col bg-[#020617] text-slate-200 selection:bg-pink-500/30">
         <Header />
-        <main className="flex flex-1 items-center justify-center bg-muted/30 px-4 py-20">
-          <Card className="w-full max-w-md border-2 border-primary">
-            <CardContent className="p-8 text-center">
-              <div className="mb-4 flex justify-center">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-                  <CheckCircle2 className="h-8 w-8 text-primary" />
-                </div>
+        
+        <main className="flex-1 relative overflow-hidden flex flex-col">
+          {/* Infrastructure Background */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-pink-500/5 rounded-full blur-[120px] animate-glow-pulse" />
+            <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-500/5 rounded-full blur-[100px] animate-float" />
+            <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.02]" />
+          </div>
+
+          <div className="container relative z-10 py-12 md:py-20 flex-1 flex flex-col max-w-5xl">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-center space-y-8"
+            >
+              <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-3xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 shadow-2xl shadow-emerald-500/10">
+                <CheckCircle2 className="h-12 w-12" />
               </div>
-              <h2 className="mb-2 text-2xl font-bold">{t('booking.success.title')}</h2>
-              <p className="mb-6 text-sm text-muted-foreground leading-relaxed">
-                {t('booking.success.description')}
-              </p>
-              <div className="mb-6 space-y-2 rounded-lg bg-muted/50 p-4 text-left">
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">{t('booking.details.date')}:</span>
-                  <span className="font-medium">{date && format(date, "PPP", { locale: locale === 'th' ? th : enUS })}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">{t('booking.details.time')}:</span>
-                  <span className="font-medium">{selectedTime}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">{t('booking.details.treatment')}:</span>
-                  <span className="font-medium">{treatmentsData.find((t) => t.id === selectedTreatment)?.name}</span>
-                </div>
+              <div className="space-y-4">
+                <h2 className="text-4xl font-bold text-white tracking-tight italic">
+                  {t('booking.success.title')}
+                </h2>
+                <p className="text-xl text-slate-400 font-light leading-relaxed max-w-md mx-auto italic">
+                  {t('booking.success.description')}
+                </p>
               </div>
+              
+              <Card className="max-w-md mx-auto border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2.5rem] overflow-hidden shadow-2xl relative">
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent" />
+                <CardContent className="p-10 space-y-6">
+                  <div className="flex justify-between items-center text-sm border-b border-white/5 pb-4">
+                    <span className="text-slate-500 uppercase font-black tracking-widest text-[10px] italic">{t('booking.details.date')}</span>
+                    <span className="text-white font-bold italic">{date && format(date, "PPP", { locale: locale === 'th' ? th : enUS })}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-sm border-b border-white/5 pb-4">
+                    <span className="text-slate-500 uppercase font-black tracking-widest text-[10px] italic">{t('booking.details.time')}</span>
+                    <span className="text-white font-bold italic">{selectedTime}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-slate-500 uppercase font-black tracking-widest text-[10px] italic">{t('booking.details.treatment')}</span>
+                    <span className="text-white font-bold italic">{treatmentsData.find((t) => t.id === selectedTreatment)?.name}</span>
+                  </div>
+                </CardContent>
+              </Card>
+
               <Button
-                className="w-full"
+                variant="premium"
+                size="xl"
+                className="h-16 px-12 rounded-2xl shadow-2xl shadow-pink-500/20 text-[10px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all"
                 onClick={() => {
                   setIsSubmitted(false)
                   setFormData({ firstName: "", lastName: "", email: "", phone: "", notes: "" })
@@ -148,8 +172,8 @@ export default function BookingPage() {
               >
                 {t('booking.bookAnother')}
               </Button>
-            </CardContent>
-          </Card>
+            </motion.div>
+          </div>
         </main>
         <Footer />
       </div>
@@ -157,119 +181,196 @@ export default function BookingPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-[#020617] text-slate-200 selection:bg-pink-500/30">
       <Header />
 
-      <main className="flex-1 bg-muted/30">
-        <div className="container py-12">
-          <div className="mx-auto max-w-5xl">
-            <div className="mb-8 text-center">
-              <h1 className="mb-2 text-3xl font-bold">{t('booking.title')}</h1>
-              <p className="mt-2 text-sm text-muted-foreground">
-                {t('booking.subtitle')}
-              </p>
-            </div>
+      <main className="flex-1 relative overflow-hidden">
+        {/* Infrastructure Background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-pink-500/5 rounded-full blur-[120px] animate-glow-pulse" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-500/5 rounded-full blur-[100px] animate-float" />
+          <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.02]" />
+        </div>
 
+        <div className="container relative z-10 py-12 md:py-20 px-6 space-y-16 max-w-7xl mx-auto">
+          {/* Booking Header Interface */}
+          <div className="text-center space-y-8 max-w-4xl mx-auto">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8 }}
+            >
+              <Badge variant="outline" className="px-4 py-1 rounded-full border-pink-500/30 text-pink-400 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.2em] text-[10px] font-black shadow-2xl shadow-pink-500/10">
+                <CalendarIcon className="mr-3 h-3.5 w-3.5 animate-pulse" />
+                Clinical Reservation Protocol
+              </Badge>
+            </motion.div>
+            
+            <motion.h1 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+              className="text-5xl md:text-8xl font-bold tracking-tighter text-white leading-[0.9] italic"
+            >
+              Treatment<br />
+              <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent not-italic">Scheduling</span>
+            </motion.h1>
+            
+            <motion.p 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4, duration: 1 }}
+              className="text-xl text-slate-500 font-light tracking-widest max-w-2xl mx-auto italic leading-relaxed"
+            >
+              Synchronize your aesthetic transformation cycle with our precision clinical nodes.
+            </motion.p>
+          </div>
+
+          <AnimatePresence>
             {error && (
-              <div className="mb-6 rounded-lg border border-destructive bg-destructive/10 p-4 text-center">
-                <p className="text-sm text-destructive">{error}</p>
-              </div>
+              <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+                <Alert variant="destructive" className="bg-rose-500/10 border-rose-500/20 text-rose-400 rounded-[2rem] p-6 max-w-3xl mx-auto">
+                  <AlertDescription className="text-center text-sm font-bold uppercase tracking-widest">{error}</AlertDescription>
+                </Alert>
+              </motion.div>
             )}
+          </AnimatePresence>
 
-            <form onSubmit={handleSubmit}>
-              <div className="grid gap-6 lg:grid-cols-3">
-                {/* Left Column - Treatment Selection */}
-                <div className="lg:col-span-1">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-lg">{t('booking.selectTreatment')}</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      {treatmentsData.map((treatment) => (
-                        <Card
-                          key={treatment.id}
-                          className={`cursor-pointer transition-all hover:shadow-md ${
-                            selectedTreatment === treatment.id ? "border-2 border-primary bg-primary/5" : "border"
-                          }`}
-                          onClick={() => setSelectedTreatment(treatment.id)}
-                        >
-                          <CardContent className="p-3">
-                            <div className="mb-1 font-medium">{treatment.name}</div>
-                            <div className="flex items-center justify-between text-xs text-muted-foreground">
-                              <span className="flex items-center gap-1">
-                                <Clock className="h-3 w-3" />
-                                {treatment.duration}
-                              </span>
-                              <Badge variant="outline" className="text-xs">
-                                {treatment.price}
-                              </Badge>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </CardContent>
-                  </Card>
-                </div>
-
-                {/* Right Column - Date, Time & Details */}
-                <div className="space-y-6 lg:col-span-2">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-lg">{t('booking.selectDate')} & {t('booking.selectTime')}</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                      <div>
-                        <Label className="mb-2 block">{t('booking.chooseDate')}</Label>
-                        <Calendar
-                          mode="single"
-                          selected={date}
-                          onSelect={setDate}
-                          disabled={(date) => date < new Date()}
-                          className="rounded-md border"
-                        />
-                      </div>
-
-                      <div>
-                        <Label className="mb-2 block">{t('booking.chooseTime')}</Label>
-                        <div className="grid grid-cols-4 gap-2">
-                          {timeSlots.map((time) => (
-                            <Button
-                              key={time}
-                              type="button"
-                              variant={selectedTime === time ? "default" : "outline"}
-                              size="sm"
-                              onClick={() => setSelectedTime(time)}
-                              className="w-full"
-                            >
-                              {time}
-                            </Button>
-                          ))}
+          <form onSubmit={handleSubmit}>
+            <div className="grid gap-10 lg:grid-cols-12">
+              {/* Treatment Selection Node */}
+              <motion.div 
+                className="lg:col-span-4 space-y-8"
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+              >
+                <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative h-full">
+                  <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                  <CardHeader className="p-10 pb-6">
+                    <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('booking.selectTreatment')}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-10 pt-0 space-y-4">
+                    {treatmentsData.map((treatment) => (
+                      <motion.div
+                        key={treatment.id}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className={cn(
+                          "cursor-pointer transition-all duration-500 rounded-3xl p-6 border group relative overflow-hidden",
+                          selectedTreatment === treatment.id 
+                            ? "bg-pink-600/10 border-pink-500/40 shadow-inner" 
+                            : "bg-white/[0.02] border-white/5 hover:border-white/10"
+                        )}
+                        onClick={() => setSelectedTreatment(treatment.id)}
+                      >
+                        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <div className="space-y-4 relative z-10">
+                          <div className="font-bold text-lg text-white tracking-tight italic group-hover:text-pink-400 transition-colors">{treatment.name}</div>
+                          <div className="flex items-center justify-between">
+                            <span className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.1em] text-slate-500 italic">
+                              <Clock className="h-3.5 w-3.5 text-pink-500/60" />
+                              {treatment.duration}
+                            </span>
+                            <Badge className={cn(
+                              "text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full border-none shadow-inner transition-all",
+                              selectedTreatment === treatment.id ? "bg-pink-600 text-white shadow-pink-600/20" : "bg-white/[0.03] text-slate-600"
+                            )}>
+                              {treatment.price}
+                            </Badge>
+                          </div>
                         </div>
-                      </div>
+                      </motion.div>
+                    ))}
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              {/* Date & Time Hub */}
+              <div className="lg:col-span-8 space-y-10">
+                <motion.div 
+                  className="grid gap-10 md:grid-cols-2"
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.4 }}
+                >
+                  <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative">
+                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
+                    <CardHeader className="p-10 pb-6">
+                      <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('booking.selectDate')}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-10 pt-0 flex justify-center">
+                      <Calendar
+                        mode="single"
+                        selected={date}
+                        onSelect={setDate}
+                        disabled={(date) => date < new Date()}
+                        className="rounded-[2rem] border-white/5 bg-white/[0.02] p-6 shadow-inner text-slate-300"
+                      />
                     </CardContent>
                   </Card>
 
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-lg">{t('booking.patientInfo')}</CardTitle>
+                  <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative">
+                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent" />
+                    <CardHeader className="p-10 pb-6">
+                      <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('booking.selectTime')}</CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div className="grid gap-4 sm:grid-cols-2">
-                        <div className="space-y-2">
-                          <Label htmlFor="firstName">{t('booking.firstName')}</Label>
+                    <CardContent className="p-10 pt-0">
+                      <div className="grid grid-cols-3 gap-3">
+                        {timeSlots.map((time) => (
+                          <motion.button
+                            key={time}
+                            type="button"
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => setSelectedTime(time)}
+                            className={cn(
+                              "h-12 rounded-xl text-[10px] font-black uppercase tracking-[0.1em] transition-all duration-500 border italic",
+                              selectedTime === time 
+                                ? "bg-pink-600 border-pink-500 text-white shadow-2xl shadow-pink-600/40" 
+                                : "bg-white/[0.02] border-white/5 text-slate-500 hover:text-slate-300 hover:border-white/10"
+                            )}
+                          >
+                            {time}
+                          </motion.button>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+
+                {/* Patient Information Interface */}
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.6 }}
+                >
+                  <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative">
+                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                    <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
+                      <CardTitle className="text-3xl font-bold text-white tracking-tight italic flex items-center gap-4">
+                        <User className="h-8 w-8 text-pink-500" />
+                        {t('booking.patientInfo')}
+                      </CardTitle>
+                      <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Initialize diagnostic credential binding</CardDescription>
+                    </CardHeader>
+                    <CardContent className="p-10 lg:p-12 space-y-8">
+                      <div className="grid gap-8 md:grid-cols-2">
+                        <div className="space-y-3">
+                          <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">{t('booking.firstName')}</Label>
                           <Input
-                            id="firstName"
-                            placeholder={t('booking.firstName')}
+                            className="h-14 rounded-2xl border-white/5 bg-white/[0.03] text-white placeholder:text-slate-700 focus:border-pink-500/30 focus:ring-pink-500/20 transition-all px-6"
+                            placeholder="NODE_INIT_NAME"
                             required
                             value={formData.firstName}
                             onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                           />
                         </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="lastName">{t('booking.lastName')}</Label>
+                        <div className="space-y-3">
+                          <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">{t('booking.lastName')}</Label>
                           <Input
-                            id="lastName"
-                            placeholder={t('booking.lastName')}
+                            className="h-14 rounded-2xl border-white/5 bg-white/[0.03] text-white placeholder:text-slate-700 focus:border-pink-500/30 focus:ring-pink-500/20 transition-all px-6"
+                            placeholder="NODE_INIT_SURNAME"
                             required
                             value={formData.lastName}
                             onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
@@ -277,65 +378,68 @@ export default function BookingPage() {
                         </div>
                       </div>
 
-                      <div className="space-y-2">
-                        <Label htmlFor="email">{t('booking.email')}</Label>
-                        <Input
-                          id="email"
-                          type="email"
-                          placeholder={t('booking.email')}
-                          required
-                          value={formData.email}
-                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        />
+                      <div className="grid gap-8 md:grid-cols-2">
+                        <div className="space-y-3">
+                          <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">{t('booking.email')}</Label>
+                          <Input
+                            className="h-14 rounded-2xl border-white/5 bg-white/[0.03] text-white placeholder:text-slate-700 focus:border-pink-500/30 focus:ring-pink-500/20 transition-all px-6"
+                            placeholder="identity@clinical.ai"
+                            type="email"
+                            required
+                            value={formData.email}
+                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                          />
+                        </div>
+                        <div className="space-y-3">
+                          <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">{t('booking.phone')}</Label>
+                          <Input
+                            className="h-14 rounded-2xl border-white/5 bg-white/[0.03] text-white placeholder:text-slate-700 focus:border-pink-500/30 focus:ring-pink-500/20 transition-all px-6"
+                            placeholder="+66-SYNC-ID"
+                            required
+                            value={formData.phone}
+                            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                          />
+                        </div>
                       </div>
 
-                      <div className="space-y-2">
-                        <Label htmlFor="phone">{t('booking.phone')}</Label>
-                        <Input
-                          id="phone"
-                          type="tel"
-                          placeholder={t('booking.phone')}
-                          required
-                          value={formData.phone}
-                          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="notes">{t('booking.notes')} ({t('booking.optional')})</Label>
+                      <div className="space-y-3">
+                        <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">{t('booking.notes')} ({t('booking.optional')})</Label>
                         <Textarea
-                          id="notes"
+                          className="rounded-[2rem] border-white/5 bg-white/[0.03] text-white placeholder:text-slate-700 focus:border-pink-500/30 transition-all px-6 py-4 resize-none italic font-light"
                           placeholder={t('booking.notesPlaceholder')}
-                          rows={3}
+                          rows={4}
                           value={formData.notes}
                           onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                         />
                       </div>
 
-                      <Button
-                        type="submit"
-                        size="lg"
-                        className="w-full"
-                        disabled={!selectedTreatment || !date || !selectedTime || isSubmitting}
-                      >
-                        {isSubmitting ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            {t('booking.confirming')}
-                          </>
-                        ) : (
-                          <>
-                            <CalendarIcon className="mr-2 h-4 w-4" />
-                            {t('booking.confirm')}
-                          </>
-                        )}
-                      </Button>
+                      <div className="pt-6">
+                        <Button
+                          type="submit"
+                          size="xl"
+                          variant="premium"
+                          className="w-full h-20 rounded-[2rem] shadow-2xl shadow-pink-500/20 text-xs font-black uppercase tracking-[0.3em] transition-all hover:scale-[1.02] active:scale-[0.98]"
+                          disabled={!selectedTreatment || !date || !selectedTime || isSubmitting}
+                        >
+                          {isSubmitting ? (
+                            <div className="flex items-center gap-4">
+                              <Loader2 className="h-6 w-6 animate-spin" />
+                              {t('booking.confirming')}
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-4">
+                              <CheckCircle2 className="h-6 w-6" />
+                              {t('booking.confirm')}
+                            </div>
+                          )}
+                        </Button>
+                      </div>
                     </CardContent>
                   </Card>
-                </div>
+                </motion.div>
               </div>
-            </form>
-          </div>
+            </div>
+          </form>
         </div>
       </main>
 

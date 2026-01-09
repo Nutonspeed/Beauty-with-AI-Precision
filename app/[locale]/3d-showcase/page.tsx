@@ -2,6 +2,14 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import { Header } from "@/components/header"
+import { Footer } from "@/components/footer"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { cn } from "@/lib/utils"
+import { LayoutGrid, Palette, Rocket, Box } from "lucide-react"
+import { useTranslations, useLocale } from "next-intl"
 import { 
   StripeHero, 
   AppleHero, 
@@ -73,6 +81,9 @@ const themes = [
 ]
 
 export default function ThreeDShowcasePage() {
+  const t = useTranslations()
+  const locale = useLocale()
+  const isThaiLocale = locale === 'th'
   const [selectedTemplate, setSelectedTemplate] = useState('stripe')
   const [selectedTheme, setSelectedTheme] = useState('stripe')
   const [showPreview, setShowPreview] = useState(false)
@@ -174,132 +185,212 @@ export default function ThreeDShowcasePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white">
-      {/* Header */}
-      <div className="border-b border-white/10 px-6 py-4">
-        <h1 className="text-2xl font-bold">🎨 3D Design System Showcase</h1>
-        <p className="text-gray-400 text-sm">เลือก template และ theme ที่ชอบ แล้วกด Preview</p>
-      </div>
-
-      <div className="flex">
-        {/* Sidebar - Template Selection */}
-        <div className="w-80 border-r border-white/10 p-6 space-y-6">
-          {/* Templates */}
-          <div>
-            <h2 className="text-lg font-semibold mb-4">Templates</h2>
-            <div className="space-y-2">
-              {templates.map((template) => (
-                <button
-                  key={template.id}
-                  onClick={() => setSelectedTemplate(template.id)}
-                  className={`w-full text-left p-3 rounded-lg transition-all ${
-                    selectedTemplate === template.id
-                      ? 'bg-white/10 border border-white/20'
-                      : 'hover:bg-white/5'
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="text-2xl">{template.preview}</span>
-                    <div>
-                      <div className="font-medium">{template.name}</div>
-                      <div className="text-sm text-gray-400">{template.description}</div>
-                    </div>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Themes */}
-          <div>
-            <h2 className="text-lg font-semibold mb-4">Color Themes</h2>
-            <div className="grid grid-cols-2 gap-2">
-              {themes.map((theme) => (
-                <button
-                  key={theme.id}
-                  onClick={() => setSelectedTheme(theme.id)}
-                  className={`p-3 rounded-lg transition-all ${
-                    selectedTheme === theme.id
-                      ? 'ring-2 ring-white'
-                      : 'hover:bg-white/5'
-                  }`}
-                >
-                  <div 
-                    className="w-full h-8 rounded-md mb-2"
-                    style={{
-                      background: `linear-gradient(135deg, ${theme.colors.join(', ')})`
-                    }}
-                  />
-                  <div className="text-sm font-medium">{theme.name}</div>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Preview Button */}
-          <motion.button
-            onClick={() => setShowPreview(true)}
-            className="w-full py-3 bg-white text-black rounded-lg font-semibold hover:bg-gray-200 transition-colors"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            🚀 Preview Full Screen
-          </motion.button>
+    <div className="flex min-h-screen flex-col bg-[#020617] text-slate-200 selection:bg-pink-500/30">
+      <Header />
+      
+      <main className="flex-1 relative overflow-hidden flex flex-col">
+        {/* Infrastructure Background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-pink-500/5 rounded-full blur-[120px] animate-glow-pulse" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-500/5 rounded-full blur-[100px] animate-float" />
+          <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.02]" />
         </div>
 
-        {/* Main Preview Area */}
-        <div className="flex-1 p-6">
-          <div className="bg-gray-900 rounded-2xl overflow-hidden border border-white/10 aspect-video">
-            <div className="transform scale-50 origin-top-left w-[200%] h-[200%]">
-              {renderTemplate()}
+        <div className="container relative z-10 py-12 md:py-20 px-6 space-y-12 max-w-7xl mx-auto flex-1">
+          {/* Showcase Header Interface */}
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-12 pb-12 border-b border-white/5">
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="space-y-6"
+            >
+              <Badge variant="outline" className="px-4 py-1 rounded-full border-pink-500/30 text-pink-400 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.2em] text-[10px] font-black shadow-2xl shadow-pink-500/10">
+                <Box className="mr-3 h-3.5 w-3.5 animate-pulse" />
+                Dimensional Design System Hub
+              </Badge>
+              <h1 className="text-5xl md:text-8xl font-bold tracking-tighter text-white leading-[0.9] italic">
+                3D System<br />
+                <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent not-italic">Showcase</span>
+              </h1>
+              <p className="text-xl text-slate-500 font-light tracking-widest max-w-2xl italic leading-relaxed">
+                Orchestrate immersive clinical experiences through precision dimensional rendering and advanced visual nodes.
+              </p>
+            </motion.div>
+            
+            <div className="shrink-0">
+              <Button size="xl" variant="premium" className="h-16 px-10 rounded-2xl shadow-2xl shadow-pink-500/20 text-[10px] font-black uppercase tracking-[0.3em] transition-all hover:scale-105 active:scale-95 border" onClick={() => setShowPreview(true)}>
+                <Rocket className="mr-3 h-5 w-5" />
+                Execute Full Render
+              </Button>
             </div>
           </div>
 
-          {/* Code Preview */}
-          <div className="mt-6 p-4 bg-gray-900 rounded-xl border border-white/10">
-            <h3 className="text-sm font-semibold text-gray-400 mb-3">📝 Code Usage</h3>
-            <pre className="text-sm text-green-400 overflow-x-auto">
+          <div className="grid gap-10 lg:grid-cols-12">
+            {/* Template Parameter Node */}
+            <div className="lg:col-span-4 space-y-8">
+              <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group">
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
+                  <CardTitle className="text-2xl font-bold text-white tracking-tight italic flex items-center gap-4">
+                    <LayoutGrid className="h-6 w-6 text-pink-500" />
+                    Template Selection
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-10 lg:p-12 space-y-4 max-h-[600px] overflow-y-auto scrollbar-hide">
+                  {templates.map((template) => (
+                    <motion.div
+                      key={template.id}
+                      whileHover={{ x: 10 }}
+                      className={cn(
+                        "group/item cursor-pointer p-6 rounded-[2rem] border transition-all duration-500 relative overflow-hidden",
+                        selectedTemplate === template.id 
+                          ? "bg-pink-600/10 border-pink-500/40 shadow-inner" 
+                          : "bg-white/[0.02] border-white/5 hover:bg-white/[0.04] hover:border-white/10"
+                      )}
+                      onClick={() => setSelectedTemplate(template.id)}
+                    >
+                      <div className="flex items-center gap-6 relative z-10">
+                        <div className={cn(
+                          "h-12 w-12 rounded-2xl flex items-center justify-center border border-white/5 shadow-inner transition-all duration-700",
+                          selectedTemplate === template.id ? "bg-pink-600/20 text-pink-400 border-pink-500/30" : "bg-white/[0.03] text-slate-500"
+                        )}>
+                          <span className="text-2xl group-hover/item:scale-110 transition-transform">{template.preview}</span>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="font-bold text-white italic group-hover/item:text-pink-400 transition-colors">{template.name}</p>
+                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">{template.description}</p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              {/* Theme Configuration Node */}
+              <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative">
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
+                <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
+                  <CardTitle className="text-2xl font-bold text-white tracking-tight italic flex items-center gap-4">
+                    <Palette className="h-6 w-6 text-cyan-400" />
+                    Color Infrastructure
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-10 lg:p-12">
+                  <div className="grid grid-cols-2 gap-4">
+                    {themes.map((theme) => (
+                      <motion.div
+                        key={theme.id}
+                        whileHover={{ scale: 1.05 }}
+                        className={cn(
+                          "cursor-pointer p-4 rounded-2xl border transition-all duration-500 group/theme",
+                          selectedTheme === theme.id 
+                            ? "bg-white/[0.05] border-cyan-500/40 shadow-inner ring-1 ring-cyan-500/20" 
+                            : "bg-white/[0.02] border-white/5 hover:border-white/10"
+                        )}
+                        onClick={() => setSelectedTheme(theme.id)}
+                      >
+                        <div 
+                          className="w-full h-10 rounded-xl mb-3 shadow-2xl transition-transform group-hover/theme:rotate-3"
+                          style={{
+                            background: `linear-gradient(135deg, ${theme.colors.join(', ')})`
+                          }}
+                        />
+                        <p className="text-[9px] font-black uppercase tracking-widest text-center text-slate-500 group-hover/theme:text-cyan-400 transition-colors">{theme.name}</p>
+                      </motion.div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Rendering Engine Hub */}
+            <div className="lg:col-span-8 space-y-10">
+              <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3.5rem] overflow-hidden shadow-2xl relative aspect-video flex items-center justify-center group/render">
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/20 to-transparent" />
+                
+                {/* Visual Output Port */}
+                <div className="absolute inset-4 rounded-[3rem] overflow-hidden bg-black/40 border border-white/5">
+                  <div className="transform scale-[0.6] lg:scale-[0.7] origin-top-left w-[166%] h-[166%]">
+                    {renderTemplate()}
+                  </div>
+                </div>
+
+                {/* Telemetry HUD */}
+                <div className="absolute bottom-12 left-12 right-12 flex justify-between items-end pointer-events-none">
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-2 h-2 rounded-full bg-pink-500 animate-pulse shadow-[0_0_10px_rgba(236,72,153,0.5)]" />
+                      <span className="text-[9px] font-black uppercase tracking-widest text-pink-400">Render Pipeline Active</span>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-[8px] font-black text-slate-600 tracking-widest uppercase">LATENCY: 8MS</p>
+                      <p className="text-[8px] font-black text-slate-600 tracking-widest uppercase">THREADS: 128_ASYNC</p>
+                    </div>
+                  </div>
+                  <div className="text-right space-y-1">
+                    <p className="text-[8px] font-black text-slate-600 tracking-widest uppercase italic">BUILD_HASH: {selectedTemplate.toUpperCase()}_NODE</p>
+                    <p className="text-[8px] font-black text-slate-600 tracking-widest uppercase italic">DEPLOY_VECTOR: {selectedTheme.toUpperCase()}_SYNC</p>
+                  </div>
+                </div>
+              </Card>
+
+              {/* Functional Schema Node */}
+              <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative">
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
+                <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
+                  <CardTitle className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-600 italic">Module Schema Extraction</CardTitle>
+                </CardHeader>
+                <CardContent className="p-10 lg:p-12">
+                  <div className="relative group/code">
+                    <div className="absolute -inset-1 bg-gradient-to-r from-pink-500/20 to-purple-500/20 rounded-2xl blur opacity-20 group-hover/code:opacity-40 transition duration-1000" />
+                    <pre className="relative z-10 bg-black/40 rounded-2xl p-8 overflow-x-auto text-xs font-mono text-cyan-400 scrollbar-hide border border-white/5">
 {`import { ${selectedTemplate === 'stripe' ? 'StripeHero' : 
   selectedTemplate === 'apple' ? 'AppleHero' :
   selectedTemplate === 'linear' ? 'LinearHero' :
   selectedTemplate === 'vercel' ? 'VercelHero' : 'CustomHero'} } from '@/components/3d-system/templates'
 
-export default function Page() {
+export default function PrecisionNode() {
   return (
     <${selectedTemplate === 'stripe' ? `StripeHero
-      title="Your Title"
-      subtitle="Your subtitle here"
+      title="Cinematic Transformation"
+      subtitle="AI-driven dermal orchestration"
       theme="${selectedTheme}"
       stats={[
-        { value: '98.5%', label: 'Accuracy' },
-        { value: '50k+', label: 'Users' }
+        { value: '98.5%', label: 'Precision' },
+        { value: '50k+', label: 'Cycles' }
       ]}
     />` : 
     selectedTemplate === 'apple' ? `AppleHero
-      title="Your Title"
-      subtitle="Your subtitle"
+      title="Clinical Accuracy"
+      subtitle="The future of aesthetic medicine"
     />` :
     selectedTemplate === 'linear' ? `LinearHero
-      title="Your Title"
-      subtitle="Your subtitle"
-      badge="New Feature"
-      features={['Feature 1', 'Feature 2']}
+      title="System Synthesis"
+      subtitle="Precision architecture control"
+      badge="Node Sync v2.0"
+      features={['AI Analysis', 'Real-time Telemetry']}
     />` :
     selectedTemplate === 'vercel' ? `VercelHero
-      title="Your Title"
-      subtitle="Your subtitle"
+      title="Deploy. Visualize. Transform."
+      subtitle="Advanced clinical infrastructure"
     />` : `CustomHero
       background="${selectedTemplate}"
-      backgroundProps={{ /* custom props */ }}
+      backgroundProps={{ /* node parameters */ }}
     >
-      <YourContent />
+      <ClinicalContent />
     </CustomHero>`}
   )
 }`}
-            </pre>
+                    </pre>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
-      </div>
+      </main>
+
+      <Footer />
     </div>
   )
 }

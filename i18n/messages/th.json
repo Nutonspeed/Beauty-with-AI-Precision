@@ -848,28 +848,88 @@
       "freeTrial": "ทดลองฟรีไม่ต้องใช้บัตรเครดิต",
       "cancelAnytime": "ยกเลิกได้ทุกเมื่อ"
     },
-    "free": {
-      "badge": "เริ่มต้นใช้งาน",
-      "description": "เหมาะสำหรับผู้ที่ต้องการทดลองใช้ระบบ AI Skin Analysis",
-      "period": "ตลอดไป",
-      "cta": "เริ่มวิเคราะห์ฟรี",
-      "excludedFeatures": {
-        "noHistory": "ไม่บันทึกประวัติ",
-        "noAR": "ไม่มี AR Simulator",
-        "noRecommendations": "ไม่มีคำแนะนำส่วนตัว"
+    "plans": {
+      "starter": {
+        "name": "Starter Plan",
+        "badge": "คุ้มค่า",
+        "description": "เริ่มต้นใช้งาน AI วินิจฉัยสำหรับ 1 สาขา",
+        "price": "฿9,900",
+        "period": "เดือน",
+        "salesUsers": "1 Sales User",
+        "cta": "เริ่มต้นใช้งาน",
+        "features": [
+          "AI Skin Analysis (100 ครั้ง/เดือน)",
+          "CRM & Lead Management",
+          "ระบบนัดหมาย",
+          "Customer Database",
+          "รายงานพื้นฐาน",
+          "PDPA Compliant"
+        ]
+      },
+      "professional": {
+        "name": "Professional Plan",
+        "badge": "ยอดนิยม",
+        "description": "ระบบ AI เต็มรูปแบบเพื่อการเติบโตอย่างก้าวกระโดด",
+        "price": "฿19,900",
+        "period": "เดือน",
+        "salesUsers": "3 Sales Users",
+        "cta": "ทดลองฟรี 14 วัน",
+        "features": [
+          "AI Analysis ไม่จำกัด",
+          "AR Before/After Simulator",
+          "CRM Advanced + Sales Pipeline",
+          "ระบบนัดหมาย + จัดคิว",
+          "Treatment Plans & History",
+          "Inventory Management",
+          "Email & SMS Marketing",
+          "Loyalty Points System",
+          "Advanced Analytics",
+          "หลายสาขา (สูงสุด 3)",
+          "Video Call Consultation",
+          "Priority Support"
+        ]
+      },
+      "enterprise": {
+        "name": "Enterprise Plan",
+        "badge": "คุ้มค่าสุด",
+        "description": "สำหรับเครือคลินิก & โรงพยาบาลที่ต้องการความเป็นเลิศ",
+        "price": "฿39,900",
+        "period": "เดือน",
+        "salesUsers": "10 Sales Users",
+        "cta": "ติดต่อทีมขาย",
+        "features": [
+          "ทุกอย่างใน Professional",
+          "Unlimited Sales Users (10+)",
+          "หลายสาขาไม่จำกัด",
+          "Marketing Automation",
+          "Custom Reports & Dashboards",
+          "API Access",
+          "Advanced Integrations",
+          "Dedicated Account Manager",
+          "Custom Training",
+          "24/7 Priority Support"
+        ]
+      },
+      "platinum": {
+        "name": "Platinum Plan",
+        "badge": "Premium",
+        "description": "โซลูชัน White-label และการปรับแต่งระดับสูงสุด",
+        "price": "฿69,900",
+        "period": "เดือน",
+        "salesUsers": "ไม่จำกัด",
+        "cta": "ติดต่อทีมขาย",
+        "features": [
+          "ทุกอย่างใน Enterprise",
+          "White-label Solution",
+          "Custom Domain & Branding",
+          "Custom AI Model Training",
+          "Dedicated Server Option",
+          "Custom Feature Development",
+          "SLA 99.9% Uptime",
+          "On-site Training",
+          "Consulting Services"
+        ]
       }
-    },
-    "premium": {
-      "badge": "ยอดนิยม",
-      "description": "เหมาะสำหรับคลินิกขนาดเล็กถึงกลาง พร้อมฟีเจอร์ครบครัน",
-      "period": "ต่อเดือน",
-      "cta": "ทดลองฟรี 14 วัน"
-    },
-    "enterprise": {
-      "badge": "หลายสาขา",
-      "description": "สำหรับคลินิกหลายสาขา พร้อมการปรับแต่งและซัพพอร์ตเฉพาะทาง",
-      "period": "ราคาพิเศษ",
-      "cta": "ทดลองฟรี 30 วัน"
     },
     "limits": {
       "unlimited": "ไม่จำกัด",
@@ -896,16 +956,16 @@
     "faq": {
       "title": "คำถามที่พบบ่อย",
       "q1": {
-        "question": "Free Tier มีข้อจำกัดอะไรบ้าง?",
-        "answer": "Free Tier สามารถใช้วิเคราะห์ผิวได้ไม่จำกัด แต่จะไม่มีการบันทึกประวัติ ไม่มี AR Simulator และไม่มีฟีเจอร์ส่วนตัว"
+        "question": "Starter Plan มีข้อจำกัดอะไรบ้าง?",
+        "answer": "Starter Plan สามารถใช้วิเคราะห์ผิวได้ 100 ครั้งต่อเดือน แต่จะไม่มีการบันทึกประวัติ และไม่มี AR Simulator"
       },
       "q2": {
         "question": "สามารถยกเลิกได้ทุกเมื่อหรือไม่?",
-        "answer": "ได้ค่ะ สามารถยกเลิกได้ทุกเมื่อโดยไม่มีค่าปรับ และจะยังใช้งานได้จนถึงสิ้นสุดรอบบิล"
+        "answer": "ได้ครับ สามารถยกเลิกได้ทุกเมื่อโดยไม่มีค่าปรับ และจะยังใช้งานได้จนถึงสิ้นสุดรอบบิล"
       },
       "q3": {
         "question": "Enterprise Package เหมาะสำหรับใคร?",
-        "answer": "เหมาะสำหรับคลินิกที่มีหลายสาขา ต้องการ Custom Branding หรือต้องการ Support แบบเฉพาะทาง"
+        "answer": "เหมาะสำหรับเครือคลินิกที่มีหลายสาขา ต้องการ Custom Branding หรือต้องการการสนับสนุนแบบ 24/7"
       }
     },
     "cta": {
@@ -926,184 +986,71 @@
       "noCreditCard": "พร้อมสำหรับองค์กร",
       "freeTierAvailable": "โครงสร้างพื้นฐานมาตรฐานสากล"
     },
-    "heroTitle": "AI เพื่อคลินิก ที่ \"ปิดการขาย\" ได้จริง",
-    "heroSubtitle": "จากการวิเคราะห์ → แนะนำ → สู่รายได้ ในที่เดียว",
-    "heroDescription": "วิเคราะห์ผิวที่พิสูจน์ได้ เชื่อมต่อเวิร์กโฟลว์การขาย เพื่อเพิ่ม Conversion และความเชื่อมั่น ด้วยข้อมูลระดับการแพทย์และ AR Visualization",
     "startFreeAnalysis": "เริ่มวิเคราะห์ฟรี",
-    "watchDemo": "ดูเดโมแบบโต้ตอบ",
-    "noCreditCard": "ไม่ต้องใช้บัตรเครดิต",
-    "freeTierAvailable": "มีแพ็กเกจฟรี",
-    "whyChooseTitle": "ทำไมต้องเลือกเรา",
-    "whyChooseSubtitle": "เครื่องมือระดับมืออาชีพที่ออกแบบมาเฉพาะสำหรับคลินิกความงามและแพทย์ผิวหนัง",
     "features": {
-      "title": "ฟีเจอร์ของเรา",
+      "badge": "Clinical Intelligence",
+      "title": "Clinical Intelligence",
+      "description": "ขีดความสามารถการวิเคราะห์ระดับโมเลกุลด้วยโครงข่ายประสาทเทียมอัจฉริยะ",
+      "neural": {
+        "title": "Neural Diagnostics",
+        "description": "วิเคราะห์โครงสร้างใบหน้าแบบเรียลไทม์ด้วยโครงข่ายประสาทเทียมขั้นสูง"
+      },
       "ar": {
-        "title": "AR 3D แบบเรียลไทม์",
-        "description": "ดูผลลัพธ์การรักษาแบบเรียลไทม์ด้วยเทคโนโลยี 3D"
+        "title": "AR Simulation",
+        "description": "จำลองผลลัพธ์การรักษาแบบ 3 มิติด้วยความแม่นยำ 99%"
       },
-      "ai": {
-        "title": "การวิเคราะห์ AI",
-        "description": "รับคำแนะนำการรักษาที่เหมาะกับคุณด้วย AI"
+      "safety": {
+        "title": "Protocol Safety",
+        "description": "การยืนยันตัวตนด้วยไบโอเมตริกและการเข้ารหัสข้อมูลระดับคลินิก"
       },
-      "booking": {
-        "title": "จองออนไลน์",
-        "description": "จองนัดหมายได้ง่ายๆ ด้วยระบบอัจฉริยะ"
+      "vitals": {
+        "title": "Vital Tracking",
+        "description": "ติดตามสุขภาพผิวอย่างต่อเนื่องด้วยการซิงโครไนซ์ข้อมูลหลายมิติ"
       },
-      "aiPowered": {
-        "title": "AI-Powered Analysis",
-        "description": "วิเคราะห์ผิวหน้า 8 จุดด้วย AI ความแม่นยำ 95-99% รองรับผิวคนไทย"
+      "speed": {
+        "title": "Hyper-Speed Sync",
+        "description": "ประมวลผลการวินิจฉัยอย่างรวดเร็วภายใน 2.4 วินาที"
       },
-      "arVisualization": {
-        "title": "AR Visualization",
-        "description": "แสดงผลการรักษาแบบ Real-time AR ให้ลูกค้าเห็นภาพก่อนทำจริง"
-      },
-      "pdpaCompliant": {
-        "title": "PDPA Compliant",
-        "description": "ปลอดภัย เข้ารหัสข้อมูล ตาม พ.ร.บ.คุ้มครองข้อมูลส่วนบุคคล"
-      },
-      "visiaStyle": {
-        "title": "VISIA-Style Dashboard",
-        "description": "รายงานผลแบบมืออาชีพ เหมือนเครื่อง VISIA ราคาหลักล้าน"
-      },
-      "fastAccurate": {
-        "title": "Fast & Accurate",
-        "description": "วิเคราะห์เสร็จภายใน 3-5 วินาที พร้อมคำแนะนำเฉพาะบุคคล"
-      },
-      "multiClinic": {
-        "title": "Multi-Clinic Support",
-        "description": "รองรับหลายสาขา จัดการลูกค้า CRM และระบบนัดหมาย"
+      "management": {
+        "title": "Entity Management",
+        "description": "จัดการสาขาและทีมงานอย่างเป็นระบบด้วยโครงสร้างพื้นฐานอัจฉริยะ"
       }
     },
-    "howItWorks": {
-      "title": "วิธีการใช้งาน",
-      "subtitle": "ขั้นตอนง่าย ๆ 3 ขั้นตอน เพื่อรับการวิเคราะห์ผิวหน้าแบบมืออาชีพ",
+    "protocol": {
+      "badge": "Diagnostic Protocol",
+      "title": "Diagnostic Protocol",
+      "description": "เวิร์กโฟลว์การวินิจฉัยแบบอัตโนมัติเพื่อความแม่นยำสูงสุด",
       "step1": {
-        "title": "อัปโหลดภาพ",
-        "description": "ถ่ายหรืออัปโหลดภาพใบหน้า\nระบบรองรับทุกอุปกรณ์"
+        "title": "Neural Scanning",
+        "description": "เริ่มต้นสแกนใบหน้าแบบ 3 มิติและเก็บข้อมูลความละเอียดสูง"
       },
       "step2": {
-        "title": "AI Analysis",
-        "description": "AI วิเคราะห์ผิวหน้า 8 จุด\nภายใน 3-5 วินาที"
+        "title": "Inference Analysis",
+        "description": "ประมวลผลข้อมูลผ่าน AI เพื่อค้นหาแนวทางการรักษาที่ดีที่สุด"
       },
       "step3": {
-        "title": "รับผลลัพธ์",
-        "description": "รับรายงานผลและคำแนะนำ\nพร้อม AR Visualization"
+        "title": "Precision Roadmap",
+        "description": "สร้างแผนการรักษาแบบ 3 มิติพร้อมจำลองผลลัพธ์แบบเรียลไทม์"
       }
+    },
+    "deployment": {
+      "badge": "Global Deployment",
+      "title": "Global Deployment",
+      "description": "โครงสร้างพื้นฐานระดับเอลิสต์ พร้อมให้บริการทั่วโลกด้วยความหน่วงต่ำ"
+    },
+    "subscription": {
+      "badge": "Elite Infrastructure",
+      "title": "Elite Infrastructure",
+      "description": "เลือกแพ็กเกจที่เหมาะสมกับสเกลธุรกิจของคุณ"
     },
     "cta": {
-      "title": "พร้อมยกระดับคลินิกของคุณแล้วหรือยัง",
-      "description": "เริ่มต้นฟรีวันนี้ ไม่ต้องใช้บัตรเครดิต",
-      "startFreeAnalysis": "เริ่มวิเคราะห์ฟรี",
       "contactSales": "ติดต่อฝ่ายขาย"
     },
-    "pricing": {
-      "title": "แพ็กเกจราคา",
-      "subtitle": "เริ่มต้น 9,900 บาท/เดือน - ยิ่งซื้อสูง ยิ่งคุ้ม",
-      "freeTier": {
-        "badge": "เริ่มต้นใช้งาน",
-        "title": "Essential Analysis",
-        "description": "เหมาะสำหรับผู้ใช้ทั่วไปที่ต้องการสำรวจสุขภาพผิวด้วย AI",
-        "period": "ฟรีตลอดไป",
-        "features": [
-          "การวิเคราะห์ผิวพื้นฐาน",
-          "การจำลองผลลัพธ์พื้นฐาน"
-        ],
-        "cta": "เริ่มวิเคราะห์ฟรี"
-      },
-      "premium": {
-        "badge": "ยอดนิยม",
-        "title": "Professional",
-        "description": "สำหรับคลินิกที่กำลังเติบโต - ประหยัด 30%",
-        "period": "ต่อเดือน",
-        "cta": "ทดลองใช้ฟรี 14 วัน",
-        "features": [
-          "การวิเคราะห์ผิว AI ไม่จำกัด",
-          "ระบบจำลอง AR ก่อน/หลัง",
-          "CRM ขั้นสูง + Sales Pipeline",
-          "ระบบนัดหมาย + คิว",
-          "แผนการรักษา",
-          "ระบบจัดการคลังสินค้า",
-          "การตลาดผ่านอีเมลและ SMS",
-          "ระบบสะสมแต้ม",
-          "การวิเคราะห์ขั้นสูง",
-          "รองรับสูงสุด 3 สาขา",
-          "ระบบวิดีโอคอล",
-          "ฝ่ายสนับสนุนพิเศษ"
-        ]
-      },
-      "starter": {
-        "badge": "เริ่มต้น",
-        "title": "Starter",
-        "description": "สำหรับคลินิกขนาดเล็ก 1 สาขา",
-        "price": "฿9,900",
-        "period": "เดือน",
-        "salesUsers": "1 Sales User",
-        "features": [
-          "AI Skin Analysis (100 ครั้ง/เดือน)",
-          "CRM & Lead Management",
-          "ระบบนัดหมาย",
-          "Customer Database",
-          "รายงานพื้นฐาน",
-          "PDPA Compliant"
-        ],
-        "cta": "เริ่มใช้งาน"
-      },
-      "professional": {
-        "badge": "ยอดนิยม",
-        "title": "Professional",
-        "description": "สำหรับคลินิกที่กำลังเติบโต - ประหยัด 30%",
-        "price": "฿19,900",
-        "period": "เดือน",
-        "salesUsers": "3 Sales Users",
-        "originalPrice": "29,700",
-        "savings": "ประหยัด ฿9,800/เดือน",
-        "features": [
-          "AI Analysis ไม่จำกัด",
-          "AR Before/After Simulator",
-          "CRM Advanced + Pipeline",
-          "ระบบนัดหมาย + Queue",
-          "Treatment Plans",
-          "Inventory Management",
-          "Email & SMS Marketing",
-          "Loyalty Points",
-          "Advanced Analytics",
-          "Multi-branch (3 สาขา)",
-          "Video Call",
-          "Priority Support"
-        ],
-        "cta": "ทดลอง 14 วัน"
-      },
-      "enterprise": {
-        "badge": "คุ้มค่าสุด",
-        "title": "Enterprise",
-        "description": "เครือคลินิก - ประหยัด 60%",
-        "price": "฿39,900",
-        "period": "เดือน",
-        "salesUsers": "10 Sales Users",
-        "originalPrice": "99,000",
-        "savings": "ประหยัด ฿59,100/เดือน",
-        "features": [
-          "ทุกอย่างใน Professional",
-          "Unlimited Sales Users",
-          "Multi-branch ไม่จำกัด",
-          "Marketing Automation",
-          "Custom Reports",
-          "API Access",
-          "Dedicated Account Manager",
-          "24/7 Support"
-        ],
-        "cta": "ติดต่อทีมขาย"
-      }
-    },
     "roi": {
-      "title": "ประเมินมูลค่าเพิ่มใน 10 วินาที",
-      "description": "ใส่ตัวเลขของคลินิกคุณเพื่อดูผลกระทบโดยประมาณจาก AI",
-      "performanceAnalytics": "การวิเคราะห์ประสิทธิภาพ"
-    },
-    "caseStudy": {
-      "title": "เคสศึกษา",
-      "subtitle": "ลดเวลารอคิวเฉลี่ย 37% ภายใน 6 สัปดาห์",
-      "description": "คลินิก A, กรุงเทพฯ — ใช้การวิเคราะห์ผิวอัตโนมัติและเวิร์กโฟลว์ใหม่"
+      "description": "วิเคราะห์ผลตอบแทนการลงทุนด้วยระบบประมวลผลอัจฉริยะ",
+      "performanceAnalytics": "การวิเคราะห์ประสิทธิภาพ",
+      "avgRevenueUplift": "รายได้เฉลี่ยที่เพิ่มขึ้น",
+      "clientRetention": "การรักษาฐานลูกค้า"
     }
   },
   "demoCta": {
@@ -3137,308 +3084,6 @@
         "count": "จำนวนครั้ง",
         "average": "ค่าเฉลี่ย"
       }
-    }
-  },
-  "founders-clone": {
-    "meta": {
-      "title": "ClinicIQ - แพลตฟอร์ม AI สำหรับคลินิกความงาม",
-      "description": "ยกระดับคลินิกของคุณด้วย AI วิเคราะห์ผิว, AR Simulator และ CRM อัจฉริยะ"
-    },
-    "nav": {
-      "features": "ฟีเจอร์",
-      "howItWorks": "วิธีใช้งาน",
-      "portfolio": "ผลงาน",
-      "pricing": "ราคา",
-      "about": "เกี่ยวกับเรา",
-      "contact": "ติดต่อ",
-      "login": "เข้าสู่ระบบ",
-      "getStarted": "เริ่มต้นใช้งาน"
-    },
-    "hero": {
-      "badge": "แพลตฟอร์ม AI #1 สำหรับคลินิกความงาม",
-      "title": "ยกระดับคลินิก",
-      "titleHighlight": "ความงาม",
-      "titleEnd": "ของคุณด้วย AI",
-      "description": "วิเคราะห์ผิวด้วย AI แม่นยำ 99.2% พร้อม AR Simulator และ CRM ครบวงจร ใช้งานโดยคลินิกชั้นนำกว่า 150 แห่ง",
-      "cta": "ทดลองใช้ฟรี",
-      "demo": "ดูเดโม",
-      "stats": {
-        "clinics": "คลินิกที่ไว้วางใจ",
-        "analyses": "การวิเคราะห์",
-        "accuracy": "ความแม่นยำ"
-      }
-    },
-    "trust": {
-      "badge": "ความปลอดภัยระดับองค์กร",
-      "title": "ได้รับความไว้วางใจจากคลินิกชั้นนำ",
-      "description": "ความปลอดภัยของข้อมูลเป็นสิ่งสำคัญที่สุด เราปฏิบัติตามมาตรฐานสูงสุด",
-      "badges": {
-        "hipaa": "รองรับ HIPAA",
-        "soc2": "SOC 2 Type II",
-        "pdpa": "รองรับ PDPA",
-        "gdpr": "รองรับ GDPR"
-      }
-    },
-    "services": {
-      "badge": "ฟีเจอร์ทรงพลัง",
-      "title": "ทุกสิ่งที่คุณต้องการ",
-      "titleHighlight": "เปลี่ยน",
-      "description": "ชุดเครื่องมือ AI ครบวงจรสำหรับคลินิกความงาม เพิ่มประสิทธิภาพ ยอดขาย และประสบการณ์ลูกค้า",
-      "items": {
-        "aiAnalysis": {
-          "title": "AI วิเคราะห์ผิว",
-          "description": "วิเคราะห์ 50+ เมตริกด้วย Deep Learning รวมถึงริ้วรอย รูขุมขน ฝ้า ความชุ่มชื้น ด้วยความแม่นยำระดับการแพทย์",
-          "stats": "แม่นยำ 99.2%"
-        },
-        "realtime": {
-          "title": "ตรวจจับแบบเรียลไทม์",
-          "description": "ตรวจจับ 468 จุดบนใบหน้าพร้อมแสดงผลทันที สร้างแผนที่ผิวครบถ้วนภายใน 3 วินาที",
-          "stats": "<3 วินาที"
-        },
-        "progress": {
-          "title": "ติดตามความก้าวหน้า",
-          "description": "เปรียบเทียบก่อน/หลังด้วยข้อมูลเชิงปริมาณ ติดตามประสิทธิภาพการรักษาตลอดเวลา",
-          "stats": "ไทม์ไลน์ภาพ"
-        },
-        "ar": {
-          "title": "AR Simulator",
-          "description": "แสดงตัวอย่างผลการรักษาให้ลูกค้าเห็นล่วงหน้าด้วย AR เพิ่มอัตราปิดการขาย",
-          "stats": "+35% Conversion"
-        },
-        "security": {
-          "title": "ความปลอดภัยองค์กร",
-          "description": "รองรับ HIPAA, PDPA และ SOC 2 ข้อมูลเข้ารหัสทั้งขณะเก็บและส่งต่อ",
-          "stats": "รองรับ HIPAA"
-        },
-        "reports": {
-          "title": "รายงานทันที",
-          "description": "สร้างรายงาน PDF พร้อมคำแนะนำการรักษาด้วยคลิกเดียว เหมาะสำหรับการให้คำปรึกษา",
-          "stats": "ส่งออก 1 คลิก"
-        }
-      },
-      "cta": "ทดลองทุกฟีเจอร์ฟรี"
-    },
-    "howItWorks": {
-      "badge": "ขั้นตอนง่ายๆ",
-      "title": "วิธีใช้งาน",
-      "description": "รับการวิเคราะห์ผิวด้วย AI ใน 3 ขั้นตอนง่ายๆ ไม่ต้องนัดหมาย ไม่ต้องรอ",
-      "steps": {
-        "capture": {
-          "subtitle": "ถ่ายภาพ",
-          "title": "บันทึก",
-          "description": "ใช้กล้องอัจฉริยะของเราถ่ายภาพใบหน้าที่ชัดเจน ปรับแสงอัตโนมัติ ใช้ได้กับสมาร์ทโฟนทุกรุ่น",
-          "features": [
-            "ตรวจจับแสงอัตโนมัติ",
-            "ไกด์จัดตำแหน่งใบหน้า",
-            "ตรวจสอบคุณภาพ"
-          ]
-        },
-        "analyze": {
-          "subtitle": "AI ประมวลผล",
-          "title": "วิเคราะห์",
-          "description": "AI ระดับการแพทย์ของเราวิเคราะห์ 50+ เมตริกผิว รวมถึงริ้วรอย รูขุมขน ฝ้ากระ ภายในไม่กี่วินาที",
-          "features": [
-            "แมปปิ้ง 468 จุด",
-            "50+ เมตริก",
-            "<3 วินาที"
-          ]
-        },
-        "results": {
-          "subtitle": "รับข้อมูล",
-          "title": "ผลลัพธ์",
-          "description": "รับการวิเคราะห์โดยละเอียดพร้อม Heat Map, คำแนะนำเฉพาะบุคคล และแผนการรักษา",
-          "features": [
-            "Heat Map ภาพ",
-            "แผนการรักษา",
-            "ติดตามความก้าวหน้า"
-          ]
-        }
-      },
-      "cta": "ทดลองเลย — ฟรี",
-      "demo": "ดูเดโม"
-    },
-    "roi": {
-      "badge": "เครื่องคำนวณ ROI",
-      "title": "คำนวณ ROI ที่เป็นไปได้",
-      "description": "ดูว่า ClinicIQ จะสร้างรายได้เพิ่มให้คลินิกของคุณเท่าไร",
-      "inputs": {
-        "consultations": "การให้คำปรึกษาต่อเดือน",
-        "avgTicket": "มูลค่าเฉลี่ยต่อครั้ง (฿)",
-        "conversionRate": "อัตราการปิดการขายปัจจุบัน"
-      },
-      "results": {
-        "additionalRevenue": "รายได้เพิ่มต่อเดือน",
-        "conversionImprovement": "Conversion เพิ่มขึ้น",
-        "timeSaved": "เวลาที่ประหยัดได้",
-        "roi": "ROI เทียบ Pro Plan"
-      },
-      "cta": "เริ่มทดลองใช้ฟรี"
-    },
-    "portfolio": {
-      "badge": "ผลงานสำเร็จ",
-      "title": "ได้รับความไว้วางใจจาก 150+ คลินิก",
-      "description": "ดูว่าคลินิกชั้นนำเปลี่ยนธุรกิจด้วยแพลตฟอร์มของเราอย่างไร",
-      "viewAll": "ดูทั้งหมด"
-    },
-    "testimonials": {
-      "badge": "ความคิดเห็นลูกค้า",
-      "title": "เสียงจากคลินิก",
-      "titleHighlight": "ทั่วประเทศ"
-    },
-    "pricing": {
-      "badge": "ราคาเรียบง่าย",
-      "plans": {
-        "starter": {
-          "name": "Starter",
-          "badge": "เริ่มต้น",
-          "description": "สำหรับคลินิกขนาดเล็ก 1 สาขา",
-          "price": "9,900",
-          "period": "เดือน",
-          "salesUsers": "1 Sales User",
-          "features": [
-            "AI Skin Analysis (100 ครั้ง/เดือน)",
-            "CRM & Lead Management พื้นฐาน",
-            "ระบบนัดหมาย",
-            "Customer Database",
-            "รายงานพื้นฐาน",
-            "PDPA Compliant"
-          ],
-          "limitations": [
-            "1 สาขา",
-            "จำกัด 100 การวิเคราะห์/เดือน",
-            "ไม่มี AR Simulator",
-            "ไม่มี Marketing Automation"
-          ],
-          "cta": "เริ่มใช้งาน"
-        },
-        "professional": {
-          "name": "Professional",
-          "badge": "ยอดนิยม",
-          "description": "สำหรับคลินิกที่กำลังเติบโต",
-          "price": "19,900",
-          "period": "เดือน",
-          "salesUsers": "3 Sales Users",
-          "features": [
-            "AI Skin Analysis (ไม่จำกัด)",
-            "AR Before/After Simulator",
-            "CRM Advanced + Sales Pipeline",
-            "ระบบนัดหมาย + Queue",
-            "Treatment Plans & History",
-            "Inventory Management",
-            "Email & SMS Marketing",
-            "Loyalty Points System",
-            "Advanced Analytics",
-            "Multi-branch (สูงสุด 3 สาขา)",
-            "Video Call Consultation",
-            "Priority Support"
-          ],
-          "savings": "ประหยัด 30% ต่อ sales user",
-          "cta": "ทดลอง 14 วัน"
-        },
-        "enterprise": {
-          "name": "Enterprise",
-          "badge": "คุ้มค่าสุด",
-          "description": "สำหรับเครือคลินิก & โรงพยาบาล",
-          "price": "39,900",
-          "period": "เดือน",
-          "salesUsers": "10 Sales Users",
-          "features": [
-            "ทุกอย่างใน Professional",
-            "Unlimited Sales Users (10+)",
-            "Multi-branch (ไม่จำกัด)",
-            "Marketing Automation",
-            "Custom Reports & Dashboards",
-            "API Access",
-            "Advanced Integrations",
-            "Dedicated Account Manager",
-            "Custom Training",
-            "24/7 Priority Support"
-          ],
-          "savings": "ประหยัด 60% ต่อ sales user",
-          "cta": "ติดต่อทีมขาย"
-        },
-        "platinum": {
-          "name": "Platinum",
-          "badge": "Premium",
-          "description": "White-label & Custom Solutions",
-          "price": "69,900",
-          "period": "เดือน",
-          "salesUsers": "Unlimited",
-          "features": [
-            "ทุกอย่างใน Enterprise",
-            "White-label Solution",
-            "Custom Domain & Branding",
-            "Custom AI Model Training",
-            "Dedicated Server Option",
-            "Custom Feature Development",
-            "SLA 99.9% Uptime",
-            "On-site Training",
-            "Consulting Services"
-          ],
-          "savings": "ประหยัด 75% + ROI สูงสุด",
-          "cta": "ติดต่อทีมขาย"
-        }
-      },
-      "features": {
-        "analyses": "การวิเคราะห์ AI",
-        "metrics": "เมตริกผิว",
-        "support": "ช่องทางซัพพอร์ต",
-        "users": "จำนวนผู้ใช้",
-        "ar": "AR Visualization",
-        "crm": "CRM Dashboard",
-        "api": "API Access",
-        "whitelabel": "White-label"
-      }
-    },
-    "about": {
-      "badge": "เรื่องราวของเรา",
-      "title": "ปฏิวัติ",
-      "titleHighlight": "การดูแลความงาม",
-      "description": "เรามุ่งมั่นเสริมพลังคลินิกความงามด้วยเทคโนโลยี AI ที่มอบประสบการณ์ผู้ป่วยและผลลัพธ์ธุรกิจที่ยอดเยี่ยม",
-      "story": "สร้างอนาคตของ Beauty Tech",
-      "values": {
-        "patient": {
-          "title": "ลูกค้าต้องมาก่อน",
-          "description": "ทุกฟีเจอร์ถูกออกแบบโดยคำนึงถึงผลลัพธ์ของผู้ป่วย"
-        },
-        "security": {
-          "title": "ความไว้วางใจและความปลอดภัย",
-          "description": "ความปลอดภัยระดับองค์กรสำหรับข้อมูลทางการแพทย์ที่ละเอียดอ่อน"
-        },
-        "innovation": {
-          "title": "นวัตกรรม",
-          "description": "ก้าวข้ามขีดจำกัดด้วยเทคโนโลยี AI ล้ำสมัย"
-        },
-        "accessibility": {
-          "title": "เข้าถึงได้",
-          "description": "ทำให้เทคโนโลยีความงามขั้นสูงเข้าถึงได้สำหรับทุกคน"
-        }
-      }
-    },
-    "team": {
-      "badge": "ทีมของเรา",
-      "title": "พบกับ",
-      "titleHighlight": "ผู้เชี่ยวชาญ",
-      "description": "ทีมระดับโลกที่รวมความเชี่ยวชาญด้าน AI และประสบการณ์ด้านสุขภาพ",
-      "cta": {
-        "title": "ร่วมงานกับเรา",
-        "description": "เรากำลังมองหาคนที่มีความหลงใหลในการเปลี่ยนแปลงวงการสุขภาพด้วย AI",
-        "button": "ดูตำแหน่งงาน"
-      }
-    },
-    "footer": {
-      "cta": {
-        "badge": "เริ่มต้นการเดินทาง",
-        "title": "พร้อมเปลี่ยนคลินิกของคุณ?",
-        "description": "เข้าร่วมกับ 150+ คลินิกที่ใช้ ClinicIQ เพื่อมอบการดูแลผู้ป่วยที่ยอดเยี่ยม",
-        "trial": "เริ่มทดลองฟรี",
-        "demo": "จองเดโม"
-      },
-      "product": "ผลิตภัณฑ์",
-      "company": "บริษัท",
-      "resources": "ทรัพยากร",
-      "legal": "กฎหมาย",
-      "copyright": "สงวนลิขสิทธิ์"
     }
   },
   "fillerLipSimulator": {

@@ -127,6 +127,7 @@ export interface ABTest {
   status: ABTestStatus
   variants: ABTestVariant[]
   trafficSplit: number[] // Percentage split for each variant
+  metric?: string // The metric being tested (e.g., "open_rate", "click_rate")
   startDate?: Date
   endDate?: Date
   winningVariant?: string
@@ -610,6 +611,7 @@ class CampaignManager {
     totalRevenue: number
     averageOpenRate: number
     averageClickRate: number
+    averageConversionRate: number
     averageROI: number
   } {
     const campaigns = Array.from(this.campaigns.values())
@@ -619,6 +621,7 @@ class CampaignManager {
     let totalRevenue = 0
     let totalOpenRate = 0
     let totalClickRate = 0
+    let totalConversionRate = 0
     let totalROI = 0
 
     campaigns.forEach((campaign) => {
@@ -627,11 +630,13 @@ class CampaignManager {
       totalRevenue += analytics.revenue
       totalOpenRate += analytics.openRate
       totalClickRate += analytics.clickRate
+      totalConversionRate += analytics.conversionRate
       totalROI += analytics.roi
     })
 
     const avgOpenRate = campaigns.length > 0 ? totalOpenRate / campaigns.length : 0
     const avgClickRate = campaigns.length > 0 ? totalClickRate / campaigns.length : 0
+    const avgConversionRate = campaigns.length > 0 ? totalConversionRate / campaigns.length : 0
     const avgROI = campaigns.length > 0 ? totalROI / campaigns.length : 0
 
     return {
@@ -641,6 +646,7 @@ class CampaignManager {
       totalRevenue,
       averageOpenRate: avgOpenRate,
       averageClickRate: avgClickRate,
+      averageConversionRate: avgConversionRate,
       averageROI: avgROI,
     }
   }

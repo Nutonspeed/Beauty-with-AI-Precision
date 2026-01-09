@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -17,8 +17,15 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from '@/components/ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import {
   Select,
   SelectContent,
@@ -27,19 +34,26 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
   CreditCard,
   Building2,
-  TrendingUp,
   AlertTriangle,
   Loader2,
   Edit,
   Clock,
   CheckCircle2,
   Search,
-  Filter,
+  Shield,
+  Layers,
+  Calendar,
+  RefreshCw,
+  Trash2,
+  ChevronLeft,
+  ChevronRight,
+  MoreVertical
 } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { cn } from '@/lib/utils';
 import { useToast } from '@/components/ui/use-toast';
 
 interface Subscription {
@@ -177,33 +191,6 @@ export default function SubscriptionManagement() {
     });
   };
 
-  const getStatusBadge = (status: string, isTrialExpired: boolean) => {
-    if (isTrialExpired) {
-      return <Badge variant="destructive">Trial Expired</Badge>;
-    }
-    
-    const variants: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
-      active: 'default',
-      trial: 'secondary',
-      suspended: 'destructive',
-      cancelled: 'outline',
-    };
-    return <Badge variant={variants[status] || 'outline'}>{status}</Badge>;
-  };
-
-  const getPlanBadge = (plan: string) => {
-    const colors: Record<string, string> = {
-      starter: 'bg-gray-100 text-gray-800',
-      professional: 'bg-blue-100 text-blue-800',
-      enterprise: 'bg-purple-100 text-purple-800',
-    };
-    return (
-      <Badge className={colors[plan] || 'bg-gray-100 text-gray-800'}>
-        {plan.charAt(0).toUpperCase() + plan.slice(1)}
-      </Badge>
-    );
-  };
-
   // Calculate stats
   const stats = {
     total: subscriptions.length,
@@ -226,86 +213,64 @@ export default function SubscriptionManagement() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Stats Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="pt-4">
-            <div className="flex items-center gap-3">
-              <Building2 className="w-10 h-10 p-2 rounded-full bg-blue-100 text-blue-600" />
-              <div>
-                <p className="text-2xl font-bold">{stats.total}</p>
-                <p className="text-xs text-muted-foreground">Total Clinics</p>
+    <div className="space-y-10 animate-in fade-in duration-700">
+      {/* Overview Metrics Grid - Operational Nodes */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {[
+          { label: 'Total Clinical Uplinks', val: stats.total, sub: 'Global Infrastructure Nodes', icon: Building2, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+          { label: 'Verified Active Vectors', val: stats.active, sub: 'Nominal Operational State', icon: CheckCircle2, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+          { label: 'Temporal Trial Sync', val: stats.trial, sub: 'Active Evaluation Cycles', icon: Clock, color: 'text-amber-400', bg: 'bg-amber-500/10' },
+          { label: 'Trial Expiry Delta', val: stats.expiredTrials, sub: 'Decommissioned Evaluation Nodes', icon: AlertTriangle, color: 'text-rose-400', bg: 'bg-rose-500/10' }
+        ].map((node, i) => (
+          <Card key={i} className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2rem] hover:bg-white/[0.03] transition-all duration-500 group shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+              <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 italic">{node.label}</CardTitle>
+              <div className={cn("p-2 rounded-lg border border-white/5 shadow-inner group-hover:scale-110 transition-transform duration-700", node.bg)}>
+                <node.icon className={cn("h-4 w-4", node.color)} />
               </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="pt-4">
-            <div className="flex items-center gap-3">
-              <CheckCircle2 className="w-10 h-10 p-2 rounded-full bg-green-100 text-green-600" />
-              <div>
-                <p className="text-2xl font-bold">{stats.active}</p>
-                <p className="text-xs text-muted-foreground">Active</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="pt-4">
-            <div className="flex items-center gap-3">
-              <Clock className="w-10 h-10 p-2 rounded-full bg-yellow-100 text-yellow-600" />
-              <div>
-                <p className="text-2xl font-bold">{stats.trial}</p>
-                <p className="text-xs text-muted-foreground">On Trial</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="pt-4">
-            <div className="flex items-center gap-3">
-              <AlertTriangle className="w-10 h-10 p-2 rounded-full bg-red-100 text-red-600" />
-              <div>
-                <p className="text-2xl font-bold">{stats.expiredTrials}</p>
-                <p className="text-xs text-muted-foreground">Expired Trials</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-black text-white tracking-tighter italic">{node.val.toLocaleString()}</div>
+              <p className="text-[9px] font-black uppercase tracking-widest mt-2 text-slate-500 italic">{node.sub}</p>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
-      {/* Plan Distribution */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <TrendingUp className="w-5 h-5" />
-            Plan Distribution
+      {/* Plan Allocation Matrix */}
+      <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group">
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent" />
+        <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
+          <CardTitle className="text-2xl font-bold text-white tracking-tight italic flex items-center gap-4">
+            <Layers className="h-6 w-6 text-purple-400" />
+            Subscription Sector Matrix
           </CardTitle>
+          <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Resource allocation by service tier protocol</CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="flex gap-4">
-            {Object.entries(stats.byPlan).map(([plan, count]) => {
+        <CardContent className="p-10 lg:p-12 space-y-10">
+          <div className="grid md:grid-cols-3 gap-10">
+            {Object.entries(stats.byPlan).map(([plan, count], idx) => {
               const percentage = stats.total > 0 ? (count / stats.total) * 100 : 0;
+              const colorClass = plan === 'enterprise' ? 'from-purple-500 to-indigo-600' : plan === 'professional' ? 'from-blue-500 to-cyan-600' : 'from-slate-500 to-slate-600';
+              const shadowColor = plan === 'enterprise' ? 'rgba(139,92,246,0.3)' : plan === 'professional' ? 'rgba(6,182,212,0.3)' : 'rgba(148,163,184,0.2)';
+              
               return (
-                <div key={plan} className="flex-1">
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="capitalize">{plan}</span>
-                    <span className="font-medium">{count}</span>
+                <div key={plan} className="space-y-4 group/plan">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-black text-white group-hover/plan:text-pink-400 transition-colors uppercase tracking-[0.25em] italic">{plan} Protocol</span>
+                      <p className="text-2xl font-black text-white italic tracking-tighter">{count} <span className="text-[10px] text-slate-600 not-italic ml-1">Nodes</span></p>
+                    </div>
+                    <Badge variant="outline" className="bg-white/[0.03] border-white/10 text-slate-500 text-[9px] font-black rounded-lg px-3 py-1 italic">{percentage.toFixed(1)}%</Badge>
                   </div>
-                  <div className="h-2 bg-muted rounded-full overflow-hidden">
-                    <div
-                      className={`h-full transition-all ${
-                        plan === 'enterprise'
-                          ? 'bg-purple-500'
-                          : plan === 'professional'
-                          ? 'bg-blue-500'
-                          : 'bg-gray-400'
-                      }`}
-                      style={{ width: `${percentage}%` }}
+                  <div className="relative h-2 w-full bg-white/[0.02] rounded-full overflow-hidden border border-white/5 shadow-inner">
+                    <motion.div 
+                      initial={{ width: 0 }}
+                      animate={{ width: `${percentage}%` }}
+                      transition={{ duration: 1.5, delay: idx * 0.1 }}
+                      className={cn("h-full bg-gradient-to-r rounded-full", colorClass)} 
+                      style={{ boxShadow: `0 0 15px ${shadowColor}` }}
                     />
                   </div>
                 </div>
@@ -315,100 +280,142 @@ export default function SubscriptionManagement() {
         </CardContent>
       </Card>
 
-      {/* Filters & Table */}
-      <Card>
-        <CardHeader>
-          <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <CreditCard className="w-5 h-5" />
-              All Subscriptions
-            </CardTitle>
-            <div className="flex gap-2 flex-wrap">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+      {/* Primary Registry Table */}
+      <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative">
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+        <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
+          <div className="flex flex-col lg:flex-row gap-8 items-center justify-between">
+            <div className="space-y-2">
+              <CardTitle className="text-3xl font-bold text-white tracking-tight italic">Subscription Ledger</CardTitle>
+              <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Live fiscal status synchronization</CardDescription>
+            </div>
+            
+            <div className="flex gap-3 flex-wrap justify-center">
+              <div className="relative group">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-600 group-focus-within:text-pink-500 transition-colors" />
                 <Input
-                  placeholder="Search clinics..."
+                  placeholder="Search Node Identifier..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 w-[200px]"
+                  className="h-14 pl-12 pr-6 rounded-2xl border-white/5 bg-white/[0.03] text-white placeholder:text-slate-700 focus:border-pink-500/30 focus:ring-pink-500/20 transition-all text-sm font-bold italic w-[240px]"
                 />
               </div>
+
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-[130px]">
-                  <Filter className="h-4 w-4 mr-2" />
-                  <SelectValue placeholder="Status" />
+                <SelectTrigger className="h-14 w-[160px] rounded-2xl border border-white/5 bg-white/[0.03] px-6 text-[10px] font-black uppercase tracking-widest text-white focus:ring-pink-500/20 appearance-none transition-all italic">
+                  <SelectValue placeholder="Status Protocol" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="trial">Trial</SelectItem>
-                  <SelectItem value="suspended">Suspended</SelectItem>
-                  <SelectItem value="cancelled">Cancelled</SelectItem>
+                <SelectContent className="bg-[#020617] border-white/10 rounded-2xl">
+                  <SelectItem value="all" className="text-[10px] font-black uppercase tracking-widest italic">GLOBAL_STATE</SelectItem>
+                  <SelectItem value="active" className="text-[10px] font-black uppercase tracking-widest italic">ACTIVE</SelectItem>
+                  <SelectItem value="trial" className="text-[10px] font-black uppercase tracking-widest italic">TRIAL_CYCLE</SelectItem>
+                  <SelectItem value="suspended" className="text-[10px] font-black uppercase tracking-widest italic text-rose-500">SUSPENDED</SelectItem>
+                  <SelectItem value="cancelled" className="text-[10px] font-black uppercase tracking-widest italic">DECOMMISSIONED</SelectItem>
                 </SelectContent>
               </Select>
+
               <Select value={planFilter} onValueChange={setPlanFilter}>
-                <SelectTrigger className="w-[130px]">
-                  <SelectValue placeholder="Plan" />
+                <SelectTrigger className="h-14 w-[160px] rounded-2xl border border-white/5 bg-white/[0.03] px-6 text-[10px] font-black uppercase tracking-widest text-white focus:ring-pink-500/20 appearance-none transition-all italic">
+                  <SelectValue placeholder="Tier Vector" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Plans</SelectItem>
-                  <SelectItem value="starter">Starter</SelectItem>
-                  <SelectItem value="professional">Professional</SelectItem>
-                  <SelectItem value="enterprise">Enterprise</SelectItem>
+                <SelectContent className="bg-[#020617] border-white/10 rounded-2xl">
+                  <SelectItem value="all" className="text-[10px] font-black uppercase tracking-widest italic">ALL_TIERS</SelectItem>
+                  <SelectItem value="starter" className="text-[10px] font-black uppercase tracking-widest italic">STARTER</SelectItem>
+                  <SelectItem value="professional" className="text-[10px] font-black uppercase tracking-widest italic">PROFESSIONAL</SelectItem>
+                  <SelectItem value="enterprise" className="text-[10px] font-black uppercase tracking-widest italic">ENTERPRISE</SelectItem>
                 </SelectContent>
               </Select>
+
+              <Button variant="outline" size="icon" className="h-14 w-14 rounded-2xl border-white/10 bg-white/5 hover:bg-white/10" onClick={fetchSubscriptions}>
+                <RefreshCw className={cn("h-4 w-4 text-slate-400", loading && "animate-spin")} />
+              </Button>
             </div>
           </div>
         </CardHeader>
-        <CardContent>
-          <div className="border rounded-lg">
+
+        <CardContent className="p-0">
+          <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Clinic</TableHead>
-                  <TableHead>Plan</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Started</TableHead>
-                  <TableHead>Trial Ends</TableHead>
-                  <TableHead className="w-12"></TableHead>
+                <TableRow className="bg-white/[0.02] border-b border-white/5">
+                  <TableHead className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Origin Node</TableHead>
+                  <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Plan Protocol</TableHead>
+                  <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">State</TableHead>
+                  <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Established</TableHead>
+                  <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Temporal Expiry</TableHead>
+                  <TableHead className="px-10 py-8 text-right w-[70px]"></TableHead>
                 </TableRow>
               </TableHeader>
-              <TableBody>
+              <TableBody className="divide-y divide-white/5">
                 {filteredSubs.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                      No subscriptions found
+                    <TableCell colSpan={6} className="text-center py-20 text-slate-600 uppercase tracking-[0.4em] font-black text-[10px] italic">
+                      NO_SUBSCRIPTIONS_DETECTED_IN_SECTOR
                     </TableCell>
                   </TableRow>
                 ) : (
                   filteredSubs.map((sub) => (
-                    <TableRow key={sub.id}>
-                      <TableCell>
-                        <div>
-                          <div className="font-medium">{sub.name}</div>
-                          <div className="text-sm text-muted-foreground">{sub.slug}</div>
+                    <TableRow key={sub.id} className="group/row transition-all duration-500 hover:bg-white/[0.03] border-white/5">
+                      <TableCell className="px-10 py-8">
+                        <div className="space-y-1">
+                          <div className="text-lg font-bold text-white tracking-tight italic group-hover/row:text-pink-400 transition-colors">{sub.name}</div>
+                          <div className="text-[10px] font-black uppercase tracking-widest text-slate-600 italic">/{sub.slug}</div>
                         </div>
                       </TableCell>
-                      <TableCell>{getPlanBadge(sub.subscription_plan)}</TableCell>
-                      <TableCell>{getStatusBadge(sub.subscription_status, sub.isTrialExpired)}</TableCell>
-                      <TableCell>{formatDate(sub.subscription_started_at)}</TableCell>
-                      <TableCell>
+                      <TableCell className="px-8 py-8">
+                        <div className="flex items-center gap-3">
+                          <CreditCard className="h-3.5 w-3.5 text-slate-600" />
+                          <span className="text-sm font-bold text-slate-300 italic uppercase tracking-widest">{sub.subscription_plan}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="px-8 py-8">
+                        <div className="flex items-center gap-2">
+                          <div className={cn("h-2 w-2 rounded-full animate-pulse shadow-lg", sub.subscription_status === 'active' ? 'bg-emerald-500 shadow-emerald-500/50' : 'bg-rose-500 shadow-rose-500/50')} />
+                          <Badge className={cn("px-4 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border-none shadow-inner", sub.subscription_status === 'active' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400')}>
+                            {sub.subscription_status}
+                          </Badge>
+                        </div>
+                      </TableCell>
+                      <TableCell className="px-8 py-8">
+                        <div className="flex items-center gap-3 text-slate-500 italic">
+                          <Calendar className="h-3.5 w-3.5" />
+                          <span className="text-[10px] font-black uppercase tracking-widest">{formatDate(sub.subscription_started_at)}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="px-8 py-8">
                         {sub.is_trial ? (
-                          <span className={sub.isTrialExpired ? 'text-red-600' : ''}>
-                            {formatDate(sub.trial_ends_at)}
-                          </span>
+                          <div className="flex items-center gap-3">
+                            <Clock className={cn("h-3.5 w-3.5", sub.isTrialExpired ? 'text-rose-500' : 'text-amber-500')} />
+                            <span className={cn("text-sm font-black italic tracking-tighter", sub.isTrialExpired ? 'text-rose-500' : 'text-amber-400')}>
+                              {formatDate(sub.trial_ends_at)}
+                            </span>
+                          </div>
                         ) : (
-                          '-'
+                          <span className="text-[10px] font-black text-slate-700 uppercase tracking-widest italic">PERMANENT_UPLINK</span>
                         )}
                       </TableCell>
-                      <TableCell>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => openEditModal(sub)}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
+                      <TableCell className="px-10 py-8 text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl hover:bg-white/10 text-slate-500">
+                              <MoreVertical className="h-5 w-5" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="bg-[#020617] border-white/10 rounded-2xl p-2 min-w-[180px]">
+                            <DropdownMenuLabel className="px-4 py-2 text-[9px] font-black uppercase tracking-[0.2em] text-slate-500 italic">Resource Control</DropdownMenuLabel>
+                            <DropdownMenuSeparator className="bg-white/5" />
+                            <DropdownMenuItem className="rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-pink-600 focus:text-white transition-colors" onClick={() => openEditModal(sub)}>
+                              <Edit className="mr-3 h-4 w-4" /> Reallocate Protocol
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-pink-600 focus:text-white transition-colors">
+                              <Shield className="mr-3 h-4 w-4" /> View Sector
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator className="bg-white/5" />
+                            <DropdownMenuItem className="rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-rose-600 focus:text-white transition-colors text-rose-500">
+                              <Trash2 className="mr-3 h-4 w-4" /> Suspend Inflow
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </TableCell>
                     </TableRow>
                   ))
@@ -416,56 +423,100 @@ export default function SubscriptionManagement() {
               </TableBody>
             </Table>
           </div>
-          <div className="mt-4 text-sm text-muted-foreground">
-            Showing {filteredSubs.length} of {subscriptions.length} subscriptions
+
+          {/* Pagination Telemetry */}
+          <div className="p-10 border-t border-white/5 flex items-center justify-between">
+            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 italic">
+              Displaying Resource Uplinks: {filteredSubs.length} of {subscriptions.length} <span className="mx-2">::</span> Sector Total Active: {stats.active}
+            </p>
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-xl border-white/10 bg-white/5 h-12 px-6 hover:bg-white/10 transition-all opacity-20 cursor-not-allowed"
+                disabled
+              >
+                <ChevronLeft className="h-4 w-4 mr-2" />
+                <span className="text-[9px] font-black uppercase tracking-widest">Previous_Sector</span>
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-xl border-white/10 bg-white/5 h-12 px-6 hover:bg-white/10 transition-all opacity-20 cursor-not-allowed"
+                disabled
+              >
+                <span className="text-[9px] font-black uppercase tracking-widest">Next_Sector</span>
+                <ChevronRight className="h-4 w-4 ml-2" />
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Edit Modal */}
+      {/* Reallocation Modal - Critical Command Interface */}
       <Dialog open={editModalOpen} onOpenChange={setEditModalOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit Subscription: {selectedSub?.name}</DialogTitle>
+        <DialogContent className="bg-[#020617] border-white/10 rounded-[3rem] p-10 max-w-md shadow-2xl backdrop-blur-3xl overflow-hidden text-slate-200">
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/30 to-transparent" />
+          <DialogHeader className="mb-10">
+            <DialogTitle className="text-2xl font-bold text-white tracking-tight italic flex items-center gap-4">
+              <Shield className="h-6 w-6 text-pink-500" />
+              Reallocate Protocol
+            </DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label>Plan</Label>
-              <Select value={editPlan} onValueChange={setEditPlan}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="starter">Starter</SelectItem>
-                  <SelectItem value="professional">Professional</SelectItem>
-                  <SelectItem value="enterprise">Enterprise</SelectItem>
-                </SelectContent>
-              </Select>
+          {selectedSub && (
+            <div className="space-y-10">
+              <div className="flex items-center gap-6 p-6 rounded-3xl bg-white/[0.02] border border-white/5">
+                <div className="h-16 w-16 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center shadow-xl">
+                  <Building2 className="h-8 w-8 text-pink-400" />
+                </div>
+                <div>
+                  <div className="text-xl font-bold text-white italic tracking-tight">{selectedSub.name}</div>
+                  <div className="text-[10px] font-black uppercase tracking-widest text-slate-600 mt-1">Node Identifier: /{selectedSub.slug}</div>
+                </div>
+              </div>
+
+              <div className="space-y-8">
+                <div className="space-y-3">
+                  <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic ml-4">Protocol Tier</label>
+                  <Select value={editPlan} onValueChange={setEditPlan}>
+                    <SelectTrigger className="h-16 rounded-2xl border-white/5 bg-white/[0.03] text-white focus:ring-pink-500/20 focus:border-pink-500/30 transition-all px-8 text-sm font-bold italic">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[#020617] border-white/10 rounded-2xl">
+                      <SelectItem value="starter" className="text-[10px] font-black uppercase tracking-widest italic">STARTER</SelectItem>
+                      <SelectItem value="professional" className="text-[10px] font-black uppercase tracking-widest italic">PROFESSIONAL</SelectItem>
+                      <SelectItem value="enterprise" className="text-[10px] font-black uppercase tracking-widest italic">ENTERPRISE</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-3">
+                  <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic ml-4">State Vector</label>
+                  <Select value={editStatus} onValueChange={setEditStatus}>
+                    <SelectTrigger className="h-16 rounded-2xl border-white/5 bg-white/[0.03] text-white focus:ring-pink-500/20 focus:border-pink-500/30 transition-all px-8 text-sm font-bold italic">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[#020617] border-white/10 rounded-2xl">
+                      <SelectItem value="active" className="text-[10px] font-black uppercase tracking-widest italic text-emerald-400">ACTIVE</SelectItem>
+                      <SelectItem value="trial" className="text-[10px] font-black uppercase tracking-widest italic text-amber-400">TRIAL_CYCLE</SelectItem>
+                      <SelectItem value="suspended" className="text-[10px] font-black uppercase tracking-widest italic text-rose-500">SUSPENDED</SelectItem>
+                      <SelectItem value="cancelled" className="text-[10px] font-black uppercase tracking-widest italic">DECOMMISSIONED</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="pt-6 border-t border-white/5 flex gap-4">
+                <Button variant="outline" className="flex-1 h-14 rounded-2xl font-black uppercase tracking-widest text-[10px] border-white/10 bg-white/5" onClick={() => setEditModalOpen(false)}>
+                  ABORT_COMMAND
+                </Button>
+                <Button className="flex-1 h-14 rounded-2xl font-black uppercase tracking-widest text-[10px] bg-pink-600 shadow-2xl shadow-pink-600/40" onClick={handleSave} disabled={saving}>
+                  {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                  CONFIRM_REALLOCATION
+                </Button>
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label>Status</Label>
-              <Select value={editStatus} onValueChange={setEditStatus}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="trial">Trial</SelectItem>
-                  <SelectItem value="suspended">Suspended</SelectItem>
-                  <SelectItem value="cancelled">Cancelled</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setEditModalOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleSave} disabled={saving}>
-              {saving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-              Save Changes
-            </Button>
-          </DialogFooter>
+          )}
         </DialogContent>
       </Dialog>
     </div>

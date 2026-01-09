@@ -8,7 +8,6 @@ import { useAnalysisMode } from "@/hooks/use-analysis-mode"
 import type { AnalysisMode } from "@/types"
 import { cn } from "@/lib/utils"
 import { useTranslations } from "next-intl"
-import { useLocalizePath } from "@/lib/i18n/locale-link"
 import { Sparkles, ShieldCheck, Brain } from "lucide-react"
 
 interface AnalysisInteractionPanelProps {
@@ -38,7 +37,6 @@ const MODE_ORDER: AnalysisMode[] = ["local", "auto", "hf"]
 export function AnalysisInteractionPanel({ isLoggedIn }: AnalysisInteractionPanelProps) {
   const t = useTranslations()
   const { mode, setMode } = useAnalysisMode()
-  const lp = useLocalizePath()
 
   const activeMeta = MODE_METADATA[mode]
 

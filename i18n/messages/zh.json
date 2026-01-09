@@ -766,69 +766,20 @@
       "contactSales": "联系销售"
     },
     "pricing": {
-      "title": "适合各种规模诊所的套餐",
-      "subtitle": "从฿9,900/月起 - 层级越高越划算",
-      "starter": {
-        "badge": "入门版",
-        "title": "Starter",
-        "description": "适合单店小型诊所",
-        "price": "฿9,900",
+      "title": "临床级生态系统",
+      "subtitle": "为顶级诊所提供的精英诊断基础设施",
+      "freeTier": {
+        "badge": "入门",
+        "title": "Starter Plan",
+        "description": "为单店卓越提供的基础 AI 诊断",
         "period": "月",
-        "salesUsers": "1位销售用户",
-        "features": [
-          "AI皮肤分析（100次/月）",
-          "CRM与潜客管理",
-          "预约系统",
-          "客户数据库",
-          "基础报告",
-          "PDPA合规"
-        ],
-        "cta": "立即开始"
+        "cta": "开始部署"
       },
-      "professional": {
-        "badge": "最受欢迎",
-        "title": "Professional",
-        "description": "适合成长型诊所 - 省30%",
-        "price": "฿19,900",
+      "premium": {
+        "badge": "推荐",
+        "title": "Professional Plan",
+        "description": "为诊所快速增长提供的全面 AI 智能",
         "period": "月",
-        "salesUsers": "3位销售用户",
-        "originalPrice": "29,700",
-        "savings": "节省฿9,800/月",
-        "features": [
-          "无限AI分析",
-          "AR前后对比模拟器",
-          "高级CRM+销售管道",
-          "预约+排队系统",
-          "治疗方案",
-          "库存管理",
-          "邮件与短信营销",
-          "积分系统",
-          "高级分析",
-          "多店支持（最多3家）",
-          "视频通话",
-          "优先支持"
-        ],
-        "cta": "开始14天试用"
-      },
-      "enterprise": {
-        "badge": "最超值",
-        "title": "Enterprise",
-        "description": "适合连锁诊所 - 省60%",
-        "price": "฿39,900",
-        "period": "月",
-        "salesUsers": "10位销售用户",
-        "originalPrice": "99,000",
-        "savings": "节省฿59,100/月",
-        "features": [
-          "Professional所有功能",
-          "无限销售用户",
-          "无限多店支持",
-          "营销自动化",
-          "定制报告",
-          "API访问",
-          "专属客户经理",
-          "24/7支持"
-        ],
         "cta": "联系销售"
       }
     },

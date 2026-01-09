@@ -35,8 +35,6 @@ interface ToolbarProps {
   onWidthChange: (width: number) => void;
   onClear?: () => void;
   onExportImage?: () => void;
-  onExportJSON?: () => void;
-  onImportJSON?: () => void;
   onToggleLock?: () => void;
   onUndo?: () => void;
   onRedo?: () => void;
@@ -49,26 +47,6 @@ interface IconProps extends React.SVGProps<SVGSVGElement> {
 }
 
 type IconComponent = React.ComponentType<IconProps>;
-
-const tools: { type: DrawingTool; icon: IconComponent; label: string }[] = [
-  { type: 'pen', icon: Pencil, label: 'Pen' },
-  { type: 'eraser', icon: Eraser, label: 'Eraser' },
-  { type: 'line', icon: Minus, label: 'Line' },
-  { type: 'rectangle', icon: Square, label: 'Rectangle' },
-  { type: 'circle', icon: Circle, label: 'Circle' },
-  { type: 'text', icon: Type, label: 'Text' },
-  { type: 'select', icon: MousePointer2, label: 'Select' }
-];
-
-const colors: { value: DrawingColor; hex: string; label: string }[] = [
-  { value: 'black', hex: '#000000', label: 'Black' },
-  { value: 'red', hex: '#EF4444', label: 'Red' },
-  { value: 'blue', hex: '#3B82F6', label: 'Blue' },
-  { value: 'green', hex: '#10B981', label: 'Green' },
-  { value: 'yellow', hex: '#F59E0B', label: 'Yellow' },
-  { value: 'orange', hex: '#F97316', label: 'Orange' },
-  { value: 'purple', hex: '#8B5CF6', label: 'Purple' }
-];
 
 const widths = [1, 2, 4, 6, 8];
 
@@ -83,8 +61,6 @@ export function Toolbar({
   onWidthChange,
   onClear,
   onExportImage,
-  onExportJSON,
-  onImportJSON,
   onToggleLock,
   onUndo,
   onRedo,

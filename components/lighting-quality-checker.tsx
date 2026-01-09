@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/badge"
 import { Lightbulb, Sun, CloudSun, AlertTriangle } from "lucide-react"
 import { cn } from "@/lib/utils"
 
+import { motion } from "framer-motion"
+
 export function LightingQualityChecker() {
   const [lightingQuality, setLightingQuality] = useState<"excellent" | "good" | "fair" | "poor" | "checking">(
     "checking",
@@ -115,47 +117,52 @@ export function LightingQualityChecker() {
       case "excellent":
         return {
           icon: Sun,
-          color: "text-green-700 dark:text-green-400",
-          bgColor: "bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-800",
-          label: "Excellent / ยอดเยี่ยม",
-          message: "Perfect lighting conditions! / แสงสว่างเหมาะสมมาก!",
+          color: "text-emerald-400",
+          bgColor: "bg-emerald-500/5 border-emerald-500/20",
+          label: "Optimal Spectrum",
+          message: "Clinical-grade lighting detected. Ready for high-precision analysis.",
           badgeVariant: "default" as const,
+          barColor: "bg-emerald-500"
         }
       case "good":
         return {
           icon: CloudSun,
-          color: "text-blue-700 dark:text-blue-400",
-          bgColor: "bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800",
-          label: "Good / ดี",
-          message: "Lighting is good for analysis / แสงสว่างดีสำหรับการวิเคราะห์",
+          color: "text-blue-400",
+          bgColor: "bg-blue-500/5 border-blue-500/20",
+          label: "Stable Environment",
+          message: "Lighting conditions are within operational parameters.",
           badgeVariant: "secondary" as const,
+          barColor: "bg-blue-500"
         }
       case "fair":
         return {
           icon: Lightbulb,
-          color: "text-amber-700 dark:text-amber-400",
-          bgColor: "bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800",
-          label: "Fair / พอใช้",
-          message: "Consider improving lighting / ควรปรับปรุงแสงสว่าง",
+          color: "text-amber-400",
+          bgColor: "bg-amber-500/5 border-amber-500/20",
+          label: "Sub-optimal Delta",
+          message: "Detected variance in ambient lux. Precision may be affected.",
           badgeVariant: "outline" as const,
+          barColor: "bg-amber-500"
         }
       case "poor":
         return {
           icon: AlertTriangle,
-          color: "text-red-700 dark:text-red-400",
-          bgColor: "bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-800",
-          label: "Poor / ไม่เหมาะสม",
-          message: "Please improve lighting for better results / กรุณาปรับปรุงแสงสว่างเพื่อผลลัพธ์ที่ดีขึ้น",
+          color: "text-rose-400",
+          bgColor: "bg-rose-500/5 border-rose-500/20",
+          label: "Critical Underexposure",
+          message: "Insufficient lighting infrastructure. Diagnostic failure risk high.",
           badgeVariant: "destructive" as const,
+          barColor: "bg-rose-500"
         }
       default:
         return {
           icon: Lightbulb,
-          color: "text-gray-600 dark:text-gray-400",
-          bgColor: "bg-gray-50 dark:bg-gray-900/30 border-gray-200 dark:border-gray-700",
-          label: "Checking... / กำลังตรวจสอบ...",
-          message: "Analyzing lighting conditions / กำลังวิเคราะห์แสงสว่าง",
+          color: "text-slate-400",
+          bgColor: "bg-slate-500/5 border-slate-500/20",
+          label: "Calibrating Sensors...",
+          message: "Analyzing atmospheric photon density...",
           badgeVariant: "outline" as const,
+          barColor: "bg-slate-500"
         }
     }
   }
@@ -164,32 +171,60 @@ export function LightingQualityChecker() {
   const Icon = config.icon
 
   return (
-    <Card className={cn("border-2", config.bgColor)}>
-      <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-base text-gray-900 dark:text-white">
-          <Icon className={cn("h-5 w-5", config.color)} />
-          Lighting Quality / คุณภาพแสง
+    <Card className={cn("border-white/5 bg-white/[0.01] backdrop-blur-md rounded-[2.5rem] overflow-hidden group hover:border-white/10 transition-all", config.bgColor)}>
+      <CardHeader className="p-8 pb-4">
+        <CardTitle className="text-xs font-black uppercase tracking-[0.25em] flex items-center gap-4 text-white">
+          <div className={cn("p-2 rounded-lg bg-white/5 border border-white/5 shadow-inner", config.color)}>
+            <Icon className="h-5 w-5" />
+          </div>
+          Lighting Diagnostic
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-3">
-        <div className="flex items-center justify-between">
-          <Badge variant={config.badgeVariant} className="text-xs font-medium">
-            {config.label}
-          </Badge>
-          <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
-            Brightness: {brightness}/255
-          </span>
-        </div>
-        <p className="text-sm text-gray-700 dark:text-gray-200 font-medium">{config.message}</p>
-        {lightingQuality === "poor" && (
-          <div className="rounded-md bg-white/50 dark:bg-gray-800/50 p-3 text-xs border border-gray-200 dark:border-gray-700">
-            <p className="font-bold mb-1 text-gray-900 dark:text-white">Tips / คำแนะนำ:</p>
-            <ul className="space-y-1 text-gray-700 dark:text-gray-300">
-              <li>• Move to a brighter area / ย้ายไปยังที่มีแสงสว่างมากขึ้น</li>
-              <li>• Use natural daylight / ใช้แสงธรรมชาติ</li>
-              <li>• Avoid backlighting / หลีกเลี่ยงแสงส่องจากด้านหลัง</li>
-            </ul>
+      <CardContent className="p-8 pt-0 space-y-6">
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <Badge variant="outline" className={cn("px-3 py-1 rounded-full border-none bg-white/5 text-[10px] font-bold uppercase tracking-widest", config.color)}>
+              {config.label}
+            </Badge>
+            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic">
+              Luminance: {brightness} LUX
+            </span>
           </div>
+          
+          <div className="relative h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+            <motion.div 
+              initial={{ width: 0 }}
+              animate={{ width: `${(brightness / 255) * 100}%` }}
+              transition={{ duration: 1, ease: "easeOut" }}
+              className={cn("absolute inset-y-0 left-0 rounded-full shadow-lg", config.barColor)}
+            />
+          </div>
+        </div>
+
+        <p className="text-sm text-slate-400 font-light leading-relaxed">{config.message}</p>
+        
+        {lightingQuality === "poor" && (
+          <motion.div 
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            className="rounded-2xl bg-rose-500/5 p-4 text-[13px] border border-rose-500/10 space-y-3"
+          >
+            <p className="font-bold text-rose-400 uppercase tracking-widest text-[10px]">Recommended Optimization:</p>
+            <ul className="space-y-2 text-slate-400 font-light">
+              <li className="flex items-center gap-2">
+                <div className="h-1 w-1 rounded-full bg-rose-500/40" />
+                Increase ambient light intensity
+              </li>
+              <li className="flex items-center gap-2">
+                <div className="h-1 w-1 rounded-full bg-rose-500/40" />
+                Utilize natural daylight spectrum
+              </li>
+              <li className="flex items-center gap-2">
+                <div className="h-1 w-1 rounded-full bg-rose-500/40" />
+                Eliminate high-contrast backlighting
+              </li>
+            </ul>
+          </motion.div>
         )}
       </CardContent>
     </Card>

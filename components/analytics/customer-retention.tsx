@@ -1,10 +1,19 @@
 "use client"
 
 import { useEffect, useState, useCallback } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Badge } from "@/components/ui/badge"
-import { Users, Heart } from "lucide-react"
+import { 
+  Users, 
+  Heart, 
+  Activity, 
+  Target, 
+  RotateCcw,
+  PieChart as PieIcon
+} from "lucide-react"
+import { motion } from "framer-motion"
+import { cn } from "@/lib/utils"
 import {
   Tooltip,
   ResponsiveContainer,
@@ -88,215 +97,201 @@ export function CustomerRetention({ dateRange }: CustomerRetentionProps) {
   ]
 
   return (
-    <div className="space-y-6">
-      {/* Summary Cards */}
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card>
-          <CardContent className="pt-6">
-            <div className="text-sm text-muted-foreground">ลูกค้าทั้งหมด</div>
-            <div className="text-2xl font-bold">{data.summary.totalCustomers}</div>
-            <div className="text-xs text-muted-foreground mt-1">
-              {data.summary.customersWithBookings} คนมีการนัด
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="pt-6">
-            <div className="text-sm text-muted-foreground">Retention Rate</div>
-            <div className="text-2xl font-bold text-green-500">
-              {data.summary.retentionRate.toFixed(1)}%
-            </div>
-            <div className="text-xs text-muted-foreground mt-1">
-              {data.summary.repeatCustomers} ลูกค้าประจำ
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="pt-6">
-            <div className="text-sm text-muted-foreground">Average CLV</div>
-            <div className="text-2xl font-bold">
-              ฿{data.summary.averageLifetimeValue.toLocaleString()}
-            </div>
-            <div className="text-xs text-muted-foreground mt-1">Customer Lifetime Value</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="pt-6">
-            <div className="text-sm text-muted-foreground">Churn Rate</div>
-            <div className="text-2xl font-bold text-red-500">
-              {data.summary.churnRate.toFixed(1)}%
-            </div>
-            <div className="text-xs text-muted-foreground mt-1">
-              {data.summary.churnedCustomers} ลูกค้าหายไป
-            </div>
-          </CardContent>
-        </Card>
+    <div className="space-y-12">
+      {/* Summary Nodes - Operational Metrics */}
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        {[
+          { label: 'ลูกค้าทั้งหมด', val: data.summary.totalCustomers, sub: `${data.summary.customersWithBookings} Active Nodes`, icon: Users, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+          { label: 'Retention Rate', val: `${data.summary.retentionRate.toFixed(1)}%`, sub: `${data.summary.repeatCustomers} Legacy Units`, icon: RotateCcw, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+          { label: 'Average CLV', val: `฿${data.summary.averageLifetimeValue.toLocaleString()}`, sub: 'Lifetime Yield Index', icon: Target, color: 'text-pink-400', bg: 'bg-pink-500/10' },
+          { label: 'Churn Rate', val: `${data.summary.churnRate.toFixed(1)}%`, sub: `${data.summary.churnedCustomers} Offline Units`, icon: Activity, color: 'text-rose-400', bg: 'bg-rose-500/10' }
+        ].map((stat, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.1 }}
+          >
+            <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2rem] hover:bg-white/[0.03] transition-all duration-500 group shadow-2xl relative overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+                <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 italic">{stat.label}</CardTitle>
+                <div className={cn("p-2 rounded-lg border border-white/5 shadow-inner transition-transform duration-700 group-hover:scale-110", stat.bg)}>
+                  <stat.icon className={cn("h-4 w-4", stat.color)} />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-black text-white tracking-tighter italic">{stat.val}</div>
+                <p className="text-[9px] font-black uppercase tracking-widest mt-2 text-slate-500 italic">
+                  {stat.sub}
+                </p>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
       </div>
 
-      {/* Customer Segments */}
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5" />
-              การแบ่งกลุ่มลูกค้า
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        {/* Segmentation Architecture Node */}
+        <div className="lg:col-span-7">
+          <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group h-full">
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/20 to-transparent" />
+            <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5 flex flex-row items-center justify-between">
+              <div className="space-y-2">
+                <CardTitle className="text-3xl font-bold text-white tracking-tight italic flex items-center gap-4">
+                  <PieIcon className="h-8 w-8 text-pink-500" />
+                  Client Segmentation
+                </CardTitle>
+                <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Distribution analysis by engagement cycles</CardDescription>
+              </div>
+            </CardHeader>
+            <CardContent className="p-10 lg:p-12">
+              <div className="h-[300px] w-full mb-10">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={segmentData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={(entry: any) => `${(entry.percent * 100).toFixed(0)}%`}
+                      innerRadius={80}
+                      outerRadius={110}
+                      paddingAngle={10}
+                      dataKey="value"
+                    >
+                      {segmentData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.fill} stroke="rgba(255,255,255,0.05)" strokeWidth={2} />
+                      ))}
+                    </Pie>
+                    <Tooltip contentStyle={{ backgroundColor: '#020617', border: 'none', borderRadius: '24px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                {[
+                  { label: "ลูกค้า 1 ครั้ง", sub: "Retention Priority", val: data.segments.oneTime, color: "text-rose-400", bg: "bg-rose-500/10" },
+                  { label: "ลูกค้า 2-5 ครั้ง", sub: "Operational Stable", val: data.segments.twoToFive, color: "text-teal-400", bg: "bg-teal-500/10" },
+                  { label: "ลูกค้า 5+ ครั้ง", sub: "Elite Tier", val: data.segments.moreThanFive, color: "text-blue-400", bg: "bg-blue-500/10" }
+                ].map((seg, i) => (
+                  <div key={i} className="p-6 rounded-[2rem] bg-white/[0.02] border border-white/5 space-y-3 group/seg hover:border-white/10 transition-all duration-500">
+                    <div className="flex items-center justify-between">
+                      <div className={cn("h-2 w-2 rounded-full", seg.color.replace('text-', 'bg-'))} />
+                      <Badge className={cn("bg-white/[0.03] border-none text-[9px] font-black uppercase tracking-widest italic shadow-inner", seg.color)}>{seg.val} Units</Badge>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-sm font-bold text-white italic group-hover/seg:text-pink-400 transition-colors">{seg.label}</p>
+                      <p className="text-[8px] font-black uppercase tracking-widest text-slate-600">{seg.sub}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Acquisition Dynamics Column */}
+        <div className="lg:col-span-5 space-y-10">
+          <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative h-full group">
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
+            <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
+              <CardTitle className="text-2xl font-bold text-white tracking-tight italic">Acquisition Vector</CardTitle>
+              <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">New clinical unit ingestion analytics</CardDescription>
+            </CardHeader>
+            <CardContent className="p-10 lg:p-12 space-y-10">
+              <div className="text-center p-10 rounded-[2.5rem] bg-gradient-to-br from-blue-500/5 to-purple-500/5 border border-white/5 shadow-inner relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-6 opacity-[0.03] group-hover:scale-110 transition-transform duration-1000">
+                  <Users className="w-32 h-32 text-white" />
+                </div>
+                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 mb-4 italic">Period Node Acquisition</p>
+                <div className="text-7xl font-black text-white tracking-tighter italic">{data.summary.newCustomersInPeriod}</div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-blue-400 mt-4">Authorized Units</p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-6">
+                {[
+                  { label: "Cycle Conversion", val: `${data.summary.totalCustomers > 0 ? ((data.summary.customersWithBookings / data.summary.totalCustomers) * 100).toFixed(1) : 0}%`, color: "text-emerald-400" },
+                  { label: "Retention Yield", val: `${data.summary.retentionRate.toFixed(1)}%`, color: "text-blue-400" }
+                ].map((node, i) => (
+                  <div key={i} className="p-6 rounded-2xl border border-white/5 bg-white/[0.02] space-y-2">
+                    <p className="text-[8px] font-black uppercase tracking-widest text-slate-600 italic">{node.label}</p>
+                    <p className={cn("text-2xl font-black italic tracking-tighter", node.color)}>{node.val}</p>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* Global VIP Matrix */}
+      <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative">
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/20 to-transparent" />
+        <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5 flex flex-row items-center justify-between">
+          <div className="space-y-2">
+            <CardTitle className="text-3xl font-bold text-white tracking-tight italic flex items-center gap-4">
+              <Heart className="h-8 w-8 text-pink-500" />
+              Elite Client Matrix
             </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={segmentData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={(entry: any) => 
-                    `${entry.name}: ${entry.value} (${(entry.percent * 100).toFixed(0)}%)`
-                  }
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {segmentData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.fill} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-
-            <div className="mt-4 space-y-2">
-              <div className="flex items-center justify-between p-2 bg-red-50 dark:bg-red-950 rounded">
-                <span className="text-sm">ลูกค้า 1 ครั้ง (ต้องติดตาม)</span>
-                <Badge className="bg-red-500">{data.segments.oneTime}</Badge>
-              </div>
-              <div className="flex items-center justify-between p-2 bg-teal-50 dark:bg-teal-950 rounded">
-                <span className="text-sm">ลูกค้า 2-5 ครั้ง (ปานกลาง)</span>
-                <Badge className="bg-teal-500">{data.segments.twoToFive}</Badge>
-              </div>
-              <div className="flex items-center justify-between p-2 bg-blue-50 dark:bg-blue-950 rounded">
-                <span className="text-sm">ลูกค้า 5+ ครั้ง (VIP)</span>
-                <Badge className="bg-blue-500">{data.segments.moreThanFive}</Badge>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>สถิติลูกค้าใหม่</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-6">
-              <div className="text-center p-6 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950 dark:to-purple-950 rounded-lg">
-                <div className="text-sm text-muted-foreground mb-2">ลูกค้าใหม่ในช่วงที่เลือก</div>
-                <div className="text-4xl font-bold text-blue-600">
-                  {data.summary.newCustomersInPeriod}
-                </div>
-                <div className="text-sm text-muted-foreground mt-2">คน</div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 border rounded-lg text-center">
-                  <div className="text-sm text-muted-foreground">ลูกค้าที่จองแล้ว</div>
-                  <div className="text-2xl font-bold mt-2">
-                    {data.summary.customersWithBookings}
-                  </div>
-                  <div className="text-xs text-green-500 mt-1">
-                    {data.summary.totalCustomers > 0
-                      ? ((data.summary.customersWithBookings / data.summary.totalCustomers) * 100).toFixed(1)
-                      : 0}
-                    % แปลง
-                  </div>
-                </div>
-
-                <div className="p-4 border rounded-lg text-center">
-                  <div className="text-sm text-muted-foreground">ลูกค้าประจำ</div>
-                  <div className="text-2xl font-bold mt-2">
-                    {data.summary.repeatCustomers}
-                  </div>
-                  <div className="text-xs text-blue-500 mt-1">
-                    {data.summary.retentionRate.toFixed(1)}% retention
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Top Customers */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Heart className="h-5 w-5 text-pink-500" />
-            Top 10 VIP Customers
-          </CardTitle>
+            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Top 10 personnel by aggregate yield</CardDescription>
+          </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0">
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="w-full border-collapse">
               <thead>
-                <tr className="border-b">
-                  <th className="text-left py-2 px-4">ลำดับ</th>
-                  <th className="text-left py-2 px-4">ชื่อลูกค้า</th>
-                  <th className="text-right py-2 px-4">Lifetime Value</th>
-                  <th className="text-right py-2 px-4">จำนวนนัด</th>
-                  <th className="text-right py-2 px-4">Average/นัด</th>
-                  <th className="text-right py-2 px-4">วันที่นัดครั้งแรก</th>
+                <tr className="bg-white/[0.02] border-b border-white/5">
+                  <th className="px-10 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Identity Rank</th>
+                  <th className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Client Entity</th>
+                  <th className="px-8 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Lifetime Yield</th>
+                  <th className="px-8 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Cycle Count</th>
+                  <th className="px-8 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Average Yield</th>
+                  <th className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Initialization Node</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-white/5">
                 {data.topCustomers.map((customer: any, index: number) => (
-                  <tr key={customer.customerId} className="border-b hover:bg-muted/50">
-                    <td className="py-3 px-4">
-                      <div
-                        className={`flex h-8 w-8 items-center justify-center rounded-full font-bold text-white ${
-                          index === 0
-                            ? "bg-yellow-500"
-                            : index === 1
-                              ? "bg-gray-400"
-                              : index === 2
-                                ? "bg-orange-600"
-                                : "bg-gray-300 text-gray-700"
-                        }`}
-                      >
-                        {index + 1}
+                  <motion.tr
+                    key={customer.customerId}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: index * 0.05 }}
+                    className="group transition-all duration-500 hover:bg-white/[0.03]"
+                  >
+                    <td className="px-10 py-8">
+                      <div className={cn(
+                        "h-10 w-10 rounded-xl flex items-center justify-center font-black italic shadow-inner group-hover:scale-110 transition-all duration-700",
+                        index === 0 ? "bg-yellow-500 text-white" :
+                        index === 1 ? "bg-slate-400 text-white" :
+                        index === 2 ? "bg-orange-600 text-white" :
+                        "bg-white/[0.03] text-slate-500 border border-white/10"
+                      )}>
+                        #{index + 1}
                       </div>
                     </td>
-                    <td className="py-3 px-4">
-                      <div className="font-medium">{customer.customerName}</div>
-                      <div className="text-xs text-muted-foreground">
-                        ID: {customer.customerId.slice(0, 8)}...
+                    <td className="px-8 py-8">
+                      <div className="space-y-1">
+                        <p className="text-lg font-bold text-white tracking-tight italic group-hover:text-pink-400 transition-colors">{customer.customerName}</p>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600 italic">NODE_ID: {customer.customerId.slice(0, 8)}</p>
                       </div>
                     </td>
-                    <td className="text-right py-3 px-4">
-                      <div className="font-bold text-lg text-green-600">
-                        ฿{customer.totalValue.toLocaleString()}
-                      </div>
+                    <td className="px-8 py-8 text-right">
+                      <span className="text-xl font-black text-white italic tracking-tighter group-hover:text-emerald-400 transition-colors">฿{customer.totalValue.toLocaleString()}</span>
                     </td>
-                    <td className="text-right py-3 px-4">
-                      <div>{customer.totalBookings}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {customer.paidBookings} ชำระแล้ว
-                      </div>
+                    <td className="px-8 py-8 text-right">
+                      <div className="text-lg font-black text-white italic tracking-tighter">{customer.totalBookings}</div>
+                      <p className="text-[9px] font-black uppercase text-slate-600 tracking-widest italic">{customer.paidBookings} VERIFIED</p>
                     </td>
-                    <td className="text-right py-3 px-4">
-                      ฿{customer.averageOrderValue.toLocaleString()}
+                    <td className="px-8 py-8 text-right">
+                      <span className="text-sm font-bold text-slate-400 italic">฿{customer.averageOrderValue.toLocaleString()}</span>
                     </td>
-                    <td className="text-right py-3 px-4 text-sm text-muted-foreground">
-                      {customer.firstBookingDate
-                        ? new Date(customer.firstBookingDate).toLocaleDateString("th-TH", {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                          })
-                        : "-"}
+                    <td className="px-10 py-8 text-right">
+                      <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic">
+                        {customer.firstBookingDate ? new Date(customer.firstBookingDate).toLocaleDateString() : 'N/A'}
+                      </span>
                     </td>
-                  </tr>
+                  </motion.tr>
                 ))}
               </tbody>
             </table>

@@ -109,6 +109,8 @@ export const dynamic = 'force-dynamic'
 // Remove generateStaticParams to prevent static generation
 // All pages will be rendered dynamically
 
+import { PageTransition } from "@/components/animations/page-transition"
+
 export default async function RootLayout({
   children,
   params: { locale }
@@ -165,7 +167,9 @@ export default async function RootLayout({
               {/* Offline mode indicator with sync status */}
               <OfflineIndicator />
               <main id="main-content" role="main" aria-label="Primary content">
-                {children}
+                <PageTransition>
+                  {children}
+                </PageTransition>
               </main>
               <Toaster position="top-right" richColors closeButton />
             </Providers>

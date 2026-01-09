@@ -1,4 +1,3 @@
-// @ts-nocheck
 "use client"
 
 import Link from "next/link"
@@ -16,12 +15,13 @@ import { Menu, User, LogOut, Building2 } from "lucide-react"
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet"
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 import { useTranslations } from "next-intl"
-import { useLocale } from "next-intl"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { ClinicIQLogo } from "@/components/brand/logo"
 import { useLocalizePath } from "@/lib/i18n/locale-link"
 import { LanguageSwitcher } from "@/components/language-switcher"
+
+import { motion } from "framer-motion"
 
 // Safe hook wrapper for server-side rendering
 function useSafeAuth() {
@@ -38,8 +38,6 @@ export function Header() {
   const handleSignOut = auth.signOut;
   const t = useTranslations()
   
-  const locale = useLocale()
-  const isThaiLocale = locale === 'th'
   const lp = useLocalizePath()
 
   const roleLabels: Record<string, string> = {
@@ -61,8 +59,8 @@ export function Header() {
       return [
         { href: "/features", label: t('nav.features') },
         { href: "/pricing", label: t('nav.pricing') },
-        { href: "/3d-models", label: t('nav.3dModels') },
-        { href: "/demo/skin-analysis", label: t('nav.tryDemo') },
+        { href: "/3d-showcase", label: t('nav.3dModels') },
+        { href: "/analysis", label: t('nav.tryDemo') },
         { href: "/faq", label: t('nav.faq') },
       ]
     }
@@ -109,57 +107,74 @@ export function Header() {
 
   const navItems = getNavItems()
 
-  // Import centralized colors at top of file
-  // import { getRoleColor } from "@/lib/ui/colors"
-  const getRoleBadgeColor = (role: string) => {
-    // Use centralized color system
-    const roleColors: Record<string, string> = {
-      super_admin: "bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-900 dark:text-orange-200",
-      clinic_owner: "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900 dark:text-blue-200",
-      clinic_staff: "bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900 dark:text-purple-200",
-      sales_staff: "bg-green-100 text-green-800 border-green-200 dark:bg-green-900 dark:text-green-200",
-      customer: "bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-900 dark:text-gray-200",
-      premium_customer: "bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-900 dark:text-amber-200",
-    }
-    return roleColors[role] || roleColors.customer
-  }
-
   return (
     <header
       suppressHydrationWarning
-      className="sticky top-0 z-50 w-full border-b border-white/5 bg-[#020617]/80 backdrop-blur-xl supports-[backdrop-filter]:bg-[#020617]/60"
+      className="sticky top-0 z-50 w-full border-b border-white/5 bg-[#020617]/40 backdrop-blur-3xl supports-[backdrop-filter]:bg-[#020617]/20 transition-all duration-500"
     >
-      <div className="container flex h-16 sm:h-20 items-center justify-between gap-4 px-6">
+      {/* Cinematic Top Beam */}
+      <div className="absolute top-0 left-0 right-0 h-[1px] overflow-hidden">
+        <motion.div
+          initial={{ x: "-100%" }}
+          animate={{ x: "100%" }}
+          transition={{
+            duration: 4,
+            repeat: Infinity,
+            ease: "linear",
+          }}
+          className="h-full w-1/2 bg-gradient-to-r from-transparent via-pink-500/40 to-transparent opacity-30"
+        />
+      </div>
+
+      {/* Subtle Glow Underside */}
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-50" />
+
+      <div className="container flex h-16 sm:h-20 items-center justify-between gap-4 px-6 relative">
+        {/* Glow effect behind logo */}
+        <div className="absolute top-1/2 left-6 -translate-y-1/2 w-32 h-8 bg-pink-500/10 blur-2xl rounded-full -z-10" />
+        
         {/* Logo - Premium Clinical Branding */}
         <Link
           href={lp("/")}
-          className="flex items-center gap-3 min-w-0 flex-shrink transition-transform hover:scale-[1.02] active:scale-95"
+          className="flex items-center gap-3 min-w-0 flex-shrink transition-all hover:scale-[1.02] active:scale-95 group"
           aria-label={t('common.home')}
         >
           <div className="relative">
-            <div className="absolute inset-0 bg-primary/20 blur-md rounded-full animate-pulse" />
+            <motion.div 
+              animate={{ 
+                scale: [1, 1.1, 1],
+                opacity: [0.2, 0.3, 0.2] 
+              }}
+              transition={{ duration: 4, repeat: Infinity }}
+              className="absolute inset-0 bg-primary/30 blur-lg rounded-full" 
+            />
             <ClinicIQLogo className="relative flex-shrink-0" />
           </div>
         </Link>
 
         {/* Desktop Navigation - High-end Spacing */}
-        <nav className="hidden items-center gap-8 lg:flex">
+        <nav className="hidden items-center gap-10 lg:flex">
           {navItems.map((item) => (
             <Link
               key={item.href}
               href={lp(item.href)}
-              className="text-[13px] font-bold uppercase tracking-[0.15em] text-slate-400 transition-all hover:text-primary hover:tracking-[0.2em]"
+              className="relative text-[11px] font-black uppercase tracking-[0.25em] text-slate-400 transition-all hover:text-white group py-2"
             >
               {item.label}
+              <motion.span 
+                className="absolute bottom-0 left-0 h-px bg-pink-500 w-0 group-hover:w-full transition-all duration-500"
+                initial={false}
+              />
             </Link>
           ))}
         </nav>
 
         {/* Right Section - Functional Sophistication */}
-        <div className="flex items-center gap-3 flex-shrink-0">
-          <div className="hidden sm:flex items-center gap-2 mr-2">
-            <LanguageSwitcher />
-            <div className="h-4 w-px bg-white/10 mx-1" />
+        <div className="flex items-center gap-4 flex-shrink-0">
+          <div className="hidden md:flex items-center gap-4 mr-4">
+            <div className="flex items-center p-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-md">
+              <LanguageSwitcher />
+            </div>
             <ThemeToggle />
           </div>
 
@@ -169,58 +184,62 @@ export function Header() {
                 <Button 
                   variant="glass" 
                   size="sm" 
-                  className="h-10 gap-3 px-2 pr-4 rounded-full border-white/10 hover:border-primary/30 transition-all group"
+                  className="h-11 gap-3 px-3 pr-5 rounded-full border-white/10 hover:border-pink-500/30 transition-all bg-white/[0.03] shadow-xl group"
                 >
                   <div className="relative">
-                    <Avatar className="h-7 w-7 border border-white/20">
+                    <Avatar className="h-8 w-8 border border-white/20 ring-2 ring-transparent group-hover:ring-pink-500/20 transition-all">
                       <AvatarImage src={user.avatar_url || ""} alt={user.full_name || ""} />
-                      <AvatarFallback className="bg-primary/10 text-primary text-[10px]">
+                      <AvatarFallback className="bg-pink-500/10 text-pink-400 text-[10px] font-bold">
                         {user.full_name?.charAt(0) || "U"}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-500 border-2 border-[#020617] shadow-sm" />
+                    <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-emerald-500 border-2 border-[#020617] shadow-lg" />
                   </div>
                   <div className="hidden flex-col items-start xl:flex">
-                    <span className="text-xs font-bold text-white tracking-tight">{user.full_name || t('common.profile')}</span>
-                    <span className="text-[9px] uppercase font-black text-primary tracking-widest leading-none">
+                    <span className="text-xs font-bold text-white tracking-tight leading-tight">{user.full_name || t('common.profile')}</span>
+                    <span className="text-[8px] uppercase font-black text-pink-500 tracking-[0.2em] leading-none mt-0.5">
                       {roleLabels[user.role] || user.role?.replace('_', ' ').toUpperCase()}
                     </span>
                   </div>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-64 glass-panel border-white/10 p-2">
-                <DropdownMenuLabel className="px-4 py-3">
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-bold text-white">{user.full_name || t('common.profile')}</p>
-                    <p className="text-[10px] text-slate-500 uppercase font-medium tracking-tighter">{user.email}</p>
+              <DropdownMenuContent align="end" className="w-72 glass-panel border-white/10 p-3 rounded-2xl shadow-2xl backdrop-blur-2xl">
+                <DropdownMenuLabel className="px-4 py-4">
+                  <div className="flex flex-col space-y-1.5">
+                    <p className="text-sm font-bold text-white tracking-tight">{user.full_name || t('common.profile')}</p>
+                    <p className="text-[10px] text-slate-500 uppercase font-black tracking-widest">{user.email}</p>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator className="bg-white/5" />
-                {user.clinic_id && (
-                  <DropdownMenuItem className="rounded-lg py-2 cursor-pointer focus:bg-primary/10 focus:text-primary">
-                    <Building2 className="mr-3 h-4 w-4" />
-                    <span className="text-xs font-bold uppercase tracking-wider">{t('common.switchClinic')}</span>
+                <div className="p-1 space-y-1 mt-1">
+                  {user.clinic_id && (
+                    <DropdownMenuItem className="rounded-xl py-3 cursor-pointer focus:bg-pink-500/10 focus:text-pink-400 transition-colors">
+                      <Building2 className="mr-3 h-4 w-4" />
+                      <span className="text-[11px] font-bold uppercase tracking-widest">{t('common.switchClinic')}</span>
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuItem asChild className="rounded-xl py-3 cursor-pointer focus:bg-pink-500/10 focus:text-pink-400 transition-colors">
+                    <Link href={lp("/profile")} className="flex items-center w-full">
+                      <User className="mr-3 h-4 w-4" />
+                      <span className="text-[11px] font-bold uppercase tracking-widest">{t('nav.profile')}</span>
+                    </Link>
                   </DropdownMenuItem>
-                )}
-                <DropdownMenuItem asChild className="rounded-lg py-2 cursor-pointer focus:bg-primary/10 focus:text-primary">
-                  <Link href={lp("/profile")} className="flex items-center w-full">
-                    <User className="mr-3 h-4 w-4" />
-                    <span className="text-xs font-bold uppercase tracking-wider">{t('nav.profile')}</span>
-                  </Link>
-                </DropdownMenuItem>
+                </div>
                 <DropdownMenuSeparator className="bg-white/5" />
-                <DropdownMenuItem onClick={() => handleSignOut()} className="rounded-lg py-2 cursor-pointer text-rose-400 focus:bg-rose-500/10 focus:text-rose-400">
-                  <LogOut className="mr-3 h-4 w-4" />
-                  <span className="text-xs font-bold uppercase tracking-wider">{t('common.logout')}</span>
-                </DropdownMenuItem>
+                <div className="p-1">
+                  <DropdownMenuItem onClick={() => handleSignOut()} className="rounded-xl py-3 cursor-pointer text-rose-400 focus:bg-rose-500/10 focus:text-rose-400 transition-colors">
+                    <LogOut className="mr-3 h-4 w-4" />
+                    <span className="text-[11px] font-bold uppercase tracking-widest">{t('common.logout')}</span>
+                  </DropdownMenuItem>
+                </div>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <div className="flex items-center gap-3">
-              <Button variant="ghost" size="sm" asChild className="h-10 px-5 text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-white hover:bg-white/5">
+            <div className="flex items-center gap-4">
+              <Button variant="ghost" size="sm" asChild className="hidden sm:flex h-11 px-6 text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-white hover:bg-white/5 rounded-full transition-all">
                 <Link href={lp("/auth/login")}>{t('common.login')}</Link>
               </Button>
-              <Button variant="premium" size="sm" asChild className="h-10 px-6 text-[11px] font-black uppercase tracking-[0.15em] shadow-glow-primary">
+              <Button variant="premium" size="sm" asChild className="h-11 px-8 text-[11px] font-black uppercase tracking-[0.2em] shadow-2xl shadow-pink-500/20 rounded-full hover:scale-105 active:scale-95 transition-all">
                 <Link href={lp("/analysis")}>{t('common.getStarted')}</Link>
               </Button>
             </div>
@@ -229,42 +248,48 @@ export function Header() {
           {/* Mobile Navigator */}
           <Sheet>
             <SheetTrigger asChild className="lg:hidden">
-              <Button variant="glass" size="icon" className="h-10 w-10 border-white/10">
+              <Button variant="glass" size="icon" className="h-11 w-11 rounded-xl border-white/10 bg-white/5">
                 <Menu className="h-5 w-5 text-slate-300" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-full sm:w-[400px] bg-[#020617] border-white/5 p-8">
+            <SheetContent side="right" className="w-full sm:w-[400px] bg-[#020617] border-white/5 p-10 backdrop-blur-3xl">
               <VisuallyHidden>
-                <SheetTitle>Navigation Portfolio</SheetTitle>
+                <SheetTitle>Navigation Infrastructure</SheetTitle>
               </VisuallyHidden>
               <div className="flex flex-col h-full">
-                <div className="pb-8 border-b border-white/5">
+                <div className="pb-10 border-b border-white/5">
                   <ClinicIQLogo />
                 </div>
-                <nav className="flex flex-col gap-6 mt-10">
-                  {navItems.map((item) => (
-                    <Link
+                <nav className="flex flex-col gap-8 mt-12">
+                  {navItems.map((item, i) => (
+                    <motion.div
                       key={item.href}
-                      href={lp(item.href)}
-                      className="text-lg font-bold text-white hover:text-primary transition-all flex items-center group"
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.1 }}
                     >
-                      <span className="mr-4 h-1 w-1 rounded-full bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
-                      {item.label}
-                    </Link>
+                      <Link
+                        href={lp(item.href)}
+                        className="text-2xl font-black text-white hover:text-pink-500 transition-all flex items-center group uppercase tracking-tighter"
+                      >
+                        <span className="mr-6 h-px w-0 bg-pink-500 transition-all group-hover:w-8" />
+                        {item.label}
+                      </Link>
+                    </motion.div>
                   ))}
                 </nav>
-                <div className="mt-auto space-y-4">
+                <div className="mt-auto space-y-6">
                   {!user && (
-                    <>
-                      <Button variant="premium" asChild className="w-full h-14 uppercase tracking-widest font-black">
+                    <div className="grid grid-cols-1 gap-4">
+                      <Button variant="premium" asChild className="h-16 rounded-2xl uppercase tracking-[0.2em] font-black shadow-xl shadow-pink-500/20">
                         <Link href={lp("/analysis")}>{t('common.getStarted')}</Link>
                       </Button>
-                      <Button variant="outline" asChild className="w-full h-14 glass uppercase tracking-widest font-bold">
+                      <Button variant="outline" asChild className="h-16 rounded-2xl glass uppercase tracking-[0.2em] font-bold">
                         <Link href={lp("/auth/login")}>{t('common.login')}</Link>
                       </Button>
-                    </>
+                    </div>
                   )}
-                  <div className="flex items-center justify-center gap-6 pt-6 border-t border-white/5">
+                  <div className="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/10">
                     <LanguageSwitcher />
                     <ThemeToggle />
                   </div>
