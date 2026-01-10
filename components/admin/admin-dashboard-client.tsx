@@ -34,6 +34,7 @@ import {
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
+import { useTranslations } from "next-intl"
 import { UserManagementTable } from "@/components/admin/user-management-table"
 import { ChannelSubscriber } from "@/components/realtime/ChannelSubscriber"
 import { channels } from "@/lib/realtime/channels"
@@ -50,12 +51,13 @@ interface AdminDashboardClientProps {
 }
 
 export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientProps) {
+  const t = useTranslations()
   const [searchQuery, setSearchQuery] = useState("")
 
   const handleRealtimeMessage = (msg: { type: string; data?: any }) => {
     if (msg.type === 'MAINTENANCE') {
-      toast.warning('System Maintenance', {
-        description: msg.data?.message || 'Maintenance scheduled',
+      toast.warning(t('adminDashboard.maintenance'), {
+        description: msg.data?.message || t('adminDashboard.scheduled'),
       });
     }
   };
@@ -66,21 +68,21 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
         return (
           <Badge className="bg-green-500/10 text-green md:text-green-700 border-green-500/20" variant="outline">
             <CheckCircle2 className="mr-1 h-3 w-3" />
-            Confirmed
+            {t('adminDashboard.status.confirmed')}
           </Badge>
         )
       case "pending":
         return (
           <Badge className="bg-yellow-500/10 text-yellow md:text-yellow-700 border-yellow-500/20" variant="outline">
             <Clock className="mr-1 h-3 w-3" />
-            Pending
+            {t('adminDashboard.status.pending')}
           </Badge>
         )
       case "cancelled":
         return (
           <Badge className="bg-red-500/10 text-red md:text-red-700 border-red-500/20" variant="outline">
             <XCircle className="mr-1 h-3 w-3" />
-            Cancelled
+            {t('adminDashboard.status.cancelled')}
           </Badge>
         )
       default:
@@ -113,24 +115,24 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
           >
             <Badge variant="outline" className="px-4 py-1 rounded-full border-pink-500/30 text-pink-400 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.2em] text-[10px] font-black shadow-2xl shadow-pink-500/10">
               <LayoutDashboard className="mr-3 h-3.5 w-3.5 animate-pulse" />
-              Elite System Orchestration
+              {t('adminDashboard.orchestration')}
             </Badge>
             <h1 className="text-5xl md:text-8xl font-bold tracking-tighter text-white leading-[0.9] italic">
-              Admin<br />
+              {t('nav.admin')}<br />
               <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent not-italic font-black uppercase tracking-tight">Intelligence</span>
             </h1>
             <p className="text-xl text-slate-500 font-light tracking-widest max-w-2xl italic leading-relaxed">
-              Command global platform parameters and monitor clinical ecosystem throughput with precision telemetry.
+              {t('adminDashboard.commandDesc')}
             </p>
           </motion.div>
 
           {/* Core Metrics Grid - Infrastructure Nodes */}
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {[
-              { label: 'Total Sync Cycles', val: stats?.totalBookings || 0, sub: 'Global Bookings', icon: Calendar, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-              { label: 'Verified Entities', val: stats?.activeCustomers || 0, sub: 'Active Customers', icon: Users, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
-              { label: 'Gross Inflow', val: `฿${(stats?.revenue || 0).toLocaleString()}`, sub: 'Monthly Revenue', icon: DollarSign, color: 'text-pink-400', bg: 'bg-pink-500/10' },
-              { label: 'Conversion Velocity', val: `${stats?.conversionRate || 0}%`, sub: 'Efficiency Index', icon: TrendingUp, color: 'text-cyan-400', bg: 'bg-cyan-500/10' }
+              { label: t('adminDashboard.metrics.syncCycles'), val: stats?.totalBookings || 0, sub: t('adminDashboard.globalBookings'), icon: Calendar, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+              { label: t('adminDashboard.metrics.verifiedEntities'), val: stats?.activeCustomers || 0, sub: t('adminDashboard.activeCustomers'), icon: Users, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+              { label: t('adminDashboard.metrics.grossInflow'), val: `฿${(stats?.revenue || 0).toLocaleString()}`, sub: t('adminDashboard.monthlyRevenue'), icon: DollarSign, color: 'text-pink-400', bg: 'bg-pink-500/10' },
+              { label: t('adminDashboard.metrics.conversionVelocity'), val: `${stats?.conversionRate || 0}%`, sub: t('adminDashboard.efficiencyIndex'), icon: TrendingUp, color: 'text-cyan-400', bg: 'bg-cyan-500/10' }
             ].map((stat, i) => (
               <motion.div
                 key={i}
@@ -160,21 +162,21 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
             <div className="flex items-center justify-between border-b border-white/5 pb-6">
               <h2 className="text-2xl font-bold text-white tracking-tight italic flex items-center gap-4">
                 <Wrench className="h-6 w-6 text-pink-500" />
-                Operational Control Center
+                {t('adminDashboard.controlCenter')}
               </h2>
-              <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-600 italic">Global Node Access</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-600 italic">{t('adminDashboard.globalNodeAccess')}</p>
             </div>
             
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {[
-                { label: 'Personnel Registry', sub: 'Identity Nodes', href: '/admin/users', icon: UserCog, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-                { label: 'Clinical Uplinks', sub: 'Node Allocation', href: '/super-admin', icon: Building2, color: 'text-purple-400', bg: 'bg-purple-500/10' },
-                { label: 'Security Matrix', sub: 'Defensive Protocols', href: '/super-admin', icon: Shield, color: 'text-rose-400', bg: 'bg-rose-500/10' },
-                { label: 'Audit Ledger', sub: 'Temporal Logs', href: '/super-admin', icon: FileText, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
-                { label: 'Sync Stream', sub: 'Real-time WebSocket', href: '/super-admin', icon: Radio, color: 'text-cyan-400', bg: 'bg-cyan-500/10' },
-                { label: 'Database Flux', sub: 'RLS Calibration', href: '/super-admin', icon: Wrench, color: 'text-orange-400', bg: 'bg-orange-500/10', dev: true },
-                { label: 'Global Broadcast', sub: 'System Messaging', href: '/super-admin', icon: Megaphone, color: 'text-pink-400', bg: 'bg-pink-500/10' },
-                { label: 'Neural Analytics', sub: 'Inference Matrix', href: '/super-admin', icon: TrendingUp, color: 'text-indigo-400', bg: 'bg-indigo-500/10' }
+                { label: t('adminDashboard.tools.personnelRegistry.label'), sub: t('adminDashboard.tools.personnelRegistry.sub'), href: '/admin/users', icon: UserCog, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+                { label: t('adminDashboard.tools.clinicalUplinks.label'), sub: t('adminDashboard.tools.clinicalUplinks.sub'), href: '/super-admin', icon: Building2, color: 'text-purple-400', bg: 'bg-purple-500/10' },
+                { label: t('adminDashboard.tools.securityMatrix.label'), sub: t('adminDashboard.tools.securityMatrix.sub'), href: '/super-admin', icon: Shield, color: 'text-rose-400', bg: 'bg-rose-500/10' },
+                { label: t('adminDashboard.tools.auditLedger.label'), sub: t('adminDashboard.tools.auditLedger.sub'), href: '/super-admin', icon: FileText, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+                { label: t('adminDashboard.tools.syncStream.label'), sub: t('adminDashboard.tools.syncStream.sub'), href: '/super-admin', icon: Radio, color: 'text-cyan-400', bg: 'bg-cyan-500/10' },
+                { label: t('adminDashboard.tools.databaseFlux.label'), sub: t('adminDashboard.tools.databaseFlux.sub'), href: '/super-admin', icon: Wrench, color: 'text-orange-400', bg: 'bg-orange-500/10', dev: true },
+                { label: t('adminDashboard.tools.globalBroadcast.label'), sub: t('adminDashboard.tools.globalBroadcast.sub'), href: '/super-admin', icon: Megaphone, color: 'text-pink-400', bg: 'bg-pink-500/10' },
+                { label: t('adminDashboard.tools.neuralAnalytics.label'), sub: t('adminDashboard.tools.neuralAnalytics.sub'), href: '/super-admin', icon: TrendingUp, color: 'text-indigo-400', bg: 'bg-indigo-500/10' }
               ].map((tool, i) => (
                 <motion.div key={i} whileHover={{ y: -5 }} transition={{ duration: 0.3 }}>
                   <Link href={tool.href}>
@@ -210,10 +212,10 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
               <div className="flex items-center justify-center">
                 <TabsList className="bg-white/[0.02] border border-white/5 p-1.5 rounded-2xl h-auto gap-2 flex-wrap justify-center">
                   {[
-                    { value: 'users', label: 'IDENTITY_REGISTRY' },
-                    { value: 'bookings', label: 'PROCESS_CYCLES' },
-                    { value: 'clinics', label: 'NODE_TOPOLOGY' },
-                    { value: 'analytics', label: 'INFERENCE_MATRIX' }
+                    { value: 'users', label: t('adminDashboard.tabs.identityRegistry') },
+                    { value: 'bookings', label: t('adminDashboard.tabs.processCycles') },
+                    { value: 'clinics', label: t('adminDashboard.tabs.nodeTopology') },
+                    { value: 'analytics', label: t('adminDashboard.tabs.inferenceMatrix') }
                   ].map((tab) => (
                     <TabsTrigger 
                       key={tab.value} 
@@ -236,8 +238,8 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
                     <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3.5rem] overflow-hidden shadow-2xl relative">
                       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                       <CardHeader className="p-12 pb-6 border-b border-white/5">
-                        <CardTitle className="text-3xl font-black text-white italic tracking-tighter uppercase">Identity Registry Management</CardTitle>
-                        <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Authorized entity synchronization matrix</CardDescription>
+                        <CardTitle className="text-3xl font-black text-white italic tracking-tighter uppercase">{t('adminDashboard.management.identityTitle')}</CardTitle>
+                        <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('adminDashboard.management.identityDesc')}</CardDescription>
                       </CardHeader>
                       <CardContent className="p-0">
                         <UserManagementTable />
@@ -249,19 +251,19 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
                     <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3.5rem] overflow-hidden shadow-2xl relative">
                       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                       <CardHeader className="p-12 pb-6 border-b border-white/5">
-                        <CardTitle className="text-3xl font-black text-white italic tracking-tighter uppercase">Process Cycle Stream</CardTitle>
-                        <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Global immutable clinical cycle ledger</CardDescription>
+                        <CardTitle className="text-3xl font-black text-white italic tracking-tighter uppercase">{t('adminDashboard.management.processTitle')}</CardTitle>
+                        <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('adminDashboard.management.processDesc')}</CardDescription>
                       </CardHeader>
                       <CardContent className="p-0">
                         <div className="overflow-x-auto">
                           <Table>
                             <TableHeader>
                               <TableRow className="bg-white/[0.02] border-b border-white/5">
-                                <TableHead className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Identity Node</TableHead>
-                                <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Protocol Type</TableHead>
-                                <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Temporal Stamp</TableHead>
-                                <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Sync Time</TableHead>
-                                <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Auth Status</TableHead>
+                                <TableHead className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('adminDashboard.table.identityNode')}</TableHead>
+                                <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('adminDashboard.table.protocolType')}</TableHead>
+                                <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('adminDashboard.table.temporalStamp')}</TableHead>
+                                <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('adminDashboard.table.syncTime')}</TableHead>
+                                <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('adminDashboard.table.authStatus')}</TableHead>
                                 <TableHead className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic"></TableHead>
                               </TableRow>
                             </TableHeader>
@@ -269,7 +271,7 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
                               {bookings.map((booking: any) => (
                                 <TableRow key={booking.id} className="group/row transition-all duration-500 hover:bg-white/[0.03]">
                                   <TableCell className="px-10 py-8">
-                                    <div className="text-base font-bold text-white italic group-hover/row:text-pink-400 transition-colors">{booking.user?.full_name || booking.user?.email || 'UNDEFINED_ENTITY'}</div>
+                                    <div className="text-base font-bold text-white italic group-hover/row:text-pink-400 transition-colors uppercase tracking-tight">{booking.user?.full_name || booking.user?.email || 'UNDEFINED_ENTITY'}</div>
                                   </TableCell>
                                   <TableCell className="px-8 py-8">
                                     <Badge variant="outline" className="bg-white/[0.02] border-white/10 text-slate-400 text-[10px] font-black rounded-lg px-4 py-1 italic uppercase tracking-widest">{booking.treatment_type}</Badge>
@@ -285,10 +287,10 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
                                         </Button>
                                       </DropdownMenuTrigger>
                                       <DropdownMenuContent align="end" className="bg-[#020617] border-white/10 rounded-2xl p-2 min-w-[180px]">
-                                        <DropdownMenuItem className="rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-pink-600 focus:text-white transition-colors">View Details</DropdownMenuItem>
-                                        <DropdownMenuItem className="rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-pink-600 focus:text-white transition-colors">Refine Parameters</DropdownMenuItem>
-                                        <DropdownMenuItem className="rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-pink-600 focus:text-white transition-colors text-emerald-400">Verify Node</DropdownMenuItem>
-                                        <DropdownMenuItem className="rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-rose-600 focus:text-white transition-colors text-rose-500">Decommission</DropdownMenuItem>
+                                        <DropdownMenuItem className="rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-pink-600 focus:text-white transition-colors">{t('adminDashboard.dropdown.viewDetails')}</DropdownMenuItem>
+                                        <DropdownMenuItem className="rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-pink-600 focus:text-white transition-colors">{t('adminDashboard.dropdown.refineParameters')}</DropdownMenuItem>
+                                        <DropdownMenuItem className="rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-pink-600 focus:text-white transition-colors text-emerald-400">{t('adminDashboard.dropdown.verifyNode')}</DropdownMenuItem>
+                                        <DropdownMenuItem className="rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-rose-600 focus:text-white transition-colors text-rose-500">{t('adminDashboard.dropdown.decommission')}</DropdownMenuItem>
                                       </DropdownMenuContent>
                                     </DropdownMenu>
                                   </TableCell>
@@ -307,29 +309,29 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
                       <CardHeader className="p-12 border-b border-white/5">
                         <div className="flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">
                           <div className="space-y-2">
-                            <CardTitle className="text-3xl font-black text-white italic tracking-tighter uppercase">Node Topology Matrix</CardTitle>
-                            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Active clinical sector allocation mapping</CardDescription>
+                            <CardTitle className="text-3xl font-black text-white italic tracking-tighter uppercase">{t('adminDashboard.management.topologyTitle')}</CardTitle>
+                            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('adminDashboard.management.topologyDesc')}</CardDescription>
                           </div>
                           <div className="flex gap-3">
                             <div className="relative group">
                               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-600 group-focus-within:text-pink-500 transition-colors" />
                               <Input 
-                                placeholder="Search Node Topology..." 
+                                placeholder={t('adminDashboard.searchPlaceholder')} 
                                 className="h-14 pl-12 pr-6 rounded-2xl border-white/5 bg-white/[0.03] text-white placeholder:text-slate-700 focus:border-pink-500/30 focus:ring-pink-500/20 transition-all font-bold italic w-[240px]" 
                                 value={searchQuery} 
                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)} 
                               />
                             </div>
                             <Button variant="premium" className="h-14 px-8 rounded-2xl shadow-2xl shadow-pink-500/20 text-[10px] font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95 border">
-                              Initialize Node
+                              {t('adminDashboard.management.initializeNode')}
                             </Button>
                           </div>
                         </div>
                       </CardHeader>
                       <CardContent className="p-20 text-center space-y-6">
                         <Monitor className="w-16 h-16 text-slate-700 mx-auto mb-6 opacity-20" />
-                        <p className="text-xl font-bold text-slate-500 italic uppercase tracking-widest">Topology Ledger Synchronizing...</p>
-                        <p className="text-sm text-slate-600 font-light italic leading-relaxed">Fetch sequence initiated. Awaiting node telemetry from global registry.</p>
+                        <p className="text-xl font-bold text-slate-500 italic uppercase tracking-widest">{t('adminDashboard.management.syncing')}</p>
+                        <p className="text-sm text-slate-600 font-light italic leading-relaxed">{t('adminDashboard.management.awaitingTelemetry')}</p>
                       </CardContent>
                     </Card>
                   </TabsContent>
@@ -339,7 +341,7 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
                       <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group">
                         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
                         <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
-                          <CardTitle className="text-2xl font-bold text-white tracking-tight italic">Protocol Popularity Matrix</CardTitle>
+                          <CardTitle className="text-2xl font-bold text-white tracking-tight italic">{t('aiAnalyticsDashboard.popularityMatrix')}</CardTitle>
                         </CardHeader>
                         <CardContent className="p-10 lg:p-12 space-y-10">
                           {[
@@ -351,7 +353,7 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
                             <div key={index} className="space-y-4 group/item">
                               <div className="flex items-center justify-between">
                                 <span className="text-[10px] font-black text-slate-400 group-hover/item:text-white transition-colors uppercase tracking-widest italic">{treatment.name}</span>
-                                <span className="text-lg font-black text-white italic tracking-tighter">{treatment.count} <span className="text-[9px] text-slate-600 not-italic ml-1">CYCLES</span></span>
+                                <span className="text-lg font-black text-white italic tracking-tighter">{treatment.count} <span className="text-[9px] text-slate-600 not-italic ml-1">{t('aiAnalyticsDashboard.cycles')}</span></span>
                               </div>
                               <div className="relative h-1.5 w-full bg-white/[0.02] rounded-full overflow-hidden border border-white/5">
                                 <motion.div
@@ -370,7 +372,7 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
                       <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group">
                         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent" />
                         <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
-                          <CardTitle className="text-2xl font-bold text-white tracking-tight italic">Revenue Yield Breakdown</CardTitle>
+                          <CardTitle className="text-2xl font-bold text-white tracking-tight italic">{t('aiAnalyticsDashboard.revenueBreakdown')}</CardTitle>
                         </CardHeader>
                         <CardContent className="p-10 lg:p-12 space-y-10">
                           {[
@@ -380,7 +382,7 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
                           ].map((item, index) => (
                             <div key={index} className="space-y-4 group/item">
                               <div className="flex items-center justify-between">
-                                <span className="text-[10px] font-black text-slate-400 group-hover/item:text-white transition-colors uppercase tracking-widest italic">{item.category} Vector</span>
+                                <span className="text-[10px] font-black text-slate-400 group-hover/item:text-white transition-colors uppercase tracking-widest italic">{item.category} {t('aiAnalyticsDashboard.vector')}</span>
                                 <span className="text-lg font-black text-white italic tracking-tighter">{item.amount}</span>
                               </div>
                               <div className="relative h-1.5 w-full bg-white/[0.02] rounded-full overflow-hidden border border-white/5">
@@ -400,15 +402,15 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
                       <Card className="md:col-span-2 border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group">
                         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/20 to-transparent" />
                         <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
-                          <CardTitle className="text-2xl font-bold text-white tracking-tight italic">Temporal Activity Stream</CardTitle>
+                          <CardTitle className="text-2xl font-bold text-white tracking-tight italic">{t('aiAnalyticsDashboard.activityStream')}</CardTitle>
                         </CardHeader>
                         <CardContent className="p-10 lg:p-12">
                           <div className="space-y-8">
                             {[
-                              { action: "New Clinical Cycle", entity: "Sarah Johnson", time: "5m ago", icon: Zap, color: 'text-blue-400' },
-                              { action: "Inflow Verified", entity: "Michael Chen", time: "1h ago", icon: DollarSign, color: 'text-emerald-400' },
-                              { action: "Protocol Terminated", entity: "Emma Wilson", time: "2h ago", icon: CheckCircle2, color: 'text-purple-400' },
-                              { action: "Entity Established", entity: "David Lee", time: "3h ago", icon: Users, color: 'text-pink-400' },
+                              { action: t('aiAnalyticsDashboard.actions.newCycle'), entity: "Sarah Johnson", time: "5m ago", icon: Zap, color: 'text-blue-400' },
+                              { action: t('aiAnalyticsDashboard.actions.inflowVerified'), entity: "Michael Chen", time: "1h ago", icon: DollarSign, color: 'text-emerald-400' },
+                              { action: t('aiAnalyticsDashboard.actions.protocolTerminated'), entity: "Emma Wilson", time: "2h ago", icon: CheckCircle2, color: 'text-purple-400' },
+                              { action: t('aiAnalyticsDashboard.actions.entityEstablished'), entity: "David Lee", time: "3h ago", icon: Users, color: 'text-pink-400' },
                             ].map((activity, index) => (
                               <div key={index} className="flex items-center justify-between border-b border-white/5 pb-6 last:border-0 last:pb-0 group/act">
                                 <div className="flex items-center gap-6">

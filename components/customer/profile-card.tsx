@@ -2,6 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { useTranslations } from "next-intl"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
@@ -22,6 +23,7 @@ interface ProfileCardProps {
 }
 
 export function ProfileCard({ user, profile }: ProfileCardProps) {
+  const t = useTranslations()
   const [isEditing, setIsEditing] = useState(false)
 
   return (
@@ -29,28 +31,28 @@ export function ProfileCard({ user, profile }: ProfileCardProps) {
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>Personal Information</CardTitle>
+            <CardTitle>{t('customerProfile.personalInfo')}</CardTitle>
             <Button variant="outline" size="sm" onClick={() => setIsEditing(!isEditing)}>
               <Edit className="mr-2 h-4 w-4" />
-              {isEditing ? "Cancel" : "Edit"}
+              {isEditing ? t('common.cancel') : t('common.edit')}
             </Button>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Full Name</Label>
+            <Label htmlFor="name">{t('customerProfile.fullName')}</Label>
             <div className="flex items-center gap-2">
               <User className="h-4 w-4 text-muted-foreground" />
               {isEditing ? (
-                <Input id="name" defaultValue={profile?.full_name || ""} placeholder="Enter your name" />
+                <Input id="name" defaultValue={profile?.full_name || ""} placeholder={t('customerProfile.enterName')} />
               ) : (
-                <span>{profile?.full_name || "Not set"}</span>
+                <span>{profile?.full_name || t('customerProfile.notSet')}</span>
               )}
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t('common.email')}</Label>
             <div className="flex items-center gap-2">
               <Mail className="h-4 w-4 text-muted-foreground" />
               <span>{user.email}</span>
@@ -58,23 +60,23 @@ export function ProfileCard({ user, profile }: ProfileCardProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="phone">Phone</Label>
+            <Label htmlFor="phone">{t('common.phone')}</Label>
             <div className="flex items-center gap-2">
               <Phone className="h-4 w-4 text-muted-foreground" />
               {isEditing ? (
-                <Input id="phone" defaultValue={profile?.phone || ""} placeholder="Enter your phone" />
+                <Input id="phone" defaultValue={profile?.phone || ""} placeholder={t('salesWizard.steps.customer.phonePlaceholder')} />
               ) : (
-                <span>{profile?.phone || "Not set"}</span>
+                <span>{profile?.phone || t('customerProfile.notSet')}</span>
               )}
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label>Member Since</Label>
+            <Label>{t('customerProfile.memberSince')}</Label>
             <div className="flex items-center gap-2">
               <Calendar className="h-4 w-4 text-muted-foreground" />
               <span>
-                {new Date(user.created_at).toLocaleDateString("en-US", {
+                {new Date(user.created_at).toLocaleDateString(t('common.locale'), {
                   month: "long",
                   day: "numeric",
                   year: "numeric",
@@ -83,36 +85,36 @@ export function ProfileCard({ user, profile }: ProfileCardProps) {
             </div>
           </div>
 
-          {isEditing && <Button className="w-full">Save Changes</Button>}
+          {isEditing && <Button className="w-full">{t('customerProfile.saveChanges')}</Button>}
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>Account Status</CardTitle>
+          <CardTitle>{t('customerProfile.accountStatus')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label>Account Type</Label>
+            <Label>{t('customerProfile.accountType')}</Label>
             <Badge className="text-sm">
-              {profile?.role === "customer_premium" ? "Premium Customer" : "Free Customer"}
+              {profile?.role === "customer_premium" ? t('customerProfile.premiumCustomer') : t('customerProfile.freeCustomer')}
             </Badge>
           </div>
 
           <div className="space-y-2">
-            <Label>Subscription</Label>
+            <Label>{t('customerProfile.subscription')}</Label>
             <p className="text-sm text-muted-foreground">
-              {profile?.role === "customer_premium" ? "Active Premium Subscription" : "Free Plan"}
+              {profile?.role === "customer_premium" ? t('customerProfile.activePremium') : t('customerProfile.freePlan')}
             </p>
           </div>
 
           {profile?.role !== "customer_premium" && (
             <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
-              <h4 className="mb-2 font-semibold">Upgrade to Premium</h4>
+              <h4 className="mb-2 font-semibold">{t('customerProfile.upgradeToPremium')}</h4>
               <p className="mb-4 text-sm text-muted-foreground">
-                Get unlimited AI analyses, priority booking, and exclusive features
+                {t('customerProfile.upgradeDesc')}
               </p>
-              <Button className="w-full">Upgrade Now</Button>
+              <Button className="w-full">{t('customerProfile.upgradeNow')}</Button>
             </div>
           )}
         </CardContent>

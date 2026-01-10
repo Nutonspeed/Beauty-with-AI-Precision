@@ -6,6 +6,7 @@
  */
 
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -29,17 +30,17 @@ export interface MultiModeViewerProps {
   }
 }
 
-const DEFAULT_MODES: AnalysisMode[] = [
+const DEFAULT_MODES: any[] = [
   // Top row
-  { id: 'spots', name: 'Spots', count: 0, color: 'rgba(255, 255, 0, 0.3)', description: 'จุดด่างดำ' },
-  { id: 'wrinkles', name: 'Wrinkles', count: 0, color: 'rgba(0, 255, 0, 0.3)', description: 'รอยย่น' },
-  { id: 'texture', name: 'Texture', count: 0, color: 'rgba(255, 200, 100, 0.3)', description: 'พื้นผิว' },
-  { id: 'pores', name: 'Pores', count: 0, color: 'rgba(255, 150, 255, 0.3)', description: 'รูขุมขน' },
+  { id: 'spots', color: 'rgba(255, 255, 0, 0.3)' },
+  { id: 'wrinkles', color: 'rgba(0, 255, 0, 0.3)' },
+  { id: 'texture', color: 'rgba(255, 200, 100, 0.3)' },
+  { id: 'pores', color: 'rgba(255, 150, 255, 0.3)' },
   // Bottom row
-  { id: 'uv_spots', name: 'UV Spots', count: 0, color: 'rgba(255, 215, 0, 0.5)', description: 'จุดใต้ UV' },
-  { id: 'brown_spots', name: 'Brown Spots', count: 0, color: 'rgba(139, 90, 43, 0.4)', description: 'จุดสีน้ำตาล' },
-  { id: 'red_areas', name: 'Red Areas', count: 0, color: 'rgba(255, 0, 0, 0.3)', description: 'บริเวณแดง' },
-  { id: 'porphyrins', name: 'Porphyrins', count: 0, color: 'rgba(0, 100, 255, 0.4)', description: 'แบคทีเรีย' },
+  { id: 'uv_spots', color: 'rgba(255, 215, 0, 0.5)' },
+  { id: 'brown_spots', color: 'rgba(139, 90, 43, 0.4)' },
+  { id: 'red_areas', color: 'rgba(255, 0, 0, 0.3)' },
+  { id: 'porphyrins', color: 'rgba(0, 100, 255, 0.4)' },
 ]
 
 export function MultiModeViewer({ 
@@ -47,14 +48,15 @@ export function MultiModeViewer({
   modes = DEFAULT_MODES,
   detectionData 
 }: MultiModeViewerProps) {
+  const t = useTranslations('multiModeViewer')
   const [selectedMode, setSelectedMode] = useState<string | null>(null)
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="text-center">
-        <h2 className="text-2xl font-bold mb-2">Skin Analysis Modes</h2>
-        <p className="text-sm text-muted-foreground">โหมดการวิเคราะห์ผิว 8 แบบ</p>
+        <h2 className="text-2xl font-bold mb-2">{t('title')}</h2>
+        <p className="text-sm text-muted-foreground">{t('subtitle')}</p>
       </div>
 
       {/* 8-Panel Grid */}
@@ -96,8 +98,8 @@ export function MultiModeViewer({
 
               {/* Label */}
               <div className="p-3 bg-black text-white text-center">
-                <div className="font-semibold text-sm">{mode.name}</div>
-                <div className="text-xs text-gray-300">{mode.description}</div>
+                <div className="font-semibold text-sm">{t(`${mode.id}.name` as any)}</div>
+                <div className="text-xs text-gray-300">{t(`${mode.id}.desc` as any)}</div>
               </div>
             </CardContent>
           </Card>
@@ -116,11 +118,11 @@ export function MultiModeViewer({
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="text-xl font-bold">{mode.name}</h3>
-                      <p className="text-sm text-muted-foreground">{mode.description}</p>
+                      <h3 className="text-xl font-bold">{t(`${mode.id}.name` as any)}</h3>
+                      <p className="text-sm text-muted-foreground">{t(`${mode.id}.desc` as any)}</p>
                     </div>
                     <Badge variant="outline" className="text-lg px-4 py-2">
-                      {mode.count} detected
+                      {mode.count} {t('detected')}
                     </Badge>
                   </div>
 
@@ -143,23 +145,23 @@ export function MultiModeViewer({
                   {/* Analysis details */}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t">
                     <div>
-                      <div className="text-sm text-muted-foreground">Detected</div>
+                      <div className="text-sm text-muted-foreground">{t('detected')}</div>
                       <div className="text-2xl font-bold">{mode.count}</div>
                     </div>
                     <div>
-                      <div className="text-sm text-muted-foreground">Severity</div>
+                      <div className="text-sm text-muted-foreground">{t('severity')}</div>
                       <div className="text-2xl font-bold">
-                        {mode.count > 10 ? 'High' : mode.count > 5 ? 'Medium' : 'Low'}
+                        {mode.count > 10 ? t('high') : mode.count > 5 ? t('medium') : t('low')}
                       </div>
                     </div>
                     <div>
-                      <div className="text-sm text-muted-foreground">Coverage</div>
+                      <div className="text-sm text-muted-foreground">{t('coverage')}</div>
                       <div className="text-2xl font-bold">
                         {Math.min(Math.round((mode.count / 100) * 100), 100)}%
                       </div>
                     </div>
                     <div>
-                      <div className="text-sm text-muted-foreground">Status</div>
+                      <div className="text-sm text-muted-foreground">{t('status')}</div>
                       <div className="text-2xl font-bold">
                         {mode.count > 10 ? '⚠️' : mode.count > 5 ? '⚡' : '✅'}
                       </div>

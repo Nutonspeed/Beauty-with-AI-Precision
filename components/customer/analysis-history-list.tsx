@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { useTranslations } from "next-intl"
 import { Sparkles, Loader2, Eye } from "lucide-react"
 import { format } from "date-fns"
 import Image from "next/image"
@@ -20,6 +21,7 @@ interface Analysis {
 }
 
 export function AnalysisHistoryList({ userId }: { userId: string }) {
+  const t = useTranslations()
   const [analyses, setAnalyses] = useState<Analysis[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
@@ -53,11 +55,11 @@ export function AnalysisHistoryList({ userId }: { userId: string }) {
     return (
       <div className="py-12 text-center">
         <Sparkles className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
-        <h3 className="mb-2 text-lg font-semibold">No analyses yet</h3>
-        <p className="mb-4 text-sm text-muted-foreground">Start with your first AI skin analysis</p>
+        <h3 className="mb-2 text-lg font-semibold">{t('analysisHistory.noAnalyses')}</h3>
+        <p className="mb-4 text-sm text-muted-foreground">{t('analysisHistory.startFirst')}</p>
         <Button>
           <Sparkles className="mr-2 h-4 w-4" />
-          Start Analysis
+          {t('analysisHistory.startAnalysis')}
         </Button>
       </div>
     )
@@ -79,7 +81,7 @@ export function AnalysisHistoryList({ userId }: { userId: string }) {
               </span>
               <Badge variant="secondary">
                 <Sparkles className="mr-1 h-3 w-3" />
-                AI Analysis
+                {t('analysisHistory.aiAnalysis')}
               </Badge>
             </div>
 
@@ -100,7 +102,7 @@ export function AnalysisHistoryList({ userId }: { userId: string }) {
 
             <Button size="sm" className="w-full">
               <Eye className="mr-2 h-4 w-4" />
-              View Results
+              {t('analysisHistory.viewResults')}
             </Button>
           </div>
         </div>

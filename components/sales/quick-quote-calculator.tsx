@@ -91,7 +91,7 @@ export function QuickQuoteCalculator({
     },
     {
       id: 'flash_sale',
-      name: 'Flash Sale',
+      name: t('salesTools.quote.promotions.flashSale'),
       type: 'percentage',
       value: 25,
       validUntil: new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
@@ -107,14 +107,14 @@ export function QuickQuoteCalculator({
 
   // Treatment catalog moved inside component
   const TREATMENT_CATALOG = [
-    { id: 'botox', name: 'Botox', nameTh: 'โบท็อกซ์', basePrice: 8900, category: 'Anti-Aging' },
-    { id: 'filler', name: 'Filler', nameTh: 'ฟิลเลอร์', basePrice: 15900, category: 'Volume' },
-    { id: 'hifu', name: 'HIFU', nameTh: 'ไฮฟู่', basePrice: 25900, category: 'Lifting' },
-    { id: 'laser', name: 'Laser', nameTh: 'เลเซอร์', basePrice: 12900, category: 'Skin' },
-    { id: 'thread', name: 'Thread Lift', nameTh: 'ร้อยไหม', basePrice: 35900, category: 'Lifting' },
-    { id: 'hydra', name: 'HydraFacial', nameTh: 'ไฮดราเฟเชียล', basePrice: 4900, category: 'Facial' },
-    { id: 'prp', name: 'PRP', nameTh: 'PRP', basePrice: 18900, category: 'Regenerative' },
-    { id: 'coolsculpt', name: 'CoolSculpting', nameTh: 'สลายไขมัน', basePrice: 45900, category: 'Body' },
+    { id: 'botox', name: 'Botox', nameTh: t('salesTools.quote.catalog.botox'), basePrice: 8900, category: 'Anti-Aging' },
+    { id: 'filler', name: 'Filler', nameTh: t('salesTools.quote.catalog.filler'), basePrice: 15900, category: 'Volume' },
+    { id: 'hifu', name: 'HIFU', nameTh: t('salesTools.quote.catalog.hifu'), basePrice: 25900, category: 'Lifting' },
+    { id: 'laser', name: 'Laser', nameTh: t('salesTools.quote.catalog.laser'), basePrice: 12900, category: 'Skin' },
+    { id: 'thread', name: 'Thread Lift', nameTh: t('salesTools.quote.catalog.thread'), basePrice: 35900, category: 'Lifting' },
+    { id: 'hydra', name: 'HydraFacial', nameTh: t('salesTools.quote.catalog.hydra'), basePrice: 4900, category: 'Facial' },
+    { id: 'prp', name: 'PRP', nameTh: t('salesTools.quote.catalog.prp'), basePrice: 18900, category: 'Regenerative' },
+    { id: 'coolsculpt', name: 'CoolSculpting', nameTh: t('salesTools.quote.catalog.coolsculpt'), basePrice: 45900, category: 'Body' },
   ];
 
   const [items, setItems] = useState<TreatmentItem[]>(initialItems);

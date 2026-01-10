@@ -111,7 +111,7 @@ export function AISalesCompanion({
     interests: string[],
     treatment?: Treatment
   ): string => {
-    const name = profile.name ? `คุณ${profile.name}` : t('roles.customer');
+    const name = profile.name ? `${t('aiSalesCompanion.honorific')}${profile.name}` : t('roles.customer');
     const interestsText = interests.length > 0 ? interests.join(', ') : t('salesWizard.steps.summary.sectionAIAnalysis');
 
     if (treatment) {
@@ -217,19 +217,22 @@ export function AISalesCompanion({
   const generateNormalResponse = (message: string, context: any): string => {
     // Simple response generation based on keywords
     const lowerMessage = message.toLowerCase();
+    const priceKeywords = t.raw('aiSalesCompanion.keywords.price') as string[];
+    const timeKeywords = t.raw('aiSalesCompanion.keywords.time') as string[];
+    const doctorKeywords = t.raw('aiSalesCompanion.keywords.doctor') as string[];
 
-    if (lowerMessage.includes('ราคา') || lowerMessage.includes('price')) {
+    if (priceKeywords.some(kw => lowerMessage.includes(kw))) {
       return t('aiSalesCompanion.responses.price', {
         treatment: context.currentTreatment?.name || t('nav.analysis'),
         price: context.currentTreatment?.price?.toLocaleString() || t('salesTools.quote.treatmentList')
       });
     }
 
-    if (lowerMessage.includes('เวลา') || lowerMessage.includes('time') || lowerMessage.includes('นัด')) {
+    if (timeKeywords.some(kw => lowerMessage.includes(kw))) {
       return t('aiSalesCompanion.responses.time');
     }
 
-    if (lowerMessage.includes('แพทย์') || lowerMessage.includes('doctor') || lowerMessage.includes('ปลอดภัย')) {
+    if (doctorKeywords.some(kw => lowerMessage.includes(kw))) {
       return t('aiSalesCompanion.responses.doctor');
     }
 

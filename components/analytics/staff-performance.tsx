@@ -14,6 +14,7 @@ import {
   DollarSign
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+import { useTranslations } from "next-intl"
 import { cn } from "@/lib/utils"
 import {
   BarChart,
@@ -34,6 +35,7 @@ interface StaffPerformanceProps {
 }
 
 export function StaffPerformance({ dateRange }: StaffPerformanceProps) {
+  const t = useTranslations()
   const [data, setData] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -68,11 +70,11 @@ export function StaffPerformance({ dateRange }: StaffPerformanceProps) {
 
   const getRoleBadge = (role: string) => {
     const roleMap: Record<string, { label: string; color: string }> = {
-      doctor: { label: "👨‍⚕️ แพทย์", color: "bg-blue-500" },
-      nurse: { label: "👩‍⚕️ พยาบาล", color: "bg-green-500" },
-      therapist: { label: "💆 นักบำบัด", color: "bg-purple-500" },
-      admin: { label: "👔 ผู้จัดการ", color: "bg-orange-500" },
-      receptionist: { label: "📋 ต้อนรับ", color: "bg-pink-500" },
+      doctor: { label: t('staffPerformance.roles.doctor'), color: "bg-blue-500" },
+      nurse: { label: t('staffPerformance.roles.nurse'), color: "bg-green-500" },
+      therapist: { label: t('staffPerformance.roles.therapist'), color: "bg-purple-500" },
+      admin: { label: t('staffPerformance.roles.admin'), color: "bg-orange-500" },
+      receptionist: { label: t('staffPerformance.roles.receptionist'), color: "bg-pink-500" },
     }
 
     const roleInfo = roleMap[role] || { label: role, color: "bg-gray-500" }
@@ -100,7 +102,7 @@ export function StaffPerformance({ dateRange }: StaffPerformanceProps) {
     return (
       <Card>
         <CardContent className="pt-6">
-          <p className="text-center text-muted-foreground">ไม่สามารถโหลดข้อมูลได้: {error}</p>
+          <p className="text-center text-muted-foreground">{t('common.error')}: {error}</p>
         </CardContent>
       </Card>
     )
@@ -113,10 +115,10 @@ export function StaffPerformance({ dateRange }: StaffPerformanceProps) {
       {/* Summary Nodes - Operational Metrics */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {[
-          { label: 'ทีมงานทั้งหมด', val: data.summary.totalStaff, sub: 'Active Personnel', icon: Users, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-          { label: 'รายได้รวม', val: `฿${data.summary.totalRevenue.toLocaleString()}`, sub: 'Cumulative Yield', icon: DollarSign, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
-          { label: 'การนัดทั้งหมด', val: data.summary.totalAppointments, sub: 'Temporal Cycles', icon: Activity, color: 'text-pink-400', bg: 'bg-pink-500/10' },
-          { label: 'Average Yield', val: `฿${data.summary.averageRevenuePerStaff.toLocaleString()}`, sub: 'Per Operator', icon: TrendingUp, color: 'text-cyan-400', bg: 'bg-cyan-500/10' }
+          { label: t('staffPerformance.totalStaff'), val: data.summary.totalStaff, sub: t('staffPerformance.activePersonnel'), icon: Users, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+          { label: t('staffPerformance.totalRevenue'), val: `฿${data.summary.totalRevenue.toLocaleString()}`, sub: t('staffPerformance.cumulativeYield'), icon: DollarSign, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+          { label: t('staffPerformance.totalAppointments'), val: data.summary.totalAppointments, sub: t('staffPerformance.temporalCycles'), icon: Activity, color: 'text-pink-400', bg: 'bg-pink-500/10' },
+          { label: t('staffPerformance.averageYield'), val: `฿${data.summary.averageRevenuePerStaff.toLocaleString()}`, sub: t('staffPerformance.perOperator'), icon: TrendingUp, color: 'text-cyan-400', bg: 'bg-cyan-500/10' }
         ].map((stat, i) => (
           <motion.div
             key={i}
@@ -152,9 +154,9 @@ export function StaffPerformance({ dateRange }: StaffPerformanceProps) {
               <div className="space-y-2">
                 <CardTitle className="text-3xl font-bold text-white tracking-tight italic flex items-center gap-4">
                   <Trophy className="h-8 w-8 text-pink-500" />
-                  Elite Performers
+                  {t('staffPerformance.elitePerformers')}
                 </CardTitle>
-                <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Top 5 personnel productivity</CardDescription>
+                <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{t('staffPerformance.productivityDesc')}</CardDescription>
               </div>
             </CardHeader>
             <CardContent className="p-10 lg:p-12 space-y-6">
@@ -199,7 +201,7 @@ export function StaffPerformance({ dateRange }: StaffPerformanceProps) {
                     <div className="text-right space-y-1">
                       <p className="text-2xl font-black text-white tracking-tighter italic">฿{member.revenue.toLocaleString()}</p>
                       <p className="text-[10px] font-black uppercase tracking-widest text-slate-600 italic">
-                        {member.appointments} Cycles • Yield: ฿{member.averageRevenuePerAppointment.toLocaleString()}
+                        {member.appointments} {t('staffPerformance.temporalCycles')} • {t('staffPerformance.averageYield')}: ฿{member.averageRevenuePerAppointment.toLocaleString()}
                       </p>
                     </div>
                   </motion.div>
@@ -214,8 +216,8 @@ export function StaffPerformance({ dateRange }: StaffPerformanceProps) {
           <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative h-full">
             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
             <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
-              <CardTitle className="text-2xl font-bold text-white tracking-tight italic">Protocol Breakdown</CardTitle>
-              <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Revenue distribution by clinical role</CardDescription>
+              <CardTitle className="text-2xl font-bold text-white tracking-tight italic">{t('staffPerformance.protocolBreakdown')}</CardTitle>
+              <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('staffPerformance.revenueDistributionDesc')}</CardDescription>
             </CardHeader>
             <CardContent className="p-10 lg:p-12">
               <div className="h-[400px] w-full">
@@ -245,8 +247,8 @@ export function StaffPerformance({ dateRange }: StaffPerformanceProps) {
                       itemStyle={{ fontSize: '10px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.1em' }}
                     />
                     <Legend iconType="circle" wrapperStyle={{ fontSize: '9px', fontWeight: 'black', textTransform: 'uppercase', letterSpacing: '0.2em', opacity: 0.6, paddingTop: '30px' }} />
-                    <Bar dataKey="totalRevenue" fill="#ec4899" radius={[8, 8, 0, 0]} name="Gross Inflow" />
-                    <Bar dataKey="averageRevenuePerStaff" fill="#06b6d4" radius={[8, 8, 0, 0]} name="Node Yield" />
+                    <Bar dataKey="totalRevenue" fill="#ec4899" radius={[8, 8, 0, 0]} name={t('staffPerformance.totalRevenue')} />
+                    <Bar dataKey="averageRevenuePerStaff" fill="#06b6d4" radius={[8, 8, 0, 0]} name={t('staffPerformance.averageYield')} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -262,9 +264,9 @@ export function StaffPerformance({ dateRange }: StaffPerformanceProps) {
           <div className="space-y-2">
             <CardTitle className="text-3xl font-bold text-white tracking-tight italic flex items-center gap-4">
               <Users className="h-8 w-8 text-pink-500" />
-              Global Personnel Matrix
+              {t('staffPerformance.globalPersonnelMatrix')}
             </CardTitle>
-            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Authorized operator efficiency index</CardDescription>
+            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{t('staffPerformance.operatorEfficiencyDesc')}</CardDescription>
           </div>
         </CardHeader>
         <CardContent className="p-0">
@@ -272,12 +274,12 @@ export function StaffPerformance({ dateRange }: StaffPerformanceProps) {
             <table className="w-full border-collapse">
               <thead>
                 <tr className="bg-white/[0.02] border-b border-white/5">
-                  <th className="px-10 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Identity Node</th>
-                  <th className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Protocol Access</th>
-                  <th className="px-8 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Sentiment Index</th>
-                  <th className="px-8 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Temporal Cycles</th>
-                  <th className="px-8 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Cumulative Yield</th>
-                  <th className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Efficiency Yield</th>
+                  <th className="px-10 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('staffPerformance.identityNode')}</th>
+                  <th className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('staffPerformance.protocolAccess')}</th>
+                  <th className="px-8 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('staffPerformance.sentimentIndex')}</th>
+                  <th className="px-8 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('staffPerformance.temporalCycles')}</th>
+                  <th className="px-8 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('staffPerformance.totalRevenue')}</th>
+                  <th className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('staffPerformance.efficiencyYield')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
@@ -312,12 +314,12 @@ export function StaffPerformance({ dateRange }: StaffPerformanceProps) {
                           <span className="text-xl font-black text-white italic tracking-tighter">{member.rating.toFixed(1)}</span>
                         </div>
                       ) : (
-                        <span className="text-[10px] font-black text-slate-700 tracking-widest italic">NOT_INDEXED</span>
+                        <span className="text-[10px] font-black text-slate-700 tracking-widest italic">{t('staffPerformance.notIndexed')}</span>
                       )}
                     </td>
                     <td className="px-8 py-8 text-right">
                       <div className="text-lg font-black text-white italic tracking-tighter">{member.appointments}</div>
-                      <p className="text-[9px] font-black uppercase text-slate-600 tracking-widest italic">{member.totalAppointments} AGGREGATE</p>
+                      <p className="text-[9px] font-black uppercase text-slate-600 tracking-widest italic">{member.totalAppointments} {t('staffPerformance.aggregate')}</p>
                     </td>
                     <td className="px-8 py-8 text-right">
                       <span className="text-xl font-black text-white italic tracking-tighter group-hover:text-emerald-400 transition-colors">฿{member.revenue.toLocaleString()}</span>

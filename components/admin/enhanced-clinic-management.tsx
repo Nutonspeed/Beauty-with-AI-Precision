@@ -48,7 +48,9 @@ import {
   CreditCard
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 import ClinicDetailModal from './clinic-detail-modal';
 import ClinicOnboardingWizard from './clinic-onboarding-wizard';
 
@@ -70,6 +72,7 @@ interface ClinicData {
 }
 
 export default function EnhancedClinicManagement() {
+  const t = useTranslations();
   const [clinics, setClinics] = useState<ClinicData[]>([]);
   const [filteredClinics, setFilteredClinics] = useState<ClinicData[]>([]);
   const [selectedClinics, setSelectedClinics] = useState<Set<string>>(new Set());
@@ -210,9 +213,7 @@ export default function EnhancedClinicManagement() {
   const handleBulkAction = async (action: string) => {
     if (selectedClinics.size === 0) return;
 
-    const confirmed = globalThis.confirm(
-      `Are you sure you want to ${action} ${selectedClinics.size} clinic(s)?`
-    );
+    const confirmed = globalThis.confirm(t('common.confirmAction'));
 
     if (!confirmed) return;
 
@@ -229,9 +230,11 @@ export default function EnhancedClinicManagement() {
       if (response.ok) {
         await fetchClinics();
         setSelectedClinics(new Set());
+        toast.success(t('common.success'));
       }
     } catch (error) {
       console.error('Bulk action failed:', error);
+      toast.error(t('common.error'));
     }
   };
 
@@ -299,21 +302,21 @@ export default function EnhancedClinicManagement() {
         <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2rem] hover:bg-white/[0.03] transition-all duration-500 group shadow-2xl relative overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 italic">Total Clinics</CardTitle>
+            <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 italic">{t('clinicManagement.totalClinics')}</CardTitle>
             <div className="p-2 rounded-lg bg-blue-500/10 border border-white/5 shadow-inner group-hover:scale-110 transition-transform duration-700">
               <Users className="h-4 w-4 text-blue-400" />
             </div>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-black text-white tracking-tighter italic">{clinics.length}</div>
-            <p className="text-[9px] font-black uppercase tracking-widest mt-2 text-slate-500 italic">Global Infrastructure Nodes</p>
+            <p className="text-[9px] font-black uppercase tracking-widest mt-2 text-slate-500 italic">{t('clinicManagement.globalNodes')}</p>
           </CardContent>
         </Card>
 
         <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2rem] hover:bg-white/[0.03] transition-all duration-500 group shadow-2xl relative overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 italic">Active</CardTitle>
+            <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 italic">{t('clinicManagement.active')}</CardTitle>
             <div className="p-2 rounded-lg bg-green-500/10 border border-white/5 shadow-inner group-hover:scale-110 transition-transform duration-700">
               <CheckCircle2 className="h-4 w-4 text-green-400" />
             </div>
@@ -322,14 +325,14 @@ export default function EnhancedClinicManagement() {
             <div className="text-3xl font-black text-green-400 tracking-tighter italic">
               {clinics.filter((c) => c.status === 'active').length}
             </div>
-            <p className="text-[9px] font-black uppercase tracking-widest mt-2 text-slate-500 italic">Operational Cycles</p>
+            <p className="text-[9px] font-black uppercase tracking-widest mt-2 text-slate-500 italic">{t('clinicManagement.operationalCycles')}</p>
           </CardContent>
         </Card>
 
         <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2rem] hover:bg-white/[0.03] transition-all duration-500 group shadow-2xl relative overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 italic">Avg Health</CardTitle>
+            <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 italic">{t('clinicManagement.avgHealth')}</CardTitle>
             <div className="p-2 rounded-lg bg-pink-500/10 border border-white/5 shadow-inner group-hover:scale-110 transition-transform duration-700">
               <TrendingUp className="h-4 w-4 text-pink-400" />
             </div>
@@ -340,14 +343,14 @@ export default function EnhancedClinicManagement() {
                 ? Math.round(clinics.reduce((sum, c) => sum + c.healthScore, 0) / clinics.length)
                 : 0}
             </div>
-            <p className="text-[9px] font-black uppercase tracking-widest mt-2 text-slate-500 italic">Integrity Index</p>
+            <p className="text-[9px] font-black uppercase tracking-widest mt-2 text-slate-500 italic">{t('clinicManagement.integrityIndex')}</p>
           </CardContent>
         </Card>
 
         <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2rem] hover:bg-white/[0.03] transition-all duration-500 group shadow-2xl relative overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 italic">Total Users</CardTitle>
+            <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 italic">{t('clinicManagement.totalUsers')}</CardTitle>
             <div className="p-2 rounded-lg bg-cyan-500/10 border border-white/5 shadow-inner group-hover:scale-110 transition-transform duration-700">
               <Users className="h-4 w-4 text-cyan-400" />
             </div>
@@ -356,7 +359,7 @@ export default function EnhancedClinicManagement() {
             <div className="text-3xl font-black text-white tracking-tighter italic">
               {clinics.reduce((sum, c) => sum + c.users, 0).toLocaleString()}
             </div>
-            <p className="text-[9px] font-black uppercase tracking-widest mt-2 text-slate-500 italic">Registered Entities</p>
+            <p className="text-[9px] font-black uppercase tracking-widest mt-2 text-slate-500 italic">{t('clinicManagement.registeredEntities')}</p>
           </CardContent>
         </Card>
       </div>
@@ -368,7 +371,7 @@ export default function EnhancedClinicManagement() {
             <Search className="h-5 w-5 text-slate-600 group-focus-within:text-pink-500 transition-colors" />
           </div>
           <Input
-            placeholder="Search clinical nodes by name, email, or identifier..."
+            placeholder={t('clinicManagement.searchPlaceholder')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="h-16 pl-16 pr-8 rounded-2xl border-white/5 bg-white/[0.03] text-white placeholder:text-slate-700 focus:border-pink-500/30 focus:ring-pink-500/20 transition-all text-sm font-bold italic"
@@ -378,14 +381,14 @@ export default function EnhancedClinicManagement() {
         <div className="flex gap-3 flex-wrap justify-center">
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="h-16 w-[160px] rounded-2xl border border-white/5 bg-white/[0.03] px-6 text-[10px] font-black uppercase tracking-widest text-white focus:ring-pink-500/20 appearance-none transition-all italic">
-              <SelectValue placeholder="Status Node" />
+              <SelectValue placeholder={t('clinicManagement.statusNode')} />
             </SelectTrigger>
             <SelectContent className="bg-[#020617] border-white/10 rounded-2xl">
-              <SelectItem value="all" className="text-[10px] font-black uppercase tracking-widest italic">GLOBAL</SelectItem>
-              <SelectItem value="active" className="text-[10px] font-black uppercase tracking-widest italic">ACTIVE</SelectItem>
-              <SelectItem value="trial" className="text-[10px] font-black uppercase tracking-widest italic">TRIAL</SelectItem>
-              <SelectItem value="inactive" className="text-[10px] font-black uppercase tracking-widest italic">INACTIVE</SelectItem>
-              <SelectItem value="suspended" className="text-[10px] font-black uppercase tracking-widest italic text-rose-500">SUSPENDED</SelectItem>
+              <SelectItem value="all" className="text-[10px] font-black uppercase tracking-widest italic">{t('clinicManagement.global')}</SelectItem>
+              <SelectItem value="active" className="text-[10px] font-black uppercase tracking-widest italic">{t('clinicManagement.activeStatus')}</SelectItem>
+              <SelectItem value="trial" className="text-[10px] font-black uppercase tracking-widest italic">{t('clinicManagement.trial')}</SelectItem>
+              <SelectItem value="inactive" className="text-[10px] font-black uppercase tracking-widest italic">{t('clinicManagement.inactive')}</SelectItem>
+              <SelectItem value="suspended" className="text-[10px] font-black uppercase tracking-widest italic text-rose-500">{t('clinicManagement.suspended')}</SelectItem>
             </SelectContent>
           </Select>
 
@@ -395,7 +398,7 @@ export default function EnhancedClinicManagement() {
             onClick={exportData}
           >
             <Download className="mr-3 h-4 w-4" />
-            Export Schema
+            {t('clinicManagement.exportSchema')}
           </Button>
 
           <Button 
@@ -404,7 +407,7 @@ export default function EnhancedClinicManagement() {
             onClick={() => setWizardOpen(true)}
           >
             <Plus className="mr-3 h-5 w-5" />
-            Initialize Node
+            {t('clinicManagement.initializeNode')}
           </Button>
         </div>
       </div>
@@ -420,17 +423,17 @@ export default function EnhancedClinicManagement() {
               className="p-6 bg-pink-600/10 border-b border-pink-500/20 flex items-center justify-between"
             >
               <span className="text-xs font-black uppercase tracking-widest text-pink-400">
-                {selectedClinics.size} NODE(S) SELECTED FOR GLOBAL OVERRIDE
+                {t('clinicManagement.nodesSelected', { count: selectedClinics.size })}
               </span>
               <div className="flex gap-3">
                 <Button variant="outline" size="sm" className="rounded-xl border-white/10 bg-white/5 text-[9px] font-black uppercase tracking-widest" onClick={() => handleBulkAction('activate')}>
-                  <Unlock className="h-3 w-3 mr-2" /> Activate
+                  <Unlock className="h-3 w-3 mr-2" /> {t('clinicManagement.activate')}
                 </Button>
                 <Button variant="outline" size="sm" className="rounded-xl border-white/10 bg-white/5 text-[9px] font-black uppercase tracking-widest" onClick={() => handleBulkAction('suspend')}>
-                  <Lock className="h-3 w-3 mr-2" /> Suspend
+                  <Lock className="h-3 w-3 mr-2" /> {t('clinicManagement.suspend')}
                 </Button>
                 <Button variant="destructive" size="sm" className="rounded-xl text-[9px] font-black uppercase tracking-widest" onClick={() => handleBulkAction('delete')}>
-                  <Trash2 className="h-3 w-3 mr-2" /> Decommission
+                  <Trash2 className="h-3 w-3 mr-2" /> {t('clinicManagement.decommission')}
                 </Button>
               </div>
             </motion.div>
@@ -447,12 +450,12 @@ export default function EnhancedClinicManagement() {
                       className="border-white/20 data-[state=checked]:bg-pink-600 data-[state=checked]:border-pink-600"
                     />
                   </TableHead>
-                  <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Clinical Uplink</TableHead>
-                  <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Protocol Access</TableHead>
-                  <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Plan Vector</TableHead>
-                  <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Users</TableHead>
-                  <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Integrity</TableHead>
-                  <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Last Sync</TableHead>
+                  <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('clinicManagement.clinicalUplink')}</TableHead>
+                  <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('clinicManagement.protocolAccess')}</TableHead>
+                  <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('clinicManagement.planVector')}</TableHead>
+                  <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('clinicManagement.users')}</TableHead>
+                  <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('clinicManagement.integrity')}</TableHead>
+                  <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('clinicManagement.lastSync')}</TableHead>
                   <TableHead className="px-10 py-8 text-right w-[70px]"></TableHead>
                 </TableRow>
               </TableHeader>
@@ -460,7 +463,7 @@ export default function EnhancedClinicManagement() {
                 {filteredClinics.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={8} className="text-center py-20 text-slate-600 uppercase tracking-[0.4em] font-black text-[10px] italic">
-                      NO_NODES_DETECTED_IN_SECTOR
+                      {t('clinicManagement.noNodesDetected')}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -521,20 +524,20 @@ export default function EnhancedClinicManagement() {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="bg-[#020617] border-white/10 rounded-2xl p-2 min-w-[180px]">
-                            <DropdownMenuLabel className="px-4 py-2 text-[9px] font-black uppercase tracking-[0.2em] text-slate-500 italic">Node Control</DropdownMenuLabel>
+                            <DropdownMenuLabel className="px-4 py-2 text-[9px] font-black uppercase tracking-[0.2em] text-slate-500 italic">{t('clinicManagement.nodeControl')}</DropdownMenuLabel>
                             <DropdownMenuSeparator className="bg-white/5" />
                             <DropdownMenuItem className="rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-pink-600 focus:text-white transition-colors" onClick={() => openClinicDetail(clinic.id)}>
-                              <Eye className="mr-3 h-4 w-4" /> View Vector
+                              <Eye className="mr-3 h-4 w-4" /> {t('clinicManagement.viewVector')}
                             </DropdownMenuItem>
                             <DropdownMenuItem className="rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-pink-600 focus:text-white transition-colors">
-                              <Edit className="mr-3 h-4 w-4" /> Refine Parameters
+                              <Edit className="mr-3 h-4 w-4" /> {t('clinicManagement.refineParameters')}
                             </DropdownMenuItem>
                             <DropdownMenuItem className="rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-pink-600 focus:text-white transition-colors">
-                              <CreditCard className="mr-3 h-4 w-4" /> Reallocate Plan
+                              <CreditCard className="mr-3 h-4 w-4" /> {t('clinicManagement.reallocatePlan')}
                             </DropdownMenuItem>
                             <DropdownMenuSeparator className="bg-white/5" />
                             <DropdownMenuItem className="rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-rose-600 focus:text-white transition-colors text-rose-500">
-                              <Trash2 className="mr-3 h-4 w-4" /> Decommission Unit
+                              <Trash2 className="mr-3 h-4 w-4" /> {t('clinicManagement.decommissionUnit')}
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>

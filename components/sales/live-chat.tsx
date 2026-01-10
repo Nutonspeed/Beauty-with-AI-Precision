@@ -63,16 +63,49 @@ const activeChats = [
   }
 ]
 
-const quickResponses = [
-  "ขอบคุณที่สนใจครับ เรามีแพ็คเกจพิเศษสำหรับคุณ",
-  "จะส่งรายละเอียดเพิ่มเติมให้ภายในวันนี้",
-  "สามารถนัดหมายปรึกษาได้ตามสะดวกครับ",
-  "มีคำถามอะไรเพิ่มเติมไหมครับ?"
-]
-
 export function LiveChat() {
   const t = useTranslations("liveChat")
-  const [selectedChat, setSelectedChat] = useState(activeChats[0])
+  
+  const activeChatsLocal = [
+    {
+      ...activeChats[0],
+      customer: { ...activeChats[0].customer, name: t('mock.name1') },
+      lastMessage: t('mock.msg1_3'),
+      timestamp: t('mock.time1'),
+      messages: [
+        { ...activeChats[0].messages[0], text: t('mock.msg1_1') },
+        { ...activeChats[0].messages[1], text: t('mock.msg1_2') },
+        { ...activeChats[0].messages[2], text: t('mock.msg1_3') },
+      ]
+    },
+    {
+      ...activeChats[1],
+      customer: { ...activeChats[1].customer, name: t('mock.name2') },
+      lastMessage: t('mock.msg2_4'),
+      timestamp: t('mock.time2'),
+      messages: [
+        { ...activeChats[1].messages[0], text: t('mock.msg2_1') },
+        { ...activeChats[1].messages[1], text: t('mock.msg2_2') },
+        { ...activeChats[1].messages[2], text: t('mock.msg2_3') },
+        { ...activeChats[1].messages[3], text: t('mock.msg2_4') },
+      ]
+    },
+    {
+      ...activeChats[2],
+      customer: { ...activeChats[2].customer, name: t('mock.name3') },
+      lastMessage: t('mock.msg3_3'),
+      timestamp: t('mock.time3'),
+      messages: [
+        { ...activeChats[2].messages[0], text: t('mock.msg3_1') },
+        { ...activeChats[2].messages[1], text: t('mock.msg3_2') },
+        { ...activeChats[2].messages[2], text: t('mock.msg3_3') },
+      ]
+    }
+  ]
+
+  const quickResponses = t.raw('quickResponses') as string[]
+  
+  const [selectedChat, setSelectedChat] = useState(activeChatsLocal[0])
   const [newMessage, setNewMessage] = useState("")
   const [isTyping, setIsTyping] = useState(false)
 
@@ -101,14 +134,14 @@ export function LiveChat() {
             <MessageCircle className="h-5 w-5" />
             {t("activeChats")}
             <Badge className="bg-blue-100 text-blue-800">
-              {t("unread", { count: activeChats.filter(c => c.unread > 0).length })}
+              {t("unread", { count: activeChatsLocal.filter(c => c.unread > 0).length })}
             </Badge>
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           <div className="h-96 overflow-auto">
             <div className="space-y-2 p-4">
-              {activeChats.map((chat) => (
+              {activeChatsLocal.map((chat) => (
                 <button
                   key={chat.id}
                   type="button"
@@ -289,16 +322,16 @@ export function LiveChat() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <div className="text-sm font-medium">Phone</div>
+                    <div className="text-sm font-medium">{t('profile.phone')}</div>
                     <p className="text-sm text-muted-foreground">081-234-5678</p>
                   </div>
                   <div>
-                    <div className="text-sm font-medium">Email</div>
+                    <div className="text-sm font-medium">{t('profile.email')}</div>
                     <p className="text-sm text-muted-foreground">customer@email.com</p>
                   </div>
                   <div>
                     <div className="text-sm font-medium">{t("lastVisit")}</div>
-                    <p className="text-sm text-muted-foreground">2 สัปดาห์ที่แล้ว</p>
+                    <p className="text-sm text-muted-foreground">2 {t('history.weeksAgo') || 'weeks ago'}</p>
                   </div>
                   <div>
                     <div className="text-sm font-medium">{t("totalSpent")}</div>
@@ -309,7 +342,7 @@ export function LiveChat() {
                 <div>
                   <div className="text-sm font-medium">{t("notes")}</div>
                   <p className="text-sm text-muted-foreground mt-1">
-                    ลูกค้าประจำ สนใจทรีตเมนต์ขั้นสูง คุยง่าย ตัดสินใจเร็ว
+                    {t('profile.notesDesc')}
                   </p>
                 </div>
               </div>

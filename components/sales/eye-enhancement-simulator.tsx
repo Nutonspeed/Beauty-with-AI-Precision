@@ -22,6 +22,7 @@ interface EyeEnhancementProps {
   onExport?: (imageData: Blob) => void
   onGenerateProposal?: (treatment: any) => void
   className?: string
+  isEnterprise?: boolean
 }
 
 export function EyeEnhancementSimulator({
@@ -29,6 +30,7 @@ export function EyeEnhancementSimulator({
   onExport,
   onGenerateProposal,
   className = "",
+  isEnterprise = true,
 }: EyeEnhancementProps) {
   const t = useTranslations()
   const locale = useLocale()
@@ -245,9 +247,11 @@ export function EyeEnhancementSimulator({
               <p className="text-sm text-gray-400">{t("eyeEnhancementSimulator.subtitle")}</p>
             </div>
           </div>
-          <Badge variant="outline" className="border-blue-500/50 text-blue-400">
-            AI Powered
-          </Badge>
+          {isEnterprise && (
+            <Badge className="bg-cyan-600 text-white border-none px-4 py-1 text-[9px] font-black tracking-widest uppercase italic">
+              {t('eyeEnhancementSimulator.aiPowered')}
+            </Badge>
+          )}
         </div>
       </CardHeader>
 

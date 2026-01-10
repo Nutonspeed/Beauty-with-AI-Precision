@@ -29,6 +29,7 @@ import {
   ArrowLeft,
   Loader2,
 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useToast } from '@/components/ui/use-toast';
 
 interface Props {
@@ -51,6 +52,7 @@ const PLANS = [
 ];
 
 export default function ClinicOnboardingWizard({ open, onOpenChange, onSuccess }: Props) {
+  const t = useTranslations();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
@@ -97,13 +99,13 @@ export default function ClinicOnboardingWizard({ open, onOpenChange, onSuccess }
         body: JSON.stringify(form),
       });
       if (!res.ok) throw new Error('Failed');
-      toast({ title: 'Success', description: 'Clinic created!' });
+      toast({ title: t('common.success'), description: t('clinicOnboarding.messages.success') });
       onSuccess?.();
       onOpenChange(false);
       setStep(1);
       setForm({ name: '', slug: '', email: '', phone: '', address: '', ownerName: '', ownerEmail: '', plan: 'starter', startTrial: true, trialDays: 14 });
     } catch {
-      toast({ title: 'Error', description: 'Failed to create clinic', variant: 'destructive' });
+      toast({ title: t('common.error'), description: t('clinicOnboarding.messages.error'), variant: 'destructive' });
     } finally {
       setLoading(false);
     }
@@ -113,7 +115,7 @@ export default function ClinicOnboardingWizard({ open, onOpenChange, onSuccess }
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Create New Clinic</DialogTitle>
+          <DialogTitle>{t('clinicOnboarding.title')}</DialogTitle>
         </DialogHeader>
 
         {/* Steps */}
@@ -123,7 +125,7 @@ export default function ClinicOnboardingWizard({ open, onOpenChange, onSuccess }
               <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= s.id ? 'bg-primary text-white' : 'bg-muted'}`}>
                 {step > s.id ? <CheckCircle2 className="w-4 h-4" /> : <s.icon className="w-4 h-4" />}
               </div>
-              <span className="text-sm hidden sm:inline">{s.title}</span>
+              <span className="text-sm hidden sm:inline">{t(`clinicOnboarding.steps.${['info', 'owner', 'plan', 'review'][s.id - 1]}`)}</span>
             </div>
           ))}
         </div>
@@ -132,27 +134,27 @@ export default function ClinicOnboardingWizard({ open, onOpenChange, onSuccess }
         {step === 1 && (
           <div className="space-y-4">
             <div>
-              <Label>Clinic Name *</Label>
+              <Label>{t('clinicOnboarding.form.clinicName')} *</Label>
               <Input value={form.name} onChange={(e) => { update('name', e.target.value); update('slug', genSlug(e.target.value)); }} placeholder="Beauty Clinic" />
               {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
             </div>
             <div>
-              <Label>Slug *</Label>
+              <Label>{t('clinicOnboarding.form.slug')} *</Label>
               <Input value={form.slug} onChange={(e) => update('slug', e.target.value)} placeholder="beauty-clinic" />
               {errors.slug && <p className="text-sm text-red-500">{errors.slug}</p>}
             </div>
             <div>
-              <Label>Email *</Label>
+              <Label>{t('clinicOnboarding.form.email')} *</Label>
               <Input type="email" value={form.email} onChange={(e) => update('email', e.target.value)} placeholder="clinic@example.com" />
               {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label>Phone</Label>
+                <Label>{t('clinicOnboarding.form.phone')}</Label>
                 <Input value={form.phone} onChange={(e) => update('phone', e.target.value)} placeholder="02-xxx-xxxx" />
               </div>
               <div>
-                <Label>Address</Label>
+                <Label>{t('clinicOnboarding.form.address')}</Label>
                 <Input value={form.address} onChange={(e) => update('address', e.target.value)} placeholder="Bangkok" />
               </div>
             </div>
@@ -163,15 +165,15 @@ export default function ClinicOnboardingWizard({ open, onOpenChange, onSuccess }
         {step === 2 && (
           <div className="space-y-4">
             <div>
-              <Label>Owner Name *</Label>
+              <Label>{t('clinicOnboarding.form.ownerName')} *</Label>
               <Input value={form.ownerName} onChange={(e) => update('ownerName', e.target.value)} placeholder="John Doe" />
               {errors.ownerName && <p className="text-sm text-red-500">{errors.ownerName}</p>}
             </div>
             <div>
-              <Label>Owner Email *</Label>
+              <Label>{t('clinicOnboarding.form.ownerEmail')} *</Label>
               <Input type="email" value={form.ownerEmail} onChange={(e) => update('ownerEmail', e.target.value)} placeholder="owner@example.com" />
               {errors.ownerEmail && <p className="text-sm text-red-500">{errors.ownerEmail}</p>}
-              <p className="text-xs text-muted-foreground mt-1">Invitation will be sent to this email</p>
+              <p className="text-xs text-muted-foreground mt-1">{t('clinicOnboarding.form.invitationNote')}</p>
             </div>
           </div>
         )}
@@ -183,7 +185,7 @@ export default function ClinicOnboardingWizard({ open, onOpenChange, onSuccess }
               {PLANS.map((p) => (
                 <Card key={p.id} className={`cursor-pointer transition ${form.plan === p.id ? 'ring-2 ring-primary' : ''}`} onClick={() => update('plan', p.id)}>
                   <CardContent className="p-4">
-                    <div className="font-medium">{p.name}</div>
+                    <div className="font-medium">{t(`clinicOnboarding.plans.${p.id}`)}</div>
                     <div className="text-lg font-bold">฿{p.price.toLocaleString()}/mo</div>
                     <ul className="text-xs text-muted-foreground mt-2">
                       {p.features.map((f) => <li key={f}>• {f}</li>)}
@@ -194,20 +196,20 @@ export default function ClinicOnboardingWizard({ open, onOpenChange, onSuccess }
             </div>
             <div className="flex items-center justify-between p-4 border rounded-lg">
               <div>
-                <div className="font-medium">Start with Trial</div>
-                <div className="text-sm text-muted-foreground">{form.trialDays} days free trial</div>
+                <div className="font-medium">{t('clinicOnboarding.form.startTrial')}</div>
+                <div className="text-sm text-muted-foreground">{t('clinicOnboarding.form.trialDesc', { days: form.trialDays })}</div>
               </div>
               <Switch checked={form.startTrial} onCheckedChange={(v) => update('startTrial', v)} />
             </div>
             {form.startTrial && (
               <div>
-                <Label>Trial Days</Label>
+                <Label>{t('clinicOnboarding.form.trialDays')}</Label>
                 <Select value={String(form.trialDays)} onValueChange={(v) => update('trialDays', Number(v))}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="7">7 days</SelectItem>
-                    <SelectItem value="14">14 days</SelectItem>
-                    <SelectItem value="30">30 days</SelectItem>
+                    <SelectItem value="7">7 {t('common.days')}</SelectItem>
+                    <SelectItem value="14">14 {t('common.days')}</SelectItem>
+                    <SelectItem value="30">30 {t('common.days')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -219,25 +221,25 @@ export default function ClinicOnboardingWizard({ open, onOpenChange, onSuccess }
         {step === 4 && (
           <div className="space-y-4">
             <Card>
-              <CardHeader><CardTitle className="text-lg">Clinic Details</CardTitle></CardHeader>
+              <CardHeader><CardTitle className="text-lg">{t('clinicOnboarding.review.details')}</CardTitle></CardHeader>
               <CardContent className="grid grid-cols-2 gap-2 text-sm">
-                <div><span className="text-muted-foreground">Name:</span> {form.name}</div>
-                <div><span className="text-muted-foreground">Slug:</span> {form.slug}</div>
-                <div><span className="text-muted-foreground">Email:</span> {form.email}</div>
-                <div><span className="text-muted-foreground">Phone:</span> {form.phone || '-'}</div>
+                <div><span className="text-muted-foreground">{t('clinicOnboarding.form.clinicName')}:</span> {form.name}</div>
+                <div><span className="text-muted-foreground">{t('clinicOnboarding.form.slug')}:</span> {form.slug}</div>
+                <div><span className="text-muted-foreground">{t('clinicOnboarding.form.email')}:</span> {form.email}</div>
+                <div><span className="text-muted-foreground">{t('clinicOnboarding.form.phone')}:</span> {form.phone || '-'}</div>
               </CardContent>
             </Card>
             <Card>
-              <CardHeader><CardTitle className="text-lg">Owner</CardTitle></CardHeader>
+              <CardHeader><CardTitle className="text-lg">{t('clinicOnboarding.review.owner')}</CardTitle></CardHeader>
               <CardContent className="text-sm">
                 <div>{form.ownerName} ({form.ownerEmail})</div>
               </CardContent>
             </Card>
             <Card>
-              <CardHeader><CardTitle className="text-lg">Subscription</CardTitle></CardHeader>
+              <CardHeader><CardTitle className="text-lg">{t('clinicOnboarding.review.subscription')}</CardTitle></CardHeader>
               <CardContent className="flex gap-2">
-                <Badge>{PLANS.find((p) => p.id === form.plan)?.name}</Badge>
-                {form.startTrial && <Badge variant="secondary">{form.trialDays} days trial</Badge>}
+                <Badge>{t(`clinicOnboarding.plans.${form.plan}`)}</Badge>
+                {form.startTrial && <Badge variant="secondary">{t('clinicOnboarding.review.trial', { days: form.trialDays })}</Badge>}
               </CardContent>
             </Card>
           </div>
@@ -246,16 +248,16 @@ export default function ClinicOnboardingWizard({ open, onOpenChange, onSuccess }
         {/* Actions */}
         <div className="flex justify-between mt-6">
           <Button variant="outline" onClick={prev} disabled={step === 1}>
-            <ArrowLeft className="w-4 h-4 mr-2" /> Back
+            <ArrowLeft className="w-4 h-4 mr-2" /> {t('clinicOnboarding.buttons.back')}
           </Button>
           {step < 4 ? (
             <Button onClick={next}>
-              Next <ArrowRight className="w-4 h-4 ml-2" />
+              {t('clinicOnboarding.buttons.next')} <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           ) : (
             <Button onClick={submit} disabled={loading}>
               {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-              Create Clinic
+              {loading ? t('clinicOnboarding.buttons.creating') : t('clinicOnboarding.buttons.create')}
             </Button>
           )}
         </div>

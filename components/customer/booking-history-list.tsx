@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { useTranslations } from "next-intl"
 import { Calendar, Clock, MapPin, Loader2 } from "lucide-react"
 import { format } from "date-fns"
 
@@ -20,6 +21,7 @@ interface Booking {
 }
 
 export function BookingHistoryList({ userId }: { userId: string }) {
+  const t = useTranslations()
   const [bookings, setBookings] = useState<Booking[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
@@ -53,9 +55,9 @@ export function BookingHistoryList({ userId }: { userId: string }) {
     return (
       <div className="py-12 text-center">
         <Calendar className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
-        <h3 className="mb-2 text-lg font-semibold">No bookings yet</h3>
-        <p className="mb-4 text-sm text-muted-foreground">Start by booking your first treatment</p>
-        <Button>Book Treatment</Button>
+        <h3 className="mb-2 text-lg font-semibold">{t('bookingHistory.noBookings')}</h3>
+        <p className="mb-4 text-sm text-muted-foreground">{t('bookingHistory.startBooking')}</p>
+        <Button>{t('bookingHistory.bookTreatment')}</Button>
       </div>
     )
   }
@@ -105,16 +107,16 @@ export function BookingHistoryList({ userId }: { userId: string }) {
               {booking.status === "confirmed" && (
                 <>
                   <Button size="sm" variant="outline">
-                    Reschedule
+                    {t('bookingHistory.reschedule')}
                   </Button>
                   <Button size="sm" variant="outline">
-                    Cancel
+                    {t('bookingHistory.cancel')}
                   </Button>
                 </>
               )}
               {booking.status === "completed" && (
                 <Button size="sm" variant="outline">
-                  Book Again
+                  {t('bookingHistory.bookAgain')}
                 </Button>
               )}
             </div>

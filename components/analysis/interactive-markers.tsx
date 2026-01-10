@@ -6,6 +6,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { X, ZoomIn, ZoomOut, Info, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -46,8 +47,9 @@ export function InteractivePhotoMarkers({
   enableZoom = true,
   enableLayerToggle = true,
   className,
-  imageAlt = 'Skin analysis photo',
+  imageAlt,
 }: InteractivePhotoMarkersProps) {
+  const t = useTranslations('interactiveMarkers');
   const [zoomLevel, setZoomLevel] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [isPanning, setIsPanning] = useState(false);
@@ -217,7 +219,7 @@ export function InteractivePhotoMarkers({
               <div>
                 <div className="font-semibold">{formatConcernType(concern.type)}</div>
                 <div className="text-xs text-gray-500">
-                  Confidence: {Math.round(location.confidence * 100)}%
+                  {t('confidence', { value: Math.round(location.confidence * 100) })}
                 </div>
                 {location.severity && (
                   <Badge
@@ -225,7 +227,7 @@ export function InteractivePhotoMarkers({
                     className="text-xs mt-1"
                     style={{ backgroundColor: getSeverityColor(location.severity) }}
                   >
-                    {location.severity}
+                    {t(location.severity as any)}
                   </Badge>
                 )}
               </div>
@@ -261,7 +263,7 @@ export function InteractivePhotoMarkers({
             <div className="text-left">
               <div className="text-sm font-semibold">{formatConcernType(concern.type)}</div>
               <div className="text-xs text-gray-500">
-                Severity: {concern.averageSeverity.toFixed(1)}/10
+                {t('severity', { value: concern.averageSeverity.toFixed(1) })}
               </div>
             </div>
           </button>
@@ -316,7 +318,7 @@ export function InteractivePhotoMarkers({
               variant="ghost"
               onClick={toggleAllLayers}
               className="h-8 w-8 mb-1"
-              title={visibleLayers.size > 0 ? 'Hide all layers' : 'Show all layers'}
+              title={visibleLayers.size > 0 ? t('hideAllLayers') : t('showAllLayers')}
             >
               {visibleLayers.size > 0 ? (
                 <Eye className="h-4 w-4" />
@@ -355,7 +357,7 @@ export function InteractivePhotoMarkers({
         <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm shadow-lg">
           <Info className="h-4 w-4 text-blue-600" />
           <span className="text-sm font-medium">
-            {concerns.filter(c => visibleLayers.has(c.type)).length} concerns detected
+            {t('concernsDetected', { count: concerns.filter(c => visibleLayers.has(c.type)).length })}
           </span>
         </div>
       </div>
@@ -387,7 +389,7 @@ export function InteractivePhotoMarkers({
           <Image
             ref={imageRef as any}
             src={imageUrl}
-            alt={imageAlt}
+            alt={imageAlt || t('imageAlt')}
             fill
             className="object-contain"
             onLoad={(e) => {

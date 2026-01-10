@@ -16,6 +16,7 @@ import {
   Shield
 } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 
 type HealthStatus = 'healthy' | 'degraded' | 'down'
@@ -55,6 +56,7 @@ interface SystemMetrics {
 }
 
 export function SystemHealthMonitor() {
+  const t = useTranslations()
   const [metrics, setMetrics] = useState<SystemMetrics | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date())
@@ -115,7 +117,7 @@ export function SystemHealthMonitor() {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center justify-center py-8 text-muted-foreground">
-              Loading system health metrics...
+              {t('systemHealth.loading')}
             </div>
           </CardContent>
         </Card>
@@ -130,25 +132,25 @@ export function SystemHealthMonitor() {
         <div className="space-y-2 text-center md:text-left">
           <h2 className="text-3xl font-bold text-white tracking-tight italic flex items-center justify-center md:justify-start gap-4">
             <Activity className="w-8 h-8 text-pink-500 animate-pulse" />
-            System Health Telemetry
+            {t('systemHealth.title')}
           </h2>
           <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">
-            Temporal Synchronization: {lastUpdate.toLocaleTimeString('th-TH')}
+            {t('systemHealth.subtitle')}: {lastUpdate.toLocaleTimeString('th-TH')}
           </p>
         </div>
         <Badge className={cn("px-6 py-2 rounded-full border-none shadow-inner text-[10px] font-black uppercase tracking-widest italic", getStatusColor(metrics.api.status))}>
           {getStatusIcon(metrics.api.status)}
-          <span className="ml-2">Status: {metrics.api.status.toUpperCase()}</span>
+          <span className="ml-2">{t('systemHealth.statusLabel', { status: metrics.api.status.toUpperCase() })}</span>
         </Badge>
       </div>
 
       {/* Core Services Status - Infrastructure Nodes */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {[
-          { label: 'API Server Node', status: metrics.api.status, val: `${metrics.api.responseTime}ms`, sub: formatUptime(metrics.api.uptime), icon: Server, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-          { label: 'Database Matrix', status: metrics.database.status, val: `${metrics.database.queryTime}ms`, sub: `${metrics.database.connections} Active Connects`, icon: Database, color: 'text-purple-400', bg: 'bg-purple-500/10' },
-          { label: 'Neural AI Core', status: metrics.services.ai, val: 'Active', sub: 'Optimized Inference', icon: Zap, color: 'text-pink-400', bg: 'bg-pink-500/10' },
-          { label: 'Entity Registry', status: 'healthy', val: metrics.activeUsers.current.toLocaleString(), sub: `${metrics.activeUsers.peak24h} Peak Sync`, icon: Users, color: 'text-cyan-400', bg: 'bg-cyan-500/10' }
+          { label: t('systemHealth.apiServerNode'), status: metrics.api.status, val: `${metrics.api.responseTime}ms`, sub: formatUptime(metrics.api.uptime), icon: Server, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+          { label: t('systemHealth.databaseMatrix'), status: metrics.database.status, val: `${metrics.database.queryTime}ms`, sub: t('systemHealth.activeConnects', { count: metrics.database.connections }), icon: Database, color: 'text-purple-400', bg: 'bg-purple-500/10' },
+          { label: t('systemHealth.neuralAiCore'), status: metrics.services.ai, val: t('ui.status.active'), sub: t('systemHealth.optimizedInference'), icon: Zap, color: 'text-pink-400', bg: 'bg-pink-500/10' },
+          { label: t('systemHealth.entityRegistry'), status: 'healthy', val: metrics.activeUsers.current.toLocaleString(), sub: t('systemHealth.peakSync', { count: metrics.activeUsers.peak24h }), icon: Users, color: 'text-cyan-400', bg: 'bg-cyan-500/10' }
         ].map((node, i) => (
           <Card key={i} className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2rem] hover:bg-white/[0.03] transition-all duration-500 group shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
@@ -176,9 +178,9 @@ export function SystemHealthMonitor() {
       {/* Performance Telemetry Bars */}
       <div className="grid gap-6 md:grid-cols-3">
         {[
-          { label: 'CPU Load Factor', val: metrics.performance.cpuUsage, icon: Activity },
-          { label: 'Neural Memory Allocation', val: metrics.performance.memoryUsage, icon: Brain },
-          { label: 'Storage Sector Integrity', val: metrics.performance.diskUsage, icon: Database }
+          { label: t('systemHealth.cpuLoadFactor'), val: metrics.performance.cpuUsage, icon: Activity },
+          { label: t('systemHealth.neuralMemoryAllocation'), val: metrics.performance.memoryUsage, icon: Brain },
+          { label: t('systemHealth.storageSectorIntegrity'), val: metrics.performance.diskUsage, icon: Database }
         ].map((item, i) => (
           <Card key={i} className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2.5rem] shadow-2xl overflow-hidden relative group">
             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
@@ -216,25 +218,25 @@ export function SystemHealthMonitor() {
           <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
             <CardTitle className="text-2xl font-bold text-white tracking-tight italic flex items-center gap-4">
               <TrendingUp className="h-6 w-6 text-cyan-400" />
-              Real-time Throughput
+              {t('systemHealth.realtimeThroughput')}
             </CardTitle>
-            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Vector analysis of system inflow</CardDescription>
+            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('systemHealth.vectorAnalysisDesc')}</CardDescription>
           </CardHeader>
           <CardContent className="p-10 lg:p-12">
             <div className="grid grid-cols-2 gap-8">
               <div className="space-y-2">
-                <p className="text-[9px] font-black uppercase tracking-widest text-slate-600 italic">Requests Intensity</p>
+                <p className="text-[9px] font-black uppercase tracking-widest text-slate-600 italic">{t('systemHealth.requestsIntensity')}</p>
                 <div className="text-4xl font-black text-white tracking-tighter italic">{metrics.api.requestsPerMinute} <span className="text-[10px] uppercase text-slate-500 not-italic font-black tracking-widest ml-2">RPM</span></div>
               </div>
               <div className="space-y-2">
-                <p className="text-[9px] font-black uppercase tracking-widest text-slate-600 italic">Exception Delta</p>
+                <p className="text-[9px] font-black uppercase tracking-widest text-slate-600 italic">{t('systemHealth.exceptionDelta')}</p>
                 <div className={cn("text-4xl font-black tracking-tighter italic", metrics.api.errorRate > 5 ? 'text-rose-500' : 'text-emerald-400')}>
                   {metrics.api.errorRate.toFixed(2)}%
                 </div>
               </div>
               <div className="col-span-2 space-y-4 pt-4">
                 <div className="flex justify-between items-center">
-                  <p className="text-[9px] font-black uppercase tracking-widest text-slate-600 italic">Database Pool Saturation</p>
+                  <p className="text-[9px] font-black uppercase tracking-widest text-slate-600 italic">{t('systemHealth.dbPoolSaturation')}</p>
                   <span className="text-sm font-black text-white italic">{metrics.database.poolUtilization}%</span>
                 </div>
                 <div className="h-1.5 w-full bg-white/[0.02] rounded-full overflow-hidden border border-white/5">
@@ -255,9 +257,9 @@ export function SystemHealthMonitor() {
           <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
             <CardTitle className="text-2xl font-bold text-white tracking-tight italic flex items-center gap-4">
               <Shield className="h-6 w-6 text-purple-400" />
-              Protocol Integrity Index
+              {t('systemHealth.protocolIntegrityIndex')}
             </CardTitle>
-            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Nominal state of platform modules</CardDescription>
+            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('systemHealth.nominalStateDesc')}</CardDescription>
           </CardHeader>
           <CardContent className="p-10 lg:p-12 space-y-4">
             {Object.entries(metrics.services).map(([service, status], idx) => (
@@ -270,10 +272,10 @@ export function SystemHealthMonitor() {
               >
                 <div className="flex items-center gap-4">
                   <div className={cn("h-2 w-2 rounded-full animate-pulse shadow-lg", status === 'healthy' ? 'bg-emerald-500 shadow-emerald-500/50' : 'bg-rose-500 shadow-rose-500/50')} />
-                  <span className="text-sm font-bold text-slate-300 group-hover/svc:text-white transition-colors uppercase tracking-widest italic">{service} Control Node</span>
+                  <span className="text-sm font-bold text-slate-300 group-hover/svc:text-white transition-colors uppercase tracking-widest italic">{t('systemHealth.controlNode', { service: service.toUpperCase() })}</span>
                 </div>
                 <Badge className={cn("px-4 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border-none shadow-inner", getStatusColor(status as HealthStatus))}>
-                  {status}
+                  {t('systemHealth.statusLabel', { status: status.toUpperCase() })}
                 </Badge>
               </motion.div>
             ))}

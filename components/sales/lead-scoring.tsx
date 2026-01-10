@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useTranslations } from "next-intl"
 import { AILeadScorer, LeadData, AIScoreResult } from "@/lib/ai/lead-scorer"
 import { Target, Users, DollarSign, TrendingUp } from 'lucide-react'
 import { AIMarketingCampaignGenerator } from "@/lib/ai/campaign-generator"
@@ -98,20 +99,21 @@ const leadsData: any[] = [
 ]
 
 
-const getStatusBadge = (status: string) => {
+const getStatusBadge = (status: string, t: any) => {
   switch (status) {
     case "hot":
-      return <Badge className="bg-red-100 text-red-800">Hot Lead</Badge>
+      return <Badge className="bg-red-100 text-red-800">{t('salesLeads.status.hot')}</Badge>
     case "warm":
-      return <Badge className="bg-orange-100 text-orange-800">Warm Lead</Badge>
+      return <Badge className="bg-orange-100 text-orange-800">{t('salesLeads.status.warm')}</Badge>
     case "cold":
-      return <Badge className="bg-gray-100 text-gray-800">Cold Lead</Badge>
+      return <Badge className="bg-gray-100 text-gray-800">{t('salesLeads.status.cold')}</Badge>
     default:
       return <Badge variant="secondary">{status}</Badge>
   }
 }
 
 export function LeadScoring() {
+  const t = useTranslations()
   const [leads, setLeads] = useState<any[]>(leadsData)
   const [sortBy, setSortBy] = useState("aiScore")
   const [filterBy, setFilterBy] = useState("all")
@@ -183,7 +185,7 @@ export function LeadScoring() {
   const handleContactLead = (leadId: string) => {
     // ในโปรดักชั่นจะเปิด chat หรือส่ง email
     console.log("Contacting lead:", leadId)
-    alert("เปิดการสนทนากับ Lead")
+    alert(t('leadScoring.actions.contactAlert'))
   }
 
   const handleUpdateScore = (leadId: string, newScore: number) => {
@@ -203,7 +205,7 @@ export function LeadScoring() {
             <div className="flex items-center">
               <Target className="h-4 w-4 text-muted-foreground" />
               <div className="ml-2">
-                <p className="text-sm font-medium leading-none">Hot Leads</p>
+                <p className="text-sm font-medium leading-none">{t('leadScoring.stats.hotLeads')}</p>
                 <p className="text-2xl font-bold">
                   {leads.filter(l => l.status === "hot").length}
                 </p>
@@ -217,7 +219,7 @@ export function LeadScoring() {
             <div className="flex items-center">
               <Users className="h-4 w-4 text-muted-foreground" />
               <div className="ml-2">
-                <p className="text-sm font-medium leading-none">Total Leads</p>
+                <p className="text-sm font-medium leading-none">{t('leadScoring.stats.totalLeads')}</p>
                 <p className="text-2xl font-bold">{leads.length}</p>
               </div>
             </div>
@@ -229,7 +231,7 @@ export function LeadScoring() {
             <div className="flex items-center">
               <DollarSign className="h-4 w-4 text-muted-foreground" />
               <div className="ml-2">
-                <p className="text-sm font-medium leading-none">Predicted Revenue</p>
+                <p className="text-sm font-medium leading-none">{t('leadScoring.stats.predictedRevenue')}</p>
                 <p className="text-2xl font-bold">
                   ฿{leads.reduce((sum, lead) => sum + (lead.aiScore?.predictedValue || (lead as any).predictedValue || 0), 0).toLocaleString()}
                 </p>
@@ -243,7 +245,7 @@ export function LeadScoring() {
             <div className="flex items-center">
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
               <div className="ml-2">
-                <p className="text-sm font-medium leading-none">Avg Conversion</p>
+                <p className="text-sm font-medium leading-none">{t('leadScoring.stats.avgConversion')}</p>
                 <p className="text-2xl font-bold">
                   {Math.round(leads.reduce((sum, lead) => sum + (lead.aiScore?.conversionProbability || (lead as any).conversionProbability || 0), 0) / leads.length)}%
                 </p>
@@ -256,37 +258,37 @@ export function LeadScoring() {
       {/* Filters and Sorting */}
       <Card>
         <CardHeader>
-          <CardTitle>Lead Scoring Dashboard</CardTitle>
+          <CardTitle>{t('leadScoring.title')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex gap-4 mb-6">
             <div>
-              <div className="text-sm font-medium mb-2">กรองตามสถานะ</div>
+              <div className="text-sm font-medium mb-2">{t('leadScoring.filterLabel')}</div>
               <Select value={filterBy} onValueChange={setFilterBy}>
                 <SelectTrigger className="w-40">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">ทั้งหมด</SelectItem>
-                  <SelectItem value="hot">Hot Leads</SelectItem>
-                  <SelectItem value="warm">Warm Leads</SelectItem>
-                  <SelectItem value="cold">Cold Leads</SelectItem>
+                  <SelectItem value="all">{t('common.all')}</SelectItem>
+                  <SelectItem value="hot">{t('salesLeads.status.hot')}</SelectItem>
+                  <SelectItem value="warm">{t('salesLeads.status.warm')}</SelectItem>
+                  <SelectItem value="cold">{t('salesLeads.status.cold')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div>
-              <div className="text-sm font-medium mb-2">เรียงตาม</div>
+              <div className="text-sm font-medium mb-2">{t('leadScoring.sortLabel')}</div>
               <Select value={sortBy} onValueChange={setSortBy}>
                 <SelectTrigger className="w-40">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="aiScore">AI Score สูงสุด</SelectItem>
-                  <SelectItem value="conversion">โอกาสขายสูงสุด</SelectItem>
-                  <SelectItem value="value">มูลค่าสูงสุด</SelectItem>
-                  <SelectItem value="urgency">ความเร่งด่วนสูงสุด</SelectItem>
-                  <SelectItem value="activity">กิจกรรมล่าสุด</SelectItem>
+                  <SelectItem value="aiScore">{t('leadScoring.sortOptions.aiScore')}</SelectItem>
+                  <SelectItem value="conversion">{t('leadScoring.sortOptions.conversion')}</SelectItem>
+                  <SelectItem value="value">{t('leadScoring.sortOptions.value')}</SelectItem>
+                  <SelectItem value="urgency">{t('leadScoring.sortOptions.urgency')}</SelectItem>
+                  <SelectItem value="activity">{t('leadScoring.sortOptions.activity')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -299,10 +301,13 @@ export function LeadScoring() {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="font-medium">{lead.name}</h3>
-                    <div className="text-sm text-muted-foreground">Score: {lead.aiScore?.overallScore ?? (lead as any).score ?? 0}</div>
+                    <div className="flex items-center gap-2 mt-1">
+                      <div className="text-sm text-muted-foreground">{t('leadPrioritization.scoreLabel')}: {lead.aiScore?.overallScore ?? (lead as any).score ?? 0}</div>
+                      {getStatusBadge(lead.status, t)}
+                    </div>
                   </div>
                   <div>
-                    <Button size="sm" onClick={() => handleContactLead(lead.id)}>ติดต่อ</Button>
+                    <Button size="sm" onClick={() => handleContactLead(lead.id)}>{t('leadScoring.actions.contact')}</Button>
                   </div>
                 </div>
               </Card>

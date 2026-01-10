@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useTranslations } from "next-intl"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Presentation, CheckCircle2, Clock, TrendingUp, DollarSign } from "lucide-react"
@@ -17,6 +18,7 @@ interface PresentationStats {
 }
 
 export function PresentationStatsCards() {
+  const t = useTranslations()
   const [stats, setStats] = useState<PresentationStats>({
     todayCount: 0,
     completionRate: 0,
@@ -142,7 +144,7 @@ export function PresentationStatsCards() {
       <Card>
         <CardContent className="p-4">
           <div className="flex items-center justify-between mb-2">
-            <div className="text-sm text-muted-foreground">Presentations วันนี้</div>
+            <div className="text-sm text-muted-foreground">{t('salesPresentations.stats.todayPresentations')}</div>
             <Presentation className="h-4 w-4 text-blue-500" />
           </div>
           <div className="flex items-end justify-between">
@@ -158,7 +160,7 @@ export function PresentationStatsCards() {
             )}
           </div>
           <div className="text-xs text-muted-foreground mt-1">
-            vs สัปดาห์ที่แล้ว
+            {t('salesPresentations.stats.vsLastWeek')}
           </div>
         </CardContent>
       </Card>
@@ -167,7 +169,7 @@ export function PresentationStatsCards() {
       <Card>
         <CardContent className="p-4">
           <div className="flex items-center justify-between mb-2">
-            <div className="text-sm text-muted-foreground">Completion Rate</div>
+            <div className="text-sm text-muted-foreground">{t('salesPresentations.stats.completionRate')}</div>
             <CheckCircle2 className="h-4 w-4 text-green-500" />
           </div>
           <div className="flex items-end justify-between">
@@ -182,7 +184,7 @@ export function PresentationStatsCards() {
             )}
           </div>
           <div className="text-xs text-muted-foreground mt-1">
-            เสร็จสมบูรณ์
+            {t('salesPresentations.stats.completed')}
           </div>
         </CardContent>
       </Card>
@@ -191,15 +193,15 @@ export function PresentationStatsCards() {
       <Card>
         <CardContent className="p-4">
           <div className="flex items-center justify-between mb-2">
-            <div className="text-sm text-muted-foreground">Avg. Time</div>
+            <div className="text-sm text-muted-foreground">{t('salesPresentations.stats.avgTime')}</div>
             <Clock className="h-4 w-4 text-orange-500" />
           </div>
           <div className="flex items-baseline gap-1">
             <div className="text-2xl font-bold">{stats.avgTimeMinutes}</div>
-            <div className="text-sm text-muted-foreground">min</div>
+            <div className="text-sm text-muted-foreground">{t('common.units.minutes')}</div>
           </div>
           <div className="text-xs text-muted-foreground mt-1">
-            ต่อ presentation
+            {t('salesPresentations.stats.perPresentation')}
           </div>
         </CardContent>
       </Card>
@@ -208,7 +210,7 @@ export function PresentationStatsCards() {
       <Card>
         <CardContent className="p-4">
           <div className="flex items-center justify-between mb-2">
-            <div className="text-sm text-muted-foreground">มูลค่าวันนี้</div>
+            <div className="text-sm text-muted-foreground">{t('salesPresentations.stats.todayValue')}</div>
             <DollarSign className="h-4 w-4 text-purple-500" />
           </div>
           <div className="flex items-baseline gap-1">
@@ -217,10 +219,10 @@ export function PresentationStatsCards() {
                 ? `${(stats.totalValue / 1000).toFixed(1)}K`
                 : stats.totalValue}
             </div>
-            <div className="text-sm text-muted-foreground">THB</div>
+            <div className="text-sm text-muted-foreground">{t('common.currency.thb')}</div>
           </div>
           <div className="text-xs text-muted-foreground mt-1">
-            จาก presentations ที่ปิดการขาย
+            {t('salesPresentations.stats.fromCompleted')}
           </div>
         </CardContent>
       </Card>

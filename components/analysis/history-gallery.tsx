@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState, useCallback } from "react"
+import { useTranslations } from "next-intl"
 import { useRouter } from "next/navigation"
 import { useLocalizePath } from "@/lib/i18n/locale-link"
 import Image from "next/image"
@@ -11,6 +12,7 @@ import type { AnalysisHistoryItem } from "@/types/api"
 import { useAuth } from "@/lib/auth/context"
 
 export function AnalysisHistoryGallery() {
+  const t = useTranslations('analysisHistory')
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const lp = useLocalizePath()
@@ -35,7 +37,7 @@ export function AnalysisHistoryGallery() {
       const response = await fetch(`/api/analysis/history?userId=${user.id}&limit=${pagination.limit}&offset=${pagination.offset}`)
       
       if (!response.ok) {
-        throw new Error('Failed to load analysis history')
+        throw new Error(t('loadError'))
       }
 
       const result = await response.json()
@@ -46,7 +48,7 @@ export function AnalysisHistoryGallery() {
       setPagination(result.pagination)
     } catch (err) {
       console.error('[HistoryGallery] Failed to load history:', err)
-      const errorMessage = err instanceof Error ? err.message : 'Failed to load analysis history'
+      const errorMessage = err instanceof Error ? err.message : t('loadError')
       
       // Check if it's an auth error
       if (errorMessage.includes('Unauthorized') || errorMessage.includes('401')) {
@@ -102,7 +104,7 @@ export function AnalysisHistoryGallery() {
         <CardContent className="p-6">
           <p className="text-red-700">{error}</p>
           <Button onClick={loadHistory} className="mt-4" variant="outline">
-            Try Again
+            {t('tryAgain')}
           </Button>
         </CardContent>
       </Card>
@@ -116,14 +118,12 @@ export function AnalysisHistoryGallery() {
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
             <Eye className="h-8 w-8 text-muted-foreground" />
           </div>
-          <h3 className="mb-2 text-lg font-semibold">No Analysis History</h3>
+          <h3 className="mb-2 text-lg font-semibold">{t('noHistory')}</h3>
           <p className="mb-6 text-sm text-muted-foreground">
-            You haven't performed any skin analysis yet.
-            <br />
-            คุณยังไม่มีประวัติการวิเคราะห์ผิวหน้า
+            {t('noHistoryDesc')}
           </p>
           <Button onClick={() => router.push(lp('/analysis'))}>
-            Start Analysis / เริ่มวิเคราะห์
+            {t('startAnalysis')}
           </Button>
         </CardContent>
       </Card>
@@ -136,42 +136,42 @@ export function AnalysisHistoryGallery() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Analyses</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('totalAnalyses')}</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{pagination.total}</div>
             <p className="text-xs text-muted-foreground">
-              All time / ทั้งหมด
+              {t('allTime')}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Most Common Concern</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('mostCommonConcern')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {getMostCommonConcern(history)}
+              {getMostCommonConcern(history, t)}
             </div>
             <p className="text-xs text-muted-foreground">
-              Top concern / ปัญหาที่พบบ่อย
+              {t('topConcern')}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Latest Analysis</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('latestAnalysis')}</CardTitle>
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {formatRelativeTime(history[0]?.createdAt)}
+              {formatRelativeTime(history[0]?.createdAt, t)}
             </div>
             <p className="text-xs text-muted-foreground">
-              Last scan / ครั้งล่าสุด
+              {t('lastScan')}
             </p>
           </CardContent>
         </Card>
@@ -201,7 +201,7 @@ export function AnalysisHistoryGallery() {
                   {new Date(item.createdAt).toLocaleDateString()}
                 </p>
                 <p className="text-[10px] opacity-75">
-                  Optimized: 96% faster loading ⚡
+                  {t('optimizedLoading')}
                 </p>
               </div>
             </div>
@@ -214,12 +214,12 @@ export function AnalysisHistoryGallery() {
                       key={type}
                       className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary"
                     >
-                      {getConcernLabel(type)}: {count}
+                      {getConcernLabel(type, t)}: {count}
                     </span>
                   ))}
               </div>
               <p className="text-xs text-muted-foreground">
-                {item.concerns.length} concerns detected
+                {t('concernsDetected', { count: item.concerns.length })}
               </p>
             </CardContent>
           </Card>
@@ -233,10 +233,10 @@ export function AnalysisHistoryGallery() {
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Loading...
+                {t('loading')}
               </>
             ) : (
-              `Load More (${pagination.total - pagination.offset - pagination.limit} remaining)`
+              t('loadMore', { count: pagination.total - pagination.offset - pagination.limit })
             )}
           </Button>
         </div>
@@ -246,7 +246,7 @@ export function AnalysisHistoryGallery() {
 }
 
 // Helper functions
-function getMostCommonConcern(history: AnalysisHistoryItem[]): string {
+function getMostCommonConcern(history: AnalysisHistoryItem[], t: any): string {
   const counts: Record<string, number> = {}
   
   for (const item of history) {
@@ -261,30 +261,30 @@ function getMostCommonConcern(history: AnalysisHistoryItem[]): string {
   if (entries.length === 0) return 'None'
 
   const [topConcern] = entries.reduce((a, b) => (a[1] > b[1] ? a : b))
-  return getConcernLabel(topConcern)
+  return getConcernLabel(topConcern, t)
 }
 
-function getConcernLabel(type: string): string {
+function getConcernLabel(type: string, t: any): string {
   const labels: Record<string, string> = {
-    wrinkle: 'Wrinkles',
-    pigmentation: 'Dark Spots',
-    pore: 'Pores',
-    redness: 'Redness',
-    acne: 'Acne',
-    dark_circle: 'Dark Circles',
+    wrinkle: t('wrinkle'),
+    pigmentation: t('pigmentation'),
+    pore: t('pore'),
+    redness: t('redness'),
+    acne: t('acne'),
+    dark_circle: t('dark_circle'),
   }
   return labels[type] || type
 }
 
-function formatRelativeTime(dateStr: string): string {
+function formatRelativeTime(dateStr: string, t: any): string {
   const date = new Date(dateStr)
   const now = new Date()
   const diffMs = now.getTime() - date.getTime()
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
 
-  if (diffDays === 0) return 'Today'
-  if (diffDays === 1) return 'Yesterday'
-  if (diffDays < 7) return `${diffDays} days ago`
-  if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`
+  if (diffDays === 0) return t('today')
+  if (diffDays === 1) return t('yesterday')
+  if (diffDays < 7) return t('daysAgo', { days: diffDays })
+  if (diffDays < 30) return t('weeksAgo', { weeks: Math.floor(diffDays / 7) })
   return date.toLocaleDateString()
 }

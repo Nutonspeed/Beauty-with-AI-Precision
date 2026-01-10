@@ -16,7 +16,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Loader2, Mail, Send, Eye, X, Sparkles } from "lucide-react"
 import { toast } from "sonner"
-import { useTranslations } from "next-intl"
+import { useTranslations, useLocale } from "next-intl"
 
 interface EmailTemplate {
   id: string
@@ -45,6 +45,7 @@ export function EmailComposer({
   onSent,
 }: EmailComposerProps) {
   const t = useTranslations()
+  const locale = useLocale()
   const [templates, setTemplates] = useState<EmailTemplate[]>([])
   const [selectedTemplate, setSelectedTemplate] = useState<EmailTemplate | null>(null)
   const [loading, setLoading] = useState(true)
@@ -66,13 +67,13 @@ export function EmailComposer({
   useEffect(() => {
     setVariables({
       customer_name: leadName,
-      clinic_name: "Beauty AI Clinic",
-      sales_name: "ทีมงานขาย",
-      appointment_date: new Date().toLocaleDateString("th-TH"),
+      clinic_name: t('common.clinicName') || "Beauty AI Clinic",
+      sales_name: t('dashboard.emailComposer.variables.salesTeam'),
+      appointment_date: new Date().toLocaleDateString(locale === 'th' ? "th-TH" : "en-US"),
       appointment_time: "14:00",
-      service_name: "Skin Analysis",
+      service_name: t('dashboard.emailComposer.variables.skinAnalysis'),
       total_price: "15,000",
-      valid_until: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString("th-TH"),
+      valid_until: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString(locale === 'th' ? "th-TH" : "en-US"),
     })
   }, [leadName])
 

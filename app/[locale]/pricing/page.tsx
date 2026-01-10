@@ -336,7 +336,11 @@ export default function PricingPage() {
                       { label: t('pricing.comparison.visiaMetrics'), starter: true, pro: true, enterprise: true },
                       { label: t('pricing.comparison.saveHistory'), starter: false, pro: true, enterprise: true },
                       { label: t('pricing.comparison.arSimulator'), starter: false, pro: true, enterprise: true },
-                      { label: t('pricing.comparison.dashboard'), starter: false, pro: true, enterprise: true },
+                      { label: t('pricing.comparison.predictiveSales'), starter: false, pro: true, enterprise: true },
+                      { label: t('pricing.comparison.roiSimulator'), starter: false, pro: true, enterprise: true },
+                      { label: t('pricing.comparison.mdss'), starter: false, pro: false, enterprise: true },
+                      { label: t('pricing.comparison.complianceAudit'), starter: false, pro: false, enterprise: true },
+                      { label: t('pricing.comparison.revenueForecast'), starter: false, pro: false, enterprise: true },
                       { label: t('pricing.comparison.multiBranch'), starter: false, pro: false, enterprise: true }
                     ].map((row, idx) => (
                       <tr key={idx} className="hover:bg-white/[0.02] transition-colors group">

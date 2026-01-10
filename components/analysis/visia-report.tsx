@@ -10,49 +10,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { AnalysisCardsGrid } from './analysis-card';
-import { Download, Printer, Share2, FileText } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { Printer, Share2, FileText } from 'lucide-react';
 import type { HybridSkinAnalysis } from '@/lib/types/skin-analysis';
-
-const REPORT_TRANSLATIONS = {
-  en: {
-    print: 'Print',
-    pdf: 'PDF',
-    share: 'Share',
-    reportDate: 'Report Date',
-    patient: 'Patient',
-    age: 'Age',
-    years: 'years',
-    skinType: 'Skin Type',
-    skinHealthScore: 'Skin Health Score',
-    grade: 'Grade',
-    confidence: 'Confidence',
-    detailedAnalysis: 'Detailed Analysis',
-    aiInsights: 'AI Insights',
-    recommendations: 'Recommendations',
-    skinConcerns: 'Detected Skin Concerns',
-    overallCondition: 'Overall Skin Condition',
-    summary: 'Summary'
-  },
-  th: {
-    print: 'พิมพ์',
-    pdf: 'PDF',
-    share: 'แชร์',
-    reportDate: 'วันที่รายงาน',
-    patient: 'ผู้รับบริการ',
-    age: 'อายุ',
-    years: 'ปี',
-    skinType: 'ประเภทผิว',
-    skinHealthScore: 'คะแนนสุขภาพผิว',
-    grade: 'เกรด',
-    confidence: 'ความแม่นยำ',
-    detailedAnalysis: 'วิเคราะห์เชิงลึก',
-    aiInsights: 'การวิเคราะห์ AI',
-    recommendations: 'คำแนะนำ',
-    skinConcerns: 'ปัญหาผิวที่ตรวจพบ',
-    overallCondition: 'สภาพผิวโดยรวม',
-    summary: 'สรุป'
-  }
-};
 
 export interface VISIAReportProps {
   analysis: HybridSkinAnalysis;
@@ -84,7 +44,7 @@ export function VISIAReport({
   onShare,
   className = '',
 }: VISIAReportProps) {
-  const t = REPORT_TRANSLATIONS[locale as keyof typeof REPORT_TRANSLATIONS] || REPORT_TRANSLATIONS.en;
+  const t = useTranslations('visiaReport');
   const reportDate = new Date(analysis.timestamp);
 
   // Calculate overall health score with fallback
@@ -144,7 +104,7 @@ export function VISIAReport({
           <div className="flex gap-2 print:hidden">
             <Button onClick={onPrint} variant="outline" size="sm" className="gap-2">
               <Printer className="w-4 h-4" />
-              {t.print}
+              {t('print')}
             </Button>
             <Button
               onClick={() => onExport?.('pdf')}
@@ -152,12 +112,12 @@ export function VISIAReport({
               size="sm"
               className="gap-2"
             >
-              <Download className="w-4 h-4" />
-              {t.pdf}
+              <Printer className="w-4 h-4" />
+              {t('pdf')}
             </Button>
             <Button onClick={onShare} variant="outline" size="sm" className="gap-2">
               <Share2 className="w-4 h-4" />
-              {t.share}
+              {t('share')}
             </Button>
           </div>
         </div>
@@ -167,21 +127,21 @@ export function VISIAReport({
         {/* Report Info */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div>
-            <p className="text-sm text-muted-foreground">{t.reportDate}</p>
-            <p className="font-medium">{reportDate.toLocaleDateString()}</p>
+            <p className="text-sm text-muted-foreground">{t('reportDate')}</p>
+            <p className="font-medium">{reportDate.toLocaleDateString(locale === 'th' ? 'th-TH' : 'en-US')}</p>
           </div>
           <div>
-            <p className="text-sm text-muted-foreground">{t.patient}</p>
-            <p className="font-medium">{patientInfo?.name || (locale === 'th' ? 'ผู้รับบริการ' : 'Patient')}</p>
+            <p className="text-sm text-muted-foreground">{t('patient')}</p>
+            <p className="font-medium">{patientInfo?.name || t('defaultPatientName')}</p>
           </div>
           {patientInfo?.age && (
             <div>
-              <p className="text-sm text-muted-foreground">{t.age}</p>
-              <p className="font-medium">{patientInfo.age} {t.years}</p>
+              <p className="text-sm text-muted-foreground">{t('age')}</p>
+              <p className="font-medium">{patientInfo.age} {t('years')}</p>
             </div>
           )}
           <div>
-            <p className="text-sm text-muted-foreground">{t.skinType}</p>
+            <p className="text-sm text-muted-foreground">{t('skinType')}</p>
             <p className="font-medium capitalize">{patientInfo?.skinType || analysis.ai?.skinType || 'Normal'}</p>
           </div>
         </div>
@@ -191,13 +151,11 @@ export function VISIAReport({
       <Card className="p-8 text-center bg-gradient-to-br from-primary/5 to-primary/10 print:shadow-none">
         <div className="inline-block">
           <div className="text-6xl font-bold text-primary mb-2">{healthScore}</div>
-          <div className="text-2xl font-semibold mb-2">{t.skinHealthScore}</div>
-          <Badge className="text-lg px-4 py-1">{t.grade}: {healthGrade}</Badge>
+          <div className="text-2xl font-semibold mb-2">{t('skinHealthScore')}</div>
+          <Badge className="text-lg px-4 py-1">{t('grade')}: {healthGrade}</Badge>
           <p className="text-sm text-muted-foreground mt-4">
-            {t.confidence}: {(() => {
+            {t('confidence')}: {(() => {
               const conf = analysis.confidence || 0;
-              // Normalize: if value > 1, it's already in percentage (0-100)
-              // if value <= 1, it's decimal (0-1) and needs *100
               return conf > 1 ? Math.round(conf) : Math.round(conf * 100);
             })()}%
           </p>
@@ -208,7 +166,7 @@ export function VISIAReport({
       <div>
         <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
           <FileText className="w-6 h-6 text-primary" />
-          {t.detailedAnalysis}
+          {t('detailedAnalysis')}
         </h2>
         <AnalysisCardsGrid
           analysis={{
@@ -244,10 +202,10 @@ export function VISIAReport({
       {/* AI Insights */}
       {analysis.ai && (
         <Card className="p-6 print:shadow-none">
-          <h3 className="text-xl font-semibold mb-4">{t.aiInsights}</h3>
+          <h3 className="text-xl font-semibold mb-4">{t('aiInsights')}</h3>
           <div className="space-y-4">
             <div>
-              <p className="text-sm font-medium text-muted-foreground mb-2">{t.skinType}</p>
+              <p className="text-sm font-medium text-muted-foreground mb-2">{t('skinType')}</p>
               <Badge variant="outline" className="text-base">
                 {analysis.ai.skinType}
               </Badge>
@@ -256,7 +214,7 @@ export function VISIAReport({
             {analysis.ai.concerns && analysis.ai.concerns.length > 0 && (
               <div>
                 <p className="text-sm font-medium text-muted-foreground mb-2">
-                  {t.skinConcerns}
+                  {t('skinConcerns')}
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {analysis.ai.concerns.map((concern: any, index: number) => (
@@ -270,7 +228,7 @@ export function VISIAReport({
 
             <div>
               <p className="text-sm font-medium text-muted-foreground mb-2">
-                {t.overallCondition}
+                {t('overallCondition')}
               </p>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {Object.entries(analysis.ai.severity).map(([key, value]: [string, any]) => (
@@ -287,7 +245,7 @@ export function VISIAReport({
 
       {/* Recommendations */}
       <Card className="p-6 print:shadow-none print:break-before-page">
-        <h3 className="text-xl font-semibold mb-4">{t.recommendations}</h3>
+        <h3 className="text-xl font-semibold mb-4">{t('recommendations')}</h3>
         <div className="space-y-3">
           {(analysis.recommendations && analysis.recommendations.length > 0) ? (
             analysis.recommendations.map((recommendation: any, index: number) => {
@@ -325,14 +283,14 @@ export function VISIAReport({
               );
             })
           ) : (
-            <p className="text-sm text-muted-foreground">No recommendations available at this time.</p>
+            <p className="text-sm text-muted-foreground">{t('noRecommendations')}</p>
           )}
         </div>
       </Card>
 
       {/* Treatment Plan */}
       <Card className="p-6 print:shadow-none">
-        <h3 className="text-xl font-semibold mb-4">Recommended Treatment Plan</h3>
+        <h3 className="text-xl font-semibold mb-4">{t('recommendedTreatmentPlan')}</h3>
         <div className="space-y-3">
           {(() => {
             // Generate treatment plan based on severity
@@ -447,14 +405,14 @@ export function VISIAReport({
                       </div>
                       <p className="text-sm text-muted-foreground mb-2">{treatment.description}</p>
                       <p className="text-xs text-muted-foreground">
-                        ⏱️ Estimated duration: <span className="font-medium">{treatment.duration}</span>
+                        ⏱️ {t('estimatedDuration')}: <span className="font-medium">{treatment.duration}</span>
                       </p>
                     </div>
                   </div>
                 );
               })
             ) : (
-              <p className="text-sm text-muted-foreground">No treatment plan available</p>
+              <p className="text-sm text-muted-foreground">{t('noTreatmentPlan')}</p>
             );
           })()}
         </div>
@@ -462,33 +420,33 @@ export function VISIAReport({
 
       {/* Technical Details */}
       <Card className="p-6 print:shadow-none bg-muted/50">
-        <h3 className="text-lg font-semibold mb-4">Technical Details</h3>
+        <h3 className="text-lg font-semibold mb-4">{t('techDetails')}</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
           <div>
-            <p className="text-muted-foreground">Analysis Method</p>
-            <p className="font-medium">Hybrid AI + CV</p>
+            <p className="text-muted-foreground">{t('analysisMethod')}</p>
+            <p className="font-medium">{t('hybridMethod')}</p>
           </div>
           <div>
-            <p className="text-muted-foreground">AI Confidence</p>
+            <p className="text-muted-foreground">{t('aiConfidence')}</p>
             <p className="font-medium">{(() => {
               const conf = analysis.ai.confidence || 0;
               return conf > 1 ? Math.round(conf) : Math.round(conf * 100);
             })()}%</p>
           </div>
           <div>
-            <p className="text-muted-foreground">Overall Percentile</p>
+            <p className="text-muted-foreground">{t('overallPercentile')}</p>
             <p className="font-medium">{Math.round((analysis.percentiles.spots + analysis.percentiles.pores + analysis.percentiles.wrinkles + analysis.percentiles.texture + analysis.percentiles.redness) / 5)}th</p>
           </div>
           <div>
-            <p className="text-muted-foreground">Spots Detected</p>
+            <p className="text-muted-foreground">{t('spotsDetected')}</p>
             <p className="font-medium">{analysis.cv.spots.count}</p>
           </div>
           <div>
-            <p className="text-muted-foreground">Pores Analyzed</p>
+            <p className="text-muted-foreground">{t('poresAnalyzed')}</p>
             <p className="font-medium">{analysis.cv.pores.enlargedCount}</p>
           </div>
           <div>
-            <p className="text-muted-foreground">Wrinkles Detected</p>
+            <p className="text-muted-foreground">{t('wrinklesDetected')}</p>
             <p className="font-medium">{analysis.cv.wrinkles.count}</p>
           </div>
         </div>
@@ -497,13 +455,11 @@ export function VISIAReport({
       {/* Footer */}
       <div className="text-center text-sm text-muted-foreground print:mt-8">
         <p>
-          This report was generated using AI-powered skin analysis technology.
-          <br />
-          Results should be reviewed by a qualified skincare professional.
+          {t('footerNotice')}
         </p>
         <p className="mt-2">
-          Report ID: {analysis.timestamp.getTime()} | Generated on{' '}
-          {reportDate.toLocaleString()}
+          {t('reportId')}: {analysis.timestamp.getTime()} | {t('generatedOn')}{' '}
+          {reportDate.toLocaleString(locale === 'th' ? 'th-TH' : 'en-US')}
         </p>
       </div>
     </div>

@@ -29,6 +29,7 @@ import {
   Globe
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 
 interface ErrorLog {
@@ -167,7 +168,7 @@ const TRANSLATIONS = {
 };
 
 export function ErrorDashboard({ locale = 'th' }: ErrorDashboardProps) {
-  const t = TRANSLATIONS[locale as keyof typeof TRANSLATIONS] || TRANSLATIONS.en;
+  const t = useTranslations();
 
   const [logs, setLogs] = useState<ErrorLog[]>([]);
   const [stats, setStats] = useState<ErrorStats | null>(null);
@@ -260,20 +261,20 @@ export function ErrorDashboard({ locale = 'th' }: ErrorDashboardProps) {
         <div className="space-y-2 text-center md:text-left">
           <h2 className="text-3xl font-bold text-white tracking-tight italic flex items-center justify-center md:justify-start gap-4">
             <Activity className="w-8 h-8 text-rose-500 animate-pulse" />
-            Anomaly Telemetry Stream
+            {t('errorDashboard.title')}
           </h2>
           <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">
-            Global exception ledger and fault analysis
+            {t('errorDashboard.subtitle')}
           </p>
         </div>
         <div className="flex gap-3 flex-wrap justify-center">
           <Button variant="outline" className="h-14 px-8 rounded-2xl border-white/10 bg-white/5 hover:bg-white/10 text-[10px] font-black uppercase tracking-widest transition-all" onClick={() => setShowFilters(!showFilters)}>
             <Filter className="mr-3 h-4 w-4" />
-            {t.filters.title.toUpperCase()}
+            {t('filters.title').toUpperCase()}
           </Button>
           <Button variant="outline" className="h-14 px-8 rounded-2xl border-white/10 bg-white/5 hover:bg-white/10 text-[10px] font-black uppercase tracking-widest transition-all" onClick={fetchLogs}>
             <RefreshCw className={cn("mr-3 h-4 w-4", loading && "animate-spin")} />
-            {t.actions.refresh.toUpperCase()}
+            {t('actions.refresh').toUpperCase()}
           </Button>
           <Button variant="premium" className="h-14 px-8 rounded-2xl shadow-2xl shadow-pink-500/20 text-[10px] font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95 border" onClick={exportToCSV} disabled={logs.length === 0}>
             <Download className="mr-3 h-4 w-4" />
@@ -286,11 +287,11 @@ export function ErrorDashboard({ locale = 'th' }: ErrorDashboardProps) {
       {stats && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
           {[
-            { label: 'Cumulative Variance', val: stats.total, sub: 'Global Error Registry', icon: Activity, color: 'text-white', bg: 'bg-white/5' },
-            { label: 'Temporal Peak (24h)', val: stats.last24h, sub: 'Cycle Fault Velocity', icon: Zap, color: 'text-rose-400', bg: 'bg-rose-500/10' },
-            { label: 'Critical Breaches', val: stats.bySeverity.error || 0, sub: 'Mitigation Required', icon: AlertTriangle, color: 'text-red-500', bg: 'bg-red-500/10' },
-            { label: 'State Warnings', val: stats.bySeverity.warning || 0, sub: 'Sector Fluctuations', icon: AlertCircle, color: 'text-yellow-400', bg: 'bg-yellow-500/10' },
-            { label: 'Nominal Logs', val: stats.bySeverity.info || 0, sub: 'Sync Intelligence', icon: Info, color: 'text-blue-400', bg: 'bg-blue-500/10' }
+            { label: t('errorDashboard.stats.cumulativeVariance'), val: stats.total, sub: t('activityLogsDashboard.globalActivityNodes'), icon: Activity, color: 'text-white', bg: 'bg-white/5' },
+            { label: t('errorDashboard.stats.temporalPeak'), val: stats.last24h, sub: t('activityLogsDashboard.realtimeThroughput'), icon: Zap, color: 'text-rose-400', bg: 'bg-rose-500/10' },
+            { label: t('errorDashboard.stats.criticalBreaches'), val: stats.bySeverity.error || 0, sub: t('strategicGrowthAdvisor.implementation'), icon: AlertTriangle, color: 'text-red-500', bg: 'bg-red-500/10' },
+            { label: t('errorDashboard.stats.stateWarnings'), val: stats.bySeverity.warning || 0, sub: t('regionalGrowthHeatmap.regions.northern'), icon: AlertCircle, color: 'text-yellow-400', bg: 'bg-yellow-500/10' },
+            { label: t('errorDashboard.stats.nominalLogs'), val: stats.bySeverity.info || 0, sub: t('ui.terminal.authVerified'), icon: Info, color: 'text-blue-400', bg: 'bg-blue-500/10' }
           ].map((node, i) => (
             <Card key={i} className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2rem] hover:bg-white/[0.03] transition-all duration-500 group shadow-2xl relative overflow-hidden">
               <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
@@ -323,21 +324,21 @@ export function ErrorDashboard({ locale = 'th' }: ErrorDashboardProps) {
               </CardHeader>
               <CardContent className="p-10 lg:p-12 flex gap-8 items-end">
                 <div className="flex-1 space-y-4">
-                  <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic ml-4">Severity Vector</Label>
+                  <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic ml-4">{t('errorDashboard.filters.severityVector')}</Label>
                   <select
                     value={severityFilter}
                     onChange={(e) => setSeverityFilter(e.target.value)}
                     className="h-16 w-full rounded-2xl border border-white/5 bg-white/[0.03] px-8 text-sm font-bold italic text-white focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500/30 appearance-none transition-all cursor-pointer"
                   >
-                    <option value="all" className="bg-[#020617]">{t.filters.all.toUpperCase()}_PROTOCOL</option>
-                    <option value="error" className="bg-[#020617] text-red-400">{t.filters.error.toUpperCase()}_BREACH</option>
-                    <option value="warning" className="bg-[#020617] text-yellow-400">{t.filters.warning.toUpperCase()}_VARIANCE</option>
-                    <option value="info" className="bg-[#020617] text-blue-400">{t.filters.info.toUpperCase()}_TELEMETRY</option>
+                    <option value="all" className="bg-[#020617]">{t('errorDashboard.filters.allProtocol')}</option>
+                    <option value="error" className="bg-[#020617] text-red-400">{t('errorDashboard.filters.errorBreach')}</option>
+                    <option value="warning" className="bg-[#020617] text-yellow-400">{t('errorDashboard.filters.warningVariance')}</option>
+                    <option value="info" className="bg-[#020617] text-blue-400">{t('errorDashboard.filters.infoTelemetry')}</option>
                   </select>
                 </div>
                 <Button variant="outline" className="h-16 px-8 rounded-2xl border-white/10 bg-white/5 hover:bg-white/10 text-[9px] font-black uppercase tracking-widest italic" onClick={() => setSeverityFilter('all')}>
                   <X className="h-4 w-4 mr-2" />
-                  {t.filters.clear.toUpperCase()}
+                  {t('filters.clear').toUpperCase()}
                 </Button>
               </CardContent>
             </Card>
@@ -350,8 +351,8 @@ export function ErrorDashboard({ locale = 'th' }: ErrorDashboardProps) {
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
         <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5 flex flex-row items-center justify-between">
           <div className="space-y-2">
-            <CardTitle className="text-3xl font-bold text-white tracking-tight italic">Global Fault Ledger</CardTitle>
-            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Live immutable stream: {logs.length} vectors detected</CardDescription>
+            <CardTitle className="text-3xl font-bold text-white tracking-tight italic">{t('errorDashboard.table.title')}</CardTitle>
+            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{t('errorDashboard.table.desc', { count: logs.length })}</CardDescription>
           </div>
         </CardHeader>
         <CardContent className="p-0">
@@ -359,11 +360,11 @@ export function ErrorDashboard({ locale = 'th' }: ErrorDashboardProps) {
             <Table>
               <TableHeader>
                 <TableRow className="bg-white/[0.02] border-b border-white/5">
-                  <TableHead className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Temporal Stamp</TableHead>
-                  <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Severity</TableHead>
-                  <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Exception Message</TableHead>
-                  <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Source Node</TableHead>
-                  <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Entity</TableHead>
+                  <TableHead className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('errorDashboard.table.temporalStamp')}</TableHead>
+                  <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('filters.severity')}</TableHead>
+                  <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('errorDashboard.table.exceptionMessage')}</TableHead>
+                  <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('errorDashboard.table.sourceNode')}</TableHead>
+                  <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('errorDashboard.table.entity')}</TableHead>
                   <TableHead className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic"></TableHead>
                 </TableRow>
               </TableHeader>
@@ -408,7 +409,7 @@ export function ErrorDashboard({ locale = 'th' }: ErrorDashboardProps) {
                       <TableCell className="px-10 py-8 text-right">
                         <Button variant="outline" size="sm" className="h-10 rounded-xl border-white/10 bg-white/5 text-[9px] font-black uppercase tracking-widest italic hover:bg-white hover:text-[#020617] transition-all" onClick={() => setSelectedLog(log)}>
                           <Eye className="mr-2 h-3.5 w-3.5" />
-                          {t.table.viewDetails.toUpperCase()}
+                          {t('table.viewDetails').toUpperCase()}
                         </Button>
                       </TableCell>
                     </motion.tr>
@@ -441,10 +442,10 @@ export function ErrorDashboard({ locale = 'th' }: ErrorDashboardProps) {
                           selectedLog.severity === 'error' ? 'bg-red-500/10 text-red-400' : 
                           selectedLog.severity === 'warning' ? 'bg-yellow-500/10 text-yellow-400' : 'bg-blue-500/10 text-blue-400'
                         )}>
-                          {selectedLog.severity.toUpperCase()}_PROTOCOL
+                          {t(`filters.${selectedLog.severity}`).toUpperCase()}_PROTOCOL
                         </Badge>
                       </div>
-                      <CardTitle className="text-4xl font-black text-white italic tracking-tighter">{t.details.title.toUpperCase()}</CardTitle>
+                      <CardTitle className="text-4xl font-black text-white italic tracking-tighter">{t('details.title').toUpperCase()}</CardTitle>
                       <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">TEMPORAL_STAMP: {formatDate(selectedLog.created_at)}</p>
                     </div>
                     <Button variant="ghost" size="icon" className="h-14 w-14 rounded-2xl hover:bg-white/5 text-slate-500" onClick={() => setSelectedLog(null)}>
@@ -456,7 +457,7 @@ export function ErrorDashboard({ locale = 'th' }: ErrorDashboardProps) {
                   <div className="space-y-4">
                     <div className="flex items-center gap-3">
                       <AlertCircle className="h-4 w-4 text-pink-500" />
-                      <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t.details.message.toUpperCase()}</h4>
+                      <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('details.message').toUpperCase()}</h4>
                     </div>
                     <div className="p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/5 shadow-inner text-lg font-bold text-white italic leading-relaxed break-words">{selectedLog.error_message}</div>
                   </div>
@@ -465,7 +466,7 @@ export function ErrorDashboard({ locale = 'th' }: ErrorDashboardProps) {
                     <div className="space-y-4">
                       <div className="flex items-center gap-3">
                         <Layers className="h-4 w-4 text-cyan-500" />
-                        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t.details.stack.toUpperCase()}</h4>
+                        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('details.stack').toUpperCase()}</h4>
                       </div>
                       <pre className="p-8 rounded-[2.5rem] bg-[#010409] border border-white/5 text-[11px] font-mono text-slate-400 overflow-x-auto leading-relaxed scrollbar-hide select-all">{selectedLog.error_stack}</pre>
                     </div>
@@ -475,14 +476,14 @@ export function ErrorDashboard({ locale = 'th' }: ErrorDashboardProps) {
                     <div className="space-y-4">
                       <div className="flex items-center gap-3">
                         <Globe className="h-4 w-4 text-blue-500" />
-                        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">SOURCE_VECTOR</h4>
+                        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('errorDashboard.details.sourceVector')}</h4>
                       </div>
                       <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 font-mono text-[10px] text-slate-300 break-all">{selectedLog.url}</div>
                     </div>
                     <div className="space-y-4">
                       <div className="flex items-center gap-3">
                         <Shield className="h-4 w-4 text-emerald-500" />
-                        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">AGENT_UPLINK</h4>
+                        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('errorDashboard.details.agentUplink')}</h4>
                       </div>
                       <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 font-mono text-[10px] text-slate-300 leading-relaxed">{selectedLog.user_agent}</div>
                     </div>
@@ -492,7 +493,7 @@ export function ErrorDashboard({ locale = 'th' }: ErrorDashboardProps) {
                     <div className="space-y-4">
                       <div className="flex items-center gap-3">
                         <FileText className="h-4 w-4 text-purple-500" />
-                        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">DYNAMIC_CONTEXT_METADATA</h4>
+                        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('errorDashboard.details.contextMetadata')}</h4>
                       </div>
                       <pre className="p-8 rounded-[2.5rem] bg-[#010409] border border-white/5 text-[11px] font-mono text-pink-400/80 overflow-x-auto scrollbar-hide select-all">{JSON.stringify(selectedLog.context, null, 2)}</pre>
                     </div>
@@ -500,7 +501,7 @@ export function ErrorDashboard({ locale = 'th' }: ErrorDashboardProps) {
 
                   <div className="pt-8 flex justify-end">
                     <Button variant="outline" className="h-16 px-12 rounded-[2rem] border-white/10 bg-white/5 text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-white hover:text-[#020617] transition-all" onClick={() => setSelectedLog(null)}>
-                      CLOSE_TERMINAL
+                      {t('errorDashboard.details.closeTerminal')}
                     </Button>
                   </div>
                 </CardContent>

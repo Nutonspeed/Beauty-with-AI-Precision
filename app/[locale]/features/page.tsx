@@ -18,6 +18,10 @@ import {
   MessageSquare,
   Camera,
   Cpu,
+  Microscope,
+  Calculator,
+  ShieldCheck,
+  Clock
 } from "lucide-react"
 import { useTranslations } from "next-intl"
 import Link from "next/link"
@@ -79,6 +83,37 @@ export default function FeaturesPage() {
       color: "from-orange-500/10 to-red-500/10",
       iconColor: "text-orange-600",
     },
+  ]
+
+  const supremacyFeatures = [
+    {
+      icon: Microscope,
+      title: t('featuresSupremacy.mdss.title'),
+      desc: t('featuresSupremacy.mdss.desc'),
+      color: "from-cyan-500/10 to-blue-500/10",
+      iconColor: "text-cyan-400"
+    },
+    {
+      icon: Clock,
+      title: t('featuresSupremacy.aging.title'),
+      desc: t('featuresSupremacy.aging.desc'),
+      color: "from-purple-500/10 to-pink-500/10",
+      iconColor: "text-purple-400"
+    },
+    {
+      icon: Calculator,
+      title: t('featuresSupremacy.roi.title'),
+      desc: t('featuresSupremacy.roi.desc'),
+      color: "from-emerald-500/10 to-teal-500/10",
+      iconColor: "text-emerald-400"
+    },
+    {
+      icon: ShieldCheck,
+      title: t('featuresSupremacy.audit.title'),
+      desc: t('featuresSupremacy.audit.desc'),
+      color: "from-pink-500/10 to-rose-500/10",
+      iconColor: "text-pink-400"
+    }
   ]
 
   const additionalFeatures = [
@@ -275,6 +310,54 @@ export default function FeaturesPage() {
                               </p>
                             </div>
                           ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Supremacy Strategic Modules - NEW SECTION */}
+        <section className="py-32 lg:py-48 relative border-b border-white/5 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-purple-500/5 via-transparent to-transparent pointer-events-none" />
+          <div className="container relative z-10">
+            <div className="mx-auto max-w-6xl">
+              <div className="mb-24 text-center space-y-6">
+                <Badge variant="outline" className="px-6 py-2 rounded-full border-pink-500/30 text-pink-400 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.4em] text-[10px] font-black italic shadow-2xl">
+                  ENTERPRISE_SUPREMACY_TIER
+                </Badge>
+                <h2 className="text-4xl md:text-6xl font-black text-white leading-tight italic uppercase">
+                  {t('featuresSupremacy.title')}
+                </h2>
+                <div className="h-1 w-20 bg-pink-500/50 mx-auto rounded-full" />
+                <p className="text-xl text-slate-400 font-light tracking-wide max-w-2xl mx-auto">
+                  {t('featuresSupremacy.subtitle')}
+                </p>
+              </div>
+
+              <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+                {supremacyFeatures.map((feature, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                  >
+                    <Card className="h-full border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2.5rem] overflow-hidden group hover:border-pink-500/30 transition-all duration-700 shadow-2xl relative">
+                      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+                      <CardContent className="p-8 space-y-6">
+                        <div className={`flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${feature.color} border border-white/5 shadow-inner transition-transform duration-700 group-hover:scale-110 group-hover:rotate-3`}>
+                          <feature.icon className={`h-6 w-6 ${feature.iconColor}`} />
+                        </div>
+                        <div className="space-y-3">
+                          <h3 className="text-lg font-black text-white italic tracking-tight group-hover:text-pink-400 transition-colors">{feature.title}</h3>
+                          <p className="text-xs text-slate-500 font-light leading-relaxed italic">
+                            {feature.desc}
+                          </p>
                         </div>
                       </CardContent>
                     </Card>

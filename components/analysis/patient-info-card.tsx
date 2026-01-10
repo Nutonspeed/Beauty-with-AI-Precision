@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Label } from '@/components/ui/label'
@@ -16,20 +17,6 @@ interface PatientInfoCardProps {
   className?: string
 }
 
-const SKIN_TYPE_LABELS: Record<string, { th: string; en: string }> = {
-  dry: { th: 'ผิวแห้ง', en: 'Dry' },
-  oily: { th: 'ผิวมัน', en: 'Oily' },
-  combination: { th: 'ผิวผสม', en: 'Combination' },
-  normal: { th: 'ผิวปกติ', en: 'Normal' },
-  sensitive: { th: 'ผิวบอบบาง', en: 'Sensitive' },
-}
-
-const GENDER_LABELS: Record<string, { th: string; en: string }> = {
-  male: { th: 'ชาย', en: 'Male' },
-  female: { th: 'หญิง', en: 'Female' },
-  other: { th: 'อื่นๆ', en: 'Other' },
-}
-
 export function PatientInfoCard({
   patientInfo,
   analysisDate,
@@ -37,6 +24,7 @@ export function PatientInfoCard({
   locale = 'en',
   className = '',
 }: PatientInfoCardProps) {
+  const t = useTranslations('patientInfoCard');
   const dateLocale = locale === 'th' ? th : enUS
 
   return (
@@ -45,11 +33,11 @@ export function PatientInfoCard({
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <User className="h-5 w-5" />
-            {locale === 'th' ? 'ข้อมูลผู้ป่วย' : 'Patient Information'}
+            {t('title')}
           </CardTitle>
           {isBaseline && (
             <Badge variant="secondary">
-              {locale === 'th' ? 'การวิเคราะห์ฐาน' : 'Baseline Analysis'}
+              {t('baselineAnalysis')}
             </Badge>
           )}
         </div>
@@ -59,7 +47,7 @@ export function PatientInfoCard({
           {/* Name */}
           <div className="space-y-1">
             <Label className="text-xs text-muted-foreground">
-              {locale === 'th' ? 'ชื่อ-นามสกุล' : 'Full Name'}
+              {t('fullName')}
             </Label>
             <p className="font-semibold">{patientInfo.name}</p>
           </div>
@@ -68,10 +56,10 @@ export function PatientInfoCard({
           {patientInfo.age && (
             <div className="space-y-1">
               <Label className="text-xs text-muted-foreground">
-                {locale === 'th' ? 'อายุ' : 'Age'}
+                {t('age')}
               </Label>
               <p className="font-semibold">
-                {patientInfo.age} {locale === 'th' ? 'ปี' : 'years'}
+                {patientInfo.age} {t('years')}
               </p>
             </div>
           )}
@@ -80,10 +68,10 @@ export function PatientInfoCard({
           {patientInfo.gender && (
             <div className="space-y-1">
               <Label className="text-xs text-muted-foreground">
-                {locale === 'th' ? 'เพศ' : 'Gender'}
+                {t('gender')}
               </Label>
               <p className="font-semibold">
-                {GENDER_LABELS[patientInfo.gender]?.[locale] || patientInfo.gender}
+                {t(patientInfo.gender as any)}
               </p>
             </div>
           )}
@@ -93,10 +81,10 @@ export function PatientInfoCard({
             <div className="space-y-1">
               <Label className="text-xs text-muted-foreground flex items-center gap-1">
                 <Droplet className="h-3 w-3" />
-                {locale === 'th' ? 'ประเภทผิว' : 'Skin Type'}
+                {t('skinType')}
               </Label>
               <Badge variant="outline" className="font-semibold">
-                {SKIN_TYPE_LABELS[patientInfo.skinType]?.[locale] || patientInfo.skinType}
+                {t(patientInfo.skinType as any)}
               </Badge>
             </div>
           )}
@@ -105,7 +93,7 @@ export function PatientInfoCard({
           <div className="space-y-1">
             <Label className="text-xs text-muted-foreground flex items-center gap-1">
               <Calendar className="h-3 w-3" />
-              {locale === 'th' ? 'วันที่วิเคราะห์' : 'Analysis Date'}
+              {t('analysisDate')}
             </Label>
             <p className="font-semibold">
               {format(new Date(analysisDate), 'PPP', { locale: dateLocale })}
@@ -117,7 +105,7 @@ export function PatientInfoCard({
             <div className="col-span-full space-y-2">
               <Label className="text-xs text-muted-foreground flex items-center gap-1">
                 <AlertCircle className="h-3 w-3" />
-                {locale === 'th' ? 'ประวัติทางการแพทย์' : 'Medical History'}
+                {t('medicalHistory')}
               </Label>
               <div className="flex flex-wrap gap-2">
                 {patientInfo.medicalHistory.map((item) => (
@@ -134,7 +122,7 @@ export function PatientInfoCard({
             <div className="col-span-full space-y-2">
               <Label className="text-xs text-muted-foreground flex items-center gap-1">
                 <AlertCircle className="h-3 w-3 text-destructive" />
-                {locale === 'th' ? 'อาการแพ้' : 'Allergies'}
+                {t('allergies')}
               </Label>
               <div className="flex flex-wrap gap-2">
                 {patientInfo.allergies.map((item) => (
@@ -150,7 +138,7 @@ export function PatientInfoCard({
           {patientInfo.currentMedications && patientInfo.currentMedications.length > 0 && (
             <div className="col-span-full space-y-2">
               <Label className="text-xs text-muted-foreground">
-                {locale === 'th' ? 'ยาที่ใช้อยู่' : 'Current Medications'}
+                {t('currentMedications')}
               </Label>
               <div className="flex flex-wrap gap-2">
                 {patientInfo.currentMedications.map((item) => (
@@ -166,7 +154,7 @@ export function PatientInfoCard({
           {patientInfo.notes && (
             <div className="col-span-full space-y-1">
               <Label className="text-xs text-muted-foreground">
-                {locale === 'th' ? 'หมายเหตุ' : 'Notes'}
+                {t('notes')}
               </Label>
               <p className="text-sm text-muted-foreground whitespace-pre-wrap">
                 {patientInfo.notes}

@@ -20,6 +20,7 @@ import { useLocalizePath } from "@/lib/i18n/locale-link"
 import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { BioAdaptiveScheduler } from "@/components/booking/bio-adaptive-scheduler"
 
 export default function BookingPage() {
   const t = useTranslations()
@@ -310,33 +311,11 @@ export default function BookingPage() {
                     </CardContent>
                   </Card>
 
-                  <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative">
-                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent" />
-                    <CardHeader className="p-10 pb-6">
-                      <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('booking.selectTime')}</CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-10 pt-0">
-                      <div className="grid grid-cols-3 gap-3">
-                        {timeSlots.map((time) => (
-                          <motion.button
-                            key={time}
-                            type="button"
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            onClick={() => setSelectedTime(time)}
-                            className={cn(
-                              "h-12 rounded-xl text-[10px] font-black uppercase tracking-[0.1em] transition-all duration-500 border italic",
-                              selectedTime === time 
-                                ? "bg-pink-600 border-pink-500 text-white shadow-2xl shadow-pink-600/40" 
-                                : "bg-white/[0.02] border-white/5 text-slate-500 hover:text-slate-300 hover:border-white/10"
-                            )}
-                          >
-                            {time}
-                          </motion.button>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
+                  <BioAdaptiveScheduler 
+                    selectedDate={date} 
+                    onTimeSelect={setSelectedTime} 
+                    selectedTime={selectedTime} 
+                  />
                 </motion.div>
 
                 {/* Patient Information Interface */}

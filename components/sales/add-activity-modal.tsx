@@ -144,26 +144,26 @@ export function AddActivityModal({ open, onClose, onSuccess, leadId, activityTyp
             </div>
 
             {/* Scheduled At (optional) */}
-            <div className="grid gap-2">
-              <Label htmlFor="scheduled_at">{t('salesLeadDetail.followUpDate')} ({t('common.optional')})</Label>
-              <Input
-                id="scheduled_at"
-                type="datetime-local"
-                value={formData.scheduled_at}
-                onChange={(e) => setFormData(prev => ({ ...prev, scheduled_at: e.target.value }))}
-              />
-            </div>
+          <div className="grid gap-2">
+            <Label htmlFor="scheduled_at">{t('salesLeadDetail.followUpDate')} ({t('common.optional')})</Label>
+            <Input
+              id="scheduled_at"
+              type="datetime-local"
+              value={formData.scheduled_at}
+              onChange={(e) => setFormData(prev => ({ ...prev, scheduled_at: e.target.value }))}
+            />
           </div>
+        </div>
 
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose} disabled={loading}>
-              {t('common.cancel')}
-            </Button>
-            <Button type="submit" disabled={loading}>
-              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {t('common.save')}
-            </Button>
-          </DialogFooter>
+        <DialogFooter>
+          <Button type="button" variant="outline" onClick={onClose} disabled={loading}>
+            {t('common.cancel')}
+          </Button>
+          <Button type="submit" disabled={loading}>
+            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {t('common.save')}
+          </Button>
+        </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>

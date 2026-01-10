@@ -13,6 +13,7 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
+import { useTranslations } from 'next-intl'
 import { useAnalysisProgress, formatTimeElapsed, getEstimatedTimeRemaining } from '@/hooks/useAnalysisProgress'
 
 export interface AnalysisProgressIndicatorProps {
@@ -30,6 +31,7 @@ export function AnalysisProgressIndicator({
   showDescription = true,
   className = '',
 }: AnalysisProgressIndicatorProps) {
+  const t = useTranslations('analysis')
   const {
     progress,
     stage,
@@ -44,6 +46,8 @@ export function AnalysisProgressIndicator({
   })
 
   const timeRemaining = getEstimatedTimeRemaining(progress, timeElapsed)
+  const formattedTimeRemaining = formatTimeElapsed(timeRemaining)
+  const formattedTimeElapsed = formatTimeElapsed(timeElapsed)
 
   return (
     <div className={`w-full max-w-md mx-auto space-y-4 ${className}`}>
@@ -131,8 +135,8 @@ export function AnalysisProgressIndicator({
             {showTimeEstimate && !isComplete && (
               <span className="text-gray-600 dark:text-gray-400">
                 {progress > 0 && timeRemaining > 0
-                  ? `ประมาณ ${formatTimeElapsed(timeRemaining)} เหลืออยู่`
-                  : 'กำลังคำนวณ...'}
+                  ? t('estimatedTimeRemaining', { time: formattedTimeRemaining })
+                  : t('calculating')}
               </span>
             )}
             
@@ -142,7 +146,7 @@ export function AnalysisProgressIndicator({
                 animate={{ scale: 1 }}
                 className="text-green-600 dark:text-green-400 font-medium"
               >
-                เสร็จสิ้นใน {formatTimeElapsed(timeElapsed)}
+                {t('completedIn', { time: formattedTimeElapsed })}
               </motion.span>
             )}
           </div>
@@ -158,7 +162,7 @@ export function AnalysisProgressIndicator({
           className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4"
         >
           <p className="text-sm text-blue-800 dark:text-blue-200">
-            💡 <strong>คุณรู้หรือไม่?</strong> ระบบใช้ AI 3 ตัวร่วมกันวิเคราะห์ผิวของคุณเพื่อความแม่นยำสูงสุด
+            💡 <strong>{t('didYouKnow')}</strong> {t('aiFact')}
           </p>
         </motion.div>
       )}
@@ -174,10 +178,10 @@ export function AnalysisProgressIndicator({
           >
             <div className="text-4xl mb-2">🎉</div>
             <p className="text-green-800 dark:text-green-200 font-medium">
-              การวิเคราะห์เสร็จสมบูรณ์!
+              {t('analysisComplete')}
             </p>
             <p className="text-sm text-green-700 dark:text-green-300 mt-1">
-              ผลลัพธ์พร้อมแสดงแล้ว
+              {t('resultsReady')}
             </p>
           </motion.div>
         )}

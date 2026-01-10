@@ -5,6 +5,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { Calendar } from '@/components/ui/calendar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -28,20 +29,6 @@ interface BookingFormProps {
   isLoading?: boolean;
 }
 
-const treatmentOptions = [
-  { value: 'botox', label: 'Botox - โบท็อกซ์', price: 15000 },
-  { value: 'filler', label: 'Filler - ฟิลเลอร์', price: 20000 },
-  { value: 'laser', label: 'Laser - เลเซอร์', price: 12000 },
-  { value: 'chemical_peel', label: 'Chemical Peel - ปอกเซลล์', price: 8000 },
-  { value: 'microneedling', label: 'Microneedling - ไมโครนีดลิ่ง', price: 6000 },
-  { value: 'hydrafacial', label: 'Hydrafacial - ไฮดร้าเฟเชียล', price: 5000 },
-  { value: 'led_therapy', label: 'LED Therapy - แอลอีดี', price: 3000 },
-  { value: 'mesotherapy', label: 'Mesotherapy - เมโสเธอราพี', price: 10000 },
-  { value: 'thread_lift', label: 'Thread Lift - ไหม', price: 25000 },
-  { value: 'prp', label: 'PRP - พีอาร์พี', price: 18000 },
-  { value: 'consultation', label: 'Consultation - ปรึกษาหมอ', price: 1500 },
-];
-
 const doctorOptions = [
   { value: 'dr001', label: 'พญ. สมหญิง ใจดี' },
   { value: 'dr002', label: 'นพ. วิทย์ มีสุข' },
@@ -49,7 +36,29 @@ const doctorOptions = [
 ];
 
 export function BookingForm({ onSubmit, availableSlots, onDateChange, isLoading }: BookingFormProps) {
+  const t = useTranslations();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+
+  const treatmentOptions = [
+    { value: 'botox', label: t('salesPresentations.treatments.botox.name'), price: 15000 },
+    { value: 'filler', label: t('salesPresentations.treatments.filler.name'), price: 20000 },
+    { value: 'laser', label: t('salesPresentations.treatments.laser.name'), price: 12000 },
+    { value: 'chemical_peel', label: t('salesPresentations.treatments.peel.name'), price: 8000 },
+    { value: 'microneedling', label: t('salesPresentations.treatments.microneedling.name'), price: 6000 },
+    { value: 'hydrafacial', label: t('salesPresentations.treatments.hydrafacial.name'), price: 5000 },
+    { value: 'led_therapy', label: 'LED Therapy', price: 3000 },
+    { value: 'mesotherapy', label: 'Mesotherapy', price: 10000 },
+    { value: 'thread_lift', label: 'Thread Lift', price: 25000 },
+    { value: 'prp', label: 'PRP', price: 18000 },
+    { value: 'consultation', label: t('customerNotes.types.call'), price: 1500 },
+  ];
+
+  const doctorOptions = [
+    { value: 'dr001', label: t('predictiveAnalytics.mock.name1') },
+    { value: 'dr002', label: t('predictiveAnalytics.mock.name2') },
+    { value: 'dr003', label: t('predictiveAnalytics.mock.name1') }, // Placeholder
+  ];
+
   const [formData, setFormData] = useState({
     patientName: '',
     patientEmail: '',
@@ -116,20 +125,20 @@ export function BookingForm({ onSubmit, availableSlots, onDateChange, isLoading 
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <CalendarIcon className="w-5 h-5" />
-              เลือกวันที่และเวลา
+              {t('bookingForm.selectDateTime')}
             </CardTitle>
-            <CardDescription>เลือกวันที่และช่วงเวลาที่สะดวก</CardDescription>
+            <CardDescription>{t('bookingForm.selectDateTimeDesc')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Doctor Selection */}
             <div className="space-y-2">
-              <Label>เลือกหมอ</Label>
+              <Label>{t('bookingForm.selectDoctor')}</Label>
               <Select
                 value={formData.doctorId}
                 onValueChange={value => setFormData(prev => ({ ...prev, doctorId: value }))}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="เลือกหมอ" />
+                  <SelectValue placeholder={t('bookingForm.selectDoctor')} />
                 </SelectTrigger>
                 <SelectContent>
                   {doctorOptions.map(doctor => (
@@ -143,18 +152,18 @@ export function BookingForm({ onSubmit, availableSlots, onDateChange, isLoading 
 
             {/* Treatment Selection */}
             <div className="space-y-2">
-              <Label>เลือกทรีทเมนท์</Label>
+              <Label>{t('bookingForm.selectTreatment')}</Label>
               <Select
                 value={formData.treatmentType}
                 onValueChange={value => setFormData(prev => ({ ...prev, treatmentType: value }))}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="เลือกทรีทเมนท์" />
+                  <SelectValue placeholder={t('bookingForm.selectTreatment')} />
                 </SelectTrigger>
                 <SelectContent>
                   {treatmentOptions.map(treatment => (
                     <SelectItem key={treatment.value} value={treatment.value}>
-                      {treatment.label} - {treatment.price.toLocaleString()} บาท
+                      {treatment.label} - {treatment.price.toLocaleString()} {t('common.currency.thb')}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -163,7 +172,7 @@ export function BookingForm({ onSubmit, availableSlots, onDateChange, isLoading 
 
             {/* Calendar */}
             <div className="space-y-2">
-              <Label>เลือกวันที่</Label>
+              <Label>{t('bookingForm.selectDate')}</Label>
               <Calendar
                 mode="single"
                 selected={selectedDate}
@@ -178,7 +187,7 @@ export function BookingForm({ onSubmit, availableSlots, onDateChange, isLoading 
               <div className="space-y-2">
                 <Label className="flex items-center gap-2">
                   <Clock className="w-4 h-4" />
-                  เลือกเวลา
+                  {t('bookingForm.selectTime')}
                 </Label>
                 <div className="grid grid-cols-3 gap-2">
                   {availableSlots.map(slot => (
@@ -191,12 +200,12 @@ export function BookingForm({ onSubmit, availableSlots, onDateChange, isLoading 
                       className="w-full"
                     >
                       {slot.startTime}
-                      {!slot.isAvailable && ' (เต็ม)'}
+                      {!slot.isAvailable && ` (${t('bookingForm.full')})`}
                     </Button>
                   ))}
                 </div>
                 {availableSlots.length === 0 && (
-                  <p className="text-sm text-muted-foreground">กำลังโหลดช่วงเวลา...</p>
+                  <p className="text-sm text-muted-foreground">{t('bookingForm.loadingSlots')}</p>
                 )}
               </div>
             )}
@@ -207,7 +216,7 @@ export function BookingForm({ onSubmit, availableSlots, onDateChange, isLoading 
               disabled={!formData.selectedSlot || !formData.doctorId || !formData.treatmentType}
               className="w-full"
             >
-              ถัดไป
+              {t('common.next')}
             </Button>
           </CardContent>
         </Card>
@@ -219,24 +228,24 @@ export function BookingForm({ onSubmit, availableSlots, onDateChange, isLoading 
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <User className="w-5 h-5" />
-              ข้อมูลผู้จอง
+              {t('bookingForm.patientInfo')}
             </CardTitle>
-            <CardDescription>กรอกข้อมูลของคุณ</CardDescription>
+            <CardDescription>{t('bookingForm.patientInfoDesc')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="patientName">ชื่อ-นามสกุล *</Label>
+              <Label htmlFor="patientName">{t('bookingForm.nameLabel')} *</Label>
               <Input
                 id="patientName"
                 value={formData.patientName}
                 onChange={e => setFormData(prev => ({ ...prev, patientName: e.target.value }))}
-                placeholder="ชื่อ-นามสกุล"
+                placeholder={t('bookingForm.nameLabel')}
                 required
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="patientEmail">อีเมล *</Label>
+              <Label htmlFor="patientEmail">{t('bookingForm.emailLabel')} *</Label>
               <Input
                 id="patientEmail"
                 type="email"
@@ -248,7 +257,7 @@ export function BookingForm({ onSubmit, availableSlots, onDateChange, isLoading 
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="patientPhone">เบอร์โทรศัพท์ *</Label>
+              <Label htmlFor="patientPhone">{t('bookingForm.phoneLabel')} *</Label>
               <Input
                 id="patientPhone"
                 type="tel"
@@ -260,19 +269,19 @@ export function BookingForm({ onSubmit, availableSlots, onDateChange, isLoading 
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="notes">หมายเหตุ (ถ้ามี)</Label>
+              <Label htmlFor="notes">{t('bookingForm.notesLabel')}</Label>
               <Textarea
                 id="notes"
                 value={formData.notes}
                 onChange={e => setFormData(prev => ({ ...prev, notes: e.target.value }))}
-                placeholder="ข้อมูลเพิ่มเติม เช่น อาการแพ้ ยาที่กินอยู่"
+                placeholder={t('bookingForm.notesPlaceholder')}
                 rows={3}
               />
             </div>
 
             <div className="flex gap-2">
               <Button type="button" variant="outline" onClick={() => setStep(1)} className="flex-1">
-                ย้อนกลับ
+                {t('common.previous')}
               </Button>
               <Button
                 type="button"
@@ -280,7 +289,7 @@ export function BookingForm({ onSubmit, availableSlots, onDateChange, isLoading 
                 disabled={!formData.patientName || !formData.patientEmail || !formData.patientPhone}
                 className="flex-1"
               >
-                ถัดไป
+                {t('common.next')}
               </Button>
             </div>
           </CardContent>
@@ -293,28 +302,28 @@ export function BookingForm({ onSubmit, availableSlots, onDateChange, isLoading 
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <CreditCard className="w-5 h-5" />
-              วิธีการชำระเงิน
+              {t('bookingForm.paymentMethod')}
             </CardTitle>
-            <CardDescription>เลือกวิธีการชำระเงิน</CardDescription>
+            <CardDescription>{t('bookingForm.selectPayment')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Booking Summary */}
             <div className="p-4 bg-muted rounded-lg space-y-2">
-              <h3 className="font-semibold">สรุปการจอง</h3>
+              <h3 className="font-semibold">{t('bookingForm.summaryTitle')}</h3>
               <div className="text-sm space-y-1">
-                <p>วันที่: {selectedDate?.toLocaleDateString('th-TH')}</p>
-                <p>เวลา: {selectedSlot?.startTime} - {selectedSlot?.endTime}</p>
-                <p>หมอ: {doctorOptions.find(d => d.value === formData.doctorId)?.label}</p>
-                <p>ทรีทเมนท์: {selectedTreatment?.label}</p>
+                <p>{t('bookingForm.summaryDate')}: {selectedDate?.toLocaleDateString(t('common.locale'))}</p>
+                <p>{t('bookingForm.summaryTime')}: {selectedSlot?.startTime} - {selectedSlot?.endTime}</p>
+                <p>{t('bookingForm.summaryDoctor')}: {doctorOptions.find(d => d.value === formData.doctorId)?.label}</p>
+                <p>{t('bookingForm.summaryTreatment')}: {selectedTreatment?.label}</p>
                 <p className="text-lg font-bold mt-2">
-                  ค่าใช้จ่าย: {selectedTreatment?.price.toLocaleString()} บาท
+                  {t('bookingForm.summaryCost')}: {selectedTreatment?.price.toLocaleString()} {t('common.currency.thb')}
                 </p>
               </div>
             </div>
 
             {/* Payment Method Selection */}
             <div className="space-y-2">
-              <Label>เลือกวิธีชำระเงิน</Label>
+              <Label>{t('bookingForm.paymentMethod')}</Label>
               <Select
                 value={formData.paymentMethod}
                 onValueChange={(value: any) => setFormData(prev => ({ ...prev, paymentMethod: value }))}
@@ -323,24 +332,24 @@ export function BookingForm({ onSubmit, availableSlots, onDateChange, isLoading 
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="promptpay">PromptPay - พร้อมเพย์</SelectItem>
-                  <SelectItem value="credit_card">Credit Card - บัตรเครดิต</SelectItem>
-                  <SelectItem value="cash">Cash - เงินสด (ชำระที่คลินิก)</SelectItem>
+                  <SelectItem value="promptpay">PromptPay</SelectItem>
+                  <SelectItem value="credit_card">Credit Card</SelectItem>
+                  <SelectItem value="cash">Cash ({t('common.status.completed')})</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="flex gap-2">
               <Button type="button" variant="outline" onClick={() => setStep(2)} className="flex-1">
-                ย้อนกลับ
+                {t('common.previous')}
               </Button>
               <Button type="submit" disabled={isLoading} className="flex-1">
                 {isLoading ? (
-                  'กำลังจอง...'
+                  t('bookingForm.bookingInProgress')
                 ) : (
                   <>
                     <CheckCircle className="w-4 h-4 mr-2" />
-                    ยืนยันการจอง
+                    {t('bookingForm.confirmBooking')}
                   </>
                 )}
               </Button>

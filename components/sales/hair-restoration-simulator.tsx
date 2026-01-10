@@ -29,6 +29,7 @@ interface HairRestorationProps {
   onExport?: (imageData: Blob) => void;
   onGenerateProposal?: (treatment: any) => void;
   className?: string;
+  isEnterprise?: boolean;
 }
 
 export function HairRestorationSimulator({
@@ -36,6 +37,7 @@ export function HairRestorationSimulator({
   onExport,
   onGenerateProposal,
   className = "",
+  isEnterprise = true,
 }: HairRestorationProps) {
   const t = useTranslations();
   const locale = useLocale();
@@ -156,9 +158,11 @@ export function HairRestorationSimulator({
               <p className="text-sm text-gray-400">{t("hairRestorationSimulator.subtitle")}</p>
             </div>
           </div>
-          <Badge variant="outline" className="border-emerald-500/50 text-emerald-400">
-            AI Powered
-          </Badge>
+          {isEnterprise && (
+            <Badge className="bg-emerald-600 text-white border-none px-4 py-1 text-[9px] font-black tracking-widest uppercase italic">
+              {t('hairRestorationSimulator.aiPowered')}
+            </Badge>
+          )}
         </div>
       </CardHeader>
 
@@ -294,7 +298,7 @@ export function HairRestorationSimulator({
         <div className="p-4 rounded-xl bg-gradient-to-r from-emerald-600/20 to-teal-600/20 border border-emerald-500/30">
           <div className="flex items-center justify-between mb-2">
             <span className="text-gray-300">{t("hairRestorationSimulator.grafts")}</span>
-            <span className="text-white font-bold">{estimatedGrafts.toLocaleString()} grafts</span>
+            <span className="text-white font-bold">{t('hairRestorationSimulator.graftsCount', { count: estimatedGrafts.toLocaleString() })}</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-gray-300">{t("bodyContouringSimulator.estimatedCost")}</span>

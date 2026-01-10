@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useTranslations } from "next-intl"
 import { 
   TrendingUp, 
   Calendar, 
@@ -24,73 +25,12 @@ interface SkinFuturePredictionProps {
   className?: string
 }
 
-const translations = {
-  th: {
-    title: "ทำนายสภาพผิวในอนาคต",
-    subtitle: "วิเคราะห์แนวโน้มการเปลี่ยนแปลงของผิวใน 1-5 ปี",
-    currentSkinAge: "อายุผิวปัจจุบัน",
-    biologicalAge: "อายุจริง",
-    skinAgeGap: "ส่วนต่าง",
-    yearsOlder: "ปี (ผิวแก่กว่าจริง)",
-    yearsYounger: "ปี (ผิวอ่อนกว่าจริง)",
-    year: "ปี",
-    year1: "1 ปีข้างหน้า",
-    year3: "3 ปีข้างหน้า", 
-    year5: "5 ปีข้างหน้า",
-    predictedAge: "อายุผิวที่คาดการณ์",
-    riskLevel: "ระดับความเสี่ยง",
-    low: "ต่ำ",
-    moderate: "ปานกลาง",
-    high: "สูง",
-    concerns: "ปัญหาที่คาดว่าจะเกิด",
-    wrinkles: "ริ้วรอย",
-    spots: "จุดด่างดำ",
-    pores: "รูขุมขน",
-    elasticity: "ความยืดหยุ่น",
-    hydration: "ความชุ่มชื้น",
-    uvDamage: "ความเสียหายจาก UV",
-    agingFactors: "ปัจจัยที่ทำให้ผิวแก่",
-    recommendations: "คำแนะนำส่วนตัว",
-    preventionTips: "วิธีป้องกัน",
-    impact: "ผลกระทบ"
-  },
-  en: {
-    title: "Future Skin Prediction",
-    subtitle: "Analyze skin changes over 1-5 years",
-    currentSkinAge: "Current Skin Age",
-    biologicalAge: "Biological Age",
-    skinAgeGap: "Gap",
-    yearsOlder: "years (skin older than actual)",
-    yearsYounger: "years (skin younger than actual)",
-    year: "Year",
-    year1: "In 1 Year",
-    year3: "In 3 Years",
-    year5: "In 5 Years",
-    predictedAge: "Predicted Skin Age",
-    riskLevel: "Risk Level",
-    low: "Low",
-    moderate: "Moderate",
-    high: "High",
-    concerns: "Predicted Concerns",
-    wrinkles: "Wrinkles",
-    spots: "Dark Spots",
-    pores: "Pores",
-    elasticity: "Elasticity",
-    hydration: "Hydration",
-    uvDamage: "UV Damage",
-    agingFactors: "Aging Factors",
-    recommendations: "Personalized Recommendations",
-    preventionTips: "Prevention Tips",
-    impact: "Impact"
-  }
-}
-
 export function SkinFuturePrediction({ 
   prediction, 
-  locale = 'th',
+  locale: _locale = 'th',
   className = ''
 }: SkinFuturePredictionProps) {
-  const t = translations[locale]
+  const t = useTranslations('skinFuturePrediction')
   const [selectedYear, setSelectedYear] = useState<'year1' | 'year3' | 'year5'>('year1')
 
   const yearPrediction = prediction.futureCondition[selectedYear]
@@ -129,8 +69,8 @@ export function SkinFuturePrediction({
     <div className={`space-y-6 ${className}`}>
       {/* Header */}
       <div className="text-center">
-        <h2 className="text-2xl font-bold mb-2">{t.title}</h2>
-        <p className="text-muted-foreground">{t.subtitle}</p>
+        <h2 className="text-2xl font-bold mb-2">{t('title')}</h2>
+        <p className="text-muted-foreground">{t('subtitle')}</p>
       </div>
 
       {/* Skin Age Summary */}
@@ -141,20 +81,20 @@ export function SkinFuturePrediction({
               <div className="text-4xl font-bold text-primary">
                 {prediction.currentSkinAge}
               </div>
-              <div className="text-sm text-muted-foreground">{t.currentSkinAge}</div>
+              <div className="text-sm text-muted-foreground">{t('currentSkinAge')}</div>
             </div>
             <div>
               <div className="text-4xl font-bold">
                 {prediction.biologicalAge}
               </div>
-              <div className="text-sm text-muted-foreground">{t.biologicalAge}</div>
+              <div className="text-sm text-muted-foreground">{t('biologicalAge')}</div>
             </div>
             <div>
               <div className={`text-4xl font-bold ${prediction.skinAgeGap > 0 ? 'text-red-500' : 'text-emerald-500'}`}>
                 {prediction.skinAgeGap > 0 ? '+' : ''}{prediction.skinAgeGap}
               </div>
               <div className="text-sm text-muted-foreground">
-                {prediction.skinAgeGap > 0 ? t.yearsOlder : t.yearsYounger}
+                {prediction.skinAgeGap > 0 ? t('yearsOlder') : t('yearsYounger')}
               </div>
             </div>
           </div>
@@ -166,15 +106,15 @@ export function SkinFuturePrediction({
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="year1" className="flex items-center gap-2">
             <Calendar className="h-4 w-4" />
-            {t.year1}
+            {t('year1')}
           </TabsTrigger>
           <TabsTrigger value="year3" className="flex items-center gap-2">
             <Calendar className="h-4 w-4" />
-            {t.year3}
+            {t('year3')}
           </TabsTrigger>
           <TabsTrigger value="year5" className="flex items-center gap-2">
             <Calendar className="h-4 w-4" />
-            {t.year5}
+            {t('year5')}
           </TabsTrigger>
         </TabsList>
 
@@ -192,16 +132,16 @@ export function SkinFuturePrediction({
                 <CardContent className="pt-6">
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <div className="text-sm text-muted-foreground">{t.predictedAge}</div>
+                      <div className="text-sm text-muted-foreground">{t('predictedAge')}</div>
                       <div className="text-3xl font-bold">
-                        {yearPrediction.estimatedSkinAge} {t.year}
+                        {yearPrediction.estimatedSkinAge} {t('year')}
                       </div>
                     </div>
                     <Badge className={getRiskColor(yearPrediction.riskLevel)}>
                       {yearPrediction.riskLevel === 'low' && <CheckCircle2 className="h-4 w-4 mr-1" />}
                       {yearPrediction.riskLevel === 'moderate' && <AlertTriangle className="h-4 w-4 mr-1" />}
                       {yearPrediction.riskLevel === 'high' && <AlertTriangle className="h-4 w-4 mr-1" />}
-                      {t.riskLevel}: {t[yearPrediction.riskLevel as keyof typeof t]}
+                      {t('riskLevel')}: {t(yearPrediction.riskLevel as any)}
                     </Badge>
                   </div>
                 </CardContent>
@@ -210,7 +150,7 @@ export function SkinFuturePrediction({
               {/* Predicted Concerns */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">{t.concerns}</CardTitle>
+                  <CardTitle className="text-lg">{t('concerns')}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {Object.entries(yearPrediction.predictedConcerns).map(([key, value]) => (
@@ -218,7 +158,7 @@ export function SkinFuturePrediction({
                       <div className="flex items-center justify-between text-sm">
                         <span className="flex items-center gap-2">
                           {getConcernIcon(key)}
-                          {t[key as keyof typeof t] || key}
+                          {t(key as any) || key}
                         </span>
                         <span className={value > 60 ? 'text-red-500' : value > 40 ? 'text-amber-500' : 'text-emerald-500'}>
                           {Math.round(value)}%
@@ -237,7 +177,7 @@ export function SkinFuturePrediction({
               {yearPrediction.preventionTips.length > 0 && (
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-lg">{t.preventionTips}</CardTitle>
+                    <CardTitle className="text-lg">{t('preventionTips')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <ul className="space-y-2">
@@ -262,7 +202,7 @@ export function SkinFuturePrediction({
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-amber-500" />
-              {t.agingFactors}
+              {t('agingFactors')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -273,7 +213,7 @@ export function SkinFuturePrediction({
                     <div className="flex items-center gap-2 mb-1">
                       <span className="font-medium">{factor.factor}</span>
                       <Badge variant={getImpactColor(factor.impact) as "default" | "secondary" | "destructive" | "outline"}>
-                        {factor.impact} {t.impact}
+                        {factor.impact} {t('impact')}
                       </Badge>
                       <span className="text-sm text-muted-foreground">
                         ({factor.contribution}%)
@@ -294,7 +234,7 @@ export function SkinFuturePrediction({
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-emerald-500" />
-            {t.recommendations}
+            {t('recommendations')}
           </CardTitle>
         </CardHeader>
         <CardContent>

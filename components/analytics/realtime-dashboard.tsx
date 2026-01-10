@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Badge } from '@/components/ui/badge'
+import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 import { 
   LineChart, 
@@ -79,6 +80,7 @@ interface DashboardMetrics {
 }
 
 export default function RealTimeAnalyticsDashboard() {
+  const t = useTranslations()
   const [metrics, setMetrics] = useState<DashboardMetrics>({
     business: {
       totalUsers: 0,
@@ -255,16 +257,16 @@ export default function RealTimeAnalyticsDashboard() {
         >
           <Badge variant="outline" className="px-4 py-1 rounded-full border-pink-500/30 text-pink-400 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.2em] text-[10px] font-black shadow-2xl shadow-pink-500/10">
             <Zap className="mr-3 h-3.5 w-3.5 animate-pulse" />
-            Live System Telemetry
+            {t('realtimeDashboard.liveTelemetry')}
           </Badge>
           <h1 className="text-5xl md:text-7xl font-bold tracking-tighter text-white leading-[0.9] italic">
             Real-time<br />
-            <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent not-italic">Intelligence</span>
+            <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent not-italic font-black uppercase tracking-tight">{t('realtimeDashboard.realtimeIntelligence')}</span>
           </h1>
           <div className="flex items-center gap-4">
             <div className={`h-2 w-2 rounded-full ${connected ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]' : 'bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.5)]'} animate-pulse`} />
             <p className="text-[10px] uppercase tracking-[0.3em] text-slate-500 font-black italic">
-              {connected ? 'NODE_CONNECTED_NOMINAL' : 'NODE_DISCONNECTED_ALERT'}
+              {connected ? t('realtimeDashboard.nodeConnected') : t('realtimeDashboard.nodeDisconnected')}
             </p>
           </div>
         </motion.div>
@@ -277,11 +279,11 @@ export default function RealTimeAnalyticsDashboard() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-[#020617] border-white/10 rounded-2xl">
-                <SelectItem value="1h" className="text-[10px] font-black uppercase tracking-widest italic">Last Hour</SelectItem>
-                <SelectItem value="6h" className="text-[10px] font-black uppercase tracking-widest italic">Last 6 Hours</SelectItem>
-                <SelectItem value="24h" className="text-[10px] font-black uppercase tracking-widest italic">Last 24 Hours</SelectItem>
-                <SelectItem value="7d" className="text-[10px] font-black uppercase tracking-widest italic">Last 7 Days</SelectItem>
-                <SelectItem value="30d" className="text-[10px] font-black uppercase tracking-widest italic">Last 30 Days</SelectItem>
+                <SelectItem value="1h" className="text-[10px] font-black uppercase tracking-widest italic">{t('realtimeDashboard.periods.1h')}</SelectItem>
+                <SelectItem value="6h" className="text-[10px] font-black uppercase tracking-widest italic">{t('realtimeDashboard.periods.6h')}</SelectItem>
+                <SelectItem value="24h" className="text-[10px] font-black uppercase tracking-widest italic">{t('realtimeDashboard.periods.24h')}</SelectItem>
+                <SelectItem value="7d" className="text-[10px] font-black uppercase tracking-widest italic">{t('realtimeDashboard.periods.7d')}</SelectItem>
+                <SelectItem value="30d" className="text-[10px] font-black uppercase tracking-widest italic">{t('realtimeDashboard.periods.30d')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -295,7 +297,7 @@ export default function RealTimeAnalyticsDashboard() {
             onClick={() => setAutoRefresh(!autoRefresh)}
           >
             <RefreshCw className={cn("w-4 h-4 mr-3", autoRefresh && "animate-spin")} />
-            {autoRefresh ? 'SYNC_ACTIVE' : 'SYNC_PAUSED'}
+            {autoRefresh ? t('realtimeDashboard.syncActive') : t('realtimeDashboard.syncPaused')}
           </Button>
         </div>
       </div>
@@ -303,10 +305,10 @@ export default function RealTimeAnalyticsDashboard() {
       {/* Primary Metrics Grid - Infrastructure Nodes */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
-          { label: 'Total User Registry', val: formatNumber(metrics.business.totalUsers), sub: '+12% Momentum', icon: Users, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-          { label: 'Dermal Syntheses', val: formatNumber(metrics.business.totalAnalyses), sub: '+8% Cycle Load', icon: Activity, color: 'text-pink-400', bg: 'bg-pink-500/10' },
-          { label: 'Financial Inflow', val: formatCurrency(metrics.business.totalRevenue), sub: '+15% Yield', icon: DollarSign, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
-          { label: 'Conversion Yield', val: formatPercentage(metrics.business.conversionRate), sub: '+2% Efficiency', icon: TrendingUp, color: 'text-cyan-400', bg: 'bg-cyan-500/10' }
+          { label: t('realtimeDashboard.totalUserRegistry'), val: formatNumber(metrics.business.totalUsers), sub: t('realtimeDashboard.momentum'), icon: Users, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+          { label: t('realtimeDashboard.dermalSyntheses'), val: formatNumber(metrics.business.totalAnalyses), sub: t('realtimeDashboard.cycleLoad'), icon: Activity, color: 'text-pink-400', bg: 'bg-pink-500/10' },
+          { label: t('realtimeDashboard.financialInflow'), val: formatCurrency(metrics.business.totalRevenue), sub: t('realtimeDashboard.yield'), icon: DollarSign, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+          { label: t('realtimeDashboard.conversionYield'), val: formatPercentage(metrics.business.conversionRate), sub: t('realtimeDashboard.efficiency'), icon: TrendingUp, color: 'text-cyan-400', bg: 'bg-cyan-500/10' }
         ].map((stat, i) => (
           <motion.div
             key={i}
@@ -341,16 +343,16 @@ export default function RealTimeAnalyticsDashboard() {
             <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
               <CardTitle className="text-2xl font-bold text-white tracking-tight italic flex items-center gap-4">
                 <Cpu className="h-6 w-6 text-cyan-400" />
-                System Telemetry
+                {t('realtimeDashboard.systemTelemetry')}
               </CardTitle>
-              <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Infrastructure nominal tracking</CardDescription>
+              <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('realtimeDashboard.infraTracking')}</CardDescription>
             </CardHeader>
             <CardContent className="p-10 lg:p-12 space-y-8">
               {[
-                { label: 'Inflow Latency', val: `${metrics.performance.avgResponseTime}ms`, thresholds: { good: 200, warning: 500 }, icon: Zap },
-                { label: 'Uptime Integrity', val: formatPercentage(metrics.performance.uptime), thresholds: { good: 99, warning: 95 }, icon: Globe },
-                { label: 'Exception Delta', val: formatPercentage(metrics.performance.errorRate), thresholds: { good: 95, warning: 90 }, icon: AlertCircle, reverse: true },
-                { label: 'Cache Hit Yield', val: formatPercentage(metrics.performance.cacheHitRate), thresholds: { good: 80, warning: 60 }, icon: Database }
+                { label: t('realtimeDashboard.latency'), val: `${metrics.performance.avgResponseTime}ms`, thresholds: { good: 200, warning: 500 }, icon: Zap },
+                { label: t('realtimeDashboard.uptime'), val: formatPercentage(metrics.performance.uptime), thresholds: { good: 99, warning: 95 }, icon: Globe },
+                { label: t('realtimeDashboard.exceptionDelta'), val: formatPercentage(metrics.performance.errorRate), thresholds: { good: 95, warning: 90 }, icon: AlertCircle, reverse: true },
+                { label: t('realtimeDashboard.cacheHitYield'), val: formatPercentage(metrics.performance.cacheHitRate), thresholds: { good: 80, warning: 60 }, icon: Database }
               ].map((perf, i) => (
                 <div key={i} className="flex items-center justify-between p-6 rounded-2xl bg-white/[0.02] border border-white/5 group/item hover:border-white/10 transition-all duration-500">
                   <div className="flex items-center gap-6">
@@ -378,17 +380,17 @@ export default function RealTimeAnalyticsDashboard() {
             <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
               <CardTitle className="text-2xl font-bold text-white tracking-tight italic flex items-center gap-4">
                 <Brain className="h-6 w-6 text-purple-400" />
-                AI Service Protocol
+                {t('realtimeDashboard.aiServiceProtocol')}
               </CardTitle>
-              <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Neural architecture performance</CardDescription>
+              <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('realtimeDashboard.neuralPerformance')}</CardDescription>
             </CardHeader>
             <CardContent className="p-10 lg:p-12 space-y-8">
               <div className="grid grid-cols-2 gap-6">
                 {[
-                  { label: 'Total Requests', val: formatNumber(metrics.ai.totalRequests), icon: Activity, color: 'text-purple-400' },
-                  { label: 'Neural Latency', val: `${metrics.ai.avgResponseTime}ms`, icon: Zap, color: 'text-pink-400' },
-                  { label: 'Success Velocity', val: formatPercentage(metrics.ai.successRate), icon: CheckCircle, color: 'text-emerald-400' },
-                  { label: 'Tokens Synthesized', val: formatNumber(metrics.ai.tokensUsed), icon: Fingerprint, color: 'text-cyan-400' }
+                  { label: t('realtimeDashboard.totalRequests'), val: formatNumber(metrics.ai.totalRequests), icon: Activity, color: 'text-purple-400' },
+                  { label: t('realtimeDashboard.neuralLatency'), val: `${metrics.ai.avgResponseTime}ms`, icon: Zap, color: 'text-pink-400' },
+                  { label: t('realtimeDashboard.successVelocity'), val: formatPercentage(metrics.ai.successRate), icon: CheckCircle, color: 'text-emerald-400' },
+                  { label: t('realtimeDashboard.tokensSynthesized'), val: formatNumber(metrics.ai.tokensUsed), icon: Fingerprint, color: 'text-cyan-400' }
                 ].map((ai, i) => (
                   <div key={i} className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 group/ai hover:border-purple-500/30 transition-all duration-500">
                     <ai.icon className={cn("h-5 w-5 mb-4 opacity-40 group-hover/ai:opacity-100 transition-opacity", ai.color)} />
@@ -399,7 +401,7 @@ export default function RealTimeAnalyticsDashboard() {
               </div>
               
               <div className="pt-6 border-t border-white/5">
-                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 mb-6 italic">Neural Node Distribution</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 mb-6 italic">{t('realtimeDashboard.neuralNodeDistribution')}</p>
                 <div className="flex items-center justify-center h-[200px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
@@ -436,16 +438,16 @@ export default function RealTimeAnalyticsDashboard() {
           <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
             <CardTitle className="text-3xl font-bold text-white tracking-tight italic flex items-center gap-4">
               <Activity className="h-8 w-8 text-pink-500" />
-              Live Cycle Monitor
+              {t('realtimeDashboard.liveCycleMonitor')}
             </CardTitle>
           </CardHeader>
           <CardContent className="p-10 lg:p-16">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-12 text-center">
               {[
-                { label: 'Current Users', val: metrics.realTime.currentUsers, color: 'text-blue-400' },
-                { label: 'Active Sessions', val: metrics.realTime.activeSessions, color: 'text-emerald-400' },
-                { label: 'Requests / Sec', val: metrics.realTime.requestsPerSecond, color: 'text-purple-400' },
-                { label: 'System Load', val: `${metrics.realTime.systemLoad}%`, color: 'text-pink-400' }
+                { label: t('realtimeDashboard.currentUsers'), val: metrics.realTime.currentUsers, color: 'text-blue-400' },
+                { label: t('realtimeDashboard.activeSessions'), val: metrics.realTime.activeSessions, color: 'text-emerald-400' },
+                { label: t('realtimeDashboard.requestsPerSec'), val: metrics.realTime.requestsPerSecond, color: 'text-purple-400' },
+                { label: t('realtimeDashboard.systemLoad'), val: `${metrics.realTime.systemLoad}%`, color: 'text-pink-400' }
               ].map((rt, i) => (
                 <div key={i} className="space-y-2 group">
                   <div className={cn("text-5xl font-black italic tracking-tighter transition-all duration-500 group-hover:scale-110", rt.color)}>{rt.val}</div>
@@ -463,7 +465,7 @@ export default function RealTimeAnalyticsDashboard() {
           <TabsList className="bg-white/[0.02] border border-white/5 p-1.5 rounded-2xl h-auto gap-2">
             {['overview', 'business', 'performance', 'ai'].map((tab) => (
               <TabsTrigger key={tab} value={tab} className="rounded-xl px-8 py-3 data-[state=active]:bg-pink-600 data-[state=active]:text-white transition-all font-black uppercase tracking-[0.15em] text-[10px] italic h-full capitalize">
-                {tab}
+                {t(`realtimeDashboard.tabs.${tab}`)}
               </TabsTrigger>
             ))}
           </TabsList>
@@ -476,7 +478,7 @@ export default function RealTimeAnalyticsDashboard() {
                 <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] p-10 lg:p-12 overflow-hidden shadow-2xl relative">
                   <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                   <CardHeader className="px-0 pt-0 pb-10 border-b border-white/5 mb-10">
-                    <CardTitle className="text-xl font-bold text-white italic">User Intensity Curve</CardTitle>
+                    <CardTitle className="text-xl font-bold text-white italic">{t('realtimeDashboard.userIntensityCurve')}</CardTitle>
                   </CardHeader>
                   <ResponsiveContainer width="100%" height={350}>
                     <AreaChart data={historicalData}>
@@ -498,7 +500,7 @@ export default function RealTimeAnalyticsDashboard() {
                 <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] p-10 lg:p-12 overflow-hidden shadow-2xl relative">
                   <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                   <CardHeader className="px-0 pt-0 pb-10 border-b border-white/5 mb-10">
-                    <CardTitle className="text-xl font-bold text-white italic">Temporal Latency Map</CardTitle>
+                    <CardTitle className="text-xl font-bold text-white italic">{t('realtimeDashboard.temporalLatencyMap')}</CardTitle>
                   </CardHeader>
                   <ResponsiveContainer width="100%" height={350}>
                     <LineChart data={historicalData}>

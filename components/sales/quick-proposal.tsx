@@ -66,16 +66,16 @@ export function QuickProposal({ open, onOpenChange, lead, onSent }: QuickProposa
     // แพ็คเกจพื้นฐาน - สำหรับคะแนนดี (>80)
     const basicPackage: TreatmentPackage = {
       id: "basic",
-      name: "Starter Maintenance",
+      name: t('packages.basic.name'),
       price: SUBSCRIPTION_PLANS.starter.price,
       treatments: ["HydraFacial", "LED Therapy", "Vitamin Serum"],
-      description: "บำรุงรักษาผิวขั้นพื้นฐานสำหรับ 1 สาขา",
+      description: t('packages.basic.description'),
       recommended: avgScore > 80,
     }
 
     const premiumPackage: TreatmentPackage = {
       id: "premium",
-      name: "Professional Renewal",
+      name: t('packages.premium.name'),
       price: SUBSCRIPTION_PLANS.professional.price,
       treatments: [
         "HydraFacial",
@@ -83,21 +83,16 @@ export function QuickProposal({ open, onOpenChange, lead, onSent }: QuickProposa
         "Microdermabrasion",
         "RF Skin Tightening",
       ],
-      description: "แพ็คเกจยอดนิยมเพื่อการฟื้นฟูผิวอย่างเต็มรูปแบบ",
+      description: t('packages.premium.description'),
       recommended: avgScore <= 80 && avgScore > 50,
     }
 
     const vipPackage: TreatmentPackage = {
       id: "vip",
-      name: "Enterprise Transformation",
+      name: t('packages.vip.name'),
       price: SUBSCRIPTION_PLANS.enterprise.price,
-      treatments: [
-        "ทุกทรีตเมนต์",
-        "Laser Treatment",
-        "ปรึกษาแพทย์พิเศษ",
-        "Premium Home Care Kit",
-      ],
-      description: "การดูแลระดับสูงสุดสำหรับเครือคลินิกหรือเคสซับซ้อน",
+      treatments: t.raw('packages.vip.treatments') as string[],
+      description: t('packages.vip.description'),
       recommended: avgScore <= 50,
     }
 
@@ -114,26 +109,26 @@ export function QuickProposal({ open, onOpenChange, lead, onSent }: QuickProposa
     return [
       {
         id: "premium",
-        name: "Professional Renewal",
+        name: t('packages.premium.name'),
         price: SUBSCRIPTION_PLANS.professional.price,
         treatments: ["HydraFacial", "Chemical Peel", "Microdermabrasion", "RF Skin Tightening"],
-        description: "แพ็คเกจยอดนิยมเพื่อการฟื้นฟูผิวอย่างเต็มรูปแบบ",
+        description: t('packages.premium.description'),
         recommended: true,
       },
       {
         id: "basic",
-        name: "Starter Maintenance",
+        name: t('packages.basic.name'),
         price: SUBSCRIPTION_PLANS.starter.price,
         treatments: ["HydraFacial", "LED Therapy", "Vitamin Serum"],
-        description: "บำรุงรักษาผิวขั้นพื้นฐาน",
+        description: t('packages.basic.description'),
         recommended: false,
       },
       {
         id: "vip",
-        name: "Enterprise Transformation",
+        name: t('packages.vip.name'),
         price: SUBSCRIPTION_PLANS.enterprise.price,
-        treatments: ["ทุกทรีตเมนต์", "Laser", "ปรึกษาแพทย์พิเศษ", "Premium Home Care Kit"],
-        description: "การดูแลระดับสูงสุด ครบวงจร",
+        treatments: t.raw('packages.vip.treatments') as string[],
+        description: t('packages.vip.description'),
         recommended: false,
       },
     ]

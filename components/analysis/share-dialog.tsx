@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useTranslations } from "next-intl"
 import { 
   Dialog, 
   DialogContent, 
@@ -52,6 +53,7 @@ export function ShareDialog({
   clinicLogoUrl,
   onShareCreated,
 }: ShareDialogProps) {
+  const t = useTranslations('shareDialog');
   const [isLoading, setIsLoading] = useState(false)
   const [shareUrl, setShareUrl] = useState<string | null>(null)
   type ExpiryOption = '7' | '30' | '90' | 'never'
@@ -76,17 +78,17 @@ export function ShareDialog({
 
       if (!response.ok) {
         const error = await response.json()
-        throw new Error(error.message || 'Failed to create share link')
+        throw new Error(error.message || t('loadError'))
       }
 
       const result = await response.json()
       setShareUrl(result.data.share_url)
       onShareCreated?.(result.data.share_url)
       
-      toast.success('Share link created successfully!')
+      toast.success(t('linkCopied'))
     } catch (error) {
       console.error('[ShareDialog] Error creating share link:', error)
-      toast.error(error instanceof Error ? error.message : 'Failed to create share link')
+      toast.error(error instanceof Error ? error.message : t('loadError'))
     } finally {
       setIsLoading(false)
     }
@@ -98,18 +100,18 @@ export function ShareDialog({
     try {
       await navigator.clipboard.writeText(shareUrl)
       setCopied(true)
-      toast.success('Link copied to clipboard!')
+      toast.success(t('linkCopied'))
       
       setTimeout(() => setCopied(false), 2000)
     } catch (error) {
       console.error('[ShareDialog] Error copying link:', error)
-      toast.error('Failed to copy link')
+      toast.error(t('loadError'))
     }
   }
 
   const handleSendEmail = async () => {
     if (!shareUrl || !recipientEmail) {
-      toast.error('Please enter recipient email')
+      toast.error(t('recipientEmail'))
       return
     }
 
@@ -128,16 +130,16 @@ export function ShareDialog({
       })
 
       if (!response.ok) {
-        throw new Error('Failed to send email')
+        throw new Error(t('loadError'))
       }
 
-      toast.success(`Email sent to ${recipientEmail}`)
+      toast.success(t('sendEmail') + ` ${recipientEmail}`)
       setRecipientEmail("")
       setRecipientName("")
       setMessage("")
     } catch (error) {
       console.error('[ShareDialog] Error sending email:', error)
-      toast.error('Failed to send email')
+      toast.error(t('loadError'))
     } finally {
       setIsLoading(false)
     }
@@ -146,7 +148,7 @@ export function ShareDialog({
   const handleShareLine = () => {
     if (!shareUrl) return
 
-    const lineMessage = `รายงานการวิเคราะห์ผิวหน้าจาก ${clinicName}\n${shareUrl}`
+    const lineMessage = t('lineMessage', { name: clinicName }) + `\n${shareUrl}`
     const lineUrl = `https://line.me/R/msg/text/?${encodeURIComponent(lineMessage)}`
     
     window.open(lineUrl, '_blank')
@@ -163,10 +165,10 @@ export function ShareDialog({
   }
 
   const expiryTextMap = {
-    "7": "7 days",
-    "30": "30 days",
-    "90": "90 days",
-    "never": "Never expires"
+    "7": t('expiry7'),
+    "30": t('expiry30'),
+    "90": t('expiry90'),
+    "never": t('expiryNever')
   } as const
 
   const expiryText = expiryTextMap[expiryDays] ?? 'the selected period'
@@ -186,9 +188,9 @@ export function ShareDialog({
               />
             )}
             <div>
-              <DialogTitle className="text-xl">Share Analysis Report</DialogTitle>
+              <DialogTitle className="text-xl">{t('title')}</DialogTitle>
               <DialogDescription>
-                Share this report with patients or colleagues
+                {t('description')}
               </DialogDescription>
             </div>
           </div>
@@ -201,7 +203,7 @@ export function ShareDialog({
               <div>
                 <Label htmlFor="expiry" className="flex items-center gap-2">
                   <Clock className="h-4 w-4" />
-                  Link Expiry
+                  {t('linkExpiry')}
                 </Label>
                 <Select
                   value={expiryDays}
@@ -211,14 +213,14 @@ export function ShareDialog({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="7">7 days (recommended)</SelectItem>
-                    <SelectItem value="30">30 days</SelectItem>
-                    <SelectItem value="90">90 days</SelectItem>
-                    <SelectItem value="never">Never expires</SelectItem>
+                    <SelectItem value="7">{t('expiry7')}</SelectItem>
+                    <SelectItem value="30">{t('expiry30')}</SelectItem>
+                    <SelectItem value="90">{t('expiry90')}</SelectItem>
+                    <SelectItem value="never">{t('expiryNever')}</SelectItem>
                   </SelectContent>
                 </Select>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  The link will expire after {expiryText.toLowerCase()}
+                  {t('expireAfter', { period: expiryText.toLowerCase() })}
                 </p>
               </div>
 
@@ -231,12 +233,12 @@ export function ShareDialog({
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Creating Share Link...
+                    {t('creatingLink')}
                   </>
                 ) : (
                   <>
                     <Share2 className="mr-2 h-4 w-4" />
-                    Create Share Link
+                    {t('createLink')}
                   </>
                 )}
               </Button>
@@ -250,7 +252,7 @@ export function ShareDialog({
               <div className="rounded-lg border bg-muted/50 p-4">
                 <Label className="flex items-center gap-2 mb-2">
                   <LinkIcon className="h-4 w-4" />
-                  Share Link
+                  {t('shareLink')}
                 </Label>
                 <div className="flex gap-2">
                   <Input 
@@ -271,7 +273,7 @@ export function ShareDialog({
                   </Button>
                 </div>
                 <p className="mt-2 text-xs text-muted-foreground">
-                  Anyone with this link can view the report. {expiryText}.
+                  {t('expireAfter', { period: expiryText })}.
                 </p>
               </div>
 
@@ -283,7 +285,7 @@ export function ShareDialog({
                   className="w-full"
                 >
                   <MessageSquare className="mr-2 h-4 w-4 text-green-600" />
-                  Share via Line
+                  {t('shareViaLine')}
                 </Button>
                 <Button
                   onClick={() => setShowQR(!showQR)}
@@ -291,7 +293,7 @@ export function ShareDialog({
                   className="w-full"
                 >
                   <QrCode className="mr-2 h-4 w-4" />
-                  {showQR ? 'Hide' : 'Show'} QR Code
+                  {showQR ? t('hideQR') : t('showQR')}
                 </Button>
               </div>
 
@@ -307,7 +309,7 @@ export function ShareDialog({
                       className="rounded-lg"
                     />
                     <p className="mt-3 text-sm text-muted-foreground">
-                      Scan to view report
+                      {t('scanToView')}
                     </p>
                   </div>
                 </div>
@@ -317,14 +319,14 @@ export function ShareDialog({
               <div className="space-y-3 pt-4 border-t">
                 <Label className="flex items-center gap-2">
                   <Mail className="h-4 w-4" />
-                  Send via Email (Optional)
+                  {t('sendViaEmail')}
                 </Label>
                 
                 <div className="space-y-3">
                   <div>
                     <Input
                       type="email"
-                      placeholder="Recipient email"
+                      placeholder={t('recipientEmail')}
                       value={recipientEmail}
                       onChange={(e) => setRecipientEmail(e.target.value)}
                     />
@@ -333,7 +335,7 @@ export function ShareDialog({
                   <div>
                     <Input
                       type="text"
-                      placeholder="Recipient name (optional)"
+                      placeholder={t('recipientName')}
                       value={recipientName}
                       onChange={(e) => setRecipientName(e.target.value)}
                     />
@@ -341,7 +343,7 @@ export function ShareDialog({
 
                   <div>
                     <Textarea
-                      placeholder="Add a personal message (optional)"
+                      placeholder={t('personalMessage')}
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       rows={3}
@@ -357,12 +359,12 @@ export function ShareDialog({
                     {isLoading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Sending...
+                        {t('sending')}
                       </>
                     ) : (
                       <>
                         <Mail className="mr-2 h-4 w-4" />
-                        Send Email
+                        {t('sendEmail')}
                       </>
                     )}
                   </Button>
@@ -375,14 +377,14 @@ export function ShareDialog({
         {/* Footer */}
         <div className="flex justify-between items-center pt-4 border-t">
           <p className="text-xs text-muted-foreground">
-            Powered by {clinicName}
+            {t('poweredBy', { name: clinicName })}
           </p>
           <Button 
             onClick={handleClose} 
             variant="outline"
           >
             <X className="mr-2 h-4 w-4" />
-            Close
+            {t('close')}
           </Button>
         </div>
       </DialogContent>

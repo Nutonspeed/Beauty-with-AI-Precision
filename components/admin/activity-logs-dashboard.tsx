@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { useTranslations } from 'next-intl';
 import {
   Select,
   SelectContent,
@@ -69,6 +70,7 @@ interface Clinic {
 }
 
 export default function ActivityLogsDashboard() {
+  const t = useTranslations();
   const [activities, setActivities] = useState<ActivityLog[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
   const [clinics, setClinics] = useState<Clinic[]>([]);
@@ -153,10 +155,10 @@ export default function ActivityLogsDashboard() {
       {/* Overview Metrics Grid - Operational Nodes */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
-          { label: 'Total Event Registry', val: stats?.totalActivities || 0, sub: 'Global Activity Nodes', icon: Activity, color: 'text-white', bg: 'bg-white/5' },
-          { label: 'Temporal Cycles (Today)', val: stats?.todayActivities || 0, sub: 'Real-time Throughput', icon: Zap, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-          { label: 'Weekly Delta', val: stats?.weekActivities || 0, sub: '7d Cumulative Flow', icon: TrendingUp, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
-          { label: 'Neural Inferences', val: stats?.byType?.ai_analysis || 0, sub: 'AI Core Processing', icon: Brain, color: 'text-purple-400', bg: 'bg-purple-500/10' }
+          { label: t('activityLogsDashboard.totalEventRegistry'), val: stats?.totalActivities || 0, sub: t('activityLogsDashboard.globalActivityNodes'), icon: Activity, color: 'text-white', bg: 'bg-white/5' },
+          { label: t('activityLogsDashboard.temporalCyclesToday'), val: stats?.todayActivities || 0, sub: t('activityLogsDashboard.realtimeThroughput'), icon: Zap, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+          { label: t('activityLogsDashboard.weeklyDelta'), val: stats?.weekActivities || 0, sub: t('activityLogsDashboard.cumulativeFlow'), icon: TrendingUp, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+          { label: t('activityLogsDashboard.neuralInferences'), val: stats?.byType?.ai_analysis || 0, sub: t('activityLogsDashboard.aiCoreProcessing'), icon: Brain, color: 'text-purple-400', bg: 'bg-purple-500/10' }
         ].map((node, i) => (
           <Card key={i} className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2rem] hover:bg-white/[0.03] transition-all duration-500 group shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
@@ -180,17 +182,17 @@ export default function ActivityLogsDashboard() {
         <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
           <CardTitle className="text-2xl font-bold text-white tracking-tight italic flex items-center gap-4">
             <Layers className="h-6 w-6 text-cyan-400" />
-            Event Sector Matrix
+            {t('activityLogsDashboard.eventSectorMatrix')}
           </CardTitle>
-          <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Operational breakdown of system-wide identity interactions</CardDescription>
+          <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('activityLogsDashboard.sectorBreakdownDesc')}</CardDescription>
         </CardHeader>
         <CardContent className="p-10 lg:p-12">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
-              { type: 'ai_analysis', label: 'Neural Inferences', icon: Brain, color: 'purple', val: stats?.byType?.ai_analysis || 0 },
-              { type: 'booking', label: 'Clinical Cycles', icon: Calendar, color: 'blue', val: stats?.byType?.booking || 0 },
-              { type: 'user', label: 'Entity Registry', icon: Users, color: 'green', val: stats?.byType?.user || 0 },
-              { type: 'clinic', label: 'Node Allocation', icon: Building2, color: 'orange', val: stats?.byType?.clinic || 0 },
+              { type: 'ai_analysis', label: t('activityLogsDashboard.neuralInferences'), icon: Brain, color: 'purple', val: stats?.byType?.ai_analysis || 0 },
+              { type: 'booking', label: t('activityLogsDashboard.clinicalCycles'), icon: Calendar, color: 'blue', val: stats?.byType?.booking || 0 },
+              { type: 'user', label: t('activityLogsDashboard.entityRegistry'), icon: Users, color: 'green', val: stats?.byType?.user || 0 },
+              { type: 'clinic', label: t('activityLogsDashboard.nodeAllocation'), icon: Building2, color: 'orange', val: stats?.byType?.clinic || 0 },
             ].map(({ type, label, icon: Icon, color, val }) => (
               <div key={type} className="flex flex-col items-center gap-4 p-6 rounded-[2rem] bg-white/[0.02] border border-white/5 hover:border-cyan-500/20 transition-all duration-500 group/sector">
                 <div className={cn("p-3 rounded-2xl border border-white/5 shadow-inner transition-transform duration-700 group-hover/sector:scale-110", `bg-${color}-500/10`)}>
@@ -212,15 +214,15 @@ export default function ActivityLogsDashboard() {
         <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
           <div className="flex flex-col lg:flex-row gap-8 items-center justify-between">
             <div className="space-y-2">
-              <CardTitle className="text-3xl font-bold text-white tracking-tight italic">Temporal Log Stream</CardTitle>
-              <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Global immutable activity ledger</CardDescription>
+              <CardTitle className="text-3xl font-bold text-white tracking-tight italic">{t('activityLogsDashboard.temporalLogStream')}</CardTitle>
+              <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{t('activityLogsDashboard.immutableLedgerDesc')}</CardDescription>
             </div>
             
             <div className="flex gap-3 flex-wrap justify-center">
               <div className="relative group">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-600 group-focus-within:text-pink-500 transition-colors" />
                 <Input
-                  placeholder="Search Vector Stream..."
+                  placeholder={t('activityLogsDashboard.searchVectorStream')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="h-14 pl-12 pr-6 rounded-2xl border-white/5 bg-white/[0.03] text-white placeholder:text-slate-700 focus:border-pink-500/30 focus:ring-pink-500/20 transition-all text-sm font-bold italic w-[240px]"
@@ -229,23 +231,23 @@ export default function ActivityLogsDashboard() {
 
               <Select value={typeFilter} onValueChange={(v) => { setTypeFilter(v); setOffset(0); }}>
                 <SelectTrigger className="h-14 w-[160px] rounded-2xl border border-white/5 bg-white/[0.03] px-6 text-[10px] font-black uppercase tracking-widest text-white focus:ring-pink-500/20 appearance-none transition-all italic">
-                  <SelectValue placeholder="Filter Protocol" />
+                  <SelectValue placeholder={t('activityLogsDashboard.filterProtocol')} />
                 </SelectTrigger>
                 <SelectContent className="bg-[#020617] border-white/10 rounded-2xl">
-                  <SelectItem value="all" className="text-[10px] font-black uppercase tracking-widest italic">GLOBAL_STREAM</SelectItem>
-                  <SelectItem value="ai_analysis" className="text-[10px] font-black uppercase tracking-widest italic">NEURAL_INFERENCE</SelectItem>
-                  <SelectItem value="booking" className="text-[10px] font-black uppercase tracking-widest italic">CLINICAL_CYCLE</SelectItem>
-                  <SelectItem value="user" className="text-[10px] font-black uppercase tracking-widest italic">IDENTITY_AUTH</SelectItem>
-                  <SelectItem value="clinic" className="text-[10px] font-black uppercase tracking-widest italic">NODE_ALLOCATION</SelectItem>
+                  <SelectItem value="all" className="text-[10px] font-black uppercase tracking-widest italic">{t('activityLogsDashboard.globalStream')}</SelectItem>
+                  <SelectItem value="ai_analysis" className="text-[10px] font-black uppercase tracking-widest italic">{t('activityLogsDashboard.neuralInference')}</SelectItem>
+                  <SelectItem value="booking" className="text-[10px] font-black uppercase tracking-widest italic">{t('activityLogsDashboard.clinicalCycle')}</SelectItem>
+                  <SelectItem value="user" className="text-[10px] font-black uppercase tracking-widest italic">{t('activityLogsDashboard.identityAuth')}</SelectItem>
+                  <SelectItem value="clinic" className="text-[10px] font-black uppercase tracking-widest italic">{t('activityLogsDashboard.nodeAllocation')}</SelectItem>
                 </SelectContent>
               </Select>
 
               <Select value={clinicFilter} onValueChange={(v) => { setClinicFilter(v); setOffset(0); }}>
                 <SelectTrigger className="h-14 w-[180px] rounded-2xl border border-white/5 bg-white/[0.03] px-6 text-[10px] font-black uppercase tracking-widest text-white focus:ring-pink-500/20 appearance-none transition-all italic">
-                  <SelectValue placeholder="Origin Node" />
+                  <SelectValue placeholder={t('activityLogsDashboard.originNode')} />
                 </SelectTrigger>
                 <SelectContent className="bg-[#020617] border-white/10 rounded-2xl max-h-[300px]">
-                  <SelectItem value="all" className="text-[10px] font-black uppercase tracking-widest italic">ANY_SOURCE</SelectItem>
+                  <SelectItem value="all" className="text-[10px] font-black uppercase tracking-widest italic">{t('activityLogsDashboard.anySource')}</SelectItem>
                   {clinics.map((c) => (
                     <SelectItem key={c.id} value={c.id} className="text-[10px] font-black uppercase tracking-widest italic">{c.name}</SelectItem>
                   ))}
@@ -264,18 +266,18 @@ export default function ActivityLogsDashboard() {
             <Table>
               <TableHeader>
                 <TableRow className="bg-white/[0.02] border-b border-white/5">
-                  <TableHead className="w-20 px-10 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Type</TableHead>
-                  <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Event Description</TableHead>
-                  <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Entity Origin</TableHead>
-                  <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Source Node</TableHead>
-                  <TableHead className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Temporal Stamp</TableHead>
+                  <TableHead className="w-20 px-10 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('activityLogsDashboard.type')}</TableHead>
+                  <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('activityLogsDashboard.eventDescription')}</TableHead>
+                  <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('activityLogsDashboard.entityOrigin')}</TableHead>
+                  <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('activityLogsDashboard.sourceNode')}</TableHead>
+                  <TableHead className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('activityLogsDashboard.temporalStamp')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody className="divide-y divide-white/5">
                 {filteredActivities.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={5} className="text-center py-20 text-slate-600 uppercase tracking-[0.4em] font-black text-[10px] italic">
-                      NO_EVENTS_DETECTED_IN_SECTOR
+                      {t('activityLogsDashboard.noEventsDetected')}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -330,7 +332,7 @@ export default function ActivityLogsDashboard() {
           {/* Pagination Telemetry */}
           <div className="p-10 border-t border-white/5 flex items-center justify-between">
             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 italic">
-              Streaming Identity Matrix: {offset + 1} — {Math.min(offset + limit, total)} <span className="mx-2">::</span> Sector Total: {total}
+              {t('activityLogsDashboard.streamingIdentityMatrix', { range: `${offset + 1} — ${Math.min(offset + limit, total)}`, total })}
             </p>
             <div className="flex gap-3">
               <Button
@@ -341,7 +343,7 @@ export default function ActivityLogsDashboard() {
                 disabled={offset === 0}
               >
                 <ChevronLeft className="h-4 w-4 mr-2" />
-                <span className="text-[9px] font-black uppercase tracking-widest">Previous_Sector</span>
+                <span className="text-[9px] font-black uppercase tracking-widest">{t('activityLogsDashboard.previousSector')}</span>
               </Button>
               <Button
                 variant="outline"
@@ -350,7 +352,7 @@ export default function ActivityLogsDashboard() {
                 onClick={() => setOffset(offset + limit)}
                 disabled={offset + limit >= total}
               >
-                <span className="text-[9px] font-black uppercase tracking-widest">Next_Sector</span>
+                <span className="text-[9px] font-black uppercase tracking-widest">{t('activityLogsDashboard.nextSector')}</span>
                 <ChevronRight className="h-4 w-4 ml-2" />
               </Button>
             </div>

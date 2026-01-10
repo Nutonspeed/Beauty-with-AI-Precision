@@ -13,7 +13,8 @@ import { Badge } from '@/components/ui/badge';
 import { Slider } from '@/components/ui/slider';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
-import type { HybridSkinAnalysis } from '@/lib/types/skin-analysis';
+import { useTranslations, useLocale } from 'next-intl';
+import { type HybridSkinAnalysis } from '@/lib/types/skin-analysis';
 import {
   ChevronLeft,
   ChevronRight,
@@ -45,115 +46,15 @@ interface AnalysisComparisonProps {
   maxSessions?: 2 | 3 | 4;
 }
 
-// Translation dictionary
-const TRANSLATIONS = {
-  en: {
-    title: 'Analysis Comparison',
-    description: 'Compare multiple analysis sessions side-by-side',
-    selectSessions: 'Select Sessions to Compare',
-    timeline: 'Timeline',
-    viewMode: 'View Mode',
-    sideBySide: 'Side by Side',
-    overlay: 'Overlay',
-    difference: 'Difference Map',
-    parameters: 'Parameters',
-    overall: 'Overall',
-    spots: 'Spots',
-    pores: 'Pores',
-    wrinkles: 'Wrinkles',
-    texture: 'Texture',
-    redness: 'Redness',
-    score: 'Score',
-    percentile: 'Percentile',
-    severity: 'Severity',
-    count: 'Count',
-    change: 'Change',
-    improvement: 'Improvement',
-    decline: 'Decline',
-    noChange: 'No Change',
-    session: 'Session',
-    date: 'Date',
-    zoomLevel: 'Zoom Level',
-    syncZoom: 'Sync Zoom',
-    resetView: 'Reset View',
-    grid: 'Grid View',
-    detailedComparison: 'Detailed Comparison',
-    summary: 'Summary',
-    parameterChanges: 'Parameter Changes',
-    overallProgress: 'Overall Progress',
-    timeRange: 'Time Range',
-    days: 'days',
-    selectAtLeast2: 'Select at least 2 sessions to compare',
-    comparing: 'Comparing',
-    of: 'of',
-    selected: 'selected',
-    improved: 'Improved',
-    worsened: 'Worsened',
-    stable: 'Stable',
-    trendAnalysis: 'Trend Analysis',
-    ascending: 'Ascending',
-    descending: 'Descending',
-    fluctuating: 'Fluctuating',
-  },
-  th: {
-    title: 'เปรียบเทียบการวิเคราะห์',
-    description: 'เปรียบเทียบการวิเคราะห์หลายครั้งแบบเคียงข้าง',
-    selectSessions: 'เลือกการวิเคราะห์ที่ต้องการเปรียบเทียบ',
-    timeline: 'ไทม์ไลน์',
-    viewMode: 'โหมดการแสดงผล',
-    sideBySide: 'เคียงข้าง',
-    overlay: 'ซ้อนทับ',
-    difference: 'แผนที่ความแตกต่าง',
-    parameters: 'พารามิเตอร์',
-    overall: 'โดยรวม',
-    spots: 'จุดด่างดำ',
-    pores: 'รูขุมขน',
-    wrinkles: 'ริ้วรอย',
-    texture: 'เนื้อผิว',
-    redness: 'รอยแดง',
-    score: 'คะแนน',
-    percentile: 'เปอร์เซ็นไทล์',
-    severity: 'ความรุนแรง',
-    count: 'จำนวน',
-    change: 'การเปลี่ยนแปลง',
-    improvement: 'ดีขึ้น',
-    decline: 'แย่ลง',
-    noChange: 'ไม่เปลี่ยนแปลง',
-    session: 'ครั้งที่',
-    date: 'วันที่',
-    zoomLevel: 'ระดับการซูม',
-    syncZoom: 'ซิงค์การซูม',
-    resetView: 'รีเซ็ตมุมมอง',
-    grid: 'มุมมองตาราง',
-    detailedComparison: 'เปรียบเทียบรายละเอียด',
-    summary: 'สรุป',
-    parameterChanges: 'การเปลี่ยนแปลงของพารามิเตอร์',
-    overallProgress: 'ความคืบหน้าโดยรวม',
-    timeRange: 'ช่วงเวลา',
-    days: 'วัน',
-    selectAtLeast2: 'เลือกอย่างน้อย 2 การวิเคราะห์เพื่อเปรียบเทียบ',
-    comparing: 'กำลังเปรียบเทียบ',
-    of: 'จาก',
-    selected: 'ที่เลือก',
-    improved: 'ดีขึ้น',
-    worsened: 'แย่ลง',
-    stable: 'คงที่',
-    trendAnalysis: 'การวิเคราะห์แนวโน้ม',
-    ascending: 'เพิ่มขึ้น',
-    descending: 'ลดลง',
-    fluctuating: 'ผันผวน',
-  },
-};
-
 type ParameterKey = 'spots' | 'pores' | 'wrinkles' | 'texture' | 'redness' | 'overall';
 
 export default function AnalysisComparison({
   sessions,
-  locale = 'en',
   onSelectSession: _onSelectSession,
   maxSessions = 4,
 }: Readonly<AnalysisComparisonProps>) {
-  const t = TRANSLATIONS[locale];
+  const t = useTranslations('analysisComparison');
+  const locale = useLocale();
   const [selectedSessions, setSelectedSessions] = useState<string[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [viewMode, setViewMode] = useState<'grid' | 'sideBySide' | 'overlay'>('grid');
@@ -265,7 +166,7 @@ export default function AnalysisComparison({
       <Card>
         <CardContent className="py-12 text-center">
           <Calendar className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-          <p className="text-muted-foreground">{t.selectAtLeast2}</p>
+          <p className="text-muted-foreground">{t('selectAtLeast2')}</p>
         </CardContent>
       </Card>
     );
@@ -277,17 +178,17 @@ export default function AnalysisComparison({
       <div>
         <h2 className="text-2xl font-bold flex items-center gap-2">
           <ArrowUpDown className="h-6 w-6" />
-          {t.title}
+          {t('title')}
         </h2>
-        <p className="text-muted-foreground mt-1">{t.description}</p>
+        <p className="text-muted-foreground mt-1">{t('description')}</p>
       </div>
 
       {/* Session Selection Timeline */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">{t.selectSessions}</CardTitle>
+          <CardTitle className="text-lg">{t('selectSessions')}</CardTitle>
           <CardDescription>
-            {t.comparing} {selectedSessions.length} {t.of} {sessions.length} {t.selected}
+            {t('comparing')} {selectedSessions.length} {t('of')} {sessions.length} {t('selected')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -352,7 +253,7 @@ export default function AnalysisComparison({
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between mb-2">
                       <div className="text-sm font-semibold">
-                        {t.session} {idx + 1}
+                        {t('session')} {idx + 1}
                       </div>
                       {selectedSessions.includes(session.id) && (
                         <Badge variant="default" className="text-xs">
@@ -366,7 +267,7 @@ export default function AnalysisComparison({
                     <div className="text-2xl font-bold text-primary">
                       {session.analysis.percentiles.overall}
                     </div>
-                    <div className="text-xs text-muted-foreground">{t.score}</div>
+                    <div className="text-xs text-muted-foreground">{t('score')}</div>
                   </CardContent>
                 </Card>
               ))}
@@ -390,7 +291,7 @@ export default function AnalysisComparison({
                     onClick={() => setViewMode('grid')}
                   >
                     <Grid3x3 className="h-4 w-4 mr-2" />
-                    {t.grid}
+                    {t('grid')}
                   </Button>
                   <Button
                     variant={viewMode === 'sideBySide' ? 'default' : 'outline'}
@@ -398,7 +299,7 @@ export default function AnalysisComparison({
                     onClick={() => setViewMode('sideBySide')}
                   >
                     <SlidersHorizontal className="h-4 w-4 mr-2" />
-                    {t.sideBySide}
+                    {t('sideBySide')}
                   </Button>
                 </div>
 
@@ -429,7 +330,7 @@ export default function AnalysisComparison({
                     onClick={() => setZoomLevel(100)}
                   >
                     <Maximize2 className="h-4 w-4 mr-2" />
-                    {t.resetView}
+                    {t('resetView')}
                   </Button>
                 </div>
               </div>
@@ -440,17 +341,17 @@ export default function AnalysisComparison({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium">{t.timeRange}</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('timeRange')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{timeRange}</div>
-                <p className="text-xs text-muted-foreground">{t.days}</p>
+                <p className="text-xs text-muted-foreground">{t('days')}</p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium">{t.overallProgress}</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('overallProgress')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center gap-2">
@@ -486,7 +387,7 @@ export default function AnalysisComparison({
 
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium">{t.parameterChanges}</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('parameterChanges')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-1">
@@ -494,21 +395,21 @@ export default function AnalysisComparison({
                     <TrendingUp className="h-3 w-3 text-green-500" />
                     <span>
                       {parameterChanges?.filter((p) => p.trend === 'improvement').length || 0}{' '}
-                      {t.improved}
+                      {t('improved')}
                     </span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <TrendingDown className="h-3 w-3 text-red-500" />
                     <span>
                       {parameterChanges?.filter((p) => p.trend === 'decline').length || 0}{' '}
-                      {t.worsened}
+                      {t('worsened')}
                     </span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <Minus className="h-3 w-3 text-gray-400" />
                     <span>
                       {parameterChanges?.filter((p) => p.trend === 'stable').length || 0}{' '}
-                      {t.stable}
+                      {t('stable')}
                     </span>
                   </div>
                 </div>
@@ -519,9 +420,9 @@ export default function AnalysisComparison({
           {/* Detailed Comparison */}
           <Tabs defaultValue="parameters" className="space-y-4">
             <TabsList>
-              <TabsTrigger value="parameters">{t.parameters}</TabsTrigger>
-              <TabsTrigger value="summary">{t.summary}</TabsTrigger>
-              <TabsTrigger value="trend">{t.trendAnalysis}</TabsTrigger>
+              <TabsTrigger value="parameters">{t('parameters')}</TabsTrigger>
+              <TabsTrigger value="summary">{t('summary')}</TabsTrigger>
+              <TabsTrigger value="trend">{t('trendAnalysis')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="parameters" className="space-y-4">
@@ -530,7 +431,7 @@ export default function AnalysisComparison({
                 <Card key={paramChange.parameter}>
                   <CardHeader>
                     <CardTitle className="text-lg flex items-center justify-between">
-                      <span>{t[paramChange.parameter]}</span>
+                      <span>{t(paramChange.parameter)}</span>
                       <Badge className={getTrendColor(paramChange.trend)}>
                         {getTrendIcon(paramChange.trend)}
                         <span className="ml-2">
@@ -557,11 +458,11 @@ export default function AnalysisComparison({
                             style={{ transform: `scale(${zoomLevel / 100})`, transformOrigin: 'top left' }}
                           >
                             <div className="text-xs text-muted-foreground mb-2">
-                              {t.session} {idx + 1}
+                              {t('session')} {idx + 1}
                             </div>
                             <div className="text-2xl font-bold mb-1">
                               {session.analysis.percentiles[paramChange.parameter]}
-                              <span className="text-sm font-normal">th</span>
+                              <span className="text-sm font-normal">{t('percentileSuffix')}</span>
                             </div>
                             <Progress
                               value={session.analysis.percentiles[paramChange.parameter]}
@@ -580,7 +481,7 @@ export default function AnalysisComparison({
                       {/* Change Indicator */}
                       <div className="flex items-center justify-center gap-4 py-2">
                         <div className="text-center">
-                          <div className="text-sm text-muted-foreground">{t.change}</div>
+                          <div className="text-sm text-muted-foreground">{t('change')}</div>
                           <div className="text-lg font-bold">
                             {paramChange.change > 0 && '+'}
                             {paramChange.change.toFixed(1)} ({paramChange.percentChange > 0 && '+'}
@@ -597,26 +498,26 @@ export default function AnalysisComparison({
             <TabsContent value="summary">
               <Card>
                 <CardHeader>
-                  <CardTitle>{t.detailedComparison}</CardTitle>
+                  <CardTitle>{t('detailedComparison')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead>
                         <tr className="border-b">
-                          <th className="text-left py-3 px-4">{t.parameters}</th>
+                          <th className="text-left py-3 px-4">{t('parameters')}</th>
                           {comparisonSessions.map((session, idx) => (
                             <th key={session.id} className="text-center py-3 px-4">
-                              {t.session} {idx + 1}
+                              {t('session')} {idx + 1}
                             </th>
                           ))}
-                          <th className="text-center py-3 px-4">{t.change}</th>
+                          <th className="text-center py-3 px-4">{t('change')}</th>
                         </tr>
                       </thead>
                       <tbody>
                         {parameterChanges?.map((paramChange) => (
                           <tr key={paramChange.parameter} className="border-b">
-                            <td className="py-3 px-4 font-medium">{t[paramChange.parameter]}</td>
+                            <td className="py-3 px-4 font-medium">{t(paramChange.parameter)}</td>
                             {comparisonSessions.map((session) => (
                               <td key={session.id} className="text-center py-3 px-4">
                                 {session.analysis.percentiles[paramChange.parameter]}
@@ -651,7 +552,7 @@ export default function AnalysisComparison({
             <TabsContent value="trend">
               <Card>
                 <CardHeader>
-                  <CardTitle>{t.trendAnalysis}</CardTitle>
+                  <CardTitle>{t('trendAnalysis')}</CardTitle>
                   <CardDescription>
                     Parameter trends over {comparisonSessions.length} sessions
                   </CardDescription>
@@ -676,8 +577,8 @@ export default function AnalysisComparison({
                       return (
                         <div key={paramChange.parameter} className="space-y-2">
                           <div className="flex items-center justify-between">
-                            <span className="font-medium">{t[paramChange.parameter]}</span>
-                            <Badge variant="outline">{t[trendType as keyof typeof t]}</Badge>
+                            <span className="font-medium">{t(paramChange.parameter)}</span>
+                            <Badge variant="outline">{t(trendType as keyof typeof t)}</Badge>
                           </div>
                           <div className="flex items-end gap-1 h-24">
                             {values.map((value, idx) => (

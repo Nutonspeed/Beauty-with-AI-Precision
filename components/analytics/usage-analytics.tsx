@@ -23,6 +23,7 @@ import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { useUsageTracking } from "@/lib/analytics/usage-tracker"
 import { LayoutGrid, Box, Brain, CheckCircle2 } from "lucide-react"
+import { useTranslations } from "next-intl"
 
 interface UsageMetrics {
   totalEvents: number
@@ -33,6 +34,7 @@ interface UsageMetrics {
 }
 
 export function UsageAnalytics() {
+  const t = useTranslations()
   const [metrics, setMetrics] = useState<UsageMetrics | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const { getSessionStats } = useUsageTracking()
@@ -88,7 +90,7 @@ export function UsageAnalytics() {
     return (
       <Card>
         <CardContent className="pt-6">
-          <p className="text-center text-muted-foreground">ไม่สามารถโหลดข้อมูลการใช้งานได้</p>
+          <p className="text-center text-muted-foreground">{t('usageAnalytics.errorLoad')}</p>
         </CardContent>
       </Card>
     )
@@ -111,10 +113,10 @@ export function UsageAnalytics() {
       {/* Summary Nodes - Operational Metrics */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {[
-          { label: 'Total Events', val: metrics.totalEvents, sub: 'Events this session', icon: Activity, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-          { label: 'Session Duration', val: formatDuration(metrics.sessionDuration), sub: 'Current uplink time', icon: Clock, color: 'text-pink-400', bg: 'bg-pink-500/10' },
-          { label: 'Feature Usage', val: Object.keys(metrics.featureUsage).length, sub: 'Unique protocols', icon: TrendingUp, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
-          { label: 'Last Updated', val: metrics.lastUpdated.toLocaleTimeString(), sub: 'Real-time telemetry', icon: Eye, color: 'text-cyan-400', bg: 'bg-cyan-500/10' }
+          { label: t('usageAnalytics.totalEvents'), val: metrics.totalEvents, sub: t('usageAnalytics.eventsThisSession'), icon: Activity, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+          { label: t('usageAnalytics.sessionDuration'), val: formatDuration(metrics.sessionDuration), sub: t('usageAnalytics.currentUplinkTime'), icon: Clock, color: 'text-pink-400', bg: 'bg-pink-500/10' },
+          { label: t('usageAnalytics.featureUsage'), val: Object.keys(metrics.featureUsage).length, sub: t('usageAnalytics.uniqueProtocols'), icon: TrendingUp, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+          { label: t('usageAnalytics.lastUpdated'), val: metrics.lastUpdated.toLocaleTimeString(), sub: t('usageAnalytics.realtimeTelemetry'), icon: Eye, color: 'text-cyan-400', bg: 'bg-cyan-500/10' }
         ].map((stat, i) => (
           <motion.div
             key={i}
@@ -149,9 +151,9 @@ export function UsageAnalytics() {
             <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
               <CardTitle className="text-3xl font-bold text-white tracking-tight italic flex items-center gap-4">
                 <LayoutGrid className="h-8 w-8 text-pink-500" />
-                Event Taxonomy
+                {t('usageAnalytics.eventTaxonomy')}
               </CardTitle>
-              <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Distribution of actions by classification</CardDescription>
+              <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('usageAnalytics.distributionDesc')}</CardDescription>
             </CardHeader>
             <CardContent className="p-10 lg:p-12 space-y-6">
               {Object.entries(metrics.eventsByCategory).length === 0 ? (
@@ -159,7 +161,7 @@ export function UsageAnalytics() {
                   <div className="h-20 w-20 rounded-3xl bg-white/[0.02] border border-white/5 flex items-center justify-center text-slate-700 mx-auto">
                     <Activity className="h-10 w-10" />
                   </div>
-                  <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-600">No events synchronized</p>
+                  <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-600">{t('usageAnalytics.noEventsSync')}</p>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -180,7 +182,7 @@ export function UsageAnalytics() {
                       </div>
                       <div className="text-right">
                         <span className="text-2xl font-black text-white italic tracking-tighter">{count}</span>
-                        <p className="text-[8px] font-black uppercase text-slate-600 tracking-widest">Invocations</p>
+                        <p className="text-[8px] font-black uppercase text-slate-600 tracking-widest">{t('usageAnalytics.invocations')}</p>
                       </div>
                     </motion.div>
                   ))}
@@ -195,11 +197,11 @@ export function UsageAnalytics() {
           <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group h-full">
             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
             <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
-              <CardTitle className="text-3xl font-bold text-white tracking-tight italic flex items-center gap-4">
+              <CardTitle className="text-2xl font-bold text-white tracking-tight italic flex items-center gap-4">
                 <Zap className="h-8 w-8 text-cyan-400" />
-                Feature Velocity
+                {t('usageAnalytics.featureVelocity')}
               </CardTitle>
-              <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Highest engagement clinical nodes</CardDescription>
+              <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('usageAnalytics.highestEngagement')}</CardDescription>
             </CardHeader>
             <CardContent className="p-10 lg:p-12 space-y-6">
               {getTopFeatures().length === 0 ? (
@@ -207,7 +209,7 @@ export function UsageAnalytics() {
                   <div className="h-20 w-20 rounded-3xl bg-white/[0.02] border border-white/5 flex items-center justify-center text-slate-700 mx-auto">
                     <Cpu className="h-10 w-10" />
                   </div>
-                  <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-600">No feature load data</p>
+                  <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-600">{t('usageAnalytics.noFeatureLoad')}</p>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -228,7 +230,7 @@ export function UsageAnalytics() {
                       </div>
                       <div className="text-right">
                         <span className="text-2xl font-black text-white italic tracking-tighter">{count}</span>
-                        <p className="text-[8px] font-black uppercase text-slate-600 tracking-widest">Access Nodes</p>
+                        <p className="text-[8px] font-black uppercase text-slate-600 tracking-widest">{t('usageAnalytics.accessNodes')}</p>
                       </div>
                     </motion.div>
                   ))}
@@ -246,9 +248,9 @@ export function UsageAnalytics() {
           <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
             <CardTitle className="text-3xl font-bold text-white tracking-tight italic flex items-center gap-4">
               <Brain className="h-8 w-8 text-purple-400" />
-              Behavioral Insights
+              {t('usageAnalytics.behavioralInsights')}
             </CardTitle>
-            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Pattern recognition and engagement optimization</CardDescription>
+            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('usageAnalytics.patternRecognitionDesc')}</CardDescription>
           </CardHeader>
           <CardContent className="p-10 lg:p-12">
             <div className="grid gap-8 md:grid-cols-3">
@@ -258,8 +260,8 @@ export function UsageAnalytics() {
                     <Globe className="h-8 w-8 text-blue-400" />
                   </div>
                   <div className="space-y-1">
-                    <p className="text-lg font-bold text-white italic">Getting Started</p>
-                    <p className="text-sm text-slate-400 font-light italic">Initialize clinical protocols like AI synthesis to activate behavioral tracking nodes.</p>
+                    <p className="text-lg font-bold text-white italic">{t('usageAnalytics.gettingStarted')}</p>
+                    <p className="text-sm text-slate-400 font-light italic">{t('usageAnalytics.initProtocols')}</p>
                   </div>
                 </div>
               )}
@@ -270,8 +272,8 @@ export function UsageAnalytics() {
                     <CheckCircle2 className="h-6 w-6 text-emerald-400" />
                   </div>
                   <div className="space-y-2">
-                    <p className="text-lg font-bold text-white italic">High Engagement</p>
-                    <p className="text-sm text-slate-400 font-light italic leading-relaxed">System detected {metrics.eventsByCategory.feature} unique feature synchronizations. Unit performance is optimal.</p>
+                    <p className="text-lg font-bold text-white italic">{t('usageAnalytics.highEngagement')}</p>
+                    <p className="text-sm text-slate-400 font-light italic leading-relaxed">{t('usageAnalytics.unitPerformanceOptimal', { count: metrics.eventsByCategory.feature })}</p>
                   </div>
                 </div>
               )}
@@ -282,8 +284,8 @@ export function UsageAnalytics() {
                     <Clock className="h-6 w-6 text-purple-400" />
                   </div>
                   <div className="space-y-2">
-                    <p className="text-lg font-bold text-white italic">Extended Sequence</p>
-                    <p className="text-sm text-slate-400 font-light italic leading-relaxed">Temporal cycle active for {formatDuration(metrics.sessionDuration)}. Consider diagnostic rest node.</p>
+                    <p className="text-lg font-bold text-white italic">{t('usageAnalytics.extendedSequence')}</p>
+                    <p className="text-sm text-slate-400 font-light italic leading-relaxed">{t('usageAnalytics.temporalCycleActive', { duration: formatDuration(metrics.sessionDuration) })}</p>
                   </div>
                 </div>
               )}
@@ -293,8 +295,8 @@ export function UsageAnalytics() {
                   <Activity className="h-6 w-6 text-pink-400" />
                 </div>
                 <div className="space-y-2">
-                  <p className="text-lg font-bold text-white italic">Telemetry Status</p>
-                  <p className="text-sm text-slate-400 font-light italic leading-relaxed">Real-time data streaming nominal. All authorized nodes responding within 14ms window.</p>
+                  <p className="text-lg font-bold text-white italic">{t('usageAnalytics.telemetryStatus')}</p>
+                  <p className="text-sm text-slate-400 font-light italic leading-relaxed">{t('usageAnalytics.streamingNominal')}</p>
                 </div>
               </div>
             </div>

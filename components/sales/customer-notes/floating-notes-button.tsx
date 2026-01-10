@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { StickyNote } from "lucide-react";
@@ -21,6 +22,7 @@ export function FloatingNotesButton({
   className,
   position = "bottom-right",
 }: FloatingNotesButtonProps) {
+  const t = useTranslations();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { notes = [] } = useCustomerNotes(customer_id);
 

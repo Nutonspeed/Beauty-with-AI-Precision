@@ -1,5 +1,6 @@
 "use client"
 
+import { useTranslations } from 'next-intl'
 import { useState, useRef, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -11,6 +12,7 @@ import { skinAnalysisModel, SkinAnalysisResult } from '@/lib/ai/tensorflow'
 import { generateTreatmentRecommendation } from '@/lib/ai/openai'
 
 export default function SkinAnalyzerComponent() {
+  const t = useTranslations('skinAnalyzer');
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [analysisResult, setAnalysisResult] = useState<SkinAnalysisResult | null>(null)
   const [treatmentRecommendations, setTreatmentRecommendations] = useState('')
@@ -60,7 +62,7 @@ export default function SkinAnalyzerComponent() {
 
     } catch (error) {
       console.error('Analysis error:', error)
-      setError('Failed to analyze skin. Please try again.')
+      setError(t('loadError'))
     } finally {
       setIsAnalyzing(false)
     }
@@ -89,9 +91,9 @@ export default function SkinAnalyzerComponent() {
     <div className="container mx-auto p-4 space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>AI Skin Analysis</CardTitle>
+          <CardTitle>{t('title')}</CardTitle>
           <CardDescription>
-            Upload a photo or use your camera for instant skin analysis
+            {t('description')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -113,7 +115,7 @@ export default function SkinAnalyzerComponent() {
                   disabled={isAnalyzing}
                 >
                   <Upload className="mr-2 h-4 w-4" />
-                  Upload Photo
+                  {t('uploadPhoto')}
                 </Button>
               </div>
 
@@ -126,7 +128,7 @@ export default function SkinAnalyzerComponent() {
                   disabled={isLoading || isAnalyzing}
                 >
                   <Camera className="mr-2 h-4 w-4" />
-                  {isLoading ? 'Loading Camera...' : 'Start Camera'}
+                  {isLoading ? t('loadingCamera') : t('startCamera')}
                 </Button>
                 
                 <div className="relative">
@@ -150,7 +152,7 @@ export default function SkinAnalyzerComponent() {
                     className="w-full"
                     disabled={isAnalyzing}
                   >
-                    Analyze Current Frame
+                    {t('analyzeFrame')}
                   </Button>
                 )}
               </div>
@@ -162,7 +164,7 @@ export default function SkinAnalyzerComponent() {
                 <div className="space-y-2">
                   <div className="flex items-center space-x-2">
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    <span>Analyzing skin...</span>
+                    <span>{t('analyzing')}</span>
                   </div>
                   <Progress value={66} />
                 </div>
@@ -177,13 +179,13 @@ export default function SkinAnalyzerComponent() {
               {analysisResult && (
                 <div className="space-y-4">
                   <div>
-                    <h3 className="font-semibold mb-2">Analysis Results</h3>
+                    <h3 className="font-semibold mb-2">{t('resultsTitle')}</h3>
                     <div className="space-y-2">
-                      <p><strong>Primary Concern:</strong> {analysisResult.primaryConcern}</p>
-                      <p><strong>Confidence:</strong> {(analysisResult.confidence * 100).toFixed(1)}%</p>
+                      <p><strong>{t('primaryConcern')}:</strong> {analysisResult.primaryConcern}</p>
+                      <p><strong>{t('confidence')}:</strong> {(analysisResult.confidence * 100).toFixed(1)}%</p>
                       
                       <div className="space-y-1">
-                        <p className="font-medium">All Scores:</p>
+                        <p className="font-medium">{t('allScores')}:</p>
                         {Object.entries(analysisResult.scores).map(([concern, score]) => (
                           <div key={concern} className="flex justify-between">
                             <span className="capitalize">{concern.replace('_', ' ')}:</span>
@@ -196,7 +198,7 @@ export default function SkinAnalyzerComponent() {
 
                   {treatmentRecommendations && (
                     <div>
-                      <h3 className="font-semibold mb-2">Treatment Recommendations</h3>
+                      <h3 className="font-semibold mb-2">{t('treatmentRecsTitle')}</h3>
                       <div className="bg-gray-50 p-3 rounded-lg">
                         <p className="text-sm whitespace-pre-wrap">{treatmentRecommendations}</p>
                       </div>

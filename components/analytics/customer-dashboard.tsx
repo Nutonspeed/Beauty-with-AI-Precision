@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 import TrendChart from './trend-chart';
 import {
   TrendPeriod,
@@ -53,12 +54,13 @@ const PeriodSelector = ({
   selected: TrendPeriod;
   onChange: (period: TrendPeriod) => void;
 }) => {
+  const t = useTranslations();
   const periods: { value: TrendPeriod; label: string }[] = [
-    { value: '1m', label: '1 Month' },
-    { value: '3m', label: '3 Months' },
-    { value: '6m', label: '6 Months' },
-    { value: '1y', label: '1 Year' },
-    { value: 'all', label: 'All Time' },
+    { value: '1m', label: t('customerDashboard.periods.1m') },
+    { value: '3m', label: t('customerDashboard.periods.3m') },
+    { value: '6m', label: t('customerDashboard.periods.6m') },
+    { value: '1y', label: t('customerDashboard.periods.1y') },
+    { value: 'all', label: t('customerDashboard.periods.all') },
   ];
 
   return (
@@ -151,14 +153,15 @@ const MetricCard = ({
 // =============================================
 
 const InsightsPanel = ({ trends }: { trends: TrendsResponse }) => {
+  const t = useTranslations();
   const insights = [];
 
   // Generate insights based on trends
   if (trends.metrics.overall.changePercent > 5) {
     insights.push({
       type: 'success',
-      title: 'Great Progress!',
-      message: `Your overall skin score improved by ${trends.metrics.overall.changePercent.toFixed(1)}%`,
+      title: t('customerDashboard.insights.greatProgress'),
+      message: t('customerDashboard.insights.scoreImproved', { val: trends.metrics.overall.changePercent.toFixed(1) }),
       icon: CheckCircle,
     });
   }
@@ -166,8 +169,8 @@ const InsightsPanel = ({ trends }: { trends: TrendsResponse }) => {
   if (trends.metrics.spots.trend === 'improving') {
     insights.push({
       type: 'success',
-      title: 'Spots Improving',
-      message: 'Your acne treatment is showing positive results',
+      title: t('customerDashboard.insights.spotsImproving'),
+      message: t('customerDashboard.insights.acnePositiveResults'),
       icon: CheckCircle,
     });
   }
@@ -175,8 +178,8 @@ const InsightsPanel = ({ trends }: { trends: TrendsResponse }) => {
   if (trends.metrics.wrinkles.trend === 'worsening') {
     insights.push({
       type: 'warning',
-      title: 'Wrinkles Need Attention',
-      message: 'Consider adding anti-aging treatments',
+      title: t('customerDashboard.insights.wrinklesAttention'),
+      message: t('customerDashboard.insights.addAntiAging'),
       icon: AlertCircle,
     });
   }
@@ -184,8 +187,8 @@ const InsightsPanel = ({ trends }: { trends: TrendsResponse }) => {
   if (trends.summary.treatmentAdherence < 0.5) {
     insights.push({
       type: 'warning',
-      title: 'Low Analysis Frequency',
-      message: 'Regular tracking helps achieve better results',
+      title: t('customerDashboard.insights.lowFrequency'),
+      message: t('customerDashboard.insights.regularTracking'),
       icon: AlertCircle,
     });
   }
@@ -193,8 +196,8 @@ const InsightsPanel = ({ trends }: { trends: TrendsResponse }) => {
   if (trends.summary.improvementRate > 2) {
     insights.push({
       type: 'success',
-      title: 'Excellent Improvement Rate',
-      message: `Your skin is improving ${trends.summary.improvementRate.toFixed(1)} points per month`,
+      title: t('customerDashboard.insights.excellentImprovement'),
+      message: t('customerDashboard.insights.improvementPoints', { val: trends.summary.improvementRate.toFixed(1) }),
       icon: Award,
     });
   }
@@ -202,8 +205,8 @@ const InsightsPanel = ({ trends }: { trends: TrendsResponse }) => {
   if (insights.length === 0) {
     insights.push({
       type: 'info',
-      title: 'Keep Going!',
-      message: 'Continue your skincare routine for best results',
+      title: t('customerDashboard.insights.keepGoing'),
+      message: t('customerDashboard.insights.continueRoutine'),
       icon: Info,
     });
   }
@@ -223,8 +226,8 @@ const InsightsPanel = ({ trends }: { trends: TrendsResponse }) => {
     <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group">
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
       <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
-        <CardTitle className="text-2xl font-bold text-white tracking-tight italic">Diagnostic Intelligence</CardTitle>
-        <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">AI-generated clinical synthesis</CardDescription>
+        <CardTitle className="text-2xl font-bold text-white tracking-tight italic">{t('customerDashboard.diagnosticIntelligence')}</CardTitle>
+        <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('customerDashboard.aiClinicalSynthesis')}</CardDescription>
       </CardHeader>
       <CardContent className="p-10 lg:p-12 space-y-6">
         {insights.map((insight, index) => {
@@ -262,6 +265,7 @@ export default function CustomerDashboard({
   customerId,
   defaultPeriod = '3m',
 }: CustomerDashboardProps) {
+  const t = useTranslations();
   const [period, setPeriod] = useState<TrendPeriod>(defaultPeriod);
   const [trends, setTrends] = useState<TrendsResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -327,10 +331,10 @@ export default function CustomerDashboard({
           <div className="text-center">
             <AlertCircle className="mx-auto h-12 w-12 text-red-500" />
             <h3 className="mt-4 text-lg font-semibold">
-              {error || 'Failed to load data'}
+              {error || t('common.error')}
             </h3>
             <Button className="mt-4" onClick={() => globalThis.location.reload()}>
-              Retry
+              {t('common.retry')}
             </Button>
           </div>
         </CardContent>
@@ -349,14 +353,14 @@ export default function CustomerDashboard({
         >
           <Badge variant="outline" className="px-4 py-1 rounded-full border-pink-500/30 text-pink-400 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.2em] text-[10px] font-black shadow-2xl shadow-pink-500/10">
             <Activity className="mr-3 h-3.5 w-3.5 animate-pulse" />
-            Longitudinal Skin Analytics
+            {t('customerDashboard.longitudinalSkinAnalytics')}
           </Badge>
           <h1 className="text-5xl md:text-7xl font-bold tracking-tighter text-white leading-[0.9] italic">
-            Analytics<br />
-            <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent not-italic">Dashboard</span>
+            {t('nav.analytics')}<br />
+            <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent not-italic font-black uppercase tracking-tight">Dashboard</span>
           </h1>
-          <p className="text-xl text-slate-500 font-light tracking-widest italic">
-            Track clinical improvement vectors over temporal cycles.
+          <p className="text-xl text-slate-500 font-light tracking-widest italic leading-relaxed">
+            {t('customerDashboard.trackImprovementDesc')}
           </p>
         </motion.div>
         <div className="shrink-0">
@@ -369,10 +373,10 @@ export default function CustomerDashboard({
       {/* Summary Stats - Infrastructure Nodes */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {[
-          { label: 'Total Analyses', val: trends.summary.totalAnalyses, sub: 'Temporal cycle count', icon: Activity, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-          { label: 'Average Score', val: trends.summary.averageScore.toFixed(1), sub: 'Out of 100 benchmark', icon: Target, color: 'text-pink-400', bg: 'bg-pink-500/10' },
-          { label: 'Improvement Rate', val: `${trends.summary.improvementRate > 0 ? '+' : ''}${trends.summary.improvementRate.toFixed(1)}`, sub: 'Points per cycle', icon: TrendingUp, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
-          { label: 'Analysis Frequency', val: trends.summary.treatmentAdherence.toFixed(1), sub: 'Cycles per month', icon: Calendar, color: 'text-purple-400', bg: 'bg-purple-500/10' }
+          { label: t('customerDashboard.summary.totalAnalyses'), val: trends.summary.totalAnalyses, sub: t('customerDashboard.summary.temporalCycleCount'), icon: Activity, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+          { label: t('customerDashboard.summary.averageScore'), val: trends.summary.averageScore.toFixed(1), sub: t('customerDashboard.summary.benchmarkDesc'), icon: Target, color: 'text-pink-400', bg: 'bg-pink-500/10' },
+          { label: t('customerDashboard.summary.improvementRate'), val: `${trends.summary.improvementRate > 0 ? '+' : ''}${trends.summary.improvementRate.toFixed(1)}`, sub: t('customerDashboard.summary.pointsPerCycle'), icon: TrendingUp, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+          { label: t('customerDashboard.summary.analysisFrequency'), val: trends.summary.treatmentAdherence.toFixed(1), sub: t('customerDashboard.summary.cyclesPerMonth'), icon: Calendar, color: 'text-purple-400', bg: 'bg-purple-500/10' }
         ].map((stat, i) => (
           <motion.div
             key={i}
@@ -433,8 +437,8 @@ export default function CustomerDashboard({
         <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative">
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/20 to-transparent" />
           <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
-            <CardTitle className="text-3xl font-bold text-white tracking-tight italic">Synthesis Momentum</CardTitle>
-            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Historical diagnostic data trends</CardDescription>
+            <CardTitle className="text-3xl font-bold text-white tracking-tight italic">{t('customerDashboard.synthesisMomentum')}</CardTitle>
+            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('customerDashboard.historicalDataTrends')}</CardDescription>
           </CardHeader>
           <CardContent className="p-10 lg:p-12">
             <TrendChart metrics={trends.metrics} />

@@ -30,6 +30,7 @@ import {
   Download,
   Share2,
 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import type { SchedulingRecommendation, ScheduledTreatment, TreatmentConflict } from '@/lib/ai/treatment-scheduling';
 
 // ============================================================================
@@ -42,83 +43,6 @@ interface TreatmentSchedulingComponentProps {
   readonly onScheduleConfirm?: (schedule: ScheduledTreatment[]) => void;
   readonly onReschedule?: (treatmentId: string) => void;
 }
-
-// ============================================================================
-// Translations
-// ============================================================================
-
-const TRANSLATIONS = {
-  en: {
-    title: 'Treatment Schedule',
-    description: 'AI-optimized treatment plan with timeline and recovery periods',
-    schedule: 'Your Schedule',
-    timeline: 'Timeline',
-    totalCost: 'Estimated Total Cost',
-    recoveryPeriod: 'Recovery Period',
-    completionDate: 'Completion Date',
-    highlights: 'Key Highlights',
-    warnings: 'Important Notes',
-    conflicts: 'Treatment Spacing',
-    noConflicts: 'No spacing conflicts detected',
-    conflictDetected: 'Spacing consideration detected',
-    recovery: 'Recovery Stages',
-    stage: 'Stage',
-    duration: 'Duration',
-    recommendations: 'Recommendations',
-    viewDetails: 'View Details',
-    confirmSchedule: 'Confirm Schedule',
-    downloadSchedule: 'Download Schedule',
-    shareSchedule: 'Share Schedule',
-    reschedule: 'Reschedule',
-    session: 'Session',
-    of: 'of',
-    downtime: 'Downtime',
-    days: 'days',
-    confidence: 'Confidence',
-    priority: 'Priority',
-    status: 'Status',
-    scheduledFor: 'Scheduled for',
-    recoveryUntil: 'Recovery until',
-    notes: 'Notes',
-    frequency: 'Frequency',
-    optimizationScore: 'Schedule Optimization Score',
-  },
-  th: {
-    title: 'ตารางการรักษา',
-    description: 'แผนการรักษาที่เหมาะสมที่สุดโดย AI พร้อมไทม์ไลน์และระยะเวลาการฟื้นตัว',
-    schedule: 'ตารางการรักษาของคุณ',
-    timeline: 'ไทม์ไลน์',
-    totalCost: 'ต้นทุนโดยประมาณทั้งหมด',
-    recoveryPeriod: 'ระยะเวลาการฟื้นตัว',
-    completionDate: 'วันที่เสร็จสิ้น',
-    highlights: 'ประเด็นสำคัญ',
-    warnings: 'บันทึกสำคัญ',
-    conflicts: 'ระยะห่างของการรักษา',
-    noConflicts: 'ไม่พบความขัดแย้งในระยะห่าง',
-    conflictDetected: 'ตรวจพบการพิจารณาระยะห่าง',
-    recovery: 'ขั้นตอนการฟื้นตัว',
-    stage: 'ขั้นตอน',
-    duration: 'ระยะเวลา',
-    recommendations: 'คำแนะนำ',
-    viewDetails: 'ดูรายละเอียด',
-    confirmSchedule: 'ยืนยันตารางการรักษา',
-    downloadSchedule: 'ดาวน์โหลดตารางการรักษา',
-    shareSchedule: 'แบ่งปันตารางการรักษา',
-    reschedule: 'เปลี่ยนตารางการรักษา',
-    session: 'ครั้งที่',
-    of: 'จาก',
-    downtime: 'ระยะเวลาพักตัว',
-    days: 'วัน',
-    confidence: 'ความมั่นใจ',
-    priority: 'ลำดับความสำคัญ',
-    status: 'สถานะ',
-    scheduledFor: 'กำหนดการรักษาสำหรับ',
-    recoveryUntil: 'พักตัวถึง',
-    notes: 'บันทึก',
-    frequency: 'ความถี่',
-    optimizationScore: 'คะแนนการเพิ่มประสิทธิภาพตารางการรักษา',
-  },
-};
 
 // ============================================================================
 // Helper Functions
@@ -201,7 +125,7 @@ function _RecoveryStageCard({
         <div>
           <p className="font-semibold text-sm">{stage.stage}</p>
           <p className="text-xs text-muted-foreground">
-            {stage.duration} {t.days}
+            {stage.duration} {t('days')}
           </p>
         </div>
         <Clock className="h-4 w-4 text-muted-foreground" />
@@ -257,7 +181,7 @@ function ScheduleItemCard({
                 <span>•</span>
                 <Clock className="h-3.5 w-3.5" />
                 <span>
-                  {treatment.downtime} {t.days} downtime
+                  {treatment.downtime} {t('days')} {t('downtimeLabel')}
                 </span>
               </>
             )}
@@ -280,30 +204,30 @@ function ScheduleItemCard({
         <div className="border-t p-4 space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="text-xs text-muted-foreground mb-1">{t.priority}</p>
+              <p className="text-xs text-muted-foreground mb-1">{t('priority')}</p>
               <Badge className={getPriorityColor(treatment.priority)}>
                 {treatment.priority}
               </Badge>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground mb-1">{t.status}</p>
+              <p className="text-xs text-muted-foreground mb-1">{t('status')}</p>
               <Badge className={getStatusColor(treatment.status)}>
                 {treatment.status}
               </Badge>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground mb-1">{t.scheduledFor}</p>
+              <p className="text-xs text-muted-foreground mb-1">{t('scheduledFor')}</p>
               <p className="text-sm font-semibold">{formatDate(treatment.scheduledDate)}</p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground mb-1">{t.recoveryUntil}</p>
+              <p className="text-xs text-muted-foreground mb-1">{t('recoveryUntil')}</p>
               <p className="text-sm font-semibold">{formatDate(treatment.recoveryEndDate)}</p>
             </div>
           </div>
 
           {treatment.notes && (
             <div>
-              <p className="text-xs text-muted-foreground mb-1">{t.notes}</p>
+              <p className="text-xs text-muted-foreground mb-1">{t('notes')}</p>
               <p className="text-sm">{treatment.notes}</p>
             </div>
           )}
@@ -315,11 +239,11 @@ function ScheduleItemCard({
                 variant="outline"
                 onClick={() => onReschedule(treatment.id)}
               >
-                {t.reschedule}
+                {t('reschedule')}
               </Button>
             )}
             <Button size="sm" variant="ghost">
-              {t.viewDetails}
+              {t('viewDetails')}
             </Button>
           </div>
         </div>
@@ -338,7 +262,7 @@ export function TreatmentSchedulingComponent({
   onScheduleConfirm,
   onReschedule,
 }: TreatmentSchedulingComponentProps): React.ReactNode {
-  const t = TRANSLATIONS[locale];
+  const t = useTranslations('treatmentScheduling');
   const [expandedSections, setExpandedSections] = useState<string[]>(['schedule']);
 
   const toggleSection = (section: string) => {
@@ -356,28 +280,28 @@ export function TreatmentSchedulingComponent({
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Card>
           <CardContent className="pt-6">
-            <p className="text-xs text-muted-foreground mb-1">Timeline</p>
+            <p className="text-xs text-muted-foreground mb-1">{t('timeline')}</p>
             <p className="text-2xl font-bold">{recommendations.timeline}</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardContent className="pt-6">
-            <p className="text-xs text-muted-foreground mb-1">{t.totalCost}</p>
+            <p className="text-xs text-muted-foreground mb-1">{t('totalCost')}</p>
             <p className="text-2xl font-bold">฿{recommendations.totalCost.toLocaleString()}</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardContent className="pt-6">
-            <p className="text-xs text-muted-foreground mb-1">{t.completionDate}</p>
+            <p className="text-xs text-muted-foreground mb-1">{t('completionDate')}</p>
             <p className="text-lg font-bold">{formatDate(recommendations.completionDate)}</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardContent className="pt-6">
-            <p className="text-xs text-muted-foreground mb-1">{t.optimizationScore}</p>
+            <p className="text-xs text-muted-foreground mb-1">{t('optimizationScore')}</p>
             <div className="flex items-center gap-2">
               <p className="text-2xl font-bold">{recommendations.optimizationScore}%</p>
               <TrendingUp className="h-5 w-5 text-green-600" />
@@ -426,7 +350,7 @@ export function TreatmentSchedulingComponent({
         >
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>{t.schedule}</CardTitle>
+              <CardTitle>{t('schedule')}</CardTitle>
               <CardDescription>
                 {recommendations.schedule.length} treatment{recommendations.schedule.length === 1 ? '' : 's'} planned
               </CardDescription>
@@ -466,7 +390,7 @@ export function TreatmentSchedulingComponent({
               <div className="flex items-center gap-2">
                 <AlertCircle className="h-4 w-4 text-orange-600" />
                 <div>
-                  <CardTitle>{t.conflicts}</CardTitle>
+                  <CardTitle>{t('conflicts')}</CardTitle>
                   <CardDescription>
                     {recommendations.conflicts.length} spacing consideration{recommendations.conflicts.length === 1 ? '' : 's'}
                   </CardDescription>
@@ -498,7 +422,7 @@ export function TreatmentSchedulingComponent({
         >
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>{t.recovery}</CardTitle>
+              <CardTitle>{t('recovery')}</CardTitle>
               <CardDescription>{recommendations.expectedRecoveryPeriod}</CardDescription>
             </div>
             {expandedSections.includes('recovery') ? (
@@ -523,15 +447,15 @@ export function TreatmentSchedulingComponent({
       <div className="flex flex-col md:flex-row gap-3">
         <Button size="lg" onClick={() => onScheduleConfirm?.(recommendations.schedule)}>
           <CheckCircle className="h-4 w-4 mr-2" />
-          {t.confirmSchedule}
+          {t('confirmSchedule')}
         </Button>
         <Button size="lg" variant="outline">
           <Download className="h-4 w-4 mr-2" />
-          {t.downloadSchedule}
+          {t('downloadSchedule')}
         </Button>
         <Button size="lg" variant="outline">
           <Share2 className="h-4 w-4 mr-2" />
-          {t.shareSchedule}
+          {t('shareSchedule')}
         </Button>
       </div>
     </div>

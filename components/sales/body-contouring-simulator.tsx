@@ -123,7 +123,7 @@ export function BodyContouringSimulator({
             </div>
           </div>
           <Badge variant="outline" className="border-orange-500/50 text-orange-400">
-            AI Powered
+            {t("bodyContouringSimulator.aiPowered")}
           </Badge>
         </div>
       </CardHeader>
@@ -237,7 +237,7 @@ export function BodyContouringSimulator({
             </div>
           </TabsContent>
 
-          <TabsContent value="tech" className="space-y-3 mt-4">
+          <div className="grid grid-cols-2 gap-3">
             {TECHNOLOGIES.map((tech) => (
               <motion.div
                 key={tech.id}
@@ -249,7 +249,7 @@ export function BodyContouringSimulator({
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium text-white">{tech.name}</p>
+                    <p className="font-medium text-white">{t(`bodyContouringSimulator.techNames.${tech.id}`)}</p>
                     <p className="text-sm text-gray-400">
                       {t("bodyContouringSimulator.techLabels.effectiveness", { percent: tech.effectiveness })}
                     </p>
@@ -263,7 +263,7 @@ export function BodyContouringSimulator({
                 </div>
               </motion.div>
             ))}
-          </TabsContent>
+          </div>
         </Tabs>
 
         {/* Estimated Cost */}

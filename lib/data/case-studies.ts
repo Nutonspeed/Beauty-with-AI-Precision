@@ -51,6 +51,44 @@ const CASE_STUDIES: CaseStudy[] = [
       zh: "数据为演示用途的模拟示例。",
     },
   },
+  {
+    slug: "rejuvenation-precision",
+    title: { th: "ยกกระชับใบหน้าด้วยเลเซอร์", en: "Precision Laser Rejuvenation", zh: "精准激光嫩肤" },
+    summary: {
+      th: "ผลลัพธ์การยกกระชับและปรับสภาพผิวด้วยเทคโนโลยีเลเซอร์ความแม่นยำสูง ติดตามผลผ่านระบบ AI",
+      en: "Results of lifting and skin conditioning with high-precision laser technology, tracked via AI.",
+      zh: "通过 AI 追踪的高精度激光提升和皮肤调理效果。",
+    },
+    metrics: [
+      { label: { th: "ความกระชับ", en: "Firmness", zh: "紧致度" }, value: "+45%" },
+      { label: { th: "ริ้วรอยลดลง", en: "Wrinkle Red.", zh: "皱纹减少" }, value: "30%" },
+      { label: { th: "ความพึงพอใจ", en: "Satisfaction", zh: "满意度" }, value: "98%" },
+    ],
+    content: [
+      {
+        heading: { th: "การวิเคราะห์", en: "Analysis", zh: "分析" },
+        body: {
+          th: "ใช้ระบบ AI วิเคราะห์ความลึกของริ้วรอยก่อนการรักษาเพื่อกำหนดพลังงานที่เหมาะสม",
+          en: "Used AI to analyze wrinkle depth before treatment to determine optimal energy levels.",
+          zh: "治疗前使用 AI 分析皱纹深度，以确定最佳能量水平。",
+        },
+      },
+    ],
+  },
+  {
+    slug: "pigmentation-correction",
+    title: { th: "แก้ไขจุดด่างดำและฝ้า", en: "Pigmentation & Melasma Correction", zh: "色素沉着和黄褐斑校正" },
+    summary: {
+      th: "การจัดการปัญหาเม็ดสีสะสมด้วยการวางแผนจาก AI Heatmap และการรักษาต่อเนื่อง",
+      en: "Management of accumulated pigment issues through AI Heatmap planning and continuous treatment.",
+      zh: "通过 AI 热图规划和持续治疗管理累积的色素问题。",
+    },
+    metrics: [
+      { label: { th: "ความสว่าง", en: "Radiance", zh: "光泽度" }, value: "+60%" },
+      { label: { th: "จุดด่างดำ", en: "Dark Spots", zh: "色斑" }, value: "-50%" },
+      { label: { th: "ความมั่นใจ", en: "Confidence", zh: "自信度" }, value: "High" },
+    ],
+  },
 ]
 
 function localize(value: LocalizedText, locale: Locale): string {

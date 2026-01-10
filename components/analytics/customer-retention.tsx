@@ -13,6 +13,7 @@ import {
   PieChart as PieIcon
 } from "lucide-react"
 import { motion } from "framer-motion"
+import { useTranslations } from "next-intl"
 import { cn } from "@/lib/utils"
 import {
   Tooltip,
@@ -32,6 +33,7 @@ interface CustomerRetentionProps {
 const COLORS = ["#FF6B6B", "#4ECDC4", "#45B7D1", "#FFA07A", "#98D8C8"]
 
 export function CustomerRetention({ dateRange }: CustomerRetentionProps) {
+  const t = useTranslations()
   const [data, setData] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -91,9 +93,9 @@ export function CustomerRetention({ dateRange }: CustomerRetentionProps) {
 
   // Prepare segment data for chart
   const segmentData = [
-    { name: "ลูกค้า 1 ครั้ง", value: data.segments.oneTime, fill: COLORS[0] },
-    { name: "ลูกค้า 2-5 ครั้ง", value: data.segments.twoToFive, fill: COLORS[1] },
-    { name: "ลูกค้า 5+ ครั้ง", value: data.segments.moreThanFive, fill: COLORS[2] },
+    { name: t('customerRetention.segments.oneTime'), value: data.segments.oneTime, fill: COLORS[0] },
+    { name: t('customerRetention.segments.twoToFive'), value: data.segments.twoToFive, fill: COLORS[1] },
+    { name: t('customerRetention.segments.moreThanFive'), value: data.segments.moreThanFive, fill: COLORS[2] },
   ]
 
   return (
@@ -101,10 +103,10 @@ export function CustomerRetention({ dateRange }: CustomerRetentionProps) {
       {/* Summary Nodes - Operational Metrics */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {[
-          { label: 'ลูกค้าทั้งหมด', val: data.summary.totalCustomers, sub: `${data.summary.customersWithBookings} Active Nodes`, icon: Users, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-          { label: 'Retention Rate', val: `${data.summary.retentionRate.toFixed(1)}%`, sub: `${data.summary.repeatCustomers} Legacy Units`, icon: RotateCcw, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
-          { label: 'Average CLV', val: `฿${data.summary.averageLifetimeValue.toLocaleString()}`, sub: 'Lifetime Yield Index', icon: Target, color: 'text-pink-400', bg: 'bg-pink-500/10' },
-          { label: 'Churn Rate', val: `${data.summary.churnRate.toFixed(1)}%`, sub: `${data.summary.churnedCustomers} Offline Units`, icon: Activity, color: 'text-rose-400', bg: 'bg-rose-500/10' }
+          { label: t('customerRetention.totalCustomers'), val: data.summary.totalCustomers, sub: t('customerRetention.activeNodes', { count: data.summary.customersWithBookings }), icon: Users, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+          { label: t('customerRetention.retentionRate'), val: `${data.summary.retentionRate.toFixed(1)}%`, sub: t('customerRetention.legacyUnits', { count: data.summary.repeatCustomers }), icon: RotateCcw, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+          { label: t('customerRetention.averageClv'), val: `฿${data.summary.averageLifetimeValue.toLocaleString()}`, sub: t('customerRetention.lifetimeYieldIndex'), icon: Target, color: 'text-pink-400', bg: 'bg-pink-500/10' },
+          { label: t('customerRetention.churnRate'), val: `${data.summary.churnRate.toFixed(1)}%`, sub: t('customerRetention.offlineUnits', { count: data.summary.churnedCustomers }), icon: Activity, color: 'text-rose-400', bg: 'bg-rose-500/10' }
         ].map((stat, i) => (
           <motion.div
             key={i}
@@ -140,9 +142,9 @@ export function CustomerRetention({ dateRange }: CustomerRetentionProps) {
               <div className="space-y-2">
                 <CardTitle className="text-3xl font-bold text-white tracking-tight italic flex items-center gap-4">
                   <PieIcon className="h-8 w-8 text-pink-500" />
-                  Client Segmentation
+                  {t('customerRetention.clientSegmentation')}
                 </CardTitle>
-                <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Distribution analysis by engagement cycles</CardDescription>
+                <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('customerRetention.engagementCycleDesc')}</CardDescription>
               </div>
             </CardHeader>
             <CardContent className="p-10 lg:p-12">
@@ -171,9 +173,9 @@ export function CustomerRetention({ dateRange }: CustomerRetentionProps) {
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 {[
-                  { label: "ลูกค้า 1 ครั้ง", sub: "Retention Priority", val: data.segments.oneTime, color: "text-rose-400", bg: "bg-rose-500/10" },
-                  { label: "ลูกค้า 2-5 ครั้ง", sub: "Operational Stable", val: data.segments.twoToFive, color: "text-teal-400", bg: "bg-teal-500/10" },
-                  { label: "ลูกค้า 5+ ครั้ง", sub: "Elite Tier", val: data.segments.moreThanFive, color: "text-blue-400", bg: "bg-blue-500/10" }
+                  { label: t('customerRetention.segments.oneTime'), sub: t('customerRetention.segments.retentionPriority'), val: data.segments.oneTime, color: "text-rose-400", bg: "bg-rose-500/10" },
+                  { label: t('customerRetention.segments.twoToFive'), sub: t('customerRetention.segments.operationalStable'), val: data.segments.twoToFive, color: "text-teal-400", bg: "bg-teal-500/10" },
+                  { label: t('customerRetention.segments.moreThanFive'), sub: t('customerRetention.segments.eliteTier'), val: data.segments.moreThanFive, color: "text-blue-400", bg: "bg-blue-500/10" }
                 ].map((seg, i) => (
                   <div key={i} className="p-6 rounded-[2rem] bg-white/[0.02] border border-white/5 space-y-3 group/seg hover:border-white/10 transition-all duration-500">
                     <div className="flex items-center justify-between">
@@ -196,23 +198,23 @@ export function CustomerRetention({ dateRange }: CustomerRetentionProps) {
           <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative h-full group">
             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
             <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
-              <CardTitle className="text-2xl font-bold text-white tracking-tight italic">Acquisition Vector</CardTitle>
-              <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">New clinical unit ingestion analytics</CardDescription>
+              <CardTitle className="text-2xl font-bold text-white tracking-tight italic">{t('customerRetention.acquisitionVector')}</CardTitle>
+              <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('customerRetention.newUnitIngestion')}</CardDescription>
             </CardHeader>
             <CardContent className="p-10 lg:p-12 space-y-10">
               <div className="text-center p-10 rounded-[2.5rem] bg-gradient-to-br from-blue-500/5 to-purple-500/5 border border-white/5 shadow-inner relative overflow-hidden">
                 <div className="absolute top-0 right-0 p-6 opacity-[0.03] group-hover:scale-110 transition-transform duration-1000">
                   <Users className="w-32 h-32 text-white" />
                 </div>
-                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 mb-4 italic">Period Node Acquisition</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 mb-4 italic">{t('customerRetention.periodNodeAcquisition')}</p>
                 <div className="text-7xl font-black text-white tracking-tighter italic">{data.summary.newCustomersInPeriod}</div>
-                <p className="text-[10px] font-black uppercase tracking-widest text-blue-400 mt-4">Authorized Units</p>
+                <p className="text-[10px] font-black uppercase tracking-widest text-blue-400 mt-4">{t('customerRetention.authorizedUnits')}</p>
               </div>
 
               <div className="grid grid-cols-2 gap-6">
                 {[
-                  { label: "Cycle Conversion", val: `${data.summary.totalCustomers > 0 ? ((data.summary.customersWithBookings / data.summary.totalCustomers) * 100).toFixed(1) : 0}%`, color: "text-emerald-400" },
-                  { label: "Retention Yield", val: `${data.summary.retentionRate.toFixed(1)}%`, color: "text-blue-400" }
+                  { label: t('customerRetention.cycleConversion'), val: `${data.summary.totalCustomers > 0 ? ((data.summary.customersWithBookings / data.summary.totalCustomers) * 100).toFixed(1) : 0}%`, color: "text-emerald-400" },
+                  { label: t('customerRetention.retentionYield'), val: `${data.summary.retentionRate.toFixed(1)}%`, color: "text-blue-400" }
                 ].map((node, i) => (
                   <div key={i} className="p-6 rounded-2xl border border-white/5 bg-white/[0.02] space-y-2">
                     <p className="text-[8px] font-black uppercase tracking-widest text-slate-600 italic">{node.label}</p>
@@ -232,9 +234,9 @@ export function CustomerRetention({ dateRange }: CustomerRetentionProps) {
           <div className="space-y-2">
             <CardTitle className="text-3xl font-bold text-white tracking-tight italic flex items-center gap-4">
               <Heart className="h-8 w-8 text-pink-500" />
-              Elite Client Matrix
+              {t('customerRetention.eliteClientMatrix')}
             </CardTitle>
-            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Top 10 personnel by aggregate yield</CardDescription>
+            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{t('customerRetention.aggregateYieldDesc')}</CardDescription>
           </div>
         </CardHeader>
         <CardContent className="p-0">
@@ -242,12 +244,12 @@ export function CustomerRetention({ dateRange }: CustomerRetentionProps) {
             <table className="w-full border-collapse">
               <thead>
                 <tr className="bg-white/[0.02] border-b border-white/5">
-                  <th className="px-10 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Identity Rank</th>
-                  <th className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Client Entity</th>
-                  <th className="px-8 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Lifetime Yield</th>
-                  <th className="px-8 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Cycle Count</th>
-                  <th className="px-8 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Average Yield</th>
-                  <th className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Initialization Node</th>
+                  <th className="px-10 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('customerRetention.identityRank')}</th>
+                  <th className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('customerRetention.clientEntity')}</th>
+                  <th className="px-8 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('customerRetention.lifetimeYield')}</th>
+                  <th className="px-8 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('customerRetention.cycleCount')}</th>
+                  <th className="px-8 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('customerRetention.averageYield')}</th>
+                  <th className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('customerRetention.initializationNode')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
@@ -281,7 +283,7 @@ export function CustomerRetention({ dateRange }: CustomerRetentionProps) {
                     </td>
                     <td className="px-8 py-8 text-right">
                       <div className="text-lg font-black text-white italic tracking-tighter">{customer.totalBookings}</div>
-                      <p className="text-[9px] font-black uppercase text-slate-600 tracking-widest italic">{customer.paidBookings} VERIFIED</p>
+                      <p className="text-[9px] font-black uppercase text-slate-600 tracking-widest italic">{customer.paidBookings} {t('customerRetention.verified')}</p>
                     </td>
                     <td className="px-8 py-8 text-right">
                       <span className="text-sm font-bold text-slate-400 italic">฿{customer.averageOrderValue.toLocaleString()}</span>

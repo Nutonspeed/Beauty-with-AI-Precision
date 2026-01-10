@@ -36,7 +36,7 @@ export function AIProposalGenerator() {
       id: "vip",
       name: t('salesProposalGenerator.packages.vip.name'),
       price: 75000,
-      treatments: ["ทุกทรีตเมนต์ที่มี", "ปรึกษาแพทย์เฉพาะ", "Home Care Kit", "Follow-up 6 เดือน"],
+      treatments: t.raw('salesProposalGenerator.packages.vip.treatments') as string[],
       description: t('salesProposalGenerator.packages.vip.description')
     }
   ]
@@ -49,7 +49,7 @@ export function AIProposalGenerator() {
       concerns: [t('treatmentComparison.concerns.acne'), t('treatmentComparison.concerns.pigmentation')],
       recommendedPackage: "premium",
       confidence: 92,
-      reasoning: "ลูกค้าอายุ 25 ปี มีปัญหาผิวมันและสิว ควรใช้แพ็คเกจพรีเมี่ยมที่มี Chemical Peel และ Microdermabrasion"
+      reasoning: t('salesProposalGenerator.suggestions.reasoning1')
     },
     {
       id: "2",
@@ -58,7 +58,7 @@ export function AIProposalGenerator() {
       concerns: [t('treatmentComparison.concerns.anti_aging'), t('treatmentComparison.concerns.dryness')],
       recommendedPackage: "vip",
       confidence: 88,
-      reasoning: "ลูกค้าอายุ 45 ปี มีปัญหาผิวแห้งและริ้วรอย ควรใช้แพ็คเกจ VIP ที่มี RF Skin Tightening"
+      reasoning: t('salesProposalGenerator.suggestions.reasoning2')
     }
   ]
 

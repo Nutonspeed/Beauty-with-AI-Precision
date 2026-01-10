@@ -384,7 +384,7 @@ export function FillerLipSimulator({
             </div>
           </div>
           <Badge variant="outline" className="border-pink-500/50 text-pink-400">
-            AI Powered
+            {t('fillerLipSimulator.aiPowered')}
           </Badge>
         </div>
       </CardHeader>
@@ -607,7 +607,7 @@ export function FillerLipSimulator({
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium text-white">{product.name}</p>
-                      <p className="text-sm text-gray-400">{product.brand} • {product.type}</p>
+                      <p className="text-sm text-gray-400">{t(`fillerLipSimulator.brands.${product.brand.toLowerCase()}` as any)} • {product.type}</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="h-2 w-16 bg-white/10 rounded-full overflow-hidden">
@@ -653,7 +653,6 @@ export function FillerLipSimulator({
           </TabsContent>
         </Tabs>
 
-        {/* Estimated Cost */}
         <div className="p-4 rounded-xl bg-gradient-to-r from-pink-600/20 to-rose-600/20 border border-pink-500/30">
           <div className="flex items-center justify-between mb-2">
             <span className="text-gray-300">{t('fillerLipSimulator.estimatedUsage')}</span>

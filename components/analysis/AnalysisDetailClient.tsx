@@ -17,25 +17,33 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
+  CheckCircle2,
+  Clock,
+  AlertCircle,
+  Activity,
+  Shield,
   Download,
   Share2,
   ArrowLeft,
-  AlertCircle,
-  CheckCircle,
-  Activity,
-  Calendar,
-  Clock,
-  User,
   Brain,
-  Shield,
+  Calendar,
+  User,
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { formatDistanceToNow } from 'date-fns';
+import { th, enUS } from 'date-fns/locale';
 import { useLocalizePath } from '@/lib/i18n/locale-link';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
+import { useAuth } from '@/lib/auth/context';
+
+import { VisionToOrderPanel } from './vision-to-order-panel';
+import { Shared3DCanvas } from './shared-3d-canvas';
+import { AgingSimulator } from './aging-simulator';
+import { MedicalDecisionSupport } from './medical-decision-support';
+import { ClinicalGenomeVisualization } from './clinical-genome-visualization';
 
 interface RecommendationItem {
   name?: string;
@@ -113,14 +121,14 @@ interface AnalysisDetailClientProps {
 }
 
 const MODES = [
-  { id: 'spots', label: 'Spots', icon: '🔴', color: 'text-red-600' },
-  { id: 'wrinkles', label: 'Wrinkles', icon: '📏', color: 'text-orange-600' },
-  { id: 'texture', label: 'Texture', icon: '✨', color: 'text-yellow-600' },
-  { id: 'pores', label: 'Pores', icon: '⚪', color: 'text-gray-600' },
-  { id: 'uv_spots', label: 'UV Spots', icon: '☀️', color: 'text-purple-600' },
-  { id: 'brown_spots', label: 'Brown Spots', icon: '🟤', color: 'text-amber-700' },
-  { id: 'red_areas', label: 'Red Areas', icon: '🔺', color: 'text-rose-600' },
-  { id: 'porphyrins', label: 'Porphyrins', icon: '💧', color: 'text-blue-600' },
+  { id: 'spots', icon: '🔴', color: 'text-red-600' },
+  { id: 'wrinkles', icon: '📏', color: 'text-orange-600' },
+  { id: 'texture', icon: '✨', color: 'text-yellow-600' },
+  { id: 'pores', icon: '⚪', color: 'text-gray-600' },
+  { id: 'uv_spots', icon: '☀️', color: 'text-purple-600' },
+  { id: 'brown_spots', icon: '🟤', color: 'text-amber-700' },
+  { id: 'red_areas', icon: '🔺', color: 'text-rose-600' },
+  { id: 'porphyrins', icon: '💧', color: 'text-blue-600' },
 ];
 
 export default function AnalysisDetailClient({
@@ -130,23 +138,36 @@ export default function AnalysisDetailClient({
   userProfile: _userProfile,
   userId: _userId,
 }: AnalysisDetailClientProps) {
-  const t = useTranslations();
+  const t = useTranslations('analysis');
+  const tReport = useTranslations('visiaReport');
+  const tCommon = useTranslations('common');
+  const tSeverity = useTranslations('severity');
+  const locale = useLocale();
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
   const [regenerating, setRegenerating] = useState(false);
   const [vizUrl, setVizUrl] = useState(analysis.visualization_url);
   const lp = useLocalizePath();
+  const isEnterprise = user?.role === 'super_admin' || user?.role === 'clinic_owner';
+  const isPlatinum = user?.role === 'super_admin' || user?.role === 'clinic_owner' || user?.role === 'customer_clinical';
+
+  const dateLocale = locale === 'th' ? th : enUS;
+
   const analyzedAtDisplay = useMemo(() => {
     try {
       const analysisDate = new Date(analysis.analyzed_at);
       if (Number.isNaN(analysisDate.getTime())) {
-        return t('analysis.error');
+        return t('error');
       }
-      return formatDistanceToNow(analysisDate, { addSuffix: true });
+      return formatDistanceToNow(analysisDate, { 
+        addSuffix: true,
+        locale: dateLocale
+      });
     } catch (error) {
       console.warn('[AnalysisDetailClient] Failed to format analysis date:', error);
-      return t('analysis.error');
+      return t('error');
     }
-  }, [analysis.analyzed_at, t]);
+  }, [analysis.analyzed_at, t, dateLocale]);
 
   const getSeverityColor = (severity: string) => {
     switch (severity?.toLowerCase()) {
@@ -181,7 +202,7 @@ export default function AnalysisDetailClient({
       score: (analysis[scoreKey] as number) || 0,
       count: (analysis[countKey] as number) || 
              (mode === 'red_areas' ? analysis.red_areas_percentage : 0) || 0,
-      severity: (analysis[severityKey] as string) || 'Unknown',
+      severity: (analysis[severityKey] as string) || tSeverity('low'),
     };
   };
 
@@ -212,38 +233,38 @@ export default function AnalysisDetailClient({
                   <ArrowLeft className="w-5 h-5" />
                 </Button>
               </Link>
-            <Badge variant="premium" className="px-4 py-1">{t('analysis.reportTypes.clinical')}</Badge>
-          </div>
-          <div>
-            <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white leading-tight">
-              {t('analysis.title')} <span className="text-primary text-elevated">{t('analysis.reportTypes.intelligence')}</span>
-            </h1>
-            <div className="flex flex-wrap items-center gap-6 text-slate-500 mt-4 uppercase tracking-[0.15em] text-[10px] font-bold">
-              <span className="flex items-center gap-2">
-                <Calendar className="w-3.5 h-3.5 text-primary" />
-                {t('common.atTime')}: {analyzedAtDisplay}
-              </span>
-              <span className="flex items-center gap-2">
-                <Activity className="w-3.5 h-3.5 text-primary" />
-                Neural Hash: {analysis.id.slice(0, 12)}
-              </span>
-              {analysis.is_baseline && (
-                <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 rounded-md h-5 px-2">
-                  {t('analysis.baselineReference')}
-                </Badge>
-              )}
+              <Badge variant="premium" className="px-4 py-1">{t('reportTypes.clinical')}</Badge>
             </div>
-          </div>
+            <div>
+              <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white leading-tight">
+                {t('title')} <span className="text-primary text-elevated">{t('reportTypes.intelligence')}</span>
+              </h1>
+              <div className="flex flex-wrap items-center gap-6 text-slate-500 mt-4 uppercase tracking-[0.15em] text-[10px] font-bold">
+                <span className="flex items-center gap-2">
+                  <Calendar className="w-3.5 h-3.5 text-primary" />
+                  {tCommon('atTime')}: {analyzedAtDisplay}
+                </span>
+                <span className="flex items-center gap-2">
+                  <Activity className="w-3.5 h-3.5 text-primary" />
+                  {t('neuralHash')}: {analysis.id.slice(0, 12)}
+                </span>
+                {analysis.is_baseline && (
+                  <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 rounded-md h-5 px-2">
+                    {t('baselineReference')}
+                  </Badge>
+                )}
+              </div>
+            </div>
           </div>
           
           <div className="flex gap-3">
             <Button variant="glass" className="h-12 px-6 border-white/10 text-xs font-bold uppercase tracking-widest hover:border-primary/30">
               <Share2 className="w-4 h-4 mr-3" />
-              Secure Share
+              {t('secureShare')}
             </Button>
             <Button variant="premium" className="h-12 px-8 text-xs font-black uppercase tracking-widest shadow-glow-primary">
               <Download className="w-4 h-4 mr-3" />
-              Export Full PDF
+              {t('exportPdf')}
             </Button>
           </div>
         </div>
@@ -255,7 +276,7 @@ export default function AnalysisDetailClient({
             <Card className="glass-panel border-white/5 h-full overflow-hidden flex flex-col justify-center text-center p-10 relative group">
               <div className="absolute inset-0 bg-primary/5 blur-[100px] rounded-full pointer-events-none group-hover:bg-primary/10 transition-colors" />
               <div className="space-y-8 relative z-10">
-                <p className="text-[11px] uppercase font-black tracking-[0.3em] text-slate-500">{t('analysis.metrics.globalIndex')}</p>
+                <p className="text-[11px] uppercase font-black tracking-[0.3em] text-slate-500">{t('metrics.globalIndex')}</p>
                 <div className="relative inline-flex items-center justify-center">
                   <svg className="h-48 w-48 -rotate-90">
                     <circle cx="96" cy="96" r="88" fill="none" stroke="currentColor" strokeWidth="4" className="text-white/5" />
@@ -271,14 +292,14 @@ export default function AnalysisDetailClient({
                     <span className={cn("text-6xl font-black tracking-tighter", getScoreColor(analysis.overall_score))}>
                       {analysis.overall_score.toFixed(0)}
                     </span>
-                    <span className="text-[10px] uppercase font-bold text-slate-500 tracking-widest">{t('analysis.metrics.aggregate')}</span>
+                    <span className="text-[10px] uppercase font-bold text-slate-500 tracking-widest">{t('metrics.aggregate')}</span>
                   </div>
                 </div>
                 <div className="space-y-2">
                   <Badge className={cn("text-lg px-8 py-1.5 rounded-full border-0 shadow-lg uppercase tracking-[0.2em] font-black", getSeverityColor('low'))}>
-                    GRADE {analysis.skin_health_grade}
+                    {tReport('grade')} {analysis.skin_health_grade}
                   </Badge>
-                  <p className="text-xs text-slate-500 font-medium uppercase tracking-widest pt-2">{t('analysis.metrics.clinicalClassification')}</p>
+                  <p className="text-xs text-slate-500 font-medium uppercase tracking-widest pt-2">{t('metrics.clinicalClassification')}</p>
                 </div>
               </div>
             </Card>
@@ -288,17 +309,17 @@ export default function AnalysisDetailClient({
           <div className="lg:col-span-8">
             <Card className="glass-panel border-white/5 h-full overflow-hidden p-8">
               <div className="flex items-center justify-between mb-8">
-                <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-slate-400">{t('analysis.metrics.multiSpectrum')}</h3>
+                <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-slate-400">{t('metrics.multiSpectrum')}</h3>
                 <div className="flex gap-2">
                   <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
-                  <span className="text-[10px] uppercase font-bold text-slate-500">{t('analysis.metrics.synthesisActive')}</span>
+                  <span className="text-[10px] uppercase font-bold text-slate-500">{t('metrics.synthesisActive')}</span>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-6 md:gap-10">
                 <div className="space-y-4">
                   <div className="flex justify-between items-end px-1">
-                    <span className="text-[10px] uppercase font-black tracking-widest text-slate-500">{t('analysis.metrics.inputAsset')}</span>
-                    <span className="text-[9px] text-slate-600">{t('analysis.metrics.standardRgb')}</span>
+                    <span className="text-[10px] uppercase font-black tracking-widest text-slate-500">{t('metrics.inputAsset')}</span>
+                    <span className="text-[9px] text-slate-600">{t('metrics.standardRgb')}</span>
                   </div>
                   <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden border border-white/10 shadow-2xl group">
                     <Image src={analysis.image_url} alt="Input" fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
@@ -307,8 +328,8 @@ export default function AnalysisDetailClient({
                 </div>
                 <div className="space-y-4">
                   <div className="flex justify-between items-end px-1">
-                    <span className="text-[10px] uppercase font-black tracking-widest text-primary">{t('analysis.metrics.neuralOverlay')}</span>
-                    <span className="text-[9px] text-slate-600">{t('analysis.metrics.crossSpectrum')}</span>
+                    <span className="text-[10px] uppercase font-black tracking-widest text-primary">{t('metrics.neuralOverlay')}</span>
+                    <span className="text-[9px] text-slate-600">{t('metrics.crossSpectrum')}</span>
                   </div>
                   <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden border border-primary/20 shadow-[0_0_40px_rgba(var(--primary-rgb),0.1)] group">
                     {vizUrl ? (
@@ -323,7 +344,7 @@ export default function AnalysisDetailClient({
                           <div className="absolute inset-0 bg-primary/10 blur-xl rounded-full animate-pulse" />
                         </div>
                         <div className="space-y-2">
-                          <p className="text-slate-400 text-xs font-medium uppercase tracking-widest leading-relaxed">{t('analysis.metrics.pendingSynthesis')}</p>
+                          <p className="text-slate-400 text-xs font-medium uppercase tracking-widest leading-relaxed">{t('metrics.pendingSynthesis')}</p>
                           <Button 
                             variant="premium" 
                             size="sm" 
@@ -346,7 +367,7 @@ export default function AnalysisDetailClient({
                             }}
                             className="h-10 px-6 text-[10px] font-black"
                           >
-                            {regenerating ? t('analysis.metrics.calibrating') : t('analysis.metrics.initSynthesis')}
+                            {regenerating ? t('metrics.calibrating') : t('metrics.initSynthesis')}
                           </Button>
                         </div>
                       </div>
@@ -362,19 +383,20 @@ export default function AnalysisDetailClient({
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-10">
           <div className="flex items-center justify-between border-b border-white/5 pb-2">
             <TabsList className="bg-white/5 border border-white/10 p-1.5 rounded-2xl h-14">
-              <TabsTrigger value="overview" className="rounded-xl px-8 data-[state=active]:bg-primary data-[state=active]:text-white font-bold uppercase tracking-widest text-[11px]">{t('analysis.tabs.summary')}</TabsTrigger>
-              <TabsTrigger value="details" className="rounded-xl px-8 data-[state=active]:bg-primary data-[state=active]:text-white font-bold uppercase tracking-widest text-[11px]">{t('analysis.tabs.portfolio')}</TabsTrigger>
-              <TabsTrigger value="recommendations" className="rounded-xl px-8 data-[state=active]:bg-primary data-[state=active]:text-white font-bold uppercase tracking-widest text-[11px]">{t('analysis.tabs.protocol')}</TabsTrigger>
+              <TabsTrigger value="overview" className="rounded-xl px-8 data-[state=active]:bg-primary data-[state=active]:text-white font-bold uppercase tracking-widest text-[11px]">{t('tabs.summary')}</TabsTrigger>
+              <TabsTrigger value="details" className="rounded-xl px-8 data-[state=active]:bg-primary data-[state=active]:text-white font-bold uppercase tracking-widest text-[11px]">{t('tabs.portfolio')}</TabsTrigger>
+              <TabsTrigger value="aging" className="rounded-xl px-8 data-[state=active]:bg-primary data-[state=active]:text-white font-bold uppercase tracking-widest text-[11px]">{t('tabs.aging')}</TabsTrigger>
+              <TabsTrigger value="recommendations" className="rounded-xl px-8 data-[state=active]:bg-primary data-[state=active]:text-white font-bold uppercase tracking-widest text-[11px]">{t('tabs.protocol')}</TabsTrigger>
             </TabsList>
             <div className="hidden md:flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
               <div className="flex items-center gap-2">
                 <Clock className="w-3.5 h-3.5 text-primary" />
-                Processing: {analysis.processing_time_ms}ms
+                {t('metrics.processing')}: {analysis.processing_time_ms}ms
               </div>
               <div className="h-1 w-1 rounded-full bg-slate-700" />
               <div className="flex items-center gap-2">
                 <Activity className="w-3.5 h-3.5 text-primary" />
-                Neural Precision: High
+                {t('metrics.neuralPrecision')}: {t('metrics.high')}
               </div>
             </div>
           </div>
@@ -395,7 +417,7 @@ export default function AnalysisDetailClient({
                         <div className="flex items-start justify-between">
                           <div className="flex items-center gap-3">
                             <div className="h-10 w-10 rounded-xl bg-white/5 flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition-transform">{mode.icon}</div>
-                            <span className="font-bold text-sm tracking-tight text-white">{t(`analysis.modes.${mode.id}`)}</span>
+                            <span className="font-bold text-sm tracking-tight text-white">{t(`modes.${mode.id}`)}</span>
                           </div>
                           <Badge className={cn("px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-tighter", getSeverityColor(data.severity))}>
                             {data.severity}
@@ -406,11 +428,11 @@ export default function AnalysisDetailClient({
                         <div className="space-y-4">
                           <div className="flex items-end justify-between">
                             <div className="space-y-1">
-                              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{t('analysis.metrics.healthIndex')}</p>
+                              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{t('metrics.healthIndex')}</p>
                               <p className={cn("text-3xl font-black tracking-tighter", getScoreColor(data.score))}>{data.score.toFixed(0)}</p>
                             </div>
                             <div className="text-right space-y-1">
-                              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{mode.id === 'red_areas' ? t('analysis.metrics.coverage') : t('analysis.metrics.rawCount')}</p>
+                              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{mode.id === 'red_areas' ? t('metrics.coverage') : t('metrics.rawCount')}</p>
                               <p className="text-lg font-bold text-slate-200">
                                 {mode.id === 'red_areas' ? `${data.count.toFixed(1)}%` : data.count}
                               </p>
@@ -435,8 +457,8 @@ export default function AnalysisDetailClient({
           <TabsContent value="details" className="animate-in fade-in slide-in-from-bottom-4 duration-700">
             <Card className="glass-panel border-white/5 overflow-hidden">
               <CardHeader className="bg-white/5 border-b border-white/5 p-8">
-                <CardTitle className="text-2xl font-bold tracking-tight text-white">{t('analysis.metrics.fullPortfolio')}</CardTitle>
-                <CardDescription className="text-slate-400 font-light text-base">{t('analysis.metrics.portfolioDesc')}</CardDescription>
+                <CardTitle className="text-2xl font-bold tracking-tight text-white">{t('metrics.fullPortfolio')}</CardTitle>
+                <CardDescription className="text-slate-400 font-light text-base">{t('metrics.portfolioDesc')}</CardDescription>
               </CardHeader>
               <CardContent className="p-0">
                 <div className="divide-y divide-white/5">
@@ -450,13 +472,13 @@ export default function AnalysisDetailClient({
                               {mode.icon}
                             </div>
                             <div className="space-y-1">
-                              <h3 className="text-xl font-bold text-white tracking-tight">{t(`analysis.modes.${mode.id}`)}</h3>
+                              <h3 className="text-xl font-bold text-white tracking-tight">{t(`modes.${mode.id}`)}</h3>
                               <div className="flex items-center gap-3">
                                 <Badge className={cn("px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest", getSeverityColor(data.severity))}>
-                                  {data.severity} SEVERITY
+                                  {data.severity} {t('metrics.severityLabel')}
                                 </Badge>
                                 <span className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">
-                                  {mode.id === 'red_areas' ? `DENSITY: ${data.count.toFixed(1)}%` : `COUNT: ${data.count}`}
+                                  {mode.id === 'red_areas' ? `${t('metrics.densityLabel')}: ${data.count.toFixed(1)}%` : `${t('metrics.countLabel')}: ${data.count}`}
                                 </span>
                               </div>
                             </div>
@@ -464,7 +486,7 @@ export default function AnalysisDetailClient({
                           
                           <div className="flex-1 max-w-md space-y-3">
                             <div className="flex items-center justify-between">
-                              <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.25em]">{t('analysis.metrics.subMetricScore')}</span>
+                              <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.25em]">{t('metrics.subMetricScore')}</span>
                               <span className={cn("text-2xl font-black tracking-tighter", getScoreColor(data.score))}>{data.score.toFixed(1)}</span>
                             </div>
                             <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
@@ -485,15 +507,25 @@ export default function AnalysisDetailClient({
             </Card>
           </TabsContent>
 
+          <TabsContent value="aging" className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <AgingSimulator originalImageUrl={analysis.image_url} isPremium={isPlatinum} />
+          </TabsContent>
+
           {/* Treatment Protocol Tab */}
           <TabsContent value="recommendations" className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-            {analysis.recommendations ? (
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="space-y-10">
+              <MedicalDecisionSupport isEnterprise={isEnterprise} skinData={analysis} />
+              <ClinicalGenomeVisualization />
+              <Shared3DCanvas isPremium={isEnterprise || isPlatinum} />
+              <VisionToOrderPanel analysisId={analysis.id} recommendations={analysis.recommendations} />
+              
+              {analysis.recommendations ? (
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Protocol Card Mixin */}
                 {[
-                  { id: 'treatments', title: t('analysis.protocols.interventions'), icon: Activity, data: analysis.recommendations.treatments, color: "text-primary" },
-                  { id: 'products', title: t('analysis.protocols.regimen'), icon: CheckCircle, data: analysis.recommendations.products, color: "text-emerald-400" },
-                  { id: 'lifestyle', title: t('analysis.protocols.optimization'), icon: User, data: analysis.recommendations.lifestyle, color: "text-amber-400" }
+                  { id: 'treatments', title: t('protocols.interventions'), icon: Activity, data: analysis.recommendations.treatments, color: "text-primary" },
+                  { id: 'products', title: t('protocols.regimen'), icon: CheckCircle2, data: analysis.recommendations.products, color: "text-emerald-400" },
+                  { id: 'lifestyle', title: t('protocols.optimization'), icon: User, data: analysis.recommendations.lifestyle, color: "text-amber-400" }
                 ].map((sec) => (
                   <Card key={sec.id} className="glass-panel border-white/5 overflow-hidden flex flex-col">
                     <CardHeader className="bg-white/5 border-b border-white/5 p-6">
@@ -520,25 +552,26 @@ export default function AnalysisDetailClient({
                       )) : (
                         <div className="h-full flex flex-col items-center justify-center text-center opacity-30 py-10">
                           <sec.icon className="w-12 h-12 mb-4" />
-                          <p className="text-[10px] uppercase font-bold tracking-widest">{t('analysis.protocols.noData')}</p>
+                          <p className="text-[10px] uppercase font-bold tracking-widest">{t('protocols.noData')}</p>
                         </div>
                       )}
                     </CardContent>
                   </Card>
                 ))}
-              </div>
-            ) : (
-              <Card className="glass-panel border-white/5">
-                <CardContent className="py-24 text-center space-y-6">
-                  <AlertCircle className="w-16 h-16 mx-auto text-slate-700 animate-pulse" />
-                  <div className="space-y-2">
-                    <h3 className="text-xl font-bold tracking-tight text-white">{t('analysis.protocols.pendingTitle')}</h3>
-                    <p className="text-slate-500 font-light max-w-sm mx-auto">{t('analysis.protocols.pendingDesc')}</p>
-                  </div>
-                  <Button variant="outline" className="glass uppercase tracking-widest font-black text-[10px]">{t('analysis.protocols.retry')}</Button>
-                </CardContent>
-              </Card>
-            )}
+                </div>
+              ) : (
+                <Card className="glass-panel border-white/5">
+                  <CardContent className="py-24 text-center space-y-6">
+                    <AlertCircle className="w-16 h-16 mx-auto text-slate-700 animate-pulse" />
+                    <div className="space-y-2">
+                      <h3 className="text-xl font-bold tracking-tight text-white">{t('protocols.pendingTitle')}</h3>
+                      <p className="text-slate-500 font-light max-w-sm mx-auto">{t('protocols.pendingDesc')}</p>
+                    </div>
+                    <Button variant="outline" className="glass uppercase tracking-widest font-black text-[10px]">{t('protocols.retry')}</Button>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
           </TabsContent>
         </Tabs>
 
@@ -547,13 +580,16 @@ export default function AnalysisDetailClient({
           <div className="flex items-center gap-4">
             <Shield className="w-10 h-10 text-slate-600" />
             <div className="space-y-1">
-              <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400">{t('analysis.footer.disclaimerTitle')}</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400">{t('footer.disclaimerTitle')}</p>
               <p className="text-[9px] text-slate-500 leading-relaxed max-w-2xl font-light">
-                {t('analysis.footer.disclaimerDesc')}
+                {t('footer.disclaimerDesc')}
               </p>
             </div>
           </div>
-          <p className="text-[9px] font-black uppercase tracking-widest text-slate-600">{t('analysis.footer.verified')}</p>
+          <div className="flex flex-col items-end gap-1">
+            <span className="text-[9px] font-black uppercase tracking-widest text-slate-600">{t('footer.verified')}</span>
+            <span className="text-[8px] font-bold text-slate-700 uppercase tracking-[0.2em]">{t('neuralHash')}: {analysis.id.slice(0, 12)}</span>
+          </div>
         </div>
       </div>
     </div>

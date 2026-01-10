@@ -17,6 +17,7 @@ import {
   Zap
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 
 interface RevenueMetrics {
@@ -52,6 +53,7 @@ interface RevenueMetrics {
 }
 
 export default function RevenueAnalytics() {
+  const t = useTranslations();
   const [metrics, setMetrics] = useState<RevenueMetrics | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -88,7 +90,7 @@ export default function RevenueAnalytics() {
   if (!metrics) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <p className="text-muted-foreground">Failed to load revenue analytics</p>
+        <p className="text-muted-foreground">{t('revenueAnalytics.errorLoad')}</p>
       </div>
     );
   }
@@ -120,10 +122,10 @@ export default function RevenueAnalytics() {
       {/* Overview Metrics Grid - Operational Nodes */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
-          { label: 'Monthly Recurring Revenue', val: formatCurrency(metrics.overview.mrr), sub: `ARR: ${formatCurrency(metrics.overview.arr)}`, icon: DollarSign, color: 'text-pink-400', bg: 'bg-pink-500/10' },
-          { label: 'Active Clinical Nodes', val: metrics.overview.totalClinics.toString(), sub: `Avg: ${formatCurrency(metrics.overview.averageRevenuePerClinic)} / node`, icon: Users, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-          { label: 'Payment Success Velocity', val: `${metrics.overview.paymentSuccessRate}%`, sub: metrics.overview.paymentSuccessRate >= 95 ? 'OPTIMAL_PERFORMANCE' : 'ATTENTION_REQUIRED', icon: CreditCard, color: 'text-emerald-400', bg: 'bg-emerald-500/10', badge: true, status: metrics.overview.paymentSuccessRate >= 95 ? 'default' : 'destructive' },
-          { label: 'Churn Delta (30d)', val: `${metrics.overview.churnRate}%`, sub: metrics.overview.churnRate > 5 ? 'CRITICAL_LEAKAGE' : 'NOMINAL_RETENTION', icon: AlertCircle, color: metrics.overview.churnRate > 5 ? 'text-rose-400' : 'text-cyan-400', bg: metrics.overview.churnRate > 5 ? 'bg-rose-500/10' : 'bg-cyan-500/10', badge: metrics.overview.churnRate > 5, status: 'destructive' }
+          { label: t('revenueAnalytics.mrr'), val: formatCurrency(metrics.overview.mrr), sub: t('revenueAnalytics.arr', { val: formatCurrency(metrics.overview.arr) }), icon: DollarSign, color: 'text-pink-400', bg: 'bg-pink-500/10' },
+          { label: t('revenueAnalytics.activeClinicalNodes'), val: metrics.overview.totalClinics.toString(), sub: t('revenueAnalytics.avgPerNode', { val: formatCurrency(metrics.overview.averageRevenuePerClinic) }), icon: Users, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+          { label: t('revenueAnalytics.paymentSuccessVelocity'), val: `${metrics.overview.paymentSuccessRate}%`, sub: metrics.overview.paymentSuccessRate >= 95 ? t('revenueAnalytics.optimalPerformance') : t('revenueAnalytics.attentionRequired'), icon: CreditCard, color: 'text-emerald-400', bg: 'bg-emerald-500/10', badge: true, status: metrics.overview.paymentSuccessRate >= 95 ? 'default' : 'destructive' },
+          { label: t('revenueAnalytics.churnDelta'), val: `${metrics.overview.churnRate}%`, sub: metrics.overview.churnRate > 5 ? t('revenueAnalytics.criticalLeakage') : t('revenueAnalytics.nominalRetention'), icon: AlertCircle, color: metrics.overview.churnRate > 5 ? 'text-rose-400' : 'text-cyan-400', bg: metrics.overview.churnRate > 5 ? 'bg-rose-500/10' : 'bg-cyan-500/10', badge: metrics.overview.churnRate > 5, status: 'destructive' }
         ].map((node, i) => (
           <Card key={i} className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2rem] hover:bg-white/[0.03] transition-all duration-500 group shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
@@ -162,13 +164,13 @@ export default function RevenueAnalytics() {
                   <CreditCard className="h-8 w-8 text-rose-400 animate-pulse" />
                 </div>
                 <div className="space-y-1 text-center md:text-left">
-                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-rose-500 italic">Unresolved Financial Inflow</p>
+                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-rose-500 italic">{t('revenueAnalytics.unresolvedInflow')}</p>
                   <h3 className="text-3xl font-black text-white tracking-tighter italic">{formatCurrency(metrics.overview.outstandingAmount)}</h3>
-                  <p className="text-sm text-slate-500 font-light italic leading-relaxed">Outstanding invoice parameters detected. Immediate collection protocol recommended.</p>
+                  <p className="text-sm text-slate-500 font-light italic leading-relaxed">{t('revenueAnalytics.outstandingDesc')}</p>
                 </div>
               </div>
               <Button variant="destructive" className="h-14 px-10 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-2xl shadow-rose-500/20">
-                INITIATE_COLLECTION
+                {t('revenueAnalytics.initiateCollection')}
               </Button>
             </CardContent>
           </Card>
@@ -182,9 +184,9 @@ export default function RevenueAnalytics() {
           <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
             <CardTitle className="text-2xl font-bold text-white tracking-tight italic flex items-center gap-4">
               <PieChart className="h-6 w-6 text-cyan-400" />
-              Subscription Distribution
+              {t('revenueAnalytics.subscriptionDistribution')}
             </CardTitle>
-            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Global node status matrix breakdown</CardDescription>
+            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('revenueAnalytics.nodeStatusMatrix')}</CardDescription>
           </CardHeader>
           <CardContent className="p-10 lg:p-12 space-y-6">
             {Object.entries(metrics.subscriptionDistribution).map(([status, count], idx) => {
@@ -202,7 +204,7 @@ export default function RevenueAnalytics() {
                 >
                   <div className="flex items-center gap-4">
                     <div className={cn("h-3 w-3 rounded-full animate-pulse", getStatusColor(status))} />
-                    <span className="text-sm font-bold text-slate-300 group/row:text-white transition-colors uppercase tracking-widest italic">{status.replace('_', ' ')} Vector</span>
+                    <span className="text-sm font-bold text-slate-300 group/row:text-white transition-colors uppercase tracking-widest italic">{t('revenueAnalytics.vector', { status: status.replace('_', ' ').toUpperCase() })}</span>
                   </div>
                   <div className="flex items-center gap-6">
                     <span className="text-lg font-black text-white italic tracking-tighter">{count}</span>
@@ -222,9 +224,9 @@ export default function RevenueAnalytics() {
           <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
             <CardTitle className="text-2xl font-bold text-white tracking-tight italic flex items-center gap-4">
               <BarChart3 className="h-6 w-6 text-purple-400" />
-              Plan Yield Performance
+              {t('revenueAnalytics.planYieldHierarchy')}
             </CardTitle>
-            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Revenue optimization by service tier</CardDescription>
+            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('revenueAnalytics.revenueOptimizationDesc')}</CardDescription>
           </CardHeader>
           <CardContent className="p-10 lg:p-12 space-y-10">
             {[...metrics.revenueByPlan]
@@ -237,10 +239,10 @@ export default function RevenueAnalytics() {
                   <div key={item.plan} className="space-y-4 group/plan">
                     <div className="flex items-center justify-between">
                       <div className="space-y-1">
-                        <span className="text-[10px] font-black text-white group-hover/plan:text-pink-400 transition-colors uppercase tracking-[0.25em] italic">{item.plan} Tier</span>
+                        <span className="text-[10px] font-black text-white group-hover/plan:text-pink-400 transition-colors uppercase tracking-[0.25em] italic">{t('revenueAnalytics.tier', { plan: item.plan.toUpperCase() })}</span>
                         <p className="text-2xl font-black text-white italic tracking-tighter">{formatCurrency(item.revenue)}</p>
                       </div>
-                      <Badge className="bg-white/[0.03] border-white/10 text-slate-500 text-[9px] font-black uppercase tracking-widest rounded-lg px-4 py-1 italic">Active Cycle</Badge>
+                      <Badge className="bg-white/[0.03] border-white/10 text-slate-500 text-[9px] font-black uppercase tracking-widest rounded-lg px-4 py-1 italic">{t('revenueAnalytics.activeCycle')}</Badge>
                     </div>
                     <div className="relative h-2 w-full bg-white/[0.02] rounded-full overflow-hidden border border-white/5 shadow-inner">
                       <motion.div 
@@ -263,9 +265,9 @@ export default function RevenueAnalytics() {
         <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
           <CardTitle className="text-2xl font-bold text-white tracking-tight italic flex items-center gap-4">
             <Calendar className="h-6 w-6 text-white" />
-            Temporal Revenue Dynamics (12M)
+            {t('revenueAnalytics.temporalInflowMonitor')}
           </CardTitle>
-          <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Historical momentum and growth vector mapping</CardDescription>
+          <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('revenueAnalytics.growthVectorMapping')}</CardDescription>
         </CardHeader>
         <CardContent className="p-10 lg:p-16">
           <div className="flex items-end gap-2 h-64">
@@ -315,9 +317,9 @@ export default function RevenueAnalytics() {
         <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
           <CardTitle className="text-2xl font-bold text-white tracking-tight italic flex items-center gap-4">
             <CreditCard className="h-6 w-6 text-cyan-400" />
-            Ingestion Vector Matrix
+            {t('revenueAnalytics.ingestionVectorMatrix')}
           </CardTitle>
-          <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Methodological financial intake distribution (90d)</CardDescription>
+          <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('revenueAnalytics.methodologicalIntake')}</CardDescription>
         </CardHeader>
         <CardContent className="p-10 lg:p-12">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -329,13 +331,13 @@ export default function RevenueAnalytics() {
                 transition={{ delay: idx * 0.1 }}
                 className="text-center p-8 rounded-[2rem] bg-white/[0.02] border border-white/5 hover:border-cyan-500/30 transition-all duration-500 shadow-inner group/vector"
               >
-                <div className="text-4xl font-black text-white tracking-tighter italic group-hover/vector:text-cyan-400 transition-colors">{method.count}</div>
+                <div className="text-4xl font-black text-white tracking-tighter italic">{method.count}</div>
                 <div className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-600 mt-2 italic group-hover/vector:text-slate-400 transition-colors">
-                  {method.method.replace('_', ' ')} Node
+                  {t('revenueAnalytics.node', { method: method.method.replace('_', ' ').toUpperCase() })}
                 </div>
                 <div className="mt-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/5 text-cyan-400 text-[9px] font-black uppercase tracking-widest shadow-inner">
                   <Zap className="w-2.5 h-2.5 animate-pulse" />
-                  {method.percentage}% Delta
+                  {t('revenueAnalytics.delta', { percentage: method.percentage })}
                 </div>
               </motion.div>
             ))}

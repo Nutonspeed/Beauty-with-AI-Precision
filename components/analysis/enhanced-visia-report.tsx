@@ -9,6 +9,7 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useTranslations } from "next-intl"
 import { Download, Printer, Share2, FileText, TrendingUp, ImageIcon } from "lucide-react"
 import type { HybridSkinAnalysis } from "@/lib/types/skin-analysis"
 import { getPDFGenerator } from "@/lib/utils/pdf-generator"
@@ -42,6 +43,7 @@ export function EnhancedVISIAReport({
   clinicInfo,
   className = "",
 }: EnhancedVISIAReportProps) {
+  const t = useTranslations('visiaReport')
   const [isExporting, setIsExporting] = useState(false)
   const [activeTab, setActiveTab] = useState<"report" | "comparison" | "timeline">("report")
 
@@ -54,12 +56,12 @@ export function EnhancedVISIAReport({
         includeCharts: true,
         includeRecommendations: true,
         clinicInfo: clinicInfo?.name ? { ...clinicInfo, name: clinicInfo.name } : undefined,
-        watermark: "AI Beauty Platform - Confidential",
+        watermark: t('watermark'),
       })
       console.log("[v0] PDF export initiated")
     } catch (error) {
       console.error("[v0] PDF export failed:", error)
-      alert("Failed to export PDF. Please try again.")
+      alert(t('exportPdfFailed'))
     } finally {
       setIsExporting(false)
     }
@@ -82,7 +84,7 @@ export function EnhancedVISIAReport({
       console.log("[v0] PNG export complete")
     } catch (error) {
       console.error("[v0] PNG export failed:", error)
-      alert("Failed to export PNG. Please try again.")
+      alert(t('exportPngFailed'))
     } finally {
       setIsExporting(false)
     }
@@ -102,14 +104,14 @@ export function EnhancedVISIAReport({
 
       if (navigator.share) {
         await navigator.share({
-          title: "Skin Analysis Report",
-          text: "Check out my skin analysis report",
+          title: t('shareTitle'),
+          text: t('shareText'),
           url: shareUrl,
         })
       } else {
         // Fallback: copy to clipboard
         await navigator.clipboard.writeText(shareUrl)
-        alert("Share link copied to clipboard!")
+        alert(t('shareLinkCopied'))
       }
     } catch (error) {
       console.error("[v0] Share failed:", error)
@@ -122,14 +124,14 @@ export function EnhancedVISIAReport({
       <Card className="p-6 print:hidden">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-3xl font-bold">Professional Skin Analysis Report</h1>
-            <p className="text-muted-foreground">VISIA-Equivalent Analysis System</p>
+            <h1 className="text-3xl font-bold">{t('professionalTitle')}</h1>
+            <p className="text-muted-foreground">{t('equivalentSystem')}</p>
           </div>
 
           <div className="flex gap-2">
             <Button onClick={handlePrint} variant="outline" size="sm" className="gap-2 bg-transparent">
               <Printer className="w-4 h-4" />
-              Print
+              {t('print')}
             </Button>
             <Button
               onClick={handleExportPDF}
@@ -139,7 +141,7 @@ export function EnhancedVISIAReport({
               className="gap-2 bg-transparent"
             >
               <Download className="w-4 h-4" />
-              {isExporting ? "Exporting..." : "PDF"}
+              {isExporting ? t('exporting') : t('pdf')}
             </Button>
             <Button
               onClick={handleExportPNG}
@@ -149,11 +151,11 @@ export function EnhancedVISIAReport({
               className="gap-2 bg-transparent"
             >
               <ImageIcon className="w-4 h-4" />
-              PNG
+              {t('png')}
             </Button>
             <Button onClick={handleShare} variant="outline" size="sm" className="gap-2 bg-transparent">
               <Share2 className="w-4 h-4" />
-              Share
+              {t('share')}
             </Button>
           </div>
         </div>
@@ -163,15 +165,15 @@ export function EnhancedVISIAReport({
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="report" className="gap-2">
               <FileText className="w-4 h-4" />
-              Full Report
+              {t('summary')}
             </TabsTrigger>
             <TabsTrigger value="comparison" className="gap-2" disabled={previousAnalyses.length === 0}>
               <TrendingUp className="w-4 h-4" />
-              Progress Tracking
+              {t('progressTracking')}
             </TabsTrigger>
             <TabsTrigger value="timeline" className="gap-2" disabled={previousAnalyses.length === 0}>
               <TrendingUp className="w-4 h-4" />
-              Timeline
+              {t('timeline')}
             </TabsTrigger>
           </TabsList>
 
@@ -213,7 +215,7 @@ export function EnhancedVISIAReport({
                   {
                     analysis,
                     imageUrl: (analysis as any).imageUrl,
-                    notes: "Latest analysis",
+                    notes: t('latestAnalysis'),
                   },
                   ...previousAnalyses.map((prev) => ({
                     analysis: prev,
@@ -232,15 +234,15 @@ export function EnhancedVISIAReport({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Badge variant="default" className="text-sm">
-              VISIA-Equivalent
+              {t('visiaEquivalent')}
             </Badge>
-            <span className="text-sm text-muted-foreground">Professional-grade analysis with 88-92% accuracy</span>
+            <span className="text-sm text-muted-foreground">{t('accuracyNote')}</span>
           </div>
           {(analysis as any)?.advancedFeatures && (
             <div className="flex gap-2">
-              <Badge variant="outline">UV Spots</Badge>
-              <Badge variant="outline">Porphyrins</Badge>
-              <Badge variant="outline">RBX Technology</Badge>
+              <Badge variant="outline">{t('uvSpots')}</Badge>
+              <Badge variant="outline">{t('porphyrins')}</Badge>
+              <Badge variant="outline">{t('rbxTech')}</Badge>
             </div>
           )}
         </div>

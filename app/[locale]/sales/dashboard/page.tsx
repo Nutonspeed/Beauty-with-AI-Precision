@@ -14,6 +14,7 @@ import Link from 'next/link'
 import { useLocalizePath } from '@/lib/i18n/locale-link'
 import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
+import { useAuth } from '@/lib/auth/context'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -75,8 +76,15 @@ interface SalesFunnelResponse {
   conversionRates: ConversionRates
 }
 
+import { LeadPrioritization } from '@/components/sales/lead-prioritization'
+import { SalesVelocity } from '@/components/sales/sales-velocity'
+import { GenMarketingVisuals } from '@/components/sales/gen-marketing-visuals'
+import { PredictiveReengagement } from '@/components/sales/predictive-reengagement'
+import { IntelligenceCommandPalette } from '@/components/analytics/intelligence-command-palette'
+
 export default function SalesDashboard() {
   const t = useTranslations()
+  const { user } = useAuth()
   const router = useRouter()
   const lp = useLocalizePath()
   const [isLoading, setIsLoading] = useState(true)
@@ -86,6 +94,18 @@ export default function SalesDashboard() {
   const [overview, setOverview] = useState<SalesOverviewResponse | null>(null)
   const [funnel, setFunnel] = useState<SalesFunnelResponse | null>(null)
   const [range, setRange] = useState<'1d' | '7d' | '30d'>('7d')
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false)
+
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault()
+        setIsCommandPaletteOpen((open) => !open)
+      }
+    }
+    document.addEventListener("keydown", down)
+    return () => document.removeEventListener("keydown", down)
+  }, [])
 
   useEffect(() => {
     let cancelled = false
@@ -212,6 +232,14 @@ export default function SalesDashboard() {
 
   return (
     <div className="min-h-screen bg-[#020617] text-slate-200 p-4 md:p-8 relative overflow-hidden selection:bg-pink-500/30">
+      <IntelligenceCommandPalette 
+        isOpen={isCommandPaletteOpen} 
+        onClose={() => setIsCommandPaletteOpen(false)} 
+        onSelect={(id) => {
+          console.log("Sales selected node:", id)
+          // Implement specific navigation if needed
+        }} 
+      />
       {/* Infrastructure Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-pink-500/5 rounded-full blur-[120px] animate-glow-pulse" />
@@ -299,81 +327,93 @@ export default function SalesDashboard() {
         </div>
 
         {/* AI Conversion Pipeline - Clinical Data Stream */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-        >
-          <Card className="relative overflow-hidden border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] shadow-2xl">
-            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/20 to-transparent" />
-            <CardHeader className="bg-white/[0.02] border-b border-white/5 px-10 py-8 flex flex-row items-center justify-between">
-              <CardTitle className="text-[11px] font-black uppercase tracking-[0.3em] flex items-center gap-4 text-white">
-                <div className="p-2 rounded-lg bg-pink-500/10 border border-pink-500/20">
-                  <Sparkles className="w-4 h-4 text-pink-400 animate-pulse" />
-                </div>
-                {t('salesDashboard.pipeline.title')}
-              </CardTitle>
-              <Badge className="bg-pink-600 text-white border-none px-4 py-1 text-[9px] font-black tracking-widest uppercase">
-                {t('salesDashboard.pipeline.badge')}
-              </Badge>
-            </CardHeader>
-            <CardContent className="p-10">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-                {[
-                  { label: t('salesDashboard.pipeline.acquisition'), val: aiLeadsToday, desc: t('salesDashboard.pipeline.acquisitionDesc'), icon: Microscope, color: "from-pink-500/20 to-purple-600/20", iconColor: "text-pink-400" },
-                  { label: t('salesDashboard.pipeline.proposals'), val: aiProposalsToday, desc: t('salesDashboard.pipeline.proposalsDesc'), icon: Brain, color: "from-blue-500/20 to-cyan-600/20", iconColor: "text-blue-400" },
-                  { label: t('salesDashboard.pipeline.bookings'), val: aiBookingsToday, desc: t('salesDashboard.pipeline.bookingsDesc'), icon: Fingerprint, color: "from-emerald-500/20 to-teal-600/20", iconColor: "text-emerald-400" }
-                ].map((s, i) => (
-                  <div key={i} className="relative group p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/5 hover:border-white/10 transition-all text-center md:text-left">
-                    <div className={cn("inline-flex h-14 w-14 rounded-2xl bg-gradient-to-br border border-white/5 flex items-center justify-center shadow-lg group-hover:scale-110 transition-all duration-500 mb-6 mx-auto md:mx-0", s.color)}>
-                      <s.icon className={cn("w-7 h-7", s.iconColor)} />
+        <div className="grid lg:grid-cols-12 gap-10">
+          <div className="lg:col-span-8">
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+            >
+              <Card className="relative overflow-hidden border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] shadow-2xl h-full">
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/20 to-transparent" />
+                <CardHeader className="bg-white/[0.02] border-b border-white/5 px-10 py-8 flex flex-row items-center justify-between">
+                  <CardTitle className="text-[11px] font-black uppercase tracking-[0.3em] flex items-center gap-4 text-white">
+                    <div className="p-2 rounded-lg bg-pink-500/10 border border-pink-500/20">
+                      <Sparkles className="w-4 h-4 text-pink-400 animate-pulse" />
                     </div>
-                    <div className="space-y-2">
-                      <p className="text-[10px] uppercase font-black text-slate-500 tracking-[0.25em]">{s.label}</p>
-                      <p className="text-5xl font-bold text-white tracking-tighter">{s.val}</p>
-                      <p className="text-[13px] text-slate-400 font-light mt-4 leading-relaxed">{s.desc}</p>
-                    </div>
+                    {t('salesDashboard.pipeline.title')}
+                  </CardTitle>
+                  <Badge className="bg-pink-600 text-white border-none px-4 py-1 text-[9px] font-black tracking-widest uppercase">
+                    {t('salesDashboard.pipeline.badge')}
+                  </Badge>
+                </CardHeader>
+                <CardContent className="p-10">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+                    {[
+                      { label: t('salesDashboard.pipeline.acquisition'), val: aiLeadsToday, desc: t('salesDashboard.pipeline.acquisitionDesc'), icon: Microscope, color: "from-pink-500/20 to-purple-600/20", iconColor: "text-pink-400" },
+                      { label: t('salesDashboard.pipeline.proposals'), val: aiProposalsToday, desc: t('salesDashboard.pipeline.proposalsDesc'), icon: Brain, color: "from-blue-500/20 to-cyan-600/20", iconColor: "text-blue-400" },
+                      { label: t('salesDashboard.pipeline.bookings'), val: aiBookingsToday, desc: t('salesDashboard.pipeline.bookingsDesc'), icon: Fingerprint, color: "from-emerald-500/20 to-teal-600/20", iconColor: "text-emerald-400" }
+                    ].map((s, i) => (
+                      <div key={i} className="relative group p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/5 hover:border-white/10 transition-all text-center md:text-left">
+                        <div className={cn("inline-flex h-14 w-14 rounded-2xl bg-gradient-to-br border border-white/5 flex items-center justify-center shadow-lg group-hover:scale-110 transition-all duration-500 mb-6 mx-auto md:mx-0", s.color)}>
+                          <s.icon className={cn("w-7 h-7", s.iconColor)} />
+                        </div>
+                        <div className="space-y-2">
+                          <p className="text-[10px] uppercase font-black text-slate-500 tracking-[0.25em]">{s.label}</p>
+                          <p className="text-5xl font-bold text-white tracking-tighter">{s.val}</p>
+                          <p className="text-[13px] text-slate-400 font-light mt-4 leading-relaxed">{s.desc}</p>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </div>
+          <div className="lg:col-span-4 space-y-10">
+            <LeadPrioritization />
+            <SalesVelocity />
+          </div>
+        </div>
 
         {/* Strategic Infrastructure Grid */}
         <div className="grid lg:grid-cols-12 gap-10">
-          {/* Main AI Toolset */}
-          <div className="lg:col-span-8 space-y-8">
-            <div className="flex items-center justify-between px-4">
-              <h3 className="text-2xl font-bold tracking-tight text-white flex items-center gap-4 italic">
-                <Wand2 className="w-7 h-7 text-pink-500" />
-                {t('salesDashboard.toolset.title')}
-              </h3>
-              <div className="h-px flex-1 bg-gradient-to-r from-pink-500/30 via-transparent to-transparent mx-8 hidden sm:block" />
-              <p className="text-[10px] uppercase tracking-[0.3em] text-slate-600 font-black whitespace-nowrap">{t('salesDashboard.toolset.optimization')}</p>
-            </div>
-            
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              {[
-                { icon: Camera, title: t('salesDashboard.toolset.precisionScan'), desc: t('salesDashboard.toolset.precisionScanDesc'), href: '/sales/quick-scan', color: "text-blue-400", bg: "bg-blue-500/10" },
-                { icon: TrendingUp, title: t('salesDashboard.toolset.futureForecast'), desc: t('salesDashboard.toolset.futureForecastDesc'), href: "/analysis/future", color: "text-emerald-400", bg: "bg-emerald-500/10" },
-                { icon: Wand2, title: t('salesDashboard.toolset.arSimulation'), desc: t('salesDashboard.toolset.arSimulationDesc'), href: "/ar-simulator", color: "text-pink-400", bg: "bg-pink-500/10" },
-                { icon: BarChart3, title: t('salesDashboard.toolset.presentation'), desc: t('salesDashboard.toolset.presentationDesc'), href: '/sales/presentations', color: "text-purple-400", bg: "bg-purple-500/10" }
-              ].map((tool, i) => (
-                <Link key={i} href={lp(tool.href)}>
-                  <Card className="h-full border-white/5 bg-white/[0.01] backdrop-blur-2xl hover:border-white/20 hover:bg-white/[0.04] transition-all cursor-pointer group text-center rounded-[2rem] overflow-hidden">
-                    <CardContent className="p-8 space-y-6">
-                      <div className={cn("mx-auto h-16 w-16 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500 border border-white/5 shadow-inner", tool.bg)}>
-                        <tool.icon className={cn("w-8 h-8", tool.color)} />
-                      </div>
-                      <div className="space-y-2">
-                        <h4 className="font-bold text-sm text-white tracking-tight group-hover:text-pink-400 transition-colors">{tool.title}</h4>
-                        <p className="text-[9px] text-slate-500 uppercase font-black tracking-widest leading-relaxed">{tool.desc}</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
+          {/* Main AI Toolset & Generative Marketing */}
+          <div className="lg:col-span-8 space-y-10">
+            <GenMarketingVisuals isEnterprise={['super_admin', 'clinic_owner'].includes(user?.role || '')} />
+
+            <div className="space-y-8">
+              <div className="flex items-center justify-between px-4">
+                <h3 className="text-2xl font-bold tracking-tight text-white flex items-center gap-4 italic">
+                  <Wand2 className="w-7 h-7 text-pink-500" />
+                  {t('salesDashboard.toolset.title')}
+                </h3>
+                <div className="h-px flex-1 bg-gradient-to-r from-pink-500/30 via-transparent to-transparent mx-8 hidden sm:block" />
+                <p className="text-[10px] uppercase tracking-[0.3em] text-slate-600 font-black whitespace-nowrap">{t('salesDashboard.toolset.optimization')}</p>
+              </div>
+              
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                {[
+                  { icon: Camera, title: t('salesDashboard.toolset.precisionScan'), desc: t('salesDashboard.toolset.precisionScanDesc'), href: '/sales/quick-scan', color: "text-blue-400", bg: "bg-blue-500/10" },
+                  { icon: TrendingUp, title: t('salesDashboard.toolset.futureForecast'), desc: t('salesDashboard.toolset.futureForecastDesc'), href: "/analysis/future", color: "text-emerald-400", bg: "bg-emerald-500/10" },
+                  { icon: Wand2, title: t('salesDashboard.toolset.arSimulation'), desc: t('salesDashboard.toolset.arSimulationDesc'), href: "/ar-simulator", color: "text-pink-400", bg: "bg-pink-500/10" },
+                  { icon: BarChart3, title: t('salesDashboard.toolset.presentation'), desc: t('salesDashboard.toolset.presentationDesc'), href: '/sales/presentations', color: "text-purple-400", bg: "bg-purple-500/10" }
+                ].map((tool, i) => (
+                  <Link key={i} href={lp(tool.href)}>
+                    <Card className="h-full border-white/5 bg-white/[0.01] backdrop-blur-2xl hover:border-white/20 hover:bg-white/[0.04] transition-all cursor-pointer group text-center rounded-[2rem] overflow-hidden">
+                      <CardContent className="p-8 space-y-6">
+                        <div className={cn("mx-auto h-16 w-16 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500 border border-white/5 shadow-inner", tool.bg)}>
+                          <tool.icon className={cn("w-8 h-8", tool.color)} />
+                        </div>
+                        <div className="space-y-2">
+                          <h4 className="font-bold text-sm text-white tracking-tight group-hover:text-pink-400 transition-colors">{tool.title}</h4>
+                          <p className="text-[9px] text-slate-500 uppercase font-black tracking-widest leading-relaxed">{tool.desc}</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                ))}
+              </div>
             </div>
 
             {/* Specialized Clinical AR Modules */}
@@ -403,6 +443,8 @@ export default function SalesDashboard() {
 
           {/* Right Column - Secondary Precision Insights */}
           <div className="lg:col-span-4 space-y-10">
+            <PredictiveReengagement />
+
             {/* Remote Consult Card */}
             <Card className="relative overflow-hidden border-emerald-500/20 bg-emerald-500/[0.02] backdrop-blur-3xl rounded-[3rem] group">
               <div className="absolute top-0 right-0 p-10 opacity-[0.03] group-hover:scale-110 transition-transform">

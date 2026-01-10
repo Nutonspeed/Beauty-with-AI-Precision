@@ -221,7 +221,7 @@ export function LeadConversionOptimizer({
         const objectionAnalyses = [];
         for (const objection of lead.objections) {
           const analysis = await objectionHandler.detectObjection(
-            `ลูกค้ากังวลเรื่อง${objection === 'price' ? 'ราคา' : objection === 'time' ? 'เวลา' : objection}`,
+            objection === 'price' ? t('leadConversionOptimizer.objectionPrice') : objection === 'time' ? t('leadConversionOptimizer.objectionTime') : objection,
             {
               customerProfile: {
                 name: lead.name,
@@ -371,14 +371,14 @@ export function LeadConversionOptimizer({
             {/* Objections Warning */}
             {lead.objections && lead.objections.length > 0 && (
               <div className="p-3 rounded-xl bg-yellow-500/10 border border-yellow-500/30">
-                <div className="flex items-start gap-2">
+                  <div className="flex items-start gap-2">
                   <AlertTriangle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
                   <div>
                     <p className="font-medium text-yellow-400">{t('leadConversionOptimizer.concerns')}</p>
                     <div className="flex flex-wrap gap-1 mt-1">
                       {lead.objections.map((obj, idx) => (
                         <Badge key={idx} variant="outline" className="border-yellow-500/50 text-yellow-400 text-xs">
-                          {obj === 'price' ? t('salesLeadDetail.dialog.types.call') : obj === 'time' ? t('salesWizard.steps.summary.paymentTerms') : obj}
+                          {obj === 'price' ? t('aiSalesCompanion.keywords.price')[0] : obj === 'time' ? t('aiSalesCompanion.keywords.time')[0] : obj}
                         </Badge>
                       ))}
                     </div>

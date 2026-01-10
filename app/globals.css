@@ -625,6 +625,71 @@ img {
   animation: glow-pulse 8s ease-in-out infinite;
 }
 
+/* Neural Pulse Animation */
+@keyframes neural-pulse {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
+    filter: blur(2px);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.05);
+    filter: blur(4px);
+  }
+}
+
+.animate-neural-pulse {
+  animation: neural-pulse 4s ease-in-out infinite;
+}
+
+/* Data Streaming Animation */
+@keyframes data-stream {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+.animate-data-stream {
+  animation: data-stream 3s linear infinite;
+}
+
+/* Synaptic Fire Animation */
+@keyframes synaptic-fire {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(236, 72, 153, 0);
+  }
+  50% {
+    box-shadow: 0 0 20px 4px rgba(236, 72, 153, 0.4);
+  }
+}
+
+.animate-synaptic-fire {
+  animation: synaptic-fire 2s ease-in-out infinite;
+}
+
+/* Cyber Grid Drift */
+@keyframes grid-drift {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 100px 100px;
+  }
+}
+
+.animate-grid-drift {
+  animation: grid-drift 20s linear infinite;
+}
+
 /* Gradient orb utilities */
 .orb-gradient-blue {
   background: radial-gradient(circle at center, rgba(59, 130, 246, 0.4) 0%, rgba(59, 130, 246, 0.2) 40%, transparent 70%);

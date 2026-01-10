@@ -50,6 +50,13 @@ import {
   Loader2,
   Plus,
   Fingerprint,
+  Sparkles,
+  Brain,
+  Zap,
+  Target,
+  ShieldAlert,
+  Lightbulb,
+  Trophy
 } from "lucide-react"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
@@ -57,6 +64,9 @@ import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
 import { format } from "date-fns"
+
+import { NeuralNarrativeSynthesis } from '@/components/sales/neural-narrative-synthesis'
+import { ClinicalSentiment } from '@/components/sales/clinical-sentiment'
 
 type SalesLeadStatus = 'new' | 'contacted' | 'qualified' | 'proposal_sent' | 'negotiation' | 'won' | 'lost' | 'cold' | 'warm' | 'hot'
 
@@ -474,6 +484,107 @@ export default function LeadDetailPage() {
                   )}
                 </CardContent>
               </Card>
+
+              {/* AI Sales Advisor Node - ENTERPRISE VALUE */}
+              <div className="space-y-10">
+                <ClinicalSentiment customerName={lead.name} />
+                
+                <NeuralNarrativeSynthesis 
+                  customerData={{
+                    name: lead.name,
+                    concerns: lead.interested_treatments || [],
+                    score: lead.score
+                  }} 
+                />
+                
+                <Card className="relative overflow-hidden border-pink-500/20 bg-pink-500/[0.02] backdrop-blur-3xl rounded-[3rem] shadow-2xl group">
+                  <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/40 to-transparent" />
+                  <CardHeader className="p-10 pb-6 border-b border-white/5 flex flex-row items-center justify-between">
+                    <div className="space-y-2">
+                      <CardTitle className="text-xs font-black uppercase tracking-[0.3em] text-pink-400 flex items-center gap-3">
+                        <Brain className="w-4 h-4 animate-pulse" />
+                        AI Strategic Sales Advisor
+                      </CardTitle>
+                      <CardDescription className="text-slate-500 font-light italic">Predictive communication patterns and personalized conversion scripts.</CardDescription>
+                    </div>
+                    <Badge variant="outline" className="px-4 py-1 rounded-full border-pink-500/30 text-pink-400 bg-pink-500/10 font-black italic tracking-widest text-[9px]">
+                      PRECISION_LEVEL: HIGH
+                    </Badge>
+                  </CardHeader>
+                  <CardContent className="p-10 lg:p-12 space-y-10">
+                    {/* Strategic Battle Cards Interface */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <div className="p-6 rounded-[2rem] bg-pink-500/5 border border-pink-500/10 space-y-4 hover:bg-pink-500/10 transition-colors group/card">
+                        <div className="flex items-center gap-3">
+                          <Zap className="h-4 w-4 text-pink-500" />
+                          <span className="text-[9px] font-black uppercase tracking-widest text-white">Opening Hook</span>
+                        </div>
+                        <p className="text-xs text-slate-300 italic leading-relaxed">"Based on your scan, the 468-point neural mapping identified specific vectors for rejuvenation..."</p>
+                      </div>
+                      <div className="p-6 rounded-[2rem] bg-cyan-500/5 border border-cyan-500/10 space-y-4 hover:bg-cyan-500/10 transition-colors">
+                        <div className="flex items-center gap-3">
+                          <ShieldAlert className="h-4 w-4 text-cyan-500" />
+                          <span className="text-[9px] font-black uppercase tracking-widest text-white">Objection Handling</span>
+                        </div>
+                        <p className="text-xs text-slate-300 italic leading-relaxed">"I understand the budget concern. Our Professional Tier ROI metrics show a 2.4x retention lift..."</p>
+                      </div>
+                      <div className="p-6 rounded-[2rem] bg-purple-500/5 border border-purple-500/10 space-y-4 hover:bg-purple-500/10 transition-colors">
+                        <div className="flex items-center gap-3">
+                          <Trophy className="h-4 w-4 text-purple-500" />
+                          <span className="text-[9px] font-black uppercase tracking-widest text-white">Closing Playbook</span>
+                        </div>
+                        <p className="text-xs text-slate-300 italic leading-relaxed">"Secure your digital twin slot today to lock in the AI-calibrated protocol discount."</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                      <div className="space-y-6">
+                        <div className="flex items-center gap-4">
+                          <div className="h-10 w-10 rounded-xl bg-pink-500/10 flex items-center justify-center border border-pink-500/20">
+                            <Lightbulb className="h-5 w-5 text-pink-500" />
+                          </div>
+                          <h4 className="text-sm font-black uppercase tracking-widest text-white italic">AI Strategy Insights</h4>
+                        </div>
+                        <ul className="space-y-4">
+                          {[
+                            "Quantitative evidence of treatment effectiveness",
+                            "Personalized 3D visualization of future results",
+                            "Precision-calibrated treatment protocols"
+                          ].map((insight, i) => (
+                            <li key={i} className="flex items-center gap-4 text-xs text-slate-400 font-light">
+                              <div className="h-1 w-1 rounded-full bg-pink-500 shadow-[0_0_8px_rgba(236,72,153,0.5)]" />
+                              {insight}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div className="space-y-6">
+                        <div className="flex items-center gap-4">
+                          <div className="h-10 w-10 rounded-xl bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20">
+                            <Target className="h-5 w-5 text-cyan-500" />
+                          </div>
+                          <h4 className="text-sm font-black uppercase tracking-widest text-white italic">Target Conversion Vector</h4>
+                        </div>
+                        <div className="p-6 rounded-2xl bg-white/[0.03] border border-white/5 space-y-4">
+                          <div className="flex justify-between text-[9px] font-black uppercase tracking-widest text-slate-500">
+                            <span>Probability</span>
+                            <span className="text-emerald-500">82%</span>
+                          </div>
+                          <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                            <motion.div animate={{ width: "82%" }} className="h-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="pt-6 border-t border-white/5">
+                      <Button variant="outline" className="w-full h-14 rounded-2xl border-white/10 bg-white/5 text-[10px] font-black uppercase tracking-[0.3em] hover:bg-white/10">
+                        <Sparkles className="mr-3 h-4 w-4 text-pink-500" />
+                        Regenerate AI Sales Narrative
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
 
               {/* Interaction Narrative Timeline */}
               <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative">

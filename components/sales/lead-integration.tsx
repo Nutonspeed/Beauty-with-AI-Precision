@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
+import { useTranslations } from "next-intl"
 import { 
   UserPlus, 
   CheckCircle2, 
@@ -38,6 +39,7 @@ interface LeadIntegrationProps {
 }
 
 export default function LeadIntegration({ scanResult, onLeadCreated }: LeadIntegrationProps) {
+  const t = useTranslations()
   const { toast } = useToast();
   const [isCreating, setIsCreating] = useState(false);
   const [leadCreated, setLeadCreated] = useState(false);
@@ -62,10 +64,10 @@ export default function LeadIntegration({ scanResult, onLeadCreated }: LeadInteg
           status: 'new',
           estimated_value: estimatedValue,
           notes: `
-Skin Analysis Results:
-- Skin Age: ${scanResult.skin_age} years
-- Concerns: ${scanResult.concerns.map(c => c.name).join(', ')}
-- Recommended Treatments: ${scanResult.recommendations.map(r => r.treatment).join(', ')}
+${t('leadIntegration.scanResults')}
+${t('leadIntegration.skinAge', { val: scanResult.skin_age })}
+${t('leadIntegration.concerns', { val: scanResult.concerns.map(c => c.name).join(', ') })}
+${t('leadIntegration.recommendations', { val: scanResult.recommendations.map(r => r.treatment).join(', ') })}
 
 ${notes || ''}
           `.trim(),
@@ -97,8 +99,8 @@ ${notes || ''}
 
       setLeadCreated(true);
       toast({
-        title: 'Lead Created Successfully',
-        description: `${scanResult.customer_name} has been added to your leads pipeline.`,
+        title: t('leadIntegration.createSuccess'),
+        description: t('leadIntegration.createSuccessDesc', { name: scanResult.customer_name }),
         variant: 'default'
       });
 
@@ -108,8 +110,8 @@ ${notes || ''}
     } catch (error) {
       console.error('Error creating lead:', error);
       toast({
-        title: 'Error Creating Lead',
-        description: 'Failed to create lead. Please try again.',
+        title: t('leadIntegration.createError'),
+        description: t('leadIntegration.createErrorDesc'),
         variant: 'destructive'
       });
     } finally {
@@ -123,9 +125,9 @@ ${notes || ''}
         <CardContent className="flex items-center justify-center py-8">
           <div className="text-center space-y-3">
             <CheckCircle2 className="w-12 h-12 text-green-600 mx-auto" />
-            <h3 className="font-semibold text-lg">Lead Created Successfully!</h3>
+            <h3 className="font-semibold text-lg">{t('leadIntegration.createSuccess')}</h3>
             <p className="text-sm text-muted-foreground">
-              {scanResult.customer_name} has been added to your pipeline.
+              {t('leadIntegration.createSuccessDesc', { name: scanResult.customer_name })}
             </p>
           </div>
         </CardContent>
@@ -138,10 +140,10 @@ ${notes || ''}
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <UserPlus className="w-5 h-5 text-blue-500" />
-          Convert to Lead
+          {t('leadIntegration.convertToLead')}
         </CardTitle>
         <CardDescription>
-          Add this customer to your sales pipeline
+          {t('leadIntegration.addPipelineDesc')}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -149,17 +151,17 @@ ${notes || ''}
         <div className="p-4 bg-muted/50 rounded-lg space-y-3">
           <div className="grid grid-cols-2 gap-3 text-sm">
             <div>
-              <div className="text-muted-foreground">Name</div>
+              <div className="text-muted-foreground">{t('salesLeads.modal.nameLabel')}</div>
               <div className="font-medium">{scanResult.customer_name}</div>
             </div>
             <div>
-              <div className="text-muted-foreground">Phone</div>
+              <div className="text-muted-foreground">{t('salesLeads.modal.phoneLabel')}</div>
               <div className="font-medium">{scanResult.customer_phone}</div>
             </div>
           </div>
           
           <div className="space-y-2">
-            <div className="text-muted-foreground text-sm">Skin Concerns</div>
+            <div className="text-muted-foreground text-sm">{t('patient.concerns')}</div>
             <div className="flex flex-wrap gap-2">
               {scanResult.concerns.map((concern, idx) => (
                 <Badge key={idx} variant={concern.severity >= 7 ? 'destructive' : 'secondary'}>
@@ -170,11 +172,11 @@ ${notes || ''}
           </div>
           
           <div className="space-y-2">
-            <div className="text-muted-foreground text-sm">Recommended Treatments</div>
+            <div className="text-muted-foreground text-sm">{t('treatmentAnalytics.treatment')}</div>
             <div className="flex flex-wrap gap-2">
               {scanResult.recommendations.map((rec, idx) => (
                 <Badge key={idx} variant="outline">
-                  {rec.treatment} - ฿{rec.price.toLocaleString()}
+                  {rec.treatment} - {t('format.currency', { amount: rec.price.toLocaleString() })}
                 </Badge>
               ))}
             </div>
@@ -184,7 +186,7 @@ ${notes || ''}
         {/* Lead Details Form */}
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email">Email (Optional)</Label>
+            <Label htmlFor="email">{t('salesLeads.modal.emailLabel')} ({t('common.optional')})</Label>
             <Input
               id="email"
               type="email"
@@ -195,7 +197,7 @@ ${notes || ''}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="estimated-value">Estimated Deal Value (฿)</Label>
+            <Label htmlFor="estimated-value">{t('leadIntegration.estimatedValue')}</Label>
             <Input
               id="estimated-value"
               type="number"
@@ -203,15 +205,15 @@ ${notes || ''}
               onChange={(e) => setEstimatedValue(parseInt(e.target.value) || 0)}
             />
             <p className="text-xs text-muted-foreground">
-              Auto-calculated from recommended treatments
+              {t('leadIntegration.autoCalc')}
             </p>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="notes">Additional Notes (Optional)</Label>
+            <Label htmlFor="notes">{t('salesLeads.modal.notesLabel')} ({t('common.optional')})</Label>
             <Textarea
               id="notes"
-              placeholder="Any additional information about the customer or consultation..."
+              placeholder={t('salesLeads.modal.notesPlaceholder')}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={4}
@@ -224,12 +226,12 @@ ${notes || ''}
           <div className="flex items-start gap-2">
             <AlertCircle className="w-4 h-4 text-blue-600 mt-0.5" />
             <div className="flex-1">
-              <h4 className="font-semibold text-sm">Lead Preview</h4>
+              <h4 className="font-semibold text-sm">{t('leadIntegration.leadPreview')}</h4>
               <ul className="text-sm text-muted-foreground mt-2 space-y-1">
-                <li>• Source: Quick Scan Analysis</li>
-                <li>• Status: New Lead</li>
-                <li>• Priority: {scanResult.concerns.some(c => c.severity >= 7) ? 'High' : 'Medium'}</li>
-                <li>• Follow-up: Recommended within 24 hours</li>
+                <li>• {t('leadIntegration.sourceScan')}</li>
+                <li>• {t('leadIntegration.statusNew')}</li>
+                <li>• {t('leadIntegration.priority', { val: scanResult.concerns.some(c => c.severity >= 7) ? t('common.high') : t('common.medium') })}</li>
+                <li>• {t('leadIntegration.followUp24h')}</li>
               </ul>
             </div>
           </div>
@@ -246,12 +248,12 @@ ${notes || ''}
             {isCreating ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Creating Lead...
+                {t('leadIntegration.creating')}
               </>
             ) : (
               <>
                 <UserPlus className="w-4 h-4 mr-2" />
-                Create Lead
+                {t('leadIntegration.create')}
               </>
             )}
           </Button>
@@ -259,7 +261,7 @@ ${notes || ''}
 
         {/* Info Notice */}
         <p className="text-xs text-muted-foreground">
-          Creating a lead will save this scan result to the customer's profile and add them to your sales pipeline for follow-up.
+          {t('leadIntegration.pipelineNotice')}
         </p>
       </CardContent>
     </Card>

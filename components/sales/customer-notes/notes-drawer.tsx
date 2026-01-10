@@ -32,6 +32,7 @@ import { useCustomerNotes, CustomerNote } from "@/hooks/useCustomerNotes";
 import { AddNoteForm } from "./add-note-form";
 import { formatDistanceToNow, format } from "date-fns";
 import { th } from "date-fns/locale";
+import { useTranslations } from "next-intl";
 import {
   StickyNote,
   Phone,
@@ -56,13 +57,13 @@ interface NotesDrawerProps {
   customer_name?: string;
 }
 
-const NOTE_TYPE_CONFIG = {
-  call: { icon: Phone, label: "โทรศัพท์", color: "bg-blue-100 text-blue-700" },
-  meeting: { icon: Calendar, label: "นัดหมาย", color: "bg-purple-100 text-purple-700" },
-  followup: { icon: AlertCircle, label: "ติดตาม", color: "bg-orange-100 text-orange-700" },
-  general: { icon: StickyNote, label: "ทั่วไป", color: "bg-gray-100 text-gray-700" },
-  important: { icon: Star, label: "สำคัญ", color: "bg-red-100 text-red-700" },
-};
+const NOTE_TYPE_CONFIG = (t: any) => ({
+  call: { icon: Phone, label: t('customerNotes.types.call'), color: "bg-blue-100 text-blue-700" },
+  meeting: { icon: Calendar, label: t('customerNotes.types.meeting'), color: "bg-purple-100 text-purple-700" },
+  followup: { icon: AlertCircle, label: t('customerNotes.types.followup'), color: "bg-orange-100 text-orange-700" },
+  general: { icon: StickyNote, label: t('customerNotes.types.general'), color: "bg-gray-100 text-gray-700" },
+  important: { icon: Star, label: t('customerNotes.types.important'), color: "bg-red-100 text-red-700" },
+});
 
 export function NotesDrawer({
   open,
@@ -70,8 +71,11 @@ export function NotesDrawer({
   customer_id,
   customer_name,
 }: NotesDrawerProps) {
+  const t = useTranslations();
   const { notes, loading, error, refresh, deleteNote, pinNote, unpinNote, addNote } =
     useCustomerNotes(customer_id);
+
+  const config_map = NOTE_TYPE_CONFIG(t);
 
   const [expandedNotes, setExpandedNotes] = useState<Set<string>>(new Set());
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -143,7 +147,7 @@ export function NotesDrawer({
                 </Button>
               )}
               <StickyNote className="h-5 w-5" />
-              {showAddForm ? "เพิ่มบันทึกใหม่" : "บันทึกลูกค้า"}
+              {showAddForm ? t('customerNotes.addNote') : t('customerNotes.title')}
             </SheetTitle>
             {customer_name && !showAddForm && (
               <SheetDescription>{customer_name}</SheetDescription>
@@ -170,7 +174,7 @@ export function NotesDrawer({
                     size="sm"
                   >
                     <Plus className="mr-2 h-4 w-4" />
-                    เพิ่มบันทึก
+                    {t('customerNotes.addNoteButton')}
                   </Button>
                   <Button
                     onClick={refresh}
@@ -197,9 +201,9 @@ export function NotesDrawer({
               ) : notes.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-8 text-center">
                   <StickyNote className="h-12 w-12 text-gray-300 mb-3" />
-                  <p className="text-sm text-gray-500">ยังไม่มีบันทึก</p>
+                  <p className="text-sm text-gray-500">{t('customerNotes.noNotes')}</p>
                   <p className="text-xs text-gray-400 mt-1">
-                    คลิก "เพิ่มบันทึก" เพื่อเริ่มต้น
+                    {t('customerNotes.clickToAdd')}
                   </p>
                 </div>
               ) : (
@@ -247,18 +251,18 @@ export function NotesDrawer({
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>ยืนยันการลบ</AlertDialogTitle>
+            <AlertDialogTitle>{t('customerNotes.deleteConfirmTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              คุณแน่ใจหรือไม่ที่จะลบบันทึกนี้? การกระทำนี้ไม่สามารถย้อนกลับได้
+              {t('customerNotes.deleteConfirmDesc')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>ยกเลิก</AlertDialogCancel>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteConfirm}
               className="bg-red-600 hover:bg-red-700"
             >
-              ลบ
+              {t('customerNotes.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -283,7 +287,9 @@ function NoteCard({
   onDelete,
   onTogglePin,
 }: NoteCardProps) {
-  const config = NOTE_TYPE_CONFIG[note.note_type] || NOTE_TYPE_CONFIG.general;
+  const t = useTranslations();
+  const config_map = NOTE_TYPE_CONFIG(t);
+  const config = config_map[note.note_type as keyof typeof config_map] || config_map.general;
   const Icon = config.icon;
 
   // Truncate content for preview
@@ -309,7 +315,7 @@ function NoteCard({
           {note.is_private && (
             <Badge variant="outline" className="text-xs">
               <Lock className="h-3 w-3 mr-1" />
-              ส่วนตัว
+              {t('customerNotes.private')}
             </Badge>
           )}
 
@@ -330,25 +336,25 @@ function NoteCard({
               {note.is_pinned ? (
                 <>
                   <PinOff className="mr-2 h-4 w-4" />
-                  ยกเลิกปักหมุด
+                  {t('customerNotes.unpin')}
                 </>
               ) : (
                 <>
                   <Pin className="mr-2 h-4 w-4" />
-                  ปักหมุด
+                  {t('customerNotes.pin')}
                 </>
               )}
             </DropdownMenuItem>
             <DropdownMenuItem>
               <Edit className="mr-2 h-4 w-4" />
-              แก้ไข
+              {t('customerNotes.edit')}
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={onDelete}
               className="text-red-600 focus:text-red-600"
             >
               <Trash2 className="mr-2 h-4 w-4" />
-              ลบ
+              {t('customerNotes.delete')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -392,7 +398,7 @@ function NoteCard({
         <div className="mt-2 pt-2 border-t border-gray-100">
           <div className="flex items-center gap-1 text-xs text-orange-600">
             <Calendar className="h-3 w-3" />
-            ติดตาม: {format(new Date(note.followup_date), "d MMM yyyy", { locale: th })}
+            {t('customerNotes.followupDate')}: {format(new Date(note.followup_date), "d MMM yyyy", { locale: t('format.date') === '{date}' ? th : undefined })}
           </div>
         </div>
       )}

@@ -10,7 +10,8 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { TrendingUp, TrendingDown, Minus, ArrowRight, Image } from "lucide-react"
+import { useTranslations } from "next-intl"
+import { TrendingUp, TrendingDown, Minus, ArrowRight, Image as ImageIcon } from "lucide-react"
 import type { HybridSkinAnalysis } from "@/lib/types/skin-analysis"
 
 export interface ComparisonItem {
@@ -25,23 +26,24 @@ export interface ComparisonViewProps {
 }
 
 export function ComparisonView({ items, className = "" }: ComparisonViewProps) {
+  const t = useTranslations('analysisComparison')
   const [activeTab, setActiveTab] = useState("overview")
 
   return (
     <div className={`space-y-6 ${className}`}>
       {/* Header */}
       <div>
-        <h2 className="text-2xl font-bold mb-2">Analysis Comparison</h2>
-        <p className="text-muted-foreground">Compare {items.length} analyses side-by-side</p>
+        <h2 className="text-2xl font-bold mb-2">{t('title')}</h2>
+        <p className="text-muted-foreground">{t('comparing', { count: items.length })}</p>
       </div>
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="images">Images</TabsTrigger>
-          <TabsTrigger value="parameters">Parameters</TabsTrigger>
-          <TabsTrigger value="progress">Progress</TabsTrigger>
+          <TabsTrigger value="overview">{t('overview')}</TabsTrigger>
+          <TabsTrigger value="images">{t('images')}</TabsTrigger>
+          <TabsTrigger value="parameters">{t('parameters')}</TabsTrigger>
+          <TabsTrigger value="progress">{t('progress')}</TabsTrigger>
         </TabsList>
 
         {/* Overview Tab */}
@@ -62,16 +64,16 @@ export function ComparisonView({ items, className = "" }: ComparisonViewProps) {
             <div className={`grid grid-cols-${items.length} gap-6`}>
               {items.map((item, index) => (
                 <div key={index} className="space-y-2">
-                  <div className="text-sm font-medium text-center">{item.label || `Analysis ${index + 1}`}</div>
+                  <div className="text-sm font-medium text-center">{item.label || `${t('session')} ${index + 1}`}</div>
                   {item.imageUrl ? (
                     <img
                       src={item.imageUrl || "/placeholder.svg"}
-                      alt={`Analysis ${index + 1}`}
+                      alt={`${t('session')} ${index + 1}`}
                       className="w-full aspect-square object-cover rounded-lg"
                     />
                   ) : (
                     <div className="w-full aspect-square bg-muted rounded-lg flex items-center justify-center">
-                      <Image className="w-12 h-12 text-muted-foreground" />
+                      <ImageIcon className="w-12 h-12 text-muted-foreground" />
                     </div>
                   )}
                   <div className="text-xs text-center text-muted-foreground">
@@ -85,17 +87,17 @@ export function ComparisonView({ items, className = "" }: ComparisonViewProps) {
 
         {/* Parameters Tab */}
         <TabsContent value="parameters" className="space-y-4">
-          <ParameterComparison items={items} parameter="spots" label="Spots" />
-          <ParameterComparison items={items} parameter="pores" label="Pores" />
-          <ParameterComparison items={items} parameter="wrinkles" label="Wrinkles" />
-          <ParameterComparison items={items} parameter="texture" label="Texture" />
-          <ParameterComparison items={items} parameter="redness" label="Redness" />
+          <ParameterComparison items={items} parameter="spots" label={t('spots')} />
+          <ParameterComparison items={items} parameter="pores" label={t('pores')} />
+          <ParameterComparison items={items} parameter="wrinkles" label={t('wrinkles')} />
+          <ParameterComparison items={items} parameter="texture" label={t('texture')} />
+          <ParameterComparison items={items} parameter="redness" label={t('redness')} />
         </TabsContent>
 
         {/* Progress Tab */}
         <TabsContent value="progress">
           <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4">Progress Metrics</h3>
+            <h3 className="text-lg font-semibold mb-4">{t('progressMetrics')}</h3>
             <div className="space-y-6">
               {items.length === 2 && <ProgressMetrics before={items[0]} after={items[1]} />}
               {items.length === 3 && (
@@ -121,13 +123,14 @@ interface OverviewCardProps {
 }
 
 function OverviewCard({ item, index }: OverviewCardProps) {
+  const t = useTranslations('analysisComparison')
   const { analysis, imageUrl, label } = item
   const date = new Date(analysis.timestamp)
 
   return (
     <Card className="p-4">
       <div className="text-center mb-3">
-        <Badge className="mb-2">{label || `Analysis ${index + 1}`}</Badge>
+        <Badge className="mb-2">{label || `${t('session')} ${index + 1}`}</Badge>
         <p className="text-xs text-muted-foreground">
           {date.toLocaleDateString()} {date.toLocaleTimeString()}
         </p>
@@ -154,7 +157,7 @@ function OverviewCard({ item, index }: OverviewCardProps) {
                 6,
             )}
           </p>
-          <p className="text-xs text-muted-foreground">Overall Score</p>
+          <p className="text-xs text-muted-foreground">{t('overallScore')}</p>
         </div>
 
         <Separator />
@@ -162,7 +165,7 @@ function OverviewCard({ item, index }: OverviewCardProps) {
         <div className="grid grid-cols-2 gap-2 text-sm">
           <div className="text-center">
             <p className="font-semibold">95%</p>
-            <p className="text-xs text-muted-foreground">Confidence</p>
+            <p className="text-xs text-muted-foreground">{t('confidence')}</p>
           </div>
           <div className="text-center">
             <p className="font-semibold">
@@ -176,7 +179,7 @@ function OverviewCard({ item, index }: OverviewCardProps) {
               )}
               th
             </p>
-            <p className="text-xs text-muted-foreground">Percentile</p>
+            <p className="text-xs text-muted-foreground">{t('percentile')}</p>
           </div>
         </div>
       </div>
@@ -190,6 +193,7 @@ interface ImprovementSummaryProps {
 }
 
 function ImprovementSummary({ before, after }: ImprovementSummaryProps) {
+  const t = useTranslations('analysisComparison')
   const beforeScore = Math.round(
     (before.analysis.overallScore.spots +
       before.analysis.overallScore.pores +
@@ -232,7 +236,7 @@ function ImprovementSummary({ before, after }: ImprovementSummaryProps) {
       <div className="flex items-center justify-between">
         <div className="text-center flex-1">
           <p className="text-2xl font-bold">{beforeScore}</p>
-          <p className="text-sm text-muted-foreground">Before</p>
+          <p className="text-sm text-muted-foreground">{t('before')}</p>
         </div>
 
         <div className="flex items-center gap-2">
@@ -241,12 +245,12 @@ function ImprovementSummary({ before, after }: ImprovementSummaryProps) {
 
         <div className="text-center flex-1">
           <p className="text-2xl font-bold">{afterScore}</p>
-          <p className="text-sm text-muted-foreground">After</p>
+          <p className="text-sm text-muted-foreground">{t('after')}</p>
         </div>
 
         <div className="flex-1 text-center">
-          <ChangeBadge value={scoreDiff} label="Score Change" />
-          <ChangeBadge value={percentileDiff} label="Percentile Change" className="mt-2" />
+          <ChangeBadge value={scoreDiff} label={t('scoreChange')} />
+          <ChangeBadge value={percentileDiff} label={t('percentileChange')} className="mt-2" />
         </div>
       </div>
     </Card>
@@ -260,6 +264,7 @@ interface ParameterComparisonProps {
 }
 
 function ParameterComparison({ items, parameter, label }: ParameterComparisonProps) {
+  const t = useTranslations('analysisComparison')
   return (
     <Card className="p-4">
       <h4 className="font-semibold mb-3">{label}</h4>
@@ -275,14 +280,14 @@ function ParameterComparison({ items, parameter, label }: ParameterComparisonPro
 
           return (
             <div key={index} className="space-y-2">
-              <div className="text-sm text-center font-medium">{item.label || `Analysis ${index + 1}`}</div>
+              <div className="text-sm text-center font-medium">{item.label || `${t('session')} ${index + 1}`}</div>
               <div className="text-center">
                 <p className="text-2xl font-bold">{percentile}th</p>
-                <p className="text-sm text-muted-foreground">Percentile</p>
+                <p className="text-sm text-muted-foreground">{t('percentile')}</p>
               </div>
               <div className="text-center">
                 <p className="text-lg font-semibold">{severity}/10</p>
-                <p className="text-xs text-muted-foreground">Severity</p>
+                <p className="text-xs text-muted-foreground">{t('severity')}</p>
               </div>
             </div>
           )
@@ -293,7 +298,7 @@ function ParameterComparison({ items, parameter, label }: ParameterComparisonPro
         <div className="mt-3 pt-3 border-t text-center">
           <ChangeBadge
             value={items[1].analysis.percentiles[parameter] - items[0].analysis.percentiles[parameter]}
-            label="Change"
+            label={t('change')}
           />
         </div>
       )}
@@ -307,21 +312,23 @@ interface ProgressMetricsProps {
   readonly label?: string
 }
 
-function ProgressMetrics({ before, after, label = "Progress" }: ProgressMetricsProps) {
+function ProgressMetrics({ before, after, label }: ProgressMetricsProps) {
+  const t = useTranslations('analysisComparison')
+  const defaultLabel = t('progress')
   const parameters: Array<{
     key: keyof typeof before.analysis.percentiles
     label: string
   }> = [
-    { key: "spots", label: "Spots" },
-    { key: "pores", label: "Pores" },
-    { key: "wrinkles", label: "Wrinkles" },
-    { key: "texture", label: "Texture" },
-    { key: "redness", label: "Redness" },
+    { key: "spots", label: t('spots') },
+    { key: "pores", label: t('pores') },
+    { key: "wrinkles", label: t('wrinkles') },
+    { key: "texture", label: t('texture') },
+    { key: "redness", label: t('redness') },
   ]
 
   return (
     <div>
-      <h4 className="font-semibold mb-4">{label}</h4>
+      <h4 className="font-semibold mb-4">{label || defaultLabel}</h4>
       <div className="space-y-2">
         {parameters.map(({ key, label: paramLabel }) => {
           const beforeValue = before.analysis.percentiles[key]

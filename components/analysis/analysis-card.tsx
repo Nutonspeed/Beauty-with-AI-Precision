@@ -8,135 +8,95 @@
 import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
+import { useTranslations } from 'next-intl';
 import {
-  Circle,
-  Droplet,
-  Sparkles,
-  Activity,
-  Layers,
-  AlertCircle,
   TrendingUp,
   TrendingDown,
   Minus,
+  AlertCircle,
+  Sparkles,
+  Droplets,
+  Circle,
+  Sun,
+  Layout,
+  Scan,
 } from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
-
-const CARD_TRANSLATIONS = {
-  en: {
-    spots: { label: 'Dark Spots', description: 'Pigmentation, age spots, and freckles' },
-    pores: { label: 'Pores', description: 'Pore size and visibility' },
-    wrinkles: { label: 'Wrinkles', description: 'Fine lines and expression lines' },
-    texture: { label: 'Texture', description: 'Skin smoothness and uniformity' },
-    redness: { label: 'Redness', description: 'Inflammation and vascular issues' },
-    hydration: { label: 'Hydration', description: 'Skin moisture levels' },
-    excellent: 'Excellent',
-    good: 'Good',
-    moderate: 'Moderate',
-    needsAttention: 'Needs Attention',
-    betterThan: 'Better than',
-    ofUsers: 'of users',
-    improving: 'Improving',
-    stable: 'Stable',
-    worsening: 'Worsening',
-    detected: 'detected'
-  },
-  th: {
-    spots: { label: 'จุดด่างดำ', description: 'รอยดำ ฝ้า กระ และจุดด่างดำต่างๆ' },
-    pores: { label: 'รูขุมขน', description: 'ขนาดและความชัดเจนของรูขุมขน' },
-    wrinkles: { label: 'ริ้วรอย', description: 'เส้นริ้วรอยและรอยยับ' },
-    texture: { label: 'เนื้อผิว', description: 'ความเรียบเนียนและสม่ำเสมอของผิว' },
-    redness: { label: 'รอยแดง', description: 'การอักเสบและปัญหาหลอดเลือด' },
-    hydration: { label: 'ความชุ่มชื้น', description: 'ระดับความชุ่มชื้นของผิว' },
-    excellent: 'ดีเยี่ยม',
-    good: 'ดี',
-    moderate: 'ปานกลาง',
-    needsAttention: 'ต้องดูแล',
-    betterThan: 'ดีกว่า',
-    ofUsers: 'ของผู้ใช้',
-    improving: 'ดีขึ้น',
-    stable: 'คงที่',
-    worsening: 'แย่ลง',
-    detected: 'ตรวจพบ'
-  }
-};
 
 export interface AnalysisCardProps {
-  parameter: 'spots' | 'pores' | 'wrinkles' | 'texture' | 'redness' | 'hydration';
-  severity: number; // 1-10
-  percentile: number; // 0-100 (lower is better)
+  parameter: keyof typeof PARAMETER_CONFIG;
+  severity: number;
+  percentile: number;
   count?: number;
   trend?: 'improving' | 'stable' | 'worsening';
   locale?: string;
   className?: string;
 }
 
-const PARAMETER_CONFIG: Record<
-  AnalysisCardProps['parameter'],
-  {
-    icon: LucideIcon;
-    color: string;
-  }
-> = {
+const PARAMETER_CONFIG = {
   spots: {
-    icon: Circle,
-    color: 'text-amber-600',
+    icon: Scan,
+    color: 'text-red-500',
   },
   pores: {
-    icon: Droplet,
-    color: 'text-blue-600',
+    icon: Circle,
+    color: 'text-gray-500',
   },
   wrinkles: {
-    icon: Activity,
-    color: 'text-purple-600',
+    icon: Layout,
+    color: 'text-orange-500',
   },
   texture: {
-    icon: Layers,
-    color: 'text-green-600',
+    icon: Sparkles,
+    color: 'text-yellow-500',
   },
   redness: {
     icon: AlertCircle,
-    color: 'text-red-600',
+    color: 'text-rose-500',
   },
-  hydration: {
-    icon: Sparkles,
-    color: 'text-cyan-600',
+  uv_spots: {
+    icon: Sun,
+    color: 'text-purple-500',
+  },
+  brown_spots: {
+    icon: Droplets,
+    color: 'text-amber-700',
+  },
+  porphyrins: {
+    icon: Droplets,
+    color: 'text-blue-500',
   },
 };
 
 /**
  * Get severity level
  */
-function getSeverityLevel(severity: number, locale: string = 'en'): {
+function getSeverityLevel(severity: number, t: any): {
   label: string;
   color: string;
 } {
-  const t = CARD_TRANSLATIONS[locale as keyof typeof CARD_TRANSLATIONS] || CARD_TRANSLATIONS.en;
-  
   if (severity <= 3) {
-    return { label: t.excellent, color: 'bg-green-500' };
+    return { label: t('excellent'), color: 'bg-green-500' };
   } else if (severity <= 5) {
-    return { label: t.good, color: 'bg-blue-500' };
+    return { label: t('good'), color: 'bg-blue-500' };
   } else if (severity <= 7) {
-    return { label: t.moderate, color: 'bg-yellow-500' };
+    return { label: t('moderate'), color: 'bg-yellow-500' };
   } else {
-    return { label: t.needsAttention, color: 'bg-red-500' };
+    return { label: t('needsAttention'), color: 'bg-red-500' };
   }
 }
 
 /**
  * Get percentile description
  */
-function getPercentileDescription(percentile: number, locale: string = 'en'): string {
-  const t = CARD_TRANSLATIONS[locale as keyof typeof CARD_TRANSLATIONS] || CARD_TRANSLATIONS.en;
-  
+function getPercentileDescription(percentile: number, t: any): string {
   if (percentile <= 25) {
-    return `${t.betterThan} 75% ${t.ofUsers}`;
+    return `${t('betterThan')} 75% ${t('ofUsers')}`;
   } else if (percentile <= 50) {
-    return `${t.betterThan} 50% ${t.ofUsers}`;
+    return `${t('betterThan')} 50% ${t('ofUsers')}`;
   } else if (percentile <= 75) {
-    return `${t.betterThan} 25% ${t.ofUsers}`;
+    return `${t('betterThan')} 25% ${t('ofUsers')}`;
   } else {
-    return `${t.betterThan} 0% ${t.ofUsers}`;
+    return `${t('betterThan')} 0% ${t('ofUsers')}`;
   }
 }
 
@@ -146,17 +106,16 @@ export function AnalysisCard({
   percentile,
   count,
   trend,
-  locale = 'en',
+  locale: _locale = 'en',
   className = '',
 }: AnalysisCardProps) {
-  const t = CARD_TRANSLATIONS[locale as keyof typeof CARD_TRANSLATIONS] || CARD_TRANSLATIONS.en;
+  const t = useTranslations('analysisCard');
   const config = PARAMETER_CONFIG[parameter];
-  const paramTranslation = t[parameter];
-  const severityLevel = getSeverityLevel(severity, locale);
+  const severityLevel = getSeverityLevel(severity, t);
   const Icon = config.icon;
   const TrendIcon = trend === 'improving' ? TrendingDown : trend === 'worsening' ? TrendingUp : Minus;
   
-  const trendLabel = trend === 'improving' ? t.improving : trend === 'worsening' ? t.worsening : t.stable;
+  const trendLabel = trend === 'improving' ? t('improving') : trend === 'worsening' ? t('worsening') : t('stable');
 
   return (
     <Card className={`p-6 ${className}`}>
@@ -167,8 +126,8 @@ export function AnalysisCard({
             <Icon className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="font-semibold text-lg">{paramTranslation.label}</h3>
-            <p className="text-sm text-muted-foreground">{paramTranslation.description}</p>
+            <h3 className="font-semibold text-lg">{t(`${parameter}.label`)}</h3>
+            <p className="text-sm text-muted-foreground">{t(`${parameter}.description`)}</p>
           </div>
         </div>
 
@@ -189,7 +148,7 @@ export function AnalysisCard({
       {/* Severity Score */}
       <div className="mb-4">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium">{paramTranslation.label}</span>
+          <span className="text-sm font-medium">{t(`${parameter}.label`)}</span>
           <div className="flex items-center gap-2">
             <span className="text-2xl font-bold">{severity}</span>
             <span className="text-muted-foreground">/10</span>
@@ -199,7 +158,7 @@ export function AnalysisCard({
         <div className="flex items-center justify-between mt-2">
           <Badge className={severityLevel.color}>{severityLevel.label}</Badge>
           {count !== undefined && (
-            <span className="text-sm text-muted-foreground">{count} {t.detected}</span>
+            <span className="text-sm text-muted-foreground">{count} {t('detected')}</span>
           )}
         </div>
       </div>
@@ -207,12 +166,12 @@ export function AnalysisCard({
       {/* Percentile Ranking */}
       <div className="mb-4">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium">{locale === 'th' ? 'เปอร์เซ็นไทล์' : 'Percentile'}</span>
+          <span className="text-sm font-medium">{t('percentile')}</span>
           <span className="text-lg font-semibold">{percentile}th</span>
         </div>
         <Progress value={100 - percentile} className="h-2" />
         <p className="text-xs text-muted-foreground mt-2">
-          {getPercentileDescription(percentile, locale)}
+          {getPercentileDescription(percentile, t)}
         </p>
       </div>
 
@@ -310,13 +269,6 @@ export function AnalysisCardsGrid({
         percentile={analysis.redness.percentile}
         count={analysis.redness.count}
         locale={locale}
-        trend={getTrend(analysis.redness.severity, previousAnalysis?.redness.severity)}
-      />
-      <AnalysisCard
-        parameter="redness"
-        severity={analysis.redness.severity}
-        percentile={analysis.redness.percentile}
-        count={analysis.redness.count}
         trend={getTrend(analysis.redness.severity, previousAnalysis?.redness.severity)}
       />
     </div>

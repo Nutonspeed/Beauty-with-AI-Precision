@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useTranslations } from "next-intl"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -22,16 +23,6 @@ interface IncompletePresentationSummary {
   progress: number
   data: PresentationData
 }
-
-const STEP_NAMES = [
-  "ข้อมูลลูกค้า",
-  "สแกนใบหน้า", 
-  "วิเคราะห์ AI",
-  "ดู AR Preview",
-  "เลือกผลิตภัณฑ์",
-  "สร้างใบเสนอราคา",
-  "เซ็นสัญญา"
-]
 
 function computeLastStep(data: PresentationData): number {
   const selectedTreatments = data.selectedTreatments ?? []
@@ -72,8 +63,19 @@ function buildPresentationSummary(
 }
 
 export function ResumePresentations() {
+  const t = useTranslations()
   const [incompletePresentations, setIncompletePresentations] = useState<IncompletePresentationSummary[]>([])
   const [isLoading, setIsLoading] = useState(true)
+
+  const STEP_NAMES = [
+    t('salesPresentations.steps.customerInfo'),
+    t('salesPresentations.steps.scan'),
+    t('salesPresentations.steps.analysis'),
+    t('salesPresentations.steps.arPreview'),
+    t('salesPresentations.steps.products'),
+    t('salesPresentations.steps.proposal'),
+    t('salesPresentations.steps.signature')
+  ]
 
   useEffect(() => {
     loadIncompletePresentations()
@@ -98,7 +100,7 @@ export function ResumePresentations() {
   }
 
   const handleDelete = (customerId: string) => {
-    if (confirm('ต้องการลบ presentation นี้ใช่หรือไม่?')) {
+    if (confirm(t('common.messages.confirmDelete'))) {
       clearPresentationData(customerId)
       loadIncompletePresentations()
     }
@@ -111,7 +113,7 @@ export function ResumePresentations() {
           <div className="flex items-center justify-center py-8">
             <div className="text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
-              <p className="text-sm text-muted-foreground">กำลังโหลด...</p>
+              <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
             </div>
           </div>
         </CardContent>
@@ -125,8 +127,8 @@ export function ResumePresentations() {
         <CardContent className="p-6">
           <div className="text-center py-8 text-muted-foreground">
             <CheckCircle2 className="h-12 w-12 mx-auto mb-3 text-green-500" />
-            <p className="text-lg font-medium">ไม่มี Presentation ที่ค้างอยู่</p>
-            <p className="text-sm mt-1">Presentations ทั้งหมดเสร็จสิ้นแล้ว</p>
+            <p className="text-lg font-medium">{t('salesPresentations.noIncomplete')}</p>
+            <p className="text-sm mt-1">{t('salesPresentations.allCompleted')}</p>
           </div>
         </CardContent>
       </Card>
@@ -137,17 +139,16 @@ export function ResumePresentations() {
     <div className="space-y-3">
       <div className="flex items-center justify-between mb-3">
         <div>
-          <h3 className="text-lg font-semibold">Presentations ที่ค้างอยู่</h3>
+          <h3 className="text-lg font-semibold">{t('salesPresentations.incompleteTitle')}</h3>
           <p className="text-sm text-muted-foreground">
-            {incompletePresentations.length} รายการรอดำเนินการต่อ
+            {t('salesPresentations.incompleteCount', { count: incompletePresentations.length })}
           </p>
         </div>
         <Badge variant="outline" className="text-orange-600 border-orange-200">
           <Clock className="h-3 w-3 mr-1" />
-          Incomplete
+          {t('common.status.incomplete')}
         </Badge>
       </div>
-
       {incompletePresentations.map((presentation) => (
         <Card key={presentation.customerId} className="hover:shadow-md transition-shadow">
           <CardContent className="p-4">
@@ -162,7 +163,7 @@ export function ResumePresentations() {
                 {/* Progress Bar */}
                 <div className="mb-2">
                   <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
-                    <span>ความคืบหน้า: Step {presentation.lastStep}/7</span>
+                    <span>{t('salesPresentations.progressStep', { current: presentation.lastStep, total: 7 })}</span>
                     <span>{Math.round(presentation.progress)}%</span>
                   </div>
                   <Progress value={presentation.progress} className="h-2" />
@@ -174,7 +175,7 @@ export function ResumePresentations() {
                     {STEP_NAMES[presentation.lastStep - 1]}
                   </Badge>
                   <span className="text-muted-foreground text-xs">
-                    • ต่อไปคือ: {STEP_NAMES[presentation.lastStep] || 'เสร็จสิ้น'}
+                    • {t('salesPresentations.nextStep')}: {STEP_NAMES[presentation.lastStep] || t('common.status.completed')}
                   </span>
                 </div>
 
@@ -196,7 +197,7 @@ export function ResumePresentations() {
                 <Link href={`/sales/wizard/${presentation.customerId}`}>
                   <Button size="sm" className="w-full">
                     <PlayCircle className="h-4 w-4 mr-1" />
-                    ทำต่อ
+                    {t('common.actions.continue')}
                   </Button>
                 </Link>
                 <Button

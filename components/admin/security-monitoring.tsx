@@ -23,6 +23,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useToast } from '@/components/ui/use-toast'
+import { useTranslations } from 'next-intl';
 import { PaginationControls } from './pagination-controls';
 
 interface SecurityOverview {
@@ -90,6 +91,7 @@ interface SecurityData {
 }
 
 export default function SecurityMonitoring() {
+  const t = useTranslations();
   const [data, setData] = useState<SecurityData | null>(null);
   const [loading, setLoading] = useState(true);
   const [actingId, setActingId] = useState<string | null>(null)
@@ -136,14 +138,14 @@ export default function SecurityMonitoring() {
         body: JSON.stringify({ id }),
       })
       if (res.ok) {
-        toast({ title: 'Event resolved', variant: 'default' })
+        toast({ title: t('securityMonitoring.stream.resolved'), variant: 'default' })
         await fetchSecurityData()
       } else {
         const err = await res.json().catch(() => ({}))
-        toast({ title: 'Failed to resolve', description: err.error || 'Please try again', variant: 'destructive' })
+        toast({ title: t('common.error'), description: err.error || t('common.retry'), variant: 'destructive' })
       }
     } catch {
-      toast({ title: 'Error', description: 'Unexpected error', variant: 'destructive' })
+      toast({ title: t('common.error'), description: t('common.error'), variant: 'destructive' })
     } finally {
       setActingId(null)
     }
@@ -158,14 +160,14 @@ export default function SecurityMonitoring() {
         body: JSON.stringify({ id, reviewed: true }),
       })
       if (res.ok) {
-        toast({ title: 'Marked reviewed', variant: 'default' })
+        toast({ title: t('securityMonitoring.variance.verified'), variant: 'default' })
         await fetchSecurityData()
       } else {
         const err = await res.json().catch(() => ({}))
-        toast({ title: 'Failed to update', description: err.error || 'Please try again', variant: 'destructive' })
+        toast({ title: t('common.error'), description: err.error || t('common.retry'), variant: 'destructive' })
       }
     } catch {
-      toast({ title: 'Error', description: 'Unexpected error', variant: 'destructive' })
+      toast({ title: t('common.error'), description: t('common.error'), variant: 'destructive' })
     } finally {
       setActingId(null)
     }
@@ -208,9 +210,9 @@ export default function SecurityMonitoring() {
     const now = new Date();
     const diffMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
     
-    if (diffMinutes < 1) return 'Just now';
-    if (diffMinutes < 60) return `${diffMinutes}m ago`;
-    if (diffMinutes < 1440) return `${Math.floor(diffMinutes / 60)}h ago`;
+    if (diffMinutes < 1) return t('ui.time.justNow');
+    if (diffMinutes < 60) return t('ui.time.minsAgo', { val: diffMinutes });
+    if (diffMinutes < 1440) return t('ui.time.hoursAgo', { val: Math.floor(diffMinutes / 60) });
     return date.toLocaleDateString();
   };
 
@@ -297,7 +299,7 @@ export default function SecurityMonitoring() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-muted-foreground">Loading security data...</div>
+        <div className="text-muted-foreground">{t('common.loading')}...</div>
       </div>
     );
   }
@@ -305,7 +307,7 @@ export default function SecurityMonitoring() {
   if (!data) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-destructive">Failed to load security data</div>
+        <div className="text-destructive">{t('securityMonitoring.errorFetch')}</div>
       </div>
     );
   }
@@ -315,10 +317,10 @@ export default function SecurityMonitoring() {
       {/* Overview Metrics Grid - Operational Nodes */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {[
-          { label: 'Security Protocols', val: data.overview.totalEvents, sub: 'Global Incident Ledger', icon: Shield, color: 'text-white', bg: 'bg-white/5' },
-          { label: 'Defensive Breach Threshold', val: data.overview.failedLogins, sub: 'Auth Failure Intensity', icon: Lock, color: 'text-rose-400', bg: 'bg-rose-500/10', badge: data.overview.blockedIPs > 0, badgeText: `${data.overview.blockedIPs} BLOCKED_VECTORS` },
-          { label: 'Active Session Matrix', val: data.overview.activeSessions, sub: 'Verified Entity Uplinks', icon: Activity, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-          { label: 'Variance Score', val: data.overview.averageRiskScore, sub: 'Risk Coefficient Index', icon: AlertTriangle, color: getRiskColor(data.overview.averageRiskScore), bg: 'bg-white/[0.03]' }
+          { label: t('securityMonitoring.overview.securityProtocols'), val: data.overview.totalEvents, sub: t('securityMonitoring.overview.globalIncidentLedger'), icon: Shield, color: 'text-white', bg: 'bg-white/5' },
+          { label: t('securityMonitoring.overview.breachThreshold'), val: data.overview.failedLogins, sub: t('securityMonitoring.overview.authFailureIntensity'), icon: Lock, color: 'text-rose-400', bg: 'bg-rose-500/10', badge: data.overview.blockedIPs > 0, badgeText: t('securityMonitoring.overview.blockedVectors', { count: data.overview.blockedIPs }) },
+          { label: t('securityMonitoring.overview.activeSessionMatrix'), val: data.overview.activeSessions, sub: t('securityMonitoring.overview.verifiedUplinks'), icon: Activity, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+          { label: t('securityMonitoring.overview.riskScore'), val: data.overview.averageRiskScore, sub: t('securityMonitoring.overview.riskIndex'), icon: AlertTriangle, color: getRiskColor(data.overview.averageRiskScore), bg: 'bg-white/[0.03]' }
         ].map((node, i) => (
           <Card key={i} className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2rem] hover:bg-white/[0.03] transition-all duration-500 group shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
@@ -357,13 +359,13 @@ export default function SecurityMonitoring() {
                   <Shield className="h-8 w-8 text-rose-400 animate-pulse" />
                 </div>
                 <div className="space-y-1 text-center md:text-left">
-                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-rose-500 italic">Unresolved Protocol Variance</p>
-                  <h3 className="text-3xl font-black text-white tracking-tighter italic">{data.overview.unresolvedEvents} CRITICAL_NODES</h3>
-                  <p className="text-sm text-slate-500 font-light italic leading-relaxed">Immediate defensive mitigation required for unresolved security events.</p>
+                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-rose-500 italic">{t('securityMonitoring.overview.unresolvedVariance')}</p>
+                  <h3 className="text-3xl font-black text-white tracking-tighter italic">{t('securityMonitoring.overview.criticalNodes', { count: data.overview.unresolvedEvents })}</h3>
+                  <p className="text-sm text-slate-500 font-light italic leading-relaxed">{t('securityMonitoring.overview.mitigationDesc')}</p>
                 </div>
               </div>
               <Button variant="destructive" className="h-14 px-10 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-2xl shadow-rose-500/20">
-                INITIALIZE_MITIGATION
+                {t('securityMonitoring.overview.initiateMitigation')}
               </Button>
             </CardContent>
           </Card>
@@ -378,7 +380,7 @@ export default function SecurityMonitoring() {
             <div className="flex-1 min-w-[300px] relative group/search">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-600 group-focus-within/search:text-pink-500 transition-colors" />
               <Input
-                placeholder="Search Incident Stream / Entity Identifier / IP Node..."
+                placeholder={t('securityMonitoring.filters.searchPlaceholder')}
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value)
@@ -439,10 +441,10 @@ export default function SecurityMonitoring() {
         <div className="flex items-center justify-center">
           <TabsList className="bg-white/[0.02] border border-white/5 p-1.5 rounded-2xl h-auto gap-2 flex-wrap justify-center">
             {[
-              { value: 'events', icon: Shield, label: 'INCIDENT_STREAM' },
-              { value: 'failed-logins', icon: Lock, label: 'AUTH_FAILURE_LOG' },
-              { value: 'sessions', icon: Activity, label: 'SESSION_MATRIX' },
-              { value: 'suspicious', icon: AlertTriangle, label: 'VARIANCE_DETECTION' }
+              { value: 'events', icon: Shield, label: t('securityMonitoring.tabs.incidentStream') },
+              { value: 'failed-logins', icon: Lock, label: t('securityMonitoring.tabs.authFailureLog') },
+              { value: 'sessions', icon: Activity, label: t('securityMonitoring.tabs.sessionMatrix') },
+              { value: 'suspicious', icon: AlertTriangle, label: t('securityMonitoring.tabs.varianceDetection') }
             ].map((tab) => (
               <TabsTrigger 
                 key={tab.value} 
@@ -463,11 +465,11 @@ export default function SecurityMonitoring() {
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                 <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5 flex flex-row items-center justify-between">
                   <div className="space-y-2">
-                    <CardTitle className="text-2xl font-bold text-white tracking-tight italic">Protocol Incident Stream</CardTitle>
-                    <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Live immutable security ledger</CardDescription>
+                    <CardTitle className="text-2xl font-bold text-white tracking-tight italic">{t('securityMonitoring.stream.title')}</CardTitle>
+                    <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{t('securityMonitoring.stream.desc')}</CardDescription>
                   </div>
                   <Badge variant="outline" className="h-8 rounded-full px-4 border-white/10 text-slate-500 text-[10px] font-black italic">
-                    {filteredEvents.length} VECTORS_DETECTED
+                    {t('securityMonitoring.stream.vectorsDetected', { count: filteredEvents.length })}
                   </Badge>
                 </CardHeader>
                 <CardContent className="p-0">
@@ -475,19 +477,19 @@ export default function SecurityMonitoring() {
                     <Table>
                       <TableHeader>
                         <TableRow className="bg-white/[0.02] border-b border-white/5">
-                          <TableHead className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Severity</TableHead>
-                          <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Event Protocol</TableHead>
-                          <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Entity / Node</TableHead>
-                          <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Description</TableHead>
-                          <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Status</TableHead>
-                          <TableHead className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Temporal Stamp</TableHead>
+                          <TableHead className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('securityMonitoring.stream.severity')}</TableHead>
+                          <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('securityMonitoring.stream.eventProtocol')}</TableHead>
+                          <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('securityMonitoring.stream.entityNode')}</TableHead>
+                          <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('securityMonitoring.stream.description')}</TableHead>
+                          <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('securityMonitoring.stream.status')}</TableHead>
+                          <TableHead className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('securityMonitoring.stream.temporalStamp')}</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody className="divide-y divide-white/5">
                         {filteredEvents.length === 0 ? (
                           <TableRow>
                             <TableCell colSpan={6} className="text-center py-20 text-slate-600 uppercase tracking-[0.4em] font-black text-[10px] italic">
-                              NO_VECTORS_DETECTED_IN_SECTOR
+                              {t('securityMonitoring.stream.noVectors')}
                             </TableCell>
                           </TableRow>
                         ) : (
@@ -514,17 +516,17 @@ export default function SecurityMonitoring() {
                               </TableCell>
                               <TableCell className="px-8 py-8">
                                 {event.resolved ? (
-                                  <Badge className="bg-emerald-500/10 text-emerald-400 border-none shadow-inner text-[8px] font-black italic rounded-full px-3 py-0.5">RESOLVED</Badge>
+                                  <Badge className="bg-emerald-500/10 text-emerald-400 border-none shadow-inner text-[8px] font-black italic rounded-full px-3 py-0.5">{t('securityMonitoring.stream.resolved').toUpperCase()}</Badge>
                                 ) : (
                                   <Button size="sm" variant="outline" className="h-8 rounded-xl border-rose-500/30 bg-rose-500/5 text-rose-400 text-[8px] font-black uppercase tracking-widest hover:bg-rose-500 hover:text-white" disabled={actingId === event.id} onClick={() => resolveEvent(event.id)}>
-                                    {actingId === event.id ? 'PROCESSING...' : 'MITIGATE'}
+                                    {actingId === event.id ? t('securityMonitoring.stream.processing') : t('securityMonitoring.stream.mitigate').toUpperCase()}
                                   </Button>
                                 )}
                               </TableCell>
                               <TableCell className="px-10 py-8 text-right">
                                 <div className="space-y-1">
                                   <div className="text-sm font-bold text-slate-300 italic">{formatTimestamp(event.timestamp)}</div>
-                                  <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Temporal Vector</p>
+                                  <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest">{t('securityMonitoring.stream.temporalVector')}</p>
                                 </div>
                               </TableCell>
                             </TableRow>
@@ -552,24 +554,24 @@ export default function SecurityMonitoring() {
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-rose-500/20 to-transparent" />
                 <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
                   <div className="space-y-2">
-                    <CardTitle className="text-2xl font-bold text-white tracking-tight italic">Auth Failure Log</CardTitle>
-                    <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Failed authentication vector tracking</CardDescription>
+                    <CardTitle className="text-2xl font-bold text-white tracking-tight italic">{t('securityMonitoring.authLog.title')}</CardTitle>
+                    <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{t('securityMonitoring.authLog.desc')}</CardDescription>
                   </div>
                 </CardHeader>
                 <CardContent className="p-0">
                   <Table>
                     <TableHeader>
                       <TableRow className="bg-white/[0.02] border-b border-white/5">
-                        <TableHead className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Entity Identifier</TableHead>
-                        <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Origin Node</TableHead>
-                        <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Intensity</TableHead>
-                        <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Status</TableHead>
-                        <TableHead className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Last Interaction</TableHead>
+                        <TableHead className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('securityMonitoring.authLog.entityIdentifier')}</TableHead>
+                        <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('securityMonitoring.authLog.originNode')}</TableHead>
+                        <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('securityMonitoring.authLog.intensity')}</TableHead>
+                        <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('securityMonitoring.authLog.status')}</TableHead>
+                        <TableHead className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('securityMonitoring.authLog.lastInteraction')}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody className="divide-y divide-white/5">
                       {filteredFailedLogins.length === 0 ? (
-                        <TableRow><TableCell colSpan={5} className="text-center py-20 text-slate-600 font-black italic">NO_FAILURE_VECTORS_DETECTED</TableCell></TableRow>
+                        <TableRow><TableCell colSpan={5} className="text-center py-20 text-slate-600 font-black italic">{t('securityMonitoring.authLog.noFailures')}</TableCell></TableRow>
                       ) : (
                         paginate(filteredFailedLogins, failedLoginsPage, pageSize).items.map((login) => (
                           <TableRow key={`${login.email}-${login.ipAddress}`} className="group/row transition-all hover:bg-white/[0.03]">
@@ -577,14 +579,14 @@ export default function SecurityMonitoring() {
                             <TableCell className="px-8 py-8 font-mono text-xs text-slate-500">{login.ipAddress}</TableCell>
                             <TableCell className="px-8 py-8">
                               <Badge variant={login.attemptCount >= 5 ? 'destructive' : 'secondary'} className="px-3 py-0.5 rounded-full text-[8px] font-black italic">
-                                {login.attemptCount} ATTEMPTS
+                                {t('securityMonitoring.authLog.attempts', { count: login.attemptCount })}
                               </Badge>
                             </TableCell>
                             <TableCell className="px-8 py-8">
                               {login.blocked ? (
-                                <Badge className="bg-rose-500/10 text-rose-400 border-none italic text-[8px] rounded-full px-3">BLOCKED_NODE</Badge>
+                                <Badge className="bg-rose-500/10 text-rose-400 border-none italic text-[8px] rounded-full px-3">{t('securityMonitoring.authLog.blockedNode').toUpperCase()}</Badge>
                               ) : (
-                                <Badge className="bg-blue-500/10 text-blue-400 border-none italic text-[8px] rounded-full px-3">MONITORING</Badge>
+                                <Badge className="bg-blue-500/10 text-blue-400 border-none italic text-[8px] rounded-full px-3">{t('securityMonitoring.authLog.monitoring').toUpperCase()}</Badge>
                               )}
                             </TableCell>
                             <TableCell className="px-10 py-8 text-right text-sm font-bold text-slate-300 italic">{formatTimestamp(login.lastAttempt)}</TableCell>
@@ -611,24 +613,24 @@ export default function SecurityMonitoring() {
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/20 to-transparent" />
                 <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
                   <div className="space-y-2">
-                    <CardTitle className="text-2xl font-bold text-white tracking-tight italic">Active Session Matrix</CardTitle>
-                    <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Global active uplink telemetry</CardDescription>
+                    <CardTitle className="text-2xl font-bold text-white tracking-tight italic">{t('securityMonitoring.sessions.title')}</CardTitle>
+                    <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{t('securityMonitoring.sessions.desc')}</CardDescription>
                   </div>
                 </CardHeader>
                 <CardContent className="p-0">
                   <Table>
                     <TableHeader>
                       <TableRow className="bg-white/[0.02] border-b border-white/5">
-                        <TableHead className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Entity</TableHead>
-                        <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Device / Browser</TableHead>
-                        <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Geo Vector</TableHead>
-                        <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Temporal Duration</TableHead>
-                        <TableHead className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Last Activity</TableHead>
+                        <TableHead className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('securityMonitoring.sessions.entity')}</TableHead>
+                        <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('securityMonitoring.sessions.deviceBrowser')}</TableHead>
+                        <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('securityMonitoring.sessions.geoVector')}</TableHead>
+                        <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('securityMonitoring.sessions.temporalDuration')}</TableHead>
+                        <TableHead className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('securityMonitoring.sessions.lastActivity')}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody className="divide-y divide-white/5">
                       {filteredSessions.length === 0 ? (
-                        <TableRow><TableCell colSpan={5} className="text-center py-20 text-slate-600 font-black italic">NO_ACTIVE_UPLINKS</TableCell></TableRow>
+                        <TableRow><TableCell colSpan={5} className="text-center py-20 text-slate-600 font-black italic">{t('securityMonitoring.sessions.noUplinks')}</TableCell></TableRow>
                       ) : (
                         paginate(filteredSessions, sessionsPage, pageSize).items.map((session) => (
                           <TableRow key={session.id} className="group/row transition-all hover:bg-white/[0.03]">
@@ -669,8 +671,8 @@ export default function SecurityMonitoring() {
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/20 to-transparent" />
                 <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5 flex flex-row items-center justify-between">
                   <div className="space-y-2">
-                    <CardTitle className="text-2xl font-bold text-white tracking-tight italic">Variance Detection Stream</CardTitle>
-                    <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Anomaly detection telemetry</CardDescription>
+                    <CardTitle className="text-2xl font-bold text-white tracking-tight italic">{t('securityMonitoring.variance.title')}</CardTitle>
+                    <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{t('securityMonitoring.variance.desc')}</CardDescription>
                   </div>
                 </CardHeader>
                 <CardContent className="p-0">
@@ -678,16 +680,16 @@ export default function SecurityMonitoring() {
                     <Table>
                       <TableHeader>
                         <TableRow className="bg-white/[0.02] border-b border-white/5">
-                          <TableHead className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Risk Vector</TableHead>
-                          <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Protocol Type</TableHead>
-                          <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Entity / Node</TableHead>
-                          <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Status</TableHead>
-                          <TableHead className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Temporal Stamp</TableHead>
+                          <TableHead className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('securityMonitoring.variance.riskVector')}</TableHead>
+                          <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('securityMonitoring.variance.protocolType')}</TableHead>
+                          <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('securityMonitoring.variance.entityNode')}</TableHead>
+                          <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('securityMonitoring.variance.status')}</TableHead>
+                          <TableHead className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('securityMonitoring.variance.temporalStamp')}</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody className="divide-y divide-white/5">
                         {filteredSuspicious.length === 0 ? (
-                          <TableRow><TableCell colSpan={5} className="text-center py-20 text-slate-600 font-black italic uppercase tracking-[0.4em]">NO_ANOMALIES_DETECTED</TableCell></TableRow>
+                          <TableRow><TableCell colSpan={5} className="text-center py-20 text-slate-600 font-black italic uppercase tracking-[0.4em]">{t('securityMonitoring.variance.noAnomalies')}</TableCell></TableRow>
                         ) : (
                           paginate(filteredSuspicious, suspiciousPage, pageSize).items.map((activity) => (
                             <TableRow key={activity.id} className="group/row transition-all hover:bg-white/[0.03]">
@@ -700,7 +702,7 @@ export default function SecurityMonitoring() {
                               <TableCell className="px-8 py-8">
                                 <div className="space-y-1">
                                   <div className="text-sm font-bold text-white italic uppercase">{activity.activityType.replaceAll('_', ' ')}</div>
-                                  <Badge variant="outline" className="h-5 text-[7px] font-black border-white/10 text-slate-500 uppercase">{activity.indicators.length} ANALYTIC_INDICATORS</Badge>
+                                  <Badge variant="outline" className="h-5 text-[7px] font-black border-white/10 text-slate-500 uppercase">{t('securityMonitoring.variance.analyticIndicators', { count: activity.indicators.length })}</Badge>
                                 </div>
                               </TableCell>
                               <TableCell className="px-8 py-8">
@@ -711,10 +713,10 @@ export default function SecurityMonitoring() {
                               </TableCell>
                               <TableCell className="px-8 py-8">
                                 {activity.reviewed ? (
-                                  <Badge className="bg-emerald-500/10 text-emerald-400 border-none italic text-[8px] rounded-full px-3">VERIFIED</Badge>
+                                  <Badge className="bg-emerald-500/10 text-emerald-400 border-none italic text-[8px] rounded-full px-3">{t('securityMonitoring.variance.verified').toUpperCase()}</Badge>
                                 ) : (
                                   <Button size="sm" variant="outline" className="h-8 rounded-xl border-amber-500/30 bg-amber-500/5 text-amber-400 text-[8px] font-black uppercase tracking-widest hover:bg-amber-500 hover:text-[#020617]" disabled={actingId === activity.id} onClick={() => markReviewed(activity.id)}>
-                                    {actingId === activity.id ? 'PROCESSING...' : 'MARK_REVIEWED'}
+                                    {actingId === activity.id ? t('securityMonitoring.stream.processing') : t('securityMonitoring.variance.markReviewed').toUpperCase()}
                                   </Button>
                                 )}
                               </TableCell>

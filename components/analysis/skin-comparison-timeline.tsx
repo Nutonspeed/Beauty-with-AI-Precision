@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Slider } from "@/components/ui/slider"
+import { useTranslations } from "next-intl"
 import { 
   Calendar,
   TrendingUp,
@@ -42,63 +43,12 @@ interface SkinComparisonTimelineProps {
   className?: string
 }
 
-const translations = {
-  th: {
-    title: "เปรียบเทียบความก้าวหน้า",
-    subtitle: "ดูพัฒนาการของผิวตลอดระยะเวลา",
-    before: "ก่อน",
-    after: "หลัง",
-    improvement: "ดีขึ้น",
-    decline: "แย่ลง",
-    noChange: "เท่าเดิม",
-    skinAge: "อายุผิว",
-    overallScore: "คะแนนรวม",
-    metrics: "รายละเอียด",
-    wrinkles: "ริ้วรอย",
-    spots: "จุดด่างดำ",
-    pores: "รูขุมขน",
-    texture: "เนื้อผิว",
-    elasticity: "ความยืดหยุ่น",
-    hydration: "ความชุ่มชื้น",
-    uvDamage: "ความเสียหาย UV",
-    download: "ดาวน์โหลด",
-    share: "แชร์",
-    dragToCompare: "เลื่อนเพื่อเปรียบเทียบ",
-    selectDates: "เลือกวันที่",
-    noRecords: "ยังไม่มีประวัติการวิเคราะห์"
-  },
-  en: {
-    title: "Progress Comparison",
-    subtitle: "Track your skin improvement over time",
-    before: "Before",
-    after: "After",
-    improvement: "Improved",
-    decline: "Declined",
-    noChange: "No change",
-    skinAge: "Skin Age",
-    overallScore: "Overall Score",
-    metrics: "Metrics",
-    wrinkles: "Wrinkles",
-    spots: "Dark Spots",
-    pores: "Pores",
-    texture: "Texture",
-    elasticity: "Elasticity",
-    hydration: "Hydration",
-    uvDamage: "UV Damage",
-    download: "Download",
-    share: "Share",
-    dragToCompare: "Drag to compare",
-    selectDates: "Select dates",
-    noRecords: "No analysis records yet"
-  }
-}
-
 export function SkinComparisonTimeline({ 
   records, 
   locale = 'th',
   className = ''
 }: SkinComparisonTimelineProps) {
-  const t = translations[locale]
+  const t = useTranslations('skinComparisonTimeline')
   const [beforeIndex, setBeforeIndex] = useState(0)
   const [afterIndex, setAfterIndex] = useState(records.length - 1)
   const [sliderPosition, setSliderPosition] = useState(50)
@@ -108,7 +58,7 @@ export function SkinComparisonTimeline({
       <Card className={className}>
         <CardContent className="py-12 text-center">
           <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-          <p className="text-muted-foreground">{t.noRecords}</p>
+          <p className="text-muted-foreground">{t('noRecords')}</p>
         </CardContent>
       </Card>
     )
@@ -142,13 +92,13 @@ export function SkinComparisonTimeline({
   }
 
   const metrics = [
-    { key: 'wrinkles', label: t.wrinkles, inverse: true },
-    { key: 'spots', label: t.spots, inverse: true },
-    { key: 'pores', label: t.pores, inverse: true },
-    { key: 'texture', label: t.texture, inverse: false },
-    { key: 'elasticity', label: t.elasticity, inverse: false },
-    { key: 'hydration', label: t.hydration, inverse: false },
-    { key: 'uvDamage', label: t.uvDamage, inverse: true }
+    { key: 'wrinkles', label: t('wrinkles'), inverse: true },
+    { key: 'spots', label: t('spots'), inverse: true },
+    { key: 'pores', label: t('pores'), inverse: true },
+    { key: 'texture', label: t('texture'), inverse: false },
+    { key: 'elasticity', label: t('elasticity'), inverse: false },
+    { key: 'hydration', label: t('hydration'), inverse: false },
+    { key: 'uvDamage', label: t('uvDamage'), inverse: true }
   ]
 
   const overallChange = calculateChange(beforeRecord.overallScore, afterRecord.overallScore)
@@ -158,8 +108,8 @@ export function SkinComparisonTimeline({
     <div className={`space-y-6 ${className}`}>
       {/* Header */}
       <div className="text-center">
-        <h2 className="text-2xl font-bold mb-2">{t.title}</h2>
-        <p className="text-muted-foreground">{t.subtitle}</p>
+        <h2 className="text-2xl font-bold mb-2">{t('title')}</h2>
+        <p className="text-muted-foreground">{t('subtitle')}</p>
       </div>
 
       {/* Date Selector */}
@@ -167,7 +117,7 @@ export function SkinComparisonTimeline({
         <CardContent className="pt-6">
           <div className="flex items-center justify-between gap-4">
             <div className="flex-1">
-              <label className="text-sm text-muted-foreground mb-2 block">{t.before}</label>
+              <label className="text-sm text-muted-foreground mb-2 block">{t('before')}</label>
               <select
                 value={beforeIndex}
                 onChange={(e) => setBeforeIndex(parseInt(e.target.value))}
@@ -182,7 +132,7 @@ export function SkinComparisonTimeline({
             </div>
             <ArrowRight className="h-5 w-5 text-muted-foreground mt-6" />
             <div className="flex-1">
-              <label className="text-sm text-muted-foreground mb-2 block">{t.after}</label>
+              <label className="text-sm text-muted-foreground mb-2 block">{t('after')}</label>
               <select
                 value={afterIndex}
                 onChange={(e) => setAfterIndex(parseInt(e.target.value))}
@@ -214,7 +164,7 @@ export function SkinComparisonTimeline({
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-muted">
-                  <span className="text-muted-foreground">{t.before}</span>
+                  <span className="text-muted-foreground">{t('before')}</span>
                 </div>
               )}
             </div>
@@ -233,7 +183,7 @@ export function SkinComparisonTimeline({
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-muted/80">
-                  <span className="text-muted-foreground">{t.after}</span>
+                  <span className="text-muted-foreground">{t('after')}</span>
                 </div>
               )}
             </div>
@@ -251,10 +201,10 @@ export function SkinComparisonTimeline({
 
             {/* Labels */}
             <Badge className="absolute top-4 left-4 bg-background/80">
-              {t.before}
+              {t('before')}
             </Badge>
             <Badge className="absolute top-4 right-4 bg-background/80">
-              {t.after}
+              {t('after')}
             </Badge>
           </div>
 
@@ -268,7 +218,7 @@ export function SkinComparisonTimeline({
               step={1}
             />
             <p className="text-center text-sm text-muted-foreground mt-2">
-              {t.dragToCompare}
+              {t('dragToCompare')}
             </p>
           </div>
         </CardContent>
@@ -278,7 +228,7 @@ export function SkinComparisonTimeline({
       <div className="grid grid-cols-2 gap-4">
         <Card className={`${overallChange.direction === 'up' ? 'bg-emerald-500/5 border-emerald-500/20' : overallChange.direction === 'down' ? 'bg-red-500/5 border-red-500/20' : ''}`}>
           <CardContent className="pt-6 text-center">
-            <div className="text-sm text-muted-foreground mb-1">{t.overallScore}</div>
+            <div className="text-sm text-muted-foreground mb-1">{t('overallScore')}</div>
             <div className="flex items-center justify-center gap-2">
               <span className="text-2xl font-bold">{beforeRecord.overallScore}</span>
               <ArrowRight className="h-4 w-4" />
@@ -298,7 +248,7 @@ export function SkinComparisonTimeline({
 
         <Card className={`${skinAgeChange.direction === 'down' ? 'bg-emerald-500/5 border-emerald-500/20' : skinAgeChange.direction === 'up' ? 'bg-red-500/5 border-red-500/20' : ''}`}>
           <CardContent className="pt-6 text-center">
-            <div className="text-sm text-muted-foreground mb-1">{t.skinAge}</div>
+            <div className="text-sm text-muted-foreground mb-1">{t('skinAge')}</div>
             <div className="flex items-center justify-center gap-2">
               <span className="text-2xl font-bold">{beforeRecord.skinAge}</span>
               <ArrowRight className="h-4 w-4" />
@@ -309,7 +259,7 @@ export function SkinComparisonTimeline({
             <div className={`flex items-center justify-center gap-1 mt-2 ${getChangeColor(skinAgeChange.direction, true)}`}>
               {getChangeIcon(skinAgeChange.direction, true)}
               <span className="text-sm">
-                {skinAgeChange.value} {locale === 'th' ? 'ปี' : 'years'}
+                {skinAgeChange.value} {t('year')}
               </span>
             </div>
           </CardContent>
@@ -319,7 +269,7 @@ export function SkinComparisonTimeline({
       {/* Detailed Metrics */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">{t.metrics}</CardTitle>
+          <CardTitle className="text-lg">{t('metrics')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {metrics.map((metric) => {
@@ -365,11 +315,11 @@ export function SkinComparisonTimeline({
       <div className="flex gap-4">
         <Button variant="outline" className="flex-1">
           <Download className="h-4 w-4 mr-2" />
-          {t.download}
+          {t('download')}
         </Button>
         <Button variant="outline" className="flex-1">
           <Share2 className="h-4 w-4 mr-2" />
-          {t.share}
+          {t('share')}
         </Button>
       </div>
     </div>

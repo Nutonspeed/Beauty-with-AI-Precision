@@ -29,6 +29,15 @@ import { createClient } from '@/lib/supabase/client'
 import { useTranslations, useLocale } from 'next-intl'
 import { useLocalizePath } from "@/lib/i18n/locale-link"
 
+import { GlobalPerformanceIndex } from '@/components/admin/global-performance-index'
+import { RegionalGrowthHeatmap } from '@/components/admin/regional-growth-heatmap'
+import { NeuralHealthMonitor } from '@/components/admin/neural-health-monitor'
+import { AutonomousOpsLog } from '@/components/admin/autonomous-ops-log'
+import { SynapticNotifications } from '@/components/admin/ai-synaptic-notifications'
+import { StrategicGrowthAdvisor } from '@/components/admin/strategic-growth-advisor'
+import { SecurityOrchestrator } from '@/components/admin/security-orchestrator'
+import { IntelligenceCommandPalette } from '@/components/analytics/intelligence-command-palette'
+
 interface SystemStats {
   totalUsers: number
   activeClinics: number
@@ -61,6 +70,18 @@ export default function AdminDashboard() {
   const [isLoading, setIsLoading] = useState(true)
   const [data, setData] = useState<AdminDashboardData | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false)
+
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault()
+        setIsCommandPaletteOpen((open) => !open)
+      }
+    }
+    document.addEventListener("keydown", down)
+    return () => document.removeEventListener("keydown", down)
+  }, [])
 
   useEffect(() => {
     // If auth never resolves, stop spinning and surface an actionable error
@@ -166,6 +187,15 @@ export default function AdminDashboard() {
     <div className="flex min-h-screen flex-col bg-[#020617] text-slate-200 selection:bg-pink-500/30">
       <Header />
       
+      <IntelligenceCommandPalette 
+        isOpen={isCommandPaletteOpen} 
+        onClose={() => setIsCommandPaletteOpen(false)} 
+        onSelect={(id) => {
+          // Admin dashboard doesn't have tabs yet, but we can redirect or show toast
+          console.log("Admin selected node:", id)
+        }} 
+      />
+
       <main className="flex-1 relative overflow-hidden flex flex-col">
         {/* Infrastructure Background */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -230,6 +260,7 @@ export default function AdminDashboard() {
           <div className="grid gap-10 lg:grid-cols-12">
             {/* Tactical Control Hub */}
             <div className="lg:col-span-4 space-y-10">
+              <SynapticNotifications />
               <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group">
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
                 <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
@@ -293,6 +324,13 @@ export default function AdminDashboard() {
 
             {/* Performance Analytics Column */}
             <div className="lg:col-span-8 space-y-10">
+              <SecurityOrchestrator />
+              <StrategicGrowthAdvisor />
+              <AutonomousOpsLog />
+              <NeuralHealthMonitor />
+              <GlobalPerformanceIndex />
+              <RegionalGrowthHeatmap />
+              
               <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group">
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/20 to-transparent" />
                 <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5 flex flex-row items-center justify-between">

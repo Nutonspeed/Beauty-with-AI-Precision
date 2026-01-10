@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { useTranslations, useLocale } from "next-intl";
 import { X, Bell, AlertCircle, TrendingUp } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +18,8 @@ export default function LeadNotificationToast({
   onClose,
   autoCloseDelay = 8000
 }: LeadNotificationToastProps) {
+  const t = useTranslations();
+  const locale = useLocale();
   const [isVisible, setIsVisible] = useState(false);
   const [isLeaving, setIsLeaving] = useState(false);
 
@@ -101,10 +104,10 @@ export default function LeadNotificationToast({
               </div>
               <div className="flex-1">
                 <div className="font-semibold text-gray-900 dark:text-white">
-                  New Lead Alert
+                  {t('leadNotification.alertTitle')}
                 </div>
                 <div className="text-xs text-gray-500 dark:text-gray-400">
-                  {new Date(notification.timestamp).toLocaleTimeString('en-US', {
+                  {new Date(notification.timestamp).toLocaleTimeString(locale === 'th' ? 'th-TH' : 'en-US', {
                     hour: '2-digit',
                     minute: '2-digit'
                   })}
@@ -130,17 +133,17 @@ export default function LeadNotificationToast({
             {notification.leadData && (
               <div className="flex flex-wrap gap-2 mt-3">
                 <Badge className={getPriorityBadgeClass()}>
-                  Score: {notification.priorityScore}
+                  {t('leadNotification.score', { val: notification.priorityScore })}
                 </Badge>
                 
                 {notification.leadData.isOnline && (
                   <Badge variant="outline" className="border-green-500 text-green-700 dark:text-green-400">
-                    🟢 Online
+                    🟢 {t('leadNotification.online')}
                   </Badge>
                 )}
 
                 <Badge variant="outline" className="border-purple-500 text-purple-700 dark:text-purple-400">
-                  AI: {notification.leadData.score}
+                  {t('leadNotification.aiScore', { val: notification.leadData.score })}
                 </Badge>
 
                 <Badge variant="outline" className="border-blue-500 text-blue-700 dark:text-blue-400">
@@ -155,7 +158,7 @@ export default function LeadNotificationToast({
                 onClick={handleClose}
                 className="w-full px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm font-medium"
               >
-                View Lead Details →
+                {t('leadNotification.viewDetails')}
               </button>
             </div>
           </div>

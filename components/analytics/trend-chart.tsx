@@ -19,6 +19,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { MetricTrend, METRIC_CONFIGS } from '@/types/analytics';
 
@@ -75,6 +76,7 @@ export default function TrendChart({
   showLegend = true,
   showGrid = true,
 }: TrendChartProps) {
+  const t = useTranslations();
   // Transform data for recharts
   const chartData = useMemo(() => {
     // Get all unique dates from all metrics
@@ -110,11 +112,11 @@ export default function TrendChart({
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Trend Analysis</CardTitle>
+          <CardTitle>{t('trendChart.title')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex h-[400px] items-center justify-center text-muted-foreground">
-            No data available for the selected period
+            {t('trendChart.noData')}
           </div>
         </CardContent>
       </Card>
@@ -124,7 +126,7 @@ export default function TrendChart({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Trend Analysis</CardTitle>
+        <CardTitle>{t('trendChart.title')}</CardTitle>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={height}>
@@ -146,7 +148,7 @@ export default function TrendChart({
             <YAxis
               domain={[0, 100]}
               tick={{ fontSize: 12 }}
-              label={{ value: 'Score', angle: -90, position: 'insideLeft' }}
+              label={{ value: t('trendChart.yAxisLabel'), angle: -90, position: 'insideLeft' }}
             />
             <Tooltip content={<CustomTooltip />} />
             {showLegend && <Legend />}

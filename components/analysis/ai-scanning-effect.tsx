@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 import { Brain, Sparkles, Scan, Eye } from 'lucide-react'
 
 interface AIScanningEffectProps {
@@ -20,9 +21,11 @@ export function AIScanningEffect({
   isScanning, 
   progress = 0, 
   className,
-  stage = 'กำลังวิเคราะห์...'
+  stage
 }: AIScanningEffectProps) {
+  const t = useTranslations('analysis')
   const [_scanPosition, setScanPosition] = useState(0)
+  const displayStage = stage || t('scanning')
 
   useEffect(() => {
     if (!isScanning) return
@@ -146,7 +149,7 @@ export function AIScanningEffect({
               <Scan className="w-5 h-5 text-cyan-500" />
             </motion.div>
             <div className="flex-1">
-              <p className="text-sm font-medium">{stage}</p>
+              <p className="text-sm font-medium">{displayStage}</p>
               <div className="mt-1 h-1.5 bg-muted rounded-full overflow-hidden">
                 <motion.div
                   className="h-full bg-gradient-to-r from-cyan-500 to-purple-500"
@@ -168,11 +171,12 @@ export function AIScanningEffect({
  * Analysis Stage Indicator - Shows current analysis stage with icons
  */
 export function AnalysisStageIndicator({ stage: _stage, total, current }: { stage: string; total: number; current: number }) {
+  const t = useTranslations('analysis')
   const stages = [
-    { icon: Scan, label: 'สแกนใบหน้า' },
-    { icon: Eye, label: 'วิเคราะห์ผิว' },
-    { icon: Brain, label: 'AI ประมวลผล' },
-    { icon: Sparkles, label: 'สรุปผลลัพธ์' },
+    { icon: Scan, label: t('scanFace') },
+    { icon: Eye, label: t('analyzeSkin') },
+    { icon: Brain, label: t('aiProcessing') },
+    { icon: Sparkles, label: t('summarizing') },
   ]
 
   return (
@@ -207,6 +211,7 @@ export function AnalysisStageIndicator({ stage: _stage, total, current }: { stag
  * Face Detection Overlay - Shows detected face region
  */
 export function FaceDetectionOverlay({ detected, bounds }: { detected: boolean; bounds?: { x: number; y: number; width: number; height: number } }) {
+  const t = useTranslations('analysis')
   if (!detected || !bounds) return null
 
   return (
@@ -234,7 +239,7 @@ export function FaceDetectionOverlay({ detected, bounds }: { detected: boolean; 
         initial={{ opacity: 0, y: 5 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        Face Detected ✓
+        {t('faceDetected')}
       </motion.div>
     </motion.div>
   )

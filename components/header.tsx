@@ -58,10 +58,10 @@ export function Header() {
       // Landing page navigation - clean and professional
       return [
         { href: "/features", label: t('nav.features') },
+        { href: "/vision-2026", label: t('vision2026.title') },
         { href: "/pricing", label: t('nav.pricing') },
         { href: "/3d-showcase", label: t('nav.3dModels') },
         { href: "/analysis", label: t('nav.tryDemo') },
-        { href: "/faq", label: t('nav.faq') },
       ]
     }
 
@@ -92,6 +92,8 @@ export function Header() {
       case "super_admin":
         return [
           { href: "/admin", label: t('nav.admin') },
+          { href: "/vision-2026", label: "VISION_2026" },
+          { href: "/tech-supremacy", label: "TECH_HUB" },
           { href: "/admin/system-status", label: t('nav.systemStatus') },
           { href: "/clinic/settings", label: t('nav.settings') },
         ]

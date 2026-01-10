@@ -11,7 +11,8 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { TrendingUp, TrendingDown, Target, Calendar, Award, LineChart, Image, Lightbulb } from "lucide-react"
+import { useTranslations } from "next-intl"
+import { TrendingUp, TrendingDown, Target, Calendar, Award, LineChart, ImageIcon, Lightbulb } from "lucide-react"
 import type { HybridSkinAnalysis } from "@/lib/types/skin-analysis"
 import { ProgressCalculator } from "@/lib/utils/progress-calculator"
 import { ComparisonView } from "./comparison-view"
@@ -24,6 +25,7 @@ export interface ProgressDashboardProps {
 }
 
 export function ProgressDashboard({ analyses, goals = [], className = "" }: ProgressDashboardProps) {
+  const t = useTranslations('progressDashboard')
   const [selectedView, setSelectedView] = useState<"overview" | "comparison" | "timeline" | "goals">("overview")
 
   // Sort analyses by date
@@ -46,12 +48,12 @@ export function ProgressDashboard({ analyses, goals = [], className = "" }: Prog
   if (analyses.length === 0) {
     return (
       <Card className={`p-8 text-center ${className}`}>
-        <Image className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-        <h3 className="text-xl font-semibold mb-2">No Analysis Data</h3>
+        <ImageIcon className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
+        <h3 className="text-xl font-semibold mb-2">{t('noData')}</h3>
         <p className="text-muted-foreground mb-4">
-          Start tracking your skin health progress by uploading your first analysis.
+          {t('noDataDesc')}
         </p>
-        <Button>Upload First Analysis</Button>
+        <Button>{t('uploadFirst')}</Button>
       </Card>
     )
   }
@@ -66,7 +68,7 @@ export function ProgressDashboard({ analyses, goals = [], className = "" }: Prog
               <Calendar className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Total Analyses</p>
+              <p className="text-sm text-muted-foreground">{t('totalAnalyses')}</p>
               <p className="text-2xl font-bold">{analyses.length}</p>
             </div>
           </div>
@@ -78,7 +80,7 @@ export function ProgressDashboard({ analyses, goals = [], className = "" }: Prog
               <Award className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Current Score</p>
+              <p className="text-sm text-muted-foreground">{t('currentScore')}</p>
               <p className="text-2xl font-bold">
                 {ProgressCalculator.calculateOverallScore(latestAnalysis).toFixed(0)}
               </p>
@@ -108,7 +110,7 @@ export function ProgressDashboard({ analyses, goals = [], className = "" }: Prog
                   )}
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Overall Change</p>
+                  <p className="text-sm text-muted-foreground">{t('overallChange')}</p>
                   <p className="text-2xl font-bold">
                     {progressMetrics.overallImprovement > 0 ? "+" : ""}
                     {progressMetrics.overallImprovement.toFixed(1)}
@@ -123,7 +125,7 @@ export function ProgressDashboard({ analyses, goals = [], className = "" }: Prog
                   <Target className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">4-Week Projection</p>
+                  <p className="text-sm text-muted-foreground">{t('projectedScore')}</p>
                   <p className="text-2xl font-bold">{progressMetrics.projectedScore.toFixed(0)}</p>
                 </div>
               </div>
@@ -138,7 +140,7 @@ export function ProgressDashboard({ analyses, goals = [], className = "" }: Prog
           <div className="flex items-start gap-3">
             <Lightbulb className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
             <div className="flex-1">
-              <h3 className="text-lg font-semibold mb-3">Progress Insights</h3>
+              <h3 className="text-lg font-semibold mb-3">{t('progressInsights')}</h3>
               <ul className="space-y-2">
                 {insights.map((insight, index) => (
                   <li key={index} className="text-sm leading-relaxed">
@@ -154,13 +156,13 @@ export function ProgressDashboard({ analyses, goals = [], className = "" }: Prog
       {/* Main Content Tabs */}
       <Tabs value={selectedView} onValueChange={(v: any) => setSelectedView(v)}>
         <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="overview">{t('overview')}</TabsTrigger>
           <TabsTrigger value="comparison" disabled={analyses.length < 2}>
-            Comparison
+            {t('comparison')}
           </TabsTrigger>
-          <TabsTrigger value="timeline">Timeline</TabsTrigger>
+          <TabsTrigger value="timeline">{t('timeline')}</TabsTrigger>
           <TabsTrigger value="goals" disabled={goals.length === 0}>
-            Goals
+            {t('goals')}
           </TabsTrigger>
         </TabsList>
 
@@ -168,7 +170,7 @@ export function ProgressDashboard({ analyses, goals = [], className = "" }: Prog
         <TabsContent value="overview" className="space-y-6">
           {progressMetrics && (
             <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Parameter Progress</h3>
+              <h3 className="text-lg font-semibold mb-4">{t('parameterProgress')}</h3>
               <div className="space-y-4">
                 {Object.entries(progressMetrics.parameterImprovements).map(([param, change]) => (
                   <ParameterProgressBar
@@ -185,10 +187,10 @@ export function ProgressDashboard({ analyses, goals = [], className = "" }: Prog
           {/* Multi-Angle Comparison */}
           {analyses.length >= 2 && (
             <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Multi-Angle Progress</h3>
+              <h3 className="text-lg font-semibold mb-4">{t('multiAngleProgress')}</h3>
               <div className="grid grid-cols-2 gap-4">
-                <MultiAngleComparison analysis={firstAnalysis} label="First Analysis" />
-                <MultiAngleComparison analysis={latestAnalysis} label="Latest Analysis" />
+                <MultiAngleComparison analysis={firstAnalysis} label={t('firstAnalysis')} />
+                <MultiAngleComparison analysis={latestAnalysis} label={t('latestAnalysis')} />
               </div>
             </Card>
           )}
@@ -202,12 +204,12 @@ export function ProgressDashboard({ analyses, goals = [], className = "" }: Prog
                 {
                   analysis: firstAnalysis,
                   imageUrl: firstAnalysis.imageUrl,
-                  label: "First Analysis",
+                  label: t('firstAnalysis'),
                 },
                 {
                   analysis: latestAnalysis,
                   imageUrl: latestAnalysis.imageUrl,
-                  label: "Latest Analysis",
+                  label: t('latestAnalysis'),
                 },
               ]}
             />
@@ -268,6 +270,7 @@ interface MultiAngleComparisonProps {
 }
 
 function MultiAngleComparison({ analysis, label }: MultiAngleComparisonProps) {
+  const t = useTranslations('progressDashboard')
   return (
     <div className="space-y-3">
       <h4 className="font-medium text-center">{label}</h4>
@@ -278,7 +281,7 @@ function MultiAngleComparison({ analysis, label }: MultiAngleComparisonProps) {
             alt="Front view"
             className="w-full aspect-square object-cover rounded"
           />
-          <p className="text-xs text-center text-muted-foreground">Front</p>
+          <p className="text-xs text-center text-muted-foreground">{t('front')}</p>
         </div>
         <div className="space-y-1">
           <img
@@ -286,7 +289,7 @@ function MultiAngleComparison({ analysis, label }: MultiAngleComparisonProps) {
             alt="Left view"
             className="w-full aspect-square object-cover rounded"
           />
-          <p className="text-xs text-center text-muted-foreground">Left</p>
+          <p className="text-xs text-center text-muted-foreground">{t('left')}</p>
         </div>
         <div className="space-y-1">
           <img
@@ -294,12 +297,12 @@ function MultiAngleComparison({ analysis, label }: MultiAngleComparisonProps) {
             alt="Right view"
             className="w-full aspect-square object-cover rounded"
           />
-          <p className="text-xs text-center text-muted-foreground">Right</p>
+          <p className="text-xs text-center text-muted-foreground">{t('right')}</p>
         </div>
       </div>
       <div className="text-center">
         <p className="text-2xl font-bold">{ProgressCalculator.calculateOverallScore(analysis).toFixed(0)}</p>
-        <p className="text-xs text-muted-foreground">Overall Score</p>
+        <p className="text-xs text-muted-foreground">{t('overallScore')}</p>
       </div>
     </div>
   )
@@ -310,21 +313,22 @@ interface GoalProgressCardProps {
 }
 
 function GoalProgressCard({ goal }: GoalProgressCardProps) {
+  const t = useTranslations('progressDashboard')
   return (
     <Card className="p-6">
       <div className="flex items-start justify-between mb-4">
         <div>
-          <h4 className="font-semibold capitalize">{goal.parameter} Goal</h4>
+          <h4 className="font-semibold capitalize">{t('goalTitle', { parameter: goal.parameter })}</h4>
           <p className="text-sm text-muted-foreground">
-            Target: {goal.targetValue} | Current: {goal.currentValue.toFixed(1)}
+            {t('target')}: {goal.targetValue} | {t('current')}: {goal.currentValue.toFixed(1)}
           </p>
         </div>
-        <Badge variant={goal.onTrack ? "default" : "secondary"}>{goal.onTrack ? "On Track" : "Needs Attention"}</Badge>
+        <Badge variant={goal.onTrack ? "default" : "secondary"}>{goal.onTrack ? t('onTrack') : t('needsAttention')}</Badge>
       </div>
 
       <div className="space-y-2 mb-4">
         <div className="flex items-center justify-between text-sm">
-          <span>Progress</span>
+          <span>{t('progress')}</span>
           <span className="font-semibold">{goal.progress.toFixed(0)}%</span>
         </div>
         <Progress value={goal.progress} className="h-2" />
@@ -332,13 +336,13 @@ function GoalProgressCard({ goal }: GoalProgressCardProps) {
 
       <div className="grid grid-cols-2 gap-4 text-sm">
         <div>
-          <p className="text-muted-foreground">Start Value</p>
+          <p className="text-muted-foreground">{t('startValue')}</p>
           <p className="font-semibold">{goal.startValue.toFixed(1)}</p>
         </div>
         <div>
-          <p className="text-muted-foreground">Est. Time to Goal</p>
+          <p className="text-muted-foreground">{t('estTimeToGoal')}</p>
           <p className="font-semibold">
-            {goal.estimatedWeeksToGoal === Number.POSITIVE_INFINITY ? "N/A" : `${goal.estimatedWeeksToGoal} weeks`}
+            {goal.estimatedWeeksToGoal === Number.POSITIVE_INFINITY ? "N/A" : `${goal.estimatedWeeksToGoal} ${t('weeks')}`}
           </p>
         </div>
       </div>

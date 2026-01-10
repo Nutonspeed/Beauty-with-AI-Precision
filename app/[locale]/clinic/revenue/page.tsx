@@ -23,7 +23,18 @@ import {
   Loader2,
   Activity,
   ArrowUpRight,
-  ArrowDownRight
+  ArrowDownRight,
+  Megaphone,
+  LayoutGrid,
+  Globe,
+  Calculator,
+  Binary,
+  ShieldAlert,
+  Gauge,
+  Brain,
+  Cpu,
+  ShieldCheck,
+  BarChart3
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
@@ -56,12 +67,37 @@ const Legend = dynamic(() => import('recharts').then(mod => mod.Legend), { ssr: 
 // @ts-ignore
 const ResponsiveContainer = dynamic(() => import('recharts').then(mod => mod.ResponsiveContainer), { ssr: false });
 
+import { MarketIntelligenceHeatmap } from '@/components/analytics/market-intelligence-heatmap';
+
+import { PredictiveInventory } from '@/components/analytics/predictive-inventory';
+import { StaffEfficiency } from '@/components/analytics/staff-efficiency';
+import { RevenueForecaster } from '@/components/analytics/revenue-forecaster';
+import { AutonomousMarketing } from '@/components/analytics/autonomous-marketing';
+import { BranchBenchmarking } from '@/components/analytics/branch-benchmarking';
+import { IndustryBenchmarking } from '@/components/analytics/industry-benchmarking';
+import { MedicalComplianceAudit } from '@/components/analytics/medical-compliance-audit';
+import { ROISimulator } from '@/components/analytics/roi-simulator';
+import { ClinicalOutcomeQuantifier } from '@/components/analytics/clinical-outcome-quantifier';
+import { SynapticNotifications } from '@/components/admin/ai-synaptic-notifications';
+import { StrategicGrowthAdvisor } from '@/components/admin/strategic-growth-advisor';
+import { AIRevenueRecovery } from '@/components/analytics/revenue-recovery';
+import { ClinicalAssetLifecycle } from '@/components/analytics/clinical-asset-lifecycle';
+import { MissionControl } from '@/components/analytics/mission-control';
+import { IntelligenceCommandPalette } from '@/components/analytics/intelligence-command-palette';
+import { AIBoardroomReport } from '@/components/analytics/boardroom-report';
+
 interface RevenueData {
   summary: {
     totalRevenue: number;
     totalBookings: number;
     averageOrderValue: number;
     growthRate: number;
+    aiIntelligence?: {
+      totalScans: number;
+      conversionRate: number;
+      drivenRevenue: number;
+      roiMultiplier: number;
+    };
   };
   chartData: Array<{
     date: string;
@@ -109,7 +145,19 @@ export default function ClinicRevenuePage() {
   const [period, setPeriod] = useState<'7d' | '30d' | '90d'>('30d');
   const [data, setData] = useState<RevenueData | null>(null);
   const [appointmentData, setAppointmentData] = useState<AppointmentAnalytics | null>(null);
-  const [activeTab, setActiveTab] = useState<'trend' | 'payment' | 'appointments'>('trend');
+  const [activeTab, setActiveTab] = useState<'mission' | 'trend' | 'payment' | 'appointments' | 'market' | 'inventory' | 'staff' | 'forecast' | 'marketing' | 'benchmarking' | 'industry' | 'audit' | 'roi' | 'outcomes' | 'advisor' | 'recovery' | 'assets' | 'boardroom'>('mission');
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault()
+        setIsCommandPaletteOpen((open) => !open)
+      }
+    }
+    document.addEventListener("keydown", down)
+    return () => document.removeEventListener("keydown", down)
+  }, [])
 
   const loadAppointmentData = useCallback(async () => {
     try {
@@ -274,6 +322,12 @@ export default function ClinicRevenuePage() {
     <div className="flex min-h-screen flex-col bg-[#020617] text-slate-200 selection:bg-pink-500/30 print:bg-white print:text-black">
       <Header />
       
+      <IntelligenceCommandPalette 
+        isOpen={isCommandPaletteOpen} 
+        onClose={() => setIsCommandPaletteOpen(false)} 
+        onSelect={(id) => setActiveTab(id as any)} 
+      />
+
       <main className="flex-1 relative overflow-hidden flex flex-col">
         {/* Infrastructure Background */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -284,24 +338,32 @@ export default function ClinicRevenuePage() {
 
         <div className="container relative z-10 py-12 md:py-20 px-6 space-y-16 max-w-7xl mx-auto flex-1">
           {/* Header - Financial Command Interface */}
+          <div className="grid lg:grid-cols-12 gap-10">
+            <div className="lg:col-span-8">
+              <motion.div 
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="space-y-6"
+              >
+                <Badge variant="outline" className="px-4 py-1 rounded-full border-pink-500/30 text-pink-400 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.2em] text-[10px] font-black shadow-2xl shadow-pink-500/10">
+                  <TrendingUp className="mr-3 h-3.5 w-3.5 animate-pulse" />
+                  Financial Intelligence Terminal
+                </Badge>
+                <h1 className="text-5xl md:text-8xl font-bold tracking-tighter text-white leading-[0.9] italic">
+                  Revenue<br />
+                  <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent not-italic text-2xl tracking-[0.3em] font-black uppercase">Active Nodes MTD</span>
+                </h1>
+                <p className="text-xl text-slate-500 font-light tracking-widest max-w-2xl italic leading-relaxed">
+                  Orchestrate clinical financial flows and monitor yield optimization cycles with precision telemetry.
+                </p>
+              </motion.div>
+            </div>
+            <div className="lg:col-span-4">
+              <SynapticNotifications />
+            </div>
+          </div>
+          
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-12 pb-12 border-b border-white/5 print:hidden">
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="space-y-6"
-            >
-              <Badge variant="outline" className="px-4 py-1 rounded-full border-pink-500/30 text-pink-400 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.2em] text-[10px] font-black shadow-2xl shadow-pink-500/10">
-                <TrendingUp className="mr-3 h-3.5 w-3.5 animate-pulse" />
-                Financial Intelligence Terminal
-              </Badge>
-              <h1 className="text-5xl md:text-8xl font-bold tracking-tighter text-white leading-[0.9] italic">
-                Revenue<br />
-                <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent not-italic text-2xl tracking-[0.3em] font-black uppercase">Active Nodes MTD</span>
-              </h1>
-              <p className="text-xl text-slate-500 font-light tracking-widest max-w-2xl italic leading-relaxed">
-                Orchestrate clinical financial flows and monitor yield optimization cycles with precision telemetry.
-              </p>
-            </motion.div>
             
             <div className="flex flex-wrap items-center gap-6 shrink-0">
               <div className="flex bg-white/[0.02] p-2 rounded-2xl border border-white/5 shadow-inner">
@@ -374,10 +436,66 @@ export default function ClinicRevenuePage() {
             ))}
           </div>
 
+          {/* AI Intelligence Value Node - THE "VALUE" PROPOSITION */}
+          {data.summary.aiIntelligence && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2 }}
+            >
+              <Card className="relative overflow-hidden border-pink-500/20 bg-pink-500/[0.02] backdrop-blur-3xl rounded-[3rem] shadow-2xl group">
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/40 to-transparent" />
+                <CardHeader className="p-10 pb-6 border-b border-white/5 flex flex-row items-center justify-between">
+                  <div className="space-y-2">
+                    <CardTitle className="text-xs font-black uppercase tracking-[0.3em] text-pink-400 flex items-center gap-3">
+                      <Brain className="w-4 h-4 animate-pulse" />
+                      AI Intelligence Optimization Engine
+                    </CardTitle>
+                    <CardDescription className="text-slate-500 font-light italic">Quantifying the impact of clinical AI orchestration on your bottom line.</CardDescription>
+                  </div>
+                  <Badge variant="outline" className="px-4 py-1 rounded-full border-pink-500/30 text-pink-400 bg-pink-500/10 font-black italic tracking-widest text-[9px]">
+                    ROI: {data.summary.aiIntelligence.roiMultiplier}x
+                  </Badge>
+                </CardHeader>
+                <CardContent className="p-10 lg:p-12">
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
+                    <div className="space-y-4">
+                      <p className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-600 italic">AI Cycles Completed</p>
+                      <div className="text-5xl font-black text-white tracking-tighter italic">{data.summary.aiIntelligence.totalScans}</div>
+                      <p className="text-[10px] text-slate-500 leading-relaxed font-light">Total precision skin diagnostics performed this period.</p>
+                    </div>
+                    <div className="space-y-4 border-x border-white/5 px-10">
+                      <p className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-600 italic">Conversion Yield</p>
+                      <div className="text-5xl font-black text-pink-500 tracking-tighter italic">{data.summary.aiIntelligence.conversionRate}%</div>
+                      <p className="text-[10px] text-slate-500 leading-relaxed font-light">Percentage of AI scans successfully converted to clinical procedures.</p>
+                    </div>
+                    <div className="md:col-span-2 space-y-6">
+                      <p className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-600 italic">AI-Driven Gross Inflow</p>
+                      <div className="text-6xl font-black text-white tracking-tighter italic">{formatCurrency(data.summary.aiIntelligence.drivenRevenue)}</div>
+                      <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden shadow-inner mt-4">
+                        <motion.div 
+                          initial={{ width: 0 }}
+                          animate={{ width: '65%' }}
+                          transition={{ duration: 2, ease: "easeOut" }}
+                          className="h-full bg-gradient-to-r from-pink-600 to-purple-500 shadow-[0_0_20px_rgba(236,72,153,0.4)]"
+                        />
+                      </div>
+                      <p className="text-[10px] text-pink-500/60 font-black uppercase tracking-widest italic">Node Attribution: 65% of Total Revenue assisted by AI Insights</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
+
           {/* Analytics Tabs - High-Precision Visualization Interface */}
           <Tabs defaultValue="trend" className="space-y-12" value={activeTab} onValueChange={(value: any) => setActiveTab(value)}>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-8 border-b border-white/5 pb-4 print:hidden">
               <TabsList className="bg-white/[0.02] border border-white/5 p-1.5 rounded-2xl h-auto gap-2">
+                <TabsTrigger value="mission" className="rounded-xl px-8 py-3 data-[state=active]:bg-pink-600 data-[state=active]:text-white transition-all font-black uppercase tracking-[0.15em] text-[10px] italic">
+                  <Cpu className="h-4 w-4 mr-3" />
+                  MISSION_CONTROL
+                </TabsTrigger>
                 <TabsTrigger value="trend" className="rounded-xl px-8 py-3 data-[state=active]:bg-pink-600 data-[state=active]:text-white transition-all font-black uppercase tracking-[0.15em] text-[10px] italic">
                   <TrendingUp className="h-4 w-4 mr-3" />
                   MOMENTUM
@@ -389,6 +507,62 @@ export default function ClinicRevenuePage() {
                 <TabsTrigger value="appointments" className="rounded-xl px-8 py-3 data-[state=active]:bg-pink-600 data-[state=active]:text-white transition-all font-black uppercase tracking-[0.15em] text-[10px] italic">
                   <Activity className="h-4 w-4 mr-3" />
                   UTILIZATION
+                </TabsTrigger>
+                <TabsTrigger value="market" className="rounded-xl px-8 py-3 data-[state=active]:bg-pink-600 data-[state=active]:text-white transition-all font-black uppercase tracking-[0.15em] text-[10px] italic">
+                  <Globe className="h-4 w-4 mr-3" />
+                  MARKET_INTEL
+                </TabsTrigger>
+                <TabsTrigger value="inventory" className="rounded-xl px-8 py-3 data-[state=active]:bg-pink-600 data-[state=active]:text-white transition-all font-black uppercase tracking-[0.15em] text-[10px] italic">
+                  <Package className="h-4 w-4 mr-3" />
+                  PREDICTIVE_STOCK
+                </TabsTrigger>
+                <TabsTrigger value="staff" className="rounded-xl px-8 py-3 data-[state=active]:bg-pink-600 data-[state=active]:text-white transition-all font-black uppercase tracking-[0.15em] text-[10px] italic">
+                  <Users className="h-4 w-4 mr-3" />
+                  STAFF_AI
+                </TabsTrigger>
+                <TabsTrigger value="forecast" className="rounded-xl px-8 py-3 data-[state=active]:bg-pink-600 data-[state=active]:text-white transition-all font-black uppercase tracking-[0.15em] text-[10px] italic">
+                  <TrendingUp className="h-4 w-4 mr-3" />
+                  REVENUE_FORECAST
+                </TabsTrigger>
+                <TabsTrigger value="marketing" className="rounded-xl px-8 py-3 data-[state=active]:bg-pink-600 data-[state=active]:text-white transition-all font-black uppercase tracking-[0.15em] text-[10px] italic">
+                  <Megaphone className="h-4 w-4 mr-3" />
+                  AUTONOMOUS_ADS
+                </TabsTrigger>
+                <TabsTrigger value="benchmarking" className="rounded-xl px-8 py-3 data-[state=active]:bg-pink-600 data-[state=active]:text-white transition-all font-black uppercase tracking-[0.15em] text-[10px] italic">
+                  <LayoutGrid className="h-4 w-4 mr-3" />
+                  BRANCH_SYNC
+                </TabsTrigger>
+                <TabsTrigger value="industry" className="rounded-xl px-8 py-3 data-[state=active]:bg-pink-600 data-[state=active]:text-white transition-all font-black uppercase tracking-[0.15em] text-[10px] italic">
+                  <Globe className="h-4 w-4 mr-3" />
+                  INDUSTRY_MATRIX
+                </TabsTrigger>
+                <TabsTrigger value="audit" className="rounded-xl px-8 py-3 data-[state=active]:bg-pink-600 data-[state=active]:text-white transition-all font-black uppercase tracking-[0.15em] text-[10px] italic">
+                  <ShieldCheck className="h-4 w-4 mr-3" />
+                  COMPLIANCE
+                </TabsTrigger>
+                <TabsTrigger value="roi" className="rounded-xl px-8 py-3 data-[state=active]:bg-pink-600 data-[state=active]:text-white transition-all font-black uppercase tracking-[0.15em] text-[10px] italic">
+                  <Calculator className="h-4 w-4 mr-3" />
+                  ROI_STRATEGY
+                </TabsTrigger>
+                <TabsTrigger value="outcomes" className="rounded-xl px-8 py-3 data-[state=active]:bg-pink-600 data-[state=active]:text-white transition-all font-black uppercase tracking-[0.15em] text-[10px] italic">
+                  <Binary className="h-4 w-4 mr-3" />
+                  OUTCOME_QUANTIFIER
+                </TabsTrigger>
+                <TabsTrigger value="advisor" className="rounded-xl px-8 py-3 data-[state=active]:bg-pink-600 data-[state=active]:text-white transition-all font-black uppercase tracking-[0.15em] text-[10px] italic">
+                  <Brain className="h-4 w-4 mr-3" />
+                  GROWTH_ADVISOR
+                </TabsTrigger>
+                <TabsTrigger value="recovery" className="rounded-xl px-8 py-3 data-[state=active]:bg-pink-600 data-[state=active]:text-white transition-all font-black uppercase tracking-[0.15em] text-[10px] italic">
+                  <ShieldAlert className="h-4 w-4 mr-3" />
+                  REVENUE_RECOVERY
+                </TabsTrigger>
+                <TabsTrigger value="assets" className="rounded-xl px-8 py-3 data-[state=active]:bg-pink-600 data-[state=active]:text-white transition-all font-black uppercase tracking-[0.15em] text-[10px] italic">
+                  <Gauge className="h-4 w-4 mr-3" />
+                  ASSET_LIFECYCLE
+                </TabsTrigger>
+                <TabsTrigger value="boardroom" className="rounded-xl px-8 py-3 data-[state=active]:bg-pink-600 data-[state=active]:text-white transition-all font-black uppercase tracking-[0.15em] text-[10px] italic">
+                  <BarChart3 className="h-4 w-4 mr-3" />
+                  BOARDROOM_EXEC
                 </TabsTrigger>
               </TabsList>
               <div className="flex items-center gap-4">
@@ -405,6 +579,10 @@ export default function ClinicRevenuePage() {
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.5 }}
               >
+                <TabsContent value="mission" className="mt-0 outline-none">
+                  <MissionControl />
+                </TabsContent>
+
                 <TabsContent value="trend" className="mt-0 outline-none">
                   <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group">
                     <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
@@ -626,6 +804,62 @@ export default function ClinicRevenuePage() {
                       </Card>
                     </div>
                   </div>
+                </TabsContent>
+
+                <TabsContent value="market" className="mt-0 outline-none">
+                  <MarketIntelligenceHeatmap isEnterprise={user.role === 'super_admin'} />
+                </TabsContent>
+
+                <TabsContent value="inventory" className="mt-0 outline-none">
+                  <PredictiveInventory isEnterprise={user.role === 'super_admin'} />
+                </TabsContent>
+
+                <TabsContent value="staff" className="mt-0 outline-none">
+                  <StaffEfficiency isEnterprise={user.role === 'super_admin'} />
+                </TabsContent>
+
+                <TabsContent value="forecast" className="mt-0 outline-none">
+                  <RevenueForecaster isEnterprise={user.role === 'super_admin'} />
+                </TabsContent>
+
+                <TabsContent value="marketing" className="mt-0 outline-none">
+                  <AutonomousMarketing isEnterprise={user.role === 'super_admin'} />
+                </TabsContent>
+
+                <TabsContent value="benchmarking" className="mt-0 outline-none">
+                  <BranchBenchmarking isEnterprise={user.role === 'super_admin'} />
+                </TabsContent>
+
+                <TabsContent value="industry" className="mt-0 outline-none">
+                  <IndustryBenchmarking isEnterprise={user.role === 'super_admin'} />
+                </TabsContent>
+
+                <TabsContent value="audit" className="mt-0 outline-none">
+                  <MedicalComplianceAudit isEnterprise={user.role === 'super_admin'} />
+                </TabsContent>
+
+                <TabsContent value="roi" className="mt-0 outline-none">
+                  <ROISimulator isEnterprise={user.role === 'super_admin'} />
+                </TabsContent>
+
+                <TabsContent value="outcomes" className="mt-0 outline-none">
+                  <ClinicalOutcomeQuantifier isPremium={user.role === 'super_admin' || user.role === 'clinic_owner'} />
+                </TabsContent>
+
+                <TabsContent value="advisor" className="mt-0 outline-none">
+                  <StrategicGrowthAdvisor />
+                </TabsContent>
+
+                <TabsContent value="recovery" className="mt-0 outline-none">
+                  <AIRevenueRecovery />
+                </TabsContent>
+
+                <TabsContent value="assets" className="mt-0 outline-none">
+                  <ClinicalAssetLifecycle />
+                </TabsContent>
+
+                <TabsContent value="boardroom" className="mt-0 outline-none">
+                  <AIBoardroomReport />
                 </TabsContent>
               </motion.div>
             </AnimatePresence>

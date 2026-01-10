@@ -210,7 +210,7 @@ export function SalesMetrics() {
         icon={DollarSign}
         trend={{
           value: metrics.revenueGenerated.change,
-          label: t('dashboard.livePipeline.potential')
+          label: t('salesDashboard.metrics.potentialRevenue', { val: (metrics.revenueGenerated.target / 1000).toFixed(0) })
         }}
         iconColor="text-amber-600"
         iconBackground="bg-amber-50"
@@ -231,12 +231,12 @@ export function SalesMetrics() {
 
       {/* Win Rate (Overall) */}
       <StatCard
-        title={t('salesLeads.stats.won')}
+        title={t('salesLeads.status.won') || t('salesLeads.status.qualified')}
         value={`${metrics.winRateOverall.today.toFixed(1)}%`}
         icon={BarChart}
         trend={{
           value: metrics.winRateOverall.change,
-          label: t('dashboard.livePipeline.averageDeal'),
+          label: t('salesDashboard.metrics.todayRate', { val: metrics.winRateOverall.today.toFixed(1) }),
         }}
         iconColor="text-teal-600"
         iconBackground="bg-teal-50"

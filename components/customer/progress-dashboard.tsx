@@ -12,6 +12,7 @@
  */
 
 import React, { useMemo } from 'react';
+import { useTranslations, useLocale } from 'next-intl';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -85,125 +86,6 @@ export interface ProgressDashboardProps {
   onShare?: () => void;
   onBookFollowup?: () => void;
 }
-
-// ============================================================================
-// Translation Constants
-// ============================================================================
-
-const TRANSLATIONS = {
-  en: {
-    title: 'Progress Tracking',
-    description: 'Track your skin improvement journey over time',
-    overview: 'Overview',
-    timeline: 'Timeline',
-    comparison: 'Comparison',
-    metrics: 'Metrics',
-    achievements: 'Achievements',
-    totalAnalyses: 'Total Analyses',
-    daysSinceStart: 'Days Since Start',
-    overallImprovement: 'Overall Improvement',
-    activeGoals: 'Active Goals',
-    improvement: 'Improvement',
-    stable: 'Stable',
-    worsening: 'Needs Attention',
-    parameter: 'Parameter',
-    baseline: 'Baseline',
-    current: 'Current',
-    change: 'Change',
-    goal: 'Goal',
-    progress: 'Progress',
-    trend: 'Trend',
-    selectParameter: 'Select Parameter',
-    spots: 'Spots',
-    pores: 'Pores',
-    wrinkles: 'Wrinkles',
-    texture: 'Texture',
-    redness: 'Redness',
-    pigmentation: 'Pigmentation',
-    overall: 'Overall',
-    compareAnalyses: 'Compare Analyses',
-    selectBaseline: 'Select Baseline',
-    selectCurrent: 'Select Current',
-    viewComparison: 'View Comparison',
-    improvementRate: 'Improvement Rate',
-    perMonth: 'per month',
-    topImprovements: 'Top Improvements',
-    needsAttention: 'Needs Attention',
-    exportReport: 'Export Report',
-    shareProgress: 'Share Progress',
-    bookFollowup: 'Book Follow-up',
-    noData: 'No analysis data available',
-    noDataDescription: 'Start your skin journey by taking your first analysis',
-    milestone: 'Milestone',
-    treatment: 'Treatment',
-    followup: 'Follow-up',
-    achievement: 'Achievement',
-    session: 'Session',
-    ago: 'ago',
-    days: 'days',
-    weeks: 'weeks',
-    months: 'months',
-    congratulations: 'Congratulations!',
-    keepItUp: 'Keep up the great work!',
-    stayConsistent: 'Stay consistent with your treatment plan',
-  },
-  th: {
-    title: 'ติดตามความคืบหน้า',
-    description: 'ติดตามการปรับปรุงสภาพผิวของคุณตามเวลา',
-    overview: 'ภาพรวม',
-    timeline: 'ไทม์ไลน์',
-    comparison: 'เปรียบเทียบ',
-    metrics: 'ตัวชี้วัด',
-    achievements: 'ความสำเร็จ',
-    totalAnalyses: 'จำนวนครั้งทั้งหมด',
-    daysSinceStart: 'วันนับตั้งแต่เริ่มต้น',
-    overallImprovement: 'การปรับปรุงโดยรวม',
-    activeGoals: 'เป้าหมายที่ใช้งาน',
-    improvement: 'ดีขึ้น',
-    stable: 'คงที่',
-    worsening: 'ต้องดูแล',
-    parameter: 'พารามิเตอร์',
-    baseline: 'พื้นฐาน',
-    current: 'ปัจจุบัน',
-    change: 'การเปลี่ยนแปลง',
-    goal: 'เป้าหมาย',
-    progress: 'ความคืบหน้า',
-    trend: 'แนวโน้ม',
-    selectParameter: 'เลือกพารามิเตอร์',
-    spots: 'จุดด่างดำ',
-    pores: 'รูขุมขน',
-    wrinkles: 'ริ้วรอย',
-    texture: 'เนื้อผิว',
-    redness: 'รอยแดง',
-    pigmentation: 'เม็ดสีผิว',
-    overall: 'โดยรวม',
-    compareAnalyses: 'เปรียบเทียบการวิเคราะห์',
-    selectBaseline: 'เลือกฐาน',
-    selectCurrent: 'เลือกปัจจุบัน',
-    viewComparison: 'ดูการเปรียบเทียบ',
-    improvementRate: 'อัตราการปรับปรุง',
-    perMonth: 'ต่อเดือน',
-    topImprovements: 'ปรับปรุงดีสุด',
-    needsAttention: 'ต้องดูแล',
-    exportReport: 'ส่งออกรายงาน',
-    shareProgress: 'แชร์ความคืบหน้า',
-    bookFollowup: 'จองติดตามผล',
-    noData: 'ไม่มีข้อมูลการวิเคราะห์',
-    noDataDescription: 'เริ่มต้นเส้นทางผิวสวยด้วยการวิเคราะห์ครั้งแรก',
-    milestone: 'เหตุการณ์สำคัญ',
-    treatment: 'ทรีตเมนต์',
-    followup: 'ติดตามผล',
-    achievement: 'ความสำเร็จ',
-    session: 'ครั้งที่',
-    ago: 'ที่แล้ว',
-    days: 'วัน',
-    weeks: 'สัปดาห์',
-    months: 'เดือน',
-    congratulations: 'ยินดีด้วย!',
-    keepItUp: 'ทำต่อไปเยี่ยมมาก!',
-    stayConsistent: 'รักษาความสม่ำเสมอในแผนการรักษา',
-  },
-};
 
 // ============================================================================
 // Helper Functions
@@ -285,7 +167,7 @@ function OverviewStats({
   metrics: ProgressMetrics[];
   locale?: 'th' | 'en';
 }>) {
-  const t = TRANSLATIONS[locale];
+  const t = useTranslations();
 
   const daysSinceStart = useMemo(() => {
     if (analyses.length === 0) return 0;
@@ -302,28 +184,28 @@ function OverviewStats({
 
   const stats = [
     {
-      label: t.totalAnalyses,
+      label: t('progressDashboard.totalAnalyses'),
       value: analyses.length,
       icon: ImageIcon,
       color: 'text-blue-600',
       bg: 'bg-blue-50',
     },
     {
-      label: t.daysSinceStart,
+      label: t('progressDashboard.daysSinceStart'),
       value: daysSinceStart,
       icon: Calendar,
       color: 'text-purple-600',
       bg: 'bg-purple-50',
     },
     {
-      label: t.overallImprovement,
+      label: t('progressDashboard.overallImprovement'),
       value: `${overallImprovement > 0 ? '+' : ''}${overallImprovement}%`,
       icon: overallImprovement > 0 ? TrendingUp : Activity,
       color: overallImprovement > 0 ? 'text-green-600' : 'text-gray-600',
       bg: overallImprovement > 0 ? 'bg-green-50' : 'bg-gray-50',
     },
     {
-      label: t.activeGoals,
+      label: t('progressDashboard.activeGoals'),
       value: 0,
       icon: Target,
       color: 'text-orange-600',
@@ -362,7 +244,7 @@ function ProgressTimeline({
   analyses: AnalysisSnapshot[];
   locale?: 'th' | 'en';
 }>) {
-  const t = TRANSLATIONS[locale];
+  const t = useTranslations();
 
   const timelineData = useMemo(() => {
     return analyses.map((snapshot, idx) => ({
@@ -392,9 +274,9 @@ function ProgressTimeline({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Activity className="h-5 w-5" />
-          {t.timeline}
+          {t('progressDashboard.timeline')}
         </CardTitle>
-        <CardDescription>{t.description}</CardDescription>
+        <CardDescription>{t('progressDashboard.description')}</CardDescription>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
@@ -416,7 +298,7 @@ function ProgressTimeline({
               stroke="#8884d8"
               fillOpacity={1}
               fill="url(#colorOverall)"
-              name={t.overall}
+              name={t('progressDashboard.overall')}
             />
           </AreaChart>
         </ResponsiveContainer>
@@ -435,20 +317,20 @@ function MetricsTable({
   metrics: ProgressMetrics[];
   locale?: 'th' | 'en';
 }>) {
-  const t = TRANSLATIONS[locale];
+  const t = useTranslations();
 
   const parameterLabels: Record<string, string> = {
-    spots: t.spots,
-    pores: t.pores,
-    wrinkles: t.wrinkles,
-    texture: t.texture,
-    redness: t.redness,
+    spots: t('progressDashboard.spots'),
+    pores: t('progressDashboard.pores'),
+    wrinkles: t('progressDashboard.wrinkles'),
+    texture: t('progressDashboard.texture'),
+    redness: t('progressDashboard.redness'),
   };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t.metrics}</CardTitle>
+        <CardTitle>{t('progressDashboard.metrics')}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -500,18 +382,18 @@ function BeforeAfterComparison({
   current: AnalysisSnapshot;
   locale?: 'th' | 'en';
 }>) {
-  const t = TRANSLATIONS[locale];
+  const t = useTranslations();
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t.comparison}</CardTitle>
+        <CardTitle>{t('progressDashboard.comparison')}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Baseline */}
           <div className="space-y-2">
-            <Badge variant="secondary">{t.baseline}</Badge>
+            <Badge variant="secondary">{t('progressDashboard.baseline')}</Badge>
             <div className="aspect-square bg-muted rounded-lg overflow-hidden">
               {baseline.imageUrl && (
                 <img
@@ -528,7 +410,7 @@ function BeforeAfterComparison({
 
           {/* Current */}
           <div className="space-y-2">
-            <Badge>{t.current}</Badge>
+            <Badge>{t('progressDashboard.current')}</Badge>
             <div className="aspect-square bg-muted rounded-lg overflow-hidden">
               {current.imageUrl && (
                 <img
@@ -554,12 +436,14 @@ function BeforeAfterComparison({
 
 export default function CustomerProgressDashboard({
   analyses,
-  locale = 'th',
+  locale: propLocale,
   onExport,
   onShare,
   onBookFollowup,
 }: Readonly<ProgressDashboardProps>) {
-  const t = TRANSLATIONS[locale];
+  const t = useTranslations();
+  const currentLocale = useLocale() as 'th' | 'en';
+  const locale = propLocale ?? currentLocale;
 
 
   // Sort analyses by date
@@ -580,9 +464,9 @@ export default function CustomerProgressDashboard({
           <div className="text-center space-y-4">
             <AlertCircle className="h-12 w-12 mx-auto text-muted-foreground" />
             <div>
-              <h3 className="text-lg font-semibold">{t.noData}</h3>
+              <h3 className="text-lg font-semibold">{t('progressDashboard.noData')}</h3>
               <p className="text-sm text-muted-foreground mt-1">
-                {t.noDataDescription}
+                {t('progressDashboard.noDataDescription')}
               </p>
             </div>
           </div>
@@ -599,26 +483,26 @@ export default function CustomerProgressDashboard({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">{t.title}</h2>
-          <p className="text-muted-foreground">{t.description}</p>
+          <h2 className="text-2xl font-bold">{t('progressDashboard.title')}</h2>
+          <p className="text-muted-foreground">{t('progressDashboard.description')}</p>
         </div>
         <div className="flex gap-2">
           {onExport && (
             <Button variant="outline" size="sm" onClick={onExport}>
               <Download className="h-4 w-4 mr-2" />
-              {t.exportReport}
+              {t('progressDashboard.exportReport')}
             </Button>
           )}
           {onShare && (
             <Button variant="outline" size="sm" onClick={onShare}>
               <Share2 className="h-4 w-4 mr-2" />
-              {t.shareProgress}
+              {t('progressDashboard.shareProgress')}
             </Button>
           )}
           {onBookFollowup && (
             <Button size="sm" onClick={onBookFollowup}>
               <Calendar className="h-4 w-4 mr-2" />
-              {t.bookFollowup}
+              {t('progressDashboard.bookFollowup')}
             </Button>
           )}
         </div>
@@ -630,10 +514,10 @@ export default function CustomerProgressDashboard({
       {/* Main Content Tabs */}
       <Tabs defaultValue="overview" className="space-y-4">
         <TabsList className="grid w-full max-w-2xl grid-cols-4">
-          <TabsTrigger value="overview">{t.overview}</TabsTrigger>
-          <TabsTrigger value="timeline">{t.timeline}</TabsTrigger>
-          <TabsTrigger value="comparison">{t.comparison}</TabsTrigger>
-          <TabsTrigger value="metrics">{t.metrics}</TabsTrigger>
+          <TabsTrigger value="overview">{t('progressDashboard.overview')}</TabsTrigger>
+          <TabsTrigger value="timeline">{t('progressDashboard.timeline')}</TabsTrigger>
+          <TabsTrigger value="comparison">{t('progressDashboard.comparison')}</TabsTrigger>
+          <TabsTrigger value="metrics">{t('progressDashboard.metrics')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">

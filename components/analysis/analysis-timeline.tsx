@@ -10,6 +10,7 @@ import type React from "react"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { useTranslations } from "next-intl"
 import { TrendingUp, TrendingDown, Minus, Calendar, ChevronLeft, ChevronRight, Target } from "lucide-react"
 import type { HybridSkinAnalysis } from "@/lib/types/skin-analysis"
 
@@ -26,10 +27,11 @@ export interface AnalysisTimelineProps {
 }
 
 export function AnalysisTimeline({ entries, onSelectEntry, className = "" }: AnalysisTimelineProps) {
+  const t = useTranslations('analysisTimeline')
   if (entries.length === 0) {
     return (
       <Card className={`p-8 text-center ${className}`}>
-        <p className="text-muted-foreground">No analysis history available</p>
+        <p className="text-muted-foreground">{t('noHistory')}</p>
       </Card>
     )
   }
@@ -43,7 +45,7 @@ export function AnalysisTimeline({ entries, onSelectEntry, className = "" }: Ana
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold flex items-center gap-2">
           <Calendar className="w-6 h-6 text-primary" />
-          Progress Timeline
+          {t('title')}
         </h2>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" disabled>
@@ -104,11 +106,11 @@ export function AnalysisTimeline({ entries, onSelectEntry, className = "" }: Ana
 
       {/* Summary Stats */}
       <Card className="p-6">
-        <h3 className="text-lg font-semibold mb-4">Overall Progress</h3>
+        <h3 className="text-lg font-semibold mb-4">{t('overallProgress')}</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <StatCard label="Total Sessions" value={entries.length} icon={<Target className="w-5 h-5" />} />
+          <StatCard label={t('totalSessions')} value={entries.length} icon={<Target className="w-5 h-5" />} />
           <StatCard
-            label="Current Score"
+            label={t('currentScore')}
             value={Math.round(
               (sortedEntries[0].analysis.overallScore.spots +
                 sortedEntries[0].analysis.overallScore.pores +
@@ -121,7 +123,7 @@ export function AnalysisTimeline({ entries, onSelectEntry, className = "" }: Ana
             icon={<TrendingUp className="w-5 h-5" />}
           />
           <StatCard
-            label="Starting Score"
+            label={t('startingScore')}
             value={Math.round(
               (sortedEntries[sortedEntries.length - 1].analysis.overallScore.spots +
                 sortedEntries[sortedEntries.length - 1].analysis.overallScore.pores +
@@ -134,7 +136,7 @@ export function AnalysisTimeline({ entries, onSelectEntry, className = "" }: Ana
             icon={<Minus className="w-5 h-5" />}
           />
           <StatCard
-            label="Total Improvement"
+            label={t('totalImprovement')}
             value={(() => {
               const currentScore = Math.round(
                 (sortedEntries[0].analysis.overallScore.spots +
@@ -174,6 +176,7 @@ interface TimelineItemProps {
 }
 
 function TimelineItem({ entry, improvement, isFirst, isLast, onClick }: TimelineItemProps) {
+  const t = useTranslations('analysisTimeline')
   const date = new Date(entry.analysis.timestamp)
   const dateString = date.toLocaleDateString()
   const timeString = date.toLocaleTimeString([], {
@@ -211,10 +214,10 @@ function TimelineItem({ entry, improvement, isFirst, isLast, onClick }: Timeline
           {/* Info */}
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
-              {isFirst && <Badge className="text-xs">Latest</Badge>}
+              {isFirst && <Badge className="text-xs">{t('latest')}</Badge>}
               {isLast && (
                 <Badge variant="outline" className="text-xs">
-                  First
+                  {t('first')}
                 </Badge>
               )}
               {!isFirst && improvement !== 0 && <ImprovementBadge value={improvement} />}
@@ -222,7 +225,7 @@ function TimelineItem({ entry, improvement, isFirst, isLast, onClick }: Timeline
 
             <div className="grid grid-cols-3 gap-2 text-sm">
               <div>
-                <p className="text-xs text-muted-foreground">Overall Score</p>
+                <p className="text-xs text-muted-foreground">{t('overallScore')}</p>
                 <p className="font-semibold text-lg">
                   {Math.round(
                     (entry.analysis.overallScore.spots +
@@ -236,11 +239,11 @@ function TimelineItem({ entry, improvement, isFirst, isLast, onClick }: Timeline
                 </p>
               </div>
               <div>
-                <p className="text-xs text-muted-foreground">Confidence</p>
+                <p className="text-xs text-muted-foreground">{t('confidence')}</p>
                 <p className="font-semibold text-lg">95%</p>
               </div>
               <div>
-                <p className="text-xs text-muted-foreground">Percentile</p>
+                <p className="text-xs text-muted-foreground">{t('percentile')}</p>
                 <p className="font-semibold text-lg">
                   {Math.round(
                     (entry.analysis.percentiles.spots +
@@ -261,11 +264,11 @@ function TimelineItem({ entry, improvement, isFirst, isLast, onClick }: Timeline
 
         {/* Parameter trends */}
         <div className="mt-3 pt-3 border-t grid grid-cols-3 md:grid-cols-5 gap-2 text-xs">
-          <ParamTrend label="Spots" value={entry.analysis.percentiles.spots} />
-          <ParamTrend label="Pores" value={entry.analysis.percentiles.pores} />
-          <ParamTrend label="Wrinkles" value={entry.analysis.percentiles.wrinkles} />
-          <ParamTrend label="Texture" value={entry.analysis.percentiles.texture} />
-          <ParamTrend label="Redness" value={entry.analysis.percentiles.redness} />
+          <ParamTrend label={t('spots')} value={entry.analysis.percentiles.spots} />
+          <ParamTrend label={t('pores')} value={entry.analysis.percentiles.pores} />
+          <ParamTrend label={t('wrinkles')} value={entry.analysis.percentiles.wrinkles} />
+          <ParamTrend label={t('texture')} value={entry.analysis.percentiles.texture} />
+          <ParamTrend label={t('redness')} value={entry.analysis.percentiles.redness} />
         </div>
       </Card>
     </div>

@@ -5,6 +5,7 @@
  */
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -24,22 +25,24 @@ interface MessagingProps {
   className?: string;
 }
 
-const TEMPLATES = [
-  { id: 'greeting', name: 'ทักทาย', template: 'สวัสดีค่ะ คุณ{name} ขอบคุณที่สนใจ {treatment} ค่ะ สะดวกคุยตอนไหนคะ?' },
-  { id: 'followup', name: 'ติดตาม', template: 'สวัสดีค่ะ คุณ{name} ติดตามเรื่อง {treatment} ค่ะ มีโปรลด 15% วันนี้ค่ะ' },
-  { id: 'promo', name: 'โปรโมชั่น', template: '🎉 คุณ{name} โปรพิเศษ! {treatment} ลด 30% วันนี้วันเดียว!' },
-  { id: 'appointment', name: 'นัดหมาย', template: '✅ ยืนยันนัดหมาย คุณ{name} วัน [วันที่] เวลา [เวลา] บริการ {treatment}' },
-  { id: 'thankyou', name: 'ขอบคุณ', template: 'ขอบคุณค่ะ คุณ{name} ดีใจที่ได้ให้บริการ {treatment} ค่ะ 💕' },
+const TEMPLATES = (t: any) => [
+  { id: 'greeting', name: t('messagingIntegration.templateNames.greeting'), template: t('messagingIntegration.templates.greeting') },
+  { id: 'followup', name: t('messagingIntegration.templateNames.followup'), template: t('messagingIntegration.templates.followup') },
+  { id: 'promo', name: t('messagingIntegration.templateNames.promo'), template: t('messagingIntegration.templates.promo') },
+  { id: 'appointment', name: t('messagingIntegration.templateNames.appointment'), template: t('messagingIntegration.templates.appointment') },
+  { id: 'thankyou', name: t('messagingIntegration.templateNames.thankyou'), template: t('messagingIntegration.templates.thankyou') },
 ];
 
 export function MessagingIntegration({ customer, onMessageSent, className = '' }: MessagingProps) {
+  const t = useTranslations();
+  const templates = TEMPLATES(t);
   const [selectedTemplate, setSelectedTemplate] = useState('');
   const [message, setMessage] = useState('');
   const [copied, setCopied] = useState(false);
   const [platform, setPlatform] = useState<'line' | 'whatsapp'>('line');
 
   const fillTemplate = (template: string) => {
-    return template.replace(/{name}/g, customer.name).replace(/{treatment}/g, customer.treatment || 'treatment');
+    return template.replace(/{name}/g, customer.name).replace(/{treatment}/g, customer.treatment || t('common.treatment') || 'treatment');
   };
 
   const handleSelectTemplate = (template: string) => {
@@ -73,8 +76,8 @@ export function MessagingIntegration({ customer, onMessageSent, className = '' }
             <MessageSquare className="w-5 h-5 text-white" />
           </div>
           <div>
-            <CardTitle className="text-white">Quick Message</CardTitle>
-            <p className="text-sm text-gray-400">ส่งข้อความถึงลูกค้า</p>
+            <CardTitle className="text-white">{t('messagingIntegration.title')}</CardTitle>
+            <p className="text-sm text-gray-400">{t('messagingIntegration.subtitle')}</p>
           </div>
         </div>
       </CardHeader>
@@ -109,14 +112,14 @@ export function MessagingIntegration({ customer, onMessageSent, className = '' }
 
         {/* Templates */}
         <div className="flex flex-wrap gap-2">
-          {TEMPLATES.map(t => (
+          {templates.map(tmp => (
             <Badge
-              key={t.id}
+              key={tmp.id}
               variant="outline"
-              className={`cursor-pointer ${selectedTemplate === t.template ? 'bg-purple-500/20 border-purple-500' : 'border-white/20'} text-white`}
-              onClick={() => handleSelectTemplate(t.template)}
+              className={`cursor-pointer ${selectedTemplate === tmp.template ? 'bg-purple-500/20 border-purple-500' : 'border-white/20'} text-white`}
+              onClick={() => handleSelectTemplate(tmp.template)}
             >
-              {t.name}
+              {tmp.name}
             </Badge>
           ))}
         </div>
@@ -125,7 +128,7 @@ export function MessagingIntegration({ customer, onMessageSent, className = '' }
         <Textarea
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          placeholder="พิมพ์ข้อความ..."
+          placeholder={t('messagingIntegration.placeholder')}
           className="bg-white/5 border-white/20 text-white min-h-[120px]"
         />
 
@@ -133,7 +136,7 @@ export function MessagingIntegration({ customer, onMessageSent, className = '' }
         <div className="flex gap-2">
           <Button variant="outline" className="border-white/20 text-white" onClick={handleCopy}>
             {copied ? <Check className="w-4 h-4 mr-2" /> : <Copy className="w-4 h-4 mr-2" />}
-            {copied ? 'Copied!' : 'Copy'}
+            {copied ? t('messagingIntegration.copied') : t('messagingIntegration.copy')}
           </Button>
           <Button 
             className={`flex-1 ${platform === 'line' ? 'bg-[#00B900]' : 'bg-[#25D366]'}`}
@@ -141,7 +144,7 @@ export function MessagingIntegration({ customer, onMessageSent, className = '' }
             disabled={!message}
           >
             <Send className="w-4 h-4 mr-2" />
-            ส่งผ่าน {platform === 'line' ? 'LINE' : 'WhatsApp'}
+            {t('messagingIntegration.sendVia', { platform: platform.toUpperCase() })}
           </Button>
         </div>
       </CardContent>

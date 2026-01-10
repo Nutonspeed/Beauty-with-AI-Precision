@@ -346,7 +346,7 @@ export function SummaryStep({
                   {data.selectedTreatments.map((treatment: string) => (
                     <div key={treatment} className="flex items-center gap-2 text-sm">
                       <Sparkles className="h-3 w-3 text-purple-500" />
-                      {getTreatmentDisplayName(treatment)}
+                      {getTreatmentDisplayName(treatment, t)}
                     </div>
                   ))}
                 </div>

@@ -32,7 +32,11 @@ import { cn } from '@/lib/utils'
 import { ARVisualization } from '@/components/ar-visualization'
 import { BeforeAfterSlider } from '@/components/ar/before-after-slider'
 import type { HybridAnalysisResult } from '@/lib/ai/hybrid-analyzer'
-import { TREATMENT_OPTIONS } from '@/lib/sales/presentation-catalog'
+import { 
+  TREATMENT_OPTIONS, 
+  getTreatmentDisplayName, 
+  getTreatmentDescription 
+} from '@/lib/sales/presentation-catalog'
 
 interface ARPreviewStepProps {
   readonly image: string
@@ -344,12 +348,12 @@ export function ARPreviewStep({
                     {/* Content */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <h4 className="font-semibold text-sm">{treatment.name}</h4>
+                        <h4 className="font-semibold text-sm">{getTreatmentDisplayName(treatment.id, t)}</h4>
                         {isSelected && (
                           <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0" />
                         )}
                       </div>
-                      <p className="text-xs opacity-80">{treatment.description}</p>
+                      <p className="text-xs opacity-80">{getTreatmentDescription(treatment.id, t)}</p>
                     </div>
 
                     {/* Selection Indicator */}
@@ -404,8 +408,8 @@ export function ARPreviewStep({
                   >
                     <span className="text-2xl">{treatment.icon}</span>
                     <div className="flex-1">
-                      <p className="font-medium text-sm">{treatment.name}</p>
-                      <p className="text-xs text-muted-foreground">{treatment.description}</p>
+                      <p className="font-medium text-sm">{getTreatmentDisplayName(id, t)}</p>
+                      <p className="text-xs text-muted-foreground">{getTreatmentDescription(id, t)}</p>
                     </div>
                     <Button
                       variant="ghost"

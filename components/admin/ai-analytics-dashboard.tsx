@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { useTranslations } from 'next-intl';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Table,
@@ -59,6 +60,7 @@ interface AIAnalyticsData {
 }
 
 export default function AIAnalyticsDashboard() {
+  const t = useTranslations();
   const [data, setData] = useState<AIAnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -135,10 +137,10 @@ export default function AIAnalyticsDashboard() {
       {/* Overview Metrics Grid - Operational Hub */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
-          { label: 'Total Neural Analyses', val: data.overview.totalAnalyses.toLocaleString(), sub: 'Global Synapse Load', icon: Brain, color: 'text-purple-400', bg: 'bg-purple-500/10' },
-          { label: 'Active Cycle Load', val: data.overview.analysesThisMonth.toLocaleString(), sub: 'MTD Processing', icon: Activity, color: 'text-blue-400', bg: 'bg-blue-500/10', growth: data.overview.momGrowth },
-          { label: 'Mean Integrity Index', val: data.overview.avgOverallScore.toString(), sub: 'Composite Quality Score', icon: Sparkles, color: 'text-yellow-400', bg: 'bg-yellow-500/10' },
-          { label: 'Verified Entities', val: data.overview.uniqueUsers.toLocaleString(), sub: 'Unique Identity Nodes', icon: Users, color: 'text-emerald-400', bg: 'bg-emerald-500/10' }
+          { label: t('aiAnalyticsDashboard.totalNeuralAnalyses'), val: data.overview.totalAnalyses.toLocaleString(), sub: t('aiAnalyticsDashboard.globalSynapseLoad'), icon: Brain, color: 'text-purple-400', bg: 'bg-purple-500/10' },
+          { label: t('aiAnalyticsDashboard.activeCycleLoad'), val: data.overview.analysesThisMonth.toLocaleString(), sub: t('aiAnalyticsDashboard.mtdProcessing'), icon: Activity, color: 'text-blue-400', bg: 'bg-blue-500/10', growth: data.overview.momGrowth },
+          { label: t('aiAnalyticsDashboard.meanIntegrityIndex'), val: data.overview.avgOverallScore.toString(), sub: t('aiAnalyticsDashboard.compositeQualityScore'), icon: Sparkles, color: 'text-yellow-400', bg: 'bg-yellow-500/10' },
+          { label: t('aiAnalyticsDashboard.verifiedEntities'), val: data.overview.uniqueUsers.toLocaleString(), sub: t('aiAnalyticsDashboard.uniqueIdentityNodes'), icon: Users, color: 'text-emerald-400', bg: 'bg-emerald-500/10' }
         ].map((node, i) => (
           <Card key={i} className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2rem] hover:bg-white/[0.03] transition-all duration-500 group shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
@@ -172,9 +174,9 @@ export default function AIAnalyticsDashboard() {
           <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
             <CardTitle className="text-2xl font-bold text-white tracking-tight italic flex items-center gap-4">
               <BarChart3 className="h-6 w-6 text-purple-400" />
-              Temporal Trend Matrix
+              {t('aiAnalyticsDashboard.temporalTrendMatrix')}
             </CardTitle>
-            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">12-Month cyclical analysis volume mapping</CardDescription>
+            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('aiAnalyticsDashboard.trendDesc')}</CardDescription>
           </CardHeader>
           <CardContent className="p-10 lg:p-16">
             <div className="flex items-end gap-2 h-48">
@@ -207,16 +209,16 @@ export default function AIAnalyticsDashboard() {
           <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
             <CardTitle className="text-2xl font-bold text-white tracking-tight italic flex items-center gap-4">
               <Shield className="h-6 w-6 text-pink-400" />
-              Quality Vector Distribution
+              {t('aiAnalyticsDashboard.qualityVectorDistribution')}
             </CardTitle>
-            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">System-wide integrity score allocation</CardDescription>
+            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('aiAnalyticsDashboard.integrityScoreDesc')}</CardDescription>
           </CardHeader>
           <CardContent className="p-10 lg:p-12 space-y-8">
             {[
-              { label: 'High Integrity (80-100)', val: data.scoreDistribution.excellent, color: 'from-emerald-500 to-teal-600', shadow: 'rgba(16,185,129,0.3)' },
-              { label: 'Optimal Status (60-79)', val: data.scoreDistribution.good, color: 'from-blue-500 to-indigo-600', shadow: 'rgba(59,130,246,0.3)' },
-              { label: 'Nominal State (40-59)', val: data.scoreDistribution.fair, color: 'from-yellow-500 to-amber-600', shadow: 'rgba(245,158,11,0.3)' },
-              { label: 'Critical Variance (0-39)', val: data.scoreDistribution.poor, color: 'from-rose-500 to-red-600', shadow: 'rgba(244,63,94,0.3)' },
+              { label: t('aiAnalyticsDashboard.scoreCategories.excellent'), val: data.scoreDistribution.excellent, color: 'from-emerald-500 to-teal-600', shadow: 'rgba(16,185,129,0.3)' },
+              { label: t('aiAnalyticsDashboard.scoreCategories.good'), val: data.scoreDistribution.good, color: 'from-blue-500 to-indigo-600', shadow: 'rgba(59,130,246,0.3)' },
+              { label: t('aiAnalyticsDashboard.scoreCategories.fair'), val: data.scoreDistribution.fair, color: 'from-yellow-500 to-amber-600', shadow: 'rgba(245,158,11,0.3)' },
+              { label: t('aiAnalyticsDashboard.scoreCategories.poor'), val: data.scoreDistribution.poor, color: 'from-rose-500 to-red-600', shadow: 'rgba(244,63,94,0.3)' },
             ].map((item, i) => {
               const total = data.scoreDistribution.excellent + data.scoreDistribution.good + data.scoreDistribution.fair + data.scoreDistribution.poor;
               const percentage = total > 0 ? (item.val / total) * 100 : 0;
@@ -248,10 +250,10 @@ export default function AIAnalyticsDashboard() {
           <div className="flex items-center justify-center">
             <TabsList className="bg-white/[0.02] border border-white/5 p-1.5 rounded-2xl h-auto gap-2">
               {[
-                { value: 'daily', icon: Calendar, label: 'DAILY_SYNC' },
-                { value: 'skinTypes', icon: Layers, label: 'DERMAL_MATRIX' },
-                { value: 'topClinics', icon: Building2, label: 'NODE_RANKING' },
-                { value: 'recent', icon: Brain, label: 'LATEST_INFERENCE' }
+                { value: 'daily', icon: Calendar, label: t('aiAnalyticsDashboard.tabs.daily') },
+                { value: 'skinTypes', icon: Layers, label: t('aiAnalyticsDashboard.tabs.skinTypes') },
+                { value: 'topClinics', icon: Building2, label: t('aiAnalyticsDashboard.tabs.topClinics') },
+                { value: 'recent', icon: Brain, label: t('aiAnalyticsDashboard.tabs.recent') }
               ].map((tab) => (
                 <TabsTrigger 
                   key={tab.value} 
@@ -274,9 +276,9 @@ export default function AIAnalyticsDashboard() {
                   <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
                     <CardTitle className="text-2xl font-bold text-white tracking-tight italic flex items-center gap-4">
                       <Activity className="h-6 w-6 text-blue-400" />
-                      Temporal Synchronicity (30d)
+                      {t('aiAnalyticsDashboard.temporalSynchronicity')}
                     </CardTitle>
-                    <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Mean velocity: {data.overview.avgPerDay} inferences / cycle</CardDescription>
+                    <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('aiAnalyticsDashboard.meanVelocity', { val: data.overview.avgPerDay })}</CardDescription>
                   </CardHeader>
                   <CardContent className="p-10 lg:p-16">
                     <div className="flex items-end gap-[3px] h-48">
@@ -297,8 +299,8 @@ export default function AIAnalyticsDashboard() {
                       })}
                     </div>
                     <div className="flex justify-between mt-8 text-[9px] font-black uppercase tracking-[0.3em] text-slate-600 italic">
-                      <span>STAMP_START: {data.dailyTrend[0]?.date}</span>
-                      <span>STAMP_END: {data.dailyTrend[data.dailyTrend.length - 1]?.date}</span>
+                      <span>{t('aiAnalyticsDashboard.stampStart')}: {data.dailyTrend[0]?.date}</span>
+                      <span>{t('aiAnalyticsDashboard.stampEnd')}: {data.dailyTrend[data.dailyTrend.length - 1]?.date}</span>
                     </div>
                   </CardContent>
                 </Card>
@@ -317,10 +319,10 @@ export default function AIAnalyticsDashboard() {
                       <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2.5rem] hover:bg-white/[0.03] transition-all duration-500 group shadow-xl overflow-hidden relative text-center p-8">
                         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                         <Badge className={cn("px-4 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border-none shadow-inner mb-6", getSkinTypeBadgeColor(item.type))}>
-                          {item.type} Node
+                          {t('aiAnalyticsDashboard.nodeType', { type: item.type })}
                         </Badge>
                         <div className="text-4xl font-black text-white tracking-tighter italic mb-2">{item.count}</div>
-                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600 italic">{item.percentage}% Sector Density</p>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600 italic">{t('aiAnalyticsDashboard.sectorDensity', { percentage: item.percentage })}</p>
                       </Card>
                     </motion.div>
                   ))}
@@ -335,10 +337,10 @@ export default function AIAnalyticsDashboard() {
                     <Table>
                       <TableHeader>
                         <TableRow className="bg-white/[0.02] border-b border-white/5">
-                          <TableHead className="w-20 px-10 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Rank</TableHead>
-                          <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Clinical Uplink</TableHead>
-                          <TableHead className="px-8 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Cycle Count</TableHead>
-                          <TableHead className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Global Share</TableHead>
+                          <TableHead className="w-20 px-10 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('aiAnalyticsDashboard.rank')}</TableHead>
+                          <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('aiAnalyticsDashboard.clinicalUplink')}</TableHead>
+                          <TableHead className="px-8 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('aiAnalyticsDashboard.cycleCount')}</TableHead>
+                          <TableHead className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('aiAnalyticsDashboard.globalShare')}</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -376,10 +378,10 @@ export default function AIAnalyticsDashboard() {
                     <Table>
                       <TableHeader>
                         <TableRow className="bg-white/[0.02] border-b border-white/5">
-                          <TableHead className="px-10 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Origin Node</TableHead>
-                          <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Dermal Type</TableHead>
-                          <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Integrity Index</TableHead>
-                          <TableHead className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Temporal Stamp</TableHead>
+                          <TableHead className="px-10 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('aiAnalyticsDashboard.originNode')}</TableHead>
+                          <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('aiAnalyticsDashboard.dermalType')}</TableHead>
+                          <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('aiAnalyticsDashboard.integrityIndex')}</TableHead>
+                          <TableHead className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('aiAnalyticsDashboard.temporalStamp')}</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>

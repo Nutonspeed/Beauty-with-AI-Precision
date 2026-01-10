@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Slider } from "@/components/ui/slider"
 import { Input } from "@/components/ui/input"
+import { useTranslations } from "next-intl"
 import { 
   Sun, 
   Moon, 
@@ -26,85 +27,12 @@ interface LifestyleQuestionnaireProps {
   className?: string
 }
 
-const translations = {
-  th: {
-    title: "แบบสอบถามไลฟ์สไตล์",
-    subtitle: "ช่วยให้เราทำนายสภาพผิวได้แม่นยำขึ้น",
-    age: "อายุของคุณ",
-    ageYears: "ปี",
-    sunExposure: "คุณโดนแดดบ่อยแค่ไหน?",
-    sunLow: "น้อย (อยู่ในร่ม)",
-    sunModerate: "ปานกลาง (บางครั้ง)",
-    sunHigh: "มาก (กลางแจ้งบ่อย)",
-    smoking: "คุณสูบบุหรี่หรือไม่?",
-    smokingYes: "สูบ",
-    smokingNo: "ไม่สูบ",
-    sleep: "คุณนอนวันละกี่ชั่วโมง?",
-    sleepHours: "ชั่วโมง/คืน",
-    stress: "ระดับความเครียดของคุณ?",
-    stressLow: "ต่ำ (สบายๆ)",
-    stressModerate: "ปานกลาง",
-    stressHigh: "สูง (เครียดมาก)",
-    hydration: "คุณดื่มน้ำเพียงพอหรือไม่?",
-    hydrationPoor: "น้อย (<4 แก้ว)",
-    hydrationAdequate: "พอดี (4-8 แก้ว)",
-    hydrationGood: "ดี (>8 แก้ว)",
-    diet: "พฤติกรรมการกินของคุณ?",
-    dietPoor: "ไม่ดี (อาหารจังก์ฟู้ด)",
-    dietAverage: "ปานกลาง",
-    dietHealthy: "ดี (ผัก ผลไม้)",
-    skincare: "คุณดูแลผิวอย่างไร?",
-    skincareNone: "ไม่ดูแล",
-    skincareBasic: "พื้นฐาน (ล้างหน้า+มอยส์)",
-    skincareComprehensive: "ครบถ้วน (เซรั่ม, กันแดด)",
-    next: "ถัดไป",
-    back: "กลับ",
-    submit: "วิเคราะห์",
-    step: "ขั้นตอน"
-  },
-  en: {
-    title: "Lifestyle Questionnaire",
-    subtitle: "Help us predict your skin more accurately",
-    age: "Your Age",
-    ageYears: "years",
-    sunExposure: "How often are you exposed to sun?",
-    sunLow: "Low (mostly indoors)",
-    sunModerate: "Moderate (sometimes)",
-    sunHigh: "High (often outdoors)",
-    smoking: "Do you smoke?",
-    smokingYes: "Yes",
-    smokingNo: "No",
-    sleep: "How many hours do you sleep?",
-    sleepHours: "hours/night",
-    stress: "Your stress level?",
-    stressLow: "Low (relaxed)",
-    stressModerate: "Moderate",
-    stressHigh: "High (very stressed)",
-    hydration: "Do you drink enough water?",
-    hydrationPoor: "Poor (<4 glasses)",
-    hydrationAdequate: "Adequate (4-8 glasses)",
-    hydrationGood: "Good (>8 glasses)",
-    diet: "Your eating habits?",
-    dietPoor: "Poor (junk food)",
-    dietAverage: "Average",
-    dietHealthy: "Healthy (veggies, fruits)",
-    skincare: "Your skincare routine?",
-    skincareNone: "None",
-    skincareBasic: "Basic (cleanser + moisturizer)",
-    skincareComprehensive: "Comprehensive (serum, sunscreen)",
-    next: "Next",
-    back: "Back",
-    submit: "Analyze",
-    step: "Step"
-  }
-}
-
 export function LifestyleQuestionnaire({ 
   onComplete, 
-  locale = 'th',
+  locale: _locale = 'th',
   className = ''
 }: LifestyleQuestionnaireProps) {
-  const t = translations[locale]
+  const t = useTranslations('lifestyleQuestionnaire')
   const [step, setStep] = useState(0)
   const [data, setData] = useState<{
     age: number
@@ -130,7 +58,7 @@ export function LifestyleQuestionnaire({
     // Step 0: Age
     {
       icon: <Activity className="h-6 w-6" />,
-      title: t.age,
+      title: t('age'),
       content: (
         <div className="space-y-4">
           <div className="flex items-center gap-4">
@@ -142,7 +70,7 @@ export function LifestyleQuestionnaire({
               min={15}
               max={80}
             />
-            <span className="text-muted-foreground">{t.ageYears}</span>
+            <span className="text-muted-foreground">{t('ageYears')}</span>
           </div>
           <Slider
             value={[data.age]}
@@ -158,7 +86,7 @@ export function LifestyleQuestionnaire({
     // Step 1: Sun Exposure
     {
       icon: <Sun className="h-6 w-6" />,
-      title: t.sunExposure,
+      title: t('sunExposure'),
       content: (
         <RadioGroup
           value={data.sunExposure}
@@ -166,9 +94,9 @@ export function LifestyleQuestionnaire({
           className="space-y-3"
         >
           {[
-            { value: 'low', label: t.sunLow },
-            { value: 'moderate', label: t.sunModerate },
-            { value: 'high', label: t.sunHigh }
+            { value: 'low', label: t('sunLow') },
+            { value: 'moderate', label: t('sunModerate') },
+            { value: 'high', label: t('sunHigh') }
           ].map((option) => (
             <div key={option.value} className="flex items-center space-x-3 p-3 rounded-lg border hover:bg-muted/50 cursor-pointer">
               <RadioGroupItem value={option.value} id={`sun-${option.value}`} />
@@ -183,12 +111,12 @@ export function LifestyleQuestionnaire({
     // Step 2: Sleep
     {
       icon: <Moon className="h-6 w-6" />,
-      title: t.sleep,
+      title: t('sleep'),
       content: (
         <div className="space-y-4">
           <div className="text-center">
             <span className="text-4xl font-bold">{data.sleepHours}</span>
-            <span className="text-muted-foreground ml-2">{t.sleepHours}</span>
+            <span className="text-muted-foreground ml-2">{t('sleepHours')}</span>
           </div>
           <Slider
             value={[data.sleepHours]}
@@ -199,11 +127,11 @@ export function LifestyleQuestionnaire({
             className="w-full"
           />
           <div className="flex justify-between text-sm text-muted-foreground">
-            <span>3h</span>
+            <span>3{t('hours')}</span>
             <span className={data.sleepHours >= 7 && data.sleepHours <= 9 ? 'text-emerald-500 font-medium' : ''}>
-              7-9h ✓
+              {t('sleepGoal')}
             </span>
-            <span>12h</span>
+            <span>12{t('hours')}</span>
           </div>
         </div>
       )
@@ -211,7 +139,7 @@ export function LifestyleQuestionnaire({
     // Step 3: Stress
     {
       icon: <Activity className="h-6 w-6" />,
-      title: t.stress,
+      title: t('stress'),
       content: (
         <RadioGroup
           value={data.stressLevel}
@@ -219,9 +147,9 @@ export function LifestyleQuestionnaire({
           className="space-y-3"
         >
           {[
-            { value: 'low', label: t.stressLow },
-            { value: 'moderate', label: t.stressModerate },
-            { value: 'high', label: t.stressHigh }
+            { value: 'low', label: t('stressLow') },
+            { value: 'moderate', label: t('stressModerate') },
+            { value: 'high', label: t('stressHigh') }
           ].map((option) => (
             <div key={option.value} className="flex items-center space-x-3 p-3 rounded-lg border hover:bg-muted/50 cursor-pointer">
               <RadioGroupItem value={option.value} id={`stress-${option.value}`} />
@@ -236,7 +164,7 @@ export function LifestyleQuestionnaire({
     // Step 4: Hydration
     {
       icon: <Droplets className="h-6 w-6" />,
-      title: t.hydration,
+      title: t('hydration'),
       content: (
         <RadioGroup
           value={data.hydrationLevel}
@@ -244,9 +172,9 @@ export function LifestyleQuestionnaire({
           className="space-y-3"
         >
           {[
-            { value: 'poor', label: t.hydrationPoor },
-            { value: 'adequate', label: t.hydrationAdequate },
-            { value: 'good', label: t.hydrationGood }
+            { value: 'poor', label: t('hydrationPoor') },
+            { value: 'adequate', label: t('hydrationAdequate') },
+            { value: 'good', label: t('hydrationGood') }
           ].map((option) => (
             <div key={option.value} className="flex items-center space-x-3 p-3 rounded-lg border hover:bg-muted/50 cursor-pointer">
               <RadioGroupItem value={option.value} id={`hydration-${option.value}`} />
@@ -261,7 +189,7 @@ export function LifestyleQuestionnaire({
     // Step 5: Diet
     {
       icon: <Utensils className="h-6 w-6" />,
-      title: t.diet,
+      title: t('diet'),
       content: (
         <RadioGroup
           value={data.diet}
@@ -269,9 +197,9 @@ export function LifestyleQuestionnaire({
           className="space-y-3"
         >
           {[
-            { value: 'poor', label: t.dietPoor },
-            { value: 'average', label: t.dietAverage },
-            { value: 'healthy', label: t.dietHealthy }
+            { value: 'poor', label: t('dietPoor') },
+            { value: 'average', label: t('dietAverage') },
+            { value: 'healthy', label: t('dietHealthy') }
           ].map((option) => (
             <div key={option.value} className="flex items-center space-x-3 p-3 rounded-lg border hover:bg-muted/50 cursor-pointer">
               <RadioGroupItem value={option.value} id={`diet-${option.value}`} />
@@ -286,7 +214,7 @@ export function LifestyleQuestionnaire({
     // Step 6: Skincare
     {
       icon: <Sparkles className="h-6 w-6" />,
-      title: t.skincare,
+      title: t('skincare'),
       content: (
         <RadioGroup
           value={data.skinCareRoutine}
@@ -294,9 +222,9 @@ export function LifestyleQuestionnaire({
           className="space-y-3"
         >
           {[
-            { value: 'none', label: t.skincareNone },
-            { value: 'basic', label: t.skincareBasic },
-            { value: 'comprehensive', label: t.skincareComprehensive }
+            { value: 'none', label: t('skincareNone') },
+            { value: 'basic', label: t('skincareBasic') },
+            { value: 'comprehensive', label: t('skincareComprehensive') }
           ].map((option) => (
             <div key={option.value} className="flex items-center space-x-3 p-3 rounded-lg border hover:bg-muted/50 cursor-pointer">
               <RadioGroupItem value={option.value} id={`skincare-${option.value}`} />
@@ -326,8 +254,8 @@ export function LifestyleQuestionnaire({
   return (
     <Card className={className}>
       <CardHeader className="text-center">
-        <CardTitle className="text-xl">{t.title}</CardTitle>
-        <p className="text-sm text-muted-foreground">{t.subtitle}</p>
+        <CardTitle className="text-xl">{t('title')}</CardTitle>
+        <p className="text-sm text-muted-foreground">{t('subtitle')}</p>
         
         {/* Progress */}
         <div className="flex justify-center gap-1 mt-4">
@@ -341,7 +269,7 @@ export function LifestyleQuestionnaire({
           ))}
         </div>
         <p className="text-xs text-muted-foreground mt-2">
-          {t.step} {step + 1} / {steps.length}
+          {t('step')} {step + 1} / {steps.length}
         </p>
       </CardHeader>
 
@@ -374,18 +302,18 @@ export function LifestyleQuestionnaire({
             disabled={step === 0}
           >
             <ChevronLeft className="h-4 w-4 mr-1" />
-            {t.back}
+            {t('back')}
           </Button>
 
           {step < steps.length - 1 ? (
             <Button onClick={() => setStep(s => s + 1)}>
-              {t.next}
+              {t('next')}
               <ChevronRight className="h-4 w-4 ml-1" />
             </Button>
           ) : (
             <Button onClick={handleSubmit} className="bg-primary">
               <Sparkles className="h-4 w-4 mr-2" />
-              {t.submit}
+              {t('submit')}
             </Button>
           )}
         </div>

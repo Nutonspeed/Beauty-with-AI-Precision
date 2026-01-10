@@ -48,12 +48,12 @@ export function CustomerSegmentation() {
     const mockLeads: any[] = [
       {
         id: '1',
-        name: 'สมใจ รักสวย',
+        name: t('customerSegmentation.mock.name1'),
         source: 'Facebook Ads',
         status: 'hot',
         budget: 'high',
-        interests: ['สิว', 'ผิวกระจ่าง'],
-        concerns: ['สิวอักเสบ', 'จุดด่างดำ'],
+        interests: t.raw('campaignManager.mock.interests1') as string[],
+        concerns: t.raw('campaignManager.mock.concerns1') as string[],
         age: 28,
         gender: 'female',
         engagement: {
@@ -72,12 +72,12 @@ export function CustomerSegmentation() {
       },
       {
         id: '2',
-        name: 'วิชัย ใจดี',
+        name: t('customerSegmentation.mock.name2'),
         source: 'Google Search',
         status: 'warm',
         budget: 'medium',
-        interests: ['ริ้วรอย', 'ผิวไม่กระชับ'],
-        concerns: ['ริ้วรอยใต้ตา', 'ผิวหย่อนคล้อย'],
+        interests: t.raw('campaignManager.mock.interests2') as string[],
+        concerns: t.raw('campaignManager.mock.concerns2') as string[],
         age: 45,
         gender: 'male',
         engagement: {
@@ -96,12 +96,12 @@ export function CustomerSegmentation() {
       },
       {
         id: '3',
-        name: 'วรรณา สวยงาม',
+        name: t('customerSegmentation.mock.name3'),
         source: 'Instagram',
         status: 'cold',
         budget: 'low',
         interests: ['HydraFacial'],
-        concerns: ['ผิวแห้ง'],
+        concerns: [t('marketIntelligence.concerns.dryness')],
         age: 32,
         gender: 'female',
         engagement: {
@@ -120,12 +120,12 @@ export function CustomerSegmentation() {
       },
       {
         id: '4',
-        name: 'ประสิทธิ์ วิไล',
+        name: t('customerSegmentation.mock.name4'),
         source: 'Website',
         status: 'hot',
         budget: 'premium',
-        interests: ['เลเซอร์', 'ฟิลเลอร์', 'โบท็อกซ์'],
-        concerns: ['ริ้วรอย', 'จุดด่างดำ', 'ผิวไม่กระชับ'],
+        interests: [t('ui.menu.laser'), t('ui.menu.filler'), t('ui.menu.botox')],
+        concerns: [t('treatmentComparison.concerns.anti_aging'), t('treatmentComparison.concerns.pigmentation')],
         age: 38,
         gender: 'male',
         engagement: {
@@ -144,12 +144,12 @@ export function CustomerSegmentation() {
       },
       {
         id: '5',
-        name: 'นภาพร แสงจันทร์',
+        name: t('customerSegmentation.mock.name5'),
         source: 'Referral',
         status: 'warm',
         budget: 'high',
-        interests: ['แพ็คเกจผิวขาว', 'ดูแลหลังเลเซอร์'],
-        concerns: ['ผิวหมองคล้ำ', 'จุดด่างดำ'],
+        interests: [t('treatmentComparison.concerns.whitening'), t('treatmentComparison.concerns.laser_care')],
+        concerns: [t('treatmentComparison.concerns.whitening'), t('treatmentComparison.concerns.pigmentation')],
         age: 29,
         gender: 'female',
         engagement: {
@@ -179,12 +179,12 @@ export function CustomerSegmentation() {
       const fn = (aiScorer as any).segmentLeads
       const segments: any[] = typeof fn === 'function' ? await fn.call(aiScorer, leads) : [
         {
-          segment: 'All Leads',
-          description: 'Fallback segment',
+          segment: t('customerSegmentation.segments.allLeads'),
+          description: t('customerSegmentation.segments.fallback'),
           conversionRate: 0,
           averageValue: 0,
           characteristics: [],
-          recommendedStrategy: 'General outreach',
+          recommendedStrategy: t('customerSegmentation.strategies.general'),
           recommendedActions: [],
           conversionLift: 0
         }
@@ -238,11 +238,11 @@ export function CustomerSegmentation() {
 
   const getSegmentColor = (segmentName: string) => {
     const colors = {
-      'High-Value Prospects': 'bg-purple-100 text-purple-800 border-purple-200',
-      'Engaged Browsers': 'bg-blue-100 text-blue-800 border-blue-200',
-      'Cold Leads': 'bg-gray-100 text-gray-800 border-gray-200',
-      'Premium Seekers': 'bg-pink-100 text-pink-800 border-pink-200',
-      'Referral Champions': 'bg-green-100 text-green-800 border-green-200',
+      [t('customerSegmentation.segments.highValue')]: 'bg-purple-100 text-purple-800 border-purple-200',
+      [t('customerSegmentation.segments.engaged')]: 'bg-blue-100 text-blue-800 border-blue-200',
+      [t('customerSegmentation.segments.cold')]: 'bg-gray-100 text-gray-800 border-gray-200',
+      [t('customerSegmentation.segments.premium')]: 'bg-pink-100 text-pink-800 border-pink-200',
+      [t('customerSegmentation.segments.referral')]: 'bg-green-100 text-green-800 border-green-200',
     };
     return colors[segmentName as keyof typeof colors] || 'bg-gray-100 text-gray-800 border-gray-200';
   };

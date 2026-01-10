@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dialog"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useTranslations } from "next-intl"
 import { Loader2, MoreVertical, Plus, Search } from "lucide-react"
 import { format } from "date-fns"
 
@@ -30,6 +31,7 @@ interface User {
 }
 
 export function UserManagementTable() {
+  const t = useTranslations()
   const [users, setUsers] = useState<User[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
@@ -80,7 +82,7 @@ export function UserManagementTable() {
   }
 
   async function handleDeleteUser(userId: string) {
-    if (!confirm("Are you sure you want to delete this user?")) return
+    if (!confirm(t('userTable.confirmDelete'))) return
 
     try {
       const response = await fetch(`/api/admin/users/${userId}`, {
@@ -116,7 +118,7 @@ export function UserManagementTable() {
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Search users..."
+            placeholder={t('userTable.searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-9"
@@ -127,17 +129,17 @@ export function UserManagementTable() {
           <DialogTrigger asChild>
             <Button>
               <Plus className="mr-2 h-4 w-4" />
-              Add User
+              {t('userTable.addUser')}
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Create New User</DialogTitle>
-              <DialogDescription>Add a new user to the system</DialogDescription>
+              <DialogTitle>{t('userTable.createTitle')}</DialogTitle>
+              <DialogDescription>{t('userTable.createDesc')}</DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t('userTable.email')}</Label>
                 <Input
                   id="email"
                   type="email"
@@ -146,7 +148,7 @@ export function UserManagementTable() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">{t('userTable.password')}</Label>
                 <Input
                   id="password"
                   type="password"
@@ -155,7 +157,7 @@ export function UserManagementTable() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="full_name">Full Name</Label>
+                <Label htmlFor="full_name">{t('userTable.fullName')}</Label>
                 <Input
                   id="full_name"
                   value={newUser.full_name}
@@ -163,7 +165,7 @@ export function UserManagementTable() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="phone">Phone</Label>
+                <Label htmlFor="phone">{t('userTable.phone')}</Label>
                 <Input
                   id="phone"
                   value={newUser.phone}
@@ -171,25 +173,25 @@ export function UserManagementTable() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="role">Role</Label>
+                <Label htmlFor="role">{t('userTable.role')}</Label>
                 <Select value={newUser.role} onValueChange={(value) => setNewUser({ ...newUser, role: value })}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="customer">Customer</SelectItem>
-                    <SelectItem value="clinic_staff">Clinic Staff</SelectItem>
-                    <SelectItem value="sales_staff">Sales Staff</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
+                    <SelectItem value="customer">{t('userTable.roles.customer')}</SelectItem>
+                    <SelectItem value="clinic_staff">{t('userTable.roles.clinic_staff')}</SelectItem>
+                    <SelectItem value="sales_staff">{t('userTable.roles.sales_staff')}</SelectItem>
+                    <SelectItem value="admin">{t('userTable.roles.admin')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
-                Cancel
+                {t('userTable.cancel')}
               </Button>
-              <Button onClick={handleCreateUser}>Create User</Button>
+              <Button onClick={handleCreateUser}>{t('userTable.createUser')}</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -198,39 +200,39 @@ export function UserManagementTable() {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Phone</TableHead>
-            <TableHead>Role</TableHead>
-            <TableHead>Created</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            <TableHead>{t('userTable.table.name')}</TableHead>
+            <TableHead>{t('userTable.table.email')}</TableHead>
+            <TableHead>{t('userTable.table.phone')}</TableHead>
+            <TableHead>{t('userTable.table.role')}</TableHead>
+            <TableHead>{t('userTable.table.created')}</TableHead>
+            <TableHead className="text-right">{t('userTable.table.actions')}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {filteredUsers.map((user) => (
             <TableRow key={user.id}>
-              <TableCell className="font-medium">{user.full_name || "N/A"}</TableCell>
+              <TableCell className="font-medium">{user.full_name || t('common.na')}</TableCell>
               <TableCell>{user.email}</TableCell>
-              <TableCell>{user.phone || "N/A"}</TableCell>
+              <TableCell>{user.phone || t('common.na')}</TableCell>
               <TableCell>
                 <Badge variant="outline" className="capitalize">
-                  {user.role.replace("_", " ")}
+                  {t(`userTable.roles.${user.role}`)}
                 </Badge>
               </TableCell>
               <TableCell>{format(new Date(user.created_at), "MMM d, yyyy")}</TableCell>
               <TableCell className="text-right">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm">
-                      <MoreVertical className="h-4 w-4" />
+                    <Button variant="ghost" size="icon" className="h-10 w-10">
+                      <MoreVertical className="h-5 w-5" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem>View Profile</DropdownMenuItem>
-                    <DropdownMenuItem>Edit</DropdownMenuItem>
-                    <DropdownMenuItem>Reset Password</DropdownMenuItem>
+                    <DropdownMenuItem>{t('userTable.dropdown.viewProfile')}</DropdownMenuItem>
+                    <DropdownMenuItem>{t('userTable.dropdown.edit')}</DropdownMenuItem>
+                    <DropdownMenuItem>{t('userTable.dropdown.resetPassword')}</DropdownMenuItem>
                     <DropdownMenuItem className="text-red-600" onClick={() => handleDeleteUser(user.id)}>
-                      Delete
+                      {t('userTable.dropdown.delete')}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

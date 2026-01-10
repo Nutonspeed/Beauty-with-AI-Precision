@@ -6,6 +6,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useTranslations, useLocale } from 'next-intl';
 import { InteractivePhotoMarkers } from '@/components/analysis/interactive-markers';
 import { ConcernDetailModal } from '@/components/analysis/concern-detail-modal';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -38,8 +39,10 @@ interface AnalysisWithConcernsProps {
 export function AnalysisWithConcerns({
   analysis,
   imageUrl,
-  language = 'en',
+  language: _language = 'en',
 }: AnalysisWithConcernsProps) {
+  const t = useTranslations('analysis');
+  const locale = useLocale();
   const [interactiveConcerns, setInteractiveConcerns] = useState<InteractiveConcern[]>([]);
   const [selectedConcern, setSelectedConcern] = useState<{
     concern: InteractiveConcern;
@@ -64,7 +67,7 @@ export function AnalysisWithConcerns({
         );
 
         if (concerns.length === 0) {
-          setError('No skin concerns detected in this analysis.');
+          setError(t('noConcerns'));
           return;
         }
 
@@ -87,7 +90,7 @@ export function AnalysisWithConcerns({
         setHealthScore(score);
       } catch (err) {
         console.error('Error loading concern data:', err);
-        setError('Failed to load concern information. Please try again.');
+        setError(t('loadError'));
       } finally {
         setLoading(false);
       }
@@ -154,7 +157,7 @@ export function AnalysisWithConcerns({
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            <span>Skin Health Score</span>
+            <span>{t('healthScore')}</span>
             <div className={`flex items-center gap-2 ${getHealthScoreColor()}`}>
               {getHealthScoreIcon()}
               <span className="text-3xl font-bold">{healthScore}</span>
@@ -179,12 +182,12 @@ export function AnalysisWithConcerns({
           </div>
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
             {healthScore >= 80
-              ? 'Excellent! Your skin is in great condition.'
+              ? t('excellentCondition')
               : healthScore >= 60
-              ? 'Good! Minor concerns detected. Consistent care recommended.'
+              ? t('goodCondition')
               : healthScore >= 40
-              ? 'Fair. Several concerns need attention. Consider professional consultation.'
-              : 'Attention needed. Multiple significant concerns detected. Dermatologist consultation recommended.'}
+              ? t('fairCondition')
+              : t('attentionNeeded')}
           </p>
         </CardContent>
       </Card>
@@ -195,7 +198,7 @@ export function AnalysisWithConcerns({
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-orange-600" />
-              Priority Concerns
+              {t('priorityConcerns')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -225,12 +228,12 @@ export function AnalysisWithConcerns({
                     }}
                     className="mb-2"
                   >
-                    Severity: {concern.averageSeverity.toFixed(1)}/10
+                    {t('severity')}: {concern.averageSeverity.toFixed(1)}/10
                   </Badge>
                   {concern.locations.length > 0 && (
                     <p className="text-sm text-gray-600">
-                      {concern.locations.length} location{concern.locations.length > 1 ? 's' : ''}{' '}
-                      detected
+                      {concern.locations.length} {t('location')}{concern.locations.length > 1 ? 's' : ''}{' '}
+                      {t('detected')}
                     </p>
                   )}
                 </button>
@@ -243,9 +246,9 @@ export function AnalysisWithConcerns({
       {/* Interactive Photo with Markers */}
       <Card>
         <CardHeader>
-          <CardTitle>Interactive Skin Analysis</CardTitle>
+          <CardTitle>{t('interactiveTitle')}</CardTitle>
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            Click on markers to view detailed information about each concern
+            {t('interactiveSubtitle')}
           </p>
         </CardHeader>
         <CardContent>
@@ -263,7 +266,7 @@ export function AnalysisWithConcerns({
       {/* All Concerns List */}
       <Card>
         <CardHeader>
-          <CardTitle>All Detected Concerns ({interactiveConcerns.length})</CardTitle>
+          <CardTitle>{t('allConcerns')} ({interactiveConcerns.length})</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -313,7 +316,7 @@ export function AnalysisWithConcerns({
       <ConcernDetailModal
         concern={selectedConcern?.concern || null}
         location={selectedConcern?.location}
-        language={language}
+        language={locale as 'en' | 'th'}
         open={isModalOpen}
         onOpenChange={handleModalClose}
       />

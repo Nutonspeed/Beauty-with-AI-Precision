@@ -10,6 +10,7 @@ import {
   Package
 } from "lucide-react"
 import { motion } from "framer-motion"
+import { useTranslations } from "next-intl"
 import { cn } from "@/lib/utils"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -38,6 +39,7 @@ interface RevenueAnalyticsProps {
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884d8", "#82ca9d"]
 
 export function RevenueAnalytics({ dateRange }: RevenueAnalyticsProps) {
+  const t = useTranslations()
   const [data, setData] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -89,7 +91,7 @@ export function RevenueAnalytics({ dateRange }: RevenueAnalyticsProps) {
     return (
       <Card>
         <CardContent className="pt-6">
-          <p className="text-center text-muted-foreground">ไม่สามารถโหลดข้อมูลได้: {error}</p>
+          <p className="text-center text-muted-foreground">{t('common.error')}: {error}</p>
         </CardContent>
       </Card>
     )
@@ -102,10 +104,10 @@ export function RevenueAnalytics({ dateRange }: RevenueAnalyticsProps) {
       {/* Summary Nodes - Operational Metrics */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {[
-          { label: 'รายได้รวม', val: `฿${data.summary.totalRevenue.toLocaleString()}`, sub: `${data.summary.paidCount} Cycles / ${data.summary.totalBookings} Total`, icon: DollarSign, color: 'text-pink-400', bg: 'bg-pink-500/10' },
-          { label: 'Average Yield', val: `฿${data.summary.averageOrderValue.toLocaleString()}`, sub: 'Per Node Yield', icon: Target, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-          { label: 'Conversion Yield', val: `${data.summary.conversionRate.toFixed(1)}%`, sub: 'Verified Flow', icon: TrendingUp, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
-          { label: 'Pending Nodes', val: data.summary.pendingCount, sub: 'Awaiting Sync', icon: CreditCard, color: 'text-amber-400', bg: 'bg-amber-500/10' }
+          { label: t('revenueAnalyticsInternal.summary.totalRevenue'), val: `฿${data.summary.totalRevenue.toLocaleString()}`, sub: t('revenueAnalyticsInternal.summary.cyclesTotal', { paid: data.summary.paidCount, total: data.summary.totalBookings }), icon: DollarSign, color: 'text-pink-400', bg: 'bg-pink-500/10' },
+          { label: t('revenueAnalyticsInternal.summary.averageYield'), val: `฿${data.summary.averageOrderValue.toLocaleString()}`, sub: t('revenueAnalyticsInternal.summary.perNodeYield'), icon: Target, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+          { label: t('revenueAnalyticsInternal.summary.conversionYield'), val: `${data.summary.conversionRate.toFixed(1)}%`, sub: t('revenueAnalyticsInternal.summary.verifiedFlow'), icon: TrendingUp, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+          { label: t('revenueAnalyticsInternal.summary.pendingNodes'), val: data.summary.pendingCount, sub: t('revenueAnalyticsInternal.summary.awaitingSync'), icon: CreditCard, color: 'text-amber-400', bg: 'bg-amber-500/10' }
         ].map((stat, i) => (
           <motion.div
             key={i}
@@ -144,9 +146,9 @@ export function RevenueAnalytics({ dateRange }: RevenueAnalyticsProps) {
             <div className="space-y-2">
               <CardTitle className="text-3xl font-bold text-white tracking-tight italic flex items-center gap-4">
                 <TrendingUp className="h-8 w-8 text-pink-500" />
-                Synthesis Momentum
+                {t('revenueAnalyticsInternal.momentum.title')}
               </CardTitle>
-              <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Daily clinical yield synchronization</CardDescription>
+              <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{t('revenueAnalyticsInternal.momentum.desc')}</CardDescription>
             </div>
           </CardHeader>
           <CardContent className="p-10 lg:p-16">
@@ -174,7 +176,7 @@ export function RevenueAnalytics({ dateRange }: RevenueAnalyticsProps) {
                   <Tooltip
                     contentStyle={{ backgroundColor: '#020617', border: 'none', borderRadius: '24px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }}
                     itemStyle={{ fontSize: '12px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.1em' }}
-                    formatter={(value: any) => [`฿${value.toLocaleString()}`, "Gross Inflow"]}
+                    formatter={(value: any) => [`฿${value.toLocaleString()}`, t('revenueAnalyticsInternal.momentum.grossInflow')]}
                   />
                   <Line type="monotone" dataKey="revenue" stroke="#ec4899" strokeWidth={4} dot={false} activeDot={{ r: 8, strokeWidth: 0, fill: '#ec4899' }} />
                 </LineChart>
@@ -193,9 +195,9 @@ export function RevenueAnalytics({ dateRange }: RevenueAnalyticsProps) {
               <div className="space-y-2">
                 <CardTitle className="text-3xl font-bold text-white tracking-tight italic flex items-center gap-4">
                   <BarIcon className="h-8 w-8 text-cyan-400" />
-                  Protocol Yield
+                  {t('revenueAnalyticsInternal.protocol.title')}
                 </CardTitle>
-                <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Revenue distribution by clinical protocol</CardDescription>
+                <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{t('revenueAnalyticsInternal.protocol.desc')}</CardDescription>
               </div>
             </CardHeader>
             <CardContent className="p-10 lg:p-12">
@@ -209,7 +211,7 @@ export function RevenueAnalytics({ dateRange }: RevenueAnalyticsProps) {
                       cursor={{ fill: 'rgba(255,255,255,0.02)' }}
                       contentStyle={{ backgroundColor: '#020617', border: 'none', borderRadius: '24px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }}
                     />
-                    <Bar dataKey="revenue" fill="#06b6d4" radius={[8, 8, 0, 0]} name="Inflow Vector" />
+                    <Bar dataKey="revenue" fill="#06b6d4" radius={[8, 8, 0, 0]} name={t('revenueAnalyticsInternal.protocol.inflowVector')} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -222,8 +224,8 @@ export function RevenueAnalytics({ dateRange }: RevenueAnalyticsProps) {
           <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative h-full group">
             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent" />
             <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
-              <CardTitle className="text-2xl font-bold text-white tracking-tight italic">Vector Matrix</CardTitle>
-              <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Therapeutic revenue allocation</CardDescription>
+              <CardTitle className="text-2xl font-bold text-white tracking-tight italic">{t('revenueAnalyticsInternal.vector.title')}</CardTitle>
+              <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('revenueAnalyticsInternal.vector.desc')}</CardDescription>
             </CardHeader>
             <CardContent className="p-10 lg:p-12">
               <div className="h-[300px] w-full mb-10">
@@ -260,9 +262,9 @@ export function RevenueAnalytics({ dateRange }: RevenueAnalyticsProps) {
           <div className="space-y-2">
             <CardTitle className="text-3xl font-bold text-white tracking-tight italic flex items-center gap-4">
               <CreditCard className="h-8 w-8 text-pink-500" />
-              Global Protocol Hierarchy
+              {t('revenueAnalyticsInternal.hierarchy.title')}
             </CardTitle>
-            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Aggregate yield by clinical protocol</CardDescription>
+            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{t('revenueAnalyticsInternal.hierarchy.desc')}</CardDescription>
           </div>
         </CardHeader>
         <CardContent className="p-0">
@@ -270,10 +272,10 @@ export function RevenueAnalytics({ dateRange }: RevenueAnalyticsProps) {
             <table className="w-full border-collapse">
               <thead>
                 <tr className="bg-white/[0.02] border-b border-white/5">
-                  <th className="px-10 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Protocol Identifier</th>
-                  <th className="px-8 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Inflow Velocity</th>
-                  <th className="px-8 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Cycle Density</th>
-                  <th className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Yield Allocation</th>
+                  <th className="px-10 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('revenueAnalyticsInternal.hierarchy.protocolIdentifier')}</th>
+                  <th className="px-8 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('revenueAnalyticsInternal.hierarchy.inflowVelocity')}</th>
+                  <th className="px-8 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('revenueAnalyticsInternal.hierarchy.cycleDensity')}</th>
+                  <th className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('revenueAnalyticsInternal.hierarchy.yieldAllocation')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
@@ -298,7 +300,7 @@ export function RevenueAnalytics({ dateRange }: RevenueAnalyticsProps) {
                     </td>
                     <td className="px-8 py-8 text-right">
                       <div className="text-lg font-black text-white italic tracking-tighter">{item.count}</div>
-                      <p className="text-[9px] font-black uppercase text-slate-600 tracking-widest italic">Temporal Cycles</p>
+                      <p className="text-[9px] font-black uppercase text-slate-600 tracking-widest italic">{t('customerRetention.cycleCount')}</p>
                     </td>
                     <td className="px-10 py-8 text-right">
                       <div className="flex flex-col items-end gap-2">

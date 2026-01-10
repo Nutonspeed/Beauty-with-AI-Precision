@@ -19,6 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { useTranslations } from 'next-intl';
 import {
   Users,
   UserCheck,
@@ -120,6 +121,7 @@ export default function ClinicDetailModal({
   open,
   onOpenChange,
 }: ClinicDetailModalProps) {
+  const t = useTranslations();
   const [data, setData] = useState<ClinicDetail | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -215,7 +217,7 @@ export default function ClinicDetailModal({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Building2 className="w-5 h-5" />
-            {loading ? 'Loading...' : data?.clinic.name || 'Clinic Details'}
+            {loading ? t('clinicDetail.loading') : data?.clinic.name || t('clinicDetail.title')}
           </DialogTitle>
         </DialogHeader>
 
@@ -242,7 +244,7 @@ export default function ClinicDetailModal({
                       <Heart className={`w-8 h-8 p-1.5 rounded-full ${getHealthScoreColor(data.clinic.healthScore)}`} />
                       <div>
                         <p className="text-2xl font-bold">{data.clinic.healthScore}</p>
-                        <p className="text-xs text-muted-foreground">Health Score</p>
+                        <p className="text-xs text-muted-foreground">{t('clinicDetail.healthScore')}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -254,7 +256,7 @@ export default function ClinicDetailModal({
                       <Users className="w-8 h-8 p-1.5 rounded-full bg-blue-100 text-blue-600" />
                       <div>
                         <p className="text-2xl font-bold">{data.users.total}</p>
-                        <p className="text-xs text-muted-foreground">Users ({data.users.activeLastWeek} active)</p>
+                        <p className="text-xs text-muted-foreground">{t('clinicDetail.users')} ({data.users.activeLastWeek} {t('clinicDetail.active')})</p>
                       </div>
                     </div>
                   </CardContent>
@@ -266,7 +268,7 @@ export default function ClinicDetailModal({
                       <UserCheck className="w-8 h-8 p-1.5 rounded-full bg-green-100 text-green-600" />
                       <div>
                         <p className="text-2xl font-bold">{data.customers.total}</p>
-                        <p className="text-xs text-muted-foreground">Customers</p>
+                        <p className="text-xs text-muted-foreground">{t('clinicDetail.customers')}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -278,7 +280,7 @@ export default function ClinicDetailModal({
                       <TrendingUp className="w-8 h-8 p-1.5 rounded-full bg-purple-100 text-purple-600" />
                       <div>
                         <p className="text-2xl font-bold">{formatCurrency(data.revenue.mrr)}</p>
-                        <p className="text-xs text-muted-foreground">MRR</p>
+                        <p className="text-xs text-muted-foreground">{t('clinicDetail.mrr')}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -288,7 +290,7 @@ export default function ClinicDetailModal({
               {/* Clinic Info Card */}
               <Card>
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-lg">Clinic Information</CardTitle>
+                  <CardTitle className="text-lg">{t('clinicDetail.info')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
@@ -306,18 +308,18 @@ export default function ClinicDetailModal({
                     </div>
                     <div className="flex items-center gap-2">
                       <Clock className="w-4 h-4 text-muted-foreground" />
-                      <span>Created: {formatDate(data.clinic.created_at)}</span>
+                      <span>{t('clinicDetail.created')}: {formatDate(data.clinic.created_at)}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <CreditCard className="w-4 h-4 text-muted-foreground" />
-                      <span>Plan: {data.subscription?.plan?.name || 'None'}</span>
+                      <span>{t('clinicDetail.plan')}: {data.subscription?.plan?.name || 'None'}</span>
                       {data.subscription && getStatusBadge(data.subscription.status)}
                     </div>
                     <div className="flex items-center gap-2">
                       <Activity className="w-4 h-4 text-muted-foreground" />
-                      <span>Status: </span>
+                      <span>{t('clinicDetail.status')}: </span>
                       <Badge variant={data.clinic.is_active ? 'default' : 'destructive'}>
-                        {data.clinic.is_active ? 'Active' : 'Inactive'}
+                        {data.clinic.is_active ? t('clinicDetail.activeStatus') : t('clinicDetail.inactiveStatus')}
                       </Badge>
                     </div>
                   </div>
@@ -329,19 +331,19 @@ export default function ClinicDetailModal({
                 <TabsList className="grid w-full grid-cols-4">
                   <TabsTrigger value="users" className="gap-1">
                     <Users className="w-4 h-4" />
-                    Users ({data.users.total})
+                    {t('clinicDetail.tabs.users')} ({data.users.total})
                   </TabsTrigger>
                   <TabsTrigger value="customers" className="gap-1">
                     <UserCheck className="w-4 h-4" />
-                    Customers ({data.customers.total})
+                    {t('clinicDetail.tabs.customers')} ({data.customers.total})
                   </TabsTrigger>
                   <TabsTrigger value="analyses" className="gap-1">
                     <BarChart3 className="w-4 h-4" />
-                    Analyses ({data.analyses.total})
+                    {t('clinicDetail.tabs.analyses')} ({data.analyses.total})
                   </TabsTrigger>
                   <TabsTrigger value="bookings" className="gap-1">
                     <Calendar className="w-4 h-4" />
-                    Bookings ({data.bookings.totalThisMonth})
+                    {t('clinicDetail.tabs.bookings')} ({data.bookings.totalThisMonth})
                   </TabsTrigger>
                 </TabsList>
 
@@ -350,16 +352,16 @@ export default function ClinicDetailModal({
                   <Card>
                     <CardContent className="pt-4">
                       {data.users.list.length === 0 ? (
-                        <p className="text-center text-muted-foreground py-4">No users found</p>
+                        <p className="text-center text-muted-foreground py-4">{t('clinicDetail.noUsers')}</p>
                       ) : (
                         <Table>
                           <TableHeader>
                             <TableRow>
-                              <TableHead>Name</TableHead>
-                              <TableHead>Email</TableHead>
-                              <TableHead>Role</TableHead>
-                              <TableHead>Last Seen</TableHead>
-                              <TableHead>Status</TableHead>
+                              <TableHead>{t('clinicDetail.table.name')}</TableHead>
+                              <TableHead>{t('clinicDetail.table.email')}</TableHead>
+                              <TableHead>{t('clinicDetail.table.role')}</TableHead>
+                              <TableHead>{t('clinicDetail.table.lastSeen')}</TableHead>
+                              <TableHead>{t('clinicDetail.table.status')}</TableHead>
                             </TableRow>
                           </TableHeader>
                           <TableBody>
@@ -371,7 +373,7 @@ export default function ClinicDetailModal({
                                 <TableCell>{formatDateTime(user.last_seen_at)}</TableCell>
                                 <TableCell>
                                   <Badge variant={user.is_active ? 'default' : 'outline'}>
-                                    {user.is_active ? 'Active' : 'Inactive'}
+                                    {user.is_active ? t('clinicDetail.activeStatus') : t('clinicDetail.inactiveStatus')}
                                   </Badge>
                                 </TableCell>
                               </TableRow>
@@ -388,16 +390,16 @@ export default function ClinicDetailModal({
                   <Card>
                     <CardContent className="pt-4">
                       {data.customers.list.length === 0 ? (
-                        <p className="text-center text-muted-foreground py-4">No customers found</p>
+                        <p className="text-center text-muted-foreground py-4">{t('clinicDetail.noCustomers')}</p>
                       ) : (
                         <Table>
                           <TableHeader>
                             <TableRow>
-                              <TableHead>Name</TableHead>
-                              <TableHead>Email</TableHead>
-                              <TableHead>Phone</TableHead>
-                              <TableHead>Last Visit</TableHead>
-                              <TableHead>Joined</TableHead>
+                              <TableHead>{t('clinicDetail.table.name')}</TableHead>
+                              <TableHead>{t('clinicDetail.table.email')}</TableHead>
+                              <TableHead>{t('clinicDetail.table.phone')}</TableHead>
+                              <TableHead>{t('clinicDetail.table.lastVisit')}</TableHead>
+                              <TableHead>{t('clinicDetail.table.joined')}</TableHead>
                             </TableRow>
                           </TableHeader>
                           <TableBody>
@@ -422,15 +424,15 @@ export default function ClinicDetailModal({
                   <Card>
                     <CardContent className="pt-4">
                       {data.analyses.list.length === 0 ? (
-                        <p className="text-center text-muted-foreground py-4">No analyses found</p>
+                        <p className="text-center text-muted-foreground py-4">{t('clinicDetail.noAnalyses')}</p>
                       ) : (
                         <Table>
                           <TableHeader>
                             <TableRow>
-                              <TableHead>ID</TableHead>
-                              <TableHead>Skin Type</TableHead>
-                              <TableHead>Overall Score</TableHead>
-                              <TableHead>Date</TableHead>
+                              <TableHead>{t('clinicDetail.table.id')}</TableHead>
+                              <TableHead>{t('clinicDetail.table.skinType')}</TableHead>
+                              <TableHead>{t('clinicDetail.table.overallScore')}</TableHead>
+                              <TableHead>{t('clinicDetail.table.date')}</TableHead>
                             </TableRow>
                           </TableHeader>
                           <TableBody>
@@ -464,15 +466,15 @@ export default function ClinicDetailModal({
                   <Card>
                     <CardContent className="pt-4">
                       {data.bookings.list.length === 0 ? (
-                        <p className="text-center text-muted-foreground py-4">No bookings this month</p>
+                        <p className="text-center text-muted-foreground py-4">{t('clinicDetail.noBookings')}</p>
                       ) : (
                         <Table>
                           <TableHeader>
                             <TableRow>
-                              <TableHead>Treatment</TableHead>
-                              <TableHead>Status</TableHead>
-                              <TableHead>Scheduled</TableHead>
-                              <TableHead>Created</TableHead>
+                              <TableHead>{t('clinicDetail.table.treatment')}</TableHead>
+                              <TableHead>{t('clinicDetail.table.status')}</TableHead>
+                              <TableHead>{t('clinicDetail.table.scheduled')}</TableHead>
+                              <TableHead>{t('clinicDetail.table.created')}</TableHead>
                             </TableRow>
                           </TableHeader>
                           <TableBody>
@@ -506,7 +508,7 @@ export default function ClinicDetailModal({
                   <CardHeader className="pb-2">
                     <CardTitle className="text-lg flex items-center gap-2">
                       <TrendingUp className="w-5 h-5" />
-                      Revenue Trend (Last 6 Months)
+                      {t('clinicDetail.revenueTrend')}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -528,7 +530,7 @@ export default function ClinicDetailModal({
                     </div>
                     <div className="text-center mt-4">
                       <p className="text-lg font-semibold">
-                        Total: {formatCurrency(data.revenue.total)}
+                        {t('clinicDetail.total')}: {formatCurrency(data.revenue.total)}
                       </p>
                     </div>
                   </CardContent>

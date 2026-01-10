@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
+import { useTranslations, useLocale } from 'next-intl';
 import {
   Card,
   CardContent,
@@ -33,117 +34,6 @@ interface ProductRecommendationProps {
   readonly onPurchase?: (productId: string, storeUrl: string) => void;
   readonly onAddReview?: (productId: string) => void;
 }
-
-// ============================================================================
-// Translations
-// ============================================================================
-
-const TRANSLATIONS = {
-  en: {
-    title: 'Recommended Products',
-    description: 'Personalized skincare products matched to your analysis',
-    completeness: 'Regimen Completeness',
-    estimatedBudget: 'Estimated Budget',
-    totalResults: 'Total Products',
-    overallResults: 'Overall Results',
-    timeline: 'Expected Timeline',
-    expectations: 'What to Expect',
-    requirements: 'For Best Results',
-    productReviews: 'Customer Reviews',
-    inStock: 'In Stock',
-    outOfStock: 'Out of Stock',
-    bestPrice: 'Best Price',
-    viewOther: 'View Other Stores',
-    buyNow: 'Buy Now',
-    readReviews: 'Read Reviews',
-    addReview: 'Add Review',
-    verifiedPurchase: 'Verified Purchase',
-    allReviews: 'All Reviews',
-    helpful: 'Helpful',
-    skinType: 'Skin Type',
-    resultAfter: 'Results After',
-    weeks: 'weeks',
-    rating: 'Rating',
-    based: 'based on',
-    reviews: 'reviews',
-    complementary: 'Complementary Products',
-    repurchaseIn: 'Repurchase in',
-    days: 'days',
-    lastPurchased: 'Last Purchased',
-    noPurchaseHistory: 'No purchase history',
-    estimatedDelivery: 'Estimated Delivery',
-    pros: 'What Users Love',
-    cons: 'Common Feedback',
-    skinTypeBreakdown: 'Rating by Skin Type',
-    ratingDistribution: 'Rating Distribution',
-    completenessScore: 'Your regimen covers',
-    ofRecommendedCategories: 'of recommended product categories',
-    viewDetails: 'View Details',
-    close: 'Close',
-    price: 'Price',
-    store: 'Store',
-    delivery: 'Delivery',
-    filterByCategory: 'Filter by Category',
-    all: 'All',
-    sortBy: 'Sort by',
-    relevance: 'Relevance',
-    price_asc: 'Price (Low to High)',
-    price_desc: 'Price (High to Low)',
-    rating_high: 'Highest Rated',
-  },
-  th: {
-    title: 'ผลิตภัณฑ์ที่แนะนำ',
-    description: 'ผลิตภัณฑ์ดูแลผิวที่ปรับเข้ากับผลการวิเคราะห์ของคุณ',
-    completeness: 'ความสมบูรณ์ของระบบ',
-    estimatedBudget: 'งบประมาณโดยประมาณ',
-    totalResults: 'ผลิตภัณฑ์ทั้งหมด',
-    overallResults: 'ผลลัพธ์โดยรวม',
-    timeline: 'ระยะเวลาที่คาดหวัง',
-    expectations: 'สิ่งที่ต้องคาดหวัง',
-    requirements: 'เพื่อได้ผลลัพธ์ที่ดีที่สุด',
-    productReviews: 'บทวิจารณ์ของลูกค้า',
-    inStock: 'มีสินค้า',
-    outOfStock: 'สินค้าหมด',
-    bestPrice: 'ราคาดีที่สุด',
-    viewOther: 'ดูร้านค้าอื่น',
-    buyNow: 'ซื้อเลย',
-    readReviews: 'อ่านบทวิจารณ์',
-    addReview: 'เพิ่มบทวิจารณ์',
-    verifiedPurchase: 'ซื้อแล้วและตรวจสอบแล้ว',
-    allReviews: 'บทวิจารณ์ทั้งหมด',
-    helpful: 'มีประโยชน์',
-    skinType: 'ประเภทผิว',
-    resultAfter: 'ผลลัพธ์หลังจาก',
-    weeks: 'สัปดาห์',
-    rating: 'การให้คะแนน',
-    based: 'โดยอิงจาก',
-    reviews: 'บทวิจารณ์',
-    complementary: 'ผลิตภัณฑ์เสริม',
-    repurchaseIn: 'ซื้อซ้ำใน',
-    days: 'วัน',
-    lastPurchased: 'ซื้อครั้งล่าสุด',
-    noPurchaseHistory: 'ไม่มีประวัติการซื้อ',
-    estimatedDelivery: 'การจัดส่งโดยประมาณ',
-    pros: 'สิ่งที่ผู้ใช้ชอบ',
-    cons: 'ข้อเสนอแนะ',
-    skinTypeBreakdown: 'การให้คะแนนตามประเภทผิว',
-    ratingDistribution: 'การกระจายการให้คะแนน',
-    completenessScore: 'ระบบของคุณครอบคลุม',
-    ofRecommendedCategories: 'ของหมวดหมู่ผลิตภัณฑ์ที่แนะนำ',
-    viewDetails: 'ดูรายละเอียด',
-    close: 'ปิด',
-    price: 'ราคา',
-    store: 'ร้านค้า',
-    delivery: 'การจัดส่ง',
-    filterByCategory: 'กรองตามหมวดหมู่',
-    all: 'ทั้งหมด',
-    sortBy: 'เรียงลำดับตาม',
-    relevance: 'ความเกี่ยวข้อง',
-    price_asc: 'ราคา (ต่ำถึงสูง)',
-    price_desc: 'ราคา (สูงถึงต่ำ)',
-    rating_high: 'คะแนนสูงสุด',
-  },
-};
 
 // ============================================================================
 // Utility Functions
@@ -198,7 +88,7 @@ function ProductCard({
   onViewDetails,
 }: ProductCardProps) {
   const inventory = product.inventory.find((i) => i.inStock);
-  const stockStatus = inventory ? t.inStock : t.outOfStock;
+  const stockStatus = inventory ? t('inStock') : t('outOfStock');
   const stockColor = inventory ? 'text-green-600' : 'text-red-600';
 
   return (
@@ -218,7 +108,7 @@ function ProductCard({
         <div className="flex items-center justify-between">
           <div>{renderStars(product.averageRating)}</div>
           <span className="text-xs text-muted-foreground">
-            {product.totalReviews} {t.reviews}
+            {product.totalReviews} {t('reviews')}
           </span>
         </div>
 
@@ -242,7 +132,7 @@ function ProductCard({
         {/* Price and Stock */}
         <div className="flex items-center justify-between bg-muted p-3 rounded">
           <div>
-            <div className="text-sm text-muted-foreground">{t.bestPrice}</div>
+            <div className="text-sm text-muted-foreground">{t('bestPrice')}</div>
             <div className="font-bold">
               {product.bestPrice.amount.toLocaleString(locale === 'th' ? 'th-TH' : 'en-US', {
                 style: 'currency',
@@ -257,10 +147,10 @@ function ProductCard({
         {product.lastPurchased && (
           <div className="text-xs text-muted-foreground flex items-center gap-2">
             <Package className="h-3 w-3" />
-            {t.lastPurchased}: {new Date(product.lastPurchased).toLocaleDateString(locale === 'th' ? 'th-TH' : 'en-US')}
+            {t('lastPurchased')}: {new Date(product.lastPurchased).toLocaleDateString(locale === 'th' ? 'th-TH' : 'en-US')}
             {product.repurchaseInterval && (
               <span className="text-primary font-medium">
-                • {t.repurchaseIn} {product.repurchaseInterval} {t.days}
+                • {t('repurchaseIn')} {product.repurchaseInterval} {t('days')}
               </span>
             )}
           </div>
@@ -274,7 +164,7 @@ function ProductCard({
             onClick={() => onViewDetails?.(product)}
             className="text-xs"
           >
-            {t.viewDetails}
+            {t('viewDetails')}
           </Button>
           <Button
             size="sm"
@@ -283,7 +173,7 @@ function ProductCard({
             className="text-xs"
           >
             <MessageSquare className="h-3 w-3 mr-1" />
-            {t.addReview}
+            {t('addReview')}
           </Button>
           <Button
             size="sm"
@@ -291,14 +181,14 @@ function ProductCard({
             disabled={!inventory}
             className="text-xs"
           >
-            <ShoppingCart className="h-3 w-3 mr-1" />
-            {t.buyNow}
+            <MessageSquare className="h-3 w-3 mr-1" />
+            {t('buyNow')}
           </Button>
         </div>
 
         {/* Store Badge */}
         <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t">
-          <span>{t.store}: {product.bestPrice.store}</span>
+          <span>{t('store')}: {product.bestPrice.store}</span>
           <Button
             variant="ghost"
             size="sm"
@@ -395,7 +285,7 @@ function ProductDetailsPanel({ product, t, locale: _locale, onClose }: ProductDe
 
           {/* Key Ingredients */}
           <div className="space-y-3">
-            <h3 className="font-semibold">Key Ingredients</h3>
+            <h3 className="font-semibold">{t('keyIngredients')}</h3>
             <div className="grid grid-cols-2 gap-2">
               {product.keyIngredients.map((ingredient) => (
                 <div key={ingredient} className="flex items-center gap-2 text-sm">
@@ -408,7 +298,7 @@ function ProductDetailsPanel({ product, t, locale: _locale, onClose }: ProductDe
 
           {/* Usage Instructions */}
           <div className="space-y-3">
-            <h3 className="font-semibold">How to Use</h3>
+            <h3 className="font-semibold">{t('howToUse')}</h3>
             <p className="text-sm text-muted-foreground">{product.usage}</p>
           </div>
 
@@ -437,11 +327,13 @@ function ProductDetailsPanel({ product, t, locale: _locale, onClose }: ProductDe
 
 export function ProductRecommendationComponent({
   recommendations,
-  locale,
+  locale: propLocale,
   onPurchase,
   onAddReview,
 }: ProductRecommendationProps) {
-  const t = TRANSLATIONS[locale];
+  const t = useTranslations('productRecommendation');
+  const currentLocale = useLocale() as 'th' | 'en';
+  const locale = propLocale ?? currentLocale;
   const [selectedProduct, setSelectedProduct] = useState<ProductWithIntegration | null>(null);
   const [sortBy, setSortBy] = useState<'relevance' | 'price_asc' | 'price_desc' | 'rating_high'>('relevance');
   const [filterCategory, setFilterCategory] = useState<string>('all');
@@ -481,9 +373,9 @@ export function ProductRecommendationComponent({
       <div className="space-y-2">
         <h2 className="text-2xl font-bold flex items-center gap-2">
           <ShoppingCart className="h-6 w-6 text-primary" />
-          {t.title}
+          {t('title')}
         </h2>
-        <p className="text-muted-foreground">{t.description}</p>
+        <p className="text-muted-foreground">{t('description')}</p>
       </div>
 
       {/* Summary Cards */}
@@ -492,7 +384,7 @@ export function ProductRecommendationComponent({
           <CardContent className="pt-6">
             <div className="text-center space-y-2">
               <div className="text-3xl font-bold text-primary">{recommendations.products.length}</div>
-              <div className="text-sm text-muted-foreground">{t.totalResults}</div>
+              <div className="text-sm text-muted-foreground">{t('totalResults')}</div>
             </div>
           </CardContent>
         </Card>
@@ -501,7 +393,7 @@ export function ProductRecommendationComponent({
           <CardContent className="pt-6">
             <div className="text-center space-y-2">
               <div className="text-3xl font-bold text-green-600">{recommendations.completenessScore}%</div>
-              <div className="text-sm text-muted-foreground">{t.completeness}</div>
+              <div className="text-sm text-muted-foreground">{t('completeness')}</div>
             </div>
           </CardContent>
         </Card>
@@ -512,7 +404,7 @@ export function ProductRecommendationComponent({
               <div className="text-2xl font-bold">
                 ฿{totalBudget.min.toLocaleString()} - ฿{totalBudget.max.toLocaleString()}
               </div>
-              <div className="text-sm text-muted-foreground">{t.estimatedBudget}</div>
+              <div className="text-sm text-muted-foreground">{t('estimatedBudget')}</div>
             </div>
           </CardContent>
         </Card>
@@ -521,7 +413,7 @@ export function ProductRecommendationComponent({
           <CardContent className="pt-6">
             <div className="text-center space-y-2">
               <div className="text-2xl font-bold">{recommendations.estimatedResults.timeline}</div>
-              <div className="text-sm text-muted-foreground">{t.timeline}</div>
+              <div className="text-sm text-muted-foreground">{t('timeline')}</div>
             </div>
           </CardContent>
         </Card>
@@ -532,12 +424,12 @@ export function ProductRecommendationComponent({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <TrendingUp className="h-5 w-5 text-primary" />
-            {t.expectations}
+            {t('expectations')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <h4 className="font-semibold mb-2">Expected Improvements:</h4>
+            <h4 className="font-semibold mb-2">{t('expectedImprovements')}:</h4>
             <ul className="space-y-2">
               {recommendations.estimatedResults.expectedImprovements.map((improvement) => (
                 <li key={improvement} className="flex items-start gap-2 text-sm">
@@ -549,7 +441,7 @@ export function ProductRecommendationComponent({
           </div>
 
           <div>
-            <h4 className="font-semibold mb-2">{t.requirements}:</h4>
+            <h4 className="font-semibold mb-2">{t('requirements')}:</h4>
             <ul className="space-y-2">
               {recommendations.estimatedResults.requirementForBestResults.map((requirement) => (
                 <li key={requirement} className="flex items-start gap-2 text-sm">
@@ -565,14 +457,14 @@ export function ProductRecommendationComponent({
       {/* Filters and Sorting */}
       <div className="flex flex-col md:flex-row gap-4">
         <div className="flex-1">
-          <label className="text-sm font-semibold mb-2 block">{t.filterByCategory}</label>
+          <label className="text-sm font-semibold mb-2 block">{t('filterByCategory')}</label>
           <div className="flex flex-wrap gap-2">
             <Button
               size="sm"
               variant={filterCategory === 'all' ? 'default' : 'outline'}
               onClick={() => setFilterCategory('all')}
             >
-              {t.all}
+              {t('all')}
             </Button>
             {categories.map((cat) => (
               <Button
@@ -588,17 +480,17 @@ export function ProductRecommendationComponent({
         </div>
 
         <div className="flex-1">
-          <label htmlFor="sort-select" className="text-sm font-semibold mb-2 block">{t.sortBy}</label>
+          <label htmlFor="sort-select" className="text-sm font-semibold mb-2 block">{t('sortBy')}</label>
           <select
             id="sort-select"
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as any)}
             className="w-full px-3 py-2 border rounded-md text-sm"
           >
-            <option value="relevance">{t.relevance}</option>
-            <option value="price_asc">{t.price_asc}</option>
-            <option value="price_desc">{t.price_desc}</option>
-            <option value="rating_high">{t.rating_high}</option>
+            <option value="relevance">{t('relevance')}</option>
+            <option value="price_asc">{t('price_asc')}</option>
+            <option value="price_desc">{t('price_desc')}</option>
+            <option value="rating_high">{t('rating_high')}</option>
           </select>
         </div>
       </div>
@@ -622,7 +514,7 @@ export function ProductRecommendationComponent({
       {filteredAndSorted.length === 0 && (
         <Alert>
           <AlertCircle className="h-4 w-4" />
-          <AlertDescription>No products found matching your filters.</AlertDescription>
+          <AlertDescription>{t('noProductsFound')}</AlertDescription>
         </Alert>
       )}
 

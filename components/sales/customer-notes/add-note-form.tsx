@@ -23,6 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { format } from "date-fns";
 import { th } from "date-fns/locale";
+import { useTranslations } from "next-intl";
 import {
   Phone,
   Calendar as CalendarIcon,
@@ -49,54 +50,43 @@ interface AddNoteFormProps {
   onCancel?: () => void;
 }
 
-const QUICK_TEMPLATES = [
+const QUICK_TEMPLATES = (t: any) => [
   {
     id: "call",
     icon: Phone,
-    label: "📞 โทรศัพท์",
-    content: "โทรติดต่อลูกค้า:\n- เรื่อง: \n- ผลการติดต่อ: \n- ข้อตกลง: ",
+    label: `📞 ${t('customerNotes.types.call')}`,
+    content: t('customerNotes.templates.call'),
   },
   {
     id: "meeting",
     icon: CalendarIcon,
-    label: "💬 นัดหมาย",
-    content: "พบลูกค้า:\n- สถานที่: \n- หัวข้อสนทนา: \n- สิ่งที่ลูกค้าสนใจ: ",
+    label: `💬 ${t('customerNotes.types.meeting')}`,
+    content: t('customerNotes.templates.meeting'),
   },
   {
     id: "interest",
     icon: Star,
-    label: "🎯 ความสนใจ",
-    content: "ระดับความสนใจ:\n- บริการที่สนใจ: \n- งบประมาณ: \n- ความพร้อม: ",
+    label: `🎯 ${t('customerNotes.types.interest')}`,
+    content: t('customerNotes.templates.interest'),
   },
   {
     id: "budget",
     icon: Sparkles,
-    label: "💰 งบประมาณ",
-    content: "อภิปรายงบประมาณ:\n- ช่วงราคา: \n- วิธีชำระ: \n- โปรโมชั่น: ",
+    label: `💰 ${t('customerNotes.types.budget')}`,
+    content: t('customerNotes.templates.budget'),
   },
   {
     id: "followup",
     icon: AlertCircle,
-    label: "⏰ ติดตาม",
-    content: "ติดตามลูกค้า:\n- เหตุผล: \n- กำหนดติดตาม: \n- สิ่งที่ต้องเตรียม: ",
+    label: `⏰ ${t('customerNotes.types.followup')}`,
+    content: t('customerNotes.templates.followup'),
   },
   {
     id: "custom",
     icon: StickyNote,
-    label: "📝 กำหนดเอง",
+    label: `📝 ${t('customerNotes.types.custom')}`,
     content: "",
   },
-];
-
-const SUGGESTED_TAGS = [
-  "ให้ข้อมูล",
-  "สนใจ",
-  "รอตัดสินใจ",
-  "เปรียบเทียบราคา",
-  "ติดตามแล้ว",
-  "นัดหมายแล้ว",
-  "ร้อนแรง",
-  "เย็นชา",
 ];
 
 export function AddNoteForm({
@@ -104,6 +94,7 @@ export function AddNoteForm({
   onSubmit,
   onCancel,
 }: AddNoteFormProps) {
+  const t = useTranslations();
   const [content, setContent] = useState("");
   const [noteType, setNoteType] = useState("general");
   const [tags, setTags] = useState<string[]>([]);
@@ -114,8 +105,11 @@ export function AddNoteForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
 
+  const templates = QUICK_TEMPLATES(t);
+  const suggestedTags = t.raw('customerNotes.suggestedTags') as string[];
+
   // Handle template selection
-  const handleTemplateSelect = (template: typeof QUICK_TEMPLATES[0]) => {
+  const handleTemplateSelect = (template: any) => {
     setContent(template.content);
     setNoteType(template.id === "custom" ? "general" : template.id);
   };
@@ -152,7 +146,7 @@ export function AddNoteForm({
     e.preventDefault();
 
     if (!content.trim()) {
-      alert("กรุณาใส่เนื้อหาบันทึก");
+      alert(t('customerNotes.contentPlaceholder'));
       return;
     }
 
@@ -177,7 +171,7 @@ export function AddNoteForm({
       setFollowupDate(undefined);
     } catch (error) {
       console.error("Error submitting note:", error);
-      alert("เกิดข้อผิดพลาดในการบันทึก");
+      alert(t('customerNotes.saveError'));
     } finally {
       setIsSubmitting(false);
     }
@@ -188,11 +182,11 @@ export function AddNoteForm({
       {/* Quick Templates */}
       <div>
         <Label className="text-sm font-medium mb-2 block">
-          เทมเพลตด่วน
+          {t('customerNotes.quickTemplates')}
         </Label>
         <ScrollArea className="w-full whitespace-nowrap">
           <div className="flex gap-2 pb-2">
-            {QUICK_TEMPLATES.map((template) => (
+            {templates.map((template) => (
               <Button
                 key={template.id}
                 type="button"
@@ -210,17 +204,17 @@ export function AddNoteForm({
 
       {/* Note Type */}
       <div>
-        <Label htmlFor="note-type">ประเภทบันทึก</Label>
+        <Label htmlFor="note-type">{t('customerNotes.type')}</Label>
         <Select value={noteType} onValueChange={setNoteType}>
           <SelectTrigger id="note-type">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="call">โทรศัพท์</SelectItem>
-            <SelectItem value="meeting">นัดหมาย</SelectItem>
-            <SelectItem value="followup">ติดตาม</SelectItem>
-            <SelectItem value="general">ทั่วไป</SelectItem>
-            <SelectItem value="important">สำคัญ</SelectItem>
+            <SelectItem value="call">{t('customerNotes.types.call')}</SelectItem>
+            <SelectItem value="meeting">{t('customerNotes.types.meeting')}</SelectItem>
+            <SelectItem value="followup">{t('customerNotes.types.followup')}</SelectItem>
+            <SelectItem value="general">{t('customerNotes.types.general')}</SelectItem>
+            <SelectItem value="important">{t('customerNotes.types.important')}</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -228,7 +222,7 @@ export function AddNoteForm({
       {/* Content */}
       <div>
         <div className="flex items-center justify-between mb-2">
-          <Label htmlFor="content">เนื้อหา</Label>
+          <Label htmlFor="content">{t('customerNotes.content')}</Label>
           <Button
             type="button"
             variant="ghost"
@@ -240,25 +234,25 @@ export function AddNoteForm({
             )}
           >
             <Mic className="h-4 w-4 mr-1" />
-            {isRecording ? "กำลังบันทึก..." : "พูด"}
+            {isRecording ? t('customerNotes.saving') : t('voice.record')}
           </Button>
         </div>
         <Textarea
           id="content"
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          placeholder="พิมพ์บันทึกของคุณ..."
+          placeholder={t('customerNotes.contentPlaceholder')}
           className="min-h-[120px] resize-none"
           required
         />
         <p className="text-xs text-gray-500 mt-1">
-          {content.length} ตัวอักษร
+          {t('customerNotes.charCount', { count: content.length })}
         </p>
       </div>
 
       {/* Tags */}
       <div>
-        <Label htmlFor="tags">แท็ก</Label>
+        <Label htmlFor="tags">{t('customerNotes.tags')}</Label>
         <div className="space-y-2">
           {/* Current Tags */}
           {tags.length > 0 && (
@@ -285,12 +279,12 @@ export function AddNoteForm({
             value={tagInput}
             onChange={(e) => setTagInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="พิมพ์แท็กแล้วกด Enter"
+            placeholder={t('customerNotes.tagPlaceholder')}
           />
 
           {/* Suggested Tags */}
           <div className="flex flex-wrap gap-1">
-            {SUGGESTED_TAGS.filter((tag) => !tags.includes(tag)).map(
+            {suggestedTags.filter((tag) => !tags.includes(tag)).map(
               (tag) => (
                 <Badge
                   key={tag}
@@ -308,7 +302,7 @@ export function AddNoteForm({
 
       {/* Follow-up Date */}
       <div>
-        <Label>วันที่ติดตาม</Label>
+        <Label>{t('customerNotes.followupDate')}</Label>
         <Popover>
           <PopoverTrigger asChild>
             <Button
@@ -320,9 +314,9 @@ export function AddNoteForm({
             >
               <CalendarIcon className="mr-2 h-4 w-4" />
               {followupDate ? (
-                format(followupDate, "d MMMM yyyy", { locale: th })
+                format(followupDate, "d MMMM yyyy", { locale: t('format.date') === '{date}' ? th : undefined })
               ) : (
-                <span>เลือกวันที่</span>
+                <span>{t('customerNotes.selectDate')}</span>
               )}
             </Button>
           </PopoverTrigger>
@@ -331,7 +325,7 @@ export function AddNoteForm({
               mode="single"
               selected={followupDate}
               onSelect={setFollowupDate}
-              locale={th}
+              locale={t('format.date') === '{date}' ? th : undefined}
             />
           </PopoverContent>
         </Popover>
@@ -343,7 +337,7 @@ export function AddNoteForm({
             onClick={() => setFollowupDate(undefined)}
             className="mt-1 h-7 text-xs"
           >
-            ล้างวันที่
+            {t('customerNotes.clearDate')}
           </Button>
         )}
       </div>
@@ -352,7 +346,7 @@ export function AddNoteForm({
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <Label htmlFor="pinned" className="cursor-pointer">
-            ปักหมุดบันทึก
+            {t('customerNotes.pin')}
           </Label>
           <Switch
             id="pinned"
@@ -363,7 +357,7 @@ export function AddNoteForm({
 
         <div className="flex items-center justify-between">
           <Label htmlFor="private" className="cursor-pointer">
-            บันทึกส่วนตัว (เห็นเฉพาะคุณ)
+            {t('customerNotes.private')}
           </Label>
           <Switch
             id="private"
@@ -383,12 +377,12 @@ export function AddNoteForm({
           {isSubmitting ? (
             <>
               <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-              กำลังบันทึก...
+              {t('customerNotes.saving')}
             </>
           ) : (
             <>
               <Save className="mr-2 h-4 w-4" />
-              บันทึก
+              {t('customerNotes.saveNote')}
             </>
           )}
         </Button>
@@ -399,7 +393,7 @@ export function AddNoteForm({
             onClick={onCancel}
             disabled={isSubmitting}
           >
-            ยกเลิก
+            {t('common.cancel')}
           </Button>
         )}
       </div>

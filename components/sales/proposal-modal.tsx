@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useTranslations } from "next-intl"
 import {
   Dialog,
   DialogContent,
@@ -71,6 +72,7 @@ type ProposalModalProps = {
 }
 
 export function ProposalModal({ open, onClose, onSuccess, editProposal, leads = [] }: ProposalModalProps) {
+  const t = useTranslations()
   const [loading, setLoading] = useState(false)
   
   // Form fields
@@ -138,12 +140,12 @@ export function ProposalModal({ open, onClose, onSuccess, editProposal, leads = 
     
     // Validation
     if (!leadId || !title) {
-      toast.error('กรุณาเลือก Lead และกรอกชื่อ Proposal')
+      toast.error(t('salesTools.proposalModal.validation.leadAndTitle'))
       return
     }
 
     if (treatments.some(t => !t.name || t.price <= 0)) {
-      toast.error('กรุณากรอกข้อมูลการรักษาให้ครบถ้วน')
+      toast.error(t('salesTools.proposalModal.validation.treatmentDetails'))
       return
     }
 
@@ -179,13 +181,13 @@ export function ProposalModal({ open, onClose, onSuccess, editProposal, leads = 
         throw new Error(error.error || 'Failed to save proposal')
       }
 
-      toast.success(editProposal ? 'อัพเดท proposal สำเร็จ!' : 'สร้าง proposal สำเร็จ!')
+      toast.success(editProposal ? t('salesTools.proposalModal.messages.updateSuccess') : t('salesTools.proposalModal.messages.createSuccess'))
       resetForm()
       onSuccess()
       onClose()
     } catch (error) {
       console.error('Error saving proposal:', error)
-      toast.error('ไม่สามารถบันทึก proposal ได้')
+      toast.error(t('salesTools.proposalModal.messages.saveError'))
     } finally {
       setLoading(false)
     }
@@ -196,21 +198,21 @@ export function ProposalModal({ open, onClose, onSuccess, editProposal, leads = 
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
-            {editProposal ? 'แก้ไข Proposal' : 'สร้าง Proposal ใหม่'}
+            {editProposal ? t('salesTools.proposalModal.titleEdit') : t('salesTools.proposalModal.titleCreate')}
           </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Lead Selection */}
           <div className="space-y-2">
-            <Label htmlFor="lead">Lead *</Label>
+            <Label htmlFor="lead">{t('salesTools.proposalModal.leadLabel')}</Label>
             <Select
               value={leadId}
               onValueChange={setLeadId}
               disabled={!!editProposal}
             >
               <SelectTrigger>
-                <SelectValue placeholder="เลือก Lead" />
+                <SelectValue placeholder={t('salesTools.proposalModal.leadPlaceholder')} />
               </SelectTrigger>
               <SelectContent>
                 {leads.map((lead) => (
@@ -224,12 +226,12 @@ export function ProposalModal({ open, onClose, onSuccess, editProposal, leads = 
 
           {/* Title */}
           <div className="space-y-2">
-            <Label htmlFor="title">ชื่อ Proposal *</Label>
+            <Label htmlFor="title">{t('salesTools.proposalModal.proposalTitleLabel')}</Label>
             <Input
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="เช่น แผนการรักษาสิว 3 เดือน"
+              placeholder={t('salesTools.proposalModal.proposalTitlePlaceholder')}
               required
             />
           </div>
@@ -237,7 +239,7 @@ export function ProposalModal({ open, onClose, onSuccess, editProposal, leads = 
           {/* Treatments */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <Label>การรักษา *</Label>
+              <Label>{t('salesTools.proposalModal.treatmentsLabel')}</Label>
               <Button
                 type="button"
                 variant="outline"
@@ -245,7 +247,7 @@ export function ProposalModal({ open, onClose, onSuccess, editProposal, leads = 
                 onClick={handleAddTreatment}
               >
                 <Plus className="h-4 w-4 mr-2" />
-                เพิ่มการรักษา
+                {t('salesTools.proposalModal.addTreatment')}
               </Button>
             </div>
 
@@ -255,16 +257,16 @@ export function ProposalModal({ open, onClose, onSuccess, editProposal, leads = 
                   <div className="grid gap-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label>ชื่อการรักษา *</Label>
+                        <Label>{t('salesTools.proposalModal.treatmentNameLabel')}</Label>
                         <Input
                           value={treatment.name}
                           onChange={(e) => handleTreatmentChange(index, 'name', e.target.value)}
-                          placeholder="เช่น Laser Treatment"
+                          placeholder={t('salesTools.proposalModal.treatmentNamePlaceholder')}
                           required
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label>ราคาต่อครั้ง (฿) *</Label>
+                        <Label>{t('salesTools.proposalModal.pricePerSessionLabel')}</Label>
                         <Input
                           type="number"
                           min="0"
@@ -279,7 +281,7 @@ export function ProposalModal({ open, onClose, onSuccess, editProposal, leads = 
 
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label>จำนวนครั้ง *</Label>
+                        <Label>{t('salesTools.proposalModal.sessionsLabel')}</Label>
                         <Input
                           type="number"
                           min="1"
@@ -289,7 +291,7 @@ export function ProposalModal({ open, onClose, onSuccess, editProposal, leads = 
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label>รวม</Label>
+                        <Label>{t('salesTools.proposalModal.totalLabel')}</Label>
                         <Input
                           value={`฿${(treatment.price * treatment.sessions).toLocaleString()}`}
                           disabled
@@ -298,11 +300,11 @@ export function ProposalModal({ open, onClose, onSuccess, editProposal, leads = 
                     </div>
 
                     <div className="space-y-2">
-                      <Label>รายละเอียด</Label>
+                      <Label>{t('salesTools.proposalModal.detailsLabel')}</Label>
                       <Textarea
                         value={treatment.description}
                         onChange={(e) => handleTreatmentChange(index, 'description', e.target.value)}
-                        placeholder="รายละเอียดเพิ่มเติม (ถ้ามี)"
+                        placeholder={t('salesTools.proposalModal.detailsPlaceholder')}
                         rows={2}
                       />
                     </div>
@@ -315,7 +317,7 @@ export function ProposalModal({ open, onClose, onSuccess, editProposal, leads = 
                         onClick={() => handleRemoveTreatment(index)}
                       >
                         <Trash2 className="h-4 w-4 mr-2" />
-                        ลบการรักษานี้
+                        {t('salesTools.proposalModal.removeTreatment')}
                       </Button>
                     )}
                   </div>
@@ -328,11 +330,11 @@ export function ProposalModal({ open, onClose, onSuccess, editProposal, leads = 
           <Card className="bg-muted/50">
             <CardContent className="pt-4 space-y-2">
               <div className="flex justify-between text-sm">
-                <span>ยอดรวม:</span>
+                <span>{t('salesTools.proposalModal.subtotal')}</span>
                 <span className="font-medium">฿{subtotal.toLocaleString()}</span>
               </div>
               <div className="flex justify-between text-sm items-center gap-4">
-                <span>ส่วนลด:</span>
+                <span>{t('salesTools.proposalModal.discount')}</span>
                 <div className="flex items-center gap-2">
                   <Input
                     type="number"
@@ -348,7 +350,7 @@ export function ProposalModal({ open, onClose, onSuccess, editProposal, leads = 
                 </div>
               </div>
               <div className="flex justify-between text-lg font-bold pt-2 border-t">
-                <span>ยอดสุทธิ:</span>
+                <span>{t('salesTools.proposalModal.netTotal')}</span>
                 <span className="text-primary">฿{totalValue.toLocaleString()}</span>
               </div>
             </CardContent>
@@ -357,7 +359,7 @@ export function ProposalModal({ open, onClose, onSuccess, editProposal, leads = 
           {/* Additional Details */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="validUntil">ใช้ได้ถึงวันที่</Label>
+              <Label htmlFor="validUntil">{t('salesTools.proposalModal.validUntil')}</Label>
               <Input
                 id="validUntil"
                 type="date"
@@ -366,45 +368,45 @@ export function ProposalModal({ open, onClose, onSuccess, editProposal, leads = 
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="paymentTerms">เงื่อนไขการชำระเงิน</Label>
+              <Label htmlFor="paymentTerms">{t('salesTools.proposalModal.paymentTerms')}</Label>
               <Input
                 id="paymentTerms"
                 value={paymentTerms}
                 onChange={(e) => setPaymentTerms(e.target.value)}
-                placeholder="เช่น ชำระเต็มจำนวน, แบ่ง 3 งวด"
+                placeholder={t('salesTools.proposalModal.paymentTermsPlaceholder')}
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="terms">ข้อกำหนดและเงื่อนไข</Label>
+            <Label htmlFor="terms">{t('salesTools.proposalModal.termsAndConditions')}</Label>
             <Textarea
               id="terms"
               value={termsAndConditions}
               onChange={(e) => setTermsAndConditions(e.target.value)}
-              placeholder="ข้อกำหนดและเงื่อนไข..."
+              placeholder={t('salesTools.proposalModal.termsPlaceholder')}
               rows={3}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="notes">หมายเหตุ</Label>
+            <Label htmlFor="notes">{t('salesTools.proposalModal.notes')}</Label>
             <Textarea
               id="notes"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="หมายเหตุเพิ่มเติม (internal use)"
+              placeholder={t('salesTools.proposalModal.notesPlaceholder')}
               rows={2}
             />
           </div>
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onClose}>
-              ยกเลิก
+              {t('salesTools.proposalModal.cancel')}
             </Button>
             <Button type="submit" disabled={loading}>
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {editProposal ? 'บันทึกการแก้ไข' : 'สร้าง Proposal'}
+              {editProposal ? t('salesTools.proposalModal.saveChanges') : t('salesTools.proposalModal.createProposal')}
             </Button>
           </DialogFooter>
         </form>

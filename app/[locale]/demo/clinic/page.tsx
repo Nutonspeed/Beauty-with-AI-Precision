@@ -1,20 +1,17 @@
 "use client"
 
 import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { 
   DollarSign, 
-  TrendingUp, 
-  Download,
   Calendar,
-  CreditCard,
   Users,
   Package,
   Activity,
@@ -129,11 +126,11 @@ export default function ClinicDemoPage() {
                 Live Revenue Orchestration
               </Badge>
               <h1 className="text-5xl md:text-8xl font-bold tracking-tighter text-white leading-[0.9] italic">
-                Clinic<br />
-                <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent not-italic text-2xl tracking-[0.3em] font-black uppercase">Command_Terminal</span>
+                {t('demo.clinic.title')}<br />
+                <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent not-italic text-2xl tracking-[0.3em] font-black uppercase">{t('demo.clinic.subtitle')}</span>
               </h1>
               <p className="text-xl text-slate-500 font-light tracking-widest max-w-2xl italic leading-relaxed">
-                Experience the precision of clinical yield management. Monitor real-time financial flows and operational cycles.
+                {t('demo.clinic.description')}
               </p>
             </motion.div>
             
@@ -150,10 +147,10 @@ export default function ClinicDemoPage() {
           {/* Executive Metrics Grid */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             {[
-              { label: 'Total Inflow', val: formatCurrency(MOCK_DATA.summary.totalRevenue), icon: DollarSign, trend: MOCK_DATA.summary.growthRate },
-              { label: 'Ops Cycles', val: MOCK_DATA.summary.totalBookings, icon: Calendar, trend: 12.4 },
-              { label: 'Avg Yield', val: formatCurrency(MOCK_DATA.summary.averageOrderValue), icon: Package, trend: -2.1 },
-              { label: 'Active Entities', val: '1,204', icon: Users, trend: 8.5 }
+              { label: t('demo.clinic.metrics.inflow'), val: formatCurrency(MOCK_DATA.summary.totalRevenue), icon: DollarSign, trend: MOCK_DATA.summary.growthRate },
+              { label: t('demo.clinic.metrics.cycles'), val: MOCK_DATA.summary.totalBookings, icon: Calendar, trend: 12.4 },
+              { label: t('demo.clinic.metrics.yield'), val: formatCurrency(MOCK_DATA.summary.averageOrderValue), icon: Package, trend: -2.1 },
+              { label: t('demo.clinic.metrics.entities'), val: '1,204', icon: Users, trend: 8.5 }
             ].map((m, i) => (
               <motion.div
                 key={i}
@@ -189,17 +186,17 @@ export default function ClinicDemoPage() {
               <Tabs defaultValue="trend" className="space-y-12" value={activeTab} onValueChange={(value: any) => setActiveTab(value)}>
                 <TabsList className="bg-white/[0.02] border border-white/5 p-1.5 rounded-2xl h-auto gap-2">
                   <TabsTrigger value="trend" className="rounded-xl px-8 py-3 data-[state=active]:bg-pink-600 data-[state=active]:text-white transition-all font-black uppercase tracking-[0.15em] text-[10px] italic">
-                    Momentum_Graph
+                    {t('demo.clinic.tabs.momentum')}
                   </TabsTrigger>
                   <TabsTrigger value="payment" className="rounded-xl px-8 py-3 data-[state=active]:bg-pink-600 data-[state=active]:text-white transition-all font-black uppercase tracking-[0.15em] text-[10px] italic">
-                    Vector_Analysis
+                    {t('demo.clinic.tabs.vector')}
                   </TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="trend" className="mt-0 outline-none">
                   <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group">
                     <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
-                      <CardTitle className="text-3xl font-bold text-white tracking-tight italic">Synthesis Dynamics</CardTitle>
+                      <CardTitle className="text-3xl font-bold text-white tracking-tight italic">{t('demo.clinic.cards.synthesis')}</CardTitle>
                     </CardHeader>
                     <CardContent className="p-10 lg:p-16 h-[400px]">
                       <ResponsiveContainer width="100%" height="100%">
@@ -218,7 +215,7 @@ export default function ClinicDemoPage() {
                 <TabsContent value="payment" className="mt-0 outline-none">
                   <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group">
                     <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
-                      <CardTitle className="text-3xl font-bold text-white tracking-tight italic">Vector Breakdown</CardTitle>
+                      <CardTitle className="text-3xl font-bold text-white tracking-tight italic">{t('demo.clinic.cards.vector')}</CardTitle>
                     </CardHeader>
                     <CardContent className="p-10 lg:p-16 h-[400px]">
                       <ResponsiveContainer width="100%" height="100%">
@@ -247,17 +244,17 @@ export default function ClinicDemoPage() {
                     <ShieldCheck className="h-8 w-8 text-pink-500" />
                   </div>
                   <div className="space-y-4">
-                    <h3 className="text-2xl font-bold text-white italic">Enterprise Protocols</h3>
+                    <h3 className="text-2xl font-bold text-white italic">{t('demo.clinic.enterprise.title')}</h3>
                     <p className="text-sm text-slate-500 font-light leading-relaxed">
-                      Unlock advanced predictive analytics, multi-node synchronization, and automated yield optimization.
+                      {t('demo.clinic.enterprise.description')}
                     </p>
                   </div>
                   <div className="space-y-4 pt-4">
                     {[
-                      'Predictive_Revenue_AI',
-                      'Automated_Inventory_Sync',
-                      'Multi_Branch_Orchestration',
-                      'Patient_Lifetime_Value_ML'
+                      t('demo.clinic.enterprise.features.revenue'),
+                      t('demo.clinic.enterprise.features.inventory'),
+                      t('demo.clinic.enterprise.features.orchestration'),
+                      t('demo.clinic.enterprise.features.lifetime')
                     ].map((feat, i) => (
                       <div key={i} className="flex items-center gap-4 text-slate-600 group-hover:text-slate-400 transition-colors">
                         <Lock className="h-3 w-3" />
@@ -266,16 +263,16 @@ export default function ClinicDemoPage() {
                     ))}
                   </div>
                   <Button variant="premium" className="w-full h-16 rounded-2xl shadow-2xl shadow-pink-500/20 text-[10px] font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95 border" asChild>
-                    <Link href={lp("/auth/login")}>ACTIVATE_FULL_ACCESS</Link>
+                    <Link href={lp("/auth/login")}>{t('demo.clinic.enterprise.activate')}</Link>
                   </Button>
                 </div>
               </Card>
 
               <div className="rounded-[2.5rem] border border-white/5 bg-white/[0.01] p-10 backdrop-blur-md space-y-6">
-                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 italic text-center">System_Diagnostics_Active</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 italic text-center">{t('demo.clinic.diagnostics.title')}</p>
                 <div className="space-y-4">
                   <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-slate-500">
-                    <span>Node_Connectivity</span>
+                    <span>{t('demo.clinic.diagnostics.node')}</span>
                     <span className="text-emerald-500">99.9%</span>
                   </div>
                   <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">

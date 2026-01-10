@@ -71,12 +71,12 @@ export function PredictiveAnalytics() {
     const mockLeads: LeadData[] = [
       {
         id: '1',
-        name: 'สมใจ รักสวย',
+        name: t('predictiveAnalytics.mock.name1'),
         source: 'Facebook Ads',
         status: 'hot',
         budget: 'high',
-        interests: ['สิว', 'ผิวกระจ่าง'],
-        concerns: ['สิวอักเสบ', 'จุดด่างดำ'],
+        interests: t.raw('campaignManager.mock.interests1') as string[],
+        concerns: t.raw('campaignManager.mock.concerns1') as string[],
         age: 28,
         gender: 'female',
         engagement: {
@@ -95,12 +95,12 @@ export function PredictiveAnalytics() {
       },
       {
         id: '2',
-        name: 'วิชัย ใจดี',
+        name: t('predictiveAnalytics.mock.name2'),
         source: 'Google Search',
         status: 'warm',
         budget: 'medium',
-        interests: ['ริ้วรอย', 'ผิวไม่กระชับ'],
-        concerns: ['ริ้วรอยใต้ตา', 'ผิวหย่อนคล้อย'],
+        interests: t.raw('campaignManager.mock.interests2') as string[],
+        concerns: t.raw('campaignManager.mock.concerns2') as string[],
         age: 45,
         gender: 'male',
         engagement: {

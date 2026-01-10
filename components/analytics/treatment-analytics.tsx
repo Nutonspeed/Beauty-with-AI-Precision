@@ -14,6 +14,7 @@ import {
   BarChart3 as BarIcon
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+import { useTranslations } from "next-intl"
 import { cn } from "@/lib/utils"
 import {
   BarChart,
@@ -34,6 +35,7 @@ interface TreatmentAnalyticsProps {
 }
 
 export function TreatmentAnalytics({ dateRange }: TreatmentAnalyticsProps) {
+  const t = useTranslations()
   const [data, setData] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -92,10 +94,10 @@ export function TreatmentAnalytics({ dateRange }: TreatmentAnalyticsProps) {
   if (!data) return null
 
   const summaryStats = [
-    { label: 'Treatment ทั้งหมด', val: data.summary.totalTreatments, sub: 'Active Protocols', icon: Package, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-    { label: 'การนัดรวม', val: data.summary.totalBookings, sub: 'Temporal Cycles', icon: Activity, color: 'text-pink-400', bg: 'bg-pink-500/10' },
-    { label: 'รายได้รวม', val: `฿${data.summary.totalRevenue.toLocaleString()}`, sub: 'Cumulative Yield', icon: DollarSign, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
-    { label: 'Average Yield', val: `฿${data.summary.averageRevenuePerTreatment.toLocaleString()}`, sub: 'Per Protocol', icon: Target, color: 'text-cyan-400', bg: 'bg-cyan-500/10' }
+    { label: t('treatmentAnalytics.totalTreatments'), val: data.summary.totalTreatments, sub: t('treatmentAnalytics.activeProtocols'), icon: Package, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+    { label: t('treatmentAnalytics.totalBookings'), val: data.summary.totalBookings, sub: t('treatmentAnalytics.temporalCycles'), icon: Activity, color: 'text-pink-400', bg: 'bg-pink-500/10' },
+    { label: t('treatmentAnalytics.totalRevenue'), val: `฿${data.summary.totalRevenue.toLocaleString()}`, sub: t('treatmentAnalytics.cumulativeYield'), icon: DollarSign, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+    { label: t('treatmentAnalytics.averageYield'), val: `฿${data.summary.averageRevenuePerTreatment.toLocaleString()}`, sub: t('treatmentAnalytics.perProtocol'), icon: Target, color: 'text-cyan-400', bg: 'bg-cyan-500/10' }
   ];
 
   return (
@@ -137,9 +139,9 @@ export function TreatmentAnalytics({ dateRange }: TreatmentAnalyticsProps) {
               <div className="space-y-2">
                 <CardTitle className="text-3xl font-bold text-white tracking-tight italic flex items-center gap-4">
                   <Activity className="h-8 w-8 text-pink-500" />
-                  Elite Protocols
+                  {t('treatmentAnalytics.eliteProtocols')}
                 </CardTitle>
-                <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Top 5 treatments by clinical yield</CardDescription>
+                <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{t('treatmentAnalytics.treatmentYieldDesc')}</CardDescription>
               </div>
             </CardHeader>
             <CardContent className="p-10 lg:p-12 space-y-6">
@@ -203,8 +205,8 @@ export function TreatmentAnalytics({ dateRange }: TreatmentAnalyticsProps) {
           <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative h-full group">
             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
             <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
-              <CardTitle className="text-2xl font-bold text-white tracking-tight italic">Protocol Velocity</CardTitle>
-              <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Cycle load comparison by protocol</CardDescription>
+              <CardTitle className="text-2xl font-bold text-white tracking-tight italic">{t('treatmentAnalytics.protocolVelocity')}</CardTitle>
+              <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('treatmentAnalytics.cycleLoadDesc')}</CardDescription>
             </CardHeader>
             <CardContent className="p-10 lg:p-12">
               <div className="h-[400px] w-full">
@@ -227,8 +229,8 @@ export function TreatmentAnalytics({ dateRange }: TreatmentAnalyticsProps) {
                       itemStyle={{ fontSize: '10px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.1em' }}
                     />
                     <Legend iconType="circle" wrapperStyle={{ fontSize: '9px', fontWeight: 'black', textTransform: 'uppercase', letterSpacing: '0.2em', opacity: 0.6, paddingTop: '30px' }} />
-                    <Bar dataKey="bookings" fill="#ec4899" radius={[8, 8, 0, 0]} name="Total Cycles" />
-                    <Bar dataKey="paidCount" fill="#06b6d4" radius={[8, 8, 0, 0]} name="Verified Nodes" />
+                    <Bar dataKey="bookings" fill="#ec4899" radius={[8, 8, 0, 0]} name={t('treatmentAnalytics.totalCycles')} />
+                    <Bar dataKey="paidCount" fill="#06b6d4" radius={[8, 8, 0, 0]} name={t('treatmentAnalytics.verifiedNodes')} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -244,9 +246,9 @@ export function TreatmentAnalytics({ dateRange }: TreatmentAnalyticsProps) {
           <div className="space-y-2">
             <CardTitle className="text-3xl font-bold text-white tracking-tight italic flex items-center gap-4">
               <BarIcon className="h-8 w-8 text-pink-500" />
-              Global Protocol Matrix
+              {t('treatmentAnalytics.globalProtocolMatrix')}
             </CardTitle>
-            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Authorized treatment efficiency index</CardDescription>
+            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{t('treatmentAnalytics.treatmentEfficiencyDesc')}</CardDescription>
           </div>
         </CardHeader>
         <CardContent className="p-0">
@@ -254,12 +256,12 @@ export function TreatmentAnalytics({ dateRange }: TreatmentAnalyticsProps) {
             <table className="w-full border-collapse">
               <thead>
                 <tr className="bg-white/[0.02] border-b border-white/5">
-                  <th className="px-10 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Protocol Identifier</th>
-                  <th className="px-8 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Cycle Density</th>
-                  <th className="px-8 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Cumulative Yield</th>
-                  <th className="px-8 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Average Yield</th>
-                  <th className="px-8 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Unit Reach</th>
-                  <th className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Momentum Vector</th>
+                  <th className="px-10 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('treatmentAnalytics.protocolIdentifier')}</th>
+                  <th className="px-8 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('treatmentAnalytics.cycleDensity')}</th>
+                  <th className="px-8 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('treatmentAnalytics.cumulativeYield')}</th>
+                  <th className="px-8 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('treatmentAnalytics.averageYield')}</th>
+                  <th className="px-8 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('treatmentAnalytics.unitReach')}</th>
+                  <th className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('treatmentAnalytics.momentumVector')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">

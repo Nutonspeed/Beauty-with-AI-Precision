@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
+import { useTranslations } from "next-intl"
 import { CheckCircle2, AlertTriangle, XCircle, Camera, Sun, Focus, Palette } from "lucide-react"
 import type { LightingQualityResult } from "@/lib/ai/lighting-quality-checker"
 
@@ -11,6 +12,7 @@ interface QualityIndicatorProps {
 }
 
 export function QualityIndicator({ quality, isAnalyzing }: QualityIndicatorProps) {
+  const t = useTranslations('qualityIndicator');
   if (!quality) return null
 
   const getQualityColor = (q: string) => {
@@ -35,10 +37,10 @@ export function QualityIndicator({ quality, isAnalyzing }: QualityIndicatorProps
 
   const getQualityText = (q: string) => {
     switch (q) {
-      case 'excellent': return 'คุณภาพดีเยี่ยม'
-      case 'good': return 'คุณภาพดี'
-      case 'fair': return 'คุณภาพพอใช้'
-      case 'poor': return 'คุณภาพต่ำ'
+      case 'excellent': return t('excellent')
+      case 'good': return t('good')
+      case 'fair': return t('fair')
+      case 'poor': return t('poor')
       default: return ''
     }
   }
@@ -46,28 +48,28 @@ export function QualityIndicator({ quality, isAnalyzing }: QualityIndicatorProps
   const metrics = [
     { 
       icon: Sun, 
-      label: 'แสง', 
+      label: t('brightness'), 
       value: Math.round(quality.brightness),
       max: 255,
       good: quality.brightness >= 100 && quality.brightness <= 220
     },
     { 
       icon: Focus, 
-      label: 'ความคมชัด', 
+      label: t('sharpness'), 
       value: Math.round(quality.sharpness),
       max: 100,
       good: quality.sharpness >= 40
     },
     { 
       icon: Camera, 
-      label: 'ความสม่ำเสมอ', 
+      label: t('evenness'), 
       value: Math.round(quality.evenness),
       max: 100,
       good: quality.evenness >= 50
     },
     { 
       icon: Palette, 
-      label: 'คอนทราสต์', 
+      label: t('contrast'), 
       value: Math.round(quality.contrast),
       max: 100,
       good: quality.contrast >= 20 && quality.contrast <= 80
@@ -103,7 +105,7 @@ export function QualityIndicator({ quality, isAnalyzing }: QualityIndicatorProps
             <div>
               <p className="font-medium">{getQualityText(quality.quality)}</p>
               <p className="text-xs opacity-70">
-                คะแนนรวม {Math.round(quality.score * 100)}%
+                {t('overallScore', { score: Math.round(quality.score * 100) })}
               </p>
             </div>
           </div>
@@ -181,7 +183,7 @@ export function QualityIndicator({ quality, isAnalyzing }: QualityIndicatorProps
             transition={{ delay: 0.5 }}
             className="mt-3 p-3 rounded-lg bg-amber-500/5 border border-amber-500/20"
           >
-            <p className="text-xs font-medium text-amber-600 mb-2">💡 คำแนะนำ</p>
+            <p className="text-xs font-medium text-amber-600 mb-2">💡 {t('recommendations')}</p>
             <ul className="space-y-1">
               {quality.recommendations.map((rec, i) => (
                 <motion.li
@@ -209,7 +211,7 @@ export function QualityIndicator({ quality, isAnalyzing }: QualityIndicatorProps
           >
             <p className="text-xs text-rose-600 flex items-center gap-2">
               <XCircle className="w-4 h-4" />
-              คุณภาพภาพไม่เพียงพอสำหรับการวิเคราะห์ที่แม่นยำ กรุณาถ่ายใหม่
+              {t('insufficientQuality')}
             </p>
           </motion.div>
         )}

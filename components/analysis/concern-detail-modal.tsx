@@ -6,6 +6,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useTranslations, useLocale } from 'next-intl';
 import {
   Dialog,
   DialogContent,
@@ -41,11 +42,13 @@ interface ConcernDetailModalProps {
 export function ConcernDetailModal({
   concern,
   location,
-  language = 'en',
+  language: _language = 'en',
   open,
   onOpenChange,
 }: ConcernDetailModalProps) {
-  const [currentLanguage, setCurrentLanguage] = useState<'en' | 'th'>(language);
+  const t = useTranslations('concernDetail');
+  const locale = useLocale() as 'en' | 'th';
+  const [currentLanguage, setCurrentLanguage] = useState<'en' | 'th'>(locale);
 
   if (!concern?.education) return null;
 
@@ -95,7 +98,7 @@ export function ConcernDetailModal({
                 size="sm"
                 onClick={() => setCurrentLanguage(currentLanguage === 'en' ? 'th' : 'en')}
               >
-                {currentLanguage === 'en' ? 'ไทย' : 'EN'}
+                {currentLanguage === 'en' ? t('thaiLanguage') : t('englishLanguage')}
               </Button>
               {/* Print button */}
               <Button variant="outline" size="sm" onClick={handlePrint}>
@@ -111,16 +114,16 @@ export function ConcernDetailModal({
               className="px-3 py-1"
               style={{ backgroundColor: getSeverityColor(severity) }}
             >
-              {severity.toUpperCase()} - Score: {concern.averageSeverity.toFixed(1)}/10
+              {severity.toUpperCase()} - {t('score', { value: concern.averageSeverity.toFixed(1) })}
             </Badge>
             {concern.locations.length > 0 && (
               <Badge variant="outline">
-                {concern.locations.length} location{concern.locations.length > 1 ? 's' : ''}
+                {t('locations', { count: concern.locations.length })}
               </Badge>
             )}
             {location && (
               <Badge variant="outline">
-                Confidence: {Math.round(location.confidence * 100)}%
+                {t('confidence', { value: Math.round(location.confidence * 100) })}
               </Badge>
             )}
           </div>
@@ -130,23 +133,23 @@ export function ConcernDetailModal({
           <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="overview">
               <Info className="h-4 w-4 mr-1" />
-              Overview
+              {t('overview')}
             </TabsTrigger>
             <TabsTrigger value="causes">
               <AlertCircle className="h-4 w-4 mr-1" />
-              Causes
+              {t('causes')}
             </TabsTrigger>
             <TabsTrigger value="prevention">
               <ShieldCheck className="h-4 w-4 mr-1" />
-              Prevention
+              {t('prevention')}
             </TabsTrigger>
             <TabsTrigger value="treatment">
               <Sparkles className="h-4 w-4 mr-1" />
-              Treatment
+              {t('treatment')}
             </TabsTrigger>
             <TabsTrigger value="routine">
               <Calendar className="h-4 w-4 mr-1" />
-              Routine
+              {t('routine')}
             </TabsTrigger>
           </TabsList>
 
@@ -158,7 +161,7 @@ export function ConcernDetailModal({
                 <div className="rounded-lg border p-4 bg-blue-50 dark:bg-blue-950">
                   <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
                     <Info className="h-5 w-5" />
-                    Key Statistics
+                    {t('keyStatistics')}
                   </h3>
                   <ul className="space-y-2">
                     {Object.entries(education.statistics).map(([key, value]) => (
@@ -176,19 +179,19 @@ export function ConcernDetailModal({
                 <div>
                   <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
                     <XCircle className="h-5 w-5 text-red-600" />
-                    Common Myths
+                    {t('commonMyths')}
                   </h3>
                   <div className="space-y-4">
                     {education.myths.map((myth, index) => (
                       <div key={index} className="rounded-lg border p-4">
                         <div className="flex items-start gap-2 mb-2">
-                          <Badge variant="destructive" className="mt-1">MYTH</Badge>
+                          <Badge variant="destructive" className="mt-1">{t('myth')}</Badge>
                           <p className="font-medium text-red-700 dark:text-red-400">
                             {myth.myth}
                           </p>
                         </div>
                         <div className="flex items-start gap-2 ml-2 pl-4 border-l-2 border-green-600">
-                          <Badge variant="secondary" className="mt-1 bg-green-600">FACT</Badge>
+                          <Badge variant="secondary" className="mt-1 bg-green-600">{t('fact')}</Badge>
                           <p className="text-green-700 dark:text-green-400">
                             {myth.fact}
                           </p>
@@ -202,7 +205,7 @@ export function ConcernDetailModal({
               {/* Related Concerns */}
               {education.relatedConcerns && education.relatedConcerns.length > 0 && (
                 <div>
-                  <h3 className="font-semibold text-lg mb-3">Related Concerns</h3>
+                  <h3 className="font-semibold text-lg mb-3">{t('relatedConcerns')}</h3>
                   <div className="flex flex-wrap gap-2">
                     {education.relatedConcerns.map((relatedType) => (
                       <Badge key={relatedType} variant="outline">
@@ -217,7 +220,7 @@ export function ConcernDetailModal({
             {/* Causes Tab */}
             <TabsContent value="causes" className="space-y-4">
               <div className="rounded-lg border p-4">
-                <h3 className="font-semibold text-lg mb-3">What Causes {formatConcernType(concern.type)}?</h3>
+                <h3 className="font-semibold text-lg mb-3">{t('whatCauses', { concern: formatConcernType(concern.type) })}</h3>
                 <ul className="space-y-2">
                   {education.causes[currentLanguage].map((cause, index) => (
                     <li key={index} className="flex items-start gap-3">
@@ -234,7 +237,7 @@ export function ConcernDetailModal({
               <div className="rounded-lg border p-4 bg-green-50 dark:bg-green-950">
                 <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
                   <ShieldCheck className="h-5 w-5 text-green-600" />
-                  How to Prevent {formatConcernType(concern.type)}
+                  {t('howToPrevent', { concern: formatConcernType(concern.type) })}
                 </h3>
                 <ul className="space-y-2">
                   {education.prevention[currentLanguage].map((tip, index) => (
@@ -253,7 +256,7 @@ export function ConcernDetailModal({
               <div className="rounded-lg border p-4 bg-purple-50 dark:bg-purple-950">
                 <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
                   <Sparkles className="h-5 w-5 text-purple-600" />
-                  Recommended Treatment for Your {severity.toUpperCase()} Level
+                  {t('recommendedTreatment', { severity: severity.toUpperCase() })}
                 </h3>
                 <ul className="space-y-2">
                   {getTreatmentOptions().map((option: string, index: number) => (
@@ -270,7 +273,7 @@ export function ConcernDetailModal({
                 <div className="rounded-lg border p-4 bg-orange-50 dark:bg-orange-950">
                   <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
                     <AlertCircle className="h-5 w-5 text-orange-600" />
-                    When to See a Dermatologist
+                    {t('whenToSeeDermatologist')}
                   </h3>
                   <ul className="space-y-2">
                     {education.whenToSeeDermatologist[currentLanguage].map((scenario, index) => (
@@ -286,11 +289,11 @@ export function ConcernDetailModal({
               {/* Ingredients */}
               {(education as any).ingredients && (
                 <div>
-                  <h3 className="font-semibold text-lg mb-3">Effective Ingredients</h3>
+                  <h3 className="font-semibold text-lg mb-3">{t('effectiveIngredients')}</h3>
                   <div className="grid gap-4 md:grid-cols-2">
                     {(education as any).ingredients.proven && (
                       <div className="rounded-lg border p-4">
-                        <h4 className="font-medium mb-2">Proven Ingredients</h4>
+                        <h4 className="font-medium mb-2">{t('provenIngredients')}</h4>
                         <ul className="space-y-1 text-sm">
                           {(education as any).ingredients.proven.map((ingredient: string, index: number) => (
                             <li key={index} className="flex items-center gap-2">
@@ -303,7 +306,7 @@ export function ConcernDetailModal({
                     )}
                     {(education as any).ingredients.effective && (
                       <div className="rounded-lg border p-4">
-                        <h4 className="font-medium mb-2">Effective Ingredients</h4>
+                        <h4 className="font-medium mb-2">{t('effectiveIngredients')}</h4>
                         <ul className="space-y-1 text-sm">
                           {(education as any).ingredients.effective.map((ingredient: string, index: number) => (
                             <li key={index} className="flex items-center gap-2">
@@ -326,7 +329,7 @@ export function ConcernDetailModal({
                   {/* Morning routine */}
                   {education.dailyRoutine.morning && (
                     <div className="rounded-lg border p-4 bg-yellow-50 dark:bg-yellow-950">
-                      <h3 className="font-semibold text-lg mb-3">☀️ Morning Routine</h3>
+                      <h3 className="font-semibold text-lg mb-3">{t('morningRoutine')}</h3>
                       <ol className="space-y-2">
                         {education.dailyRoutine.morning.map((step, index) => (
                           <li key={index} className="flex items-start gap-3">
@@ -341,7 +344,7 @@ export function ConcernDetailModal({
                   {/* Evening routine */}
                   {education.dailyRoutine.evening && (
                     <div className="rounded-lg border p-4 bg-blue-50 dark:bg-blue-950">
-                      <h3 className="font-semibold text-lg mb-3">🌙 Evening Routine</h3>
+                      <h3 className="font-semibold text-lg mb-3">{t('eveningRoutine')}</h3>
                       <ol className="space-y-2">
                         {education.dailyRoutine.evening.map((step, index) => (
                           <li key={index} className="flex items-start gap-3">
@@ -356,7 +359,7 @@ export function ConcernDetailModal({
                   {/* Weekly routine */}
                   {education.dailyRoutine.weekly && education.dailyRoutine.weekly.length > 0 && (
                     <div className="rounded-lg border p-4 bg-purple-50 dark:bg-purple-950">
-                      <h3 className="font-semibold text-lg mb-3">📅 Weekly Treatments</h3>
+                      <h3 className="font-semibold text-lg mb-3">{t('weeklyTreatments')}</h3>
                       <ul className="space-y-2">
                         {education.dailyRoutine.weekly.map((treatment, index) => (
                           <li key={index} className="flex items-start gap-3">
@@ -376,10 +379,10 @@ export function ConcernDetailModal({
         {/* Footer */}
         <div className="flex items-center justify-between pt-4 border-t">
           <p className="text-sm text-gray-500">
-            💡 Tip: Consistency is key for best results. Track your progress over time.
+            {t('consistencyTip')}
           </p>
           <Button onClick={() => onOpenChange(false)}>
-            Close
+            {t('close')}
           </Button>
         </div>
       </DialogContent>

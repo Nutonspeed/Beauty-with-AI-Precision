@@ -19,7 +19,8 @@ if (typeof window !== 'undefined') {
 import { PersonaSettings } from '@/components/PersonalizationPanel';
 import { analytics } from '@/lib/analytics';
 import { useTranslations } from "next-intl";
-import { Dna, Scan, ShieldCheck, Target, Cpu, Activity as ActivityIcon } from 'lucide-react';
+import { cn } from "@/lib/utils";
+import { Scan, ShieldCheck, Cpu } from 'lucide-react';
 
 // --- HUD Components ---
 function HudCorner({ position }: { position: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' }) {
@@ -59,9 +60,10 @@ function DataStream({ side }: { side: 'left' | 'right' }) {
   useEffect(() => {
     const interval = setInterval(() => {
       const hex = Math.random().toString(16).substring(2, 8).toUpperCase();
+      const status = Math.random() > 0.8 ? 'OPTIMIZING' : 'OK';
       const timestamp = new Date().toLocaleTimeString('en-GB', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
       setData(prev => [
-        `${timestamp} | SYNC_${hex} | OK`,
+        `${timestamp} | NODE_${hex} | ${status}`,
         ...prev.slice(0, 12)
       ]);
     }, 800);
@@ -70,18 +72,39 @@ function DataStream({ side }: { side: 'left' | 'right' }) {
 
   return (
     <div className={`fixed ${side === 'left' ? 'left-8' : 'right-8'} top-1/2 -translate-y-1/2 space-y-3 pointer-events-none z-20 hidden xl:block`}>
-      <div className="h-32 w-[1px] bg-gradient-to-b from-transparent via-pink-500/20 to-transparent mx-auto mb-4" />
+      <div className={cn(
+        "h-32 w-[1px] mx-auto mb-4 relative overflow-hidden",
+        side === 'left' ? "bg-gradient-to-b from-transparent via-pink-500/20 to-transparent" : "bg-gradient-to-b from-transparent via-cyan-500/20 to-transparent"
+      )}>
+        <motion.div 
+          animate={{ y: ['-100%', '100%'] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+          className={cn("absolute inset-0 w-full h-1/2", side === 'left' ? "bg-pink-500/40" : "bg-cyan-500/40")}
+        />
+      </div>
       {data.map((str, i) => (
         <motion.div
           key={i}
           initial={{ opacity: 0, x: side === 'left' ? -20 : 20 }}
           animate={{ opacity: (15 - i) / 30, x: 0 }}
-          className="font-mono text-[7px] text-pink-500/30 whitespace-nowrap bg-white/[0.02] px-2 py-1 rounded border border-white/5 shadow-2xl"
+          className={cn(
+            "font-mono text-[7px] whitespace-nowrap bg-white/[0.02] px-2 py-1 rounded border border-white/5 shadow-2xl",
+            side === 'left' ? "text-pink-500/40" : "text-cyan-500/40"
+          )}
         >
           {side === 'left' ? `>> ${str}` : `${str} <<`}
         </motion.div>
       ))}
-      <div className="h-32 w-[1px] bg-gradient-to-b from-transparent via-cyan-500/20 to-transparent mx-auto mt-4" />
+      <div className={cn(
+        "h-32 w-[1px] mx-auto mt-4 relative overflow-hidden",
+        side === 'left' ? "bg-gradient-to-b from-transparent via-cyan-500/20 to-transparent" : "bg-gradient-to-b from-transparent via-pink-500/20 to-transparent"
+      )}>
+        <motion.div 
+          animate={{ y: ['100%', '-100%'] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+          className={cn("absolute inset-0 w-full h-1/2", side === 'left' ? "bg-cyan-500/40" : "bg-pink-500/40")}
+        />
+      </div>
     </div>
   );
 }
@@ -301,12 +324,12 @@ export function LandingHero(props: LandingHeroProps) {
           <motion.div 
             animate={{ rotate: 360 }}
             transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-            className="absolute inset-0 rounded-full border border-pink-500/5 shadow-[0_0_100px_rgba(236,72,153,0.05)]"
+            className="absolute inset-0 rounded-full border border-pink-500/5 shadow-[0_0_100px_rgba(236,72,153,0.05)] animate-neural-pulse"
           />
           <motion.div 
             animate={{ rotate: -360 }}
             transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-            className="absolute inset-10 rounded-full border border-dashed border-cyan-500/10"
+            className="absolute inset-10 rounded-full border border-dashed border-cyan-500/10 animate-synaptic-fire"
           />
         </div>
 
