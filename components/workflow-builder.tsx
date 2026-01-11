@@ -85,7 +85,7 @@ interface WorkflowBuilderProps {
     { value: "signup", label: t('workflowBuilder.eventTypes.signup') },
     { value: "purchase", label: t('workflowBuilder.eventTypes.purchase') },
     { value: "booking", label: t('workflowBuilder.eventTypes.booking') },
-    { value: "treatment_complete", label: t('workflowBuilder.eventTypes.treatment_complete') },
+    { value: "program_complete", label: t('workflowBuilder.eventTypes.program_complete') },
     { value: "birthday", label: t('workflowBuilder.eventTypes.birthday') },
     { value: "anniversary", label: t('workflowBuilder.eventTypes.anniversary') },
     { value: "abandoned_cart", label: t('workflowBuilder.eventTypes.abandoned_cart') },
@@ -108,7 +108,7 @@ export default function WorkflowBuilder({
         type: "send_email",
         name: "Welcome Email",
         config: {
-          subject: "Welcome to our clinic!",
+          subject: "Welcome to our center!",
           body: "Thank you for signing up...",
         },
       },
@@ -129,7 +129,7 @@ export default function WorkflowBuilder({
         unit: "hours",
       },
       condition: {
-        field: "totalTreatments",
+        field: "totalServices",
         operator: "greater_than",
         value: "0",
       },

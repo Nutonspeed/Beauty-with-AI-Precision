@@ -37,7 +37,7 @@ interface LeadData {
   lastContact?: Date;
   engagementScore: number;
   visitCount: number;
-  treatmentInterest: string[];
+  programInterest: string[];
   budget?: 'low' | 'medium' | 'high' | 'premium';
   urgency?: 'low' | 'medium' | 'high';
   objections?: string[];
@@ -88,9 +88,9 @@ function calculateConversionProbability(lead: LeadData): number {
   if (lead.urgency === 'high') score += 20;
   else if (lead.urgency === 'medium') score += 10;
   
-  // Treatment interest
-  if (lead.treatmentInterest.length >= 3) score += 10;
-  else if (lead.treatmentInterest.length >= 2) score += 5;
+  // Program interest
+  if (lead.programInterest.length >= 3) score += 10;
+  else if (lead.programInterest.length >= 2) score += 5;
   
   // Objections penalty
   if (lead.objections && lead.objections.length > 0) {
@@ -115,7 +115,7 @@ function generateActions(lead: LeadData, probability: number, t: any): Conversio
         description: t('leadConversionOptimizer.actions.followup.description', { days: daysSince }),
         impact: 'high',
         priority: 1,
-        script: t('leadConversionOptimizer.actions.followup.script', { name: lead.name, treatment: lead.treatmentInterest[0] })
+        script: t('leadConversionOptimizer.actions.followup.script', { name: lead.name, program: lead.programInterest[0] })
       });
     }
   }
@@ -129,7 +129,7 @@ function generateActions(lead: LeadData, probability: number, t: any): Conversio
       description: t('leadConversionOptimizer.actions.content.description'),
       impact: 'medium',
       priority: 2,
-      script: t('leadConversionOptimizer.actions.content.script', { name: lead.name, treatment: lead.treatmentInterest[0] })
+      script: t('leadConversionOptimizer.actions.content.script', { name: lead.name, program: lead.programInterest[0] })
     });
   }
   
@@ -167,12 +167,12 @@ function generateActions(lead: LeadData, probability: number, t: any): Conversio
       description: t('leadConversionOptimizer.actions.close.description'),
       impact: 'high',
       priority: 1,
-      script: t('leadConversionOptimizer.actions.close.script', { name: lead.name, treatment: lead.treatmentInterest[0] })
+      script: t('leadConversionOptimizer.actions.close.script', { name: lead.name, program: lead.programInterest[0] })
     });
   }
   
   // Upsell opportunity
-  if (lead.treatmentInterest.length === 1 && lead.budget !== 'low') {
+  if (lead.programInterest.length === 1 && lead.budget !== 'low') {
     actions.push({
       id: 'upsell',
       type: 'upsell',
@@ -180,7 +180,7 @@ function generateActions(lead: LeadData, probability: number, t: any): Conversio
       description: t('leadConversionOptimizer.actions.upsell.description'),
       impact: 'medium',
       priority: 3,
-      script: t('leadConversionOptimizer.actions.upsell.script', { name: lead.name, treatment: lead.treatmentInterest[0] })
+      script: t('leadConversionOptimizer.actions.upsell.script', { name: lead.name, program: lead.programInterest[0] })
     });
   }
   
@@ -225,10 +225,10 @@ export function LeadConversionOptimizer({
             {
               customerProfile: {
                 name: lead.name,
-                concerns: lead.treatmentInterest,
+                concerns: lead.programInterest,
                 budget: lead.budget as 'low' | 'medium' | 'high' | 'premium' | undefined,
               },
-              treatmentInterest: lead.treatmentInterest,
+              programInterest: lead.programInterest,
               leadScore: lead.engagementScore,
               urgency: lead.urgency,
             }
@@ -242,10 +242,10 @@ export function LeadConversionOptimizer({
       const strategies = await objectionHandler.getConversionStrategies({
         customerProfile: {
           name: lead.name,
-          concerns: lead.treatmentInterest,
+          concerns: lead.programInterest,
           budget: lead.budget,
         },
-        treatmentInterest: lead.treatmentInterest,
+        programInterest: lead.programInterest,
         leadScore: lead.engagementScore,
         urgency: lead.urgency,
       });
@@ -338,7 +338,7 @@ export function LeadConversionOptimizer({
                 </Badge>
               </div>
               <div className="flex flex-wrap gap-1">
-                {lead.treatmentInterest.map((interest, idx) => (
+                {lead.programInterest.map((interest, idx) => (
                   <Badge key={idx} className="bg-purple-500/20 text-purple-300 text-xs">
                     {interest}
                   </Badge>

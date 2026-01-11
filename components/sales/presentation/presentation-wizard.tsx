@@ -70,7 +70,7 @@ function createInitialPresentationData({
     },
     scannedImages: {},
     analysisResults: null,
-    selectedTreatments: [],
+    selectedPrograms: [],
     selectedProducts: [],
     proposal: null,
     signature: null,
@@ -86,7 +86,7 @@ function findLastCompletedStep(data: PresentationData): number {
   if (data.signature) return 7
   if (data.proposal) return 6
   if (data.selectedProducts.length > 0) return 5
-  if (data.selectedTreatments.length > 0) return 4
+  if (data.selectedPrograms.length > 0) return 4
   if (data.analysisResults) return 3
   if (data.scannedImages.front && data.scannedImages.left && data.scannedImages.right) return 2
   if (data.customer.name && data.customer.phone) return 1
@@ -254,7 +254,7 @@ export function PresentationWizard({
       case 3:
         return Boolean(data.analysisResults)
       case 4:
-        return data.selectedTreatments.length > 0
+        return data.selectedPrograms.length > 0
       case 5:
         return data.selectedProducts.length > 0
       case 6:
@@ -309,8 +309,8 @@ export function PresentationWizard({
           <ARPreviewStep
             image={data.scannedImages.front || ''}
             analysisResults={data.analysisResults}
-            selectedTreatments={data.selectedTreatments}
-            onUpdate={(treatments) => updateData('selectedTreatments', treatments)}
+            selectedPrograms={data.selectedPrograms}
+            onUpdate={(programs) => updateData('selectedPrograms', programs)}
             customerName={data.customer.name || 'Customer'}
           />
         )
@@ -326,7 +326,7 @@ export function PresentationWizard({
       case 6:
         return (
           <ProposalStep
-            selectedTreatments={data.selectedTreatments}
+            selectedPrograms={data.selectedPrograms}
             selectedProducts={data.selectedProducts}
             proposal={data.proposal}
             onUpdate={(proposal) => updateData('proposal', proposal)}

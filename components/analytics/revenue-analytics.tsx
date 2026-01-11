@@ -54,7 +54,7 @@ export function RevenueAnalytics({ dateRange }: RevenueAnalyticsProps) {
         end_date: dateRange.to.toISOString(),
       })
 
-      const response = await fetch(`/api/clinic/analytics/revenue?${params}`)
+      const response = await fetch(`/api/center/analytics/revenue?${params}`)
       if (!response.ok) throw new Error("Failed to fetch revenue data")
 
       const result = await response.json()
@@ -203,9 +203,9 @@ export function RevenueAnalytics({ dateRange }: RevenueAnalyticsProps) {
             <CardContent className="p-10 lg:p-12">
               <div className="h-[350px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={data.treatmentBreakdown.slice(0, 5)}>
+                  <BarChart data={data.programBreakdown.slice(0, 5)}>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
-                    <XAxis dataKey="treatment" tick={{ fill: '#475569', fontSize: 9, fontWeight: 'bold' }} axisLine={false} dy={15} angle={-45} textAnchor="end" height={80} />
+                    <XAxis dataKey="program" tick={{ fill: '#475569', fontSize: 9, fontWeight: 'bold' }} axisLine={false} dy={15} angle={-45} textAnchor="end" height={80} />
                     <YAxis tick={{ fill: '#475569', fontSize: 9, fontWeight: 'bold' }} axisLine={false} tickFormatter={(v: number) => `฿${v/1000}k`} dx={-10} />
                     <Tooltip
                       cursor={{ fill: 'rgba(255,255,255,0.02)' }}
@@ -232,7 +232,7 @@ export function RevenueAnalytics({ dateRange }: RevenueAnalyticsProps) {
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
-                      data={data.treatmentBreakdown.slice(0, 6)}
+                      data={data.programBreakdown.slice(0, 6)}
                       cx="50%"
                       cy="50%"
                       labelLine={false}
@@ -242,7 +242,7 @@ export function RevenueAnalytics({ dateRange }: RevenueAnalyticsProps) {
                       paddingAngle={10}
                       dataKey="revenue"
                     >
-                      {data.treatmentBreakdown.slice(0, 6).map((entry: any, index: number) => (
+                      {data.programBreakdown.slice(0, 6).map((entry: any, index: number) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} stroke="rgba(255,255,255,0.05)" strokeWidth={2} />
                       ))}
                     </Pie>
@@ -279,7 +279,7 @@ export function RevenueAnalytics({ dateRange }: RevenueAnalyticsProps) {
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
-                {data.treatmentBreakdown.map((item: any, index: number) => (
+                {data.programBreakdown.map((item: any, index: number) => (
                   <motion.tr
                     key={index}
                     initial={{ opacity: 0 }}
@@ -292,7 +292,7 @@ export function RevenueAnalytics({ dateRange }: RevenueAnalyticsProps) {
                         <div className="h-10 w-10 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-center shrink-0 group-hover:border-pink-500/30 transition-all">
                           <Package className="h-5 w-5 text-slate-500 group-hover:text-pink-400 transition-colors" />
                         </div>
-                        <p className="text-lg font-bold text-white tracking-tight italic group-hover:text-pink-400 transition-colors">{item.treatment}</p>
+                        <p className="text-lg font-bold text-white tracking-tight italic group-hover:text-pink-400 transition-colors">{item.program}</p>
                       </div>
                     </td>
                     <td className="px-8 py-8 text-right">

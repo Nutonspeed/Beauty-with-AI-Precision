@@ -17,7 +17,7 @@ export interface VideoCallConfig {
 export interface Participant {
   id: string;
   name: string;
-  role: 'doctor' | 'patient' | 'admin';
+  role: 'expert' | 'customer' | 'admin';
   isAudioEnabled: boolean;
   isVideoEnabled: boolean;
   isScreenSharing: boolean;
@@ -72,12 +72,12 @@ export class VideoCallManager {
   private callState: CallState;
   private userId: string;
   private userName: string;
-  private userRole: 'doctor' | 'patient' | 'admin';
+  private userRole: 'expert' | 'customer' | 'admin';
 
   constructor(
     userId: string,
     userName: string,
-    userRole: 'doctor' | 'patient' | 'admin',
+    userRole: 'expert' | 'customer' | 'admin',
     config: VideoCallConfig = {},
     eventHandlers: CallEventHandlers = {}
   ) {

@@ -8,16 +8,16 @@ import { normalizeRole } from '@/lib/auth/role-normalize';
 export type UserRole = 
   | 'public'
   | 'guest'
-  | 'customer'
   | 'customer_free'
   | 'customer_premium'
-  | 'customer_clinical'
+  | 'customer_aesthetic'
+  | 'customer'
   | 'free_user'
   | 'premium_customer'
-  | 'clinic_staff'
-  | 'clinic_owner'
+  | 'center_staff'
+  | 'center_owner'
   | 'sales_staff'
-  | 'clinic_admin'
+  | 'center_admin'
   | 'super_admin';
 
 export interface RoutePermission {
@@ -34,116 +34,116 @@ export const routePermissions: RoutePermission[] = [
   // Public routes (accessible to everyone)
   {
     path: '/',
-    allowedRoles: ['public', 'customer', 'customer_free', 'customer_premium', 'customer_clinical', 'free_user', 'premium_customer', 'clinic_staff', 'clinic_owner', 'sales_staff', 'clinic_admin', 'super_admin'],
+    allowedRoles: ['public', 'customer', 'customer_free', 'customer_premium', 'customer_aesthetic', 'center_staff', 'center_owner', 'sales_staff', 'center_admin', 'super_admin'],
   },
   {
     path: '/about',
-    allowedRoles: ['public', 'customer', 'customer_free', 'customer_premium', 'customer_clinical', 'free_user', 'premium_customer', 'clinic_staff', 'clinic_owner', 'sales_staff', 'clinic_admin', 'super_admin'],
+    allowedRoles: ['public', 'customer', 'customer_free', 'customer_premium', 'customer_aesthetic', 'center_staff', 'center_owner', 'sales_staff', 'center_admin', 'super_admin'],
   },
   {
     path: '/pricing',
-    allowedRoles: ['public', 'customer', 'customer_free', 'customer_premium', 'customer_clinical', 'free_user', 'premium_customer', 'clinic_staff', 'clinic_owner', 'sales_staff', 'clinic_admin', 'super_admin'],
+    allowedRoles: ['public', 'customer', 'customer_free', 'customer_premium', 'customer_aesthetic', 'center_staff', 'center_owner', 'sales_staff', 'center_admin', 'super_admin'],
   },
   {
     path: '/contact',
-    allowedRoles: ['public', 'customer', 'customer_free', 'customer_premium', 'customer_clinical', 'free_user', 'premium_customer', 'clinic_staff', 'clinic_owner', 'sales_staff', 'clinic_admin', 'super_admin'],
+    allowedRoles: ['public', 'customer', 'customer_free', 'customer_premium', 'customer_aesthetic', 'center_staff', 'center_owner', 'sales_staff', 'center_admin', 'super_admin'],
   },
   {
     path: '/privacy',
-    allowedRoles: ['public', 'customer', 'customer_free', 'customer_premium', 'customer_clinical', 'free_user', 'premium_customer', 'clinic_staff', 'clinic_owner', 'sales_staff', 'clinic_admin', 'super_admin'],
+    allowedRoles: ['public', 'customer', 'customer_free', 'customer_premium', 'customer_aesthetic', 'center_staff', 'center_owner', 'sales_staff', 'center_admin', 'super_admin'],
   },
   {
     path: '/terms',
-    allowedRoles: ['public', 'customer', 'customer_free', 'customer_premium', 'customer_clinical', 'free_user', 'premium_customer', 'clinic_staff', 'clinic_owner', 'sales_staff', 'clinic_admin', 'super_admin'],
+    allowedRoles: ['public', 'customer', 'customer_free', 'customer_premium', 'customer_aesthetic', 'center_staff', 'center_owner', 'sales_staff', 'center_admin', 'super_admin'],
   },
   {
     path: '/faq',
-    allowedRoles: ['public', 'customer', 'customer_free', 'customer_premium', 'customer_clinical', 'free_user', 'premium_customer', 'clinic_staff', 'clinic_owner', 'sales_staff', 'clinic_admin', 'super_admin'],
+    allowedRoles: ['public', 'customer', 'customer_free', 'customer_premium', 'customer_aesthetic', 'center_staff', 'center_owner', 'sales_staff', 'center_admin', 'super_admin'],
   },
 
   // Auth routes (public access)
   {
     path: '/auth/login',
-    allowedRoles: ['public', 'customer', 'customer_free', 'customer_premium', 'customer_clinical', 'free_user', 'premium_customer', 'clinic_staff', 'clinic_owner', 'sales_staff', 'clinic_admin', 'super_admin'],
+    allowedRoles: ['public', 'customer', 'customer_free', 'customer_premium', 'customer_aesthetic', 'center_staff', 'center_owner', 'sales_staff', 'center_admin', 'super_admin'],
   },
   {
     path: '/auth/register',
-    allowedRoles: ['public', 'customer', 'customer_free', 'customer_premium', 'customer_clinical', 'free_user', 'premium_customer', 'clinic_staff', 'clinic_owner', 'sales_staff', 'clinic_admin', 'super_admin'],
+    allowedRoles: ['public', 'customer', 'customer_free', 'customer_premium', 'customer_aesthetic', 'center_staff', 'center_owner', 'sales_staff', 'center_admin', 'super_admin'],
   },
   {
     path: '/auth/forgot-password',
-    allowedRoles: ['public', 'customer', 'customer_free', 'customer_premium', 'customer_clinical', 'free_user', 'premium_customer', 'clinic_staff', 'clinic_owner', 'sales_staff', 'clinic_admin', 'super_admin'],
+    allowedRoles: ['public', 'customer', 'customer_free', 'customer_premium', 'customer_aesthetic', 'center_staff', 'center_owner', 'sales_staff', 'center_admin', 'super_admin'],
   },
 
   // Customer routes (require login)
   {
     path: '/analysis',
-    allowedRoles: ['customer', 'customer_free', 'customer_premium', 'customer_clinical', 'free_user', 'premium_customer', 'clinic_staff', 'clinic_owner', 'sales_staff', 'clinic_admin', 'super_admin'],
+    allowedRoles: ['customer', 'customer_free', 'customer_premium', 'customer_aesthetic', 'center_staff', 'center_owner', 'sales_staff', 'center_admin', 'super_admin'],
     redirectTo: '/auth/login',
   },
   {
     path: '/ar-simulator',
-    allowedRoles: ['customer', 'customer_free', 'customer_premium', 'customer_clinical', 'free_user', 'premium_customer', 'clinic_staff', 'clinic_owner', 'sales_staff', 'clinic_admin', 'super_admin'],
+    allowedRoles: ['customer', 'customer_free', 'customer_premium', 'customer_aesthetic', 'center_staff', 'center_owner', 'sales_staff', 'center_admin', 'super_admin'],
     redirectTo: '/auth/login',
   },
   {
     path: '/booking',
-    allowedRoles: ['customer', 'customer_free', 'customer_premium', 'customer_clinical', 'free_user', 'premium_customer', 'clinic_staff', 'clinic_owner', 'sales_staff', 'clinic_admin', 'super_admin'],
+    allowedRoles: ['customer', 'customer_free', 'customer_premium', 'customer_aesthetic', 'center_staff', 'center_owner', 'sales_staff', 'center_admin', 'super_admin'],
     redirectTo: '/auth/login',
   },
   {
     path: '/profile',
-    allowedRoles: ['customer', 'customer_free', 'customer_premium', 'customer_clinical', 'free_user', 'premium_customer', 'clinic_staff', 'clinic_owner', 'sales_staff', 'clinic_admin', 'super_admin'],
+    allowedRoles: ['customer', 'customer_free', 'customer_premium', 'customer_aesthetic', 'center_staff', 'center_owner', 'sales_staff', 'center_admin', 'super_admin'],
     redirectTo: '/auth/login',
   },
   {
-    path: '/treatment-plans',
-    allowedRoles: ['customer', 'customer_free', 'customer_premium', 'customer_clinical', 'free_user', 'premium_customer', 'clinic_staff', 'clinic_owner', 'sales_staff', 'clinic_admin', 'super_admin'],
+    path: '/program-plans',
+    allowedRoles: ['customer', 'customer_free', 'customer_premium', 'customer_aesthetic', 'center_staff', 'center_owner', 'sales_staff', 'center_admin', 'super_admin'],
     redirectTo: '/auth/login',
   },
   {
     path: '/dashboard',
-    allowedRoles: ['customer', 'customer_free', 'customer_premium', 'customer_clinical', 'free_user', 'premium_customer', 'clinic_staff', 'clinic_owner', 'sales_staff', 'clinic_admin', 'super_admin'],
+    allowedRoles: ['customer', 'customer_free', 'customer_premium', 'customer_aesthetic', 'center_staff', 'center_owner', 'sales_staff', 'center_admin', 'super_admin'],
     redirectTo: '/auth/login',
   },
 
   // Chat routes (customers + sales + admin)
   {
     path: '/chat',
-    allowedRoles: ['customer', 'customer_free', 'customer_premium', 'customer_clinical', 'free_user', 'premium_customer', 'clinic_staff', 'clinic_owner', 'sales_staff', 'clinic_admin', 'super_admin'],
+    allowedRoles: ['customer', 'customer_free', 'customer_premium', 'customer_aesthetic', 'center_staff', 'center_owner', 'sales_staff', 'center_admin', 'super_admin'],
     redirectTo: '/auth/login',
   },
 
-  // Clinic routes (clinic owner + staff + admin)
+  // Center routes (center owner + staff + admin)
   {
-    path: '/clinic',
-    allowedRoles: ['clinic_owner', 'clinic_staff', 'clinic_admin', 'super_admin'],
+    path: '/center',
+    allowedRoles: ['center_owner', 'center_staff', 'center_admin', 'super_admin'],
     redirectTo: '/unauthorized',
   },
 
   // Sales routes (sales staff only + admin)
   {
     path: '/sales',
-    allowedRoles: ['sales_staff', 'clinic_owner', 'clinic_admin', 'super_admin'],
+    allowedRoles: ['sales_staff', 'center_owner', 'center_admin', 'super_admin'],
     redirectTo: '/unauthorized',
   },
 
   // Customer management (sales + admin only)
   {
     path: '/customer',
-    allowedRoles: ['sales_staff', 'clinic_owner', 'clinic_admin', 'super_admin'],
+    allowedRoles: ['sales_staff', 'center_owner', 'center_admin', 'super_admin'],
     redirectTo: '/unauthorized',
   },
 
-  // Admin routes (clinic_admin + super_admin only)
+  // Admin routes (center_admin + super_admin only)
   {
     path: '/admin-dashboard',
-    allowedRoles: ['clinic_admin', 'super_admin'],
+    allowedRoles: ['center_admin', 'super_admin'],
     redirectTo: '/unauthorized',
   },
   {
     path: '/admin',
-    allowedRoles: ['clinic_owner', 'clinic_admin', 'super_admin'],
+    allowedRoles: ['center_owner', 'center_admin', 'super_admin'],
     redirectTo: '/unauthorized',
   },
 
@@ -157,7 +157,7 @@ export const routePermissions: RoutePermission[] = [
   // Reports (sales + admin)
   {
     path: '/reports',
-    allowedRoles: ['sales_staff', 'clinic_owner', 'clinic_admin', 'super_admin'],
+    allowedRoles: ['sales_staff', 'center_owner', 'center_admin', 'super_admin'],
     redirectTo: '/unauthorized',
   },
 ];
@@ -171,14 +171,14 @@ export const roleHierarchy: Record<UserRole, number> = {
   guest: 0,
   customer: 1,
   customer_free: 1,
+  customer_aesthetic: 1,
   free_user: 1,
   customer_premium: 2,
-  customer_clinical: 2,
   premium_customer: 2,
-  clinic_staff: 3,
+  center_staff: 3,
   sales_staff: 3,
-  clinic_owner: 4,
-  clinic_admin: 4,
+  center_owner: 4,
+  center_admin: 4,
   super_admin: 5,
 };
 
@@ -241,18 +241,18 @@ export function getDefaultLandingPage(userRole: UserRole): string {
   switch (userRole) {
     case 'super_admin':
       return '/super-admin';
-    case 'clinic_admin':
+    case 'center_admin':
       return '/admin';
-    case 'clinic_owner':
-      return '/clinic/dashboard';
+    case 'center_owner':
+      return '/center/dashboard';
     case 'sales_staff':
       return '/sales/dashboard';
-    case 'clinic_staff':
+    case 'center_staff':
       return '/dashboard';
     case 'customer':
     case 'customer_free':
     case 'customer_premium':
-    case 'customer_clinical':
+    case 'customer_aesthetic':
     case 'premium_customer':
     case 'free_user':
       return '/dashboard';
@@ -261,7 +261,7 @@ export function getDefaultLandingPage(userRole: UserRole): string {
   }
 }
 
-export const SALES_ALLOWED_ROLES: UserRole[] = ['sales_staff', 'clinic_owner', 'clinic_admin', 'super_admin'];
+export const SALES_ALLOWED_ROLES: UserRole[] = ['sales_staff', 'center_owner', 'center_admin', 'super_admin'];
 
 export function canAccessSales(role: string | null | undefined): boolean {
   const canonical = normalizeRole(role);

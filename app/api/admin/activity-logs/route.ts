@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const action = searchParams.get('action');
-    const clinicId = searchParams.get('clinicId');
+    const centerId = searchParams.get('centerId') || searchParams.get('clinicId');
     const userId = searchParams.get('userId');
     const dateFrom = searchParams.get('dateFrom');
     const dateTo = searchParams.get('dateTo');
@@ -44,15 +44,15 @@ export async function GET(request: NextRequest) {
         id,
         created_at,
         overall_score,
-        clinic_id,
+        center_id,
         user_id,
-        clinics(name),
+        centers(name),
         user:users!skin_analyses_user_id_fkey(full_name, email)
       `)
       .order('created_at', { ascending: false })
       .limit(20);
 
-    if (clinicId) analysesQuery = analysesQuery.eq('clinic_id', clinicId);
+    if (centerId) analysesQuery = analysesQuery.eq('center_id', centerId);
     if (dateFrom) analysesQuery = analysesQuery.gte('created_at', dateFrom);
     if (dateTo) analysesQuery = analysesQuery.lte('created_at', dateTo);
 
@@ -67,8 +67,8 @@ export async function GET(request: NextRequest) {
         userId: a.user_id,
         userName: a.user?.full_name || 'Unknown',
         userEmail: a.user?.email,
-        clinicId: a.clinic_id,
-        clinicName: a.clinics?.name || 'Unknown',
+        centerId: a.center_id,
+        centerName: a.centers?.name || 'Unknown',
         metadata: { overallScore: a.overall_score },
         createdAt: a.created_at,
       });
@@ -81,15 +81,15 @@ export async function GET(request: NextRequest) {
         id,
         created_at,
         status,
-        clinic_id,
+        center_id,
         customer_id,
-        clinics(name),
+        centers(name),
         customers(name, email)
       `)
       .order('created_at', { ascending: false })
       .limit(20);
 
-    if (clinicId) bookingsQuery = bookingsQuery.eq('clinic_id', clinicId);
+    if (centerId) bookingsQuery = bookingsQuery.eq('center_id', centerId);
     if (dateFrom) bookingsQuery = bookingsQuery.gte('created_at', dateFrom);
     if (dateTo) bookingsQuery = bookingsQuery.lte('created_at', dateTo);
 
@@ -104,8 +104,8 @@ export async function GET(request: NextRequest) {
         userId: b.customer_id,
         userName: b.customers?.name || 'Customer',
         userEmail: b.customers?.email,
-        clinicId: b.clinic_id,
-        clinicName: b.clinics?.name || 'Unknown',
+        centerId: b.center_id,
+        centerName: b.centers?.name || 'Unknown',
         metadata: { status: b.status },
         createdAt: b.created_at,
       });
@@ -120,13 +120,13 @@ export async function GET(request: NextRequest) {
         full_name,
         email,
         role,
-        clinic_id,
-        clinics(name)
+        center_id,
+        centers(name)
       `)
       .order('created_at', { ascending: false })
       .limit(20);
 
-    if (clinicId) usersQuery = usersQuery.eq('clinic_id', clinicId);
+    if (centerId) usersQuery = usersQuery.eq('center_id', centerId);
     if (dateFrom) usersQuery = usersQuery.gte('created_at', dateFrom);
     if (dateTo) usersQuery = usersQuery.lte('created_at', dateTo);
 
@@ -141,36 +141,36 @@ export async function GET(request: NextRequest) {
         userId: u.id,
         userName: u.full_name || 'Unknown',
         userEmail: u.email,
-        clinicId: u.clinic_id,
-        clinicName: u.clinics?.name || 'System',
+        centerId: u.center_id,
+        centerName: u.centers?.name || 'System',
         metadata: { role: u.role },
         createdAt: u.created_at,
       });
     });
 
-    // 4. Get clinic creations
-    let clinicsQuery = supabase
-      .from('clinics')
+    // 4. Get center creations
+    let centersQuery = supabase
+      .from('centers')
       .select('id, name, created_at, email')
       .order('created_at', { ascending: false })
       .limit(20);
 
-    if (dateFrom) clinicsQuery = clinicsQuery.gte('created_at', dateFrom);
-    if (dateTo) clinicsQuery = clinicsQuery.lte('created_at', dateTo);
+    if (dateFrom) centersQuery = centersQuery.gte('created_at', dateFrom);
+    if (dateTo) centersQuery = centersQuery.lte('created_at', dateTo);
 
-    const { data: clinics } = await clinicsQuery;
+    const { data: centers } = await centersQuery;
 
-    clinics?.forEach((c: any) => {
+    centers?.forEach((c: any) => {
       activities.push({
-        id: `clinic-${c.id}`,
-        type: 'clinic',
-        action: 'clinic_created',
-        description: `Clinic "${c.name}" created`,
+        id: `center-${c.id}`,
+        type: 'center',
+        action: 'center_created',
+        description: `Center "${c.name}" created`,
         userId: null,
         userName: 'System',
         userEmail: c.email,
-        clinicId: c.id,
-        clinicName: c.name,
+        centerId: c.id,
+        centerName: c.name,
         metadata: {},
         createdAt: c.created_at,
       });
@@ -201,20 +201,20 @@ export async function GET(request: NextRequest) {
         ai_analysis: activities.filter(a => a.type === 'ai_analysis').length,
         booking: activities.filter(a => a.type === 'booking').length,
         user: activities.filter(a => a.type === 'user').length,
-        clinic: activities.filter(a => a.type === 'clinic').length,
+        center: activities.filter(a => a.type === 'center').length,
       },
     };
 
-    // Get unique clinics for filter
-    const { data: allClinics } = await supabase
-      .from('clinics')
+    // Get unique centers for filter
+    const { data: allCenters } = await supabase
+      .from('centers')
       .select('id, name')
       .order('name');
 
     return NextResponse.json({
       activities: paginatedActivities,
       stats,
-      clinics: allClinics || [],
+      centers: allCenters || [],
       pagination: {
         total: filteredActivities.length,
         limit,

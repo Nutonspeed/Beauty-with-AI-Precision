@@ -66,7 +66,7 @@ import { toast } from "sonner"
 import { format } from "date-fns"
 
 import { NeuralNarrativeSynthesis } from '@/components/sales/neural-narrative-synthesis'
-import { ClinicalSentiment } from '@/components/sales/clinical-sentiment'
+import { AestheticSentiment } from '@/components/sales/aesthetic-sentiment'
 
 type SalesLeadStatus = 'new' | 'contacted' | 'qualified' | 'proposal_sent' | 'negotiation' | 'won' | 'lost' | 'cold' | 'warm' | 'hot'
 
@@ -79,7 +79,7 @@ type SalesLead = {
   score: number
   source: string
   primary_concern: string | null
-  interested_treatments?: string[] | null
+  interested_programs?: string[] | null
   budget_range_min?: number | null
   budget_range_max?: number | null
   notes: string | null
@@ -152,7 +152,7 @@ export default function LeadDetailPage() {
           return
         }
         const roleData = await roleRes.json()
-        if (!['sales_staff', 'clinic_admin', 'clinic_owner', 'super_admin'].includes(roleData.role)) {
+        if (!['sales_staff', 'center_admin', 'center_owner', 'super_admin'].includes(roleData.role)) {
           router.push(lp('/unauthorized'))
           return
         }
@@ -173,26 +173,24 @@ export default function LeadDetailPage() {
     setIsCreatingProposal(true)
     try {
       const recs = (lead.metadata as any)?.recommendations
-      const treatmentsRaw = Array.isArray(recs) ? recs : []
-      const treatments = treatmentsRaw.length
-        ? treatmentsRaw.map((r: any) => ({
-            name: r?.title_th || r?.title_en || r?.name || t('common.treatment'),
+      const programsRaw = Array.isArray(recs) ? recs : []
+      const programs = programsRaw.length
+        ? programsRaw.map((r: any) => ({
+            name: r?.title_th || r?.title_en || r?.name || t('common.program'),
             price: Number(r?.price || 0),
             sessions: Number(r?.sessions || 1),
-            description: r?.description_th || r?.description_en || r?.description || "",
-            service_id: r?.service_id ?? null,
+            type: r?.type || 'procedure'
           }))
         : [
             {
-              name: t('salesArTools.tools.skin.name'),
-              price: 0,
+              name: lead.primary_concern || t('common.program'),
+              price: lead.budget_range_min || 0,
               sessions: 1,
-              description: lead.primary_concern ? `${t('salesTools.profile.concerns')}: ${lead.primary_concern}` : "",
-              service_id: null,
+              type: 'procedure'
             },
           ]
 
-      const subtotal = treatments.reduce((sum: number, t: any) => sum + (Number(t.price) || 0), 0)
+      const subtotal = programs.reduce((sum: number, p: any) => sum + (Number(p.price) || 0), 0)
 
       const res = await fetch("/api/sales/proposals", {
         method: "POST",
@@ -200,11 +198,12 @@ export default function LeadDetailPage() {
         body: JSON.stringify({
           lead_id: lead.id,
           title: t('salesProposalGenerator.generatedTitle'),
-          treatments,
+          programs,
           subtotal,
           discount_percent: 0,
           discount_amount: 0,
-          total_value: subtotal,
+          total: subtotal,
+          status: "draft",
         }),
       })
 
@@ -371,7 +370,7 @@ export default function LeadDetailPage() {
                 </Button>
                 <Badge variant="outline" className="px-4 py-1 rounded-full border-pink-500/30 text-pink-400 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.2em] text-[10px] font-black shadow-2xl shadow-pink-500/10">
                   <Fingerprint className="mr-3 h-3.5 w-3.5 animate-pulse" />
-                  Unit Precision Diagnostic
+                  Unit Precision Analysis
                 </Badge>
               </div>
               <div className="space-y-2">
@@ -470,13 +469,13 @@ export default function LeadDetailPage() {
                     </div>
                   </div>
 
-                  {lead.interested_treatments && lead.interested_treatments.length > 0 && (
+                  {lead.interested_programs && lead.interested_programs.length > 0 && (
                     <div className="space-y-4 pt-6 border-t border-white/5">
-                      <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 italic">{t('salesLeadDetail.interestedTreatments')}</p>
+                      <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 italic">{t('salesLeadDetail.interestedPrograms')}</p>
                       <div className="flex flex-wrap gap-3">
-                        {lead.interested_treatments.map((treatment: string) => (
-                          <Badge key={treatment} variant="outline" className="bg-white/[0.03] text-[10px] font-black uppercase tracking-widest text-slate-300 border-white/5 px-4 py-2 rounded-xl italic">
-                            {treatment}
+                        {lead.interested_programs.map((program: string) => (
+                          <Badge key={program} variant="outline" className="bg-white/[0.03] text-[10px] font-black uppercase tracking-widest text-slate-300 border-white/5 px-4 py-2 rounded-xl italic">
+                            {program}
                           </Badge>
                         ))}
                       </div>
@@ -487,12 +486,12 @@ export default function LeadDetailPage() {
 
               {/* AI Sales Advisor Node - ENTERPRISE VALUE */}
               <div className="space-y-10">
-                <ClinicalSentiment customerName={lead.name} />
+                <AestheticSentiment customerName={lead.name} />
                 
                 <NeuralNarrativeSynthesis 
                   customerData={{
                     name: lead.name,
-                    concerns: lead.interested_treatments || [],
+                    concerns: lead.interested_programs || [],
                     score: lead.score
                   }} 
                 />
@@ -547,9 +546,9 @@ export default function LeadDetailPage() {
                         </div>
                         <ul className="space-y-4">
                           {[
-                            "Quantitative evidence of treatment effectiveness",
+                            "Quantitative evidence of program effectiveness",
                             "Personalized 3D visualization of future results",
-                            "Precision-calibrated treatment protocols"
+                            "Precision-calibrated program protocols"
                           ].map((insight, i) => (
                             <li key={i} className="flex items-center gap-4 text-xs text-slate-400 font-light">
                               <div className="h-1 w-1 rounded-full bg-pink-500 shadow-[0_0_8px_rgba(236,72,153,0.5)]" />

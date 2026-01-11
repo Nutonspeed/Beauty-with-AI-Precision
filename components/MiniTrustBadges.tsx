@@ -24,7 +24,7 @@ export function MiniTrustBadges() {
           whileHover={{ y:-3 }}
           whileTap={{ scale:0.92 }}
           onClick={() => {
-            router.push(lp('/clinic-experience'));
+            router.push(lp('/center-experience'));
           }}
           className="mini-trust-badge"
           title={b.id}

@@ -202,7 +202,7 @@ export default function PrivacyPolicyPage() {
           </div>
         </section>
 
-        {/* Quick Clinical Navigation */}
+        {/* Quick Aesthetic Navigation */}
         <section className="sticky top-[72px] z-40 border-b border-white/5 bg-[#020617]/80 backdrop-blur-xl py-4 overflow-x-auto">
           <div className="container">
             <div className="flex items-center justify-center gap-4 min-w-max">
@@ -297,7 +297,7 @@ export default function PrivacyPolicyPage() {
                         
                         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-1">
                           {[
-                            { label: t('privacy.contact.email'), val: "privacy@cliniciq.ai", href: "mailto:privacy@cliniciq.ai" },
+                            { label: t('privacy.contact.email'), val: "privacy@aesthetic-ai.io", href: "mailto:privacy@aesthetic-ai.io" },
                             { label: t('privacy.contact.phone'), val: "+66 (0) 2-000-0000", href: "tel:+6620000000" },
                             { label: t('privacy.contact.address'), val: t('privacy.contact.addressText') }
                           ].map((c, i) => (

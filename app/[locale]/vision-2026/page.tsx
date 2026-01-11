@@ -33,7 +33,7 @@ export default function Vision2026Page() {
       icon: Cpu, 
       color: 'text-cyan-400', 
       bg: 'bg-cyan-500/10',
-      desc: 'Autonomous clinic management and predictive logistics.'
+      desc: 'Autonomous center management and predictive logistics.'
     },
     { 
       id: 'precision', 
@@ -41,7 +41,7 @@ export default function Vision2026Page() {
       icon: Target, 
       color: 'text-pink-400', 
       bg: 'bg-pink-500/10',
-      desc: 'AI-mapped treatment protocols with biometric accuracy.'
+      desc: 'AI-mapped aesthetic protocols with biometric accuracy.'
     },
     { 
       id: 'retention', 
@@ -55,7 +55,7 @@ export default function Vision2026Page() {
 
   const roadmap = [
     { year: 'Q1 2026', milestone: 'Generative 4D Aging Simulator', status: 'Deployed', color: 'bg-emerald-500' },
-    { year: 'Q2 2026', milestone: 'Medical Decision Support (MDSS)', status: 'Live', color: 'bg-emerald-500' },
+    { year: 'Q2 2026', milestone: 'Aesthetic Decision Support (ADSS)', status: 'Live', color: 'bg-emerald-500' },
     { year: 'Q3 2026', milestone: 'Autonomous Ad-Creative Engine', status: 'Beta', color: 'bg-amber-500' },
     { year: 'Q4 2026', milestone: 'Global Bio-Metric IoT Mesh', status: 'Planned', color: 'bg-slate-500' },
   ]
@@ -170,7 +170,7 @@ export default function Vision2026Page() {
                     { 
                       tier: t('vision2026.tierValue.enterprise'), 
                       price: 'Elite', 
-                      features: ['Medical Decision Support (MDSS)', 'Clinical Compliance Audit', 'Global Industry Benchmarking', 'Generative Marketing Engine'],
+                      features: ['Aesthetic Decision Support (ADSS)', 'Service Compliance Audit', 'Global Industry Benchmarking', 'Generative Marketing Engine'],
                       color: 'border-pink-500/30 bg-pink-500/5',
                       premium: true
                     }
@@ -264,10 +264,10 @@ export default function Vision2026Page() {
                    </CardHeader>
                    <CardContent className="p-10 space-y-8">
                       <p className="text-xs text-slate-400 italic font-light leading-relaxed">
-                        Beauty-Intelligence-Precision (BIP) protocol ensures 100% HIPAA/GDPR compliance while leveraging deep clinical datasets for autonomous diagnostic support.
+                        Beauty-Intelligence-Precision (BIP) protocol ensures 100% HIPAA/GDPR compliance while leveraging deep aesthetic datasets for autonomous analysis support.
                       </p>
                       <div className="space-y-4">
-                        {['Zero-Latency Edge API', 'Quantum-Safe Encryption', 'Neural Medical Audit'].map((tag, i) => (
+                        {['Zero-Latency Edge API', 'Quantum-Safe Encryption', 'Neural Aesthetic Audit'].map((tag, i) => (
                           <div key={i} className="flex items-center gap-3">
                             <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
                             <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">{tag}</span>

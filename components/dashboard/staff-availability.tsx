@@ -17,7 +17,7 @@ interface StaffMember {
   role: string
   status: "active" | "on_leave" | "busy" | "available" | "offline"
   avatar_url: string | null
-  patients_today: number
+  customers_today: number
   appointments_today: number
   rating: number | null
 }
@@ -226,7 +226,7 @@ export function StaffAvailability() {
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <span>{getRoleBadge(member.role)}</span>
                   <span>•</span>
-                  <span>{t('dashboard.staffAvailability.patientsCount', { count: member.patients_today })}</span>
+                  <span>{t('dashboard.staffAvailability.customersCount', { count: member.customers_today })}</span>
                 </div>
               </div>
               <div>{getStatusBadge(member.status)}</div>

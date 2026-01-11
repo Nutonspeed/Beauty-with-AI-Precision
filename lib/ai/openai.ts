@@ -9,7 +9,7 @@ function getOpenAIClient(): OpenAI {
   return openai
 }
 
-export async function generateTreatmentRecommendation(
+export async function generateProgramRecommendation(
   skinAnalysis: any,
   userPreferences: any
 ) {
@@ -19,11 +19,11 @@ export async function generateTreatmentRecommendation(
       messages: [
         {
           role: "system",
-          content: "You are a professional aesthetic treatment advisor. Based on skin analysis results, provide personalized treatment recommendations."
+          content: "You are a professional aesthetic program advisor. Based on skin analysis results, provide personalized program recommendations."
         },
         {
           role: "user",
-          content: `Based on this skin analysis: ${JSON.stringify(skinAnalysis)} and user preferences: ${JSON.stringify(userPreferences)}, provide 3 recommended treatments with explanations.`
+          content: `Based on this skin analysis: ${JSON.stringify(skinAnalysis)} and user preferences: ${JSON.stringify(userPreferences)}, provide 3 recommended programs with explanations.`
         }
       ],
       max_tokens: 500,
@@ -33,7 +33,7 @@ export async function generateTreatmentRecommendation(
     return completion.choices[0].message.content
   } catch (error) {
     console.error('OpenAI API error:', error)
-    throw new Error('Failed to generate treatment recommendations')
+    throw new Error('Failed to generate program recommendations')
   }
 }
 

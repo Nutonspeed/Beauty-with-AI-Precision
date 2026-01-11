@@ -20,7 +20,7 @@ interface SearchFilters {
   gender?: string
   ageRange?: [number, number]
   tags?: string[]
-  treatmentTypes?: string[]
+  programTypes?: string[]
   scoreRange?: [number, number]
 }
 
@@ -32,12 +32,12 @@ interface SearchResult {
 }
 
 interface SearchInterfaceProps {
-  clinicId: string
+  centerId: string
   onResultSelect?: (result: SearchResult) => void
 }
 
 const SearchInterface: React.FC<SearchInterfaceProps> = ({ 
-  clinicId, 
+  centerId, 
   onResultSelect 
 }) => {
   const [query, setQuery] = useState('')
@@ -59,7 +59,7 @@ const SearchInterface: React.FC<SearchInterfaceProps> = ({
   const fetchSuggestions = useCallback(async () => {
     try {
       const response = await fetch(
-        `/api/search/suggestions?q=${encodeURIComponent(query)}&type=patients&clinicId=${clinicId}`
+        `/api/search/suggestions?q=${encodeURIComponent(query)}&type=customers&centerId=${centerId}`
       )
       const data = await response.json()
       
@@ -69,7 +69,7 @@ const SearchInterface: React.FC<SearchInterfaceProps> = ({
     } catch (error) {
       console.error('Failed to fetch suggestions:', error)
     }
-  }, [clinicId, query])
+  }, [centerId, query])
 
   const performSearch = useCallback(async () => {
     setLoading(true)
@@ -84,8 +84,8 @@ const SearchInterface: React.FC<SearchInterfaceProps> = ({
     try {
       const params = new URLSearchParams({
         q: query,
-        type: 'patients',
-        clinicId,
+        type: 'customers',
+        centerId,
         from: '0',
         size: '20'
       })
@@ -104,8 +104,8 @@ const SearchInterface: React.FC<SearchInterfaceProps> = ({
         params.append('tags', filters.tags.join(','))
       }
       
-      if (filters.treatmentTypes && filters.treatmentTypes.length > 0) {
-        params.append('treatmentTypes', filters.treatmentTypes.join(','))
+      if (filters.programTypes && filters.programTypes.length > 0) {
+        params.append('programTypes', filters.programTypes.join(','))
       }
       
       if (filters.scoreRange) {
@@ -130,7 +130,7 @@ const SearchInterface: React.FC<SearchInterfaceProps> = ({
     } finally {
       setLoading(false)
     }
-  }, [clinicId, filters, query])
+  }, [centerId, filters, query])
 
   // Debounced search
   useEffect(() => {
@@ -178,7 +178,7 @@ const SearchInterface: React.FC<SearchInterfaceProps> = ({
   }
 
   const renderSearchResult = (result: SearchResult) => {
-    const patient = result.source
+    const customer = result.source
     
     return (
       <Card 
@@ -194,19 +194,19 @@ const SearchInterface: React.FC<SearchInterfaceProps> = ({
               </div>
               <div className="space-y-1">
                 <h4 className="font-medium">
-                  {patient.firstName} {patient.lastName}
+                  {customer.firstName} {customer.lastName}
                 </h4>
                 <p className="text-sm text-muted-foreground">
-                  {patient.email}
+                  {customer.email}
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  {patient.phone}
+                  {customer.phone}
                 </p>
                 <div className="flex items-center space-x-2 text-xs text-muted-foreground">
                   <Calendar className="w-3 h-3" />
-                  <span>{new Date(patient.dateOfBirth).toLocaleDateString()}</span>
+                  <span>{new Date(customer.dateOfBirth).toLocaleDateString()}</span>
                   <span>•</span>
-                  <span>{patient.gender}</span>
+                  <span>{customer.gender}</span>
                 </div>
               </div>
             </div>
@@ -214,10 +214,10 @@ const SearchInterface: React.FC<SearchInterfaceProps> = ({
               <div className="text-sm text-muted-foreground">
                 Score: {Math.round(result.score * 100)}%
               </div>
-              {patient.skinAnalysis && (
+              {customer.skinAnalysis && (
                 <div className="text-sm">
                   <span className="text-muted-foreground">Skin Score:</span>{' '}
-                  <span className="font-medium">{patient.skinAnalysis.overallScore}</span>
+                  <span className="font-medium">{customer.skinAnalysis.overallScore}</span>
                 </div>
               )}
             </div>
@@ -233,9 +233,9 @@ const SearchInterface: React.FC<SearchInterfaceProps> = ({
             </div>
           )}
           
-          {patient.tags && patient.tags.length > 0 && (
+          {customer.tags && customer.tags.length > 0 && (
             <div className="mt-3 flex flex-wrap gap-1">
-              {patient.tags.map((tag: string) => (
+              {customer.tags.map((tag: string) => (
                 <Badge key={tag} variant="secondary" className="text-xs">
                   {tag}
                 </Badge>
@@ -325,9 +325,9 @@ const SearchInterface: React.FC<SearchInterfaceProps> = ({
       <div className="space-y-6">
         {/* Search Header */}
         <div className="text-center">
-          <h1 className="text-3xl font-bold">Patient Search</h1>
+          <h1 className="text-3xl font-bold">Customer Search</h1>
           <p className="text-muted-foreground">
-            Search patients by name, email, phone, or medical history
+            Search customers by name, email, phone, or aesthetic history
           </p>
         </div>
 
@@ -336,7 +336,7 @@ const SearchInterface: React.FC<SearchInterfaceProps> = ({
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
           <Input
             type="text"
-            placeholder="Search patients..."
+            placeholder="Search customers..."
             value={query}
             onChange={(e) => handleSearch(e.target.value)}
             className="pl-10 pr-10"

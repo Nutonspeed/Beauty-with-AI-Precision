@@ -118,7 +118,7 @@ export default function LoginPage() {
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden border-r border-white/5">
         <div className="absolute inset-0 bg-gradient-to-br from-pink-600/10 via-purple-600/10 to-transparent" />
         
-        {/* Animated Clinical Nodes */}
+        {/* Animated Aesthetic Nodes */}
         <div className="absolute inset-0">
           <motion.div 
             animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.2, 0.1] }}
@@ -144,7 +144,7 @@ export default function LoginPage() {
               <div className="p-4 bg-white/[0.03] border border-white/10 rounded-[2rem] backdrop-blur-2xl shadow-2xl shadow-pink-500/10">
                 <Sparkles className="w-10 h-10 text-pink-400" />
               </div>
-              <span className="text-4xl font-black tracking-tighter text-white">ClinicIQ <span className="text-pink-500 italic">AI</span></span>
+              <span className="text-4xl font-black tracking-tighter text-white">CenterIQ <span className="text-pink-500 italic">AI</span></span>
             </div>
             
             <div className="space-y-6">
@@ -152,16 +152,16 @@ export default function LoginPage() {
                 Advanced<br />Skin Synthesis
               </h1>
               <p className="text-2xl text-slate-400 font-light leading-relaxed max-w-lg tracking-wide">
-                Experience the next generation of clinical analysis driven by precision intelligence.
+                Experience the next generation of aesthetic analysis driven by precision intelligence.
               </p>
             </div>
             
-            {/* Clinical Features Nodes */}
+            {/* Aesthetic Features Nodes */}
             <div className="space-y-6 pt-10">
               {[
                 { icon: Zap, text: "AI-Driven 8D Analysis", color: "text-blue-400" },
                 { icon: Shield, text: "Enterprise-Grade PDPA Security", color: "text-emerald-400" },
-                { icon: Sparkles, text: "Real-time Clinical AR", color: "text-pink-400" }
+                { icon: Sparkles, text: "Real-time Aesthetic AR", color: "text-pink-400" }
               ].map((f, i) => (
                 <motion.div 
                   key={i}
@@ -183,7 +183,7 @@ export default function LoginPage() {
 
       {/* Right Side - Luxury Login Infrastructure */}
       <div className="flex-1 flex items-center justify-center p-8 sm:p-24 relative z-10">
-        {/* Clinical Back Navigation */}
+        {/* Aesthetic Back Navigation */}
         <Link 
           href={lp("/")}
           className="fixed top-10 left-8 z-50 inline-flex items-center gap-4 px-6 py-3 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 hover:text-pink-400 transition-all rounded-2xl bg-white/[0.03] border border-white/5 backdrop-blur-xl group"
@@ -210,7 +210,7 @@ export default function LoginPage() {
                     <Sparkles className="w-6 h-6 text-white" />
                   </div>
                   <span className="text-2xl font-black text-white tracking-tighter">
-                    ClinicIQ
+                    CenterIQ
                   </span>
                 </div>
               </div>
@@ -224,7 +224,7 @@ export default function LoginPage() {
                 </motion.div>
                 <div className="space-y-2">
                   <CardTitle className="text-3xl font-bold text-white tracking-tight italic">
-                    {isThaiLocale ? 'ยินดีต้อนรับกลับ' : 'Clinical Access'}
+                    {isThaiLocale ? 'ยินดีต้อนรับกลับ' : 'Aesthetic Access'}
                   </CardTitle>
                   <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
                     {isThaiLocale ? 'เข้าสู่ระบบเพื่อใช้งานระบบจำลอง' : 'Authorize diagnostic credentials'}
@@ -251,7 +251,7 @@ export default function LoginPage() {
                     <Input
                       id="email"
                       type="email"
-                      placeholder="clinical@access.ai"
+                      placeholder="aesthetic@access.ai"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       disabled={loading}
@@ -325,10 +325,10 @@ export default function LoginPage() {
 
               <CardFooter className="flex flex-col space-y-10 p-12 pt-0 pb-16">
                 <div className="text-[10px] text-center text-slate-600 font-black uppercase tracking-[0.2em] leading-relaxed max-w-[200px] mx-auto">
-                  {isThaiLocale ? 'ระบบปิดสำหรับผู้ได้รับเชิญเท่านั้น' : 'Clinical gateway restricted to authorized personnel'}
+                  {isThaiLocale ? 'ระบบปิดสำหรับผู้ได้รับเชิญเท่านั้น' : 'Aesthetic gateway restricted to authorized personnel'}
                   <div className="mt-3">
                     <a 
-                      href="mailto:admin@beautyclinic.com" 
+                      href="mailto:admin@centeriq.ai" 
                       className="text-pink-500/60 hover:text-pink-400 transition-colors border-b border-pink-500/20 pb-0.5"
                     >
                       {isThaiLocale ? 'ขอสิทธิ์เข้าใช้งาน' : 'Request Credentials'}
@@ -351,7 +351,7 @@ export default function LoginPage() {
                     <div className="grid grid-cols-2 gap-3">
                       {[
                         { label: 'Admin', icon: '🔧', email: 'admin@ai367bar.com', color: 'text-orange-400' },
-                        { label: 'Owner', icon: '🏥', email: 'clinic-owner@example.com', color: 'text-blue-400' },
+                        { label: 'Owner', icon: '🏥', email: 'center-owner@example.com', color: 'text-blue-400' },
                         { label: 'Sales', icon: '💼', email: 'sales@example.com', color: 'text-emerald-400' },
                         { label: 'Client', icon: '👤', email: 'customer@example.com', color: 'text-purple-400' }
                       ].map((d, i) => (

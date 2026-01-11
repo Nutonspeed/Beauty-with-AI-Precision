@@ -6,7 +6,7 @@ export const revalidate = 0
 
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
-import { TreatmentSimulator } from "@/components/ar/treatment-simulator"
+import { ProgramSimulator } from "@/components/ar/program-simulator"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -77,7 +77,7 @@ export default function ARSimulatorPage() {
               transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
               className="text-5xl md:text-8xl font-bold tracking-tight text-white leading-tight"
             >
-              {isThaiLocale ? 'ระบบจำลอง' : 'Clinical'} <span className="bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent italic">{t('arSimulator.clinicalAr')}</span>
+              {isThaiLocale ? 'ระบบจำลอง' : 'Aesthetic'} <span className="bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent italic">{t('arSimulator.aestheticAr')}</span>
             </motion.h1>
             
             <motion.p 
@@ -167,12 +167,12 @@ export default function ARSimulatorPage() {
             >
               <div className="relative rounded-[3rem] border border-pink-500/20 bg-white/[0.01] backdrop-blur-3xl overflow-hidden p-1 shadow-2xl">
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/30 to-transparent" />
-                <TreatmentSimulator 
+                <ProgramSimulator 
                   beforeImage={uploadedImage}
                   locale={language}
                   onExport={(image) => {
                     const link = document.createElement('a')
-                    link.download = 'clinical-simulation.png'
+                    link.download = 'aesthetic-simulation.png'
                     if (image instanceof Blob) {
                       link.href = URL.createObjectURL(image)
                     } else {
@@ -193,7 +193,7 @@ export default function ARSimulatorPage() {
                 </Button>
                 <Link href={lp('/analysis')}>
                   <Button variant="premium" className="h-16 px-12 rounded-2xl shadow-2xl shadow-pink-500/20 text-xs font-black uppercase tracking-[0.2em] hover:scale-105 active:scale-95 transition-all">
-                    {t('arSimulator.finalizeTreatment')}
+                    {t('arSimulator.finalizeProgram')}
                   </Button>
                 </Link>
               </div>

@@ -1,11 +1,11 @@
 /**
- * Session Management for Multi-Clinic System
+ * Session Management for Multi-Center System
  * 
- * Purpose: Manage user sessions with clinic context for 120+ concurrent users
+ * Purpose: Manage user sessions with center context for 120+ concurrent users
  * Features:
  * - Server-side session validation
- * - Clinic context extraction
- * - Permission checking with clinic isolation
+ * - Center context extraction
+ * - Permission checking with center isolation
  * - Rate limiting integration
  */
 
@@ -91,12 +91,12 @@ export async function getSession(): Promise<SessionContext> {
       };
     }
     
-    // Get full user profile with clinic context
+    // Get full user profile with center context
     const { data: userData, error: userError } = await supabase
       .from('users')
       .select(`
         *,
-        clinic:clinics(*)
+        center:centers(*)
       `)
       .eq('id', authUser.id)
       .single();
@@ -124,16 +124,16 @@ export async function getSession(): Promise<SessionContext> {
       last_login_at: userData.last_login_at,
       email_verified: userData.email_verified,
       metadata: userData.metadata || {},
-      clinic_id: userData.clinic_id,
+      center_id: userData.center_id,
       branch_id: userData.branch_id,
-      clinic: userData.clinic || undefined,
+      center: userData.center || undefined,
     };
     
     // Build permission context
     const permissionContext: PermissionContext = {
       userId: user.id,
       role: user.role,
-      clinicId: user.clinic_id,
+      centerId: user.center_id,
       branchId: user.branch_id,
     };
     
@@ -166,13 +166,13 @@ export async function requireSession(): Promise<SessionContext> {
 }
 
 /**
- * Get session with clinic requirement
+ * Get session with center requirement
  */
-export async function requireClinicSession(): Promise<SessionContext> {
+export async function requireCenterSession(): Promise<SessionContext> {
   const session = await requireSession();
   
-  if (!session.user?.clinic_id) {
-    throw new Error('Unauthorized: Clinic membership required');
+  if (!session.user?.center_id) {
+    throw new Error('Unauthorized: Center membership required');
   }
   
   return session;
@@ -198,9 +198,9 @@ export async function requireRole(
 // ============================================================================
 
 /**
- * Check if current user can access clinic
+ * Check if current user can access center
  */
-export async function canAccessClinic(clinicId: string): Promise<boolean> {
+export async function canAccessCenter(centerId: string): Promise<boolean> {
   const session = await getSession();
   
   if (!session.isAuthenticated || !session.user) {
@@ -209,19 +209,19 @@ export async function canAccessClinic(clinicId: string): Promise<boolean> {
   
   const { user } = session;
   
-  // Super admin can access all clinics
+  // Super admin can access all centers
   if (user.role === 'super_admin') {
     return true;
   }
   
-  // User must be in the same clinic
-  return user.clinic_id === clinicId;
+  // User must be in the same center
+  return user.center_id === centerId;
 }
 
 /**
- * Check if current user can manage clinic
+ * Check if current user can manage center
  */
-export async function canManageClinic(clinicId: string): Promise<boolean> {
+export async function canManageCenter(centerId: string): Promise<boolean> {
   const session = await getSession();
   
   if (!session.isAuthenticated || !session.user) {
@@ -230,15 +230,15 @@ export async function canManageClinic(clinicId: string): Promise<boolean> {
   
   const { user } = session;
   
-  // Super admin can manage all clinics
+  // Super admin can manage all centers
   if (user.role === 'super_admin') {
     return true;
   }
   
-  // Clinic owner/admin can manage own clinic
+  // Center owner/admin can manage own center
   if (
-    (user.role === 'clinic_owner' || user.role === 'clinic_admin') &&
-    user.clinic_id === clinicId
+    (user.role === 'center_owner' || user.role === 'center_admin') &&
+    user.center_id === centerId
   ) {
     return true;
   }
@@ -251,7 +251,7 @@ export async function canManageClinic(clinicId: string): Promise<boolean> {
  */
 export async function canViewAnalysis(
   analysisUserId: string,
-  analysisClinicId?: string | null
+  analysisCenterId?: string | null
 ): Promise<boolean> {
   const session = await getSession();
   
@@ -271,11 +271,11 @@ export async function canViewAnalysis(
     return true;
   }
   
-  // Clinic staff can view clinic analyses
+  // Center staff can view center analyses
   if (
-    analysisClinicId &&
-    ['clinic_owner', 'clinic_admin', 'clinic_staff', 'sales_staff'].includes(user.role) &&
-    user.clinic_id === analysisClinicId
+    analysisCenterId &&
+    ['center_owner', 'center_admin', 'center_staff', 'sales_staff'].includes(user.role) &&
+    user.center_id === analysisCenterId
   ) {
     return true;
   }
@@ -284,9 +284,9 @@ export async function canViewAnalysis(
 }
 
 /**
- * Check if current user can create analysis in clinic
+ * Check if current user can create analysis in center
  */
-export async function canCreateAnalysis(clinicId?: string | null): Promise<boolean> {
+export async function canCreateAnalysis(centerId?: string | null): Promise<boolean> {
   const session = await getSession();
   
   if (!session.isAuthenticated || !session.user) {
@@ -300,15 +300,15 @@ export async function canCreateAnalysis(clinicId?: string | null): Promise<boole
     return true;
   }
   
-  // Users can create without clinic context
-  if (!clinicId) {
+  // Users can create without center context
+  if (!centerId) {
     return true;
   }
   
-  // Staff can only create in own clinic
+  // Staff can only create in own center
   if (
-    ['clinic_owner', 'clinic_admin', 'clinic_staff', 'sales_staff'].includes(user.role) &&
-    user.clinic_id === clinicId
+    ['center_owner', 'center_admin', 'center_staff', 'sales_staff'].includes(user.role) &&
+    user.center_id === centerId
   ) {
     return true;
   }
@@ -348,11 +348,11 @@ export async function refreshSession(): Promise<SessionContext> {
 }
 
 /**
- * Get user's clinic ID (helper)
+ * Get user's center ID (helper)
  */
-export async function getUserClinicId(): Promise<string | null> {
+export async function getUserCenterId(): Promise<string | null> {
   const session = await getSession();
-  return session.user?.clinic_id || null;
+  return session.user?.center_id || null;
 }
 
 /**
@@ -372,11 +372,11 @@ export async function isSuperAdmin(): Promise<boolean> {
 }
 
 /**
- * Check if user is clinic owner
+ * Check if user is center owner
  */
-export async function isClinicOwner(): Promise<boolean> {
+export async function isCenterOwner(): Promise<boolean> {
   const session = await getSession();
-  return session.user?.role === 'clinic_owner';
+  return session.user?.role === 'center_owner';
 }
 
 /**

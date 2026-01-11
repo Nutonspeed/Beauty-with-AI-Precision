@@ -23,17 +23,17 @@ export interface TimeSlot {
 
 export interface Booking {
   id: string;
-  patientId: string;
-  patientName: string;
-  patientEmail: string;
-  patientPhone: string;
+  customerId: string;
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
   doctorId: string;
   doctorName: string;
   appointmentDate: Date;
   startTime: string;
   endTime: string;
   duration: number;
-  treatmentType: string;
+  programType: string;
   status: 'pending' | 'confirmed' | 'completed' | 'cancelled' | 'no-show';
   paymentStatus: 'pending' | 'paid' | 'refunded';
   paymentMethod?: 'promptpay' | 'credit_card' | 'cash';
@@ -45,15 +45,15 @@ export interface Booking {
 }
 
 export interface BookingInput {
-  patientId: string;
-  patientName: string;
-  patientEmail: string;
-  patientPhone: string;
+  customerId: string;
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
   doctorId: string;
   appointmentDate: Date;
   startTime: string;
   duration: number;
-  treatmentType: string;
+  programType: string;
   paymentMethod: 'promptpay' | 'credit_card' | 'cash';
   notes?: string;
 }
@@ -67,7 +67,7 @@ export interface BookingStats {
   noShowBookings: number;
   totalRevenue: number;
   averageBookingValue: number;
-  bookingsByTreatment: Record<string, number>;
+  bookingsByProgram: Record<string, number>;
   bookingsByMonth: Record<string, number>;
 }
 
@@ -77,8 +77,8 @@ export class BookingManager {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
   
-  // Treatment prices
-  private treatmentPrices: Record<string, number> = {
+  // Program prices
+  private programPrices: Record<string, number> = {
     'botox': 15000,
     'filler': 20000,
     'laser': 12000,
@@ -117,21 +117,21 @@ export class BookingManager {
     const doctorName = await this.getDoctorName(input.doctorId);
 
     // Calculate payment amount
-    const paymentAmount = this.treatmentPrices[input.treatmentType] || 0;
+    const paymentAmount = this.programPrices[input.programType] || 0;
 
     const booking: Booking = {
       id: this.generateBookingId(),
-      patientId: input.patientId,
-      patientName: input.patientName,
-      patientEmail: input.patientEmail,
-      patientPhone: input.patientPhone,
+      customerId: input.customerId,
+      customerName: input.customerName,
+      customerEmail: input.customerEmail,
+      customerPhone: input.customerPhone,
       doctorId: input.doctorId,
       doctorName,
       appointmentDate: input.appointmentDate,
       startTime: input.startTime,
       endTime,
       duration: input.duration,
-      treatmentType: input.treatmentType,
+      programType: input.programType,
       status: 'pending',
       paymentStatus: 'pending',
       paymentMethod: input.paymentMethod,
@@ -203,13 +203,13 @@ export class BookingManager {
   }
 
   /**
-   * ดึงข้อมูลการจองทั้งหมดของผู้ป่วย
+   * ดึงข้อมูลการจองทั้งหมดของลูกค้า
    */
-  async getPatientBookings(patientId: string): Promise<Booking[]> {
+  async getCustomerBookings(customerId: string): Promise<Booking[]> {
     const { data, error } = await this.supabase
       .from('bookings')
       .select('*')
-      .eq('patient_id', patientId)
+      .eq('customer_id', customerId)
       .order('appointment_date', { ascending: false });
 
     if (error) {
@@ -401,22 +401,22 @@ export class BookingManager {
   private async sendConfirmationEmail(booking: Booking): Promise<void> {
     const _emailContent = `
       <h2>ยืนยันการจองนัดหมาย</h2>
-      <p>สวัสดีคุณ ${booking.patientName},</p>
+      <p>สวัสดีคุณ ${booking.customerName},</p>
       <p>การจองนัดหมายของคุณได้รับการยืนยันแล้ว</p>
       <ul>
         <li>รหัสการจอง: ${booking.id}</li>
         <li>วันที่: ${booking.appointmentDate.toLocaleDateString('th-TH')}</li>
         <li>เวลา: ${booking.startTime} - ${booking.endTime}</li>
         <li>หมอ: ${booking.doctorName}</li>
-        <li>ทรีทเมนท์: ${booking.treatmentType}</li>
+        <li>โปรแกรม: ${booking.programType}</li>
         <li>ค่าใช้จ่าย: ${booking.paymentAmount.toLocaleString()} บาท</li>
       </ul>
       <p>หากต้องการยกเลิกหรือเปลี่ยนแปลงนัดหมาย กรุณาแจ้งล่วงหน้าอย่างน้อย 24 ชั่วโมง</p>
     `;
 
     // Send via email service (SendGrid/Resend)
-    console.log(`Sending confirmation email to ${booking.patientEmail}`);
-    // await emailService.send(booking.patientEmail, 'Booking Confirmation', emailContent);
+    console.log(`Sending confirmation email to ${booking.customerEmail}`);
+    // await emailService.send(booking.customerEmail, 'Booking Confirmation', emailContent);
   }
 
   /**
@@ -426,8 +426,8 @@ export class BookingManager {
     const message = `ยืนยันการจอง: ${booking.appointmentDate.toLocaleDateString('th-TH')} เวลา ${booking.startTime} กับ ${booking.doctorName}. รหัส: ${booking.id}`;
 
     // Send via SMS service (Twilio/Thai SMS providers)
-    console.log(`Sending SMS to ${booking.patientPhone}: ${message}`);
-    // await smsService.send(booking.patientPhone, message);
+    console.log(`Sending SMS to ${booking.customerPhone}: ${message}`);
+    // await smsService.send(booking.customerPhone, message);
   }
 
   /**
@@ -466,12 +466,12 @@ export class BookingManager {
 
   private async sendReminderEmail(booking: Booking): Promise<void> {
     const _message = `เตือน: คุณมีนัดหมายพรุ่งนี้ ${booking.appointmentDate.toLocaleDateString('th-TH')} เวลา ${booking.startTime} กับ ${booking.doctorName}`;
-    console.log(`Sending reminder email to ${booking.patientEmail}`);
+    console.log(`Sending reminder email to ${booking.customerEmail}`);
   }
 
   private async sendReminderSMS(booking: Booking): Promise<void> {
     const _message = `เตือน: นัดหมายพรุ่งนี้ ${booking.startTime} กับ ${booking.doctorName}. รหัส: ${booking.id}`;
-    console.log(`Sending reminder SMS to ${booking.patientPhone}`);
+    console.log(`Sending reminder SMS to ${booking.customerPhone}`);
   }
 
   private async sendStatusUpdateNotification(booking: Booking): Promise<void> {
@@ -522,7 +522,7 @@ export class BookingManager {
         bookings.length > 0
           ? bookings.reduce((sum, b) => sum + b.paymentAmount, 0) / bookings.length
           : 0,
-      bookingsByTreatment: this.groupByTreatment(bookings),
+      bookingsByProgram: this.groupByProgram(bookings),
       bookingsByMonth: this.groupByMonth(bookings),
     };
 
@@ -568,17 +568,17 @@ export class BookingManager {
   private mapBookingToDatabase(booking: Booking): any {
     return {
       id: booking.id,
-      patient_id: booking.patientId,
-      patient_name: booking.patientName,
-      patient_email: booking.patientEmail,
-      patient_phone: booking.patientPhone,
+      customer_id: booking.customerId,
+      customer_name: booking.customerName,
+      customer_email: booking.customerEmail,
+      customer_phone: booking.customerPhone,
       doctor_id: booking.doctorId,
       doctor_name: booking.doctorName,
       appointment_date: booking.appointmentDate.toISOString().split('T')[0],
       start_time: booking.startTime,
       end_time: booking.endTime,
       duration: booking.duration,
-      treatment_type: booking.treatmentType,
+      program_type: booking.programType,
       status: booking.status,
       payment_status: booking.paymentStatus,
       payment_method: booking.paymentMethod,
@@ -593,17 +593,17 @@ export class BookingManager {
   private mapDatabaseToBooking(row: any): Booking {
     return {
       id: row.id,
-      patientId: row.patient_id,
-      patientName: row.patient_name,
-      patientEmail: row.patient_email,
-      patientPhone: row.patient_phone,
+      customerId: row.customer_id,
+      customerName: row.customer_name,
+      customerEmail: row.customer_email,
+      customerPhone: row.customer_phone,
       doctorId: row.doctor_id,
       doctorName: row.doctor_name,
       appointmentDate: new Date(row.appointment_date),
       startTime: row.start_time,
       endTime: row.end_time,
       duration: row.duration,
-      treatmentType: row.treatment_type,
+      programType: row.program_type,
       status: row.status,
       paymentStatus: row.payment_status,
       paymentMethod: row.payment_method,
@@ -615,9 +615,9 @@ export class BookingManager {
     };
   }
 
-  private groupByTreatment(bookings: Booking[]): Record<string, number> {
+  private groupByProgram(bookings: Booking[]): Record<string, number> {
     return bookings.reduce((acc, booking) => {
-      acc[booking.treatmentType] = (acc[booking.treatmentType] || 0) + 1;
+      acc[booking.programType] = (acc[booking.programType] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
   }
@@ -640,7 +640,7 @@ export class BookingManager {
       noShowBookings: 0,
       totalRevenue: 0,
       averageBookingValue: 0,
-      bookingsByTreatment: {},
+      bookingsByProgram: {},
       bookingsByMonth: {},
     };
   }

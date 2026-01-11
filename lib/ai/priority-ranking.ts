@@ -1,7 +1,7 @@
 /**
  * AI-Powered Skin Concern Priority Ranking System
  * 
- * Automatically ranks detected skin concerns by severity, urgency, and treatment priority
+ * Automatically ranks detected skin concerns by severity, urgency, and program priority
  * Uses VISIA parameter scores, percentiles, trends, and medical urgency factors
  */
 
@@ -13,7 +13,7 @@ import { HybridSkinAnalysis, SkinConcern } from '@/lib/types/skin-analysis';
 
 export type PriorityLevel = 'critical' | 'high' | 'medium' | 'low' | 'minimal';
 export type UrgencyLevel = 'immediate' | 'urgent' | 'moderate' | 'low';
-export type TreatmentComplexity = 'simple' | 'moderate' | 'complex';
+export type ProgramComplexity = 'simple' | 'moderate' | 'complex';
 
 export interface SkinConcernPriority {
   concern: SkinConcern;
@@ -23,8 +23,8 @@ export interface SkinConcernPriority {
   severity: number; // 1-10 normalized score
   percentile: number; // 0-100 (how bad compared to others)
   score: number; // Overall priority score (0-100)
-  treatmentComplexity: TreatmentComplexity;
-  estimatedTreatmentWeeks: number;
+  programComplexity: ProgramComplexity;
+  estimatedProgramWeeks: number;
   improvementPotential: number; // 0-100 (how much improvement possible)
   reasons: string[]; // Why this priority level
   recommendations: string[];
@@ -34,9 +34,9 @@ export interface PriorityRankingResult {
   ranked: SkinConcernPriority[];
   topPriorities: SkinConcernPriority[]; // Top 3 concerns
   quickWins: SkinConcernPriority[]; // Easy improvements
-  longTermGoals: SkinConcernPriority[]; // Complex treatments
+  longTermGoals: SkinConcernPriority[]; // Complex programs
   overallSeverity: PriorityLevel;
-  treatmentPhases: {
+  programPhases: {
     phase: number;
     concerns: SkinConcernPriority[];
     estimatedWeeks: number;
@@ -69,8 +69,8 @@ const MEDICAL_URGENCY_WEIGHTS: Record<string, number> = {
   blackheads: 0.8,
 };
 
-// Treatment complexity mapping
-const TREATMENT_COMPLEXITY: Record<string, TreatmentComplexity> = {
+// Program complexity mapping
+const PROGRAM_COMPLEXITY: Record<string, ProgramComplexity> = {
   dullness: 'simple',
   blackheads: 'simple',
   large_pores: 'moderate',
@@ -82,8 +82,8 @@ const TREATMENT_COMPLEXITY: Record<string, TreatmentComplexity> = {
   wrinkles: 'complex',
 };
 
-// Estimated treatment duration (weeks)
-const TREATMENT_DURATION: Record<string, number> = {
+// Estimated program duration (weeks)
+const PROGRAM_DURATION: Record<string, number> = {
   dullness: 4,
   blackheads: 6,
   large_pores: 8,
@@ -139,27 +139,27 @@ export function rankSkinConcernPriorities(
   // Extract top priorities (top 3)
   const topPriorities = ranked.slice(0, 3);
 
-  // Find quick wins (simple treatments with high improvement potential)
+  // Find quick wins (simple programs with high improvement potential)
   const quickWins = ranked
     .filter(
       (r) =>
-        r.treatmentComplexity === 'simple' &&
+        r.programComplexity === 'simple' &&
         r.improvementPotential >= 80 &&
-        r.estimatedTreatmentWeeks <= 8
+        r.estimatedProgramWeeks <= 8
     )
     .slice(0, 3);
 
-  // Find long-term goals (complex treatments)
+  // Find long-term goals (complex programs)
   const longTermGoals = ranked
-    .filter((r) => r.treatmentComplexity === 'complex')
+    .filter((r) => r.programComplexity === 'complex')
     .slice(0, 2);
 
   // Calculate overall severity
   const avgScore = ranked.reduce((sum, r) => sum + r.score, 0) / ranked.length;
   const overallSeverity = scoreToSeverity(avgScore);
 
-  // Generate treatment phases
-  const treatmentPhases = generateTreatmentPhases(ranked);
+  // Generate program phases
+  const programPhases = generateProgramPhases(ranked);
 
   return {
     ranked,
@@ -167,7 +167,7 @@ export function rankSkinConcernPriorities(
     quickWins,
     longTermGoals,
     overallSeverity,
-    treatmentPhases,
+    programPhases,
   };
 }
 
@@ -355,9 +355,9 @@ function calculateConcernPriority(
   // Determine urgency
   const urgency = calculateUrgency(score, trend);
 
-  // Get treatment metadata
-  const treatmentComplexity = TREATMENT_COMPLEXITY[concern.concern] || 'moderate';
-  const estimatedTreatmentWeeks = TREATMENT_DURATION[concern.concern] || 12;
+  // Get program metadata
+  const programComplexity = PROGRAM_COMPLEXITY[concern.concern] || 'moderate';
+  const estimatedProgramWeeks = PROGRAM_DURATION[concern.concern] || 12;
   const improvementPotential = IMPROVEMENT_POTENTIAL[concern.concern] || 70;
 
   // Generate reasons
@@ -374,8 +374,8 @@ function calculateConcernPriority(
     severity: concern.severity,
     percentile: concern.percentile,
     score,
-    treatmentComplexity,
-    estimatedTreatmentWeeks,
+    programComplexity,
+    estimatedProgramWeeks,
     improvementPotential,
     reasons,
     recommendations,
@@ -451,7 +451,7 @@ function generateReasons(
 }
 
 /**
- * Generate treatment recommendations
+ * Generate program recommendations
  */
 function generateRecommendations(
   concern: {
@@ -467,7 +467,7 @@ function generateRecommendations(
 
   const recommendationMap: Record<SkinConcern, string[]> = {
     acne: [
-      'Acne Treatment (Salicylic Acid, Benzoyl Peroxide)',
+      'Acne Program (Salicylic Acid, Benzoyl Peroxide)',
       'Professional Extraction',
       'Light Therapy (Blue/Red LED)',
       'Chemical Peel (BHA)',
@@ -480,7 +480,7 @@ function generateRecommendations(
     ],
     dark_spots: [
       'Vitamin C Serum',
-      'Laser Treatment (Q-Switch)',
+      'Laser Program (Q-Switch)',
       'Chemical Peel (AHA)',
       'Hydroquinone Cream',
     ],
@@ -492,7 +492,7 @@ function generateRecommendations(
     ],
     redness: [
       'Soothing Cream (Centella)',
-      'IPL Treatment',
+      'IPL Program',
       'Laser (V-Beam)',
       'Anti-inflammatory Serum',
     ],
@@ -512,17 +512,17 @@ function generateRecommendations(
       'BHA Cleanser',
       'Clay Mask',
       'Professional Extraction',
-      'Pore Vacuum Treatment',
+      'Pore Vacuum Program',
     ],
     hyperpigmentation: [
-      'Melasma Treatment Protocol',
+      'Melasma Program Protocol',
       'Tranexamic Acid',
       'Laser Toning',
       'Brightening Serum',
     ],
     spots: [
       'Spot Corrector Serum',
-      'Targeted Laser Treatment',
+      'Targeted Laser Program',
       'Brightening Peel',
       'Broad-Spectrum Sunscreen (SPF 50+)',
     ],
@@ -535,26 +535,26 @@ function generateRecommendations(
     texture: [
       'Microdermabrasion',
       'Retexturizing Serum (AHA/BHA)',
-      'Dermaplaning Treatment',
+      'Dermaplaning Program',
       'LED Phototherapy',
     ],
   };
 
-  const treatments = recommendationMap[concern.concern] || [];
+  const programs = recommendationMap[concern.concern] || [];
 
   if (priority === 'critical' || priority === 'high') {
     recs.push(
-      ...treatments.slice(0, 3),
+      ...programs.slice(0, 3),
       'นัดหมายให้เร็วที่สุด (Book appointment ASAP)'
     );
   } else if (priority === 'medium') {
     recs.push(
-      ...treatments.slice(0, 2),
+      ...programs.slice(0, 2),
       'เริ่มใช้ผลิตภัณฑ์บำรุงผิวที่เหมาะสม (Start appropriate skincare)'
     );
   } else {
     recs.push(
-      treatments[0] || 'General skincare routine',
+      programs[0] || 'General skincare routine',
       'ติดตามอาการเป็นประจำ (Monitor regularly)'
     );
   }
@@ -563,9 +563,9 @@ function generateRecommendations(
 }
 
 /**
- * Generate treatment phases (step-by-step plan)
+ * Generate program phases (step-by-step plan)
  */
-function generateTreatmentPhases(
+function generateProgramPhases(
   ranked: SkinConcernPriority[]
 ): Array<{
   phase: number;
@@ -588,18 +588,18 @@ function generateTreatmentPhases(
     phases.push({
       phase: 1,
       concerns: phase1,
-      estimatedWeeks: Math.max(...phase1.map((c) => c.estimatedTreatmentWeeks)),
+      estimatedWeeks: Math.max(...phase1.map((c) => c.estimatedProgramWeeks)),
       description: 'ฉุกเฉิน: ดูแลปัญหาที่มีความรุนแรงสูงก่อน (Critical: Address severe issues first)',
     });
   }
 
-  // Phase 2: Medium Priority (follow-up treatment)
+  // Phase 2: Medium Priority (follow-up program)
   const phase2 = ranked.filter((r) => r.priority === 'medium');
   if (phase2.length > 0) {
     phases.push({
       phase: 2,
       concerns: phase2,
-      estimatedWeeks: Math.max(...phase2.map((c) => c.estimatedTreatmentWeeks)),
+      estimatedWeeks: Math.max(...phase2.map((c) => c.estimatedProgramWeeks)),
       description: 'ติดตาม: ดูแลปัญหารองหลังจากแก้ไขปัญหาหลัก (Follow-up: Address secondary concerns)',
     });
   }
@@ -662,7 +662,7 @@ export function formatPriorityRankingForCustomer(
   summary: string;
   topConcerns: string[];
   quickWins: string[];
-  treatmentPlan: string[];
+  programPlan: string[];
 } {
   const isEn = locale === 'en';
 
@@ -672,17 +672,17 @@ export function formatPriorityRankingForCustomer(
 
   const topConcerns = result.topPriorities.map((p, i) =>
     isEn
-      ? `${i + 1}. ${p.concern} (${p.priority} priority, ${p.estimatedTreatmentWeeks} weeks treatment)`
-      : `${i + 1}. ${p.concern} (ระดับ ${p.priority}, ใช้เวลารักษา ${p.estimatedTreatmentWeeks} สัปดาห์)`
+      ? `${i + 1}. ${p.concern} (${p.priority} priority, ${p.estimatedProgramWeeks} weeks program)`
+      : `${i + 1}. ${p.concern} (ระดับ ${p.priority}, ใช้เวลาโปรแกรม ${p.estimatedProgramWeeks} สัปดาห์)`
   );
 
   const quickWins = result.quickWins.map((p) =>
     isEn
-      ? `${p.concern}: ${p.improvementPotential}% improvement potential in ${p.estimatedTreatmentWeeks} weeks`
-      : `${p.concern}: โอกาสปรับปรุง ${p.improvementPotential}% ภายใน ${p.estimatedTreatmentWeeks} สัปดาห์`
+      ? `${p.concern}: ${p.improvementPotential}% improvement potential in ${p.estimatedProgramWeeks} weeks`
+      : `${p.concern}: โอกาสปรับปรุง ${p.improvementPotential}% ภายใน ${p.estimatedProgramWeeks} สัปดาห์`
   );
 
-  const treatmentPlan = result.treatmentPhases.map((phase) =>
+  const programPlan = result.programPhases.map((phase) =>
     isEn
       ? `Phase ${phase.phase} (${phase.estimatedWeeks} weeks): ${phase.description}`
       : `ระยะที่ ${phase.phase} (${phase.estimatedWeeks} สัปดาห์): ${phase.description}`
@@ -692,6 +692,6 @@ export function formatPriorityRankingForCustomer(
     summary,
     topConcerns,
     quickWins,
-    treatmentPlan,
+    programPlan,
   };
 }

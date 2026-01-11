@@ -33,7 +33,7 @@ export const PAGE_ACCESS: Record<string, { minRole?: UserRole; permissions?: Per
     minRole: UserRole.PREMIUM_CUSTOMER,
     permissions: [Permission.USE_AR_SIMULATOR],
   },
-  "/treatment-plans": {
+  "/program-plans": {
     minRole: UserRole.PREMIUM_CUSTOMER,
     permissions: [Permission.VIEW_FULL_RESULTS],
   },
@@ -42,34 +42,38 @@ export const PAGE_ACCESS: Record<string, { minRole?: UserRole; permissions?: Per
     permissions: [Permission.CHAT_WITH_SALES],
   },
 
-  // Clinic pages
-  "/clinic": {
-    minRole: UserRole.CLINIC_STAFF,
-    permissions: [Permission.VIEW_CLINIC_DASHBOARD],
+  // Center pages
+  "/center": {
+    minRole: UserRole.CENTER_STAFF,
+    permissions: [Permission.VIEW_CENTER_DASHBOARD],
   },
-  "/clinic/dashboard": {
-    minRole: UserRole.CLINIC_STAFF,
-    permissions: [Permission.VIEW_CLINIC_DASHBOARD],
+  "/centers": {
+    minRole: UserRole.CENTER_STAFF,
+    permissions: [Permission.VIEW_CENTER_DASHBOARD],
   },
-  "/clinic/customers": {
-    minRole: UserRole.CLINIC_STAFF,
-    permissions: [Permission.VIEW_CLINIC_CUSTOMERS],
+  "/centers/dashboard": {
+    minRole: UserRole.CENTER_STAFF,
+    permissions: [Permission.VIEW_CENTER_DASHBOARD],
   },
-  "/clinic/bookings": {
-    minRole: UserRole.CLINIC_STAFF,
+  "/centers/customers": {
+    minRole: UserRole.CENTER_STAFF,
+    permissions: [Permission.VIEW_CENTER_CUSTOMERS],
+  },
+  "/centers/bookings": {
+    minRole: UserRole.CENTER_STAFF,
     permissions: [Permission.MANAGE_BOOKINGS],
   },
-  "/clinic/staff": {
-    minRole: UserRole.CLINIC_ADMIN,
-    permissions: [Permission.MANAGE_CLINIC_STAFF],
+  "/centers/staff": {
+    minRole: UserRole.CENTER_ADMIN,
+    permissions: [Permission.MANAGE_CENTER_STAFF],
   },
-  "/clinic/settings": {
-    minRole: UserRole.CLINIC_ADMIN,
-    permissions: [Permission.MANAGE_CLINIC_SETTINGS],
+  "/centers/settings": {
+    minRole: UserRole.CENTER_ADMIN,
+    permissions: [Permission.MANAGE_CENTER_SETTINGS],
   },
-  "/clinic/reports": {
-    minRole: UserRole.CLINIC_STAFF,
-    permissions: [Permission.VIEW_CLINIC_REPORTS],
+  "/centers/reports": {
+    minRole: UserRole.CENTER_STAFF,
+    permissions: [Permission.VIEW_CENTER_REPORTS],
   },
 
   // Sales pages
@@ -147,7 +151,7 @@ export function canAccessPage(pathname: string, userRole: UserRole = UserRole.PU
     return true
   }
 
-  // Check pattern matching (e.g., /clinic/*)
+  // Center pages inheritance
   for (const [path, rule] of Object.entries(PAGE_ACCESS)) {
     if (path.endsWith("/*") && pathname.startsWith(path.slice(0, -2))) {
       if (!rule.minRole && !rule.permissions) {
@@ -232,9 +236,16 @@ export function hasRole(userRole: UserRole, requiredRole: UserRole): boolean {
     [UserRole.PUBLIC]: [],
     [UserRole.FREE_USER]: [UserRole.PUBLIC],
     [UserRole.PREMIUM_CUSTOMER]: [UserRole.FREE_USER, UserRole.PUBLIC],
-    [UserRole.CLINIC_STAFF]: [UserRole.PREMIUM_CUSTOMER, UserRole.FREE_USER, UserRole.PUBLIC],
-    [UserRole.CLINIC_ADMIN]: [
-      UserRole.CLINIC_STAFF,
+    [UserRole.CENTER_STAFF]: [UserRole.PREMIUM_CUSTOMER, UserRole.FREE_USER, UserRole.PUBLIC],
+    [UserRole.CENTER_ADMIN]: [
+      UserRole.CENTER_STAFF,
+      UserRole.PREMIUM_CUSTOMER,
+      UserRole.FREE_USER,
+      UserRole.PUBLIC,
+    ],
+    [UserRole.CENTER_OWNER]: [
+      UserRole.CENTER_ADMIN,
+      UserRole.CENTER_STAFF,
       UserRole.PREMIUM_CUSTOMER,
       UserRole.FREE_USER,
       UserRole.PUBLIC,
@@ -254,8 +265,9 @@ export function getDefaultRedirectPath(userRole: UserRole): string {
     [UserRole.PUBLIC]: "/",
     [UserRole.FREE_USER]: "/analysis",
     [UserRole.PREMIUM_CUSTOMER]: "/analysis",
-    [UserRole.CLINIC_STAFF]: "/clinic/dashboard",
-    [UserRole.CLINIC_ADMIN]: "/clinic/dashboard",
+    [UserRole.CENTER_STAFF]: "/centers/dashboard",
+    [UserRole.CENTER_ADMIN]: "/centers/dashboard",
+    [UserRole.CENTER_OWNER]: "/centers/dashboard",
     [UserRole.SALES_STAFF]: "/sales/dashboard",
     [UserRole.SUPER_ADMIN]: "/admin/dashboard",
   }
@@ -271,10 +283,11 @@ export function getDefaultTierForRole(userRole: UserRole): AnalysisTier {
     [UserRole.PUBLIC]: AnalysisTier.FREE,
     [UserRole.FREE_USER]: AnalysisTier.FREE,
     [UserRole.PREMIUM_CUSTOMER]: AnalysisTier.PREMIUM,
-    [UserRole.CLINIC_STAFF]: AnalysisTier.CLINICAL,
-    [UserRole.CLINIC_ADMIN]: AnalysisTier.CLINICAL,
+    [UserRole.CENTER_STAFF]: AnalysisTier.AESTHETIC,
+    [UserRole.CENTER_ADMIN]: AnalysisTier.AESTHETIC,
+    [UserRole.CENTER_OWNER]: AnalysisTier.AESTHETIC,
     [UserRole.SALES_STAFF]: AnalysisTier.PREMIUM, // For demos
-    [UserRole.SUPER_ADMIN]: AnalysisTier.CLINICAL,
+    [UserRole.SUPER_ADMIN]: AnalysisTier.AESTHETIC,
   }
 
   return tierMap[userRole] ?? AnalysisTier.FREE
@@ -296,10 +309,11 @@ export function canUseTier(userRole: UserRole, tier: AnalysisTier): boolean {
     return hasPermission(userRole, Permission.PREMIUM_ANALYSIS)
   }
 
-  if (tier === AnalysisTier.CLINICAL) {
+  if (tier === AnalysisTier.AESTHETIC) {
     return (
-      userRole === UserRole.CLINIC_STAFF ||
-      userRole === UserRole.CLINIC_ADMIN
+      userRole === UserRole.CENTER_STAFF ||
+      userRole === UserRole.CENTER_ADMIN ||
+      userRole === UserRole.CENTER_OWNER
     )
   }
 

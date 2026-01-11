@@ -17,26 +17,26 @@ export function AIProposalGenerator() {
   const [generatedProposal, setGeneratedProposal] = useState("")
   const [isGenerating, setIsGenerating] = useState(false)
 
-  const treatmentPackages = [
+  const programPackages = [
     {
       id: "basic",
       name: t('salesProposalGenerator.packages.basic.name'),
       price: 15000,
-      treatments: ["HydraFacial", "Chemical Peel", "LED Therapy"],
+      programs: ["HydraFacial", "Chemical Peel", "LED Therapy"],
       description: t('salesProposalGenerator.packages.basic.description')
     },
     {
       id: "premium",
       name: t('salesProposalGenerator.packages.premium.name'),
       price: 35000,
-      treatments: ["HydraFacial", "Chemical Peel", "LED Therapy", "Microdermabrasion", "RF Skin Tightening"],
+      programs: ["HydraFacial", "Chemical Peel", "LED Therapy", "Microdermabrasion", "RF Skin Tightening"],
       description: t('salesProposalGenerator.packages.premium.description')
     },
     {
       id: "vip",
       name: t('salesProposalGenerator.packages.vip.name'),
       price: 75000,
-      treatments: t.raw('salesProposalGenerator.packages.vip.treatments') as string[],
+      programs: t.raw('salesProposalGenerator.packages.vip.programs') as string[],
       description: t('salesProposalGenerator.packages.vip.description')
     }
   ]
@@ -45,8 +45,8 @@ export function AIProposalGenerator() {
     {
       id: "1",
       customerName: "นางสาว สมใจ รักสวย",
-      skinType: t('patient.skinType.oily'),
-      concerns: [t('treatmentComparison.concerns.acne'), t('treatmentComparison.concerns.pigmentation')],
+      skinType: t('customer.skinType.oily'),
+      concerns: [t('programComparison.concerns.acne'), t('programComparison.concerns.pigmentation')],
       recommendedPackage: "premium",
       confidence: 92,
       reasoning: t('salesProposalGenerator.suggestions.reasoning1')
@@ -54,8 +54,8 @@ export function AIProposalGenerator() {
     {
       id: "2",
       customerName: "นาย วิชัย ใจดี",
-      skinType: t('patient.skinType.dry'),
-      concerns: [t('treatmentComparison.concerns.anti_aging'), t('treatmentComparison.concerns.dryness')],
+      skinType: t('customer.skinType.dry'),
+      concerns: [t('programComparison.concerns.anti_aging'), t('programComparison.concerns.dryness')],
       recommendedPackage: "vip",
       confidence: 88,
       reasoning: t('salesProposalGenerator.suggestions.reasoning2')
@@ -70,13 +70,13 @@ export function AIProposalGenerator() {
     // Simulate AI generation
     setTimeout(() => {
       const customer = aiSuggestions.find(c => c.id === selectedCustomer)
-      const package_ = treatmentPackages.find(p => p.id === selectedPackage)
+      const package_ = programPackages.find(p => p.id === selectedPackage)
 
       if (customer && package_) {
         const proposal = `${t('salesProposalGenerator.template.greeting', { name: customer.customerName })}\n\n` +
           `${t('salesProposalGenerator.template.intro', { concerns: customer.concerns.join(", ") })}\n\n` +
           `${t('salesProposalGenerator.template.recommend', { package: t(`salesProposalGenerator.packages.${package_.id}.name`), price: package_.price.toLocaleString() })}\n` +
-          `${t('salesProposalGenerator.template.includes', { items: package_.treatments.join(", ") })}\n\n` +
+          `${t('salesProposalGenerator.template.includes', { items: package_.programs.join(", ") })}\n\n` +
           `${t(`salesProposalGenerator.packages.${package_.id}.description`)}\n\n` +
           `${customMessage ? `${t('salesProposalGenerator.customMessage')}: ${customMessage}` : ""}\n\n` +
           `${t('salesProposalGenerator.template.contact')}\n\n` +
@@ -100,7 +100,7 @@ export function AIProposalGenerator() {
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = 'treatment-proposal.txt'
+    a.download = 'program-proposal.txt'
     document.body.appendChild(a)
     a.click()
     a.remove()
@@ -169,7 +169,7 @@ export function AIProposalGenerator() {
                 <SelectValue placeholder={t('salesProposalGenerator.packagePlaceholder')} />
               </SelectTrigger>
               <SelectContent>
-                {treatmentPackages.map((pkg) => (
+                {programPackages.map((pkg) => (
                   <SelectItem key={pkg.id} value={pkg.id}>
                     {t(`salesProposalGenerator.packages.${pkg.id}.name`)} - ฿{pkg.price.toLocaleString()}
                   </SelectItem>

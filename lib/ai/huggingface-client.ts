@@ -4,7 +4,7 @@
  * Security: Token is hidden on server-side
  */
 
-export type HuggingFaceTask = 'featureExtraction' | 'segmentation' | 'classification'
+export type HuggingFaceTask = 'featureExtraction' | 'segmentation' | 'classification' | 'acneDetection' | 'skinTypeClassification' | 'faceCharacteristics'
 
 export interface HuggingFaceClientRequest {
   task: HuggingFaceTask
@@ -74,6 +74,36 @@ export async function segmentImage(imageData: string) {
 export async function classifyImage(imageData: string) {
   return callHuggingFaceAPI({
     task: 'classification',
+    imageData,
+  })
+}
+
+/**
+ * Detect acne using specialized model
+ */
+export async function detectAcne(imageData: string) {
+  return callHuggingFaceAPI({
+    task: 'acneDetection',
+    imageData,
+  })
+}
+
+/**
+ * Classify skin type using specialized model
+ */
+export async function classifySkinType(imageData: string) {
+  return callHuggingFaceAPI({
+    task: 'skinTypeClassification',
+    imageData,
+  })
+}
+
+/**
+ * Detect face characteristics (wrinkles, spots, etc.) using specialized model
+ */
+export async function detectFaceCharacteristics(imageData: string) {
+  return callHuggingFaceAPI({
+    task: 'faceCharacteristics',
     imageData,
   })
 }

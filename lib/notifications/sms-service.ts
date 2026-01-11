@@ -58,11 +58,11 @@ export async function sendBookingConfirmationSMS(params: {
   customerName: string;
   bookingDate: string;
   bookingTime: string;
-  treatment: string;
-  clinicName: string;
+  program: string;
+  centerName: string;
   bookingId: string;
 }) {
-  const { to, customerName, bookingDate, bookingTime, treatment, clinicName, bookingId } = params;
+  const { to, customerName, bookingDate, bookingTime, program, centerName, bookingId } = params;
 
   const message = `
 ✅ ยืนยันการจอง
@@ -72,8 +72,8 @@ export async function sendBookingConfirmationSMS(params: {
 
 📅 วันที่: ${bookingDate}
 ⏰ เวลา: ${bookingTime}
-💆 การรักษา: ${treatment}
-🏥 สถานที่: ${clinicName}
+💆 โปรแกรม: ${program}
+🏥 สถานที่: ${centerName}
 🔖 เลขที่: ${bookingId}
 
 กรุณามาถึงก่อนเวลานัด 15 นาที
@@ -88,10 +88,10 @@ export async function sendBookingReminderSMS(params: {
   customerName: string;
   bookingDate: string;
   bookingTime: string;
-  treatment: string;
-  clinicName: string;
+  program: string;
+  centerName: string;
 }) {
-  const { to, customerName, bookingDate, bookingTime, treatment, clinicName } = params;
+  const { to, customerName, bookingDate, bookingTime, program, centerName } = params;
 
   const message = `
 ⏰ เตือนนัดหมาย
@@ -101,8 +101,8 @@ export async function sendBookingReminderSMS(params: {
 
 📅 ${bookingDate}
 ⏰ ${bookingTime}
-💆 ${treatment}
-🏥 ${clinicName}
+💆 ${program}
+🏥 ${centerName}
 
 เราตั้งตารอพบคุณ!
   `.trim();

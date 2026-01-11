@@ -54,12 +54,12 @@ export async function sendBookingConfirmationEmail(params: {
   customerName: string;
   bookingDate: string;
   bookingTime: string;
-  treatment: string;
-  clinicName: string;
-  clinicAddress?: string;
+  program: string;
+  centerName: string;
+  centerAddress?: string;
   bookingId: string;
 }) {
-  const { to, customerName, bookingDate, bookingTime, treatment, clinicName, clinicAddress, bookingId } = params;
+  const { to, customerName, bookingDate, bookingTime, program, centerName, centerAddress, bookingId } = params;
 
   const html = `
     <!DOCTYPE html>
@@ -104,17 +104,17 @@ export async function sendBookingConfirmationEmail(params: {
                 <span class="detail-value">${bookingTime}</span>
               </div>
               <div class="detail-row">
-                <span class="detail-label">การรักษา:</span>
-                <span class="detail-value">${treatment}</span>
+                <span class="detail-label">โปรแกรม:</span>
+                <span class="detail-value">${program}</span>
               </div>
               <div class="detail-row">
-                <span class="detail-label">สถานพยาบาล:</span>
-                <span class="detail-value">${clinicName}</span>
+                <span class="detail-label">ศูนย์ความงาม:</span>
+                <span class="detail-value">${centerName}</span>
               </div>
-              ${clinicAddress ? `
+              ${centerAddress ? `
               <div class="detail-row">
                 <span class="detail-label">ที่อยู่:</span>
-                <span class="detail-value">${clinicAddress}</span>
+                <span class="detail-value">${centerAddress}</span>
               </div>
               ` : ''}
             </div>
@@ -133,7 +133,7 @@ export async function sendBookingConfirmationEmail(params: {
             <p>หากต้องการเปลี่ยนแปลงหรือยกเลิกการจอง กรุณาติดต่อเราล่วงหน้าอย่างน้อย 24 ชั่วโมง</p>
           </div>
           <div class="footer">
-            <p>© ${new Date().getFullYear()} Beauty AI Clinic. All rights reserved.</p>
+            <p>© ${new Date().getFullYear()} CenterIQ AI. All rights reserved.</p>
             <p>Email นี้ส่งอัตโนมัติ กรุณาอย่าตอบกลับ</p>
           </div>
         </div>
@@ -148,9 +148,9 @@ export async function sendBookingConfirmationEmail(params: {
 หมายเลขการจอง: ${bookingId}
 วันที่: ${bookingDate}
 เวลา: ${bookingTime}
-การรักษา: ${treatment}
-สถานพยาบาล: ${clinicName}
-${clinicAddress ? `ที่อยู่: ${clinicAddress}` : ''}
+โปรแกรม: ${program}
+ศูนย์ความงาม: ${centerName}
+${centerAddress ? `ที่อยู่: ${centerAddress}` : ''}
 
 สิ่งที่ต้องเตรียม:
 - มาถึงก่อนเวลานัด 15 นาที
@@ -162,7 +162,7 @@ ${clinicAddress ? `ที่อยู่: ${clinicAddress}` : ''}
 
   return sendEmail({
     to,
-    subject: `✅ ยืนยันการจอง - ${treatment} วันที่ ${bookingDate}`,
+    subject: `✅ ยืนยันการจอง - ${program} วันที่ ${bookingDate}`,
     html,
     text,
   });
@@ -174,10 +174,10 @@ export async function sendBookingReminderEmail(params: {
   customerName: string;
   bookingDate: string;
   bookingTime: string;
-  treatment: string;
-  clinicName: string;
+  program: string;
+  centerName: string;
 }) {
-  const { to, customerName, bookingDate, bookingTime, treatment, clinicName } = params;
+  const { to, customerName, bookingDate, bookingTime, program, centerName } = params;
 
   const html = `
     <!DOCTYPE html>
@@ -204,8 +204,8 @@ export async function sendBookingReminderEmail(params: {
             <div class="reminder-box">
               <p><strong>📅 วันที่:</strong> ${bookingDate}</p>
               <p><strong>⏰ เวลา:</strong> ${bookingTime}</p>
-              <p><strong>💆 การรักษา:</strong> ${treatment}</p>
-              <p><strong>🏥 สถานที่:</strong> ${clinicName}</p>
+              <p><strong>💆 โปรแกรม:</strong> ${program}</p>
+              <p><strong>🏥 สถานที่:</strong> ${centerName}</p>
             </div>
 
             <p>เราตั้งตารอพบคุณ!</p>
@@ -217,7 +217,7 @@ export async function sendBookingReminderEmail(params: {
 
   return sendEmail({
     to,
-    subject: `⏰ เตือนนัดหมาย: ${treatment} พรุ่งนี้ ${bookingTime}`,
+    subject: `⏰ เตือนนัดหมาย: ${program} พรุ่งนี้ ${bookingTime}`,
     html,
   });
 }

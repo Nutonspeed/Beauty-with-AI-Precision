@@ -49,26 +49,26 @@ export function AiMetricsPanel() {
       animate={{ opacity: 1, y: 0 }}
       className="pointer-events-none select-none"
     >
-      <div className="aimetrics-panel">
-        <div className="aimetrics-header">
-          AI LIVE METRICS
+      <div className="bg-white/60 backdrop-blur-xl border border-white rounded-[2rem] p-6 shadow-premium w-[280px]">
+        <div className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 italic mb-6 flex items-center gap-2">
+          <div className="h-2 w-2 rounded-full bg-blue-600 animate-pulse" />
+          AI_LIVE_TELEMETRY
         </div>
-        <div className="space-y-3">
+        <div className="space-y-6">
           {metricDefs.map(m => {
             const value = metrics[m.key];
             const pct = ((value - m.min) / (m.max - m.min)) * 100;
             return (
-              <div key={m.key} className="space-y-1">
-                <div className="flex justify-between text-[11px] font-medium aimetrics-label-row">
+              <div key={m.key} className="space-y-2">
+                <div className="flex justify-between text-[10px] font-bold italic tracking-tight text-slate-500 uppercase">
                   <span>{m.label}</span>
-                  <span className="aimetrics-value">
+                  <span className="text-blue-600 font-black">
                     {value.toFixed(m.precision || 0)}{m.unit}
                   </span>
                 </div>
-                <div className="aimetrics-bar-track">
+                <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden shadow-inner">
                   <motion.div
-                    className="h-full"
-                    style={{ background: colors.accentPink, borderRadius: 999 }}
+                    className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 shadow-[0_0_10px_rgba(37,99,235,0.3)]"
                     animate={{ width: pct + "%" }}
                     transition={{ type: "spring", stiffness: 120, damping: 24 }}
                   />

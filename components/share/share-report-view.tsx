@@ -21,14 +21,14 @@ import { Separator } from "@/components/ui/separator"
 
 interface ShareReportViewProps {
   analysis: any
-  clinic: any
+  center: any
   salesStaff: any
   remainingDays: number | null
 }
 
 export function ShareReportView({ 
   analysis, 
-  clinic, 
+  center, 
   salesStaff,
   remainingDays 
 }: ShareReportViewProps) {
@@ -53,11 +53,11 @@ export function ShareReportView({
   const StatusIcon = healthStatus.icon
 
   // Get brand color or use default
-  const brandColor = clinic.brand_color || "#667eea"
+  const brandColor = center.brand_color || "#667eea"
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
-      {/* Clinic Header */}
+      {/* Center Header */}
       <div 
         className="rounded-xl p-8 mb-8 text-white"
         style={{
@@ -66,11 +66,11 @@ export function ShareReportView({
       >
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-4">
-            {clinic.logo_url && (
+            {center.logo_url && (
               <div className="bg-white rounded-lg p-2">
                 <Image
-                  src={clinic.logo_url}
-                  alt={clinic.name}
+                  src={center.logo_url}
+                  alt={center.name}
                   width={60}
                   height={60}
                   className="rounded"
@@ -78,7 +78,7 @@ export function ShareReportView({
               </div>
             )}
             <div>
-              <h1 className="text-3xl font-bold mb-1">{clinic.name}</h1>
+              <h1 className="text-3xl font-bold mb-1">{center.name}</h1>
               <p className="text-white/90 flex items-center gap-2">
                 <Shield className="h-4 w-4" />
                 AI-Powered Skin Analysis Report
@@ -264,51 +264,51 @@ export function ShareReportView({
       <Alert className="mb-8">
         <Shield className="h-4 w-4" />
         <AlertDescription>
-          This report is private and confidential. It has been shared securely with you by {clinic.name}. 
+          This report is private and confidential. It has been shared securely with you by {center.name}. 
           {remainingDays !== null && ` This link will expire in ${remainingDays} ${remainingDays === 1 ? 'day' : 'days'}.`}
         </AlertDescription>
       </Alert>
 
       <Separator className="my-8" />
 
-      {/* Clinic Contact Information */}
+      {/* Center Contact Information */}
       <Card>
         <CardHeader>
-          <CardTitle>Contact {clinic.name}</CardTitle>
+          <CardTitle>Contact {center.name}</CardTitle>
           <CardDescription>
             Have questions? Get in touch with us
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {clinic.contact_phone && (
+            {center.contact_phone && (
               <div className="flex items-center gap-3 text-sm">
                 <Phone className="h-4 w-4 text-muted-foreground" />
                 <a 
-                  href={`tel:${clinic.contact_phone}`}
+                  href={`tel:${center.contact_phone}`}
                   className="hover:underline"
                 >
-                  {clinic.contact_phone}
+                  {center.contact_phone}
                 </a>
               </div>
             )}
 
-            {clinic.contact_email && (
+            {center.contact_email && (
               <div className="flex items-center gap-3 text-sm">
                 <Mail className="h-4 w-4 text-muted-foreground" />
                 <a 
-                  href={`mailto:${clinic.contact_email}`}
+                  href={`mailto:${center.contact_email}`}
                   className="hover:underline"
                 >
-                  {clinic.contact_email}
+                  {center.contact_email}
                 </a>
               </div>
             )}
 
-            {clinic.address && (
+            {center.address && (
               <div className="flex items-start gap-3 text-sm">
                 <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
-                <span>{clinic.address}</span>
+                <span>{center.address}</span>
               </div>
             )}
 
@@ -326,7 +326,7 @@ export function ShareReportView({
       {/* Footer */}
       <div className="mt-8 text-center text-sm text-muted-foreground">
         <p>Powered by AI Beauty Platform</p>
-        <p className="mt-1">© {new Date().getFullYear()} {clinic.name}. All rights reserved.</p>
+        <p className="mt-1">© {new Date().getFullYear()} {center.name}. All rights reserved.</p>
       </div>
     </div>
   )

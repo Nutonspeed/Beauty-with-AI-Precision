@@ -3,11 +3,11 @@
 /**
  * AR Preview Step Component
  * 
- * Interactive AR treatment preview with:
+ * Interactive AR program preview with:
  * - Before/After comparison slider
- * - Treatment selector carousel
+ * - Program selector carousel
  * - Intensity controls
- * - Multiple treatment selection
+ * - Multiple program selection
  * - Mobile-optimized controls
  */
 
@@ -33,23 +33,23 @@ import { ARVisualization } from '@/components/ar-visualization'
 import { BeforeAfterSlider } from '@/components/ar/before-after-slider'
 import type { HybridAnalysisResult } from '@/lib/ai/hybrid-analyzer'
 import { 
-  TREATMENT_OPTIONS, 
-  getTreatmentDisplayName, 
-  getTreatmentDescription 
+  PROGRAM_OPTIONS, 
+  getProgramDisplayName, 
+  getProgramDescription 
 } from '@/lib/sales/presentation-catalog'
 
 interface ARPreviewStepProps {
   readonly image: string
   readonly analysisResults: HybridAnalysisResult | null
-  readonly selectedTreatments: string[]
-  readonly onUpdate: (treatments: string[]) => void
+  readonly selectedPrograms: string[]
+  readonly onUpdate: (programs: string[]) => void
   readonly customerName: string
 }
 
 export function ARPreviewStep({
   image,
   analysisResults,
-  selectedTreatments,
+  selectedPrograms,
   onUpdate,
   customerName,
 }: ARPreviewStepProps) {
@@ -58,9 +58,9 @@ export function ARPreviewStep({
   const [viewMode, setViewMode] = useState<'ar' | 'comparison'>('ar')
   const [processedImage, setProcessedImage] = useState<string | null>(null)
 
-  // Generate processed image when treatments or intensity change
+  // Generate processed image when programs or intensity change
   useEffect(() => {
-    if (selectedTreatments.length === 0 || !image) {
+    if (selectedPrograms.length === 0 || !image) {
       setProcessedImage(null)
       return
     }
@@ -85,20 +85,20 @@ export function ARPreviewStep({
         canvas.height = img.height
         ctx.drawImage(img, 0, 0)
 
-        // Apply simple treatment effects (placeholder for actual AR processing)
+        // Apply simple program effects (placeholder for actual AR processing)
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
         const data = imageData.data
         const effectIntensity = intensity / 100
 
-        // Apply treatments based on selection
+        // Apply programs based on selection
         for (let i = 0; i < data.length; i += 4) {
-          if (selectedTreatments.includes('botox') || selectedTreatments.includes('filler')) {
+          if (selectedPrograms.includes('botox') || selectedPrograms.includes('filler')) {
             // Smoothing effect
             data[i] = Math.min(255, data[i] * (1 + 0.1 * effectIntensity))
             data[i + 1] = Math.min(255, data[i + 1] * (1 + 0.1 * effectIntensity))
             data[i + 2] = Math.min(255, data[i + 2] * (1 + 0.1 * effectIntensity))
           }
-          if (selectedTreatments.includes('laser') || selectedTreatments.includes('peel')) {
+          if (selectedPrograms.includes('laser') || selectedPrograms.includes('peel')) {
             // Brightening effect
             data[i] = Math.min(255, data[i] + 5 * effectIntensity)
             data[i + 1] = Math.min(255, data[i + 1] + 5 * effectIntensity)
@@ -116,32 +116,32 @@ export function ARPreviewStep({
     }
 
     generateProcessedImage()
-  }, [selectedTreatments, intensity, image])
+  }, [selectedPrograms, intensity, image])
 
-  // Get recommended treatments based on analysis
-  const recommendedTreatments = analysisResults 
-    ? TREATMENT_OPTIONS.filter(treatment => {
+  // Get recommended programs based on analysis
+  const recommendedPrograms = analysisResults 
+    ? PROGRAM_OPTIONS.filter(program => {
         // Check if any concerns match
         const concerns = analysisResults.recommendations
           .join(' ')
           .toLowerCase()
-        return treatment.concerns.some(concern => 
+        return program.concerns.some(concern => 
           concerns.includes(concern.replace('_', ' '))
         )
       })
     : []
 
-  const toggleTreatment = (treatmentId: string) => {
-    if (selectedTreatments.includes(treatmentId)) {
-      onUpdate(selectedTreatments.filter(id => id !== treatmentId))
+  const toggleProgram = (programId: string) => {
+    if (selectedPrograms.includes(programId)) {
+      onUpdate(selectedPrograms.filter(id => id !== programId))
       return
     }
 
-    if (selectedTreatments.length >= 3) {
+    if (selectedPrograms.length >= 3) {
       return
     }
 
-    onUpdate([...selectedTreatments, treatmentId])
+    onUpdate([...selectedPrograms, programId])
   }
 
   const handleViewModeChange = (mode: string) => {
@@ -191,21 +191,21 @@ export function ARPreviewStep({
         <TabsContent value="ar" className="space-y-4 mt-4">
           <Card>
             <CardContent className="pt-6">
-              {selectedTreatments.length === 0 ? (
+              {selectedPrograms.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
                   <Eye className="h-16 w-16 text-muted-foreground mb-4" />
                   <p className="text-muted-foreground">
-                    {t('salesWizard.steps.ar.selectTreatmentPrompt')}
+                    {t('salesWizard.steps.ar.selectProgramPrompt')}
                   </p>
                 </div>
               ) : (
                 <ARVisualization
                   image={image}
-                  treatment={selectedTreatments.join(',')}
+                  program={selectedPrograms.join(',')}
                   intensity={intensity}
                   compact={false}
                   viewMode="front"
-                  multiTreatment={selectedTreatments.length > 1}
+                  multiProgram={selectedPrograms.length > 1}
                 />
               )}
             </CardContent>
@@ -216,7 +216,7 @@ export function ARPreviewStep({
         <TabsContent value="comparison" className="space-y-4 mt-4">
           <Card>
             <CardContent className="pt-6">
-              {selectedTreatments.length === 0 ? (
+              {selectedPrograms.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
                   <Sparkles className="h-16 w-16 text-muted-foreground mb-4" />
                   <p className="text-muted-foreground">
@@ -237,7 +237,7 @@ export function ARPreviewStep({
       </Tabs>
 
       {/* Intensity Control */}
-      {selectedTreatments.length > 0 && (
+      {selectedPrograms.length > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
@@ -302,32 +302,32 @@ export function ARPreviewStep({
         </Card>
       )}
 
-      {/* Treatment Selection */}
+      {/* Program Selection */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">{t('salesWizard.steps.ar.selectTreatmentsTitle')}</CardTitle>
+          <CardTitle className="text-lg">{t('salesWizard.steps.ar.selectProgramsTitle')}</CardTitle>
           <CardDescription>
-            {t('salesWizard.steps.ar.selectTreatmentsDesc')}
+            {t('salesWizard.steps.ar.selectProgramsDesc')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-3">
-            {TREATMENT_OPTIONS.map((treatment) => {
-              const isSelected = selectedTreatments.includes(treatment.id)
-              const isRecommended = recommendedTreatments.some(t => t.id === treatment.id)
-              const canSelect = isSelected || selectedTreatments.length < 3
+            {PROGRAM_OPTIONS.map((program) => {
+              const isSelected = selectedPrograms.includes(program.id)
+              const isRecommended = recommendedPrograms.some(t => t.id === program.id)
+              const canSelect = isSelected || selectedPrograms.length < 3
 
               return (
                 <button
-                  key={treatment.id}
-                  onClick={() => canSelect && toggleTreatment(treatment.id)}
+                  key={program.id}
+                  onClick={() => canSelect && toggleProgram(program.id)}
                   disabled={!canSelect}
                   className={cn(
                     "relative p-4 rounded-lg border-2 text-left transition-all",
                     "hover:shadow-md active:scale-98",
                     isSelected && "ring-2 ring-primary ring-offset-2",
                     !canSelect && "opacity-50 cursor-not-allowed",
-                    treatment.colorClass
+                    program.colorClass
                   )}
                 >
                   {/* Recommended Badge */}
@@ -343,17 +343,17 @@ export function ARPreviewStep({
 
                   <div className="flex items-start gap-3">
                     {/* Icon */}
-                    <div className="text-3xl">{treatment.icon}</div>
+                    <div className="text-3xl">{program.icon}</div>
 
                     {/* Content */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <h4 className="font-semibold text-sm">{getTreatmentDisplayName(treatment.id, t)}</h4>
+                        <h4 className="font-semibold text-sm">{getProgramDisplayName(program.id, t)}</h4>
                         {isSelected && (
                           <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0" />
                         )}
                       </div>
-                      <p className="text-xs opacity-80">{getTreatmentDescription(treatment.id, t)}</p>
+                      <p className="text-xs opacity-80">{getProgramDescription(program.id, t)}</p>
                     </div>
 
                     {/* Selection Indicator */}
@@ -380,14 +380,14 @@ export function ARPreviewStep({
           {/* Selection Counter */}
           <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200">
             <p className="text-sm text-blue-900 dark:text-blue-100 text-center" dangerouslySetInnerHTML={{ 
-              __html: t('salesWizard.steps.ar.selectionCounter', { count: selectedTreatments.length }) 
+              __html: t('salesWizard.steps.ar.selectionCounter', { count: selectedPrograms.length }) 
             }} />
           </div>
         </CardContent>
       </Card>
 
-      {/* Selected Treatments Summary */}
-      {selectedTreatments.length > 0 && (
+      {/* Selected Programs Summary */}
+      {selectedPrograms.length > 0 && (
         <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
@@ -397,28 +397,26 @@ export function ARPreviewStep({
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              {selectedTreatments.map((id) => {
-                const treatment = TREATMENT_OPTIONS.find(t => t.id === id)
-                if (!treatment) return null
+              {selectedPrograms.map((id) => {
+                const program = PROGRAM_OPTIONS.find(t => t.id === id)
+                if (!program) return null
                 
                 return (
                   <div 
                     key={id}
                     className="flex items-center gap-3 p-3 bg-white dark:bg-gray-800 rounded-lg"
                   >
-                    <span className="text-2xl">{treatment.icon}</span>
+                    <span className="text-2xl">{program.icon}</span>
                     <div className="flex-1">
-                      <p className="font-medium text-sm">{getTreatmentDisplayName(id, t)}</p>
-                      <p className="text-xs text-muted-foreground">{getTreatmentDescription(id, t)}</p>
+                      <p className="font-medium text-sm">{getProgramDisplayName(id, t)}</p>
+                      <p className="text-xs text-muted-foreground">{getProgramDescription(id, t)}</p>
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => toggleTreatment(id)}
-                      className="h-8 w-8 p-0"
+                    <button
+                      onClick={() => toggleProgram(id)}
+                      className="h-8 w-8 p-0 flex items-center justify-center rounded-full hover:bg-slate-100"
                     >
                       <Minus className="h-4 w-4" />
-                    </Button>
+                    </button>
                   </div>
                 )
               })}

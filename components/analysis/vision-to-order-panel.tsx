@@ -18,7 +18,7 @@ export function VisionToOrderPanel({ analysisId, recommendations }: VisionToOrde
   const [isGenerating, setIsGenerating] = useState(false)
   const [isSynced, setIsSynced] = useState(false)
 
-  // Simulated mapping of treatments to medical supplies
+  // Simulated mapping of programs to medical supplies
   const medicalSuppliesMapping: Record<string, string[]> = {
     'Botox': t.raw('supplies.botox') as string[],
     'Filler': t.raw('supplies.filler') as string[],
@@ -35,9 +35,9 @@ export function VisionToOrderPanel({ analysisId, recommendations }: VisionToOrde
     }, 2000)
   }
 
-  const treatments = recommendations?.treatments || []
-  const allSupplies: string[] = Array.from(new Set(treatments.flatMap((t: any) => {
-    const key = Object.keys(medicalSuppliesMapping).find(k => t.name.includes(k))
+  const programs = recommendations?.programs || []
+  const allSupplies: string[] = Array.from(new Set(programs.flatMap((p: any) => {
+    const key = Object.keys(medicalSuppliesMapping).find(k => p.name.includes(k))
     return key ? medicalSuppliesMapping[key] : (t.raw('supplies.standard') as string[])
   })))
 
@@ -62,7 +62,7 @@ export function VisionToOrderPanel({ analysisId, recommendations }: VisionToOrde
 
       <CardContent className="p-10 lg:p-12 space-y-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Treatment Selection Node */}
+          {/* Program Selection Node */}
           <div className="space-y-6">
             <div className="flex items-center gap-4">
               <div className="h-10 w-10 rounded-xl bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20">
@@ -71,11 +71,11 @@ export function VisionToOrderPanel({ analysisId, recommendations }: VisionToOrde
               <h4 className="text-sm font-black uppercase tracking-widest text-white italic">{t('recommendedItems')}</h4>
             </div>
             <div className="space-y-4">
-              {treatments.map((treatment: any, idx: number) => (
+              {programs.map((program: any, idx: number) => (
                 <div key={idx} className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center justify-between group/item hover:bg-white/[0.04] transition-all">
                   <div className="flex items-center gap-4">
                     <div className="h-2 w-2 rounded-full bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.5)]" />
-                    <p className="text-sm font-bold text-white italic">{treatment.name}</p>
+                    <p className="text-sm font-bold text-white italic">{program.name}</p>
                   </div>
                   <Badge variant="outline" className="text-[8px] font-black tracking-widest border-white/10 text-slate-500">Node_{idx+1}</Badge>
                 </div>
@@ -103,7 +103,7 @@ export function VisionToOrderPanel({ analysisId, recommendations }: VisionToOrde
               {isSynced && (
                 <div className="pt-4 border-t border-white/5 flex items-center gap-3">
                   <ShieldCheck className="h-4 w-4 text-emerald-400" />
-                  <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest">{t('validatedByClinical')}</span>
+                  <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest">{t('validatedByAesthetic')}</span>
                 </div>
               )}
             </div>

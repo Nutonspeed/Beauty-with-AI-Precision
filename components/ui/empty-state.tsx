@@ -132,7 +132,7 @@ export function NoCustomersState({ onAddNew }: { onAddNew?: () => void }) {
     <EmptyState
       icon={require("lucide-react").Users}
       title="ยังไม่มีลูกค้า"
-      description="เพิ่มลูกค้าใหม่เพื่อเริ่มต้นจัดการข้อมูลและประวัติการรักษา"
+      description="เพิ่มลูกค้าใหม่เพื่อเริ่มต้นจัดการข้อมูลและประวัติโปรแกรมความงาม"
       action={
         onAddNew
           ? {

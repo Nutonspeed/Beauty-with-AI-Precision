@@ -11,10 +11,10 @@ interface Booking {
   id: string
   booking_date: string
   booking_time: string
-  treatment_type: string
+  program_type: string
   status: string
   notes?: string
-  clinic?: {
+  center?: {
     name: string
     address: string
   }
@@ -57,7 +57,7 @@ export function BookingHistoryList({ userId }: { userId: string }) {
         <Calendar className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
         <h3 className="mb-2 text-lg font-semibold">{t('bookingHistory.noBookings')}</h3>
         <p className="mb-4 text-sm text-muted-foreground">{t('bookingHistory.startBooking')}</p>
-        <Button>{t('bookingHistory.bookTreatment')}</Button>
+        <Button>{t('bookingHistory.bookProgram')}</Button>
       </div>
     )
   }
@@ -69,7 +69,7 @@ export function BookingHistoryList({ userId }: { userId: string }) {
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <div className="mb-2 flex items-center gap-2">
-                <h4 className="font-semibold">{booking.treatment_type}</h4>
+                <h4 className="font-semibold">{booking.program_type}</h4>
                 <Badge
                   variant={
                     booking.status === "confirmed"
@@ -92,10 +92,10 @@ export function BookingHistoryList({ userId }: { userId: string }) {
                   <Clock className="h-4 w-4" />
                   <span>{booking.booking_time}</span>
                 </div>
-                {booking.clinic && (
+                {booking.center && (
                   <div className="flex items-center gap-2">
                     <MapPin className="h-4 w-4" />
-                    <span>{booking.clinic.name}</span>
+                    <span>{booking.center.name}</span>
                   </div>
                 )}
               </div>

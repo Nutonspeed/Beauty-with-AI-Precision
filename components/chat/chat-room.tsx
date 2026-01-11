@@ -13,7 +13,7 @@ interface ChatRoomProps {
   roomId: string;
   userId: string;
   userName: string;
-  userRole: 'staff' | 'patient';
+  userRole: 'staff' | 'customer';
 }
 
 export function ChatRoom({ roomId, userId, userName, userRole }: ChatRoomProps) {

@@ -36,10 +36,10 @@ interface CustomerProfile {
   gender?: 'male' | 'female' | 'other';
   concerns?: string[];
   budget?: 'low' | 'medium' | 'high' | 'premium';
-  previousTreatments?: string[];
+  previousPrograms?: string[];
 }
 
-interface Treatment {
+interface Program {
   name: string;
   price: number;
   category: string;
@@ -57,8 +57,8 @@ interface ConversationMessage {
 
 interface AISalesCompanionProps {
   customerProfile?: CustomerProfile;
-  treatmentInterest?: string[];
-  currentTreatment?: Treatment;
+  programInterest?: string[];
+  currentProgram?: Program;
   leadScore?: number;
   urgency?: 'low' | 'medium' | 'high';
   onConversionAction?: (action: string) => void;
@@ -67,8 +67,8 @@ interface AISalesCompanionProps {
 
 export function AISalesCompanion({
   customerProfile = {},
-  treatmentInterest = [],
-  currentTreatment,
+  programInterest = [],
+  currentProgram,
   leadScore = 50,
   urgency: childUrgency = 'medium',
   onConversionAction,
@@ -99,7 +99,7 @@ export function AISalesCompanion({
       const welcomeMessage: ConversationMessage = {
         id: 'welcome',
         role: 'assistant',
-        content: generateWelcomeMessage(customerProfile, treatmentInterest, currentTreatment),
+        content: generateWelcomeMessage(customerProfile, programInterest, currentProgram),
         timestamp: new Date(),
       };
       setMessages([welcomeMessage]);
@@ -109,18 +109,18 @@ export function AISalesCompanion({
   const generateWelcomeMessage = (
     profile: CustomerProfile,
     interests: string[],
-    treatment?: Treatment
+    program?: Program
   ): string => {
     const name = profile.name ? `${t('aiSalesCompanion.honorific')}${profile.name}` : t('roles.customer');
     const interestsText = interests.length > 0 ? interests.join(', ') : t('salesWizard.steps.summary.sectionAIAnalysis');
 
-    if (treatment) {
-      return t('aiSalesCompanion.welcomeWithTreatment', {
+    if (program) {
+      return t('aiSalesCompanion.welcomeWithProgram', {
         name,
         interests: interestsText,
-        treatment: treatment.name,
-        price: treatment.price.toLocaleString(),
-        confidence: (treatment.confidence || 0) * 100
+        program: program.name,
+        price: program.price.toLocaleString(),
+        confidence: (program.confidence || 0) * 100
       });
     }
 
@@ -148,8 +148,8 @@ export function AISalesCompanion({
       // Analyze for objections
       const context = {
         customerProfile,
-        treatmentInterest,
-        currentTreatment,
+        programInterest,
+        currentProgram,
         leadScore,
         urgency: childUrgency,
         conversationHistory: messages,
@@ -223,8 +223,8 @@ export function AISalesCompanion({
 
     if (priceKeywords.some(kw => lowerMessage.includes(kw))) {
       return t('aiSalesCompanion.responses.price', {
-        treatment: context.currentTreatment?.name || t('nav.analysis'),
-        price: context.currentTreatment?.price?.toLocaleString() || t('salesTools.quote.treatmentList')
+        program: context.currentProgram?.name || t('nav.analysis'),
+        price: context.currentProgram?.price?.toLocaleString() || t('salesTools.quote.programList')
       });
     }
 

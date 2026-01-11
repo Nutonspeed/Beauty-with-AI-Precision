@@ -63,13 +63,13 @@ interface UserData {
   email: string;
   full_name: string | null;
   role: string;
-  clinic_id: string | null;
+  center_id: string | null;
   avatar_url: string | null;
   phone: string | null;
   is_active: boolean;
   last_seen_at: string | null;
   created_at: string;
-  clinics: { id: string; name: string } | null;
+  centers: { id: string; name: string } | null;
 }
 
 interface Stats {
@@ -80,7 +80,7 @@ interface Stats {
   byRole: Record<string, number>;
 }
 
-interface Clinic {
+interface Center {
   id: string;
   name: string;
 }
@@ -89,13 +89,13 @@ export default function GlobalUserManagement() {
   const t = useTranslations();
   const [users, setUsers] = useState<UserData[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
-  const [clinics, setClinics] = useState<Clinic[]>([]);
+  const [centers, setCenters] = useState<Center[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
   // Filters
   const [roleFilter, setRoleFilter] = useState('all');
-  const [clinicFilter, setClinicFilter] = useState('all');
+  const [centerFilter, setCenterFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [offset, setOffset] = useState(0);
@@ -114,7 +114,7 @@ export default function GlobalUserManagement() {
         offset: String(offset),
       });
       if (roleFilter !== 'all') params.append('role', roleFilter);
-      if (clinicFilter !== 'all') params.append('clinicId', clinicFilter);
+      if (centerFilter !== 'all') params.append('centerId', centerFilter);
       if (statusFilter !== 'all') params.append('status', statusFilter);
       if (searchTerm) params.append('search', searchTerm);
 
@@ -124,7 +124,7 @@ export default function GlobalUserManagement() {
       const data = await res.json();
       setUsers(data.users || []);
       setStats(data.stats || null);
-      setClinics(data.clinics || []);
+      setCenters(data.centers || []);
       setTotal(data.pagination?.total || 0);
     } catch (error) {
       console.error('Error:', error);
@@ -132,7 +132,7 @@ export default function GlobalUserManagement() {
     } finally {
       setLoading(false);
     }
-  }, [roleFilter, clinicFilter, statusFilter, offset, searchTerm, toast]);
+  }, [roleFilter, centerFilter, statusFilter, offset, searchTerm, toast]);
 
   useEffect(() => {
     fetchUsers();
@@ -177,8 +177,8 @@ export default function GlobalUserManagement() {
   const getRoleIcon = (role: string) => {
     switch (role) {
       case 'super_admin': return <Crown className="h-4 w-4 text-purple-500" />;
-      case 'clinic_owner': return <Building2 className="h-4 w-4 text-blue-500" />;
-      case 'clinic_admin': return <Shield className="h-4 w-4 text-green-500" />;
+      case 'center_owner': return <Building2 className="h-4 w-4 text-blue-500" />;
+      case 'center_admin': return <Shield className="h-4 w-4 text-green-500" />;
       case 'staff': return <Briefcase className="h-4 w-4 text-orange-500" />;
       case 'beautician': return <Scissors className="h-4 w-4 text-pink-500" />;
       default: return <User className="h-4 w-4 text-gray-500" />;
@@ -188,8 +188,8 @@ export default function GlobalUserManagement() {
   const getRoleBadge = (role: string) => {
     const variants: Record<string, string> = {
       super_admin: 'bg-purple-100 text-purple-700',
-      clinic_owner: 'bg-blue-100 text-blue-700',
-      clinic_admin: 'bg-green-100 text-green-700',
+      center_owner: 'bg-blue-100 text-blue-700',
+      center_admin: 'bg-green-100 text-green-700',
       staff: 'bg-orange-100 text-orange-700',
       beautician: 'bg-pink-100 text-pink-700',
       customer: 'bg-gray-100 text-gray-700',
@@ -257,8 +257,8 @@ export default function GlobalUserManagement() {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
             {[
               { role: 'super_admin', label: t('userManagement.roles.super_admin'), icon: Crown, color: 'purple' },
-              { role: 'clinic_owner', label: t('userManagement.roles.clinic_owner'), icon: Building2, color: 'blue' },
-              { role: 'clinic_admin', label: t('userManagement.roles.clinic_admin'), icon: Shield, color: 'green' },
+              { role: 'center_owner', label: t('userManagement.roles.center_owner'), icon: Building2, color: 'blue' },
+              { role: 'center_admin', label: t('userManagement.roles.center_admin'), icon: Shield, color: 'green' },
               { role: 'staff', label: t('userManagement.roles.staff'), icon: Briefcase, color: 'orange' },
               { role: 'beautician', label: t('userManagement.roles.beautician'), icon: Scissors, color: 'pink' },
               { role: 'customer', label: t('userManagement.roles.customer'), icon: User, color: 'gray' },
@@ -306,8 +306,8 @@ export default function GlobalUserManagement() {
                 <SelectContent className="bg-[#020617] border-white/10 rounded-2xl">
                   <SelectItem value="all" className="text-[10px] font-black uppercase tracking-widest italic">{t('userManagement.globalProtocol')}</SelectItem>
                   <SelectItem value="super_admin" className="text-[10px] font-black uppercase tracking-widest italic">SUPER_ADMIN</SelectItem>
-                  <SelectItem value="clinic_owner" className="text-[10px] font-black uppercase tracking-widest italic">OWNER_NODE</SelectItem>
-                  <SelectItem value="clinic_admin" className="text-[10px] font-black uppercase tracking-widest italic">ADMIN_VECTOR</SelectItem>
+                  <SelectItem value="center_owner" className="text-[10px] font-black uppercase tracking-widest italic">OWNER_NODE</SelectItem>
+                  <SelectItem value="center_admin" className="text-[10px] font-black uppercase tracking-widest italic">ADMIN_VECTOR</SelectItem>
                   <SelectItem value="staff" className="text-[10px] font-black uppercase tracking-widest italic">OPERATOR</SelectItem>
                   <SelectItem value="beautician" className="text-[10px] font-black uppercase tracking-widest italic">TECHNICIAN</SelectItem>
                   <SelectItem value="customer" className="text-[10px] font-black uppercase tracking-widest italic">CLIENT_UNIT</SelectItem>
@@ -325,13 +325,13 @@ export default function GlobalUserManagement() {
                 </SelectContent>
               </Select>
 
-              <Select value={clinicFilter} onValueChange={(v) => { setClinicFilter(v); setOffset(0); }}>
+              <Select value={centerFilter} onValueChange={(v) => { setCenterFilter(v); setOffset(0); }}>
                 <SelectTrigger className="h-14 w-[180px] rounded-2xl border border-white/5 bg-white/[0.03] px-6 text-[10px] font-black uppercase tracking-widest text-white focus:ring-pink-500/20 appearance-none transition-all italic">
-                  <SelectValue placeholder={t('userManagement.clinicalUplink')} />
+                  <SelectValue placeholder={t('userManagement.centerUplink')} />
                 </SelectTrigger>
                 <SelectContent className="bg-[#020617] border-white/10 rounded-2xl max-h-[300px]">
                   <SelectItem value="all" className="text-[10px] font-black uppercase tracking-widest italic">{t('userManagement.globalNetwork')}</SelectItem>
-                  {clinics.map((c) => (
+                  {centers.map((c) => (
                     <SelectItem key={c.id} value={c.id} className="text-[10px] font-black uppercase tracking-widest italic">{c.name}</SelectItem>
                   ))}
                 </SelectContent>
@@ -351,7 +351,7 @@ export default function GlobalUserManagement() {
                 <TableRow className="bg-white/[0.02] border-b border-white/5">
                   <TableHead className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('userManagement.identityNode')}</TableHead>
                   <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('userManagement.protocol')}</TableHead>
-                  <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('userManagement.clinicalUplink')}</TableHead>
+                  <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('userManagement.centerUplink')}</TableHead>
                   <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('userManagement.operationalState')}</TableHead>
                   <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('userManagement.lastTemporalSync')}</TableHead>
                   <TableHead className="px-10 py-8 text-right w-[70px]"></TableHead>
@@ -396,7 +396,7 @@ export default function GlobalUserManagement() {
                         </div>
                       </TableCell>
                       <TableCell className="px-8 py-8">
-                        <span className="text-sm font-bold text-slate-300 italic uppercase tracking-tight">{user.clinics?.name || t('userManagement.standaloneUnit')}</span>
+                        <span className="text-sm font-bold text-slate-300 italic uppercase tracking-tight">{user.centers?.name || t('userManagement.standaloneUnit')}</span>
                       </TableCell>
                       <TableCell className="px-8 py-8">
                         <Switch
@@ -510,8 +510,8 @@ export default function GlobalUserManagement() {
                     </SelectTrigger>
                     <SelectContent className="bg-[#020617] border-white/10 rounded-2xl">
                       <SelectItem value="super_admin" className="text-[10px] font-black uppercase tracking-widest italic">{t('userManagement.roles.super_admin').toUpperCase()}</SelectItem>
-                      <SelectItem value="clinic_owner" className="text-[10px] font-black uppercase tracking-widest italic">{t('userManagement.roles.clinic_owner').toUpperCase()}</SelectItem>
-                      <SelectItem value="clinic_admin" className="text-[10px] font-black uppercase tracking-widest italic">{t('userManagement.roles.clinic_admin').toUpperCase()}</SelectItem>
+                      <SelectItem value="center_owner" className="text-[10px] font-black uppercase tracking-widest italic">{t('userManagement.roles.center_owner').toUpperCase()}</SelectItem>
+                      <SelectItem value="center_admin" className="text-[10px] font-black uppercase tracking-widest italic">{t('userManagement.roles.center_admin').toUpperCase()}</SelectItem>
                       <SelectItem value="staff" className="text-[10px] font-black uppercase tracking-widest italic">{t('userManagement.roles.staff').toUpperCase()}</SelectItem>
                       <SelectItem value="beautician" className="text-[10px] font-black uppercase tracking-widest italic">{t('userManagement.roles.beautician').toUpperCase()}</SelectItem>
                       <SelectItem value="customer" className="text-[10px] font-black uppercase tracking-widest italic">{t('userManagement.roles.customer').toUpperCase()}</SelectItem>

@@ -34,26 +34,26 @@ function getSubscriptionAmount(tier: string): number {
 export async function getTenantById(tenantId: string): Promise<Tenant | null> {
   try {
     const supabase = await createClient()
-    const { data: clinic, error } = await supabase
-      .from("clinics")
+    const { data: center, error } = await supabase
+      .from("centers")
       .select("*")
       .eq("id", tenantId)
       .single()
 
-    if (error || !clinic) return null
+    if (error || !center) return null
 
-    // Map clinics table to Tenant type (same as createTenant)
-    const features = PLAN_FEATURES[clinic.subscription_tier as keyof typeof PLAN_FEATURES] || PLAN_FEATURES.starter
-    const subscriptionAmount = getSubscriptionAmount(clinic.subscription_tier)
+    // Map centers table to Tenant type (same as createTenant)
+    const features = PLAN_FEATURES[center.subscription_tier as keyof typeof PLAN_FEATURES] || PLAN_FEATURES.starter
+    const subscriptionAmount = getSubscriptionAmount(center.subscription_tier)
 
     return {
-      id: clinic.id,
-      slug: clinic.slug,
+      id: center.id,
+      slug: center.slug,
       settings: {
-        clinicName: clinic.name || clinic.clinic_name,
-        clinicType: "aesthetic_clinic",
-        email: clinic.email,
-        phone: clinic.phone,
+        centerName: center.name || center.clinic_name,
+        centerType: "aesthetic_center",
+        email: center.email,
+        phone: center.phone,
         address: { street: "", city: "", state: "", postalCode: "", country: "Thailand" },
         timezone: "Asia/Bangkok",
         businessHours: getDefaultBusinessHours(),
@@ -67,19 +67,19 @@ export async function getTenantById(tenantId: string): Promise<Tenant | null> {
       branding: { primaryColor: "#8B5CF6", secondaryColor: "#EC4899" },
       features: features as TenantFeatures,
       subscription: {
-        plan: clinic.subscription_tier,
-        status: clinic.subscription_tier === "starter" ? "trial" : "active",
+        plan: center.subscription_tier,
+        status: center.subscription_tier === "starter" ? "trial" : "active",
         startDate: new Date(),
-        endDate: clinic.subscription_tier === "starter" ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) : undefined,
+        endDate: center.subscription_tier === "starter" ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) : undefined,
         billingCycle: "monthly",
         amount: subscriptionAmount,
         currency: "THB",
       },
-      createdAt: clinic.created_at || new Date().toISOString(),
-      updatedAt: clinic.updated_at || new Date().toISOString(),
+      createdAt: center.created_at || new Date().toISOString(),
+      updatedAt: center.updated_at || new Date().toISOString(),
       createdBy: "",
-      isActive: clinic.is_active ?? true,
-      isTrial: clinic.subscription_tier === "starter",
+      isActive: center.is_active ?? true,
+      isTrial: center.subscription_tier === "starter",
       isolationStrategy: "shared_schema",
       usage: { currentUsers: 1, currentCustomers: 0, storageUsedGB: 0, apiCallsThisMonth: 0 },
     }
@@ -95,26 +95,26 @@ export async function getTenantById(tenantId: string): Promise<Tenant | null> {
 export async function getTenantBySlug(slug: string): Promise<Tenant | null> {
   try {
     const supabase = await createClient()
-    const { data: clinic, error } = await supabase
-      .from("clinics")
+    const { data: center, error } = await supabase
+      .from("centers")
       .select("*")
       .eq("slug", slug)
       .single()
 
-    if (error || !clinic) return null
+    if (error || !center) return null
 
-    // Map clinics table to Tenant type
-    const features = PLAN_FEATURES[clinic.subscription_tier as keyof typeof PLAN_FEATURES] || PLAN_FEATURES.starter
-    const subscriptionAmount = getSubscriptionAmount(clinic.subscription_tier)
+    // Map centers table to Tenant type
+    const features = PLAN_FEATURES[center.subscription_tier as keyof typeof PLAN_FEATURES] || PLAN_FEATURES.starter
+    const subscriptionAmount = getSubscriptionAmount(center.subscription_tier)
 
     return {
-      id: clinic.id,
-      slug: clinic.slug,
+      id: center.id,
+      slug: center.slug,
       settings: {
-        clinicName: clinic.name || clinic.clinic_name,
-        clinicType: "aesthetic_clinic",
-        email: clinic.email,
-        phone: clinic.phone,
+        centerName: center.name || center.clinic_name,
+        centerType: "aesthetic_center",
+        email: center.email,
+        phone: center.phone,
         address: { street: "", city: "", state: "", postalCode: "", country: "Thailand" },
         timezone: "Asia/Bangkok",
         businessHours: getDefaultBusinessHours(),
@@ -128,19 +128,19 @@ export async function getTenantBySlug(slug: string): Promise<Tenant | null> {
       branding: { primaryColor: "#8B5CF6", secondaryColor: "#EC4899" },
       features: features as TenantFeatures,
       subscription: {
-        plan: clinic.subscription_tier,
-        status: clinic.subscription_tier === "starter" ? "trial" : "active",
+        plan: center.subscription_tier,
+        status: center.subscription_tier === "starter" ? "trial" : "active",
         startDate: new Date(),
-        endDate: clinic.subscription_tier === "starter" ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) : undefined,
+        endDate: center.subscription_tier === "starter" ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) : undefined,
         billingCycle: "monthly",
         amount: subscriptionAmount,
         currency: "THB",
       },
-      createdAt: clinic.created_at || new Date().toISOString(),
-      updatedAt: clinic.updated_at || new Date().toISOString(),
+      createdAt: center.created_at || new Date().toISOString(),
+      updatedAt: center.updated_at || new Date().toISOString(),
       createdBy: "",
-      isActive: clinic.is_active ?? true,
-      isTrial: clinic.subscription_tier === "starter",
+      isActive: center.is_active ?? true,
+      isTrial: center.subscription_tier === "starter",
       isolationStrategy: "shared_schema",
       usage: { currentUsers: 1, currentCustomers: 0, storageUsedGB: 0, apiCallsThisMonth: 0 },
     }
@@ -156,23 +156,23 @@ export async function getTenantBySlug(slug: string): Promise<Tenant | null> {
 export async function getAllTenants(): Promise<Tenant[]> {
   try {
     const supabase = await createClient()
-    const { data: clinics, error } = await supabase.from("clinics").select("*")
+    const { data: centers, error } = await supabase.from("centers").select("*")
 
-    if (error || !clinics) return []
+    if (error || !centers) return []
 
-    // Map clinics table to Tenant type
-    return clinics.map((clinic: any) => {
-      const features = PLAN_FEATURES[clinic.subscription_tier as keyof typeof PLAN_FEATURES] || PLAN_FEATURES.starter
-      const subscriptionAmount = getSubscriptionAmount(clinic.subscription_tier)
+    // Map centers table to Tenant type
+    return centers.map((center: any) => {
+      const features = PLAN_FEATURES[center.subscription_tier as keyof typeof PLAN_FEATURES] || PLAN_FEATURES.starter
+      const subscriptionAmount = getSubscriptionAmount(center.subscription_tier)
 
       return {
-        id: clinic.id,
-        slug: clinic.slug,
+        id: center.id,
+        slug: center.slug,
         settings: {
-          clinicName: clinic.name || clinic.clinic_name,
-          clinicType: "aesthetic_clinic",
-          email: clinic.email,
-          phone: clinic.phone,
+          centerName: center.name || center.clinic_name,
+          centerType: "aesthetic_center",
+          email: center.email,
+          phone: center.phone,
           address: { street: "", city: "", state: "", postalCode: "", country: "Thailand" },
           timezone: "Asia/Bangkok",
           businessHours: getDefaultBusinessHours(),
@@ -186,19 +186,19 @@ export async function getAllTenants(): Promise<Tenant[]> {
         branding: { primaryColor: "#8B5CF6", secondaryColor: "#EC4899" },
         features: features as TenantFeatures,
         subscription: {
-          plan: clinic.subscription_tier,
-          status: clinic.subscription_tier === "starter" ? "trial" : "active",
+          plan: center.subscription_tier,
+          status: center.subscription_tier === "starter" ? "trial" : "active",
           startDate: new Date(),
-          endDate: clinic.subscription_tier === "starter" ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) : undefined,
+          endDate: center.subscription_tier === "starter" ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) : undefined,
           billingCycle: "monthly",
           amount: subscriptionAmount,
           currency: "THB",
         },
-        createdAt: clinic.created_at || new Date().toISOString(),
-        updatedAt: clinic.updated_at || new Date().toISOString(),
+        createdAt: center.created_at || new Date().toISOString(),
+        updatedAt: center.updated_at || new Date().toISOString(),
         createdBy: "",
-        isActive: clinic.is_active ?? true,
-        isTrial: clinic.subscription_tier === "starter",
+        isActive: center.is_active ?? true,
+        isTrial: center.subscription_tier === "starter",
         isolationStrategy: "shared_schema",
         usage: { currentUsers: 1, currentCustomers: 0, storageUsedGB: 0, apiCallsThisMonth: 0 },
       }
@@ -215,23 +215,23 @@ export async function getAllTenants(): Promise<Tenant[]> {
 export async function getActiveTenants(): Promise<Tenant[]> {
   try {
     const supabase = await createClient()
-    const { data: clinics, error } = await supabase.from("clinics").select("*").eq("is_active", true)
+    const { data: centers, error } = await supabase.from("centers").select("*").eq("is_active", true)
 
-    if (error || !clinics) return []
+    if (error || !centers) return []
 
-    // Map clinics table to Tenant type
-    return clinics.map((clinic: any) => {
-      const features = PLAN_FEATURES[clinic.subscription_tier as keyof typeof PLAN_FEATURES] || PLAN_FEATURES.starter
-      const subscriptionAmount = getSubscriptionAmount(clinic.subscription_tier)
+    // Map centers table to Tenant type
+    return centers.map((center: any) => {
+      const features = PLAN_FEATURES[center.subscription_tier as keyof typeof PLAN_FEATURES] || PLAN_FEATURES.starter
+      const subscriptionAmount = getSubscriptionAmount(center.subscription_tier)
 
       return {
-        id: clinic.id,
-        slug: clinic.slug,
+        id: center.id,
+        slug: center.slug,
         settings: {
-          clinicName: clinic.name || clinic.clinic_name,
-          clinicType: "aesthetic_clinic",
-          email: clinic.email,
-          phone: clinic.phone,
+          centerName: center.name || center.clinic_name,
+          centerType: "aesthetic_center",
+          email: center.email,
+          phone: center.phone,
           address: { street: "", city: "", state: "", postalCode: "", country: "Thailand" },
           timezone: "Asia/Bangkok",
           businessHours: getDefaultBusinessHours(),
@@ -245,19 +245,19 @@ export async function getActiveTenants(): Promise<Tenant[]> {
         branding: { primaryColor: "#8B5CF6", secondaryColor: "#EC4899" },
         features: features as TenantFeatures,
         subscription: {
-          plan: clinic.subscription_tier,
-          status: clinic.subscription_tier === "starter" ? "trial" : "active",
+          plan: center.subscription_tier,
+          status: center.subscription_tier === "starter" ? "trial" : "active",
           startDate: new Date(),
-          endDate: clinic.subscription_tier === "starter" ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) : undefined,
+          endDate: center.subscription_tier === "starter" ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) : undefined,
           billingCycle: "monthly",
           amount: subscriptionAmount,
           currency: "THB",
         },
-        createdAt: clinic.created_at || new Date().toISOString(),
-        updatedAt: clinic.updated_at || new Date().toISOString(),
+        createdAt: center.created_at || new Date().toISOString(),
+        updatedAt: center.updated_at || new Date().toISOString(),
         createdBy: "",
-        isActive: clinic.is_active ?? true,
-        isTrial: clinic.subscription_tier === "starter",
+        isActive: center.is_active ?? true,
+        isTrial: center.subscription_tier === "starter",
         isolationStrategy: "shared_schema",
         usage: { currentUsers: 1, currentCustomers: 0, storageUsedGB: 0, apiCallsThisMonth: 0 },
       }
@@ -290,17 +290,17 @@ export async function createTenant(input: CreateTenantInput): Promise<Tenant> {
 
     const supabase = await createClient()
 
-    // Insert into clinics table (using actual schema)
+    // Insert into centers table (using actual schema)
     const maxStaff = input.plan === "starter" ? 5 : input.plan === "professional" ? 15 : 50
     const maxAnalyses = input.plan === "starter" ? 100 : input.plan === "professional" ? 500 : 10000
 
     const { data: tenant, error } = await supabase
-      .from("clinics")
+      .from("centers")
       .insert({
         id: tenantId,
         slug: input.slug,
-        name: input.clinicName,
-        clinic_name: input.clinicName,
+        name: input.centerName,
+        center_name: input.centerName,
         email: input.email,
         phone: input.phone,
         subscription_tier: input.plan,
@@ -315,14 +315,14 @@ export async function createTenant(input: CreateTenantInput): Promise<Tenant> {
       throw new Error(error?.message || "Failed to create tenant")
     }
 
-    // Convert clinics table data to Tenant type
-    // Note: clinics table doesn't have all fields, so we create defaults
+    // Convert centers table data to Tenant type
+    // Note: centers table doesn't have all fields, so we create defaults
     return {
       id: tenant.id,
       slug: tenant.slug,
       settings: {
-        clinicName: tenant.name || tenant.clinic_name,
-        clinicType: "aesthetic_clinic",
+        centerName: tenant.name || tenant.clinic_name,
+        centerType: "aesthetic_center",
         email: tenant.email,
         phone: tenant.phone,
         address: {
@@ -381,11 +381,11 @@ export async function updateTenant(tenantId: string, updates: Partial<Tenant>): 
   try {
     const supabase = await createClient()
 
-    // Map Tenant updates to clinics table columns
+    // Map Tenant updates to centers table columns
     const updateData: any = {}
 
     if (updates.slug) updateData.slug = updates.slug
-    if (updates.settings?.clinicName) updateData.name = updates.settings.clinicName
+    if (updates.settings?.centerName) updateData.name = updates.settings.centerName
     if (updates.settings?.email) updateData.email = updates.settings.email
     if (updates.settings?.phone) updateData.phone = updates.settings.phone
     if (updates.subscription?.plan) updateData.subscription_tier = updates.subscription.plan
@@ -396,27 +396,27 @@ export async function updateTenant(tenantId: string, updates: Partial<Tenant>): 
       return getTenantById(tenantId)
     }
 
-    const { data: updatedClinic, error } = await supabase
-      .from("clinics")
+    const { data: updatedCenter, error } = await supabase
+      .from("centers")
       .update(updateData)
       .eq("id", tenantId)
       .select()
       .single()
 
-    if (error || !updatedClinic) return null
+    if (error || !updatedCenter) return null
 
     // Map back to Tenant type
-    const features = PLAN_FEATURES[updatedClinic.subscription_tier as keyof typeof PLAN_FEATURES] || PLAN_FEATURES.starter
-    const subscriptionAmount = getSubscriptionAmount(updatedClinic.subscription_tier)
+    const features = PLAN_FEATURES[updatedCenter.subscription_tier as keyof typeof PLAN_FEATURES] || PLAN_FEATURES.starter
+    const subscriptionAmount = getSubscriptionAmount(updatedCenter.subscription_tier)
 
     return {
-      id: updatedClinic.id,
-      slug: updatedClinic.slug,
+      id: updatedCenter.id,
+      slug: updatedCenter.slug,
       settings: {
-        clinicName: updatedClinic.name || updatedClinic.clinic_name,
-        clinicType: "aesthetic_clinic",
-        email: updatedClinic.email,
-        phone: updatedClinic.phone,
+        centerName: updatedCenter.name || updatedCenter.clinic_name,
+        centerType: "aesthetic_center",
+        email: updatedCenter.email,
+        phone: updatedCenter.phone,
         address: { street: "", city: "", state: "", postalCode: "", country: "Thailand" },
         timezone: "Asia/Bangkok",
         businessHours: getDefaultBusinessHours(),
@@ -430,19 +430,19 @@ export async function updateTenant(tenantId: string, updates: Partial<Tenant>): 
       branding: { primaryColor: "#8B5CF6", secondaryColor: "#EC4899" },
       features: features as TenantFeatures,
       subscription: {
-        plan: updatedClinic.subscription_tier,
-        status: updatedClinic.subscription_tier === "starter" ? "trial" : "active",
+        plan: updatedCenter.subscription_tier,
+        status: updatedCenter.subscription_tier === "starter" ? "trial" : "active",
         startDate: new Date(),
-        endDate: updatedClinic.subscription_tier === "starter" ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) : undefined,
+        endDate: updatedCenter.subscription_tier === "starter" ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) : undefined,
         billingCycle: "monthly",
         amount: subscriptionAmount,
         currency: "THB",
       },
-      createdAt: updatedClinic.created_at || new Date().toISOString(),
-      updatedAt: updatedClinic.updated_at || new Date().toISOString(),
+      createdAt: updatedCenter.created_at || new Date().toISOString(),
+      updatedAt: updatedCenter.updated_at || new Date().toISOString(),
       createdBy: "",
-      isActive: updatedClinic.is_active ?? true,
-      isTrial: updatedClinic.subscription_tier === "starter",
+      isActive: updatedCenter.is_active ?? true,
+      isTrial: updatedCenter.subscription_tier === "starter",
       isolationStrategy: "shared_schema",
       usage: { currentUsers: 1, currentCustomers: 0, storageUsedGB: 0, apiCallsThisMonth: 0 },
     }
@@ -459,7 +459,7 @@ export async function deleteTenant(tenantId: string): Promise<boolean> {
   try {
     const supabase = await createClient()
 
-    const { error } = await supabase.from("clinics").update({ is_active: false }).eq("id", tenantId)
+    const { error } = await supabase.from("centers").update({ is_active: false }).eq("id", tenantId)
 
     return !error
   } catch (error) {

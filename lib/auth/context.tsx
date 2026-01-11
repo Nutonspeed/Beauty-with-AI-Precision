@@ -16,7 +16,7 @@ interface AuthUser {
   email: string
   role: UserRole
   tier: AnalysisTier
-  clinic_id: string | null
+  center_id: string | null
   full_name: string | null
   avatar_url: string | null
   phone: string | null
@@ -196,7 +196,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 email: newProfile.email,
                 role: 'customer',
                 tier: 'free',
-                clinic_id: null,
+                center_id: null,
                 full_name: newProfile.full_name,
                 avatar_url: null,
                 phone: null,
@@ -247,7 +247,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           email: profile.email,
           role: userRole,
           tier: getRoleTier(userRole),
-          clinic_id: profile.clinic_id,
+          center_id: profile.center_id || profile.clinic_id,
           full_name: profile.full_name,
           avatar_url: profile.avatar_url,
           phone: profile.phone,

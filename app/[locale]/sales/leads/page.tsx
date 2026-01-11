@@ -64,7 +64,7 @@ interface Lead {
   score: number
   next_follow_up_at?: string | null
   last_contact_at?: string | null
-  interested_treatments?: string[] | null
+  interested_programs?: string[] | null
   budget_range_min?: number | null
   budget_range_max?: number | null
   created_at: string
@@ -121,7 +121,7 @@ export default function LeadsListPage() {
           return
         }
         const roleData = await roleRes.json()
-        if (!['sales_staff', 'clinic_admin', 'clinic_owner', 'super_admin'].includes(roleData.role)) {
+        if (!['sales_staff', 'center_admin', 'center_owner', 'super_admin'].includes(roleData.role)) {
           router.push(lp('/unauthorized'))
           return
         }
@@ -244,7 +244,7 @@ export default function LeadsListPage() {
                 <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent not-italic">Management</span>
               </h1>
               <p className="text-xl text-slate-500 font-light tracking-widest max-w-2xl italic leading-relaxed">
-                Orchestrate prospective conversion flows through clinical intelligence metrics.
+                Orchestrate prospective conversion flows through aesthetic intelligence metrics.
               </p>
             </motion.div>
             
@@ -324,7 +324,7 @@ export default function LeadsListPage() {
                 </SelectTrigger>
                 <SelectContent className="bg-[#020617] border-white/10 rounded-2xl">
                   <SelectItem value="all" className="text-[10px] font-black uppercase tracking-widest italic">{t('salesLeads.allSources')}</SelectItem>
-                  <SelectItem value="website" className="text-[10px] font-black uppercase tracking-widest italic">Clinical Portal</SelectItem>
+                  <SelectItem value="website" className="text-[10px] font-black uppercase tracking-widest italic">Aesthetic Portal</SelectItem>
                   <SelectItem value="facebook" className="text-[10px] font-black uppercase tracking-widest italic">Meta Node</SelectItem>
                   <SelectItem value="instagram" className="text-[10px] font-black uppercase tracking-widest italic">Visual Channel</SelectItem>
                   <SelectItem value="google_ads" className="text-[10px] font-black uppercase tracking-widest italic">Alpha Search</SelectItem>

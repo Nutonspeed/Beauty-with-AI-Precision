@@ -23,7 +23,7 @@ export function MedicalDecisionSupport({ isEnterprise, skinData }: MedicalDecisi
     setIsAnalyzing(true)
     setTimeout(() => {
       setIsAnalyzing(false)
-      toast.success(t('clinicalRationaleGenerated'))
+      toast.success(t('aestheticRationaleGenerated'))
     }, 2500)
   }
 
@@ -36,7 +36,7 @@ export function MedicalDecisionSupport({ isEnterprise, skinData }: MedicalDecisi
       ]
     },
     {
-      title: t('treatmentRationale'),
+      title: t('programRationale'),
       items: [
         { label: t('yagLaser'), rationale: t('yagRationale') },
         { label: t('tranexamic'), rationale: t('tranexamicRationale') },
@@ -54,7 +54,7 @@ export function MedicalDecisionSupport({ isEnterprise, skinData }: MedicalDecisi
       {!isEnterprise && (
         <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-[#020617]/60 backdrop-blur-sm p-10 text-center">
           <Badge className="mb-4 bg-cyan-500/20 text-cyan-400 border-cyan-500/30 uppercase tracking-widest font-black">{t('systemLocked')}</Badge>
-          <h2 className="text-2xl font-bold text-white italic mb-4">{t('clinicalDecisionSupport')}</h2>
+          <h2 className="text-2xl font-bold text-white italic mb-4">{t('aestheticDecisionSupport')}</h2>
           <p className="text-slate-400 max-w-sm font-light mb-8">
             {t('lockedDescription')}
           </p>
@@ -136,7 +136,7 @@ export function MedicalDecisionSupport({ isEnterprise, skinData }: MedicalDecisi
                 <ShieldCheck className="h-8 w-8 text-cyan-500" />
               </div>
               <h4 className="text-lg font-bold text-white italic">{t('protocolIntegrity', { value: 99.8 })}</h4>
-              <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest italic">{t('validatedByClinicalAI')}</p>
+              <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest italic">{t('validatedByAestheticAI')}</p>
             </div>
           </div>
           <Button variant="outline" className="h-14 px-8 rounded-2xl border-white/10 bg-white/5 text-[10px] font-black uppercase tracking-widest italic hover:bg-white/10">

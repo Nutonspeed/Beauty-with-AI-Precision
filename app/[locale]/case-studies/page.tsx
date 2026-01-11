@@ -49,7 +49,7 @@ export default function CaseStudiesPage() {
             >
               <Badge variant="outline" className="px-4 py-1 rounded-full border-pink-500/30 text-pink-400 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.2em] text-[10px] font-black shadow-2xl shadow-pink-500/10">
                 <BookOpen className="mr-3 h-3.5 w-3.5 animate-pulse" />
-                Clinical Outcome Archive
+                Aesthetic Outcome Archive
               </Badge>
             </motion.div>
             
@@ -69,7 +69,7 @@ export default function CaseStudiesPage() {
               transition={{ delay: 0.4, duration: 1 }}
               className="text-xl text-slate-500 font-light tracking-widest max-w-2xl mx-auto italic leading-relaxed"
             >
-              Explore synchronized clinical evidence and realized aesthetic outcomes from our precision AI ecosystem.
+              Explore synchronized aesthetic evidence and realized aesthetic outcomes from our precision AI ecosystem.
             </motion.p>
           </div>
 

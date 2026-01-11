@@ -39,11 +39,11 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { getProduct3DManager } from '@/lib/ar/product-3d-viewer'
-import { getTreatmentById, getTreatmentDisplayName, getTreatmentPrice } from '@/lib/sales/presentation-catalog'
+import { getProgramById, getProgramDisplayName, getProgramPrice } from '@/lib/sales/presentation-catalog'
 import type { ProposalDetails, ProposalItem } from '@/lib/sales/presentation-types'
 
 interface ProposalStepProps {
-  readonly selectedTreatments: string[]
+  readonly selectedPrograms: string[]
   readonly selectedProducts: string[]
   readonly proposal: ProposalDetails | null
   readonly onUpdate: (proposal: ProposalDetails) => void
@@ -60,7 +60,7 @@ const PRODUCT_PRICES: Record<string, number> = {
 }
 
 export function ProposalStep({
-  selectedTreatments,
+  selectedPrograms,
   selectedProducts,
   proposal,
   onUpdate,
@@ -90,14 +90,14 @@ export function ProposalStep({
       // Create new proposal from selections
       const newItems: ProposalItem[] = []
 
-      // Add treatments
-      for (const treatment of selectedTreatments) {
-        const treatmentDefinition = getTreatmentById(treatment)
-        const price = getTreatmentPrice(treatment)
+      // Add programs
+      for (const program of selectedPrograms) {
+        const programDefinition = getProgramById(program)
+        const price = getProgramPrice(program)
         newItems.push({
-          id: `treatment-${treatment}`,
-          name: treatmentDefinition?.name ?? getTreatmentDisplayName(treatment),
-          type: 'treatment',
+          id: `program-${program}`,
+          name: programDefinition?.name ?? getProgramDisplayName(program),
+          type: 'program',
           quantity: 1,
           pricePerUnit: price,
           total: price,
@@ -123,7 +123,7 @@ export function ProposalStep({
 
       setItems(newItems)
     }
-  }, [selectedTreatments, selectedProducts, proposal, manager])
+  }, [selectedPrograms, selectedProducts, proposal, manager])
 
   // Calculate totals
   const subtotal = items.reduce((sum, item) => sum + item.total, 0)
@@ -189,7 +189,7 @@ export function ProposalStep({
     const newItem: ProposalItem = {
       id: `custom-${Date.now()}`,
       name: t('salesWizard.steps.proposal.customItemName'),
-      type: 'treatment',
+      type: 'program',
       quantity: 1,
       pricePerUnit: 0,
       total: 0,
@@ -241,7 +241,7 @@ export function ProposalStep({
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        {item.type === 'treatment' ? (
+                        {item.type === 'program' ? (
                           <Sparkles className="h-4 w-4 text-purple-500" />
                         ) : (
                           <Package className="h-4 w-4 text-blue-500" />
@@ -255,7 +255,7 @@ export function ProposalStep({
                         />
                       </div>
                       <Badge variant="secondary" className="text-xs">
-                        {item.type === 'treatment' ? t('nav.analysis') : t('nav.features')}
+                        {item.type === 'program' ? t('nav.analysis') : t('nav.features')}
                       </Badge>
                     </div>
                     

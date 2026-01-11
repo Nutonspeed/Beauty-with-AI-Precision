@@ -4,16 +4,16 @@
  */
 
 // ============================================================================
-// Clinic Types
+// Center Types
 // ============================================================================
 
 export type SubscriptionTier = 'free' | 'standard' | 'premium' | 'enterprise';
 
-export interface Clinic {
+export interface Center {
   id: string;
-  clinic_code: string;
-  clinic_name: string;
-  clinic_name_en?: string;
+  center_code: string;
+  center_name: string;
+  center_name_en?: string;
   
   // Branding
   logo_url?: string;
@@ -71,12 +71,12 @@ export type UserRole =
   | 'public'
   | 'customer_free'
   | 'customer_premium'
-  | 'customer_clinical'
+  | 'customer_aesthetic'
   | 'customer' // generic fallback
-  | 'clinic_staff'
-  | 'clinic_admin'
+  | 'center_staff'
+  | 'center_admin'
   | 'sales_staff'
-  | 'clinic_owner'
+  | 'center_owner'
   | 'super_admin';
 
 export interface MultiTenantUser {
@@ -86,10 +86,10 @@ export interface MultiTenantUser {
   tier: string;
   metadata?: Record<string, unknown>;
   
-  // Multi-Clinic fields
-  clinic_id?: string;
+  // Multi-Center fields
+  center_id?: string;
   branch_id?: string;
-  clinic?: Clinic; // Populated via join
+  center?: Center; // Populated via join
   
   // Profile
   full_name?: string;
@@ -116,8 +116,8 @@ export type LeadSource = 'walk_in' | 'online' | 'referral' | 'event' | 'social_m
 export interface Lead {
   id: string;
   
-  // Clinic & Branch
-  clinic_id: string;
+  // Center & Branch
+  center_id: string;
   branch_id?: string;
   sales_staff_id: string;
   
@@ -140,7 +140,7 @@ export interface Lead {
   next_action?: string;
   
   // Interests
-  interested_treatments?: string[];
+  interested_programs?: string[];
   budget_range?: string;
   
   // Conversion
@@ -153,7 +153,7 @@ export interface Lead {
   interaction_history: LeadInteraction[];
 
   // Relations (loaded on demand)
-  clinic?: {
+  center?: {
     id: string;
     name: string;
     logo_url?: string;
@@ -209,7 +209,7 @@ export interface LeadCreateInput {
   status?: LeadStatus;
   source?: LeadSource;
   analysis_id?: string;
-  interested_treatments?: string[];
+  interested_programs?: string[];
   budget_range?: string;
   notes?: string;
 }
@@ -222,7 +222,7 @@ export interface LeadUpdateInput {
   status?: LeadStatus;
   follow_up_date?: string;
   next_action?: string;
-  interested_treatments?: string[];
+  interested_programs?: string[];
   budget_range?: string;
   notes?: string;
   lead_score?: number;
@@ -236,8 +236,8 @@ export interface MultiTenantSkinAnalysis {
   id: string;
   user_id: string;
   
-  // Multi-Clinic fields
-  clinic_id?: string;
+  // Multi-Center fields
+  center_id?: string;
   branch_id?: string;
   sales_staff_id?: string;
   
@@ -263,16 +263,16 @@ export interface MultiTenantSkinAnalysis {
   ai_skin_type?: string;
   ai_concerns?: string[];
   ai_severity?: Record<string, number>;
-  ai_treatment_plan?: string;
+  ai_program_plan?: string;
   
   // Recommendations
   recommendations?: string[];
   
-  // Patient Info
-  patient_name?: string;
-  patient_age?: number;
-  patient_gender?: string;
-  patient_skin_type?: string;
+  // Customer Info
+  customer_name?: string;
+  customer_age?: number;
+  customer_gender?: string;
+  customer_skin_type?: string;
   
   // Notes
   notes?: string;
@@ -280,7 +280,7 @@ export interface MultiTenantSkinAnalysis {
   // Performance
   analysis_time_ms?: number;
   
-  // Share & Export (Task 5: Save & Share Multi-Clinic)
+  // Share & Export (Task 5: Save & Share Multi-Center)
   is_shared?: boolean;
   share_token?: string;
   share_expires_at?: string;
@@ -297,7 +297,7 @@ export interface MultiTenantSkinAnalysis {
 export interface PermissionContext {
   userId: string;
   role: UserRole;
-  clinicId?: string;
+  centerId?: string;
   branchId?: string;
 }
 
@@ -312,8 +312,8 @@ export type Permission =
   | 'delete_leads'
   | 'view_analytics'
   | 'manage_staff'
-  | 'manage_clinic_settings'
-  | 'view_all_clinics';
+  | 'manage_center_settings'
+  | 'view_all_centers';
 
 export interface RolePermissions {
   [role: string]: Permission[];
@@ -323,8 +323,8 @@ export interface RolePermissions {
 // Statistics & Analytics Types
 // ============================================================================
 
-export interface ClinicStatistics {
-  clinic_id: string;
+export interface CenterStatistics {
+  center_id: string;
   total_analyses: number;
   total_leads: number;
   total_conversions: number;
@@ -384,7 +384,7 @@ export interface LeadFilterParams extends PaginationParams {
 }
 
 export interface AnalysisFilterParams extends PaginationParams {
-  clinic_id?: string;
+  center_id?: string;
   branch_id?: string;
   sales_staff_id?: string;
   date_from?: string;

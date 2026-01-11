@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 /**
  * FeatureGate Component (ใช้งานกับโครงสร้าง DB จริง)
@@ -121,7 +121,7 @@ function DefaultUpgradePrompt({ _tier, feature }: { _tier: AnalysisTier; feature
     'comparison': 'การเปรียบเทียบผล',
     'history': 'ประวัติการวิเคราะห์',
     'export': 'การส่งออกข้อมูล',
-    'clinic_management': 'การจัดการคลินิก',
+    'center_management': 'การจัดการเซ็นเตอร์',
     'multi_user': 'ผู้ใช้หลายคน',
     'api_access': 'API Access',
   }
@@ -129,7 +129,7 @@ function DefaultUpgradePrompt({ _tier, feature }: { _tier: AnalysisTier; feature
   const tierNames: Record<AnalysisTier, string> = {
     'free': 'Free',
     'premium': 'Premium',
-    'clinical': 'Clinical',
+    'aesthetic': 'Aesthetic',
   }
 
   const requiredTier = getRequiredTier(feature)
@@ -172,9 +172,9 @@ function getRequiredTier(feature: string): AnalysisTier {
     'comparison': 'premium',
     'history': 'premium',
     'export': 'premium',
-    'clinic_management': 'clinical',
-    'multi_user': 'clinical',
-    'api_access': 'clinical',
+    'center_management': 'aesthetic',
+    'multi_user': 'aesthetic',
+    'api_access': 'aesthetic',
   }
 
   return featureMap[feature] || 'premium'

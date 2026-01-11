@@ -3,7 +3,7 @@
 /**
  * Priority Ranking Card Component
  * 
- * Displays AI-powered skin concern priority rankings with treatment recommendations
+ * Displays AI-powered skin concern priority rankings with program recommendations
  */
 
 import React from 'react';
@@ -131,9 +131,9 @@ function ConcernCard({
           <div className="flex items-center gap-2">
             <Clock className="h-4 w-4 text-muted-foreground" />
             <div>
-              <div className="text-xs text-muted-foreground">{t('treatmentTime')}</div>
+              <div className="text-xs text-muted-foreground">{t('programTime')}</div>
               <div className="text-sm font-medium">
-                {concern.estimatedTreatmentWeeks} {t('weeks')}
+                {concern.estimatedProgramWeeks} {t('weeks')}
               </div>
             </div>
           </div>
@@ -276,7 +276,7 @@ export default function PriorityRankingCard({
             </TabsTrigger>
             <TabsTrigger value="plan">
               <Target className="h-4 w-4 mr-1" />
-              {t('treatmentPlan')}
+              {t('programPlan')}
             </TabsTrigger>
             <TabsTrigger value="all">
               {t('allConcerns')}
@@ -336,9 +336,9 @@ export default function PriorityRankingCard({
             )}
           </TabsContent>
 
-          {/* Treatment Plan Tab */}
+          {/* Program Plan Tab */}
           <TabsContent value="plan" className="space-y-4 mt-4">
-            {rankingResult.treatmentPhases.map((phase: any) => (
+            {rankingResult.programPhases.map((phase: any) => (
               <Card key={phase.phase}>
                 <CardHeader>
                   <CardTitle className="text-base">

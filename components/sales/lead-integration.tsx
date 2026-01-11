@@ -28,7 +28,7 @@ interface ScanResult {
     description: string;
   }>;
   recommendations: Array<{
-    treatment: string;
+    program: string;
     price: number;
   }>;
 }
@@ -67,7 +67,7 @@ export default function LeadIntegration({ scanResult, onLeadCreated }: LeadInteg
 ${t('leadIntegration.scanResults')}
 ${t('leadIntegration.skinAge', { val: scanResult.skin_age })}
 ${t('leadIntegration.concerns', { val: scanResult.concerns.map(c => c.name).join(', ') })}
-${t('leadIntegration.recommendations', { val: scanResult.recommendations.map(r => r.treatment).join(', ') })}
+${t('leadIntegration.recommendations', { val: scanResult.recommendations.map(r => r.program).join(', ') })}
 
 ${notes || ''}
           `.trim(),
@@ -172,11 +172,11 @@ ${notes || ''}
           </div>
           
           <div className="space-y-2">
-            <div className="text-muted-foreground text-sm">{t('treatmentAnalytics.treatment')}</div>
+            <div className="text-muted-foreground text-sm">{t('programAnalytics.program')}</div>
             <div className="flex flex-wrap gap-2">
               {scanResult.recommendations.map((rec, idx) => (
                 <Badge key={idx} variant="outline">
-                  {rec.treatment} - {t('format.currency', { amount: rec.price.toLocaleString() })}
+                  {rec.program} - {t('format.currency', { amount: rec.price.toLocaleString() })}
                 </Badge>
               ))}
             </div>

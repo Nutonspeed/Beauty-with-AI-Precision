@@ -1,17 +1,17 @@
 // Search Suggestions API
 import { NextRequest, NextResponse } from 'next/server'
-import { patientSearchService } from '@/lib/elasticsearch/services/patient-search'
+import { customerSearchService } from '@/lib/elasticsearch/services/customer-search'
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const query = searchParams.get('q') || ''
-    const type = searchParams.get('type') || 'patients'
-    const clinicId = searchParams.get('clinicId')
+    const type = searchParams.get('type') || 'customers'
+    const centerId = searchParams.get('centerId') || searchParams.get('clinicId')
     
-    if (!clinicId) {
+    if (!centerId) {
       return NextResponse.json(
-        { error: 'clinicId is required' },
+        { error: 'centerId is required' },
         { status: 400 }
       )
     }
@@ -26,8 +26,9 @@ export async function GET(request: NextRequest) {
     let suggestions
 
     switch (type) {
+      case 'customers':
       case 'patients':
-        suggestions = await patientSearchService.getPatientSuggestions(query, clinicId)
+        suggestions = await customerSearchService.getCustomerSuggestions(query, centerId)
         break
       
       default:

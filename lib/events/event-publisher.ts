@@ -28,9 +28,9 @@ export class SupabaseEventPublisher implements EventPublisher {
     try {
       const supabase = await createServerClient()
       
-      // Publish to clinic-specific channel
-      if (event.clinic_id) {
-        await supabase.channel(`clinic:${event.clinic_id}`)
+      // Publish to center-specific channel
+      if (event.center_id) {
+        await supabase.channel(`center:${event.center_id}`)
           .send({
             type: 'broadcast',
             event: 'sales_event',
@@ -77,7 +77,7 @@ class SupabaseEventStore implements EventStore {
         version: event.version,
         correlation_id: event.correlation_id,
         user_id: event.user_id,
-        clinic_id: event.clinic_id,
+        center_id: event.center_id,
         data: event.data
       })
 
@@ -98,7 +98,7 @@ class SupabaseEventStore implements EventStore {
       version: event.version,
       correlation_id: event.correlation_id,
       user_id: event.user_id,
-      clinic_id: event.clinic_id,
+      center_id: event.center_id,
       data: event.data
     }))
 
@@ -144,7 +144,7 @@ class SupabaseEventStore implements EventStore {
       version: row.version,
       correlation_id: row.correlation_id,
       user_id: row.user_id,
-      clinic_id: row.clinic_id,
+      center_id: row.center_id,
       data: row.data
     })) as SalesEvent[]
   }
@@ -156,7 +156,7 @@ export function createEvent(
   data: SalesEvent['data'],
   options: {
     user_id?: string
-    clinic_id?: string
+    center_id?: string
     correlation_id?: string
     source?: string
   } = {}
@@ -169,7 +169,7 @@ export function createEvent(
     version: '1.0',
     data,
     ...(options.user_id && { user_id: options.user_id }),
-    ...(options.clinic_id && { clinic_id: options.clinic_id }),
+    ...(options.center_id && { center_id: options.center_id }),
     ...(options.correlation_id && { correlation_id: options.correlation_id })
   } as const
 

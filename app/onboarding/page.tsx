@@ -17,10 +17,10 @@ import { toast } from "sonner"
 
 type Step = 1 | 2 | 3 | 4
 
-interface ClinicData {
-  // Step 1: Clinic Information
-  clinicName: string
-  clinicType: string
+interface CenterData {
+  // Step 1: Center Information
+  centerName: string
+  centerType: string
   email: string
   phone: string
   street: string
@@ -43,10 +43,10 @@ export default function OnboardingPage() {
   const router = useRouter()
   const [step, setStep] = useState<Step>(1)
   const [loading, setLoading] = useState(false)
-  const [formData, setFormData] = useState<ClinicData>({
+  const [formData, setFormData] = useState<CenterData>({
     // Step 1
-    clinicName: "",
-    clinicType: "",
+    centerName: "",
+    centerType: "",
     email: "",
     phone: "",
     street: "",
@@ -109,36 +109,36 @@ export default function OnboardingPage() {
       color: "bg-purple-500",
     },
     {
-      id: "clinical",
-      name: "Clinical",
+      id: "elite",
+      name: "Elite",
       price: "฿10,000",
       period: "/month",
       accuracy: "95-99%",
       features: [
-        "VISIA-Equivalent Accuracy",
+        "Skinive Elite AI Accuracy",
         "Hardware Sensor Integration (Optional)",
-        "Medical-Grade Reports",
+        "Premium Aesthetic Reports",
         "Dedicated Account Manager",
         "Custom AI Training",
       ],
-      color: "bg-orange-500",
+      color: "bg-emerald-500",
     },
   ]
 
-  const updateFormData = (field: keyof ClinicData, value: string) => {
+  const updateFormData = (field: keyof CenterData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
 
   const validateStep1 = () => {
     if (
-      !formData.clinicName ||
-      !formData.clinicType ||
+      !formData.centerName ||
+      !formData.centerType ||
       !formData.email ||
       !formData.phone ||
       !formData.street ||
       !formData.city
     ) {
-      toast.error("กรุณากรอกข้อมูลคลินิกให้ครบถ้วน")
+      toast.error("กรุณากรอกข้อมูลศูนย์ความงามให้ครบถ้วน")
       return false
     }
     return true
@@ -146,7 +146,7 @@ export default function OnboardingPage() {
 
   const validateStep2 = () => {
     if (!formData.ownerName || !formData.ownerEmail || !formData.password || !formData.confirmPassword) {
-      toast.error("กรุณากรอกข้อมูลเจ้าของคลินิกให้ครบถ้วน")
+      toast.error("กรุณากรอกข้อมูลเจ้าของศูนย์ความงามให้ครบถ้วน")
       return false
     }
     if (formData.password !== formData.confirmPassword) {
@@ -174,7 +174,7 @@ export default function OnboardingPage() {
     setLoading(true)
     try {
       // Create tenant
-      const slug = formData.clinicName
+      const slug = formData.centerName
         .toLowerCase()
         .replace(/\s+/g, "-")
         .replace(/[^a-z0-9-]/g, "")
@@ -184,8 +184,8 @@ export default function OnboardingPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           slug,
-          clinicName: formData.clinicName,
-          clinicType: formData.clinicType,
+          centerName: formData.centerName,
+          centerType: formData.centerType,
           email: formData.email,
           phone: formData.phone,
           address: {
@@ -201,7 +201,7 @@ export default function OnboardingPage() {
       })
 
       if (!response.ok) {
-        throw new Error("Failed to create clinic")
+        throw new Error("Failed to create center")
       }
 
       const { tenant } = await response.json()
@@ -214,7 +214,7 @@ export default function OnboardingPage() {
           email: formData.ownerEmail,
           password: formData.password,
           name: formData.ownerName,
-          role: "clinic_owner",
+          role: "center_owner",
           tenantId: tenant.id,
         }),
       })
@@ -223,7 +223,7 @@ export default function OnboardingPage() {
         throw new Error("Failed to create owner account")
       }
 
-      toast.success("🎉 ยินดีต้อนรับ! คลินิกของคุณพร้อมใช้งานแล้ว")
+      toast.success("🎉 ยินดีต้อนรับ! ศูนย์ความงามของคุณพร้อมใช้งานแล้ว")
 
       // Auto-login and redirect
       setTimeout(() => {
@@ -269,38 +269,38 @@ export default function OnboardingPage() {
             </div>
           </div>
 
-          {/* Step 1: Clinic Information */}
+          {/* Step 1: Center Information */}
           {step === 1 && (
             <Card>
               <CardHeader>
                 <div className="flex items-center gap-2">
                   <Building2 className="h-6 w-6 text-primary" />
-                  <CardTitle>ข้อมูลคลินิก</CardTitle>
+                  <CardTitle>ข้อมูลศูนย์ความงาม</CardTitle>
                 </div>
-                <CardDescription>กรอกข้อมูลคลินิกของคุณเพื่อเริ่มต้นใช้งาน</CardDescription>
+                <CardDescription>กรอกข้อมูลศูนย์ความงามของคุณเพื่อเริ่มต้นใช้งาน</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="clinicName">ชื่อคลินิก *</Label>
+                    <Label htmlFor="centerName">ชื่อศูนย์ความงาม *</Label>
                     <Input
-                      id="clinicName"
-                      placeholder="Beauty Clinic Bangkok"
-                      value={formData.clinicName}
-                      onChange={(e) => updateFormData("clinicName", e.target.value)}
+                      id="centerName"
+                      placeholder="Beauty Center Bangkok"
+                      value={formData.centerName}
+                      onChange={(e) => updateFormData("centerName", e.target.value)}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="clinicType">ประเภทคลินิก *</Label>
+                    <Label htmlFor="centerType">ประเภทศูนย์ความงาม *</Label>
                     <Select
-                      value={formData.clinicType}
-                      onValueChange={(value) => updateFormData("clinicType", value)}
+                      value={formData.centerType}
+                      onValueChange={(value) => updateFormData("centerType", value)}
                     >
-                      <SelectTrigger id="clinicType">
-                        <SelectValue placeholder="เลือกประเภทคลินิก" />
+                      <SelectTrigger id="centerType">
+                        <SelectValue placeholder="เลือกประเภทศูนย์ความงาม" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="aesthetic_clinic">คลินิกความงาม</SelectItem>
+                        <SelectItem value="aesthetic_center">ศูนย์ความงาม</SelectItem>
                         <SelectItem value="dermatology">คลินิกผิวหนัง</SelectItem>
                         <SelectItem value="med_spa">Med Spa</SelectItem>
                         <SelectItem value="wellness">ศูนย์เวลเนส</SelectItem>
@@ -315,7 +315,7 @@ export default function OnboardingPage() {
                     <Input
                       id="email"
                       type="email"
-                      placeholder="contact@clinic.com"
+                      placeholder="contact@center.com"
                       value={formData.email}
                       onChange={(e) => updateFormData("email", e.target.value)}
                     />
@@ -388,16 +388,16 @@ export default function OnboardingPage() {
               <CardHeader>
                 <div className="flex items-center gap-2">
                   <User className="h-6 w-6 text-primary" />
-                  <CardTitle>ข้อมูลเจ้าของคลินิก</CardTitle>
+                  <CardTitle>ข้อมูลเจ้าของศูนย์ความงาม</CardTitle>
                 </div>
-                <CardDescription>สร้างบัญชีผู้ดูแลระบบหลักของคลินิก</CardDescription>
+                <CardDescription>สร้างบัญชีผู้ดูแลระบบหลักของศูนย์ความงาม</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="ownerName">ชื่อ-นามสกุล *</Label>
                   <Input
                     id="ownerName"
-                    placeholder="Dr. Somchai Clinic"
+                    placeholder="Dr. Somchai Center"
                     value={formData.ownerName}
                     onChange={(e) => updateFormData("ownerName", e.target.value)}
                   />
@@ -408,12 +408,12 @@ export default function OnboardingPage() {
                   <Input
                     id="ownerEmail"
                     type="email"
-                    placeholder="owner@clinic.com"
+                    placeholder="owner@center.com"
                     value={formData.ownerEmail}
                     onChange={(e) => updateFormData("ownerEmail", e.target.value)}
                   />
                   <p className="text-xs text-muted-foreground">
-                    อีเมลนี้จะใช้สำหรับเข้าสู่ระบบในฐานะเจ้าของคลินิก
+                    อีเมลนี้จะใช้สำหรับเข้าสู่ระบบในฐานะเจ้าของศูนย์ความงาม
                   </p>
                 </div>
 
@@ -530,18 +530,18 @@ export default function OnboardingPage() {
               </CardHeader>
               <CardContent className="space-y-6">
                 <div>
-                  <h3 className="mb-2 font-semibold">ข้อมูลคลินิก</h3>
+                  <h3 className="mb-2 font-semibold">ข้อมูลศูนย์ความงาม</h3>
                   <div className="rounded-lg bg-muted p-4 text-sm space-y-1">
                     <p>
-                      <strong>ชื่อคลินิก:</strong> {formData.clinicName}
+                      <strong>ชื่อศูนย์ความงาม:</strong> {formData.centerName}
                     </p>
                     <p>
                       <strong>ประเภท:</strong>{" "}
-                      {formData.clinicType === "aesthetic_clinic"
-                        ? "คลินิกความงาม"
-                        : formData.clinicType === "dermatology"
+                      {formData.centerType === "aesthetic_center"
+                        ? "ศูนย์ความงาม"
+                        : formData.centerType === "dermatology"
                         ? "คลินิกผิวหนัง"
-                        : formData.clinicType === "med_spa"
+                        : formData.centerType === "med_spa"
                         ? "Med Spa"
                         : "ศูนย์เวลเนส"}
                     </p>
@@ -559,7 +559,7 @@ export default function OnboardingPage() {
                 </div>
 
                 <div>
-                  <h3 className="mb-2 font-semibold">เจ้าของคลินิก</h3>
+                  <h3 className="mb-2 font-semibold">เจ้าของศูนย์ความงาม</h3>
                   <div className="rounded-lg bg-muted p-4 text-sm space-y-1">
                     <p>
                       <strong>ชื่อ:</strong> {formData.ownerName}

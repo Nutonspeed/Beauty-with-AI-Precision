@@ -24,37 +24,26 @@ import { Card, CardContent } from "@/components/ui/card"
 import { toast } from "sonner"
 import { Plus, Trash2, Loader2 } from "lucide-react"
 
-export type Treatment = {
+export type Program = {
   name: string
   price: number
   sessions: number
-  description?: string
+  description: string
 }
 
 export type Proposal = {
   id: string
   lead_id: string
   title: string
-  treatments: Treatment[]
+  programs: Program[]
   subtotal: number
   discount_percent: number
   discount_amount: number
   total_value: number
-  valid_until?: string | null
-  payment_terms?: string | null
-  terms_and_conditions?: string | null
-  notes?: string | null
-  status?: string
-  sent_at?: string | null
-  win_probability?: number
-  created_at?: string
-  metadata?: {
-    appointment_id?: string
-    [key: string]: any
-  }
-  sales_leads?: {
-    name: string
-  } | null
+  valid_until: string | null
+  status: 'draft' | 'sent' | 'accepted' | 'rejected'
+  payment_terms: string | null
+  notes: string | null
 }
 
 type Lead = {
@@ -78,17 +67,16 @@ export function ProposalModal({ open, onClose, onSuccess, editProposal, leads = 
   // Form fields
   const [leadId, setLeadId] = useState("")
   const [title, setTitle] = useState("")
-  const [treatments, setTreatments] = useState<Treatment[]>([
+  const [programs, setPrograms] = useState<Program[]>([
     { name: "", price: 0, sessions: 1, description: "" }
   ])
   const [discountPercent, setDiscountPercent] = useState(0)
   const [validUntil, setValidUntil] = useState("")
   const [paymentTerms, setPaymentTerms] = useState("")
-  const [termsAndConditions, setTermsAndConditions] = useState("")
   const [notes, setNotes] = useState("")
 
   // Calculate totals
-  const subtotal = treatments.reduce((sum, t) => sum + (t.price * t.sessions), 0)
+  const subtotal = programs.reduce((sum, t) => sum + (t.price * t.sessions), 0)
   const discountAmount = (subtotal * discountPercent) / 100
   const totalValue = subtotal - discountAmount
 
@@ -97,11 +85,10 @@ export function ProposalModal({ open, onClose, onSuccess, editProposal, leads = 
     if (editProposal) {
       setLeadId(editProposal.lead_id)
       setTitle(editProposal.title)
-      setTreatments(editProposal.treatments.length > 0 ? editProposal.treatments : [{ name: "", price: 0, sessions: 1, description: "" }])
+      setPrograms(editProposal.programs.length > 0 ? editProposal.programs : [{ name: "", price: 0, sessions: 1, description: "" }])
       setDiscountPercent(editProposal.discount_percent || 0)
       setValidUntil(editProposal.valid_until?.split('T')[0] || "")
       setPaymentTerms(editProposal.payment_terms || "")
-      setTermsAndConditions(editProposal.terms_and_conditions || "")
       setNotes(editProposal.notes || "")
     } else {
       resetForm()
@@ -111,28 +98,29 @@ export function ProposalModal({ open, onClose, onSuccess, editProposal, leads = 
   const resetForm = () => {
     setLeadId("")
     setTitle("")
-    setTreatments([{ name: "", price: 0, sessions: 1, description: "" }])
+    setPrograms([{ name: "", price: 0, sessions: 1, description: "" }])
     setDiscountPercent(0)
     setValidUntil("")
     setPaymentTerms("")
-    setTermsAndConditions("")
     setNotes("")
   }
 
-  const handleAddTreatment = () => {
-    setTreatments([...treatments, { name: "", price: 0, sessions: 1, description: "" }])
+  const addProgram = () => {
+    setPrograms([...programs, { name: "", price: 0, sessions: 1, description: "" }])
   }
 
-  const handleRemoveTreatment = (index: number) => {
-    if (treatments.length > 1) {
-      setTreatments(treatments.filter((_, i) => i !== index))
+  const removeProgram = (index: number) => {
+    if (programs.length > 1) {
+      const updated = [...programs]
+      updated.splice(index, 1)
+      setPrograms(updated)
     }
   }
 
-  const handleTreatmentChange = (index: number, field: keyof Treatment, value: string | number) => {
-    const updated = [...treatments]
+  const updateProgram = (index: number, field: keyof Program, value: any) => {
+    const updated = [...programs]
     updated[index] = { ...updated[index], [field]: value }
-    setTreatments(updated)
+    setPrograms(updated)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -144,7 +132,7 @@ export function ProposalModal({ open, onClose, onSuccess, editProposal, leads = 
       return
     }
 
-    if (treatments.some(t => !t.name || t.price <= 0)) {
+    if (programs.some(t => !t.name || t.price <= 0)) {
       toast.error(t('salesTools.proposalModal.validation.treatmentDetails'))
       return
     }
@@ -164,14 +152,13 @@ export function ProposalModal({ open, onClose, onSuccess, editProposal, leads = 
         body: JSON.stringify({
           lead_id: leadId,
           title,
-          treatments,
+          programs,
           subtotal,
           discount_percent: discountPercent,
           discount_amount: discountAmount,
           total_value: totalValue,
           valid_until: validUntil || null,
           payment_terms: paymentTerms || null,
-          terms_and_conditions: termsAndConditions || null,
           notes: notes || null
         })
       })
@@ -236,32 +223,32 @@ export function ProposalModal({ open, onClose, onSuccess, editProposal, leads = 
             />
           </div>
 
-          {/* Treatments */}
+          {/* Programs */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <Label>{t('salesTools.proposalModal.treatmentsLabel')}</Label>
+              <Label>{t('salesTools.proposalModal.programsLabel')}</Label>
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={handleAddTreatment}
+                onClick={addProgram}
               >
                 <Plus className="h-4 w-4 mr-2" />
-                {t('salesTools.proposalModal.addTreatment')}
+                {t('salesTools.proposalModal.addProgram')}
               </Button>
             </div>
 
-            {treatments.map((treatment, index) => (
+            {programs.map((program, index) => (
               <Card key={index}>
                 <CardContent className="pt-4">
                   <div className="grid gap-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label>{t('salesTools.proposalModal.treatmentNameLabel')}</Label>
+                        <Label>{t('salesTools.proposalModal.programNameLabel')}</Label>
                         <Input
-                          value={treatment.name}
-                          onChange={(e) => handleTreatmentChange(index, 'name', e.target.value)}
-                          placeholder={t('salesTools.proposalModal.treatmentNamePlaceholder')}
+                          value={program.name}
+                          onChange={(e) => updateProgram(index, 'name', e.target.value)}
+                          placeholder={t('salesTools.proposalModal.programNamePlaceholder')}
                           required
                         />
                       </div>
@@ -271,8 +258,8 @@ export function ProposalModal({ open, onClose, onSuccess, editProposal, leads = 
                           type="number"
                           min="0"
                           step="0.01"
-                          value={treatment.price}
-                          onChange={(e) => handleTreatmentChange(index, 'price', parseFloat(e.target.value) || 0)}
+                          value={program.price}
+                          onChange={(e) => updateProgram(index, 'price', parseFloat(e.target.value) || 0)}
                           placeholder="0.00"
                           required
                         />
@@ -285,15 +272,15 @@ export function ProposalModal({ open, onClose, onSuccess, editProposal, leads = 
                         <Input
                           type="number"
                           min="1"
-                          value={treatment.sessions}
-                          onChange={(e) => handleTreatmentChange(index, 'sessions', parseInt(e.target.value) || 1)}
+                          value={program.sessions}
+                          onChange={(e) => updateProgram(index, 'sessions', parseInt(e.target.value) || 1)}
                           required
                         />
                       </div>
                       <div className="space-y-2">
                         <Label>{t('salesTools.proposalModal.totalLabel')}</Label>
                         <Input
-                          value={`฿${(treatment.price * treatment.sessions).toLocaleString()}`}
+                          value={`฿${(program.price * program.sessions).toLocaleString()}`}
                           disabled
                         />
                       </div>
@@ -302,22 +289,22 @@ export function ProposalModal({ open, onClose, onSuccess, editProposal, leads = 
                     <div className="space-y-2">
                       <Label>{t('salesTools.proposalModal.detailsLabel')}</Label>
                       <Textarea
-                        value={treatment.description}
-                        onChange={(e) => handleTreatmentChange(index, 'description', e.target.value)}
+                        value={program.description}
+                        onChange={(e) => updateProgram(index, 'description', e.target.value)}
                         placeholder={t('salesTools.proposalModal.detailsPlaceholder')}
                         rows={2}
                       />
                     </div>
 
-                    {treatments.length > 1 && (
+                    {programs.length > 1 && (
                       <Button
                         type="button"
                         variant="destructive"
                         size="sm"
-                        onClick={() => handleRemoveTreatment(index)}
+                        onClick={() => removeProgram(index)}
                       >
                         <Trash2 className="h-4 w-4 mr-2" />
-                        {t('salesTools.proposalModal.removeTreatment')}
+                        {t('salesTools.proposalModal.removeProgram')}
                       </Button>
                     )}
                   </div>

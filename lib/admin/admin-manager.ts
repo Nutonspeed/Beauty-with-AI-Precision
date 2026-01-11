@@ -3,7 +3,7 @@
  * 
  * Features:
  * - Customer Management (CRUD)
- * - Treatment Analytics
+ * - Program Analytics
  * - Revenue & Sales Reports
  * - Staff Management
  * - Appointment Calendar
@@ -15,7 +15,7 @@ import { createBrowserClient } from '@supabase/ssr';
 
 // ===== Customer Management =====
 
-export interface Patient {
+export interface Customer {
   id: string;
   name: string;
   email: string;
@@ -36,7 +36,7 @@ export interface Patient {
   updatedAt: Date;
 }
 
-export interface PatientInput {
+export interface CustomerInput {
   name: string;
   email: string;
   phone: string;
@@ -96,9 +96,9 @@ export interface InventoryItem {
 
 export interface DashboardStats {
   // Overview
-  totalPatients: number;
-  activePatients: number;
-  newPatientsThisMonth: number;
+  totalCustomers: number;
+  activeCustomers: number;
+  newCustomersThisMonth: number;
   
   // Revenue
   totalRevenue: number;
@@ -112,9 +112,9 @@ export interface DashboardStats {
   appointmentsThisWeek: number;
   appointmentsThisMonth: number;
   
-  // Treatments
-  totalTreatments: number;
-  popularTreatments: Array<{ name: string; count: number; revenue: number }>;
+  // Programs
+  totalPrograms: number;
+  popularPrograms: Array<{ name: string; count: number; revenue: number }>;
   
   // Staff
   totalStaff: number;
@@ -139,8 +139,8 @@ export interface RevenueReport {
   avgBookingValue: number;
 }
 
-export interface TreatmentAnalytics {
-  treatmentType: string;
+export interface ProgramAnalytics {
+  programType: string;
   totalBookings: number;
   totalRevenue: number;
   avgPrice: number;
@@ -159,9 +159,9 @@ export class AdminManager {
   /**
    * สร้างลูกค้าใหม่
    */
-  async createPatient(input: PatientInput): Promise<Patient> {
-    const patient: Patient = {
-      id: this.generatePatientId(),
+  async createCustomer(input: CustomerInput): Promise<Customer> {
+    const customer: Customer = {
+      id: this.generateCustomerId(),
       name: input.name,
       email: input.email,
       phone: input.phone,
@@ -180,39 +180,39 @@ export class AdminManager {
     };
 
     const { error } = await this.supabase
-      .from('patients')
-      .insert(this.mapPatientToDatabase(patient));
+      .from('customers')
+      .insert(this.mapCustomerToDatabase(customer));
 
     if (error) {
-      console.error('Error creating patient:', error);
-  throw new Error('Failed to create customer');
+      console.error('Error creating customer:', error);
+      throw new Error('Failed to create customer');
     }
 
-    return patient;
+    return customer;
   }
 
   /**
    * อัพเดทข้อมูลลูกค้า
    */
-  async updatePatient(id: string, updates: Partial<Patient>): Promise<Patient> {
-    const patient = await this.getPatientById(id);
-    if (!patient) {
-  throw new Error('Customer not found');
+  async updateCustomer(id: string, updates: Partial<Customer>): Promise<Customer> {
+    const customer = await this.getCustomerById(id);
+    if (!customer) {
+      throw new Error('Customer not found');
     }
 
-    const updated: Patient = {
-      ...patient,
+    const updated: Customer = {
+      ...customer,
       ...updates,
       updatedAt: new Date(),
     };
 
     const { error } = await this.supabase
-      .from('patients')
-      .update(this.mapPatientToDatabase(updated))
+      .from('customers')
+      .update(this.mapCustomerToDatabase(updated))
       .eq('id', id);
 
     if (error) {
-  throw new Error('Failed to update customer');
+      throw new Error('Failed to update customer');
     }
 
     return updated;
@@ -221,20 +221,20 @@ export class AdminManager {
   /**
    * ลบลูกค้า (soft delete)
    */
-  async deletePatient(id: string): Promise<void> {
-    await this.updatePatient(id, { status: 'inactive' });
+  async deleteCustomer(id: string): Promise<void> {
+    await this.updateCustomer(id, { status: 'inactive' });
   }
 
   /**
    * ดึงข้อมูลลูกค้าทั้งหมด
    */
-  async getAllPatients(filters?: {
+  async getAllCustomers(filters?: {
     status?: 'active' | 'inactive';
     search?: string;
     limit?: number;
     offset?: number;
-  }): Promise<{ patients: Patient[]; total: number }> {
-    let query = this.supabase.from('patients').select('*', { count: 'exact' });
+  }): Promise<{ customers: Customer[]; total: number }> {
+    let query = this.supabase.from('customers').select('*', { count: 'exact' });
 
     if (filters?.status) {
       query = query.eq('status', filters.status);
@@ -257,12 +257,12 @@ export class AdminManager {
     const { data, error, count } = await query.order('created_at', { ascending: false });
 
     if (error) {
-  console.error('Error fetching customers:', error);
-      return { patients: [], total: 0 };
+      console.error('Error fetching customers:', error);
+      return { customers: [], total: 0 };
     }
 
     return {
-      patients: (data || []).map(row => this.mapDatabaseToPatient(row)),
+      customers: (data || []).map(row => this.mapDatabaseToCustomer(row)),
       total: count || 0,
     };
   }
@@ -270,9 +270,9 @@ export class AdminManager {
   /**
    * ดึงข้อมูลลูกค้าตาม ID
    */
-  async getPatientById(id: string): Promise<Patient | null> {
+  async getCustomerById(id: string): Promise<Customer | null> {
     const { data, error } = await this.supabase
-      .from('patients')
+      .from('customers')
       .select('*')
       .eq('id', id)
       .single();
@@ -281,7 +281,7 @@ export class AdminManager {
       return null;
     }
 
-    return this.mapDatabaseToPatient(data);
+    return this.mapDatabaseToCustomer(data);
   }
 
   // ===== Staff Management =====
@@ -449,8 +449,8 @@ export class AdminManager {
     const firstDayOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
     const lastDayOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
 
-    // Patients
-    const { data: allCustomers } = await this.supabase.from('patients').select('*');
+    // Customers
+    const { data: allCustomers } = await this.supabase.from('customers').select('*');
     const activeCustomers = allCustomers?.filter(p => p.status === 'active') || [];
     const newCustomers = allCustomers?.filter(
       p => new Date(p.created_at) >= firstDayOfMonth
@@ -479,9 +479,9 @@ export class AdminManager {
         : 0;
 
     // Appointments
-  const today = new Date().toISOString().split('T')[0];
-  const thisWeekStart = new Date(now);
-  thisWeekStart.setDate(now.getDate() - now.getDay());
+    const today = new Date().toISOString().split('T')[0];
+    const thisWeekStart = new Date(now);
+    thisWeekStart.setDate(now.getDate() - now.getDay());
     
     const appointmentsToday = bookings?.filter(
       b => b.appointment_date === today
@@ -495,8 +495,8 @@ export class AdminManager {
       b => new Date(b.appointment_date) >= firstDayOfMonth
     ).length || 0;
 
-    // Popular Treatments
-    const treatmentStats = this.calculateTreatmentStats(bookings || []);
+    // Popular Programs
+    const programStats = this.calculateProgramStats(bookings || []);
 
     // Staff
     const { data: staff } = await this.supabase.from('staff').select('*');
@@ -508,9 +508,9 @@ export class AdminManager {
     const outOfStock = inventory?.filter(i => i.status === 'out-of-stock') || [];
 
     return {
-  totalPatients: allCustomers?.length || 0,
-  activePatients: activeCustomers.length,
-  newPatientsThisMonth: newCustomers.length,
+      totalCustomers: allCustomers?.length || 0,
+      activeCustomers: activeCustomers.length,
+      newCustomersThisMonth: newCustomers.length,
       
       totalRevenue,
       revenueThisMonth: thisMonthRevenue,
@@ -522,8 +522,8 @@ export class AdminManager {
       appointmentsThisWeek,
       appointmentsThisMonth,
       
-      totalTreatments: treatmentStats.length,
-      popularTreatments: treatmentStats.slice(0, 5),
+      totalPrograms: programStats.length,
+      popularPrograms: programStats.slice(0, 5),
       
       totalStaff: staff?.length || 0,
       activeStaff: activeStaff.length,
@@ -574,23 +574,23 @@ export class AdminManager {
   }
 
   /**
-   * วิเคราะห์ทรีทเมนท์
+   * วิเคราะห์โปรแกรม
    */
-  async getTreatmentAnalytics(): Promise<TreatmentAnalytics[]> {
+  async getProgramAnalytics(): Promise<ProgramAnalytics[]> {
     const { data: bookings } = await this.supabase.from('bookings').select('*');
 
     if (!bookings) return [];
 
-    const treatmentMap = new Map<string, TreatmentAnalytics>();
+    const programMap = new Map<string, ProgramAnalytics>();
 
     bookings.forEach(booking => {
-      const existing = treatmentMap.get(booking.treatment_type);
+      const existing = programMap.get(booking.program_type || booking.treatment_type);
       if (existing) {
         existing.totalBookings++;
         existing.totalRevenue += booking.payment_amount;
       } else {
-        treatmentMap.set(booking.treatment_type, {
-          treatmentType: booking.treatment_type,
+        programMap.set(booking.program_type || booking.treatment_type, {
+          programType: booking.program_type || booking.treatment_type,
           totalBookings: 1,
           totalRevenue: booking.payment_amount,
           avgPrice: booking.payment_amount,
@@ -600,7 +600,7 @@ export class AdminManager {
       }
     });
 
-    const analytics = Array.from(treatmentMap.values())
+    const analytics = Array.from(programMap.values())
       .map(t => ({
         ...t,
         avgPrice: t.totalRevenue / t.totalBookings,
@@ -616,8 +616,8 @@ export class AdminManager {
 
   // ===== Helper Methods =====
 
-  private generatePatientId(): string {
-    return `PAT${Date.now()}${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
+  private generateCustomerId(): string {
+    return `CUST${Date.now()}${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
   }
 
   private generateStaffId(): string {
@@ -641,7 +641,7 @@ export class AdminManager {
     return 'in-stock';
   }
 
-  private calculateTreatmentStats(bookings: any[]): Array<{
+  private calculateProgramStats(bookings: any[]): Array<{
     name: string;
     count: number;
     revenue: number;
@@ -649,12 +649,13 @@ export class AdminManager {
     const stats = new Map<string, { count: number; revenue: number }>();
 
     bookings.forEach(booking => {
-      const existing = stats.get(booking.treatment_type);
+      const programType = booking.program_type || booking.treatment_type;
+      const existing = stats.get(programType);
       if (existing) {
         existing.count++;
         existing.revenue += booking.payment_amount;
       } else {
-        stats.set(booking.treatment_type, {
+        stats.set(programType, {
           count: 1,
           revenue: booking.payment_amount,
         });
@@ -787,30 +788,30 @@ export class AdminManager {
     };
   }
 
-  private mapPatientToDatabase(patient: Patient): any {
+  private mapCustomerToDatabase(customer: Customer): any {
     return {
-      id: patient.id,
-      name: patient.name,
-      email: patient.email,
-      phone: patient.phone,
-      date_of_birth: patient.dateOfBirth.toISOString().split('T')[0],
-      gender: patient.gender,
-      address: patient.address,
-      skin_type: patient.skinType,
-      allergies: patient.allergies,
-      current_medications: patient.medications,
-      medical_history: patient.medicalHistory,
-      profile_image: patient.profileImage,
-      total_visits: patient.totalVisits,
-      total_spent: patient.totalSpent,
-      last_visit_date: patient.lastVisit?.toISOString(),
-      status: patient.status,
-      created_at: patient.createdAt.toISOString(),
-      updated_at: patient.updatedAt.toISOString(),
+      id: customer.id,
+      name: customer.name,
+      email: customer.email,
+      phone: customer.phone,
+      date_of_birth: customer.dateOfBirth.toISOString().split('T')[0],
+      gender: customer.gender,
+      address: customer.address,
+      skin_type: customer.skinType,
+      allergies: customer.allergies,
+      current_medications: customer.medications,
+      medical_history: customer.medicalHistory,
+      profile_image: customer.profileImage,
+      total_visits: customer.totalVisits,
+      total_spent: customer.totalSpent,
+      last_visit_date: customer.lastVisit?.toISOString(),
+      status: customer.status,
+      created_at: customer.createdAt.toISOString(),
+      updated_at: customer.updatedAt.toISOString(),
     };
   }
 
-  private mapDatabaseToPatient(row: any): Patient {
+  private mapDatabaseToCustomer(row: any): Customer {
     return {
       id: row.id,
       name: row.name,

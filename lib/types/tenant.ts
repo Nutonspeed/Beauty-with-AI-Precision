@@ -1,6 +1,6 @@
 /**
  * Multi-Tenant Architecture Types
- * Defines core types for B2B2C SaaS multi-clinic support
+ * Defines core types for B2B2C SaaS multi-center support
  */
 
 export interface TenantBranding {
@@ -20,7 +20,7 @@ export interface TenantFeatures {
   // AR & Visualization
   arSimulator: boolean
   advancedVisualization: boolean
-  multiTreatmentComparison: boolean
+  multiProgramComparison: boolean
   
   // Sales & CRM
   leadManagement: boolean
@@ -46,8 +46,8 @@ export interface TenantFeatures {
 
 export interface TenantSettings {
   // Business Information
-  clinicName: string
-  clinicType: 'medical_spa' | 'dermatology' | 'aesthetic_clinic' | 'wellness_center'
+  centerName: string
+  centerType: 'medical_spa' | 'dermatology' | 'aesthetic_center' | 'wellness_center'
   businessRegistration?: string
   taxId?: string
   
@@ -96,7 +96,7 @@ export interface TenantSubscription {
 
 export interface Tenant {
   id: string
-  slug: string // URL-friendly identifier (e.g., 'beauty-clinic-bkk')
+  slug: string // URL-friendly identifier (e.g., 'beauty-center-bkk')
   
   // Tenant Information
   settings: TenantSettings
@@ -135,7 +135,7 @@ export interface TenantContext {
     id: string
     email: string
     role: string
-    tenantId: string
+    centerId: string
   }
   permissions: string[]
 }
@@ -148,7 +148,7 @@ export const PLAN_FEATURES: Record<string, Partial<TenantFeatures>> = {
     batchAnalysis: false,
     arSimulator: true,
     advancedVisualization: false,
-    multiTreatmentComparison: false,
+    multiProgramComparison: false,
     leadManagement: true,
     aiProposalGenerator: false,
     leadScoring: false,
@@ -166,21 +166,21 @@ export const PLAN_FEATURES: Record<string, Partial<TenantFeatures>> = {
   professional: {
     aiAnalysis: true,
     premiumAIModels: true,
-    batchAnalysis: true,
+    batchAnalysis: false,
     arSimulator: true,
     advancedVisualization: true,
-    multiTreatmentComparison: true,
+    multiProgramComparison: true,
     leadManagement: true,
     aiProposalGenerator: true,
-    leadScoring: true,
+    leadScoring: false,
     liveChat: true,
     advancedAnalytics: true,
-    customReports: true,
+    customReports: false,
     exportData: true,
     apiAccess: false,
     webhooks: false,
     thirdPartyIntegrations: false,
-    maxUsers: 20,
+    maxUsers: 10,
     maxCustomersPerMonth: 500,
     maxStorageGB: 50,
   },
@@ -190,7 +190,7 @@ export const PLAN_FEATURES: Record<string, Partial<TenantFeatures>> = {
     batchAnalysis: true,
     arSimulator: true,
     advancedVisualization: true,
-    multiTreatmentComparison: true,
+    multiProgramComparison: true,
     leadManagement: true,
     aiProposalGenerator: true,
     leadScoring: true,
@@ -201,15 +201,15 @@ export const PLAN_FEATURES: Record<string, Partial<TenantFeatures>> = {
     apiAccess: true,
     webhooks: true,
     thirdPartyIntegrations: true,
-    maxUsers: -1, // unlimited
-    maxCustomersPerMonth: -1, // unlimited
+    maxUsers: 50,
+    maxCustomersPerMonth: 5000,
     maxStorageGB: 500,
   },
 }
 
 // Tenant creation helper type
 export interface CreateTenantInput {
-  clinicName: string
+  centerName: string
   slug: string
   email: string
   phone: string

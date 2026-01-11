@@ -17,7 +17,7 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const { data: userData } = await supabase.from("users").select("clinic_id, role").eq("id", user.id).single()
+    const { data: userData } = await supabase.from("users").select("center_id, role").eq("id", user.id).single()
 
     let query = supabase
       .from("bookings")
@@ -28,7 +28,7 @@ export async function GET(request: Request) {
         staff:users!bookings_staff_id_fkey(full_name)
       `,
       )
-      .eq("clinic_id", userData?.clinic_id)
+      .eq("center_id", userData?.center_id)
       .gte("booking_date", startDate)
       .lte("booking_date", endDate)
 

@@ -42,7 +42,7 @@ export default function SalesNarrativePage() {
   const [selectedTemplate, setSelectedTemplate] = useState<NarrativeTemplate | null>(null)
   const [customNarrative, setCustomNarrative] = useState("")
   const [customerName, setCustomerName] = useState("")
-  const [treatmentType, setTreatmentType] = useState("")
+  const [programType, setProgramType] = useState("")
   const [painPoints, setPainPoints] = useState("")
   const [generatedNarrative, setGeneratedNarrative] = useState("")
   const [isGenerating, setIsGenerating] = useState(false)
@@ -54,7 +54,7 @@ export default function SalesNarrativePage() {
       description: t('salesNarrativePage.templates.confidence.description'),
       category: t('salesNarrativePage.templates.confidence.category'),
       content: t('salesNarrativePage.templates.confidence.content'),
-      variables: ["customer_name", "treatment_type", "pain_point"]
+      variables: ["customer_name", "program_type", "pain_point"]
     },
     {
       id: "problem-solution",
@@ -62,7 +62,7 @@ export default function SalesNarrativePage() {
       description: t('salesNarrativePage.templates.problem.description'),
       category: t('salesNarrativePage.templates.problem.category'),
       content: t('salesNarrativePage.templates.problem.content'),
-      variables: ["pain_points", "treatment_type"]
+      variables: ["pain_points", "program_type"]
     },
     {
       id: "social-proof",
@@ -70,7 +70,7 @@ export default function SalesNarrativePage() {
       description: t('salesNarrativePage.templates.social.description'),
       category: t('salesNarrativePage.templates.social.category'),
       content: t('salesNarrativePage.templates.social.content'),
-      variables: ["treatment_type"]
+      variables: ["program_type"]
     },
     {
       id: "urgency-scarcity",
@@ -96,7 +96,7 @@ export default function SalesNarrativePage() {
       // Replace variables
       narrative = narrative
         .replace(/\[customer_name\]/g, customerName || t('salesNarrativePage.placeholders.customerName'))
-        .replace(/\[treatment_type\]/g, treatmentType || t('salesNarrativePage.placeholders.treatmentType'))
+        .replace(/\[program_type\]/g, programType || t('salesNarrativePage.placeholders.programType'))
         .replace(/\[pain_points\]/g, painPoints || t('salesNarrativePage.placeholders.painPoints'))
         .replace(/\[pain_point\]/g, painPoints || t('salesNarrativePage.placeholders.painPoint'))
 
@@ -236,15 +236,15 @@ export default function SalesNarrativePage() {
                               </div>
                             )}
 
-                            {selectedTemplate.variables.includes("treatment_type") && (
+                            {selectedTemplate.variables.includes("program_type") && (
                               <div>
                                 <label className="text-sm font-medium">
-                                  {t('salesNarrativePage.treatmentType')}
+                                  {t('salesNarrativePage.programType')}
                                 </label>
                                 <Input
-                                  value={treatmentType}
-                                  onChange={(e) => setTreatmentType(e.target.value)}
-                                  placeholder={t('salesNarrativePage.treatmentTypePlaceholder')}
+                                  value={programType}
+                                  onChange={(e) => setProgramType(e.target.value)}
+                                  placeholder={t('salesNarrativePage.programTypePlaceholder')}
                                 />
                               </div>
                             )}

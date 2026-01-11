@@ -210,22 +210,22 @@ export function showAppointmentBookedToast(
 }
 
 /**
- * Treatment plan created success toast
+ * Aesthetic plan created success toast
  */
-export function showTreatmentPlanCreatedToast(
+export function showAestheticPlanCreatedToast(
   planId: string,
   onViewClick: () => void,
   locale: string = "th"
 ) {
   const messages = {
     th: {
-      title: "สร้างแผนการรักษาสำเร็จ",
-      description: "แผนการรักษาส่วนบุคคลของคุณพร้อมใช้งานแล้ว",
-      action: "ดูแผนการรักษา",
+      title: "สร้างแผนงานความงามสำเร็จ",
+      description: "แผนงานความงามส่วนบุคคลของคุณพร้อมแล้ว",
+      action: "ดูแผนงาน",
     },
     en: {
-      title: "Treatment Plan Created Successfully",
-      description: "Your personalized treatment plan is ready",
+      title: "Aesthetic Plan Created Successfully",
+      description: "Your personalized aesthetic plan is ready",
       action: "View Plan",
     },
   };

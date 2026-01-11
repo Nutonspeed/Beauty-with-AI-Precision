@@ -16,13 +16,13 @@ import type { HybridSkinAnalysis } from '@/lib/types/skin-analysis';
 
 export interface VISIAReportProps {
   analysis: HybridSkinAnalysis;
-  patientInfo?: {
+  customerInfo?: {
     name?: string;
     age?: number;
     gender?: string;
     skinType?: string;
   };
-  clinicInfo?: {
+  centerInfo?: {
     name?: string;
     logo?: string;
     address?: string;
@@ -36,8 +36,8 @@ export interface VISIAReportProps {
 
 export function VISIAReport({
   analysis,
-  patientInfo,
-  clinicInfo,
+  customerInfo,
+  centerInfo,
   locale = 'en',
   onExport,
   onPrint,
@@ -82,20 +82,20 @@ export function VISIAReport({
 
   return (
     <div className={`space-y-6 ${className}`} id="visia-report">
-      {/* Header */}
+      {/* Center Info */}
       <Card className="p-6 print:shadow-none">
         <div className="flex items-start justify-between">
-          {/* Clinic Info */}
+          {/* Center Info */}
           <div className="flex items-center gap-4">
-            {clinicInfo?.logo && (
-              <img src={clinicInfo.logo} alt="Clinic Logo" className="h-16 w-auto" />
+            {centerInfo?.logo && (
+              <img src={centerInfo.logo} alt="Center Logo" className="h-16 w-auto" />
             )}
             <div>
-              {clinicInfo?.name && (
-                <h1 className="text-2xl font-bold">{clinicInfo.name}</h1>
+              {centerInfo?.name && (
+                <h1 className="text-2xl font-bold">{centerInfo.name}</h1>
               )}
-              {clinicInfo?.address && (
-                <p className="text-sm text-muted-foreground">{clinicInfo.address}</p>
+              {centerInfo?.address && (
+                <p className="text-sm text-muted-foreground">{centerInfo.address}</p>
               )}
             </div>
           </div>
@@ -131,18 +131,18 @@ export function VISIAReport({
             <p className="font-medium">{reportDate.toLocaleDateString(locale === 'th' ? 'th-TH' : 'en-US')}</p>
           </div>
           <div>
-            <p className="text-sm text-muted-foreground">{t('patient')}</p>
-            <p className="font-medium">{patientInfo?.name || t('defaultPatientName')}</p>
+            <p className="text-sm text-muted-foreground">{t('customer')}</p>
+            <p className="font-medium">{customerInfo?.name || t('defaultCustomerName')}</p>
           </div>
-          {patientInfo?.age && (
+          {customerInfo?.age && (
             <div>
               <p className="text-sm text-muted-foreground">{t('age')}</p>
-              <p className="font-medium">{patientInfo.age} {t('years')}</p>
+              <p className="font-medium">{customerInfo.age} {t('years')}</p>
             </div>
           )}
           <div>
             <p className="text-sm text-muted-foreground">{t('skinType')}</p>
-            <p className="font-medium capitalize">{patientInfo?.skinType || analysis.ai?.skinType || 'Normal'}</p>
+            <p className="font-medium capitalize">{customerInfo?.skinType || analysis.ai?.skinType || 'Normal'}</p>
           </div>
         </div>
       </Card>
@@ -288,13 +288,13 @@ export function VISIAReport({
         </div>
       </Card>
 
-      {/* Treatment Plan */}
+      {/* Program Plan */}
       <Card className="p-6 print:shadow-none">
-        <h3 className="text-xl font-semibold mb-4">{t('recommendedTreatmentPlan')}</h3>
+        <h3 className="text-xl font-semibold mb-4">{t('recommendedProgramPlan')}</h3>
         <div className="space-y-3">
           {(() => {
-            // Generate treatment plan based on severity
-            const treatments: Array<{
+            // Generate program plan based on severity
+            const programs: Array<{
               id: string;
               name: string;
               description: string;
@@ -305,10 +305,10 @@ export function VISIAReport({
             const cvData = analysis.cv || {};
             
             if (severity.acne >= 4) {
-              treatments.push({
-                id: 'acne-treatment',
-                name: 'Acne Treatment',
-                description: 'Professional acne treatment with laser or chemical peels',
+              programs.push({
+                id: 'acne-program',
+                name: 'Acne Program',
+                description: 'Professional acne program with laser or chemical peels',
                 duration: '4-6 weeks',
                 priority: 'high'
               });
@@ -318,9 +318,9 @@ export function VISIAReport({
               ? cvData.wrinkles.severity 
               : 0;
             if (severity.wrinkles >= 4 || wrinklesSeverity >= 4) {
-              treatments.push({
-                id: 'anti-aging-treatment',
-                name: 'Anti-Aging Treatment',
+              programs.push({
+                id: 'anti-aging-program',
+                name: 'Anti-Aging Program',
                 description: 'Botox, dermal fillers, or RF skin tightening',
                 duration: '6-12 weeks',
                 priority: 'medium'
@@ -331,10 +331,10 @@ export function VISIAReport({
               ? cvData.spots.severity
               : 0;
             if (severity.dark_spots >= 4 || spotsSeverity >= 4) {
-              treatments.push({
-                id: 'pigmentation-treatment',
-                name: 'Pigmentation Treatment',
-                description: 'Laser treatment or intense chemical peels for dark spots',
+              programs.push({
+                id: 'pigmentation-program',
+                name: 'Pigmentation Program',
+                description: 'Laser program or intense chemical peels for dark spots',
                 duration: '8-12 weeks',
                 priority: 'high'
               });
@@ -344,10 +344,10 @@ export function VISIAReport({
               ? cvData.redness.severity
               : 0;
             if (severity.redness >= 4 || rednessSeverity >= 4) {
-              treatments.push({
+              programs.push({
                 id: 'redness-reduction',
                 name: 'Redness Reduction',
-                description: 'IPL therapy or gentle laser treatment',
+                description: 'IPL therapy or gentle laser program',
                 duration: '6-8 weeks',
                 priority: 'medium'
               });
@@ -357,7 +357,7 @@ export function VISIAReport({
               ? cvData.pores.severity
               : 0;
             if (poresSeverity >= 4) {
-              treatments.push({
+              programs.push({
                 id: 'pore-refinement',
                 name: 'Pore Refinement',
                 description: 'Microneedling or fractional laser for pore size reduction',
@@ -367,8 +367,8 @@ export function VISIAReport({
             }
             
             // Default general care
-            if (treatments.length === 0) {
-              treatments.push({
+            if (programs.length === 0) {
+              programs.push({
                 id: 'preventive-skincare',
                 name: 'Preventive Skincare',
                 description: 'Maintain healthy skin with regular facials and proper skincare routine',
@@ -377,8 +377,8 @@ export function VISIAReport({
               });
             }
             
-            return treatments.length > 0 ? (
-              treatments.map((treatment, idx) => {
+            return programs.length > 0 ? (
+              programs.map((program, idx) => {
                 const getBadgeVariant = (priority: 'high' | 'medium' | 'low') => {
                   if (priority === 'high') return 'destructive';
                   if (priority === 'medium') return 'default';
@@ -392,27 +392,27 @@ export function VISIAReport({
                 };
                 
                 return (
-                  <div key={treatment.id} className="flex gap-3 p-4 border rounded-lg hover:bg-muted/50 transition-colors">
+                  <div key={program.id} className="flex gap-3 p-4 border rounded-lg hover:bg-muted/50 transition-colors">
                     <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-semibold">
                       {idx + 1}
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <p className="font-semibold text-base">{treatment.name}</p>
-                        <Badge variant={getBadgeVariant(treatment.priority)} className="text-xs">
-                          {getBadgeLabel(treatment.priority)}
+                        <p className="font-semibold text-base">{program.name}</p>
+                        <Badge variant={getBadgeVariant(program.priority)} className="text-xs">
+                          {getBadgeLabel(program.priority)}
                         </Badge>
                       </div>
-                      <p className="text-sm text-muted-foreground mb-2">{treatment.description}</p>
+                      <p className="text-sm text-muted-foreground mb-2">{program.description}</p>
                       <p className="text-xs text-muted-foreground">
-                        ⏱️ {t('estimatedDuration')}: <span className="font-medium">{treatment.duration}</span>
+                        ⏱️ {t('estimatedDuration')}: <span className="font-medium">{program.duration}</span>
                       </p>
                     </div>
                   </div>
                 );
               })
             ) : (
-              <p className="text-sm text-muted-foreground">{t('noTreatmentPlan')}</p>
+              <p className="text-sm text-muted-foreground">{t('noProgramPlan')}</p>
             );
           })()}
         </div>

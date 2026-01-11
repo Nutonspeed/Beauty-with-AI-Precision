@@ -29,7 +29,7 @@ export default function UserManagement() {
   const [formData, setFormData] = useState({
     email: '',
     name: '',
-    role: 'patient' as UserRole,
+    role: 'customer' as UserRole,
     department: '',
     password: '',
     confirmPassword: '',
@@ -120,7 +120,7 @@ export default function UserManagement() {
     setFormData({
       email: '',
       name: '',
-      role: 'patient',
+      role: 'customer',
       department: '',
       password: '',
       confirmPassword: '',
@@ -130,12 +130,12 @@ export default function UserManagement() {
   const getRoleBadgeColor = (role: UserRole) => {
     switch (role) {
       case 'super_admin': return 'bg-red-100 text-red-800 border-red-200'
-      case 'admin': return 'bg-orange-100 text-orange-800 border-orange-200'
-      case 'doctor': return 'bg-blue-100 text-blue-800 border-blue-200'
-      case 'nurse': return 'bg-green-100 text-green-800 border-green-200'
-      case 'receptionist': return 'bg-purple-100 text-purple-800 border-purple-200'
-      case 'patient': return 'bg-gray-100 text-gray-800 border-gray-200'
-      case 'customer': return 'bg-yellow-100 text-yellow-800 border-yellow-200'
+      case 'center_admin': return 'bg-orange-100 text-orange-800 border-orange-200'
+      case 'center_owner': return 'bg-blue-100 text-blue-800 border-blue-200'
+      case 'center_staff': return 'bg-green-100 text-green-800 border-green-200'
+      case 'sales_staff': return 'bg-purple-100 text-purple-800 border-purple-200'
+      case 'customer': return 'bg-gray-100 text-gray-800 border-gray-200'
+      case 'customer_elite': return 'bg-yellow-100 text-yellow-800 border-yellow-200'
       default: return 'bg-gray-100 text-gray-800 border-gray-200'
     }
   }
@@ -214,12 +214,12 @@ export default function UserManagement() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="super_admin">{t('userManagement.roles.super_admin')}</SelectItem>
-                    <SelectItem value="admin">{t('userManagement.roles.admin')}</SelectItem>
-                    <SelectItem value="doctor">{t('userManagement.roles.doctor')}</SelectItem>
-                    <SelectItem value="nurse">{t('userManagement.roles.nurse')}</SelectItem>
-                    <SelectItem value="receptionist">{t('userManagement.roles.receptionist')}</SelectItem>
-                    <SelectItem value="patient">{t('userManagement.roles.patient')}</SelectItem>
+                    <SelectItem value="center_admin">{t('userManagement.roles.center_admin')}</SelectItem>
+                    <SelectItem value="center_owner">{t('userManagement.roles.center_owner')}</SelectItem>
+                    <SelectItem value="center_staff">{t('userManagement.roles.center_staff')}</SelectItem>
+                    <SelectItem value="sales_staff">{t('userManagement.roles.sales_staff')}</SelectItem>
                     <SelectItem value="customer">{t('userManagement.roles.customer')}</SelectItem>
+                    <SelectItem value="customer_elite">{t('userManagement.roles.customer_elite')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -263,12 +263,12 @@ export default function UserManagement() {
               <SelectContent>
                 <SelectItem value="all">{t('userManagement.filters.allRoles')}</SelectItem>
                 <SelectItem value="super_admin">{t('userManagement.roles.super_admin')}</SelectItem>
-                <SelectItem value="admin">{t('userManagement.roles.admin')}</SelectItem>
-                <SelectItem value="doctor">{t('userManagement.roles.doctor')}</SelectItem>
-                <SelectItem value="nurse">{t('userManagement.roles.nurse')}</SelectItem>
-                <SelectItem value="receptionist">{t('userManagement.roles.receptionist')}</SelectItem>
-                <SelectItem value="patient">{t('userManagement.roles.patient')}</SelectItem>
+                <SelectItem value="center_admin">{t('userManagement.roles.center_admin')}</SelectItem>
+                <SelectItem value="center_owner">{t('userManagement.roles.center_owner')}</SelectItem>
+                <SelectItem value="center_staff">{t('userManagement.roles.center_staff')}</SelectItem>
+                <SelectItem value="sales_staff">{t('userManagement.roles.sales_staff')}</SelectItem>
                 <SelectItem value="customer">{t('userManagement.roles.customer')}</SelectItem>
+                <SelectItem value="customer_elite">{t('userManagement.roles.customer_elite')}</SelectItem>
               </SelectContent>
             </Select>
             <Select value={statusFilter} onValueChange={(value: any) => setStatusFilter(value)}>
@@ -433,10 +433,9 @@ export default function UserManagement() {
                 <SelectContent>
                   <SelectItem value="super_admin">{t('userManagement.roles.super_admin')}</SelectItem>
                   <SelectItem value="admin">{t('userManagement.roles.admin')}</SelectItem>
-                  <SelectItem value="doctor">{t('userManagement.roles.doctor')}</SelectItem>
-                  <SelectItem value="nurse">{t('userManagement.roles.nurse')}</SelectItem>
+                  <SelectItem value="doctor">{t('userManagement.roles.specialist')}</SelectItem>
+                  <SelectItem value="nurse">{t('userManagement.roles.assistant')}</SelectItem>
                   <SelectItem value="receptionist">{t('userManagement.roles.receptionist')}</SelectItem>
-                  <SelectItem value="patient">{t('userManagement.roles.patient')}</SelectItem>
                   <SelectItem value="customer">{t('userManagement.roles.customer')}</SelectItem>
                 </SelectContent>
               </Select>

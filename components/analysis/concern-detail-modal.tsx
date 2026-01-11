@@ -55,18 +55,18 @@ export function ConcernDetailModal({
   const { education } = concern;
   const severity = location?.severity || concern.averageSeverity > 7 ? 'high' : concern.averageSeverity > 4 ? 'medium' : 'low';
   
-  // Get treatment based on severity
-  const getTreatmentOptions = () => {
-    if (!education.treatment) return [];
+  // Get program based on severity
+  const getProgramOptions = () => {
+    if (!education.program) return [];
     
-    // Handle different treatment structures
-    if ('mild' in education.treatment) {
-      return education.treatment[severity as 'mild' | 'moderate' | 'severe']?.options || [];
+    // Handle different program structures
+    if ('mild' in education.program) {
+      return education.program[severity as 'mild' | 'moderate' | 'severe']?.options || [];
     }
-    if ('fine_lines' in education.treatment) {
+    if ('fine_lines' in education.program) {
       // Wrinkles special case
       const level = concern.averageSeverity < 4 ? 'fine_lines' : concern.averageSeverity < 7 ? 'moderate' : 'severe';
-      return (education.treatment as any)[level]?.options || [];
+      return (education.program as any)[level]?.options || [];
     }
     return [];
   };
@@ -143,9 +143,9 @@ export function ConcernDetailModal({
               <ShieldCheck className="h-4 w-4 mr-1" />
               {t('prevention')}
             </TabsTrigger>
-            <TabsTrigger value="treatment">
+            <TabsTrigger value="program">
               <Sparkles className="h-4 w-4 mr-1" />
-              {t('treatment')}
+              {t('program')}
             </TabsTrigger>
             <TabsTrigger value="routine">
               <Calendar className="h-4 w-4 mr-1" />
@@ -250,16 +250,16 @@ export function ConcernDetailModal({
               </div>
             </TabsContent>
 
-            {/* Treatment Tab */}
-            <TabsContent value="treatment" className="space-y-6">
-              {/* Current severity treatment */}
+            {/* Program Tab */}
+            <TabsContent value="program" className="space-y-6">
+              {/* Current severity program */}
               <div className="rounded-lg border p-4 bg-purple-50 dark:bg-purple-950">
                 <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
                   <Sparkles className="h-5 w-5 text-purple-600" />
-                  {t('recommendedTreatment', { severity: severity.toUpperCase() })}
+                  {t('recommendedProgram', { severity: severity.toUpperCase() })}
                 </h3>
                 <ul className="space-y-2">
-                  {getTreatmentOptions().map((option: string, index: number) => (
+                  {getProgramOptions().map((option: string, index: number) => (
                     <li key={index} className="flex items-start gap-3">
                       <span className="text-purple-600 font-bold mt-1">•</span>
                       <span>{option}</span>
@@ -359,12 +359,12 @@ export function ConcernDetailModal({
                   {/* Weekly routine */}
                   {education.dailyRoutine.weekly && education.dailyRoutine.weekly.length > 0 && (
                     <div className="rounded-lg border p-4 bg-purple-50 dark:bg-purple-950">
-                      <h3 className="font-semibold text-lg mb-3">{t('weeklyTreatments')}</h3>
+                      <h3 className="font-semibold text-lg mb-3">{t('weeklyPrograms')}</h3>
                       <ul className="space-y-2">
-                        {education.dailyRoutine.weekly.map((treatment, index) => (
+                        {education.dailyRoutine.weekly.map((program, index) => (
                           <li key={index} className="flex items-start gap-3">
                             <Calendar className="h-5 w-5 text-purple-600 mt-0.5 flex-shrink-0" />
-                            <span>{treatment}</span>
+                            <span>{program}</span>
                           </li>
                         ))}
                       </ul>

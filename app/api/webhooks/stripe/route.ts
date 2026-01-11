@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
           // Get booking details for notifications
           const { data: booking } = await supabase
             .from('bookings')
-            .select('*, customer:customer_id(*), clinic:clinic_id(*)')
+            .select('*, customer:customer_id(*), center:center_id(*)')
             .eq('id', bookingId)
             .single();
 
@@ -78,9 +78,9 @@ export async function POST(request: NextRequest) {
                 customerName: booking.customer.full_name || booking.customer.email,
                 bookingDate: new Date(booking.booking_date).toLocaleDateString('th-TH'),
                 bookingTime: booking.booking_time || 'TBD',
-                treatment: booking.treatment_type || 'Treatment',
-                clinicName: booking.clinic?.name || 'Beauty AI Clinic',
-                clinicAddress: booking.clinic?.address,
+                program: booking.program_type || 'Program',
+                centerName: booking.center?.name || 'Beauty Aesthetic Center',
+                centerAddress: booking.center?.address,
                 bookingId: booking.id,
               });
             }
@@ -92,8 +92,8 @@ export async function POST(request: NextRequest) {
                 customerName: booking.customer.full_name || 'Customer',
                 bookingDate: new Date(booking.booking_date).toLocaleDateString('th-TH'),
                 bookingTime: booking.booking_time || 'TBD',
-                treatment: booking.treatment_type || 'Treatment',
-                clinicName: booking.clinic?.name || 'Beauty AI Clinic',
+                program: booking.program_type || 'Program',
+                centerName: booking.center?.name || 'Beauty Aesthetic Center',
                 bookingId: booking.id,
               });
 

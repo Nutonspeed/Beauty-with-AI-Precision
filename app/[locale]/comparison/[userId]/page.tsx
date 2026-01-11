@@ -1,6 +1,6 @@
 /**
- * Patient Progress Comparison Page
- * View treatment progress over multiple sessions
+ * Customer Progress Comparison Page
+ * View program progress over multiple sessions
  */
 
 import React from 'react';
@@ -43,8 +43,8 @@ async function getAnalyses(userId: string, analysisIds?: string[]) {
     redirect('/auth/login');
   }
 
-  // Verify user has access to this userId's data
-  // In multi-tenant system, this would check clinic ownership
+  // Verify user has access to this customerId's data
+  // In multi-tenant system, this would check center ownership
   // For now, we just ensure authenticated
 
   let query = supabase
@@ -154,7 +154,7 @@ export async function generateMetadata({ params }: PageProps) {
   return {
     title: locale === 'th' ? 'ติดตามความคืบหน้า - ai367bar' : 'Progress Tracking - ai367bar',
     description: locale === 'th'
-      ? 'เปรียบเทียบผลการวิเคราะห์ผิวหน้าและติดตามความคืบหน้าของการรักษา'
-      : 'Compare skin analysis results and track treatment progress over time'
+      ? 'เปรียบเทียบผลการวิเคราะห์ผิวหน้าและติดตามความคืบหน้าของโปรแกรมความงาม'
+      : 'Compare skin analysis results and track program progress over time'
   };
 }

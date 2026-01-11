@@ -1,8 +1,8 @@
 import { redirect } from 'next/navigation'
 
 /**
- * Settings - Redirects to Clinic Settings
+ * Settings - Redirects to Center Settings
  */
 export default function SettingsPage() {
-  redirect('/th/clinic/settings')
+  redirect('/th/center/settings')
 }

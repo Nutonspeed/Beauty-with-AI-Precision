@@ -16,11 +16,14 @@ const MODELS = {
   featureExtraction: 'facebook/dinov2-base',
   segmentation: 'facebook/detr-resnet-50-panoptic',
   classification: 'google/vit-base-patch16-224',
+  acneDetection: 'imfarzanansari/skintelligent-acne',
+  skinTypeClassification: 'dima806/skin_types_image_detection',
+  faceCharacteristics: 'varun1505/face-characteristics',
 } as const
 
 // Request body type
 interface HuggingFaceRequest {
-  task: 'featureExtraction' | 'segmentation' | 'classification'
+  task: 'featureExtraction' | 'segmentation' | 'classification' | 'acneDetection' | 'skinTypeClassification' | 'faceCharacteristics'
   imageData: string // base64 encoded image
 }
 

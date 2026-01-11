@@ -21,14 +21,14 @@ export const FEATURE_FLAGS: Record<string, FeatureFlag> = {
     id: "browser_ai",
     name: "Browser AI Analysis",
     description: "AI analysis running in browser (TensorFlow.js)",
-    enabledForTiers: [AnalysisTier.FREE, AnalysisTier.PREMIUM, AnalysisTier.CLINICAL],
+    enabledForTiers: [AnalysisTier.FREE, AnalysisTier.PREMIUM, AnalysisTier.AESTHETIC],
   },
 
   CLOUD_AI: {
     id: "cloud_ai",
     name: "Cloud AI Analysis",
     description: "Advanced AI analysis in cloud with GPUs",
-    enabledForTiers: [AnalysisTier.PREMIUM, AnalysisTier.CLINICAL],
+    enabledForTiers: [AnalysisTier.PREMIUM, AnalysisTier.AESTHETIC],
     requiresPremium: true,
   },
 
@@ -36,7 +36,7 @@ export const FEATURE_FLAGS: Record<string, FeatureFlag> = {
     id: "basic_8_point",
     name: "8-Point Skin Metrics",
     description: "Basic 8-point skin analysis",
-    enabledForTiers: [AnalysisTier.FREE, AnalysisTier.PREMIUM, AnalysisTier.CLINICAL],
+    enabledForTiers: [AnalysisTier.FREE, AnalysisTier.PREMIUM, AnalysisTier.AESTHETIC],
   },
 
   TOP_3_CONCERNS: {
@@ -50,7 +50,7 @@ export const FEATURE_FLAGS: Record<string, FeatureFlag> = {
     id: "all_concerns",
     name: "All Skin Concerns",
     description: "Show all detected skin concerns",
-    enabledForTiers: [AnalysisTier.PREMIUM, AnalysisTier.CLINICAL],
+    enabledForTiers: [AnalysisTier.PREMIUM, AnalysisTier.AESTHETIC],
     requiresPremium: true,
   },
 
@@ -59,23 +59,23 @@ export const FEATURE_FLAGS: Record<string, FeatureFlag> = {
     id: "basic_heatmap",
     name: "Basic Heatmap",
     description: "Simple heatmap visualization",
-    enabledForTiers: [AnalysisTier.FREE, AnalysisTier.PREMIUM, AnalysisTier.CLINICAL],
+    enabledForTiers: [AnalysisTier.FREE, AnalysisTier.PREMIUM, AnalysisTier.AESTHETIC],
   },
 
   ADVANCED_HEATMAP: {
     id: "advanced_heatmap",
     name: "Advanced Heatmap",
     description: "Multi-layer interactive heatmap with confidence scores",
-    enabledForTiers: [AnalysisTier.PREMIUM, AnalysisTier.CLINICAL],
+    enabledForTiers: [AnalysisTier.PREMIUM, AnalysisTier.AESTHETIC],
     requiresPremium: true,
   },
 
   AR_SIMULATOR: {
     id: "ar_simulator",
-    name: "AR Treatment Simulator",
-    description: "Before/After AR simulation of treatments",
-    enabledForTiers: [AnalysisTier.PREMIUM, AnalysisTier.CLINICAL],
-    enabledForRoles: [UserRole.PREMIUM_CUSTOMER, UserRole.CLINIC_STAFF, UserRole.CLINIC_ADMIN, UserRole.SUPER_ADMIN],
+    name: "AR Program Simulator",
+    description: "Before/After AR simulation of programs",
+    enabledForTiers: [AnalysisTier.PREMIUM, AnalysisTier.AESTHETIC],
+    enabledForRoles: [UserRole.PREMIUM_CUSTOMER, UserRole.CENTER_STAFF, UserRole.CENTER_ADMIN, UserRole.SUPER_ADMIN],
     requiresPremium: true,
   },
 
@@ -83,24 +83,24 @@ export const FEATURE_FLAGS: Record<string, FeatureFlag> = {
     id: "uv_imaging",
     name: "UV Imaging Simulation",
     description: "Simulated UV light analysis",
-    enabledForTiers: [AnalysisTier.CLINICAL],
-    enabledForRoles: [UserRole.CLINIC_STAFF, UserRole.CLINIC_ADMIN, UserRole.SUPER_ADMIN],
+    enabledForTiers: [AnalysisTier.AESTHETIC],
+    enabledForRoles: [UserRole.CENTER_STAFF, UserRole.CENTER_ADMIN, UserRole.SUPER_ADMIN],
   },
 
   POLARIZED_LIGHT: {
     id: "polarized_light",
     name: "Polarized Light Analysis",
     description: "Depth analysis with polarized light simulation",
-    enabledForTiers: [AnalysisTier.CLINICAL],
-    enabledForRoles: [UserRole.CLINIC_STAFF, UserRole.CLINIC_ADMIN, UserRole.SUPER_ADMIN],
+    enabledForTiers: [AnalysisTier.AESTHETIC],
+    enabledForRoles: [UserRole.CENTER_STAFF, UserRole.CENTER_ADMIN, UserRole.SUPER_ADMIN],
   },
 
   DEPTH_3D: {
     id: "3d_estimation",
     name: "3D Depth Estimation",
     description: "3D depth mapping for wrinkles and texture",
-    enabledForTiers: [AnalysisTier.CLINICAL],
-    enabledForRoles: [UserRole.CLINIC_STAFF, UserRole.CLINIC_ADMIN, UserRole.SUPER_ADMIN],
+    enabledForTiers: [AnalysisTier.AESTHETIC],
+    enabledForRoles: [UserRole.CENTER_STAFF, UserRole.CENTER_ADMIN, UserRole.SUPER_ADMIN],
   },
 
   // Recommendations
@@ -108,23 +108,23 @@ export const FEATURE_FLAGS: Record<string, FeatureFlag> = {
     id: "basic_recommendations",
     name: "Basic Recommendations",
     description: "Generic skincare recommendations",
-    enabledForTiers: [AnalysisTier.FREE, AnalysisTier.PREMIUM, AnalysisTier.CLINICAL],
+    enabledForTiers: [AnalysisTier.FREE, AnalysisTier.PREMIUM, AnalysisTier.AESTHETIC],
   },
 
   PERSONALIZED_RECOMMENDATIONS: {
     id: "personalized_recommendations",
     name: "Personalized Recommendations",
-    description: "AI-generated personalized treatment plans",
-    enabledForTiers: [AnalysisTier.PREMIUM, AnalysisTier.CLINICAL],
+    description: "AI-generated personalized program plans",
+    enabledForTiers: [AnalysisTier.PREMIUM, AnalysisTier.AESTHETIC],
     requiresPremium: true,
   },
 
   EXPERT_VALIDATION: {
     id: "expert_validation",
     name: "Expert Validation",
-    description: "Dermatologist review and validation",
-    enabledForTiers: [AnalysisTier.CLINICAL],
-    enabledForRoles: [UserRole.CLINIC_ADMIN, UserRole.SUPER_ADMIN],
+    description: "Specialist review and validation",
+    enabledForTiers: [AnalysisTier.AESTHETIC],
+    enabledForRoles: [UserRole.CENTER_ADMIN, UserRole.SUPER_ADMIN],
   },
 
   // History & Tracking
@@ -139,7 +139,7 @@ export const FEATURE_FLAGS: Record<string, FeatureFlag> = {
     id: "unlimited_history",
     name: "Unlimited History",
     description: "Full analysis history with no time limit",
-    enabledForTiers: [AnalysisTier.PREMIUM, AnalysisTier.CLINICAL],
+    enabledForTiers: [AnalysisTier.PREMIUM, AnalysisTier.AESTHETIC],
     requiresPremium: true,
   },
 
@@ -147,7 +147,7 @@ export const FEATURE_FLAGS: Record<string, FeatureFlag> = {
     id: "progress_tracking",
     name: "Progress Tracking",
     description: "Timeline view with before/after comparisons",
-    enabledForTiers: [AnalysisTier.PREMIUM, AnalysisTier.CLINICAL],
+    enabledForTiers: [AnalysisTier.PREMIUM, AnalysisTier.AESTHETIC],
     requiresPremium: true,
   },
 
@@ -156,7 +156,7 @@ export const FEATURE_FLAGS: Record<string, FeatureFlag> = {
     id: "export_pdf",
     name: "Export to PDF",
     description: "Download professional PDF report",
-    enabledForTiers: [AnalysisTier.PREMIUM, AnalysisTier.CLINICAL],
+    enabledForTiers: [AnalysisTier.PREMIUM, AnalysisTier.AESTHETIC],
     requiresPremium: true,
   },
 
@@ -164,8 +164,8 @@ export const FEATURE_FLAGS: Record<string, FeatureFlag> = {
     id: "export_data",
     name: "Export Raw Data",
     description: "Export analysis data as JSON/CSV",
-    enabledForTiers: [AnalysisTier.CLINICAL],
-    enabledForRoles: [UserRole.CLINIC_ADMIN, UserRole.SUPER_ADMIN],
+    enabledForTiers: [AnalysisTier.AESTHETIC],
+    enabledForRoles: [UserRole.CENTER_ADMIN, UserRole.SUPER_ADMIN],
   },
 
   // Communication
@@ -173,40 +173,40 @@ export const FEATURE_FLAGS: Record<string, FeatureFlag> = {
     id: "live_chat",
     name: "Live Chat with Sales",
     description: "Real-time chat with sales team",
-    enabledForTiers: [AnalysisTier.PREMIUM, AnalysisTier.CLINICAL],
+    enabledForTiers: [AnalysisTier.PREMIUM, AnalysisTier.AESTHETIC],
     requiresPremium: true,
   },
 
   BOOKING: {
     id: "booking",
     name: "Appointment Booking",
-    description: "Book appointments with clinics",
-    enabledForTiers: [AnalysisTier.FREE, AnalysisTier.PREMIUM, AnalysisTier.CLINICAL],
+    description: "Book appointments with centers",
+    enabledForTiers: [AnalysisTier.FREE, AnalysisTier.PREMIUM, AnalysisTier.AESTHETIC],
   },
 
-  // Clinic Features
+  // Center Features
   BATCH_ANALYSIS: {
     id: "batch_analysis",
     name: "Batch Analysis",
-    description: "Analyze multiple patients at once",
-    enabledForTiers: [AnalysisTier.CLINICAL],
-    enabledForRoles: [UserRole.CLINIC_STAFF, UserRole.CLINIC_ADMIN, UserRole.SUPER_ADMIN],
+    description: "Analyze multiple customers at once",
+    enabledForTiers: [AnalysisTier.AESTHETIC],
+    enabledForRoles: [UserRole.CENTER_STAFF, UserRole.CENTER_ADMIN, UserRole.SUPER_ADMIN],
   },
 
   CRM_INTEGRATION: {
     id: "crm_integration",
     name: "CRM Integration",
-    description: "Auto-save to patient CRM records",
-    enabledForTiers: [AnalysisTier.CLINICAL],
-    enabledForRoles: [UserRole.CLINIC_STAFF, UserRole.CLINIC_ADMIN, UserRole.SUPER_ADMIN],
+    description: "Auto-save to customer CRM records",
+    enabledForTiers: [AnalysisTier.AESTHETIC],
+    enabledForRoles: [UserRole.CENTER_STAFF, UserRole.CENTER_ADMIN, UserRole.SUPER_ADMIN],
   },
 
   API_ACCESS: {
     id: "api_access",
     name: "API Access",
-    description: "REST API for integration with clinic systems",
-    enabledForTiers: [AnalysisTier.CLINICAL],
-    enabledForRoles: [UserRole.CLINIC_ADMIN, UserRole.SUPER_ADMIN],
+    description: "REST API for integration with center systems",
+    enabledForTiers: [AnalysisTier.AESTHETIC],
+    enabledForRoles: [UserRole.CENTER_ADMIN, UserRole.SUPER_ADMIN],
   },
 
   // Processing
@@ -221,7 +221,7 @@ export const FEATURE_FLAGS: Record<string, FeatureFlag> = {
     id: "priority_processing",
     name: "Priority Processing",
     description: "Faster analysis with priority queue",
-    enabledForTiers: [AnalysisTier.PREMIUM, AnalysisTier.CLINICAL],
+    enabledForTiers: [AnalysisTier.PREMIUM, AnalysisTier.AESTHETIC],
     requiresPremium: true,
   },
 }

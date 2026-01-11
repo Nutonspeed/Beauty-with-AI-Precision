@@ -1,6 +1,6 @@
 /**
  * Report Sharing Utilities
- * Handles analysis sharing with clinic branding, token generation, and view tracking
+ * Handles analysis sharing with center branding, token generation, and view tracking
  */
 
 // Using Web Crypto API for Edge Runtime compatibility
@@ -13,7 +13,7 @@ const crypto = globalThis.crypto || (globalThis as any).msCrypto;
 export interface ShareOptions {
   expiryDays?: 7 | 30 | 90 | null // null = never expires
   includeRecommendations?: boolean
-  includePatientInfo?: boolean
+  includeCustomerInfo?: boolean
 }
 
 export interface ShareResult {
@@ -34,8 +34,8 @@ export interface EmailShareData {
   recipientEmail: string
   recipientName?: string
   senderName: string
-  clinicName: string
-  clinicLogoUrl?: string
+  centerName: string
+  centerLogoUrl?: string
   shareUrl: string
   expiresAt?: string
   message?: string
@@ -179,8 +179,8 @@ export function generateShareEmail(data: EmailShareData): string {
   const {
     recipientName,
     senderName,
-    clinicName,
-    clinicLogoUrl,
+    centerName,
+    centerLogoUrl,
     shareUrl,
     expiresAt,
     message,
@@ -200,7 +200,7 @@ export function generateShareEmail(data: EmailShareData): string {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Skin Analysis Report - ${clinicName}</title>
+  <title>Skin Analysis Report - ${centerName}</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f5f5f5;">
   <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f5f5f5; padding: 40px 20px;">
@@ -211,7 +211,7 @@ export function generateShareEmail(data: EmailShareData): string {
           <!-- Header -->
           <tr>
             <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px; text-align: center;">
-              ${clinicLogoUrl ? `<img src="${clinicLogoUrl}" alt="${clinicName}" style="max-width: 150px; max-height: 60px; margin-bottom: 20px;">` : ''}
+              ${centerLogoUrl ? `<img src="${centerLogoUrl}" alt="${centerName}" style="max-width: 150px; max-height: 60px; margin-bottom: 20px;">` : ''}
               <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 700;">
                 Skin Analysis Report
               </h1>
@@ -227,10 +227,10 @@ export function generateShareEmail(data: EmailShareData): string {
               ${recipientName ? `<p style="font-size: 16px; color: #333; margin: 0 0 20px 0;">สวัสดีค่ะคุณ ${recipientName}</p>` : ''}
               
               <p style="font-size: 16px; color: #333; line-height: 1.6; margin: 0 0 20px 0;">
-                ${senderName} from <strong>${clinicName}</strong> has shared a skin analysis report with you.
+                ${senderName} from <strong>${centerName}</strong> has shared a skin analysis report with you.
                 <br>
                 <span style="color: #666;">
-                  ${senderName} จาก <strong>${clinicName}</strong> ได้แชร์รายงานการวิเคราะห์ผิวหน้าให้คุณ
+                  ${senderName} จาก <strong>${centerName}</strong> ได้แชร์รายงานการวิเคราะห์ผิวหน้าให้คุณ
                 </span>
               </p>
               
@@ -290,7 +290,7 @@ export function generateShareEmail(data: EmailShareData): string {
           <tr>
             <td style="background-color: #f9fafb; padding: 30px; text-align: center; border-top: 1px solid #e5e7eb;">
               <p style="margin: 0 0 10px 0; font-size: 16px; font-weight: 600; color: #333;">
-                ${clinicName}
+                ${centerName}
               </p>
               <p style="margin: 0; font-size: 14px; color: #666;">
                 Powered by AI Beauty Platform
@@ -320,7 +320,7 @@ export function generateShareEmailText(data: EmailShareData): string {
   const {
     recipientName,
     senderName,
-    clinicName,
+    centerName,
     shareUrl,
     expiresAt,
     message,
@@ -333,15 +333,15 @@ export function generateShareEmailText(data: EmailShareData): string {
   const messageText = message ? `\nMessage:\n${message}\n` : ''
 
   return `
-${greeting}${senderName} from ${clinicName} has shared a skin analysis report with you.
-${senderName} จาก ${clinicName} ได้แชร์รายงานการวิเคราะห์ผิวหน้าให้คุณ
+${greeting}${senderName} from ${centerName} has shared a skin analysis report with you.
+${senderName} จาก ${centerName} ได้แชร์รายงานการวิเคราะห์ผิวหน้าให้คุณ
 ${messageText}
 View Report / ดูรายงาน:
 ${shareUrl}
 ${expiryText}
 
 ---
-${clinicName}
+${centerName}
 Powered by AI Beauty Platform
 
 This report is confidential and intended only for the recipient.
@@ -358,16 +358,16 @@ If you received this in error, please delete it immediately.
  * Max 160 characters for single SMS
  */
 export function generateShareSMS(data: {
-  clinicName: string
+  centerName: string
   shareUrl: string
   recipientName?: string
 }): string {
-  const { clinicName, shareUrl, recipientName } = data
+  const { centerName, shareUrl, recipientName } = data
   
   const greeting = recipientName ? `${recipientName} ` : ''
   
   // Short URL for SMS (consider using URL shortener service)
-  return `${greeting}${clinicName}: รายงานการวิเคราะห์ผิวหน้าของคุณพร้อมแล้ว ${shareUrl}`.substring(0, 160)
+  return `${greeting}${centerName}: รายงานการวิเคราะห์ผิวหน้าของคุณพร้อมแล้ว ${shareUrl}`.substring(0, 160)
 }
 
 // ============================================================================
@@ -378,12 +378,12 @@ export function generateShareSMS(data: {
  * Generate Line Flex Message for sharing analysis
  */
 export function generateLineFlexMessage(data: {
-  clinicName: string
-  clinicLogoUrl?: string
+  centerName: string
+  centerLogoUrl?: string
   shareUrl: string
   expiresAt?: string
 }) {
-  const { clinicName, clinicLogoUrl, shareUrl, expiresAt } = data
+  const { centerName, centerLogoUrl, shareUrl, expiresAt } = data
   
   const expiryText = expiresAt 
     ? `หมดอายุ: ${new Date(expiresAt).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' })}`
@@ -391,9 +391,9 @@ export function generateLineFlexMessage(data: {
 
   return {
     type: 'bubble',
-    hero: clinicLogoUrl ? {
+    hero: centerLogoUrl ? {
       type: 'image',
-      url: clinicLogoUrl,
+      url: centerLogoUrl,
       size: 'full',
       aspectRatio: '20:13',
       aspectMode: 'cover',
@@ -429,7 +429,7 @@ export function generateLineFlexMessage(data: {
                 },
                 {
                   type: 'text',
-                  text: clinicName,
+                  text: centerName,
                   wrap: true,
                   color: '#666666',
                   size: 'sm',

@@ -11,7 +11,7 @@
 'use client';
 
 import { useAuth } from '@/hooks/useAuth';
-import { useClinicContext } from '@/hooks/useClinicContext';
+import { useCenterContext } from '@/hooks/useCenterContext';
 
 // ============================================================================
 // Permission Gate Props
@@ -20,10 +20,10 @@ import { useClinicContext } from '@/hooks/useClinicContext';
 interface PermissionGateProps {
   children: React.ReactNode;
   allowedRoles?: string[];
-  requireClinic?: boolean;
+  requireCenter?: boolean;
   requireFeature?: string;
   fallback?: React.ReactNode;
-  clinicId?: string;
+  centerId?: string;
 }
 
 // ============================================================================
@@ -45,13 +45,13 @@ interface PermissionGateProps {
 export function PermissionGate({
   children,
   allowedRoles,
-  requireClinic = false,
+  requireCenter = false,
   requireFeature,
   fallback = null,
-  clinicId,
+  centerId,
 }: PermissionGateProps) {
   const { user } = useAuth();
-  const { hasFeature, canAccessClinic } = useClinicContext();
+  const { hasFeature, canAccessCenter } = useCenterContext();
 
   // Check if user exists
   if (!user) {
@@ -68,13 +68,13 @@ export function PermissionGate({
     }
   }
 
-  // Check clinic requirement
-  if (requireClinic && !user.clinic_id) {
+  // Check center requirement
+  if (requireCenter && !user.center_id) {
     return <>{fallback}</>;
   }
 
-  // Check clinic access
-  if (clinicId && !canAccessClinic(clinicId)) {
+  // Check center access
+  if (centerId && !canAccessCenter(centerId)) {
     return <>{fallback}</>;
   }
 
@@ -117,7 +117,7 @@ export function SalesStaffOnly({
 }) {
   return (
     <PermissionGate 
-      allowedRoles={['sales_staff', 'clinic_admin', 'clinic_owner', 'super_admin']} 
+      allowedRoles={['sales_staff', 'center_admin', 'center_owner', 'super_admin']} 
       fallback={fallback}
     >
       {children}
@@ -126,9 +126,9 @@ export function SalesStaffOnly({
 }
 
 /**
- * Show content only to clinic admins
+ * Show content only to center admins
  */
-export function ClinicAdminOnly({ 
+export function CenterAdminOnly({ 
   children, 
   fallback 
 }: { 
@@ -137,7 +137,7 @@ export function ClinicAdminOnly({
 }) {
   return (
     <PermissionGate 
-      allowedRoles={['clinic_admin', 'clinic_owner', 'super_admin']} 
+      allowedRoles={['center_admin', 'center_owner', 'super_admin']} 
       fallback={fallback}
     >
       {children}
@@ -166,7 +166,7 @@ export function SuperAdminOnly({
 }
 
 /**
- * Show content only if clinic has feature enabled
+ * Show content only if center has feature enabled
  */
 export function FeatureGate({ 
   children, 
@@ -188,20 +188,20 @@ export function FeatureGate({
 }
 
 /**
- * Show content only to users in specific clinic
+ * Show content only to users in specific center
  */
-export function ClinicOnly({ 
+export function CenterOnly({ 
   children, 
-  clinicId, 
+  centerId, 
   fallback 
 }: { 
   children: React.ReactNode; 
-  clinicId: string; 
+  centerId: string; 
   fallback?: React.ReactNode 
 }) {
   return (
     <PermissionGate 
-      clinicId={clinicId} 
+      centerId={centerId} 
       fallback={fallback}
     >
       {children}

@@ -4,7 +4,7 @@ import { NextResponse, type NextRequest } from "next/server"
 const PUBLIC_ROUTES = new Set(["/", "/auth/login", "/auth/sign-up", "/auth/error", "/demo", "/contact", "/api/analyze", "/analysis"])
 
 const PROTECTED_ROUTE_PATTERNS = [
-  "/clinic",
+  "/center",
   "/branches",
   "/sales",
   "/admin",
@@ -42,10 +42,10 @@ function getRoleDashboardPath(role?: string | null, locale?: string | null) {
   switch (role) {
     case "super_admin":
       return withLocalePath("/super-admin", locale ?? null)
-    case "clinic_owner":
-    case "clinic_staff":
-    case "clinic_admin":
-      return withLocalePath("/clinic/dashboard", locale ?? null)
+    case "center_owner":
+    case "center_staff":
+    case "center_admin":
+      return withLocalePath("/center/dashboard", locale ?? null)
     case "sales_staff":
       return withLocalePath("/sales/dashboard", locale ?? null)
     case "customer":
@@ -134,16 +134,16 @@ export async function updateSession(request: NextRequest, response?: NextRespons
     }
 
     if (user && isProtectedRoute(normalizedPathname)) {
-      const { data: userProfile } = await supabase.from("users").select("role, clinic_id").eq("id", user.id).single()
+      const { data: userProfile } = await supabase.from("users").select("role, center_id").eq("id", user.id).single()
       const resolvedRole = userProfile?.role ?? (user.user_metadata as any)?.role ?? null
       const roleDashboardPath = getRoleDashboardPath(resolvedRole, locale)
 
       if (userProfile) {
-        // Clinic and branches routes require clinic_owner or clinic_staff
-        if ((normalizedPathname.startsWith("/clinic") || normalizedPathname.startsWith("/branches")) && 
-            userProfile.role !== "clinic_owner" && 
-            userProfile.role !== "clinic_staff" &&
-            userProfile.role !== "clinic_admin") {
+        // Center and branches routes require center_owner or center_staff
+        if ((normalizedPathname.startsWith("/center") || normalizedPathname.startsWith("/branches")) && 
+            userProfile.role !== "center_owner" && 
+            userProfile.role !== "center_staff" &&
+            userProfile.role !== "center_admin") {
           const url = request.nextUrl.clone()
           url.pathname = roleDashboardPath
           return NextResponse.redirect(url)
@@ -166,9 +166,9 @@ export async function updateSession(request: NextRequest, response?: NextRespons
           return NextResponse.redirect(url)
         }
 
-        // Admin routes require clinic_owner or super_admin (shared admin tools)
+        // Admin routes require center_owner or super_admin (shared admin tools)
         if (normalizedPathname.startsWith("/admin") && 
-            userProfile.role !== "clinic_owner" && 
+            userProfile.role !== "center_owner" && 
             userProfile.role !== "super_admin") {
           const url = request.nextUrl.clone()
           url.pathname = roleDashboardPath

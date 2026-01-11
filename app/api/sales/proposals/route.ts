@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     const service = createServiceClient()
     const { data: userRow, error: userErr } = await service
       .from('users')
-      .select('role, clinic_id')
+      .select('role, center_id')
       .eq('id', user.id)
       .single()
     if (userErr || !userRow || !canAccessSales(userRow.role)) {
@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
     const { listProposals } = await import('@/lib/sales/proposals-service')
     const payload = await listProposals({
       userId: user.id,
-      clinicId: userRow.clinic_id ?? null,
+      clinicId: userRow.center_id ?? null,
       status,
       search,
       limit,
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
     const service = createServiceClient()
     const { data: userRow, error: userErr } = await service
       .from('users')
-      .select('role, clinic_id')
+      .select('role, center_id')
       .eq('id', user.id)
       .single()
     if (userErr || !userRow || !canAccessSales(userRow.role)) {
@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json()
     const { createProposal } = await import('@/lib/sales/proposals-service')
-    const proposal = await createProposal(user.id, userRow.clinic_id ?? null, body)
+    const proposal = await createProposal(user.id, userRow.center_id ?? null, body)
 
     return NextResponse.json(proposal, { status: 201 })
 

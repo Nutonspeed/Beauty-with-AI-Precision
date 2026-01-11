@@ -8,9 +8,9 @@ type LogoProps = {
   variant?: 'default' | 'white' | 'dark'
 }
 
-// Modern AI-powered clinic logo mark
-export function ClinicIQMark({ className, title, variant: _variant = 'default' }: LogoProps) {
-  const ariaTitle = title || "ClinicIQ"
+// Modern AI-powered center logo mark
+export function CenterIQMark({ className, title, variant: _variant = 'default' }: LogoProps) {
+  const ariaTitle = title || "CenterIQ"
   
   return (
     <svg
@@ -75,15 +75,15 @@ export function ClinicIQMark({ className, title, variant: _variant = 'default' }
 }
 
 // Modern text-based wordmark
-export function ClinicIQWordmark({ className, title }: LogoProps) {
-  const ariaTitle = title || "ClinicIQ"
+export function CenterIQWordmark({ className, title }: LogoProps) {
+  const ariaTitle = title || "CenterIQ"
   return (
     <span 
       className={`font-bold tracking-tight ${className}`}
       aria-label={ariaTitle}
     >
       <span className="bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 bg-clip-text text-transparent">
-        Clinic
+        Center
       </span>
       <span className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
         IQ
@@ -93,29 +93,29 @@ export function ClinicIQWordmark({ className, title }: LogoProps) {
 }
 
 // Alternative: Simple text with gradient
-export function ClinicIQText({ className }: { className?: string }) {
+export function CenterIQText({ className }: { className?: string }) {
   return (
     <span className={`font-bold ${className}`}>
-      <span className="text-cyan-500">Clinic</span>
+      <span className="text-cyan-500">Center</span>
       <span className="text-blue-600">IQ</span>
     </span>
   )
 }
 
-export function ClinicIQLogo({ className, title }: LogoProps) {
+export function CenterIQLogo({ className, title }: LogoProps) {
   return (
-    <div className={`flex items-center gap-2.5 ${className}`} aria-label={title || "ClinicIQ Logo"}>
-      <ClinicIQMark className="h-9 w-9 sm:h-10 sm:w-10" />
-      <ClinicIQWordmark className="text-xl sm:text-2xl" />
+    <div className={`flex items-center gap-2.5 ${className}`} aria-label={title || "CenterIQ Logo"}>
+      <CenterIQMark className="h-9 w-9 sm:h-10 sm:w-10" />
+      <CenterIQWordmark className="text-xl sm:text-2xl" />
     </div>
   )
 }
 
 // Compact logo for mobile/small spaces
-export function ClinicIQLogoCompact({ className }: { className?: string }) {
+export function CenterIQLogoCompact({ className }: { className?: string }) {
   return (
     <div className={`flex items-center gap-2 ${className}`}>
-      <ClinicIQMark className="h-8 w-8" />
+      <CenterIQMark className="h-8 w-8" />
       <span className="font-bold text-lg">
         <span className="text-cyan-500">C</span>
         <span className="text-blue-600">IQ</span>
@@ -125,12 +125,12 @@ export function ClinicIQLogoCompact({ className }: { className?: string }) {
 }
 
 // Logo with tagline
-export function ClinicIQLogoFull({ className }: { className?: string }) {
+export function CenterIQLogoFull({ className }: { className?: string }) {
   return (
     <div className={`flex flex-col ${className}`}>
       <div className="flex items-center gap-2.5">
-        <ClinicIQMark className="h-10 w-10" />
-        <ClinicIQWordmark className="text-2xl" />
+        <CenterIQMark className="h-10 w-10" />
+        <CenterIQWordmark className="text-2xl" />
       </div>
       <span className="text-xs text-muted-foreground ml-12 -mt-1">
         AI-Powered Skin Analysis

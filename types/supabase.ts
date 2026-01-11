@@ -15,18 +15,18 @@ export type Json =
 // Canonical Supabase User Roles (normalized via normalizeRole). Added 'public'.
 export type UserRole = 
   | 'public'
-  | 'clinic_owner'
-  | 'clinic_admin'
+  | 'center_owner'
+  | 'center_admin'
   | 'sales_staff'
-  | 'clinic_staff'
+  | 'center_staff'
   | 'customer'
   | 'customer_free'
   | 'customer_premium'
-  | 'customer_clinical'
+  | 'customer_aesthetic'
   | 'super_admin'
 
 // Analysis Tier - ไม่มีใน DB, คำนวณจาก role
-export type AnalysisTier = 'free' | 'premium' | 'clinical'
+export type AnalysisTier = 'free' | 'premium' | 'aesthetic'
 
 export interface Database {
   public: {
@@ -35,7 +35,7 @@ export interface Database {
       users: {
         Row: {
           id: string
-          clinic_id: string | null
+          center_id: string | null
           email: string
           full_name: string | null
           phone: string | null
@@ -49,7 +49,7 @@ export interface Database {
         }
         Insert: {
           id: string
-          clinic_id?: string | null
+          center_id?: string | null
           email: string
           full_name?: string | null
           phone?: string | null
@@ -63,7 +63,7 @@ export interface Database {
         }
         Update: {
           id?: string
-          clinic_id?: string | null
+          center_id?: string | null
           email?: string
           full_name?: string | null
           phone?: string | null
@@ -79,7 +79,7 @@ export interface Database {
       skin_analyses: {
         Row: {
           id: string
-          clinic_id: string | null
+          center_id: string | null
           customer_id: string | null
           analyzed_by: string | null
           image_url: string
@@ -93,14 +93,14 @@ export interface Database {
           ai_model_version: string | null
           ip_address: string | null
           user_agent: string | null
-          patient_info: Json | null
+          customer_info: Json | null
           appointment_id: string | null
-          treatment_plan_id: string | null
+          program_plan_id: string | null
           created_at: string
         }
         Insert: {
           id?: string
-          clinic_id?: string | null
+          center_id?: string | null
           customer_id?: string | null
           analyzed_by?: string | null
           image_url: string
@@ -114,14 +114,14 @@ export interface Database {
           ai_model_version?: string | null
           ip_address?: string | null
           user_agent?: string | null
-          patient_info?: Json | null
+          customer_info?: Json | null
           appointment_id?: string | null
-          treatment_plan_id?: string | null
+          program_plan_id?: string | null
           created_at?: string
         }
         Update: {
           id?: string
-          clinic_id?: string | null
+          center_id?: string | null
           customer_id?: string | null
           analyzed_by?: string | null
           image_url?: string
@@ -135,13 +135,13 @@ export interface Database {
           ai_model_version?: string | null
           ip_address?: string | null
           user_agent?: string | null
-          patient_info?: Json | null
+          customer_info?: Json | null
           appointment_id?: string | null
-          treatment_plan_id?: string | null
+          program_plan_id?: string | null
           created_at?: string
         }
       }
-      clinics: {
+      centers: {
         Row: {
           id: string
           name: string
@@ -214,12 +214,12 @@ export function parseUserRole(role: string): UserRole {
 // Helper: แปลง role เป็น tier
 export function getRoleTier(role: UserRole): AnalysisTier {
   switch (role) {
-    case 'clinic_owner':
+    case 'center_owner':
     case 'super_admin':
-    case 'customer_clinical':
-      return 'clinical'
+    case 'customer_aesthetic':
+      return 'aesthetic'
     case 'sales_staff':
-    case 'clinic_staff':
+    case 'center_staff':
     case 'customer_premium':
       return 'premium'
     case 'customer':
@@ -234,29 +234,29 @@ export function hasFeatureAccess(role: UserRole, feature: string): boolean {
   const tier = getRoleTier(role)
   
   const featureMap: Record<string, AnalysisTier[]> = {
-    'basic_analysis': ['free', 'premium', 'clinical'],
-    'advanced_analysis': ['premium', 'clinical'],
-    'ai_recommendations': ['premium', 'clinical'],
-    'comparison': ['premium', 'clinical'],
-    'history': ['premium', 'clinical'],
-    'export': ['premium', 'clinical'],
-    'clinic_management': ['clinical'],
-    'multi_user': ['clinical'],
-    'api_access': ['clinical'],
+    'basic_analysis': ['free', 'premium', 'aesthetic'],
+    'advanced_analysis': ['premium', 'aesthetic'],
+    'ai_recommendations': ['premium', 'aesthetic'],
+    'comparison': ['premium', 'aesthetic'],
+    'history': ['premium', 'aesthetic'],
+    'export': ['premium', 'aesthetic'],
+    'center_management': ['aesthetic'],
+    'multi_user': ['aesthetic'],
+    'api_access': ['aesthetic'],
   }
   
   const allowedTiers = featureMap[feature] || []
   return allowedTiers.includes(tier)
 }
 
-// Patient Info Type for skin_analyses.patient_info JSONB column
-export interface PatientInfo {
+// Customer Info Type for skin_analyses.patient_info JSONB column
+export interface CustomerInfo {
   name: string;
   age?: number;
   gender?: 'male' | 'female' | 'other';
   skinType?: 'dry' | 'oily' | 'combination' | 'normal' | 'sensitive';
-  medicalHistory?: string[];
+  history?: string[];
   allergies?: string[];
-  currentMedications?: string[];
+  currentProducts?: string[];
   notes?: string;
 }

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Auth Middleware for API Routes
  * Centralized authentication and authorization
  */
@@ -13,14 +13,14 @@ export interface AuthenticatedUser {
   id: string;
   email: string;
   role: string;
-  clinic_id?: string;
+  center_id?: string;
   branch_id?: string;
 }
 
 export interface AuthMiddlewareOptions {
   requireAuth?: boolean;
   allowedRoles?: string[];
-  requireClinicId?: boolean;
+  requireCenterId?: boolean;
   rateLimitCategory?: 'general' | 'auth' | 'api' | 'upload' | 'ai' | 'database';
 }
 
@@ -29,7 +29,7 @@ export interface AuthMiddlewareOptions {
  * @example
  * export const GET = withAuth(async (req, user) => {
  *   return Response.json({ data: 'protected' });
- * }, { allowedRoles: ['admin', 'clinic_admin'] });
+ * }, { allowedRoles: ['admin', 'center_admin'] });
  */
 export function withAuth(
   handler: (req: NextRequest, user: AuthenticatedUser) => Promise<Response>,
@@ -38,7 +38,7 @@ export function withAuth(
   const {
     requireAuth = true,
     allowedRoles = [],
-    requireClinicId = false,
+    requireCenterId = false,
     rateLimitCategory,
   } = options;
 
@@ -85,7 +85,7 @@ export function withAuth(
           id: 'test-user-id',
           email: 'test@example.com',
           role: 'sales_staff', // Default role for tests
-          clinic_id: 'test-clinic-id',
+          center_id: 'test-center-id',
         };
         const response = await handler(req, testUser);
         const resWithId = attachRequestIdHeader(response, requestId);
@@ -118,10 +118,10 @@ export function withAuth(
         return nextRes;
       }
 
-      // Fetch user details including role and clinic_id
+      // Fetch user details including role and center_id
       let { data: userData, error: userError } = await supabase
         .from('users')
-        .select('id, email, role, clinic_id, branch_id')
+        .select('id, email, role, center_id, branch_id')
         .eq('id', authUser.id)
         .single();
 
@@ -133,19 +133,22 @@ export function withAuth(
             (authUser.user_metadata as any)?.role ||
             (authUser.app_metadata as any)?.role
 
-          const allowedRoles = new Set([
+          const allowedRolesList = new Set([
             'public',
             'customer',
+            'customer_free',
+            'customer_premium',
+            'customer_aesthetic',
             'free_user',
             'premium_customer',
-            'clinic_staff',
-            'clinic_admin',
-            'clinic_owner',
+            'center_staff',
+            'center_admin',
+            'center_owner',
             'sales_staff',
             'super_admin',
           ])
 
-          const safeRole = allowedRoles.has(rawRole) ? rawRole : 'customer'
+          const safeRole = allowedRolesList.has(rawRole) ? rawRole : 'customer'
           const safeEmail = authUser.email || (authUser.user_metadata as any)?.email || null
           if (!safeEmail) {
             throw new Error('Authenticated user is missing email')
@@ -163,7 +166,7 @@ export function withAuth(
               },
               { onConflict: 'id' }
             )
-            .select('id, email, role, clinic_id, branch_id')
+            .select('id, email, role, center_id, branch_id')
             .single()
 
           if (createError || !createdUser) {
@@ -198,7 +201,7 @@ export function withAuth(
         id: userData.id,
         email: userData.email,
         role: authUser.user_metadata?.role || userData.role || 'customer',
-        clinic_id: userData.clinic_id,
+        center_id: userData.center_id,
         branch_id: userData.branch_id,
       };
 
@@ -216,12 +219,12 @@ export function withAuth(
         return nextRes;
       }
 
-      // Check clinic_id requirement
-      if (requireClinicId && !user.clinic_id) {
+      // Check center_id requirement
+      if (requireCenterId && !user.center_id) {
         const nextRes = NextResponse.json(
           {
             error: 'Forbidden',
-            message: 'User must be associated with a clinic',
+            message: 'User must be associated with a center',
           },
           { status: 403 }
         );
@@ -255,7 +258,7 @@ export function withAuthContext<TContext>(
   const {
     requireAuth = true,
     allowedRoles = [],
-    requireClinicId = false,
+    requireCenterId = false,
     rateLimitCategory,
   } = options;
 
@@ -289,7 +292,7 @@ export function withAuthContext<TContext>(
           id: 'test-user-id',
           email: 'test@example.com',
           role: 'sales_staff',
-          clinic_id: 'test-clinic-id',
+          center_id: 'test-center-id',
         };
         const response = await handler(req, testUser, context);
         const resWithId = attachRequestIdHeader(response, requestId);
@@ -322,7 +325,7 @@ export function withAuthContext<TContext>(
 
       const { data: userData, error: userError } = await supabase
         .from('users')
-        .select('id, email, role, clinic_id, branch_id')
+        .select('id, email, role, center_id, branch_id')
         .eq('id', authUser.id)
         .single();
 
@@ -340,7 +343,7 @@ export function withAuthContext<TContext>(
         id: userData.id,
         email: userData.email,
         role: authUser.user_metadata?.role || userData.role || 'customer',
-        clinic_id: userData.clinic_id,
+        center_id: userData.center_id,
         branch_id: userData.branch_id,
       };
 
@@ -357,11 +360,11 @@ export function withAuthContext<TContext>(
         return nextRes;
       }
 
-      if (requireClinicId && !user.clinic_id) {
+      if (requireCenterId && !user.center_id) {
         const nextRes = NextResponse.json(
           {
             error: 'Forbidden',
-            message: 'User must be associated with a clinic',
+            message: 'User must be associated with a center',
           },
           { status: 403 }
         );
@@ -392,7 +395,7 @@ export function withAuthContext<TContext>(
  */
 export function withPublicAccess(
   handler: (req: NextRequest) => Promise<Response>,
-  options: Omit<AuthMiddlewareOptions, 'requireAuth' | 'allowedRoles' | 'requireClinicId'> = {}
+  options: Omit<AuthMiddlewareOptions, 'requireAuth' | 'allowedRoles' | 'requireCenterId'> = {}
 ) {
   return withAuth(handler as any, { requireAuth: false, ...options });
 }
@@ -402,7 +405,7 @@ export function withPublicAccess(
  */
 export function withAdminAuth(
   handler: (req: NextRequest, user: AuthenticatedUser) => Promise<Response>,
-  options: Omit<AuthMiddlewareOptions, 'allowedRoles' | 'requireClinicId' | 'requireAuth'> = {}
+  options: Omit<AuthMiddlewareOptions, 'allowedRoles' | 'requireCenterId' | 'requireAuth'> = {}
 ) {
   return withAuth(handler, {
     allowedRoles: ['super_admin', 'admin'],
@@ -411,15 +414,15 @@ export function withAdminAuth(
 }
 
 /**
- * Shorthand for clinic staff endpoints
+ * Shorthand for center staff endpoints
  */
-export function withClinicAuth(
+export function withCenterAuth(
   handler: (req: NextRequest, user: AuthenticatedUser) => Promise<Response>,
-  options: Omit<AuthMiddlewareOptions, 'allowedRoles' | 'requireClinicId' | 'requireAuth'> = {}
+  options: Omit<AuthMiddlewareOptions, 'allowedRoles' | 'requireCenterId' | 'requireAuth'> = {}
 ) {
   return withAuth(handler, {
-    allowedRoles: ['super_admin', 'clinic_admin', 'clinic_staff'],
-    requireClinicId: true,
+    allowedRoles: ['super_admin', 'center_admin', 'center_staff'],
+    requireCenterId: true,
     ...options,
   });
 }
@@ -429,7 +432,7 @@ export function withClinicAuth(
  */
 export function withSalesAuth(
   handler: (req: NextRequest, user: AuthenticatedUser) => Promise<Response>,
-  options: Omit<AuthMiddlewareOptions, 'allowedRoles' | 'requireClinicId' | 'requireAuth'> = {}
+  options: Omit<AuthMiddlewareOptions, 'allowedRoles' | 'requireCenterId' | 'requireAuth'> = {}
 ) {
   return withAuth(async (req, user) => {
     if (!canAccessSales(user.role)) {
@@ -444,7 +447,7 @@ export function withSalesAuth(
 
     return handler(req, user);
   }, {
-    requireClinicId: true,
+    requireCenterId: true,
     ...options,
   });
 }
@@ -455,10 +458,10 @@ export function withSalesAuth(
 export function hasPermission(user: AuthenticatedUser, permission: string): boolean {
   const rolePermissions: Record<string, string[]> = {
     super_admin: ['*'], // All permissions
-    admin: ['view_all', 'manage_clinics', 'view_analytics'],
-    clinic_admin: ['view_clinic', 'manage_clinic', 'manage_staff', 'view_reports'],
-    clinic_staff: ['view_clinic', 'create_analysis', 'view_customers'],
-    sales_staff: ['view_clinic', 'create_leads', 'manage_proposals'],
+    admin: ['view_all', 'manage_centers', 'view_analytics'],
+    center_admin: ['view_center', 'manage_center', 'manage_staff', 'view_reports'],
+    center_staff: ['view_center', 'create_analysis', 'view_customers'],
+    sales_staff: ['view_center', 'create_leads', 'manage_proposals'],
     customer: ['view_own', 'create_booking'],
   };
 

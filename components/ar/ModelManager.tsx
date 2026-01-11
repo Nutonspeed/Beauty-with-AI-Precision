@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 // Define model types
-type ModelType = 'face' | 'product' | 'treatment';
+type ModelType = 'face' | 'product' | 'program';
 
 // Model configurations
 const MODEL_CONFIG = {
@@ -23,8 +23,8 @@ const MODEL_CONFIG = {
     position: [0, -1, 0],
     rotation: [0, Math.PI / 4, 0],
   },
-  treatment: {
-    path: '/models/treatments/treatment-sample.glb',
+  program: {
+    path: '/models/programs/program-sample.glb',
     scale: 1,
     position: [0, 0, 0],
     rotation: [0, 0, 0],
@@ -78,8 +78,8 @@ function ProductModel() {
   );
 }
 
-// Treatment Model Component
-function TreatmentModel() {
+// Program Model Component
+function ProgramModel() {
   return (
     <group>
       <mesh castShadow>
@@ -102,7 +102,7 @@ function Model({ modelType }: { modelType: ModelType }) {
     <>
       {modelType === 'face' && <FaceModel />}
       {modelType === 'product' && <ProductModel />}
-      {modelType === 'treatment' && <TreatmentModel />}
+      {modelType === 'program' && <ProgramModel />}
     </>
   );
 }
@@ -161,7 +161,7 @@ export function ModelManager() {
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="face">Face</TabsTrigger>
             <TabsTrigger value="product">Product</TabsTrigger>
-            <TabsTrigger value="treatment">Treatment</TabsTrigger>
+            <TabsTrigger value="program">Program</TabsTrigger>
           </TabsList>
           
           <TabsContent value={activeModel} className="mt-4">

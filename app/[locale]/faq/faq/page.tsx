@@ -38,20 +38,20 @@ export default function FAQPage() {
         {
           question: language === "th" ? "AI367BAR คืออะไร?" : "What is AI367BAR?",
           answer: language === "th" 
-            ? "AI367BAR คือแพลตฟอร์ม B2B2C สำหรับคลินิกความงาม ที่รวมเทคโนโลยี AI Skin Analysis, AR Simulator และระบบจัดการคลินิกครบวงจรไว้ในที่เดียว"
-            : "AI367BAR is a B2B2C platform for aesthetic clinics, combining AI Skin Analysis, AR Simulator, and comprehensive clinic management in one place."
+            ? "AI367BAR คือแพลตฟอร์ม B2B2C สำหรับศูนย์ความงามอัจฉริยะ ที่รวมเทคโนโลยี AI Skin Analysis, AR Simulator และระบบจัดการศูนย์ความงามครบวงจรไว้ในที่เดียว"
+            : "AI367BAR is a B2B2C platform for aesthetic centers, combining AI Skin Analysis, AR Simulator, and comprehensive center management in one place."
         },
         {
           question: language === "th" ? "ทำไมต้องใช้ AI367BAR?" : "Why use AI367BAR?",
           answer: language === "th" 
-            ? "ช่วยให้คลินิกวิเคราะห์ผิวได้แม่นยำด้วย AI ระดับการแพทย์ มีระบบ AR แสดงผลการรักษา และมี Dashboard จัดการธุรกิจครบวงจร ในราคาที่เข้าถึงได้"
-            : "Helps clinics analyze skin accurately with medical-grade AI, includes AR treatment visualization, and comprehensive business dashboard at an affordable price."
+            ? "ช่วยให้ศูนย์ความงามวิเคราะห์ผิวได้แม่นยำด้วย AI ระดับพรีเมียม มีระบบ AR แสดงผลลัพธ์ที่คาดหวัง และมี Dashboard จัดการธุรกิจครบวงจร ในราคาที่เข้าถึงได้"
+            : "Helps aesthetic centers analyze skin accurately with premium AI, includes AR result visualization, and comprehensive business dashboard at an affordable price."
         },
         {
-          question: language === "th" ? "มีคลินิกใดใช้บ้าง?" : "Which clinics are using it?",
+          question: language === "th" ? "มีศูนย์ความงามใดใช้บ้าง?" : "Which centers are using it?",
           answer: language === "th" 
-            ? "ปัจจุบันมีคลินิกความงามในประเทศไทยใช้งานมากกว่า 50 สาขา ครอบคลุมทั้งคลินิกขนาดเล็กและเครือข่ายหลายสาขา"
-            : "Currently used by over 50 branches of aesthetic clinics in Thailand, covering both small clinics and multi-branch networks."
+            ? "ปัจจุบันมีศูนย์ความงามในประเทศไทยใช้งานมากกว่า 50 สาขา ครอบคลุมทั้งธุรกิจขนาดเล็กและเครือข่ายหลายสาขา"
+            : "Currently used by over 50 branches of aesthetic centers in Thailand, covering both small businesses and multi-branch networks."
         }
       ]
     },
@@ -62,8 +62,8 @@ export default function FAQPage() {
         {
           question: language === "th" ? "วิเคราะห์ผิวได้แม่นยำแค่ไหน?" : "How accurate is skin analysis?",
           answer: language === "th" 
-            ? "ระบบมีความแม่นยำมากกว่า 95% ใช้เทคโนโลยี MediaPipe สำหรับตรวจจับใบหน้า 468 จุด และ TensorFlow.js วิเคราะห์ผิวตามมาตรฐาน VISIA 8 ตัวชี้วัด"
-            : "The system is over 95% accurate, using MediaPipe technology for 468-point face detection and TensorFlow.js for VISIA-standard 8-metric skin analysis."
+            ? "ระบบมีความแม่นยำมากกว่า 95% ใช้เทคโนโลยี MediaPipe สำหรับตรวจจับใบหน้า 468 จุด และ TensorFlow.js วิเคราะห์ผิวตามมาตรฐานความงามอัจฉริยะ 8 ตัวชี้วัด"
+            : "The system is over 95% accurate, using MediaPipe technology for 468-point face detection and TensorFlow.js for Aesthetic Intelligence-standard 8-metric skin analysis."
         },
         {
           question: language === "th" ? "ใช้เวลาวิเคราะห์นานเท่าไหร่?" : "How long does analysis take?",
@@ -74,8 +74,8 @@ export default function FAQPage() {
         {
           question: language === "th" ? "วัดอะไรบ้าง?" : "What does it measure?",
           answer: language === "th" 
-            ? "วัด 8 ตัวชี้วัดตามมาตรฐาน VISIA: รอยเหี่ยวย่น (Wrinkles), จุดด่างดำ (Spots), รูขุมขน (Pores), เนื้อผิว (Texture), ความสม่ำเสมอ (Evenness), ความกระชับ (Firmness), ความกระจ่างใส (Radiance) และความชุ่มชื้น (Hydration)"
-            : "Measures 8 VISIA-standard metrics: Wrinkles, Spots, Pores, Texture, Evenness, Firmness, Radiance, and Hydration."
+            ? "วัด 8 ตัวชี้วัดตามมาตรฐานความงามอัจฉริยะ: รอยเหี่ยวย่น (Wrinkles), จุดด่างดำ (Spots), รูขุมขน (Pores), เนื้อผิว (Texture), ความสม่ำเสมอ (Evenness), ความกระชับ (Firmness), ความกระจ่างใส (Radiance) และความชุ่มชื้น (Hydration)"
+            : "Measures 8 Aesthetic Intelligence-standard metrics: Wrinkles, Spots, Pores, Texture, Evenness, Firmness, Radiance, and Hydration."
         },
         {
           question: language === "th" ? "ต้องใช้กล้องพิเศษหรือไม่?" : "Do I need a special camera?",
@@ -122,8 +122,8 @@ export default function FAQPage() {
         {
           question: language === "th" ? "Premium แพงไหม?" : "Is Premium expensive?",
           answer: language === "th" 
-            ? "Premium เริ่มต้นเพียง 4,900 บาท/เดือน ถูกกว่าเครื่อง VISIA หลายหมื่นเท่า และมีฟีเจอร์มากกว่า"
-            : "Premium starts at only ฿4,900/month, much cheaper than VISIA machines costing hundreds of thousands, with more features."
+            ? "Premium เริ่มต้นเพียงไม่กี่พันบาท/เดือน ถูกกว่าเครื่องวิเคราะห์ผิวระดับสูงหลายเท่า และมีฟีเจอร์ที่ช่วยสร้างยอดขายได้มากกว่า"
+            : "Premium starts at a competitive monthly rate, significantly more cost-effective than high-end skin analysis machines while providing more sales-enablement features."
         },
         {
           question: language === "th" ? "ยกเลิกได้ไหม?" : "Can I cancel?",

@@ -120,7 +120,7 @@ export default function FaqPage() {
                   </p>
                   <Button size="xl" variant="premium" className="h-16 px-12 rounded-2xl shadow-2xl shadow-pink-500/20 text-lg font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all" asChild>
                     <a href="/contact">
-                      {isThaiLocale ? 'ติดต่อฝ่ายสนับสนุน' : 'Contact Clinical Support'}
+                      {isThaiLocale ? 'ติดต่อฝ่ายสนับสนุน' : 'Contact Aesthetic Support'}
                     </a>
                   </Button>
                 </div>

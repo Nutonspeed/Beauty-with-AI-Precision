@@ -9,12 +9,12 @@ import { getMediaPipeDetector, type FaceDetectionResult } from "@/lib/ai/mediapi
 import { getFaceTrackingStabilizer } from "@/lib/ar/face-tracking-stabilizer"
 
 interface LiveCameraARProps {
-  readonly treatment: string
+  readonly program: string
   readonly intensity: number
   readonly onCapture?: (imageData: string) => void
 }
 
-export function LiveCameraAR({ treatment, intensity, onCapture }: LiveCameraARProps) {
+export function LiveCameraAR({ program, intensity, onCapture }: LiveCameraARProps) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const animationFrameRef = useRef<number | undefined>(undefined)
@@ -120,8 +120,8 @@ export function LiveCameraAR({ treatment, intensity, onCapture }: LiveCameraARPr
           // Draw face mesh
           drawFaceMesh(ctx, stabilizedResult, canvas.width, canvas.height)
 
-          // Apply AR treatment effect
-          applyTreatmentEffect(ctx, stabilizedResult, treatment, intensity, canvas.width, canvas.height)
+          // Apply AR program effect
+          applyProgramEffect(ctx, stabilizedResult, program, intensity, canvas.width, canvas.height)
         } else {
           setFaceDetected(false)
         }
@@ -138,7 +138,7 @@ export function LiveCameraAR({ treatment, intensity, onCapture }: LiveCameraARPr
     }
 
     processFrameRef.current = processFrame
-  }, [isStreaming, treatment, intensity])
+  }, [isStreaming, program, intensity])
 
   const drawFaceMesh = (ctx: CanvasRenderingContext2D, result: FaceDetectionResult, width: number, height: number) => {
     // Draw landmarks
@@ -162,10 +162,10 @@ export function LiveCameraAR({ treatment, intensity, onCapture }: LiveCameraARPr
     )
   }
 
-  const applyTreatmentEffect = (
+  const applyProgramEffect = (
     ctx: CanvasRenderingContext2D,
     result: FaceDetectionResult,
-    selectedTreatment: string,
+    selectedProgram: string,
     effectIntensity: number,
     width: number,
     height: number,
@@ -174,7 +174,7 @@ export function LiveCameraAR({ treatment, intensity, onCapture }: LiveCameraARPr
     const bbox = result.boundingBox
 
     // ENHANCED: High-quality real-time AR effects
-    switch (selectedTreatment) {
+    switch (selectedProgram) {
       case "botox": {
         // Multi-layer forehead smoothing
         const foreheadY = bbox.yMin * height

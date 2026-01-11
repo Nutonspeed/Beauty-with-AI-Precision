@@ -50,7 +50,7 @@ export default function OfflinePage() {
                 <div>
                   <h3 className="font-semibold text-green-900">Cached Data Available</h3>
                   <p className="text-sm text-green-700 mt-1">
-                    Access recent patient records, analysis results, and treatment history
+                    Access recent customer records, analysis results, and program history
                   </p>
                 </div>
               </div>
@@ -68,9 +68,9 @@ export default function OfflinePage() {
               <div className="flex items-start space-x-3 p-4 bg-purple-50 rounded-lg border border-purple-200">
                 <Users className="h-6 w-6 text-purple-600 mt-1" />
                 <div>
-                  <h3 className="font-semibold text-purple-900">Patient Management</h3>
+                  <h3 className="font-semibold text-purple-900">Customer Management</h3>
                   <p className="text-sm text-purple-700 mt-1">
-                    View and edit patient information (changes sync automatically)
+                    View and edit customer information (changes sync automatically)
                   </p>
                 </div>
               </div>

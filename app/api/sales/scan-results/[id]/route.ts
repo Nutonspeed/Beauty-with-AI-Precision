@@ -20,7 +20,7 @@ export async function GET(
     const service = createServiceClient();
     const { data: userRow, error: userErr } = await service
       .from('users')
-      .select('role, clinic_id')
+      .select('role, center_id')
       .eq('id', user.id)
       .single();
 
@@ -75,7 +75,7 @@ export async function PATCH(
     const service = createServiceClient();
     const { data: userRow, error: userErr } = await service
       .from('users')
-      .select('role, clinic_id')
+      .select('role, center_id')
       .eq('id', user.id)
       .single();
 
@@ -149,7 +149,7 @@ export async function DELETE(
     const service = createServiceClient();
     const { data: userRow, error: userErr } = await service
       .from('users')
-      .select('role, clinic_id')
+      .select('role, center_id')
       .eq('id', user.id)
       .single();
 

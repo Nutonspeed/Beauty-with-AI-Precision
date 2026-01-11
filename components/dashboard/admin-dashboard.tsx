@@ -97,20 +97,20 @@ export default function AdminDashboard({ role }: AdminDashboardProps) {
               <span className="text-[10px] font-black uppercase tracking-[0.4em] text-pink-500/60 italic">System Administrator Node</span>
             </div>
             <h1 className="text-5xl md:text-8xl font-bold tracking-tighter text-white leading-[0.9] italic">
-              {isSuperAdmin ? 'Elite' : 'Clinical'}<br />
+              {isSuperAdmin ? 'Elite' : 'Aesthetic'}<br />
               <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent italic">
                 Dashboard <span className="not-italic">Control</span>
               </span>
             </h1>
             <p className="text-xl text-slate-500 font-light tracking-widest max-w-2xl italic">
-              {isThaiLocale ? 'จัดการและควบคุมคลินิกของคุณด้วยระบบอัจฉริยะ' : 'Command and monitor your clinical infrastructure with precision intelligence.'}
+              {isThaiLocale ? 'จัดการและควบคุมเซ็นเตอร์ของคุณด้วยระบบอัจฉริยะ' : 'Command and monitor your aesthetic infrastructure with precision intelligence.'}
             </p>
           </motion.div>
 
           {/* Quick Stats Grid - Infrastructure Nodes */}
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {[
-              { label: 'ผู้ป่วยทั้งหมด', val: data.stats.totalClients.toLocaleString(), sub: `+${data.stats.newClientsThisMonth} คนใหม่เดือนนี้`, icon: Users, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+              { label: 'ลูกค้าทั้งหมด', val: data.stats.totalClients.toLocaleString(), sub: `+${data.stats.newClientsThisMonth} คนใหม่เดือนนี้`, icon: Users, color: 'text-blue-400', bg: 'bg-blue-500/10' },
               { label: 'นัดหมายวันนี้', val: data.stats.appointmentsToday, sub: `${data.stats.cancelledAppointments} คนยกเลิก`, icon: Calendar, color: 'text-green-400', bg: 'bg-green-500/10' },
               { label: 'รายได้เดือนนี้', val: `฿${data.stats.monthlyRevenue.toLocaleString()}`, sub: `${data.stats.revenueChange >= 0 ? '+' : ''}${data.stats.revenueChange}% จากเดือนที่แล้ว`, icon: TrendingUp, color: 'text-emerald-400', bg: 'bg-emerald-500/10', trend: data.stats.revenueChange >= 0 },
               { label: 'สต็อกต่ำ', val: data.stats.lowStockItems, sub: 'ต้องสั่งเพิ่ม', icon: Package, color: 'text-orange-400', bg: 'bg-orange-500/10' }
@@ -171,7 +171,7 @@ export default function AdminDashboard({ role }: AdminDashboardProps) {
                       <div className="space-y-2">
                         <p className="font-bold text-white tracking-tight italic group-hover:text-pink-400 transition-colors">{appointment.clientName}</p>
                         <p className="text-[10px] font-black uppercase tracking-[0.1em] text-slate-500">
-                          {appointment.treatment} • <span className="text-slate-400">{appointment.time}</span>
+                          {appointment.program} • <span className="text-slate-400">{appointment.time}</span>
                         </p>
                       </div>
                       <div className="flex items-center gap-4">
@@ -259,12 +259,12 @@ export default function AdminDashboard({ role }: AdminDashboardProps) {
           {/* Main Command Actions */}
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {[
-              { icon: Users, color: 'text-blue-400', bg: 'bg-blue-500/10', title: 'จัดการผู้ป่วย', desc: 'Clinical patient data orchestration', href: '/admin/patients' },
+              { icon: Users, color: 'text-blue-400', bg: 'bg-blue-500/10', title: 'จัดการลูกค้า', desc: 'Aesthetic customer data orchestration', href: '/admin/customers' },
               { icon: UserCheck, color: 'text-purple-400', bg: 'bg-purple-500/10', title: 'จัดการพนักงาน', desc: 'Staff allocation and scheduling node', href: '/admin/staff' },
               { icon: Package, color: 'text-orange-400', bg: 'bg-orange-500/10', title: 'จัดการสต็อก', desc: 'Asset supply chain management', href: '/admin/inventory' },
               { icon: Calendar, color: 'text-green-400', bg: 'bg-green-500/10', title: 'จัดการนัดหมาย', desc: 'Temporal appointment synchronization', href: '/admin-dashboard/bookings' },
               { icon: BarChart3, color: 'text-emerald-400', bg: 'bg-emerald-500/10', title: 'รายงานและวิเคราะห์', desc: 'Global performance intelligence', href: '/admin/reports' },
-              { icon: Settings, color: 'text-slate-400', bg: 'bg-white/5', title: 'ตั้งค่าระบบ', desc: 'Clinical parameter configuration', href: '/admin-dashboard/settings' }
+              { icon: Settings, color: 'text-slate-400', bg: 'bg-white/5', title: 'ตั้งค่าระบบ', desc: 'Aesthetic parameter configuration', href: '/admin-dashboard/settings' }
             ].map((action, i) => (
               <motion.div
                 key={i}
@@ -314,7 +314,7 @@ export default function AdminDashboard({ role }: AdminDashboardProps) {
               <CardContent className="p-12 pt-6">
                 <div className="space-y-8">
                   {[
-                    { label: 'ผู้ป่วยใหม่ลงทะเบียน', sub: 'สมชาย ใจดี - 15 นาทีที่แล้ว', color: 'bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]' },
+                    { label: 'ลูกค้าใหม่ลงทะเบียน', sub: 'สมชาย ใจดี - 15 นาทีที่แล้ว', color: 'bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]' },
                     { label: 'นัดหมายสำเร็จ', sub: 'สุดา ดีมาก - 1 ชั่วโมงที่แล้ว', color: 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]' },
                     { label: 'สต็อกต่ำ - ต้องสั่งซื้อ', sub: 'เซรั่มวิตามินซี - 2 ชั่วโมงที่แล้ว', color: 'bg-orange-500 shadow-[0_0_10px_rgba(249,115,22,0.5)]' }
                   ].map((log, i) => (
@@ -350,7 +350,7 @@ export default function AdminDashboard({ role }: AdminDashboardProps) {
                       Elite Command Panel
                     </h2>
                     <p className="text-xl text-slate-400 font-light italic leading-relaxed max-w-xl">
-                      Access top-tier system orchestration and global clinic management parameters.
+                      Access top-tier system orchestration and global center management parameters.
                     </p>
                   </div>
                   <div className="shrink-0 w-full lg:w-auto">

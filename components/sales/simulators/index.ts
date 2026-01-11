@@ -1,12 +1,12 @@
 /**
  * AR/AI Simulators for Sales Dashboard
- * เครื่องมือจำลองผลลัพธ์สำหรับคลินิกเสริมความงามทุกสาขา
+ * เครื่องมือจำลองผลลัพธ์สำหรับศูนย์ความงามทุกสาขา
  */
 
 // Skin & Face
 export { default as FillerLipSimulator } from '../filler-lip-simulator';
 export { EyeEnhancementSimulator } from '../eye-enhancement-simulator';
-export { default as ARTreatmentPreview } from '../ar-treatment-preview';
+export { default as ARProgramPreview } from '../ar-program-preview';
 
 // Body
 export { default as BodyContouringSimulator } from '../body-contouring-simulator';
@@ -28,8 +28,8 @@ export const SIMULATOR_REGISTRY = {
     nameTh: 'วิเคราะห์ผิวด้วย AI',
     category: 'face',
     component: 'SkinHeatmap',
-    clinicTypes: ['dermatology', 'aesthetic', 'spa'],
-    features: ['8-mode detection', '468-point mapping', 'Treatment recommendations']
+    centerTypes: ['dermatology', 'aesthetic', 'spa'],
+    features: ['8-mode detection', '468-point mapping', 'Program recommendations']
   },
   filler_lip: {
     id: 'filler_lip',
@@ -37,7 +37,7 @@ export const SIMULATOR_REGISTRY = {
     nameTh: 'จำลองฟิลเลอร์และปาก',
     category: 'face',
     component: 'FillerLipSimulator',
-    clinicTypes: ['aesthetic', 'plastic_surgery'],
+    centerTypes: ['aesthetic', 'plastic_surgery'],
     features: ['Lip augmentation', 'Cheek filler', 'Chin projection', 'Nose filler']
   },
   eye_enhancement: {
@@ -46,17 +46,17 @@ export const SIMULATOR_REGISTRY = {
     nameTh: 'จำลองการทำตา',
     category: 'face',
     component: 'EyeEnhancementSimulator',
-    clinicTypes: ['aesthetic', 'plastic_surgery'],
+    centerTypes: ['aesthetic', 'plastic_surgery'],
     features: ['Double eyelid', 'Eye bag removal', 'Brow lift', 'Dark circles']
   },
-  treatment_preview: {
-    id: 'treatment_preview',
-    name: 'AR Treatment Preview',
+  program_preview: {
+    id: 'program_preview',
+    name: 'AR Program Preview',
     nameTh: 'ดูผลลัพธ์ล่วงหน้า',
     category: 'face',
-    component: 'ARTreatmentPreview',
-    clinicTypes: ['dermatology', 'aesthetic', 'spa'],
-    features: ['Before/After', 'Multiple treatments', 'Real-time preview']
+    component: 'ARProgramPreview',
+    centerTypes: ['dermatology', 'aesthetic', 'spa'],
+    features: ['Before/After', 'Multiple programs', 'Real-time preview']
   },
   
   // Body
@@ -66,7 +66,7 @@ export const SIMULATOR_REGISTRY = {
     nameTh: 'จำลองการกระชับสัดส่วน',
     category: 'body',
     component: 'BodyContouringSimulator',
-    clinicTypes: ['slimming', 'aesthetic', 'spa'],
+    centerTypes: ['slimming', 'aesthetic', 'spa'],
     features: ['Fat reduction', 'Skin tightening', 'Muscle toning', 'Cellulite']
   },
   
@@ -77,17 +77,17 @@ export const SIMULATOR_REGISTRY = {
     nameTh: 'จำลองการปลูกผม',
     category: 'hair',
     component: 'HairRestorationSimulator',
-    clinicTypes: ['hair_clinic', 'aesthetic'],
+    centerTypes: ['hair_clinic', 'aesthetic'],
     features: ['FUE/DHI preview', 'Density simulation', 'Hairline design']
   },
 };
 
 /**
- * Get simulators by clinic type
+ * Get simulators by center type
  */
-export function getSimulatorsByClinicType(clinicType: string) {
+export function getSimulatorsByCenterType(centerType: string) {
   return Object.values(SIMULATOR_REGISTRY).filter(
-    sim => sim.clinicTypes.includes(clinicType)
+    sim => sim.centerTypes.includes(centerType)
   );
 }
 

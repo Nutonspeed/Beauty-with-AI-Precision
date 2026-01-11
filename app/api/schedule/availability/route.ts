@@ -60,13 +60,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const { data: userData } = await supabase.from("users").select("clinic_id").eq("id", user.id).single()
+    const { data: userData } = await supabase.from("users").select("center_id").eq("id", user.id).single()
 
     const { data, error } = await supabase
       .from("staff_availability")
       .upsert({
         staff_id: user.id,
-        clinic_id: userData?.clinic_id,
+        center_id: userData?.center_id,
         date,
         day_of_week,
         start_time,

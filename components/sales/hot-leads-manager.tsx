@@ -30,7 +30,7 @@ export function HotLeadsManager() {
       lastActivity: t('socialProof.times.2minsAgo') || "2 mins ago",
       potentialValue: 25000,
       avatar: "/avatars/01.png",
-      treatment: "Laser Treatment + Facial",
+      program: "Laser Program + Facial",
       notes: "สนใจแพ็คเกจครบครัน ต้องการปรึกษาเรื่องราคา",
       nextFollowUp: `${t('dashboard.staffAvailability.available')} 14:00`
     },
@@ -45,7 +45,7 @@ export function HotLeadsManager() {
       lastActivity: t('socialProof.times.15minsAgo') || "15 mins ago",
       potentialValue: 15000,
       avatar: "/avatars/02.png",
-      treatment: "Anti-Aging Package",
+      program: "Anti-Aging Package",
       notes: "ส่ง proposal แล้ว รอการติดต่อกลับ",
       nextFollowUp: `${t('dashboard.staffAvailability.available')} 10:00`
     }
@@ -95,7 +95,7 @@ export function HotLeadsManager() {
 
   const filteredLeads = hotLeads.filter(lead => {
     const matchesSearch = lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         lead.treatment.toLowerCase().includes(searchTerm.toLowerCase())
+                         lead.program.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesStatus = statusFilter === "all" || lead.status === statusFilter
     const matchesPriority = priorityFilter === "all" || lead.priority === priorityFilter
     return matchesSearch && matchesStatus && matchesPriority
@@ -168,7 +168,7 @@ export function HotLeadsManager() {
                         <Badge className={getStatusColor(lead.status)}>{getStatusLabel(lead.status)}</Badge>
                         <Badge className={getPriorityColor(lead.priority)}>{getPriorityLabel(lead.priority)}</Badge>
                       </div>
-                      <p className="text-sm text-muted-foreground mb-2">{lead.treatment}</p>
+                      <p className="text-sm text-muted-foreground mb-2">{lead.program}</p>
                       <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3">
                         <span className="flex items-center gap-1">
                           <Phone className="h-3 w-3" />
@@ -242,7 +242,7 @@ export function HotLeadsManager() {
                           </Avatar>
                           <span className="text-sm font-medium truncate">{lead.name}</span>
                         </div>
-                        <p className="text-xs text-muted-foreground mb-2">{lead.treatment}</p>
+                        <p className="text-xs text-muted-foreground mb-2">{lead.program}</p>
                         <div className="flex items-center justify-between text-xs">
                           <span className="font-medium text-green-600">{formatCurrency(lead.potentialValue)}</span>
                           <span>{t('salesLeadDetail.score')}: {lead.score}%</span>

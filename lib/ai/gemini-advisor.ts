@@ -33,30 +33,42 @@ export async function analyzeSkinWithGemini(
 ): Promise<{
   skinAge: number;
   concerns: Array<{ name: string; severity: number; description: string }>;
-  recommendations: Array<{ treatment: string; sessions: number; price: number; duration: string; expectedOutcome: string }>;
+  recommendations: Array<{ program: string; sessions: number; price: number; duration: string; expectedOutcome: string }>;
 }> {
   try {
-    const prompt = `วิเคราะห์ผิวหน้านี้และให้ผลการวิเคราะห์ดังนี้:
+    const prompt = `คุณคือ "Aesthetic Intelligence Expert" ที่เชี่ยวชาญด้านการวิเคราะห์ผิวพรรณเพื่อการนำเสนอโปรแกรมความงามระดับพรีเมียม (High-end Aesthetic Advisor)
+วิเคราะห์ภาพผิวหน้านี้ด้วยสายตาของผู้เชี่ยวชาญ และให้ผลการวิเคราะห์ในรูปแบบ JSON เท่านั้น โดยมีรายละเอียดดังนี้:
 
-1. อายุผิวจริง (ประมาณ 20-60 ปี)
-2. ปัญหาผิวหลัก 3-5 อย่าง พร้อมระดับความรุนแรง (1-10) และคำอธิบาย
-3. แนะนำการรักษา 3 อย่าง พร้อมจำนวนครั้ง, ราคาโดยประมาณ, ระยะเวลา, และผลที่คาดว่าจะได้
+1. "skinAge": อายุผิวที่ประเมินจากสภาพผิวจริง (เป็นตัวเลข)
+2. "skinType": ประเภทผิว (Oily, Dry, Combination, Normal, Sensitive)
+3. "concerns": รายการปัญหาผิว 3-5 อย่างที่ตรวจพบ โดยแต่ละอย่างประกอบด้วย:
+   - "name": ชื่อปัญหา (ภาษาไทยที่ดูเป็นมืออาชีพ เช่น "ริ้วรอยร่องลึก", "จุดด่างดำจากแสงแดด", "รูขุมขนกว้าง")
+   - "severity": ระดับความรุนแรง (1-10)
+   - "description": คำอธิบายปัญหาเชิงวิเคราะห์ที่ช่วยในการปิดการขาย (เช่น "พบการกระจายตัวของเม็ดสีที่หนาแน่นบริเวณโหนกแก้ม")
+4. "recommendations": รายการโปรแกรมความงามแนะนำ 3 โปรแกรม โดยแต่ละโปรแกรมประกอบด้วย:
+   - "program": ชื่อโปรแกรมที่ดูพรีเมียม (ภาษาไทย เช่น "Ultra Brightening Laser", "Advanced Anti-Aging Protocol")
+   - "sessions": จำนวนครั้งที่แนะนำ (ตัวเลข)
+   - "price": ราคาประมาณการ (ตัวเลข)
+   - "duration": ระยะเวลาการเห็นผล (เช่น "12 สัปดาห์")
+   - "expectedOutcome": ผลลัพธ์ที่คาดหวังในเชิงบวก (เช่น "ผิวดูกระจ่างใสขึ้นและสีผิวสม่ำเสมออย่างเห็นได้ชัด")
 
-ตอบเป็น JSON format เท่านั้น:
+ตอบเป็น JSON format เท่านั้น ห้ามมีข้อความอื่นปน:
 {
   "skinAge": number,
+  "skinType": "string",
   "concerns": [
     {"name": "string", "severity": number, "description": "string"}
   ],
   "recommendations": [
-    {"treatment": "string", "sessions": number, "price": number, "duration": "string", "expectedOutcome": "string"}
+    {"program": "string", "sessions": number, "price": number, "duration": "string", "expectedOutcome": "string"}
   ]
 }
 
-${userInfo?.name ? `ชื่อผู้ใช้: ${userInfo.name}` : ''}
-${userInfo?.age ? `อายุ: ${userInfo.age} ปี` : ''}
+ข้อมูลผู้รับบริการ (ถ้ามี):
+${userInfo?.name ? `ชื่อ: ${userInfo.name}` : ''}
+${userInfo?.age ? `อายุจริง: ${userInfo.age} ปี` : ''}
 
-ให้คำวิเคราะห์ที่เป็นจริงและมีประโยชน์`;
+ให้ผลการวิเคราะห์ที่ดูเป็นมืออาชีพ มีความแม่นยำสูง และส่งเสริมการตัดสินใจเลือกโปรแกรมความงาม`;
 
     const { text } = await generateText({
       model: "google/gemini-1.5-flash",
@@ -124,25 +136,25 @@ function getFallbackAnalysis() {
     ],
     recommendations: [
       {
-        treatment: 'Anti-Aging Package',
+        program: 'Anti-Aging Elite Protocol',
         sessions: 6,
         price: 19900,
         duration: '3 months',
-        expectedOutcome: 'ลดริ้วรอยได้ 40%'
+        expectedOutcome: 'ริ้วรอยดูลดเลือนลงอย่างเห็นได้ชัดและผิวดูยกกระชับขึ้น'
       },
       {
-        treatment: 'Pigmentation Treatment',
+        program: 'Luminous Skin Brightening',
         sessions: 8,
         price: 24900,
         duration: '4 months',
-        expectedOutcome: 'ลดจุดด่างดำได้ 60%'
+        expectedOutcome: 'จุดด่างดำจางลงและสีผิวสม่ำเสมอยิ่งขึ้น'
       },
       {
-        treatment: 'Complete Skin Rejuvenation',
+        program: 'Complete Aesthetic Rejuvenation',
         sessions: 12,
         price: 39900,
         duration: '6 months',
-        expectedOutcome: 'ผิวอ่อนเยาว์ขึ้น 3-5 ปี'
+        expectedOutcome: 'ฟื้นฟูสภาพผิวอย่างครบวงจร ให้ผิวดูอ่อนเยาว์ลง 3-5 ปี'
       }
     ]
   };

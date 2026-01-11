@@ -1,6 +1,6 @@
 /**
  * Whiteboard Manager
- * Real-time collaborative whiteboard for medical diagrams
+ * Real-time collaborative whiteboard for aesthetic diagrams
  */
 
 import wsClient, { type WebSocketClient } from './websocket-client';

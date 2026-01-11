@@ -32,35 +32,35 @@ const services = [
   { 
     icon: ChartLineUp, 
     title: 'Progress Tracking', 
-    description: 'Visual timeline with before/after comparisons. Track treatment efficacy with data-driven insights.',
+    description: 'Visual timeline with before/after comparisons. Track program efficacy with data-driven insights.',
     gradient: 'from-emerald-600 to-green-600',
     stats: '360° analytics'
   },
   { 
     icon: ShieldCheck, 
     title: 'Enterprise Security', 
-    description: 'HIPAA compliant with end-to-end encryption. Row-level security on all patient data.',
+    description: 'HIPAA compliant with end-to-end encryption. Row-level security on all customer data.',
     gradient: 'from-slate-600 to-zinc-600',
     stats: 'SOC 2 certified'
   },
   { 
     icon: Calendar, 
     title: 'Smart Scheduling', 
-    description: 'AI-optimized appointment booking. Reduce no-shows and maximize clinic efficiency.',
+    description: 'AI-optimized appointment booking. Reduce no-shows and maximize center efficiency.',
     gradient: 'from-blue-600 to-indigo-600',
     stats: '80% time saved'
   },
   { 
     icon: VideoCamera, 
     title: 'Video Consultations', 
-    description: 'Built-in WebRTC video calling with screen sharing. Connect with patients anywhere.',
+    description: 'Built-in WebRTC video calling with screen sharing. Connect with customers anywhere.',
     gradient: 'from-rose-600 to-pink-600',
     stats: 'HD quality'
   },
   { 
     icon: Sparkle, 
-    title: 'Treatment Plans', 
-    description: 'AI-generated personalized recommendations based on skin analysis and patient history.',
+    title: 'Program Plans', 
+    description: 'AI-generated personalized recommendations based on skin analysis and customer history.',
     gradient: 'from-amber-600 to-orange-600',
     stats: 'Personalized'
   },
@@ -120,12 +120,12 @@ export function ServicesSection() {
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
             <span className="text-white">Everything you need to </span>
             <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
-              grow your clinic
+              grow your center
             </span>
           </h2>
           
           <p className="text-lg md:text-xl text-gray-400 max-w-3xl mx-auto">
-            A complete AI-powered platform that handles skin analysis, patient management, 
+            A complete AI-powered platform that handles skin analysis, customer management, 
             scheduling, and business growth — all in one place.
           </p>
         </motion.div>

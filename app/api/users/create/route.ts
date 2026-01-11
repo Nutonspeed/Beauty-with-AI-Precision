@@ -7,8 +7,8 @@ import { normalizeRole } from '@/lib/auth/role-normalize'
  * Create a new user (invitation-only system)
  *
  * Canonical Roles & Permissions (normalized via normalizeRole):
- * - super_admin: can create clinic_owner OR clinic_admin (staff management at top-level)
- * - clinic_admin: can create sales_staff (within same clinic)
+ * - super_admin: can create center_owner OR center_admin (staff management at top-level)
+ * - center_admin: can create sales_staff (within same center)
  * - other roles: no creation rights (future phases may add sales_staff -> customer creation)
  */
 
@@ -16,14 +16,14 @@ type ParsedRequest = {
   email: string
   full_name: string
   rawRole: string
-  clinic_id?: string
+  center_id?: string
 }
 
 function parseBody(body: any): ParsedRequest | { error: NextResponse } {
   const email = body?.email
   const role = body?.role
   const full_name = body?.full_name
-  const clinic_id = body?.clinic_id as string | undefined
+  const center_id = (body?.center_id || body?.tenantId || body?.clinic_id) as string | undefined
 
   if (!email || !role || !full_name) {
     return {
@@ -33,31 +33,31 @@ function parseBody(body: any): ParsedRequest | { error: NextResponse } {
       ),
     }
   }
-  return { email, full_name, rawRole: role, clinic_id }
+  return { email, full_name, rawRole: role, center_id }
 }
 
 function validatePermissions(
   actorRole: string,
   targetRole: string,
-  clinic_id: string | undefined,
-  actorClinicId: string | null
+  center_id: string | undefined,
+  actorCenterId: string | null
 ): { ok: true } | { ok: false; status: number; message: string } {
   if (actorRole === 'super_admin') {
-    if (!(targetRole === 'clinic_admin' || targetRole === 'clinic_owner')) {
-      return { ok: false, status: 403, message: 'super_admin can only create clinic_admin or clinic_owner' }
+    if (!(targetRole === 'center_admin' || targetRole === 'center_owner')) {
+      return { ok: false, status: 403, message: 'super_admin can only create center_admin or center_owner' }
     }
-    if (!clinic_id) {
-      return { ok: false, status: 400, message: 'clinic_id required when creating clinic_admin or clinic_owner' }
+    if (!center_id) {
+      return { ok: false, status: 400, message: 'center_id required when creating center_admin or center_owner' }
     }
     return { ok: true }
   }
 
-  if (actorRole === 'clinic_admin') {
+  if (actorRole === 'center_admin') {
     if (targetRole !== 'sales_staff') {
-      return { ok: false, status: 403, message: 'clinic_admin can only create sales_staff' }
+      return { ok: false, status: 403, message: 'center_admin can only create sales_staff' }
     }
-    if (clinic_id && clinic_id !== (actorClinicId ?? undefined)) {
-      return { ok: false, status: 403, message: 'Cannot create users in other clinics' }
+    if (center_id && center_id !== (actorCenterId ?? undefined)) {
+      return { ok: false, status: 403, message: 'Cannot create users in other centers' }
     }
     return { ok: true }
   }
@@ -72,12 +72,12 @@ async function createAuthUser(
     full_name: string
     tempPassword: string
     targetRole: string
-    clinic_id?: string | null
+    center_id?: string | null
     creatorId: string
     originalRequestedRole: string
   }
 ) {
-  const { email, full_name, tempPassword, targetRole, clinic_id, creatorId, originalRequestedRole } = params
+  const { email, full_name, tempPassword, targetRole, center_id, creatorId, originalRequestedRole } = params
   return supabase.auth.admin.createUser({
     email,
     password: tempPassword,
@@ -85,7 +85,7 @@ async function createAuthUser(
     user_metadata: {
       full_name,
       role: targetRole,
-      clinic_id,
+      center_id,
       created_by: creatorId,
       original_requested_role: originalRequestedRole,
     },
@@ -94,10 +94,10 @@ async function createAuthUser(
 
 async function insertUserRow(
   supabase: Awaited<ReturnType<typeof createClient>>,
-  params: { id: string; email: string; full_name: string; role: string; clinic_id?: string | null }
+  params: { id: string; email: string; full_name: string; role: string; center_id?: string | null }
 ) {
-  const { id, email, full_name, role, clinic_id } = params
-  return supabase.from('users').insert({ id, email, full_name, role, clinic_id })
+  const { id, email, full_name, role, center_id } = params
+  return supabase.from('users').insert({ id, email, full_name, role, center_id })
 }
 
 async function logActivity(
@@ -131,7 +131,7 @@ export async function POST(request: NextRequest) {
     // Get user profile with role (raw string from DB)
     const { data: profile, error: profileError } = await supabase
       .from('users')
-      .select('role, clinic_id')
+      .select('role, center_id')
       .eq('id', user.id)
       .single()
 
@@ -146,13 +146,13 @@ export async function POST(request: NextRequest) {
   const body = await request.json()
   const parsed = parseBody(body)
   if ('error' in parsed) return parsed.error
-  const { email, rawRole, full_name, clinic_id } = parsed
+  const { email, rawRole, full_name, center_id } = parsed
   const actorRole = normalizeRole(profile.role)
   const targetRole = normalizeRole(rawRole)
 
     // Validation
     // Permission checks based on normalized canonical roles
-    const perm = validatePermissions(actorRole, targetRole, clinic_id, profile.clinic_id)
+    const perm = validatePermissions(actorRole, targetRole, center_id, profile.center_id)
     if (!perm.ok) {
       return NextResponse.json({ error: perm.message }, { status: perm.status })
     }
@@ -166,7 +166,7 @@ export async function POST(request: NextRequest) {
       full_name,
       tempPassword,
       targetRole,
-      clinic_id: clinic_id || profile.clinic_id,
+      center_id: center_id || profile.center_id,
       creatorId: user.id,
       originalRequestedRole: rawRole,
     })
@@ -185,7 +185,7 @@ export async function POST(request: NextRequest) {
       email,
       full_name,
       role: targetRole,
-      clinic_id: clinic_id || profile.clinic_id,
+      center_id: center_id || profile.center_id,
     })
 
     if (userInsertError) {
@@ -212,7 +212,7 @@ export async function POST(request: NextRequest) {
         email,
         full_name,
         role: targetRole,
-        clinic_id: clinic_id || profile.clinic_id,
+        center_id: center_id || profile.center_id,
         temp_password: tempPassword, // Only for initial setup
       },
       message: 'User created successfully. Send invitation email with temp password.',

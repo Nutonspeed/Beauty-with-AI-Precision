@@ -105,7 +105,7 @@ export default function BeautyLandingPage() {
           <p className="text-xl md:text-2xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
             วิเคราะห์ผิวหน้า 8 ตัวชี้วัด พร้อม AR แสดงผลการรักษา
             <br />
-            เพิ่มยอดขายคลินิกของคุณได้ถึง <span className="text-pink-400 font-semibold">65%</span>
+            เพิ่มยอดขายศูนย์ความงามของคุณได้ถึง <span className="text-pink-400 font-semibold">65%</span>
           </p>
 
           {/* CTA Buttons */}
@@ -140,7 +140,7 @@ export default function BeautyLandingPage() {
                   />
                 ))}
               </div>
-              <span className="text-gray-300">89+ คลินิกใช้งาน</span>
+              <span className="text-gray-300">89+ ศูนย์ความงามใช้งาน</span>
             </div>
             <div className="flex items-center gap-2">
               <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />

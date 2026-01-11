@@ -14,7 +14,7 @@ interface ReengagementLead {
   id: string
   name: string
   lastVisit: string
-  treatment: string
+  program: string
   dueInDays: number
   affinityScore: number
   recommendedOffer: string
@@ -29,7 +29,7 @@ export function PredictiveReengagement() {
       id: 'rl1',
       name: t('leadPrioritization.mock.name1'),
       lastVisit: '2025-11-15',
-      treatment: t('treatmentComparison.concerns.anti_aging'),
+      program: t('treatmentComparison.concerns.anti_aging'),
       dueInDays: 5,
       affinityScore: 92,
       recommendedOffer: t('predictiveReengagement.mock.offer1') || 'Complimentary Collagen Booster'
@@ -38,7 +38,7 @@ export function PredictiveReengagement() {
       id: 'rl2',
       name: t('leadPrioritization.mock.name2'),
       lastVisit: '2025-12-01',
-      treatment: t('treatmentComparison.concerns.lifting'),
+      program: t('treatmentComparison.concerns.lifting'),
       dueInDays: 12,
       affinityScore: 85,
       recommendedOffer: t('predictiveReengagement.mock.offer2') || '10% Retention Discount'
@@ -47,7 +47,7 @@ export function PredictiveReengagement() {
       id: 'rl3',
       name: t('leadPrioritization.mock.name3'),
       lastVisit: '2025-10-20',
-      treatment: t('treatmentComparison.concerns.pigmentation'),
+      program: t('treatmentComparison.concerns.pigmentation'),
       dueInDays: -2,
       affinityScore: 78,
       recommendedOffer: t('predictiveReengagement.mock.offer3') || 'Express Recovery Session'
@@ -105,7 +105,7 @@ export function PredictiveReengagement() {
                         {lead.dueInDays <= 0 ? t('predictiveReengagement.overdue') : t('predictiveReengagement.dueIn', { days: lead.dueInDays })}
                       </Badge>
                     </div>
-                    <p className="text-[10px] text-slate-500 uppercase font-black tracking-widest">{lead.treatment}</p>
+                    <p className="text-[10px] text-slate-500 uppercase font-black tracking-widest">{lead.program}</p>
                   </div>
                 </div>
 

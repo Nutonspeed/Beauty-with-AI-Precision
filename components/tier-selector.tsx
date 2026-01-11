@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Check, Sparkles, Zap, Microscope } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-export type AnalysisTier = "free" | "premium" | "clinical"
+export type AnalysisTier = "free" | "premium" | "professional"
 
 interface TierSelectorProps {
   selectedTier: AnalysisTier
@@ -45,19 +45,19 @@ const tiers = [
     popular: true,
   },
   {
-    id: "clinical" as const,
-    name: "Clinical",
-    nameTh: "คลินิก",
+    id: "professional" as const,
+    name: "Professional",
+    nameTh: "มืออาชีพ",
     icon: Microscope,
     price: "฿999",
     accuracy: "85-90%",
     features: [
-      "VISIA-equivalent analysis",
+      "Aesthetic-equivalent analysis",
       "UV & polarized imaging simulation",
       "3D depth estimation",
-      "Expert validation available",
+      "Specialist validation available",
     ],
-    featuresTh: ["วิเคราะห์ระดับ VISIA", "จำลอง UV และแสงโพลาไรซ์", "ประมาณความลึก 3 มิติ", "ตรวจสอบโดยผู้เชี่ยวชาญ"],
+    featuresTh: ["วิเคราะห์ระดับความงามอัจฉริยะ", "จำลอง UV และแสงโพลาไรซ์", "ประมาณความลึก 3 มิติ", "ตรวจสอบโดยผู้เชี่ยวชาญ"],
     color: "border-blue-500 dark:border-blue-600",
     bgColor: "bg-blue-50 dark:bg-blue-950/30",
     badge: "Most Accurate",

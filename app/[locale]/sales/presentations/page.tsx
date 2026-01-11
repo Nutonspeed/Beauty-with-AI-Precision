@@ -86,7 +86,7 @@ export default function PresentationsPage() {
             if (data.customer?.name) currentStep = 1
             if (data.scannedImages?.front) currentStep = 2
             if (data.analysisResults) currentStep = 3
-            if (data.selectedTreatments?.length > 0) currentStep = 4
+            if (data.selectedPrograms?.length > 0) currentStep = 4
             if (data.selectedProducts?.length > 0) currentStep = 5
             if (data.proposal) currentStep = 6
             if (data.signature) currentStep = 7

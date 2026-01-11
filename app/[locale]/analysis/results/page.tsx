@@ -1055,7 +1055,7 @@ export default function AnalysisResultsPage() {
                             Interactive 3D Face Model / โมเดลใบหน้า 3 มิติ
                           </CardTitle>
                           <p className="text-sm text-muted-foreground mt-1">
-                            360° rotation with real-time treatment preview
+                            360° rotation with real-time program preview
                           </p>
                         </div>
                       </div>
@@ -1063,7 +1063,7 @@ export default function AnalysisResultsPage() {
                     <CardContent>
                       <Interactive3DViewer 
                         image={analysisImage || ""} 
-                        treatment="comprehensive"
+                        program="comprehensive"
                         intensity={70}
                       />
                       <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
@@ -1093,7 +1093,7 @@ export default function AnalysisResultsPage() {
                           <div>
                             <CardTitle>Before & After Comparison / เปรียบเทียบก่อน-หลัง</CardTitle>
                             <p className="text-sm text-muted-foreground mt-1">
-                              Interactive slider to visualize treatment results
+                              Interactive slider to visualize program results
                             </p>
                           </div>
                         </div>

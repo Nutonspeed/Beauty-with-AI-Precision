@@ -10,7 +10,7 @@ interface Booking {
   booking_date: string
   booking_time: string
   duration_minutes: number
-  treatment_type: string
+  program_type: string
   status: string
   customer: {
     full_name: string
@@ -160,7 +160,7 @@ function BookingCard({ booking }: { booking: Booking }) {
               {booking.duration_minutes}m
             </Badge>
           </div>
-          <div className="text-sm font-semibold">{booking.treatment_type}</div>
+          <div className="text-sm font-semibold">{booking.program_type}</div>
           <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
             <User className="h-3 w-3" />
             {booking.customer.full_name}

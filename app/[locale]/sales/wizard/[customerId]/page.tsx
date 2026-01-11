@@ -7,7 +7,7 @@
  * 1. Customer Info
  * 2. Quick Scan (3 angles)
  * 3. AI Analysis
- * 4. AR Treatment Preview
+ * 4. AR Program Preview
  * 5. Product Showcase (3D)
  * 6. Build Proposal
  * 7. Summary & Close

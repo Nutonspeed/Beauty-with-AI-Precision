@@ -52,8 +52,8 @@ export const STATUS_COLORS = {
 // Role Badge Colors
 export const ROLE_COLORS = {
   super_admin: "bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-900 dark:text-orange-200",
-  clinic_owner: "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900 dark:text-blue-200",
-  clinic_staff: "bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900 dark:text-purple-200",
+  center_owner: "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900 dark:text-blue-200",
+  center_staff: "bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900 dark:text-purple-200",
   sales_staff: "bg-green-100 text-green-800 border-green-200 dark:bg-green-900 dark:text-green-200",
   customer: "bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-900 dark:text-gray-200",
   premium_customer: "bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-900 dark:text-amber-200",
@@ -85,7 +85,7 @@ export const METRIC_COLORS = {
     background: "bg-purple-50 dark:bg-purple-950",
     border: "border-purple-200 dark:border-purple-800",
   },
-  treatments: {
+  programs: {
     icon: "text-pink-600 dark:text-pink-400",
     background: "bg-pink-50 dark:bg-pink-950",
     border: "border-pink-200 dark:border-pink-800",
@@ -145,8 +145,8 @@ export const STATUS_LABELS = {
 
 export const ROLE_LABELS = {
   super_admin: "Super Admin",
-  clinic_owner: "เจ้าของคลินิก",
-  clinic_staff: "พนักงาน",
+  center_owner: "เจ้าของศูนย์ความงาม",
+  center_staff: "พนักงาน",
   sales_staff: "ฝ่ายขาย",
   customer: "ลูกค้า",
   premium_customer: "ลูกค้า VIP",

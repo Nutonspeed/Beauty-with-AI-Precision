@@ -1,6 +1,6 @@
 /**
  * Professional PDF Report Generator
- * Converts VISIA-style reports to high-quality PDF
+ * Converts Aesthetic Intelligence reports to high-quality PDF
  */
 
 import type { HybridSkinAnalysis } from "@/lib/types/skin-analysis"
@@ -10,7 +10,7 @@ export interface PDFGeneratorOptions {
   includeCharts?: boolean
   includeRecommendations?: boolean
   watermark?: string
-  clinicInfo?: {
+  centerInfo?: {
     name: string
     logo?: string
     address?: string
@@ -24,10 +24,10 @@ export class PDFGenerator {
    * Generate PDF from analysis data
    */
   async generatePDF(analysis: HybridSkinAnalysis, options: PDFGeneratorOptions = {}): Promise<Blob> {
-    const { includeImages: _includeImages = true, includeCharts: _includeCharts = true, includeRecommendations: _includeRecommendations = true, clinicInfo: _clinicInfo, watermark } = options
+    const { includeImages: _includeImages = true, includeCharts: _includeCharts = true, includeRecommendations: _includeRecommendations = true, centerInfo: _centerInfo, watermark } = options
 
     // For now, we'll use the browser's print-to-PDF functionality
-    const reportElement = document.getElementById("visia-report")
+    const reportElement = document.getElementById("aesthetic-report")
 
     if (!reportElement) {
       throw new Error("Report element not found")
@@ -71,7 +71,7 @@ export class PDFGenerator {
       <!DOCTYPE html>
       <html>
         <head>
-          <title>Skin Analysis Report</title>
+          <title>Aesthetic Analysis Report</title>
           ${printStyles}
           <link rel="stylesheet" href="/globals.css">
         </head>
@@ -96,7 +96,7 @@ export class PDFGenerator {
   /**
    * Generate high-resolution PNG export
    */
-  async generatePNG(elementId = "visia-report"): Promise<Blob> {
+  async generatePNG(elementId = "aesthetic-report"): Promise<Blob> {
     const element = document.getElementById(elementId)
 
     if (!element) {

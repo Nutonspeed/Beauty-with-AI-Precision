@@ -52,7 +52,7 @@ export const POST = withPublicAccess(async (request: NextRequest) => {
       .from('skin_analyses')
       .insert({
         user_id: session.user.id,
-        clinic_id: session.user.user_metadata?.clinic_id || 'default-clinic',
+        center_id: session.user.user_metadata?.center_id || session.user.user_metadata?.clinic_id || 'default-center',
         analysis_type: 'deepface',
         raw_results: analysisResult,
         confidence_score: analysisResult.confidence,
@@ -75,8 +75,8 @@ export const POST = withPublicAccess(async (request: NextRequest) => {
       // Continue even if save fails
     }
 
-    // Generate treatment recommendations based on analysis
-    const recommendations = generateTreatmentRecommendations(analysisResult)
+    // Generate program recommendations based on analysis
+    const recommendations = generateProgramRecommendations(analysisResult)
 
     // Return comprehensive analysis
     return NextResponse.json({
@@ -149,7 +149,7 @@ export const GET = withPublicAccess(async (request: NextRequest) => {
   }
 }, { rateLimitCategory: 'api' })
 
-function generateTreatmentRecommendations(analysis: FaceAnalysisResult) {
+function generateProgramRecommendations(analysis: FaceAnalysisResult) {
   const recommendations = []
 
   if (!analysis.face_detected) {
@@ -158,7 +158,7 @@ function generateTreatmentRecommendations(analysis: FaceAnalysisResult) {
       category: 'detection',
       title: 'Face Not Detected',
       description: 'Please ensure your face is clearly visible in the image.',
-      treatments: []
+      programs: []
     }]
   }
 
@@ -168,9 +168,9 @@ function generateTreatmentRecommendations(analysis: FaceAnalysisResult) {
       recommendations.push({
         priority: 'medium',
         category: 'anti-aging',
-        title: 'Anti-Aging Treatment',
-        description: 'Based on your age, consider anti-aging treatments.',
-        treatments: ['Botox', 'Dermal Fillers', 'Chemical Peel', 'Laser Resurfacing']
+        title: 'Anti-Aging Program',
+        description: 'Based on your age, consider anti-aging programs.',
+        programs: ['Botox', 'Dermal Fillers', 'Chemical Peel', 'Laser Resurfacing']
       })
     }
   }
@@ -184,7 +184,7 @@ function generateTreatmentRecommendations(analysis: FaceAnalysisResult) {
         category: 'texture',
         title: 'Skin Texture Improvement',
         description: 'Your skin texture shows room for improvement.',
-        treatments: ['Microdermabrasion', 'Chemical Peel', 'Laser Treatment']
+        programs: ['Microdermabrasion', 'Chemical Peel', 'Laser Program']
       })
     }
 
@@ -193,8 +193,8 @@ function generateTreatmentRecommendations(analysis: FaceAnalysisResult) {
         priority: 'medium',
         category: 'smoothness',
         title: 'Skin Smoothing',
-        description: 'Consider treatments to improve skin smoothness.',
-        treatments: ['Hydrafacial', 'Chemical Peel', 'LED Therapy']
+        description: 'Consider programs to improve skin smoothness.',
+        programs: ['Hydrafacial', 'Chemical Peel', 'LED Therapy']
       })
     }
 
@@ -203,8 +203,8 @@ function generateTreatmentRecommendations(analysis: FaceAnalysisResult) {
         priority: 'medium',
         category: 'brightness',
         title: 'Skin Brightening',
-        description: 'Your skin could benefit from brightening treatments.',
-        treatments: ['Vitamin C Treatment', 'Chemical Peel', 'Laser Brightening']
+        description: 'Your skin could benefit from brightening programs.',
+        programs: ['Vitamin C Program', 'Chemical Peel', 'Laser Brightening']
       })
     }
   }
@@ -217,8 +217,8 @@ function generateTreatmentRecommendations(analysis: FaceAnalysisResult) {
         priority: 'low',
         category: 'overall',
         title: 'Overall Beauty Enhancement',
-        description: 'Comprehensive treatment plan for beauty enhancement.',
-        treatments: ['Custom Treatment Plan', 'Combination Therapy']
+        description: 'Comprehensive program plan for beauty enhancement.',
+        programs: ['Custom Program Plan', 'Combination Therapy']
       })
     }
   }

@@ -230,9 +230,9 @@ export default function AuditLogsViewer() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Resources</SelectItem>
-                  <SelectItem value="patients">Patients</SelectItem>
+                  <SelectItem value="customers">Customers</SelectItem>
                   <SelectItem value="medical_records">Medical Records</SelectItem>
-                  <SelectItem value="treatments">Treatments</SelectItem>
+                  <SelectItem value="programs">Programs</SelectItem>
                   <SelectItem value="appointments">Appointments</SelectItem>
                   <SelectItem value="prescriptions">Prescriptions</SelectItem>
                   <SelectItem value="billing">Billing</SelectItem>

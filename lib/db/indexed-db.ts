@@ -1,20 +1,20 @@
 /**
- * IndexedDB Manager for Multi-Clinic Offline Storage
+ * IndexedDB Manager for Multi-Center Offline Storage
  * Supports: 120 sales staff × 50 analyses each = 6,000 offline records
  * 
  * Architecture:
- * - Store: analyses (last 50 per sales_staff, clinic-scoped)
- * - Store: leads (all active leads, clinic-scoped)
+ * - Store: analyses (last 50 per sales_staff, center-scoped)
+ * - Store: leads (all active leads, center-scoped)
  * - Store: sync-queue (pending actions when offline)
- * - Store: clinic-cache (clinic metadata, settings)
+ * - Store: center-cache (center metadata, settings)
  * 
  * Data Isolation:
- * - Each sales staff can only access their own clinic's data
- * - Super admin can access all clinics
+ * - Each sales staff can only access their own center's data
+ * - Super admin can access all centers
  * - Automatic cleanup after sync
  */
 
-import type { MultiTenantSkinAnalysis, Lead, Clinic } from '@/types/multi-tenant';
+import type { MultiTenantSkinAnalysis, Lead, Center } from '@/types/multi-tenant';
 
 // ============================================================================
 // Types
@@ -44,16 +44,16 @@ export interface SyncAction {
   resource_type: 'analysis' | 'lead';
   resource_id: string;
   data: any;
-  clinic_id: string;
+  center_id: string;
   sales_staff_id: string;
   created_at: number;
   attempts: number;
   last_error?: string;
 }
 
-export interface ClinicCache {
-  clinic_id: string;
-  clinic_data: Clinic;
+export interface CenterCache {
+  center_id: string;
+  center_data: Center;
   cached_at: number;
   expires_at: number;
 }
@@ -62,7 +62,7 @@ export interface DBStats {
   analyses_count: number;
   leads_count: number;
   pending_sync_count: number;
-  clinic_cache_count: number;
+  center_cache_count: number;
   total_size_mb: number;
   last_cleanup: number | null;
 }
@@ -72,7 +72,7 @@ export interface DBStats {
 // ============================================================================
 
 export class IndexedDBManager {
-  private dbName = 'cliniciq-multi-clinic';
+  private dbName = 'centeriq-multi-center';
   private dbVersion = 2; // Increment for schema changes
   private db: IDBDatabase | null = null;
 
@@ -107,31 +107,31 @@ export class IndexedDBManager {
         // Create object stores with indexes
         if (!db.objectStoreNames.contains('analyses')) {
           const analysesStore = db.createObjectStore('analyses', { keyPath: 'id' });
-          analysesStore.createIndex('clinic_id', 'clinic_id', { unique: false });
+          analysesStore.createIndex('center_id', 'center_id', { unique: false });
           analysesStore.createIndex('sales_staff_id', 'sales_staff_id', { unique: false });
           analysesStore.createIndex('offline_timestamp', 'offline_timestamp', { unique: false });
           analysesStore.createIndex('synced', 'synced', { unique: false });
-          analysesStore.createIndex('clinic_sales', ['clinic_id', 'sales_staff_id'], { unique: false });
+          analysesStore.createIndex('center_sales', ['center_id', 'sales_staff_id'], { unique: false });
         }
 
         if (!db.objectStoreNames.contains('leads')) {
           const leadsStore = db.createObjectStore('leads', { keyPath: 'id' });
-          leadsStore.createIndex('clinic_id', 'clinic_id', { unique: false });
+          leadsStore.createIndex('center_id', 'center_id', { unique: false });
           leadsStore.createIndex('sales_staff_id', 'sales_staff_id', { unique: false });
           leadsStore.createIndex('status', 'status', { unique: false });
           leadsStore.createIndex('synced', 'synced', { unique: false });
-          leadsStore.createIndex('clinic_sales', ['clinic_id', 'sales_staff_id'], { unique: false });
+          leadsStore.createIndex('center_sales', ['center_id', 'sales_staff_id'], { unique: false });
         }
 
         if (!db.objectStoreNames.contains('sync-queue')) {
           const syncStore = db.createObjectStore('sync-queue', { keyPath: 'id' });
-          syncStore.createIndex('clinic_id', 'clinic_id', { unique: false });
+          syncStore.createIndex('center_id', 'center_id', { unique: false });
           syncStore.createIndex('action_type', 'action_type', { unique: false });
           syncStore.createIndex('created_at', 'created_at', { unique: false });
         }
 
-        if (!db.objectStoreNames.contains('clinic-cache')) {
-          const cacheStore = db.createObjectStore('clinic-cache', { keyPath: 'clinic_id' });
+        if (!db.objectStoreNames.contains('center-cache')) {
+          const cacheStore = db.createObjectStore('center-cache', { keyPath: 'center_id' });
           cacheStore.createIndex('expires_at', 'expires_at', { unique: false });
         }
 
@@ -195,10 +195,10 @@ export class IndexedDBManager {
   }
 
   /**
-   * Get analyses for specific sales staff (clinic-scoped)
+   * Get analyses for specific sales staff (center-scoped)
    */
   async getAnalysesBySalesStaff(
-    clinicId: string,
+    centerId: string,
     salesStaffId: string,
     limit = 50
   ): Promise<OfflineAnalysis[]> {
@@ -207,8 +207,8 @@ export class IndexedDBManager {
     return new Promise((resolve, reject) => {
       const transaction = db.transaction(['analyses'], 'readonly');
       const store = transaction.objectStore('analyses');
-      const index = store.index('clinic_sales');
-      const request = index.getAll([clinicId, salesStaffId]);
+      const index = store.index('center_sales');
+      const request = index.getAll([centerId, salesStaffId]);
 
       request.onsuccess = () => {
         const results = request.result as OfflineAnalysis[];
@@ -373,16 +373,16 @@ export class IndexedDBManager {
   }
 
   /**
-   * Get leads for specific sales staff (clinic-scoped)
+   * Get leads for specific sales staff (center-scoped)
    */
-  async getLeadsBySalesStaff(clinicId: string, salesStaffId: string): Promise<OfflineLead[]> {
+  async getLeadsBySalesStaff(centerId: string, salesStaffId: string): Promise<OfflineLead[]> {
     const db = await this.getDB();
 
     return new Promise((resolve, reject) => {
       const transaction = db.transaction(['leads'], 'readonly');
       const store = transaction.objectStore('leads');
-      const index = store.index('clinic_sales');
-      const request = index.getAll([clinicId, salesStaffId]);
+      const index = store.index('center_sales');
+      const request = index.getAll([centerId, salesStaffId]);
 
       request.onsuccess = () => {
         const results = request.result as OfflineLead[];
@@ -548,25 +548,25 @@ export class IndexedDBManager {
   }
 
   // ============================================================================
-  // Clinic Cache Operations
+  // Center Cache Operations
   // ============================================================================
 
   /**
-   * Cache clinic data
+   * Cache center data
    */
-  async cacheClinic(clinic: Clinic, ttlSeconds = 3600): Promise<void> {
+  async cacheCenter(center: Center, ttlSeconds = 3600): Promise<void> {
     const db = await this.getDB();
 
-    const cacheEntry: ClinicCache = {
-      clinic_id: clinic.id,
-      clinic_data: clinic,
+    const cacheEntry: CenterCache = {
+      center_id: center.id,
+      center_data: center,
       cached_at: Date.now(),
       expires_at: Date.now() + ttlSeconds * 1000,
     };
 
     return new Promise((resolve, reject) => {
-      const transaction = db.transaction(['clinic-cache'], 'readwrite');
-      const store = transaction.objectStore('clinic-cache');
+      const transaction = db.transaction(['center-cache'], 'readwrite');
+      const store = transaction.objectStore('center-cache');
       const request = store.put(cacheEntry);
 
       request.onsuccess = () => resolve();
@@ -575,18 +575,18 @@ export class IndexedDBManager {
   }
 
   /**
-   * Get cached clinic data
+   * Get cached center data
    */
-  async getCachedClinic(clinicId: string): Promise<Clinic | null> {
+  async getCachedCenter(centerId: string): Promise<Center | null> {
     const db = await this.getDB();
 
     return new Promise((resolve, reject) => {
-      const transaction = db.transaction(['clinic-cache'], 'readonly');
-      const store = transaction.objectStore('clinic-cache');
-      const request = store.get(clinicId);
+      const transaction = db.transaction(['center-cache'], 'readonly');
+      const store = transaction.objectStore('center-cache');
+      const request = store.get(centerId);
 
       request.onsuccess = () => {
-        const cacheEntry = request.result as ClinicCache;
+        const cacheEntry = request.result as CenterCache;
 
         if (!cacheEntry) {
           resolve(null);
@@ -595,12 +595,12 @@ export class IndexedDBManager {
 
         // Check if expired
         if (Date.now() > cacheEntry.expires_at) {
-          console.log(`[IndexedDB] Clinic cache expired: ${clinicId}`);
+          console.log(`[IndexedDB] Center cache expired: ${centerId}`);
           resolve(null);
           return;
         }
 
-        resolve(cacheEntry.clinic_data);
+        resolve(cacheEntry.center_data);
       };
 
       request.onerror = () => reject(request.error);
@@ -622,17 +622,17 @@ export class IndexedDBManager {
         const analysesCount = await this.getStoreCount(db, 'analyses');
         const leadsCount = await this.getStoreCount(db, 'leads');
         const pendingSyncCount = await this.getStoreCount(db, 'sync-queue');
-        const clinicCacheCount = await this.getStoreCount(db, 'clinic-cache');
+        const centerCacheCount = await this.getStoreCount(db, 'center-cache');
 
         // Estimate size (rough calculation)
         const estimatedSize =
-          (analysesCount * 5 + leadsCount * 3 + pendingSyncCount * 2 + clinicCacheCount * 1) / 1024;
+          (analysesCount * 5 + leadsCount * 3 + pendingSyncCount * 2 + centerCacheCount * 1) / 1024;
 
         resolve({
           analyses_count: analysesCount,
           leads_count: leadsCount,
           pending_sync_count: pendingSyncCount,
-          clinic_cache_count: clinicCacheCount,
+          center_cache_count: centerCacheCount,
           total_size_mb: estimatedSize,
           last_cleanup: null,
         });
@@ -648,7 +648,7 @@ export class IndexedDBManager {
   async clearAll(): Promise<void> {
     const db = await this.getDB();
 
-    const stores = ['analyses', 'leads', 'sync-queue', 'clinic-cache'];
+    const stores = ['analyses', 'leads', 'sync-queue', 'center-cache'];
 
     for (const storeName of stores) {
       console.log(`[IndexedDB] Clearing store ${storeName}`);

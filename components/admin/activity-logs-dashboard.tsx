@@ -46,8 +46,8 @@ interface ActivityLog {
   userId: string | null;
   userName: string;
   userEmail: string | null;
-  clinicId: string | null;
-  clinicName: string;
+  centerId: string | null;
+  centerName: string;
   metadata: Record<string, any>;
   createdAt: string;
 }
@@ -60,11 +60,11 @@ interface Stats {
     ai_analysis: number;
     booking: number;
     user: number;
-    clinic: number;
+    center: number;
   };
 }
 
-interface Clinic {
+interface Center {
   id: string;
   name: string;
 }
@@ -73,12 +73,12 @@ export default function ActivityLogsDashboard() {
   const t = useTranslations();
   const [activities, setActivities] = useState<ActivityLog[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
-  const [clinics, setClinics] = useState<Clinic[]>([]);
+  const [centers, setCenters] = useState<Center[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Filters
   const [typeFilter, setTypeFilter] = useState('all');
-  const [clinicFilter, setClinicFilter] = useState('all');
+  const [centerFilter, setCenterFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [offset, setOffset] = useState(0);
   const [total, setTotal] = useState(0);
@@ -92,7 +92,7 @@ export default function ActivityLogsDashboard() {
         offset: String(offset),
       });
       if (typeFilter !== 'all') params.append('action', typeFilter);
-      if (clinicFilter !== 'all') params.append('clinicId', clinicFilter);
+      if (centerFilter !== 'all') params.append('centerId', centerFilter);
 
       const res = await fetch(`/api/admin/activity-logs?${params}`);
       if (!res.ok) throw new Error('Failed to fetch');
@@ -100,7 +100,7 @@ export default function ActivityLogsDashboard() {
       const data = await res.json();
       setActivities(data.activities || []);
       setStats(data.stats || null);
-      setClinics(data.clinics || []);
+      setCenters(data.centers || []);
       setTotal(data.pagination?.total || 0);
     } catch (error) {
       console.error('Error fetching activities:', error);
@@ -118,7 +118,7 @@ export default function ActivityLogsDashboard() {
       case 'ai_analysis': return <Brain className="h-4 w-4 text-purple-500" />;
       case 'booking': return <Calendar className="h-4 w-4 text-blue-500" />;
       case 'user': return <Users className="h-4 w-4 text-green-500" />;
-      case 'clinic': return <Building2 className="h-4 w-4 text-orange-500" />;
+      case 'center': return <Building2 className="h-4 w-4 text-orange-500" />;
       default: return <Activity className="h-4 w-4 text-gray-500" />;
     }
   };
@@ -128,7 +128,7 @@ export default function ActivityLogsDashboard() {
       ai_analysis: 'bg-purple-100 text-purple-700',
       booking: 'bg-blue-100 text-blue-700',
       user: 'bg-green-100 text-green-700',
-      clinic: 'bg-orange-100 text-orange-700',
+      center: 'bg-orange-100 text-orange-700',
     };
     return variants[type] || 'bg-gray-100 text-gray-700';
   };
@@ -147,7 +147,7 @@ export default function ActivityLogsDashboard() {
     searchTerm === '' ||
     a.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
     a.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    a.clinicName.toLowerCase().includes(searchTerm.toLowerCase())
+    a.centerName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -192,7 +192,7 @@ export default function ActivityLogsDashboard() {
               { type: 'ai_analysis', label: t('activityLogsDashboard.neuralInferences'), icon: Brain, color: 'purple', val: stats?.byType?.ai_analysis || 0 },
               { type: 'booking', label: t('activityLogsDashboard.clinicalCycles'), icon: Calendar, color: 'blue', val: stats?.byType?.booking || 0 },
               { type: 'user', label: t('activityLogsDashboard.entityRegistry'), icon: Users, color: 'green', val: stats?.byType?.user || 0 },
-              { type: 'clinic', label: t('activityLogsDashboard.nodeAllocation'), icon: Building2, color: 'orange', val: stats?.byType?.clinic || 0 },
+              { type: 'center', label: t('activityLogsDashboard.nodeAllocation'), icon: Building2, color: 'orange', val: stats?.byType?.center || 0 },
             ].map(({ type, label, icon: Icon, color, val }) => (
               <div key={type} className="flex flex-col items-center gap-4 p-6 rounded-[2rem] bg-white/[0.02] border border-white/5 hover:border-cyan-500/20 transition-all duration-500 group/sector">
                 <div className={cn("p-3 rounded-2xl border border-white/5 shadow-inner transition-transform duration-700 group-hover/sector:scale-110", `bg-${color}-500/10`)}>
@@ -238,17 +238,17 @@ export default function ActivityLogsDashboard() {
                   <SelectItem value="ai_analysis" className="text-[10px] font-black uppercase tracking-widest italic">{t('activityLogsDashboard.neuralInference')}</SelectItem>
                   <SelectItem value="booking" className="text-[10px] font-black uppercase tracking-widest italic">{t('activityLogsDashboard.clinicalCycle')}</SelectItem>
                   <SelectItem value="user" className="text-[10px] font-black uppercase tracking-widest italic">{t('activityLogsDashboard.identityAuth')}</SelectItem>
-                  <SelectItem value="clinic" className="text-[10px] font-black uppercase tracking-widest italic">{t('activityLogsDashboard.nodeAllocation')}</SelectItem>
+                  <SelectItem value="center" className="text-[10px] font-black uppercase tracking-widest italic">{t('activityLogsDashboard.nodeAllocation')}</SelectItem>
                 </SelectContent>
               </Select>
 
-              <Select value={clinicFilter} onValueChange={(v) => { setClinicFilter(v); setOffset(0); }}>
+              <Select value={centerFilter} onValueChange={(v) => { setCenterFilter(v); setOffset(0); }}>
                 <SelectTrigger className="h-14 w-[180px] rounded-2xl border border-white/5 bg-white/[0.03] px-6 text-[10px] font-black uppercase tracking-widest text-white focus:ring-pink-500/20 appearance-none transition-all italic">
                   <SelectValue placeholder={t('activityLogsDashboard.originNode')} />
                 </SelectTrigger>
                 <SelectContent className="bg-[#020617] border-white/10 rounded-2xl max-h-[300px]">
-                  <SelectItem value="all" className="text-[10px] font-black uppercase tracking-widest italic">{t('activityLogsDashboard.anySource')}</SelectItem>
-                  {clinics.map((c) => (
+                  <SelectItem value="all" className="text-[10px] font-black uppercase tracking-widest italic">{t('activityLogsDashboard.globalNetwork')}</SelectItem>
+                  {centers.map((c) => (
                     <SelectItem key={c.id} value={c.id} className="text-[10px] font-black uppercase tracking-widest italic">{c.name}</SelectItem>
                   ))}
                 </SelectContent>
@@ -313,7 +313,7 @@ export default function ActivityLogsDashboard() {
                       <TableCell className="px-8 py-8">
                         <div className="flex items-center gap-2">
                           <Building2 className="h-3.5 w-3.5 text-slate-600" />
-                          <span className="text-xs font-black text-slate-400 italic uppercase tracking-tighter">{activity.clinicName}</span>
+                          <span className="text-xs font-black text-slate-400 italic uppercase tracking-tighter">{activity.centerName}</span>
                         </div>
                       </TableCell>
                       <TableCell className="px-10 py-8 text-right">

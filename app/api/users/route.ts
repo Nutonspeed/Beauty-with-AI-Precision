@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams
     const search = searchParams.get('search') || ''
     const role = searchParams.get('role') || ''
-    const clinicId = searchParams.get('clinic_id') || ''
+    const centerId = searchParams.get('center_id') || ''
 
     // Build query
     let query = supabase
@@ -51,10 +51,10 @@ export async function GET(request: NextRequest) {
         id,
         email,
         role,
-        clinic_id,
+        center_id,
         created_at,
         full_name,
-        clinics:clinic_id (
+        centers:center_id (
           id,
           name,
           slug
@@ -71,8 +71,8 @@ export async function GET(request: NextRequest) {
       query = query.eq('role', role)
     }
 
-    if (clinicId) {
-      query = query.eq('clinic_id', clinicId)
+    if (centerId) {
+      query = query.eq('center_id', centerId)
     }
 
     const { data: users, error: usersError } = await query

@@ -14,8 +14,8 @@ interface InvitationData {
   id: string
   email: string
   invited_role: string
-  clinic_id: string | null
-  clinic_name: string | null
+  center_id: string | null
+  center_name: string | null
   status: string
   is_valid: boolean
   error_message: string | null
@@ -33,9 +33,9 @@ export default function AcceptInvitationClient({ token }: AcceptInvitationClient
   const lp = useLocalizePath()
 
   const roleNames: Record<string, string> = {
-    clinic_owner: t('roles.clinic_owner'),
-    clinic_manager: t('roles.clinic_manager'),
-    clinic_staff: t('roles.clinic_staff'),
+    center_owner: t('roles.center_owner'),
+    center_manager: t('roles.center_manager'),
+    center_staff: t('roles.center_staff'),
     sales_staff: t('roles.sales_staff'),
     customer: t('roles.customer'),
   }
@@ -125,7 +125,7 @@ export default function AcceptInvitationClient({ token }: AcceptInvitationClient
 
       if (role === 'super_admin') {
         router.push(lp('/super-admin'))
-      } else if (role === 'clinic_owner' || role === 'clinic_manager') {
+      } else if (role === 'center_owner' || role === 'center_manager') {
         router.push(lp('/admin'))
       } else if (role === 'sales_staff' || role === 'customer') {
         router.push(lp('/booking'))
@@ -223,10 +223,10 @@ export default function AcceptInvitationClient({ token }: AcceptInvitationClient
                   <strong className="block text-sm">{t('acceptInvitation.roleLabel')}</strong>
                   <p className="text-sm">{roleNames[invitation.invited_role] || invitation.invited_role}</p>
                 </div>
-                {invitation.clinic_name && (
+                {invitation.center_name && (
                   <div>
-                    <strong className="block text-sm">{t('acceptInvitation.clinicLabel')}</strong>
-                    <p className="text-sm">{invitation.clinic_name}</p>
+                    <strong className="block text-sm">{t('acceptInvitation.centerLabel')}</strong>
+                    <p className="text-sm">{invitation.center_name}</p>
                   </div>
                 )}
               </div>

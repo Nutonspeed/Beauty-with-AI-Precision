@@ -1,8 +1,8 @@
 {
   "brand": "AI Beauty Platform",
   "common": {
-    "appName": "AI Beauty Clinic",
-    "appDescription": "AI-powered dermatology & aesthetic analysis platform",
+    "appName": "AI Aesthetic Intelligence",
+    "appDescription": "AI-powered aesthetic & skin health analysis platform",
     "loading": "Loading",
     "error": "Error",
     "success": "Success",
@@ -27,9 +27,9 @@
     "profile": "Profile",
     "language": "Language",
     "notifications": "Notifications",
-    "switchClinic": "Switch Clinic",
+    "switchCenter": "Switch Center",
     "startAnalysis": "Start Analysis",
-    "viewFullSystem": "View Full Clinic System",
+    "viewFullSystem": "View Full Aesthetic System",
     "status": {
       "initializing": "INITIALIZING",
       "scanningBaseline": "SCANNING FACIAL BASELINE"
@@ -37,19 +37,19 @@
     "messages": {
       "webglFallback": "WebGL not available – showing optimized static preview.",
       "bestRegards": "Best regards",
-      "clinicTeam": "Your Beauty Clinic Team",
+      "centerTeam": "Your Aesthetic Intelligence Team",
       "contactUsPrompt": "If you have any questions, please don't hesitate to contact us.",
       "nextSteps": "Next Steps",
       "department": "Region",
       "status": "Severity",
       "error": "Error"
     },
-    "clinic": {
-      "name": "AI367 Skin Clinic",
-      "address": "123 Medical Plaza, Bangkok, Thailand",
+    "center": {
+      "name": "Aesthetic Intelligence Hub",
+      "address": "123 Aesthetic Plaza, Bangkok, Thailand",
       "phone": "+66 2 XXX XXXX",
-      "email": "info@ai367clinic.com",
-      "website": "www.ai367clinic.com"
+      "email": "info@ai-aesthetic.com",
+      "website": "www.ai-aesthetic.com"
     },
     "saved": "Settings saved",
     "retry": "Try again",
@@ -75,7 +75,7 @@
     "analytics": "Analytics",
     "leads": "Leads",
     "proposals": "Proposals",
-    "tenants": "Clinic Management",
+    "tenants": "Center Management",
     "users": "User Management",
     "settings": "Settings",
     "demo": "Demo",
@@ -94,7 +94,7 @@
     "salesTool": "Sales Tool",
     "systemStatus": "System Status",
     "tryResults": "Try Results",
-    "clinicDemo": "Clinic Demo",
+    "centerDemo": "Aesthetic Hub Demo",
     "vision2026": "Vision 2026",
     "techHub": "Technical Hub"
   },
@@ -150,7 +150,7 @@
       "item1": "This page requires a specific role or permission.",
       "item2": "Your current plan does not support this feature.",
       "item3": "You need to upgrade to a higher tier.",
-      "item4": "This page is restricted to clinic staff or administrators."
+      "item4": "This page is restricted to center staff or administrators."
     },
     "upgradeToUnlock": "Upgrade to unlock features",
     "help": {
@@ -261,7 +261,7 @@
       },
       "sharing": {
         "title": "Data Sharing",
-        "content": "We will not sell, rent, or share your personal data with third parties except when legally required or to provide services you requested, such as sharing data with clinics where you book appointments.",
+        "content": "We will not sell, rent, or share your personal data with third parties except when legally required or to provide services you requested, such as sharing data with aesthetic centers where you book appointments.",
         "items": {
           "noSale": {
             "label": "No Sale",
@@ -334,7 +334,7 @@
       },
       "service": {
         "title": "Service Description",
-        "content": "Our platform provides AI-powered facial skin analysis, AR treatment simulation, and customer management for beauty clinics. Services may be modified or updated without prior notice.",
+        "content": "Our platform provides AI-powered facial skin analysis, AR program simulation, and customer management for aesthetic centers. Services may be modified or updated without prior notice.",
         "items": {
           "free": {
             "label": "Free Tier",
@@ -346,7 +346,7 @@
           },
           "enterprise": {
             "label": "Enterprise",
-            "desc": "Multi-clinic, API Integration, Custom Features"
+            "desc": "Multi-center, API Integration, Custom Features"
           }
         }
       },
@@ -403,8 +403,8 @@
             "desc": "We strive for accuracy but cannot guarantee 100%"
           },
           "consult": {
-            "label": "Consult Experts",
-            "desc": "Consult medical professionals before treatment decisions"
+            "label": "Consult Specialists",
+            "desc": "Consult aesthetic specialists before program decisions"
           }
         }
       },
@@ -490,8 +490,8 @@
     "customizeGenerate": "Customize & Generate",
     "customerName": "Customer Name",
     "customerNamePlaceholder": "e.g. Sarah",
-    "treatmentType": "Treatment Type",
-    "treatmentTypePlaceholder": "e.g. Botox",
+    "programType": "Program Type",
+    "programTypePlaceholder": "e.g. Skin Refinement",
     "mainConcern": "Main Concern",
     "mainConcernPlaceholder": "e.g. wrinkles",
     "generating": "Generating...",
@@ -561,7 +561,7 @@
   },
   "compliance": {
     "title": "Privacy & Compliance",
-    "description": "Overview of patient data privacy, security measures, and AI model validation.",
+    "description": "Overview of customer data privacy, security measures, and AI model validation.",
     "dataPrivacy": {
       "title": "Data Privacy (PDPA/GDPR)",
       "item1": "Purpose-limited data collection and use with explicit consent.",
@@ -575,11 +575,11 @@
       "sensitivity": "Sensitivity",
       "specificity": "Specificity",
       "accuracy": "Overall accuracy",
-      "disclaimer": "Numbers are simulated for communication purposes, not clinical test results; real‑world performance may vary."
+      "disclaimer": "Numbers are simulated for communication purposes, not center test results; real‑world performance may vary."
     },
     "medicalDisclaimer": {
-      "title": "Medical Disclaimer",
-      "description": "This system supports professional decision‑making and is not a substitute for diagnosis or treatment by licensed clinicians."
+      "title": "Aesthetic Disclaimer",
+      "description": "This system supports professional decision‑making and is not a substitute for diagnosis or program planning by licensed specialists."
     },
     "contact": {
       "title": "Contact",
@@ -590,21 +590,21 @@
     "badge": "AI Advisor",
     "title": "Business AI Advisor",
     "description": "Ask questions about business, marketing, or get AI recommendations",
-    "initialMessage": "Hello! I'm ClinicIQ AI Advisor, ready to help you with clinic management, data analysis, and business consulting! 🏥",
-    "aiResponse": "Thank you for your question! Here's my initial analysis:\n\n📊 Based on your clinic data:\n- Average monthly revenue: ฿450,000\n- Popular treatments: Botox (35%), Filler (28%)\n- Return rate: 72%\n\nRecommendation: Consider adding promotions for new customers and a loyalty program",
+    "initialMessage": "Hello! I'm Aesthetic Intelligence AI Advisor, ready to help you with center management, data analysis, and business consulting! 🏥",
+    "aiResponse": "Thank you for your question! Here's my initial analysis:\n\n📊 Based on your center data:\n- Average monthly revenue: ฿450,000\n- Popular programs: Skin Refinement (35%), Bio-Regeneration (28%)\n- Return rate: 72%\n\nRecommendation: Consider adding promotions for new customers and a loyalty program",
     "suggestions": {
       "sales": "Analyze this month's sales",
       "customers": "Suggest ways to get new customers",
-      "treatments": "Summarize popular treatments",
+      "programs": "Summarize popular programs",
       "staff": "Analyze staff performance"
     },
     "placeholder": "Type your question..."
   },
   "arSimulator": {
     "backToAnalysis": "Back to Analysis",
-    "badge": "AR Treatment Simulator",
-    "title": "Treatment Result Simulator",
-    "description": "Upload your photo and see treatment results in real-time with AR technology",
+    "badge": "AR Program Simulator",
+    "title": "Aesthetic Outcome Simulator",
+    "description": "Upload your photo and see program results in real-time with AR technology",
     "uploadImage": "Upload Image",
     "clickToUpload": "Click to upload",
     "supports": "Supports JPG, PNG (max 10MB)",
@@ -613,8 +613,8 @@
     "uploadNewImage": "Upload New Image",
     "assetSynthesisDesc": "Input visual asset for augmented synthesis",
     "calibrationProtocol": "Calibration Protocol",
-    "finalizeTreatment": "Finalize Treatment Plan",
-    "clinicalAr": "Clinical AR Simulator"
+    "finalizeProgram": "Finalize Program Plan",
+    "aestheticAr": "Aesthetic AR Simulator"
   },
   "branches": {
     "title": "Branch Management",
@@ -715,9 +715,9 @@
   },
   "caseStudies": {
     "title": "Case Studies",
-    "carouselTitle1": "Clinical",
+    "carouselTitle1": "Aesthetic",
     "carouselTitle2": "Outcomes",
-    "description": "Simulated examples to illustrate ClinicIQ capabilities — not medical advice.",
+    "description": "Simulated examples to illustrate Aesthetic Intelligence capabilities — not medical advice.",
     "caseStudyLabel": "Case Study",
     "readMore": "Read more",
     "backToHome": "Back to home",
@@ -729,7 +729,7 @@
     "questions": {
       "accuracy": {
         "q": "How accurate is the AI skin analysis?",
-        "a": "The model has been tested with diverse samples and is continuously improved. It undergoes clinical validation."
+        "a": "The model has been tested with diverse samples and is continuously improved. It undergoes aesthetic validation."
       },
       "privacy": {
         "q": "How are image data stored?",
@@ -755,18 +755,18 @@
       "emailPlaceholder": "your@email.com",
       "phone": "Phone Number",
       "phonePlaceholder": "08X-XXX-XXXX",
-      "clinicName": "Clinic/Company Name",
+      "centerName": "Center/Company Name",
       "packageInterest": "Package Interest",
       "message": "Message",
       "namePlaceholder": "John Doe",
-      "clinicPlaceholder": "ABC Beauty Clinic",
+      "centerPlaceholder": "ABC Aesthetic Center",
       "messagePlaceholder": "Tell us about your needs...",
       "sending": "Sending...",
       "sendMessage": "Send Message",
       "packages": {
         "free": "Free Tier",
         "premium": "Premium Package",
-        "enterprise": "Enterprise - Multi-Clinic",
+        "enterprise": "Enterprise - Multi-Center",
         "consultation": "General Consultation"
       },
       "success": {
@@ -786,7 +786,7 @@
     },
     "enterprise": {
       "title": "Enterprise Customers",
-      "discount": "Special discount for multi-branch clinics",
+      "discount": "Special discount for multi-branch centers",
       "customization": "Custom configuration support",
       "support": "Dedicated 24/7 support team"
     }
@@ -795,18 +795,18 @@
     "hero": {
       "badge": "About Us",
       "title": "AI Technology Leader",
-      "subtitle": "for Aesthetic Clinics",
-      "description": "AI367BAR is a B2B2C platform combining advanced AI technology, medical-grade skin analysis, and comprehensive clinic management systems to help aesthetic clinic businesses grow sustainably.",
+      "subtitle": "for Aesthetic Centers",
+      "description": "AI367BAR is a B2B2C platform combining advanced AI technology, precision skin analysis, and comprehensive center management systems to help aesthetic businesses grow sustainably.",
       "tryFree": "Try for Free",
       "contactUs": "Contact Us"
     },
     "vision": {
       "title": "Vision",
-      "description": "To be the leading AI platform in Asia for skin analysis and aesthetic clinic management, making world-class technology accessible and affordable for businesses."
+      "description": "To be the leading AI platform in Asia for skin analysis and aesthetic center management, making world-class technology accessible and affordable for businesses."
     },
     "mission": {
       "title": "Mission",
-      "description": "Develop accurate, secure, and accessible AI technology to elevate aesthetic clinic service standards and create the best customer experience."
+      "description": "Develop accurate, secure, and accessible AI technology to elevate aesthetic center service standards and create the best customer experience."
     },
     "coreValues": {
       "title": "Core Values",
@@ -821,11 +821,11 @@
       },
       "growth": {
         "title": "Growth",
-        "description": "Helping clinic businesses grow with modern technology"
+        "description": "Helping aesthetic businesses grow with modern technology"
       },
       "quality": {
         "title": "Quality",
-        "description": "Medical-grade standards comparable to VISIA"
+        "description": "Professional-grade standards comparable to international metrics"
       }
     },
     "techStack": {
@@ -841,11 +841,11 @@
       },
       "ar": {
         "title": "AR Visualization",
-        "description": "AR visualization of treatment results before decision"
+        "description": "AR visualization of program results before decision"
       },
-      "visia": {
-        "title": "VISIA Metrics",
-        "description": "8 metrics measured by VISIA standards"
+      "aestheticMetrics": {
+        "title": "Aesthetic Metrics",
+        "description": "8 metrics measured by international standards"
       }
     },
     "milestones": {
@@ -854,7 +854,7 @@
       "q1_2024": {
         "year": "2024 Q1",
         "title": "Company Founded",
-        "description": "Started developing AI system for aesthetic clinics"
+        "description": "Started developing AI system for aesthetic centers"
       },
       "q2_2024": {
         "year": "2024 Q2",
@@ -864,7 +864,7 @@
       "q3_2024": {
         "year": "2024 Q3",
         "title": "Beta Launch",
-        "description": "Launched beta testing with pilot clinics"
+        "description": "Launched beta testing with pilot centers"
       },
       "q1_2025": {
         "year": "2025 Q1",
@@ -903,22 +903,22 @@
       "subtitle": "AI architecture designed exclusively for premium aesthetic excellence",
       "aiAnalysis": {
         "title": "Deep Skin Analysis (Hybrid AI)",
-        "desc": "Fusing global algorithms with real clinical data for maximum accuracy in identifying dark spots, wrinkles, and pore structures.",
-        "feature1": " 8 VISIA Standard Metric Analysis",
+        "desc": "Fusing global algorithms with real aesthetic data for maximum accuracy in identifying dark spots, wrinkles, and pore structures.",
+        "feature1": " 8 Aesthetic Standard Metric Analysis",
         "feature2": " Inference completion within 3 seconds",
         "feature3": " 468 High-Precision Landmark Detection",
         "feature4": " 0-100 Precision Accuracy Scoring"
       },
       "arVisualization": {
         "title": "3D Simulation & AR Visualization",
-        "desc": "Enable clients to visualize real-time treatment outcomes through 3D models and simulate future skin evolution via 4D Aging nodes.",
-        "feature1": " Instant AR Treatment Preview",
+        "desc": "Enable clients to visualize real-time program outcomes through 3D models and simulate future skin evolution via 4D Aging nodes.",
+        "feature1": " Instant AR Program Preview",
         "feature2": " High-Resolution 3D Face Modeling",
         "feature3": " Cinematic Before/After Slider",
-        "feature4": " Instant Clinical Sharing Node"
+        "feature4": " Instant Aesthetic Sharing Node"
       },
-      "multiClinic": {
-        "title": "Smart Clinical Network Orchestration",
+      "multiCenter": {
+        "title": "Smart Center Network Orchestration",
         "desc": "Manage multiple branches simultaneously with a unified dashboard, track predictive inventory, and compare inter-node efficiency.",
         "feature1": " Unlimited Node/Branch Management",
         "feature2": " Role-Based Access Control (RBAC)",
@@ -936,14 +936,14 @@
     },
     "additional": {
       "title": "Strategic Utility Modules",
-      "subtitle": "Elevating staff efficiency and operational yield across all clinical dimensions",
+      "subtitle": "Elevating staff efficiency and operational yield across all aesthetic dimensions",
       "ultraFast": {
         "title": "3s Hyper-Inference",
         "desc": "AI processes and analyzes biometric scans in sub-second cycles"
       },
       "customerDb": {
         "title": "Intelligent Resident Database",
-        "desc": "Maintain treatment history as a temporal timeline with visual comparisons"
+        "desc": "Maintain program history as a temporal timeline with visual comparisons"
       },
       "salesAnalytics": {
         "title": "Sales Conversion Dashboard",
@@ -954,8 +954,8 @@
         "desc": "Online booking with autonomous client notification triggers"
       },
       "recommendations": {
-        "title": "AI Clinical Recommendations",
-        "desc": "Synthesize optimal treatment plans based on neural analysis results"
+        "title": "AI Aesthetic Recommendations",
+        "desc": "Synthesize optimal program plans based on neural analysis results"
       },
       "gallery": {
         "title": "Cinematic Result Portfolio",
@@ -972,7 +972,7 @@
     },
     "comparison": {
       "title": "Capability Benchmarking",
-      "subtitle": "Why elite clinics choose our Beauty Intelligence Engine",
+      "subtitle": "Why elite centers choose our Beauty Intelligence Engine",
       "feature": "Feature",
       "ourPlatform": "Our Platform",
       "competitors": "Legacy Competitors",
@@ -980,7 +980,7 @@
       "speed": "Inference Speed",
       "analysisPoints": "Analysis Metrics",
       "arSimulator": "AR Simulation Engine",
-      "multiClinic": "Network Management",
+      "multiCenter": "Network Management",
       "pdpaCompliant": "Global Compliance",
       "price": "Starting Price",
       "values": {
@@ -993,10 +993,10 @@
           "competitor": "10-15 Seconds"
         },
         "points": {
-          "ours": "8 VISIA Points",
+          "ours": "8 Aesthetic Points",
           "competitor": "5-6 Points"
         },
-        "multiClinic": {
+        "multiCenter": {
           "ours": " Unlimited",
           "competitor": "Limited"
         },
@@ -1011,7 +1011,7 @@
       }
     },
     "cta": {
-      "title": "Ready to Modernize Your Clinic?",
+      "title": "Ready to Modernize Your Center?",
       "description": "Deploy the world's most advanced AI diagnostic engine today.",
       "freeSkinAnalysis": "Initialize Free Analysis",
       "contactSales": "Contact Strategic Sales"
@@ -1039,13 +1039,13 @@
     },
     "premium": {
       "badge": "Most Popular",
-      "description": "Perfect for small to medium clinics with full features",
+      "description": "Perfect for small to medium centers with full features",
       "period": "per month",
       "cta": "Start 14-Day Free Trial"
     },
     "enterprise": {
       "badge": "Multi-Branch",
-      "description": "For multi-branch clinics with customization and dedicated support",
+      "description": "For multi-branch centers with customization and dedicated support",
       "period": "Custom Price",
       "cta": "Start 30-Day Free Trial"
     },
@@ -1064,13 +1064,13 @@
       "description": "See all features available in each package",
       "features": "Features",
       "aiAnalysis": "AI Skin Analysis",
-      "visiaMetrics": "8 VISIA Metrics",
+      "visiaMetrics": "8 Aesthetic Metrics",
       "saveHistory": "Save History",
       "arSimulator": "AR Simulation Engine",
       "predictiveSales": "AI Sales Prediction",
       "roiSimulator": "Strategic ROI Simulator",
-      "mdss": "Medical Decision Support (MDSS)",
-      "complianceAudit": "AI Clinical Audit",
+      "adss": "Aesthetic Decision Support (ADSS)",
+      "complianceAudit": "AI Aesthetic Audit",
       "revenueForecast": "Predictive Revenue Forecast",
       "dashboard": "Dashboard & Analytics",
       "multiBranch": "Network Orchestration",
@@ -1088,7 +1088,7 @@
       },
       "q3": {
         "question": "Who is Enterprise Package for?",
-        "answer": "Perfect for multi-branch clinics, those needing custom branding, or dedicated support"
+        "answer": "Perfect for multi-branch centers, those needing custom branding, or dedicated support"
       }
     },
     "cta": {
@@ -1100,16 +1100,16 @@
   },
   "home": {
     "hero": {
-      "badge": "Medical-Grade AI Precision",
+      "badge": "Aesthetic-Grade AI Precision",
       "title": "THE FUTURE OF AESTHETIC ANALYSIS",
-      "subtitle": "AI-Driven Clinical Excellence",
-      "description": "The elite diagnostic ecosystem for premium clinics. 468-point facial mapping meets medical-grade precision.",
-      "cta": "Deploy in Your Clinic",
+      "subtitle": "AI-Driven Excellence",
+      "description": "The elite diagnostic ecosystem for premium centers. 468-point facial mapping meets professional-grade precision.",
+      "cta": "Deploy in Your Center",
       "learnMore": "Live Demo",
       "noCreditCard": "Enterprise Ready",
       "freeTierAvailable": "Certified Infrastructure"
     },
-    "heroTitle": "AI for Clinics that Actually Converts",
+    "heroTitle": "AI for Centers that Actually Converts",
     "heroSubtitle": "From analysis to recommendations to revenue",
     "heroDescription": "Evidence‑based AI skin analysis connected to your sales workflow — improve conversion and customer trust with medical‑grade insights and AR visualization.",
     "startFreeAnalysis": "Start Free Analysis",
@@ -1117,16 +1117,16 @@
     "noCreditCard": "No credit card required",
     "freeTierAvailable": "Free tier available",
     "whyChooseTitle": "Why Choose Our Platform",
-    "whyChooseSubtitle": "Professional-grade tools designed specifically for beauty clinics and dermatologists",
+    "whyChooseSubtitle": "Professional-grade tools designed specifically for beauty centers and dermatologists",
     "features": {
       "title": "Our Features",
       "ar": {
         "title": "AR 3D Visualization",
-        "description": "See treatment results in real-time with advanced 3D face mapping"
+        "description": "See program results in real-time with advanced 3D face mapping"
       },
       "ai": {
         "title": "AI Analysis",
-        "description": "Get personalized treatment recommendations powered by AI"
+        "description": "Get personalized program recommendations powered by AI"
       },
       "booking": {
         "title": "Online Booking",
@@ -1138,7 +1138,7 @@
       },
       "arVisualization": {
         "title": "AR Visualization",
-        "description": "Real-time AR preview of treatment results before actual procedures"
+        "description": "Real-time AR preview of program results before actual procedures"
       },
       "pdpaCompliant": {
         "title": "PDPA Compliant",
@@ -1152,8 +1152,8 @@
         "title": "Fast & Accurate",
         "description": "Complete analysis in 3-5 seconds with personalized recommendations"
       },
-      "multiClinic": {
-        "title": "Multi-Clinic Support",
+      "multiCenter": {
+        "title": "Multi-Center Support",
         "description": "Multi-branch support with integrated CRM and appointment system"
       }
     },
@@ -1174,13 +1174,13 @@
       }
     },
     "cta": {
-      "title": "Ready to Transform Your Clinic?",
-      "description": "Join 100+ clinics using AI to boost their results.",
+      "title": "Ready to Transform Your Center?",
+      "description": "Join 100+ centers using AI to boost their results.",
       "contactSales": "Contact Sales"
     },
     "pricing": {
-      "title": "Clinical-Grade Ecosystem",
-      "subtitle": "Elite diagnostic infrastructure for premium clinics",
+      "title": "Aesthetic-Grade Ecosystem",
+      "subtitle": "Elite diagnostic infrastructure for premium centers",
       "freeTier": {
         "badge": "Entry",
         "title": "Starter Plan",
@@ -1191,14 +1191,14 @@
       "premium": {
         "badge": "Recommended",
         "title": "Professional Plan",
-        "description": "Full-scale AI intelligence for rapid clinical growth",
+        "description": "Full-scale AI intelligence for rapid Aesthetic growth",
         "period": "mo",
         "cta": "Contact Sales"
       },
       "starter": {
         "badge": "Starter",
         "title": "Starter",
-        "description": "For small clinics with 1 branch",
+        "description": "For small centers with 1 branch",
         "price": "฿9,900",
         "period": "month",
         "salesUsers": "1 Sales User",
@@ -1215,7 +1215,7 @@
       "professional": {
         "badge": "Most Popular",
         "title": "Professional",
-        "description": "For growing clinics - Save 30%",
+        "description": "For growing centers - Save 30%",
         "price": "฿19,900",
         "period": "month",
         "salesUsers": "3 Sales Users",
@@ -1226,7 +1226,7 @@
           "AR Before/After Simulator",
           "CRM Advanced + Pipeline",
           "Appointment + Queue System",
-          "Treatment Plans",
+          "Program Plans",
           "Inventory Management",
           "Email & SMS Marketing",
           "Loyalty Points",
@@ -1240,7 +1240,7 @@
       "enterprise": {
         "badge": "Best Value",
         "title": "Enterprise",
-        "description": "For clinic chains - Save 60%",
+        "description": "For center chains - Save 60%",
         "price": "฿39,900",
         "period": "month",
         "salesUsers": "10 Sales Users",
@@ -1261,13 +1261,13 @@
     },
     "roi": {
       "title": "Assess Added Value in 10 Seconds",
-      "description": "Enter your clinic numbers to see estimated AI impact",
+      "description": "Enter your center numbers to see estimated AI impact",
       "performanceAnalytics": "Performance Analytics"
     },
     "caseStudy": {
       "title": "Case Study",
       "subtitle": "Reduced Average Queue Time by 37% in 6 Weeks",
-      "description": "Clinic A, Bangkok — Using automated skin analysis and new workflow"
+      "description": "Center A, Bangkok — Using automated skin analysis and new workflow"
     }
   },
   "demoCta": {
@@ -1277,11 +1277,11 @@
   },
   "caseStudyTeaser": {
     "title": "View Case Example",
-    "description": "Real results from clinics using our system",
+    "description": "Real results from centers using our system",
     "button": "Open Case Study"
   },
   "footer": {
-    "description": "AI platform for aesthetic clinics to enhance skin analysis and customer management",
+    "description": "AI platform for aesthetic centers to enhance skin analysis and customer management",
     "product": "Product",
     "tryDemo": "Try Demo",
     "company": "Company",
@@ -1311,7 +1311,7 @@
       "tooltip": "Encrypted and segmented data"
     }
   },
-  "clinic": {
+  "center": {
     "steps": [
       {
         "eyebrow": "STEP 01",
@@ -1321,12 +1321,12 @@
       {
         "eyebrow": "STEP 02",
         "title": "Volumetric Scan",
-        "body": "A paced vertical scan communicates genuine data capture, enhancing perceived credibility for premium clinical experiences."
+        "body": "A paced vertical scan communicates genuine data capture, enhancing perceived credibility for premium center experiences."
       },
       {
         "eyebrow": "STEP 03",
         "title": "Adaptive Protocol",
-        "body": "AI-driven treatment protocol adapts live; user sliders for sensitivity/intensity instantly reflect via HALO feedback."
+        "body": "AI-driven program protocol adapts live; user sliders for sensitivity/intensity instantly reflect via HALO feedback."
       },
       {
         "eyebrow": "STEP 04",
@@ -1358,7 +1358,7 @@
       "proposals": "AI-Generated Proposals",
       "bookings": "Confirmed AI Bookings",
       "acquisitionDesc": "Sourced via AI Vision Scanning",
-      "proposalsDesc": "Autonomous Treatment Synthesis",
+      "proposalsDesc": "Autonomous Program Synthesis",
       "bookingsDesc": "Closed via Digital Consultation"
     },
     "toolset": {
@@ -1374,7 +1374,7 @@
       "presentationDesc": "Dynamic Quoting"
     },
     "arModules": {
-      "title": "Specialized AR Clinical Modules",
+      "title": "Specialized AR Center Modules",
       "filler": "Filler & Lips",
       "body": "Body Contour",
       "hair": "Trichology",
@@ -1514,22 +1514,22 @@
         "severityLabel": "Severity",
         "visiaTitle": "VISIA Skin Metrics",
         "visiaDesc": "8-point professional skin analysis",
-        "recommendationsTitle": "Treatment Recommendations",
+        "recommendationsTitle": "Program Recommendations",
         "recommendationsDesc": "Personalized suggestions for {name}",
         "offlineWarning": "You are offline. Results are saved locally and will sync when online.",
         "exportReport": "Export Analysis Report (PDF)"
       },
       "ar": {
         "frontImageRequired": "No image available for AR preview. Please go back to the scan step.",
-        "instructions": "Select treatments and adjust intensity to preview results for {name}. Drag the slider in comparison mode to see before/after.",
+        "instructions": "Select programs and adjust intensity to preview results for {name}. Drag the slider in comparison mode to see before/after.",
         "arPreviewTab": "AR Preview",
         "compareTab": "Compare",
-        "selectTreatmentPrompt": "Select at least one treatment below to preview",
-        "comparePrompt": "Select treatments to see before/after comparison",
-        "sliderTitle": "Treatment Preview",
+        "selectProgramPrompt": "Select at least one program below to preview",
+        "comparePrompt": "Select programs to see before/after comparison",
+        "sliderTitle": "Program Preview",
         "sliderDesc": "Drag to compare before and after",
-        "intensityTitle": "Treatment Intensity",
-        "intensityDesc": "Adjust the intensity of selected treatments",
+        "intensityTitle": "Program Intensity",
+        "intensityDesc": "Adjust the intensity of selected programs",
         "intensityLabel": "Intensity",
         "intensitySubtle": "Subtle",
         "intensityNatural": "Natural",
@@ -1537,11 +1537,11 @@
         "presetMild": "Mild (30%)",
         "presetModerate": "Moderate (60%)",
         "presetIntensive": "Intensive (90%)",
-        "selectTreatmentsTitle": "Select Treatments",
-        "selectTreatmentsDesc": "Choose up to 3 treatments (recommended treatments highlighted)",
+        "selectProgramsTitle": "Select Programs",
+        "selectProgramsDesc": "Choose up to 3 programs (recommended programs highlighted)",
         "recommendedBadge": "Recommended",
-        "selectionCounter": "<strong>{count}</strong> of 3 treatments selected",
-        "selectedSummaryTitle": "Selected Treatments"
+        "selectionCounter": "<strong>{count}</strong> of 3 programs selected",
+        "selectedSummaryTitle": "Selected Programs"
       },
       "products": {
         "instructions": "Browse and select products for {name}. Recommended products are highlighted based on AI analysis.",
@@ -1588,7 +1588,7 @@
         "depositDetail": "Deposit: ฿{deposit} | Balance: ฿{balance}",
         "additionalNotesLabel": "Additional Notes",
         "notesPlaceholder": "Special conditions, warranties, or instructions...",
-        "emptyProposal": "No items in proposal. Please go back and select treatments or products."
+        "emptyProposal": "No items in proposal. Please go back and select programs or products."
       },
       "summary": {
         "instructions": "Review the complete proposal and sign to finalize the agreement.",
@@ -1606,7 +1606,7 @@
         "condition": "Condition",
         "ageDiff": "Age Difference",
         "personalizedTips": "{count} personalized tips",
-        "sectionTreatments": "Selected Treatments",
+        "sectionPrograms": "Selected Programs",
         "itemsCount": "{count} items",
         "sectionProducts": "Selected Products",
         "sectionProposal": "Pricing Proposal",
@@ -1641,13 +1641,13 @@
     "enterFullscreen": "Enter Fullscreen",
     "overview": "Overview",
     "comparison": "Comparison",
-    "treatments": "Treatments",
+    "programs": "Programs",
     "pricing": "Pricing",
     "timeline": "Timeline",
     "skinHealthScore": "Skin Health Score",
     "concerns": "Skin Concerns",
     "expectedResults": "Expected Results",
-    "treatmentPlan": "Treatment Plan",
+    "programPlan": "Program Plan",
     "estimatedCost": "Estimated Cost",
     "duration": "Duration",
     "sessions": "Sessions",
@@ -1740,8 +1740,8 @@
     "globalIdentityDesc": "Global identity node distribution by protocol",
     "roles": {
       "super_admin": "Super Admin",
-      "clinic_owner": "Owner Node",
-      "clinic_admin": "Admin Vector",
+      "center_owner": "Owner Node",
+      "center_admin": "Admin Vector",
       "staff": "Operator",
       "beautician": "Technician",
       "customer": "Client Unit"
@@ -1751,7 +1751,7 @@
     "searchPlaceholder": "Search Identity Node...",
     "protocol": "Protocol",
     "status": "Status",
-    "clinicalUplink": "Clinical Uplink",
+    "centerUplink": "Center Uplink",
     "globalProtocol": "GLOBAL_PROTOCOL",
     "anyState": "ANY_STATE",
     "globalNetwork": "GLOBAL_NETWORK",
@@ -1788,7 +1788,7 @@
     "title": "Workflow Details",
     "description": "Define your automation workflow",
     "nameLabel": "Workflow Name",
-    "namePlaceholder": "e.g., Post-Treatment Follow-up",
+    "namePlaceholder": "e.g., Post-Program Follow-up",
     "descLabel": "Description",
     "descPlaceholder": "Describe what this workflow does...",
     "triggerType": "Trigger Type",
@@ -1822,7 +1822,7 @@
       "signup": "User Signup",
       "purchase": "Purchase",
       "booking": "Booking Made",
-      "treatment_complete": "Treatment Completed",
+      "program_complete": "Program Completed",
       "birthday": "Birthday",
       "anniversary": "Anniversary",
       "abandoned_cart": "Abandoned Cart",
@@ -1895,7 +1895,7 @@
       "networkError": "❌ Network Error - Cannot load AI models\n\nPlease check your internet connection.\nMediaPipe and TensorFlow need to download models from CDN."
     }
   },
-  "treatmentTimeline": {
+  "programTimeline": {
     "loading": "Loading timeline...",
     "empty": "No timeline entries yet",
     "loadMore": "Load More",
@@ -1917,9 +1917,9 @@
     },
     "verified": "Verified Purchase",
     "actions": {
-      "booking": "{name} booked {treatment} {time} ago",
+      "booking": "{name} booked {program} {time} ago",
       "purchase": "{name} purchased {package} {time} ago",
-      "consultation": "{name} consulted about {treatment} {time} ago"
+      "consultation": "{name} consulted about {program} {time} ago"
     },
     "reviews": {
       "names": {
@@ -1956,7 +1956,7 @@
     "avgSeverity": "Avg severity",
     "scale": "Severity Scale:",
     "mild": "Mild - Minimal intervention needed",
-    "moderate": "Moderate - Recommended treatment",
+    "moderate": "Moderate - Recommended program",
     "severe": "Severe - Immediate attention recommended",
     "tabs": {
       "all": "All",
@@ -1975,9 +1975,9 @@
       "eyes": "Eyes"
     }
   },
-  "treatmentComparison": {
-    "title": "Treatment Comparison",
-    "aiTitle": "AI Treatment Recommendation",
+  "programComparison": {
+    "title": "Program Comparison",
+    "aiTitle": "AI Program Recommendation",
     "skinConcernLabel": "Primary Skin Concern",
     "budgetLabel": "Budget",
     "getRecommendation": "Get AI Recommendation",
@@ -1986,13 +1986,13 @@
     "choosePackage": "Select this package",
     "gridView": "Grid View",
     "comparisonView": "Comparison View",
-    "noSelection": "Select at least 1 treatment to compare",
-    "summaryTitle": "Selected Treatments Summary",
-    "selectedCount": "{count} treatments selected",
+    "noSelection": "Select at least 1 program to compare",
+    "summaryTitle": "Selected Programs Summary",
+    "selectedCount": "{count} programs selected",
     "total": "Total {amount}",
-    "bookNow": "Book Treatment",
+    "bookNow": "Book Program",
     "table": {
-      "treatment": "Treatment",
+      "program": "Program",
       "price": "Price",
       "duration": "Duration",
       "effectiveness": "Effectiveness",
@@ -2014,7 +2014,7 @@
   "videoCall": {
     "title": "AI Remote Consultation",
     "inCall": "Secure Neural Uplink Active",
-    "description": "Encrypted clinical consultation channel",
+    "description": "Encrypted center consultation channel",
     "ready": "Ready for Secure Uplink",
     "pressToStart": "Press Start to initialize remote consultation",
     "startCall": "Start Consultation",
@@ -2040,7 +2040,7 @@
       "ended": "Session terminated successfully",
       "duration": "Consultation duration: {time}"
     },
-    "notes": " <strong>Strategic Oversight:</strong> Remote sessions are monitored for <strong>Clinical Sentiment</strong> and <strong>Neural Resonance</strong> to optimize outcome satisfaction."
+    "notes": " <strong>Strategic Oversight:</strong> Remote sessions are monitored for <strong>Center Sentiment</strong> and <strong>Neural Resonance</strong> to optimize outcome satisfaction."
   },
   "photoComparison": {
     "tabs": {
@@ -2060,7 +2060,7 @@
     },
     "empty": {
       "title": "No photos available yet",
-      "description": "Photos will appear here as treatment progresses",
+      "description": "Photos will appear here as program progresses",
       "noBefore": "No before photos available",
       "noAfter": "No after photos available yet",
       "noProgress": "No progress photos available yet"
@@ -2072,8 +2072,8 @@
       "of": "of"
     }
   },
-  "treatmentConfigurator": {
-    "title": "TREATMENT CONFIGURATOR",
+  "programConfigurator": {
+    "title": "PROGRAM CONFIGURATOR",
     "presets": {
       "rejuvenate": "Rejuvenate",
       "detox": "Detox",
@@ -2090,7 +2090,7 @@
       "beamColor": "Beam Color"
     }
   },
-  "treatments": {
+  "programs": {
     "hydrafacial": {
       "description": "Deep cleansing with special solutions"
     },
@@ -2158,7 +2158,7 @@
       "to": "To",
       "subject": "Subject",
       "yourResults": "Your Skin Analysis Results",
-      "summary": "Personalized analysis with {concernCount} concerns identified and {recommendationCount} treatment recommendations.",
+      "summary": "Personalized analysis with {concernCount} concerns identified and {recommendationCount} program recommendations.",
       "sending": "Sending Email...",
       "send": "Send Email",
       "error": "Error Sending Email",
@@ -2177,8 +2177,8 @@
       "dear": "Hi {name}! Here are your personalized skin analysis results:",
       "age": "Skin Age: {age} years",
       "concerns": "Identified Concerns:",
-      "recommendations": "Recommended Treatments:",
-      "nextSteps": "Would you like to schedule a consultation to discuss these treatments?"
+      "recommendations": "Recommended Programs:",
+      "nextSteps": "Would you like to schedule a consultation to discuss these programs?"
     },
     "status": {
       "emailSent": "Email Sent",
@@ -2274,7 +2274,7 @@
     "checking": "Checking invitation...",
     "emailLabel": "Email:",
     "roleLabel": "Role:",
-    "clinicLabel": "Clinic:",
+    "centerLabel": "Center:",
     "fullNameLabel": "Full Name",
     "passwordLabel": "Password",
     "confirmPasswordLabel": "Confirm Password",
@@ -2369,13 +2369,13 @@
         "description": "Click \"Analyze Behavior\" to let AI forecast customer behavior and sales opportunities"
       }
     },
-    "arTreatmentPreview": {
-      "title": "AR Treatment Preview",
-      "description": "See the expected results after treatment",
+    "arProgramPreview": {
+      "title": "AR Program Preview",
+      "description": "See the expected results after program",
       "expectedImprovements": "Expected Improvements:",
       "improvement": "{percent}% improvement",
       "severity": "Severity: {value}/10",
-      "disclaimer": "* Results shown are simulated based on typical outcomes. Actual results may vary depending on individual skin condition and treatment response.",
+      "disclaimer": "* Results shown are simulated based on typical outcomes. Actual results may vary depending on individual skin condition and program response.",
       "shareComingSoon": "Share functionality coming soon!",
       "before": "Before",
       "after": "After"
@@ -2482,7 +2482,7 @@
     "fillerLipSimulator": {
       "title": "Filler & Lip Simulator",
       "subtitle": "Real-time filler injection simulation",
-      "selectArea": "Select treatment area",
+      "selectArea": "Select program area",
       "compareBeforeAfter": "Compare Before/After",
       "processing": "Processing...",
       "estimatedUsage": "Estimated Filler Usage",
@@ -2649,12 +2649,12 @@
         "followup": {
           "title": "Follow-up Call",
           "description": "Not contacted for {days} days - should follow up",
-          "script": "Hello {name}, this is [Name] from [Clinic] calling to follow up on your interest in {treatment}. Is now a good time to chat?"
+          "script": "Hello {name}, this is [Name] from [Center] calling to follow up on your interest in {program}. Is now a good time to chat?"
         },
         "content": {
           "title": "Send Extra Content",
-          "description": "Send more information about the interested treatment",
-          "script": "Hello {name} 📸\n\nWe'd like to share some real customer reviews for {treatment}. The results are amazing!\n\n[Attach Before/After]\n\nWould you like to schedule a free consultation? 💕"
+          "description": "Send more information about the interested program",
+          "script": "Hello {name} 📸\n\nWe'd like to share some real customer reviews for {program}. The results are amazing!\n\n[Attach Before/After]\n\nWould you like to schedule a free consultation? 💕"
         },
         "discount": {
           "title": "Offer Special Promotion",
@@ -2669,12 +2669,12 @@
         "close": {
           "title": "Close Deal",
           "description": "High probability! Should call to book date and time",
-          "script": "Dear {name}, based on our chat, it seems {treatment} is exactly what you need.\n\nWe have slots available this Wednesday at XX and Friday at XX.\n\nWhich day is convenient for you? 😊"
+          "script": "Dear {name}, based on our chat, it seems {program} is exactly what you need.\n\nWe have slots available this Wednesday at XX and Friday at XX.\n\nWhich day is convenient for you? 😊"
         },
         "upsell": {
           "title": "Offer Package Upgrade",
-          "description": "Recommend complementary treatments",
-          "script": "Dear {name}, in addition to {treatment},\n\nmany of our customers also get [XXX] for even better results!\n\nIf you book them together, you'll get a special 15% discount."
+          "description": "Recommend complementary programs",
+          "script": "Dear {name}, in addition to {program},\n\nmany of our customers also get [XXX] for even better results!\n\nIf you book them together, you'll get a special 15% discount."
         }
       },
       "strategies": "AI Conversion Strategies",
@@ -2709,7 +2709,7 @@
       "hydration": "Hydration",
       "selectPackage": "Select Package (1-Tap)",
       "aiRecommended": "AI Recommended",
-      "treatmentCount": "{count} treatments",
+      "programCount": "{count} programs",
       "newPackage": "Select New Package",
       "preview": "Proposal Preview",
       "sendMethod": "Choose Send Method (1-Tap)",
@@ -2727,7 +2727,7 @@
         "price": "💰 Price: {price} Baht",
         "discount": "🎁 Discount {percent}% = {finalPrice} Baht",
         "contact": "📞 Contact: 02-123-4567",
-        "walkin": "🏥 Or Walk-in at the clinic",
+        "walkin": "🏥 Or Walk-in at the center",
         "closing": "Sincerely, ❤️\nAI Beauty Team"
       }
     },
@@ -2768,13 +2768,13 @@
       "title": "Quick Actions",
       "available": "{count} Available",
       "powerActions": "Power Actions",
-      "clinicSettings": "Clinic Settings & Configuration",
+      "centerSettings": "Center Settings & Configuration",
       "advancedAnalytics": "Advanced Analytics & Insights",
       "recentActivity": "Recent Activity",
       "urgent": "urgent",
       "active": "active",
       "activity": {
-        "newCustomer": "New customer \"{name}\" booked {treatment}",
+        "newCustomer": "New customer \"{name}\" booked {program}",
         "targetAchieved": "Revenue target achieved for the month ({percent})",
         "hotLeadsFollowup": "{count} hot leads require immediate follow-up"
       },
@@ -2839,7 +2839,7 @@
       "busy": "Busy",
       "onLeave": "On Leave",
       "offline": "Offline",
-      "patientsCount": "👥 {count} patients",
+      "customersCount": "👥 {count} customers",
       "noStaff": "No staff members in the system",
       "error": "Failed to load staff data",
       "roles": {
@@ -2886,18 +2886,18 @@
         "other": "Other"
       }
     },
-    "topTreatments": {
-      "title": "🏆 Top Performing Treatments",
-      "performance": "📊 Treatment Performance",
+    "topPrograms": {
+      "title": "🏆 Top Performing Programs",
+      "performance": "📊 Program Performance",
       "thisMonth": "This Month",
-      "empty": "No treatment data yet",
+      "empty": "No program data yet",
       "emptyDesc": "Data will appear when there are bookings",
       "bookings": "{count} bookings",
       "revenue": "Revenue Distribution",
       "growth": "🚀 Growth Leaders",
       "rating": "⭐ Average Rating",
       "reviews": "Based on {count} customer reviews",
-      "error": "Failed to load treatments. Please try again."
+      "error": "Failed to load programs. Please try again."
     },
     "sales": {
       "title": "Sales Dashboard",
@@ -3073,7 +3073,7 @@
     "tips": {
       "title": "Sales Boosting Tips",
       "bundle": "Bundle Discount",
-      "bundleDesc": "Offer 3 treatment package 20% off - increases conversion 35%",
+      "bundleDesc": "Offer 3 program package 20% off - increases conversion 35%",
       "urgency": "Urgency Works",
       "urgencyDesc": "Offer expires today - increases conversion 28%",
       "installment": "0% Installment",
@@ -3090,7 +3090,7 @@
     },
     "recommendations": {
       "title": "AI Smart Recommendations",
-      "subtitle": "Recommended treatments for customer",
+      "subtitle": "Recommended programs for customer",
       "analyzing": "AI is analyzing...",
       "processing": "Processing customer data",
       "topPick": "Top Pick",
@@ -3098,7 +3098,7 @@
       "risksLabel": "Risks: {text}",
       "priceLabel": "฿{amount}",
       "maintenanceLabel": "Maintenance: {text}",
-      "selectButton": "Select this Treatment",
+      "selectButton": "Select this Program",
       "allCategories": "All",
       "resultShort": "Res: {text}"
     },
@@ -3108,7 +3108,7 @@
       "limitedTime": "Limited Time",
       "customerName": "Customer Name",
       "namePlaceholder": "Enter customer name",
-      "treatmentList": "Treatment Items",
+      "programList": "Program Items",
       "add": "Add",
       "empty": "No items yet",
       "promoCode": "Promo Code",
@@ -3174,17 +3174,17 @@
       "leadLabel": "Lead *",
       "leadPlaceholder": "Select Lead",
       "proposalTitleLabel": "Proposal Title *",
-      "proposalTitlePlaceholder": "e.g. 3-Month Acne Treatment Plan",
-      "treatmentsLabel": "Treatments *",
-      "addTreatment": "Add Treatment",
-      "treatmentNameLabel": "Treatment Name *",
-      "treatmentNamePlaceholder": "e.g. Laser Treatment",
+      "proposalTitlePlaceholder": "e.g. 3-Month Acne Program Plan",
+      "programsLabel": "Programs *",
+      "addProgram": "Add Program",
+      "programNameLabel": "Program Name *",
+      "programNamePlaceholder": "e.g. Laser Program",
       "pricePerSessionLabel": "Price per Session (฿) *",
       "sessionsLabel": "Number of Sessions *",
       "totalLabel": "Total",
       "detailsLabel": "Details",
       "detailsPlaceholder": "Additional details (optional)",
-      "removeTreatment": "Remove this treatment",
+      "removeProgram": "Remove this program",
       "subtotal": "Subtotal:",
       "discount": "Discount:",
       "netTotal": "Net Total:",
@@ -3200,7 +3200,7 @@
       "createProposal": "Create Proposal",
       "validation": {
         "leadAndTitle": "Please select a lead and enter a proposal title",
-        "treatmentDetails": "Please complete all treatment information"
+        "programDetails": "Please complete all program information"
       },
       "messages": {
         "updateSuccess": "Proposal updated successfully!",
@@ -3253,12 +3253,12 @@
     "sendProposal": "Send Proposal",
     "error": "Sorry, there was a system error. Please try again. 🙏",
     "welcome": "Hello {name} 👋\n\nThank you for your interest in {interests}.\n\nI am here to assist you in every step. 💕\nHow can I help you today?",
-    "welcomeWithTreatment": "Hello {name} 👋\n\nThank you for your interest in {interests}.\n\nFor **{treatment}**:\n💰 Price: ฿{price}\n🎯 Confidence: {confidence}%\n\nI am here to assist you in every step. 💕\nHow can I help you today?",
+    "welcomeWithProgram": "Hello {name} 👋\n\nThank you for your interest in {interests}.\n\nFor **{program}**:\n💰 Price: ฿{price}\n🎯 Confidence: {confidence}%\n\nI am here to assist you in every step. 💕\nHow can I help you today?",
     "responses": {
-      "price": "The price for {treatment} starts at ฿{price}.\n\nWe also have promotions and installment plans available. 💳",
+      "price": "The price for {program} starts at ฿{price}.\n\nWe also have promotions and installment plans available. 💳",
       "time": "We have various time slots available:\n\n📅 Mon-Fri: 10:00-19:00\n🌅 Sat-Sun: 10:00-18:00\n⏰ Lunch time: 12:00-13:00\n\nWhich day works for you?",
       "doctor": "Our doctors are certified Dermatology specialists.\n\n✅ Board certified\n✅ 10+ years of experience\n✅ World-class technology\n\nWould you like to see their certificates and work?",
-      "default": "I understand. {message}\n\nWhat would you like more information about?\n• Price & Promotions 💰\n• Treatment Process ⚕️\n• Results & Reviews ⭐\n• Appointments 📅"
+      "default": "I understand. {message}\n\nWhat would you like more information about?\n• Price & Promotions 💰\n• Program Process ⚕️\n• Results & Reviews ⭐\n• Appointments 📅"
     },
     "honorific": "",
     "keywords": {
@@ -3393,8 +3393,8 @@
       "vip": {
         "name": "VIP Package",
         "description": "Complete package for professional care",
-        "treatments": [
-          "All available treatments",
+        "programs": [
+          "All available programs",
           "Dedicated specialist consult",
           "Home Care Kit",
           "6-month follow-up"
@@ -3406,7 +3406,7 @@
       "intro": "Based on our skin analysis, we found your concerns: {concerns}",
       "recommend": "We recommend **{package}** price {price} Baht",
       "includes": "Including: {items}",
-      "contact": "Contact us at 02-123-4567 or walk-in at the clinic",
+      "contact": "Contact us at 02-123-4567 or walk-in at the center",
       "closing": "Sincerely,\nAI Beauty Team"
     },
     "suggestions": {
@@ -3428,10 +3428,10 @@
     "proposal": "Proposal",
     "viewAllNotes": "View all notes ({count})",
     "highPriority": "High Priority",
-    "priorityDesc": "Low skin score indicates strong treatment need"
+    "priorityDesc": "Low skin score indicates strong program need"
   },
   "hotLeadsManager": {
-    "searchPlaceholder": "Search name or treatment...",
+    "searchPlaceholder": "Search name or program...",
     "status": "Status",
     "priority": "Priority",
     "allStatus": "All Statuses",
@@ -3461,7 +3461,7 @@
     "score": "Lead Score",
     "phone": "Phone",
     "email": "Email",
-    "interestedTreatments": "Interested Treatments",
+    "interestedPrograms": "Interested Programs",
     "budgetRange": "Budget Range",
     "interactionHistory": "Interaction History",
     "interactionsCount": "{count} interactions recorded",
@@ -3580,11 +3580,11 @@
   },
   "roles": {
     "customer": "Customer",
-    "clinic_owner": "Clinic Owner",
+    "center_owner": "Center Owner",
     "sales_staff": "Sales Staff",
     "super_admin": "Super Admin",
-    "clinic_admin": "Clinic Admin",
-    "clinic_staff": "Clinic Staff",
+    "center_admin": "Center Admin",
+    "center_staff": "Center Staff",
     "premium_customer": "Premium Customer",
     "free_user": "Free User",
     "public": "Public"
@@ -3625,7 +3625,7 @@
     "trialMode": {
       "badge": "Trial Mode Active",
       "title": "Trial Mode Active",
-      "description": "You are currently in guest mode. Results will not be archived in your clinical history."
+      "description": "You are currently in guest mode. Results will not be archived in your Aesthetic history."
     },
     "guidance": {
       "title": "Optimal Positioning Guide",
@@ -3637,13 +3637,13 @@
       }
     },
     "reportTypes": {
-      "clinical": "CLINICAL",
+      "center": "AESTHETIC",
       "intelligence": "INTELLIGENCE"
     },
     "metrics": {
       "globalIndex": "GLOBAL SKIN INDEX",
       "aggregate": "AGGREGATE SCORE",
-      "clinicalClassification": "CLINICAL CLASSIFICATION",
+      "centerClassification": "AESTHETIC CLASSIFICATION",
       "multiSpectrum": "MULTI-SPECTRUM ANALYSIS",
       "synthesisActive": "SYNTHESIS ACTIVE",
       "inputAsset": "INPUT ASSET",
@@ -3660,7 +3660,7 @@
       "neuralPrecision": "NEURAL PRECISION",
       "high": "HIGH",
       "fullPortfolio": "FULL METRIC PORTFOLIO",
-      "portfolioDesc": "Detailed breakdown of all clinical skin metrics",
+      "portfolioDesc": "Detailed breakdown of all aesthetic skin metrics",
       "severityLabel": "SEVERITY",
       "countLabel": "COUNT",
       "densityLabel": "DENSITY",
@@ -3677,17 +3677,17 @@
       "regimen": "REGIMEN",
       "optimization": "OPTIMIZATION",
       "noData": "NO PROTOCOL DATA",
-      "pendingTitle": "PREPARING TREATMENT PROTOCOL",
+      "pendingTitle": "PREPARING PROGRAM PROTOCOL",
       "pendingDesc": "AI is currently tailoring your personalized protocol based on the analysis results.",
       "retry": "RETRY"
     },
     "footer": {
-      "disclaimerTitle": "CLINICAL DISCLOSURE",
+      "disclaimerTitle": "Aesthetic Disclosure",
       "disclaimerDesc": "This report is generated using advanced AI and image processing algorithms. It is intended for guidance only and is not a formal medical diagnosis.",
       "verified": "VERIFIED BY BIP NEURAL"
     },
     "bestPractices": {
-      "title": "Clinical Best Practices",
+      "title": "Center Best Practices",
       "items": {
         "illumination": {
           "title": "Neutral Illumination",
@@ -3703,7 +3703,7 @@
         },
         "verification": {
           "title": "Expert Verification",
-          "desc": "AI results serve as a decision-support tool for clinical consultation."
+          "desc": "AI results serve as a decision-support tool for center consultation."
         }
       }
     },
@@ -3765,14 +3765,14 @@
   },
   "booking": {
     "title": "Book Appointment",
-    "subtitle": "Schedule your consultation or treatment with our expert team",
+    "subtitle": "Schedule your consultation or program with our expert team",
     "selectDoctor": "Select Doctor",
-    "selectTreatment": "Select Treatment",
+    "selectProgram": "Select Program",
     "selectDate": "Select Date",
     "selectTime": "Select Time",
     "chooseDate": "Choose Date",
     "chooseTime": "Choose Time",
-    "patientInfo": "Patient Information",
+    "customerInfo": "Customer Information",
     "firstName": "First Name",
     "lastName": "Last Name",
     "name": "Full Name",
@@ -3793,20 +3793,20 @@
     "details": {
       "date": "Date",
       "time": "Time",
-      "treatment": "Treatment"
+      "program": "Program"
     },
-    "treatments": {
+    "programs": {
       "consultation": "Free Consultation",
       "botox": "Botox Injection",
       "filler": "Dermal Filler",
-      "laser": "Laser Treatment",
-      "facial": "Facial Treatment",
+      "laser": "Laser Program",
+      "facial": "Facial Program",
       "peeling": "Chemical Peeling",
       "mesotherapy": "Mesotherapy",
       "thread_lift": "Thread Lift",
-      "acne_treatment": "Acne Treatment",
-      "pigmentation": "Pigmentation Treatment",
-      "anti_aging": "Anti-Aging Treatment",
+      "acne_program": "Acne Program",
+      "pigmentation": "Pigmentation Program",
+      "anti_aging": "Anti-Aging Program",
       "skin_tightening": "Skin Tightening",
       "peel": "Chemical Peel",
       "microneedling": "Microneedling"
@@ -3839,13 +3839,13 @@
   "admin": {
     "dashboard": "Admin Dashboard",
     "overview": "Overview",
-    "patients": "Patients",
+    "customers": "Customers",
     "staff": "Staff",
     "inventory": "Inventory",
     "analytics": "Analytics",
     "reports": "Reports",
-    "totalPatients": "Total Patients",
-    "activePatients": "Active Patients",
+    "totalCustomers": "Total Customers",
+    "activeCustomers": "Active Customers",
     "newThisMonth": "New This Month",
     "totalRevenue": "Total Revenue",
     "revenueThisMonth": "This Month",
@@ -3854,27 +3854,27 @@
     "appointmentsToday": "Today",
     "appointmentsWeek": "This Week",
     "appointmentsMonth": "This Month",
-    "popularTreatments": "Popular Treatments",
+    "popularPrograms": "Popular Programs",
     "staffCount": "Staff Members",
     "activeStaff": "Active",
     "inventoryStatus": "Inventory Status",
     "totalItems": "Total Items",
     "lowStock": "Low Stock",
     "outOfStock": "Out of Stock",
-    "addPatient": "Add Patient",
+    "addCustomer": "Add Customer",
     "addStaff": "Add Staff",
     "addInventory": "Add Inventory Item",
     "exportReport": "Export Report",
     "revenueReport": "Revenue Report",
     "revenueTrend": "Revenue Trend (Last 30 Days)",
-    "treatmentPerformance": "Treatment Performance",
-    "recentPatients": "Recent Patients",
-    "patientManagement": "Patient Management",
+    "programPerformance": "Program Performance",
+    "recentCustomers": "Recent Customers",
+    "customerManagement": "Customer Management",
     "staffManagement": "Staff Management",
     "inventoryManagement": "Inventory Management",
-    "treatmentStats": "Treatment Statistics"
+    "programStats": "Program Statistics"
   },
-  "patient": {
+  "customer": {
     "name": "Name",
     "email": "Email",
     "phone": "Phone",
@@ -3898,7 +3898,7 @@
     "medications": "Current Medications",
     "medicalHistory": "Medical History",
     "skinConcerns": "Skin Concerns",
-    "previousTreatments": "Previous Treatments",
+    "previousPrograms": "Previous Programs",
     "totalVisits": "Total Visits",
     "totalSpent": "Total Spent",
     "lastVisit": "Last Visit",
@@ -3978,7 +3978,7 @@
   },
   "revenue": {
     "title": "Revenue Executive Summary",
-    "subtitle": "Consolidated financial reporting and AI-powered revenue projections for clinic operations.",
+    "subtitle": "Consolidated financial reporting and AI-powered revenue projections for center operations.",
     "activePeriod": "Active period:",
     "periods": {
       "7d": "Last 7 Days",
@@ -4091,7 +4091,7 @@
   },
   "inventoryForecasting": {
     "title": "Predictive Inventory",
-    "subtitle": "AI-driven supply forecasting based on real clinical trends",
+    "subtitle": "AI-driven supply forecasting based on real aesthetic trends",
     "stockStatus": "Critical Stock Analysis",
     "forecastUsage": "Projected 30-Day Usage",
     "autoReorder": "Smart Reorder Suggestion",
@@ -4102,7 +4102,7 @@
   },
   "regimenTracker": {
     "title": "Smart Regimen Tracker",
-    "subtitle": "Monitor and optimize your post-treatment care routine",
+    "subtitle": "Monitor and optimize your post-program care routine",
     "dailyTask": "Daily Routine Task",
     "complianceRate": "Routine Adherence",
     "productUsage": "Product Utilization",
@@ -4142,7 +4142,7 @@
     "realtimeLoadCalc": "REALTIME_LOAD_CALCULATION",
     "forecastLabel": "Operational Load",
     "aiOperationalInsight": "AI Operational Insight",
-    "peakLoadInsight": "Peak load detected between {range}. AI recommends deploying {count} additional clinical staff to maintain optimal service latency.",
+    "peakLoadInsight": "Peak load detected between {range}. AI recommends deploying {count} additional center staff to maintain optimal service latency.",
     "topPerformer": "Personnel Performance Hierarchy",
     "efficiencyScore": "Efficiency Score",
     "excellence": "Excellence",
@@ -4153,16 +4153,16 @@
   },
   "virtualConcierge": {
     "title": "AI Virtual Concierge",
-    "subtitle": "24/7 technical clinical assistance and smart scheduling",
+    "subtitle": "24/7 technical center assistance and smart scheduling",
     "chatStatus": "Neural Node Online",
-    "technicalSupport": "Clinical Tech Support",
+    "technicalSupport": "Aesthetic Tech Support",
     "appointmentSync": "Smart Appointment Link",
     "aiResponse": "Instant Intelligence"
   },
   "loyaltyRewards": {
     "title": "Aesthetic Loyalty Rewards",
-    "subtitle": "Gamified rewards for clinical consistency and routine adherence",
-    "currentPoints": "Clinical Loyalty Points",
+    "subtitle": "Gamified rewards for center consistency and routine adherence",
+    "currentPoints": "Aesthetic Loyalty Points",
     "tierStatus": "Elite Tier Status",
     "milestones": "Upcoming Milestones",
     "redeemable": "Available Perks",
@@ -4185,20 +4185,20 @@
     "globalRank": "Global Rank",
     "efficiencyIndex": "Efficiency Index",
     "yieldAllocation": "Yield Allocation",
-    "multiClinicIntelligence": "Multi-Clinic Intelligence",
+    "multiCenterIntelligence": "Multi-Center Intelligence",
     "unlockMultiBranchDashboard": "Unlock Multi-Branch Dashboard",
     "globalNetworkSynced": "Global Network Synced",
     "revenueComparison": "Revenue Comparison",
     "aggregateYieldMatrix": "Aggregate Yield Matrix",
     "networkOptimizationInsight": "Network Optimization Insight",
-    "optimizationDesc": "Unit {branch} is outperforming the network baseline by 14%. AI recommends redistributing surplus clinical stock to this node.",
+    "optimizationDesc": "Unit {branch} is outperforming the network baseline by 14%. AI recommends redistributing surplus center stock to this node.",
     "branchMatrix": "Branch Performance Matrix",
     "utilizationRate": "Utilization Rate",
     "synchronizeNetworkData": "Synchronize Network Data"
   },
   "industryBenchmarking": {
     "title": "Industry Benchmarking",
-    "subtitle": "Measure your clinic capability against global standards",
+    "subtitle": "Measure your center capability against global standards",
     "globalPercentile": "Global Percentile",
     "competitorAnalysis": "AI Competitor Pulse",
     "efficiencyComparison": "Efficiency Comparison Vector",
@@ -4206,7 +4206,7 @@
     "enterpriseElite": "ENTERPRISE_ELITE",
     "globalEliteLocked": "GLOBAL_ELITE_DATA_LOCKED",
     "unlockIndustryMatrix": "Unlock Industry Matrix",
-    "yourClinic": "Your Clinic",
+    "yourCenter": "Your Center",
     "globalAvg": "Global Avg",
     "techAdoption": "Technology Adoption",
     "topGlobally": "Top {val}% Globally",
@@ -4218,34 +4218,34 @@
       "conversionRate": "Conversion Rate",
       "retention": "Retention",
       "aov": "AOV",
-      "patientTrust": "Patient Trust"
+      "customerTrust": "Customer Trust"
     },
-    "yourClinicLabel": "Your Clinic",
+    "yourCenterLabel": "Your Center",
     "globalAvgLabel": "Global Average"
   },
   "generativeMarketing": {
     "title": "Generative Marketing",
-    "subtitle": "Auto-generate ad creatives and copy from successful clinical outcomes",
+    "subtitle": "Auto-generate ad creatives and copy from successful center outcomes",
     "createVisuals": "Generate AI Visuals",
     "draftCopy": "AI Ad Copy Synthesis",
     "targetedAds": "Targeted Schema",
     "conversionPrediction": "Projected Conversion Lift",
     "autoPost": "Deploy to Social Nodes",
     "styleElite": "Style_Preset: Elite",
-    "synthesizing": "Synthesizing_Clinical_Visuals",
+    "synthesizing": "Synthesizing_Center_Visuals",
     "awaiting": "Awaiting_Initialization_Sequence",
-    "resultBadge": "Clinical Result: {trend}",
+    "resultBadge": "Center Result: {trend}",
     "protocolTitle": "Precision Rejuvenation Protocol",
     "initDesc": "Initialize visual generation to unlock AI copy schemas",
-    "copyDesc": "Transform your biological future. Our AI-mapped Rejuvenation Protocol achieved a significant match for our patients. Discover your unique skin vector today.",
+    "copyDesc": "Transform your biological future. Our AI-mapped Rejuvenation Protocol achieved a significant match for our customers. Discover your unique skin vector today.",
     "targetDemographic": "Target Demographic",
     "predictedCtr": "Predicted CTR",
     "dataIntegrity": "Data Integrity",
-    "verifiedCases": "Verified Clinical Cases"
+    "verifiedCases": "Verified Center Cases"
   },
   "medicalCompliance": {
     "title": "Medical Compliance Audit",
-    "subtitle": "Autonomous verification of clinical protocols and data isolation",
+    "subtitle": "Autonomous verification of center protocols and data isolation",
     "activeAudits": "Active Audits",
     "complianceRate": "Compliance Rate",
     "dataIsolation": "Data Isolation",
@@ -4265,14 +4265,14 @@
     "auditLog": "Audit Log",
     "realtimeTelemetry": "Real-time Compliance Telemetry",
     "remediationSchema": "Remediation Schema",
-    "remediationDesc": "Neural monitor detected 1 deviation in CASE_8835. AI recommends immediate clinical re-alignment sequence.",
+    "remediationDesc": "Neural monitor detected 1 deviation in CASE_8835. AI recommends immediate center re-alignment sequence.",
     "generateAuditLedger": "Generate Audit Ledger",
     "complianceEngine": "COMPLIANCE_ENGINE_v4.2_NOMINAL",
     "certifiedISO": "ISO-27001 & HIPAA CERTIFIED STRATEGIC OVERSIGHT",
     "viewArchive": "View Audit Archive",
     "auditCompleted": "Systematic Audit Completed",
     "safeguardLocked": "SAFEGUARD_LOCKED",
-    "safeguardDesc": "Deploy autonomous AI to audit treatment records against medical safety protocols in real-time. Reduce liability and ensure 100% adherence to clinical standards.",
+    "safeguardDesc": "Deploy autonomous AI to audit program records against medical safety protocols in real-time. Reduce liability and ensure 100% adherence to center standards.",
     "runAudit": "Run Real-time Audit",
     "cases": {
       "case1": {
@@ -4280,7 +4280,7 @@
         "details": "Dosage (25U) within recommended range for Frontalis node."
       },
       "case2": {
-        "protocol": "Treatment Interval",
+        "protocol": "Program Interval",
         "details": "HIFU session scheduled 14 days after Laser. Recommended: 21 days."
       },
       "case3": {
@@ -4313,9 +4313,9 @@
     "syncToDoctor": "Sync to Doctor",
     "efficiencyBadge": "3.2X Efficiency Boost",
     "synchronizing": "Synchronizing Neural Data...",
-    "validatedClinical": "Validated_by_Clinical_Engine",
+    "validatedCenter": "Validated_by_Center_Engine",
     "synchronizingNeuralData": "Synchronizing Neural Data...",
-    "validatedByClinicalEngine": "Validated by Clinical Engine",
+    "validatedByCenterEngine": "Validated by Center Engine",
     "node": "Node",
     "supplies": {
       "botox": [
@@ -4344,7 +4344,7 @@
         "Standard Consultation Kit"
       ]
     },
-    "validatedByClinical": "Validated by Clinical Engine"
+    "validatedByCenter": "Validated by Center Engine"
   },
   "revenueForecasting": {
     "title": "AI Revenue Forecast",
@@ -4403,14 +4403,14 @@
   },
   "shared3DCanvas": {
     "title": "Shared 3D Canvas",
-    "subtitle": "Real-time collaborative treatment planning between physician and patient",
+    "subtitle": "Real-time collaborative program planning between physician and customer",
     "liveSync": "LIVE_COLLABORATION_ACTIVE",
     "drawTool": "Annotation Tool",
     "measureTool": "Precision Measurement",
-    "addNote": "Append Clinical Note",
+    "addNote": "Append Center Note",
     "clearCanvas": "Reset Canvas Node",
-    "savePlan": "Authorize Clinical Schema",
-    "clinicalValidation": "Clinical Validation",
+    "savePlan": "Authorize Center Schema",
+    "centerValidation": "Center Validation",
     "layers": {
       "dermal": "Dermal Layer",
       "muscular": "Muscular Layer",
@@ -4418,8 +4418,8 @@
     },
     "cameraOrbit": "Camera Orbit",
     "initializeCanvas": "Initialize Shared Canvas",
-    "collaborationDesc": "Enable real-time 3D clinical collaboration between practitioners and patients. Draw, measure, and visualize outcomes together.",
-    "clinicalDescription": "Collaborative annotations are automatically synced across both medical and client nodes.",
+    "collaborationDesc": "Enable real-time 3D center collaboration between practitioners and customers. Draw, measure, and visualize outcomes together.",
+    "centerDescription": "Collaborative annotations are automatically synced across both medical and client nodes.",
     "discardSchema": "Discard Schema",
     "authorizePlan": "Authorize Plan",
     "finalizingSync": "Finalizing Sync...",
@@ -4449,17 +4449,17 @@
   },
   "medicalDecisionSupport": {
     "title": "Medical Decision Support (MDSS)",
-    "subtitle": "AI-driven differential diagnosis and evidence-based treatment rationales",
+    "subtitle": "AI-driven differential diagnosis and evidence-based program rationales",
     "differentialDiagnosis": "Suggested Differential Diagnosis",
-    "riskAssessment": "Clinical Risk Assessment",
-    "evidenceBase": "Clinical Evidence Rationale",
-    "treatmentRationale": "Scientific Treatment Rationale",
+    "riskAssessment": "Center Risk Assessment",
+    "evidenceBase": "Center Evidence Rationale",
+    "programRationale": "Scientific Program Rationale",
     "doctorConfirmation": "DOCTOR CONFIRMATION",
     "enterpriseElite": "Enterprise Elite",
     "aiConfidence": "System Confidence Level",
     "consultAI": "Consult AI MDSS",
     "upgradeEnterprise": "Upgrade to Enterprise",
-    "lockedDescription": "Unlock the Medical Decision Support System (MDSS). Empower your clinical staff with AI-driven differential diagnosis and evidence-based treatment rationales.",
+    "lockedDescription": "Unlock the Medical Decision Support System (MDSS). Empower your center staff with AI-driven differential diagnosis and evidence-based program rationales.",
     "melasma": "Melasma (Chloasma)",
     "pih": "Post-Inflammatory Hyperpigmentation",
     "melasmaReasoning": "Symmetrical irregular hyperpigmented macules detected.",
@@ -4468,19 +4468,19 @@
     "yagRationale": "Targeted photo-acoustic effect for dermal pigment fragmentation.",
     "tranexamic": "Tranexamic Protocol",
     "tranexamicRationale": "Inhibition of plasminogen activator to reduce melanocyte activity.",
-    "clinicalRationaleGenerated": "Clinical Rationale Generated",
+    "centerRationaleGenerated": "Center Rationale Generated",
     "systemLocked": "MDSS_SYSTEM_LOCKED",
-    "protocolIntegrity": "Clinical Protocol Integrity: {value}%",
+    "protocolIntegrity": "Center Protocol Integrity: {value}%",
     "viewSourceMetaData": "View Source Meta-Data",
     "requiredBeforeAuthorizedProtocol": "REQUIRED BEFORE AUTHORIZED PROTOCOL",
     "match": "MATCH",
     "aiIdentified": "AI has identified {node} correlation. Recommend introducing {protocol} to stabilize molecular elasticity.",
-    "validatedByClinicalAI": "Validated by Clinical AI"
+    "validatedByCenterAI": "Validated by Center AI"
   },
   "predictiveReengagement": {
     "success": "Re-engagement Matrix Synchronized",
     "retentionInsight": "Retention Engine Insight",
-    "retentionDesc": "AI has identified {count} high-affinity nodes nearing the end of their treatment effectiveness cycle. Recommend deploying personalized re-engagement schemas within {hours} hours.",
+    "retentionDesc": "AI has identified {count} high-affinity nodes nearing the end of their program effectiveness cycle. Recommend deploying personalized re-engagement schemas within {hours} hours.",
     "auditOk": "Temporal_Retention_Audit: OK",
     "massOutreach": "Execute Mass Outreach",
     "overdue": "OVERDUE",
@@ -4508,7 +4508,7 @@
     "topPerformingRegion": "High-Yield Geographic Node",
     "expansionPotential": "Expansion Capacity Index",
     "dataLatency": "Regional Node Latency",
-    "nodesInRegion": "Clinical Node Density",
+    "nodesInRegion": "Center Node Density",
     "regions": {
       "bangkok": "Bangkok Metropolitan",
       "northern": "Northern Thailand",
@@ -4518,7 +4518,7 @@
   },
   "roiSimulator": {
     "title": "AI Strategic ROI Simulator",
-    "subtitle": "Quantify clinical yield and ROI from Beauty-Precision AI infrastructure",
+    "subtitle": "Quantify center yield and ROI from Beauty-Precision AI infrastructure",
     "calculateButton": "Calculate Annual Yield",
     "inputs": {
       "avgMonthlyRevenue": "Current Monthly Revenue",
@@ -4532,7 +4532,7 @@
       "paybackPeriod": "Capital Payback Period (Months)"
     },
     "aiImpact": "AI projects a potential upsell yield increase of {percent}%",
-    "clinicalLogic": "Derived from average performance of clinics in BIP network",
+    "centerLogic": "Derived from average performance of centers in BIP network",
     "lockedBadge": "ROI_STRATEGY_LOCKED",
     "unlockButton": "Unlock Strategy Module",
     "biBadge": "BUSINESS_INTELLIGENCE_V2",
@@ -4587,7 +4587,7 @@
   },
   "featuresSupremacy": {
     "title": "Supremacy Strategic Modules",
-    "subtitle": "Mission-critical AI infrastructure for elite clinical performance",
+    "subtitle": "Mission-critical AI infrastructure for elite center performance",
     "mdss": {
       "title": "Medical Decision Support (MDSS)",
       "desc": "Empower physicians with differential diagnosis and evidence-based rationale."
@@ -4598,10 +4598,10 @@
     },
     "roi": {
       "title": "AI Strategic ROI Simulator",
-      "desc": "Quantify clinical yield and financial impact with real-time business intelligence."
+      "desc": "Quantify center yield and financial impact with real-time business intelligence."
     },
     "audit": {
-      "title": "Clinical Compliance Audit",
+      "title": "Center Compliance Audit",
       "desc": "Autonomous safety safeguards ensuring 100% adherence to medical protocols."
     }
   },
@@ -4666,13 +4666,13 @@
       "authorizeExpansion": "Authorize {node} in {region} to capture {percent}% market delta.",
       "globalNodeExpansion": "GLOBAL_NODE_EXPANSION",
       "easternSeaboard": "EASTERN_SEABOARD",
-      "clinicalAdherenceInsights": "Clinical Adherence Insights",
+      "centerAdherenceInsights": "Center Adherence Insights",
       "adherenceIncrease": "Biological adherence increased by {percent} this cycle. Neural mapping suggests improved barrier function.",
-      "nextNodeScan": "Next Clinical Node Scan in {days}. Maintain streak for maximum accuracy.",
+      "nextNodeScan": "Next Center Node Scan in {days}. Maintain streak for maximum accuracy.",
       "viewProtocolAnalysis": "View Protocol Analysis",
       "premiumEcosystem": "PREMIUM_ECOSYSTEM",
       "activateEcosystem": "Activate Ecosystem",
-      "upgradeToTrack": "Upgrade to track your daily clinical adherence and earn biological health rewards.",
+      "upgradeToTrack": "Upgrade to track your daily center adherence and earn biological health rewards.",
       "nextTierProgress": "Next Tier Progress",
       "pathwayTo": "Pathway to {tier}",
       "pointsNeeded": "Earn {points} more points to unlock {tier} benefits.",
@@ -4698,7 +4698,7 @@
       "meshNodeSync": "Mesh Node Sync: 100%",
       "securityCertified": "ISO SECURITY CERTIFIED: 2026 EDITION",
       "defenseEngine": "Engine: BIP-Defense-v4.2",
-      "apiTransmissionOk": "Clinical Transmission Node: ONLINE",
+      "apiTransmissionOk": "Center Transmission Node: ONLINE",
       "inferenceEngine": "Inference Engine: BIP-Neural-v4.2",
       "outcomeVerified": "Outcome Quantifier: NODE_SYNC_SUCCESSFUL",
       "precisionLevelHigh": "PRECISION_LEVEL: HIGH",
@@ -4706,7 +4706,7 @@
       "learningRate": "Learning Rate: {val}",
       "nodeVitals": "Training Node Vitals",
       "computeNode": "Compute Node: {node}",
-      "fineTuningDesc": "Fine-tuning proprietary weights for {model} across 4.2M synaptic parameters. Resulting model is clinical-verified and privacy-preserved.",
+      "fineTuningDesc": "Fine-tuning proprietary weights for {model} across 4.2M synaptic parameters. Resulting model is center-verified and privacy-preserved.",
       "inferenceNode": "Node: {node}",
       "systemIntegrity": "SYSTEM_INTEGRITY",
       "activeDefenseOn": "ACTIVE_DEFENSE_ON",
@@ -4739,7 +4739,7 @@
       "globalBenchmark": "Global Benchmark",
       "operationalYield": "Operational Yield",
       "efficiencyAlpha": "Efficiency Alpha",
-      "systemEfficiencyDesc": "System efficiency is currently {multiplier}x higher than the industry baseline for AI-driven clinical operations.",
+      "systemEfficiencyDesc": "System efficiency is currently {multiplier}x higher than the industry baseline for AI-driven center operations.",
       "latencyValue": "{val}s Latency",
       "downloadStrategyReport": "Download Global Strategy Report",
       "neuralEngineLive": "NEURAL_ENGINE_LIVE",
@@ -4786,22 +4786,22 @@
     }
   },
   "outcomeQuantifier": {
-    "title": "Clinical Outcome Quantifier",
-    "subtitle": "AI-driven quantitative analysis of treatment results and skin improvement",
+    "title": "Center Outcome Quantifier",
+    "subtitle": "AI-driven quantitative analysis of program results and skin improvement",
     "improvementMetrics": "Improvement Metrics",
     "volumetricChange": "Volumetric Change",
     "texturalRefinement": "Textural Refinement",
     "pigmentReduction": "Pigment Reduction",
     "quantifiedSuccess": "Quantified Success Rate",
     "beforeAfterDelta": "Before/After Delta",
-    "clinicalValidation": "Clinical Result Verified",
+    "centerValidation": "Center Result Verified",
     "lockedBadge": "OUTCOME_QUANTIFIER_LOCKED",
     "unlockButton": "Unlock Precision Metrics",
     "verifiedBadge": "QUANTUM_RESULT_VERIFIED",
     "neuralTrackingActive": "Neural Tracking Active",
-    "clinicalAuthority": "Clinical Authority",
-    "precisionDesc": "These metrics are generated using {engine} engine, ensuring {precision}% precision in treatment result quantification.",
-    "exportReport": "Export Clinical Report"
+    "centerAuthority": "Center Authority",
+    "precisionDesc": "These metrics are generated using {engine} engine, ensuring {precision}% precision in program result quantification.",
+    "exportReport": "Export Center Report"
   },
   "synapticNotifications": {
     "title": "AI Synaptic Notifications",
@@ -4829,7 +4829,7 @@
   },
   "networkTopology": {
     "title": "AI Network Topology",
-    "subtitle": "Visualization of the global distributed clinical intelligence nodes and data synchronicity",
+    "subtitle": "Visualization of the global distributed center intelligence nodes and data synchronicity",
     "globalNodes": "Global Intelligence Nodes",
     "dataFlow": "Inference Data Flow",
     "syncLatency": "Global Sync Latency",
@@ -4851,7 +4851,7 @@
     "assets": {
       "neuralArchitecture": "Neural Mapping: 468-Point Precision Architecture",
       "biometricEvolution": "Predictive Biometric Evolution in Aesthetic Medicine",
-      "roiOrchestration": "ROI Orchestration: Autonomous Clinical Logistics",
+      "roiOrchestration": "ROI Orchestration: Autonomous Center Logistics",
       "apiV42": "Inference Edge API v4.2 Specification",
       "webhookNode": "Secure Webhook Integration Node",
       "dataLakeSync": "Enterprise Data Lake Sync Protocol",
@@ -4862,7 +4862,7 @@
   },
   "strategicGrowthAdvisor": {
     "title": "Strategic Growth Advisor",
-    "subtitle": "Proactive AI-driven recommendations to optimize clinical yield and network expansion",
+    "subtitle": "Proactive AI-driven recommendations to optimize center yield and network expansion",
     "activeAdvisory": "Neural Advisory Active",
     "recommendation": "Strategic Recommendation",
     "impact": "Estimated ROI Impact",
@@ -4885,17 +4885,17 @@
       },
       "rec3": {
         "title": "Expand to Eastern Seaboard Hub",
-        "desc": "Regional Growth Heatmap identifies 24% demand surge in Chonburi. Deploy Clinical Node within Q2 to achieve First-Mover Advantage.",
+        "desc": "Regional Growth Heatmap identifies 24% demand surge in Chonburi. Deploy Center Node within Q2 to achieve First-Mover Advantage.",
         "impact": "+35% Market Share"
       }
     }
   },
   "neuralNarrative": {
     "title": "Neural Narrative Synthesis",
-    "subtitle": "Synthesizing persuasive, data-driven clinical stories to maximize conversion",
+    "subtitle": "Synthesizing persuasive, data-driven center stories to maximize conversion",
     "synthesisMode": "Synthesis Mode",
     "empathyNode": "Empathy Alignment",
-    "authorityNode": "Clinical Authority",
+    "authorityNode": "Center Authority",
     "scarcityNode": "Temporal Scarcity",
     "generateNarrative": "Synthesize Narrative",
     "copyToProposal": "Inject into Proposal Schema",
@@ -4903,8 +4903,8 @@
     "mock": {
       "greeting": "Dear {name},",
       "intro": "Based on our neural mapping of your skin's unique vectors, we've identified a 94% precision match for our Rejuvenation Protocol.",
-      "body": "Our AI detects that your primary concerns{concerns}can be optimally addressed through a calibrated sequence of treatments. This isn't just a standard plan; it's a data-backed roadmap to your biological prime.",
-      "evidence": "Clinical evidence from our BIP network shows that clients who initialize this protocol within 48 hours achieve an 18% higher satisfaction yield. Your journey to precision beauty starts here.",
+      "body": "Our AI detects that your primary concerns{concerns}can be optimally addressed through a calibrated sequence of programs. This isn't just a standard plan; it's a data-backed roadmap to your biological prime.",
+      "evidence": "Center evidence from our BIP network shows that clients who initialize this protocol within 48 hours achieve an 18% higher satisfaction yield. Your journey to precision beauty starts here.",
       "fallbackName": "Valued Client",
       "fallbackConcerns": "hydration and texture"
     },
@@ -4915,10 +4915,10 @@
   },
   "apiExplorer": {
     "title": "Interactive Neural-API Explorer",
-    "subtitle": "Test and visualize raw clinical inference data streams from the BIP-Neural engine",
+    "subtitle": "Test and visualize raw center inference data streams from the BIP-Neural engine",
     "endpoint": "Neural Endpoint",
     "method": "Transmission Method",
-    "requestPayload": "Clinical Request Payload",
+    "requestPayload": "Center Request Payload",
     "responseStream": "Neural Response Stream",
     "runTest": "Execute Inference Cycle",
     "reset": "Reset Transmission Node",
@@ -4927,9 +4927,9 @@
   },
   "whitePaper": {
     "title": "Strategic White-paper: Neural Architecture v4.2",
-    "subtitle": "An in-depth analysis of the Beauty-Precision inference engine and clinical data mesh",
+    "subtitle": "An in-depth analysis of the Beauty-Precision inference engine and center data mesh",
     "abstract": "Executive Abstract",
-    "abstractText": "Our proprietary BIP-Neural-v4.2 architecture utilizes a distributed edge-computing model to deliver medical-grade skin diagnostics with sub-150ms latency. By fusing 468 biometric landmarks with localized clinical datasets, we achieve a 98.4% diagnostic correlation compared to high-end hardware analyzers.",
+    "abstractText": "Our proprietary BIP-Neural-v4.2 architecture utilizes a distributed edge-computing model to deliver medical-grade skin diagnostics with sub-150ms latency. By fusing 468 biometric landmarks with localized center datasets, we achieve a 98.4% diagnostic correlation compared to high-end hardware analyzers.",
     "keyChapters": "Key Architecture Chapters",
     "chapter1": "Distributed Inference Nodes",
     "chapter2": "Biometric Vector Mapping",
@@ -4938,8 +4938,8 @@
     "readFull": "Initialize Full Document Read",
     "techSpecs": "Technical Specifications"
   },
-  "clinicalSentiment": {
-    "title": "Clinical Sentiment Intelligence",
+  "centerSentiment": {
+    "title": "Center Sentiment Intelligence",
     "subtitle": "AI-driven analysis of client emotional state and engagement satisfaction",
     "satisfactionScore": "Engagement Satisfaction",
     "emotionalTone": "Current Emotional Tone",
@@ -4954,7 +4954,7 @@
     "title": "AI Revenue Recovery",
     "subtitle": "Identify lost or at-risk revenue nodes and synthesize autonomous recovery protocols",
     "atRiskRevenue": "At-Risk Revenue",
-    "lostCycles": "Lost Clinical Cycles",
+    "lostCycles": "Lost Center Cycles",
     "recoveryPotential": "Recovery Probability",
     "recommendedAction": "Recovery Rationale",
     "executeRecovery": "EXECUTE_RECOVERY",
@@ -4962,7 +4962,7 @@
     "engineActive": "RECOVERY_ENGINE_ACTIVE",
     "churnProb": "Churn Probability: {val}%",
     "leakageAuditTitle": "Synthetic Leakage Audit",
-    "leakageAuditDesc": "AI has identified {total} in high-probability revenue leakage due to unaddressed clinical cycles. Executing the synthesized recovery protocols could restore {restorable} ({yield} yield) to the current MTD cycle.",
+    "leakageAuditDesc": "AI has identified {total} in high-probability revenue leakage due to unaddressed center cycles. Executing the synthesized recovery protocols could restore {restorable} ({yield} yield) to the current MTD cycle.",
     "recoverySuccess": "Autonomous Recovery Protocol Initialized",
     "nodes": {
       "node1": {
@@ -4971,7 +4971,7 @@
       },
       "node2": {
         "name": "Khun Somchai (Pro-Tier)",
-        "rationale": "Laser series effectiveness typically degrades at Day 55. High risk of losing momentum for treatment series."
+        "rationale": "Laser series effectiveness typically degrades at Day 55. High risk of losing momentum for program series."
       },
       "node3": {
         "name": "Khun Alice (Starter-Tier)",
@@ -4980,10 +4980,10 @@
     }
   },
   "dataLake": {
-    "title": "AI Clinical Data Lake Simulator",
-    "subtitle": "Visualize the ingestion and processing of massive clinical datasets across the BIP global mesh",
+    "title": "AI Center Data Lake Simulator",
+    "subtitle": "Visualize the ingestion and processing of massive center datasets across the BIP global mesh",
     "ingestionRate": "Ingestion Velocity",
-    "totalRecords": "Total Clinical Records",
+    "totalRecords": "Total Center Records",
     "processingPower": "Neural Compute Yield",
     "activeClusters": "Active Compute Clusters",
     "dataIntegrity": "Data Integrity Node",
@@ -5001,7 +5001,7 @@
     "activeDefense": "Active Defensive Mesh"
   },
   "assetLifecycle": {
-    "title": "Clinical Asset Lifecycle Forecast",
+    "title": "Center Asset Lifecycle Forecast",
     "subtitle": "Predictive maintenance and yield optimization for high-end medical equipment",
     "assetHealth": "Device Health Index",
     "nextMaintenance": "Projected Service Node",
@@ -5012,7 +5012,7 @@
   },
   "globalCommand": {
     "title": "BIP-Global Command Center",
-    "subtitle": "Orchestrating clinical intelligence across a worldwide distributed neural mesh",
+    "subtitle": "Orchestrating center intelligence across a worldwide distributed neural mesh",
     "totalNodes": "Global Intelligence Nodes",
     "liveTraffic": "Live Inference Traffic",
     "securityStatus": "Neural Mesh Integrity",
@@ -5021,8 +5021,8 @@
     "nodeLatency": "Inter-node Latency",
     "activeSessions": "Concurrent Neural Sessions"
   },
-  "clinicalGenome": {
-    "title": "Clinical Genome Visualization",
+  "centerGenome": {
+    "title": "Center Genome Visualization",
     "subtitle": "Deep-tech simulation of skin molecular structure and genetic predispositions",
     "molecularHelix": "Neural Molecular Helix",
     "geneticMarkers": "Genetic Marker Analysis",
@@ -5042,7 +5042,7 @@
   },
   "bioAdaptiveScheduler": {
     "title": "AI Bio-Adaptive Scheduler",
-    "subtitle": "Neural alignment of treatment timing with your biological skin readiness",
+    "subtitle": "Neural alignment of program timing with your biological skin readiness",
     "optimalWindow": "Optimal Biological Window",
     "readinessScore": "Skin Readiness Index",
     "recommendation": "AI Temporal Alignment",
@@ -5079,7 +5079,7 @@
     "revenueMomentum": "Revenue Momentum",
     "revenueValue": "฿4.2M",
     "revenueDelta": "+12% QUARTERLY",
-    "clinicalExcellence": "Clinical Excellence",
+    "centerExcellence": "Center Excellence",
     "nominal": "NOMINAL_FLOW",
     "operationalYield": "Operational Yield",
     "yieldDelta": "+8% EFFICIENCY",
@@ -5089,7 +5089,7 @@
     "activeNodes": "Active Operational Nodes",
     "activeNodesCount": "14_NODES_SYNCED",
     "commandPath": "Strategic Command Path",
-    "oversightDesc": "AI-directed operational oversight ensures clinical precision across all active network nodes.",
+    "oversightDesc": "AI-directed operational oversight ensures center precision across all active network nodes.",
     "launchAnalysis": "Launch Neural Analysis",
     "threatMesh": "Threat Mesh",
     "secure": "Secure"
@@ -5130,7 +5130,7 @@
       "customer1": "Khun Sabai (Customer_Node)",
       "customer2": "Khun Somchai (Customer_Node)",
       "scanHistory": "Scan_History_8842 (Temporal_Record)",
-      "protocolAuth": "Protocol_Auth_Node_7 (Clinical_Schema)"
+      "protocolAuth": "Protocol_Auth_Node_7 (Center_Schema)"
     },
     "footer": {
       "nodeName": "BIP-OS_Neural_Search_Node",
@@ -5162,7 +5162,7 @@
   },
   "neuralMesh": {
     "title": "3D Neural Particle Mesh",
-    "subtitle": "Real-time visualization of synaptic firing patterns across the clinical intelligence layer",
+    "subtitle": "Real-time visualization of synaptic firing patterns across the center intelligence layer",
     "nodes": "Neural Nodes",
     "connections": "Synaptic Connections",
     "signalStrength": "Signal Strength",
@@ -5182,7 +5182,7 @@
   },
   "adminDashboard": {
     "orchestration": "Elite System Orchestration",
-    "commandDesc": "Command global platform parameters and monitor clinical ecosystem throughput with precision telemetry.",
+    "commandDesc": "Command global platform parameters and monitor center ecosystem throughput with precision telemetry.",
     "metrics": {
       "syncCycles": "Total Sync Cycles",
       "verifiedEntities": "Verified Entities",
@@ -5196,8 +5196,8 @@
         "label": "Personnel Registry",
         "sub": "Identity Nodes"
       },
-      "clinicalUplinks": {
-        "label": "Clinical Uplinks",
+      "centerUplinks": {
+        "label": "Center Uplinks",
         "sub": "Node Allocation"
       },
       "securityMatrix": {
@@ -5235,9 +5235,9 @@
       "identityTitle": "Identity Registry Management",
       "identityDesc": "Authorized entity synchronization matrix",
       "processTitle": "Process Cycle Stream",
-      "processDesc": "Global immutable clinical cycle ledger",
+      "processDesc": "Global immutable center cycle ledger",
       "topologyTitle": "Node Topology Matrix",
-      "topologyDesc": "Active clinical sector allocation mapping",
+      "topologyDesc": "Active center sector allocation mapping",
       "syncing": "Topology Ledger Synchronizing...",
       "awaitingTelemetry": "Fetch sequence initiated. Awaiting node telemetry from global registry."
     },
@@ -5283,7 +5283,7 @@
     "tabs": {
       "daily": "DAILY_SYNC",
       "skinTypes": "DERMAL_MATRIX",
-      "topClinics": "NODE_RANKING",
+      "topCenters": "NODE_RANKING",
       "recent": "LATEST_INFERENCE"
     },
     "temporalSynchronicity": "Temporal Synchronicity (30d)",
@@ -5293,7 +5293,7 @@
     "nodeType": "{type} Node",
     "sectorDensity": "{percentage}% Sector Density",
     "rank": "Rank",
-    "clinicalUplink": "Clinical Uplink",
+    "centerUplink": "Center Uplink",
     "cycleCount": "Cycle Count",
     "globalShare": "Global Share",
     "originNode": "Origin Node",
@@ -5306,7 +5306,7 @@
     "vector": "Vector",
     "activityStream": "Temporal Activity Stream",
     "actions": {
-      "newCycle": "New Clinical Cycle",
+      "newCycle": "New Center Cycle",
       "inflowVerified": "Inflow Verified",
       "protocolTerminated": "Protocol Terminated",
       "entityEstablished": "Entity Established"
@@ -5323,7 +5323,7 @@
     "aiCoreProcessing": "AI Core Processing",
     "eventSectorMatrix": "Event Sector Matrix",
     "sectorBreakdownDesc": "Operational breakdown of system-wide identity interactions",
-    "clinicalCycles": "Clinical Cycles",
+    "centerCycles": "Center Cycles",
     "entityRegistry": "Entity Registry",
     "nodeAllocation": "Node Allocation",
     "temporalLogStream": "Temporal Log Stream",
@@ -5332,7 +5332,7 @@
     "filterProtocol": "Filter Protocol",
     "globalStream": "GLOBAL_STREAM",
     "neuralInference": "NEURAL_INFERENCE",
-    "clinicalCycle": "CLINICAL_CYCLE",
+    "centerCycle": "AESTHETIC_CYCLE",
     "identityAuth": "IDENTITY_AUTH",
     "originNode": "Origin Node",
     "anySource": "ANY_SOURCE",
@@ -5346,8 +5346,8 @@
     "previousSector": "Previous_Sector",
     "nextSector": "Next_Sector"
   },
-  "clinicManagement": {
-    "totalClinics": "Total Clinics",
+  "centerManagement": {
+    "totalCenters": "Total Centers",
     "globalNodes": "Global Infrastructure Nodes",
     "active": "Active",
     "operationalCycles": "Operational Cycles",
@@ -5355,7 +5355,7 @@
     "integrityIndex": "Integrity Index",
     "totalUsers": "Total Users",
     "registeredEntities": "Registered Entities",
-    "searchPlaceholder": "Search clinical nodes by name, email, or identifier...",
+    "searchPlaceholder": "Search center nodes by name, email, or identifier...",
     "statusNode": "Status Node",
     "global": "GLOBAL",
     "activeStatus": "ACTIVE",
@@ -5368,7 +5368,7 @@
     "activate": "Activate",
     "suspend": "Suspend",
     "decommission": "Decommission",
-    "clinicalUplink": "Clinical Uplink",
+    "centerUplink": "Center Uplink",
     "protocolAccess": "Protocol Access",
     "planVector": "Plan Vector",
     "users": "Users",
@@ -5381,15 +5381,15 @@
     "reallocatePlan": "Reallocate Plan",
     "decommissionUnit": "Decommission Unit"
   },
-  "clinicDetail": {
-    "title": "Clinic Details",
+  "centerDetail": {
+    "title": "Center Details",
     "loading": "Loading...",
     "healthScore": "Health Score",
     "users": "Users",
     "active": "active",
     "customers": "Customers",
     "mrr": "MRR",
-    "info": "Clinic Information",
+    "info": "Center Information",
     "created": "Created",
     "plan": "Plan",
     "status": "Status",
@@ -5418,7 +5418,7 @@
       "skinType": "Skin Type",
       "overallScore": "Overall Score",
       "date": "Date",
-      "treatment": "Treatment",
+      "program": "Program",
       "scheduled": "Scheduled",
       "created": "Created"
     },
@@ -5426,7 +5426,7 @@
     "total": "Total"
   },
   "subscriptionManagement": {
-    "totalClinicalUplinks": "Total Clinical Uplinks",
+    "totalCenterUplinks": "Total Center Uplinks",
     "verifiedActiveVectors": "Verified Active Vectors",
     "temporalTrialSync": "Temporal Trial Sync",
     "trialExpiryDelta": "Trial Expiry Delta",
@@ -5516,7 +5516,7 @@
     "populationDesc": "Active row intensity across primary infrastructure tables",
     "sectors": {
       "identityNodes": "Identity Nodes",
-      "clinicalUplinks": "Clinical Uplinks",
+      "centerUplinks": "Center Uplinks",
       "accessVectors": "Access Vectors",
       "salesLeads": "Sales Leads",
       "processCycles": "Process Cycles",
@@ -5533,16 +5533,16 @@
     "errorTitle": "Error Occurred",
     "retry": "Retry"
   },
-  "clinicOnboarding": {
-    "title": "Create New Clinic",
+  "centerOnboarding": {
+    "title": "Create New Center",
     "steps": {
-      "info": "Clinic Info",
+      "info": "Center Info",
       "owner": "Owner",
       "plan": "Plan",
       "review": "Review"
     },
     "form": {
-      "clinicName": "Clinic Name",
+      "centerName": "Center Name",
       "slug": "Slug",
       "email": "Email",
       "phone": "Phone",
@@ -5560,7 +5560,7 @@
       "enterprise": "Enterprise"
     },
     "review": {
-      "details": "Clinic Details",
+      "details": "Center Details",
       "owner": "Owner",
       "subscription": "Subscription",
       "trial": "{days} days trial"
@@ -5568,12 +5568,12 @@
     "buttons": {
       "back": "Back",
       "next": "Next",
-      "create": "Create Clinic",
+      "create": "Create Center",
       "creating": "Creating..."
     },
     "messages": {
-      "success": "Clinic created!",
-      "error": "Failed to create clinic"
+      "success": "Center created!",
+      "error": "Failed to create center"
     }
   },
   "errorDashboard": {
@@ -5611,7 +5611,7 @@
   "revenueAnalytics": {
     "mrr": "Monthly Recurring Revenue",
     "arr": "ARR: {val}",
-    "activeClinicalNodes": "Active Clinical Nodes",
+    "activeCenterNodes": "Active Center Nodes",
     "avgPerNode": "Avg: {val} / node",
     "paymentSuccessVelocity": "Payment Success Velocity",
     "optimalPerformance": "OPTIMAL_PERFORMANCE",
@@ -5808,10 +5808,10 @@
       },
       "arSimulator": {
         "label": "AR Simulation Matrix",
-        "desc": "Real-time augmented reality treatment preview"
+        "desc": "Real-time augmented reality program preview"
       },
       "videoCall": {
-        "label": "Tele-Clinical Uplink",
+        "label": "Tele-Center Uplink",
         "desc": "Secure RTC video consultation channels"
       },
       "email": {
@@ -5830,7 +5830,7 @@
     "limits": {
       "title": "Resource Thresholds",
       "desc": "Allocation limits for infrastructure entities",
-      "maxClinics": "Clinical Node Limit (Owner)",
+      "maxCenters": "Center Node Limit (Owner)",
       "maxStaff": "Operator Limit (Sector)",
       "maxAnalyses": "Inference Threshold (24h)",
       "maxStorage": "Storage Allocation (MB)",
@@ -5885,7 +5885,7 @@
     "confirmDelete": "Are you sure you want to delete this user?",
     "roles": {
       "customer": "Customer",
-      "clinic_staff": "Clinic Staff",
+      "center_staff": "Center Staff",
       "sales_staff": "Sales Staff",
       "admin": "Admin"
     }
@@ -5896,7 +5896,7 @@
     "next": "Next",
     "pageOf": "Page {page} of {total}"
   },
-  "clinicalAssetLifecycle": {
+  "centerAssetLifecycle": {
     "managedDeviceNodes": "Managed Device Nodes",
     "integrityScore": "Integrity Score",
     "utilization": "Utilization",
@@ -5915,7 +5915,7 @@
   },
   "staffPerformance": {
     "totalStaff": "Total Staff Registry",
-    "activePersonnel": "Active clinical personnel",
+    "activePersonnel": "Active center personnel",
     "totalRevenue": "Total Revenue Yield",
     "cumulativeYield": "Cumulative financial yield",
     "totalAppointments": "Total Appointments",
@@ -5923,7 +5923,7 @@
     "averageYield": "Average Yield",
     "perOperator": "Per operator average",
     "elitePerformers": "Elite Performers Hub",
-    "productivityDesc": "Top personnel by aggregate clinical yield",
+    "productivityDesc": "Top personnel by aggregate center yield",
     "protocolBreakdown": "Protocol Dynamics",
     "revenueDistributionDesc": "Therapeutic revenue allocation by role",
     "globalPersonnelMatrix": "Global Personnel Matrix",
@@ -5942,8 +5942,8 @@
       "receptionist": "Receptionist"
     }
   },
-  "treatmentAnalytics": {
-    "totalTreatments": "Total Treatments",
+  "programAnalytics": {
+    "totalPrograms": "Total Programs",
     "totalBookings": "Total Bookings",
     "totalRevenue": "Total Revenue",
     "averageYield": "Average Yield",
@@ -5952,21 +5952,21 @@
     "cumulativeYield": "Cumulative Yield",
     "perProtocol": "Per Protocol",
     "eliteProtocols": "Elite Protocols",
-    "treatmentYieldDesc": "Top 5 treatments by clinical yield",
+    "programYieldDesc": "Top 5 programs by center yield",
     "protocolVelocity": "Protocol Velocity",
     "cycleLoadDesc": "Cycle load comparison by protocol",
     "totalCycles": "Total Cycles",
     "verifiedNodes": "Verified Nodes",
     "globalProtocolMatrix": "Global Protocol Matrix",
-    "treatmentEfficiencyDesc": "Authorized treatment efficiency index",
+    "programEfficiencyDesc": "Authorized program efficiency index",
     "protocolIdentifier": "Protocol Identifier",
     "cycleDensity": "Cycle Density",
     "momentumVector": "Momentum Vector",
     "unitReach": "Unit Reach"
   },
   "customerDashboard": {
-    "longitudinalSkinAnalytics": "Longitudinal Skin Analytics",
-    "trackImprovementDesc": "Track clinical improvement vectors over temporal cycles.",
+    "longitudinalAestheticSkinAnalytics": "Longitudinal Aesthetic Skin Analytics",
+    "trackImprovementDesc": "Track aesthetic improvement vectors over temporal cycles.",
     "summary": {
       "totalAnalyses": "Total Analyses",
       "averageScore": "Average Score",
@@ -5978,16 +5978,16 @@
       "cyclesPerMonth": "Cycles per month"
     },
     "diagnosticIntelligence": "Diagnostic Intelligence",
-    "aiClinicalSynthesis": "AI-generated clinical synthesis",
+    "aiCenterSynthesis": "AI-generated center synthesis",
     "synthesisMomentum": "Synthesis Momentum",
     "historicalDataTrends": "Historical diagnostic data trends",
     "insights": {
       "greatProgress": "Great Progress!",
       "scoreImproved": "Your overall skin score improved by {val}%",
       "spotsImproving": "Spots Improving",
-      "acnePositiveResults": "Your acne treatment is showing positive results",
+      "acnePositiveResults": "Your acne program is showing positive results",
       "wrinklesAttention": "Wrinkles Need Attention",
-      "addAntiAging": "Consider adding anti-aging treatments",
+      "addAntiAging": "Consider adding anti-aging programs",
       "lowFrequency": "Low Analysis Frequency",
       "regularTracking": "Regular tracking helps achieve better results",
       "excellentImprovement": "Excellent Improvement Rate",
@@ -6015,7 +6015,7 @@
     "clientSegmentation": "Client Segmentation",
     "engagementCycleDesc": "Distribution analysis by engagement cycles",
     "acquisitionVector": "Acquisition Vector",
-    "newUnitIngestion": "New clinical unit ingestion analytics",
+    "newUnitIngestion": "New center unit ingestion analytics",
     "periodNodeAcquisition": "Period Node Acquisition",
     "authorizedUnits": "Authorized Units",
     "cycleConversion": "Cycle Conversion",
@@ -6101,13 +6101,13 @@
     "noEventsSync": "No events synchronized",
     "invocations": "Invocations",
     "featureVelocity": "Feature Velocity",
-    "highestEngagement": "Highest engagement clinical nodes",
+    "highestEngagement": "Highest engagement center nodes",
     "noFeatureLoad": "No feature load data",
     "accessNodes": "Access Nodes",
     "behavioralInsights": "Behavioral Insights",
     "patternRecognitionDesc": "Pattern recognition and engagement optimization",
     "gettingStarted": "Getting Started",
-    "initProtocols": "Initialize clinical protocols like AI synthesis to activate behavioral tracking nodes.",
+    "initProtocols": "Initialize center protocols like AI synthesis to activate behavioral tracking nodes.",
     "highEngagement": "High Engagement",
     "unitPerformanceOptimal": "System detected {count} unique feature synchronizations. Unit performance is optimal.",
     "extendedSequence": "Extended Sequence",
@@ -6129,12 +6129,12 @@
     },
     "momentum": {
       "title": "Synthesis Momentum",
-      "desc": "Daily clinical yield synchronization",
+      "desc": "Daily center yield synchronization",
       "grossInflow": "Gross Inflow"
     },
     "protocol": {
       "title": "Protocol Yield",
-      "desc": "Revenue distribution by clinical protocol",
+      "desc": "Revenue distribution by center protocol",
       "inflowVector": "Inflow Vector"
     },
     "vector": {
@@ -6143,7 +6143,7 @@
     },
     "hierarchy": {
       "title": "Global Protocol Hierarchy",
-      "desc": "Aggregate yield by clinical protocol",
+      "desc": "Aggregate yield by center protocol",
       "protocolIdentifier": "Protocol Identifier",
       "inflowVelocity": "Inflow Velocity",
       "cycleDensity": "Cycle Density",
@@ -6211,7 +6211,7 @@
   "liveChat": {
     "mock": {
       "name1": "Somjai Raksauy",
-      "msg1_1": "Hello, I want to ask about treatments",
+      "msg1_1": "Hello, I want to ask about programs",
       "msg1_2": "Hello, how can I help you?",
       "msg1_3": "I am very interested in the comprehensive package. I would like to know the price.",
       "name2": "Wichai Jaidee",
@@ -6220,7 +6220,7 @@
       "msg2_3": "I have sent the proposal as discussed.",
       "msg2_4": "Thank you for sending the proposal. I will get back to you.",
       "name3": "Wanna Suayngam",
-      "msg3_1": "Hello, I want to start treatment next week.",
+      "msg3_1": "Hello, I want to start program next week.",
       "msg3_2": "Hello, glad you are interested. I will prepare the documents for you.",
       "msg3_3": "I am ready to sign the contract now.",
       "time1": "2 minutes ago",
@@ -6236,7 +6236,7 @@
     "profile": {
       "phone": "Phone",
       "email": "Email",
-      "notesDesc": "Regular customer, interested in advanced treatments, easy to talk to, fast decision maker."
+      "notesDesc": "Regular customer, interested in advanced programs, easy to talk to, fast decision maker."
     }
   },
   "leadConversionOptimizer": {
@@ -6244,32 +6244,32 @@
       "followup": {
         "title": "Priority Follow-up Call",
         "description": "Node hasn't responded in {days} days. High probability of drift.",
-        "script": "Hello {name}, I noticed you were interested in {treatment} during your last AI scan. Would you like to schedule a quick 10-minute consultation?"
+        "script": "Hello {name}, I noticed you were interested in {program} during your last AI scan. Would you like to schedule a quick 10-minute consultation?"
       },
       "content": {
         "title": "Send Educational Content",
         "description": "Engagement score is low. Unit requires more diagnostic proof.",
-        "script": "Hi {name}, here is a clinical case study on {treatment} outcomes similar to your profile. Hope this helps with your decision!"
+        "script": "Hi {name}, here is a center case study on {program} outcomes similar to your profile. Hope this helps with your decision!"
       },
       "discount": {
         "title": "Tactical Pricing Offer",
         "description": "Price objection detected. AI recommends standard incentive node.",
-        "script": "Hello {name}, as a first-time client, I can offer you a 15% discount if you book your {treatment} within the next 48 hours."
+        "script": "Hello {name}, as a first-time client, I can offer you a 15% discount if you book your {program} within the next 48 hours."
       },
       "flexible": {
         "title": "Flexible Scheduling Sync",
         "description": "Temporal constraint detected. Suggest weekend or evening slots.",
-        "script": "Hi {name}, I noticed your schedule is tight. We have opened a special Sunday slot specifically for your treatment."
+        "script": "Hi {name}, I noticed your schedule is tight. We have opened a special Sunday slot specifically for your program."
       },
       "close": {
         "title": "Closing Inflow Protocol",
         "description": "High conversion propensity detected. Unit ready for final commitment.",
-        "script": "Hello {name}, based on your analysis, you are an ideal candidate for {treatment}. Shall we lock in your session for tomorrow?"
+        "script": "Hello {name}, based on your analysis, you are an ideal candidate for {program}. Shall we lock in your session for tomorrow?"
       },
       "upsell": {
         "title": "Premium Yield Expansion",
         "description": "Single-protocol unit with high budget. Recommend VIP upgrade.",
-        "script": "Hi {name}, since you are interested in {treatment}, you might also benefit from our Premium Care package which includes post-care sync."
+        "script": "Hi {name}, since you are interested in {program}, you might also benefit from our Premium Care package which includes post-care sync."
       }
     },
     "objectionPrice": "Client concerned about price",
@@ -6286,7 +6286,7 @@
     "scanResults": "Skin Analysis Results:",
     "skinAge": "- Skin Age: {val} years",
     "concerns": "- Concerns: {val}",
-    "recommendations": "- Recommended Treatments: {val}",
+    "recommendations": "- Recommended Programs: {val}",
     "createError": "Error Creating Lead",
     "createErrorDesc": "Failed to create lead. Please try again.",
     "createSuccess": "Lead Created Successfully!",
@@ -6294,7 +6294,7 @@
     "convertToLead": "Convert to Lead",
     "addPipelineDesc": "Add this customer to your sales pipeline",
     "estimatedValue": "Estimated Deal Value (฿)",
-    "autoCalc": "Auto-calculated from recommended treatments",
+    "autoCalc": "Auto-calculated from recommended programs",
     "leadPreview": "Lead Preview",
     "sourceScan": "Source: Quick Scan Analysis",
     "statusNew": "Status: New Lead",
@@ -6366,11 +6366,11 @@
       },
       "vip": {
         "name": "Enterprise Transformation",
-        "description": "Highest level of care for clinic chains or complex cases"
+        "description": "Highest level of care for center chains or complex cases"
       }
     },
     "title": "AI Quick Proposal",
-    "subtitle": "Personalized treatment plan for {name}, age {age}",
+    "subtitle": "Personalized program plan for {name}, age {age}",
     "analysis": "AI Insight",
     "topConcern": "Primary Concern:",
     "wrinkles": "Wrinkles",
@@ -6379,7 +6379,7 @@
     "hydration": "Hydration",
     "selectPackage": "Select Recommended Package",
     "aiRecommended": "AI Recommended",
-    "treatmentCount": "{count} Treatments included",
+    "programCount": "{count} Programs included",
     "newPackage": "Select New Package",
     "preview": "Proposal Preview",
     "sendMethod": "Select Delivery Method",
@@ -6391,14 +6391,14 @@
     "packageLabel": "Package: {name}",
     "template": {
       "greeting": "Hello {name},",
-      "intro": "Based on your recent skin analysis focusing on {concerns}, we have prepared a personalized treatment plan for you.",
+      "intro": "Based on your recent skin analysis focusing on {concerns}, we have prepared a personalized program plan for you.",
       "recommend": "We highly recommend the {package} package.",
       "includes": "Your plan includes:",
       "price": "Total Price: ฿{price}",
       "discount": "Special Offer: -{percent}% (Final Price: ฿{finalPrice})",
       "contact": "If you have any questions, feel free to reply to this message.",
       "walkin": "You can also walk in to any of our branches for a follow-up consult.",
-      "closing": "Best regards,\nBeauty AI Clinic Team"
+      "closing": "Best regards,\nBeauty AI Center Team"
     }
   },
   "messagingIntegration": {
@@ -6409,11 +6409,11 @@
     "copy": "Copy",
     "sendVia": "Send via {platform}",
     "templates": {
-      "greeting": "Hello {name}, thank you for your interest in {treatment}. When would be a good time to chat?",
-      "followup": "Hi {name}, following up on {treatment}. We have a 15% discount offer today!",
-      "promo": " {name}, special offer! {treatment} 30% off today only!",
-      "appointment": " Appointment confirmed for {name} on [date] at [time] for {treatment}",
-      "thankyou": "Thank you {name}, it was a pleasure serving you for {treatment}. "
+      "greeting": "Hello {name}, thank you for your interest in {program}. When would be a good time to chat?",
+      "followup": "Hi {name}, following up on {program}. We have a 15% discount offer today!",
+      "promo": " {name}, special offer! {program} 30% off today only!",
+      "appointment": " Appointment confirmed for {name} on [date] at [time] for {program}",
+      "thankyou": "Thank you {name}, it was a pleasure serving you for {program}. "
     },
     "templateNames": {
       "greeting": "Greeting",
@@ -6573,8 +6573,8 @@
   "bookingHistory": {
     "title": "Booking History",
     "noBookings": "No bookings yet",
-    "startBooking": "Start by booking your first treatment",
-    "bookTreatment": "Book Treatment",
+    "startBooking": "Start by booking your first program",
+    "bookProgram": "Book Program",
     "reschedule": "Reschedule",
     "cancel": "Cancel",
     "bookAgain": "Book Again"
@@ -6584,12 +6584,12 @@
     "selectDateTime": "Select Date & Time",
     "selectDateTimeDesc": "Choose your preferred date and time slot",
     "selectDoctor": "Select Doctor",
-    "selectTreatment": "Select Treatment",
+    "selectProgram": "Select Program",
     "selectDate": "Select Date",
     "selectTime": "Select Time",
     "loadingSlots": "Loading available slots...",
-    "patientInfo": "Booking Information",
-    "patientInfoDesc": "Please provide your details",
+    "customerInfo": "Booking Information",
+    "customerInfoDesc": "Please provide your details",
     "nameLabel": "Full Name",
     "emailLabel": "Email",
     "phoneLabel": "Phone Number",
@@ -6601,7 +6601,7 @@
     "summaryDate": "Date",
     "summaryTime": "Time",
     "summaryDoctor": "Doctor",
-    "summaryTreatment": "Treatment",
+    "summaryProgram": "Program",
     "summaryCost": "Total Cost",
     "confirmBooking": "Confirm Booking",
     "bookingInProgress": "Processing...",
@@ -6660,9 +6660,9 @@
     "activeCount": "Active",
     "achievedCount": "Achieved",
     "motivationalMessage": "Motivation",
-    "treatmentPlan": "Recommended Treatments",
+    "programPlan": "Recommended Programs",
     "rationale": "Why This Goal",
-    "emptyTreatments": "No specific treatments assigned yet",
+    "emptyPrograms": "No specific programs assigned yet",
     "congratulations": "Congratulations!",
     "goalAchieved": "You achieved your goal!",
     "keepGoing": "Keep going! You are making progress.",
@@ -6724,10 +6724,10 @@
     "keyIngredients": "Key Ingredients",
     "howToUse": "How to Use"
   },
-  "treatmentRecommendation": {
+  "programRecommendation": {
     "title": "Personalized Recommendations",
-    "description": "AI-powered treatment and product suggestions based on your skin analysis",
-    "treatments": "Treatments",
+    "description": "AI-powered program and product suggestions based on your skin analysis",
+    "programs": "Programs",
     "products": "Products",
     "lifestyle": "Lifestyle",
     "timeline": "Timeline",
@@ -6838,7 +6838,7 @@
     "pdf": "PDF",
     "share": "Share",
     "reportDate": "Report Date",
-    "patient": "Patient",
+    "customer": "Customer",
     "age": "Age",
     "years": "years",
     "skinType": "Skin Type",
@@ -6851,7 +6851,7 @@
     "skinConcerns": "Detected Skin Concerns",
     "overallCondition": "Overall Skin Condition",
     "summary": "Summary",
-    "defaultPatientName": "Patient",
+    "defaultCustomerName": "Customer",
     "techDetails": "Technical Details",
     "analysisMethod": "Analysis Method",
     "aiConfidence": "AI Confidence",
@@ -6863,8 +6863,8 @@
     "reportId": "Report ID",
     "generatedOn": "Generated on",
     "noRecommendations": "No recommendations available at this time.",
-    "recommendedTreatmentPlan": "Recommended Treatment Plan",
-    "noTreatmentPlan": "No treatment plan available",
+    "recommendedProgramPlan": "Recommended Program Plan",
+    "noProgramPlan": "No program plan available",
     "estimatedDuration": "Estimated duration",
     "priority": "Priority",
     "recommended": "Recommended",
@@ -6889,9 +6889,9 @@
     "watermark": "AI Beauty Platform - Confidential",
     "hybridMethod": "Hybrid AI + CV"
   },
-  "treatmentScheduling": {
-    "title": "Treatment Schedule",
-    "description": "AI-optimized treatment plan with timeline and recovery periods",
+  "programScheduling": {
+    "title": "Program Schedule",
+    "description": "AI-optimized program plan with timeline and recovery periods",
     "schedule": "Your Schedule",
     "timeline": "Timeline",
     "totalCost": "Estimated Total Cost",
@@ -6899,7 +6899,7 @@
     "completionDate": "Completion Date",
     "highlights": "Key Highlights",
     "warnings": "Important Notes",
-    "conflicts": "Treatment Spacing",
+    "conflicts": "Program Spacing",
     "noConflicts": "No spacing conflicts detected",
     "conflictDetected": "Spacing consideration detected",
     "recovery": "Recovery Stages",
@@ -7019,22 +7019,22 @@
   },
   "priorityRanking": {
     "title": "AI Priority Ranking",
-    "description": "Automated analysis of your skin concerns ranked by urgency and treatment priority",
+    "description": "Automated analysis of your skin concerns ranked by urgency and program priority",
     "overallCondition": "Overall Condition",
     "topPriorities": "Top Priorities",
     "quickWins": "Quick Wins",
-    "treatmentPlan": "Treatment Plan",
+    "programPlan": "Program Plan",
     "allConcerns": "All Concerns",
     "priority": "Priority",
     "urgency": "Urgency",
     "severity": "Severity",
     "percentile": "Percentile",
     "parameter": "Parameter",
-    "treatmentTime": "Treatment Time",
+    "programTime": "Program Time",
     "improvementPotential": "Improvement Potential",
     "weeks": "weeks",
     "reasons": "Why This Priority",
-    "recommendations": "Recommended Treatments",
+    "recommendations": "Recommended Programs",
     "bookNow": "Book Appointment",
     "viewDetails": "View Details",
     "phase": "Phase",
@@ -7114,7 +7114,7 @@
     "overview": "Overview",
     "causes": "Causes",
     "prevention": "Prevention",
-    "treatment": "Treatment",
+    "program": "Program",
     "routine": "Routine",
     "keyStatistics": "Key Statistics",
     "commonMyths": "Common Myths",
@@ -7123,14 +7123,14 @@
     "provenIngredients": "Proven Ingredients",
     "morningRoutine": " Morning Routine",
     "eveningRoutine": " Evening Routine",
-    "weeklyTreatments": " Weekly Treatments",
+    "weeklyPrograms": " Weekly Programs",
     "close": "Close",
     "consistencyTip": " Tip: Consistency is key for best results. Track your progress over time.",
     "myth": "MYTH",
     "fact": "FACT",
     "whatCauses": "What Causes {concern}?",
     "howToPrevent": "How to Prevent {concern}",
-    "recommendedTreatment": "Recommended Treatment for Your {severity} Level",
+    "recommendedProgram": "Recommended Program for Your {severity} Level",
     "whenToSeeDermatologist": "When to See a Dermatologist",
     "locations": "{count} location(s)",
     "confidence": "Confidence: {value}%",
@@ -7190,8 +7190,8 @@
       "desc": "Bacterial activity indicators"
     }
   },
-  "patientInfoCard": {
-    "title": "Patient Information",
+  "customerInfoCard": {
+    "title": "Customer Information",
     "baselineAnalysis": "Baseline Analysis",
     "fullName": "Full Name",
     "age": "Age",
@@ -7227,7 +7227,7 @@
   },
   "shareDialog": {
     "title": "Share Analysis Report",
-    "description": "Share this report with patients or colleagues",
+    "description": "Share this report with customers or colleagues",
     "linkExpiry": "Link Expiry",
     "expiry7": "7 days (recommended)",
     "expiry30": "30 days",
@@ -7264,7 +7264,7 @@
     "primaryConcern": "Primary Concern",
     "confidence": "Confidence",
     "allScores": "All Scores",
-    "treatmentRecsTitle": "Treatment Recommendations",
+    "programRecsTitle": "Program Recommendations",
     "loadError": "Failed to analyze skin. Please try again."
   },
   "severity": {

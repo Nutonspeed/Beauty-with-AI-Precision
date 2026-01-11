@@ -41,14 +41,14 @@ interface SegmentBuilderProps {
 
 const AVAILABLE_FIELDS = [
   { value: "totalSpent", label: "Total Spent", type: "number" },
-  { value: "totalTreatments", label: "Total Treatments", type: "number" },
+  { value: "totalPrograms", label: "Total Programs", type: "number" },
   { value: "lastActivity", label: "Last Activity (days ago)", type: "number" },
   { value: "signupDate", label: "Signup Date (days ago)", type: "number" },
   { value: "age", label: "Age", type: "number" },
   { value: "gender", label: "Gender", type: "string" },
   { value: "city", label: "City", type: "string" },
   { value: "membershipTier", label: "Membership Tier", type: "string" },
-  { value: "preferredTreatment", label: "Preferred Treatment", type: "string" },
+  { value: "preferredProgram", label: "Preferred Program", type: "string" },
 ]
 
 const NUMERIC_OPERATORS: ConditionOperator[] = [
@@ -185,7 +185,7 @@ export default function SegmentBuilder({
             <Label htmlFor="segment-description">Description</Label>
             <Input
               id="segment-description"
-              placeholder="e.g., High-value customers with multiple treatments"
+              placeholder="e.g., High-value customers with multiple programs"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />

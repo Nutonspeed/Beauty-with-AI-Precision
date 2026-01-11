@@ -275,7 +275,7 @@ export default function HomePage() {
                       <span className="bg-gradient-to-r from-emerald-400 to-cyan-500 bg-clip-text text-transparent not-italic">Orchestration</span>
                     </h2>
                     <p className="text-xl text-slate-400 font-light tracking-widest leading-relaxed italic">
-                      Deploy our AI Strategic ROI Simulator to quantify the precise financial impact on your clinical operations.
+                      Deploy our AI Strategic ROI Simulator to quantify the precise financial impact on your aesthetic operations.
                     </p>
                     <div className="flex items-center gap-8 pt-6">
                       <div className="space-y-1">
@@ -376,14 +376,14 @@ export default function HomePage() {
                 </Link>
               </motion.div>
 
-              {/* Clinic Management Demo Card */}
+              {/* Center Management Demo Card */}
               <motion.div
                 initial={{ opacity: 0, x: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8 }}
               >
-                <Link href={lp("/demo/clinic")}>
+                <Link href={lp("/demo/center")}>
                   <Card className="h-full border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3.5rem] overflow-hidden group hover:border-cyan-500/30 transition-all duration-700 shadow-2xl relative">
                     <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
                     <div className="p-12 space-y-10">
@@ -413,7 +413,7 @@ export default function HomePage() {
 
         <CaseStudyCarousel />
 
-        {/* Clinical Intelligence Grid - Infrastructure Modules */}
+        {/* Aesthetic Intelligence Grid - Infrastructure Modules */}
         <SectionScanner color="rgba(14, 165, 233, 0.6)">
           <section className="py-32 lg:py-64 relative">
             <div className="container relative z-10">

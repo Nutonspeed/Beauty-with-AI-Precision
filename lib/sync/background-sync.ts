@@ -1,13 +1,13 @@
 /**
  * Background Sync Manager
- * Handles offline→online synchronization for multi-clinic system
+ * Handles offline→online synchronization for multi-center system
  * 
  * Features:
- * - Auto-sync when connection restored
+ * - Multi-center support (partitioned by center_id)
  * - Retry with exponential backoff (max 5 attempts)
  * - Conflict resolution with ConflictResolver
  * - Progress tracking for 120 concurrent sales staff
- * - Clinic-scoped sync (only sync own clinic data)
+ *   - Center-scoped sync (via center_id) own center data)
  */
 
 import { getIndexedDB } from '@/lib/db/indexed-db';

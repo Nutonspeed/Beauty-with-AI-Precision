@@ -67,7 +67,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const clearError = useCallback(() => setError(null), []);
 
-  // Fetch user profile with clinic context via API to avoid RLS issues
+  // Fetch user profile with center context via API to avoid RLS issues
   const fetchUserProfile = useCallback(async (userId: string): Promise<MultiTenantUser | null> => {
     try {
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
@@ -212,7 +212,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const permissionContext: PermissionContext | null = user ? {
     userId: user.id,
     role: user.role,
-    clinicId: user.clinic_id,
+    centerId: user.center_id,
     branchId: user.branch_id,
   } : null;
 
@@ -263,19 +263,19 @@ export function useUserRole(): string {
 }
 
 /**
- * Get current user's clinic ID
+ * Get current user's center ID
  */
-export function useClinicId(): string | null | undefined {
+export function useCenterId(): string | null | undefined {
   const { user } = useAuth();
-  return user?.clinic_id;
+  return user?.center_id;
 }
 
 /**
- * Get current user's clinic data
+ * Get current user's center data
  */
-export function useClinic() {
+export function useCenter() {
   const { user } = useAuth();
-  return user?.clinic;
+  return user?.center;
 }
 
 /**
@@ -294,10 +294,10 @@ export function useIsSuperAdmin(): boolean {
 }
 
 /**
- * Check if user is clinic owner
+ * Check if user is center owner
  */
-export function useIsClinicOwner(): boolean {
-  return useHasRole('clinic_owner');
+export function useIsCenterOwner(): boolean {
+  return useHasRole('center_owner');
 }
 
 /**
@@ -308,11 +308,11 @@ export function useIsSalesStaff(): boolean {
 }
 
 /**
- * Check if user is clinic staff (any clinic role)
+ * Check if user is center staff (any center role)
  */
-export function useIsClinicStaff(): boolean {
+export function useIsCenterStaff(): boolean {
   const role = useUserRole();
-  return ['clinic_staff', 'clinic_admin', 'clinic_owner', 'sales_staff'].includes(role);
+  return ['center_staff', 'center_admin', 'center_owner', 'sales_staff'].includes(role);
 }
 
 /**

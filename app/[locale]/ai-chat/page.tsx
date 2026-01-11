@@ -30,7 +30,7 @@ export default function AIChatPage() {
   const suggestedQuestions = [
     t('aiChat.suggestions.sales'),
     t('aiChat.suggestions.customers'),
-    t('aiChat.suggestions.treatments'),
+    t('aiChat.suggestions.programs'),
     t('aiChat.suggestions.staff')
   ]
 
@@ -75,7 +75,7 @@ export default function AIChatPage() {
             >
               <Badge variant="outline" className="px-6 py-2 rounded-full border-pink-500/30 text-pink-400 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.2em] text-[10px] font-black shadow-2xl shadow-pink-500/10">
                 <Sparkles className="mr-3 h-3.5 w-3.5 animate-pulse" />
-                {t('aiChat.badge' as any) || 'Clinical AI Advisor'}
+                {t('aiChat.badge' as any) || 'Aesthetic AI Advisor'}
               </Badge>
             </motion.div>
             

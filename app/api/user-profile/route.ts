@@ -129,7 +129,7 @@ export async function POST(request: NextRequest) {
       'permissions',
       'role',
       'tier',
-      'clinic_id',
+      'center_id',
       'last_login_at',
       'is_active',
       'updated_at',

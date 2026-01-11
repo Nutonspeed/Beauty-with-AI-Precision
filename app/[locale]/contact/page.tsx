@@ -32,7 +32,7 @@ export default function ContactPage() {
     name: "",
     email: "",
     phone: "",
-    clinicName: "",
+    centerName: "",
     message: "",
     interest: "premium"
   })
@@ -172,14 +172,14 @@ export default function ContactPage() {
                             />
                           </div>
                           <div className="space-y-3">
-                            <Label htmlFor="clinicName" className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 ml-1">
-                              {t('contact.form.clinicName')}
+                            <Label htmlFor="centerName" className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 ml-1">
+                              {t('contact.form.centerName')}
                             </Label>
                             <Input
-                              id="clinicName"
-                              name="clinicName"
-                              placeholder={t('contact.form.clinicPlaceholder')}
-                              value={formData.clinicName}
+                              id="centerName"
+                              name="centerName"
+                              placeholder={t('contact.form.centerPlaceholder')}
+                              value={formData.centerName}
                               onChange={handleChange}
                               className="h-14 rounded-2xl border-white/5 bg-white/[0.03] text-white placeholder:text-slate-600 focus:border-pink-500/30 focus:ring-pink-500/20 transition-all px-6"
                             />
@@ -293,7 +293,7 @@ export default function ContactPage() {
                   </CardHeader>
                   <CardContent className="p-10 pt-4 space-y-10">
                     {[
-                      { icon: Mail, label: t('contact.info.email'), val: "contact@cliniciq.ai", href: "mailto:contact@cliniciq.ai", color: "text-pink-400" },
+                      { icon: Mail, label: t('contact.info.email'), val: "contact@aesthetic-ai.io", href: "mailto:contact@aesthetic-ai.io", color: "text-pink-400" },
                       { icon: Phone, label: t('contact.info.phone'), val: "+66 (0) 2-000-0000", href: "tel:+6620000000", color: "text-cyan-400" },
                       { icon: MapPin, label: t('contact.info.address'), val: t('contact.info.addressText'), color: "text-purple-400" },
                       { icon: Clock, label: t('contact.info.businessHours'), val: t('contact.info.hoursText'), color: "text-emerald-400" }

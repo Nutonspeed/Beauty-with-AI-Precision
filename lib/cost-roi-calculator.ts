@@ -1,14 +1,14 @@
 'use strict';
 
 export type Currency = 'USD' | 'THB' | 'EUR' | 'GBP';
-export type TreatmentType = 'skincare' | 'professional' | 'procedure' | 'supplement' | 'consultation';
+export type ProgramType = 'skincare' | 'professional' | 'procedure' | 'supplement' | 'consultation';
 export type TimeUnit = 'week' | 'month' | 'quarter' | 'year';
 export type CostTrend = 'increasing' | 'stable' | 'decreasing';
 
-export interface TreatmentCost {
+export interface ProgramCost {
   id: string;
   name: string;
-  type: TreatmentType;
+  type: ProgramType;
   basePrice: number;
   quantity: number;
   totalPrice: number;
@@ -22,16 +22,16 @@ export interface TreatmentCost {
 
 export interface CostBreakdown {
   totalCost: number;
-  byType: Record<TreatmentType, number>;
+  byType: Record<ProgramType, number>;
   monthlyAverage: number;
   yearlyProjection: number;
   discountAmount: number;
   effectivePrice: number;
 }
 
-export interface TreatmentEffectiveness {
-  treatmentId: string;
-  treatmentName: string;
+export interface ProgramEffectiveness {
+  programId: string;
+  programName: string;
   improvementScore: number;
   costPerImprovement: number;
   effectivenessRating: number;
@@ -44,15 +44,15 @@ export interface ROIAnalysis {
   roi: number;
   paybackPeriodMonths: number;
   costPerUnit: number;
-  effectiveness: TreatmentEffectiveness[];
+  effectiveness: ProgramEffectiveness[];
   recommendations: string[];
   costTrend: CostTrend;
   summary: string;
 }
 
 export interface CostComparison {
-  treatment1: TreatmentCost;
-  treatment2: TreatmentCost;
+  program1: ProgramCost;
+  program2: ProgramCost;
   priceDifference: number;
   effectivenessDifference: number;
   recommendation: string;
@@ -60,7 +60,7 @@ export interface CostComparison {
 
 export interface FinancialReport {
   reportDate: Date;
-  treatments: TreatmentCost[];
+  programs: ProgramCost[];
   breakdown: CostBreakdown;
   roi: ROIAnalysis;
   comparisons: CostComparison[];
@@ -70,18 +70,18 @@ export interface FinancialReport {
 
 export interface BudgetPlan {
   monthlyBudget: number;
-  allocations: Record<TreatmentType, number>;
+  allocations: Record<ProgramType, number>;
   currency: Currency;
   duration: TimeUnit;
   projectedOutcome: string;
 }
 
 export class CostROICalculator {
-  static calculateTotalCost(treatments: TreatmentCost[]): CostBreakdown {
+  static calculateTotalCost(programs: ProgramCost[]): CostBreakdown {
     let totalCost = 0;
     let discountAmount = 0;
 
-    const byType: Record<TreatmentType, number> = {
+    const byType: Record<ProgramType, number> = {
       skincare: 0,
       professional: 0,
       procedure: 0,
@@ -89,14 +89,14 @@ export class CostROICalculator {
       consultation: 0,
     };
 
-    for (const treatment of treatments) {
-      const treatmentTotal = treatment.totalPrice - (treatment.discount ?? 0);
-      totalCost += treatmentTotal;
-      discountAmount += treatment.discount ?? 0;
-      byType[treatment.type] += treatmentTotal;
+    for (const program of programs) {
+      const programTotal = program.totalPrice - (program.discount ?? 0);
+      totalCost += programTotal;
+      discountAmount += program.discount ?? 0;
+      byType[program.type] += programTotal;
     }
 
-    const monthlyAverage = totalCost / Math.max(1, treatments.length);
+    const monthlyAverage = totalCost / Math.max(1, programs.length);
     const yearlyProjection = monthlyAverage * 12;
 
     return {
@@ -109,14 +109,14 @@ export class CostROICalculator {
     };
   }
 
-  static calculateMonthlyAverage(treatments: TreatmentCost[]): number {
-    if (treatments.length === 0) return 0;
+  static calculateMonthlyAverage(programs: ProgramCost[]): number {
+    if (programs.length === 0) return 0;
 
     let totalCost = 0;
     let count = 0;
 
-    for (const treatment of treatments) {
-      const adjustedPrice = treatment.totalPrice - (treatment.discount ?? 0);
+    for (const program of programs) {
+      const adjustedPrice = program.totalPrice - (program.discount ?? 0);
       totalCost += adjustedPrice;
       count += 1;
     }
@@ -125,18 +125,18 @@ export class CostROICalculator {
   }
 
   static estimateROI(
-    treatments: TreatmentCost[],
+    programs: ProgramCost[],
     effectivenessScores: Record<string, number>,
     benefitMultiplier: number = 1.5
   ): ROIAnalysis {
-    const breakdown = this.calculateTotalCost(treatments);
+    const breakdown = this.calculateTotalCost(programs);
     const totalInvestment = breakdown.totalCost;
 
-    const effectiveness: TreatmentEffectiveness[] = [];
+    const effectiveness: ProgramEffectiveness[] = [];
 
-    for (const treatment of treatments) {
-      const score = effectivenessScores[treatment.id] ?? 50;
-      const costPerImprovement = treatment.totalPrice / Math.max(1, score);
+    for (const program of programs) {
+      const score = effectivenessScores[program.id] ?? 50;
+      const costPerImprovement = program.totalPrice / Math.max(1, score);
 
       const effectivenessRating = Math.min(100, score * 1.2);
 
@@ -145,15 +145,15 @@ export class CostROICalculator {
         recommendationsList.push('Consider more cost-effective alternatives');
       }
       if (effectivenessRating > 80) {
-        recommendationsList.push('High-value treatment - continue');
+        recommendationsList.push('High-value program - continue');
       }
       if (effectivenessRating < 40) {
         recommendationsList.push('Low effectiveness - consider discontinuing');
       }
 
       effectiveness.push({
-        treatmentId: treatment.id,
-        treatmentName: treatment.name,
+        programId: program.id,
+        programName: program.name,
         improvementScore: score,
         costPerImprovement,
         effectivenessRating,
@@ -168,7 +168,7 @@ export class CostROICalculator {
     const roi = ((projectedBenefit - totalInvestment) / totalInvestment) * 100;
     const paybackPeriodMonths = totalInvestment / Math.max(1, breakdown.monthlyAverage);
 
-    const costTrend = this.calculateCostTrend(treatments);
+    const costTrend = this.calculateCostTrend(programs);
 
     const recommendations = this.generateROIRecommendations(
       roi,
@@ -183,7 +183,7 @@ export class CostROICalculator {
       projectedBenefit,
       roi,
       paybackPeriodMonths,
-      costPerUnit: totalInvestment / Math.max(1, treatments.length),
+      costPerUnit: totalInvestment / Math.max(1, programs.length),
       effectiveness,
       recommendations,
       costTrend,
@@ -191,10 +191,10 @@ export class CostROICalculator {
     };
   }
 
-  private static calculateCostTrend(treatments: TreatmentCost[]): CostTrend {
-    if (treatments.length < 2) return 'stable';
+  private static calculateCostTrend(programs: ProgramCost[]): CostTrend {
+    if (programs.length < 2) return 'stable';
 
-    const sorted = [...treatments].sort((a, b) => a.startDate.getTime() - b.startDate.getTime());
+    const sorted = [...programs].sort((a, b) => a.startDate.getTime() - b.startDate.getTime());
 
     const firstHalf = sorted.slice(0, Math.floor(sorted.length / 2));
     const secondHalf = sorted.slice(Math.floor(sorted.length / 2));
@@ -217,17 +217,17 @@ export class CostROICalculator {
     const recommendations: string[] = [];
 
     if (roi > 50) {
-      recommendations.push('Excellent ROI - continue current treatment plan');
+      recommendations.push('Excellent ROI - continue current program plan');
     } else if (roi > 20) {
-      recommendations.push('Good ROI - maintain current treatments');
+      recommendations.push('Good ROI - maintain current programs');
     } else if (roi < 0) {
-      recommendations.push('Negative ROI - review and optimize treatment selection');
+      recommendations.push('Negative ROI - review and optimize program selection');
     }
 
     if (effectiveness > 75) {
-      recommendations.push('High effectiveness across treatments');
+      recommendations.push('High effectiveness across programs');
     } else if (effectiveness < 50) {
-      recommendations.push('Consider switching to more effective treatments');
+      recommendations.push('Consider switching to more effective programs');
     }
 
     if (trend === 'increasing') {
@@ -240,13 +240,13 @@ export class CostROICalculator {
   }
 
   static compareCostEffectiveness(
-    treatment1: TreatmentCost,
-    treatment2: TreatmentCost,
+    program1: ProgramCost,
+    program2: ProgramCost,
     effectiveness1: number,
     effectiveness2: number
   ): CostComparison {
-    const price1 = treatment1.totalPrice - (treatment1.discount ?? 0);
-    const price2 = treatment2.totalPrice - (treatment2.discount ?? 0);
+    const price1 = program1.totalPrice - (program1.discount ?? 0);
+    const price2 = program2.totalPrice - (program2.discount ?? 0);
 
     const priceDifference = price2 - price1;
     const effectivenessDifference = effectiveness2 - effectiveness1;
@@ -254,18 +254,18 @@ export class CostROICalculator {
     let recommendation = '';
 
     if (priceDifference < 0 && effectivenessDifference > 0) {
-      recommendation = `${treatment2.name} is cheaper AND more effective - recommended`;
+      recommendation = `${program2.name} is cheaper AND more effective - recommended`;
     } else if (priceDifference < 0 && effectivenessDifference < 0) {
-      recommendation = `${treatment2.name} is cheaper but less effective - weigh trade-offs`;
+      recommendation = `${program2.name} is cheaper but less effective - weigh trade-offs`;
     } else if (priceDifference > 0 && effectivenessDifference > 0) {
-      recommendation = `${treatment2.name} is more expensive but more effective - consider value`;
+      recommendation = `${program2.name} is more expensive but more effective - consider value`;
     } else {
-      recommendation = `${treatment1.name} is more cost-effective overall`;
+      recommendation = `${program1.name} is more cost-effective overall`;
     }
 
     return {
-      treatment1,
-      treatment2,
+      program1,
+      program2,
       priceDifference,
       effectivenessDifference,
       recommendation,
@@ -273,24 +273,24 @@ export class CostROICalculator {
   }
 
   static generateFinancialReport(
-    treatments: TreatmentCost[],
+    programs: ProgramCost[],
     effectivenessScores: Record<string, number>,
     monthlyBudget: number,
     benefitMultiplier?: number
   ): FinancialReport {
-    const breakdown = this.calculateTotalCost(treatments);
-    const roi = this.estimateROI(treatments, effectivenessScores, benefitMultiplier);
+    const breakdown = this.calculateTotalCost(programs);
+    const roi = this.estimateROI(programs, effectivenessScores, benefitMultiplier);
     const budgetRemaining = monthlyBudget - breakdown.monthlyAverage;
 
     const comparisons: CostComparison[] = [];
 
-    for (let i = 0; i < treatments.length - 1; i++) {
-      for (let j = i + 1; j < treatments.length; j++) {
+    for (let i = 0; i < programs.length - 1; i++) {
+      for (let j = i + 1; j < programs.length; j++) {
         const comparison = this.compareCostEffectiveness(
-          treatments[i],
-          treatments[j],
-          effectivenessScores[treatments[i].id] ?? 50,
-          effectivenessScores[treatments[j].id] ?? 50
+          programs[i],
+          programs[j],
+          effectivenessScores[programs[i].id] ?? 50,
+          effectivenessScores[programs[j].id] ?? 50
         );
         comparisons.push(comparison);
       }
@@ -302,9 +302,9 @@ export class CostROICalculator {
       alerts.push(`Budget exceeded by ${Math.abs(budgetRemaining).toFixed(2)} per month`);
     }
 
-    const lowEffectivenessTreatments = roi.effectiveness.filter((e) => e.effectivenessRating < 50);
-    if (lowEffectivenessTreatments.length > 0) {
-      alerts.push(`${lowEffectivenessTreatments.length} treatments showing low effectiveness`);
+    const lowEffectivenessPrograms = roi.effectiveness.filter((e) => e.effectivenessRating < 50);
+    if (lowEffectivenessPrograms.length > 0) {
+      alerts.push(`${lowEffectivenessPrograms.length} programs showing low effectiveness`);
     }
 
     if (roi.costTrend === 'increasing') {
@@ -313,7 +313,7 @@ export class CostROICalculator {
 
     return {
       reportDate: new Date(),
-      treatments,
+      programs,
       breakdown,
       roi,
       comparisons,
@@ -324,10 +324,10 @@ export class CostROICalculator {
 
   static createBudgetPlan(
     monthlyBudget: number,
-    treatmentTypes: TreatmentType[],
+    programTypes: ProgramType[],
     currency: Currency = 'USD'
   ): BudgetPlan {
-    const allocations: Record<TreatmentType, number> = {
+    const allocations: Record<ProgramType, number> = {
       skincare: 0,
       professional: 0,
       procedure: 0,
@@ -335,7 +335,7 @@ export class CostROICalculator {
       consultation: 0,
     };
 
-    const percentages: Record<TreatmentType, number> = {
+    const percentages: Record<ProgramType, number> = {
       skincare: 0.35,
       professional: 0.25,
       procedure: 0.2,
@@ -344,21 +344,21 @@ export class CostROICalculator {
     };
 
     let _totalAllocated = 0;
-    for (const type of treatmentTypes) {
+    for (const type of programTypes) {
       allocations[type] = monthlyBudget * percentages[type];
       _totalAllocated += allocations[type];
     }
 
     for (const type of Object.keys(allocations)) {
-      if (!treatmentTypes.includes(type as TreatmentType)) {
-        allocations[type as TreatmentType] = 0;
+      if (!programTypes.includes(type as ProgramType)) {
+        allocations[type as ProgramType] = 0;
       }
     }
 
     const projectedOutcome =
       `Monthly budget: ${monthlyBudget} ${currency} | ` +
       `Annual budget: ${(monthlyBudget * 12).toFixed(2)} ${currency} | ` +
-      `Estimated 30% improvement in skin quality with consistent treatment`;
+      `Estimated 30% improvement in skin quality with consistent program`;
 
     return {
       monthlyBudget,
@@ -369,10 +369,10 @@ export class CostROICalculator {
     };
   }
 
-  static applyDiscount(treatment: TreatmentCost, discountPercentage: number): TreatmentCost {
-    const discountAmount = treatment.totalPrice * (discountPercentage / 100);
+  static applyDiscount(program: ProgramCost, discountPercentage: number): ProgramCost {
+    const discountAmount = program.totalPrice * (discountPercentage / 100);
     return {
-      ...treatment,
+      ...program,
       discount: discountAmount,
     };
   }
@@ -383,15 +383,15 @@ export class CostROICalculator {
   }
 
   static projectCostTimeline(
-    treatment: TreatmentCost,
+    program: ProgramCost,
     months: number
   ): Array<{ month: number; cumulativeCost: number; date: Date }> {
     const timeline: Array<{ month: number; cumulativeCost: number; date: Date }> = [];
 
-    const monthlyRate = treatment.totalPrice / 12;
+    const monthlyRate = program.totalPrice / 12;
 
     for (let i = 1; i <= months; i++) {
-      const date = new Date(treatment.startDate);
+      const date = new Date(program.startDate);
       date.setMonth(date.getMonth() + i);
 
       timeline.push({

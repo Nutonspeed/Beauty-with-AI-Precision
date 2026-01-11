@@ -15,7 +15,7 @@ export function NeuralAPIExplorer() {
   const [response, setResponse] = useState<any>(null)
 
   const mockPayload = {
-    clinical_node: "BIP-NODE-BKK-01",
+    aesthetic_node: "BIP-NODE-BKK-01",
     biometric_scan_id: "SCAN_8842_Neural",
     requested_inference: ["pigmentation_vector", "dermal_elasticity", "4D_aging_projection"],
     auth_token: "pk_live_************************"
@@ -81,9 +81,20 @@ export function NeuralAPIExplorer() {
               <Copy className="h-4 w-4" />
             </Button>
           </div>
-          <div className="flex items-center gap-4 text-slate-600">
-            <Terminal className="h-4 w-4" />
-            <p className="text-[9px] font-black uppercase tracking-widest italic">Clinical_Transmission_Node: ONLINE</p>
+          <div className="mb-8 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-pink-500/10 border border-pink-500/20">
+                <Zap className="h-5 w-5 text-pink-500" />
+              </div>
+              <div>
+                <h3 className="text-sm font-black uppercase tracking-widest text-white">Aesthetic_Transmission_Node</h3>
+                <p className="text-[10px] text-slate-500 font-bold">Latency: 24ms | Protocol: BIP-V4</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4 text-slate-600">
+              <Terminal className="h-4 w-4" />
+              <p className="text-[9px] font-black uppercase tracking-widest italic">Node_Status: ONLINE</p>
+            </div>
           </div>
         </div>
 

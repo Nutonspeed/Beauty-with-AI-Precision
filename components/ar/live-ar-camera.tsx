@@ -2,17 +2,17 @@
 
 import { useRef, useEffect, useState, useCallback } from "react"
 import { FaceLandmarker, FilesetResolver } from "@mediapipe/tasks-vision"
-import { treatmentEffects, type TreatmentType } from "@/lib/ar/treatment-effects"
+import { programEffects, type ProgramType } from "@/lib/ar/program-effects"
 
 interface LiveARCameraProps {
-  treatment: TreatmentType
+  program: ProgramType
   intensity: number
   onFaceDetected?: (detected: boolean) => void
 }
 
 let faceLandmarker: FaceLandmarker | null = null
 
-export function LiveARCamera({ treatment, intensity, onFaceDetected }: Readonly<LiveARCameraProps>) {
+export function LiveARCamera({ program, intensity, onFaceDetected }: Readonly<LiveARCameraProps>) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -61,9 +61,9 @@ export function LiveARCamera({ treatment, intensity, onFaceDetected }: Readonly<
         
         const landmarks = detectionResult.faceLandmarks[0]
 
-        // 3. Apply treatment effect if selected
-        if (treatment !== 'none') {
-          const effect = treatmentEffects[treatment]
+        // 3. Apply program effect if selected
+        if (program !== 'none') {
+          const effect = programEffects[program]
           
           if (effect) {
             const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
@@ -190,11 +190,11 @@ export function LiveARCamera({ treatment, intensity, onFaceDetected }: Readonly<
         </div>
       )}
 
-      {/* Treatment indicator */}
-      {!isLoading && treatment !== 'none' && (
+      {/* Program indicator */}
+      {!isLoading && program !== 'none' && (
         <div className="absolute bottom-4 left-4 bg-primary/90 text-primary-foreground px-4 py-2 rounded-lg">
           <p className="text-sm font-medium">
-            {treatmentEffects[treatment]?.name} - {Math.round(intensity * 100)}%
+            {programEffects[program]?.name} - {Math.round(intensity * 100)}%
           </p>
         </div>
       )}

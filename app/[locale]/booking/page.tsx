@@ -27,13 +27,13 @@ export default function BookingPage() {
   const locale = useLocale()
   const lp = useLocalizePath()
 
-  const treatmentsData = [
-    { id: "consultation", name: t('booking.treatments.consultation'), duration: t('booking.duration.min30'), price: t('booking.priceFree'), priceValue: 0 },
-    { id: "botox", name: t('booking.treatments.botox'), duration: t('booking.duration.min45'), price: t('format.currency', { amount: '8,000' }), priceValue: 8000 },
-    { id: "filler", name: t('booking.treatments.filler'), duration: t('booking.duration.min60'), price: t('format.currency', { amount: '12,000' }), priceValue: 12000 },
-    { id: "laser", name: t('booking.treatments.laser'), duration: t('booking.duration.min45'), price: t('format.currency', { amount: '6,000' }), priceValue: 6000 },
-    { id: "peel", name: t('booking.treatments.peel'), duration: t('booking.duration.min60'), price: t('format.currency', { amount: '5,000' }), priceValue: 5000 },
-    { id: "microneedling", name: t('booking.treatments.microneedling'), duration: t('booking.duration.min60'), price: t('format.currency', { amount: '7,000' }), priceValue: 7000 },
+  const programsData = [
+    { id: "consultation", name: t('booking.programs.consultation'), duration: t('booking.duration.min30'), price: t('booking.priceFree'), priceValue: 0 },
+    { id: "botox", name: t('booking.programs.botox'), duration: t('booking.duration.min45'), price: t('format.currency', { amount: '8,000' }), priceValue: 8000 },
+    { id: "filler", name: t('booking.programs.filler'), duration: t('booking.duration.min60'), price: t('format.currency', { amount: '12,000' }), priceValue: 12000 },
+    { id: "laser", name: t('booking.programs.laser'), duration: t('booking.duration.min45'), price: t('format.currency', { amount: '6,000' }), priceValue: 6000 },
+    { id: "peel", name: t('booking.programs.peel'), duration: t('booking.duration.min60'), price: t('format.currency', { amount: '5,000' }), priceValue: 5000 },
+    { id: "microneedling", name: t('booking.programs.microneedling'), duration: t('booking.duration.min60'), price: t('format.currency', { amount: '7,000' }), priceValue: 7000 },
   ]
 
   const timeSlots = [
@@ -56,7 +56,7 @@ export default function BookingPage() {
   ]
 
   const [date, setDate] = useState<Date | undefined>(new Date())
-  const [selectedTreatment, setSelectedTreatment] = useState("")
+  const [selectedProgram, setSelectedProgram] = useState("")
   const [selectedTime, setSelectedTime] = useState("")
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -85,7 +85,7 @@ export default function BookingPage() {
           lastName: formData.lastName,
           email: formData.email,
           phone: formData.phone,
-          treatmentId: selectedTreatment,
+          programId: selectedProgram,
           date: date ? format(date, "yyyy-MM-dd") : "",
           time: selectedTime,
           notes: formData.notes,
@@ -153,8 +153,8 @@ export default function BookingPage() {
                     <span className="text-white font-bold italic">{selectedTime}</span>
                   </div>
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-slate-500 uppercase font-black tracking-widest text-[10px] italic">{t('booking.details.treatment')}</span>
-                    <span className="text-white font-bold italic">{treatmentsData.find((t) => t.id === selectedTreatment)?.name}</span>
+                    <span className="text-slate-500 uppercase font-black tracking-widest text-[10px] italic">{t('booking.details.program')}</span>
+                    <span className="text-white font-bold italic">{programsData.find((p) => p.id === selectedProgram)?.name}</span>
                   </div>
                 </CardContent>
               </Card>
@@ -166,7 +166,7 @@ export default function BookingPage() {
                 onClick={() => {
                   setIsSubmitted(false)
                   setFormData({ firstName: "", lastName: "", email: "", phone: "", notes: "" })
-                  setSelectedTreatment("")
+                  setSelectedProgram("")
                   setSelectedTime("")
                   setDate(new Date())
                 }}
@@ -203,7 +203,7 @@ export default function BookingPage() {
             >
               <Badge variant="outline" className="px-4 py-1 rounded-full border-pink-500/30 text-pink-400 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.2em] text-[10px] font-black shadow-2xl shadow-pink-500/10">
                 <CalendarIcon className="mr-3 h-3.5 w-3.5 animate-pulse" />
-                Clinical Reservation Protocol
+                Aesthetic Reservation Protocol
               </Badge>
             </motion.div>
             
@@ -213,7 +213,7 @@ export default function BookingPage() {
               transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
               className="text-5xl md:text-8xl font-bold tracking-tighter text-white leading-[0.9] italic"
             >
-              Treatment<br />
+              Program<br />
               <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent not-italic">Scheduling</span>
             </motion.h1>
             
@@ -223,7 +223,7 @@ export default function BookingPage() {
               transition={{ delay: 0.4, duration: 1 }}
               className="text-xl text-slate-500 font-light tracking-widest max-w-2xl mx-auto italic leading-relaxed"
             >
-              Synchronize your aesthetic transformation cycle with our precision clinical nodes.
+              Synchronize your aesthetic transformation cycle with our precision aesthetic nodes.
             </motion.p>
           </div>
 
@@ -239,7 +239,7 @@ export default function BookingPage() {
 
           <form onSubmit={handleSubmit}>
             <div className="grid gap-10 lg:grid-cols-12">
-              {/* Treatment Selection Node */}
+              {/* Program Selection Node */}
               <motion.div 
                 className="lg:col-span-4 space-y-8"
                 initial={{ opacity: 0, x: -30 }}
@@ -249,35 +249,35 @@ export default function BookingPage() {
                 <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative h-full">
                   <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                   <CardHeader className="p-10 pb-6">
-                    <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('booking.selectTreatment')}</CardTitle>
+                    <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('booking.selectProgram')}</CardTitle>
                   </CardHeader>
                   <CardContent className="p-10 pt-0 space-y-4">
-                    {treatmentsData.map((treatment) => (
+                    {programsData.map((program) => (
                       <motion.div
-                        key={treatment.id}
+                        key={program.id}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         className={cn(
                           "cursor-pointer transition-all duration-500 rounded-3xl p-6 border group relative overflow-hidden",
-                          selectedTreatment === treatment.id 
+                          selectedProgram === program.id 
                             ? "bg-pink-600/10 border-pink-500/40 shadow-inner" 
                             : "bg-white/[0.02] border-white/5 hover:border-white/10"
                         )}
-                        onClick={() => setSelectedTreatment(treatment.id)}
+                        onClick={() => setSelectedProgram(program.id)}
                       >
                         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                         <div className="space-y-4 relative z-10">
-                          <div className="font-bold text-lg text-white tracking-tight italic group-hover:text-pink-400 transition-colors">{treatment.name}</div>
+                          <div className="font-bold text-lg text-white tracking-tight italic group-hover:text-pink-400 transition-colors">{program.name}</div>
                           <div className="flex items-center justify-between">
                             <span className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.1em] text-slate-500 italic">
                               <Clock className="h-3.5 w-3.5 text-pink-500/60" />
-                              {treatment.duration}
+                              {program.duration}
                             </span>
                             <Badge className={cn(
                               "text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full border-none shadow-inner transition-all",
-                              selectedTreatment === treatment.id ? "bg-pink-600 text-white shadow-pink-600/20" : "bg-white/[0.03] text-slate-600"
+                              selectedProgram === program.id ? "bg-pink-600 text-white shadow-pink-600/20" : "bg-white/[0.03] text-slate-600"
                             )}>
-                              {treatment.price}
+                              {program.price}
                             </Badge>
                           </div>
                         </div>
@@ -318,7 +318,7 @@ export default function BookingPage() {
                   />
                 </motion.div>
 
-                {/* Patient Information Interface */}
+                {/* Customer Information Interface */}
                 <motion.div
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -329,7 +329,7 @@ export default function BookingPage() {
                     <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
                       <CardTitle className="text-3xl font-bold text-white tracking-tight italic flex items-center gap-4">
                         <User className="h-8 w-8 text-pink-500" />
-                        {t('booking.patientInfo')}
+                        {t('booking.customerInfo')}
                       </CardTitle>
                       <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Initialize diagnostic credential binding</CardDescription>
                     </CardHeader>
@@ -362,7 +362,7 @@ export default function BookingPage() {
                           <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">{t('booking.email')}</Label>
                           <Input
                             className="h-14 rounded-2xl border-white/5 bg-white/[0.03] text-white placeholder:text-slate-700 focus:border-pink-500/30 focus:ring-pink-500/20 transition-all px-6"
-                            placeholder="identity@clinical.ai"
+                            placeholder="identity@aesthetic.ai"
                             type="email"
                             required
                             value={formData.email}
@@ -398,7 +398,7 @@ export default function BookingPage() {
                           size="xl"
                           variant="premium"
                           className="w-full h-20 rounded-[2rem] shadow-2xl shadow-pink-500/20 text-xs font-black uppercase tracking-[0.3em] transition-all hover:scale-[1.02] active:scale-[0.98]"
-                          disabled={!selectedTreatment || !date || !selectedTime || isSubmitting}
+                          disabled={!selectedProgram || !date || !selectedTime || isSubmitting}
                         >
                           {isSubmitting ? (
                             <div className="flex items-center gap-4">

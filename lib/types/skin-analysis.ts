@@ -59,11 +59,11 @@ export interface AIAnalysisResult {
   concerns: SkinConcern[];
   severity: Record<SkinConcern, number>; // 1-10
   recommendations: Array<{
-    category: 'cleanser' | 'serum' | 'moisturizer' | 'treatment' | 'sunscreen';
+    category: 'cleanser' | 'serum' | 'moisturizer' | 'program' | 'sunscreen';
     product: string;
     reason: string;
   }>;
-  treatmentPlan?: string;
+  programPlan?: string;
   confidence: number;
 }
 
@@ -181,9 +181,9 @@ export interface AnalysisHistory {
   recommendations: string[];
 }
 
-// AR Treatment Simulation
-export interface TreatmentSimulation {
-  treatmentType: 'acne' | 'anti-aging' | 'brightening' | 'hydration';
+// AR Program Simulation
+export interface ProgramSimulation {
+  programType: 'acne' | 'anti-aging' | 'brightening' | 'hydration';
   intensity: number; // 0-1
   beforeImage: string;
   afterImage: string;

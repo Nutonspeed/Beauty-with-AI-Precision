@@ -19,7 +19,7 @@ export async function POST(
     const service = createServiceClient()
     const { data: userRow, error: userErr } = await service
       .from('users')
-      .select('role, clinic_id')
+      .select('role, center_id')
       .eq('id', user.id)
       .single()
     if (userErr || !userRow || !canAccessSales(userRow.role)) {
@@ -27,7 +27,7 @@ export async function POST(
     }
 
     const { sendProposal } = await import('@/lib/sales/proposals-service')
-    const proposal = await sendProposal(user.id, userRow.clinic_id ?? null, id)
+    const proposal = await sendProposal(user.id, userRow.center_id ?? null, id)
 
     return NextResponse.json(proposal)
 

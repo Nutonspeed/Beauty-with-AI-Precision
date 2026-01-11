@@ -8,9 +8,10 @@ export enum UserRole {
   PUBLIC = "public",
   FREE_USER = "free_user",
   PREMIUM_CUSTOMER = "premium_customer",
-  CLINIC_STAFF = "clinic_staff",
-  CLINIC_ADMIN = "clinic_admin",
+  CENTER_STAFF = "center_staff",
+  CENTER_ADMIN = "center_admin",
   SALES_STAFF = "sales_staff",
+  CENTER_OWNER = "center_owner",
   SUPER_ADMIN = "super_admin",
 }
 
@@ -18,7 +19,7 @@ export enum UserRole {
 export enum AnalysisTier {
   FREE = "free",
   PREMIUM = "premium",
-  CLINICAL = "clinical",
+  AESTHETIC = "aesthetic",
 }
 
 // Permissions
@@ -44,18 +45,18 @@ export enum Permission {
   CHAT_WITH_SALES = "chat_with_sales",
   BOOKING_APPOINTMENTS = "booking_appointments",
 
-  // Clinic Permissions
-  VIEW_CLINIC_DASHBOARD = "view_clinic_dashboard",
-  VIEW_CLINIC_CUSTOMERS = "view_clinic_customers",
+  // Center Permissions
+  VIEW_CENTER_DASHBOARD = "view_center_dashboard",
+  VIEW_CENTER_CUSTOMERS = "view_center_customers",
   MANAGE_BOOKINGS = "manage_bookings",
   UPLOAD_ANALYSIS = "upload_analysis",
-  VIEW_CLINIC_REPORTS = "view_clinic_reports",
+  VIEW_CENTER_REPORTS = "view_center_reports",
 
-  // Clinic Admin Permissions (additional)
-  MANAGE_CLINIC_STAFF = "manage_clinic_staff",
-  MANAGE_CLINIC_SETTINGS = "manage_clinic_settings",
+  // Center Admin Permissions (additional)
+  MANAGE_CENTER_STAFF = "manage_center_staff",
+  MANAGE_CENTER_SETTINGS = "manage_center_settings",
   VIEW_FINANCIAL_REPORTS = "view_financial_reports",
-  EXPORT_CLINIC_DATA = "export_clinic_data",
+  EXPORT_CENTER_DATA = "export_center_data",
 
   // Sales Permissions
   VIEW_SALES_DASHBOARD = "view_sales_dashboard",
@@ -100,19 +101,19 @@ const PREMIUM_CUSTOMER_PERMISSIONS = [
   Permission.BOOKING_APPOINTMENTS,
 ]
 
-const CLINIC_STAFF_PERMISSIONS = [
-  Permission.VIEW_CLINIC_DASHBOARD,
-  Permission.VIEW_CLINIC_CUSTOMERS,
+const CENTER_STAFF_PERMISSIONS = [
+  Permission.VIEW_CENTER_DASHBOARD,
+  Permission.VIEW_CENTER_CUSTOMERS,
   Permission.MANAGE_BOOKINGS,
   Permission.UPLOAD_ANALYSIS,
-  Permission.VIEW_CLINIC_REPORTS,
+  Permission.VIEW_CENTER_REPORTS,
 ]
 
-const CLINIC_ADMIN_PERMISSIONS = [
-  Permission.MANAGE_CLINIC_STAFF,
-  Permission.MANAGE_CLINIC_SETTINGS,
+const CENTER_ADMIN_PERMISSIONS = [
+  Permission.MANAGE_CENTER_STAFF,
+  Permission.MANAGE_CENTER_SETTINGS,
   Permission.VIEW_FINANCIAL_REPORTS,
-  Permission.EXPORT_CLINIC_DATA,
+  Permission.EXPORT_CENTER_DATA,
 ]
 
 const SALES_STAFF_PERMISSIONS = [
@@ -135,17 +136,24 @@ export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
     ...PREMIUM_CUSTOMER_PERMISSIONS,
   ],
 
-  [UserRole.CLINIC_STAFF]: [
+  [UserRole.CENTER_STAFF]: [
     ...FREE_USER_PERMISSIONS,
     ...PREMIUM_CUSTOMER_PERMISSIONS,
-    ...CLINIC_STAFF_PERMISSIONS,
+    ...CENTER_STAFF_PERMISSIONS,
   ],
 
-  [UserRole.CLINIC_ADMIN]: [
+  [UserRole.CENTER_ADMIN]: [
     ...FREE_USER_PERMISSIONS,
     ...PREMIUM_CUSTOMER_PERMISSIONS,
-    ...CLINIC_STAFF_PERMISSIONS,
-    ...CLINIC_ADMIN_PERMISSIONS,
+    ...CENTER_STAFF_PERMISSIONS,
+    ...CENTER_ADMIN_PERMISSIONS,
+  ],
+
+  [UserRole.CENTER_OWNER]: [
+    ...FREE_USER_PERMISSIONS,
+    ...PREMIUM_CUSTOMER_PERMISSIONS,
+    ...CENTER_STAFF_PERMISSIONS,
+    ...CENTER_ADMIN_PERMISSIONS,
   ],
 
   [UserRole.SALES_STAFF]: [
@@ -181,10 +189,10 @@ export const TIER_FEATURES: Record<AnalysisTier, string[]> = {
     "unlimited_history",
   ],
 
-  [AnalysisTier.CLINICAL]: [
+  [AnalysisTier.AESTHETIC]: [
     "browser_ai",
     "cloud_ai",
-    "visia_equivalent",
+    "aesthetic_equivalent",
     "8_point_metrics",
     "all_concerns",
     "advanced_heatmap",
@@ -215,8 +223,9 @@ export function getRoleLevel(role: UserRole): number {
     [UserRole.PUBLIC]: 0,
     [UserRole.FREE_USER]: 1,
     [UserRole.PREMIUM_CUSTOMER]: 2,
-    [UserRole.CLINIC_STAFF]: 3,
-    [UserRole.CLINIC_ADMIN]: 4,
+    [UserRole.CENTER_STAFF]: 3,
+    [UserRole.CENTER_ADMIN]: 4,
+    [UserRole.CENTER_OWNER]: 4,
     [UserRole.SALES_STAFF]: 3,
     [UserRole.SUPER_ADMIN]: 5,
   }

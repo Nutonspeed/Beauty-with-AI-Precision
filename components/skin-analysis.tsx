@@ -54,13 +54,13 @@ export default function SkinAnalysisComponent() {
       {/* Header - Professional AI Branding */}
       <div className="text-center space-y-4 py-8">
         <Badge variant="outline" className="px-4 py-1 border-primary/30 text-primary bg-primary/5 rounded-full uppercase tracking-widest text-[10px] font-bold">
-          Clinical Grade Analysis
+          Aesthetic Intelligence Analysis
         </Badge>
         <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
-          AI Skin <span className="text-primary">Diagnostic</span>
+          Aesthetic <span className="text-primary">Diagnostic</span>
         </h1>
         <p className="text-muted-foreground max-w-2xl mx-auto text-lg font-light leading-relaxed">
-          Advanced computer vision algorithm for comprehensive dermatological assessment and personalized treatment protocols.
+          Advanced computer vision algorithm for comprehensive aesthetic assessment and personalized program protocols.
         </p>
       </div>
 
@@ -277,14 +277,14 @@ export default function SkinAnalysisComponent() {
                                 </ul>
                               </div>
                               <div className="space-y-2">
-                                <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest flex items-center gap-2">
+                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 flex items-center gap-2">
                                   <CheckCircle2 className="h-3 w-3 text-emerald-500" /> Protocol
                                 </p>
                                 <ul className="text-xs text-muted-foreground space-y-1.5 font-light">
-                                  {condition.treatments.slice(0, 3).map((t, i) => (
+                                  {condition.programs.slice(0, 3).map((p, i) => (
                                     <li key={i} className="flex items-start gap-2">
                                       <span className="h-1 w-1 rounded-full bg-emerald-500/50 mt-1.5 shrink-0" />
-                                      {t}
+                                      {p}
                                     </li>
                                   ))}
                                 </ul>
@@ -304,7 +304,7 @@ export default function SkinAnalysisComponent() {
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-lg flex items-center gap-3">
                       <Sparkles className="h-5 w-5 text-primary animate-pulse" />
-                      Personalized Treatment Protocol
+                      Personalized Aesthetic Protocol
                     </CardTitle>
                     <Badge variant="premium" className="rounded-full text-[10px]">AI Optimized</Badge>
                   </div>
@@ -353,9 +353,9 @@ export default function SkinAnalysisComponent() {
               <div className="bg-rose-500/5 border border-rose-500/10 p-6 rounded-3xl flex items-start gap-4">
                 <AlertCircle className="h-5 w-5 text-rose-500 shrink-0 mt-0.5" />
                 <div className="space-y-1">
-                  <p className="text-[10px] uppercase font-bold text-rose-500 tracking-[0.2em]">Clinical Disclaimer</p>
+                  <p className="text-[10px] uppercase font-bold text-rose-500 tracking-[0.2em]">Aesthetic Disclaimer</p>
                   <p className="text-xs text-muted-foreground font-light leading-relaxed">
-                    This automated analysis uses proprietary computer vision models for informational screening only. It does not constitute a medical diagnosis. For clinical assessment, please consult with a board-certified dermatologist.
+                    This automated analysis uses proprietary computer vision models for informational screening only. It does not constitute a medical diagnosis. For professional assessment, please consult with an aesthetic specialist.
                   </p>
                 </div>
               </div>
@@ -369,7 +369,7 @@ export default function SkinAnalysisComponent() {
               <div className="space-y-2">
                 <h3 className="text-2xl font-bold tracking-tight">System Ready for Scan</h3>
                 <p className="text-muted-foreground max-w-sm mx-auto font-light">
-                  Our neural network is optimized and waiting for your data input. Upload a photo to initiate clinical-grade analysis.
+                  Our neural network is optimized and waiting for your data input. Upload a photo to initiate aesthetic-grade analysis.
                 </p>
               </div>
               <div className="flex gap-4 opacity-30 grayscale grayscale-100">

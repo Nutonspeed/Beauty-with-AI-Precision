@@ -59,13 +59,13 @@ export default function FeaturesPage() {
     },
     {
       icon: Boxes,
-      title: t('features.main.multiClinic.title'),
-      desc: t('features.main.multiClinic.desc'),
+      title: t('features.main.multiCenter.title'),
+      desc: t('features.main.multiCenter.desc'),
       features: [
-        t('features.main.multiClinic.feature1'),
-        t('features.main.multiClinic.feature2'),
-        t('features.main.multiClinic.feature3'),
-        t('features.main.multiClinic.feature4'),
+        t('features.main.multiCenter.feature1'),
+        t('features.main.multiCenter.feature2'),
+        t('features.main.multiCenter.feature3'),
+        t('features.main.multiCenter.feature4'),
       ],
       color: "from-emerald-500/10 to-green-500/10",
       iconColor: "text-emerald-600",
@@ -88,8 +88,8 @@ export default function FeaturesPage() {
   const supremacyFeatures = [
     {
       icon: Microscope,
-      title: t('featuresSupremacy.mdss.title'),
-      desc: t('featuresSupremacy.mdss.desc'),
+      title: t('featuresSupremacy.adss.title'),
+      desc: t('featuresSupremacy.adss.desc'),
       color: "from-cyan-500/10 to-blue-500/10",
       iconColor: "text-cyan-400"
     },
@@ -181,9 +181,9 @@ export default function FeaturesPage() {
       competitor: "✗",
     },
     {
-      feature: t('features.comparison.multiClinic'),
-      ours: t('features.comparison.values.multiClinic.ours'),
-      competitor: t('features.comparison.values.multiClinic.competitor'),
+      feature: t('features.comparison.multiCenter'),
+      ours: t('features.comparison.values.multiCenter.ours'),
+      competitor: t('features.comparison.values.multiCenter.competitor'),
     },
     {
       feature: t('features.comparison.pdpaCompliant'),
@@ -368,7 +368,7 @@ export default function FeaturesPage() {
           </div>
         </section>
 
-        {/* Specialized Clinical Utility Modules */}
+        {/* Specialized Aesthetic Utility Modules */}
         <section className="py-32 lg:py-48 border-y border-white/5 bg-white/[0.01]">
           <div className="container relative z-10">
             <div className="mx-auto max-w-6xl">

@@ -81,7 +81,7 @@ const VALID_RECOMMENDATION_CATEGORIES: ReadonlyArray<AIAnalysisResult['recommend
   'cleanser',
   'serum',
   'moisturizer',
-  'treatment',
+  'program',
   'sunscreen',
 ];
 
@@ -317,7 +317,7 @@ function normalizeHuggingFaceResult(raw: HuggingFaceAnalysisPayload): AIAnalysis
     concerns,
     severity: mergeSeverity(severityPartial),
     recommendations: normalizeRecommendationsList(raw.recommendations ?? [], PROVIDER_LABELS.huggingface),
-    treatmentPlan: undefined,
+    programPlan: undefined,
     confidence: normalizeConfidence(raw.confidence, 0.8),
   };
 }
@@ -328,7 +328,7 @@ function normalizeVisionResult(raw: VisionSkinAnalysis): AIAnalysisResult {
     concerns: normalizeConcernsList(raw.concerns),
     severity: mergeSeverity(raw.severity ?? {}),
     recommendations: normalizeRecommendationsList(raw.recommendations ?? [], PROVIDER_LABELS['google-vision']),
-    treatmentPlan: raw.treatmentPlan,
+    programPlan: raw.treatmentPlan,
     confidence: normalizeConfidence(raw.confidence, 0.75),
   };
 }
@@ -339,7 +339,7 @@ function normalizeGeminiResult(raw: GeminiSkinAnalysisResult): AIAnalysisResult 
     concerns: normalizeConcernsList(raw.concerns),
     severity: mergeSeverity(raw.severity ?? {}),
     recommendations: normalizeRecommendationsList(raw.recommendations ?? [], PROVIDER_LABELS.gemini),
-    treatmentPlan: raw.treatmentPlan,
+    programPlan: raw.treatmentPlan,
     confidence: normalizeConfidence(raw.confidence, 0.8),
   };
 }
@@ -614,7 +614,7 @@ function buildLocalAIAnalysis(cv: CVAnalysisResult): AIAnalysisResult {
 
   if (severity.spots >= 6 || severity.hyperpigmentation >= 6) {
     recommendations.push({
-      category: 'treatment',
+      category: 'program',
       product: 'Niacinamide + vitamin C serum',
       reason: 'Targets pigmentation and spots detected locally',
     });
@@ -622,7 +622,7 @@ function buildLocalAIAnalysis(cv: CVAnalysisResult): AIAnalysisResult {
 
   if (severity.pores >= 6 || severity.large_pores >= 6) {
     recommendations.push({
-      category: 'treatment',
+      category: 'program',
       product: 'Refining serum with niacinamide',
       reason: 'Helps minimize enlarged pores highlighted in analysis',
     });
@@ -630,7 +630,7 @@ function buildLocalAIAnalysis(cv: CVAnalysisResult): AIAnalysisResult {
 
   if (severity.wrinkles >= 6 || severity.fine_lines >= 6) {
     recommendations.push({
-      category: 'treatment',
+      category: 'program',
       product: 'Peptide or retinol night treatment',
       reason: 'Addresses lines emphasized by wrinkle detection',
     });
@@ -641,7 +641,7 @@ function buildLocalAIAnalysis(cv: CVAnalysisResult): AIAnalysisResult {
     concerns: primaryConcerns,
     severity,
     recommendations: recommendations.slice(0, 5),
-    treatmentPlan: `Focus on ${primaryConcerns.slice(0, 2).join(', ') || 'overall skin health'} with consistent daily care.`,
+    programPlan: `Focus on ${primaryConcerns.slice(0, 2).join(', ') || 'overall skin health'} with consistent daily care.`,
     confidence: 0.55,
   };
 }

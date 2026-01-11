@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     // Get user profile with role
     const { data: profile, error: profileError } = await supabase
       .from('users')
-      .select('role, clinic_id, full_name')
+      .select('role, center_id, full_name')
       .eq('id', user.id)
       .single()
 
@@ -47,10 +47,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Verify target user exists and was created by current user or in same clinic
+    // Verify target user exists and was created by current user or in same center
     const { data: targetUser, error: targetError } = await supabase
       .from('users')
-      .select('id, email, full_name, role, clinic_id')
+      .select('id, email, full_name, role, center_id')
       .eq('id', user_id)
       .single()
 
@@ -64,11 +64,11 @@ export async function POST(request: NextRequest) {
     // Permission check
     if (profile.role === 'super_admin') {
       // Super admin can invite anyone
-    } else if (profile.role === 'clinic_admin') {
-      // Clinic admin can only invite users in their clinic
-      if (targetUser.clinic_id !== profile.clinic_id) {
+    } else if (profile.role === 'center_admin') {
+      // Center admin can only invite users in their center
+      if (targetUser.center_id !== profile.center_id) {
         return NextResponse.json(
-          { error: 'Cannot invite users from other clinics' },
+          { error: 'Cannot invite users from other centers' },
           { status: 403 }
         )
       }
@@ -187,9 +187,9 @@ function generateSetupToken(): string {
 function getRoleDisplayName(role: string): string {
   const roleNames: Record<string, string> = {
     super_admin: 'Super Administrator',
-    clinic_owner: 'เจ้าของคลินิก',
-    clinic_admin: 'ผู้ดูแลระบบคลินิก',
-    clinic_staff: 'พนักงานคลินิก',
+    center_owner: 'เจ้าของศูนย์ความงาม',
+    center_admin: 'ผู้ดูแลระบบศูนย์ความงาม',
+    center_staff: 'พนักงานศูนย์ความงาม',
     sales_staff: 'พนักงานขาย',
     customer: 'ลูกค้า',
   }

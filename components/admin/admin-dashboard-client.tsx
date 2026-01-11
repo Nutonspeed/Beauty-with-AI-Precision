@@ -170,7 +170,7 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {[
                 { label: t('adminDashboard.tools.personnelRegistry.label'), sub: t('adminDashboard.tools.personnelRegistry.sub'), href: '/admin/users', icon: UserCog, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-                { label: t('adminDashboard.tools.clinicalUplinks.label'), sub: t('adminDashboard.tools.clinicalUplinks.sub'), href: '/super-admin', icon: Building2, color: 'text-purple-400', bg: 'bg-purple-500/10' },
+                { label: t('adminDashboard.tools.centerUplinks.label'), sub: t('adminDashboard.tools.centerUplinks.sub'), href: '/super-admin', icon: Building2, color: 'text-purple-400', bg: 'bg-purple-500/10' },
                 { label: t('adminDashboard.tools.securityMatrix.label'), sub: t('adminDashboard.tools.securityMatrix.sub'), href: '/super-admin', icon: Shield, color: 'text-rose-400', bg: 'bg-rose-500/10' },
                 { label: t('adminDashboard.tools.auditLedger.label'), sub: t('adminDashboard.tools.auditLedger.sub'), href: '/super-admin', icon: FileText, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
                 { label: t('adminDashboard.tools.syncStream.label'), sub: t('adminDashboard.tools.syncStream.sub'), href: '/super-admin', icon: Radio, color: 'text-cyan-400', bg: 'bg-cyan-500/10' },
@@ -214,7 +214,7 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
                   {[
                     { value: 'users', label: t('adminDashboard.tabs.identityRegistry') },
                     { value: 'bookings', label: t('adminDashboard.tabs.processCycles') },
-                    { value: 'clinics', label: t('adminDashboard.tabs.nodeTopology') },
+                    { value: 'centers', label: t('adminDashboard.tabs.nodeTopology') },
                     { value: 'analytics', label: t('adminDashboard.tabs.inferenceMatrix') }
                   ].map((tab) => (
                     <TabsTrigger 
@@ -260,7 +260,7 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
                             <TableHeader>
                               <TableRow className="bg-white/[0.02] border-b border-white/5">
                                 <TableHead className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('adminDashboard.table.identityNode')}</TableHead>
-                                <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('adminDashboard.table.protocolType')}</TableHead>
+                                <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('adminDashboard.table.programType')}</TableHead>
                                 <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('adminDashboard.table.temporalStamp')}</TableHead>
                                 <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('adminDashboard.table.syncTime')}</TableHead>
                                 <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('adminDashboard.table.authStatus')}</TableHead>
@@ -274,7 +274,7 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
                                     <div className="text-base font-bold text-white italic group-hover/row:text-pink-400 transition-colors uppercase tracking-tight">{booking.user?.full_name || booking.user?.email || 'UNDEFINED_ENTITY'}</div>
                                   </TableCell>
                                   <TableCell className="px-8 py-8">
-                                    <Badge variant="outline" className="bg-white/[0.02] border-white/10 text-slate-400 text-[10px] font-black rounded-lg px-4 py-1 italic uppercase tracking-widest">{booking.treatment_type}</Badge>
+                                    <Badge variant="outline" className="bg-white/[0.02] border-white/10 text-slate-400 text-[10px] font-black rounded-lg px-4 py-1 italic uppercase tracking-widest">{booking.program_type}</Badge>
                                   </TableCell>
                                   <TableCell className="px-8 py-8 text-slate-300 font-bold italic">{booking.booking_date}</TableCell>
                                   <TableCell className="px-8 py-8 font-mono text-xs text-slate-500">{booking.booking_time}</TableCell>
@@ -303,7 +303,7 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
                     </Card>
                   </TabsContent>
 
-                  <TabsContent value="clinics" className="mt-6">
+                  <TabsContent value="centers" className="mt-6">
                     <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3.5rem] overflow-hidden shadow-2xl relative">
                       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                       <CardHeader className="p-12 border-b border-white/5">
@@ -345,22 +345,22 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
                         </CardHeader>
                         <CardContent className="p-10 lg:p-12 space-y-10">
                           {[
-                            { name: "Botox Protocol", count: 45, percentage: 35, color: 'from-blue-500 to-indigo-600' },
+                            { name: "Botox Program", count: 45, percentage: 35, color: 'from-blue-500 to-indigo-600' },
                             { name: "Dermal Inflow", count: 38, percentage: 30, color: 'from-purple-500 to-pink-600' },
                             { name: "Neural Laser Grid", count: 28, percentage: 22, color: 'from-cyan-500 to-blue-600' },
                             { name: "Chemical Dermal Layer", count: 17, percentage: 13, color: 'from-amber-500 to-orange-600' },
-                          ].map((treatment, index) => (
+                          ].map((program, index) => (
                             <div key={index} className="space-y-4 group/item">
                               <div className="flex items-center justify-between">
-                                <span className="text-[10px] font-black text-slate-400 group-hover/item:text-white transition-colors uppercase tracking-widest italic">{treatment.name}</span>
-                                <span className="text-lg font-black text-white italic tracking-tighter">{treatment.count} <span className="text-[9px] text-slate-600 not-italic ml-1">{t('aiAnalyticsDashboard.cycles')}</span></span>
+                                <span className="text-[10px] font-black text-slate-400 group-hover/item:text-white transition-colors uppercase tracking-widest italic">{program.name}</span>
+                                <span className="text-lg font-black text-white italic tracking-tighter">{program.count} <span className="text-[9px] text-slate-600 not-italic ml-1">{t('aiAnalyticsDashboard.cycles')}</span></span>
                               </div>
                               <div className="relative h-1.5 w-full bg-white/[0.02] rounded-full overflow-hidden border border-white/5">
                                 <motion.div
                                   initial={{ width: 0 }}
-                                  animate={{ width: `${treatment.percentage}%` }}
+                                  animate={{ width: `${program.percentage}%` }}
                                   transition={{ duration: 1.5, delay: index * 0.1 }}
-                                  className={cn("h-full rounded-full bg-gradient-to-r", treatment.color)}
+                                  className={cn("h-full rounded-full bg-gradient-to-r", program.color)}
                                   style={{ boxShadow: `0 0 15px rgba(236,72,153,0.3)` }}
                                 />
                               </div>
@@ -376,7 +376,7 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
                         </CardHeader>
                         <CardContent className="p-10 lg:p-12 space-y-10">
                           {[
-                            { category: "Clinical Protocols", amount: "฿180K", percentage: 73, color: 'from-emerald-500 to-teal-600' },
+                            { category: "Aesthetic Protocols", amount: "฿180K", percentage: 73, color: 'from-emerald-500 to-teal-600' },
                             { category: "Consultation Uplink", amount: "฿35K", percentage: 14, color: 'from-blue-500 to-cyan-600' },
                             { category: "Dermal Products", amount: "฿30K", percentage: 13, color: 'from-pink-500 to-rose-600' },
                           ].map((item, index) => (

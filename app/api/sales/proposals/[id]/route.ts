@@ -19,7 +19,7 @@ export async function GET(
     const service = createServiceClient()
     const { data: userRow, error: userErr } = await service
       .from('users')
-      .select('role, clinic_id')
+      .select('role, center_id')
       .eq('id', user.id)
       .single()
     if (userErr || !userRow || !canAccessSales(userRow.role)) {
@@ -27,7 +27,7 @@ export async function GET(
     }
 
     const { getProposalById } = await import('@/lib/sales/proposals-service')
-    const proposal = await getProposalById(user.id, userRow.clinic_id ?? null, id)
+    const proposal = await getProposalById(user.id, userRow.center_id ?? null, id)
     return NextResponse.json(proposal)
 
   } catch (error) {
@@ -55,7 +55,7 @@ export async function PUT(
     const service = createServiceClient()
     const { data: userRow, error: userErr } = await service
       .from('users')
-      .select('role, clinic_id')
+      .select('role, center_id')
       .eq('id', user.id)
       .single()
     if (userErr || !userRow || !canAccessSales(userRow.role)) {
@@ -63,7 +63,7 @@ export async function PUT(
     }
 
     const { updateProposal } = await import('@/lib/sales/proposals-service')
-    const proposal = await updateProposal(user.id, userRow.clinic_id ?? null, id, body)
+    const proposal = await updateProposal(user.id, userRow.center_id ?? null, id, body)
 
     return NextResponse.json(proposal)
 
@@ -90,7 +90,7 @@ export async function DELETE(
     const service = createServiceClient()
     const { data: userRow, error: userErr } = await service
       .from('users')
-      .select('role, clinic_id')
+      .select('role, center_id')
       .eq('id', user.id)
       .single()
     if (userErr || !userRow || !canAccessSales(userRow.role)) {
@@ -98,7 +98,7 @@ export async function DELETE(
     }
 
     const { deleteDraftProposal } = await import('@/lib/sales/proposals-service')
-    const result = await deleteDraftProposal(user.id, userRow.clinic_id ?? null, id)
+    const result = await deleteDraftProposal(user.id, userRow.center_id ?? null, id)
 
     return NextResponse.json(result)
 

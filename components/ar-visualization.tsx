@@ -7,11 +7,11 @@ import { Loader2 } from "lucide-react"
 
 interface ARVisualizationProps {
   readonly image: string | null
-  readonly treatment: string
+  readonly program: string
   readonly intensity: number
   readonly compact?: boolean
   readonly viewMode?: "front" | "side" | "profile"
-  readonly multiTreatment?: boolean
+  readonly multiProgram?: boolean
 }
 
 /**
@@ -55,11 +55,11 @@ function sharpenImage(imageData: ImageData, strength: number): ImageData {
 
 export function ARVisualization({
   image,
-  treatment,
+  program,
   intensity,
   compact = false,
   viewMode = "front",
-  multiTreatment = false,
+  multiProgram = false,
 }: ARVisualizationProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [isProcessing, setIsProcessing] = useState(false)
@@ -168,7 +168,7 @@ export function ARVisualization({
     }
   }, [zoom, pan, handleWheel])
 
-  const applyAREffect = useCallback((imageSrc: string, selectedTreatment: string, effectIntensity: number, mode: string) => {
+  const applyAREffect = useCallback((imageSrc: string, selectedProgram: string, effectIntensity: number, mode: string) => {
     const canvas = canvasRef.current
     if (!canvas) return
 
@@ -197,7 +197,7 @@ export function ARVisualization({
       // Apply view mode transformation
       applyViewModeTransform(ctx, canvas, mode)
 
-      // PHASE 2: Apply realistic lighting and treatment effects
+      // PHASE 2: Apply realistic lighting and aesthetic effects
       const alpha = effectIntensity / 100
 
       // Create gradient for depth perception (subtle shadow/highlight)
@@ -206,7 +206,7 @@ export function ARVisualization({
       gradient.addColorStop(0.5, 'rgba(0, 0, 0, 0)') // Neutral middle
       gradient.addColorStop(1, 'rgba(0, 0, 0, 0.1)') // Subtle shadow at bottom
 
-      switch (selectedTreatment) {
+      switch (selectedProgram) {
         case "botox":
           // ENHANCED: Multi-layer smoothing with depth preservation
           // Layer 1: Gentle blur for wrinkle smoothing
@@ -350,7 +350,7 @@ export function ARVisualization({
     img.src = imageSrc
   }, [applyViewModeTransform])
 
-  const applyMultiTreatmentEffect = useCallback((imageSrc: string, treatments: string[], effectIntensity: number, mode: string) => {
+  const applyMultiProgramEffect = useCallback((imageSrc: string, programs: string[], effectIntensity: number, mode: string) => {
     const canvas = canvasRef.current
     if (!canvas) return
 
@@ -371,9 +371,9 @@ export function ARVisualization({
 
       const alpha = effectIntensity / 100
 
-      // Apply combined effects from all selected treatments
-      for (const selectedTreatment of treatments) {
-        switch (selectedTreatment) {
+      // Apply combined effects from all selected programs
+      for (const selectedProgram of programs) {
+        switch (selectedProgram) {
           case "botox":
             ctx.filter = `blur(${alpha * 1.5}px) brightness(${1 + alpha * 0.08})`
             ctx.drawImage(canvas, 0, 0)
@@ -437,10 +437,10 @@ export function ARVisualization({
       // Apply effect with animated intensity
       const animatedIntensity = intensity * easedProgress
       
-      if (multiTreatment) {
-        applyMultiTreatmentEffect(image, treatment.split(","), animatedIntensity, viewMode)
+      if (multiProgram) {
+        applyMultiProgramEffect(image, program.split(","), animatedIntensity, viewMode)
       } else {
-        applyAREffect(image, treatment, animatedIntensity, viewMode)
+        applyAREffect(image, program, animatedIntensity, viewMode)
       }
       
       if (progress < 1) {
@@ -451,7 +451,7 @@ export function ARVisualization({
     }
     
     requestAnimationFrame(animateTransition)
-  }, [image, treatment, intensity, viewMode, multiTreatment, zoom, pan, applyAREffect, applyMultiTreatmentEffect])
+  }, [image, program, intensity, viewMode, multiProgram, zoom, pan, applyAREffect, applyMultiProgramEffect])
 
   if (!image) {
     return (
@@ -490,8 +490,8 @@ export function ARVisualization({
         {!compact && (
           <div className="absolute left-3 top-3 flex gap-2">
             <Badge className="bg-primary/90 text-primary-foreground backdrop-blur-sm">AR Live Preview</Badge>
-            {multiTreatment && (
-              <Badge className="bg-purple-500/90 text-white backdrop-blur-sm">Multi-Treatment</Badge>
+            {multiProgram && (
+              <Badge className="bg-purple-500/90 text-white backdrop-blur-sm">Multi-Program</Badge>
             )}
           </div>
         )}

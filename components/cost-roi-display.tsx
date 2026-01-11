@@ -4,9 +4,9 @@ import { useState, useMemo } from 'react';
 import { PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import {
   CostROICalculator,
-  TreatmentCost,
+  ProgramCost,
   Currency,
-  TreatmentType,
+  ProgramType,
   ROIAnalysis,
   CostBreakdown,
 } from '@/lib/cost-roi-calculator';
@@ -14,10 +14,10 @@ import {
 const translations = {
   en: {
     title: 'Cost Calculator & ROI Analyzer',
-    addTreatment: 'Add Treatment',
+    addProgram: 'Add Program',
     calculateROI: 'Calculate ROI',
     reset: 'Reset',
-    treatmentName: 'Treatment Name',
+    programName: 'Program Name',
     type: 'Type',
     basePrice: 'Price',
     quantity: 'Quantity',
@@ -35,15 +35,15 @@ const translations = {
     recommendations: 'Recommendations',
     byType: 'Cost by Type',
     timeline: 'Cost Timeline',
-    noTreatments: 'No treatments added yet',
+    noPrograms: 'No programs added yet',
     summary: 'Summary',
   },
   th: {
     title: 'เครื่องคำนวณต้นทุน & ตัววิเคราะห์ ROI',
-    addTreatment: 'เพิ่มการรักษา',
+    addProgram: 'เพิ่มโปรแกรมความงาม',
     calculateROI: 'คำนวณ ROI',
     reset: 'รีเซ็ต',
-    treatmentName: 'ชื่อการรักษา',
+    programName: 'ชื่อโปรแกรม',
     type: 'ประเภท',
     basePrice: 'ราคา',
     quantity: 'จำนวน',
@@ -61,7 +61,7 @@ const translations = {
     recommendations: 'คำแนะนำ',
     byType: 'ต้นทุนตามประเภท',
     timeline: 'ไทม์ไลน์ต้นทุน',
-    noTreatments: 'ยังไม่มีการรักษาใด ๆ',
+    noPrograms: 'ยังไม่มีโปรแกรมความงามใด ๆ',
     summary: 'สรุป',
   },
 };
@@ -79,10 +79,10 @@ export default function CostROIDisplay({
 }: Readonly<ComponentProps>) {
   const t = translations[language] ?? translations.en;
 
-  const [treatments, setTreatments] = useState<TreatmentCost[]>([]);
+  const [programs, setPrograms] = useState<ProgramCost[]>([]);
   const [formData, setFormData] = useState({
     name: '',
-    type: 'skincare' as TreatmentType,
+    type: 'skincare' as ProgramType,
     basePrice: 100,
     quantity: 1,
     currency: 'USD' as Currency,
@@ -107,7 +107,7 @@ export default function CostROIDisplay({
   const COLORS = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6'];
 
   const timelineData = useMemo(() => {
-    if (treatments.length === 0) return [];
+    if (programs.length === 0) return [];
 
     const months = 12;
     const data: Array<{ month: string; cost: number }> = [];
@@ -117,8 +117,8 @@ export default function CostROIDisplay({
       date.setMonth(date.getMonth() + i);
 
       let cumulativeCost = 0;
-      for (const treatment of treatments) {
-        const adjustedPrice = treatment.totalPrice - (treatment.discount ?? 0);
+      for (const program of programs) {
+        const adjustedPrice = program.totalPrice - (program.discount ?? 0);
         cumulativeCost += adjustedPrice * (i / 12);
       }
 
@@ -129,13 +129,13 @@ export default function CostROIDisplay({
     }
 
     return data;
-  }, [treatments]);
+  }, [programs]);
 
-  const handleAddTreatment = (): void => {
+  const handleAddProgram = (): void => {
     if (!formData.name) return;
 
-    const newTreatment: TreatmentCost = {
-      id: `treatment-${Date.now()}`,
+    const newProgram: ProgramCost = {
+      id: `program-${Date.now()}`,
       name: formData.name,
       type: formData.type,
       basePrice: formData.basePrice,
@@ -147,8 +147,8 @@ export default function CostROIDisplay({
       discount: formData.discount,
     };
 
-    const updated = [...treatments, newTreatment];
-    setTreatments(updated);
+    const updated = [...programs, newProgram];
+    setPrograms(updated);
 
     setFormData({
       name: '',
@@ -162,15 +162,15 @@ export default function CostROIDisplay({
   };
 
   const handleCalculateROI = (): void => {
-    if (treatments.length === 0) return;
+    if (programs.length === 0) return;
 
     const effectivenessScores: Record<string, number> = {};
-    for (const treatment of treatments) {
-      effectivenessScores[treatment.id] = 65 + Math.random() * 30;
+    for (const program of programs) {
+      effectivenessScores[program.id] = 65 + Math.random() * 30;
     }
 
-    const calculatedROI = CostROICalculator.estimateROI(treatments, effectivenessScores, 1.8);
-    const calculatedBreakdown = CostROICalculator.calculateTotalCost(treatments);
+    const calculatedROI = CostROICalculator.estimateROI(programs, effectivenessScores, 1.8);
+    const calculatedBreakdown = CostROICalculator.calculateTotalCost(programs);
 
     setRoiData(calculatedROI);
     setBreakdown(calculatedBreakdown);
@@ -181,7 +181,7 @@ export default function CostROIDisplay({
   };
 
   const handleReset = (): void => {
-    setTreatments([]);
+    setPrograms([]);
     setRoiData(null);
     setBreakdown(null);
     setFormData({
@@ -195,8 +195,8 @@ export default function CostROIDisplay({
     });
   };
 
-  const getTypeColor = (type: TreatmentType): string => {
-    const colorMap: Record<TreatmentType, string> = {
+  const getTypeColor = (type: ProgramType): string => {
+    const colorMap: Record<ProgramType, string> = {
       skincare: 'bg-blue-50 border-blue-200',
       professional: 'bg-purple-50 border-purple-200',
       procedure: 'bg-red-50 border-red-200',
@@ -206,8 +206,8 @@ export default function CostROIDisplay({
     return colorMap[type];
   };
 
-  const getTypeTextColor = (type: TreatmentType): string => {
-    const colorMap: Record<TreatmentType, string> = {
+  const getTypeTextColor = (type: ProgramType): string => {
+    const colorMap: Record<ProgramType, string> = {
       skincare: 'text-blue-700',
       professional: 'text-purple-700',
       procedure: 'text-red-700',
@@ -235,11 +235,11 @@ export default function CostROIDisplay({
 
       {/* Input Section */}
       <div className="bg-white rounded-lg border border-slate-200 p-6 mb-6">
-        <h2 className="text-xl font-semibold text-slate-800 mb-4">{t.addTreatment}</h2>
+        <h2 className="text-xl font-semibold text-slate-800 mb-4">{t.addProgram}</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           <input
             type="text"
-            placeholder={t.treatmentName}
+            placeholder={t.programName}
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             className="px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -247,7 +247,7 @@ export default function CostROIDisplay({
           <select
             title={t.type}
             value={formData.type}
-            onChange={(e) => setFormData({ ...formData, type: e.target.value as TreatmentType })}
+            onChange={(e) => setFormData({ ...formData, type: e.target.value as ProgramType })}
             className="px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="skincare">{t.type}: Skincare</option>
@@ -293,10 +293,10 @@ export default function CostROIDisplay({
         </div>
         <div className="flex gap-3">
           <button
-            onClick={handleAddTreatment}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+            onClick={handleAddProgram}
+            className="w-full md:w-auto px-6 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
           >
-            {t.addTreatment}
+            {t.addProgram}
           </button>
           <button
             onClick={handleReset}
@@ -307,30 +307,30 @@ export default function CostROIDisplay({
         </div>
       </div>
 
-      {/* Treatments List */}
-      {treatments.length > 0 && (
+      {/* Programs List */}
+      {programs.length > 0 && (
         <div className="bg-white rounded-lg border border-slate-200 p-6 mb-6">
-          <h2 className="text-xl font-semibold text-slate-800 mb-4">
-            Treatments ({treatments.length})
-          </h2>
+          <div className="text-center py-12 text-slate-400 italic">
+            {t.noPrograms}
+          </div>
           <div className="space-y-3">
-            {treatments.map((treatment) => (
+            {programs.map((program) => (
               <div
-                key={treatment.id}
-                className={`p-4 rounded-lg border-2 ${getTypeColor(treatment.type)}`}
+                key={program.id}
+                className={`p-4 rounded-lg border-2 ${getTypeColor(program.type)}`}
               >
                 <div className="flex justify-between items-start">
                   <div>
-                    <p className={`font-semibold ${getTypeTextColor(treatment.type)}`}>
-                      {treatment.name}
+                    <p className={`font-semibold ${getTypeTextColor(program.type)}`}>
+                      {program.name}
                     </p>
                     <p className="text-sm text-slate-600">
-                      {treatment.basePrice} {treatment.currency} × {treatment.quantity} = {treatment.totalPrice}
-                      {treatment.discount ? ` (- ${treatment.discount}%)` : ''}
+                      {program.basePrice} {program.currency} × {program.quantity} = {program.totalPrice}
+                      {program.discount ? ` (- ${program.discount}%)` : ''}
                     </p>
                   </div>
                   <button
-                    onClick={() => setTreatments(treatments.filter((t) => t.id !== treatment.id))}
+                    onClick={() => setPrograms(programs.filter((p) => p.id !== program.id))}
                     className="text-red-500 hover:text-red-700 font-semibold"
                   >
                     ✕
@@ -343,7 +343,7 @@ export default function CostROIDisplay({
       )}
 
       {/* Calculate Button */}
-      {treatments.length > 0 && (
+      {programs.length > 0 && (
         <button
           onClick={handleCalculateROI}
           className="w-full mb-6 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-purple-700 transition"
@@ -360,19 +360,19 @@ export default function CostROIDisplay({
             <div className="bg-white rounded-lg border border-slate-200 p-4">
               <p className="text-sm text-slate-600">{t.totalCost}</p>
               <p className="text-2xl font-bold text-slate-900">
-                {breakdown.totalCost.toFixed(2)} {treatments[0]?.currency}
+                {breakdown.totalCost.toFixed(2)} {programs[0]?.currency}
               </p>
             </div>
             <div className="bg-white rounded-lg border border-slate-200 p-4">
               <p className="text-sm text-slate-600">{t.monthlyAverage}</p>
               <p className="text-2xl font-bold text-slate-900">
-                {breakdown.monthlyAverage.toFixed(2)} {treatments[0]?.currency}
+                {breakdown.monthlyAverage.toFixed(2)} {programs[0]?.currency}
               </p>
             </div>
             <div className="bg-white rounded-lg border border-slate-200 p-4">
               <p className="text-sm text-slate-600">{t.yearlyProjection}</p>
               <p className="text-2xl font-bold text-slate-900">
-                {breakdown.yearlyProjection.toFixed(2)} {treatments[0]?.currency}
+                {breakdown.yearlyProjection.toFixed(2)} {programs[0]?.currency}
               </p>
             </div>
             <div className={`rounded-lg border-2 border-slate-200 p-4 ${getRoiBgColor(roiData.roi)}`}>
@@ -448,7 +448,7 @@ export default function CostROIDisplay({
               <div>
                 <p className="text-sm text-slate-600">Projected Benefit</p>
                 <p className="text-xl font-bold text-green-600">
-                  {roiData.projectedBenefit.toFixed(2)} {treatments[0]?.currency}
+                  {roiData.projectedBenefit.toFixed(2)} {programs[0]?.currency}
                 </p>
               </div>
               <div>
@@ -478,9 +478,9 @@ export default function CostROIDisplay({
       )}
 
       {/* Empty State */}
-      {treatments.length === 0 && !breakdown && (
+      {programs.length === 0 && !breakdown && (
         <div className="bg-white rounded-lg border border-slate-200 p-12 text-center">
-          <p className="text-slate-600">{t.noTreatments}</p>
+          <p className="text-slate-600">{t.noPrograms}</p>
         </div>
       )}
     </div>

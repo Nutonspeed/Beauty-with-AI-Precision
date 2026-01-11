@@ -49,10 +49,10 @@ interface AIAnalyticsData {
     fair: number;
     poor: number;
   };
-  topClinics: Array<{ id: string; name: string; analysisCount: number }>;
+  topCenters: Array<{ id: string; name: string; analysisCount: number }>;
   recentAnalyses: Array<{
     id: string;
-    clinicName: string;
+    centerName: string;
     skinType: string;
     overallScore: number;
     createdAt: string;
@@ -252,7 +252,7 @@ export default function AIAnalyticsDashboard() {
               {[
                 { value: 'daily', icon: Calendar, label: t('aiAnalyticsDashboard.tabs.daily') },
                 { value: 'skinTypes', icon: Layers, label: t('aiAnalyticsDashboard.tabs.skinTypes') },
-                { value: 'topClinics', icon: Building2, label: t('aiAnalyticsDashboard.tabs.topClinics') },
+                { value: 'topCenters', icon: Building2, label: t('aiAnalyticsDashboard.tabs.topCenters') },
                 { value: 'recent', icon: Brain, label: t('aiAnalyticsDashboard.tabs.recent') }
               ].map((tab) => (
                 <TabsTrigger 
@@ -330,7 +330,7 @@ export default function AIAnalyticsDashboard() {
               </TabsContent>
 
               {/* Node Ranking Tab */}
-              <TabsContent value="topClinics" className="mt-0 outline-none">
+              <TabsContent value="topCenters" className="mt-0 outline-none">
                 <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative">
                   <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent" />
                   <CardContent className="p-0">
@@ -338,28 +338,28 @@ export default function AIAnalyticsDashboard() {
                       <TableHeader>
                         <TableRow className="bg-white/[0.02] border-b border-white/5">
                           <TableHead className="w-20 px-10 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('aiAnalyticsDashboard.rank')}</TableHead>
-                          <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('aiAnalyticsDashboard.clinicalUplink')}</TableHead>
+                          <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('aiAnalyticsDashboard.centerUplink')}</TableHead>
                           <TableHead className="px-8 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('aiAnalyticsDashboard.cycleCount')}</TableHead>
                           <TableHead className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('aiAnalyticsDashboard.globalShare')}</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {data.topClinics.map((clinic, idx) => (
-                          <TableRow key={clinic.id} className="group/row transition-all duration-500 hover:bg-white/[0.03] border-white/5">
+                        {data.topCenters.map((center, idx) => (
+                          <TableRow key={center.id} className="group/row transition-all duration-500 hover:bg-white/[0.03] border-white/5">
                             <TableCell className="px-10 py-8">
                               <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center font-black italic shadow-inner border border-white/5", idx === 0 ? 'bg-pink-600 text-white shadow-pink-600/40' : 'bg-white/[0.03] text-slate-500')}>
                                 0{idx + 1}
                               </div>
                             </TableCell>
                             <TableCell className="px-8 py-8">
-                              <span className="text-lg font-bold text-white italic group-hover/row:text-pink-400 transition-colors uppercase tracking-tight">{clinic.name}</span>
+                              <span className="text-lg font-bold text-white italic group-hover/row:text-pink-400 transition-colors uppercase tracking-tight">{center.name}</span>
                             </TableCell>
                             <TableCell className="px-8 py-8 text-right font-black text-white italic tracking-tighter text-xl">
-                              {clinic.analysisCount.toLocaleString()}
+                              {center.analysisCount.toLocaleString()}
                             </TableCell>
                             <TableCell className="px-10 py-8 text-right">
                               <Badge variant="outline" className="bg-white/[0.02] border-white/10 text-emerald-400 text-[10px] font-black rounded-lg px-4 py-1 italic">
-                                {((clinic.analysisCount / data.overview.totalAnalyses) * 100).toFixed(1)}% Δ
+                                {((center.analysisCount / data.overview.totalAnalyses) * 100).toFixed(1)}% Δ
                               </Badge>
                             </TableCell>
                           </TableRow>
@@ -394,7 +394,7 @@ export default function AIAnalyticsDashboard() {
                             className="group/row transition-all duration-500 hover:bg-white/[0.03] border-white/5"
                           >
                             <TableCell className="px-10 py-8">
-                              <span className="text-base font-bold text-white italic group-hover/row:text-cyan-400 transition-colors">{analysis.clinicName}</span>
+                              <span className="text-base font-bold text-white italic group-hover/row:text-cyan-400 transition-colors">{analysis.centerName}</span>
                             </TableCell>
                             <TableCell className="px-8 py-8">
                               <Badge className={cn("px-3 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest border-none shadow-inner", getSkinTypeBadgeColor(analysis.skinType))}>

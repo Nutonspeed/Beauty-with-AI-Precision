@@ -32,13 +32,13 @@ function HudCorner({ position }: { position: 'top-left' | 'top-right' | 'bottom-
   };
 
   return (
-    <div className={`fixed ${styles[position]} w-32 h-32 border-pink-500/10 pointer-events-none z-20 p-4 hidden lg:block backdrop-blur-[2px]`}>
-      <div className="text-[7px] font-black uppercase tracking-[0.4em] text-pink-500/30 font-mono">
+    <div className={`fixed ${styles[position]} w-32 h-32 border-blue-500/10 pointer-events-none z-20 p-4 hidden lg:block backdrop-blur-[2px]`}>
+      <div className="text-[7px] font-black uppercase tracking-[0.4em] text-blue-500/30 font-mono">
         {position.replace('-', ' ')}
       </div>
       <div className="mt-2 space-y-1.5">
-        <div className="h-[1px] w-full bg-pink-500/5" />
-        <div className="h-[1px] w-2/3 bg-pink-500/5" />
+        <div className="h-[1px] w-full bg-blue-500/5" />
+        <div className="h-[1px] w-2/3 bg-blue-500/5" />
       </div>
     </div>
   );
@@ -49,7 +49,7 @@ function ScanningLine() {
     <motion.div
       animate={{ top: ['0%', '100%', '0%'] }}
       transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-      className="fixed left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/30 to-transparent z-10 pointer-events-none"
+      className="fixed left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/20 to-transparent z-10 pointer-events-none"
     />
   );
 }
@@ -74,12 +74,12 @@ function DataStream({ side }: { side: 'left' | 'right' }) {
     <div className={`fixed ${side === 'left' ? 'left-8' : 'right-8'} top-1/2 -translate-y-1/2 space-y-3 pointer-events-none z-20 hidden xl:block`}>
       <div className={cn(
         "h-32 w-[1px] mx-auto mb-4 relative overflow-hidden",
-        side === 'left' ? "bg-gradient-to-b from-transparent via-pink-500/20 to-transparent" : "bg-gradient-to-b from-transparent via-cyan-500/20 to-transparent"
+        side === 'left' ? "bg-gradient-to-b from-transparent via-blue-500/20 to-transparent" : "bg-gradient-to-b from-transparent via-cyan-500/20 to-transparent"
       )}>
         <motion.div 
           animate={{ y: ['-100%', '100%'] }}
           transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-          className={cn("absolute inset-0 w-full h-1/2", side === 'left' ? "bg-pink-500/40" : "bg-cyan-500/40")}
+          className={cn("absolute inset-0 w-full h-1/2", side === 'left' ? "bg-blue-500/20" : "bg-cyan-500/20")}
         />
       </div>
       {data.map((str, i) => (
@@ -88,8 +88,8 @@ function DataStream({ side }: { side: 'left' | 'right' }) {
           initial={{ opacity: 0, x: side === 'left' ? -20 : 20 }}
           animate={{ opacity: (15 - i) / 30, x: 0 }}
           className={cn(
-            "font-mono text-[7px] whitespace-nowrap bg-white/[0.02] px-2 py-1 rounded border border-white/5 shadow-2xl",
-            side === 'left' ? "text-pink-500/40" : "text-cyan-500/40"
+            "font-mono text-[7px] whitespace-nowrap bg-white/40 backdrop-blur-md px-2 py-1 rounded border border-blue-500/5 shadow-sm",
+            side === 'left' ? "text-blue-600/40" : "text-cyan-600/40"
           )}
         >
           {side === 'left' ? `>> ${str}` : `${str} <<`}
@@ -97,12 +97,12 @@ function DataStream({ side }: { side: 'left' | 'right' }) {
       ))}
       <div className={cn(
         "h-32 w-[1px] mx-auto mt-4 relative overflow-hidden",
-        side === 'left' ? "bg-gradient-to-b from-transparent via-cyan-500/20 to-transparent" : "bg-gradient-to-b from-transparent via-pink-500/20 to-transparent"
+        side === 'left' ? "bg-gradient-to-b from-transparent via-cyan-500/20 to-transparent" : "bg-gradient-to-b from-transparent via-blue-500/20 to-transparent"
       )}>
         <motion.div 
           animate={{ y: ['100%', '-100%'] }}
           transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-          className={cn("absolute inset-0 w-full h-1/2", side === 'left' ? "bg-cyan-500/40" : "bg-pink-500/40")}
+          className={cn("absolute inset-0 w-full h-1/2", side === 'left' ? "bg-cyan-500/20" : "bg-blue-500/20")}
         />
       </div>
     </div>
@@ -136,9 +136,9 @@ function MedicalScanningMesh({ active }: { active: boolean }) {
           <sphereGeometry args={[1.4, 64, 64]} />
           <pointsMaterial 
             size={0.012} 
-            color="#ff6b9d" 
+            color="#2563eb" 
             transparent 
-            opacity={0.25} 
+            opacity={0.15} 
             sizeAttenuation 
           />
         </points>
@@ -148,16 +148,16 @@ function MedicalScanningMesh({ active }: { active: boolean }) {
           <sphereGeometry args={[1.39, 32, 32]} />
           <meshStandardMaterial 
             wireframe 
-            color="#c084fc" 
+            color="#3b82f6" 
             transparent 
-            opacity={0.05} 
+            opacity={0.03} 
           />
         </mesh>
 
         {/* Dynamic Scanning Ring */}
         <mesh rotation={[Math.PI / 2, 0, 0]}>
           <torusGeometry args={[1.6, 0.003, 16, 100]} />
-          <meshBasicMaterial color="#ff6b9d" transparent opacity={0.15} />
+          <meshBasicMaterial color="#2563eb" transparent opacity={0.1} />
         </mesh>
       </Float>
     </group>
@@ -177,18 +177,18 @@ function AtmosphericFog() {
       <motion.div 
         animate={{ 
           x: [-100, 100],
-          opacity: [0.03, 0.07, 0.03]
+          opacity: [0.03, 0.05, 0.03]
         }}
         transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-        className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20%_30%,#ff6b9d_0%,transparent_50%)] blur-[120px]"
+        className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20%_30%,#3b82f6_0%,transparent_50%)] blur-[120px]"
       />
       <motion.div 
         animate={{ 
           x: [100, -100],
-          opacity: [0.03, 0.07, 0.03]
+          opacity: [0.03, 0.05, 0.03]
         }}
         transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-        className="absolute bottom-0 right-0 w-full h-full bg-[radial-gradient(circle_at_80%_70%,#c084fc_0%,transparent_50%)] blur-[120px]"
+        className="absolute bottom-0 right-0 w-full h-full bg-[radial-gradient(circle_at_80%_70%,#0ea5e9_0%,transparent_50%)] blur-[120px]"
       />
     </div>
   );
@@ -211,9 +211,9 @@ export function LandingHero(props: LandingHeroProps) {
   const [webglSupported, setWebglSupported] = useState<boolean>(true);
   const haloColors = (() => {
     switch(persona.tone){
-      case 'Cool': return ['#b3d6ff','#c084fc'];
-      case 'Warm': return ['#ff6b9d','#fbbf8b'];
-      default: return ['#ff6b9d','#c084fc'];
+      case 'Cool': return ['#3b82f6','#60a5fa'];
+      case 'Warm': return ['#2563eb','#0ea5e9'];
+      default: return ['#2563eb','#3b82f6'];
     }
   })();
   const intensityMod = persona.goal==='Firming'?0.75: persona.goal==='Clarity'?0.55:0.65;
@@ -277,35 +277,35 @@ export function LandingHero(props: LandingHeroProps) {
   }, [persona]);
 
   return (
-    <div className="landing-hero-wrapper bg-[#020617]">
+    <div className="landing-hero-wrapper bg-white">
       <AtmosphericFog />
       <GrainOverlay />
       {webglSupported ? (
-        <div className="fixed inset-0 -z-10 bg-[#020617]">
+        <div className="fixed inset-0 -z-10 bg-white">
           <Canvas camera={{ position:[0,0,5], fov:62 }} gl={{ antialias: true, alpha: true }}>
-            <color attach="background" args={['#020617']} />
-            <ambientLight intensity={0.2} />
-            <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} color="#ff87b0" />
-            <spotLight position={[-10, -10, -10]} angle={0.15} penumbra={1} intensity={0.5} color="#c3a5ff" />
+            <color attach="background" args={['#ffffff']} />
+            <ambientLight intensity={0.8} />
+            <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} color="#3b82f6" />
+            <spotLight position={[-10, -10, -10]} angle={0.15} penumbra={1} intensity={0.5} color="#60a5fa" />
             <Suspense fallback={null}>
               <group position={[0,-0.2,0]}>
-                <ProceduralHalo innerColor={haloColors[0]} outerColor={haloColors[1]} distortScale={distortMod} opacity={0.3 * lowPerfFactor} intensity={intensityMod * 0.8 * lowPerfFactor} />
+                <ProceduralHalo innerColor={haloColors[0]} outerColor={haloColors[1]} distortScale={distortMod} opacity={0.1 * lowPerfFactor} intensity={intensityMod * 0.5 * lowPerfFactor} />
                 <MedicalScanningMesh active={stage==='active'} />
-                <VolumetricScanBeam color={haloColors[0]} sweepSpeed={(stage==='scanning'?1.1:0.18) * lowPerfFactor} opacity={stage==='active'?0.15*lowPerfFactor:0.25*lowPerfFactor} />
+                <VolumetricScanBeam color={haloColors[0]} sweepSpeed={(stage==='scanning'?1.1:0.18) * lowPerfFactor} opacity={stage==='active'?0.05*lowPerfFactor:0.1*lowPerfFactor} />
               </group>
-              <Environment preset="night" />
+              <Environment preset="apartment" />
             </Suspense>
           </Canvas>
-          {/* Deep Vignette Overlay */}
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#020617_80%)] pointer-events-none" />
+          {/* Subtle Vignette Overlay for Light Mode */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(248,250,252,0.4)_80%)] pointer-events-none" />
         </div>
       ) : (
-        <div className="fixed inset-0 -z-10 flex items-center justify-center bg-[#020617]">
-          <div className="absolute inset-0 bg-gradient-to-br from-pink-900/20 via-[#020617] to-purple-900/20" />
+        <div className="fixed inset-0 -z-10 flex items-center justify-center bg-white">
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-indigo-50" />
           {/* Graceful fallback illustration */}
           <div className="relative w-[320px] h-[320px] opacity-50">
-            <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-pink-500 to-purple-500 opacity-10 blur-3xl" />
-            <div className="absolute inset-[18%] rounded-full border border-pink-500/20 backdrop-blur-sm bg-white/5 shadow-inner" />
+            <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-blue-500 to-indigo-500 opacity-5 blur-3xl" />
+            <div className="absolute inset-[18%] rounded-full border border-blue-500/10 backdrop-blur-sm bg-white/30 shadow-inner" />
           </div>
         </div>
       )}
@@ -324,12 +324,12 @@ export function LandingHero(props: LandingHeroProps) {
           <motion.div 
             animate={{ rotate: 360 }}
             transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-            className="absolute inset-0 rounded-full border border-pink-500/5 shadow-[0_0_100px_rgba(236,72,153,0.05)] animate-neural-pulse"
+            className="absolute inset-0 rounded-full border border-blue-500/5 shadow-[0_0_100px_rgba(37,99,235,0.03)] animate-neural-pulse"
           />
           <motion.div 
             animate={{ rotate: -360 }}
             transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-            className="absolute inset-10 rounded-full border border-dashed border-cyan-500/10 animate-synaptic-fire"
+            className="absolute inset-10 rounded-full border border-dashed border-blue-500/10 animate-synaptic-fire"
           />
         </div>
 
@@ -337,17 +337,17 @@ export function LandingHero(props: LandingHeroProps) {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="mb-10 inline-flex items-center gap-4 rounded-full border border-pink-500/20 bg-pink-500/5 px-6 py-2 backdrop-blur-xl shadow-2xl shadow-pink-500/10"
+          className="mb-10 inline-flex items-center gap-4 rounded-full border border-blue-500/10 bg-white/50 px-6 py-2 backdrop-blur-xl shadow-premium"
         >
-          <div className="flex items-center gap-2 border-r border-white/10 pr-4 mr-2">
-            <Cpu className="h-4 w-4 text-pink-500 animate-pulse" />
-            <span className="text-[10px] font-black tracking-[0.3em] text-pink-500/60 font-mono uppercase">V-3.5-O</span>
+          <div className="flex items-center gap-2 border-r border-slate-200 pr-4 mr-2">
+            <Cpu className="h-4 w-4 text-blue-600 animate-pulse" />
+            <span className="text-[10px] font-black tracking-[0.3em] text-blue-600/60 font-mono uppercase">OS-1.0-A</span>
           </div>
           <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-pink-500 opacity-75"></span>
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-pink-500"></span>
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-500 opacity-75"></span>
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-blue-600"></span>
           </span>
-          <span className="text-[10px] font-black tracking-[0.4em] text-pink-500 uppercase italic">
+          <span className="text-[10px] font-black tracking-[0.4em] text-blue-600 uppercase italic">
             {t('home.hero.badge')}
           </span>
         </motion.div>
@@ -356,11 +356,11 @@ export function LandingHero(props: LandingHeroProps) {
           initial={{ opacity:0, y:30 }}
           animate={{ opacity:1, y:0 }}
           transition={{ duration:1, ease:[0.16, 1, 0.3, 1] }}
-          className="max-w-5xl font-bold tracking-tight text-[clamp(2rem,7vw,6.5rem)] leading-[1.1] md:leading-[0.95] italic"
+          className="max-w-5xl font-bold tracking-tight text-[clamp(2rem,7vw,6.5rem)] leading-[1.1] md:leading-[0.95] italic text-slate-900"
           aria-label={t('home.hero.title')}
         >
-          <span className="block text-white mb-2 md:mb-4 drop-shadow-[0_0_30px_rgba(255,255,255,0.3)]">{t('home.hero.title')}</span>
-          <span className="bg-gradient-to-r from-pink-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent not-italic block pb-2 md:pb-4 drop-shadow-[0_0_20px_rgba(192,132,252,0.2)]">
+          <span className="block mb-2 md:mb-4 drop-shadow-sm">{t('home.hero.title')}</span>
+          <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 bg-clip-text text-transparent not-italic block pb-2 md:pb-4">
             {t('home.hero.subtitle')}
           </span>
         </motion.h1>
@@ -369,7 +369,7 @@ export function LandingHero(props: LandingHeroProps) {
           initial={{ opacity:0, y:20 }}
           animate={{ opacity:1, y:0 }}
           transition={{ delay:0.4, duration:0.8, ease:[0.16, 1, 0.3, 1] }}
-          className="mt-4 max-w-2xl text-base md:text-xl text-slate-400 font-light tracking-normal md:tracking-widest leading-relaxed italic"
+          className="mt-4 max-w-2xl text-base md:text-xl text-slate-500 font-light tracking-normal md:tracking-widest leading-relaxed italic"
         >
           {t('home.hero.description')}
         </motion.p>
@@ -382,9 +382,9 @@ export function LandingHero(props: LandingHeroProps) {
         >
           <button 
             onClick={_onPrimary}
-            className="group relative h-16 md:h-20 w-full sm:w-auto px-10 md:px-16 rounded-2xl md:rounded-[2rem] bg-white text-[#020617] font-black overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-[0_0_50px_rgba(255,255,255,0.1)] border"
+            className="group relative h-16 md:h-20 w-full sm:w-auto px-10 md:px-16 rounded-2xl md:rounded-[2rem] bg-blue-600 text-white font-black overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-xl shadow-blue-600/20 border-none"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-pink-500 to-purple-600 opacity-0 group-hover:opacity-10 transition-opacity" />
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-700 to-indigo-700 opacity-0 group-hover:opacity-100 transition-opacity" />
             <span className="relative z-10 flex items-center justify-center gap-3 text-[10px] md:text-xs uppercase tracking-[0.2em] md:tracking-[0.4em] italic">
               {t('home.hero.cta')}
               <Scan className="h-4 w-4 md:h-5 md:w-5 animate-pulse" />
@@ -393,11 +393,11 @@ export function LandingHero(props: LandingHeroProps) {
 
           <button 
             onClick={_onSecondary}
-            className="group h-16 md:h-20 w-full sm:w-auto px-10 md:px-16 rounded-2xl md:rounded-[2rem] border border-white/5 bg-white/[0.02] backdrop-blur-3xl text-white/40 font-black hover:bg-white/[0.05] transition-all hover:text-white"
+            className="group h-16 md:h-20 w-full sm:w-auto px-10 md:px-16 rounded-2xl md:rounded-[2rem] border border-slate-200 bg-white shadow-sm text-slate-400 font-black hover:bg-slate-50 transition-all hover:text-blue-600"
           >
             <span className="flex items-center justify-center gap-3 text-[10px] md:text-xs uppercase tracking-[0.2em] md:tracking-[0.4em] italic">
               {t('home.hero.learnMore')}
-              <ShieldCheck className="h-4 w-4 md:h-5 md:w-5 text-cyan-500/40 group-hover:text-cyan-400" />
+              <ShieldCheck className="h-4 w-4 md:h-5 md:w-5 text-blue-500/40 group-hover:text-blue-600" />
             </span>
           </button>
         </motion.div>

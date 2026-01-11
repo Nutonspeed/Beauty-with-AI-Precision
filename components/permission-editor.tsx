@@ -57,7 +57,7 @@ export default function PermissionEditor({ className }: PermissionEditorProps) {
     {
       id: 'rule_1',
       userId: 'user_1',
-      resource: 'patient_records',
+      resource: 'customer_info',
       action: 'read',
       conditions: [{ field: 'department', operator: 'equals', value: 'cardiology' }],
       expiresAt: null,
@@ -77,7 +77,7 @@ export default function PermissionEditor({ className }: PermissionEditorProps) {
   ])
 
   const resources: ResourceType[] = [
-    'patient_records', 'appointments', 'inventory', 'billing', 'reports',
+    'customer_info', 'appointments', 'inventory', 'billing', 'reports',
     'user_management', 'system_settings', 'audit_logs', 'emergency_alerts'
   ]
 
@@ -90,7 +90,6 @@ export default function PermissionEditor({ className }: PermissionEditorProps) {
       case 'doctor': return 'bg-blue-100 text-blue-800 border-blue-200'
       case 'nurse': return 'bg-green-100 text-green-800 border-green-200'
       case 'receptionist': return 'bg-yellow-100 text-yellow-800 border-yellow-200'
-      case 'patient': return 'bg-gray-100 text-gray-800 border-gray-200'
       case 'customer': return 'bg-indigo-100 text-indigo-800 border-indigo-200'
       default: return 'bg-gray-100 text-gray-800 border-gray-200'
     }
@@ -98,7 +97,7 @@ export default function PermissionEditor({ className }: PermissionEditorProps) {
 
   const getResourceIcon = (resource: ResourceType) => {
     switch (resource) {
-      case 'patient_records': return <UserIcon className="h-4 w-4" />
+      case 'customer_info': return <UserIcon className="h-4 w-4" />
       case 'appointments': return <Clock className="h-4 w-4" />
       case 'inventory': return <Settings className="h-4 w-4" />
       case 'billing': return <Key className="h-4 w-4" />
@@ -146,7 +145,7 @@ export default function PermissionEditor({ className }: PermissionEditorProps) {
       }
       setPermissionRules([...permissionRules, rule])
       setNewRule({
-        resource: 'patient_records',
+        resource: 'customer_info',
         action: 'read',
         conditions: [],
         expiresAt: null
@@ -394,7 +393,6 @@ export default function PermissionEditor({ className }: PermissionEditorProps) {
                   <SelectItem value="doctor">Doctor</SelectItem>
                   <SelectItem value="nurse">Nurse</SelectItem>
                   <SelectItem value="receptionist">Receptionist</SelectItem>
-                  <SelectItem value="patient">Patient</SelectItem>
                   <SelectItem value="customer">Customer</SelectItem>
                 </SelectContent>
               </Select>
@@ -452,8 +450,8 @@ export default function PermissionEditor({ className }: PermissionEditorProps) {
                         <UserIcon className="h-4 w-4" />
                         <div>
                           <p className="font-medium">{user?.name || 'Unknown User'}</p>
-                          <Badge className={getRoleColor(user?.role || 'patient')}>
-                            {user?.role || 'patient'}
+                          <Badge className={getRoleColor(user?.role || 'customer')}>
+                            {user?.role || 'customer'}
                           </Badge>
                         </div>
                       </div>

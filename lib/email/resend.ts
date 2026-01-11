@@ -11,16 +11,16 @@ interface SendInvitationEmailParams {
   inviterName: string
   inviterEmail: string
   role: string
-  clinicName?: string | null
+  centerName?: string | null
   invitationLink: string
   expiresAt: string
 }
 
 // Role name mapping (Thai)
 const roleNames: Record<string, string> = {
-  clinic_owner: 'เจ้าของคลินิก',
-  clinic_manager: 'ผู้จัดการคลินิก',
-  clinic_staff: 'พนักงานคลินิก',
+  center_owner: 'เจ้าของศูนย์ความงาม',
+  center_manager: 'ผู้จัดการศูนย์ความงาม',
+  center_staff: 'พนักงานศูนย์ความงาม',
   sales_staff: 'พนักงานขาย',
   customer: 'ลูกค้า'
 }
@@ -33,7 +33,7 @@ export async function sendInvitationEmail({
   inviterName,
   inviterEmail,
   role,
-  clinicName,
+  centerName,
   invitationLink,
   expiresAt
 }: SendInvitationEmailParams) {
@@ -51,21 +51,21 @@ export async function sendInvitationEmail({
     })
 
     const { data, error } = await resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL || 'Beauty Clinic <onboarding@resend.dev>',
+      from: process.env.RESEND_FROM_EMAIL || 'CenterIQ AI <onboarding@resend.dev>',
       to: [to],
-      subject: `คำเชิญเข้าใช้งานระบบ Beauty Clinic - ${roleName}`,
+      subject: `คำเชิญเข้าใช้งานระบบ CenterIQ AI - ${roleName}`,
       html: getInvitationEmailHTML({
         inviterName,
         inviterEmail,
         role: roleName,
-        clinicName,
+        centerName,
         invitationLink,
         expiryDate
       }),
       text: getInvitationEmailText({
         inviterName,
         role: roleName,
-        clinicName,
+        centerName,
         invitationLink,
         expiryDate
       })
@@ -92,14 +92,14 @@ function getInvitationEmailHTML({
   inviterName,
   inviterEmail,
   role,
-  clinicName,
+  centerName,
   invitationLink,
   expiryDate
 }: {
   inviterName: string
   inviterEmail?: string
   role: string
-  clinicName?: string | null
+  centerName?: string | null
   invitationLink: string
   expiryDate: string
 }) {
@@ -124,7 +124,7 @@ function getInvitationEmailHTML({
                 🎉 คุณได้รับคำเชิญ!
               </h1>
               <p style="color: #e9d8fd; margin: 10px 0 0; font-size: 16px;">
-                Beauty Clinic Management System
+                CenterIQ AI Management System
               </p>
             </td>
           </tr>
@@ -137,16 +137,16 @@ function getInvitationEmailHTML({
               </p>
 
               <p style="color: #2d3748; font-size: 16px; line-height: 1.6; margin: 0 0 20px;">
-                <strong>${inviterName}</strong>${inviterEmail ? ` (${inviterEmail})` : ''} ได้เชิญคุณเข้าร่วมระบบ Beauty Clinic Management System
+                <strong>${inviterName}</strong>${inviterEmail ? ` (${inviterEmail})` : ''} ได้เชิญคุณเข้าร่วมระบบ CenterIQ AI Management System
               </p>
 
-              ${clinicName ? `
+              ${centerName ? `
               <div style="background-color: #edf2f7; padding: 20px; border-radius: 6px; margin: 20px 0;">
                 <p style="color: #4a5568; font-size: 14px; margin: 0 0 8px;">
-                  <strong>คลินิก:</strong>
+                  <strong>ศูนย์ความงาม:</strong>
                 </p>
                 <p style="color: #2d3748; font-size: 16px; margin: 0; font-weight: 600;">
-                  ${clinicName}
+                  ${centerName}
                 </p>
               </div>
               ` : ''}
@@ -200,10 +200,10 @@ function getInvitationEmailHTML({
           <tr>
             <td style="background-color: #f7fafc; padding: 30px 40px; border-radius: 0 0 8px 8px; text-align: center;">
               <p style="color: #a0aec0; font-size: 13px; margin: 0 0 10px;">
-                ส่งจาก Beauty Clinic Management System
+                ส่งจาก CenterIQ AI Management System
               </p>
               <p style="color: #cbd5e0; font-size: 12px; margin: 0;">
-                © ${new Date().getFullYear()} Beauty Clinic. All rights reserved.
+                © ${new Date().getFullYear()} CenterIQ AI. All rights reserved.
               </p>
             </td>
           </tr>
@@ -223,22 +223,22 @@ function getInvitationEmailHTML({
 function getInvitationEmailText({
   inviterName,
   role,
-  clinicName,
+  centerName,
   invitationLink,
   expiryDate
 }: {
   inviterName: string
   role: string
-  clinicName?: string | null
+  centerName?: string | null
   invitationLink: string
   expiryDate: string
 }) {
   return `
-คุณได้รับคำเชิญเข้าใช้งานระบบ Beauty Clinic!
+คุณได้รับคำเชิญเข้าใช้งานระบบ CenterIQ AI!
 
-${inviterName} ได้เชิญคุณเข้าร่วมระบบ Beauty Clinic Management System
+${inviterName} ได้เชิญคุณเข้าร่วมระบบ CenterIQ AI Management System
 
-${clinicName ? `คลินิก: ${clinicName}\n` : ''}
+${centerName ? `ศูนย์ความงาม: ${centerName}\n` : ''}
 บทบาทของคุณ: ${role}
 
 คลิกลิงก์ด้านล่างเพื่อสร้างบัญชีและเริ่มใช้งาน:

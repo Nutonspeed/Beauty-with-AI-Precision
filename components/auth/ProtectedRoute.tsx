@@ -23,7 +23,7 @@ interface ProtectedRouteProps {
   children: React.ReactNode;
   requireAuth?: boolean;
   requireRoles?: string[];
-  requireClinic?: boolean;
+  requireCenter?: boolean;
   fallback?: React.ReactNode;
   redirectTo?: string;
 }
@@ -40,7 +40,7 @@ interface ProtectedRouteProps {
  *   <YourPage />
  * </ProtectedRoute>
  * 
- * <ProtectedRoute requireRoles={['sales_staff', 'clinic_admin']}>
+ * <ProtectedRoute requireRoles={['sales_staff', 'center_admin']}>
  *   <SalesPage />
  * </ProtectedRoute>
  */
@@ -48,7 +48,7 @@ export function ProtectedRoute({
   children,
   requireAuth = true,
   requireRoles,
-  requireClinic = false,
+  requireCenter = false,
   fallback,
   redirectTo = '/auth/login',
 }: ProtectedRouteProps) {
@@ -73,9 +73,9 @@ export function ProtectedRoute({
       return;
     }
 
-    // Check clinic requirement
-    if (requireClinic && !user?.clinic_id) {
-      router.push('/clinic/join');
+    // Check center requirement
+    if (requireCenter && !user?.center_id) {
+      router.push('/center/join');
       return;
     }
   }, [
@@ -84,7 +84,7 @@ export function ProtectedRoute({
     requireAuth,
     requireRoles,
     hasRequiredRole,
-    requireClinic,
+    requireCenter,
     user,
     router,
     redirectTo,
@@ -105,8 +105,8 @@ export function ProtectedRoute({
     return null;
   }
 
-  // Show nothing if clinic required but not present
-  if (requireClinic && !user?.clinic_id) {
+  // Show nothing if center required but not present
+  if (requireCenter && !user?.center_id) {
     return null;
   }
 
@@ -158,11 +158,11 @@ export function RequireRole({
 }
 
 /**
- * Require clinic membership
+ * Require center membership
  */
-export function RequireClinic({ children }: { children: React.ReactNode }) {
+export function RequireCenter({ children }: { children: React.ReactNode }) {
   return (
-    <ProtectedRoute requireAuth requireClinic>
+    <ProtectedRoute requireAuth requireCenter>
       {children}
     </ProtectedRoute>
   );
@@ -173,7 +173,7 @@ export function RequireClinic({ children }: { children: React.ReactNode }) {
  */
 export function RequireSalesStaff({ children }: { children: React.ReactNode }) {
   return (
-    <RequireRole roles={['sales_staff', 'clinic_admin', 'clinic_owner', 'super_admin']}>
+    <RequireRole roles={['sales_staff', 'center_admin', 'center_owner', 'super_admin']}>
       {children}
     </RequireRole>
   );

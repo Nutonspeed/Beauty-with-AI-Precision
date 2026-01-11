@@ -1,23 +1,23 @@
 // Universal Search API
 import { NextRequest, NextResponse } from 'next/server'
-import { patientSearchService } from '@/lib/elasticsearch/services/patient-search'
+import { customerSearchService } from '@/lib/elasticsearch/services/customer-search'
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const query = searchParams.get('q') || ''
-    const type = searchParams.get('type') || 'patients'
-    const clinicId = searchParams.get('clinicId')
+    const type = searchParams.get('type') || 'customers'
+    const centerId = searchParams.get('centerId') || searchParams.get('clinicId')
     
-    if (!clinicId) {
+    if (!centerId) {
       return NextResponse.json(
-        { error: 'clinicId is required' },
+        { error: 'centerId is required' },
         { status: 400 }
       )
     }
 
     // Parse filters
-    const filters: any = { clinicId }
+    const filters: any = { centerId }
     
     // Gender filter
     const gender = searchParams.get('gender')
@@ -36,10 +36,10 @@ export async function GET(request: NextRequest) {
       filters.tags = tags.split(',')
     }
 
-    // Treatment types filter
-    const treatmentTypes = searchParams.get('treatmentTypes')
-    if (treatmentTypes) {
-      filters.treatmentTypes = treatmentTypes.split(',')
+    // Program types filter
+    const programTypes = searchParams.get('programTypes') || searchParams.get('treatmentTypes')
+    if (programTypes) {
+      filters.programTypes = programTypes.split(',')
     }
 
     // Score range filter
@@ -57,8 +57,9 @@ export async function GET(request: NextRequest) {
     let results
 
     switch (type) {
+      case 'customers':
       case 'patients':
-        results = await patientSearchService.searchPatients(query, filters, {
+        results = await customerSearchService.searchCustomers(query, filters, {
           from,
           size,
           sort: sort || undefined
@@ -109,8 +110,9 @@ export async function POST(request: NextRequest) {
     let results
 
     switch (type) {
+      case 'customers':
       case 'patients':
-        results = await patientSearchService.advancedSearch(query || {}, filters || {})
+        results = await customerSearchService.advancedSearch(query || {}, filters || {})
         break
       
       default:

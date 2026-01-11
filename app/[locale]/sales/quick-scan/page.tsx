@@ -10,7 +10,10 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { cn } from "@/lib/utils"
 // import { FloatingNotesButton } from '@/components/sales/customer-notes'
-import { analyzeSkinWithGemini } from '@/lib/ai/gemini-advisor'
+import { analyzeSkinAesthetic } from '@/lib/ai/aesthetic-hub'
+import { BeforeAfterSlider } from '@/components/ar/before-after-slider'
+import { SkinEffectProcessor } from '@/lib/ar/skin-effects'
+// import { analyzeSkinWithGemini } from '@/lib/ai/gemini-advisor'
 // import { predictSkinFuture, type SkinAgePrediction } from '@/lib/ai/skin-age-predictor'
 // import ARTreatmentPreview from '@/components/sales/ar-treatment-preview'
 // import SkinHeatmap from '@/components/sales/skin-heatmap'
@@ -36,7 +39,7 @@ interface ScanResult {
     description: string
   }>
   recommendations: Array<{
-    treatment: string
+    program: string
     sessions?: number
     price: number
     duration: string
@@ -48,7 +51,14 @@ interface ScanResult {
   face_landmarks?: any
   heatmap_data?: any
   problem_areas?: any[]
-  // futurePrediction?: SkinAgePrediction
+  specializedMetrics?: {
+    acneSeverity?: string
+    acneScore?: number
+    detectedSkinType?: string
+    skinTypeConfidence?: number
+    wrinklesScore?: number
+    spotsScore?: number
+  }
 }
 
 export default function QuickScanPage() {
@@ -72,6 +82,7 @@ export default function QuickScanPage() {
   const [customerName, setCustomerName] = useState('')
   const [customerPhone, setCustomerPhone] = useState('')
   const [customerEmail, setCustomerEmail] = useState('')
+  const [simulatedAfterImage, setSimulatedAfterImage] = useState<string | null>(null)
   const [leadId, setLeadId] = useState<string | null>(null)
   const [isSaving, setIsSaving] = useState(false)
   const [isUploadMode, setIsUploadMode] = useState(false)
@@ -122,19 +133,20 @@ export default function QuickScanPage() {
       const faceDetection: any = null
       const analysisTime = Date.now() - startTime
 
-      // Use Gemini AI for real skin analysis
-      console.log('Starting Gemini skin analysis...')
-      let geminiAnalysis;
+      // Use Aesthetic Intelligence Hub for real skin analysis
+      console.log('Starting Aesthetic Intelligence analysis...')
+      let analysis;
       try {
-        geminiAnalysis = await analyzeSkinWithGemini(frontImage, {
+        analysis = await analyzeSkinAesthetic(frontImage, {
           name: selectedCustomer?.name || t('roles.customer'),
           age: 35 // Default age, can be enhanced later
         });
-        console.log('Gemini analysis completed:', geminiAnalysis);
+        console.log('Aesthetic analysis completed:', analysis);
       } catch (error) {
-        console.error('Gemini analysis failed, using fallback:', error);
-        geminiAnalysis = {
+        console.error('Aesthetic analysis failed, using fallback:', error);
+        analysis = {
           skinAge: Math.floor(35 + Math.random() * 10),
+          skinType: 'Combination',
           concerns: [
             {
               name: t('skinHeatmap.tabs.wrinkles'),
@@ -154,21 +166,21 @@ export default function QuickScanPage() {
           ],
           recommendations: [
             {
-              treatment: t('packages.basic.name'),
+              program: t('packages.basic.name'),
               sessions: 6,
               price: 19900,
               duration: '3 months',
               expectedOutcome: t('salesQuickScan.fallback.outcome1')
             },
             {
-              treatment: t('packages.premium.name'),
+              program: t('packages.premium.name'),
               sessions: 8,
               price: 24900,
               duration: '4 months',
               expectedOutcome: t('salesQuickScan.fallback.outcome2')
             },
             {
-              treatment: t('packages.vip.name'),
+              program: t('packages.vip.name'),
               sessions: 12,
               price: 39900,
               duration: '6 months',
@@ -179,11 +191,11 @@ export default function QuickScanPage() {
       }
 
       // Generate comprehensive analysis results
-      const skinAge = geminiAnalysis.skinAge;
+      const skinAge = analysis.skinAge;
       const actualAge = 35;
 
-      const concerns = geminiAnalysis.concerns;
-      const recommendations = geminiAnalysis.recommendations;
+      const concerns = analysis.concerns;
+      const recommendations = analysis.recommendations;
 
       // Generate heatmap data
       const problemAreas = [
@@ -209,7 +221,7 @@ export default function QuickScanPage() {
 
       const heatmapData = {
         problemAreas,
-        overallSeverity: concerns.reduce((sum, c) => sum + c.severity, 0) / concerns.length
+        overallSeverity: concerns.reduce((sum: number, c: any) => sum + c.severity, 0) / concerns.length
       }
 
       // Save to database
@@ -287,16 +299,47 @@ export default function QuickScanPage() {
         actualAge,
         concerns,
         recommendations,
-        confidence_score: 0.85,
-        analysis_model: 'hybrid-v1',
+        confidence_score: analysis.confidenceScore || 0.85,
+        analysis_model: analysis.provider === 'hybrid' ? 'aesthetic-hybrid-v1' : 'gemini-pro-v1',
         face_detected: !!faceDetection,
         face_landmarks: faceDetection?.landmarks,
         heatmap_data: heatmapData,
         problem_areas: problemAreas,
-        // futurePrediction
+        specializedMetrics: analysis.specializedMetrics
       }
 
       setScanResult(result)
+      
+      // Generate Simulated After Image
+      if (images.front) {
+        try {
+          const processor = new SkinEffectProcessor()
+          const canvas = document.createElement('canvas')
+          // Use a reasonable size for simulation
+          await processor.initialize(canvas, 800, 800)
+          await processor.loadImage(images.front)
+          
+          // Map AI concerns to simulation intensity
+          const smoothing = result.concerns.find(c => c.name.includes('รูขุมขน')) ? 0.6 : 0.3
+          const brightening = result.concerns.find(c => c.name.includes('กระจ่างใส')) ? 0.4 : 0.2
+          const spotRemoval = result.concerns.find(c => c.name.includes('จุดด่างดำ')) ? 0.7 : 0.2
+          
+          processor.applyEffects({
+            smoothing,
+            brightening,
+            spotRemoval,
+            rednessReduction: 0.3,
+            wrinkleReduction: 0.5
+          })
+          
+          const afterDataUrl = processor.getDataURL('jpeg', 0.8)
+          setSimulatedAfterImage(afterDataUrl)
+          processor.dispose()
+        } catch (simError) {
+          console.error('Failed to generate simulation:', simError)
+        }
+      }
+
       setStep('results')
       
       // toast({
@@ -592,7 +635,7 @@ export default function QuickScanPage() {
                       />
                       <canvas ref={canvasRef} className="hidden" />
 
-                      {/* Clinical Face Guide Overlay */}
+                      {/* Aesthetic Face Guide Overlay */}
                       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                         <motion.div
                           animate={{
@@ -686,7 +729,7 @@ export default function QuickScanPage() {
               </motion.div>
             )}
 
-            {/* Results Step - Premium Clinical Report */}
+            {/* Results Step - Premium Aesthetic Report */}
             {step === 'results' && scanResult && selectedCustomer && (
               <motion.div
                 key="results"
@@ -698,13 +741,25 @@ export default function QuickScanPage() {
               >
                 {/* Precision Summary Header */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  {/* Visual Simulation Node (New!) */}
+                  {simulatedAfterImage && capturedImages.front && (
+                    <div className="lg:col-span-3">
+                      <BeforeAfterSlider 
+                        beforeImage={capturedImages.front}
+                        afterImage={simulatedAfterImage}
+                        title="Aesthetic Outcome Simulation"
+                        description="Visual prediction of your skin transformation / จำลองผลลัพธ์การเปลี่ยนแปลงของผิว"
+                      />
+                    </div>
+                  )}
+
                   <Card className="lg:col-span-2 relative overflow-hidden border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] p-10 flex flex-col justify-center">
                     <div className="absolute top-0 right-0 p-8 opacity-5">
                       <Users className="w-40 h-40 text-pink-500" />
                     </div>
                     <div className="relative z-10 space-y-6">
                       <Badge className="bg-pink-500/10 text-pink-400 border-pink-500/20 px-4 py-1 rounded-full text-[10px] font-black tracking-widest uppercase">
-                        Clinical Biological Profile
+                        Aesthetic Biological Profile
                       </Badge>
                       <div className="flex items-baseline gap-4">
                         <h2 className="text-7xl font-bold text-white tracking-tighter">
@@ -712,7 +767,7 @@ export default function QuickScanPage() {
                         </h2>
                         <div className="space-y-1">
                           <p className="text-2xl text-slate-400 font-light leading-none">{t('salesQuickScan.results.years')}</p>
-                          <p className="text-xs font-black uppercase tracking-widest text-slate-600">Bio-Age Diagnostic</p>
+                          <p className="text-xs font-black uppercase tracking-widest text-slate-600">Aesthetic Age Analysis</p>
                         </div>
                       </div>
                       <div className="h-px w-full bg-gradient-to-r from-pink-500/30 via-transparent to-transparent" />
@@ -721,6 +776,12 @@ export default function QuickScanPage() {
                           <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Actual Age</p>
                           <p className="text-xl text-white font-light">{scanResult.actualAge} Years</p>
                         </div>
+                        {scanResult.specializedMetrics?.detectedSkinType && (
+                          <div className="space-y-1">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-pink-500">Detected Type</p>
+                            <p className="text-xl text-white font-light capitalize">{scanResult.specializedMetrics.detectedSkinType}</p>
+                          </div>
+                        )}
                         <div className="space-y-1">
                           <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Age Variance</p>
                           <p className={cn("text-xl font-bold", scanResult.skinAge > scanResult.actualAge ? "text-rose-500" : "text-emerald-500")}>
@@ -728,7 +789,7 @@ export default function QuickScanPage() {
                           </p>
                         </div>
                         <div className="space-y-1">
-                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Confidence</p>
+                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Precision</p>
                           <p className="text-xl text-pink-400 font-light">{(scanResult.confidence_score || 0.85 * 100).toFixed(0)}%</p>
                         </div>
                       </div>
@@ -740,6 +801,25 @@ export default function QuickScanPage() {
                       <div className="space-y-4">
                         <Zap className="w-10 h-10 text-white opacity-80" />
                         <h3 className="text-2xl font-bold leading-tight">Precision Recommendation</h3>
+                        {scanResult.specializedMetrics?.acneSeverity && (
+                          <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-md mb-2">
+                            Acne Node: {scanResult.specializedMetrics.acneSeverity} ({scanResult.specializedMetrics.acneScore}%)
+                          </Badge>
+                        )}
+                        {(scanResult.specializedMetrics?.wrinklesScore !== undefined || scanResult.specializedMetrics?.spotsScore !== undefined) && (
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {scanResult.specializedMetrics?.wrinklesScore !== undefined && (
+                              <Badge variant="outline" className="border-pink-500/30 text-pink-400 bg-pink-500/5 text-[9px] uppercase font-black tracking-widest">
+                                Wrinkle Intensity: {scanResult.specializedMetrics.wrinklesScore}%
+                              </Badge>
+                            )}
+                            {scanResult.specializedMetrics?.spotsScore !== undefined && (
+                              <Badge variant="outline" className="border-cyan-500/30 text-cyan-400 bg-cyan-500/5 text-[9px] uppercase font-black tracking-widest">
+                                Pigmentation Index: {scanResult.specializedMetrics.spotsScore}%
+                              </Badge>
+                            )}
+                          </div>
+                        )}
                         <p className="text-white/70 font-light leading-relaxed text-sm">
                           Based on 468-point mapping, we've synthesized an optimized protocol for {selectedCustomer.name}.
                         </p>
@@ -784,19 +864,19 @@ export default function QuickScanPage() {
                     </CardContent>
                   </Card>
 
-                  {/* High-fidelity Treatment Roadmap */}
+                  {/* High-fidelity Aesthetic Roadmap */}
                   <Card className="border-white/5 bg-white/[0.01] backdrop-blur-md rounded-[3rem] overflow-hidden">
                     <CardHeader className="p-10 pb-6 border-b border-white/5">
                       <CardTitle className="text-xs font-black uppercase tracking-[0.25em] flex items-center gap-4 text-emerald-400">
                         <Award className="w-5 h-5" />
-                        Diagnostic Roadmap
+                        Aesthetic Roadmap
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="p-10 space-y-6">
                       {scanResult.recommendations.map((rec, idx) => (
                         <div key={idx} className="p-6 rounded-3xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all group">
                           <div className="flex justify-between items-start mb-4">
-                            <h4 className="font-bold text-white text-xl tracking-tight group-hover:text-emerald-400 transition-colors">{rec.treatment}</h4>
+                            <h4 className="font-bold text-white text-xl tracking-tight group-hover:text-emerald-400 transition-colors">{rec.program}</h4>
                             <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest">
                               ฿{rec.price.toLocaleString()}
                             </Badge>
@@ -840,7 +920,7 @@ export default function QuickScanPage() {
                     size="lg"
                     className="flex-1 h-16 bg-emerald-600 hover:bg-emerald-500 text-white border-0 shadow-2xl shadow-emerald-600/20 rounded-2xl font-black tracking-widest uppercase text-[10px] transition-transform hover:scale-[1.02]"
                   >
-                    Generate Clinical Report (PDF)
+                    Generate Aesthetic Report (PDF)
                   </Button>
                 </div>
               </motion.div>

@@ -66,7 +66,7 @@ export default function BranchesPage() {
                 Global Node Distribution
               </Badge>
               <h1 className="text-5xl md:text-8xl font-bold tracking-tighter text-white leading-[0.9] italic">
-                Clinical<br />
+                Aesthetic<br />
                 <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent not-italic">Network</span>
               </h1>
               <p className="text-xl text-slate-500 font-light tracking-widest max-w-2xl italic leading-relaxed">

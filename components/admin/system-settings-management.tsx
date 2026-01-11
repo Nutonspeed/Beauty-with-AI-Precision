@@ -54,10 +54,10 @@ interface SystemSettings {
     pushNotifications: boolean;
   };
   limits: {
-    maxClinicsPerOwner: number;
-    maxStaffPerClinic: number;
+    maxCentersPerOwner: number;
+    maxStaffPerCenter: number;
     maxAnalysesPerDay: number;
-    maxStoragePerClinicMB: number;
+    maxStoragePerCenterMB: number;
     sessionTimeoutMinutes: number;
   };
   security: {
@@ -77,9 +77,9 @@ interface SystemSettings {
 
 const defaultSettings: SystemSettings = {
   general: {
-    siteName: 'ClinicIQ',
-    siteUrl: 'https://cliniciq.app',
-    supportEmail: 'support@cliniciq.app',
+    siteName: 'CenterIQ',
+    siteUrl: 'https://centeriq.app',
+    supportEmail: 'support@centeriq.app',
     defaultLanguage: 'th',
     maintenanceMode: false,
     allowNewRegistrations: true,
@@ -93,10 +93,10 @@ const defaultSettings: SystemSettings = {
     pushNotifications: true,
   },
   limits: {
-    maxClinicsPerOwner: 5,
-    maxStaffPerClinic: 50,
+    maxCentersPerOwner: 5,
+    maxStaffPerCenter: 50,
     maxAnalysesPerDay: 100,
-    maxStoragePerClinicMB: 5000,
+    maxStoragePerCenterMB: 5000,
     sessionTimeoutMinutes: 60,
   },
   security: {
@@ -364,10 +364,10 @@ export default function SystemSettingsManagement() {
                 <CardContent className="p-10 lg:p-12">
                   <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {[
-                      { key: 'maxClinicsPerOwner', label: t('systemSettings.limits.maxClinics'), icon: Building2 },
-                      { key: 'maxStaffPerClinic', label: t('systemSettings.limits.maxStaff'), icon: Users },
+                      { key: 'maxCentersPerOwner', label: t('systemSettings.limits.maxCenters'), icon: Building2 },
+                      { key: 'maxStaffPerCenter', label: t('systemSettings.limits.maxStaff'), icon: Users },
                       { key: 'maxAnalysesPerDay', label: t('systemSettings.limits.maxAnalyses'), icon: Brain },
-                      { key: 'maxStoragePerClinicMB', label: t('systemSettings.limits.maxStorage'), icon: Database },
+                      { key: 'maxStoragePerCenterMB', label: t('systemSettings.limits.maxStorage'), icon: Database },
                       { key: 'sessionTimeoutMinutes', label: t('systemSettings.limits.sessionTimeout'), icon: Clock },
                     ].map(({ key, label, icon: Icon }) => (
                       <div key={key} className="space-y-4 p-6 rounded-[2rem] bg-white/[0.02] border border-white/5">

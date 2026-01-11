@@ -26,19 +26,19 @@
   }
 }
 
-/* Orb radial gradient backgrounds */
-.bg-orb-blue {
-  background: radial-gradient(circle, rgba(59, 130, 246, 0.6) 0%, rgba(59, 130, 246, 0.2) 50%, transparent 100%);
-}
-.bg-orb-purple {
-  background: radial-gradient(circle, rgba(168, 85, 247, 0.5) 0%, rgba(168, 85, 247, 0.2) 50%, transparent 100%);
-}
-.bg-orb-pink {
-  background: radial-gradient(circle, rgba(236, 72, 153, 0.4) 0%, rgba(236, 72, 153, 0.15) 50%, transparent 100%);
-}
-.bg-orb-cyan {
-  background: radial-gradient(circle, rgba(14, 165, 233, 0.5) 0%, rgba(14, 165, 233, 0.2) 50%, transparent 100%);
-}
+  /* Orb radial gradient backgrounds - Updated for light mode */
+  .bg-orb-blue {
+    background: radial-gradient(circle, rgba(37, 99, 235, 0.15) 0%, rgba(37, 99, 235, 0.05) 50%, transparent 100%);
+  }
+  .bg-orb-purple {
+    background: radial-gradient(circle, rgba(147, 51, 234, 0.1) 0%, rgba(147, 51, 234, 0.03) 50%, transparent 100%);
+  }
+  .bg-orb-pink {
+    background: radial-gradient(circle, rgba(236, 72, 153, 0.1) 0%, rgba(236, 72, 153, 0.03) 50%, transparent 100%);
+  }
+  .bg-orb-cyan {
+    background: radial-gradient(circle, rgba(14, 165, 233, 0.15) 0%, rgba(14, 165, 233, 0.05) 50%, transparent 100%);
+  }
 .bg-orb-violet {
   background: radial-gradient(circle, rgba(139, 92, 246, 0.5) 0%, rgba(139, 92, 246, 0.2) 50%, transparent 100%);
 }
@@ -62,124 +62,119 @@
 .bg-avatar-5 { background: linear-gradient(135deg, hsl(300, 70%, 60%), hsl(340, 70%, 50%)); }
 
 :root {
-  /* Medical-grade blue and white theme for trustworthiness */
-  --background: 0 0% 100%;
+  /* High-so Light Tech Theme: White & Royal Blue */
+  --background: 210 40% 98%;
   --foreground: 222.2 84% 4.9%;
   --card: 0 0% 100%;
   --card-foreground: 222.2 84% 4.9%;
   --popover: 0 0% 100%;
   --popover-foreground: 222.2 84% 4.9%;
 
-  /* Primary: ClinicIQ teal */
-  --primary: 187 92% 43%;
-  --primary-rgb: 9, 182, 212;
+  /* Primary: Deep Royal Blue for Premium feel */
+  --primary: 221.2 83.2% 53.3%;
+  --primary-rgb: 37, 99, 235;
   --primary-foreground: 210 40% 98%;
 
-  /* Premium Elevations */
-  --shadow-premium: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
-  --shadow-glow: 0 0 20px rgba(9, 182, 212, 0.2);
+  /* Premium Elevations - Softer and cleaner */
+  --shadow-premium: 0 20px 50px -12px rgba(0, 0, 0, 0.05);
+  --shadow-glow: 0 0 30px rgba(37, 99, 235, 0.1);
 
-  /* Secondary: Light blue accent */
-  --secondary: 210 40% 96.1%;
+  /* Secondary: Electric Blue / Cyan for High-tech feel */
+  --secondary: 199 89% 48%;
   --secondary-foreground: 222.2 47.4% 11.2%;
 
-  /* Muted: Soft gray-blue */
+  /* Muted: Clean Slate Gray */
   --muted: 210 40% 96.1%;
   --muted-foreground: 215.4 16.3% 46.9%;
 
-  /* Accent: Teal-cyan with real contrast (light mode) */
-  --accent: 189 88% 48%;
-  --accent-foreground: 210 40% 98%;
+  /* Accent: Royal Blue with subtle opacity */
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222.2 47.4% 11.2%;
 
   --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 210 40% 98%;
 
   --border: 214.3 31.8% 91.4%;
   --input: 214.3 31.8% 91.4%;
-  --ring: 187 92% 43%;
+  --ring: 221.2 83.2% 53.3%;
 
-  /* Chart colors - medical theme */
-  --chart-1: 221.2 83.2% 53.3%;
-  --chart-2: 212 95% 68%;
-  --chart-3: 216 92% 60%;
-  --chart-4: 210 98% 78%;
-  --chart-5: 212 97% 87%;
+  /* Radius: Refined and modern */
+  --radius: 1.25rem;
 
-  --radius: 0.85rem;
-
-  --sidebar: 0 0% 98%;
+  /* Sidebar: Clean light interface */
+  --sidebar: 0 0% 100%;
   --sidebar-foreground: 240 5.3% 26.1%;
-  --sidebar-primary: 240 5.9% 10%;
+  --sidebar-primary: 221.2 83.2% 53.3%;
   --sidebar-primary-foreground: 0 0% 98%;
   --sidebar-accent: 240 4.8% 95.9%;
   --sidebar-accent-foreground: 240 5.9% 10%;
   --sidebar-border: 220 13% 91%;
-  --sidebar-ring: 187 92% 43%;
+  --sidebar-ring: 221.2 83.2% 53.3%;
 
-  /* Beauty Clinic AI extension palette */
-  --bc-bg: #FCFCFC;
-  --bc-bg-alt: #FEF3F4;
+  /* Beauty AI Extension Palette - Updated for Light Mode */
+  --bc-bg: #F8FAFC;
+  --bc-bg-alt: #EFF6FF;
   --bc-surface: #FFFFFF;
-  --bc-surface-muted: #F7F7F8;
-  --bc-text-primary: #1A1C1E;
-  --bc-text-secondary: #42474E;
-  --bc-text-faint: #72777F;
-  --bc-accent-pink: #FF6B9D;
-  --bc-accent-petal: #F9D4E6;
-  --bc-accent-purple: #C084FC;
-  --bc-accent-orchid: #C89BF8;
-  --bc-accent-yellow: #FBBF24;
-  --bc-accent-mint: #B8F5D9;
-  --bc-accent-green: #34D399;
-  --bc-accent-neutral: #EEDFD5;
-  --bc-gradient-hero: linear-gradient(135deg,#FF6B9D 0%,#C084FC 50%,#F9D4E6 100%);
-  --bc-gradient-mint: linear-gradient(135deg,#B8F5D9 0%,#C89BF8 100%);
+  --bc-surface-muted: #F1F5F9;
+  --bc-text-primary: #0F172A;
+  --bc-text-secondary: #334155;
+  --bc-text-faint: #64748B;
+  --bc-accent-pink: #EC4899;
+  --bc-accent-petal: #FDF2F8;
+  --bc-accent-blue: #2563EB;
+  --bc-accent-cyan: #0EA5E9;
+  --bc-accent-green: #10B981;
+  --bc-accent-neutral: #F8FAFC;
+  --bc-gradient-hero: linear-gradient(135deg, #2563EB 0%, #0EA5E9 50%, #EFF6FF 100%);
+  --bc-gradient-tech: linear-gradient(135deg, #1E40AF 0%, #3B82F6 100%);
 }
 
 .dark {
-  --background: 224 71% 4%;
-  --foreground: 213 31% 91%;
-  --card: 224 71% 4%;
-  --card-foreground: 213 31% 91%;
-  --popover: 224 71% 4%;
-  --popover-foreground: 215 20.2% 65.1%;
-  /* Dark primary adjusted to deeper teal */
-  --primary: 189 84% 39%;
-  --primary-rgb: 13, 148, 172;
+  --background: 222.2 84% 4.9%;
+  --foreground: 210 40% 98%;
+  --card: 222.2 84% 4.9%;
+  --card-foreground: 210 40% 98%;
+  --popover: 222.2 84% 4.9%;
+  --popover-foreground: 210 40% 98%;
+  
+  /* Primary: Vibrant Blue for Dark Mode */
+  --primary: 217.2 91.2% 59.8%;
+  --primary-rgb: 59, 130, 246;
   --primary-foreground: 222.2 47.4% 11.2%;
-  --secondary: 222.2 47.4% 11.2%;
+  
+  --secondary: 217.2 32.6% 17.5%;
   --secondary-foreground: 210 40% 98%;
-  --muted: 223 47% 11%;
-  --muted-foreground: 215.4 16.3% 56.9%;
-  --accent: 216 34% 17%;
+  
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+  
+  --accent: 217.2 32.6% 17.5%;
   --accent-foreground: 210 40% 98%;
+  
   --destructive: 0 62.8% 30.6%;
   --destructive-foreground: 210 40% 98%;
-  --border: 216 34% 17%;
-  --input: 216 34% 17%;
-  --ring: 189 84% 39%;
-  --chart-1: 220 70% 50%;
-  --chart-2: 160 60% 45%;
-  --chart-3: 30 80% 55%;
-  --chart-4: 280 65% 60%;
-  --chart-5: 340 75% 55%;
-  --sidebar: 240 5.9% 10%;
+  
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 224.3 76.3% 48%;
+
+  --sidebar: 222.2 84% 4.9%;
   --sidebar-foreground: 240 4.8% 95.9%;
   --sidebar-primary: 224.3 76.3% 48%;
   --sidebar-primary-foreground: 0 0% 100%;
   --sidebar-accent: 240 3.7% 15.9%;
   --sidebar-accent-foreground: 240 4.8% 95.9%;
   --sidebar-border: 240 3.7% 15.9%;
-  --sidebar-ring: 189 84% 39%;
+  --sidebar-ring: 217.2 91.2% 59.8%;
 }
 
-/* Glassmorphism Classes */
+/* Glassmorphism Classes - Refined for light mode */
 .glass-panel {
-  @apply bg-white/5 backdrop-blur-xl border border-white/10 shadow-glass;
+  @apply bg-white/40 backdrop-blur-2xl border border-white/40 shadow-premium;
 }
 
 .premium-card {
-  @apply transition-all duration-500 hover:shadow-premium-hover border border-border/50 hover:border-primary/20;
+  @apply transition-all duration-500 hover:shadow-premium border border-white bg-white/60 backdrop-blur-xl hover:border-primary/10;
 }
 
 .glow-on-hover {
@@ -396,24 +391,22 @@
     padding: 0;
   }
 
-  /* Custom Futuristic Scrollbar */
+  /* Custom Futuristic Scrollbar - Cleaner for light mode */
   ::-webkit-scrollbar {
-    width: 4px;
+    width: 6px;
   }
 
   ::-webkit-scrollbar-track {
-    background: #020617;
+    background: #F1F5F9;
   }
 
   ::-webkit-scrollbar-thumb {
-    background: linear-gradient(to bottom, #0ea5e9, #ec4899);
+    background: #CBD5E1;
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(14, 165, 233, 0.5);
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(to bottom, #38bdf8, #f472b6);
-    box-shadow: 0 0 15px rgba(14, 165, 233, 0.8);
+    background: #94A3B8;
   }
 
   /* Firefox */

@@ -4,7 +4,7 @@ import { randomUUID } from 'crypto'
 
 export type LeadsListParams = {
   userId: string
-  clinicId: string | null
+  centerId: string | null
   status: string | null
   search: string | null
   campaign: string | null
@@ -102,8 +102,8 @@ export async function listLeads(params: LeadsListParams) {
     .order('created_at', { ascending: false })
     .range(params.offset, params.offset + params.limit - 1)
 
-  if (params.clinicId) {
-    query = query.eq('clinic_id', params.clinicId)
+  if (params.centerId) {
+    query = query.eq("center_id", params.centerId)
   }
 
   if (params.status && params.status !== 'all') {
@@ -147,7 +147,7 @@ function ensureEmail(input: any) {
   return { email: generated, emailPlaceholder: true }
 }
 
-export async function createLead(userId: string, clinicId: string | null, body: any) {
+export async function createLead(userId: string, centerId: string | null, body: any) {
   const supabase = await createServerClient()
 
   if (!body?.name) {
@@ -175,7 +175,7 @@ export async function createLead(userId: string, clinicId: string | null, body: 
 
   const leadData: any = {
     sales_user_id: userId,
-    clinic_id: clinicId,
+    center_id: centerId,
     customer_user_id: body?.customer_user_id ?? null,
     name: body.name,
     email,
@@ -186,7 +186,7 @@ export async function createLead(userId: string, clinicId: string | null, body: 
     source,
     primary_concern: body?.primary_concern ?? body?.concern ?? null,
     secondary_concerns: body?.secondary_concerns ?? null,
-    interested_treatments: body?.interested_treatments ?? null,
+    interested_programs: body?.interested_programs ?? body?.interested_treatments ?? null,
     estimated_value: body?.estimated_value ?? (metadata as any)?.estimated_value ?? 0,
     budget_range_min: body?.budget_range_min ?? body?.budget_min ?? null,
     budget_range_max: body?.budget_range_max ?? body?.budget_max ?? null,
@@ -240,11 +240,11 @@ export async function createLead(userId: string, clinicId: string | null, body: 
   throw error
 }
 
-export async function getLeadById(userId: string, clinicId: string | null, id: string) {
+export async function getLeadById(userId: string, centerId: string | null, id: string) {
   const supabase = await createServerClient()
 
   let query = supabase
-    .from('sales_leads')
+    .from("sales_leads")
     .select(
       `
         *,
@@ -252,17 +252,17 @@ export async function getLeadById(userId: string, clinicId: string | null, id: s
         customer:users!sales_leads_customer_user_id_fkey(full_name, email)
       `,
     )
-    .eq('id', id)
-    .eq('sales_user_id', userId)
+    .eq("id", id)
+    .eq("sales_user_id", userId)
 
-  if (clinicId) query = query.eq('clinic_id', clinicId)
+  if (centerId) query = query.eq("center_id", centerId)
 
   const { data, error } = await query.single()
   if (error) throw error
   return data
 }
 
-export async function updateLead(userId: string, clinicId: string | null, id: string, body: any) {
+export async function updateLead(userId: string, centerId: string | null, id: string, body: any) {
   const supabase = await createServerClient()
 
   if (body?.email) {
@@ -299,7 +299,8 @@ export async function updateLead(userId: string, clinicId: string | null, id: st
     ['primary_concern', 'primary_concern'],
     ['concern', 'primary_concern'],
     ['secondary_concerns', 'secondary_concerns'],
-    ['interested_treatments', 'interested_treatments'],
+    ['interested_programs', 'interested_programs'],
+    ['interested_treatments', 'interested_programs'],
     ['estimated_value', 'estimated_value'],
     ['budget_range_min', 'budget_range_min'],
     ['budget_min', 'budget_range_min'],
@@ -335,7 +336,7 @@ export async function updateLead(userId: string, clinicId: string | null, id: st
     .eq('id', id)
     .eq('sales_user_id', userId)
 
-  if (clinicId) query = query.eq('clinic_id', clinicId)
+  if (centerId) query = query.eq('center_id', centerId)
 
   const { data, error } = await query
     .select(
@@ -351,7 +352,7 @@ export async function updateLead(userId: string, clinicId: string | null, id: st
   return data
 }
 
-export async function softDeleteLead(userId: string, clinicId: string | null, id: string) {
+export async function softDeleteLead(userId: string, centerId: string | null, id: string) {
   const supabase = await createServerClient()
 
   let query = supabase
@@ -360,7 +361,7 @@ export async function softDeleteLead(userId: string, clinicId: string | null, id
     .eq('id', id)
     .eq('sales_user_id', userId)
 
-  if (clinicId) query = query.eq('clinic_id', clinicId)
+  if (centerId) query = query.eq('center_id', centerId)
 
   const { error } = await query
   if (error) throw error

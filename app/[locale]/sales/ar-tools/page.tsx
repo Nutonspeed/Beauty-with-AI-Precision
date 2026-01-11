@@ -2,7 +2,7 @@
 
 /**
  * AR Tools Hub - AR/AI tools for Sales Team
- * Covers all aesthetic clinic branches
+ * Covers all aesthetic center branches
  */
 
 import { Header } from "@/components/header";
@@ -103,7 +103,7 @@ export default function ARToolsPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `treatment-preview-${Date.now()}.jpg`;
+    a.download = `program-preview-${Date.now()}.jpg`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -148,7 +148,7 @@ export default function ARToolsPage() {
                 <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent not-italic">Nodes</span>
               </h1>
               <p className="text-xl text-slate-500 font-light tracking-widest max-w-2xl italic leading-relaxed">
-                Synchronize clinical transformations through real-time dimensional rendering engines.
+                Synchronize aesthetic transformations through real-time dimensional rendering engines.
               </p>
             </motion.div>
             
@@ -172,7 +172,7 @@ export default function ARToolsPage() {
                     <Maximize2 className="h-6 w-6 text-pink-500" />
                     Operational Control
                   </CardTitle>
-                  <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Initialize diagnostic rendering parameters</CardDescription>
+                  <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Initialize aesthetic rendering parameters</CardDescription>
                 </CardHeader>
                 <CardContent className="p-10 lg:p-12 space-y-8">
                   <div className="space-y-6">

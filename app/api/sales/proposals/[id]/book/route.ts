@@ -20,7 +20,7 @@ export async function POST(
     const service = createServiceClient()
     const { data: userRow, error: userErr } = await service
       .from("users")
-      .select("role, clinic_id")
+      .select("role, center_id")
       .eq("id", user.id)
       .single()
     if (userErr || !userRow || !canAccessSales(userRow.role)) {
@@ -30,7 +30,7 @@ export async function POST(
     const body = await request.json().catch(() => ({}))
     const { booking_date, booking_time, service_id, staff_id, customer_notes, internal_notes } = body
 
-    const booking = await bookFromProposal(user.id, userRow.clinic_id ?? null, id, {
+    const booking = await bookFromProposal(user.id, userRow.center_id ?? null, id, {
       booking_date,
       booking_time,
       service_id,

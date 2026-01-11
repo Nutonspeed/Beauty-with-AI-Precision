@@ -68,7 +68,7 @@ export interface PersonalizedActionPlan {
 export interface ActionPlanPreferences {
   budget?: 'low' | 'medium' | 'high';
   timeCommitment?: 'minimal' | 'moderate' | 'intensive';
-  professionalTreatments?: boolean;
+  professionalPrograms?: boolean;
   naturalProducts?: boolean;
   skinType?: 'oily' | 'dry' | 'combination' | 'sensitive' | 'normal';
   allergies?: string[];
@@ -218,7 +218,7 @@ export class ActionPlanGenerator {
     // Add retinol/retinoid
     if (this.hasConcernType(['wrinkles', 'fine_lines', 'texture', 'acne'])) {
       actions.push(this.createAction({
-        title: 'Start Retinol Treatment',
+        title: 'Start Retinol Program',
         description: 'Introduce retinol 0.25-0.5% 2-3 nights per week. Gradually increase frequency over 4-6 weeks.',
         category: 'daily',
         priority: 'short-term',
@@ -250,7 +250,7 @@ export class ActionPlanGenerator {
     if (severeConcerns.length > 0) {
       actions.push(this.createAction({
         title: 'Schedule Dermatologist Consultation',
-        description: 'Book appointment with board-certified dermatologist to discuss prescription options and professional treatments.',
+        description: 'Book appointment with board-certified dermatologist to discuss prescription options and professional programs.',
         category: 'professional',
         priority: 'short-term',
         concernTypes: severeConcerns.map(c => c.type),
@@ -275,10 +275,10 @@ export class ActionPlanGenerator {
   private generateLongTermActions(concerns: InteractiveConcern[]): ActionPlanSection {
     const actions: ActionItem[] = [];
 
-    // Professional treatments
-    if (this.preferences.professionalTreatments !== false) {
+    // Professional programs
+    if (this.preferences.professionalPrograms !== false) {
       concerns.slice(0, 3).forEach(concern => {
-        const professionalActions = this.getProfessionalTreatments(concern);
+        const professionalActions = this.getProfessionalPrograms(concern);
         actions.push(...professionalActions);
       });
     }
@@ -298,10 +298,10 @@ export class ActionPlanGenerator {
       }));
     }
 
-    // Maintenance treatments
+    // Maintenance programs
     actions.push(this.createAction({
       title: 'Regular Professional Facials',
-      description: 'Schedule monthly facials for deep cleansing, extractions, and professional-grade treatments.',
+      description: 'Schedule monthly facials for deep cleansing, extractions, and professional-grade programs.',
       category: 'monthly',
       priority: 'long-term',
       concernTypes: ['blackheads', 'texture', 'dullness'],
@@ -340,7 +340,7 @@ export class ActionPlanGenerator {
     return {
       priority: 'long-term',
       title: 'Long-Term Goals',
-      description: 'Advanced treatments and lifestyle changes for sustained improvement over 3-12 months.',
+      description: 'Advanced programs and lifestyle changes for sustained improvement over 3-12 months.',
       actions,
       estimatedTimeframe: '3-12 months',
     };
@@ -356,8 +356,8 @@ export class ActionPlanGenerator {
     switch (concern.type) {
       case 'acne':
         actions.push(this.createAction({
-          title: 'Spot Treatment for Acne',
-          description: 'Apply benzoyl peroxide 2.5-5% or salicylic acid spot treatment to active breakouts.',
+          title: 'Spot Program for Acne',
+          description: 'Apply benzoyl peroxide 2.5-5% or salicylic acid spot program to active breakouts.',
           category: 'daily',
           priority: 'immediate',
           concernTypes: ['acne'],
@@ -451,9 +451,9 @@ export class ActionPlanGenerator {
   }
 
   /**
-   * Get professional treatment recommendations
+   * Get professional program recommendations
    */
-  private getProfessionalTreatments(concern: InteractiveConcern): ActionItem[] {
+  private getProfessionalPrograms(concern: InteractiveConcern): ActionItem[] {
     const actions: ActionItem[] = [];
 
     if (concern.averageSeverity < 6) return actions; // Only recommend for moderate-severe
@@ -463,7 +463,7 @@ export class ActionPlanGenerator {
       case 'fine_lines':
         if (this.preferences.budget !== 'low') {
           actions.push(this.createAction({
-            title: 'Botox Treatment',
+            title: 'Botox Program',
             description: 'Consider Botox for dynamic wrinkles in forehead, frown lines, and crow\'s feet. Results last 3-4 months.',
             category: 'professional',
             priority: 'long-term',
@@ -505,7 +505,7 @@ export class ActionPlanGenerator {
 
       case 'large_pores':
         actions.push(this.createAction({
-          title: 'Laser Treatment',
+          title: 'Laser Program',
           description: 'Fractional laser or IPL to reduce pore size and improve skin texture. Requires consultation.',
           category: 'professional',
           priority: 'long-term',

@@ -16,7 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Sparkles, Download, Scissors } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 
-const TREATMENTS = [
+const PROGRAMS = [
   { id: "fue", effectiveness: 95, pricePerGraft: 80 },
   { id: "dhi", effectiveness: 92, pricePerGraft: 100 },
   { id: "prp", effectiveness: 70, pricePerSession: 8000 },
@@ -27,7 +27,7 @@ const TREATMENTS = [
 interface HairRestorationProps {
   beforeImage: string;
   onExport?: (imageData: Blob) => void;
-  onGenerateProposal?: (treatment: any) => void;
+  onGenerateProposal?: (program: any) => void;
   className?: string;
   isEnterprise?: boolean;
 }
@@ -42,7 +42,7 @@ export function HairRestorationSimulator({
   const t = useTranslations();
   const locale = useLocale();
   const [selectedZone, setSelectedZone] = useState("frontal");
-  const [selectedTreatment, setSelectedTreatment] = useState("fue");
+  const [selectedProgram, setSelectedProgram] = useState("fue");
   const [isProcessing, setIsProcessing] = useState(false);
   const [comparison, setComparison] = useState(50);
   const [afterImage, setAfterImage] = useState("");
@@ -65,26 +65,26 @@ export function HairRestorationSimulator({
     eyebrows: { id: "eyebrows", name: t("hairRestorationSimulator.areas.eyebrows") },
   };
 
-  const LOCAL_TREATMENTS = TREATMENTS.map((tr) => ({
+  const LOCAL_PROGRAMS = PROGRAMS.map((tr) => ({
     ...tr,
-    name: t(`hairRestorationSimulator.treatments.${tr.id}.name`),
-    description: t(`hairRestorationSimulator.treatments.${tr.id}.description`),
+    name: t(`hairRestorationSimulator.programs.${tr.id}.name`),
+    description: t(`hairRestorationSimulator.programs.${tr.id}.description`),
   }));
 
   useEffect(() => {
-    const treatment = TREATMENTS.find((t) => t.id === selectedTreatment);
-    if (!treatment) return;
+    const program = PROGRAMS.find((t) => t.id === selectedProgram);
+    if (!program) return;
 
     const grafts = Math.round((settings.density + settings.coverage) * 15);
     setEstimatedGrafts(grafts);
 
-    if (treatment.pricePerGraft) {
-      setEstimatedCost(grafts * treatment.pricePerGraft);
-    } else if (treatment.pricePerSession) {
+    if (program.pricePerGraft) {
+      setEstimatedCost(grafts * program.pricePerGraft);
+    } else if (program.pricePerSession) {
       const sessions = Math.ceil(settings.density / 20);
-      setEstimatedCost(sessions * treatment.pricePerSession);
+      setEstimatedCost(sessions * program.pricePerSession);
     }
-  }, [selectedTreatment, settings]);
+  }, [selectedProgram, settings]);
 
   const generateEnhancedImage = useCallback(() => {
     if (!beforeImage) return;
@@ -143,7 +143,7 @@ export function HairRestorationSimulator({
   }, [generateEnhancedImage]);
 
   const selectedZoneInfo = HAIR_ZONES[selectedZone as keyof typeof HAIR_ZONES];
-  const selectedTreatmentInfo = LOCAL_TREATMENTS.find((t) => t.id === selectedTreatment);
+  const selectedProgramInfo = LOCAL_PROGRAMS.find((t) => t.id === selectedProgram);
 
   return (
     <Card className={`bg-gradient-to-br from-gray-900 to-black border-white/10 ${className}`}>
@@ -206,10 +206,10 @@ export function HairRestorationSimulator({
                 </div>
               </div>
               <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-black/60 text-white text-sm">
-                {t("arTreatmentPreview.before")}
+                {t("arProgramPreview.before")}
               </div>
               <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-sm">
-                {t("arTreatmentPreview.after")}
+                {t("arProgramPreview.after")}
               </div>
               {isProcessing && (
                 <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
@@ -226,7 +226,7 @@ export function HairRestorationSimulator({
         <Tabs defaultValue="density" className="w-full">
           <TabsList className="grid grid-cols-2 bg-white/5">
             <TabsTrigger value="density">{t("hairRestorationSimulator.density")}</TabsTrigger>
-            <TabsTrigger value="treatment">{t("salesArTools.mobileTitle")}</TabsTrigger>
+            <TabsTrigger value="program">{t("salesArTools.mobileTitle")}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="density" className="space-y-4 mt-4">
@@ -271,23 +271,23 @@ export function HairRestorationSimulator({
             </div>
           </TabsContent>
 
-          <TabsContent value="treatment" className="space-y-3 mt-4">
-            {LOCAL_TREATMENTS.map((treatment) => (
+          <TabsContent value="program" className="space-y-3 mt-4">
+            {LOCAL_PROGRAMS.map((program) => (
               <motion.div
-                key={treatment.id}
+                key={program.id}
                 whileHover={{ scale: 1.02 }}
-                onClick={() => setSelectedTreatment(treatment.id)}
+                onClick={() => setSelectedProgram(program.id)}
                 className={`p-3 rounded-xl border cursor-pointer ${
-                  selectedTreatment === treatment.id ? "border-emerald-500 bg-emerald-500/10" : "border-white/10 bg-white/5"
+                  selectedProgram === program.id ? "border-emerald-500 bg-emerald-500/10" : "border-white/10 bg-white/5"
                 }`}
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium text-white">{treatment.name}</p>
-                    <p className="text-sm text-gray-400">{treatment.description}</p>
+                    <p className="font-medium text-white">{program.name}</p>
+                    <p className="text-sm text-gray-400">{program.description}</p>
                   </div>
                   <Badge variant="outline" className="border-emerald-500/50 text-emerald-400">
-                    {treatment.effectiveness}%
+                    {program.effectiveness}%
                   </Badge>
                 </div>
               </motion.div>
@@ -323,7 +323,7 @@ export function HairRestorationSimulator({
               onGenerateProposal &&
               onGenerateProposal({
                 zone: selectedZoneInfo,
-                treatment: selectedTreatmentInfo,
+                program: selectedProgramInfo,
                 estimatedGrafts,
                 estimatedCost,
                 settings,

@@ -67,7 +67,7 @@ export async function POST(request: Request) {
     const body = await request.json() as CreateTenantInput
 
     // Validate required fields
-    if (!body.clinicName || !body.slug || !body.email || !body.phone || !body.plan || !body.ownerId) {
+    if (!body.centerName || !body.slug || !body.email || !body.phone || !body.plan || !body.ownerId) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }

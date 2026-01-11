@@ -1,8 +1,8 @@
 {
   "brand": "AI Beauty Platform",
   "common": {
-    "appName": "คลินิกความงาม AI",
-    "appDescription": "แพลตฟอร์มวิเคราะห์ผิวและความงามด้วย AI",
+    "appName": "BIP Aesthetic AI",
+    "appDescription": "แพลตฟอร์มวิเคราะห์ผิวและที่ปรึกษาความงามอัจฉริยะ",
     "loading": "กำลังโหลด",
     "error": "เกิดข้อผิดพลาด",
     "success": "สำเร็จ",
@@ -27,9 +27,9 @@
     "profile": "โปรไฟล์",
     "language": "ภาษา",
     "notifications": "การแจ้งเตือน",
-    "switchClinic": "เปลี่ยนคลินิก",
-    "startAnalysis": "เริ่มวิเคราะห์",
-    "viewFullSystem": "ดูระบบคลินิกเต็ม",
+    "switchCenter": "เปลี่ยนศูนย์ความงาม",
+    "startAnalysis": "เริ่มวิเคราะห์ผิว",
+    "viewFullSystem": "ดูระบบความงามอัจฉริยะเต็มรูปแบบ",
     "status": {
       "initializing": "กำลังเริ่มระบบ",
       "scanningBaseline": "กำลังสแกนค่าพื้นฐานผิว"
@@ -37,19 +37,19 @@
     "messages": {
       "webglFallback": "WebGL ไม่พร้อมใช้งาน – กำลังแสดงตัวอย่างแบบคงที่ที่ปรับให้เหมาะสมแล้ว",
       "bestRegards": "ขอแสดงความนับถือ",
-      "clinicTeam": "ทีมงานคลินิกเสริมความงามของคุณ",
+      "centerTeam": "ทีมที่ปรึกษาความงามอัจฉริยะของคุณ",
       "contactUsPrompt": "หากคุณมีคำถามใดๆ โปรดอย่าลังเลที่จะติดต่อเรา",
       "nextSteps": "ขั้นตอนถัดไป",
       "department": "ภูมิภาค",
       "status": "ความรุนแรง",
       "error": "เกิดข้อผิดพลาด"
     },
-    "clinic": {
-      "name": "คลินิก AI367",
-      "address": "123 อาคารแมดิคัล พลาซ่า กรุงเทพฯ ประเทศไทย",
+    "center": {
+      "name": "ศูนย์ความงามอัจฉริยะ Aesthetic Hub",
+      "address": "123 อาคารพลาซ่า กรุงเทพฯ ประเทศไทย",
       "phone": "+66 2 XXX XXXX",
-      "email": "info@ai367clinic.com",
-      "website": "www.ai367clinic.com"
+      "email": "info@ai-aesthetic.com",
+      "website": "www.ai-aesthetic.com"
     },
     "saved": "บันทึกการตั้งค่าแล้ว",
     "retry": "ลองใหม่",
@@ -75,21 +75,21 @@
     "analytics": "การวิเคราะห์",
     "leads": "ลูกค้าเป้าหมาย",
     "proposals": "ข้อเสนอ",
-    "tenants": "จัดการคลินิก",
-    "users": "จัดการผู้ใช้",
+    "tenants": "จัดการศูนย์บริการ",
+    "users": "จัดการทีมงาน",
     "settings": "ตั้งค่า",
     "revenue": {
       "title": "รายได้และผลกำไร",
-      "subtitle": "สรุปผลประกอบการคลินิก",
+      "subtitle": "สรุปผลประกอบการศูนย์ความงาม",
       "loading": "กำลังโหลดข้อมูลรายได้...",
       "intelligence": {
-        "title": "ศูนย์รวมปัญญาประดิษฐ์เชิงกลยุทธ์ (AI Intelligence)",
-        "description": "การวัดผลกระทบเชิงธุรกิจจากการใช้งาน AI ในคลินิกของคุณ",
+        "title": "ศูนย์รวม AI เชิงกลยุทธ์ (AI Intelligence)",
+        "description": "การวัดผลกระทบเชิงธุรกิจจากการใช้งาน AI ในสถานประกอบการของคุณ",
         "roi": "ผลตอบแทนการลงทุน (ROI)",
         "aiCycles": "รอบการวิเคราะห์ AI",
-        "aiCyclesDesc": "จำนวนการวินิจฉัยผิวด้วยความแม่นยำสูงในรอบนี้",
+        "aiCyclesDesc": "จำนวนการวิเคราะห์ผิวด้วยความแม่นยำสูงในรอบนี้",
         "conversionYield": "อัตราการปิดการขาย",
-        "conversionYieldDesc": "สัดส่วนการสแกนผิวที่เปลี่ยนเป็นยอดจองทรีตเมนต์จริง",
+        "conversionYieldDesc": "สัดส่วนการสแกนผิวที่เปลี่ยนเป็นยอดจองโปรแกรมจริง",
         "aiDrivenRevenue": "รายได้ที่เกิดจาก AI",
         "attribution": "การมีส่วนร่วมของ AI: 65% ของรายได้ทั้งหมดได้รับความช่วยเหลือจากข้อมูลเชิงลึกของ AI"
       },
@@ -118,7 +118,7 @@
         "loadAppointments": "ไม่สามารถโหลดข้อมูลการนัดหมายได้"
       },
       "csv": {
-        "reportTitle": "รายงานสรุปรายได้คลินิก",
+        "reportTitle": "รายงานสรุปรายได้ศูนย์ความงาม",
         "periodLabel": "รอบเวลา:",
         "summary": "สรุปภาพรวม",
         "dailyRevenue": "รายได้รายวัน",
@@ -146,7 +146,7 @@
     "salesTool": "เครื่องมือขาย",
     "systemStatus": "สถานะระบบ",
     "tryResults": "ลองผลลัพธ์",
-    "clinicDemo": "เดโมคลินิก",
+    "centerDemo": "เดโมระบบความงามอัจฉริยะ",
     "vision2026": "วิสัยทัศน์ 2026",
     "techHub": "ศูนย์กลางเทคนิค"
   },
@@ -204,7 +204,7 @@
       "item1": "หน้านี้ต้องการบทบาทหรือสิทธิ์พิเศษ",
       "item2": "แพ็กเกจของคุณไม่รองรับฟีเจอร์นี้",
       "item3": "คุณต้องอัพเกรดเป็นแพ็กเกจที่สูงกว่า",
-      "item4": "หน้านี้เฉพาะสำหรับบุคลากรของคลินิก หรือแอดมิน"
+      "item4": "หน้านี้เฉพาะสำหรับที่ปรึกษาความงาม หรือแอดมิน"
     },
     "upgradeToUnlock": "อัพเกรดเพื่อปลดล็อคฟีเจอร์",
     "help": {
@@ -231,7 +231,7 @@
           },
           "responsibility": {
             "label": "ความรับผิดชอบ",
-            "desc": "คุณรับผิดชอบในการรักษาความลับของบัญชีของคุณ"
+            "desc": "คุณรับผิดชอบในโปรแกรมความงามความปลอดภัยของบัญชีของคุณ"
           },
           "properUse": {
             "label": "การใช้งานที่ถูกต้อง",
@@ -241,7 +241,7 @@
       },
       "service": {
         "title": "การให้บริการ",
-        "content": "แพลตฟอร์มของเราให้บริการวิเคราะห์ผิวหน้าด้วย AI, การจำลอง AR สำหรับทรีตเมนต์, และการจัดการข้อมูลลูกค้าสำหรับคลินิกความงาม บริการอาจมีการเปลี่ยนแปลงหรือปรับปรุงโดยไม่ต้องแจ้งให้ทราบล่วงหน้า",
+        "content": "แพลตฟอร์มของเราให้บริการวิเคราะห์ผิวหน้าด้วย AI, การจำลองโปรแกรมความงามด้วย AR และการจัดการลูกค้าสำหรับศูนย์ความงาม บริการอาจมีการแก้ไขหรืออัปเดตโดยไม่ต้องแจ้งให้ทราบล่วงหน้า",
         "items": {
           "free": {
             "label": "Free Tier",
@@ -253,7 +253,7 @@
           },
           "enterprise": {
             "label": "Enterprise",
-            "desc": "Multi-clinic, API Integration, Custom Features"
+            "desc": "รองรับหลายศูนย์ (Multi-center), เชื่อมต่อ API, ฟีเจอร์ที่กำหนดเอง"
           }
         }
       },
@@ -303,7 +303,7 @@
         "items": {
           "notMedical": {
             "label": "ไม่ใช่คำแนะนำทางการแพทย์",
-            "desc": "ผลวิเคราะห์เพื่อการอ้างอิงเท่านั้น"
+            "desc": "ผลวิเคราะห์เพื่อการอ้างอิงความงามเท่านั้น"
           },
           "accuracy": {
             "label": "ความถูกต้อง",
@@ -311,7 +311,7 @@
           },
           "consult": {
             "label": "ปรึกษาผู้เชี่ยวชาญ",
-            "desc": "ควรปรึกษาแพทย์หรือผู้เชี่ยวชาญก่อนตัดสินใจทรีตเมนต์"
+            "desc": "ควรปรึกษาที่ปรึกษาความงามหรือผู้เชี่ยวชาญก่อนตัดสินใจทำโปรแกรม"
           }
         }
       },
@@ -411,8 +411,8 @@
         }
       },
       "security": {
-        "title": "การรักษาความปลอดภัย",
-        "content": "เราใช้มาตรการรักษาความปลอดภัยตามมาตรฐานสากล รวมถึง SSL/TLS Encryption, การเข้ารหัสข้อมูล, การควบคุมการเข้าถึง, และ Backup อัตโนมัติ เพื่อปกป้องข้อมูลของคุณจากการเข้าถึงโดยไม่ได้รับอนุญาต การสูญหาย หรือการเปิดเผยโดยไม่ตั้งใจ",
+        "title": "โปรแกรมความงามความปลอดภัย",
+        "content": "เราใช้มาตรโปรแกรมความงามความปลอดภัยตามมาตรฐานสากล รวมถึง SSL/TLS Encryption, การเข้ารหัสข้อมูล, การควบคุมการเข้าถึง, และ Backup อัตโนมัติ เพื่อปกป้องข้อมูลของคุณจากการเข้าถึงโดยไม่ได้รับอนุญาต การสูญหาย หรือการเปิดเผยโดยไม่ตั้งใจ",
         "items": {
           "encryption": {
             "label": "Encryption",
@@ -456,7 +456,7 @@
       },
       "sharing": {
         "title": "การแชร์ข้อมูล",
-        "content": "เราจะไม่ขาย เช่า หรือแชร์ข้อมูลส่วนบุคคลของคุณกับบุคคลที่สาม ยกเว้นกรณีที่จำเป็นตามกฎหมาย หรือเพื่อให้บริการที่คุณร้องขอ เช่น การส่งต่อข้อมูลไปยังคลินิกที่คุณจองนัดหมาย",
+        "content": "เราจะไม่ขาย ให้เช่า หรือแชร์ข้อมูลส่วนบุคคลของคุณกับบุคคลที่สาม ยกเว้นเมื่อกฎหมายกำหนดหรือเพื่อให้บริการที่คุณร้องขอ เช่น การแชร์ข้อมูลกับศูนย์ความงามที่คุณจองนัดหมาย",
         "items": {
           "noSale": {
             "label": "ไม่มีการขาย",
@@ -514,8 +514,8 @@
     "customizeGenerate": "ปรับแต่งและสร้าง",
     "customerName": "ชื่อลูกค้า",
     "customerNamePlaceholder": "เช่น สาระ",
-    "treatmentType": "ประเภทการรักษา",
-    "treatmentTypePlaceholder": "เช่น Botox",
+    "programType": "โปรแกรมความงาม",
+    "programTypePlaceholder": "เช่น โปรแกรมยกกระชับอัจฉริยะ",
     "mainConcern": "ปัญหาหลัก",
     "mainConcernPlaceholder": "เช่น รอยเหี่ยวย่น",
     "generating": "กำลังสร้าง...",
@@ -585,7 +585,7 @@
   },
   "compliance": {
     "title": "ความเป็นส่วนตัวและความสอดคล้อง",
-    "description": "ภาพรวมด้านความเป็นส่วนตัวของข้อมูลผู้ป่วย มาตรการความปลอดภัย และการตรวจสอบความถูกต้องของโมเดล AI",
+    "description": "ภาพรวมด้านความเป็นส่วนตัวของข้อมูลผู้รับบริการ มาตรการความปลอดภัย และการตรวจสอบความถูกต้องของโมเดล AI",
     "dataPrivacy": {
       "title": "ความเป็นส่วนตัวของข้อมูล (PDPA/GDPR)",
       "item1": "การเก็บและใช้ข้อมูลตามวัตถุประสงค์ พร้อมการยินยอมที่ชัดเจน",
@@ -599,11 +599,11 @@
       "sensitivity": "ความไว (Sensitivity)",
       "specificity": "ความจำเพาะ (Specificity)",
       "accuracy": "ความแม่นยำโดยรวม",
-      "disclaimer": "ตัวเลขเป็นตัวอย่างจำลองเพื่อประกอบการสื่อสาร ไม่ใช่ผลการทดสอบเชิงคลินิก และอาจแตกต่างตามการใช้งานจริง"
+      "disclaimer": "ตัวเลขเป็นตัวอย่างจำลองเพื่อประกอบการสื่อสาร ไม่ใช่ผลการทดสอบอย่างเป็นทางการ และอาจแตกต่างตามการใช้งานจริง"
     },
     "medicalDisclaimer": {
-      "title": "คำจำกัดความทางการแพทย์",
-      "description": "ระบบนี้ใช้เพื่อสนับสนุนการตัดสินใจของผู้เชี่ยวชาญเท่านั้น ไม่ใช่เพื่อการวินิจฉัยหรือรักษาแทนแพทย์"
+      "title": "คำชี้แจงการใช้งาน",
+      "description": "ระบบนี้ใช้เพื่อสนับสนุนที่ปรึกษาความงามเท่านั้น ไม่ใช่เพื่อการวิเคราะห์หรือดูแลแทนผู้เชี่ยวชาญ"
     },
     "contact": {
       "title": "ติดต่อเรา",
@@ -614,21 +614,21 @@
     "badge": "AI Advisor",
     "title": "AI ที่ปรึกษาธุรกิจ",
     "description": "ถามคำถามเกี่ยวกับธุรกิจ การตลาด หรือขอคำแนะนำจาก AI",
-    "initialMessage": "สวัสดีครับ! ผมคือ AI Advisor ของ ClinicIQ พร้อมช่วยเหลือคุณในเรื่องการบริหารคลินิก การวิเคราะห์ข้อมูล และให้คำปรึกษาทางธุรกิจครับ ",
-    "aiResponse": "ขอบคุณสำหรับคำถามครับ! นี่คือการวิเคราะห์เบื้องต้น:\n\n จากข้อมูลของคลินิก พบว่า:\n- ยอดขายเฉลี่ยต่อเดือน: ฿450,000\n- การรักษายอดนิยม: Botox (35%), Filler (28%)\n- อัตราการกลับมาใช้บริการ: 72%\n\nแนะนำ: ควรเพิ่มโปรโมชั่นสำหรับลูกค้าใหม่และโปรแกรม Loyalty",
+    "initialMessage": "สวัสดีครับ! ผมคือ AI Advisor ของ BIP พร้อมช่วยเหลือคุณในเรื่องการบริหารงานความงาม การวิเคราะห์ข้อมูล และให้คำปรึกษาทางธุรกิจครับ ",
+    "aiResponse": "ขอบคุณสำหรับคำถามครับ! นี่คือการวิเคราะห์เบื้องต้น:\n\n จากข้อมูลของศูนย์ความงาม พบว่า:\n- ยอดขายเฉลี่ยต่อเดือน: ฿450,000\n- โปรแกรมความงามยอดนิยม: Botox (35%), Filler (28%)\n- อัตราการกลับมาใช้บริการ: 72%\n\nแนะนำ: ควรเพิ่มโปรโมชั่นสำหรับลูกค้าใหม่และโปรแกรม Loyalty",
     "suggestions": {
       "sales": "วิเคราะห์ยอดขายเดือนนี้",
       "customers": "แนะนำวิธีเพิ่มลูกค้าใหม่",
-      "treatments": "สรุปผลการรักษายอดนิยม",
+      "programs": "สรุปผลโปรแกรมยอดนิยม",
       "staff": "วิเคราะห์ประสิทธิภาพพนักงาน"
     },
     "placeholder": "พิมพ์คำถามของคุณ..."
   },
   "arSimulator": {
     "backToAnalysis": "กลับไปวิเคราะห์ผิว",
-    "badge": "AR Treatment Simulator",
-    "title": "จำลองผลลัพธ์การรักษา",
-    "description": "อัพโหลดรูปภาพของคุณและดูผลลัพธ์การรักษาแบบ Real-time ด้วยเทคโนโลยี AR",
+    "badge": "AR Aesthetic Simulator",
+    "title": "จำลองผลลัพธ์ความงาม",
+    "description": "อัพโหลดรูปภาพของคุณและดูผลลัพธ์ความงามแบบ Real-time ด้วยเทคโนโลยี AR",
     "uploadImage": "อัพโหลดรูปภาพ",
     "clickToUpload": "คลิกเพื่ออัพโหลด",
     "supports": "รองรับ JPG, PNG (สูงสุด 10MB)",
@@ -637,8 +637,8 @@
     "uploadNewImage": "อัพโหลดรูปใหม่",
     "assetSynthesisDesc": "ข้อมูลภาพสำหรับประมวลผลการจำลอง",
     "calibrationProtocol": "ขั้นตอนการปรับแต่งค่า",
-    "finalizeTreatment": "สรุปแผนการรักษา",
-    "clinicalAr": "ระบบจำลองการรักษา AR"
+    "finalizeProgram": "สรุปแผนงานความงาม",
+    "aestheticAr": "ระบบจำลองความงามอัจฉริยะ"
   },
   "branches": {
     "title": "จัดการสาขา",
@@ -740,8 +740,8 @@
   "caseStudies": {
     "title": "เคสศึกษา",
     "carouselTitle1": "ผลลัพธ์",
-    "carouselTitle2": "เชิงคลินิก",
-    "description": "ตัวอย่างเคส (จำลอง) เพื่ออธิบายศักยภาพของ ClinicIQ — ไม่ใช่คำแนะนำทางการแพทย์",
+    "carouselTitle2": "ระดับโปร",
+    "description": "ตัวอย่างเคส (จำลอง) เพื่ออธิบายศักยภาพของ BIP — ไม่ใช่คำแนะนำทางการแพทย์",
     "caseStudyLabel": "เคสศึกษา",
     "caseNode": "เคสศึกษา_{number}",
     "verifyOutcome": "ตรวจสอบผลลัพธ์",
@@ -761,15 +761,16 @@
     },
     "plans": {
       "starter": {
-        "name": "Starter Plan (AI-First CRM)",
+        "name": "Starter (AI-First CRM)",
         "badge": "คุ้มค่า",
-        "description": "เริ่มต้นใช้งาน AI วินิจฉัยสำหรับ 1 สาขา",
+        "description": "เริ่มต้นใช้งาน AI วิเคราะห์ผิวสำหรับ 1 สาขา",
         "price": "฿9,900",
         "period": "เดือน",
         "salesUsers": "1 Sales User",
         "cta": "เริ่มต้นใช้งาน",
         "features": [
-          "Hybrid AI Skin Analysis (100 ครั้ง/เดือน)",
+          "Aesthetic AI Skin Analysis (100 ครั้ง/เดือน)",
+          "Gemini 1.5 Flash Intelligence Node",
           "ระบบติดตาม AI Conversion Pipeline",
           "CRM & จัดการ Lead อัจฉริยะ",
           "ระบบนัดหมายอัตโนมัติ",
@@ -778,51 +779,52 @@
         ]
       },
       "professional": {
-        "name": "Professional Plan (Precision Growth)",
+        "name": "Professional (Precision Growth)",
         "badge": "ยอดนิยม",
-        "description": "ระบบ AI เต็มรูปแบบเพื่อการเติบโตอย่างก้าวกระโดด",
+        "description": "วิเคราะห์ปัญหาผิวแม่นยำสูง เพื่อการนำเสนอโปรแกรมที่ตรงจุด",
         "price": "฿19,900",
         "period": "เดือน",
         "salesUsers": "3 Sales Users",
         "cta": "ทดลองฟรี 14 วัน",
         "features": [
           "ทุกอย่างในแพ็กเกจ Starter",
-          "วิเคราะห์ผิวด้วย AI ไม่จำกัดจำนวน",
-          "AR Before/After Simulator (3D)",
+          "Unified Aesthetic Intelligence Hub (ไม่จำกัด)",
+          "Multi-Node Detection (ตรวจสิว, ริ้วรอย, จุดด่างดำ)",
+          "Hugging Face Specialized AI Integration",
+          "ชุดเครื่องมือสนับสนุนการขาย: AI Conversion Suite",
+          "AR Before/After Simulator (จำลองภาพเสมือนจริง)",
           "AI ทำนายความเร็วการปิดยอด (Sales Velocity)",
           "ระบบติดตามการใช้ผลิตภัณฑ์ (Regimen Tracker)",
           "ระบบ Loyalty & แต้มสะสมอัจฉริยะ",
           "AI Virtual Concierge (ระดับมาตรฐาน)",
           "แดชบอร์ดคำนวณกำไรจาก AI (ROI)",
-          "ระบบจัดการสต็อกสินค้าอัตโนมัติ",
-          "การตลาด SMS & Email อัจฉริยะ",
           "รองรับสูงสุด 3 สาขา (ซิงค์ข้อมูล)"
         ]
       },
       "enterprise": {
-        "name": "Enterprise Plan (Intelligence Hub)",
+        "name": "Enterprise (Intelligence Hub)",
         "badge": "คุ้มค่าสุด",
-        "description": "สำหรับเครือคลินิก & โรงพยาบาลที่ต้องการความเป็นเลิศ",
+        "description": "สำหรับเครือศูนย์ความงามที่ต้องการความเป็นเลิศ",
         "price": "฿39,900",
         "period": "เดือน",
         "salesUsers": "10 Sales Users",
         "cta": "ติดต่อทีมขาย",
         "features": [
           "ทุกอย่างในแพ็กเกจ Professional",
-          "ระบบสนับสนุนการตัดสินใจแพทย์ (MDSS)",
-          "AI ตรวจสอบมาตรฐานการรักษา (Compliance)",
-          "ระบบทำนายสต็อกเวชภัณฑ์ล่วงหน้า",
+          "ระบบสนับสนุนการแนะนำความงาม (ADSS)",
+          "AI ตรวจสอบคุณภาพบริการ (Compliance)",
+          "ระบบทำนายสต็อกสินค้าล่วงหน้า",
           "AI คาดการณ์รายได้แม่นยำ (90 วัน)",
           "เครื่องมือสร้างแคมเปญการตลาดอัตโนมัติ",
           "AI สร้างภาพโฆษณาพรีเมียม (Generative)",
           "ระบบเปรียบเทียบมาตรฐานโลก (Benchmarking)",
-          "ระบบร่างแผนการรักษาทันที (Vision-to-Order)",
+          "ระบบร่างแผนงานความงามทันที (Aesthetic Hub)",
           "พื้นที่วางแผน 3 มิตร่วมกับลูกค้า (Shared Canvas)",
           "ระบบแยกข้อมูลความปลอดภัยระดับสูง"
         ]
       },
       "platinum": {
-        "name": "Platinum Plan (Elite Custom)",
+        "name": "Platinum (Elite Custom)",
         "badge": "ที่สุด",
         "description": "โซลูชัน White-label และการปรับแต่งระดับสูงสุด",
         "price": "฿69,900",
@@ -834,7 +836,7 @@
           "เครื่องมือจำลองอายุผิว 4 มิติ (Moonshot)",
           "ระบบซิงค์ข้อมูล IoT & Smart Mirror",
           "White-label (ใช้โดเมนและโลโก้ตัวเอง)",
-          "ปรับแต่งโมเดล AI เฉพาะคลินิกคุณ",
+          "ปรับแต่งโมเดล AI เฉพาะแบรนด์คุณ",
           "ทางเลือก Private Cloud ส่วนตัว",
           "พัฒนาฟีเจอร์ใหม่ตามความต้องการ",
           "ที่ปรึกษาเชิงกลยุทธ์ด้าน AI ส่วนตัว"
@@ -856,13 +858,13 @@
       "description": "ดูฟีเจอร์ทั้งหมดที่มีในแต่ละแพ็กเกจ",
       "features": "ฟีเจอร์",
       "aiAnalysis": "AI Skin Analysis",
-      "visiaMetrics": "8 ตัวชี้วัด VISIA",
+      "visiaMetrics": "8 ตัวชี้วัดความงามอัจฉริยะ",
       "saveHistory": "บันทึกประวัติ",
       "arSimulator": "AR Simulator",
       "predictiveSales": "ทำนายการปิดยอด AI",
       "roiSimulator": "จำลองกำไร ROI",
-      "mdss": "ระบบช่วยตัดสินใจแพทย์",
-      "complianceAudit": "ตรวจสอบมาตรฐาน AI",
+      "mdss": "ระบบสนับสนุนการแนะนำความงาม (ADSS)",
+      "complianceAudit": "ตรวจสอบคุณภาพบริการ",
       "revenueForecast": "คาดการณ์รายได้ล่วงหน้า",
       "dashboard": "Dashboard & Analytics",
       "multiBranch": "หลายสาขา",
@@ -880,7 +882,7 @@
       },
       "q3": {
         "question": "Enterprise Package เหมาะสำหรับใคร?",
-        "answer": "เหมาะสำหรับเครือคลินิกที่มีหลายสาขา ต้องการ Custom Branding หรือต้องการการสนับสนุนแบบ 24/7"
+        "answer": "เหมาะสำหรับเครือศูนย์ความงามที่มีหลายสาขา ต้องการสร้างแบรนด์ของตัวเอง (Custom Branding) หรือต้องการการสนับสนุนระดับพรีเมียมแบบ 24/7"
       }
     },
     "cta": {
@@ -892,31 +894,31 @@
   },
   "home": {
     "hero": {
-      "badge": "AI ความแม่นยำระดับการแพทย์",
+      "badge": "AI วิเคราะห์ความงามแม่นยำสูง",
       "title": "อนาคตของการวิเคราะห์ความงาม",
       "subtitle": "นวัตกรรม AI เพื่อความสมบูรณ์แบบ",
-      "description": "แพลตฟอร์มวินิจฉัยผิวระดับเอลิสต์สำหรับคลินิกชั้นนำ ผสานเทคโนโลยี Mapping 468 จุด เข้ากับการวินิจฉัยระดับการแพทย์",
-      "cta": "ยกระดับคลินิกด้วย AI",
+      "description": "แพลตฟอร์มวิเคราะห์ผิวระดับเอลิสต์สำหรับศูนย์ความงามชั้นนำ ผสานเทคโนโลยี Mapping 468 จุด เข้ากับการประเมินสภาพผิวระดับสากล",
+      "cta": "ยกระดับธุรกิจด้วย AI",
       "learnMore": "ทดลองใช้งาน",
       "noCreditCard": "พร้อมสำหรับองค์กร",
       "freeTierAvailable": "โครงสร้างพื้นฐานมาตรฐานสากล"
     },
     "startFreeAnalysis": "เริ่มวิเคราะห์ฟรี",
     "features": {
-      "badge": "Clinical Intelligence",
-      "title": "Clinical Intelligence",
+      "badge": "Aesthetic Intelligence",
+      "title": "Aesthetic Intelligence",
       "description": "ขีดความสามารถการวิเคราะห์ระดับโมเลกุลด้วยโครงข่ายประสาทเทียมอัจฉริยะ",
       "neural": {
-        "title": "Neural Diagnostics",
+        "title": "Neural Analysis",
         "description": "วิเคราะห์โครงสร้างใบหน้าแบบเรียลไทม์ด้วยโครงข่ายประสาทเทียมขั้นสูง"
       },
       "ar": {
         "title": "AR Simulation",
-        "description": "จำลองผลลัพธ์การรักษาแบบ 3 มิติด้วยความแม่นยำ 99%"
+        "description": "จำลองผลลัพธ์ความงามแบบ 3 มิติด้วยความแม่นยำ 99%"
       },
       "safety": {
         "title": "Protocol Safety",
-        "description": "การยืนยันตัวตนด้วยไบโอเมตริกและการเข้ารหัสข้อมูลระดับคลินิก"
+        "description": "การยืนยันตัวตนด้วยไบโอเมตริกและการเข้ารหัสข้อมูลระดับมาตรฐานสากล"
       },
       "vitals": {
         "title": "Vital Tracking",
@@ -924,7 +926,7 @@
       },
       "speed": {
         "title": "Hyper-Speed Sync",
-        "description": "ประมวลผลการวินิจฉัยอย่างรวดเร็วภายใน 2.4 วินาที"
+        "description": "ประมวลผลการวิเคราะห์อย่างรวดเร็วภายใน 2.4 วินาที"
       },
       "management": {
         "title": "Entity Management",
@@ -932,20 +934,20 @@
       }
     },
     "protocol": {
-      "badge": "Diagnostic Protocol",
-      "title": "Diagnostic Protocol",
-      "description": "เวิร์กโฟลว์การวินิจฉัยแบบอัตโนมัติเพื่อความแม่นยำสูงสุด",
+      "badge": "Aesthetic Protocol",
+      "title": "Aesthetic Protocol",
+      "description": "เวิร์กโฟลว์การวิเคราะห์แบบอัตโนมัติเพื่อความแม่นยำสูงสุด",
       "step1": {
         "title": "Neural Scanning",
         "description": "เริ่มต้นสแกนใบหน้าแบบ 3 มิติและเก็บข้อมูลความละเอียดสูง"
       },
       "step2": {
         "title": "Inference Analysis",
-        "description": "ประมวลผลข้อมูลผ่าน AI เพื่อค้นหาแนวทางการรักษาที่ดีที่สุด"
+        "description": "ประมวลผลข้อมูลผ่าน AI เพื่อค้นหาแนวทางการดูแลผิวที่ดีที่สุด"
       },
       "step3": {
         "title": "Precision Roadmap",
-        "description": "สร้างแผนการรักษาแบบ 3 มิติพร้อมจำลองผลลัพธ์แบบเรียลไทม์"
+        "description": "สร้างแผนงานความงามแบบ 3 มิติพร้อมจำลองผลลัพธ์แบบเรียลไทม์"
       }
     },
     "deployment": {
@@ -965,7 +967,7 @@
       "description": "วิเคราะห์ผลตอบแทนการลงทุนด้วยระบบประมวลผลอัจฉริยะ",
       "performanceAnalytics": "การวิเคราะห์ประสิทธิภาพ",
       "avgRevenueUplift": "รายได้เฉลี่ยที่เพิ่มขึ้น",
-      "clientRetention": "การรักษาฐานลูกค้า",
+      "clientRetention": "การกลับมาใช้ซ้ำ",
       "title1": "ผลกำไร",
       "title2": "การประสานงาน"
     }
@@ -977,11 +979,11 @@
   },
   "caseStudyTeaser": {
     "title": "ดูเคสตัวอย่าง",
-    "description": "ผลลัพธ์จริงจากคลินิกที่ใช้งาน",
+    "description": "ผลลัพธ์จริงจากศูนย์ความงามที่ใช้งาน",
     "button": "เปิดดูเคสศึกษา"
   },
   "footer": {
-    "description": "แพลตฟอร์ม AI สำหรับคลินิกความงาม ช่วยเพิ่มประสิทธิภาพการวิเคราะห์ผิวและจัดการลูกค้า",
+    "description": "แพลตฟอร์ม AI สำหรับศูนย์ความงาม ช่วยเพิ่มประสิทธิภาพการวิเคราะห์ผิวและจัดการลูกค้า",
     "product": "ผลิตภัณฑ์",
     "tryDemo": "ลองใช้งาน",
     "company": "บริษัท",
@@ -1000,7 +1002,7 @@
   "badges": {
     "iso": {
       "label": "ISO 13485",
-      "tooltip": "มาตรฐานระบบเครื่องมือแพทย์"
+      "tooltip": "มาตรฐานระบบเครื่องมือสากล"
     },
     "ethics": {
       "label": "AI Ethics",
@@ -1011,27 +1013,27 @@
       "tooltip": "ข้อมูลถูกเข้ารหัสและแยกส่วน"
     }
   },
-  "clinic": {
+  "center": {
     "steps": [
       {
         "eyebrow": "STEP 01",
         "title": "Precision AI Halo",
-        "body": "ระบบ HALO แสดงการวิเคราะห์ผิวแบบเรียลไทม์ พร้อม volumetric beam สแกนสภาพชั้นผิวเพื่อให้แพทย์เห็น pattern ความผิดปกติอย่างนุ่มนวล ไม่รกตา"
+        "body": "ระบบ HALO แสดงการวิเคราะห์ผิวแบบเรียลไทม์ พร้อม volumetric beam สแกนสภาพชั้นผิวเพื่อให้ที่ปรึกษาเห็นรูปแบบความผิดปกติอย่างนุ่มนวล ไม่รกตา"
       },
       {
         "eyebrow": "STEP 02",
         "title": "Volumetric Scan",
-        "body": "แสงสแกนแนวตั้งเลื่อนเป็นจังหวะ ทำให้ผู้ใช้เข้าใจว่ามีการจับข้อมูลจริง ไม่ใช่อนิเมชันลอยๆ เพิ่มความน่าเชื่อถือระดับคลินิกพรีเมียม"
+        "body": "แสงสแกนแนวตั้งเลื่อนเป็นจังหวะ ทำให้ผู้ใช้เข้าใจว่ามีการจับข้อมูลจริง ไม่ใช่อนิเมชันลอยๆ เพิ่มความน่าเชื่อถือระดับพรีเมียม"
       },
       {
         "eyebrow": "STEP 03",
         "title": "Adaptive Protocol",
-        "body": "โปรโตคอลการรักษาที่ปรับอัตโนมัติด้วยโมเดล AI ให้ลูกค้าปรับสไลเดอร์ ความไว/ความเข้มข้น แล้ว HALO เปลี่ยนสีตอบสนองทันที"
+        "body": "โปรแกรมความงามที่ปรับอัตโนมัติด้วยโมเดล AI ให้ลูกค้าปรับสไลเดอร์ ความไว/ความเข้มข้น แล้ว HALO เปลี่ยนสีตอบสนองทันที"
       },
       {
         "eyebrow": "STEP 04",
         "title": "Outcome Forecast",
-        "body": "คาดการณ์ผลลัพธ์หลังการรักษา 30 / 60 / 90 วัน พร้อมระดับความเชื่อมั่น และ percentile เทียบกลุ่มอ้างอิง"
+        "body": "คาดการณ์ผลลัพธ์หลังการดูแลผิว 30 / 60 / 90 วัน พร้อมระดับความเชื่อมั่น และ percentile เทียบกลุ่มอ้างอิง"
       }
     ]
   },
@@ -1042,9 +1044,9 @@
     "intelligenceBadge": "ข้อมูลอัจฉริยะด้านการขาย",
     "initializeScan": "เริ่มการสแกน",
     "metrics": {
-      "acquisition": "การได้มาซึ่งลูกค้า",
+      "acquisition": "การเพิ่มลูกค้าใหม่",
       "conversions": "การปิดการขายสำเร็จ",
-      "retention": "อัตราการรักษาฐานลูกค้า",
+      "retention": "อัตราลูกค้าเดิม",
       "revenue": "รายได้ที่ระบุ",
       "today": "+{count} วันนี้",
       "vsPrev": "{percent}% เทียบช่วงก่อน",
@@ -1058,7 +1060,7 @@
       "proposals": "ข้อเสนอที่สร้างด้วย AI",
       "bookings": "การจองที่ยืนยันด้วย AI",
       "acquisitionDesc": "แหล่งที่มาจาก AI Vision Scanning",
-      "proposalsDesc": "การสังเคราะห์การรักษาอัตโนมัติ",
+      "proposalsDesc": "การสังเคราะห์โปรแกรมอัตโนมัติ",
       "bookingsDesc": "ปิดการขายผ่านการปรึกษาดิจิทัล"
     },
     "toolset": {
@@ -1068,13 +1070,13 @@
       "futureForecast": "ทำนายอนาคต",
       "arSimulation": "จำลอง AR",
       "presentation": "การนำเสนอ",
-      "precisionScanDesc": "การวินิจฉัยด้วยภาพ",
+      "precisionScanDesc": "การวิเคราะห์ด้วยภาพ",
       "futureForecastDesc": "การคาดการณ์อายุผิว",
       "arSimulationDesc": "การฉายภาพผลลัพธ์",
       "presentationDesc": "การเสนอราคาแบบไดนามิก"
     },
     "arModules": {
-      "title": "โมดูลคลินิก AR เฉพาะทาง",
+      "title": "โมดูลเสริมความงาม AR เฉพาะทาง",
       "filler": "ฟิลเลอร์และริมฝีปาก",
       "body": "กระชับสัดส่วน",
       "hair": "การปลูกผม",
@@ -1212,24 +1214,24 @@
         "skinConditionTitle": "สภาพผิว",
         "confidenceLabel": "ความเชื่อมั่น {percent}%",
         "severityLabel": "ระดับความรุนแรง",
-        "visiaTitle": "ตัวชี้วัดผิว VISIA",
-        "visiaDesc": "การวิเคราะห์ผิวระดับมืออาชีพ 8 จุด",
-        "recommendationsTitle": "คำแนะนำการรักษา",
+        "visiaTitle": "ตัวชี้วัดความงามอัจฉริยะ",
+        "visiaDesc": "การวิเคราะห์ความงามระดับมืออาชีพ 8 จุด",
+        "recommendationsTitle": "คำแนะนำความงาม",
         "recommendationsDesc": "ข้อเสนอแนะเฉพาะบุคคลสำหรับ {name}",
         "offlineWarning": "คุณกำลังออฟไลน์ ผลลัพธ์จะถูกบันทึกไว้ในเครื่องและซิงค์เมื่อออนไลน์",
         "exportReport": "ส่งออกรายงานการวิเคราะห์ (PDF)"
       },
       "ar": {
         "frontImageRequired": "ไม่มีภาพสำหรับดู AR Preview กรุณากลับไปที่ขั้นตอนการสแกน",
-        "instructions": "เลือกการรักษาและปรับความเข้มข้นเพื่อดูผลลัพธ์ล่วงหน้าสำหรับ {name} ลากสไลเดอร์ในโหมดเปรียบเทียบเพื่อดูความต่างก่อน/หลัง",
+        "instructions": "เลือกโปรแกรมและปรับความเข้มข้นเพื่อดูผลลัพธ์ล่วงหน้าสำหรับ {name} ลากสไลเดอร์ในโหมดเปรียบเทียบเพื่อดูความต่างก่อน/หลัง",
         "arPreviewTab": "ดู AR Preview",
         "compareTab": "เปรียบเทียบ",
-        "selectTreatmentPrompt": "เลือกการรักษาอย่างน้อยหนึ่งอย่างเพื่อดูผลลัพธ์",
-        "comparePrompt": "เลือกการรักษาเพื่อดูการเปรียบเทียบก่อน/หลัง",
-        "sliderTitle": "พรีวิวการรักษา",
+        "selectProgramPrompt": "เลือกโปรแกรมอย่างน้อยหนึ่งอย่างเพื่อดูผลลัพธ์",
+        "comparePrompt": "เลือกโปรแกรมเพื่อดูการเปรียบเทียบก่อน/หลัง",
+        "sliderTitle": "พรีวิวผลลัพธ์",
         "sliderDesc": "ลากเพื่อเปรียบเทียบก่อนและหลัง",
-        "intensityTitle": "ความเข้มข้นของการรักษา",
-        "intensityDesc": "ปรับระดับความเข้มข้นของการรักษาที่เลือก",
+        "intensityTitle": "ระดับความเข้มข้น",
+        "intensityDesc": "ปรับระดับความเข้มข้นของโปรแกรมที่เลือก",
         "intensityLabel": "ความเข้มข้น",
         "intensitySubtle": "เบาบาง",
         "intensityNatural": "เป็นธรรมชาติ",
@@ -1237,11 +1239,11 @@
         "presetMild": "น้อย (30%)",
         "presetModerate": "ปานกลาง (60%)",
         "presetIntensive": "มาก (90%)",
-        "selectTreatmentsTitle": "เลือกการรักษา",
-        "selectTreatmentsDesc": "เลือกได้สูงสุด 3 รายการ (รายการที่แนะนำจะถูกเน้นข้อความ)",
+        "selectProgramsTitle": "เลือกโปรแกรม",
+        "selectProgramsDesc": "เลือกได้สูงสุด 3 รายการ (รายการที่แนะนำจะถูกเน้นข้อความ)",
         "recommendedBadge": "แนะนำ",
         "selectionCounter": "เลือกแล้ว <strong>{count}</strong> จาก 3 รายการ",
-        "selectedSummaryTitle": "การรักษาที่เลือก"
+        "selectedSummaryTitle": "โปรแกรมที่เลือก"
       },
       "products": {
         "instructions": "เลือกผลิตภัณฑ์สำหรับ {name} ผลิตภัณฑ์ที่แนะนำจะถูกเน้นตามผลการวิเคราะห์ของ AI",
@@ -1288,7 +1290,7 @@
         "depositDetail": "มัดจำ: ฿{deposit} | ยอดคงเหลือ: ฿{balance}",
         "additionalNotesLabel": "บันทึกเพิ่มเติม",
         "notesPlaceholder": "เงื่อนไขพิเศษ, การรับประกัน หรือคำแนะนำอื่นๆ...",
-        "emptyProposal": "ไม่มีรายการในใบเสนอราคา กรุณากลับไปเลือกการรักษาหรือผลิตภัณฑ์"
+        "emptyProposal": "ไม่มีรายการในใบเสนอราคา กรุณากลับไปเลือกโปรแกรมหรือผลิตภัณฑ์"
       },
       "summary": {
         "instructions": "ตรวจสอบใบเสนอราคาที่สมบูรณ์และลงนามเพื่อยืนยันข้อตกลง",
@@ -1306,7 +1308,7 @@
         "condition": "สภาพผิว",
         "ageDiff": "ส่วนต่างอายุ",
         "personalizedTips": "{count} คำแนะนำเฉพาะบุคคล",
-        "sectionTreatments": "การรักษาที่เลือก",
+        "sectionPrograms": "โปรแกรมที่เลือก",
         "itemsCount": "{count} รายการ",
         "sectionProducts": "ผลิตภัณฑ์ที่เลือก",
         "sectionProposal": "ใบเสนอราคา",
@@ -1341,13 +1343,13 @@
     "enterFullscreen": "เต็มหน้าจอ",
     "overview": "ภาพรวม",
     "comparison": "เปรียบเทียบ",
-    "treatments": "การรักษา",
+    "treatments": "โปรแกรมความงาม",
     "pricing": "ราคา",
     "timeline": "ระยะเวลา",
     "skinHealthScore": "คะแนนสุขภาพผิว",
     "concerns": "ปัญหาผิว",
     "expectedResults": "ผลลัพธ์ที่คาดหวัง",
-    "treatmentPlan": "แผนการรักษา",
+    "programPlan": "แผนงานความงาม",
     "estimatedCost": "ค่าใช้จ่ายโดยประมาณ",
     "duration": "ระยะเวลา",
     "sessions": "ครั้ง",
@@ -1440,8 +1442,8 @@
     "globalIdentityDesc": "การกระจายโหนดระบุตัวตนทั่วโลกตามโปรโตคอล",
     "roles": {
       "super_admin": "ผู้ดูแลระบบสูงสุด",
-      "clinic_owner": "โหนดเจ้าของ",
-      "clinic_admin": "เวกเตอร์ผู้ดูแลระบบ",
+      "center_owner": "โหนดเจ้าของศูนย์",
+      "center_admin": "เวกเตอร์ผู้ดูแลระบบ",
       "staff": "ผู้ปฏิบัติงาน",
       "beautician": "ช่างเทคนิค",
       "customer": "หน่วยลูกค้า"
@@ -1451,7 +1453,7 @@
     "searchPlaceholder": "ค้นหาโหนดระบุตัวตน...",
     "protocol": "โปรโตคอล",
     "status": "สถานะ",
-    "clinicalUplink": "การเชื่อมต่อทางคลินิก",
+    "centerUplink": "การเชื่อมต่อศูนย์ส่วนกลาง",
     "globalProtocol": "โปรโตคอลสากล",
     "anyState": "ทุกสถานะ",
     "globalNetwork": "เครือข่ายสากล",
@@ -1488,7 +1490,7 @@
     "title": "รายละเอียดเวิร์กโฟลว์",
     "description": "กำหนดเวิร์กโฟลว์การทำงานอัตโนมัติของคุณ",
     "nameLabel": "ชื่อเวิร์กโฟลว์",
-    "namePlaceholder": "เช่น การติดตามผลหลังการรักษา",
+    "namePlaceholder": "เช่น การติดตามผลหลังรับบริการ",
     "descLabel": "คำอธิบาย",
     "descPlaceholder": "อธิบายว่าเวิร์กโฟลว์นี้ทำอะไร...",
     "triggerType": "ประเภทตัวกระตุ้น",
@@ -1522,7 +1524,7 @@
       "signup": "ผู้ใช้ลงทะเบียน",
       "purchase": "การซื้อ",
       "booking": "การจองนัดหมาย",
-      "treatment_complete": "การรักษาเสร็จสิ้น",
+      "program_complete": "รับบริการเสร็จสิ้น",
       "birthday": "วันเกิด",
       "anniversary": "วันครบรอบ",
       "abandoned_cart": "รถเข็นที่ถูกทิ้ง",
@@ -1588,7 +1590,7 @@
       "networkError": "❌ ข้อผิดพลาดเครือข่าย - ไม่สามารถโหลดโมเดล AI\n\nกรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต\nMediaPipe และ TensorFlow ต้องดาวน์โหลดโมเดลจาก CDN"
     }
   },
-  "treatmentTimeline": {
+  "programTimeline": {
     "stats": {
       "customers": "ลูกค้า",
       "rating": "คะแนน",
@@ -1597,9 +1599,9 @@
     },
     "verified": "ยืนยันการซื้อ",
     "actions": {
-      "booking": "คุณ{name} จองนัด {treatment} เมื่อ {time} ที่แล้ว",
+      "booking": "คุณ{name} จองนัด {program} เมื่อ {time} ที่แล้ว",
       "purchase": "คุณ{name} ซื้อแพ็คเกจ {package} เมื่อ {time} ที่แล้ว",
-      "consultation": "คุณ{name} ปรึกษาเรื่อง {treatment} เมื่อ {time} ที่แล้ว"
+      "consultation": "คุณ{name} ปรึกษาเรื่อง {program} เมื่อ {time} ที่แล้ว"
     },
     "reviews": {
       "names": {
@@ -1612,7 +1614,7 @@
         "napha": "นภา"
       },
       "review1": "ผลลัพธ์ดีมากค่ะ หน้าเด็กลง 5 ปี!",
-      "review2": "แพทย์เก่งมาก ไม่เจ็บเลยค่ะ",
+      "review2": "ที่ปรึกษาเก่งมาก ไม่เจ็บเลยค่ะ",
       "review3": "หน้าเรียวขึ้นชัดเจน แนะนำเลยค่ะ",
       "review4": "ฝ้าจางลงมาก คุ้มค่ามากค่ะ"
     },
@@ -1636,8 +1638,8 @@
     "avgSeverity": "ความรุนแรงเฉลี่ย",
     "scale": "เกณฑ์ระดับความรุนแรง:",
     "mild": "น้อย - ต้องการการบำรุงพื้นฐาน",
-    "moderate": "ปานกลาง - แนะนำให้รับการรักษา",
-    "severe": "มาก - แนะนำให้ปรึกษาแพทย์ทันที",
+    "moderate": "ปานกลาง - แนะนำให้รับโปรแกรมความงาม",
+    "severe": "มาก - แนะนำให้ปรึกษาผู้เชี่ยวชาญทันที",
     "tabs": {
       "all": "ทั้งหมด",
       "wrinkles": "ริ้วรอย",
@@ -1655,9 +1657,9 @@
       "eyes": "รอบดวงตา"
     }
   },
-  "treatmentComparison": {
-    "title": "เปรียบเทียบการรักษา",
-    "aiTitle": "คำแนะนำการรักษาโดย AI",
+  "programComparison": {
+    "title": "เปรียบเทียบโปรแกรมความงาม",
+    "aiTitle": "คำแนะนำโปรแกรมความงามโดย AI",
     "skinConcernLabel": "ปัญหาผิวหลัก",
     "budgetLabel": "งบประมาณ",
     "getRecommendation": "รับคำแนะนำจาก AI",
@@ -1666,13 +1668,13 @@
     "choosePackage": "เลือกแพ็คเกจนี้",
     "gridView": "มุมมองตาราง",
     "comparisonView": "มุมมองเปรียบเทียบ",
-    "noSelection": "เลือกทรีตเมนต์อย่างน้อย 1 อย่างเพื่อเปรียบเทียบ",
-    "summaryTitle": "สรุปทรีตเมนต์ที่เลือก",
-    "selectedCount": "เลือกแล้ว {count} ทรีตเมนต์",
+    "noSelection": "เลือกโปรแกรมอย่างน้อย 1 อย่างเพื่อเปรียบเทียบ",
+    "summaryTitle": "สรุปโปรแกรมที่เลือก",
+    "selectedCount": "เลือกแล้ว {count} โปรแกรม",
     "total": "รวม {amount}",
-    "bookNow": "จองทรีตเมนต์",
+    "bookNow": "จองโปรแกรม",
     "table": {
-      "treatment": "การรักษา",
+      "treatment": "โปรแกรมความงาม",
       "price": "ราคา",
       "duration": "ระยะเวลา",
       "effectiveness": "ประสิทธิภาพ",
@@ -1694,7 +1696,7 @@
   "videoCall": {
     "title": "การปรึกษาทางไกล AI",
     "inCall": "การเชื่อมต่อระบบประสาทที่ปลอดภัยทำงานอยู่",
-    "description": "ช่องทางการปรึกษาทางคลินิกที่เข้ารหัส",
+    "description": "ช่องทางการปรึกษาความงามระดับโปรที่เข้ารหัส",
     "ready": "พร้อมสำหรับการเชื่อมต่อที่ปลอดภัย",
     "pressToStart": "กดเริ่มเพื่อเริ่มต้นการปรึกษาทางไกล",
     "startCall": "เริ่มการปรึกษา",
@@ -1740,7 +1742,7 @@
     },
     "empty": {
       "title": "ยังไม่มีรูปภาพ",
-      "description": "รูปภาพจะแสดงที่นี่เมื่อการรักษามีความคืบหน้า",
+      "description": "รูปภาพจะแสดงที่นี่เมื่อโปรแกรมความงามมีความคืบหน้า",
       "noBefore": "ยังไม่มีรูปภาพก่อนรักษา",
       "noAfter": "ยังไม่มีรูปภาพหลังรักษา",
       "noProgress": "ยังไม่มีรูปภาพความคืบหน้า"
@@ -1752,8 +1754,8 @@
       "of": "จาก"
     }
   },
-  "treatmentConfigurator": {
-    "title": "การตั้งค่าทรีตเมนต์",
+  "programConfigurator": {
+    "title": "การตั้งค่าโปรแกรม",
     "presets": {
       "rejuvenate": "ฟื้นฟูผิว",
       "detox": "ดีท็อกซ์",
@@ -1770,7 +1772,7 @@
       "beamColor": "สีลำแสง"
     }
   },
-  "treatments": {
+  "programs": {
     "hydrafacial": {
       "description": "ทำความสะอาดผิวล้ำลึกด้วยน้ำยาพิเศษ",
       "benefit1": "ลดสิว",
@@ -1850,7 +1852,7 @@
       "to": "ถึง",
       "subject": "หัวข้อ",
       "yourResults": "ผลการวิเคราะห์ผิวของคุณ",
-      "summary": "การวิเคราะห์ส่วนบุคคลพบปัญหา {concernCount} ประการ และคำแนะนำการรักษา {recommendationCount} รายการ",
+      "summary": "การวิเคราะห์ส่วนบุคคลพบปัญหา {concernCount} ประการ และคำแนะนำโปรแกรมความงาม {recommendationCount} รายการ",
       "sending": "กำลังส่งอีเมล...",
       "send": "ส่งอีเมล",
       "error": "เกิดข้อผิดพลาดในการส่งอีเมล",
@@ -1869,8 +1871,8 @@
       "dear": "สวัสดีคุณ {name}! นี่คือผลการวิเคราะห์ผิวส่วนบุคคลของคุณ:",
       "age": "อายุผิว: {age} ปี",
       "concerns": "ปัญหาที่พบ:",
-      "recommendations": "ทรีตเมนต์ที่แนะนำ:",
-      "nextSteps": "คุณต้องการนัดหมายเพื่อปรึกษาเกี่ยวกับทรีตเมนต์เหล่านี้หรือไม่?"
+      "recommendations": "โปรแกรมที่แนะนำ:",
+      "nextSteps": "คุณต้องการนัดหมายเพื่อปรึกษาเกี่ยวกับโปรแกรมเหล่านี้หรือไม่?"
     },
     "status": {
       "emailSent": "ส่งอีเมลแล้ว",
@@ -1929,7 +1931,7 @@
     "insightsTab": "ข้อมูลเชิงลึก",
     "emptyState": "เลือก Lead เพื่อสร้างแคมเปญเฉพาะบุคคล",
     "categories": {
-      "retention": "การรักษาลูกค้า",
+      "retention": "การดูแลลูกค้าต่อเนื่อง",
       "acquisition": "การหาลูกค้าใหม่",
       "win_back": "การดึงลูกค้ากลับ",
       "referral": "การแนะนำ"
@@ -1966,7 +1968,7 @@
     "checking": "กำลังตรวจสอบคำเชิญ...",
     "emailLabel": "อีเมล:",
     "roleLabel": "บทบาท:",
-    "clinicLabel": "คลินิก:",
+    "centerLabel": "ศูนย์ความงาม:",
     "fullNameLabel": "ชื่อ-นามสกุล",
     "passwordLabel": "รหัสผ่าน",
     "confirmPasswordLabel": "ยืนยันรหัสผ่าน",
@@ -2157,9 +2159,9 @@
         "results": "ผลลัพธ์"
       }
     },
-    "arTreatmentPreview": {
-      "title": "AR Treatment Preview",
-      "description": "See the expected results after treatment",
+    "arProgramPreview": {
+      "title": "AR Program Preview",
+      "description": "See the expected results after program",
       "expectedImprovements": "Expected Improvements:",
       "improvement": "{percent}% improvement",
       "severity": "Severity: {value}/10",
@@ -2352,32 +2354,27 @@
         "followup": {
           "title": "Follow-up Call",
           "description": "Not contacted for {days} days - should follow up",
-          "script": "Hello {name}, this is [Name] from [Clinic] calling to follow up on your interest in {treatment}. Is now a good time to chat?"
+          "script": "Hello {name}, this is [Name] from [Center] calling to follow up on your interest in {program}. Is now a good time to chat?"
         },
         "content": {
           "title": "Send Extra Content",
-          "description": "Send more information about the interested treatment",
-          "script": "Hello {name} 📸\n\nWe'd like to share some real customer reviews for {treatment}. The results are amazing!\n\n[Attach Before/After]\n\nWould you like to schedule a free consultation? 💕"
+          "description": "ส่งข้อมูลเพิ่มเติมเกี่ยวกับโปรแกรมที่คุณสนใจ",
+          "script": "สวัสดีคุณ {name} 📸\n\nเราอยากแชร์รีวิวจากผู้ใช้บริการจริงสำหรับ {program} ผลลัพธ์น่าประทับใจมากค่ะ!\n\n[แนบภาพ Before/After]\n\nคุณสนใจนัดปรึกษาผู้เชี่ยวชาญฟรีไหมคะ? 💕"
         },
         "discount": {
           "title": "Offer Special Promotion",
           "description": "Customer concerned about price - offer discount or installment",
           "script": "Dear {name}, we have a special promotion for you:\n\n✅ 20% off for booking today\n✅ 0% installment for 6 months\n✅ Free doctor consultation\n\nWould you like more details?"
         },
-        "flexible": {
-          "title": "Offer Flexible Timing",
-          "description": "Customer has no time - offer off-hour appointments",
-          "script": "Dear {name}, we understand you're busy.\n\nWe're available:\n📅 Sat-Sun\n🌙 After 6 PM\n⏰ Lunch time 12:00-13:00\n\nWhich slot works best for you?"
-        },
         "close": {
           "title": "Close Deal",
           "description": "High probability! Should call to book date and time",
-          "script": "Dear {name}, based on our chat, it seems {treatment} is exactly what you need.\n\nWe have slots available this Wednesday at XX and Friday at XX.\n\nWhich day is convenient for you? 😊"
+          "script": "สวัสดีคุณ {name} ค่ะ จากที่เราได้คุยกัน ดูเหมือนว่า {program} จะเป็นโปรแกรมที่ตอบโจทย์ความต้องการของคุณพอดีเลยค่ะ\n\nเรามีคิวว่างวันพุธนี้เวลา XX และวันศุกร์เวลา XX ค่ะ\n\nคุณสะดวกเป็นวันไหนดีคะ? 😊"
         },
         "upsell": {
           "title": "Offer Package Upgrade",
-          "description": "Recommend complementary treatments",
-          "script": "Dear {name}, in addition to {treatment},\n\nmany of our customers also get [XXX] for even better results!\n\nIf you book them together, you'll get a special 15% discount."
+          "description": "แนะนำโปรแกรมเสริมเพื่อผลลัพธ์ที่ดียิ่งขึ้น",
+          "script": "สวัสดีคุณ {name} ค่ะ นอกจาก {program} แล้ว\n\nลูกค้าหลายท่านยังเลือกทำ [XXX] ควบคู่กันเพื่อผลลัพธ์ที่ชัดเจนยิ่งขึ้นด้วยค่ะ!\n\nหากจองพร้อมกันตอนนี้ จะได้รับส่วนลดพิเศษ 15% ทันทีนะคะ"
         }
       },
       "strategies": "AI Conversion Strategies",
@@ -2412,7 +2409,7 @@
       "hydration": "Hydration",
       "selectPackage": "Select Package (1-Tap)",
       "aiRecommended": "AI Recommended",
-      "treatmentCount": "{count} treatments",
+      "treatmentCount": "{count} โปรแกรม",
       "newPackage": "Select New Package",
       "preview": "Proposal Preview",
       "sendMethod": "Choose Send Method (1-Tap)",
@@ -2430,7 +2427,7 @@
         "price": "💰 Price: {price} Baht",
         "discount": "🎁 Discount {percent}% = {finalPrice} Baht",
         "contact": "📞 Contact: 02-123-4567",
-        "walkin": "🏥 Or Walk-in at the clinic",
+        "walkin": "🏥 หรือเข้ามาปรึกษาได้ที่ศูนย์ความงาม",
         "closing": "Sincerely, ❤️\nAI Beauty Team"
       }
     },
@@ -2471,13 +2468,13 @@
       "title": "Quick Actions",
       "available": "{count} Available",
       "powerActions": "Power Actions",
-      "clinicSettings": "Clinic Settings & Configuration",
+      "centerSettings": "การตั้งค่าศูนย์ความงาม",
       "advancedAnalytics": "Advanced Analytics & Insights",
       "recentActivity": "Recent Activity",
       "urgent": "urgent",
       "active": "active",
       "activity": {
-        "newCustomer": "New customer \"{name}\" booked {treatment}",
+        "newCustomer": "ลูกค้าใหม่ \"{name}\" จองโปรแกรม {program}",
         "targetAchieved": "Revenue target achieved for the month ({percent})",
         "hotLeadsFollowup": "{count} hot leads require immediate follow-up"
       },
@@ -2542,7 +2539,7 @@
       "busy": "Busy",
       "onLeave": "On Leave",
       "offline": "Offline",
-      "patientsCount": "👥 {count} patients",
+      "patientsCount": "👥 {count} customers",
       "noStaff": "No staff members in the system",
       "error": "Failed to load staff data",
       "roles": {
@@ -2589,18 +2586,18 @@
         "other": "Other"
       }
     },
-    "topTreatments": {
-      "title": "🏆 Top Performing Treatments",
-      "performance": "📊 Treatment Performance",
-      "thisMonth": "This Month",
-      "empty": "No treatment data yet",
-      "emptyDesc": "Data will appear when there are bookings",
-      "bookings": "{count} bookings",
-      "revenue": "Revenue Distribution",
-      "growth": "🚀 Growth Leaders",
-      "rating": "⭐ Average Rating",
-      "reviews": "Based on {count} customer reviews",
-      "error": "Failed to load treatments. Please try again."
+    "topPrograms": {
+      "title": "🏆 โปรแกรมยอดนิยม",
+      "performance": "📊 ประสิทธิภาพโปรแกรม",
+      "thisMonth": "เดือนนี้",
+      "empty": "ยังไม่มีข้อมูลโปรแกรม",
+      "emptyDesc": "ข้อมูลจะปรากฏเมื่อมีการจอง",
+      "bookings": "{count} การจอง",
+      "revenue": "ส่วนแบ่งรายได้",
+      "growth": "🚀 ผู้นำการเติบโต",
+      "rating": "⭐ คะแนนเฉลี่ย",
+      "reviews": "อ้างอิงจากรีวิวลูกค้า {count} รายการ",
+      "error": "ไม่สามารถโหลดข้อมูลโปรแกรมได้ กรุณาลองใหม่อีกครั้ง"
     },
     "sales": {
       "title": "Sales Dashboard",
@@ -2666,7 +2663,7 @@
       "rating": "คะแนนเฉลี่ย"
     },
     "tabs": {
-      "recommendations": "AI แนะนำทรีทเม้นท์",
+      "recommendations": "AI แนะนำโปรแกรมความงาม",
       "quote": "คำนวณราคาด่วน",
       "optimizer": "เพิ่มโอกาสการขาย",
       "recommendShort": "แนะนำ",
@@ -2720,7 +2717,7 @@
       "limitedTime": "ข้อเสนอจำกัดเวลา",
       "customerName": "ชื่อลูกค้า",
       "namePlaceholder": "กรอกชื่อลูกค้า",
-      "treatmentList": "รายการทรีทเม้นท์",
+      "programList": "รายการโปรแกรมความงาม",
       "add": "เพิ่ม",
       "empty": "ยังไม่มีรายการ",
       "promoCode": "รหัสส่วนลด",
@@ -2786,17 +2783,17 @@
       "leadLabel": "Lead *",
       "leadPlaceholder": "เลือก Lead",
       "proposalTitleLabel": "ชื่อ Proposal *",
-      "proposalTitlePlaceholder": "เช่น แผนการรักษาสิว 3 เดือน",
-      "treatmentsLabel": "การรักษา *",
-      "addTreatment": "เพิ่มการรักษา",
-      "treatmentNameLabel": "ชื่อการรักษา *",
-      "treatmentNamePlaceholder": "เช่น Laser Treatment",
+      "proposalTitlePlaceholder": "เช่น แผนงานความงามอัจฉริยะ 3 เดือน",
+      "programsLabel": "โปรแกรมความงาม *",
+      "addProgram": "เพิ่มโปรแกรม",
+      "programNameLabel": "ชื่อโปรแกรม *",
+      "programNamePlaceholder": "เช่น Smart Skin Refinement",
       "pricePerSessionLabel": "ราคาต่อครั้ง (฿) *",
       "sessionsLabel": "จำนวนครั้ง *",
       "totalLabel": "รวม",
       "detailsLabel": "รายละเอียด",
       "detailsPlaceholder": "รายละเอียดเพิ่มเติม (ถ้ามี)",
-      "removeTreatment": "ลบการรักษานี้",
+      "removeProgram": "ลบโปรแกรมนี้",
       "subtotal": "ยอดรวม:",
       "discount": "ส่วนลด:",
       "netTotal": "ยอดสุทธิ:",
@@ -2812,7 +2809,7 @@
       "createProposal": "สร้าง Proposal",
       "validation": {
         "leadAndTitle": "กรุณาเลือก Lead และกรอกชื่อ Proposal",
-        "treatmentDetails": "กรุณากรอกข้อมูลการรักษาให้ครบถ้วน"
+        "treatmentDetails": "กรุณากรอกข้อมูลโปรแกรมความงามให้ครบถ้วน"
       },
       "messages": {
         "updateSuccess": "อัพเดท proposal สำเร็จ!",
@@ -2868,10 +2865,10 @@
     "welcome": "สวัสดีค่ะ {name} 👋\n\nขอบคุณที่สนใจ {interests} ของเรา\n\nฉันพร้อมช่วยเหลือคุณในทุกขั้นตอนค่ะ 💕\nมีอะไรให้ช่วยไหมคะ?",
     "welcomeWithTreatment": "สวัสดีค่ะ {name} 👋\n\nขอบคุณที่สนใจ {interests} ของเรา\n\nสำหรับ **{treatment}**:\n💰 ราคา: ฿{price}\n🎯 ความมั่นใจ: {confidence}%\n\nฉันพร้อมช่วยเหลือคุณในทุกขั้นตอนค่ะ 💕\nมีอะไรให้ช่วยไหมคะ?",
     "responses": {
-      "price": "ค่ะ ราคา {treatment} อยู่ที่ ฿{price}.\n\nเรามีโปรโมชั่นและการผ่อนชำระให้เลือกด้วยค่ะ 💳",
+      "price": "ค่ะ ราคา {program} อยู่ที่ ฿{price}.\n\nเรามีโปรโมชั่นและการผ่อนชำระให้เลือกด้วยค่ะ 💳",
       "time": "ค่ะ เรามีเวลาการให้บริการที่หลากหลาย:\n\n📅 จันทร์-ศุกร์: 10:00-19:00\n🌅 เสาร์-อาทิตย์: 10:00-18:00\n⏰ เวลาพักเที่ยง: 12:00-13:00\n\nสะดวกวันไหนคะ?",
-      "doctor": "ค่ะ แพทย์ของเราเป็นผู้เชี่ยวชาญด้านผิวหนังที่ได้รับการรับรอง\n\n✅ ได้รับการรับรองจากแพทยสภา\n✅ ประสบการณ์กว่า 10 ปี\n✅ เทคโนโลยีระดับโลก\n\nอยากให้ดูใบประกาศและผลงานไหมคะ?",
-      "default": "เข้าใจค่ะ {message}\n\nอยากให้ข้อมูลเพิ่มเติมเรื่องไหนคะ?\n• ราคาและโปรโมชั่น 💰\n• กระบวนการรักษา ⚕️\n• ผลลัพธ์และรีวิว ⭐\n• การนัดหมาย 📅"
+      "doctor": "ค่ะ ทีมงานของเราเป็นผู้เชี่ยวชาญด้านความงามที่ได้รับการรับรอง\n\n✅ ประสบการณ์กว่า 10 ปี\n✅ เทคโนโลยีระดับโลก\n\nอยากให้ดูใบประกาศและผลงานไหมคะ?",
+      "default": "เข้าใจค่ะ {message}\n\nอยากให้ข้อมูลเพิ่มเติมเรื่องไหนคะ?\n• ราคาและโปรโมชั่น 💰\n• กระบวนการดูแลผิว ⚕️\n• ผลลัพธ์และรีวิว ⭐\n• การนัดหมาย 📅"
     },
     "honorific": "คุณ",
     "keywords": {
@@ -2887,10 +2884,10 @@
         "จอง"
       ],
       "doctor": [
-        "แพทย์",
-        "หมอ",
-        "ปลอดภัย",
-        "อันตราย"
+        "ผู้เชี่ยวชาญ",
+        "ที่ปรึกษา",
+        "ความปลอดภัย",
+        "มาตรฐาน"
       ]
     }
   },
@@ -2917,7 +2914,7 @@
       "status": "สถานะคิว",
       "score": "AI Score",
       "followUp": "กำหนดการติดตาม",
-      "interests": "ทรีตเมนต์ที่สนใจ",
+      "interests": "โปรแกรมที่สนใจ",
       "salesStaff": "พนักงานผู้ดูแล",
       "created": "เริ่มระบบเมื่อ",
       "campaign": "Node แคมเปญ",
@@ -2981,7 +2978,7 @@
     "score": "Precision Probability (AI Score)",
     "phone": "Voice Uplink (เบอร์โทรศัพท์)",
     "email": "Data Sync (อีเมล)",
-    "interestedTreatments": "ทรีตเมนต์ที่ระบบแนะนำ",
+    "interestedTreatments": "โปรแกรมที่ระบบแนะนำ",
     "interactionHistory": "ประวัติการสื่อสารเชิงกลยุทธ์",
     "interactionsCount": "บันทึก {count} รายการ",
     "noInteractions": "ยังไม่มีการบันทึกกิจกรรม",
@@ -3003,7 +3000,7 @@
       "insights": [
         "หลักฐานเชิงตัวเลขจากผลการสแกนผิวจริง",
         "ภาพจำลอง 3D แสดงผลลัพธ์ในอนาคต",
-        "โปรโตคอลการรักษาแบบ Precision-Calibrated"
+        "โปรโตคอลโปรแกรมความงามแบบ Precision-Calibrated"
       ]
     },
     "dialog": {
@@ -3059,8 +3056,8 @@
         "name": "แพ็คเกจ VIP",
         "description": "แพ็คเกจครบครันสำหรับผู้ที่ต้องการการดูแลระดับมืออาชีพ",
         "treatments": [
-          "ทุกทรีตเมนต์ที่มี",
-          "ปรึกษาแพทย์เฉพาะทาง",
+          "ทุกโปรแกรมที่มี",
+          "ปรึกษาผู้เชี่ยวชาญเฉพาะทาง",
           "ชุดดูแลผิวที่บ้าน",
           "ติดตามผล 6 เดือน"
         ]
@@ -3071,7 +3068,7 @@
       "intro": "จากการวิเคราะห์ผิวของคุณ เราพบว่าคุณมีปัญหา: {concerns}",
       "recommend": "เราขอแนะนำ **{package}** ราคา {price} บาท",
       "includes": "ประกอบด้วย: {items}",
-      "contact": "ติดต่อเราได้ที่ 02-123-4567 หรือ Walk-in ที่คลินิก",
+      "contact": "ติดต่อเราได้ที่ 02-123-4567 หรือ Walk-in ที่ศูนย์ความงาม",
       "closing": "ด้วยความเคารพ\nทีมงาน AI Beauty"
     },
     "suggestions": {
@@ -3093,10 +3090,10 @@
     "proposal": "ข้อเสนอ",
     "viewAllNotes": "ดูบันทึกทั้งหมด ({count})",
     "highPriority": "ความสำคัญสูง",
-    "priorityDesc": "คะแนนผิวต่ำบ่งบอกถึงความต้องการการรักษาที่สูง"
+    "priorityDesc": "คะแนนผิวต่ำบ่งบอกถึงความต้องการโปรแกรมความงามที่สูง"
   },
   "hotLeadsManager": {
-    "searchPlaceholder": "ค้นหาชื่อหรือทรีตเมนต์...",
+    "searchPlaceholder": "ค้นหาชื่อหรือโปรแกรมความงาม...",
     "status": "สถานะ",
     "priority": "ลำดับความสำคัญ",
     "allStatus": "ทุกสถานะ",
@@ -3116,7 +3113,7 @@
   "salesArTools": {
     "title": "เครื่องมือ AR สำหรับทีมขาย",
     "mobileTitle": "เครื่องมือ AR",
-    "subtitle": "เครื่องมือจำลองผลลัพธ์การรักษาสำหรับทีมขาย",
+    "subtitle": "เครื่องมือจำลองผลลัพธ์โปรแกรมความงามสำหรับทีมขาย",
     "selectTool": "เลือกเครื่องมือ",
     "customerPhoto": "รูปภาพลูกค้า",
     "changePhoto": "เปลี่ยนรูปภาพ",
@@ -3192,11 +3189,11 @@
   },
   "roles": {
     "customer": "ลูกค้า",
-    "clinic_owner": "เจ้าของคลินิก",
+    "clinic_owner": "เจ้าของศูนย์ความงาม",
     "sales_staff": "พนักงานขาย",
     "super_admin": "ผู้ดูแลระบบสูงสุด",
-    "clinic_admin": "ผู้ดูแลคลินิก",
-    "clinic_staff": "พนักงานคลินิก",
+    "clinic_admin": "ผู้ดูแลศูนย์ความงาม",
+    "clinic_staff": "พนักงานศูนย์ความงาม",
     "premium_customer": "ลูกค้าพรีเมียม",
     "free_user": "ผู้ใช้ฟรี",
     "public": "ผู้ใช้ทั่วไป"
@@ -3223,7 +3220,7 @@
     "presentationMode": "โหมดนำเสนอขาย",
     "compareProgress": "เปรียบเทียบความคืบหน้า",
     "priorities": "ความสำคัญ",
-    "recommendations": "คำแนะนำการรักษา",
+    "recommendations": "คำแนะนำโปรแกรมความงาม",
     "modes": {
       "spots": "จุดด่างดำ",
       "wrinkles": "ริ้วรอย",
@@ -3237,7 +3234,7 @@
     "trialMode": {
       "badge": "โหมดทดลองใช้งาน",
       "title": "โหมดทดลองใช้งาน",
-      "description": "คุณกำลังอยู่ในโหมดแขก ผลลัพธ์จะไม่ถูกบันทึกลงในประวัติการรักษาของคุณ"
+      "description": "คุณกำลังอยู่ในโหมดแขก ผลลัพธ์จะไม่ถูกบันทึกลงในประวัติโปรแกรมความงามของคุณ"
     },
     "guidance": {
       "title": "คำแนะนำการจัดวางตำแหน่งที่เหมาะสม",
@@ -3249,13 +3246,13 @@
       }
     },
     "reportTypes": {
-      "clinical": "ทางคลินิก",
+      "aesthetic": "ระดับผู้เชี่ยวชาญ",
       "intelligence": "อัจฉริยะ"
     },
     "metrics": {
       "globalIndex": "ดัชนีผิวรวม",
       "aggregate": "คะแนนรวม",
-      "clinicalClassification": "การจัดระดับทางคลินิก",
+      "aestheticClassification": "การจัดระดับผู้เชี่ยวชาญ",
       "multiSpectrum": "ภาพวิเคราะห์หลายสเปกตรัม",
       "synthesisActive": "กำลังประมวลผลการสังเคราะห์",
       "inputAsset": "ภาพต้นฉบับ",
@@ -3272,7 +3269,7 @@
       "neuralPrecision": "ความแม่นยำประสาท",
       "high": "สูง",
       "fullPortfolio": "แฟ้มผลงานตัวชี้วัดฉบับเต็ม",
-      "portfolioDesc": "รายละเอียดตัวชี้วัดผิวทางคลินิกทั้งหมด",
+      "portfolioDesc": "รายละเอียดตัวชี้วัดผิวทางศูนย์ความงามทั้งหมด",
       "severityLabel": "ความรุนแรง",
       "countLabel": "จำนวน",
       "densityLabel": "ความหนาแน่น",
@@ -3285,21 +3282,21 @@
       "protocol": "ระเบียบการ"
     },
     "protocols": {
-      "interventions": "การรักษา",
+      "interventions": "โปรแกรมความงาม",
       "regimen": "ผลิตภัณฑ์",
       "optimization": "ไลฟ์สไตล์",
       "noData": "ไม่มีข้อมูลระเบียบการ",
-      "pendingTitle": "กำลังเตรียมระเบียบการรักษา",
+      "pendingTitle": "กำลังเตรียมระเบียบโปรแกรมความงาม",
       "pendingDesc": "AI กำลังปรับแต่งระเบียบการส่วนบุคคลตามผลการวิเคราะห์ของคุณ",
       "retry": "ลองใหม่อีกครั้ง"
     },
     "footer": {
-      "disclaimerTitle": "การเปิดเผยข้อมูลระดับคลินิก",
-      "disclaimerDesc": "รายงานนี้จัดทำขึ้นโดยใช้ปัญญาประดิษฐ์และอัลกอริทึมการประมวลผลภาพขั้นสูง เพื่อใช้เป็นแนวทางเบื้องต้นและไม่ใช่การวินิจฉัยทางการแพทย์อย่างเป็นทางการ",
+      "disclaimerTitle": "การเปิดเผยข้อมูลการวิเคราะห์",
+      "disclaimerDesc": "รายงานสรุปนี้ใช้เพื่อการประเมินข้อมูลความงามเท่านั้น ผลลัพธ์ไม่ใช่การวินิจฉัยทางการแพทย์",
       "verified": "ตรวจสอบโดย BIP NEURAL"
     },
     "bestPractices": {
-      "title": "แนวทางปฏิบัติทางคลินิกที่ดีที่สุด",
+      "title": "แนวทางปฏิบัติทางศูนย์ความงามที่ดีที่สุด",
       "items": {
         "illumination": {
           "title": "แสงสว่างที่เหมาะสม",
@@ -3315,7 +3312,7 @@
         },
         "verification": {
           "title": "การตรวจสอบโดยผู้เชี่ยวชาญ",
-          "desc": "ผลลัพธ์ AI ทำหน้าที่เป็นเครื่องมือสนับสนุนการตัดสินใจสำหรับการปรึกษาทางคลินิก"
+          "desc": "ผลลัพธ์ AI ทำหน้าที่เป็นเครื่องมือสนับสนุนการตัดสินใจสำหรับการปรึกษาทางศูนย์ความงาม"
         }
       }
     },
@@ -3361,7 +3358,7 @@
     "excellentCondition": "ดีเยี่ยม! ผิวของคุณอยู่ในสภาพดีมาก",
     "goodCondition": "ดี! พบปัญหาเล็กน้อย แนะนำให้ดูแลอย่างต่อเนื่อง",
     "fairCondition": "พอใช้ พบปัญหาหลายประการที่ต้องดูแล ควรปรึกษาผู้เชี่ยวชาญ",
-    "attentionNeeded": "ต้องดูแลเป็นพิเศษ พบปัญหาที่สำคัญหลายประการ แนะนำให้ปรึกษาแพทย์ผิวหนัง",
+    "attentionNeeded": "ต้องดูแลเป็นพิเศษ พบปัญหาที่สำคัญหลายประการ แนะนำให้ปรึกษาผู้เชี่ยวชาญด้านผิวพรรณ",
     "priorityConcerns": "ปัญหาที่ควรให้ความสำคัญ",
     "severity": "ความรุนแรง",
     "location": "ตำแหน่ง",
@@ -3375,7 +3372,7 @@
   },
   "booking": {
     "title": "จองนัดหมาย",
-    "subtitle": "นัดหมายเพื่อปรึกษาหรือรับการรักษากับทีมผู้เชี่ยวชาญของเรา",
+    "subtitle": "นัดหมายเพื่อปรึกษาหรือรับโปรแกรมความงามกับทีมผู้เชี่ยวชาญของเรา",
     "salesArTools": {
       "peel": "ลอกหน้าใส",
       "microneedling": "ไมโครนีดลิง"
@@ -3385,13 +3382,13 @@
       "min45": "45 นาที",
       "min60": "60 นาที"
     },
-    "selectDoctor": "เลือกแพทย์",
-    "selectTreatment": "เลือกการรักษา",
+    "selectDoctor": "เลือกที่ปรึกษา",
+    "selectProgram": "เลือกโปรแกรมความงาม",
     "selectDate": "เลือกวันที่",
     "selectTime": "เลือกเวลา",
     "chooseDate": "เลือกวันที่",
     "chooseTime": "เลือกเวลา",
-    "patientInfo": "ข้อมูลผู้ป่วย",
+    "customerInfo": "ข้อมูลลูกค้า",
     "firstName": "ชื่อ",
     "lastName": "นามสกุล",
     "name": "ชื่อ-นามสกุล",
@@ -3412,9 +3409,9 @@
     "details": {
       "date": "วันที่",
       "time": "เวลา",
-      "treatment": "การรักษา"
+      "program": "การรับบริการ"
     },
-    "treatments": {
+    "programs": {
       "consultation": "ปรึกษาฟรี",
       "botox": "ฉีดโบท็อกซ์",
       "filler": "ฉีดฟิลเลอร์",
@@ -3453,14 +3450,14 @@
   "admin": {
     "dashboard": "แดชบอร์ดผู้ดูแล",
     "overview": "ภาพรวม",
-    "patients": "ผู้ป่วย",
-    "staff": "พนักงาน",
+    "patients": "ลูกค้า",
+    "staff": "ทีมงาน",
     "inventory": "คลังสินค้า",
     "analytics": "การวิเคราะห์",
     "reports": "รายงาน",
-    "totalPatients": "ผู้ป่วยทั้งหมด",
-    "activePatients": "ผู้ป่วยที่ใช้งาน",
-    "newThisMonth": "ผู้ป่วยใหม่เดือนนี้",
+    "totalPatients": "ลูกค้าทั้งหมด",
+    "activePatients": "ลูกค้าที่ใช้งาน",
+    "newThisMonth": "ลูกค้าใหม่เดือนนี้",
     "totalRevenue": "รายได้รวม",
     "revenueThisMonth": "เดือนนี้",
     "revenueGrowth": "การเติบโต",
@@ -3468,25 +3465,25 @@
     "appointmentsToday": "วันนี้",
     "appointmentsWeek": "สัปดาห์นี้",
     "appointmentsMonth": "เดือนนี้",
-    "popularTreatments": "การรักษายอดนิยม",
+    "popularPrograms": "โปรแกรมความงามยอดนิยม",
     "staffCount": "พนักงาน",
     "activeStaff": "ที่ใช้งาน",
     "inventoryStatus": "สถานะคลังสินค้า",
     "totalItems": "สินค้าทั้งหมด",
     "lowStock": "สินค้าใกล้หมด",
     "outOfStock": "สินค้าหมด",
-    "addPatient": "เพิ่มผู้ป่วย",
-    "addStaff": "เพิ่มพนักงาน",
+    "addPatient": "เพิ่มลูกค้า",
+    "addStaff": "เพิ่มทีมงาน",
     "addInventory": "เพิ่มสินค้า",
     "exportReport": "ส่งออกรายงาน",
     "revenueReport": "รายงานรายได้",
     "revenueTrend": "แนวโน้มรายได้ (30 วันล่าสุด)",
-    "treatmentPerformance": "ประสิทธิภาพการรักษา",
-    "recentPatients": "ผู้ป่วยล่าสุด",
-    "patientManagement": "จัดการผู้ป่วย",
-    "staffManagement": "จัดการพนักงาน",
+    "treatmentPerformance": "ประสิทธิภาพโปรแกรมความงาม",
+    "recentPatients": "ลูกค้าล่าสุด",
+    "patientManagement": "จัดการลูกค้า",
+    "staffManagement": "จัดการทีมงาน",
     "inventoryManagement": "จัดการคลังสินค้า",
-    "treatmentStats": "สถิติการรักษา"
+    "treatmentStats": "สถิติโปรแกรมความงาม"
   },
   "patient": {
     "name": "ชื่อ",
@@ -3510,9 +3507,9 @@
     },
     "allergies": "ประวัติแพ้ยา",
     "medications": "ยาที่ใช้ปัจจุบัน",
-    "medicalHistory": "ประวัติการรักษา",
+    "medicalHistory": "ประวัติโปรแกรมความงาม",
     "skinConcerns": "ปัญหาผิว",
-    "previousTreatments": "การรักษาก่อนหน้า",
+    "previousTreatments": "โปรแกรมความงามก่อนหน้า",
     "totalVisits": "จำนวนครั้งที่มา",
     "totalSpent": "ยอดใช้จ่ายรวม",
     "lastVisit": "มาครั้งล่าสุด",
@@ -3596,7 +3593,7 @@
     "heatmapTitle": "แผนที่ความร้อนปัญหาผิว (Skin Concern Heatmap)",
     "heatmapDesc": "แสดงความหนาแน่นของปัญหาผิวที่พบบ่อยแยกตามพื้นที่บริการ",
     "topConcerns": "ปัญหาผิวอันดับต้นในพื้นที่",
-    "demandForecast": "การคาดการณ์ความต้องการทรีตเมนต์",
+    "demandForecast": "การคาดการณ์ความต้องการโปรแกรมความงาม",
     "enterpriseBadge": "ENTERPRISE EXCLUSIVE",
     "regions": {
       "bangkok": "กรุงเทพฯ และปริมณฑล",
@@ -3630,7 +3627,7 @@
     "title": "ระบบคาดการณ์คลังเวชภัณฑ์อัจฉริยะ (Predictive Inventory)",
     "subtitle": "วิเคราะห์การใช้ยาและอุปกรณ์ทางการแพทย์ล่วงหน้าด้วย AI",
     "forecastTitle": "การคาดการณ์ปริมาณการใช้ (Usage Forecast)",
-    "forecastDesc": "คำนวณจากเทรนด์ปัญหาผิวที่ตรวจพบ (Skin Concerns) และแผนการรักษา",
+    "forecastDesc": "คำนวณจากเทรนด์ปัญหาผิวที่ตรวจพบ (Skin Concerns) และแผนโปรแกรมความงาม",
     "stockOptimization": "การปรับปรุงสต็อก",
     "reorderAlert": "การแจ้งเตือนสั่งซื้อล่วงหน้า",
     "efficiencyBadge": "OPEX OPTIMIZED",
@@ -3707,18 +3704,18 @@
     "title": "ผู้ช่วยส่วนตัวอัจฉริยะ (AI Virtual Concierge)",
     "subtitle": "ที่ปรึกษาความงามส่วนตัวพร้อมดูแลคุณ 24/7",
     "welcome": "สวัสดีค่ะ ฉันคือ AI ประจำตัวของคุณ มีอะไรให้ช่วยเกี่ยวกับการดูแลผิวในวันนี้ไหมคะ?",
-    "clinicalAdvice": "คำแนะนำเชิงคลินิก",
+    "clinicalAdvice": "คำแนะนำเชิงศูนย์ความงาม",
     "regimenSupport": "สอบถามแผนการดูแลผิว",
     "bookingHelp": "ช่วยเรื่องการจอง",
     "premiumFeature": "PREMIUM_CONCIERGE",
     "placeholder": "พิมพ์ข้อความหาผู้ดูแลอัจฉริยะ...",
     "disclaimer": "ข้อมูลที่ให้เป็นการคาดการณ์โดย AI เพื่อการดูแลผิวเบื้องต้นเท่านั้น โปรดปรึกษาแพทย์เพื่อรับการวินิจฉัยทางการแพทย์",
     "premiumIntelligence": "ความฉลาดระดับพรีเมียม",
-    "upgradeUnlock": "ปลดล็อกการสนับสนุนทางคลินิกโดย AI ตลอด 24 ชั่วโมงและการให้คำปรึกษาด้านความงามส่วนบุคคล",
+    "upgradeUnlock": "ปลดล็อกการสนับสนุนทางศูนย์ความงามโดย AI ตลอด 24 ชั่วโมงและการให้คำปรึกษาด้านความงามส่วนบุคคล",
     "neuralActive": "ระบบประสาททำงานตลอด 24 ชั่วโมง",
     "botResponses": {
       "analyzed": "ฉันได้วิเคราะห์ข้อมูลของคุณแล้ว แผนปัจจุบันทำงานได้ดี แต่เราสังเกตเห็นโหนดความชุ่มชื้นลดลงเล็กน้อย แนะนำให้เพิ่มการใช้ HydraMatrix ค่ะ",
-      "booking": "ฉันสามารถช่วยเรื่องนี้ได้ค่ะ ตามรอบคลินิกปัจจุบันของคุณ ช่วงเวลาที่เหมาะสมที่สุดสำหรับเซสชันถัดไปคือวันที่ 25-28 ม.ค. ต้องการให้ฉันจองคิวไว้ให้ไหมคะ?"
+      "booking": "ฉันสามารถช่วยเรื่องนี้ได้ค่ะ ตามรอบศูนย์ความงามปัจจุบันของคุณ ช่วงเวลาที่เหมาะสมที่สุดสำหรับเซสชันถัดไปคือวันที่ 25-28 ม.ค. ต้องการให้ฉันจองคิวไว้ให้ไหมคะ?"
     }
   },
   "loyaltyRewards": {
@@ -3740,7 +3737,7 @@
       "hydrationMaster": "ผู้เชี่ยวชาญการเติมน้ำ",
       "hydrationMasterDesc": "รักษาระดับความชุ่มชื้นได้ถึง 80%",
       "loyalNode": "โหนดลูกค้าประจำ",
-      "loyalNodeDesc": "เข้ารับการรักษาครบ 3 รอบคลินิก"
+      "loyalNodeDesc": "เข้ารับโปรแกรมความงามครบ 3 รอบศูนย์ความงาม"
     },
     "rewards": {
       "freeScan": "สแกนผิวระดับลึกฟรี",
@@ -3748,7 +3745,7 @@
       "premiumPrint": "พิมพ์โครงสร้างผิว 3 มิติ"
     },
     "locked": "ล็อคระบบสิทธิประโยชน์",
-    "upgradeUnlock": "อัปเกรดเพื่อปลดล็อกรางวัลด้านสุขภาพทางชีวภาพและรับคะแนนสำหรับทุกรอบการรักษา",
+    "upgradeUnlock": "อัปเกรดเพื่อปลดล็อกรางวัลด้านสุขภาพทางชีวภาพและรับคะแนนสำหรับทุกรอบโปรแกรมความงาม",
     "initRewardNode": "เปิดใช้งานโหนดรางวัล",
     "redeem": "แลกรางวัล",
     "insufficientPoints": "คะแนนไม่เพียงพอ",
@@ -3775,20 +3772,20 @@
     "globalRank": "อันดับโลก",
     "efficiencyIndex": "ดัชนีประสิทธิภาพ",
     "yieldAllocation": "การจัดสรรผลตอบแทน",
-    "multiClinicIntelligence": "ข้อมูลอัจฉริยะหลายคลินิก",
+    "multiClinicIntelligence": "ข้อมูลอัจฉริยะหลายศูนย์ความงาม",
     "unlockMultiBranchDashboard": "ปลดล็อกแดชบอร์ดหลายสาขา",
     "globalNetworkSynced": "ซิงค์เครือข่ายทั่วโลกแล้ว",
     "revenueComparison": "การเปรียบเทียบรายได้",
     "aggregateYieldMatrix": "เมทริกซ์ผลตอบแทนรวม",
     "networkOptimizationInsight": "ข้อมูลเชิงลึกการเพิ่มประสิทธิภาพเครือข่าย",
-    "optimizationDesc": "หน่วย {branch} กำลังทำงานได้ดีกว่าเกณฑ์มาตรฐานเครือข่าย 14% AI แนะนำให้กระจายสต็อกทางคลินิกส่วนเกินไปยังโหนดนี้",
+    "optimizationDesc": "หน่วย {branch} กำลังทำงานได้ดีกว่าเกณฑ์มาตรฐานเครือข่าย 14% AI แนะนำให้กระจายสต็อกทางศูนย์ความงามส่วนเกินไปยังโหนดนี้",
     "branchMatrix": "เมทริกซ์ประสิทธิภาพสาขา",
     "utilizationRate": "อัตราการใช้งาน",
     "synchronizeNetworkData": "ซิงโครไนซ์ข้อมูลเครือข่าย"
   },
   "industryBenchmarking": {
     "title": "การเปรียบเทียบระดับอุตสาหกรรม (Industry Benchmarking)",
-    "subtitle": "วัดระดับขีดความสามารถของคลินิกคุณเทียบกับค่าเฉลี่ยทั่วโลก",
+    "subtitle": "วัดระดับขีดความสามารถของศูนย์ความงามคุณเทียบกับค่าเฉลี่ยทั่วโลก",
     "globalPercentile": "เปอร์เซ็นไทล์ระดับโลก",
     "competitorAnalysis": "การวิเคราะห์คู่แข่ง AI",
     "efficiencyComparison": "เวกเตอร์เปรียบเทียบประสิทธิภาพ",
@@ -3796,7 +3793,7 @@
     "enterpriseElite": "ระดับองค์กรชั้นนำ",
     "globalEliteLocked": "ข้อมูลระดับโลกถูกล็อก",
     "unlockIndustryMatrix": "ปลดล็อกเมทริกซ์อุตสาหกรรม",
-    "yourClinic": "คลินิกของคุณ",
+    "yourClinic": "ศูนย์ความงามของคุณ",
     "globalAvg": "ค่าเฉลี่ยทั่วโลก",
     "techAdoption": "การเปิดรับเทคโนโลยี",
     "topGlobally": "ติดอันดับท็อป {val}% ทั่วโลก",
@@ -3806,11 +3803,11 @@
     "radarLabels": {
       "aiAdoption": "การใช้ AI",
       "conversionRate": "อัตราการซื้อ",
-      "retention": "การรักษาลูกค้า",
+      "retention": "โปรแกรมความงามลูกค้า",
       "aov": "ยอดขายเฉลี่ย",
-      "patientTrust": "ความเชื่อมั่นของคนไข้"
+      "patientTrust": "ความเชื่อมั่นของลูกค้า"
     },
-    "yourClinicLabel": "คลินิกของคุณ",
+    "yourClinicLabel": "ศูนย์ความงามของคุณ",
     "globalAvgLabel": "ค่าเฉลี่ยทั่วโลก"
   },
   "generativeMarketing": {
@@ -3822,20 +3819,20 @@
     "conversionPrediction": "คาดการณ์การตอบสนอง",
     "autoPost": "ส่งไปยังช่องทางโซเชียล",
     "styleElite": "พรีเซ็ตสไตล์: พรีเมียม",
-    "synthesizing": "กำลังสังเคราะห์ภาพทางคลินิก",
+    "synthesizing": "กำลังสังเคราะห์ภาพทางศูนย์ความงาม",
     "awaiting": "รอการเริ่มต้นลำดับการทำงาน",
-    "resultBadge": "ผลลัพธ์ทางคลินิก: {trend}",
+    "resultBadge": "ผลลัพธ์ทางศูนย์ความงาม: {trend}",
     "protocolTitle": "โปรโตคอลการฟื้นฟูที่แม่นยำ",
     "initDesc": "เริ่มต้นการสร้างภาพเพื่อปลดล็อกรูปแบบข้อความ AI",
-    "copyDesc": "เปลี่ยนอนาคตทางชีวภาพของคุณ โปรโตคอลการฟื้นฟูที่วิเคราะห์ด้วย AI ของเราให้ผลลัพธ์ที่แม่นยำสำหรับคนไข้ ค้นพบเวกเตอร์ผิวที่เป็นเอกลักษณ์ของคุณได้วันนี้",
+    "copyDesc": "เปลี่ยนอนาคตทางชีวภาพของคุณ โปรโตคอลการฟื้นฟูที่วิเคราะห์ด้วย AI ของเราให้ผลลัพธ์ที่แม่นยำสำหรับลูกค้า ค้นพบเวกเตอร์ผิวที่เป็นเอกลักษณ์ของคุณได้วันนี้",
     "targetDemographic": "กลุ่มเป้าหมาย",
     "predictedCtr": "CTR ที่คาดการณ์",
     "dataIntegrity": "ความสมบูรณ์ของข้อมูล",
-    "verifiedCases": "เคสทางคลินิกที่ยืนยันแล้ว"
+    "verifiedCases": "เคสทางศูนย์ความงามที่ยืนยันแล้ว"
   },
   "medicalCompliance": {
     "title": "การตรวจสอบการปฏิบัติตามกฎระเบียบแพทย์",
-    "subtitle": "การยืนยันโปรโตคอลคลินิกและการแยกข้อมูลโดยอัตโนมัติ",
+    "subtitle": "การยืนยันโปรโตคอลศูนย์ความงามและการแยกข้อมูลโดยอัตโนมัติ",
     "activeAudits": "การตรวจสอบที่ทำงานอยู่",
     "complianceRate": "อัตราการปฏิบัติตามกฎ",
     "dataIsolation": "การแยกข้อมูล",
@@ -3855,14 +3852,14 @@
     "auditLog": "บันทึกการตรวจสอบ",
     "realtimeTelemetry": "ข้อมูลการปฏิบัติตามกฎระเบียบเรียลไทม์",
     "remediationSchema": "แผนผังการแก้ไข",
-    "remediationDesc": "ตัวเฝ้าสังเกตระบบประสาทตรวจพบความเบี่ยงเบน 1 รายการใน CASE_8835 AI แนะนำให้เริ่มลำดับการปรับแนวทางทางคลินิกทันที",
+    "remediationDesc": "ตัวเฝ้าสังเกตระบบประสาทตรวจพบความเบี่ยงเบน 1 รายการใน CASE_8835 AI แนะนำให้เริ่มลำดับการปรับแนวทางทางศูนย์ความงามทันที",
     "generateAuditLedger": "สร้างบัญชีการตรวจสอบ",
     "complianceEngine": "เครื่องมือปฏิบัติตามกฎระเบียบ v4.2 ปกติ",
     "certifiedISO": "การกำกับดูแลเชิงกลยุทธ์ที่ได้รับการรับรอง ISO-27001 และ HIPAA",
     "viewArchive": "ดูคลังการตรวจสอบ",
     "auditCompleted": "การตรวจสอบระบบเสร็จสิ้น",
     "safeguardLocked": "การป้องกันถูกล็อค",
-    "safeguardDesc": "ใช้ AI อัตโนมัติเพื่อตรวจสอบบันทึกการรักษาเทียบกับโปรโตคอลความปลอดภัยทางการแพทย์แบบเรียลไทม์ ลดความรับผิดชอบและรับรองการปฏิบัติตามมาตรฐานคลินิก 100%",
+    "safeguardDesc": "ใช้ AI อัตโนมัติเพื่อตรวจสอบบันทึกโปรแกรมความงามเทียบกับโปรโตคอลความปลอดภัยทางการแพทย์แบบเรียลไทม์ ลดความรับผิดชอบและรับรองการปฏิบัติตามมาตรฐานศูนย์ความงาม 100%",
     "runAudit": "เริ่มการตรวจสอบเรียลไทม์",
     "cases": {
       "case1": {
@@ -3870,7 +3867,7 @@
         "details": "ปริมาณ (25U) อยู่ในเกณฑ์ที่แนะนำสำหรับโหนด Frontalis"
       },
       "case2": {
-        "protocol": "ช่วงเวลาการรักษา",
+        "protocol": "ช่วงเวลาโปรแกรมความงาม",
         "details": "เซสชัน HIFU กำหนดไว้ 14 วันหลังเลเซอร์ แนะนำ: 21 วัน"
       },
       "case3": {
@@ -3892,11 +3889,11 @@
     "smartMirrorLink": "เชื่อมต่อ Smart Mirror",
     "realtimeTelemetry": "ข้อมูลไบโอเมตริกซ์เรียลไทม์",
     "locked": "ล็อคการเชื่อมต่อไบโอเมตริกซ์",
-    "unlockDesc": "เชื่อมต่อกระจกอัจฉริยะและเซ็นเซอร์สิ่งแวดล้อมในบ้านเพื่อซิงค์ข้อมูลทางชีวภาพแบบเรียลไทม์กับโปรโตคอลคลินิกของคุณ",
+    "unlockDesc": "เชื่อมต่อกระจกอัจฉริยะและเซ็นเซอร์สิ่งแวดล้อมในบ้านเพื่อซิงค์ข้อมูลทางชีวภาพแบบเรียลไทม์กับโปรโตคอลศูนย์ความงามของคุณ",
     "linkDevice": "เชื่อมต่ออุปกรณ์อัจฉริยะ",
     "connectedMesh": "เชื่อมต่อผ่านเครือข่ายเมชแล้ว",
     "mirrorLinkLabel": "การเชื่อมต่อกระจกอัจฉริยะ",
-    "mirrorLinkDesc": "กระจกอัจฉริยะของคุณกำลังสแกนความชุ่มชื้นทุกๆ 4 ชั่วโมง ข้อมูลจะถูกแมปไปยังโปรโตคอลคลินิกโดยอัตโนมัติเพื่อปรับแผนการดูแลผิว",
+    "mirrorLinkDesc": "กระจกอัจฉริยะของคุณกำลังสแกนความชุ่มชื้นทุกๆ 4 ชั่วโมง ข้อมูลจะถูกแมปไปยังโปรโตคอลศูนย์ความงามโดยอัตโนมัติเพื่อปรับแผนการดูแลผิว",
     "linkStability": "เสถียรภาพการเชื่อมต่อ",
     "efficient": "มีประสิทธิภาพ",
     "encryptionInfo": "ข้อมูลถูกเข้ารหัสผ่านโปรโตคอล AES-256 Quantum-Safe ข้อมูลถูกใช้เพื่อการปรับจูนแผนการดูแลผิวเท่านั้น",
@@ -3914,18 +3911,18 @@
   },
   "visionToOrder": {
     "title": "Vision to Order",
-    "subtitle": "ระบบจัดการเวชภัณฑ์และใบสั่งยาอัจฉริยะ",
-    "draftStatus": "สร้างแบบร่างใบสั่งยาสำเร็จ!",
-    "generateButton": "สร้างใบสั่งยาและเวชภัณฑ์",
+    "subtitle": "ระบบจัดการผลิตภัณฑ์และแผนงานอัจฉริยะ",
+    "draftStatus": "สร้างแบบร่างรายการสำเร็จ!",
+    "generateButton": "สร้างรายการผลิตภัณฑ์และโปรแกรม",
     "recommendedItems": "รายการที่แนะนำ",
-    "medicalSupplies": "เวชภัณฑ์ทางการแพทย์",
-    "syncToPharmacy": "ส่งข้อมูลห้องยา",
-    "syncToDoctor": "ส่งข้อมูลให้แพทย์",
+    "medicalSupplies": "ผลิตภัณฑ์ที่ต้องเตรียม",
+    "syncToPharmacy": "ส่งข้อมูลไปฝ่ายคลัง",
+    "syncToDoctor": "ส่งให้ที่ปรึกษาตรวจสอบ",
     "efficiencyBadge": "เพิ่มประสิทธิภาพ 3.2 เท่า",
-    "synchronizing": "กำลังซิงค์ข้อมูลประสาท...",
-    "validatedClinical": "ตรวจสอบโดยระบบคลินิกแล้ว",
-    "synchronizingNeuralData": "กำลังซิงโครไนซ์ข้อมูลประสาท...",
-    "validatedByClinicalEngine": "ตรวจสอบโดยระบบคลินิกแล้ว",
+    "synchronizing": "กำลังซิงค์ข้อมูล...",
+    "validatedClinical": "ตรวจสอบโดยระบบอัตโนมัติแล้ว",
+    "synchronizingNeuralData": "กำลังประมวลผลข้อมูล...",
+    "validatedByClinicalEngine": "ตรวจสอบโดยระบบประเมินผลแล้ว",
     "node": "โหนด",
     "supplies": {
       "botox": [
@@ -3954,7 +3951,7 @@
         "ชุดอุปกรณ์ให้คำปรึกษามาตรฐาน"
       ]
     },
-    "validatedByClinical": "ตรวจสอบโดยระบบคลินิกแล้ว"
+    "validatedByClinical": "ตรวจสอบโดยระบบประเมินแล้ว"
   },
   "revenueForecasting": {
     "title": "การคาดการณ์รายได้อัจฉริยะ (AI Revenue Forecast)",
@@ -4012,15 +4009,15 @@
     "aiInsight": "AI ระบุว่าการยืนยันด้วยภาพ 3D เป็นปัจจัยหลักในการเร่งรอบการปิดดีล"
   },
   "shared3DCanvas": {
-    "title": "พื้นที่วางแผนการรักษา 3 มิติ (Shared 3D Canvas)",
-    "subtitle": "วางแผนการรักษาร่วมกันแบบเรียลไทม์ระหว่างแพทย์และลูกค้า",
+    "title": "พื้นที่วางแผนโปรแกรมความงาม 3 มิติ (Shared 3D Canvas)",
+    "subtitle": "วางแผนโปรแกรมความงามร่วมกันแบบเรียลไทม์ระหว่างแพทย์และลูกค้า",
     "liveSync": "LIVE_COLLABORATION_ACTIVE",
     "drawTool": "เครื่องมือวาด",
     "measureTool": "เครื่องมือวัดระยะ",
     "addNote": "เพิ่มบันทึกบนโมเดล",
     "clearCanvas": "ล้างกระดานวาด",
-    "savePlan": "บันทึกแผนการรักษา",
-    "clinicalValidation": "การตรวจสอบทางคลินิก",
+    "savePlan": "บันทึกแผนโปรแกรมความงาม",
+    "clinicalValidation": "การตรวจสอบทางศูนย์ความงาม",
     "layers": {
       "dermal": "ชั้นหนังแท้",
       "muscular": "ชั้นกล้ามเนื้อ",
@@ -4041,8 +4038,8 @@
     "title": "เครื่องมือจำลองอายุผิว 4 มิติ (Generative 4D Aging)",
     "subtitle": "จำลองวิวัฒนาการของผิวในอีก 5-10 ปีข้างหน้าด้วยเทคโนโลยี Generative AI",
     "simulateFuture": "จำลองภาพอนาคต (5-10 ปี)",
-    "preventionMode": "จำลองผลเมื่อได้รับการรักษา",
-    "agingMode": "จำลองผลเมื่อไม่ได้รับการรักษา",
+    "preventionMode": "จำลองผลเมื่อได้รับโปรแกรมความงาม",
+    "agingMode": "จำลองผลเมื่อไม่ได้รับโปรแกรมความงาม",
     "confidenceScore": "ความแม่นยำของโมเดลคาดการณ์",
     "temporalMapping": "การแมปปิ้งตามช่วงเวลา",
     "visualizing": "กำลังประมวลผลวิวัฒนาการผิว...",
@@ -4059,17 +4056,17 @@
   },
   "medicalDecisionSupport": {
     "title": "ระบบสนับสนุนการตัดสินใจทางการแพทย์ (Medical Decision Support)",
-    "subtitle": "AI ช่วยวิเคราะห์เคสทางคลินิกเชิงลึกและเสนอแนวทางการรักษาอ้างอิงฐานข้อมูลสากล",
+    "subtitle": "AI ช่วยวิเคราะห์เคสทางศูนย์ความงามเชิงลึกและเสนอแนวทางโปรแกรมความงามอ้างอิงฐานข้อมูลสากล",
     "differentialDiagnosis": "การวินิจฉัยแยกโรคแนะนำ",
-    "riskAssessment": "การประเมินความเสี่ยงทางคลินิก",
+    "riskAssessment": "การประเมินความเสี่ยงทางศูนย์ความงาม",
     "evidenceBase": "หลักฐานอ้างอิงเชิงวิชาการ",
-    "treatmentRationale": "เหตุผลสนับสนุนแนวทางการรักษา",
+    "treatmentRationale": "เหตุผลสนับสนุนแนวทางโปรแกรมความงาม",
     "doctorConfirmation": "การยืนยันโดยแพทย์",
     "enterpriseElite": "Enterprise Elite",
     "aiConfidence": "ระดับความเชื่อมั่นของระบบ",
     "consultAI": "ปรึกษา AI MDSS",
     "upgradeEnterprise": "อัปเกรดเป็น Enterprise",
-    "lockedDescription": "ปลดล็อกระบบสนับสนุนการตัดสินใจทางการแพทย์ (MDSS) เพิ่มพลังให้ทีมคลินิกของคุณด้วยการวินิจฉัยแยกโรคด้วย AI และแนวทางการรักษาตามหลักฐานอ้างอิง",
+    "lockedDescription": "ปลดล็อกระบบสนับสนุนการตัดสินใจทางการแพทย์ (MDSS) เพิ่มพลังให้ทีมศูนย์ความงามของคุณด้วยการวินิจฉัยแยกโรคด้วย AI และแนวทางโปรแกรมความงามตามหลักฐานอ้างอิง",
     "melasma": "ฝ้า (Melasma)",
     "pih": "รอยดำหลังการอักเสบ",
     "melasmaReasoning": "ตรวจพบจุดด่างดำที่มีลักษณะสมมาตรและไม่สม่ำเสมอ",
@@ -4078,20 +4075,20 @@
     "yagRationale": "ผลกระทบจากแสงและความร้อนที่ตรงเป้าหมายเพื่อสลายเม็ดสีในชั้นผิว",
     "tranexamic": "ทราเนซามิก โปรโตคอล",
     "tranexamicRationale": "ยับยั้งการกระตุ้นพลาสมิโนเจนเพื่อลดกิจกรรมของเซลล์เมลาโนไซต์",
-    "clinicalRationaleGenerated": "สร้างเหตุผลทางคลินิกสำเร็จ",
+    "clinicalRationaleGenerated": "สร้างข้อมูลสนับสนุนความงามสำเร็จ",
     "systemLocked": "ระบบ MDSS ถูกล็อก",
-    "protocolIntegrity": "ความสมบูรณ์ของระเบียบการทางคลินิก: {value}%",
+    "protocolIntegrity": "ความสมบูรณ์ของแผนงานความงาม: {value}%",
     "viewSourceMetaData": "ดูข้อมูลแหล่งที่มา",
-    "requiredBeforeAuthorizedProtocol": "ต้องได้รับการยืนยันก่อนอนุญาตระเบียบการ",
+    "requiredBeforeAuthorizedProtocol": "ต้องได้รับการยืนยันก่อนอนุมัติแผนงาน",
     "match": "แมตช์",
     "aiIdentified": "AI ตรวจพบความสัมพันธ์ของ {node}. แนะนำให้ใช้ {protocol} เพื่อรักษาระดับความยืดหยุ่นของโมเลกุล",
-    "validatedByClinicalAI": "ตรวจสอบโดย AI ทางคลินิก"
+    "validatedByClinicalAI": "ตรวจสอบโดย AI ระดับโปร"
   },
   "predictiveReengagement": {
     "success": "ซิงโครไนซ์เมทริกซ์การดึงลูกค้ากลับเรียบร้อยแล้ว",
-    "retentionInsight": "ข้อมูลเชิงลึกเครื่องมือการรักษาลูกค้า",
-    "retentionDesc": "AI ระบุ {count} โหนดที่มีความสัมพันธ์สูงซึ่งกำลังจะสิ้นสุดรอบประสิทธิภาพการรักษา แนะนำให้ใช้รูปแบบการดึงลูกค้ากลับเฉพาะบุคคลภายใน {hours} ชั่วโมง",
-    "auditOk": "การตรวจสอบการรักษาลูกค้าตามเวลา: ปกติ",
+    "retentionInsight": "ข้อมูลเชิงลึกเครื่องมือโปรแกรมความงามลูกค้า",
+    "retentionDesc": "AI ระบุ {count} โหนดที่มีความสัมพันธ์สูงซึ่งกำลังจะสิ้นสุดรอบประสิทธิภาพโปรแกรมความงาม แนะนำให้ใช้รูปแบบการดึงลูกค้ากลับเฉพาะบุคคลภายใน {hours} ชั่วโมง",
+    "auditOk": "การตรวจสอบโปรแกรมความงามลูกค้าตามเวลา: ปกติ",
     "massOutreach": "ดำเนินการสื่อสารมวลชน",
     "overdue": "เกินกำหนด",
     "dueIn": "ครบกำหนดใน {days} วัน",
@@ -4151,7 +4148,7 @@
   },
   "roiSimulator": {
     "title": "ระบบจำลองผลตอบแทน (AI Strategic ROI Simulator)",
-    "subtitle": "คำนวณความคุ้มค่าและผลตอบแทนจากการลงทุนในเทคโนโลยี AI สำหรับคลินิกคุณ",
+    "subtitle": "คำนวณความคุ้มค่าและผลตอบแทนจากการลงทุนในเทคโนโลยี AI สำหรับศูนย์ความงามคุณ",
     "calculateButton": "คำนวณ ROI รายปี",
     "inputs": {
       "avgMonthlyRevenue": "รายได้ต่อเดือนปัจจุบัน",
@@ -4165,7 +4162,7 @@
       "paybackPeriod": "ระยะเวลาคืนทุน (เดือน)"
     },
     "aiImpact": "AI ประเมินว่าคุณจะสามารถเพิ่มรายได้จากการ Upsell ได้อีก {percent}%",
-    "clinicalLogic": "คำนวณจากสถิติเฉลี่ยของคลินิกในเครือข่ายที่ใช้ AI Precision",
+    "clinicalLogic": "คำนวณจากสถิติเฉลี่ยของศูนย์ความงามในเครือข่ายที่ใช้ AI Precision",
     "lockedBadge": "ล็อคกลยุทธ์ ROI",
     "unlockButton": "ปลดล็อกโมดูลกลยุทธ์",
     "biBadge": "ข้อมูลอัจฉริยะทางธุรกิจ V2",
@@ -4187,7 +4184,7 @@
     "corePillars": {
       "automation": "การดำเนินงานอัตโนมัติ (Autonomous Ops)",
       "precision": "ความแม่นยำระดับชีวมาตร (Biometric Precision)",
-      "retention": "การรักษาฐานลูกค้าอัจฉริยะ (Smart Retention)"
+      "retention": "โปรแกรมความงามฐานลูกค้าอัจฉริยะ (Smart Retention)"
     },
     "tierValue": {
       "standard": "พื้นฐาน (Standard)",
@@ -4225,22 +4222,22 @@
       "subtitle": "สถาปัตยกรรม AI ที่ออกแบบมาเพื่อความงามระดับพรีเมียมโดยเฉพาะ",
       "aiAnalysis": {
         "title": "การวิเคราะห์ผิวระดับลึก (Hybrid AI)",
-        "desc": "ผสานอัลกอริทึมสากลเข้ากับ Data การรักษาจริง เพื่อความแม่นยำสูงสุดในการระบุจุดด่างดำ ริ้วรอย และปัญหารูขุมขน",
-        "feature1": " วิเคราะห์ละเอียด 8 ตัวชี้วัดมาตรฐาน VISIA",
+        "desc": "ผสานอัลกอริทึมสากลเข้ากับ Data โปรแกรมความงามจริง เพื่อความแม่นยำสูงสุดในการระบุจุดด่างดำ ริ้วรอย และปัญหารูขุมขน",
+        "feature1": " วิเคราะห์ละเอียด 8 ตัวชี้วัดมาตรฐานความงามอัจฉริยะ",
         "feature2": " ประมวลผลเสร็จสิ้นภายใน 3 วินาที",
         "feature3": " ตรวจจับจุดสำคัญบนใบหน้า 468 จุด",
         "feature4": " ให้คะแนนความแม่นยำ 0-100 รายจุด"
       },
       "arVisualization": {
         "title": "เครื่องมือจำลองผลลัพธ์ 3 มิติ & AR",
-        "desc": "ให้ลูกค้าเห็นผลลัพธ์หลังการรักษาแบบเรียลไทม์ผ่านโมเดล 3 มิติ และจำลองอายุผิวในอนาคตด้วยระบบ 4D Aging",
-        "feature1": " จำลองผลการรักษา (AR Preview) ทันที",
+        "desc": "ให้ลูกค้าเห็นผลลัพธ์หลังโปรแกรมความงามแบบเรียลไทม์ผ่านโมเดล 3 มิติ และจำลองอายุผิวในอนาคตด้วยระบบ 4D Aging",
+        "feature1": " จำลองผลโปรแกรมความงาม (AR Preview) ทันที",
         "feature2": " โมเดลใบหน้า 3 มิติความละเอียดสูง",
         "feature3": " การเปรียบเทียบก่อน/หลัง แบบสไลเดอร์",
         "feature4": " แชร์ผลลัพธ์ให้ลูกค้าได้ทันที"
       },
       "multiClinic": {
-        "title": "การจัดการโครงข่ายคลินิกอัจฉริยะ",
+        "title": "การจัดการโครงข่ายศูนย์ความงามอัจฉริยะ",
         "desc": "บริหารจัดการหลายสาขาพร้อมกันด้วยแดชบอร์ดเดียว ติดตามสต็อกเวชภัณฑ์ และเปรียบเทียบประสิทธิภาพรายโหนด",
         "feature1": " บริหารจัดการไม่จำกัดจำนวนสาขา",
         "feature2": " ระบบกำหนดสิทธิ์ตามบทบาท (RBAC)",
@@ -4265,7 +4262,7 @@
       },
       "customerDb": {
         "title": "ฐานข้อมูลลูกค้าอัจฉริยะ",
-        "desc": "เก็บบันทึกประวัติการรักษาเป็นไทม์ไลน์พร้อมภาพเปรียบเทียบ"
+        "desc": "เก็บบันทึกประวัติโปรแกรมความงามเป็นไทม์ไลน์พร้อมภาพเปรียบเทียบ"
       },
       "salesAnalytics": {
         "title": "แดชบอร์ดวิเคราะห์การขาย",
@@ -4276,7 +4273,7 @@
         "desc": "นัดหมายออนไลน์พร้อมระบบแจ้งเตือนลูกค้าอัตโนมัติ"
       },
       "recommendations": {
-        "title": "ระบบแนะนำการรักษา AI",
+        "title": "ระบบแนะนำโปรแกรมความงาม AI",
         "desc": "แนะนำคอร์สและเวชภัณฑ์ที่เหมาะสมที่สุดตามผลการวิเคราะห์"
       },
       "gallery": {
@@ -4294,7 +4291,7 @@
     },
     "comparison": {
       "title": "เปรียบเทียบขีดความสามารถ",
-      "subtitle": "เหตุผลที่คลินิกชั้นนำเลือกใช้ระบบ AI ของเรา",
+      "subtitle": "เหตุผลที่ศูนย์ความงามชั้นนำเลือกใช้ระบบ AI ของเรา",
       "feature": "ฟีเจอร์",
       "ourPlatform": "แพลตฟอร์มของเรา",
       "competitors": "คู่แข่งทั่วไป",
@@ -4315,7 +4312,7 @@
           "competitor": "10-15 วินาที"
         },
         "points": {
-          "ours": "8 ตัวชี้วัด (VISIA)",
+          "ours": "8 ตัวชี้วัด (Aesthetic AI)",
           "competitor": "5-6 ตัวชี้วัด"
         },
         "multiClinic": {
@@ -4333,7 +4330,7 @@
       }
     },
     "cta": {
-      "title": "พร้อมยกระดับคลินิกของคุณหรือยัง?",
+      "title": "พร้อมยกระดับศูนย์ความงามของคุณหรือยัง?",
       "description": "ทดลองใช้งานระบบวินิจฉัยผิวอัจฉริยะฟรีวันนี้",
       "freeSkinAnalysis": "วิเคราะห์ผิวฟรี",
       "contactSales": "ติดต่อฝ่ายขาย"
@@ -4341,7 +4338,7 @@
   },
   "socialProof": {
     "title": "ความไว้วางใจจากลูกค้า",
-    "subtitle": "คลินิกชั้นนำที่เลือกใช้ระบบของเรา"
+    "subtitle": "ศูนย์ความงามชั้นนำที่เลือกใช้ระบบของเรา"
   },
   "salesPresentations": {
     "title": "การนำเสนอการขาย",
@@ -4373,7 +4370,7 @@
       "signature": "เซ็นสัญญา",
       "start": "เริ่ม"
     },
-    "treatments": {
+    "programs": {
       "botox": {
         "name": "Botox (ลดริ้วรอย)",
         "description": "ปรับผิวให้เรียบเนียน ลดริ้วรอยและรอยเหี่ยวย่น"
@@ -4464,7 +4461,7 @@
       "totalRevenue": "รายได้รวมทั้งหมด",
       "confirmedBookings": "การนัดหมายที่ยืนยัน",
       "avgRevenueUplift": "รายได้ที่เพิ่มขึ้นเฉลี่ย",
-      "clientRetention": "การรักษาฐานลูกค้า",
+      "clientRetention": "การกลับมาใช้ซ้ำ",
       "title1": "กำไร",
       "title2": "การบริหารจัดการ"
     },
@@ -4535,7 +4532,7 @@
   },
   "featuresSupremacy": {
     "title": "โมดูลเชิงกลยุทธ์ระดับสูงสุด (Supremacy Modules)",
-    "subtitle": "โครงสร้างพื้นฐาน AI ที่สำคัญต่อภารกิจเพื่อประสิทธิภาพทางคลินิกที่เหนือชั้น",
+    "subtitle": "โครงสร้างพื้นฐาน AI ที่สำคัญต่อภารกิจเพื่อประสิทธิภาพทางศูนย์ความงามที่เหนือชั้น",
     "mdss": {
       "title": "ระบบสนับสนุนการตัดสินใจแพทย์ (MDSS)",
       "desc": "เพิ่มขีดความสามารถให้แพทย์ด้วยการวินิจฉัยแยกโรคและหลักฐานอ้างอิงเชิงวิชาการ"
@@ -4546,10 +4543,10 @@
     },
     "roi": {
       "title": "ระบบจำลองผลตอบแทน AI (ROI)",
-      "desc": "วัดผลลัพธ์ทางคลินิกและผลกระทบทางการเงินด้วยข้อมูลอัจฉริยะแบบเรียลไทม์"
+      "desc": "วัดผลลัพธ์ทางศูนย์ความงามและผลกระทบทางการเงินด้วยข้อมูลอัจฉริยะแบบเรียลไทม์"
     },
     "audit": {
-      "title": "ระบบตรวจสอบมาตรฐานการรักษา",
+      "title": "ระบบตรวจสอบมาตรฐานโปรแกรมความงาม",
       "desc": "การดูแลความปลอดภัยอัตโนมัติเพื่อให้แน่ใจว่าปฏิบัติตามโปรโตคอลทางการแพทย์ 100%"
     }
   },
@@ -4610,17 +4607,17 @@
       "certifiedOversight": "การกำกับดูแลเชิงกลยุทธ์ที่ได้รับการรับรอง",
       "networkEfficiency": "ประสิทธิภาพเครือข่ายถึง {state} ที่ {percent}% คาดการณ์ {target} พร้อมประสิทธิภาพที่เพิ่มขึ้น {multiplier} เท่า",
       "criticalMassPivot": "จุดเปลี่ยนมวลวิกฤต",
-      "biologicalRetentionLoop": "วงจรการรักษาลูกค้าแบบชีวภาพ",
+      "biologicalRetentionLoop": "วงจรโปรแกรมความงามลูกค้าแบบชีวภาพ",
       "authorizeExpansion": "อนุญาตให้ {node} ใน {region} เพื่อดึงส่วนแบ่งการตลาด {percent}%",
       "globalNodeExpansion": "การขยายโหนดทั่วโลก",
       "easternSeaboard": "ชายฝั่งตะวันออก",
       "clinicalAdherenceInsights": "ข้อมูลเชิงลึกการปฏิบัติตามโปรโตคอล",
       "adherenceIncrease": "การปฏิบัติตามจังหวะชีวภาพเพิ่มขึ้น {percent} ในรอบนี้ การแมปปิ้งประสาทบ่งชี้ถึงเกราะป้องกันผิวที่ดีขึ้น",
-      "nextNodeScan": "การสแกนโหนดคลินิกครั้งถัดไปในอีก {days} คงระดับความต่อเนื่องเพื่อความแม่นยำสูงสุด",
+      "nextNodeScan": "การสแกนโหนดศูนย์ความงามครั้งถัดไปในอีก {days} คงระดับความต่อเนื่องเพื่อความแม่นยำสูงสุด",
       "viewProtocolAnalysis": "ดูการวิเคราะห์โปรโตคอล",
       "premiumEcosystem": "ระบบนิเวศพรีเมียม",
       "activateEcosystem": "เปิดใช้งานระบบนิเวศ",
-      "upgradeToTrack": "อัปเกรดเพื่อติดตามการปฏิบัติตามคำแนะนำทางคลินิกรายวันและรับรางวัลสุขภาพทางชีวภาพ",
+      "upgradeToTrack": "อัปเกรดเพื่อติดตามการปฏิบัติตามคำแนะนำทางศูนย์ความงามรายวันและรับรางวัลสุขภาพทางชีวภาพ",
       "nextTierProgress": "ความคืบหน้าสู่ระดับถัดไป",
       "pathwayTo": "เส้นทางสู่ระดับ {tier}",
       "pointsNeeded": "สะสมอีก {points} แต้มเพื่อปลดล็อกสิทธิประโยชน์ระดับ {tier}",
@@ -4646,7 +4643,7 @@
       "meshNodeSync": "การซิงค์โหนด Mesh: 100%",
       "securityCertified": "ได้รับการรับรองความปลอดภัย ISO: รุ่นปี 2026",
       "defenseEngine": "เครื่องยนต์: BIP-Defense-v4.2",
-      "apiTransmissionOk": "โหนดการส่งข้อมูลคลินิก: ออนไลน์",
+      "apiTransmissionOk": "โหนดการส่งข้อมูลศูนย์ความงาม: ออนไลน์",
       "inferenceEngine": "เครื่องยนต์ประมวลผล: BIP-Neural-v4.2",
       "outcomeVerified": "การวัดผลลัพธ์: ซิงค์โหนดสำเร็จ",
       "precisionLevelHigh": "ระดับความแม่นยำ: สูง",
@@ -4654,7 +4651,7 @@
       "learningRate": "อัตราการเรียนรู้: {val}",
       "nodeVitals": "ข้อมูลสำคัญของโหนดเทรน",
       "computeNode": "โหนดการประมวลผล: {node}",
-      "fineTuningDesc": "การปรับจูนค่าน้ำหนักเฉพาะสำหรับ {model} ครอบคลุมพารามิเตอร์ประสาท 4.2 ล้านจุด โมเดลที่ได้ผ่านการยืนยันทางคลินิกและรักษาความเป็นส่วนตัว",
+      "fineTuningDesc": "การปรับจูนค่าน้ำหนักเฉพาะสำหรับ {model} ครอบคลุมพารามิเตอร์ประสาท 4.2 ล้านจุด โมเดลที่ได้ผ่านการยืนยันทางศูนย์ความงามและรักษาความเป็นส่วนตัว",
       "inferenceNode": "โหนด: {node}",
       "systemIntegrity": "ความสมบรณของระบบ",
       "activeDefenseOn": "ระบบปองกนทำงาน",
@@ -4734,22 +4731,22 @@
     }
   },
   "outcomeQuantifier": {
-    "title": "ระบบวัดผลการรักษาเชิงปริมาณ (Outcome Quantifier)",
-    "subtitle": "การวิเคราะห์ผลลัพธ์การรักษาและพัฒนาการของผิวเชิงตัวเลขด้วย AI",
+    "title": "ระบบวัดผลโปรแกรมความงามเชิงปริมาณ (Outcome Quantifier)",
+    "subtitle": "การวิเคราะห์ผลลัพธ์โปรแกรมความงามและพัฒนาการของผิวเชิงตัวเลขด้วย AI",
     "improvementMetrics": "ตัวชี้วัดพัฒนาการ",
     "volumetricChange": "การเปลี่ยนแปลงเชิงปริมาตร",
     "texturalRefinement": "ความละเอียดของผิวสัมผัส",
     "pigmentReduction": "การลดลงของเม็ดสี",
     "quantifiedSuccess": "อัตราความสำเร็จเชิงปริมาณ",
     "beforeAfterDelta": "ความต่างก่อน/หลัง",
-    "clinicalValidation": "ยืนยันผลลัพธ์ทางคลินิก",
+    "clinicalValidation": "ยืนยันผลลัพธ์ทางศูนย์ความงาม",
     "lockedBadge": "ล็อคตัวชี้วัดผลลัพธ์",
     "unlockButton": "ปลดล็อกตัวชี้วัดความแม่นยำ",
     "verifiedBadge": "ยืนยันผลลัพธ์ควอนตัมแล้ว",
     "neuralTrackingActive": "การติดตามระบบประสาททำงานอยู่",
-    "clinicalAuthority": "อำนาจทางคลินิก",
-    "precisionDesc": "ตัวชี้วัดเหล่านี้สร้างขึ้นโดยใช้เครื่องมือ {engine} เพื่อให้มั่นใจในความแม่นยำ {precision}% ในการระบุผลการรักษา",
-    "exportReport": "ส่งออกรายงานทางคลินิก"
+    "clinicalAuthority": "อำนาจทางศูนย์ความงาม",
+    "precisionDesc": "ตัวชี้วัดเหล่านี้สร้างขึ้นโดยใช้เครื่องมือ {engine} เพื่อให้มั่นใจในความแม่นยำ {precision}% ในการระบุผลโปรแกรมความงาม",
+    "exportReport": "ส่งออกรายงานทางศูนย์ความงาม"
   },
   "synapticNotifications": {
     "title": "ระบบแจ้งเตือนอัจฉริยะ (AI Synaptic Notifications)",
@@ -4799,7 +4796,7 @@
     "assets": {
       "neuralArchitecture": "Neural Mapping: สถาปัตยกรรมความแม่นยำ 468 จุด",
       "biometricEvolution": "วิวัฒนาการชีวมาตรเชิงคาดการณ์ในเวชศาสตร์ความงาม",
-      "roiOrchestration": "การจัดการ ROI: โลจิสติกส์ทางคลินิกอัตโนมัติ",
+      "roiOrchestration": "การจัดการ ROI: โลจิสติกส์ทางศูนย์ความงามอัตโนมัติ",
       "apiV42": "ข้อกำหนด Inference Edge API v4.2",
       "webhookNode": "โหนดการเชื่อมต่อ Webhook ที่ปลอดภัย",
       "dataLakeSync": "โปรโตคอลการซิงค์ Enterprise Data Lake",
@@ -4810,7 +4807,7 @@
   },
   "strategicGrowthAdvisor": {
     "title": "ที่ปรึกษาการเติบโตเชิงกลยุทธ์ (Strategic Growth Advisor)",
-    "subtitle": "คำแนะนำเชิงรุกที่ขับเคลื่อนด้วย AI เพื่อเพิ่มผลตอบแทนและขยายเครือข่ายคลินิก",
+    "subtitle": "คำแนะนำเชิงรุกที่ขับเคลื่อนด้วย AI เพื่อเพิ่มผลตอบแทนและขยายเครือข่ายศูนย์ความงาม",
     "activeAdvisory": "ระบบที่ปรึกษาอัจฉริยะทำงานอยู่",
     "recommendation": "ข้อเสนอแนะเชิงกลยุทธ์",
     "impact": "ผลกระทบ ROI คาดการณ์",
@@ -4840,10 +4837,10 @@
   },
   "neuralNarrative": {
     "title": "การสังเคราะห์เรื่องราวด้วยประสาทเทียม (Neural Narrative)",
-    "subtitle": "สร้างเรื่องราวการรักษาที่โน้มน้าวใจด้วย Data เพื่อเพิ่มโอกาสการปิดยอดสูงสุด",
+    "subtitle": "สร้างเรื่องราวโปรแกรมความงามที่โน้มน้าวใจด้วย Data เพื่อเพิ่มโอกาสการปิดยอดสูงสุด",
     "synthesisMode": "โหมดการสังเคราะห์",
     "empathyNode": "การปรับจูนความเข้าอกเข้าใจ",
-    "authorityNode": "การสร้างความน่าเชื่อถือทางคลินิก",
+    "authorityNode": "การสร้างความน่าเชื่อถือทางศูนย์ความงาม",
     "scarcityNode": "การกระตุ้นด้วยข้อจำกัดเวลา",
     "generateNarrative": "สังเคราะห์เรื่องราว",
     "copyToProposal": "ใส่ลงในร่างข้อเสนอ",
@@ -4851,8 +4848,8 @@
     "mock": {
       "greeting": "เรียนคุณ {name},",
       "intro": "จากการวิเคราะห์แผนผังประสาทของเวกเตอร์ผิวที่เป็นเอกลักษณ์ของคุณ เราพบความแม่นยำถึง 94% สำหรับโปรโตคอลการฟื้นฟูของเรา",
-      "body": "AI ของเราตรวจพบว่าปัญหาหลักของคุณ{concerns}สามารถแก้ไขได้อย่างเหมาะสมที่สุดผ่านลำดับการรักษาที่ปรับเทียบแล้ว นี่ไม่ใช่แค่แผนมาตรฐาน แต่เป็นแผนที่เส้นทางสู่ความสมบูรณ์แบบทางชีวภาพของคุณ",
-      "evidence": "หลักฐานทางคลินิกจากเครือข่าย BIP แสดงให้เห็นว่าลูกค้าที่เริ่มโปรโตคอลนี้ภายใน 48 ชั่วโมงจะได้รับผลความพึงพอใจสูงขึ้น 18% การเดินทางสู่ความงามที่แม่นยำของคุณเริ่มต้นที่นี่",
+      "body": "AI ของเราตรวจพบว่าปัญหาหลักของคุณ{concerns}สามารถแก้ไขได้อย่างเหมาะสมที่สุดผ่านลำดับโปรแกรมความงามที่ปรับเทียบแล้ว นี่ไม่ใช่แค่แผนมาตรฐาน แต่เป็นแผนที่เส้นทางสู่ความสมบูรณ์แบบทางชีวภาพของคุณ",
+      "evidence": "หลักฐานทางศูนย์ความงามจากเครือข่าย BIP แสดงให้เห็นว่าลูกค้าที่เริ่มโปรโตคอลนี้ภายใน 48 ชั่วโมงจะได้รับผลความพึงพอใจสูงขึ้น 18% การเดินทางสู่ความงามที่แม่นยำของคุณเริ่มต้นที่นี่",
       "fallbackName": "ลูกค้าคนสำคัญ",
       "fallbackConcerns": "ความชุ่มชื้นและพื้นผิว"
     },
@@ -4866,7 +4863,7 @@
     "subtitle": "ทดสอบและแสดงผลการไหลของข้อมูลการวิเคราะห์ดิบจากเครื่องยนต์ BIP-Neural",
     "endpoint": "โหนดปลายทาง (Endpoint)",
     "method": "วิธีการส่งข้อมูล",
-    "requestPayload": "ข้อมูลคำขอทางคลินิก",
+    "requestPayload": "ข้อมูลคำขอทางศูนย์ความงาม",
     "responseStream": "กระแสข้อมูลตอบกลับจากระบบ",
     "runTest": "เริ่มวงจรการประมวลผล",
     "reset": "รีเซ็ตโหนดการส่งสัญญาณ",
@@ -4875,9 +4872,9 @@
   },
   "whitePaper": {
     "title": "เอกสารวิชาการเชิงกลยุทธ์: สถาปัตยกรรมโครงข่ายประสาท v4.2",
-    "subtitle": "การวิเคราะห์เชิงลึกเกี่ยวกับเครื่องยนต์ประมวลผล Beauty-Precision และโครงข่ายข้อมูลทางคลินิก",
+    "subtitle": "การวิเคราะห์เชิงลึกเกี่ยวกับเครื่องยนต์ประมวลผล Beauty-Precision และโครงข่ายข้อมูลทางศูนย์ความงาม",
     "abstract": "บทคัดย่อสำหรับผู้บริหาร",
-    "abstractText": "สถาปัตยกรรม BIP-Neural-v4.2 ที่เป็นกรรมสิทธิ์ของเราใช้โมเดลการประมวลผลแบบกระจายศูนย์ (Edge Computing) เพื่อส่งมอบการวินิจฉัยผิวระดับการแพทย์ด้วยความหน่วงต่ำกว่า 150ms ด้วยการผสานจุดอ้างอิงชีวมาตร 468 จุดเข้ากับชุดข้อมูลทางคลินิกในพื้นที่ เราบรรลุความแม่นยำในการวินิจฉัย 98.4% เมื่อเทียบกับเครื่องวิเคราะห์ฮาร์ดแวร์ราคาสูง",
+    "abstractText": "สถาปัตยกรรม BIP-Neural-v4.2 ที่เป็นกรรมสิทธิ์ของเราใช้โมเดลการประมวลผลแบบกระจายศูนย์ (Edge Computing) เพื่อส่งมอบการวินิจฉัยผิวระดับการแพทย์ด้วยความหน่วงต่ำกว่า 150ms ด้วยการผสานจุดอ้างอิงชีวมาตร 468 จุดเข้ากับชุดข้อมูลทางศูนย์ความงามในพื้นที่ เราบรรลุความแม่นยำในการวินิจฉัย 98.4% เมื่อเทียบกับเครื่องวิเคราะห์ฮาร์ดแวร์ราคาสูง",
     "keyChapters": "หัวข้อสำคัญทางสถาปัตยกรรม",
     "chapter1": "โหนดการประมวลผลแบบกระจายตัว",
     "chapter2": "การแมปปิ้งเวกเตอร์ชีวมาตร",
@@ -4887,7 +4884,7 @@
     "techSpecs": "ข้อมูลทางเทคนิคเฉพาะ"
   },
   "clinicalSentiment": {
-    "title": "ระบบวิเคราะห์อารมณ์ทางคลินิก (Sentiment Intelligence)",
+    "title": "ระบบวิเคราะห์อารมณ์ทางศูนย์ความงาม (Sentiment Intelligence)",
     "subtitle": "การวิเคราะห์อารมณ์และความพึงพอใจของลูกค้าด้วย AI เพื่อการสื่อสารที่มีประสิทธิภาพ",
     "satisfactionScore": "ความพึงพอใจในการสื่อสาร",
     "emotionalTone": "โทนอารมณ์ปัจจุบัน",
@@ -4902,7 +4899,7 @@
     "title": "ระบบกู้คืนรายได้อัจฉริยะ (Revenue Recovery)",
     "subtitle": "ระบุจุดที่รายได้อาจสูญเสียและสร้างโปรโตคอลการกู้คืนยอดขายอัตโนมัติ",
     "atRiskRevenue": "รายได้ที่มีความเสี่ยง",
-    "lostCycles": "รอบการรักษาที่หลุดมือ",
+    "lostCycles": "รอบโปรแกรมความงามที่หลุดมือ",
     "recoveryPotential": "โอกาสในการกู้คืน",
     "recommendedAction": "แนวทางการกู้คืนที่แนะนำ",
     "executeRecovery": "ดำเนินการกู้คืน",
@@ -4910,7 +4907,7 @@
     "engineActive": "เครื่องยนต์กู้คืนทำงานอยู่",
     "churnProb": "ความน่าจะเป็นการเลิกใช้งาน: {val}%",
     "leakageAuditTitle": "การตรวจสอบการรั่วไหลสังเคราะห์",
-    "leakageAuditDesc": "AI ระบุรายได้รั่วไหลที่มีความน่าจะเป็นสูงจำนวน {total} เนื่องจากการรอบคลินิกที่ไม่ได้จัดการ การดำเนินการโปรโตคอลกู้คืนที่สังเคราะห์ขึ้นสามารถกู้คืนเงินได้ {restorable} ({yield}) ในรอบปัจจุบัน",
+    "leakageAuditDesc": "AI ระบุรายได้รั่วไหลที่มีความน่าจะเป็นสูงจำนวน {total} เนื่องจากการรอบศูนย์ความงามที่ไม่ได้จัดการ การดำเนินการโปรโตคอลกู้คืนที่สังเคราะห์ขึ้นสามารถกู้คืนเงินได้ {restorable} ({yield}) ในรอบปัจจุบัน",
     "recoverySuccess": "เริ่มโปรโตคอลการกู้คืนอัตโนมัติสำเร็จ",
     "nodes": {
       "node1": {
@@ -4919,7 +4916,7 @@
       },
       "node2": {
         "name": "คุณสมชาย (ระดับโปร)",
-        "rationale": "ประสิทธิภาพของชุดเลเซอร์มักจะลดลงในวันที่ 55 มีความเสี่ยงสูงที่จะสูญเสียความต่อเนื่องในการรักษา"
+        "rationale": "ประสิทธิภาพของชุดเลเซอร์มักจะลดลงในวันที่ 55 มีความเสี่ยงสูงที่จะสูญเสียความต่อเนื่องในโปรแกรมความงาม"
       },
       "node3": {
         "name": "คุณอลิส (ระดับเริ่มต้น)",
@@ -4928,10 +4925,10 @@
     }
   },
   "dataLake": {
-    "title": "ระบบจำลองคลังข้อมูลคลินิก (Clinical Data Lake)",
-    "subtitle": "แสดงผลการนำเข้าและประมวลผลข้อมูลทางคลินิกมหาศาลผ่านเครือข่าย BIP ทั่วโลก",
+    "title": "ระบบจำลองคลังข้อมูลศูนย์ความงาม (Clinical Data Lake)",
+    "subtitle": "แสดงผลการนำเข้าและประมวลผลข้อมูลทางศูนย์ความงามมหาศาลผ่านเครือข่าย BIP ทั่วโลก",
     "ingestionRate": "ความเร็วการนำเข้าข้อมูล",
-    "totalRecords": "จำนวนบันทึกทางคลินิกรวม",
+    "totalRecords": "จำนวนบันทึกทางศูนย์ความงามรวม",
     "processingPower": "ประสิทธิภาพการประมวลผล",
     "activeClusters": "คลัสเตอร์ประมวลผลที่ใช้งานอยู่",
     "dataIntegrity": "โหนดความสมบูรณ์ของข้อมูล",
@@ -4981,8 +4978,8 @@
     "nodeName": "BIP-OS_Neural_Search_Node",
     "version": "v4.2.0-neural"
   },
-  "clinicalGenome": {
-    "title": "การจำลองโครงสร้างโมเลกุลผิว (Clinical Genome)",
+  "aestheticGenome": {
+    "title": "การจำลองโครงสร้างโมเลกุลผิว (Aesthetic Genome)",
     "subtitle": "การจำลองระดับโมเลกุลและวิเคราะห์ปัจจัยทางพันธุกรรมที่มีผลต่อสุขภาพผิว",
     "molecularHelix": "โครงสร้างเกลียวโมเลกุลประสาทเทียม",
     "geneticMarkers": "การวิเคราะห์ตัวบ่งชี้ทางพันธุกรรม",
@@ -5037,7 +5034,7 @@
       "w4Status": "ล็อคโปรโตคอล",
       "w4Detail": "ตรวจพบการปรับปรุงเนื้อผิว",
       "w8Status": "เพิ่มความยืดหยุ่น",
-      "w8Detail": "การรักษาเสถียรภาพของโหนดคอลลาเจน",
+      "w8Detail": "โปรแกรมความงามเสถียรภาพของโหนดคอลลาเจน",
       "w12Status": "จุดสูงสุดความงาม",
       "w12Detail": "ผลตอบแทนโปรโตคอลสูงสุด"
     }
@@ -5049,7 +5046,7 @@
     "revenueMomentum": "แรงขับเคลื่อนรายได้",
     "revenueValue": "4.2 ล้านบาท",
     "revenueDelta": "+12% รายไตรมาส",
-    "clinicalExcellence": "ความเป็นเลิศทางคลินิก",
+    "clinicalExcellence": "ความเป็นเลิศทางศูนย์ความงาม",
     "nominal": "กระแสข้อมูลปกติ",
     "operationalYield": "ผลตอบแทนการดำเนินงาน",
     "yieldDelta": "+8% ประสิทธิภาพ",
@@ -5059,7 +5056,7 @@
     "activeNodes": "โหนดการปฏิบัติงานที่ใช้งานอยู่",
     "activeNodesCount": "14 โหนดซิงค์แล้ว",
     "commandPath": "เส้นทางคำสั่งเชิงกลยุทธ์",
-    "oversightDesc": "การกำกับดูแลการปฏิบัติงานที่กำกับโดย AI ช่วยให้มั่นใจได้ถึงความแม่นยำทางคลินิกในทุกโหนดเครือข่ายที่ใช้งานอยู่",
+    "oversightDesc": "การกำกับดูแลการปฏิบัติงานที่กำกับโดย AI ช่วยให้มั่นใจได้ถึงความแม่นยำทางศูนย์ความงามในทุกโหนดเครือข่ายที่ใช้งานอยู่",
     "launchAnalysis": "เริ่มการวิเคราะห์ประสาท",
     "threatMesh": "โครงข่ายภัยคุกคาม",
     "secure": "ปลอดภัย"
@@ -5090,7 +5087,7 @@
       "industry": "เมทริกซ์อุตสาหกรรม",
       "audit": "โปรโตคอลการปฏิบัติตามกฎ",
       "roi": "เครื่องมือจำลอง ROI",
-      "outcomes": "การวัดผลทางคลินิก",
+      "outcomes": "การวัดผลทางศูนย์ความงาม",
       "advisor": "ที่ปรึกษาการเติบโต",
       "recovery": "การกู้คืนรายได้",
       "assets": "วงจรชีวิตสินทรัพย์"
@@ -5132,7 +5129,7 @@
   },
   "neuralMesh": {
     "title": "โครงข่ายประสาทเทียม 3 มิติ (Neural Particle Mesh)",
-    "subtitle": "การแสดงผลรูปแบบการส่งสัญญาณประสาทผ่านเลเยอร์ปัญญาประดิษฐ์ทางคลินิกแบบเรียลไทม์",
+    "subtitle": "การแสดงผลรูปแบบการส่งสัญญาณประสาทผ่านเลเยอร์ปัญญาประดิษฐ์ทางศูนย์ความงามแบบเรียลไทม์",
     "nodes": "โหนดประสาท",
     "connections": "การเชื่อมต่อประสาทเทียม",
     "signalStrength": "ความแรงของสัญญาณ",
@@ -5316,84 +5313,84 @@
     "previousSector": "สวนกอนหนา",
     "nextSector": "สวนถดไป"
   },
-  "clinicManagement": {
-    "totalClinics": "คลนกทงหมด",
-    "globalNodes": "โหนดโครงสรางพนฐานทวโลก",
-    "active": "เปดใชงาน",
-    "operationalCycles": "รอบการปฏบตงาน",
-    "avgHealth": "สขภาพเฉลย",
-    "integrityIndex": "ดชนความสมบรณ",
-    "totalUsers": "ผใชทงหมด",
-    "registeredEntities": "หนวยงานทลงทะเบยน",
-    "searchPlaceholder": "คนหาโหนดคลนกดวยชอ อเมล หรอตวระบ...",
+  "centerManagement": {
+    "totalCenters": "ศูนย์บริการทั้งหมด",
+    "globalNodes": "โหนดโครงสร้างพื้นฐานทั่วโลก",
+    "active": "เปิดใช้งาน",
+    "operationalCycles": "รอบการปฏิบัติงาน",
+    "avgHealth": "สุขภาพเฉลี่ย",
+    "integrityIndex": "ดัชนีความสมบูรณ์",
+    "totalUsers": "ผู้ใช้ทั้งหมด",
+    "registeredEntities": "หน่วยงานที่ลงทะเบียน",
+    "searchPlaceholder": "ค้นหาโหนดศูนย์บริการด้วยชื่อ อีเมล หรือตัวระบุ...",
     "statusNode": "โหนดสถานะ",
-    "global": "ทวโลก",
-    "activeStatus": "เปดใชงาน",
-    "trial": "ชวงทดลอง",
-    "inactive": "ไมเปดใชงาน",
-    "suspended": "ระงบการใชงาน",
-    "exportSchema": "สงออกโครงราง",
-    "initializeNode": "เรมใชงานโหนด",
-    "nodesSelected": "เลอกแลว {count} โหนดสำหรบการควบคมสวนกลาง",
-    "activate": "เปดใชงาน",
-    "suspend": "ระงบ",
-    "decommission": "ยกเลกการใชงาน",
-    "clinicalUplink": "การเชอมตอทางคลนก",
-    "protocolAccess": "การเขาถงโปรโตคอล",
-    "planVector": "เวกเตอรแผนงาน",
-    "users": "ผใช",
-    "integrity": "ความสมบรณ",
-    "lastSync": "ซงคลาสด",
-    "noNodesDetected": "ไมพบโหนดในสวนน",
-    "nodeControl": "การควบคมโหนด",
-    "viewVector": "ดเวกเตอร",
-    "refineParameters": "ปรบแตงพารามเตอร",
-    "reallocatePlan": "จดสรรแผนใหม",
-    "decommissionUnit": "ยกเลกหนวยใชงาน"
+    "global": "ทั่วโลก",
+    "activeStatus": "เปิดใช้งาน",
+    "trial": "ช่วงทดลอง",
+    "inactive": "ไม่เปิดใช้งาน",
+    "suspended": "ระงับการใช้งาน",
+    "exportSchema": "ส่งออกโครงร่าง",
+    "initializeNode": "เริ่มใช้งานโหนด",
+    "nodesSelected": "เลือกแล้ว {count} โหนดสำหรับการควบคุมส่วนกลาง",
+    "activate": "เปิดใช้งาน",
+    "suspend": "ระงับ",
+    "decommission": "ยกเลิกการใช้งาน",
+    "aestheticUplink": "การเชื่อมต่อทางความงาม",
+    "protocolAccess": "การเข้าถึงโปรโตคอล",
+    "planVector": "เวกเตอร์แผนงาน",
+    "users": "ผู้ใช้",
+    "integrity": "ความสมบูรณ์",
+    "lastSync": "ซิงค์ล่าสุด",
+    "noNodesDetected": "ไม่พบโหนดในส่วนนี้",
+    "nodeControl": "การควบคุมโหนด",
+    "viewVector": "ดูเวกเตอร์",
+    "refineParameters": "ปรับแต่งพารามิเตอร์",
+    "reallocatePlan": "จัดสรรแผนใหม่",
+    "decommissionUnit": "ยกเลิกหน่วยใช้งาน"
   },
-  "clinicDetail": {
-    "title": "รายละเอยดคลนก",
-    "loading": "กำลงโหลด...",
-    "healthScore": "คะแนนสขภาพ",
-    "users": "ผใช",
-    "active": "เปดใชงาน",
-    "customers": "ลกคา",
-    "mrr": "รายไดรายเดอน (MRR)",
-    "info": "ขอมลคลนก",
-    "created": "วนทสราง",
+  "centerDetail": {
+    "title": "รายละเอียดศูนย์บริการ",
+    "loading": "กำลังโหลด...",
+    "healthScore": "คะแนนสุขภาพ",
+    "users": "ผู้ใช้",
+    "active": "เปิดใช้งาน",
+    "customers": "ลูกค้า",
+    "mrr": "รายได้รายเดือน (MRR)",
+    "info": "ข้อมูลศูนย์บริการ",
+    "created": "วันที่สร้าง",
     "plan": "แผนงาน",
     "status": "สถานะ",
-    "activeStatus": "เปดใชงาน",
-    "inactiveStatus": "ไมเปดใชงาน",
+    "activeStatus": "เปิดใช้งาน",
+    "inactiveStatus": "ไม่เปิดใช้งาน",
     "tabs": {
-      "users": "ผใช",
-      "customers": "ลกคา",
-      "analyses": "การวเคราะห",
+      "users": "ผู้ใช้",
+      "customers": "ลูกค้า",
+      "analyses": "การวิเคราะห์",
       "bookings": "การจอง"
     },
-    "noUsers": "ไมพบผใช",
-    "noCustomers": "ไมพบลกคา",
-    "noAnalyses": "ไมพบการวเคราะห",
-    "noBookings": "ไมมการจองในเดอนน",
+    "noUsers": "ไม่พบผู้ใช้",
+    "noCustomers": "ไม่พบลูกค้า",
+    "noAnalyses": "ไม่พบการวิเคราะห์",
+    "noBookings": "ไม่มีการจองในเดือนนี้",
     "table": {
-      "name": "ชอ",
-      "email": "อเมล",
+      "name": "ชื่อ",
+      "email": "อีเมล",
       "role": "บทบาท",
-      "lastSeen": "เหนลาสดเมอ",
+      "lastSeen": "เห็นล่าสุดเมื่อ",
       "status": "สถานะ",
-      "phone": "เบอรโทรศพท",
-      "lastVisit": "เขาใชลาสด",
-      "joined": "เขารวมเมอ",
-      "id": "ไอด",
-      "skinType": "ประเภทผว",
+      "phone": "เบอร์โทรศัพท์",
+      "lastVisit": "เข้าใช้ล่าสุด",
+      "joined": "เข้าร่วมเมื่อ",
+      "id": "ไอดี",
+      "skinType": "ประเภทผิว",
       "overallScore": "คะแนนรวม",
-      "date": "วนท",
-      "treatment": "การรกษา",
+      "date": "วันที่",
+      "program": "โปรแกรม",
       "scheduled": "กำหนดเวลา",
-      "created": "สรางเมอ"
+      "created": "สร้างเมื่อ"
     },
-    "revenueTrend": "แนวโนมรายได (6 เดอนลาสด)",
-    "total": "ทงหมด"
+    "revenueTrend": "แนวโน้มรายได้ (6 เดือนล่าสุด)",
+    "total": "ทั้งหมด"
   },
   "subscriptionManagement": {
     "totalClinicalUplinks": "การเชอมตอทางคลนกทงหมด",
@@ -5486,7 +5483,7 @@
     "populationDesc": "ความหนาแน่นของแถวข้อมูลที่ใช้งานอยู่ในตารางโครงสร้างพื้นฐานหลัก",
     "sectors": {
       "identityNodes": "โหนดระบุตัวตน",
-      "clinicalUplinks": "การเชื่อมต่อทางคลินิก",
+      "clinicalUplinks": "การเชื่อมต่อทางศูนย์ความงาม",
       "accessVectors": "เวกเตอร์การเข้าถึง",
       "salesLeads": "ลีดการขาย",
       "processCycles": "รอบกระบวนการ",
@@ -5503,16 +5500,16 @@
     "errorTitle": "เกิดข้อผิดพลาด",
     "retry": "ลองใหม่"
   },
-  "clinicOnboarding": {
-    "title": "สร้างคลินิกใหม่",
+  "centerOnboarding": {
+    "title": "สร้างศูนย์ความงามใหม่",
     "steps": {
-      "info": "ข้อมูลคลินิก",
+      "info": "ข้อมูลศูนย์ความงาม",
       "owner": "เจ้าของ",
       "plan": "แผนงาน",
       "review": "ตรวจสอบ"
     },
     "form": {
-      "clinicName": "ชื่อคลินิก",
+      "centerName": "ชื่อศูนย์ความงาม",
       "slug": "สลัก (URL)",
       "email": "อีเมล",
       "phone": "เบอร์โทรศัพท์",
@@ -5530,7 +5527,7 @@
       "enterprise": "องค์กร"
     },
     "review": {
-      "details": "รายละเอียดคลินิก",
+      "details": "รายละเอียดศูนย์ความงาม",
       "owner": "เจ้าของ",
       "subscription": "การสมัครสมาชิก",
       "trial": "ทดลองใช้งาน {days} วัน"
@@ -5538,12 +5535,16 @@
     "buttons": {
       "back": "ย้อนกลับ",
       "next": "ถัดไป",
-      "create": "สร้างคลินิก",
+      "create": "สร้างศูนย์ความงาม",
       "creating": "กำลังสร้าง..."
     },
     "messages": {
-      "success": "สร้างคลินิกสำเร็จ!",
-      "error": "สร้างคลินิกไม่สำเร็จ"
+      "success": "สร้างศูนย์ความงามสำเร็จ",
+      "error": "ไม่สามารถสร้างศูนย์ความงามได้"
+    }
+  },
+      "success": "สร้างศูนย์ความงามสำเร็จ!",
+      "error": "สร้างศูนย์ความงามไม่สำเร็จ"
     }
   },
   "errorDashboard": {
@@ -5581,14 +5582,14 @@
   "revenueAnalytics": {
     "mrr": "รายได้รายเดือน (MRR)",
     "arr": "รายได้ต่อปี: {val}",
-    "activeClinicalNodes": "โหนดคลินิกที่ใช้งานอยู่",
+    "activeClinicalNodes": "โหนดศูนย์ความงามที่ใช้งานอยู่",
     "avgPerNode": "เฉลี่ย: {val} / โหนด",
     "paymentSuccessVelocity": "ความเร็วความสำเร็จของการชำระเงิน",
     "optimalPerformance": "ประสิทธิภาพดีเยี่ยม",
     "attentionRequired": "ต้องดำเนินการตรวจสอบ",
     "churnDelta": "อัตราการยกเลิก (30 วัน)",
     "criticalLeakage": "การรั่วไหลขั้นวิกฤต",
-    "nominalRetention": "การรักษาลูกค้าปกติ",
+    "nominalRetention": "โปรแกรมความงามลูกค้าปกติ",
     "unresolvedInflow": "กระแสเงินเข้าที่ยังไม่เรียบร้อย",
     "outstandingDesc": "ตรวจพบพารามิเตอร์ใบแจ้งหนี้ค้างชำระ แนะนำให้ใช้โปรโตคอลการเรียกเก็บเงินทันที",
     "initiateCollection": "เริ่มกระบวนการเรียกเก็บเงิน",
@@ -5778,10 +5779,10 @@
       },
       "arSimulator": {
         "label": "เมทริกซ์การจำลอง AR",
-        "desc": "การแสดงตัวอย่างการรักษาด้วยเทคโนโลยีความจริงเสริม"
+        "desc": "การแสดงตัวอย่างโปรแกรมความงามด้วยเทคโนโลยีความจริงเสริม"
       },
       "videoCall": {
-        "label": "การเชื่อมต่อคลินิกทางไกล",
+        "label": "การเชื่อมต่อศูนย์ความงามทางไกล",
         "desc": "ช่องทางปรึกษาผ่านวิดีโอ RTC ที่ปลอดภัย"
       },
       "email": {
@@ -5800,7 +5801,7 @@
     "limits": {
       "title": "ขีดจำกัดทรัพยากร",
       "desc": "ขีดจำกัดการจัดสรรสำหรับหน่วยงานโครงสร้างพื้นฐาน",
-      "maxClinics": "ขีดจำกัดโหนดคลินิก (เจ้าของ)",
+      "maxClinics": "ขีดจำกัดโหนดศูนย์ความงาม (เจ้าของ)",
       "maxStaff": "ขีดจำกัดผู้ปฏิบัติงาน (ภาคส่วน)",
       "maxAnalyses": "ขีดจำกัดการประมวลผล (24 ชม.)",
       "maxStorage": "การจัดสรรพื้นที่จัดเก็บ (MB)",
@@ -5855,7 +5856,7 @@
     "confirmDelete": "คุณแน่ใจหรือไม่ว่าต้องการลบผู้ใช้นี้?",
     "roles": {
       "customer": "ลูกค้า",
-      "clinic_staff": "เจ้าหน้าที่คลินิก",
+      "clinic_staff": "เจ้าหน้าที่ศูนย์ความงาม",
       "sales_staff": "เจ้าหน้าที่ฝ่ายขาย",
       "admin": "ผู้ดูแลระบบ"
     }
@@ -5885,7 +5886,7 @@
   },
   "staffPerformance": {
     "totalStaff": "ทะเบียนพนักงานทั้งหมด",
-    "activePersonnel": "บุคลากรทางคลินิกที่ใช้งานอยู่",
+    "activePersonnel": "บุคลากรทางศูนย์ความงามที่ใช้งานอยู่",
     "totalRevenue": "รายได้รวมทั้งหมด",
     "cumulativeYield": "ผลตอบแทนทางการเงินสะสม",
     "totalAppointments": "การนัดหมายทั้งหมด",
@@ -5893,9 +5894,9 @@
     "averageYield": "ผลตอบแทนเฉลี่ย",
     "perOperator": "ค่าเฉลี่ยต่อผู้ปฏิบัติงาน",
     "elitePerformers": "ศูนย์กลางผู้ปฏิบัติงานระดับสูง",
-    "productivityDesc": "บุคลากรชั้นนำตามผลตอบแทนทางคลินิกรวม",
+    "productivityDesc": "บุคลากรชั้นนำตามผลตอบแทนทางศูนย์ความงามรวม",
     "protocolBreakdown": "พลวัตของโปรโตคอล",
-    "revenueDistributionDesc": "การจัดสรรรายได้จากการรักษาตามบทบาท",
+    "revenueDistributionDesc": "การจัดสรรรายได้จากโปรแกรมความงามตามบทบาท",
     "globalPersonnelMatrix": "เมทริกซ์บุคลากรทั่วโลก",
     "operatorEfficiencyDesc": "การวิเคราะห์ประสิทธิภาพผู้ปฏิบัติงานที่ครอบคลุม",
     "identityNode": "โหนดระบุตัวตน",
@@ -5913,7 +5914,7 @@
     }
   },
   "treatmentAnalytics": {
-    "totalTreatments": "การรักษาทั้งหมด",
+    "totalTreatments": "โปรแกรมความงามทั้งหมด",
     "totalBookings": "การนัดหมายรวม",
     "totalRevenue": "รายได้รวม",
     "averageYield": "ผลตอบแทนเฉลี่ย",
@@ -5922,13 +5923,13 @@
     "cumulativeYield": "ผลตอบแทนสะสม",
     "perProtocol": "ต่อโปรโตคอล",
     "eliteProtocols": "โปรโตคอลระดับสูง",
-    "treatmentYieldDesc": "การรักษา 5 อันดับแรกตามผลตอบแทนทางคลินิก",
+    "treatmentYieldDesc": "โปรแกรมความงาม 5 อันดับแรกตามผลตอบแทนทางศูนย์ความงาม",
     "protocolVelocity": "ความเร็วของโปรโตคอล",
     "cycleLoadDesc": "การเปรียบเทียบภาระรอบการทำงานตามโปรโตคอล",
     "totalCycles": "รอบการทำงานทั้งหมด",
     "verifiedNodes": "โหนดที่ยืนยันแล้ว",
     "globalProtocolMatrix": "เมทริกซ์โปรโตคอลทั่วโลก",
-    "treatmentEfficiencyDesc": "ดัชนีประสิทธิภาพการรักษาที่ได้รับอนุญาต",
+    "treatmentEfficiencyDesc": "ดัชนีประสิทธิภาพโปรแกรมความงามที่ได้รับอนุญาต",
     "protocolIdentifier": "ตัวระบุโปรโตคอล",
     "cycleDensity": "ความหนาแน่นของรอบ",
     "momentumVector": "เวกเตอร์ความแรง",
@@ -5936,7 +5937,7 @@
   },
   "customerDashboard": {
     "longitudinalSkinAnalytics": "การวิเคราะห์ผิวตามช่วงเวลา",
-    "trackImprovementDesc": "ติดตามเวกเตอร์การปรับปรุงทางคลินิกผ่านรอบเวลา",
+    "trackImprovementDesc": "ติดตามเวกเตอร์การปรับปรุงทางศูนย์ความงามผ่านรอบเวลา",
     "summary": {
       "totalAnalyses": "การวิเคราะห์ทั้งหมด",
       "averageScore": "คะแนนเฉลี่ย",
@@ -5948,16 +5949,16 @@
       "cyclesPerMonth": "รอบต่อเดือน"
     },
     "diagnosticIntelligence": "ความฉลาดในการวินิจฉัย",
-    "aiClinicalSynthesis": "การสังเคราะห์ทางคลินิกที่สร้างโดย AI",
+    "aiClinicalSynthesis": "การสังเคราะห์ทางศูนย์ความงามที่สร้างโดย AI",
     "synthesisMomentum": "แรงผลักดันการสังเคราะห์",
     "historicalDataTrends": "แนวโน้มข้อมูลการวินิจฉัยย้อนหลัง",
     "insights": {
       "greatProgress": "ความก้าวหน้าที่ยอดเยี่ยม!",
       "scoreImproved": "คะแนนผิวโดยรวมของคุณดีขึ้น {val}%",
       "spotsImproving": "จุดด่างดำดีขึ้น",
-      "acnePositiveResults": "การรักษาสิวของคุณกำลังแสดงผลในเชิงบวก",
+      "acnePositiveResults": "โปรแกรมความงามสิวของคุณกำลังแสดงผลในเชิงบวก",
       "wrinklesAttention": "ริ้วรอยต้องการการดูแล",
-      "addAntiAging": "พิจารณาเพิ่มการทรีตเมนต์ต้านริ้วรอย",
+      "addAntiAging": "พิจารณาเพิ่มการโปรแกรมความงามต้านริ้วรอย",
       "lowFrequency": "ความถี่การวิเคราะห์ต่ำ",
       "regularTracking": "การติดตามอย่างสม่ำเสมอช่วยให้ได้ผลลัพธ์ที่ดีขึ้น",
       "excellentImprovement": "อัตราการปรับปรุงที่ยอดเยี่ยม",
@@ -5975,7 +5976,7 @@
   },
   "customerRetention": {
     "totalCustomers": "ลูกค้าทั้งหมด",
-    "retentionRate": "อัตราการรักษาลูกค้า",
+    "retentionRate": "อัตราโปรแกรมความงามลูกค้า",
     "averageClv": "มูลค่าตลอดอายุการใช้งานเฉลี่ย (CLV)",
     "churnRate": "อัตราการเลิกใช้งาน",
     "activeNodes": "โหนดที่ใช้งานอยู่",
@@ -5985,11 +5986,11 @@
     "clientSegmentation": "การแบ่งส่วนลูกค้า",
     "engagementCycleDesc": "การวิเคราะห์การกระจายตามรอบการมีส่วนร่วม",
     "acquisitionVector": "เวกเตอร์การได้มาซึ่งลูกค้า",
-    "newUnitIngestion": "การวิเคราะห์การรับหน่วยคลินิกใหม่",
+    "newUnitIngestion": "การวิเคราะห์การรับหน่วยศูนย์ความงามใหม่",
     "periodNodeAcquisition": "การได้มาซึ่งโหนดในช่วงเวลา",
     "authorizedUnits": "หน่วยที่ได้รับอนุญาต",
     "cycleConversion": "การเปลี่ยนรอบ",
-    "retentionYield": "ผลตอบแทนการรักษาลูกค้า",
+    "retentionYield": "ผลตอบแทนโปรแกรมความงามลูกค้า",
     "eliteClientMatrix": "เมทริกซ์ลูกค้าระดับสูง",
     "aggregateYieldDesc": "บุคคล 10 อันดับแรกตามผลตอบแทนรวม",
     "identityRank": "อันดับระบุตัวตน",
@@ -6002,7 +6003,7 @@
       "oneTime": "ลูกค้า 1 ครั้ง",
       "twoToFive": "ลูกค้า 2-5 ครั้ง",
       "moreThanFive": "ลูกค้า 5 ครั้งขึ้นไป",
-      "retentionPriority": "เป้าหมายการรักษาลูกค้า",
+      "retentionPriority": "เป้าหมายโปรแกรมความงามลูกค้า",
       "operationalStable": "สถานะการทำงานเสถียร",
       "eliteTier": "ระดับสูงสุด"
     },
@@ -6071,13 +6072,13 @@
     "noEventsSync": "ไม่มีเหตุการณ์ที่ซิงโครไนซ์",
     "invocations": "การเรียกใช้งาน",
     "featureVelocity": "ความเร็วของฟีเจอร์",
-    "highestEngagement": "โหนดทางคลินิกที่มีการโต้ตอบสูงสุด",
+    "highestEngagement": "โหนดทางศูนย์ความงามที่มีการโต้ตอบสูงสุด",
     "noFeatureLoad": "ไม่มีข้อมูลการใช้งานฟีเจอร์",
     "accessNodes": "โหนดการเข้าถึง",
     "behavioralInsights": "ข้อมูลเชิงลึกทางพฤติกรรม",
     "patternRecognitionDesc": "การจดจำรูปแบบและการเพิ่มประสิทธิภาพการมีส่วนร่วม",
     "gettingStarted": "เริ่มต้นใช้งาน",
-    "initProtocols": "เริ่มต้นโปรโตคอลทางคลินิก เช่น การสังเคราะห์ AI เพื่อเปิดใช้งานโหนดการติดตามพฤติกรรม",
+    "initProtocols": "เริ่มต้นโปรโตคอลทางศูนย์ความงาม เช่น การสังเคราะห์ AI เพื่อเปิดใช้งานโหนดการติดตามพฤติกรรม",
     "highEngagement": "การมีส่วนร่วมสูง",
     "unitPerformanceOptimal": "ระบบตรวจพบการซิงโครไนซ์ฟีเจอร์ {count} รายการ ประสิทธิภาพของหน่วยอยู่ในระดับดีเยี่ยม",
     "extendedSequence": "ลำดับการทำงานที่ยาวนาน",
@@ -6099,21 +6100,21 @@
     },
     "momentum": {
       "title": "แรงผลักดันการสังเคราะห์",
-      "desc": "การซิงโครไนซ์ผลตอบแทนทางคลินิกรายวัน",
+      "desc": "การซิงโครไนซ์ผลตอบแทนทางศูนย์ความงามรายวัน",
       "grossInflow": "กระแสเงินเข้าสุทธิ"
     },
     "protocol": {
       "title": "ผลตอบแทนโปรโตคอล",
-      "desc": "การกระจายรายได้ตามโปรโตคอลทางคลินิก",
+      "desc": "การกระจายรายได้ตามโปรโตคอลทางศูนย์ความงาม",
       "inflowVector": "เวกเตอร์กระแสเงินเข้า"
     },
     "vector": {
       "title": "เมทริกซ์เวกเตอร์",
-      "desc": "การจัดสรรรายได้จากการรักษา"
+      "desc": "การจัดสรรรายได้จากโปรแกรมความงาม"
     },
     "hierarchy": {
       "title": "ลำดับขั้นโปรโตคอลทั่วโลก",
-      "desc": "ผลตอบแทนรวมตามโปรโตคอลทางคลินิก",
+      "desc": "ผลตอบแทนรวมตามโปรโตคอลทางศูนย์ความงาม",
       "protocolIdentifier": "ตัวระบุโปรโตคอล",
       "inflowVelocity": "ความเร็วกระแสเงินเข้า",
       "cycleDensity": "ความหนาแน่นของรอบ",
@@ -6181,7 +6182,7 @@
   "liveChat": {
     "mock": {
       "name1": "นางสาว สมใจ รักสวย",
-      "msg1_1": "สวัสดีค่ะ อยากสอบถามเรื่องทรีตเมนต์",
+      "msg1_1": "สวัสดีค่ะ อยากสอบถามเรื่องโปรแกรมความงาม",
       "msg1_2": "สวัสดีค่ะ มีอะไรให้ช่วยเหลือครับ",
       "msg1_3": "สนใจแพ็คเกจครบครันมากค่ะ อยากทราบราคา",
       "name2": "นาย วิชัย ใจดี",
@@ -6190,7 +6191,7 @@
       "msg2_3": "ได้ส่ง proposal ตามที่คุยกันแล้วครับ",
       "msg2_4": "ขอบคุณที่ส่ง proposal มาครับ จะติดต่อกลับ",
       "name3": "นาง วรรณา สวยงาม",
-      "msg3_1": "สวัสดีค่ะ อยากเริ่มทรีตเมนต์สัปดาห์หน้า",
+      "msg3_1": "สวัสดีค่ะ อยากเริ่มโปรแกรมความงามสัปดาห์หน้า",
       "msg3_2": "สวัสดีค่ะ ดีใจที่สนใจครับ จะจัดเตรียมเอกสารให้",
       "msg3_3": "พร้อมทำสัญญาแล้วค่ะ",
       "time1": "2 นาทีที่แล้ว",
@@ -6206,7 +6207,7 @@
     "profile": {
       "phone": "โทรศัพท์",
       "email": "อีเมล",
-      "notesDesc": "ลูกค้าประจำ สนใจทรีตเมนต์ขั้นสูง คุยง่าย ตัดสินใจเร็ว"
+      "notesDesc": "ลูกค้าประจำ สนใจโปรแกรมความงามขั้นสูง คุยง่าย ตัดสินใจเร็ว"
     }
   },
   "leadConversionOptimizer": {
@@ -6219,7 +6220,7 @@
       "content": {
         "title": "ส่งเนื้อหาให้ความรู้",
         "description": "คะแนนการมีส่วนร่วมต่ำ หน่วยต้องการหลักฐานการวินิจฉัยเพิ่มเติม",
-        "script": "สวัสดีค่ะ {name} นี่เป็นกรณีศึกษาทางคลินิกเกี่ยวกับผลลัพธ์ของ {treatment} ที่คล้ายกับโปรไฟล์ของคุณ หวังว่าจะเป็นประโยชน์ต่อการตัดสินใจนะคะ!"
+        "script": "สวัสดีค่ะ {name} นี่เป็นกรณีศึกษาทางศูนย์ความงามเกี่ยวกับผลลัพธ์ของ {treatment} ที่คล้ายกับโปรไฟล์ของคุณ หวังว่าจะเป็นประโยชน์ต่อการตัดสินใจนะคะ!"
       },
       "discount": {
         "title": "ข้อเสนอส่วนลดทางยุทธวิธี",
@@ -6229,7 +6230,7 @@
       "flexible": {
         "title": "การซิงค์ตารางนัดหมายที่ยืดหยุ่น",
         "description": "ตรวจพบข้อจำกัดด้านเวลา แนะนำช่วงเวลาวันหยุดหรือเย็น",
-        "script": "สวัสดีค่ะ {name} ทราบว่าคุณมีตารางงานที่ยุ่ง เราได้เปิดช่วงเวลาพิเศษในวันอาทิตย์สำหรับการรักษาของคุณโดยเฉพาะค่ะ"
+        "script": "สวัสดีค่ะ {name} ทราบว่าคุณมีตารางงานที่ยุ่ง เราได้เปิดช่วงเวลาพิเศษในวันอาทิตย์สำหรับโปรแกรมความงามของคุณโดยเฉพาะค่ะ"
       },
       "close": {
         "title": "โปรโตคอลการปิดการขาย",
@@ -6239,7 +6240,7 @@
       "upsell": {
         "title": "การขยายผลตอบแทนพรีเมียม",
         "description": "หน่วยโปรโตคอลเดี่ยวที่มีงบประมาณสูง แนะนำการอัปเกรดเป็น VIP",
-        "script": "สวัสดีค่ะ {name} เนื่องจากคุณสนใจ {treatment} คุณอาจได้รับประโยชน์จากแพ็คเกจ Premium Care ของเราซึ่งรวมถึงการดูแลหลังการรักษาด้วยค่ะ"
+        "script": "สวัสดีค่ะ {name} เนื่องจากคุณสนใจ {treatment} คุณอาจได้รับประโยชน์จากแพ็คเกจ Premium Care ของเราซึ่งรวมถึงการดูแลหลังโปรแกรมความงามด้วยค่ะ"
       }
     },
     "objectionPrice": "ลูกค้ากังวลเรื่องราคา",
@@ -6256,7 +6257,7 @@
     "scanResults": "ผลวิเคราะห์ผิว:",
     "skinAge": "- อายุผิว: {val} ปี",
     "concerns": "- ปัญหาที่พบ: {val}",
-    "recommendations": "- ทรีตเมนต์ที่แนะนำ: {val}",
+    "recommendations": "- โปรแกรมความงามที่แนะนำ: {val}",
     "createError": "เกิดข้อผิดพลาดในการสร้าง Lead",
     "createErrorDesc": "ไม่สามารถสร้าง Lead ได้ กรุณาลองใหม่อีกครั้ง",
     "createSuccess": "สร้าง Lead สำเร็จแล้ว!",
@@ -6264,7 +6265,7 @@
     "convertToLead": "เปลี่ยนเป็น Lead",
     "addPipelineDesc": "เพิ่มลูกค้าคนนี้เข้าสู่ระบบการขาย",
     "estimatedValue": "มูลค่าดีลที่คาดการณ์ (฿)",
-    "autoCalc": "คำนวณอัตโนมัติจากทรีตเมนต์ที่แนะนำ",
+    "autoCalc": "คำนวณอัตโนมัติจากโปรแกรมความงามที่แนะนำ",
     "leadPreview": "ตัวอย่างข้อมูล Lead",
     "sourceScan": "ที่มา: การวิเคราะห์สแกนด่วน",
     "statusNew": "สถานะ: Lead ใหม่",
@@ -6336,11 +6337,11 @@
       },
       "vip": {
         "name": "การเปลี่ยนแปลงระดับองค์กร",
-        "description": "การดูแลระดับสูงสุดสำหรับเครือคลินิกหรือเคสซับซ้อน"
+        "description": "การดูแลระดับสูงสุดสำหรับเครือศูนย์ความงามหรือเคสซับซ้อน"
       }
     },
     "title": "ใบเสนอราคาด่วน AI",
-    "subtitle": "แผนการรักษาเฉพาะบุคคลสำหรับคุณ {name} อายุ {age} ปี",
+    "subtitle": "แผนโปรแกรมความงามเฉพาะบุคคลสำหรับคุณ {name} อายุ {age} ปี",
     "analysis": "ข้อมูลเชิงลึก AI",
     "topConcern": "ปัญหาหลัก:",
     "wrinkles": "ริ้วรอย",
@@ -6349,7 +6350,7 @@
     "hydration": "ความชุ่มชื้น",
     "selectPackage": "เลือกแพ็คเกจที่แนะนำ",
     "aiRecommended": "AI แนะนำ",
-    "treatmentCount": "รวม {count} ทรีตเมนต์",
+    "treatmentCount": "รวม {count} โปรแกรมความงาม",
     "newPackage": "เลือกแพ็คเกจใหม่",
     "preview": "ตัวอย่างใบเสนอราคา",
     "sendMethod": "เลือกวิธีส่ง",
@@ -6361,7 +6362,7 @@
     "packageLabel": "แพ็คเกจ: {name}",
     "template": {
       "greeting": "สวัสดีค่ะ คุณ {name},",
-      "intro": "จากผลวิเคราะห์ผิวของคุณที่เน้นเรื่อง {concerns} เราได้เตรียมแผนการรักษาเฉพาะบุคคลสำหรับคุณแล้วค่ะ",
+      "intro": "จากผลวิเคราะห์ผิวของคุณที่เน้นเรื่อง {concerns} เราได้เตรียมแผนโปรแกรมความงามเฉพาะบุคคลสำหรับคุณแล้วค่ะ",
       "recommend": "เราขอแนะนำแพ็คเกจ {package} ค่ะ",
       "includes": "ในแผนของคุณประกอบด้วย:",
       "price": "ราคารวม: ฿{price}",
@@ -6463,7 +6464,7 @@
   },
   "bioAdaptiveScheduler": {
     "title": "ระบบนัดหมายอัจฉริยะ (Bio-Adaptive Scheduler)",
-    "subtitle": "การปรับจูนเวลาการรักษาร่วมกับความพร้อมทางชีวภาพของผิวคุณ",
+    "subtitle": "การปรับจูนเวลาโปรแกรมความงามร่วมกับความพร้อมทางชีวภาพของผิวคุณ",
     "optimalWindow": "ช่วงเวลาที่เหมาะสมทางชีวภาพ",
     "readinessScore": "ดัชนีความพร้อมของผิว",
     "recommendation": "การจัดสรรเวลาโดย AI",
@@ -6521,8 +6522,8 @@
   "bookingHistory": {
     "title": "ประวัติการนัดหมาย",
     "noBookings": "ยังไม่มีประวัติการจอง",
-    "startBooking": "เริ่มต้นด้วยการจองทรีตเมนต์แรกของคุณ",
-    "bookTreatment": "จองทรีตเมนต์",
+    "startBooking": "เริ่มต้นด้วยการจองโปรแกรมความงามแรกของคุณ",
+    "bookTreatment": "จองโปรแกรมความงาม",
     "reschedule": "เปลี่ยนเวลานัด",
     "cancel": "ยกเลิกนัด",
     "bookAgain": "จองอีกครั้ง"
@@ -6613,9 +6614,9 @@
     "activeCount": "ที่กำลังดำเนินการ",
     "achievedCount": "ที่บรรลุแล้ว",
     "motivationalMessage": "แรงบันดาลใจ",
-    "treatmentPlan": "แผนการรักษาที่แนะนำ",
+    "treatmentPlan": "แผนโปรแกรมความงามที่แนะนำ",
     "rationale": "เหตุผลของเป้าหมายนี้",
-    "emptyTreatments": "ยังไม่ได้ระบุการรักษา",
+    "emptyTreatments": "ยังไม่ได้ระบุโปรแกรมความงาม",
     "congratulations": "ยินดีด้วย!",
     "goalAchieved": "คุณบรรลุเป้าหมายแล้ว!",
     "keepGoing": "พยายามต่อไป! คุณกำลังก้าวหน้า",
@@ -6677,10 +6678,10 @@
     "keyIngredients": "ส่วนผสมสำคัญ",
     "howToUse": "วิธีใช้"
   },
-  "treatmentRecommendation": {
-    "title": "คำแนะนำการรักษาเฉพาะบุคคล",
-    "description": "การรักษาและผลิตภัณฑ์ที่แนะนำโดย AI ตามสภาพผิวของคุณ",
-    "treatments": "การรักษา",
+  "programRecommendation": {
+    "title": "คำแนะนำโปรแกรมความงามเฉพาะบุคคล",
+    "description": "โปรแกรมและผลิตภัณฑ์ที่แนะนำโดย AI ตามสภาพผิวของคุณ",
+    "programs": "โปรแกรมความงาม",
     "products": "ผลิตภัณฑ์",
     "lifestyle": "ไลฟ์สไตล์",
     "timeline": "ไทม์ไลน์",
@@ -6724,7 +6725,7 @@
     "benefits": "ประโยชน์",
     "risks": "ความเสี่ยง",
     "before_care": "การเตรียมตัวก่อนรักษา",
-    "after_care": "การดูแลหลังการรักษา",
+    "after_care": "การดูแลหลังโปรแกรมความงาม",
     "contraindications": "ข้อห้าม",
     "alternatives": "ทางเลือกอื่น"
   },
@@ -6816,14 +6817,14 @@
     "reportId": "รหัสรายงาน",
     "generatedOn": "สร้างเมื่อ",
     "noRecommendations": "ไม่มีคำแนะนำในขณะนี้",
-    "recommendedTreatmentPlan": "แผนการรักษาที่แนะนำ",
-    "noTreatmentPlan": "ไม่มีแผนการรักษาในขณะนี้",
+    "recommendedTreatmentPlan": "แผนโปรแกรมความงามที่แนะนำ",
+    "noTreatmentPlan": "ไม่มีแผนโปรแกรมความงามในขณะนี้",
     "estimatedDuration": "ระยะเวลาโดยประมาณ",
     "priority": "ความสำคัญ",
     "recommended": "แนะนำ",
     "optional": "ทางเลือก",
     "professionalTitle": "รายงานการวิเคราะห์ผิวระดับมืออาชีพ",
-    "equivalentSystem": "ระบบวิเคราะห์เทียบเท่า VISIA",
+    "equivalentSystem": "ระบบวิเคราะห์ความงามระดับสูง",
     "png": "PNG",
     "exporting": "กำลังส่งออก...",
     "exportPdfFailed": "ไม่สามารถส่งออก PDF ได้ กรุณาลองใหม่อีกครั้ง",
@@ -6834,7 +6835,7 @@
     "progressTracking": "การติดตามความก้าวหน้า",
     "timeline": "ไทม์ไลน์",
     "latestAnalysis": "การวิเคราะห์ล่าสุด",
-    "visiaEquivalent": "เทียบเท่า VISIA",
+    "visiaEquivalent": "เทียบเท่าระดับสากล",
     "accuracyNote": "การวิเคราะห์ระดับมืออาชีพด้วยความแม่นยำ 88-92%",
     "uvSpots": "จุด UV",
     "porphyrins": "พอร์ไฟริน",
@@ -6843,16 +6844,16 @@
     "hybridMethod": "ไฮบริด AI + CV"
   },
   "treatmentScheduling": {
-    "title": "ตารางการรักษา",
-    "description": "แผนการรักษาที่เหมาะสมที่สุดโดย AI พร้อมไทม์ไลน์และระยะเวลาการฟื้นตัว",
-    "schedule": "ตารางการรักษาของคุณ",
+    "title": "ตารางโปรแกรมความงาม",
+    "description": "แผนโปรแกรมความงามที่เหมาะสมที่สุดโดย AI พร้อมไทม์ไลน์และระยะเวลาการฟื้นตัว",
+    "schedule": "ตารางโปรแกรมความงามของคุณ",
     "timeline": "ไทม์ไลน์",
     "totalCost": "ต้นทุนโดยประมาณทั้งหมด",
     "recoveryPeriod": "ระยะเวลาการฟื้นตัว",
     "completionDate": "วันที่เสร็จสิ้น",
     "highlights": "ประเด็นสำคัญ",
     "warnings": "บันทึกสำคัญ",
-    "conflicts": "ระยะห่างของการรักษา",
+    "conflicts": "ระยะห่างของโปรแกรมความงาม",
     "noConflicts": "ไม่พบความขัดแย้งในระยะห่าง",
     "conflictDetected": "ตรวจพบการพิจารณาระยะห่าง",
     "recovery": "ขั้นตอนการฟื้นตัว",
@@ -6860,10 +6861,10 @@
     "duration": "ระยะเวลา",
     "recommendations": "คำแนะนำ",
     "viewDetails": "ดูรายละเอียด",
-    "confirmSchedule": "ยืนยันตารางการรักษา",
-    "downloadSchedule": "ดาวน์โหลดตารางการรักษา",
-    "shareSchedule": "แบ่งปันตารางการรักษา",
-    "reschedule": "เปลี่ยนตารางการรักษา",
+    "confirmSchedule": "ยืนยันตารางโปรแกรมความงาม",
+    "downloadSchedule": "ดาวน์โหลดตารางโปรแกรมความงาม",
+    "shareSchedule": "แบ่งปันตารางโปรแกรมความงาม",
+    "reschedule": "เปลี่ยนตารางโปรแกรมความงาม",
     "session": "ครั้งที่",
     "of": "จาก",
     "downtime": "ระยะเวลาพักตัว",
@@ -6871,11 +6872,11 @@
     "confidence": "ความมั่นใจ",
     "priority": "ลำดับความสำคัญ",
     "status": "สถานะ",
-    "scheduledFor": "กำหนดการรักษาสำหรับ",
+    "scheduledFor": "กำหนดโปรแกรมความงามสำหรับ",
     "recoveryUntil": "พักตัวถึง",
     "notes": "บันทึก",
     "frequency": "ความถี่",
-    "optimizationScore": "คะแนนการเพิ่มประสิทธิภาพตารางการรักษา",
+    "optimizationScore": "คะแนนการเพิ่มประสิทธิภาพตารางโปรแกรมความงาม",
     "minSpacing": "ระยะห่างขั้นต่ำ",
     "timelineLabel": "ไทม์ไลน์",
     "downtimeLabel": "ระยะเวลาพักฟื้น"
@@ -6972,11 +6973,11 @@
   },
   "priorityRanking": {
     "title": "การจัดอันดับความสำคัญด้วย AI",
-    "description": "วิเคราะห์ปัญหาผิวอัตโนมัติ จัดเรียงตามความเร่งด่วนและลำดับการรักษา",
+    "description": "วิเคราะห์ปัญหาผิวอัตโนมัติ จัดเรียงตามความเร่งด่วนและลำดับโปรแกรมความงาม",
     "overallCondition": "สภาพผิวโดยรวม",
     "topPriorities": "ปัญหาสำคัญ",
     "quickWins": "แก้ไขง่าย ผลชัดเร็ว",
-    "treatmentPlan": "แผนการรักษา",
+    "treatmentPlan": "แผนงานความงาม",
     "allConcerns": "ปัญหาทั้งหมด",
     "priority": "ระดับความสำคัญ",
     "urgency": "ความเร่งด่วน",
@@ -6987,7 +6988,7 @@
     "improvementPotential": "โอกาสปรับปรุง",
     "weeks": "สัปดาห์",
     "reasons": "เหตุผลที่สำคัญ",
-    "recommendations": "ทรีตเมนต์ที่แนะนำ",
+    "recommendations": "โปรแกรมความงามที่แนะนำ",
     "bookNow": "จองคิว",
     "viewDetails": "ดูรายละเอียด",
     "phase": "ระยะที่",
@@ -7067,7 +7068,7 @@
     "overview": "ภาพรวม",
     "causes": "สาเหตุ",
     "prevention": "การป้องกัน",
-    "treatment": "การรักษา",
+    "program": "การดูแล",
     "routine": "กิจวัตร",
     "keyStatistics": "สถิติสำคัญ",
     "commonMyths": "ความเชื่อที่ผิด",
@@ -7076,14 +7077,14 @@
     "provenIngredients": "ส่วนผสมที่พิสูจน์แล้ว",
     "morningRoutine": " กิจวัตรตอนเช้า",
     "eveningRoutine": " กิจวัตรตอนเย็น",
-    "weeklyTreatments": " ทรีตเมนต์รายสัปดาห์",
+    "weeklyTreatments": " โปรแกรมความงามรายสัปดาห์",
     "close": "ปิด",
     "consistencyTip": " คำแนะนำ: ความสม่ำเสมอเป็นกุญแจสำคัญสู่ผลลัพธ์ที่ดีที่สุด ติดตามความก้าวหน้าของคุณอย่างต่อเนื่อง",
     "myth": "ความเชื่อ",
     "fact": "ข้อเท็จจริง",
     "whatCauses": "อะไรคือสาเหตุของ {concern}?",
     "howToPrevent": "วิธีป้องกัน {concern}",
-    "recommendedTreatment": "การรักษาที่แนะนำสำหรับระดับ {severity} ของคุณ",
+    "recommendedTreatment": "โปรแกรมความงามที่แนะนำสำหรับระดับ {severity} ของคุณ",
     "whenToSeeDermatologist": "เมื่อไหร่ควรไปพบแพทย์ผิวหนัง",
     "locations": "{count} ตำแหน่ง",
     "confidence": "ความแม่นยำ: {value}%",
@@ -7144,16 +7145,16 @@
     }
   },
   "patientInfoCard": {
-    "title": "ข้อมูลผู้ป่วย",
+    "title": "ข้อมูลลูกค้า",
     "baselineAnalysis": "การวิเคราะห์ฐาน",
     "fullName": "ชื่อ-นามสกุล",
     "age": "อายุ",
     "gender": "เพศ",
     "skinType": "ประเภทผิว",
     "analysisDate": "วันที่วิเคราะห์",
-    "medicalHistory": "ประวัติทางการแพทย์",
-    "allergies": "อาการแพ้",
-    "currentMedications": "ยาที่ใช้อยู่",
+    "medicalHistory": "ประวัติการดูแลผิว",
+    "allergies": "อาการแพ้/แพ้ง่าย",
+    "currentMedications": "ผลิตภัณฑ์ที่ใช้อยู่",
     "notes": "หมายเหตุ",
     "years": "ปี",
     "dry": "ผิวแห้ง",
@@ -7217,7 +7218,7 @@
     "primaryConcern": "ปัญหาหลัก",
     "confidence": "ความแม่นยำ",
     "allScores": "คะแนนทั้งหมด",
-    "treatmentRecsTitle": "คำแนะนำการรักษา",
+    "treatmentRecsTitle": "คำแนะนำโปรแกรมความงาม",
     "loadError": "ไม่สามารถวิเคราะห์ผิวได้ กรุณาลองใหม่อีกครั้ง"
   },
   "severity": {
@@ -7229,17 +7230,12 @@
     "severe": "รุนแรง"
   },
   "missionReport": {
-    "title": "รายงานความสำเร็จ: AI Aesthetic Supremacy 2026",
-    "status": "สถานะ: ภารกิจเสร็จสิ้น (Mission Accomplished)",
+    "title": "ภารกิจ AI Aesthetic Supremacy 2026 สำเร็จ!",
+    "status": "สถานะ: ภารกิจเสร็จสิ้น",
     "implementation": "การติดตั้งระบบ",
     "localization": "การแปลภาษาและภูมิภาค",
     "polish": "การขัดเกลา UI และ UX",
     "ecosystem": "ระบบนิเวศน์ Supremacy",
-    "summary": "รายงานสรุปภาพรวมการพัฒนาและการขัดเกลาระบบนิเวศน์ AI ความงามระดับโลก",
-    "systemImplementation": "การติดตั้งระบบและการขัดเกลาโค้ด",
-    "i18nLocalization": "ระบบหลายภาษา (I18N) และการตั้งค่าภูมิภาค",
-    "uiuxCinematic": "Cinematic UI/UX และการสร้างประสบการณ์ผู้ใช้",
-    "technicalExcellence": "มาตรฐานทางเทคนิคและความเสถียร",
-    "nextSteps": "ก้าวต่อไปสู่ตลาด Enterprise ทั่วโลก"
+    "summary": "สรุปผลการดำเนินงาน"
   }
 }

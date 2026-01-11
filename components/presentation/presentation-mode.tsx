@@ -34,13 +34,13 @@ import Image from 'next/image';
 interface PresentationModeProps {
   analysis: HybridSkinAnalysis;
   comparisonAnalysis?: HybridSkinAnalysis;
-  patientInfo?: {
+  customerInfo?: {
     name?: string;
     age?: number;
     gender?: string;
     skinType?: string;
   };
-  clinicInfo?: {
+  centerInfo?: {
     name: string;
     logo?: string;
     brandColor?: string;
@@ -52,16 +52,16 @@ interface PresentationModeProps {
   onClose?: () => void;
 }
 
-const TREATMENT_PACKAGES = [
+const PROGRAM_PACKAGES = [
   {
     id: 'basic',
     name: { en: 'Basic Care', th: 'ดูแลพื้นฐาน' },
     badge: { en: 'Popular', th: 'ยอดนิยม' },
     badgeColor: 'bg-blue-500',
-    treatments: [
-      { name: { en: 'Facial Cleansing', th: 'ทำความสะอาดผิวหน้า' }, sessions: 4 },
-      { name: { en: 'Vitamin C Serum', th: 'เซรั่มวิตามินซี' }, sessions: 8 },
-      { name: { en: 'Moisturizing Treatment', th: 'บำรุงความชุ่มชื้น' }, sessions: 4 },
+    programs: [
+      { name: { en: 'Aesthetic Cleansing', th: 'ทำความสะอาดผิวอัจฉริยะ' }, sessions: 4 },
+      { name: { en: 'AI-Guided Serum', th: 'เซรั่มสูตร AI' }, sessions: 8 },
+      { name: { en: 'Hydration Protocol', th: 'โปรโตคอลเติมความชุ่มชื้น' }, sessions: 4 },
     ],
     duration: { weeks: 8, months: 2 },
     price: 12000,
@@ -72,14 +72,14 @@ const TREATMENT_PACKAGES = [
   },
   {
     id: 'advanced',
-    name: { en: 'Advanced Treatment', th: 'การรักษาขั้นสูง' },
+    name: { en: 'Advanced Aesthetic', th: 'การดูแลขั้นสูง' },
     badge: { en: 'Best Value', th: 'คุ้มค่าที่สุด' },
     badgeColor: 'bg-green-500',
-    treatments: [
-      { name: { en: 'Laser Therapy', th: 'เลเซอร์บำบัด' }, sessions: 6 },
-      { name: { en: 'Chemical Peel', th: 'ผลัดเซลล์ผิว' }, sessions: 4 },
-      { name: { en: 'Hydrafacial', th: 'ไฮดร้าเฟเชียล' }, sessions: 6 },
-      { name: { en: 'LED Light Therapy', th: 'บำบัดด้วยแสง LED' }, sessions: 8 },
+    programs: [
+      { name: { en: 'Precision Laser', th: 'เลเซอร์ความแม่นยำสูง' }, sessions: 6 },
+      { name: { en: 'Smart Skin Resurfacing', th: 'ผลัดเซลล์ผิวอัจฉริยะ' }, sessions: 4 },
+      { name: { en: 'Acoustic Wave Therapy', th: 'คลื่นเสียงบำบัด' }, sessions: 6 },
+      { name: { en: 'Bio-Light Therapy', th: 'บำบัดด้วยแสงชีวภาพ' }, sessions: 8 },
     ],
     duration: { weeks: 12, months: 3 },
     price: 35000,
@@ -92,16 +92,16 @@ const TREATMENT_PACKAGES = [
   },
   {
     id: 'premium',
-    name: { en: 'Premium Package', th: 'แพ็คเกจพรีเมียม' },
+    name: { en: 'Aesthetic Intelligence', th: 'โปรแกรมอัจฉริยะสูงสุด' },
     badge: { en: 'Comprehensive', th: 'ครบวงจร' },
     badgeColor: 'bg-purple-500',
-    treatments: [
-      { name: { en: 'Fraxel Laser', th: 'เลเซอร์ Fraxel' }, sessions: 4 },
-      { name: { en: 'Botox Treatment', th: 'โบท็อกซ์' }, sessions: 2 },
-      { name: { en: 'Dermal Fillers', th: 'ฟิลเลอร์' }, sessions: 2 },
-      { name: { en: 'PRP Therapy', th: 'PRP บำบัด' }, sessions: 4 },
-      { name: { en: 'Microneedling', th: 'ไมโครนีดเดิ้ล' }, sessions: 6 },
-      { name: { en: 'Home Care Kit', th: 'ชุดดูแลที่บ้าน' }, sessions: 1 },
+    programs: [
+      { name: { en: 'Neural Skin Repair', th: 'ซ่อมแซมผิวระดับเซลล์' }, sessions: 4 },
+      { name: { en: 'Dynamic Muscle Modulation', th: 'ปรับกล้ามเนื้อใบหน้า' }, sessions: 2 },
+      { name: { en: 'Volume Orchestration', th: 'ปรับรูปหน้าอัจฉริยะ' }, sessions: 2 },
+      { name: { en: 'Regenerative Complex', th: 'รีเจนเนอเรทีฟคอมเพล็กซ์' }, sessions: 4 },
+      { name: { en: 'Digital Micro-needling', th: 'ไมโครนีดเดิ้ลระบบดิจิทัล' }, sessions: 6 },
+      { name: { en: 'AI Bio-Homecare Kit', th: 'ชุดดูแลต่อเนื่องที่บ้าน' }, sessions: 1 },
     ],
     duration: { weeks: 16, months: 4 },
     price: 85000,
@@ -117,8 +117,8 @@ const TREATMENT_PACKAGES = [
 export function PresentationMode({
   analysis,
   comparisonAnalysis,
-  patientInfo,
-  clinicInfo,
+  customerInfo,
+  centerInfo,
   locale = 'en',
   onExport,
   onShare,
@@ -185,16 +185,16 @@ export function PresentationMode({
     return { level: t('presentationMode.low'), color: 'text-green-500' };
   };
 
-  const renderClinicBranding = () => (
+  const renderCenterBranding = () => (
     <div className="flex items-center gap-3">
-      {clinicInfo?.logo && (
+      {centerInfo?.logo && (
         <div className="relative w-12 h-12">
-          <Image src={clinicInfo.logo} alt={clinicInfo.name} fill className="object-contain" />
+          <Image src={centerInfo.logo} alt={centerInfo.name} fill className="object-contain" />
         </div>
       )}
       <div>
-        <h3 className="font-bold text-lg" style={{ color: clinicInfo?.brandColor }}>
-          {clinicInfo?.name || 'AI367 Skin Clinic'}
+        <h3 className="font-bold text-lg" style={{ color: centerInfo?.brandColor }}>
+          {centerInfo?.name || 'Aesthetic Intelligence Hub'}
         </h3>
       </div>
     </div>
@@ -213,7 +213,7 @@ export function PresentationMode({
         } flex items-center justify-between bg-gradient-to-r from-primary/10 to-purple-500/10`}
       >
         <div className="flex items-center gap-4">
-          {renderClinicBranding()}
+          {renderCenterBranding()}
           <Badge variant="secondary" className="ml-4">
             {t('presentationMode.title')}
           </Badge>
@@ -259,33 +259,33 @@ export function PresentationMode({
         </div>
       </div>
 
-      {/* Patient Info Bar */}
-      {patientInfo && (
+      {/* Customer Info Bar */}
+      {customerInfo && (
         <div
           className={`border-b ${
             isFullscreen ? 'px-8 py-3' : 'px-4 py-2'
           } bg-muted/30 flex items-center gap-6 text-sm`}
         >
-          {patientInfo.name && (
+          {customerInfo.name && (
             <div>
               <span className="text-muted-foreground">{t('common.name')}:</span>{' '}
-              <span className="font-medium">{patientInfo.name}</span>
+              <span className="font-medium">{customerInfo.name}</span>
             </div>
           )}
-          {patientInfo.age && (
+          {customerInfo.age && (
             <div>
-              <span className="text-muted-foreground">{t('patient.age')}:</span>{' '}
+              <span className="text-muted-foreground">{t('customer.age')}:</span>{' '}
               <span className="font-medium">
-                {patientInfo.age} {t('common.years')}
+                {customerInfo.age} {t('common.years')}
               </span>
             </div>
           )}
-          {patientInfo.skinType && (
+          {customerInfo.skinType && (
             <div>
               <span className="text-muted-foreground">
-                {t('patient.skinType.label')}:
+                {t('customer.skinType.label')}:
               </span>{' '}
-              <span className="font-medium capitalize">{patientInfo.skinType}</span>
+              <span className="font-medium capitalize">{customerInfo.skinType}</span>
             </div>
           )}
           <div className="ml-auto text-muted-foreground">
@@ -300,7 +300,7 @@ export function PresentationMode({
           <TabsList className={`grid w-full ${isFullscreen ? 'max-w-3xl' : 'max-w-2xl'} mx-auto grid-cols-5 mb-6`}>
             <TabsTrigger value="overview">{t('presentationMode.overview')}</TabsTrigger>
             <TabsTrigger value="comparison">{t('presentationMode.comparison')}</TabsTrigger>
-            <TabsTrigger value="treatments">{t('presentationMode.treatments')}</TabsTrigger>
+            <TabsTrigger value="programs">{t('presentationMode.programs')}</TabsTrigger>
             <TabsTrigger value="pricing">{t('presentationMode.pricing')}</TabsTrigger>
             <TabsTrigger value="timeline">{t('presentationMode.timeline')}</TabsTrigger>
           </TabsList>
@@ -465,10 +465,10 @@ export function PresentationMode({
             )}
           </TabsContent>
 
-          {/* Treatments Tab */}
-          <TabsContent value="treatments" className="space-y-6">
+          {/* Programs Tab */}
+          <TabsContent value="programs" className="space-y-6">
             <div className="grid gap-6 md:grid-cols-3">
-              {TREATMENT_PACKAGES.map((pkg) => (
+              {PROGRAM_PACKAGES.map((pkg) => (
                 <Card
                   key={pkg.id}
                   className="relative overflow-hidden hover:shadow-lg transition-shadow"
@@ -495,11 +495,11 @@ export function PresentationMode({
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="space-y-2">
-                      {pkg.treatments.map((treatment, idx) => (
+                      {pkg.programs.map((program, idx) => (
                         <div key={idx} className="flex justify-between text-sm">
-                          <span>{treatment.name[locale]}</span>
+                          <span>{program.name[locale]}</span>
                           <span className="text-muted-foreground">
-                            {treatment.sessions} {t('presentationMode.sessions')}
+                            {program.sessions} {t('presentationMode.sessions')}
                           </span>
                         </div>
                       ))}
@@ -551,7 +551,7 @@ export function PresentationMode({
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {TREATMENT_PACKAGES.map((pkg) => (
+                  {PROGRAM_PACKAGES.map((pkg) => (
                     <div
                       key={pkg.id}
                       className="p-4 rounded-lg border bg-gradient-to-r from-muted/30 to-muted/10 hover:border-primary transition-colors"
@@ -597,11 +597,11 @@ export function PresentationMode({
           <TabsContent value="timeline" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>{t('presentationMode.treatmentPlan')}</CardTitle>
+                <CardTitle>{t('presentationMode.programPlan')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-8">
-                  {TREATMENT_PACKAGES.map((pkg, pkgIdx) => (
+                  {PROGRAM_PACKAGES.map((pkg, pkgIdx) => (
                     <div key={pkg.id}>
                       <div className="flex items-center gap-3 mb-4">
                         <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">
@@ -616,7 +616,7 @@ export function PresentationMode({
                       </div>
 
                       <div className="ml-11 space-y-3">
-                        {pkg.treatments.map((treatment, idx) => (
+                        {pkg.programs.map((program, idx) => (
                           <div
                             key={idx}
                             className="flex items-center gap-3 p-3 rounded-lg border bg-muted/30"
@@ -625,10 +625,10 @@ export function PresentationMode({
                               {idx + 1}
                             </div>
                             <div className="flex-1">
-                              <div className="font-medium">{treatment.name[locale]}</div>
+                              <div className="font-medium">{program.name[locale]}</div>
                             </div>
                             <div className="text-sm text-muted-foreground">
-                              {treatment.sessions} {t('presentationMode.sessions')}
+                              {program.sessions} {t('presentationMode.sessions')}
                             </div>
                           </div>
                         ))}
@@ -662,7 +662,7 @@ export function PresentationMode({
         <Button
           variant="outline"
           onClick={() => {
-            const tabs = ['overview', 'comparison', 'treatments', 'pricing', 'timeline'];
+            const tabs = ['overview', 'comparison', 'programs', 'pricing', 'timeline'];
             const currentIndex = tabs.indexOf(currentTab);
             if (currentIndex > 0) {
               setCurrentTab(tabs[currentIndex - 1]);
@@ -681,7 +681,7 @@ export function PresentationMode({
         <Button
           variant="outline"
           onClick={() => {
-            const tabs = ['overview', 'comparison', 'treatments', 'pricing', 'timeline'];
+            const tabs = ['overview', 'comparison', 'programs', 'pricing', 'timeline'];
             const currentIndex = tabs.indexOf(currentTab);
             if (currentIndex < tabs.length - 1) {
               setCurrentTab(tabs[currentIndex + 1]);

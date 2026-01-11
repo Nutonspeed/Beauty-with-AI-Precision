@@ -40,8 +40,8 @@ interface ShareDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   analysisId: string
-  clinicName: string
-  clinicLogoUrl?: string
+  centerName: string
+  centerLogoUrl?: string
   onShareCreated?: (shareUrl: string) => void
 }
 
@@ -49,8 +49,8 @@ export function ShareDialog({
   open,
   onOpenChange,
   analysisId,
-  clinicName,
-  clinicLogoUrl,
+  centerName,
+  centerLogoUrl,
   onShareCreated,
 }: ShareDialogProps) {
   const t = useTranslations('shareDialog');
@@ -148,7 +148,7 @@ export function ShareDialog({
   const handleShareLine = () => {
     if (!shareUrl) return
 
-    const lineMessage = t('lineMessage', { name: clinicName }) + `\n${shareUrl}`
+    const lineMessage = t('lineMessage', { name: centerName }) + `\n${shareUrl}`
     const lineUrl = `https://line.me/R/msg/text/?${encodeURIComponent(lineMessage)}`
     
     window.open(lineUrl, '_blank')
@@ -377,7 +377,7 @@ export function ShareDialog({
         {/* Footer */}
         <div className="flex justify-between items-center pt-4 border-t">
           <p className="text-xs text-muted-foreground">
-            {t('poweredBy', { name: clinicName })}
+            {t('poweredBy', { name: centerName })}
           </p>
           <Button 
             onClick={handleClose} 

@@ -12,20 +12,20 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Image, Maximize2, ChevronLeft, ChevronRight, Calendar } from "lucide-react"
-import { useTreatmentPhotos } from "@/hooks/useTreatment"
+import { useProgramPhotos } from "@/hooks/useProgram"
 
 interface PhotoComparisonProps {
-  treatmentId: string
+  programId: string
 }
 
 import { useTranslations, useLocale } from "next-intl"
 
-export default function PhotoComparison({ treatmentId }: PhotoComparisonProps) {
+export default function PhotoComparison({ programId }: PhotoComparisonProps) {
   const t = useTranslations()
   const locale = useLocale()
-  const { photos: beforePhotos } = useTreatmentPhotos(treatmentId, { type: "before" })
-  const { photos: afterPhotos } = useTreatmentPhotos(treatmentId, { type: "after" })
-  const { photos: progressPhotos } = useTreatmentPhotos(treatmentId, { type: "progress" })
+  const { photos: beforePhotos } = useProgramPhotos(programId, { type: "before" })
+  const { photos: afterPhotos } = useProgramPhotos(programId, { type: "after" })
+  const { photos: progressPhotos } = useProgramPhotos(programId, { type: "progress" })
 
   const [selectedBeforeIndex, setSelectedBeforeIndex] = useState(0)
   const [selectedAfterIndex, setSelectedAfterIndex] = useState(0)

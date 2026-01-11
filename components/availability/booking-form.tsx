@@ -18,8 +18,8 @@ import { TimeSlot } from '@/lib/availability-manager';
 interface BookingFormProps {
   selectedSlot: TimeSlot | null;
   onBook: (data: {
-    patientId: string;
-    patientName: string;
+    customerId: string;
+    customerName: string;
     serviceType: string;
     notes?: string;
   }) => void;
@@ -35,27 +35,27 @@ export function BookingForm({
   formatTime,
   className
 }: BookingFormProps) {
-  const [patientName, setPatientName] = useState('');
+  const [customerName, setCustomerName] = useState('');
   const [serviceType, setServiceType] = useState('');
   const [notes, setNotes] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!patientName || !serviceType) {
+    if (!customerName || !serviceType) {
       alert('Please fill in all required fields');
       return;
     }
 
     onBook({
-      patientId: `patient-${Date.now()}`,
-      patientName,
+      customerId: `customer-${Date.now()}`,
+      customerName,
       serviceType,
       notes: notes || undefined
     });
 
     // Reset form
-    setPatientName('');
+    setCustomerName('');
     setServiceType('');
     setNotes('');
   };
@@ -87,16 +87,16 @@ export function BookingForm({
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Patient Name */}
+          {/* Customer Name */}
           <div className="space-y-2">
-            <Label htmlFor="patientName" className="flex items-center gap-2">
+            <Label htmlFor="customerName" className="flex items-center gap-2">
               <User className="w-4 h-4" />
-              Patient Name *
+              Customer Name *
             </Label>
             <Input
-              id="patientName"
-              value={patientName}
-              onChange={(e) => setPatientName(e.target.value)}
+              id="customerName"
+              value={customerName}
+              onChange={(e) => setCustomerName(e.target.value)}
               placeholder="John Doe"
               required
             />

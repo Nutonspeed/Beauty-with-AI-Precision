@@ -125,7 +125,7 @@ export const STAT_CARD_VARIANTS = {
     iconColor: "text-indigo-600 dark:text-indigo-400",
     iconBackground: "bg-indigo-50 dark:bg-indigo-950",
   },
-  treatments: {
+  programs: {
     iconColor: "text-pink-600 dark:text-pink-400",
     iconBackground: "bg-pink-50 dark:bg-pink-950",
   },

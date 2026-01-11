@@ -14,16 +14,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Face3DViewer } from '@/components/ar/face-3d-viewer';
 import { TreatmentSimulator } from '@/components/ar/treatment-simulator';
 import PriorityRankingCard from '@/components/analysis/priority-ranking-card';
-import TreatmentRecommendations from '@/components/analysis/treatment-recommendations';
+import ProgramRecommendations from '@/components/analysis/program-recommendations';
 import { Loader2, AlertCircle, ArrowLeft, Globe, Check, Presentation, LineChart } from 'lucide-react';
 import { useTranslations, useLocale } from 'next-intl';
 import { useRouter, useParams } from 'next/navigation';
 import { downloadAnalysisPDF } from '@/lib/utils/pdf-export';
 import { exportToPNG, shareAnalysis, printReport } from '@/lib/utils/export-report';
 import { rankSkinConcernPriorities } from '@/lib/ai/priority-ranking';
-import { generateTreatmentRecommendations } from '@/lib/ai/treatment-recommendations';
+import { generateProgramRecommendations } from '@/lib/ai/program-recommendations';
 import type { PriorityRankingResult } from '@/lib/ai/priority-ranking';
-import type { RecommendationResult } from '@/lib/ai/treatment-recommendations';
+import type { RecommendationResult } from '@/lib/ai/program-recommendations';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -661,9 +661,9 @@ export default function AnalysisDetailPage({ params }: Readonly<AnalysisDetailPa
   const locale = useLocale();
   const [analysis, setAnalysis] = useState<HybridSkinAnalysis | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [patientInfo, setPatientInfo] = useState<any>(null);
+  const [customerInfo, setCustomerInfo] = useState<any>(null);
   const [priorityRanking, setPriorityRanking] = useState<PriorityRankingResult | null>(null);
-  const [treatmentRecs, setTreatmentRecs] = useState<RecommendationResult | null>(null);
+  const [programRecs, setProgramRecs] = useState<RecommendationResult | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [analysisId, setAnalysisId] = useState<string | null>(null);
@@ -719,22 +719,23 @@ export default function AnalysisDetailPage({ params }: Readonly<AnalysisDetailPa
       setPriorityRanking(ranking);
       
       const skinType = normalizedAnalysis.ai.skinType || 'normal';
-      const recommendations = generateTreatmentRecommendations(
+      const recommendations = await generateProgramRecommendations(
         normalizedAnalysis,
-        skinType as 'dry' | 'oily' | 'combination' | 'normal' | 'sensitive'
+        priorityRanking,
+        { locale: locale as 'th' | 'en' }
       );
-      setTreatmentRecs(recommendations);
+      setProgramRecs(recommendations);
       
-      const patientInfoValue = isRecord(data.data) && 'patientInfo' in data.data
-        ? (data.data as Record<string, unknown>).patientInfo ?? null
+      const customerInfoValue = isRecord(data.data) && 'customerInfo' in data.data
+        ? (data.data as Record<string, unknown>).customerInfo ?? null
         : null;
       
-      const finalPatientInfo = patientInfoValue || {
+      const finalCustomerInfo = customerInfoValue || {
         name: t('roles.customer'),
         skinType: normalizedAnalysis.ai.skinType || 'normal'
       };
       
-      setPatientInfo(finalPatientInfo);
+      setCustomerInfo(finalCustomerInfo);
     } catch (err) {
       console.error('Load analysis error:', err);
       setError(err instanceof Error ? err.message : t('analysis.error'));
@@ -760,11 +761,11 @@ export default function AnalysisDetailPage({ params }: Readonly<AnalysisDetailPa
           analysis,
           {
             locale: locale as 'th' | 'en',
-            patientInfo: patientInfo ? {
-              name: patientInfo.name,
-              age: patientInfo.age,
-              gender: patientInfo.gender,
-              skinType: patientInfo.skinType || analysis.ai.skinType,
+            customerInfo: customerInfo ? {
+              name: customerInfo.name,
+              age: customerInfo.age,
+              gender: customerInfo.gender,
+              skinType: customerInfo.skinType || analysis.ai.skinType,
               customerId: analysisId || undefined,
             } : undefined,
             clinicInfo: {
@@ -778,7 +779,7 @@ export default function AnalysisDetailPage({ params }: Readonly<AnalysisDetailPa
             },
             includeCharts: true,
             includePhotos: !!imageUrl,
-            includeRecommendations: !!treatmentRecs,
+            includeRecommendations: !!programRecs,
             includePriorityRanking: !!priorityRanking,
             photos: imageUrl ? {
               current: imageUrl,
@@ -935,7 +936,7 @@ export default function AnalysisDetailPage({ params }: Readonly<AnalysisDetailPa
         <TabsContent value="report">
           <VISIAReport
             analysis={analysis}
-            patientInfo={patientInfo}
+            customerInfo={customerInfo}
             locale={locale}
             onExport={handleExport}
             onPrint={handlePrint}
@@ -956,19 +957,10 @@ export default function AnalysisDetailPage({ params }: Readonly<AnalysisDetailPa
         </TabsContent>
 
         <TabsContent value="recommendations">
-          {treatmentRecs && (
-            <TreatmentRecommendations
-              recommendations={treatmentRecs}
-              locale={locale as 'th' | 'en'}
-              onBookConsultation={(treatmentId) => {
-                router.push(`/${locale}/booking?treatment=${treatmentId}`);
-              }}
-              onBuyProduct={(productId) => {
-                const product = treatmentRecs?.products.find(p => p.id === productId);
-                if (product?.purchaseUrl) {
-                  globalThis.open(product.purchaseUrl, '_blank');
-                }
-              }}
+          {programRecs && (
+            <ProgramRecommendations
+              recommendations={programRecs}
+              onBookConsultation={(id) => router.push(lp(`/booking?program=${id}`))}
             />
           )}
         </TabsContent>
@@ -996,13 +988,19 @@ export default function AnalysisDetailPage({ params }: Readonly<AnalysisDetailPa
           )}
         </TabsContent>
 
-        <TabsContent value="simulator">
-          {imageUrl && (
-            <TreatmentSimulator
-              beforeImage={imageUrl}
-              locale={locale}
-            />
-          )}
+        <TabsContent value="simulator" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Program Simulator / จำลองโปรแกรมความงาม</CardTitle>
+              <CardDescription>Visualize potential aesthetic outcomes</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ProgramSimulator 
+                beforeImage={imageUrl || ''} 
+                locale={locale}
+              />
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>

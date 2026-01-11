@@ -13,7 +13,7 @@ import { useTranslations } from 'next-intl';
 interface Review {
   id: string;
   name: string;
-  treatment: string;
+  program: string;
   rating: number;
   text: string;
   date: string;
@@ -31,10 +31,10 @@ export function SocialProofWidget({ className = '', autoRotate = true }: SocialP
   const [recentAction, setRecentAction] = useState<string | null>(null);
 
   const REVIEWS = [
-    { id: '1', name: t('socialProof.reviews.names.prae'), treatment: 'Botox', rating: 5, text: t('socialProof.reviews.review1'), date: t('socialProof.times.2daysAgo'), verified: true },
-    { id: '2', name: t('socialProof.reviews.names.nid'), treatment: 'Filler', rating: 5, text: t('socialProof.reviews.review2'), date: t('socialProof.times.3daysAgo'), verified: true },
-    { id: '3', name: t('socialProof.reviews.names.aim'), treatment: 'HIFU', rating: 5, text: t('socialProof.reviews.review3'), date: t('socialProof.times.1weekAgo'), verified: true },
-    { id: '4', name: t('socialProof.reviews.names.por'), treatment: 'Laser', rating: 4, text: t('socialProof.reviews.review4'), date: t('socialProof.times.1weekAgo'), verified: true },
+    { id: '1', name: t('socialProof.reviews.names.prae'), program: 'Botox', rating: 5, text: t('socialProof.reviews.review1'), date: t('socialProof.times.2daysAgo'), verified: true },
+    { id: '2', name: t('socialProof.reviews.names.nid'), program: 'Filler', rating: 5, text: t('socialProof.reviews.review2'), date: t('socialProof.times.3daysAgo'), verified: true },
+    { id: '3', name: t('socialProof.reviews.names.aim'), program: 'HIFU', rating: 5, text: t('socialProof.reviews.review3'), date: t('socialProof.times.1weekAgo'), verified: true },
+    { id: '4', name: t('socialProof.reviews.names.por'), program: 'Laser', rating: 4, text: t('socialProof.reviews.review4'), date: t('socialProof.times.1weekAgo'), verified: true },
   ];
 
   const STATS = {
@@ -56,9 +56,9 @@ export function SocialProofWidget({ className = '', autoRotate = true }: SocialP
   // Show random recent action
   useEffect(() => {
     const actions = [
-      t('socialProof.actions.booking', { name: t('socialProof.reviews.names.somsri'), treatment: 'Botox', time: t('socialProof.times.2mins') }),
+      t('socialProof.actions.booking', { name: t('socialProof.reviews.names.somsri'), program: 'Botox', time: t('socialProof.times.2mins') }),
       t('socialProof.actions.purchase', { name: t('socialProof.reviews.names.wipa'), package: 'HIFU', time: t('socialProof.times.5mins') }),
-      t('socialProof.actions.consultation', { name: t('socialProof.reviews.names.napha'), treatment: 'Filler', time: t('socialProof.times.8mins') }),
+      t('socialProof.actions.consultation', { name: t('socialProof.reviews.names.napha'), program: 'Filler', time: t('socialProof.times.8mins') }),
     ];
 
     const showAction = () => {

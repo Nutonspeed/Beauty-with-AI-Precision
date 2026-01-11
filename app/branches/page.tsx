@@ -3,13 +3,13 @@
 /**
  * Branch Management Page
  * 
- * Complete multi-branch management system for clinic owners:
- * - View all branches in clinic
+ * Complete multi-branch management system for center owners:
+ * - View all branches in center
  * - Manage staff transfers between branches
  * - Track inventory and analytics per branch
  * - Configure branch settings
  * 
- * Access: clinic_owner, clinic_admin, clinic_staff (view-only)
+ * Access: center_owner, center_admin, center_staff (view-only)
  */
 
 import { useState, useEffect } from "react"
@@ -35,11 +35,11 @@ import { Footer } from "@/components/footer"
 import BranchDashboard from "@/components/branch-dashboard"
 import StaffTransferModal from "@/components/staff-transfer-modal"
 import { useBranches, useBranchComparison } from "@/hooks/useBranch"
-import { useClinicContext } from "@/hooks/useClinicContext"
+import { useCenterContext } from "@/hooks/useCenterContext"
 
 export default function BranchManagementPage() {
   const router = useRouter()
-  const { canManageClinic } = useClinicContext()
+  const { canManageCenter } = useCenterContext()
   const [isCheckingAuth, setIsCheckingAuth] = useState(true)
   
   // Check authentication and permissions
@@ -53,8 +53,8 @@ export default function BranchManagementPage() {
         }
         const data = await response.json()
         
-        // Only clinic staff can access this page
-        if (!["clinic_owner", "clinic_admin", "clinic_staff"].includes(data.role)) {
+        // Only center staff can access this page
+        if (!["center_owner", "center_admin", "center_staff"].includes(data.role)) {
           router.push("/dashboard")
           return
         }
@@ -110,7 +110,7 @@ export default function BranchManagementPage() {
                 Multi-branch operations, staff transfers, and inventory management
               </p>
             </div>
-            <Button disabled={!canManageClinic()}>
+            <Button disabled={!canManageCenter()}>
               <Plus className="h-4 w-4 mr-2" />
               Add New Branch
             </Button>
@@ -391,7 +391,7 @@ export default function BranchManagementPage() {
               <div>
                 <h3 className="font-semibold text-lg mb-3">🏢 Multi-Branch Management</h3>
                 <ul className="list-disc list-inside space-y-2 text-gray-700">
-                  <li>Create and manage multiple clinic branches</li>
+                  <li>Create and manage multiple center branches</li>
                   <li>Configure operating hours, settings, and capacity per branch</li>
                   <li>Track branch status (active, maintenance, inactive, closed)</li>
                   <li>Manage branch contact information and location details</li>

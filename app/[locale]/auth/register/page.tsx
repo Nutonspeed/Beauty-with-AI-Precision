@@ -69,7 +69,7 @@ export default function RegisterPage() {
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden border-r border-white/5">
         <div className="absolute inset-0 bg-gradient-to-br from-pink-600/10 via-purple-600/10 to-transparent" />
         
-        {/* Animated Clinical Nodes */}
+        {/* Animated Aesthetic Nodes */}
         <div className="absolute inset-0">
           <motion.div 
             animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.2, 0.1] }}
@@ -95,22 +95,22 @@ export default function RegisterPage() {
               <div className="p-4 bg-white/[0.03] border border-white/10 rounded-[2rem] backdrop-blur-2xl shadow-2xl shadow-pink-500/10">
                 <Sparkles className="w-10 h-10 text-pink-400" />
               </div>
-              <span className="text-4xl font-black tracking-tighter text-white">ClinicIQ <span className="text-pink-500 italic">AI</span></span>
+              <span className="text-4xl font-black tracking-tighter text-white">CenterIQ <span className="text-pink-500 italic">AI</span></span>
             </div>
             
             <div className="space-y-6">
               <h1 className="text-6xl md:text-8xl font-bold tracking-tight text-white leading-[0.9] italic">
-                Clinical<br />Registration
+                Aesthetic<br />Registration
               </h1>
               <p className="text-2xl text-slate-400 font-light leading-relaxed max-w-lg tracking-wide">
                 Initialize your professional profile and access high-precision diagnostic tools.
               </p>
             </div>
             
-            {/* Clinical Security Nodes */}
+            {/* Aesthetic Security Nodes */}
             <div className="space-y-6 pt-10">
               {[
-                { icon: Shield, text: "End-to-End Clinical Encryption", color: "text-blue-400" },
+                { icon: Shield, text: "End-to-End Aesthetic Encryption", color: "text-blue-400" },
                 { icon: UserCheck, text: "Professional Credential Verification", color: "text-emerald-400" },
                 { icon: Lock, text: "PDPA Compliant Data Node", color: "text-pink-400" }
               ].map((f, i) => (
@@ -134,7 +134,7 @@ export default function RegisterPage() {
 
       {/* Right Side - Luxury Registration Infrastructure */}
       <div className="flex-1 flex items-center justify-center p-8 sm:p-24 relative z-10">
-        {/* Clinical Back Navigation */}
+        {/* Aesthetic Back Navigation */}
         <Link 
           href={lp("/")}
           className="fixed top-10 left-8 z-50 inline-flex items-center gap-4 px-6 py-3 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 hover:text-pink-400 transition-all rounded-2xl bg-white/[0.03] border border-white/5 backdrop-blur-xl group"
@@ -161,7 +161,7 @@ export default function RegisterPage() {
                     <Sparkles className="w-6 h-6 text-white" />
                   </div>
                   <span className="text-2xl font-black text-white tracking-tighter">
-                    ClinicIQ
+                    CenterIQ
                   </span>
                 </div>
               </div>
@@ -203,7 +203,7 @@ export default function RegisterPage() {
                       id="name"
                       name="name"
                       type="text"
-                      placeholder="Dr. Clinical Precise"
+                      placeholder="Dr. Aesthetic Precise"
                       required
                       disabled={isLoading}
                       className="h-14 rounded-2xl border-white/5 bg-white/[0.03] text-white placeholder:text-slate-700 focus:border-pink-500/30 focus:ring-pink-500/20 transition-all px-6"
@@ -218,7 +218,7 @@ export default function RegisterPage() {
                       id="email"
                       name="email"
                       type="email"
-                      placeholder="node@clinical.ai"
+                      placeholder="node@aesthetic.ai"
                       required
                       disabled={isLoading}
                       className="h-14 rounded-2xl border-white/5 bg-white/[0.03] text-white placeholder:text-slate-700 focus:border-pink-500/30 focus:ring-pink-500/20 transition-all px-6"

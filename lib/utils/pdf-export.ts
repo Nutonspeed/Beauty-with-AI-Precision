@@ -1,6 +1,6 @@
 /**
- * Professional PDF Export for VISIA Analysis Reports
- * Includes clinic branding, analysis results, visualizations, recommendations
+ * Professional PDF Export for Aesthetic Intelligence Analysis Reports
+ * Includes center branding, analysis results, visualizations, recommendations
  */
 
 import jsPDF from 'jspdf';
@@ -8,14 +8,14 @@ import type { HybridSkinAnalysis } from '@/lib/types/skin-analysis';
 
 export interface PDFExportOptions {
   locale?: 'th' | 'en';
-  patientInfo?: {
+  customerInfo?: {
     name?: string;
     age?: number;
     gender?: string;
     skinType?: string;
     customerId?: string;
   };
-  clinicInfo?: {
+  centerInfo?: {
     name: string;
     nameTh?: string;
     logo?: string; // Base64 or URL
@@ -24,10 +24,9 @@ export interface PDFExportOptions {
     phone?: string;
     email?: string;
     website?: string;
-    license?: string;
   };
+  includeImages?: boolean;
   includeCharts?: boolean;
-  includePhotos?: boolean;
   includeRecommendations?: boolean;
   includePriorityRanking?: boolean;
   includeProgress?: boolean;
@@ -45,118 +44,108 @@ export interface PDFExportOptions {
 // Translation dictionary
 const TRANSLATIONS = {
   en: {
-    title: 'VISIA Skin Analysis Report',
+    title: 'Aesthetic Intelligence Analysis Report',
     reportDate: 'Report Date',
-    patientInfo: 'Patient Information',
+    customerInfo: 'Customer Information',
     name: 'Name',
     age: 'Age',
     gender: 'Gender',
     skinType: 'Skin Type',
     customerId: 'Customer ID',
     overallScore: 'Overall Skin Health Score',
-    confidence: 'Confidence',
-    detailedAnalysis: 'Detailed Analysis',
-    percentile: 'Percentile',
+    confidence: 'Analysis Confidence',
+    concerns: 'Detected Skin Concerns',
     severity: 'Severity',
-    count: 'Count',
-    score: 'Score',
-    spots: 'Spots',
-    pores: 'Pores',
-    wrinkles: 'Wrinkles',
-    texture: 'Texture',
-    redness: 'Redness',
-    overall: 'Overall',
-    priorityRanking: 'Priority Ranking',
-    rank: 'Rank',
-    concern: 'Concern',
-    priority: 'Priority',
     high: 'High',
     medium: 'Medium',
     low: 'Low',
     urgency: 'Urgency',
-    recommendations: 'Treatment Recommendations',
-    treatments: 'Recommended Treatments',
+    recommendations: 'Program Recommendations',
+    treatments: 'Recommended Programs',
     products: 'Recommended Products',
     lifestyle: 'Lifestyle Recommendations',
-    timeline: 'Treatment Timeline',
+    timeline: 'Program Roadmap',
     estimatedCost: 'Estimated Cost',
     expectedImprovement: 'Expected Improvement',
     sessions: 'Sessions',
     effectiveness: 'Effectiveness',
     progressTracking: 'Progress Tracking',
     analysisDate: 'Analysis Date',
-    disclaimer: 'This report was generated using AI-powered VISIA skin analysis technology. Results should be reviewed by a qualified dermatologist or skincare professional.',
-    confidential: 'CONFIDENTIAL - For patient use only',
+    disclaimer: 'This report was generated using AI-powered Aesthetic Intelligence technology. Results should be reviewed by a qualified aesthetic specialist or skincare professional.',
+    confidential: 'CONFIDENTIAL - For customer use only',
     reportId: 'Report ID',
     page: 'Page',
     of: 'of',
-    years: 'years',
-    thPercentile: 'th percentile',
-    immediate: 'Immediate',
-    shortTerm: 'Short-term',
-    longTerm: 'Long-term',
+    spots: 'Spots',
+    pores: 'Pores',
+    wrinkles: 'Wrinkles',
+    texture: 'Texture',
+    redness: 'Redness',
+    pigmentation: 'Pigmentation',
+    acne: 'Acne',
+    sunProtection: 'Sun Protection',
     diet: 'Diet',
     hydration: 'Hydration',
     sleep: 'Sleep',
     stress: 'Stress Management',
-    sunProtection: 'Sun Protection',
+    priorityRanking: 'Priority Ranking',
+    detailedAnalysis: 'Detailed Analysis',
+    count: 'Count',
+    score: 'Score',
+    overall: 'Overall',
+    percentile: 'Percentile',
   },
   th: {
-    title: 'รายงานการวิเคราะห์ผิวด้วย VISIA',
+    title: 'รายงานการวิเคราะห์ความงามอัจฉริยะ',
     reportDate: 'วันที่ออกรายงาน',
-    patientInfo: 'ข้อมูลผู้รับบริการ',
+    customerInfo: 'ข้อมูลผู้รับบริการ',
     name: 'ชื่อ',
     age: 'อายุ',
     gender: 'เพศ',
     skinType: 'ประเภทผิว',
     customerId: 'รหัสลูกค้า',
     overallScore: 'คะแนนสุขภาพผิวโดยรวม',
-    confidence: 'ความเชื่อมั่น',
-    detailedAnalysis: 'ผลการวิเคราะห์โดยละเอียด',
-    percentile: 'เปอร์เซ็นไทล์',
+    confidence: 'ความเชื่อมั่นในการวิเคราะห์',
+    concerns: 'ปัญหาผิวที่ตรวจพบ',
     severity: 'ความรุนแรง',
-    count: 'จำนวน',
-    score: 'คะแนน',
+    high: 'สูง',
+    medium: 'ปานกลาง',
+    low: 'ต่ำ',
+    urgency: 'ความเร่งด่วน',
+    recommendations: 'คำแนะนำโปรแกรมความงาม',
+    treatments: 'โปรแกรมที่แนะนำ',
+    products: 'ผลิตภัณฑ์ที่แนะนำ',
+    lifestyle: 'คำแนะนำการดูแลตนเอง',
+    timeline: 'แผนงานความงาม',
+    estimatedCost: 'ประมาณการค่าใช้จ่าย',
+    expectedImprovement: 'การปรับปรุงที่คาดหวัง',
+    sessions: 'จำนวนครั้ง',
+    effectiveness: 'ประสิทธิภาพ',
+    progressTracking: 'ติดตามความคืบหน้า',
+    analysisDate: 'วันที่วิเคราะห์',
+    disclaimer: 'รายงานนี้สร้างจากเทคโนโลยีความงามอัจฉริยะด้วยปัญญาประดิษฐ์ ผลการวิเคราะห์ควรได้รับการตรวจสอบโดยผู้เชี่ยวชาญด้านความงาม',
+    confidential: 'เอกสารลับ - สำหรับลูกค้าเท่านั้น',
+    reportId: 'รหัสรายงาน',
+    page: 'หน้า',
+    of: 'จาก',
     spots: 'จุดด่างดำ',
     pores: 'รูขุมขน',
     wrinkles: 'ริ้วรอย',
     texture: 'เนื้อผิว',
     redness: 'รอยแดง',
-    overall: 'โดยรวม',
-    priorityRanking: 'ลำดับความสำคัญของปัญหา',
-    rank: 'อันดับ',
-    concern: 'ปัญหา',
-    priority: 'ความสำคัญ',
-    high: 'สูง',
-    medium: 'ปานกลาง',
-    low: 'ต่ำ',
-    urgency: 'ความเร่งด่วน',
-    recommendations: 'คำแนะนำการรักษา',
-    treatments: 'การรักษาที่แนะนำ',
-    products: 'ผลิตภัณฑ์ที่แนะนำ',
-    lifestyle: 'คำแนะนำการดูแลตนเอง',
-    timeline: 'แผนการรักษา',
-    estimatedCost: 'ค่าใช้จ่ายโดยประมาณ',
-    expectedImprovement: 'การปรับปรุงที่คาดหวัง',
-    sessions: 'ครั้ง',
-    effectiveness: 'ประสิทธิภาพ',
-    progressTracking: 'ติดตามความคืบหน้า',
-    analysisDate: 'วันที่วิเคราะห์',
-    disclaimer: 'รายงานนี้สร้างจากเทคโนโลยี VISIA ด้วยปัญญาประดิษฐ์ ผลการวิเคราะห์ควรได้รับการตรวจสอบโดยแพทย์ผู้เชี่ยวชาญด้านผิวหนัง',
-    confidential: 'เอกสารลับ - สำหรับผู้รับบริการเท่านั้น',
-    reportId: 'รหัสรายงาน',
-    page: 'หน้า',
-    of: 'จาก',
-    years: 'ปี',
-    thPercentile: 'เปอร์เซ็นไทล์',
-    immediate: 'ทันที',
-    shortTerm: 'ระยะสั้น',
-    longTerm: 'ระยะยาว',
+    pigmentation: 'เม็ดสี',
+    acne: 'สิว',
+    sunProtection: 'การป้องกันแสงแดด',
     diet: 'อาหาร',
     hydration: 'การดื่มน้ำ',
     sleep: 'การนอนหลับ',
     stress: 'การจัดการความเครียด',
-    sunProtection: 'การป้องกันแสงแดด',
+    priorityRanking: 'ลำดับความสำคัญ',
+    detailedAnalysis: 'การวิเคราะห์โดยละเอียด',
+    count: 'จำนวน',
+    score: 'คะแนน',
+    overall: 'โดยรวม',
+    percentile: 'เปอร์เซ็นไทล์',
   },
 };
 
@@ -177,13 +166,6 @@ export class PDFReportGenerator {
     });
     this.locale = locale;
     this.t = TRANSLATIONS[locale];
-
-    // Set up Thai font if needed
-    if (locale === 'th') {
-      // jsPDF uses default fonts, for Thai we'd need to add custom font
-      // For now, using default font with unicode support
-      this.pdf.setFont('helvetica');
-    }
   }
 
   /**
@@ -196,9 +178,9 @@ export class PDFReportGenerator {
     this.currentY = 20;
     this.pageNumber = 1;
 
-    // Page 1: Header, Patient Info, Overall Score
-    this.addHeader(options.clinicInfo);
-    this.addPatientInfo(options.patientInfo);
+    // Page 1: Header, Customer Info, Overall Score
+    this.addHeader(options.centerInfo);
+    this.addCustomerInfo(options.customerInfo);
     this.addOverallScore(analysis);
     
     // Page 1-2: Detailed Analysis
@@ -208,83 +190,72 @@ export class PDFReportGenerator {
     if (options.includePriorityRanking) {
       this.checkPageBreak(80);
       this.addSectionTitle(this.t.priorityRanking);
-      // Priority ranking data would come from separate parameter
-      // For now, showing placeholder
+      // Placeholder for priority ranking
     }
 
-    // Page 2-3: Treatment Recommendations
+    // Page 2-3: Program Recommendations
     if (options.includeRecommendations) {
-      this.addPageBreak();
+      this.checkPageBreak(40);
       this.addSectionTitle(this.t.recommendations);
-      // Recommendations would come from separate parameter
+      // Recommendations logic
     }
 
     // Page 3-4: Photos (if included)
-    if (options.includePhotos && options.photos) {
+    if (options.includeImages && options.photos) {
       this.addPageBreak();
       await this.addPhotos(options.photos);
     }
 
     // Page 4-5: Progress Tracking (if included)
     if (options.includeProgress && options.progressData) {
-      this.addPageBreak();
+      this.checkPageBreak(60);
       this.addProgressTracking(options.progressData);
     }
 
-    // Footer on all pages
-    this.addFooter(analysis);
+    // Final Footer adjustments
+    this.applyFinalFooter(analysis);
 
     return this.pdf.output('blob');
   }
 
-  /**
-   * Add header with clinic branding
-   */
-  private addHeader(clinicInfo?: PDFExportOptions['clinicInfo']): void {
+  private addHeader(centerInfo?: PDFExportOptions['centerInfo']): void {
     const pageWidth = this.pdf.internal.pageSize.getWidth();
 
-    // Add logo if provided
-    if (clinicInfo?.logo) {
+    if (centerInfo?.logo) {
       try {
-        this.pdf.addImage(clinicInfo.logo, 'PNG', this.margin, 15, 40, 20);
+        this.pdf.addImage(centerInfo.logo, 'PNG', this.margin, 15, 40, 20);
         this.currentY = 40;
       } catch (error) {
         console.error('Failed to add logo:', error);
       }
     }
 
-    // Clinic name
-    if (clinicInfo?.name) {
+    if (centerInfo?.name) {
       this.pdf.setFontSize(16);
       this.pdf.setFont('helvetica', 'bold');
-      const clinicName = this.locale === 'th' && clinicInfo.nameTh ? clinicInfo.nameTh : clinicInfo.name;
-      this.pdf.text(clinicName, pageWidth / 2, this.currentY, { align: 'center' });
+      const centerName = this.locale === 'th' && centerInfo.nameTh ? centerInfo.nameTh : centerInfo.name;
+      this.pdf.text(centerName, pageWidth / 2, this.currentY, { align: 'center' });
       this.currentY += 8;
 
-      // Clinic details
       this.pdf.setFontSize(9);
       this.pdf.setFont('helvetica', 'normal');
-      if (clinicInfo.address) {
-        const address = this.locale === 'th' && clinicInfo.addressTh ? clinicInfo.addressTh : clinicInfo.address;
+      if (centerInfo.address) {
+        const address = this.locale === 'th' && centerInfo.addressTh ? centerInfo.addressTh : centerInfo.address;
         this.pdf.text(address, pageWidth / 2, this.currentY, { align: 'center' });
         this.currentY += 5;
       }
-      if (clinicInfo.phone || clinicInfo.email) {
-        const contact = [clinicInfo.phone, clinicInfo.email].filter(Boolean).join(' | ');
+      if (centerInfo.phone || centerInfo.email) {
+        const contact = [centerInfo.phone, centerInfo.email].filter(Boolean).join(' | ');
         this.pdf.text(contact, pageWidth / 2, this.currentY, { align: 'center' });
         this.currentY += 5;
       }
+    } else {
+      this.pdf.setFontSize(20);
+      this.pdf.setFont('helvetica', 'bold');
+      this.pdf.text(this.t.title, pageWidth / 2, this.currentY, { align: 'center' });
+      this.currentY += 10;
     }
 
-    // Report title
-    this.currentY += 5;
-    this.pdf.setFontSize(18);
-    this.pdf.setFont('helvetica', 'bold');
-    this.pdf.setTextColor(37, 99, 235); // Blue
-    this.pdf.text(this.t.title, pageWidth / 2, this.currentY, { align: 'center' });
-    this.currentY += 10;
-
-    // Report date
     this.pdf.setFontSize(10);
     this.pdf.setFont('helvetica', 'normal');
     this.pdf.setTextColor(0, 0, 0);
@@ -292,71 +263,55 @@ export class PDFReportGenerator {
     this.pdf.text(dateStr, pageWidth / 2, this.currentY, { align: 'center' });
     this.currentY += 10;
 
-    // Divider line
     this.pdf.setDrawColor(200, 200, 200);
     this.pdf.line(this.margin, this.currentY, pageWidth - this.margin, this.currentY);
     this.currentY += 10;
   }
 
-  /**
-   * Add patient information section
-   */
-  private addPatientInfo(patientInfo?: PDFExportOptions['patientInfo']): void {
-    if (!patientInfo || Object.keys(patientInfo).length === 0) {
-      return;
-    }
+  private addCustomerInfo(customerInfo?: PDFExportOptions['customerInfo']): void {
+    if (!customerInfo || Object.keys(customerInfo).length === 0) return;
 
     this.pdf.setFontSize(12);
     this.pdf.setFont('helvetica', 'bold');
-    this.pdf.text(this.t.patientInfo, this.margin, this.currentY);
+    this.pdf.text(this.t.customerInfo, this.margin, this.currentY);
     this.currentY += 8;
 
     this.pdf.setFontSize(10);
     this.pdf.setFont('helvetica', 'normal');
 
-    const pageWidth = this.pdf.internal.pageSize.getWidth();
-    const colWidth = (pageWidth - 2 * this.margin) / 2;
-
-    let col = 0;
+    const colWidth = (this.pdf.internal.pageSize.getWidth() - this.margin * 2) / 2;
     const fields = [
-      { key: 'name', label: this.t.name },
-      { key: 'age', label: this.t.age, suffix: ` ${this.t.years}` },
-      { key: 'gender', label: this.t.gender },
-      { key: 'skinType', label: this.t.skinType },
-      { key: 'customerId', label: this.t.customerId },
+      { label: this.t.name, key: 'name' },
+      { label: this.t.age, key: 'age' },
+      { label: this.t.gender, key: 'gender' },
+      { label: this.t.skinType, key: 'skinType' },
+      { label: this.t.reportId, key: 'customerId' },
     ];
 
     const startY = this.currentY;
     fields.forEach((field, index) => {
-      const value = patientInfo[field.key as keyof typeof patientInfo];
+      const value = customerInfo[field.key as keyof typeof customerInfo];
       if (value !== undefined) {
+        const col = index % 2;
+        const row = Math.floor(index / 2);
         const x = this.margin + col * colWidth;
-        const y = startY + Math.floor(index / 2) * 7;
+        const y = startY + row * 7;
         
         this.pdf.setFont('helvetica', 'bold');
         this.pdf.text(`${field.label}:`, x, y);
-        this.pdf.setFont('helvetica', 'normal');
-        this.pdf.text(
-          `${value}${field.suffix || ''}`,
-          x + 25,
-          y
-        );
         
-        col = (col + 1) % 2;
+        const labelWidth = this.pdf.getTextWidth(`${field.label}: `);
+        this.pdf.setFont('helvetica', 'normal');
+        this.pdf.text(String(value), x + labelWidth, y);
+        
+        this.currentY = Math.max(this.currentY, y + 7);
       }
     });
 
-    this.currentY += Math.ceil(fields.length / 2) * 7 + 5;
-
-    // Divider line
-    this.pdf.setDrawColor(230, 230, 230);
-    this.pdf.line(this.margin, this.currentY, pageWidth - this.margin, this.currentY);
-    this.currentY += 8;
+    this.currentY += 5;
+    this.addLine();
   }
 
-  /**
-   * Add overall score section with large display
-   */
   private addOverallScore(analysis: HybridSkinAnalysis): void {
     const pageWidth = this.pdf.internal.pageSize.getWidth();
     const boxWidth = 80;
@@ -364,48 +319,31 @@ export class PDFReportGenerator {
     const boxX = (pageWidth - boxWidth) / 2;
     const boxY = this.currentY;
 
-    // Background box
     this.pdf.setFillColor(245, 247, 250);
     this.pdf.roundedRect(boxX, boxY, boxWidth, boxHeight, 3, 3, 'F');
 
-    // Score number
     this.pdf.setFontSize(36);
     this.pdf.setFont('helvetica', 'bold');
     this.pdf.setTextColor(37, 99, 235);
-    this.pdf.text(
-      analysis.overallScore.toString(),
-      pageWidth / 2,
-      boxY + boxHeight / 2 - 5,
-      { align: 'center' }
-    );
+    
+    const scoreStr = typeof analysis.overallScore === 'object' 
+      ? (analysis.percentiles.overall ?? 0).toString() 
+      : (analysis.overallScore as any).toString();
 
-    // Label
+    this.pdf.text(scoreStr, pageWidth / 2, boxY + boxHeight / 2 - 5, { align: 'center' });
+
     this.pdf.setFontSize(12);
     this.pdf.setFont('helvetica', 'normal');
     this.pdf.setTextColor(100, 100, 100);
-    this.pdf.text(
-      this.t.overallScore,
-      pageWidth / 2,
-      boxY + boxHeight / 2 + 8,
-      { align: 'center' }
-    );
+    this.pdf.text(this.t.overallScore, pageWidth / 2, boxY + boxHeight / 2 + 8, { align: 'center' });
 
-    // Confidence
     this.pdf.setFontSize(9);
-    this.pdf.text(
-      `${this.t.confidence}: ${analysis.confidence}%`,
-      pageWidth / 2,
-      boxY + boxHeight - 5,
-      { align: 'center' }
-    );
+    this.pdf.text(`${this.t.confidence}: ${Math.round(analysis.confidence * 100)}%`, pageWidth / 2, boxY + boxHeight - 5, { align: 'center' });
 
     this.currentY = boxY + boxHeight + 15;
     this.pdf.setTextColor(0, 0, 0);
   }
 
-  /**
-   * Add detailed analysis with parameters
-   */
   private addDetailedAnalysis(analysis: HybridSkinAnalysis): void {
     this.addSectionTitle(this.t.detailedAnalysis);
 
@@ -415,42 +353,12 @@ export class PDFReportGenerator {
     const cardSpacing = 8;
 
     const parameters = [
-      {
-        name: this.t.spots,
-        percentile: analysis.percentiles.spots,
-        severity: analysis.cv.spots.severity,
-        extra: `${this.t.count}: ${analysis.cv.spots.count}`,
-      },
-      {
-        name: this.t.pores,
-        percentile: analysis.percentiles.pores,
-        severity: analysis.cv.pores.severity,
-        extra: `${this.t.count}: ${analysis.cv.pores.enlargedCount}`,
-      },
-      {
-        name: this.t.wrinkles,
-        percentile: analysis.percentiles.wrinkles,
-        severity: analysis.cv.wrinkles.severity,
-        extra: `${this.t.count}: ${analysis.cv.wrinkles.count}`,
-      },
-      {
-        name: this.t.texture,
-        percentile: analysis.percentiles.texture,
-        severity: analysis.cv.texture.score,
-        extra: `${this.t.score}: ${analysis.cv.texture.score}/10`,
-      },
-      {
-        name: this.t.redness,
-        percentile: analysis.percentiles.redness,
-        severity: analysis.cv.redness.severity,
-        extra: `${analysis.cv.redness.percentage}%`,
-      },
-      {
-        name: this.t.overall,
-        percentile: analysis.percentiles.overall,
-        severity: typeof analysis.overallScore === 'number' ? analysis.overallScore / 10 : 0,
-        extra: `${this.t.percentile}`,
-      },
+      { name: this.t.spots, percentile: analysis.percentiles.spots, severity: analysis.cv.spots.severity, extra: `${this.t.count}: ${analysis.cv.spots.count}` },
+      { name: this.t.pores, percentile: analysis.percentiles.pores, severity: analysis.cv.pores.severity, extra: `${this.t.count}: ${analysis.cv.pores.enlargedCount}` },
+      { name: this.t.wrinkles, percentile: analysis.percentiles.wrinkles, severity: analysis.cv.wrinkles.severity, extra: `${this.t.count}: ${analysis.cv.wrinkles.count}` },
+      { name: this.t.texture, percentile: analysis.percentiles.texture, severity: analysis.cv.texture.score, extra: `${this.t.score}: ${analysis.cv.texture.score}/10` },
+      { name: this.t.redness, percentile: analysis.percentiles.redness, severity: analysis.cv.redness.severity, extra: `${analysis.cv.redness.percentage}%` },
+      { name: this.t.overall, percentile: analysis.percentiles.overall, severity: analysis.percentiles.overall / 10, extra: `${this.t.percentile}` },
     ];
 
     parameters.forEach((param, index) => {
@@ -461,28 +369,20 @@ export class PDFReportGenerator {
 
       this.checkPageBreak(cardHeight + cardSpacing);
 
-      // Card background
       this.pdf.setFillColor(249, 250, 251);
       this.pdf.setDrawColor(229, 231, 235);
       this.pdf.roundedRect(x, y, cardWidth, cardHeight, 2, 2, 'FD');
 
-      // Parameter name
       this.pdf.setFontSize(11);
       this.pdf.setFont('helvetica', 'bold');
       this.pdf.setTextColor(75, 85, 99);
       this.pdf.text(param.name, x + 5, y + 8);
 
-      // Percentile
       this.pdf.setFontSize(24);
       this.pdf.setFont('helvetica', 'bold');
       this.pdf.setTextColor(37, 99, 235);
-      this.pdf.text(
-        `${param.percentile}${this.locale === 'th' ? '' : 'th'}`,
-        x + 5,
-        y + 22
-      );
+      this.pdf.text(`${param.percentile}${this.locale === 'th' ? '' : 'th'}`, x + 5, y + 22);
 
-      // Severity bar
       const barWidth = 30;
       const barHeight = 4;
       const barX = x + cardWidth - barWidth - 5;
@@ -496,29 +396,19 @@ export class PDFReportGenerator {
       this.pdf.setFillColor(color.r, color.g, color.b);
       this.pdf.rect(barX, barY, fillWidth, barHeight, 'F');
 
-      // Extra info
       this.pdf.setFontSize(8);
       this.pdf.setFont('helvetica', 'normal');
       this.pdf.setTextColor(107, 114, 128);
       this.pdf.text(param.extra, x + 5, y + 30);
 
-      // Severity text
-      this.pdf.text(
-        `${this.t.severity}: ${param.severity.toFixed(1)}/10`,
-        barX,
-        barY + barHeight + 5
-      );
+      this.pdf.text(`${this.t.severity}: ${param.severity.toFixed(1)}/10`, barX, barY + barHeight + 5);
     });
 
     this.currentY += Math.ceil(parameters.length / 2) * (cardHeight + cardSpacing) + 10;
     this.pdf.setTextColor(0, 0, 0);
   }
 
-  /**
-   * Add section title
-   */
   private addSectionTitle(title: string): void {
-    this.checkPageBreak(15);
     this.pdf.setFontSize(14);
     this.pdf.setFont('helvetica', 'bold');
     this.pdf.setTextColor(31, 41, 55);
@@ -527,137 +417,24 @@ export class PDFReportGenerator {
     this.pdf.setTextColor(0, 0, 0);
   }
 
-  /**
-   * Add photos section
-   */
-  private async addPhotos(photos: PDFExportOptions['photos']): Promise<void> {
-    if (!photos) return;
-
-    this.addSectionTitle('Analysis Photos');
-
-    const pageWidth = this.pdf.internal.pageSize.getWidth();
-    const photoWidth = (pageWidth - 4 * this.margin) / 3;
-    const photoHeight = photoWidth * 1.2;
-
-    let x = this.margin;
-    const labels = ['Before', 'Current', 'After'];
-    const photoKeys = ['before', 'current', 'after'] as const;
-
-    for (let i = 0; i < photoKeys.length; i++) {
-      const key = photoKeys[i];
-      const photo = photos[key];
-
-      if (photo) {
-        try {
-          this.pdf.addImage(photo, 'JPEG', x, this.currentY, photoWidth, photoHeight);
-          
-          // Label
-          this.pdf.setFontSize(10);
-          this.pdf.setFont('helvetica', 'bold');
-          this.pdf.text(labels[i], x + photoWidth / 2, this.currentY + photoHeight + 5, {
-            align: 'center',
-          });
-        } catch (error) {
-          console.error(`Failed to add ${key} photo:`, error);
-        }
-      }
-
-      x += photoWidth + this.margin;
-    }
-
-    this.currentY += photoHeight + 15;
+  private addLine(): void {
+    this.pdf.setDrawColor(200, 200, 200);
+    this.pdf.line(this.margin, this.currentY, this.pdf.internal.pageSize.getWidth() - this.margin, this.currentY);
+    this.currentY += 10;
   }
 
-  /**
-   * Add progress tracking chart
-   */
-  private addProgressTracking(data: { dates: string[]; scores: number[] }): void {
-    this.addSectionTitle(this.t.progressTracking);
-
-    // Simple text-based progress for now
-    // In production, would generate chart image and add it
-    this.pdf.setFontSize(10);
-    this.pdf.setFont('helvetica', 'normal');
-
-    data.dates.forEach((date, index) => {
-      const score = data.scores[index];
-      this.checkPageBreak(8);
-      this.pdf.text(
-        `${date}: ${score}/100`,
-        this.margin + 10,
-        this.currentY
-      );
-      this.currentY += 7;
-    });
-
-    this.currentY += 5;
-  }
-
-  /**
-   * Add footer to all pages
-   */
-  private addFooter(analysis: HybridSkinAnalysis): void {
-    const totalPages = this.pdf.getNumberOfPages();
-    const pageWidth = this.pdf.internal.pageSize.getWidth();
-
-    for (let i = 1; i <= totalPages; i++) {
-      this.pdf.setPage(i);
-      
-      // Disclaimer
-      this.pdf.setFontSize(7);
-      this.pdf.setFont('helvetica', 'italic');
-      this.pdf.setTextColor(107, 114, 128);
-      
-      const disclaimerY = this.pageHeight - 20;
-      const maxWidth = pageWidth - 2 * this.margin;
-      const disclaimerLines = this.pdf.splitTextToSize(this.t.disclaimer, maxWidth);
-      this.pdf.text(disclaimerLines, this.margin, disclaimerY);
-
-      // Confidential notice
-      this.pdf.setFont('helvetica', 'bold');
-      this.pdf.text(this.t.confidential, pageWidth / 2, disclaimerY + 10, {
-        align: 'center',
-      });
-
-      // Page number and report ID
-      this.pdf.setFont('helvetica', 'normal');
-      this.pdf.text(
-        `${this.t.page} ${i} ${this.t.of} ${totalPages}`,
-        this.margin,
-        this.pageHeight - 5
-      );
-      this.pdf.text(
-        `${this.t.reportId}: ${analysis.timestamp.getTime()}`,
-        pageWidth - this.margin,
-        this.pageHeight - 5,
-        { align: 'right' }
-      );
-    }
-
-    this.pdf.setTextColor(0, 0, 0);
-  }
-
-  /**
-   * Check if we need a page break
-   */
-  private checkPageBreak(requiredSpace: number): void {
-    if (this.currentY + requiredSpace > this.pageHeight - 30) {
+  private checkPageBreak(neededHeight: number): void {
+    if (this.currentY + neededHeight > this.pageHeight - this.margin) {
       this.addPageBreak();
     }
   }
 
-  /**
-   * Add a new page
-   */
   private addPageBreak(): void {
     this.pdf.addPage();
-    this.currentY = 20;
     this.pageNumber++;
+    this.currentY = 20;
   }
 
-  /**
-   * Get color based on severity (0-10)
-   */
   private getSeverityColor(severity: number): { r: number; g: number; b: number } {
     if (severity < 3) return { r: 34, g: 197, b: 94 }; // Green
     if (severity < 6) return { r: 234, g: 179, b: 8 }; // Yellow
@@ -665,42 +442,68 @@ export class PDFReportGenerator {
     return { r: 239, g: 68, b: 68 }; // Red
   }
 
-  /**
-   * Save PDF to file
-   */
-  save(filename: string = 'skin-analysis-report.pdf'): void {
+  private async addPhotos(photos: PDFExportOptions['photos']): Promise<void> {
+    if (!photos) return;
+    this.addSectionTitle('Analysis Photos');
+    const photoWidth = (this.pdf.internal.pageSize.getWidth() - 4 * this.margin) / 3;
+    const photoHeight = photoWidth * 1.2;
+    let x = this.margin;
+    const labels = ['Before', 'Current', 'After'];
+    const photoKeys = ['before', 'current', 'after'] as const;
+
+    for (let i = 0; i < photoKeys.length; i++) {
+      const photo = photos[photoKeys[i]];
+      if (photo) {
+        try {
+          this.pdf.addImage(photo, 'JPEG', x, this.currentY, photoWidth, photoHeight);
+          this.pdf.setFontSize(10);
+          this.pdf.setFont('helvetica', 'bold');
+          this.pdf.text(labels[i], x + photoWidth / 2, this.currentY + photoHeight + 5, { align: 'center' });
+        } catch (e) { console.error(e); }
+      }
+      x += photoWidth + this.margin;
+    }
+    this.currentY += photoHeight + 15;
+  }
+
+  private addProgressTracking(data: { dates: string[]; scores: number[] }): void {
+    this.addSectionTitle(this.t.progressTracking);
+    this.pdf.setFontSize(10);
+    data.dates.forEach((date, i) => {
+      this.checkPageBreak(8);
+      this.pdf.text(`${date}: ${data.scores[i]}/100`, this.margin + 10, this.currentY);
+      this.currentY += 7;
+    });
+  }
+
+  private applyFinalFooter(analysis: HybridSkinAnalysis): void {
+    const pageCount = this.pdf.getNumberOfPages();
+    const pageWidth = this.pdf.internal.pageSize.getWidth();
+    for (let i = 1; i <= pageCount; i++) {
+      this.pdf.setPage(i);
+      this.pdf.setFontSize(7);
+      this.pdf.setTextColor(107, 114, 128);
+      const disclaimerY = this.pageHeight - 20;
+      const disclaimerLines = this.pdf.splitTextToSize(this.t.disclaimer, pageWidth - 2 * this.margin);
+      this.pdf.text(disclaimerLines, this.margin, disclaimerY);
+      this.pdf.setFont('helvetica', 'bold');
+      this.pdf.text(this.t.confidential, pageWidth / 2, disclaimerY + 10, { align: 'center' });
+      this.pdf.setFont('helvetica', 'normal');
+      this.pdf.text(`${this.t.page} ${i} ${this.t.of} ${pageCount}`, this.margin, this.pageHeight - 5);
+      this.pdf.text(`${this.t.reportId}: ${analysis.id}`, pageWidth - this.margin, this.pageHeight - 5, { align: 'right' });
+    }
+  }
+
+  save(filename: string = 'aesthetic-report.pdf'): void {
     this.pdf.save(filename);
-  }
-
-  /**
-   * Get PDF as blob
-   */
-  getBlob(): Blob {
-    return this.pdf.output('blob');
-  }
-
-  /**
-   * Get PDF as data URL
-   */
-  getDataUrl(): string {
-    return this.pdf.output('dataurlstring');
   }
 }
 
-/**
- * Quick export function
- */
-export async function exportAnalysisToPDF(
-  analysis: HybridSkinAnalysis,
-  options: PDFExportOptions = {}
-): Promise<Blob> {
+export async function exportAnalysisToPDF(analysis: HybridSkinAnalysis, options: PDFExportOptions = {}): Promise<Blob> {
   const generator = new PDFReportGenerator(options.locale || 'en');
   return generator.generateReport(analysis, options);
 }
 
-/**
- * Download PDF directly
- */
 export async function downloadAnalysisPDF(
   analysis: HybridSkinAnalysis,
   options: PDFExportOptions = {},

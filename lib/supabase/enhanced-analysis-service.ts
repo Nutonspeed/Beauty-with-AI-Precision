@@ -3,7 +3,7 @@ import type { VISIAEquivalentResult } from "@/lib/ai/phase2/visia-equivalent-pip
 
 export interface SaveEnhancedAnalysisParams {
   analysisId: string // Reference to base skin_analyses record
-  clinicId: string
+  centerId: string
   customerId: string
   enhancedResult: VISIAEquivalentResult
   tier: "free" | "premium" | "clinical"
@@ -13,7 +13,7 @@ export interface SaveEnhancedAnalysisParams {
 export interface EnhancedAnalysisRecord {
   id: string
   analysis_id: string
-  clinic_id: string
+  center_id: string
   customer_id: string
 
   // Phase 2A: Lighting Simulation
@@ -54,11 +54,11 @@ export async function saveEnhancedAnalysis(
   try {
     const supabase = await createServerClient()
 
-    const { analysisId, clinicId, customerId, enhancedResult, tier, processingTimeMs } = params
+    const { analysisId, centerId, customerId, enhancedResult, tier, processingTimeMs } = params
 
     const analysisData = {
       analysis_id: analysisId,
-      clinic_id: clinicId,
+      center_id: centerId,
       customer_id: customerId,
 
       // Phase 2A: Lighting Simulation Results
@@ -176,7 +176,7 @@ export async function getCustomerEnhancedAnalyses(
  * Log accuracy metrics for Phase tracking
  */
 export async function logAccuracyMetrics(params: {
-  clinicId: string
+  centerId: string
   phase: "baseline" | "2a" | "2b" | "2c" | "2d"
   averageAccuracy: number
   sampleSize: number
@@ -189,7 +189,7 @@ export async function logAccuracyMetrics(params: {
     const supabase = await createServerClient()
 
     const { error } = await supabase.from("analysis_accuracy_logs").insert({
-      clinic_id: params.clinicId,
+      center_id: params.centerId,
       phase: params.phase,
       average_accuracy: params.averageAccuracy,
       sample_size: params.sampleSize,

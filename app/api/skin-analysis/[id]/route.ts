@@ -110,16 +110,16 @@ export async function GET(request: NextRequest, context: RouteParams) {
         skinType: analysis.ai_skin_type,
         concerns: analysis.ai_concerns,
         severity: analysis.ai_severity,
-        treatmentPlan: analysis.ai_treatment_plan,
+        programPlan: analysis.ai_program_plan,
       },
       
       recommendations: analysis.recommendations,
       
-      patientInfo: {
-        name: analysis.patient_name,
-        age: analysis.patient_age,
-        gender: analysis.patient_gender,
-        skinType: analysis.patient_skin_type,
+      customerInfo: {
+        name: analysis.customer_name || analysis.patient_name,
+        age: analysis.customer_age || analysis.patient_age,
+        gender: analysis.customer_gender || analysis.patient_gender,
+        skinType: analysis.customer_skin_type || analysis.patient_skin_type,
       },
       
       notes: analysis.notes,

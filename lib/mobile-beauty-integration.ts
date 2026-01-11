@@ -1,6 +1,6 @@
 /**
  * Mobile Beauty AR/AI Integration Layer
- * รวมทุกระบบเข้าด้วยกัน: AI analysis + AR treatment + Sales tools + Offline + Voice
+ * รวมทุกระบบเข้าด้วยกัน: AI analysis + AR program + Sales tools + Offline + Voice
  */
 
 import { SkinTypeClassifier } from '@/lib/skin-type-classifier'
@@ -35,7 +35,7 @@ export class MobileBeautyIntegration {
 
   private async initializeOfflineCapabilities(): Promise<void> {
     try {
-      // Queue beauty treatment data for offline sync
+      // Queue beauty program data for offline sync
       offlineManager.subscribe((status) => {
         if (status.isOnline && status.queuedMessages > 0) {
           console.log('[MobileBeautyIntegration] Syncing offline beauty data...')
@@ -83,16 +83,16 @@ export class MobileBeautyIntegration {
       // Classify skin type
       const classificationResult = SkinTypeClassifier.classify(thaiAdaptedCharacteristics)
 
-      // Generate AR treatment
-      const arTreatment = this.generateIntegratedARTreatment(classificationResult, userPreferences)
+      // Generate AR program
+      const arProgram = this.generateIntegratedARProgram(classificationResult, userPreferences)
 
       // Generate sales data
-      const salesData = this.generateIntegratedSalesData(classificationResult, arTreatment)
+      const salesData = this.generateIntegratedSalesData(classificationResult, arProgram)
 
       // Cache results for offline access
       await this.cacheResultsForOffline({
         analysis: classificationResult,
-        arTreatment,
+        arProgram,
         salesData,
         timestamp: new Date().toISOString()
       })
@@ -100,7 +100,7 @@ export class MobileBeautyIntegration {
       return {
         success: true,
         analysis: classificationResult,
-        arTreatment,
+        arProgram,
         salesData,
         offlineAvailable: !isOnline,
         cached: !isOnline
@@ -115,21 +115,21 @@ export class MobileBeautyIntegration {
     }
   }
 
-  async startTreatmentSimulation(treatmentType: string, _parameters: any = {}) {
+  async startProgramSimulation(programType: string, _parameters: any = {}) {
     try {
       const simulation = {
-        treatmentType,
-        arLayers: this.generateSimulationLayers(treatmentType, _parameters),
-        audioGuidance: this.generateAudioGuidance(treatmentType),
-        hapticFeedback: this.generateHapticFeedback(treatmentType),
-        progressTracking: this.setupProgressTracking(treatmentType),
-        safetyMonitoring: this.setupSafetyMonitoring(treatmentType)
+        programType,
+        arLayers: this.generateSimulationLayers(programType, _parameters),
+        audioGuidance: this.generateAudioGuidance(programType),
+        hapticFeedback: this.generateHapticFeedback(programType),
+        progressTracking: this.setupProgressTracking(programType),
+        safetyMonitoring: this.setupSafetyMonitoring(programType)
       }
 
       // Queue for offline sync if needed
       await offlineManager.queueLeadUpdate({
         leadId: 'simulation-session',
-        leadName: 'Treatment Simulation',
+        leadName: 'Program Simulation',
         data: { simulation, parameters: _parameters },
         timestamp: new Date()
       })
@@ -137,7 +137,7 @@ export class MobileBeautyIntegration {
       return {
         success: true,
         simulation,
-        voiceCommands: this.getVoiceCommandsForSimulation(treatmentType)
+        voiceCommands: this.getVoiceCommandsForSimulation(programType)
       }
 
     } catch (error) {
@@ -149,13 +149,13 @@ export class MobileBeautyIntegration {
     }
   }
 
-  async generateSalesPresentation(_customerProfile: any, _treatmentInterest: string) {
+  async generateSalesPresentation(_customerProfile: any, _programInterest: string) {
     try {
       const presentation = {
         customerAnalysis: this.analyzeCustomerProfile(_customerProfile),
-        treatmentDemonstration: this.prepareTreatmentDemo(_treatmentInterest),
-        objectionHandlers: this.prepareObjectionHandlers(_treatmentInterest),
-        closingScripts: this.prepareClosingScripts(_customerProfile, _treatmentInterest),
+        programDemonstration: this.prepareProgramDemo(_programInterest),
+        objectionHandlers: this.prepareObjectionHandlers(_programInterest),
+        closingScripts: this.prepareClosingScripts(_customerProfile, _programInterest),
         followUpPlan: this.createFollowUpPlan(_customerProfile)
       }
 
@@ -193,19 +193,19 @@ export class MobileBeautyIntegration {
     return adapted
   }
 
-  private generateIntegratedARTreatment(analysis: any, userPreferences: any) {
-    // Generate AR treatment based on analysis and preferences
+  private generateIntegratedARProgram(analysis: any, userPreferences: any) {
+    // Generate AR program based on analysis and preferences
     return {
-      treatmentType: userPreferences.treatmentType || 'skin-brightening',
-      arLayers: this.generateARTreatmentLayers(analysis, userPreferences),
-      visualization: this.generateTreatmentVisualization(analysis),
-      guidance: this.generateTreatmentGuidance(analysis)
+      programType: userPreferences.programType || 'skin-brightening',
+      arLayers: this.generateARProgramLayers(analysis, userPreferences),
+      visualization: this.generateProgramVisualization(analysis),
+      guidance: this.generateProgramGuidance(analysis)
     }
   }
 
-  private generateIntegratedSalesData(analysis: any, arTreatment: any) {
+  private generateIntegratedSalesData(analysis: any, arProgram: any) {
     return {
-      conversionOpportunities: this.identifyConversionOpportunities(analysis, arTreatment),
+      conversionOpportunities: this.identifyConversionOpportunities(analysis, arProgram),
       objectionHandlers: this.generateSalesObjectionHandlers(analysis),
       upsellingSuggestions: this.generateUpsellingSuggestions(analysis),
       customerEducation: this.generateCustomerEducation(analysis)
@@ -237,13 +237,13 @@ export class MobileBeautyIntegration {
     // Trigger skin scan process
   }
 
-  private showTreatmentResults(): void {
-    console.log('[MobileBeautyIntegration] Showing treatment results via voice command')
-    // Display treatment results
+  private showProgramResults(): void {
+    console.log('[MobileBeautyIntegration] Showing program results via voice command')
+    // Display program results
   }
 
-  private startTreatmentSimulationVoice(): void {
-    console.log('[MobileBeautyIntegration] Starting treatment simulation via voice command')
+  private startProgramSimulationVoice(): void {
+    console.log('[MobileBeautyIntegration] Starting program simulation via voice command')
     // Start AR simulation
   }
 
@@ -258,22 +258,22 @@ export class MobileBeautyIntegration {
   }
 
   // Additional helper methods would be implemented here
-  private generateSimulationLayers(_treatmentType: string, _parameters: any) { return [] }
-  private generateAudioGuidance(_treatmentType: string) { return [] }
-  private generateHapticFeedback(_treatmentType: string) { return [] }
-  private setupProgressTracking(_treatmentType: string) { return {} }
-  private setupSafetyMonitoring(_treatmentType: string) { return {} }
-  private getVoiceCommandsForSimulation(_treatmentType: string) { return [] }
+  private generateSimulationLayers(_programType: string, _parameters: any) { return [] }
+  private generateAudioGuidance(_programType: string) { return [] }
+  private generateHapticFeedback(_programType: string) { return [] }
+  private setupProgressTracking(_programType: string) { return {} }
+  private setupSafetyMonitoring(_programType: string) { return {} }
+  private getVoiceCommandsForSimulation(_programType: string) { return [] }
   private analyzeCustomerProfile(_customerProfile: any) { return {} }
-  private prepareTreatmentDemo(_treatmentInterest: string) { return {} }
-  private prepareObjectionHandlers(_treatmentInterest: string) { return [] }
-  private prepareClosingScripts(_customerProfile: any, _treatmentInterest: string) { return [] }
+  private prepareProgramDemo(_programInterest: string) { return {} }
+  private prepareObjectionHandlers(_programInterest: string) { return [] }
+  private prepareClosingScripts(_customerProfile: any, _programInterest: string) { return [] }
   private createFollowUpPlan(_customerProfile: any) { return {} }
   private generateVoiceScriptsForSales(_presentation: any) { return [] }
-  private generateARTreatmentLayers(_analysis: any, _userPreferences: any) { return [] }
-  private generateTreatmentVisualization(_analysis: any) { return {} }
-  private generateTreatmentGuidance(_analysis: any) { return [] }
-  private identifyConversionOpportunities(_analysis: any, _arTreatment: any) { return [] }
+  private generateARProgramLayers(_analysis: any, _userPreferences: any) { return [] }
+  private generateProgramVisualization(_analysis: any) { return {} }
+  private generateProgramGuidance(_analysis: any) { return [] }
+  private identifyConversionOpportunities(_analysis: any, _arProgram: any) { return [] }
   private generateSalesObjectionHandlers(_analysis: any) { return [] }
   private generateUpsellingSuggestions(_analysis: any) { return [] }
   private generateCustomerEducation(_analysis: any) { return [] }

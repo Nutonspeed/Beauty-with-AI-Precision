@@ -33,7 +33,7 @@ export interface ErrorLogEntry {
   stack?: string
   context?: Record<string, any>
   userId?: string
-  clinicId?: string
+  centerId?: string
   sessionId?: string
   requestId?: string
   userAgent?: string
@@ -311,7 +311,7 @@ export class ErrorLogger {
           stack: log.stack,
           context: log.context,
           user_id: log.userId,
-          clinic_id: log.clinicId,
+          center_id: log.centerId,
           session_id: log.sessionId,
           request_id: log.requestId,
           user_agent: log.userAgent,

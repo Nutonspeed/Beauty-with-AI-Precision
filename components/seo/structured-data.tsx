@@ -13,6 +13,8 @@ interface OrganizationData {
   contactPoint?: {
     telephone: string
     contactType: string
+    areaServed?: string
+    availableLanguage?: string[]
   }
 }
 
@@ -40,6 +42,7 @@ interface SoftwareApplicationData {
   offers: {
     price: string
     priceCurrency: string
+    availability?: string
   }
 }
 
@@ -71,9 +74,9 @@ export function OrganizationSchema({ data }: { data: OrganizationData }) {
 }
 
 /**
- * Medical Business Schema (for clinics)
+ * Aesthetic Business Schema (for centers)
  */
-export function MedicalBusinessSchema({ data }: { data: MedicalBusinessData }) {
+export function AestheticBusinessSchema({ data }: { data: MedicalBusinessData }) {
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'MedicalBusiness',
@@ -182,35 +185,38 @@ export function FAQSchema({ questions }: { questions: { question: string; answer
 }
 
 /**
- * Default ClinicIQ Schema
+ * Default AestheticOS Schema
  */
-export function ClinicIQSchema() {
+export function AestheticOSSchema() {
   return (
     <>
       <OrganizationSchema
         data={{
-          name: 'ClinicIQ',
-          url: 'https://cliniciq.ai',
-          logo: 'https://cliniciq.ai/logo.png',
-          description: 'AI-powered aesthetic clinic platform with skin analysis, AR visualization, and clinic management.',
+          name: 'AestheticOS',
+          url: 'https://aestheticos.ai',
+          logo: 'https://aestheticos.ai/logo.png',
+          description: 'AI-powered aesthetic center platform with skin analysis, AR visualization, and center management.',
           contactPoint: {
             telephone: '+66-2-XXX-XXXX',
             contactType: 'customer service',
-          },
+            areaServed: 'TH',
+            availableLanguage: ['Thai', 'English']
+          }
         }}
       />
       <SoftwareApplicationSchema
         data={{
-          name: 'ClinicIQ',
-          description: 'Intelligent Aesthetic Platform - AI skin analysis, AR treatment preview, clinic management',
+          name: 'AestheticOS',
+          description: 'Intelligent Aesthetic Platform - AI skin analysis, AR program preview, center management',
           applicationCategory: 'HealthApplication',
           operatingSystem: 'Web',
           offers: {
             price: '0',
             priceCurrency: 'THB',
-          },
+            availability: 'https://schema.org/InStock'
+          }
         }}
       />
     </>
-  )
+  );
 }

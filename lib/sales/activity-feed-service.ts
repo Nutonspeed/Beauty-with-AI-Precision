@@ -28,7 +28,7 @@ function resolveRange(value: string | null) {
 
 export type ActivityFeedQuery = {
   userId: string
-  clinicId: string | null
+  centerId: string | null
   limit: number
   offset: number
   leadId: string | null
@@ -57,7 +57,7 @@ export async function fetchActivityFeed(query: ActivityFeedQuery) {
         created_at,
         lead:sales_leads!sales_activities_lead_id_fkey (
           id,
-          clinic_id,
+          center_id,
           name,
           status,
           score,
@@ -87,8 +87,8 @@ export async function fetchActivityFeed(query: ActivityFeedQuery) {
     activitiesQuery = activitiesQuery.eq("type", query.type)
   }
 
-  if (query.clinicId) {
-    activitiesQuery = activitiesQuery.eq("lead.clinic_id", query.clinicId)
+  if (query.centerId) {
+    activitiesQuery = activitiesQuery.eq("lead.center_id", query.centerId)
   }
 
   const { data: activities, error, count } = await activitiesQuery

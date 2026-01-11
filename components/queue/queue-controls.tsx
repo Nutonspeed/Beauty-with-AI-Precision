@@ -9,7 +9,7 @@ import { PhoneCall, Play, CheckCircle2, XCircle, AlertCircle } from 'lucide-reac
 
 interface QueueControlsProps {
   onCallNext?: () => void;
-  onCallPatient?: (entryId: string) => void;
+  onCallCustomer?: (entryId: string) => void;
   onStartService?: (entryId: string) => void;
   onCompleteService?: (entryId: string) => void;
   onCancelEntry?: (entryId: string) => void;
@@ -21,7 +21,7 @@ interface QueueControlsProps {
 
 export function QueueControls({
   onCallNext,
-  onCallPatient,
+  onCallCustomer,
   onStartService,
   onCompleteService,
   onCancelEntry,
@@ -40,9 +40,9 @@ export function QueueControls({
         </Button>
       )}
 
-      {/* Call Specific Patient */}
-      {entryId && status === 'waiting' && onCallPatient && (
-        <Button onClick={() => onCallPatient(entryId)} variant="outline" className="flex items-center gap-2">
+      {/* Call Specific Customer */}
+      {entryId && status === 'waiting' && onCallCustomer && (
+        <Button onClick={() => onCallCustomer(entryId)} variant="outline" className="flex items-center gap-2">
           <PhoneCall className="w-4 h-4" />
           Call
         </Button>

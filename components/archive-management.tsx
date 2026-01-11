@@ -37,7 +37,7 @@ const translations = {
   th: {
     title: 'ประวัติการวิเคราะห์',
     search: 'ค้นหาประวัติ',
-    searchPlaceholder: 'ค้นหา ID, คลินิก, บันทึก...',
+    searchPlaceholder: 'ค้นหา ID, ศูนย์, บันทึก...',
     filter: 'ตัวกรอง',
     export: 'ส่งออก',
     delete: 'ลบ',
@@ -46,10 +46,10 @@ const translations = {
     skinTypes: 'ประเภทผิว',
     concerns: 'ปัญหาผิว',
     severity: 'ความรุนแรง',
-    treatment: 'ใช้การรักษา',
+    program: 'ใช้โปรแกรม',
     tags: 'แท็ก',
-    clinician: 'เพศแพทย์',
-    clinic: 'คลินิก',
+    clinician: 'ผู้เชี่ยวชาญ',
+    center: 'ศูนย์',
     stats: 'สถิติ',
     totalAnalyses: 'วิเคราะห์ทั้งหมด',
     averageImprovement: 'การปรับปรุงเฉลี่ย',
@@ -78,7 +78,7 @@ const translations = {
     analysisDate: 'วันที่วิเคราะห์',
     skinType: 'ประเภทผิว',
     improvement: 'การปรับปรุง',
-    treated: 'ทำการรักษา',
+    programApplied: 'รับโปรแกรม',
     viewDetails: 'ดูรายละเอียด',
     page: 'หน้า',
     of: 'จาก',
@@ -92,7 +92,7 @@ const translations = {
   en: {
     title: 'Analysis Archive',
     search: 'Search Archive',
-    searchPlaceholder: 'Search ID, clinic, notes...',
+    searchPlaceholder: 'Search ID, center, notes...',
     filter: 'Filters',
     export: 'Export',
     delete: 'Delete',
@@ -101,10 +101,10 @@ const translations = {
     skinTypes: 'Skin Types',
     concerns: 'Concerns',
     severity: 'Severity',
-    treatment: 'Treatment Applied',
+    program: 'Program Applied',
     tags: 'Tags',
-    clinician: 'Clinician',
-    clinic: 'Clinic',
+    clinician: 'Aesthetic Specialist',
+    center: 'Center',
     stats: 'Statistics',
     totalAnalyses: 'Total Analyses',
     averageImprovement: 'Average Improvement',
@@ -133,7 +133,7 @@ const translations = {
     analysisDate: 'Analysis Date',
     skinType: 'Skin Type',
     improvement: 'Improvement',
-    treated: 'Treated',
+    programApplied: 'Program Applied',
     viewDetails: 'View Details',
     page: 'Page',
     of: 'of',
@@ -238,7 +238,7 @@ export const ArchiveManagement: React.FC<Props> = ({ language = 'en' }) => {
       format,
       includeImages: true,
       includeAnalysis: true,
-      includeTreatments: true,
+      includePrograms: true,
       language,
     });
 
@@ -305,18 +305,18 @@ export const ArchiveManagement: React.FC<Props> = ({ language = 'en' }) => {
             <p className="text-sm text-gray-600">
               {new Date(record.date).toLocaleDateString(language === 'th' ? 'th-TH' : 'en-US')}
             </p>
-            {record.clinicName && (
+            {record.centerName && (
               <p className="text-sm text-gray-600 flex items-center gap-1">
                 <Building className="w-4 h-4" />
-                {record.clinicName}
+                {record.centerName}
               </p>
             )}
           </div>
         </div>
         <div className="flex gap-2">
-          {record.treatmentApplied && (
+          {record.programApplied && (
             <span className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded">
-              {t.treated}
+              {t.programApplied}
             </span>
           )}
         </div>

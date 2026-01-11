@@ -53,7 +53,7 @@ interface RecommendationItem {
 }
 
 interface AnalysisRecommendations {
-  treatments: RecommendationItem[];
+  programs: RecommendationItem[];
   products: RecommendationItem[];
   lifestyle: RecommendationItem[];
 }
@@ -100,6 +100,7 @@ interface Analysis {
   processing_time_ms: number;
   recommendations?: AnalysisRecommendations;
   is_baseline: boolean;
+  program_plan_id: string | null;
 }
 
 interface AnalysisDetailClientProps {
@@ -148,8 +149,8 @@ export default function AnalysisDetailClient({
   const [regenerating, setRegenerating] = useState(false);
   const [vizUrl, setVizUrl] = useState(analysis.visualization_url);
   const lp = useLocalizePath();
-  const isEnterprise = user?.role === 'super_admin' || user?.role === 'clinic_owner';
-  const isPlatinum = user?.role === 'super_admin' || user?.role === 'clinic_owner' || user?.role === 'customer_clinical';
+  const isEnterprise = user?.role === 'super_admin' || user?.role === 'center_owner';
+  const isPlatinum = user?.role === 'super_admin' || user?.role === 'center_owner' || user?.role === 'customer_aesthetic';
 
   const dateLocale = locale === 'th' ? th : enUS;
 
@@ -233,7 +234,7 @@ export default function AnalysisDetailClient({
                   <ArrowLeft className="w-5 h-5" />
                 </Button>
               </Link>
-              <Badge variant="premium" className="px-4 py-1">{t('reportTypes.clinical')}</Badge>
+              <Badge variant="premium" className="px-4 py-1">{t('reportTypes.aesthetic')}</Badge>
             </div>
             <div>
               <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white leading-tight">
@@ -299,7 +300,7 @@ export default function AnalysisDetailClient({
                   <Badge className={cn("text-lg px-8 py-1.5 rounded-full border-0 shadow-lg uppercase tracking-[0.2em] font-black", getSeverityColor('low'))}>
                     {tReport('grade')} {analysis.skin_health_grade}
                   </Badge>
-                  <p className="text-xs text-slate-500 font-medium uppercase tracking-widest pt-2">{t('metrics.clinicalClassification')}</p>
+                  <p className="text-xs text-slate-500 font-medium uppercase tracking-widest pt-2">{t('metrics.aestheticClassification')}</p>
                 </div>
               </div>
             </Card>
@@ -511,7 +512,7 @@ export default function AnalysisDetailClient({
             <AgingSimulator originalImageUrl={analysis.image_url} isPremium={isPlatinum} />
           </TabsContent>
 
-          {/* Treatment Protocol Tab */}
+          {/* Program Protocol Tab */}
           <TabsContent value="recommendations" className="animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div className="space-y-10">
               <MedicalDecisionSupport isEnterprise={isEnterprise} skinData={analysis} />
@@ -523,7 +524,7 @@ export default function AnalysisDetailClient({
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Protocol Card Mixin */}
                 {[
-                  { id: 'treatments', title: t('protocols.interventions'), icon: Activity, data: analysis.recommendations.treatments, color: "text-primary" },
+                  { id: 'programs', title: t('protocols.interventions'), icon: Activity, data: analysis.recommendations.programs, color: "text-primary" },
                   { id: 'products', title: t('protocols.regimen'), icon: CheckCircle2, data: analysis.recommendations.products, color: "text-emerald-400" },
                   { id: 'lifestyle', title: t('protocols.optimization'), icon: User, data: analysis.recommendations.lifestyle, color: "text-amber-400" }
                 ].map((sec) => (

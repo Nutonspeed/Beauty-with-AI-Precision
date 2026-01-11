@@ -8,7 +8,7 @@ interface User {
   name: string
   role: string
   phone?: string
-  clinicId?: string;
+  centerId?: string;
 }
 
 interface AuthContextType {
@@ -37,14 +37,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(true)
     try {
       // Mock authentication - replace with actual auth
-      if (email === "demo@clinic.com" && password === "demo123") {
+      if (email === "demo@center.com" && password === "demo123") {
         const userData: User = {
           id: "demo-user",
           email,
-          name: "Demo Clinic",
-          role: "clinic_owner",
+          name: "Demo Center",
+          role: "center_owner",
           phone: "02-XXX-XXXX",
-          clinicId: "demo-clinic"
+          centerId: "demo-center"
         };
         setUser(userData);
         localStorage.setItem("auth-user", JSON.stringify(userData));

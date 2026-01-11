@@ -18,7 +18,7 @@ export interface Route {
   id: string;
   visitId: string;
   providerId: string;
-  patientId: string;
+  customerId: string;
   origin: Position;
   destination: Position;
   status: 'pending' | 'in-progress' | 'arrived' | 'completed' | 'cancelled';

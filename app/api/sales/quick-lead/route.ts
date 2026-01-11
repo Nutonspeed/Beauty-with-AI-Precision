@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     const service = createServiceClient()
     const { data: userRow, error: userErr } = await service
       .from('users')
-      .select('role, clinic_id')
+      .select('role, center_id')
       .eq('id', user.id)
       .single()
     if (userErr || !userRow || !canAccessSales(userRow.role)) {
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
 
     let newLead: any
     try {
-      newLead = await createLead(user.id, userRow.clinic_id ?? null, payload)
+      newLead = await createLead(user.id, userRow.center_id ?? null, payload)
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error)
       if (message.includes("lead_source") && message.includes("enum")) {
@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
             source_raw: requestedSource,
           },
         }
-        newLead = await createLead(user.id, userRow.clinic_id ?? null, fallbackPayload)
+        newLead = await createLead(user.id, userRow.center_id ?? null, fallbackPayload)
       } else {
         throw error
       }
@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
 
     await logLeadSystemActivity(
       user.id,
-      userRow.clinic_id ?? null,
+      userRow.center_id ?? null,
       newLead.id,
       "Lead Created from Quick Scan",
       `Lead "${newLead.name}" was created from quick skin analysis`,

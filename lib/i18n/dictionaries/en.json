@@ -14,13 +14,13 @@
   "nav": {
     "home": "Home",
     "analysis": "AI Analysis",
-    "booking": "Book Appointment",
+    "booking": "Book Program",
     "dashboard": "Dashboard",
     "profile": "Profile"
   },
   "booking": {
-    "title": "Book an Appointment",
-    "selectTreatment": "Select Treatment",
+    "title": "Book a Program",
+    "selectProgram": "Select Program",
     "selectDate": "Select Date",
     "selectTime": "Select Time",
     "confirm": "Confirm Booking"

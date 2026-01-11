@@ -39,13 +39,13 @@ export function BookingForm({ onSubmit, availableSlots, onDateChange, isLoading 
   const t = useTranslations();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
 
-  const treatmentOptions = [
-    { value: 'botox', label: t('salesPresentations.treatments.botox.name'), price: 15000 },
-    { value: 'filler', label: t('salesPresentations.treatments.filler.name'), price: 20000 },
-    { value: 'laser', label: t('salesPresentations.treatments.laser.name'), price: 12000 },
-    { value: 'chemical_peel', label: t('salesPresentations.treatments.peel.name'), price: 8000 },
-    { value: 'microneedling', label: t('salesPresentations.treatments.microneedling.name'), price: 6000 },
-    { value: 'hydrafacial', label: t('salesPresentations.treatments.hydrafacial.name'), price: 5000 },
+  const programOptions = [
+    { value: 'botox', label: t('salesPresentations.programs.botox.name'), price: 15000 },
+    { value: 'filler', label: t('salesPresentations.programs.filler.name'), price: 20000 },
+    { value: 'laser', label: t('salesPresentations.programs.laser.name'), price: 12000 },
+    { value: 'chemical_peel', label: t('salesPresentations.programs.peel.name'), price: 8000 },
+    { value: 'microneedling', label: t('salesPresentations.programs.microneedling.name'), price: 6000 },
+    { value: 'hydrafacial', label: t('salesPresentations.programs.hydrafacial.name'), price: 5000 },
     { value: 'led_therapy', label: 'LED Therapy', price: 3000 },
     { value: 'mesotherapy', label: 'Mesotherapy', price: 10000 },
     { value: 'thread_lift', label: 'Thread Lift', price: 25000 },
@@ -53,24 +53,24 @@ export function BookingForm({ onSubmit, availableSlots, onDateChange, isLoading 
     { value: 'consultation', label: t('customerNotes.types.call'), price: 1500 },
   ];
 
-  const doctorOptions = [
+  const specialistOptions = [
     { value: 'dr001', label: t('predictiveAnalytics.mock.name1') },
     { value: 'dr002', label: t('predictiveAnalytics.mock.name2') },
     { value: 'dr003', label: t('predictiveAnalytics.mock.name1') }, // Placeholder
   ];
 
   const [formData, setFormData] = useState({
-    patientName: '',
-    patientEmail: '',
-    patientPhone: '',
-    doctorId: '',
-    treatmentType: '',
+    customerName: '',
+    customerEmail: '',
+    customerPhone: '',
+    specialistId: '',
+    programType: '',
     selectedSlot: '',
     paymentMethod: 'promptpay' as 'promptpay' | 'credit_card' | 'cash',
     notes: '',
   });
 
-  const [step, setStep] = useState(1); // 1: Select Date/Time, 2: Patient Info, 3: Payment
+  const [step, setStep] = useState(1); // 1: Select Date/Time, 2: Customer Info, 3: Payment
 
   useEffect(() => {
     if (selectedDate) {
@@ -98,15 +98,15 @@ export function BookingForm({ onSubmit, availableSlots, onDateChange, isLoading 
     if (!slot) return;
 
     const input: BookingInput = {
-      patientId: 'PAT' + Date.now(), // In real app, get from auth
-      patientName: formData.patientName,
-      patientEmail: formData.patientEmail,
-      patientPhone: formData.patientPhone,
-      doctorId: formData.doctorId,
+      customerId: 'CST' + Date.now(), // Reusing customerId field for now to avoid breaking lib/booking
+      customerName: formData.customerName,
+      customerEmail: formData.customerEmail,
+      customerPhone: formData.customerPhone,
+      specialistId: formData.specialistId,
       appointmentDate: selectedDate,
       startTime: slot.startTime,
       duration: slot.duration,
-      treatmentType: formData.treatmentType,
+      programType: formData.programType,
       paymentMethod: formData.paymentMethod,
       notes: formData.notes,
     };
@@ -114,7 +114,7 @@ export function BookingForm({ onSubmit, availableSlots, onDateChange, isLoading 
     await onSubmit(input);
   };
 
-  const selectedTreatment = treatmentOptions.find(t => t.value === formData.treatmentType);
+  const selectedProgram = programOptions.find(t => t.value === formData.programType);
   const selectedSlot = availableSlots.find(s => s.id === formData.selectedSlot);
 
   return (
@@ -130,40 +130,40 @@ export function BookingForm({ onSubmit, availableSlots, onDateChange, isLoading 
             <CardDescription>{t('bookingForm.selectDateTimeDesc')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            {/* Doctor Selection */}
+            {/* Specialist Selection */}
             <div className="space-y-2">
-              <Label>{t('bookingForm.selectDoctor')}</Label>
+              <Label>{t('bookingForm.selectSpecialist')}</Label>
               <Select
-                value={formData.doctorId}
-                onValueChange={value => setFormData(prev => ({ ...prev, doctorId: value }))}
+                value={formData.specialistId}
+                onValueChange={value => setFormData(prev => ({ ...prev, specialistId: value }))}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder={t('bookingForm.selectDoctor')} />
+                  <SelectValue placeholder={t('bookingForm.selectSpecialist')} />
                 </SelectTrigger>
                 <SelectContent>
-                  {doctorOptions.map(doctor => (
-                    <SelectItem key={doctor.value} value={doctor.value}>
-                      {doctor.label}
+                  {specialistOptions.map(specialist => (
+                    <SelectItem key={specialist.value} value={specialist.value}>
+                      {specialist.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
 
-            {/* Treatment Selection */}
+            {/* Program Selection */}
             <div className="space-y-2">
-              <Label>{t('bookingForm.selectTreatment')}</Label>
+              <Label>{t('bookingForm.selectProgram')}</Label>
               <Select
-                value={formData.treatmentType}
-                onValueChange={value => setFormData(prev => ({ ...prev, treatmentType: value }))}
+                value={formData.programType}
+                onValueChange={value => setFormData(prev => ({ ...prev, programType: value }))}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder={t('bookingForm.selectTreatment')} />
+                  <SelectValue placeholder={t('bookingForm.selectProgram')} />
                 </SelectTrigger>
                 <SelectContent>
-                  {treatmentOptions.map(treatment => (
-                    <SelectItem key={treatment.value} value={treatment.value}>
-                      {treatment.label} - {treatment.price.toLocaleString()} {t('common.currency.thb')}
+                  {programOptions.map(program => (
+                    <SelectItem key={program.value} value={program.value}>
+                      {program.label} - {program.price.toLocaleString()} {t('common.currency.thb')}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -183,7 +183,7 @@ export function BookingForm({ onSubmit, availableSlots, onDateChange, isLoading 
             </div>
 
             {/* Available Slots */}
-            {selectedDate && formData.doctorId && (
+            {selectedDate && formData.specialistId && (
               <div className="space-y-2">
                 <Label className="flex items-center gap-2">
                   <Clock className="w-4 h-4" />
@@ -213,7 +213,7 @@ export function BookingForm({ onSubmit, availableSlots, onDateChange, isLoading 
             <Button
               type="button"
               onClick={() => setStep(2)}
-              disabled={!formData.selectedSlot || !formData.doctorId || !formData.treatmentType}
+              disabled={!formData.selectedSlot || !formData.specialistId || !formData.programType}
               className="w-full"
             >
               {t('common.next')}
@@ -222,47 +222,47 @@ export function BookingForm({ onSubmit, availableSlots, onDateChange, isLoading 
         </Card>
       )}
 
-      {/* Step 2: Patient Information */}
+      {/* Step 2: Customer Information */}
       {step === 2 && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <User className="w-5 h-5" />
-              {t('bookingForm.patientInfo')}
+              {t('bookingForm.customerInfo')}
             </CardTitle>
-            <CardDescription>{t('bookingForm.patientInfoDesc')}</CardDescription>
+            <CardDescription>{t('bookingForm.customerInfoDesc')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="patientName">{t('bookingForm.nameLabel')} *</Label>
+              <Label htmlFor="customerName">{t('bookingForm.nameLabel')} *</Label>
               <Input
-                id="patientName"
-                value={formData.patientName}
-                onChange={e => setFormData(prev => ({ ...prev, patientName: e.target.value }))}
+                id="customerName"
+                value={formData.customerName}
+                onChange={e => setFormData(prev => ({ ...prev, customerName: e.target.value }))}
                 placeholder={t('bookingForm.nameLabel')}
                 required
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="patientEmail">{t('bookingForm.emailLabel')} *</Label>
+              <Label htmlFor="customerEmail">{t('bookingForm.emailLabel')} *</Label>
               <Input
-                id="patientEmail"
+                id="customerEmail"
                 type="email"
-                value={formData.patientEmail}
-                onChange={e => setFormData(prev => ({ ...prev, patientEmail: e.target.value }))}
+                value={formData.customerEmail}
+                onChange={e => setFormData(prev => ({ ...prev, customerEmail: e.target.value }))}
                 placeholder="email@example.com"
                 required
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="patientPhone">{t('bookingForm.phoneLabel')} *</Label>
+              <Label htmlFor="customerPhone">{t('bookingForm.phoneLabel')} *</Label>
               <Input
-                id="patientPhone"
+                id="customerPhone"
                 type="tel"
-                value={formData.patientPhone}
-                onChange={e => setFormData(prev => ({ ...prev, patientPhone: e.target.value }))}
+                value={formData.customerPhone}
+                onChange={e => setFormData(prev => ({ ...prev, customerPhone: e.target.value }))}
                 placeholder="0812345678"
                 required
               />
@@ -286,7 +286,7 @@ export function BookingForm({ onSubmit, availableSlots, onDateChange, isLoading 
               <Button
                 type="button"
                 onClick={() => setStep(3)}
-                disabled={!formData.patientName || !formData.patientEmail || !formData.patientPhone}
+                disabled={!formData.customerName || !formData.customerEmail || !formData.customerPhone}
                 className="flex-1"
               >
                 {t('common.next')}
@@ -313,10 +313,10 @@ export function BookingForm({ onSubmit, availableSlots, onDateChange, isLoading 
               <div className="text-sm space-y-1">
                 <p>{t('bookingForm.summaryDate')}: {selectedDate?.toLocaleDateString(t('common.locale'))}</p>
                 <p>{t('bookingForm.summaryTime')}: {selectedSlot?.startTime} - {selectedSlot?.endTime}</p>
-                <p>{t('bookingForm.summaryDoctor')}: {doctorOptions.find(d => d.value === formData.doctorId)?.label}</p>
-                <p>{t('bookingForm.summaryTreatment')}: {selectedTreatment?.label}</p>
+                <p>{t('bookingForm.summarySpecialist')}: {specialistOptions.find(d => d.value === formData.specialistId)?.label}</p>
+                <p>{t('bookingForm.summaryProgram')}: {selectedProgram?.label}</p>
                 <p className="text-lg font-bold mt-2">
-                  {t('bookingForm.summaryCost')}: {selectedTreatment?.price.toLocaleString()} {t('common.currency.thb')}
+                  {t('bookingForm.summaryCost')}: {selectedProgram?.price.toLocaleString()} {t('common.currency.thb')}
                 </p>
               </div>
             </div>

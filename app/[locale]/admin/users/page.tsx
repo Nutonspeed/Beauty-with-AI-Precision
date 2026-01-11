@@ -52,8 +52,8 @@ interface User {
   lastName: string
   phone: string
   avatarUrl: string
-  clinicId: string
-  clinicName: string
+  centerId: string
+  centerName: string
   createdAt: string
   lastSignIn: string | null
 }
@@ -68,10 +68,10 @@ interface UsersResponse {
 const roleColors = {
   super_admin: 'bg-red-500/10 text-red-400',
   admin: 'bg-blue-500/10 text-blue-400',
-  clinic_owner: 'bg-purple-500/10 text-purple-400',
-  clinic_admin: 'bg-indigo-500/10 text-indigo-400',
+  center_owner: 'bg-purple-500/10 text-purple-400',
+  center_admin: 'bg-indigo-500/10 text-indigo-400',
   manager: 'bg-green-500/10 text-green-400',
-  clinic_staff: 'bg-gray-500/10 text-gray-400',
+  center_staff: 'bg-gray-500/10 text-gray-400',
   customer: 'bg-yellow-500/10 text-yellow-400',
 }
 
@@ -208,7 +208,7 @@ export default function AdminUsersPage() {
                 <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent not-italic">Registry</span>
               </h1>
               <p className="text-xl text-slate-500 font-light tracking-widest max-w-2xl italic leading-relaxed">
-                Synchronize clinical operators and manage system-wide authentication credentials.
+                Synchronize aesthetic operators and manage system-wide authentication credentials.
               </p>
             </motion.div>
             
@@ -224,7 +224,7 @@ export default function AdminUsersPage() {
             {[
               { label: 'Total User Registry', val: total, sub: 'Global Authorization Nodes', icon: Users, color: 'text-white', bg: 'bg-white/5' },
               { label: 'System Operators', val: users.filter((u: User) => u.role !== 'customer').length, sub: 'Active Personnel', icon: Shield, color: 'text-pink-400', bg: 'bg-pink-500/10' },
-              { label: 'Clinical Reach', val: new Set(users.map((u: User) => u.clinicId)).size, sub: 'Operational Units', icon: Building, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+              { label: 'Aesthetic Reach', val: new Set(users.map((u: User) => u.centerId)).size, sub: 'Operational Units', icon: Building, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
               { label: 'Security Protocols', val: 'End-to-End', sub: 'PDPA Validated', icon: Fingerprint, color: 'text-cyan-400', bg: 'bg-cyan-500/10' }
             ].map((stat, i) => (
               <motion.div
@@ -271,8 +271,8 @@ export default function AdminUsersPage() {
               >
                 <option value="all" className="bg-[#020617]">GLOBAL ROLES</option>
                 <option value="super_admin" className="bg-[#020617]">SUPER ADMIN</option>
-                <option value="clinic_owner" className="bg-[#020617]">OWNER NODE</option>
-                <option value="clinic_staff" className="bg-[#020617]">OPERATOR</option>
+                <option value="center_owner" className="bg-[#020617]">OWNER NODE</option>
+                <option value="center_staff" className="bg-[#020617]">OPERATOR</option>
                 <option value="customer" className="bg-[#020617]">CLIENT UNIT</option>
               </select>
 
@@ -304,7 +304,7 @@ export default function AdminUsersPage() {
                   <tr className="bg-white/[0.02] border-b border-white/5">
                     <th className="px-10 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Identity Node</th>
                     <th className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Access Protocol</th>
-                    <th className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Clinical Uplink</th>
+                    <th className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Aesthetic Uplink</th>
                     <th className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Temporal Last Sync</th>
                     <th className="px-10 py-8 text-right w-[70px]"></th>
                   </tr>
@@ -359,7 +359,7 @@ export default function AdminUsersPage() {
                             <Building className="h-4 w-4 text-slate-600 group-hover/row:text-cyan-400" />
                           </div>
                           <span className="text-sm font-bold text-slate-300 italic group-hover/row:text-white transition-colors">
-                            {u.clinicName || 'STANDALONE NODE'}
+                            {u.centerName || 'STANDALONE NODE'}
                           </span>
                         </div>
                       </td>

@@ -23,7 +23,7 @@ export interface BaseEvent {
   version: string // event schema version
   correlation_id?: string // for tracing related events
   user_id?: string // user who triggered the event
-  clinic_id?: string // clinic context
+  center_id?: string // center context
 }
 
 export interface LeadEvent extends BaseEvent {

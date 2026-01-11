@@ -119,7 +119,7 @@ export default function SalesDashboard() {
           return
         }
         const roleData = await roleRes.json()
-        if (!['sales_staff', 'clinic_admin', 'clinic_owner', 'super_admin'].includes(roleData.role)) {
+        if (!['sales_staff', 'center_admin', 'center_owner', 'super_admin'].includes(roleData.role)) {
           router.push(lp('/unauthorized'))
           return
         }
@@ -248,7 +248,7 @@ export default function SalesDashboard() {
       </div>
 
       <div className="max-w-7xl mx-auto space-y-10 relative z-10">
-        {/* Header - Elite Clinical Dashboard */}
+        {/* Header - Elite Aesthetic Dashboard */}
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -326,7 +326,7 @@ export default function SalesDashboard() {
           ))}
         </div>
 
-        {/* AI Conversion Pipeline - Clinical Data Stream */}
+        {/* AI Conversion Pipeline - Aesthetic Data Stream */}
         <div className="grid lg:grid-cols-12 gap-10">
           <div className="lg:col-span-8">
             <motion.div
@@ -380,7 +380,7 @@ export default function SalesDashboard() {
         <div className="grid lg:grid-cols-12 gap-10">
           {/* Main AI Toolset & Generative Marketing */}
           <div className="lg:col-span-8 space-y-10">
-            <GenMarketingVisuals isEnterprise={['super_admin', 'clinic_owner'].includes(user?.role || '')} />
+            <GenMarketingVisuals isEnterprise={['super_admin', 'center_owner'].includes(user?.role || '')} />
 
             <div className="space-y-8">
               <div className="flex items-center justify-between px-4">
@@ -416,7 +416,7 @@ export default function SalesDashboard() {
               </div>
             </div>
 
-            {/* Specialized Clinical AR Modules */}
+            {/* Specialized Aesthetic AR Modules */}
             <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden">
               <CardHeader className="bg-white/[0.03] border-b border-white/5 px-10 py-6">
                 <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">{t('salesDashboard.arModules.title')}</CardTitle>
@@ -508,7 +508,7 @@ export default function SalesDashboard() {
           </div>
         </div>
 
-        {/* Top Clinical Service Assets */}
+        {/* Top Aesthetic Service Assets */}
         <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden">
           <CardHeader className="p-10 pb-6 border-b border-white/5">
             <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">{t('salesDashboard.topAssets.title')}</CardTitle>

@@ -25,13 +25,13 @@ interface IncompletePresentationSummary {
 }
 
 function computeLastStep(data: PresentationData): number {
-  const selectedTreatments = data.selectedTreatments ?? []
+  const selectedPrograms = data.selectedPrograms ?? []
   const selectedProducts = data.selectedProducts ?? []
 
   if (data.completedAt) return 7
   if (data.proposal) return 6
   if (selectedProducts.length > 0) return 5
-  if (selectedTreatments.length > 0) return 4
+  if (selectedPrograms.length > 0) return 4
   if (data.analysisResults) return 3
   if (data.scannedImages?.front) return 2
   if (data.customer?.name) return 1

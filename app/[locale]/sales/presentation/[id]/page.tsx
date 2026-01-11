@@ -2,7 +2,7 @@
 
 /**
  * Sales Presentation Page
- * Full sales demo mode with treatment packages and pricing
+ * Full sales demo mode with program packages and pricing
  */
 
 import { useState, useEffect, useCallback } from 'react';
@@ -185,7 +185,7 @@ export default function SalesPresentationPage() {
 
   const [analysis, setAnalysis] = useState<HybridSkinAnalysis | null>(null);
   const [comparisonAnalysis, setComparisonAnalysis] = useState<HybridSkinAnalysis | null>(null);
-  const [patientInfo, setPatientInfo] = useState<any>(null);
+  const [customerInfo, setCustomerInfo] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -212,18 +212,18 @@ export default function SalesPresentationPage() {
       const normalizedAnalysis = buildHybridAnalysis(data.data, analysisId);
       setAnalysis(normalizedAnalysis);
 
-      // Get patient info
-      const patientInfoValue =
-        isRecord(data.data) && 'patientInfo' in data.data
-          ? (data.data as Record<string, unknown>).patientInfo ?? null
+      // Get customer info
+      const customerInfoValue =
+        isRecord(data.data) && 'customerInfo' in data.data
+          ? (data.data as Record<string, unknown>).customerInfo ?? null
           : null;
 
-      const finalPatientInfo = patientInfoValue || {
+      const finalCustomerInfo = customerInfoValue || {
         name: t('roles.customer'),
         skinType: normalizedAnalysis.ai.skinType || 'normal',
       };
 
-      setPatientInfo(finalPatientInfo);
+      setCustomerInfo(finalCustomerInfo);
 
       // Try to load previous analysis for comparison
       // This would require an API endpoint that returns user's analysis history
@@ -249,28 +249,28 @@ export default function SalesPresentationPage() {
         analysis,
         {
           locale: currentLocale as 'th' | 'en',
-          patientInfo: patientInfo
+          customerInfo: customerInfo
             ? {
-                name: patientInfo.name,
-                age: patientInfo.age,
-                gender: patientInfo.gender,
-                skinType: patientInfo.skinType || analysis.ai.skinType,
+                name: customerInfo.name,
+                age: customerInfo.age,
+                gender: customerInfo.gender,
+                skinType: customerInfo.skinType || analysis.ai.skinType,
                 customerId: analysisId,
               }
             : undefined,
-          clinicInfo: {
-            name: currentLocale === 'th' ? t('common.clinic.name') : t('common.clinic.name'),
-            address: currentLocale === 'th' ? t('common.clinic.address') : t('common.clinic.address'),
-            phone: t('common.clinic.phone'),
-            email: t('common.clinic.email'),
-            website: t('common.clinic.website'),
+          centerInfo: {
+            name: currentLocale === 'th' ? t('common.center.name') : t('common.center.name'),
+            address: currentLocale === 'th' ? t('common.center.address') : t('common.center.address'),
+            phone: t('common.center.phone'),
+            email: t('common.center.email'),
+            website: t('common.center.website'),
             brandColor: '#6366f1',
           },
           includePricing: true,
           includeTimeline: true,
           showDiscounts: true,
         },
-        `treatment-proposal-${analysisId}-${Date.now()}.pdf`
+        `aesthetic-proposal-${analysisId}-${Date.now()}.pdf`
       );
     } catch (err) {
       console.error('Export error:', err);
@@ -326,9 +326,9 @@ export default function SalesPresentationPage() {
       <PresentationMode
         analysis={analysis}
         comparisonAnalysis={comparisonAnalysis || undefined}
-        patientInfo={patientInfo}
-        clinicInfo={{
-          name: t('common.clinic.name'),
+        customerInfo={customerInfo}
+        centerInfo={{
+          name: t('common.center.name'),
           logo: '/logo.png',
           brandColor: '#6366f1',
         }}

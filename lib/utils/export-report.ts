@@ -13,7 +13,7 @@ export interface ExportOptions {
   quality?: number; // 1-100 for images
 }
 
-export interface PatientInfo {
+export interface CustomerInfo {
   name?: string;
   age?: number;
   gender?: string;
@@ -21,7 +21,7 @@ export interface PatientInfo {
   email?: string;
 }
 
-export interface ClinicInfo {
+export interface CenterInfo {
   name?: string;
   logo?: string;
   address?: string;
@@ -36,8 +36,8 @@ export interface ClinicInfo {
 export async function exportToPDF(
   analysis: HybridSkinAnalysis,
   options: {
-    patientInfo?: PatientInfo;
-    clinicInfo?: ClinicInfo;
+    customerInfo?: CustomerInfo;
+    centerInfo?: CenterInfo;
     imageUrl?: string;
   } = {}
 ): Promise<Blob> {
@@ -111,7 +111,7 @@ export async function exportToPNG(
 export function exportToJSON(
   analysis: HybridSkinAnalysis,
   options: {
-    patientInfo?: PatientInfo;
+    customerInfo?: CustomerInfo;
     metadata?: Record<string, unknown>;
   } = {}
 ): Blob {
@@ -182,8 +182,8 @@ export async function emailReport(
   options: {
     to: string;
     subject?: string;
-    patientInfo?: PatientInfo;
-    clinicInfo?: ClinicInfo;
+    customerInfo?: CustomerInfo;
+    centerInfo?: CenterInfo;
   }
 ): Promise<Response> {
   const subject =
@@ -219,8 +219,8 @@ export async function emailReport(
 function generateReportHTML(
   analysis: HybridSkinAnalysis,
   options: {
-    patientInfo?: PatientInfo;
-    clinicInfo?: ClinicInfo;
+    customerInfo?: CustomerInfo;
+    centerInfo?: CenterInfo;
     imageUrl?: string;
   }
 ): string {
@@ -253,7 +253,7 @@ function generateReportHTML(
       padding-bottom: 20px;
       border-bottom: 2px solid #333;
     }
-    .clinic-logo {
+    .center-logo {
       max-height: 60px;
       margin-bottom: 10px;
     }
@@ -316,20 +316,20 @@ function generateReportHTML(
 </head>
 <body>
   <div class="header">
-    ${options.clinicInfo?.logo ? `<img src="${options.clinicInfo.logo}" alt="Logo" class="clinic-logo">` : ''}
-    <h1>${options.clinicInfo?.name || 'Skin Analysis Report'}</h1>
-    ${options.clinicInfo?.address ? `<p>${options.clinicInfo.address}</p>` : ''}
+    ${options.centerInfo?.logo ? `<img src="${options.centerInfo.logo}" alt="Logo" class="center-logo">` : ''}
+    <h1>${options.centerInfo?.name || 'Skin Analysis Report'}</h1>
+    ${options.centerInfo?.address ? `<p>${options.centerInfo.address}</p>` : ''}
     <p>Report Date: ${date.toLocaleDateString()} ${date.toLocaleTimeString()}</p>
   </div>
 
   ${
-    options.patientInfo
+    options.customerInfo
       ? `
   <div style="margin-bottom: 20px;">
-    <h3>Patient Information</h3>
-    ${options.patientInfo.name ? `<p><strong>Name:</strong> ${options.patientInfo.name}</p>` : ''}
-    ${options.patientInfo.age ? `<p><strong>Age:</strong> ${options.patientInfo.age} years</p>` : ''}
-    ${options.patientInfo.skinType ? `<p><strong>Skin Type:</strong> ${options.patientInfo.skinType}</p>` : ''}
+    <h3>Customer Information</h3>
+    ${options.customerInfo.name ? `<p><strong>Name:</strong> ${options.customerInfo.name}</p>` : ''}
+    ${options.customerInfo.age ? `<p><strong>Age:</strong> ${options.customerInfo.age} years</p>` : ''}
+    ${options.customerInfo.skinType ? `<p><strong>Skin Type:</strong> ${options.customerInfo.skinType}</p>` : ''}
   </div>
   `
       : ''
@@ -408,8 +408,8 @@ function generateReportHTML(
 function generateEmailBody(
   analysis: HybridSkinAnalysis,
   options: {
-    patientInfo?: PatientInfo;
-    clinicInfo?: ClinicInfo;
+    customerInfo?: CustomerInfo;
+    centerInfo?: CenterInfo;
   }
 ): string {
   // Simplified email template
@@ -419,7 +419,7 @@ function generateEmailBody(
 /**
  * Print report directly
  */
-export function printReport(elementId: string = 'visia-report'): void {
+export function printReport(elementId: string = 'aesthetic-report'): void {
   const element = document.getElementById(elementId);
   if (!element) {
     throw new Error(`Element with id "${elementId}" not found`);

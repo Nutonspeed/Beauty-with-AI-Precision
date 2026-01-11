@@ -8,14 +8,14 @@ import type { HybridSkinAnalysis } from '@/lib/types/skin-analysis';
 
 export interface PresentationPDFOptions {
   locale?: 'th' | 'en';
-  patientInfo?: {
+  customerInfo?: {
     name?: string;
     age?: number;
     gender?: string;
     skinType?: string;
     customerId?: string;
   };
-  clinicInfo: {
+  centerInfo: {
     name: string;
     nameTh?: string;
     logo?: string; // Base64 or URL
@@ -27,16 +27,16 @@ export interface PresentationPDFOptions {
     website?: string;
     license?: string;
   };
-  treatmentPackages?: TreatmentPackage[];
+  programPackages?: ProgramPackage[];
   includePricing?: boolean;
   includeTimeline?: boolean;
   showDiscounts?: boolean;
 }
 
-export interface TreatmentPackage {
+export interface ProgramPackage {
   id: string;
   name: { en: string; th: string };
-  treatments: { name: { en: string; th: string }; sessions: number }[];
+  programs: { name: { en: string; th: string }; sessions: number }[];
   duration: { weeks: number; months: number };
   price: number;
   sessions: number;
@@ -55,17 +55,17 @@ export interface TreatmentPackage {
 
 const TRANSLATIONS = {
   en: {
-    title: 'Personalized Skin Treatment Proposal',
-    subtitle: 'Professional Skin Analysis & Treatment Plan',
+    title: 'Personalized Aesthetic Program Proposal',
+    subtitle: 'Professional Aesthetic Analysis & Program Plan',
     date: 'Date',
     preparedFor: 'Prepared For',
-    patientInfo: 'Patient Information',
+    customerInfo: 'Customer Information',
     name: 'Name',
     age: 'Age',
     gender: 'Gender',
     skinType: 'Skin Type',
     customerId: 'Customer ID',
-    analysisResults: 'Skin Analysis Results',
+    analysisResults: 'Aesthetic Analysis Results',
     overallScore: 'Overall Skin Health Score',
     confidence: 'Analysis Confidence',
     detailedAnalysis: 'Detailed Analysis',
@@ -77,33 +77,33 @@ const TRANSLATIONS = {
     redness: 'Redness & Inflammation',
     severity: 'Severity',
     percentile: 'Percentile',
-    treatmentPackages: 'Recommended Treatment Packages',
+    programPackages: 'Recommended Aesthetic Packages',
     package: 'Package',
     packageDetails: 'Package Details',
-    duration: 'Treatment Duration',
+    duration: 'Program Duration',
     sessions: 'Total Sessions',
     improvement: 'Expected Improvement',
     price: 'Price',
     savings: 'You Save',
-    effectiveness: 'Treatment Effectiveness',
-    treatmentTimeline: 'Treatment Timeline',
+    effectiveness: 'Program Effectiveness',
+    programTimeline: 'Aesthetic Roadmap',
     week: 'Week',
     weeks: 'weeks',
     month: 'Month',
     months: 'months',
     session: 'session',
-    treatmentPlan: 'Your Treatment Plan',
+    programPlan: 'Your Aesthetic Plan',
     nextSteps: 'Next Steps',
-    stepOne: 'Schedule your consultation with our skin specialist',
-    stepTwo: 'Receive detailed treatment plan and timeline',
-    stepThree: 'Begin your personalized treatment journey',
+    stepOne: 'Schedule your consultation with our aesthetic specialist',
+    stepTwo: 'Receive detailed program plan and timeline',
+    stepThree: 'Begin your personalized aesthetic journey',
     contactUs: 'Contact Us',
     phone: 'Phone',
     email: 'Email',
     website: 'Website',
     address: 'Address',
-    disclaimer: 'This treatment proposal is based on AI-powered skin analysis. Final treatment plan will be determined after consultation with our licensed dermatologist.',
-    confidential: 'CONFIDENTIAL - For patient use only',
+    disclaimer: 'This aesthetic proposal is based on AI-powered skin analysis. Final program plan will be determined after consultation with our aesthetic consultant.',
+    confidential: 'CONFIDENTIAL - For customer use only',
     validUntil: 'This proposal is valid for 30 days',
     page: 'Page',
     of: 'of',
@@ -117,21 +117,21 @@ const TRANSLATIONS = {
     baht: 'THB',
   },
   th: {
-    title: 'ข้อเสนอการรักษาผิวเฉพาะบุคคล',
-    subtitle: 'การวิเคราะห์ผิวและแผนการรักษาแบบมืออาชีพ',
+    title: 'ข้อเสนอการดูแลผิวเฉพาะบุคคล',
+    subtitle: 'การวิเคราะห์และวางแผนความงามระดับมืออาชีพ',
     date: 'วันที่',
     preparedFor: 'จัดทำสำหรับ',
-    patientInfo: 'ข้อมูลผู้รับบริการ',
+    customerInfo: 'ข้อมูลผู้รับบริการ',
     name: 'ชื่อ',
     age: 'อายุ',
     gender: 'เพศ',
     skinType: 'ประเภทผิว',
     customerId: 'รหัสลูกค้า',
-    analysisResults: 'ผลการวิเคราะห์ผิว',
+    analysisResults: 'ผลการวิเคราะห์ผิวอัจฉริยะ',
     overallScore: 'คะแนนสุขภาพผิวโดยรวม',
     confidence: 'ความเชื่อมั่นในการวิเคราะห์',
     detailedAnalysis: 'การวิเคราะห์โดยละเอียด',
-    concerns: 'ปัญหาผิว',
+    concerns: 'ปัญหาผิวที่ตรวจพบ',
     spots: 'จุดด่างดำ & เม็ดสี',
     pores: 'ขนาดรูขุมขน',
     wrinkles: 'ริ้วรอยและเส้นตื้น',
@@ -139,33 +139,33 @@ const TRANSLATIONS = {
     redness: 'รอยแดงและการอักเสบ',
     severity: 'ความรุนแรง',
     percentile: 'เปอร์เซ็นไทล์',
-    treatmentPackages: 'แพ็คเกจการรักษาที่แนะนำ',
+    programPackages: 'โปรแกรมความงามที่แนะนำ',
     package: 'แพ็คเกจ',
     packageDetails: 'รายละเอียดแพ็คเกจ',
-    duration: 'ระยะเวลาการรักษา',
+    duration: 'ระยะเวลาโปรแกรม',
     sessions: 'จำนวนครั้งทั้งหมด',
     improvement: 'การปรับปรุงที่คาดหวัง',
     price: 'ราคา',
     savings: 'คุณประหยัด',
-    effectiveness: 'ประสิทธิภาพการรักษา',
-    treatmentTimeline: 'ไทม์ไลน์การรักษา',
+    effectiveness: 'ประสิทธิภาพของโปรแกรม',
+    programTimeline: 'ไทม์ไลน์ความงาม',
     week: 'สัปดาห์',
     weeks: 'สัปดาห์',
     month: 'เดือน',
     months: 'เดือน',
     session: 'ครั้ง',
-    treatmentPlan: 'แผนการรักษาของคุณ',
+    programPlan: 'แผนงานความงามของคุณ',
     nextSteps: 'ขั้นตอนถัดไป',
-    stepOne: 'นัดหมายให้คำปรึกษากับผู้เชี่ยวชาญด้านผิวหนัง',
-    stepTwo: 'รับแผนการรักษาและไทม์ไลน์โดยละเอียด',
-    stepThree: 'เริ่มต้นการรักษาเฉพาะบุคคลของคุณ',
+    stepOne: 'นัดหมายให้คำปรึกษากับที่ปรึกษาความงาม',
+    stepTwo: 'รับแผนงานความงามและไทม์ไลน์โดยละเอียด',
+    stepThree: 'เริ่มต้นการดูแลผิวเฉพาะบุคคลของคุณ',
     contactUs: 'ติดต่อเรา',
     phone: 'โทรศัพท์',
     email: 'อีเมล',
     website: 'เว็บไซต์',
     address: 'ที่อยู่',
-    disclaimer: 'ข้อเสนอการรักษานี้อิงจากการวิเคราะห์ผิวด้วย AI แผนการรักษาขั้นสุดท้ายจะถูกกำหนดหลังจากการปรึกษากับแพทย์ผู้เชี่ยวชาญ',
-    confidential: 'เอกสารลับ - สำหรับผู้รับบริการเท่านั้น',
+    disclaimer: 'ข้อเสนอนี้อิงจากการวิเคราะห์ผิวด้วย AI แผนงานขั้นสุดท้ายจะถูกกำหนดหลังจากการปรึกษากับที่ปรึกษาความงาม',
+    confidential: 'เอกสารลับ - สำหรับลูกค้าเท่านั้น',
     validUntil: 'ข้อเสนอนี้มีผลบังคับใช้ 30 วัน',
     page: 'หน้า',
     of: 'จาก',
@@ -198,7 +198,7 @@ export class PresentationPDFExporter {
   constructor(options: PresentationPDFOptions) {
     this.locale = options.locale || 'en';
     this.t = TRANSLATIONS[this.locale];
-    this.brandColor = options.clinicInfo.brandColor || '#6366f1';
+    this.brandColor = options.centerInfo.brandColor || '#6366f1';
 
     this.pdf = new jsPDF({
       orientation: 'portrait',
@@ -222,13 +222,13 @@ export class PresentationPDFExporter {
       : { r: 99, g: 102, b: 241 }; // Default primary color
   }
 
-  private addHeader(clinicInfo: PresentationPDFOptions['clinicInfo']) {
+  private addHeader(centerInfo: PresentationPDFOptions['centerInfo']) {
     const rgb = this.hexToRgb(this.brandColor);
 
-    // Clinic logo and name
-    if (clinicInfo.logo) {
+    // Center logo and name
+    if (centerInfo.logo) {
       try {
-        this.pdf.addImage(clinicInfo.logo, 'PNG', this.marginLeft, this.marginTop, 20, 20);
+        this.pdf.addImage(centerInfo.logo, 'PNG', this.marginLeft, this.marginTop, 20, 20);
       } catch (error) {
         console.warn('Failed to add logo to PDF:', error);
       }
@@ -237,9 +237,9 @@ export class PresentationPDFExporter {
     this.pdf.setFontSize(18);
     this.pdf.setTextColor(rgb.r, rgb.g, rgb.b);
     this.pdf.setFont('helvetica', 'bold');
-    const clinicName =
-      this.locale === 'th' && clinicInfo.nameTh ? clinicInfo.nameTh : clinicInfo.name;
-    this.pdf.text(clinicName, clinicInfo.logo ? this.marginLeft + 25 : this.marginLeft, this.marginTop + 7);
+    const centerName =
+      this.locale === 'th' && centerInfo.nameTh ? centerInfo.nameTh : centerInfo.name;
+    this.pdf.text(centerName, centerInfo.logo ? this.marginLeft + 25 : this.marginLeft, this.marginTop + 7);
 
     // Reset text color
     this.pdf.setTextColor(0, 0, 0);
@@ -287,8 +287,8 @@ export class PresentationPDFExporter {
 
   private addCoverPage(
     analysis: HybridSkinAnalysis,
-    patientInfo: PresentationPDFOptions['patientInfo'],
-    clinicInfo: PresentationPDFOptions['clinicInfo']
+    customerInfo: PresentationPDFOptions['customerInfo'],
+    centerInfo: PresentationPDFOptions['centerInfo']
   ) {
     const rgb = this.hexToRgb(this.brandColor);
 
@@ -296,10 +296,10 @@ export class PresentationPDFExporter {
     this.pdf.setFillColor(rgb.r, rgb.g, rgb.b);
     this.pdf.rect(0, 0, this.pageWidth, 80, 'F');
 
-    // Clinic logo
-    if (clinicInfo.logo) {
+    // Center logo
+    if (centerInfo.logo) {
       try {
-        this.pdf.addImage(clinicInfo.logo, 'PNG', this.pageWidth / 2 - 15, 15, 30, 30);
+        this.pdf.addImage(centerInfo.logo, 'PNG', this.pageWidth / 2 - 15, 15, 30, 30);
       } catch (error) {
         console.warn('Failed to add logo:', error);
       }
@@ -319,7 +319,7 @@ export class PresentationPDFExporter {
     // Reset colors
     this.pdf.setTextColor(0, 0, 0);
 
-    // Patient info box
+    // Customer info box
     const boxY = 95;
     this.drawBox(this.marginLeft, boxY, this.contentWidth, 50, { r: 250, g: 250, b: 250 });
 
@@ -331,19 +331,19 @@ export class PresentationPDFExporter {
     this.pdf.setFont('helvetica', 'normal');
     let infoY = boxY + 22;
 
-    if (patientInfo?.name) {
-      this.pdf.text(`${this.t.name}: ${patientInfo.name}`, this.marginLeft + 10, infoY);
+    if (customerInfo?.name) {
+      this.pdf.text(`${this.t.name}: ${customerInfo.name}`, this.marginLeft + 10, infoY);
       infoY += 7;
     }
 
-    if (patientInfo?.age) {
-      this.pdf.text(`${this.t.age}: ${patientInfo.age} ${this.t.years}`, this.marginLeft + 10, infoY);
+    if (customerInfo?.age) {
+      this.pdf.text(`${this.t.age}: ${customerInfo.age} ${this.t.years}`, this.marginLeft + 10, infoY);
       infoY += 7;
     }
 
-    if (patientInfo?.skinType) {
+    if (customerInfo?.skinType) {
       this.pdf.text(
-        `${this.t.skinType}: ${patientInfo.skinType}`,
+        `${this.t.skinType}: ${customerInfo.skinType}`,
         this.marginLeft + 10,
         infoY
       );
@@ -408,24 +408,24 @@ export class PresentationPDFExporter {
     // Contact info
     const contactY = footerY + 10;
     this.pdf.setFontSize(9);
-    if (clinicInfo.phone) {
-      this.pdf.text(`${this.t.phone}: ${clinicInfo.phone}`, this.pageWidth / 2, contactY, {
+    if (centerInfo.phone) {
+      this.pdf.text(`${this.t.phone}: ${centerInfo.phone}`, this.pageWidth / 2, contactY, {
         align: 'center',
       });
     }
-    if (clinicInfo.email) {
-      this.pdf.text(`${this.t.email}: ${clinicInfo.email}`, this.pageWidth / 2, contactY + 5, {
+    if (centerInfo.email) {
+      this.pdf.text(`${this.t.email}: ${centerInfo.email}`, this.pageWidth / 2, contactY + 5, {
         align: 'center',
       });
     }
-    if (clinicInfo.website) {
-      this.pdf.text(clinicInfo.website, this.pageWidth / 2, contactY + 10, { align: 'center' });
+    if (centerInfo.website) {
+      this.pdf.text(centerInfo.website, this.pageWidth / 2, contactY + 10, { align: 'center' });
     }
   }
 
-  private addAnalysisPage(analysis: HybridSkinAnalysis, clinicInfo: PresentationPDFOptions['clinicInfo']) {
+  private addAnalysisPage(analysis: HybridSkinAnalysis, centerInfo: PresentationPDFOptions['centerInfo']) {
     this.addNewPage();
-    this.addHeader(clinicInfo);
+    this.addHeader(centerInfo);
 
     const startY = this.marginTop + 30;
 
@@ -526,20 +526,20 @@ export class PresentationPDFExporter {
     }
   }
 
-  private addTreatmentPackagesPage(
-    packages: TreatmentPackage[],
-    clinicInfo: PresentationPDFOptions['clinicInfo'],
+  private addProgramPackagesPage(
+    packages: ProgramPackage[],
+    centerInfo: PresentationPDFOptions['centerInfo'],
     showDiscounts: boolean = true
   ) {
     this.addNewPage();
-    this.addHeader(clinicInfo);
+    this.addHeader(centerInfo);
 
     const startY = this.marginTop + 30;
 
     // Title
     this.pdf.setFontSize(16);
     this.pdf.setFont('helvetica', 'bold');
-    this.pdf.text(this.t.treatmentPackages, this.marginLeft, startY);
+    this.pdf.text(this.t.programPackages, this.marginLeft, startY);
 
     let y = startY + 15;
 
@@ -547,7 +547,7 @@ export class PresentationPDFExporter {
       // Check if we need a new page
       if (y + 70 > this.pageHeight - this.marginBottom) {
         this.addNewPage();
-        this.addHeader(clinicInfo);
+        this.addHeader(centerInfo);
         y = this.marginTop + 30;
       }
 
@@ -612,10 +612,10 @@ export class PresentationPDFExporter {
       this.pdf.setTextColor(80, 80, 80);
       this.pdf.setFont('helvetica', 'normal');
 
-      // Treatments list
-      pkg.treatments.forEach((treatment: { name: { en: string; th: string }; sessions: number }) => {
+      // Programs list
+      pkg.programs.forEach((program: { name: { en: string; th: string }; sessions: number }) => {
         if (detailY < y + boxHeight - 5) {
-          const text = `• ${treatment.name[this.locale]} (${treatment.sessions} ${this.t.session})`;
+          const text = `• ${program.name[this.locale]} (${program.sessions} ${this.t.session})`;
           this.pdf.text(text, this.marginLeft + 5, detailY);
           detailY += 5;
         }
@@ -643,25 +643,25 @@ export class PresentationPDFExporter {
   }
 
   private addTimelinePage(
-    packages: TreatmentPackage[],
-    clinicInfo: PresentationPDFOptions['clinicInfo']
+    packages: ProgramPackage[],
+    centerInfo: PresentationPDFOptions['centerInfo']
   ) {
     this.addNewPage();
-    this.addHeader(clinicInfo);
+    this.addHeader(centerInfo);
 
     const startY = this.marginTop + 30;
 
     // Title
     this.pdf.setFontSize(16);
     this.pdf.setFont('helvetica', 'bold');
-    this.pdf.text(this.t.treatmentPlan, this.marginLeft, startY);
+    this.pdf.text(this.t.programPlan, this.marginLeft, startY);
 
     let y = startY + 15;
 
     packages.forEach((pkg, pkgIdx) => {
       if (y + 50 > this.pageHeight - this.marginBottom) {
         this.addNewPage();
-        this.addHeader(clinicInfo);
+        this.addHeader(centerInfo);
         y = this.marginTop + 30;
       }
 
@@ -687,8 +687,8 @@ export class PresentationPDFExporter {
 
       y += 12;
 
-      // Treatment list
-      pkg.treatments.forEach((treatment, _idx) => {
+      // Program list
+      pkg.programs.forEach((program, _idx: number) => {
         this.pdf.setFontSize(10);
         this.pdf.setTextColor(0, 0, 0);
 
@@ -697,7 +697,7 @@ export class PresentationPDFExporter {
         this.pdf.circle(this.marginLeft + 15, y - 1, 2, 'S');
 
         this.pdf.text(
-          `${treatment.name[this.locale]} - ${treatment.sessions} ${this.t.session}`,
+          `${program.name[this.locale]} - ${program.sessions} ${this.t.session}`,
           this.marginLeft + 20,
           y
         );
@@ -741,7 +741,7 @@ export class PresentationPDFExporter {
     }
   }
 
-  private addContactPage(clinicInfo: PresentationPDFOptions['clinicInfo']) {
+  private addContactPage(centerInfo: PresentationPDFOptions['centerInfo']) {
     this.addNewPage();
 
     const rgb = this.hexToRgb(this.brandColor);
@@ -750,9 +750,9 @@ export class PresentationPDFExporter {
     this.pdf.setFillColor(rgb.r, rgb.g, rgb.b);
     this.pdf.rect(0, 0, this.pageWidth, 60, 'F');
 
-    if (clinicInfo.logo) {
+    if (centerInfo.logo) {
       try {
-        this.pdf.addImage(clinicInfo.logo, 'PNG', this.pageWidth / 2 - 15, 10, 30, 30);
+        this.pdf.addImage(centerInfo.logo, 'PNG', this.pageWidth / 2 - 15, 10, 30, 30);
       } catch (error) {
         console.warn('Failed to add logo:', error);
       }
@@ -769,37 +769,37 @@ export class PresentationPDFExporter {
     this.pdf.setTextColor(0, 0, 0);
     this.pdf.setFont('helvetica', 'normal');
 
-    const clinicName =
-      this.locale === 'th' && clinicInfo.nameTh ? clinicInfo.nameTh : clinicInfo.name;
-    this.pdf.text(clinicName, this.marginLeft, y);
+    const centerName =
+      this.locale === 'th' && centerInfo.nameTh ? centerInfo.nameTh : centerInfo.name;
+    this.pdf.text(centerName, this.marginLeft, y);
     y += 15;
 
-    if (clinicInfo.phone) {
+    if (centerInfo.phone) {
       this.pdf.setFont('helvetica', 'bold');
       this.pdf.text(`${this.t.phone}:`, this.marginLeft, y);
       this.pdf.setFont('helvetica', 'normal');
-      this.pdf.text(clinicInfo.phone, this.marginLeft + 30, y);
+      this.pdf.text(centerInfo.phone, this.marginLeft + 30, y);
       y += 10;
     }
 
-    if (clinicInfo.email) {
+    if (centerInfo.email) {
       this.pdf.setFont('helvetica', 'bold');
       this.pdf.text(`${this.t.email}:`, this.marginLeft, y);
       this.pdf.setFont('helvetica', 'normal');
-      this.pdf.text(clinicInfo.email, this.marginLeft + 30, y);
+      this.pdf.text(centerInfo.email, this.marginLeft + 30, y);
       y += 10;
     }
 
-    if (clinicInfo.website) {
+    if (centerInfo.website) {
       this.pdf.setFont('helvetica', 'bold');
       this.pdf.text(`${this.t.website}:`, this.marginLeft, y);
       this.pdf.setFont('helvetica', 'normal');
-      this.pdf.text(clinicInfo.website, this.marginLeft + 30, y);
+      this.pdf.text(centerInfo.website, this.marginLeft + 30, y);
       y += 10;
     }
 
     const address =
-      this.locale === 'th' && clinicInfo.addressTh ? clinicInfo.addressTh : clinicInfo.address;
+      this.locale === 'th' && centerInfo.addressTh ? centerInfo.addressTh : centerInfo.address;
     if (address) {
       y += 5;
       this.pdf.setFont('helvetica', 'bold');
@@ -822,11 +822,11 @@ export class PresentationPDFExporter {
   public async generate(
     analysis: HybridSkinAnalysis,
     options: PresentationPDFOptions,
-    _filename: string = 'treatment-proposal.pdf'
+    _filename: string = 'aesthetic-proposal.pdf'
   ): Promise<void> {
     // Calculate total pages (approximate)
     this.totalPages = 2; // Cover + Analysis
-    if (options.treatmentPackages && options.treatmentPackages.length > 0) {
+    if (options.programPackages && options.programPackages.length > 0) {
       this.totalPages += 1; // Packages page
       if (options.includeTimeline) {
         this.totalPages += 1; // Timeline page
@@ -835,22 +835,22 @@ export class PresentationPDFExporter {
     this.totalPages += 1; // Contact page
 
     // Generate pages
-    this.addCoverPage(analysis, options.patientInfo, options.clinicInfo);
-    this.addAnalysisPage(analysis, options.clinicInfo);
+    this.addCoverPage(analysis, options.customerInfo, options.centerInfo);
+    this.addAnalysisPage(analysis, options.centerInfo);
 
-    if (options.treatmentPackages && options.treatmentPackages.length > 0) {
-      this.addTreatmentPackagesPage(
-        options.treatmentPackages,
-        options.clinicInfo,
+    if (options.programPackages && options.programPackages.length > 0) {
+      this.addProgramPackagesPage(
+        options.programPackages,
+        options.centerInfo,
         options.showDiscounts
       );
 
       if (options.includeTimeline) {
-        this.addTimelinePage(options.treatmentPackages, options.clinicInfo);
+        this.addTimelinePage(options.programPackages, options.centerInfo);
       }
     }
 
-    this.addContactPage(options.clinicInfo);
+    this.addContactPage(options.centerInfo);
 
     // Add footers to all pages
     const pageCount = this.pdf.internal.pages.length - 1; // Subtract 1 for the initial page
@@ -875,6 +875,6 @@ export async function exportPresentationToPDF(
   await exporter.generate(
     analysis,
     options,
-    filename || `treatment-proposal-${Date.now()}.pdf`
+    filename || `aesthetic-proposal-${Date.now()}.pdf`
   );
 }

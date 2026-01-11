@@ -83,7 +83,7 @@ export default function CustomerDashboard({ role }: CustomerDashboardProps) {
                     <AlertDescription className="flex flex-col md:flex-row items-center justify-between w-full gap-8">
                       <div className="space-y-2 text-center md:text-left">
                         <p className="text-2xl font-bold text-white tracking-tight italic">
-                          {isThaiLocale ? 'ยินดีต้อนรับสู่ ClinicIQ AI! 👋' : 'Welcome to ClinicIQ AI! 👋'}
+                          {isThaiLocale ? 'ยินดีต้อนรับสู่ CenterIQ AI! 👋' : 'Welcome to CenterIQ AI! 👋'}
                         </p>
                         <p className="text-slate-400 font-light tracking-wide italic">
                           {isThaiLocale 
@@ -122,7 +122,7 @@ export default function CustomerDashboard({ role }: CustomerDashboardProps) {
             <h1 className="text-5xl md:text-8xl font-bold tracking-tighter text-white leading-[0.9] italic">
               {isThaiLocale ? 'ยินดีต้อนรับสู่' : 'Welcome to'}<br />
               <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent italic">
-                ClinicIQ <span className="not-italic">AI</span>
+                CenterIQ <span className="not-italic">AI</span>
               </span>
             </h1>
             <p className="text-xl text-slate-500 font-light tracking-widest max-w-2xl italic">
@@ -146,7 +146,7 @@ export default function CustomerDashboard({ role }: CustomerDashboardProps) {
               { 
                 icon: Sparkles, 
                 title: isThaiLocale ? 'ทดลอง AR' : 'AR Simulation', 
-                desc: isThaiLocale ? 'ดูผลการรักษาแบบ 3D ก่อนตัดสินใจ' : 'Visualize treatment outcomes in real-time 3D.',
+                desc: isThaiLocale ? 'ดูผลการรักษาแบบ 3D ก่อนตัดสินใจ' : 'Visualize program outcomes in real-time 3D.',
                 href: '/ar-simulator',
                 cta: isThaiLocale ? 'เริ่มทดลอง' : 'Initialize AR',
                 color: 'from-purple-500/20 to-pink-600/20',
@@ -156,8 +156,8 @@ export default function CustomerDashboard({ role }: CustomerDashboardProps) {
               },
               { 
                 icon: Star, 
-                title: isThaiLocale ? 'คำแนะนำเฉพาะคุณ' : 'Clinical Protocol', 
-                desc: isThaiLocale ? 'ดูคำแนะนำจาก AI ที่ปรับแต่งเฉพาะผิวคุณ' : 'View personalized treatment algorithms.',
+                title: isThaiLocale ? 'คำแนะนำเฉพาะคุณ' : 'Aesthetic Protocol', 
+                desc: isThaiLocale ? 'ดูคำแนะนำจาก AI ที่ปรับแต่งเฉพาะผิวคุณ' : 'View personalized program algorithms.',
                 href: '/recommendations',
                 cta: isThaiLocale ? 'ดูคำแนะนำ' : 'View Protocol',
                 color: 'from-amber-500/20 to-orange-600/20',
@@ -178,7 +178,7 @@ export default function CustomerDashboard({ role }: CustomerDashboardProps) {
               { 
                 icon: BarChart3, 
                 title: isThaiLocale ? 'ติดตามความก้าวหน้า' : 'Metrics Progress', 
-                desc: isThaiLocale ? 'ดูกราฟและเปรียบเทียบผลการรักษา' : 'Analyze treatment efficacy trends.',
+                desc: isThaiLocale ? 'ดูกราฟและเปรียบเทียบผลการรักษา' : 'Analyze program efficacy trends.',
                 href: '/analysis/progress',
                 cta: isThaiLocale ? 'ดูความก้าวหน้า' : 'View Metrics',
                 color: 'from-cyan-500/20 to-blue-500/20',
@@ -253,9 +253,9 @@ export default function CustomerDashboard({ role }: CustomerDashboardProps) {
                 <CardContent className="p-12 pt-6 space-y-8">
                   {[
                     { step: "1", title: isThaiLocale ? 'อัปโหลดรูปภาพผิวหน้า' : 'Ingest Dermal Assets', desc: isThaiLocale ? 'ถ่ายภาพในแสงสว่างเพียงพอ หน้าตรง ไม่เอียง' : 'Capture clinical-grade direct orientation images.' },
-                    { step: "2", title: isThaiLocale ? 'รับผลการวิเคราะห์จาก AI' : 'Execute AI Synthesis', desc: isThaiLocale ? 'ดู Heatmap และคำแนะนำการรักษา' : 'Generate diagnostic heatmaps and recommendations.' },
-                    { step: "3", title: isThaiLocale ? 'ทดลอง AR Simulator' : 'AR Outcome Simulation', desc: isThaiLocale ? 'ดูผลการรักษาแบบ 3D ก่อนตัดสินใจ' : 'Simulate therapeutic results in real-time 3D.' },
-                    { step: "4", title: isThaiLocale ? 'จองนัดหมายผู้เชี่ยวชาญ' : 'Authorize Consultant', desc: isThaiLocale ? 'ปรึกษาแผนการรักษาที่เหมาะสมกับคุณ' : 'Confirm clinical implementation parameters.' }
+                    { step: "2", title: isThaiLocale ? 'รับผลการวิเคราะห์จาก AI' : 'Execute AI Synthesis', desc: isThaiLocale ? 'ดู Heatmap และคำแนะนำโปรแกรม' : 'Generate diagnostic heatmaps and recommendations.' },
+                    { step: "3", title: isThaiLocale ? 'ทดลอง AR Simulator' : 'AR Outcome Simulation', desc: isThaiLocale ? 'ดูผลโปรแกรมแบบ 3D ก่อนตัดสินใจ' : 'Simulate therapeutic results in real-time 3D.' },
+                    { step: "4", title: isThaiLocale ? 'จองนัดหมายผู้เชี่ยวชาญ' : 'Authorize Consultant', desc: isThaiLocale ? 'ปรึกษาแผนงานโปรแกรมที่เหมาะสมกับคุณ' : 'Confirm clinical implementation parameters.' }
                   ].map((s, i) => (
                     <div key={i} className="flex items-start gap-6 group">
                       <div className="h-10 w-10 rounded-xl bg-white/[0.03] border border-white/5 flex items-center justify-center shrink-0 text-[10px] font-black text-slate-500 group-hover:text-pink-400 group-hover:border-pink-500/30 transition-all shadow-inner italic">
@@ -331,13 +331,13 @@ export default function CustomerDashboard({ role }: CustomerDashboardProps) {
                         {isThaiLocale ? 'อัพเกรดเป็น Premium' : 'Deploy Premium Infrastructure'}
                       </h2>
                       <p className="text-xl text-slate-400 font-light italic leading-relaxed max-w-xl">
-                        {isThaiLocale ? 'ปลดล็อคฟีเจอร์พิเศษเพื่อประสิทธิภาพการดูแลผิวขั้นสูงสุด' : 'Unlock elite clinical modules for maximum diagnostic performance.'}
+                        {isThaiLocale ? 'ปลดล็อคฟีเจอร์พิเศษเพื่อประสิทธิภาพการดูแลผิวขั้นสูงสุด' : 'Unlock elite aesthetic modules for maximum diagnostic performance.'}
                       </p>
                     </div>
                     <ul className="grid sm:grid-cols-2 gap-6">
                       {[
                         isThaiLocale ? 'วิเคราะห์ไม่จำกัดครั้ง' : 'Infinite Synthesis Cycles',
-                        isThaiLocale ? 'รายงานแบบละเอียด พร้อม PDF' : 'Full Clinical Export (PDF)',
+                        isThaiLocale ? 'รายงานแบบละเอียด พร้อม PDF' : 'Full Aesthetic Export (PDF)',
                         isThaiLocale ? 'ติดตามความก้าวหน้าแบบ Timeline' : 'Longitudinal Analytics',
                         isThaiLocale ? 'ปรึกษาผู้เชี่ยวชาญทาง Chat' : 'Direct Expert Gateway'
                       ].map((item, i) => (

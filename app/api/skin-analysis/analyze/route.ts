@@ -17,7 +17,13 @@ interface AnalyzeRequest {
   image: string // base64 encoded image
   userId?: string
   mode?: AnalysisMode
-  patientInfo?: {
+  customerInfo?: {
+    name?: string
+    age?: number
+    gender?: string
+    skinType?: string
+  }
+  patientInfo?: { // Backward compatibility
     name?: string
     age?: number
     gender?: string
@@ -142,16 +148,16 @@ export const POST = withPublicAccess(async (request: NextRequest) => {
         ai_skin_type: analysis.ai?.skinType || "normal",
         ai_concerns: analysis.ai?.concerns || [],
         ai_severity: (analysis.ai?.severity as Record<string, number>) || {},
-        ai_treatment_plan: analysis.ai?.treatmentPlan || "No treatment plan available",
+        ai_program_plan: (analysis.ai as any)?.programPlan || (analysis.ai as any)?.treatmentPlan || "No program plan available",
 
         // Recommendations (convert to JSON)
         recommendations: (analysis.ai?.recommendations as any) || [],
 
         // Metadata
-        patient_name: body.patientInfo?.name,
-        patient_age: body.patientInfo?.age,
-        patient_gender: body.patientInfo?.gender,
-        patient_skin_type: body.patientInfo?.skinType,
+        customer_name: body.customerInfo?.name || (body as any).patientInfo?.name,
+        customer_age: body.customerInfo?.age || (body as any).patientInfo?.age,
+        customer_gender: body.customerInfo?.gender || (body as any).patientInfo?.gender,
+        customer_skin_type: body.customerInfo?.skinType || (body as any).patientInfo?.skinType,
         notes: body.notes,
         analysis_time_ms: analysisTime,
 

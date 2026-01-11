@@ -30,12 +30,12 @@ interface Lead {
   phone?: string
 }
 
-// Interface สำหรับแพ็คเกจทรีตเมนต์
-interface TreatmentPackage {
+// Interface สำหรับแพ็คเกจโปรแกรมความงาม
+interface ProgramPackage {
   id: string
   name: string
   price: number
-  treatments: string[]
+  programs: string[]
   description: string
   recommended: boolean
   discount?: number
@@ -55,7 +55,7 @@ export function QuickProposal({ open, onOpenChange, lead, onSent }: QuickProposa
   const [sendMethod, setSendMethod] = useState<"line" | "email" | null>(null)
 
   // AI แนะนำแพ็คเกจอัตโนมัติจากข้อมูลการวิเคราะห์
-  const getAIRecommendedPackages = (): TreatmentPackage[] => {
+  const getAIRecommendedPackages = (): ProgramPackage[] => {
     if (!lead || !lead.analysisData) {
       return getDefaultPackages()
     }
@@ -64,34 +64,40 @@ export function QuickProposal({ open, onOpenChange, lead, onSent }: QuickProposa
     const avgScore = (wrinkles + pigmentation + pores + hydration) / 4
 
     // แพ็คเกจพื้นฐาน - สำหรับคะแนนดี (>80)
-    const basicPackage: TreatmentPackage = {
+    const basicPackage: ProgramPackage = {
       id: "basic",
       name: t('packages.basic.name'),
       price: SUBSCRIPTION_PLANS.starter.price,
-      treatments: ["HydraFacial", "LED Therapy", "Vitamin Serum"],
+      programs: ["HydraFacial", "LED Therapy", "Vitamin Serum"],
       description: t('packages.basic.description'),
       recommended: avgScore > 80,
     }
 
-    const premiumPackage: TreatmentPackage = {
+    const premiumPackage: ProgramPackage = {
       id: "premium",
       name: t('packages.premium.name'),
       price: SUBSCRIPTION_PLANS.professional.price,
-      treatments: [
+      programs: [
         "HydraFacial",
         "Chemical Peel",
         "Microdermabrasion",
-        "RF Skin Tightening",
+        "IPL Rejuvenation",
       ],
       description: t('packages.premium.description'),
       recommended: avgScore <= 80 && avgScore > 50,
     }
 
-    const vipPackage: TreatmentPackage = {
+    const vipPackage: ProgramPackage = {
       id: "vip",
       name: t('packages.vip.name'),
       price: SUBSCRIPTION_PLANS.enterprise.price,
-      treatments: t.raw('packages.vip.treatments') as string[],
+      programs: [
+        "Laser Resurfacing",
+        "HIFU Lifting",
+        "Botox",
+        "Filler",
+        "Meso Bright",
+      ],
       description: t('packages.vip.description'),
       recommended: avgScore <= 50,
     }
@@ -105,29 +111,29 @@ export function QuickProposal({ open, onOpenChange, lead, onSent }: QuickProposa
   }
 
   // แพ็คเกจเริ่มต้นถ้าไม่มีข้อมูลการวิเคราะห์
-  const getDefaultPackages = (): TreatmentPackage[] => {
+  const getDefaultPackages = (): ProgramPackage[] => {
     return [
-      {
-        id: "premium",
-        name: t('packages.premium.name'),
-        price: SUBSCRIPTION_PLANS.professional.price,
-        treatments: ["HydraFacial", "Chemical Peel", "Microdermabrasion", "RF Skin Tightening"],
-        description: t('packages.premium.description'),
-        recommended: true,
-      },
       {
         id: "basic",
         name: t('packages.basic.name'),
         price: SUBSCRIPTION_PLANS.starter.price,
-        treatments: ["HydraFacial", "LED Therapy", "Vitamin Serum"],
+        programs: ["HydraFacial", "LED Therapy"],
         description: t('packages.basic.description'),
         recommended: false,
+      },
+      {
+        id: "premium",
+        name: t('packages.premium.name'),
+        price: SUBSCRIPTION_PLANS.professional.price,
+        programs: ["HydraFacial", "IPL Rejuvenation", "Meso Glow"],
+        description: t('packages.premium.description'),
+        recommended: true,
       },
       {
         id: "vip",
         name: t('packages.vip.name'),
         price: SUBSCRIPTION_PLANS.enterprise.price,
-        treatments: t.raw('packages.vip.treatments') as string[],
+        programs: t.raw('packages.vip.programs') as string[],
         description: t('packages.vip.description'),
         recommended: false,
       },
@@ -152,7 +158,7 @@ export function QuickProposal({ open, onOpenChange, lead, onSent }: QuickProposa
            t('template.intro', { concerns: `${lead.topConcern}${lead.secondaryConcern ? `, ${lead.secondaryConcern}` : ""}` }) + '\n\n' +
            t('template.recommend', { package: selectedPkg.name }) + '\n\n' +
            t('template.includes') + '\n' +
-           selectedPkg.treatments.map(tr => `• ${tr}`).join('\n') + '\n\n' +
+           selectedPkg.programs.map(tr => `• ${tr}`).join('\n') + '\n\n' +
            t('template.price', { price: pkgPriceStr }) + '\n' +
            (selectedPkg.discount ? t('template.discount', { percent: selectedPkg.discount, finalPrice: finalPriceStr }) : "") + '\n\n' +
            selectedPkg.description + '\n\n' +
@@ -272,7 +278,7 @@ export function QuickProposal({ open, onOpenChange, lead, onSent }: QuickProposa
 
                     <div className="flex items-end justify-between mt-3">
                       <div className="text-sm text-muted-foreground">
-                        {t('treatmentCount', { count: pkg.treatments.length })}
+                        {t('programCount', { count: pkg.programs.length })}
                       </div>
                       <div className="text-right">
                         {pkg.discount && (

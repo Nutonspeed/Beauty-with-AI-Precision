@@ -9,13 +9,13 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Camera, Upload, Loader2 } from 'lucide-react'
 import { useMediaPipeFaceDetection } from '@/lib/ai/mediapipe'
 import { skinAnalysisModel, SkinAnalysisResult } from '@/lib/ai/tensorflow'
-import { generateTreatmentRecommendation } from '@/lib/ai/openai'
+import { generateProgramRecommendation } from '@/lib/ai/openai'
 
 export default function SkinAnalyzerComponent() {
   const t = useTranslations('skinAnalyzer');
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [analysisResult, setAnalysisResult] = useState<SkinAnalysisResult | null>(null)
-  const [treatmentRecommendations, setTreatmentRecommendations] = useState('')
+  const [programRecommendations, setProgramRecommendations] = useState('')
   const [error, setError] = useState('')
   const fileInputRef = useRef<HTMLInputElement>(null)
   
@@ -52,13 +52,13 @@ export default function SkinAnalyzerComponent() {
       const result = await skinAnalysisModel.analyzeImage(imageElement)
       setAnalysisResult(result)
 
-      // Generate treatment recommendations
-      const recommendations = await generateTreatmentRecommendation(result, {
+      // Generate program recommendations
+      const recommendations = await generateProgramRecommendation(result, {
         age: 30,
         gender: 'female',
         concerns: [result.primaryConcern]
       })
-      setTreatmentRecommendations(recommendations || '')
+      setProgramRecommendations(recommendations || '')
 
     } catch (error) {
       console.error('Analysis error:', error)
@@ -196,11 +196,11 @@ export default function SkinAnalyzerComponent() {
                     </div>
                   </div>
 
-                  {treatmentRecommendations && (
+                  {programRecommendations && (
                     <div>
-                      <h3 className="font-semibold mb-2">{t('treatmentRecsTitle')}</h3>
+                      <h3 className="font-semibold mb-2">{t('programRecsTitle')}</h3>
                       <div className="bg-gray-50 p-3 rounded-lg">
-                        <p className="text-sm whitespace-pre-wrap">{treatmentRecommendations}</p>
+                        <p className="text-sm whitespace-pre-wrap">{programRecommendations}</p>
                       </div>
                     </div>
                   )}

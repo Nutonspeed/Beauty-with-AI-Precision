@@ -3,7 +3,7 @@ import { createEvent, getEventPublisher } from "@/lib/events/event-publisher"
 
 export type ProposalsListParams = {
   userId: string
-  clinicId: string | null
+  centerId: string | null
   status: string | null
   search: string | null
   limit: number
@@ -26,7 +26,7 @@ export async function listProposals(params: ProposalsListParams) {
         *,
         lead:sales_leads!lead_id (
           id,
-          clinic_id,
+          center_id,
           name,
           email,
           phone,
@@ -44,8 +44,8 @@ export async function listProposals(params: ProposalsListParams) {
     .order("created_at", { ascending: false })
     .range(params.offset, params.offset + params.limit - 1)
 
-  if (params.clinicId) {
-    query = query.eq("clinic_id", params.clinicId)
+  if (params.centerId) {
+    query = query.eq("center_id", params.centerId)
   }
 
   if (params.status && params.status !== "all") {
@@ -71,12 +71,12 @@ export async function listProposals(params: ProposalsListParams) {
   }
 }
 
-export async function createProposal(userId: string, clinicId: string | null, body: any) {
+export async function createProposal(userId: string, centerId: string | null, body: any) {
   const supabase = await createServerClient()
 
   const leadId = body?.lead_id
   const title = body?.title
-  const treatments = body?.treatments
+  const programs = body?.programs
 
   if (!leadId || !title) {
     const err: any = new Error("lead_id and title are required")
@@ -84,19 +84,19 @@ export async function createProposal(userId: string, clinicId: string | null, bo
     throw err
   }
 
-  if (!Array.isArray(treatments) || treatments.length === 0) {
-    const err: any = new Error("At least one treatment is required")
+  if (!Array.isArray(programs) || programs.length === 0) {
+    const err: any = new Error("At least one program is required")
     err.status = 400
     throw err
   }
 
   let leadQuery = supabase
     .from("sales_leads")
-    .select("id, clinic_id")
+    .select("id, center_id")
     .eq("id", leadId)
     .eq("sales_user_id", userId)
 
-  if (clinicId) leadQuery = leadQuery.eq("clinic_id", clinicId)
+  if (centerId) leadQuery = leadQuery.eq("center_id", centerId)
 
   const { data: lead, error: leadError } = await leadQuery.single()
   if (leadError || !lead) {
@@ -108,11 +108,11 @@ export async function createProposal(userId: string, clinicId: string | null, bo
   const insertPayload: any = {
     lead_id: leadId,
     sales_user_id: userId,
-    clinic_id: lead.clinic_id,
+    center_id: lead.center_id,
     title,
     description: body?.description ?? null,
     status: "draft",
-    treatments,
+    programs,
     subtotal: body?.subtotal || 0,
     discount_percent: body?.discount_percent || 0,
     discount_amount: body?.discount_amount || 0,
@@ -132,7 +132,7 @@ export async function createProposal(userId: string, clinicId: string | null, bo
         *,
         lead:sales_leads!lead_id (
           id,
-          clinic_id,
+          center_id,
           name,
           email,
           phone,
@@ -166,7 +166,7 @@ export async function createProposal(userId: string, clinicId: string | null, bo
         },
         {
           user_id: userId,
-          clinic_id: proposal.clinic_id ?? clinicId ?? undefined,
+          center_id: proposal.center_id ?? centerId ?? undefined,
           source: "proposals-service",
         },
       ),
@@ -187,7 +187,7 @@ export async function createProposal(userId: string, clinicId: string | null, bo
   return proposal
 }
 
-export async function getProposalById(userId: string, clinicId: string | null, id: string) {
+export async function getProposalById(userId: string, centerId: string | null, id: string) {
   const supabase = await createServerClient()
 
   let query = supabase
@@ -197,7 +197,7 @@ export async function getProposalById(userId: string, clinicId: string | null, i
         *,
         lead:sales_leads!lead_id (
           id,
-          clinic_id,
+          center_id,
           name,
           email,
           phone,
@@ -214,14 +214,14 @@ export async function getProposalById(userId: string, clinicId: string | null, i
     .eq("id", id)
     .eq("sales_user_id", userId)
 
-  if (clinicId) query = query.eq("clinic_id", clinicId)
+  if (centerId) query = query.eq("center_id", centerId)
 
   const { data, error } = await query.single()
   if (error) throw error
   return data
 }
 
-export async function updateProposal(userId: string, clinicId: string | null, id: string, body: any) {
+export async function updateProposal(userId: string, centerId: string | null, id: string, body: any) {
   const supabase = await createServerClient()
 
   let check = supabase
@@ -230,7 +230,7 @@ export async function updateProposal(userId: string, clinicId: string | null, id
     .eq("id", id)
     .eq("sales_user_id", userId)
 
-  if (clinicId) check = check.eq("clinic_id", clinicId)
+  if (centerId) check = check.eq("center_id", centerId)
 
   const { data: existing, error: checkError } = await check.single()
   if (checkError || !existing) {
@@ -242,7 +242,7 @@ export async function updateProposal(userId: string, clinicId: string | null, id
   const allowedFields = [
     "title",
     "description",
-    "treatments",
+    "programs",
     "subtotal",
     "discount_percent",
     "discount_amount",
@@ -262,8 +262,8 @@ export async function updateProposal(userId: string, clinicId: string | null, id
     }
   }
 
-  if (updates.treatments && (!Array.isArray(updates.treatments) || updates.treatments.length === 0)) {
-    const err: any = new Error("Treatments must be a non-empty array")
+  if (updates.programs && (!Array.isArray(updates.programs) || updates.programs.length === 0)) {
+    const err: any = new Error("Programs must be a non-empty array")
     err.status = 400
     throw err
   }
@@ -274,7 +274,7 @@ export async function updateProposal(userId: string, clinicId: string | null, id
     .eq("id", id)
     .eq("sales_user_id", userId)
 
-  if (clinicId) updateQuery = updateQuery.eq("clinic_id", clinicId)
+  if (centerId) updateQuery = updateQuery.eq("center_id", centerId)
 
   const { data, error } = await updateQuery
     .select(
@@ -282,7 +282,7 @@ export async function updateProposal(userId: string, clinicId: string | null, id
         *,
         lead:sales_leads!lead_id (
           id,
-          clinic_id,
+          center_id,
           name,
           email,
           phone,
@@ -329,7 +329,7 @@ export async function updateProposal(userId: string, clinicId: string | null, id
         },
         {
           user_id: userId,
-          clinic_id: (data as any).clinic_id ?? clinicId ?? undefined,
+          center_id: (data as any).center_id ?? centerId ?? undefined,
           source: "proposals-service",
         },
       ),
@@ -341,7 +341,7 @@ export async function updateProposal(userId: string, clinicId: string | null, id
   return data
 }
 
-export async function deleteDraftProposal(userId: string, clinicId: string | null, id: string) {
+export async function deleteDraftProposal(userId: string, centerId: string | null, id: string) {
   const supabase = await createServerClient()
 
   let check = supabase
@@ -350,7 +350,7 @@ export async function deleteDraftProposal(userId: string, clinicId: string | nul
     .eq("id", id)
     .eq("sales_user_id", userId)
 
-  if (clinicId) check = check.eq("clinic_id", clinicId)
+  if (centerId) check = check.eq("center_id", centerId)
 
   const { data: existing, error: checkError } = await check.single()
   if (checkError || !existing) {
@@ -366,7 +366,7 @@ export async function deleteDraftProposal(userId: string, clinicId: string | nul
   }
 
   let del = supabase.from("sales_proposals").delete().eq("id", id).eq("sales_user_id", userId)
-  if (clinicId) del = del.eq("clinic_id", clinicId)
+  if (centerId) del = del.eq("center_id", centerId)
 
   const { error } = await del
   if (error) throw error
@@ -382,7 +382,7 @@ export async function deleteDraftProposal(userId: string, clinicId: string | nul
   return { message: "Proposal deleted successfully" }
 }
 
-export async function sendProposal(userId: string, clinicId: string | null, id: string) {
+export async function sendProposal(userId: string, centerId: string | null, id: string) {
   const supabase = await createServerClient()
 
   let check = supabase
@@ -391,7 +391,7 @@ export async function sendProposal(userId: string, clinicId: string | null, id: 
     .eq("id", id)
     .eq("sales_user_id", userId)
 
-  if (clinicId) check = check.eq("clinic_id", clinicId)
+  if (centerId) check = check.eq("center_id", centerId)
 
   const { data: existing, error: checkError } = await check.single()
   if (checkError || !existing) {
@@ -414,7 +414,7 @@ export async function sendProposal(userId: string, clinicId: string | null, id: 
     .eq("id", id)
     .eq("sales_user_id", userId)
 
-  if (clinicId) updateQuery = updateQuery.eq("clinic_id", clinicId)
+  if (centerId) updateQuery = updateQuery.eq("center_id", centerId)
 
   const { data, error } = await updateQuery
     .select(
@@ -422,7 +422,7 @@ export async function sendProposal(userId: string, clinicId: string | null, id: 
         *,
         lead:sales_leads!lead_id (
           id,
-          clinic_id,
+          center_id,
           name,
           email,
           phone,
@@ -456,7 +456,7 @@ export async function sendProposal(userId: string, clinicId: string | null, id: 
         },
         {
           user_id: userId,
-          clinic_id: (data as any).clinic_id ?? clinicId ?? undefined,
+          center_id: (data as any).center_id ?? centerId ?? undefined,
           source: "proposals-service",
         },
       ),
@@ -478,7 +478,7 @@ export async function sendProposal(userId: string, clinicId: string | null, id: 
   return data
 }
 
-export async function acceptProposal(userId: string, clinicId: string | null, id: string) {
+export async function acceptProposal(userId: string, centerId: string | null, id: string) {
   const supabase = await createServerClient()
 
   let check = supabase
@@ -487,7 +487,7 @@ export async function acceptProposal(userId: string, clinicId: string | null, id
     .eq("id", id)
     .eq("sales_user_id", userId)
 
-  if (clinicId) check = check.eq("clinic_id", clinicId)
+  if (centerId) check = check.eq("center_id", centerId)
 
   const { data: existing, error: checkError } = await check.single()
   if (checkError || !existing) {
@@ -510,7 +510,7 @@ export async function acceptProposal(userId: string, clinicId: string | null, id
     .eq("id", id)
     .eq("sales_user_id", userId)
 
-  if (clinicId) updateQuery = updateQuery.eq("clinic_id", clinicId)
+  if (centerId) updateQuery = updateQuery.eq("center_id", centerId)
 
   const { data, error } = await updateQuery
     .select(
@@ -518,7 +518,7 @@ export async function acceptProposal(userId: string, clinicId: string | null, id
         *,
         lead:sales_leads!lead_id (
           id,
-          clinic_id,
+          center_id,
           name,
           email,
           phone,
@@ -552,7 +552,7 @@ export async function acceptProposal(userId: string, clinicId: string | null, id
         },
         {
           user_id: userId,
-          clinic_id: (data as any).clinic_id ?? clinicId ?? undefined,
+          center_id: (data as any).center_id ?? centerId ?? undefined,
           source: "proposals-service",
         },
       ),
@@ -567,7 +567,7 @@ export async function acceptProposal(userId: string, clinicId: string | null, id
     .update({ status: "won", updated_at: now })
     .eq("id", existing.lead_id)
     .eq("sales_user_id", userId)
-  if (clinicId) leadUpdate = leadUpdate.eq("clinic_id", clinicId)
+  if (centerId) leadUpdate = leadUpdate.eq("center_id", centerId)
   await leadUpdate
 
   await supabase.from("sales_activities").insert({
@@ -583,7 +583,7 @@ export async function acceptProposal(userId: string, clinicId: string | null, id
   return data
 }
 
-export async function rejectProposal(userId: string, clinicId: string | null, id: string, reason: string | null) {
+export async function rejectProposal(userId: string, centerId: string | null, id: string, reason: string | null) {
   const supabase = await createServerClient()
 
   let check = supabase
@@ -592,7 +592,7 @@ export async function rejectProposal(userId: string, clinicId: string | null, id
     .eq("id", id)
     .eq("sales_user_id", userId)
 
-  if (clinicId) check = check.eq("clinic_id", clinicId)
+  if (centerId) check = check.eq("center_id", centerId)
 
   const { data: existing, error: checkError } = await check.single()
   if (checkError || !existing) {
@@ -621,7 +621,7 @@ export async function rejectProposal(userId: string, clinicId: string | null, id
     .eq("id", id)
     .eq("sales_user_id", userId)
 
-  if (clinicId) updateQuery = updateQuery.eq("clinic_id", clinicId)
+  if (centerId) updateQuery = updateQuery.eq("center_id", centerId)
 
   const { data, error } = await updateQuery
     .select(
@@ -629,7 +629,7 @@ export async function rejectProposal(userId: string, clinicId: string | null, id
         *,
         lead:sales_leads!lead_id (
           id,
-          clinic_id,
+          center_id,
           name,
           email,
           phone,
@@ -663,7 +663,7 @@ export async function rejectProposal(userId: string, clinicId: string | null, id
         },
         {
           user_id: userId,
-          clinic_id: (data as any).clinic_id ?? clinicId ?? undefined,
+          center_id: (data as any).center_id ?? centerId ?? undefined,
           source: "proposals-service",
         },
       ),
@@ -685,7 +685,7 @@ export async function rejectProposal(userId: string, clinicId: string | null, id
   return data
 }
 
-export async function trackProposalView(userId: string, clinicId: string | null, id: string) {
+export async function trackProposalView(userId: string, centerId: string | null, id: string) {
   const supabase = await createServerClient()
 
   const { data: proposal, error: rpcError } = await supabase.rpc("increment_proposal_view_count", {
@@ -708,7 +708,7 @@ export async function trackProposalView(userId: string, clinicId: string | null,
           },
           {
             user_id: userId,
-            clinic_id: (proposal as any)?.clinic_id ?? clinicId ?? undefined,
+            center_id: (proposal as any)?.center_id ?? centerId ?? undefined,
             source: "proposals-service",
           },
         ),
@@ -722,7 +722,7 @@ export async function trackProposalView(userId: string, clinicId: string | null,
 
   const { data: existing, error: checkError } = await supabase
     .from("sales_proposals")
-    .select("id, view_count, first_viewed_at, lead_id, title, sales_user_id, clinic_id")
+    .select("id, view_count, first_viewed_at, lead_id, title, sales_user_id, center_id")
     .eq("id", id)
     .single()
 
@@ -738,7 +738,7 @@ export async function trackProposalView(userId: string, clinicId: string | null,
     throw err
   }
 
-  if (clinicId && existing.clinic_id && existing.clinic_id !== clinicId) {
+  if (centerId && existing.center_id && existing.center_id !== centerId) {
     const err: any = new Error("Forbidden")
     err.status = 403
     throw err
@@ -756,7 +756,7 @@ export async function trackProposalView(userId: string, clinicId: string | null,
   }
 
   let updateQuery = supabase.from("sales_proposals").update(updates).eq("id", id)
-  if (clinicId) updateQuery = updateQuery.eq("clinic_id", clinicId)
+  if (centerId) updateQuery = updateQuery.eq("center_id", centerId)
 
   const { data: updated, error: updateError } = await updateQuery
     .select(
@@ -764,7 +764,7 @@ export async function trackProposalView(userId: string, clinicId: string | null,
         *,
         lead:sales_leads!lead_id (
           id,
-          clinic_id,
+          center_id,
           name,
           email,
           phone,
@@ -809,7 +809,7 @@ export async function trackProposalView(userId: string, clinicId: string | null,
         },
         {
           user_id: userId,
-          clinic_id: (updated as any).clinic_id ?? clinicId ?? undefined,
+          center_id: (updated as any).center_id ?? centerId ?? undefined,
           source: "proposals-service",
         },
       ),
@@ -832,7 +832,7 @@ export type BookFromProposalParams = {
 
 export async function bookFromProposal(
   userId: string,
-  clinicId: string | null,
+  centerId: string | null,
   proposalId: string,
   params: BookFromProposalParams
 ) {
@@ -872,10 +872,10 @@ export async function bookFromProposal(
       id,
       lead_id,
       sales_user_id,
-      clinic_id,
+      center_id,
       status,
       total_value,
-      treatments,
+      programs,
       lead:sales_leads!lead_id (
         id,
         sales_user_id,
@@ -883,14 +883,14 @@ export async function bookFromProposal(
         name,
         email,
         phone,
-        clinic_id
+        center_id
       )
     `
     )
     .eq("id", proposalId)
     .eq("sales_user_id", userId)
 
-  if (clinicId) proposalQuery = proposalQuery.eq("clinic_id", clinicId)
+  if (centerId) proposalQuery = proposalQuery.eq("center_id", centerId)
 
   const { data: proposal, error: proposalError } = await proposalQuery.single()
 
@@ -907,21 +907,21 @@ export async function bookFromProposal(
   }
 
   const lead = Array.isArray(proposal.lead) ? proposal.lead[0] : proposal.lead
-  const effectiveClinicId = proposal.clinic_id || lead?.clinic_id
-  if (!effectiveClinicId) {
-    const err: any = new Error("Proposal is missing clinic context")
+  const effectiveCenterId = proposal.center_id || lead?.center_id
+  if (!effectiveCenterId) {
+    const err: any = new Error("Proposal is missing center context")
     err.status = 400
     throw err
   }
 
-  // 2) Ensure a customer exists for this lead/clinic
+  // 2) Ensure a customer exists for this lead/center
   let customerId: string | null = null
 
   if (lead?.email || lead?.phone) {
     const { data: existingCustomer } = await supabase
       .from("customers")
       .select("id")
-      .eq("clinic_id", effectiveClinicId)
+      .eq("center_id", effectiveCenterId)
       .or(
         [
           lead.email ? `email.eq.${lead.email}` : "",
@@ -941,7 +941,7 @@ export async function bookFromProposal(
     const { data: newCustomer, error: createCustomerError } = await supabase
       .from("customers")
       .insert({
-        clinic_id: effectiveClinicId,
+        center_id: effectiveCenterId,
         name: lead?.name ?? "Unknown",
         email: lead?.email ?? null,
         phone: lead?.phone ?? null,
@@ -959,31 +959,31 @@ export async function bookFromProposal(
     customerId = newCustomer.id as string
   }
 
-  // 3) Load the clinic service to derive price / duration
-  const { data: clinicService, error: serviceError } = await supabase
-    .from("clinic_services")
+  // 3) Load the center service to derive price / duration
+  const { data: centerService, error: serviceError } = await supabase
+    .from("center_services")
     .select("id, name, price, duration_minutes")
     .eq("id", service_id)
-    .eq("clinic_id", effectiveClinicId)
+    .eq("center_id", effectiveCenterId)
     .single()
 
-  if (serviceError || !clinicService) {
-    const err: any = new Error("Service not found for this clinic")
+  if (serviceError || !centerService) {
+    const err: any = new Error("Service not found for this center")
     err.status = 404
     throw err
   }
 
-  const durationMinutes = Number(clinicService.duration_minutes ?? 60)
+  const durationMinutes = Number(centerService.duration_minutes ?? 60)
 
   // 4) Create appointment record (canonical booking)
   const bookingTimeHHMM = booking_time.slice(0, 5)
   const { data: appointment, error: appointmentError } = await supabase
     .from("appointments")
     .insert({
-      clinic_id: effectiveClinicId,
+      center_id: effectiveCenterId,
       customer_id: customerId,
       staff_id: staff_id ?? null,
-      service_type: clinicService.name,
+      service_type: centerService.name,
       appointment_date: booking_date,
       appointment_time: bookingTimeHHMM,
       duration_minutes: durationMinutes,
@@ -1004,13 +1004,13 @@ export async function bookFromProposal(
   let paymentId: string | null = null
   let paymentAmount: number | null = null
   try {
-    const amount = Number(clinicService.price ?? proposal.total_value ?? 0)
+    const amount = Number(centerService.price ?? proposal.total_value ?? 0)
     if (Number.isFinite(amount) && amount > 0) {
       paymentAmount = amount
       const { data: payment, error: paymentError } = await supabase
         .from("booking_payments")
         .insert({
-          clinic_id: effectiveClinicId,
+          center_id: effectiveCenterId,
           appointment_id: appointment.id,
           amount,
           payment_method: "promptpay",
@@ -1063,7 +1063,7 @@ export async function bookFromProposal(
         },
         {
           user_id: userId,
-          clinic_id: effectiveClinicId ?? clinicId ?? undefined,
+          center_id: effectiveCenterId ?? centerId ?? undefined,
           source: "proposals-service",
         },
       ),

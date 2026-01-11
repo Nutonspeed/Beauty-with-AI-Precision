@@ -42,7 +42,7 @@ const leadFormSchema = z.object({
   line_id: z.string().optional(),
   status: z.enum(['new', 'contacted', 'hot', 'warm', 'cold']).default('new'),
   source: z.enum(['walk_in', 'online', 'referral', 'event', 'social_media', 'other']).optional(),
-  interested_treatments: z.array(z.string()).default([]),
+  interested_programs: z.array(z.string()).default([]),
   budget_range: z.string().optional(),
   notes: z.string().optional(),
 })
@@ -57,17 +57,17 @@ interface LeadCaptureFormProps {
   onSuccess?: (leadId: string) => void
 }
 
-const TREATMENT_OPTIONS = [
-  "Acne Treatment",
+const PROGRAM_OPTIONS = [
+  "Acne Program",
   "Anti-Aging",
   "Brightening",
   "Hydration",
-  "Laser Treatment",
+  "Laser Program",
   "Facial Peel",
   "Botox/Fillers",
   "Skin Tightening",
-  "Pigmentation Treatment",
-  "Scar Treatment",
+  "Pigmentation Program",
+  "Scar Program",
 ]
 
 const BUDGET_OPTIONS = [
@@ -114,7 +114,7 @@ export function LeadCaptureForm({
       line_id: defaultValues?.line_id || "",
       status: defaultValues?.status || "new",
       source: defaultValues?.source || undefined,
-      interested_treatments: defaultValues?.interested_treatments || [],
+      interested_programs: defaultValues?.interested_programs || [],
       budget_range: defaultValues?.budget_range || undefined,
       notes: defaultValues?.notes || "",
     },
@@ -307,46 +307,46 @@ export function LeadCaptureForm({
               </div>
             </div>
 
-            {/* Interested Treatments */}
+            {/* Interested Programs */}
             <FormField
               control={form.control}
-              name="interested_treatments"
+              name="interested_programs"
               render={() => (
                 <FormItem>
                   <div className="mb-4">
-                    <FormLabel>Interested Treatments</FormLabel>
+                    <FormLabel>Interested Programs</FormLabel>
                     <FormDescription>
-                      Select all treatments the customer is interested in
+                      Select all programs the customer is interested in
                     </FormDescription>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
-                    {TREATMENT_OPTIONS.map((treatment) => (
+                    {PROGRAM_OPTIONS.map((program) => (
                       <FormField
-                        key={treatment}
+                        key={program}
                         control={form.control}
-                        name="interested_treatments"
+                        name="interested_programs"
                         render={({ field }) => {
                           return (
                             <FormItem
-                              key={treatment}
+                              key={program}
                               className="flex flex-row items-start space-x-3 space-y-0"
                             >
                               <FormControl>
                                 <Checkbox
-                                  checked={field.value?.includes(treatment)}
+                                  checked={field.value?.includes(program)}
                                   onCheckedChange={(checked) => {
                                     return checked
-                                      ? field.onChange([...field.value, treatment])
+                                      ? field.onChange([...field.value, program])
                                       : field.onChange(
                                           field.value?.filter(
-                                            (value) => value !== treatment
+                                            (value) => value !== program
                                           )
                                         )
                                   }}
                                 />
                               </FormControl>
                               <FormLabel className="text-sm font-normal cursor-pointer">
-                                {treatment}
+                                {program}
                               </FormLabel>
                             </FormItem>
                           )
@@ -381,7 +381,7 @@ export function LeadCaptureForm({
                     </SelectContent>
                   </Select>
                   <FormDescription>
-                    Estimated budget for treatments
+                    Estimated budget for programs
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

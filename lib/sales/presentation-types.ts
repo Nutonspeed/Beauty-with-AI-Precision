@@ -3,7 +3,7 @@ import type { HybridAnalysisResult } from '@/lib/ai/hybrid-analyzer'
 export interface ProposalItem {
   id: string
   name: string
-  type: 'treatment' | 'product'
+  type: 'program' | 'product'
   quantity: number
   pricePerUnit: number
   total: number
@@ -34,7 +34,7 @@ export interface PresentationData {
     right?: string
   }
   analysisResults: HybridAnalysisResult | null
-  selectedTreatments: string[]
+  selectedPrograms: string[]
   selectedProducts: string[]
   proposal: ProposalDetails | null
   signature: string | null

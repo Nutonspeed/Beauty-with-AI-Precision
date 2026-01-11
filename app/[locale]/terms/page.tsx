@@ -204,7 +204,7 @@ export default function TermsOfServicePage() {
           </div>
         </section>
 
-        {/* Quick Clinical Navigation */}
+        {/* Quick Aesthetic Navigation */}
         <section className="sticky top-[72px] z-40 border-b border-white/5 bg-[#020617]/80 backdrop-blur-xl py-4 overflow-x-auto">
           <div className="container">
             <div className="flex items-center justify-center gap-4 min-w-max">

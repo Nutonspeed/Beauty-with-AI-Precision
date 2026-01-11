@@ -31,15 +31,15 @@ function getRangeWindows(range: string) {
   }
 }
 
-export async function fetchSalesMetricsForUser(userId: string, clinicId: string | null, range: string = '1d') {
+export async function fetchSalesMetricsForUser(userId: string, centerId: string | null, range: string = '1d') {
   const supabase = await createServerClient()
   const { currentStart, previousStart, previousEnd } = getRangeWindows(range)
 
-  // Helper for clinic filter
-  const applyClinic = <_T extends { eq: any }>(q: any) => (clinicId ? q.eq('clinic_id', clinicId) : q)
+  // Helper for center filter
+  const applyCenter = <_T extends { eq: any }>(q: any) => (centerId ? q.eq('center_id', centerId) : q)
 
   // Query 1: Hot leads (high priority)
-  const q1 = applyClinic(
+  const q1 = applyCenter(
     supabase
       .from('sales_leads')
       .select('*', { count: 'exact', head: true })
@@ -50,7 +50,7 @@ export async function fetchSalesMetricsForUser(userId: string, clinicId: string 
   const { count: totalHotLeads } = await q1
 
   // Query 2: New leads today
-  const q2 = applyClinic(
+  const q2 = applyCenter(
     supabase
       .from('sales_leads')
       .select('*', { count: 'exact', head: true })
@@ -61,7 +61,7 @@ export async function fetchSalesMetricsForUser(userId: string, clinicId: string 
   const { count: newLeadsToday } = await q2
 
   // Query 3: New leads yesterday
-  const q3 = applyClinic(
+  const q3 = applyCenter(
     supabase
       .from('sales_leads')
       .select('*', { count: 'exact', head: true })
@@ -73,7 +73,7 @@ export async function fetchSalesMetricsForUser(userId: string, clinicId: string 
   const { count: newLeadsYesterday } = await q3
 
   // Query 4: Leads contacted today
-  const q4 = applyClinic(
+  const q4 = applyCenter(
     supabase
       .from('sales_leads')
       .select('*', { count: 'exact', head: true })
@@ -83,7 +83,7 @@ export async function fetchSalesMetricsForUser(userId: string, clinicId: string 
   const { count: leadsContactedToday } = await q4
 
   // Query 5: Leads contacted yesterday
-  const q5 = applyClinic(
+  const q5 = applyCenter(
     supabase
       .from('sales_leads')
       .select('*', { count: 'exact', head: true })
@@ -94,7 +94,7 @@ export async function fetchSalesMetricsForUser(userId: string, clinicId: string 
   const { count: leadsContactedYesterday } = await q5
 
   // Query 6: Qualified leads today
-  const q6 = applyClinic(
+  const q6 = applyCenter(
     supabase
       .from('sales_leads')
       .select('*', { count: 'exact', head: true })
@@ -105,7 +105,7 @@ export async function fetchSalesMetricsForUser(userId: string, clinicId: string 
   const { count: qualifiedLeadsToday } = await q6
 
   // Query 7: Qualified leads yesterday
-  const q7 = applyClinic(
+  const q7 = applyCenter(
     supabase
       .from('sales_leads')
       .select('*', { count: 'exact', head: true })
@@ -123,14 +123,14 @@ export async function fetchSalesMetricsForUser(userId: string, clinicId: string 
     .eq('sales_user_id', userId)
     .eq('status', 'accepted')
     .gte('accepted_at', currentStart)
-  if (clinicId) proposalsQuery = proposalsQuery.eq('clinic_id', clinicId)
+  if (centerId) proposalsQuery = proposalsQuery.eq('center_id', centerId)
   const { data: acceptedProposals } = await proposalsQuery
 
   const totalAcceptedRevenue =
     acceptedProposals?.reduce((sum, row) => sum + (Number((row as any).total_value) || 0), 0) || 0
 
   // Query 9: AI leads created
-  const q9 = applyClinic(
+  const q9 = applyCenter(
     supabase
       .from('sales_leads')
       .select('*', { count: 'exact', head: true })
@@ -147,7 +147,7 @@ export async function fetchSalesMetricsForUser(userId: string, clinicId: string 
     .eq('sales_user_id', userId)
     .eq('lead.source', 'ai_scan')
     .gte('created_at', currentStart)
-  if (clinicId) aiProposalsQuery = aiProposalsQuery.eq('clinic_id', clinicId)
+  if (centerId) aiProposalsQuery = aiProposalsQuery.eq('center_id', centerId)
   const { count: aiProposalsCount } = await aiProposalsQuery
 
   // Query 11: AI bookings created
@@ -156,7 +156,7 @@ export async function fetchSalesMetricsForUser(userId: string, clinicId: string 
     .select('price, booking_date, internal_notes')
     .ilike('internal_notes', `Created from accepted proposal%by ${userId}%`)
     .gte('booking_date', currentStart)
-  if (clinicId) aiBookingsQuery = aiBookingsQuery.eq('clinic_id', clinicId)
+  if (centerId) aiBookingsQuery = aiBookingsQuery.eq('center_id', centerId)
   const { data: aiBookingsRows } = await aiBookingsQuery
 
   const aiBookingsCount = aiBookingsRows?.length || 0
@@ -164,7 +164,7 @@ export async function fetchSalesMetricsForUser(userId: string, clinicId: string 
     aiBookingsRows?.reduce((sum, row) => sum + (Number((row as any).price) || 0), 0) || 0
 
   // Query 12: Remote consult requests
-  const q12 = applyClinic(
+  const q12 = applyCenter(
     supabase
       .from('sales_leads')
       .select('*', { count: 'exact', head: true })
@@ -175,7 +175,7 @@ export async function fetchSalesMetricsForUser(userId: string, clinicId: string 
   const { count: remoteConsultRequestsCount } = await q12
 
   // Query 13: Remote consult leads converted
-  const q13 = applyClinic(
+  const q13 = applyCenter(
     supabase
       .from('sales_leads')
       .select('*', { count: 'exact', head: true })
@@ -188,7 +188,7 @@ export async function fetchSalesMetricsForUser(userId: string, clinicId: string 
 
   // Query 14-17: Lead age buckets
   const ageCut = (days: number) => new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString()
-  const q14 = applyClinic(
+  const q14 = applyCenter(
     supabase
       .from('sales_leads')
       .select('*', { count: 'exact', head: true })
@@ -197,7 +197,7 @@ export async function fetchSalesMetricsForUser(userId: string, clinicId: string 
   )
   const { count: ageLt1d } = await q14
 
-  const q15 = applyClinic(
+  const q15 = applyCenter(
     supabase
       .from('sales_leads')
       .select('*', { count: 'exact', head: true })
@@ -207,7 +207,7 @@ export async function fetchSalesMetricsForUser(userId: string, clinicId: string 
   )
   const { count: age1to3 } = await q15
 
-  const q16 = applyClinic(
+  const q16 = applyCenter(
     supabase
       .from('sales_leads')
       .select('*', { count: 'exact', head: true })
@@ -217,7 +217,7 @@ export async function fetchSalesMetricsForUser(userId: string, clinicId: string 
   )
   const { count: age3to7 } = await q16
 
-  const q17 = applyClinic(
+  const q17 = applyCenter(
     supabase
       .from('sales_leads')
       .select('*', { count: 'exact', head: true })
@@ -234,7 +234,7 @@ export async function fetchSalesMetricsForUser(userId: string, clinicId: string 
     .not('last_contact_at', 'is', null)
     .order('created_at', { ascending: false })
     .limit(500)
-  if (clinicId) responseQuery = responseQuery.eq('clinic_id', clinicId)
+  if (centerId) responseQuery = responseQuery.eq('center_id', centerId)
   const { data: responseRows } = await responseQuery
 
   const responseMinutes = (responseRows || [])
@@ -255,7 +255,7 @@ export async function fetchSalesMetricsForUser(userId: string, clinicId: string 
     .select('source, status')
     .eq('sales_user_id', userId)
     .not('source', 'is', null)
-  if (clinicId) winLeadsQuery = winLeadsQuery.eq('clinic_id', clinicId)
+  if (centerId) winLeadsQuery = winLeadsQuery.eq('center_id', centerId)
   const { data: winLeads } = await winLeadsQuery
 
   const sourceTotals: Record<string, { total: number; won: number }> = {}
@@ -288,7 +288,7 @@ export async function fetchSalesMetricsForUser(userId: string, clinicId: string 
     return ((today - yesterday) / yesterday) * 100
   }
 
-  const targets = await getClinicSalesKpiTargets({ supabase: supabase as any, clinicId })
+  const targets = await getClinicSalesKpiTargets({ supabase: supabase as any, centerId })
 
   return {
     callsMade: {

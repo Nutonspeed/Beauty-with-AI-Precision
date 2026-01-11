@@ -1,7 +1,7 @@
 {
   "brand": "AI Beauty Platform",
   "common": {
-    "appName": "AI美容诊所",
+    "appName": "AI美容中心",
     "appDescription": "AI驱动的皮肤科和美容分析平台",
     "loading": "加载中...",
     "error": "错误",
@@ -27,7 +27,7 @@
     "profile": "个人资料",
     "language": "语言",
     "notifications": "通知",
-    "switchClinic": "切换诊所",
+    "switchCenter": "切换中心",
     "startAnalysis": "开始分析",
     "viewFullSystem": "查看完整系统",
     "status": {
@@ -55,7 +55,7 @@
     "analytics": "分析",
     "leads": "潜在客户",
     "proposals": "提案",
-    "tenants": "诊所管理",
+    "tenants": "中心管理",
     "users": "用户管理",
     "settings": "设置",
     "demo": "演示",
@@ -161,8 +161,8 @@
     "customizeGenerate": "自定义和生成",
     "customerName": "客户姓名",
     "customerNamePlaceholder": "例如 Sarah",
-    "treatmentType": "治疗类型",
-    "treatmentTypePlaceholder": "例如 肉毒杆菌",
+    "programType": "方案类型",
+    "programTypePlaceholder": "例如 肉毒杆菌",
     "mainConcern": "主要问题",
     "mainConcernPlaceholder": "例如 皱纹",
     "generating": "生成中...",
@@ -199,7 +199,7 @@
   },
   "compliance": {
     "title": "隐私与合规",
-    "description": "患者数据隐私、安全措施和AI模型验证概述",
+    "description": "客户数据隐私、安全措施和AI模型验证概述",
     "dataPrivacy": {
       "title": "数据隐私 (PDPA/GDPR)",
       "item1": "明确同意的目的限制数据收集和使用",
@@ -213,11 +213,11 @@
       "sensitivity": "灵敏度",
       "specificity": "特异性",
       "accuracy": "总体准确性",
-      "disclaimer": "数字是为沟通目的模拟的，不是临床测试结果；实际性能可能会有所不同。"
+      "disclaimer": "数字是为沟通目的模拟的，不是美学测试结果；实际性能可能会有所不同。"
     },
     "medicalDisclaimer": {
       "title": "医疗免责声明",
-      "description": "该系统支持专业决策，不能替代持证临床医生的诊断或治疗。"
+      "description": "该系统支持专业决策，不能替代持证美学医生的诊断或方案。"
     },
     "contact": {
       "title": "联系我们",
@@ -228,21 +228,21 @@
     "badge": "AI顾问",
     "title": "商业AI顾问",
     "description": "询问有关业务、营销的问题或获取AI建议",
-    "initialMessage": "您好！我是ClinicIQ AI顾问，随时帮助您进行诊所管理、数据分析和业务咨询！🏥",
-    "aiResponse": "感谢您的提问！这是我的初步分析：\n\n📊 根据您的诊所数据：\n- 平均月收入：฿450,000\n- 热门治疗：肉毒杆菌（35%）、填充剂（28%）\n- 回头率：72%\n\n建议：考虑为新客户添加促销活动和忠诚度计划",
+    "initialMessage": "您好！我是Aesthetic Intelligence AI顾问，随时帮助您进行中心管理、数据分析和业务咨询！🏥",
+    "aiResponse": "感谢您的提问！这是我的初步分析：\n\n📊 根据您的中心数据：\n- 平均月收入：฿450,000\n- 热门方案：肉毒杆菌（35%）、填充剂（28%）\n- 回头率：72%\n\n建议：考虑为新客户添加促销活动和忠诚度计划",
     "suggestions": {
       "sales": "分析本月销售额",
       "customers": "建议获取新客户的方法",
-      "treatments": "总结热门治疗",
+      "programs": "总结热门方案",
       "staff": "分析员工绩效"
     },
     "placeholder": "输入您的问题..."
   },
   "arSimulator": {
     "backToAnalysis": "返回分析",
-    "badge": "AR治疗模拟器",
-    "title": "治疗结果模拟器",
-    "description": "上传您的照片，使用AR技术实时查看治疗效果",
+    "badge": "AR方案模拟器",
+    "title": "方案结果模拟器",
+    "description": "上传您的照片，使用AR技术实时查看方案效果",
     "uploadImage": "上传图片",
     "clickToUpload": "点击上传",
     "supports": "支持JPG、PNG（最大10MB）",
@@ -349,7 +349,7 @@
   },
   "caseStudies": {
     "title": "案例研究",
-    "description": "模拟示例以说明ClinicIQ的能力 — 不是医疗建议",
+    "description": "模拟示例以说明Aesthetic Intelligence的能力 — 不是医疗建议",
     "caseStudyLabel": "案例研究",
     "readMore": "阅读更多",
     "backToHome": "返回首页",
@@ -361,7 +361,7 @@
     "questions": {
       "accuracy": {
         "q": "AI皮肤分析有多准确？",
-        "a": "该模型经过多样化样本测试并持续改进。经过临床验证。"
+        "a": "该模型经过多样化样本测试并持续改进。经过美学验证。"
       },
       "privacy": {
         "q": "图像数据如何存储？",
@@ -376,7 +376,7 @@
   "contact": {
     "hero": {
       "badge": "联系我们",
-      "title": "准备开始使用AI367BAR?",
+      "title": "准备开始使用Aesthetic Intelligence?",
       "description": "联系我们的团队进行咨询或了解有关系统的更多信息"
     },
     "form": {
@@ -385,18 +385,18 @@
       "fullName": "全名",
       "email": "电子邮件",
       "phone": "电话号码",
-      "clinicName": "诊所/公司名称",
+      "centerName": "中心/公司名称",
       "packageInterest": "套餐兴趣",
       "message": "留言",
       "namePlaceholder": "张三",
-      "clinicPlaceholder": "ABC美容诊所",
+      "centerPlaceholder": "ABC美容中心",
       "messagePlaceholder": "告诉我们您的需求...",
       "sending": "发送中...",
       "sendMessage": "发送消息",
       "packages": {
         "free": "免费套餐",
         "premium": "高级套餐",
-        "enterprise": "企业版 - 多诊所",
+        "enterprise": "企业版 - 多中心",
         "consultation": "一般咨询"
       },
       "success": {
@@ -415,7 +415,7 @@
     },
     "enterprise": {
       "title": "企业客户",
-      "discount": "多分店诊所特别折扣",
+      "discount": "多分店中心特别折扣",
       "customization": "定制配置支持",
       "support": "专属24/7支持团队"
     }
@@ -424,18 +424,18 @@
     "hero": {
       "badge": "关于我们",
       "title": "AI技术领导者",
-      "subtitle": "面向美容诊所",
-      "description": "AI367BAR是一个B2B2C平台，结合先进的AI技术、医疗级皮肤分析和全面的诊所管理系统，帮助美容诊所业务可持续发展。",
+      "subtitle": "面向美容中心",
+      "description": "Aesthetic Intelligence是一个B2B2C平台，结合先进的AI技术、医疗级皮肤分析和全面的中心管理系统，帮助美容中心业务可持续发展。",
       "tryFree": "免费试用",
       "contactUs": "联系我们"
     },
     "vision": {
       "title": "愿景",
-      "description": "成为亚洲领先的AI平台，用于皮肤分析和美容诊所管理，使世界级技术对企业来说既可及又负担得起。"
+      "description": "成为亚洲领先的AI平台，用于皮肤分析和美容中心管理，使世界级技术对企业来说既可及又负担得起。"
     },
     "mission": {
       "title": "使命",
-      "description": "开发准确、安全且易于访问的AI技术，提升美容诊所服务标准，创造最佳客户体验。"
+      "description": "开发准确、安全且易于访问的AI技术，提升美容中心服务标准，创造最佳客户体验。"
     },
     "coreValues": {
       "title": "核心价值观",
@@ -450,7 +450,7 @@
       },
       "growth": {
         "title": "增长",
-        "description": "利用现代技术帮助诊所业务增长"
+        "description": "利用现代技术帮助中心业务增长"
       },
       "quality": {
         "title": "质量",
@@ -467,7 +467,7 @@
         "description": "基于浏览器的机器学习用于皮肤分析"
       },
       "ar": {
-        "description": "决策前治疗结果的AR可视化"
+        "description": "决策前方案结果的AR可视化"
       },
       "visia": {
         "description": "按VISIA标准测量的8个指标"
@@ -478,7 +478,7 @@
       "subtitle": "产品开发的关键步骤",
       "q1_2024": {
         "title": "公司成立",
-        "description": "开始为美容诊所开发AI系统"
+        "description": "开始为美容中心开发AI系统"
       },
       "q2_2024": {
         "title": "AI模型测试",
@@ -486,7 +486,7 @@
       },
       "q3_2024": {
         "title": "Beta发布",
-        "description": "与试点诊所进行Beta测试"
+        "description": "与试点中心进行Beta测试"
       },
       "q1_2025": {
         "title": "正式发布",
@@ -510,8 +510,8 @@
     "hero": {
       "badge": "完整功能集",
       "title": "强大功能",
-      "subtitle": "面向现代美容诊所",
-      "description": "最先进的AI驱动皮肤分析系统，具有美容诊所管理的全面功能",
+      "subtitle": "面向现代美容中心",
+      "description": "最先进的AI驱动皮肤分析系统，具有美容中心管理的全面功能",
       "tryFree": "免费试用",
       "viewPricing": "查看价格"
     },
@@ -528,16 +528,16 @@
       },
       "arVisualization": {
         "title": "AR可视化和3D面部模型",
-        "desc": "通过AR和3D面部建模实时预览治疗效果。在承诺之前查看前后对比",
+        "desc": "通过AR和3D面部建模实时预览方案效果。在承诺之前查看前后对比",
         "feature1": "✓ 实时AR预览",
         "feature2": "✓ 详细的3D面部模型",
         "feature3": "✓ 前后对比",
         "feature4": "✓ 即时分享"
       },
-      "multiClinic": {
-        "title": "多诊所管理",
-        "desc": "在一个地方管理多个诊所。通过实时仪表板跟踪客户结果、管理团队和分析销售",
-        "feature1": "✓ 无限诊所管理",
+      "multiCenter": {
+        "title": "多中心管理",
+        "desc": "在一个地方管理多个中心。通过实时仪表板跟踪客户结果、管理团队和分析销售",
+        "feature1": "✓ 无限中心管理",
         "feature2": "✓ 基于角色的访问控制",
         "feature3": "✓ 实时分析",
         "feature4": "✓ 跨分店数据同步"
@@ -571,8 +571,8 @@
         "desc": "带自动通知的在线预约系统"
       },
       "recommendations": {
-        "title": "治疗建议",
-        "desc": "基于分析的AI驱动治疗建议"
+        "title": "方案建议",
+        "desc": "基于分析的AI驱动方案建议"
       },
       "gallery": {
         "title": "前后对比画廊",
@@ -597,7 +597,7 @@
       "speed": "速度",
       "analysisPoints": "分析点",
       "arSimulator": "AR模拟器",
-      "multiClinic": "多诊所",
+      "multiCenter": "多中心",
       "pdpaCompliant": "符合PDPA",
       "price": "价格"
     },
@@ -630,13 +630,13 @@
     },
     "premium": {
       "badge": "最受欢迎",
-      "description": "非常适合具有完整功能的中小型诊所",
+      "description": "非常适合具有完整功能的中小型中心",
       "period": "每月",
       "cta": "开始14天免费试用"
     },
     "enterprise": {
       "badge": "多分店",
-      "description": "适合具有定制和专属支持的多分店诊所",
+      "description": "适合具有定制和专属支持的多分店中心",
       "period": "定制价格",
       "cta": "开始30天免费试用"
     },
@@ -674,7 +674,7 @@
       },
       "q3": {
         "question": "企业套餐适合谁？",
-        "answer": "非常适合多分店诊所、需要定制品牌或专属支持的客户"
+        "answer": "非常适合多分店中心、需要定制品牌或专属支持的客户"
       }
     },
     "cta": {
@@ -686,7 +686,7 @@
   },
   "home": {
     "hero": {
-      "badge": "AI美容诊所",
+      "badge": "AI美容中心",
       "title": "AI驱动的美容与护肤",
       "subtitle": "通过先进的AR可视化和AI分析改变您的肌肤",
       "description": "基于证据的AI皮肤分析连接到您的销售工作流程 - 通过医疗级见解和AR可视化提高转化率和客户信任",
@@ -695,7 +695,7 @@
       "noCreditCard": "无需信用卡",
       "freeTierAvailable": "有免费套餐"
     },
-    "heroTitle": "真正转化的AI诊所",
+    "heroTitle": "真正转化的AI中心",
     "heroSubtitle": "从分析到建议到收入",
     "heroDescription": "基于证据的AI皮肤分析连接到您的销售工作流程 - 通过医疗级见解和AR可视化提高转化率和客户信任",
     "startFreeAnalysis": "开始免费分析",
@@ -703,16 +703,16 @@
     "noCreditCard": "无需信用卡",
     "freeTierAvailable": "有免费套餐",
     "whyChooseTitle": "为什么选择我们",
-    "whyChooseSubtitle": "专为美容诊所和皮肤科医生设计的专业级工具",
+    "whyChooseSubtitle": "专为美容中心和皮肤科医生设计的专业级工具",
     "features": {
       "title": "我们的功能",
       "ar": {
         "title": "AR 3D可视化",
-        "description": "通过先进的3D面部映射实时查看治疗效果"
+        "description": "通过先进的3D面部映射实时查看方案效果"
       },
       "ai": {
         "title": "AI分析",
-        "description": "获得AI驱动的个性化治疗建议"
+        "description": "获得AI驱动的个性化方案建议"
       },
       "booking": {
         "title": "在线预约",
@@ -724,7 +724,7 @@
       },
       "arVisualization": {
         "title": "AR可视化",
-        "description": "实时AR预览治疗效果"
+        "description": "实时AR预览方案效果"
       },
       "pdpaCompliant": {
         "title": "PDPA合规",
@@ -739,7 +739,7 @@
         "description": "3-5秒内完成分析，提供个性化建议"
       },
       "multiClinic": {
-        "title": "多诊所支持",
+        "title": "多中心支持",
         "description": "多分支支持，集成CRM和预约系统"
       }
     },
@@ -760,14 +760,14 @@
       }
     },
     "cta": {
-      "title": "准备改变您的诊所了吗？",
+      "title": "准备改变您的中心了吗？",
       "description": "今天开始，无需信用卡",
       "startFreeAnalysis": "开始免费分析",
       "contactSales": "联系销售"
     },
     "pricing": {
-      "title": "临床级生态系统",
-      "subtitle": "为顶级诊所提供的精英诊断基础设施",
+      "title": "美学级生态系统",
+      "subtitle": "为顶级中心提供的精英诊断基础设施",
       "freeTier": {
         "badge": "入门",
         "title": "Starter Plan",
@@ -778,19 +778,19 @@
       "premium": {
         "badge": "推荐",
         "title": "Professional Plan",
-        "description": "为诊所快速增长提供的全面 AI 智能",
+        "description": "为中心快速增长提供的全面 AI 智能",
         "period": "月",
         "cta": "联系销售"
       }
     },
     "roi": {
       "title": "10秒内评估附加价值",
-      "description": "输入您的诊所数据，查看AI的预估影响"
+      "description": "输入您的中心数据，查看AI的预估影响"
     },
     "caseStudy": {
       "title": "案例研究",
       "subtitle": "6周内平均排队时间减少37%",
-      "description": "曼谷A诊所 — 使用自动皮肤分析和新工作流程"
+      "description": "曼谷A中心 — 使用自动皮肤分析和新工作流程"
     }
   },
   "demoCta": {
@@ -800,11 +800,11 @@
   },
   "caseStudyTeaser": {
     "title": "查看案例示例",
-    "description": "使用我们系统的诊所的真实结果",
+    "description": "使用我们系统的中心的真实结果",
     "button": "打开案例研究"
   },
   "footer": {
-    "description": "AI驱动的美容诊所皮肤分析平台",
+    "description": "AI驱动的美容中心皮肤分析平台",
     "product": "产品",
     "tryDemo": "试用演示",
     "company": "公司",
@@ -814,7 +814,7 @@
     "terms": "条款",
     "compliance": "合规",
     "pdpa": "PDPA",
-    "copyright": "© 2025 AI Beauty Platform. 保留所有权利"
+    "copyright": " 2025 Aesthetic Intelligence. 保留所有权利"
   },
   "badges": {
     "iso": {
@@ -830,7 +830,7 @@
       "tooltip": "加密和分段数据"
     }
   },
-  "clinic": {
+  "center": {
     "steps": [
       {
         "eyebrow": "步骤 01",
@@ -840,12 +840,12 @@
       {
         "eyebrow": "步骤 02",
         "title": "体积扫描",
-        "body": "有节奏的垂直扫描传达真实的数据捕获，增强高级临床体验的可信度"
+        "body": "有节奏的垂直扫描传达真实的数据捕获，增强高级美学体验的可信度"
       },
       {
         "eyebrow": "步骤 03",
         "title": "自适应协议",
-        "body": "AI驱动的治疗协议实时适应；用户滑块控制敏感度/强度，通过HALO反馈即时反映"
+        "body": "AI驱动的方案协议实时适应；用户滑块控制敏感度/强度，通过HALO反馈即时反映"
       },
       {
         "eyebrow": "步骤 04",
@@ -892,7 +892,7 @@
   },
   "roles": {
     "customer": "客户",
-    "clinic_owner": "诊所所有者",
+    "center_owner": "中心所有者",
     "sales_staff": "销售人员",
     "super_admin": "超级管理员"
   },
@@ -910,10 +910,10 @@
   "booking": {
     "title": "预约",
     "selectDoctor": "选择医生",
-    "selectTreatment": "选择治疗",
+    "selectProgram": "选择方案",
     "selectDate": "选择日期",
     "selectTime": "选择时间",
-    "patientInfo": "患者信息",
+    "customerInfo": "客户信息",
     "name": "全名",
     "email": "电子邮件",
     "phone": "电话号码",
@@ -922,17 +922,17 @@
     "paymentMethod": "付款方式",
     "bookingConfirmed": "预约成功!",
     "bookingFailed": "预约失败",
-    "treatments": {
+    "programs": {
       "botox": "肉毒杆菌注射",
       "filler": "填充剂",
-      "laser": "激光治疗",
+      "laser": "激光方案",
       "facial": "面部护理",
       "peeling": "化学换肤",
       "mesotherapy": "中胚层疗法",
       "thread_lift": "线雕提升",
-      "acne_treatment": "痤疮治疗",
-      "pigmentation": "色素治疗",
-      "anti_aging": "抗衰老治疗",
+      "acne_treatment": "痤疮方案",
+      "pigmentation": "色素方案",
+      "anti_aging": "抗衰老方案",
       "skin_tightening": "紧肤"
     },
     "status": {
@@ -957,175 +957,97 @@
   "admin": {
     "dashboard": "管理仪表板",
     "overview": "概览",
-    "patients": "患者",
+    "customers": "客户",
     "staff": "员工",
     "inventory": "库存",
     "analytics": "分析",
     "reports": "报告",
-    "totalPatients": "总患者数",
-    "activePatients": "活跃患者",
+    "totalCustomers": "总客户数",
+    "activeCustomers": "活跃客户",
     "newThisMonth": "本月新增",
     "totalRevenue": "总收入",
     "revenueThisMonth": "本月收入",
-    "revenueGrowth": "增长",
-    "appointments": "预约",
     "appointmentsToday": "今天",
     "appointmentsWeek": "本周",
     "appointmentsMonth": "本月",
-    "popularTreatments": "热门治疗",
+    "popularPrograms": "热门方案",
     "staffCount": "员工人数",
     "activeStaff": "在职",
     "inventoryStatus": "库存状态",
     "totalItems": "总项目",
     "lowStock": "库存不足",
     "outOfStock": "缺货",
-    "addPatient": "添加患者",
+    "addCustomer": "添加客户",
     "addStaff": "添加员工",
     "addInventory": "添加库存",
     "exportReport": "导出报告",
     "revenueReport": "收入报告",
     "revenueTrend": "收入趋势（最近30天）",
-    "treatmentPerformance": "治疗效果",
-    "recentPatients": "最近患者",
-    "patientManagement": "患者管理",
+    "programPerformance": "方案效果",
+    "recentCustomers": "最近客户",
+    "customerManagement": "客户管理",
     "staffManagement": "员工管理",
     "inventoryManagement": "库存管理",
-    "treatmentStats": "治疗统计"
+    "programStats": "方案统计"
   },
-  "patient": {
+  "customer": {
     "name": "姓名",
     "email": "电子邮件",
     "phone": "电话",
-    "dateOfBirth": "出生日期",
-    "gender": {
-      "label": "性别",
-      "male": "男",
-      "female": "女",
-      "other": "其他"
-    },
     "address": "地址",
-    "skinType": {
-      "label": "肤质",
-      "oily": "油性",
-      "dry": "干性",
-      "combination": "混合性",
-      "sensitive": "敏感性",
-      "normal": "正常"
-    },
-    "allergies": "过敏史",
+    "birthday": "生日",
+    "gender": "性别",
+    "occupation": "职业",
+    "registrationDate": "注册日期",
+    "status": "状态",
+    "active": "活跃",
+    "inactive": "不活跃",
+    "blocked": "已屏蔽",
+    "notes": "备注",
+    "emergencyContact": "紧急联系人",
+    "allergies": "过敏反应",
     "medications": "当前用药",
     "medicalHistory": "病史",
     "skinConcerns": "皮肤问题",
-    "previousTreatments": "既往治疗",
+    "previousPrograms": "既往方案",
     "totalVisits": "就诊次数",
     "totalSpent": "总消费",
-    "lastVisit": "上次就诊",
+    "lastVisit": "上次就诊"
+  },
     "status": {
       "label": "状态",
       "active": "活跃",
       "inactive": "非活跃"
     }
   },
-  "staff": {
-    "name": "姓名",
-    "email": "电子邮件",
-    "phone": "电话",
-    "role": {
-      "label": "职位",
-      "doctor": "医生",
-      "nurse": "护士",
-      "receptionist": "接待员",
-      "admin": "管理员"
-    },
-    "specialization": "专业",
-    "licenseNumber": "执照号码",
-    "hireDate": "入职日期",
-    "salary": "薪水",
-    "workingHours": "工作时间",
-    "isActive": "在职状态"
-  },
-  "inventory": {
-    "name": "项目名称",
-    "sku": "SKU",
-    "category": {
-      "label": "类别",
-      "product": "产品",
-      "equipment": "设备",
-      "medicine": "药品",
-      "supply": "耗材"
-    },
-    "description": "描述",
-    "quantity": "数量",
-    "minQuantity": "最小数量",
-    "unitPrice": "单价",
-    "supplier": "供应商",
-    "expiryDate": "有效期",
-    "status": {
-      "label": "状态",
-      "inStock": "有货",
-      "lowStock": "库存不足",
-      "outOfStock": "缺货"
-    },
-    "lastRestocked": "上次补货",
-    "location": "位置"
-  },
-  "format": {
-    "currency": "¥{amount}",
-    "date": "{date}",
-    "time": "{time}",
-    "dateTime": "{date} {time}",
-    "percentage": "{value}%"
-  },
-  "validation": {
-    "required": "此字段为必填项",
-    "invalidEmail": "无效的电子邮件地址",
-    "invalidPhone": "无效的电话号码",
-    "minLength": "最小长度为{min}个字符",
-    "maxLength": "最大长度为{max}个字符",
-    "invalidDate": "无效的日期",
-    "invalidNumber": "无效的数字"
-  },
-  "messages": {
-    "bookingSuccess": "您的预约已成功!",
-    "bookingError": "预约失败，请重试",
-    "updateSuccess": "更新成功",
-    "updateError": "更新失败",
-    "deleteSuccess": "删除成功",
-    "deleteError": "删除失败",
-    "deleteConfirm": "您确定要删除此项吗？"
-  },
   "founders-clone": {
     "meta": {
-      "title": "ClinicIQ - 美容诊所AI平台",
-      "description": "使用AI皮肤分析、AR模拟器和智能CRM提升您的诊所"
+      "title": "Aesthetic Intelligence - 美容中心AI平台",
+      "description": "使用AI皮肤分析、AR模拟器和智能CRM提升您的中心"
     },
     "nav": {
       "features": "功能",
-      "howItWorks": "工作原理",
-      "portfolio": "作品集",
       "pricing": "价格",
       "about": "关于",
-      "contact": "联系",
-      "login": "登录",
-      "getStarted": "开始使用"
+      "blog": "博客",
+      "cta": "立即开始"
     },
     "hero": {
-      "badge": "#1美容诊所AI平台",
-      "title": "提升您的",
-      "titleHighlight": "美容",
-      "titleEnd": "诊所AI",
-      "description": "99.2%准确的AI皮肤分析，配备AR模拟器和完整CRM。受到150多家领先诊所的信赖",
+      "badge": "新功能：AR模拟器 2.0",
+      "title": "使用AI重新定义您的",
+      "titleHighlight": "美容业务",
+      "description": "全球首个专为顶级中心设计的AI驱动皮肤分析和AR方案模拟平台。",
       "cta": "免费试用",
       "demo": "观看演示",
       "stats": {
-        "clinics": "信任的诊所",
+        "centers": "信任的中心",
         "analyses": "完成的分析",
         "accuracy": "准确率"
       }
     },
     "trust": {
       "badge": "企业级安全",
-      "title": "受领先诊所信赖",
+      "title": "受领先中心信赖",
       "description": "数据安全是我们的首要任务。我们保持最高标准",
       "badges": {
         "hipaa": "HIPAA合规",
@@ -1138,7 +1060,7 @@
       "badge": "强大功能",
       "title": "您需要的一切",
       "titleHighlight": "转型",
-      "description": "美容诊所的完整AI工具包。提高效率、销售和患者体验",
+      "description": "美容中心的完整AI工具包。提高效率、销售和客户体验",
       "items": {
         "aiAnalysis": {
           "title": "AI皮肤分析",
@@ -1152,12 +1074,12 @@
         },
         "progress": {
           "title": "进度跟踪",
-          "description": "使用量化数据进行前后比较。跟踪治疗效果",
+          "description": "使用量化数据进行前后比较。跟踪方案效果",
           "stats": "视觉时间线"
         },
         "ar": {
           "title": "AR模拟器",
-          "description": "通过AR向患者展示治疗预览。提高咨询转化率",
+          "description": "通过AR向客户展示方案预览。提高咨询转化率",
           "stats": "+35%转化"
         },
         "security": {
@@ -1167,7 +1089,7 @@
         },
         "reports": {
           "title": "即时报告",
-          "description": "一键生成带治疗建议的PDF报告。非常适合咨询",
+          "description": "一键生成带方案建议的PDF报告。非常适合咨询",
           "stats": "1键导出"
         }
       },
@@ -1201,10 +1123,10 @@
         "results": {
           "subtitle": "获取见解",
           "title": "结果",
-          "description": "接收包含热图、个性化建议和治疗计划的详细分析",
+          "description": "接收包含热图、个性化建议和方案计划的详细分析",
           "features": [
             "视觉热图",
-            "治疗计划",
+            "方案计划",
             "进度跟踪"
           ]
         }
@@ -1215,10 +1137,10 @@
     "roi": {
       "badge": "ROI计算器",
       "title": "计算您的潜在ROI",
-      "description": "看看ClinicIQ能为您的诊所创造多少额外收入",
+      "description": "看看Aesthetic Intelligence能为您的中心创造多少额外收入",
       "inputs": {
         "consultations": "每月咨询",
-        "avgTicket": "平均治疗价值（฿）",
+        "avgTicket": "平均方案价值（฿）",
         "conversionRate": "当前转化率"
       },
       "results": {
@@ -1231,13 +1153,13 @@
     },
     "portfolio": {
       "badge": "成功案例",
-      "title": "受150多家诊所信赖",
-      "description": "看看领先的诊所如何通过我们的平台改变他们的业务",
+      "title": "受150多家中心信赖",
+      "description": "看看领先的中心如何通过我们的平台改变他们的业务",
       "viewAll": "查看所有案例"
     },
     "testimonials": {
       "badge": "客户评价",
-      "title": "深受诊所喜爱",
+      "title": "深受中心喜爱",
       "titleHighlight": "到处"
     },
     "pricing": {
@@ -1252,7 +1174,7 @@
         "starter": {
           "name": "Starter",
           "badge": "入门版",
-          "description": "适合单店小型诊所",
+          "description": "适合单店小型中心",
           "price": "9,900",
           "period": "月",
           "salesUsers": "1位销售用户",
@@ -1275,7 +1197,7 @@
         "professional": {
           "name": "Professional",
           "badge": "最受欢迎",
-          "description": "适合成长型诊所",
+          "description": "适合成长型中心",
           "price": "19,900",
           "period": "月",
           "salesUsers": "3位销售用户",
@@ -1284,7 +1206,7 @@
             "AR前后对比模拟器",
             "高级CRM+销售管道",
             "预约+排队系统",
-            "治疗方案与历史记录",
+            "方案方案与历史记录",
             "库存管理",
             "邮件与短信营销",
             "积分系统",
@@ -1299,7 +1221,7 @@
         "enterprise": {
           "name": "Enterprise",
           "badge": "最超值",
-          "description": "适合连锁诊所与医院",
+          "description": "适合连锁中心与医院",
           "price": "39,900",
           "period": "月",
           "salesUsers": "10位销售用户",
@@ -1355,12 +1277,12 @@
       "badge": "我们的故事",
       "title": "革新",
       "titleHighlight": "美容护理",
-      "description": "我们的使命是用AI技术赋能美容诊所，提供卓越的患者体验和业务成果",
+      "description": "我们的使命是用AI技术赋能美容中心，提供卓越的客户体验和业务成果",
       "story": "打造美容科技的未来",
       "values": {
-        "patient": {
-          "title": "患者至上",
-          "description": "每个功能都以患者结果为出发点设计"
+        "customer": {
+          "title": "客户至上",
+          "description": "每个功能都以客户结果为出发点设计"
         },
         "security": {
           "title": "信任与安全",
@@ -1390,8 +1312,8 @@
     "footer": {
       "cta": {
         "badge": "开始您的旅程",
-        "title": "准备改变您的诊所了吗？",
-        "description": "加入已经使用ClinicIQ提供卓越患者护理的150多家诊所",
+        "title": "准备改变您的中心了吗？",
+        "description": "加入已经使用Aesthetic Intelligence提供卓越客户护理的150多家中心",
         "trial": "开始免费试用",
         "demo": "预约演示"
       },

@@ -3,7 +3,7 @@
 /**
  * Progress Notes Component
  * 
- * Note-taking and documentation for treatment sessions.
+ * Note-taking and documentation for program sessions.
  */
 
 import { useState } from "react"
@@ -14,22 +14,22 @@ import { Badge } from "@/components/ui/badge"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { FileText, Plus, Edit, Trash2, Lock, User } from "lucide-react"
-import { useTreatmentNotes } from "@/hooks/useTreatment"
+import { useProgramNotes } from "@/hooks/useProgram"
 
 interface ProgressNotesProps {
-  treatmentId: string
+  programId: string
   currentUserId?: string
   currentUserName?: string
   currentUserRole?: string
 }
 
 export default function ProgressNotes({
-  treatmentId,
-  currentUserId = "DOC001",
-  currentUserName = "Dr. Lisa Wong",
-  currentUserRole = "Dermatologist",
+  programId,
+  currentUserId = "SPEC001",
+  currentUserName = "Specialist Lisa Wong",
+  currentUserRole = "Aesthetic Specialist",
 }: ProgressNotesProps) {
-  const { notes, loading, addNote, updateNote, deleteNote } = useTreatmentNotes(treatmentId, {
+  const { notes, loading, addNote, updateNote, deleteNote } = useProgramNotes(programId, {
     includePrivate: true,
   })
 
@@ -42,7 +42,7 @@ export default function ProgressNotes({
     if (!noteContent.trim()) return
 
     addNote({
-      treatmentId,
+      programId: programId,
       authorId: currentUserId,
       authorName: currentUserName,
       authorRole: currentUserRole,
@@ -142,7 +142,7 @@ export default function ProgressNotes({
               />
               <Label htmlFor="private" className="flex items-center gap-2 cursor-pointer">
                 <Lock className="w-4 h-4" />
-                Private note (visible to doctors only)
+                Private note (visible to specialists only)
               </Label>
             </div>
 

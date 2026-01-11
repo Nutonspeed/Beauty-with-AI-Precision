@@ -35,6 +35,20 @@ import { AISmartRecommendations } from '@/components/sales/ai-smart-recommendati
 import { QuickQuoteCalculator } from '@/components/sales/quick-quote-calculator';
 import { LeadConversionOptimizer } from '@/components/sales/lead-conversion-optimizer';
 
+interface LeadData {
+  id: string;
+  name: string;
+  source: string;
+  lastContact: Date;
+  engagementScore: number;
+  visitCount: number;
+  programInterest: string[];
+  budget: 'low' | 'medium' | 'high' | 'premium';
+  urgency: 'low' | 'medium' | 'high';
+  objections: string[];
+  previousPrograms?: string[];
+}
+
 // Sample lead data for demo
 const getSampleLead = (t: any) => ({
   id: 'lead_001',
@@ -43,10 +57,11 @@ const getSampleLead = (t: any) => ({
   lastContact: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
   engagementScore: 65,
   visitCount: 3,
-  treatmentInterest: ['Botox', 'Filler'],
+  programInterest: ['Botox', 'Filler'],
   budget: 'medium' as const,
   urgency: 'medium' as const,
-  objections: ['price']
+  objections: ['price'],
+  previousPrograms: ['HydraFacial']
 });
 
 // Sample customer profile
@@ -56,7 +71,7 @@ const getSampleProfile = (t: any) => ({
   skinType: 'combination' as const,
   concerns: ['wrinkles', 'pigmentation'],
   budget: 'medium' as const,
-  previousTreatments: ['HydraFacial']
+  previousPrograms: ['HydraFacial']
 });
 
 export default function SalesToolsPage() {
@@ -66,17 +81,18 @@ export default function SalesToolsPage() {
   const [activeTab, setActiveTab] = useState('recommendations');
   const lp = useLocalizePath();
   
-  const sampleLead = {
+  const sampleLead: LeadData = {
     id: 'lead_001',
     name: t('salesLeads.modal.namePlaceholder') || 'Customer',
     source: t('salesTools.sources.facebook'),
     lastContact: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
     engagementScore: 65,
     visitCount: 3,
-    treatmentInterest: [t('booking.treatments.botox'), t('booking.treatments.filler')],
+    programInterest: [t('booking.programs.botox'), t('booking.programs.filler')],
     budget: 'medium' as const,
     urgency: 'medium' as const,
-    objections: ['price']
+    objections: ['price'],
+    previousPrograms: ['HydraFacial']
   };
 
   const sampleProfile = {
@@ -85,14 +101,14 @@ export default function SalesToolsPage() {
     skinType: 'combination' as const,
     concerns: ['wrinkles', 'pigmentation'],
     budget: 'medium' as const,
-    previousTreatments: ['HydraFacial']
+    previousPrograms: ['HydraFacial']
   };
 
   const leadQueue = [
-    { name: `${t('roles.customer')} 1`, score: 78, interest: `${t('booking.treatments.botox')}, ${t('booking.treatments.filler')}`, status: 'hot' },
-    { name: `${t('roles.customer')} 2`, score: 65, interest: t('booking.treatments.skin_tightening'), status: 'warm' },
-    { name: `${t('roles.customer')} 3`, score: 52, interest: t('booking.treatments.laser'), status: 'warm' },
-    { name: `${t('roles.customer')} 4`, score: 45, interest: t('booking.treatments.facial'), status: 'cold' },
+    { name: `${t('roles.customer')} 1`, score: 78, interest: `${t('booking.programs.botox')}, ${t('booking.programs.filler')}`, status: 'hot' },
+    { name: `${t('roles.customer')} 2`, score: 65, interest: t('booking.programs.skin_tightening'), status: 'warm' },
+    { name: `${t('roles.customer')} 3`, score: 52, interest: t('booking.programs.laser'), status: 'warm' },
+    { name: `${t('roles.customer')} 4`, score: 45, interest: t('booking.programs.facial'), status: 'cold' },
   ];
 
   return (
@@ -204,7 +220,7 @@ export default function SalesToolsPage() {
                             <Users className="h-6 w-6 text-pink-500" />
                             {t('salesTools.profile.title')}
                           </CardTitle>
-                          <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Initialize diagnostic credential binding</CardDescription>
+                          <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Initialize aesthetic credential binding</CardDescription>
                         </CardHeader>
                         <CardContent className="p-10 lg:p-12 space-y-8">
                           <div className="space-y-6">
@@ -246,8 +262,8 @@ export default function SalesToolsPage() {
                     <div className="lg:col-span-8">
                       <AISmartRecommendations 
                         customerProfile={sampleProfile}
-                        onSelectTreatment={(treatment) => {
-                          console.log('Selected:', treatment);
+                        onSelectProgram={(program) => {
+                          console.log('Selected:', program);
                           setActiveTab('quote');
                         }}
                       />

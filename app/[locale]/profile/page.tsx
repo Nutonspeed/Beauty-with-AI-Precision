@@ -137,8 +137,8 @@ export default async function ProfilePage({ params }: PageProps) {
     const roleMap: Record<string, string> = {
       customer: 'ลูกค้า (Customer)',
       sales_staff: 'พนักงานขาย (Sales Staff)',
-      clinic_owner: 'เจ้าของคลินิก (Clinic Owner)',
-      clinic_staff: 'พนักงานคลินิก (Clinic Staff)',
+      center_owner: 'เจ้าของศูนย์ความงาม (Center Owner)',
+      center_staff: 'พนักงาน (Staff)',
       admin: 'ผู้ดูแลระบบ (Admin)',
       super_admin: 'ผู้ดูแลระบบสูงสุด (Super Admin)',
     }
@@ -165,14 +165,14 @@ export default async function ProfilePage({ params }: PageProps) {
             className="mb-12 space-y-4"
           >
             <Badge variant="outline" className="px-4 py-1 rounded-full border-pink-500/30 text-pink-400 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.2em] text-[10px] font-black shadow-2xl shadow-pink-500/10">
-              Clinical Profile Infrastructure
+              Aesthetic Profile Infrastructure
             </Badge>
             <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white italic">
               Profile Settings
               <br />
               <span className="text-2xl md:text-3xl bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent not-italic font-light">ตั้งค่าโปรไฟล์</span>
             </h1>
-            <p className="text-slate-400 font-light tracking-wide max-w-2xl italic">Manage your clinical account nodes and system preferences with precision.</p>
+            <p className="text-slate-400 font-light tracking-wide max-w-2xl italic">Manage your aesthetic account nodes and system preferences with precision.</p>
           </motion.div>
 
           <motion.div
@@ -230,7 +230,7 @@ export default async function ProfilePage({ params }: PageProps) {
                   <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                   <CardHeader className="p-10 lg:p-12 pb-4">
                     <CardTitle className="text-2xl font-bold text-white tracking-tight italic">Personal Information</CardTitle>
-                    <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Synchronize your diagnostic identity</CardDescription>
+                    <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Synchronize your aesthetic identity</CardDescription>
                   </CardHeader>
                   <CardContent className="p-10 lg:p-12 pt-6">
                     <PersonalInfoForm user={session.user} profile={profile} />
@@ -243,7 +243,7 @@ export default async function ProfilePage({ params }: PageProps) {
                   <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                   <CardHeader className="p-10 lg:p-12 pb-4">
                     <CardTitle className="text-2xl font-bold text-white tracking-tight italic">Password & Security</CardTitle>
-                    <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Manage clinical access keys</CardDescription>
+                    <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Manage secure access keys</CardDescription>
                   </CardHeader>
                   <CardContent className="p-10 lg:p-12 pt-6">
                     <PasswordChangeForm />
@@ -256,7 +256,7 @@ export default async function ProfilePage({ params }: PageProps) {
                   <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                   <CardHeader className="p-10 lg:p-12 pb-4">
                     <CardTitle className="text-2xl font-bold text-white tracking-tight italic">Notification Settings</CardTitle>
-                    <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Configure real-time diagnostic alerts</CardDescription>
+                    <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Configure real-time system alerts</CardDescription>
                   </CardHeader>
                   <CardContent className="p-10 lg:p-12 pt-6">
                     <NotificationSettings userId={session.user.id} />

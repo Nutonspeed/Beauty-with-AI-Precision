@@ -19,7 +19,8 @@ import {
   Zap, 
   Clock,
   Cpu,
-  Globe
+  Globe,
+  Brain
 } from "lucide-react"
 import { useTranslations, useLocale } from "next-intl"
 import { SUBSCRIPTION_PLANS, formatPrice } from "@/lib/subscriptions/plans"
@@ -176,7 +177,7 @@ export default function PricingPage() {
           </div>
         </section>
 
-        {/* Pricing Architecture - Luxury Clinical Cards */}
+        {/* Pricing Architecture - Aesthetic Hub Matrix */}
         <section className="py-32 lg:py-48 relative">
           <div className="container relative z-10">
             <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
@@ -207,16 +208,26 @@ export default function PricingPage() {
                       
                       <CardHeader className="p-10">
                         <div className="mb-10 flex items-center justify-between">
-                          <div className={`flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${tier.color} border border-white/5 shadow-inner transition-transform duration-700 group-hover:scale-110 group-hover:rotate-3`}>
+                          <div className={`flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${tier.color} border border-white/5 shadow-inner transition-transform duration-700 group-hover:scale-110 group-hover:rotate-3 relative`}>
                             <Icon className="h-8 w-8 text-white" />
+                            {tier.planKey === 'professional' && (
+                              <div className="absolute -right-2 -top-2 h-6 w-6 rounded-full bg-pink-600 flex items-center justify-center border-2 border-[#020617] shadow-lg animate-pulse">
+                                <Sparkles className="h-3 w-3 text-white" />
+                              </div>
+                            )}
                           </div>
                           {!tier.popular && (
                             <Badge variant="outline" className="border-white/5 text-slate-500 font-black uppercase tracking-widest text-[8px] bg-white/[0.02]">{tier.badge}</Badge>
                           )}
                         </div>
                         
-                        <CardTitle className="text-3xl font-bold text-white tracking-tight group-hover:text-pink-400 transition-colors">{tier.name}</CardTitle>
-                        <CardDescription className="min-h-12 text-slate-500 font-light mt-4 leading-relaxed">{tier.description}</CardDescription>
+                        <CardTitle className="text-3xl font-bold text-white tracking-tight group-hover:text-pink-400 transition-colors">
+                          {tier.name}
+                          {tier.planKey === 'professional' && (
+                            <span className="ml-2 inline-block h-2 w-2 rounded-full bg-pink-500 animate-ping" />
+                          )}
+                        </CardTitle>
+                        <CardDescription className="min-h-12 text-slate-500 font-light mt-4 leading-relaxed italic">{tier.description}</CardDescription>
                         
                         <div className="mt-10 space-y-1">
                           <div className="text-4xl font-black text-white tracking-tighter">{tier.price}</div>
@@ -250,34 +261,48 @@ export default function PricingPage() {
                           </Link>
                         </Button>
 
-                        {/* Diagnostic Limits Node */}
-                        <div className="grid grid-cols-3 gap-2 rounded-[2rem] bg-white/[0.02] border border-white/5 p-6 text-center shadow-inner relative overflow-hidden group/node">
-                          <div className="absolute inset-0 bg-pink-500/[0.01] opacity-0 group-hover/node:opacity-100 transition-opacity" />
-                          <div className="relative z-10">
-                            <Users className="mx-auto mb-2 h-4 w-4 text-slate-600 group-hover/node:text-pink-400 transition-colors" />
-                            <div className="font-bold text-white text-[10px] tracking-tight">{formatLimit(tier.limits.users, 'users')}</div>
-                            <div className="text-[7px] text-slate-600 uppercase font-black tracking-widest mt-1">{t('pricing.limits.users')}</div>
-                          </div>
-                          <div className="relative z-10 border-x border-white/5">
-                            <HardDrive className="mx-auto mb-2 h-4 w-4 text-slate-600 group-hover/node:text-cyan-400 transition-colors" />
-                            <div className="font-bold text-white text-[10px] tracking-tight">{formatLimit(tier.limits.storage, 'storage')}</div>
-                            <div className="text-[7px] text-slate-600 uppercase font-black tracking-widest mt-1">{t('pricing.limits.storage')}</div>
-                          </div>
-                          <div className="relative z-10">
-                            <Zap className="mx-auto mb-2 h-4 w-4 text-slate-600 group-hover/node:text-purple-400 transition-colors" />
-                            <div className="font-bold text-white text-[10px] tracking-tight">{formatLimit(tier.limits.analyses, 'analyses')}</div>
-                            <div className="text-[7px] text-slate-600 uppercase font-black tracking-widest mt-1">{t('pricing.limits.analyses')}</div>
-                          </div>
+                      {/* Aesthetic Intelligence Infrastructure */}
+                      <div className="grid grid-cols-3 gap-2 rounded-[2rem] bg-white/[0.02] border border-white/5 p-6 text-center shadow-inner relative overflow-hidden group/node">
+                        <div className="absolute inset-0 bg-pink-500/[0.01] opacity-0 group-hover/node:opacity-100 transition-opacity" />
+                        <div className="relative z-10">
+                          <Users className="mx-auto mb-2 h-4 w-4 text-slate-600 group-hover/node:text-pink-400 transition-colors" />
+                          <div className="font-bold text-white text-[10px] tracking-tight">{formatLimit(tier.limits.users, 'users')}</div>
+                          <div className="text-[7px] text-slate-600 uppercase font-black tracking-widest mt-1">{t('pricing.limits.users')}</div>
                         </div>
+                        <div className="relative z-10 border-x border-white/5">
+                          <Brain className="mx-auto mb-2 h-4 w-4 text-slate-600 group-hover/node:text-cyan-400 transition-colors" />
+                          <div className="font-bold text-white text-[10px] tracking-tight">{formatLimit(tier.limits.analyses, 'analyses')}</div>
+                          <div className="text-[7px] text-slate-600 uppercase font-black tracking-widest mt-1">AI Nodes</div>
+                        </div>
+                        <div className="relative z-10">
+                          <Zap className="mx-auto mb-2 h-4 w-4 text-slate-600 group-hover/node:text-purple-400 transition-colors" />
+                          <div className="font-bold text-white text-[10px] tracking-tight">{tier.planKey === 'starter' ? 'Gemini' : 'Hybrid'}</div>
+                          <div className="text-[7px] text-slate-600 uppercase font-black tracking-widest mt-1">Engine</div>
+                        </div>
+                      </div>
 
-                        {/* Precision Feature Infrastructure */}
+                        {/* Aesthetic Precision Infrastructure */}
                         <div className="space-y-5">
-                          {tier.features.map((feature: string, index: number) => (
-                            <div key={index} className="flex items-start gap-4 text-sm group/item">
-                              <div className="mt-1 flex h-1.5 w-1.5 shrink-0 rounded-full bg-pink-500/50 group-hover/item:bg-pink-500 transition-colors shadow-[0_0_8px_rgba(236,72,153,0.5)]" />
-                              <span className="text-slate-400 font-light leading-snug group-hover/item:text-slate-200 transition-colors">{feature}</span>
-                            </div>
-                          ))}
+                          {tier.features.map((feature: string, index: number) => {
+                            const isHub = feature.toLowerCase().includes('hub') || feature.toLowerCase().includes('intelligence');
+                            const isSpecialized = feature.toLowerCase().includes('specialized') || feature.toLowerCase().includes('node');
+                            const isSales = feature.toLowerCase().includes('conversion') || feature.toLowerCase().includes('enablement');
+                            const isHighlight = tier.planKey === 'professional' && (isHub || isSpecialized || isSales);
+                            
+                            return (
+                              <div key={index} className="flex items-start gap-4 text-sm group/item">
+                                <div className={`mt-1 flex h-1.5 w-1.5 shrink-0 rounded-full transition-colors ${
+                                  isHighlight ? 'bg-pink-400 shadow-[0_0_12px_rgba(236,72,153,0.8)]' : 'bg-pink-500/50 shadow-[0_0_8px_rgba(236,72,153,0.5)]'
+                                } group-hover/item:bg-pink-500`} />
+                                <span className={`font-light leading-snug transition-colors ${
+                                  isHighlight ? 'text-white font-bold tracking-tight' : 'text-slate-400 group-hover/item:text-slate-200'
+                                }`}>
+                                  {feature}
+                                  {isHighlight && <Sparkles className="inline-block ml-1.5 h-3 w-3 text-pink-400 animate-pulse" />}
+                                </span>
+                              </div>
+                            );
+                          })}
                           {tier.excludedFeatures.map((feature: string, index: number) => (
                             <div key={`ex-${index}`} className="flex items-start gap-4 text-sm opacity-30 grayscale">
                               <X className="mt-1 h-3.5 w-3.5 shrink-0 text-slate-600" />
@@ -294,7 +319,7 @@ export default function PricingPage() {
           </div>
         </section>
 
-        {/* Clinical Comparison Grid - High-End Matrix */}
+        {/* Aesthetic Intelligence Comparison Grid - High-End Matrix */}
         <section className="py-32 lg:py-48 relative border-y border-white/5 bg-white/[0.01]">
           <div className="container relative z-10">
             <motion.div 
@@ -333,12 +358,12 @@ export default function PricingPage() {
                   <tbody className="divide-y divide-white/5">
                     {[
                       { label: t('pricing.comparison.aiAnalysis'), starter: true, pro: true, enterprise: true },
-                      { label: t('pricing.comparison.visiaMetrics'), starter: true, pro: true, enterprise: true },
+                      { label: t('pricing.comparison.aestheticMetrics'), starter: true, pro: true, enterprise: true },
                       { label: t('pricing.comparison.saveHistory'), starter: false, pro: true, enterprise: true },
                       { label: t('pricing.comparison.arSimulator'), starter: false, pro: true, enterprise: true },
                       { label: t('pricing.comparison.predictiveSales'), starter: false, pro: true, enterprise: true },
                       { label: t('pricing.comparison.roiSimulator'), starter: false, pro: true, enterprise: true },
-                      { label: t('pricing.comparison.mdss'), starter: false, pro: false, enterprise: true },
+                      { label: t('pricing.comparison.adss'), starter: false, pro: false, enterprise: true },
                       { label: t('pricing.comparison.complianceAudit'), starter: false, pro: false, enterprise: true },
                       { label: t('pricing.comparison.revenueForecast'), starter: false, pro: false, enterprise: true },
                       { label: t('pricing.comparison.multiBranch'), starter: false, pro: false, enterprise: true }
@@ -365,7 +390,7 @@ export default function PricingPage() {
           </div>
         </section>
 
-        {/* Clinical Infrastructure FAQ - Diagnostic Nodes */}
+        {/* Aesthetic Intelligence FAQ - Diagnostic Nodes */}
         <section className="py-32 lg:py-48 relative overflow-hidden">
           <div className="container relative z-10">
             <motion.div 

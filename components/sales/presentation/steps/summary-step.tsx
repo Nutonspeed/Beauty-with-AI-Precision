@@ -38,7 +38,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { PresentationData } from '@/lib/sales/presentation-types'
-import { getTreatmentDisplayName } from '@/lib/sales/presentation-catalog'
+import { getProgramDisplayName } from '@/lib/sales/presentation-catalog'
 import { getProduct3DManager } from '@/lib/ar/product-3d-viewer'
 
 interface SummaryStepProps {
@@ -332,21 +332,21 @@ export function SummaryStep({
               </AccordionItem>
             )}
 
-            {/* Selected Treatments */}
-            <AccordionItem value="treatments">
+            {/* Selected Programs */}
+            <AccordionItem value="programs">
               <AccordionTrigger className="text-sm font-medium">
                 <div className="flex items-center gap-2">
                   <Badge>4</Badge>
-                  {t('salesWizard.steps.summary.sectionTreatments')}
-                  <Badge variant="secondary">{t('salesWizard.steps.summary.itemsCount', { count: data.selectedTreatments.length })}</Badge>
+                  {t('salesWizard.steps.summary.sectionPrograms')}
+                  <Badge variant="secondary">{t('salesWizard.steps.summary.itemsCount', { count: data.selectedPrograms.length })}</Badge>
                 </div>
               </AccordionTrigger>
               <AccordionContent>
                 <div className="space-y-1 pl-8">
-                  {data.selectedTreatments.map((treatment: string) => (
-                    <div key={treatment} className="flex items-center gap-2 text-sm">
+                  {data.selectedPrograms.map((program: string) => (
+                    <div key={program} className="flex items-center gap-2 text-sm">
                       <Sparkles className="h-3 w-3 text-purple-500" />
-                      {getTreatmentDisplayName(treatment, t)}
+                      {getProgramDisplayName(program, t)}
                     </div>
                   ))}
                 </div>

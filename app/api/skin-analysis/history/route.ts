@@ -76,11 +76,11 @@ export async function GET(request: NextRequest) {
           count: analysis.redness_count || 0,
         },
       },
-      patient: {
-        name: analysis.patient_name || 'Unknown',
-        age: analysis.patient_age || null,
-        gender: analysis.patient_gender || null,
-        skinType: analysis.patient_skin_type || null,
+      customer: {
+        name: analysis.customer_name || analysis.patient_name || 'Unknown',
+        age: analysis.customer_age || analysis.patient_age || null,
+        gender: analysis.customer_gender || analysis.patient_gender || null,
+        skinType: analysis.customer_skin_type || analysis.patient_skin_type || null,
       },
       notes: analysis.notes || null,
     }));

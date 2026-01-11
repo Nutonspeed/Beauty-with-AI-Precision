@@ -32,9 +32,9 @@ const TrainingDashboard: React.FC = () => {
       progress: 100
     },
     {
-      id: 'patient-management',
-      title: 'Patient Management',
-      description: 'Master patient records and appointment scheduling',
+      id: 'customer-management',
+      title: 'Customer Management',
+      description: 'Master customer records and appointment scheduling',
       type: 'video',
       duration: 15,
       difficulty: 'intermediate',
@@ -53,8 +53,8 @@ const TrainingDashboard: React.FC = () => {
     },
     {
       id: 'ar-simulator',
-      title: 'AR Treatment Simulator',
-      description: '3D visualization and treatment planning',
+      title: 'AR Program Simulator',
+      description: '3D visualization and program planning',
       type: 'video',
       duration: 12,
       difficulty: 'intermediate',

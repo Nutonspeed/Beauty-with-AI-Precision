@@ -20,13 +20,13 @@ import { AnalysisTimeline } from "./analysis-timeline"
 export interface EnhancedVISIAReportProps {
   analysis: HybridSkinAnalysis
   previousAnalyses?: HybridSkinAnalysis[]
-  patientInfo?: {
+  customerInfo?: {
     name?: string
     age?: number
     gender?: string
     skinType?: string
   }
-  clinicInfo?: {
+  centerInfo?: {
     name?: string
     logo?: string
     address?: string
@@ -39,8 +39,8 @@ export interface EnhancedVISIAReportProps {
 export function EnhancedVISIAReport({
   analysis,
   previousAnalyses = [],
-  patientInfo,
-  clinicInfo,
+  customerInfo,
+  centerInfo,
   className = "",
 }: EnhancedVISIAReportProps) {
   const t = useTranslations('visiaReport')
@@ -55,7 +55,7 @@ export function EnhancedVISIAReport({
         includeImages: true,
         includeCharts: true,
         includeRecommendations: true,
-        clinicInfo: clinicInfo?.name ? { ...clinicInfo, name: clinicInfo.name } : undefined,
+        centerInfo: centerInfo?.name ? { ...centerInfo, name: centerInfo.name } : undefined,
         watermark: t('watermark'),
       })
       console.log("[v0] PDF export initiated")
@@ -180,8 +180,8 @@ export function EnhancedVISIAReport({
           <TabsContent value="report" className="mt-6">
             <VISIAReport
               analysis={analysis}
-              patientInfo={patientInfo}
-              clinicInfo={clinicInfo}
+              customerInfo={customerInfo}
+              centerInfo={centerInfo}
               onExport={(format) => {
                 if (format === "pdf") handleExportPDF()
                 else handleExportPNG()

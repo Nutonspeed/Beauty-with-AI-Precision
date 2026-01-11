@@ -22,7 +22,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { NeuralAPIExplorer } from "@/components/visuals/neural-api-explorer"
-import { ClinicalDataLake } from "@/components/visuals/clinical-data-lake"
+import { AestheticDataLake } from "@/components/visuals/aesthetic-data-lake"
 import { BIPCLI } from "@/components/visuals/bip-cli"
 import { NeuralTrainingMonitor } from "@/components/visuals/neural-training-monitor"
 import { cn } from "@/lib/utils"
@@ -35,8 +35,8 @@ export default function TechSupremacyPage() {
       title: t('techHub.whitePapers'),
       items: [
         { name: 'Neural Mapping: 468-Point Precision Architecture', type: 'PDF', size: '4.2MB' },
-        { name: 'Predictive Biometric Evolution in Aesthetic Medicine', type: 'PDF', size: '3.8MB' },
-        { name: 'ROI Orchestration: Autonomous Clinical Logistics', type: 'PDF', size: '2.1MB' },
+        { name: 'Predictive Biometric Evolution in Aesthetic Tech', type: 'PDF', size: '3.8MB' },
+        { name: 'ROI Orchestration: Autonomous Aesthetic Logistics', type: 'PDF', size: '2.1MB' },
       ],
       icon: FileText,
       color: 'text-pink-400'
@@ -148,17 +148,17 @@ export default function TechSupremacyPage() {
             <NeuralAPIExplorer />
           </section>
 
-          {/* Clinical Data Lake Simulator */}
+          {/* Aesthetic Data Lake Simulator */}
           <section className="space-y-16">
             <div className="flex items-center justify-between">
               <h2 className="text-3xl font-bold text-white italic flex items-center gap-4">
                 <Database className="h-8 w-8 text-cyan-400" />
-                {t('dataLake.title')}
+                {t('techHub.dataLake')}
               </h2>
               <div className="h-px flex-1 bg-gradient-to-r from-cyan-500/30 via-transparent to-transparent mx-10" />
             </div>
             
-            <ClinicalDataLake />
+            <AestheticDataLake />
           </section>
 
           {/* BIP-Command Line Interface */}
@@ -291,7 +291,7 @@ export default function TechSupremacyPage() {
                     {t('techHub.requestFullAccess')}
                   </h2>
                   <p className="text-xl text-slate-400 font-light italic leading-relaxed">
-                    Partner clinics receive full access to our neural weights audit, raw inference datasets, and bespoke cloud deployment architecture.
+                    Partner centers receive full access to our neural weights audit, raw inference datasets, and bespoke cloud deployment architecture.
                   </p>
                 </div>
                 <Button variant="premium" className="h-24 px-16 rounded-[2.5rem] shadow-2xl shadow-pink-500/20 text-md font-black uppercase tracking-[0.4em] italic group shrink-0">

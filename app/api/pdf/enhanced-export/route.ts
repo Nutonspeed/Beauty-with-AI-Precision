@@ -110,23 +110,23 @@ export async function POST(request: NextRequest) {
       .eq('id', user.id)
       .single();
 
-    // Fetch clinic info from settings or use defaults
-    const { data: settings } = await supabase
-      .from('clinic_settings')
+    // Fetch center info from centers table or use defaults
+    const { data: centerSettings } = await supabase
+      .from('centers')
       .select('*')
       .single();
 
-    const clinicInfo = {
-      name: settings?.clinic_name || 'Beauty with AI Precision',
-      nameTh: settings?.clinic_name_th || 'ความงามด้วยความแม่นยำของ AI',
-      logo: settings?.logo_url || null,
-      brandColor: settings?.brand_color || '#8b5cf6',
-      address: settings?.address || '',
-      addressTh: settings?.address_th || '',
-      phone: settings?.phone || '',
-      email: settings?.email || '',
-      website: settings?.website || '',
-      license: settings?.license_number || '',
+    const centerInfo = {
+      name: centerSettings?.name || centerSettings?.center_name || 'Beauty with AI Precision',
+      nameTh: centerSettings?.center_name_th || 'ความงามด้วยความแม่นยำของ AI',
+      logo: centerSettings?.logo_url || null,
+      brandColor: centerSettings?.primary_color || '#8b5cf6',
+      address: centerSettings?.address || '',
+      addressTh: centerSettings?.address_th || '',
+      phone: centerSettings?.phone || '',
+      email: centerSettings?.email || '',
+      website: centerSettings?.website || '',
+      license: centerSettings?.license_number || '',
     };
 
     const pdfOptions = {
@@ -140,7 +140,7 @@ export async function POST(request: NextRequest) {
         skinType: patientInfo?.skinType || profile?.skin_type,
         customerId: user.id.substring(0, 8).toUpperCase(),
       },
-      clinicInfo,
+      centerInfo,
       previousAnalysis: previousAnalysis || undefined,
       comparisonMode: includeComparison && !!previousAnalysis,
       highlightImprovements: true,

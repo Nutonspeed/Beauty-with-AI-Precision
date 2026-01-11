@@ -27,18 +27,18 @@ interface CustomerProfile {
   skinType?: 'oily' | 'dry' | 'combination' | 'sensitive' | 'normal';
   concerns?: string[];
   budget?: 'low' | 'medium' | 'high' | 'premium';
-  previousTreatments?: string[];
+  previousPrograms?: string[];
 }
 
-interface Treatment {
+interface Program {
   id?: string;
-  treatment: string; // เปลี่ยนจาก name เป็น treatment
+  program: string;
   name?: string;
   nameTh?: string;
   category?: string;
   price: number;
   duration?: string;
-  confidence: number; // เปลี่ยนจาก matchScore เป็น confidence
+  confidence: number;
   reasoning: string;
   expectedResults: string;
   risks: string;
@@ -49,7 +49,7 @@ interface Treatment {
 interface AISmartRecommendationsProps {
   customerProfile?: CustomerProfile;
   skinAnalysisResults?: any;
-  onSelectTreatment?: (treatment: Treatment) => void;
+  onSelectProgram?: (program: Program) => void;
   className?: string;
 }
 
@@ -70,11 +70,11 @@ function convertBudgetToNumber(budget: string): number {
 export function AISmartRecommendations({
   customerProfile = {},
   skinAnalysisResults,
-  onSelectTreatment,
+  onSelectProgram,
   className = ''
 }: AISmartRecommendationsProps) {
   const t = useTranslations();
-  const [recommendations, setRecommendations] = useState<Treatment[]>([]);
+  const [recommendations, setRecommendations] = useState<Program[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   
@@ -87,7 +87,7 @@ export function AISmartRecommendations({
         const budget = convertBudgetToNumber(customerProfile.budget || 'medium');
         const goals = customerProfile.concerns || [];
 
-        const fn = (recommender as any).recommendTreatments
+        const fn = (recommender as any).recommendPrograms
         let aiRecommendations: any[] = []
         if (typeof fn === 'function') {
           aiRecommendations = await fn.call(recommender, customerProfile, skinAnalysisResults || {}, budget, goals)
@@ -177,7 +177,7 @@ export function AISmartRecommendations({
                   </div>
                   
                   <div className="flex-1">
-                    <h3 className="text-lg font-bold text-white">{topRecommendation.treatment}</h3>
+                    <h3 className="text-lg font-bold text-white">{topRecommendation.program}</h3>
                     <p className="text-sm text-gray-400 mb-2">{topRecommendation.reasoning}</p>
                     
                     <div className="flex flex-wrap gap-2 mb-3">
@@ -198,7 +198,7 @@ export function AISmartRecommendations({
                 
                 <Button 
                   className="w-full mt-4 bg-gradient-to-r from-violet-600 to-purple-600"
-                  onClick={() => onSelectTreatment?.(topRecommendation)}
+                  onClick={() => onSelectProgram?.(topRecommendation)}
                 >
                   {t('salesTools.recommendations.selectButton')}
                   <ArrowRight className="w-4 h-4 ml-2" />
@@ -227,24 +227,24 @@ export function AISmartRecommendations({
             {/* Other Recommendations */}
             <div className="space-y-2">
               <AnimatePresence mode="popLayout">
-                {filteredRecommendations.slice(1, 6).map((treatment, idx) => (
+                {filteredRecommendations.slice(1, 6).map((program, idx) => (
                   <motion.div
-                    key={treatment.id}
+                    key={program.id}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: 20 }}
                     transition={{ delay: idx * 0.1 }}
                     className="p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all cursor-pointer group"
-                    onClick={() => onSelectTreatment?.(treatment)}
+                    onClick={() => onSelectProgram?.(program)}
                   >
                     <div className="flex items-center gap-3">
                       {/* Confidence Circle */}
                       <div className="relative flex-shrink-0">
                         <div className="w-12 h-12 rounded-full bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center">
-                          <span className="text-lg font-bold text-white">{treatment.confidence}</span>
+                          <span className="text-lg font-bold text-white">{program.confidence}</span>
                         </div>
                         <Progress 
-                          value={treatment.confidence} 
+                          value={program.confidence} 
                           className="absolute inset-0 w-12 h-12 rounded-full [&>div]:rounded-full" 
                         />
                       </div>
@@ -252,16 +252,16 @@ export function AISmartRecommendations({
                       {/* Content */}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
-                          <h4 className="font-medium text-white truncate">{treatment.treatment}</h4>
+                          <h4 className="font-medium text-white truncate">{program.program}</h4>
                           <span className="text-green-400 font-bold text-sm">
-                            {t('salesTools.recommendations.priceLabel', { amount: treatment.price.toLocaleString() })}
+                            {t('salesTools.recommendations.priceLabel', { amount: program.price.toLocaleString() })}
                           </span>
                         </div>
                         <div className="flex items-center gap-2 mt-1">
                           <Badge variant="outline" className="border-white/20 text-gray-400 text-xs">
-                            {treatment.reasoning.substring(0, 30)}...
+                            {program.reasoning.substring(0, 30)}...
                           </Badge>
-                          <span className="text-xs text-gray-500">{t('salesTools.recommendations.resultShort', { text: treatment.expectedResults.substring(0, 20) })}...</span>
+                          <span className="text-xs text-gray-500">{t('salesTools.recommendations.resultShort', { text: program.expectedResults.substring(0, 20) })}...</span>
                         </div>
                       </div>
                       

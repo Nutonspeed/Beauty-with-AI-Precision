@@ -20,7 +20,7 @@ export async function GET(request: Request) {
 
     let query = supabase
       .from("bookings")
-      .select("*, clinic:clinics(*)")
+      .select("*, center:centers(*)")
       .eq("customer_id", user.id)
       .order("booking_date", { ascending: false })
       .range(offset, offset + limit - 1)

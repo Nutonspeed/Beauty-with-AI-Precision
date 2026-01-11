@@ -1,9 +1,11 @@
 // Database types generated from Supabase schema
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
 
-export type UserRole = "super_admin" | "clinic_owner" | "sales_staff" | "customer_free" | "customer_premium"
+export type UserRole = "super_admin" | "center_owner" | "sales_staff" | "customer_free" | "customer_premium" | "center_admin" | "center_staff"
 
 export type SkinType = "oily" | "dry" | "combination" | "normal" | "sensitive"
+
+export type AnalysisTier = "free" | "premium" | "aesthetic"
 
 export type ConcernType = "wrinkle" | "pigmentation" | "pore" | "redness" | "acne" | "dark_circle"
 
@@ -19,7 +21,7 @@ export interface Database {
           password: string
           name: string
           role: UserRole
-          tenant_id: string | null
+          center_id: string | null
           is_active: boolean
           created_at: string
           updated_at: string
@@ -30,7 +32,7 @@ export interface Database {
           password: string
           name: string
           role: UserRole
-          tenant_id?: string | null
+          center_id?: string | null
           is_active?: boolean
           created_at?: string
           updated_at?: string
@@ -41,57 +43,89 @@ export interface Database {
           password?: string
           name?: string
           role?: UserRole
-          tenant_id?: string | null
+          center_id?: string | null
           is_active?: boolean
           created_at?: string
           updated_at?: string
         }
       }
-      tenants: {
+      center_subscriptions: {
         Row: {
           id: string
-          slug: string
-          settings: Json
-          branding: Json
-          features: Json
-          subscription: Json
+          center_id: string
+          status: string
+          mrr: number
+          current_period_start: string
+          current_period_end: string
           created_at: string
           updated_at: string
-          created_by: string
-          is_active: boolean
-          is_trial: boolean
-          isolation_strategy: string
-          usage: Json
+          plan_id: string
         }
         Insert: {
           id?: string
-          slug: string
-          settings?: Json
-          branding?: Json
-          features?: Json
-          subscription?: Json
+          center_id: string
+          status: string
+          mrr: number
+          current_period_start: string
+          current_period_end: string
           created_at?: string
           updated_at?: string
-          created_by: string
-          is_active?: boolean
-          is_trial?: boolean
-          isolation_strategy?: string
-          usage?: Json
+          plan_id: string
         }
         Update: {
           id?: string
-          slug?: string
-          settings?: Json
-          branding?: Json
-          features?: Json
-          subscription?: Json
+          center_id?: string
+          status?: string
+          mrr?: number
+          current_period_start?: string
+          current_period_end?: string
           created_at?: string
           updated_at?: string
-          created_by?: string
+          plan_id?: string
+        }
+      }
+      centers: {
+        Row: {
+          id: string
+          name: string
+          slug: string
+          email: string | null
+          phone: string | null
+          address: string | null
+          is_active: boolean
+          subscription_plan: string | null
+          subscription_status: string | null
+          created_at: string
+          updated_at: string
+          settings: Json
+        }
+        Insert: {
+          id?: string
+          name: string
+          slug: string
+          email?: string | null
+          phone?: string | null
+          address?: string | null
           is_active?: boolean
-          is_trial?: boolean
-          isolation_strategy?: string
-          usage?: Json
+          subscription_plan?: string | null
+          subscription_status?: string | null
+          created_at?: string
+          updated_at?: string
+          settings?: Json
+        }
+        Update: {
+          id?: string
+          name?: string
+          slug?: string
+          email?: string | null
+          phone?: string | null
+          address?: string | null
+          is_active?: boolean
+          subscription_plan?: string | null
+          subscription_status?: string | null
+          created_at?: string
+          updated_at?: string
+          settings?: Json
         }
       }
       user_profiles: {

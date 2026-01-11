@@ -19,22 +19,22 @@ import { Noto_Sans_Thai, Kanit } from "next/font/google"
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'),
-  title: "ClinicIQ — Intelligent Aesthetic Platform",
-  description: "ClinicIQ brings medical-grade AI to aesthetics: skin analysis, booking, treatment recommendations, and clinic operations.",
+  title: "Aesthetic OS — Intelligent Aesthetic Intelligence Platform",
+  description: "Aesthetic OS brings elite-grade AI to aesthetics: skin analysis, booking, program recommendations, and center operations.",
   generator: "Next.js",
   manifest: "/manifest.json",
   openGraph: {
-    title: "ClinicIQ — Intelligent Aesthetic Platform",
+    title: "Aesthetic OS — Intelligent Aesthetic Intelligence Platform",
     description:
-      "ClinicIQ brings medical-grade AI to aesthetics: skin analysis, booking, treatment recommendations, and clinic operations.",
-    url: "https://cliniciq.example",
-    siteName: "ClinicIQ",
+      "Aesthetic OS brings elite-grade AI to aesthetics: skin analysis, booking, program recommendations, and center operations.",
+    url: "https://aestheticos.ai",
+    siteName: "Aesthetic OS",
     images: [
       {
-        url: "/og-cliniciq.svg",
+        url: "/og-aestheticos.svg",
         width: 1200,
         height: 630,
-        alt: "ClinicIQ",
+        alt: "Aesthetic OS",
         type: "image/svg+xml",
       },
     ],
@@ -43,17 +43,17 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    site: "@cliniciq",
-    creator: "@cliniciq",
-    title: "ClinicIQ — Intelligent Aesthetic Platform",
+    site: "@aestheticos",
+    creator: "@aestheticos",
+    title: "Aesthetic OS — Intelligent Aesthetic Intelligence Platform",
     description:
-      "ClinicIQ brings medical-grade AI to aesthetics: skin analysis, booking, treatment recommendations, and clinic operations.",
-    images: ["/og-cliniciq.svg"],
+      "Aesthetic OS brings elite-grade AI to aesthetics: skin analysis, booking, program recommendations, and center operations.",
+    images: ["/og-aestheticos.svg"],
   },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "ClinicIQ",
+    title: "Aesthetic OS",
   },
   formatDetection: {
     telephone: false,
@@ -70,8 +70,8 @@ export const metadata: Metadata = {
     "apple-mobile-web-app-capable": "yes",
     "apple-mobile-web-app-status-bar-style": "black-translucent",
   },
-  applicationName: "ClinicIQ",
-  keywords: ["cliniciq", "skin analysis", "AI", "aesthetic", "clinic", "treatment", "dermatology"],
+  applicationName: "Aesthetic OS",
+  keywords: ["aestheticos", "skin analysis", "AI", "aesthetic", "center", "program", "dermatology"],
 }
 
 // Thai-friendly typography: Noto Sans Thai for body, Kanit for display headings

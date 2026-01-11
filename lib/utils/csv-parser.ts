@@ -8,7 +8,7 @@ export interface CSVParseResult<T> {
 export interface TeamMemberCSVRow {
   email: string;
   name: string;
-  role: 'sales_staff' | 'clinic_staff' | 'clinic_manager';
+  role: 'sales_staff' | 'center_staff' | 'center_manager';
 }
 
 export interface CustomerCSVRow {
@@ -90,7 +90,7 @@ export function parseTeamMemberCSV(csvText: string): CSVParseResult<TeamMemberCS
       continue;
     }
 
-    const validRoles = ['sales_staff', 'clinic_staff', 'clinic_manager'];
+    const validRoles = ['sales_staff', 'center_staff', 'center_manager'];
     if (!validRoles.includes(role)) {
       errors.push({ 
         row: i + 1, 
@@ -176,7 +176,7 @@ export function parseCustomerCSV(csvText: string): CSVParseResult<CustomerCSVRow
 
 export function generateCSVTemplate(type: 'team' | 'customer'): string {
   if (type === 'team') {
-    return 'email,name,role\nexample@clinic.com,John Doe,sales_staff\n';
+    return 'email,name,role\nexample@center.com,John Doe,sales_staff\n';
   } else {
     return 'email,name,phone\ncustomer@example.com,Jane Smith,0812345678\n';
   }

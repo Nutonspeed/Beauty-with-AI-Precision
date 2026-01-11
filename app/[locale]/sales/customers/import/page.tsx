@@ -26,7 +26,7 @@ export default function CustomerImportPage() {
   useEffect(() => {
     if (authLoading) return;
 
-    if (!user || !['sales_staff', 'clinic_admin', 'clinic_owner', 'super_admin'].includes(user.role)) {
+    if (!user || !['sales_staff', 'center_admin', 'center_owner', 'super_admin'].includes(user.role)) {
       router.push(lp('/unauthorized'));
       return;
     }
@@ -87,7 +87,7 @@ export default function CustomerImportPage() {
                 <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent not-italic">Synchronizer</span>
               </h1>
               <p className="text-xl text-slate-500 font-light tracking-widest max-w-2xl italic leading-relaxed">
-                Initialize bulk unit synchronization and authorize clinical record insertion.
+                Initialize bulk unit synchronization and authorize aesthetic record insertion.
               </p>
             </motion.div>
           </div>
@@ -129,7 +129,7 @@ export default function CustomerImportPage() {
                     <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 mb-4 italic">{t('salesImport.instructions.formatLabel')}</p>
                     <code className="text-pink-400 font-mono text-sm block leading-relaxed relative z-10">
                       email,name,phone<br />
-                      customer@example.com,{t('patient.name')},0812345678
+                      customer@example.com,{t('customer.name')},0812345678
                     </code>
                   </div>
                 </CardContent>

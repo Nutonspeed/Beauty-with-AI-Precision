@@ -11,7 +11,7 @@ export interface DashboardStats {
 export interface DashboardAppointment {
   id: string
   clientName: string
-  treatment: string
+  program: string
   time: string
   status: 'confirmed' | 'pending'
 }
@@ -23,7 +23,7 @@ export interface LowStockItem {
   minStock: number
 }
 
-export interface PopularTreatment {
+export interface PopularProgram {
   name: string
   count: number
 }
@@ -32,7 +32,7 @@ export interface DashboardData {
   stats: DashboardStats
   recentAppointments: DashboardAppointment[]
   lowStockItems: LowStockItem[]
-  popularTreatments: PopularTreatment[]
+  popularPrograms: PopularProgram[]
 }
 
 export const mockDashboardData: DashboardData = {
@@ -49,21 +49,21 @@ export const mockDashboardData: DashboardData = {
     {
       id: 'appt-001',
       clientName: 'สุดา ใจดี',
-      treatment: 'Toning Laser',
+      program: 'Toning Laser',
       time: 'วันนี้ • 10:30 น.',
       status: 'confirmed',
     },
     {
       id: 'appt-002',
       clientName: 'มานะ ขยันดี',
-      treatment: 'HydraFacial',
+      program: 'HydraFacial',
       time: 'วันนี้ • 13:00 น.',
       status: 'pending',
     },
     {
       id: 'appt-003',
       clientName: 'อรทัย รุ่งเรือง',
-      treatment: 'Microneedling',
+      program: 'Microneedling',
       time: 'วันนี้ • 15:30 น.',
       status: 'confirmed',
     },
@@ -88,7 +88,7 @@ export const mockDashboardData: DashboardData = {
       minStock: 10,
     },
   ],
-  popularTreatments: [
+  popularPrograms: [
     {
       name: 'HydraFacial Signature',
       count: 120,

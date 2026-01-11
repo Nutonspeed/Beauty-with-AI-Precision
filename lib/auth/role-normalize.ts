@@ -8,11 +8,11 @@ export type CanonicalRole =
   | 'guest'
   | 'customer_free'
   | 'customer_premium'
-  | 'customer_clinical'
+  | 'customer_aesthetic'
   | 'customer' // generic customer (fallback)
-  | 'clinic_staff'
-  | 'clinic_owner'
-  | 'clinic_admin'
+  | 'center_staff'
+  | 'center_owner'
+  | 'center_admin'
   | 'sales_staff'
   | 'super_admin'
 
@@ -22,13 +22,17 @@ const LEGACY_MAP: Record<string, CanonicalRole> = {
   premium_customer: 'customer_premium',
   customer_free: 'customer_free',
   customer_premium: 'customer_premium',
-  customer_clinical: 'customer_clinical',
+  customer_aesthetic: 'customer_aesthetic',
+  customer_clinical: 'customer_aesthetic',
   customer: 'customer',
   admin: 'super_admin',
-  manager: 'clinic_admin',
-  clinic_staff: 'clinic_staff',
-  clinic_owner: 'clinic_owner',
-  clinic_admin: 'clinic_admin',
+  manager: 'center_admin',
+  clinic_staff: 'center_staff',
+  clinic_owner: 'center_owner',
+  clinic_admin: 'center_admin',
+  center_staff: 'center_staff',
+  center_owner: 'center_owner',
+  center_admin: 'center_admin',
   sales_staff: 'sales_staff',
   sales: 'sales_staff',
   super_admin: 'super_admin',
@@ -55,11 +59,11 @@ export function normalizeRole(role: string | null | undefined): CanonicalRole {
 }
 
 /**
- * Helper: ตรวจสอบว่า role อยู่ในกลุ่ม clinic (owner/admin/staff)
+ * Helper: ตรวจสอบว่า role อยู่ในกลุ่ม center (owner/admin/staff)
  */
-export function isClinicRole(role: string | null | undefined): boolean {
+export function isCenterRole(role: string | null | undefined): boolean {
   const r = normalizeRole(role)
-  return r === 'clinic_owner' || r === 'clinic_admin' || r === 'clinic_staff' || r === 'sales_staff'
+  return r === 'center_owner' || r === 'center_admin' || r === 'center_staff' || r === 'sales_staff'
 }
 
 /**
@@ -67,25 +71,25 @@ export function isClinicRole(role: string | null | undefined): boolean {
  */
 export function isElevatedRole(role: string | null | undefined): boolean {
   const r = normalizeRole(role)
-  return r === 'super_admin' || r === 'clinic_admin'
+  return r === 'super_admin' || r === 'center_admin'
 }
 
 /**
  * Helper: แปลง canonical role เป็น analysis tier
  */
-export type AnalysisTier = 'free' | 'premium' | 'clinical'
+export type AnalysisTier = 'free' | 'premium' | 'aesthetic'
 export function roleToTier(role: string | null | undefined): AnalysisTier {
   const r = normalizeRole(role)
   switch (r) {
     case 'customer_premium':
     case 'sales_staff':
-    case 'clinic_staff':
+    case 'center_staff':
       return 'premium'
-    case 'customer_clinical':
-    case 'clinic_owner':
-    case 'clinic_admin':
+    case 'customer_aesthetic':
+    case 'center_owner':
+    case 'center_admin':
     case 'super_admin':
-      return 'clinical'
+      return 'aesthetic'
     case 'customer_free':
     case 'customer':
     case 'public':
@@ -103,10 +107,10 @@ export function roleDisplayName(role: string | null | undefined): string {
   switch (r) {
     case 'customer_free': return 'ผู้ใช้ฟรี'
     case 'customer_premium': return 'ผู้ใช้พรีเมียม'
-    case 'customer_clinical': return 'ลูกค้าคลินิก'
-    case 'clinic_staff': return 'พนักงานคลินิก'
-    case 'clinic_owner': return 'เจ้าของคลินิก'
-    case 'clinic_admin': return 'ผู้ดูแลคลินิก'
+    case 'customer_aesthetic': return 'ลูกค้าศูนย์ความงาม'
+    case 'center_staff': return 'พนักงานศูนย์ความงาม'
+    case 'center_owner': return 'เจ้าของศูนย์ความงาม'
+    case 'center_admin': return 'ผู้ดูแลศูนย์ความงาม'
     case 'sales_staff': return 'พนักงานขาย'
     case 'super_admin': return 'ซูเปอร์แอดมิน'
     case 'customer': return 'ผู้ใช้'

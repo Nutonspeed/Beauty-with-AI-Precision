@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
     const service = createServiceClient()
     const { data: userRow, error: userErr } = await service
       .from("users")
-      .select("role, clinic_id")
+      .select("role, center_id")
       .eq("id", user.id)
       .single()
 
@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
     const { fetchActivityFeed } = await import("@/lib/sales/activity-feed-service")
     const payload = await fetchActivityFeed({
       userId: user.id,
-      clinicId: userRow.clinic_id ?? null,
+      centerId: userRow.center_id ?? null,
       limit,
       offset,
       leadId,

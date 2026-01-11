@@ -225,7 +225,7 @@ export function SkinAnalysisUpload({ isLoggedIn = false, analysisMode = "auto" }
         body: JSON.stringify({
           image: compressResult.dataUrl, // Use optimized image
           mode: analysisMode,
-          patientInfo: {
+          customerInfo: {
             name: "",
             age: 0,
             gender: "unknown",

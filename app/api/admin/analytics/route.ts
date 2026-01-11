@@ -21,7 +21,7 @@ export async function GET(request: Request) {
     // Verify super admin
     const { data: userData } = await supabase
       .from('users')
-      .select('role')
+      .select('role, center_id')
       .eq('id', user.id)
       .single()
 
@@ -31,7 +31,7 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url)
     const period = searchParams.get('period') || 'month'
-    const metric = searchParams.get('metric') || 'all'
+    const metric = searchParams.get('metric') || 'all' // centers, users, revenue
 
     // Calculate date range based on period
     const now = new Date()
@@ -57,8 +57,8 @@ export async function GET(request: Request) {
         .order('paid_at', { ascending: true })
 
       // Get subscription plans for MRR calculation
-      const { data: clinics } = await supabase
-        .from('clinics')
+      const { data: centers } = await supabase
+        .from('centers')
         .select('subscription_plan, subscription_status')
         .eq('subscription_status', 'active')
 
@@ -68,8 +68,8 @@ export async function GET(request: Request) {
         enterprise: 29900,
       }
 
-      const monthlyRecurringRevenue = clinics?.reduce((sum, clinic) => {
-        const price = planPrices[clinic.subscription_plan as keyof typeof planPrices] || 0
+      const monthlyRecurringRevenue = centers?.reduce((sum, center) => {
+        const price = planPrices[center.subscription_plan as keyof typeof planPrices] || 0
         return sum + price
       }, 0) || 0
 
@@ -97,60 +97,60 @@ export async function GET(request: Request) {
       }
     }
 
-    // 2. Clinic Analytics
-    let clinicData = null
-    if (metric === 'clinics' || metric === 'all') {
-      const { data: allClinics } = await supabase
-        .from('clinics')
+    // 2. Center Analytics
+    let centerData = null
+    if (metric === 'centers' || metric === 'clinics' || metric === 'all') {
+      const { data: allCenters } = await supabase
+        .from('centers')
         .select('id, created_at, subscription_status, subscription_plan')
         .order('created_at', { ascending: true })
 
-      const activeClinics = allClinics?.filter((c) => c.subscription_status === 'active').length || 0
-      const trialClinics = allClinics?.filter((c) => c.subscription_status === 'trial').length || 0
-      const suspendedClinics = allClinics?.filter((c) => c.subscription_status === 'suspended').length || 0
-      const cancelledClinics = allClinics?.filter((c) => c.subscription_status === 'cancelled').length || 0
+      const activeCenters = allCenters?.filter((c) => c.subscription_status === 'active').length || 0
+      const trialCenters = allCenters?.filter((c) => c.subscription_status === 'trial').length || 0
+      const suspendedCenters = allCenters?.filter((c) => c.subscription_status === 'suspended').length || 0
+      const cancelledCenters = allCenters?.filter((c) => c.subscription_status === 'cancelled').length || 0
 
       // Growth over time
-      const clinicsInPeriod = allClinics?.filter((c) => new Date(c.created_at) >= startDate) || []
+      const centersInPeriod = allCenters?.filter((c) => new Date(c.created_at) >= startDate) || []
       
       // Group by month
-      const clinicsByMonth = new Map<string, number>()
-      allClinics?.forEach((clinic) => {
-        const date = new Date(clinic.created_at)
+      const centersByMonth = new Map<string, number>()
+      allCenters?.forEach((center) => {
+        const date = new Date(center.created_at)
         if (date >= startDate) {
           const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
-          clinicsByMonth.set(monthKey, (clinicsByMonth.get(monthKey) || 0) + 1)
+          centersByMonth.set(monthKey, (centersByMonth.get(monthKey) || 0) + 1)
         }
       })
 
-      const clinicGrowthTimeSeries = Array.from(clinicsByMonth.entries())
+      const centerGrowthTimeSeries = Array.from(centersByMonth.entries())
         .map(([month, count]) => ({ month, count }))
         .sort((a, b) => a.month.localeCompare(b.month))
 
       // Plan distribution
       const planDistribution = {
-        starter: allClinics?.filter((c) => c.subscription_plan === 'starter').length || 0,
-        professional: allClinics?.filter((c) => c.subscription_plan === 'professional').length || 0,
-        enterprise: allClinics?.filter((c) => c.subscription_plan === 'enterprise').length || 0,
+        starter: allCenters?.filter((c) => c.subscription_plan === 'starter').length || 0,
+        professional: allCenters?.filter((c) => c.subscription_plan === 'professional').length || 0,
+        enterprise: allCenters?.filter((c) => c.subscription_plan === 'enterprise').length || 0,
       }
 
       // Churn rate calculation (cancelled in period / total at start)
-      const cancelledInPeriod = allClinics?.filter(
+      const cancelledInPeriod = allCenters?.filter(
         (c) => c.subscription_status === 'cancelled'
       ).length || 0
-      const totalClinics = allClinics?.length || 1
-      const churnRate = ((cancelledInPeriod / totalClinics) * 100).toFixed(2)
+      const totalCenters = allCenters?.length || 1
+      const churnRate = ((cancelledInPeriod / totalCenters) * 100).toFixed(2)
 
-      clinicData = {
-        total: allClinics?.length || 0,
-        active: activeClinics,
-        trial: trialClinics,
-        suspended: suspendedClinics,
-        cancelled: cancelledClinics,
-        newInPeriod: clinicsInPeriod.length,
+      centerData = {
+        total: allCenters?.length || 0,
+        active: activeCenters,
+        trial: trialCenters,
+        suspended: suspendedCenters,
+        cancelled: cancelledCenters,
+        newInPeriod: centersInPeriod.length,
         churnRate: parseFloat(churnRate),
         planDistribution,
-        growthTimeSeries: clinicGrowthTimeSeries,
+        growthTimeSeries: centerGrowthTimeSeries,
       }
     }
 
@@ -159,7 +159,7 @@ export async function GET(request: Request) {
     if (metric === 'users' || metric === 'all') {
       const { data: allUsers } = await supabase
         .from('users')
-        .select('id, created_at, role, clinic_id')
+        .select('id, created_at, role, center_id')
         .order('created_at', { ascending: true })
 
       const totalUsers = allUsers?.length || 0
@@ -168,7 +168,7 @@ export async function GET(request: Request) {
       // Role distribution
       const roleDistribution = {
         super_admin: allUsers?.filter((u) => u.role === 'super_admin').length || 0,
-        clinic_admin: allUsers?.filter((u) => u.role === 'clinic_admin').length || 0,
+        center_admin: allUsers?.filter((u) => u.role === 'center_admin' || u.role === 'clinic_admin').length || 0,
         staff: allUsers?.filter((u) => u.role === 'staff').length || 0,
         customer: allUsers?.filter((u) => u.role === 'customer').length || 0,
       }
@@ -219,11 +219,11 @@ export async function GET(request: Request) {
       const analysesCount = recentAnalyses?.length || 0
       const customersCount = recentCustomers?.length || 0
 
-      // Average per clinic
-      const clinicsCount = clinicData?.active || 1
-      const avgBookingsPerClinic = (bookingsCount / clinicsCount).toFixed(1)
-      const avgAnalysesPerClinic = (analysesCount / clinicsCount).toFixed(1)
-      const avgCustomersPerClinic = (customersCount / clinicsCount).toFixed(1)
+      // Average per center
+      const centersCount = centerData?.active || 1
+      const avgBookingsPerCenter = (bookingsCount / centersCount).toFixed(1)
+      const avgAnalysesPerCenter = (analysesCount / centersCount).toFixed(1)
+      const avgCustomersPerCenter = (customersCount / centersCount).toFixed(1)
 
       systemData = {
         featureUsage: {
@@ -232,9 +232,9 @@ export async function GET(request: Request) {
           customers: customersCount,
         },
         averages: {
-          bookingsPerClinic: parseFloat(avgBookingsPerClinic),
-          analysesPerClinic: parseFloat(avgAnalysesPerClinic),
-          customersPerClinic: parseFloat(avgCustomersPerClinic),
+          bookingsPerCenter: parseFloat(avgBookingsPerCenter),
+          analysesPerCenter: parseFloat(avgAnalysesPerCenter),
+          customersPerCenter: parseFloat(avgCustomersPerCenter),
         },
       }
     }
@@ -273,7 +273,7 @@ export async function GET(request: Request) {
         end: now.toISOString(),
       },
       revenue: revenueData,
-      clinics: clinicData,
+      centers: centerData,
       users: userAnalyticsData,
       system: systemData,
       popularFeatures,

@@ -18,7 +18,7 @@ export interface SkinCondition {
   description: string;
   symptoms: string[];
   causes: string[];
-  treatments: string[];
+  programs: string[];
   recommendedProducts?: string[];
   whenToSeeDermatologist: string;
 }
