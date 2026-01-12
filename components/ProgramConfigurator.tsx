@@ -1,6 +1,5 @@
 "use client";
 import { motion } from 'framer-motion';
-import { colors } from '@/lib/design/tokens';
 import { useTranslations } from 'next-intl';
 import { Zap } from 'lucide-react';
 

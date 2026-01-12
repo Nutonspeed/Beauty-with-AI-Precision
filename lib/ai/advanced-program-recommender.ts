@@ -3,7 +3,6 @@
 
 import { OpenAI } from 'openai';
 import { getOpenAIApiKey } from '@/lib/config/ai';
-import { Program, ProgramRecommendation } from '@/types/program';
 
 let openai: OpenAI | null = null;
 

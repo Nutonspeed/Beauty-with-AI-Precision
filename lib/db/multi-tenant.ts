@@ -11,8 +11,7 @@ import type {
   MultiTenantSkinAnalysis,
   PermissionContext,
   Permission,
-  RolePermissions,
-  ApiResponse
+  RolePermissions
 } from '@/types/multi-tenant';
 
 // ============================================================================

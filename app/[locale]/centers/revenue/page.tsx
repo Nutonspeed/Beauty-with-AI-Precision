@@ -21,20 +21,11 @@ import {
   Users,
   Package,
   Loader2,
-  Activity,
   ArrowUpRight,
   ArrowDownRight,
   Megaphone,
   LayoutGrid,
-  Globe,
-  Calculator,
-  Binary,
-  ShieldAlert,
-  Gauge,
-  Brain,
-  Cpu,
-  ShieldCheck,
-  BarChart3
+  Binary
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';

@@ -1,5 +1,4 @@
 import { analyzeSkinWithGemini } from "./gemini-advisor";
-import { HuggingFaceAnalyzer } from "./huggingface-analyzer";
 import { detectAcne, classifySkinType, detectFaceCharacteristics } from "./huggingface-client";
 
 export interface SkinAnalysisResult {

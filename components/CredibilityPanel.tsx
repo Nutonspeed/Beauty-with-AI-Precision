@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShieldCheck, Activity, Globe, Zap } from 'lucide-react';
+import { ShieldCheck, Activity } from 'lucide-react';
 
 interface Certification {
   id: string;

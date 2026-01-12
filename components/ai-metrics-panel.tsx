@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { colors } from "@/lib/design/tokens";
 
 interface MetricDef {
   key: string;

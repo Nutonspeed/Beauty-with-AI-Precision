@@ -33,7 +33,6 @@ import {
   useProgramMilestones,
   useProgramReport,
 } from "@/hooks/useProgram"
-import { Breadcrumbs } from "@/components/ui/breadcrumbs"
 import PhotoComparison from "@/components/photo-comparison"
 import ProgressNotes from "@/components/progress-notes"
 import { AestheticTimeline as ProgramTimeline } from "@/components/aesthetic-timeline"

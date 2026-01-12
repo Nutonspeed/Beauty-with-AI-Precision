@@ -15,7 +15,6 @@ import {
   Crown, 
   Building2, 
   Users, 
-  HardDrive, 
   Zap, 
   Clock,
   Cpu,
@@ -354,7 +353,7 @@ export default function PricingPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5">
-                    {[/* eslint-disable @typescript-eslint/no-unused-vars */
+                    {[ 
                       { label: t('pricing.comparison.aiAnalysis'), starter: true, pro: true, enterprise: true },
                       { label: t('pricing.comparison.aestheticMetrics'), starter: true, pro: true, enterprise: true },
                       { label: t('pricing.comparison.saveHistory'), starter: false, pro: true, enterprise: true },
