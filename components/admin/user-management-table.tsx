@@ -180,7 +180,7 @@ export function UserManagementTable() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="customer">{t('userTable.roles.customer')}</SelectItem>
-                    <SelectItem value="clinic_staff">{t('userTable.roles.clinic_staff')}</SelectItem>
+                    <SelectItem value="center_staff">{t('userTable.roles.center_staff')}</SelectItem>
                     <SelectItem value="sales_staff">{t('userTable.roles.sales_staff')}</SelectItem>
                     <SelectItem value="admin">{t('userTable.roles.admin')}</SelectItem>
                   </SelectContent>

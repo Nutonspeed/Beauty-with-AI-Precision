@@ -50,7 +50,7 @@ export function StaffPerformance({ dateRange }: StaffPerformanceProps) {
         end_date: dateRange.to.toISOString(),
       })
 
-      const response = await fetch(`/api/clinic/analytics/staff-performance?${params}`)
+      const response = await fetch(`/api/center/analytics/staff-performance?${params}`)
       if (!response.ok) throw new Error("Failed to fetch staff performance data")
 
       const result = await response.json()
@@ -70,8 +70,8 @@ export function StaffPerformance({ dateRange }: StaffPerformanceProps) {
 
   const getRoleBadge = (role: string) => {
     const roleMap: Record<string, { label: string; color: string }> = {
-      doctor: { label: t('staffPerformance.roles.doctor'), color: "bg-blue-500" },
-      nurse: { label: t('staffPerformance.roles.nurse'), color: "bg-green-500" },
+      specialist: { label: t('staffPerformance.roles.specialist'), color: "bg-blue-500" },
+      assistant: { label: t('staffPerformance.roles.assistant'), color: "bg-green-500" },
       therapist: { label: t('staffPerformance.roles.therapist'), color: "bg-purple-500" },
       admin: { label: t('staffPerformance.roles.admin'), color: "bg-orange-500" },
       receptionist: { label: t('staffPerformance.roles.receptionist'), color: "bg-pink-500" },
@@ -231,8 +231,8 @@ export function StaffPerformance({ dateRange }: StaffPerformanceProps) {
                       dy={15}
                       tickFormatter={(label) => {
                         const roleMap: Record<string, string> = {
-                          doctor: "DOC",
-                          nurse: "NRS",
+                          specialist: "SPEC",
+                          assistant: "AST",
                           therapist: "THR",
                           admin: "MGR",
                           receptionist: "RCP",

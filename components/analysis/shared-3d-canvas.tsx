@@ -164,7 +164,7 @@ export function Shared3DCanvas({ isPremium }: Shared3DCanvasProps) {
             <ShieldCheck className="h-5 w-5 text-pink-500" />
           </div>
           <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 italic">
-            {t('clinicalValidation')}
+            {t('aestheticValidation')}
           </p>
         </div>
       </CardContent>
@@ -174,7 +174,7 @@ export function Shared3DCanvas({ isPremium }: Shared3DCanvasProps) {
           <div className="h-12 w-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
             <Info className="h-5 w-5 text-slate-500" />
           </div>
-          <p className="text-[11px] text-slate-500 font-light italic max-w-sm">{t('clinicalDescription')}</p>
+          <p className="text-[11px] text-slate-500 font-light italic max-w-sm">{t('aestheticDescription')}</p>
         </div>
         <div className="flex gap-4">
           <Button variant="ghost" className="h-16 px-8 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 hover:text-rose-500 transition-all italic">

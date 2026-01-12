@@ -14,7 +14,7 @@ export { ConcernDetailModal } from './concern-detail-modal'
 export { InteractivePhotoMarkers } from './interactive-markers'
 export { Shared3DCanvas } from './shared-3d-canvas'
 export { AgingSimulator } from './aging-simulator'
-export { ClinicalGenomeVisualization } from './clinical-genome-visualization'
+export { AestheticGenomeVisualization } from './aesthetic-genome-visualization'
 
 // Comparison & Progress
 export { default as AnalysisComparison } from './analysis-comparison'

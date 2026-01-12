@@ -120,7 +120,7 @@ export function LightingQualityChecker() {
           color: "text-emerald-400",
           bgColor: "bg-emerald-500/5 border-emerald-500/20",
           label: "Optimal Spectrum",
-          message: "Clinical-grade lighting detected. Ready for high-precision analysis.",
+          message: "Aesthetic-grade lighting detected. Ready for high-precision analysis.",
           badgeVariant: "default" as const,
           barColor: "bg-emerald-500"
         }

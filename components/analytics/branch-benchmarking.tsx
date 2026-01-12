@@ -48,7 +48,7 @@ export function BranchBenchmarking({ isEnterprise }: BranchBenchmarkingProps) {
       
       {!isEnterprise && (
         <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-[#020617]/60 backdrop-blur-sm p-10 text-center">
-          <Badge className="mb-4 bg-cyan-500/20 text-cyan-400 border-cyan-500/30 uppercase tracking-widest font-black">{t('branchBenchmarking.multiClinicIntelligence')}</Badge>
+          <Badge className="mb-4 bg-cyan-500/20 text-cyan-400 border-cyan-500/30 uppercase tracking-widest font-black">{t('branchBenchmarking.multiCenterIntelligence')}</Badge>
           <h3 className="text-2xl font-bold text-white italic mb-4">{t('branchBenchmarking.title')}</h3>
           <p className="text-slate-400 max-w-sm font-light mb-8">
             {t('branchBenchmarking.subtitle')}

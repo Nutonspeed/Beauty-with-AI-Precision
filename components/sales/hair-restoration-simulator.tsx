@@ -2,7 +2,7 @@
 
 /**
  * Hair Restoration & Density Simulator
- * AR tool for visualizing hair transplant and treatment results
+ * AR tool for visualizing hair transplant and program results
  */
 
 import { useState, useEffect, useCallback } from 'react';

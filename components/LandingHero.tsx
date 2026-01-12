@@ -109,8 +109,8 @@ function DataStream({ side }: { side: 'left' | 'right' }) {
   );
 }
 
-// High-fidelity Clinical Mesh
-function MedicalScanningMesh({ active }: { active: boolean }) {
+// High-fidelity Aesthetic Mesh
+function AestheticScanningMesh({ active }: { active: boolean }) {
   const ref = useRef<THREE.Group>(null);
   const pointsRef = useRef<THREE.Points>(null);
 
@@ -118,7 +118,7 @@ function MedicalScanningMesh({ active }: { active: boolean }) {
     if (!ref.current) return;
     const t = state.clock.elapsedTime;
     
-    // Smooth clinical rotation
+    // Smooth aesthetic rotation
     ref.current.rotation.y += active ? 0.002 : 0.0005;
     
     // Subtle breathing effect for the point cloud
@@ -143,7 +143,7 @@ function MedicalScanningMesh({ active }: { active: boolean }) {
           />
         </points>
 
-        {/* Wireframe Shell - Clinical structure */}
+        {/* Wireframe Shell - Aesthetic structure */}
         <mesh>
           <sphereGeometry args={[1.39, 32, 32]} />
           <meshStandardMaterial 
@@ -290,7 +290,7 @@ export function LandingHero(props: LandingHeroProps) {
             <Suspense fallback={null}>
               <group position={[0,-0.2,0]}>
                 <ProceduralHalo innerColor={haloColors[0]} outerColor={haloColors[1]} distortScale={distortMod} opacity={0.1 * lowPerfFactor} intensity={intensityMod * 0.5 * lowPerfFactor} />
-                <MedicalScanningMesh active={stage==='active'} />
+                <AestheticScanningMesh active={stage==='active'} />
                 <VolumetricScanBeam color={haloColors[0]} sweepSpeed={(stage==='scanning'?1.1:0.18) * lowPerfFactor} opacity={stage==='active'?0.05*lowPerfFactor:0.1*lowPerfFactor} />
               </group>
               <Environment preset="apartment" />

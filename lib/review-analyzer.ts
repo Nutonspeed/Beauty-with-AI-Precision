@@ -1,7 +1,7 @@
 'use strict';
 
 export type SentimentType = 'very-negative' | 'negative' | 'neutral' | 'positive' | 'very-positive';
-export type ReviewCategory = 'treatment-quality' | 'staff-service' | 'cleanliness' | 'value-for-money' | 'results';
+export type ReviewCategory = 'program-quality' | 'staff-service' | 'cleanliness' | 'value-for-money' | 'results';
 export type TrendDirection = 'improving' | 'declining' | 'stable';
 
 export interface Review {
@@ -212,7 +212,7 @@ export class ReviewAnalyzer {
           'very-positive': 0,
         },
         categoryRatings: {
-          'treatment-quality': 0,
+          'program-quality': 0,
           'staff-service': 0,
           cleanliness: 0,
           'value-for-money': 0,
@@ -233,7 +233,7 @@ export class ReviewAnalyzer {
       'very-positive': 0,
     };
     const categoryRatings: Record<ReviewCategory, Record<string, number>> = {
-      'treatment-quality': { sum: 0, count: 0 },
+      'program-quality': { sum: 0, count: 0 },
       'staff-service': { sum: 0, count: 0 },
       cleanliness: { sum: 0, count: 0 },
       'value-for-money': { sum: 0, count: 0 },
@@ -258,7 +258,7 @@ export class ReviewAnalyzer {
     const verifiedPercentage = (verifiedCount / reviews.length) * 100;
 
     const categoryRatingsAverage: Record<ReviewCategory, number> = {
-      'treatment-quality': categoryRatings['treatment-quality'].count > 0 ? categoryRatings['treatment-quality'].sum / categoryRatings['treatment-quality'].count : 0,
+      'program-quality': categoryRatings['program-quality'].count > 0 ? categoryRatings['program-quality'].sum / categoryRatings['program-quality'].count : 0,
       'staff-service': categoryRatings['staff-service'].count > 0 ? categoryRatings['staff-service'].sum / categoryRatings['staff-service'].count : 0,
       cleanliness: categoryRatings.cleanliness.count > 0 ? categoryRatings.cleanliness.sum / categoryRatings.cleanliness.count : 0,
       'value-for-money': categoryRatings['value-for-money'].count > 0 ? categoryRatings['value-for-money'].sum / categoryRatings['value-for-money'].count : 0,

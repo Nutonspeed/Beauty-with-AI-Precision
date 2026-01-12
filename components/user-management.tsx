@@ -433,8 +433,8 @@ export default function UserManagement() {
                 <SelectContent>
                   <SelectItem value="super_admin">{t('userManagement.roles.super_admin')}</SelectItem>
                   <SelectItem value="admin">{t('userManagement.roles.admin')}</SelectItem>
-                  <SelectItem value="doctor">{t('userManagement.roles.specialist')}</SelectItem>
-                  <SelectItem value="nurse">{t('userManagement.roles.assistant')}</SelectItem>
+                  <SelectItem value="specialist">{t('userManagement.roles.specialist')}</SelectItem>
+                  <SelectItem value="assistant">{t('userManagement.roles.assistant')}</SelectItem>
                   <SelectItem value="receptionist">{t('userManagement.roles.receptionist')}</SelectItem>
                   <SelectItem value="customer">{t('userManagement.roles.customer')}</SelectItem>
                 </SelectContent>

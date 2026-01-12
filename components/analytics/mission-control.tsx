@@ -49,7 +49,7 @@ export function MissionControl() {
 
   const metrics = [
     { label: t('missionControl.revenueMomentum'), val: t('missionControl.revenueValue'), sub: t('missionControl.revenueDelta'), color: 'text-emerald-400' },
-    { label: t('missionControl.clinicalExcellence'), val: '98.4%', sub: t('missionControl.nominal'), color: 'text-cyan-400' },
+    { label: t('missionControl.aestheticExcellence'), val: '98.4%', sub: t('missionControl.nominal'), color: 'text-cyan-400' },
     { label: t('missionControl.operationalYield'), val: '94.2%', sub: t('missionControl.yieldDelta'), color: 'text-pink-400' },
     { label: t('missionControl.systemResiliency'), val: `${systemHealth.toFixed(2)}%`, sub: t('missionControl.slaStable'), color: 'text-blue-400' },
   ]

@@ -39,7 +39,7 @@ export function RecentActivity() {
 
   const fetchActivity = async () => {
     try {
-      const response = await fetch("/api/clinic/dashboard/activity")
+      const response = await fetch("/api/center/dashboard/activity")
       if (!response.ok) throw new Error("Failed to fetch activity")
       const result = await response.json()
       setData(result)

@@ -161,7 +161,7 @@ ${notes || ''}
           </div>
           
           <div className="space-y-2">
-            <div className="text-muted-foreground text-sm">{t('patient.concerns')}</div>
+            <div className="text-muted-foreground text-sm">{t('customer.concerns')}</div>
             <div className="flex flex-wrap gap-2">
               {scanResult.concerns.map((concern, idx) => (
                 <Badge key={idx} variant={concern.severity >= 7 ? 'destructive' : 'secondary'}>

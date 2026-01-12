@@ -184,7 +184,7 @@ const InsightsPanel = ({ trends }: { trends: TrendsResponse }) => {
     });
   }
 
-  if (trends.summary.treatmentAdherence < 0.5) {
+  if (trends.summary.programAdherence < 0.5) {
     insights.push({
       type: 'warning',
       title: t('customerDashboard.insights.lowFrequency'),
@@ -227,7 +227,7 @@ const InsightsPanel = ({ trends }: { trends: TrendsResponse }) => {
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
       <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
         <CardTitle className="text-2xl font-bold text-white tracking-tight italic">{t('customerDashboard.diagnosticIntelligence')}</CardTitle>
-        <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('customerDashboard.aiClinicalSynthesis')}</CardDescription>
+        <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('customerDashboard.aiAestheticSynthesis')}</CardDescription>
       </CardHeader>
       <CardContent className="p-10 lg:p-12 space-y-6">
         {insights.map((insight, index) => {
@@ -376,7 +376,7 @@ export default function CustomerDashboard({
           { label: t('customerDashboard.summary.totalAnalyses'), val: trends.summary.totalAnalyses, sub: t('customerDashboard.summary.temporalCycleCount'), icon: Activity, color: 'text-blue-400', bg: 'bg-blue-500/10' },
           { label: t('customerDashboard.summary.averageScore'), val: trends.summary.averageScore.toFixed(1), sub: t('customerDashboard.summary.benchmarkDesc'), icon: Target, color: 'text-pink-400', bg: 'bg-pink-500/10' },
           { label: t('customerDashboard.summary.improvementRate'), val: `${trends.summary.improvementRate > 0 ? '+' : ''}${trends.summary.improvementRate.toFixed(1)}`, sub: t('customerDashboard.summary.pointsPerCycle'), icon: TrendingUp, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
-          { label: t('customerDashboard.summary.analysisFrequency'), val: trends.summary.treatmentAdherence.toFixed(1), sub: t('customerDashboard.summary.cyclesPerMonth'), icon: Calendar, color: 'text-purple-400', bg: 'bg-purple-500/10' }
+          { label: t('customerDashboard.summary.analysisFrequency'), val: trends.summary.programAdherence.toFixed(1), sub: t('customerDashboard.summary.cyclesPerMonth'), icon: Calendar, color: 'text-purple-400', bg: 'bg-purple-500/10' }
         ].map((stat, i) => (
           <motion.div
             key={i}

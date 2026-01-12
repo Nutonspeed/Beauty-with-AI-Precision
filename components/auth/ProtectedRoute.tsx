@@ -180,11 +180,11 @@ export function RequireSalesStaff({ children }: { children: React.ReactNode }) {
 }
 
 /**
- * Clinic admin only
+ * Center admin only
  */
-export function RequireClinicAdmin({ children }: { children: React.ReactNode }) {
+export function RequireCenterAdmin({ children }: { children: React.ReactNode }) {
   return (
-    <RequireRole roles={['clinic_admin', 'clinic_owner', 'super_admin']}>
+    <RequireRole roles={['center_admin', 'center_owner', 'super_admin']}>
       {children}
     </RequireRole>
   );

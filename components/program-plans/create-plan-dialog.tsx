@@ -79,7 +79,7 @@ export function CreatePlanDialog({ open, onOpenChange, onSuccess }: CreatePlanDi
             <Label htmlFor="concern">Primary Concern</Label>
             <Input
               id="concern"
-              placeholder="e.g., Acne Treatment, Anti-Aging"
+              placeholder="e.g., Acne Program, Anti-Aging"
               value={concernType}
               onChange={(e) => setConcernType(e.target.value)}
             />

@@ -19,7 +19,7 @@ interface Enhanced3DViewerProps {
     wrinkles?: Array<{ points: Array<{ x: number; y: number }> }>
   }
   showHeatmap?: boolean
-  treatment?: string
+  program?: string
 }
 
 // 3D Face Mesh Component
@@ -264,7 +264,7 @@ export function Enhanced3DViewer({
   landmarks,
   analysisData,
   showHeatmap = false,
-  treatment
+  program
 }: Enhanced3DViewerProps) {
   const [zoom, setZoom] = useState([5])
   const [showGrid, setShowGrid] = useState(false)
@@ -436,10 +436,10 @@ export function Enhanced3DViewer({
         </div>
 
         {/* Info */}
-        {treatment && (
+        {program && (
           <div className="p-3 bg-primary/5 rounded-lg border border-primary/10">
             <p className="text-sm">
-              <span className="font-medium">Treatment Preview:</span> {treatment}
+              <span className="font-medium">Program Preview:</span> {program}
             </p>
           </div>
         )}

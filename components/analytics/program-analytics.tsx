@@ -58,7 +58,7 @@ export function ProgramAnalytics({ dateRange }: ProgramAnalyticsProps) {
       setError(null)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unknown error")
-      console.error("Error fetching treatment analytics:", err)
+      console.error("Error fetching program analytics:", err)
     } finally {
       setIsLoading(false)
     }

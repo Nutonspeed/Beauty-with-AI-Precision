@@ -60,7 +60,7 @@ const getCategoryColor = (category: string): string => {
     serum: 'bg-purple-100 text-purple-800',
     moisturizer: 'bg-green-100 text-green-800',
     sunscreen: 'bg-yellow-100 text-yellow-800',
-    treatment: 'bg-red-100 text-red-800',
+    program: 'bg-red-100 text-red-800',
     mask: 'bg-pink-100 text-pink-800',
   };
   return colors[category] || 'bg-gray-100 text-gray-800';

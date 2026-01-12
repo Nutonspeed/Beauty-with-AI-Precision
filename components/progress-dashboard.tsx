@@ -108,8 +108,8 @@ export const ProgressDashboard: React.FC = () => {
   const handleExportPDF = async () => {
     await exportToPDF({
       title: 'Skin Progress Report',
-      patientName: 'Demo Patient',
-      clinicName: 'AI Beauty Clinic',
+      customerName: 'Demo Customer',
+      centerName: 'AI Beauty Center',
       language: 'th',
     });
   };

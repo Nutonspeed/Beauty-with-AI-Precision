@@ -41,7 +41,7 @@ export function GenMarketingVisuals({ isEnterprise }: GenMarketingVisualsProps) 
           <Badge className="mb-4 bg-purple-500/20 text-purple-400 border-purple-500/30 font-black uppercase tracking-widest">CREATIVE_AI_LOCKED</Badge>
           <h3 className="text-2xl font-bold text-white italic mb-4">{t('generativeMarketing.title')}</h3>
           <p className="text-slate-400 max-w-sm font-light mb-8">
-            Automatically generate professional marketing visuals and ad copies derived from your clinic's most successful clinical outcomes.
+            Automatically generate professional marketing visuals and ad copies derived from your center's most successful aesthetic outcomes.
           </p>
           <Button variant="premium" className="h-14 px-10 rounded-2xl border shadow-xl shadow-purple-500/20 uppercase text-[10px] font-black tracking-widest italic">
             Unlock Generative Creative

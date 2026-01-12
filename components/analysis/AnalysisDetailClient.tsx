@@ -43,7 +43,7 @@ import { VisionToOrderPanel } from './vision-to-order-panel';
 import { Shared3DCanvas } from './shared-3d-canvas';
 import { AgingSimulator } from './aging-simulator';
 import { MedicalDecisionSupport } from './medical-decision-support';
-import { ClinicalGenomeVisualization } from './clinical-genome-visualization';
+import { AestheticGenomeVisualization } from './aesthetic-genome-visualization';
 
 interface RecommendationItem {
   name?: string;
@@ -516,7 +516,7 @@ export default function AnalysisDetailClient({
           <TabsContent value="recommendations" className="animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div className="space-y-10">
               <MedicalDecisionSupport isEnterprise={isEnterprise} skinData={analysis} />
-              <ClinicalGenomeVisualization />
+              <AestheticGenomeVisualization />
               <Shared3DCanvas isPremium={isEnterprise || isPlatinum} />
               <VisionToOrderPanel analysisId={analysis.id} recommendations={analysis.recommendations} />
               

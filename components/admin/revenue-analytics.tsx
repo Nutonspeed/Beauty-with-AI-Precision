@@ -24,8 +24,8 @@ interface RevenueMetrics {
   overview: {
     mrr: number;
     arr: number;
-    totalClinics: number;
-    averageRevenuePerClinic: number;
+    totalCenters: number;
+    averageRevenuePerCenter: number;
     churnRate: number;
     paymentSuccessRate: number;
     outstandingAmount: number;
@@ -123,7 +123,7 @@ export default function RevenueAnalytics() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
           { label: t('revenueAnalytics.mrr'), val: formatCurrency(metrics.overview.mrr), sub: t('revenueAnalytics.arr', { val: formatCurrency(metrics.overview.arr) }), icon: DollarSign, color: 'text-pink-400', bg: 'bg-pink-500/10' },
-          { label: t('revenueAnalytics.activeClinicalNodes'), val: metrics.overview.totalClinics.toString(), sub: t('revenueAnalytics.avgPerNode', { val: formatCurrency(metrics.overview.averageRevenuePerClinic) }), icon: Users, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+          { label: t('revenueAnalytics.activeAestheticNodes'), val: metrics.overview.totalCenters.toString(), sub: t('revenueAnalytics.avgPerNode', { val: formatCurrency(metrics.overview.averageRevenuePerCenter) }), icon: Users, color: 'text-blue-400', bg: 'bg-blue-500/10' },
           { label: t('revenueAnalytics.paymentSuccessVelocity'), val: `${metrics.overview.paymentSuccessRate}%`, sub: metrics.overview.paymentSuccessRate >= 95 ? t('revenueAnalytics.optimalPerformance') : t('revenueAnalytics.attentionRequired'), icon: CreditCard, color: 'text-emerald-400', bg: 'bg-emerald-500/10', badge: true, status: metrics.overview.paymentSuccessRate >= 95 ? 'default' : 'destructive' },
           { label: t('revenueAnalytics.churnDelta'), val: `${metrics.overview.churnRate}%`, sub: metrics.overview.churnRate > 5 ? t('revenueAnalytics.criticalLeakage') : t('revenueAnalytics.nominalRetention'), icon: AlertCircle, color: metrics.overview.churnRate > 5 ? 'text-rose-400' : 'text-cyan-400', bg: metrics.overview.churnRate > 5 ? 'bg-rose-500/10' : 'bg-cyan-500/10', badge: metrics.overview.churnRate > 5, status: 'destructive' }
         ].map((node, i) => (

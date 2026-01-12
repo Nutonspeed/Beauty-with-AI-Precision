@@ -5,7 +5,7 @@
  * and purchase tracking capabilities for seamless shopping integration.
  */
 
-import type { ProductRecommendation } from './treatment-recommendations';
+import type { ProductRecommendation } from './program-recommendations';
 import type { HybridSkinAnalysis } from '@/lib/types/skin-analysis';
 
 // ============================================================================

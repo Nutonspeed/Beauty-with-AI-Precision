@@ -11,7 +11,7 @@ interface Certification {
   icon: string;
 }
 
-interface DoctorProfile {
+interface SpecialistProfile {
   id: string;
   name: string;
   role: string;
@@ -26,9 +26,9 @@ const certifications: Certification[] = [
   { id: 'data-sec', label: 'Data Security Tier IV', authority: 'Cyber Health Alliance', year: 2024, icon: '🔐' }
 ];
 
-const doctors: DoctorProfile[] = [
-  { id: 'dr-arin', name: 'Dr. Arin Ch.', role: 'Aesthetic Director', expYears: 12, specialties: ['Facial Mapping', 'Laser Protocol', 'AI Assisted Planning'] },
-  { id: 'dr-nina', name: 'Dr. Nina P.', role: 'Aesthetic AI Lead', expYears: 9, specialties: ['Predictive Outcomes', 'Dermal Analytics'] }
+const specialists: SpecialistProfile[] = [
+  { id: 'spec-arin', name: 'Specialist Arin Ch.', role: 'Aesthetic Director', expYears: 12, specialties: ['Facial Mapping', 'Laser Protocol', 'AI Assisted Planning'] },
+  { id: 'spec-nina', name: 'Specialist Nina P.', role: 'Aesthetic AI Lead', expYears: 9, specialties: ['Predictive Outcomes', 'Dermal Analytics'] }
 ];
 
 interface AuditEntry {
@@ -41,7 +41,7 @@ interface AuditEntry {
 
 const auditTrail: AuditEntry[] = [
   { id: 'a1', ts: '2025-11-18 09:12', actor: 'Model v2.3', action: 'SCAN_COMPLETE', detail: 'Full facial dermal density map generated.' },
-  { id: 'a2', ts: '2025-11-18 09:13', actor: 'Dr. Arin', action: 'PLAN_ADJUST', detail: 'Refined laser intensity -2.4% for zone T.' },
+  { id: 'a2', ts: '2025-11-18 09:13', actor: 'Specialist Arin', action: 'PLAN_ADJUST', detail: 'Refined laser intensity -2.4% for zone T.' },
   { id: 'a3', ts: '2025-11-18 09:15', actor: 'Model v2.3', action: 'RISK_SCORE', detail: 'Post protocol risk stable at 1.8% (green).' }
 ];
 
@@ -68,19 +68,19 @@ export function CredibilityPanel() {
           ))}
         </div>
         <div className="space-y-4">
-          {doctors.map(d => (
-            <div key={d.id} className="p-5 rounded-3xl bg-white border border-slate-100 shadow-sm hover:border-indigo-200 transition-all group/doc">
+          {specialists.map(s => (
+            <div key={s.id} className="p-5 rounded-3xl bg-white border border-slate-100 shadow-sm hover:border-indigo-200 transition-all group/doc">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 flex items-center justify-center text-[13px] font-black text-blue-600 shadow-inner group-hover/doc:scale-105 transition-transform">{d.name.split(' ')[1]?.[0] || d.name[0]}</div>
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 flex items-center justify-center text-[13px] font-black text-blue-600 shadow-inner group-hover/doc:scale-105 transition-transform">{s.name.split(' ')[1]?.[0] || s.name[0]}</div>
                 <div className="flex-1 space-y-1">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-sm text-slate-900 italic uppercase">{d.name}</span>
-                    <span className="text-[9px] font-black uppercase text-slate-400 italic tracking-widest">{d.expYears}Y_EXP</span>
+                    <span className="font-bold text-sm text-slate-900 italic uppercase">{s.name}</span>
+                    <span className="text-[9px] font-black uppercase text-slate-400 italic tracking-widest">{s.expYears}Y_EXP</span>
                   </div>
-                  <div className="text-[10px] text-blue-600 font-black tracking-[0.15em] uppercase italic">{d.role}</div>
+                  <div className="text-[10px] text-blue-600 font-black tracking-[0.15em] uppercase italic">{s.role}</div>
                   <div className="mt-2 flex flex-wrap gap-1.5">
-                    {d.specialties.map(s => (
-                      <span key={s} className="px-3 py-1 rounded-lg bg-slate-50 border border-slate-100 text-[8px] font-black uppercase tracking-widest text-slate-400 italic group-hover/doc:border-blue-100 group-hover/doc:text-blue-400 transition-all">{s}</span>
+                    {s.specialties.map(spec => (
+                      <span key={spec} className="px-3 py-1 rounded-lg bg-slate-50 border border-slate-100 text-[8px] font-black uppercase tracking-widest text-slate-400 italic group-hover/doc:border-blue-100 group-hover/doc:text-blue-400 transition-all">{spec}</span>
                     ))}
                   </div>
                 </div>

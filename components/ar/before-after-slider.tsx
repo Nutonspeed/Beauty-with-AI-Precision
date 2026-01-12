@@ -198,7 +198,7 @@ export function BeforeAfterSlider({
               <div className="absolute inset-0">
                 <Image
                   src={afterImage}
-                  alt="After Treatment"
+                  alt="After Program"
                   fill
                   className="object-cover"
                   priority
@@ -219,7 +219,7 @@ export function BeforeAfterSlider({
               >
                 <Image
                   src={beforeImage}
-                  alt="Before Treatment"
+                  alt="Before Program"
                   fill
                   className="object-cover"
                   priority
@@ -319,7 +319,7 @@ export function BeforeAfterSlider({
               <div className="text-xs text-muted-foreground">Overall Score</div>
             </div>
             <div className="text-center">
-              <div className="text-xs text-muted-foreground mb-1">Treatment</div>
+              <div className="text-xs text-muted-foreground mb-1">Program</div>
               <div className="text-2xl font-bold text-primary">6 Weeks</div>
               <div className="text-xs text-muted-foreground">Progress</div>
             </div>

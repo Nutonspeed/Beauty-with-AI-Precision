@@ -13,7 +13,7 @@ import { createBrowserClient } from '@supabase/ssr';
 
 export interface TimeSlot {
   id: string;
-  doctorId: string;
+  specialistId: string;
   date: Date;
   startTime: string; // "09:00"
   endTime: string;   // "10:00"
@@ -27,8 +27,8 @@ export interface Booking {
   customerName: string;
   customerEmail: string;
   customerPhone: string;
-  doctorId: string;
-  doctorName: string;
+  specialistId: string;
+  specialistName: string;
   appointmentDate: Date;
   startTime: string;
   endTime: string;
@@ -49,7 +49,7 @@ export interface BookingInput {
   customerName: string;
   customerEmail: string;
   customerPhone: string;
-  doctorId: string;
+  specialistId: string;
   appointmentDate: Date;
   startTime: string;
   duration: number;
@@ -100,7 +100,7 @@ export class BookingManager {
   async createBooking(input: BookingInput): Promise<Booking> {
     // Check if time slot is available
     const isAvailable = await this.checkAvailability(
-      input.doctorId,
+      input.specialistId,
       input.appointmentDate,
       input.startTime,
       input.duration
@@ -113,8 +113,8 @@ export class BookingManager {
     // Calculate end time
     const endTime = this.calculateEndTime(input.startTime, input.duration);
 
-    // Get doctor name
-    const doctorName = await this.getDoctorName(input.doctorId);
+    // Get specialist name
+    const specialistName = await this.getSpecialistName(input.specialistId);
 
     // Calculate payment amount
     const paymentAmount = this.programPrices[input.programType] || 0;
@@ -125,8 +125,8 @@ export class BookingManager {
       customerName: input.customerName,
       customerEmail: input.customerEmail,
       customerPhone: input.customerPhone,
-      doctorId: input.doctorId,
-      doctorName,
+      specialistId: input.specialistId,
+      specialistName,
       appointmentDate: input.appointmentDate,
       startTime: input.startTime,
       endTime,
@@ -223,14 +223,14 @@ export class BookingManager {
   /**
    * ดึงข้อมูลการจองของหมอ
    */
-  async getDoctorBookings(
-    doctorId: string,
+  async getSpecialistBookings(
+    specialistId: string,
     date?: Date
   ): Promise<Booking[]> {
     let query = this.supabase
       .from('bookings')
       .select('*')
-      .eq('doctor_id', doctorId);
+      .eq('specialist_id', specialistId);
 
     if (date) {
       const dateStr = date.toISOString().split('T')[0];
@@ -270,7 +270,7 @@ export class BookingManager {
    * ตรวจสอบว่าช่วงเวลามีว่างหรือไม่
    */
   async checkAvailability(
-    doctorId: string,
+    specialistId: string,
     date: Date,
     startTime: string,
     duration: number
@@ -281,7 +281,7 @@ export class BookingManager {
     const { data, error } = await this.supabase
       .from('bookings')
       .select('*')
-      .eq('doctor_id', doctorId)
+      .eq('specialist_id', specialistId)
       .eq('appointment_date', dateStr)
       .in('status', ['pending', 'confirmed'])
       .or(`start_time.lt.${endTime},end_time.gt.${startTime}`);
@@ -298,7 +298,7 @@ export class BookingManager {
    * ดึงช่วงเวลาที่ว่างทั้งหมดในวัน
    */
   async getAvailableSlots(
-    doctorId: string,
+    specialistId: string,
     date: Date,
     duration: number = 60
   ): Promise<TimeSlot[]> {
@@ -307,7 +307,7 @@ export class BookingManager {
       end: '18:00',
     };
 
-    const bookedSlots = await this.getDoctorBookings(doctorId, date);
+    const bookedSlots = await this.getSpecialistBookings(specialistId, date);
     const allSlots: TimeSlot[] = [];
 
     // Generate all possible slots
@@ -315,7 +315,7 @@ export class BookingManager {
     while (currentTime < workingHours.end) {
       const endTime = this.calculateEndTime(currentTime, duration);
       
-      const isAvailable = !bookedSlots.some(booking => {
+      const isAvailable = !bookedSlots.some((booking: Booking) => {
         return (
           (currentTime >= booking.startTime && currentTime < booking.endTime) ||
           (endTime > booking.startTime && endTime <= booking.endTime)
@@ -323,8 +323,8 @@ export class BookingManager {
       });
 
       allSlots.push({
-        id: `${doctorId}-${date.toISOString().split('T')[0]}-${currentTime}`,
-        doctorId,
+        id: `${specialistId}-${date.toISOString().split('T')[0]}-${currentTime}`,
+        specialistId,
         date,
         startTime: currentTime,
         endTime,
@@ -407,7 +407,7 @@ export class BookingManager {
         <li>รหัสการจอง: ${booking.id}</li>
         <li>วันที่: ${booking.appointmentDate.toLocaleDateString('th-TH')}</li>
         <li>เวลา: ${booking.startTime} - ${booking.endTime}</li>
-        <li>หมอ: ${booking.doctorName}</li>
+        <li>ผู้เชี่ยวชาญ: ${booking.specialistName}</li>
         <li>โปรแกรม: ${booking.programType}</li>
         <li>ค่าใช้จ่าย: ${booking.paymentAmount.toLocaleString()} บาท</li>
       </ul>
@@ -423,7 +423,7 @@ export class BookingManager {
    * ส่ง SMS ยืนยันการจอง
    */
   private async sendConfirmationSMS(booking: Booking): Promise<void> {
-    const message = `ยืนยันการจอง: ${booking.appointmentDate.toLocaleDateString('th-TH')} เวลา ${booking.startTime} กับ ${booking.doctorName}. รหัส: ${booking.id}`;
+    const message = `ยืนยันการจอง: ${booking.appointmentDate.toLocaleDateString('th-TH')} เวลา ${booking.startTime} กับ ${booking.specialistName}. รหัส: ${booking.id}`;
 
     // Send via SMS service (Twilio/Thai SMS providers)
     console.log(`Sending SMS to ${booking.customerPhone}: ${message}`);
@@ -465,12 +465,12 @@ export class BookingManager {
   }
 
   private async sendReminderEmail(booking: Booking): Promise<void> {
-    const _message = `เตือน: คุณมีนัดหมายพรุ่งนี้ ${booking.appointmentDate.toLocaleDateString('th-TH')} เวลา ${booking.startTime} กับ ${booking.doctorName}`;
+    const _message = `เตือน: คุณมีนัดหมายพรุ่งนี้ ${booking.appointmentDate.toLocaleDateString('th-TH')} เวลา ${booking.startTime} กับ ${booking.specialistName}`;
     console.log(`Sending reminder email to ${booking.customerEmail}`);
   }
 
   private async sendReminderSMS(booking: Booking): Promise<void> {
-    const _message = `เตือน: นัดหมายพรุ่งนี้ ${booking.startTime} กับ ${booking.doctorName}. รหัส: ${booking.id}`;
+    const _message = `เตือน: นัดหมายพรุ่งนี้ ${booking.startTime} กับ ${booking.specialistName}. รหัส: ${booking.id}`;
     console.log(`Sending reminder SMS to ${booking.customerPhone}`);
   }
 
@@ -547,9 +547,9 @@ export class BookingManager {
     return `TX${Date.now()}${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
   }
 
-  private async getDoctorName(doctorId: string): Promise<string> {
-    // In real implementation, fetch from doctors table
-    return `หมอ ${doctorId}`;
+  private async getSpecialistName(specialistId: string): Promise<string> {
+    // In real implementation, fetch from specialists table
+    return `ผู้เชี่ยวชาญ ${specialistId}`;
   }
 
   private async saveBooking(booking: Booking): Promise<void> {
@@ -572,8 +572,8 @@ export class BookingManager {
       customer_name: booking.customerName,
       customer_email: booking.customerEmail,
       customer_phone: booking.customerPhone,
-      doctor_id: booking.doctorId,
-      doctor_name: booking.doctorName,
+      specialist_id: booking.specialistId,
+      specialist_name: booking.specialistName,
       appointment_date: booking.appointmentDate.toISOString().split('T')[0],
       start_time: booking.startTime,
       end_time: booking.endTime,
@@ -597,8 +597,8 @@ export class BookingManager {
       customerName: row.customer_name,
       customerEmail: row.customer_email,
       customerPhone: row.customer_phone,
-      doctorId: row.doctor_id,
-      doctorName: row.doctor_name,
+      specialistId: row.specialist_id,
+      specialistName: row.specialist_name,
       appointmentDate: new Date(row.appointment_date),
       startTime: row.start_time,
       endTime: row.end_time,

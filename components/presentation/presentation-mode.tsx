@@ -3,7 +3,7 @@
 /**
  * Sales Presentation Mode Component
  * Full-screen presentation for showcasing analysis to customers
- * Features: full-screen toggle, side-by-side comparison, treatment packages, pricing
+ * Features: full-screen toggle, side-by-side comparison, program packages, pricing
  */
 
 import { useState, useEffect, useCallback } from 'react';
@@ -158,7 +158,7 @@ export function PresentationMode({
       }
       if (e.key === 'ArrowRight') {
         // Navigate to next tab
-        const tabs = ['overview', 'comparison', 'treatments', 'pricing', 'timeline'];
+        const tabs = ['overview', 'comparison', 'programs', 'pricing', 'timeline'];
         const currentIndex = tabs.indexOf(currentTab);
         if (currentIndex < tabs.length - 1) {
           setCurrentTab(tabs[currentIndex + 1]);
@@ -166,7 +166,7 @@ export function PresentationMode({
       }
       if (e.key === 'ArrowLeft') {
         // Navigate to previous tab
-        const tabs = ['overview', 'comparison', 'treatments', 'pricing', 'timeline'];
+        const tabs = ['overview', 'comparison', 'programs', 'pricing', 'timeline'];
         const currentIndex = tabs.indexOf(currentTab);
         if (currentIndex > 0) {
           setCurrentTab(tabs[currentIndex - 1]);

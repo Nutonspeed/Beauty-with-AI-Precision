@@ -107,7 +107,7 @@ export default function ActivityLogsDashboard() {
     } finally {
       setLoading(false);
     }
-  }, [typeFilter, clinicFilter, offset]);
+  }, [typeFilter, centerFilter, offset]);
 
   useEffect(() => {
     fetchActivities();
@@ -190,7 +190,7 @@ export default function ActivityLogsDashboard() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
               { type: 'ai_analysis', label: t('activityLogsDashboard.neuralInferences'), icon: Brain, color: 'purple', val: stats?.byType?.ai_analysis || 0 },
-              { type: 'booking', label: t('activityLogsDashboard.clinicalCycles'), icon: Calendar, color: 'blue', val: stats?.byType?.booking || 0 },
+              { type: 'booking', label: t('activityLogsDashboard.aestheticCycles'), icon: Calendar, color: 'blue', val: stats?.byType?.booking || 0 },
               { type: 'user', label: t('activityLogsDashboard.entityRegistry'), icon: Users, color: 'green', val: stats?.byType?.user || 0 },
               { type: 'center', label: t('activityLogsDashboard.nodeAllocation'), icon: Building2, color: 'orange', val: stats?.byType?.center || 0 },
             ].map(({ type, label, icon: Icon, color, val }) => (
@@ -236,7 +236,7 @@ export default function ActivityLogsDashboard() {
                 <SelectContent className="bg-[#020617] border-white/10 rounded-2xl">
                   <SelectItem value="all" className="text-[10px] font-black uppercase tracking-widest italic">{t('activityLogsDashboard.globalStream')}</SelectItem>
                   <SelectItem value="ai_analysis" className="text-[10px] font-black uppercase tracking-widest italic">{t('activityLogsDashboard.neuralInference')}</SelectItem>
-                  <SelectItem value="booking" className="text-[10px] font-black uppercase tracking-widest italic">{t('activityLogsDashboard.clinicalCycle')}</SelectItem>
+                  <SelectItem value="booking" className="text-[10px] font-black uppercase tracking-widest italic">{t('activityLogsDashboard.aestheticCycle')}</SelectItem>
                   <SelectItem value="user" className="text-[10px] font-black uppercase tracking-widest italic">{t('activityLogsDashboard.identityAuth')}</SelectItem>
                   <SelectItem value="center" className="text-[10px] font-black uppercase tracking-widest italic">{t('activityLogsDashboard.nodeAllocation')}</SelectItem>
                 </SelectContent>

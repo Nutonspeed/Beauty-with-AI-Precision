@@ -13,7 +13,7 @@ function hasAllowedRole(userRole: UserRole, allowedRoles: UserRole[]): boolean {
 }
 
 // ใช้ roleHierarchy กลางจากระบบ RBAC configuration เพื่อหลีกเลี่ยงค่าซ้ำ/ไม่ตรงกัน
-// (public, clinic_admin ถูกเพิ่มไว้แล้วใน globalRoleHierarchy)
+// (public, center_admin ถูกเพิ่มไว้แล้วใน globalRoleHierarchy)
 const roleHierarchy = globalRoleHierarchy
 
 function hasMinimumRole(userRole: UserRole, requiredRole: UserRole): boolean {
@@ -82,8 +82,8 @@ interface ProtectedRouteProps {
  * 
  * @example
  * // Allow multiple roles
- * <ProtectedRoute allowedRoles={[UserRole.CLINIC_STAFF, UserRole.CLINIC_ADMIN]}>
- *   <ClinicDashboard />
+ * <ProtectedRoute allowedRoles={[UserRole.CENTER_STAFF, UserRole.CENTER_ADMIN]}>
+ *   <CenterDashboard />
  * </ProtectedRoute>
  * 
  * @example

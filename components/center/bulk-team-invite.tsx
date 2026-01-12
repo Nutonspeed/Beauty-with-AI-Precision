@@ -46,7 +46,7 @@ export default function BulkTeamInvite({ open, onOpenChange, onSuccess }: Props)
 
     setUploading(true);
     try {
-      const response = await fetch('/api/clinic/team/bulk-invite', {
+      const response = await fetch('/api/center/team/bulk-invite', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ invitations: parseResult.data }),
@@ -82,7 +82,7 @@ export default function BulkTeamInvite({ open, onOpenChange, onSuccess }: Props)
   };
 
   const downloadTemplate = () => {
-    const csv = 'email,name,role\nexample@clinic.com,John Doe,sales_staff\nsales@clinic.com,Jane Smith,sales_staff\n';
+    const csv = 'email,name,role\nexample@center.com,John Doe,sales_staff\nsales@center.com,Jane Smith,sales_staff\n';
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -110,7 +110,7 @@ export default function BulkTeamInvite({ open, onOpenChange, onSuccess }: Props)
               <AlertDescription>
                 CSV must have columns: <strong>email</strong>, <strong>name</strong>, <strong>role</strong>
                 <br />
-                Valid roles: sales_staff, clinic_staff, clinic_manager
+                Valid roles: sales_staff, center_staff, center_manager
               </AlertDescription>
             </Alert>
 

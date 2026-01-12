@@ -29,12 +29,6 @@ interface BookingFormProps {
   isLoading?: boolean;
 }
 
-const doctorOptions = [
-  { value: 'dr001', label: 'พญ. สมหญิง ใจดี' },
-  { value: 'dr002', label: 'นพ. วิทย์ มีสุข' },
-  { value: 'dr003', label: 'พญ. ปริม สวย' },
-];
-
 export function BookingForm({ onSubmit, availableSlots, onDateChange, isLoading }: BookingFormProps) {
   const t = useTranslations();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
@@ -54,9 +48,9 @@ export function BookingForm({ onSubmit, availableSlots, onDateChange, isLoading 
   ];
 
   const specialistOptions = [
-    { value: 'dr001', label: t('predictiveAnalytics.mock.name1') },
-    { value: 'dr002', label: t('predictiveAnalytics.mock.name2') },
-    { value: 'dr003', label: t('predictiveAnalytics.mock.name1') }, // Placeholder
+    { value: 'spec001', label: t('predictiveAnalytics.mock.name1') },
+    { value: 'spec002', label: t('predictiveAnalytics.mock.name2') },
+    { value: 'spec003', label: t('predictiveAnalytics.mock.name1') }, // Placeholder
   ];
 
   const [formData, setFormData] = useState({
@@ -138,12 +132,12 @@ export function BookingForm({ onSubmit, availableSlots, onDateChange, isLoading 
                 onValueChange={value => setFormData(prev => ({ ...prev, specialistId: value }))}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder={t('bookingForm.selectSpecialist')} />
+                  <SelectValue placeholder="เลือกผู้เชี่ยวชาญ (ถ้ามี)" />
                 </SelectTrigger>
                 <SelectContent>
-                  {specialistOptions.map(specialist => (
-                    <SelectItem key={specialist.value} value={specialist.value}>
-                      {specialist.label}
+                  {specialistOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -158,7 +152,7 @@ export function BookingForm({ onSubmit, availableSlots, onDateChange, isLoading 
                 onValueChange={value => setFormData(prev => ({ ...prev, programType: value }))}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder={t('bookingForm.selectProgram')} />
+                  <SelectValue placeholder="เลือกผู้เชี่ยวชาญ (ถ้ามี)" />
                 </SelectTrigger>
                 <SelectContent>
                   {programOptions.map(program => (

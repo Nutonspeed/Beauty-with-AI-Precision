@@ -245,7 +245,7 @@ export function QuickQuoteCalculator({
         {/* Items List */}
         <div className="space-y-3">
           <div className="flex items-center justify-between px-1">
-            <Label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em]">{t('salesTools.quote.treatmentList')}</Label>
+            <Label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em]">{t('salesTools.quote.programList')}</Label>
             <Button
               size="sm"
               variant="outline"
@@ -272,7 +272,7 @@ export function QuickQuoteCalculator({
                     onClick={() => addItem(item)}
                     className="p-3 rounded-2xl bg-white border border-slate-100 hover:border-blue-500/30 hover:shadow-lg hover:shadow-blue-500/5 text-left transition-all group"
                   >
-                    <p className="text-xs font-bold text-slate-900 group-hover:text-blue-600 transition-colors">{t(`booking.treatments.${item.id}`)}</p>
+                    <p className="text-xs font-bold text-slate-900 group-hover:text-blue-600 transition-colors">{t(`booking.programs.${item.id}`)}</p>
                     <p className="text-[10px] text-blue-600 font-black italic mt-1">{t('format.currency', { amount: item.basePrice.toLocaleString() })}</p>
                   </button>
                 ))}
@@ -297,7 +297,7 @@ export function QuickQuoteCalculator({
                   className="flex items-center justify-between p-4 px-6 rounded-3xl bg-white border border-slate-100 shadow-sm group/item"
                 >
                   <div className="flex-1">
-                    <p className="font-bold text-slate-900 italic">{t(`booking.treatments.${item.id}`)}</p>
+                    <p className="font-bold text-slate-900 italic">{t(`booking.programs.${item.id}`)}</p>
                     <p className="text-xs text-blue-600 font-black italic">{t('format.currency', { amount: item.basePrice.toLocaleString() })}</p>
                   </div>
                   

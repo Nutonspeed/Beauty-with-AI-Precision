@@ -48,7 +48,7 @@ export function Navigation() {
                 <Sparkle weight="fill" className="w-5 h-5 text-white" />
               </motion.div>
               <span className="text-xl font-bold text-white">
-                Clinic<span className="text-purple-400">IQ</span>
+                Center<span className="text-purple-400">IQ</span>
               </span>
             </Link>
 

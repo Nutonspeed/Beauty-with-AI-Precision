@@ -8,7 +8,7 @@
  * - Skin age vs actual age
  * - Concerns with severity indicators
  * - VISIA metrics
- * - Treatment recommendations
+ * - Program recommendations
  * - Mobile-optimized layout
  */
 
@@ -190,7 +190,7 @@ export function AnalysisStep({
 
   // Calculate skin age (simplified)
   const skinAge = Math.round(overallScore * 0.5 + 20)
-  // Estimate actual age from skin condition (35 as baseline for beauty clinic customers)
+  // Estimate actual age from skin condition (35 as baseline for beauty center customers)
   let estimatedAge = 38
   if (overallScore > 70) {
     estimatedAge = 35

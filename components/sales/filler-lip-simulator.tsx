@@ -99,7 +99,7 @@ const FILLER_PRODUCTS = [
 interface FillerSimulatorProps {
   beforeImage: string;
   onExport?: (imageData: Blob) => void;
-  onGenerateProposal?: (treatment: any) => void;
+  onGenerateProposal?: (program: any) => void;
   className?: string;
 }
 

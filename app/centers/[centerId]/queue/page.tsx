@@ -1,8 +1,8 @@
-import { ClinicQueuePage } from '@/components/clinic/ClinicQueuePage';
+import { CenterQueuePage } from '@/components/center/CenterQueuePage';
 import { getCurrentUser } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 
-export default async function ClinicQueueRoute(context: { params: Promise<{ clinicId: string }> }) {
+export default async function CenterQueueRoute(context: { params: Promise<{ centerId: string }> }) {
   const params = await context.params;
   const user = await getCurrentUser();
   
@@ -12,9 +12,9 @@ export default async function ClinicQueueRoute(context: { params: Promise<{ clin
 
   // TODO: Fetch initial queue from database
   // const initialQueue = await db.query.bookings.findMany({
-  //   where: eq(bookings.clinicId, params.clinicId),
+  //   where: eq(bookings.centerId, params.centerId),
   //   orderBy: [asc(bookings.appointmentTime)]
   // });
 
-  return <ClinicQueuePage clinicId={params.clinicId} />;
+  return <CenterQueuePage centerId={params.centerId} />;
 }

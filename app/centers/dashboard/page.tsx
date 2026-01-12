@@ -5,7 +5,7 @@ import { Footer } from "@/components/footer"
 import { PerformanceCards } from "@/components/dashboard/performance-cards"
 import { LivePipeline } from "@/components/dashboard/live-pipeline"
 import { RevenueChart } from "@/components/dashboard/revenue-chart"
-import { TopTreatments } from "@/components/dashboard/top-treatments"
+import { TopPrograms } from "@/components/dashboard/top-programs"
 import { QuickActions } from "@/components/dashboard/quick-actions"
 import { RecentActivity } from "@/components/dashboard/recent-activity"
 import { StaffAvailability } from "@/components/dashboard/staff-availability"
@@ -16,35 +16,35 @@ import { Settings, Bell, User, Calendar, Users, BarChart3, Package, Building2, M
 import { checkUserRole } from "@/lib/auth/check-role"
 import Link from "next/link"
 
-export default async function ClinicDashboardPage() {
-  console.log('[ClinicDashboard] 📍 Page rendering...')
+export default async function CenterDashboardPage() {
+  console.log('[CenterDashboard] 📍 Page rendering...')
   
   try {
-    // ✅ Allow clinic_owner and clinic_staff
-    const { user, clinicId } = await checkUserRole(["clinic_owner", "clinic_staff", "clinic_admin", "super_admin"])
+    // ✅ Allow center_owner and center_staff
+    const { user, centerId } = await checkUserRole(["center_owner", "center_staff", "center_admin", "super_admin"])
 
-    if (!user || !clinicId) {
-      console.log('[ClinicDashboard] ❌ No user/clinic, redirecting to login')
+    if (!user || !centerId) {
+      console.log('[CenterDashboard] ❌ No user/center, redirecting to login')
       redirect("/auth/login")
     }
     
-    console.log('[ClinicDashboard] ✅ User authorized:', user.email, 'Clinic:', clinicId)
+    console.log('[CenterDashboard] ✅ User authorized:', user.email, 'Center:', centerId)
 
     // Fetch dashboard data
     let dashboardData = null
     try {
       // Simulate data fetching - replace with actual data fetching logic
       dashboardData = {
-        totalCustomers: 156,
+        totalClients: 156,
         todayAppointments: 12,
         monthlyRevenue: 458900,
         activeStaff: 8
       }
-      console.log('[ClinicDashboard] ✅ Data fetched successfully')
+      console.log('[CenterDashboard] ✅ Data fetched successfully')
     } catch (dataError) {
-      console.error('[ClinicDashboard] ⚠️ Data fetch error:', dataError)
+      console.error('[CenterDashboard] ⚠️ Data fetch error:', dataError)
       dashboardData = {
-        totalCustomers: 0,
+        totalClients: 0,
         todayAppointments: 0,
         monthlyRevenue: 0,
         activeStaff: 0
@@ -62,7 +62,7 @@ export default async function ClinicDashboardPage() {
           <div className="container py-4">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold">Clinic Dashboard</h1>
+                <h1 className="text-2xl font-bold">Center Dashboard</h1>
                 <p className="text-foreground/70">Welcome back, {user.email}</p>
               </div>
               <div className="flex items-center gap-2">
@@ -88,14 +88,14 @@ export default async function ClinicDashboardPage() {
           <div className="mb-8">
             <h2 className="text-lg font-semibold mb-4">Management Tools / เครื่องมือจัดการ</h2>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              <Link href="/clinic/customers">
+              <Link href="/center/clients">
                 <Card className="cursor-pointer border-2 border-transparent transition-all hover:border-primary/50 hover:shadow-md">
                   <CardContent className="flex items-center gap-3 p-4">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/10">
                       <User className="h-5 w-5 text-emerald-500" />
                     </div>
                     <div>
-                      <p className="font-semibold text-sm">Customers</p>
+                      <p className="font-semibold text-sm">Clients</p>
                       <p className="text-xs text-muted-foreground">ลูกค้า & Leads</p>
                     </div>
                   </CardContent>
@@ -130,7 +130,7 @@ export default async function ClinicDashboardPage() {
                 </Card>
               </Link>
 
-              <Link href={`/clinic/queue/display?clinicId=${clinicId}`} target="_blank">
+              <Link href={`/center/queue/display?centerId=${centerId}`} target="_blank">
                 <Card className="cursor-pointer border-2 border-yellow-500/30 bg-yellow-50 dark:bg-yellow-900/10 transition-all hover:border-yellow-500 hover:shadow-md">
                   <CardContent className="flex items-center gap-3 p-4">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-500/20">
@@ -144,7 +144,7 @@ export default async function ClinicDashboardPage() {
                 </Card>
               </Link>
 
-              <Link href="/clinic/analytics">
+              <Link href="/center/analytics">
                 <Card className="cursor-pointer border-2 border-transparent transition-all hover:border-primary/50 hover:shadow-md">
                   <CardContent className="flex items-center gap-3 p-4">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-500/10">
@@ -172,7 +172,7 @@ export default async function ClinicDashboardPage() {
                 </Card>
               </Link>
 
-              <Link href="/clinic/staff">
+              <Link href="/center/staff">
                 <Card className="cursor-pointer border-2 border-transparent transition-all hover:border-primary/50 hover:shadow-md">
                   <CardContent className="flex items-center gap-3 p-4">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-teal-500/10">
@@ -214,7 +214,7 @@ export default async function ClinicDashboardPage() {
                 </Card>
               </Link>
 
-              <Link href="/clinic/settings/automation">
+              <Link href="/center/settings/automation">
                 <Card className="cursor-pointer border-2 border-transparent transition-all hover:border-primary/50 hover:shadow-md">
                   <CardContent className="flex items-center gap-3 p-4">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-500/10">
@@ -283,10 +283,10 @@ export default async function ClinicDashboardPage() {
             <RevenueChart />
           </div>
 
-          {/* Top Performing Treatments */}
+          {/* Top Performing Programs */}
           <div className="mb-8">
-            <h2 className="text-xl font-semibold mb-6">🎯 Top Performing Treatments</h2>
-            <TopTreatments />
+            <h2 className="text-xl font-semibold mb-6">🎯 Top Performing Programs</h2>
+            <TopPrograms />
           </div>
 
           {/* Staff & Activity Grid */}
@@ -311,7 +311,7 @@ export default async function ClinicDashboardPage() {
     </PageLayout>
   )
   } catch (error) {
-    console.error('[ClinicDashboard] ❌ Critical error:', error)
+    console.error('[CenterDashboard] ❌ Critical error:', error)
     redirect("/auth/login?error=dashboard_failed")
   }
 }

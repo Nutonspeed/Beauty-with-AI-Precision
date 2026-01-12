@@ -26,7 +26,7 @@ import { th } from "date-fns/locale"
 import { DateRange } from "react-day-picker"
 import { cn } from "@/lib/utils"
 import { RevenueAnalytics } from "@/components/analytics/revenue-analytics"
-import { TreatmentAnalytics } from "@/components/analytics/treatment-analytics"
+import { ProgramAnalytics } from "@/components/analytics/program-analytics"
 import { StaffPerformance } from "@/components/analytics/staff-performance"
 import { CustomerRetention } from "@/components/analytics/customer-retention"
 
@@ -65,7 +65,7 @@ export function AnalyticsClient({ initialData }: AnalyticsClientProps) {
         end_date: dateRange.to.toISOString(),
       })
       
-      const response = await fetch(`/api/clinic/analytics/export?${params}`)
+      const response = await fetch(`/api/center/analytics/export?${params}`)
       if (!response.ok) {
         throw new Error('Export failed')
       }
@@ -98,7 +98,7 @@ export function AnalyticsClient({ initialData }: AnalyticsClientProps) {
         <div className="container py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Link href="/clinic/dashboard">
+              <Link href="/center/dashboard">
                 <Button variant="ghost" size="sm">
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   กลับ
@@ -246,7 +246,7 @@ export function AnalyticsClient({ initialData }: AnalyticsClientProps) {
                 {initialData.overview.newCustomers}
               </div>
               <p className="text-xs text-muted-foreground">
-                ลูกค้าที่เพิ่มใหม่
+                ลูกค้าที่เพิ่มใหม่ (Clients)
               </p>
             </CardContent>
           </Card>
@@ -274,15 +274,15 @@ export function AnalyticsClient({ initialData }: AnalyticsClientProps) {
               <DollarSign className="h-4 w-4 mr-2" />
               รายได้
             </TabsTrigger>
-            <TabsTrigger value="treatments">
+            <TabsTrigger value="programs">
               <Activity className="h-4 w-4 mr-2" />
-              ทรีตเมนต์
+              โปรแกรม
             </TabsTrigger>
             <TabsTrigger value="staff">
               <Users className="h-4 w-4 mr-2" />
               ทีมงาน
             </TabsTrigger>
-            <TabsTrigger value="customers">
+            <TabsTrigger value="clients">
               <FileText className="h-4 w-4 mr-2" />
               ลูกค้า
             </TabsTrigger>
@@ -292,15 +292,15 @@ export function AnalyticsClient({ initialData }: AnalyticsClientProps) {
             <RevenueAnalytics dateRange={{ from: dateRange?.from, to: dateRange?.to }} />
           </TabsContent>
 
-          <TabsContent value="treatments" className="space-y-6">
-            <TreatmentAnalytics dateRange={{ from: dateRange?.from, to: dateRange?.to }} />
+          <TabsContent value="programs" className="space-y-6">
+            <ProgramAnalytics dateRange={{ from: dateRange?.from, to: dateRange?.to }} />
           </TabsContent>
 
           <TabsContent value="staff" className="space-y-6">
             <StaffPerformance dateRange={{ from: dateRange?.from, to: dateRange?.to }} />
           </TabsContent>
 
-          <TabsContent value="customers" className="space-y-6">
+          <TabsContent value="clients" className="space-y-6">
             <CustomerRetention dateRange={{ from: dateRange?.from, to: dateRange?.to }} />
           </TabsContent>
         </Tabs>

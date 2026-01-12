@@ -32,7 +32,7 @@ import Link from "next/link"
 import { formatDistanceToNow } from "date-fns"
 import { th } from "date-fns/locale"
 
-interface Customer {
+interface Client {
   id: string
   name: string
   email: string
@@ -55,27 +55,27 @@ interface Stats {
   converted: number
 }
 
-interface CustomersClientProps {
-  initialCustomers: Customer[]
+interface ClientsClientProps {
+  initialClients: Client[]
   initialStats: Stats
 }
 
-export function CustomersClient({ initialCustomers, initialStats }: CustomersClientProps) {
-  const [customers] = useState<Customer[]>(initialCustomers) // setter unused
+export function ClientsClient({ initialClients, initialStats }: ClientsClientProps) {
+  const [clients] = useState<Client[]>(initialClients) // setter unused
   const [stats] = useState<Stats>(initialStats) // setter unused
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [sourceFilter, setSourceFilter] = useState("all")
 
-  // Filter customers
-  const filteredCustomers = customers.filter((customer) => {
+  // Filter clients
+  const filteredClients = clients.filter((client) => {
     const matchesSearch =
-      customer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      customer.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (customer.phone && customer.phone.includes(searchQuery))
+      client.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      client.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (client.phone && client.phone.includes(searchQuery))
 
-    const matchesStatus = statusFilter === "all" || customer.lead_status === statusFilter
-    const matchesSource = sourceFilter === "all" || customer.source === sourceFilter
+    const matchesStatus = statusFilter === "all" || client.lead_status === statusFilter
+    const matchesSource = sourceFilter === "all" || client.source === sourceFilter
 
     return matchesSearch && matchesStatus && matchesSource
   })
@@ -155,14 +155,14 @@ export function CustomersClient({ initialCustomers, initialStats }: CustomersCli
         <div className="container py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Link href="/clinic/dashboard">
+              <Link href="/center/dashboard">
                 <Button variant="ghost" size="sm">
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   กลับ
                 </Button>
               </Link>
               <div>
-                <h1 className="text-2xl font-bold">Customer Management</h1>
+                <h1 className="text-2xl font-bold">Client Management</h1>
                 <p className="text-sm text-muted-foreground">จัดการลูกค้าและ Leads</p>
               </div>
             </div>
@@ -179,7 +179,7 @@ export function CustomersClient({ initialCustomers, initialStats }: CustomersCli
         <div className="mb-6 grid gap-4 md:grid-cols-5">
           <Card>
             <CardContent className="p-4">
-              <div className="text-sm text-muted-foreground">Total Customers</div>
+              <div className="text-sm text-muted-foreground">Total Clients</div>
               <div className="text-2xl font-bold">{stats.total}</div>
             </CardContent>
           </Card>
@@ -258,16 +258,16 @@ export function CustomersClient({ initialCustomers, initialStats }: CustomersCli
           </CardContent>
         </Card>
 
-        {/* Customers Table */}
+        {/* Clients Table */}
         <Card>
           <CardHeader>
-            <CardTitle>รายชื่อลูกค้า ({filteredCustomers.length})</CardTitle>
+            <CardTitle>รายชื่อลูกค้า ({filteredClients.length})</CardTitle>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Customer</TableHead>
+                  <TableHead>Client</TableHead>
                   <TableHead>Contact</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Source</TableHead>
@@ -277,24 +277,24 @@ export function CustomersClient({ initialCustomers, initialStats }: CustomersCli
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredCustomers.length === 0 ? (
+                {filteredClients.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={7} className="text-center text-muted-foreground">
                       ไม่พบข้อมูลลูกค้า
                     </TableCell>
                   </TableRow>
                 ) : (
-                  filteredCustomers.map((customer) => (
-                    <TableRow key={customer.id}>
+                  filteredClients.map((client) => (
+                    <TableRow key={client.id}>
                       <TableCell>
                         <div className="flex items-center gap-3">
                           <Avatar>
-                            <AvatarFallback>{customer.name.charAt(0)}</AvatarFallback>
+                            <AvatarFallback>{client.name.charAt(0)}</AvatarFallback>
                           </Avatar>
                           <div>
-                            <div className="font-medium">{customer.name}</div>
+                            <div className="font-medium">{client.name}</div>
                             <div className="text-xs text-muted-foreground">
-                              ID: {customer.id.slice(0, 8)}
+                              ID: {client.id.slice(0, 8)}
                             </div>
                           </div>
                         </div>
@@ -303,32 +303,32 @@ export function CustomersClient({ initialCustomers, initialStats }: CustomersCli
                         <div className="text-sm space-y-1">
                           <div className="flex items-center gap-1">
                             <Mail className="h-3 w-3 text-muted-foreground" />
-                            <span className="text-xs">{customer.email}</span>
+                            <span className="text-xs">{client.email}</span>
                           </div>
-                          {customer.phone && (
+                          {client.phone && (
                             <div className="flex items-center gap-1">
                               <Phone className="h-3 w-3 text-muted-foreground" />
-                              <span className="text-xs">{customer.phone}</span>
+                              <span className="text-xs">{client.phone}</span>
                             </div>
                           )}
                         </div>
                       </TableCell>
                       <TableCell>
-                        {getLeadStatusBadge(customer.lead_status, customer.lead_score)}
+                        {getLeadStatusBadge(client.lead_status, client.lead_score)}
                       </TableCell>
-                      <TableCell>{getSourceBadge(customer.source)}</TableCell>
+                      <TableCell>{getSourceBadge(client.source)}</TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1 text-sm text-muted-foreground">
                           <Calendar className="h-3 w-3" />
-                          <span className="text-xs">{formatLastActivity(customer.last_activity_at)}</span>
+                          <span className="text-xs">{formatLastActivity(client.last_activity_at)}</span>
                         </div>
                       </TableCell>
                       <TableCell>
-                        {customer.latest_booking ? (
+                        {client.latest_booking ? (
                           <div className="text-sm">
-                            <div className="font-medium text-xs">{customer.latest_booking.treatment_type}</div>
+                            <div className="font-medium text-xs">{client.latest_booking.program_type}</div>
                             <div className="text-xs text-muted-foreground">
-                              ฿{customer.latest_booking.payment_amount?.toLocaleString() || 0}
+                              ฿{client.latest_booking.payment_amount?.toLocaleString() || 0}
                             </div>
                           </div>
                         ) : (

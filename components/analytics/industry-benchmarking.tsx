@@ -36,7 +36,7 @@ export function IndustryBenchmarking({ isEnterprise }: IndustryBenchmarkingProps
     { subject: t('industryBenchmarking.radarLabels.conversionRate'), A: 82, B: 45, fullMark: 100 },
     { subject: t('industryBenchmarking.radarLabels.retention'), A: 78, B: 55, fullMark: 100 },
     { subject: t('industryBenchmarking.radarLabels.aov'), A: 91, B: 70, fullMark: 100 },
-    { subject: t('industryBenchmarking.radarLabels.patientTrust'), A: 88, B: 65, fullMark: 100 },
+    { subject: t('industryBenchmarking.radarLabels.customerTrust'), A: 88, B: 65, fullMark: 100 },
   ]
 
   return (
@@ -88,7 +88,7 @@ export function IndustryBenchmarking({ isEnterprise }: IndustryBenchmarkingProps
               <div className="flex gap-6">
                 <div className="flex items-center gap-2">
                   <div className="h-2 w-2 rounded-full bg-cyan-500" />
-                  <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">{t('industryBenchmarking.yourClinic')}</span>
+                  <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">{t('industryBenchmarking.yourCenter')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="h-2 w-2 rounded-full bg-slate-700" />
@@ -103,7 +103,7 @@ export function IndustryBenchmarking({ isEnterprise }: IndustryBenchmarkingProps
                   <PolarGrid stroke="rgba(255,255,255,0.05)" />
                   <PolarAngleAxis dataKey="subject" tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 'bold' }} />
                   <PolarRadiusAxis hide />
-                  <Radar name={t('industryBenchmarking.yourClinicLabel')} dataKey="A" stroke="#06b6d4" fill="#06b6d4" fillOpacity={0.3} />
+                  <Radar name={t('industryBenchmarking.yourCenterLabel')} dataKey="A" stroke="#06b6d4" fill="#06b6d4" fillOpacity={0.3} />
                   <Radar name={t('industryBenchmarking.globalAvgLabel')} dataKey="B" stroke="#475569" fill="#475569" fillOpacity={0.1} />
                   <Tooltip 
                     contentStyle={{ backgroundColor: '#020617', border: 'none', borderRadius: '24px' }}

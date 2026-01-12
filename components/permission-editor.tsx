@@ -46,7 +46,7 @@ export default function PermissionEditor({ className }: PermissionEditorProps) {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [editingRule, setEditingRule] = useState<PermissionRule | null>(null)
   const [newRule, setNewRule] = useState<Partial<PermissionRule>>({
-    resource: 'patient_records',
+    resource: 'customer_records',
     action: 'read',
     conditions: [],
     expiresAt: null
@@ -59,7 +59,7 @@ export default function PermissionEditor({ className }: PermissionEditorProps) {
       userId: 'user_1',
       resource: 'customer_info',
       action: 'read',
-      conditions: [{ field: 'department', operator: 'equals', value: 'cardiology' }],
+      conditions: [{ field: 'department', operator: 'equals', value: 'aesthetic' }],
       expiresAt: null,
       createdAt: new Date('2024-01-15'),
       createdBy: 'admin_1'
@@ -87,8 +87,8 @@ export default function PermissionEditor({ className }: PermissionEditorProps) {
     switch (role) {
       case 'super_admin': return 'bg-purple-100 text-purple-800 border-purple-200'
       case 'admin': return 'bg-red-100 text-red-800 border-red-200'
-      case 'doctor': return 'bg-blue-100 text-blue-800 border-blue-200'
-      case 'nurse': return 'bg-green-100 text-green-800 border-green-200'
+      case 'specialist': return 'bg-blue-100 text-blue-800 border-blue-200'
+      case 'assistant': return 'bg-green-100 text-green-800 border-green-200'
       case 'receptionist': return 'bg-yellow-100 text-yellow-800 border-yellow-200'
       case 'customer': return 'bg-indigo-100 text-indigo-800 border-indigo-200'
       default: return 'bg-gray-100 text-gray-800 border-gray-200'
@@ -390,8 +390,8 @@ export default function PermissionEditor({ className }: PermissionEditorProps) {
                   <SelectItem value="all">All Roles</SelectItem>
                   <SelectItem value="super_admin">Super Admin</SelectItem>
                   <SelectItem value="admin">Admin</SelectItem>
-                  <SelectItem value="doctor">Doctor</SelectItem>
-                  <SelectItem value="nurse">Nurse</SelectItem>
+                  <SelectItem value="specialist">Specialist</SelectItem>
+                  <SelectItem value="assistant">Assistant</SelectItem>
                   <SelectItem value="receptionist">Receptionist</SelectItem>
                   <SelectItem value="customer">Customer</SelectItem>
                 </SelectContent>

@@ -74,6 +74,7 @@ export function ProposalModal({ open, onClose, onSuccess, editProposal, leads = 
   const [validUntil, setValidUntil] = useState("")
   const [paymentTerms, setPaymentTerms] = useState("")
   const [notes, setNotes] = useState("")
+  const [termsAndConditions, setTermsAndConditions] = useState("")
 
   // Calculate totals
   const subtotal = programs.reduce((sum, t) => sum + (t.price * t.sessions), 0)
@@ -133,7 +134,7 @@ export function ProposalModal({ open, onClose, onSuccess, editProposal, leads = 
     }
 
     if (programs.some(t => !t.name || t.price <= 0)) {
-      toast.error(t('salesTools.proposalModal.validation.treatmentDetails'))
+      toast.error(t('salesTools.proposalModal.validation.programDetails'))
       return
     }
 
@@ -159,7 +160,8 @@ export function ProposalModal({ open, onClose, onSuccess, editProposal, leads = 
           total_value: totalValue,
           valid_until: validUntil || null,
           payment_terms: paymentTerms || null,
-          notes: notes || null
+          notes: notes || null,
+          terms_and_conditions: termsAndConditions || null
         })
       })
 

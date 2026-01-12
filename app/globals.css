@@ -242,7 +242,7 @@
   transition: box-shadow .25s, transform .25s;
 }
 .cred-badge:hover { box-shadow: 0 8px 20px -6px rgba(0,0,0,0.18); }
-.doctor-card {
+.specialist-card {
   background: rgba(255,255,255,0.78);
   border: 1px solid rgba(0,0,0,0.06);
   border-radius: 16px;
@@ -507,7 +507,7 @@ img {
 
 /* ===== AR Visualization Enhancements (Task 2) ===== */
 
-/* High-quality canvas rendering for AR treatments */
+/* High-quality canvas rendering for AR programs */
 .ar-canvas-high-quality {
   image-rendering: -webkit-optimize-contrast;
   image-rendering: high-quality;

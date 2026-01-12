@@ -48,7 +48,7 @@ export function CustomerRetention({ dateRange }: CustomerRetentionProps) {
         end_date: dateRange.to.toISOString(),
       })
 
-      const response = await fetch(`/api/clinic/analytics/customer-retention?${params}`)
+      const response = await fetch(`/api/center/analytics/customer-retention?${params}`)
       if (!response.ok) throw new Error("Failed to fetch customer retention data")
 
       const result = await response.json()

@@ -20,7 +20,7 @@ export function NeuralTerminal() {
       "AI_INFERENCE: LATENCY_118ms",
       "BIOMETRIC_SYNC: MIRROR_LINK_ESTABLISHED",
       "PREDICTIVE_YIELD: ROI_PROJECTION_SUCCESS",
-      "CLINICAL_AUDIT: ZERO_ANOMALIES_DETECTED"
+      "AESTHETIC_AUDIT: ZERO_ANOMALIES_DETECTED"
     ]
 
     const interval = setInterval(() => {

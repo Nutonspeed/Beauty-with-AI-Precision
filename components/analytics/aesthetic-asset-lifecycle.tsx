@@ -127,7 +127,7 @@ export function AestheticAssetLifecycle() {
                           <p className="text-sm font-bold text-white italic">{asset.nextService}</p>
                         </div>
                         <div className="space-y-1">
-                          <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest italic">{t('clinicalAssetLifecycle.utilization')}</p>
+                          <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest italic">{t('aestheticAssetLifecycle.utilization')}</p>
                           <p className="text-sm font-bold text-cyan-400 italic">{asset.utilization}%</p>
                         </div>
                       </div>

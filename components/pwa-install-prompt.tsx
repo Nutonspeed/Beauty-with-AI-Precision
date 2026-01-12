@@ -115,7 +115,7 @@ export function PWAInstallPrompt({
               <Monitor className="h-8 w-8 text-purple-600" />
             )}
             <div>
-              <CardTitle className="text-lg">Install AI Clinic App</CardTitle>
+              <CardTitle className="text-lg">Install CenterIQ AI App</CardTitle>
               <CardDescription>Get quick access and offline features</CardDescription>
             </div>
           </div>

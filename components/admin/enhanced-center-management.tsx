@@ -450,7 +450,7 @@ export default function EnhancedCenterManagement() {
                       className="border-white/20 data-[state=checked]:bg-pink-600 data-[state=checked]:border-pink-600"
                     />
                   </TableHead>
-                  <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('centerManagement.clinicalUplink')}</TableHead>
+                  <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('centerManagement.aestheticUplink')}</TableHead>
                   <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('centerManagement.protocolAccess')}</TableHead>
                   <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('centerManagement.planVector')}</TableHead>
                   <TableHead className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('centerManagement.users')}</TableHead>

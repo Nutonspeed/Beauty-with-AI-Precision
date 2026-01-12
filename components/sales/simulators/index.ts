@@ -77,7 +77,7 @@ export const SIMULATOR_REGISTRY = {
     nameTh: 'จำลองการปลูกผม',
     category: 'hair',
     component: 'HairRestorationSimulator',
-    centerTypes: ['hair_clinic', 'aesthetic'],
+    centerTypes: ['hair_center', 'aesthetic'],
     features: ['FUE/DHI preview', 'Density simulation', 'Hairline design']
   },
 };

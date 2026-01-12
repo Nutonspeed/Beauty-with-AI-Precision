@@ -31,9 +31,9 @@ export function StaffEfficiency({ isEnterprise }: StaffEfficiencyProps) {
   const t = useTranslations()
 
   const staffData = [
-    { name: 'Dr. Sarah', revenue: 450000, efficiency: 94, sessions: 120, rating: 4.9 },
-    { name: 'Nurse Joy', revenue: 280000, efficiency: 88, sessions: 145, rating: 4.8 },
-    { name: 'Dr. Mike', revenue: 520000, efficiency: 91, sessions: 98, rating: 4.7 },
+    { name: 'Specialist Sarah', revenue: 450000, efficiency: 94, sessions: 120, rating: 4.9 },
+    { name: 'Assistant Joy', revenue: 280000, efficiency: 88, sessions: 145, rating: 4.8 },
+    { name: 'Specialist Mike', revenue: 520000, efficiency: 91, sessions: 98, rating: 4.7 },
     { name: 'Therapist Ann', revenue: 150000, efficiency: 82, sessions: 160, rating: 4.6 },
   ]
 

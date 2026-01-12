@@ -15,7 +15,7 @@ interface MetricDef {
 const metricDefs: MetricDef[] = [
   { key: "analysisConfidence", label: "Analysis Confidence", unit: "%", min: 86, max: 99.4, precision: 1 },
   { key: "scanClarity", label: "Scan Clarity", unit: "%", min: 72, max: 95.2, precision: 1 },
-  { key: "treatmentFit", label: "Treatment Fit", unit: "%", min: 64, max: 90.8, precision: 1 }
+  { key: "programFit", label: "Program Fit", unit: "%", min: 64, max: 90.8, precision: 1 }
 ];
 
 export function AiMetricsPanel() {

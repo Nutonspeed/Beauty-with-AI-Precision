@@ -43,7 +43,7 @@ export function PerformanceCards() {
     async function fetchMetrics() {
       try {
         console.log('[PerformanceCards] Fetching metrics...')
-        const response = await fetch("/api/clinic/dashboard/metrics")
+        const response = await fetch("/api/center/dashboard/metrics")
         console.log('[PerformanceCards] Response status:', response.status)
         
         if (!response.ok) {

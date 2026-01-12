@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Progress } from '@/components/ui/progress';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { 
   MessageSquare, 
   Send, 
@@ -75,6 +75,7 @@ export function AISalesCompanion({
   className = ''
 }: AISalesCompanionProps) {
   const t = useTranslations();
+  const locale = useLocale();
   const [messages, setMessages] = useState<ConversationMessage[]>([]);
   const [currentMessage, setCurrentMessage] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -105,6 +106,14 @@ export function AISalesCompanion({
       setMessages([welcomeMessage]);
     }
   }, []);
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat(locale === 'th' ? 'th-TH' : 'en-US', {
+      style: 'currency',
+      currency: 'THB',
+      minimumFractionDigits: 0
+    }).format(amount);
+  };
 
   const generateWelcomeMessage = (
     profile: CustomerProfile,
@@ -219,12 +228,11 @@ export function AISalesCompanion({
     const lowerMessage = message.toLowerCase();
     const priceKeywords = t.raw('aiSalesCompanion.keywords.price') as string[];
     const timeKeywords = t.raw('aiSalesCompanion.keywords.time') as string[];
-    const doctorKeywords = t.raw('aiSalesCompanion.keywords.doctor') as string[];
+    const specialistKeywords = t.raw('aiSalesCompanion.keywords.specialist') as string[];
 
     if (priceKeywords.some(kw => lowerMessage.includes(kw))) {
       return t('aiSalesCompanion.responses.price', {
-        program: context.currentProgram?.name || t('nav.analysis'),
-        price: context.currentProgram?.price?.toLocaleString() || t('salesTools.quote.programList')
+        amount: formatCurrency(25000)
       });
     }
 
@@ -232,8 +240,8 @@ export function AISalesCompanion({
       return t('aiSalesCompanion.responses.time');
     }
 
-    if (doctorKeywords.some(kw => lowerMessage.includes(kw))) {
-      return t('aiSalesCompanion.responses.doctor');
+    if (specialistKeywords.some(kw => lowerMessage.includes(kw))) {
+      return t('aiSalesCompanion.responses.specialist');
     }
 
     return t('aiSalesCompanion.responses.default', { message });

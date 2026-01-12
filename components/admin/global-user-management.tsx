@@ -321,7 +321,7 @@ export default function GlobalUserManagement() {
                 <SelectContent className="bg-[#020617] border-white/10 rounded-2xl">
                   <SelectItem value="all" className="text-[10px] font-black uppercase tracking-widest italic">{t('userManagement.anyState')}</SelectItem>
                   <SelectItem value="active" className="text-[10px] font-black uppercase tracking-widest italic">{t('subscriptionManagement.active')}</SelectItem>
-                  <SelectItem value="inactive" className="text-[10px] font-black uppercase tracking-widest italic">{t('clinicDetail.inactiveStatus')}</SelectItem>
+                  <SelectItem value="inactive" className="text-[10px] font-black uppercase tracking-widest italic">{t('centerDetail.inactiveStatus')}</SelectItem>
                 </SelectContent>
               </Select>
 

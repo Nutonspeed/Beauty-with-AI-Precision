@@ -2,7 +2,7 @@
 
 /**
  * AI Smart Recommendations
- * Recommends treatments automatically based on customer profile and skin analysis
+ * Recommends programs automatically based on customer profile and skin analysis
  * Competitive advantage: Real-time AI-powered suggestions
  */
 
@@ -20,6 +20,7 @@ import {
   ArrowRight, 
   ChevronRight
 } from 'lucide-react';
+import { AdvancedProgramRecommender } from '@/lib/ai/advanced-program-recommender';
 
 interface CustomerProfile {
   age?: number;
@@ -53,8 +54,8 @@ interface AISmartRecommendationsProps {
   className?: string;
 }
 
-// Advanced AI Treatment Recommendations
-const recommender = new AdvancedTreatmentRecommender();
+// Advanced AI Program Recommendations
+const recommender = new AdvancedProgramRecommender();
 
 // Convert budget string to number
 function convertBudgetToNumber(budget: string): number {

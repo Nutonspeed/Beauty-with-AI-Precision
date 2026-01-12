@@ -14,7 +14,7 @@ export function CampaignManager() {
     {
       id: "1",
       name: "Summer Promotion",
-      subject: "Get 20% off all treatments this summer!",
+      subject: "Get 20% off all programs this summer!",
       status: "sent",
       recipientsCount: 1200,
       openedCount: 480,
@@ -23,8 +23,8 @@ export function CampaignManager() {
     },
     {
       id: "2",
-      name: "New Treatment Launch",
-      subject: "Introducing our latest anti-aging treatment",
+      name: "New Program Launch",
+      subject: "Introducing our latest anti-aging program",
       status: "scheduled",
       recipientsCount: 850,
       openedCount: 0,

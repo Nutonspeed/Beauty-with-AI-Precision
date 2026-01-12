@@ -27,7 +27,7 @@ export function LeadPrioritization() {
       name: t('leadPrioritization.mock.name1'),
       score: 94,
       value: '฿45,000',
-      concern: t('clinicalSentiment.keywords.prevention'),
+      concern: t('programSentiment.keywords.prevention'),
       status: 'high_propensity',
       reason: t('leadPrioritization.mock.reason1')
     },

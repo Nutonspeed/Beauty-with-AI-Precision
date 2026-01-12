@@ -252,10 +252,10 @@ export default function CustomerDashboard({ role }: CustomerDashboardProps) {
                 </CardHeader>
                 <CardContent className="p-12 pt-6 space-y-8">
                   {[
-                    { step: "1", title: isThaiLocale ? 'อัปโหลดรูปภาพผิวหน้า' : 'Ingest Dermal Assets', desc: isThaiLocale ? 'ถ่ายภาพในแสงสว่างเพียงพอ หน้าตรง ไม่เอียง' : 'Capture clinical-grade direct orientation images.' },
+                    { step: "1", title: isThaiLocale ? 'อัปโหลดรูปภาพผิวหน้า' : 'Ingest Dermal Assets', desc: isThaiLocale ? 'ถ่ายภาพในแสงสว่างเพียงพอ หน้าตรง ไม่เอียง' : 'Capture aesthetic-grade direct orientation images.' },
                     { step: "2", title: isThaiLocale ? 'รับผลการวิเคราะห์จาก AI' : 'Execute AI Synthesis', desc: isThaiLocale ? 'ดู Heatmap และคำแนะนำโปรแกรม' : 'Generate diagnostic heatmaps and recommendations.' },
                     { step: "3", title: isThaiLocale ? 'ทดลอง AR Simulator' : 'AR Outcome Simulation', desc: isThaiLocale ? 'ดูผลโปรแกรมแบบ 3D ก่อนตัดสินใจ' : 'Simulate therapeutic results in real-time 3D.' },
-                    { step: "4", title: isThaiLocale ? 'จองนัดหมายผู้เชี่ยวชาญ' : 'Authorize Consultant', desc: isThaiLocale ? 'ปรึกษาแผนงานโปรแกรมที่เหมาะสมกับคุณ' : 'Confirm clinical implementation parameters.' }
+                    { step: "4", title: isThaiLocale ? 'จองนัดหมายผู้เชี่ยวชาญ' : 'Authorize Consultant', desc: isThaiLocale ? 'ปรึกษาแผนงานโปรแกรมที่เหมาะสมกับคุณ' : 'Confirm aesthetic implementation parameters.' }
                   ].map((s, i) => (
                     <div key={i} className="flex items-start gap-6 group">
                       <div className="h-10 w-10 rounded-xl bg-white/[0.03] border border-white/5 flex items-center justify-center shrink-0 text-[10px] font-black text-slate-500 group-hover:text-pink-400 group-hover:border-pink-500/30 transition-all shadow-inner italic">
@@ -299,7 +299,7 @@ export default function CustomerDashboard({ role }: CustomerDashboardProps) {
                     </div>
                     <div className="space-y-2">
                       <p className="text-xl font-bold text-slate-400 italic">{isThaiLocale ? 'ยังไม่มีประวัติการใช้งาน' : 'Logs Empty'}</p>
-                      <p className="text-sm text-slate-600 font-light italic">{isThaiLocale ? 'เริ่มต้นด้วยการวิเคราะห์ผิวหน้าครั้งแรกของคุณ!' : 'Execute your first clinical synthesis.'}</p>
+                      <p className="text-sm text-slate-600 font-light italic">{isThaiLocale ? 'เริ่มต้นด้วยการวิเคราะห์ผิวหน้าครั้งแรกของคุณ!' : 'Execute your first aesthetic synthesis.'}</p>
                     </div>
                     <Button asChild variant="premium" className="h-14 px-10 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] shadow-2xl shadow-pink-500/20">
                       <Link href={lp('/analysis')}>

@@ -63,8 +63,8 @@ export function RouteInfoCard({ route, className }: RouteInfoCardProps) {
             <div className="font-mono text-sm">{route.visitId}</div>
           </div>
           <div>
-            <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Patient ID</div>
-            <div className="font-mono text-sm">{route.patientId}</div>
+            <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Customer ID</div>
+            <div className="font-mono text-sm">{route.customerId}</div>
           </div>
         </div>
 

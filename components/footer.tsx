@@ -4,7 +4,7 @@ import Link from "next/link"
 import { useLocale } from "next-intl"
 import { useTranslations } from "next-intl"
 import { useLocalizePath } from "@/lib/i18n/locale-link"
-import { ClinicIQLogoFull, ClinicIQMark } from "@/components/brand/logo"
+import { CenterIQLogoFull, CenterIQMark } from "@/components/brand/logo"
 import { Mail, Phone, Facebook, Instagram, Youtube, Linkedin } from "lucide-react"
 
 import { motion } from "framer-motion"
@@ -32,7 +32,7 @@ export function Footer() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
               >
-                <ClinicIQLogoFull />
+                <CenterIQLogoFull />
               </motion.div>
               <motion.p 
                 initial={{ opacity: 0 }}
@@ -145,7 +145,7 @@ export function Footer() {
           <div className="flex flex-col md:flex-row justify-between items-center gap-10">
             <div className="flex items-center gap-6">
               <div className="h-10 w-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center shadow-sm">
-                <ClinicIQMark className="h-5 w-5 opacity-40 text-blue-600" />
+                <CenterIQMark className="h-5 w-5 opacity-40 text-blue-600" />
               </div>
               <p className="text-[10px] uppercase font-black tracking-[0.2em] text-slate-400">
                 {t('footer.copyright')}

@@ -158,7 +158,7 @@ export default function SubscriptionManagement() {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          clinicId: selectedSub.id,
+          centerId: selectedSub.id,
           plan: editPlan,
           status: editStatus,
         }),
@@ -219,7 +219,7 @@ export default function SubscriptionManagement() {
       {/* Overview Metrics Grid - Operational Nodes */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
-          { label: t('subscriptionManagement.totalClinicalUplinks'), val: stats.total, sub: t('subscriptionManagement.globalInfrastructureNodes'), icon: Building2, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+          { label: t('subscriptionManagement.totalAestheticUplinks'), val: stats.total, sub: t('subscriptionManagement.globalInfrastructureNodes'), icon: Building2, color: 'text-blue-400', bg: 'bg-blue-500/10' },
           { label: t('subscriptionManagement.verifiedActiveVectors'), val: stats.active, sub: t('subscriptionManagement.nominalOperationalState'), icon: CheckCircle2, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
           { label: t('subscriptionManagement.temporalTrialSync'), val: stats.trial, sub: t('subscriptionManagement.activeEvaluationCycles'), icon: Clock, color: 'text-amber-400', bg: 'bg-amber-500/10' },
           { label: t('subscriptionManagement.trialExpiryDelta'), val: stats.expiredTrials, sub: t('subscriptionManagement.decommissionedEvaluationNodes'), icon: AlertTriangle, color: 'text-rose-400', bg: 'bg-rose-500/10' }

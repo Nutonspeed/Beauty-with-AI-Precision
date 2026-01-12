@@ -88,7 +88,7 @@ export function DigitalTwinModule() {
             <span className="bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600 bg-clip-text text-transparent not-italic uppercase">Reconstruction</span>
           </h3>
           <p className="text-2xl text-slate-400 font-light leading-relaxed italic tracking-wide">
-            Deploying high-fidelity volumetric rendering to synthesize clinical outcomes. Our <span className="text-cyan-400 font-bold">Molecular Engine</span> calculates 12.4 million geometric vectors to ensure structural precision.
+            Deploying high-fidelity volumetric rendering to synthesize aesthetic outcomes. Our <span className="text-cyan-400 font-bold">Molecular Engine</span> calculates 12.4 million geometric vectors to ensure structural precision.
           </p>
           
           <div className="grid grid-cols-2 gap-6">

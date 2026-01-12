@@ -99,7 +99,7 @@ export default function AdminDashboard({ role }: AdminDashboardProps) {
             <h1 className="text-5xl md:text-8xl font-bold tracking-tighter text-white leading-[0.9] italic">
               {isSuperAdmin ? 'Elite' : 'Aesthetic'}<br />
               <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent italic">
-                Dashboard <span className="not-italic">Control</span>
+                Center <span className="not-italic">Control</span>
               </span>
             </h1>
             <p className="text-xl text-slate-500 font-light tracking-widest max-w-2xl italic">
@@ -110,8 +110,8 @@ export default function AdminDashboard({ role }: AdminDashboardProps) {
           {/* Quick Stats Grid - Infrastructure Nodes */}
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {[
-              { label: 'ลูกค้าทั้งหมด', val: data.stats.totalClients.toLocaleString(), sub: `+${data.stats.newClientsThisMonth} คนใหม่เดือนนี้`, icon: Users, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-              { label: 'นัดหมายวันนี้', val: data.stats.appointmentsToday, sub: `${data.stats.cancelledAppointments} คนยกเลิก`, icon: Calendar, color: 'text-green-400', bg: 'bg-green-500/10' },
+              { label: 'ลูกค้าทั้งหมด', val: data.stats.totalCustomers.toLocaleString(), sub: `+${data.stats.newCustomersThisMonth} คนใหม่เดือนนี้`, icon: Users, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+              { label: 'นัดหมายวันนี้', val: data.stats.sessionsToday, sub: `${data.stats.cancelledSessions} คนยกเลิก`, icon: Calendar, color: 'text-green-400', bg: 'bg-green-500/10' },
               { label: 'รายได้เดือนนี้', val: `฿${data.stats.monthlyRevenue.toLocaleString()}`, sub: `${data.stats.revenueChange >= 0 ? '+' : ''}${data.stats.revenueChange}% จากเดือนที่แล้ว`, icon: TrendingUp, color: 'text-emerald-400', bg: 'bg-emerald-500/10', trend: data.stats.revenueChange >= 0 },
               { label: 'สต็อกต่ำ', val: data.stats.lowStockItems, sub: 'ต้องสั่งเพิ่ม', icon: Package, color: 'text-orange-400', bg: 'bg-orange-500/10' }
             ].map((stat, i) => (
@@ -154,7 +154,7 @@ export default function AdminDashboard({ role }: AdminDashboardProps) {
                     <div className="space-y-2">
                       <CardTitle className="text-3xl font-bold text-white tracking-tight italic flex items-center gap-4">
                         <Calendar className="h-8 w-8 text-pink-500" />
-                        {isThaiLocale ? 'นัดหมายล่าสุด' : 'Recent Appointments'}
+                        {isThaiLocale ? 'นัดหมายล่าสุด' : 'Aesthetic Sessions'}
                       </CardTitle>
                       <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Live scheduling synchronization</CardDescription>
                     </div>
@@ -166,19 +166,19 @@ export default function AdminDashboard({ role }: AdminDashboardProps) {
                   </div>
                 </CardHeader>
                 <CardContent className="p-10 pt-6 space-y-6">
-                  {data.recentAppointments.map((appointment) => (
-                    <div key={appointment.id} className="flex items-center justify-between p-6 rounded-[1.5rem] border border-white/5 bg-white/[0.02] group hover:bg-white/[0.04] transition-all duration-500">
+                  {data.recentSessions.map((session: any) => (
+                    <div key={session.id} className="flex items-center justify-between p-6 rounded-[1.5rem] border border-white/5 bg-white/[0.02] group hover:bg-white/[0.04] transition-all duration-500">
                       <div className="space-y-2">
-                        <p className="font-bold text-white tracking-tight italic group-hover:text-pink-400 transition-colors">{appointment.clientName}</p>
+                        <p className="font-bold text-white tracking-tight italic group-hover:text-pink-400 transition-colors">{session.customerName}</p>
                         <p className="text-[10px] font-black uppercase tracking-[0.1em] text-slate-500">
-                          {appointment.program} • <span className="text-slate-400">{appointment.time}</span>
+                          {session.program} • <span className="text-slate-400">{session.time}</span>
                         </p>
                       </div>
                       <div className="flex items-center gap-4">
                         <Badge className={cn("px-4 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border-none shadow-inner", 
-                          appointment.status === 'confirmed' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'
+                          session.status === 'confirmed' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'
                         )}>
-                          {appointment.status === 'confirmed' ? (isThaiLocale ? 'ยืนยันแล้ว' : 'CONFIRMED') : (isThaiLocale ? 'รอการยืนยัน' : 'PENDING')}
+                          {session.status === 'confirmed' ? (isThaiLocale ? 'ยืนยันแล้ว' : 'CONFIRMED') : (isThaiLocale ? 'รอการยืนยัน' : 'PENDING')}
                         </Badge>
                         <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl hover:bg-white/5 text-slate-600 hover:text-white transition-all">
                           <MoreHorizontal className="h-5 w-5" />
@@ -190,7 +190,7 @@ export default function AdminDashboard({ role }: AdminDashboardProps) {
               </Card>
             </motion.div>
 
-            {/* popular treatments grid */}
+            {/* popular programs grid */}
             <div className="space-y-10">
               <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
                 <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2.5rem] overflow-hidden shadow-2xl relative">
@@ -198,20 +198,20 @@ export default function AdminDashboard({ role }: AdminDashboardProps) {
                   <CardHeader className="p-10 pb-6">
                     <CardTitle className="text-2xl font-bold text-white tracking-tight italic flex items-center gap-4">
                       <BarChart3 className="h-6 w-6 text-cyan-400" />
-                      {isThaiLocale ? 'บริการยอดนิยม' : 'Popular Protocols'}
+                      {isThaiLocale ? 'โปรแกรมยอดนิยม' : 'Popular Protocols'}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="p-10 pt-6 space-y-8">
-                    {data.popularTreatments.map((treatment, index) => (
+                    {data.popularPrograms.map((program, index) => (
                       <div key={index} className="space-y-3 group">
                         <div className="flex items-center justify-between">
-                          <span className="text-sm font-bold text-slate-300 group-hover:text-cyan-400 transition-colors italic">{treatment.name}</span>
-                          <span className="text-[10px] font-black uppercase tracking-widest text-slate-600">{treatment.count} cycles</span>
+                          <span className="text-sm font-bold text-slate-300 group-hover:text-cyan-400 transition-colors italic">{program.name}</span>
+                          <span className="text-[10px] font-black uppercase tracking-widest text-slate-600">{program.count} cycles</span>
                         </div>
                         <div className="h-1.5 w-full bg-white/[0.02] rounded-full overflow-hidden border border-white/5">
                           <motion.div 
                             initial={{ width: 0 }}
-                            whileInView={{ width: `${(treatment.count / data.popularTreatments[0].count) * 100}%` }}
+                            whileInView={{ width: `${(program.count / data.popularPrograms[0].count) * 100}%` }}
                             transition={{ duration: 1, delay: index * 0.1 }}
                             className="h-full bg-gradient-to-r from-cyan-500 to-blue-600 shadow-[0_0_15px_rgba(6,182,212,0.5)]" 
                           />
@@ -262,7 +262,7 @@ export default function AdminDashboard({ role }: AdminDashboardProps) {
               { icon: Users, color: 'text-blue-400', bg: 'bg-blue-500/10', title: 'จัดการลูกค้า', desc: 'Aesthetic customer data orchestration', href: '/admin/customers' },
               { icon: UserCheck, color: 'text-purple-400', bg: 'bg-purple-500/10', title: 'จัดการพนักงาน', desc: 'Staff allocation and scheduling node', href: '/admin/staff' },
               { icon: Package, color: 'text-orange-400', bg: 'bg-orange-500/10', title: 'จัดการสต็อก', desc: 'Asset supply chain management', href: '/admin/inventory' },
-              { icon: Calendar, color: 'text-green-400', bg: 'bg-green-500/10', title: 'จัดการนัดหมาย', desc: 'Temporal appointment synchronization', href: '/admin-dashboard/bookings' },
+              { icon: Calendar, color: 'text-green-400', bg: 'bg-green-500/10', title: 'จัดการนัดหมาย', desc: 'Temporal session synchronization', href: '/admin-dashboard/bookings' },
               { icon: BarChart3, color: 'text-emerald-400', bg: 'bg-emerald-500/10', title: 'รายงานและวิเคราะห์', desc: 'Global performance intelligence', href: '/admin/reports' },
               { icon: Settings, color: 'text-slate-400', bg: 'bg-white/5', title: 'ตั้งค่าระบบ', desc: 'Aesthetic parameter configuration', href: '/admin-dashboard/settings' }
             ].map((action, i) => (

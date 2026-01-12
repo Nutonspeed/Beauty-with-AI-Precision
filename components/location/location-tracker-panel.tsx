@@ -108,8 +108,8 @@ export function LocationTrackerPanel({
                   <span className="font-mono">{currentRoute.visitId}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-400">Patient ID:</span>
-                  <span className="font-mono">{currentRoute.patientId}</span>
+                  <span className="text-gray-600 dark:text-gray-400">Customer ID:</span>
+                  <span className="font-mono">{currentRoute.customerId}</span>
                 </div>
                 {currentRoute.startTime && (
                   <div className="flex justify-between">

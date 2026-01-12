@@ -40,7 +40,7 @@ export function CaseStudyCarousel() {
             {t('caseStudies.title')}
           </Badge>
           <h2 className="text-5xl md:text-8xl font-bold tracking-tighter text-white leading-[0.9] italic">
-            Clinical<br />
+            Aesthetic<br />
             <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent not-italic">Outcomes</span>
           </h2>
           <p className="text-xl text-slate-500 font-light tracking-[0.2em] italic max-w-2xl mx-auto leading-relaxed">

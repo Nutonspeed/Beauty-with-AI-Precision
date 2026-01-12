@@ -26,7 +26,7 @@ const TECHNOLOGIES = [
 interface BodyContouringProps {
   beforeImage: string;
   onExport?: (imageData: Blob) => void;
-  onGenerateProposal?: (treatment: any) => void;
+  onGenerateProposal?: (program: any) => void;
   className?: string;
 }
 

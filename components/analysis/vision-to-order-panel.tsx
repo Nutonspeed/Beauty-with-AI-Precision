@@ -138,7 +138,7 @@ export function VisionToOrderPanel({ analysisId, recommendations }: VisionToOrde
             </Button>
             <Button variant="premium" className="flex-1 h-16 rounded-2xl shadow-2xl shadow-pink-500/20 text-[10px] font-black uppercase tracking-[0.2em] italic border">
               <ClipboardCheck className="mr-3 h-4 w-4" />
-              {t('syncToDoctor')}
+              {t('syncToSpecialist')}
             </Button>
           </div>
         )}

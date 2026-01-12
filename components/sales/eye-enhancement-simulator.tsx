@@ -20,7 +20,7 @@ import { useTranslations, useLocale } from "next-intl"
 interface EyeEnhancementProps {
   beforeImage: string
   onExport?: (imageData: Blob) => void
-  onGenerateProposal?: (treatment: any) => void
+  onGenerateProposal?: (program: any) => void
   className?: string
   isEnterprise?: boolean
 }
@@ -297,10 +297,10 @@ export function EyeEnhancementSimulator({
                 </div>
               </div>
               <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-black/60 text-white text-sm">
-                {t("arTreatmentPreview.before")}
+                {t("arProgramPreview.before")}
               </div>
               <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm">
-                {t("arTreatmentPreview.after")}
+                {t("arProgramPreview.after")}
               </div>
               {isProcessing && (
                 <div className="absolute inset-0 bg-black/50 flex items-center justify-center">

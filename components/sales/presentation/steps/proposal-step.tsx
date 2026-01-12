@@ -4,7 +4,7 @@
  * Proposal Step Component
  * 
  * Generates pricing proposal with:
- * - Auto-populated treatments & products
+ * - Auto-populated programs & products
  * - Editable quantities and prices
  * - Discount calculator
  * - Payment terms selector
@@ -77,7 +77,7 @@ export function ProposalStep({
   const [paymentTerms, setPaymentTerms] = useState('full')
   const [notes, setNotes] = useState('')
 
-  // Initialize items from selected treatments & products
+  // Initialize items from selected programs & products
   useEffect(() => {
     if (proposal) {
       // Load existing proposal

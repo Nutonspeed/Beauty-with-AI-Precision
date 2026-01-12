@@ -7,7 +7,7 @@ import type { StaffMember, StaffStats } from "./staff-client"
 
 export default async function StaffPage() {
   // Authentication check
-  const user = await requireRole(['clinic_owner', 'super_admin'])
+  const user = await requireRole(['center_owner', 'super_admin'])
   const supabase = await createServerClient()
 
   // Query staff data with JOIN to users table
@@ -38,12 +38,12 @@ export default async function StaffPage() {
     .select('*', { count: 'exact', head: true })
     .eq('status', 'on_leave')
 
-  const { count: doctorsCount } = await supabase
+  const { count: specialistsCount } = await supabase
     .from('clinic_staff')
     .select('*', { count: 'exact', head: true })
     .eq('role', 'doctor')
 
-  const { count: nursesCount } = await supabase
+  const { count: techniciansCount } = await supabase
     .from('clinic_staff')
     .select('*', { count: 'exact', head: true })
     .eq('role', 'nurse')
@@ -62,8 +62,8 @@ export default async function StaffPage() {
     total: totalCount || 0,
     active: activeCount || 0,
     on_leave: onLeaveCount || 0,
-    doctors: doctorsCount || 0,
-    nurses: nursesCount || 0,
+    specialists: specialistsCount || 0,
+    technicians: techniciansCount || 0,
     therapists: therapistsCount || 0,
     admins: adminsCount || 0,
   }
@@ -72,14 +72,14 @@ export default async function StaffPage() {
   const staff: StaffMember[] = (staffData || []).map((s: any) => ({
     id: s.id,
     user_id: s.user_id,
-    clinic_id: s.clinic_id,
+    center_id: s.clinic_id,
     role: s.role,
     specialty: s.specialty,
     email: s.email,
     phone: s.phone,
     status: s.status,
     rating: s.rating,
-    patients_today: s.patients_today || 0,
+    clients_today: s.patients_today || 0,
     appointments_today: s.appointments_today || 0,
     join_date: s.join_date,
     avatar_url: s.avatar_url,

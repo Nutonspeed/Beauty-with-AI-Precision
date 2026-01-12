@@ -1,6 +1,6 @@
 /**
- * Treatment Photo Gallery Component
- * Display treatment journey photos in a responsive gallery with timeline
+ * Program Photo Gallery Component
+ * Display program journey photos in a responsive gallery with timeline
  */
 
 'use client';
@@ -44,7 +44,7 @@ interface PhotoGalleryProps {
 const TRANSLATIONS = {
   en: {
     title: 'Photo Gallery',
-    description: 'Your treatment journey in photos',
+    description: 'Your program journey in photos',
     viewMode: {
       grid: 'Grid View',
       list: 'List View'
@@ -68,10 +68,10 @@ const TRANSLATIONS = {
     viewFullSize: 'View Full Size'
   },
   th: {
-    title: 'แกลเลอรี่รูปภาพ',
-    description: 'เส้นทางการรักษาของคุณในรูปภาพ',
+    title: 'คลังรูปภาพ',
+    description: 'ภาพบันทึกเส้นทางความงามของคุณ',
     viewMode: {
-      grid: 'มุมมองตาราง',
+      grid: 'มุมมองกริด',
       list: 'มุมมองรายการ'
     },
     session: 'เซสชัน',

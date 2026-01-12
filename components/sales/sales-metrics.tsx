@@ -158,7 +158,7 @@ export function SalesMetrics() {
         icon={Target}
         trend={{
           value: 0, // Hot leads don't show trend, just target progress
-          label: t('dashboard.topTreatments.ofTarget', { percent: Math.round((metrics.callsMade.today / metrics.callsMade.target) * 100) })
+          label: t('dashboard.topPrograms.ofTarget', { percent: Math.round((metrics.callsMade.today / metrics.callsMade.target) * 100) })
         }}
         iconColor="text-red-600"
         iconBackground="bg-red-50"

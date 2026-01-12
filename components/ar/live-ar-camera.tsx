@@ -83,7 +83,7 @@ export function LiveARCamera({ program, intensity, onFaceDetected }: Readonly<Li
     }
 
     animationFrameRef.current = globalThis.requestAnimationFrame?.(processFrame) ?? null
-  }, [treatment, intensity, onFaceDetected])
+  }, [program, intensity, onFaceDetected])
 
   // Initialize MediaPipe and camera
   useEffect(() => {

@@ -4,7 +4,7 @@
  * Purpose: Conditionally render content based on permissions
  * Features:
  * - Role-based rendering
- * - Clinic-scoped permissions
+ * - Center-scoped permissions
  * - Fallback content
  */
 

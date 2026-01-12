@@ -47,18 +47,18 @@ async function getAutomationSettings() {
     reminder_24h_enabled: true,
     reminder_1h_enabled: true,
     reminder_channels: ["sms", "line"],
-    reminder_template_24h: "สวัสดีค่ะ คุณ {{customer_name}} มีนัดที่คลินิกในวันพรุ่งนี้เวลา {{time}} สำหรับ {{treatment}} หากต้องการเปลี่ยนนัด กรุณาติดต่อ {{clinic_phone}}",
-    reminder_template_1h: "สวัสดีค่ะ อีก 1 ชั่วโมงคุณมีนัดที่คลินิก สำหรับ {{treatment}} เวลา {{time}} รอพบคุณนะคะ 💕",
+    reminder_template_24h: "สวัสดีค่ะ คุณ {{customer_name}} มีนัดที่เซ็นเตอร์ในวันพรุ่งนี้เวลา {{time}} สำหรับ {{program}} หากต้องการเปลี่ยนนัด กรุณาติดต่อ {{center_phone}}",
+    reminder_template_1h: "สวัสดีค่ะ อีก 1 ชั่วโมงคุณมีนัดที่เซ็นเตอร์ สำหรับ {{program}} เวลา {{time}} รอพบคุณนะคะ 💕",
 
     // Booking Confirmations
     booking_confirmation_enabled: true,
     booking_confirmation_channels: ["line", "email"],
-    booking_confirmation_template: "ยืนยันการจองสำเร็จ! 🎉\n\nเลขที่การจอง: {{booking_id}}\nวันที่: {{date}}\nเวลา: {{time}}\nการรักษา: {{treatment}}\nผู้ให้บริการ: {{staff_name}}\n\nขอบคุณที่ไว้วางใจค่ะ 💖",
+    booking_confirmation_template: "ยืนยันการจองสำเร็จ! 🎉\n\nเลขที่การจอง: {{booking_id}}\nวันที่: {{date}}\nเวลา: {{time}}\nโปรแกรม: {{program}}\nผู้ให้บริการ: {{staff_name}}\n\nขอบคุณที่ไว้วางใจค่ะ 💖",
 
     // Customer Follow-ups
     follow_up_enabled: true,
     follow_up_after_days: 3,
-    follow_up_template: "สวัสดีค่ะคุณ {{customer_name}} 😊\n\nขอบคุณที่ใช้บริการ {{treatment}} เมื่อวันที่ {{date}} เป็นอย่างไรบ้างคะ? หากมีคำถามหรือต้องการคำแนะนำเพิ่มเติม ยินดีให้คำปรึกษาค่ะ 💕",
+    follow_up_template: "สวัสดีค่ะคุณ {{customer_name}} 😊\n\nขอบคุณที่ใช้บริการ {{program}} เมื่อวันที่ {{date}} เป็นอย่างไรบ้างคะ? หากมีคำถามหรือต้องการคำแนะนำเพิ่มเติม ยินดีให้คำปรึกษาค่ะ 💕",
 
     // Inactive Customer Campaign
     inactive_campaign_enabled: true,
@@ -67,7 +67,7 @@ async function getAutomationSettings() {
 
     // Birthday Wishes
     birthday_wishes_enabled: true,
-    birthday_template: "🎂 สุขสันต์วันเกิดค่ะคุณ {{customer_name}}! 🎉\n\nขอให้มีความสุขมากๆ และมีผิวสวยเปล่งปลั่งตลอดปีนี้นะคะ 💖\n\nรับส่วนลด 30% สำหรับ Treatment ที่ชอบในเดือนเกิด! 🎁",
+    birthday_template: "🎂 สุขสันต์วันเกิดค่ะคุณ {{customer_name}}! 🎉\n\nขอให้มีความสุขมากๆ และมีผิวสวยเปล่งปลั่งตลอดปีนี้นะคะ 💖\n\nรับส่วนลด 30% สำหรับโปรแกรมที่ชอบในเดือนเกิด! 🎁",
     birthday_discount_percentage: 30,
 
     // Staff Schedule Notifications
@@ -79,7 +79,7 @@ async function getAutomationSettings() {
 }
 
 export default async function AutomationSettingsPage() {
-  await requireRole(["clinic_owner", "super_admin"]);
+  await requireRole(["center_owner", "super_admin"]);
   const settings = await getAutomationSettings();
 
   return <AutomationSettingsClient initialSettings={settings} />;

@@ -45,7 +45,7 @@ interface HealthData {
   };
   table_counts: {
     users: number;
-    clinics: number;
+    centers: number;
     invitations: number;
     sales_leads: number;
     appointments: number;
@@ -261,7 +261,7 @@ export default function DatabaseHealthDashboard() {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
             {[
               { label: t('databaseHealth.sectors.identityNodes'), val: health.table_counts.users, icon: Users, color: 'blue' },
-              { label: t('databaseHealth.sectors.clinicalUplinks'), val: health.table_counts.clinics, icon: Building2, color: 'emerald' },
+              { label: t('databaseHealth.sectors.aestheticUplinks'), val: health.table_counts.centers, icon: Building2, color: 'emerald' },
               { label: t('databaseHealth.sectors.accessVectors'), val: health.table_counts.invitations, icon: Shield, color: 'amber' },
               { label: t('databaseHealth.sectors.salesLeads'), val: health.table_counts.sales_leads, icon: TrendingUp, color: 'cyan' },
               { label: t('databaseHealth.sectors.processCycles'), val: health.table_counts.appointments, icon: Activity, color: 'indigo' },

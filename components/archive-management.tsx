@@ -48,7 +48,7 @@ const translations = {
     severity: 'ความรุนแรง',
     program: 'ใช้โปรแกรม',
     tags: 'แท็ก',
-    clinician: 'ผู้เชี่ยวชาญ',
+    specialist: 'ผู้เชี่ยวชาญ',
     center: 'ศูนย์',
     stats: 'สถิติ',
     totalAnalyses: 'วิเคราะห์ทั้งหมด',
@@ -103,7 +103,7 @@ const translations = {
     severity: 'Severity',
     program: 'Program Applied',
     tags: 'Tags',
-    clinician: 'Aesthetic Specialist',
+    specialist: 'Aesthetic Specialist',
     center: 'Center',
     stats: 'Statistics',
     totalAnalyses: 'Total Analyses',
@@ -507,22 +507,22 @@ export const ArchiveManagement: React.FC<Props> = ({ language = 'en' }) => {
                 </div>
               </div>
 
-              {/* Clinician Filter */}
+              {/* Specialist Filter */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t.clinician}
+                  {t.specialist}
                 </label>
                 <input
                   type="text"
-                  placeholder={t.clinician}
+                  placeholder={t.specialist}
                   onChange={(e) =>
                     setFilters((prev) => ({
                       ...prev,
-                      clinician: e.target.value || undefined,
+                      specialist: e.target.value || undefined,
                     }))
                   }
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                  aria-label={t.clinician}
+                  aria-label={t.specialist}
                 />
               </div>
 

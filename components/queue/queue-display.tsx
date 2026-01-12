@@ -65,7 +65,7 @@ export function QueueDisplay({ entries, showEstimatedTime = true, className = ''
       {entries.length === 0 ? (
         <Card>
           <CardContent className="py-8 text-center text-gray-500 dark:text-gray-400">
-            No patients in queue
+            No customers in queue
           </CardContent>
         </Card>
       ) : (
@@ -81,11 +81,11 @@ export function QueueDisplay({ entries, showEstimatedTime = true, className = ''
                     </span>
                   </div>
 
-                  {/* Patient Info */}
+                  {/* Customer Info */}
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <User className="w-4 h-4 text-gray-500" />
-                      <span className="font-semibold">{entry.patientName}</span>
+                      <span className="font-semibold">{entry.customerName}</span>
                     </div>
                     <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                       <Calendar className="w-3 h-3" />

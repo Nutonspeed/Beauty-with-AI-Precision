@@ -134,7 +134,7 @@ export function QuickActions() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <Button className="justify-start" variant="outline">
               <Settings className="h-4 w-4 mr-2" />
-              {t('dashboard.quickActions.clinicSettings')}
+              {t('dashboard.quickActions.centerSettings')}
             </Button>
             <Button className="justify-start" variant="outline">
               <BarChart3 className="h-4 w-4 mr-2" />
@@ -149,7 +149,7 @@ export function QuickActions() {
           <div className="space-y-2 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-green-500 rounded-full" />
-              <span>{t('dashboard.quickActions.activity.newCustomer', { name: "นางสาว สมใจ รักสวย", treatment: "Complete Skin Renewal" })}</span>
+              <span>{t('dashboard.quickActions.activity.newCustomer', { name: "นางสาว สมใจ รักสวย", program: "Complete Skin Renewal" })}</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-blue-500 rounded-full" />

@@ -175,7 +175,7 @@ export function RegimenTracker({ isPremium }: RegimenTrackerProps) {
               </div>
 
               <div className="space-y-6">
-                <h5 className="text-[9px] font-black text-slate-500 uppercase tracking-widest border-b border-white/5 pb-2 italic">{t('ui.labels.clinicalAdherenceInsights')}</h5>
+                <h5 className="text-[9px] font-black text-slate-500 uppercase tracking-widest border-b border-white/5 pb-2 italic">{t('ui.labels.aestheticAdherenceInsights')}</h5>
                 <div className="space-y-4">
                   <div className="flex gap-4">
                     <div className="h-8 w-8 rounded-xl bg-emerald-500/10 flex items-center justify-center shrink-0 border border-emerald-500/20">

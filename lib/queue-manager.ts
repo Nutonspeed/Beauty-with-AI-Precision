@@ -1,6 +1,6 @@
 /**
  * Queue Manager
- * Real-time patient queue management system
+ * Real-time customer queue management system
  */
 
 import wsClient from './websocket-client';
@@ -10,11 +10,11 @@ export type QueuePriority = 'normal' | 'urgent' | 'emergency';
 
 export interface QueueEntry {
   id: string;
-  patientId: string;
-  patientName: string;
+  customerId: string;
+  customerName: string;
   queueNumber: number;
-  clinicId: string;
-  doctorId?: string;
+  centerId: string;
+  specialistId?: string;
   appointmentType: string;
   priority: QueuePriority;
   status: QueueStatus;
@@ -52,7 +52,7 @@ export interface QueueEventHandlers {
 
 export class QueueManager {
   private wsClient = wsClient;
-  private clinicId: string | null = null;
+  private centerId: string | null = null;
   private queue: Map<string, QueueEntry> = new Map();
   private handlers: QueueEventHandlers = {};
   private statsUpdateInterval: NodeJS.Timeout | null = null;
@@ -60,10 +60,10 @@ export class QueueManager {
   private unsubscribeCallbacks: Array<() => void> = [];
 
   /**
-   * Initialize queue management for a clinic
+   * Initialize queue management for a center
    */
-  initialize(clinicId: string, handlers: QueueEventHandlers): void {
-    this.clinicId = clinicId;
+  initialize(centerId: string, handlers: QueueEventHandlers): void {
+    this.centerId = centerId;
     this.handlers = handlers;
 
     // Create message handler for queue updates
@@ -94,11 +94,11 @@ export class QueueManager {
     // Start stats updates
     this.startStatsUpdates();
 
-    console.log(`[Queue] Initialized for clinic: ${clinicId}`);
+    console.log(`[Queue] Initialized for center: ${centerId}`);
   }
 
   /**
-   * Add patient to queue
+   * Add customer to queue
    */
   joinQueue(entry: Omit<QueueEntry, 'id' | 'queueNumber' | 'checkInTime' | 'estimatedWaitTime' | 'status'>): QueueEntry {
     const queueNumber = this.getNextQueueNumber();
@@ -116,9 +116,9 @@ export class QueueManager {
 
     this.queue.set(newEntry.id, newEntry);
 
-    // Broadcast to clinic
+    // Broadcast to center
     this.wsClient.send('queue_join', {
-      clinicId: this.clinicId,
+      centerId: this.centerId,
       entry: newEntry
     });
 
@@ -134,9 +134,9 @@ export class QueueManager {
   }
 
   /**
-   * Call next patient in queue
+   * Call next customer in queue
    */
-  callNext(doctorId?: string): QueueEntry | null {
+  callNext(specialistId?: string): QueueEntry | null {
     const waitingEntries = this.getEntriesByStatus('waiting');
     
     if (waitingEntries.length === 0) {
@@ -155,23 +155,23 @@ export class QueueManager {
     this.updateQueueEntry(nextEntry.id, {
       status: 'called',
       calledTime: Date.now(),
-      doctorId
+      specialistId
     });
 
     return this.queue.get(nextEntry.id) || null;
   }
 
   /**
-   * Call specific patient
+   * Call specific customer
    */
-  callPatient(entryId: string, doctorId?: string): void {
+  callCustomer(entryId: string, specialistId?: string): void {
     const entry = this.queue.get(entryId);
     if (!entry || entry.status !== 'waiting') return;
 
     this.updateQueueEntry(entryId, {
       status: 'called',
       calledTime: Date.now(),
-      doctorId
+      specialistId
     });
 
     if (this.handlers.onQueueCalled) {
@@ -183,7 +183,7 @@ export class QueueManager {
   }
 
   /**
-   * Start service for patient
+   * Start service for customer
    */
   startService(entryId: string): void {
     this.updateQueueEntry(entryId, {
@@ -256,7 +256,7 @@ export class QueueManager {
 
     // Broadcast update
     this.wsClient.send('queue_update', {
-      clinicId: this.clinicId,
+      centerId: this.centerId,
       entry: updatedEntry
     });
 
@@ -289,11 +289,11 @@ export class QueueManager {
   }
 
   /**
-   * Get entry by patient ID
+   * Get entry by customer ID
    */
-  getEntryByPatientId(patientId: string): QueueEntry | null {
+  getEntryByCustomerId(customerId: string): QueueEntry | null {
     return Array.from(this.queue.values())
-      .find(entry => entry.patientId === patientId && 
+      .find(entry => entry.customerId === customerId && 
              (entry.status === 'waiting' || entry.status === 'called' || entry.status === 'in-service')) || null;
   }
 

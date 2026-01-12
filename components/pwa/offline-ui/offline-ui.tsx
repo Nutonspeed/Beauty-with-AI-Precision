@@ -64,7 +64,7 @@ export function OfflineUI({
               <Database className="h-5 w-5 text-gray-600" />
               <div>
                 <p className="text-sm font-medium text-gray-900">Cached Data Available</p>
-                <p className="text-xs text-gray-600">Recent patient data and analysis results</p>
+                <p className="text-xs text-gray-600">Recent customer data and analysis results</p>
               </div>
             </div>
             

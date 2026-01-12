@@ -1,16 +1,16 @@
 export interface DashboardStats {
-  totalClients: number
-  newClientsThisMonth: number
-  appointmentsToday: number
-  cancelledAppointments: number
+  totalCustomers: number
+  newCustomersThisMonth: number
+  sessionsToday: number
+  cancelledSessions: number
   monthlyRevenue: number
   revenueChange: number
   lowStockItems: number
 }
 
-export interface DashboardAppointment {
+export interface DashboardSession {
   id: string
-  clientName: string
+  customerName: string
   program: string
   time: string
   status: 'confirmed' | 'pending'
@@ -30,39 +30,39 @@ export interface PopularProgram {
 
 export interface DashboardData {
   stats: DashboardStats
-  recentAppointments: DashboardAppointment[]
+  recentSessions: DashboardSession[]
   lowStockItems: LowStockItem[]
   popularPrograms: PopularProgram[]
 }
 
 export const mockDashboardData: DashboardData = {
   stats: {
-    totalClients: 1240,
-    newClientsThisMonth: 48,
-    appointmentsToday: 32,
-    cancelledAppointments: 3,
+    totalCustomers: 1240,
+    newCustomersThisMonth: 48,
+    sessionsToday: 32,
+    cancelledSessions: 3,
     monthlyRevenue: 985000,
     revenueChange: 12,
     lowStockItems: 6,
   },
-  recentAppointments: [
+  recentSessions: [
     {
       id: 'appt-001',
-      clientName: 'สุดา ใจดี',
+      customerName: 'สุดา ใจดี',
       program: 'Toning Laser',
       time: 'วันนี้ • 10:30 น.',
       status: 'confirmed',
     },
     {
       id: 'appt-002',
-      clientName: 'มานะ ขยันดี',
+      customerName: 'มานะ ขยันดี',
       program: 'HydraFacial',
       time: 'วันนี้ • 13:00 น.',
       status: 'pending',
     },
     {
       id: 'appt-003',
-      clientName: 'อรทัย รุ่งเรือง',
+      customerName: 'อรทัย รุ่งเรือง',
       program: 'Microneedling',
       time: 'วันนี้ • 15:30 น.',
       status: 'confirmed',

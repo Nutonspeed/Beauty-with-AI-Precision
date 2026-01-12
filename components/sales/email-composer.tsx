@@ -66,12 +66,12 @@ export function EmailComposer({
   // Load default variables
   useEffect(() => {
     setVariables({
-      customer_name: leadName,
-      clinic_name: t('common.clinicName') || "Beauty AI Clinic",
+      center_name: leadName,
+      center_name_val: t('common.centerName') || "Beauty AI Center",
       sales_name: t('dashboard.emailComposer.variables.salesTeam'),
       appointment_date: new Date().toLocaleDateString(locale === 'th' ? "th-TH" : "en-US"),
       appointment_time: "14:00",
-      service_name: t('dashboard.emailComposer.variables.skinAnalysis'),
+      service_name: t('dashboard.emailComposer.variables.programAnalysis'),
       total_price: "15,000",
       valid_until: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString(locale === 'th' ? "th-TH" : "en-US"),
     })

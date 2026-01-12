@@ -48,7 +48,7 @@ export function StaffAvailability() {
 
   const fetchStaffAvailability = async () => {
     try {
-      const response = await fetch("/api/clinic/staff?status=active&limit=10")
+      const response = await fetch("/api/center/staff?status=active&limit=10")
       if (!response.ok) throw new Error("Failed to fetch staff")
       const result = await response.json()
       
@@ -116,10 +116,10 @@ export function StaffAvailability() {
 
   const getRoleBadge = (role: string) => {
     switch (role) {
-      case "doctor":
-        return t('dashboard.staffAvailability.roles.doctor')
-      case "nurse":
-        return t('dashboard.staffAvailability.roles.nurse')
+      case "specialist":
+        return t('dashboard.staffAvailability.roles.specialist')
+      case "assistant":
+        return t('dashboard.staffAvailability.roles.assistant')
       case "therapist":
         return t('dashboard.staffAvailability.roles.therapist')
       case "admin":
@@ -183,7 +183,7 @@ export function StaffAvailability() {
             <Users className="h-5 w-5" />
             {t('dashboard.staffAvailability.title')}
           </CardTitle>
-          <Link href={lp("/clinic/staff")}>
+          <Link href={lp("/center/staff")}>
             <Button variant="ghost" size="sm">
               {t('dashboard.staffAvailability.viewAll')}
             </Button>

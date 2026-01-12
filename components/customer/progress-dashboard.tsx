@@ -54,7 +54,7 @@ export interface AnalysisSnapshot {
   imageUrl?: string;
   thumbnailUrl?: string;
   sessionNumber?: number;
-  treatmentType?: string;
+  programType?: string;
   notes?: string;
 }
 
@@ -69,12 +69,12 @@ export interface ProgressMetrics {
   progressToGoal?: number;
 }
 
-export interface TreatmentMilestone {
+export interface ProgramMilestone {
   id: string;
   date: Date;
   title: string;
   description: string;
-  type: 'baseline' | 'treatment' | 'followup' | 'achievement';
+  type: 'baseline' | 'program' | 'followup' | 'achievement';
   imageUrl?: string;
   metrics?: Record<string, number>;
 }

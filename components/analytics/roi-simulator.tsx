@@ -174,7 +174,7 @@ export function ROISimulator({ isEnterprise }: ROISimulatorProps) {
         <div className="flex items-center gap-4 text-slate-600">
           <Info className="h-5 w-5" />
           <p className="text-[9px] font-black uppercase tracking-[0.2em] italic">
-            {t('roiSimulator.clinicalLogic')} | {t('ui.status.roiActive')}
+            {t('roiSimulator.aestheticLogic')} | {t('ui.status.roiActive')}
           </p>
         </div>
       </CardFooter>

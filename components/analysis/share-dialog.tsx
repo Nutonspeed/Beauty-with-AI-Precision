@@ -178,10 +178,10 @@ export function ShareDialog({
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <div className="flex items-center gap-3">
-            {clinicLogoUrl && (
+            {centerLogoUrl && (
               <Image
-                src={clinicLogoUrl}
-                alt={clinicName}
+                src={centerLogoUrl}
+                alt={centerName}
                 width={40}
                 height={40}
                 className="rounded-lg"

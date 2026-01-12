@@ -17,7 +17,7 @@ interface Lead {
   lastActivity: string
   potentialValue: number
   avatar?: string
-  treatment: string
+  program: string
   score: number
 }
 
@@ -36,7 +36,7 @@ export function LivePipeline() {
   useEffect(() => {
     async function fetchPipeline() {
       try {
-        const response = await fetch("/api/clinic/dashboard/pipeline")
+        const response = await fetch("/api/center/dashboard/pipeline")
         if (!response.ok) {
           throw new Error(`Failed to fetch pipeline: ${response.status}`)
         }
@@ -54,7 +54,7 @@ export function LivePipeline() {
                 status: mapLeadStatus(lead.lead_status),
                 lastActivity: formatLastActivity(lead.created_at),
                 potentialValue: calculatePotentialValue(lead.lead_score),
-                treatment: 'Consultation', // Default, would come from lead data
+                program: 'Consultation', // Default, would come from lead data
                 score: lead.lead_score || 0
               })
             })
@@ -203,7 +203,7 @@ export function LivePipeline() {
                 </Avatar>
                 <div>
                   <div className="font-medium">{lead.name}</div>
-                  <div className="text-sm text-muted-foreground">{lead.treatment}</div>
+                  <div className="text-sm text-muted-foreground">{lead.program}</div>
                   <div className="flex items-center gap-2 mt-1">
                     <Badge className={getStatusColor(lead.status)}>{getStatusLabel(lead.status)}</Badge>
                     <span className="text-xs text-muted-foreground flex items-center gap-1">

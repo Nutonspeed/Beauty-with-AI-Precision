@@ -43,8 +43,8 @@ interface StaffModalProps {
 }
 
 const ROLES = [
-  { value: 'doctor', label: 'Doctor' },
-  { value: 'nurse', label: 'Nurse' },
+  { value: 'specialist', label: 'Specialist' },
+  { value: 'assistant', label: 'Assistant' },
   { value: 'therapist', label: 'Therapist' },
   { value: 'receptionist', label: 'Receptionist' },
   { value: 'admin', label: 'Admin' },
@@ -303,7 +303,7 @@ export default function StaffModal({
                     id="fullName"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    placeholder="e.g., Dr. Sarah Johnson"
+                    placeholder="e.g., Specialist Sarah Johnson"
                     required
                   />
                 </div>
@@ -352,7 +352,7 @@ export default function StaffModal({
                     id="specialty"
                     value={specialty}
                     onChange={(e) => setSpecialty(e.target.value)}
-                    placeholder="e.g., Dermatology, Laser Treatments"
+                    placeholder="e.g., Aesthetics, Laser Programs"
                   />
                 </div>
 
@@ -380,8 +380,8 @@ export default function StaffModal({
             </CardContent>
           </Card>
 
-          {/* License Information (for doctors/nurses) */}
-          {(role === 'doctor' || role === 'nurse') && (
+          {/* License Information (for specialists/assistants) */}
+          {(role === 'specialist' || role === 'assistant') && (
             <Card>
               <CardHeader>
                 <CardTitle>License Information</CardTitle>

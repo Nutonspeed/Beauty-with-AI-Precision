@@ -16,7 +16,7 @@ interface Customer {
   name: string;
   phone?: string;
   lineId?: string;
-  treatment?: string;
+  program?: string;
 }
 
 interface MessagingProps {
@@ -42,7 +42,7 @@ export function MessagingIntegration({ customer, onMessageSent, className = '' }
   const [platform, setPlatform] = useState<'line' | 'whatsapp'>('line');
 
   const fillTemplate = (template: string) => {
-    return template.replace(/{name}/g, customer.name).replace(/{treatment}/g, customer.treatment || t('common.treatment') || 'treatment');
+    return template.replace(/{name}/g, customer.name).replace(/{program}/g, customer.program || t('common.program') || 'program');
   };
 
   const handleSelectTemplate = (template: string) => {

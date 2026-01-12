@@ -125,7 +125,7 @@ export function CustomerSegmentation() {
         status: 'hot',
         budget: 'premium',
         interests: [t('ui.menu.laser'), t('ui.menu.filler'), t('ui.menu.botox')],
-        concerns: [t('treatmentComparison.concerns.anti_aging'), t('treatmentComparison.concerns.pigmentation')],
+        concerns: [t('programComparison.concerns.anti_aging'), t('programComparison.concerns.pigmentation')],
         age: 38,
         gender: 'male',
         engagement: {
@@ -148,8 +148,8 @@ export function CustomerSegmentation() {
         source: 'Referral',
         status: 'warm',
         budget: 'high',
-        interests: [t('treatmentComparison.concerns.whitening'), t('treatmentComparison.concerns.laser_care')],
-        concerns: [t('treatmentComparison.concerns.whitening'), t('treatmentComparison.concerns.pigmentation')],
+        interests: [t('programComparison.concerns.whitening'), t('programComparison.concerns.laser_care')],
+        concerns: [t('programComparison.concerns.whitening'), t('programComparison.concerns.pigmentation')],
         age: 29,
         gender: 'female',
         engagement: {

@@ -52,10 +52,10 @@ export default function BetaSignupPage() {
 
   const targetGroups = [
     {
-      title: "🏥 Clinic Owners",
+      title: "🏥 Center Owners",
       count: "3-5 คน",
       requirements: [
-        "เจ้าของคลินิกความงาม / skincare",
+        "เจ้าของเซ็นเตอร์ความงาม / skincare",
         "สนใจใช้ AI ในธุรกิจ",
         "มีลูกค้า 50-500 คน/เดือน"
       ]
@@ -107,7 +107,7 @@ export default function BetaSignupPage() {
           </h1>
           
           <p className="text-xl text-gray-600 mb-4 max-w-2xl mx-auto">
-            ระบบวิเคราณ์ผิวหน้าด้วย AI + AR Treatment Simulator
+            ระบบวิเคราะห์ผิวหน้าด้วย AI + AR Program Simulator
           </p>
           
           <div className="flex items-center justify-center gap-4 text-sm text-gray-500 mb-8">
@@ -266,10 +266,10 @@ export default function BetaSignupPage() {
                     Nice to Test
                   </h3>
                   <ul className="space-y-2 text-sm text-gray-700">
-                    <li>• AR Treatment Simulator (10 นาที)</li>
+                    <li>• AR Program Simulator (10 นาที)</li>
                     <li>• Booking System (5 นาที)</li>
-                    <li>• Dashboard (Clinic Owners)</li>
-                    <li>• Customer Management (Clinic Owners)</li>
+                    <li>• Dashboard (Center Owners)</li>
+                    <li>• Customer Management (Center Owners)</li>
                   </ul>
                 </div>
               </div>

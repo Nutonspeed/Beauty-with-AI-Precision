@@ -11,9 +11,9 @@ export function SalesVelocity() {
   const t = useTranslations()
 
   const velocityData = [
-    { staff: 'Dr. Sarah', avgDays: 4.2, trend: -12, status: 'Accelerating' },
-    { staff: 'Nurse Joy', avgDays: 6.8, trend: +5, status: 'Stable' },
-    { staff: 'Dr. Mike', avgDays: 3.5, trend: -18, status: 'Optimal' },
+    { staff: 'Specialist Sarah', avgDays: 4.2, trend: -12, status: 'Accelerating' },
+    { staff: 'Assistant Joy', avgDays: 6.8, trend: +5, status: 'Stable' },
+    { staff: 'Specialist Mike', avgDays: 3.5, trend: -18, status: 'Optimal' },
   ]
 
   return (

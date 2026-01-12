@@ -209,8 +209,8 @@ export default function ShareResults({ scanResult, leadId, onShared }: ShareResu
     ${scanResult.recommendations.map(r => `
       <div style="border: 1px solid #e5e7eb; padding: 15px; border-radius: 8px; margin: 10px 0;">
         <h4 style="margin: 0 0 10px 0; color: #2563eb;">${r.program}</h4>
-        <p style="margin: 5px 0;"><strong>${t('treatmentComparison.table.price')}:</strong> ฿${r.price.toLocaleString()}</p>
-        <p style="margin: 5px 0;"><strong>${t('treatmentComparison.table.duration')}:</strong> ${r.duration}</p>
+        <p style="margin: 5px 0;"><strong>${t('programComparison.table.price')}:</strong> ฿${r.price.toLocaleString()}</p>
+        <p style="margin: 5px 0;"><strong>${t('programComparison.table.duration')}:</strong> ${r.duration}</p>
         <p style="margin: 5px 0;"><strong>${t('presentationMode.expectedResults')}:</strong> ${r.expectedOutcome}</p>
       </div>
     `).join('')}
@@ -241,7 +241,7 @@ ${t('shareResults.chat.dear', { name: scanResult.customer_name })}
 ${scanResult.concerns.map((c, i) => `${i + 1}. ${c.name} - ${t('skinHeatmap.avgSeverity')}: ${c.severity}/10\n   ${c.description}`).join('\n')}
 
 **${t('shareResults.chat.recommendations')}**
-${scanResult.recommendations.map((r, i) => `${i + 1}. **${r.program}**\n   💰 ${t('treatmentComparison.table.price')}: ฿${r.price.toLocaleString()}\n   ⏱️ ${t('treatmentComparison.table.duration')}: ${r.duration}\n   ✨ ${t('presentationMode.expectedResults')}: ${r.expectedOutcome}`).join('\n\n')}
+${scanResult.recommendations.map((r, i) => `${i + 1}. **${r.program}**\n   💰 ${t('programComparison.table.price')}: ฿${r.price.toLocaleString()}\n   ⏱️ ${t('programComparison.table.duration')}: ${r.duration}\n   ✨ ${t('presentationMode.expectedResults')}: ${r.expectedOutcome}`).join('\n\n')}
 
 ${t('shareResults.chat.nextSteps')}
     `.trim();

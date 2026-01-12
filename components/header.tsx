@@ -135,7 +135,7 @@ export function Header() {
         {/* Glow effect behind logo - Blue */}
         <div className="absolute top-1/2 left-6 -translate-y-1/2 w-32 h-8 bg-blue-500/5 blur-2xl rounded-full -z-10" />
         
-        {/* Logo - Premium Clinical Branding */}
+        {/* Logo - Premium Aesthetic Branding */}
         <Link
           href={lp("/")}
           className="flex items-center gap-3 min-w-0 flex-shrink transition-all hover:scale-[1.02] active:scale-95 group"

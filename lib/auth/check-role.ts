@@ -33,8 +33,8 @@ export async function checkUserRole(allowedRoles: UserRole[]) {
     // Redirect to appropriate dashboard based on role
     if (userRole === "super_admin") {
       redirect("/admin")
-    } else if (userRole === "clinic_owner" || userRole === "clinic_admin" || userRole === "clinic_staff") {
-      redirect("/clinic/dashboard")
+    } else if (userRole === "center_owner" || userRole === "center_admin" || userRole === "center_staff") {
+      redirect("/center/dashboard")
     } else if (userRole === "sales_staff") {
       redirect("/sales/dashboard")
     } else {
@@ -46,6 +46,6 @@ export async function checkUserRole(allowedRoles: UserRole[]) {
   return {
     user: session.user,
     role: userRole,
-    clinicId: userData.clinic_id,
+    centerId: userData.clinic_id,
   }
 }

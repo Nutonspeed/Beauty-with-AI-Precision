@@ -18,14 +18,14 @@ interface PerformanceMetrics {
 
 interface EnhancedARViewerProps {
   modelUrl?: string
-  treatmentData?: any
+  programData?: any
   onPerformanceUpdate?: (metrics: PerformanceMetrics) => void
   enableOffline?: boolean
 }
 
 export function EnhancedARViewer({
   modelUrl,
-  treatmentData,
+  programData,
   onPerformanceUpdate,
   enableOffline = true
 }: EnhancedARViewerProps) {
@@ -106,7 +106,7 @@ export function EnhancedARViewer({
     // GPU-accelerated drawing
     ctx.save()
 
-    // Draw AR content here (3D model, treatments, etc.)
+    // Draw AR content here (3D model, programs, etc.)
     // This is where the actual AR rendering happens
 
     ctx.restore()

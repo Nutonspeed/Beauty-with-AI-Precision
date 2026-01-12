@@ -27,7 +27,7 @@ export function MedicalDecisionSupport({ isEnterprise, skinData }: MedicalDecisi
     }, 2500)
   }
 
-  const clinicalInsights = [
+  const aestheticInsights = [
     {
       title: t('differentialDiagnosis'),
       items: [
@@ -92,8 +92,8 @@ export function MedicalDecisionSupport({ isEnterprise, skinData }: MedicalDecisi
 
       <CardContent className="p-10 lg:p-12 space-y-12 flex-1">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Clinical Intelligence Node */}
-          {clinicalInsights.map((section, idx) => (
+          {/* Aesthetic Intelligence Node */}
+          {aestheticInsights.map((section, idx) => (
             <div key={idx} className="space-y-8">
               <div className="flex items-center gap-4">
                 <div className="h-10 w-10 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-center animate-synaptic-fire">
@@ -150,7 +150,7 @@ export function MedicalDecisionSupport({ isEnterprise, skinData }: MedicalDecisi
         <div className="flex items-center gap-4 text-slate-600">
           <AlertCircle className="h-5 w-5" />
           <p className="text-[9px] font-black uppercase tracking-[0.2em] italic">
-            {t('doctorConfirmation')}: {t('requiredBeforeAuthorizedProtocol')}
+            {t('specialistConfirmation')}: {t('requiredBeforeAuthorizedProtocol')}
           </p>
         </div>
       </CardFooter>

@@ -12,10 +12,10 @@ export interface ArchiveFilter {
   concerns?: SkinConcern[];
   severityRange?: { min: number; max: number };
   improvementStatus?: 'improved' | 'stable' | 'declined';
-  treatmentApplied?: boolean;
+  programApplied?: boolean;
   tags?: string[];
-  clinician?: string;
-  clinic?: string;
+  specialist?: string;
+  center?: string;
   searchText?: string;
 }
 
@@ -37,13 +37,13 @@ export interface AnalysisRecord {
   timestamp?: Date;
   imageUrl?: string;
   analysis: AIAnalysisResult;
-  clinicId?: string;
-  clinicName?: string;
-  clinicianId?: string;
-  clinicianName?: string;
+  centerId?: string;
+  centerName?: string;
+  specialistId?: string;
+  specialistName?: string;
   tags: string[];
   notes: string;
-  treatmentApplied: boolean;
+  programApplied: boolean;
   archived: boolean;
   improvementScore?: number;
   exportedAt?: Date[];
@@ -54,7 +54,7 @@ export interface ExportOptions {
   format: 'json' | 'csv' | 'excel' | 'pdf';
   includeImages: boolean;
   includeAnalysis: boolean;
-  includeTreatments: boolean;
+  includePrograms: boolean;
   dateRange?: { start: Date; end: Date };
   language: 'th' | 'en';
 }
@@ -116,10 +116,11 @@ export class AnalysisArchiveEngine {
     const lowerQuery = query.toLowerCase();
 
     let filtered = records.filter((record) => {
+      const lowerQuery = query.toLowerCase();
       const matchesText =
         record.id.toLowerCase().includes(lowerQuery) ||
-        record.clinicianName?.toLowerCase().includes(lowerQuery) ||
-        record.clinicName?.toLowerCase().includes(lowerQuery) ||
+        record.specialistName?.toLowerCase().includes(lowerQuery) ||
+        record.centerName?.toLowerCase().includes(lowerQuery) ||
         record.notes.toLowerCase().includes(lowerQuery) ||
         record.tags.some((tag) => tag.toLowerCase().includes(lowerQuery)) ||
         record.analysis.skinType.toLowerCase().includes(lowerQuery);
@@ -157,13 +158,13 @@ export class AnalysisArchiveEngine {
     analysisId: string,
     analysis: AIAnalysisResult,
     metadata: {
-      clinicId?: string;
-      clinicName?: string;
-      clinicianId?: string;
-      clinicianName?: string;
+      centerId?: string;
+      centerName?: string;
+      specialistId?: string;
+      specialistName?: string;
       tags?: string[];
       notes?: string;
-      treatmentApplied?: boolean;
+      programApplied?: boolean;
       improvementScore?: number;
     } = {}
   ): AnalysisRecord {
@@ -179,13 +180,13 @@ export class AnalysisArchiveEngine {
       id: analysisId,
       date: new Date(),
       analysis,
-      clinicId: metadata.clinicId,
-      clinicName: metadata.clinicName,
-      clinicianId: metadata.clinicianId,
-      clinicianName: metadata.clinicianName,
+      centerId: metadata.centerId,
+      centerName: metadata.centerName,
+      specialistId: metadata.specialistId,
+      specialistName: metadata.specialistName,
       tags: metadata.tags || [],
       notes: metadata.notes || '',
-      treatmentApplied: metadata.treatmentApplied || false,
+      programApplied: metadata.programApplied || false,
       archived: false,
       improvementScore: metadata.improvementScore,
     };
@@ -343,8 +344,8 @@ export class AnalysisArchiveEngine {
       .map(([type]) => type as SkinConcern);
 
     // Compliance rate
-    const treatedRecords = records.filter((r) => r.treatmentApplied).length;
-    const complianceRate = (treatedRecords / records.length) * 100;
+    const programmedRecords = records.filter((r) => r.programApplied).length;
+    const complianceRate = (programmedRecords / records.length) * 100;
 
     return {
       totalAnalyses: records.length,
@@ -423,8 +424,8 @@ export class AnalysisArchiveEngine {
     }
 
     // Treatment applied filter
-    if (filters.treatmentApplied !== undefined) {
-      if (record.treatmentApplied !== filters.treatmentApplied) return false;
+    if (filters.programApplied !== undefined) {
+      if (record.programApplied !== filters.programApplied) return false;
     }
 
     // Tags filter
@@ -434,12 +435,12 @@ export class AnalysisArchiveEngine {
     }
 
     // Clinician filter
-    if (filters.clinician && record.clinicianName !== filters.clinician) {
+    if (filters.specialist && record.specialistName !== filters.specialist) {
       return false;
     }
 
-    // Clinic filter
-    if (filters.clinic && record.clinicName !== filters.clinic) {
+    // Center filter
+    if (filters.center && record.centerName !== filters.center) {
       return false;
     }
 
@@ -453,10 +454,10 @@ export class AnalysisArchiveEngine {
     const data = records.map((record) => ({
       id: record.id,
       date: record.date,
-      clinic: record.clinicName,
-      clinician: record.clinicianName,
+      center: record.centerName,
+      specialist: record.specialistName,
       analysis: options.includeAnalysis ? record.analysis : null,
-      treatmentApplied: record.treatmentApplied,
+      programApplied: record.programApplied,
       improvement: record.improvementScore,
       tags: record.tags,
       notes: record.notes,
@@ -472,11 +473,11 @@ export class AnalysisArchiveEngine {
     const headers = [
       'ID',
       'Date',
-      'Clinic',
-      'Clinician',
+      'Center',
+      'Specialist',
       'Skin Type',
       'Concerns',
-      'Treatment Applied',
+      'Program Applied',
       'Improvement',
       'Tags',
     ];
@@ -484,11 +485,11 @@ export class AnalysisArchiveEngine {
     const rows = records.map((record) => [
       record.id,
       record.date.toISOString(),
-      record.clinicName || '',
-      record.clinicianName || '',
+      record.centerName || '',
+      record.specialistName || '',
       record.analysis.skinType,
       record.analysis.concerns.join('; '),
-      record.treatmentApplied ? 'Yes' : 'No',
+      record.programApplied ? 'Yes' : 'No',
       record.improvementScore || '',
       record.tags.join('; '),
     ]);

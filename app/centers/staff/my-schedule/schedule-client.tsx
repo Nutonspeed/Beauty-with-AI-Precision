@@ -62,7 +62,7 @@ export default function StaffScheduleClient({
     setUpdatingStatus(true);
     try {
       const response = await fetch(
-        `/api/clinic/bookings/${appointmentId}/status`,
+        `/api/center/bookings/${appointmentId}/status`,
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
@@ -139,8 +139,8 @@ export default function StaffScheduleClient({
               <h1 className="text-2xl font-bold">{staff.name}</h1>
               <p className="text-white/80 flex items-center gap-2">
                 <Badge variant="secondary" className="bg-white/20 text-white">
-                  {staff.role === "doctor" && "แพทย์"}
-                  {staff.role === "nurse" && "พยาบาล"}
+                  {staff.role === "doctor" && "ผู้เชี่ยวชาญ"}
+                  {staff.role === "nurse" && "ฝ่ายเทคนิค"}
                   {staff.role === "therapist" && "ผู้ให้บริการ"}
                   {staff.role === "admin" && "ผู้ดูแลระบบ"}
                 </Badge>
@@ -260,7 +260,7 @@ export default function StaffScheduleClient({
                             {appointment.appointment_time}
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            {appointment.treatment?.duration || 60} นาที
+                            {appointment.program?.duration || 60} นาที
                           </p>
                         </div>
                       </div>
@@ -274,22 +274,22 @@ export default function StaffScheduleClient({
                                 src={appointment.customer?.profile_image_url}
                               />
                               <AvatarFallback>
-                                {appointment.customer?.name?.charAt(0) || "C"}
+                                {appointment.client?.name?.charAt(0) || "C"}
                               </AvatarFallback>
                             </Avatar>
                             <div>
                               <h3 className="font-semibold text-lg">
-                                {appointment.customer?.name || "ลูกค้า"}
+                                {appointment.client?.name || "ลูกค้า"}
                               </h3>
                               <div className="flex items-center gap-3 text-sm text-muted-foreground">
                                 <span className="flex items-center gap-1">
                                   <Phone className="w-3 h-3" />
-                                  {appointment.customer?.phone}
+                                  {appointment.client?.phone}
                                 </span>
-                                {appointment.customer?.email && (
+                                {appointment.client?.email && (
                                   <span className="flex items-center gap-1">
                                     <Mail className="w-3 h-3" />
-                                    {appointment.customer?.email}
+                                    {appointment.client?.email}
                                   </span>
                                 )}
                               </div>
@@ -300,9 +300,9 @@ export default function StaffScheduleClient({
 
                         <div className="bg-muted/50 rounded-lg p-3 mb-3">
                           <p className="font-semibold text-sm mb-1">
-                            การรักษา
+                            โปรแกรมความงาม
                           </p>
-                          <p className="text-sm">{appointment.treatment_type}</p>
+                          <p className="text-sm">{appointment.program_type}</p>
                           <p className="text-xs text-muted-foreground mt-1">
                             ราคา: ฿{(appointment.total_price || 0).toLocaleString()}
                           </p>
@@ -395,14 +395,14 @@ export default function StaffScheduleClient({
                       <div className="flex-1">
                         <div className="flex items-center justify-between mb-2">
                           <h3 className="font-semibold">
-                            {appointment.customer?.name}
+                            {appointment.client?.name}
                           </h3>
                           <Badge variant="default" className="bg-green-600">
                             เสร็จสิ้น
                           </Badge>
                         </div>
                         <p className="text-sm text-muted-foreground mb-1">
-                          {appointment.treatment_type}
+                          {appointment.program_type}
                         </p>
                         <p className="text-xs text-muted-foreground">
                           เวลา: {appointment.appointment_time} | ราคา: ฿

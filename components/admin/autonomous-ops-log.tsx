@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils"
 
 interface Operation {
   id: string
-  type: 'inventory' | 'marketing' | 'security' | 'clinical'
+  type: 'inventory' | 'marketing' | 'security' | 'aesthetic'
   action: string
   impact: string
   timestamp: string
@@ -49,7 +49,7 @@ export function AutonomousOpsLog() {
   useEffect(() => {
     const actions = [
       { type: 'inventory', action: t('autonomousOps.actions.optimizingStock'), impact: t('autonomousOps.actions.reducedWaste') },
-      { type: 'clinical', action: t('autonomousOps.actions.synthesizingMDSS'), impact: t('autonomousOps.actions.confidenceScore') },
+      { type: 'aesthetic', action: t('autonomousOps.actions.synthesizingMDSS'), impact: t('autonomousOps.actions.confidenceScore') },
       { type: 'marketing', action: t('autonomousOps.actions.hyperPersonalizing'), impact: t('autonomousOps.actions.highPropensity') },
       { type: 'security', action: t('autonomousOps.actions.quantumHandshake'), impact: t('autonomousOps.actions.meshNodeSync') }
     ]

@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Search, MoreVertical, UserPlus, ArrowLeft, Star, Edit, Trash2, UserCog } from "lucide-react"
 import Link from "next/link"
-import StaffModal from "@/components/clinic/staff-modal"
+import StaffModal from "@/components/center/staff-modal"
 import { toast } from "sonner"
 
 export interface StaffMember {
@@ -43,7 +43,7 @@ export interface StaffMember {
   phone: string | null
   status: string
   rating: number | null
-  patients_today: number
+  clients_today: number
   appointments_today: number
   join_date: string
   avatar_url: string | null
@@ -65,8 +65,8 @@ export interface StaffStats {
   total: number
   active: number
   on_leave: number
-  doctors: number
-  nurses: number
+  specialists: number
+  technicians: number
   therapists: number
   admins: number
 }
@@ -200,9 +200,9 @@ export function StaffClient({ initialStaff, initialStats }: StaffClientProps) {
   const getRoleBadge = (role: string) => {
     switch (role) {
       case "doctor":
-        return <Badge className="bg-blue-500">👨‍⚕️ Doctor</Badge>
+        return <Badge className="bg-blue-500">👨‍⚕️ Specialist</Badge>
       case "nurse":
-        return <Badge className="bg-green-500">👩‍⚕️ Nurse</Badge>
+        return <Badge className="bg-green-500">👩‍⚕️ Technician</Badge>
       case "therapist":
         return <Badge className="bg-purple-500">💆 Therapist</Badge>
       case "admin":
@@ -235,7 +235,7 @@ export function StaffClient({ initialStaff, initialStats }: StaffClientProps) {
         <div className="container py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Link href="/clinic/dashboard">
+              <Link href="/center/dashboard">
                 <Button variant="ghost" size="sm">
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Back
@@ -271,14 +271,14 @@ export function StaffClient({ initialStaff, initialStats }: StaffClientProps) {
           </Card>
           <Card>
             <CardContent className="p-4">
-              <div className="text-sm text-muted-foreground">👨‍⚕️ Doctors</div>
-              <div className="text-2xl font-bold text-blue-500">{stats.doctors}</div>
+              <div className="text-sm text-muted-foreground">👨‍⚕️ Specialists</div>
+              <div className="text-2xl font-bold text-blue-500">{stats.specialists}</div>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-4">
-              <div className="text-sm text-muted-foreground">👩‍⚕️ Nurses</div>
-              <div className="text-2xl font-bold text-green-500">{stats.nurses}</div>
+              <div className="text-sm text-muted-foreground">👩‍⚕️ Technicians</div>
+              <div className="text-2xl font-bold text-green-500">{stats.technicians}</div>
             </CardContent>
           </Card>
           <Card>
@@ -310,8 +310,8 @@ export function StaffClient({ initialStaff, initialStats }: StaffClientProps) {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Roles</SelectItem>
-                  <SelectItem value="doctor">👨‍⚕️ Doctor</SelectItem>
-                  <SelectItem value="nurse">👩‍⚕️ Nurse</SelectItem>
+                  <SelectItem value="doctor">👨‍⚕️ Specialist</SelectItem>
+                  <SelectItem value="nurse">👩‍⚕️ Technician</SelectItem>
                   <SelectItem value="therapist">💆 Therapist</SelectItem>
                   <SelectItem value="admin">👔 Admin</SelectItem>
                   <SelectItem value="receptionist">📋 Receptionist</SelectItem>
@@ -393,7 +393,7 @@ export function StaffClient({ initialStaff, initialStats }: StaffClientProps) {
                       </TableCell>
                       <TableCell>
                         <div className="text-sm">
-                          <div>👥 {staffMember.patients_today} patients</div>
+                          <div>👥 {staffMember.clients_today} clients</div>
                           <div className="text-muted-foreground">📅 {staffMember.appointments_today} appts</div>
                         </div>
                       </TableCell>

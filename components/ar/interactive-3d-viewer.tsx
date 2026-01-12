@@ -11,11 +11,11 @@ import { useHaptic } from "@/lib/hooks/use-haptic"
 
 interface Interactive3DViewerProps {
   image: string | null
-  treatment?: string
+  program?: string
   intensity?: number
 }
 
-export function Interactive3DViewer({ image, treatment, intensity = 50 }: Interactive3DViewerProps) {
+export function Interactive3DViewer({ image, program, intensity = 50 }: Interactive3DViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const haptic = useHaptic()
   const [rotation, setRotation] = useState({ x: 0, y: 0, z: 0 })
@@ -160,7 +160,7 @@ export function Interactive3DViewer({ image, treatment, intensity = 50 }: Intera
                     fill
                     className="object-contain"
                     style={{
-                      filter: treatment ? `brightness(${1 + (intensity / 100) * 0.2})` : "none",
+                      filter: program ? `brightness(${1 + (intensity / 100) * 0.2})` : "none",
                     }}
                   />
                   {/* Depth effect overlay */}
@@ -288,7 +288,7 @@ export function Interactive3DViewer({ image, treatment, intensity = 50 }: Intera
             </div>
             <div className="flex items-center gap-2">
               <div className="h-2 w-2 rounded-full bg-green-500" />
-              <span>Real-time treatment preview / ดูตัวอย่างการรักษาแบบเรียลไทม์</span>
+              <span>Real-time program preview / ดูตัวอย่างโปรแกรมแบบเรียลไทม์</span>
             </div>
           </div>
         </div>

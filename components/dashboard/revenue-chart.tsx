@@ -41,7 +41,7 @@ export function RevenueChart() {
   useEffect(() => {
     async function fetchRevenue() {
       try {
-        const response = await fetch("/api/clinic/dashboard/revenue")
+        const response = await fetch("/api/center/dashboard/revenue")
         if (!response.ok) {
           throw new Error(`Failed to fetch revenue: ${response.status}`)
         }
