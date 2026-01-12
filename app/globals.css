@@ -6,6 +6,22 @@
 @import '../styles/beauty-theme.css';
 @import '../styles/beauty-animations.css';
 
+/* Medical Snap Scroll Layout */
+.snap-container {
+  height: 100vh;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+}
+
+.snap-section {
+  height: 100vh;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  display: flex;
+  flex-direction: column;
+}
+
 /* Thai font optimization for mobile */
 @media (max-width: 640px) {
   html {
@@ -62,32 +78,31 @@
 .bg-avatar-5 { background: linear-gradient(135deg, hsl(300, 70%, 60%), hsl(340, 70%, 50%)); }
 
 :root {
-  /* High-so Light Tech Theme: White & Royal Blue */
-  --background: 210 40% 98%;
-  --foreground: 222.2 84% 4.9%;
+  /* Phase 1: Elite Medical Foundation */
+  /* Porcelain White Base */
+  --background: 0 0% 100%;
+  --foreground: 222.2 47.4% 11.2%;
+  
   --card: 0 0% 100%;
-  --card-foreground: 222.2 84% 4.9%;
+  --card-foreground: 222.2 47.4% 11.2%;
+  
   --popover: 0 0% 100%;
-  --popover-foreground: 222.2 84% 4.9%;
+  --popover-foreground: 222.2 47.4% 11.2%;
 
-  /* Primary: Deep Royal Blue for Premium feel */
-  --primary: 221.2 83.2% 53.3%;
+  /* Hospital Blue Primary - High Authority & Trust */
+  --primary: 221 83% 53%;
   --primary-rgb: 37, 99, 235;
   --primary-foreground: 210 40% 98%;
 
-  /* Premium Elevations - Softer and cleaner */
-  --shadow-premium: 0 20px 50px -12px rgba(0, 0, 0, 0.05);
-  --shadow-glow: 0 0 30px rgba(37, 99, 235, 0.1);
-
-  /* Secondary: Electric Blue / Cyan for High-tech feel */
-  --secondary: 199 89% 48%;
+  /* Medical Slate Secondary - Clean Infrastructure */
+  --secondary: 210 40% 96.1%;
   --secondary-foreground: 222.2 47.4% 11.2%;
 
-  /* Muted: Clean Slate Gray */
+  /* Muted Text & Backgrounds */
   --muted: 210 40% 96.1%;
   --muted-foreground: 215.4 16.3% 46.9%;
 
-  /* Accent: Royal Blue with subtle opacity */
+  /* Accent: Subtle Medical Blue */
   --accent: 210 40% 96.1%;
   --accent-foreground: 222.2 47.4% 11.2%;
 
@@ -98,83 +113,46 @@
   --input: 214.3 31.8% 91.4%;
   --ring: 221.2 83.2% 53.3%;
 
-  /* Radius: Refined and modern */
-  --radius: 1.25rem;
-
-  /* Sidebar: Clean light interface */
-  --sidebar: 0 0% 100%;
-  --sidebar-foreground: 240 5.3% 26.1%;
-  --sidebar-primary: 221.2 83.2% 53.3%;
-  --sidebar-primary-foreground: 0 0% 98%;
-  --sidebar-accent: 240 4.8% 95.9%;
-  --sidebar-accent-foreground: 240 5.9% 10%;
-  --sidebar-border: 220 13% 91%;
-  --sidebar-ring: 221.2 83.2% 53.3%;
-
-  /* Beauty AI Extension Palette - Updated for Light Mode */
-  --bc-bg: #F8FAFC;
-  --bc-bg-alt: #EFF6FF;
-  --bc-surface: #FFFFFF;
-  --bc-surface-muted: #F1F5F9;
-  --bc-text-primary: #0F172A;
-  --bc-text-secondary: #334155;
-  --bc-text-faint: #64748B;
-  --bc-accent-pink: #EC4899;
-  --bc-accent-petal: #FDF2F8;
-  --bc-accent-blue: #2563EB;
-  --bc-accent-cyan: #0EA5E9;
-  --bc-accent-green: #10B981;
-  --bc-accent-neutral: #F8FAFC;
-  --bc-gradient-hero: linear-gradient(135deg, #2563EB 0%, #0EA5E9 50%, #EFF6FF 100%);
-  --bc-gradient-tech: linear-gradient(135deg, #1E40AF 0%, #3B82F6 100%);
+  /* Radius: Professional & Sharp */
+  --radius: 0.5rem;
 }
 
 .dark {
-  --background: 222.2 84% 4.9%;
+  /* Medical Dark Mode - Deep Navy, not Black */
+  --background: 222 47% 4%;
   --foreground: 210 40% 98%;
-  --card: 222.2 84% 4.9%;
+  --card: 222 47% 4%;
   --card-foreground: 210 40% 98%;
-  --popover: 222.2 84% 4.9%;
+  --popover: 222 47% 4%;
   --popover-foreground: 210 40% 98%;
   
-  /* Primary: Vibrant Blue for Dark Mode */
-  --primary: 217.2 91.2% 59.8%;
+  --primary: 217 91% 60%;
   --primary-rgb: 59, 130, 246;
   --primary-foreground: 222.2 47.4% 11.2%;
   
-  --secondary: 217.2 32.6% 17.5%;
+  --secondary: 217 32% 17%;
   --secondary-foreground: 210 40% 98%;
   
-  --muted: 217.2 32.6% 17.5%;
-  --muted-foreground: 215 20.2% 65.1%;
+  --muted: 217 32% 17%;
+  --muted-foreground: 215 20% 65%;
   
-  --accent: 217.2 32.6% 17.5%;
+  --accent: 217 32% 17%;
   --accent-foreground: 210 40% 98%;
   
   --destructive: 0 62.8% 30.6%;
   --destructive-foreground: 210 40% 98%;
   
-  --border: 217.2 32.6% 17.5%;
-  --input: 217.2 32.6% 17.5%;
-  --ring: 224.3 76.3% 48%;
-
-  --sidebar: 222.2 84% 4.9%;
-  --sidebar-foreground: 240 4.8% 95.9%;
-  --sidebar-primary: 224.3 76.3% 48%;
-  --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 240 3.7% 15.9%;
-  --sidebar-accent-foreground: 240 4.8% 95.9%;
-  --sidebar-border: 240 3.7% 15.9%;
-  --sidebar-ring: 217.2 91.2% 59.8%;
+  --border: 217 32% 17%;
+  --input: 217 32% 17%;
+  --ring: 224 76% 48%;
 }
 
-/* Glassmorphism Classes - Refined for light mode */
 .glass-panel {
   @apply bg-white/40 backdrop-blur-2xl border border-white/40 shadow-premium;
 }
 
 .premium-card {
-  @apply transition-all duration-500 hover:shadow-premium border border-white bg-white/60 backdrop-blur-xl hover:border-primary/10;
+  @apply transition-all duration-300 border border-slate-200 bg-white hover:border-primary/30 hover:shadow-md;
 }
 
 .glow-on-hover {
@@ -397,16 +375,16 @@
   }
 
   ::-webkit-scrollbar-track {
-    background: #F1F5F9;
+    background: #FFFFFF;
   }
 
   ::-webkit-scrollbar-thumb {
-    background: #CBD5E1;
+    background: #E2E8F0;
     border-radius: 10px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: #94A3B8;
+    background: #CBD5E1;
   }
 
   /* Firefox */

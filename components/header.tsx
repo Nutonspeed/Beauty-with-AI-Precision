@@ -112,61 +112,27 @@ export function Header() {
   return (
     <header
       suppressHydrationWarning
-      className="sticky top-0 z-50 w-full border-b border-slate-200/50 bg-white/70 backdrop-blur-2xl supports-[backdrop-filter]:bg-white/40 transition-all duration-500 shadow-sm"
+      className="sticky top-0 z-50 w-full border-b border-slate-100 bg-white/80 backdrop-blur-xl supports-[backdrop-filter]:bg-white/60 transition-all duration-300"
     >
-      {/* Cinematic Top Beam - Blue theme */}
-      <div className="absolute top-0 left-0 right-0 h-[1px] overflow-hidden">
-        <motion.div
-          initial={{ x: "-100%" }}
-          animate={{ x: "100%" }}
-          transition={{
-            duration: 4,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-          className="h-full w-1/2 bg-gradient-to-r from-transparent via-blue-500/20 to-transparent opacity-30"
-        />
-      </div>
-
-      {/* Subtle Glow Underside */}
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/10 to-transparent opacity-50" />
-
       <div className="container flex h-16 sm:h-20 items-center justify-between gap-4 px-6 relative">
-        {/* Glow effect behind logo - Blue */}
-        <div className="absolute top-1/2 left-6 -translate-y-1/2 w-32 h-8 bg-blue-500/5 blur-2xl rounded-full -z-10" />
-        
         {/* Logo - Premium Aesthetic Branding */}
         <Link
           href={lp("/")}
-          className="flex items-center gap-3 min-w-0 flex-shrink transition-all hover:scale-[1.02] active:scale-95 group"
+          className="flex items-center gap-3 min-w-0 flex-shrink transition-all hover:opacity-80 active:scale-95 group"
           aria-label={t('common.home')}
         >
-          <div className="relative">
-            <motion.div 
-              animate={{ 
-                scale: [1, 1.1, 1],
-                opacity: [0.1, 0.2, 0.1] 
-              }}
-              transition={{ duration: 4, repeat: Infinity }}
-              className="absolute inset-0 bg-blue-500/20 blur-lg rounded-full" 
-            />
-            <CenterIQLogo className="relative flex-shrink-0" />
-          </div>
+          <CenterIQLogo className="relative flex-shrink-0" />
         </Link>
 
-        {/* Desktop Navigation - High-end Spacing */}
-        <nav className="hidden items-center gap-10 lg:flex">
+        {/* Desktop Navigation - Clean Corporate Spacing */}
+        <nav className="hidden items-center gap-8 lg:flex">
           {navItems.map((item) => (
             <Link
               key={item.href}
               href={lp(item.href)}
-              className="relative text-[11px] font-black uppercase tracking-[0.25em] text-slate-500 transition-all hover:text-blue-600 group py-2"
+              className="relative text-[11px] font-bold uppercase tracking-widest text-slate-500 transition-all hover:text-blue-600 py-2"
             >
               {item.label}
-              <motion.span 
-                className="absolute bottom-0 left-0 h-px bg-blue-600 w-0 group-hover:w-full transition-all duration-500"
-                initial={false}
-              />
             </Link>
           ))}
         </nav>

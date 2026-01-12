@@ -1,419 +1,90 @@
 "use client";
-import React, { useEffect, useState, Suspense, useRef, useCallback } from 'react';
-import dynamic from 'next/dynamic';
-import { motion } from 'framer-motion';
-
-// Dynamic imports for heavy 3D libraries to reduce initial bundle
-const Canvas = dynamic(() => import('@react-three/fiber').then(mod => ({ default: mod.Canvas })), { ssr: false });
-const Float = dynamic(() => import('@react-three/drei').then(mod => ({ default: mod.Float })), { ssr: false });
-const Environment = dynamic(() => import('@react-three/drei').then(mod => ({ default: mod.Environment })), { ssr: false });
-const ProceduralHalo = dynamic(() => import('@/components/three/ProceduralHalo').then(mod => ({ default: mod.ProceduralHalo })), { ssr: false });
-const VolumetricScanBeam = dynamic(() => import('@/components/three/VolumetricScanBeam').then(mod => ({ default: mod.VolumetricScanBeam })), { ssr: false });
-
-// Import THREE and useFrame only when needed
-import * as THREE from 'three';
-let useFrame: any;
-if (typeof window !== 'undefined') {
-  import('@react-three/fiber').then(mod => { useFrame = mod.useFrame; });
-}
-import { PersonaSettings } from '@/components/PersonalizationPanel';
-import { analytics } from '@/lib/analytics';
+import React, { motion } from 'framer-motion';
 import { useTranslations } from "next-intl";
-import { cn } from "@/lib/utils";
-import { Scan, ShieldCheck, Cpu } from 'lucide-react';
-
-// --- HUD Components ---
-function HudCorner({ position }: { position: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' }) {
-  const styles = {
-    'top-left': 'top-20 left-12 border-t-2 border-l-2',
-    'top-right': 'top-20 right-12 border-t-2 border-r-2 text-right',
-    'bottom-left': 'bottom-12 left-12 border-b-2 border-l-2',
-    'bottom-right': 'bottom-12 right-12 border-b-2 border-r-2 text-right',
-  };
-
-  return (
-    <div className={`fixed ${styles[position]} w-32 h-32 border-blue-500/10 pointer-events-none z-20 p-4 hidden lg:block backdrop-blur-[2px]`}>
-      <div className="text-[7px] font-black uppercase tracking-[0.4em] text-blue-500/30 font-mono">
-        {position.replace('-', ' ')}
-      </div>
-      <div className="mt-2 space-y-1.5">
-        <div className="h-[1px] w-full bg-blue-500/5" />
-        <div className="h-[1px] w-2/3 bg-blue-500/5" />
-      </div>
-    </div>
-  );
-}
-
-function ScanningLine() {
-  return (
-    <motion.div
-      animate={{ top: ['0%', '100%', '0%'] }}
-      transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-      className="fixed left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/20 to-transparent z-10 pointer-events-none"
-    />
-  );
-}
-
-function DataStream({ side }: { side: 'left' | 'right' }) {
-  const [data, setData] = useState<string[]>([]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const hex = Math.random().toString(16).substring(2, 8).toUpperCase();
-      const status = Math.random() > 0.8 ? 'OPTIMIZING' : 'OK';
-      const timestamp = new Date().toLocaleTimeString('en-GB', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
-      setData(prev => [
-        `${timestamp} | NODE_${hex} | ${status}`,
-        ...prev.slice(0, 12)
-      ]);
-    }, 800);
-    return () => clearInterval(interval);
-  }, []);
-
-  return (
-    <div className={`fixed ${side === 'left' ? 'left-8' : 'right-8'} top-1/2 -translate-y-1/2 space-y-3 pointer-events-none z-20 hidden xl:block`}>
-      <div className={cn(
-        "h-32 w-[1px] mx-auto mb-4 relative overflow-hidden",
-        side === 'left' ? "bg-gradient-to-b from-transparent via-blue-500/20 to-transparent" : "bg-gradient-to-b from-transparent via-cyan-500/20 to-transparent"
-      )}>
-        <motion.div 
-          animate={{ y: ['-100%', '100%'] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-          className={cn("absolute inset-0 w-full h-1/2", side === 'left' ? "bg-blue-500/20" : "bg-cyan-500/20")}
-        />
-      </div>
-      {data.map((str, i) => (
-        <motion.div
-          key={i}
-          initial={{ opacity: 0, x: side === 'left' ? -20 : 20 }}
-          animate={{ opacity: (15 - i) / 30, x: 0 }}
-          className={cn(
-            "font-mono text-[7px] whitespace-nowrap bg-white/40 backdrop-blur-md px-2 py-1 rounded border border-blue-500/5 shadow-sm",
-            side === 'left' ? "text-blue-600/40" : "text-cyan-600/40"
-          )}
-        >
-          {side === 'left' ? `>> ${str}` : `${str} <<`}
-        </motion.div>
-      ))}
-      <div className={cn(
-        "h-32 w-[1px] mx-auto mt-4 relative overflow-hidden",
-        side === 'left' ? "bg-gradient-to-b from-transparent via-cyan-500/20 to-transparent" : "bg-gradient-to-b from-transparent via-blue-500/20 to-transparent"
-      )}>
-        <motion.div 
-          animate={{ y: ['100%', '-100%'] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-          className={cn("absolute inset-0 w-full h-1/2", side === 'left' ? "bg-cyan-500/20" : "bg-blue-500/20")}
-        />
-      </div>
-    </div>
-  );
-}
-
-// High-fidelity Aesthetic Mesh
-function AestheticScanningMesh({ active }: { active: boolean }) {
-  const ref = useRef<THREE.Group>(null);
-  const pointsRef = useRef<THREE.Points>(null);
-
-  useFrame((state: any) => {
-    if (!ref.current) return;
-    const t = state.clock.elapsedTime;
-    
-    // Smooth aesthetic rotation
-    ref.current.rotation.y += active ? 0.002 : 0.0005;
-    
-    // Subtle breathing effect for the point cloud
-    if (pointsRef.current) {
-      const s = 1 + Math.sin(t * 0.8) * 0.01;
-      pointsRef.current.scale.setScalar(s);
-    }
-  });
-
-  return (
-    <group ref={ref}>
-      <Float speed={1.5} rotationIntensity={0.3} floatIntensity={0.3}>
-        {/* Core Point Cloud - Sells the "AI Scanning" look */}
-        <points ref={pointsRef}>
-          <sphereGeometry args={[1.4, 64, 64]} />
-          <pointsMaterial 
-            size={0.012} 
-            color="#2563eb" 
-            transparent 
-            opacity={0.15} 
-            sizeAttenuation 
-          />
-        </points>
-
-        {/* Wireframe Shell - Aesthetic structure */}
-        <mesh>
-          <sphereGeometry args={[1.39, 32, 32]} />
-          <meshStandardMaterial 
-            wireframe 
-            color="#3b82f6" 
-            transparent 
-            opacity={0.03} 
-          />
-        </mesh>
-
-        {/* Dynamic Scanning Ring */}
-        <mesh rotation={[Math.PI / 2, 0, 0]}>
-          <torusGeometry args={[1.6, 0.003, 16, 100]} />
-          <meshBasicMaterial color="#2563eb" transparent opacity={0.1} />
-        </mesh>
-      </Float>
-    </group>
-  );
-}
+import { ArrowRight, CheckCircle2 } from 'lucide-react';
 
 interface LandingHeroProps {
   _onPrimary?: () => void;
   _onSecondary?: () => void;
-  _ctaVariant?: "A" | "B";
-  ctaVariant?: "A" | "B";
 }
 
-function AtmosphericFog() {
-  return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
-      <motion.div 
-        animate={{ 
-          x: [-100, 100],
-          opacity: [0.03, 0.05, 0.03]
-        }}
-        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-        className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20%_30%,#3b82f6_0%,transparent_50%)] blur-[120px]"
-      />
-      <motion.div 
-        animate={{ 
-          x: [100, -100],
-          opacity: [0.03, 0.05, 0.03]
-        }}
-        transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-        className="absolute bottom-0 right-0 w-full h-full bg-[radial-gradient(circle_at_80%_70%,#0ea5e9_0%,transparent_50%)] blur-[120px]"
-      />
-    </div>
-  );
-}
-
-function GrainOverlay() {
-  return (
-    <div className="absolute inset-0 pointer-events-none z-10 opacity-[0.03] mix-blend-overlay">
-      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-repeat" />
-    </div>
-  );
-}
-
-export function LandingHero(props: LandingHeroProps) {
-  const { _onPrimary, _onSecondary } = props;
+export function LandingHero({ _onPrimary, _onSecondary }: LandingHeroProps) {
   const t = useTranslations();
-  const [stage, setStage] = useState<'intro'|'scanning'|'active'>('intro');
-  const [perfLow, _setPerfLow] = useState(false);
-  const [persona, _setPersona] = useState<PersonaSettings>({ tone:'Neutral', sensitivity:'Medium', goal:'Rejuvenate' });
-  const [webglSupported, setWebglSupported] = useState<boolean>(true);
-  const haloColors = (() => {
-    switch(persona.tone){
-      case 'Cool': return ['#3b82f6','#60a5fa'];
-      case 'Warm': return ['#2563eb','#0ea5e9'];
-      default: return ['#2563eb','#3b82f6'];
-    }
-  })();
-  const intensityMod = persona.goal==='Firming'?0.75: persona.goal==='Clarity'?0.55:0.65;
-  const distortMod = persona.sensitivity==='High'?0.25: persona.sensitivity==='Low'?0.45:0.35;
-  const lowPerfFactor = perfLow?0.5:1;
-
-  useEffect(() => {
-    const timers: NodeJS.Timeout[] = [];
-    timers.push(setTimeout(()=>setStage('scanning'), 900));
-    timers.push(setTimeout(()=>setStage('active'), 2400));
-    return () => { timers.forEach(clearTimeout); };
-  }, []);
-
-  // Log stage changes (privacy-safe)
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      if ('track' in analytics) (analytics as any).track('stage_change', { stage });
-    }
-  }, [stage]);
-
-  // Detect WebGL support (runs client-side only)
-  useEffect(() => {
-    try {
-      const canvas = document.createElement('canvas');
-      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-      if (!gl) setWebglSupported(false);
-      if ('track' in analytics) (analytics as any).track('webgl_support', { supported: !!gl });
-    } catch {
-      setWebglSupported(false);
-      if ('track' in analytics) (analytics as any).track('webgl_support', { supported: false });
-    }
-  }, []);
-
-  // Capture snapshot helper
-  const captureSnapshot = useCallback((_labelStage: string) => {
-    if (!webglSupported) return; // skip when fallback static mode
-    try {
-      const canvas = document.querySelector('.landing-hero-wrapper canvas') as HTMLCanvasElement | null;
-      if (!canvas) return;
-      // const dataUrl = canvas.toDataURL('image/png');
-      // console.log('Hero snapshot captured for stage:', labelStage);
-    } catch {/* ignore */}
-  }, [webglSupported]);
-
-  // Capture at stage transitions with slight delay for rendering stabilization
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (stage==='scanning' || stage==='active') captureSnapshot(stage);
-    }, 300);
-    return () => clearTimeout(timeout);
-  }, [stage, captureSnapshot]);
-
-  // Log perf adaptation
-  useEffect(() => {
-    if ('track' in analytics) (analytics as any).track('performance_state', { low: perfLow });
-  }, [perfLow]);
-
-  // Log persona updates
-  useEffect(() => {
-    if ('track' in analytics) (analytics as any).track('persona_update', persona);
-  }, [persona]);
 
   return (
-    <div className="landing-hero-wrapper bg-white">
-      <AtmosphericFog />
-      <GrainOverlay />
-      {webglSupported ? (
-        <div className="fixed inset-0 -z-10 bg-white">
-          <Canvas camera={{ position:[0,0,5], fov:62 }} gl={{ antialias: true, alpha: true }}>
-            <color attach="background" args={['#ffffff']} />
-            <ambientLight intensity={0.8} />
-            <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} color="#3b82f6" />
-            <spotLight position={[-10, -10, -10]} angle={0.15} penumbra={1} intensity={0.5} color="#60a5fa" />
-            <Suspense fallback={null}>
-              <group position={[0,-0.2,0]}>
-                <ProceduralHalo innerColor={haloColors[0]} outerColor={haloColors[1]} distortScale={distortMod} opacity={0.1 * lowPerfFactor} intensity={intensityMod * 0.5 * lowPerfFactor} />
-                <AestheticScanningMesh active={stage==='active'} />
-                <VolumetricScanBeam color={haloColors[0]} sweepSpeed={(stage==='scanning'?1.1:0.18) * lowPerfFactor} opacity={stage==='active'?0.05*lowPerfFactor:0.1*lowPerfFactor} />
-              </group>
-              <Environment preset="apartment" />
-            </Suspense>
-          </Canvas>
-          {/* Subtle Vignette Overlay for Light Mode */}
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(248,250,252,0.4)_80%)] pointer-events-none" />
-        </div>
-      ) : (
-        <div className="fixed inset-0 -z-10 flex items-center justify-center bg-white">
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-indigo-50" />
-          {/* Graceful fallback illustration */}
-          <div className="relative w-[320px] h-[320px] opacity-50">
-            <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-blue-500 to-indigo-500 opacity-5 blur-3xl" />
-            <div className="absolute inset-[18%] rounded-full border border-blue-500/10 backdrop-blur-sm bg-white/30 shadow-inner" />
-          </div>
-        </div>
-      )}
-      <div className="relative h-screen flex flex-col items-center justify-center px-6 text-center">
-        {/* HUD Elements */}
-        <HudCorner position="top-left" />
-        <HudCorner position="top-right" />
-        <HudCorner position="bottom-left" />
-        <HudCorner position="bottom-right" />
-        <ScanningLine />
-        <DataStream side="left" />
-        <DataStream side="right" />
-
-        {/* Central HUD Ring */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] pointer-events-none hidden lg:block">
-          <motion.div 
-            animate={{ rotate: 360 }}
-            transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-            className="absolute inset-0 rounded-full border border-blue-500/5 shadow-[0_0_100px_rgba(37,99,235,0.03)] animate-neural-pulse"
-          />
-          <motion.div 
-            animate={{ rotate: -360 }}
-            transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-            className="absolute inset-10 rounded-full border border-dashed border-blue-500/10 animate-synaptic-fire"
-          />
-        </div>
-
+    <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-white">
+      {/* Subtle Medical Grid Pattern */}
+      <div className="absolute inset-0 opacity-[0.02] pointer-events-none" 
+           style={{ backgroundImage: 'linear-gradient(#1e40af 1px, transparent 1px), linear-gradient(90deg, #1e40af 1px, transparent 1px)', backgroundSize: '100px 100px' }} />
+      
+      <div className="relative z-10 container max-w-6xl px-6 text-center">
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="mb-10 inline-flex items-center gap-4 rounded-full border border-blue-500/10 bg-white/50 px-6 py-2 backdrop-blur-xl shadow-premium"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mb-8 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-4 py-1.5"
         >
-          <div className="flex items-center gap-2 border-r border-slate-200 pr-4 mr-2">
-            <Cpu className="h-4 w-4 text-blue-600 animate-pulse" />
-            <span className="text-[10px] font-black tracking-[0.3em] text-blue-600/60 font-mono uppercase">OS-1.0-A</span>
-          </div>
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-500 opacity-75"></span>
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-blue-600"></span>
-          </span>
-          <span className="text-[10px] font-black tracking-[0.4em] text-blue-600 uppercase italic">
+          <div className="h-1.5 w-1.5 rounded-full bg-blue-600" />
+          <span className="text-[10px] font-bold tracking-widest text-blue-700 uppercase">
             {t('home.hero.badge')}
           </span>
         </motion.div>
 
         <motion.h1
-          initial={{ opacity:0, y:30 }}
-          animate={{ opacity:1, y:0 }}
-          transition={{ duration:1, ease:[0.16, 1, 0.3, 1] }}
-          className="max-w-5xl font-bold tracking-tight text-[clamp(2rem,7vw,6.5rem)] leading-[1.1] md:leading-[0.95] italic text-slate-900"
-          aria-label={t('home.hero.title')}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="font-display font-bold tracking-tight text-[clamp(2.5rem,7vw,4.5rem)] leading-[1.1] text-slate-900"
         >
-          <span className="block mb-2 md:mb-4 drop-shadow-sm">{t('home.hero.title')}</span>
-          <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 bg-clip-text text-transparent not-italic block pb-2 md:pb-4">
+          {t('home.hero.title')}
+          <span className="block text-blue-600">
             {t('home.hero.subtitle')}
           </span>
         </motion.h1>
 
         <motion.p
-          initial={{ opacity:0, y:20 }}
-          animate={{ opacity:1, y:0 }}
-          transition={{ delay:0.4, duration:0.8, ease:[0.16, 1, 0.3, 1] }}
-          className="mt-4 max-w-2xl text-base md:text-xl text-slate-500 font-light tracking-normal md:tracking-widest leading-relaxed italic"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="mt-8 max-w-2xl mx-auto text-lg md:text-xl text-slate-500 font-normal leading-relaxed"
         >
           {t('home.hero.description')}
         </motion.p>
 
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8, duration: 0.8 }}
-          className="mt-10 md:mt-16 flex flex-col sm:flex-row items-center gap-4 md:gap-10 w-full sm:w-auto px-4 sm:px-0"
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4"
         >
           <button 
             onClick={_onPrimary}
-            className="group relative h-16 md:h-20 w-full sm:w-auto px-10 md:px-16 rounded-2xl md:rounded-[2rem] bg-blue-600 text-white font-black overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-xl shadow-blue-600/20 border-none"
+            className="group h-14 md:h-16 w-full sm:w-auto px-10 md:px-12 rounded-xl bg-blue-600 text-white font-bold text-sm uppercase tracking-wider transition-all hover:bg-blue-700 hover:shadow-lg active:scale-95 flex items-center justify-center gap-2"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-700 to-indigo-700 opacity-0 group-hover:opacity-100 transition-opacity" />
-            <span className="relative z-10 flex items-center justify-center gap-3 text-[10px] md:text-xs uppercase tracking-[0.2em] md:tracking-[0.4em] italic">
-              {t('home.hero.cta')}
-              <Scan className="h-4 w-4 md:h-5 md:w-5 animate-pulse" />
-            </span>
+            {t('home.hero.cta')}
+            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </button>
 
           <button 
             onClick={_onSecondary}
-            className="group h-16 md:h-20 w-full sm:w-auto px-10 md:px-16 rounded-2xl md:rounded-[2rem] border border-slate-200 bg-white shadow-sm text-slate-400 font-black hover:bg-slate-50 transition-all hover:text-blue-600"
+            className="h-14 md:h-16 w-full sm:w-auto px-10 md:px-12 rounded-xl border border-slate-200 bg-white text-slate-600 font-bold text-sm uppercase tracking-wider transition-all hover:bg-slate-50 hover:border-slate-300"
           >
-            <span className="flex items-center justify-center gap-3 text-[10px] md:text-xs uppercase tracking-[0.2em] md:tracking-[0.4em] italic">
-              {t('home.hero.learnMore')}
-              <ShieldCheck className="h-4 w-4 md:h-5 md:w-5 text-blue-500/40 group-hover:text-blue-600" />
-            </span>
+            {t('home.hero.learnMore')}
           </button>
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1.2, duration: 1 }}
-          className="mt-16 flex items-center gap-8 text-[10px] font-medium tracking-[0.2em] text-gray-500 uppercase"
+          transition={{ delay: 0.5, duration: 0.8 }}
+          className="mt-16 flex flex-wrap justify-center items-center gap-x-8 gap-y-4 text-[10px] font-bold tracking-widest text-slate-400 uppercase"
         >
           <span className="flex items-center gap-2">
-            <div className="h-1 w-1 rounded-full bg-pink-500" />
+            <CheckCircle2 className="h-3.5 w-3.5 text-blue-500/40" />
             {t('home.hero.noCreditCard')}
           </span>
           <span className="flex items-center gap-2">
-            <div className="h-1 w-1 rounded-full bg-pink-500" />
+            <CheckCircle2 className="h-3.5 w-3.5 text-blue-500/40" />
             {t('home.hero.freeTierAvailable')}
           </span>
         </motion.div>
@@ -421,3 +92,4 @@ export function LandingHero(props: LandingHeroProps) {
     </div>
   );
 }
+

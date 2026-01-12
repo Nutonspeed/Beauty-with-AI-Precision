@@ -182,13 +182,12 @@ const nextConfig = {
   experimental: {
     workerThreads: false,
     cpus: FAST_BUILD ? 1 : 2, // Reduce CPU usage during build
-    optimizePackageImports: [
+    optimizePackageImports: FAST_BUILD
+      ? []
+      : [
           '@radix-ui/react-icons',
           'lucide-react',
-          '@phosphor-icons/react',
-          'date-fns',
-          'recharts',
-        ], // Optimize imports to save memory
+        ], // Reduce scope of optimization
     optimizeCss: false, // Disable CSS optimization to fix critters error
     webpackBuildWorker: false,
     // Note: serverExternalPackages has been moved to root level

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { Globe, ShieldCheck, Activity, Server, Compass } from "lucide-react"
+import { Globe, ShieldCheck, Activity, Server, Compass, ArrowRight } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
@@ -31,22 +31,22 @@ export function GlobalCommandCenter() {
   }, [])
 
   return (
-    <div className="w-full bg-[#020617] border-y border-white/5 relative overflow-hidden group">
-      <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03] bg-center animate-grid-drift" />
-      <div className="absolute inset-0 bg-gradient-to-b from-cyan-500/[0.02] to-transparent animate-neural-pulse pointer-events-none" />
+    <div className="w-full bg-slate-50 border-y border-slate-100 relative overflow-hidden group h-full flex flex-col">
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" 
+           style={{ backgroundImage: 'linear-gradient(#1e40af 1px, transparent 1px), linear-gradient(90deg, #1e40af 1px, transparent 1px)', backgroundSize: '100px 100px' }} />
       
-      {/* Cinematic HUD Overlays */}
+      {/* HUD Overlays - Clean Medical Look */}
       <div className="absolute top-12 left-12 z-20 space-y-6">
-        <Badge variant="outline" className="px-6 py-2 rounded-full border-cyan-500/30 text-cyan-400 bg-cyan-500/5 backdrop-blur-md uppercase tracking-[0.4em] text-[10px] font-black italic">
-          <Globe className="mr-3 h-4 w-4 animate-spin-slow" />
+        <Badge variant="outline" className="px-4 py-1.5 rounded-full border-blue-200 text-blue-700 bg-blue-50 font-bold tracking-wider text-[10px] uppercase">
+          <Globe className="mr-2 h-3.5 w-3.5" />
           {t('globalCommand.title')}
         </Badge>
         <div className="space-y-1">
-          <h3 className="text-4xl md:text-6xl font-black text-white italic tracking-tighter uppercase leading-[0.8]">
+          <h3 className="text-4xl md:text-6xl font-bold text-slate-900 tracking-tight leading-tight">
             {t('globalCommand.distributed')}<br />
-            <span className="text-cyan-500">{t('globalCommand.intelligence')}</span>
+            <span className="text-blue-600">{t('globalCommand.intelligence')}</span>
           </h3>
-          <p className="text-slate-500 text-xs font-light tracking-[0.2em] italic max-w-sm">
+          <p className="text-slate-500 text-sm font-normal max-w-sm">
             {t('globalCommand.subtitle')}
           </p>
         </div>
@@ -54,44 +54,43 @@ export function GlobalCommandCenter() {
 
       <div className="absolute top-12 right-12 z-20 text-right space-y-8 hidden md:block">
         <div className="space-y-1">
-          <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest italic">{t('globalCommand.liveTraffic')}</p>
-          <p className="text-4xl font-black text-white italic tracking-tighter">{liveTraffic.toLocaleString()} {t('globalCommand.reqPerSec')}</p>
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('globalCommand.liveTraffic')}</p>
+          <p className="text-4xl font-bold text-slate-900 tracking-tight">{liveTraffic.toLocaleString()} <span className="text-sm font-normal text-slate-500">{t('globalCommand.reqPerSec')}</span></p>
         </div>
         <div className="flex flex-col items-end gap-4">
-          <Badge className="bg-emerald-600 text-white border-none px-4 py-1 text-[9px] font-black tracking-widest uppercase italic">
+          <Badge className="bg-blue-600 text-white border-none px-4 py-1 text-[9px] font-bold tracking-widest uppercase">
             {t('globalCommand.meshActive')}
           </Badge>
           <div className="flex items-center gap-3">
-            <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[8px] font-black text-emerald-500 uppercase tracking-widest italic">{t('globalCommand.nodesResilient')}</span>
+            <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+            <span className="text-[8px] font-bold text-emerald-600 uppercase tracking-widest">{t('globalCommand.nodesResilient')}</span>
           </div>
         </div>
       </div>
 
       {/* Main Map Visualization */}
-      <div className="relative h-[800px] w-full flex items-center justify-center">
+      <div className="relative flex-1 w-full flex items-center justify-center min-h-[500px]">
         {/* Abstract World Mesh */}
-        <div className="relative w-full max-w-6xl aspect-[2/1] opacity-20">
-          <svg viewBox="0 0 1000 500" className="w-full h-full text-white/10 fill-current">
+        <div className="relative w-full max-w-6xl aspect-[2/1] opacity-40">
+          <svg viewBox="0 0 1000 500" className="w-full h-full text-blue-100 fill-current">
             {/* Simple abstract dots for continents */}
             {Array.from({ length: 200 }).map((_, i) => (
               <circle 
                 key={i} 
                 cx={Math.random() * 1000} 
                 cy={Math.random() * 500} 
-                r={1} 
-                className="animate-pulse" 
-                style={{ animationDelay: `${Math.random() * 5}s` }} 
+                r={1.5} 
+                className="opacity-50"
               />
             ))}
           </svg>
 
-          {/* Animated Synaptic Arcs */}
+          {/* Animated Arcs */}
           <svg className="absolute inset-0 w-full h-full pointer-events-none overflow-visible">
             <defs>
               <linearGradient id="beamGrad" x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop offset="0%" stopColor="transparent" />
-                <stop offset="50%" stopColor="#06b6d4" />
+                <stop offset="50%" stopColor="#2563eb" />
                 <stop offset="100%" stopColor="transparent" />
               </linearGradient>
             </defs>
@@ -101,10 +100,10 @@ export function GlobalCommandCenter() {
                   key={`${node.id}-${target.id}`}
                   d={`M ${node.lon} ${node.lat} Q 500 100 ${target.lon} ${target.lat}`}
                   stroke="url(#beamGrad)"
-                  strokeWidth="0.5"
+                  strokeWidth="1"
                   fill="transparent"
                   initial={{ pathLength: 0, opacity: 0 }}
-                  animate={{ pathLength: 1, opacity: [0, 0.2, 0] }}
+                  animate={{ pathLength: 1, opacity: [0, 0.3, 0] }}
                   transition={{ duration: 4, repeat: Infinity, repeatDelay: Math.random() * 5 }}
                 />
               ))
@@ -127,34 +126,34 @@ export function GlobalCommandCenter() {
               >
                 <div className="relative">
                   <div className={cn(
-                    "h-4 w-4 rounded-full shadow-[0_0_20px_rgba(6,182,212,0.5)] relative z-10 transition-all duration-500",
-                    activeNode === idx ? "bg-cyan-400 scale-125" : "bg-cyan-900/40 border border-cyan-500/30"
+                    "h-3 w-3 rounded-full relative z-10 transition-all duration-500",
+                    activeNode === idx ? "bg-blue-600 scale-125 shadow-[0_0_15px_rgba(37,99,235,0.5)]" : "bg-slate-200 border border-slate-300"
                   )}>
                     <motion.div 
-                      animate={{ scale: [1, 2.5, 1], opacity: [0.4, 0, 0.4] }}
+                      animate={{ scale: [1, 2, 1], opacity: [0.3, 0, 0.3] }}
                       transition={{ repeat: Infinity, duration: 3 }}
-                      className="absolute inset-0 rounded-full bg-cyan-400"
+                      className="absolute inset-0 rounded-full bg-blue-400"
                     />
                   </div>
                   
                   {/* Node Tooltip */}
                   <div className={cn(
-                    "absolute top-8 left-1/2 -translate-x-1/2 whitespace-nowrap transition-all duration-500",
+                    "absolute top-6 left-1/2 -translate-x-1/2 whitespace-nowrap transition-all duration-500 z-30",
                     activeNode === idx ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"
                   )}>
-                    <Card className="bg-[#020617]/90 backdrop-blur-xl border-white/10 p-4 rounded-2xl shadow-2xl space-y-3 min-w-[180px]">
-                      <div className="flex justify-between items-center border-b border-white/5 pb-2">
-                        <span className="text-[9px] font-black text-white uppercase tracking-widest italic">{node.name}</span>
-                        <Badge className="bg-emerald-500/10 text-emerald-400 border-none text-[7px] font-black italic">{t('globalCommand.optimal')}</Badge>
+                    <Card className="bg-white border-slate-200 p-4 rounded-xl shadow-lg space-y-3 min-w-[160px]">
+                      <div className="flex justify-between items-center border-b border-slate-50 pb-2">
+                        <span className="text-[10px] font-bold text-slate-900 uppercase tracking-wider">{node.name}</span>
+                        <Badge className="bg-emerald-50 text-emerald-700 border-none text-[8px] font-bold uppercase">{t('globalCommand.optimal')}</Badge>
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-0.5">
-                          <p className="text-[7px] font-black text-slate-600 uppercase tracking-widest italic">{t('globalCommand.load')}</p>
-                          <p className="text-xs font-bold text-white">{node.load}%</p>
+                          <p className="text-[8px] font-bold text-slate-400 uppercase tracking-wider">{t('globalCommand.load')}</p>
+                          <p className="text-xs font-bold text-slate-900">{node.load}%</p>
                         </div>
                         <div className="text-right space-y-0.5">
-                          <p className="text-[7px] font-black text-slate-600 uppercase tracking-widest italic">{t('globalCommand.latency')}</p>
-                          <p className="text-xs font-bold text-cyan-400">12{t('globalCommand.ms')}</p>
+                          <p className="text-[8px] font-bold text-slate-400 uppercase tracking-wider">{t('globalCommand.latency')}</p>
+                          <p className="text-xs font-bold text-blue-600">12{t('globalCommand.ms')}</p>
                         </div>
                       </div>
                     </Card>
@@ -167,29 +166,29 @@ export function GlobalCommandCenter() {
       </div>
 
       {/* Bottom Interface Bar */}
-      <div className="absolute bottom-0 left-0 right-0 bg-white/[0.01] border-t border-white/5 backdrop-blur-3xl z-20">
-        <div className="container mx-auto px-12 py-8 flex flex-col md:flex-row items-center justify-between gap-8">
-          <div className="flex gap-12 items-center">
+      <div className="bg-white border-t border-slate-100 p-8 md:p-10 z-20">
+        <div className="container mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
+          <div className="flex flex-wrap gap-8 md:gap-12 items-center justify-center">
             {[
-              { label: t('globalCommand.totalNodes'), val: '12 ONLINE', icon: Server, color: 'text-cyan-400' },
-              { label: t('globalCommand.securityStatus'), val: 'QUANTUM_SAFE', icon: ShieldCheck, color: 'text-emerald-400' },
-              { label: t('globalCommand.uptime'), val: '99.99%', icon: Activity, color: 'text-pink-400' },
+              { label: t('globalCommand.totalNodes'), val: '12 ONLINE', icon: Server, color: 'text-blue-600' },
+              { label: t('globalCommand.securityStatus'), val: 'ACTIVE', icon: ShieldCheck, color: 'text-emerald-600' },
+              { label: t('globalCommand.uptime'), val: '99.99%', icon: Activity, color: 'text-indigo-600' },
             ].map((m, i) => (
-              <div key={i} className="flex items-center gap-4">
-                <div className="h-10 w-10 rounded-xl bg-white/[0.03] border border-white/5 flex items-center justify-center animate-synaptic-fire">
+              <div key={i} className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center">
                   <m.icon className={cn("h-5 w-5", m.color)} />
                 </div>
                 <div className="space-y-0.5">
-                  <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest">{m.label}</p>
-                  <p className="text-sm font-black text-white italic tracking-tighter">{m.val}</p>
+                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{m.label}</p>
+                  <p className="text-sm font-bold text-slate-900 tracking-tight">{m.val}</p>
                 </div>
               </div>
             ))}
           </div>
           
-          <Button variant="premium" className="h-14 px-10 rounded-2xl border shadow-xl shadow-pink-500/20 uppercase text-[10px] font-black tracking-[0.3em] italic group transition-all">
+          <Button className="h-14 px-10 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold uppercase tracking-wider text-xs shadow-lg shadow-blue-600/10 group transition-all">
             {t('globalCommand.joinInfrastructure')}
-            <Compass className="ml-4 h-5 w-5 group-hover:rotate-90 transition-transform duration-700" />
+            <ArrowRight className="ml-3 h-4 w-4 group-hover:translate-x-1 transition-transform" />
           </Button>
         </div>
       </div>
