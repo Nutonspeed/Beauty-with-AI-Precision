@@ -43,7 +43,7 @@ export default function UsagePage() {
 
   const [usage, setUsage] = useState<UsageMetrics[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [selectedClinic, setSelectedClinic] = useState<string | null>(null)
+  const [selectedCenter, setSelectedCenter] = useState<string | null>(null)
 
   useEffect(() => {
     if (!loading && !user) {
@@ -86,7 +86,7 @@ export default function UsagePage() {
     if (user?.role === 'super_admin') {
       loadUsage()
     }
-  }, [user, selectedClinic, toast])
+  }, [user, selectedCenter, toast])
 
   if (loading || isLoading) {
     return (
@@ -111,7 +111,7 @@ export default function UsagePage() {
   const totalStorage = usage.reduce((sum, u) => sum + u.storageUsedGB, 0)
   const totalApiCalls = usage.reduce((sum, u) => sum + u.apiCallsThisMonth, 0)
   const totalAnalyses = usage.reduce((sum, u) => sum + u.aiAnalysesThisMonth, 0)
-  const clinicsWithWarnings = usage.filter((u) => u.quotaWarnings.length > 0).length
+  const centersWithWarnings = usage.filter((u) => u.quotaWarnings.length > 0).length
 
   const getUsageColor = (used: number, limit: number) => {
     if (limit === -1) return 'text-green-600' // Unlimited

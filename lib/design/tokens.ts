@@ -1,5 +1,5 @@
 // Centralized design tokens for Beauty-with-AI-Precision
-// Focus: clean clinical beauty + soft AI futurism
+// Focus: clean centeral beauty + soft AI futurism
 
 export const colors = {
   // Base surfaces
@@ -28,7 +28,7 @@ export const colors = {
   // Gradients
   gradientPink: 'linear-gradient(135deg,#FF6B9D 0%,#C084FC 50%,#F9D4E6 100%)',
   gradientMint: 'linear-gradient(135deg,#B8F5D9 0%,#C89BF8 100%)',
-  gradientTreatment: 'radial-gradient(circle at 30% 30%, rgba(255,107,157,0.55), rgba(200,132,252,0.35), rgba(255,255,255,0))'
+  gradientProgram: 'radial-gradient(circle at 30% 30%, rgba(255,107,157,0.55), rgba(200,132,252,0.35), rgba(255,255,255,0))'
 } as const
 
 export const motion = {

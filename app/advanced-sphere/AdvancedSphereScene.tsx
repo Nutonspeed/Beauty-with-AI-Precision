@@ -187,7 +187,7 @@ function Scene3D({ scrollProgress, mousePos, activeCard, setActiveCard, rippleTr
           <SimpleParticles scrollProgress={scrollProgress} />
           <Card3D position={[-3.5, 1.5, -3]} title="AI Analysis" icon="🔬" color={colors.accentPink} isActive={activeCard === 0} onPointerOver={() => setActiveCard(0)} onPointerOut={() => setActiveCard(-1)} />
           <Card3D position={[3.5, 1.5, -3]} title="3D Scanning" icon="📸" color={colors.accentPurple} isActive={activeCard === 1} onPointerOver={() => setActiveCard(1)} onPointerOut={() => setActiveCard(-1)} />
-          <Card3D position={[-3.5, -1.5, -3]} title="Treatment" icon="💎" color={colors.accentYellow} isActive={activeCard === 2} onPointerOver={() => setActiveCard(2)} onPointerOut={() => setActiveCard(-1)} />
+          <Card3D position={[-3.5, -1.5, -3]} title="Program" icon="💎" color={colors.accentYellow} isActive={activeCard === 2} onPointerOver={() => setActiveCard(2)} onPointerOut={() => setActiveCard(-1)} />
           <Card3D position={[3.5, -1.5, -3]} title="Results" icon="✨" color={colors.accentGreen} isActive={activeCard === 3} onPointerOver={() => setActiveCard(3)} onPointerOut={() => setActiveCard(-1)} />
         </Physics>
         <Environment preset="sunset" />

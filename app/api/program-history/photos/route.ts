@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { withClinicAuth } from '@/lib/auth/middleware';
+import { withCenterAuth } from '@/lib/auth/middleware';
 
 function getSupabaseClient() {
   return createClient(
@@ -10,50 +10,50 @@ function getSupabaseClient() {
 }
 
 /**
- * GET /api/treatment-history/photos
- * List treatment photos for beauty clinic customers
+ * GET /api/program-history/photos
+ * List program photos for beauty center customers
  * 
  * Query parameters:
- * - clinic_id (required): Clinic ID
+ * - center_id (required): Center ID
  * - customer_id (optional): Filter by customer
- * - treatment_record_id (optional): Filter by treatment record
+ * - program_record_id (optional): Filter by program record
  * - photo_type (optional): Filter by type (before, after, during, progress)
  * - comparison_group_id (optional): Filter by comparison group
  */
-export const GET = withClinicAuth(async (request: NextRequest) => {
+export const GET = withCenterAuth(async (request: NextRequest) => {
   try {
     const { searchParams } = new URL(request.url);
-    const clinic_id = searchParams.get('clinic_id');
+    const center_id = searchParams.get('center_id');
     const customer_id = searchParams.get('customer_id');
-    const treatment_record_id = searchParams.get('treatment_record_id');
+    const program_record_id = searchParams.get('program_record_id');
     const photo_type = searchParams.get('photo_type');
     const comparison_group_id = searchParams.get('comparison_group_id');
 
-    if (!clinic_id) {
+    if (!center_id) {
       return NextResponse.json(
-        { error: 'clinic_id is required' },
+        { error: 'center_id is required' },
         { status: 400 }
       );
     }
 
     const supabaseClient = getSupabaseClient();
     let query = supabaseClient
-      .from('treatment_photos')
+      .from('program_photos')
       .select(`
         *,
-        customer:users!treatment_photos_customer_id_fkey(id, full_name),
-        treatment_record:treatment_records(id, treatment_name, treatment_date),
-        uploaded_by:users!treatment_photos_uploaded_by_user_id_fkey(id, full_name)
+        customer:users!program_photos_customer_id_fkey(id, full_name),
+        program_record:program_records(id, program_name, program_date),
+        uploaded_by:users!program_photos_uploaded_by_user_id_fkey(id, full_name)
       `)
-      .eq('clinic_id', clinic_id)
+      .eq('center_id', center_id)
       .eq('is_deleted', false);
 
     if (customer_id) {
       query = query.eq('customer_id', customer_id);
     }
 
-    if (treatment_record_id) {
-      query = query.eq('treatment_record_id', treatment_record_id);
+    if (program_record_id) {
+      query = query.eq('program_record_id', program_record_id);
     }
 
     if (photo_type) {
@@ -70,25 +70,25 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
 
     return NextResponse.json(data || []);
   } catch (error) {
-    console.error('Error fetching treatment photos:', error);
+    console.error('Error fetching program photos:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch treatment photos' },
+      { error: 'Failed to fetch program photos' },
       { status: 500 }
     );
   }
 })
 
 /**
- * POST /api/treatment-history/photos
- * Upload a new treatment photo for beauty clinic customer
+ * POST /api/program-history/photos
+ * Upload a new program photo for beauty center customer
  */
-export const POST = withClinicAuth(async (request: NextRequest) => {
+export const POST = withCenterAuth(async (request: NextRequest) => {
   try {
     const body = await request.json();
     const {
-      clinic_id,
+      center_id,
       customer_id,
-      treatment_record_id,
+      program_record_id,
       photo_type,
       photo_url,
       thumbnail_url,
@@ -97,7 +97,7 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
       specific_area,
       view_angle,
       lighting_condition,
-      days_after_treatment,
+      days_after_program,
       session_number,
       photo_tags,
       ai_analysis,
@@ -114,20 +114,20 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
       notes,
     } = body;
 
-    if (!clinic_id || !customer_id || !photo_type || !photo_url || !photo_taken_at) {
+    if (!center_id || !customer_id || !photo_type || !photo_url || !photo_taken_at) {
       return NextResponse.json(
-        { error: 'clinic_id, customer_id, photo_type, photo_url, and photo_taken_at are required' },
+        { error: 'center_id, customer_id, photo_type, photo_url, and photo_taken_at are required' },
         { status: 400 }
       );
     }
 
     const supabaseClient = getSupabaseClient();
     const { data, error } = await supabaseClient
-      .from('treatment_photos')
+      .from('program_photos')
       .insert({
-        clinic_id,
+        center_id,
         customer_id,
-        treatment_record_id,
+        program_record_id,
         photo_type,
         photo_url,
         thumbnail_url,
@@ -136,7 +136,7 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
         specific_area,
         view_angle,
         lighting_condition,
-        days_after_treatment,
+        days_after_program,
         session_number,
         photo_tags,
         ai_analysis,
@@ -159,9 +159,9 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
 
     return NextResponse.json(data, { status: 201 });
   } catch (error) {
-    console.error('Error creating treatment photo:', error);
+    console.error('Error creating program photo:', error);
     return NextResponse.json(
-      { error: 'Failed to create treatment photo' },
+      { error: 'Failed to create program photo' },
       { status: 500 }
     );
   }

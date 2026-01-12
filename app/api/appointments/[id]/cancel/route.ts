@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
-import { withClinicAuth } from "@/lib/auth/middleware"
+import { withCenterAuth } from "@/lib/auth/middleware"
 
 
 async function handler(req: NextRequest, user: any) {
@@ -152,4 +152,4 @@ async function handler(req: NextRequest, user: any) {
   });
 }
 
-export const POST = withClinicAuth(handler);
+export const POST = withCenterAuth(handler);

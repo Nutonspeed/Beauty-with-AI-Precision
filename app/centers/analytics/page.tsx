@@ -7,7 +7,7 @@ import { PageLayout } from "@/components/layouts/page-layout"
 
 export default async function AnalyticsPage() {
   // Authentication check
-  const user = await requireRole(['clinic_owner', 'super_admin'])
+  const user = await requireRole(['center_owner', 'super_admin'])
   const supabase = await createServerClient()
 
   // Get initial date range (last 30 days)
@@ -18,7 +18,7 @@ export default async function AnalyticsPage() {
   // Fetch initial overview stats
   const { data: bookings } = await supabase
     .from('bookings')
-    .select('payment_amount, payment_status, booking_date, treatment_type')
+    .select('payment_amount, payment_status, booking_date, program_type')
     .gte('booking_date', startDate.toISOString())
     .lte('booking_date', endDate.toISOString())
 
@@ -29,7 +29,7 @@ export default async function AnalyticsPage() {
     .lte('created_at', endDate.toISOString())
 
   const { data: staff } = await supabase
-    .from('clinic_staff')
+    .from('center_staff')
     .select('id, full_name, role, total_appointments, rating')
     .eq('status', 'active')
 

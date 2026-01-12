@@ -10,7 +10,7 @@ function getSupabaseClient() {
 
 /**
  * GET /api/marketing/promo-codes/[id]/usage
- * Get usage statistics for a promo code used by beauty clinic customers
+ * Get usage statistics for a promo code used by beauty center customers
  */
 export async function GET(
   request: NextRequest,

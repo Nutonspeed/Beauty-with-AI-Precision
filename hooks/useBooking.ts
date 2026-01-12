@@ -54,9 +54,9 @@ export function useBooking() {
         lastSyncAt: Date.now()
       }));
 
-      // Auto-refresh patient history if relevant
-      if (input.patientId) {
-        await loadPatientBookings(input.patientId);
+      // Auto-refresh client history if relevant
+      if (input.clientId) {
+        await loadClientBookings(input.clientId);
       }
 
       console.log(`[Booking] Cycle created in ${Date.now() - startTime}ms`);
@@ -104,10 +104,10 @@ export function useBooking() {
     }
   };
 
-  const loadPatientBookings = async (patientId: string): Promise<void> => {
+  const loadClientBookings = async (clientId: string): Promise<void> => {
     setState(prev => ({ ...prev, isLoading: true, error: null }));
     try {
-      const data = await bookingManager.getPatientBookings(patientId);
+      const data = await bookingManager.getClientBookings(clientId);
       setState(prev => ({ ...prev, bookings: data, isLoading: false, lastSyncAt: Date.now() }));
     } catch (err) {
       handleError(err, 'Data retrieval failed');
@@ -154,7 +154,7 @@ export function useBooking() {
     createBooking,
     updateBooking,
     cancelBooking,
-    loadPatientBookings,
+    loadClientBookings,
     loadAvailableSlots,
     processPayment,
     clearError,

@@ -250,10 +250,10 @@ export default function CustomerOnboardingPage() {
                   { name: 'IPL', desc: 'ผิวกระจ่างใส', color: 'bg-orange-100' },
                   { name: 'RF', desc: 'กระชับผิว', color: 'bg-green-100' },
                   { name: 'HydraFacial', desc: 'ทำความสะอาด', color: 'bg-cyan-100' },
-                ].map((treatment, i) => (
-                  <div key={i} className={`${treatment.color} p-3 rounded-lg`}>
-                    <p className="font-medium text-sm">{treatment.name}</p>
-                    <p className="text-xs text-muted-foreground">{treatment.desc}</p>
+                ].map((program, i) => (
+                  <div key={i} className={`${program.color} p-3 rounded-lg`}>
+                    <p className="font-medium text-sm">{program.name}</p>
+                    <p className="text-xs text-muted-foreground">{program.desc}</p>
                   </div>
                 ))}
               </div>

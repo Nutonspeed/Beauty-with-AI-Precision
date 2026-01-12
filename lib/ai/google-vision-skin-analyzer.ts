@@ -58,7 +58,7 @@ export interface VisionSkinAnalysis {
     product: string;
     reason: string;
   }>;
-  treatmentPlan?: string;
+  programPlan?: string;
   confidence: number;
 }
 
@@ -185,7 +185,7 @@ function analyzeFaceFeatures(
     concerns: concerns.length > 0 ? concerns : ['dullness'],
     severity,
     recommendations,
-    treatmentPlan: `Recommended treatments for ${skinType} skin with ${concerns.join(', ')}`,
+    programPlan: `Recommended programs for ${skinType} skin with ${concerns.join(', ')}`,
     confidence: Number(confidence.toFixed(2)),
   };
 }
@@ -217,7 +217,7 @@ function generateRecommendations(
   // Add concern-specific recommendations
   if (concerns.includes('acne')) {
     recommendations.push({
-      category: 'Treatment',
+      category: 'Program',
       product: 'Benzoyl Peroxide Gel',
       reason: 'Treats acne and prevents new breakouts',
     });

@@ -15,7 +15,7 @@ export async function GET() {
 
     // ดึงการตั้งค่า automation
     const { data: settings, error } = await supabase
-      .from("clinic_settings")
+      .from("center_settings")
       .select("*")
       .eq("setting_type", "automation")
       .maybeSingle();
@@ -27,7 +27,7 @@ export async function GET() {
 
     return NextResponse.json({ settings: settings?.settings || {} });
   } catch (error) {
-    console.error("Error in GET /api/clinic/settings/automation:", error);
+    console.error("Error in GET /api/center/settings/automation:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
 
     // ตรวจสอบว่ามีการตั้งค่าอยู่แล้วหรือไม่
     const { data: existing } = await supabase
-      .from("clinic_settings")
+      .from("center_settings")
       .select("id")
       .eq("setting_type", "automation")
       .maybeSingle();
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
     if (existing) {
       // อัปเดตการตั้งค่าที่มีอยู่
       result = await supabase
-        .from("clinic_settings")
+        .from("center_settings")
         .update({
           settings,
           updated_at: new Date().toISOString(),
@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
         .eq("id", existing.id);
     } else {
       // สร้างการตั้งค่าใหม่
-      result = await supabase.from("clinic_settings").insert({
+      result = await supabase.from("center_settings").insert({
         setting_type: "automation",
         settings,
         created_by: user.id,
@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, settings });
   } catch (error) {
-    console.error("Error in POST /api/clinic/settings/automation:", error);
+    console.error("Error in POST /api/center/settings/automation:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

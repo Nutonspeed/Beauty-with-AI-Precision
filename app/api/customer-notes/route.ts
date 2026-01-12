@@ -95,13 +95,13 @@ export async function POST(request: NextRequest) {
     // Get user info
     const { data: userInfo } = await supabase
       .from('users')
-      .select('full_name, clinic_id')
+      .select('full_name, center_id')
       .eq('id', user.id)
       .single();
 
-    if (!userInfo?.clinic_id) {
+    if (!userInfo?.center_id) {
       return NextResponse.json(
-        { error: 'User clinic information not found' },
+        { error: 'User center information not found' },
         { status: 400 }
       );
     }
@@ -143,7 +143,7 @@ export async function POST(request: NextRequest) {
       .insert({
         customer_id,
         sales_staff_id: user.id,
-        clinic_id: userInfo.clinic_id,
+        center_id: userInfo.center_id,
         content: content.trim(),
         note_type,
         tags,

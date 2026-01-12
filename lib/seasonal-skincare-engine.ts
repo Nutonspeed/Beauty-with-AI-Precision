@@ -190,7 +190,7 @@ export class SeasonalSkincareEngine {
       skinTypeCompatible: ['normal', 'dry', 'sensitive'],
       seasonalRecommendation: { spring: 6, summer: 3, autumn: 7, winter: 8 },
       climateRecommendation: { tropical: 4, temperate: 6, arid: 9, cold: 8, humid: 3 },
-      benefits: ['intensive hydration', 'soothing', 'quick treatment'],
+      benefits: ['intensive hydration', 'soothing', 'quick program'],
       ingredients: ['hyaluronic acid', 'centella asiatica'],
       useFrequency: 'weekly',
     },

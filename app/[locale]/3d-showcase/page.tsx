@@ -361,7 +361,7 @@ export default function PrecisionNode() {
       ]}
     />` : 
     selectedTemplate === 'apple' ? `AppleHero
-      title="Clinical Accuracy"
+      title="Centeral Accuracy"
       subtitle="The future of aesthetic medicine"
     />` :
     selectedTemplate === 'linear' ? `LinearHero
@@ -372,12 +372,12 @@ export default function PrecisionNode() {
     />` :
     selectedTemplate === 'vercel' ? `VercelHero
       title="Deploy. Visualize. Transform."
-      subtitle="Advanced clinical infrastructure"
+      subtitle="Advanced centeral infrastructure"
     />` : `CustomHero
       background="${selectedTemplate}"
       backgroundProps={{ /* node parameters */ }}
     >
-      <ClinicalContent />
+      <CenteralContent />
     </CustomHero>`}
   )
 }`}

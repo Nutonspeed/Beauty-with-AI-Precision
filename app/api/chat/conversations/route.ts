@@ -16,8 +16,8 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    // Get user's clinic_id and role
-    const { data: userData } = await supabase.from("users").select("clinic_id, role").eq("id", user.id).single()
+    // Get user's center_id and role
+    const { data: userData } = await supabase.from("users").select("center_id, role").eq("id", user.id).single()
 
     if (!userData) {
       return NextResponse.json({ error: "User not found" }, { status: 404 })
@@ -45,7 +45,7 @@ export async function GET(request: Request) {
           is_read
         )
       `)
-      .eq("clinic_id", userData.clinic_id)
+      .eq("center_id", userData.center_id)
       .eq("status", status)
       .order("last_message_at", { ascending: false })
       .limit(50)
@@ -91,8 +91,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    // Get user's clinic_id
-    const { data: userData } = await supabase.from("users").select("clinic_id").eq("id", user.id).single()
+    // Get user's center_id
+    const { data: userData } = await supabase.from("users").select("center_id").eq("id", user.id).single()
 
     if (!userData) {
       return NextResponse.json({ error: "User not found" }, { status: 404 })
@@ -103,7 +103,7 @@ export async function POST(request: Request) {
       .from("conversations")
       .select("*")
       .eq("customer_id", customer_id)
-      .eq("clinic_id", userData.clinic_id)
+      .eq("center_id", userData.center_id)
       .eq("status", "active")
       .single()
 
@@ -116,7 +116,7 @@ export async function POST(request: Request) {
       .from("conversations")
       .insert({
         customer_id,
-        clinic_id: userData.clinic_id,
+        center_id: userData.center_id,
         staff_id: user.id,
         status: "active",
         last_message_at: new Date().toISOString(),

@@ -9,18 +9,18 @@ function getSupabaseClient() {
 }
 
 // GET: Generate customer analytics report
-// IMPORTANT: This is for BEAUTY CLINIC customers (ลูกค้า), NOT patients
-// Customers seek beauty enhancement services, not medical treatment
+// * IMPORTANT: This is for BEAUTY CENTER customer support (ลูกค้า), NOT clients
+// Customers seek beauty enhancement services, not medical program
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const clinicId = searchParams.get('clinic_id');
+    const centerId = searchParams.get('center_id');
     const startDate = searchParams.get('start_date');
     const endDate = searchParams.get('end_date');
 
-    if (!clinicId || !startDate || !endDate) {
+    if (!centerId || !startDate || !endDate) {
       return NextResponse.json(
-        { error: 'Missing required parameters: clinic_id, start_date, end_date' },
+        { error: 'Missing required parameters: center_id, start_date, end_date' },
         { status: 400 }
       );
     }
@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
     // Call database function for customer analytics
     const { data: analytics, error: analyticsError } = await supabaseClient
       .rpc('calculate_customer_analytics', {
-        p_clinic_id: clinicId,
+        p_center_id: centerId,
         p_start_date: startDate,
         p_end_date: endDate,
       });
@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
     const { data: topCustomers } = await supabaseClient
       .from('bookings')
       .select('user_id, customer_name, customer_email, total_amount')
-      .eq('clinic_id', clinicId)
+      .eq('center_id', centerId)
       .eq('payment_status', 'paid')
       .gte('created_at', startDate)
       .lte('created_at', endDate);
@@ -80,7 +80,7 @@ export async function GET(request: NextRequest) {
     const { data: retentionData } = await supabaseClient
       .from('bookings')
       .select('user_id, created_at')
-      .eq('clinic_id', clinicId)
+      .eq('center_id', centerId)
       .gte('created_at', startDate)
       .lte('created_at', endDate)
       .order('created_at', { ascending: true });

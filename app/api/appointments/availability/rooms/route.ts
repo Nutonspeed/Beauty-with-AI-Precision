@@ -1,10 +1,10 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
-import { withClinicAuth } from "@/lib/auth/middleware"
+import { withCenterAuth } from "@/lib/auth/middleware"
 
 
 // GET /api/appointments/availability/rooms - Get room availability and list
-export const GET = withClinicAuth(async (request: NextRequest) => {
+export const GET = withCenterAuth(async (request: NextRequest) => {
   const supabaseAdmin = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
@@ -18,13 +18,13 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
 
   try {
     const { searchParams } = new URL(request.url)
-    const clinicId = searchParams.get('clinic_id')
+    const centerId = searchParams.get('center_id')
     const roomType = searchParams.get('room_type')
     const includeAvailability = searchParams.get('include_availability') === 'true'
 
-    if (!clinicId) {
+    if (!centerId) {
       return NextResponse.json(
-        { error: 'clinic_id is required' },
+        { error: 'center_id is required' },
         { status: 400 }
       )
     }
@@ -33,7 +33,7 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
     let roomsQuery = supabaseAdmin
       .from('service_rooms')
       .select('*')
-      .eq('clinic_id', clinicId)
+      .eq('center_id', centerId)
       .eq('status', 'active')
 
     if (roomType) {
@@ -84,7 +84,7 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
 })
 
 // POST /api/appointments/availability/rooms - Create room or room availability
-export const POST = withClinicAuth(async (request: NextRequest) => {
+export const POST = withCenterAuth(async (request: NextRequest) => {
   try {
     const body = await request.json()
 
@@ -104,7 +104,7 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
     if (action === 'create_room') {
       // Create new room
       const {
-        clinic_id,
+        center_id,
         name,
         room_number,
         room_type,
@@ -112,7 +112,7 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
         equipment
       } = body
 
-      if (!clinic_id || !name || !room_number || !room_type) {
+      if (!center_id || !name || !room_number || !room_type) {
         return NextResponse.json(
           { error: 'Missing required fields for room creation' },
           { status: 400 }
@@ -122,7 +122,7 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
       const { data, error } = await supabaseAdmin
         .from('service_rooms')
         .insert({
-          clinic_id,
+          center_id,
           name,
           room_number,
           room_type,

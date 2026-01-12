@@ -1,8 +1,8 @@
 /**
  * Session API Route
  * 
- * Purpose: Get current user session with clinic context
- * Returns: User profile, clinic data, permissions
+ * Purpose: Get current user session with center context
+ * Returns: User profile, center data, permissions
  */
 
 import { NextRequest, NextResponse } from 'next/server';

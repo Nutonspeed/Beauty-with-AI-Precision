@@ -12,7 +12,7 @@ export function getAIServiceUrl(): string {
     return process.env.AI_SERVICE_URL || 'http://localhost:8000'
   }
   
-  return process.env.AI_SERVICE_URL || 'https://ai-service.cliniciq.app'
+  return process.env.AI_SERVICE_URL || 'https://ai-service.centeriq.app'
 }
 
 export function getAIServiceConfig() {

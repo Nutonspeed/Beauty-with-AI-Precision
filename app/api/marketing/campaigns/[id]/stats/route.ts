@@ -10,7 +10,7 @@ function getSupabaseClient() {
 
 /**
  * GET /api/marketing/campaigns/[id]/stats
- * Get campaign performance statistics for beauty clinic
+ * Get campaign performance statistics for beauty center
  * 
  * Returns:
  * - Campaign details with metrics

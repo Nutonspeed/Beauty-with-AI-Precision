@@ -24,7 +24,7 @@ describe('QueueManager', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     manager = new QueueManager();
-    manager.initialize('clinic-1', {});
+    manager.initialize('center-1', {});
   });
 
   afterEach(() => {
@@ -32,12 +32,12 @@ describe('QueueManager', () => {
   });
 
   describe('Join Queue', () => {
-    it('should add patient to queue', async () => {
+    it('should add customer to queue', async () => {
       const wsClient = await import('@/lib/websocket-client');
       const entry = manager.joinQueue({
-        patientId: 'P001',
-        patientName: 'John Doe',
-        clinicId: 'clinic-1',
+        customerId: 'P001',
+        customerName: 'John Doe',
+        centerId: 'center-1',
         appointmentType: 'General',
         priority: 'normal'
       });
@@ -51,17 +51,17 @@ describe('QueueManager', () => {
 
     it('should assign sequential queue numbers', () => {
       const entry1 = manager.joinQueue({
-        patientId: 'P001',
-        patientName: 'John Doe',
-        clinicId: 'clinic-1',
+        customerId: 'P001',
+        customerName: 'John Doe',
+        centerId: 'center-1',
         appointmentType: 'General',
         priority: 'normal'
       });
 
       const entry2 = manager.joinQueue({
-        patientId: 'P002',
-        patientName: 'Jane Smith',
-        clinicId: 'clinic-1',
+        customerId: 'P002',
+        customerName: 'Jane Smith',
+        centerId: 'center-1',
         appointmentType: 'General',
         priority: 'normal'
       });
@@ -72,12 +72,12 @@ describe('QueueManager', () => {
 
     it('should call onQueueJoined handler', () => {
       const handler = vi.fn();
-      manager.initialize('clinic-1', { onQueueJoined: handler });
+      manager.initialize('center-1', { onQueueJoined: handler });
 
       manager.joinQueue({
-        patientId: 'P001',
-        patientName: 'John Doe',
-        clinicId: 'clinic-1',
+        customerId: 'P001',
+        customerName: 'John Doe',
+        centerId: 'center-1',
         appointmentType: 'General',
         priority: 'normal'
       });
@@ -86,39 +86,39 @@ describe('QueueManager', () => {
     });
   });
 
-  describe('Call Next Patient', () => {
+  describe('Call Next Customer', () => {
     beforeEach(() => {
-      // Add multiple patients
+      // Add multiple customers
       manager.joinQueue({
-        patientId: 'P001',
-        patientName: 'Normal Patient',
-        clinicId: 'clinic-1',
+        customerId: 'P001',
+        customerName: 'Normal Patient',
+        centerId: 'center-1',
         appointmentType: 'General',
         priority: 'normal'
       });
 
       manager.joinQueue({
-        patientId: 'P002',
-        patientName: 'Urgent Patient',
-        clinicId: 'clinic-1',
+        customerId: 'P002',
+        customerName: 'Urgent Patient',
+        centerId: 'center-1',
         appointmentType: 'General',
         priority: 'urgent'
       });
 
       manager.joinQueue({
-        patientId: 'P003',
-        patientName: 'Emergency Patient',
-        clinicId: 'clinic-1',
+        customerId: 'P003',
+        customerName: 'Emergency Patient',
+        centerId: 'center-1',
         appointmentType: 'Emergency',
         priority: 'emergency'
       });
     });
 
-    it('should call next patient by priority', () => {
+    it('should call next customer by priority', () => {
       const called = manager.callNext();
 
       expect(called).toBeDefined();
-      expect(called?.patientName).toBe('Emergency Patient');
+      expect(called?.customerName).toBe('Emergency Patient');
       expect(called?.status).toBe('called');
     });
 
@@ -137,23 +137,23 @@ describe('QueueManager', () => {
     });
   });
 
-  describe('Call Specific Patient', () => {
-    it('should call specific patient', () => {
+  describe('Call Specific Customer', () => {
+    it('should call specific customer', () => {
       const entry = manager.joinQueue({
-        patientId: 'P001',
-        patientName: 'John Doe',
-        clinicId: 'clinic-1',
+        customerId: 'P001',
+        customerName: 'John Doe',
+        centerId: 'center-1',
         appointmentType: 'General',
         priority: 'normal'
       });
 
-      manager.callPatient(entry.id, 'doctor-1');
+      manager.callClient(entry.id, 'specialist-1');
 
       const entries = manager.getAllEntries();
       const calledEntry = entries.find(e => e.id === entry.id);
 
       expect(calledEntry?.status).toBe('called');
-      expect(calledEntry?.doctorId).toBe('doctor-1');
+      expect(calledEntry?.specialistId).toBe('specialist-1');
     });
   });
 
@@ -162,14 +162,14 @@ describe('QueueManager', () => {
 
     beforeEach(() => {
       const entry = manager.joinQueue({
-        patientId: 'P001',
-        patientName: 'John Doe',
-        clinicId: 'clinic-1',
+        customerId: 'P001',
+        customerName: 'John Doe',
+        centerId: 'center-1',
         appointmentType: 'General',
         priority: 'normal'
       });
       entryId = entry.id;
-      manager.callPatient(entryId);
+      manager.callClient(entryId);
     });
 
     it('should start service', () => {
@@ -199,9 +199,9 @@ describe('QueueManager', () => {
 
     beforeEach(() => {
       const entry = manager.joinQueue({
-        patientId: 'P001',
-        patientName: 'John Doe',
-        clinicId: 'clinic-1',
+        customerId: 'P001',
+        customerName: 'John Doe',
+        centerId: 'center-1',
         appointmentType: 'General',
         priority: 'normal'
       });
@@ -209,17 +209,17 @@ describe('QueueManager', () => {
     });
 
     it('should cancel entry', () => {
-      manager.cancelEntry(entryId, 'Patient request');
+      manager.cancelEntry(entryId, 'Customer request');
 
       const entries = manager.getAllEntries();
       const entry = entries.find(e => e.id === entryId);
 
       expect(entry?.status).toBe('cancelled');
-      expect(entry?.notes).toBe('Patient request');
+      expect(entry?.notes).toBe('Customer request');
     });
 
     it('should mark as no-show', () => {
-      manager.callPatient(entryId);
+      manager.callClient(entryId);
       manager.markNoShow(entryId);
 
       const entries = manager.getAllEntries();
@@ -232,22 +232,22 @@ describe('QueueManager', () => {
   describe('Get Entries', () => {
     beforeEach(() => {
       manager.joinQueue({
-        patientId: 'P001',
-        patientName: 'Patient 1',
-        clinicId: 'clinic-1',
+        customerId: 'P001',
+        customerName: 'Patient 1',
+        centerId: 'center-1',
         appointmentType: 'General',
         priority: 'normal'
       });
 
       const entry2 = manager.joinQueue({
-        patientId: 'P002',
-        patientName: 'Patient 2',
-        clinicId: 'clinic-1',
+        customerId: 'P002',
+        customerName: 'Patient 2',
+        centerId: 'center-1',
         appointmentType: 'General',
         priority: 'urgent'
       });
 
-      manager.callPatient(entry2.id);
+      manager.callClient(entry2.id);
     });
 
     it('should get all entries', () => {
@@ -263,28 +263,28 @@ describe('QueueManager', () => {
       expect(called).toHaveLength(1);
     });
 
-    it('should get entry by patient ID', () => {
-      const entry = manager.getEntryByPatientId('P001');
+    it('should get entry by client ID', () => {
+      const entry = manager.getEntryByClientId('P001');
 
       expect(entry).toBeDefined();
-      expect(entry?.patientName).toBe('Patient 1');
+      expect(entry?.customerName).toBe('Patient 1');
     });
   });
 
   describe('Queue Position', () => {
     it('should calculate correct position', () => {
       const entry1 = manager.joinQueue({
-        patientId: 'P001',
-        patientName: 'Patient 1',
-        clinicId: 'clinic-1',
+        customerId: 'P001',
+        customerName: 'Patient 1',
+        centerId: 'center-1',
         appointmentType: 'General',
         priority: 'normal'
       });
 
       const entry2 = manager.joinQueue({
-        patientId: 'P002',
-        patientName: 'Patient 2',
-        clinicId: 'clinic-1',
+        customerId: 'P002',
+        customerName: 'Patient 2',
+        centerId: 'center-1',
         appointmentType: 'General',
         priority: 'normal'
       });
@@ -295,14 +295,14 @@ describe('QueueManager', () => {
 
     it('should return -1 for non-waiting entries', () => {
       const entry = manager.joinQueue({
-        patientId: 'P001',
-        patientName: 'Patient 1',
-        clinicId: 'clinic-1',
+        customerId: 'P001',
+        customerName: 'Patient 1',
+        centerId: 'center-1',
         appointmentType: 'General',
         priority: 'normal'
       });
 
-      manager.callPatient(entry.id);
+      manager.callClient(entry.id);
 
       expect(manager.getPosition(entry.id)).toBe(-1);
     });
@@ -311,22 +311,22 @@ describe('QueueManager', () => {
   describe('Statistics', () => {
     beforeEach(() => {
       const entry1 = manager.joinQueue({
-        patientId: 'P001',
-        patientName: 'Patient 1',
-        clinicId: 'clinic-1',
+        customerId: 'P001',
+        customerName: 'Patient 1',
+        centerId: 'center-1',
         appointmentType: 'General',
         priority: 'normal'
       });
 
       const entry2 = manager.joinQueue({
-        patientId: 'P002',
-        patientName: 'Patient 2',
-        clinicId: 'clinic-1',
+        customerId: 'P002',
+        customerName: 'Patient 2',
+        centerId: 'center-1',
         appointmentType: 'General',
         priority: 'normal'
       });
 
-      manager.callPatient(entry1.id);
+      manager.callClient(entry1.id);
       manager.startService(entry1.id);
       manager.completeService(entry1.id);
     });

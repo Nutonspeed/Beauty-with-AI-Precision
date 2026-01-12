@@ -30,7 +30,7 @@ import { motion } from "framer-motion"
 
 interface Recommendation {
   id: string
-  type: "treatment" | "product" | "lifestyle"
+  type: "program" | "product" | "lifestyle"
   title: string
   description: string
   priority: "high" | "medium" | "low"
@@ -70,8 +70,8 @@ export default function RecommendationsPage() {
       const mockRecommendations: Recommendation[] = [
         {
           id: "1",
-          type: "treatment",
-          title: "Laser Treatment for Dark Spots",
+          type: "program",
+          title: "Laser Program for Dark Spots",
           description: "Q-switched laser therapy to target pigmentation and dark spots. Highly effective for melasma and sun damage.",
           priority: "high",
           confidence: 0.89,
@@ -83,9 +83,9 @@ export default function RecommendationsPage() {
         },
         {
           id: "2",
-          type: "treatment",
+          type: "program",
           title: "HydraFacial Deep Cleanse",
-          description: "Medical-grade facial treatment to improve pore clarity and skin texture. Removes impurities and hydrates skin.",
+          description: "Medical-grade facial program to improve pore clarity and skin texture. Removes impurities and hydrates skin.",
           priority: "high",
           confidence: 0.85,
           targetMetrics: ["pores", "texture", "hydration"],
@@ -183,7 +183,7 @@ export default function RecommendationsPage() {
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case "treatment":
+      case "program":
         return <Sparkles className="h-5 w-5 text-purple-600 dark:text-purple-400" />
       case "product":
         return <ShoppingBag className="h-5 w-5 text-blue-600 dark:text-blue-400" />
@@ -209,7 +209,7 @@ export default function RecommendationsPage() {
     )
   }
 
-  const treatmentRecs = recommendations.filter((r) => r.type === "treatment")
+  const programRecs = recommendations.filter((r) => r.type === "program")
   const productRecs = recommendations.filter((r) => r.type === "product")
   const lifestyleRecs = recommendations.filter((r) => r.type === "lifestyle")
   const highPriorityRecs = recommendations.filter((r) => r.priority === "high")
@@ -287,9 +287,9 @@ export default function RecommendationsPage() {
                 <CardContent className="pt-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-muted-foreground">Treatments</p>
+                      <p className="text-sm text-muted-foreground">Programs</p>
                       <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-                        {treatmentRecs.length}
+                        {programRecs.length}
                       </p>
                       <p className="text-xs text-muted-foreground">ทรีทเมนต์</p>
                     </div>
@@ -318,7 +318,7 @@ export default function RecommendationsPage() {
             <Tabs defaultValue="all" className="w-full">
               <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="all">All ({recommendations.length})</TabsTrigger>
-                <TabsTrigger value="treatments">Treatments ({treatmentRecs.length})</TabsTrigger>
+                <TabsTrigger value="programs">Programs ({programRecs.length})</TabsTrigger>
                 <TabsTrigger value="products">Products ({productRecs.length})</TabsTrigger>
                 <TabsTrigger value="lifestyle">Lifestyle ({lifestyleRecs.length})</TabsTrigger>
               </TabsList>
@@ -430,7 +430,7 @@ export default function RecommendationsPage() {
 
                         {/* Actions */}
                         <div className="flex gap-2">
-                          {rec.type === "treatment" && (
+                          {rec.type === "program" && (
                             <Button asChild className="flex-1">
                               <Link href="/booking">
                                 จองนัดหมาย
@@ -456,9 +456,9 @@ export default function RecommendationsPage() {
                 ))}
               </TabsContent>
 
-              {/* Treatment Recommendations */}
-              <TabsContent value="treatments" className="space-y-4 mt-6">
-                {treatmentRecs.map((rec, idx) => (
+              {/* Program Recommendations */}
+              <TabsContent value="programs" className="space-y-4 mt-6">
+                {programRecs.map((rec, idx) => (
                   <motion.div
                     key={rec.id}
                     initial={{ opacity: 0, y: 20 }}

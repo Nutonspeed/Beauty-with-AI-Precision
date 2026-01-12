@@ -95,17 +95,17 @@ export function useOffline() {
    */
   const saveAnalysisOffline = useCallback(
     async (analysis: MultiTenantSkinAnalysis): Promise<void> => {
-      if (!user || !user.clinic_id) {
-        throw new Error('User not authenticated or no clinic_id');
+      if (!user || !user.center_id) {
+        throw new Error('User not authenticated or no center_id');
       }
 
       const indexedDB = getIndexedDB();
       await indexedDB.initialize();
 
-      // Add clinic and sales staff info
+      // Add center and sales staff info
       const offlineAnalysis: MultiTenantSkinAnalysis = {
         ...analysis,
-        clinic_id: user.clinic_id,
+        center_id: user.center_id,
         sales_staff_id: user.id,
         created_at: analysis.created_at || new Date().toISOString(),
         updated_at: new Date().toISOString(),
@@ -121,7 +121,7 @@ export function useOffline() {
           resource_type: 'analysis',
           resource_id: analysis.id,
           data: offlineAnalysis,
-          clinic_id: user.clinic_id,
+          center_id: user.center_id,
           sales_staff_id: user.id,
         });
 
@@ -136,17 +136,17 @@ export function useOffline() {
    */
   const saveLeadOffline = useCallback(
     async (lead: Lead): Promise<void> => {
-      if (!user || !user.clinic_id) {
-        throw new Error('User not authenticated or no clinic_id');
+      if (!user || !user.center_id) {
+        throw new Error('User not authenticated or no center_id');
       }
 
       const indexedDB = getIndexedDB();
       await indexedDB.initialize();
 
-      // Add clinic and sales staff info
+      // Add center and sales staff info
       const offlineLead: Lead = {
         ...lead,
-        clinic_id: user.clinic_id,
+        center_id: user.center_id,
         sales_staff_id: user.id,
         created_at: lead.created_at || new Date().toISOString(),
         updated_at: new Date().toISOString(),
@@ -162,7 +162,7 @@ export function useOffline() {
           resource_type: 'lead',
           resource_id: lead.id,
           data: offlineLead,
-          clinic_id: user.clinic_id,
+          center_id: user.center_id,
           sales_staff_id: user.id,
         });
 
@@ -177,8 +177,8 @@ export function useOffline() {
    */
   const updateLeadOffline = useCallback(
     async (leadId: string, updates: Partial<Lead>): Promise<void> => {
-      if (!user || !user.clinic_id) {
-        throw new Error('User not authenticated or no clinic_id');
+      if (!user || !user.center_id) {
+        throw new Error('User not authenticated or no center_id');
       }
 
       const indexedDB = getIndexedDB();
@@ -186,7 +186,7 @@ export function useOffline() {
 
       // Get current lead from IndexedDB
       const leads = await indexedDB.getLeadsBySalesStaff(
-        user.clinic_id,
+        user.center_id,
         user.id
       );
       const currentLead = leads.find((l) => l.id === leadId);
@@ -211,7 +211,7 @@ export function useOffline() {
         resource_type: 'lead',
         resource_id: leadId,
         data: updatedLead,
-        clinic_id: user.clinic_id,
+        center_id: user.center_id,
         sales_staff_id: user.id,
       });
 
@@ -225,7 +225,7 @@ export function useOffline() {
    */
   const getOfflineAnalyses = useCallback(
     async (limit = 50): Promise<MultiTenantSkinAnalysis[]> => {
-      if (!user || !user.clinic_id) {
+      if (!user || !user.center_id) {
         return [];
       }
 
@@ -233,7 +233,7 @@ export function useOffline() {
       await indexedDB.initialize();
 
       const analyses = await indexedDB.getAnalysesBySalesStaff(
-        user.clinic_id,
+        user.center_id,
         user.id,
         limit
       );
@@ -247,14 +247,14 @@ export function useOffline() {
    * Get offline leads
    */
   const getOfflineLeads = useCallback(async (): Promise<Lead[]> => {
-    if (!user || !user.clinic_id) {
+    if (!user || !user.center_id) {
       return [];
     }
 
     const indexedDB = getIndexedDB();
     await indexedDB.initialize();
 
-    const leads = await indexedDB.getLeadsBySalesStaff(user.clinic_id, user.id);
+    const leads = await indexedDB.getLeadsBySalesStaff(user.center_id, user.id);
 
     return leads;
   }, [user]);

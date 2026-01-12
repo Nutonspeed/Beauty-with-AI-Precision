@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { withClinicAuth } from '@/lib/auth/middleware';
+import { withCenterAuth } from '@/lib/auth/middleware';
 
 /**
  * PATCH /api/branches/inventory/[id]
  * Update branch inventory item
  */
-export const PATCH = withClinicAuth(async (req: NextRequest, user: any) => {
+export const PATCH = withCenterAuth(async (req: NextRequest, user: any) => {
   try {
     const id = req.nextUrl.pathname.split('/').pop() || '';
     const body = await req.json();

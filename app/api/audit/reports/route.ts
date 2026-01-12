@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
     // Parse filter parameters
     const filter = {
       userId: searchParams.get('userId') || undefined,
-      clinicId: searchParams.get('clinicId') || undefined,
+      centerId: searchParams.get('centerId') || undefined,
       dateRange: searchParams.get('startDate') && searchParams.get('endDate') 
         ? [searchParams.get('startDate'), searchParams.get('endDate')] as [string, string]
         : undefined

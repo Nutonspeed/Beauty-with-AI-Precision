@@ -48,7 +48,7 @@ test.describe('Multi-language Support', () => {
     
     // Check English text elements
     const englishTexts = await page.locator('body').textContent();
-    expect(englishTexts).toMatch(/Dashboard|Login|User|Clinic|Skin Analysis/);
+    expect(englishTexts).toMatch(/Dashboard|Login|User|Center|Skin Analysis/);
     
     await takeScreenshot(page, 'lang-english-switched');
   });

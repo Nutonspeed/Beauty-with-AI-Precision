@@ -16,7 +16,7 @@ export interface AnalyticsLogEntry {
   context?: Record<string, any>
   timestamp: string
   userId?: string
-  clinicId?: string
+  centerId?: string
   sessionId?: string
 }
 
@@ -108,7 +108,7 @@ export class AnalyticsLogger {
           message: log.message,
           context: log.context,
           user_id: log.userId,
-          clinic_id: log.clinicId,
+          center_id: log.centerId,
           session_id: log.sessionId,
           created_at: log.timestamp
         })))

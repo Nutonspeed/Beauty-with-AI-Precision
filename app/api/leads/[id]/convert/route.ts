@@ -25,7 +25,7 @@ async function requireSession(supabase: any) {
 async function fetchSalesStaff(supabase: any, userId: string) {
   const { data, error } = await supabase
     .from('sales_staff')
-    .select('id, role, clinic_id')
+    .select('id, role, center_id')
     .eq('user_id', userId)
     .single()
   if (error || !data) {
@@ -51,7 +51,7 @@ function verifyConvertible(lead: any, salesStaff: any) {
   const permitted =
     lead.sales_staff_id === salesStaff.id ||
     staffRole === 'super_admin' ||
-    (staffRole === 'clinic_admin' && lead.clinic_id === salesStaff.clinic_id)
+    (staffRole === 'center_admin' && lead.center_id === salesStaff.center_id)
   if (!permitted) {
     return { response: NextResponse.json({ success: false, message: 'You do not have permission to convert this lead' }, { status: 403 }) }
   }
@@ -77,7 +77,7 @@ async function createCustomerAccountIfNeeded(supabase: any, lead: any, opts: { c
       full_name: lead.full_name,
       phone: lead.phone,
       line_id: lead.line_id,
-      clinic_id: lead.clinic_id,
+      center_id: lead.center_id,
     },
   })
   if (authCreateError) {
@@ -92,7 +92,7 @@ async function createCustomerAccountIfNeeded(supabase: any, lead: any, opts: { c
       email: lead.email,
       full_name: lead.full_name,
       phone: lead.phone,
-      clinic_id: lead.clinic_id,
+      center_id: lead.center_id,
       role: 'customer',
     })
   if (profileError) {
@@ -126,7 +126,7 @@ async function markLeadConverted(supabase: any, lead: any, id: string, customerI
     .eq('id', id)
     .select(`
       *,
-      clinic:clinics!clinic_id (
+      center:centers!center_id (
         id,
         name
       ),

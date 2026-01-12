@@ -1,16 +1,15 @@
-# 🌸 Beauty with AI Precision
+# 🌸 CenterIQ AI: Aesthetic Intelligence Platform
 
 [![Next.js 16](https://img.shields.io/badge/Next.js-16.0-black?style=for-the-badge&logo=next.js)](https://nextjs.org)
 [![React 19](https://img.shields.io/badge/React-19.0-blue?style=for-the-badge&logo=react)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38bdf8?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com)
 
-**Status**: **🚀 PRODUCTION READY** (95% - Ready for Launch)
-**Version**: 1.0.0
-**Last Updated**: January 29, 2025
-**Live URL**: https://beauty-with-ai-precision-jdts4lzu2-nuttapongs-projects-6ab11a57.vercel.app
-**UI**: Custom Beauty Theme with Modern Icons 2025
-**TypeScript**: 0 Errors | 0 Warnings
+**Status**: **🚀 PRODUCTION READY** (98% - Final Rebrand)
+**Version**: 1.1.0
+**Last Updated**: February 2026
+**UI**: Custom CenterIQ Theme with Aesthetic Intelligence 2026
+**TypeScript**: Verified | All Dashboards Fixed
 
 ---
 
@@ -41,14 +40,14 @@
 
 ## 🎯 Overview
 
-Beauty with AI Precision is a **complete AI-powered beauty analysis platform** that delivers:
+CenterIQ AI is a **complete AI-powered aesthetic intelligence platform** that delivers:
 
-- **🤖 AI Skin Analysis** - 98% accuracy with OpenAI & Anthropic integration
-- **👗 AR Try-On Experience** - Virtual product testing with 3D visualization
-- **🎯 Personalized Recommendations** - AI-driven product suggestions
-- **📊 Sales Dashboard** - Modern CRM with real-time analytics
-- **🏥 Multi-tenant Architecture** - Support for multiple clinics with RLS security
-- **🎨 Custom UI Design** - Unique Beauty theme with Glass Morphism icons
+- **🤖 AI Skin Analysis** - 98% accuracy with advanced neural models
+- **👗 AR Simulation Experience** - Virtual program testing with 3D visualization
+- **🎯 Intelligent Recommendations** - AI-driven program suggestions
+- **📊 Strategic Dashboard** - Modern center management with real-time analytics
+- **🏥 Multi-center Architecture** - Support for multiple nodes with RLS security
+- **🎨 Custom UI Design** - Unique Aesthetic theme with CenterIQ branding
 
 ### 🚀 **Live Demo**
 - **Production**: https://beauty-with-ai-precision-jdts4lzu2-nuttapongs-projects-6ab11a57.vercel.app
@@ -63,7 +62,7 @@ Beauty with AI Precision is a **complete AI-powered beauty analysis platform** t
 - **Skin Concern Detection**: Acne, wrinkles, dark spots, redness analysis
 - **Multi-layer Heatmap**: Interactive visualization with 5 intensity levels
 - **Quality Assessment**: Image quality scoring (lighting, blur, angle)
-- **Treatment Recommendations**: AI-generated suggestions based on analysis
+- **Program Recommendations**: AI-generated suggestions based on analysis
 
 ### 📱 Mobile Responsive Design
 - **Haptic Feedback**: Touch vibration for premium feel
@@ -74,7 +73,7 @@ Beauty with AI Precision is a **complete AI-powered beauty analysis platform** t
 ### 🎨 AR/3D Features
 - **Interactive 3D Viewer**: Touch-enabled 360° model rotation
 - **Before/After Slider**: Drag comparison with visual feedback
-- **Treatment Simulator**: Multi-treatment visualization with intensity control
+- **Program Simulator**: Multi-program visualization with intensity control
 
 ### 💼 Sales & CRM
 - **Leads Management**: Real-time lead prioritization dashboard
@@ -82,9 +81,9 @@ Beauty with AI Precision is a **complete AI-powered beauty analysis platform** t
 - **Email Tracking**: Open/click tracking with templates
 - **Analytics Dashboard**: Revenue, conversion, satisfaction metrics
 
-### 🏥 Multi-Tenant System
-- **Clinic Isolation**: Row Level Security (RLS) on all tables
-- **Role-Based Access**: Admin, Staff, Customer roles
+### 🏥 Multi-Center System
+- **Center Isolation**: Row Level Security (RLS) on all tables
+- **Role-Based Access**: Admin, Staff, Client roles
 - **Data Privacy**: GDPR compliance ready
 
 ---
@@ -173,24 +172,24 @@ pnpm db:push    # Push database changes
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
-\`\`\`
+```bash
 Beauty-with-AI-Precision/
 ├── app/                          # Next.js 16 App Router
 │   ├── api/                      # 50+ API routes
-│   │   ├── invitations/          # Invitation system (NEW)
+│   │   ├── invitations/          # Invitation system
 │   │   ├── admin/                # Admin management
-│   │   ├── clinic/               # Clinic operations
+│   │   ├── centers/              # Center operations
 │   │   ├── analytics/            # Analytics & reports
 │   │   └── ...
-│   ├── invite/[token]/           # Accept invitation page (NEW)
-│   ├── clinic/                   # Clinic dashboard
+│   ├── invite/[token]/           # Accept invitation page
+│   ├── centers/                  # Center dashboard
 │   ├── sales/                    # Sales CRM
 │   ├── analysis/                 # AI skin analysis
 │   └── ...
 ├── components/                   # React components
-│   ├── invitations/              # Invitation components (NEW)
+│   ├── invitations/              # Invitation components
 │   ├── ui/                       # shadcn/ui components
 │   └── ...
 ├── lib/                         # Utilities & helpers
@@ -216,45 +215,47 @@ Beauty-with-AI-Precision/
 ## 📊 System Status
 
 ### Current Progress: **90% Complete** 
-### Current Progress: **90% Complete** ✅
+### Current Progress: **90% Complete** 
 
 **Core Platform** (100%)
-- ✅ Next.js 16 App Router
-- ✅ TypeScript (0 compilation errors)
-- ✅ Supabase integration
-- ✅ Authentication system
-- ✅ RLS policies (78 tables)
+- Next.js 16 App Router
+- TypeScript (0 compilation errors)
+- Supabase integration
+- Authentication system
+- RLS policies (78 tables)
 
 **Recent Updates (November 2025)**
-- ✅ **Invitation System** - Full workflow with email
-- ✅ **Subscription Management** - Plan tiers & limits
-- ✅ **TypeScript Cleanup** - All errors resolved
-- ✅ **Production Build** - Passing successfully
-- ✅ **Clinical Landing Upgrade** - Premium hero, trust, personalization
-- ✅ **WebGL Fallback & Timeline** - Graceful degradation + session snapshots
-- ✅ **Outcome Projection Widget** - Before/after simulated improvements
-- ✅ **Privacy-Safe Analytics (Opt-In)** - Consent-based, no raw images
-- ✅ **Sales Chat System** - Real-time messaging with Supabase Realtime (NEW)
-- ✅ **Video Call Integration** - WebRTC conferencing for leads (NEW)
-- ✅ **Email Tracking & Templates** - Full tracking with engagement metrics (NEW)
+- Invitation System - Full workflow with email
+- Subscription Management - Plan tiers & limits
+- TypeScript Cleanup - All errors resolved
+- Production Build - Passing successfully
+- Clinical Landing Upgrade - Premium hero, trust, personalization
+- WebGL Fallback & Timeline - Graceful degradation + session snapshots
+- Outcome Projection Widget - Before/after simulated improvements
+- Privacy-Safe Analytics (Opt-In) - Consent-based, no raw images
+- Sales Chat System - Real-time messaging with Supabase Realtime (NEW)
+- Video Call Integration - WebRTC conferencing for leads (NEW)
+- Email Tracking & Templates - Full tracking with engagement metrics (NEW)
 
 **Database** (100%)
-- ✅ 78 tables installed
-- ✅ RLS enabled on all tables
-- ✅ Invitation system (NEW)
-- ✅ Action plans & smart goals
-- ✅ Analytics & reporting
+- 78 tables installed
+- RLS enabled on all tables
+- Invitation system (NEW)
+- Action plans & smart goals
+- Analytics & reporting
 
 **API Endpoints** (95%)
-- ✅ 50+ routes implemented
-- ✅ Invitation APIs (NEW)
-- ✅ Admin APIs
-- ✅ Clinic management
-- ✅ Sales & CRM (95% - Chat, Video, Email tracking implemented)
-- ✅ Analytics & reports
+- 50+ routes implemented
+- Invitation APIs (NEW)
+- Admin APIs
+- Center management
+- Sales & CRM (95% - Chat, Video, Email tracking implemented)
+- Analytics & reports
 
 **UI Components** (85%)
-- ✅ shadcn/ui integrated
+- shadcn/ui integrated
+- Responsive layouts
+- Additional polish needed
 - ✅ Responsive layouts
 - ⏳ Additional polish needed
 
@@ -435,8 +436,8 @@ Currently in active development. Contributions welcome after Phase 10 completion
 
 ## 📄 License
 
-Proprietary - ClinicIQ Platform  
-© 2025 All Rights Reserved
+Proprietary - CenterIQ AI Platform  
+© 2026 All Rights Reserved
 
 ---
 

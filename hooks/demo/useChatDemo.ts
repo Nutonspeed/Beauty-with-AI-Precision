@@ -7,7 +7,7 @@ interface UseChatDemoOptions {
   roomId: string;
   userId: string;
   userName: string;
-  userRole: 'staff' | 'patient';
+  userRole: 'staff' | 'client';
 }
 
 interface ChatEventHandlers {

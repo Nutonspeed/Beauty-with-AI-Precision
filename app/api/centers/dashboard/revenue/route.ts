@@ -18,26 +18,26 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    // Get user's clinic_id and role
+    // Get user's center_id and role
     const { data: userData, error: userErr } = await supabase
       .from("users")
-      .select("clinic_id, role")
+      .select("center_id, role")
       .eq("id", user.id)
       .single()
 
     if (userErr) {
-      console.error('[clinic/revenue] Failed to fetch user:', userErr)
+      console.error('[center/revenue] Failed to fetch user:', userErr)
       return NextResponse.json({ error: "Failed to fetch user" }, { status: 500 })
     }
 
-    if (!userData || (userData.role !== "clinic_owner" && userData.role !== "clinic_staff")) {
-      return NextResponse.json({ error: "Forbidden - Clinic access required" }, { status: 403 })
+    if (!userData || (userData.role !== "center_owner" && userData.role !== "center_staff")) {
+      return NextResponse.json({ error: "Forbidden - Center access required" }, { status: 403 })
     }
 
-    const clinicId = userData.clinic_id
+    const centerId = userData.center_id
 
-    if (!clinicId) {
-      return NextResponse.json({ error: "No clinic associated" }, { status: 400 })
+    if (!centerId) {
+      return NextResponse.json({ error: "No center associated" }, { status: 400 })
     }
 
     // Get date ranges
@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
     const { data: bookings, error } = await supabase
       .from("bookings")
       .select("booking_date, price, status")
-      .eq("clinic_id", clinicId)
+      .eq("center_id", centerId)
       .gte("booking_date", toISOStringLocal(thirtyDaysAgo))
       .in("status", ["confirmed", "completed"])
       .order("booking_date", { ascending: true })

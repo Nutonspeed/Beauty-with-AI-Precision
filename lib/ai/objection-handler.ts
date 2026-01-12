@@ -14,15 +14,15 @@ export interface ObjectionContext {
     gender?: 'male' | 'female' | 'other';
     concerns?: string[];
     budget?: 'low' | 'medium' | 'high' | 'premium';
-    previousTreatments?: string[];
+    previousPrograms?: string[];
   };
-  treatmentInterest?: string[];
+  programInterest?: string[];
   conversationHistory?: Array<{
     role: 'user' | 'assistant';
     content: string;
     timestamp: Date;
   }>;
-  currentTreatment?: {
+  currentProgram?: {
     name: string;
     price: number;
     category: string;
@@ -68,7 +68,7 @@ export class AIObjectionHandler {
         messages: [
           {
             role: 'system',
-            content: `You are an expert sales objection analyzer for a beauty clinic. Analyze the user's message and classify any objections with high accuracy.
+            content: `You are an expert sales objection analyzer for a beauty center. Analyze the user's message and classify any objections with high accuracy.
 
 Return JSON in this format:
 {
@@ -134,7 +134,7 @@ Return JSON in this format:
         messages: [
           {
             role: 'system',
-            content: `You are a master sales closer for a premium beauty clinic. Generate empathetic, persuasive responses to handle customer objections.
+            content: `You are a master sales closer for a premium beauty center. Generate empathetic, persuasive responses to handle customer objections.
 
 Focus on:
 - Building trust and rapport
@@ -188,7 +188,7 @@ Return JSON in this format:
         messages: [
           {
             role: 'system',
-            content: `You are a sales optimization expert for beauty clinics. Provide specific, actionable strategies to increase conversion rates.
+            content: `You are a sales optimization expert for beauty centers. Provide specific, actionable strategies to increase conversion rates.
 
 Return JSON array of strategy strings in Thai.`
           },
@@ -218,10 +218,10 @@ Return JSON array of strategy strings in Thai.`
 ข้อมูลลูกค้า:
 - ชื่อ: ${context.customerProfile?.name || 'ไม่ระบุ'}
 - อายุ: ${context.customerProfile?.age || 'ไม่ระบุ'}
-- ความสนใจ: ${context.treatmentInterest?.join(', ') || 'ไม่ระบุ'}
+- ความสนใจ: ${context.programInterest?.join(', ') || 'ไม่ระบุ'}
 - งบประมาณ: ${context.customerProfile?.budget || 'ไม่ระบุ'}
-- Treatment ปัจจุบัน: ${context.currentTreatment?.name || 'ไม่ระบุ'}
-- ราคา: ${context.currentTreatment?.price ? `฿${context.currentTreatment.price.toLocaleString()}` : 'ไม่ระบุ'}
+- Program ปัจจุบัน: ${context.currentProgram?.name || 'ไม่ระบุ'}
+- ราคา: ${context.currentProgram?.price ? `฿${context.currentProgram.price.toLocaleString()}` : 'ไม่ระบุ'}
 - Lead Score: ${context.leadScore || 'ไม่ระบุ'}
 
 ประเภท objection ที่พบบ่อย:
@@ -265,9 +265,9 @@ Return JSON array of strategy strings in Thai.`
 
 ข้อมูลลูกค้า:
 - ชื่อ: ${context.customerProfile?.name || 'คุณลูกค้า'}
-- ความสนใจ: ${context.treatmentInterest?.join(', ') || 'ไม่ระบุ'}
-- Treatment: ${context.currentTreatment?.name || 'ไม่ระบุ'}
-- ราคา: ${context.currentTreatment?.price ? `฿${context.currentTreatment.price.toLocaleString()}` : 'ไม่ระบุ'}
+- ความสนใจ: ${context.programInterest?.join(', ') || 'ไม่ระบุ'}
+- Program: ${context.currentProgram?.name || 'ไม่ระบุ'}
+- ราคา: ${context.currentProgram?.price ? `฿${context.currentProgram.price.toLocaleString()}` : 'ไม่ระบุ'}
 
 สร้างการตอบสนองที่:
 1. แสดงความเข้าใจ (Acknowledge)
@@ -286,7 +286,7 @@ Return JSON array of strategy strings in Thai.`
 
 ข้อมูลลูกค้า:
 - ชื่อ: ${context.customerProfile?.name || 'ไม่ระบุ'}
-- ความสนใจ: ${context.treatmentInterest?.join(', ') || 'ไม่ระบุ'}
+- ความสนใจ: ${context.programInterest?.join(', ') || 'ไม่ระบุ'}
 - งบประมาณ: ${context.customerProfile?.budget || 'ไม่ระบุ'}
 - Lead Score: ${context.leadScore || 'ไม่ระบุ'}
 - Urgency: ${context.urgency || 'ไม่ระบุ'}

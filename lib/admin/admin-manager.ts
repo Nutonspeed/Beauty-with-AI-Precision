@@ -584,13 +584,13 @@ export class AdminManager {
     const programMap = new Map<string, ProgramAnalytics>();
 
     bookings.forEach(booking => {
-      const existing = programMap.get(booking.program_type || booking.treatment_type);
+      const existing = programMap.get(booking.program_type || booking.program_type);
       if (existing) {
         existing.totalBookings++;
         existing.totalRevenue += booking.payment_amount;
       } else {
-        programMap.set(booking.program_type || booking.treatment_type, {
-          programType: booking.program_type || booking.treatment_type,
+        programMap.set(booking.program_type || booking.program_type, {
+          programType: booking.program_type || booking.program_type,
           totalBookings: 1,
           totalRevenue: booking.payment_amount,
           avgPrice: booking.payment_amount,
@@ -649,7 +649,7 @@ export class AdminManager {
     const stats = new Map<string, { count: number; revenue: number }>();
 
     bookings.forEach(booking => {
-      const programType = booking.program_type || booking.treatment_type;
+      const programType = booking.program_type || booking.program_type;
       const existing = stats.get(programType);
       if (existing) {
         existing.count++;

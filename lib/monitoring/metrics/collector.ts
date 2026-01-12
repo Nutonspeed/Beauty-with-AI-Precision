@@ -12,7 +12,7 @@ export interface PerformanceMetrics {
   statusCode: number
   userAgent?: string
   userId?: string
-  clinicId?: string
+  centerId?: string
 }
 
 export interface SystemMetrics {

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { withClinicAuth } from '@/lib/auth/middleware';
+import { withCenterAuth } from '@/lib/auth/middleware';
 
 function getSupabaseClient() {
   return createClient(
@@ -11,28 +11,28 @@ function getSupabaseClient() {
 
 /**
  * GET /api/loyalty/points/rules
- * List points earning rules for beauty clinic
+ * List points earning rules for beauty center
  * 
  * Query parameters:
- * - clinic_id (required): Clinic ID
+ * - center_id (required): Center ID
  * - rule_type (optional): Filter by rule type
  * - is_active (optional): Filter by active status
  */
-export const GET = withClinicAuth(async (request: NextRequest, user: any) => {
+export const GET = withCenterAuth(async (request: NextRequest, user: any) => {
   try {
     const { searchParams } = new URL(request.url);
-    const clinic_id = searchParams.get('clinic_id');
+    const center_id = searchParams.get('center_id');
     const rule_type = searchParams.get('rule_type');
     const is_active = searchParams.get('is_active');
 
-    if (!clinic_id) {
+    if (!center_id) {
       return NextResponse.json(
-        { error: 'clinic_id is required' },
+        { error: 'center_id is required' },
         { status: 400 }
       );
     }
 
-    if (user?.clinic_id && clinic_id !== user.clinic_id) {
+    if (user?.center_id && center_id !== user.center_id) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
@@ -43,7 +43,7 @@ export const GET = withClinicAuth(async (request: NextRequest, user: any) => {
         *,
         created_by:users!points_earning_rules_created_by_user_id_fkey(id, full_name, email)
       `)
-      .eq('clinic_id', clinic_id);
+      .eq('center_id', center_id);
 
     if (rule_type) {
       query = query.eq('rule_type', rule_type);
@@ -69,9 +69,9 @@ export const GET = withClinicAuth(async (request: NextRequest, user: any) => {
 
 /**
  * POST /api/loyalty/points/rules
- * Create a new points earning rule for beauty clinic
+ * Create a new points earning rule for beauty center
  */
-export const POST = withClinicAuth(async (request: NextRequest, user: any) => {
+export const POST = withCenterAuth(async (request: NextRequest, user: any) => {
   try {
     let body: any = null;
     try {
@@ -80,7 +80,7 @@ export const POST = withClinicAuth(async (request: NextRequest, user: any) => {
       return new NextResponse(null, { status: 204 });
     }
     const {
-      clinic_id,
+      center_id,
       rule_name,
       rule_name_en,
       description,
@@ -109,14 +109,14 @@ export const POST = withClinicAuth(async (request: NextRequest, user: any) => {
       notes,
     } = body;
 
-    if (!clinic_id || !rule_name || !rule_type || !points_calculation_method || points_value === undefined) {
+    if (!center_id || !rule_name || !rule_type || !points_calculation_method || points_value === undefined) {
       return NextResponse.json(
-        { error: 'clinic_id, rule_name, rule_type, points_calculation_method, and points_value are required' },
+        { error: 'center_id, rule_name, rule_type, points_calculation_method, and points_value are required' },
         { status: 400 }
       );
     }
 
-    if (user?.clinic_id && clinic_id !== user.clinic_id) {
+    if (user?.center_id && center_id !== user.center_id) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
@@ -124,7 +124,7 @@ export const POST = withClinicAuth(async (request: NextRequest, user: any) => {
     const { data, error } = await supabaseClient
       .from('points_earning_rules')
       .insert({
-        clinic_id,
+        center_id,
         rule_name,
         rule_name_en,
         description,

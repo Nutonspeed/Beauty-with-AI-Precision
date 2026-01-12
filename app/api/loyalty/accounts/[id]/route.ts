@@ -10,7 +10,7 @@ function getSupabaseClient() {
 
 /**
  * GET /api/loyalty/accounts/[id]
- * Get loyalty account details for beauty clinic customer
+ * Get loyalty account details for beauty center customer
  */
 export async function GET(
   request: NextRequest,
@@ -43,7 +43,7 @@ export async function GET(
 
 /**
  * PATCH /api/loyalty/accounts/[id]
- * Update loyalty account for beauty clinic customer
+ * Update loyalty account for beauty center customer
  */
 export async function PATCH(
   request: NextRequest,

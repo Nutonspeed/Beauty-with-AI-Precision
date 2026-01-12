@@ -11,7 +11,7 @@ interface AppointmentReminder {
   customer_line_id: string | null;
   appointment_date: string;
   appointment_time: string;
-  treatment_type: string;
+  program_type: string;
   staff_name: string;
   reminder_type: "24h" | "1h";
   channels: string[];
@@ -31,7 +31,7 @@ export async function GET() {
 
     // ดึงการตั้งค่า
     const { data: settings } = await supabase
-      .from("clinic_settings")
+      .from("center_settings")
       .select("settings")
       .eq("setting_type", "automation")
       .maybeSingle();
@@ -57,12 +57,12 @@ export async function GET() {
 
     // ดึงการนัดหมายที่ต้องแจ้งเตือน
     const { data: upcomingBookings, error } = await supabase
-      .from("clinic_bookings")
+      .from("center_bookings")
       .select(
         `
         *,
-        customer:clinic_customers(name, email, phone, line_id),
-        staff:clinic_staff(name)
+        customer:center_customers(name, email, phone, line_id),
+        staff:center_staff(name)
       `
       )
       .eq("status", "confirmed")
@@ -98,7 +98,7 @@ export async function GET() {
           customer_line_id: booking.customer?.line_id || null,
           appointment_date: booking.appointment_date,
           appointment_time: booking.appointment_time,
-          treatment_type: booking.treatment_type,
+          program_type: booking.program_type,
           staff_name: booking.staff?.name || "ทีมงาน",
           reminder_type: "24h",
           channels: reminderSettings.channels,
@@ -121,7 +121,7 @@ export async function GET() {
           customer_line_id: booking.customer?.line_id || null,
           appointment_date: booking.appointment_date,
           appointment_time: booking.appointment_time,
-          treatment_type: booking.treatment_type,
+          program_type: booking.program_type,
           staff_name: booking.staff?.name || "ทีมงาน",
           reminder_type: "1h",
           channels: reminderSettings.channels,
@@ -136,7 +136,7 @@ export async function GET() {
       reminder_1h: reminders.filter((r) => r.reminder_type === "1h").length,
     });
   } catch (error) {
-    console.error("Error in GET /api/clinic/automation/appointment-reminders:", error);
+    console.error("Error in GET /api/center/automation/appointment-reminders:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
@@ -151,7 +151,7 @@ export async function POST() {
 
     // ดึงการตั้งค่า
     const { data: settings } = await supabase
-      .from("clinic_settings")
+      .from("center_settings")
       .select("settings")
       .eq("setting_type", "automation")
       .maybeSingle();
@@ -163,10 +163,10 @@ export async function POST() {
       channels: settings?.settings?.reminder_channels || ["sms", "line"],
       template_24h:
         settings?.settings?.reminder_template_24h ||
-        "สวัสดีค่ะ คุณ {{customer_name}} มีนัดที่คลินิกในวันพรุ่งนี้เวลา {{time}} สำหรับ {{treatment}}",
+        "สวัสดีค่ะ คุณ {{customer_name}} มีนัดที่คลินิกในวันพรุ่งนี้เวลา {{time}} สำหรับ {{program}}",
       template_1h:
         settings?.settings?.reminder_template_1h ||
-        "สวัสดีค่ะ อีก 1 ชั่วโมงคุณมีนัดที่คลินิก สำหรับ {{treatment}} เวลา {{time}}",
+        "สวัสดีค่ะ อีก 1 ชั่วโมงคุณมีนัดที่คลินิก สำหรับ {{program}} เวลา {{time}}",
     };
 
     if (!reminderSettings.enabled) {
@@ -183,12 +183,12 @@ export async function POST() {
 
     // ดึงการนัดหมายที่ต้องแจ้งเตือน
     const { data: upcomingBookings } = await supabase
-      .from("clinic_bookings")
+      .from("center_bookings")
       .select(
         `
         *,
-        customer:clinic_customers(name, email, phone, line_id),
-        staff:clinic_staff(name)
+        customer:center_customers(name, email, phone, line_id),
+        staff:center_staff(name)
       `
       )
       .eq("status", "confirmed")
@@ -214,9 +214,9 @@ export async function POST() {
         const message = reminderSettings.template_24h
           .replace("{{customer_name}}", booking.customer?.name || "ลูกค้า")
           .replace("{{time}}", booking.appointment_time)
-          .replace("{{treatment}}", booking.treatment_type)
+          .replace("{{program}}", booking.program_type)
           .replace("{{staff_name}}", booking.staff?.name || "ทีมงาน")
-          .replace("{{clinic_phone}}", "02-XXX-XXXX");
+          .replace("{{center_phone}}", "02-XXX-XXXX");
 
         await sendReminder(
           booking,
@@ -239,7 +239,7 @@ export async function POST() {
         const message = reminderSettings.template_1h
           .replace("{{customer_name}}", booking.customer?.name || "ลูกค้า")
           .replace("{{time}}", booking.appointment_time)
-          .replace("{{treatment}}", booking.treatment_type)
+          .replace("{{program}}", booking.program_type)
           .replace("{{staff_name}}", booking.staff?.name || "ทีมงาน");
 
         await sendReminder(
@@ -292,13 +292,13 @@ async function sendReminder(
   if (channels.includes("email") && booking.customer?.email) {
     const emailResult = await sendEmail({
       to: booking.customer.email,
-      subject: `🔔 เตือนนัดหมาย - ${booking.treatment_type}`,
+      subject: `🔔 เตือนนัดหมาย - ${booking.program_type}`,
       html: `
         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
           <h2>เตือนนัดหมาย</h2>
           <p>สวัสดีคุณ ${booking.customer?.name || "ลูกค้า"},</p>
           <p>${message}</p>
-          <p style="color: #666;">AI367 Beauty Clinic</p>
+          <p style="color: #666;">AI367 Beauty Center</p>
         </div>
       `,
     });

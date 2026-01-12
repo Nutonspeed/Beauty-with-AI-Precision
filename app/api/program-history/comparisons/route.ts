@@ -9,11 +9,11 @@ function getSupabaseClient() {
 }
 
 /**
- * GET /api/treatment-history/comparisons
- * List treatment comparisons for beauty clinic customers
+ * GET /api/program-history/comparisons
+ * List program comparisons for beauty center customers
  * 
  * Query parameters:
- * - clinic_id (required): Clinic ID
+ * - center_id (required): Center ID
  * - customer_id (optional): Filter by customer
  * - comparison_type (optional): Filter by type
  * - is_featured (optional): Filter by featured status
@@ -21,27 +21,27 @@ function getSupabaseClient() {
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const clinic_id = searchParams.get('clinic_id');
+    const center_id = searchParams.get('center_id');
     const customer_id = searchParams.get('customer_id');
     const comparison_type = searchParams.get('comparison_type');
     const is_featured = searchParams.get('is_featured');
 
-    if (!clinic_id) {
+    if (!center_id) {
       return NextResponse.json(
-        { error: 'clinic_id is required' },
+        { error: 'center_id is required' },
         { status: 400 }
       );
     }
 
     const supabaseClient = getSupabaseClient();
     let query = supabaseClient
-      .from('treatment_comparisons')
+      .from('program_comparisons')
       .select(`
         *,
-        customer:users!treatment_comparisons_customer_id_fkey(id, full_name),
-        created_by:users!treatment_comparisons_created_by_user_id_fkey(id, full_name)
+        customer:users!program_comparisons_customer_id_fkey(id, full_name),
+        created_by:users!program_comparisons_created_by_user_id_fkey(id, full_name)
       `)
-      .eq('clinic_id', clinic_id)
+      .eq('center_id', center_id)
       .eq('is_deleted', false);
 
     if (customer_id) {
@@ -62,27 +62,27 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(data || []);
   } catch (error) {
-    console.error('Error fetching treatment comparisons:', error);
+    console.error('Error fetching program comparisons:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch treatment comparisons' },
+      { error: 'Failed to fetch program comparisons' },
       { status: 500 }
     );
   }
 }
 
 /**
- * POST /api/treatment-history/comparisons
- * Create a new treatment comparison for beauty clinic customer
+ * POST /api/program-history/comparisons
+ * Create a new program comparison for beauty center customer
  */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const {
-      clinic_id,
+      center_id,
       customer_id,
       comparison_name,
       comparison_type,
-      treatment_category,
+      program_category,
       before_photo_ids,
       after_photo_ids,
       before_date,
@@ -99,22 +99,22 @@ export async function POST(request: NextRequest) {
       notes,
     } = body;
 
-    if (!clinic_id || !customer_id || !comparison_name || !before_photo_ids || !after_photo_ids) {
+    if (!center_id || !customer_id || !comparison_name || !before_photo_ids || !after_photo_ids) {
       return NextResponse.json(
-        { error: 'clinic_id, customer_id, comparison_name, before_photo_ids, and after_photo_ids are required' },
+        { error: 'center_id, customer_id, comparison_name, before_photo_ids, and after_photo_ids are required' },
         { status: 400 }
       );
     }
 
     const supabaseClient = getSupabaseClient();
     const { data, error } = await supabaseClient
-      .from('treatment_comparisons')
+      .from('program_comparisons')
       .insert({
-        clinic_id,
+        center_id,
         customer_id,
         comparison_name,
         comparison_type,
-        treatment_category,
+        program_category,
         before_photo_ids,
         after_photo_ids,
         before_date,
@@ -137,9 +137,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(data, { status: 201 });
   } catch (error) {
-    console.error('Error creating treatment comparison:', error);
+    console.error('Error creating program comparison:', error);
     return NextResponse.json(
-      { error: 'Failed to create treatment comparison' },
+      { error: 'Failed to create program comparison' },
       { status: 500 }
     );
   }

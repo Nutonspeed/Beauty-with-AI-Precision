@@ -9,8 +9,8 @@ function getSupabaseClient() {
 }
 
 /**
- * GET /api/treatment-history/outcomes/[id]
- * Get treatment outcome details for beauty clinic customer
+ * GET /api/program-history/outcomes/[id]
+ * Get program outcome details for beauty center customer
  */
 export async function GET(
   request: NextRequest,
@@ -20,12 +20,12 @@ export async function GET(
     const params = await context.params;
     const supabaseClient = getSupabaseClient();
     const { data, error } = await supabaseClient
-      .from('treatment_outcomes')
+      .from('program_outcomes')
       .select(`
         *,
-        customer:users!treatment_outcomes_customer_id_fkey(id, full_name, email, phone),
-        treatment_record:treatment_records(id, treatment_name, treatment_category, treatment_date),
-        assessor:users!treatment_outcomes_assessor_user_id_fkey(id, full_name, email)
+        customer:users!program_outcomes_customer_id_fkey(id, full_name, email, phone),
+        program_record:program_records(id, program_name, program_category, program_date),
+        assessor:users!program_outcomes_assessor_user_id_fkey(id, full_name, email)
       `)
       .eq('id', params.id)
       .eq('is_deleted', false)
@@ -35,17 +35,17 @@ export async function GET(
 
     return NextResponse.json(data);
   } catch (error) {
-    console.error('Error fetching treatment outcome:', error);
+    console.error('Error fetching program outcome:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch treatment outcome' },
+      { error: 'Failed to fetch program outcome' },
       { status: 500 }
     );
   }
 }
 
 /**
- * PATCH /api/treatment-history/outcomes/[id]
- * Update treatment outcome for beauty clinic customer
+ * PATCH /api/program-history/outcomes/[id]
+ * Update program outcome for beauty center customer
  */
 export async function PATCH(
   request: NextRequest,
@@ -57,7 +57,7 @@ export async function PATCH(
     const supabaseClient = getSupabaseClient();
 
     const { data, error } = await supabaseClient
-      .from('treatment_outcomes')
+      .from('program_outcomes')
       .update(body)
       .eq('id', params.id)
       .eq('is_deleted', false)
@@ -68,17 +68,17 @@ export async function PATCH(
 
     return NextResponse.json(data);
   } catch (error) {
-    console.error('Error updating treatment outcome:', error);
+    console.error('Error updating program outcome:', error);
     return NextResponse.json(
-      { error: 'Failed to update treatment outcome' },
+      { error: 'Failed to update program outcome' },
       { status: 500 }
     );
   }
 }
 
 /**
- * DELETE /api/treatment-history/outcomes/[id]
- * Delete treatment outcome (soft delete)
+ * DELETE /api/program-history/outcomes/[id]
+ * Delete program outcome (soft delete)
  */
 export async function DELETE(
   request: NextRequest,
@@ -88,7 +88,7 @@ export async function DELETE(
     const params = await context.params;
     const supabaseClient = getSupabaseClient();
     const { data, error } = await supabaseClient
-      .from('treatment_outcomes')
+      .from('program_outcomes')
       .update({ is_deleted: true })
       .eq('id', params.id)
       .select()
@@ -98,9 +98,9 @@ export async function DELETE(
 
     return NextResponse.json({ success: true, data });
   } catch (error) {
-    console.error('Error deleting treatment outcome:', error);
+    console.error('Error deleting program outcome:', error);
     return NextResponse.json(
-      { error: 'Failed to delete treatment outcome' },
+      { error: 'Failed to delete program outcome' },
       { status: 500 }
     );
   }

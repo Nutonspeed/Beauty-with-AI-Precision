@@ -10,7 +10,7 @@ function getSupabaseClient() {
 
 /**
  * GET /api/loyalty/tiers/[id]
- * Get loyalty tier details for beauty clinic
+ * Get loyalty tier details for beauty center
  */
 export async function GET(
   request: NextRequest,
@@ -39,7 +39,7 @@ export async function GET(
 
 /**
  * PATCH /api/loyalty/tiers/[id]
- * Update loyalty tier for beauty clinic customers
+ * Update loyalty tier for beauty center customers
  */
 export async function PATCH(
   request: NextRequest,

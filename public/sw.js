@@ -29,7 +29,7 @@ const STATIC_ASSETS = [
   '/[locale]/analysis',
   '/[locale]/ar-simulator',
   '/[locale]/sales',
-  '/[locale]/clinic',
+  '/[locale]/center',
   '/offline',
   '/_next/static/css/',
   '/_next/static/js/',

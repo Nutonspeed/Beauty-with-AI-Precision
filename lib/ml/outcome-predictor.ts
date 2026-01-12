@@ -2,7 +2,7 @@
  * Outcome Prediction Model
  * Phase 3 Week 8-9 Task 8.1
  * 
- * Predicts treatment outcomes based on customer data and historical patterns
+ * Predicts program outcomes based on customer data and historical patterns
  */
 
 import { createServerClient } from '@/lib/supabase/server';
@@ -14,7 +14,7 @@ import { createServerClient } from '@/lib/supabase/server';
 export interface PredictionInput {
   customerId: string;
   currentAnalysisId: string;
-  treatmentPlanId?: string;
+  programPlanId?: string;
 }
 
 export interface CustomerFeatures {
@@ -39,10 +39,10 @@ export interface CustomerFeatures {
   scoreVariance: number;
   improvementRate: number; // % change per month
   
-  // Treatment factors
-  hasActiveTreatment: boolean;
-  treatmentAdherence?: number; // 0-1
-  monthsSinceTreatmentStart?: number;
+  // Program factors
+  hasActiveProgram: boolean;
+  programAdherence?: number; // 0-1
+  monthsSinceProgramStart?: number;
   
   // Lifestyle factors (from profile)
   lifestyle?: {
@@ -151,18 +151,18 @@ export class FeatureExtractor {
     // Extract current concerns
     const currentConcerns = this.extractConcerns(currentAnalysis?.ai_analysis);
 
-    // Check for active treatment
-    const { data: activeTreatment } = await this.supabase
-      .from('treatment_plans')
+    // Check for active program
+    const { data: activeProgram } = await this.supabase
+      .from('program_plans')
       .select('id, created_at')
       .eq('user_id', customerId)
       .order('created_at', { ascending: false })
       .limit(1)
       .single();
 
-    const hasActiveTreatment = !!activeTreatment;
-    const monthsSinceTreatmentStart = activeTreatment
-      ? this.calculateMonthsDiff(new Date(activeTreatment.created_at), new Date())
+    const hasActiveProgram = !!activeProgram;
+    const monthsSinceProgramStart = activeProgram
+      ? this.calculateMonthsDiff(new Date(activeProgram.created_at), new Date())
       : undefined;
 
     return {
@@ -175,8 +175,8 @@ export class FeatureExtractor {
       averageScore,
       scoreVariance,
       improvementRate,
-      hasActiveTreatment,
-      monthsSinceTreatmentStart,
+      hasActiveProgram,
+      monthsSinceProgramStart,
       lifestyle: profile?.lifestyle_data as CustomerFeatures['lifestyle'],
     };
   }
@@ -252,7 +252,7 @@ export class FeatureExtractor {
 
 export class OutcomePredictor {
   /**
-   * Predict treatment outcomes
+   * Predict program outcomes
    */
   async predict(input: PredictionInput): Promise<PredictionResult> {
     const supabase = await createServerClient();
@@ -282,13 +282,13 @@ export class OutcomePredictor {
     let confidence = 0.7; // Base confidence
     const keyFactors: PredictionResult['keyFactors'] = [];
 
-    // Factor 1: Active treatment (+5 to +15 points)
-    if (features.hasActiveTreatment) {
-      const treatmentBonus = 10;
-      improvementPoints += treatmentBonus;
+    // Factor 1: Active program (+5 to +15 points)
+    if (features.hasActiveProgram) {
+      const programBonus = 10;
+      improvementPoints += programBonus;
       confidence += 0.1;
       keyFactors.push({
-        factor: 'Active treatment plan',
+        factor: 'Active program plan',
         impact: 'positive',
         weight: 0.3,
       });
@@ -414,9 +414,9 @@ export class OutcomePredictor {
     const en: string[] = [];
     const th: string[] = [];
 
-    // Treatment recommendations
-    if (!features.hasActiveTreatment) {
-      en.push('Start a personalized treatment plan to see faster results');
+    // Program recommendations
+    if (!features.hasActiveProgram) {
+      en.push('Start a personalized program plan to see faster results');
       th.push('เริ่มแผนการรักษาเฉพาะบุคคลเพื่อเห็นผลเร็วขึ้น');
     }
 
@@ -439,13 +439,13 @@ export class OutcomePredictor {
 
     // Age-specific recommendations
     if (features.age > 35 && features.currentConcerns.wrinkles && features.currentConcerns.wrinkles < 70) {
-      en.push('Consider anti-aging treatments like retinol or peptides');
+      en.push('Consider anti-aging programs like retinol or peptides');
       th.push('พิจารณาการรักษาต้านริ้วรอยเช่น retinol หรือ peptides');
     }
 
     // Concern-specific recommendations
     if (features.currentConcerns.acne && features.currentConcerns.acne < 70) {
-      en.push('Focus on acne-targeted treatments and consistent cleansing routine');
+      en.push('Focus on acne-targeted programs and consistent cleansing routine');
       th.push('เน้นการรักษาสิวและทำความสะอาดผิวอย่างสม่ำเสมอ');
     }
 

@@ -81,7 +81,7 @@ export interface ProductRecommendation {
   id: string;
   name: string;
   brand: string;
-  category: 'cleanser' | 'toner' | 'serum' | 'moisturizer' | 'sunscreen' | 'treatment' | 'mask';
+  category: 'cleanser' | 'toner' | 'serum' | 'moisturizer' | 'sunscreen' | 'program' | 'mask';
   targetConcerns: SkinConcernType[];
   priority: PriorityLevel;
   confidence: number;
@@ -161,7 +161,7 @@ export interface CustomerHistory {
 const PROGRAM_DATABASE: ProgramRecommendation[] = [
   {
     id: 'laser-pigmentation',
-    name: 'Q-Switched Laser Treatment',
+    name: 'Q-Switched Laser Program',
     category: 'laser',
     targetConcerns: ['spots', 'pigmentation'],
     priority: 'high',
@@ -180,7 +180,7 @@ const PROGRAM_DATABASE: ProgramRecommendation[] = [
     numberOfSessions: 4,
     beforeCare: ['Avoid sun exposure 2 weeks before', 'Stop retinoids 1 week before'],
     afterCare: ['Apply SPF 50+', 'Avoid sun for 2 weeks', 'Moisturize regularly'],
-    alternatives: ['Chemical Peel', 'IPL Treatment'],
+    alternatives: ['Chemical Peel', 'IPL Program'],
     benefits: ['Precise targeting', 'Minimal downtime', 'Long-lasting results'],
     risks: ['Temporary redness', 'Mild swelling', 'Rare: hyperpigmentation'],
   },
@@ -197,7 +197,7 @@ const PROGRAM_DATABASE: ProgramRecommendation[] = [
     frequency: 'Every 2-4 weeks',
     cost: { min: 2000, max: 5000, currency: 'THB' },
     suitableFor: ['normal', 'oily', 'combination'],
-    contraindications: ['Active acne', 'Eczema', 'Recent laser treatment'],
+    contraindications: ['Active acne', 'Eczema', 'Recent laser program'],
     effectiveness: 75,
     downtime: '5-7 days peeling',
     painLevel: 3,
@@ -280,7 +280,7 @@ const PROGRAM_DATABASE: ProgramRecommendation[] = [
     numberOfSessions: 12,
     beforeCare: ['Clean face', 'Remove makeup'],
     afterCare: ['Normal skincare routine'],
-    alternatives: ['IPL', 'Topical treatments'],
+    alternatives: ['IPL', 'Topical programs'],
     benefits: ['Painless', 'No downtime', 'Safe for sensitive skin'],
     risks: ['None significant'],
   },
@@ -396,11 +396,11 @@ const PRODUCT_DATABASE: ProductRecommendation[] = [
     id: 'azelaic-acid',
     name: 'Azelaic Acid 10% Suspension',
     brand: 'The Ordinary',
-    category: 'treatment',
+    category: 'program',
     targetConcerns: ['redness', 'acne', 'pigmentation'],
     priority: 'medium',
     confidence: 0.81,
-    description: 'Multi-functional treatment for redness and texture',
+    description: 'Multi-functional program for redness and texture',
     keyIngredients: ['Azelaic Acid 10%'],
     usage: 'Apply PM after water-based serums',
     price: { amount: 650, currency: 'THB' },
@@ -650,7 +650,7 @@ function generateLifestyleRecommendations(
   
   // Adjust based on concerns
   if (concerns.has('pigmentation') || concerns.has('spots')) {
-    lifestyle.sun_protection.push('Avoid sun exposure during treatment period');
+    lifestyle.sun_protection.push('Avoid sun exposure during program period');
   }
   
   if (concerns.has('redness') || concerns.has('sensitivity')) {

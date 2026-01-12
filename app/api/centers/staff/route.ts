@@ -108,7 +108,6 @@ export async function POST(request: NextRequest) {
     const {
       user_id,
       center_id,
-      clinic_id,
       role,
       specialty,
       full_name,
@@ -133,7 +132,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Verify center exists (if provided)
-    const targetCenterId = center_id || clinic_id
+    const targetCenterId = center_id || center_id
     if (targetCenterId) {
       const { data: center } = await supabase
         .from('centers')
@@ -188,9 +187,9 @@ export async function POST(request: NextRequest) {
       email,
       status: 'active',
       rating: 0,
-      total_customers: 0, // Changed from total_patients
+      total_customers: 0, // Changed from total_clients
       total_appointments: 0,
-      customers_today: 0, // Changed from patients_today
+      customers_today: 0, // Changed from clients_today
       appointments_today: 0,
       working_hours: working_hours || {},
       languages: languages || ['th']

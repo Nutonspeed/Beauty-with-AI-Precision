@@ -127,7 +127,7 @@ export function generateWeeklyProgressDigest(data: WeeklyDigestData): string {
           <!-- Footer -->
           <div style="background: #f9fafb; padding: 20px; text-align: center; border-top: 1px solid #e0e0e0;">
             <p style="margin: 0 0 10px 0; font-size: 14px; color: #666;">
-              © 2025 ClinicIQ. All rights reserved.
+              © 2025 CenterIQ. All rights reserved.
             </p>
             <p style="margin: 0; font-size: 12px; color: #999;">
               ไม่ต้องการรับอีเมลนี้? <a href="#" style="color: #667eea;">ยกเลิกการสมัคร</a>
@@ -149,7 +149,7 @@ export interface ProgressReportData {
   currentAnalysis: HybridSkinAnalysis;
   previousAnalysis: HybridSkinAnalysis;
   improvements: { concern: string; before: number; after: number; change: number }[];
-  treatmentFollowed: number; // percentage
+  programFollowed: number; // percentage
   recommendations: string[];
   pdfUrl?: string;
   viewOnlineUrl: string;
@@ -203,14 +203,14 @@ export function generateAutomatedProgressReport(data: ProgressReportData): strin
               นี่คือรายงานความคืบหน้าที่สร้างขึ้นโดยอัตโนมัติจากการเปรียบเทียบการวิเคราะห์ล่าสุดของคุณ
             </p>
 
-            <!-- Treatment Adherence -->
+            <!-- Program Adherence -->
             <div style="background: #f0fdf4; border: 1px solid #d1fae5; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                 <span style="font-weight: 600; color: #333;">การปฏิบัติตามแผนการรักษา</span>
-                <span style="font-size: 24px; font-weight: bold; color: #10b981;">${data.treatmentFollowed}%</span>
+                <span style="font-size: 24px; font-weight: bold; color: #10b981;">${data.programFollowed}%</span>
               </div>
               <div style="background: #e5e7eb; height: 8px; border-radius: 4px; overflow: hidden;">
-                <div style="background: linear-gradient(90deg, #10b981 0%, #059669 100%); height: 100%; width: ${data.treatmentFollowed}%;"></div>
+                <div style="background: linear-gradient(90deg, #10b981 0%, #059669 100%); height: 100%; width: ${data.programFollowed}%;"></div>
               </div>
             </div>
 
@@ -250,7 +250,7 @@ export function generateAutomatedProgressReport(data: ProgressReportData): strin
           <!-- Footer -->
           <div style="background: #f9fafb; padding: 20px; text-align: center; border-top: 1px solid #e0e0e0;">
             <p style="margin: 0 0 10px 0; font-size: 14px; color: #666;">
-              © 2025 ClinicIQ. All rights reserved.
+              © 2025 CenterIQ. All rights reserved.
             </p>
             <p style="margin: 0; font-size: 12px; color: #999;">
               รายงานนี้ส่งอัตโนมัติทุก 2 สัปดาห์
@@ -373,7 +373,7 @@ export function generateGoalAchievement(data: GoalAchievementData): string {
           <!-- Footer -->
           <div style="background: #f9fafb; padding: 20px; text-align: center; border-top: 1px solid #e0e0e0;">
             <p style="margin: 0 0 10px 0; font-size: 14px; color: #666;">
-              © 2025 ClinicIQ. All rights reserved.
+              © 2025 CenterIQ. All rights reserved.
             </p>
             <p style="margin: 0; font-size: 12px; color: #999;">
               ขอบคุณที่ไว้วางใจและมุ่งมั่นในการดูแลผิว! 💜
@@ -519,7 +519,7 @@ export function generateReEngagement(data: ReEngagementData): string {
           <!-- Footer -->
           <div style="background: #f9fafb; padding: 20px; text-align: center; border-top: 1px solid #e0e0e0;">
             <p style="margin: 0 0 10px 0; font-size: 14px; color: #666;">
-              © 2025 ClinicIQ. All rights reserved.
+              © 2025 CenterIQ. All rights reserved.
             </p>
             <p style="margin: 0; font-size: 12px; color: #999;">
               ไม่ต้องการรับอีเมลนี้? <a href="#" style="color: #8b5cf6;">ยกเลิกการสมัคร</a>

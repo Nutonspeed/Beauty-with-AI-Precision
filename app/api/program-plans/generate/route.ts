@@ -1,18 +1,18 @@
 /**
- * Treatment Plan Generation API
+ * Program Plan Generation API
  * Phase 2 Week 6-7 Task 6.2
  * 
- * POST /api/treatment-plans/generate
+ * POST /api/program-plans/generate
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
 import { withPublicAccess } from '@/lib/auth/middleware';
 import {
-  createTreatmentPlanner,
+  createProgramPlanner,
   type AnalysisData,
-  type TreatmentPreferences,
-} from '@/lib/ai/treatment-planner';
+  type ProgramPreferences,
+} from '@/lib/ai/program-planner';
 
 // =============================================
 // Types
@@ -20,7 +20,7 @@ import {
 
 interface GenerateRequest {
   analysisId: string;
-  preferences?: TreatmentPreferences;
+  preferences?: ProgramPreferences;
 }
 
 // =============================================
@@ -83,7 +83,7 @@ export const POST = withPublicAccess(async (request: NextRequest) => {
 
     // Check if plan already exists
     const { data: existingPlan } = await supabase
-      .from('treatment_plans')
+      .from('program_plans')
       .select('id, created_at')
       .eq('analysis_id', analysisId)
       .single();
@@ -94,7 +94,7 @@ export const POST = withPublicAccess(async (request: NextRequest) => {
         {
           success: true,
           planId: existingPlan.id,
-          message: 'Treatment plan already exists for this analysis',
+          message: 'Program plan already exists for this analysis',
           existing: true,
         },
         { status: 200 }
@@ -146,32 +146,32 @@ export const POST = withPublicAccess(async (request: NextRequest) => {
       age,
     };
 
-    // Generate treatment plan
-    const planner = createTreatmentPlanner();
-    const treatmentPlan = await planner.generatePlan(
+    // Generate program plan
+    const planner = createProgramPlanner();
+    const programPlan = await planner.generatePlan(
       analysisData,
       preferences
     );
 
     // Set customer ID
-    treatmentPlan.customerId = user.id;
+    programPlan.customerId = user.id;
 
     // Save to database
-    const planId = await planner.savePlan(treatmentPlan);
+    const planId = await planner.savePlan(programPlan);
 
     // Return response
     return NextResponse.json(
       {
         success: true,
         planId,
-        plan: treatmentPlan,
+        plan: programPlan,
       },
       { status: 201 }
     );
   } catch (error) {
-    console.error('[Treatment Planner API] Error:', error);
+    console.error('[Program Planner API] Error:', error);
     return NextResponse.json(
-      { error: 'Failed to generate treatment plan' },
+      { error: 'Failed to generate program plan' },
       { status: 500 }
     );
   }
@@ -207,7 +207,7 @@ export async function GET(request: NextRequest) {
 
     // Build query
     let query = supabase
-      .from('treatment_plans')
+      .from('program_plans')
       .select('*')
       .eq('user_id', user.id);
 
@@ -221,7 +221,7 @@ export async function GET(request: NextRequest) {
 
     if (error || !data) {
       return NextResponse.json(
-        { error: 'Treatment plan not found' },
+        { error: 'Program plan not found' },
         { status: 404 }
       );
     }
@@ -240,7 +240,7 @@ export async function GET(request: NextRequest) {
       reviewMilestones: data.review_milestones,
       morningRoutine: data.morning_routine,
       eveningRoutine: data.evening_routine,
-      weeklyTreatments: data.weekly_treatments,
+      weeklyPrograms: data.weekly_programs,
       expectedResults: data.expected_results,
       expectedResultsTh: data.expected_results_th,
       warnings: data.warnings,
@@ -259,11 +259,11 @@ export async function GET(request: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
-    console.error('Treatment plan retrieval error:', error);
+    console.error('Program plan retrieval error:', error);
 
     return NextResponse.json(
       {
-        error: 'Failed to retrieve treatment plan',
+        error: 'Failed to retrieve program plan',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }

@@ -4,7 +4,7 @@ declare module 'ws' {
     clientId?: string;
     userId?: string;
     role?: string;
-    clinicId?: string;
+    centerId?: string;
   }
 }
 
@@ -20,6 +20,6 @@ export interface ClientInfo {
   clientId: string;
   userId: string;
   role: string;
-  clinicId: string;
+  centerId: string;
   subscribedChannels: Set<string>;
 }

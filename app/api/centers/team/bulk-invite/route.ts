@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic';
 interface BulkInviteData {
   email: string;
   name: string;
-  role: 'sales_staff' | 'clinic_staff' | 'clinic_manager';
+  role: 'sales_staff' | 'center_staff' | 'center_manager';
 }
 
 export async function POST(request: NextRequest) {
@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     await cookies();
     const supabase = await createClient();
 
-    // Verify user is clinic owner or admin
+    // Verify user is center owner or admin
     const { data: { user }, error: userError } = await supabase.auth.getUser();
     if (userError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -23,17 +23,17 @@ export async function POST(request: NextRequest) {
 
     const { data: profile } = await supabase
       .from('users')
-      .select('role, clinic_id')
+      .select('role, center_id')
       .eq('id', user.id)
       .single();
 
-    if (!profile || !['clinic_owner', 'clinic_admin', 'super_admin'].includes(profile.role)) {
-      return NextResponse.json({ error: 'Forbidden - Only clinic owners can invite team members' }, { status: 403 });
+    if (!profile || !['center_owner', 'center_admin', 'super_admin'].includes(profile.role)) {
+      return NextResponse.json({ error: 'Forbidden - Only center owners can invite team members' }, { status: 403 });
     }
 
-    const clinicId = profile.clinic_id;
-    if (!clinicId) {
-      return NextResponse.json({ error: 'No clinic associated with user' }, { status: 400 });
+    const centerId = profile.center_id;
+    if (!centerId) {
+      return NextResponse.json({ error: 'No center associated with user' }, { status: 400 });
     }
 
     // Parse request body
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Validate role
-        if (!['sales_staff', 'clinic_staff', 'clinic_manager'].includes(invite.role)) {
+        if (!['sales_staff', 'center_staff', 'center_manager'].includes(invite.role)) {
           results.failed.push({ 
             email: invite.email, 
             reason: 'Invalid role' 
@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
           .from('invitations')
           .select('id, email, status')
           .eq('email', invite.email.toLowerCase())
-          .eq('clinic_id', clinicId)
+          .eq('center_id', centerId)
           .eq('status', 'pending')
           .single();
 
@@ -115,7 +115,7 @@ export async function POST(request: NextRequest) {
           .insert({
             email: invite.email.toLowerCase(),
             invited_role: invite.role,
-            clinic_id: clinicId,
+            center_id: centerId,
             invited_by: user.id,
             status: 'pending',
             expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
@@ -153,7 +153,7 @@ export async function POST(request: NextRequest) {
       user_id: user.id,
       action: 'bulk_team_invite',
       resource_type: 'invitation',
-      resource_id: clinicId,
+      resource_id: centerId,
       metadata: {
         total: invitations.length,
         success: results.success.length,

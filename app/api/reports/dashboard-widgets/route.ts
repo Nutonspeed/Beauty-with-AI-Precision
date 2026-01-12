@@ -12,12 +12,12 @@ function getSupabaseClient() {
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const clinicId = searchParams.get('clinic_id');
+    const centerId = searchParams.get('center_id');
     const isActive = searchParams.get('is_active');
 
-    if (!clinicId) {
+    if (!centerId) {
       return NextResponse.json(
-        { error: 'Missing required parameter: clinic_id' },
+        { error: 'Missing required parameter: center_id' },
         { status: 400 }
       );
     }
@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
     let query = supabaseClient
       .from('dashboard_widgets')
       .select('*')
-      .eq('clinic_id', clinicId)
+      .eq('center_id', centerId)
       .order('position_y', { ascending: true })
       .order('position_x', { ascending: true });
 
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const {
-      clinic_id,
+      center_id,
       name,
       description,
       widget_type,
@@ -84,9 +84,9 @@ export async function POST(request: NextRequest) {
     } = body;
 
     // Validate required fields
-    if (!clinic_id || !name || !widget_type || !data_source) {
+    if (!center_id || !name || !widget_type || !data_source) {
       return NextResponse.json(
-        { error: 'Missing required fields: clinic_id, name, widget_type, data_source' },
+        { error: 'Missing required fields: center_id, name, widget_type, data_source' },
         { status: 400 }
       );
     }
@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
     const { data, error } = await supabaseClient
       .from('dashboard_widgets')
       .insert({
-        clinic_id,
+        center_id,
         name,
         description,
         widget_type,

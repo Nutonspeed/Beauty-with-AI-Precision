@@ -7,11 +7,11 @@ export const dynamic = "force-dynamic"
 export const GET = withAuth(
   async (request: NextRequest, user) => {
     try {
-      if (!user.clinic_id) {
+      if (!user.center_id) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 })
       }
 
-      if (!["super_admin", "admin", "clinic_owner", "clinic_admin", "manager", "clinic_staff"].includes(user.role)) {
+      if (!["super_admin", "admin", "center_owner", "center_admin", "manager", "center_staff"].includes(user.role)) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 })
       }
 
@@ -28,26 +28,26 @@ export const GET = withAuth(
 
       const service = createServiceClient()
 
-      // Ensure these appointments belong to the user's clinic (unless global admin)
+      // Ensure these appointments belong to the user's center (unless global admin)
       if (!["super_admin", "admin"].includes(user.role)) {
         const { data: appts, error: apptErr } = await service
           .from("appointments")
-          .select("id, clinic_id")
+          .select("id, center_id")
           .in("id", appointmentIds)
 
         if (apptErr) {
           return NextResponse.json({ error: "Failed to validate appointments" }, { status: 500 })
         }
 
-        const allInClinic = (appts || []).every((a) => a.clinic_id === user.clinic_id)
-        if (!allInClinic) {
+        const allInCenter = (appts || []).every((a) => a.center_id === user.center_id)
+        if (!allInCenter) {
           return NextResponse.json({ error: "Forbidden" }, { status: 403 })
         }
       }
 
       const { data: payments, error } = await service
         .from("booking_payments")
-        .select("id, clinic_id, appointment_id, amount, payment_method, payment_status, payment_date, transaction_id, notes")
+        .select("id, center_id, appointment_id, amount, payment_method, payment_status, payment_date, transaction_id, notes")
         .in("appointment_id", appointmentIds)
 
       if (error) {

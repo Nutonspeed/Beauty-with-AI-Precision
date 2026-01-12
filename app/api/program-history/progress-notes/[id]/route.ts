@@ -9,8 +9,8 @@ function getSupabaseClient() {
 }
 
 /**
- * GET /api/treatment-history/progress-notes/[id]
- * Get progress note details for beauty clinic customer
+ * GET /api/program-history/progress-notes/[id]
+ * Get progress note details for beauty center customer
  */
 export async function GET(
   request: NextRequest,
@@ -20,12 +20,12 @@ export async function GET(
     const params = await context.params;
     const supabaseClient = getSupabaseClient();
     const { data, error } = await supabaseClient
-      .from('treatment_progress_notes')
+      .from('program_progress_notes')
       .select(`
         *,
-        customer:users!treatment_progress_notes_customer_id_fkey(id, full_name, email),
-        treatment_record:treatment_records(id, treatment_name, treatment_date, treatment_category),
-        created_by:users!treatment_progress_notes_created_by_user_id_fkey(id, full_name, email)
+        customer:users!program_progress_notes_customer_id_fkey(id, full_name, email),
+        program_record:program_records(id, program_name, program_date, program_category),
+        created_by:users!program_progress_notes_created_by_user_id_fkey(id, full_name, email)
       `)
       .eq('id', params.id)
       .eq('is_deleted', false)
@@ -44,8 +44,8 @@ export async function GET(
 }
 
 /**
- * PATCH /api/treatment-history/progress-notes/[id]
- * Update progress note for beauty clinic customer
+ * PATCH /api/program-history/progress-notes/[id]
+ * Update progress note for beauty center customer
  */
 export async function PATCH(
   request: NextRequest,
@@ -57,7 +57,7 @@ export async function PATCH(
     const supabaseClient = getSupabaseClient();
 
     const { data, error } = await supabaseClient
-      .from('treatment_progress_notes')
+      .from('program_progress_notes')
       .update(body)
       .eq('id', params.id)
       .eq('is_deleted', false)
@@ -77,7 +77,7 @@ export async function PATCH(
 }
 
 /**
- * DELETE /api/treatment-history/progress-notes/[id]
+ * DELETE /api/program-history/progress-notes/[id]
  * Delete progress note (soft delete)
  */
 export async function DELETE(
@@ -88,7 +88,7 @@ export async function DELETE(
     const params = await context.params;
     const supabaseClient = getSupabaseClient();
     const { data, error } = await supabaseClient
-      .from('treatment_progress_notes')
+      .from('program_progress_notes')
       .update({ is_deleted: true })
       .eq('id', params.id)
       .select()

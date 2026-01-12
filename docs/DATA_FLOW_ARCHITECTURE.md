@@ -1,17 +1,17 @@
-# 🏗️ ClinicIQ - Data Flow Architecture & Dashboard Integration
+# 🏗️ CenterIQ AI - Data Flow Architecture & Dashboard Integration
 
 **Date**: December 26, 2025  
-**Version**: 1.0.0
+**Version**: 1.1.0
 
 ---
 
 ## 📊 System Overview
 
-ClinicIQ เป็นระบบ Multi-tenant Clinic Management Platform ที่รองรับ 4 ระดับผู้ใช้หลัก:
+CenterIQ AI เป็นระบบ Multi-tenant Center Management Platform ที่รองรับ 4 ระดับผู้ใช้หลัก:
 - **Super Admin** - จัดการระบบทั้งหมด
-- **Clinic Owner/Admin** - จัดการคลินิก
+- **Center Owner/Admin** - จัดการศูนย์ความงาม
 - **Sales Staff** - ขายและดูแลลูกค้า
-- **Customer** - ลูกค้า/ผู้ใช้บริการ
+- **Client** - ลูกค้า/ผู้ใช้บริการ
 
 ---
 
@@ -19,12 +19,12 @@ ClinicIQ เป็นระบบ Multi-tenant Clinic Management Platform ที
 
 ### 1. **Central Tables**
 
-#### `clinics` - คลินิก (Hub แห่งข้อมูล)
+#### `centers` - ศูนย์ความงาม (Hub แห่งข้อมูล)
 ```
 id (PK)
 name
 owner_id -> users.id
-clinic_code
+center_code
 subscription_tier
 max_sales_staff
 max_analyses_per_month
@@ -34,9 +34,9 @@ max_analyses_per_month
 ```
 id (PK)
 email
-role (enum: super_admin, clinic_owner, clinic_admin, sales_staff, customer)
-clinic_id -> clinics.id  ⭐ Multi-tenant key
-assigned_sales_user_id -> users.id  ⭐ Customer assignment
+role (enum: super_admin, center_owner, center_admin, sales_staff, client)
+center_id -> centers.id  ⭐ Multi-tenant key
+assigned_sales_user_id -> users.id  ⭐ Client assignment
 ```
 
 #### `invitations` - ระบบเชิญ
@@ -44,7 +44,7 @@ assigned_sales_user_id -> users.id  ⭐ Customer assignment
 id (PK)
 email
 invited_role
-clinic_id -> clinics.id
+center_id -> centers.id
 invited_by -> users.id
 token (unique)
 status (pending/accepted/expired)
@@ -58,26 +58,26 @@ expires_at
 #### Sales & CRM
 ```
 sales_leads
-├── customer_user_id -> users.id
+├── client_user_id -> users.id
 ├── sales_user_id -> users.id  ⭐ Sales assignment
-├── clinic_id -> clinics.id
+├── center_id -> centers.id
 └── status (new/qualified/proposal/won/lost)
 
 sales_proposals
 ├── lead_id -> sales_leads.id
 ├── created_by -> users.id
-└── clinic_id -> clinics.id
+└── center_id -> centers.id
 
 chat_history
 ├── user_id -> users.id
-└── clinic_id -> clinics.id
+└── center_id -> centers.id
 ```
 
 #### Skin Analysis & AI
 ```
 skin_analyses (40 rows)
 ├── user_id (text/uuid) ⚠️ Mixed types
-├── clinic_id -> clinics.id
+├── center_id -> centers.id
 ├── sales_staff_id -> users.id
 ├── branch_id -> branches.id
 └── analysis_data (jsonb)
@@ -86,56 +86,56 @@ skin_analyses (40 rows)
 #### Appointments & Bookings
 ```
 appointments
-├── customer_id -> customers.id
+├── client_id -> clients.id
 ├── staff_id -> auth.users.id
-├── clinic_id -> clinics.id
+├── center_id -> centers.id
 └── invoice_id -> invoices.id
 
 bookings
-├── customer_id -> customers.id
-├── clinic_id -> clinics.id
+├── client_id -> clients.id
+├── center_id -> centers.id
 └── service_id -> services.id
 
-customers (separate from users)
-├── clinic_id -> clinics.id
+clients (separate from users)
+├── center_id -> centers.id
 └── created_by -> auth.users.id
 ```
 
-#### Treatment & Records
+#### Program & Records
 ```
-treatment_records
-├── customer_id -> customers.id
+program_records
+├── client_id -> clients.id
 ├── staff_id -> auth.users.id
-└── clinic_id -> clinics.id
+└── center_id -> centers.id
 
-treatments
-└── clinic_id -> clinics.id
+programs
+└── center_id -> centers.id
 ```
 
 ---
 
 ## 🔄 Complete Data Flow
 
-### Flow 1: **Invitation → User → Clinic Assignment**
+### Flow 1: **Invitation → User → Center Assignment**
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │ 1. Sales Staff Creates Invitation                              │
 │    POST /api/invitations                                        │
-│    ├── email: "customer@example.com"                           │
-│    ├── invited_role: "customer"                                │
-│    ├── clinic_id: [sales staff's clinic]                       │
+│    ├── email: "client@example.com"                             │
+│    ├── invited_role: "client"                                  │
+│    ├── center_id: [sales staff's center]                       │
 │    └── invited_by: [sales staff user_id]                       │
 └─────────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────────┐
-│ 2. Customer Receives Email with Token                          │
+│ 2. Client Receives Email with Token                            │
 │    GET /invitations/[token]                                     │
 │    └── Validates invitation                                     │
 └─────────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────────┐
-│ 3. Customer Accepts Invitation                                 │
+│ 3. Client Accepts Invitation                                   │
 │    POST /api/invitations/[token]/accept                        │
 │    ├── Creates auth.users (email, password)                    │
 │    └── Calls accept_invitation()                               │
@@ -144,15 +144,15 @@ treatments
 ┌─────────────────────────────────────────────────────────────────┐
 │ 4. Database Function: accept_invitation()                      │
 │    INSERT/UPDATE public.users SET                              │
-│    ├── role = "customer" ✅                                     │
-│    ├── clinic_id = [invitation.clinic_id] ✅                   │
+│    ├── role = "client" ✅                                       │
+│    ├── center_id = [invitation.center_id] ✅                   │
 │    ├── assigned_sales_user_id = [invitation.invited_by] ✅     │
 │    └── invitation.status = "accepted" ✅                        │
 └─────────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────────┐
-│ 5. Customer Now Belongs To                                     │
-│    ├── Clinic (multi-tenant isolation) 🏥                      │
+│ 5. Client Now Belongs To                                       │
+│    ├── Center (multi-tenant isolation) 🏥                      │
 │    ├── Sales Staff (for tracking & commission) 👤              │
 │    └── Ready to use system ✅                                   │
 └─────────────────────────────────────────────────────────────────┘
@@ -160,13 +160,13 @@ treatments
 
 ---
 
-### Flow 2: **Customer Journey → Sales Funnel**
+### Flow 2: **Client Journey → Sales Funnel**
 
 ```
-Customer Login
+Client Login
     ↓
 ┌─────────────────────────┐
-│ Customer Dashboard      │
+│ Client Dashboard        │
 │ /dashboard              │
 │ - View own analyses     │
 │ - Book appointments     │
@@ -185,10 +185,10 @@ Customer Login
 ┌─────────────────────────┐
 │ Sales Lead              │
 │ - lead_source: "ai_scan"│
-│ - customer_user_id ✅   │
+│ - client_user_id ✅     │
 │ - sales_user_id ✅      │
 │   (from assigned_sales) │
-│ - clinic_id ✅          │
+│ - center_id ✅          │
 └─────────────────────────┘
     ↓ (sales staff)
 ┌─────────────────────────┐
@@ -197,20 +197,20 @@ Customer Login
 │ - Linked to lead        │
 │ - Can send via email    │
 └─────────────────────────┘
-    ↓ (customer accepts)
+    ↓ (client accepts)
 ┌─────────────────────────┐
 │ Appointment/Booking     │
-│ - customer_id ✅        │
+│ - client_id ✅          │
 │ - staff_id ✅           │
-│ - clinic_id ✅          │
+│ - center_id ✅          │
 │ - Creates invoice       │
 └─────────────────────────┘
-    ↓ (after treatment)
+    ↓ (after program)
 ┌─────────────────────────┐
-│ Treatment Record        │
+│ Program Record          │
 │ - Progress notes        │
 │ - Before/after photos   │
-│ - clinic_id ✅          │
+│ - center_id ✅          │
 └─────────────────────────┘
 ```
 
@@ -221,7 +221,7 @@ Customer Login
 ### 1. **Sales Dashboard** (`/sales/dashboard`)
 
 **Primary Role**: `sales_staff`  
-**Also Access**: `clinic_admin`, `clinic_owner`, `super_admin`
+**Also Access**: `center_admin`, `center_owner`, `super_admin`
 
 **Data Sources**:
 ```typescript
@@ -242,7 +242,7 @@ Database Queries (via RLS):
 - Real-time metrics (calls, leads, proposals)
 - Conversion funnel visualization
 - AI-driven lead scoring
-- Customer assignment tracking
+- Client assignment tracking
 - Revenue per sales staff
 
 **RLS Policy**:
@@ -251,73 +251,73 @@ Database Queries (via RLS):
 users_select_sales_assigned_customers:
   is_sales_staff(auth.uid()) 
   AND assigned_sales_user_id = auth.uid()
-  AND clinic_id = get_user_clinic(auth.uid())
+  AND center_id = get_user_center(auth.uid())
 ```
 
 ---
 
-### 2. **Clinic Dashboard** (`/clinic/dashboard` → redirects to `/clinic/revenue`)
+### 2. **Center Dashboard** (`/centers/dashboard` → redirects to `/centers/revenue`)
 
-**Primary Role**: `clinic_owner`, `clinic_admin`  
+**Primary Role**: `center_owner`, `center_admin`  
 **Also Access**: `super_admin`
 
 **Data Sources**:
 ```typescript
 API Endpoints:
-├── /api/clinic/dashboard/stats      // Overall clinic metrics
-├── /api/clinic/analytics/revenue    // Revenue breakdown
-├── /api/clinic/analytics/treatments // Treatment statistics
-├── /api/clinic/analytics/staff-performance // Staff KPIs
-└── /api/clinic/analytics/customer-retention // Retention rates
+├── /api/center/dashboard/stats      // Overall center metrics
+├── /api/center/analytics/revenue    // Revenue breakdown
+├── /api/center/analytics/programs   // Program statistics
+├── /api/center/analytics/staff-performance // Staff KPIs
+└── /api/center/analytics/client-retention // Retention rates
 
 Database Queries:
-├── ALL users (WHERE clinic_id = current_user.clinic_id)
-├── ALL sales_leads (WHERE clinic_id = ...)
-├── ALL appointments (WHERE clinic_id = ...)
-├── ALL bookings (WHERE clinic_id = ...)
-├── ALL skin_analyses (WHERE clinic_id = ...)
-└── ALL treatment_records (WHERE clinic_id = ...)
+├── ALL users (WHERE center_id = current_user.center_id)
+├── ALL sales_leads (WHERE center_id = ...)
+├── ALL appointments (WHERE center_id = ...)
+├── ALL bookings (WHERE center_id = ...)
+├── ALL skin_analyses (WHERE center_id = ...)
+└── ALL program_records (WHERE center_id = ...)
 ```
 
 **Key Features**:
 - Revenue dashboard (primary)
 - Staff performance tracking
-- Customer retention analysis
-- Treatment analytics
+- Client retention analysis
+- Program analytics
 - Appointment management
 - Payment tracking
 
 **RLS Policy**:
 ```sql
--- Clinic admin sees all clinic data
-users_select_clinic_scope:
-  is_clinic_admin(auth.uid())
-  AND clinic_id = get_user_clinic(auth.uid())
+-- Center admin sees all center data
+users_select_center_scope:
+  is_center_admin(auth.uid())
+  AND center_id = get_user_center(auth.uid())
 ```
 
 ---
 
 ### 3. **Beautician Dashboard** (`/beautician/dashboard`)
 
-**Primary Role**: `clinic_staff`, `beautician`
+**Primary Role**: `center_staff`, `beautician`
 
 **Data Sources**:
 ```typescript
 API Endpoints:
 ├── /api/beautician/appointments  // Today's schedule
-├── /api/beautician/customers     // Assigned customers
-└── /api/beautician/treatments    // Treatment history
+├── /api/beautician/clients       // Assigned clients
+└── /api/beautician/programs      // Program history
 
 Database Queries:
 ├── appointments (WHERE staff_id = current_user)
-├── treatment_records (WHERE staff_id = current_user)
-└── customers (via appointments)
+├── program_records (WHERE staff_id = current_user)
+└── clients (via appointments)
 ```
 
 **Key Features**:
 - Daily appointment schedule
-- Customer treatment history
-- Treatment notes
+- Client program history
+- Program notes
 - Before/after photos
 
 ---
@@ -330,19 +330,19 @@ Database Queries:
 ```typescript
 API Endpoints:
 ├── /api/admin/analytics          // System-wide analytics
-├── /api/admin/revenue-analytics  // All clinics revenue
+├── /api/admin/revenue-analytics  // All centers revenue
 ├── /api/admin/ai-analytics       // AI usage stats
-└── /api/admin/clinics/performance // Clinic comparisons
+└── /api/admin/centers/performance // Center comparisons
 
 Database Queries:
-├── ALL clinics (no RLS filter)
+├── ALL centers (no RLS filter)
 ├── ALL users (no RLS filter)
 ├── ALL tables (super admin bypass)
 ```
 
 **Key Features**:
 - System-wide analytics
-- Multi-clinic comparison
+- Multi-center comparison
 - User management
 - Error monitoring
 - System health
@@ -381,14 +381,14 @@ User Login
 │ IF role = 'sales_staff'        │
 │   THEN show only:              │
 │   - own data                   │
-│   - assigned customers         │
-│   - same clinic data           │
+│   - assigned clients           │
+│   - same center data           │
 │                                │
-│ IF role = 'clinic_admin'       │
+│ IF role = 'center_admin'       │
 │   THEN show:                   │
-│   - all clinic data            │
-│   - all staff in clinic        │
-│   - all customers in clinic    │
+│   - all center data            │
+│   - all staff in center        │
+│   - all clients in center      │
 │                                │
 │ IF role = 'super_admin'        │
 │   THEN show:                   │
@@ -411,7 +411,7 @@ User Login
 
 ```
 1. Sales Staff: /sales/quick-scan
-   ├── Select/create customer
+   ├── Select/create client
    ├── Capture face images (front, left, right)
    └── POST /api/skin-analysis/gemini-analyze
 
@@ -419,26 +419,26 @@ User Login
    ├── 8-mode detection
    ├── Skin age calculation
    ├── Concerns identification
-   └── Treatment recommendations
+   └── Program recommendations
 
 3. Create Records
    ├── INSERT skin_analyses
-   │   ├── user_id = customer.id
+   │   ├── user_id = client.id
    │   ├── sales_staff_id = current_user.id
-   │   ├── clinic_id = current_user.clinic_id
+   │   ├── center_id = current_user.center_id
    │   └── analysis_data (jsonb)
    │
    └── INSERT/UPDATE sales_leads
-       ├── customer_user_id = customer.id
+       ├── client_user_id = client.id
        ├── sales_user_id = current_user.id
-       ├── clinic_id = current_user.clinic_id
+       ├── center_id = current_user.center_id
        ├── lead_source = "quick_scan"
        └── status = "new"
 
 4. Dashboard Updates
    ├── Sales Dashboard: +1 scan, +1 lead
-   ├── Clinic Dashboard: +1 analysis
-   └── Customer Profile: New analysis available
+   ├── Center Dashboard: +1 analysis
+   └── Client Profile: New analysis available
 ```
 
 ---
@@ -446,14 +446,14 @@ User Login
 ### Feature 2: **Appointment Booking**
 
 ```
-1. Customer/Sales: Book appointment
+1. Client/Sales: Book appointment
    └── POST /api/appointments
 
 2. Create Records
    ├── INSERT appointments
-   │   ├── customer_id
+   │   ├── client_id
    │   ├── staff_id (beautician)
-   │   ├── clinic_id ✅
+   │   ├── center_id ✅
    │   ├── service_id
    │   └── booking_date/time
    │
@@ -461,14 +461,14 @@ User Login
        └── invoice_id linked to appointment
 
 3. Notifications
-   ├── Email to customer (confirmation)
+   ├── Email to client (confirmation)
    ├── Email to staff (schedule update)
    └── Dashboard notification
 
 4. Dashboard Updates
-   ├── Clinic Dashboard: +1 booking
+   ├── Center Dashboard: +1 booking
    ├── Beautician Dashboard: +1 appointment
-   └── Customer Dashboard: Show upcoming
+   ├── Client Dashboard: Show upcoming
 ```
 
 ---
@@ -478,23 +478,23 @@ User Login
 ```
 1. Sales Staff creates proposal
    ├── Based on skin analysis
-   ├── Includes treatments
+   ├── Includes programs
    ├── Pricing and packages
    └── POST /api/sales/proposals
 
-2. Send to Customer
+2. Send to Client
    ├── Email with proposal link
    ├── /proposals/[token]
-   └── Customer can view/accept
+   └── Client can view/accept
 
-3. Customer Accepts
+3. Client Accepts
    ├── PUT /api/sales/proposals/[id]/accept
    ├── UPDATE sales_leads (status = "won")
    └── Can proceed to booking
 
 4. Dashboard Updates
    ├── Sales Dashboard: +1 proposal, +1 won
-   ├── Clinic Dashboard: +1 revenue
+   ├── Center Dashboard: +1 revenue
    └── Sales commission calculated
 ```
 
@@ -502,21 +502,21 @@ User Login
 
 ## 🎯 Data Consistency Rules
 
-### 1. **Clinic ID Propagation**
+### 1. **Center ID Propagation**
 ```
-✅ MUST have clinic_id:
-- users (for clinic staff & customers)
+✅ MUST have center_id:
+- users (for center staff & clients)
 - sales_leads
 - skin_analyses
 - appointments
 - bookings
-- treatment_records
+- program_records
 - invoices
 - payments
 
-⚠️ Optional clinic_id:
+⚠️ Optional center_id:
 - invitations (before accept)
-- customers (legacy table)
+- clients (legacy table)
 ```
 
 ### 2. **User Assignment Chain**
@@ -534,7 +534,7 @@ appointments.staff_id
 
 ### 3. **Multi-Tenant Isolation**
 ```
-WHERE clinic_id = get_user_clinic_id()
+WHERE center_id = get_user_center_id()
 
 Applied to:
 ✅ All SELECT queries
@@ -547,7 +547,7 @@ Applied to:
 
 ## 📈 Analytics Data Aggregation
 
-### Clinic-Level Analytics
+### Center-Level Analytics
 ```sql
 -- Revenue by period
 SELECT 
@@ -555,7 +555,7 @@ SELECT
   SUM(total_amount) as revenue,
   COUNT(*) as transaction_count
 FROM invoices
-WHERE clinic_id = :clinic_id
+WHERE center_id = :center_id
   AND status = 'paid'
 GROUP BY DATE_TRUNC('day', created_at)
 ORDER BY date DESC;
@@ -569,7 +569,7 @@ SELECT
   SUM(CASE WHEN sl.status = 'won' THEN sl.value ELSE 0 END) as revenue
 FROM users u
 LEFT JOIN sales_leads sl ON sl.sales_user_id = u.id
-WHERE u.clinic_id = :clinic_id
+WHERE u.center_id = :center_id
   AND u.role = 'sales_staff'
 GROUP BY u.id, u.email;
 ```
@@ -581,13 +581,13 @@ GROUP BY u.id, u.email;
 ### 1. **Indexes**
 ```sql
 -- Multi-tenant queries
-CREATE INDEX idx_users_clinic_id ON users(clinic_id);
-CREATE INDEX idx_sales_leads_clinic_id ON sales_leads(clinic_id);
-CREATE INDEX idx_appointments_clinic_id ON appointments(clinic_id);
+CREATE INDEX idx_users_center_id ON users(center_id);
+CREATE INDEX idx_sales_leads_center_id ON sales_leads(center_id);
+CREATE INDEX idx_appointments_center_id ON appointments(center_id);
 
 -- User lookups
 CREATE INDEX idx_users_assigned_sales ON users(assigned_sales_user_id);
-CREATE INDEX idx_sales_leads_customer ON sales_leads(customer_user_id);
+CREATE INDEX idx_sales_leads_client ON sales_leads(client_user_id);
 CREATE INDEX idx_sales_leads_sales_user ON sales_leads(sales_user_id);
 
 -- Status filters
@@ -615,8 +615,8 @@ skin_analyses.user_id = text (should be uuid)
 
 ### 2. **Duplicate Tables**
 ```
-customers vs users
-- customers: legacy table (27 columns)
+clients vs users
+- clients: legacy table (27 columns)
 - users: current table (98 columns)
 - 🔧 Recommend: Migrate to users only
 ```
@@ -635,7 +635,7 @@ skin_analyses.user_id (text) -/-> users.id (uuid)
 
 ### Short Term
 - [ ] Fix skin_analyses.user_id type
-- [ ] Migrate customers → users
+- [ ] Migrate clients → users
 - [ ] Add missing foreign keys
 - [ ] Create performance indexes
 
@@ -661,12 +661,12 @@ skin_analyses.user_id (text) -/-> users.id (uuid)
 - API Documentation (Swagger/OpenAPI)
 
 **Key Functions**:
-- `get_user_clinic_id()` - Get current user's clinic
-- `is_sales_staff()`, `is_clinic_admin()` - Role checks
+- `get_user_center_id()` - Get current user's center
+- `is_sales_staff()`, `is_center_admin()` - Role checks
 - `accept_invitation()` - Complete invitation flow
 
 ---
 
-**Last Updated**: December 26, 2025  
+**Last Updated**: January 13, 2026  
 **Maintained By**: Development Team  
 **Status**: ✅ Production Architecture

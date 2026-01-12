@@ -37,7 +37,7 @@ export interface HotLead {
   phone: string | null
 }
 
-export async function fetchHotLeadsForUser(userId: string, clinicId: string | null, limit = 20, offset = 0) {
+export async function fetchHotLeadsForUser(userId: string, centerId: string | null, limit = 20, offset = 0) {
   const safeLimit = Number.isFinite(limit) ? Math.min(Math.max(limit, 1), 200) : 20
   const safeOffset = Number.isFinite(offset) ? Math.max(offset, 0) : 0
   const supabase = await createServerClient()
@@ -50,8 +50,8 @@ export async function fetchHotLeadsForUser(userId: string, clinicId: string | nu
     .order('created_at', { ascending: false })
     .range(safeOffset, safeOffset + safeLimit - 1)
 
-  if (clinicId) {
-    leadsQuery = leadsQuery.eq('clinic_id', clinicId)
+  if (centerId) {
+    leadsQuery = leadsQuery.eq('center_id', centerId)
   }
 
   const { data: leads, error } = await leadsQuery

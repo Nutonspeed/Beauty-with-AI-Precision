@@ -1,8 +1,9 @@
-// Advanced AI Treatment Recommendations
-// ใช้ GPT-4 วิเคราะห์และแนะนำ treatment จริงๆ ไม่ใช่ rule-based
+// Advanced AI Program Recommendations
+// ใช้ GPT-4 วิเคราะห์และแนะนำ program จริงๆ ไม่ใช่ rule-based
 
 import { OpenAI } from 'openai';
 import { getOpenAIApiKey } from '@/lib/config/ai';
+import { Program, ProgramRecommendation } from '@/types/program';
 
 let openai: OpenAI | null = null;
 
@@ -12,8 +13,8 @@ function getOpenAIClient(): OpenAI {
   return openai;
 }
 
-interface TreatmentRecommendation {
-  treatment: string;
+interface LocalProgramRecommendation {
+  program: string;
   price: number;
   confidence: number;
   reasoning: string;
@@ -29,7 +30,7 @@ export class AdvancedProgramRecommender {
     skinAnalysis: any,
     budget: number,
     goals: string[]
-  ): Promise<Program[]> {
+  ): Promise<LocalProgramRecommendation[]> {
 
     const prompt = `
     คุณคือแพทย์ผิวหนัง AI ผู้เชี่ยวชาญ ให้คำแนะนำ program ที่เหมาะสม
@@ -39,7 +40,7 @@ export class AdvancedProgramRecommender {
     - เพศ: ${customerProfile.gender}
     - ประเภทผิว: ${customerProfile.skinType}
     - ปัญหาผิว: ${customerProfile.concerns?.join(', ')}
-    - การรักษาก่อนหน้า: ${customerProfile.previousTreatments?.join(', ')}
+    - การรักษาก่อนหน้า: ${customerProfile.previousPrograms?.join(', ')}
     - งบประมาณ: ${budget} บาท
     - เป้าหมาย: ${goals?.join(', ')}
 
@@ -57,7 +58,7 @@ export class AdvancedProgramRecommender {
     คืนค่าเป็น JSON array เท่านั้น:
     [
       {
-        "treatment": "ชื่อการรักษาภาษาไทย",
+        "program": "ชื่อการรักษาภาษาไทย",
         "price": ราคาเป็นตัวเลข,
         "confidence": 70-100,
         "reasoning": "เหตุผลทางการแพทย์",
@@ -97,13 +98,13 @@ export class AdvancedProgramRecommender {
     }
   }
 
-  private fallbackRecommendations(customerProfile: any, budget: number): TreatmentRecommendation[] {
+  private fallbackRecommendations(customerProfile: any, budget: number): LocalProgramRecommendation[] {
     // Enhanced fallback with medical reasoning
-    const recommendations: TreatmentRecommendation[] = [];
+    const recommendations: LocalProgramRecommendation[] = [];
 
     if (budget >= 8000 && customerProfile.concerns?.includes('wrinkles')) {
       recommendations.push({
-        treatment: "โบท็อกซ์ หน้าผาก",
+        program: "โบท็อกซ์ หน้าผาก",
         price: 8900,
         confidence: 85,
         reasoning: "โบท็อกซ์ช่วยยับยั้งการทำงานของกล้ามเนื้อที่ก่อให้เกิดริ้วรอย ผลลัพธ์อยู่ได้ 3-4 เดือน",

@@ -1,8 +1,8 @@
 /**
- * Treatment Planner
+ * Program Planner
  * Phase 2 Week 6-7 Task 6.2
  * 
- * AI-powered treatment plan generation based on skin analysis
+ * AI-powered program plan generation based on skin analysis
  */
 
 import { createServerClient } from '@/lib/supabase/server';
@@ -13,14 +13,14 @@ import { getOpenAIApiKey } from '@/lib/config/ai';
 // Types
 // =============================================
 
-export interface TreatmentPreferences {
+export interface ProgramPreferences {
   budget?: 'low' | 'medium' | 'high';
   timeCommitment?: 'minimal' | 'moderate' | 'intensive';
-  productPreference?: 'natural' | 'clinical' | 'any';
+  productPreference?: 'natural' | 'centeral' | 'any';
   sensitivity?: 'sensitive' | 'normal' | 'resistant';
 }
 
-export interface TreatmentStep {
+export interface ProgramStep {
   order: number;
   name: string;
   nameTh: string;
@@ -32,7 +32,7 @@ export interface TreatmentStep {
   productsUrlReference?: string;
 }
 
-export interface TreatmentPlan {
+export interface ProgramPlan {
   id?: string;
   analysisId: string;
   customerId: string;
@@ -49,9 +49,9 @@ export interface TreatmentPlan {
   reviewMilestones: string[]; // e.g., ["2 weeks", "4 weeks", "8 weeks"]
   
   // Steps
-  morningRoutine: TreatmentStep[];
-  eveningRoutine: TreatmentStep[];
-  weeklyTreatments: TreatmentStep[];
+  morningRoutine: ProgramStep[];
+  eveningRoutine: ProgramStep[];
+  weeklyPrograms: ProgramStep[];
   
   // Expectations
   expectedResults: string[];
@@ -98,17 +98,17 @@ function getOpenAIClient(): OpenAI {
 }
 
 // =============================================
-// Treatment Plan Generator
+// Program Plan Generator
 // =============================================
 
-export class TreatmentPlanner {
+export class ProgramPlanner {
   /**
-   * Generate treatment plan using AI
+   * Generate program plan using AI
    */
   async generatePlan(
     analysisData: AnalysisData,
-    preferences?: TreatmentPreferences
-  ): Promise<TreatmentPlan> {
+    preferences?: ProgramPreferences
+  ): Promise<ProgramPlan> {
     // Build prompt
     const prompt = this.buildPrompt(analysisData, preferences);
 
@@ -119,7 +119,7 @@ export class TreatmentPlanner {
         messages: [
           {
             role: 'system',
-            content: `You are an expert dermatologist and skincare specialist. Generate detailed, personalized treatment plans based on skin analysis results. Plans should be medically sound, practical, and tailored to the customer's needs and preferences. Always provide both English and Thai translations.`,
+            content: `You are an expert dermatologist and skincare specialist. Generate detailed, personalized program plans based on skin analysis results. Plans should be medically sound, practical, and tailored to the customer's needs and preferences. Always provide both English and Thai translations.`,
           },
           {
             role: 'user',
@@ -138,11 +138,11 @@ export class TreatmentPlanner {
 
       const aiPlan = JSON.parse(responseText);
 
-      // Transform AI response to TreatmentPlan structure
-      const treatmentPlan: TreatmentPlan = {
+      // Transform AI response to ProgramPlan structure
+      const programPlan: ProgramPlan = {
         analysisId: analysisData.id,
         customerId: '', // Will be set by caller
-        title: aiPlan.title || 'Personalized Treatment Plan',
+        title: aiPlan.title || 'Personalized Program Plan',
         titleTh: aiPlan.titleTh || 'แผนการรักษาเฉพาะบุคคล',
         summary: aiPlan.summary || '',
         summaryTh: aiPlan.summaryTh || '',
@@ -151,7 +151,7 @@ export class TreatmentPlanner {
         reviewMilestones: aiPlan.reviewMilestones || ['2 weeks', '4 weeks', '8 weeks'],
         morningRoutine: aiPlan.morningRoutine || [],
         eveningRoutine: aiPlan.eveningRoutine || [],
-        weeklyTreatments: aiPlan.weeklyTreatments || [],
+        weeklyPrograms: aiPlan.weeklyPrograms || [],
         expectedResults: aiPlan.expectedResults || [],
         expectedResultsTh: aiPlan.expectedResultsTh || [],
         warnings: aiPlan.warnings || [],
@@ -165,9 +165,9 @@ export class TreatmentPlanner {
         generatedBy: 'ai',
       };
 
-      return treatmentPlan;
+      return programPlan;
     } catch (error) {
-      console.error('Failed to generate treatment plan with AI:', error);
+      console.error('Failed to generate program plan with AI:', error);
       
       // Fallback to template-based plan
       return this.generateTemplatePlan(analysisData, preferences);
@@ -179,7 +179,7 @@ export class TreatmentPlanner {
    */
   private buildPrompt(
     analysisData: AnalysisData,
-    preferences?: TreatmentPreferences
+    preferences?: ProgramPreferences
   ): string {
     const concerns: string[] = [];
     
@@ -200,7 +200,7 @@ export class TreatmentPlanner {
     }
 
     return `
-Generate a personalized skincare treatment plan based on the following analysis:
+Generate a personalized skincare program plan based on the following analysis:
 
 **Skin Analysis:**
 - Overall Score: ${analysisData.overallScore}/100
@@ -214,7 +214,7 @@ Generate a personalized skincare treatment plan based on the following analysis:
 - Product Preference: ${preferences?.productPreference || 'any'}
 - Skin Sensitivity: ${preferences?.sensitivity || 'normal'}
 
-Please provide a comprehensive treatment plan in JSON format with the following structure:
+Please provide a comprehensive program plan in JSON format with the following structure:
 {
   "title": "Brief plan title in English",
   "titleTh": "Brief plan title in Thai",
@@ -236,7 +236,7 @@ Please provide a comprehensive treatment plan in JSON format with the following 
     }
   ],
   "eveningRoutine": [/* Similar structure */],
-  "weeklyTreatments": [/* Similar structure */],
+  "weeklyPrograms": [/* Similar structure */],
   "expectedResults": ["Array of expected outcomes in English"],
   "expectedResultsTh": ["Array of expected outcomes in Thai"],
   "warnings": ["Array of warnings/precautions in English"],
@@ -280,8 +280,8 @@ Focus on:
    */
   private generateTemplatePlan(
     analysisData: AnalysisData,
-    preferences?: TreatmentPreferences
-  ): TreatmentPlan {
+    preferences?: ProgramPreferences
+  ): ProgramPlan {
     const budget = preferences?.budget || 'medium';
     
     return {
@@ -346,9 +346,9 @@ Focus on:
         },
         {
           order: 2,
-          name: 'Treatment Serum',
+          name: 'Program Serum',
           nameTh: 'เซรั่มรักษา',
-          description: 'Apply targeted treatment serum',
+          description: 'Apply targeted program serum',
           descriptionTh: 'ทาเซรั่มรักษาเฉพาะจุด',
           frequency: 'Daily',
           frequencyTh: 'ทุกวัน',
@@ -363,7 +363,7 @@ Focus on:
           frequencyTh: 'ทุกวัน',
         },
       ],
-      weeklyTreatments: [
+      weeklyPrograms: [
         {
           order: 1,
           name: 'Exfoliation',
@@ -407,13 +407,13 @@ Focus on:
   }
 
   /**
-   * Save treatment plan to database
+   * Save program plan to database
    */
-  async savePlan(plan: TreatmentPlan): Promise<string> {
+  async savePlan(plan: ProgramPlan): Promise<string> {
     const supabase = await createServerClient();
 
     const { data, error } = await supabase
-      .from('treatment_plans')
+      .from('program_plans')
       .insert({
         user_id: plan.customerId,
         analysis_id: plan.analysisId,
@@ -426,7 +426,7 @@ Focus on:
         review_milestones: plan.reviewMilestones,
         morning_routine: plan.morningRoutine,
         evening_routine: plan.eveningRoutine,
-        weekly_treatments: plan.weeklyTreatments,
+        weekly_programs: plan.weeklyPrograms,
         expected_results: plan.expectedResults,
         expected_results_th: plan.expectedResultsTh,
         warnings: plan.warnings,
@@ -439,7 +439,7 @@ Focus on:
       .single();
 
     if (error) {
-      throw new Error(`Failed to save treatment plan: ${error.message}`);
+      throw new Error(`Failed to save program plan: ${error.message}`);
     }
 
     return data.id;
@@ -450,6 +450,6 @@ Focus on:
 // Factory Function
 // =============================================
 
-export function createTreatmentPlanner(): TreatmentPlanner {
-  return new TreatmentPlanner();
+export function createProgramPlanner(): ProgramPlanner {
+  return new ProgramPlanner();
 }

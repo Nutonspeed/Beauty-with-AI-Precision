@@ -41,7 +41,7 @@ export interface SkinAnalysisResult {
     product: string;
     reason: string;
   }>;
-  treatmentPlan?: string;
+  programPlan?: string;
   confidence: number;
 }
 
@@ -63,12 +63,12 @@ const SKIN_ANALYSIS_PROMPT = `คุณเป็นผู้เชี่ยว�
   },
   "recommendations": [
     {
-      "category": "cleanser" | "serum" | "moisturizer" | "treatment",
+      "category": "cleanser" | "serum" | "moisturizer" | "program",
       "product": "ชื่อผลิตภัณฑ์หรือส่วนผสมที่แนะนำ",
       "reason": "เหตุผลที่แนะนำ"
     }
   ],
-  "treatmentPlan": "แผนการรักษาที่แนะนำ",
+  "programPlan": "แผนการรักษาที่แนะนำ",
   "confidence": 0-1
 }
 
@@ -77,7 +77,7 @@ const SKIN_ANALYSIS_PROMPT = `คุณเป็นผู้เชี่ยว�
 2. ปัญหาผิว (Concerns): ตรวจหาทุกปัญหาที่มองเห็น
 3. ระดับความรุนแรง (Severity): ให้คะแนน 1-10 (1=เล็กน้อย, 10=รุนแรงมาก)
 4. คำแนะนำ (Recommendations): แนะนำผลิตภัณฑ์และส่วนผสมที่เหมาะสม
-5. แผนการรักษา (Treatment Plan): แนะนำขั้นตอนการดูแลผิว
+5. แผนการรักษา (Program Plan): แนะนำขั้นตอนการดูแลผิว
 
 ตอบเป็น JSON เท่านั้น ไม่ต้องมีข้อความอธิบายเพิ่มเติม`;
 

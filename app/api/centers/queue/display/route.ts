@@ -2,26 +2,26 @@ import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 
 /**
- * GET /api/clinic/queue/display
+ * GET /api/center/queue/display
  * 
  * Returns current queue status for display screen
- * - Current serving patient
- * - Next 3-5 patients in queue
+ * - Current serving client
+ * - Next 3-5 clients in queue
  * - Updated timestamp
  * 
  * Query params:
- * - clinicId: string (required)
- * - limit: number (default: 3) - how many next patients to show
+ * - centerId: string (required)
+ * - limit: number (default: 3) - how many next clients to show
  */
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
-    const clinicId = searchParams.get("clinicId")
+    const centerId = searchParams.get("centerId")
     const limit = parseInt(searchParams.get("limit") || "3", 10)
 
-    if (!clinicId) {
+    if (!centerId) {
       return NextResponse.json(
-        { error: "clinicId is required" },
+        { error: "centerId is required" },
         { status: 400 }
       )
     }
@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
       }
     )
 
-    // Get current serving patient (status = 'serving' or 'called')
+    // Get current serving client (status = 'serving' or 'called')
     const { data: servingData, error: servingError } = await supabaseAdmin
       .from("bookings")
       .select(
@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
         id,
         queue_number,
         booking_time,
-        treatment_type,
+        program_type,
         status,
         check_in_time,
         customer_name,
@@ -55,14 +55,14 @@ export async function GET(request: NextRequest) {
           full_name,
           phone
         ),
-        clinic_staff (
+        center_staff (
           id,
           full_name,
           role
         )
       `
       )
-      .eq("clinic_id", clinicId)
+      .eq("center_id", centerId)
       .eq("booking_date", new Date().toISOString().split("T")[0])
       .in("status", ["serving", "called"])
       .order("booking_time", { ascending: true })
@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
       console.error("[queue/display] Error fetching serving:", servingError)
     }
 
-    // Get next patients in queue (status = 'waiting' or 'checked_in')
+    // Get next clients in queue (status = 'waiting' or 'checked_in')
     const { data: nextData, error: nextError } = await supabaseAdmin
       .from("bookings")
       .select(
@@ -81,7 +81,7 @@ export async function GET(request: NextRequest) {
         id,
         queue_number,
         booking_time,
-        treatment_type,
+        program_type,
         status,
         check_in_time,
         customer_name,
@@ -92,7 +92,7 @@ export async function GET(request: NextRequest) {
         )
       `
       )
-      .eq("clinic_id", clinicId)
+      .eq("center_id", centerId)
       .eq("booking_date", new Date().toISOString().split("T")[0])
       .in("status", ["waiting", "checked_in"])
       .order("queue_number", { ascending: true })
@@ -107,16 +107,16 @@ export async function GET(request: NextRequest) {
     }
 
     // Calculate estimated wait times
-    const AVERAGE_SERVICE_TIME = 15 // minutes per patient
+    const AVERAGE_SERVICE_TIME = 15 // minutes per client
     const nextWithEstimates = (nextData || []).map((booking: any, index) => {
       const estimatedWait = (index + 1) * AVERAGE_SERVICE_TIME
       const customer = Array.isArray(booking.customers) ? booking.customers[0] : booking.customers
       return {
         id: booking.id,
         queueNumber: booking.queue_number || `Q-${booking.id.slice(0, 6)}`,
-        patientName: customer?.full_name || booking.customer_name || "ลูกค้า",
+        clientName: customer?.full_name || booking.customer_name || "ลูกค้า",
         status: booking.status,
-        treatmentType: booking.treatment_type,
+        programType: booking.program_type,
         estimatedWait,
         checkInTime: booking.check_in_time,
       }
@@ -128,15 +128,15 @@ export async function GET(request: NextRequest) {
           const customer = Array.isArray((servingData as any).customers) 
             ? (servingData as any).customers[0] 
             : (servingData as any).customers
-          const staff = Array.isArray((servingData as any).clinic_staff) 
-            ? (servingData as any).clinic_staff[0] 
-            : (servingData as any).clinic_staff
+          const staff = Array.isArray((servingData as any).center_staff) 
+            ? (servingData as any).center_staff[0] 
+            : (servingData as any).center_staff
           return {
             id: servingData.id,
             queueNumber: servingData.queue_number || `Q-${servingData.id.slice(0, 6)}`,
-            patientName: customer?.full_name || servingData.customer_name || "ลูกค้า",
+            clientName: customer?.full_name || servingData.customer_name || "ลูกค้า",
             status: servingData.status,
-            treatmentType: servingData.treatment_type,
+            programType: servingData.program_type,
             room: (servingData as any).room_number || "ห้อง 1", // Default to room 1 if not assigned
             doctor: staff?.full_name || "แพทย์",
             checkInTime: servingData.check_in_time,
@@ -148,7 +148,7 @@ export async function GET(request: NextRequest) {
     const { data: statsData } = await supabaseAdmin
       .from("bookings")
       .select("status", { count: "exact" })
-      .eq("clinic_id", clinicId)
+      .eq("center_id", centerId)
       .eq("booking_date", new Date().toISOString().split("T")[0])
       .in("status", ["waiting", "checked_in", "serving", "called"])
 

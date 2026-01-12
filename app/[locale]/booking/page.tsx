@@ -223,7 +223,7 @@ export default function BookingPage() {
               transition={{ delay: 0.4, duration: 1 }}
               className="text-xl text-slate-500 font-light tracking-widest max-w-2xl mx-auto italic leading-relaxed"
             >
-              Synchronize your aesthetic transformation cycle with our precision aesthetic nodes.
+              Synchronize your aesthetic transformation cycle with our precision center nodes.
             </motion.p>
           </div>
 
@@ -318,7 +318,7 @@ export default function BookingPage() {
                   />
                 </motion.div>
 
-                {/* Customer Information Interface */}
+                {/* Client Information Interface */}
                 <motion.div
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -329,9 +329,9 @@ export default function BookingPage() {
                     <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
                       <CardTitle className="text-3xl font-bold text-white tracking-tight italic flex items-center gap-4">
                         <User className="h-8 w-8 text-pink-500" />
-                        {t('booking.customerInfo')}
+                        {t('booking.clientInfo' as any) || t('booking.customerInfo')}
                       </CardTitle>
-                      <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Initialize diagnostic credential binding</CardDescription>
+                      <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Initialize aesthetic credential binding</CardDescription>
                     </CardHeader>
                     <CardContent className="p-10 lg:p-12 space-y-8">
                       <div className="grid gap-8 md:grid-cols-2">

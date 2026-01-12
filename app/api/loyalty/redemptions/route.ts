@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { withClinicAuth } from '@/lib/auth/middleware';
+import { withCenterAuth } from '@/lib/auth/middleware';
 
 function getSupabaseClient() {
   return createClient(
@@ -11,27 +11,27 @@ function getSupabaseClient() {
 
 /**
  * GET /api/loyalty/redemptions
- * List reward redemptions for beauty clinic customers
+ * List reward redemptions for beauty center customers
  * 
  * Query parameters:
- * - clinic_id (required): Clinic ID
+ * - center_id (required): Center ID
  * - customer_id (optional): Filter by customer
  * - reward_id (optional): Filter by reward
  * - status (optional): Filter by status
  * - limit (optional): Limit results (default 100)
  */
-export const GET = withClinicAuth(async (request: NextRequest) => {
+export const GET = withCenterAuth(async (request: NextRequest) => {
   try {
     const { searchParams } = new URL(request.url);
-    const clinic_id = searchParams.get('clinic_id');
+    const center_id = searchParams.get('center_id');
     const customer_id = searchParams.get('customer_id');
     const reward_id = searchParams.get('reward_id');
     const status = searchParams.get('status');
     const limit = searchParams.get('limit');
 
-    if (!clinic_id) {
+    if (!center_id) {
       return NextResponse.json(
-        { error: 'clinic_id is required' },
+        { error: 'center_id is required' },
         { status: 400 }
       );
     }
@@ -45,7 +45,7 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
         reward:rewards_catalog(id, reward_name, reward_type, reward_value),
         branch:branches(id, branch_name)
       `)
-      .eq('clinic_id', clinic_id);
+      .eq('center_id', center_id);
 
     if (customer_id) {
       query = query.eq('customer_id', customer_id);

@@ -13,18 +13,18 @@ function getSupabaseClient() {
  * List auto-reply templates
  * 
  * Query parameters:
- * - clinic_id (required): Clinic ID
+ * - center_id (required): Center ID
  * - is_active (optional): Filter by active status
  */
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const clinic_id = searchParams.get('clinic_id');
+    const center_id = searchParams.get('center_id');
     const is_active = searchParams.get('is_active');
 
-    if (!clinic_id) {
+    if (!center_id) {
       return NextResponse.json(
-        { error: 'clinic_id is required' },
+        { error: 'center_id is required' },
         { status: 400 }
       );
     }
@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
     let query = supabaseClient
       .from('chat_auto_replies')
       .select('*')
-      .eq('clinic_id', clinic_id)
+      .eq('center_id', center_id)
       .order('priority', { ascending: false });
 
     if (is_active !== null) {
@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
  * Create a new auto-reply template
  * 
  * Body:
- * - clinic_id (required): Clinic ID
+ * - center_id (required): Center ID
  * - trigger_keywords (required): Array of keywords
  * - reply_message (required): Auto-reply message
  * - trigger_pattern (optional): Regex pattern
@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const {
-      clinic_id,
+      center_id,
       trigger_keywords,
       reply_message,
       trigger_pattern,
@@ -86,9 +86,9 @@ export async function POST(request: NextRequest) {
       is_active = true,
     } = body;
 
-    if (!clinic_id || !trigger_keywords || !reply_message) {
+    if (!center_id || !trigger_keywords || !reply_message) {
       return NextResponse.json(
-        { error: 'clinic_id, trigger_keywords, and reply_message are required' },
+        { error: 'center_id, trigger_keywords, and reply_message are required' },
         { status: 400 }
       );
     }
@@ -104,7 +104,7 @@ export async function POST(request: NextRequest) {
     const { data, error } = await supabaseClient
       .from('chat_auto_replies')
       .insert({
-        clinic_id,
+        center_id,
         trigger_keywords,
         reply_message,
         trigger_pattern,

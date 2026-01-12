@@ -15,11 +15,11 @@ import { QueueEntry } from '@/lib/queue-manager';
 
 interface CustomerQueueTicketProps {
   centerId: string;
-  customerId: string;
+  clientId: string;
 }
 
-export function CustomerQueueTicket({ centerId, customerId }: CustomerQueueTicketProps) {
-  const { getEntryByCustomerId, getPosition, entries } = useQueue({
+export function CustomerQueueTicket({ centerId, clientId }: CustomerQueueTicketProps) {
+  const { getEntryByClientId, getPosition, entries } = useQueue({
     centerId,
     enabled: true
   });
@@ -28,13 +28,13 @@ export function CustomerQueueTicket({ centerId, customerId }: CustomerQueueTicke
   const [position, setPosition] = useState<number>(-1);
 
   useEffect(() => {
-    const customerEntry = getEntryByCustomerId(customerId);
+    const customerEntry = getEntryByClientId(clientId);
     setEntry(customerEntry);
 
     if (customerEntry) {
       setPosition(getPosition(customerEntry.id));
     }
-  }, [customerId, entries, getEntryByCustomerId, getPosition]);
+  }, [clientId, entries, getEntryByClientId, getPosition]);
 
   if (!entry) {
     return (

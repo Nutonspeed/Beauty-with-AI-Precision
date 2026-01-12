@@ -35,7 +35,7 @@ export async function GET(
     // Get sales staff info
     const { data: salesStaff, error: staffError } = await supabase
       .from('sales_staff')
-      .select('id, role, clinic_id')
+      .select('id, role, center_id')
       .eq('user_id', userId)
       .single()
 
@@ -51,7 +51,7 @@ export async function GET(
       .from('leads')
       .select(`
         *,
-        clinic:clinics!clinic_id (
+        center:centers!center_id (
           id,
           name,
           logo_url,
@@ -88,12 +88,12 @@ export async function GET(
       )
     }
 
-    // Check permission: owner, clinic admin, or super admin
+    // Check permission: owner, center admin, or super admin
     const staffRole = normalizeRole(salesStaff.role)
     const canView = 
       lead.sales_staff_id === salesStaff.id ||
       staffRole === 'super_admin' ||
-      (staffRole === 'clinic_admin' && lead.clinic_id === salesStaff.clinic_id)
+      (staffRole === 'center_admin' && lead.center_id === salesStaff.center_id)
 
     if (!canView) {
       return NextResponse.json(
@@ -146,7 +146,7 @@ export async function PATCH(
     // Get sales staff info
     const { data: salesStaff, error: staffError } = await supabase
       .from('sales_staff')
-      .select('id, role, clinic_id')
+      .select('id, role, center_id')
       .eq('user_id', userId)
       .single()
 
@@ -176,7 +176,7 @@ export async function PATCH(
     const canEdit = 
       existingLead.sales_staff_id === salesStaff.id ||
       staffRole2 === 'super_admin' ||
-      (staffRole2 === 'clinic_admin' && existingLead.clinic_id === salesStaff.clinic_id)
+      (staffRole2 === 'center_admin' && existingLead.center_id === salesStaff.center_id)
 
     if (!canEdit) {
       return NextResponse.json(
@@ -195,7 +195,7 @@ export async function PATCH(
       status,
       follow_up_date,
       next_action,
-      interested_treatments,
+      interested_programs,
       budget_range,
       notes,
       lead_score,
@@ -214,7 +214,7 @@ export async function PATCH(
     if (status !== undefined) updates.status = status
     if (follow_up_date !== undefined) updates.follow_up_date = follow_up_date
     if (next_action !== undefined) updates.next_action = next_action
-    if (interested_treatments !== undefined) updates.interested_treatments = interested_treatments
+    if (interested_programs !== undefined) updates.interested_programs = interested_programs
     if (budget_range !== undefined) updates.budget_range = budget_range
     if (notes !== undefined) updates.notes = notes
     if (lead_score !== undefined) updates.lead_score = Math.max(0, Math.min(100, lead_score))
@@ -244,7 +244,7 @@ export async function PATCH(
       .eq('id', id)
       .select(`
         *,
-        clinic:clinics!clinic_id (
+        center:centers!center_id (
           id,
           name
         ),
@@ -305,7 +305,7 @@ export async function DELETE(
     // Get sales staff info
     const { data: salesStaff, error: staffError } = await supabase
       .from('sales_staff')
-      .select('id, role, clinic_id')
+      .select('id, role, center_id')
       .eq('user_id', userId)
       .single()
 
@@ -319,7 +319,7 @@ export async function DELETE(
     // Fetch existing lead
     const { data: existingLead, error: fetchError } = await supabase
       .from('leads')
-      .select('sales_staff_id, clinic_id')
+      .select('sales_staff_id, center_id')
       .eq('id', id)
       .single()
 
@@ -334,7 +334,7 @@ export async function DELETE(
     const staffRole3 = normalizeRole(salesStaff.role)
     const canDelete = 
       staffRole3 === 'super_admin' ||
-      (staffRole3 === 'clinic_admin' && existingLead.clinic_id === salesStaff.clinic_id)
+      (staffRole3 === 'center_admin' && existingLead.center_id === salesStaff.center_id)
 
     if (!canDelete) {
       return NextResponse.json(

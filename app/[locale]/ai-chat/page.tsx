@@ -29,7 +29,7 @@ export default function AIChatPage() {
 
   const suggestedQuestions = [
     t('aiChat.suggestions.sales'),
-    t('aiChat.suggestions.customers'),
+    t('aiChat.suggestions.clients' as any) || t('aiChat.suggestions.customers'),
     t('aiChat.suggestions.programs'),
     t('aiChat.suggestions.staff')
   ]
@@ -85,7 +85,7 @@ export default function AIChatPage() {
               transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
               className="text-4xl md:text-6xl font-bold tracking-tight text-white leading-tight italic"
             >
-              {t('aiChat.title')}
+              Aesthetic AI Advisor
             </motion.h1>
             
             <motion.p 
@@ -94,7 +94,7 @@ export default function AIChatPage() {
               transition={{ delay: 0.4, duration: 1 }}
               className="text-slate-400 max-w-2xl mx-auto text-lg font-light leading-relaxed tracking-wide italic"
             >
-              {t('aiChat.description')}
+              Deploy our neural-driven advisor node to orchestrate your aesthetic journey with precision.
             </motion.p>
           </div>
 

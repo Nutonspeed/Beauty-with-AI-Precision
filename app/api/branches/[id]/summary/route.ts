@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { withClinicAuth } from '@/lib/auth/middleware';
+import { withCenterAuth } from '@/lib/auth/middleware';
 
 /**
  * GET /api/branches/[id]/summary
  * Get comprehensive branch summary including inventory, staff, services, and revenue
  */
-export const GET = withClinicAuth(async (req: NextRequest, user: any) => {
+export const GET = withCenterAuth(async (req: NextRequest, user: any) => {
   try {
     const id = req.nextUrl.pathname.split('/').pop() || '';
 

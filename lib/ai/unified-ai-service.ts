@@ -77,13 +77,13 @@ Analyze the image for these 8 VISIA metrics (score 0-100, where 100 is best):
 8. Hydration - Moisture level
 
 Identify any concerns with severity (mild/moderate/severe) and confidence (0-1).
-Provide 3-5 personalized treatment recommendations.
+Provide 3-5 personalized program recommendations.
 
 Return ONLY valid JSON in this exact format:
 {
   "concerns": [{"type": "acne", "severity": "mild", "confidence": 0.85, "location": "forehead", "description": "Minor breakout"}],
   "visiaScores": {"wrinkles": 85, "spots": 78, "pores": 72, "texture": 80, "evenness": 75, "firmness": 82, "radiance": 70, "hydration": 68},
-  "recommendations": ["Use SPF 50 daily", "Consider retinol treatment"],
+  "recommendations": ["Use SPF 50 daily", "Consider retinol program"],
   "overallScore": 76
 }`
 
@@ -301,7 +301,7 @@ function generateDemoResult(startTime: number): AnalysisResult {
         'Apply SPF 50+ sunscreen daily for UV protection',
         'Use vitamin C serum in the morning for brightness',
         'Incorporate hyaluronic acid for hydration',
-        'Consider retinol treatment 2-3x weekly',
+        'Consider retinol program 2-3x weekly',
         'Stay hydrated and get adequate sleep'
       ],
       overallScore: 76

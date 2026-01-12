@@ -38,7 +38,7 @@ export class AuditMiddleware {
 
       // Extract user and session info
       const userId = await this.extractUserId(request)
-      const clinicId = await this.extractClinicId(request)
+      const centerId = await this.extractCenterId(request)
       const sessionId = await this.extractSessionId(request)
 
       // Get request metadata
@@ -56,7 +56,7 @@ export class AuditMiddleware {
           action: method.toLowerCase(),
           resource: 'api_request',
           userId,
-          clinicId,
+          centerId,
           sessionId,
           details: {
             path,
@@ -83,7 +83,7 @@ export class AuditMiddleware {
           action: 'api_response',
           resource: 'api_request',
           userId,
-          clinicId,
+          centerId,
           sessionId,
           details: {
             path,
@@ -110,7 +110,7 @@ export class AuditMiddleware {
           action: 'api_error',
           resource: 'api_request',
           userId,
-          clinicId,
+          centerId,
           sessionId,
           details: {
             path,
@@ -163,16 +163,16 @@ export class AuditMiddleware {
     }
   }
 
-  // Extract clinic ID from request
-  private async extractClinicId(request: NextRequest): Promise<string | undefined> {
+  // Extract center ID from request
+  private async extractCenterId(request: NextRequest): Promise<string | undefined> {
     try {
-      // Try to get clinic from headers
-      const clinicHeader = request.headers.get('x-clinic-id')
-      if (clinicHeader) {
-        return clinicHeader
+      // Try to get center from headers
+      const centerHeader = request.headers.get('x-center-id')
+      if (centerHeader) {
+        return centerHeader
       }
 
-      // Try to get clinic from user session
+      // Try to get center from user session
       // Implementation depends on your auth system
       return undefined
     } catch (error) {

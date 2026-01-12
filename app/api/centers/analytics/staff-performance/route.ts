@@ -1,7 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server"
 import { NextRequest, NextResponse } from "next/server"
 
-// GET /api/clinic/analytics/staff-performance - Staff performance metrics
+// GET /api/center/analytics/staff-performance - Staff performance metrics
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createServerClient()
@@ -22,8 +22,8 @@ export async function GET(request: NextRequest) {
 
     // Fetch active staff
     const { data: staff, error: staffError } = await supabase
-      .from("clinic_staff")
-      .select("id, full_name, role, rating, total_appointments, total_patients, email")
+      .from("center_staff")
+      .select("id, full_name, role, rating, total_appointments, total_clients, email")
       .eq("status", "active")
 
     if (staffError) {
@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
         // Adjust the query based on your actual schema
         const { data: bookings } = await supabase
           .from("bookings")
-          .select("id, booking_date, payment_amount, payment_status, treatment_type")
+          .select("id, booking_date, payment_amount, payment_status, program_type")
           .gte("booking_date", startDate)
           .lte("booking_date", endDate)
         // .eq('staff_id', member.id) // Uncomment if you have staff_id in bookings
@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
           rating: member.rating || 0,
           appointments: appointmentsInPeriod,
           totalAppointments: member.total_appointments || 0,
-          totalPatients: member.total_patients || 0,
+          totalClients: member.total_clients || 0,
           revenue,
           averageRevenuePerAppointment: appointmentsInPeriod > 0 ? revenue / appointmentsInPeriod : 0,
           email: member.email,
@@ -111,7 +111,7 @@ export async function GET(request: NextRequest) {
       },
     })
   } catch (error) {
-    console.error("Error in GET /api/clinic/analytics/staff-performance:", error)
+    console.error("Error in GET /api/center/analytics/staff-performance:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

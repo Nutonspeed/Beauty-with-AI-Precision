@@ -1,4 +1,4 @@
-# 🚀 Vercel Deployment Guide - ClinicIQ
+# 🚀 Vercel Deployment Guide - CenterIQ AI
 
 **Quick Setup:** Deploy to production ใน 15 นาที
 
@@ -130,7 +130,7 @@ NEXT_PUBLIC_ENABLE_MARKETING_CAMPAIGNS=true
 #### **🔧 Other Settings:**
 ```env
 NODE_ENV=production
-AI_SERVICE_URL=https://ai-service.cliniciq.app
+AI_SERVICE_URL=https://ai-service.centeriq.app
 API_RATE_LIMIT=100
 MAX_FILE_SIZE_MB=10
 ALLOWED_FILE_TYPES=image/jpeg,image/png,image/webp
@@ -146,12 +146,12 @@ ALLOWED_FILE_TYPES=image/jpeg,image/png,image/webp
 
 ---
 
-## 🔄 **After First Deployment**
+## After First Deployment
 
-### **1. Custom Domain Setup**
+### 1. Custom Domain Setup
 
 1. ไปที่ **Project Settings > Domains**
-2. เพิ่ม domain: `www.cliniciq.com` (ตัวอย่าง)
+2. เพิ่ม domain: `www.centeriq.app` (ตัวอย่าง)
 3. Update DNS records:
    ```
    Type: CNAME
@@ -160,20 +160,20 @@ ALLOWED_FILE_TYPES=image/jpeg,image/png,image/webp
    ```
 4. รอ DNS propagate (5-60 นาที)
 
-### **2. Update Environment Variables**
+### 2. Update Environment Variables
 
 อัปเดต URLs ให้ตรงกับ domain จริง:
 ```env
-NEXT_PUBLIC_APP_URL=https://www.cliniciq.com
-NEXT_PUBLIC_API_URL=https://www.cliniciq.com/api
-NEXT_PUBLIC_SITE_URL=https://www.cliniciq.com
+NEXT_PUBLIC_APP_URL=https://www.centeriq.app
+NEXT_PUBLIC_API_URL=https://www.centeriq.app/api
+NEXT_PUBLIC_SITE_URL=https://www.centeriq.app
 ```
 
-### **3. Stripe Webhook Setup**
+### 3. Stripe Webhook Setup
 
 1. ไปที่ https://dashboard.stripe.com/webhooks
 2. กด **Add endpoint**
-3. URL: `https://www.cliniciq.com/api/webhooks/stripe`
+3. URL: `https://www.centeriq.app/api/webhooks/stripe`
 4. Select events:
    - `payment_intent.succeeded`
    - `payment_intent.payment_failed`

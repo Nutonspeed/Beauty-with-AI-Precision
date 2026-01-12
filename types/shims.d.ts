@@ -1,9 +1,9 @@
-declare class AdvancedTreatmentRecommender {
+declare class AdvancedProgramRecommender {
   constructor();
   recommend(input: any): any;
-  recommendTreatments?(input: any): any;
+  recommendPrograms?(input: any): any;
 }
 
-declare module 'AdvancedTreatmentRecommender' {
-  export = AdvancedTreatmentRecommender;
+declare module 'AdvancedProgramRecommender' {
+  export = AdvancedProgramRecommender;
 }

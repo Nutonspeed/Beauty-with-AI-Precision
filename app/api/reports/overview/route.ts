@@ -13,10 +13,10 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    // Check if user has access (admin, clinic_staff, sales_staff)
+    // Check if user has access (admin, center_staff, sales_staff)
     const { data: userProfile } = await supabase.from("users").select("role").eq("id", session.user.id).single()
 
-    if (!["admin", "clinic_staff", "sales_staff"].includes(userProfile?.role || "")) {
+    if (!["admin", "center_staff", "sales_staff"].includes(userProfile?.role || "")) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
@@ -85,10 +85,10 @@ export async function GET(request: NextRequest) {
 
     const conversionRate = totalBookings ? Math.round(((completedBookings || 0) / totalBookings) * 100) : 0
 
-    // Treatment type breakdown
-    const treatmentBreakdown = bookings?.reduce(
+    // Program type breakdown
+    const programBreakdown = bookings?.reduce(
       (acc, booking) => {
-        const type = booking.treatment_type
+        const type = booking.program_type
         acc[type] = (acc[type] || 0) + 1
         return acc
       },
@@ -120,7 +120,7 @@ export async function GET(request: NextRequest) {
         conversionRate,
       },
       breakdown: {
-        treatments: treatmentBreakdown,
+        programs: programBreakdown,
         dailyRevenue,
       },
     })

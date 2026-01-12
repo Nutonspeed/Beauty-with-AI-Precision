@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { withClinicAuth } from '@/lib/auth/middleware';
+import { withCenterAuth } from '@/lib/auth/middleware';
 
 /**
  * GET /api/branches/transfers/[id]
  * Get transfer details
  */
-export const GET = withClinicAuth(async (req: NextRequest, user: any) => {
+export const GET = withCenterAuth(async (req: NextRequest, user: any) => {
   try {
     const id = req.nextUrl.pathname.split('/').pop() || '';
 
@@ -64,7 +64,7 @@ export const GET = withClinicAuth(async (req: NextRequest, user: any) => {
  * - user_id (required): User performing action
  * - Additional fields based on action
  */
-export const PATCH = withClinicAuth(async (req: NextRequest, user: any) => {
+export const PATCH = withCenterAuth(async (req: NextRequest, user: any) => {
   try {
     const id = req.nextUrl.pathname.split('/').pop() || '';
     const body = await req.json();

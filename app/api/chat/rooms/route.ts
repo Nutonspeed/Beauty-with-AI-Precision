@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { withClinicAuth } from '@/lib/auth/middleware';
+import { withCenterAuth } from '@/lib/auth/middleware';
 
 function getSupabaseClient() {
   return createClient(
@@ -11,27 +11,27 @@ function getSupabaseClient() {
 
 /**
  * GET /api/chat/rooms
- * List chat rooms for a clinic
+ * List chat rooms for a center
  * 
  * Query parameters:
- * - clinic_id (required): Clinic ID
+ * - center_id (required): Center ID
  * - customer_id (optional): Filter by customer
  * - assigned_staff_id (optional): Filter by assigned staff
  * - status (optional): Filter by status (active, assigned, resolved, closed)
  * - priority (optional): Filter by priority
  */
-export const GET = withClinicAuth(async (request: NextRequest) => {
+export const GET = withCenterAuth(async (request: NextRequest) => {
   try {
     const { searchParams } = new URL(request.url);
-    const clinic_id = searchParams.get('clinic_id');
+    const center_id = searchParams.get('center_id');
     const customer_id = searchParams.get('customer_id');
     const assigned_staff_id = searchParams.get('assigned_staff_id');
     const status = searchParams.get('status');
     const priority = searchParams.get('priority');
 
-    if (!clinic_id) {
+    if (!center_id) {
       return NextResponse.json(
-        { error: 'clinic_id is required' },
+        { error: 'center_id is required' },
         { status: 400 }
       );
     }
@@ -44,7 +44,7 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
         customer:users!chat_rooms_customer_id_fkey(id, email, full_name),
         assigned_staff:users!chat_rooms_assigned_staff_id_fkey(id, email, full_name)
       `)
-      .eq('clinic_id', clinic_id);
+      .eq('center_id', center_id);
 
     if (customer_id) {
       query = query.eq('customer_id', customer_id);
@@ -80,21 +80,21 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
  * POST /api/chat/rooms
  * Create a new chat room
  * 
- * IMPORTANT: This is for BEAUTY CLINIC customer support (ลูกค้า), NOT patients
+ * IMPORTANT: This is for BEAUTY CENTER customer support (ลูกค้า), NOT clients
  * 
  * Body:
- * - clinic_id (required): Clinic ID
- * - customer_id (required): Customer ID (beauty clinic client)
+ * - center_id (required): Center ID
+ * - customer_id (required): Customer ID (beauty center client)
  * - subject (optional): Chat subject
  * - room_type (optional): Type of chat (support, consultation, etc.)
  * - priority (optional): Priority level
  * - auto_assign (optional): Auto-assign to staff
  */
-export const POST = withClinicAuth(async (request: NextRequest) => {
+export const POST = withCenterAuth(async (request: NextRequest) => {
   try {
     const body = await request.json();
     const {
-      clinic_id,
+      center_id,
       customer_id,
       subject,
       room_type = 'support',
@@ -102,9 +102,9 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
       auto_assign = true,
     } = body;
 
-    if (!clinic_id || !customer_id) {
+    if (!center_id || !customer_id) {
       return NextResponse.json(
-        { error: 'clinic_id and customer_id are required' },
+        { error: 'center_id and customer_id are required' },
         { status: 400 }
       );
     }
@@ -114,7 +114,7 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
     const { data: room, error: roomError } = await supabase
       .from('chat_rooms')
       .insert({
-        clinic_id,
+        center_id,
         customer_id,
         subject,
         room_type,
@@ -143,7 +143,7 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
         'auto_assign_chat_to_staff',
         {
           p_room_id: room.id,
-          p_clinic_id: clinic_id,
+          p_center_id: center_id,
         }
       );
 

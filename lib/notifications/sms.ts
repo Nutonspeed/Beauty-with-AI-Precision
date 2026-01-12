@@ -51,16 +51,16 @@ export async function sendSMS({ to, message }: SMSOptions) {
 }
 
 export async function sendBookingConfirmationSMS(to: string, bookingDetails: any) {
-  const message = `Booking confirmed! ${bookingDetails.treatment_type} on ${bookingDetails.booking_date} at ${bookingDetails.booking_time}. See you soon!`
+  const message = `Booking confirmed! ${bookingDetails.program_type} on ${bookingDetails.booking_date} at ${bookingDetails.booking_time}. See you soon!`
   return sendSMS({ to, message })
 }
 
 export async function sendBookingReminderSMS(to: string, bookingDetails: any) {
-  const message = `Reminder: Your ${bookingDetails.treatment_type} appointment is tomorrow at ${bookingDetails.booking_time}. ${bookingDetails.clinic?.name || ""}. See you soon!`
+  const message = `Reminder: Your ${bookingDetails.program_type} appointment is tomorrow at ${bookingDetails.booking_time}. ${bookingDetails.center?.name || ""}. See you soon!`
   return sendSMS({ to, message })
 }
 
 export async function sendBookingCancellationSMS(to: string, bookingDetails: any) {
-  const message = `Your appointment for ${bookingDetails.treatment_type} on ${bookingDetails.booking_date} has been cancelled. Contact us to reschedule.`
+  const message = `Your appointment for ${bookingDetails.program_type} on ${bookingDetails.booking_date} has been cancelled. Contact us to reschedule.`
   return sendSMS({ to, message })
 }

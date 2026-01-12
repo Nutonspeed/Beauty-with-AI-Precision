@@ -8,12 +8,12 @@
 
 import { NextRequest, NextResponse } from "next/server"
 import { sendAutomatedProgressReport, type ProgressReportData } from "@/lib/notifications/email"
-import { withClinicAuth } from "@/lib/auth/middleware"
+import { withCenterAuth } from "@/lib/auth/middleware"
 
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
 
-export const POST = withClinicAuth(async (request: NextRequest) => {
+export const POST = withCenterAuth(async (request: NextRequest) => {
   try {
     const body: { email: string; data: ProgressReportData } = await request.json()
 
@@ -32,9 +32,9 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
     }
 
     // Validate data structure
-    const { userName, reportPeriod, currentAnalysis, previousAnalysis, improvements, treatmentFollowed, recommendations, viewOnlineUrl } = body.data
+    const { userName, reportPeriod, currentAnalysis, previousAnalysis, improvements, programFollowed, recommendations, viewOnlineUrl } = body.data
     
-    if (!userName || !reportPeriod || !currentAnalysis || !previousAnalysis || !improvements || treatmentFollowed === undefined || !recommendations || !viewOnlineUrl) {
+    if (!userName || !reportPeriod || !currentAnalysis || !previousAnalysis || !improvements || programFollowed === undefined || !recommendations || !viewOnlineUrl) {
       return NextResponse.json(
         { error: "Missing required data fields" },
         { status: 400 }

@@ -7,11 +7,11 @@ export const dynamic = "force-dynamic"
 export const GET = withAuth(
   async (request: NextRequest, user) => {
     try {
-      if (!user.clinic_id) {
+      if (!user.center_id) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 })
       }
 
-      if (!["super_admin", "admin", "clinic_owner", "clinic_admin", "manager"].includes(user.role)) {
+      if (!["super_admin", "admin", "center_owner", "center_admin", "manager"].includes(user.role)) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 })
       }
 
@@ -32,7 +32,7 @@ export const GET = withAuth(
       const { data: payments, error } = await service
         .from("booking_payments")
         .select("id, amount, payment_method, payment_date, created_at")
-        .eq("clinic_id", user.clinic_id)
+        .eq("center_id", user.center_id)
         .eq("payment_status", "paid")
         .gte("payment_date", startDateStr)
         .lte("payment_date", endDateStr)
@@ -100,7 +100,7 @@ export const GET = withAuth(
         const { data: prevPayments } = await service
           .from("booking_payments")
           .select("amount")
-          .eq("clinic_id", user.clinic_id)
+          .eq("center_id", user.center_id)
           .eq("payment_status", "paid")
           .gte("payment_date", prevStartDateStr)
           .lte("payment_date", prevEndDateStr)
@@ -129,16 +129,16 @@ export const GET = withAuth(
         .gte("created_at", startDateStr)
         .lte("created_at", endDateStr)
 
-      // In a real system, we would filter by clinic_id if skin_analyses had it, 
-      // or join through users. For now, let's simulate clinic-specific AI stats
-      // based on users associated with this clinic.
-      const { data: clinicUsers } = await service
+      // In a real system, we would filter by center_id if skin_analyses had it, 
+      // or join through users. For now, let's simulate center-specific AI stats
+      // based on users associated with this center.
+      const { data: centerUsers } = await service
         .from("users")
         .select("id")
-        .eq("clinic_id", user.clinic_id)
+        .eq("center_id", user.center_id)
       
-      const clinicUserIds = new Set((clinicUsers || []).map(u => u.id))
-      const filteredScans = (aiScans || []).filter(s => clinicUserIds.has(s.user_id))
+      const centerUserIds = new Set((centerUsers || []).map(u => u.id))
+      const filteredScans = (aiScans || []).filter(s => centerUserIds.has(s.user_id))
       
       const totalAiScans = filteredScans.length
       const aiConversionRate = totalBookings > 0 ? Math.min(100, Math.round((totalBookings / (totalAiScans || 1)) * 100)) : 0

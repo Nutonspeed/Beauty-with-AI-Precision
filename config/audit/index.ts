@@ -58,15 +58,15 @@ export const auditConfig = {
     data: ['read', 'create', 'update', 'delete', 'export', 'import'],
     system: ['startup', 'shutdown', 'restart', 'error', 'configuration_change'],
     security: ['breach_attempt', 'privilege_escalation', 'suspicious_activity'],
-    business: ['appointment_booked', 'payment_processed', 'treatment_completed'],
+    business: ['appointment_booked', 'payment_processed', 'program_completed'],
     compliance: ['data_access', 'consent_given', 'policy_accepted']
   },
   
   // Resources to audit
   resources: {
     users: ['create', 'read', 'update', 'delete'],
-    patients: ['create', 'read', 'update', 'delete', 'export'],
-    treatments: ['create', 'read', 'update', 'delete'],
+    clients: ['create', 'read', 'update', 'delete', 'export'],
+    programs: ['create', 'read', 'update', 'delete'],
     appointments: ['create', 'read', 'update', 'delete'],
     payments: ['create', 'read', 'update', 'delete'],
     reports: ['create', 'read', 'update', 'delete', 'export']

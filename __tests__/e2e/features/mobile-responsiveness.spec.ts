@@ -77,7 +77,7 @@ test.describe('Mobile Responsiveness', () => {
         await page.fill('input[name="email"]', testUsers.customer.email);
         await page.fill('input[name="password"]', testUsers.customer.password);
         await page.click('button[type="submit"]');
-        await page.waitForURL('/th/customer/dashboard');
+        await page.waitForURL('/th/client/dashboard');
         await waitForLoading(page);
         
         // Check dashboard layout
@@ -107,9 +107,9 @@ test.describe('Mobile Responsiveness', () => {
         await page.fill('input[name="email"]', testUsers.customer.email);
         await page.fill('input[name="password"]', testUsers.customer.password);
         await page.click('button[type="submit"]');
-        await page.waitForURL('/th/customer/dashboard');
+        await page.waitForURL('/th/client/dashboard');
         
-        await page.goto('/th/customer/appointments');
+        await page.goto('/th/client/appointments');
         await waitForLoading(page);
         
         if (device.viewport.width < 768) {
@@ -139,9 +139,9 @@ test.describe('Mobile Responsiveness', () => {
         await page.fill('input[name="email"]', testUsers.customer.email);
         await page.fill('input[name="password"]', testUsers.customer.password);
         await page.click('button[type="submit"]');
-        await page.waitForURL('/th/customer/dashboard');
+        await page.waitForURL('/th/client/dashboard');
         
-        await page.goto('/th/customer/analysis');
+        await page.goto('/th/client/analysis');
         await waitForLoading(page);
         
         // Check mobile-specific features
@@ -165,7 +165,7 @@ test.describe('Mobile Responsiveness', () => {
         await page.fill('input[name="email"]', testUsers.customer.email);
         await page.fill('input[name="password"]', testUsers.customer.password);
         await page.click('button[type="submit"]');
-        await page.waitForURL('/th/customer/dashboard');
+        await page.waitForURL('/th/client/dashboard');
         
         await page.goto('/th/ar-simulator');
         await waitForLoading(page);

@@ -9,31 +9,31 @@ function getSupabaseClient() {
 }
 
 /**
- * GET /api/treatment-history/timeline
- * Get chronological treatment timeline for beauty clinic customer
+ * GET /api/program-history/timeline
+ * Get chronological program timeline for beauty center customer
  * 
  * Query parameters:
- * - clinic_id (required): Clinic ID
+ * - center_id (required): Center ID
  * - customer_id (required): Customer ID
  * - limit (optional): Limit results (default 50)
  */
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const clinic_id = searchParams.get('clinic_id');
+    const center_id = searchParams.get('center_id');
     const customer_id = searchParams.get('customer_id');
     const limit = searchParams.get('limit');
 
-    if (!clinic_id || !customer_id) {
+    if (!center_id || !customer_id) {
       return NextResponse.json(
-        { error: 'clinic_id and customer_id are required' },
+        { error: 'center_id and customer_id are required' },
         { status: 400 }
       );
     }
 
     const supabaseClient = getSupabaseClient();
-    const { data, error } = await supabaseClient.rpc('get_customer_treatment_timeline', {
-      p_clinic_id: clinic_id,
+    const { data, error } = await supabaseClient.rpc('get_customer_program_timeline', {
+      p_center_id: center_id,
       p_customer_id: customer_id,
       p_limit: limit ? Number.parseInt(limit) : 50,
     });
@@ -42,9 +42,9 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(data || []);
   } catch (error) {
-    console.error('Error fetching treatment timeline:', error);
+    console.error('Error fetching program timeline:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch treatment timeline' },
+      { error: 'Failed to fetch program timeline' },
       { status: 500 }
     );
   }

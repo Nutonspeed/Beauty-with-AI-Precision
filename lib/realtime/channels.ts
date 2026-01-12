@@ -3,10 +3,10 @@ export const channels = {
     announcements: 'system:announcements',
     maintenance: 'system:maintenance',
   },
-  clinic: {
-    base: (clinicId: string) => `clinic:${clinicId}`,
-    queue: (clinicId: string) => `clinic:${clinicId}:queue`,
-    alerts: (clinicId: string) => `clinic:${clinicId}:alerts`,
+  center: {
+    base: (centerId: string) => `center:${centerId}`,
+    queue: (centerId: string) => `center:${centerId}:queue`,
+    alerts: (centerId: string) => `center:${centerId}:alerts`,
   },
   user: {
     base: (userId: string) => `user:${userId}`,

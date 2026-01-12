@@ -12,13 +12,13 @@ function getSupabaseClient() {
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const clinicId = searchParams.get('clinic_id');
+    const centerId = searchParams.get('center_id');
     const startDate = searchParams.get('start_date');
     const endDate = searchParams.get('end_date');
 
-    if (!clinicId || !startDate || !endDate) {
+    if (!centerId || !startDate || !endDate) {
       return NextResponse.json(
-        { error: 'Missing required parameters: clinic_id, start_date, end_date' },
+        { error: 'Missing required parameters: center_id, start_date, end_date' },
         { status: 400 }
       );
     }
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     // Call database function for staff performance
     const { data: performance, error: performanceError } = await supabaseClient
       .rpc('calculate_staff_performance', {
-        p_clinic_id: clinicId,
+        p_center_id: centerId,
         p_start_date: startDate,
         p_end_date: endDate,
       });
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
     const { data: appointments } = await supabaseClient
       .from('appointment_slots')
       .select('doctor_id, status, appointment_date, duration_minutes')
-      .eq('clinic_id', clinicId)
+      .eq('center_id', centerId)
       .gte('appointment_date', startDate)
       .lte('appointment_date', endDate);
 

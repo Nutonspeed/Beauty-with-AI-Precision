@@ -20,10 +20,10 @@ export default function SalesNarrativePage() {
             <div className="mx-auto max-w-4xl text-center">
               <Badge className="mb-4 bg-primary/10 text-primary" variant="secondary">For Stakeholders & Partners</Badge>
               <h1 className="mb-4 text-balance text-4xl font-bold tracking-tight md:text-5xl">
-                From AI Skin Insights to Measurable Clinic Revenue
+                From AI Skin Insights to Measurable Center Revenue
               </h1>
               <p className="mx-auto mb-8 max-w-2xl text-muted-foreground md:text-lg">
-                We connect medical‑grade AI analysis to a clear sales workflow. Clinics convert more, faster, with transparency and compliance.
+                We connect medical‑grade AI analysis to a clear sales workflow. Centers convert more, faster, with transparency and compliance.
               </p>
               <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
                 <Button asChild size="lg">
@@ -73,7 +73,7 @@ export default function SalesNarrativePage() {
                   </div>
                   <h3 className="mb-2 text-xl font-semibold">Trust & Compliance</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">
-                    PDPA‑ready, encrypted, auditable. Evidence‑based visuals help clinicians and customers align.
+                    PDPA‑ready, encrypted, auditable. Evidence‑based visuals help centerians and customers align.
                   </p>
                 </CardContent>
               </Card>
@@ -104,7 +104,7 @@ export default function SalesNarrativePage() {
                   "Medical‑grade accuracy with rapid analysis (3–5s)",
                   "From analysis → recommendation → close: a complete workflow",
                   "AR visualization to set expectations and reduce doubt",
-                  "Multi‑clinic, CRM, and booking integration",
+                  "Multi‑center, CRM, and booking integration",
                   "Data security: encryption at rest/in transit; audit logs",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-2 text-sm">
@@ -128,7 +128,7 @@ export default function SalesNarrativePage() {
           <div className="container">
             <div className="mx-auto max-w-3xl text-center">
               <h2 className="mb-3 text-2xl font-bold tracking-tight md:text-3xl">Ready to Discuss Outcomes?</h2>
-              <p className="mb-6 text-muted-foreground">We can walk through a live demo and a tailored projection for your clinics.</p>
+              <p className="mb-6 text-muted-foreground">We can walk through a live demo and a tailored projection for your centers.</p>
               <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
                 <Button asChild size="lg">
                   <Link href="/contact">

@@ -2,7 +2,7 @@ import http from 'node:http';
 
 export type BroadcastFilter = {
   userIds?: string[];
-  clinicIds?: string[];
+  centerIds?: string[];
   roles?: string[];
   channels?: string[];
 };
@@ -57,8 +57,8 @@ export async function broadcastAnnouncement(text: string, channels: string[] = [
   return broadcast({ type: 'ANNOUNCEMENT', data: { message: text, at: new Date().toISOString() } }, { channels });
 }
 
-export async function broadcastToClinic(type: string, data: unknown, clinicId: string, channels?: string[]) {
-  return broadcast({ type, data }, { clinicIds: [clinicId], channels });
+export async function broadcastToCenter(type: string, data: unknown, centerId: string, channels?: string[]) {
+  return broadcast({ type, data }, { centerIds: [centerId], channels });
 }
 
 export async function broadcastToUsers(type: string, data: unknown, userIds: string[], channels?: string[]) {

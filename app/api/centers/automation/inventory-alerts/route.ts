@@ -26,7 +26,7 @@ export async function GET() {
 
     // ดึงการตั้งค่า automation
     const { data: settings } = await supabase
-      .from("clinic_settings")
+      .from("center_settings")
       .select("settings")
       .eq("setting_type", "automation")
       .maybeSingle();
@@ -45,7 +45,7 @@ export async function GET() {
 
     // ดึงสินค้าที่มีจำนวนต่ำกว่า threshold
     const { data: lowStockItems, error } = await supabase
-      .from("clinic_inventory")
+      .from("center_inventory")
       .select("*")
       .lt("current_stock", threshold)
       .order("current_stock", { ascending: true });
@@ -83,7 +83,7 @@ export async function GET() {
       threshold,
     });
   } catch (error) {
-    console.error("Error in GET /api/clinic/automation/inventory-alerts:", error);
+    console.error("Error in GET /api/center/automation/inventory-alerts:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
@@ -98,7 +98,7 @@ export async function POST() {
 
     // ใช้ service role สำหรับ background job
     const { data: settings } = await supabase
-      .from("clinic_settings")
+      .from("center_settings")
       .select("settings")
       .eq("setting_type", "automation")
       .maybeSingle();
@@ -116,7 +116,7 @@ export async function POST() {
 
     // ดึงสินค้าที่มีจำนวนต่ำ
     const { data: lowStockItems } = await supabase
-      .from("clinic_inventory")
+      .from("center_inventory")
       .select("*")
       .lt("current_stock", threshold)
       .order("current_stock", { ascending: true });

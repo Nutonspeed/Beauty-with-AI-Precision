@@ -1,10 +1,10 @@
-# ClinicIQ API Documentation
+# CenterIQ AI API Documentation
 
 ## Overview
 
-ClinicIQ provides a comprehensive REST API for AI-powered skin analysis, clinic management, and CRM functionality.
+CenterIQ provides a comprehensive REST API for AI-powered skin analysis, center management, and CRM functionality.
 
-**Base URL:** `https://api.cliniciq.app` (Production) | `http://localhost:3000` (Development)
+**Base URL:** `https://api.centeriq.app` (Production) | `http://localhost:3000` (Development)
 
 **Authentication:** JWT Bearer Token (via Supabase Auth)
 
@@ -105,23 +105,23 @@ Authorization: Bearer <access_token>
 
 ---
 
-## Clinic Management
+## Center Management
 
-### Get Clinic Info
+### Get Center Info
 ```http
-GET /api/clinic?clinicId=<uuid>
+GET /api/center?centerId=<uuid>
 Authorization: Bearer <access_token>
 ```
 
-### Update Clinic
+### Update Center
 ```http
-PUT /api/clinic
+PUT /api/center
 Authorization: Bearer <access_token>
 Content-Type: application/json
 
 {
-  "clinicId": "uuid",
-  "name": "Beauty Clinic",
+  "centerId": "uuid",
+  "name": "Beauty Center",
   "address": "123 Main St"
 }
 ```
@@ -137,9 +137,9 @@ Authorization: Bearer <access_token>
 Content-Type: application/json
 
 {
-  "clinicId": "uuid",
-  "customerId": "uuid",
-  "treatmentId": "uuid",
+  "centerId": "uuid",
+  "clientId": "uuid",
+  "programId": "uuid",
   "dateTime": "2024-12-15T10:00:00Z",
   "notes": "Optional notes"
 }
@@ -147,7 +147,7 @@ Content-Type: application/json
 
 ### Get Bookings
 ```http
-GET /api/bookings?clinicId=<uuid>&date=2024-12-15
+GET /api/bookings?centerId=<uuid>&date=2024-12-15
 Authorization: Bearer <access_token>
 ```
 
@@ -217,26 +217,26 @@ All errors follow this format:
 
 ## Webhooks
 
-ClinicIQ can send webhooks for these events:
+CenterIQ can send webhooks for these events:
 
 - `booking.created`
 - `booking.cancelled`
 - `analysis.completed`
 - `payment.received`
 
-Configure webhooks in Clinic Settings.
+Configure webhooks in Center Settings.
 
 ---
 
 ## SDKs
 
-- **JavaScript/TypeScript:** `npm install @cliniciq/sdk`
-- **Python:** `pip install cliniciq`
+- **JavaScript/TypeScript:** `npm install @centeriq/sdk`
+- **Python:** `pip install centeriq`
 
 ---
 
 ## Support
 
-- **Email:** support@cliniciq.app
-- **Documentation:** https://docs.cliniciq.app
-- **Status Page:** https://status.cliniciq.app
+- **Email:** support@centeriq.app
+- **Documentation:** https://docs.centeriq.app
+- **Status Page:** https://status.centeriq.app

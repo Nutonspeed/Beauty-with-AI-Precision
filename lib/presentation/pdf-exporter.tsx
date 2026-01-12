@@ -1,6 +1,6 @@
 /**
  * PDF Exporter for Sales Presentations
- * Generates professional PDFs with clinic branding, treatment packages, and pricing
+ * Generates professional PDFs with center branding, program packages, and pricing
  */
 
 import jsPDF from 'jspdf';

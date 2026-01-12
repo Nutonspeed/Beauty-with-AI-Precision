@@ -1,6 +1,6 @@
 /**
  * Skin Effect Filters
- * ใช้ Pixi.js สำหรับ real-time skin effects และ treatment simulation
+ * ใช้ Pixi.js สำหรับ real-time skin effects และ program simulation
  */
 
 import * as PIXI from 'pixi.js';
@@ -180,9 +180,9 @@ export class SkinEffectProcessor {
   }
 
   /**
-   * Apply treatment preset
+   * Apply program preset
    */
-  applyTreatmentPreset(preset: 'mild' | 'moderate' | 'intensive'): void {
+  applyProgramPreset(preset: 'mild' | 'moderate' | 'intensive'): void {
     const presets: Record<string, SkinEffectOptions> = {
       mild: {
         smoothing: 0.2,

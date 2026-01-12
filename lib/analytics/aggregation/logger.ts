@@ -6,7 +6,7 @@ export interface AnalyticsLogEntry {
   timestamp: Date
   operation: string
   userId?: string
-  clinicId?: string
+  centerId?: string
   metrics?: Record<string, number>
   error?: string
   duration?: number

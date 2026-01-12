@@ -12,14 +12,14 @@ function getSupabaseClient() {
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const clinicId = searchParams.get('clinic_id');
+    const centerId = searchParams.get('center_id');
     const snapshotType = searchParams.get('snapshot_type'); // daily, weekly, monthly
     const startDate = searchParams.get('start_date');
     const endDate = searchParams.get('end_date');
 
-    if (!clinicId) {
+    if (!centerId) {
       return NextResponse.json(
-        { error: 'Missing required parameter: clinic_id' },
+        { error: 'Missing required parameter: center_id' },
         { status: 400 }
       );
     }
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     let query = supabaseClient
       .from('analytics_snapshots')
       .select('*')
-      .eq('clinic_id', clinicId)
+      .eq('center_id', centerId)
       .order('snapshot_date', { ascending: false });
 
     if (snapshotType) {
@@ -68,14 +68,14 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const {
-      clinic_id,
+      center_id,
       snapshot_date,
       snapshot_type,
     } = body;
 
-    if (!clinic_id || !snapshot_date || !snapshot_type) {
+    if (!center_id || !snapshot_date || !snapshot_type) {
       return NextResponse.json(
-        { error: 'Missing required fields: clinic_id, snapshot_date, snapshot_type' },
+        { error: 'Missing required fields: center_id, snapshot_date, snapshot_type' },
         { status: 400 }
       );
     }
@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
     const { data: revenue } = await supabaseClient
       .from('bookings')
       .select('total_amount')
-      .eq('clinic_id', clinic_id)
+      .eq('center_id', center_id)
       .eq('payment_status', 'paid')
       .gte('created_at', startOfDay.toISOString())
       .lte('created_at', endOfDay.toISOString());
@@ -101,11 +101,11 @@ export async function POST(request: NextRequest) {
     const totalTransactions = revenue?.length || 0;
     const avgTransactionValue = totalTransactions > 0 ? totalRevenue / totalTransactions : 0;
 
-    // Customer metrics (beauty clinic customers, NOT patients)
+    // Customer metrics (beauty center customers, NOT clients)
     const { data: customers } = await supabaseClient
       .from('bookings')
       .select('user_id')
-      .eq('clinic_id', clinic_id)
+      .eq('center_id', center_id)
       .gte('created_at', startOfDay.toISOString())
       .lte('created_at', endOfDay.toISOString());
 
@@ -115,7 +115,7 @@ export async function POST(request: NextRequest) {
     const { data: appointments } = await supabaseClient
       .from('appointment_slots')
       .select('status')
-      .eq('clinic_id', clinic_id)
+      .eq('center_id', center_id)
       .eq('appointment_date', snapshot_date);
 
     const totalAppointments = appointments?.length || 0;
@@ -130,7 +130,7 @@ export async function POST(request: NextRequest) {
     const { data: snapshot, error: snapshotError } = await supabaseClient
       .from('analytics_snapshots')
       .upsert({
-        clinic_id,
+        center_id,
         snapshot_date,
         snapshot_type,
         total_revenue: totalRevenue,
@@ -143,7 +143,7 @@ export async function POST(request: NextRequest) {
         no_show_appointments: noShowAppointments,
         appointment_completion_rate: appointmentCompletionRate,
       }, {
-        onConflict: 'clinic_id,snapshot_date,snapshot_type',
+        onConflict: 'center_id,snapshot_date,snapshot_type',
       })
       .select()
       .single();

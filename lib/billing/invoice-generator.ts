@@ -4,7 +4,7 @@ export interface InvoiceData {
   invoiceNumber: string
   invoiceDate: string
   dueDate: string
-  clinic: {
+  center: {
     id: string
     name: string
     address?: string
@@ -30,7 +30,7 @@ export interface InvoiceData {
 
 export interface Invoice {
   id: string
-  clinic_id: string
+  center_id: string
   invoice_number: string
   billing_period_start: string
   billing_period_end: string
@@ -133,23 +133,23 @@ export function generateInvoicePDF(data: InvoiceData): Blob {
   yPosition += 7
   doc.setFontSize(10)
   doc.setFont('helvetica', 'bold')
-  doc.text(data.clinic.name, 14, yPosition)
+  doc.text(data.center.name, 14, yPosition)
   yPosition += 5
   doc.setFont('helvetica', 'normal')
-  if (data.clinic.address) {
-    doc.text(data.clinic.address, 14, yPosition)
+  if (data.center.address) {
+    doc.text(data.center.address, 14, yPosition)
     yPosition += 5
   }
-  if (data.clinic.phone) {
-    doc.text(`Tel: ${data.clinic.phone}`, 14, yPosition)
+  if (data.center.phone) {
+    doc.text(`Tel: ${data.center.phone}`, 14, yPosition)
     yPosition += 5
   }
-  if (data.clinic.email) {
-    doc.text(`Email: ${data.clinic.email}`, 14, yPosition)
+  if (data.center.email) {
+    doc.text(`Email: ${data.center.email}`, 14, yPosition)
     yPosition += 5
   }
-  if (data.clinic.taxId) {
-    doc.text(`Tax ID: ${data.clinic.taxId}`, 14, yPosition)
+  if (data.center.taxId) {
+    doc.text(`Tax ID: ${data.center.taxId}`, 14, yPosition)
     yPosition += 5
   }
 

@@ -117,17 +117,17 @@ export async function POST(
       // But log the error for debugging
     }
 
-    // Get clinic name if applicable
-    let clinicName = null
-    if (invitation.clinic_id) {
-      const { data: clinic } = await supabase
-        .from('clinics')
+    // Get center name if applicable
+    let centerName = null
+    if (invitation.center_id) {
+      const { data: center } = await supabase
+        .from('centers')
         .select('name')
-        .eq('id', invitation.clinic_id)
+        .eq('id', invitation.center_id)
         .single()
       
-      if (clinic) {
-        clinicName = clinic.name
+      if (center) {
+        centerName = center.name
       }
     }
 
@@ -140,8 +140,8 @@ export async function POST(
         email: invitation.email,
         full_name: full_name,
         role: invitation.invited_role,
-        clinic_id: invitation.clinic_id,
-        clinic_name: clinicName
+        center_id: invitation.center_id,
+        center_name: centerName
       },
       // Include session data for auto-login
       session: authData.session

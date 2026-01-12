@@ -1,4 +1,4 @@
-# 🚀 Production Launch Checklist - ClinicIQ
+# 🚀 CenterIQ AI Production Deployment Checklist - CenterIQ AI
 
 **Status:** In Progress  
 **Target Launch:** ไม่กี่วันข้างหน้า  
@@ -10,7 +10,7 @@
 
 ### 1. Bug Fixes (DONE ✅)
 - [x] แก้ Supabase Analytics API key error
-- [x] แก้ Translation errors ครบทั้ง 3 ภาษา (TH/EN/ZH)
+- [x] แก้ Translation errors ครบทุกภาษา (TH/EN/ZH/JA/KO)
 - [x] แก้ Component path mismatches (pricing page)
 - [x] สร้างไฟล์ที่หายไป (`lib/config/ai.ts`, `lib/api/skin-analyses-history.ts`)
 
@@ -74,7 +74,7 @@ GOOGLE_APPLICATION_CREDENTIALS="path/to/credentials.json"
 
 #### **ตรวจสอบ .env.local:**
 - [ ] ไม่มี API keys ใน git history
-- [ ] Service Role Key ครบและถูกต้อง (currently truncated ⚠️)
+- [ ] Service Role Key ครบและถูกต้อง
 - [ ] Production URLs ถูกต้อง
 
 #### **ตรวจสอบ Public Files:**
@@ -89,6 +89,15 @@ GOOGLE_APPLICATION_CREDENTIALS="path/to/credentials.json"
 #### **Database:**
 - [ ] RLS Policies เปิดใช้งานครบ
 - [ ] Migrations ทั้งหมด applied แล้ว
+- [x] Thai (default)
+- [x] English
+- [x] Chinese
+- [x] Japanese
+- [x] Korean
+- [x] next-intl setup
+- [x] TypeScript build errors resolved
+- [x] `pnpm tsc` passing with 0 errors
+- [x] Production build verified
 - [ ] Database backups enabled
 - [ ] Connection pooling configured
 
@@ -124,7 +133,7 @@ GOOGLE_APPLICATION_CREDENTIALS="path/to/credentials.json"
 #### **Functional Testing:**
 - [ ] Auth flow (Login/Register/Logout)
 - [ ] Pricing page แสดง 4 tiers ครบ
-- [ ] Homepage ทุกภาษา (TH/EN/ZH)
+- [ ] Homepage ทุกภาษา (TH/EN/ZH/JA/KO)
 - [ ] AI Skin Analysis (basic flow)
 - [ ] Payment flow (test mode)
 
@@ -154,10 +163,10 @@ GOOGLE_APPLICATION_CREDENTIALS="path/to/credentials.json"
 
 ## 🚨 **KNOWN ISSUES**
 
-### **TypeScript Errors (Non-Critical):**
-- ~5,924 TS errors จาก monorepo React type conflicts
-- **ผลกระทบ:** ไม่มี - Next.js build ได้แม้มี warnings
-- **แก้ไข:** ไม่จำเป็นก่อน launch (nice to have)
+### **TypeScript Build (DONE ✅)**
+- [x] All compilation errors resolved
+- [x] `pnpm tsc` passing with 0 errors
+- [x] Production build verified
 
 ### **Service Role Key (ต้องแก้):**
 - Key อาจถูก truncate ใน `.env.local`

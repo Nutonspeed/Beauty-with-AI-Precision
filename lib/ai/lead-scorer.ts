@@ -21,7 +21,7 @@ export interface LeadData {
   interests: string[];
   concerns?: string[];
   skinType?: string;
-  previousTreatments?: string[];
+  previousPrograms?: string[];
   location?: string;
   engagement: {
     websiteVisits: number;
@@ -131,7 +131,7 @@ export class AILeadScorer {
 - สนใจ: ${lead.interests.join(', ')}
 - ปัญหาผิว: ${lead.concerns?.join(', ') || 'ไม่ระบุ'}
 - ประเภทผิว: ${lead.skinType || 'ไม่ระบุ'}
-- การรักษาก่อนหน้า: ${lead.previousTreatments?.join(', ') || 'ไม่มี'}
+- การรักษาก่อนหน้า: ${lead.previousPrograms?.join(', ') || 'ไม่มี'}
 
 สถิติการมีส่วนร่วม:
 - การเข้าชมเว็บไซต์: ${lead.engagement.websiteVisits}
@@ -299,7 +299,7 @@ ${historicalData ? `ข้อมูลประวัติ (${historicalData.le
         characteristics: ['งบประมาณสูง', 'สนใจหลายบริการ', 'การมีส่วนร่วมสูง'],
         conversionRate: 75,
         averageValue: 45000,
-        recommendedStrategy: 'Personal consultation + VIP treatment packages'
+        recommendedStrategy: 'Personal consultation + VIP program packages'
       },
       {
         segment: 'Engaged Browsers',

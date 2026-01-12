@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { withClinicAuth } from '@/lib/auth/middleware';
+import { withCenterAuth } from '@/lib/auth/middleware';
 
 /**
  * GET /api/branches/inventory
@@ -10,7 +10,7 @@ import { withClinicAuth } from '@/lib/auth/middleware';
  * - branch_id (required): Branch ID
  * - low_stock (optional): Filter low stock items only
  */
-export const GET = withClinicAuth(async (request: NextRequest) => {
+export const GET = withCenterAuth(async (request: NextRequest) => {
   try {
     const { searchParams } = new URL(request.url);
     const branch_id = searchParams.get('branch_id');
@@ -88,7 +88,7 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
  * - reorder_point (optional): Reorder point
  * - storage_location (optional): Storage location
  */
-export const POST = withClinicAuth(async (request: NextRequest) => {
+export const POST = withCenterAuth(async (request: NextRequest) => {
   try {
     const body = await request.json();
     const {

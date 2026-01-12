@@ -116,7 +116,7 @@ export default async function CenterDashboardPage() {
                 </Card>
               </Link>
 
-              <Link href="/queue/patient">
+              <Link href="/queue/client">
                 <Card className="cursor-pointer border-2 border-transparent transition-all hover:border-primary/50 hover:shadow-md">
                   <CardContent className="flex items-center gap-3 p-4">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-500/10">

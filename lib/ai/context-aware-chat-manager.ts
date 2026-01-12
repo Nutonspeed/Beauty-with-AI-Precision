@@ -32,7 +32,7 @@ export interface ConversationContext {
     age?: number
     budget?: number
     preferences?: string[]
-    previousTreatments?: string[]
+    previousPrograms?: string[]
   }
   currentTopic?: string
   followUpSuggestions?: string[]
@@ -55,10 +55,10 @@ const THAI_MEDICAL_TERMS: Record<string, string[]> = {
   'ผิวแดง': ['redness', 'inflammation', 'erythema'],
   'ผิวหมองคล้ำ': ['dull skin', 'uneven tone', 'lackluster'],
   
-  // Treatments
+  // Programs
   'โบท็อกซ์': ['botox', 'botulinum toxin', 'neurotoxin'],
   'ฟิลเลอร์': ['filler', 'dermal filler', 'HA filler', 'hyaluronic acid'],
-  'เลเซอร์': ['laser', 'laser treatment', 'laser therapy'],
+  'เลเซอร์': ['laser', 'laser program', 'laser therapy'],
   'พีโค': ['pico', 'picosecond', 'pico laser'],
   'คาร์บอน': ['carbon', 'carbon peel', 'carbon laser'],
   'ปอกหน้า': ['peel', 'chemical peel', 'facial peel'],
@@ -94,9 +94,9 @@ const THAI_MEDICAL_TERMS: Record<string, string[]> = {
  * Intent patterns
  */
 const INTENT_PATTERNS = {
-  'ask_treatment': [
+  'ask_program': [
     'ทำอะไร', 'รักษาอย่างไร', 'ทำยังไง', 'แนะนำ', 'ควรทำ', 'ช่วยแนะนำ',
-    'treatment', 'cure', 'solve', 'fix'
+    'program', 'cure', 'solve', 'fix'
   ],
   'ask_price': [
     'ราคา', 'ค่าใช้จ่าย', 'งบประมาณ', 'เท่าไหร่', 'ค่ารักษา',
@@ -114,7 +114,7 @@ const INTENT_PATTERNS = {
     'พักฟื้น', 'ดาวน์ไทม์', 'หยุดงาน', 'ฟื้นตัว',
     'downtime', 'recovery', 'healing time'
   ],
-  'compare_treatments': [
+  'compare_programs': [
     'เปรียบเทียบ', 'ต่างกัน', 'ดีกว่า', 'เลือก',
     'compare', 'difference', 'better', 'versus', 'vs'
   ],
@@ -281,7 +281,7 @@ export class ContextAwareChatManager {
     const concerns = message.metadata?.skinConcerns || []
     
     // Intent-based suggestions
-    if (intent === 'ask_treatment') {
+    if (intent === 'ask_program') {
       suggestions = [
         ...suggestions,
         'ราคาประมาณเท่าไหร่?',
@@ -325,7 +325,7 @@ export class ContextAwareChatManager {
       const cv = context.skinAnalysis.cv
       const additionalSuggestions: string[] = [];
       if (cv.spots && cv.spots.severity > 70) {
-        additionalSuggestions.push('มีฝ้ากระมาก แนะนำ treatment อะไร?');
+        additionalSuggestions.push('มีฝ้ากระมาก แนะนำ program อะไร?');
       }
       if (cv.wrinkles && cv.wrinkles.severity > 70) {
         additionalSuggestions.push('ริ้วรอยเยอะ ควรเริ่มจากอะไร?');
@@ -362,7 +362,7 @@ export class ContextAwareChatManager {
 ⚠️ ไม่วินิจฉัยโรค (ให้แพทย์ผิวหนังเท่านั้น)
 ⚠️ ไม่ระบุชื่อยี่ห้อยาหรือผลิตภัณฑ์เฉพาะ
 ✅ แนะนำให้ปรึกษาคลินิกถ้าปัญหารุนแรง
-✅ ให้ข้อมูลทั่วไปเกี่ยวกับ Treatment ต่างๆ`
+✅ ให้ข้อมูลทั่วไปเกี่ยวกับ Program ต่างๆ`
 
     // Conversation history (last N messages)
     const recentMessages = context.messages.slice(-this.contextWindowSize)
@@ -384,9 +384,9 @@ export class ContextAwareChatManager {
       if (profile.budget) {
         contextParts.push(`งบประมาณ: ${profile.budget.toLocaleString()} บาท`)
       }
-      if (profile.previousTreatments && profile.previousTreatments.length > 0) {
+      if (profile.previousPrograms && profile.previousPrograms.length > 0) {
         contextParts.push(
-          `เคยทำ: ${profile.previousTreatments.join(', ')}`
+          `เคยทำ: ${profile.previousPrograms.join(', ')}`
         )
       }
     }
@@ -498,7 +498,7 @@ ${conversationHistory}
       messages: [],
       followUpSuggestions: [
         'ผิวฉันมีปัญหาอะไรบ้าง?',
-        'แนะนำ treatment สำหรับฝ้า-กระ',
+        'แนะนำ program สำหรับฝ้า-กระ',
         'โบท็อกซ์กับฟิลเลอร์ต่างกันอย่างไร?'
       ]
     }

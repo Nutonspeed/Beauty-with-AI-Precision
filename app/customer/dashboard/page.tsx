@@ -7,9 +7,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Calendar, History, User, Sparkles, TrendingUp, FileText, Target } from "lucide-react"
-import { BookingHistoryList } from "@/components/customer/booking-history-list"
-import { AnalysisHistoryList } from "@/components/customer/analysis-history-list"
-import { ProfileCard } from "@/components/customer/profile-card"
+import { BookingHistoryList } from "@/components/client/booking-history-list"
+import { AnalysisHistoryList } from "@/components/client/analysis-history-list"
+import { ProfileCard } from "@/components/client/profile-card"
 import Link from "next/link"
 
 export default async function CustomerDashboardPage() {

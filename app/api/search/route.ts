@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const query = searchParams.get('q') || ''
     const type = searchParams.get('type') || 'customers'
-    const centerId = searchParams.get('centerId') || searchParams.get('clinicId')
+    const centerId = searchParams.get('centerId') || searchParams.get('centerId')
     
     if (!centerId) {
       return NextResponse.json(
@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Program types filter
-    const programTypes = searchParams.get('programTypes') || searchParams.get('treatmentTypes')
+    const programTypes = searchParams.get('programTypes') || searchParams.get('programTypes')
     if (programTypes) {
       filters.programTypes = programTypes.split(',')
     }
@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
 
     switch (type) {
       case 'customers':
-      case 'patients':
+      case 'clients':
         results = await customerSearchService.searchCustomers(query, filters, {
           from,
           size,
@@ -111,7 +111,7 @@ export async function POST(request: NextRequest) {
 
     switch (type) {
       case 'customers':
-      case 'patients':
+      case 'clients':
         results = await customerSearchService.advancedSearch(query || {}, filters || {})
         break
       

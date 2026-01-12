@@ -302,7 +302,7 @@ export default function ReceptionClient({
                       {/* Program */}
                       <div className="bg-muted/50 rounded p-2 mb-3">
                         <p className="text-sm font-medium">
-                          {booking.program_type || booking.treatment_type}
+                          {booking.program_type || booking.program_type}
                         </p>
                         <p className="text-xs text-muted-foreground">
                           ผู้ให้บริการ: {booking.staff?.name || "-"}
@@ -388,7 +388,7 @@ export default function ReceptionClient({
                             {booking.client?.name || "ลูกค้า"}
                           </h3>
                           <p className="text-sm text-muted-foreground">
-                            {booking.program_type || booking.treatment_type}
+                            {booking.program_type || booking.program_type}
                           </p>
                         </div>
                       </div>
@@ -484,10 +484,10 @@ export default function ReceptionClient({
                       {/* Program */}
                       <div className="bg-purple-50 dark:bg-purple-900/20 rounded p-2">
                         <p className="text-sm font-medium">
-                          {booking.program_type || booking.treatment_type}
+                          {booking.program_type || booking.program_type}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          ระยะเวลา: {booking.treatment?.duration || 60} นาที
+                          ระยะเวลา: {booking.program?.duration || 60} นาที
                         </p>
                       </div>
                     </CardContent>

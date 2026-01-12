@@ -3,14 +3,14 @@
 /**
  * Queue Display Screen - TV/Monitor Mode
  * 
- * Large display for showing queue status in clinic waiting area
+ * Large display for showing queue status in center waiting area
  * Features:
  * - Fullscreen mode
  * - Auto-refresh every 5 seconds
  * - Large, readable fonts
  * - Current serving + Next 3
  * - Animated transitions
- * - Clinic branding
+ * - Center branding
  */
 
 import { useState, useEffect } from 'react'
@@ -24,7 +24,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 interface QueueEntry {
   id: string
   queueNumber: string
-  patientName: string
+  clientName: string
   status: 'waiting' | 'called' | 'serving' | 'completed'
   room?: string
   doctor?: string
@@ -59,7 +59,7 @@ export default function QueueDisplayPage() {
       setCurrentServing({
         id: '1',
         queueNumber: 'A-015',
-        patientName: 'คุณสมชาย',
+        clientName: 'คุณสมชาย',
         status: 'serving',
         room: 'ห้อง 2',
         doctor: 'นพ.สมศักดิ์',
@@ -70,7 +70,7 @@ export default function QueueDisplayPage() {
         {
           id: '2',
           queueNumber: 'A-016',
-          patientName: 'คุณสมหญิง',
+          clientName: 'คุณสมหญิง',
           status: 'called',
           estimatedWait: 10,
           checkInTime: new Date()
@@ -78,7 +78,7 @@ export default function QueueDisplayPage() {
         {
           id: '3',
           queueNumber: 'A-017',
-          patientName: 'คุณประชา',
+          clientName: 'คุณประชา',
           status: 'waiting',
           estimatedWait: 25,
           checkInTime: new Date()
@@ -86,7 +86,7 @@ export default function QueueDisplayPage() {
         {
           id: '4',
           queueNumber: 'A-018',
-          patientName: 'คุณสุวรรณี',
+          clientName: 'คุณสุวรรณี',
           status: 'waiting',
           estimatedWait: 40,
           checkInTime: new Date()
@@ -98,8 +98,8 @@ export default function QueueDisplayPage() {
       try {
         setIsLoading(true)
         const urlParams = new URLSearchParams(window.location.search)
-        const clinicId = urlParams.get('clinicId') || localStorage.getItem('clinicId') || 'demo-clinic-1'
-        const response = await fetch(`/api/clinic/queue/display?clinicId=${clinicId}&limit=3`)
+        const centerId = urlParams.get('centerId') || localStorage.getItem('centerId') || 'demo-center-1'
+        const response = await fetch(`/api/center/queue/display?centerId=${centerId}&limit=3`)
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
         const data = await response.json()
         if (mounted) {
@@ -157,14 +157,14 @@ export default function QueueDisplayPage() {
       <header className="bg-white dark:bg-gray-800 border-b-4 border-blue-600 shadow-lg">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            {/* Clinic Logo & Name */}
+            {/* Center Logo & Name */}
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center">
                 <span className="text-3xl font-bold text-white">AI</span>
               </div>
               <div>
                 <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                  AI Beauty Clinic
+                  AI Beauty Center
                 </h1>
                 <p className="text-lg text-gray-600 dark:text-gray-300">
                   ระบบคิวอัจฉริยะ

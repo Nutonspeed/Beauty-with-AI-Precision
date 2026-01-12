@@ -18,7 +18,7 @@ export function getWrinkleDescription(score: number, lang: "en" | "th"): string 
       ? "Fine lines visible around eyes and forehead. Good skin elasticity maintained."
       : "มีริ้วรอยเล็กน้อยรอบดวงตาและหน้าผาก ความยืดหยุ่นของผิวยังดี"
   }
-  return lang === "en" ? "Moderate wrinkles detected. Consider anti-aging treatments." : "พบริ้วรอยปานกลาง แนะนำการรักษาต้านริ้วรอย"
+  return lang === "en" ? "Moderate wrinkles detected. Consider anti-aging programs." : "พบริ้วรอยปานกลาง แนะนำการรักษาต้านริ้วรอย"
 }
 
 export function getSpotsDescription(score: number, lang: "en" | "th"): string {
@@ -27,10 +27,10 @@ export function getSpotsDescription(score: number, lang: "en" | "th"): string {
   }
   if (score >= 70) {
     return lang === "en"
-      ? "Some pigmentation and age spots detected. Recommend brightening treatments."
+      ? "Some pigmentation and age spots detected. Recommend brightening programs."
       : "พบจุดด่างดำและฝ้าบางส่วน แนะนำการรักษาเพื่อปรับสีผิว"
   }
-  return lang === "en" ? "Multiple dark spots detected. Brightening treatment recommended." : "พบจุดด่างดำหลายจุด แนะนำการรักษาเพื่อผิวกระจ่างใส"
+  return lang === "en" ? "Multiple dark spots detected. Brightening program recommended." : "พบจุดด่างดำหลายจุด แนะนำการรักษาเพื่อผิวกระจ่างใส"
 }
 
 export function getPoresDescription(score: number, lang: "en" | "th"): string {
@@ -40,7 +40,7 @@ export function getPoresDescription(score: number, lang: "en" | "th"): string {
   if (score >= 70) {
     return lang === "en" ? "Pores slightly visible in T-zone. Overall good pore condition." : "รูขุมขนมองเห็นเล็กน้อยบริเวณ T-zone สภาพรูขุมขนโดยรวมดี"
   }
-  return lang === "en" ? "Enlarged pores detected. Pore tightening treatment recommended." : "พบรูขุมขนกว้าง แนะนำการรักษาเพื่อกระชับรูขุมขน"
+  return lang === "en" ? "Enlarged pores detected. Pore tightening program recommended." : "พบรูขุมขนกว้าง แนะนำการรักษาเพื่อกระชับรูขุมขน"
 }
 
 export function getTextureDescription(score: number, lang: "en" | "th"): string {
@@ -52,7 +52,7 @@ export function getTextureDescription(score: number, lang: "en" | "th"): string 
   if (score >= 70) {
     return lang === "en" ? "Good skin texture. Some minor uneven areas detected." : "พื้นผิวผิวดี พบบริเวณที่ไม่เรียบเล็กน้อย"
   }
-  return lang === "en" ? "Rough skin texture detected. Resurfacing treatment recommended." : "พบพื้นผิวผิวขรุขระ แนะนำการรักษาเพื่อปรับผิว"
+  return lang === "en" ? "Rough skin texture detected. Resurfacing program recommended." : "พบพื้นผิวผิวขรุขระ แนะนำการรักษาเพื่อปรับผิว"
 }
 
 export function getEvennessDescription(score: number, lang: "en" | "th"): string {
@@ -62,7 +62,7 @@ export function getEvennessDescription(score: number, lang: "en" | "th"): string
   if (score >= 70) {
     return lang === "en" ? "Mild uneven skin tone. Some areas of hyperpigmentation noted." : "สีผิวไม่สม่ำเสมอเล็กน้อย พบบริเวณที่มีเม็ดสีเข้มขึ้นบางส่วน"
   }
-  return lang === "en" ? "Uneven skin tone. Color correction treatment recommended." : "สีผิวไม่สม่ำเสมอ แนะนำการรักษาเพื่อปรับสีผิว"
+  return lang === "en" ? "Uneven skin tone. Color correction program recommended." : "สีผิวไม่สม่ำเสมอ แนะนำการรักษาเพื่อปรับสีผิว"
 }
 
 export function getFirmnessDescription(score: number, lang: "en" | "th"): string {
@@ -72,7 +72,7 @@ export function getFirmnessDescription(score: number, lang: "en" | "th"): string
   if (score >= 70) {
     return lang === "en" ? "Good skin firmness and elasticity. Minimal sagging observed." : "ความกระชับและยืดหยุ่นของผิวดี มีความหย่อนคล้อยน้อยมาก"
   }
-  return lang === "en" ? "Loss of firmness detected. Skin tightening treatment recommended." : "พบการสูญเสียความกระชับ แนะนำการรักษาเพื่อกระชับผิว"
+  return lang === "en" ? "Loss of firmness detected. Skin tightening program recommended." : "พบการสูญเสียความกระชับ แนะนำการรักษาเพื่อกระชับผิว"
 }
 
 export function getRadianceDescription(score: number, lang: "en" | "th"): string {
@@ -80,9 +80,9 @@ export function getRadianceDescription(score: number, lang: "en" | "th"): string
     return lang === "en" ? "Radiant and glowing skin." : "ผิวกระจ่างใสและเปล่งปลั่ง"
   }
   if (score >= 70) {
-    return lang === "en" ? "Skin appears slightly dull. Could benefit from brightening treatments." : "ผิวดูหมองคล้ำเล็กน้อย อาจได้รับประโยชน์จากการบำรุงเพื่อเพิ่มความกระจ่างใส"
+    return lang === "en" ? "Skin appears slightly dull. Could benefit from brightening programs." : "ผิวดูหมองคล้ำเล็กน้อย อาจได้รับประโยชน์จากการบำรุงเพื่อเพิ่มความกระจ่างใส"
   }
-  return lang === "en" ? "Dull skin detected. Brightening treatment highly recommended." : "พบผิวหมองคล้ำ แนะนำการรักษาเพื่อผิวกระจ่างใสอย่างยิ่ง"
+  return lang === "en" ? "Dull skin detected. Brightening program highly recommended." : "พบผิวหมองคล้ำ แนะนำการรักษาเพื่อผิวกระจ่างใสอย่างยิ่ง"
 }
 
 // Map pre-analyzed browser result into API response shape

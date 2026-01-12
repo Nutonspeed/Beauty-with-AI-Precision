@@ -17,7 +17,7 @@ import type {
   ProgramTimeline,
   ProgramNote,
   ProgramReport,
-  CustomerProgramSummary,
+  ClientProgramSummary,
   ProgramStatus,
   PhotoType,
   ProgramCategory,
@@ -28,7 +28,7 @@ import type {
 // ============================================================================
 
 export function usePrograms(filters?: {
-  customerId?: string
+  clientId?: string
   status?: ProgramStatus
   category?: ProgramCategory
   specialistId?: string
@@ -218,7 +218,7 @@ export function useProgramSessions(programId: string) {
 }
 
 export function useUpcomingSessions(filters?: {
-  customerId?: string
+  clientId?: string
   specialistId?: string
   centerId?: string
   startDate?: Date
@@ -548,8 +548,8 @@ export function useProgramReport(programId: string) {
   }
 }
 
-export function useCustomerSummary(customerId: string) {
-  const [summary, setSummary] = useState<CustomerProgramSummary | null>(null)
+export function useClientSummary(clientId: string) {
+  const [summary, setSummary] = useState<ClientProgramSummary | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -557,15 +557,15 @@ export function useCustomerSummary(customerId: string) {
     try {
       setLoading(true)
       const manager = ProgramTracker.getInstance()
-      const data = manager.getCustomerSummary(customerId)
+      const data = manager.getClientSummary(clientId)
       setSummary(data)
       setError(null)
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load customer summary")
+      setError(err instanceof Error ? err.message : "Failed to load client summary")
     } finally {
       setLoading(false)
     }
-  }, [customerId])
+  }, [clientId])
 
   useEffect(() => {
     loadSummary()

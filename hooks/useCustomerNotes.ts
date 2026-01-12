@@ -4,7 +4,7 @@ export interface CustomerNote {
   id: string;
   customer_id: string;
   sales_staff_id: string;
-  clinic_id: string;
+  center_id: string;
   content: string;
   note_type: 'call' | 'meeting' | 'followup' | 'general' | 'important';
   tags: string[];

@@ -12,7 +12,7 @@ import { Card } from '@/components/ui/card'
 import { useTranslations } from 'next-intl'
 import { WizardProgress } from './wizard-progress'
 import { WizardNavigation } from './wizard-navigation'
-import { CustomerInfoStep } from './steps/customer-info-step'
+import { ClientInfoStep } from './steps/client-info-step'
 import { ScanStep } from './steps/scan-step'
 import { AnalysisStep } from './steps/analysis-step'
 import { ARPreviewStep } from './steps/ar-preview-step'
@@ -280,7 +280,7 @@ export function PresentationWizard({
     switch (currentStep) {
       case 1:
         return (
-          <CustomerInfoStep
+          <ClientInfoStep
             client={data.client}
             onUpdate={(client) => updateData('client', client)}
             isOnline={isOnline}

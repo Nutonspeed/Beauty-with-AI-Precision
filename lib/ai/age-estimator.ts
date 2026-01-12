@@ -312,7 +312,7 @@ export class AgeEstimator {
 
     // General recommendations based on age difference
     if (ageDifference > 5) {
-      recommendations.push("Your skin age is higher than your chronological age. Focus on anti-aging treatments.")
+      recommendations.push("Your skin age is higher than your chronological age. Focus on anti-aging programs.")
     } else if (ageDifference < -3) {
       recommendations.push(
         "Great news! Your skin age is younger than your chronological age. Maintain your current routine.",
@@ -338,12 +338,12 @@ export class AgeEstimator {
     // Texture recommendations
     if (factors.texture > 15) {
       recommendations.push("Regular exfoliation with AHA/BHA can improve skin texture.")
-      recommendations.push("Consider professional treatments like microdermabrasion.")
+      recommendations.push("Consider professional programs like microdermabrasion.")
     }
 
     // Age-specific recommendations
     if (estimatedAge >= 40) {
-      recommendations.push("Consider professional treatments like laser therapy or chemical peels.")
+      recommendations.push("Consider professional programs like laser therapy or chemical peels.")
       recommendations.push("Use products with growth factors and stem cells for cellular renewal.")
     } else if (estimatedAge >= 30) {
       recommendations.push("Start incorporating retinol into your nighttime routine.")

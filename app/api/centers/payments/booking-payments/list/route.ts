@@ -7,11 +7,11 @@ export const dynamic = "force-dynamic"
 export const GET = withAuth(
   async (request: NextRequest, user) => {
     try {
-      if (!user.clinic_id) {
+      if (!user.center_id) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 })
       }
 
-      if (!["super_admin", "admin", "clinic_owner", "clinic_admin", "manager", "clinic_staff"].includes(user.role)) {
+      if (!["super_admin", "admin", "center_owner", "center_admin", "manager", "center_staff"].includes(user.role)) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 })
       }
 
@@ -28,10 +28,10 @@ export const GET = withAuth(
 
       let query = service
         .from("booking_payments")
-        .select("id, clinic_id, appointment_id, amount, payment_method, payment_status, payment_date, transaction_id, notes, created_at", {
+        .select("id, center_id, appointment_id, amount, payment_method, payment_status, payment_date, transaction_id, notes, created_at", {
           count: "exact",
         })
-        .eq("clinic_id", user.clinic_id)
+        .eq("center_id", user.center_id)
 
       if (status) query = query.eq("payment_status", status)
       if (method) query = query.eq("payment_method", method)

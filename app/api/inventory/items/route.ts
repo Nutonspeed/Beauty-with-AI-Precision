@@ -1,8 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
-import { withClinicAuth } from "@/lib/auth/middleware"
+import { withCenterAuth } from "@/lib/auth/middleware"
 
-export const GET = withClinicAuth(async (request: NextRequest, user) => {
+export const GET = withCenterAuth(async (request: NextRequest, user) => {
   try {
     const { searchParams } = new URL(request.url)
     const lowStock = searchParams.get("low_stock") === "true"
@@ -134,7 +134,7 @@ export const GET = withClinicAuth(async (request: NextRequest, user) => {
   }
 });
 
-export const POST = withClinicAuth(async (request: NextRequest, user) => {
+export const POST = withCenterAuth(async (request: NextRequest, user) => {
   try {
     const body = await request.json()
 

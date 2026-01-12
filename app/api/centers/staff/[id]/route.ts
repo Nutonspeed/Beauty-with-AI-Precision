@@ -1,7 +1,7 @@
 import { createServerClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 
-// GET /api/clinic/staff/[id] - Get single staff member
+// GET /api/center/staff/[id] - Get single staff member
 export async function GET(
   request: NextRequest,
   context: { params: Promise<{ id: string }> }
@@ -17,7 +17,7 @@ export async function GET(
     }
 
     const { data: staff, error } = await supabase
-      .from('clinic_staff')
+      .from('center_staff')
       .select(`
         *,
         user:users(id, email, full_name)
@@ -31,7 +31,7 @@ export async function GET(
 
     return NextResponse.json(staff)
   } catch (error) {
-    console.error('Error in GET /api/clinic/staff/[id]:', error)
+    console.error('Error in GET /api/center/staff/[id]:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -39,7 +39,7 @@ export async function GET(
   }
 }
 
-// PUT /api/clinic/staff/[id] - Update staff member
+// PUT /api/center/staff/[id] - Update staff member
 export async function PUT(
   request: NextRequest,
   context: { params: Promise<{ id: string }> }
@@ -85,7 +85,7 @@ export async function PUT(
     // Handle license info in metadata
     if (body.license_number !== undefined || body.license_expiry !== undefined) {
       const { data: currentStaff } = await supabase
-        .from('clinic_staff')
+        .from('center_staff')
         .select('metadata')
         .eq('id', id)
         .single()
@@ -100,7 +100,7 @@ export async function PUT(
     updateData.updated_at = new Date().toISOString()
 
     const { data: updatedStaff, error } = await supabase
-      .from('clinic_staff')
+      .from('center_staff')
       .update(updateData)
       .eq('id', id)
       .select(`
@@ -116,7 +116,7 @@ export async function PUT(
 
     return NextResponse.json(updatedStaff)
   } catch (error) {
-    console.error('Error in PUT /api/clinic/staff/[id]:', error)
+    console.error('Error in PUT /api/center/staff/[id]:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -124,7 +124,7 @@ export async function PUT(
   }
 }
 
-// DELETE /api/clinic/staff/[id] - Soft delete (terminate) staff member
+// DELETE /api/center/staff/[id] - Soft delete (terminate) staff member
 export async function DELETE(
   request: NextRequest,
   context: { params: Promise<{ id: string }> }
@@ -141,7 +141,7 @@ export async function DELETE(
 
     // Soft delete: set status to offline and terminated_date
     const { data: terminatedStaff, error } = await supabase
-      .from('clinic_staff')
+      .from('center_staff')
       .update({
         status: 'offline',
         terminated_date: new Date().toISOString().split('T')[0],
@@ -161,7 +161,7 @@ export async function DELETE(
       data: terminatedStaff
     })
   } catch (error) {
-    console.error('Error in DELETE /api/clinic/staff/[id]:', error)
+    console.error('Error in DELETE /api/center/staff/[id]:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

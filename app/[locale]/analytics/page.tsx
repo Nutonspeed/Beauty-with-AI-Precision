@@ -8,7 +8,7 @@
 import { Suspense } from 'react';
 import { createServerClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
-import CustomerDashboard from '@/components/analytics/customer-dashboard';
+import ClientDashboard from '@/components/analytics/client-dashboard';
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -94,7 +94,7 @@ export default async function AnalyticsPage() {
           </div>
 
           <Suspense fallback={<DashboardLoading />}>
-            <CustomerDashboard customerId={user.id} />
+            <ClientDashboard clientId={user.id} />
           </Suspense>
         </div>
       </main>
@@ -110,5 +110,5 @@ export default async function AnalyticsPage() {
 
 export const metadata = {
   title: 'Analytics Dashboard - Beauty with AI Precision',
-  description: 'Track your skin improvement over time with detailed analytics',
+  description: 'Track your aesthetic improvement over time with detailed analytics',
 };

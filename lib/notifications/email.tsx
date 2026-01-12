@@ -80,8 +80,8 @@ export async function sendBookingConfirmation(to: string, bookingDetails: any) {
             
             <div class="details">
               <div class="detail-row">
-                <strong>Treatment:</strong>
-                <span>${bookingDetails.treatment_type}</span>
+                <strong>Program:</strong>
+                <span>${bookingDetails.program_type}</span>
               </div>
               <div class="detail-row">
                 <strong>Date:</strong>
@@ -92,8 +92,8 @@ export async function sendBookingConfirmation(to: string, bookingDetails: any) {
                 <span>${bookingDetails.booking_time}</span>
               </div>
               <div class="detail-row">
-                <strong>Clinic:</strong>
-                <span>${bookingDetails.clinic?.name || "TBD"}</span>
+                <strong>Center:</strong>
+                <span>${bookingDetails.center?.name || "TBD"}</span>
               </div>
             </div>
 
@@ -140,10 +140,10 @@ export async function sendBookingReminder(to: string, bookingDetails: any) {
             <p>This is a friendly reminder about your upcoming appointment:</p>
             
             <ul>
-              <li><strong>Treatment:</strong> ${bookingDetails.treatment_type}</li>
+              <li><strong>Program:</strong> ${bookingDetails.program_type}</li>
               <li><strong>Date:</strong> ${bookingDetails.booking_date}</li>
               <li><strong>Time:</strong> ${bookingDetails.booking_time}</li>
-              <li><strong>Location:</strong> ${bookingDetails.clinic?.name || "TBD"}</li>
+              <li><strong>Location:</strong> ${bookingDetails.center?.name || "TBD"}</li>
             </ul>
 
             <p>We look forward to seeing you!</p>
@@ -178,7 +178,7 @@ export async function sendAnalysisComplete(to: string, _analysisId: string) {
           </div>
           <div class="content">
             <p>Your skin analysis has been completed successfully.</p>
-            <p>View your personalized results and treatment recommendations now.</p>
+            <p>View your personalized results and program recommendations now.</p>
             
             <a href="${process.env.NEXT_PUBLIC_SITE_URL}/analysis/results" class="button">View Results</a>
           </div>

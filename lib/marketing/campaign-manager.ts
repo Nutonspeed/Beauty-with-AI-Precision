@@ -12,7 +12,7 @@ export type CampaignStatus = "draft" | "scheduled" | "active" | "paused" | "comp
 export type SegmentOperator = "and" | "or"
 export type ConditionOperator = "equals" | "not_equals" | "contains" | "not_contains" | "greater_than" | "less_than" | "in" | "not_in"
 export type TriggerType = "immediate" | "scheduled" | "event-based" | "behavioral"
-export type EventType = "signup" | "purchase" | "booking" | "treatment_complete" | "birthday" | "anniversary" | "abandoned_cart" | "inactivity"
+export type EventType = "signup" | "purchase" | "booking" | "program_complete" | "birthday" | "anniversary" | "abandoned_cart" | "inactivity"
 export type MessageStatus = "pending" | "sent" | "delivered" | "opened" | "clicked" | "bounced" | "failed"
 export type ABTestStatus = "draft" | "running" | "completed" | "cancelled"
 
@@ -780,15 +780,15 @@ class CampaignManager {
     // Create sample segments
     const segment1 = this.createSegment({
       name: "VIP Customers",
-      description: "High-value customers with 5+ treatments",
+      description: "High-value customers with 5+ programs",
       operator: "and",
       conditions: [
         {
           id: "C1",
-          field: "totalTreatments",
+          field: "totalPrograms",
           operator: "greater_than",
           value: 5,
-          label: "Total Treatments > 5",
+          label: "Total Programs > 5",
         },
         {
           id: "C2",
@@ -816,10 +816,10 @@ class CampaignManager {
         },
         {
           id: "C2",
-          field: "totalTreatments",
+          field: "totalPrograms",
           operator: "equals",
           value: 0,
-          label: "Total Treatments = 0",
+          label: "Total Programs = 0",
         },
       ],
       createdBy: "MKT001",
@@ -840,10 +840,10 @@ class CampaignManager {
         },
         {
           id: "C2",
-          field: "totalTreatments",
+          field: "totalPrograms",
           operator: "greater_than",
           value: 0,
-          label: "Total Treatments > 0",
+          label: "Total Programs > 0",
         },
       ],
       createdBy: "MKT001",
@@ -856,8 +856,8 @@ class CampaignManager {
       description: "Welcome new customers and introduce our services",
       type: "email",
       category: "onboarding",
-      subject: "Welcome to Beauty Clinic! 🌟",
-      body: "Dear {{firstName}},\n\nWelcome to our clinic family! We're excited to have you...",
+      subject: "Welcome to Beauty Center! 🌟",
+      body: "Dear {{firstName}},\n\nWelcome to our center family! We're excited to have you...",
       htmlBody: "<h1>Welcome {{firstName}}!</h1><p>We're excited to have you...</p>",
       thumbnailUrl: "/templates/welcome-email.jpg",
       tags: ["welcome", "onboarding", "new-customer"],
@@ -865,12 +865,12 @@ class CampaignManager {
     })
 
     this.createTemplate({
-      name: "Treatment Reminder",
+      name: "Program Reminder",
       description: "Remind customers about upcoming appointments",
       type: "sms",
       category: "reminder",
-      body: "Hi {{firstName}}, this is a reminder about your {{treatmentName}} appointment on {{date}} at {{time}}. See you soon!",
-      tags: ["reminder", "appointment", "treatment"],
+      body: "Hi {{firstName}}, this is a reminder about your {{programName}} appointment on {{date}} at {{time}}. See you soon!",
+      tags: ["reminder", "appointment", "program"],
       createdBy: "MKT001",
     })
 
@@ -880,7 +880,7 @@ class CampaignManager {
       type: "email",
       category: "promotion",
       subject: "Happy Birthday {{firstName}}! 🎉 Special Gift Inside",
-      body: "Happy Birthday! Celebrate with 20% off any treatment this month...",
+      body: "Happy Birthday! Celebrate with 20% off any program this month...",
       htmlBody: "<div class='birthday-card'><h1>Happy Birthday {{firstName}}!</h1>...</div>",
       tags: ["birthday", "promotion", "discount"],
       createdBy: "MKT001",
@@ -891,22 +891,22 @@ class CampaignManager {
       id: "MSG1",
       campaignId: "",
       type: "email",
-      subject: "Exclusive Offer: 30% Off Laser Treatments",
-      body: "Dear VIP Customer,\n\nAs one of our most valued clients, we're offering you an exclusive 30% discount on all laser treatments this month...",
-      htmlBody: "<h2>Exclusive VIP Offer</h2><p>30% OFF Laser Treatments</p>...",
-      from: "marketing@beautyclinic.com",
-      replyTo: "support@beautyclinic.com",
+      subject: "Exclusive Offer: 30% Off Laser Programs",
+      body: "Dear VIP Customer,\n\nAs one of our most valued clients, we're offering you an exclusive 30% discount on all laser programs this month...",
+      htmlBody: "<h2>Exclusive VIP Offer</h2><p>30% OFF Laser Programs</p>...",
+      from: "marketing@beautycenter.com",
+      replyTo: "support@beautycenter.com",
       cta: {
         text: "Book Now",
-        url: "https://beautyclinic.com/book",
+        url: "https://beautycenter.com/book",
         trackingParams: { campaign: "vip-laser-2024", source: "email" },
       },
       createdAt: new Date(),
     }
 
     const campaign1 = this.createCampaign({
-      name: "VIP Laser Treatment Promotion",
-      description: "Exclusive 30% discount for VIP customers on laser treatments",
+      name: "VIP Laser Program Promotion",
+      description: "Exclusive 30% discount for VIP customers on laser programs",
       type: "email",
       status: "active",
       segmentId: segment1.id,
@@ -950,11 +950,11 @@ class CampaignManager {
       campaignId: "",
       type: "email",
       variant: "A",
-      subject: "New Customer Special: First Treatment 50% Off",
-      body: "Welcome! Get 50% off your first treatment...",
+      subject: "New Customer Special: First Program 50% Off",
+      body: "Welcome! Get 50% off your first program...",
       cta: {
         text: "Claim Offer",
-        url: "https://beautyclinic.com/first-time",
+        url: "https://beautycenter.com/first-time",
       },
       createdAt: new Date(),
     }
@@ -968,7 +968,7 @@ class CampaignManager {
       body: "Welcome! Start your beauty journey with 50% off...",
       cta: {
         text: "Get Started",
-        url: "https://beautyclinic.com/first-time",
+        url: "https://beautycenter.com/first-time",
       },
       createdAt: new Date(),
     }
@@ -1054,10 +1054,10 @@ class CampaignManager {
       campaignId: "",
       type: "email",
       subject: "We Miss You! Come Back for 40% Off",
-      body: "It's been a while! We'd love to see you again. Enjoy 40% off your next treatment...",
+      body: "It's been a while! We'd love to see you again. Enjoy 40% off your next program...",
       cta: {
         text: "Redeem Offer",
-        url: "https://beautyclinic.com/winback",
+        url: "https://beautycenter.com/winback",
       },
       createdAt: new Date(),
     }
@@ -1101,10 +1101,10 @@ class CampaignManager {
 
     // Create sample automation workflow
     this.createWorkflow({
-      name: "Post-Treatment Follow-up",
-      description: "Automated follow-up sequence after treatment completion",
+      name: "Post-Program Follow-up",
+      description: "Automated follow-up sequence after program completion",
       triggerType: "event-based",
-      eventType: "treatment_complete",
+      eventType: "program_complete",
       status: "active",
       steps: [
         {
@@ -1120,7 +1120,7 @@ class CampaignManager {
           type: "send_email",
           name: "Send satisfaction survey",
           config: {
-            subject: "How was your treatment?",
+            subject: "How was your program?",
             templateId: "survey-email",
           },
           order: 2,

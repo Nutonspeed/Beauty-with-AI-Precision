@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
     const { listProposals } = await import('@/lib/sales/proposals-service')
     const payload = await listProposals({
       userId: user.id,
-      clinicId: userRow.center_id ?? null,
+      centerId: userRow.center_id ?? null,
       status,
       search,
       limit,

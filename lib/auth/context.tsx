@@ -247,7 +247,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           email: profile.email,
           role: userRole,
           tier: getRoleTier(userRole),
-          center_id: profile.center_id || profile.clinic_id,
+          center_id: profile.center_id || profile.center_id,
           full_name: profile.full_name,
           avatar_url: profile.avatar_url,
           phone: profile.phone,

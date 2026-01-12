@@ -17,7 +17,7 @@ export default async function ClientsPage() {
       latest_booking:bookings(
         id,
         booking_date,
-        treatment_type,
+        program_type,
         payment_amount,
         status
       )
@@ -78,7 +78,7 @@ export default async function ClientsPage() {
     notes: c.notes,
     latest_booking: c.latest_booking?.[0] ? {
       ...c.latest_booking[0],
-      program_type: c.latest_booking[0].treatment_type
+      program_type: c.latest_booking[0].program_type
     } : null,
   }))
 

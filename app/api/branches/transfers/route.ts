@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { withClinicAuth } from '@/lib/auth/middleware';
+import { withCenterAuth } from '@/lib/auth/middleware';
 
 function getSupabaseClient() {
   return createClient(
@@ -14,15 +14,15 @@ function getSupabaseClient() {
  * List branch transfers
  * 
  * Query parameters:
- * - clinic_id (optional): Filter by clinic
+ * - center_id (optional): Filter by center
  * - from_branch_id (optional): Filter by source branch
  * - to_branch_id (optional): Filter by destination branch
  * - status (optional): Filter by status
  */
-export const GET = withClinicAuth(async (request: NextRequest) => {
+export const GET = withCenterAuth(async (request: NextRequest) => {
   try {
     const { searchParams } = new URL(request.url);
-    const clinic_id = searchParams.get('clinic_id');
+    const center_id = searchParams.get('center_id');
     const from_branch_id = searchParams.get('from_branch_id');
     const to_branch_id = searchParams.get('to_branch_id');
     const status = searchParams.get('status');
@@ -46,8 +46,8 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
         )
       `);
 
-    if (clinic_id) {
-      query = query.eq('clinic_id', clinic_id);
+    if (center_id) {
+      query = query.eq('center_id', center_id);
     }
 
     if (from_branch_id) {
@@ -81,7 +81,7 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
  * Create a new branch transfer
  * 
  * Body:
- * - clinic_id (required): Clinic ID
+ * - center_id (required): Center ID
  * - from_branch_id (required): Source branch ID
  * - to_branch_id (required): Destination branch ID
  * - requested_by_user_id (required): User requesting transfer
@@ -89,11 +89,11 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
  * - reason (optional): Reason for transfer
  * - expected_delivery_date (optional): Expected delivery date
  */
-export const POST = withClinicAuth(async (request: NextRequest) => {
+export const POST = withCenterAuth(async (request: NextRequest) => {
   try {
     const body = await request.json();
     const {
-      clinic_id,
+      center_id,
       from_branch_id,
       to_branch_id,
       requested_by_user_id,
@@ -104,9 +104,9 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
       expected_delivery_date,
     } = body;
 
-    if (!clinic_id || !from_branch_id || !to_branch_id || !requested_by_user_id || !items) {
+    if (!center_id || !from_branch_id || !to_branch_id || !requested_by_user_id || !items) {
       return NextResponse.json(
-        { error: 'clinic_id, from_branch_id, to_branch_id, requested_by_user_id, and items are required' },
+        { error: 'center_id, from_branch_id, to_branch_id, requested_by_user_id, and items are required' },
         { status: 400 }
       );
     }
@@ -151,7 +151,7 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
     const { data: transfer, error: transferError } = await supabaseClient
       .from('branch_transfers')
       .insert({
-        clinic_id,
+        center_id,
         transfer_number: transferNumber,
         from_branch_id,
         to_branch_id,

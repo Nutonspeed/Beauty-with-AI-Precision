@@ -10,10 +10,10 @@ function getSupabaseClient() {
 
 /**
  * GET /api/marketing/campaigns
- * List marketing campaigns for beauty clinic customers
+ * List marketing campaigns for beauty center customers
  * 
  * Query parameters:
- * - clinic_id (required): Clinic ID
+ * - center_id (required): Center ID
  * - status (optional): Filter by status
  * - campaign_type (optional): Filter by campaign type
  * - is_active (optional): Filter by active status
@@ -21,14 +21,14 @@ function getSupabaseClient() {
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const clinic_id = searchParams.get('clinic_id');
+    const center_id = searchParams.get('center_id');
     const status = searchParams.get('status');
     const campaign_type = searchParams.get('campaign_type');
     const is_active = searchParams.get('is_active');
 
-    if (!clinic_id) {
+    if (!center_id) {
       return NextResponse.json(
-        { error: 'clinic_id is required' },
+        { error: 'center_id is required' },
         { status: 400 }
       );
     }
@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
         *,
         created_by:users!marketing_campaigns_created_by_user_id_fkey(id, full_name, email)
       `)
-      .eq('clinic_id', clinic_id);
+      .eq('center_id', center_id);
 
     if (status) {
       query = query.eq('status', status);
@@ -70,10 +70,10 @@ export async function GET(request: NextRequest) {
 
 /**
  * POST /api/marketing/campaigns
- * Create a new marketing campaign for beauty clinic customers
+ * Create a new marketing campaign for beauty center customers
  * 
  * Body:
- * - clinic_id (required): Clinic ID
+ * - center_id (required): Center ID
  * - campaign_code (required): Unique campaign code
  * - campaign_name (required): Campaign name
  * - campaign_type (required): Campaign type
@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const {
-      clinic_id,
+      center_id,
       campaign_code,
       campaign_name,
       campaign_name_en,
@@ -104,9 +104,9 @@ export async function POST(request: NextRequest) {
       notes,
     } = body;
 
-    if (!clinic_id || !campaign_code || !campaign_name || !campaign_type || !start_date || !end_date) {
+    if (!center_id || !campaign_code || !campaign_name || !campaign_type || !start_date || !end_date) {
       return NextResponse.json(
-        { error: 'clinic_id, campaign_code, campaign_name, campaign_type, start_date, and end_date are required' },
+        { error: 'center_id, campaign_code, campaign_name, campaign_type, start_date, and end_date are required' },
         { status: 400 }
       );
     }
@@ -115,7 +115,7 @@ export async function POST(request: NextRequest) {
     const { data, error } = await supabaseClient
       .from('marketing_campaigns')
       .insert({
-        clinic_id,
+        center_id,
         campaign_code,
         campaign_name,
         campaign_name_en,

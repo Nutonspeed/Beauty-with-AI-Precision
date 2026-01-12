@@ -35,7 +35,7 @@ export const GET = withAuth(
             phone,
             avatar_url
           ),
-          clinics!inner(
+          centers!inner(
             id,
             name
           )
@@ -47,7 +47,7 @@ export const GET = withAuth(
       }
 
       if (q) {
-        query = query.or(`email.ilike.%${q}%,user_profiles.first_name.ilike.%${q}%,user_profiles.last_name.ilike.%${q}%,clinics.name.ilike.%${q}%`)
+        query = query.or(`email.ilike.%${q}%,user_profiles.first_name.ilike.%${q}%,user_profiles.last_name.ilike.%${q}%,centers.name.ilike.%${q}%`)
       }
 
       const { data, error, count } = await query.range(offset, offset + limit - 1)
@@ -66,8 +66,8 @@ export const GET = withAuth(
         lastName: user.user_profiles?.last_name || "",
         phone: user.user_profiles?.phone || "",
         avatarUrl: user.user_profiles?.avatar_url || "",
-        clinicId: user.clinics?.id || "",
-        clinicName: user.clinics?.name || "",
+        centerId: user.centers?.id || "",
+        centerName: user.centers?.name || "",
         createdAt: user.created_at,
         lastSignIn: user.last_sign_in_at,
       }))

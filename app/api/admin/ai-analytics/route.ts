@@ -111,35 +111,35 @@ export async function GET() {
       else scoreDistribution.poor++;
     });
 
-    // Get top clinics by analysis count
-    const { data: clinicAnalyses } = await supabase
+    // Get top centers by analysis count
+    const { data: centerAnalyses } = await supabase
       .from('skin_analyses')
-      .select('clinic_id');
+      .select('center_id');
 
-    const clinicCounts: Record<string, number> = {};
-    clinicAnalyses?.forEach((item) => {
-      if (item.clinic_id) {
-        clinicCounts[item.clinic_id] = (clinicCounts[item.clinic_id] || 0) + 1;
+    const centerCounts: Record<string, number> = {};
+    centerAnalyses?.forEach((item) => {
+      if (item.center_id) {
+        centerCounts[item.center_id] = (centerCounts[item.center_id] || 0) + 1;
       }
     });
 
-    // Get clinic names for top clinics
-    const topClinicIds = Object.entries(clinicCounts)
+    // Get center names for top centers
+    const topCenterIds = Object.entries(centerCounts)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5)
       .map(([id]) => id);
 
-    const { data: topClinicsData } = await supabase
-      .from('clinics')
+    const { data: topCentersData } = await supabase
+      .from('centers')
       .select('id, name')
-      .in('id', topClinicIds);
+      .in('id', topCenterIds);
 
-    const topClinics = topClinicIds.map((id) => {
-      const clinic = topClinicsData?.find((c) => c.id === id);
+    const topCenters = topCenterIds.map((id) => {
+      const center = topCentersData?.find((c) => c.id === id);
       return {
         id,
-        name: clinic?.name || 'Unknown Clinic',
-        analysisCount: clinicCounts[id],
+        name: center?.name || 'Unknown Center',
+        analysisCount: centerCounts[id],
       };
     });
 
@@ -168,11 +168,11 @@ export async function GET() {
       .select(`
         id,
         user_id,
-        clinic_id,
+        center_id,
         skin_type,
         overall_score,
         created_at,
-        clinics(name)
+        centers(name)
       `)
       .order('created_at', { ascending: false })
       .limit(10);
@@ -207,10 +207,10 @@ export async function GET() {
         percentage: Number(((count / (totalAnalyses || 1)) * 100).toFixed(1)),
       })),
       scoreDistribution,
-      topClinics,
+      topCenters,
       recentAnalyses: recentAnalyses?.map((a) => ({
         id: a.id,
-        clinicName: (a.clinics as any)?.name || 'Unknown',
+        centerName: (a.centers as any)?.name || 'Unknown',
         skinType: a.skin_type || 'Unknown',
         overallScore: a.overall_score || 0,
         createdAt: a.created_at,

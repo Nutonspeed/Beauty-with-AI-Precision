@@ -1,17 +1,17 @@
 'use client';
 
 /**
- * Customer Progress Tracking Page
+ * Client Progress Tracking Page
  * 
- * Shows comprehensive progress dashboard for logged-in customers
+ * Shows comprehensive progress dashboard for logged-in clients
  */
 
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter, useParams } from 'next/navigation';
-import CustomerProgressDashboard, {
+import ClientProgressDashboard, {
   type AnalysisSnapshot,
-} from '@/components/customer/progress-dashboard';
+} from '@/components/client/progress-dashboard';
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { motion } from 'framer-motion';
@@ -77,7 +77,7 @@ interface ProgressPageProps {
   params: Promise<{ locale: string }>;
 }
 
-export default function CustomerProgressPage({ params }: ProgressPageProps) {
+export default function ClientProgressPage({ params }: ProgressPageProps) {
   const t = useTranslations();
   const [analyses, setAnalyses] = useState<AnalysisSnapshot[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -259,7 +259,7 @@ export default function CustomerProgressPage({ params }: ProgressPageProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <CustomerProgressDashboard
+          <ClientProgressDashboard
               analyses={analyses}
               locale={locale as 'th' | 'en'}
               onExport={handleExport}

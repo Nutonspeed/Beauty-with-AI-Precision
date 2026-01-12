@@ -10,7 +10,7 @@ function getSupabaseClient() {
 
 /**
  * GET /api/marketing/campaigns/[id]
- * Get campaign details for beauty clinic
+ * Get campaign details for beauty center
  */
 export async function GET(
   request: NextRequest,
@@ -43,7 +43,7 @@ export async function GET(
 
 /**
  * PATCH /api/marketing/campaigns/[id]
- * Update campaign for beauty clinic customers
+ * Update campaign for beauty center customers
  */
 export async function PATCH(
   request: NextRequest,

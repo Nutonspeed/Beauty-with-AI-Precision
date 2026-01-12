@@ -7,8 +7,8 @@ export const dynamic = "force-dynamic"
 export const GET = withAuth(
   async (request: NextRequest, user) => {
     try {
-      // Only clinic owners and admins can access
-      if (!["clinic_owner", "clinic_admin", "admin"].includes(user.role)) {
+      // Only center owners and admins can access
+      if (!["center_owner", "center_admin", "admin"].includes(user.role)) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 })
       }
 
@@ -29,7 +29,7 @@ export const GET = withAuth(
       const { data: appointments, error: appointmentsError } = await service
         .from("appointments")
         .select("id, status, created_at, appointment_date")
-        .eq("clinic_id", user.clinic_id!)
+        .eq("center_id", user.center_id!)
         .gte("appointment_date", startDateStr)
         .lte("appointment_date", endDateStr)
 
@@ -42,7 +42,7 @@ export const GET = withAuth(
       const { data: paidAppointments, error: paymentsError } = await service
         .from("booking_payments")
         .select("appointment_id")
-        .eq("clinic_id", user.clinic_id!)
+        .eq("center_id", user.center_id!)
         .eq("payment_status", "paid")
 
       if (paymentsError) {

@@ -47,17 +47,17 @@ test.describe('Authentication & Authorization', () => {
     await takeScreenshot(page, 'auth-super-admin-login');
   });
 
-  test('should login as clinic owner successfully', async ({ page }) => {
+  test('should login as center owner successfully', async ({ page }) => {
     await page.goto('/th/auth/login');
     await waitForLoading(page);
     
-    await page.fill('#email', testUsers.clinicOwner.email);
-    await page.fill('#password', testUsers.clinicOwner.password);
+    await page.fill('#email', testUsers.centerOwner.email);
+    await page.fill('#password', testUsers.centerOwner.password);
     await page.click('button[type="submit"]');
     
     // Smoke only
     await page.waitForTimeout(1500);
-    await takeScreenshot(page, 'auth-clinic-owner-login');
+    await takeScreenshot(page, 'auth-center-owner-login');
   });
 
   test('should login as sales staff successfully', async ({ page, browserName }) => {

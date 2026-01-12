@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { withClinicAuth } from '@/lib/auth/middleware';
+import { withCenterAuth } from '@/lib/auth/middleware';
 
 /**
  * GET /api/branches/services
@@ -11,7 +11,7 @@ import { withClinicAuth } from '@/lib/auth/middleware';
  * - service_id (optional): Filter by service
  * - is_available (optional): Filter by availability
  */
-export const GET = withClinicAuth(async (request: NextRequest) => {
+export const GET = withCenterAuth(async (request: NextRequest) => {
   try {
     const { searchParams } = new URL(request.url);
     const branch_id = searchParams.get('branch_id');
@@ -72,19 +72,19 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
  * Body:
  * - branch_id (required): Branch ID
  * - service_id (required): Service ID
- * - branch_price (optional): Branch-specific price (overrides clinic price)
- * - use_clinic_price (optional): Use clinic base price
+ * - branch_price (optional): Branch-specific price (overrides center price)
+ * - use_center_price (optional): Use center base price
  * - daily_capacity (optional): Daily capacity
  * - available_days (optional): Array of available days
  */
-export const POST = withClinicAuth(async (request: NextRequest) => {
+export const POST = withCenterAuth(async (request: NextRequest) => {
   try {
     const body = await request.json();
     const {
       branch_id,
       service_id,
       branch_price,
-      use_clinic_price = true,
+      use_center_price = true,
       daily_capacity,
       slots_per_day,
       requires_specialist = false,
@@ -121,7 +121,7 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
         branch_id,
         service_id,
         branch_price,
-        use_clinic_price,
+        use_center_price,
         daily_capacity,
         slots_per_day,
         requires_specialist,

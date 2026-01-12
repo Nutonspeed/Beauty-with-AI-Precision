@@ -9,7 +9,7 @@ import { VideoCallManager, CallState, ChatMessage, CallEventHandlers } from '@/l
 export interface UseVideoCallOptions {
   userId: string;
   userName: string;
-  userRole: 'doctor' | 'patient' | 'admin';
+  userRole: 'expert' | 'customer' | 'admin';
   socketUrl?: string;
   autoInitialize?: boolean;
 }

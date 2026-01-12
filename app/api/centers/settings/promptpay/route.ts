@@ -15,35 +15,35 @@ export async function GET() {
     const service = createServiceClient()
     const { data: userRow, error: userErr } = await service
       .from("users")
-      .select("role, clinic_id")
+      .select("role, center_id")
       .eq("id", user.id)
       .single()
 
-    if (userErr || !userRow?.clinic_id) {
+    if (userErr || !userRow?.center_id) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
-    if (!['clinic_owner', 'clinic_admin', 'manager', 'admin', 'super_admin'].includes(userRow.role)) {
+    if (!['center_owner', 'center_admin', 'manager', 'admin', 'super_admin'].includes(userRow.role)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
-    const { data: clinic, error: clinicError } = await service
-      .from("clinics")
+    const { data: center, error: centerError } = await service
+      .from("centers")
       .select("id, promptpay_id, promptpay_type")
-      .eq("id", userRow.clinic_id)
+      .eq("id", userRow.center_id)
       .single()
 
-    if (clinicError || !clinic) {
-      return NextResponse.json({ error: "Clinic not found" }, { status: 404 })
+    if (centerError || !center) {
+      return NextResponse.json({ error: "Center not found" }, { status: 404 })
     }
 
     return NextResponse.json({
-      clinic_id: clinic.id,
-      promptpay_id: clinic.promptpay_id,
-      promptpay_type: clinic.promptpay_type,
+      center_id: center.id,
+      promptpay_id: center.promptpay_id,
+      promptpay_type: center.promptpay_type,
     })
   } catch (e) {
-    console.error("[API] GET /api/clinic/settings/promptpay error:", e)
+    console.error("[API] GET /api/center/settings/promptpay error:", e)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
@@ -60,15 +60,15 @@ export async function PUT(request: NextRequest) {
     const service = createServiceClient()
     const { data: userRow, error: userErr } = await service
       .from("users")
-      .select("role, clinic_id")
+      .select("role, center_id")
       .eq("id", user.id)
       .single()
 
-    if (userErr || !userRow?.clinic_id) {
+    if (userErr || !userRow?.center_id) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
-    if (!['clinic_owner', 'clinic_admin', 'manager', 'admin', 'super_admin'].includes(userRow.role)) {
+    if (!['center_owner', 'center_admin', 'manager', 'admin', 'super_admin'].includes(userRow.role)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
@@ -91,23 +91,23 @@ export async function PUT(request: NextRequest) {
     }
 
     const { data: updated, error: updErr } = await service
-      .from("clinics")
+      .from("centers")
       .update(updates)
-      .eq("id", userRow.clinic_id)
+      .eq("id", userRow.center_id)
       .select("id, promptpay_id, promptpay_type")
       .single()
 
     if (updErr || !updated) {
-      return NextResponse.json({ error: "Failed to update clinic promptpay settings" }, { status: 500 })
+      return NextResponse.json({ error: "Failed to update center promptpay settings" }, { status: 500 })
     }
 
     return NextResponse.json({
-      clinic_id: updated.id,
+      center_id: updated.id,
       promptpay_id: updated.promptpay_id,
       promptpay_type: updated.promptpay_type,
     })
   } catch (e) {
-    console.error("[API] PUT /api/clinic/settings/promptpay error:", e)
+    console.error("[API] PUT /api/center/settings/promptpay error:", e)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

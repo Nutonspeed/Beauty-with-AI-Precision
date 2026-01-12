@@ -10,7 +10,7 @@ import {
   analyzePorphyrins,
   formatPorphyrinSummary,
   getPorphyrinDescription,
-  getTreatmentUrgencyDescription,
+  getProgramUrgencyDescription,
   type PorphyrinDetectorInput,
 } from '../porphyrin-detector';
 
@@ -35,7 +35,7 @@ function demoClearSkin() {
     userHistory: {
       age: 28,
       acneHistory: 'never',
-      onTreatment: false,
+      onProgram: false,
       skincareRoutine: 'good',
     },
     imageConfidence: 0.9,
@@ -49,7 +49,7 @@ function demoClearSkin() {
   console.log(`- Acne Severity: ${result.acneSeverity}`);
   console.log(`- Pore Congestion: ${result.poreCongestion}`);
   console.log(`- Inflammation: ${result.inflammationLevel}`);
-  console.log(`- Treatment: ${result.treatmentUrgency} (${getTreatmentUrgencyDescription(result.treatmentUrgency)})`);
+  console.log(`- Program: ${result.programUrgency} (${getProgramUrgencyDescription(result.programUrgency)})`);
   console.log(`- Bacterial Density: ${result.estimatedBacterialDensity} spots/cm²`);
   console.log(`- Confidence: ${(result.confidence * 100).toFixed(0)}%`);
   console.log('\nTop 3 Recommendations:');
@@ -77,7 +77,7 @@ function demoMildAcne() {
     userHistory: {
       age: 16,                  // Teenager = high sebum production
       acneHistory: 'occasional',
-      onTreatment: false,
+      onProgram: false,
       skincareRoutine: 'basic',
     },
     imageConfidence: 0.85,
@@ -89,7 +89,7 @@ function demoMildAcne() {
   console.log('\nResult:');
   console.log(`- Porphyrin Score: ${result.porphyrinScore}/100 (${getPorphyrinDescription(result.porphyrinScore)})`);
   console.log(`- Acne Severity: ${result.acneSeverity}`);
-  console.log(`- Treatment: ${result.treatmentUrgency} (${getTreatmentUrgencyDescription(result.treatmentUrgency)})`);
+  console.log(`- Program: ${result.programUrgency} (${getProgramUrgencyDescription(result.programUrgency)})`);
   console.log(`- Progression Risk: ${result.progressionRisk}`);
   console.log('\nFactor Breakdown:');
   console.log(`  - Acne Pattern: ${result.factors.acnePattern}/100`);
@@ -121,7 +121,7 @@ function demoModerateAcne() {
     userHistory: {
       age: 24,
       acneHistory: 'frequent',
-      onTreatment: false,
+      onProgram: false,
       skincareRoutine: 'poor',  // Poor hygiene = worse score
     },
     imageConfidence: 0.82,
@@ -134,7 +134,7 @@ function demoModerateAcne() {
   console.log(`- Porphyrin Score: ${result.porphyrinScore}/100 (${getPorphyrinDescription(result.porphyrinScore)})`);
   console.log(`- Acne Severity: ${result.acneSeverity}`);
   console.log(`- Pore Congestion: ${result.poreCongestion}`);
-  console.log(`- Treatment: ${result.treatmentUrgency} (${getTreatmentUrgencyDescription(result.treatmentUrgency)})`);
+  console.log(`- Program: ${result.programUrgency} (${getProgramUrgencyDescription(result.programUrgency)})`);
   console.log(`- Bacterial Density: ${result.estimatedBacterialDensity} spots/cm²`);
   console.log(`- Progression Risk: ${result.progressionRisk}`);
   console.log('\nTop 3 Recommendations:');
@@ -162,7 +162,7 @@ function demoSevereAcne() {
     userHistory: {
       age: 21,
       acneHistory: 'chronic',   // Long-term acne
-      onTreatment: false,
+      onProgram: false,
       skincareRoutine: 'basic',
     },
     imageConfidence: 0.88,
@@ -175,10 +175,10 @@ function demoSevereAcne() {
   console.log(`- Porphyrin Score: ${result.porphyrinScore}/100 (${getPorphyrinDescription(result.porphyrinScore)})`);
   console.log(`- Acne Severity: ${result.acneSeverity}`);
   console.log(`- Inflammation: ${result.inflammationLevel}`);
-  console.log(`- Treatment: ${result.treatmentUrgency} (${getTreatmentUrgencyDescription(result.treatmentUrgency)})`);
+  console.log(`- Program: ${result.programUrgency} (${getProgramUrgencyDescription(result.programUrgency)})`);
   console.log(`- Bacterial Density: ${result.estimatedBacterialDensity} spots/cm²`);
   console.log(`- Progression Risk: ${result.progressionRisk}`);
-  console.log('\n⚠️ WARNING: Urgent treatment needed!');
+  console.log('\n⚠️ WARNING: Urgent program needed!');
   console.log('\nTop 3 Recommendations:');
   result.recommendations.slice(0, 3).forEach((rec, i) => {
     console.log(`  ${i + 1}. ${rec}`);
@@ -186,10 +186,10 @@ function demoSevereAcne() {
 }
 
 /**
- * Demo 5: Severe acne on treatment - สิวรุนแรง แต่กำลังรักษา
+ * Demo 5: Severe acne on program - สิวรุนแรง แต่กำลังรักษา
  */
-function demoSevereAcneOnTreatment() {
-  console.log('\n========== DEMO 5: SEVERE ACNE (On Treatment) ==========\n');
+function demoSevereAcneOnProgram() {
+  console.log('\n========== DEMO 5: SEVERE ACNE (On Program) ==========\n');
   
   const input: PorphyrinDetectorInput = {
     features: {
@@ -204,7 +204,7 @@ function demoSevereAcneOnTreatment() {
     userHistory: {
       age: 22,
       acneHistory: 'chronic',
-      onTreatment: true,        // On medication = reduced score
+      onProgram: true,        // On medication = reduced score
       skincareRoutine: 'excellent', // Good compliance
     },
     imageConfidence: 0.85,
@@ -213,13 +213,13 @@ function demoSevereAcneOnTreatment() {
   const result = analyzePorphyrins(input);
   
   console.log('Input:', JSON.stringify(input.features, null, 2));
-  console.log('User on treatment: YES');
+  console.log('User on program: YES');
   console.log('\nResult:');
   console.log(`- Porphyrin Score: ${result.porphyrinScore}/100 (${getPorphyrinDescription(result.porphyrinScore)})`);
-  console.log(`- Treatment: ${result.treatmentUrgency} (${getTreatmentUrgencyDescription(result.treatmentUrgency)})`);
-  console.log(`- Progression Risk: ${result.progressionRisk} (reduced due to treatment)`);
+  console.log(`- Program: ${result.programUrgency} (${getProgramUrgencyDescription(result.programUrgency)})`);
+  console.log(`- Progression Risk: ${result.progressionRisk} (reduced due to program)`);
   console.log('\nFactor Breakdown:');
-  console.log(`  - History Adjustment: ${result.factors.historyAdjustment >= 0 ? '+' : ''}${result.factors.historyAdjustment} (includes -10 for treatment)`);
+  console.log(`  - History Adjustment: ${result.factors.historyAdjustment >= 0 ? '+' : ''}${result.factors.historyAdjustment} (includes -10 for program)`);
   console.log('\nTop 3 Recommendations:');
   result.recommendations.slice(0, 3).forEach((rec, i) => {
     console.log(`  ${i + 1}. ${rec}`);
@@ -245,7 +245,7 @@ function demoPortCongestionOnly() {
     userHistory: {
       age: 32,                  // Older age = less bacterial activity
       acneHistory: 'occasional',
-      onTreatment: false,
+      onProgram: false,
       skincareRoutine: 'good',
     },
     imageConfidence: 0.8,
@@ -258,7 +258,7 @@ function demoPortCongestionOnly() {
   console.log(`- Porphyrin Score: ${result.porphyrinScore}/100 (${getPorphyrinDescription(result.porphyrinScore)})`);
   console.log(`- Acne Severity: ${result.acneSeverity}`);
   console.log(`- Pore Congestion: ${result.poreCongestion} (main issue)`);
-  console.log(`- Treatment: ${result.treatmentUrgency}`);
+  console.log(`- Program: ${result.programUrgency}`);
   console.log('\nFactor Breakdown:');
   console.log(`  - Acne Pattern: ${result.factors.acnePattern}/100 (low)`);
   console.log(`  - Pore Congestion: ${result.factors.poreCongestion}/100 (HIGH)`);
@@ -288,7 +288,7 @@ function demoMatureSkin() {
     userHistory: {
       age: 48,                  // Mature age = low bacterial activity
       acneHistory: 'never',
-      onTreatment: false,
+      onProgram: false,
       skincareRoutine: 'excellent',
     },
     imageConfidence: 0.88,
@@ -299,7 +299,7 @@ function demoMatureSkin() {
   console.log('Input:', JSON.stringify(input.features, null, 2));
   console.log('\nResult:');
   console.log(`- Porphyrin Score: ${result.porphyrinScore}/100 (${getPorphyrinDescription(result.porphyrinScore)})`);
-  console.log(`- Treatment: ${result.treatmentUrgency} (${getTreatmentUrgencyDescription(result.treatmentUrgency)})`);
+  console.log(`- Program: ${result.programUrgency} (${getProgramUrgencyDescription(result.programUrgency)})`);
   console.log('\nFactor Breakdown:');
   console.log(`  - History Adjustment: ${result.factors.historyAdjustment >= 0 ? '+' : ''}${result.factors.historyAdjustment} (age 48 = reduced bacterial activity)`);
   console.log('\nTop 3 Recommendations:');
@@ -327,7 +327,7 @@ function demoFormattedSummary() {
     userHistory: {
       age: 20,
       acneHistory: 'frequent',
-      onTreatment: false,
+      onProgram: false,
       skincareRoutine: 'basic',
     },
     imageConfidence: 0.83,
@@ -351,7 +351,7 @@ export function runPorphyrinDemo() {
   demoMildAcne();
   demoModerateAcne();
   demoSevereAcne();
-  demoSevereAcneOnTreatment();
+  demoSevereAcneOnProgram();
   demoPortCongestionOnly();
   demoMatureSkin();
   demoFormattedSummary();

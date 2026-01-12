@@ -115,7 +115,7 @@ export async function GET() {
     .eq('id', user.id)
     .single();
 
-  if (!profile || !['super_admin', 'clinic_owner'].includes(profile.role)) {
+  if (!profile || !['super_admin', 'center_owner'].includes(profile.role)) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 

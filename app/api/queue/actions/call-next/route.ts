@@ -6,8 +6,8 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
 
-    if (!body.clinic_id) {
-      return NextResponse.json({ error: "clinic_id is required" }, { status: 400 })
+    if (!body.center_id) {
+      return NextResponse.json({ error: "center_id is required" }, { status: 400 })
     }
 
     const supabaseAdmin = createClient(
@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     const { data: waitingEntries, error: fetchError } = await supabaseAdmin
       .from('queue_entries')
       .select('*')
-      .eq('clinic_id', body.clinic_id)
+      .eq('center_id', body.center_id)
       .eq('status', 'waiting')
       .gte('check_in_time', startOfDay)
       .lte('check_in_time', endOfDay)

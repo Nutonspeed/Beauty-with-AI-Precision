@@ -8,12 +8,12 @@
 
 import { NextRequest, NextResponse } from "next/server"
 import { sendReEngagementEmail, type ReEngagementData } from "@/lib/notifications/email"
-import { withClinicAuth } from "@/lib/auth/middleware"
+import { withCenterAuth } from "@/lib/auth/middleware"
 
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
 
-export const POST = withClinicAuth(async (request: NextRequest) => {
+export const POST = withCenterAuth(async (request: NextRequest) => {
   try {
     const body: { email: string; data: ReEngagementData } = await request.json()
 

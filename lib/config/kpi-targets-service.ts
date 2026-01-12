@@ -41,21 +41,21 @@ function toNumberOrUndefined(value: unknown): number | undefined {
   return undefined
 }
 
-export async function getClinicSalesKpiTargets(options: {
+export async function getCenterSalesKpiTargets(options: {
   supabase: SupabaseClient
-  clinicId: string | null
+  centerId: string | null
 }): Promise<SalesKpiTargets> {
-  const { supabase, clinicId } = options
+  const { supabase, centerId } = options
 
-  if (!clinicId) {
+  if (!centerId) {
     return DEFAULT_SALES_KPI_TARGETS
   }
 
   try {
     const { data, error } = await supabase
-      .from('clinic_kpi_targets')
+      .from('center_kpi_targets')
       .select('targets')
-      .eq('clinic_id', clinicId)
+      .eq('center_id', centerId)
       .maybeSingle()
 
     if (error || !data?.targets) {

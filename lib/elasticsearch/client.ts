@@ -50,14 +50,14 @@ class ElasticsearchManager {
   }
 
   private initializeIndices() {
-    // Patient Search Index
-    this.indices.set('patients', {
-      name: 'patients',
-      pattern: 'patients-*',
+    // Client Search Index
+    this.indices.set('clients', {
+      name: 'clients',
+      pattern: 'clients-*',
       mappings: {
         properties: {
           id: { type: 'keyword' },
-          clinicId: { type: 'keyword' },
+          centerId: { type: 'keyword' },
           firstName: {
             type: 'text',
             analyzer: 'standard',
@@ -103,7 +103,7 @@ class ElasticsearchManager {
               surgeries: { type: 'text' }
             }
           },
-          treatments: {
+          programs: {
             type: 'nested',
             properties: {
               type: { type: 'keyword' },
@@ -146,15 +146,15 @@ class ElasticsearchManager {
       }
     })
 
-    // Treatment Search Index
-    this.indices.set('treatments', {
-      name: 'treatments',
-      pattern: 'treatments-*',
+    // Program Search Index
+    this.indices.set('programs', {
+      name: 'programs',
+      pattern: 'programs-*',
       mappings: {
         properties: {
           id: { type: 'keyword' },
-          clinicId: { type: 'keyword' },
-          patientId: { type: 'keyword' },
+          centerId: { type: 'keyword' },
+          clientId: { type: 'keyword' },
           type: { type: 'keyword' },
           name: {
             type: 'text',
@@ -216,7 +216,7 @@ class ElasticsearchManager {
       mappings: {
         properties: {
           id: { type: 'keyword' },
-          clinicId: { type: 'keyword' },
+          centerId: { type: 'keyword' },
           type: { type: 'keyword' },
           event: { type: 'keyword' },
           data: { type: 'object' },

@@ -1,19 +1,19 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
-import { withClinicAuth } from "@/lib/auth/middleware"
+import { withCenterAuth } from "@/lib/auth/middleware"
 
 
 // GET /api/appointments/slots - Get available time slots
-export const GET = withClinicAuth(async (request: NextRequest) => {
+export const GET = withCenterAuth(async (request: NextRequest) => {
   try {
     const { searchParams } = new URL(request.url)
-    const clinicId = searchParams.get('clinic_id')
+    const centerId = searchParams.get('center_id')
     const doctorId = searchParams.get('doctor_id')
     const date = searchParams.get('date')
 
-    if (!clinicId || !date) {
+    if (!centerId || !date) {
       return NextResponse.json(
-        { error: 'clinic_id and date are required' },
+        { error: 'center_id and date are required' },
         { status: 400 }
       )
     }
@@ -36,7 +36,7 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
     let doctorAvailabilityQuery = supabaseAdmin
       .from('doctor_availability')
       .select('*')
-      .eq('clinic_id', clinicId)
+      .eq('center_id', centerId)
       .eq('day_of_week', dayOfWeek)
       .eq('is_available', true)
       .lte('effective_from', date)
@@ -57,7 +57,7 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
     let appointmentsQuery = supabaseAdmin
       .from('appointment_slots')
       .select('doctor_id, start_time, end_time')
-      .eq('clinic_id', clinicId)
+      .eq('center_id', centerId)
       .eq('appointment_date', date)
       .in('status', ['scheduled', 'confirmed', 'in-progress'])
 

@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import StaffScheduleClient from "@/app/clinic/staff/my-schedule/schedule-client";
+import StaffScheduleClient from "@/app/centers/staff/my-schedule/schedule-client";
 import { format } from "date-fns";
 import { PageLayout } from "@/components/layouts/page-layout";
 
@@ -20,7 +20,7 @@ async function requireStaffRole() {
     .eq("id", user.id)
     .single();
 
-  if (!profile || !["clinic_staff", "clinic_owner", "super_admin"].includes(profile.role)) {
+  if (!profile || !["center_staff", "center_owner", "super_admin"].includes(profile.role)) {
     redirect("/unauthorized");
   }
 
@@ -33,7 +33,7 @@ async function getStaffSchedule(staffId: string) {
 
   // ดึงข้อมูลทีมงาน
   const { data: staff } = await supabase
-    .from("clinic_staff")
+    .from("center_staff")
     .select("*")
     .eq("user_id", staffId)
     .single();
@@ -44,12 +44,12 @@ async function getStaffSchedule(staffId: string) {
 
   // ดึงการนัดหมายวันนี้
   const { data: appointments } = await supabase
-    .from("clinic_bookings")
+    .from("center_bookings")
     .select(
       `
       *,
-      customer:clinic_customers(id, name, phone, email, profile_image_url),
-      treatment:clinic_treatments(name, duration, price)
+      customer:center_customers(id, name, phone, email, profile_image_url),
+      program:center_programs(name, duration, price)
     `
     )
     .eq("staff_id", staff.id)
@@ -58,7 +58,7 @@ async function getStaffSchedule(staffId: string) {
 
   // ดึงสถิติวันนี้
   const { data: todayStats } = await supabase
-    .from("clinic_bookings")
+    .from("center_bookings")
     .select("id, status, total_price")
     .eq("staff_id", staff.id)
     .eq("appointment_date", format(today, "yyyy-MM-dd"));
@@ -80,7 +80,7 @@ async function getStaffSchedule(staffId: string) {
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
   const { data: monthlyStats } = await supabase
-    .from("clinic_bookings")
+    .from("center_bookings")
     .select("id, status, total_price")
     .eq("staff_id", staff.id)
     .gte("appointment_date", format(thirtyDaysAgo, "yyyy-MM-dd"))

@@ -428,7 +428,7 @@ export class HybridAnalyzer {
     // Analyze wrinkle severity from MediaPipe
     if (mp.wrinkles && mp.wrinkles.severity > 50) {
       recommendations.push({
-        text: "Consider anti-aging treatments like retinoids or peptides",
+        text: "Consider anti-aging programs like retinoids or peptides",
         confidence: Math.min(1.0, mp.wrinkles.severity / 100),
         priority: 'high'
       })
@@ -472,7 +472,7 @@ export class HybridAnalyzer {
     switch (skinAnalysis.condition) {
       case "acne":
         recommendations.push({
-          text: "Use salicylic acid or benzoyl peroxide treatments",
+          text: "Use salicylic acid or benzoyl peroxide programs",
           confidence: hfConfidence,
           priority: 'high'
         })
@@ -513,7 +513,7 @@ export class HybridAnalyzer {
           priority: 'high'
         })
         recommendations.push({
-          text: "Consider professional treatments for dark spots",
+          text: "Consider professional programs for dark spots",
           confidence: hfConfidence * 0.7,
           priority: 'low'
         })

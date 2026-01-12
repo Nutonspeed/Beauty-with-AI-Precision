@@ -11,7 +11,7 @@ type AppUserRow = {
   full_name: string | null;
   phone: string | null;
   avatar_url: string | null;
-  clinic_id: string | null;
+  center_id: string | null;
   created_at: string;
   updated_at: string;
   last_login_at: string | null;
@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const role = searchParams.get('role');
-    const clinicId = searchParams.get('clinicId');
+    const centerId = searchParams.get('centerId');
     const status = searchParams.get('status');
     const search = searchParams.get('search');
     const limit = parseInt(searchParams.get('limit') || '50');
@@ -55,14 +55,14 @@ export async function GET(request: NextRequest) {
         email,
         full_name,
         role,
-        clinic_id,
+        center_id,
         phone,
         avatar_url,
         last_login_at,
         email_verified,
         created_at,
         updated_at,
-        clinics(id, name)
+        centers(id, name)
       `, { count: 'exact' })
       .order('created_at', { ascending: false });
 
@@ -70,8 +70,8 @@ export async function GET(request: NextRequest) {
     if (role && role !== 'all') {
       query = query.eq('role', role);
     }
-    if (clinicId && clinicId !== 'all') {
-      query = query.eq('clinic_id', clinicId);
+    if (centerId && centerId !== 'all') {
+      query = query.eq('center_id', centerId);
     }
     // Note: public.users does not have is_active in current DB (per schema/check:db)
     if (search) {
@@ -98,24 +98,24 @@ export async function GET(request: NextRequest) {
       recentlyActive: allUsers?.filter((u: any) => u.last_login_at && new Date(u.last_login_at) >= oneWeekAgo).length || 0,
       byRole: {
         super_admin: allUsers?.filter((u: any) => u.role === 'super_admin').length || 0,
-        clinic_owner: allUsers?.filter((u: any) => u.role === 'clinic_owner').length || 0,
-        clinic_admin: allUsers?.filter((u: any) => u.role === 'clinic_admin').length || 0,
-        clinic_staff: allUsers?.filter((u: any) => u.role === 'clinic_staff').length || 0,
+        center_owner: allUsers?.filter((u: any) => u.role === 'center_owner').length || 0,
+        center_admin: allUsers?.filter((u: any) => u.role === 'center_admin').length || 0,
+        center_staff: allUsers?.filter((u: any) => u.role === 'center_staff').length || 0,
         sales_staff: allUsers?.filter((u: any) => u.role === 'sales_staff').length || 0,
         customer: allUsers?.filter((u: any) => String(u.role || '').startsWith('customer') || u.role === 'free_user' || u.role === 'premium_customer').length || 0,
       },
     };
 
-    // Get clinics for filter
-    const { data: clinics } = await supabase
-      .from('clinics')
+    // Get centers for filter
+    const { data: centers } = await supabase
+      .from('centers')
       .select('id, name')
       .order('name');
 
     return NextResponse.json({
       users: users || [],
       stats,
-      clinics: clinics || [],
+      centers: centers || [],
       pagination: {
         total: count || 0,
         limit,
@@ -167,8 +167,8 @@ export async function PATCH(request: NextRequest) {
       case 'change_role':
         updateData.role = value;
         break;
-      case 'change_clinic':
-        updateData.clinic_id = value || null;
+      case 'change_center':
+        updateData.center_id = value || null;
         break;
       default:
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
@@ -180,7 +180,7 @@ export async function PATCH(request: NextRequest) {
       .from('users')
       .update(updateData)
       .eq('id', userId)
-      .select('id, email, full_name, phone, role, clinic_id, avatar_url, created_at, updated_at, last_login_at, email_verified')
+      .select('id, email, full_name, phone, role, center_id, avatar_url, created_at, updated_at, last_login_at, email_verified')
       .single();
 
     if (error) throw error;

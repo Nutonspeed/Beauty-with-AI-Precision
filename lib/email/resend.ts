@@ -249,7 +249,7 @@ ${invitationLink}
 หากคุณไม่ได้คาดหวังอีเมลนี้ สามารถเพิกเฉยได้เลย
 
 ---
-ส่งจาก Beauty Clinic Management System
-© ${new Date().getFullYear()} Beauty Clinic. All rights reserved.
+ส่งจาก Beauty Center Management System
+© ${new Date().getFullYear()} Beauty Center. All rights reserved.
   `
 }

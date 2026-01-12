@@ -1,14 +1,14 @@
-# 📖 ClinicIQ User Guide
+# 📖 CenterIQ AI User Guide
 
-## คู่มือการใช้งาน ClinicIQ Platform
+## คู่มือการใช้งาน CenterIQ Platform
 
 ---
 
 ## 🏠 หน้าแรก (Landing Page)
 
 เมื่อเข้าสู่ระบบครั้งแรก คุณจะเห็นหน้า Landing Page ที่แสดง:
-- **คุณสมบัติหลัก** ของ ClinicIQ
-- **แผนราคา** สำหรับคลินิกต่างๆ
+- **คุณสมบัติหลัก** ของ CenterIQ
+- **แผนราคา** สำหรับศูนย์ความงามต่างๆ
 - **ปุ่มทดลองใช้** สำหรับ AI Skin Analysis
 
 ### การเปลี่ยนภาษา
@@ -44,7 +44,7 @@
    - ไปที่ `/th/analysis`
    - หรือคลิก "วิเคราะห์ผิว" บน Dashboard
 
-2. **อัพโหลดรูปภาพ**
+2. **เลือกรูปภาพ**
    - คลิก "อัพโหลดรูป" หรือ "ถ่ายรูป"
    - เลือกรูปหน้าที่ชัดเจน
    - แสงสว่างเพียงพอ, ไม่มีเงา
@@ -62,8 +62,8 @@
      - UV Damage
 
 4. **ดูคำแนะนำ**
-   - ระบบจะแนะนำ Treatment ที่เหมาะสม
-   - แสดง Match Score สำหรับแต่ละ Treatment
+   - ระบบจะแนะนำ Program ที่เหมาะสม
+   - แสดง Match Score สำหรับแต่ละ Program
 
 ### Tips สำหรับรูปที่ดี
 - ✅ แสงธรรมชาติ
@@ -110,7 +110,7 @@
 ### AI Sales Tools (`/th/sales/tools`)
 
 1. **AI Smart Recommendations**
-   - แนะนำ Treatment อัตโนมัติ
+   - แนะนำ Program อัตโนมัติ
    - คำนวณ Match Score
    - แสดง Conversion Rate
 
@@ -139,7 +139,7 @@
 3. กรอกข้อมูล:
    - ชื่อลูกค้า
    - เบอร์โทร
-   - Treatment ที่สนใจ
+   - Program ที่สนใจ
    - แหล่งที่มา (Facebook, Walk-in, etc.)
 
 ### จัดการ Lead
@@ -159,12 +159,12 @@
 
 ---
 
-## 🏥 Clinic Management
+## 🏥 Center Management
 
-### ตั้งค่าคลินิก (`/th/clinic/settings`)
+### ตั้งค่าศูนย์ความงาม (`/th/center/settings`)
 
-1. **ข้อมูลคลินิก**
-   - ชื่อคลินิก
+1. **ข้อมูลศูนย์ความงาม**
+   - ชื่อศูนย์ความงาม
    - ที่อยู่
    - เบอร์โทร
 
@@ -176,11 +176,11 @@
    - เพิ่ม/ลบ Staff
    - กำหนด Role
 
-### รายงาน Revenue (`/th/clinic/revenue`)
+### รายงาน Revenue (`/th/center/revenue`)
 
 แสดง:
 - รายได้รายวัน/รายเดือน
-- Treatment ที่ขายดี
+- Program ที่ขายดี
 - เปรียบเทียบกับเดือนก่อน
 
 ---
@@ -191,13 +191,13 @@
 
 1. ไปที่ `/th/booking`
 2. เลือกลูกค้า
-3. เลือก Treatment
+3. เลือก Program
 4. เลือกวันและเวลา
 5. ยืนยันการจอง
 
 ### จัดการ Queue
 
-- ดู Queue ปัจจุบันที่ `/th/clinic/reception`
+- ดู Queue ปัจจุบันที่ `/th/center/reception`
 - เรียกคิวถัดไป
 - แจ้งเตือนลูกค้าผ่าน LINE
 
@@ -208,7 +208,7 @@
 ### การใช้งานบน Mobile
 
 1. เปิด Browser บนมือถือ
-2. ไปที่ URL ของ ClinicIQ
+2. ไปที่ URL ของ CenterIQ AI
 3. คลิก "เพิ่มไปยังหน้าจอหลัก" (Add to Home Screen)
 4. ใช้งานเหมือน App ปกติ
 
@@ -225,7 +225,7 @@
 
 - ข้อมูลทั้งหมดถูกเข้ารหัส
 - ใช้ Row Level Security (RLS)
-- แยกข้อมูลแต่ละคลินิกอย่างสมบูรณ์
+- แยกข้อมูลแต่ละศูนย์ความงามอย่างสมบูรณ์
 
 ### Best Practices
 
@@ -245,7 +245,7 @@ A: คลิก "ลืมรหัสผ่าน" ที่หน้า Login 
 A: ถ่ายรูปใหม่ในที่แสงดี ไม่มีเงา หน้าตรง
 
 ### Q: เพิ่ม Staff ใหม่อย่างไร?
-A: ไปที่ Clinic Settings > Staff > เพิ่มสมาชิก
+A: ไปที่ Center Settings > Staff > เพิ่มสมาชิก
 
 ### Q: Export ข้อมูลได้ไหม?
 A: ได้ ไปที่ Reports > Export เลือก Format (CSV, PDF)
@@ -254,8 +254,8 @@ A: ได้ ไปที่ Reports > Export เลือก Format (CSV, PDF)
 
 ## 📞 Support
 
-- **Email:** support@cliniciq.com
-- **LINE:** @cliniciq
+- **Email:** support@centeriq.app
+- **LINE:** @centeriq
 - **โทร:** 02-xxx-xxxx (จ-ศ 9:00-18:00)
 
 ---
@@ -271,4 +271,4 @@ A: ได้ ไปที่ Reports > Export เลือก Format (CSV, PDF)
 
 ---
 
-© 2024 ClinicIQ. All rights reserved.
+© 2026 CenterIQ AI. All rights reserved.

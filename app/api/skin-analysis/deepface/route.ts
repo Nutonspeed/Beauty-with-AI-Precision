@@ -52,7 +52,7 @@ export const POST = withPublicAccess(async (request: NextRequest) => {
       .from('skin_analyses')
       .insert({
         user_id: session.user.id,
-        center_id: session.user.user_metadata?.center_id || session.user.user_metadata?.clinic_id || 'default-center',
+        center_id: session.user.user_metadata?.center_id || session.user.user_metadata?.center_id || 'default-center',
         analysis_type: 'deepface',
         raw_results: analysisResult,
         confidence_score: analysisResult.confidence,

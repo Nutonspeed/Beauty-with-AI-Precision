@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
-import { withClinicAuth } from "@/lib/auth/middleware"
+import { withCenterAuth } from "@/lib/auth/middleware"
 
 
 // Helper function to add minutes to time string
@@ -62,7 +62,7 @@ async function handler(req: NextRequest, user: any) {
   // Check for conflicts
   const { data: hasConflict, error: conflictError } = await supabaseAdmin
     .rpc('check_appointment_conflict', {
-      p_clinic_id: currentAppointment.clinic_id,
+      p_center_id: currentAppointment.center_id,
       p_doctor_id: new_doctor_id || currentAppointment.doctor_id,
       p_room_id: new_room_id || currentAppointment.room_id,
       p_appointment_date: new_appointment_date,
@@ -172,4 +172,4 @@ async function handler(req: NextRequest, user: any) {
   });
 }
 
-export const POST = withClinicAuth(handler);
+export const POST = withCenterAuth(handler);

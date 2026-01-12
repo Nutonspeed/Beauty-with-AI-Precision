@@ -61,17 +61,17 @@ export async function GET(_request: NextRequest) {
     const service = createServiceClient()
     const { data: userRow, error: userErr } = await service
       .from('users')
-      .select('role, clinic_id')
+      .select('role, center_id')
       .eq('id', user.id)
       .single()
     if (userErr || !userRow || !canAccessSales(userRow.role)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
-    // Resolve clinic_id for this user (from public.users)
+    // Resolve center_id for this user (from public.users)
     const { data: profile, error: profileError } = await supabase
       .from("users")
-      .select("clinic_id")
+      .select("center_id")
       .eq("id", user.id)
       .maybeSingle()
 
@@ -79,7 +79,7 @@ export async function GET(_request: NextRequest) {
       console.error("[sales/overview] Failed to load user profile", profileError)
     }
 
-    const clinicId = profile?.clinic_id ?? null
+    const centerId = profile?.center_id ?? null
 
     const serviceClient = createServiceClient()
 
@@ -91,13 +91,13 @@ export async function GET(_request: NextRequest) {
     async function getRevenueRange(from: string, to: string): Promise<number> {
       let query = serviceClient
         .from("payment_transactions")
-        .select("amount, status, clinic_id")
+        .select("amount, status, center_id")
         .eq("status", "succeeded")
         .gte("created_at", from)
         .lte("created_at", to)
 
-      if (clinicId) {
-        query = query.eq("clinic_id", clinicId)
+      if (centerId) {
+        query = query.eq("center_id", centerId)
       }
 
       const { data, error } = await query
@@ -120,8 +120,8 @@ export async function GET(_request: NextRequest) {
         .gte("created_at", from)
         .lte("created_at", to)
 
-      if (clinicId) {
-        query = query.eq("clinic_id", clinicId)
+      if (centerId) {
+        query = query.eq("center_id", centerId)
       }
 
       const { count, error } = await query
@@ -140,37 +140,37 @@ export async function GET(_request: NextRequest) {
       getRevenueRange(from, to),
     ])
 
-    // Top packages from treatment_records (by treatment, last 90 days)
+    // Top packages from program_records (by program, last 90 days)
     const ninetyDaysAgo = new Date()
     ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90)
 
     let recordsQuery = serviceClient
-      .from("treatment_records")
-      .select("treatment_id, treatment_name, clinic_id")
+      .from("program_records")
+      .select("program_id, program_name, center_id")
       .gte("created_at", ninetyDaysAgo.toISOString())
 
-    if (clinicId) {
-      recordsQuery = recordsQuery.eq("clinic_id", clinicId)
+    if (centerId) {
+      recordsQuery = recordsQuery.eq("center_id", centerId)
     }
 
     const { data: records, error: recordsError } = await recordsQuery
 
     if (recordsError) {
-      console.error("[sales/overview] Failed to fetch treatment records", recordsError)
+      console.error("[sales/overview] Failed to fetch program records", recordsError)
     }
 
-    const packageMap = new Map<string, { sold: number; treatmentId: string | null }>()
+    const packageMap = new Map<string, { sold: number; programId: string | null }>()
 
     for (const row of records ?? []) {
-      const name = (row as any).treatment_name as string | null
-      const treatmentId = ((row as any).treatment_id as string | null) ?? null
+      const name = (row as any).program_name as string | null
+      const programId = ((row as any).program_id as string | null) ?? null
       if (!name) continue
 
-      const current = packageMap.get(name) ?? { sold: 0, treatmentId }
+      const current = packageMap.get(name) ?? { sold: 0, programId }
       current.sold += 1
-      // keep first non-null treatmentId we see
-      if (!current.treatmentId && treatmentId) {
-        current.treatmentId = treatmentId
+      // keep first non-null programId we see
+      if (!current.programId && programId) {
+        current.programId = programId
       }
       packageMap.set(name, current)
     }
@@ -182,22 +182,22 @@ export async function GET(_request: NextRequest) {
         .sort((a, b) => b[1].sold - a[1].sold)
         .slice(0, 5)
 
-      const treatmentIds = base
-        .map(([, v]) => v.treatmentId)
+      const programIds = base
+        .map(([, v]) => v.programId)
         .filter((id): id is string => !!id)
 
       let priceById = new Map<string, number>()
 
-      if (treatmentIds.length > 0) {
-        const { data: treatments, error: treatmentsError } = await serviceClient
-          .from("treatments")
+      if (programIds.length > 0) {
+        const { data: programs, error: programsError } = await serviceClient
+          .from("programs")
           .select("id, price_min, price_max")
-          .in("id", treatmentIds)
+          .in("id", programIds)
 
-        if (treatmentsError) {
-          console.error("[sales/overview] Failed to fetch treatments", treatmentsError)
+        if (programsError) {
+          console.error("[sales/overview] Failed to fetch programs", programsError)
         } else {
-          for (const t of treatments ?? []) {
+          for (const t of programs ?? []) {
             const id = (t as any).id as string
             const min = Number((t as any).price_min) || 0
             const max = Number((t as any).price_max) || min
@@ -208,7 +208,7 @@ export async function GET(_request: NextRequest) {
       }
 
       topPackages = base.map(([name, value]) => {
-        const unitPrice = value.treatmentId ? priceById.get(value.treatmentId) ?? 0 : 0
+        const unitPrice = value.programId ? priceById.get(value.programId) ?? 0 : 0
         return {
           name,
           sold: value.sold,

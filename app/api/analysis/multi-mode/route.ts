@@ -323,15 +323,15 @@ export const POST = withPublicAccess(async (request: NextRequest) => {
  */
 function generateRecommendations(analysis: any) {
   const recommendations: any = {
-    treatments: [],
+    programs: [],
     products: [],
     lifestyle: [],
   };
 
   // Spots recommendations
   if (analysis.spots_severity === 'high' || analysis.spots_severity === 'severe') {
-    recommendations.treatments.push({
-      name: 'Laser Treatment',
+    recommendations.programs.push({
+      name: 'Laser Program',
       description: 'IPL or Q-switched laser for spot reduction',
       priority: 'high',
     });
@@ -344,7 +344,7 @@ function generateRecommendations(analysis: any) {
 
   // Wrinkles recommendations
   if (analysis.wrinkles_severity === 'high' || analysis.wrinkles_severity === 'severe') {
-    recommendations.treatments.push({
+    recommendations.programs.push({
       name: 'Botox or Fillers',
       description: 'Reduce expression lines and restore volume',
       priority: 'high',
@@ -358,7 +358,7 @@ function generateRecommendations(analysis: any) {
 
   // Texture recommendations
   if (analysis.texture_severity === 'high' || analysis.texture_severity === 'severe') {
-    recommendations.treatments.push({
+    recommendations.programs.push({
       name: 'Chemical Peel',
       description: 'Improves skin texture and promotes cell renewal',
       priority: 'medium',
@@ -372,7 +372,7 @@ function generateRecommendations(analysis: any) {
 
   // Pores recommendations
   if (analysis.pores_severity === 'high' || analysis.pores_severity === 'severe') {
-    recommendations.treatments.push({
+    recommendations.programs.push({
       name: 'HydraFacial',
       description: 'Deep cleansing to minimize pore appearance',
       priority: 'medium',
@@ -400,7 +400,7 @@ function generateRecommendations(analysis: any) {
 
   // Red areas/inflammation recommendations
   if (analysis.red_areas_severity === 'high' || analysis.red_areas_severity === 'severe') {
-    recommendations.treatments.push({
+    recommendations.programs.push({
       name: 'LED Light Therapy',
       description: 'Reduces inflammation and promotes healing',
       priority: 'medium',
@@ -419,7 +419,7 @@ function generateRecommendations(analysis: any) {
 
   // Porphyrins (bacterial) recommendations
   if (analysis.porphyrins_severity === 'high' || analysis.porphyrins_severity === 'severe') {
-    recommendations.treatments.push({
+    recommendations.programs.push({
       name: 'Blue Light Therapy',
       description: 'Kills acne-causing bacteria',
       priority: 'high',
@@ -427,7 +427,7 @@ function generateRecommendations(analysis: any) {
     recommendations.products.push({
       category: 'acne care',
       name: 'Benzoyl Peroxide or Salicylic Acid',
-      description: 'Antibacterial treatment for acne-prone skin',
+      description: 'Antibacterial program for acne-prone skin',
     });
     recommendations.lifestyle.push({
       category: 'hygiene',

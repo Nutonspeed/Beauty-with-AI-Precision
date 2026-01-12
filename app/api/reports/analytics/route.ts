@@ -7,19 +7,19 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const type = searchParams.get('type')
     const period = searchParams.get('period') || '30d'
-    const clinicId = searchParams.get('clinic_id')
+    const centerId = searchParams.get('center_id')
 
     let data: any = {}
 
     switch (type) {
       case 'overview':
-        data = await getOverviewData(period, clinicId || undefined)
+        data = await getOverviewData(period, centerId || undefined)
         break
       case 'trends':
-        data = await getTrendsData(period, clinicId || undefined)
+        data = await getTrendsData(period, centerId || undefined)
         break
       case 'performance':
-        data = await getPerformanceData(period, clinicId || undefined)
+        data = await getPerformanceData(period, centerId || undefined)
         break
       default:
         return NextResponse.json(
@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-async function getOverviewData(period: string, clinicId?: string) {
+async function getOverviewData(period: string, centerId?: string) {
   const days = parseInt(period.replace('d', ''))
   const startDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000)
   const supabase = await createClient()
@@ -52,23 +52,23 @@ async function getOverviewData(period: string, clinicId?: string) {
   // Get user counts
   const { data: users } = await supabase
     .from('users')
-    .select('created_at, clinic_id')
+    .select('created_at, center_id')
     .gte('created_at', startDate.toISOString())
-    .eq(clinicId ? 'clinic_id' : 'clinic_id', clinicId || '')
+    .eq(centerId ? 'center_id' : 'center_id', centerId || '')
 
   // Get session counts
   const { data: sessions } = await supabase
     .from('user_sessions')
-    .select('created_at, duration, user_id, clinic_id')
+    .select('created_at, duration, user_id, center_id')
     .gte('created_at', startDate.toISOString())
-    .eq(clinicId ? 'clinic_id' : 'clinic_id', clinicId || '')
+    .eq(centerId ? 'center_id' : 'center_id', centerId || '')
 
-  // Get treatment counts
-  const { data: treatments } = await supabase
-    .from('treatments')
-    .select('created_at, status, price, clinic_id')
+  // Get program counts
+  const { data: programs } = await supabase
+    .from('programs')
+    .select('created_at, status, price, center_id')
     .gte('created_at', startDate.toISOString())
-    .eq(clinicId ? 'clinic_id' : 'clinic_id', clinicId || '')
+    .eq(centerId ? 'center_id' : 'center_id', centerId || '')
 
   return {
     users: {
@@ -81,15 +81,15 @@ async function getOverviewData(period: string, clinicId?: string) {
       averageDuration: calculateAverageDuration(sessions || []),
       active: calculateActiveUsers(sessions || [])
     },
-    treatments: {
-      total: treatments?.length || 0,
-      completed: treatments?.filter(t => t.status === 'completed').length || 0,
-      revenue: calculateTotalRevenue(treatments || [])
+    programs: {
+      total: programs?.length || 0,
+      completed: programs?.filter(t => t.status === 'completed').length || 0,
+      revenue: calculateTotalRevenue(programs || [])
     }
   }
 }
 
-async function getTrendsData(period: string, clinicId?: string) {
+async function getTrendsData(period: string, centerId?: string) {
   const days = parseInt(period.replace('d', ''))
   const startDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000)
   const supabase = await createClient()
@@ -99,15 +99,15 @@ async function getTrendsData(period: string, clinicId?: string) {
     .from('users')
     .select('created_at')
     .gte('created_at', startDate.toISOString())
-    .eq(clinicId ? 'clinic_id' : 'clinic_id', clinicId || '')
+    .eq(centerId ? 'center_id' : 'center_id', centerId || '')
 
   // Get daily revenue
   const { data: dailyRevenue } = await supabase
-    .from('treatments')
+    .from('programs')
     .select('created_at, price')
     .gte('created_at', startDate.toISOString())
     .eq('status', 'completed')
-    .eq(clinicId ? 'clinic_id' : 'clinic_id', clinicId || '')
+    .eq(centerId ? 'center_id' : 'center_id', centerId || '')
 
   return {
     users: groupByDay(dailyUsers || []),
@@ -115,7 +115,7 @@ async function getTrendsData(period: string, clinicId?: string) {
   }
 }
 
-async function getPerformanceData(period: string, clinicId?: string) {
+async function getPerformanceData(period: string, centerId?: string) {
   const days = parseInt(period.replace('d', ''))
   const startDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000)
   const supabase = await createClient()
@@ -123,16 +123,16 @@ async function getPerformanceData(period: string, clinicId?: string) {
   // Get feature usage
   const { data: featureUsage } = await supabase
     .from('feature_usage')
-    .select('feature, created_at, user_id, clinic_id')
+    .select('feature, created_at, user_id, center_id')
     .gte('created_at', startDate.toISOString())
-    .eq(clinicId ? 'clinic_id' : 'clinic_id', clinicId || '')
+    .eq(centerId ? 'center_id' : 'center_id', centerId || '')
 
   // Get page views
   const { data: pageViews } = await supabase
     .from('page_views')
-    .select('page, created_at, user_id, clinic_id')
+    .select('page, created_at, user_id, center_id')
     .gte('created_at', startDate.toISOString())
-    .eq(clinicId ? 'clinic_id' : 'clinic_id', clinicId || '')
+    .eq(centerId ? 'center_id' : 'center_id', centerId || '')
 
   return {
     features: groupFeatureUsage(featureUsage || []),
@@ -168,8 +168,8 @@ function calculateActiveUsers(sessions: any[]): number {
   return uniqueUsers.size
 }
 
-function calculateTotalRevenue(treatments: any[]): number {
-  return treatments.reduce((sum, t) => sum + (t.price || 0), 0)
+function calculateTotalRevenue(programs: any[]): number {
+  return programs.reduce((sum, t) => sum + (t.price || 0), 0)
 }
 
 function groupByDay(items: any[]): any {
@@ -180,10 +180,10 @@ function groupByDay(items: any[]): any {
   }, {})
 }
 
-function groupRevenueByDay(treatments: any[]): any {
-  return treatments.reduce((acc, treatment) => {
-    const day = new Date(treatment.created_at).toISOString().split('T')[0]
-    acc[day] = (acc[day] || 0) + (treatment.price || 0)
+function groupRevenueByDay(programs: any[]): any {
+  return programs.reduce((acc, program) => {
+    const day = new Date(program.created_at).toISOString().split('T')[0]
+    acc[day] = (acc[day] || 0) + (program.price || 0)
     return acc
   }, {})
 }

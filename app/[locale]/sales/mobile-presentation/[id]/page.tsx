@@ -19,17 +19,17 @@ import { useParams } from 'next/navigation'
 import { PresentationWizard } from '@/components/sales/presentation/presentation-wizard'
 
 export default function MobileSalesPresentationPage() {
-  const { id: customerId } = useParams<{ id: string }>()
+  const { id: clientId } = useParams<{ id: string }>()
   
-  // In a real app, these would come from the customer data or URL params
-  const isNewCustomer = false
+  // In a real app, these would come from the client data or URL params
+  const isNewClient = false
   const isOnline = true
 
   return (
     <div className="min-h-screen bg-background">
       <PresentationWizard 
-        customerId={customerId}
-        isNewCustomer={isNewCustomer}
+        clientId={clientId}
+        isNewClient={isNewClient}
         isOnline={isOnline}
       />
     </div>

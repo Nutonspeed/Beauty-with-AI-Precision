@@ -6,7 +6,7 @@ export interface AuditEvent {
   id?: string
   timestamp: string
   userId?: string
-  clinicId?: string
+  centerId?: string
   sessionId?: string
   action: string
   resource: string
@@ -30,7 +30,7 @@ export interface AuditEvent {
 
 export interface AuditFilter {
   userId?: string
-  clinicId?: string
+  centerId?: string
   action?: string
   resource?: string
   severity?: string[]
@@ -116,7 +116,7 @@ class AuditLogger {
   async logAuth(event: {
     action: 'login' | 'logout' | 'register' | 'password_change' | 'mfa_verify' | 'session_expired'
     userId?: string
-    clinicId?: string
+    centerId?: string
     details?: Record<string, any>
     result: 'success' | 'failure' | 'error'
     metadata?: any
@@ -136,7 +136,7 @@ class AuditLogger {
     resource: string
     resourceId?: string
     userId?: string
-    clinicId?: string
+    centerId?: string
     details?: Record<string, any>
     result: 'success' | 'failure' | 'error'
     metadata?: any
@@ -155,7 +155,7 @@ class AuditLogger {
     resource?: string
     resourceId?: string
     userId?: string
-    clinicId?: string
+    centerId?: string
     details?: Record<string, any>
     result: 'success' | 'failure' | 'error'
     metadata?: any
@@ -175,7 +175,7 @@ class AuditLogger {
     resource: string
     resourceId?: string
     userId?: string
-    clinicId?: string
+    centerId?: string
     details?: Record<string, any>
     result: 'success' | 'failure' | 'error'
     metadata?: any
@@ -219,8 +219,8 @@ class AuditLogger {
           supabaseQuery = supabaseQuery.eq('user_id', filter.userId)
         }
         
-        if (filter.clinicId) {
-          supabaseQuery = supabaseQuery.eq('clinic_id', filter.clinicId)
+        if (filter.centerId) {
+          supabaseQuery = supabaseQuery.eq('center_id', filter.centerId)
         }
         
         if (filter.action) {
@@ -299,8 +299,8 @@ class AuditLogger {
           supabaseQuery = supabaseQuery.eq('user_id', filter.userId)
         }
         
-        if (filter.clinicId) {
-          supabaseQuery = supabaseQuery.eq('clinic_id', filter.clinicId)
+        if (filter.centerId) {
+          supabaseQuery = supabaseQuery.eq('center_id', filter.centerId)
         }
         
         if (filter.dateRange) {
@@ -387,7 +387,7 @@ class AuditLogger {
           id: event.id,
           timestamp: event.timestamp,
           user_id: event.userId,
-          clinic_id: event.clinicId,
+          center_id: event.centerId,
           session_id: event.sessionId,
           action: event.action,
           resource: event.resource,
@@ -428,7 +428,7 @@ class AuditLogger {
           id: event.id,
           timestamp: event.timestamp,
           user_id: event.userId,
-          clinic_id: event.clinicId,
+          center_id: event.centerId,
           session_id: event.sessionId,
           action: event.action,
           resource: event.resource,
@@ -507,7 +507,7 @@ class AuditLogger {
     if (events.length === 0) return ''
 
     const headers = [
-      'id', 'timestamp', 'userId', 'clinicId', 'sessionId',
+      'id', 'timestamp', 'userId', 'centerId', 'sessionId',
       'action', 'resource', 'resourceId', 'severity', 'category',
       'result', 'source', 'tags'
     ]
@@ -518,7 +518,7 @@ class AuditLogger {
         event.id,
         event.timestamp,
         event.userId || '',
-        event.clinicId || '',
+        event.centerId || '',
         event.sessionId || '',
         event.action,
         event.resource,

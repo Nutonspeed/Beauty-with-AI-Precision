@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
     // Try profiles table
     const { data: profileData, error: profileError } = await supabase
       .from("profiles")
-      .select("id, email, role, full_name, avatar_url, clinic_id, is_active")
+      .select("id, email, role, full_name, avatar_url, center_id, is_active")
       .eq("id", session.user.id)
       .single()
 
@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
       // Fallback to users table
       const { data: userData, error: userError } = await supabase
         .from("users")
-        .select("id, email, role, full_name, avatar_url, clinic_id, is_active")
+        .select("id, email, role, full_name, avatar_url, center_id, is_active")
         .eq("id", session.user.id)
         .single()
       
@@ -68,7 +68,7 @@ export async function GET(request: NextRequest) {
           role: session.user.user_metadata?.role || 'customer',
           full_name: session.user.user_metadata?.full_name || null,
           avatar_url: null,
-          clinic_id: null,
+          center_id: null,
           is_active: true,
         }
       })

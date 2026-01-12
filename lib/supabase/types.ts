@@ -195,13 +195,13 @@ export interface Database {
           created_at?: string
         }
       }
-      treatment_plans: {
+      program_plans: {
         Row: {
           id: string
           user_id: string
           analysis_id: string | null
           concern_type: string
-          treatments: Json
+          programs: Json
           schedule: Json
           estimated_cost: number | null
           estimated_duration: string | null
@@ -215,7 +215,7 @@ export interface Database {
           user_id: string
           analysis_id?: string | null
           concern_type: string
-          treatments?: Json
+          programs?: Json
           schedule?: Json
           estimated_cost?: number | null
           estimated_duration?: string | null
@@ -229,7 +229,7 @@ export interface Database {
           user_id?: string
           analysis_id?: string | null
           concern_type?: string
-          treatments?: Json
+          programs?: Json
           schedule?: Json
           estimated_cost?: number | null
           estimated_duration?: string | null
@@ -244,7 +244,7 @@ export interface Database {
           id: string
           user_id: string
           tenant_id: string
-          treatment_type: string
+          program_type: string
           appointment_date: string
           duration: number
           status: BookingStatus
@@ -257,7 +257,7 @@ export interface Database {
           id?: string
           user_id: string
           tenant_id: string
-          treatment_type: string
+          program_type: string
           appointment_date: string
           duration: number
           status?: BookingStatus
@@ -270,7 +270,7 @@ export interface Database {
           id?: string
           user_id?: string
           tenant_id?: string
-          treatment_type?: string
+          program_type?: string
           appointment_date?: string
           duration?: number
           status?: BookingStatus

@@ -54,18 +54,18 @@ export interface SearchResult<T = any> {
   aggregations?: any
 }
 
-export interface PatientFilters {
-  clinicId: string
+export interface ClientFilters {
+  centerId: string
   gender?: string
   ageRange?: [number, number]
   tags?: string[]
-  treatmentTypes?: string[]
+  programTypes?: string[]
   scoreRange?: [number, number]
 }
 
-export interface TreatmentFilters {
-  clinicId: string
-  patientId?: string
+export interface ProgramFilters {
+  centerId: string
+  clientId?: string
   type?: string
   category?: string
   dateRange?: [string, string]
@@ -74,7 +74,7 @@ export interface TreatmentFilters {
 }
 
 export interface AnalyticsFilters {
-  clinicId: string
+  centerId: string
   event?: string
   dateRange?: [string, string]
   userId?: string
@@ -90,8 +90,8 @@ export interface SearchOptions {
 
 export interface SuggestionRequest {
   query: string
-  type: 'patients' | 'treatments' | 'analytics'
-  clinicId: string
+  type: 'clients' | 'programs' | 'analytics'
+  centerId: string
   size?: number
 }
 
@@ -458,9 +458,9 @@ export interface IndexStats {
   }
 }
 
-export interface PatientDocument {
+export interface ClientDocument {
   id: string
-  clinicId: string
+  centerId: string
   firstName: string
   lastName: string
   email: string
@@ -480,7 +480,7 @@ export interface PatientDocument {
     allergies: string
     surgeries: string
   }>
-  treatments: Array<{
+  programs: Array<{
     type: string
     date: string
     results: string
@@ -502,10 +502,10 @@ export interface PatientDocument {
   updatedAt: string
 }
 
-export interface TreatmentDocument {
+export interface ProgramDocument {
   id: string
-  clinicId: string
-  patientId: string
+  centerId: string
+  clientId: string
   type: string
   name: string
   description: string
@@ -537,7 +537,7 @@ export interface TreatmentDocument {
 
 export interface AnalyticsDocument {
   id: string
-  clinicId: string
+  centerId: string
   type: string
   event: string
   data: any

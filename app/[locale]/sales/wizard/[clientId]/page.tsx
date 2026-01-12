@@ -74,7 +74,7 @@ export default function SalesPresentationWizardPage() {
             <div>
               <h1 className="text-lg font-bold">{t('salesWizard.title')}</h1>
               <p className="text-xs text-muted-foreground">
-                {isNewClient ? t('salesWizard.newCustomer') : `${t('salesWizard.customerId')}: ${clientId.slice(0, 8)}`}
+                {isNewClient ? t('salesWizard.newClient') : `${t('salesWizard.clientId')}: ${clientId.slice(0, 8)}`}
               </p>
             </div>
           </div>

@@ -4,7 +4,7 @@
  */
 
 import { EnhancedMetricsResult } from './enhanced-skin-metrics';
-import { TreatmentRecommendation } from './treatment-recommender';
+import { ProgramRecommendation } from './program-recommender';
 
 /**
  * Chat Message Interface
@@ -16,7 +16,7 @@ export interface ChatMessage {
   timestamp: Date;
   metadata?: {
     metrics?: EnhancedMetricsResult;
-    recommendations?: TreatmentRecommendation[];
+    recommendations?: ProgramRecommendation[];
     intent?: string;
     confidence?: number;
   };
@@ -31,7 +31,7 @@ export interface ChatSession {
   messages: ChatMessage[];
   context: {
     latestMetrics?: EnhancedMetricsResult;
-    treatmentHistory?: string[];
+    programHistory?: string[];
     userProfile?: {
       age?: number;
       skinType?: string;
@@ -50,7 +50,7 @@ export interface ChatSession {
 type ChatIntent =
   | 'greeting'
   | 'skin_analysis'
-  | 'treatment_inquiry'
+  | 'program_inquiry'
   | 'product_recommendation'
   | 'concern_specific'
   | 'booking'
@@ -89,8 +89,8 @@ export class AIChatAssistant {
         topic: 'greeting',
         keywords: ['สวัสดี', 'หวัดดี', 'ดีครับ', 'ดีค่ะ', 'hello', 'hi'],
         response:
-          'สวัสดีค่ะ! ยินดีต้อนรับสู่ AI Beauty Clinic 🌸 ฉันคือผู้ช่วยด้านการดูแลผิว พร้อมให้คำปรึกษาเกี่ยวกับการวิเคราะห์ผิว การรักษา และผลิตภัณฑ์ค่ะ มีอะไรให้ช่วยไหมคะ?',
-        relatedTopics: ['skin_analysis', 'treatment_inquiry'],
+          'สวัสดีค่ะ! ยินดีต้อนรับสู่ AI Beauty Center 🌸 ฉันคือผู้ช่วยด้านการดูแลผิว พร้อมให้คำปรึกษาเกี่ยวกับการวิเคราะห์ผิว การรักษา และผลิตภัณฑ์ค่ะ มีอะไรให้ช่วยไหมคะ?',
+        relatedTopics: ['skin_analysis', 'program_inquiry'],
       },
 
       // Skin Analysis
@@ -99,7 +99,7 @@ export class AIChatAssistant {
         keywords: ['วิเคราะห์ผิว', 'ตรวจผิว', 'ดูผิว', 'analyze skin', 'check skin'],
         response:
           'การวิเคราะห์ผิวของเราใช้ AI ตรวจสอบ 8 ตัวชี้วัดหลัก:\n\n1. จุดด่างดำ (Spots) - ฝ้า กระ จุดดำ\n2. รูขุมขน (Pores) - ขนาดและความชัดเจน\n3. ริ้วรอย (Wrinkles) - ความลึกและประเภท\n4. เนื้อผิว (Texture) - ความเรียบเนียน\n5. ความแดง (Redness) - การอักเสบ\n6. ความชุ่มชื้น (Hydration)\n7. สีผิว (Skin Tone) - ความสม่ำเสมอ\n8. ความยืดหยุ่น (Elasticity)\n\nอยากให้ฉันวิเคราะห์ผิวให้ไหมคะ?',
-        relatedTopics: ['treatment_inquiry', 'concern_specific'],
+        relatedTopics: ['program_inquiry', 'concern_specific'],
       },
 
       // Spots & Dark Spots
@@ -107,7 +107,7 @@ export class AIChatAssistant {
         topic: 'spots',
         keywords: ['ฝ้า', 'กระ', 'จุดด่างดำ', 'spots', 'hyperpigmentation', 'จุดดำ'],
         response:
-          '**จุดด่างดำและฝ้ากระ** มักเกิดจาก:\n\n• แสงแดด UV (สาเหตุหลัก)\n• ฮอร์โมน (ฝ้าครรภ์)\n• การอักเสบหลังสิว\n• อายุที่เพิ่มขึ้น\n\n**การรักษาที่แนะนำ:**\n1. Laser Treatment - ยิงเลเซอร์ทำลายเม็ดสี\n2. Chemical Peel - ผลัดเซลล์ผิว\n3. IPL Therapy - แสงกระตุ้นผิว\n4. Medical Skincare - ครีมยับยั้งเม็ดสี\n\n**การป้องกัน:** ใช้ครีมกันแดด SPF 50+ ทุกวัน ❗',
+          '**จุดด่างดำและฝ้ากระ** มักเกิดจาก:\n\n• แสงแดด UV (สาเหตุหลัก)\n• ฮอร์โมน (ฝ้าครรภ์)\n• การอักเสบหลังสิว\n• อายุที่เพิ่มขึ้น\n\n**การรักษาที่แนะนำ:**\n1. Laser Program - ยิงเลเซอร์ทำลายเม็ดสี\n2. Chemical Peel - ผลัดเซลล์ผิว\n3. IPL Therapy - แสงกระตุ้นผิว\n4. Medical Skincare - ครีมยับยั้งเม็ดสี\n\n**การป้องกัน:** ใช้ครีมกันแดด SPF 50+ ทุกวัน ❗',
         relatedTopics: ['laser', 'chemical_peel', 'ipl'],
       },
 
@@ -116,7 +116,7 @@ export class AIChatAssistant {
         topic: 'pores',
         keywords: ['รูขุมขน', 'ขุมขนกว้าง', 'pores', 'enlarged pores'],
         response:
-          '**รูขุมขนกว้าง** เกิดจาก:\n\n• ผลิตน้ำมันมากเกินไป\n• การสูญเสียความยืดหยุ่นของผิว\n• พันธุกรรม\n• สิวที่ทำให้รูขุมขนขยาย\n\n**การรักษา:**\n1. Microneedling - กระตุ้นคอลลาเจน\n2. Chemical Peel - ลดความมันกลาง\n3. HydraFacial - ล้างรูขุมขนลึก\n4. RF Treatment - กระชับผิว\n\n**การดูแล:** ล้างหน้าสะอาด 2 ครั้ง/วัน + ใช้ Niacinamide 🌟',
+          '**รูขุมขนกว้าง** เกิดจาก:\n\n• ผลิตน้ำมันมากเกินไป\n• การสูญเสียความยืดหยุ่นของผิว\n• พันธุกรรม\n• สิวที่ทำให้รูขุมขนขยาย\n\n**การรักษา:**\n1. Microneedling - กระตุ้นคอลลาเจน\n2. Chemical Peel - ลดความมันกลาง\n3. HydraFacial - ล้างรูขุมขนลึก\n4. RF Program - กระชับผิว\n\n**การดูแล:** ล้างหน้าสะอาด 2 ครั้ง/วัน + ใช้ Niacinamide 🌟',
         relatedTopics: ['microneedling', 'hydrafacial', 'rf'],
       },
 
@@ -125,7 +125,7 @@ export class AIChatAssistant {
         topic: 'wrinkles',
         keywords: ['ริ้วรอย', 'เหี่ยว', 'ย่น', 'wrinkles', 'fine lines', 'aging'],
         response:
-          '**ริ้วรอยและเส้นเล็ก** เกิดจาก:\n\n• การสูญเสียคอลลาเจนและอีลาสติน\n• แสงแดด UV\n• การแสดงสีหน้าซ้ำๆ\n• อายุที่เพิ่มขึ้น\n• การสูบบุหรี่\n\n**การรักษา:**\n1. Botox - ผ่อนคลายกล้ามเนื้อ (ริ้วรอยแบบ dynamic)\n2. Filler - เติมเต็มริ้วรอยลึก\n3. RF Treatment - กระตุ้นคอลลาเจน\n4. Laser Resurfacing - ผิวใหม่\n\n**การป้องกัน:** Retinol + Vitamin C + SPF 💪',
+          '**ริ้วรอยและเส้นเล็ก** เกิดจาก:\n\n• การสูญเสียคอลลาเจนและอีลาสติน\n• แสงแดด UV\n• การแสดงสีหน้าซ้ำๆ\n• อายุที่เพิ่มขึ้น\n• การสูบบุหรี่\n\n**การรักษา:**\n1. Botox - ผ่อนคลายกล้ามเนื้อ (ริ้วรอยแบบ dynamic)\n2. Filler - เติมเต็มริ้วรอยลึก\n3. RF Program - กระตุ้นคอลลาเจน\n4. Laser Resurfacing - ผิวใหม่\n\n**การป้องกัน:** Retinol + Vitamin C + SPF 💪',
         relatedTopics: ['botox', 'filler', 'rf', 'laser'],
       },
 
@@ -143,16 +143,16 @@ export class AIChatAssistant {
         topic: 'hydration',
         keywords: ['แห้ง', 'ขาดน้ำ', 'ผิวแห้ง', 'dry skin', 'dehydrated', 'ความชุ่มชื้น'],
         response:
-          '**ผิวขาดน้ำ** แตกต่างจากผิวแห้ง:\n\n• ผิวแห้ง = ขาดน้ำมัน (Dry)\n• ผิวขาดน้ำ = ขาดความชุ่มชื้น (Dehydrated)\n\n**สาเหตุ:**\n• อากาศร้อน แห้ง แอร์\n• ดื่มน้ำน้อย\n• สารทำความสะอาดรุนแรง\n• ฮอร์โมน\n\n**การรักษา:**\n1. HydraFacial - ให้ความชุ่มชื้นลึก\n2. Hyaluronic Acid Filler (เบาบาง)\n3. Medical Skincare - Hyaluronic Acid, Ceramide\n4. RF Treatment - กระตุ้นผิว\n\n**ดื่มน้ำ 2-3 ลิตร/วัน** 💧',
+          '**ผิวขาดน้ำ** แตกต่างจากผิวแห้ง:\n\n• ผิวแห้ง = ขาดน้ำมัน (Dry)\n• ผิวขาดน้ำ = ขาดความชุ่มชื้น (Dehydrated)\n\n**สาเหตุ:**\n• อากาศร้อน แห้ง แอร์\n• ดื่มน้ำน้อย\n• สารทำความสะอาดรุนแรง\n• ฮอร์โมน\n\n**การรักษา:**\n1. HydraFacial - ให้ความชุ่มชื้นลึก\n2. Hyaluronic Acid Filler (เบาบาง)\n3. Medical Skincare - Hyaluronic Acid, Ceramide\n4. RF Program - กระตุ้นผิว\n\n**ดื่มน้ำ 2-3 ลิตร/วัน** 💧',
         relatedTopics: ['hydrafacial', 'medical_skincare'],
       },
 
-      // Laser Treatment
+      // Laser Program
       {
         topic: 'laser',
         keywords: ['เลเซอร์', 'laser', 'ยิงเลเซอร์'],
         response:
-          '**Laser Treatment** มีหลายประเภท:\n\n• Q-Switch Laser - ลดฝ้า กระ จุดด่างดำ\n• Fractional CO2 - ผิวใหม่ ริ้วรอย\n• Nd:YAG - รักษาสิว รูขุมขน\n• Diode Laser - กำจัดขน\n\n**ราคา:** ฿5,000 - ฿15,000 ต่อครั้ง\n**ระยะเวลา:** 30-60 นาที\n**Downtime:** 3-7 วัน (แล้วแต่ชนิด)\n**จำนวนครั้ง:** 3-6 ครั้ง\n\n**เหมาะกับ:** ฝ้า กระ รอยสิว ริ้วรอย ผิวหมองคล้ำ',
+          '**Laser Program** มีหลายประเภท:\n\n• Q-Switch Laser - ลดฝ้า กระ จุดด่างดำ\n• Fractional CO2 - ผิวใหม่ ริ้วรอย\n• Nd:YAG - รักษาสิว รูขุมขน\n• Diode Laser - กำจัดขน\n\n**ราคา:** ฿5,000 - ฿15,000 ต่อครั้ง\n**ระยะเวลา:** 30-60 นาที\n**Downtime:** 3-7 วัน (แล้วแต่ชนิด)\n**จำนวนครั้ง:** 3-6 ครั้ง\n\n**เหมาะกับ:** ฝ้า กระ รอยสิว ริ้วรอย ผิวหมองคล้ำ',
         relatedTopics: ['spots', 'wrinkles', 'acne'],
       },
 
@@ -201,7 +201,7 @@ export class AIChatAssistant {
         relatedTopics: ['spots', 'redness', 'pores'],
       },
 
-      // RF Treatment
+      // RF Program
       {
         topic: 'rf',
         keywords: ['อาร์เอฟ', 'rf', 'radiofrequency', 'กระชับผิว'],
@@ -233,7 +233,7 @@ export class AIChatAssistant {
         topic: 'pricing',
         keywords: ['ราคา', 'ค่าใช้จ่าย', 'price', 'cost', 'เท่าไหร่'],
         response:
-          '**สรุปราคาทรีทเมนท์:**\n\n💰 ราคาเริ่มต้น:\n• LED Therapy: ฿1,000-3,000\n• Chemical Peel: ฿2,000-8,000\n• HydraFacial: ฿2,500-6,000\n• Medical Skincare: ฿2,000-8,000\n• Microneedling: ฿3,000-10,000\n• Botox: ฿4,000-12,000\n• IPL: ฿4,000-10,000\n• Laser: ฿5,000-15,000\n• RF Treatment: ฿5,000-15,000\n• Filler: ฿8,000-25,000\n\n**แพ็คเกจ:** มักถูกกว่า 10-30%\n**ปรึกษาฟรี:** ทุกทรีทเมนท์',
+          '**สรุปราคาทรีทเมนท์:**\n\n💰 ราคาเริ่มต้น:\n• LED Therapy: ฿1,000-3,000\n• Chemical Peel: ฿2,000-8,000\n• HydraFacial: ฿2,500-6,000\n• Medical Skincare: ฿2,000-8,000\n• Microneedling: ฿3,000-10,000\n• Botox: ฿4,000-12,000\n• IPL: ฿4,000-10,000\n• Laser: ฿5,000-15,000\n• RF Program: ฿5,000-15,000\n• Filler: ฿8,000-25,000\n\n**แพ็คเกจ:** มักถูกกว่า 10-30%\n**ปรึกษาฟรี:** ทุกทรีทเมนท์',
       },
 
       // Booking
@@ -289,7 +289,7 @@ export class AIChatAssistant {
     userMessage: string,
     context?: {
       metrics?: EnhancedMetricsResult;
-      recommendations?: TreatmentRecommendation[];
+      recommendations?: ProgramRecommendation[];
     }
   ): Promise<ChatMessage> {
     // Classify intent
@@ -307,7 +307,7 @@ export class AIChatAssistant {
         responseText += this.addMetricsContext(context.metrics, intent);
       }
 
-      if (context?.recommendations && (intent === 'treatment_inquiry' || intent === 'concern_specific')) {
+      if (context?.recommendations && (intent === 'program_inquiry' || intent === 'concern_specific')) {
         responseText += this.addRecommendationsContext(context.recommendations);
       }
     } else {
@@ -369,7 +369,7 @@ export class AIChatAssistant {
   /**
    * Add Recommendations Context to Response
    */
-  private addRecommendationsContext(recommendations: TreatmentRecommendation[]): string {
+  private addRecommendationsContext(recommendations: ProgramRecommendation[]): string {
     if (recommendations.length === 0) return '';
 
     let contextText = '\n\n**ทรีทเมนท์ที่แนะนำสำหรับคุณ:**\n';

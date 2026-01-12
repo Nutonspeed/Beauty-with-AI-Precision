@@ -17,10 +17,10 @@ export const PATCH = withAuthContext(
       const validRoles = [
         "super_admin",
         "admin",
-        "clinic_owner",
-        "clinic_admin",
+        "center_owner",
+        "center_admin",
         "manager",
-        "clinic_staff",
+        "center_staff",
         "customer",
       ]
 

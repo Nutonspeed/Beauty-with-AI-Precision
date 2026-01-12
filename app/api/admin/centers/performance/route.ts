@@ -27,7 +27,7 @@ export const GET = withAuth(
 
       // Get all centers
       const { data: centers, error: centersError } = await service
-        .from("clinics")
+        .from("centers")
         .select("id, name, created_at")
         .eq("is_active", true)
 
@@ -45,7 +45,7 @@ export const GET = withAuth(
       // Get all paid payments for the period
       const { data: payments, error } = await service
         .from("booking_payments")
-        .select("id, clinic_id, amount, payment_date, created_at")
+        .select("id, center_id, amount, payment_date, created_at")
         .eq("payment_status", "paid")
         .gte("payment_date", startDateStr)
         .lte("payment_date", endDateStr)
@@ -61,13 +61,13 @@ export const GET = withAuth(
       let totalBookings = 0
 
       for (const p of payments || []) {
-        if (!p.clinic_id) continue
+        if (!p.center_id) continue
         
-        if (!centerMap.has(p.clinic_id)) {
-          centerMap.set(p.clinic_id, { revenue: 0, bookings: 0 })
+        if (!centerMap.has(p.center_id)) {
+          centerMap.set(p.center_id, { revenue: 0, bookings: 0 })
         }
         
-        const center = centerMap.get(p.clinic_id)!
+        const center = centerMap.get(p.center_id)!
         center.revenue += Number(p.amount || 0)
         center.bookings += 1
         

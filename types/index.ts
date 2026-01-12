@@ -4,14 +4,14 @@ export * from './multi-tenant';
 // export * from './next-auth'; // Declaration file, skip re-export
 export * from './progress';
 export * from './supabase';
-export * from './treatment';
+export * from './program';
 // export * from './websocket-client'; // Declaration file, skip re-export
 // export * from './websocket'; // Declaration file, skip re-export
 
 // Explicit exports to resolve conflicts
 export type { ApiResponse } from './api';
 export type { UserRole } from './supabase';
-export type { TreatmentRecommendation } from './treatment';
+export type { ProgramRecommendation } from './program';
 
 // Re-export from lib/types for convenience
 export type { SkinConcern } from '../lib/types/skin-analysis';

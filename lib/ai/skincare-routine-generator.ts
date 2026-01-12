@@ -26,7 +26,7 @@ export type ProductCategory =
   | 'eye-cream'
   | 'mask'
   | 'exfoliant'
-  | 'treatment';
+  | 'program';
 
 export interface SkincareRoutine {
   id: string;
@@ -36,7 +36,7 @@ export interface SkincareRoutine {
   concerns: string[];
   morningSteps: RoutineStep[];
   eveningSteps: RoutineStep[];
-  weeklyTreatments: RoutineStep[];
+  weeklyPrograms: RoutineStep[];
   estimatedCost: number;
   durationWeeks: number;
   expectedResults: string[];
@@ -112,7 +112,7 @@ export class SkincareRoutineGenerator {
   ): SkincareRoutine {
     const morningSteps: RoutineStep[] = [];
     const eveningSteps: RoutineStep[] = [];
-    const weeklyTreatments: RoutineStep[] = [];
+    const weeklyPrograms: RoutineStep[] = [];
 
     // Morning routine
     morningSteps.push(this.getCleanser(skinType, 'morning', budget));
@@ -137,13 +137,13 @@ export class SkincareRoutineGenerator {
     eveningSteps.push(this.getEyeCream(concerns, 'evening', budget));
     eveningSteps.push(this.getMoisturizer(skinType, 'evening', budget));
 
-    // Weekly treatments
-    weeklyTreatments.push(this.getExfoliant(skinType, budget));
-    weeklyTreatments.push(this.getMask(skinType, concerns, budget));
+    // Weekly programs
+    weeklyPrograms.push(this.getExfoliant(skinType, budget));
+    weeklyPrograms.push(this.getMask(skinType, concerns, budget));
 
     // Calculate estimated cost
     const estimatedCost = this.calculateCost(
-      [...morningSteps, ...eveningSteps, ...weeklyTreatments],
+      [...morningSteps, ...eveningSteps, ...weeklyPrograms],
       budget
     );
 
@@ -161,7 +161,7 @@ export class SkincareRoutineGenerator {
       concerns,
       morningSteps,
       eveningSteps,
-      weeklyTreatments,
+      weeklyPrograms,
       estimatedCost,
       durationWeeks: 12,
       expectedResults,
@@ -412,7 +412,7 @@ export class SkincareRoutineGenerator {
         serums.push({
           id: 'serum-clarifying-evening',
           order: order++,
-          name: 'Niacinamide Treatment Serum',
+          name: 'Niacinamide Program Serum',
           description: 'Pore-refining and clarifying',
           productId: 'prod-004',
           frequency: 'daily',
@@ -547,7 +547,7 @@ export class SkincareRoutineGenerator {
   }
 
   /**
-   * Get exfoliant for weekly treatment
+   * Get exfoliant for weekly program
    */
   private getExfoliant(skinType: string, budget: string): RoutineStep {
     const _budget = budget
@@ -582,7 +582,7 @@ export class SkincareRoutineGenerator {
   }
 
   /**
-   * Get mask for weekly treatment
+   * Get mask for weekly program
    */
   private getMask(skinType: string, concerns: string[], budget: string): RoutineStep {
     const _budget = budget
@@ -593,7 +593,7 @@ export class SkincareRoutineGenerator {
       maskType = 'Clay Purifying Mask';
       description = 'Deep cleanses and detoxifies';
     } else if (concerns.includes('fine lines')) {
-      maskType = 'Anti-Aging Treatment Mask';
+      maskType = 'Anti-Aging Program Mask';
       description = 'Firms and rejuvenates';
     }
 
@@ -615,7 +615,7 @@ export class SkincareRoutineGenerator {
         'Follow with regular routine',
       ],
       benefits: [
-        'Provides intensive treatment',
+        'Provides intensive program',
         'Addresses specific concerns',
         'Boosts skin radiance',
         'Self-care moment',
@@ -644,7 +644,7 @@ export class SkincareRoutineGenerator {
       'eye-cream': 40,
       exfoliant: 35,
       mask: 15,
-      treatment: 50,
+      program: 50,
     };
 
     let totalCost = 0;
@@ -822,7 +822,7 @@ export class SkincareRoutineGenerator {
         ],
         adjustments: [
           'Continue consistent routine',
-          'Consider adding targeted treatments',
+          'Consider adding targeted programs',
         ],
       },
       {

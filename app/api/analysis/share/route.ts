@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
       analysis_id,
       expiry_days = 7,
       include_recommendations = true,
-      include_patient_info = false,
+      include_client_info = false,
     } = body
 
     // Validate analysis_id
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
     // Check if user owns this analysis or has permission
     const { data: analysis, error: analysisError } = await supabase
       .from('skin_analyses')
-      .select('id, user_id, clinic_id, sales_staff_id, patient_name')
+      .select('id, user_id, center_id, sales_staff_id, client_name')
       .eq('id', analysis_id)
       .single()
 
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
     const userId = session.user.id
     const { data: profile } = await supabase
       .from('multi_tenant_users')
-      .select('role, clinic_id')
+      .select('role, center_id')
       .eq('id', userId)
       .single()
 
@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
       analysis.user_id === userId ||
       analysis.sales_staff_id === userId ||
       profile?.role === 'super_admin' ||
-      (profile?.role === 'clinic_admin' && profile.clinic_id === analysis.clinic_id)
+      (profile?.role === 'center_admin' && profile.center_id === analysis.center_id)
 
     if (!canShare) {
       return NextResponse.json(
@@ -161,7 +161,7 @@ export async function GET(request: NextRequest) {
     // Get analysis with share info
     const { data: analysis, error } = await supabase
       .from('skin_analyses')
-      .select('id, is_shared, share_token, share_expires_at, user_id, sales_staff_id, clinic_id')
+      .select('id, is_shared, share_token, share_expires_at, user_id, sales_staff_id, center_id')
       .eq('id', analysisId)
       .single()
 
@@ -176,7 +176,7 @@ export async function GET(request: NextRequest) {
     const userId = session.user.id
     const { data: profile } = await supabase
       .from('multi_tenant_users')
-      .select('role, clinic_id')
+      .select('role, center_id')
       .eq('id', userId)
       .single()
 
@@ -184,7 +184,7 @@ export async function GET(request: NextRequest) {
       analysis.user_id === userId ||
       analysis.sales_staff_id === userId ||
       profile?.role === 'super_admin' ||
-      (profile?.role === 'clinic_admin' && profile.clinic_id === analysis.clinic_id)
+      (profile?.role === 'center_admin' && profile.center_id === analysis.center_id)
 
     if (!canView) {
       return NextResponse.json(
@@ -260,7 +260,7 @@ export async function DELETE(request: NextRequest) {
     // Get analysis
     const { data: analysis, error } = await supabase
       .from('skin_analyses')
-      .select('id, user_id, sales_staff_id, clinic_id')
+      .select('id, user_id, sales_staff_id, center_id')
       .eq('id', analysis_id)
       .single()
 
@@ -275,7 +275,7 @@ export async function DELETE(request: NextRequest) {
     const userId = session.user.id
     const { data: profile } = await supabase
       .from('multi_tenant_users')
-      .select('role, clinic_id')
+      .select('role, center_id')
       .eq('id', userId)
       .single()
 
@@ -283,7 +283,7 @@ export async function DELETE(request: NextRequest) {
       analysis.user_id === userId ||
       analysis.sales_staff_id === userId ||
       profile?.role === 'super_admin' ||
-      (profile?.role === 'clinic_admin' && profile.clinic_id === analysis.clinic_id)
+      (profile?.role === 'center_admin' && profile.center_id === analysis.center_id)
 
     if (!canRevoke) {
       return NextResponse.json(

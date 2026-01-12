@@ -26,22 +26,22 @@ export async function GET(_request: NextRequest) {
     // user profile
     const { data: userData, error: userErr } = await supabase
       .from("users")
-      .select("clinic_id, role, email")
+      .select("center_id, role, email")
       .eq("id", user.id)
       .single()
 
     if (userErr) {
-      console.error("[clinic/activity] Failed to fetch user profile:", userErr)
+      console.error("[center/activity] Failed to fetch user profile:", userErr)
       return NextResponse.json({ error: "Failed to fetch user profile" }, { status: 500 })
     }
 
-    if (!userData || (userData.role !== "clinic_owner" && userData.role !== "clinic_staff")) {
-      return NextResponse.json({ error: "Forbidden - Clinic access required" }, { status: 403 })
+    if (!userData || (userData.role !== "center_owner" && userData.role !== "center_staff")) {
+      return NextResponse.json({ error: "Forbidden - Center access required" }, { status: 403 })
     }
 
-    const clinicId = userData.clinic_id
-    if (!clinicId) {
-      return NextResponse.json({ error: "No clinic associated with user" }, { status: 400 })
+    const centerId = userData.center_id
+    if (!centerId) {
+      return NextResponse.json({ error: "No center associated with user" }, { status: 400 })
     }
 
     const admin = createServiceClient()
@@ -50,12 +50,12 @@ export async function GET(_request: NextRequest) {
     const { data: bookings, error: bookingErr } = await admin
       .from("bookings")
       .select("id, booking_date, status, price")
-      .eq("clinic_id", clinicId)
+      .eq("center_id", centerId)
       .in("status", ["confirmed", "completed", "cancelled"])
       .order("booking_date", { ascending: false })
       .limit(20)
 
-    if (bookingErr) console.error("[clinic/activity] Error fetching bookings:", bookingErr)
+    if (bookingErr) console.error("[center/activity] Error fetching bookings:", bookingErr)
 
     bookings?.forEach((b) => {
       activities.push({
@@ -74,14 +74,14 @@ export async function GET(_request: NextRequest) {
 
     // staff (last 24h)
     const { data: staff, error: staffErr } = await admin
-      .from("clinic_staff")
-      .select("id, created_at, full_name, role, status, clinic_id")
-      .eq("clinic_id", clinicId)
+      .from("center_staff")
+      .select("id, created_at, full_name, role, status, center_id")
+      .eq("center_id", centerId)
       .gte("created_at", new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
       .order("created_at", { ascending: false })
       .limit(3)
 
-    if (staffErr) console.error("[clinic/activity] Error fetching staff:", staffErr)
+    if (staffErr) console.error("[center/activity] Error fetching staff:", staffErr)
 
     staff?.forEach((member) => {
       const roleText =
@@ -110,11 +110,11 @@ export async function GET(_request: NextRequest) {
     const { data: todayRevenue, error: revErr } = await admin
       .from("bookings")
       .select("booking_date, price, status")
-      .eq("clinic_id", clinicId)
+      .eq("center_id", centerId)
       .in("status", ["completed", "confirmed"])
       .gte("booking_date", todayStart.toISOString())
 
-    if (revErr) console.error("[clinic/activity] Error fetching revenue:", revErr)
+    if (revErr) console.error("[center/activity] Error fetching revenue:", revErr)
 
     if (todayRevenue && todayRevenue.length > 0) {
       const totalRevenue = todayRevenue.reduce(
@@ -140,7 +140,7 @@ export async function GET(_request: NextRequest) {
       total: activities.length,
     })
   } catch (error) {
-    console.error("[clinic/activity] Unexpected error:", error)
+    console.error("[center/activity] Unexpected error:", error)
     return NextResponse.json(
       { error: "Failed to fetch activity", details: error instanceof Error ? error.message : "Unknown error" },
       { status: 500 },

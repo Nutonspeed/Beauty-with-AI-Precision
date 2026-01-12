@@ -3,7 +3,7 @@ export interface AuditEvent {
   id?: string
   timestamp: string
   userId?: string
-  clinicId?: string
+  centerId?: string
   sessionId?: string
   action: string
   resource: string
@@ -27,7 +27,7 @@ export interface AuditEvent {
 
 export interface AuditFilter {
   userId?: string
-  clinicId?: string
+  centerId?: string
   action?: string
   resource?: string
   severity?: AuditEvent['severity'][]
@@ -117,8 +117,8 @@ export interface AuditConfig {
   }
   resources: {
     users: string[]
-    patients: string[]
-    treatments: string[]
+    clients: string[]
+    programs: string[]
     appointments: string[]
     payments: string[]
     reports: string[]
@@ -211,7 +211,7 @@ export interface AuditLogTable {
   id: string
   timestamp: string
   user_id?: string
-  clinic_id?: string
+  center_id?: string
   session_id?: string
   action: string
   resource: string

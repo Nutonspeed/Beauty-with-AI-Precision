@@ -69,9 +69,9 @@ export const POST = withPublicAccess(async (request: NextRequest) => {
     const formData = await request.formData();
     const file = formData.get('file') as File;
     const photoType = formData.get('photo_type') as string;
-    const treatmentId = formData.get('treatment_id') as string | null;
+    const programId = formData.get('program_id') as string | null;
     const sessionNumber = formData.get('session_number') as string | null;
-    const daysSinceTreatment = formData.get('days_since_treatment') as string | null;
+    const daysSinceProgram = formData.get('days_since_program') as string | null;
     const notes = formData.get('notes') as string | null;
 
     if (!file || !photoType) {
@@ -114,11 +114,11 @@ export const POST = withPublicAccess(async (request: NextRequest) => {
     // For now, we'll insert without analysis results
     const photoData = {
       user_id: user.id,
-      treatment_id: treatmentId,
+      program_id: programId,
       image_url: publicUrl,
       photo_type: photoType,
       session_number: sessionNumber ? parseInt(sessionNumber) : null,
-      days_since_treatment: daysSinceTreatment ? parseInt(daysSinceTreatment) : null,
+      days_since_program: daysSinceProgram ? parseInt(daysSinceProgram) : null,
       notes,
       is_verified: false,
     };

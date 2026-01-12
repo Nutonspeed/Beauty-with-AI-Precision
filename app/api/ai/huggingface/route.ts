@@ -5,7 +5,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { withClinicAuth } from '@/lib/auth/middleware'
+import { withCenterAuth } from '@/lib/auth/middleware'
 
 // Hugging Face API configuration
 const HUGGINGFACE_TOKEN = process.env.HUGGINGFACE_TOKEN
@@ -30,7 +30,7 @@ interface HuggingFaceRequest {
 /**
  * POST /api/ai/huggingface
  * Proxy request to Hugging Face Inference API
- * Protected: requires authenticated clinic-related user
+ * Protected: requires authenticated center-related user
  */
 async function postHandler(request: NextRequest) {
   try {
@@ -157,4 +157,4 @@ export async function GET() {
   })
 }
 
-export const POST = withClinicAuth(postHandler)
+export const POST = withCenterAuth(postHandler)

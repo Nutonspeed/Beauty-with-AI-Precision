@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
     const service = createServiceClient()
     const { data: userRow, error: userErr } = await service
       .from('users')
-      .select('role, clinic_id')
+      .select('role, center_id')
       .eq('id', user.id)
       .single()
     if (userErr || !userRow || !canAccessSales(userRow.role)) {
@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
     const range = searchParams.get('range') || '1d'
 
     const { fetchSalesMetricsForUser } = await import('@/lib/sales/metrics-service')
-    const metrics = await fetchSalesMetricsForUser(user.id, userRow.clinic_id ?? null, range)
+    const metrics = await fetchSalesMetricsForUser(user.id, userRow.center_id ?? null, range)
 
     return NextResponse.json(metrics)
   } catch (error) {

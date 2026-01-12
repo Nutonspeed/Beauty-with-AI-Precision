@@ -1,6 +1,6 @@
 /**
  * Sales Enablement API
- * เครื่องมือช่วยเซลล์ขาย AR/AI treatments
+ * เครื่องมือช่วยเซลล์ขาย AR/AI programs
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -40,7 +40,7 @@ interface ClosingScript {
   followUp: string
 }
 
-// POST /api/beauty-ar-treatment/sales - Generate sales enablement data
+// POST /api/beauty-ar-program/sales - Generate sales enablement data
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient()
@@ -53,22 +53,22 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const {
       customerProfile,
-      treatmentInterest,
+      programInterest,
       objections,
       budget,
       urgency
     } = body
 
-    if (!customerProfile || !treatmentInterest) {
+    if (!customerProfile || !programInterest) {
       return NextResponse.json({
-        error: 'Missing required fields: customerProfile, treatmentInterest'
+        error: 'Missing required fields: customerProfile, programInterest'
       }, { status: 400 })
     }
 
     // Generate personalized sales strategy
     const salesStrategy = await generatePersonalizedSalesStrategy(
       customerProfile,
-      treatmentInterest,
+      programInterest,
       objections,
       budget,
       urgency
@@ -78,20 +78,20 @@ export async function POST(request: NextRequest) {
     const objectionHandlers = await generateObjectionHandlers(
       objections,
       customerProfile,
-      treatmentInterest
+      programInterest
     )
 
     // Generate upselling opportunities
     const upsellingOpportunities = await generateUpsellingOpportunities(
       customerProfile,
-      treatmentInterest,
+      programInterest,
       budget
     )
 
     // Generate closing scripts
     const closingScripts = await generateClosingScripts(
       customerProfile,
-      treatmentInterest,
+      programInterest,
       urgency
     )
 
@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
       upsellingOpportunities,
       closingScripts,
       customerProfile,
-      treatmentInterest,
+      programInterest,
       timestamp: new Date().toISOString(),
       generatedBy: session.user.id
     }
@@ -121,7 +121,7 @@ export async function POST(request: NextRequest) {
 // Generate personalized sales strategy
 async function generatePersonalizedSalesStrategy(
   customerProfile: any,
-  treatmentInterest: string,
+  programInterest: string,
   objections?: string[],
   budget?: any,
   urgency?: string
@@ -203,7 +203,7 @@ async function generatePersonalizedSalesStrategy(
 async function generateObjectionHandlers(
   objections: string[] = [],
   customerProfile: any,
-  treatmentInterest: string
+  programInterest: string
 ): Promise<ObjectionHandler[]> {
   const handlers: ObjectionHandler[] = []
 
@@ -226,7 +226,7 @@ async function generateObjectionHandlers(
       ],
       evidence: 'ลูกค้า 95% พอใจกับผลลัพธ์'
     },
-    'prefer_clinic': {
+    'prefer_center': {
       objection: 'อยากไปคลินิก',
       responses: [
         'เราใช้เทคโนโลยีเดียวกับคลินิกชั้นนำ',
@@ -275,12 +275,12 @@ async function generateObjectionHandlers(
 // Generate upselling opportunities
 async function generateUpsellingOpportunities(
   customerProfile: any,
-  treatmentInterest: string,
+  programInterest: string,
   budget?: any
 ): Promise<Opportunity[]> {
   const opportunities: Opportunity[] = []
 
-  // Base treatment upselling
+  // Base program upselling
   opportunities.push({
     type: 'package_upgrade',
     title: 'อัปเกรดเป็นแพ็คเกจพรีเมี่ยม',
@@ -290,10 +290,10 @@ async function generateUpsellingOpportunities(
     conversionProbability: '65%'
   })
 
-  // Complementary treatments
-  if (treatmentInterest === 'skin-brightening') {
+  // Complementary programs
+  if (programInterest === 'skin-brightening') {
     opportunities.push({
-      type: 'complementary_treatment',
+      type: 'complementary_program',
       title: 'เพิ่มการรักษาริ้วรอย',
       description: 'รวมรักษาริ้วรอยเพื่อผิวที่สมบูรณ์แบบ',
       priceIncrease: '+5,000฿',
@@ -335,7 +335,7 @@ async function generateUpsellingOpportunities(
 // Generate closing scripts
 async function generateClosingScripts(
   customerProfile: any,
-  treatmentInterest: string,
+  programInterest: string,
   urgency?: string
 ): Promise<ClosingScript[]> {
   const scripts: ClosingScript[] = []

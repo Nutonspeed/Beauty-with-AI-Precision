@@ -12,24 +12,24 @@ describe('Channel Permissions', () => {
         'system:maintenance',
         'admin',
         'user-123',
-        'clinic-456'
+        'center-456'
       );
       expect(result.allowed).toBe(true);
     });
 
-    it('should allow clinic_owner to subscribe to system:announcements', () => {
+    it('should allow center_owner to subscribe to system:announcements', () => {
       const result = canSubscribeToChannel(
         'system:announcements',
-        'clinic_owner',
+        'center_owner',
         'user-123'
       );
       expect(result.allowed).toBe(true);
     });
 
-    it('should deny patient from subscribing to system:maintenance', () => {
+    it('should deny client from subscribing to system:maintenance', () => {
       const result = canSubscribeToChannel(
         'system:maintenance',
-        'patient',
+        'client',
         'user-123'
       );
       expect(result.allowed).toBe(false);
@@ -39,7 +39,7 @@ describe('Channel Permissions', () => {
     it('should allow user to subscribe to their own notification channel', () => {
       const result = canSubscribeToChannel(
         'user:user-123:notifications',
-        'patient',
+        'client',
         'user-123'
       );
       expect(result.allowed).toBe(true);
@@ -48,40 +48,40 @@ describe('Channel Permissions', () => {
     it('should deny user from subscribing to another user notification channel', () => {
       const result = canSubscribeToChannel(
         'user:user-456:notifications',
-        'patient',
+        'client',
         'user-123'
       );
       expect(result.allowed).toBe(false);
       expect(result.reason).toContain('your own');
     });
 
-    it('should allow clinic staff to subscribe to their clinic queue', () => {
+    it('should allow center staff to subscribe to their center queue', () => {
       const result = canSubscribeToChannel(
-        'clinic:clinic-123:queue',
+        'center:center-123:queue',
         'doctor',
         'user-456',
-        'clinic-123'
+        'center-123'
       );
       expect(result.allowed).toBe(true);
     });
 
-    it('should deny clinic staff from subscribing to another clinic queue', () => {
+    it('should deny center staff from subscribing to another center queue', () => {
       const result = canSubscribeToChannel(
-        'clinic:clinic-456:queue',
+        'center:center-456:queue',
         'doctor',
         'user-123',
-        'clinic-123'
+        'center-123'
       );
       expect(result.allowed).toBe(false);
       expect(result.reason).toContain('clinic');
     });
 
-    it('should deny patient from subscribing to clinic queue', () => {
+    it('should deny client from subscribing to center queue', () => {
       const result = canSubscribeToChannel(
-        'clinic:clinic-123:queue',
-        'patient',
+        'center:center-123:queue',
+        'client',
         'user-123',
-        'clinic-123'
+        'center-123'
       );
       expect(result.allowed).toBe(false);
       expect(result.reason).toContain('not allowed');
@@ -90,7 +90,7 @@ describe('Channel Permissions', () => {
     it('should deny subscription to unknown channel pattern', () => {
       const result = canSubscribeToChannel(
         'unknown:channel',
-        'patient',
+        'client',
         'user-123'
       );
       expect(result.allowed).toBe(false);
@@ -99,16 +99,16 @@ describe('Channel Permissions', () => {
   });
 
   describe('filterAllowedChannels', () => {
-    it('should filter channels correctly for patient', () => {
+    it('should filter channels correctly for client', () => {
       const channels = [
         'system:announcements',
         'system:maintenance',
         'user:user-123:notifications',
         'user:user-456:notifications',
-        'clinic:clinic-123:queue'
+        'center:center-123:queue'
       ];
 
-      const result = filterAllowedChannels(channels, 'patient', 'user-123');
+      const result = filterAllowedChannels(channels, 'client', 'user-123');
 
       expect(result.allowed).toHaveLength(2);
       expect(result.allowed).toContain('system:announcements');
@@ -120,8 +120,8 @@ describe('Channel Permissions', () => {
       const channels = [
         'system:announcements',
         'system:maintenance',
-        'clinic:clinic-123:queue',
-        'clinic:clinic-456:queue',
+        'center:center-123:queue',
+        'center:center-456:queue',
         'user:user-123:notifications'
       ];
 
@@ -129,23 +129,23 @@ describe('Channel Permissions', () => {
         channels,
         'doctor',
         'user-123',
-        'clinic-123'
+        'center-123'
       );
 
       expect(result.allowed).toHaveLength(4);
       expect(result.allowed).toContain('system:announcements');
       expect(result.allowed).toContain('system:maintenance');
-      expect(result.allowed).toContain('clinic:clinic-123:queue');
+      expect(result.allowed).toContain('center:center-123:queue');
       expect(result.allowed).toContain('user:user-123:notifications');
       expect(result.denied).toHaveLength(1);
-      expect(result.denied[0].channel).toBe('clinic:clinic-456:queue');
+      expect(result.denied[0].channel).toBe('center:center-456:queue');
     });
 
     it('should allow all channels for admin', () => {
       const channels = [
         'system:announcements',
         'system:maintenance',
-        'clinic:clinic-123:queue',
+        'center:center-123:queue',
         'user:user-456:notifications',
         'analytics:realtime'
       ];
@@ -154,7 +154,7 @@ describe('Channel Permissions', () => {
         channels,
         'admin',
         'user-123',
-        'clinic-123'
+        'center-123'
       );
 
       expect(result.allowed).toHaveLength(5);

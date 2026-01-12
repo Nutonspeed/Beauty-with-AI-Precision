@@ -35,11 +35,11 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // 🔥 FIX CRITICAL BUG #4: Build treatment plan from recommendations
-    const treatmentPlan = body.recommendations
+    // 🔥 FIX CRITICAL BUG #4: Build program plan from recommendations
+    const programPlan = body.recommendations
       ?.filter(r => r.priority === 'high' || r.priority === 'medium')
       .map((r, i) => `${i + 1}. ${r.text}`)
-      .join('\n\n') || body.aiTreatmentPlan || 'Continue current skincare routine. Schedule follow-up in 3 months.'
+      .join('\n\n') || body.aiProgramPlan || 'Continue current skincare routine. Schedule follow-up in 3 months.'
 
     // Create analysis record
     const { data: analysis, error } = await supabase
@@ -52,9 +52,9 @@ export async function POST(request: NextRequest) {
         heatmap_data: body.heatmapData || null,
         metrics: body.metrics,
         ai_version: body.aiVersion || "v1.0.0",
-        patient_info: body.patientInfo || null,
+        client_info: body.clientInfo || null,
         appointment_id: body.appointmentId || null,
-        treatment_plan_id: body.treatmentPlanId || null,
+        program_plan_id: body.programPlanId || null,
 
         // 🔥 FIX CRITICAL BUG #1: Map quality metrics to database columns
         quality_lighting: body.qualityMetrics?.lighting ?? null,
@@ -65,8 +65,8 @@ export async function POST(request: NextRequest) {
         // 🔥 FIX CRITICAL BUG #2: Save AI concerns array
         ai_concerns: body.aiConcerns || [],
 
-        // 🔥 FIX CRITICAL BUG #4: Save AI treatment plan
-        ai_treatment_plan: treatmentPlan,
+        // 🔥 FIX CRITICAL BUG #4: Save AI program plan
+        ai_program_plan: programPlan,
 
         // 🔥 FIX CRITICAL BUG #3: Normalize all scores to 0-100 scale
         // HybridAnalyzer returns 0-1 for overall, 0-10 for individual metrics

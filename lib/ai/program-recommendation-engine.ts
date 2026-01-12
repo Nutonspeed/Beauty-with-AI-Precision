@@ -215,8 +215,8 @@ function calculateTimeline(program: Program): number {
   const intervalDays = program.interval_days || 7
   const resultsVisibleDays = program.results_visible_days || 7
 
-  const treatmentDays = (sessions - 1) * intervalDays + resultsVisibleDays
-  return Math.ceil(treatmentDays / 7)
+  const programDays = (sessions - 1) * intervalDays + resultsVisibleDays
+  return Math.ceil(programDays / 7)
 }
 
 /**

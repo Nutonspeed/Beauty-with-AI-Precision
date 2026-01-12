@@ -7,11 +7,11 @@ export const dynamic = "force-dynamic"
 export const POST = withAuth(
   async (request: NextRequest, user) => {
     try {
-      if (!user.clinic_id) {
+      if (!user.center_id) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 })
       }
 
-      if (!["super_admin", "admin", "clinic_owner", "clinic_admin", "manager"].includes(user.role)) {
+      if (!["super_admin", "admin", "center_owner", "center_admin", "manager"].includes(user.role)) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 })
       }
 
@@ -29,7 +29,7 @@ export const POST = withAuth(
 
       const { data: existing, error: existingErr } = await service
         .from("booking_payments")
-        .select("id, clinic_id, payment_status")
+        .select("id, center_id, payment_status")
         .eq("id", payment_id)
         .single()
 
@@ -37,7 +37,7 @@ export const POST = withAuth(
         return NextResponse.json({ error: "Payment not found" }, { status: 404 })
       }
 
-      if (existing.clinic_id !== user.clinic_id && !["super_admin", "admin"].includes(user.role)) {
+      if (existing.center_id !== user.center_id && !["super_admin", "admin"].includes(user.role)) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 })
       }
 
@@ -70,7 +70,7 @@ export const POST = withAuth(
       try {
         await service.from("activity_logs").insert({
           user_id: user.id,
-          clinic_id: existing.clinic_id,
+          center_id: existing.center_id,
           action: "mark_payment_paid",
           resource_type: "booking_payment",
           resource_id: payment_id,

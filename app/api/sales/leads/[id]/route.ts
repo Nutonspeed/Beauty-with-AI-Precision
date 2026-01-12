@@ -5,7 +5,7 @@ export const GET = withSalesAuth(async (req, authenticatedUser) => {
   const id = req.nextUrl.pathname.split('/').pop() || '';
   try {
     const { getLeadById } = await import('@/lib/sales/leads-service')
-    const lead = await getLeadById(authenticatedUser.id, authenticatedUser.clinic_id ?? null, id)
+    const lead = await getLeadById(authenticatedUser.id, authenticatedUser.center_id ?? null, id)
     return NextResponse.json(lead)
   } catch (error: any) {
     if (error?.code === 'PGRST116') {
@@ -22,10 +22,10 @@ export const PATCH = withSalesAuth(async (req, authenticatedUser) => {
     const { updateLead } = await import('@/lib/sales/leads-service')
     const { createLeadActivity } = await import('@/lib/sales/lead-activities-service')
 
-    const updatedLead = await updateLead(authenticatedUser.id, authenticatedUser.clinic_id ?? null, id, body)
+    const updatedLead = await updateLead(authenticatedUser.id, authenticatedUser.center_id ?? null, id, body)
 
     if (body.status) {
-      await createLeadActivity(authenticatedUser.id, authenticatedUser.clinic_id ?? null, id, {
+      await createLeadActivity(authenticatedUser.id, authenticatedUser.center_id ?? null, id, {
         type: 'status_change',
         subject: 'Status Updated',
         description: `Status changed to ${body.status}`,
@@ -46,9 +46,9 @@ export const DELETE = withSalesAuth(async (req, authenticatedUser) => {
     const { softDeleteLead } = await import('@/lib/sales/leads-service')
     const { logLeadSystemActivity } = await import('@/lib/sales/lead-activities-service')
 
-    await softDeleteLead(authenticatedUser.id, authenticatedUser.clinic_id ?? null, id)
+    await softDeleteLead(authenticatedUser.id, authenticatedUser.center_id ?? null, id)
 
-    await logLeadSystemActivity(authenticatedUser.id, authenticatedUser.clinic_id ?? null, id, 'Lead Archived', 'Lead marked as lost')
+    await logLeadSystemActivity(authenticatedUser.id, authenticatedUser.center_id ?? null, id, 'Lead Archived', 'Lead marked as lost')
 
     return NextResponse.json({ success: true })
   } catch (error: any) {

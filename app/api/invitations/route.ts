@@ -23,7 +23,7 @@ export async function POST(request: Request) {
 
     // Parse request body
     const body = await request.json()
-    const { email, invited_role, clinic_id, metadata } = body
+    const { email, invited_role, center_id, metadata } = body
 
     // Validate required fields
     if (!email || !invited_role) {
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
     const { data, error } = await supabase.rpc('api_create_invitation', {
       p_email: email,
       p_invited_role: invited_role,
-      p_clinic_id: clinic_id || null,
+      p_center_id: center_id || null,
       p_metadata: metadata || {}
     })
 
@@ -87,14 +87,14 @@ export async function GET(request: Request) {
     // Parse query parameters
     const { searchParams } = new URL(request.url)
     const status = searchParams.get('status') || undefined
-    const clinic_id = searchParams.get('clinic_id') || undefined
+    const center_id = searchParams.get('center_id') || undefined
     const limit = parseInt(searchParams.get('limit') || '50')
     const offset = parseInt(searchParams.get('offset') || '0')
 
     // Call the database function
     const { data, error } = await supabase.rpc('api_list_invitations', {
       p_status: status,
-      p_clinic_id: clinic_id ? clinic_id : null,
+      p_center_id: center_id ? center_id : null,
       p_limit: limit,
       p_offset: offset
     })

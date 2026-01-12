@@ -50,7 +50,7 @@ export async function getTenantById(tenantId: string): Promise<Tenant | null> {
       id: center.id,
       slug: center.slug,
       settings: {
-        centerName: center.name || center.clinic_name,
+        centerName: center.name || center.center_name,
         centerType: "aesthetic_center",
         email: center.email,
         phone: center.phone,
@@ -111,7 +111,7 @@ export async function getTenantBySlug(slug: string): Promise<Tenant | null> {
       id: center.id,
       slug: center.slug,
       settings: {
-        centerName: center.name || center.clinic_name,
+        centerName: center.name || center.center_name,
         centerType: "aesthetic_center",
         email: center.email,
         phone: center.phone,
@@ -169,7 +169,7 @@ export async function getAllTenants(): Promise<Tenant[]> {
         id: center.id,
         slug: center.slug,
         settings: {
-          centerName: center.name || center.clinic_name,
+          centerName: center.name || center.center_name,
           centerType: "aesthetic_center",
           email: center.email,
           phone: center.phone,
@@ -228,7 +228,7 @@ export async function getActiveTenants(): Promise<Tenant[]> {
         id: center.id,
         slug: center.slug,
         settings: {
-          centerName: center.name || center.clinic_name,
+          centerName: center.name || center.center_name,
           centerType: "aesthetic_center",
           email: center.email,
           phone: center.phone,
@@ -321,7 +321,7 @@ export async function createTenant(input: CreateTenantInput): Promise<Tenant> {
       id: tenant.id,
       slug: tenant.slug,
       settings: {
-        centerName: tenant.name || tenant.clinic_name,
+        centerName: tenant.name || tenant.center_name,
         centerType: "aesthetic_center",
         email: tenant.email,
         phone: tenant.phone,
@@ -413,7 +413,7 @@ export async function updateTenant(tenantId: string, updates: Partial<Tenant>): 
       id: updatedCenter.id,
       slug: updatedCenter.slug,
       settings: {
-        centerName: updatedCenter.name || updatedCenter.clinic_name,
+        centerName: updatedCenter.name || updatedCenter.center_name,
         centerType: "aesthetic_center",
         email: updatedCenter.email,
         phone: updatedCenter.phone,

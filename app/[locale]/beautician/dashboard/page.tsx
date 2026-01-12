@@ -15,16 +15,18 @@ import {
   CheckCircle2,
   AlertCircle,
   User,
-  Stethoscope
+  Stethoscope,
+  ChevronRight,
+  Sparkles
 } from 'lucide-react';
 import Link from 'next/link';
 import { Loader2 } from 'lucide-react';
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 interface Appointment {
   id: string;
@@ -35,6 +37,7 @@ interface Appointment {
 }
 
 export default function BeauticianDashboard() {
+  const t = useTranslations();
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
   const lp = useLocalizePath();
@@ -189,7 +192,7 @@ export default function BeauticianDashboard() {
                     <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Aesthetic schedule synchronization</CardDescription>
                   </div>
                   <Button variant="outline" className="h-12 px-6 rounded-2xl border-slate-200 text-[10px] font-black uppercase tracking-widest italic hover:bg-slate-50">
-                    <Clock3 className="mr-2 h-4 w-4" />
+                    <Clock className="mr-2 h-4 w-4" />
                     Full Timeline
                   </Button>
                 </CardHeader>
@@ -338,10 +341,6 @@ export default function BeauticianDashboard() {
           </div>
         </div>
       </main>
-
-      <Footer />
-    </div>
-
       <Footer />
     </div>
   );

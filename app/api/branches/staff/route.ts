@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { withClinicAuth } from '@/lib/auth/middleware';
+import { withCenterAuth } from '@/lib/auth/middleware';
 
 /**
  * GET /api/branches/staff
@@ -11,7 +11,7 @@ import { withClinicAuth } from '@/lib/auth/middleware';
  * - user_id (optional): Filter by user
  * - is_active (optional): Filter by active status
  */
-export const GET = withClinicAuth(async (request: NextRequest) => {
+export const GET = withCenterAuth(async (request: NextRequest) => {
   try {
     const { searchParams } = new URL(request.url);
     const branch_id = searchParams.get('branch_id');
@@ -78,7 +78,7 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
  * - working_hours (optional): Working hours object
  * - assignment_start_date (required): Start date
  */
-export const POST = withClinicAuth(async (request: NextRequest) => {
+export const POST = withCenterAuth(async (request: NextRequest) => {
   try {
     const body = await request.json();
     const {

@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
     // Parse query parameters
     const filter = {
       userId: searchParams.get('userId') || undefined,
-      clinicId: searchParams.get('clinicId') || undefined,
+      centerId: searchParams.get('centerId') || undefined,
       action: searchParams.get('action') || undefined,
       resource: searchParams.get('resource') || undefined,
       severity: searchParams.get('severity')?.split(',') || undefined,

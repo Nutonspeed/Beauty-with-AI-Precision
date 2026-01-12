@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic'
  * GET /api/admin/analytics - Get system-wide analytics data
  * Query params:
  *   - period: 'week' | 'month' | 'quarter' | 'year' (default: 'month')
- *   - metric: 'revenue' | 'users' | 'clinics' | 'all' (default: 'all')
+ *   - metric: 'revenue' | 'users' | 'centers' | 'all' (default: 'all')
  */
 export async function GET(request: Request) {
   try {
@@ -99,7 +99,7 @@ export async function GET(request: Request) {
 
     // 2. Center Analytics
     let centerData = null
-    if (metric === 'centers' || metric === 'clinics' || metric === 'all') {
+    if (metric === 'centers' || metric === 'centers' || metric === 'all') {
       const { data: allCenters } = await supabase
         .from('centers')
         .select('id, created_at, subscription_status, subscription_plan')
@@ -168,7 +168,7 @@ export async function GET(request: Request) {
       // Role distribution
       const roleDistribution = {
         super_admin: allUsers?.filter((u) => u.role === 'super_admin').length || 0,
-        center_admin: allUsers?.filter((u) => u.role === 'center_admin' || u.role === 'clinic_admin').length || 0,
+        center_admin: allUsers?.filter((u) => u.role === 'center_admin' || u.role === 'center_admin').length || 0,
         staff: allUsers?.filter((u) => u.role === 'staff').length || 0,
         customer: allUsers?.filter((u) => u.role === 'customer').length || 0,
       }

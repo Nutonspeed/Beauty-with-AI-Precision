@@ -16,7 +16,7 @@ export interface HybridAnalysisResult extends CompleteAnalysisResult {
   // Add cloud AI results
   cloudAnalysis?: EnsembleAnalysisResult
   analysisMethod: "browser-only" | "cloud-only" | "hybrid" | "visia-equivalent"
-  tier: "free" | "premium" | "clinical"
+  tier: "free" | "premium" | "centeral"
 
   // Phase 2 enhancements
   phase2Result?: VISIAEquivalentResult
@@ -26,11 +26,11 @@ export interface HybridAnalysisResult extends CompleteAnalysisResult {
  * Analyze with hybrid approach
  * - Free tier: Browser AI only (MediaPipe + TensorFlow) [70-80% accuracy]
  * - Premium tier: Browser AI + Cloud AI ensemble [80-85% accuracy]
- * - Clinical tier: Full Phase 2 VISIA-equivalent [85-90% accuracy]
+ * - Centeral tier: Full Phase 2 VISIA-equivalent [85-90% accuracy]
  */
 export async function analyzeWithHybrid(
   file: File,
-  tier: "free" | "premium" | "clinical" = "free",
+  tier: "free" | "premium" | "centeral" = "free",
 ): Promise<HybridAnalysisResult> {
   const startTime = performance.now()
 
@@ -42,12 +42,12 @@ export async function analyzeWithHybrid(
 
   console.log(`[v0] Browser AI complete: ${browserResult.totalProcessingTime.toFixed(0)}ms`)
 
-  // Step 2: For premium/clinical tier, also run cloud AI ensemble
+  // Step 2: For premium/centeral tier, also run cloud AI ensemble
   let cloudAnalysis: EnsembleAnalysisResult | undefined
   let analysisMethod: HybridAnalysisResult["analysisMethod"] = "browser-only"
   let phase2Result: VISIAEquivalentResult | undefined
 
-  if (tier === "premium" || tier === "clinical") {
+  if (tier === "premium" || tier === "centeral") {
     try {
       console.log("[v0] Running premium cloud AI ensemble...")
 
@@ -58,7 +58,7 @@ export async function analyzeWithHybrid(
       const prompt: SkinAnalysisPrompt = {
         imageBase64,
         language: "th", // Default to Thai
-        analysisType: tier === "clinical" ? "medical" : "medical",
+        analysisType: tier === "centeral" ? "medical" : "medical",
       }
 
       cloudAnalysis = await analyzeWithFallback(prompt)
@@ -73,8 +73,8 @@ export async function analyzeWithHybrid(
     }
   }
 
-  // Step 3: For clinical tier, run Phase 2 VISIA-equivalent pipeline
-  if (tier === "clinical") {
+  // Step 3: For centeral tier, run Phase 2 VISIA-equivalent pipeline
+  if (tier === "centeral") {
     try {
       console.log("[v0] Running Phase 2 VISIA-equivalent pipeline...")
 
@@ -274,8 +274,8 @@ export async function analyzePremium(file: File): Promise<HybridAnalysisResult> 
 }
 
 /**
- * Clinical analysis (Phase 2 VISIA-equivalent)
+ * Centeral analysis (Phase 2 VISIA-equivalent)
  */
-export async function analyzeClinical(file: File): Promise<HybridAnalysisResult> {
-  return analyzeWithHybrid(file, "clinical")
+export async function analyzeCenteral(file: File): Promise<HybridAnalysisResult> {
+  return analyzeWithHybrid(file, "centeral")
 }

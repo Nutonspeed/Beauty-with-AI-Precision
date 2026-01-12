@@ -21,7 +21,7 @@ import {
 } from "lucide-react"
 import { useTranslations, useLocale } from "next-intl"
 import { useProgramTimeline } from "@/hooks/useProgram"
-import type { ProgramTimeline } from "@/lib/program/program-tracker"
+import type { ProgramTimeline } from "@/lib/programs/program-tracker"
 
 interface AestheticTimelineProps {
   programId: string

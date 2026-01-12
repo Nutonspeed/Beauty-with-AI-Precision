@@ -81,8 +81,8 @@ export function useOfflineSync(options: OfflineSyncOptions = {}) {
       console.log('Syncing action:', action)
 
       switch (action.type) {
-        case 'CREATE_PATIENT':
-          // Implement patient creation sync
+        case 'CREATE_CLIENT':
+          // Implement client creation sync
           break
         case 'UPDATE_APPOINTMENT':
           // Implement appointment update sync

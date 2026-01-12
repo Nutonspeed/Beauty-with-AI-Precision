@@ -11,6 +11,7 @@ export type UserRole =
   | 'customer_free'
   | 'customer_premium'
   | 'customer_aesthetic'
+  | 'customer_elite'
   | 'customer'
   | 'free_user'
   | 'premium_customer'
@@ -175,6 +176,7 @@ export const roleHierarchy: Record<UserRole, number> = {
   free_user: 1,
   customer_premium: 2,
   premium_customer: 2,
+  customer_elite: 2,
   center_staff: 3,
   sales_staff: 3,
   center_owner: 4,
@@ -198,7 +200,7 @@ export function hasPermission(userRole: UserRole | null, path: string): boolean 
     // Exact match
     if (cleanPath === rp.path) return true;
     
-    // Prefix match (e.g., /admin matches /admin/patients)
+    // Prefix match (e.g., /admin matches /admin/clients)
     if (cleanPath.startsWith(rp.path + '/')) return true;
     
     return false;

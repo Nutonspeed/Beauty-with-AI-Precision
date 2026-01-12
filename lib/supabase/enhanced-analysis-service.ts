@@ -6,7 +6,7 @@ export interface SaveEnhancedAnalysisParams {
   centerId: string
   customerId: string
   enhancedResult: VISIAEquivalentResult
-  tier: "free" | "premium" | "clinical"
+  tier: "free" | "premium" | "centeral"
   processingTimeMs: number
 }
 

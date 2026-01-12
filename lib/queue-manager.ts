@@ -162,9 +162,9 @@ export class QueueManager {
   }
 
   /**
-   * Call specific customer
+   * Call specific client
    */
-  callCustomer(entryId: string, specialistId?: string): void {
+  callClient(entryId: string, specialistId?: string): void {
     const entry = this.queue.get(entryId);
     if (!entry || entry.status !== 'waiting') return;
 
@@ -289,11 +289,11 @@ export class QueueManager {
   }
 
   /**
-   * Get entry by customer ID
+   * Get entry by client ID
    */
-  getEntryByCustomerId(customerId: string): QueueEntry | null {
+  getEntryByClientId(clientId: string): QueueEntry | null {
     return Array.from(this.queue.values())
-      .find(entry => entry.customerId === customerId && 
+      .find(entry => entry.customerId === clientId && 
              (entry.status === 'waiting' || entry.status === 'called' || entry.status === 'in-service')) || null;
   }
 

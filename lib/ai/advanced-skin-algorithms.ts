@@ -35,7 +35,7 @@ export interface PorphyrinAnalysis {
   // Extended from Task 7
   porphyrinScore?: number
   acneSeverity?: string
-  treatmentUrgency?: string
+  programUrgency?: string
 }
 
 export interface RBXAnalysis {
@@ -125,7 +125,7 @@ export class AdvancedSkinAlgorithms {
     userHistory?: {
       age?: number
       acneHistory?: 'never' | 'occasional' | 'frequent' | 'chronic'
-      onTreatment?: boolean
+      onProgram?: boolean
       skincareRoutine?: 'poor' | 'basic' | 'good' | 'excellent'
     }
   ): Promise<PorphyrinAnalysis> {
@@ -161,7 +161,7 @@ export class AdvancedSkinAlgorithms {
       // Extended data from Task 7
       porphyrinScore: porphyrinResult.porphyrinScore,
       acneSeverity: porphyrinResult.acneSeverity,
-      treatmentUrgency: porphyrinResult.treatmentUrgency,
+      programUrgency: porphyrinResult.programUrgency,
     }
   }
 

@@ -68,9 +68,9 @@ const CACHE_CONFIG = {
     prefix: 'ai:user:',
     memory: false
   },
-  TREATMENT_RECOMMENDATIONS: {
+  PROGRAM_RECOMMENDATIONS: {
     ttl: 7200, // 2 hours
-    prefix: 'ai:treatment:',
+    prefix: 'ai:program:',
     memory: true
   }
 }
@@ -245,8 +245,8 @@ export class AICacheManager {
   // Preload common data
   async preloadCommonData(): Promise<void> {
     try {
-      // Preload treatment recommendations
-      await this.preloadTreatmentRecommendations()
+      // Preload program recommendations
+      await this.preloadProgramRecommendations()
       
       // Preload common model predictions
       await this.preloadModelPredictions()
@@ -257,8 +257,8 @@ export class AICacheManager {
     }
   }
 
-  private async preloadTreatmentRecommendations(): Promise<void> {
-    // Implementation for preloading treatment recommendations
+  private async preloadProgramRecommendations(): Promise<void> {
+    // Implementation for preloading program recommendations
   }
 
   private async preloadModelPredictions(): Promise<void> {

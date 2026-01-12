@@ -109,7 +109,7 @@ test.describe('Real-time Features', () => {
       window.dispatchEvent(new CustomEvent('new-appointment', {
         detail: {
           id: '123',
-          customer: 'Test Customer',
+          customer: 'Test Client',
           time: '14:00',
           service: 'Skin Analysis'
         }
@@ -166,7 +166,7 @@ test.describe('Real-time Features', () => {
     // Simulate another user editing
     await page.evaluate(() => {
       window.dispatchEvent(new CustomEvent('user-joined', {
-        detail: { userId: 'user2', name: 'John Doe', role: 'clinic_owner' }
+        detail: { userId: 'user2', name: 'John Doe', role: 'center_owner' }
       }));
     });
     

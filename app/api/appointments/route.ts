@@ -7,7 +7,7 @@ import { withAuth } from "@/lib/auth/middleware"
 export const GET = withAuth(async (request: NextRequest, user) => {
   try {
     const { searchParams } = new URL(request.url)
-    const clinicId = searchParams.get('clinic_id')
+    const centerId = searchParams.get('center_id')
     const customerId = searchParams.get('customer_id')
     const rawDoctorId = searchParams.get('doctor_id')
     const status = searchParams.get('status')
@@ -31,8 +31,8 @@ export const GET = withAuth(async (request: NextRequest, user) => {
       .from('appointment_slots')
       .select('*', { count: 'exact' })
 
-    if (clinicId) {
-      query = query.eq('clinic_id', clinicId)
+    if (centerId) {
+      query = query.eq('center_id', centerId)
     }
 
     if (customerId) {
@@ -89,7 +89,7 @@ export const POST = withAuth(async (request: NextRequest, user) => {
     const body = await request.json()
 
     const {
-      clinic_id,
+      center_id,
       customer_id,
       doctor_id,
       room_id,
@@ -118,7 +118,7 @@ export const POST = withAuth(async (request: NextRequest, user) => {
     )
 
     // Validate required fields
-    if (!clinic_id || !customer_id || !appointment_date || !start_time || !duration_minutes || !customer_name || !customer_phone || !service_name) {
+    if (!center_id || !customer_id || !appointment_date || !start_time || !duration_minutes || !customer_name || !customer_phone || !service_name) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -131,7 +131,7 @@ export const POST = withAuth(async (request: NextRequest, user) => {
     // Check for conflicts using database function
     const { data: hasConflict, error: conflictError } = await supabaseAdmin
       .rpc('check_appointment_conflict', {
-        p_clinic_id: clinic_id,
+        p_center_id: center_id,
         p_doctor_id: doctor_id,
         p_room_id: room_id,
         p_appointment_date: appointment_date,
@@ -155,7 +155,7 @@ export const POST = withAuth(async (request: NextRequest, user) => {
     const { data: appointment, error: insertError } = await supabaseAdmin
       .from('appointment_slots')
       .insert({
-        clinic_id,
+        center_id,
         customer_id,
         doctor_id,
         room_id,

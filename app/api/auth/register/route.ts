@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate role
-    const validRoles = ['customer', 'sales_staff', 'clinic_owner', 'admin', 'super_admin']
+    const validRoles = ['customer', 'sales_staff', 'center_owner', 'admin', 'super_admin']
     if (!validRoles.includes(role)) {
       return NextResponse.json(
         { error: 'Invalid role' },
@@ -111,8 +111,8 @@ export async function POST(request: NextRequest) {
 
     console.log('[Register API] ✅ User profile created:', userData.id)
 
-    // 3. If clinic_owner or sales_staff, assign to default clinic (optional)
-    // TODO: Implement clinic assignment logic if needed
+    // 3. If center_owner or sales_staff, assign to default center (optional)
+    // TODO: Implement center assignment logic if needed
 
     return NextResponse.json({
       success: true,

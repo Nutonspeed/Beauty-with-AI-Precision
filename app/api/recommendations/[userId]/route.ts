@@ -1,5 +1,5 @@
 /**
- * User-Specific Treatment Recommendations API
+ * User-Specific Program Recommendations API
  * Week 8: Recommendation Engine Integration
  * 
  * GET /api/recommendations/[userId] - Get all recommendations for a user
@@ -45,7 +45,7 @@ export async function GET(
 
     // Authorization check - users can only access their own data
     if (user.id !== userId) {
-      // Check if user is admin/clinic staff
+      // Check if user is admin/center staff
       const { data: profile } = await supabase
         .from('profiles')
         .select('role')
@@ -54,7 +54,7 @@ export async function GET(
 
       const isAuthorized = profile?.role === 'admin' || 
                           profile?.role === 'super_admin' || 
-                          profile?.role === 'clinic_admin';
+                          profile?.role === 'center_admin';
 
       if (!isAuthorized) {
         return NextResponse.json(
@@ -66,10 +66,10 @@ export async function GET(
 
     // Fetch all recommendations for user with analysis details
     const { data: recommendations, error } = await supabase
-      .from('treatment_recommendations')
+      .from('program_recommendations')
       .select(`
         *,
-        skin_analyses!treatment_recommendations_analysis_id_fkey (
+        skin_analyses!program_recommendations_analysis_id_fkey (
           id,
           created_at,
           image_url,
@@ -162,7 +162,7 @@ export async function DELETE(
 
     const isAdmin = profile?.role === 'admin' || 
                    profile?.role === 'super_admin' || 
-                   profile?.role === 'clinic_admin';
+                   profile?.role === 'center_admin';
 
     // Users can delete their own data, admins can delete anyone's
     if (user.id !== userId && !isAdmin) {
@@ -174,7 +174,7 @@ export async function DELETE(
 
     // Delete all recommendations for user
     const { error: deleteError, count } = await supabase
-      .from('treatment_recommendations')
+      .from('program_recommendations')
       .delete()
       .eq('user_id', userId);
 

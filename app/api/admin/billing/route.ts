@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url)
     const invoiceId = searchParams.get('id')
-    const clinicId = searchParams.get('clinicId')
+    const centerId = searchParams.get('centerId')
     const status = searchParams.get('status')
 
     // If requesting specific invoice
@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
         .select(
           `
           *,
-          clinics (
+          centers (
             id,
             name,
             slug,
@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
       .select(
         `
         *,
-        clinics (
+        centers (
           id,
           name,
           slug,
@@ -82,8 +82,8 @@ export async function GET(request: NextRequest) {
       )
       .order('created_at', { ascending: false })
 
-    if (clinicId) {
-      query = query.eq('clinic_id', clinicId)
+    if (centerId) {
+      query = query.eq('center_id', centerId)
     }
 
     if (status) {
@@ -115,7 +115,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST: Create new invoice or generate for clinic
+// POST: Create new invoice or generate for center
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient()
@@ -140,21 +140,21 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { clinicId, billingPeriodStart, billingPeriodEnd } = body
+    const { centerId, billingPeriodStart, billingPeriodEnd } = body
 
-    if (!clinicId) {
-      return NextResponse.json({ error: 'Clinic ID is required' }, { status: 400 })
+    if (!centerId) {
+      return NextResponse.json({ error: 'Center ID is required' }, { status: 400 })
     }
 
-    // Get clinic details
-    const { data: clinic, error: clinicError } = await supabase
-      .from('clinics')
+    // Get center details
+    const { data: center, error: centerError } = await supabase
+      .from('centers')
       .select('*')
-      .eq('id', clinicId)
+      .eq('id', centerId)
       .single()
 
-    if (clinicError || !clinic) {
-      return NextResponse.json({ error: 'Clinic not found' }, { status: 404 })
+    if (centerError || !center) {
+      return NextResponse.json({ error: 'Center not found' }, { status: 404 })
     }
 
     // Calculate billing period (default to current month)
@@ -167,7 +167,7 @@ export async function POST(request: NextRequest) {
       : new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)
 
     // Get subscription plan
-    const plan = SUBSCRIPTION_PLANS[clinic.subscription_plan as keyof typeof SUBSCRIPTION_PLANS]
+    const plan = SUBSCRIPTION_PLANS[center.subscription_plan as keyof typeof SUBSCRIPTION_PLANS]
     
     if (!plan) {
       return NextResponse.json({ error: 'Invalid subscription plan' }, { status: 400 })
@@ -187,7 +187,7 @@ export async function POST(request: NextRequest) {
     const { data: invoice, error: insertError } = await supabase
       .from('invoices')
       .insert({
-        clinic_id: clinicId,
+        center_id: centerId,
         invoice_number: invoiceNumber,
         billing_period_start: periodStart.toISOString(),
         billing_period_end: periodEnd.toISOString(),
@@ -197,7 +197,7 @@ export async function POST(request: NextRequest) {
         status: 'pending',
         due_date: dueDate.toISOString(),
         metadata: {
-          plan: clinic.subscription_plan,
+          plan: center.subscription_plan,
           planPrice: plan.price,
         },
       })
@@ -216,7 +216,7 @@ export async function POST(request: NextRequest) {
       resource_type: 'invoice',
       resource_id: invoice.id,
       metadata: {
-        clinic_id: clinicId,
+        center_id: centerId,
         invoice_number: invoiceNumber,
         total,
       },

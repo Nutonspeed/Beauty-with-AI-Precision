@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { withClinicAuth } from '@/lib/auth/middleware';
+import { withCenterAuth } from '@/lib/auth/middleware';
 
 function getSupabaseClient() {
   return createClient(
@@ -11,27 +11,27 @@ function getSupabaseClient() {
 
 /**
  * GET /api/loyalty/rewards
- * List rewards in catalog for beauty clinic customers
+ * List rewards in catalog for beauty center customers
  * 
  * Query parameters:
- * - clinic_id (required): Clinic ID
+ * - center_id (required): Center ID
  * - reward_type (optional): Filter by reward type
  * - is_active (optional): Filter by active status
  * - is_published (optional): Filter by published status
  * - is_featured (optional): Filter by featured status
  */
-export const GET = withClinicAuth(async (request: NextRequest, user) => {
+export const GET = withCenterAuth(async (request: NextRequest, user) => {
   try {
     const { searchParams } = new URL(request.url);
-    const clinic_id = searchParams.get('clinic_id');
+    const center_id = searchParams.get('center_id');
     const reward_type = searchParams.get('reward_type');
     const is_active = searchParams.get('is_active');
     const is_published = searchParams.get('is_published');
     const is_featured = searchParams.get('is_featured');
 
-    if (!clinic_id) {
+    if (!center_id) {
       return NextResponse.json(
-        { error: 'clinic_id is required' },
+        { error: 'center_id is required' },
         { status: 400 }
       );
     }
@@ -44,7 +44,7 @@ export const GET = withClinicAuth(async (request: NextRequest, user) => {
         required_tier:loyalty_tiers(id, tier_name, tier_level),
         created_by:users!rewards_catalog_created_by_user_id_fkey(id, full_name, email)
       `)
-      .eq('clinic_id', clinic_id);
+      .eq('center_id', center_id);
 
     if (reward_type) {
       query = query.eq('reward_type', reward_type);
@@ -78,13 +78,13 @@ export const GET = withClinicAuth(async (request: NextRequest, user) => {
 
 /**
  * POST /api/loyalty/rewards
- * Create a new reward in catalog for beauty clinic
+ * Create a new reward in catalog for beauty center
  */
-export const POST = withClinicAuth(async (request: NextRequest, user: any) => {
+export const POST = withCenterAuth(async (request: NextRequest, user: any) => {
   try {
     const body = await request.json();
     const {
-      clinic_id,
+      center_id,
       reward_name,
       reward_name_en,
       description,
@@ -113,9 +113,9 @@ export const POST = withClinicAuth(async (request: NextRequest, user: any) => {
       notes,
     } = body;
 
-    if (!clinic_id || !reward_name || !reward_type || !points_required) {
+    if (!center_id || !reward_name || !reward_type || !points_required) {
       return NextResponse.json(
-        { error: 'clinic_id, reward_name, reward_type, and points_required are required' },
+        { error: 'center_id, reward_name, reward_type, and points_required are required' },
         { status: 400 }
       );
     }
@@ -124,7 +124,7 @@ export const POST = withClinicAuth(async (request: NextRequest, user: any) => {
     const { data, error } = await supabaseClient
       .from('rewards_catalog')
       .insert({
-        clinic_id,
+        center_id,
         reward_name,
         reward_name_en,
         description,

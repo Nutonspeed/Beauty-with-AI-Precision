@@ -15,7 +15,7 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    let query = supabase.from("treatment_plans").select("*").eq("is_active", true)
+    let query = supabase.from("program_plans").select("*").eq("is_active", true)
 
     if (customerId) {
       query = query.eq("user_id", customerId)
@@ -29,8 +29,8 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ plans })
   } catch (error) {
-    console.error("[v0] Error fetching treatment plans:", error)
-    return NextResponse.json({ error: "Failed to fetch treatment plans" }, { status: 500 })
+    console.error("[v0] Error fetching program plans:", error)
+    return NextResponse.json({ error: "Failed to fetch program plans" }, { status: 500 })
   }
 }
 
@@ -38,7 +38,7 @@ export async function POST(request: Request) {
   try {
     const supabase = await createServerClient()
     const body = await request.json()
-    const { user_id, analysis_id, concern_type, treatments, estimated_duration, estimated_cost, notes, schedule } = body
+    const { user_id, analysis_id, concern_type, programs, estimated_duration, estimated_cost, notes, schedule } = body
 
     const {
       data: { user },
@@ -49,12 +49,12 @@ export async function POST(request: Request) {
     }
 
     const { data: plan, error } = await supabase
-      .from("treatment_plans")
+      .from("program_plans")
       .insert({
         user_id,
         analysis_id,
         concern_type,
-        treatments,
+        programs,
         estimated_duration,
         estimated_cost,
         notes,
@@ -68,7 +68,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ plan })
   } catch (error) {
-    console.error("[v0] Error creating treatment plan:", error)
-    return NextResponse.json({ error: "Failed to create treatment plan" }, { status: 500 })
+    console.error("[v0] Error creating program plan:", error)
+    return NextResponse.json({ error: "Failed to create program plan" }, { status: 500 })
   }
 }

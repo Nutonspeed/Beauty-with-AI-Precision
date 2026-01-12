@@ -8,34 +8,34 @@ export const testUsers = {
     role: 'super_admin',
     name: 'Super Admin Test'
   },
-  clinicOwner: {
-    email: 'clinic-owner@test.com', 
+  centerOwner: {
+    email: 'center-owner@test.com', 
     password: 'password123',
-    role: 'clinic_owner',
-    name: 'Clinic Owner Test',
-    clinicId: 'test-clinic-1'
+    role: 'center_owner',
+    name: 'Center Owner Test',
+    centerId: 'test-center-1'
   },
   salesStaff: {
     email: 'sales2@test.com',
     password: 'password123', 
     role: 'sales_staff',
     name: 'Sales Staff Test',
-    clinicId: 'test-clinic-1'
+    centerId: 'test-center-1'
   },
   customer: {
     email: 'customer3@test.com',
     password: 'password123',
     role: 'customer', 
     name: 'Customer Test',
-    clinicId: 'test-clinic-1'
+    centerId: 'test-center-1'
   }
 };
 
-export const testClinics = {
-  clinic1: {
-    id: 'test-clinic-1',
-    name: 'Test Beauty Clinic',
-    email: 'clinic@test.com',
+export const testCenters = {
+  center1: {
+    id: 'test-center-1',
+    name: 'Test Beauty Center',
+    email: 'center@test.com',
     phone: '+6621234567',
     address: '123 Test Street, Bangkok'
   }

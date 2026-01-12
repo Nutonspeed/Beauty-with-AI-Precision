@@ -91,9 +91,9 @@ export function CalendarGrid({
                 <div className="text-xs opacity-75">
                   {slot.duration} min
                 </div>
-                {slot.customerName && (
+                {slot.clientName && (
                   <div className="mt-2 text-xs font-medium truncate">
-                    {slot.customerName}
+                    {slot.clientName}
                   </div>
                 )}
                 {slot.status === 'tentative' && (

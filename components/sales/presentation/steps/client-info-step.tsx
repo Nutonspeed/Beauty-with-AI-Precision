@@ -18,18 +18,18 @@ import { User, Phone, Mail, AlertCircle } from 'lucide-react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { useTranslations } from 'next-intl'
 
-interface CustomerInfoStepProps {
+interface ClientInfoStepProps {
   client: {
     id: string
     name: string
     phone: string
     email?: string
   }
-  onUpdate: (client: CustomerInfoStepProps['client']) => void
+  onUpdate: (client: ClientInfoStepProps['client']) => void
   isOnline: boolean
 }
 
-export function CustomerInfoStep({ client, onUpdate, isOnline }: CustomerInfoStepProps) {
+export function ClientInfoStep({ client, onUpdate, isOnline }: ClientInfoStepProps) {
   const t = useTranslations()
   const [localClient, setLocalClient] = useState(client)
   const [errors, setErrors] = useState<Record<string, string>>({})

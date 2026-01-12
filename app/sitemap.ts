@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next'
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://cliniciq.ai'
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://centeriq.ai'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const currentDate = new Date().toISOString()

@@ -272,14 +272,14 @@ export function calculateSummary(data: AnalysisDataPoint[]): {
   totalAnalyses: number;
   averageScore: number;
   improvementRate: number;
-  treatmentAdherence: number;
+  programAdherence: number;
 } {
   if (data.length === 0) {
     return {
       totalAnalyses: 0,
       averageScore: 0,
       improvementRate: 0,
-      treatmentAdherence: 0,
+      programAdherence: 0,
     };
   }
 
@@ -309,7 +309,7 @@ export function calculateSummary(data: AnalysisDataPoint[]): {
     }
   }
 
-  // Treatment adherence (simplified - based on analysis frequency)
+  // Program adherence (simplified - based on analysis frequency)
   // Expected: 1 analysis per month = 100% adherence
   const monthsSpan =
     sortedData.length >= 2
@@ -318,14 +318,14 @@ export function calculateSummary(data: AnalysisDataPoint[]): {
         (30 * 24 * 60 * 60 * 1000)
       : 0;
 
-  const treatmentAdherence =
+  const programAdherence =
     monthsSpan > 0 ? Math.min(1, totalAnalyses / monthsSpan) : 0;
 
   return {
     totalAnalyses,
     averageScore: Math.round(averageScore * 10) / 10,
     improvementRate: Math.round(improvementRate * 10) / 10,
-    treatmentAdherence: Math.round(treatmentAdherence * 100) / 100,
+    programAdherence: Math.round(programAdherence * 100) / 100,
   };
 }
 
@@ -373,12 +373,12 @@ export function generateInsights(
     insights.push({
       type: 'warning',
       title: 'Wrinkles Increasing',
-      message: `Wrinkles have increased by ${Math.abs(trends.wrinkles.changePercent)}%. Consider adding anti-aging treatments.`,
+      message: `Wrinkles have increased by ${Math.abs(trends.wrinkles.changePercent)}%. Consider adding anti-aging programs.`,
     });
   }
 
   // Low adherence warning
-  if (summary.treatmentAdherence < 0.5) {
+  if (summary.programAdherence < 0.5) {
     insights.push({
       type: 'warning',
       title: 'Low Analysis Frequency',

@@ -142,7 +142,7 @@ describe('LocationTracker', () => {
         id: 'route-1',
         visitId: 'visit-1',
         providerId: 'provider-1',
-        patientId: 'patient-1',
+        customerId: 'customer-1',
         origin: {
           latitude: 13.7563,
           longitude: 100.5018,
@@ -186,7 +186,7 @@ describe('LocationTracker', () => {
         id: 'route-1',
         visitId: 'visit-1',
         providerId: 'provider-1',
-        patientId: 'patient-1',
+        customerId: 'customer-1',
         origin: {
           latitude: 13.7563,
           longitude: 100.5018,
@@ -290,7 +290,7 @@ describe('LocationTracker', () => {
         id: 'route-1',
         visitId: 'visit-1',
         providerId: 'provider-1',
-        patientId: 'patient-1',
+        customerId: 'customer-1',
         origin: {
           latitude: 13.7563,
           longitude: 100.5018,
@@ -342,7 +342,7 @@ describe('LocationTracker', () => {
         id: 'route-1',
         visitId: 'visit-1',
         providerId: 'provider-1',
-        patientId: 'patient-1',
+        customerId: 'customer-1',
         origin: {
           latitude: 13.7563,
           longitude: 100.5018,
@@ -374,7 +374,7 @@ describe('LocationTracker', () => {
         id: 'route-1',
         visitId: 'visit-1',
         providerId: 'provider-1',
-        patientId: 'patient-1',
+        customerId: 'customer-1',
         origin: {
           latitude: 13.7563,
           longitude: 100.5018,

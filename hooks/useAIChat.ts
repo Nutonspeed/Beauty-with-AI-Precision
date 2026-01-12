@@ -6,7 +6,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import AIChatAssistant, { ChatMessage, ChatSession } from '@/lib/ai/chat-assistant';
 import { EnhancedMetricsResult } from '@/lib/ai/enhanced-skin-metrics';
-import { TreatmentRecommendation } from '@/lib/ai/treatment-recommender';
+import { ProgramRecommendation } from '@/lib/ai/program-recommender';
 
 /**
  * Hook State Interface
@@ -27,7 +27,7 @@ interface UseAIChatActions {
   startNewSession: () => void;
   setContext: (context: {
     metrics?: EnhancedMetricsResult;
-    recommendations?: TreatmentRecommendation[];
+    recommendations?: ProgramRecommendation[];
   }) => void;
   clearHistory: () => void;
   exportChat: () => string;
@@ -51,7 +51,7 @@ export const useAIChat = (userId: string = 'demo_user'): UseAIChatReturn => {
   const assistantRef = useRef<AIChatAssistant>(new AIChatAssistant());
   const contextRef = useRef<{
     metrics?: EnhancedMetricsResult;
-    recommendations?: TreatmentRecommendation[];
+    recommendations?: ProgramRecommendation[];
   }>({});
 
   /**
@@ -66,7 +66,7 @@ export const useAIChat = (userId: string = 'demo_user'): UseAIChatReturn => {
       id: `msg_welcome_${Date.now()}`,
       role: 'assistant',
       content:
-        'สวัสดีค่ะ! ยินดีต้อนรับสู่ AI Beauty Clinic 🌸\n\nฉันคือผู้ช่วยด้านการดูแลผิว พร้อมให้คำปรึกษาเกี่ยวกับ:\n\n• การวิเคราะห์ผิว 🔬\n• ทรีทเมนท์และการรักษา 💉\n• ผลิตภัณฑ์ดูแลผิว 🧴\n• ราคาและโปรโมชัน 💰\n• การนัดหมาย 📅\n\nมีอะไรให้ช่วยไหมคะ?',
+        'สวัสดีค่ะ! ยินดีต้อนรับสู่ AI Beauty Center 🌸\n\nฉันคือผู้ช่วยด้านการดูแลผิว พร้อมให้คำปรึกษาเกี่ยวกับ:\n\n• การวิเคราะห์ผิว 🔬\n• ทรีทเมนท์และการรักษา 💉\n• ผลิตภัณฑ์ดูแลผิว 🧴\n• ราคาและโปรโมชัน 💰\n• การนัดหมาย 📅\n\nมีอะไรให้ช่วยไหมคะ?',
       timestamp: new Date(),
     };
     setMessages([welcomeMessage]);
@@ -148,7 +148,7 @@ export const useAIChat = (userId: string = 'demo_user'): UseAIChatReturn => {
    * Set Context
    */
   const setContext = useCallback(
-    (context: { metrics?: EnhancedMetricsResult; recommendations?: TreatmentRecommendation[] }) => {
+    (context: { metrics?: EnhancedMetricsResult; recommendations?: ProgramRecommendation[] }) => {
       contextRef.current = context;
 
       // Add context update message

@@ -423,7 +423,7 @@ export class AnalysisArchiveEngine {
       }
     }
 
-    // Treatment applied filter
+    // Program applied filter
     if (filters.programApplied !== undefined) {
       if (record.programApplied !== filters.programApplied) return false;
     }
@@ -434,7 +434,7 @@ export class AnalysisArchiveEngine {
       if (!hasMatchingTag) return false;
     }
 
-    // Clinician filter
+    // Centerian filter
     if (filters.specialist && record.specialistName !== filters.specialist) {
       return false;
     }

@@ -33,7 +33,7 @@ interface ClientInfo {
   clientId: string;
   userId: string;
   role: string;
-  clinicId: string;
+  centerId: string;
   subscribedChannels: Set<string>;
 }
 
@@ -41,13 +41,13 @@ interface ClientInfo {
 interface WsJwtPayload extends JwtPayload {
   userId: string;
   role: string;
-  clinicId: string;
+  centerId: string;
 }
 
 // ประกาศ type สำหรับ filter ในการ broadcast
 interface BroadcastFilter {
   userIds?: string[];
-  clinicIds?: string[];
+  centerIds?: string[];
   roles?: string[];
   channels?: string[];
 }
@@ -56,12 +56,12 @@ interface BroadcastFilter {
 type UserRole = 'admin' | 'doctor' | 'staff' | 'free_user' | 'premium_user';
 
 // ฟังก์ชันสำหรับตรวจสอบสิทธิ์การเข้าถึง channel
-function canSubscribeToChannel(channel: string, role: UserRole, userId: string, clinicId: string): boolean {
+function canSubscribeToChannel(channel: string, role: UserRole, userId: string, centerId: string): boolean {
   // ตัวอย่างการตรวจสอบสิทธิ์พื้นฐาน
   if (channel.startsWith('user:') && channel !== `user:${userId}`) {
     return false;
   }
-  if (channel.startsWith('clinic:') && channel !== `clinic:${clinicId}`) {
+  if (channel.startsWith('center:') && channel !== `center:${centerId}`) {
     return false;
   }
   return true;
@@ -72,13 +72,13 @@ function filterAllowedChannels(
   channels: string[], 
   role: UserRole, 
   userId: string, 
-  clinicId: string
+  centerId: string
 ): { allowed: string[]; denied: Array<{ channel: string; reason: string }> } {
   const allowed: string[] = [];
   const denied: Array<{ channel: string; reason: string }> = [];
 
   for (const channel of channels) {
-    if (canSubscribeToChannel(channel, role, userId, clinicId)) {
+    if (canSubscribeToChannel(channel, role, userId, centerId)) {
       allowed.push(channel);
     } else {
       denied.push({ channel, reason: 'permission_denied' });
@@ -224,7 +224,7 @@ export class WSServer {
       // ตรวจสอบข้อมูลผู้ใช้จากฐานข้อมูล
       const { data: user, error } = await supabaseAdmin
         .from('users')
-        .select('id, role, clinic_id')
+        .select('id, role, center_id')
         .eq('id', payload.userId)
         .single();
 
@@ -237,7 +237,7 @@ export class WSServer {
         clientId,
         userId: user.id,
         role: (user as any).role || 'free_user',
-        clinicId: (user as any).clinic_id || 'default',
+        centerId: (user as any).center_id || 'default',
         subscribedChannels: new Set()
       };
 
@@ -246,7 +246,7 @@ export class WSServer {
         clientId,
         userId: clientInfo.userId,
         role: clientInfo.role,
-        clinicId: clientInfo.clinicId
+        centerId: clientInfo.centerId
       });
 
       // ตั้งค่า event handlers สำหรับ WebSocket
@@ -288,12 +288,12 @@ export class WSServer {
         return null;
       }
 
-      // ควรดึงข้อมูล role และ clinicId จากฐานข้อมูลแทนการตั้งค่าเริ่มต้น
+      // ควรดึงข้อมูล role และ centerId จากฐานข้อมูลแทนการตั้งค่าเริ่มต้น
       return { 
         userId: obj.userId, 
         timestamp: obj.timestamp,
         role: 'free_user',
-        clinicId: 'default'
+        centerId: 'default'
       };
     } catch (error) {
       console.error('Token verification error:', error);
@@ -328,7 +328,7 @@ export class WSServer {
               requestedChannels,
               client.role as UserRole,
               client.userId,
-              client.clinicId
+              client.centerId
             );
 
             // เพิ่มช่องทางที่อนุญาต
@@ -388,7 +388,7 @@ export class WSServer {
         clientId,
         userId: client.userId,
         role: client.role,
-        clinicId: client.clinicId
+        centerId: client.centerId
       });
       this.clients.delete(clientId);
     }
@@ -435,8 +435,8 @@ export class WSServer {
       return false;
     }
     
-    // ตรวจสอบ clinic ID
-    if (filter.clinicIds && filter.clinicIds.length > 0 && !filter.clinicIds.includes(client.clinicId)) {
+    // ตรวจสอบ center ID
+    if (filter.centerIds && filter.centerIds.length > 0 && !filter.centerIds.includes(client.centerId)) {
       return false;
     }
     
@@ -545,11 +545,11 @@ export class WSServer {
     const mem = process.memoryUsage();
     
     const byRole: Record<string, number> = {};
-    const byClinic: Record<string, number> = {};
+    const byCenter: Record<string, number> = {};
     
     for (const client of this.clients.values()) {
       byRole[client.role] = (byRole[client.role] || 0) + 1;
-      byClinic[client.clinicId] = (byClinic[client.clinicId] || 0) + 1;
+      byCenter[client.centerId] = (byCenter[client.centerId] || 0) + 1;
     }
 
     res.statusCode = 200;
@@ -566,7 +566,7 @@ export class WSServer {
       clients: {
         total: this.clients.size,
         byRole,
-        byClinic
+        byCenter
       }
     }));
   }

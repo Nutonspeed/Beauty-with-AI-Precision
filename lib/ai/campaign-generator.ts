@@ -105,7 +105,7 @@ export class AIMarketingCampaignGenerator {
         messages: [
           {
             role: 'system',
-            content: `You are a master marketing campaign creator for beauty clinics. Create highly personalized, conversion-optimized campaigns that resonate with individual leads.
+            content: `You are a master marketing campaign creator for beauty centers. Create highly personalized, conversion-optimized campaigns that resonate with individual leads.
 
 Return JSON in this format:
 {
@@ -370,7 +370,7 @@ Return JSON array of campaigns in sequence.`
 
 ข้อมูลเพิ่มเติม:
 - การมีส่วนร่วม: ${JSON.stringify(lead.engagement)}
-- ประวัติการรักษา: ${lead.previousTreatments?.join(', ') || 'ไม่มี'}
+- ประวัติการรักษา: ${lead.previousPrograms?.join(', ') || 'ไม่มี'}
 - ข้อกังวล: ${lead.objections?.join(', ') || 'ไม่มี'}
 
 ${context ? `บริบทเพิ่มเติม: ${JSON.stringify(context)}` : ''}
@@ -482,7 +482,7 @@ ${context ? `บริบทเพิ่มเติม: ${JSON.stringify(contex
     if (score.priority === 'urgent') return 'conversion';
     if (lead.status === 'hot') return 'conversion';
     if (lead.engagement.appointmentBookings > 0) return 'retention';
-    if (lead.previousTreatments && lead.previousTreatments.length > 0) return 'upsell';
+    if (lead.previousPrograms && lead.previousPrograms.length > 0) return 'upsell';
     if (lead.engagement.websiteVisits > 5) return 'nurture';
     return 'welcome';
   }

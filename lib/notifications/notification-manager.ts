@@ -11,7 +11,7 @@ import {
   showExportSuccessToast,
   showShareSuccessToast,
   showAppointmentBookedToast,
-  showTreatmentPlanCreatedToast,
+  showProgramPlanCreatedToast,
   showProfileUpdatedToast,
   showSettingsSavedToast,
 } from "@/components/ui/success-toast";
@@ -309,10 +309,10 @@ class NotificationManagerClass {
   }
 
   /**
-   * Treatment plan created notification
+   * Program plan created notification
    */
-  treatmentPlanCreated(planId: string, onViewClick: () => void, locale?: string) {
-    return showTreatmentPlanCreatedToast(
+  programPlanCreated(planId: string, onViewClick: () => void, locale?: string) {
+    return showProgramPlanCreatedToast(
       planId,
       onViewClick,
       locale || this.defaultLocale

@@ -307,7 +307,7 @@ export class AnalyticsEngine {
       totalRevenue: 1250000,
       periodRevenue: 125000,
       revenueByService: [
-        { service: 'Laser Treatment', revenue: 450000, percentage: 36 },
+        { service: 'Laser Program', revenue: 450000, percentage: 36 },
         { service: 'Facial', revenue: 350000, percentage: 28 },
         { service: 'Consultation', revenue: 200000, percentage: 16 },
         { service: 'Products', revenue: 150000, percentage: 12 },
@@ -330,7 +330,7 @@ export class AnalyticsEngine {
       noShowAppointments: 10,
       completionRate: 91.67,
       appointmentsByService: [
-        { service: 'Laser Treatment', count: 150, percentage: 35.71 },
+        { service: 'Laser Program', count: 150, percentage: 35.71 },
         { service: 'Facial', count: 120, percentage: 28.57 },
         { service: 'Consultation', count: 80, percentage: 19.05 },
         { service: 'Follow-up', count: 70, percentage: 16.67 },
@@ -402,7 +402,7 @@ export class AnalyticsEngine {
         { name: 'Dr. Anan', rating: 4.7, appointments: 95, revenue: 350000 },
       ],
       serviceEfficiency: [
-        { service: 'Laser Treatment', avgDuration: 45, efficiency: 92 },
+        { service: 'Laser Program', avgDuration: 45, efficiency: 92 },
         { service: 'Facial', avgDuration: 60, efficiency: 88 },
         { service: 'Consultation', avgDuration: 30, efficiency: 95 },
       ],

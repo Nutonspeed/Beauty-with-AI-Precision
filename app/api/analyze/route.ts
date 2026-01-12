@@ -43,7 +43,7 @@ export const POST = withAuth(async (request: NextRequest, user) => {
     if (contentType?.includes("multipart/form-data")) {
       const formData = await request.formData()
       const imageFile = formData.get("image") as File
-      const tier = (formData.get("tier") as "free" | "premium" | "clinical") || "free"
+      const tier = (formData.get("tier") as "free" | "premium" | "centeral") || "free"
 
       if (!imageFile) {
         return NextResponse.json({ error: "No image file provided" }, { status: 400 })
@@ -60,7 +60,7 @@ export const POST = withAuth(async (request: NextRequest, user) => {
 
       // Pick analysis type by tier
       let analysisType: SkinAnalysisPrompt["analysisType"]
-      if (tier === "clinical") {
+      if (tier === "centeral") {
         analysisType = "medical"
       } else if (tier === "premium") {
         analysisType = "detailed"

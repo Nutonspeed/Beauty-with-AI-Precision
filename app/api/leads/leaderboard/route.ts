@@ -21,7 +21,7 @@ interface LeaderboardEntry {
 /**
  * GET /api/leads/leaderboard
  * Get sales staff leaderboard by lead performance
- * Requires authentication (clinic admin or super admin)
+ * Requires authentication (center admin or super admin)
  */
 export async function GET(request: NextRequest) {
   try {
@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
     // Get sales staff info
     const { data: salesStaff, error: staffError } = await supabase
       .from('sales_staff')
-      .select('id, role, clinic_id')
+      .select('id, role, center_id')
       .eq('user_id', userId)
       .single()
 
@@ -53,8 +53,8 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Check permission (clinic admin or super admin)
-    if (salesStaff.role !== 'super_admin' && salesStaff.role !== 'clinic_admin') {
+    // Check permission (center admin or super admin)
+    if (salesStaff.role !== 'super_admin' && salesStaff.role !== 'center_admin') {
       return NextResponse.json(
         { success: false, message: 'You do not have permission to view leaderboard' },
         { status: 403 }
@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
 
     // Parse query parameters
     const searchParams = request.nextUrl.searchParams
-    const clinicId = searchParams.get('clinic_id') || salesStaff.clinic_id
+    const centerId = searchParams.get('center_id') || salesStaff.center_id
     const period = searchParams.get('period') || 'month' // month, quarter, year, all
     const limit = parseInt(searchParams.get('limit') || '10')
 
@@ -83,7 +83,7 @@ export async function GET(request: NextRequest) {
       dateFilter = startOfYear.toISOString()
     }
 
-    // Fetch all leads for the clinic in the period
+    // Fetch all leads for the center in the period
     let leadsQuery = supabase
       .from('leads')
       .select(`
@@ -99,7 +99,7 @@ export async function GET(request: NextRequest) {
           email
         )
       `)
-      .eq('clinic_id', clinicId)
+      .eq('center_id', centerId)
 
     if (dateFilter) {
       leadsQuery = leadsQuery.gte('created_at', dateFilter)

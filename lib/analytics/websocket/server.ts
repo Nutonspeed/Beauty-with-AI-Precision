@@ -20,7 +20,7 @@ export enum SocketEvent {
 
 // Room types
 export enum RoomType {
-  CLINIC_ANALYTICS = 'clinic_analytics',
+  CENTER_ANALYTICS = 'center_analytics',
   GLOBAL_ANALYTICS = 'global_analytics',
   USER_SESSION = 'user_session',
   PERFORMANCE_METRICS = 'performance_metrics',
@@ -30,7 +30,7 @@ export enum RoomType {
 // Socket data interface
 export interface SocketData {
   userId?: string
-  clinicId?: string
+  centerId?: string
   role?: string
   authenticated: boolean
   subscriptions: string[]
@@ -135,7 +135,7 @@ export class AnalyticsWebSocketServer {
         if (clientData) {
           clientData.authenticated = true
           clientData.userId = session.user.id
-          clientData.clinicId = session.user.clinicId
+          clientData.centerId = session.user.centerId
           clientData.role = session.user.role
           
           this.connectedClients.set(socket.id, clientData)
@@ -145,7 +145,7 @@ export class AnalyticsWebSocketServer {
           success: true,
           user: {
             id: session.user.id,
-            clinicId: session.user.clinicId,
+            centerId: session.user.centerId,
             role: session.user.role
           }
         })
@@ -153,7 +153,7 @@ export class AnalyticsWebSocketServer {
         analyticsLogger.logInfo('Client authenticated', {
           socketId: socket.id,
           userId: session.user.id,
-          clinicId: session.user.clinicId
+          centerId: session.user.centerId
         })
       } else {
         socket.emit('authenticated', { success: false, error: 'Invalid token' })
@@ -286,9 +286,9 @@ export class AnalyticsWebSocketServer {
 
   private canJoinRoom(clientData: SocketData, roomType: string, roomId: string): boolean {
     switch (roomType) {
-      case RoomType.CLINIC_ANALYTICS:
-        // Users can only join their own clinic's analytics room
-        return clientData.clinicId === roomId
+      case RoomType.CENTER_ANALYTICS:
+        // Users can only join their own center's analytics room
+        return clientData.centerId === roomId
       
       case RoomType.GLOBAL_ANALYTICS:
         // Only super admins can join global analytics
@@ -301,7 +301,7 @@ export class AnalyticsWebSocketServer {
       case RoomType.PERFORMANCE_METRICS:
       case RoomType.BUSINESS_METRICS:
         // Admin roles can access these rooms
-        return ['super_admin', 'clinic_owner', 'admin'].includes(clientData.role || '')
+        return ['super_admin', 'center_owner', 'admin'].includes(clientData.role || '')
       
       default:
         return false

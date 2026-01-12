@@ -22,8 +22,8 @@ export type ProgramCategory = "skin" | "hair" | "body" | "facial" | "laser" | "i
 
 export interface ProgramPlan {
   id: string
-  customerId: string
-  customerName: string
+  clientId: string
+  clientName: string
   category: ProgramCategory
   programName: string
   description: string
@@ -69,8 +69,8 @@ export interface ProgramSession {
   afterPhotos: string[]
   progressPhotos: string[]
   observations: string
-  customerFeedback?: string
-  customerRating?: ProgressRating
+  clientFeedback?: string
+  clientRating?: ProgressRating
   nextSteps: string
   cost: number
   notes: string
@@ -142,8 +142,8 @@ export interface ProgramNote {
 
 export interface ProgramReport {
   programId: string
-  customerId: string
-  customerName: string
+  clientId: string
+  clientName: string
   programName: string
   category: ProgramCategory
   status: ProgramStatus
@@ -167,9 +167,9 @@ export interface ProgramReport {
   recentNotes: ProgramNote[]
 }
 
-export interface CustomerProgramSummary {
-  customerId: string
-  customerName: string
+export interface ClientProgramSummary {
+  clientId: string
+  clientName: string
   totalPrograms: number
   activePrograms: number
   completedPrograms: number
@@ -235,7 +235,7 @@ export class ProgramTracker {
   }
   
   getAllPrograms(filters?: {
-    customerId?: string
+    clientId?: string
     status?: ProgramStatus
     category?: ProgramCategory
     specialistId?: string
@@ -244,8 +244,8 @@ export class ProgramTracker {
     let programs = Array.from(this.programs.values())
     
     if (filters) {
-      if (filters.customerId) {
-        programs = programs.filter(p => p.customerId === filters.customerId)
+      if (filters.clientId) {
+        programs = programs.filter(p => p.clientId === filters.clientId)
       }
       if (filters.status) {
         programs = programs.filter(p => p.status === filters.status)
@@ -342,7 +342,7 @@ export class ProgramTracker {
   }
   
   getUpcomingSessions(filters?: {
-    customerId?: string
+    clientId?: string
     specialistId?: string
     centerId?: string
     startDate?: Date
@@ -364,10 +364,10 @@ export class ProgramTracker {
       if (filters.endDate) {
         sessions = sessions.filter(s => s.scheduledDate <= filters.endDate!)
       }
-      if (filters.customerId) {
+      if (filters.clientId) {
         sessions = sessions.filter(s => {
           const program = this.programs.get(s.programId)
-          return program?.customerId === filters.customerId
+          return program?.clientId === filters.clientId
         })
       }
     }
@@ -654,7 +654,7 @@ export class ProgramTracker {
     
     const completedSessions = sessions.filter(s => s.status === "completed")
     const missedSessions = sessions.filter(s => s.status === "missed")
-    const ratings = completedSessions.filter(s => s.customerRating).map(s => s.customerRating!)
+    const ratings = completedSessions.filter(s => s.clientRating).map(s => s.clientRating!)
     const averageRating = ratings.length > 0 ? ratings.reduce((a, b) => a + b, 0) / ratings.length : 0
     
     const startDate = program.startDate
@@ -670,8 +670,8 @@ export class ProgramTracker {
     
     return {
       programId: program.id,
-      customerId: program.customerId,
-      customerName: program.customerName,
+      clientId: program.clientId,
+      clientName: program.clientName,
       programName: program.programName,
       category: program.category,
       status: program.status,
@@ -696,23 +696,23 @@ export class ProgramTracker {
     }
   }
   
-  getCustomerSummary(customerId: string): CustomerProgramSummary {
-    const programs = this.getAllPrograms({ customerId })
+  getClientSummary(clientId: string): ClientProgramSummary {
+    const programs = this.getAllPrograms({ clientId })
     const activePrograms = programs.filter(p => p.status === "in_progress" || p.status === "planned")
     const completedPrograms = programs.filter(p => p.status === "completed")
     
     const allSessions = programs.flatMap(p => this.getProgramSessions(p.id))
     const completedSessions = allSessions.filter(s => s.status === "completed")
-    const ratings = completedSessions.filter(s => s.customerRating).map(s => s.customerRating!)
+    const ratings = completedSessions.filter(s => s.clientRating).map(s => s.clientRating!)
     const averageRating = ratings.length > 0 ? ratings.reduce((a, b) => a + b, 0) / ratings.length : 0
     
     const totalSpent = programs.reduce((sum, p) => sum + p.actualCost, 0)
     
-    const upcomingSessions = this.getUpcomingSessions({ customerId })
+    const upcomingSessions = this.getUpcomingSessions({ clientId })
     
     return {
-      customerId,
-      customerName: programs[0]?.customerName || "Unknown",
+      clientId,
+      clientName: programs[0]?.clientName || "Unknown",
       totalPrograms: programs.length,
       activePrograms: activePrograms.length,
       completedPrograms: completedPrograms.length,
@@ -731,8 +731,8 @@ export class ProgramTracker {
   private initializeSampleData() {
     // Sample program plan
     const program1 = this.createProgram({
-      customerId: "CST001",
-      customerName: "Sarah Johnson",
+      clientId: "CST001",
+      clientName: "Sarah Johnson",
       category: "skin",
       programName: "Aesthetic Precision - Laser Protocol",
       description: "6-session high-precision laser program for skin refinement",
@@ -749,12 +749,12 @@ export class ProgramTracker {
       concerns: ["Texture irregularities", "Uneven skin tone", "Post-inflammatory markers"],
       estimatedCost: 45000,
       actualCost: 15000,
-      notes: "Customer is responding excellently to the protocol. Optimized recovery noted.",
+      notes: "Client is responding excellently to the protocol. Optimized recovery noted.",
     })
     
     const _program2 = this.createProgram({
-      customerId: "CST001",
-      customerName: "Sarah Johnson",
+      clientId: "CST001",
+      clientName: "Sarah Johnson",
       category: "facial",
       programName: "Regenerative Aesthetic Rejuvenation",
       description: "4-session regenerative facial protocol with bio-optimization",
@@ -795,11 +795,11 @@ export class ProgramTracker {
       afterPhotos: ["/photos/sarah-after-1.jpg"],
       progressPhotos: [],
       observations: "Exceptional response to laser modulation. Minor erythema resolved within 24h.",
-      customerFeedback: "Minimal discomfort, very professional procedure",
-      customerRating: 4,
+      clientFeedback: "Minimal discomfort, very professional procedure",
+      clientRating: 4,
       nextSteps: "Schedule session 2 in 4 weeks. Maintain SPF 50+ bio-shield.",
       cost: 7500,
-      notes: "Customer tolerated the modulation protocol well",
+      notes: "Client tolerated the modulation protocol well",
     })
     
     this.createSession({
@@ -823,8 +823,8 @@ export class ProgramTracker {
       afterPhotos: ["/photos/sarah-after-2.jpg"],
       progressPhotos: ["/photos/sarah-progress-2.jpg"],
       observations: "Significant structural improvement post-session 1. Markers reduced by approx 30%.",
-      customerFeedback: "Thrilled with the refinement. Texture is noticeably smoother.",
-      customerRating: 5,
+      clientFeedback: "Thrilled with the refinement. Texture is noticeably smoother.",
+      clientRating: 5,
       nextSteps: "Proceed with session 3 in 4 weeks. Optimized skincare maintenance.",
       cost: 7500,
       notes: "Accelerated progress observed",

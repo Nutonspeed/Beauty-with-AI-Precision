@@ -51,7 +51,7 @@ export async function notifyBookingCancellation(options: NotificationOptions, bo
     const emailResult = await sendEmail({
       to: options.to,
       subject: "Booking Cancelled",
-      html: `<p>Your booking for ${bookingDetails.treatment_type} on ${bookingDetails.booking_date} has been cancelled.</p>`,
+      html: `<p>Your booking for ${bookingDetails.program_type} on ${bookingDetails.booking_date} has been cancelled.</p>`,
     })
     results.push({ channel: "email", ...emailResult })
   }

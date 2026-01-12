@@ -4,7 +4,7 @@
  * Purpose: React hook for client-side authentication state
  * Features:
  * - Real-time auth state updates
- * - Clinic context management
+ * - Center context management
  * - Permission checking
  * - Sign in/out functions
  */

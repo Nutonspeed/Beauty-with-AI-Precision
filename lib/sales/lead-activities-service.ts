@@ -1,7 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server"
 import { createEvent, getEventPublisher } from "@/lib/events/event-publisher"
 
-export async function listLeadActivities(userId: string, clinicId: string | null, leadId: string) {
+export async function listLeadActivities(userId: string, centerId: string | null, leadId: string) {
   const supabase = await createServerClient()
 
   let leadQuery = supabase
@@ -10,7 +10,7 @@ export async function listLeadActivities(userId: string, clinicId: string | null
     .eq("id", leadId)
     .eq("sales_user_id", userId)
 
-  if (clinicId) leadQuery = leadQuery.eq("clinic_id", clinicId)
+  if (centerId) leadQuery = leadQuery.eq("center_id", centerId)
 
   const { data: lead, error: leadError } = await leadQuery.single()
   if (leadError || !lead) {
@@ -36,7 +36,7 @@ export async function listLeadActivities(userId: string, clinicId: string | null
   return { data: data || [] }
 }
 
-export async function createLeadActivity(userId: string, clinicId: string | null, leadId: string, body: any) {
+export async function createLeadActivity(userId: string, centerId: string | null, leadId: string, body: any) {
   const supabase = await createServerClient()
 
   const normalizedType = String(body?.type || "").trim()
@@ -69,7 +69,7 @@ export async function createLeadActivity(userId: string, clinicId: string | null
     .eq("id", leadId)
     .eq("sales_user_id", userId)
 
-  if (clinicId) leadQuery = leadQuery.eq("clinic_id", clinicId)
+  if (centerId) leadQuery = leadQuery.eq("center_id", centerId)
 
   const { data: lead, error: leadError } = await leadQuery.single()
   if (leadError || !lead) {
@@ -122,7 +122,7 @@ export async function createLeadActivity(userId: string, clinicId: string | null
         },
         {
           user_id: userId,
-          clinic_id: clinicId ?? undefined,
+          center_id: centerId ?? undefined,
           source: "lead-activities-service",
         },
       ),
@@ -138,7 +138,7 @@ export async function createLeadActivity(userId: string, clinicId: string | null
       .update({ last_contact_at: now })
       .eq("id", leadId)
 
-    if (clinicId) updateLeadQuery = updateLeadQuery.eq("clinic_id", clinicId)
+    if (centerId) updateLeadQuery = updateLeadQuery.eq("center_id", centerId)
 
     await updateLeadQuery
   }
@@ -146,7 +146,7 @@ export async function createLeadActivity(userId: string, clinicId: string | null
   return { data }
 }
 
-export async function logLeadSystemActivity(userId: string, clinicId: string | null, leadId: string, subject: string, description: string, metadata?: any) {
+export async function logLeadSystemActivity(userId: string, centerId: string | null, leadId: string, subject: string, description: string, metadata?: any) {
   const supabase = await createServerClient()
 
   const payload: any = {

@@ -177,12 +177,12 @@ export function calculateOverallImprovement(metrics: ImprovementMetrics): number
  */
 export function generateRecommendations(
   metrics: ImprovementMetrics,
-  daysSinceTreatment: number
+  daysSinceProgram: number
 ): string[] {
   const recommendations: string[] = [];
 
   // Check if improvements are on track
-  const expectedImprovement = Math.min(daysSinceTreatment / 30 * 50, 80); // 50% per month, cap at 80%
+  const expectedImprovement = Math.min(daysSinceProgram / 30 * 50, 80); // 50% per month, cap at 80%
   const actualImprovement = calculateOverallImprovement(metrics);
 
   if (actualImprovement < expectedImprovement * 0.7) {
@@ -210,7 +210,7 @@ export function generateRecommendations(
     );
   }
 
-  if (daysSinceTreatment >= 30 && actualImprovement >= 40) {
+  if (daysSinceProgram >= 30 && actualImprovement >= 40) {
     recommendations.push(
       '✨ ผลลัพธ์ดีมาก! พิจารณาจองคิวเข้ารับบริการเพื่อรักษาผลลัพธ์'
     );

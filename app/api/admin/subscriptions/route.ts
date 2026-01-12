@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { SUBSCRIPTION_PLANS } from '@/lib/subscriptions/plans'
 
 const updateSubscriptionSchema = z.object({
-  clinicId: z.string(),
+  centerId: z.string(),
   plan: z.enum(['starter', 'professional', 'enterprise']),
   status: z.enum(['active', 'trial', 'suspended', 'cancelled']).optional(),
   trialEndsAt: z.string().optional(),
@@ -34,9 +34,9 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
-    // Get all clinics with their subscription info
-    const { data: clinics, error } = await supabase
-      .from('clinics')
+    // Get all centers with their subscription info
+    const { data: centers, error } = await supabase
+      .from('centers')
       .select(
         `
         id,
@@ -59,12 +59,12 @@ export async function GET(request: NextRequest) {
     }
 
     // Enrich with plan details
-    const subscriptions = clinics.map((clinic) => {
-      const plan = SUBSCRIPTION_PLANS[clinic.subscription_plan as keyof typeof SUBSCRIPTION_PLANS]
+    const subscriptions = centers.map((center) => {
+      const plan = SUBSCRIPTION_PLANS[center.subscription_plan as keyof typeof SUBSCRIPTION_PLANS]
       return {
-        ...clinic,
+        ...center,
         planDetails: plan,
-        isTrialExpired: clinic.is_trial && clinic.trial_ends_at && new Date(clinic.trial_ends_at) < new Date(),
+        isTrialExpired: center.is_trial && center.trial_ends_at && new Date(center.trial_ends_at) < new Date(),
       }
     })
 
@@ -106,7 +106,7 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid request', details: validation.error }, { status: 400 })
     }
 
-    const { clinicId, plan, status, trialEndsAt } = validation.data
+    const { centerId, plan, status, trialEndsAt } = validation.data
 
     // Prepare update data
     const updateData: Record<string, any> = {
@@ -129,11 +129,11 @@ export async function PATCH(request: NextRequest) {
       updateData.is_trial = false
     }
 
-    // Update clinic
-    const { data: clinic, error: updateError } = await supabase
-      .from('clinics')
+    // Update center
+    const { data: center, error: updateError } = await supabase
+      .from('centers')
       .update(updateData)
-      .eq('id', clinicId)
+      .eq('id', centerId)
       .select()
       .single()
 
@@ -146,8 +146,8 @@ export async function PATCH(request: NextRequest) {
     await supabase.from('audit_logs').insert({
       user_id: user.id,
       action: 'subscription_updated',
-      resource_type: 'clinic',
-      resource_id: clinicId,
+      resource_type: 'center',
+      resource_id: centerId,
       metadata: {
         plan,
         status,
@@ -155,7 +155,7 @@ export async function PATCH(request: NextRequest) {
       },
     })
 
-    return NextResponse.json({ subscription: clinic })
+    return NextResponse.json({ subscription: center })
   } catch (error) {
     console.error('Error in PATCH /api/admin/subscriptions:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

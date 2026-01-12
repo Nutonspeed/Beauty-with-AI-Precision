@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
     // Get sales staff info
     const { data: salesStaff, error: staffError } = await supabase
       .from('sales_staff')
-      .select('id, role, clinic_id')
+      .select('id, role, center_id')
       .eq('user_id', userId)
       .single()
 
@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
       .from('leads')
       .select(`
         *,
-        clinic:clinics!clinic_id (
+        center:centers!center_id (
           id,
           name,
           logo_url
@@ -70,11 +70,11 @@ export async function GET(request: NextRequest) {
         )
       `, { count: 'exact' })
 
-    // Filter by clinic (all roles see only their clinic's leads)
-    query = query.eq('clinic_id', salesStaff.clinic_id)
+    // Filter by center (all roles see only their center's leads)
+    query = query.eq('center_id', salesStaff.center_id)
 
     // Filter by sales staff (regular staff see only their leads, admins see all)
-    if (salesStaff.role !== 'super_admin' && salesStaff.role !== 'clinic_admin') {
+    if (salesStaff.role !== 'super_admin' && salesStaff.role !== 'center_admin') {
       if (salesStaffId) {
         // If specific staff requested, check permission
         if (salesStaffId !== salesStaff.id) {
@@ -172,7 +172,7 @@ export async function POST(request: NextRequest) {
     // Get sales staff info
     const { data: salesStaff, error: staffError } = await supabase
       .from('sales_staff')
-      .select('id, role, clinic_id, branch_id')
+      .select('id, role, center_id, branch_id')
       .eq('user_id', userId)
       .single()
 
@@ -193,7 +193,7 @@ export async function POST(request: NextRequest) {
       status = 'new',
       source,
       analysis_id,
-      interested_treatments = [],
+      interested_programs = [],
       budget_range,
       notes,
     } = body
@@ -226,8 +226,8 @@ export async function POST(request: NextRequest) {
       else if (budget_range.includes('฿30,000')) leadScore += 5
     }
 
-    // Adjust based on interested treatments
-    leadScore += Math.min(interested_treatments.length * 3, 15)
+    // Adjust based on interested programs
+    leadScore += Math.min(interested_programs.length * 3, 15)
 
     // Cap score between 0-100
     leadScore = Math.max(0, Math.min(100, leadScore))
@@ -236,7 +236,7 @@ export async function POST(request: NextRequest) {
     const { data: lead, error: createError } = await supabase
       .from('leads')
       .insert({
-        clinic_id: salesStaff.clinic_id,
+        center_id: salesStaff.center_id,
         branch_id: salesStaff.branch_id,
         sales_staff_id: salesStaff.id,
         full_name,
@@ -246,7 +246,7 @@ export async function POST(request: NextRequest) {
         status,
         source,
         analysis_id,
-        interested_treatments,
+        interested_programs,
         budget_range,
         notes,
         lead_score: leadScore,
@@ -260,7 +260,7 @@ export async function POST(request: NextRequest) {
       })
       .select(`
         *,
-        clinic:clinics!clinic_id (
+        center:centers!center_id (
           id,
           name
         ),

@@ -3,7 +3,7 @@ import { WebSocket } from 'ws';
 export interface Client {
   socket: WebSocket;
   userId: string;
-  clinicId: string;
+  centerId: string;
   role: string;
   clientId: string;
   lastActivity?: number;
@@ -14,7 +14,7 @@ export interface NotificationPayload {
   type: 'NEW_BOOKING' | 'BOOKING_UPDATED' | 'NEW_MESSAGE' | 'SYSTEM_ALERT' | 'CONNECTION_ESTABLISHED' | 'YOUR_BOOKING_UPDATED';
   data: any;
   timestamp: string;
-  clinicId: string;
+  centerId: string;
   targetRoles?: string[];
 }
 
@@ -25,7 +25,7 @@ export interface WebSocketMessage {
 
 export interface Booking {
   id: string;
-  clinic_id: string;
+  center_id: string;
   customer_id?: string;
   assigned_staff_id?: string;
   status: string;
@@ -36,7 +36,7 @@ export interface Booking {
 
 export interface Message {
   id: string;
-  clinic_id: string;
+  center_id: string;
   sender_id: string;
   recipient_id?: string;
   content: string;

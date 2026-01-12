@@ -40,10 +40,10 @@ export default function DashboardPage() {
         return;
       }
 
-      if (role === 'clinic_owner') {
-        console.log('[Dashboard] Redirecting clinic_owner to /clinic');
+      if (role === 'center_owner') {
+        console.log('[Dashboard] Redirecting center_owner to /center');
         setRedirecting(true);
-        window.location.href = lp('/clinic');
+        window.location.href = lp('/center');
         return;
       }
 

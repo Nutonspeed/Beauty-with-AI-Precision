@@ -85,11 +85,6 @@ import { AestheticAssetLifecycle } from '@/components/analytics/aesthetic-asset-
 import { MissionControl } from '@/components/analytics/mission-control';
 import { IntelligenceCommandPalette } from '@/components/analytics/intelligence-command-palette';
 import { AIBoardroomReport } from '@/components/analytics/boardroom-report';
-import { PremiumAnalyticsNode } from '@/components/analytics/premium-analytics-node';
-import { CenterPerformanceBenchmark } from '@/components/analytics/center-performance-benchmark';
-import { PredictiveRevenueModel } from '@/components/analytics/predictive-revenue-model';
-import { NetworkLatencyMonitor } from '@/components/admin/network-latency-monitor';
-import { OperationalResilienceNode } from '@/components/admin/operational-resilience-node';
 
 interface RevenueData {
   summary: {
@@ -414,8 +409,9 @@ export default function CenterRevenuePage() {
               >
                 <Card className="border-white bg-white/60 backdrop-blur-xl rounded-[2.5rem] transition-all duration-500 hover:bg-white/80 group shadow-premium relative overflow-hidden">
                   <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/10 to-transparent" />
+                  <CardContent className="p-10">
                     <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity duration-700">
-                      <m.icon className="w-20 h-20 text-royalblue-500" />
+                      <m.icon className="w-20 h-20 text-blue-500" />
                     </div>
                     <div className="space-y-6 relative z-10">
                       <p className="text-[10px] uppercase font-black tracking-widest text-slate-400 italic">{m.label}</p>
@@ -436,9 +432,47 @@ export default function CenterRevenuePage() {
                     </div>
                   </CardContent>
                 </Card>
-              </TabsContent>
+              </motion.div>
+            ))}
+          </div>
 
-              <TabsContent value="trend" className="mt-0 outline-none">
+          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)} className="space-y-12">
+            <div className="flex justify-center border-b border-slate-200">
+              <TabsList className="bg-transparent h-auto p-0 gap-8">
+                {[
+                  { id: 'mission', label: 'Mission_Control', icon: LayoutGrid },
+                  { id: 'trend', label: 'Temporal_Dynamics', icon: TrendingUp },
+                  { id: 'payment', label: 'Vector_Optimization', icon: CreditCard },
+                  { id: 'appointments', label: 'Throughput_Matrix', icon: Calendar },
+                  { id: 'forecast', label: 'Predictive_Revenue', icon: Binary },
+                  { id: 'marketing', label: 'Autonomous_Growth', icon: Megaphone }
+                ].map((tab) => (
+                  <TabsTrigger
+                    key={tab.id}
+                    value={tab.id}
+                    className="pb-4 rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 data-[state=active]:bg-transparent data-[state=active]:text-blue-600 text-[10px] font-black uppercase tracking-[0.2em] transition-all"
+                  >
+                    <tab.icon className="w-4 h-4 mr-2" />
+                    {tab.label}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </div>
+
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <TabsContent value="mission" className="mt-0 outline-none">
+                  <div className="grid gap-10">
+                    <MissionControl />
+                  </div>
+                </TabsContent>
+        <TabsContent value="trend" className="mt-0 outline-none">
                 <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group">
                   <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-royalblue-500/20 to-transparent" />
                   <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
@@ -448,7 +482,7 @@ export default function CenterRevenuePage() {
                   <CardContent className="p-10 lg:p-16">
                     <div className="print:hidden h-[500px] w-full">
                       <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={data.chartData}>
+                        <LineChart data={data?.chartData || []}>
                           <defs>
                             <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
                               <stop offset="5%" stopColor="#2563eb" stopOpacity={0.1}/>
@@ -532,66 +566,38 @@ export default function CenterRevenuePage() {
                     <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-600 ml-4 italic">Operational Performance</h3>
                     <div className="space-y-6">
                       {data.byPaymentMethod.map((method, idx) => (
-                      <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
-                        <CardTitle className="text-2xl font-bold text-white tracking-tight italic">Vector Optimization</CardTitle>
-                        <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Aesthetic financial ingestion method breakdown</CardDescription>
-                      </CardHeader>
-                      <CardContent className="p-10 lg:p-16 h-[450px]">
-                        <ResponsiveContainer width="100%" height="100%">
-                          <BarChart data={data.byPaymentMethod}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
-                            <XAxis dataKey="method" tick={{ fill: '#475569', fontSize: 10, fontWeight: 'bold' }} axisLine={false} dy={15} />
-                            <YAxis tick={{ fill: '#475569', fontSize: 10, fontWeight: 'bold' }} axisLine={false} tickFormatter={(v: number) => `฿${v/1000}k`} dx={-10} />
-                            <Tooltip 
-                              cursor={{ fill: 'rgba(255,255,255,0.02)' }}
-                              contentStyle={{ backgroundColor: '#020617', border: 'none', borderRadius: '24px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }}
-                            />
-                            <Bar dataKey="amount" radius={[12, 12, 0, 0]} name="Inflow Vector">
-                              {data.byPaymentMethod.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} opacity={0.8} />
-                              ))}
-                            </Bar>
-                          </BarChart>
-                        </ResponsiveContainer>
-                      </CardContent>
-                    </Card>
-
-                    <div className="lg:col-span-5 space-y-8">
-                      <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-600 ml-4 italic">Operational Performance</h3>
-                      <div className="space-y-6">
-                        {data.byPaymentMethod.map((method, idx) => (
-                          <motion.div
-                            key={method.method}
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: idx * 0.1 }}
-                          >
-                            <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2rem] hover:bg-white/[0.03] hover:border-pink-500/20 transition-all duration-500 group overflow-hidden relative shadow-xl">
-                              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
-                              <CardContent className="p-8">
-                                <div className="flex items-center justify-between">
-                                  <div className="flex items-center gap-6">
-                                    <div className="h-14 w-14 rounded-2xl flex items-center justify-center bg-white/[0.03] border border-white/10 group-hover:scale-110 group-hover:border-pink-500/30 transition-all duration-700 shadow-inner">
-                                      <CreditCard className="h-6 w-6 text-pink-400" />
-                                    </div>
-                                    <div className="space-y-1">
-                                      <p className="text-lg font-bold text-white italic group-hover:text-pink-400 transition-colors">{method.method}</p>
-                                      <p className="text-[9px] uppercase font-black text-slate-600 tracking-widest">{method.count} Verified Nodes</p>
-                                    </div>
+                        <motion.div
+                          key={method.method}
+                          initial={{ opacity: 0, x: 20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: idx * 0.1 }}
+                        >
+                          <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2rem] hover:bg-white/[0.03] hover:border-pink-500/20 transition-all duration-500 group overflow-hidden relative shadow-xl">
+                            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+                            <CardContent className="p-8">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-6">
+                                  <div className="h-14 w-14 rounded-2xl flex items-center justify-center bg-white/[0.03] border border-white/10 group-hover:scale-110 group-hover:border-pink-500/30 transition-all duration-700 shadow-inner">
+                                    <CreditCard className="h-6 w-6 text-pink-400" />
                                   </div>
-                                  <div className="text-right space-y-1">
-                                    <p className="text-2xl font-black text-white tracking-tighter italic">{formatCurrency(method.amount)}</p>
-                                    <p className="text-[9px] text-pink-500/60 font-black uppercase tracking-widest italic">YIELD: {formatCurrency(method.amount / method.count)}</p>
+                                  <div className="space-y-1">
+                                    <p className="text-lg font-bold text-white italic group-hover:text-pink-400 transition-colors">{method.method}</p>
+                                    <p className="text-[9px] uppercase font-black text-slate-600 tracking-widest">{method.count} Verified Nodes</p>
                                   </div>
                                 </div>
-                              </CardContent>
-                            </Card>
-                          </motion.div>
-                        ))}
-                      </div>
+                                <div className="text-right space-y-1">
+                                  <p className="text-2xl font-black text-white tracking-tighter italic">{formatCurrency(method.amount)}</p>
+                                  <p className="text-[9px] text-pink-500/60 font-black uppercase tracking-widest italic">YIELD: {formatCurrency(method.amount / method.count)}</p>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </motion.div>
+                      ))}
                     </div>
                   </div>
-                </TabsContent>
+                </div>
+              </TabsContent>
 
                 <TabsContent value="appointments" className="mt-0 outline-none">
                   <div className="space-y-12">

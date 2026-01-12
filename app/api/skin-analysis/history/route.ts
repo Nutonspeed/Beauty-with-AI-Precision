@@ -77,10 +77,10 @@ export async function GET(request: NextRequest) {
         },
       },
       customer: {
-        name: analysis.customer_name || analysis.patient_name || 'Unknown',
-        age: analysis.customer_age || analysis.patient_age || null,
-        gender: analysis.customer_gender || analysis.patient_gender || null,
-        skinType: analysis.customer_skin_type || analysis.patient_skin_type || null,
+        name: analysis.customer_name || analysis.client_name || 'Unknown',
+        age: analysis.customer_age || analysis.client_age || null,
+        gender: analysis.customer_gender || analysis.client_gender || null,
+        skinType: analysis.customer_skin_type || analysis.client_skin_type || null,
       },
       notes: analysis.notes || null,
     }));

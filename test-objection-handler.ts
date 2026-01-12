@@ -18,8 +18,8 @@ async function testObjectionHandler() {
       concerns: ["ฝ้า", "จุดด่างดำ"],
       budget: 'medium'
     },
-    treatmentInterest: ["Laser Treatment"],
-    currentTreatment: {
+    programInterest: ["Laser Program"],
+    currentProgram: {
       name: "Q-Switch Laser",
       price: 15000,
       category: "laser"

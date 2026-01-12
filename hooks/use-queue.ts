@@ -11,11 +11,11 @@ import {
 } from '@/lib/queue-manager';
 
 interface UseQueueProps {
-  clinicId: string;
+  centerId: string;
   enabled?: boolean;
 }
 
-export function useQueue({ clinicId, enabled = true }: UseQueueProps) {
+export function useQueue({ centerId, enabled = true }: UseQueueProps) {
   const [entries, setEntries] = useState<QueueEntry[]>([]);
   const [stats, setStats] = useState<QueueStats>({
     total: 0,
@@ -66,7 +66,7 @@ export function useQueue({ clinicId, enabled = true }: UseQueueProps) {
   // Initialize queue
   useEffect(() => {
     if (enabled && managerRef.current) {
-      managerRef.current.initialize(clinicId, {
+      managerRef.current.initialize(centerId, {
         onQueueJoined: () => {
           updateEntries();
           updateStats();
@@ -104,7 +104,7 @@ export function useQueue({ clinicId, enabled = true }: UseQueueProps) {
         managerRef.current.destroy();
       }
     };
-  }, [clinicId, enabled, updateEntries, updateStats]);
+  }, [centerId, enabled, updateEntries, updateStats]);
 
   /**
    * Join queue
@@ -120,7 +120,7 @@ export function useQueue({ clinicId, enabled = true }: UseQueueProps) {
   }, [updateEntries, updateStats]);
 
   /**
-   * Call next patient
+   * Call next client
    */
   const callNext = useCallback((doctorId?: string): QueueEntry | null => {
     if (!managerRef.current) return null;
@@ -131,11 +131,11 @@ export function useQueue({ clinicId, enabled = true }: UseQueueProps) {
   }, [updateEntries, updateStats]);
 
   /**
-   * Call specific patient
+   * Call specific client
    */
-  const callPatient = useCallback((entryId: string, doctorId?: string) => {
+  const callClient = useCallback((entryId: string, doctorId?: string) => {
     if (managerRef.current) {
-      managerRef.current.callPatient(entryId, doctorId);
+      managerRef.current.callClient(entryId, doctorId);
       updateEntries();
       updateStats();
     }
@@ -202,11 +202,11 @@ export function useQueue({ clinicId, enabled = true }: UseQueueProps) {
   }, []);
 
   /**
-   * Get entry by patient ID
+   * Get entry by client ID
    */
-  const getEntryByPatientId = useCallback((patientId: string): QueueEntry | null => {
+  const getEntryByClientId = useCallback((clientId: string): QueueEntry | null => {
     if (!managerRef.current) return null;
-    return managerRef.current.getEntryByPatientId(patientId);
+    return managerRef.current.getEntryByClientId(clientId);
   }, []);
 
   return {
@@ -217,7 +217,7 @@ export function useQueue({ clinicId, enabled = true }: UseQueueProps) {
     // Actions
     joinQueue,
     callNext,
-    callPatient,
+    callClient,
     startService,
     completeService,
     cancelEntry,
@@ -226,6 +226,6 @@ export function useQueue({ clinicId, enabled = true }: UseQueueProps) {
     // Queries
     getEntriesByStatus,
     getPosition,
-    getEntryByPatientId
+    getEntryByClientId
   };
 }

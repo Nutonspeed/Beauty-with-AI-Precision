@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Home, Sparkles } from 'lucide-react'
-import { ClinicIQMark } from '@/components/brand/logo'
+import { CenterIQMark } from '@/components/brand/logo'
 
 export default function NotFound() {
   return (
@@ -28,7 +28,7 @@ export default function NotFound() {
           transition={{ type: 'spring', delay: 0.2 }}
           className="mx-auto mb-8"
         >
-          <ClinicIQMark className="h-20 w-20 mx-auto opacity-50" />
+          <CenterIQMark className="h-20 w-20 mx-auto opacity-50" />
         </motion.div>
 
         {/* 404 Number */}

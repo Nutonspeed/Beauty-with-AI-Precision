@@ -98,7 +98,7 @@ export const HAPTIC_PATTERNS = {
   // AR/3D interactions
   AR_SCAN_COMPLETE: "success" as const,
   MODEL_ROTATE: "selection" as const,
-  TREATMENT_APPLIED: "medium" as const,
+  PROGRAM_APPLIED: "medium" as const,
 } as const
 
 export type HapticPattern = keyof typeof HAPTIC_PATTERNS

@@ -6,7 +6,7 @@ export const GET = withSalesAuth(async (req, authenticatedUser) => {
   const id = req.nextUrl.pathname.split('/').slice(-2, -1)[0] || ''
   try {
     const { listLeadActivities } = await import('@/lib/sales/lead-activities-service')
-    const payload = await listLeadActivities(authenticatedUser.id, authenticatedUser.clinic_id ?? null, id)
+    const payload = await listLeadActivities(authenticatedUser.id, authenticatedUser.center_id ?? null, id)
     return NextResponse.json(payload)
   } catch (error: any) {
     const status = error?.status || 500
@@ -27,7 +27,7 @@ export const POST = withSalesAuth(async (req, authenticatedUser) => {
       subject: body?.subject ?? body?.title,
     }
 
-    const payload = await createLeadActivity(authenticatedUser.id, authenticatedUser.clinic_id ?? null, id, normalized)
+    const payload = await createLeadActivity(authenticatedUser.id, authenticatedUser.center_id ?? null, id, normalized)
     return NextResponse.json(payload, { status: 201 })
   } catch (error: any) {
     const status = error?.status || 500

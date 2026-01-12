@@ -50,13 +50,13 @@ export type InflammationLevel =
   | 'severe';    // Extensive inflammation
 
 /**
- * Treatment urgency (ความเร่งด่วนในการรักษา)
+ * Program urgency (ความเร่งด่วนในการรักษา)
  */
-export type TreatmentUrgency = 
+export type ProgramUrgency = 
   | 'routine'     // Regular skincare sufficient
-  | 'recommended' // Treatment suggested
-  | 'advised'     // Treatment strongly recommended
-  | 'urgent';     // Immediate treatment needed
+  | 'recommended' // Program suggested
+  | 'advised'     // Program strongly recommended
+  | 'urgent';     // Immediate program needed
 
 /**
  * ข้อมูลที่ตรวจจับได้จากภาพ (จาก image analysis)
@@ -94,8 +94,8 @@ export interface UserHistory {
   /** Acne history: 'never' | 'occasional' | 'frequent' | 'chronic' */
   acneHistory?: 'never' | 'occasional' | 'frequent' | 'chronic';
   
-  /** Current acne treatment: true if using medication */
-  onTreatment?: boolean;
+  /** Current acne program: true if using medication */
+  onProgram?: boolean;
   
   /** Skincare routine quality: 'poor' | 'basic' | 'good' | 'excellent' */
   skincareRoutine?: 'poor' | 'basic' | 'good' | 'excellent';
@@ -131,8 +131,8 @@ export interface PorphyrinAnalysisResult {
   /** Inflammation level */
   inflammationLevel: InflammationLevel;
   
-  /** Treatment urgency */
-  treatmentUrgency: TreatmentUrgency;
+  /** Program urgency */
+  programUrgency: ProgramUrgency;
   
   /** Contributing factors breakdown */
   factors: {
@@ -300,7 +300,7 @@ function calculateInflammationScore(
  * Factors:
  * - Age: younger = higher bacterial activity
  * - Acne history: chronic acne = higher baseline
- * - Treatment: reduces score by 15%
+ * - Program: reduces score by 15%
  * - Skincare: poor routine = higher score
  */
 function calculateHistoryAdjustment(userHistory?: UserHistory): number {
@@ -328,9 +328,9 @@ function calculateHistoryAdjustment(userHistory?: UserHistory): number {
     adjustment += (historyMultiplier - 1) * 15; // -4.5 to +4.5
   }
   
-  // Treatment factor (reduces bacterial load)
-  if (userHistory.onTreatment) {
-    adjustment -= 10; // -10 points if on treatment
+  // Program factor (reduces bacterial load)
+  if (userHistory.onProgram) {
+    adjustment -= 10; // -10 points if on program
   }
   
   // Skincare routine factor
@@ -398,10 +398,10 @@ function estimateBacterialDensity(porphyrinScore: number): number {
 function assessProgressionRisk(
   porphyrinScore: number,
   acneSeverity: AcneSeverity,
-  onTreatment: boolean = false
+  onProgram: boolean = false
 ): 'low' | 'moderate' | 'high' {
   // ถ้ากำลังรักษา = ความเสี่ยงลดลง
-  if (onTreatment) {
+  if (onProgram) {
     if (porphyrinScore < 40) return 'low';
     if (porphyrinScore < 70) return 'moderate';
     return 'high';
@@ -420,13 +420,13 @@ function assessProgressionRisk(
 }
 
 /**
- * Determine treatment urgency
+ * Determine program urgency
  */
-function determineTreatmentUrgency(
+function determineProgramUrgency(
   porphyrinScore: number,
   acneSeverity: AcneSeverity,
   inflammationLevel: InflammationLevel
-): TreatmentUrgency {
+): ProgramUrgency {
   // Severe cases = urgent
   if (acneSeverity === 'very-severe' || inflammationLevel === 'severe' || porphyrinScore >= 75) {
     return 'urgent';
@@ -454,7 +454,7 @@ function generateRecommendations(
   acneSeverity: AcneSeverity,
   poreCongestion: PoreCongestion,
   inflammationLevel: InflammationLevel,
-  treatmentUrgency: TreatmentUrgency,
+  programUrgency: ProgramUrgency,
   userHistory?: UserHistory
 ): string[] {
   const recommendations: string[] = [];
@@ -470,7 +470,7 @@ function generateRecommendations(
     recommendations.push('ทำความสะอาดผิวหน้าวันละ 2 ครั้ง ด้วยผลิตภัณฑ์ทำความสะอาดที่เหมาะกับผิว');
   }
   
-  // 2. Antibacterial treatment (ตามระดับแบคทีเรีย)
+  // 2. Antibacterial program (ตามระดับแบคทีเรีย)
   if (porphyrinScore >= 60) {
     recommendations.push('พบแพทย์ผิวหนังเพื่อพิจารณาใช้ยาปฏิชีวนะทาภายนอก (Topical Antibiotics) เช่น Clindamycin หรือ Erythromycin');
     recommendations.push('พิจารณาใช้ Benzoyl Peroxide 2.5-5% เพื่อลดแบคทีเรีย P. acnes (ระวังการระคายเคือง)');
@@ -480,7 +480,7 @@ function generateRecommendations(
     recommendations.push('ใช้ผลิตภัณฑ์บำรุงผิวที่มีส่วนผสมต้านแบคทีเรียเบาๆ เช่น Niacinamide หรือ Tea Tree Oil');
   }
   
-  // 3. Inflammation treatment (ตามระดับการอักเสบ)
+  // 3. Inflammation program (ตามระดับการอักเสบ)
   if (inflammationLevel === 'severe') {
     recommendations.push('พบแพทย์ผิวหนังโดยเร็ว เพื่อประเมินการใช้ยาลดการอักเสบ (เช่น Isotretinoin สำหรับกรณีรุนแรง)');
     recommendations.push('หลีกเลี่ยงการบีบสิว อาจทำให้การอักเสบรุนแรงขึ้นและเกิดรอยแผลเป็น');
@@ -493,7 +493,7 @@ function generateRecommendations(
   
   // 4. Acne-specific advice (ตามความรุนแรงของสิว)
   if (acneSeverity === 'very-severe' || acneSeverity === 'severe') {
-    recommendations.push('**แนะนำให้พบแพทย์ผิวหนังเร่งด่วน** สิวรุนแรงต้องการการรักษาทางการแพทย์ (Prescription Treatment)');
+    recommendations.push('**แนะนำให้พบแพทย์ผิวหนังเร่งด่วน** สิวรุนแรงต้องการการรักษาทางการแพทย์ (Prescription Program)');
   } else if (acneSeverity === 'moderate') {
     recommendations.push('พิจารณาใช้ Retinoids (Adapalene, Tretinoin) เพื่อลดการอุดตันและเร่งการหลุดของเซลล์ผิว');
   }
@@ -509,10 +509,10 @@ function generateRecommendations(
     recommendations.push('วัยรุ่นและผู้ใหญ่ตอนต้นมักมีการผลิตน้ำมันมาก ควรใช้ผลิตภัณฑ์ Oil-Free และ Non-Comedogenic');
   }
   
-  // 7. Treatment urgency warning
-  if (treatmentUrgency === 'urgent') {
+  // 7. Program urgency warning
+  if (programUrgency === 'urgent') {
     recommendations.push('⚠️ **ควรพบแพทย์ผิวหนังภายใน 1-2 สัปดาห์** เพื่อป้องกันรอยแผลเป็นถาวรและการอักเสบรุนแรง');
-  } else if (treatmentUrgency === 'advised') {
+  } else if (programUrgency === 'advised') {
     recommendations.push('แนะนำให้ปรึกษาแพทย์ผิวหนังเพื่อรับแผนการรักษาที่เหมาะสมกับสภาพผิวของคุณ');
   }
   
@@ -543,7 +543,7 @@ function generateRecommendations(
  *   userHistory: {
  *     age: 22,
  *     acneHistory: 'frequent',
- *     onTreatment: false,
+ *     onProgram: false,
  *     skincareRoutine: 'basic'
  *   },
  *   imageConfidence: 0.85
@@ -551,7 +551,7 @@ function generateRecommendations(
  * 
  * console.log(result.porphyrinScore); // 52.3
  * console.log(result.acneSeverity); // 'moderate'
- * console.log(result.treatmentUrgency); // 'advised'
+ * console.log(result.programUrgency); // 'advised'
  * ```
  */
 export function analyzePorphyrins(input: PorphyrinDetectorInput): PorphyrinAnalysisResult {
@@ -590,8 +590,8 @@ export function analyzePorphyrins(input: PorphyrinDetectorInput): PorphyrinAnaly
   const poreCongestion = classifyPoreCongestion(features.congestedPoresPercent || 0);
   const inflammationLevel = classifyInflammation(features.redAreasScore || 0);
   
-  // Step 4: Assess treatment urgency and progression risk
-  const treatmentUrgency = determineTreatmentUrgency(
+  // Step 4: Assess program urgency and progression risk
+  const programUrgency = determineProgramUrgency(
     porphyrinScore,
     acneSeverity,
     inflammationLevel
@@ -600,7 +600,7 @@ export function analyzePorphyrins(input: PorphyrinDetectorInput): PorphyrinAnaly
   const progressionRisk = assessProgressionRisk(
     porphyrinScore,
     acneSeverity,
-    userHistory?.onTreatment
+    userHistory?.onProgram
   );
   
   // Step 5: Estimate bacterial density
@@ -612,7 +612,7 @@ export function analyzePorphyrins(input: PorphyrinDetectorInput): PorphyrinAnaly
     acneSeverity,
     poreCongestion,
     inflammationLevel,
-    treatmentUrgency,
+    programUrgency,
     userHistory
   );
   
@@ -628,7 +628,7 @@ export function analyzePorphyrins(input: PorphyrinDetectorInput): PorphyrinAnaly
     acneSeverity,
     poreCongestion,
     inflammationLevel,
-    treatmentUrgency,
+    programUrgency,
     factors: {
       acnePattern: Math.round(acnePatternScore * 10) / 10,
       poreCongestion: Math.round(poreCongestionScore * 10) / 10,
@@ -656,9 +656,9 @@ export function getPorphyrinDescription(score: number): string {
 }
 
 /**
- * รับคำอธิบาย Treatment Urgency (ภาษาไทย)
+ * รับคำอธิบาย Program Urgency (ภาษาไทย)
  */
-export function getTreatmentUrgencyDescription(urgency: TreatmentUrgency): string {
+export function getProgramUrgencyDescription(urgency: ProgramUrgency): string {
   switch (urgency) {
     case 'routine':
       return 'ดูแลผิวตามปกติ - ใช้ผลิตภัณฑ์บำรุงผิวทั่วไปเพียงพอ';
@@ -672,9 +672,9 @@ export function getTreatmentUrgencyDescription(urgency: TreatmentUrgency): strin
 }
 
 /**
- * รับสีแสดงผล Treatment Urgency (hex color)
+ * รับสีแสดงผล Program Urgency (hex color)
  */
-export function getTreatmentUrgencyColor(urgency: TreatmentUrgency): string {
+export function getProgramUrgencyColor(urgency: ProgramUrgency): string {
   switch (urgency) {
     case 'routine': return '#4CAF50';    // Green
     case 'recommended': return '#FFC107'; // Amber
@@ -697,7 +697,7 @@ export function formatPorphyrinSummary(result: PorphyrinAnalysisResult): string 
     `Acne Severity: ${result.acneSeverity}`,
     `Pore Congestion: ${result.poreCongestion}`,
     `Inflammation: ${result.inflammationLevel}`,
-    `Treatment Urgency: ${result.treatmentUrgency} - ${getTreatmentUrgencyDescription(result.treatmentUrgency)}`,
+    `Program Urgency: ${result.programUrgency} - ${getProgramUrgencyDescription(result.programUrgency)}`,
     '',
     '--- Contributing Factors ---',
     `Acne Pattern: ${result.factors.acnePattern}/100`,

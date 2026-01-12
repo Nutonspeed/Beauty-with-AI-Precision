@@ -22,7 +22,7 @@ export interface ConcernDefinition {
   th: string;
 }
 
-export interface TreatmentLevel {
+export interface ProgramLevel {
   description: string;
   options: string[];
 }
@@ -45,8 +45,8 @@ export interface ConcernEducation {
   definition: ConcernDefinition;
   causes: Record<'en' | 'th', string[]>;
   prevention: Record<'en' | 'th', string[]>;
-  treatment: {
-    [key: string]: TreatmentLevel; // mild, moderate, severe, or custom levels
+  program: {
+    [key: string]: ProgramLevel; // mild, moderate, severe, or custom levels
   };
   whenToSeeDermatologist?: Record<'en' | 'th', string[]>;
   relatedConcerns: string[];
@@ -284,8 +284,8 @@ function getSeverityFromScore(score: number): 'low' | 'medium' | 'high' {
   return 'high';
 }
 
-// Get treatment recommendations based on severity
-export function getTreatmentRecommendations(
+// Get program recommendations based on severity
+export function getProgramRecommendations(
   concernType: ConcernType,
   severity: number,
   education: ConcernEducation
@@ -295,10 +295,10 @@ export function getTreatmentRecommendations(
   // Special case for wrinkles
   if (concernType === 'wrinkles') {
     const wrinkleKey = getWrinkleSeverityLevel(severity);
-    return education.treatment[wrinkleKey]?.options || [];
+    return education.program[wrinkleKey]?.options || [];
   }
   
-  return education.treatment[severityKey]?.options || [];
+  return education.program[severityKey]?.options || [];
 }
 
 // Calculate overall skin health score

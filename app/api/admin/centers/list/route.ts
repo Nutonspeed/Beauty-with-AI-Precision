@@ -22,7 +22,7 @@ export const GET = withAuth(
 
       // Get all centers with basic info
       let query = service
-        .from("clinics")
+        .from("centers")
         .select(`
           id,
           name,

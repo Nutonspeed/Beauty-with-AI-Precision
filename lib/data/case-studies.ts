@@ -26,9 +26,9 @@ const CASE_STUDIES: CaseStudy[] = [
     slug: "acne-recovery",
     title: { th: "ฟื้นฟูสิวอักเสบ", en: "Inflammatory Acne Recovery", zh: "炎症性痤疮修复" },
     summary: {
-      th: "ตัวอย่างเคสจำลอง: ติดตามความเปลี่ยนแปลงก่อน/หลัง พร้อมแผนดูแลที่สอดคล้องกับคลินิก",
-      en: "Simulated case: before/after tracking with a clinic-aligned care plan.",
-      zh: "模拟案例：前后对比追踪与诊所一致的护理方案。",
+      th: "ตัวอย่างเคสจำลอง: ติดตามความเปลี่ยนแปลงก่อน/หลัง พร้อมแผนดูแลที่สอดคล้องกับศูนย์ความงาม",
+      en: "Simulated case: before/after tracking with a center-aligned care plan.",
+      zh: "模拟案例：前后对比追踪与中心一致的护理方案。",
     },
     metrics: [
       { label: { th: "สัปดาห์", en: "Weeks", zh: "周" }, value: "6" },
@@ -68,9 +68,9 @@ const CASE_STUDIES: CaseStudy[] = [
       {
         heading: { th: "การวิเคราะห์", en: "Analysis", zh: "分析" },
         body: {
-          th: "ใช้ระบบ AI วิเคราะห์ความลึกของริ้วรอยก่อนการรักษาเพื่อกำหนดพลังงานที่เหมาะสม",
-          en: "Used AI to analyze wrinkle depth before treatment to determine optimal energy levels.",
-          zh: "治疗前使用 AI 分析皱纹深度，以确定最佳能量水平。",
+          th: "ใช้ระบบ AI วิเคราะห์ความลึกของริ้วรอยก่อนทำโปรแกรมเพื่อกำหนดพลังงานที่เหมาะสม",
+          en: "Used AI to analyze wrinkle depth before program to determine optimal energy levels.",
+          zh: "程序前使用 AI 分析皱纹深度，以确定最佳能量水平。",
         },
       },
     ],
@@ -79,9 +79,9 @@ const CASE_STUDIES: CaseStudy[] = [
     slug: "pigmentation-correction",
     title: { th: "แก้ไขจุดด่างดำและฝ้า", en: "Pigmentation & Melasma Correction", zh: "色素沉着和黄褐斑校正" },
     summary: {
-      th: "การจัดการปัญหาเม็ดสีสะสมด้วยการวางแผนจาก AI Heatmap และการรักษาต่อเนื่อง",
-      en: "Management of accumulated pigment issues through AI Heatmap planning and continuous treatment.",
-      zh: "通过 AI 热图规划和持续治疗管理累积的色素问题。",
+      th: "การจัดการปัญหาเม็ดสีสะสมด้วยการวางแผนจาก AI Heatmap และการทำโปรแกรมอย่างต่อเนื่อง",
+      en: "Management of accumulated pigment issues through AI Heatmap planning and continuous programs.",
+      zh: "通过 AI 热图规划和持续程序管理累积的色素问题。",
     },
     metrics: [
       { label: { th: "ความสว่าง", en: "Radiance", zh: "光泽度" }, value: "+60%" },

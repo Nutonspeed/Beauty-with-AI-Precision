@@ -2,7 +2,7 @@
 export interface ProgressPhoto {
   id: string;
   user_id: string;
-  treatment_id?: string;
+  program_id?: string;
   
   // Photo details
   image_url: string;
@@ -11,7 +11,7 @@ export interface ProgressPhoto {
   // Timeline
   photo_type: 'baseline' | 'progress' | 'final';
   session_number?: number;
-  days_since_treatment?: number;
+  days_since_program?: number;
   taken_at: string;
   
   // Analysis results (snapshot at time of photo)
@@ -81,18 +81,18 @@ export interface ProgressComparison {
   created_at: string;
 }
 
-// Treatment Session
-export interface TreatmentSession {
+// Program Session
+export interface ProgramSession {
   id: string;
   user_id: string;
-  treatment_id: string;
-  clinic_id?: string;
+  program_id: string;
+  center_id?: string;
   
   // Session details
   session_number: number;
   session_date: string;
   
-  // Treatment specifics
+  // Program specifics
   areas_treated?: string[];
   units_used?: number; // For Botox
   syringes_used?: number; // For fillers
@@ -151,9 +151,9 @@ export interface ProgressMilestone {
 // Photo Upload Request
 export interface PhotoUploadRequest {
   photo_type: 'baseline' | 'progress' | 'final';
-  treatment_id?: string;
+  program_id?: string;
   session_number?: number;
-  days_since_treatment?: number;
+  days_since_program?: number;
   notes?: string;
 }
 
@@ -176,7 +176,7 @@ export interface TimelineEntry {
   date: string;
   type: 'photo' | 'session' | 'milestone';
   photo?: ProgressPhoto;
-  session?: TreatmentSession;
+  session?: ProgramSession;
   milestone?: ProgressMilestone;
 }
 
@@ -187,7 +187,7 @@ export interface ProgressReport {
   
   // Summary
   total_sessions: number;
-  treatment_duration_days: number;
+  program_duration_days: number;
   overall_improvement: number; // %
   
   // Photos

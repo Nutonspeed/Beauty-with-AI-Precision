@@ -133,14 +133,16 @@ export default async function ProfilePage({ params }: PageProps) {
 
   const { data: profile } = await supabase.from('users').select('*').eq('id', session.user.id).single()
 
+  const isThaiLocale = locale === 'th';
+
   const getRoleDisplay = (role: string) => {
     const roleMap: Record<string, string> = {
-      customer: 'ลูกค้า (Customer)',
-      sales_staff: 'พนักงานขาย (Sales Staff)',
-      center_owner: 'เจ้าของศูนย์ความงาม (Center Owner)',
-      center_staff: 'พนักงาน (Staff)',
-      admin: 'ผู้ดูแลระบบ (Admin)',
-      super_admin: 'ผู้ดูแลระบบสูงสุด (Super Admin)',
+      customer: isThaiLocale ? 'ผู้รับบริการ (Client)' : 'Client',
+      sales_staff: isThaiLocale ? 'พนักงานขาย (Sales Staff)' : 'Sales Staff',
+      center_owner: isThaiLocale ? 'เจ้าของศูนย์ความงาม (Center Owner)' : 'Center Owner',
+      center_staff: isThaiLocale ? 'พนักงาน (Staff)' : 'Staff',
+      admin: isThaiLocale ? 'ผู้ดูแลระบบ (Admin)' : 'Admin',
+      super_admin: isThaiLocale ? 'ผู้ดูแลระบบสูงสุด (Super Admin)' : 'Super Admin',
     }
     return roleMap[role] || role
   }

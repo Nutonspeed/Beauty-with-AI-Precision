@@ -422,7 +422,7 @@ export class PWAManager {
       const cacheNames = await caches.keys();
       await Promise.all(
         cacheNames.map((cacheName) => {
-          if (cacheName.startsWith('ai-clinic-')) {
+          if (cacheName.startsWith('ai-center-')) {
             return caches.delete(cacheName);
           }
         })
@@ -484,7 +484,7 @@ export class PWAManager {
 
   private async openDatabase(): Promise<IDBDatabase> {
     return new Promise((resolve, reject) => {
-      const request = indexedDB.open('ai-clinic-db', 1);
+      const request = indexedDB.open('ai-center-db', 1);
 
       request.onerror = () => reject(request.error);
       request.onsuccess = () => resolve(request.result);

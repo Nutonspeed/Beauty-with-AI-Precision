@@ -62,7 +62,7 @@ export async function POST(request: Request) {
     // Check if user is staff
     const { data: userData } = await supabase.from("users").select("role").eq("id", user.id).single()
 
-    if (!userData || !["admin", "clinic_staff"].includes(userData.role)) {
+    if (!userData || !["admin", "center_staff"].includes(userData.role)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 

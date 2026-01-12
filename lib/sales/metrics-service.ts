@@ -1,5 +1,5 @@
 import { createServerClient } from '@/lib/supabase/server'
-import { getClinicSalesKpiTargets } from '@/lib/config/kpi-targets-service'
+import { getCenterSalesKpiTargets } from '@/lib/config/kpi-targets-service'
 
 function getRangeWindows(range: string) {
   const now = new Date()
@@ -288,7 +288,7 @@ export async function fetchSalesMetricsForUser(userId: string, centerId: string 
     return ((today - yesterday) / yesterday) * 100
   }
 
-  const targets = await getClinicSalesKpiTargets({ supabase: supabase as any, centerId })
+  const targets = await getCenterSalesKpiTargets({ supabase: supabase as any, centerId })
 
   return {
     callsMade: {

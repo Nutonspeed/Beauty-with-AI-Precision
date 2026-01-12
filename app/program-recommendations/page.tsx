@@ -21,9 +21,9 @@ import {
   Heart,
   Share2
 } from "lucide-react"
-import type { TreatmentRecommendation, RecommendationResult } from "@/types/treatment"
+import type { ProgramRecommendation, RecommendationResult } from "@/types/program"
 
-export default function TreatmentRecommendationsPage() {
+export default function ProgramRecommendationsPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [generating, setGenerating] = useState(false)
@@ -112,7 +112,7 @@ export default function TreatmentRecommendationsPage() {
             {generating ? "Generating AI-powered recommendations..." : "Loading..."}
           </p>
           <p className="text-sm text-muted-foreground mt-2">
-            Analyzing your skin concerns and matching with 60+ treatments
+            Analyzing your skin concerns and matching with 60+ programs
           </p>
         </div>
       </div>
@@ -134,7 +134,7 @@ export default function TreatmentRecommendationsPage() {
     )
   }
 
-  const topRecommendations = recommendations.recommended_treatments.slice(0, 5)
+  const topRecommendations = recommendations.recommended_programs.slice(0, 5)
 
   return (
     <div className="container mx-auto p-6 max-w-7xl">
@@ -149,10 +149,10 @@ export default function TreatmentRecommendationsPage() {
           <div>
             <h1 className="text-3xl font-bold flex items-center gap-2">
               <Sparkles className="h-8 w-8 text-primary" />
-              AI Treatment Recommendations
+              AI Program Recommendations
             </h1>
             <p className="text-muted-foreground mt-1">
-              Personalized treatment plan based on your skin analysis
+              Personalized program plan based on your skin analysis
             </p>
           </div>
           <Button variant="outline" size="sm">
@@ -220,10 +220,10 @@ export default function TreatmentRecommendationsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {recommendations.recommended_treatments.length}
+              {recommendations.recommended_programs.length}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
-              Treatments matched
+              Programs matched
             </p>
           </CardContent>
         </Card>
@@ -285,27 +285,27 @@ export default function TreatmentRecommendationsPage() {
         </CardContent>
       </Card>
 
-      {/* Treatment Recommendations */}
+      {/* Program Recommendations */}
       <div className="space-y-4">
-        <h2 className="text-2xl font-bold">Recommended Treatments</h2>
+        <h2 className="text-2xl font-bold">Recommended Programs</h2>
 
         {topRecommendations.map((rec, index) => (
-          <TreatmentCard key={rec.treatment_id} recommendation={rec} rank={index + 1} />
+          <ProgramCard key={rec.program_id} recommendation={rec} rank={index + 1} />
         ))}
       </div>
     </div>
   )
 }
 
-function TreatmentCard({ 
+function ProgramCard({ 
   recommendation, 
   rank 
 }: { 
-  recommendation: TreatmentRecommendation
+  recommendation: ProgramRecommendation
   rank: number 
 }) {
-  const treatment = recommendation.treatment
-  if (!treatment) return null
+  const program = recommendation.program
+  if (!program) return null
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('th-TH', {
@@ -324,13 +324,13 @@ function TreatmentCard({
               <Badge variant={rank === 1 ? "default" : "secondary"}>
                 #{rank} Recommendation
               </Badge>
-              <Badge variant="outline">{treatment.category}</Badge>
+              <Badge variant="outline">{program.category}</Badge>
               <Badge variant="outline" className="ml-auto">
                 {Math.round(recommendation.confidence_score * 100)}% Match
               </Badge>
             </div>
-            <CardTitle className="text-xl">{treatment.name}</CardTitle>
-            <CardDescription className="mt-1">{treatment.name_th}</CardDescription>
+            <CardTitle className="text-xl">{program.name}</CardTitle>
+            <CardDescription className="mt-1">{program.name_th}</CardDescription>
           </div>
         </div>
       </CardHeader>
@@ -395,22 +395,22 @@ function TreatmentCard({
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
             <span className="text-muted-foreground">Downtime:</span>
-            <span className="ml-2 font-medium">{treatment.downtime_days} days</span>
+            <span className="ml-2 font-medium">{program.downtime_days} days</span>
           </div>
           <div>
             <span className="text-muted-foreground">Pain Level:</span>
-            <span className="ml-2 font-medium">{treatment.pain_level}/10</span>
+            <span className="ml-2 font-medium">{program.pain_level}/10</span>
           </div>
           <div>
             <span className="text-muted-foreground">Age Range:</span>
             <span className="ml-2 font-medium">
-              {treatment.min_age}+ years
+              {program.min_age}+ years
             </span>
           </div>
           <div>
             <span className="text-muted-foreground">Results Last:</span>
             <span className="ml-2 font-medium">
-              {treatment.results_duration_months} months
+              {program.results_duration_months} months
             </span>
           </div>
         </div>

@@ -23,7 +23,7 @@ export interface TimeSlot {
 
 export interface Booking {
   id: string;
-  customerId: string;
+  clientId: string;
   customerName: string;
   customerEmail: string;
   customerPhone: string;
@@ -45,7 +45,7 @@ export interface Booking {
 }
 
 export interface BookingInput {
-  customerId: string;
+  clientId: string;
   customerName: string;
   customerEmail: string;
   customerPhone: string;
@@ -121,7 +121,7 @@ export class BookingManager {
 
     const booking: Booking = {
       id: this.generateBookingId(),
-      customerId: input.customerId,
+      clientId: input.clientId,
       customerName: input.customerName,
       customerEmail: input.customerEmail,
       customerPhone: input.customerPhone,
@@ -205,11 +205,11 @@ export class BookingManager {
   /**
    * ดึงข้อมูลการจองทั้งหมดของลูกค้า
    */
-  async getCustomerBookings(customerId: string): Promise<Booking[]> {
+  async getClientBookings(clientId: string): Promise<Booking[]> {
     const { data, error } = await this.supabase
       .from('bookings')
       .select('*')
-      .eq('customer_id', customerId)
+      .eq('customer_id', clientId)
       .order('appointment_date', { ascending: false });
 
     if (error) {
@@ -568,7 +568,7 @@ export class BookingManager {
   private mapBookingToDatabase(booking: Booking): any {
     return {
       id: booking.id,
-      customer_id: booking.customerId,
+      customer_id: booking.clientId,
       customer_name: booking.customerName,
       customer_email: booking.customerEmail,
       customer_phone: booking.customerPhone,
@@ -593,7 +593,7 @@ export class BookingManager {
   private mapDatabaseToBooking(row: any): Booking {
     return {
       id: row.id,
-      customerId: row.customer_id,
+      clientId: row.customer_id,
       customerName: row.customer_name,
       customerEmail: row.customer_email,
       customerPhone: row.customer_phone,

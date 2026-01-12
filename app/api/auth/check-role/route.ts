@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
     const serviceClient = createServiceClient()
     let { data: userData } = await serviceClient
       .from("users")
-      .select("role, clinic_id")
+      .select("role, center_id")
       .eq("id", user.id)
       .single()
 
@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
       const email = user.email || ""
       const defaultRole = metaRole
         ?? (email.includes("superadmin") || email.includes("admin") ? "super_admin"
-          : (email.includes("clinicowner") || email.includes("clinic-owner")) ? "clinic_owner"
+          : (email.includes("centerowner") || email.includes("center-owner")) ? "center_owner"
           : email.includes("sales") ? "sales_staff"
           : email.includes("customer") ? "customer"
           : "customer")
@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
           role: defaultRole,
           full_name: user.email?.split("@")[0].replace("-", " ") || "Demo User",
         })
-        .select("role, clinic_id")
+        .select("role, center_id")
         .single()
 
       if (insertError) {
@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       role: canonicalRole,
       email: user.email,
-      clinicId: userData.clinic_id,
+      centerId: userData.center_id,
     })
   } catch (error) {
     console.error("[v0] Error checking role:", error)

@@ -44,7 +44,7 @@ export function TenantProvider({ children }: { children: ReactNode }) {
 
         // Subdomain-based tenant resolution will be implemented when custom domains are configured
         // Extract subdomain from window.location.hostname
-        // e.g., beauty-clinic.ai367bar.com -> beauty-clinic
+        // e.g., beauty-center.ai367bar.com -> beauty-center
 
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load tenant')

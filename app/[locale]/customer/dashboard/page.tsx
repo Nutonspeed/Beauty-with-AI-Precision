@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/auth/context'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -23,6 +24,7 @@ import { ShimmerSkeleton } from '@/components/ui/modern-loader'
 import { useTranslations } from 'next-intl'
 import { useLocalizePath } from '@/lib/i18n/locale-link'
 import dynamic from 'next/dynamic'
+import { Footer } from '@/components/footer'
 
 // @ts-ignore
 const LineChart = dynamic(() => import('recharts').then(mod => mod.LineChart), { ssr: false });
@@ -41,12 +43,12 @@ const ResponsiveContainer = dynamic(() => import('recharts').then(mod => mod.Res
 
 const DigitalTwinModule = dynamic(() => import('@/components/DigitalTwinModule').then(mod => mod.DigitalTwinModule), { ssr: false });
 
-import { RegimenTracker } from '@/components/customer/regimen-tracker';
-import { VirtualConcierge } from '@/components/customer/virtual-concierge';
-import { AestheticLoyalty } from '@/components/customer/aesthetic-loyalty';
-import { IoTTelemetrySync } from '@/components/customer/iot-telemetry-sync';
+import { RegimenTracker } from '@/components/client/regimen-tracker';
+import { VirtualConcierge } from '@/components/client/virtual-concierge';
+import { AestheticLoyalty } from '@/components/client/aesthetic-loyalty';
+import { IoTTelemetrySync } from '@/components/client/iot-telemetry-sync';
 import { AestheticOutcomeQuantifier } from '@/components/analytics/aesthetic-outcome-quantifier';
-import { BioDigitalTwinEvolution } from '@/components/customer/bio-digital-twin-evolution';
+import { BioDigitalTwinEvolution } from '@/components/client/bio-digital-twin-evolution';
 
 export default function CustomerDashboard() {
   const t = useTranslations()
@@ -133,7 +135,7 @@ export default function CustomerDashboard() {
       color: 'text-cyan-600',
       bg: 'bg-cyan-50',
       border: 'border-cyan-100',
-      description: 'Temporal Health Metrics'
+      description: 'Temporal Aesthetic Metrics'
     },
     { 
       label: t('nav.profile'), 
@@ -142,12 +144,12 @@ export default function CustomerDashboard() {
       color: 'text-slate-600',
       bg: 'bg-slate-50',
       border: 'border-slate-200',
-      description: 'User Node Configuration'
+      description: 'Client Node Configuration'
     }
   ]
 
   const recentActivity = [
-    { type: 'analysis', date: '2026-01-05', result: 'Skin Score: 85/100', icon: Brain, color: 'text-blue-600' },
+    { type: 'analysis', date: '2026-01-05', result: 'Aesthetic Score: 85/100', icon: Brain, color: 'text-blue-600' },
     { type: 'appointment', date: '2026-01-08', result: 'Aesthetic Program Cycle Completed', icon: Calendar, color: 'text-indigo-600' },
     { type: 'product', date: '2026-01-10', result: 'Protocol Ingestion Started', icon: Zap, color: 'text-amber-600' }
   ]
@@ -176,10 +178,10 @@ export default function CustomerDashboard() {
             <h1 className="text-5xl font-bold text-slate-900 tracking-tight italic">
               {t('nav.dashboard')}{' '}
               <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 bg-clip-text text-transparent not-italic text-2xl tracking-[0.3em] font-black uppercase">
-                {user?.full_name?.split(' ')[0] || 'User'}_Node
+                {user?.full_name?.split(' ')[0] || 'Client'}_Node
               </span>
             </h1>
-            <p className="text-slate-500 font-light tracking-wide text-lg italic">Orchestrating your biological evolution with AI Precision.</p>
+            <p className="text-slate-500 font-light tracking-wide text-lg italic">Orchestrating your aesthetic evolution with AI Precision.</p>
           </div>
           
           <div className="flex gap-4">
@@ -235,8 +237,8 @@ export default function CustomerDashboard() {
             <Card className="border-white bg-white/60 backdrop-blur-xl rounded-[3rem] overflow-hidden shadow-premium relative group">
               <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/10 to-transparent" />
               <CardHeader className="p-10 lg:p-12 pb-6 border-b border-slate-100">
-                <CardTitle className="text-2xl font-bold text-slate-900 tracking-tight italic">Skin Health Journey</CardTitle>
-                <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Temporal health index progression metrics</CardDescription>
+                <CardTitle className="text-2xl font-bold text-slate-900 tracking-tight italic">Aesthetic Journey</CardTitle>
+                <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Temporal aesthetic index progression metrics</CardDescription>
               </CardHeader>
               <CardContent className="p-10 lg:p-16 h-[400px]">
                 <ResponsiveContainer width="100%" height="100%">
@@ -276,7 +278,7 @@ export default function CustomerDashboard() {
             {/* Recent Activity Stream */}
             <Card className="border-white bg-white/60 backdrop-blur-xl rounded-[3rem] overflow-hidden shadow-premium relative">
               <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/10 to-transparent" />
-              <CardHeader className="p-10 pb-6 border-b border-slate-100">
+              <CardHeader className="p-10 pb-6 border-b border-slate-100 flex flex-row items-center justify-between">
                 <CardTitle className="text-2xl font-bold text-slate-900 tracking-tight italic">Temporal Activity Logs</CardTitle>
               </CardHeader>
               <CardContent className="p-10 lg:p-12 space-y-8">
@@ -329,10 +331,26 @@ export default function CustomerDashboard() {
                         <div className="h-2 w-2 rounded-full bg-blue-500 animate-ping" />
                         <span className="text-[8px] font-black text-blue-600 uppercase tracking-[0.3em]">Neural_Link_Active</span>
                       </div>
+                    </div>
+                    <div className="text-center">
+                      <p className="font-semibold text-slate-900 italic">Aesthetic Synchronized</p>
+                      <p className="text-xs text-slate-500 uppercase font-black tracking-widest mt-1">Real-time Bio-Data Node</p>
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-center space-y-6">
+                    <div className="h-20 w-20 rounded-3xl bg-slate-50 border border-slate-100 flex items-center justify-center mx-auto shadow-inner">
+                      <ShieldCheck className="h-10 w-10 text-slate-300" />
+                    </div>
+                    <div className="space-y-2">
+                      <p className="font-bold text-slate-900 italic uppercase tracking-tighter">Premium Access Required</p>
+                      <p className="text-xs text-slate-500 leading-relaxed italic">Upgrade to unlock your AI Digital Twin and biological evolution tracking.</p>
+                    </div>
+                    <Button variant="premium" size="sm" className="h-10 px-6 rounded-xl text-[9px] font-black uppercase tracking-widest italic" asChild>
+                      <Link href={lp('/pricing')}>Upgrade Now</Link>
+                    </Button>
                   </div>
-                  <div>
-                    <p className="font-semibold">Aesthetic Programs</p>
-                    <p className="text-xs text-muted-foreground">โปรแกรมความงาม</p>
+                )}
               </CardContent>
             </Card>
 
@@ -343,7 +361,7 @@ export default function CustomerDashboard() {
               </CardHeader>
               <CardContent className="p-10 space-y-10">
                 {[
-                  { label: 'Skin Health Score', val: '85/100', trend: '+12%', color: 'text-emerald-600' },
+                  { label: 'Aesthetic Score', val: '85/100', trend: '+12%', color: 'text-emerald-600' },
                   { label: 'Cellular Hydration', val: '72%', trend: '+5%', color: 'text-blue-600' },
                   { label: 'Texture Uniformity', val: '91%', trend: 'Stable', color: 'text-slate-600' },
                 ].map((stat, i) => (
@@ -362,6 +380,7 @@ export default function CustomerDashboard() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
-  )
+  );
 }

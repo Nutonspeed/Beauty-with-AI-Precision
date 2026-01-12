@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { withClinicAuth } from '@/lib/auth/middleware';
+import { withCenterAuth } from '@/lib/auth/middleware';
 
 function getSupabaseClient() {
   return createClient(
@@ -18,7 +18,7 @@ function getSupabaseClient() {
  * - transaction_amount (required): Transaction amount in baht
  * - customer_tier_id (optional): Customer tier ID for multiplier
  */
-export const POST = withClinicAuth(async (request: NextRequest, user: any) => {
+export const POST = withCenterAuth(async (request: NextRequest, user: any) => {
   let body: any = null;
   try {
     body = await request.json();
@@ -26,11 +26,11 @@ export const POST = withClinicAuth(async (request: NextRequest, user: any) => {
     return new NextResponse(null, { status: 204 });
   }
 
-  const clinic_id = body?.clinic_id;
-  if (!clinic_id) {
-    return NextResponse.json({ error: 'clinic_id is required' }, { status: 400 });
+  const center_id = body?.center_id;
+  if (!center_id) {
+    return NextResponse.json({ error: 'center_id is required' }, { status: 400 });
   }
-  if (user?.clinic_id && clinic_id !== user.clinic_id) {
+  if (user?.center_id && center_id !== user.center_id) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 

@@ -124,7 +124,7 @@ async function getTableStatistics() {
   try {
     const tables = [
       'users', 'skin_analyses', 'sales_leads', 'bookings', 
-      'treatments', 'chat_history', 'video_calls', 'clinics'
+      'programs', 'chat_history', 'video_calls', 'centers'
     ]
 
     const tableStats: any = {}
@@ -199,7 +199,7 @@ async function updateTableStatistics() {
   try {
     const tables = [
       'users', 'skin_analyses', 'sales_leads', 'bookings', 
-      'treatments', 'chat_history', 'video_calls'
+      'programs', 'chat_history', 'video_calls'
     ]
 
     for (const table of tables) {

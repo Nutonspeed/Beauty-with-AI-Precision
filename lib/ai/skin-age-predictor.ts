@@ -280,7 +280,7 @@ export class SkinAgePredictor {
       recommendations.push('Use Vitamin C serum for pigmentation')
     }
     if (analysis.elasticity < 60) {
-      recommendations.push('Add peptides and collagen-boosting treatments')
+      recommendations.push('Add peptides and collagen-boosting programs')
     }
     if (analysis.pores > 50) {
       recommendations.push('Use niacinamide to minimize pore appearance')
@@ -299,7 +299,7 @@ export class SkinAgePredictor {
       tips.push('Daily SPF is critical - UV damage accumulates over time')
     }
     if (predicted.elasticity < 50) {
-      tips.push('Consider professional treatments like microneedling for collagen stimulation')
+      tips.push('Consider professional programs like microneedling for collagen stimulation')
     }
 
     return tips

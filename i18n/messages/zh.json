@@ -1,7 +1,7 @@
 {
-  "brand": "AI Beauty Platform",
+  "brand": "CenterIQ AI",
   "common": {
-    "appName": "AI美容中心",
+    "appName": "CenterIQ AI",
     "appDescription": "AI驱动的皮肤科和美容分析平台",
     "loading": "加载中...",
     "error": "错误",
@@ -738,7 +738,7 @@
         "title": "快速准确",
         "description": "3-5秒内完成分析，提供个性化建议"
       },
-      "multiClinic": {
+      "multiCenter": {
         "title": "多中心支持",
         "description": "多分支支持，集成CRM和预约系统"
       }
@@ -930,7 +930,7 @@
       "peeling": "化学换肤",
       "mesotherapy": "中胚层疗法",
       "thread_lift": "线雕提升",
-      "acne_treatment": "痤疮方案",
+      "acne_Program": "痤疮方案",
       "pigmentation": "色素方案",
       "anti_aging": "抗衰老方案",
       "skin_tightening": "紧肤"
@@ -1013,12 +1013,6 @@
     "totalVisits": "就诊次数",
     "totalSpent": "总消费",
     "lastVisit": "上次就诊"
-  },
-    "status": {
-      "label": "状态",
-      "active": "活跃",
-      "inactive": "非活跃"
-    }
   },
   "founders-clone": {
     "meta": {

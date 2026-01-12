@@ -17,7 +17,7 @@ export interface User {
   id: string;
   name: string;
   avatar?: string;
-  role: 'patient' | 'doctor' | 'admin' | 'staff';
+  role: 'client' | 'doctor' | 'admin' | 'staff';
   online: boolean;
   lastSeen?: Date;
 }
@@ -70,7 +70,7 @@ export interface Conversation {
   pinned: boolean;
   archived: boolean;
   metadata?: {
-    clinicId?: string;
+    centerId?: string;
     appointmentId?: string;
     purpose?: string;
   };

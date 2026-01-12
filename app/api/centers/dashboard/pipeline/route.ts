@@ -12,24 +12,24 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    // Get user's clinic_id
-    const { data: userData } = await supabase.from("users").select("clinic_id, role").eq("id", user.id).single()
+    // Get user's center_id
+    const { data: userData } = await supabase.from("users").select("center_id, role").eq("id", user.id).single()
 
-    if (!userData || (userData.role !== "clinic_owner" && userData.role !== "clinic_staff")) {
+    if (!userData || (userData.role !== "center_owner" && userData.role !== "center_staff")) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
-    const clinicId = userData.clinic_id
+    const centerId = userData.center_id
 
-    if (!clinicId) {
-      return NextResponse.json({ error: "No clinic associated" }, { status: 400 })
+    if (!centerId) {
+      return NextResponse.json({ error: "No center associated" }, { status: 400 })
     }
 
     // Fetch customers grouped by lead status
     const { data: customers, error } = await supabase
       .from("customers")
       .select("id, full_name, email, phone, lead_status, lead_score, created_at")
-      .eq("clinic_id", clinicId)
+      .eq("center_id", centerId)
       .order("lead_score", { ascending: false })
       .limit(50)
 

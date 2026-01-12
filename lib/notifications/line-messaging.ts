@@ -76,16 +76,16 @@ export async function sendLineMessage(
 export async function sendAppointmentReminder(
   userId: string,
   appointment: {
-    patientName: string
+    clientName: string
     date: Date
     time: string
-    treatment: string
-    clinicName: string
+    program: string
+    centerName: string
   }
 ): Promise<LineSendResult> {
   const message: LineMessage = {
     type: 'flex',
-    altText: `นัดหมาย: ${appointment.treatment}`,
+    altText: `นัดหมาย: ${appointment.program}`,
     contents: {
       type: 'bubble',
       hero: {
@@ -109,7 +109,7 @@ export async function sendAppointmentReminder(
         contents: [
           {
             type: 'text',
-            text: appointment.treatment,
+            text: appointment.program,
             weight: 'bold',
             size: 'xl'
           },
@@ -124,7 +124,7 @@ export async function sendAppointmentReminder(
             contents: [
               { type: 'text', text: `📆 ${formatDate(appointment.date)}`, size: 'sm' },
               { type: 'text', text: `⏰ ${appointment.time}`, size: 'sm' },
-              { type: 'text', text: `🏥 ${appointment.clinicName}`, size: 'sm' }
+              { type: 'text', text: `🏥 ${appointment.centerName}`, size: 'sm' }
             ]
           }
         ]
@@ -135,13 +135,13 @@ export async function sendAppointmentReminder(
         contents: [
           {
             type: 'button',
-            action: { type: 'uri', label: 'ยืนยัน', uri: 'https://cliniciq.app/appointments' },
+            action: { type: 'uri', label: 'ยืนยัน', uri: 'https://centeriq.app/appointments' },
             style: 'primary',
             color: '#06b6d4'
           },
           {
             type: 'button',
-            action: { type: 'uri', label: 'เลื่อนนัด', uri: 'https://cliniciq.app/reschedule' },
+            action: { type: 'uri', label: 'เลื่อนนัด', uri: 'https://centeriq.app/reschedule' },
             style: 'secondary'
           }
         ]
@@ -213,7 +213,7 @@ export async function sendAnalysisResult(
         contents: [
           {
             type: 'button',
-            action: { type: 'uri', label: 'ดูรายละเอียด', uri: 'https://cliniciq.app/analysis' },
+            action: { type: 'uri', label: 'ดูรายละเอียด', uri: 'https://centeriq.app/analysis' },
             style: 'primary',
             color: '#06b6d4'
           }

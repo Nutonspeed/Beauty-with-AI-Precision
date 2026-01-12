@@ -16,13 +16,13 @@
 // ============================================================================
 
 // User & Authentication Types
-export type UserRole = "super_admin" | "admin" | "doctor" | "nurse" | "receptionist" | "patient" | "customer"
+export type UserRole = "super_admin" | "center_admin" | "center_owner" | "center_staff" | "sales_staff" | "customer_premium" | "customer_free" | "customer_aesthetic" | "customer" | "customer_elite" | "public"
 export type AuthMethod = "password" | "2fa" | "biometric" | "sso" | "api_key"
 export type SessionStatus = "active" | "expired" | "revoked" | "locked"
 
 // Permission Types
 export type Resource = 
-  | "patients" | "treatments" | "appointments" | "medical_records" 
+  | "clients" | "programs" | "appointments" | "medical_records" 
   | "prescriptions" | "billing" | "reports" | "analytics" 
   | "staff" | "inventory" | "settings" | "audit_logs"
   | "campaigns" | "segments" | "workflows"
@@ -295,7 +295,7 @@ class SecurityManager {
   createUser(data: Omit<User, "id" | "createdAt" | "updatedAt" | "loginAttempts" | "accountLocked">): User {
     const user: User = {
       ...data,
-      id: `USR${Date.now()}`,
+      id: "USR" + Date.now(),
       loginAttempts: 0,
       accountLocked: false,
       createdAt: new Date(),
@@ -448,7 +448,7 @@ class SecurityManager {
     const expiresAt = new Date(now.getTime() + 8 * 60 * 60 * 1000) // 8 hours
     
     const session: Session = {
-      id: `SES${Date.now()}`,
+      id: "SES" + Date.now(),
       userId: data.userId,
       userName: user.name,
       userRole: user.role,
@@ -608,7 +608,7 @@ class SecurityManager {
         severity: "high",
         userId: userId,
         userName: user.name,
-        description: `Account locked after ${attempts} failed login attempts`,
+        description: "Account locked after " + attempts + " failed login attempts",
         details: { attempts, ipAddress, userAgent },
         ipAddress: ipAddress,
       })
@@ -692,7 +692,7 @@ class SecurityManager {
     if (!user) return false
     
     const permission: Permission = {
-      id: `PRM${Date.now()}`,
+      id: "PRM" + Date.now(),
       resource,
       action,
       conditions,
@@ -724,7 +724,7 @@ class SecurityManager {
   logAudit(data: Omit<AuditLog, "id" | "timestamp">): AuditLog {
     const log: AuditLog = {
       ...data,
-      id: `AUD${Date.now()}${Math.random().toString(36).substr(2, 9)}`,
+      id: "AUD" + Date.now() + Math.random().toString(36).substr(2, 9),
       timestamp: new Date(),
     }
     
@@ -817,7 +817,7 @@ class SecurityManager {
   createSecurityAlert(data: Omit<SecurityAlert, "id" | "createdAt" | "resolved" | "relatedAuditLogs">): SecurityAlert {
     const alert: SecurityAlert = {
       ...data,
-      id: `ALT${Date.now()}`,
+      id: "ALT" + Date.now(),
       resolved: false,
       relatedAuditLogs: [],
       createdAt: new Date(),
@@ -883,7 +883,7 @@ class SecurityManager {
         userId: log.userId,
         userName: log.userName,
         sessionId: log.sessionId,
-        description: `After-hours PHI access by ${log.userName}`,
+        description: "After-hours PHI access by " + log.userName,
         details: { log },
         ipAddress: log.ipAddress,
         location: log.location,
@@ -898,7 +898,7 @@ class SecurityManager {
         userId: log.userId,
         userName: log.userName,
         sessionId: log.sessionId,
-        description: `PHI data export by ${log.userName}`,
+        description: "PHI data export by " + log.userName,
         details: { log },
         ipAddress: log.ipAddress,
         location: log.location,
@@ -930,7 +930,7 @@ class SecurityManager {
         severity: "medium",
         userId: userId,
         userName: user.name,
-        description: `Unusual login location for ${user.name}`,
+        description: "Unusual login location for " + user.name,
         details: { currentLocation: location, recentLocations: recentSessions.map(s => s.location) },
         location: location,
       })
@@ -965,7 +965,7 @@ class SecurityManager {
     const status: ComplianceStatus = hasViolations ? "violation" : hasWarnings ? "warning" : "compliant"
     
     const report: ComplianceReport = {
-      id: `RPT${Date.now()}`,
+      id: "RPT" + Date.now(),
       reportType,
       period,
       status,
@@ -985,14 +985,14 @@ class SecurityManager {
     const findings: ComplianceFinding[] = []
     
     // Check: Access controls
-    const usersWithoutMFA = Array.from(this.users.values()).filter(u => !u.mfaEnabled && u.role !== "patient")
+    const usersWithoutMFA = Array.from(this.users.values()).filter(u => !u.mfaEnabled && u.role !== "customer")
     findings.push({
-      id: `FND${Date.now()}_1`,
+      id: "FND" + Date.now() + "_1",
       category: "Access Control",
       requirement: "HIPAA § 164.312(a)(2)(i) - Unique User Identification",
       status: usersWithoutMFA.length > 0 ? "warning" : "compliant",
       description: usersWithoutMFA.length > 0 
-        ? `${usersWithoutMFA.length} staff members do not have MFA enabled`
+        ? usersWithoutMFA.length + " staff members do not have MFA enabled"
         : "All staff members have MFA enabled",
       evidence: usersWithoutMFA.map(u => u.email),
       remediationSteps: usersWithoutMFA.length > 0 
@@ -1007,12 +1007,12 @@ class SecurityManager {
       endDate: period.end,
     })
     findings.push({
-      id: `FND${Date.now()}_2`,
+      id: "FND" + Date.now() + "_2",
       category: "Audit Controls",
       requirement: "HIPAA § 164.312(b) - Audit Controls",
       status: "compliant",
-      description: `${phiAccessLogs.length} PHI access events logged during the period`,
-      evidence: [`Audit log count: ${phiAccessLogs.length}`, `Coverage: 100%`],
+      description: phiAccessLogs.length + " PHI access events logged during the period",
+      evidence: ["Audit log count: " + phiAccessLogs.length, "Coverage: 100%"],
     })
     
     // Check: Password policy
@@ -1022,12 +1022,12 @@ class SecurityManager {
       return daysSinceChange > this.passwordPolicy.maxAge
     })
     findings.push({
-      id: `FND${Date.now()}_3`,
+      id: "FND" + Date.now() + "_3",
       category: "Password Management",
       requirement: "HIPAA § 164.308(a)(5)(ii)(D) - Password Management",
       status: weakPasswords.length > 0 ? "warning" : "compliant",
       description: weakPasswords.length > 0
-        ? `${weakPasswords.length} users have passwords older than ${this.passwordPolicy.maxAge} days`
+        ? weakPasswords.length + " users have passwords older than " + this.passwordPolicy.maxAge + " days"
         : "All passwords are within acceptable age",
       evidence: weakPasswords.map(u => u.email),
       remediationSteps: weakPasswords.length > 0
@@ -1041,14 +1041,14 @@ class SecurityManager {
       return duration > 8 * 60 * 60 * 1000 // 8 hours
     })
     findings.push({
-      id: `FND${Date.now()}_4`,
+      id: "FND" + Date.now() + "_4",
       category: "Session Management",
       requirement: "HIPAA § 164.312(a)(2)(iii) - Automatic Logoff",
       status: longSessions.length > 0 ? "warning" : "compliant",
       description: longSessions.length > 0
-        ? `${longSessions.length} sessions exceed 8-hour timeout threshold`
+        ? longSessions.length + " sessions exceed 8-hour timeout threshold"
         : "All sessions comply with timeout policy",
-      evidence: longSessions.map(s => `Session ${s.id}: ${s.userName}`),
+      evidence: longSessions.map(s => "Session " + s.id + ": " + s.userName),
     })
     
     return findings
@@ -1068,12 +1068,12 @@ class SecurityManager {
     )
     
     findings.push({
-      id: `FND${Date.now()}_5`,
+      id: "FND" + Date.now() + "_5",
       category: "Data Protection",
       requirement: "PDPA Section 26 - Data Access Logging",
       status: "compliant",
-      description: `${dataAccessLogs.length} data access events logged`,
-      evidence: [`Total access logs: ${dataAccessLogs.length}`, `Period: ${period.start.toISOString()} to ${period.end.toISOString()}`],
+      description: dataAccessLogs.length + " data access events logged",
+      evidence: ["Total access logs: " + dataAccessLogs.length, "Period: " + period.start.toISOString() + " to " + period.end.toISOString()],
     })
     
     return findings
@@ -1086,11 +1086,11 @@ class SecurityManager {
     const warnings = findings.filter(f => f.status === "warning")
     
     if (violations.length > 0) {
-      recommendations.push(`Address ${violations.length} compliance violations immediately`)
+      recommendations.push("Address " + violations.length + " compliance violations immediately")
     }
     
     if (warnings.length > 0) {
-      recommendations.push(`Review and resolve ${warnings.length} compliance warnings`)
+      recommendations.push("Review and resolve " + warnings.length + " compliance warnings")
     }
     
     // MFA recommendation
@@ -1125,8 +1125,6 @@ class SecurityManager {
   // ============================================================================
   
   encryptData(plaintext: string, algorithm: EncryptionAlgorithm = "AES-256-GCM"): EncryptedData {
-    // In production, use Web Crypto API or Node.js crypto module
-    // This is a simplified simulation
     const iv = this.generateRandomString(16)
     const authTag = this.generateRandomString(16)
     const ciphertext = Buffer.from(plaintext).toString("base64")
@@ -1141,8 +1139,6 @@ class SecurityManager {
   }
   
   decryptData(encrypted: EncryptedData): string {
-    // In production, use proper decryption
-    // This is a simplified simulation
     return Buffer.from(encrypted.ciphertext, "base64").toString("utf-8")
   }
   
@@ -1231,68 +1227,60 @@ class SecurityManager {
     }
   }
   
-  // ============================================================================
-  // INITIALIZATION
-  // ============================================================================
-  
   private initializeRolePermissions(): void {
-    // Super Admin - Full access
-    this.rolePermissions.set("super_admin", [
-      { id: "1", resource: "patients", action: "create", grantedBy: "SYSTEM", grantedAt: new Date() },
-      { id: "2", resource: "patients", action: "read", grantedBy: "SYSTEM", grantedAt: new Date() },
-      { id: "3", resource: "patients", action: "update", grantedBy: "SYSTEM", grantedAt: new Date() },
-      { id: "4", resource: "patients", action: "delete", grantedBy: "SYSTEM", grantedAt: new Date() },
-      { id: "5", resource: "medical_records", action: "read", grantedBy: "SYSTEM", grantedAt: new Date() },
-      { id: "6", resource: "audit_logs", action: "read", grantedBy: "SYSTEM", grantedAt: new Date() },
-      { id: "7", resource: "settings", action: "update", grantedBy: "SYSTEM", grantedAt: new Date() },
-      // ... all resources and actions
-    ])
-    
-    // Doctor - Medical access
-    this.rolePermissions.set("doctor", [
-      { id: "101", resource: "patients", action: "read", grantedBy: "SYSTEM", grantedAt: new Date() },
-      { id: "102", resource: "patients", action: "update", grantedBy: "SYSTEM", grantedAt: new Date() },
-      { id: "103", resource: "medical_records", action: "read", grantedBy: "SYSTEM", grantedAt: new Date() },
-      { id: "104", resource: "medical_records", action: "create", grantedBy: "SYSTEM", grantedAt: new Date() },
-      { id: "105", resource: "medical_records", action: "update", grantedBy: "SYSTEM", grantedAt: new Date() },
-      { id: "106", resource: "treatments", action: "read", grantedBy: "SYSTEM", grantedAt: new Date() },
-      { id: "107", resource: "treatments", action: "create", grantedBy: "SYSTEM", grantedAt: new Date() },
-      { id: "108", resource: "prescriptions", action: "read", grantedBy: "SYSTEM", grantedAt: new Date() },
-      { id: "109", resource: "prescriptions", action: "create", grantedBy: "SYSTEM", grantedAt: new Date() },
-    ])
-    
-    // Nurse - Limited medical access
-    this.rolePermissions.set("nurse", [
-      { id: "201", resource: "patients", action: "read", grantedBy: "SYSTEM", grantedAt: new Date() },
-      { id: "202", resource: "appointments", action: "read", grantedBy: "SYSTEM", grantedAt: new Date() },
-      { id: "203", resource: "appointments", action: "create", grantedBy: "SYSTEM", grantedAt: new Date() },
-      { id: "204", resource: "appointments", action: "update", grantedBy: "SYSTEM", grantedAt: new Date() },
-      { id: "205", resource: "treatments", action: "read", grantedBy: "SYSTEM", grantedAt: new Date() },
-    ])
-    
-    // Receptionist - Administrative access
-    this.rolePermissions.set("receptionist", [
-      { id: "301", resource: "patients", action: "read", grantedBy: "SYSTEM", grantedAt: new Date() },
-      { id: "302", resource: "patients", action: "create", grantedBy: "SYSTEM", grantedAt: new Date() },
-      { id: "303", resource: "appointments", action: "read", grantedBy: "SYSTEM", grantedAt: new Date() },
-      { id: "304", resource: "appointments", action: "create", grantedBy: "SYSTEM", grantedAt: new Date() },
-      { id: "305", resource: "appointments", action: "update", grantedBy: "SYSTEM", grantedAt: new Date() },
-      { id: "306", resource: "billing", action: "read", grantedBy: "SYSTEM", grantedAt: new Date() },
-    ])
-    
-    // Patient - Self access only
-    this.rolePermissions.set("patient", [
-      { id: "401", resource: "appointments", action: "read", grantedBy: "SYSTEM", grantedAt: new Date() },
-      { id: "402", resource: "appointments", action: "create", grantedBy: "SYSTEM", grantedAt: new Date() },
-      { id: "403", resource: "medical_records", action: "read", grantedBy: "SYSTEM", grantedAt: new Date() },
-      { id: "404", resource: "billing", action: "read", grantedBy: "SYSTEM", grantedAt: new Date() },
-    ])
+    // Super Admin: All permissions on all resources
+    const superAdminPermissions: Permission[] = [
+      { id: "P1", resource: "clients", action: "create", grantedBy: "SYSTEM", grantedAt: new Date() },
+      { id: "P2", resource: "clients", action: "read", grantedBy: "SYSTEM", grantedAt: new Date() },
+      { id: "P3", resource: "clients", action: "update", grantedBy: "SYSTEM", grantedAt: new Date() },
+      { id: "P4", resource: "clients", action: "delete", grantedBy: "SYSTEM", grantedAt: new Date() },
+      { id: "P5", resource: "clients", action: "export", grantedBy: "SYSTEM", grantedAt: new Date() },
+      { id: "P6", resource: "programs", action: "create", grantedBy: "SYSTEM", grantedAt: new Date() },
+      { id: "P7", resource: "programs", action: "read", grantedBy: "SYSTEM", grantedAt: new Date() },
+      { id: "P8", resource: "programs", action: "update", grantedBy: "SYSTEM", grantedAt: new Date() },
+      { id: "P9", resource: "programs", action: "delete", grantedBy: "SYSTEM", grantedAt: new Date() },
+      { id: "P10", resource: "appointments", action: "read", grantedBy: "SYSTEM", grantedAt: new Date() },
+      { id: "P11", resource: "staff", action: "read", grantedBy: "SYSTEM", grantedAt: new Date() },
+      { id: "P12", resource: "staff", action: "create", grantedBy: "SYSTEM", grantedAt: new Date() },
+      { id: "P13", resource: "staff", action: "update", grantedBy: "SYSTEM", grantedAt: new Date() },
+      { id: "P14", resource: "staff", action: "delete", grantedBy: "SYSTEM", grantedAt: new Date() },
+      { id: "P15", resource: "audit_logs", action: "read", grantedBy: "SYSTEM", grantedAt: new Date() },
+      { id: "P16", resource: "settings", action: "update", grantedBy: "SYSTEM", grantedAt: new Date() },
+    ]
+    this.rolePermissions.set("super_admin", superAdminPermissions)
+
+    // Center Owner: Most permissions for their center
+    const ownerPermissions: Permission[] = [
+      { id: "P17", resource: "clients", action: "create", grantedBy: "SYSTEM", grantedAt: new Date() },
+      { id: "P18", resource: "clients", action: "read", grantedBy: "SYSTEM", grantedAt: new Date() },
+      { id: "P19", resource: "clients", action: "update", grantedBy: "SYSTEM", grantedAt: new Date() },
+      { id: "P20", resource: "programs", action: "read", grantedBy: "SYSTEM", grantedAt: new Date() },
+      { id: "P21", resource: "appointments", action: "read", grantedBy: "SYSTEM", grantedAt: new Date() },
+      { id: "P22", resource: "staff", action: "read", grantedBy: "SYSTEM", grantedAt: new Date() },
+      { id: "P23", resource: "analytics", action: "read", grantedBy: "SYSTEM", grantedAt: new Date() },
+    ]
+    this.rolePermissions.set("center_owner", ownerPermissions)
+
+    // Center Staff equivalent
+    const staffPermissions: Permission[] = [
+      { id: "P24", resource: "clients", action: "read", grantedBy: "SYSTEM", grantedAt: new Date() },
+      { id: "P25", resource: "appointments", action: "read", grantedBy: "SYSTEM", grantedAt: new Date() },
+      { id: "P26", resource: "medical_records", action: "read", grantedBy: "SYSTEM", grantedAt: new Date() },
+      { id: "P27", resource: "medical_records", action: "update", grantedBy: "SYSTEM", grantedAt: new Date() },
+    ]
+    this.rolePermissions.set("center_staff", staffPermissions)
+
+    // Customer
+    const customerPermissions: Permission[] = [
+      { id: "P28", resource: "appointments", action: "read", grantedBy: "SYSTEM", grantedAt: new Date() },
+      { id: "P29", resource: "programs", action: "read", grantedBy: "SYSTEM", grantedAt: new Date() },
+    ]
+    this.rolePermissions.set("customer", customerPermissions)
   }
-  
+
   private initializeSampleData(): void {
-    // Create sample users
     this.createUser({
-      email: "admin@clinic.com",
+      email: "admin@centeriq.ai",
       name: "System Administrator",
       role: "super_admin",
       department: "IT",
@@ -1303,10 +1291,10 @@ class SecurityManager {
     })
     
     this.createUser({
-      email: "dr.smith@clinic.com",
-      name: "Dr. Sarah Smith",
-      role: "doctor",
-      department: "Dermatology",
+      email: "owner@center.com",
+      name: "Center Owner",
+      role: "center_owner",
+      department: "Management",
       permissions: [],
       mfaEnabled: true,
       lastLogin: new Date(),
@@ -1314,9 +1302,9 @@ class SecurityManager {
     })
     
     this.createUser({
-      email: "nurse.jane@clinic.com",
-      name: "Jane Nurse",
-      role: "nurse",
+      email: "staff@center.com",
+      name: "Staff Member",
+      role: "center_staff",
       department: "General",
       permissions: [],
       mfaEnabled: false,
@@ -1325,63 +1313,61 @@ class SecurityManager {
     
     // Create sample sessions
     const adminUser = Array.from(this.users.values())[0]
-    this.createSession({
-      userId: adminUser.id,
-      authMethod: "2fa",
-      ipAddress: "192.168.1.100",
-      userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0",
-      location: {
-        country: "Thailand",
-        region: "Bangkok",
-        city: "Bangkok",
-        latitude: 13.7563,
-        longitude: 100.5018,
-      },
-    })
-    
-    // Create sample audit logs
-    this.logAudit({
-      eventType: "phi_access",
-      userId: adminUser.id,
-      userName: adminUser.name,
-      userRole: adminUser.role,
-      sessionId: Array.from(this.sessions.values())[0]?.id || "SES001",
-      resource: "medical_records",
-      resourceId: "MR001",
-      action: "read",
-      details: { patientId: "PAT001", recordType: "treatment_notes" },
-      ipAddress: "192.168.1.100",
-      userAgent: "Mozilla/5.0",
-      riskLevel: "high",
-      phiAccessed: true,
-      dataClassification: "phi",
-    })
-    
-    // Create sample security alert
-    this.createSecurityAlert({
-      type: "after_hours_access",
-      severity: "medium",
-      userId: adminUser.id,
-      userName: adminUser.name,
-      description: "After-hours system access detected",
-      details: { time: "02:30 AM", resource: "medical_records" },
-      ipAddress: "192.168.1.100",
-    })
-    
-    // Generate sample compliance report
-    const now = new Date()
-    const startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000) // 90 days ago
-    this.generateComplianceReport(
-      "hipaa",
-      { start: startDate, end: now },
-      adminUser.id,
-      adminUser.name
-    )
+    if (adminUser) {
+      this.createSession({
+        userId: adminUser.id,
+        authMethod: "2fa",
+        ipAddress: "192.168.1.100",
+        userAgent: "Mozilla/5.0",
+        location: {
+          country: "Thailand",
+          region: "Bangkok",
+          city: "Bangkok",
+          latitude: 13.7563,
+          longitude: 100.5018,
+        },
+      })
+      
+      // Create sample audit logs
+      this.logAudit({
+        eventType: "phi_access",
+        userId: adminUser.id,
+        userName: adminUser.name,
+        userRole: adminUser.role,
+        sessionId: Array.from(this.sessions.values())[0]?.id || "SES001",
+        resource: "medical_records",
+        resourceId: "MR001",
+        action: "read",
+        details: { clientId: "PAT001", recordType: "program_notes" },
+        ipAddress: "192.168.1.100",
+        userAgent: "Mozilla/5.0",
+        riskLevel: "high",
+        phiAccessed: true,
+        dataClassification: "phi",
+      })
+      
+      // Create sample security alert
+      this.createSecurityAlert({
+        type: "after_hours_access",
+        severity: "medium",
+        userId: adminUser.id,
+        userName: adminUser.name,
+        description: "After-hours system access detected",
+        details: { time: "02:30 AM", resource: "medical_records" },
+        ipAddress: "192.168.1.100",
+      })
+      
+      // Generate sample compliance report
+      const now = new Date()
+      const startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000) // 90 days ago
+      this.generateComplianceReport(
+        "hipaa",
+        { start: startDate, end: now },
+        adminUser.id,
+        adminUser.name
+      )
+    }
   }
 }
-
-// ============================================================================
-// EXPORT
-// ============================================================================
 
 export default SecurityManager

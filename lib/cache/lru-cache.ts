@@ -5,7 +5,7 @@
  * Use Cases:
  * - Analysis results (avoid re-querying database)
  * - User profiles
- * - Clinic data
+ * - Center data
  * 
  * For Production: Consider Redis/Memcached for distributed caching
  */
@@ -191,8 +191,8 @@ export const analysisCache = new LRUCache<any>(500, 300);
 // User cache (600 seconds = 10 minutes)
 export const userCache = new LRUCache<any>(200, 600);
 
-// Clinic cache (3600 seconds = 1 hour)
-export const clinicCache = new LRUCache<any>(50, 3600);
+// Center cache (3600 seconds = 1 hour)
+export const centerCache = new LRUCache<any>(50, 3600);
 
 // General cache
 export const generalCache = new LRUCache<any>(1000, 300);
@@ -207,21 +207,21 @@ export const generalCache = new LRUCache<any>(1000, 300);
 export const CacheKeys = {
   analysis: (id: string) => `analysis:${id}`,
   analysisHistory: (userId: string) => `analysis:history:${userId}`,
-  clinicAnalyses: (clinicId: string, page: number = 1) => 
-    `analysis:clinic:${clinicId}:page:${page}`,
+  centerAnalyses: (centerId: string, page: number = 1) => 
+    `analysis:center:${centerId}:page:${page}`,
   salesAnalyses: (salesId: string, page: number = 1) => 
     `analysis:sales:${salesId}:page:${page}`,
   
   user: (id: string) => `user:${id}`,
-  userWithClinic: (id: string) => `user:clinic:${id}`,
+  userWithCenter: (id: string) => `user:center:${id}`,
   
-  clinic: (id: string) => `clinic:${id}`,
-  clinicStats: (id: string) => `clinic:stats:${id}`,
-  clinicStaff: (id: string) => `clinic:staff:${id}`,
+  center: (id: string) => `center:${id}`,
+  centerStats: (id: string) => `center:stats:${id}`,
+  centerStaff: (id: string) => `center:staff:${id}`,
   
   lead: (id: string) => `lead:${id}`,
-  clinicLeads: (clinicId: string, status?: string) => 
-    `lead:clinic:${clinicId}:${status || 'all'}`,
+  centerLeads: (centerId: string, status?: string) => 
+    `lead:center:${centerId}:${status || 'all'}`,
   salesLeads: (salesId: string, status?: string) => 
     `lead:sales:${salesId}:${status || 'all'}`,
 };
@@ -229,33 +229,33 @@ export const CacheKeys = {
 /**
  * Invalidate related cache keys
  */
-export function invalidateAnalysisCache(analysisId: string, userId?: string, clinicId?: string) {
+export function invalidateAnalysisCache(analysisId: string, userId?: string, centerId?: string) {
   analysisCache.delete(CacheKeys.analysis(analysisId));
   
   if (userId) {
     analysisCache.delete(CacheKeys.analysisHistory(userId));
   }
   
-  if (clinicId) {
-    // Invalidate all pages (simple approach: clear all clinic analyses)
+  if (centerId) {
+    // Invalidate all pages (simple approach: clear all center analyses)
     for (let i = 1; i <= 10; i++) {
-      analysisCache.delete(CacheKeys.clinicAnalyses(clinicId, i));
+      analysisCache.delete(CacheKeys.centerAnalyses(centerId, i));
     }
   }
 }
 
 export function invalidateUserCache(userId: string) {
   userCache.delete(CacheKeys.user(userId));
-  userCache.delete(CacheKeys.userWithClinic(userId));
+  userCache.delete(CacheKeys.userWithCenter(userId));
 }
 
-export function invalidateClinicCache(clinicId: string) {
-  clinicCache.delete(CacheKeys.clinic(clinicId));
-  clinicCache.delete(CacheKeys.clinicStats(clinicId));
-  clinicCache.delete(CacheKeys.clinicStaff(clinicId));
+export function invalidateCenterCache(centerId: string) {
+  centerCache.delete(CacheKeys.center(centerId));
+  centerCache.delete(CacheKeys.centerStats(centerId));
+  centerCache.delete(CacheKeys.centerStaff(centerId));
 }
 
-export function invalidateLeadCache(leadId: string, salesId?: string, clinicId?: string) {
+export function invalidateLeadCache(leadId: string, salesId?: string, centerId?: string) {
   generalCache.delete(CacheKeys.lead(leadId));
   
   if (salesId) {
@@ -264,8 +264,8 @@ export function invalidateLeadCache(leadId: string, salesId?: string, clinicId?:
     generalCache.delete(CacheKeys.salesLeads(salesId, 'warm'));
   }
   
-  if (clinicId) {
-    generalCache.delete(CacheKeys.clinicLeads(clinicId));
+  if (centerId) {
+    generalCache.delete(CacheKeys.centerLeads(centerId));
   }
 }
 
@@ -279,11 +279,11 @@ if (typeof window === 'undefined') {
     const removed = {
       analysis: analysisCache.cleanup(),
       user: userCache.cleanup(),
-      clinic: clinicCache.cleanup(),
+      center: centerCache.cleanup(),
       general: generalCache.cleanup(),
     };
     
-    const total = removed.analysis + removed.user + removed.clinic + removed.general;
+    const total = removed.analysis + removed.user + removed.center + removed.general;
     
     if (total > 0) {
       console.log('[Cache] Cleaned up expired entries:', removed);
@@ -294,11 +294,11 @@ if (typeof window === 'undefined') {
 export default {
   analysisCache,
   userCache,
-  clinicCache,
+  centerCache,
   generalCache,
   CacheKeys,
   invalidateAnalysisCache,
   invalidateUserCache,
-  invalidateClinicCache,
+  invalidateCenterCache,
   invalidateLeadCache,
 };

@@ -64,7 +64,7 @@ export default function Phase1ValidationPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Comparison with VISIA Clinical Device</CardTitle>
+          <CardTitle>Comparison with VISIA Centeral Device</CardTitle>
           <CardDescription>How our Phase 1 stacks up against the industry standard</CardDescription>
         </CardHeader>
         <CardContent>

@@ -23,7 +23,7 @@ function parseBody(body: any): ParsedRequest | { error: NextResponse } {
   const email = body?.email
   const role = body?.role
   const full_name = body?.full_name
-  const center_id = (body?.center_id || body?.tenantId || body?.clinic_id) as string | undefined
+  const center_id = (body?.center_id || body?.tenantId || body?.center_id) as string | undefined
 
   if (!email || !role || !full_name) {
     return {

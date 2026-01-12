@@ -1,6 +1,6 @@
 /**
- * Multi-Tenant Types for Multi-Clinic System
- * Supports: 4 clinics × 30 sales = 120+ concurrent users
+ * Multi-Tenant Types for Multi-Center System
+ * Supports: 4 centers × 30 sales = 120+ concurrent users
  */
 
 // ============================================================================
@@ -62,7 +62,7 @@ export interface Center {
 }
 
 // ============================================================================
-// Enhanced User Types (with Clinic)
+// Enhanced User Types (with Center)
 // ============================================================================
 
 // Canonical UserRole: legacy variants removed (free_user, premium_customer) in favor of normalized forms.
@@ -229,7 +229,7 @@ export interface LeadUpdateInput {
 }
 
 // ============================================================================
-// Enhanced Analysis Types (with Clinic)
+// Enhanced Analysis Types (with Center)
 // ============================================================================
 
 export interface MultiTenantSkinAnalysis {

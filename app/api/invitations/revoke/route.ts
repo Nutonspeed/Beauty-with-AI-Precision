@@ -20,10 +20,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Get user's role and clinic
+    // Get user's role and center
     const { data: userData, error: userError } = await supabase
       .from('users')
-      .select('role, clinic_id')
+      .select('role, center_id')
       .eq('id', user.id)
       .single()
 
@@ -62,9 +62,9 @@ export async function POST(request: NextRequest) {
     // Permission check
     const isSuperAdmin = userData.role === 'super_admin'
     const isInviter = invitation.invited_by === user.id
-    const isSameClinic = userData.clinic_id === invitation.clinic_id
+    const isSameCenter = userData.center_id === invitation.center_id
 
-    if (!isSuperAdmin && !isInviter && !isSameClinic) {
+    if (!isSuperAdmin && !isInviter && !isSameCenter) {
       return NextResponse.json(
         { error: 'Permission denied' },
         { status: 403 }

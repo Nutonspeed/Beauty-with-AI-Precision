@@ -438,7 +438,7 @@ export async function calculateBenchmark(
   const percentile = await calculatePercentile(customerId, customerAgeGroup);
 
   return {
-    customerScores,
+    clientScores: customerScores,
     groupAverages,
     percentile,
     betterThan: percentile,

@@ -76,7 +76,7 @@ export default function InventoryPage() {
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Inventory Management</h1>
-          <p className="text-muted-foreground">Track and manage clinic supplies</p>
+          <p className="text-muted-foreground">Track and manage center supplies</p>
         </div>
         <Button onClick={() => setShowAddDialog(true)}>
           <Plus className="mr-2 h-4 w-4" />

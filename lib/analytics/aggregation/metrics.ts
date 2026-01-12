@@ -28,7 +28,7 @@ export interface Metric {
   value: number
   labels?: Record<string, string>
   timestamp: number
-  clinicId?: string
+  centerId?: string
   userId?: string
 }
 
@@ -89,7 +89,7 @@ export class MetricsAggregator {
     name: string, 
     value: number = 1, 
     labels?: Record<string, string>,
-    clinicId?: string,
+    centerId?: string,
     userId?: string
   ): void {
     this.recordMetric({
@@ -99,7 +99,7 @@ export class MetricsAggregator {
       value,
       labels,
       timestamp: Date.now(),
-      clinicId,
+      centerId,
       userId
     })
   }
@@ -109,7 +109,7 @@ export class MetricsAggregator {
     name: string,
     value: number,
     labels?: Record<string, string>,
-    clinicId?: string,
+    centerId?: string,
     userId?: string
   ): void {
     this.recordMetric({
@@ -119,7 +119,7 @@ export class MetricsAggregator {
       value,
       labels,
       timestamp: Date.now(),
-      clinicId,
+      centerId,
       userId
     })
   }
@@ -129,7 +129,7 @@ export class MetricsAggregator {
     name: string,
     duration: number,
     labels?: Record<string, string>,
-    clinicId?: string,
+    centerId?: string,
     userId?: string
   ): void {
     this.recordMetric({
@@ -139,7 +139,7 @@ export class MetricsAggregator {
       value: duration,
       labels,
       timestamp: Date.now(),
-      clinicId,
+      centerId,
       userId
     })
   }
@@ -149,7 +149,7 @@ export class MetricsAggregator {
     name: string,
     value: number,
     labels?: Record<string, string>,
-    clinicId?: string,
+    centerId?: string,
     userId?: string
   ): void {
     this.recordMetric({
@@ -159,7 +159,7 @@ export class MetricsAggregator {
       value,
       labels,
       timestamp: Date.now(),
-      clinicId,
+      centerId,
       userId
     })
   }
@@ -168,9 +168,9 @@ export class MetricsAggregator {
   getAggregatedMetrics(
     name: string,
     timeWindow: string = '5m',
-    clinicId?: string
+    centerId?: string
   ): AggregatedMetric | null {
-    const key = this.getMetricKey({ name, clinicId } as any)
+    const key = this.getMetricKey({ name, centerId } as any)
     const metrics = this.metrics.get(key) || []
     
     const cutoffTime = this.getCutoffTime(timeWindow)
@@ -202,12 +202,12 @@ export class MetricsAggregator {
   getMultipleMetrics(
     names: string[],
     timeWindow?: string,
-    clinicId?: string
+    centerId?: string
   ): Map<string, AggregatedMetric> {
     const results = new Map<string, AggregatedMetric>()
     
     names.forEach(name => {
-      const metric = this.getAggregatedMetrics(name, timeWindow, clinicId)
+      const metric = this.getAggregatedMetrics(name, timeWindow, centerId)
       if (metric) {
         results.set(name, metric)
       }
@@ -307,8 +307,8 @@ export class MetricsAggregator {
   private getMetricKey(metric: Partial<Metric>): string {
     const parts = [metric.name]
     
-    if (metric.clinicId) {
-      parts.push(`clinic:${metric.clinicId}`)
+    if (metric.centerId) {
+      parts.push(`center:${metric.centerId}`)
     }
     
     if (metric.userId) {
@@ -445,29 +445,29 @@ export class BusinessMetrics {
   private static aggregator = MetricsAggregator.getInstance()
 
   // Track user registration
-  static trackUserRegistration(clinicId: string): void {
-    this.aggregator.incrementCounter('user_registrations', 1, { event: 'registration' }, clinicId)
+  static trackUserRegistration(centerId: string): void {
+    this.aggregator.incrementCounter('user_registrations', 1, { event: 'registration' }, centerId)
   }
 
   // Track skin analysis
-  static trackSkinAnalysis(clinicId: string, userId: string, confidence: number): void {
-    this.aggregator.incrementCounter('skin_analyses', 1, { event: 'analysis' }, clinicId, userId)
-    this.aggregator.recordHistogram('analysis_confidence', confidence, undefined, clinicId, userId)
+  static trackSkinAnalysis(centerId: string, userId: string, confidence: number): void {
+    this.aggregator.incrementCounter('skin_analyses', 1, { event: 'analysis' }, centerId, userId)
+    this.aggregator.recordHistogram('analysis_confidence', confidence, undefined, centerId, userId)
   }
 
-  // Track treatment booking
-  static trackTreatmentBooking(clinicId: string, userId: string, treatmentType: string): void {
-    this.aggregator.incrementCounter('treatment_bookings', 1, { treatment_type: treatmentType }, clinicId, userId)
+  // Track program booking
+  static trackProgramBooking(centerId: string, userId: string, programType: string): void {
+    this.aggregator.incrementCounter('program_bookings', 1, { program_type: programType }, centerId, userId)
   }
 
   // Track revenue
-  static trackRevenue(clinicId: string, amount: number, currency: string = 'THB'): void {
-    this.aggregator.incrementCounter('revenue', amount, { currency }, clinicId)
+  static trackRevenue(centerId: string, amount: number, currency: string = 'THB'): void {
+    this.aggregator.incrementCounter('revenue', amount, { currency }, centerId)
   }
 
   // Track lead conversion
-  static trackLeadConversion(clinicId: string, userId: string): void {
-    this.aggregator.incrementCounter('lead_conversions', 1, { event: 'conversion' }, clinicId, userId)
+  static trackLeadConversion(centerId: string, userId: string): void {
+    this.aggregator.incrementCounter('lead_conversions', 1, { event: 'conversion' }, centerId, userId)
   }
 
   // Track API usage

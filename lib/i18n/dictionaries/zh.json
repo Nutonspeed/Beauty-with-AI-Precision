@@ -20,7 +20,7 @@
   },
   "booking": {
     "title": "预约",
-    "selectTreatment": "选择治疗",
+    "selectProgram": "选择治疗",
     "selectDate": "选择日期",
     "selectTime": "选择时间",
     "confirm": "确认预约"

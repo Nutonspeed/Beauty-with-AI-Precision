@@ -1,5 +1,5 @@
 /**
- * AR Treatment Simulation API
+ * AR Program Simulation API
  * จำลองการรักษาด้วย AR แบบ real-time
  */
 
@@ -40,7 +40,7 @@ interface PerformanceMetrics {
 }
 
 interface SimulationData {
-  treatmentType: string
+  programType: string
   intensity: string
   duration: number
   targetAreas: string[]
@@ -68,7 +68,7 @@ interface EngagementContent {
   nextSteps: string[]
 }
 
-// POST /api/beauty-ar-treatment/simulate - Simulate AR treatment
+// POST /api/beauty-ar-program/simulate - Simulate AR program
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient()
@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json()
     const {
-      treatmentType,
+      programType,
       intensity,
       duration,
       targetAreas,
@@ -88,15 +88,15 @@ export async function POST(request: NextRequest) {
       deviceCapabilities
     } = body
 
-    if (!treatmentType || !targetAreas) {
+    if (!programType || !targetAreas) {
       return NextResponse.json({
-        error: 'Missing required fields: treatmentType, targetAreas'
+        error: 'Missing required fields: programType, targetAreas'
       }, { status: 400 })
     }
 
     // Generate AR simulation data
     const simulationData = await generateARSimulation(
-      treatmentType,
+      programType,
       intensity || 'medium',
       duration || 30,
       targetAreas,
@@ -113,7 +113,7 @@ export async function POST(request: NextRequest) {
     // Generate customer engagement content
     const engagementContent = await generateEngagementContent(
       simulationData,
-      treatmentType,
+      programType,
       userPreferences
     )
 
@@ -122,7 +122,7 @@ export async function POST(request: NextRequest) {
       simulationData,
       realTimeFeedback,
       engagementContent,
-      treatmentType,
+      programType,
       timestamp: new Date().toISOString(),
       sessionId: `sim_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`
     }
@@ -130,9 +130,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(response)
 
   } catch (error) {
-    console.error('AR Treatment Simulation API error:', error)
+    console.error('AR Program Simulation API error:', error)
     return NextResponse.json({
-      error: 'Failed to generate AR treatment simulation',
+      error: 'Failed to generate AR program simulation',
       details: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 })
   }
@@ -140,7 +140,7 @@ export async function POST(request: NextRequest) {
 
 // Generate AR simulation data
 async function generateARSimulation(
-  treatmentType: string,
+  programType: string,
   intensity: string,
   duration: number,
   targetAreas: string[],
@@ -148,7 +148,7 @@ async function generateARSimulation(
   deviceCapabilities?: any
 ): Promise<SimulationData> {
   const simulation: SimulationData = {
-    treatmentType,
+    programType,
     intensity,
     duration,
     targetAreas,
@@ -164,8 +164,8 @@ async function generateARSimulation(
     }
   }
 
-  // Generate treatment-specific AR layers
-  switch (treatmentType) {
+  // Generate program-specific AR layers
+  switch (programType) {
     case 'skin-brightening':
       simulation.arLayers = [
         {
@@ -214,7 +214,7 @@ async function generateARSimulation(
       ]
       break
 
-    case 'acne-treatment':
+    case 'acne-program':
       simulation.arLayers = [
         {
           id: 'inflammation-reduction',
@@ -243,7 +243,7 @@ async function generateARSimulation(
   simulation.animationSequence = [
     { phase: 'initial-scan', duration: 2000, effect: 'camera-adjustment' },
     { phase: 'analysis', duration: 3000, effect: 'processing-indicators' },
-    { phase: 'treatment-application', duration: duration * 1000, effect: 'layered-effects' },
+    { phase: 'program-application', duration: duration * 1000, effect: 'layered-effects' },
     { phase: 'results-preview', duration: 2000, effect: 'final-comparison' }
   ]
 
@@ -251,16 +251,16 @@ async function generateARSimulation(
   simulation.audioFeedback = [
     { trigger: 'scan-start', message: 'เริ่มการสแกนผิว', language: 'th' },
     { trigger: 'analysis-complete', message: 'วิเคราะห์เสร็จสิ้น', language: 'th' },
-    { trigger: 'treatment-progress', message: 'กำลังดำเนินการรักษา', language: 'th' },
-    { trigger: 'treatment-complete', message: 'การรักษาเสร็จสิ้น', language: 'th' }
+    { trigger: 'program-progress', message: 'กำลังดำเนินการรักษา', language: 'th' },
+    { trigger: 'program-complete', message: 'การรักษาเสร็จสิ้น', language: 'th' }
   ]
 
   // Generate haptic feedback
   simulation.hapticFeedback = [
     { trigger: 'scan-complete', pattern: 'light-tap' },
-    { trigger: 'treatment-start', pattern: 'medium-pulse' },
-    { trigger: 'treatment-progress', pattern: 'gentle-wave', interval: 5000 },
-    { trigger: 'treatment-complete', pattern: 'success-vibration' }
+    { trigger: 'program-start', pattern: 'medium-pulse' },
+    { trigger: 'program-progress', pattern: 'gentle-wave', interval: 5000 },
+    { trigger: 'program-complete', pattern: 'success-vibration' }
   ]
 
   // Adjust for device capabilities
@@ -316,8 +316,8 @@ async function calculateRealTimeFeedback(simulationData: SimulationData, deviceC
     'ทำตามคำแนะนำบนหน้าจอ'
   ]
 
-  // Safety alerts based on treatment
-  switch (simulationData.treatmentType) {
+  // Safety alerts based on program
+  switch (simulationData.programType) {
     case 'skin-brightening':
       feedback.safetyAlerts = [
         'หลีกเลี่ยงการใช้พร้อมกันกับผลิตภัณฑ์ที่มีกรดสูง',
@@ -339,7 +339,7 @@ async function calculateRealTimeFeedback(simulationData: SimulationData, deviceC
   feedback.progressTracking = [
     { phase: 'preparation', percentage: 0, estimatedTime: 2000 },
     { phase: 'analysis', percentage: 20, estimatedTime: 3000 },
-    { phase: 'treatment', percentage: 80, estimatedTime: totalDuration },
+    { phase: 'program', percentage: 80, estimatedTime: totalDuration },
     { phase: 'completion', percentage: 100, estimatedTime: 2000 }
   ]
 
@@ -352,7 +352,7 @@ async function calculateRealTimeFeedback(simulationData: SimulationData, deviceC
       factors: ['lighting', 'focus', 'stability']
     },
     {
-      metric: 'treatment_accuracy',
+      metric: 'program_accuracy',
       score: 92,
       status: 'excellent',
       factors: ['face_tracking', 'skin_analysis', 'ar_alignment']
@@ -363,7 +363,7 @@ async function calculateRealTimeFeedback(simulationData: SimulationData, deviceC
 }
 
 // Generate customer engagement content
-async function generateEngagementContent(simulationData: SimulationData, treatmentType: string, userPreferences?: any): Promise<EngagementContent> {
+async function generateEngagementContent(simulationData: SimulationData, programType: string, userPreferences?: any): Promise<EngagementContent> {
   const engagement: EngagementContent = {
     personalizedMessages: [],
     motivationContent: [],
@@ -374,7 +374,7 @@ async function generateEngagementContent(simulationData: SimulationData, treatme
 
   // Personalized messages
   engagement.personalizedMessages = [
-    `ยอดเยี่ยม! การรักษา ${treatmentType} จะช่วยให้ผิวของคุณดูดีขึ้น ${simulationData.intensity === 'high' ? 'อย่างเห็นได้ชัด' : 'อย่างเป็นธรรมชาติ'}`,
+    `ยอดเยี่ยม! การรักษา ${programType} จะช่วยให้ผิวของคุณดูดีขึ้น ${simulationData.intensity === 'high' ? 'อย่างเห็นได้ชัด' : 'อย่างเป็นธรรมชาติ'}`,
     'ผลลัพธ์ที่เห็นเป็นการจำลอง - การรักษาจริงจะให้ผลลัพธ์ที่ดีกว่า',
     'พร้อมที่จะเริ่มการรักษาจริงหรือยัง? เราสามารถนัดหมายได้ทันที'
   ]
@@ -391,8 +391,8 @@ async function generateEngagementContent(simulationData: SimulationData, treatme
   engagement.educationalContent = [
     {
       title: 'ทำความเข้าใจการรักษา',
-      content: `การรักษา ${treatmentType} ทำงานโดย...`,
-      type: 'treatment_mechanism'
+      content: `การรักษา ${programType} ทำงานโดย...`,
+      type: 'program_mechanism'
     },
     {
       title: 'การดูแลหลังรักษา',

@@ -12,7 +12,7 @@ import {
   Milestone,
 } from '@/lib/progress/progress-tracker';
 import { PDFReportGenerator, PDFReportOptions } from '@/lib/progress/pdf-generator';
-import { treatmentHistoryManager } from '@/lib/supabase/treatment-history';
+import { programHistoryManager } from '@/lib/supabase/program-history';
 import { EnhancedMetricsResult } from '@/lib/ai/enhanced-skin-metrics';
 
 export interface UseProgressTrackingState {
@@ -62,7 +62,7 @@ export function useProgressTracking(): UseProgressTrackingResult {
 
     try {
       // Get analysis history from database
-      const history = await treatmentHistoryManager.getAnalysisHistory();
+      const history = await programHistoryManager.getAnalysisHistory();
 
       // Convert to ProgressDataPoint format
       const dataPoints: ProgressDataPoint[] = history.map((item, index) => ({
@@ -71,7 +71,7 @@ export function useProgressTracking(): UseProgressTrackingResult {
         metrics: item.metrics,
         photoUrl: item.photoUrl,
         notes: undefined,
-        treatmentsReceived: [],
+        programsReceived: [],
       }));
 
       // Create new tracker with data
@@ -112,7 +112,7 @@ export function useProgressTracking(): UseProgressTrackingResult {
 
     try {
       // Save to database
-      await treatmentHistoryManager.saveAnalysis(metrics, photoUrl, notes);
+      await programHistoryManager.saveAnalysis(metrics, photoUrl, notes);
 
       // Create new data point
       const dataPoint: ProgressDataPoint = {
@@ -121,7 +121,7 @@ export function useProgressTracking(): UseProgressTrackingResult {
         metrics,
         photoUrl,
         notes,
-        treatmentsReceived: [],
+        programsReceived: [],
       };
 
       // Add to tracker

@@ -55,7 +55,7 @@ export async function GET(request: NextRequest) {
     const service = createServiceClient()
     const { data: userRow, error: userErr } = await service
       .from('users')
-      .select('role, clinic_id')
+      .select('role, center_id')
       .eq('id', user.id)
       .single()
     if (userErr || !userRow || !canAccessSales(userRow.role)) {
@@ -67,11 +67,11 @@ export async function GET(request: NextRequest) {
 
     const { data: profile } = await supabase
       .from("users")
-      .select("clinic_id")
+      .select("center_id")
       .eq("id", user.id)
       .maybeSingle()
 
-    const clinicId = profile?.clinic_id ?? null
+    const centerId = profile?.center_id ?? null
 
     const serviceClient = createServiceClient()
     const cutoff = getRangeCutoff(range)
@@ -79,12 +79,12 @@ export async function GET(request: NextRequest) {
 
     let leadsQuery = serviceClient
       .from("sales_leads")
-      .select("status, estimated_value, clinic_id")
+      .select("status, estimated_value, center_id")
       .gte("created_at", cutoff)
       .lte("created_at", nowIso)
 
-    if (clinicId) {
-      leadsQuery = leadsQuery.eq("clinic_id", clinicId)
+    if (centerId) {
+      leadsQuery = leadsQuery.eq("center_id", centerId)
     }
 
     const { data: leadsData, error: leadsError } = await leadsQuery
@@ -113,12 +113,12 @@ export async function GET(request: NextRequest) {
 
     let proposalsQuery = serviceClient
       .from("sales_proposals")
-      .select("status, total_value, clinic_id")
+      .select("status, total_value, center_id")
       .gte("created_at", cutoff)
       .lte("created_at", nowIso)
 
-    if (clinicId) {
-      proposalsQuery = proposalsQuery.eq("clinic_id", clinicId)
+    if (centerId) {
+      proposalsQuery = proposalsQuery.eq("center_id", centerId)
     }
 
     const { data: proposalsData, error: proposalsError } = await proposalsQuery

@@ -7,7 +7,7 @@
 
 import { redirect } from 'next/navigation';
 import { createServerClient } from '@/lib/supabase/server';
-import CustomerDashboard from '@/components/analytics/customer-dashboard';
+import ClientDashboard from '@/components/analytics/client-dashboard';
 import { Metadata } from 'next';
 
 // =============================================
@@ -57,8 +57,8 @@ export default async function AnalyticsPage() {
         </div>
       )}
 
-      {/* Customer Dashboard */}
-      <CustomerDashboard customerId={user.id} defaultPeriod="3m" />
+      {/* Client Dashboard */}
+      <ClientDashboard clientId={user.id} defaultPeriod="3m" />
 
       {/* Admin notice */}
       {isAdmin && (

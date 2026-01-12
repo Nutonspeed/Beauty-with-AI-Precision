@@ -12,8 +12,8 @@ export interface TimeSlot {
   duration: number; // minutes
   status: 'available' | 'booked' | 'blocked' | 'tentative';
   providerId: string;
-  patientId?: string;
-  patientName?: string;
+  clientId?: string;
+  clientName?: string;
   serviceType?: string;
   notes?: string;
   bookedAt?: number;
@@ -36,8 +36,8 @@ export interface DaySchedule {
 
 export interface BookingRequest {
   slotId: string;
-  patientId: string;
-  patientName: string;
+  clientId: string;
+  clientName: string;
   serviceType: string;
   notes?: string;
 }
@@ -235,12 +235,12 @@ export class AvailabilityManager {
     const bookedSlot: TimeSlot = {
       ...slot,
       status: 'booked',
-      patientId: request.patientId,
-      patientName: request.patientName,
+      clientId: request.clientId,
+      clientName: request.clientName,
       serviceType: request.serviceType,
       notes: request.notes,
       bookedAt: Date.now(),
-      bookedBy: request.patientId
+      bookedBy: request.clientId
     };
 
     this.updateSlot(bookedSlot);
@@ -266,7 +266,7 @@ export class AvailabilityManager {
    */
   public createTentativeBooking(
     slotId: string,
-    patientId: string
+    clientId: string
   ): TimeSlot | null {
     const slot = this.findSlotById(slotId);
     if (!slot || slot.status !== 'available') {
@@ -276,7 +276,7 @@ export class AvailabilityManager {
     const tentativeSlot: TimeSlot = {
       ...slot,
       status: 'tentative',
-      patientId,
+      clientId,
       bookedAt: Date.now()
     };
 
@@ -285,7 +285,7 @@ export class AvailabilityManager {
     // Auto-release after timeout
     setTimeout(() => {
       const currentSlot = this.findSlotById(slotId);
-      if (currentSlot?.status === 'tentative' && currentSlot.patientId === patientId) {
+      if (currentSlot?.status === 'tentative' && currentSlot.clientId === clientId) {
         this.releaseSlot(slotId);
       }
     }, this.BOOKING_TIMEOUT_MS);
@@ -311,8 +311,8 @@ export class AvailabilityManager {
     const cancelledSlot: TimeSlot = {
       ...slot,
       status: 'available',
-      patientId: undefined,
-      patientName: undefined,
+      clientId: undefined,
+      clientName: undefined,
       serviceType: undefined,
       notes: undefined,
       bookedAt: undefined,

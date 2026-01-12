@@ -1,12 +1,12 @@
 /**
- * Treatment Recommendations API
- * Generate AI-powered treatment recommendations based on skin analysis
+ * Program Recommendations API
+ * Generate AI-powered program recommendations based on skin analysis
  */
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { generateTreatmentRecommendations } from '@/lib/ai/treatment-recommendation-engine'
-import type { RecommendationCriteria } from '@/types/treatment'
+import { generateProgramRecommendations } from '@/lib/ai/program-recommendation-engine'
+import type { RecommendationCriteria } from '@/types/program'
 import { withPublicAccess } from '@/lib/auth/middleware'
 
 export const POST = withPublicAccess(async (request: NextRequest) => {
@@ -45,7 +45,7 @@ export const POST = withPublicAccess(async (request: NextRequest) => {
       return NextResponse.json({
         success: true,
         data: {
-          recommended_treatments: [],
+          recommended_programs: [],
           recommended_products: [],
           suggested_routine: [],
           summary: 'test-mode',
@@ -105,15 +105,15 @@ export const POST = withPublicAccess(async (request: NextRequest) => {
     }
 
     // Generate recommendations
-    const recommendations = await generateTreatmentRecommendations(
+    const recommendations = await generateProgramRecommendations(
       analysis.results,
       recommendationCriteria
     )
 
     // Save recommendations to database
-    const recommendationsToInsert = recommendations.recommended_treatments.map(rec => ({
+    const recommendationsToInsert = recommendations.recommended_programs.map(rec => ({
       analysis_id,
-      treatment_id: rec.treatment_id,
+      program_id: rec.program_id,
       priority: rec.priority,
       confidence_score: rec.confidence_score,
       estimated_cost_min: rec.estimated_cost_min,
@@ -128,7 +128,7 @@ export const POST = withPublicAccess(async (request: NextRequest) => {
 
     // Check if table exists before inserting
     const { error: insertError } = await supabase
-      .from('treatment_recommendations')
+      .from('program_recommendations')
       .insert(recommendationsToInsert)
 
     if (insertError) {
@@ -145,7 +145,7 @@ export const POST = withPublicAccess(async (request: NextRequest) => {
     })
 
   } catch (error) {
-    console.error('Error generating treatment recommendations:', error)
+    console.error('Error generating program recommendations:', error)
     return NextResponse.json(
       { 
         error: 'Failed to generate recommendations',
@@ -180,12 +180,12 @@ export const GET = withPublicAccess(async (request: NextRequest) => {
       )
     }
 
-    // Fetch recommendations with treatment details
+    // Fetch recommendations with program details
     const { data: recommendations, error } = await supabase
-      .from('treatment_recommendations')
+      .from('program_recommendations')
       .select(`
         *,
-        treatment:treatments(*)
+        program:programs(*)
       `)
       .eq('analysis_id', analysis_id)
       .order('priority', { ascending: true })

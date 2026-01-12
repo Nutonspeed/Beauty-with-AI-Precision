@@ -20,10 +20,10 @@ async function handler() {
     // Drop problematic policies that cause infinite recursion
     const dropPolicies = [
       'DROP POLICY IF EXISTS "Super admins can view all users" ON users',
-      'DROP POLICY IF EXISTS "Clinic owners can view their tenant" ON tenants',
-      'DROP POLICY IF EXISTS "Clinic staff can view their clinic users" ON users',
+      'DROP POLICY IF EXISTS "Center owners can view their tenant" ON tenants',
+      'DROP POLICY IF EXISTS "Center staff can view their center users" ON users',
       'DROP POLICY IF EXISTS "Users can view their own profile" ON users',
-      'DROP POLICY IF EXISTS "Clinic staff can view clinic tenants" ON tenants'
+      'DROP POLICY IF EXISTS "Center staff can view center tenants" ON tenants'
     ]
 
     // Execute drop policies
@@ -40,17 +40,17 @@ async function handler() {
       `CREATE POLICY "Super admins can view all users" ON users
        FOR ALL USING (role = 'super_admin')`,
 
-      `CREATE POLICY "Clinic owners can view their clinic users" ON users
+      `CREATE POLICY "Center owners can view their center users" ON users
        FOR ALL USING (
-         role = 'clinic_owner' AND clinic_id IN (
-           SELECT clinic_id FROM clinic_staff WHERE user_id = auth.uid()
+         role = 'center_owner' AND center_id IN (
+           SELECT center_id FROM center_staff WHERE user_id = auth.uid()
          )
        )`,
 
-      `CREATE POLICY "Clinic staff can view their clinic users" ON users
+      `CREATE POLICY "Center staff can view their center users" ON users
        FOR ALL USING (
-         role IN ('clinic_staff', 'doctor', 'therapist') AND clinic_id IN (
-           SELECT clinic_id FROM clinic_staff WHERE user_id = auth.uid()
+         role IN ('center_staff', 'doctor', 'therapist') AND center_id IN (
+           SELECT center_id FROM center_staff WHERE user_id = auth.uid()
          )
        )`,
 
@@ -58,17 +58,17 @@ async function handler() {
        FOR ALL USING (auth.uid() = id)`,
 
       // Tenants table policies
-      `CREATE POLICY "Clinic owners can view their tenant" ON tenants
+      `CREATE POLICY "Center owners can view their tenant" ON tenants
        FOR ALL USING (
-         clinic_id IN (
-           SELECT clinic_id FROM clinic_staff WHERE user_id = auth.uid() AND role = 'clinic_owner'
+         center_id IN (
+           SELECT center_id FROM center_staff WHERE user_id = auth.uid() AND role = 'center_owner'
          )
        )`,
 
-      `CREATE POLICY "Clinic staff can view clinic tenants" ON tenants
+      `CREATE POLICY "Center staff can view center tenants" ON tenants
        FOR ALL USING (
-         clinic_id IN (
-           SELECT clinic_id FROM clinic_staff WHERE user_id = auth.uid()
+         center_id IN (
+           SELECT center_id FROM center_staff WHERE user_id = auth.uid()
          )
        )`
     ]

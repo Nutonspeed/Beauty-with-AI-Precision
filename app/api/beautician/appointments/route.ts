@@ -17,11 +17,11 @@ export async function GET(request: NextRequest) {
 
     const { data: profile } = await supabase
       .from('users')
-      .select('role, clinic_id')
+      .select('role, center_id')
       .eq('id', user.id)
       .single();
 
-    if (!profile || !['clinic_staff', 'clinic_owner', 'super_admin'].includes(profile.role)) {
+    if (!profile || !['center_staff', 'center_owner', 'super_admin'].includes(profile.role)) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
           phone
         )
       `)
-      .eq('clinic_id', profile.clinic_id)
+      .eq('center_id', profile.center_id)
       .order('start_time', { ascending: true });
 
     // Filter by date
@@ -75,8 +75,8 @@ export async function GET(request: NextRequest) {
       const user = Array.isArray(apt.users) ? apt.users[0] : apt.users;
       return {
         id: apt.id,
-        patientName: user?.full_name || 'Unknown',
-        treatment: 'Treatment', // TODO: Add treatment info
+        clientName: user?.full_name || 'Unknown',
+        program: 'Program', // TODO: Add program info
         time: apt.start_time?.substring(0, 5) || '00:00',
         status: apt.status as 'scheduled' | 'in-progress' | 'completed',
         customerNotes: apt.customer_notes,
@@ -117,11 +117,11 @@ export async function PATCH(request: NextRequest) {
 
     const { data: profile } = await supabase
       .from('users')
-      .select('role, clinic_id')
+      .select('role, center_id')
       .eq('id', user.id)
       .single();
 
-    if (!profile || !['clinic_staff', 'clinic_owner', 'super_admin'].includes(profile.role)) {
+    if (!profile || !['center_staff', 'center_owner', 'super_admin'].includes(profile.role)) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
@@ -144,7 +144,7 @@ export async function PATCH(request: NextRequest) {
         updated_at: new Date().toISOString(),
       })
       .eq('id', appointmentId)
-      .eq('clinic_id', profile.clinic_id)
+      .eq('center_id', profile.center_id)
       .select()
       .single();
 

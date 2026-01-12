@@ -23,6 +23,7 @@ export type UserRole =
   | 'customer_free'
   | 'customer_premium'
   | 'customer_aesthetic'
+  | 'customer_elite'
   | 'super_admin'
 
 // Analysis Tier - ไม่มีใน DB, คำนวณจาก role
@@ -249,14 +250,16 @@ export function hasFeatureAccess(role: UserRole, feature: string): boolean {
   return allowedTiers.includes(tier)
 }
 
-// Customer Info Type for skin_analyses.patient_info JSONB column
+// Customer Info Type for skin_analyses.client_info JSONB column
 export interface CustomerInfo {
   name: string;
   age?: number;
   gender?: 'male' | 'female' | 'other';
   skinType?: 'dry' | 'oily' | 'combination' | 'normal' | 'sensitive';
+  aestheticHistory?: string[];
   history?: string[];
   allergies?: string[];
+  currentMedications?: string[];
   currentProducts?: string[];
   notes?: string;
 }

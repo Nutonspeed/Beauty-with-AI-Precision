@@ -390,7 +390,7 @@ export class ProductRecommendationEngine {
       serum: '4-8 weeks',
       moisturizer: '1-2 weeks',
       sunscreen: 'immediate',
-      treatment: '4-12 weeks',
+      program: '4-12 weeks',
       mask: '1-4 weeks',
     };
 
@@ -482,7 +482,7 @@ export class ProductRecommendationEngine {
         serum: 60,
         moisturizer: 45,
         sunscreen: 45,
-        treatment: 60,
+        program: 60,
         mask: 60,
       };
       return defaultIntervals[product.category] || 45;

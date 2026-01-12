@@ -92,7 +92,7 @@ export function BookingForm({ onSubmit, availableSlots, onDateChange, isLoading 
     if (!slot) return;
 
     const input: BookingInput = {
-      customerId: 'CST' + Date.now(), // Reusing customerId field for now to avoid breaking lib/booking
+      clientId: 'CST' + Date.now(), // Reusing clientId field for now to avoid breaking lib/booking
       customerName: formData.customerName,
       customerEmail: formData.customerEmail,
       customerPhone: formData.customerPhone,

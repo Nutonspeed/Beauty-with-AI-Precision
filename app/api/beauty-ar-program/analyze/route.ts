@@ -1,13 +1,13 @@
 /**
- * Mobile Beauty AR/AI Treatment API
- * รวม AR/AI treatment เข้ากับระบบที่มีอยู่
+ * Mobile Beauty AR/AI Program API
+ * รวม AR/AI program เข้ากับระบบที่มีอยู่
  */
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { SkinTypeClassifier } from '@/lib/skin-type-classifier'
 
-// POST /api/beauty-ar-treatment/analyze - Analyze skin with AR/AI treatment
+// POST /api/beauty-ar-program/analyze - Analyze skin with AR/AI program
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient()
@@ -20,55 +20,55 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const {
       imageData,
-      treatmentType,
+      programType,
       userPreferences,
       location,
       deviceInfo
     } = body
 
-    if (!imageData || !treatmentType) {
+    if (!imageData || !programType) {
       return NextResponse.json({
-        error: 'Missing required fields: imageData, treatmentType'
+        error: 'Missing required fields: imageData, programType'
       }, { status: 400 })
     }
 
-    // Get clinic ID from user metadata
-    const clinicId = session.user.user_metadata?.clinic_id || 'default-clinic'
+    // Get center ID from user metadata
+    const centerId = session.user.user_metadata?.center_id || 'default-center'
 
     // Step 1: Enhanced skin analysis with Thai-specific adaptations
     const enhancedAnalysis = await performEnhancedSkinAnalysis(imageData, location, deviceInfo)
 
-    // Step 2: Generate AR treatment visualization
-    const arTreatment = await generateARTreatmentVisualization(
+    // Step 2: Generate AR program visualization
+    const arProgram = await generateARProgramVisualization(
       enhancedAnalysis,
-      treatmentType,
+      programType,
       userPreferences
     )
 
-    // Step 3: Calculate treatment recommendations
-    const recommendations = await calculateTreatmentRecommendations(
+    // Step 3: Calculate program recommendations
+    const recommendations = await calculateProgramRecommendations(
       enhancedAnalysis,
-      treatmentType,
+      programType,
       userPreferences
     )
 
     // Step 4: Generate sales enablement data
     const salesData = await generateSalesEnablementData(
       enhancedAnalysis,
-      arTreatment,
+      arProgram,
       recommendations
     )
 
     // Step 5: Store analysis results
     const analysisResult = {
       userId: session.user.id,
-      clinicId,
+      centerId,
       imageData: imageData.substring(0, 100) + '...', // Store truncated for privacy
       analysis: enhancedAnalysis,
-      arTreatment,
+      arProgram,
       recommendations,
       salesData,
-      treatmentType,
+      programType,
       location,
       deviceInfo,
       timestamp: new Date().toISOString(),
@@ -90,10 +90,10 @@ export async function POST(request: NextRequest) {
     const response = {
       success: true,
       analysis: enhancedAnalysis,
-      arTreatment,
+      arProgram,
       recommendations,
       salesData,
-      treatmentType,
+      programType,
       timestamp: new Date().toISOString(),
       sessionId: data?.[0]?.id || null
     }
@@ -101,9 +101,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(response)
 
   } catch (error) {
-    console.error('Beauty AR Treatment API error:', error)
+    console.error('Beauty AR Program API error:', error)
     return NextResponse.json({
-      error: 'Failed to process beauty AR treatment analysis',
+      error: 'Failed to process beauty AR program analysis',
       details: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 })
   }
@@ -235,14 +235,14 @@ function generateThaiBeautyInsights(classificationResult: any, characteristics: 
   return insights
 }
 
-// Generate AR treatment visualization
-async function generateARTreatmentVisualization(analysis: any, treatmentType: string, userPreferences?: any) {
+// Generate AR program visualization
+async function generateARProgramVisualization(analysis: any, programType: string, userPreferences?: any) {
   const arVisualization: {
-    treatmentType: string
+    programType: string
     visualizationData: {
       beforeImage: any
       afterImage: any
-      treatmentZones: string[]
+      programZones: string[]
       intensityLevels: Record<string, number>
       duration: number
       confidence: number
@@ -252,11 +252,11 @@ async function generateARTreatmentVisualization(analysis: any, treatmentType: st
     safetyWarnings: string[]
     expectedResults: string[]
   } = {
-    treatmentType,
+    programType,
     visualizationData: {
       beforeImage: null, // Would contain processed image data
       afterImage: null,  // Would contain simulated result
-      treatmentZones: [],
+      programZones: [],
       intensityLevels: {},
       duration: 0,
       confidence: analysis.confidence
@@ -267,10 +267,10 @@ async function generateARTreatmentVisualization(analysis: any, treatmentType: st
     expectedResults: []
   }
 
-  // Generate treatment-specific AR data
-  switch (treatmentType) {
+  // Generate program-specific AR data
+  switch (programType) {
     case 'skin-brightening':
-      arVisualization.visualizationData.treatmentZones = ['face', 'neck', 'décolletage']
+      arVisualization.visualizationData.programZones = ['face', 'neck', 'décolletage']
       arVisualization.visualizationData.intensityLevels = { low: 20, medium: 35, high: 50 }
       arVisualization.expectedResults = [
         '+15-25% skin brightness improvement',
@@ -280,7 +280,7 @@ async function generateARTreatmentVisualization(analysis: any, treatmentType: st
       break
 
     case 'wrinkle-reduction':
-      arVisualization.visualizationData.treatmentZones = ['forehead', 'eye-area', 'nasolabial-folds']
+      arVisualization.visualizationData.programZones = ['forehead', 'eye-area', 'nasolabial-folds']
       arVisualization.visualizationData.intensityLevels = { low: 15, medium: 25, high: 35 }
       arVisualization.expectedResults = [
         '20-35% reduction in wrinkle appearance',
@@ -289,8 +289,8 @@ async function generateARTreatmentVisualization(analysis: any, treatmentType: st
       ]
       break
 
-    case 'acne-treatment':
-      arVisualization.visualizationData.treatmentZones = ['t-zone', 'chin', 'cheeks']
+    case 'acne-program':
+      arVisualization.visualizationData.programZones = ['t-zone', 'chin', 'cheeks']
       arVisualization.visualizationData.intensityLevels = { low: 25, medium: 40, high: 60 }
       arVisualization.expectedResults = [
         '40-60% reduction in active acne',
@@ -300,7 +300,7 @@ async function generateARTreatmentVisualization(analysis: any, treatmentType: st
       break
 
     case 'skin-firming':
-      arVisualization.visualizationData.treatmentZones = ['face', 'neck', 'jawline']
+      arVisualization.visualizationData.programZones = ['face', 'neck', 'jawline']
       arVisualization.visualizationData.intensityLevels = { low: 20, medium: 35, high: 50 }
       arVisualization.expectedResults = [
         '15-30% improvement in skin elasticity',
@@ -315,7 +315,7 @@ async function generateARTreatmentVisualization(analysis: any, treatmentType: st
     'Position camera 30-50cm from face',
     'Ensure good lighting for accurate analysis',
     'Hold steady for 3-5 seconds during scan',
-    'Follow on-screen treatment zone guides',
+    'Follow on-screen program zone guides',
     'Review results and adjust preferences as needed'
   ]
 
@@ -323,7 +323,7 @@ async function generateARTreatmentVisualization(analysis: any, treatmentType: st
   if (analysis.classificationResult.skinType === 'sensitive') {
     arVisualization.safetyWarnings.push(
       'Recommended lower intensity for sensitive skin',
-      'Patch test recommended before full treatment',
+      'Patch test recommended before full program',
       'Monitor skin response closely'
     )
   }
@@ -331,19 +331,19 @@ async function generateARTreatmentVisualization(analysis: any, treatmentType: st
   return arVisualization
 }
 
-// Calculate treatment recommendations
-async function calculateTreatmentRecommendations(analysis: any, treatmentType: string, userPreferences?: any) {
+// Calculate program recommendations
+async function calculateProgramRecommendations(analysis: any, programType: string, userPreferences?: any) {
   const recommendations: {
-    primaryTreatments: string[]
+    primaryPrograms: string[]
     complementaryProducts: string[]
-    treatmentPlan: { duration: number; frequency: string; sessions: number }
+    programPlan: { duration: number; frequency: string; sessions: number }
     expectedOutcomes: string[]
     precautions: string[]
     thaiTraditionalAlternatives: string[]
   } = {
-    primaryTreatments: [],
+    primaryPrograms: [],
     complementaryProducts: [],
-    treatmentPlan: {
+    programPlan: {
       duration: 0,
       frequency: '',
       sessions: 0
@@ -353,12 +353,12 @@ async function calculateTreatmentRecommendations(analysis: any, treatmentType: s
     thaiTraditionalAlternatives: []
   }
 
-  // Generate recommendations based on treatment type and skin analysis
-  switch (treatmentType) {
+  // Generate recommendations based on program type and skin analysis
+  switch (programType) {
     case 'skin-brightening':
-      recommendations.primaryTreatments = [
+      recommendations.primaryPrograms = [
         'Vitamin C serum application',
-        'Chemical exfoliation treatment',
+        'Chemical exfoliation program',
         'LED light therapy sessions'
       ]
       recommendations.complementaryProducts = [
@@ -366,30 +366,30 @@ async function calculateTreatmentRecommendations(analysis: any, treatmentType: s
         'Brightening night cream',
         'Gentle exfoliating cleanser'
       ]
-      recommendations.treatmentPlan = {
+      recommendations.programPlan = {
         duration: 60,
         frequency: '2-3 times per week',
         sessions: 8
       }
       recommendations.thaiTraditionalAlternatives = [
         'ข้าวโพดมาส์กหน้า - Rice face mask',
-        'มะนาวผสมน้ำผึ้ง - Lemon honey treatment',
+        'มะนาวผสมน้ำผึ้ง - Lemon honey program',
         'นมสดบำรุงผิว - Fresh milk skin nourishment'
       ]
       break
 
     case 'wrinkle-reduction':
-      recommendations.primaryTreatments = [
+      recommendations.primaryPrograms = [
         'Retinol application',
         'Hyaluronic acid injections',
-        'Micro-needling treatment'
+        'Micro-needling program'
       ]
       recommendations.complementaryProducts = [
         'Anti-aging eye cream',
         'Collagen-boosting serum',
         'Hydrating moisturizer'
       ]
-      recommendations.treatmentPlan = {
+      recommendations.programPlan = {
         duration: 45,
         frequency: 'Every 2-4 weeks',
         sessions: 6
@@ -406,7 +406,7 @@ async function calculateTreatmentRecommendations(analysis: any, treatmentType: s
   if (analysis.classificationResult.skinType === 'sensitive') {
     recommendations.precautions.push(
       'Start with lowest intensity settings',
-      'Limit treatment frequency initially',
+      'Limit program frequency initially',
       'Use gentle, fragrance-free products'
     )
   }
@@ -415,7 +415,7 @@ async function calculateTreatmentRecommendations(analysis: any, treatmentType: s
 }
 
 // Generate sales enablement data
-async function generateSalesEnablementData(analysis: any, arTreatment: any, recommendations: any) {
+async function generateSalesEnablementData(analysis: any, arProgram: any, recommendations: any) {
   const salesData: {
     conversionOpportunities: string[]
     objectionHandlers: Array<{ objection: string; response: string; evidence?: string }>
@@ -433,11 +433,11 @@ async function generateSalesEnablementData(analysis: any, arTreatment: any, reco
   // Conversion opportunities based on analysis
   if (analysis.confidence > 80) {
     salesData.conversionOpportunities.push(
-      'High confidence analysis - immediate treatment booking recommended'
+      'High confidence analysis - immediate program booking recommended'
     )
   }
 
-  if (arTreatment.expectedResults.length > 0) {
+  if (arProgram.expectedResults.length > 0) {
     salesData.conversionOpportunities.push(
       'AR visualization shows clear improvement potential'
     )
@@ -447,16 +447,16 @@ async function generateSalesEnablementData(analysis: any, arTreatment: any, reco
   salesData.objectionHandlers = [
     {
       objection: 'Too expensive',
-      response: 'Compare to clinic equipment costs - mobile treatment saves 90%',
-      evidence: 'Professional clinic tools cost $200K+, mobile solution is affordable'
+      response: 'Compare to center equipment costs - mobile program saves 90%',
+      evidence: 'Professional center tools cost $200K+, mobile solution is affordable'
     },
     {
-      objection: 'Not as effective as clinic',
+      objection: 'Not as effective as center',
       response: 'AI analysis matches professional equipment accuracy',
       evidence: `${analysis.confidence}% confidence matches lab-grade analysis`
     },
     {
-      objection: 'Prefer traditional treatments',
+      objection: 'Prefer traditional programs',
       response: 'Combines traditional Thai ingredients with modern technology',
       evidence: `${recommendations.thaiTraditionalAlternatives.length} Thai traditional options included`
     }
@@ -465,25 +465,25 @@ async function generateSalesEnablementData(analysis: any, arTreatment: any, reco
   // Upselling suggestions
   salesData.upsellingSuggestions = [
     'Add complementary product package',
-    'Include maintenance treatment subscription',
-    'Recommend friend/family member treatments',
-    'Suggest seasonal treatment upgrades'
+    'Include maintenance program subscription',
+    'Recommend friend/family member programs',
+    'Suggest seasonal program upgrades'
   ]
 
   // Customer education points
   salesData.customerEducation = [
-    'Mobile AI matches professional clinic accuracy',
-    'Traditional Thai ingredients enhance modern treatments',
+    'Mobile AI matches professional center accuracy',
+    'Traditional Thai ingredients enhance modern programs',
     'Consistent home care maximizes results',
     'Regular monitoring ensures optimal outcomes'
   ]
 
   // Follow-up actions
   salesData.followUpActions = [
-    'Schedule treatment session within 7 days',
+    'Schedule program session within 7 days',
     'Send product usage instructions',
     'Book follow-up analysis in 4 weeks',
-    'Set up treatment progress tracking'
+    'Set up program progress tracking'
   ]
 
   return salesData

@@ -179,7 +179,7 @@ export default function LoginPage() {
             <div className="text-sm text-center text-muted-foreground">
               ระบบนี้เปิดให้เฉพาะผู้ใช้ที่ได้รับเชิญเท่านั้น{' '}
               <a 
-                href="mailto:admin@beautyclinic.com?subject=ขอเข้าใช้งานระบบ" 
+                href="mailto:admin@beautycenter.com?subject=ขอเข้าใช้งานระบบ" 
                 className="text-primary hover:underline font-medium"
               >
                 ติดต่อผู้ดูแลระบบ
@@ -230,13 +230,13 @@ export default function LoginPage() {
                       <button
                         type="button"
                         onClick={() => {
-                          setEmail('clinic-owner@example.com')
+                          setEmail('center-owner@example.com')
                           setPassword('password123')
                         }}
                         className="w-full text-left font-mono bg-white dark:bg-blue-900 p-2 rounded hover:bg-blue-100 dark:hover:bg-blue-800 transition-colors"
                       >
-                        <div className="font-semibold text-blue-700 dark:text-blue-300">🏥 Clinic Owner</div>
-                        <div>clinic-owner@example.com</div>
+                        <div className="font-semibold text-blue-700 dark:text-blue-300">🏥 Center Owner</div>
+                        <div>center-owner@example.com</div>
                       </button>
                       <button
                         type="button"

@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
     const service = createServiceClient()
     const { data: userRow, error: userErr } = await service
       .from('users')
-      .select('role, clinic_id')
+      .select('role, center_id')
       .eq('id', user.id)
       .single()
 
@@ -74,7 +74,7 @@ export async function GET(request: NextRequest) {
 
     // ใช้ service ใหม่
     const { fetchHotLeadsForUser } = await import('@/lib/sales/hot-leads-service')
-    const leads = await fetchHotLeadsForUser(user.id, userRow.clinic_id ?? null, limit, offset)
+    const leads = await fetchHotLeadsForUser(user.id, userRow.center_id ?? null, limit, offset)
 
     return NextResponse.json({
       leads,

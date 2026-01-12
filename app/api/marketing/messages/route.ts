@@ -10,10 +10,10 @@ function getSupabaseClient() {
 
 /**
  * GET /api/marketing/messages
- * List campaign messages for beauty clinic customers
+ * List campaign messages for beauty center customers
  * 
  * Query parameters:
- * - clinic_id (required): Clinic ID
+ * - center_id (required): Center ID
  * - campaign_id (optional): Filter by campaign
  * - message_type (optional): Filter by message type
  * - status (optional): Filter by status
@@ -21,14 +21,14 @@ function getSupabaseClient() {
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const clinic_id = searchParams.get('clinic_id');
+    const center_id = searchParams.get('center_id');
     const campaign_id = searchParams.get('campaign_id');
     const message_type = searchParams.get('message_type');
     const status = searchParams.get('status');
 
-    if (!clinic_id) {
+    if (!center_id) {
       return NextResponse.json(
-        { error: 'clinic_id is required' },
+        { error: 'center_id is required' },
         { status: 400 }
       );
     }
@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
         target_segment:customer_segments(id, segment_name, customer_count),
         created_by:users!campaign_messages_created_by_user_id_fkey(id, full_name, email)
       `)
-      .eq('clinic_id', clinic_id);
+      .eq('center_id', center_id);
 
     if (campaign_id) {
       query = query.eq('campaign_id', campaign_id);
@@ -72,13 +72,13 @@ export async function GET(request: NextRequest) {
 
 /**
  * POST /api/marketing/messages
- * Create a new campaign message for beauty clinic customers
+ * Create a new campaign message for beauty center customers
  */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const {
-      clinic_id,
+      center_id,
       campaign_id,
       message_type,
       subject,
@@ -91,9 +91,9 @@ export async function POST(request: NextRequest) {
       notes,
     } = body;
 
-    if (!clinic_id || !message_type || !message_content) {
+    if (!center_id || !message_type || !message_content) {
       return NextResponse.json(
-        { error: 'clinic_id, message_type, and message_content are required' },
+        { error: 'center_id, message_type, and message_content are required' },
         { status: 400 }
       );
     }
@@ -110,7 +110,7 @@ export async function POST(request: NextRequest) {
     const { data, error } = await supabaseClient
       .from('campaign_messages')
       .insert({
-        clinic_id,
+        center_id,
         campaign_id,
         message_type,
         subject,

@@ -1,8 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@/lib/supabase/server"
-import { withClinicAuth } from "@/lib/auth/middleware"
+import { withCenterAuth } from "@/lib/auth/middleware"
 
-export const GET = withClinicAuth(async (request: NextRequest) => {
+export const GET = withCenterAuth(async (request: NextRequest) => {
   try {
     const supabase = await createServerClient()
     const {
@@ -18,7 +18,7 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
       .select(
         `
         *,
-        clinic:clinics(name, address)
+        center:centers(name, address)
       `,
       )
       .eq("user_id", session.user.id)

@@ -10,7 +10,7 @@ function getSupabaseClient() {
 
 /**
  * POST /api/marketing/promo-codes/apply
- * Apply promo code to booking for beauty clinic customer
+ * Apply promo code to booking for beauty center customer
  * 
  * Body:
  * - promo_code_id (required): Promo code ID

@@ -32,7 +32,7 @@ export async function PATCH(
 
     // Update booking status
     const { data: booking, error } = await supabase
-      .from("clinic_bookings")
+      .from("center_bookings")
       .update({
         status,
         updated_at: new Date().toISOString(),
@@ -60,7 +60,7 @@ export async function PATCH(
 
     return NextResponse.json({ success: true, booking });
   } catch (error) {
-    console.error("Error in PATCH /api/clinic/bookings/[id]/status:", error);
+    console.error("Error in PATCH /api/center/bookings/[id]/status:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

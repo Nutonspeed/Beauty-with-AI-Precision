@@ -1,11 +1,11 @@
 /**
- * AI Treatment Advisor API (Task 3/7)
+ * AI Program Advisor API (Task 3/7)
  * POST /api/ai-advisor
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { withClinicAuth } from '@/lib/auth/middleware'
-import { getTreatmentAdvisor } from '@/lib/ai/treatment-advisor'
+import { withCenterAuth } from '@/lib/auth/middleware'
+import { getProgramAdvisor } from '@/lib/ai/program-advisor'
 import type { HybridSkinAnalysis } from '@/lib/types/skin-analysis'
 
 async function handler(request: NextRequest) {
@@ -21,7 +21,7 @@ async function handler(request: NextRequest) {
     }
 
     // Get AI advisor
-    const advisor = getTreatmentAdvisor()
+    const advisor = getProgramAdvisor()
 
     // Generate intelligent recommendations
     const advice = await advisor.analyzeSkinAndRecommend(
@@ -37,10 +37,10 @@ async function handler(request: NextRequest) {
       success: true,
       advice,
       summary: {
-        totalTreatments: advice.length,
+        totalPrograms: advice.length,
         estimatedCost: totalCost,
         timelineWeeks,
-        topPriority: advice[0]?.treatmentName
+        topPriority: advice[0]?.programName
       }
     })
   } catch (error) {
@@ -52,4 +52,4 @@ async function handler(request: NextRequest) {
   }
 }
 
-export const POST = withClinicAuth(handler, { rateLimitCategory: 'ai' })
+export const POST = withCenterAuth(handler, { rateLimitCategory: 'ai' })

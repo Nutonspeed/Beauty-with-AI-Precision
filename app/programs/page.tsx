@@ -1,9 +1,9 @@
 "use client"
 
 /**
- * Treatment Progress Demo Page
+ * Program Progress Demo Page
  * 
- * Complete demo showcasing treatment tracking, timeline, photos,
+ * Complete demo showcasing program tracking, timeline, photos,
  * milestones, and progress notes.
  */
 
@@ -27,26 +27,27 @@ import {
   Stethoscope,
 } from "lucide-react"
 import {
-  useTreatments,
-  useTreatment,
-  useTreatmentSessions,
-  useTreatmentMilestones,
-  useTreatmentReport,
-} from "@/hooks/useTreatment"
-import TreatmentTimelineComponent from "@/components/treatment-timeline"
+  usePrograms,
+  useProgram,
+  useProgramSessions,
+  useProgramMilestones,
+  useProgramReport,
+} from "@/hooks/useProgram"
+import { Breadcrumbs } from "@/components/ui/breadcrumbs"
 import PhotoComparison from "@/components/photo-comparison"
 import ProgressNotes from "@/components/progress-notes"
+import { AestheticTimeline as ProgramTimeline } from "@/components/aesthetic-timeline"
 
-export default function TreatmentsPage() {
-  const { treatments } = useTreatments()
-  const [selectedTreatmentId, setSelectedTreatmentId] = useState(
-    treatments[0]?.id || ""
+export default function ProgramsPage() {
+  const { programs } = usePrograms()
+  const [selectedProgramId, setSelectedProgramId] = useState(
+    programs[0]?.id || ""
   )
 
-  const { treatment } = useTreatment(selectedTreatmentId)
-  const { sessions } = useTreatmentSessions(selectedTreatmentId)
-  const { milestones } = useTreatmentMilestones(selectedTreatmentId)
-  const { report } = useTreatmentReport(selectedTreatmentId)
+  const { program } = useProgram(selectedProgramId)
+  const { sessions } = useProgramSessions(selectedProgramId)
+  const { milestones } = useProgramMilestones(selectedProgramId)
+  const { report } = useProgramReport(selectedProgramId)
 
   const formatDate = (date: Date) => {
     return new Date(date).toLocaleDateString("en-US", {
@@ -112,15 +113,15 @@ export default function TreatmentsPage() {
     }
   }
 
-  if (treatments.length === 0) {
+  if (programs.length === 0) {
     return (
       <div className="container mx-auto p-6">
         <Card>
           <CardContent className="py-12">
             <div className="text-center">
               <Activity className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <h2 className="text-xl font-semibold text-gray-700 mb-2">No treatments found</h2>
-              <p className="text-gray-500">Start tracking patient treatments to see them here</p>
+              <h2 className="text-xl font-semibold text-gray-700 mb-2">No programs found</h2>
+              <p className="text-gray-500">Start tracking client programs to see them here</p>
             </div>
           </CardContent>
         </Card>
@@ -134,13 +135,13 @@ export default function TreatmentsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-            Treatment Progress Tracking
+            Program Progress Tracking
           </h1>
-          <p className="text-gray-600 mt-1">Monitor patient treatment journeys and outcomes</p>
+          <p className="text-gray-600 mt-1">Monitor client program journeys and outcomes</p>
         </div>
         <Button>
           <FileText className="w-4 h-4 mr-2" />
-          New Treatment Plan
+          New Program Plan
         </Button>
       </div>
 
@@ -149,13 +150,13 @@ export default function TreatmentsPage() {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium text-gray-600">
-              Total Treatments
+              Total Programs
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-2">
               <Activity className="w-5 h-5 text-blue-600" />
-              <span className="text-2xl font-bold">{treatments.length}</span>
+              <span className="text-2xl font-bold">{programs.length}</span>
             </div>
           </CardContent>
         </Card>
@@ -163,14 +164,14 @@ export default function TreatmentsPage() {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium text-gray-600">
-              Active Treatments
+              Active Programs
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-2">
               <TrendingUp className="w-5 h-5 text-green-600" />
               <span className="text-2xl font-bold">
-                {treatments.filter((t) => t.status === "in_progress").length}
+                {programs.filter((t) => t.status === "in_progress").length}
               </span>
             </div>
           </CardContent>
@@ -186,8 +187,8 @@ export default function TreatmentsPage() {
             <div className="flex items-center gap-2">
               <Stethoscope className="w-5 h-5 text-purple-600" />
               <span className="text-2xl font-bold">
-                {treatments.reduce((sum, t) => sum + t.completedSessions, 0)} /{" "}
-                {treatments.reduce((sum, t) => sum + t.totalSessions, 0)}
+                {programs.reduce((sum, t) => sum + t.completedSessions, 0)} /{" "}
+                {programs.reduce((sum, t) => sum + t.totalSessions, 0)}
               </span>
             </div>
           </CardContent>
@@ -203,12 +204,12 @@ export default function TreatmentsPage() {
             <div className="flex items-center gap-2">
               <CheckCircle className="w-5 h-5 text-green-600" />
               <span className="text-2xl font-bold">
-                {treatments.length > 0
+                {programs.length > 0
                   ? Math.round(
-                      treatments.reduce(
+                      programs.reduce(
                         (sum, t) => sum + (t.completedSessions / t.totalSessions) * 100,
                         0
-                      ) / treatments.length
+                      ) / programs.length
                     )
                   : 0}
                 %
@@ -229,42 +230,42 @@ export default function TreatmentsPage() {
           <TabsTrigger value="notes">Notes</TabsTrigger>
         </TabsList>
 
-        {/* Treatment Selector */}
+        {/* Program Selector */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Select Treatment</CardTitle>
+            <CardTitle className="text-lg">Select Program</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {treatments.map((t) => (
+              {programs.map((prog) => (
                 <Card
-                  key={t.id}
+                  key={prog.id}
                   className={`cursor-pointer transition-all ${
-                    selectedTreatmentId === t.id
+                    selectedProgramId === prog.id
                       ? "ring-2 ring-blue-500 bg-blue-50"
                       : "hover:shadow-md"
                   }`}
-                  onClick={() => setSelectedTreatmentId(t.id)}
+                  onClick={() => setSelectedProgramId(prog.id)}
                 >
                   <CardContent className="p-4">
                     <div className="space-y-2">
                       <div className="flex items-start justify-between">
-                        <h3 className="font-semibold text-gray-900">{t.treatmentName}</h3>
-                        <Badge className={getStatusColor(t.status)}>{t.status}</Badge>
+                        <h3 className="font-semibold text-gray-900">{prog.programName}</h3>
+                        <Badge className={getStatusColor(prog.status)}>{prog.status}</Badge>
                       </div>
                       <div className="flex items-center gap-2 text-sm text-gray-600">
                         <User className="w-4 h-4" />
-                        {t.patientName}
+                        {prog.clientName}
                       </div>
                       <div className="space-y-1">
                         <div className="flex justify-between text-sm">
                           <span className="text-gray-600">Progress</span>
                           <span className="font-medium">
-                            {t.completedSessions}/{t.totalSessions} sessions
+                            {prog.completedSessions}/{prog.totalSessions} sessions
                           </span>
                         </div>
                         <Progress
-                          value={(t.completedSessions / t.totalSessions) * 100}
+                          value={(prog.completedSessions / prog.totalSessions) * 100}
                           className="h-2"
                         />
                       </div>
@@ -278,35 +279,35 @@ export default function TreatmentsPage() {
 
         {/* Overview Tab */}
         <TabsContent value="overview" className="space-y-4">
-          {treatment && (
+          {program && (
             <>
-              {/* Treatment Details */}
+              {/* Program Details */}
               <Card>
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div>
-                      <CardTitle>{treatment.treatmentName}</CardTitle>
-                      <CardDescription>{treatment.description}</CardDescription>
+                      <CardTitle>{program.programName}</CardTitle>
+                      <CardDescription>{program.description}</CardDescription>
                     </div>
-                    <Badge className={getStatusColor(treatment.status)}>{treatment.status}</Badge>
+                    <Badge className={getStatusColor(program.status)}>{program.status}</Badge>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <h4 className="font-medium text-gray-700 mb-2">Patient Information</h4>
+                      <h4 className="font-medium text-gray-700 mb-2">Client Information</h4>
                       <div className="space-y-1 text-sm">
                         <p className="flex items-center gap-2">
                           <User className="w-4 h-4 text-gray-400" />
-                          {treatment.patientName}
+                          {program.clientName}
                         </p>
                         <p className="flex items-center gap-2">
                           <Stethoscope className="w-4 h-4 text-gray-400" />
-                          {treatment.doctorName}
+                          {program.specialistName}
                         </p>
                         <p className="flex items-center gap-2">
                           <Calendar className="w-4 h-4 text-gray-400" />
-                          {formatDate(treatment.startDate)} - {formatDate(treatment.estimatedEndDate)}
+                          {formatDate(program.startDate)} - {formatDate(program.estimatedEndDate)}
                         </p>
                       </div>
                     </div>
@@ -317,17 +318,17 @@ export default function TreatmentsPage() {
                         <div className="flex justify-between text-sm">
                           <span className="text-gray-600">Sessions Completed</span>
                           <span className="font-medium">
-                            {treatment.completedSessions}/{treatment.totalSessions}
+                            {program.completedSessions}/{program.totalSessions}
                           </span>
                         </div>
                         <Progress
-                          value={(treatment.completedSessions / treatment.totalSessions) * 100}
+                          value={(program.completedSessions / program.totalSessions) * 100}
                           className="h-2"
                         />
                         {report && (
                           <>
                             <div className="flex justify-between text-sm">
-                              <span className="text-gray-600">Patient Rating</span>
+                              <span className="text-gray-600">Client Rating</span>
                               <div className="flex items-center gap-1">
                                 <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
                                 <span className="font-medium">{report.averageRating.toFixed(1)}</span>
@@ -336,7 +337,7 @@ export default function TreatmentsPage() {
                             <div className="flex justify-between text-sm">
                               <span className="text-gray-600">Cost</span>
                               <span className="font-medium">
-                                {formatCurrency(treatment.actualCost)} / {formatCurrency(treatment.estimatedCost)}
+                                {formatCurrency(program.actualCost)} / {formatCurrency(program.estimatedCost)}
                               </span>
                             </div>
                           </>
@@ -347,9 +348,9 @@ export default function TreatmentsPage() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t">
                     <div>
-                      <h4 className="font-medium text-gray-700 mb-2">Treatment Goals</h4>
+                      <h4 className="font-medium text-gray-700 mb-2">Program Goals</h4>
                       <ul className="space-y-1 text-sm">
-                        {treatment.goals.map((goal, index) => (
+                        {program.goals.map((goal, index) => (
                           <li key={index} className="flex items-start gap-2">
                             <CheckCircle className="w-4 h-4 text-green-500 mt-0.5" />
                             <span>{goal}</span>
@@ -359,9 +360,9 @@ export default function TreatmentsPage() {
                     </div>
 
                     <div>
-                      <h4 className="font-medium text-gray-700 mb-2">Patient Concerns</h4>
+                      <h4 className="font-medium text-gray-700 mb-2">Client Concerns</h4>
                       <ul className="space-y-1 text-sm">
-                        {treatment.concerns.map((concern, index) => (
+                        {program.concerns.map((concern, index) => (
                           <li key={index} className="flex items-start gap-2">
                             <Activity className="w-4 h-4 text-blue-500 mt-0.5" />
                             <span>{concern}</span>
@@ -438,7 +439,7 @@ export default function TreatmentsPage() {
 
         {/* Timeline Tab */}
         <TabsContent value="timeline">
-          {selectedTreatmentId && <TreatmentTimelineComponent treatmentId={selectedTreatmentId} />}
+          {selectedProgramId && <ProgramTimeline programId={selectedProgramId} />}
         </TabsContent>
 
         {/* Sessions Tab */}
@@ -463,7 +464,7 @@ export default function TreatmentsPage() {
                       <h4 className="font-medium text-gray-700 mb-2">Session Details</h4>
                       <div className="space-y-1 text-sm">
                         <p>
-                          <span className="text-gray-600">Doctor:</span> {session.doctorName}
+                          <span className="text-gray-600">Specialist:</span> {session.specialistName}
                         </p>
                         <p>
                           <span className="text-gray-600">Duration:</span> {session.duration} minutes
@@ -471,7 +472,7 @@ export default function TreatmentsPage() {
                         <p>
                           <span className="text-gray-600">Cost:</span> {formatCurrency(session.cost)}
                         </p>
-                        {session.patientRating && (
+                        {session.clientRating && (
                           <div className="flex items-center gap-2">
                             <span className="text-gray-600">Rating:</span>
                             <div className="flex">
@@ -479,7 +480,7 @@ export default function TreatmentsPage() {
                                 <Star
                                   key={i}
                                   className={`w-4 h-4 ${
-                                    i < session.patientRating!
+                                    i < session.clientRating!
                                       ? "text-yellow-400 fill-yellow-400"
                                       : "text-gray-300"
                                   }`}
@@ -531,7 +532,7 @@ export default function TreatmentsPage() {
 
         {/* Photos Tab */}
         <TabsContent value="photos">
-          {selectedTreatmentId && <PhotoComparison treatmentId={selectedTreatmentId} />}
+          {selectedProgramId && <PhotoComparison programId={selectedProgramId} />}
         </TabsContent>
 
         {/* Milestones Tab */}
@@ -601,7 +602,7 @@ export default function TreatmentsPage() {
 
         {/* Notes Tab */}
         <TabsContent value="notes">
-          {selectedTreatmentId && <ProgressNotes treatmentId={selectedTreatmentId} />}
+          {selectedProgramId && <ProgressNotes programId={selectedProgramId} />}
         </TabsContent>
       </Tabs>
     </div>

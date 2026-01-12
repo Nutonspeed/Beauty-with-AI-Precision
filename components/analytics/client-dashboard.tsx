@@ -1,5 +1,5 @@
 /**
- * Customer Dashboard Component
+ * Client Dashboard Component
  * Phase 2 Week 4 Task 4.3
  * 
  * Main analytics dashboard displaying trends, metrics, and insights
@@ -38,8 +38,8 @@ import {
 // Types
 // =============================================
 
-interface CustomerDashboardProps {
-  customerId: string;
+interface ClientDashboardProps {
+  clientId: string;
   defaultPeriod?: TrendPeriod;
 }
 
@@ -56,11 +56,11 @@ const PeriodSelector = ({
 }) => {
   const t = useTranslations();
   const periods: { value: TrendPeriod; label: string }[] = [
-    { value: '1m', label: t('customerDashboard.periods.1m') },
-    { value: '3m', label: t('customerDashboard.periods.3m') },
-    { value: '6m', label: t('customerDashboard.periods.6m') },
-    { value: '1y', label: t('customerDashboard.periods.1y') },
-    { value: 'all', label: t('customerDashboard.periods.all') },
+    { value: '1m', label: t('clientDashboard.periods.1m') },
+    { value: '3m', label: t('clientDashboard.periods.3m') },
+    { value: '6m', label: t('clientDashboard.periods.6m') },
+    { value: '1y', label: t('clientDashboard.periods.1y') },
+    { value: 'all', label: t('clientDashboard.periods.all') },
   ];
 
   return (
@@ -160,8 +160,8 @@ const InsightsPanel = ({ trends }: { trends: TrendsResponse }) => {
   if (trends.metrics.overall.changePercent > 5) {
     insights.push({
       type: 'success',
-      title: t('customerDashboard.insights.greatProgress'),
-      message: t('customerDashboard.insights.scoreImproved', { val: trends.metrics.overall.changePercent.toFixed(1) }),
+      title: t('clientDashboard.insights.greatProgress'),
+      message: t('clientDashboard.insights.scoreImproved', { val: trends.metrics.overall.changePercent.toFixed(1) }),
       icon: CheckCircle,
     });
   }
@@ -169,8 +169,8 @@ const InsightsPanel = ({ trends }: { trends: TrendsResponse }) => {
   if (trends.metrics.spots.trend === 'improving') {
     insights.push({
       type: 'success',
-      title: t('customerDashboard.insights.spotsImproving'),
-      message: t('customerDashboard.insights.acnePositiveResults'),
+      title: t('clientDashboard.insights.spotsImproving'),
+      message: t('clientDashboard.insights.acnePositiveResults'),
       icon: CheckCircle,
     });
   }
@@ -178,8 +178,8 @@ const InsightsPanel = ({ trends }: { trends: TrendsResponse }) => {
   if (trends.metrics.wrinkles.trend === 'worsening') {
     insights.push({
       type: 'warning',
-      title: t('customerDashboard.insights.wrinklesAttention'),
-      message: t('customerDashboard.insights.addAntiAging'),
+      title: t('clientDashboard.insights.wrinklesAttention'),
+      message: t('clientDashboard.insights.addAntiAging'),
       icon: AlertCircle,
     });
   }
@@ -187,8 +187,8 @@ const InsightsPanel = ({ trends }: { trends: TrendsResponse }) => {
   if (trends.summary.programAdherence < 0.5) {
     insights.push({
       type: 'warning',
-      title: t('customerDashboard.insights.lowFrequency'),
-      message: t('customerDashboard.insights.regularTracking'),
+      title: t('clientDashboard.insights.lowFrequency'),
+      message: t('clientDashboard.insights.regularTracking'),
       icon: AlertCircle,
     });
   }
@@ -196,8 +196,8 @@ const InsightsPanel = ({ trends }: { trends: TrendsResponse }) => {
   if (trends.summary.improvementRate > 2) {
     insights.push({
       type: 'success',
-      title: t('customerDashboard.insights.excellentImprovement'),
-      message: t('customerDashboard.insights.improvementPoints', { val: trends.summary.improvementRate.toFixed(1) }),
+      title: t('clientDashboard.insights.excellentImprovement'),
+      message: t('clientDashboard.insights.improvementPoints', { val: trends.summary.improvementRate.toFixed(1) }),
       icon: Award,
     });
   }
@@ -205,8 +205,8 @@ const InsightsPanel = ({ trends }: { trends: TrendsResponse }) => {
   if (insights.length === 0) {
     insights.push({
       type: 'info',
-      title: t('customerDashboard.insights.keepGoing'),
-      message: t('customerDashboard.insights.continueRoutine'),
+      title: t('clientDashboard.insights.keepGoing'),
+      message: t('clientDashboard.insights.continueRoutine'),
       icon: Info,
     });
   }
@@ -226,8 +226,8 @@ const InsightsPanel = ({ trends }: { trends: TrendsResponse }) => {
     <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group">
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
       <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
-        <CardTitle className="text-2xl font-bold text-white tracking-tight italic">{t('customerDashboard.diagnosticIntelligence')}</CardTitle>
-        <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('customerDashboard.aiAestheticSynthesis')}</CardDescription>
+        <CardTitle className="text-2xl font-bold text-white tracking-tight italic">{t('clientDashboard.diagnosticIntelligence')}</CardTitle>
+        <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('clientDashboard.aiAestheticSynthesis')}</CardDescription>
       </CardHeader>
       <CardContent className="p-10 lg:p-12 space-y-6">
         {insights.map((insight, index) => {
@@ -261,10 +261,10 @@ const InsightsPanel = ({ trends }: { trends: TrendsResponse }) => {
 // Main Component
 // =============================================
 
-export default function CustomerDashboard({
-  customerId,
+export default function ClientDashboard({
+  clientId,
   defaultPeriod = '3m',
-}: CustomerDashboardProps) {
+}: ClientDashboardProps) {
   const t = useTranslations();
   const [period, setPeriod] = useState<TrendPeriod>(defaultPeriod);
   const [trends, setTrends] = useState<TrendsResponse | null>(null);
@@ -279,7 +279,7 @@ export default function CustomerDashboard({
 
       try {
         const response = await fetch(
-          `/api/analytics/trends?customerId=${customerId}&period=${period}`
+          `/api/analytics/trends?clientId=${clientId}&period=${period}`
         );
 
         if (!response.ok) {
@@ -297,7 +297,7 @@ export default function CustomerDashboard({
     };
 
     fetchTrends();
-  }, [customerId, period]);
+  }, [clientId, period]);
 
   // Loading state
   if (loading) {
@@ -353,14 +353,14 @@ export default function CustomerDashboard({
         >
           <Badge variant="outline" className="px-4 py-1 rounded-full border-pink-500/30 text-pink-400 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.2em] text-[10px] font-black shadow-2xl shadow-pink-500/10">
             <Activity className="mr-3 h-3.5 w-3.5 animate-pulse" />
-            {t('customerDashboard.longitudinalSkinAnalytics')}
+            {t('clientDashboard.longitudinalSkinAnalytics')}
           </Badge>
           <h1 className="text-5xl md:text-7xl font-bold tracking-tighter text-white leading-[0.9] italic">
             {t('nav.analytics')}<br />
             <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent not-italic font-black uppercase tracking-tight">Dashboard</span>
           </h1>
           <p className="text-xl text-slate-500 font-light tracking-widest italic leading-relaxed">
-            {t('customerDashboard.trackImprovementDesc')}
+            {t('clientDashboard.trackImprovementDesc')}
           </p>
         </motion.div>
         <div className="shrink-0">
@@ -373,10 +373,10 @@ export default function CustomerDashboard({
       {/* Summary Stats - Infrastructure Nodes */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {[
-          { label: t('customerDashboard.summary.totalAnalyses'), val: trends.summary.totalAnalyses, sub: t('customerDashboard.summary.temporalCycleCount'), icon: Activity, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-          { label: t('customerDashboard.summary.averageScore'), val: trends.summary.averageScore.toFixed(1), sub: t('customerDashboard.summary.benchmarkDesc'), icon: Target, color: 'text-pink-400', bg: 'bg-pink-500/10' },
-          { label: t('customerDashboard.summary.improvementRate'), val: `${trends.summary.improvementRate > 0 ? '+' : ''}${trends.summary.improvementRate.toFixed(1)}`, sub: t('customerDashboard.summary.pointsPerCycle'), icon: TrendingUp, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
-          { label: t('customerDashboard.summary.analysisFrequency'), val: trends.summary.programAdherence.toFixed(1), sub: t('customerDashboard.summary.cyclesPerMonth'), icon: Calendar, color: 'text-purple-400', bg: 'bg-purple-500/10' }
+          { label: t('clientDashboard.summary.totalAnalyses'), val: trends.summary.totalAnalyses, sub: t('clientDashboard.summary.temporalCycleCount'), icon: Activity, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+          { label: t('clientDashboard.summary.averageScore'), val: trends.summary.averageScore.toFixed(1), sub: t('clientDashboard.summary.benchmarkDesc'), icon: Target, color: 'text-pink-400', bg: 'bg-pink-500/10' },
+          { label: t('clientDashboard.summary.improvementRate'), val: `${trends.summary.improvementRate > 0 ? '+' : ''}${trends.summary.improvementRate.toFixed(1)}`, sub: t('clientDashboard.summary.pointsPerCycle'), icon: TrendingUp, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+          { label: t('clientDashboard.summary.analysisFrequency'), val: trends.summary.programAdherence.toFixed(1), sub: t('clientDashboard.summary.cyclesPerMonth'), icon: Calendar, color: 'text-purple-400', bg: 'bg-purple-500/10' }
         ].map((stat, i) => (
           <motion.div
             key={i}
@@ -437,8 +437,8 @@ export default function CustomerDashboard({
         <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative">
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/20 to-transparent" />
           <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
-            <CardTitle className="text-3xl font-bold text-white tracking-tight italic">{t('customerDashboard.synthesisMomentum')}</CardTitle>
-            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('customerDashboard.historicalDataTrends')}</CardDescription>
+            <CardTitle className="text-3xl font-bold text-white tracking-tight italic">{t('clientDashboard.synthesisMomentum')}</CardTitle>
+            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('clientDashboard.historicalDataTrends')}</CardDescription>
           </CardHeader>
           <CardContent className="p-10 lg:p-12">
             <TrendChart metrics={trends.metrics} />

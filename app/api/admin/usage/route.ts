@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
 interface UsageMetrics {
-  clinicId: string
-  clinicName: string
+  centerId: string
+  centerName: string
   activeUsers: number
   totalUsers: number
   storageUsedGB: number
@@ -16,7 +16,7 @@ interface UsageMetrics {
   quotaWarnings: string[]
 }
 
-// GET: Get usage metrics for all clinics or specific clinic
+// GET: Get usage metrics for all centers or specific center
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient()
@@ -40,13 +40,13 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
-    // Get clinic ID from query params (optional)
+    // Get center ID from query params (optional)
     const { searchParams } = new URL(request.url)
-    const clinicId = searchParams.get('clinicId')
+    const centerId = searchParams.get('centerId')
 
     // Base query
-    let clinicsQuery = supabase
-      .from('clinics')
+    let centersQuery = supabase
+      .from('centers')
       .select(
         `
         id,
@@ -57,40 +57,40 @@ export async function GET(request: NextRequest) {
       `
       )
 
-    if (clinicId) {
-      clinicsQuery = clinicsQuery.eq('id', clinicId)
+    if (centerId) {
+      centersQuery = centersQuery.eq('id', centerId)
     }
 
-    const { data: clinics, error: clinicsError } = await clinicsQuery
+    const { data: centers, error: centersError } = await centersQuery
 
-    if (clinicsError) {
-      console.error('Error fetching clinics:', clinicsError)
-      return NextResponse.json({ error: 'Failed to fetch clinics' }, { status: 500 })
+    if (centersError) {
+      console.error('Error fetching centers:', centersError)
+      return NextResponse.json({ error: 'Failed to fetch centers' }, { status: 500 })
     }
 
-    // Get usage metrics for each clinic
-    const usagePromises = clinics.map(async (clinic) => {
+    // Get usage metrics for each center
+    const usagePromises = centers.map(async (center) => {
       // Get subscription plan limits
-      const planLimits = getPlanLimits(clinic.subscription_plan)
+      const planLimits = getPlanLimits(center.subscription_plan)
 
       // Count active users
       const { count: activeUsersCount } = await supabase
         .from('users')
         .select('*', { count: 'exact', head: true })
-        .eq('clinic_id', clinic.id)
+        .eq('center_id', center.id)
         .eq('is_active', true)
 
       // Count total users
       const { count: totalUsersCount } = await supabase
         .from('users')
         .select('*', { count: 'exact', head: true })
-        .eq('clinic_id', clinic.id)
+        .eq('center_id', center.id)
 
       // Count customers
       const { count: customersCount } = await supabase
         .from('customers')
         .select('*', { count: 'exact', head: true })
-        .eq('clinic_id', clinic.id)
+        .eq('center_id', center.id)
 
       // Count bookings this month
       const startOfMonth = new Date()
@@ -100,21 +100,21 @@ export async function GET(request: NextRequest) {
       const { count: bookingsCount } = await supabase
         .from('bookings')
         .select('*', { count: 'exact', head: true })
-        .eq('clinic_id', clinic.id)
+        .eq('center_id', center.id)
         .gte('created_at', startOfMonth.toISOString())
 
       // Count AI analyses this month (from skin_analyses table)
       const { count: analysesCount } = await supabase
         .from('skin_analyses')
         .select('*', { count: 'exact', head: true })
-        .eq('clinic_id', clinic.id)
+        .eq('center_id', center.id)
         .gte('created_at', startOfMonth.toISOString())
 
-      // Calculate storage used from treatment_photos (real data)
+      // Calculate storage used from program_photos (real data)
       const { data: photoSizes } = await supabase
-        .from('treatment_photos')
+        .from('program_photos')
         .select('file_size_kb')
-        .eq('clinic_id', clinic.id)
+        .eq('center_id', center.id)
         .not('file_size_kb', 'is', null)
 
       const totalStorageKB = photoSizes?.reduce((sum, p) => sum + (p.file_size_kb || 0), 0) || 0
@@ -124,7 +124,7 @@ export async function GET(request: NextRequest) {
       const { count: skinAnalysesTotal } = await supabase
         .from('skin_analyses')
         .select('*', { count: 'exact', head: true })
-        .eq('clinic_id', clinic.id)
+        .eq('center_id', center.id)
         .gte('created_at', startOfMonth.toISOString())
 
       // Each analysis = ~5 API calls, each booking = ~3 API calls, base activity
@@ -146,8 +146,8 @@ export async function GET(request: NextRequest) {
       }
 
       return {
-        clinicId: clinic.id,
-        clinicName: clinic.name,
+        centerId: center.id,
+        centerName: center.name,
         activeUsers: activeUsersCount || 0,
         totalUsers: totalUsersCount || 0,
         storageUsedGB: parseFloat(storageUsedGB.toFixed(2)),

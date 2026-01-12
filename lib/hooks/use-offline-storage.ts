@@ -126,7 +126,7 @@ export function useOfflineStorage() {
   // IndexedDB helpers
   const saveToIndexedDB = async (key: string, item: OfflineStorageItem): Promise<void> => {
     return new Promise((resolve, reject) => {
-      const request = indexedDB.open('ClinicIQ_Offline', 1)
+      const request = indexedDB.open('CenterIQ_Offline', 1)
 
       request.onerror = () => reject(request.error)
       request.onsuccess = () => {
@@ -150,7 +150,7 @@ export function useOfflineStorage() {
 
   const loadFromIndexedDB = async (key: string): Promise<OfflineStorageItem | null> => {
     return new Promise((resolve, reject) => {
-      const request = indexedDB.open('ClinicIQ_Offline', 1)
+      const request = indexedDB.open('CenterIQ_Offline', 1)
 
       request.onerror = () => reject(request.error)
       request.onsuccess = () => {
@@ -169,7 +169,7 @@ export function useOfflineStorage() {
 
   const removeFromIndexedDB = async (key: string): Promise<void> => {
     return new Promise((resolve, reject) => {
-      const request = indexedDB.open('ClinicIQ_Offline', 1)
+      const request = indexedDB.open('CenterIQ_Offline', 1)
 
       request.onerror = () => reject(request.error)
       request.onsuccess = () => {
@@ -186,7 +186,7 @@ export function useOfflineStorage() {
 
   const getIndexedDBItemCount = async (): Promise<number> => {
     return new Promise((resolve, reject) => {
-      const request = indexedDB.open('ClinicIQ_Offline', 1)
+      const request = indexedDB.open('CenterIQ_Offline', 1)
 
       request.onerror = () => reject(request.error)
       request.onsuccess = () => {

@@ -1,19 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { withClinicAuth } from '@/lib/auth/middleware';
+import { withCenterAuth } from '@/lib/auth/middleware';
 
 /**
  * PATCH /api/branches/services/[id]
  * Update branch service
  */
-export const PATCH = withClinicAuth(async (req, user) => {
+export const PATCH = withCenterAuth(async (req, user) => {
   const id = req.nextUrl.pathname.split('/').pop() || '';
   const body = await req.json();
   const updateData: Record<string, unknown> = {};
 
   const allowedFields = [
     'branch_price',
-    'use_clinic_price',
+    'use_center_price',
     'daily_capacity',
     'slots_per_day',
     'requires_specialist',
@@ -58,7 +58,7 @@ export const PATCH = withClinicAuth(async (req, user) => {
  * DELETE /api/branches/services/[id]
  * Remove service from branch (soft delete)
  */
-export const DELETE = withClinicAuth(async (req: NextRequest, user: any) => {
+export const DELETE = withCenterAuth(async (req: NextRequest, user: any) => {
   try {
     const id = req.nextUrl.pathname.split('/').pop() || '';
 

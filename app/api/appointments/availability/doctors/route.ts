@@ -1,18 +1,18 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
-import { withClinicAuth } from "@/lib/auth/middleware"
+import { withCenterAuth } from "@/lib/auth/middleware"
 
 
 // GET /api/appointments/availability/doctors - Get doctor availability
-export const GET = withClinicAuth(async (request: NextRequest) => {
+export const GET = withCenterAuth(async (request: NextRequest) => {
   try {
     const { searchParams } = new URL(request.url)
-    const clinicId = searchParams.get('clinic_id')
+    const centerId = searchParams.get('center_id')
     const doctorId = searchParams.get('doctor_id')
 
-    if (!clinicId) {
+    if (!centerId) {
       return NextResponse.json(
-        { error: 'clinic_id is required' },
+        { error: 'center_id is required' },
         { status: 400 }
       )
     }
@@ -31,7 +31,7 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
     let query = supabaseAdmin
       .from('doctor_availability')
       .select('*')
-      .eq('clinic_id', clinicId)
+      .eq('center_id', centerId)
       .eq('is_available', true)
 
     if (doctorId) {
@@ -60,12 +60,12 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
 })
 
 // POST /api/appointments/availability/doctors - Create doctor availability
-export const POST = withClinicAuth(async (request: NextRequest) => {
+export const POST = withCenterAuth(async (request: NextRequest) => {
   try {
     const body = await request.json()
 
     const {
-      clinic_id,
+      center_id,
       doctor_id,
       day_of_week,
       start_time,
@@ -79,7 +79,7 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
     } = body
 
     // Validate required fields
-    if (!clinic_id || !doctor_id || day_of_week === undefined || !start_time || !end_time) {
+    if (!center_id || !doctor_id || day_of_week === undefined || !start_time || !end_time) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -100,7 +100,7 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
     const { data, error } = await supabaseAdmin
       .from('doctor_availability')
       .insert({
-        clinic_id,
+        center_id,
         doctor_id,
         day_of_week,
         start_time,

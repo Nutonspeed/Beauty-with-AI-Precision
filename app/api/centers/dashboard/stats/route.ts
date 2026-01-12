@@ -1,6 +1,6 @@
 // ============================================================================
-// Phase 5: Clinic Admin Dashboard - Stats API
-// Purpose: Get real-time dashboard statistics for clinic admin
+// Phase 5: Center Admin Dashboard - Stats API
+// Purpose: Get real-time dashboard statistics for center admin
 // ============================================================================
 
 import { createClient } from '@/lib/supabase/server'
@@ -11,7 +11,7 @@ import type {
   RevenueChartData, 
   GetDashboardStatsResponse,
   ActivityLog
-} from '@/types/clinic-admin'
+} from '@/types/center-admin'
 
 // ============================================================================
 // Request Validation
@@ -22,7 +22,7 @@ const QuerySchema = z.object({
 })
 
 // ============================================================================
-// GET /api/clinic/dashboard/stats
+// GET /api/center/dashboard/stats
 // Get comprehensive dashboard statistics
 // ============================================================================
 
@@ -43,23 +43,23 @@ export async function GET(request: Request) {
     }
 
     // ========================================================================
-    // 2. Get User's Clinic ID
+    // 2. Get User's Center ID
     // ========================================================================
     const { data: userData, error: userError } = await supabase
       .from('users')
-      .select('clinic_id, role')
+      .select('center_id, role')
       .eq('id', user.id)
       .single()
 
-    if (userError || !userData || !userData.clinic_id) {
+    if (userError || !userData || !userData.center_id) {
       return NextResponse.json(
-        { error: 'User not associated with any clinic' },
+        { error: 'User not associated with any center' },
         { status: 403 }
       )
     }
 
     // Verify user has appropriate role
-    const allowedRoles = ['clinic_admin', 'clinic_owner', 'manager', 'super_admin']
+    const allowedRoles = ['center_admin', 'center_owner', 'manager', 'super_admin']
     if (!allowedRoles.includes(userData.role)) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
@@ -67,7 +67,7 @@ export async function GET(request: Request) {
       )
     }
 
-    const clinicId = userData.clinic_id
+    const centerId = userData.center_id
 
     // ========================================================================
     // 3. Parse Query Parameters
@@ -90,7 +90,7 @@ export async function GET(request: Request) {
     // 4. Get Dashboard Stats (using database function)
     // ========================================================================
     const { data: stats, error: statsError } = await supabase
-      .rpc('get_clinic_dashboard_stats', { p_clinic_id: clinicId })
+      .rpc('get_center_dashboard_stats', { p_center_id: centerId })
 
     if (statsError) {
       console.error('Error fetching dashboard stats:', statsError)
@@ -111,7 +111,7 @@ export async function GET(request: Request) {
     const { data: revenueData, error: revenueError } = await supabase
       .from('booking_payments')
       .select('payment_date, amount')
-      .eq('clinic_id', clinicId)
+      .eq('center_id', centerId)
       .eq('payment_status', 'paid')
       .gte('payment_date', startDate.toISOString())
       .order('payment_date', { ascending: true })
@@ -156,7 +156,7 @@ export async function GET(request: Request) {
     const { data: topServicesData, error: servicesError } = await supabase
       .from('appointments')
       .select('service_type, id')
-      .eq('clinic_id', clinicId)
+      .eq('center_id', centerId)
       .eq('status', 'completed')
       .gte('appointment_date', startDate.toISOString())
 
@@ -184,8 +184,8 @@ export async function GET(request: Request) {
     // 7. Get Recent Activity
     // ========================================================================
     const { data: recentActivity, error: activityError } = await supabase
-      .rpc('get_clinic_recent_activity', {
-        p_clinic_id: clinicId,
+      .rpc('get_center_recent_activity', {
+        p_center_id: centerId,
         p_limit: 10,
       })
 

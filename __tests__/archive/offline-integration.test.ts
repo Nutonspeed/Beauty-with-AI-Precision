@@ -27,7 +27,7 @@ describe('Offline Mode - Complete Workflow', () => {
   let indexedDB: ReturnType<typeof getIndexedDB>
   let conflictResolver: ReturnType<typeof getConflictResolver>
 
-  const clinicId = 'test-clinic-1'
+  const centerId = 'test-center-1'
   const salesStaffId = 'test-staff-1'
 
   const createAnalysis = (overrides: Partial<MultiTenantSkinAnalysis> = {}): MultiTenantSkinAnalysis => {
@@ -35,7 +35,7 @@ describe('Offline Mode - Complete Workflow', () => {
     const base: MultiTenantSkinAnalysis = {
       id: overrides.id ?? 'analysis-default',
       user_id: overrides.user_id ?? 'user-default',
-      clinic_id: overrides.clinic_id ?? clinicId,
+      center_id: overrides.center_id ?? centerId,
       branch_id: overrides.branch_id,
       sales_staff_id: overrides.sales_staff_id ?? salesStaffId,
       image_url: overrides.image_url ?? 'https://example.com/offline-analysis.jpg',
@@ -52,14 +52,14 @@ describe('Offline Mode - Complete Workflow', () => {
       redness_count: overrides.redness_count ?? 0,
       created_at: overrides.created_at ?? now,
       updated_at: overrides.updated_at ?? now,
-      patient_name: overrides.patient_name,
-      patient_age: overrides.patient_age,
-      patient_gender: overrides.patient_gender,
-      patient_skin_type: overrides.patient_skin_type,
+      customer_name: overrides.customer_name,
+      customer_age: overrides.customer_age,
+      customer_gender: overrides.customer_gender,
+      customer_skin_type: overrides.customer_skin_type,
       ai_skin_type: overrides.ai_skin_type,
       ai_concerns: overrides.ai_concerns ?? [],
       ai_severity: overrides.ai_severity,
-      ai_treatment_plan: overrides.ai_treatment_plan,
+      ai_program_plan: overrides.ai_program_plan,
       recommendations: overrides.recommendations ?? [],
       notes: overrides.notes,
       analysis_time_ms: overrides.analysis_time_ms,
@@ -89,7 +89,7 @@ describe('Offline Mode - Complete Workflow', () => {
     const now = overrides.updated_at ?? new Date().toISOString()
     const base: Lead = {
       id: overrides.id ?? 'lead-default',
-      clinic_id: overrides.clinic_id ?? clinicId,
+      center_id: overrides.center_id ?? centerId,
       branch_id: overrides.branch_id,
       sales_staff_id: overrides.sales_staff_id ?? salesStaffId,
       full_name: overrides.full_name ?? 'Lead Name',
@@ -102,7 +102,7 @@ describe('Offline Mode - Complete Workflow', () => {
       follow_up_date: overrides.follow_up_date,
       last_contact_date: overrides.last_contact_date,
       next_action: overrides.next_action,
-      interested_treatments: overrides.interested_treatments ?? [],
+      interested_programs: overrides.interested_programs ?? [],
       budget_range: overrides.budget_range,
       converted_to_customer: overrides.converted_to_customer ?? false,
       converted_user_id: overrides.converted_user_id,
@@ -160,10 +160,10 @@ describe('Offline Mode - Complete Workflow', () => {
   }, 30000) // Increase timeout for clearing between tests
 
   describe('IndexedDB Storage', () => {
-    it('should save analysis with clinic scope', async () => {
+    it('should save analysis with center scope', async () => {
       const analysis = createAnalysis({
         id: 'analysis-1',
-        patient_name: 'Test Patient',
+        customer_name: 'Test Patient',
         ai_skin_type: 'oily',
         ai_concerns: ['acne', 'dark_spots'],
         recommendations: ['laser_treatment', 'chemical_peel'],
@@ -171,9 +171,9 @@ describe('Offline Mode - Complete Workflow', () => {
 
       await indexedDB.saveAnalysis(analysis, true)
 
-      const saved = await indexedDB.getAnalysesBySalesStaff(clinicId, salesStaffId)
+      const saved = await indexedDB.getAnalysesBySalesStaff(centerId, salesStaffId)
       expect(saved).toHaveLength(1)
-      expect(saved[0].patient_name).toBe('Test Patient')
+      expect(saved[0].customer_name).toBe('Test Patient')
       expect(saved[0].synced).toBe(false)
       expect(saved[0].ai_concerns).toContain('acne')
     })
@@ -187,7 +187,7 @@ describe('Offline Mode - Complete Workflow', () => {
         await indexedDB.saveAnalysis(
           createAnalysis({
             id: `analysis-${i}`,
-            patient_name: `Patient ${i}`,
+            customer_name: `Patient ${i}`,
           }),
           true
         )
@@ -195,19 +195,19 @@ describe('Offline Mode - Complete Workflow', () => {
 
       dateNowSpy.mockRestore()
 
-      const analyses = await indexedDB.getAnalysesBySalesStaff(clinicId, salesStaffId, 100)
+      const analyses = await indexedDB.getAnalysesBySalesStaff(centerId, salesStaffId, 100)
       expect(analyses.length).toBeLessThanOrEqual(50)
       
       // Should keep the newest 50
-      expect(analyses[0].patient_name).toBe('Patient 59')
+      expect(analyses[0].customer_name).toBe('Patient 59')
     }, 30000) // Increase timeout for large batch operations
 
-    it('should isolate data by clinic', async () => {
+    it('should isolate data by center', async () => {
       await indexedDB.saveAnalysis(
         createAnalysis({
           id: 'analysis-1',
-          clinic_id: 'clinic-1',
-          patient_name: 'Clinic 1 Patient',
+          center_id: 'center-1',
+          customer_name: 'Clinic 1 Patient',
         }),
         true
       )
@@ -215,19 +215,19 @@ describe('Offline Mode - Complete Workflow', () => {
       await indexedDB.saveAnalysis(
         createAnalysis({
           id: 'analysis-2',
-          clinic_id: 'clinic-2',
-          patient_name: 'Clinic 2 Patient',
+          center_id: 'center-2',
+          customer_name: 'Clinic 2 Patient',
         }),
         true
       )
 
-      const clinic1Data = await indexedDB.getAnalysesBySalesStaff('clinic-1', salesStaffId)
-      const clinic2Data = await indexedDB.getAnalysesBySalesStaff('clinic-2', salesStaffId)
+      const center1Data = await indexedDB.getAnalysesBySalesStaff('center-1', salesStaffId)
+      const center2Data = await indexedDB.getAnalysesBySalesStaff('center-2', salesStaffId)
 
-      expect(clinic1Data).toHaveLength(1)
-      expect(clinic2Data).toHaveLength(1)
-      expect(clinic1Data[0].patient_name).toBe('Clinic 1 Patient')
-      expect(clinic2Data[0].patient_name).toBe('Clinic 2 Patient')
+      expect(center1Data).toHaveLength(1)
+      expect(center2Data).toHaveLength(1)
+      expect(center1Data[0].customer_name).toBe('Clinic 1 Patient')
+      expect(center2Data[0].customer_name).toBe('Clinic 2 Patient')
     }, 30000)
 
     it('should save lead with all fields', async () => {
@@ -237,12 +237,12 @@ describe('Offline Mode - Complete Workflow', () => {
         email: 'test@example.com',
         status: 'hot',
         source: 'social_media',
-        interested_treatments: ['laser', 'facial'],
+        interested_programs: ['laser', 'facial'],
       })
 
       await indexedDB.saveLead(lead, true)
 
-      const leads = await indexedDB.getLeadsBySalesStaff(clinicId, salesStaffId)
+      const leads = await indexedDB.getLeadsBySalesStaff(centerId, salesStaffId)
       expect(leads).toHaveLength(1)
       expect(leads[0].full_name).toBe('Test Lead')
       expect(leads[0].status).toBe('hot')
@@ -252,12 +252,12 @@ describe('Offline Mode - Complete Workflow', () => {
   describe('Sync Queue Management', () => {
     it('should add action to sync queue', async () => {
       await indexedDB.addToSyncQueue({
-        clinic_id: clinicId,
+        center_id: centerId,
         sales_staff_id: salesStaffId,
         action_type: 'create_analysis',
         resource_type: 'analysis',
         resource_id: 'analysis-queued',
-        data: { patient_name: 'Test' },
+        data: { customer_name: 'Test' },
       })
 
       const pending = await indexedDB.getPendingSyncActions()
@@ -271,7 +271,7 @@ describe('Offline Mode - Complete Workflow', () => {
 
       dateNowSpy.mockImplementation(() => baseTime)
       await indexedDB.addToSyncQueue({
-        clinic_id: clinicId,
+        center_id: centerId,
         sales_staff_id: salesStaffId,
         action_type: 'create_analysis',
         resource_type: 'analysis',
@@ -281,7 +281,7 @@ describe('Offline Mode - Complete Workflow', () => {
 
       dateNowSpy.mockImplementation(() => baseTime + 1000)
       await indexedDB.addToSyncQueue({
-        clinic_id: clinicId,
+        center_id: centerId,
         sales_staff_id: salesStaffId,
         action_type: 'update_lead',
         resource_type: 'lead',
@@ -291,7 +291,7 @@ describe('Offline Mode - Complete Workflow', () => {
 
       dateNowSpy.mockImplementation(() => baseTime + 2000)
       await indexedDB.addToSyncQueue({
-        clinic_id: clinicId,
+        center_id: centerId,
         sales_staff_id: salesStaffId,
         action_type: 'create_lead',
         resource_type: 'lead',
@@ -310,7 +310,7 @@ describe('Offline Mode - Complete Workflow', () => {
 
     it('should track retry attempts', async () => {
       await indexedDB.addToSyncQueue({
-        clinic_id: clinicId,
+        center_id: centerId,
         sales_staff_id: salesStaffId,
         action_type: 'create_analysis',
         resource_type: 'analysis',
@@ -451,7 +451,7 @@ describe('Offline Mode - Complete Workflow', () => {
       // Add 3 pending actions
       for (let i = 0; i < 3; i++) {
         await indexedDB.addToSyncQueue({
-          clinic_id: clinicId,
+          center_id: centerId,
           sales_staff_id: salesStaffId,
           action_type: 'create_analysis',
           resource_type: 'analysis',
@@ -467,7 +467,7 @@ describe('Offline Mode - Complete Workflow', () => {
     it('should calculate storage statistics', async () => {
       // Add some data
       await indexedDB.saveAnalysis(
-        createAnalysis({ id: 'analysis-1', patient_name: 'Test' }),
+        createAnalysis({ id: 'analysis-1', customer_name: 'Test' }),
         true
       )
 
@@ -494,7 +494,7 @@ describe('Offline Mode - Complete Workflow', () => {
       await indexedDB.saveAnalysis(
         createAnalysis({
           id: 'old-analysis',
-          patient_name: 'Old Patient',
+          customer_name: 'Old Patient',
         }),
         false
       )
@@ -504,7 +504,7 @@ describe('Offline Mode - Complete Workflow', () => {
       await indexedDB.saveAnalysis(
         createAnalysis({
           id: 'new-analysis',
-          patient_name: 'New Patient',
+          customer_name: 'New Patient',
         }),
         true
     )
@@ -512,7 +512,7 @@ describe('Offline Mode - Complete Workflow', () => {
     await triggerCleanup(indexedDB, salesStaffId, 1)
       dateNowSpy.mockRestore()
 
-      const remaining = await indexedDB.getAnalysesBySalesStaff(clinicId, salesStaffId)
+      const remaining = await indexedDB.getAnalysesBySalesStaff(centerId, salesStaffId)
       
       // Old synced should be removed, new unsynced should remain
       expect(remaining.some(a => a.id === 'old-analysis')).toBe(false)
@@ -526,8 +526,8 @@ describe('Offline Mode - Complete Workflow', () => {
 
       await indexedDB.clearAll()
 
-      const analyses = await indexedDB.getAnalysesBySalesStaff(clinicId, salesStaffId)
-      const leads = await indexedDB.getLeadsBySalesStaff(clinicId, salesStaffId)
+      const analyses = await indexedDB.getAnalysesBySalesStaff(centerId, salesStaffId)
+      const leads = await indexedDB.getLeadsBySalesStaff(centerId, salesStaffId)
       const pending = await indexedDB.getPendingSyncActions()
 
       expect(analyses).toHaveLength(0)
@@ -551,9 +551,9 @@ describe('Offline Mode - Complete Workflow', () => {
     it('should handle duplicate IDs gracefully', async () => {
       let analysis = createAnalysis({
         id: 'duplicate-id',
-        clinic_id: 'test-clinic',
+        center_id: 'test-center',
         sales_staff_id: 'test-staff',
-        patient_name: 'First Save',
+        customer_name: 'First Save',
       })
 
       await indexedDB.saveAnalysis(analysis, true)
@@ -561,14 +561,14 @@ describe('Offline Mode - Complete Workflow', () => {
       // Save again with same ID (should update)
       analysis = {
         ...analysis,
-        patient_name: 'Second Save',
+        customer_name: 'Second Save',
       }
       await indexedDB.saveAnalysis(analysis, true)
 
-      const saved = await indexedDB.getAnalysesBySalesStaff('test-clinic', 'test-staff')
+      const saved = await indexedDB.getAnalysesBySalesStaff('test-center', 'test-staff')
       const duplicate = saved.find(a => a.id === 'duplicate-id')
       
-      expect(duplicate?.patient_name).toBe('Second Save')
+      expect(duplicate?.customer_name).toBe('Second Save')
     })
 
     it('should handle empty sync queue', async () => {
@@ -580,7 +580,7 @@ describe('Offline Mode - Complete Workflow', () => {
     it('should handle missing optional fields', async () => {
       await expect(
         indexedDB.saveAnalysis(
-          createAnalysis({ id: 'minimal-analysis', clinic_id: 'test-clinic' }),
+          createAnalysis({ id: 'minimal-analysis', center_id: 'test-center' }),
           true
         )
       ).resolves.not.toThrow()

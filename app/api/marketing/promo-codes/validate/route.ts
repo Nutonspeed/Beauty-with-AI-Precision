@@ -10,7 +10,7 @@ function getSupabaseClient() {
 
 /**
  * POST /api/marketing/promo-codes/validate
- * Validate promo code for beauty clinic customer
+ * Validate promo code for beauty center customer
  * 
  * Body:
  * - code (required): Promo code to validate

@@ -60,7 +60,7 @@ function buildPromptPayPayload(promptpayId: string, amount: number): string {
     formatTLV("53", "764") + // Currency THB
     formatAmount() +
     formatTLV("58", "TH") + // Country
-    formatTLV("59", "CLINICIQ") + // Merchant name (placeholder)
+    formatTLV("59", "CENTERIQ") + // Merchant name (placeholder)
     formatTLV("60", "BANGKOK") + // City (placeholder)
     "6304" // CRC placeholder
 
@@ -85,11 +85,11 @@ function crc16ccitt(input: string): number {
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
-    const clinic_id = searchParams.get("clinic_id")
+    const center_id = searchParams.get("center_id")
     const amountRaw = searchParams.get("amount")
 
-    if (!clinic_id) {
-      return NextResponse.json({ error: "clinic_id is required" }, { status: 400 })
+    if (!center_id) {
+      return NextResponse.json({ error: "center_id is required" }, { status: 400 })
     }
 
     const amount = Number(amountRaw)
@@ -98,21 +98,21 @@ export async function GET(request: NextRequest) {
     }
 
     const service = createServiceClient()
-    const { data: clinic, error: clinicError } = await service
-      .from("clinics")
+    const { data: center, error: centerError } = await service
+      .from("centers")
       .select("id, promptpay_id")
-      .eq("id", clinic_id)
+      .eq("id", center_id)
       .single()
 
-    if (clinicError || !clinic) {
-      return NextResponse.json({ error: "Clinic not found" }, { status: 404 })
+    if (centerError || !center) {
+      return NextResponse.json({ error: "Center not found" }, { status: 404 })
     }
 
-    if (!clinic.promptpay_id) {
-      return NextResponse.json({ error: "Clinic PromptPay is not configured" }, { status: 400 })
+    if (!center.promptpay_id) {
+      return NextResponse.json({ error: "Center PromptPay is not configured" }, { status: 400 })
     }
 
-    const payload = buildPromptPayPayload(clinic.promptpay_id, amount)
+    const payload = buildPromptPayPayload(center.promptpay_id, amount)
 
     const svg = await QRCode.toString(payload, {
       type: "svg",

@@ -6,7 +6,7 @@ export async function auth(options?: { token?: string }) {
       user: {
         id: 'mock-user-id',
         email: 'mock@example.com',
-        clinicId: 'mock-clinic-id',
+        centerId: 'mock-center-id',
         role: 'customer'
       }
     }

@@ -17,5 +17,5 @@ export const STRIPE_PRICES = {
   premium_monthly: process.env.STRIPE_PRICE_PREMIUM_MONTHLY || "price_premium_monthly",
   premium_yearly: process.env.STRIPE_PRICE_PREMIUM_YEARLY || "price_premium_yearly",
   single_analysis: process.env.STRIPE_PRICE_SINGLE_ANALYSIS || "price_single_analysis",
-  treatment_booking: process.env.STRIPE_PRICE_TREATMENT_BOOKING || "price_treatment_booking",
+  program_booking: process.env.STRIPE_PRICE_PROGRAM_BOOKING || "price_program_booking",
 }

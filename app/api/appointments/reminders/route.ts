@@ -1,9 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
-import { withClinicAuth } from "@/lib/auth/middleware"
+import { withCenterAuth } from "@/lib/auth/middleware"
 
 
-export const GET = withClinicAuth(async (request: NextRequest) => {
+export const GET = withCenterAuth(async (request: NextRequest) => {
   try {
     const { searchParams } = new URL(request.url)
     const status = searchParams.get('status') || 'pending'
@@ -33,7 +33,7 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
           appointment_date,
           start_time,
           service_name,
-          clinic_id
+          center_id
         )
       `)
       .eq('status', status)
@@ -57,7 +57,7 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
 });
 
 // POST /api/appointments/reminders/send - Mark reminders as sent
-export const POST = withClinicAuth(async (request: NextRequest) => {
+export const POST = withCenterAuth(async (request: NextRequest) => {
   try {
     const body = await request.json()
     const { reminder_ids, status, failure_reason } = body

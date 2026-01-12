@@ -1,14 +1,14 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 
-// GET /api/queue/settings - Get queue settings for clinic
+// GET /api/queue/settings - Get queue settings for center
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
-    const clinic_id = searchParams.get("clinic_id")
+    const center_id = searchParams.get("center_id")
 
-    if (!clinic_id) {
-      return NextResponse.json({ error: "clinic_id is required" }, { status: 400 })
+    if (!center_id) {
+      return NextResponse.json({ error: "center_id is required" }, { status: 400 })
     }
 
     const supabaseAdmin = createClient(
@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
     const { data: settings, error } = await supabaseAdmin
       .from('queue_settings')
       .select('*')
-      .eq('clinic_id', clinic_id)
+      .eq('center_id', center_id)
       .single()
 
     if (error && error.code !== 'PGRST116') { // Not found error is ok
@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
     // Return default settings if not found
     if (!settings) {
       const defaultSettings = {
-        clinic_id,
+        center_id,
         avg_service_time: 15,
         buffer_time: 5,
         notify_before_turn: 2,
@@ -68,8 +68,8 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
 
-    if (!body.clinic_id) {
-      return NextResponse.json({ error: "clinic_id is required" }, { status: 400 })
+    if (!body.center_id) {
+      return NextResponse.json({ error: "center_id is required" }, { status: 400 })
     }
 
     const supabaseAdmin = createClient(
@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
     const { data: settings, error } = await supabaseAdmin
       .from('queue_settings')
       .upsert([{
-        clinic_id: body.clinic_id,
+        center_id: body.center_id,
         avg_service_time: body.avg_service_time,
         buffer_time: body.buffer_time,
         notify_before_turn: body.notify_before_turn,
@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
         auto_reset_daily: body.auto_reset_daily,
         reset_time: body.reset_time,
       }], {
-        onConflict: 'clinic_id'
+        onConflict: 'center_id'
       })
       .select()
       .single()

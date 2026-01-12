@@ -191,7 +191,7 @@ export async function GET(request: NextRequest) {
       .eq('id', user.id)
       .single();
 
-    if (!profile || !['super_admin', 'clinic_admin'].includes(profile.role)) {
+    if (!profile || !['super_admin', 'center_admin'].includes(profile.role)) {
       return NextResponse.json(
         { success: false, error: { code: 'FORBIDDEN', message: 'Admin access required' } },
         { status: 403 }

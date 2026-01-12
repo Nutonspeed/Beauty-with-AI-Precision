@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const query = searchParams.get('q') || ''
     const type = searchParams.get('type') || 'customers'
-    const centerId = searchParams.get('centerId') || searchParams.get('clinicId')
+    const centerId = searchParams.get('centerId') || searchParams.get('centerId')
     
     if (!centerId) {
       return NextResponse.json(
@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
 
     switch (type) {
       case 'customers':
-      case 'patients':
+      case 'clients':
         suggestions = await customerSearchService.getCustomerSuggestions(query, centerId)
         break
       

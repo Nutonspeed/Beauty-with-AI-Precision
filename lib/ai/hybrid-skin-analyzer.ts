@@ -230,7 +230,7 @@ function normalizeRecommendationsList(
       }
 
       normalized.push({
-        category: 'treatment',
+        category: 'program',
         product,
         reason: `Suggested by ${providerLabel} analysis`,
       });
@@ -241,14 +241,14 @@ function normalizeRecommendationsList(
       const record = item as Record<string, unknown>;
       const product = typeof record.product === 'string' ? record.product.trim() : '';
       const reason = typeof record.reason === 'string' ? record.reason.trim() : '';
-      let category = typeof record.category === 'string' ? record.category.trim().toLowerCase() : 'treatment';
+      let category = typeof record.category === 'string' ? record.category.trim().toLowerCase() : 'program';
 
       if (!product) {
         return;
       }
 
       category = category.replace(/\s+/g, '_');
-      const resolvedCategory = VALID_RECOMMENDATION_CATEGORIES.find((cat) => cat === category) ?? 'treatment';
+      const resolvedCategory = VALID_RECOMMENDATION_CATEGORIES.find((cat) => cat === category) ?? 'program';
 
       normalized.push({
         category: resolvedCategory,
@@ -328,7 +328,7 @@ function normalizeVisionResult(raw: VisionSkinAnalysis): AIAnalysisResult {
     concerns: normalizeConcernsList(raw.concerns),
     severity: mergeSeverity(raw.severity ?? {}),
     recommendations: normalizeRecommendationsList(raw.recommendations ?? [], PROVIDER_LABELS['google-vision']),
-    programPlan: raw.treatmentPlan,
+    programPlan: raw.programPlan,
     confidence: normalizeConfidence(raw.confidence, 0.75),
   };
 }
@@ -339,7 +339,7 @@ function normalizeGeminiResult(raw: GeminiSkinAnalysisResult): AIAnalysisResult 
     concerns: normalizeConcernsList(raw.concerns),
     severity: mergeSeverity(raw.severity ?? {}),
     recommendations: normalizeRecommendationsList(raw.recommendations ?? [], PROVIDER_LABELS.gemini),
-    programPlan: raw.treatmentPlan,
+    programPlan: raw.programPlan,
     confidence: normalizeConfidence(raw.confidence, 0.8),
   };
 }
@@ -603,7 +603,7 @@ function buildLocalAIAnalysis(cv: CVAnalysisResult): AIAnalysisResult {
     {
       category: 'moisturizer',
       product: 'Barrier-repair moisturizer with ceramides',
-      reason: 'Supports hydration alongside treatment steps',
+      reason: 'Supports hydration alongside program steps',
     },
     {
       category: 'sunscreen',
@@ -631,7 +631,7 @@ function buildLocalAIAnalysis(cv: CVAnalysisResult): AIAnalysisResult {
   if (severity.wrinkles >= 6 || severity.fine_lines >= 6) {
     recommendations.push({
       category: 'program',
-      product: 'Peptide or retinol night treatment',
+      product: 'Peptide or retinol night program',
       reason: 'Addresses lines emphasized by wrinkle detection',
     });
   }

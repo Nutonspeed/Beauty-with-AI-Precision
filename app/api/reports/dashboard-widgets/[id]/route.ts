@@ -38,7 +38,7 @@ export async function GET(
       const { data: revenue } = await supabaseClient
         .from('bookings')
         .select('total_amount')
-        .eq('clinic_id', widget.clinic_id)
+        .eq('center_id', widget.center_id)
         .eq('payment_status', 'paid')
         .gte('created_at', getTimePeriodStart(widget.time_period));
 

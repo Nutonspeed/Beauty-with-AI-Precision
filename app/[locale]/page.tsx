@@ -254,7 +254,7 @@ export default function HomePage() {
             />
           </div>
 
-          {/* ROI Section - Precision Analytics Architecture */}
+          {/* ROI Section - CenterIQ Analytics Architecture */}
           <SectionScanner color="rgba(16, 185, 129, 0.6)">
             <section className="py-32 lg:py-64 relative border-b border-white/5 bg-white/[0.01]">
               <div className="container relative z-10">
@@ -268,14 +268,14 @@ export default function HomePage() {
                   >
                     <Badge variant="outline" className="px-6 py-2 rounded-full border-emerald-500/30 text-emerald-400 bg-emerald-500/5 backdrop-blur-md uppercase tracking-[0.2em] text-[10px] font-black shadow-2xl shadow-emerald-500/10">
                       <Calculator className="mr-3 h-3.5 w-3.5 animate-pulse" />
-                      Strategic Yield Analysis
+                      CenterIQ Strategic Yield
                     </Badge>
                     <h2 className="text-5xl md:text-8xl font-bold tracking-tighter text-white leading-[0.9] italic">
                       Profit<br />
                       <span className="bg-gradient-to-r from-emerald-400 to-cyan-500 bg-clip-text text-transparent not-italic">Orchestration</span>
                     </h2>
                     <p className="text-xl text-slate-400 font-light tracking-widest leading-relaxed italic">
-                      Deploy our AI Strategic ROI Simulator to quantify the precise financial impact on your aesthetic operations.
+                      Deploy CenterIQ AI Strategic ROI Simulator to quantify the precise financial impact on your operations.
                     </p>
                     <div className="flex items-center gap-8 pt-6">
                       <div className="space-y-1">
@@ -413,7 +413,7 @@ export default function HomePage() {
 
         <CaseStudyCarousel />
 
-        {/* Aesthetic Intelligence Grid - Infrastructure Modules */}
+        {/* CenterIQ Intelligence Grid - Infrastructure Modules */}
         <SectionScanner color="rgba(14, 165, 233, 0.6)">
           <section className="py-32 lg:py-64 relative">
             <div className="container relative z-10">

@@ -32,7 +32,7 @@ export async function GET() {
 
     // Calculate MRR (Monthly Recurring Revenue)
     const { data: activeSubscriptions } = await supabase
-      .from('clinic_subscriptions')
+      .from('center_subscriptions')
       .select('mrr')
       .eq('status', 'active');
 
@@ -41,7 +41,7 @@ export async function GET() {
 
     // Get subscription distribution by status
     const { data: subscriptionsByStatus } = await supabase
-      .from('clinic_subscriptions')
+      .from('center_subscriptions')
       .select('status');
 
     const statusDistribution = {
@@ -62,7 +62,7 @@ export async function GET() {
 
     // Get revenue by plan
     const { data: revenueByPlan } = await supabase
-      .from('clinic_subscriptions')
+      .from('center_subscriptions')
       .select(`
         plan_id,
         mrr,
@@ -120,13 +120,13 @@ export async function GET() {
 
     // Calculate churn rate (cancelled subscriptions in last 30 days / total active at start)
     const { count: cancelledLast30Days } = await supabase
-      .from('clinic_subscriptions')
+      .from('center_subscriptions')
       .select('*', { count: 'exact', head: true })
       .eq('status', 'cancelled')
       .gte('cancelled_at', thirtyDaysAgo);
 
     const { count: totalActiveSubscriptions } = await supabase
-      .from('clinic_subscriptions')
+      .from('center_subscriptions')
       .select('*', { count: 'exact', head: true })
       .in('status', ['active', 'trial', 'past_due']);
 
@@ -145,10 +145,10 @@ export async function GET() {
       0
     ) || 0;
 
-    // Get average revenue per clinic
-    const activeClinicCount = statusDistribution.active + statusDistribution.trial;
-    const averageRevenuePerClinic = activeClinicCount > 0
-      ? Number((totalMRR / activeClinicCount).toFixed(2))
+    // Get average revenue per center
+    const activeCenterCount = statusDistribution.active + statusDistribution.trial;
+    const averageRevenuePerCenter = activeCenterCount > 0
+      ? Number((totalMRR / activeCenterCount).toFixed(2))
       : 0;
 
     // Get payment method distribution (last 90 days)
@@ -172,8 +172,8 @@ export async function GET() {
       overview: {
         mrr: Number(totalMRR.toFixed(2)),
         arr: Number(totalARR.toFixed(2)),
-        totalClinics: activeClinicCount,
-        averageRevenuePerClinic,
+        totalCenters: activeCenterCount,
+        averageRevenuePerCenter,
         churnRate,
         paymentSuccessRate,
         outstandingAmount: Number(totalOutstanding.toFixed(2)),

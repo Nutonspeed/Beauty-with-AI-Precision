@@ -10,7 +10,7 @@ function getSupabaseClient() {
 
 /**
  * GET /api/marketing/discount-rules/[id]
- * Get discount rule details for beauty clinic
+ * Get discount rule details for beauty center
  */
 export async function GET(
   request: NextRequest,
@@ -43,7 +43,7 @@ export async function GET(
 
 /**
  * PATCH /api/marketing/discount-rules/[id]
- * Update discount rule for beauty clinic
+ * Update discount rule for beauty center
  */
 export async function PATCH(
   request: NextRequest,

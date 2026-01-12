@@ -118,12 +118,12 @@ export function useAvailability(options: UseAvailabilityOptions = {}) {
   );
 
   const createTentativeBooking = useCallback(
-    (slotId: string, patientId: string) => {
+    (slotId: string, clientId: string) => {
       try {
         setError(null);
         const tentativeSlot = managerRef.current.createTentativeBooking(
           slotId,
-          patientId,
+          clientId,
         );
         updateSchedules();
         return tentativeSlot;

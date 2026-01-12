@@ -240,7 +240,7 @@ export class SkinTypeClassifier {
           'Use lightweight, oil-free moisturizers',
           'Apply mattifying primers and powders',
           'Cleanse twice daily with gentle cleanser',
-          ...(characteristics.acneScore > 60 ? ['Consider salicylic acid or benzoyl peroxide treatments'] : []),
+          ...(characteristics.acneScore > 60 ? ['Consider salicylic acid or benzoyl peroxide programs'] : []),
           'Avoid heavy oils and thick creams',
         ];
 
@@ -407,7 +407,7 @@ export class SkinTypeClassifier {
           ...tips,
           'Use blotting papers to manage excess oil',
           'Exfoliate 2-3 times per week',
-          ...(characteristics.poreSize > 70 ? ['Consider pore-minimizing treatments'] : []),
+          ...(characteristics.poreSize > 70 ? ['Consider pore-minimizing programs'] : []),
           'Avoid heavy makeup and use powder formulations',
         ];
 

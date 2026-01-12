@@ -2,7 +2,7 @@ import { test, expect, waitForLoading, takeScreenshot, testUsers } from '../test
 
 test.describe('AI Skin Analysis Feature', () => {
   test.beforeEach(async ({ page }) => {
-    // Login as customer for skin analysis
+    // Login as client for skin analysis
     await page.goto('/th/auth/login');
     await page.fill('#email', testUsers.customer.email);
     await page.fill('#password', testUsers.customer.password);
@@ -10,12 +10,12 @@ test.describe('AI Skin Analysis Feature', () => {
     await waitForLoading(page);
   });
 
-  test('should access skin analysis from customer dashboard', async ({ page }) => {
-    await page.goto('/th/customer/dashboard');
+  test('should access skin analysis from client dashboard', async ({ page }) => {
+    await page.goto('/th/client/dashboard');
     await waitForLoading(page);
     
-    await page.click('a[href="/th/customer/analysis"]');
-    await page.waitForURL('**/customer/analysis');
+    await page.click('a[href="/th/client/analysis"]');
+    await page.waitForURL('**/client/analysis');
     await waitForLoading(page);
     
     // Basic page access
@@ -28,7 +28,7 @@ test.describe('AI Skin Analysis Feature', () => {
   });
 
   test('should perform complete skin analysis flow', async ({ page }) => {
-    await page.goto('/th/customer/analysis');
+    await page.goto('/th/client/analysis');
     await waitForLoading(page);
     
     // Upload image
@@ -51,7 +51,7 @@ test.describe('AI Skin Analysis Feature', () => {
     await takeScreenshot(page, 'ai-analysis-results');
   });
 
-  test.skip('should display comprehensive analysis results (not applicable; results shown inline on /customer/analysis)', async ({ page }) => {});
+  test.skip('should display comprehensive analysis results (not applicable; results shown inline on /client/analysis)', async ({ page }) => {});
 
   test('should handle analysis from sales quick scan (smoke)', async ({ page }) => {
     await page.goto('/th/auth/login');

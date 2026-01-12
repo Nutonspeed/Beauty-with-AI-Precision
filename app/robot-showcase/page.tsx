@@ -170,7 +170,7 @@ function Scene3D({ scrollProgress, cameraMode }: { scrollProgress: number; camer
       
       <AnimatedCamera cameraMode={cameraMode} />
       
-      {/* Lighting - Soft, clinical lighting */}
+      {/* Lighting - Soft, centeral lighting */}
       <ambientLight intensity={0.8} />
       <spotLight position={[10, 10, 10]} angle={0.3} penumbra={1} intensity={1.5} castShadow color="#ffffff" />
       <spotLight position={[-10, 5, -5]} angle={0.3} penumbra={1} intensity={1} color="#f0f4f8" />
@@ -307,12 +307,12 @@ export default function RobotShowcase() {
           <InfoHotspot 
             position={[30, 40]} 
             label="AI Skin Analysis" 
-            description="Advanced AI technology for precise skin diagnostics and treatment planning"
+            description="Advanced AI technology for precise skin diagnostics and program planning"
           />
           <InfoHotspot 
             position={[70, 35]} 
             label="Medical Grade" 
-            description="FDA-approved medical technology with clinical certification"
+            description="FDA-approved medical technology with centeral certification"
           />
           <InfoHotspot 
             position={[50, 60]} 
@@ -376,7 +376,7 @@ export default function RobotShowcase() {
               },
               { 
                 title: "การรักษา", 
-                specs: ["Non-Invasive", "FDA Approved", "Clinical Grade"],
+                specs: ["Non-Invasive", "FDA Approved", "Centeral Grade"],
                 icon: "💎"
               },
               { 

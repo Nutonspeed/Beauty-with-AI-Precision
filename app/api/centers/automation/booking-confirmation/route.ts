@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
 
     // ดึงการตั้งค่า
     const { data: settings } = await supabase
-      .from("clinic_settings")
+      .from("center_settings")
       .select("settings")
       .eq("setting_type", "automation")
       .maybeSingle();
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
       ],
       template:
         settings?.settings?.booking_confirmation_template ||
-        "ยืนยันการจองสำเร็จ! 🎉\n\nเลขที่การจอง: {{booking_id}}\nวันที่: {{date}}\nเวลา: {{time}}\nการรักษา: {{treatment}}\nผู้ให้บริการ: {{staff_name}}",
+        "ยืนยันการจองสำเร็จ! 🎉\n\nเลขที่การจอง: {{booking_id}}\nวันที่: {{date}}\nเวลา: {{time}}\nการรักษา: {{program}}\nผู้ให้บริการ: {{staff_name}}",
     };
 
     if (!confirmationSettings.enabled) {
@@ -45,12 +45,12 @@ export async function POST(request: NextRequest) {
 
     // ดึงข้อมูลการจอง
     const { data: booking, error } = await supabase
-      .from("clinic_bookings")
+      .from("center_bookings")
       .select(
         `
         *,
-        customer:clinic_customers(name, email, phone, line_id),
-        staff:clinic_staff(name)
+        customer:center_customers(name, email, phone, line_id),
+        staff:center_staff(name)
       `
       )
       .eq("id", booking_id)
@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
       .replace("{{booking_id}}", booking.id.substring(0, 8).toUpperCase())
       .replace("{{date}}", appointmentDate)
       .replace("{{time}}", booking.appointment_time)
-      .replace("{{treatment}}", booking.treatment_type)
+      .replace("{{program}}", booking.program_type)
       .replace("{{staff_name}}", booking.staff?.name || "ทีมงาน")
       .replace("{{customer_name}}", booking.customer?.name || "ลูกค้า");
 
@@ -105,8 +105,8 @@ export async function POST(request: NextRequest) {
             customerName: booking.customer.name || "ลูกค้า",
             bookingDate: appointmentDate,
             bookingTime: booking.appointment_time,
-            treatment: booking.treatment_type,
-            clinicName: "AI367 Beauty Clinic",
+            program: booking.program_type,
+            centerName: "AI367 Beauty Center",
             bookingId: booking.id,
           });
           if (emailResult.success) {
@@ -123,8 +123,8 @@ export async function POST(request: NextRequest) {
               customerName: booking.customer.name || "ลูกค้า",
               bookingDate: appointmentDate,
               bookingTime: booking.appointment_time,
-              treatment: booking.treatment_type,
-              clinicName: "AI367 Beauty Clinic",
+              program: booking.program_type,
+              centerName: "AI367 Beauty Center",
               bookingId: booking.id
             });
             if (smsResult.success) {

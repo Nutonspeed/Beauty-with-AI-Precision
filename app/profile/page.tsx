@@ -29,8 +29,8 @@ export default async function ProfilePage() {
     const roleMap: Record<string, string> = {
       customer: "ลูกค้า (Customer)",
       sales_staff: "พนักงานขาย (Sales Staff)",
-      clinic_owner: "เจ้าของคลินิก (Clinic Owner)",
-      clinic_staff: "พนักงานคลินิก (Clinic Staff)",
+      center_owner: "เจ้าของคลินิก (Center Owner)",
+      center_staff: "พนักงานคลินิก (Center Staff)",
       admin: "ผู้ดูแลระบบ (Admin)",
       super_admin: "ผู้ดูแลระบบสูงสุด (Super Admin)",
     }

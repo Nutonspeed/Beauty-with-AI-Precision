@@ -57,11 +57,11 @@ export async function GET(_request: NextRequest) {
       .select('id', { count: 'exact', head: true })
 
     // 5. System stats
-    const { data: clinicsData } = await supabase
-      .from('clinics')
+    const { data: centersData } = await supabase
+      .from('centers')
       .select('id, status')
 
-    const activeClinics = clinicsData?.filter(c => c.status === 'active').length || 0
+    const activeCenters = centersData?.filter(c => c.status === 'active').length || 0
 
     // 6. Recent API calls (from logs if available)
     const { data: recentLogs } = await supabase
@@ -79,7 +79,7 @@ export async function GET(_request: NextRequest) {
 
     // 7. Database connection pool (simulated - actual values would come from PgBouncer/Supabase)
     const maxConnections = 100
-    const currentConnections = Math.min(activeClinics + (activeUsers?.length || 0), maxConnections)
+    const currentConnections = Math.min(activeCenters + (activeUsers?.length || 0), maxConnections)
     const poolUtilization = (currentConnections / maxConnections) * 100
 
     // 8. Service health checks

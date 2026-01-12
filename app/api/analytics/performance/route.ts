@@ -197,7 +197,7 @@ export const GET = withAdminAuth(async (request: NextRequest, user) => {
       .eq('id', user.id)
       .single();
 
-    if (profileError || !profile || !['super_admin', 'clinic_admin'].includes(profile.role)) {
+    if (profileError || !profile || !['super_admin', 'center_admin'].includes(profile.role)) {
       return NextResponse.json(
         {
           success: false,

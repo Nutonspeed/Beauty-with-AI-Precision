@@ -15,10 +15,10 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url)
     const timeRange = searchParams.get('timeRange') || '1h'
-    const clinicId = session.user.user_metadata?.clinic_id || 'default-clinic'
+    const centerId = session.user.user_metadata?.center_id || 'default-center'
 
     // Get business metrics
-    const businessMetrics = await getBusinessMetrics(clinicId, timeRange)
+    const businessMetrics = await getBusinessMetrics(centerId, timeRange)
     
     // Get performance metrics
     const performanceMetrics = await getPerformanceMetrics(timeRange)
@@ -77,16 +77,16 @@ export async function POST(request: NextRequest) {
       
       switch (type) {
         case 'counter':
-          metricsAggregator.incrementCounter(name, value, labels, session.user.user_metadata?.clinic_id || 'default-clinic', session.user.id)
+          metricsAggregator.incrementCounter(name, value, labels, session.user.user_metadata?.center_id || 'default-center', session.user.id)
           break
         case 'gauge':
-          metricsAggregator.setGauge(name, value, labels, session.user.user_metadata?.clinic_id || 'default-clinic', session.user.id)
+          metricsAggregator.setGauge(name, value, labels, session.user.user_metadata?.center_id || 'default-center', session.user.id)
           break
         case 'timer':
-          metricsAggregator.recordTimer(name, value, labels, session.user.user_metadata?.clinic_id || 'default-clinic', session.user.id)
+          metricsAggregator.recordTimer(name, value, labels, session.user.user_metadata?.center_id || 'default-center', session.user.id)
           break
         case 'histogram':
-          metricsAggregator.recordHistogram(name, value, labels, session.user.user_metadata?.clinic_id || 'default-clinic', session.user.id)
+          metricsAggregator.recordHistogram(name, value, labels, session.user.user_metadata?.center_id || 'default-center', session.user.id)
           break
       }
     })
@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
 }
 
 // Helper functions
-async function getBusinessMetrics(clinicId: string, timeRange: string): Promise<any> {
+async function getBusinessMetrics(centerId: string, timeRange: string): Promise<any> {
   try {
     const supabaseClient = await createClient()
     const cutoffDate = getCutoffDate(timeRange)
@@ -115,28 +115,28 @@ async function getBusinessMetrics(clinicId: string, timeRange: string): Promise<
     const { count: totalUsers } = await supabaseClient
       .from('users')
       .select('*', { count: 'exact', head: true })
-      .eq('clinic_id', clinicId)
+      .eq('center_id', centerId)
       .gte('created_at', cutoffDate)
 
     // Get total analyses
     const { count: totalAnalyses } = await supabaseClient
       .from('skin_analyses')
       .select('*', { count: 'exact', head: true })
-      .eq('clinic_id', clinicId)
+      .eq('center_id', centerId)
       .gte('created_at', cutoffDate)
 
     // Get total bookings
     const { count: totalBookings } = await supabaseClient
       .from('bookings')
       .select('*', { count: 'exact', head: true })
-      .eq('clinic_id', clinicId)
+      .eq('center_id', centerId)
       .gte('created_at', cutoffDate)
 
     // Get total revenue
     const { data: payments } = await supabaseClient
       .from('payments')
       .select('amount')
-      .eq('clinic_id', clinicId)
+      .eq('center_id', centerId)
       .eq('status', 'completed')
       .gte('created_at', cutoffDate)
 
@@ -146,7 +146,7 @@ async function getBusinessMetrics(clinicId: string, timeRange: string): Promise<
     const { count: totalLeads } = await supabaseClient
       .from('sales_leads')
       .select('*', { count: 'exact', head: true })
-      .eq('clinic_id', clinicId)
+      .eq('center_id', centerId)
       .gte('created_at', cutoffDate)
 
     const conversionRate = (totalLeads || 0) > 0 ? (totalBookings || 0) / (totalLeads || 0) : 0

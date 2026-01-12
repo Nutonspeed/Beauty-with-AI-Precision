@@ -555,14 +555,14 @@ export class AdvancedObjectRecognitionSystem {
   }
 
   /**
-   * Get treatment recommendations for skin condition
+   * Get program recommendations for skin condition
    */
   private getRecommendations(type: SkinCondition["type"], _severity: number): string[] {
     const recommendations: Record<SkinCondition["type"], string[]> = {
-      acne: ["Use salicylic acid cleanser", "Apply benzoyl peroxide treatment", "Consider professional extraction"],
-      wrinkle: ["Use retinol serum", "Apply hyaluronic acid moisturizer", "Consider Botox treatment"],
-      dark_spot: ["Use vitamin C serum", "Apply niacinamide treatment", "Consider laser therapy"],
-      redness: ["Use gentle, fragrance-free products", "Apply centella asiatica serum", "Consider IPL treatment"],
+      acne: ["Use salicylic acid cleanser", "Apply benzoyl peroxide program", "Consider professional extraction"],
+      wrinkle: ["Use retinol serum", "Apply hyaluronic acid moisturizer", "Consider Botox program"],
+      dark_spot: ["Use vitamin C serum", "Apply niacinamide program", "Consider laser therapy"],
+      redness: ["Use gentle, fragrance-free products", "Apply centella asiatica serum", "Consider IPL program"],
       texture: ["Use AHA/BHA exfoliant", "Apply niacinamide serum", "Consider microneedling"],
       pore: ["Use niacinamide serum", "Apply clay mask weekly", "Consider professional facial"],
     }

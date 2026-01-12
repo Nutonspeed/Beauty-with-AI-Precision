@@ -226,13 +226,13 @@ export default function AnalyticsPage() {
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                 <Building2 className="w-4 h-4" />
-                Active Clinics
+                Active Centers
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{analytics.clinics.active}</div>
+              <div className="text-2xl font-bold">{analytics.centers.active}</div>
               <p className="text-xs text-muted-foreground">
-                {analytics.clinics.newInPeriod} new this period
+                {analytics.centers.newInPeriod} new this period
               </p>
             </CardContent>
           </Card>
@@ -329,33 +329,33 @@ export default function AnalyticsPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Building2 className="w-5 h-5 text-blue-600" />
-                Clinic Analytics
+                Center Analytics
               </CardTitle>
-              <CardDescription>Clinic growth and distribution</CardDescription>
+              <CardDescription>Center growth and distribution</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <div className="text-sm text-muted-foreground mb-1">Total Clinics</div>
-                    <div className="text-2xl font-bold">{analytics.clinics.total}</div>
+                    <div className="text-sm text-muted-foreground mb-1">Total Centers</div>
+                    <div className="text-2xl font-bold">{analytics.centers.total}</div>
                   </div>
                   <div>
                     <div className="text-sm text-muted-foreground mb-1">Active</div>
                     <div className="text-2xl font-bold text-green-600">
-                      {analytics.clinics.active}
+                      {analytics.centers.active}
                     </div>
                   </div>
                   <div>
                     <div className="text-sm text-muted-foreground mb-1">Trial</div>
                     <div className="text-xl font-semibold text-yellow-600">
-                      {analytics.clinics.trial}
+                      {analytics.centers.trial}
                     </div>
                   </div>
                   <div>
                     <div className="text-sm text-muted-foreground mb-1">Churn Rate</div>
                     <div className="text-xl font-semibold text-red-600">
-                      {formatPercent(analytics.clinics.churnRate)}
+                      {formatPercent(analytics.centers.churnRate)}
                     </div>
                   </div>
                 </div>
@@ -368,7 +368,7 @@ export default function AnalyticsPage() {
                       <div className="flex items-center justify-between text-xs mb-1">
                         <span>Starter</span>
                         <span className="font-medium">
-                          {analytics.clinics.planDistribution.starter}
+                          {analytics.centers.planDistribution.starter}
                         </span>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
@@ -376,8 +376,8 @@ export default function AnalyticsPage() {
                           className="bg-blue-500 h-2 rounded-full"
                           style={{
                             width: `${
-                              (analytics.clinics.planDistribution.starter /
-                                analytics.clinics.total) *
+                              (analytics.centers.planDistribution.starter /
+                                analytics.centers.total) *
                               100
                             }%`,
                           }}
@@ -388,7 +388,7 @@ export default function AnalyticsPage() {
                       <div className="flex items-center justify-between text-xs mb-1">
                         <span>Professional</span>
                         <span className="font-medium">
-                          {analytics.clinics.planDistribution.professional}
+                          {analytics.centers.planDistribution.professional}
                         </span>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
@@ -396,8 +396,8 @@ export default function AnalyticsPage() {
                           className="bg-purple-500 h-2 rounded-full"
                           style={{
                             width: `${
-                              (analytics.clinics.planDistribution.professional /
-                                analytics.clinics.total) *
+                              (analytics.centers.planDistribution.professional /
+                                analytics.centers.total) *
                               100
                             }%`,
                           }}
@@ -408,7 +408,7 @@ export default function AnalyticsPage() {
                       <div className="flex items-center justify-between text-xs mb-1">
                         <span>Enterprise</span>
                         <span className="font-medium">
-                          {analytics.clinics.planDistribution.enterprise}
+                          {analytics.centers.planDistribution.enterprise}
                         </span>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
@@ -416,8 +416,8 @@ export default function AnalyticsPage() {
                           className="bg-amber-500 h-2 rounded-full"
                           style={{
                             width: `${
-                              (analytics.clinics.planDistribution.enterprise /
-                                analytics.clinics.total) *
+                              (analytics.centers.planDistribution.enterprise /
+                                analytics.centers.total) *
                               100
                             }%`,
                           }}
@@ -427,12 +427,12 @@ export default function AnalyticsPage() {
                   </div>
                 </div>
 
-                {/* Clinic Growth */}
-                {analytics.clinics.growthTimeSeries.length > 0 && (
+                {/* Center Growth */}
+                {analytics.centers.growthTimeSeries.length > 0 && (
                   <div className="mt-6">
-                    <div className="text-sm font-medium mb-3">Clinic Growth</div>
+                    <div className="text-sm font-medium mb-3">Center Growth</div>
                     <div className="space-y-2">
-                      {analytics.clinics.growthTimeSeries.slice(-4).map((item) => (
+                      {analytics.centers.growthTimeSeries.slice(-4).map((item) => (
                         <div key={item.month} className="flex items-center gap-2">
                           <Calendar className="w-3 h-3 text-muted-foreground" />
                           <span className="text-xs text-muted-foreground flex-1">
@@ -485,9 +485,9 @@ export default function AnalyticsPage() {
                       </div>
                     </div>
                     <div className="border rounded-lg p-3">
-                      <div className="text-xs text-muted-foreground">Clinic Admin</div>
+                      <div className="text-xs text-muted-foreground">Center Admin</div>
                       <div className="text-lg font-semibold">
-                        {analytics.users.roleDistribution.clinic_admin}
+                        {analytics.users.roleDistribution.center_admin}
                       </div>
                     </div>
                     <div className="border rounded-lg p-3">

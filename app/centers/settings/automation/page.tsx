@@ -28,9 +28,9 @@ async function requireRole(allowedRoles: string[]) {
 async function getAutomationSettings() {
   const supabase = await createClient();
 
-  // ดึงข้อมูลการตั้งค่า automation จากตาราง clinic_settings
+  // ดึงข้อมูลการตั้งค่า automation จากตาราง center_settings
   const { data: settings } = await supabase
-    .from("clinic_settings")
+    .from("center_settings")
     .select("*")
     .eq("setting_type", "automation")
     .maybeSingle();

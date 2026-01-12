@@ -22,10 +22,10 @@ interface SystemSettings {
     pushNotifications: boolean;
   };
   limits: {
-    maxClinicsPerOwner: number;
-    maxStaffPerClinic: number;
+    maxCentersPerOwner: number;
+    maxStaffPerCenter: number;
     maxAnalysesPerDay: number;
-    maxStoragePerClinicMB: number;
+    maxStoragePerCenterMB: number;
     sessionTimeoutMinutes: number;
   };
   security: {
@@ -45,9 +45,9 @@ interface SystemSettings {
 
 const defaultSettings: SystemSettings = {
   general: {
-    siteName: 'ClinicIQ',
-    siteUrl: 'https://cliniciq.app',
-    supportEmail: 'support@cliniciq.app',
+    siteName: 'CenterIQ',
+    siteUrl: 'https://centeriq.app',
+    supportEmail: 'support@centeriq.app',
     defaultLanguage: 'th',
     maintenanceMode: false,
     allowNewRegistrations: true,
@@ -61,10 +61,10 @@ const defaultSettings: SystemSettings = {
     pushNotifications: true,
   },
   limits: {
-    maxClinicsPerOwner: 5,
-    maxStaffPerClinic: 50,
+    maxCentersPerOwner: 5,
+    maxStaffPerCenter: 50,
     maxAnalysesPerDay: 100,
-    maxStoragePerClinicMB: 5000,
+    maxStoragePerCenterMB: 5000,
     sessionTimeoutMinutes: 60,
   },
   security: {

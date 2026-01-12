@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { ProgressPhoto } from '@/types/progress';
 import PhotoComparison from '@/components/progress/photo-comparison';
-import TreatmentTimelineChart from '@/components/progress/treatment-timeline-chart';
+import ProgramTimelineChart from '@/components/progress/program-timeline-chart';
 import { Upload, CheckCircle, TrendingUp as TrendingUpIcon, Camera, FileDown, AlertTriangle, Loader } from 'lucide-react';
 
 export default function ProgressTrackingPage() {
@@ -205,7 +205,7 @@ export default function ProgressTrackingPage() {
             ) : (
               <div className="bg-white rounded-lg p-6 shadow">
                 <h2 className="text-xl font-semibold mb-4">เส้นเวลาการรักษา</h2>
-                <TreatmentTimelineChart photos={photos} />
+                <ProgramTimelineChart photos={photos} />
               </div>
             )}
           </div>

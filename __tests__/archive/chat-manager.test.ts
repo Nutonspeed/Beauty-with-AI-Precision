@@ -54,7 +54,7 @@ describe('ChatManager', () => {
       const roomId = 'room-123';
       const userId = 'user-1';
       const userName = 'John';
-      const userRole = 'patient' as const;
+      const userRole = 'client' as const;
 
       chatManager.joinRoom(roomId, userId, userName, userRole);
 
@@ -68,7 +68,7 @@ describe('ChatManager', () => {
       const roomId = 'room-123';
       const userId = 'user-1';
       const userName = 'John';
-      const userRole = 'patient' as const;
+      const userRole = 'client' as const;
       
       chatManager.joinRoom(roomId, userId, userName, userRole);
       chatManager.leaveCurrentRoom();
@@ -80,20 +80,20 @@ describe('ChatManager', () => {
     });
 
     it('should handle joining a new room while in another', () => {
-      chatManager.joinRoom('room-1', 'user-1', 'John', 'patient');
+      chatManager.joinRoom('room-1', 'user-1', 'John', 'client');
       expect(mockWebSocketInstance.send).toHaveBeenCalledWith(JSON.stringify({
         type: 'join',
-        data: { roomId: 'room-1', userId: 'user-1', userName: 'John', userRole: 'patient' }
+        data: { roomId: 'room-1', userId: 'user-1', userName: 'John', userRole: 'client' }
       }));
 
-      chatManager.joinRoom('room-2', 'user-1', 'John', 'patient');
+      chatManager.joinRoom('room-2', 'user-1', 'John', 'client');
       expect(mockWebSocketInstance.send).toHaveBeenCalledWith(JSON.stringify({
         type: 'leave',
         data: { roomId: 'room-1', userId: 'user-1' }
       }));
       expect(mockWebSocketInstance.send).toHaveBeenCalledWith(JSON.stringify({
         type: 'join',
-        data: { roomId: 'room-2', userId: 'user-1', userName: 'John', userRole: 'patient' }
+        data: { roomId: 'room-2', userId: 'user-1', userName: 'John', userRole: 'client' }
       }));
     });
   });
@@ -103,7 +103,7 @@ describe('ChatManager', () => {
       const roomId = 'room-123';
       const userId = 'user-1';
       const userName = 'John Doe';
-      const userRole = 'patient' as const;
+      const userRole = 'client' as const;
       
       chatManager.joinRoom(roomId, userId, userName, userRole);
 
@@ -142,7 +142,7 @@ describe('ChatManager', () => {
       const roomId = 'room-123';
       const userId = 'user-1';
       const userName = 'John';
-      const userRole = 'patient' as const;
+      const userRole = 'client' as const;
       
       chatManager.joinRoom(roomId, userId, userName, userRole);
 
@@ -161,7 +161,7 @@ describe('ChatManager', () => {
       const roomId = 'room-123';
       const userId = 'user-1';
       const userName = 'John';
-      const userRole = 'patient' as const;
+      const userRole = 'client' as const;
       const onMessage = vi.fn();
       
       chatManager.setEventHandlers({ onMessage });
@@ -189,7 +189,7 @@ describe('ChatManager', () => {
       const roomId = 'room-123';
       const userId = 'user-1';
       const userName = 'John';
-      const userRole = 'patient' as const;
+      const userRole = 'client' as const;
       
       chatManager.joinRoom(roomId, userId, userName, userRole);
 
@@ -226,7 +226,7 @@ describe('ChatManager', () => {
       const roomId = 'room-123';
       const userId = 'user-1';
       const userName = 'John';
-      const userRole = 'patient' as const;
+      const userRole = 'client' as const;
       
       chatManager.joinRoom(roomId, userId, userName, userRole);
       chatManager.sendTyping(true);
@@ -246,7 +246,7 @@ describe('ChatManager', () => {
       const roomId = 'room-123';
       const userId = 'user-1';
       const userName = 'John';
-      const userRole = 'patient' as const;
+      const userRole = 'client' as const;
       
       chatManager.joinRoom(roomId, userId, userName, userRole);
       chatManager.sendTyping(true);
@@ -280,7 +280,7 @@ describe('ChatManager', () => {
       const roomId = 'room-123';
       const userId = 'user-1';
       const userName = 'John';
-      const userRole = 'patient' as const;
+      const userRole = 'client' as const;
       const onTyping = vi.fn();
       
       chatManager.setEventHandlers({ onTyping });
@@ -305,7 +305,7 @@ describe('ChatManager', () => {
       const roomId = 'room-123';
       const userId = 'user-1';
       const userName = 'John';
-      const userRole = 'patient' as const;
+      const userRole = 'client' as const;
       
       chatManager.joinRoom(roomId, userId, userName, userRole);
       chatManager.markAsRead('msg-1');
@@ -327,7 +327,7 @@ describe('ChatManager', () => {
       const roomId = 'room-123';
       const userId = 'user-1';
       const userName = 'John';
-      const userRole = 'patient' as const;
+      const userRole = 'client' as const;
       
       chatManager.joinRoom(roomId, userId, userName, userRole);
       const messageId = chatManager.sendMessage('Test', userId, userName, userRole);
@@ -348,7 +348,7 @@ describe('ChatManager', () => {
       const roomId = 'room-123';
       const userId = 'user-1';
       const userName = 'John';
-      const userRole = 'patient' as const;
+      const userRole = 'client' as const;
       const onReadReceipt = vi.fn();
       
       chatManager.setEventHandlers({ onReadReceipt });
@@ -371,7 +371,7 @@ describe('ChatManager', () => {
       const roomId = 'room-123';
       const userId = 'user-1';
       const userName = 'John';
-      const userRole = 'patient' as const;
+      const userRole = 'client' as const;
       
       chatManager.joinRoom(roomId, userId, userName, userRole);
 
@@ -399,7 +399,7 @@ describe('ChatManager', () => {
       const roomId = 'room-123';
       const userId = 'user-1';
       const userName = 'John';
-      const userRole = 'patient' as const;
+      const userRole = 'client' as const;
       const onDelivered = vi.fn();
       
       chatManager.setEventHandlers({ onDelivered });
@@ -414,7 +414,7 @@ describe('ChatManager', () => {
       const roomId = 'room-123';
       const userId = 'user-1';
       const userName = 'John';
-      const userRole = 'patient' as const;
+      const userRole = 'client' as const;
       
       chatManager.joinRoom(roomId, userId, userName, userRole);
       const messageId = chatManager.sendMessage('Test', userId, userName, userRole);
@@ -437,7 +437,7 @@ describe('ChatManager', () => {
       const roomId = 'room-123';
       const userId = 'user-1';
       const userName = 'John';
-      const userRole = 'patient' as const;
+      const userRole = 'client' as const;
       
       chatManager.joinRoom(roomId, userId, userName, userRole);
       const messageId = chatManager.sendMessage('Test', userId, userName, userRole);
@@ -454,7 +454,7 @@ describe('ChatManager', () => {
       const roomId = 'room-123';
       const userId = 'user-1';
       const userName = 'John';
-      const userRole = 'patient' as const;
+      const userRole = 'client' as const;
       
       chatManager.joinRoom(roomId, userId, userName, userRole);
 

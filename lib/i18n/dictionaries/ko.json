@@ -20,7 +20,7 @@
   },
   "booking": {
     "title": "예약",
-    "selectTreatment": "치료 선택",
+    "selectProgram": "치료 선택",
     "selectDate": "날짜 선택",
     "selectTime": "시간 선택",
     "confirm": "예약 확인"

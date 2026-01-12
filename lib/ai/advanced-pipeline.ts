@@ -32,7 +32,7 @@ export interface AdvancedAnalysisResult {
 }
 
 export interface AdvancedAnalysisOptions {
-  // Enable enhanced metrics (ระดับ Premium/Clinical)
+  // Enable enhanced metrics (ระดับ Premium/Centeral)
   useEnhancedMetrics?: boolean
   
   // User information for better analysis
@@ -231,18 +231,18 @@ export class AdvancedAIPipeline {
    * Run analysis with automatic tier detection
    * Free tier: Basic metrics only
    * Premium tier: Enhanced metrics
-   * Clinical tier: Enhanced metrics + detailed reports
+   * Centeral tier: Enhanced metrics + detailed reports
    */
   async analyzeWithTier(
     file: File,
-    tier: 'free' | 'premium' | 'clinical',
+    tier: 'free' | 'premium' | 'centeral',
     options: Omit<AdvancedAnalysisOptions, 'useEnhancedMetrics'> = {}
   ): Promise<AdvancedAnalysisResult> {
     const enhancedOptions: AdvancedAnalysisOptions = {
       ...options,
       useEnhancedMetrics: tier !== 'free',
-      enableParallelProcessing: tier === 'clinical',
-      minQualityScore: tier === 'clinical' ? 60 : tier === 'premium' ? 50 : 40
+      enableParallelProcessing: tier === 'centeral',
+      minQualityScore: tier === 'centeral' ? 60 : tier === 'premium' ? 50 : 40
     }
     
     console.log(`🎯 Running ${tier.toUpperCase()} tier analysis...`)
@@ -423,7 +423,7 @@ export function useAdvancedAIPipeline() {
   return {
     analyzeImage: (file: File, options?: AdvancedAnalysisOptions) => 
       pipeline.analyzeImage(file, options),
-    analyzeWithTier: (file: File, tier: 'free' | 'premium' | 'clinical', options?: Omit<AdvancedAnalysisOptions, 'useEnhancedMetrics'>) =>
+    analyzeWithTier: (file: File, tier: 'free' | 'premium' | 'centeral', options?: Omit<AdvancedAnalysisOptions, 'useEnhancedMetrics'>) =>
       pipeline.analyzeWithTier(file, tier, options),
     analyzeMultiple: (files: File[], options?: AdvancedAnalysisOptions) => 
       pipeline.analyzeMultiple(files, options),

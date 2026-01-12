@@ -1,20 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { withClinicAuth } from '@/lib/auth/middleware';
+import { withCenterAuth } from '@/lib/auth/middleware';
 
 /**
  * GET /api/branches
- * List branches for a clinic
+ * List branches for a center
  *
  * Query parameters:
- * - clinic_id (required): Clinic ID
+ * - center_id (required): Center ID
  * - is_active (optional): Filter by active status
  * - province (optional): Filter by province
  */
-export const GET = withClinicAuth(async (request: NextRequest, user) => {
+export const GET = withCenterAuth(async (request: NextRequest, user) => {
   try {
     const { searchParams } = new URL(request.url);
-    const clinic_id = searchParams.get('clinic_id');
+    const center_id = searchParams.get('center_id');
     const is_active = searchParams.get('is_active');
     const province = searchParams.get('province');
 
@@ -30,9 +30,9 @@ export const GET = withClinicAuth(async (request: NextRequest, user) => {
     );
     }
 
-    if (!clinic_id) {
+    if (!center_id) {
       return NextResponse.json(
-        { error: 'clinic_id is required' },
+        { error: 'center_id is required' },
         { status: 400 }
       );
     }
@@ -44,7 +44,7 @@ export const GET = withClinicAuth(async (request: NextRequest, user) => {
         *,
         branch_manager:users!branches_branch_manager_id_fkey(id, email, full_name)
       `)
-      .eq('clinic_id', clinic_id);
+      .eq('center_id', center_id);
 
     if (is_active !== null) {
       query = query.eq('is_active', is_active === 'true');
@@ -73,7 +73,7 @@ export const GET = withClinicAuth(async (request: NextRequest, user) => {
  * Create a new branch
  * 
  * Body:
- * - clinic_id (required): Clinic ID
+ * - center_id (required): Center ID
  * - branch_code (required): Unique branch code
  * - branch_name (required): Branch name
  * - address (required): Branch address
@@ -86,11 +86,11 @@ export const GET = withClinicAuth(async (request: NextRequest, user) => {
  * - facilities (optional): Available facilities
  * - branch_manager_id (optional): Manager user ID
  */
-export const POST = withClinicAuth(async (request: NextRequest, user) => {
+export const POST = withCenterAuth(async (request: NextRequest, user) => {
   try {
     const body = await request.json();
     const {
-      clinic_id,
+      center_id,
       branch_code,
       branch_name,
       branch_name_en,
@@ -134,9 +134,9 @@ export const POST = withClinicAuth(async (request: NextRequest, user) => {
       );
     }
 
-    if (!clinic_id || !branch_code || !branch_name || !address || !city || !province) {
+    if (!center_id || !branch_code || !branch_name || !address || !city || !province) {
       return NextResponse.json(
-        { error: 'clinic_id, branch_code, branch_name, address, city, and province are required' },
+        { error: 'center_id, branch_code, branch_name, address, city, and province are required' },
         { status: 400 }
       );
     }
@@ -145,7 +145,7 @@ export const POST = withClinicAuth(async (request: NextRequest, user) => {
     const { data, error } = await supabaseClient
       .from('branches')
       .insert({
-        clinic_id,
+        center_id,
         branch_code,
         branch_name,
         branch_name_en,

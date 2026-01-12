@@ -23,17 +23,17 @@ export async function POST(request: NextRequest) {
 
     const { data: profile } = await supabase
       .from('users')
-      .select('role, clinic_id')
+      .select('role, center_id')
       .eq('id', user.id)
       .single();
 
-    if (!profile || !['sales_staff', 'clinic_admin', 'clinic_owner', 'super_admin'].includes(profile.role)) {
+    if (!profile || !['sales_staff', 'center_admin', 'center_owner', 'super_admin'].includes(profile.role)) {
       return NextResponse.json({ error: 'Forbidden - Only sales staff can import customers' }, { status: 403 });
     }
 
-    const clinicId = profile.clinic_id;
-    if (!clinicId) {
-      return NextResponse.json({ error: 'No clinic associated with user' }, { status: 400 });
+    const centerId = profile.center_id;
+    if (!centerId) {
+      return NextResponse.json({ error: 'No center associated with user' }, { status: 400 });
     }
 
     // Parse request body
@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
           .from('invitations')
           .select('id, email, status')
           .eq('email', customer.email.toLowerCase())
-          .eq('clinic_id', clinicId)
+          .eq('center_id', centerId)
           .eq('status', 'pending')
           .single();
 
@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
           .insert({
             email: customer.email.toLowerCase(),
             invited_role: 'customer',
-            clinic_id: clinicId,
+            center_id: centerId,
             invited_by: user.id,
             status: 'pending',
             expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days for customers
@@ -146,7 +146,7 @@ export async function POST(request: NextRequest) {
       user_id: user.id,
       action: 'bulk_customer_import',
       resource_type: 'invitation',
-      resource_id: clinicId,
+      resource_id: centerId,
       metadata: {
         total: customers.length,
         success: results.success.length,

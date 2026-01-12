@@ -34,7 +34,7 @@ function computeLastStep(data: PresentationData): number {
   if (selectedPrograms.length > 0) return 4
   if (data.analysisResults) return 3
   if (data.scannedImages?.front) return 2
-  if (data.customer?.name) return 1
+  if (data.client?.name) return 1
   return 0
 }
 
@@ -54,7 +54,7 @@ function buildPresentationSummary(
 
   return {
     customerId,
-    customerName: data.customer.name || 'Unknown',
+    customerName: data.client.name || 'Unknown',
     lastStep,
     lastUpdated: data.lastSavedAt ?? new Date(),
     progress: (lastStep / 7) * 100,
@@ -180,13 +180,13 @@ export function ResumePresentations() {
                 </div>
 
                 {/* Phone/Email if available */}
-                {(presentation.data.customer.phone || presentation.data.customer.email) && (
+                {(presentation.data.client.phone || presentation.data.client.email) && (
                   <div className="mt-2 text-xs text-muted-foreground">
-                    {presentation.data.customer.phone && (
-                      <span className="mr-3">📞 {presentation.data.customer.phone}</span>
+                    {presentation.data.client.phone && (
+                      <span className="mr-3">📞 {presentation.data.client.phone}</span>
                     )}
-                    {presentation.data.customer.email && (
-                      <span>✉️ {presentation.data.customer.email}</span>
+                    {presentation.data.client.email && (
+                      <span>✉️ {presentation.data.client.email}</span>
                     )}
                   </div>
                 )}

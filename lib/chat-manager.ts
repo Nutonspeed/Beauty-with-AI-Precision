@@ -3,7 +3,7 @@
  * Handles realtime chat with message persistence, typing indicators, and read receipts
  */
 
-export type UserRole = 'staff' | 'patient';
+export type UserRole = 'staff' | 'client';
 
 export interface ChatMessage {
   id: string;
@@ -153,7 +153,7 @@ export class ChatManager {
           // Handle user join/leave notifications
           if (this.handlers.onMessage) {
             const userName = 'userName' in message.data ? message.data.userName : 'Unknown User';
-            const userRole = 'userRole' in message.data ? message.data.userRole : 'patient' as UserRole;
+            const userRole = 'userRole' in message.data ? message.data.userRole : 'client' as UserRole;
             
             const notification: ChatMessage = {
               id: this.generateMessageId(),

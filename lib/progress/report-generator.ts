@@ -46,7 +46,7 @@ export async function generateProgressReport(
   doc.setFontSize(10);
   const summaryLines = [
     `จำนวนครั้งที่เข้ารับบริการ: ${report.total_sessions} ครั้ง`,
-    `ระยะเวลาการรักษา: ${formatTimeElapsed(report.treatment_duration_days)}`,
+    `ระยะเวลาการรักษา: ${formatTimeElapsed(report.program_duration_days)}`,
     `การปรับปรุงโดยรวม: ${report.overall_improvement.toFixed(1)}%`,
   ];
 

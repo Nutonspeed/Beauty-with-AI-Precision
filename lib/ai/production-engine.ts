@@ -16,7 +16,7 @@ export const PRODUCTION_REFERENCE_DATA = {
       confidence: 0.94,
       recommendations: [
         'Salicylic acid 2% daily',
-        'Benzoyl peroxide treatment',
+        'Benzoyl peroxide program',
         'Professional extraction monthly',
         'Dietary adjustments'
       ],
@@ -47,7 +47,7 @@ export const PRODUCTION_REFERENCE_DATA = {
       severity: 'severe',
       confidence: 0.97,
       recommendations: [
-        'Laser treatment sessions',
+        'Laser program sessions',
         'Topical brightening agents',
         'Chemical peels',
         'Sun protection protocol'
@@ -79,7 +79,7 @@ export const PRODUCTION_REFERENCE_DATA = {
         ],
         recommendations: [
           'Schedule immediate consultation',
-          'Prepare customized treatment plan',
+          'Prepare customized program plan',
           'Offer limited-time premium discount',
           'Assign senior consultant'
         ],
@@ -102,7 +102,7 @@ export const PRODUCTION_REFERENCE_DATA = {
         recommendations: [
           'Send educational content series',
           'Offer free skin consultation',
-          'Create personalized treatment preview',
+          'Create personalized program preview',
           'Build trust through case studies'
         ],
         nextBestAction: 'Educational nurture campaign',
@@ -198,7 +198,7 @@ export const PRODUCTION_REFERENCE_DATA = {
 เรามีโปรโมชั่นพิเศษสำหรับคุณ:
 ✅ ปรึกษาฟรีโดยทีมแพทย์ผู้เชี่ยวชาญ
 ✅ วางแผนการรักษา personalized
-✅ ส่วนลด 30% สำหรับ treatment แรก
+✅ ส่วนลด 30% สำหรับ program แรก
 ✅ รับประกันผลลัพธ์
 
 นัดหมายปรึกษาได้เลยวันนี้!
@@ -226,7 +226,7 @@ export const PRODUCTION_REFERENCE_DATA = {
 หลังจากที่คุณได้รับการรักษาไปแล้ว ผิวดูดีขึ้นมากเลยนะ!
 
 ตอนนี้ถึงเวลาเพิ่มความสวยให้สมบูรณ์แบบด้วย:
-💎 Treatment พิเศษสำหรับสมาชิก
+💎 Program พิเศษสำหรับสมาชิก
 🎯 Personalized care plan
 💰 ส่วนลดพิเศษ 25%
 ⏰ Limited time offer
@@ -234,7 +234,7 @@ export const PRODUCTION_REFERENCE_DATA = {
 พร้อมอัพเกรดผิวสวยของคุณหรือยัง?
 
 คลิกเลือกแพ็คเกจเลย!`,
-      personalizationElements: ['name', 'last_treatment', 'skin_improvement'],
+      personalizationElements: ['name', 'last_program', 'skin_improvement'],
       callToAction: {
         text: 'ดูแพ็คเกจอัพเกรด',
         type: 'secondary',
@@ -257,14 +257,14 @@ export const PRODUCTION_REFERENCE_DATA = {
 ผิวของคุณเป็นอย่างไรบ้าง? ยังคงสวยใสอยู่หรือเปล่า?
 
 เรามีโปรโมชั่นพิเศษสำหรับเพื่อนเก่า:
-🎁 ส่วนลด 40% สำหรับทุก treatment
+🎁 ส่วนลด 40% สำหรับทุก program
 👨‍⚕️ ปรึกษาฟรีเพื่อ check-up ผิว
-🌟 New treatment ที่คุณอาจสนใจ
+🌟 New program ที่คุณอาจสนใจ
 
 กลับมาดูแลผิวสวยของคุณกันเถอะ!
 
 นัดหมายได้เลย`,
-      personalizationElements: ['name', 'last_visit_date', 'past_treatments'],
+      personalizationElements: ['name', 'last_visit_date', 'past_programs'],
       callToAction: {
         text: 'กลับมารับบริการ',
         type: 'primary',
@@ -285,7 +285,7 @@ export const PRODUCTION_REFERENCE_DATA = {
     luxury_seekers: {
       segmentId: 'luxury_001',
       name: 'Luxury Seekers',
-      description: 'High-net-worth individuals seeking premium treatments',
+      description: 'High-net-worth individuals seeking premium programs',
       characteristics: [
         'Budget > 100K THB',
         'Values quality over price',
@@ -300,7 +300,7 @@ export const PRODUCTION_REFERENCE_DATA = {
       preferredChannels: ['personal_consultation', 'vip_events'],
       communicationStyle: 'exclusive_premium',
       recommendedApproach: {
-        initialContact: 'Personal phone call from clinic director',
+        initialContact: 'Personal phone call from center director',
         followUp: 'VIP concierge service',
         pricing: 'Premium packages with exclusive perks',
         urgency: 'Create scarcity with limited availability'
@@ -376,10 +376,10 @@ export const PRODUCTION_REFERENCE_DATA = {
       industry_avg: 4.2,
       status: 'excellent'
     },
-    treatment_success: {
+    program_success: {
       target: 85, // %
       current: 91,
-      clinical_standard: 78,
+      centeral_standard: 78,
       status: 'excellent'
     }
   }

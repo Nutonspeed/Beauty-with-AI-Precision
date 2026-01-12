@@ -56,7 +56,7 @@ export const analysisTutorialSteps: TutorialStep[] = [
 
 /**
  * AR Simulator Tutorial
- * Guides user through AR controls → treatment selection → intensity adjustment
+ * Guides user through AR controls → program selection → intensity adjustment
  */
 export const arTutorialSteps: TutorialStep[] = [
   {
@@ -121,7 +121,7 @@ export const arTutorialSteps: TutorialStep[] = [
 
 /**
  * Booking Page Tutorial
- * Guides user through clinic selection → date/time → confirmation
+ * Guides user through center selection → date/time → confirmation
  */
 export const bookingTutorialSteps: TutorialStep[] = [
   {

@@ -5,13 +5,17 @@ import { Footer } from "@/components/footer"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Building2, MapPin, Phone, Users, Plus, Box } from "lucide-react"
-import { useTranslations } from "next-intl"
+import { Building2, MapPin, Phone, Users, Plus, Box, ArrowLeft } from "lucide-react"
+import { useTranslations, useLocale } from "next-intl"
 import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
+import { useRouter } from "next/navigation"
+import { useLocalizePath } from "@/lib/i18n/locale-link"
 
 export default function BranchesPage() {
   const t = useTranslations()
+  const router = useRouter()
+  const lp = useLocalizePath()
 
   // Mock branches data
   const branches = [
@@ -61,16 +65,21 @@ export default function BranchesPage() {
               animate={{ opacity: 1, x: 0 }}
               className="space-y-6"
             >
-              <Badge variant="outline" className="px-4 py-1 rounded-full border-pink-500/30 text-pink-400 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.2em] text-[10px] font-black shadow-2xl shadow-pink-500/10">
-                <Box className="mr-3 h-3.5 w-3.5 animate-pulse" />
-                Global Node Distribution
-              </Badge>
+              <div className="flex items-center gap-4">
+                <Button variant="ghost" size="icon" className="h-12 w-12 rounded-xl text-slate-400 hover:bg-white/5 border border-transparent hover:border-white/10 transition-all" onClick={() => router.push(lp('/admin'))}>
+                  <ArrowLeft className="h-5 w-5" />
+                </Button>
+                <Badge variant="outline" className="px-4 py-1 rounded-full border-pink-500/30 text-pink-400 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.2em] text-[10px] font-black shadow-2xl shadow-pink-500/10">
+                  <Box className="mr-3 h-3.5 w-3.5 animate-pulse" />
+                  Global Center Distribution
+                </Badge>
+              </div>
               <h1 className="text-5xl md:text-8xl font-bold tracking-tighter text-white leading-[0.9] italic">
                 Aesthetic<br />
-                <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent not-italic">Network</span>
+                <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent not-italic">Infrastructure</span>
               </h1>
               <p className="text-xl text-slate-500 font-light tracking-widest max-w-2xl italic leading-relaxed">
-                {t('branches.total')} {branches.length} {t('branches.totalBranches')} authorized in system.
+                {t('branches.total')} {branches.length} {t('branches.totalBranches')} authorized in center network.
               </p>
             </motion.div>
             
@@ -105,7 +114,7 @@ export default function BranchesPage() {
                             "px-4 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border-none shadow-inner",
                             branch.status === "active" ? "bg-emerald-500/10 text-emerald-400" : "bg-white/[0.03] text-slate-600"
                           )}>
-                            {branch.status === "active" ? t('branches.active') : t('branches.closed')}
+                            {branch.status === "active" ? 'NOMINAL' : t('branches.closed')}
                           </Badge>
                         </div>
                       </div>

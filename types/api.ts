@@ -26,7 +26,7 @@ export interface SaveAnalysisRequest {
     detectionCount: number
   }
   aiVersion: string
-  patientInfo?: {
+  clientInfo?: {
     name: string
     age?: number
     gender?: Gender
@@ -37,7 +37,7 @@ export interface SaveAnalysisRequest {
     notes?: string
   }
   appointmentId?: string
-  treatmentPlanId?: string
+  programPlanId?: string
   // Quality metrics from image validation
   qualityMetrics?: {
     lighting: number        // 0-100
@@ -52,7 +52,7 @@ export interface SaveAnalysisRequest {
     description: string
     priority: 'high' | 'medium' | 'low'
   }>
-  // Treatment recommendations with confidence scores
+  // Program recommendations with confidence scores
   recommendations?: Array<{
     text: string
     confidence: number
@@ -73,7 +73,7 @@ export interface SaveAnalysisRequest {
   }
   // AI generated fields
   aiSkinType?: string
-  aiTreatmentPlan?: string
+  aiProgramPlan?: string
 }
 
 export interface SaveAnalysisResponse {
@@ -151,10 +151,10 @@ export interface GetProfileResponse {
 }
 
 // ============================================================================
-// Treatment Plan API Types
+// Program Plan API Types
 // ============================================================================
 
-export interface TreatmentRecommendation {
+export interface ProgramRecommendation {
   name: string
   description: string
   benefits: string[]
@@ -164,10 +164,10 @@ export interface TreatmentRecommendation {
   estimatedCost?: number
 }
 
-export interface CreateTreatmentPlanRequest {
+export interface CreateProgramPlanRequest {
   analysisId?: string
   concernType: string
-  treatments: TreatmentRecommendation[]
+  programs: ProgramRecommendation[]
   schedule?: {
     startDate?: string
     frequency?: string
@@ -176,10 +176,10 @@ export interface CreateTreatmentPlanRequest {
   notes?: string
 }
 
-export interface TreatmentPlanResponse {
+export interface ProgramPlanResponse {
   id: string
   concernType: string
-  treatments: TreatmentRecommendation[]
+  programs: ProgramRecommendation[]
   schedule: {
     startDate?: string
     frequency?: string
@@ -198,7 +198,7 @@ export interface TreatmentPlanResponse {
 
 export interface CreateBookingRequest {
   tenantId: string
-  treatmentType: string
+  programType: string
   appointmentDate: string
   duration?: number
   notes?: string
@@ -207,7 +207,7 @@ export interface CreateBookingRequest {
 export interface BookingResponse {
   id: string
   tenantId: string
-  treatmentType: string
+  programType: string
   appointmentDate: string
   duration: number
   status: 'pending' | 'confirmed' | 'completed' | 'cancelled'

@@ -4,13 +4,13 @@ import { canAccessSales } from '@/lib/auth/role-config'
 import type { PersistedPresentationData } from '@/lib/sales/presentation-storage'
 
 function sanitizeCustomerSnapshot(payload: PersistedPresentationData, fallbackCustomerId: string) {
-  const customer = payload?.customer ?? {}
+  const client = payload?.client ?? {}
 
   return {
-    id: typeof customer.id === 'string' && customer.id.length > 0 ? customer.id : fallbackCustomerId,
-    name: typeof customer.name === 'string' ? customer.name : '',
-    phone: typeof customer.phone === 'string' ? customer.phone : '',
-    email: typeof customer.email === 'string' ? customer.email : '',
+    id: typeof client.id === 'string' && client.id.length > 0 ? client.id : fallbackCustomerId,
+    name: typeof client.name === 'string' ? client.name : '',
+    phone: typeof client.phone === 'string' ? client.phone : '',
+    email: typeof client.email === 'string' ? client.email : '',
   }
 }
 

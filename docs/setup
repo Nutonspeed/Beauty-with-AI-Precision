@@ -1,4 +1,4 @@
-# 🔑 API Keys Setup Guide - ClinicIQ
+# 🔑 API Keys Setup Guide - CenterIQ AI
 
 **Complete guide:** รับ API keys ทั้งหมดที่จำเป็นสำหรับ production
 
@@ -192,7 +192,7 @@ TWILIO_PHONE_NUMBER=+66812345678
 ```typescript
 // Test in app
 await twilio.messages.create({
-  body: 'Test SMS from ClinicIQ',
+  body: 'Test SMS from CenterIQ AI',
   from: '+66812345678',
   to: '+66812345679'
 });

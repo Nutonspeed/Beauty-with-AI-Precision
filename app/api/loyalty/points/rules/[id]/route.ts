@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { withClinicAuth } from '@/lib/auth/middleware';
+import { withCenterAuth } from '@/lib/auth/middleware';
 
 function getSupabaseClient() {
   return createClient(
@@ -11,9 +11,9 @@ function getSupabaseClient() {
 
 /**
  * GET /api/loyalty/points/rules/[id]
- * Get points earning rule details for beauty clinic
+ * Get points earning rule details for beauty center
  */
-export const GET = withClinicAuth(async (req: NextRequest, user: any) => {
+export const GET = withCenterAuth(async (req: NextRequest, user: any) => {
   try {
     const id = req.nextUrl.pathname.split('/').pop() || '';
     const supabaseClient = getSupabaseClient();
@@ -40,9 +40,9 @@ export const GET = withClinicAuth(async (req: NextRequest, user: any) => {
 
 /**
  * PATCH /api/loyalty/points/rules/[id]
- * Update points earning rule for beauty clinic
+ * Update points earning rule for beauty center
  */
-export const PATCH = withClinicAuth(async (req: NextRequest, user: any) => {
+export const PATCH = withCenterAuth(async (req: NextRequest, user: any) => {
   try {
     const id = req.nextUrl.pathname.split('/').pop() || '';
     const body = await req.json();
@@ -70,7 +70,7 @@ export const PATCH = withClinicAuth(async (req: NextRequest, user: any) => {
  * DELETE /api/loyalty/points/rules/[id]
  * Deactivate points earning rule (soft delete)
  */
-export const DELETE = withClinicAuth(async (req: NextRequest, user: any) => {
+export const DELETE = withCenterAuth(async (req: NextRequest, user: any) => {
   try {
     const id = req.nextUrl.pathname.split('/').pop() || '';
     const supabaseClient = getSupabaseClient();

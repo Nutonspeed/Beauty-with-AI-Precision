@@ -1,12 +1,12 @@
 /**
  * Custom Hook: useRecommendations
- * Manages treatment recommendations for a skin analysis
+ * Manages program recommendations for a skin analysis
  */
 
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import type { TreatmentRecommendation } from '@/lib/ai/treatment-recommender';
+import type { ProgramRecommendation } from '@/lib/ai/program-recommender';
 
 interface UseRecommendationsOptions {
   analysisId?: string;
@@ -22,7 +22,7 @@ interface UseRecommendationsOptions {
 }
 
 interface UseRecommendationsResult {
-  recommendations: TreatmentRecommendation[];
+  recommendations: ProgramRecommendation[];
   loading: boolean;
   error: string | null;
   generating: boolean;
@@ -36,7 +36,7 @@ export function useRecommendations(
 ): UseRecommendationsResult {
   const { analysisId, userId, autoGenerate = false, userProfile } = options;
 
-  const [recommendations, setRecommendations] = useState<TreatmentRecommendation[]>([]);
+  const [recommendations, setRecommendations] = useState<ProgramRecommendation[]>([]);
   const [loading, setLoading] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);

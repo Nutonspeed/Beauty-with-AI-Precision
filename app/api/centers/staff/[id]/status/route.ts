@@ -1,7 +1,7 @@
 import { createServerClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 
-// PUT /api/clinic/staff/[id]/status - Update staff status (active, on_leave, busy, available, offline)
+// PUT /api/center/staff/[id]/status - Update staff status (active, on_leave, busy, available, offline)
 export async function PUT(
   request: NextRequest,
   context: { params: Promise<{ id: string }> }
@@ -29,7 +29,7 @@ export async function PUT(
     }
 
     const { data: updatedStaff, error } = await supabase
-      .from('clinic_staff')
+      .from('center_staff')
       .update({
         status,
         updated_at: new Date().toISOString()
@@ -51,7 +51,7 @@ export async function PUT(
       data: updatedStaff
     })
   } catch (error) {
-    console.error('Error in PUT /api/clinic/staff/[id]/status:', error)
+    console.error('Error in PUT /api/center/staff/[id]/status:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

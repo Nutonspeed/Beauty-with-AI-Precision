@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { withClinicAuth } from '@/lib/auth/middleware';
+import { withCenterAuth } from '@/lib/auth/middleware';
 
 /**
  * GET /api/branches/revenue
@@ -12,7 +12,7 @@ import { withClinicAuth } from '@/lib/auth/middleware';
  * - start_date (optional): Start date for date range
  * - end_date (optional): End date for date range
  */
-export const GET = withClinicAuth(async (request: NextRequest) => {
+export const GET = withCenterAuth(async (request: NextRequest) => {
   try {
     const { searchParams } = new URL(request.url);
     const branch_id = searchParams.get('branch_id');
@@ -80,7 +80,7 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
  * - period_type (required): Period type
  * - revenue data fields
  */
-export const POST = withClinicAuth(async (request: NextRequest) => {
+export const POST = withCenterAuth(async (request: NextRequest) => {
   try {
     const body = await request.json();
     const {

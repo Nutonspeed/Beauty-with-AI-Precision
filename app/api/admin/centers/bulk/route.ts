@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     if (action === 'activate') {
       // Activate centers
       const { error } = await supabase
-        .from('clinics')
+        .from('centers')
         .update({ is_active: true, updated_at: new Date().toISOString() })
         .in('id', centerIds);
 
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     } else if (action === 'suspend') {
       // Suspend centers
       const { error } = await supabase
-        .from('clinics')
+        .from('centers')
         .update({ is_active: false, updated_at: new Date().toISOString() })
         .in('id', centerIds);
 
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
     } else if (action === 'delete') {
       // Soft delete centers (set is_active to false and add deleted flag if exists)
       const { error } = await supabase
-        .from('clinics')
+        .from('centers')
         .update({ 
           is_active: false, 
           updated_at: new Date().toISOString() 
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
     } else if (action === 'export') {
       // Export center data
       const { data: centers, error } = await supabase
-        .from('clinics')
+        .from('centers')
         .select('*')
         .in('id', centerIds);
 

@@ -18,7 +18,7 @@ export async function checkUserRole(allowedRoles: UserRole[]) {
   const serviceClient = createServiceClient()
   const { data: userData, error: userError } = await serviceClient
     .from("users")
-    .select("role, clinic_id")
+    .select("role, center_id")
     .eq("id", session.user.id)
     .single()
 
@@ -46,6 +46,6 @@ export async function checkUserRole(allowedRoles: UserRole[]) {
   return {
     user: session.user,
     role: userRole,
-    centerId: userData.clinic_id,
+    centerId: userData.center_id,
   }
 }

@@ -28,7 +28,7 @@ export type Program = {
   name: string
   price: number
   sessions: number
-  description: string
+  description?: string
 }
 
 export type Proposal = {
@@ -41,9 +41,9 @@ export type Proposal = {
   discount_amount: number
   total_value: number
   valid_until: string | null
-  status: 'draft' | 'sent' | 'accepted' | 'rejected'
-  payment_terms: string | null
-  notes: string | null
+  status: 'draft' | 'sent' | 'viewed' | 'accepted' | 'rejected' | string
+  payment_terms?: string | null
+  notes?: string | null
 }
 
 type Lead = {

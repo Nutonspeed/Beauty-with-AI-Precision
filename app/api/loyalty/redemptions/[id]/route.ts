@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { withClinicAuth } from '@/lib/auth/middleware';
+import { withCenterAuth } from '@/lib/auth/middleware';
 
 function getSupabaseClient() {
   return createClient(
@@ -11,9 +11,9 @@ function getSupabaseClient() {
 
 /**
  * GET /api/loyalty/redemptions/[id]
- * Get redemption details for beauty clinic customer
+ * Get redemption details for beauty center customer
  */
-export const GET = withClinicAuth(async (request: NextRequest, _user: any) => {
+export const GET = withCenterAuth(async (request: NextRequest, _user: any) => {
   try {
     const paramsId = request.nextUrl.pathname.split('/').pop() || '';
 
@@ -47,9 +47,9 @@ export const GET = withClinicAuth(async (request: NextRequest, _user: any) => {
 
 /**
  * PATCH /api/loyalty/redemptions/[id]
- * Update redemption status for beauty clinic (approve, mark as used, etc.)
+ * Update redemption status for beauty center (approve, mark as used, etc.)
  */
-export const PATCH = withClinicAuth(async (request: NextRequest, _user: any) => {
+export const PATCH = withCenterAuth(async (request: NextRequest, _user: any) => {
   try {
     const paramsId = request.nextUrl.pathname.split('/').pop() || '';
 

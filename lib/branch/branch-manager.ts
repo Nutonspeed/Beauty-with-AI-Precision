@@ -1,7 +1,7 @@
 /**
  * Branch Management System
  * 
- * Comprehensive multi-branch clinic management with staff transfers,
+ * Comprehensive multi-branch center management with staff transfers,
  * inventory tracking, scheduling, and resource allocation.
  */
 
@@ -922,7 +922,7 @@ export class BranchManager {
   private initializeSampleData(): void {
     // Create sample branches
     const bangkok = this.createBranch({
-      name: "Bangkok Central Clinic",
+      name: "Bangkok Central Center",
       code: "BKK001",
       status: "active",
       address: {
@@ -937,8 +937,8 @@ export class BranchManager {
         longitude: 100.5018,
       },
       phone: "+66-2-123-4567",
-      email: "bangkok@clinic.com",
-      website: "https://clinic.com/bangkok",
+      email: "bangkok@center.com",
+      website: "https://center.com/bangkok",
       operatingHours: {
         monday: { open: "08:00", close: "20:00" },
         tuesday: { open: "08:00", close: "20:00" },
@@ -979,7 +979,7 @@ export class BranchManager {
         longitude: 98.9853,
       },
       phone: "+66-53-123-4567",
-      email: "chiangmai@clinic.com",
+      email: "chiangmai@center.com",
       operatingHours: {
         monday: { open: "09:00", close: "18:00" },
         tuesday: { open: "09:00", close: "18:00" },
@@ -1009,7 +1009,7 @@ export class BranchManager {
       branchId: bangkok.id,
       firstName: "Somchai",
       lastName: "Tanaka",
-      email: "somchai@clinic.com",
+      email: "somchai@center.com",
       phone: "+66-81-234-5678",
       role: "doctor",
       employeeId: "EMP001",
@@ -1026,7 +1026,7 @@ export class BranchManager {
       branchId: bangkok.id,
       firstName: "Nida",
       lastName: "Chairat",
-      email: "nida@clinic.com",
+      email: "nida@center.com",
       phone: "+66-82-234-5678",
       role: "nurse",
       employeeId: "EMP002",
@@ -1073,10 +1073,10 @@ export class BranchManager {
     // Add sample resources
     this.addResource({
       branchId: bangkok.id,
-      name: "Treatment Room 1",
+      name: "Program Room 1",
       type: "room",
       code: "TR-001",
-      description: "Main treatment room with laser equipment",
+      description: "Main program room with laser equipment",
       capacity: 2,
       isAvailable: true,
       isActive: true,

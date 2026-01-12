@@ -110,8 +110,8 @@ describe('Availability Calendar System', () => {
       const booking = await act(async () => {
         return await result.current.bookSlot({
           slotId: slotToBook.id,
-          patientId: 'patient-1',
-          patientName: 'John Doe',
+          clientId: 'client-1',
+          clientName: 'John Doe',
           serviceType: 'consultation'
         });
       });
@@ -140,8 +140,8 @@ describe('Availability Calendar System', () => {
       await act(async () => {
         await result.current.bookSlot({
           slotId: slots[0].id,
-          patientId: 'patient-1',
-          patientName: 'John Doe',
+          clientId: 'client-1',
+          clientName: 'John Doe',
           serviceType: 'consultation'
         });
       });
@@ -150,8 +150,8 @@ describe('Availability Calendar System', () => {
       const secondBooking = await act(async () => {
         return await result.current.bookSlot({
           slotId: slots[0].id,
-          patientId: 'patient-2',
-          patientName: 'Jane Doe',
+          clientId: 'client-2',
+          clientName: 'Jane Doe',
           serviceType: 'checkup'
         });
       });
@@ -178,7 +178,7 @@ describe('Availability Calendar System', () => {
       const slots = result.current.getAvailableSlots('2025-01-15', 'provider-1');
       
       await act(async () => {
-        result.current.createTentativeBooking(slots[0].id, 'patient-1');
+        result.current.createTentativeBooking(slots[0].id, 'client-1');
       });
 
       const schedule = result.current.getSchedule('2025-01-15', 'provider-1');
@@ -210,8 +210,8 @@ describe('Availability Calendar System', () => {
       await act(async () => {
         await result.current.bookSlot({
           slotId: slots[0].id,
-          patientId: 'patient-1',
-          patientName: 'John Doe',
+          clientId: 'client-1',
+          clientName: 'John Doe',
           serviceType: 'consultation'
         });
       });
@@ -283,14 +283,14 @@ describe('Availability Calendar System', () => {
       await act(async () => {
         await result.current.bookSlot({
           slotId: slots[0].id,
-          patientId: 'patient-1',
-          patientName: 'John Doe',
+          clientId: 'client-1',
+          clientName: 'John Doe',
           serviceType: 'consultation'
         });
         await result.current.bookSlot({
           slotId: slots[1].id,
-          patientId: 'patient-2',
-          patientName: 'Jane Doe',
+          clientId: 'client-2',
+          clientName: 'Jane Doe',
           serviceType: 'checkup'
         });
       });
@@ -388,8 +388,8 @@ describe('Availability Calendar System', () => {
       const booking = await act(async () => {
         return await result.current.bookSlot({
           slotId: 'invalid-slot-id',
-          patientId: 'patient-1',
-          patientName: 'John Doe',
+          clientId: 'client-1',
+          clientName: 'John Doe',
           serviceType: 'consultation'
         });
       });

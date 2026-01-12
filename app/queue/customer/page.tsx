@@ -1,17 +1,17 @@
 /**
- * Patient Queue View Page
- * Patient-facing queue ticket display
+ * Client Queue View Page
+ * Client-facing queue ticket display
  */
 
 'use client';
 
 import React from 'react';
-import { PatientQueueTicket } from '@/components/queue/patient-queue-ticket';
+import { CustomerQueueTicket as ClientQueueTicket } from '@/components/queue/customer-queue-ticket';
 
-export default function PatientQueuePage() {
+export default function ClientQueuePage() {
   // In a real app, this would come from auth
-  const patientId = 'P001';
-  const clinicId = 'clinic-1';
+  const clientId = 'P001';
+  const centerId = 'center-1';
 
   return (
     <div className="container mx-auto p-6 max-w-2xl">
@@ -22,9 +22,9 @@ export default function PatientQueuePage() {
         </p>
       </div>
 
-      <PatientQueueTicket
-        clinicId={clinicId}
-        patientId={patientId}
+      <ClientQueueTicket
+        centerId={centerId}
+        clientId={clientId}
       />
     </div>
   );

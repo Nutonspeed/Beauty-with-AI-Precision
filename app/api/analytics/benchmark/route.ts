@@ -14,13 +14,13 @@ import {
   calculateMetricPercentile,
 } from '@/lib/analytics/benchmark-calculator';
 import { AgeGroup, MetricType } from '@/types/analytics';
-import { withClinicAuth } from '@/lib/auth/middleware';
+import { withCenterAuth } from '@/lib/auth/middleware';
 
 // =============================================
 // GET Handler
 // =============================================
 
-export const GET = withClinicAuth(async (request: NextRequest) => {
+export const GET = withCenterAuth(async (request: NextRequest) => {
   try {
     // Get query parameters
     const searchParams = request.nextUrl.searchParams;

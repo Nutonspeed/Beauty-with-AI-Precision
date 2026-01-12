@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@/lib/supabase/server"
 
-// GET /api/clinic/analytics/export - Export analytics to CSV
+// GET /api/center/analytics/export - Export analytics to CSV
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createServerClient()
@@ -22,15 +22,15 @@ export async function GET(request: NextRequest) {
     const startDate = searchParams.get("start_date") || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
     const endDate = searchParams.get("end_date") || new Date().toISOString()
 
-    // Get user's clinic
+    // Get user's center
     const { data: userProfile } = await supabase
       .from("users")
-      .select("clinic_id")
+      .select("center_id")
       .eq("id", user.id)
       .single()
 
-    if (!userProfile?.clinic_id) {
-      return NextResponse.json({ error: "No clinic assigned" }, { status: 403 })
+    if (!userProfile?.center_id) {
+      return NextResponse.json({ error: "No center assigned" }, { status: 403 })
     }
 
     // Fetch bookings data
@@ -41,11 +41,11 @@ export async function GET(request: NextRequest) {
         booking_date,
         status,
         total_amount,
-        treatment_type,
+        program_type,
         customer:customers(full_name, email, phone),
         staff:users(full_name)
       `)
-      .eq("clinic_id", userProfile.clinic_id)
+      .eq("center_id", userProfile.center_id)
       .gte("booking_date", startDate)
       .lte("booking_date", endDate)
       .order("booking_date", { ascending: false })
@@ -58,14 +58,14 @@ export async function GET(request: NextRequest) {
     // Generate CSV
     const csvRows = [
       // Header
-      ["Date", "Customer", "Email", "Phone", "Treatment", "Staff", "Status", "Amount"].join(","),
+      ["Date", "Customer", "Email", "Phone", "Program", "Staff", "Status", "Amount"].join(","),
       // Data rows
       ...(bookings || []).map((b: any) => [
         new Date(b.booking_date).toLocaleDateString("th-TH"),
         `"${b.customer?.full_name || "N/A"}"`,
         b.customer?.email || "N/A",
         b.customer?.phone || "N/A",
-        `"${b.treatment_type || "N/A"}"`,
+        `"${b.program_type || "N/A"}"`,
         `"${b.staff?.full_name || "N/A"}"`,
         b.status,
         b.total_amount || 0
@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
     ]
 
     const csvContent = csvRows.join("\n")
-    const filename = `clinic-analytics-${new Date().toISOString().split("T")[0]}.csv`
+    const filename = `center-analytics-${new Date().toISOString().split("T")[0]}.csv`
 
     return new NextResponse(csvContent, {
       headers: {

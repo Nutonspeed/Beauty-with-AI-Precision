@@ -21,10 +21,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Get user's role and clinic
+    // Get user's role and center
     const { data: userData, error: userError } = await supabase
       .from('users')
-      .select('role, clinic_id')
+      .select('role, center_id')
       .eq('id', user.id)
       .single()
 
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
       .from('invitations')
       .select(`
         *,
-        clinics!invitations_clinic_id_fkey(name)
+        centers!invitations_center_id_fkey(name)
       `)
       .eq('id', invitationId)
       .single()
@@ -66,9 +66,9 @@ export async function POST(request: NextRequest) {
     // Permission check
     const isSuperAdmin = userData.role === 'super_admin'
     const isInviter = invitation.invited_by === user.id
-    const isSameClinic = userData.clinic_id === invitation.clinic_id
+    const isSameCenter = userData.center_id === invitation.center_id
 
-    if (!isSuperAdmin && !isInviter && !isSameClinic) {
+    if (!isSuperAdmin && !isInviter && !isSameCenter) {
       return NextResponse.json(
         { error: 'Permission denied' },
         { status: 403 }
@@ -121,12 +121,12 @@ export async function POST(request: NextRequest) {
       .eq('id', invitation.invited_by)
       .single()
 
-    const inviterName = inviter?.full_name || 'Beauty Clinic Admin'
+    const inviterName = inviter?.full_name || 'Beauty Center Admin'
     const inviterEmail = inviter?.email || ''
 
     // Resend invitation email
     const invitationLink = `${process.env.NEXT_PUBLIC_APP_URL}/invite/${invitation.token}`
-    const clinicName = invitation.clinics?.name || null
+    const centerName = invitation.centers?.name || null
 
     try {
       await sendInvitationEmail({
@@ -134,7 +134,7 @@ export async function POST(request: NextRequest) {
         inviterName,
         inviterEmail,
         role: invitation.invited_role,
-        clinicName,
+        centerName,
         invitationLink,
         expiresAt: newExpiresAt.toISOString()
       })

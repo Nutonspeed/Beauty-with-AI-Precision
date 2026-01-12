@@ -17,14 +17,14 @@ export const elasticsearchConfig = {
   
   // Index settings
   indices: {
-    patients: {
-      name: 'patients',
+    clients: {
+      name: 'clients',
       shards: 1,
       replicas: 1,
       refreshInterval: '1s'
     },
-    treatments: {
-      name: 'treatments',
+    programs: {
+      name: 'programs',
       shards: 1,
       replicas: 1,
       refreshInterval: '1s'
@@ -48,7 +48,7 @@ export const elasticsearchConfig = {
       'notes',
       'medicalHistory.condition',
       'medicalHistory.medications',
-      'treatments.type'
+      'programs.type'
     ],
     suggestFields: [
       'firstName.suggest',

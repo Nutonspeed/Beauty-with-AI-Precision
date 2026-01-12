@@ -1,7 +1,7 @@
 {
-  "name": "Beauty with AI Precision - Advanced Aesthetic Clinic Platform",
+  "name": "Beauty with AI Precision - Advanced Aesthetic Center Platform",
   "short_name": "Beauty AI",
-  "description": "AI-powered aesthetic clinic platform with advanced skin analysis, 3D AR visualization, and comprehensive patient management",
+  "description": "AI-powered aesthetic center platform with advanced skin analysis, 3D AR visualization, and comprehensive client management",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
@@ -67,7 +67,7 @@
       "sizes": "1280x720",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "Dashboard view with patient analytics"
+      "label": "Dashboard view with client analytics"
     },
     {
       "src": "/screenshots/mobile-1.png",
@@ -81,14 +81,14 @@
       "sizes": "1280x720",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "3D AR treatment visualization"
+      "label": "3D AR program visualization"
     },
     {
       "src": "/screenshots/mobile-2.png",
       "sizes": "390x844",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "Patient management on mobile"
+      "label": "Client management on mobile"
     }
   ],
   "shortcuts": [
@@ -117,10 +117,10 @@
       ]
     },
     {
-      "name": "Patients",
-      "short_name": "Patients",
-      "description": "Manage patient records",
-      "url": "/clinic/patients?source=pwa",
+      "name": "Clients",
+      "short_name": "Clients",
+      "description": "Manage client records",
+      "url": "/center/clients?source=pwa",
       "icons": [
         {
           "src": "/icons/icon-96x96.png",
@@ -131,7 +131,7 @@
     {
       "name": "AR Simulator",
       "short_name": "AR",
-      "description": "3D AR treatment visualization",
+      "description": "3D AR program visualization",
       "url": "/ar-simulator?source=pwa",
       "icons": [
         {

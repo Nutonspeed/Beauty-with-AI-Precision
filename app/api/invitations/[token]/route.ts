@@ -29,7 +29,7 @@ export async function GET(
         id,
         email,
         invited_role,
-        clinic_id,
+        center_id,
         status,
         expires_at,
         invited_by,
@@ -61,17 +61,17 @@ export async function GET(
       errorMessage = 'Invitation has expired'
     }
 
-    // Get clinic name if clinic_id exists
-    let clinicName = null
-    if (invitation.clinic_id) {
-      const { data: clinic } = await supabase
-        .from('clinics')
+    // Get center name if center_id exists
+    let centerName = null
+    if (invitation.center_id) {
+      const { data: center } = await supabase
+        .from('centers')
         .select('name')
-        .eq('id', invitation.clinic_id)
+        .eq('id', invitation.center_id)
         .single()
       
-      if (clinic) {
-        clinicName = clinic.name
+      if (center) {
+        centerName = center.name
       }
     }
 
@@ -81,8 +81,8 @@ export async function GET(
         id: invitation.id,
         email: invitation.email,
         invited_role: invitation.invited_role,
-        clinic_id: invitation.clinic_id,
-        clinic_name: clinicName,
+        center_id: invitation.center_id,
+        center_name: centerName,
         status: invitation.status,
         is_valid: isValid,
         error_message: errorMessage

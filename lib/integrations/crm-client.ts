@@ -33,7 +33,7 @@ export interface CRMTask {
   dueDate: string;
   priority: 'low' | 'medium' | 'high';
   contactId: string;
-  type: 'follow_up' | 'treatment_review' | 'appointment' | 'general';
+  type: 'follow_up' | 'program_review' | 'appointment' | 'general';
 }
 
 export interface AnalysisSyncData {

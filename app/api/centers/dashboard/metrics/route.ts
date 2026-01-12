@@ -12,26 +12,26 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    // Load user's clinic and role directly via server client
+    // Load user's center and role directly via server client
     const { data: userData, error: userErr } = await supabase
       .from('users')
-      .select('clinic_id, role')
+      .select('center_id, role')
       .eq('id', user.id)
       .single()
 
     if (userErr) {
-      console.error('[clinic/metrics] Failed to fetch user profile:', userErr)
+      console.error('[center/metrics] Failed to fetch user profile:', userErr)
       return NextResponse.json({ error: "Failed to fetch user profile" }, { status: 500 })
     }
 
-    if (!userData || (userData.role !== "clinic_owner" && userData.role !== "clinic_staff")) {
-      return NextResponse.json({ error: "Forbidden - Clinic access required" }, { status: 403 })
+    if (!userData || (userData.role !== "center_owner" && userData.role !== "center_staff")) {
+      return NextResponse.json({ error: "Forbidden - Center access required" }, { status: 403 })
     }
 
-    const clinicId = userData.clinic_id
+    const centerId = userData.center_id
 
-    if (!clinicId) {
-      return NextResponse.json({ error: "No clinic associated with user" }, { status: 400 })
+    if (!centerId) {
+      return NextResponse.json({ error: "No center associated with user" }, { status: 400 })
     }
 
     // Get today's and yesterday's dates in Bangkok timezone
@@ -56,26 +56,26 @@ export async function GET(request: NextRequest) {
     const { data: todayBookings, error: todayError } = await supabaseAdmin
       .from('bookings')
       .select('price, status, customer_id')
-      .eq('clinic_id', clinicId)
+      .eq('center_id', centerId)
       .in('status', ['confirmed', 'completed'])
       .gte('booking_date', todayStart.toISOString().split('T')[0])
       .lt('booking_date', new Date(todayStart.getTime() + 86400000).toISOString().split('T')[0])
 
     if (todayError) {
-      console.error('[clinic/metrics] Error fetching today bookings:', todayError)
+      console.error('[center/metrics] Error fetching today bookings:', todayError)
     }
 
     // Fetch yesterday's bookings
     const { data: yesterdayBookings, error: yesterdayError } = await supabaseAdmin
       .from('bookings')
       .select('price, status, customer_id')
-      .eq('clinic_id', clinicId)
+      .eq('center_id', centerId)
       .in('status', ['confirmed', 'completed'])
       .gte('booking_date', yesterdayStart.toISOString().split('T')[0])
       .lt('booking_date', yesterdayEnd.toISOString().split('T')[0])
 
     if (yesterdayError) {
-      console.error('[clinic/metrics] Error fetching yesterday bookings:', yesterdayError)
+      console.error('[center/metrics] Error fetching yesterday bookings:', yesterdayError)
     }
 
     // Calculate today's metrics
@@ -114,7 +114,7 @@ export async function GET(request: NextRequest) {
 
     const conversionChange = calculateChange(todayConversion, yesterdayConversion)
 
-    console.log('[clinic/metrics] Real data:', {
+    console.log('[center/metrics] Real data:', {
       todayBookings: todayBookingsCount,
       todayRevenue,
       todayCustomers: todayUniqueCustomers,
@@ -148,7 +148,7 @@ export async function GET(request: NextRequest) {
       },
     })
   } catch (error) {
-    console.error("[v0] Error fetching clinic metrics:", error)
+    console.error("[v0] Error fetching center metrics:", error)
     return NextResponse.json(
       { error: "Failed to fetch metrics", details: error instanceof Error ? error.message : "Unknown error" },
       { status: 500 },

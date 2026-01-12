@@ -11,14 +11,14 @@ import { cn } from "@/lib/utils"
 import { toast } from "sonner"
 
 interface NeuralNarrativeSynthesisProps {
-  customerData?: {
+  clientData?: {
     name: string
     concerns: string[]
     score: number
   }
 }
 
-export function NeuralNarrativeSynthesis({ customerData }: NeuralNarrativeSynthesisProps) {
+export function NeuralNarrativeSynthesis({ clientData }: NeuralNarrativeSynthesisProps) {
   const t = useTranslations()
   const [isSynthesizing, setIsSynthesizing] = useState(false)
   const [activeMode, setActiveNode] = useState<'empathy' | 'authority' | 'scarcity'>('authority')
@@ -28,9 +28,9 @@ export function NeuralNarrativeSynthesis({ customerData }: NeuralNarrativeSynthe
     setIsSynthesizing(true)
     setTimeout(() => {
       setIsSynthesizing(false)
-      const mockNarrative = t('neuralNarrative.mock.greeting', { name: customerData?.name || t('neuralNarrative.mock.fallbackName') }) + '\n\n' +
+      const mockNarrative = t('neuralNarrative.mock.greeting', { name: clientData?.name || t('neuralNarrative.mock.fallbackName') }) + '\n\n' +
         t('neuralNarrative.mock.intro') + '\n\n' +
-        t('neuralNarrative.mock.body', { concerns: customerData?.concerns.join(', ') || t('neuralNarrative.mock.fallbackConcerns') }) + '\n\n' +
+        t('neuralNarrative.mock.body', { concerns: clientData?.concerns.join(', ') || t('neuralNarrative.mock.fallbackConcerns') }) + '\n\n' +
         t('neuralNarrative.mock.evidence')
       
       setNarrative(mockNarrative.trim())

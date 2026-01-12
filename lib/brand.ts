@@ -20,19 +20,19 @@ export type BrandConfig = {
 }
 
 export const BRAND: BrandConfig = {
-  name: "ClinicIQ",
-  shortName: "ClinicIQ",
+  name: "CenterIQ",
+  shortName: "CenterIQ",
   tagline: {
     en: "Intelligent Aesthetic Platform",
     th: "แพลตฟอร์มความงามเชิงอัจฉริยะ",
   },
-  url: "https://cliniciq.example",
+  url: "https://centeriq.example",
   colors: {
     // Teal-Cyan blend that pairs well with medical blue theme
     primary: "#06b6d4",
     primaryDark: "#0891b2",
   },
   social: {
-    twitter: "cliniciq",
+    twitter: "centeriq",
   },
 }

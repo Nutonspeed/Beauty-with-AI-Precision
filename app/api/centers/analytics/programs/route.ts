@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
       .lte("booking_date", endDate)
 
     if (error) {
-      console.error("Error fetching treatments data:", error)
+      console.error("Error fetching programs data:", error)
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 

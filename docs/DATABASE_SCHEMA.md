@@ -1,12 +1,12 @@
-# 🗄️ DATABASE SCHEMA DOCUMENTATION
+# DATABASE SCHEMA DOCUMENTATION
 
-> **Last Updated:** 2025-11-13  
+> **Last Updated:** January 13, 2026  
 > **Total Objects:** 80 (78 tables + 2 views)  
 > **Database:** PostgreSQL (Supabase)
 
 ---
 
-## 📊 ภาพรวมฐานข้อมูล
+## ภาพรวมฐานข้อมูล
 
 ### การเชื่อมต่อฐานข้อมูล
 
@@ -18,7 +18,7 @@ POSTGRES_URL="postgres://postgres.bgejeqqngzvuokdffadu:fovdyaf2TGERL9Yz@aws-1-ap
 
 ### สถิติฐานข้อมูล
 
-- **Total Objects:** 80 (78 tables + 2 views) — verified 2025-11-13
+- **Total Objects:** 80 (78 tables + 2 views) — verified 2026-01-13
 - **Tables with Data:** 
   - `skin_analyses`: 37 rows (ข้อมูลหลัก)
   - `users`: 4 rows (ผู้ใช้งาน)
@@ -26,39 +26,39 @@ POSTGRES_URL="postgres://postgres.bgejeqqngzvuokdffadu:fovdyaf2TGERL9Yz@aws-1-ap
   - `chat_history`: 4 rows
   - `error_logs`: 6 rows
   - `performance_metrics`: 173 rows
-  - `customers`: 4 rows
+  - `clients`: 4 rows
   - อื่น ๆ: พร้อมใช้งาน (0 rows)
 
 > Note: Supabase Dashboard displays only base tables. Our SQL audit counts objects in `public` schema, which includes 2 views: `active_invitations`, `profiles`.
 
 ---
 
-## 🏗️ โครงสร้างตาราง (78 Tables)
+## โครงสร้างตาราง (78 Tables)
 
-### 📁 **1. Core System Tables** (4 tables)
+### 1. Core System Tables (4 tables)
 
-#### `users` (13 columns, 4 rows) ✅
+#### `users` (13 columns, 4 rows) 
 - **Purpose:** ข้อมูลผู้ใช้หลัก
 - **Key Columns:** id, email, role, created_at
 - **Relations:** หลายตารางอ้างอิงถึงตารางนี้
 - **Migration:** Built-in Supabase Auth
 
-#### `user_profiles` (0 rows) ✅
+#### `user_profiles` (0 rows) 
 - **Purpose:** โปรไฟล์เพิ่มเติมของผู้ใช้
 - **Status:** พร้อมใช้งาน
 
-#### `user_preferences` (10 columns, 1 rows) ✅
+#### `user_preferences` (10 columns, 1 rows) 
 - **Purpose:** การตั้งค่าของผู้ใช้
 - **Features:** Theme, language, notifications
 
-#### `user_activity_log` (7 columns, 0 rows) ✅
+#### `user_activity_log` (7 columns, 0 rows) 
 - **Purpose:** บันทึกกิจกรรมผู้ใช้
 
 ---
 
-### 🔬 **2. AI Analysis Tables** (4 tables)
+### 2. AI Analysis Tables (4 tables)
 
-#### `skin_analyses` (37 columns, 34 rows) ✅ **มีข้อมูล**
+#### `skin_analyses` (37 columns, 34 rows)  **มีข้อมูล**
 - **Purpose:** ผลวิเคราะห์ผิวหน้าจาก AI
 - **Key Features:**
   - รองรับ 15 ปัญหาผิว
@@ -66,22 +66,22 @@ POSTGRES_URL="postgres://postgres.bgejeqqngzvuokdffadu:fovdyaf2TGERL9Yz@aws-1-ap
   - Severity scoring
   - Photo URLs
 - **Migration:** `20250109_create_skin_analyses.sql`
-- **Used By:** Action Plans, Treatments
+- **Used By:** Action Plans, Programs
 
-#### `analyses` (9 columns, 0 rows) ✅
+#### `analyses` (9 columns, 0 rows) 
 - **Purpose:** วิเคราะห์เพิ่มเติม
 
-#### `analysis_history` (6 columns, 0 rows) ✅
+#### `analysis_history` (6 columns, 0 rows) 
 - **Purpose:** ประวัติการวิเคราะห์
 
-#### `analytics_events` (5 columns, 63 rows) ✅ **มีข้อมูล**
+#### `analytics_events` (5 columns, 63 rows) 
 - **Purpose:** Event tracking
 
 ---
 
-### 📋 **3. Week 6: Action Plans & Smart Goals** (6 tables) ✅ **ติดตั้งใหม่**
+### 3. Week 6: Action Plans & Smart Goals (6 tables) 
 
-#### `action_plans` (12 columns, 0 rows) ✅ **NEW**
+#### `action_plans` (12 columns, 0 rows)  **NEW**
 - **Purpose:** แผนดูแลผิวส่วนบุคคล
 - **Key Columns:**
   - `id` (UUID, PK)
@@ -98,7 +98,7 @@ POSTGRES_URL="postgres://postgres.bgejeqqngzvuokdffadu:fovdyaf2TGERL9Yz@aws-1-ap
 - **RLS:** Users can only access their own plans
 - **Migration:** `20240121_action_plans_smart_goals.sql`
 
-#### `action_items` (20 columns, 0 rows) ✅ **NEW**
+#### `action_items` (20 columns, 0 rows)  **NEW**
 - **Purpose:** รายการขั้นตอนในแผน
 - **Key Columns:**
   - `id` (UUID, PK)
@@ -121,7 +121,7 @@ POSTGRES_URL="postgres://postgres.bgejeqqngzvuokdffadu:fovdyaf2TGERL9Yz@aws-1-ap
 - **RLS:** Inherited from action_plans
 - **Migration:** `20240121_action_plans_smart_goals.sql`
 
-#### `smart_goals` (28 columns, 0 rows) ✅ **NEW**
+#### `smart_goals` (28 columns, 0 rows)  **NEW**
 - **Purpose:** เป้าหมายแบบ SMART
 - **SMART Framework:**
   - **S**pecific: title, description, concern_types
@@ -148,7 +148,7 @@ POSTGRES_URL="postgres://postgres.bgejeqqngzvuokdffadu:fovdyaf2TGERL9Yz@aws-1-ap
 - **RLS:** Users can only access their own goals
 - **Migration:** `20240121_action_plans_smart_goals.sql`
 
-#### `goal_milestones` (11 columns, 0 rows) ✅ **NEW**
+#### `goal_milestones` (11 columns, 0 rows)  **NEW**
 - **Purpose:** ไมล์สโตนของเป้าหมาย
 - **Key Columns:**
   - `id` (UUID, PK)
@@ -163,7 +163,7 @@ POSTGRES_URL="postgres://postgres.bgejeqqngzvuokdffadu:fovdyaf2TGERL9Yz@aws-1-ap
 - **RLS:** Inherited from smart_goals
 - **Migration:** `20240121_action_plans_smart_goals.sql`
 
-#### `goal_check_ins` (9 columns, 0 rows) ✅ **NEW**
+#### `goal_check_ins` (9 columns, 0 rows)  **NEW**
 - **Purpose:** บันทึกความก้าวหน้า
 - **Key Columns:**
   - `id` (UUID, PK)
@@ -176,7 +176,7 @@ POSTGRES_URL="postgres://postgres.bgejeqqngzvuokdffadu:fovdyaf2TGERL9Yz@aws-1-ap
 - **RLS:** Inherited from smart_goals
 - **Migration:** `20240121_action_plans_smart_goals.sql`
 
-#### `goal_photos` (7 columns, 0 rows) ✅ **NEW**
+#### `goal_photos` (7 columns, 0 rows)  **NEW**
 - **Purpose:** รูปภาพ Before/After
 - **Key Columns:**
   - `id` (UUID, PK)
@@ -189,140 +189,140 @@ POSTGRES_URL="postgres://postgres.bgejeqqngzvuokdffadu:fovdyaf2TGERL9Yz@aws-1-ap
 
 ---
 
-### 📅 **4. Booking System Tables** (11 tables)
+### 4. Booking System Tables (11 tables)
 
-#### `bookings` (25 columns, 0 rows) ✅
+#### `bookings` (25 columns, 0 rows) 
 - **Purpose:** การจองคิว
 - **Features:** Full booking management
 
-#### `appointments` (14 columns, 0 rows) ✅
+#### `appointments` (14 columns, 0 rows) 
 - **Purpose:** นัดหมาย
 
-#### `appointment_services` (7 columns, 0 rows) ✅
-#### `appointment_reminders` (7 columns, 0 rows) ✅
-#### `appointment_cancellations` (5 columns, 0 rows) ✅
-#### `availability_slots` (8 columns, 0 rows) ✅
-#### `services` (23 columns, 0 rows) ✅
-#### `branches` (13 columns, 0 rows) ✅
-#### `branch_services` (8 columns, 0 rows) ✅
-#### `branch_staff_assignments` (9 columns, 0 rows) ✅
-#### `branch_revenue` (7 columns, 0 rows) ✅
+#### `appointment_services` (7 columns, 0 rows) 
+#### `appointment_reminders` (7 columns, 0 rows) 
+#### `appointment_cancellations` (5 columns, 0 rows) 
+#### `availability_slots` (8 columns, 0 rows) 
+#### `services` (23 columns, 0 rows) 
+#### `centers` (13 columns, 0 rows) 
+#### `center_services` (8 columns, 0 rows) 
+#### `center_staff_assignments` (9 columns, 0 rows) 
+#### `center_revenue` (7 columns, 0 rows) 
 
 ---
 
-### 🏥 **5. Clinic Management Tables** (3 tables)
+### 5. Center Management Tables (3 tables)
 
-#### `clinics` (20 columns, 2 rows) ✅
-- **Purpose:** ข้อมูลคลินิก
-- **Status:** มีข้อมูล 1 คลินิก
+#### `centers` (20 columns, 2 rows) 
+- **Purpose:** ข้อมูลศูนย์ความงาม
+- **Status:** มีข้อมูล 1 ศูนย์ความงาม
 
-#### `clinic_staff` (25 columns, 0 rows) ✅
-- **Purpose:** พนักงานคลินิก
-
----
-
-### 💬 **6. Chat System Tables** (5 tables)
-
-#### `chat_rooms` (9 columns, 0 rows) ✅
-#### `chat_messages` (10 columns, 0 rows) ✅
-#### `chat_participants` (7 columns, 0 rows) ✅
-#### `chat_read_status` (4 columns, 0 rows) ✅
-#### `chat_history` (6 columns, 4 rows) ✅ **มีข้อมูล**
+#### `center_staff` (25 columns, 0 rows) 
+- **Purpose:** พนักงานศูนย์ความงาม
 
 ---
 
-### 🎯 **7. Queue Management Tables** (4 tables)
+### 6. Chat System Tables (5 tables)
 
-#### `queue_entries` (20 columns, 0 rows) ✅
-#### `queue_notifications` (9 columns, 0 rows) ✅
-#### `queue_settings` (13 columns, 0 rows) ✅
-#### `queue_statistics` (12 columns, 0 rows) ✅
-
----
-
-### 📦 **8. Inventory System Tables** (8 tables)
-
-#### `inventory_items` (18 columns, 0 rows) ✅
-#### `inventory_categories` (5 columns, 5 rows) ✅ **มีข้อมูล**
-#### `inventory_stock_movements` (11 columns, 0 rows) ✅
-#### `inventory_stock_alerts` (8 columns, 0 rows) ✅
-#### `inventory_purchase_orders` (14 columns, 0 rows) ✅
-#### `inventory_purchase_order_items` (8 columns, 0 rows) ✅
-#### `inventory_suppliers` (9 columns, 0 rows) ✅
-#### `branch_inventory` (9 columns, 0 rows) ✅
-#### `branch_transfers` (12 columns, 0 rows) ✅
-#### `branch_transfer_items` (8 columns, 0 rows) ✅
+#### `chat_rooms` (9 columns, 0 rows) 
+#### `chat_messages` (10 columns, 0 rows) 
+#### `chat_participants` (7 columns, 0 rows) 
+#### `chat_read_status` (4 columns, 0 rows) 
+#### `chat_history` (6 columns, 4 rows)  **มีข้อมูล**
 
 ---
 
-### 🎁 **9. Loyalty & Rewards Tables** (6 tables)
+### 7. Queue Management Tables (4 tables)
 
-#### `loyalty_tiers` (10 columns, 4 rows) ✅ **มีข้อมูล**
-#### `loyalty_rewards` (13 columns, 0 rows) ✅
-#### `loyalty_reward_redemptions` (9 columns, 0 rows) ✅
-#### `customer_loyalty_status` (11 columns, 0 rows) ✅
-#### `points_earning_rules` (11 columns, 4 rows) ✅ **มีข้อมูล**
-#### `points_transactions` (11 columns, 0 rows) ✅
+#### `queue_entries` (20 columns, 0 rows) 
+#### `queue_notifications` (9 columns, 0 rows) 
+#### `queue_settings` (13 columns, 0 rows) 
+#### `queue_statistics` (12 columns, 0 rows) 
 
 ---
 
-### 📢 **10. Marketing Tables** (5 tables)
+### 8. Inventory System Tables (8 tables)
 
-#### `marketing_campaigns` (14 columns, 0 rows) ✅
-#### `campaign_customers` (10 columns, 0 rows) ✅
-#### `campaign_performance` (9 columns, 0 rows) ✅
-#### `promo_codes` (16 columns, 0 rows) ✅
-#### `promo_code_usage` (9 columns, 0 rows) ✅
-
----
-
-### 👥 **11. Customer Management Tables** (4 tables)
-
-#### `customers` (24 columns, 4 rows) ✅ **มีข้อมูล**
-#### `customer_segments` (8 columns, 0 rows) ✅
-#### `customer_notes` (18 columns, 0 rows) ✅
+#### `inventory_items` (18 columns, 0 rows) 
+#### `inventory_categories` (5 columns, 5 rows)  **มีข้อมูล**
+#### `inventory_stock_movements` (11 columns, 0 rows) 
+#### `inventory_stock_alerts` (8 columns, 0 rows) 
+#### `inventory_purchase_orders` (14 columns, 0 rows) 
+#### `inventory_purchase_order_items` (8 columns, 0 rows) 
+#### `inventory_suppliers` (9 columns, 0 rows) 
+#### `center_inventory` (9 columns, 0 rows) 
+#### `center_transfers` (12 columns, 0 rows) 
+#### `center_transfer_items` (8 columns, 0 rows) 
 
 ---
 
-### 💼 **12. Sales Management Tables** (3 tables)
+### 9. Loyalty & Rewards Tables (6 tables)
 
-#### `sales_leads` (24 columns, 5 rows) ✅ **มีข้อมูล**
-#### `sales_proposals` (26 columns, 5 rows) ✅ **มีข้อมูล**
-#### `sales_activities` (14 columns, 0 rows) ✅
-
----
-
-### 🏥 **13. Treatment Tables** (8 tables)
-
-#### `treatments` (42 columns, 0 rows) ✅
-#### `treatment_records` (14 columns, 0 rows) ✅
-#### `treatment_recommendations` (16 columns, 0 rows) ✅
-#### `treatment_packages` (12 columns, 0 rows) ✅
-#### `treatment_photos` (9 columns, 0 rows) ✅
-#### `treatment_progress_notes` (8 columns, 0 rows) ✅
-#### `treatment_outcomes` (12 columns, 0 rows) ✅
-#### `treatment_comparisons` (9 columns, 0 rows) ✅
+#### `loyalty_tiers` (10 columns, 4 rows)  **มีข้อมูล**
+#### `loyalty_rewards` (13 columns, 0 rows) 
+#### `loyalty_reward_redemptions` (9 columns, 0 rows) 
+#### `client_loyalty_status` (11 columns, 0 rows) 
+#### `points_earning_rules` (11 columns, 4 rows)  **มีข้อมูล**
+#### `points_transactions` (11 columns, 0 rows) 
 
 ---
 
-### 📊 **14. Analytics & Reporting Tables** (4 tables)
+### 10. Marketing Tables (5 tables)
 
-#### `performance_metrics` (12 columns, 173 rows) ✅ **มีข้อมูล**
-#### `generated_reports` (10 columns, 0 rows) ✅
-#### `report_schedules` (9 columns, 0 rows) ✅
-#### `presentation_sessions` (13 columns, 1 rows) ✅
+#### `marketing_campaigns` (14 columns, 0 rows) 
+#### `campaign_clients` (10 columns, 0 rows) 
+#### `campaign_performance` (9 columns, 0 rows) 
+#### `promo_codes` (16 columns, 0 rows) 
+#### `promo_code_usage` (9 columns, 0 rows) 
 
 ---
 
-### 🐛 **15. System Tables** (2 tables)
+### 11. Client Management Tables (4 tables)
 
-#### `error_logs` (13 columns, 2 rows) ✅ **มีข้อมูล**
+#### `clients` (24 columns, 4 rows)  **มีข้อมูล**
+#### `client_segments` (8 columns, 0 rows) 
+#### `client_notes` (18 columns, 0 rows) 
 
-#### `invitations` (12 columns, 4 rows) ✅ **มีข้อมูล - NEW**
-- **Purpose:** ระบบเชิญผู้ใช้เข้าคลินิก
+---
+
+### 12. Sales Management Tables (3 tables)
+
+#### `sales_leads` (24 columns, 5 rows)  **มีข้อมูล**
+#### `sales_proposals` (26 columns, 5 rows)  **มีข้อมูล**
+#### `sales_activities` (14 columns, 0 rows) 
+
+---
+
+### 13. Program Tables (8 tables)
+
+#### `programs` (42 columns, 0 rows) 
+#### `program_records` (14 columns, 0 rows) 
+#### `program_recommendations` (16 columns, 0 rows) 
+#### `program_packages` (12 columns, 0 rows) 
+#### `program_photos` (9 columns, 0 rows) 
+#### `program_progress_notes` (8 columns, 0 rows) 
+#### `program_outcomes` (12 columns, 0 rows) 
+#### `program_comparisons` (9 columns, 0 rows) 
+
+---
+
+### 14. Analytics & Reporting Tables (4 tables)
+
+#### `performance_metrics` (12 columns, 173 rows)  **มีข้อมูล**
+#### `generated_reports` (10 columns, 0 rows) 
+#### `report_schedules` (9 columns, 0 rows) 
+#### `presentation_sessions` (13 columns, 1 rows) 
+
+---
+
+### 15. System Tables (2 tables)
+
+#### `error_logs` (13 columns, 2 rows)  **มีข้อมูล**
+
+#### `invitations` (12 columns, 4 rows)  **มีข้อมูล - NEW**
+- **Purpose:** ระบบเชิญผู้ใช้เข้าศูนย์ความงาม
 - **Key Columns:**
   - `id` (UUID, PK)
-  - `clinic_id` (UUID, FK → clinics)
+  - `center_id` (UUID, FK → centers)
   - `invited_email` (TEXT)
   - `invited_role` (TEXT: 'staff', 'receptionist', 'manager')
   - `invited_by` (UUID, FK → users)
@@ -336,7 +336,7 @@ POSTGRES_URL="postgres://postgres.bgejeqqngzvuokdffadu:fovdyaf2TGERL9Yz@aws-1-ap
   - Role-based access control
   - Expiration tracking (default 7 days)
   - Email notifications via Resend
-- **RLS:** 6 policies (clinic admins manage, users view own)
+- **RLS:** 6 policies (center admins manage, users view own)
 - **API Routes:**
   - `POST /api/invitations/send`
   - `GET /api/invitations/[token]`
@@ -346,7 +346,7 @@ POSTGRES_URL="postgres://postgres.bgejeqqngzvuokdffadu:fovdyaf2TGERL9Yz@aws-1-ap
 
 ---
 
-### 👁️ Views (2)
+### Views (2)
 
 These objects appear in SQL object counts but not in the Dashboard's "Tables" metric.
 
@@ -355,18 +355,18 @@ These objects appear in SQL object counts but not in the Dashboard's "Tables" me
 
 ---
 
-## 🔐 Security Features
+## Security Features
 
 ### Row Level Security (RLS)
 
 **Recent Tables with RLS Policies:**
-- ✅ invitations: 6 policies (clinic admins manage, users view own)
-- ✅ action_plans: 4 policies (SELECT, INSERT, UPDATE, DELETE)
-- ✅ action_items: 4 policies (inherited from plans)
-- ✅ smart_goals: 4 policies (SELECT, INSERT, UPDATE, DELETE)
-- ✅ goal_milestones: 4 policies (inherited from goals)
-- ✅ goal_check_ins: 4 policies (inherited from goals)
-- ✅ goal_photos: 4 policies (inherited from goals)
+- invitations: 6 policies (center admins manage, users view own)
+- action_plans: 4 policies (SELECT, INSERT, UPDATE, DELETE)
+- action_items: 4 policies (inherited from plans)
+- smart_goals: 4 policies (SELECT, INSERT, UPDATE, DELETE)
+- goal_milestones: 4 policies (inherited from goals)
+- goal_check_ins: 4 policies (inherited from goals)
+- goal_photos: 4 policies (inherited from goals)
 
 **หลักการ RLS:**
 - Users can only access their own data
@@ -375,7 +375,7 @@ These objects appear in SQL object counts but not in the Dashboard's "Tables" me
 
 ---
 
-## ⚡ Performance Optimization
+## Performance Optimization
 
 ### Indexes Created (Week 6)
 
@@ -415,7 +415,7 @@ These objects appear in SQL object counts but not in the Dashboard's "Tables" me
 
 ---
 
-## 🔧 Helper Functions
+## Helper Functions
 
 ### Week 6 Functions
 
@@ -435,7 +435,7 @@ These objects appear in SQL object counts but not in the Dashboard's "Tables" me
 
 ---
 
-## 🔄 Triggers
+## Triggers
 
 ### Week 6 Triggers
 
@@ -456,18 +456,18 @@ These objects appear in SQL object counts but not in the Dashboard's "Tables" me
 
 ---
 
-## 📜 Migration History
+## Migration History
 
 ### Completed Migrations
 
 1. **Core System** - Built-in Supabase
 2. **Skin Analyses** - `20250109_create_skin_analyses.sql`
 3. **Storage Buckets** - `20250109_create_storage_buckets.sql`
-4. **Multi-Clinic System** - `20250107_multi_clinic_foundation.sql`
+4. **Multi-Center System** - `20250107_multi_center_foundation.sql`
 5. **Queue Management** - Multiple migrations
 6. **Inventory System** - Multiple migrations
 7. **Loyalty System** - Multiple migrations
-8. **📌 Week 6: Action Plans & Smart Goals** - `20240121_action_plans_smart_goals.sql` ✅ **ล่าสุด**
+8. **Week 6: Action Plans & Smart Goals** - `20240121_action_plans_smart_goals.sql` **ล่าสุด**
 
 ---
 

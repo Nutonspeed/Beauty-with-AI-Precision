@@ -53,11 +53,11 @@ export const recommendedStrategies = {
   realtime: 'no-cache' as CacheStrategy,
   
   // Semi-static
-  treatments: 'public-medium' as CacheStrategy,
+  programs: 'public-medium' as CacheStrategy,
   products: 'public-medium' as CacheStrategy,
   
   // Rarely changing
-  clinicInfo: 'public-long' as CacheStrategy,
+  centerInfo: 'public-long' as CacheStrategy,
   staticContent: 'public-long' as CacheStrategy,
   
   // Never changes

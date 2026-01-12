@@ -25,14 +25,14 @@ export interface SubscriptionStatus {
 }
 
 /**
- * Get subscription status for a clinic
+ * Get subscription status for a center
  */
-export async function getSubscriptionStatus(clinicId: string): Promise<SubscriptionStatus> {
+export async function getSubscriptionStatus(centerId: string): Promise<SubscriptionStatus> {
   const supabase = await createClient()
 
-  // Get clinic subscription data
-  const { data: clinic, error } = await supabase
-    .from('clinics')
+  // Get center subscription data
+  const { data: center, error } = await supabase
+    .from('centers')
     .select(`
       subscription_plan,
       subscription_status,
@@ -41,38 +41,38 @@ export async function getSubscriptionStatus(clinicId: string): Promise<Subscript
       subscription_started_at,
       subscription_ends_at
     `)
-    .eq('id', clinicId)
+    .eq('id', centerId)
     .single()
 
-  if (error || !clinic) {
-    return createDefaultStatus('starter', 'Clinic not found')
+  if (error || !center) {
+    return createDefaultStatus('starter', 'Center not found')
   }
 
-  const plan = (clinic.subscription_plan || 'starter') as SubscriptionPlan
+  const plan = (center.subscription_plan || 'starter') as SubscriptionPlan
   const planDetails = SUBSCRIPTION_PLANS[plan]
   const now = new Date()
 
   // Check trial status
-  const isTrial = clinic.is_trial || false
-  const trialEndsAt = clinic.trial_ends_at ? new Date(clinic.trial_ends_at) : null
+  const isTrial = center.is_trial || false
+  const trialEndsAt = center.trial_ends_at ? new Date(center.trial_ends_at) : null
   const isTrialExpired = isTrial && trialEndsAt ? now > trialEndsAt : false
   const trialDaysRemaining = trialEndsAt && !isTrialExpired
     ? Math.ceil((trialEndsAt.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
     : null
 
   // Check subscription end date
-  const subscriptionEndsAt = clinic.subscription_ends_at ? new Date(clinic.subscription_ends_at) : null
+  const subscriptionEndsAt = center.subscription_ends_at ? new Date(center.subscription_ends_at) : null
   const daysRemaining = subscriptionEndsAt
     ? Math.ceil((subscriptionEndsAt.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
     : null
 
   // Determine if subscription is active
   const isActive = 
-    clinic.subscription_status === 'active' ||
+    center.subscription_status === 'active' ||
     (isTrial && !isTrialExpired)
 
   // Get current usage (simplified - would need actual counting in production)
-  const usage = await getClinicUsage(supabase, clinicId)
+  const usage = await getCenterUsage(supabase, centerId)
 
   // Check if within limits
   const withinLimits = isWithinLimits(plan, usage)
@@ -106,10 +106,10 @@ export async function getSubscriptionStatus(clinicId: string): Promise<Subscript
 }
 
 /**
- * Check if clinic can access a feature
+ * Check if center can access a feature
  */
-export async function canAccessFeature(clinicId: string, feature: string): Promise<boolean> {
-  const status = await getSubscriptionStatus(clinicId)
+export async function canAccessFeature(centerId: string, feature: string): Promise<boolean> {
+  const status = await getSubscriptionStatus(centerId)
   
   if (!status.isActive) return false
   
@@ -118,13 +118,13 @@ export async function canAccessFeature(clinicId: string, feature: string): Promi
 }
 
 /**
- * Check if clinic can perform an action (within limits)
+ * Check if center can perform an action (within limits)
  */
 export async function canPerformAction(
-  clinicId: string, 
+  centerId: string, 
   action: 'analysis' | 'addUser' | 'uploadFile'
 ): Promise<{ allowed: boolean; reason?: string }> {
-  const status = await getSubscriptionStatus(clinicId)
+  const status = await getSubscriptionStatus(centerId)
 
   if (!status.isActive) {
     return { allowed: false, reason: 'Subscription is not active' }
@@ -163,17 +163,17 @@ export async function canPerformAction(
 }
 
 /**
- * Get clinic usage stats
+ * Get center usage stats
  */
-async function getClinicUsage(
+async function getCenterUsage(
   supabase: Awaited<ReturnType<typeof createClient>>,
-  clinicId: string
+  centerId: string
 ): Promise<{ users: number; storage: number; analyses: number }> {
   // Count users
   const { count: userCount } = await supabase
-    .from('clinic_staff')
+    .from('center_staff')
     .select('*', { count: 'exact', head: true })
-    .eq('clinic_id', clinicId)
+    .eq('center_id', centerId)
 
   // Count analyses this month
   const startOfMonth = new Date()
@@ -183,7 +183,7 @@ async function getClinicUsage(
   const { count: analysisCount } = await supabase
     .from('skin_analyses')
     .select('*', { count: 'exact', head: true })
-    .eq('clinic_id', clinicId)
+    .eq('center_id', centerId)
     .gte('created_at', startOfMonth.toISOString())
 
   // TODO: Calculate actual storage usage
@@ -215,9 +215,9 @@ function createDefaultStatus(plan: SubscriptionPlan, message: string): Subscript
 }
 
 /**
- * Start trial for a clinic
+ * Start trial for a center
  */
-export async function startTrial(clinicId: string, plan: SubscriptionPlan = 'starter'): Promise<boolean> {
+export async function startTrial(centerId: string, plan: SubscriptionPlan = 'starter'): Promise<boolean> {
   const supabase = await createClient()
   const planDetails = SUBSCRIPTION_PLANS[plan]
   
@@ -225,7 +225,7 @@ export async function startTrial(clinicId: string, plan: SubscriptionPlan = 'sta
   trialEndsAt.setDate(trialEndsAt.getDate() + planDetails.trialDays)
 
   const { error } = await supabase
-    .from('clinics')
+    .from('centers')
     .update({
       subscription_plan: plan,
       subscription_status: 'trial',
@@ -233,7 +233,7 @@ export async function startTrial(clinicId: string, plan: SubscriptionPlan = 'sta
       trial_ends_at: trialEndsAt.toISOString(),
       subscription_started_at: new Date().toISOString()
     })
-    .eq('id', clinicId)
+    .eq('id', centerId)
 
   return !error
 }
@@ -242,7 +242,7 @@ export async function startTrial(clinicId: string, plan: SubscriptionPlan = 'sta
  * Upgrade subscription
  */
 export async function upgradeSubscription(
-  clinicId: string, 
+  centerId: string, 
   plan: SubscriptionPlan
 ): Promise<{ success: boolean; error?: string }> {
   const supabase = await createClient()
@@ -252,7 +252,7 @@ export async function upgradeSubscription(
   subscriptionEndsAt.setMonth(subscriptionEndsAt.getMonth() + 1)
 
   const { error } = await supabase
-    .from('clinics')
+    .from('centers')
     .update({
       subscription_plan: plan,
       subscription_status: 'active',
@@ -261,7 +261,7 @@ export async function upgradeSubscription(
       subscription_started_at: new Date().toISOString(),
       subscription_ends_at: subscriptionEndsAt.toISOString()
     })
-    .eq('id', clinicId)
+    .eq('id', centerId)
 
   if (error) {
     return { success: false, error: error.message }

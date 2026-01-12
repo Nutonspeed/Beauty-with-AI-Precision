@@ -12,13 +12,13 @@ function getSupabaseClient() {
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const clinicId = searchParams.get('clinic_id');
+    const centerId = searchParams.get('center_id');
     const startDate = searchParams.get('start_date');
     const endDate = searchParams.get('end_date');
 
-    if (!clinicId || !startDate || !endDate) {
+    if (!centerId || !startDate || !endDate) {
       return NextResponse.json(
-        { error: 'Missing required parameters: clinic_id, start_date, end_date' },
+        { error: 'Missing required parameters: center_id, start_date, end_date' },
         { status: 400 }
       );
     }
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     // Call database function for revenue metrics
     const { data: metrics, error: metricsError } = await supabaseClient
       .rpc('calculate_revenue_metrics', {
-        p_clinic_id: clinicId,
+        p_center_id: centerId,
         p_start_date: startDate,
         p_end_date: endDate,
       });
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
     const { data: serviceRevenue, error: serviceError } = await supabaseClient
       .from('bookings')
       .select('service_id, service_name, total_amount')
-      .eq('clinic_id', clinicId)
+      .eq('center_id', centerId)
       .eq('payment_status', 'paid')
       .gte('created_at', startDate)
       .lte('created_at', endDate);
@@ -68,7 +68,7 @@ export async function GET(request: NextRequest) {
     const { data: doctorRevenue, error: doctorError } = await supabaseClient
       .from('appointment_slots')
       .select('doctor_id, service_price')
-      .eq('clinic_id', clinicId)
+      .eq('center_id', centerId)
       .eq('payment_status', 'paid')
       .eq('status', 'completed')
       .gte('appointment_date', startDate)

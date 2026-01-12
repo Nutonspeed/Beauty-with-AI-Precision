@@ -87,7 +87,7 @@ export class ProductionDemoSystem {
         source: 'Instagram Ads',
         status: 'hot',
         budget: 'high',
-        interests: ['HydraFacial', 'Laser Treatment'],
+        interests: ['HydraFacial', 'Laser Program'],
         engagement: {
           websiteVisits: 15,
           emailOpens: 12,
@@ -158,7 +158,7 @@ export class ProductionDemoSystem {
         objection: 'แพงไปค่ะ คุ้มกับราคานี้ไหม',
         context: {
           customerProfile: { name: 'สมใจ', budget: 'medium' },
-          treatment: { name: 'HydraFacial', price: 15000 },
+          program: { name: 'HydraFacial', price: 15000 },
           leadScore: 75
         }
       },
@@ -172,7 +172,7 @@ export class ProductionDemoSystem {
       testimonials: [
         '"Script ที่ระบบแนะนำช่วย close deal ได้สำเร็จ"',
         '"เรียนรู้วิธีจัดการ objection ที่ถูกต้อง"',
-        '"ลูกค้าที่เคยลังเล กลับมาทำ treatment จริงๆ"'
+        '"ลูกค้าที่เคยลังเล กลับมาทำ program จริงๆ"'
       ]
     },
     {
@@ -184,7 +184,7 @@ export class ProductionDemoSystem {
         objection: 'ไม่มั่นใจในผลลัพธ์ค่ะ',
         context: {
           customerProfile: { name: 'วรรณา', concerns: ['safety', 'results'] },
-          treatment: { name: 'Laser Treatment', price: 25000 },
+          program: { name: 'Laser Program', price: 25000 },
           leadScore: 60
         }
       },
@@ -239,8 +239,8 @@ export class ProductionDemoSystem {
         leadType: 'existing_customer',
         leadData: {
           name: 'สมใจ รักสวย',
-          lastTreatment: 'HydraFacial',
-          interests: ['laser_treatment', 'premium_care']
+          lastProgram: 'HydraFacial',
+          interests: ['laser_program', 'premium_care']
         },
         leadScore: PRODUCTION_REFERENCE_DATA.leadScoring.patterns.hot_lead
       },
@@ -327,7 +327,7 @@ export class ProductionDemoSystem {
       pricing: {
         license: '฿299,000/ปี (ไม่รวม server)',
         implementation: '฿150,000 (ครั้งเดียว)',
-        training: '฿50,000 (ต่อ clinic)',
+        training: '฿50,000 (ต่อ center)',
         maintenance: '฿89,000/ปี'
       },
       testimonials: this.scenarios.flatMap(s => s.testimonials),

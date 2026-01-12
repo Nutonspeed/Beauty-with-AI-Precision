@@ -18,7 +18,7 @@ export async function GET() {
 
     // ดึงการตั้งค่า
     const { data: settings } = await supabase
-      .from("clinic_settings")
+      .from("center_settings")
       .select("settings")
       .eq("setting_type", "automation")
       .maybeSingle();
@@ -49,11 +49,11 @@ export async function GET() {
     let followUps: any[] = [];
     if (followUpSettings.enabled) {
       const { data: recentBookings } = await supabase
-        .from("clinic_bookings")
+        .from("center_bookings")
         .select(
           `
           *,
-          customer:clinic_customers(name, email, phone, line_id)
+          customer:center_customers(name, email, phone, line_id)
         `
         )
         .eq("status", "completed")
@@ -73,11 +73,11 @@ export async function GET() {
     let inactiveCustomers: any[] = [];
     if (inactiveSettings.enabled) {
       const { data: customers } = await supabase
-        .from("clinic_customers")
+        .from("center_customers")
         .select(
           `
           *,
-          bookings:clinic_bookings(
+          bookings:center_bookings(
             id,
             appointment_date,
             status
@@ -115,7 +115,7 @@ export async function GET() {
         customer_phone: booking.customer?.phone,
         customer_email: booking.customer?.email,
         customer_line_id: booking.customer?.line_id,
-        treatment: booking.treatment_type,
+        program: booking.program_type,
         appointment_date: booking.appointment_date,
         days_since: followUpSettings.after_days,
       })),
@@ -152,7 +152,7 @@ export async function GET() {
       },
     });
   } catch (error) {
-    console.error("Error in GET /api/clinic/automation/customer-followup:", error);
+    console.error("Error in GET /api/center/automation/customer-followup:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
@@ -167,7 +167,7 @@ export async function POST() {
 
     // ดึงการตั้งค่า
     const { data: settings } = await supabase
-      .from("clinic_settings")
+      .from("center_settings")
       .select("settings")
       .eq("setting_type", "automation")
       .maybeSingle();
@@ -177,7 +177,7 @@ export async function POST() {
       after_days: settings?.settings?.follow_up_after_days || 3,
       template:
         settings?.settings?.follow_up_template ||
-        "สวัสดีค่ะคุณ {{customer_name}} ขอบคุณที่ใช้บริการ {{treatment}}",
+        "สวัสดีค่ะคุณ {{customer_name}} ขอบคุณที่ใช้บริการ {{program}}",
     };
 
     const inactiveSettings = {
@@ -198,11 +198,11 @@ export async function POST() {
       const followUpDate = subDays(now, followUpSettings.after_days);
 
       const { data: recentBookings } = await supabase
-        .from("clinic_bookings")
+        .from("center_bookings")
         .select(
           `
           *,
-          customer:clinic_customers(name, email, phone, line_id)
+          customer:center_customers(name, email, phone, line_id)
         `
         )
         .eq("status", "completed")
@@ -212,7 +212,7 @@ export async function POST() {
       for (const booking of recentBookings || []) {
         const message = followUpSettings.template
           .replace("{{customer_name}}", booking.customer?.name || "ลูกค้า")
-          .replace("{{treatment}}", booking.treatment_type)
+          .replace("{{program}}", booking.program_type)
           .replace(
             "{{date}}",
             format(new Date(booking.appointment_date), "d MMMM yyyy", {
@@ -229,7 +229,7 @@ export async function POST() {
               <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
                 <h2>ติดตามผลหลังการรักษา</h2>
                 <p>${message}</p>
-                <p style="color: #666;">AI367 Beauty Clinic</p>
+                <p style="color: #666;">AI367 Beauty Center</p>
               </div>
             `,
           });
@@ -258,11 +258,11 @@ export async function POST() {
       const inactiveDate = subDays(now, inactiveSettings.after_days);
 
       const { data: customers } = await supabase
-        .from("clinic_customers")
+        .from("center_customers")
         .select(
           `
           *,
-          bookings:clinic_bookings(
+          bookings:center_bookings(
             id,
             appointment_date,
             status
@@ -304,7 +304,7 @@ export async function POST() {
               <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
                 <h2>คิดถึงคุณ</h2>
                 <p>${message}</p>
-                <p style="color: #666;">AI367 Beauty Clinic</p>
+                <p style="color: #666;">AI367 Beauty Center</p>
               </div>
             `,
           });

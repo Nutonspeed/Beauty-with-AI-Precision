@@ -12,7 +12,7 @@ export interface ProgressDataPoint {
   metrics: EnhancedMetricsResult;
   photoUrl?: string;
   notes?: string;
-  treatmentsReceived?: string[];
+  programsReceived?: string[];
 }
 
 // Comparison result between two time points

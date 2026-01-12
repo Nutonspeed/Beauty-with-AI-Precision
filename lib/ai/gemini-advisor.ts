@@ -1,5 +1,5 @@
 /**
- * Gemini AI Treatment Advisor
+ * Gemini AI Program Advisor
  * 
  * Uses Google Gemini 1.5 Flash (Free Tier)
  * - 1,500 requests/day

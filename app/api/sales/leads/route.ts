@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
     const service = createServiceClient()
     const { data: userRow, error: userErr } = await service
       .from('users')
-      .select('role, clinic_id')
+      .select('role, center_id')
       .eq('id', user.id)
       .single()
     if (userErr || !userRow || !canAccessSales(userRow.role)) {
@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
     const { listLeads } = await import("@/lib/sales/leads-service")
     const payload = await listLeads({
       userId: user.id,
-      clinicId: userRow.clinic_id ?? null,
+      centerId: userRow.center_id ?? null,
       status,
       search,
       campaign,
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
     const service = createServiceClient()
     const { data: userRow, error: userErr } = await service
       .from('users')
-      .select('role, clinic_id')
+      .select('role, center_id')
       .eq('id', user.id)
       .single()
     if (userErr || !userRow || !canAccessSales(userRow.role)) {
@@ -89,11 +89,11 @@ export async function POST(request: NextRequest) {
     const { createLead } = await import("@/lib/sales/leads-service")
     const { logLeadSystemActivity } = await import("@/lib/sales/lead-activities-service")
 
-    const newLead = await createLead(user.id, userRow.clinic_id ?? null, body)
+    const newLead = await createLead(user.id, userRow.center_id ?? null, body)
 
     await logLeadSystemActivity(
       user.id,
-      userRow.clinic_id ?? null,
+      userRow.center_id ?? null,
       newLead.id,
       "Lead Created",
       `Lead \"${newLead.name}\" was created`,

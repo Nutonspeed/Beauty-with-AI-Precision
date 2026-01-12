@@ -74,7 +74,7 @@ export async function createServerSupabaseClient() {
 
 /**
  * Get current session (server-side)
- * Returns user with clinic context
+ * Returns user with center context
  */
 export async function getSession(): Promise<SessionContext> {
   try {

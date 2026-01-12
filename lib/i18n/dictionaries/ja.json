@@ -20,7 +20,7 @@
   },
   "booking": {
     "title": "予約",
-    "selectTreatment": "治療を選択",
+    "selectProgram": "治療を選択",
     "selectDate": "日付を選択",
     "selectTime": "時間を選択",
     "confirm": "予約を確認"

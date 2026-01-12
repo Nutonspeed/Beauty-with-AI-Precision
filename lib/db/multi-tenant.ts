@@ -39,7 +39,7 @@ export async function getCenterById(centerId: string): Promise<Center | null> {
   const supabase = getServiceRoleClient();
   
   const { data, error } = await supabase
-    .from('clinics')
+    .from('centers')
     .select('*')
     .eq('id', centerId)
     .single();
@@ -56,7 +56,7 @@ export async function getActiveCenter(): Promise<Center[]> {
   const supabase = getServiceRoleClient();
   
   const { data, error } = await supabase
-    .from('clinics')
+    .from('centers')
     .select('*')
     .eq('is_active', true)
     .order('center_name');
@@ -74,7 +74,7 @@ export async function getUserCenter(userId: string): Promise<Center | null> {
   
   const { data, error } = await supabase
     .from('users')
-    .select('center_id, clinics(*)')
+    .select('center_id, centers(*)')
     .eq('id', userId)
     .single();
   
@@ -82,7 +82,7 @@ export async function getUserCenter(userId: string): Promise<Center | null> {
     return null;
   }
   
-  return data.clinics as unknown as Center;
+  return data.centers as unknown as Center;
 }
 
 // ============================================================================
@@ -94,7 +94,7 @@ export async function getUserWithCenter(userId: string): Promise<MultiTenantUser
   
   const { data, error } = await supabase
     .from('users')
-    .select('*, center:clinics(*)')
+    .select('*, center:centers(*)')
     .eq('id', userId)
     .single();
   

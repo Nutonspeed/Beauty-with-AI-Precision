@@ -112,7 +112,7 @@ export function StaffClient({ initialStaff, initialStats }: StaffClientProps) {
         {
           event: '*',
           schema: 'public',
-          table: 'clinic_staff',
+          table: 'center_staff',
         },
         (payload) => {
           console.log('Staff change received:', payload)

@@ -12,10 +12,10 @@ export default async function StaffPage() {
 
   // Query staff data with JOIN to users table
   const { data: staffData, error: staffError } = await supabase
-    .from('clinic_staff')
+    .from('center_staff')
     .select(`
       *,
-      user:users!clinic_staff_user_id_fkey(full_name, email)
+      user:users!center_staff_user_id_fkey(full_name, email)
     `)
     .order('created_at', { ascending: false })
 
@@ -25,36 +25,36 @@ export default async function StaffPage() {
 
   // Calculate stats
   const { count: totalCount } = await supabase
-    .from('clinic_staff')
+    .from('center_staff')
     .select('*', { count: 'exact', head: true })
 
   const { count: activeCount } = await supabase
-    .from('clinic_staff')
+    .from('center_staff')
     .select('*', { count: 'exact', head: true })
     .eq('status', 'active')
 
   const { count: onLeaveCount } = await supabase
-    .from('clinic_staff')
+    .from('center_staff')
     .select('*', { count: 'exact', head: true })
     .eq('status', 'on_leave')
 
   const { count: specialistsCount } = await supabase
-    .from('clinic_staff')
+    .from('center_staff')
     .select('*', { count: 'exact', head: true })
     .eq('role', 'doctor')
 
   const { count: techniciansCount } = await supabase
-    .from('clinic_staff')
+    .from('center_staff')
     .select('*', { count: 'exact', head: true })
     .eq('role', 'nurse')
 
   const { count: therapistsCount } = await supabase
-    .from('clinic_staff')
+    .from('center_staff')
     .select('*', { count: 'exact', head: true })
     .eq('role', 'therapist')
 
   const { count: adminsCount } = await supabase
-    .from('clinic_staff')
+    .from('center_staff')
     .select('*', { count: 'exact', head: true })
     .eq('role', 'admin')
 
@@ -72,14 +72,14 @@ export default async function StaffPage() {
   const staff: StaffMember[] = (staffData || []).map((s: any) => ({
     id: s.id,
     user_id: s.user_id,
-    center_id: s.clinic_id,
+    center_id: s.center_id,
     role: s.role,
     specialty: s.specialty,
     email: s.email,
     phone: s.phone,
     status: s.status,
     rating: s.rating,
-    clients_today: s.patients_today || 0,
+    clients_today: s.clients_today || 0,
     appointments_today: s.appointments_today || 0,
     join_date: s.join_date,
     avatar_url: s.avatar_url,

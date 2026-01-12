@@ -16,34 +16,34 @@ export async function GET(_req: NextRequest) {
 
     const { data: profile, error: profileError } = await supabase
       .from('users')
-      .select('clinic_id')
+      .select('center_id')
       .eq('id', user.id)
       .maybeSingle()
 
     if (profileError) {
-      console.error('[clinic/plan] Failed to load user profile', profileError)
+      console.error('[center/plan] Failed to load user profile', profileError)
     }
 
-    const clinicId = profile?.clinic_id
-    if (!clinicId) {
+    const centerId = profile?.center_id
+    if (!centerId) {
       return NextResponse.json(
-        { error: 'No clinic associated with current user' },
+        { error: 'No center associated with current user' },
         { status: 400 },
       )
     }
 
-    const { data: clinic, error: clinicError } = await supabase
-      .from('clinics')
+    const { data: center, error: centerError } = await supabase
+      .from('centers')
       .select('id, max_sales_users')
-      .eq('id', clinicId)
+      .eq('id', centerId)
       .maybeSingle()
 
-    if (clinicError || !clinic) {
-      console.error('[clinic/plan] Failed to load clinic', clinicError)
-      return NextResponse.json({ error: 'Clinic not found' }, { status: 404 })
+    if (centerError || !center) {
+      console.error('[center/plan] Failed to load center', centerError)
+      return NextResponse.json({ error: 'Center not found' }, { status: 404 })
     }
 
-    const maxSalesUsers = (clinic as any).max_sales_users ?? 1
+    const maxSalesUsers = (center as any).max_sales_users ?? 1
 
     let planId: 'basic' | 'pro' | 'enterprise' = 'basic'
     if (maxSalesUsers >= 3 && maxSalesUsers < 10) {
@@ -55,7 +55,7 @@ export async function GET(_req: NextRequest) {
 
     return NextResponse.json({ planId, maxSalesUsers })
   } catch (error) {
-    console.error('[clinic/plan] Unexpected error', error)
-    return NextResponse.json({ error: 'Failed to load clinic plan' }, { status: 500 })
+    console.error('[center/plan] Unexpected error', error)
+    return NextResponse.json({ error: 'Failed to load center plan' }, { status: 500 })
   }
 }

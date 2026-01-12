@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { withClinicAuth } from '@/lib/auth/middleware';
+import { withCenterAuth } from '@/lib/auth/middleware';
 
 function getSupabaseClient() {
   return createClient(
@@ -11,15 +11,15 @@ function getSupabaseClient() {
 
 /**
  * POST /api/loyalty/rewards/redeem
- * Redeem a reward with loyalty points for beauty clinic customer
+ * Redeem a reward with loyalty points for beauty center customer
  *
  * Body:
- * - clinic_id (required): Clinic ID
+ * - center_id (required): Center ID
  * - customer_id (required): Customer ID
  * - reward_id (required): Reward ID to redeem
  * - branch_id (optional): Branch ID where redemption occurs
  */
-export const POST = withClinicAuth(async (request: NextRequest, user: any) => {
+export const POST = withCenterAuth(async (request: NextRequest, user: any) => {
   try {
     let body: any = null;
     try {
@@ -28,16 +28,16 @@ export const POST = withClinicAuth(async (request: NextRequest, user: any) => {
       return new NextResponse(null, { status: 204 });
     }
 
-    const { clinic_id, customer_id, reward_id, branch_id } = body || {};
+    const { center_id, customer_id, reward_id, branch_id } = body || {};
 
-    if (!clinic_id || !customer_id || !reward_id) {
+    if (!center_id || !customer_id || !reward_id) {
       return NextResponse.json(
-        { error: 'clinic_id, customer_id, and reward_id are required' },
+        { error: 'center_id, customer_id, and reward_id are required' },
         { status: 400 }
       );
     }
 
-    if (user?.clinic_id && clinic_id !== user.clinic_id) {
+    if (user?.center_id && center_id !== user.center_id) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
@@ -45,7 +45,7 @@ export const POST = withClinicAuth(async (request: NextRequest, user: any) => {
 
     // Call database function to redeem reward
     const { data, error } = await supabaseClient.rpc('redeem_loyalty_reward', {
-      p_clinic_id: clinic_id,
+      p_center_id: center_id,
       p_customer_id: customer_id,
       p_reward_id: reward_id,
       p_branch_id: branch_id,

@@ -24,14 +24,14 @@ export const reportingConfig = {
         { key: 'profit', label: 'Profit', description: 'Profit metrics and margins' }
       ]
     },
-    patient: {
-      name: 'Patient Report',
-      description: 'Patient demographics and treatment analytics',
-      generator: 'PatientReportGenerator',
-      defaultMetrics: ['demographics', 'treatments', 'analyses'],
+    client: {
+      name: 'Client Report',
+      description: 'Client demographics and program analytics',
+      generator: 'ClientReportGenerator',
+      defaultMetrics: ['demographics', 'programs', 'analyses'],
       availableMetrics: [
-        { key: 'demographics', label: 'Demographics', description: 'Patient demographics' },
-        { key: 'treatments', label: 'Treatments', description: 'Treatment statistics' },
+        { key: 'demographics', label: 'Demographics', description: 'Client demographics' },
+        { key: 'programs', label: 'Programs', description: 'Program statistics' },
         { key: 'analyses', label: 'Analyses', description: 'Skin analysis data' },
         { key: 'appointments', label: 'Appointments', description: 'Appointment metrics' }
       ]
@@ -175,15 +175,15 @@ export const reportingConfig = {
   // Security Configuration
   security: {
     permissions: {
-      view: ['admin', 'clinic_owner', 'staff'],
-      generate: ['admin', 'clinic_owner'],
-      export: ['admin', 'clinic_owner'],
-      schedule: ['admin', 'clinic_owner'],
+      view: ['admin', 'center_owner', 'staff'],
+      generate: ['admin', 'center_owner'],
+      export: ['admin', 'center_owner'],
+      schedule: ['admin', 'center_owner'],
       delete: ['admin']
     },
     dataAccess: {
       rowLevelSecurity: true,
-      clinicIsolation: true,
+      centerIsolation: true,
       auditLogging: true
     },
     encryption: {

@@ -81,7 +81,7 @@ export default function ReportsPage() {
     )
   }
 
-  const treatmentData = Object.entries(reportData?.breakdown?.treatments || {}).map(([name, value]) => ({
+  const programData = Object.entries(reportData?.breakdown?.programs || {}).map(([name, value]) => ({
     name,
     value,
   }))
@@ -190,9 +190,9 @@ export default function ReportsPage() {
                 <LineChart className="mr-2 h-4 w-4" />
                 Revenue Trend
               </TabsTrigger>
-              <TabsTrigger value="treatments">
+              <TabsTrigger value="programs">
                 <PieChart className="mr-2 h-4 w-4" />
-                Treatments
+                Programs
               </TabsTrigger>
               <TabsTrigger value="export">
                 <Download className="mr-2 h-4 w-4" />
@@ -219,17 +219,17 @@ export default function ReportsPage() {
               </Card>
             </TabsContent>
 
-            <TabsContent value="treatments" className="mt-6">
+            <TabsContent value="programs" className="mt-6">
               <div className="grid gap-6 md:grid-cols-2">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Treatment Distribution</CardTitle>
+                    <CardTitle>Program Distribution</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <ResponsiveContainer width="100%" height={300}>
                       <RechartsPieChart>
                         <RechartsPie
-                          data={treatmentData}
+                          data={programData}
                           dataKey="value"
                           nameKey="name"
                           cx="50%"
@@ -237,7 +237,7 @@ export default function ReportsPage() {
                           outerRadius={100}
                           label
                         >
-                          {treatmentData.map((entry, index) => (
+                          {programData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                           ))}
                         </RechartsPie>
@@ -250,11 +250,11 @@ export default function ReportsPage() {
 
                 <Card>
                   <CardHeader>
-                    <CardTitle>Treatment Breakdown</CardTitle>
+                    <CardTitle>Program Breakdown</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <ResponsiveContainer width="100%" height={300}>
-                      <RechartsBarChart data={treatmentData}>
+                      <RechartsBarChart data={programData}>
                         <XAxis dataKey="name" />
                         <YAxis />
                         <Tooltip />

@@ -8,7 +8,7 @@ interface BookingRequest {
   lastName: string
   email: string
   phone: string
-  treatmentId: string
+  programId: string
   date: string
   time: string
   notes?: string
@@ -30,22 +30,22 @@ export async function POST(request: NextRequest) {
       !body.lastName ||
       !body.email ||
       !body.phone ||
-      !body.treatmentId ||
+      !body.programId ||
       !body.date ||
       !body.time
     ) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
-    // Get treatment details
-    const { data: treatment, error: treatmentError } = await supabase
+    // Get program details
+    const { data: program, error: programError } = await supabase
       .from("services")
       .select("*")
-      .eq("id", body.treatmentId)
+      .eq("id", body.programId)
       .single()
 
-    if (treatmentError || !treatment) {
-      return NextResponse.json({ error: "Invalid treatment selected" }, { status: 400 })
+    if (programError || !program) {
+      return NextResponse.json({ error: "Invalid program selected" }, { status: 400 })
     }
 
     // Check if customer exists or create new one
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
         .from("customers")
         .select("id")
         .eq("email", body.email)
-        .eq("clinic_id", treatment.clinic_id)
+        .eq("center_id", program.center_id)
         .single()
 
       if (existingCustomer) {
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
         const { data: newCustomer, error: customerError } = await supabase
           .from("customers")
           .insert({
-            clinic_id: treatment.clinic_id,
+            center_id: program.center_id,
             full_name: `${body.firstName} ${body.lastName}`,
             email: body.email,
             phone: body.phone,
@@ -94,14 +94,14 @@ export async function POST(request: NextRequest) {
     const { data: booking, error: bookingError } = await supabase
       .from("bookings")
       .insert({
-        clinic_id: treatment.clinic_id,
+        center_id: program.center_id,
         customer_id: customerId,
-        service_id: treatment.id,
-        treatment_type: treatment.name,
+        service_id: program.id,
+        program_type: program.name,
         booking_date: body.date,
         booking_time: body.time,
-        duration_minutes: treatment.duration_minutes || 60,
-        price: treatment.price,
+        duration_minutes: program.duration_minutes || 60,
+        price: program.price,
         status: "pending",
         customer_notes: body.notes || null,
       })
@@ -113,28 +113,28 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Failed to create booking" }, { status: 500 })
     }
 
-    // Get clinic information
-    const { data: clinic, error: clinicError } = await supabase
-      .from('clinics')
+    // Get center information
+    const { data: center, error: centerError } = await supabase
+      .from('centers')
       .select('name, address, phone, email')
-      .eq('id', treatment.clinic_id)
+      .eq('id', program.center_id)
       .single()
 
-    if (clinicError || !clinic) {
-      console.error('[v0] Error fetching clinic info:', clinicError)
-      // Continue with default values if clinic not found
+    if (centerError || !center) {
+      console.error('[v0] Error fetching center info:', centerError)
+      // Continue with default values if center not found
     }
 
-    // Send email confirmation with actual clinic info
+    // Send email confirmation with actual center info
     await sendBookingConfirmation(body.email, {
-      treatment_type: treatment.name,
+      program_type: program.name,
       booking_date: body.date,
       booking_time: body.time,
-      clinic: {
-        name: clinic?.name || 'คลินิกความงาม',
-        address: clinic?.address || '',
-        phone: clinic?.phone || '',
-        email: clinic?.email || ''
+      center: {
+        name: center?.name || 'คลินิกความงาม',
+        address: center?.address || '',
+        phone: center?.phone || '',
+        email: center?.email || ''
       }
     })
 
@@ -142,7 +142,7 @@ export async function POST(request: NextRequest) {
     if (body.phone) {
       await sendSMS({
         to: body.phone,
-        message: `Booking confirmed! ${treatment.name} on ${body.date} at ${body.time}. We'll see you soon!`,
+        message: `Booking confirmed! ${program.name} on ${body.date} at ${body.time}. We'll see you soon!`,
       })
     }
 
@@ -155,8 +155,8 @@ export async function POST(request: NextRequest) {
           id: booking.id,
           date: booking.booking_date,
           time: booking.booking_time,
-          treatment: treatment.name,
-          price: treatment.price,
+          program: program.name,
+          price: program.price,
         },
         message: "Booking created successfully",
       },

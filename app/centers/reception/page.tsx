@@ -16,7 +16,7 @@ async function getTodayBookings() {
       `
       *,
       client:customers(id, name, phone, email, profile_image_url, date_of_birth),
-      staff:clinic_staff(id, name, role)
+      staff:center_staff(id, name, role)
     `
     )
     .eq("booking_date", today)

@@ -18,7 +18,7 @@ import {
 
 interface PredictionRequest {
   analysisId: string;
-  treatmentPlanId?: string;
+  programPlanId?: string;
 }
 
 // =============================================
@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
   try {
     // Parse request
     const body = (await request.json()) as PredictionRequest;
-    const { analysisId, treatmentPlanId } = body;
+    const { analysisId, programPlanId } = body;
 
     if (!analysisId) {
       return NextResponse.json(
@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
     const input: PredictionInput = {
       customerId: user.id,
       currentAnalysisId: analysisId,
-      treatmentPlanId,
+      programPlanId,
     };
 
     const prediction = await predictor.predict(input);
@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
       .insert({
         customer_id: user.id,
         analysis_id: analysisId,
-        treatment_plan_id: treatmentPlanId,
+        program_plan_id: programPlanId,
         predicted_overall_score: prediction.predictedOverallScore,
         predicted_concerns: prediction.predictedConcerns,
         expected_improvement: prediction.expectedImprovement,

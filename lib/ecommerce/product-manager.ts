@@ -137,8 +137,8 @@ export class ProductManager {
       },
       {
         id: 'prod-003',
-        name: 'Retinol Night Treatment',
-        description: 'Clinical-strength retinol for smoother, firmer skin overnight',
+        name: 'Retinol Night Program',
+        description: 'Centeral-strength retinol for smoother, firmer skin overnight',
         category: 'skincare',
         price: 68.00,
         compareAtPrice: 85.00,

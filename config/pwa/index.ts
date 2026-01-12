@@ -10,9 +10,9 @@ export const pwaConfig = {
   
   // Manifest Configuration
   manifest: {
-    name: 'Beauty with AI Precision - Advanced Aesthetic Clinic Platform',
+    name: 'Beauty with AI Precision - Advanced Aesthetic Center Platform',
     shortName: 'Beauty AI',
-    description: 'AI-powered aesthetic clinic platform with advanced skin analysis, 3D AR visualization, and comprehensive patient management',
+    description: 'AI-powered aesthetic center platform with advanced skin analysis, 3D AR visualization, and comprehensive client management',
     themeColor: '#ec4899',
     backgroundColor: '#ffffff',
     display: 'standalone',
@@ -41,8 +41,8 @@ export const pwaConfig = {
       maxAge: 5 * 60 * 1000, // 5 minutes
       maxEntries: 50,
       patterns: [
-        '/api/patients',
-        '/api/treatments',
+        '/api/clients',
+        '/api/programs',
         '/api/appointments'
       ]
     },
@@ -55,7 +55,7 @@ export const pwaConfig = {
         '/analysis',
         '/ar-simulator',
         '/sales',
-        '/clinic'
+        '/center'
       ]
     }
   },

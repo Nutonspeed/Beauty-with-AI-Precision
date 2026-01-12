@@ -9,8 +9,8 @@ function getSupabaseClient() {
 }
 
 /**
- * GET /api/treatment-history/comparisons/[id]
- * Get treatment comparison details for beauty clinic customer
+ * GET /api/program-history/comparisons/[id]
+ * Get program comparison details for beauty center customer
  */
 export async function GET(
   request: NextRequest,
@@ -20,11 +20,11 @@ export async function GET(
     const params = await context.params;
     const supabaseClient = getSupabaseClient();
     const { data, error } = await supabaseClient
-      .from('treatment_comparisons')
+      .from('program_comparisons')
       .select(`
         *,
-        customer:users!treatment_comparisons_customer_id_fkey(id, full_name, email),
-        created_by:users!treatment_comparisons_created_by_user_id_fkey(id, full_name)
+        customer:users!program_comparisons_customer_id_fkey(id, full_name, email),
+        created_by:users!program_comparisons_created_by_user_id_fkey(id, full_name)
       `)
       .eq('id', params.id)
       .eq('is_deleted', false)
@@ -34,17 +34,17 @@ export async function GET(
 
     return NextResponse.json(data);
   } catch (error) {
-    console.error('Error fetching treatment comparison:', error);
+    console.error('Error fetching program comparison:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch treatment comparison' },
+      { error: 'Failed to fetch program comparison' },
       { status: 500 }
     );
   }
 }
 
 /**
- * PATCH /api/treatment-history/comparisons/[id]
- * Update treatment comparison for beauty clinic customer
+ * PATCH /api/program-history/comparisons/[id]
+ * Update program comparison for beauty center customer
  */
 export async function PATCH(
   request: NextRequest,
@@ -56,7 +56,7 @@ export async function PATCH(
     const supabaseClient = getSupabaseClient();
 
     const { data, error } = await supabaseClient
-      .from('treatment_comparisons')
+      .from('program_comparisons')
       .update(body)
       .eq('id', params.id)
       .eq('is_deleted', false)
@@ -67,17 +67,17 @@ export async function PATCH(
 
     return NextResponse.json(data);
   } catch (error) {
-    console.error('Error updating treatment comparison:', error);
+    console.error('Error updating program comparison:', error);
     return NextResponse.json(
-      { error: 'Failed to update treatment comparison' },
+      { error: 'Failed to update program comparison' },
       { status: 500 }
     );
   }
 }
 
 /**
- * DELETE /api/treatment-history/comparisons/[id]
- * Delete treatment comparison (soft delete)
+ * DELETE /api/program-history/comparisons/[id]
+ * Delete program comparison (soft delete)
  */
 export async function DELETE(
   request: NextRequest,
@@ -87,7 +87,7 @@ export async function DELETE(
     const params = await context.params;
     const supabaseClient = getSupabaseClient();
     const { data, error } = await supabaseClient
-      .from('treatment_comparisons')
+      .from('program_comparisons')
       .update({ is_deleted: true })
       .eq('id', params.id)
       .select()
@@ -97,9 +97,9 @@ export async function DELETE(
 
     return NextResponse.json({ success: true, data });
   } catch (error) {
-    console.error('Error deleting treatment comparison:', error);
+    console.error('Error deleting program comparison:', error);
     return NextResponse.json(
-      { error: 'Failed to delete treatment comparison' },
+      { error: 'Failed to delete program comparison' },
       { status: 500 }
     );
   }

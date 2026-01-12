@@ -12,7 +12,7 @@ test.describe('AR Simulator 3D Feature', () => {
   });
 
   test('should access AR simulator from analysis results', async ({ page }) => {
-    await page.goto('/th/customer/analysis');
+    await page.goto('/th/client/analysis');
     await waitForLoading(page);
     
     // Test basic AR simulator access
@@ -60,41 +60,41 @@ test.describe('AR Simulator 3D Feature', () => {
     await takeScreenshot(page, 'ar-3d-model-loaded');
   });
 
-  test('should display treatment options', async ({ page }) => {
+  test('should display program options', async ({ page }) => {
     await page.goto('/th/ar-simulator');
     await waitForLoading(page);
     
     await page.waitForSelector('[data-testid="3d-model-loaded"]', { timeout: 15000 });
     
-    // Check treatment panel
-    await expect(page.locator('[data-testid="treatment-panel"]')).toBeVisible();
+    // Check program panel
+    await expect(page.locator('[data-testid="program-panel"]')).toBeVisible();
     await expect(page.locator('button:has-text("Botox")')).toBeVisible();
     await expect(page.locator('button:has-text("Fillers")')).toBeVisible();
     await expect(page.locator('button:has-text("Laser")')).toBeVisible();
     await expect(page.locator('button:has-text("Chemical Peel")')).toBeVisible();
     
-    await takeScreenshot(page, 'ar-treatment-options');
+    await takeScreenshot(page, 'ar-program-options');
   });
 
-  test('should apply treatment simulation', async ({ page }) => {
+  test('should apply program simulation', async ({ page }) => {
     await page.goto('/th/ar-simulator');
     await waitForLoading(page);
     
     await page.waitForSelector('[data-testid="3d-model-loaded"]', { timeout: 15000 });
     
-    // Select Botox treatment
+    // Select Botox program
     await page.click('button:has-text("Botox")');
     
-    // Wait for treatment to apply
-    await page.waitForSelector('[data-testid="treatment-applied"]', { timeout: 10000 });
+    // Wait for program to apply
+    await page.waitForSelector('[data-testid="program-applied"]', { timeout: 10000 });
     await waitForLoading(page);
     
-    // Check treatment controls
-    await expect(page.locator('[data-testid="treatment-controls"]')).toBeVisible();
+    // Check program controls
+    await expect(page.locator('[data-testid="program-controls"]')).toBeVisible();
     await expect(page.locator('input[type="range"]')).toBeVisible(); // Intensity slider
     await expect(page.locator('button:has-text("Reset")')).toBeVisible();
     
-    await takeScreenshot(page, 'ar-treatment-applied');
+    await takeScreenshot(page, 'ar-program-applied');
   });
 
   test('should handle 3D model interaction', async ({ page }) => {
@@ -134,9 +134,9 @@ test.describe('AR Simulator 3D Feature', () => {
     
     await page.waitForSelector('[data-testid="3d-model-loaded"]', { timeout: 15000 });
     
-    // Apply treatment
+    // Apply program
     await page.click('button:has-text("Fillers")');
-    await page.waitForSelector('[data-testid="treatment-applied"]', { timeout: 10000 });
+    await page.waitForSelector('[data-testid="program-applied"]', { timeout: 10000 });
     
     // Toggle before/after
     await page.click('button:has-text("Before/After")');
@@ -154,42 +154,42 @@ test.describe('AR Simulator 3D Feature', () => {
     await takeScreenshot(page, 'ar-before-after');
   });
 
-  test('should handle multiple treatments', async ({ page }) => {
+  test('should handle multiple programs', async ({ page }) => {
     await page.goto('/th/ar-simulator');
     await waitForLoading(page);
     
     await page.waitForSelector('[data-testid="3d-model-loaded"]', { timeout: 15000 });
     
-    // Apply first treatment
+    // Apply first program
     await page.click('button:has-text("Botox")');
-    await page.waitForSelector('[data-testid="treatment-applied"]', { timeout: 10000 });
+    await page.waitForSelector('[data-testid="program-applied"]', { timeout: 10000 });
     
-    // Add second treatment
+    // Add second program
     await page.click('button:has-text("Fillers")');
     await page.waitForTimeout(1000);
     
-    // Check treatment stack
-    await expect(page.locator('[data-testid="treatment-stack"]')).toBeVisible();
-    await expect(page.locator('[data-testid="treatment-item"]')).toHaveCount(2);
+    // Check program stack
+    await expect(page.locator('[data-testid="program-stack"]')).toBeVisible();
+    await expect(page.locator('[data-testid="program-item"]')).toHaveCount(2);
     
-    // Test removing treatment
-    await page.click('[data-testid="treatment-item"]:first-child button:has-text("Remove")');
+    // Test removing program
+    await page.click('[data-testid="program-item"]:first-child button:has-text("Remove")');
     await page.waitForTimeout(500);
     
-    await expect(page.locator('[data-testid="treatment-item"]')).toHaveCount(1);
+    await expect(page.locator('[data-testid="program-item"]')).toHaveCount(1);
     
-    await takeScreenshot(page, 'ar-multiple-treatments');
+    await takeScreenshot(page, 'ar-multiple-programs');
   });
 
-  test('should adjust treatment parameters', async ({ page }) => {
+  test('should adjust program parameters', async ({ page }) => {
     await page.goto('/th/ar-simulator');
     await waitForLoading(page);
     
     await page.waitForSelector('[data-testid="3d-model-loaded"]', { timeout: 15000 });
     
-    // Select treatment
+    // Select program
     await page.click('button:has-text("Botox")');
-    await page.waitForSelector('[data-testid="treatment-applied"]', { timeout: 10000 });
+    await page.waitForSelector('[data-testid="program-applied"]', { timeout: 10000 });
     
     // Adjust intensity
     const intensitySlider = page.locator('input[type="range"]');
@@ -200,7 +200,7 @@ test.describe('AR Simulator 3D Feature', () => {
     await expect(page.locator('[data-testid="intensity-value"]')).toContainText('75%');
     
     // Adjust other parameters if available
-    if (await page.locator('[data-testid="treatment-parameters"]').isVisible()) {
+    if (await page.locator('[data-testid="program-parameters"]').isVisible()) {
       await page.click('button:has-text("Advanced")');
       await page.waitForTimeout(500);
       
@@ -208,7 +208,7 @@ test.describe('AR Simulator 3D Feature', () => {
       await expect(page.locator('[data-testid="parameter-controls"]')).toBeVisible();
     }
     
-    await takeScreenshot(page, 'ar-treatment-parameters');
+    await takeScreenshot(page, 'ar-program-parameters');
   });
 
   test('should save and share simulation results', async ({ page }) => {
@@ -217,9 +217,9 @@ test.describe('AR Simulator 3D Feature', () => {
     
     await page.waitForSelector('[data-testid="3d-model-loaded"]', { timeout: 15000 });
     
-    // Apply treatment
+    // Apply program
     await page.click('button:has-text("Laser")');
-    await page.waitForSelector('[data-testid="treatment-applied"]', { timeout: 10000 });
+    await page.waitForSelector('[data-testid="program-applied"]', { timeout: 10000 });
     
     // Save simulation
     await page.click('button:has-text("Save Simulation")');
@@ -295,27 +295,27 @@ test.describe('AR Simulator 3D Feature', () => {
     await takeScreenshot(page, 'ar-mobile-view');
   });
 
-  test('should display treatment information', async ({ page }) => {
+  test('should display program information', async ({ page }) => {
     await page.goto('/th/ar-simulator');
     await waitForLoading(page);
     
     await page.waitForSelector('[data-testid="3d-model-loaded"]', { timeout: 15000 });
     
-    // Select treatment
+    // Select program
     await page.click('button:has-text("Botox")');
-    await page.waitForSelector('[data-testid="treatment-applied"]', { timeout: 10000 });
+    await page.waitForSelector('[data-testid="program-applied"]', { timeout: 10000 });
     
-    // Check treatment info panel
-    await expect(page.locator('[data-testid="treatment-info"]')).toBeVisible();
-    await expect(page.locator('[data-testid="treatment-description"]')).toBeVisible();
-    await expect(page.locator('[data-testid="treatment-duration"]')).toBeVisible();
-    await expect(page.locator('[data-testid="treatment-cost"]')).toBeVisible();
-    await expect(page.locator('[data-testid="treatment-recovery"]')).toBeVisible();
+    // Check program info panel
+    await expect(page.locator('[data-testid="program-info"]')).toBeVisible();
+    await expect(page.locator('[data-testid="program-description"]')).toBeVisible();
+    await expect(page.locator('[data-testid="program-duration"]')).toBeVisible();
+    await expect(page.locator('[data-testid="program-cost"]')).toBeVisible();
+    await expect(page.locator('[data-testid="program-recovery"]')).toBeVisible();
     
     // Check before/after photos
     await expect(page.locator('[data-testid="before-after-gallery"]')).toBeVisible();
     
-    await takeScreenshot(page, 'ar-treatment-info');
+    await takeScreenshot(page, 'ar-program-info');
   });
 
   test('should handle AR errors gracefully', async ({ page }) => {

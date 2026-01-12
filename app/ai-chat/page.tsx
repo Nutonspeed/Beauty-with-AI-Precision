@@ -187,7 +187,7 @@ function AIChatContent() {
             <div className="text-sm mt-4 space-y-2">
               <p className="font-semibold">ตัวอย่างคำถาม:</p>
               <ul className="space-y-1">
-                <li>• "ฝ้ากระของฉันควรใช้ Treatment อะไร?"</li>
+                <li>• "ฝ้ากระของฉันควรใช้ Program อะไร?"</li>
                 <li>• "รูขุมขนกว้างแก้ได้ไหม?"</li>
                 <li>• "Botox กับ Filler ต่างกันอย่างไร?"</li>
                 <li>• "ริ้วรอยรอบดวงตาควรทำอย่างไร?"</li>

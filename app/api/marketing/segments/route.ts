@@ -10,23 +10,23 @@ function getSupabaseClient() {
 
 /**
  * GET /api/marketing/segments
- * List customer segments for beauty clinic
+ * List customer segments for beauty center
  * 
  * Query parameters:
- * - clinic_id (required): Clinic ID
+ * - center_id (required): Center ID
  * - segment_type (optional): Filter by segment type
  * - is_active (optional): Filter by active status
  */
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const clinic_id = searchParams.get('clinic_id');
+    const center_id = searchParams.get('center_id');
     const segment_type = searchParams.get('segment_type');
     const is_active = searchParams.get('is_active');
 
-    if (!clinic_id) {
+    if (!center_id) {
       return NextResponse.json(
-        { error: 'clinic_id is required' },
+        { error: 'center_id is required' },
         { status: 400 }
       );
     }
@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
         *,
         created_by:users!customer_segments_created_by_user_id_fkey(id, full_name, email)
       `)
-      .eq('clinic_id', clinic_id);
+      .eq('center_id', center_id);
 
     if (segment_type) {
       query = query.eq('segment_type', segment_type);
@@ -64,13 +64,13 @@ export async function GET(request: NextRequest) {
 
 /**
  * POST /api/marketing/segments
- * Create a new customer segment for beauty clinic
+ * Create a new customer segment for beauty center
  */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const {
-      clinic_id,
+      center_id,
       segment_name,
       segment_name_en,
       description,
@@ -82,9 +82,9 @@ export async function POST(request: NextRequest) {
       notes,
     } = body;
 
-    if (!clinic_id || !segment_name || !segment_type) {
+    if (!center_id || !segment_name || !segment_type) {
       return NextResponse.json(
-        { error: 'clinic_id, segment_name, and segment_type are required' },
+        { error: 'center_id, segment_name, and segment_type are required' },
         { status: 400 }
       );
     }
@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
     const { data, error } = await supabaseClient
       .from('customer_segments')
       .insert({
-        clinic_id,
+        center_id,
         segment_name,
         segment_name_en,
         description,

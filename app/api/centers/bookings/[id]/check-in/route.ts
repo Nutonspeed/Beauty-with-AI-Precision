@@ -19,7 +19,7 @@ export async function POST(
 
     // Update booking to "arrived" status
     const { data: booking, error } = await supabase
-      .from("clinic_bookings")
+      .from("center_bookings")
       .update({
         status: "arrived",
         checked_in_at: new Date().toISOString(),
@@ -29,8 +29,8 @@ export async function POST(
       .select(
         `
         *,
-        customer:clinic_customers(name, phone),
-        staff:clinic_staff(name)
+        customer:center_customers(name, phone),
+        staff:center_staff(name)
       `
       )
       .single();
@@ -73,7 +73,7 @@ export async function POST(
       message: "เช็คอินสำเร็จ",
     });
   } catch (error) {
-    console.error("Error in POST /api/clinic/bookings/[id]/check-in:", error);
+    console.error("Error in POST /api/center/bookings/[id]/check-in:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

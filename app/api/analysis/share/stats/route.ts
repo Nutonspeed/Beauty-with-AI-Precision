@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
         id,
         user_id,
         sales_staff_id,
-        clinic_id,
+        center_id,
         is_shared,
         share_token,
         share_expires_at,
@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
           id,
           user_id,
           role,
-          clinic_id
+          center_id
         )
       `)
       .eq('id', analysisId)
@@ -68,12 +68,12 @@ export async function GET(request: NextRequest) {
       ? analysis.sales_staff[0]
       : analysis.sales_staff;
 
-    // Check permission: owner, sales_staff who created it, super_admin, or clinic_admin with same clinic
+    // Check permission: owner, sales_staff who created it, super_admin, or center_admin with same center
     const canViewStats = 
       analysis.user_id === userId ||
       salesStaff?.user_id === userId ||
       salesStaff?.role === 'super_admin' ||
-      (salesStaff?.role === 'clinic_admin' && salesStaff?.clinic_id === analysis.clinic_id)
+      (salesStaff?.role === 'center_admin' && salesStaff?.center_id === analysis.center_id)
 
     if (!canViewStats) {
       return NextResponse.json(

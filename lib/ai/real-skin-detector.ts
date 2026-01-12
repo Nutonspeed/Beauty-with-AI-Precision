@@ -39,7 +39,7 @@ export class RealSkinDiseaseDetector {
   }
 
   async analyzeImage(imageData: string | File, options?: {
-    patientInfo?: any;
+    clientInfo?: any;
     previousAnalyses?: any[];
     realTime?: boolean;
   }): Promise<any> {
@@ -75,25 +75,25 @@ export class RealSkinDiseaseDetector {
   }
 
   private async analyzeWithGPT4(base64Image: string, options?: any): Promise<any> {
-    const patientContext = options?.patientInfo ? `
-Patient Context:
-- Age: ${options.patientInfo.age}
-- Gender: ${options.patientInfo.gender}
-- Skin Type: ${options.patientInfo.skinType}
-- Previous Treatments: ${options.patientInfo.previousTreatments?.join(', ')}
-- Medical History: ${options.patientInfo.medicalHistory?.join(', ')}
+    const clientContext = options?.clientInfo ? `
+Client Context:
+- Age: ${options.clientInfo.age}
+- Gender: ${options.clientInfo.gender}
+- Skin Type: ${options.clientInfo.skinType}
+- Previous Programs: ${options.clientInfo.previousPrograms?.join(', ')}
+- Medical History: ${options.clientInfo.medicalHistory?.join(', ')}
 ` : '';
 
     const prompt = `You are a board-certified dermatologist AI. Analyze this skin image with expert precision.
 
-${patientContext}
+${clientContext}
 
 Analysis Requirements:
 1. Identify ALL visible skin conditions with medical accuracy
 2. Assess severity using dermatological standards
 3. Determine skin type and current concerns
 4. Calculate overall skin health score (0-100)
-5. Provide evidence-based treatment recommendations
+5. Provide evidence-based program recommendations
 6. Include preventive care advice
 7. Note any concerning signs requiring medical attention
 
@@ -104,7 +104,7 @@ Return ONLY valid JSON:
       "id": "condition_id",
       "confidence": 0.95,
       "severity": "mild|moderate|severe",
-      "medicalReasoning": "clinical observation details",
+      "medicalReasoning": "centeral observation details",
       "differentialDiagnosis": ["possible alternatives"]
     }
   ],
@@ -113,7 +113,7 @@ Return ONLY valid JSON:
   "overallSkinHealth": 85,
   "recommendations": [
     {
-      "treatment": "specific treatment name",
+      "program": "specific program name",
       "priority": "immediate|short-term|long-term",
       "evidenceLevel": "A|B|C",
       "expectedOutcome": "specific outcome",
@@ -163,7 +163,7 @@ Be medically precise and conservative in diagnoses.`;
 
     const prompt = `Analyze this skin image as a dermatologist AI.
 
-${options?.patientInfo ? `Patient: ${options.patientInfo.age}yo ${options.patientInfo.gender}, ${options.patientInfo.skinType} skin` : ''}
+${options?.clientInfo ? `Client: ${options.clientInfo.age}yo ${options.clientInfo.gender}, ${options.clientInfo.skinType} skin` : ''}
 
 Return ONLY JSON:
 {
@@ -171,7 +171,7 @@ Return ONLY JSON:
   "skinType": "normal|dry|oily|combination|sensitive",
   "skinConcerns": ["concern1"],
   "overallSkinHealth": 75,
-  "recommendations": ["treatment1"],
+  "recommendations": ["program1"],
   "preventiveCare": ["habit1"],
   "followUp": "schedule",
   "medicalAlerts": []

@@ -17,7 +17,7 @@ import type { Tenant } from '@/lib/types/tenant'
 import { Loader2, Activity, Building2, Send, TrendingUp, Shield, Brain, CreditCard, FileText, Users, Settings } from 'lucide-react'
 import { SystemHealthMonitor } from '@/components/admin/system-health-monitor'
 import RevenueAnalytics from '@/components/admin/revenue-analytics'
-import EnhancedClinicManagement from '@/components/admin/enhanced-clinic-management'
+import EnhancedCenterManagement from '@/components/admin/enhanced-center-management'
 import SecurityMonitoring from '@/components/admin/security-monitoring'
 import AIAnalyticsDashboard from '@/components/admin/ai-analytics-dashboard'
 import SubscriptionManagement from '@/components/admin/subscription-management'
@@ -334,7 +334,7 @@ function SuperAdminDashboardContent() {
       console.error('Failed to create tenant:', error)
       toast({
         title: '❌ Error',
-        description: 'An unexpected error occurred while creating the clinic.',
+        description: 'An unexpected error occurred while creating the center.',
         variant: 'destructive',
       })
     }
@@ -420,7 +420,7 @@ function SuperAdminDashboardContent() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                {/* Clinics Tab */}
+                {/* Centers Tab */}
                 <TabsContent value="overview" className="mt-0 outline-none">
                   <EnhancedCenterManagement />
                 </TabsContent>

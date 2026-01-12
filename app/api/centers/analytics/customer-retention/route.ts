@@ -1,7 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server"
 import { NextRequest, NextResponse } from "next/server"
 
-// GET /api/clinic/analytics/customer-retention - Customer retention analysis
+// GET /api/center/analytics/customer-retention - Customer retention analysis
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createServerClient()
@@ -139,7 +139,7 @@ export async function GET(request: NextRequest) {
       },
     })
   } catch (error) {
-    console.error("Error in GET /api/clinic/analytics/customer-retention:", error)
+    console.error("Error in GET /api/center/analytics/customer-retention:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

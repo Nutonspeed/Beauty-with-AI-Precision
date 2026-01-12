@@ -10,7 +10,7 @@ function getSupabaseClient() {
 
 /**
  * POST /api/marketing/messages/[id]/send
- * Send campaign message to beauty clinic customers
+ * Send campaign message to beauty center customers
  * 
  * This is a simplified implementation that marks the message as sent.
  * In production, this would integrate with actual email/SMS/push notification services.
@@ -54,7 +54,7 @@ export async function POST(
       // Create recipient records
       if (members && members.length > 0) {
         const recipients = members.map(member => ({
-          clinic_id: message.clinic_id,
+          center_id: message.center_id,
           message_id: params.id,
           customer_id: member.customer_id,
           delivery_status: 'pending',

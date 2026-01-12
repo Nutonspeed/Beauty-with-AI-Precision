@@ -12,8 +12,8 @@ export interface ObjectionContext {
     concerns?: string[];
     budget?: string;
   };
-  treatmentInterest: string[];
-  currentTreatment?: {
+  programInterest: string[];
+  currentProgram?: {
     name: string;
     price: number;
     category: string;
@@ -61,8 +61,8 @@ export class ProductionObjectionHandler {
         objection: 'แพงไปค่ะ คุ้มกับราคานี้ไหม',
         context: {
           customerProfile: { name: 'สมใจ', budget: 'medium' },
-          treatmentInterest: ['HydraFacial'],
-          currentTreatment: { name: 'HydraFacial', price: 15000, category: 'basic' },
+          programInterest: ['HydraFacial'],
+          currentProgram: { name: 'HydraFacial', price: 15000, category: 'basic' },
           leadScore: 75
         },
         provenResponse: PRODUCTION_REFERENCE_DATA.objectionResponses.price.expensive,
@@ -70,15 +70,15 @@ export class ProductionObjectionHandler {
         testimonials: [
           '"Script ที่ระบบแนะนำช่วย close deal ได้สำเร็จ"',
           '"จัดการ objection ได้มั่นใจมากขึ้น"',
-          '"ลูกค้าตัดสินใจทำ treatment หลังจากอธิบาย"'
+          '"ลูกค้าตัดสินใจทำ program หลังจากอธิบาย"'
         ]
       },
       {
         objection: 'ไม่มั่นใจในผลลัพธ์ค่ะ',
         context: {
           customerProfile: { name: 'วรรณา', concerns: ['safety', 'results'] },
-          treatmentInterest: ['Laser Treatment'],
-          currentTreatment: { name: 'Laser Treatment', price: 25000, category: 'advanced' },
+          programInterest: ['Laser Program'],
+          currentProgram: { name: 'Laser Program', price: 25000, category: 'advanced' },
           leadScore: 60
         },
         provenResponse: PRODUCTION_REFERENCE_DATA.objectionResponses.trust.not_professional,
@@ -138,7 +138,7 @@ export class ProductionObjectionHandler {
           testimonial: 'ลูกค้าบอกว่าคุ้มค่ากับราคาที่จ่าย'
         },
         {
-          scenario: 'Trust objection - Laser treatment',
+          scenario: 'Trust objection - Laser program',
           originalConcern: 'กลัวอันตราย',
           resolution: 'แสดงใบรับรองและ case studies',
           conversion: 'สำเร็จ',

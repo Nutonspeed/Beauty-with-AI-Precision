@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const action = searchParams.get('action');
-    const centerId = searchParams.get('centerId') || searchParams.get('clinicId');
+    const centerId = searchParams.get('centerId') || searchParams.get('centerId');
     const userId = searchParams.get('userId');
     const dateFrom = searchParams.get('dateFrom');
     const dateTo = searchParams.get('dateTo');

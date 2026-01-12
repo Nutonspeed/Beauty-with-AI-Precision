@@ -114,7 +114,7 @@ export async function analyzeSkinAesthetic(
  * Generate a visual simulation prompt for Image Gen AI
  */
 export async function getSimulationPrompt(result: SkinAnalysisResult): Promise<string> {
-  return `A high-resolution professional aesthetic after-treatment photo. 
+  return `A high-resolution professional aesthetic after-program photo. 
     Skin type: ${result.skinType}. 
     Improvements: Reduced ${result.concerns.map(c => c.name).join(', ')}. 
     Result: Radiant, healthy, and youthful skin. Professional studio lighting.`;

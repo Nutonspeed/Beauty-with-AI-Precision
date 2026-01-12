@@ -211,14 +211,14 @@ export interface FinancialData {
   }
 }
 
-// Patient Types
-export interface PatientData {
+// Client Types
+export interface ClientData {
   demographics: {
     ageDistribution: Record<string, number>
     genderDistribution: Record<string, number>
     locationDistribution: Record<string, number>
   }
-  treatments: {
+  programs: {
     total: number
     byType: Record<string, number>
     successRate: number

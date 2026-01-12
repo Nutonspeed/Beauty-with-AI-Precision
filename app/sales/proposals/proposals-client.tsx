@@ -127,7 +127,7 @@ export function ProposalsClient({ initialProposals, initialStats }: ProposalsCli
     const fetchCenterServices = async () => {
       const supabase = createBrowserClient()
       const { data } = await supabase
-        .from("clinic_services")
+        .from("center_services")
         .select("id, name")
         .order("name")
 
@@ -331,7 +331,7 @@ export function ProposalsClient({ initialProposals, initialStats }: ProposalsCli
       const paymentAmount = created?.payment_amount as number | undefined
 
       // Best-effort: open PromptPay QR in new tab (center_id required)
-      const centerIdFromResponse = created?.clinic_id as string | undefined
+      const centerIdFromResponse = created?.center_id as string | undefined
 
       const details = appointmentId
         ? `Appointment ID: ${appointmentId} (คลิกข้อความนี้เพื่อคัดลอก)`
@@ -536,7 +536,7 @@ export function ProposalsClient({ initialProposals, initialStats }: ProposalsCli
             filteredProposals.map((proposal) => {
               const leadName = proposal.sales_leads?.name || 'Unknown Lead'
               const programs = Array.isArray(proposal.programs) 
-                ? proposal.programs.map((p: any) => t.name || t)
+                ? proposal.programs.map((p: any) => p.name || p)
                 : []
               
               return (

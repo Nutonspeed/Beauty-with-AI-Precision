@@ -1,6 +1,6 @@
 // Customer Search Service
 import { elasticsearchManager } from './client'
-import { SearchResult, CustomerFilters } from '@/types/elasticsearch'
+import { SearchResult, ClientFilters as CustomerFilters } from '@/types/elasticsearch'
 
 export interface CustomerSearchDocument {
   id: string

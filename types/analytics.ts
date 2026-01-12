@@ -7,9 +7,9 @@
 // Database Types
 // =============================================
 
-export interface CustomerAnalysisMetrics {
+export interface ClientAnalysisMetrics {
   id: string;
-  customer_id: string;
+  client_id: string;
   
   // Aggregated scores
   avg_overall_score: number | null;
@@ -34,8 +34,8 @@ export interface CustomerAnalysisMetrics {
   analyses_last_30_days: number;
   analyses_last_90_days: number;
   
-  // Treatment effectiveness
-  treatment_adherence_score: number;
+  // Program effectiveness
+  program_adherence_score: number;
   improvement_rate: number;
   months_tracking: number;
   
@@ -47,7 +47,7 @@ export interface CustomerAnalysisMetrics {
 
 export interface AnalysisHistory {
   id: string;
-  customer_id: string;
+  client_id: string;
   analysis_id: string;
   
   // Score snapshot
@@ -61,7 +61,7 @@ export interface AnalysisHistory {
   // Metadata
   analysis_date: string;
   is_baseline: boolean;
-  treatment_plan_id: string | null;
+  program_plan_id: string | null;
   days_since_last_analysis: number | null;
   created_at: string;
 }
@@ -73,7 +73,7 @@ export interface AnalysisHistory {
 export type TrendPeriod = '1m' | '3m' | '6m' | '1y' | 'all';
 
 export interface TrendsRequest {
-  customerId: string;
+  clientId: string;
   period?: TrendPeriod;
 }
 
@@ -108,7 +108,7 @@ export interface TrendsResponse {
     totalAnalyses: number;
     averageScore: number;
     improvementRate: number;
-    treatmentAdherence: number;
+    programAdherence: number;
   };
   predictions?: {
     nextMonth: {
@@ -196,7 +196,7 @@ export interface DashboardInsight {
 }
 
 export interface ComparisonData {
-  customerValue: number;
+  clientValue: number;
   groupAverage: number;
   percentile: number; // 0-100
   betterThanPercent: number;
@@ -209,12 +209,12 @@ export interface ComparisonData {
 export type AgeGroup = '20-29' | '30-39' | '40-49' | '50+';
 
 export interface BenchmarkRequest {
-  customerId: string;
+  clientId: string;
   ageGroup: AgeGroup;
 }
 
 export interface BenchmarkResponse {
-  customerScores: {
+  clientScores: {
     overall: number;
     spots: number;
     wrinkles: number;
@@ -236,11 +236,11 @@ export interface BenchmarkResponse {
 }
 
 // =============================================
-// Treatment Plan Analytics
+// Program Plan Analytics
 // =============================================
 
-export interface TreatmentEffectiveness {
-  treatmentPlanId: string;
+export interface ProgramEffectiveness {
+  programPlanId: string;
   startDate: string;
   endDate: string | null;
   durationDays: number;
@@ -295,12 +295,12 @@ export interface ExportOptions {
 }
 
 export interface ExportData {
-  customer: {
+  client: {
     id: string;
     name: string;
     email: string;
   };
-  metrics: CustomerAnalysisMetrics;
+  metrics: ClientAnalysisMetrics;
   trends: TrendsResponse;
   history: AnalysisHistory[];
   benchmark?: BenchmarkResponse;

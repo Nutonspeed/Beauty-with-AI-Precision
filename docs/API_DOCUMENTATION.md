@@ -1,8 +1,8 @@
-# 📚 ClinicIQ API Documentation
+# 📚 CenterIQ AI API Documentation
 
 ## Overview
 
-ClinicIQ provides a comprehensive REST API for aesthetic clinic management, AI skin analysis, and sales operations.
+CenterIQ AI provides a comprehensive REST API for aesthetic center management, AI skin analysis, and sales operations.
 
 **Base URL:** `https://your-domain.com/api`
 
@@ -112,7 +112,7 @@ mode: "comprehensive" | "spots" | "wrinkles" | "pores" | "texture" | "pigmentati
   },
   "recommendations": [
     {
-      "treatment": "Botox",
+      "program": "Botox",
       "reason": "Reduce forehead wrinkles",
       "priority": "high"
     }
@@ -129,11 +129,11 @@ Authorization: Bearer <token>
 
 ---
 
-## 👥 Customers
+## 👥 Clients
 
-### List Customers
+### List Clients
 ```http
-GET /api/customers?page=1&limit=20&search=<query>
+GET /api/clients?page=1&limit=20&search=<query>
 Authorization: Bearer <token>
 ```
 
@@ -159,15 +159,15 @@ Authorization: Bearer <token>
 }
 ```
 
-### Get Customer
+### Get Client
 ```http
-GET /api/customers/<id>
+GET /api/clients/<id>
 Authorization: Bearer <token>
 ```
 
-### Create Customer
+### Create Client
 ```http
-POST /api/customers
+POST /api/clients
 Authorization: Bearer <token>
 Content-Type: application/json
 
@@ -178,9 +178,9 @@ Content-Type: application/json
 }
 ```
 
-### Update Customer
+### Update Client
 ```http
-PUT /api/customers/<id>
+PUT /api/clients/<id>
 Authorization: Bearer <token>
 Content-Type: application/json
 
@@ -205,11 +205,11 @@ Authorization: Bearer <token>
   "data": [
     {
       "id": "uuid",
-      "customerName": "คุณนภา",
+      "clientName": "คุณนภา",
       "source": "Facebook Ads",
       "score": 85,
       "status": "hot",
-      "interestedTreatments": ["Botox", "Filler"],
+      "interestedPrograms": ["Botox", "Filler"],
       "lastContact": "2024-01-01T10:00:00Z"
     }
   ]
@@ -223,10 +223,10 @@ Authorization: Bearer <token>
 Content-Type: application/json
 
 {
-  "customerName": "คุณนภา",
+  "clientName": "คุณนภา",
   "phone": "0812345678",
   "source": "Walk-in",
-  "interestedTreatments": ["Botox"]
+  "interestedPrograms": ["Botox"]
 }
 ```
 
@@ -238,7 +238,7 @@ Content-Type: application/json
 
 {
   "status": "converted",
-  "notes": "Booked for Botox treatment"
+  "notes": "Booked for Botox program"
 }
 ```
 
@@ -259,8 +259,8 @@ Authorization: Bearer <token>
 Content-Type: application/json
 
 {
-  "customerId": "uuid",
-  "treatmentId": "uuid",
+  "clientId": "uuid",
+  "programId": "uuid",
   "date": "2024-01-15",
   "time": "10:00",
   "notes": "First visit"
@@ -275,17 +275,17 @@ Content-Type: application/json
 
 {
   "status": "completed",
-  "notes": "Treatment completed successfully"
+  "notes": "Program completed successfully"
 }
 ```
 
 ---
 
-## 💉 Treatments
+## 💉 Programs
 
-### List Treatments
+### List Programs
 ```http
-GET /api/treatments?category=anti-aging
+GET /api/programs?category=anti-aging
 Authorization: Bearer <token>
 ```
 
@@ -306,9 +306,9 @@ Authorization: Bearer <token>
 }
 ```
 
-### Get Treatment
+### Get Program
 ```http
-GET /api/treatments/<id>
+GET /api/programs/<id>
 Authorization: Bearer <token>
 ```
 
@@ -346,11 +346,11 @@ Authorization: Bearer <token>
 Content-Type: application/json
 
 {
-  "to": "customer@email.com",
+  "to": "client@email.com",
   "subject": "ยืนยันการนัดหมาย",
   "template": "appointment_confirmation",
   "data": {
-    "customerName": "คุณสมหญิง",
+    "clientName": "คุณสมหญิง",
     "date": "15 มกราคม 2024",
     "time": "10:00"
   }
@@ -374,7 +374,7 @@ Authorization: Bearer <token>
     "total": 1500000,
     "growth": 15.5
   },
-  "customers": {
+  "clients": {
     "total": 500,
     "new": 45
   },
@@ -396,22 +396,22 @@ Authorization: Bearer <token>
 
 ---
 
-## 🏢 Clinic Management
+## 🏢 Center Management
 
-### Get Clinic Info
+### Get Center Info
 ```http
-GET /api/clinic
+GET /api/center
 Authorization: Bearer <token>
 ```
 
-### Update Clinic Settings
+### Update Center Settings
 ```http
-PUT /api/clinic/settings
+PUT /api/center/settings
 Authorization: Bearer <token>
 Content-Type: application/json
 
 {
-  "name": "Beauty Clinic",
+  "name": "Beauty Center",
   "workingHours": {
     "monday": { "open": "09:00", "close": "18:00" }
   }
@@ -481,8 +481,8 @@ Content-Type: application/json
   "timestamp": "2024-01-01T00:00:00Z",
   "data": {
     "id": "uuid",
-    "customerId": "uuid",
-    "treatmentId": "uuid"
+    "clientId": "uuid",
+    "programId": "uuid"
   }
 }
 ```
@@ -493,20 +493,20 @@ Content-Type: application/json
 
 ### JavaScript/TypeScript
 ```typescript
-import { ClinicIQ } from '@cliniciq/sdk';
+import { CenterIQ } from '@centeriq/sdk';
 
-const client = new ClinicIQ({
+const client = new CenterIQ({
   apiKey: 'your_api_key',
-  baseUrl: 'https://api.cliniciq.com'
+  baseUrl: 'https://api.centeriq.com'
 });
 
-// Get customers
-const customers = await client.customers.list({ limit: 20 });
+// Get clients
+const clients = await client.clients.list({ limit: 20 });
 
 // Create booking
 const booking = await client.bookings.create({
-  customerId: 'uuid',
-  treatmentId: 'uuid',
+  clientId: 'uuid',
+  programId: 'uuid',
   date: '2024-01-15',
   time: '10:00'
 });
@@ -516,6 +516,6 @@ const booking = await client.bookings.create({
 
 ## 📞 Support
 
-- **Email:** api-support@cliniciq.com
-- **Documentation:** https://docs.cliniciq.com
-- **Status Page:** https://status.cliniciq.com
+- **Email:** api-support@centeriq.app
+- **Documentation:** https://docs.centeriq.app
+- **Status Page:** https://status.centeriq.app

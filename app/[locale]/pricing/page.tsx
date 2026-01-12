@@ -252,14 +252,12 @@ export default function PricingPage() {
                               ? 'bg-pink-600 text-white hover:bg-pink-500 shadow-2xl shadow-pink-600/30' 
                               : 'border-white/10 bg-white/5 text-white hover:bg-white/10 border'
                           }`}
-                          variant={tier.variant}
-                          asChild
-                        >
-                          <Link href={tier.href}>
-                            {tier.cta}
-                            <ArrowRight className="ml-3 h-5 w-5" />
-                          </Link>
-                        </Button>
+                      >
+                        <Link href={tier.href}>
+                          {tier.cta}
+                          <ArrowRight className="ml-3 h-5 w-5" />
+                        </Link>
+                      </Button>
 
                       {/* Aesthetic Intelligence Infrastructure */}
                       <div className="grid grid-cols-3 gap-2 rounded-[2rem] bg-white/[0.02] border border-white/5 p-6 text-center shadow-inner relative overflow-hidden group/node">
@@ -356,14 +354,14 @@ export default function PricingPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5">
-                    {[
+                    {[/* eslint-disable @typescript-eslint/no-unused-vars */
                       { label: t('pricing.comparison.aiAnalysis'), starter: true, pro: true, enterprise: true },
                       { label: t('pricing.comparison.aestheticMetrics'), starter: true, pro: true, enterprise: true },
                       { label: t('pricing.comparison.saveHistory'), starter: false, pro: true, enterprise: true },
                       { label: t('pricing.comparison.arSimulator'), starter: false, pro: true, enterprise: true },
                       { label: t('pricing.comparison.predictiveSales'), starter: false, pro: true, enterprise: true },
                       { label: t('pricing.comparison.roiSimulator'), starter: false, pro: true, enterprise: true },
-                      { label: t('pricing.comparison.adss'), starter: false, pro: false, enterprise: true },
+                      { label: t('pricing.comparison.ads'), starter: false, pro: false, enterprise: true },
                       { label: t('pricing.comparison.complianceAudit'), starter: false, pro: false, enterprise: true },
                       { label: t('pricing.comparison.revenueForecast'), starter: false, pro: false, enterprise: true },
                       { label: t('pricing.comparison.multiBranch'), starter: false, pro: false, enterprise: true }

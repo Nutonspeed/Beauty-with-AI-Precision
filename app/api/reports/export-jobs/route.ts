@@ -13,15 +13,15 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const {
-      clinic_id,
+      center_id,
       report_id,
       export_format,
       requested_by_user_id,
     } = body;
 
-    if (!clinic_id || !report_id || !export_format) {
+    if (!center_id || !report_id || !export_format) {
       return NextResponse.json(
-        { error: 'Missing required fields: clinic_id, report_id, export_format' },
+        { error: 'Missing required fields: center_id, report_id, export_format' },
         { status: 400 }
       );
     }
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
     const { data: exportJob, error: exportError } = await supabaseClient
       .from('export_jobs')
       .insert({
-        clinic_id,
+        center_id,
         report_id,
         export_format,
         file_name: fileName,
@@ -159,13 +159,13 @@ function generateExportData(report: any, format: string): any {
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const clinicId = searchParams.get('clinic_id');
+    const centerId = searchParams.get('center_id');
     const reportId = searchParams.get('report_id');
     const status = searchParams.get('status');
 
-    if (!clinicId) {
+    if (!centerId) {
       return NextResponse.json(
-        { error: 'Missing required parameter: clinic_id' },
+        { error: 'Missing required parameter: center_id' },
         { status: 400 }
       );
     }
@@ -174,7 +174,7 @@ export async function GET(request: NextRequest) {
     let query = supabaseClient
       .from('export_jobs')
       .select('*')
-      .eq('clinic_id', clinicId)
+      .eq('center_id', centerId)
       .order('created_at', { ascending: false });
 
     if (reportId) {

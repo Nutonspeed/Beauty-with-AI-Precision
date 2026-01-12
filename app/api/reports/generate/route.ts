@@ -2,13 +2,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { AnalyticsReportGenerator } from '@/lib/reports/generators/analytics-generator'
 import { FinancialReportGenerator } from '@/lib/reports/generators/financial-generator'
-import { PatientReportGenerator } from '@/lib/reports/generators/patient-generator'
+import { CustomerReportGenerator } from '@/lib/reports/generators/customer-generator'
 import { ReportConfig } from '@/types/reports'
 
 const generators = {
   analytics: new AnalyticsReportGenerator(),
   financial: new FinancialReportGenerator(),
-  patient: new PatientReportGenerator()
+  client: new CustomerReportGenerator()
 }
 
 export async function POST(request: NextRequest) {
@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
       schemas: {
         analytics: getAnalyticsSchema(),
         financial: getFinancialSchema(),
-        patient: getPatientSchema()
+        client: getClientSchema()
       }
     })
   }
@@ -111,7 +111,7 @@ function getAnalyticsSchema() {
     description: 'Comprehensive analytics and user behavior report',
     metrics: ['users', 'sessions', 'features'],
     filters: {
-      clinic_id: 'string',
+      center_id: 'string',
       user_type: 'string',
       date_range: 'object'
     }
@@ -124,20 +124,20 @@ function getFinancialSchema() {
     description: 'Revenue, expenses, and profit analysis',
     metrics: ['revenue', 'expenses', 'profit'],
     filters: {
-      clinic_id: 'string',
+      center_id: 'string',
       category: 'string',
       date_range: 'object'
     }
   }
 }
 
-function getPatientSchema() {
+function getClientSchema() {
   return {
-    title: 'Patient Report',
-    description: 'Patient demographics, treatments, and outcomes',
-    metrics: ['demographics', 'treatments', 'analyses', 'appointments'],
+    title: 'Client Report',
+    description: 'Client demographics, programs, and outcomes',
+    metrics: ['demographics', 'programs', 'analyses', 'appointments'],
     filters: {
-      clinic_id: 'string',
+      center_id: 'string',
       age_range: 'object',
       gender: 'string',
       date_range: 'object'
@@ -149,7 +149,7 @@ function getReportSchema(type: string) {
   const schemas = {
     analytics: getAnalyticsSchema(),
     financial: getFinancialSchema(),
-    patient: getPatientSchema()
+    client: getClientSchema()
   }
   return schemas[type as keyof typeof schemas]
 }

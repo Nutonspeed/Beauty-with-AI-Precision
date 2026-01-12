@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { GradientSpinner } from '@/components/ui/modern-loader'
-import { ClinicIQMark } from '@/components/brand/logo'
+import { CenterIQMark } from '@/components/brand/logo'
 
 export default function Loading() {
   return (
@@ -32,7 +32,7 @@ export default function Loading() {
           }}
           className="mb-8"
         >
-          <ClinicIQMark className="h-16 w-16 mx-auto" />
+          <CenterIQMark className="h-16 w-16 mx-auto" />
         </motion.div>
 
         {/* Spinner */}

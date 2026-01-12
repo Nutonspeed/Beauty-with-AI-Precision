@@ -147,7 +147,7 @@ export class TestHelpers {
       email: `test-${timestamp}-${random}@test.com`,
       name: `Test User ${timestamp}`,
       phone: `08${Math.floor(Math.random() * 100000000).toString().padStart(8, '0')}`,
-      clinicName: `Test Clinic ${timestamp}`
+      centerName: `Test Center ${timestamp}`
     }
   }
   

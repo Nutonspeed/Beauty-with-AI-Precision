@@ -1,11 +1,11 @@
 export const TEST_USERS = {
   // Demo user for testing
   demoUser: {
-    email: 'demo@clinic.com',
+    email: 'demo@center.com',
     password: 'demo123',
-    role: 'clinic_owner',
-    clinicId: 'demo-clinic',
-    name: 'Demo Clinic',
+    role: 'center_owner',
+    centerId: 'demo-center',
+    name: 'Demo Center',
     phone: '02-XXX-XXXX'
   },
   
@@ -14,17 +14,17 @@ export const TEST_USERS = {
     email: 'sales@test.com',
     password: 'test123',
     role: 'sales_staff',
-    clinicId: 'test-clinic',
+    centerId: 'test-center',
     name: 'Test Sales',
     phone: '08X-XXX-XXXX'
   },
   
-  // Clinic admin user
-  clinicAdmin: {
+  // Center admin user
+  centerAdmin: {
     email: 'admin@test.com',
     password: 'test123',
-    role: 'clinic_admin',
-    clinicId: 'test-clinic',
+    role: 'center_admin',
+    centerId: 'test-center',
     name: 'Test Admin',
     phone: '08X-XXX-XXXX'
   },

@@ -19,14 +19,14 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Forbidden - Admin access required" }, { status: 403 })
     }
 
-    // Fetch all bookings with user and clinic info
+    // Fetch all bookings with user and center info
     const { data: bookings, error } = await supabase
       .from("bookings")
       .select(
         `
         *,
         user:users(full_name, email, phone),
-        clinic:clinics(name, address)
+        center:centers(name, address)
       `,
       )
       .order("booking_date", { ascending: true })

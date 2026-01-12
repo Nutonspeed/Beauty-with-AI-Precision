@@ -22,5 +22,5 @@ test.describe('Super Admin Dashboard', () => {
     await takeScreenshot(page, 'super-admin-dashboard-smoke');
   });
 
-  test.skip('rest of admin flows (create clinic, filters, analytics) are skipped pending UX alignment', async () => {});
+  test.skip('rest of admin flows (create center, filters, analytics) are skipped pending UX alignment', async () => {});
 });

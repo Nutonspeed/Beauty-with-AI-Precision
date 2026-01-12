@@ -247,21 +247,21 @@ export function SummaryStep({
         </CardHeader>
 
         <CardContent>
-          <Accordion type="multiple" defaultValue={['customer', 'proposal']} className="w-full">
-            {/* Customer Info */}
-            <AccordionItem value="customer">
+          <Accordion type="multiple" defaultValue={['client', 'proposal']} className="w-full">
+            {/* Client Info */}
+            <AccordionItem value="client">
               <AccordionTrigger className="text-sm font-medium">
                 <div className="flex items-center gap-2">
                   <Badge>1</Badge>
-                  {t('salesWizard.steps.summary.sectionCustomerInfo')}
+                  {t('salesWizard.steps.summary.sectionClientInfo' as any) || t('salesWizard.steps.summary.sectionCustomerInfo')}
                 </div>
               </AccordionTrigger>
               <AccordionContent>
                 <div className="space-y-2 text-sm pl-8">
-                  <p><strong>{t('common.name')}:</strong> {data.customer.name}</p>
-                  <p><strong>{t('common.phone')}:</strong> {data.customer.phone}</p>
-                  {data.customer.email && (
-                    <p><strong>{t('common.email')}:</strong> {data.customer.email}</p>
+                  <p><strong>{t('common.name')}:</strong> {data.client.name}</p>
+                  <p><strong>{t('common.phone')}:</strong> {data.client.phone}</p>
+                  {data.client.email && (
+                    <p><strong>{t('common.email')}:</strong> {data.client.email}</p>
                   )}
                 </div>
               </AccordionContent>

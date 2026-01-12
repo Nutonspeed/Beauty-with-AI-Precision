@@ -39,7 +39,7 @@ export interface SkinGoal {
   updatedAt: Date;
   estimatedCompletionDate?: Date;
   motivationalNotes?: string;
-  treatmentPlan?: string[];
+  programPlan?: string[];
   completionPercentage: number;
 }
 
@@ -375,11 +375,11 @@ export class GoalSettingEngine {
     _target: number
   ): string {
     const messages: Record<GoalParameter, string> = {
-      spots: 'With consistent treatment, visible improvements can be seen within 6-8 weeks.',
-      pores: 'Pore refinement is achievable through dedicated skincare and professional treatments.',
-      wrinkles: 'Regular treatments and skincare can significantly reduce the appearance of fine lines.',
+      spots: 'With consistent program, visible improvements can be seen within 6-8 weeks.',
+      pores: 'Pore refinement is achievable through dedicated skincare and professional programs.',
+      wrinkles: 'Regular programs and skincare can significantly reduce the appearance of fine lines.',
       texture: 'Texture improvement is one of the most rewarding outcomes of professional skin care.',
-      redness: 'Anti-inflammatory treatments can dramatically reduce redness and improve skin tone.',
+      redness: 'Anti-inflammatory programs can dramatically reduce redness and improve skin tone.',
       overall: 'Your comprehensive skin improvement journey is about to begin!',
     };
     return messages[parameter];
@@ -479,7 +479,7 @@ export class GoalSettingEngine {
       recommendedNextStep:
         activeGoals === 0
           ? 'Consider setting new skin improvement goals based on your latest analysis.'
-          : `Continue focused treatment to achieve your ${activeGoals} active goal(s).`,
+          : `Continue focused program to achieve your ${activeGoals} active goal(s).`,
     };
   }
 }

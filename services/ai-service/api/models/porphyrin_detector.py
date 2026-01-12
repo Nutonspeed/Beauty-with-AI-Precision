@@ -194,7 +194,7 @@ class PorphyrinDetector:
                     activity = 'low'
                     activity_score = mean_fluor * 10.0
                 
-                # Location type (useful for treatment targeting)
+                # Location type (useful for program targeting)
                 # Check if near existing pore detection (would need pore locations as input)
                 # For now, classify by size
                 if area < 50:

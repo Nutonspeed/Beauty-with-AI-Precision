@@ -1,7 +1,7 @@
 /**
  * Skinive AI API Integration (Mockup)
  * 
- * Skinive provides clinical-grade skin analysis with CE-mark validation.
+ * Skinive provides centeral-grade skin analysis with CE-mark validation.
  * This module mocks the API calls for development and demonstration.
  */
 

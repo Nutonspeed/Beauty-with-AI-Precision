@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
       includeComparison = false,
       includeProgressCharts = false,
       locale = 'en',
-      patientInfo,
+      clientInfo,
     } = body;
 
     if (!analysisId) {
@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Fetch user profile for patient info
+    // Fetch user profile for client info
     const { data: profile } = await supabase
       .from('profiles')
       .select('full_name, date_of_birth, gender, skin_type')
@@ -131,13 +131,13 @@ export async function POST(request: NextRequest) {
 
     const pdfOptions = {
       locale,
-      patientInfo: {
-        name: patientInfo?.name || profile?.full_name || user.email,
+      clientInfo: {
+        name: clientInfo?.name || profile?.full_name || user.email,
         age: profile?.date_of_birth
           ? new Date().getFullYear() - new Date(profile.date_of_birth).getFullYear()
           : undefined,
-        gender: patientInfo?.gender || profile?.gender,
-        skinType: patientInfo?.skinType || profile?.skin_type,
+        gender: clientInfo?.gender || profile?.gender,
+        skinType: clientInfo?.skinType || profile?.skin_type,
         customerId: user.id.substring(0, 8).toUpperCase(),
       },
       centerInfo,

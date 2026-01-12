@@ -1,17 +1,17 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
-import { withClinicAuth } from "@/lib/auth/middleware"
+import { withCenterAuth } from "@/lib/auth/middleware"
 
 // GET /api/queue/entries - List queue entries with filters
-export const GET = withClinicAuth(async (request: NextRequest, user) => {
+export const GET = withCenterAuth(async (request: NextRequest, user) => {
   try {
     const { searchParams } = new URL(request.url)
-    const clinic_id = searchParams.get("clinic_id")
+    const center_id = searchParams.get("center_id")
     const status = searchParams.get("status")
     const date = searchParams.get("date") // YYYY-MM-DD format
 
-    if (!clinic_id) {
-      return NextResponse.json({ error: "clinic_id is required" }, { status: 400 })
+    if (!center_id) {
+      return NextResponse.json({ error: "center_id is required" }, { status: 400 })
     }
 
     const supabaseAdmin = createClient(
@@ -28,7 +28,7 @@ export const GET = withClinicAuth(async (request: NextRequest, user) => {
     let query = supabaseAdmin
       .from('queue_entries')
       .select('*')
-      .eq('clinic_id', clinic_id)
+      .eq('center_id', center_id)
 
     // Filter by status
     if (status) {
@@ -71,7 +71,7 @@ export const GET = withClinicAuth(async (request: NextRequest, user) => {
 });
 
 // POST /api/queue/entries - Add customer to queue
-export const POST = withClinicAuth(async (request: NextRequest, user: any) => {
+export const POST = withCenterAuth(async (request: NextRequest, user: any) => {
   try {
     const body = await request.json()
 
@@ -88,14 +88,14 @@ export const POST = withClinicAuth(async (request: NextRequest, user: any) => {
 
     // Get next queue number
     const { data: nextNumberData } = await supabaseAdmin
-      .rpc('get_next_queue_number', { p_clinic_id: body.clinic_id })
+      .rpc('get_next_queue_number', { p_center_id: body.center_id })
 
     const queueNumber = nextNumberData || 1
 
     // Calculate estimated wait time
     const { data: estimatedTime } = await supabaseAdmin
       .rpc('calculate_estimated_wait_time', {
-        p_clinic_id: body.clinic_id,
+        p_center_id: body.center_id,
         p_priority: body.priority || 'normal'
       })
 
@@ -111,7 +111,7 @@ export const POST = withClinicAuth(async (request: NextRequest, user: any) => {
         queue_number: queueNumber,
         customer_id: body.customer_id,
         customer_name: body.customer_name,
-        clinic_id: body.clinic_id,
+        center_id: body.center_id,
         doctor_id: body.doctor_id,
         appointment_type: body.appointment_type || 'Walk-in',
         priority: body.priority || 'normal',

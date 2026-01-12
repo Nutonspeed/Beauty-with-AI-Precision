@@ -39,13 +39,13 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Invoice ID is required' }, { status: 400 })
     }
 
-    // Get invoice with clinic details
+    // Get invoice with center details
     const { data: invoice, error } = await supabase
       .from('invoices')
       .select(
         `
         *,
-        clinics (
+        centers (
           id,
           name,
           slug,
@@ -61,23 +61,23 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Invoice not found' }, { status: 404 })
     }
 
-    const clinic = Array.isArray(invoice.clinics) ? invoice.clinics[0] : invoice.clinics
+    const center = Array.isArray(invoice.centers) ? invoice.centers[0] : invoice.centers
 
     // Get plan details
-    const plan = SUBSCRIPTION_PLANS[clinic.subscription_plan as keyof typeof SUBSCRIPTION_PLANS]
+    const plan = SUBSCRIPTION_PLANS[center.subscription_plan as keyof typeof SUBSCRIPTION_PLANS]
 
     // Prepare invoice data for PDF
     const invoiceData: InvoiceData = {
       invoiceNumber: invoice.invoice_number,
       invoiceDate: invoice.created_at,
       dueDate: invoice.due_date,
-      clinic: {
-        id: clinic.id,
-        name: clinic.name,
-        address: clinic.settings?.address,
-        phone: clinic.settings?.phone,
-        email: clinic.settings?.email,
-        taxId: clinic.settings?.taxId,
+      center: {
+        id: center.id,
+        name: center.name,
+        address: center.settings?.address,
+        phone: center.settings?.phone,
+        email: center.settings?.email,
+        taxId: center.settings?.taxId,
       },
       billingPeriod: {
         start: invoice.billing_period_start,

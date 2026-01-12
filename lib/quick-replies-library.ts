@@ -5,7 +5,7 @@
 
 export type QuickReplyCategory = 
   | 'greetings' 
-  | 'treatment_info' 
+  | 'program_info' 
   | 'booking' 
   | 'pricing' 
   | 'objections' 
@@ -35,10 +35,10 @@ export const QUICK_REPLY_CATEGORIES: QuickReplyCategoryInfo[] = [
     description: 'Greeting messages'
   },
   {
-    id: 'treatment_info',
+    id: 'program_info',
     name: 'ข้อมูลทรีตเมนต์',
     emoji: '💆',
-    description: 'Treatment information'
+    description: 'Program information'
   },
   {
     id: 'booking',
@@ -100,41 +100,41 @@ export const DEFAULT_QUICK_REPLIES: QuickReply[] = [
     emoji: '🟢'
   },
 
-  // Treatment Info (6)
+  // Program Info (6)
   {
-    id: 'treatment_1',
-    text: 'จากผล AI Analysis ของคุณ แนะนำให้ทำ Laser Treatment ค่ะ จะช่วยแก้ปัญหาริ้วรอยและรอยด่างดำได้ดีมากค่ะ',
-    category: 'treatment_info',
+    id: 'program_1',
+    text: 'จากผล AI Analysis ของคุณ แนะนำให้ทำ Laser Program ค่ะ จะช่วยแก้ปัญหาริ้วรอยและรอยด่างดำได้ดีมากค่ะ',
+    category: 'program_info',
     emoji: '💆'
   },
   {
-    id: 'treatment_2',
+    id: 'program_2',
     text: 'ทรีตเมนต์นี้ใช้เวลาประมาณ 45-60 นาทีค่ะ ไม่เจ็บ ไม่มีแผล กลับบ้านได้เลย',
-    category: 'treatment_info',
+    category: 'program_info',
     emoji: '⏰'
   },
   {
-    id: 'treatment_3',
+    id: 'program_3',
     text: 'ผลจะเห็นได้ชัดภายใน 2-3 สัปดาห์ค่ะ แล้วจะดีขึ้นเรื่อยๆ ค่ะ',
-    category: 'treatment_info',
+    category: 'program_info',
     emoji: '📈'
   },
   {
-    id: 'treatment_4',
+    id: 'program_4',
     text: 'ขั้นตอนคือ: 1) ทำความสะอาดผิว 2) ทา Serum 3) ทำ Laser 4) ทา Mask เย็นๆ สบายมากเลยค่ะ',
-    category: 'treatment_info',
+    category: 'program_info',
     emoji: '📝'
   },
   {
-    id: 'treatment_5',
+    id: 'program_5',
     text: 'เทคโนโลยีของเรามาจากเกาหลี ปลอดภัย ได้รับมาตรฐาน FDA ค่ะ',
-    category: 'treatment_info',
+    category: 'program_info',
     emoji: '🏥'
   },
   {
-    id: 'treatment_6',
+    id: 'program_6',
     text: 'แนะนำให้ทำ 3-5 ครั้งค่ะ ห่างกัน 2-3 สัปดาห์ ผลจะคงทนและดีที่สุดค่ะ',
-    category: 'treatment_info',
+    category: 'program_info',
     emoji: '🎯'
   },
 

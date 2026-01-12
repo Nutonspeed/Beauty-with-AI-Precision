@@ -3,62 +3,62 @@
  * Defines which roles can subscribe to which channels
  */
 
-export type UserRole = 'admin' | 'clinic_owner' | 'doctor' | 'receptionist' | 'patient' | 'free_user';
+export type UserRole = 'admin' | 'center_owner' | 'doctor' | 'receptionist' | 'client' | 'free_user';
 
 export interface ChannelPermission {
   pattern: RegExp;
   allowedRoles: UserRole[];
-  requiresOwnership?: boolean; // For clinic/user-specific channels
+  requiresOwnership?: boolean; // For center/user-specific channels
 }
 
 export const channelPermissions: ChannelPermission[] = [
   // System channels - Admin only
   {
     pattern: /^system:maintenance$/,
-    allowedRoles: ['admin', 'clinic_owner', 'doctor', 'receptionist']
+    allowedRoles: ['admin', 'center_owner', 'doctor', 'receptionist']
   },
   {
     pattern: /^system:announcements$/,
-    allowedRoles: ['admin', 'clinic_owner', 'doctor', 'receptionist', 'patient', 'free_user']
+    allowedRoles: ['admin', 'center_owner', 'doctor', 'receptionist', 'client', 'free_user']
   },
 
-  // Clinic-specific channels - Require ownership or admin
+  // Center-specific channels - Require ownership or admin
   {
-    pattern: /^clinic:([^:]+):queue$/,
-    allowedRoles: ['admin', 'clinic_owner', 'doctor', 'receptionist'],
+    pattern: /^center:([^:]+):queue$/,
+    allowedRoles: ['admin', 'center_owner', 'doctor', 'receptionist'],
     requiresOwnership: true
   },
   {
-    pattern: /^clinic:([^:]+):appointments$/,
-    allowedRoles: ['admin', 'clinic_owner', 'doctor', 'receptionist'],
+    pattern: /^center:([^:]+):appointments$/,
+    allowedRoles: ['admin', 'center_owner', 'doctor', 'receptionist'],
     requiresOwnership: true
   },
   {
-    pattern: /^clinic:([^:]+):chat$/,
-    allowedRoles: ['admin', 'clinic_owner', 'doctor', 'receptionist'],
+    pattern: /^center:([^:]+):chat$/,
+    allowedRoles: ['admin', 'center_owner', 'doctor', 'receptionist'],
     requiresOwnership: true
   },
 
   // User-specific channels - Require self or admin
   {
     pattern: /^user:([^:]+):notifications$/,
-    allowedRoles: ['admin', 'clinic_owner', 'doctor', 'receptionist', 'patient', 'free_user'],
+    allowedRoles: ['admin', 'center_owner', 'doctor', 'receptionist', 'client', 'free_user'],
     requiresOwnership: true
   },
   {
     pattern: /^user:([^:]+):appointments$/,
-    allowedRoles: ['admin', 'clinic_owner', 'doctor', 'receptionist', 'patient'],
+    allowedRoles: ['admin', 'center_owner', 'doctor', 'receptionist', 'client'],
     requiresOwnership: true
   },
 
   // Analytics channels - Staff only
   {
     pattern: /^analytics:realtime$/,
-    allowedRoles: ['admin', 'clinic_owner']
+    allowedRoles: ['admin', 'center_owner']
   },
   {
-    pattern: /^analytics:clinic:([^:]+)$/,
-    allowedRoles: ['admin', 'clinic_owner'],
+    pattern: /^analytics:center:([^:]+)$/,
+    allowedRoles: ['admin', 'center_owner'],
     requiresOwnership: true
   }
 ];
@@ -78,7 +78,7 @@ export function canSubscribeToChannel(
   channel: string,
   userRole: UserRole,
   userId: string,
-  clinicId?: string
+  centerId?: string
 ): { allowed: boolean; reason?: string } {
   // Admin has access to everything
   if (userRole === 'admin') {
@@ -124,12 +124,12 @@ export function canSubscribeToChannel(
       }
     }
 
-    // For clinic channels, check if user belongs to the clinic
-    if (channel.startsWith('clinic:')) {
-      if (!clinicId || resourceId !== clinicId) {
+    // For center channels, check if user belongs to the center
+    if (channel.startsWith('center:')) {
+      if (!centerId || resourceId !== centerId) {
         return { 
           allowed: false, 
-          reason: 'Can only subscribe to your clinic channels' 
+          reason: 'Can only subscribe to your center channels' 
         };
       }
     }
@@ -145,13 +145,13 @@ export function filterAllowedChannels(
   channels: string[],
   userRole: UserRole,
   userId: string,
-  clinicId?: string
+  centerId?: string
 ): { allowed: string[]; denied: Array<{ channel: string; reason: string }> } {
   const allowed: string[] = [];
   const denied: Array<{ channel: string; reason: string }> = [];
 
   for (const channel of channels) {
-    const result = canSubscribeToChannel(channel, userRole, userId, clinicId);
+    const result = canSubscribeToChannel(channel, userRole, userId, centerId);
     if (result.allowed) {
       allowed.push(channel);
     } else {

@@ -1,7 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server"
 import { NextRequest, NextResponse } from "next/server"
 
-// GET /api/clinic/analytics/revenue - Revenue breakdown analysis
+// GET /api/center/analytics/revenue - Revenue breakdown analysis
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createServerClient()
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
     // Fetch bookings with payment info
     const { data: bookings, error } = await supabase
       .from("bookings")
-      .select("id, booking_date, payment_amount, payment_status, treatment_type, customer_name")
+      .select("id, booking_date, payment_amount, payment_status, program_type, customer_name")
       .gte("booking_date", startDate)
       .lte("booking_date", endDate)
       .order("booking_date", { ascending: true })
@@ -54,20 +54,20 @@ export async function GET(request: NextRequest) {
       }))
       .sort((a, b) => a.date.localeCompare(b.date))
 
-    // Group by treatment type
-    const revenueByTreatment: Record<string, { revenue: number; count: number }> = {}
+    // Group by program type
+    const revenueByProgram: Record<string, { revenue: number; count: number }> = {}
     paidBookings.forEach((booking) => {
-      const treatment = booking.treatment_type || "Other"
-      if (!revenueByTreatment[treatment]) {
-        revenueByTreatment[treatment] = { revenue: 0, count: 0 }
+      const program = booking.program_type || "Other"
+      if (!revenueByProgram[program]) {
+        revenueByProgram[program] = { revenue: 0, count: 0 }
       }
-      revenueByTreatment[treatment].revenue += booking.payment_amount || 0
-      revenueByTreatment[treatment].count += 1
+      revenueByProgram[program].revenue += booking.payment_amount || 0
+      revenueByProgram[program].count += 1
     })
 
-    const treatmentBreakdown = Object.entries(revenueByTreatment)
-      .map(([treatment, data]) => ({
-        treatment,
+    const programBreakdown = Object.entries(revenueByProgram)
+      .map(([program, data]) => ({
+        program,
         revenue: data.revenue,
         count: data.count,
         percentage: totalRevenue > 0 ? (data.revenue / totalRevenue) * 100 : 0,
@@ -95,7 +95,7 @@ export async function GET(request: NextRequest) {
         conversionRate: totalBookings > 0 ? (paidCount / totalBookings) * 100 : 0,
       },
       chartData,
-      treatmentBreakdown,
+      programBreakdown,
       statusBreakdown,
       dateRange: {
         start: startDate,
@@ -103,7 +103,7 @@ export async function GET(request: NextRequest) {
       },
     })
   } catch (error) {
-    console.error("Error in GET /api/clinic/analytics/revenue:", error)
+    console.error("Error in GET /api/center/analytics/revenue:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

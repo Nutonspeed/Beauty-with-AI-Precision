@@ -88,7 +88,7 @@ export default function RegisterPage() {
               <p className="text-xs text-gray-500">
                 ต้องการสร้างคลินิกใหม่?{" "}
                 <a 
-                  href="mailto:admin@beautyclinic.com?subject=ขอสร้างคลินิกใหม่"
+                  href="mailto:admin@beautycenter.com?subject=ขอสร้างคลินิกใหม่"
                   className="text-blue-600 hover:text-blue-700 font-medium"
                 >
                   ติดต่อเรา

@@ -20,9 +20,9 @@ const testSuites = [
     timeout: 45000
   },
   {
-    name: 'Clinic Owner Dashboard',
-    file: 'dashboard/clinic-owner.spec.ts',
-    tags: ['@dashboard', '@clinic', '@critical'],
+    name: 'Center Owner Dashboard',
+    file: 'dashboard/center-owner.spec.ts',
+    tags: ['@dashboard', '@center', '@critical'],
     timeout: 45000
   },
   {
@@ -32,9 +32,9 @@ const testSuites = [
     timeout: 45000
   },
   {
-    name: 'Customer Dashboard',
-    file: 'dashboard/customer-dashboard.spec.ts',
-    tags: ['@dashboard', '@customer', '@critical'],
+    name: 'Client Dashboard',
+    file: 'dashboard/client-dashboard.spec.ts',
+    tags: ['@dashboard', '@client', '@critical'],
     timeout: 45000
   },
   {

@@ -5,11 +5,11 @@ import { createClient } from "@supabase/supabase-js"
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
-    const clinic_id = searchParams.get("clinic_id")
+    const center_id = searchParams.get("center_id")
     const date = searchParams.get("date") // YYYY-MM-DD format
 
-    if (!clinic_id) {
-      return NextResponse.json({ error: "clinic_id is required" }, { status: 400 })
+    if (!center_id) {
+      return NextResponse.json({ error: "center_id is required" }, { status: 400 })
     }
 
     const supabaseAdmin = createClient(
@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
     const { data: entries, error: entriesError } = await supabaseAdmin
       .from('queue_entries')
       .select('*')
-      .eq('clinic_id', clinic_id)
+      .eq('center_id', center_id)
       .gte('check_in_time', startOfDay)
       .lte('check_in_time', endOfDay)
 

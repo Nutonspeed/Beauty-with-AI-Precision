@@ -1,27 +1,27 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { analyzeWithVISIAEquivalent } from "@/lib/ai/phase2/visia-equivalent-pipeline"
 import { randomUUID } from "crypto"
-import { withClinicAuth } from "@/lib/auth/middleware"
+import { withCenterAuth } from "@/lib/auth/middleware"
 
-export const POST = withClinicAuth(async (request: NextRequest) => {
+export const POST = withCenterAuth(async (request: NextRequest) => {
   try {
     const formData = await request.formData()
     const imageFile = formData.get("image") as File
     const userId = formData.get("userId") as string
-    const tier = (formData.get("tier") as "clinical") || "clinical"
+    const tier = (formData.get("tier") as "centeral") || "centeral"
 
     if (!imageFile) {
       return NextResponse.json({ error: "No image file provided" }, { status: 400 })
     }
 
     if (!userId) {
-      return NextResponse.json({ error: "User ID required for clinical analysis" }, { status: 400 })
+      return NextResponse.json({ error: "User ID required for centeral analysis" }, { status: 400 })
     }
 
     // Generate unique analysis ID
     const analysisId = `ana_${randomUUID().replace(/-/g, '').slice(0, 16)}`
 
-    console.log(`[v0] 🚀 Starting Phase 2 Clinical analysis for user ${userId} (${analysisId})...`)
+    console.log(`[v0] 🚀 Starting Phase 2 Centeral analysis for user ${userId} (${analysisId})...`)
 
     // Run VISIA-equivalent analysis
     const startTime = Date.now()
@@ -34,7 +34,7 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
     const response = {
       success: true,
       analysisId,
-      tier: "clinical",
+      tier: "centeral",
       accuracy: result.accuracyEstimate.overall,
       processingTime,
 

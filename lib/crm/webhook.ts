@@ -31,13 +31,13 @@ export interface WebhookPayload {
     status: string
     source?: string
     lead_score: number
-    interested_treatments?: string[]
+    interested_programs?: string[]
     budget_range?: string
     notes?: string
     created_at: string
     updated_at: string
   }
-  clinic: {
+  center: {
     id: string
     name: string
     contact_phone?: string
@@ -173,14 +173,14 @@ export function transformToSalesforce(payload: WebhookPayload) {
     LastName: payload.lead.full_name.split(' ').slice(1).join(' ') || '-',
     Email: payload.lead.email || null,
     Phone: payload.lead.phone || null,
-    Company: payload.clinic.name,
+    Company: payload.center.name,
     Status: mapStatusToSalesforce(payload.lead.status),
     LeadSource: payload.lead.source || 'Other',
     Rating: mapScoreToRating(payload.lead.lead_score),
     Description: payload.lead.notes || '',
     // Custom fields
     Budget__c: payload.lead.budget_range,
-    Interested_Treatments__c: payload.lead.interested_treatments?.join('; '),
+    Interested_Programs__c: payload.lead.interested_programs?.join('; '),
     Lead_Score__c: payload.lead.lead_score,
     Line_ID__c: payload.lead.line_id,
     External_ID__c: payload.lead.id,
@@ -197,13 +197,13 @@ export function transformToHubSpot(payload: WebhookPayload) {
       firstname: payload.lead.full_name.split(' ')[0],
       lastname: payload.lead.full_name.split(' ').slice(1).join(' ') || '-',
       phone: payload.lead.phone || '',
-      company: payload.clinic.name,
+      company: payload.center.name,
       lifecyclestage: mapStatusToHubSpot(payload.lead.status),
       hs_lead_status: payload.lead.status,
       lead_source: payload.lead.source || 'OTHER',
       // Custom properties
       budget_range: payload.lead.budget_range,
-      interested_treatments: payload.lead.interested_treatments?.join(', '),
+      interested_programs: payload.lead.interested_programs?.join(', '),
       lead_score: payload.lead.lead_score,
       line_id: payload.lead.line_id,
       external_id: payload.lead.id,
@@ -217,9 +217,9 @@ export function transformToHubSpot(payload: WebhookPayload) {
  */
 export function transformToPipedrive(payload: WebhookPayload) {
   return {
-    title: `${payload.lead.full_name} - ${payload.clinic.name}`,
+    title: `${payload.lead.full_name} - ${payload.center.name}`,
     person_name: payload.lead.full_name,
-    org_name: payload.clinic.name,
+    org_name: payload.center.name,
     value: parseBudgetValue(payload.lead.budget_range),
     currency: 'THB',
     status: 'open',
@@ -231,7 +231,7 @@ export function transformToPipedrive(payload: WebhookPayload) {
     '12345': payload.lead.status, // Custom field: Lead Status
     '12346': payload.lead.source, // Custom field: Lead Source
     '12347': payload.lead.lead_score, // Custom field: Lead Score
-    '12348': payload.lead.interested_treatments?.join(', '), // Custom field: Interested Treatments
+    '12348': payload.lead.interested_programs?.join(', '), // Custom field: Interested Programs
     '12349': payload.lead.line_id, // Custom field: Line ID
   }
 }

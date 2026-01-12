@@ -22,10 +22,18 @@ const YAxis = dynamic(() => import('recharts').then(mod => mod.YAxis), { ssr: fa
 const Tooltip = dynamic(() => import('recharts').then(mod => mod.Tooltip), { ssr: false });
 
 interface AestheticSentimentProps {
-  customerName: string
+  clientName: string
 }
 
-export function AestheticSentiment({ customerName }: AestheticSentimentProps) {
+interface NeuralNarrativeSynthesisProps {
+  clientData?: {
+    name: string
+    concerns: string[]
+    score: number
+  }
+}
+
+export function AestheticSentiment({ clientName }: AestheticSentimentProps) {
   const t = useTranslations()
 
   const sentimentHistory = [

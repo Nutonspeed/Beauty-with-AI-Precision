@@ -25,7 +25,7 @@ export default async function SharePage({ params }: SharePageProps) {
     .from('skin_analyses')
     .select(`
       *,
-      clinic:clinics!clinic_id (
+      center:centers!center_id (
         id,
         name,
         logo_url,
@@ -83,7 +83,7 @@ export default async function SharePage({ params }: SharePageProps) {
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted">
       <ShareReportView
         analysis={analysis}
-        clinic={analysis.clinic}
+        center={analysis.center}
         salesStaff={analysis.sales_staff}
         remainingDays={remainingDays}
       />
@@ -98,19 +98,19 @@ export async function generateMetadata({ params }: SharePageProps) {
 
   const { data: analysis } = await supabase
     .from('skin_analyses')
-    .select('clinic:clinics!clinic_id(name)')
+    .select('center:centers!center_id(name)')
     .eq('share_token', token)
     .single()
 
-  const clinicRecord = Array.isArray(analysis?.clinic)
-    ? analysis?.clinic[0]
-    : analysis?.clinic
+  const centerRecord = Array.isArray(analysis?.center)
+    ? analysis?.center[0]
+    : analysis?.center
 
-  const clinicName = clinicRecord?.name || 'Clinic'
+  const centerName = centerRecord?.name || 'Center'
 
   return {
-    title: `Skin Analysis Report - ${clinicName}`,
-    description: `View your personalized skin analysis report from ${clinicName}`,
+    title: `Skin Analysis Report - ${centerName}`,
+    description: `View your personalized skin analysis report from ${centerName}`,
     robots: 'noindex, nofollow', // Don't index share links
   }
 }

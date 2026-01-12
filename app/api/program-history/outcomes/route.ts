@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { withClinicAuth } from '@/lib/auth/middleware';
+import { withCenterAuth } from '@/lib/auth/middleware';
 
 function getSupabaseClient() {
   return createClient(
@@ -10,48 +10,48 @@ function getSupabaseClient() {
 }
 
 /**
- * GET /api/treatment-history/outcomes
- * List treatment outcomes for beauty clinic customers
+ * GET /api/program-history/outcomes
+ * List program outcomes for beauty center customers
  * 
  * Query parameters:
- * - clinic_id (required): Clinic ID
+ * - center_id (required): Center ID
  * - customer_id (optional): Filter by customer
- * - treatment_record_id (optional): Filter by treatment record
+ * - program_record_id (optional): Filter by program record
  * - overall_result (optional): Filter by result
  */
-export const GET = withClinicAuth(async (request: NextRequest) => {
+export const GET = withCenterAuth(async (request: NextRequest) => {
   try {
     const { searchParams } = new URL(request.url);
-    const clinic_id = searchParams.get('clinic_id');
+    const center_id = searchParams.get('center_id');
     const customer_id = searchParams.get('customer_id');
-    const treatment_record_id = searchParams.get('treatment_record_id');
+    const program_record_id = searchParams.get('program_record_id');
     const overall_result = searchParams.get('overall_result');
 
-    if (!clinic_id) {
+    if (!center_id) {
       return NextResponse.json(
-        { error: 'clinic_id is required' },
+        { error: 'center_id is required' },
         { status: 400 }
       );
     }
 
     const supabaseClient = getSupabaseClient();
     let query = supabaseClient
-      .from('treatment_outcomes')
+      .from('program_outcomes')
       .select(`
         *,
-        customer:users!treatment_outcomes_customer_id_fkey(id, full_name, email),
-        treatment_record:treatment_records(id, treatment_name, treatment_category),
-        assessor:users!treatment_outcomes_assessor_user_id_fkey(id, full_name)
+        customer:users!program_outcomes_customer_id_fkey(id, full_name, email),
+        program_record:program_records(id, program_name, program_category),
+        assessor:users!program_outcomes_assessor_user_id_fkey(id, full_name)
       `)
-      .eq('clinic_id', clinic_id)
+      .eq('center_id', center_id)
       .eq('is_deleted', false);
 
     if (customer_id) {
       query = query.eq('customer_id', customer_id);
     }
 
-    if (treatment_record_id) {
-      query = query.eq('treatment_record_id', treatment_record_id);
+    if (program_record_id) {
+      query = query.eq('program_record_id', program_record_id);
     }
 
     if (overall_result) {
@@ -64,25 +64,25 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
 
     return NextResponse.json(data || []);
   } catch (error) {
-    console.error('Error fetching treatment outcomes:', error);
+    console.error('Error fetching program outcomes:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch treatment outcomes' },
+      { error: 'Failed to fetch program outcomes' },
       { status: 500 }
     );
   }
 });
 
 /**
- * POST /api/treatment-history/outcomes
- * Create a new treatment outcome assessment for beauty clinic customer
+ * POST /api/program-history/outcomes
+ * Create a new program outcome assessment for beauty center customer
  */
-export const POST = withClinicAuth(async (request: NextRequest) => {
+export const POST = withCenterAuth(async (request: NextRequest) => {
   try {
     const body = await request.json();
     const {
-      clinic_id,
+      center_id,
       customer_id,
-      treatment_record_id,
+      program_record_id,
       assessment_date,
       assessor_user_id,
       overall_result,
@@ -102,13 +102,13 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
       side_effects_summary,
       complications_summary,
       total_sessions_completed,
-      treatment_start_date,
-      treatment_end_date,
+      program_start_date,
+      program_end_date,
       total_duration_days,
       maintenance_required,
       maintenance_schedule,
       recommended_products,
-      recommended_follow_up_treatments,
+      recommended_follow_up_programs,
       would_recommend,
       testimonial,
       testimonial_approved_for_use,
@@ -116,20 +116,20 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
       notes,
     } = body;
 
-    if (!clinic_id || !customer_id || !assessment_date || !overall_result) {
+    if (!center_id || !customer_id || !assessment_date || !overall_result) {
       return NextResponse.json(
-        { error: 'clinic_id, customer_id, assessment_date, and overall_result are required' },
+        { error: 'center_id, customer_id, assessment_date, and overall_result are required' },
         { status: 400 }
       );
     }
 
     const supabaseClient = getSupabaseClient();
     const { data, error } = await supabaseClient
-      .from('treatment_outcomes')
+      .from('program_outcomes')
       .insert({
-        clinic_id,
+        center_id,
         customer_id,
-        treatment_record_id,
+        program_record_id,
         assessment_date,
         assessor_user_id,
         overall_result,
@@ -149,13 +149,13 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
         side_effects_summary,
         complications_summary,
         total_sessions_completed,
-        treatment_start_date,
-        treatment_end_date,
+        program_start_date,
+        program_end_date,
         total_duration_days,
         maintenance_required: maintenance_required ?? false,
         maintenance_schedule,
         recommended_products,
-        recommended_follow_up_treatments,
+        recommended_follow_up_programs,
         would_recommend,
         testimonial,
         testimonial_approved_for_use: testimonial_approved_for_use ?? false,
@@ -170,9 +170,9 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
     const outcome = data;
     return NextResponse.json(outcome, { status: 201 });
   } catch (error) {
-    console.error('Error creating treatment outcome:', error);
+    console.error('Error creating program outcome:', error);
     return NextResponse.json(
-      { error: 'Failed to create treatment outcome' },
+      { error: 'Failed to create program outcome' },
       { status: 500 }
     );
   }

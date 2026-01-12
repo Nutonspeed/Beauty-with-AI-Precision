@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { withClinicAuth } from '@/lib/auth/middleware';
+import { withCenterAuth } from '@/lib/auth/middleware';
 
 function getSupabaseClient() {
   return createClient(
@@ -11,21 +11,21 @@ function getSupabaseClient() {
 
 /**
  * GET /api/loyalty/tiers
- * List loyalty tiers for beauty clinic
+ * List loyalty tiers for beauty center
  * 
  * Query parameters:
- * - clinic_id (required): Clinic ID
+ * - center_id (required): Center ID
  * - is_active (optional): Filter by active status
  */
-export const GET = withClinicAuth(async (request: NextRequest) => {
+export const GET = withCenterAuth(async (request: NextRequest) => {
   try {
     const { searchParams } = new URL(request.url);
-    const clinic_id = searchParams.get('clinic_id');
+    const center_id = searchParams.get('center_id');
     const is_active = searchParams.get('is_active');
 
-    if (!clinic_id) {
+    if (!center_id) {
       return NextResponse.json(
-        { error: 'clinic_id is required' },
+        { error: 'center_id is required' },
         { status: 400 }
       );
     }
@@ -34,7 +34,7 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
     let query = supabaseClient
       .from('loyalty_tiers')
       .select('*')
-      .eq('clinic_id', clinic_id);
+      .eq('center_id', center_id);
 
     if (is_active !== null) {
       query = query.eq('is_active', is_active === 'true');
@@ -56,13 +56,13 @@ export const GET = withClinicAuth(async (request: NextRequest) => {
 
 /**
  * POST /api/loyalty/tiers
- * Create a new loyalty tier for beauty clinic customers
+ * Create a new loyalty tier for beauty center customers
  */
-export const POST = withClinicAuth(async (request: NextRequest) => {
+export const POST = withCenterAuth(async (request: NextRequest) => {
   try {
     const body = await request.json();
     const {
-      clinic_id,
+      center_id,
       tier_name,
       tier_name_en,
       tier_level,
@@ -83,9 +83,9 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
       notes,
     } = body;
 
-    if (!clinic_id || !tier_name || !tier_level || !tier_code) {
+    if (!center_id || !tier_name || !tier_level || !tier_code) {
       return NextResponse.json(
-        { error: 'clinic_id, tier_name, tier_level, and tier_code are required' },
+        { error: 'center_id, tier_name, tier_level, and tier_code are required' },
         { status: 400 }
       );
     }
@@ -94,7 +94,7 @@ export const POST = withClinicAuth(async (request: NextRequest) => {
     const { data, error } = await supabaseClient
       .from('loyalty_tiers')
       .insert({
-        clinic_id,
+        center_id,
         tier_name,
         tier_name_en,
         tier_level,

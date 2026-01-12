@@ -767,8 +767,8 @@ export class LoyaltyEngine {
       },
       {
         id: 'reward-3',
-        name: 'Free Facial Treatment',
-        description: 'Complimentary facial treatment (worth ฿1,500)',
+        name: 'Free Facial Program',
+        description: 'Complimentary facial program (worth ฿1,500)',
         category: 'service',
         pointCost: 3000,
         value: 1500,

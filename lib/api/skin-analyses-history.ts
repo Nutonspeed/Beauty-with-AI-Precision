@@ -8,7 +8,7 @@ import { createClient } from '@/lib/supabase/server'
 export interface SkinAnalysis {
   id: string
   user_id: string
-  clinic_id?: string
+  center_id?: string
   image_url?: string
   analysis_data: any
   created_at: string
@@ -63,18 +63,18 @@ export async function deleteSkinAnalysis(analysisId: string) {
   return true
 }
 
-export async function getClinicAnalyses(clinicId: string, limit = 50) {
+export async function getCenterAnalyses(centerId: string, limit = 50) {
   const supabase = await createClient()
   
   const { data, error } = await supabase
     .from('skin_analyses')
     .select('*')
-    .eq('clinic_id', clinicId)
+    .eq('center_id', centerId)
     .order('created_at', { ascending: false })
     .limit(limit)
   
   if (error) {
-    throw new Error(`Failed to fetch clinic analyses: ${error.message}`)
+    throw new Error(`Failed to fetch center analyses: ${error.message}`)
   }
   
   return data as SkinAnalysis[]

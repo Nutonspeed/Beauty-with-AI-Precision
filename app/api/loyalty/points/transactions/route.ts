@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { withClinicAuth } from '@/lib/auth/middleware';
+import { withCenterAuth } from '@/lib/auth/middleware';
 
 function getSupabaseClient() {
   return createClient(
@@ -11,34 +11,34 @@ function getSupabaseClient() {
 
 /**
  * GET /api/loyalty/points/transactions
- * List points transactions for beauty clinic customers
+ * List points transactions for beauty center customers
  * 
  * Query parameters:
- * - clinic_id (required): Clinic ID
+ * - center_id (required): Center ID
  * - customer_id (optional): Filter by customer
  * - loyalty_account_id (optional): Filter by loyalty account
  * - transaction_type (optional): Filter by type (earned, redeemed, expired, etc.)
  * - status (optional): Filter by status
  * - limit (optional): Limit results (default 100)
  */
-export const GET = withClinicAuth(async (request: NextRequest, user: any) => {
+export const GET = withCenterAuth(async (request: NextRequest, user: any) => {
   try {
     const { searchParams } = new URL(request.url);
-    const clinic_id = searchParams.get('clinic_id');
+    const center_id = searchParams.get('center_id');
     const customer_id = searchParams.get('customer_id');
     const loyalty_account_id = searchParams.get('loyalty_account_id');
     const transaction_type = searchParams.get('transaction_type');
     const status = searchParams.get('status');
     const limitParam = searchParams.get('limit');
 
-    if (!clinic_id) {
+    if (!center_id) {
       return NextResponse.json(
-        { error: 'clinic_id is required' },
+        { error: 'center_id is required' },
         { status: 400 }
       );
     }
 
-    if (user?.clinic_id && clinic_id !== user.clinic_id) {
+    if (user?.center_id && center_id !== user.center_id) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
@@ -54,7 +54,7 @@ export const GET = withClinicAuth(async (request: NextRequest, user: any) => {
         earning_rule:points_earning_rules(id, rule_name, rule_type),
         branch:branches(id, branch_name)
       `)
-      .eq('clinic_id', clinic_id);
+      .eq('center_id', center_id);
 
     if (customer_id) {
       query = query.eq('customer_id', customer_id);

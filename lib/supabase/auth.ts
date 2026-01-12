@@ -5,16 +5,13 @@
 
 import { redirect } from 'next/navigation';
 import { createClient } from './server';
+import { UserRole } from '@/types/supabase';
 
 /**
  * Valid user roles in the system
  */
-export type UserRole = 
-  | 'customer'
-  | 'staff'
-  | 'clinic_owner'
-  | 'admin'
-  | 'super_admin';
+// Exporting the same type from supabase.ts for consistency
+export type { UserRole };
 
 /**
  * Require user to be authenticated and have specific role

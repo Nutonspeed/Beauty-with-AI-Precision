@@ -17,7 +17,7 @@ export interface ChatMessage {
 export interface Conversation {
   id: string
   customer_id: string
-  clinic_id: string
+  center_id: string
   staff_id: string | null
   status: "active" | "closed" | "pending"
   last_message_at: string

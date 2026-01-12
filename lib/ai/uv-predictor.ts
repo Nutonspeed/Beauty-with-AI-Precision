@@ -303,7 +303,7 @@ function generateRecommendations(
   if (riskLevel === 'severe') {
     recommendations.push('ควรพบแพทย์ผิวหนัง เพื่อตรวจสอบความเสียหายจาก UV');
     recommendations.push('หลีกเลี่ยงแสงแดดช่วง 10:00-16:00 อย่างเคร่งครัด');
-    recommendations.push('พิจารณาทำ laser treatment เพื่อลดรอยดำจาก UV');
+    recommendations.push('พิจารณาทำ laser program เพื่อลดรอยดำจาก UV');
   } else if (riskLevel === 'high') {
     recommendations.push('ลดการอยู่กลางแดดในช่วง 10:00-16:00');
     recommendations.push('สวมหมวกกว้างและแว่นกันแดด UV400 เมื่อออกแดด');

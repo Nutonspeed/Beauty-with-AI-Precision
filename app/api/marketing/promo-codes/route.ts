@@ -10,10 +10,10 @@ function getSupabaseClient() {
 
 /**
  * GET /api/marketing/promo-codes
- * List promo codes for beauty clinic customers
+ * List promo codes for beauty center customers
  * 
  * Query parameters:
- * - clinic_id (required): Clinic ID
+ * - center_id (required): Center ID
  * - campaign_id (optional): Filter by campaign
  * - is_active (optional): Filter by active status
  * - is_public (optional): Filter by public visibility
@@ -21,14 +21,14 @@ function getSupabaseClient() {
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const clinic_id = searchParams.get('clinic_id');
+    const center_id = searchParams.get('center_id');
     const campaign_id = searchParams.get('campaign_id');
     const is_active = searchParams.get('is_active');
     const is_public = searchParams.get('is_public');
 
-    if (!clinic_id) {
+    if (!center_id) {
       return NextResponse.json(
-        { error: 'clinic_id is required' },
+        { error: 'center_id is required' },
         { status: 400 }
       );
     }
@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
         campaign:marketing_campaigns(id, campaign_name, campaign_code),
         created_by:users!promo_codes_created_by_user_id_fkey(id, full_name, email)
       `)
-      .eq('clinic_id', clinic_id);
+      .eq('center_id', center_id);
 
     if (campaign_id) {
       query = query.eq('campaign_id', campaign_id);
@@ -71,13 +71,13 @@ export async function GET(request: NextRequest) {
 
 /**
  * POST /api/marketing/promo-codes
- * Create a new promo code for beauty clinic customers
+ * Create a new promo code for beauty center customers
  */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const {
-      clinic_id,
+      center_id,
       campaign_id,
       code,
       code_type,
@@ -107,9 +107,9 @@ export async function POST(request: NextRequest) {
       notes,
     } = body;
 
-    if (!clinic_id || !code || !code_type) {
+    if (!center_id || !code || !code_type) {
       return NextResponse.json(
-        { error: 'clinic_id, code, and code_type are required' },
+        { error: 'center_id, code, and code_type are required' },
         { status: 400 }
       );
     }
@@ -133,7 +133,7 @@ export async function POST(request: NextRequest) {
     const { data, error } = await supabaseClient
       .from('promo_codes')
       .insert({
-        clinic_id,
+        center_id,
         campaign_id,
         code: code.toUpperCase(), // Store codes in uppercase
         code_type,

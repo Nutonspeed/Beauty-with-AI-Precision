@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { withClinicAuth } from '@/lib/auth/middleware';
+import { withCenterAuth } from '@/lib/auth/middleware';
 
-export const GET = withClinicAuth(async (req: NextRequest, user: any) => {
+export const GET = withCenterAuth(async (req: NextRequest, user: any) => {
   try {
     const id = req.nextUrl.pathname.split('/').pop() || '';
 
@@ -61,7 +61,7 @@ export const GET = withClinicAuth(async (req: NextRequest, user: any) => {
  * PATCH /api/branches/[id]
  * Update a branch
  */
-export const PATCH = withClinicAuth(async (req: NextRequest, user: any) => {
+export const PATCH = withCenterAuth(async (req: NextRequest, user: any) => {
   try {
     const id = req.nextUrl.pathname.split('/').pop() || '';
     const body = await req.json();
@@ -137,7 +137,7 @@ export const PATCH = withClinicAuth(async (req: NextRequest, user: any) => {
  * DELETE /api/branches/[id]
  * Delete a branch (soft delete by setting is_active to false)
  */
-export const DELETE = withClinicAuth(async (req, user) => {
+export const DELETE = withCenterAuth(async (req, user) => {
   const id = req.nextUrl.pathname.split('/').pop() || '';
 
   const supabase = createClient(

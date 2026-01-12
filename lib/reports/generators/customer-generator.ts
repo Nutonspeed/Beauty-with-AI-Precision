@@ -325,4 +325,4 @@ export class CustomerReportGenerator implements ReportGenerator {
   }
 }
 
-export default PatientReportGenerator
+export default CustomerReportGenerator

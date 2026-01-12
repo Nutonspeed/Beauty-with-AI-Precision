@@ -27,7 +27,7 @@ interface User {
   id: string
   email: string
   role: string
-  clinic_id?: string
+  center_id?: string
   created_at: string
   last_sign_in_at?: string
   email_confirmed_at?: string
@@ -74,9 +74,9 @@ function UsersManagementContent() {
           },
           {
             id: '2',
-            email: 'clinic-owner@example.com',
-            role: 'clinic_owner',
-            clinic_id: 'clinic_001',
+            email: 'center-owner@example.com',
+            role: 'center_owner',
+            center_id: 'center_001',
             created_at: '2024-01-15T00:00:00Z',
             email_confirmed_at: '2024-01-15T00:00:00Z',
           },
@@ -126,9 +126,9 @@ function UsersManagementContent() {
   const getRoleBadge = (role: string) => {
     const variants = {
       super_admin: { label: 'Super Admin', color: 'bg-orange-500/10 text-orange-500 border-orange-500/20' },
-      clinic_owner: { label: 'Clinic Owner', color: 'bg-blue-500/10 text-blue-500 border-blue-500/20' },
-      clinic_admin: { label: 'Clinic Admin', color: 'bg-purple-500/10 text-purple-500 border-purple-500/20' },
-      clinic_staff: { label: 'Clinic Staff', color: 'bg-cyan-500/10 text-cyan-500 border-cyan-500/20' },
+      center_owner: { label: 'Center Owner', color: 'bg-blue-500/10 text-blue-500 border-blue-500/20' },
+      center_admin: { label: 'Center Admin', color: 'bg-purple-500/10 text-purple-500 border-purple-500/20' },
+      center_staff: { label: 'Center Staff', color: 'bg-cyan-500/10 text-cyan-500 border-cyan-500/20' },
       sales_staff: { label: 'Sales Staff', color: 'bg-green-500/10 text-green-500 border-green-500/20' },
       customer: { label: 'Customer', color: 'bg-pink-500/10 text-pink-500 border-pink-500/20' },
     } as const
@@ -199,7 +199,7 @@ function UsersManagementContent() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-orange-500">
-                {(roleStats.super_admin || 0) + (roleStats.clinic_owner || 0)}
+                {(roleStats.super_admin || 0) + (roleStats.center_owner || 0)}
               </div>
             </CardContent>
           </Card>
@@ -211,7 +211,7 @@ function UsersManagementContent() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-blue-500">
-                {(roleStats.clinic_staff || 0) + (roleStats.sales_staff || 0)}
+                {(roleStats.center_staff || 0) + (roleStats.sales_staff || 0)}
               </div>
             </CardContent>
           </Card>
@@ -265,7 +265,7 @@ function UsersManagementContent() {
                   <TableRow>
                     <TableHead>Email</TableHead>
                     <TableHead>Role</TableHead>
-                    <TableHead>Clinic ID</TableHead>
+                    <TableHead>Center ID</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Created</TableHead>
                     <TableHead>Last Login</TableHead>
@@ -285,8 +285,8 @@ function UsersManagementContent() {
                         <TableCell className="font-medium">{u.email}</TableCell>
                         <TableCell>{getRoleBadge(u.role)}</TableCell>
                         <TableCell>
-                          {u.clinic_id ? (
-                            <span className="text-xs font-mono">{u.clinic_id}</span>
+                          {u.center_id ? (
+                            <span className="text-xs font-mono">{u.center_id}</span>
                           ) : (
                             <span className="text-muted-foreground">—</span>
                           )}
