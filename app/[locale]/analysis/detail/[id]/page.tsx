@@ -12,7 +12,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Face3DViewer } from '@/components/ar/face-3d-viewer';
-import { TreatmentSimulator } from '@/components/ar/treatment-simulator';
+import { ProgramSimulator } from '@/components/ar/program-simulator';
 import PriorityRankingCard from '@/components/analysis/priority-ranking-card';
 import ProgramRecommendations from '@/components/analysis/program-recommendations';
 import { Loader2, AlertCircle, ArrowLeft, Globe, Check, Presentation, LineChart } from 'lucide-react';
@@ -30,6 +30,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import type {
   HybridSkinAnalysis,
   SkinConcern,
@@ -40,6 +41,7 @@ import type {
 } from '@/lib/types/skin-analysis';
 import { useAuth } from '@/lib/auth/context';
 import { normalizeRole } from '@/lib/auth/role-normalize';
+import { useLocalizePath } from "@/lib/i18n/locale-link"
 
 const LANGUAGES = [
   { code: 'th', name: 'ไทย', flag: '🇹🇭' },
@@ -63,7 +65,7 @@ const RECOMMENDATION_CATEGORIES: RecommendationCategory[] = [
   'cleanser',
   'serum',
   'moisturizer',
-  'treatment',
+  'program',
   'sunscreen',
 ];
 const AI_PROVIDERS: Set<AIProvider> = new Set(['huggingface', 'google-vision', 'gemini']);
@@ -117,7 +119,7 @@ const normalizeAIRecommendations = (raw: unknown): AIAnalysisResult['recommendat
   for (const entry of raw) {
     if (typeof entry === 'string' && entry.trim() !== '') {
       recommendations.push({
-        category: 'treatment',
+        category: 'program',
         product: entry,
         reason: 'Provided by AI analysis',
       });
@@ -138,7 +140,7 @@ const normalizeAIRecommendations = (raw: unknown): AIAnalysisResult['recommendat
     const categoryValue = entryRecord.category;
     const category = typeof categoryValue === 'string' && allowed.has(categoryValue as RecommendationCategory)
       ? (categoryValue as RecommendationCategory)
-      : 'treatment';
+      : 'program';
     const reason = typeof reasonValue === 'string' && reasonValue.trim() !== ''
       ? reasonValue
       : 'Provided by AI analysis';
@@ -172,8 +174,8 @@ const normalizeAIAnalysis = (raw: unknown): AIAnalysisResult => {
     confidence,
   };
 
-  if (typeof record.treatmentPlan === 'string') {
-    ai.treatmentPlan = record.treatmentPlan;
+  if (typeof record.programPlan === 'string') {
+    ai.programPlan = record.programPlan;
   }
 
   return ai;
@@ -659,6 +661,7 @@ function AdvancedAnalysisTab({ analysisId, locale }: Readonly<{ analysisId: stri
 export default function AnalysisDetailPage({ params }: Readonly<AnalysisDetailPageProps>) {
   const t = useTranslations();
   const locale = useLocale();
+  const lp = useLocalizePath();
   const [analysis, setAnalysis] = useState<HybridSkinAnalysis | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [customerInfo, setCustomerInfo] = useState<any>(null);
@@ -673,7 +676,7 @@ export default function AnalysisDetailPage({ params }: Readonly<AnalysisDetailPa
   
   // Get user role for permission checks
   const { user } = useAuth();
-  const allowedRoles = new Set(['sales_staff', 'clinic_owner', 'clinic_admin', 'super_admin']);
+  const allowedRoles = new Set(['sales_staff', 'center_owner', 'center_admin', 'super_admin']);
   const normalized = normalizeRole(user?.role ?? null);
   const canAccessSalesPresentation = allowedRoles.has(normalized);
 
@@ -719,10 +722,9 @@ export default function AnalysisDetailPage({ params }: Readonly<AnalysisDetailPa
       setPriorityRanking(ranking);
       
       const skinType = normalizedAnalysis.ai.skinType || 'normal';
-      const recommendations = await generateProgramRecommendations(
+      const recommendations = generateProgramRecommendations(
         normalizedAnalysis,
-        priorityRanking,
-        { locale: locale as 'th' | 'en' }
+        (normalizedAnalysis.ai.skinType as any) || 'normal'
       );
       setProgramRecs(recommendations);
       
@@ -730,12 +732,12 @@ export default function AnalysisDetailPage({ params }: Readonly<AnalysisDetailPa
         ? (data.data as Record<string, unknown>).customerInfo ?? null
         : null;
       
-      const finalCustomerInfo = customerInfoValue || {
-        name: t('roles.customer'),
+      const finalClientInfo = customerInfoValue || {
+        name: t('roles.client'),
         skinType: normalizedAnalysis.ai.skinType || 'normal'
       };
       
-      setCustomerInfo(finalCustomerInfo);
+      setCustomerInfo(finalClientInfo);
     } catch (err) {
       console.error('Load analysis error:', err);
       setError(err instanceof Error ? err.message : t('analysis.error'));
@@ -761,24 +763,24 @@ export default function AnalysisDetailPage({ params }: Readonly<AnalysisDetailPa
           analysis,
           {
             locale: locale as 'th' | 'en',
-            customerInfo: customerInfo ? {
+            clientInfo: customerInfo ? {
               name: customerInfo.name,
               age: customerInfo.age,
               gender: customerInfo.gender,
               skinType: customerInfo.skinType || analysis.ai.skinType,
-              customerId: analysisId || undefined,
+              clientId: analysisId || undefined,
             } : undefined,
-            clinicInfo: {
-              name: 'AI367 Skin Clinic',
-              nameTh: 'คลินิก AI367',
+            centerInfo: {
+              name: 'CenterIQ Aesthetic',
+              nameTh: 'ศูนย์ความงาม CenterIQ',
               address: '123 Medical Plaza, Bangkok, Thailand',
               addressTh: '123 อาคารแมดิคัล พลาซ่า กรุงเทพฯ',
               phone: '+66 2 XXX XXXX',
-              email: 'info@ai367clinic.com',
-              website: 'www.ai367clinic.com',
+              email: 'info@centeriq.ai',
+              website: 'www.centeriq.ai',
             },
             includeCharts: true,
-            includePhotos: !!imageUrl,
+            includeImages: !!imageUrl,
             includeRecommendations: !!programRecs,
             includePriorityRanking: !!priorityRanking,
             photos: imageUrl ? {
@@ -960,7 +962,7 @@ export default function AnalysisDetailPage({ params }: Readonly<AnalysisDetailPa
           {programRecs && (
             <ProgramRecommendations
               recommendations={programRecs}
-              onBookConsultation={(id) => router.push(lp(`/booking?program=${id}`))}
+              onBookConsultation={(id) => router.push(`/${locale}/booking?program=${id}`)}
             />
           )}
         </TabsContent>
@@ -976,25 +978,30 @@ export default function AnalysisDetailPage({ params }: Readonly<AnalysisDetailPa
             <Face3DViewer
               imageUrl={imageUrl}
               analysisData={{
-                spots: analysis.cv.spots?.severity || 0,
-                pores: analysis.cv.pores?.severity || 0,
-                wrinkles: analysis.cv.wrinkles?.severity || 0,
-                texture: analysis.cv.texture?.score || 0,
-                redness: analysis.cv.redness?.severity || 0,
-                overall: analysis.overallScore.spots || 0,
+                spots: analysis.cv.spots.severity,
+                wrinkles: analysis.cv.wrinkles.severity,
+                pores: analysis.cv.pores.severity,
+                texture: analysis.cv.texture.score,
+                redness: analysis.cv.redness.severity,
+                overall: analysis.percentiles.overall,
               }}
               locale={locale}
             />
           )}
         </TabsContent>
 
-        <TabsContent value="simulator" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Program Simulator / จำลองโปรแกรมความงาม</CardTitle>
-              <CardDescription>Visualize potential aesthetic outcomes</CardDescription>
+        <TabsContent value="simulator">
+          <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative">
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+            <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
+              <CardTitle className="text-3xl font-bold text-white tracking-tight italic flex items-center gap-4">
+                Program Effect Simulator / จำลองผลลัพธ์โปรแกรม
+              </CardTitle>
+              <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">
+                Visualize potential improvements after recommended programs
+              </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-10 lg:p-12">
               <ProgramSimulator 
                 beforeImage={imageUrl || ''} 
                 locale={locale}

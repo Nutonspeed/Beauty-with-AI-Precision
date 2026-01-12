@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useTranslations } from 'next-intl';
 import { Upload, FileText, CheckCircle2, XCircle, AlertTriangle, Download, Loader2, Phone, Mail } from 'lucide-react';
-import { parseCustomerCSV, type CSVParseResult, type CustomerCSVRow } from '@/lib/utils/csv-parser';
+import { parseClientCSV, type CSVParseResult, type ClientCSVRow } from '@/lib/utils/csv-parser';
 
 interface Props {
   open: boolean;
@@ -16,10 +16,10 @@ interface Props {
   onSuccess?: () => void;
 }
 
-export default function BulkCustomerImport({ open, onOpenChange, onSuccess }: Props) {
-  const t = useTranslations('bulkCustomerImport');
+export default function BulkClientImport({ open, onOpenChange, onSuccess }: Props) {
+  const t = useTranslations('bulkClientImport');
   const [file, setFile] = useState<File | null>(null);
-  const [parseResult, setParseResult] = useState<CSVParseResult<CustomerCSVRow> | null>(null);
+  const [parseResult, setParseResult] = useState<CSVParseResult<ClientCSVRow> | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadResult, setUploadResult] = useState<any>(null);
   const [step, setStep] = useState<'upload' | 'preview' | 'result'>('upload');
@@ -32,7 +32,7 @@ export default function BulkCustomerImport({ open, onOpenChange, onSuccess }: Pr
     
     try {
       const text = await selectedFile.text();
-      const result = parseCustomerCSV(text);
+      const result = parseClientCSV(text);
       setParseResult(result);
       
       if (result.errors.length === 0 && result.data.length > 0) {
@@ -48,10 +48,10 @@ export default function BulkCustomerImport({ open, onOpenChange, onSuccess }: Pr
 
     setUploading(true);
     try {
-      const response = await fetch('/api/sales/customers/import', {
+      const response = await fetch('/api/sales/clients/import', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ customers: parseResult.data }),
+        body: JSON.stringify({ clients: parseResult.data }),
       });
 
       if (!response.ok) {
@@ -84,12 +84,12 @@ export default function BulkCustomerImport({ open, onOpenChange, onSuccess }: Pr
   };
 
   const downloadTemplate = () => {
-    const csv = 'email,name,phone\ncustomer1@example.com,สมชาย ใจดี,0812345678\ncustomer2@example.com,สมหญิง สวยงาม,0898765432\n';
+    const csv = 'email,name,phone\nclient1@example.com,สมชาย ใจดี,0812345678\nclient2@example.com,สมหญิง สวยงาม,0898765432\n';
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'customers-template.csv';
+    a.download = 'clients-template.csv';
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -133,10 +133,10 @@ export default function BulkCustomerImport({ open, onOpenChange, onSuccess }: Pr
                     accept=".csv"
                     onChange={handleFileChange}
                     className="hidden"
-                    id="csv-upload-customer"
+                    id="csv-upload-client"
                   />
                   <Button asChild>
-                    <label htmlFor="csv-upload-customer" className="cursor-pointer">
+                    <label htmlFor="csv-upload-client" className="cursor-pointer">
                       {t('upload.choose')}
                     </label>
                   </Button>
@@ -195,7 +195,7 @@ export default function BulkCustomerImport({ open, onOpenChange, onSuccess }: Pr
                           )}
                         </div>
                       </div>
-                      <Badge variant="outline">{t('preview.customer') || 'Customer'}</Badge>
+                      <Badge variant="outline">{t('preview.client') || 'Client'}</Badge>
                     </div>
                   ))}
                   {parseResult.data.length > 10 && (

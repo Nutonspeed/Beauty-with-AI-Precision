@@ -40,7 +40,7 @@ import { IntelligenceCommandPalette } from '@/components/analytics/intelligence-
 
 interface SystemStats {
   totalUsers: number
-  activeClinics: number
+  activeCenters: number
   totalAnalyses: number
   totalRevenue: number
   totalBookings: number
@@ -48,7 +48,7 @@ interface SystemStats {
   averageOrderValue: number
 }
 
-interface ClinicPerformance {
+interface CenterPerformance {
   id: string
   name: string
   revenue: number
@@ -58,7 +58,7 @@ interface ClinicPerformance {
 
 interface AdminDashboardData {
   systemStats: SystemStats
-  topClinics: ClinicPerformance[]
+  topCenters: CenterPerformance[]
 }
 
 export default function AdminDashboard() {
@@ -120,7 +120,7 @@ export default function AdminDashboard() {
       const controller = new AbortController()
       const timeoutId = setTimeout(() => controller.abort(), 10000)
 
-      const response = await fetch('/api/admin/clinics/performance?period=30d', {
+      const response = await fetch('/api/admin/centers/performance?period=30d', {
         headers: { Authorization: `Bearer ${accessToken}` },
         cache: 'no-store',
         signal: controller.signal,
@@ -151,7 +151,7 @@ export default function AdminDashboard() {
 
   const quickActions = [
     { label: 'User Management', href: lp('/admin/users'), icon: Users, color: 'bg-blue-500' },
-    { label: 'Clinic Management', href: lp('/admin/clinics'), icon: Database, color: 'bg-purple-500' },
+    { label: 'Center Management', href: lp('/admin/centers'), icon: Database, color: 'bg-purple-500' },
     { label: 'Analytics', href: lp('/admin/analytics'), icon: BarChart3, color: 'bg-green-500' },
     { label: 'System Settings', href: lp('/admin/settings'), icon: Settings, color: 'bg-orange-500' },
   ]
@@ -219,7 +219,7 @@ export default function AdminDashboard() {
               <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 bg-clip-text text-transparent not-italic">Infrastructure</span>
             </h1>
             <p className="text-xl text-slate-500 font-light tracking-widest max-w-2xl italic leading-relaxed">
-              Command global system parameters and monitor clinical ecosystem health with precision metrics.
+              Command global system parameters and monitor center ecosystem health with precision metrics.
             </p>
           </motion.div>
 
@@ -227,7 +227,7 @@ export default function AdminDashboard() {
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {[
               { label: 'Total User Registry', val: data.systemStats.totalUsers.toLocaleString(), sub: 'Active Entities', icon: Users, color: 'text-blue-600', bg: 'bg-blue-50' },
-              { label: 'Clinical Nodes', val: data.systemStats.activeClinics.toString(), sub: 'Operational Units', icon: Building, color: 'text-indigo-600', bg: 'bg-indigo-50' },
+              { label: 'Center Nodes', val: data.systemStats.activeCenters.toString(), sub: 'Operational Units', icon: Building, color: 'text-indigo-600', bg: 'bg-indigo-50' },
               { label: 'Global Revenue', val: formatCurrency(data.systemStats.totalRevenue), sub: `${data.systemStats.growthRate >= 0 ? '+' : ''}${data.systemStats.growthRate}% MTD`, icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50' },
               { label: 'System Cycles', val: data.systemStats.totalBookings.toLocaleString(), sub: `Avg ${formatCurrency(data.systemStats.averageOrderValue)}`, icon: TrendingUp, color: 'text-cyan-600', bg: 'bg-cyan-50' }
             ].map((stat, i) => (
@@ -344,25 +344,25 @@ export default function AdminDashboard() {
                       </div>
                       Top Performing Nodes
                     </CardTitle>
-                    <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 italic">Live clinical efficiency synchronization</CardDescription>
+                    <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 italic">Live aesthetic efficiency synchronization</CardDescription>
                   </div>
                 </CardHeader>
                 <CardContent className="p-10 lg:p-12 bg-slate-50/30">
-                  {data.topClinics.length === 0 ? (
+                  {data.topCenters.length === 0 ? (
                     <div className="py-32 text-center space-y-6 bg-white/40 rounded-[2.5rem] border border-slate-200 border-dashed italic shadow-inner">
                       <div className="mx-auto h-20 w-20 rounded-3xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-200 animate-pulse shadow-sm">
                         <Database className="h-10 w-10" />
                       </div>
                       <div className="space-y-2">
                         <p className="text-xl font-bold text-slate-400 uppercase tracking-tighter">No Registry Data</p>
-                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-300">Awaiting clinical node synchronization</p>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-300">Awaiting center node synchronization</p>
                       </div>
                     </div>
                   ) : (
                     <div className="space-y-6">
-                      {data.topClinics.map((clinic, index) => (
+                      {data.topCenters.map((center, index) => (
                         <motion.div
-                          key={clinic.id}
+                          key={center.id}
                           initial={{ opacity: 0, x: -20 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: index * 0.1 }}
@@ -374,15 +374,15 @@ export default function AdminDashboard() {
                               <span className="text-2xl font-black italic text-slate-300 group-hover:text-blue-600">0{index + 1}</span>
                             </div>
                             <div className="space-y-2">
-                              <p className="text-2xl font-bold text-slate-900 tracking-tight italic group-hover:text-blue-600 transition-colors uppercase">{clinic.name}</p>
+                              <p className="text-2xl font-bold text-slate-900 tracking-tight italic group-hover:text-blue-600 transition-colors uppercase">{center.name}</p>
                               <Badge variant="outline" className="bg-slate-50 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 border-slate-100 group-hover/item:text-blue-400 transition-colors italic px-4 py-1 rounded-lg">
-                                CYCLES: {clinic.bookings}
+                                CYCLES: {center.bookings}
                               </Badge>
                             </div>
                           </div>
                           <div className="text-right space-y-2">
-                            <p className="text-3xl font-black text-slate-900 tracking-tighter italic group-hover:text-blue-600 transition-colors">{formatCurrency(clinic.revenue)}</p>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 italic">Avg Node Yield: {formatCurrency(clinic.averageOrderValue)}</p>
+                            <p className="text-3xl font-black text-slate-900 tracking-tighter italic group-hover:text-blue-600 transition-colors">{formatCurrency(center.revenue)}</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 italic">Avg Node Yield: {formatCurrency(center.averageOrderValue)}</p>
                           </div>
                         </motion.div>
                       ))}

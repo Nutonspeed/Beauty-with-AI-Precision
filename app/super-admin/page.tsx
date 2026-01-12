@@ -40,6 +40,16 @@ interface Invitation {
   invited_by: string
   centers?: { name: string }
   inviter?: { full_name: string; email: string }
+  neural_health: string;
+  synaptic_intelligence: string;
+  autonomous_ops: string;
+  security_orchestration: string;
+  strategic_growth: string;
+  center_registry: string;
+  operational_units: string;
+  global_yield: string;
+  system_cycles: string;
+  node_synchronization: string;
 }
 
 function SuperAdminDashboardContent() {

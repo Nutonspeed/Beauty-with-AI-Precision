@@ -149,15 +149,15 @@ export default async function CustomerDashboardPage() {
                   </Card>
                 </Link>
 
-                <Link href="/treatment-plans">
+                <Link href="/program-plans">
                   <Card className="cursor-pointer border-2 border-transparent transition-all hover:border-primary/50 hover:shadow-md">
                     <CardContent className="flex flex-col items-center gap-3 p-6 text-center">
                       <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-500/10">
                         <FileText className="h-6 w-6 text-green-500" />
                       </div>
                       <div>
-                        <p className="font-semibold">Treatment Plans</p>
-                        <p className="text-xs text-muted-foreground">แผนการรักษา</p>
+                        <p className="font-semibold">Program Plans</p>
+                        <p className="text-xs text-muted-foreground">แผนโปรแกรมการดูแล</p>
                       </div>
                     </CardContent>
                   </Card>

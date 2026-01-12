@@ -51,7 +51,7 @@ export default function ErrorDashboardPage() {
                 <span className="bg-gradient-to-r from-rose-500 via-purple-500 to-orange-500 bg-clip-text text-transparent not-italic">Diagnostic</span>
               </h1>
               <p className="text-xl text-slate-500 font-light tracking-widest max-w-2xl italic leading-relaxed">
-                Monitor real-time system anomalies and track delta exceptions across clinical nodes.
+                Monitor real-time system anomalies and track delta exceptions across aesthetic nodes.
               </p>
             </motion.div>
           </div>

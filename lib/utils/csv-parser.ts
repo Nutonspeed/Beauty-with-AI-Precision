@@ -11,7 +11,7 @@ export interface TeamMemberCSVRow {
   role: 'sales_staff' | 'center_staff' | 'center_manager';
 }
 
-export interface CustomerCSVRow {
+export interface ClientCSVRow {
   email: string;
   name: string;
   phone?: string;
@@ -115,10 +115,10 @@ export function parseTeamMemberCSV(csvText: string): CSVParseResult<TeamMemberCS
   };
 }
 
-export function parseCustomerCSV(csvText: string): CSVParseResult<CustomerCSVRow> {
+export function parseClientCSV(csvText: string): CSVParseResult<ClientCSVRow> {
   const rows = parseCSV(csvText);
   const errors: Array<{ row: number; field: string; message: string }> = [];
-  const data: CustomerCSVRow[] = [];
+  const data: ClientCSVRow[] = [];
 
   if (rows.length === 0) {
     return { data: [], errors: [{ row: 0, field: 'file', message: 'CSV file is empty' }], totalRows: 0, validRows: 0 };
@@ -174,10 +174,10 @@ export function parseCustomerCSV(csvText: string): CSVParseResult<CustomerCSVRow
   };
 }
 
-export function generateCSVTemplate(type: 'team' | 'customer'): string {
+export function generateCSVTemplate(type: 'team' | 'client'): string {
   if (type === 'team') {
     return 'email,name,role\nexample@center.com,John Doe,sales_staff\n';
   } else {
-    return 'email,name,phone\ncustomer@example.com,Jane Smith,0812345678\n';
+    return 'email,name,phone\nclient@example.com,Jane Smith,0812345678\n';
   }
 }

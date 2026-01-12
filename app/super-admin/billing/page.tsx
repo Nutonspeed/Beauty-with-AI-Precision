@@ -40,7 +40,7 @@ import Link from 'next/link'
 
 interface Invoice {
   id: string
-  clinic_id: string
+  center_id: string
   invoice_number: string
   billing_period_start: string
   billing_period_end: string
@@ -52,7 +52,7 @@ interface Invoice {
   paid_at: string | null
   created_at: string
   isOverdue: boolean
-  clinics: {
+  centers: {
     id: string
     name: string
     slug: string
@@ -60,7 +60,7 @@ interface Invoice {
   }
 }
 
-interface ClinicOption {
+interface CenterOption {
   id: string
   name: string
 }
@@ -71,12 +71,12 @@ export default function BillingPage() {
   const { toast } = useToast()
 
   const [invoices, setInvoices] = useState<Invoice[]>([])
-  const [clinics, setClinics] = useState<ClinicOption[]>([])
+  const [centers, setCenters] = useState<CenterOption[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState<string>('all')
-  const [clinicFilter, setClinicFilter] = useState<string>('all')
+  const [centerFilter, setCenterFilter] = useState<string>('all')
   const [showCreateDialog, setShowCreateDialog] = useState(false)
-  const [selectedClinicForInvoice, setSelectedClinicForInvoice] = useState<string>('')
+  const [selectedCenterForInvoice, setSelectedCenterForInvoice] = useState<string>('')
   const [isCreating, setIsCreating] = useState(false)
   const [updatingInvoiceId, setUpdatingInvoiceId] = useState<string | null>(null)
 
@@ -98,12 +98,12 @@ export default function BillingPage() {
           setInvoices(data.invoices || [])
         }
 
-        // Load clinics
-        const clinicsResponse = await fetch('/api/tenant')
-        if (clinicsResponse.ok) {
-          const data = await clinicsResponse.json()
-          setClinics(
-            data.tenants?.map((t: any) => ({ id: t.id, name: t.settings.clinicName })) || []
+        // Load centers
+        const centersResponse = await fetch('/api/tenant')
+        if (centersResponse.ok) {
+          const data = await centersResponse.json()
+          setCenters(
+            data.tenants?.map((t: any) => ({ id: t.id, name: t.settings.centerName })) || []
           )
         }
       } catch (error) {
@@ -124,10 +124,10 @@ export default function BillingPage() {
   }, [user, toast])
 
   const handleCreateInvoice = async () => {
-    if (!selectedClinicForInvoice) {
+    if (!selectedCenterForInvoice) {
       toast({
         title: '⚠️ Warning',
-        description: 'Please select a clinic',
+        description: 'Please select a center',
         variant: 'destructive',
       })
       return
@@ -139,7 +139,7 @@ export default function BillingPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          clinicId: selectedClinicForInvoice,
+          centerId: selectedCenterForInvoice,
         }),
       })
 
@@ -157,7 +157,7 @@ export default function BillingPage() {
         }
 
         setShowCreateDialog(false)
-        setSelectedClinicForInvoice('')
+        setSelectedCenterForInvoice('')
       } else {
         const error = await response.json()
         toast({
@@ -280,8 +280,8 @@ export default function BillingPage() {
   // Filter invoices
   const filteredInvoices = invoices.filter((invoice) => {
     const statusMatch = statusFilter === 'all' || invoice.status === statusFilter
-    const clinicMatch = clinicFilter === 'all' || invoice.clinic_id === clinicFilter
-    return statusMatch && clinicMatch
+    const centerMatch = centerFilter === 'all' || invoice.center_id === centerFilter
+    return statusMatch && centerMatch
   })
 
   const totalRevenue = invoices
@@ -443,15 +443,15 @@ export default function BillingPage() {
             </SelectContent>
           </Select>
 
-          <Select value={clinicFilter} onValueChange={setClinicFilter}>
+          <Select value={centerFilter} onValueChange={setCenterFilter}>
             <SelectTrigger className="w-[200px]">
-              <SelectValue placeholder="Filter by clinic" />
+              <SelectValue placeholder="Filter by center" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Clinics</SelectItem>
-              {clinics.map((clinic) => (
-                <SelectItem key={clinic.id} value={clinic.id}>
-                  {clinic.name}
+              <SelectItem value="all">All Centers</SelectItem>
+              {centers.map((center) => (
+                <SelectItem key={center.id} value={center.id}>
+                  {center.name}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -462,7 +462,7 @@ export default function BillingPage() {
         <div className="space-y-4">
           {filteredInvoices.map((invoice) => {
             const daysUntilDue = getDaysUntilDue(invoice.due_date)
-            const clinic = Array.isArray(invoice.clinics) ? invoice.clinics[0] : invoice.clinics
+            const center = Array.isArray(invoice.centers) ? invoice.centers[0] : invoice.centers
 
             return (
               <Card key={invoice.id}>
@@ -476,7 +476,7 @@ export default function BillingPage() {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-muted-foreground">
                         <div>
-                          <span className="font-medium">Clinic:</span> {clinic?.name}
+                          <span className="font-medium">Center:</span> {center?.name}
                         </div>
                         <div>
                           <span className="font-medium">Amount:</span> ฿
@@ -586,15 +586,15 @@ export default function BillingPage() {
           </DialogHeader>
 
           <div className="py-4">
-            <Label htmlFor="clinic">Select Clinic</Label>
-            <Select value={selectedClinicForInvoice} onValueChange={setSelectedClinicForInvoice}>
+            <Label htmlFor="center">Select Center</Label>
+            <Select value={selectedCenterForInvoice} onValueChange={setSelectedCenterForInvoice}>
               <SelectTrigger>
-                <SelectValue placeholder="Choose a clinic" />
+                <SelectValue placeholder="Choose a center" />
               </SelectTrigger>
               <SelectContent>
-                {clinics.map((clinic) => (
-                  <SelectItem key={clinic.id} value={clinic.id}>
-                    {clinic.name}
+                {centers.map((center) => (
+                  <SelectItem key={center.id} value={center.id}>
+                    {center.name}
                   </SelectItem>
                 ))}
               </SelectContent>

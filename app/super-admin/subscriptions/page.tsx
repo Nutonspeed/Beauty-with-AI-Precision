@@ -119,7 +119,7 @@ export default function SubscriptionsPage() {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          clinicId: editingSubscription.id,
+          centerId: editingSubscription.id,
           plan: editForm.plan,
           status: editForm.status,
           trialEndsAt: editForm.trialEndsAt || undefined,
@@ -231,7 +231,7 @@ export default function SubscriptionsPage() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-4xl font-bold mb-2">Subscription Management</h1>
-            <p className="text-muted-foreground">Manage clinic subscriptions and billing</p>
+            <p className="text-muted-foreground">Manage center subscriptions and billing</p>
           </div>
           <Link href="/super-admin">
             <Button variant="outline">← Back to Dashboard</Button>
@@ -250,7 +250,7 @@ export default function SubscriptionsPage() {
             <CardContent>
               <div className="text-2xl font-bold text-green-600">{activeCount}</div>
               <p className="text-xs text-muted-foreground">
-                {subscriptions.length} total clinics
+                {subscriptions.length} total centers
               </p>
             </CardContent>
           </Card>

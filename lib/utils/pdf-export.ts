@@ -8,12 +8,12 @@ import type { HybridSkinAnalysis } from '@/lib/types/skin-analysis';
 
 export interface PDFExportOptions {
   locale?: 'th' | 'en';
-  customerInfo?: {
+  clientInfo?: {
     name?: string;
     age?: number;
     gender?: string;
     skinType?: string;
-    customerId?: string;
+    clientId?: string;
   };
   centerInfo?: {
     name: string;
@@ -46,12 +46,12 @@ const TRANSLATIONS = {
   en: {
     title: 'Aesthetic Intelligence Analysis Report',
     reportDate: 'Report Date',
-    customerInfo: 'Customer Information',
+    customerInfo: 'Client Information',
     name: 'Name',
     age: 'Age',
     gender: 'Gender',
     skinType: 'Skin Type',
-    customerId: 'Customer ID',
+    customerId: 'Client ID',
     overallScore: 'Overall Skin Health Score',
     confidence: 'Analysis Confidence',
     concerns: 'Detected Skin Concerns',
@@ -178,9 +178,9 @@ export class PDFReportGenerator {
     this.currentY = 20;
     this.pageNumber = 1;
 
-    // Page 1: Header, Customer Info, Overall Score
+    // Page 1: Header, Client Info, Overall Score
     this.addHeader(options.centerInfo);
-    this.addCustomerInfo(options.customerInfo);
+    this.addClientInfo(options.clientInfo);
     this.addOverallScore(analysis);
     
     // Page 1-2: Detailed Analysis
@@ -268,8 +268,8 @@ export class PDFReportGenerator {
     this.currentY += 10;
   }
 
-  private addCustomerInfo(customerInfo?: PDFExportOptions['customerInfo']): void {
-    if (!customerInfo || Object.keys(customerInfo).length === 0) return;
+  private addClientInfo(clientInfo?: PDFExportOptions['clientInfo']): void {
+    if (!clientInfo || Object.keys(clientInfo).length === 0) return;
 
     this.pdf.setFontSize(12);
     this.pdf.setFont('helvetica', 'bold');
@@ -285,12 +285,12 @@ export class PDFReportGenerator {
       { label: this.t.age, key: 'age' },
       { label: this.t.gender, key: 'gender' },
       { label: this.t.skinType, key: 'skinType' },
-      { label: this.t.reportId, key: 'customerId' },
+      { label: this.t.reportId, key: 'clientId' },
     ];
 
     const startY = this.currentY;
     fields.forEach((field, index) => {
-      const value = customerInfo[field.key as keyof typeof customerInfo];
+      const value = clientInfo[field.key as keyof typeof clientInfo];
       if (value !== undefined) {
         const col = index % 2;
         const row = Math.floor(index / 2);

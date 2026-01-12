@@ -8,14 +8,14 @@ import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Upload, Download, ArrowLeft, Loader2, Database, ShieldCheck, Zap } from 'lucide-react';
-import BulkCustomerImport from '@/components/sales/bulk-customer-import';
+import BulkClientImport from '@/components/sales/bulk-client-import';
 import Link from 'next/link';
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 
-export default function CustomerImportPage() {
+export default function ClientImportPage() {
   const t = useTranslations();
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
@@ -33,12 +33,12 @@ export default function CustomerImportPage() {
   }, [user, authLoading, router, lp]);
 
   const downloadTemplate = () => {
-    const csv = `email,name,phone\ncustomer1@example.com,${t('socialProof.reviews.names.somsri')},0812345678\ncustomer2@example.com,${t('socialProof.reviews.names.wipa')},0898765432\n`;
+    const csv = `email,name,phone\nclient1@example.com,${t('socialProof.reviews.names.somsri')},0812345678\nclient2@example.com,${t('socialProof.reviews.names.wipa')},0898765432\n`;
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'customers-template.csv';
+    a.download = 'clients-template.csv';
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -213,7 +213,7 @@ export default function CustomerImportPage() {
       <Footer />
 
       {/* Bulk Import Sync Interface */}
-      <BulkCustomerImport 
+      <BulkClientImport 
         open={importOpen}
         onOpenChange={setImportOpen}
         onSuccess={() => {

@@ -22,8 +22,8 @@ import {
 import Link from 'next/link'
 
 interface UsageMetrics {
-  clinicId: string
-  clinicName: string
+  centerId: string
+  centerName: string
   activeUsers: number
   totalUsers: number
   storageUsedGB: number
@@ -56,8 +56,8 @@ export default function UsagePage() {
   useEffect(() => {
     async function loadUsage() {
       try {
-        const url = selectedClinic
-          ? `/api/admin/usage?clinicId=${selectedClinic}`
+        const url = selectedCenter
+          ? `/api/admin/usage?centerId=${selectedCenter}`
           : '/api/admin/usage'
         
         const response = await fetch(url)
@@ -140,7 +140,7 @@ export default function UsagePage() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-4xl font-bold mb-2">Usage Monitoring</h1>
-            <p className="text-muted-foreground">Track resource usage across all clinics</p>
+            <p className="text-muted-foreground">Track resource usage across all centers</p>
           </div>
           <Link href="/super-admin">
             <Button variant="outline">← Back to Dashboard</Button>
@@ -158,7 +158,7 @@ export default function UsagePage() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{totalActiveUsers}</div>
-              <p className="text-xs text-muted-foreground">Across all clinics</p>
+              <p className="text-xs text-muted-foreground">Across all centers</p>
             </CardContent>
           </Card>
 
@@ -212,24 +212,24 @@ export default function UsagePage() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-yellow-600">
-                {clinicsWithWarnings}
+                {centersWithWarnings}
               </div>
-              <p className="text-xs text-muted-foreground">Clinics over 80%</p>
+              <p className="text-xs text-muted-foreground">Centers over 80%</p>
             </CardContent>
           </Card>
         </div>
 
-        {/* Per-Clinic Usage */}
+        {/* Per-Center Usage */}
         <div className="space-y-4">
-          <h2 className="text-2xl font-bold">Clinic Usage Details</h2>
+          <h2 className="text-2xl font-bold">Center Usage Details</h2>
 
           {usage.map((metrics) => (
-            <Card key={metrics.clinicId}>
+            <Card key={metrics.centerId}>
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div>
                     <CardTitle className="flex items-center gap-2">
-                      {metrics.clinicName}
+                      {metrics.centerName}
                       {metrics.quotaWarnings.length > 0 && (
                         <Badge variant="outline" className="bg-yellow-500/10 text-yellow-600">
                           <AlertTriangle className="w-3 h-3 mr-1" />
@@ -239,7 +239,7 @@ export default function UsagePage() {
                       )}
                     </CardTitle>
                     <CardDescription>
-                      Clinic ID: {metrics.clinicId.substring(0, 8)}...
+                      Center ID: {metrics.centerId.substring(0, 8)}...
                     </CardDescription>
                   </div>
                 </div>

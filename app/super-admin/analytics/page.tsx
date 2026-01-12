@@ -42,7 +42,7 @@ interface AnalyticsData {
     paidInvoicesCount: number
     timeSeries: Array<{ month: string; total: number }>
   }
-  clinics: {
+  centers: {
     total: number
     active: number
     trial: number
@@ -62,7 +62,7 @@ interface AnalyticsData {
     newInPeriod: number
     roleDistribution: {
       super_admin: number
-      clinic_admin: number
+      center_admin: number
       staff: number
       customer: number
     }
@@ -75,9 +75,9 @@ interface AnalyticsData {
       customers: number
     }
     averages: {
-      bookingsPerClinic: number
-      analysesPerClinic: number
-      customersPerClinic: number
+      bookingsPerCenter: number
+      analysesPerCenter: number
+      customersPerCenter: number
     }
   }
   popularFeatures: Array<{ name: string; count: number }>
@@ -573,24 +573,24 @@ export default function AnalyticsPage() {
                 </div>
 
                 <div>
-                  <div className="text-sm font-medium mb-3">Average Per Clinic</div>
+                  <div className="text-sm font-medium mb-3">Average Per Center</div>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">Bookings</span>
                       <span className="text-lg font-semibold">
-                        {analytics.system.averages.bookingsPerClinic}
+                        {analytics.system.averages.bookingsPerCenter}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">AI Analyses</span>
                       <span className="text-lg font-semibold">
-                        {analytics.system.averages.analysesPerClinic}
+                        {analytics.system.averages.analysesPerCenter}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">Customers</span>
                       <span className="text-lg font-semibold">
-                        {analytics.system.averages.customersPerClinic}
+                        {analytics.system.averages.customersPerCenter}
                       </span>
                     </div>
                   </div>

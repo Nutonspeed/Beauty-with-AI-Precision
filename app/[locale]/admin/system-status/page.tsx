@@ -147,7 +147,7 @@ export default function SystemStatusPage() {
                 <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent not-italic">Health</span>
               </h1>
               <p className="text-xl text-slate-500 font-light tracking-widest max-w-2xl italic leading-relaxed">
-                Monitor real-time infrastructure nominals and authorize therapeutic node synchronization.
+                Monitor real-time infrastructure nominals and authorize aesthetic node synchronization.
               </p>
             </motion.div>
             
@@ -204,7 +204,7 @@ export default function SystemStatusPage() {
                          'System Error Detected'}
                       </h2>
                       <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">
-                        {operationalCount} of {totalServices} Clinical services operational
+                        {operationalCount} of {totalServices} Aesthetic services operational
                       </p>
                     </div>
                   </div>
