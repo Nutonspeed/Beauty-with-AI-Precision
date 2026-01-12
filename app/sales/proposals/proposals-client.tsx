@@ -32,7 +32,7 @@ import {
 } from "@/components/ui/dialog"
 import { toast } from "sonner"
 
-type Treatment = {
+type Program = {
   name: string
   price: number
   sessions: number
@@ -50,7 +50,7 @@ export type Proposal = {
   discount_amount: number
   sent_at: string | null
   valid_until: string | null
-  treatments: Treatment[]
+  programs: Program[]
   win_probability: number
   created_at: string
   metadata?: {
@@ -96,8 +96,8 @@ export function ProposalsClient({ initialProposals, initialStats }: ProposalsCli
   // Booking modal states (appointment creation)
   const [showBookingModal, setShowBookingModal] = useState(false)
   const [bookingProposalId, setBookingProposalId] = useState<string | null>(null)
-  const [clinicServices, setClinicServices] = useState<any[]>([])
-  const [clinicStaff, setClinicStaff] = useState<any[]>([])
+  const [centerServices, setCenterServices] = useState<any[]>([])
+  const [centerStaff, setCenterStaff] = useState<any[]>([])
   const [bookingDate, setBookingDate] = useState("")
   const [bookingTime, setBookingTime] = useState("")
   const [bookingServiceId, setBookingServiceId] = useState("")
@@ -122,30 +122,30 @@ export function ProposalsClient({ initialProposals, initialStats }: ProposalsCli
     fetchLeads()
   }, [])
 
-  // Fetch clinic services for booking dropdown
+  // Fetch center services for booking dropdown
   useEffect(() => {
-    const fetchClinicServices = async () => {
+    const fetchCenterServices = async () => {
       const supabase = createBrowserClient()
       const { data } = await supabase
         .from("clinic_services")
         .select("id, name")
         .order("name")
 
-      if (data) setClinicServices(data)
+      if (data) setCenterServices(data)
     }
-    fetchClinicServices()
+    fetchCenterServices()
   }, [])
 
   // If there are available services and none selected, preselect first one
   useEffect(() => {
-    if (!bookingServiceId && clinicServices.length > 0) {
-      setBookingServiceId(clinicServices[0].id)
+    if (!bookingServiceId && centerServices.length > 0) {
+      setBookingServiceId(centerServices[0].id)
     }
-  }, [bookingServiceId, clinicServices])
+  }, [bookingServiceId, centerServices])
 
   // Fetch staff members for optional assignment
   useEffect(() => {
-    const fetchClinicStaff = async () => {
+    const fetchCenterStaff = async () => {
       const supabase = createBrowserClient()
       const { data } = await supabase
         .from("staff_members")
@@ -153,9 +153,9 @@ export function ProposalsClient({ initialProposals, initialStats }: ProposalsCli
         .eq("status", "active")
         .order("full_name")
 
-      if (data) setClinicStaff(data)
+      if (data) setCenterStaff(data)
     }
-    fetchClinicStaff()
+    fetchCenterStaff()
   }, [])
 
   // Set up real-time subscription
@@ -330,8 +330,8 @@ export function ProposalsClient({ initialProposals, initialStats }: ProposalsCli
       const appointmentId = created?.id as string | undefined
       const paymentAmount = created?.payment_amount as number | undefined
 
-      // Best-effort: open PromptPay QR in new tab (clinic_id required)
-      const clinicIdFromResponse = created?.clinic_id as string | undefined
+      // Best-effort: open PromptPay QR in new tab (center_id required)
+      const centerIdFromResponse = created?.clinic_id as string | undefined
 
       const details = appointmentId
         ? `Appointment ID: ${appointmentId} (คลิกข้อความนี้เพื่อคัดลอก)`
@@ -340,18 +340,18 @@ export function ProposalsClient({ initialProposals, initialStats }: ProposalsCli
       toast.success(appointmentId ? `สร้างนัดหมายสำเร็จ! (#${appointmentId})` : "สร้างนัดหมายสำเร็จ!", {
         description: details,
         action: {
-          label: paymentAmount && clinicIdFromResponse ? "จ่าย PromptPay" : "ดูนัดหมาย",
+          label: paymentAmount && centerIdFromResponse ? "จ่าย PromptPay" : "ดูนัดหมาย",
           onClick: () => {
             const locale = pathname?.split("/")[1]
             const isLocale = !!locale && /^[a-z]{2}(-[A-Z]{2})?$/.test(locale)
 
-            if (paymentAmount && clinicIdFromResponse) {
-              const qrUrl = `/api/payments/promptpay/qr?clinic_id=${encodeURIComponent(clinicIdFromResponse)}&amount=${encodeURIComponent(String(paymentAmount))}`
+            if (paymentAmount && centerIdFromResponse) {
+              const qrUrl = `/api/payments/promptpay/qr?center_id=${encodeURIComponent(centerIdFromResponse)}&amount=${encodeURIComponent(String(paymentAmount))}`
               globalThis.open(qrUrl, "_blank")
               return
             }
 
-            const target = isLocale ? `/${locale}/clinic/appointments` : "/clinic/appointments"
+            const target = isLocale ? `/${locale}/center/appointments` : "/center/appointments"
             globalThis.open(target, "_blank")
           },
         },
@@ -535,8 +535,8 @@ export function ProposalsClient({ initialProposals, initialStats }: ProposalsCli
           ) : (
             filteredProposals.map((proposal) => {
               const leadName = proposal.sales_leads?.name || 'Unknown Lead'
-              const treatments = Array.isArray(proposal.treatments) 
-                ? proposal.treatments.map((t: any) => t.name || t)
+              const programs = Array.isArray(proposal.programs) 
+                ? proposal.programs.map((p: any) => t.name || t)
                 : []
               
               return (
@@ -569,14 +569,14 @@ export function ProposalsClient({ initialProposals, initialStats }: ProposalsCli
                         </div>
                       </div>
 
-                      {/* Treatments */}
-                      {treatments.length > 0 && (
+                      {/* Programs */}
+                      {programs.length > 0 && (
                         <div>
-                          <div className="text-sm text-muted-foreground mb-2">Treatments</div>
+                          <div className="text-sm text-muted-foreground mb-2">Programs</div>
                           <div className="flex flex-wrap gap-1">
-                            {treatments.map((treatment, idx) => (
+                            {programs.map((program, idx) => (
                               <Badge key={idx} variant="outline" className="text-xs">
-                                {treatment}
+                                {program}
                               </Badge>
                             ))}
                           </div>
@@ -594,7 +594,7 @@ export function ProposalsClient({ initialProposals, initialStats }: ProposalsCli
                               onClick={() => {
                                 const locale = pathname?.split("/")[1]
                                 const isLocale = !!locale && /^[a-z]{2}(-[A-Z]{2})?$/.test(locale)
-                                const base = isLocale ? `/${locale}/clinic/appointments` : "/clinic/appointments"
+                                const base = isLocale ? `/${locale}/center/appointments` : "/center/appointments"
                                 const appointmentId = proposal.metadata?.appointment_id
                                 if (appointmentId) {
                                   const url = `${base}?appointment_id=${encodeURIComponent(appointmentId)}`
@@ -729,7 +729,7 @@ export function ProposalsClient({ initialProposals, initialStats }: ProposalsCli
                 <SelectValue placeholder="เลือกบริการ" />
               </SelectTrigger>
               <SelectContent>
-                {clinicServices.map((s) => (
+                {centerServices.map((s) => (
                   <SelectItem key={s.id} value={s.id}>
                     {s.name}
                   </SelectItem>
@@ -745,7 +745,7 @@ export function ProposalsClient({ initialProposals, initialStats }: ProposalsCli
                 <SelectValue placeholder="ไม่ระบุพนักงาน" />
               </SelectTrigger>
               <SelectContent>
-                {clinicStaff.map((s) => (
+                {centerStaff.map((s) => (
                   <SelectItem key={s.user_id} value={s.user_id}>
                     {s.full_name || s.user_id}
                   </SelectItem>

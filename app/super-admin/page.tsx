@@ -32,13 +32,13 @@ interface Invitation {
   id: string
   email: string
   invited_role: string
-  clinic_id: string | null
+  center_id: string | null
   status: 'pending' | 'accepted' | 'expired' | 'revoked'
   created_at: string
   expires_at: string
   accepted_at: string | null
   invited_by: string
-  clinics?: { name: string }
+  centers?: { name: string }
   inviter?: { full_name: string; email: string }
 }
 
@@ -59,7 +59,7 @@ function SuperAdminDashboardContent() {
 
   // Form state
   const [formData, setFormData] = useState({
-    clinicName: '',
+    centerName: '',
     slug: '',
     email: '',
     phone: '',
@@ -235,7 +235,7 @@ function SuperAdminDashboardContent() {
     e.preventDefault()
 
     try {
-      // Step 1: Create tenant/clinic
+      // Step 1: Create tenant/center
       const response = await fetch('/api/tenant', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -252,28 +252,28 @@ function SuperAdminDashboardContent() {
       if (!response.ok) {
         const error = await response.json()
         toast({
-          title: '❌ Failed to Create Clinic',
-          description: error.error || 'Could not create the clinic. Please try again.',
+          title: '❌ Failed to Create Center',
+          description: error.error || 'Could not create the center. Please try again.',
           variant: 'destructive',
         })
         return
       }
 
       const tenantData = await response.json()
-      const clinicId = tenantData.tenant?.id
+      const centerId = tenantData.tenant?.id
 
-      // Step 2: Create invitation for clinic owner
-      if (clinicId && formData.email) {
+      // Step 2: Create invitation for center owner
+      if (centerId && formData.email) {
         try {
           const inviteResponse = await fetch('/api/invitations', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               email: formData.email,
-              invited_role: 'clinic_owner',
-              clinic_id: clinicId,
+              invited_role: 'center_owner',
+              center_id: centerId,
               metadata: {
-                clinic_name: formData.clinicName,
+                center_name: formData.centerName,
                 created_by: 'super_admin'
               }
             }),
@@ -282,23 +282,23 @@ function SuperAdminDashboardContent() {
           if (inviteResponse.ok) {
             await inviteResponse.json()
             toast({
-              title: '✅ Clinic Created Successfully',
+              title: '✅ Center Created Successfully',
               description: `Invitation email sent to ${formData.email}. Check the invitation link in the table below.`,
               variant: 'default',
             })
           } else {
             const inviteError = await inviteResponse.json()
             toast({
-              title: '⚠️ Clinic Created',
-              description: `Clinic created but failed to send invitation: ${inviteError.error}. Please create invitation manually.`,
+              title: '⚠️ Center Created',
+              description: `Center created but failed to send invitation: ${inviteError.error}. Please create invitation manually.`,
               variant: 'default',
             })
           }
         } catch (inviteError) {
           console.error('Failed to send invitation:', inviteError)
           toast({
-            title: '⚠️ Clinic Created',
-            description: 'Clinic created but failed to send invitation. Please create invitation manually.',
+            title: '⚠️ Center Created',
+            description: 'Center created but failed to send invitation. Please create invitation manually.',
             variant: 'default',
           })
         }
@@ -311,7 +311,7 @@ function SuperAdminDashboardContent() {
 
       // Reset form
       setFormData({
-        clinicName: '',
+        centerName: '',
         slug: '',
         email: '',
         phone: '',
@@ -373,7 +373,7 @@ function SuperAdminDashboardContent() {
               <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent not-italic">Dashboard</span>
             </h1>
             <p className="text-xl text-slate-500 font-light tracking-widest max-w-2xl italic leading-relaxed">
-              Command and monitor global clinical infrastructure and establish system-wide operational parameters.
+              Command and monitor global center infrastructure and establish system-wide operational parameters.
             </p>
           </motion.div>
 
@@ -381,7 +381,7 @@ function SuperAdminDashboardContent() {
             <div className="flex items-center justify-start overflow-x-auto pb-4 scrollbar-hide">
               <TabsList className="bg-white/[0.02] border border-white/5 p-1.5 rounded-2xl h-auto gap-2 flex-nowrap">
                 {[
-                  { value: 'overview', icon: Building2, label: 'Clinics' },
+                  { value: 'overview', icon: Building2, label: 'Centers' },
                   { value: 'health', icon: Activity, label: 'Health' },
                   { value: 'revenue', icon: TrendingUp, label: 'Revenue' },
                   { value: 'security', icon: Shield, label: 'Security' },
@@ -412,7 +412,7 @@ function SuperAdminDashboardContent() {
               >
                 {/* Clinics Tab */}
                 <TabsContent value="overview" className="mt-0 outline-none">
-                  <EnhancedClinicManagement />
+                  <EnhancedCenterManagement />
                 </TabsContent>
 
                 {/* Health Tab */}
@@ -447,7 +447,7 @@ function SuperAdminDashboardContent() {
                     <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5 flex flex-row items-center justify-between">
                       <div className="space-y-2">
                         <CardTitle className="text-3xl font-bold text-white tracking-tight italic">Invitation Management</CardTitle>
-                        <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Authorize global clinical access vectors</CardDescription>
+                        <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Authorize global center access vectors</CardDescription>
                       </div>
                       <Select value={invitationFilter} onValueChange={setInvitationFilter}>
                         <SelectTrigger className="w-[200px] h-14 rounded-2xl border-white/5 bg-white/[0.03] text-white focus:ring-pink-500/20 focus:border-pink-500/30 transition-all px-6 text-[10px] font-black uppercase tracking-widest italic">
@@ -498,10 +498,10 @@ function SuperAdminDashboardContent() {
                                       </div>
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pl-18">
-                                      {invitation.clinics && (
+                                      {invitation.centers && (
                                         <div className="space-y-1">
-                                          <p className="text-[8px] font-black uppercase tracking-widest text-slate-600">Clinic Node</p>
-                                          <p className="text-xs text-slate-400 italic font-bold">{invitation.clinics.name}</p>
+                                          <p className="text-[8px] font-black uppercase tracking-widest text-slate-600">Center Node</p>
+                                          <p className="text-xs text-slate-400 italic font-bold">{invitation.centers.name}</p>
                                         </div>
                                       )}
                                       <div className="space-y-1">

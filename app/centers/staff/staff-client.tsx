@@ -36,7 +36,7 @@ import { toast } from "sonner"
 export interface StaffMember {
   id: string
   user_id: string
-  clinic_id: string | null
+  center_id: string | null
   role: string
   specialty: string | null
   email: string
@@ -106,7 +106,7 @@ export function StaffClient({ initialStaff, initialStats }: StaffClientProps) {
     const supabase = createBrowserClient()
 
     const channel = supabase
-      .channel('clinic_staff_changes')
+      .channel('center_staff_changes')
       .on(
         'postgres_changes',
         {
@@ -141,7 +141,7 @@ export function StaffClient({ initialStaff, initialStats }: StaffClientProps) {
     if (!confirm('Are you sure you want to terminate this staff member?')) return
 
     try {
-      const response = await fetch(`/api/clinic/staff/${staffId}`, {
+      const response = await fetch(`/api/center/staff/${staffId}`, {
         method: 'DELETE'
       })
 
@@ -160,7 +160,7 @@ export function StaffClient({ initialStaff, initialStats }: StaffClientProps) {
 
   const handleUpdateStatus = async (staffId: string, newStatus: string) => {
     try {
-      const response = await fetch(`/api/clinic/staff/${staffId}/status`, {
+      const response = await fetch(`/api/center/staff/${staffId}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })

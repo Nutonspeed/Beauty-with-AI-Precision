@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/auth/context'
 import { Loader2 } from 'lucide-react'
 
-export default function ClinicPage() {
+export default function CenterPage() {
   const router = useRouter()
   const { user, loading } = useAuth()
 
@@ -17,15 +17,15 @@ export default function ClinicPage() {
       return
     }
 
-    // Redirect to clinic dashboard
-    router.push('/clinic/dashboard')
+    // Redirect to center dashboard
+    router.push('/center/dashboard')
   }, [user, loading, router])
 
   return (
     <div className="flex min-h-screen items-center justify-center">
       <div className="text-center space-y-4">
         <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
-        <p className="text-muted-foreground">กำลังเข้าสู่ Clinic Dashboard...</p>
+        <p className="text-muted-foreground">กำลังเข้าสู่ Center Dashboard...</p>
       </div>
     </div>
   )

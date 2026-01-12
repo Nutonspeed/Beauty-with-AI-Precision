@@ -27,7 +27,7 @@ export default async function AdminAnalyticsPage() {
     .eq('id', user.id)
     .single()
 
-  if (!profile || !['super_admin', 'clinic_admin'].includes(profile.role)) {
+  if (!profile || !['super_admin', 'center_admin'].includes(profile.role)) {
     redirect('/')
   }
 

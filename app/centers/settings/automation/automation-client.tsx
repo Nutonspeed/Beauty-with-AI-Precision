@@ -98,7 +98,7 @@ export default function AutomationSettingsClient({
     setSaveMessage("");
 
     try {
-      const response = await fetch("/api/clinic/settings/automation", {
+      const response = await fetch("/api/center/settings/automation", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(settings),
@@ -183,7 +183,7 @@ export default function AutomationSettingsClient({
               <Label>อีเมลที่ต้องการรับการแจ้งเตือน</Label>
               <Input
                 type="email"
-                placeholder="admin@clinic.com, manager@clinic.com"
+                placeholder="admin@center.com, manager@center.com"
                 defaultValue={settings.inventory_alert_emails.join(", ")}
                 onChange={(e) =>
                   updateSetting(
@@ -294,9 +294,9 @@ export default function AutomationSettingsClient({
                   {"}"}, {"{"}
                   {"{"}time{"}"}
                   {"}"}, {"{"}
-                  {"{"}treatment{"}"}
+                  {"{"}program{"}"}
                   {"}"}, {"{"}
-                  {"{"}clinic_phone{"}"}
+                  {"{"}center_phone{"}"}
                   {"}"}
                 </p>
               </div>
@@ -392,7 +392,7 @@ export default function AutomationSettingsClient({
                 {"}"}, {"{"}
                 {"{"}time{"}"}
                 {"}"}, {"{"}
-                {"{"}treatment{"}"}
+                {"{"}program{"}"}
                 {"}"}, {"{"}
                 {"{"}staff_name{"}"}
                 {"}"}
@@ -409,9 +409,9 @@ export default function AutomationSettingsClient({
             <Users className="w-5 h-5 text-purple-600" />
           </div>
           <div className="flex-1">
-            <h2 className="text-xl font-semibold">ติดตามผลหลัง Treatment</h2>
+            <h2 className="text-xl font-semibold">ติดตามผลหลัง Program</h2>
             <p className="text-sm text-muted-foreground">
-              ส่งข้อความถามความพึงพอใจหลังการรักษา
+              ส่งข้อความถามความพึงพอใจหลังการรับบริการ
             </p>
           </div>
           <Switch
@@ -425,7 +425,7 @@ export default function AutomationSettingsClient({
         {settings.follow_up_enabled && (
           <div className="space-y-4 pl-13">
             <div>
-              <Label>ส่งข้อความหลังการรักษา (วัน)</Label>
+              <Label>ส่งข้อความหลังการรับบริการ (วัน)</Label>
               <Input
                 type="number"
                 value={settings.follow_up_after_days}

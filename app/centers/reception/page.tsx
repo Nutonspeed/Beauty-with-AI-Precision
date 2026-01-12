@@ -1,52 +1,26 @@
-import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { requireRole } from "@/lib/supabase/auth";
+import { createServerClient } from "@/lib/supabase/server";
 import ReceptionClient from "./reception-client";
 import { format } from "date-fns";
-import { PageLayout } from "@/components/layouts/page-layout";
-
-async function requireReceptionRole() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect("/sign-in");
-  }
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .single();
-
-  if (
-    !profile ||
-    !["clinic_staff", "clinic_owner", "super_admin"].includes(profile.role)
-  ) {
-    redirect("/unauthorized");
-  }
-
-  return { user, profile };
-}
+import { Header } from "@/components/header";
+import { Footer } from "@/components/footer";
 
 async function getTodayBookings() {
-  const supabase = await createClient();
+  const supabase = await createServerClient();
   const today = format(new Date(), "yyyy-MM-dd");
 
   // ดึงการนัดหมายวันนี้ทั้งหมด
   const { data: bookings } = await supabase
-    .from("clinic_bookings")
+    .from("bookings")
     .select(
       `
       *,
-      customer:clinic_customers(id, name, phone, email, profile_image_url, date_of_birth),
-      staff:clinic_staff(id, name, role),
-      treatment:clinic_treatments(name, duration)
+      client:customers(id, name, phone, email, profile_image_url, date_of_birth),
+      staff:clinic_staff(id, name, role)
     `
     )
-    .eq("appointment_date", today)
-    .order("appointment_time", { ascending: true });
+    .eq("booking_date", today)
+    .order("booking_time", { ascending: true });
 
   // ดึงสถิติ
   const stats = {
@@ -69,12 +43,14 @@ async function getTodayBookings() {
 }
 
 export default async function ReceptionPage() {
-  await requireReceptionRole();
+  await requireRole(["center_staff", "center_owner", "center_admin", "super_admin"]);
   const data = await getTodayBookings();
 
   return (
-    <PageLayout>
+    <div className="flex min-h-screen flex-col bg-muted/30">
+      <Header />
       <ReceptionClient {...data} />
-    </PageLayout>
+      <Footer />
+    </div>
   );
 }

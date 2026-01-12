@@ -55,7 +55,7 @@ export default function ReceptionClient({
   const handleCheckIn = async (bookingId: string) => {
     setIsChecking(true);
     try {
-      const response = await fetch(`/api/clinic/bookings/${bookingId}/check-in`, {
+      const response = await fetch(`/api/center/bookings/${bookingId}/check-in`, {
         method: "POST",
       });
 
@@ -87,8 +87,8 @@ export default function ReceptionClient({
     if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
     return (
-      booking.customer?.name?.toLowerCase().includes(query) ||
-      booking.customer?.phone?.includes(query) ||
+      booking.client?.name?.toLowerCase().includes(query) ||
+      booking.client?.phone?.includes(query) ||
       booking.id.toLowerCase().includes(query)
     );
   });
@@ -119,11 +119,11 @@ export default function ReceptionClient({
   return (
     <div className="min-h-screen bg-muted/30">
       {/* Header - ลด gradient เหลือแค่ background solid */}
-      <div className="bg-teal-600 dark:bg-teal-700 text-white border-b-4 border-teal-700 dark:border-teal-800">
+      <div className="bg-indigo-600 dark:bg-indigo-700 text-white border-b-4 border-indigo-700 dark:border-indigo-800">
         <div className="container py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold mb-2">🏥 Reception Check-in</h1>
+              <h1 className="text-3xl font-bold mb-2">🏢 Reception Check-in</h1>
               <p className="text-white/90">
                 {format(new Date(), "EEEE, d MMMM yyyy", { locale: th })} •{" "}
                 {format(new Date(), "HH:mm")} น.
@@ -153,7 +153,7 @@ export default function ReceptionClient({
                   <div className="space-y-4 py-4">
                     <Input placeholder="ชื่อลูกค้า" />
                     <Input placeholder="เบอร์โทร" />
-                    <Input placeholder="การรักษา" />
+                    <Input placeholder="โปรแกรม/บริการ" />
                     <Button className="w-full">สร้างนัดใหม่</Button>
                   </div>
                 </DialogContent>
@@ -278,31 +278,31 @@ export default function ReceptionClient({
                         </Badge>
                       </div>
 
-                      {/* Customer Info */}
+                      {/* Client Info */}
                       <div className="flex items-center gap-3 mb-3">
                         <Avatar className="w-12 h-12">
                           <AvatarImage
-                            src={booking.customer?.profile_image_url}
+                            src={booking.client?.profile_image_url}
                           />
                           <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-500 text-white font-bold">
-                            {booking.customer?.name?.charAt(0) || "C"}
+                            {booking.client?.name?.charAt(0) || "C"}
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
                           <h3 className="font-semibold truncate">
-                            {booking.customer?.name || "ลูกค้า"}
+                            {booking.client?.name || "ลูกค้า"}
                           </h3>
                           <p className="text-sm text-muted-foreground flex items-center gap-1">
                             <Phone className="w-3 h-3" />
-                            {booking.customer?.phone}
+                            {booking.client?.phone}
                           </p>
                         </div>
                       </div>
 
-                      {/* Treatment */}
+                      {/* Program */}
                       <div className="bg-muted/50 rounded p-2 mb-3">
                         <p className="text-sm font-medium">
-                          {booking.treatment_type}
+                          {booking.program_type || booking.treatment_type}
                         </p>
                         <p className="text-xs text-muted-foreground">
                           ผู้ให้บริการ: {booking.staff?.name || "-"}
@@ -311,11 +311,11 @@ export default function ReceptionClient({
 
                       {/* Check-in Button */}
                       <Button
-                        className="w-full bg-teal-600 hover:bg-teal-700 dark:bg-teal-700 dark:hover:bg-teal-800"
+                        className="w-full bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-700 dark:hover:bg-indigo-800"
                         size="lg"
                         onClick={() => handleCheckIn(booking.id)}
                         disabled={isChecking}
-                        aria-label={`เช็คอินสำหรับ ${booking.customer?.name}`}
+                        aria-label={`เช็คอินสำหรับ ${booking.client?.name}`}
                       >
                         <UserCheck className="w-5 h-5 mr-2" aria-hidden="true" />
                         เช็คอิน
@@ -373,22 +373,22 @@ export default function ReceptionClient({
                         </div>
                       </div>
 
-                      {/* Customer Info */}
+                      {/* Client Info */}
                       <div className="flex items-center gap-3 mb-3">
                         <Avatar className="w-12 h-12">
                           <AvatarImage
-                            src={booking.customer?.profile_image_url}
+                            src={booking.client?.profile_image_url}
                           />
                           <AvatarFallback className="bg-gradient-to-br from-orange-500 to-red-500 text-white font-bold">
-                            {booking.customer?.name?.charAt(0) || "C"}
+                            {booking.client?.name?.charAt(0) || "C"}
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
                           <h3 className="font-semibold truncate">
-                            {booking.customer?.name || "ลูกค้า"}
+                            {booking.client?.name || "ลูกค้า"}
                           </h3>
                           <p className="text-sm text-muted-foreground">
-                            {booking.treatment_type}
+                            {booking.program_type || booking.treatment_type}
                           </p>
                         </div>
                       </div>
@@ -445,20 +445,20 @@ export default function ReceptionClient({
                         </Badge>
                       </div>
 
-                      {/* Customer & Staff */}
+                      {/* Client & Staff */}
                       <div className="space-y-2 mb-3">
                         <div className="flex items-center gap-2">
                           <Avatar className="w-10 h-10">
                             <AvatarImage
-                              src={booking.customer?.profile_image_url}
+                              src={booking.client?.profile_image_url}
                             />
                             <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-500 text-white">
-                              {booking.customer?.name?.charAt(0) || "C"}
+                              {booking.client?.name?.charAt(0) || "C"}
                             </AvatarFallback>
                           </Avatar>
                           <div>
                             <p className="font-semibold text-sm">
-                              {booking.customer?.name}
+                              {booking.client?.name}
                             </p>
                             <p className="text-xs text-muted-foreground">
                               ลูกค้า
@@ -481,10 +481,10 @@ export default function ReceptionClient({
                         </div>
                       </div>
 
-                      {/* Treatment */}
+                      {/* Program */}
                       <div className="bg-purple-50 dark:bg-purple-900/20 rounded p-2">
                         <p className="text-sm font-medium">
-                          {booking.treatment_type}
+                          {booking.program_type || booking.treatment_type}
                         </p>
                         <p className="text-xs text-muted-foreground">
                           ระยะเวลา: {booking.treatment?.duration || 60} นาที

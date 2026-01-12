@@ -17,7 +17,7 @@ interface HealthMetrics {
   };
   clients: number;
   byRole: Record<string, number>;
-  byClinic: Record<string, number>;
+  byCenter: Record<string, number>;
 }
 
 function formatBytes(bytes: number): string {
@@ -224,21 +224,21 @@ export default function WebSocketMetricsPage() {
         </CardContent>
       </Card>
 
-      {/* Clients by Clinic */}
+      {/* Clients by Center */}
       <Card>
         <CardHeader>
-          <CardTitle>Clients by Clinic</CardTitle>
-          <CardDescription>Distribution of connected users by clinic</CardDescription>
+          <CardTitle>Clients by Center</CardTitle>
+          <CardDescription>Distribution of connected users by center</CardDescription>
         </CardHeader>
         <CardContent>
-          {metrics && Object.keys(metrics.byClinic).length > 0 ? (
+          {metrics && Object.keys(metrics.byCenter).length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {Object.entries(metrics.byClinic)
+              {Object.entries(metrics.byCenter)
                 .sort((a, b) => b[1] - a[1])
-                .map(([clinic, count]) => (
-                  <div key={clinic} className="flex items-center justify-between p-3 border rounded-lg">
-                    <span className="font-medium truncate" title={clinic}>
-                      {clinic === 'default' ? 'No Clinic' : clinic}
+                .map(([center, count]) => (
+                  <div key={center} className="flex items-center justify-between p-3 border rounded-lg">
+                    <span className="font-medium truncate" title={center}>
+                      {center === 'default' ? 'No Center' : center}
                     </span>
                     <Badge variant="secondary">{count}</Badge>
                   </div>

@@ -10,7 +10,7 @@ const plans = [
     id: 'basic',
     name: 'Basic',
     highlight: false,
-    description: 'สำหรับคลินิกที่ต้องการเริ่มทดลองใช้ AR / AI กับทีมเซล 1 คน',
+    description: 'สำหรับศูนย์ที่ต้องการเริ่มทดลองใช้ AR / AI กับทีมเซล 1 คน',
     price: 'สอบถามแพ็กเกจ',
     badge: 'เริ่มต้น',
     maxSalesUsers: 1,
@@ -26,7 +26,7 @@ const plans = [
     id: 'pro',
     name: 'Pro',
     highlight: true,
-    description: 'สำหรับคลินิกที่มีทีมเซลหลายคน ต้องการดันยอดขายด้วย AR / AI แบบจริงจัง',
+    description: 'สำหรับศูนย์ที่มีทีมเซลหลายคน ต้องการดันยอดขายด้วย AR / AI แบบจริงจัง',
     price: 'แพ็กเกจแนะนำ',
     badge: 'ยอดนิยม',
     maxSalesUsers: 3,
@@ -43,7 +43,7 @@ const plans = [
     id: 'enterprise',
     name: 'Enterprise',
     highlight: false,
-    description: 'สำหรับเชนคลินิกหรือองค์กรขนาดใหญ่ ที่ต้องการเชื่อมต่อข้อมูลหลายสาขา',
+    description: 'สำหรับเชนศูนย์หรือองค์กรขนาดใหญ่ ที่ต้องการเชื่อมต่อข้อมูลหลายสาขา',
     price: 'Customized',
     badge: 'สำหรับองค์กร',
     maxSalesUsers: null,
@@ -58,7 +58,7 @@ const plans = [
   },
 ]
 
-export default function ClinicPlansPage() {
+export default function CenterPlansPage() {
   const [currentPlanId, setCurrentPlanId] = useState<'basic' | 'pro' | 'enterprise'>('basic')
   const [currentMaxSalesUsers, setCurrentMaxSalesUsers] = useState<number | null>(1)
 
@@ -67,7 +67,7 @@ export default function ClinicPlansPage() {
 
     const fetchPlan = async () => {
       try {
-        const res = await fetch('/api/clinic/plan', { headers: { Accept: 'application/json' } })
+        const res = await fetch('/api/center/plan', { headers: { Accept: 'application/json' } })
         if (!res.ok) return
         const data: { planId?: string; maxSalesUsers?: number } = await res.json()
         if (cancelled) return
@@ -94,10 +94,10 @@ export default function ClinicPlansPage() {
       <div className="max-w-5xl mx-auto space-y-8">
         <header className="space-y-2 text-center">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
-            แพ็กเกจการใช้งาน ClinicIQ
+            แพ็กเกจการใช้งาน CenterIQ
           </h1>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            เลือกแพ็กเกจที่เหมาะกับขนาดทีมเซลของคลินิกคุณ
+            เลือกแพ็กเกจที่เหมาะกับขนาดทีมเซลของศูนย์คุณ
             เพื่อใช้ AR / AI วิเคราะห์ผิวและปิดการขายจากที่บ้านได้มากขึ้น
           </p>
         </header>
@@ -105,7 +105,7 @@ export default function ClinicPlansPage() {
         <section className="bg-white/80 backdrop-blur rounded-2xl border border-blue-100 p-4 md:p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="space-y-1">
             <p className="text-xs uppercase tracking-wide text-blue-600 font-semibold">
-              แพ็กเกจปัจจุบันของคลินิกคุณ
+              แพ็กเกจปัจจุบันของศูนย์คุณ
             </p>
             <p className="text-lg md:text-xl font-bold text-gray-900">
               {plans.find((p) => p.id === currentPlanId)?.name ?? 'Basic'}
