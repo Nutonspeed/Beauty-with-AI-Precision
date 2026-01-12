@@ -38,12 +38,12 @@ interface ScanStepProps {
     right?: string
   }
   onUpdate: (images: ScanStepProps['images']) => void
-  customerName: string
+  clientName: string
 }
 
 type AngleType = 'front' | 'left' | 'right'
 
-export function ScanStep({ images, onUpdate, customerName }: ScanStepProps) {
+export function ScanStep({ images, onUpdate, clientName }: ScanStepProps) {
   const t = useTranslations()
   const [currentAngle, setCurrentAngle] = useState<AngleType>('front')
 
@@ -202,7 +202,7 @@ export function ScanStep({ images, onUpdate, customerName }: ScanStepProps) {
       <Alert className="bg-blue-50 dark:bg-blue-950/20 border-blue-200">
         <AlertCircle className="h-4 w-4 text-blue-600" />
         <AlertDescription className="text-sm text-blue-900 dark:text-blue-100">
-          {t('salesWizard.steps.scan.alertDesc', { name: customerName })}
+          {t('salesWizard.steps.scan.alertDesc', { name: clientName })}
         </AlertDescription>
       </Alert>
 
@@ -244,7 +244,7 @@ export function ScanStep({ images, onUpdate, customerName }: ScanStepProps) {
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-gradient-to-b from-slate-900/90 to-slate-950/90">
               <User className="h-20 w-20 text-slate-400" />
               <p className="text-slate-300 text-center px-4">
-                {t('salesWizard.steps.scan.positionFace', { name: customerName })}
+                {t('salesWizard.steps.scan.positionFace', { name: clientName })}
               </p>
               <Button
                 size="lg"

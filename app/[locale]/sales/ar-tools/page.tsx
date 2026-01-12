@@ -2,7 +2,7 @@
 
 /**
  * AR Tools Hub - AR/AI tools for Sales Team
- * Covers all aesthetic center branches
+ * Covers all aesthetic center nodes
  */
 
 import { Header } from "@/components/header";
@@ -44,7 +44,7 @@ export default function ARToolsPage() {
   const lp = useLocalizePath();
   const isThaiLocale = locale === 'th';
   const [selectedTool, setSelectedTool] = useState<string>('filler');
-  const [customerImage, setCustomerImage] = useState<string>('');
+  const [clientImage, setClientImage] = useState<string>('');
   const [showUpload, setShowUpload] = useState(true);
   const [intensity, setIntensity] = useState([50]);
   const [showBeforeAfter, setShowBeforeAfter] = useState(false);
@@ -92,7 +92,7 @@ export default function ARToolsPage() {
     if (file) {
       const reader = new FileReader();
       reader.onload = (event) => {
-        setCustomerImage(event.target?.result as string);
+        setClientImage(event.target?.result as string);
         setShowUpload(false);
       };
       reader.readAsDataURL(file);
@@ -233,11 +233,11 @@ export default function ARToolsPage() {
 
             {/* Rendering Engine Hub */}
             <div className="lg:col-span-8 space-y-10">
-              <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3.5rem] overflow-hidden shadow-2xl relative min-h-[600px] flex items-center justify-center group/render">
+              <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative min-h-[600px] flex items-center justify-center group/render">
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/20 to-transparent" />
                 
                 <AnimatePresence mode="wait">
-                  {!customerImage ? (
+                  {!clientImage ? (
                     <motion.div 
                       key="upload"
                       initial={{ opacity: 0, scale: 0.95 }}
@@ -269,7 +269,7 @@ export default function ARToolsPage() {
                     >
                       {selectedTool === 'filler' && (
                         <FillerLipSimulator 
-                          beforeImage={customerImage}
+                          beforeImage={clientImage}
                           onExport={handleExport}
                           onGenerateProposal={handleGenerateProposal}
                         />
@@ -277,7 +277,7 @@ export default function ARToolsPage() {
                       
                       {selectedTool === 'body' && (
                         <BodyContouringSimulator
-                          beforeImage={customerImage}
+                          beforeImage={clientImage}
                           onExport={handleExport}
                           onGenerateProposal={handleGenerateProposal}
                         />
@@ -285,7 +285,7 @@ export default function ARToolsPage() {
                       
                       {selectedTool === 'hair' && (
                         <HairRestorationSimulator
-                          beforeImage={customerImage}
+                          beforeImage={clientImage}
                           onExport={handleExport}
                           onGenerateProposal={handleGenerateProposal}
                         />
@@ -293,7 +293,7 @@ export default function ARToolsPage() {
                       
                       {selectedTool === 'eye' && (
                         <EyeEnhancementSimulator
-                          beforeImage={customerImage}
+                          beforeImage={clientImage}
                           onExport={handleExport}
                           onGenerateProposal={handleGenerateProposal}
                         />
@@ -328,14 +328,14 @@ export default function ARToolsPage() {
       {/* Mobile Bottom Action Bar */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-black/90 backdrop-blur-xl border-t border-white/10 p-3 z-50">
         <div className="flex items-center gap-3">
-          {customerImage ? (
+          {clientImage ? (
             <>
               <Button 
                 variant="outline" 
                 size="sm"
                 className="flex-1 border-white/20 text-white h-11"
                 onClick={() => {
-                  setCustomerImage('');
+                  setClientImage('');
                   setShowUpload(true);
                 }}
               >
@@ -345,7 +345,7 @@ export default function ARToolsPage() {
               <Button 
                 size="sm"
                 className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 h-11"
-                onClick={() => handleGenerateProposal({ tool: selectedTool, image: customerImage })}
+                onClick={() => handleGenerateProposal({ tool: selectedTool, image: clientImage })}
               >
                 <Sparkles className="w-4 h-4 mr-2" />
                 {t('salesArTools.proposal')}

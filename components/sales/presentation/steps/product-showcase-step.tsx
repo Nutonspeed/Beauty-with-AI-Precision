@@ -36,14 +36,14 @@ interface ProductShowcaseStepProps {
   readonly selectedProducts: string[]
   readonly recommendedProducts: string[]
   readonly onUpdate: (products: string[]) => void
-  readonly customerName: string
+  readonly clientName: string
 }
 
 export function ProductShowcaseStep({
   selectedProducts,
   recommendedProducts,
   onUpdate,
-  customerName,
+  clientName,
 }: ProductShowcaseStepProps) {
   const t = useTranslations()
   const manager = getProduct3DManager()
@@ -120,7 +120,7 @@ export function ProductShowcaseStep({
       <Alert className="bg-blue-50 dark:bg-blue-950/20 border-blue-200">
         <Package className="h-4 w-4 text-blue-600" />
         <AlertDescription className="text-sm text-blue-900 dark:text-blue-100">
-          {t('salesWizard.steps.products.instructions', { name: customerName })}
+          {t('salesWizard.steps.products.instructions', { name: clientName })}
         </AlertDescription>
       </Alert>
 
@@ -282,7 +282,7 @@ export function ProductShowcaseStep({
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-yellow-600" />
-            {t('salesWizard.steps.products.recommendedFor', { name: customerName })}
+            {t('salesWizard.steps.products.recommendedFor', { name: clientName })}
           </CardTitle>
           <CardDescription>
             {t('salesWizard.steps.products.basedOnAI')}

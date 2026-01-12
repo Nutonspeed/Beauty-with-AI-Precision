@@ -28,7 +28,7 @@ import { useLocale } from 'next-intl';
 
 interface Appointment {
   id: string;
-  customerName: string;
+  clientName: string;
   program: string;
   time: string;
   status: 'scheduled' | 'in-progress' | 'completed';
@@ -145,8 +145,8 @@ export default function BeauticianDashboard() {
           {/* Precision Stats Grid - Operational Nodes */}
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {[
-              { label: isThaiLocale ? 'นัดหมายวันนี้' : 'Temporal Cycles', val: todayAppointments.length, sub: isThaiLocale ? `${todayAppointments.filter(a => a.status === 'completed').length} เสร็จแล้ว` : `${todayAppointments.filter(a => a.status === 'completed').length} SYNCED`, icon: Calendar, color: 'text-blue-600', bg: 'bg-blue-50' },
-              { label: isThaiLocale ? 'ลูกค้าวันนี้' : 'Active Units', val: todayAppointments.length, sub: isThaiLocale ? `รอบริการ ${todayAppointments.filter(a => a.status !== 'completed').length} คน` : `${todayAppointments.filter(a => a.status !== 'completed').length} QUEUED`, icon: Users, color: 'text-indigo-600', bg: 'bg-indigo-50' },
+              { label: isThaiLocale ? 'นัดหมายวันนี้' : 'Temporal Cycles', val: todayAppointments.length, sub: isThaiLocale ? `${todayAppointments.filter(a => a.status === 'completed').length} เสร็จสิ้น` : `${todayAppointments.filter(a => a.status === 'completed').length} SYNCED`, icon: Calendar, color: 'text-blue-600', bg: 'bg-blue-50' },
+              { label: isThaiLocale ? 'ผู้รับบริการวันนี้' : 'Active Units', val: todayAppointments.length, sub: isThaiLocale ? `รอบริการ ${todayAppointments.filter(a => a.status !== 'completed').length} ท่าน` : `${todayAppointments.filter(a => a.status !== 'completed').length} QUEUED`, icon: Users, color: 'text-indigo-600', bg: 'bg-indigo-50' },
               { label: isThaiLocale ? 'เวลาทำงานวันนี้' : 'Operational Time', val: '6.5h', sub: isThaiLocale ? 'จาก 8 ชม. ที่วางแผนไว้' : 'TARGET: 8.0H', icon: Clock, color: 'text-cyan-600', bg: 'bg-cyan-50' },
               { label: isThaiLocale ? 'ประสิทธิภาพ' : 'System Yield', val: '94%', sub: isThaiLocale ? 'คะแนนความพึงพอใจ' : 'CLIENT SENTIMENT', icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-50' }
             ].map((stat, i) => (
@@ -225,7 +225,7 @@ export default function BeauticianDashboard() {
                                 <User className="h-8 w-8 text-slate-400 group-hover/item:text-blue-600 transition-colors" />
                               </div>
                               <div className="space-y-2">
-                                <p className="text-2xl font-bold text-slate-900 tracking-tight italic group-hover/item:text-blue-600 transition-colors">{appointment.customerName}</p>
+                                <p className="text-2xl font-bold text-slate-900 tracking-tight italic group-hover/item:text-blue-600 transition-colors">{appointment.clientName}</p>
                                 <Badge variant="outline" className="bg-slate-50 text-[10px] font-black uppercase tracking-[0.15em] text-slate-500 border-slate-200 group-hover/item:text-blue-600 group-hover/item:border-blue-100 transition-colors italic px-4 py-1 rounded-lg">
                                   PROTOCOL: {appointment.program}
                                 </Badge>
@@ -279,7 +279,7 @@ export default function BeauticianDashboard() {
                 <CardContent className="p-10 lg:p-12 space-y-6">
                   {[
                     { icon: Calendar, title: isThaiLocale ? 'ตารางนัดหมาย' : 'Temporal Grid', desc: isThaiLocale ? 'จัดการนัดหมายทั้งหมด' : 'Unified scheduling node orchestration', href: '/center/appointments', color: 'text-blue-600' },
-                    { icon: Users, title: isThaiLocale ? 'ลูกค้าของฉัน' : 'Client Registry', desc: isThaiLocale ? 'ดูประวัติและข้อมูลลูกค้า' : 'Customer historical telemetry archive', href: '/center/customers', color: 'text-indigo-600' },
+                    { icon: Users, title: isThaiLocale ? 'ทะเบียนผู้รับบริการ' : 'Client Registry', desc: isThaiLocale ? 'ดูประวัติและข้อมูลผู้รับบริการ' : 'Client historical telemetry archive', href: '/center/clients', color: 'text-indigo-600' },
                     { icon: TrendingUp, title: isThaiLocale ? 'รายงานประสิทธิภาพ' : 'System Intelligence', desc: isThaiLocale ? 'ดูสถิติและผลงาน' : 'Performance metrics visualization', href: '/center/revenue', color: 'text-emerald-600' }
                   ].map((action, i) => (
                     <motion.div key={i} whileHover={{ x: 10 }} transition={{ duration: 0.3 }}>
@@ -321,8 +321,8 @@ export default function BeauticianDashboard() {
                     {[
                       isThaiLocale ? 'บันทึกผลโปรแกรมความงามทุกครั้งเพื่อติดตามความก้าวหน้า' : 'Log aesthetic deltas for longitudinal tracking.',
                       isThaiLocale ? 'ถ่ายรูป Before/After เพื่อแสดงผลลัพธ์ที่ชัดเจน' : 'Capture visual transformation assets.',
-                      isThaiLocale ? 'แนะนำผลิตภัณฑ์บำรุงผิวที่เหมาะสมสำหรับลูกค้าแต่ละคน' : 'Synchronize dermal care recommendations.',
-                      isThaiLocale ? 'ทักทายลูกค้าด้วยความเป็นมิตรและให้ความสนใจ' : 'Maintain high-sentiment customer interface.'
+                      isThaiLocale ? 'แนะนำผลิตภัณฑ์บำรุงผิวที่เหมาะสมสำหรับผู้รับบริการแต่ละท่าน' : 'Synchronize dermal care recommendations.',
+                      isThaiLocale ? 'ทักทายผู้รับบริการด้วยความเป็นมิตรและให้ความสนใจ' : 'Maintain high-sentiment client interface.'
                     ].map((tip, i) => (
                       <div key={i} className="flex items-start gap-4 group/tip">
                         <div className="h-6 w-6 rounded-lg bg-blue-600/10 border border-blue-600/20 flex items-center justify-center shrink-0 group-hover/tip:bg-blue-600 transition-all">

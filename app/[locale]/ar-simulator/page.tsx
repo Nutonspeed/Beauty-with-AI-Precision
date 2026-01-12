@@ -50,7 +50,7 @@ export default function ARSimulatorPage() {
         </div>
 
         <div className="container relative z-10 py-20 md:py-32">
-          {/* Clinical Back Navigation */}
+          {/* Aesthetic Back Navigation */}
           <Link href={lp('/analysis')} className="inline-flex items-center gap-4 text-slate-500 hover:text-pink-400 transition-all mb-16 group">
             <div className="h-10 w-10 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-center group-hover:border-pink-500/30 group-hover:bg-pink-500/5 transition-all">
               <ArrowLeft className="h-5 w-5" />

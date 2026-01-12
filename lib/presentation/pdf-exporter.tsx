@@ -8,12 +8,12 @@ import type { HybridSkinAnalysis } from '@/lib/types/skin-analysis';
 
 export interface PresentationPDFOptions {
   locale?: 'th' | 'en';
-  customerInfo?: {
+  clientInfo?: {
     name?: string;
     age?: number;
     gender?: string;
     skinType?: string;
-    customerId?: string;
+    clientId?: string;
   };
   centerInfo: {
     name: string;
@@ -59,12 +59,12 @@ const TRANSLATIONS = {
     subtitle: 'Professional Aesthetic Analysis & Program Plan',
     date: 'Date',
     preparedFor: 'Prepared For',
-    customerInfo: 'Customer Information',
+    clientInfo: 'Client Information',
     name: 'Name',
     age: 'Age',
     gender: 'Gender',
     skinType: 'Skin Type',
-    customerId: 'Customer ID',
+    clientId: 'Client ID',
     analysisResults: 'Aesthetic Analysis Results',
     overallScore: 'Overall Skin Health Score',
     confidence: 'Analysis Confidence',
@@ -121,12 +121,12 @@ const TRANSLATIONS = {
     subtitle: 'การวิเคราะห์และวางแผนความงามระดับมืออาชีพ',
     date: 'วันที่',
     preparedFor: 'จัดทำสำหรับ',
-    customerInfo: 'ข้อมูลผู้รับบริการ',
+    clientInfo: 'ข้อมูลผู้รับบริการ',
     name: 'ชื่อ',
     age: 'อายุ',
     gender: 'เพศ',
     skinType: 'ประเภทผิว',
-    customerId: 'รหัสลูกค้า',
+    clientId: 'รหัสลูกค้า',
     analysisResults: 'ผลการวิเคราะห์ผิวอัจฉริยะ',
     overallScore: 'คะแนนสุขภาพผิวโดยรวม',
     confidence: 'ความเชื่อมั่นในการวิเคราะห์',
@@ -287,7 +287,7 @@ export class PresentationPDFExporter {
 
   private addCoverPage(
     analysis: HybridSkinAnalysis,
-    customerInfo: PresentationPDFOptions['customerInfo'],
+    clientInfo: PresentationPDFOptions['clientInfo'],
     centerInfo: PresentationPDFOptions['centerInfo']
   ) {
     const rgb = this.hexToRgb(this.brandColor);
@@ -319,7 +319,7 @@ export class PresentationPDFExporter {
     // Reset colors
     this.pdf.setTextColor(0, 0, 0);
 
-    // Customer info box
+    // Client info box
     const boxY = 95;
     this.drawBox(this.marginLeft, boxY, this.contentWidth, 50, { r: 250, g: 250, b: 250 });
 
@@ -331,19 +331,19 @@ export class PresentationPDFExporter {
     this.pdf.setFont('helvetica', 'normal');
     let infoY = boxY + 22;
 
-    if (customerInfo?.name) {
-      this.pdf.text(`${this.t.name}: ${customerInfo.name}`, this.marginLeft + 10, infoY);
+    if (clientInfo?.name) {
+      this.pdf.text(`${this.t.name}: ${clientInfo.name}`, this.marginLeft + 10, infoY);
       infoY += 7;
     }
 
-    if (customerInfo?.age) {
-      this.pdf.text(`${this.t.age}: ${customerInfo.age} ${this.t.years}`, this.marginLeft + 10, infoY);
+    if (clientInfo?.age) {
+      this.pdf.text(`${this.t.age}: ${clientInfo.age} ${this.t.years}`, this.marginLeft + 10, infoY);
       infoY += 7;
     }
 
-    if (customerInfo?.skinType) {
+    if (clientInfo?.skinType) {
       this.pdf.text(
-        `${this.t.skinType}: ${customerInfo.skinType}`,
+        `${this.t.skinType}: ${clientInfo.skinType}`,
         this.marginLeft + 10,
         infoY
       );
@@ -835,7 +835,7 @@ export class PresentationPDFExporter {
     this.totalPages += 1; // Contact page
 
     // Generate pages
-    this.addCoverPage(analysis, options.customerInfo, options.centerInfo);
+    this.addCoverPage(analysis, options.clientInfo, options.centerInfo);
     this.addAnalysisPage(analysis, options.centerInfo);
 
     if (options.programPackages && options.programPackages.length > 0) {

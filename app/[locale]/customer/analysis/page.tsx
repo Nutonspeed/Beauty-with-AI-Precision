@@ -13,8 +13,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useAuth } from '@/lib/auth/context'
+import { useTranslations } from 'next-intl'
 
 export default function SkinAnalysisPage() {
+  const t = useTranslations()
   const { user, loading: authLoading } = useAuth()
   const [isLoading, setIsLoading] = useState(true)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
@@ -24,7 +26,7 @@ export default function SkinAnalysisPage() {
   useEffect(() => {
     if (authLoading && !user) return
     
-    if (!user || (user.role !== 'customer' && user.role !== 'customer_free' && user.role !== 'customer_premium')) {
+    if (!user || (!user.role?.startsWith('customer') && user.role !== 'public')) {
       setIsLoading(false)
       return
     }
@@ -90,8 +92,8 @@ export default function SkinAnalysisPage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-8"
         >
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Skin Analysis</h1>
-          <p className="text-lg text-gray-600">AI-powered skin analysis for personalized recommendations</p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">{t('nav.analysis')}</h1>
+          <p className="text-lg text-gray-600">{t('analysis.description')}</p>
         </motion.div>
 
         {!analysisResults ? (
@@ -197,11 +199,11 @@ export default function SkinAnalysisPage() {
               <CardHeader className="text-center">
                 <div className="flex items-center justify-center space-x-2 mb-4">
                   <CheckCircle className="w-8 h-8 text-green-600" />
-                  <h2 className="text-2xl font-bold text-green-600">Analysis Complete!</h2>
+                  <h2 className="text-2xl font-bold text-green-600">{t('analysis.complete')}</h2>
                 </div>
                 <div className="text-center">
                   <div className="text-5xl font-bold text-primary mb-2">{analysisResults.skinScore}/100</div>
-                  <p className="text-gray-600">Your Skin Score</p>
+                  <p className="text-gray-600">{t('analysis.yourScore')}</p>
                 </div>
               </CardHeader>
             </Card>
@@ -209,7 +211,7 @@ export default function SkinAnalysisPage() {
             {/* Skin Conditions */}
             <Card>
               <CardHeader>
-                <CardTitle>Skin Conditions Detected</CardTitle>
+                <CardTitle>{t('analysis.conditionsDetected')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -217,7 +219,7 @@ export default function SkinAnalysisPage() {
                     <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                       <div>
                         <h4 className="font-semibold">{condition.name}</h4>
-                        <p className="text-sm text-gray-600">Confidence: {Math.round(condition.confidence * 100)}%</p>
+                        <p className="text-sm text-gray-600">{t('analysis.metrics.confidence')}: {Math.round(condition.confidence * 100)}%</p>
                       </div>
                       <Badge variant={condition.severity === 'mild' ? 'default' : condition.severity === 'moderate' ? 'secondary' : 'outline'}>
                         {condition.severity}
@@ -231,7 +233,7 @@ export default function SkinAnalysisPage() {
             {/* Recommendations */}
             <Card>
               <CardHeader>
-                <CardTitle>Personalized Recommendations</CardTitle>
+                <CardTitle>{t('analysis.personalizedRecommendations')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
@@ -248,7 +250,7 @@ export default function SkinAnalysisPage() {
             {/* Product Recommendations */}
             <Card>
               <CardHeader>
-                <CardTitle>Recommended Products</CardTitle>
+                <CardTitle>{t('analysis.recommendedProducts')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -269,13 +271,13 @@ export default function SkinAnalysisPage() {
             {/* Action Buttons */}
             <div className="flex space-x-4">
               <Button className="flex-1" size="lg">
-                Save Analysis
+                {t('common.save')} {t('nav.analysis')}
               </Button>
               <Button variant="outline" className="flex-1" size="lg" onClick={() => {
                 setAnalysisResults(null)
                 setImagePreview(null)
               }}>
-                New Analysis
+                {t('analysis.newAnalysis')}
               </Button>
             </div>
           </motion.div>

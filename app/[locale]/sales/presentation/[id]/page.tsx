@@ -185,7 +185,7 @@ export default function SalesPresentationPage() {
 
   const [analysis, setAnalysis] = useState<HybridSkinAnalysis | null>(null);
   const [comparisonAnalysis, setComparisonAnalysis] = useState<HybridSkinAnalysis | null>(null);
-  const [customerInfo, setCustomerInfo] = useState<any>(null);
+  const [clientInfo, setClientInfo] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -213,17 +213,17 @@ export default function SalesPresentationPage() {
       setAnalysis(normalizedAnalysis);
 
       // Get customer info
-      const customerInfoValue =
+      const clientInfoValue =
         isRecord(data.data) && 'customerInfo' in data.data
           ? (data.data as Record<string, unknown>).customerInfo ?? null
           : null;
 
-      const finalCustomerInfo = customerInfoValue || {
-        name: t('roles.customer'),
+      const finalClientInfo = clientInfoValue || {
+        name: t('roles.client'),
         skinType: normalizedAnalysis.ai.skinType || 'normal',
       };
 
-      setCustomerInfo(finalCustomerInfo);
+      setClientInfo(finalClientInfo);
 
       // Try to load previous analysis for comparison
       // This would require an API endpoint that returns user's analysis history
@@ -249,13 +249,13 @@ export default function SalesPresentationPage() {
         analysis,
         {
           locale: currentLocale as 'th' | 'en',
-          customerInfo: customerInfo
+          clientInfo: clientInfo
             ? {
-                name: customerInfo.name,
-                age: customerInfo.age,
-                gender: customerInfo.gender,
-                skinType: customerInfo.skinType || analysis.ai.skinType,
-                customerId: analysisId,
+                name: clientInfo.name,
+                age: clientInfo.age,
+                gender: clientInfo.gender,
+                skinType: clientInfo.skinType || analysis.ai.skinType,
+                clientId: analysisId,
               }
             : undefined,
           centerInfo: {
@@ -326,7 +326,7 @@ export default function SalesPresentationPage() {
       <PresentationMode
         analysis={analysis}
         comparisonAnalysis={comparisonAnalysis || undefined}
-        customerInfo={customerInfo}
+        clientInfo={clientInfo}
         centerInfo={{
           name: t('common.center.name'),
           logo: '/logo.png',

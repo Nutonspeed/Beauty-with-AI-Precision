@@ -486,10 +486,10 @@ export default function LeadDetailPage() {
 
               {/* AI Sales Advisor Node - ENTERPRISE VALUE */}
               <div className="space-y-10">
-                <AestheticSentiment customerName={lead.name} />
+                <AestheticSentiment clientName={lead.name} />
                 
                 <NeuralNarrativeSynthesis 
-                  customerData={{
+                  clientData={{
                     name: lead.name,
                     concerns: lead.interested_programs || [],
                     score: lead.score
@@ -502,7 +502,7 @@ export default function LeadDetailPage() {
                     <div className="space-y-2">
                       <CardTitle className="text-xs font-black uppercase tracking-[0.3em] text-pink-400 flex items-center gap-3">
                         <Brain className="w-4 h-4 animate-pulse" />
-                        AI Strategic Sales Advisor
+                        AI Strategic Aesthetic Advisor
                       </CardTitle>
                       <CardDescription className="text-slate-500 font-light italic">Predictive communication patterns and personalized conversion scripts.</CardDescription>
                     </div>
@@ -578,7 +578,7 @@ export default function LeadDetailPage() {
                     <div className="pt-6 border-t border-white/5">
                       <Button variant="outline" className="w-full h-14 rounded-2xl border-white/10 bg-white/5 text-[10px] font-black uppercase tracking-[0.3em] hover:bg-white/10">
                         <Sparkles className="mr-3 h-4 w-4 text-pink-500" />
-                        Regenerate AI Sales Narrative
+                        Regenerate AI Aesthetic Narrative
                       </Button>
                     </div>
                   </CardContent>

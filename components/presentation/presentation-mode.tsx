@@ -34,7 +34,7 @@ import Image from 'next/image';
 interface PresentationModeProps {
   analysis: HybridSkinAnalysis;
   comparisonAnalysis?: HybridSkinAnalysis;
-  customerInfo?: {
+  clientInfo?: {
     name?: string;
     age?: number;
     gender?: string;
@@ -117,7 +117,7 @@ const PROGRAM_PACKAGES = [
 export function PresentationMode({
   analysis,
   comparisonAnalysis,
-  customerInfo,
+  clientInfo,
   centerInfo,
   locale = 'en',
   onExport,
@@ -259,33 +259,33 @@ export function PresentationMode({
         </div>
       </div>
 
-      {/* Customer Info Bar */}
-      {customerInfo && (
+      {/* Client Info Bar */}
+      {clientInfo && (
         <div
           className={`border-b ${
             isFullscreen ? 'px-8 py-3' : 'px-4 py-2'
           } bg-muted/30 flex items-center gap-6 text-sm`}
         >
-          {customerInfo.name && (
+          {clientInfo.name && (
             <div>
               <span className="text-muted-foreground">{t('common.name')}:</span>{' '}
-              <span className="font-medium">{customerInfo.name}</span>
+              <span className="font-medium">{clientInfo.name}</span>
             </div>
           )}
-          {customerInfo.age && (
+          {clientInfo.age && (
             <div>
               <span className="text-muted-foreground">{t('customer.age')}:</span>{' '}
               <span className="font-medium">
-                {customerInfo.age} {t('common.years')}
+                {clientInfo.age} {t('common.years')}
               </span>
             </div>
           )}
-          {customerInfo.skinType && (
+          {clientInfo.skinType && (
             <div>
               <span className="text-muted-foreground">
                 {t('customer.skinType.label')}:
               </span>{' '}
-              <span className="font-medium capitalize">{customerInfo.skinType}</span>
+              <span className="font-medium capitalize">{clientInfo.skinType}</span>
             </div>
           )}
           <div className="ml-auto text-muted-foreground">

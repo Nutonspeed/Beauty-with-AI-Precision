@@ -40,7 +40,7 @@ interface AnalysisStepProps {
   }
   readonly analysisResults: HybridAnalysisResult | null
   readonly onAnalysisComplete: (results: HybridAnalysisResult) => void
-  readonly customerName: string
+  readonly clientName: string
   readonly isOnline: boolean
 }
 
@@ -70,7 +70,7 @@ export function AnalysisStep({
   images,
   analysisResults,
   onAnalysisComplete,
-  customerName,
+  clientName,
   isOnline,
 }: AnalysisStepProps) {
   const t = useTranslations()
@@ -133,7 +133,7 @@ export function AnalysisStep({
                 <Sparkles className="h-6 w-6 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-yellow-500" />
               </div>
               <div className="text-center space-y-2">
-                <h3 className="text-lg font-semibold">{t('salesWizard.steps.analysis.analyzingTitle', { name: customerName })}</h3>
+                <h3 className="text-lg font-semibold">{t('salesWizard.steps.analysis.analyzingTitle', { name: clientName })}</h3>
                 <p className="text-sm text-muted-foreground">
                   {t('salesWizard.steps.analysis.analyzingDesc')}
                 </p>
@@ -174,7 +174,7 @@ export function AnalysisStep({
         <Alert className="bg-blue-50 dark:bg-blue-950/20 border-blue-200">
           <AlertCircle className="h-4 w-4 text-blue-600" />
           <AlertDescription className="text-sm text-blue-900 dark:text-blue-100">
-            {t('salesWizard.steps.analysis.readyAlert', { name: customerName })}
+            {t('salesWizard.steps.analysis.readyAlert', { name: clientName })}
           </AlertDescription>
         </Alert>
         <Button onClick={startAnalysis} className="w-full gap-2" size="lg">
@@ -190,7 +190,7 @@ export function AnalysisStep({
 
   // Calculate skin age (simplified)
   const skinAge = Math.round(overallScore * 0.5 + 20)
-  // Estimate actual age from skin condition (35 as baseline for beauty center customers)
+  // Estimate actual age from skin condition (35 as baseline for beauty center clients)
   let estimatedAge = 38
   if (overallScore > 70) {
     estimatedAge = 35
@@ -316,7 +316,7 @@ export function AnalysisStep({
             {t('salesWizard.steps.analysis.recommendationsTitle')}
           </CardTitle>
           <CardDescription>
-            {t('salesWizard.steps.analysis.recommendationsDesc', { name: customerName })}
+            {t('salesWizard.steps.analysis.recommendationsDesc', { name: clientName })}
           </CardDescription>
         </CardHeader>
         <CardContent>

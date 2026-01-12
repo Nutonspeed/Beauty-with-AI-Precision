@@ -157,7 +157,7 @@ export default function Vision2026Page() {
                     { 
                       tier: t('vision2026.tierValue.standard'), 
                       price: 'Starter', 
-                      features: ['Basic AI Scanning', 'Customer Registry', 'Simple Analytics'],
+                      features: ['Basic AI Scanning', 'Client Registry', 'Simple Analytics'],
                       color: 'border-slate-800 bg-slate-900/20'
                     },
                     { 

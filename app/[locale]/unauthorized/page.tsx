@@ -91,7 +91,7 @@ export default function UnauthorizedPage() {
             </Button>
           </div>
 
-          {user && (user.role === "customer" || user.tier === "free") && (
+          {user && (user.role?.startsWith("customer") || user.tier === "free") && (
             <Button
               asChild
               variant="default"

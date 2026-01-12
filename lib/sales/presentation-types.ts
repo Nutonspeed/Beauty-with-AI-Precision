@@ -22,7 +22,7 @@ export interface ProposalDetails {
 
 export interface PresentationData {
   sessionId: string
-  customer: {
+  client: {
     id: string
     name: string
     phone: string

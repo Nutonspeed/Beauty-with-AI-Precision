@@ -215,7 +215,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* Core Values - Luxury Clinical Cards */}
+        {/* Core Values - Luxury Aesthetic Cards */}
         <section className="py-32 lg:py-48 border-y border-white/5 bg-white/[0.01]">
           <div className="container relative z-10">
             <div className="mx-auto mb-24 max-w-2xl text-center space-y-6">
@@ -256,7 +256,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* Technology Stack - Clinical Infrastructure */}
+        {/* Technology Stack - Aesthetic Infrastructure */}
         <section className="py-32 lg:py-48 relative">
           <div className="container relative z-10">
             <div className="mx-auto mb-24 max-w-2xl text-center space-y-6">

@@ -201,7 +201,7 @@ function AnalysisContent() {
               </motion.div>
             </div>
 
-            {/* Interaction Panel - The Core Clinical Experience */}
+            {/* Interaction Panel - The Core Aesthetic Experience */}
             <motion.div 
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}

@@ -1101,12 +1101,12 @@ export default function AnalysisResultsPage() {
                       <CardContent>
                         <BeforeAfterSlider 
                           beforeImage={analysisImage || ""} 
-                          afterImage={analysisImage || ""} // In real app, this would be actual after-treatment photo
+                          afterImage={analysisImage || ""} // In real app, this would be actual after-program photo
                         />
                         <div className="mt-4 p-4 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg border border-green-200">
                           <h4 className="font-semibold text-green-900 mb-2">Track Your Progress / ติดตามผล</h4>
                           <p className="text-sm text-green-700 mb-3">
-                            Upload before and after photos from your treatment journey to see real improvements over time.
+                            Upload before and after photos from your program journey to see real improvements over time.
                           </p>
                           <Button size="sm" variant="outline" className="border-green-600 text-green-600 hover:bg-green-50">
                             View Analysis History / ดูประวัติการวิเคราะห์
@@ -1180,7 +1180,7 @@ export default function AnalysisResultsPage() {
 
                 <Card className="border-2 border-primary/20 bg-primary/5">
                   <CardHeader>
-                    <CardTitle className="text-lg">Treatment Recommendations / คำแนะนำการรักษา</CardTitle>
+                    <CardTitle className="text-lg">Program Recommendations / คำแนะนำโปรแกรม</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <ul className="space-y-3">
@@ -1208,9 +1208,9 @@ export default function AnalysisResultsPage() {
                       <div className="flex-1">
                         <h3 className="mb-2 text-xl font-bold">Upgrade to Premium for More Accurate Results</h3>
                         <p className="text-sm text-muted-foreground leading-relaxed">
-                          Get 95-99% accuracy, personalized treatment plans, AR visualization, and HITL validation
+                          Get 95-99% accuracy, personalized program plans, AR visualization, and HITL validation
                           <br />
-                          รับความแม่นยำ 95-99% แผนการรักษาเฉพาะบุคคล AR และการตรวจสอบโดยผู้เชี่ยวชาญ
+                          รับความแม่นยำ 95-99% แผนโปรแกรมการดูแลเฉพาะบุคคล AR และการตรวจสอบโดยผู้เชี่ยวชาญ
                         </p>
                       </div>
                       <Button size="lg" className="shrink-0">

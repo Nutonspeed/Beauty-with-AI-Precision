@@ -14,7 +14,7 @@ export interface PersistedPresentationData
 
 export interface PresentationSyncRecord {
   id: string
-  customerId: string
+  clientId: string
   payload: PersistedPresentationData
   createdAt: string
   status: 'pending' | 'synced' | 'failed'
@@ -25,8 +25,8 @@ export interface PresentationSyncRecord {
 
 export type SyncHandler = (record: PresentationSyncRecord) => Promise<boolean>
 
-function storageKey(customerId: string) {
-  return `${STORAGE_PREFIX}:${customerId}`
+function storageKey(clientId: string) {
+  return `${STORAGE_PREFIX}:${clientId}`
 }
 
 function readQueue(): PresentationSyncRecord[] {
@@ -77,12 +77,12 @@ function hydrate(data: PersistedPresentationData): PresentationData {
   }
 }
 
-export function loadPresentationData(customerId: string): PresentationData | null {
+export function loadPresentationData(clientId: string): PresentationData | null {
   if (typeof localStorage === 'undefined') {
     return null
   }
 
-  const raw = localStorage.getItem(storageKey(customerId))
+  const raw = localStorage.getItem(storageKey(clientId))
   if (!raw) {
     return null
   }
@@ -96,12 +96,12 @@ export function loadPresentationData(customerId: string): PresentationData | nul
   }
 }
 
-export function savePresentationData(customerId: string, data: PresentationData) {
+export function savePresentationData(clientId: string, data: PresentationData) {
   if (typeof localStorage === 'undefined') {
     return
   }
 
-  localStorage.setItem(storageKey(customerId), JSON.stringify(serialize(data)))
+  localStorage.setItem(storageKey(clientId), JSON.stringify(serialize(data)))
 }
 
 export function listStoredPresentationIds(): string[] {
@@ -123,25 +123,25 @@ export function listStoredPresentationIds(): string[] {
   return ids
 }
 
-export function clearPresentationData(customerId: string) {
+export function clearPresentationData(clientId: string) {
   if (typeof localStorage === 'undefined') {
     return
   }
 
-  localStorage.removeItem(storageKey(customerId))
+  localStorage.removeItem(storageKey(clientId))
 }
 
-export function enqueuePresentationSync(customerId: string, data: PresentationData) {
+export function enqueuePresentationSync(clientId: string, data: PresentationData) {
   if (typeof localStorage === 'undefined') {
     return
   }
 
   const queue = readQueue().filter(
-    (record) => !(record.customerId === customerId && record.status === 'pending')
+    (record) => !(record.clientId === clientId && record.status === 'pending')
   )
   const record: PresentationSyncRecord = {
-    id: `${customerId}-${Date.now()}`,
-    customerId,
+    id: `${clientId}-${Date.now()}`,
+    clientId,
     payload: serialize(data),
     createdAt: new Date().toISOString(),
     status: 'pending',

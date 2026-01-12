@@ -28,10 +28,10 @@ import {
 } from '@/lib/sales/presentation-storage'
 
 interface PresentationWizardProps {
-  customerId: string
-  isNewCustomer: boolean
+  clientId: string
+  isNewClient: boolean
   isOnline: boolean
-  initialCustomerData?: {
+  initialClientData?: {
     name?: string
     phone?: string
     email?: string
@@ -41,8 +41,8 @@ interface PresentationWizardProps {
 const STORAGE_DEBOUNCE_MS = 500
 
 type InitialDataConfig = {
-  customerId: string
-  initialCustomerData?: PresentationWizardProps['initialCustomerData']
+  clientId: string
+  initialClientData?: PresentationWizardProps['initialClientData']
 }
 
 function generateSessionId() {
@@ -57,16 +57,16 @@ function generateSessionId() {
 }
 
 function createInitialPresentationData({
-  customerId,
-  initialCustomerData,
+  clientId,
+  initialClientData,
 }: InitialDataConfig): PresentationData {
   return {
     sessionId: generateSessionId(),
-    customer: {
-      id: customerId,
-      name: initialCustomerData?.name ?? '',
-      phone: initialCustomerData?.phone ?? '',
-      email: initialCustomerData?.email ?? '',
+    client: {
+      id: clientId,
+      name: initialClientData?.name ?? '',
+      phone: initialClientData?.phone ?? '',
+      email: initialClientData?.email ?? '',
     },
     scannedImages: {},
     analysisResults: null,
@@ -89,20 +89,20 @@ function findLastCompletedStep(data: PresentationData): number {
   if (data.selectedPrograms.length > 0) return 4
   if (data.analysisResults) return 3
   if (data.scannedImages.front && data.scannedImages.left && data.scannedImages.right) return 2
-  if (data.customer.name && data.customer.phone) return 1
+  if (data.client.name && data.client.phone) return 1
   return 0
 }
 
 export function PresentationWizard({
-  customerId,
-  isNewCustomer,
+  clientId,
+  isNewClient,
   isOnline,
-  initialCustomerData,
+  initialClientData,
 }: Readonly<PresentationWizardProps>) {
   const t = useTranslations()
   
   const STEPS = useMemo(() => [
-    { id: 1, name: t('salesPresentations.steps.customerInfo'), key: 'customer' },
+    { id: 1, name: t('salesPresentations.steps.customerInfo'), key: 'client' },
     { id: 2, name: t('salesPresentations.steps.scan'), key: 'scan' },
     { id: 3, name: t('salesPresentations.steps.analysis'), key: 'analysis' },
     { id: 4, name: t('salesPresentations.steps.arPreview'), key: 'ar' },
@@ -111,18 +111,18 @@ export function PresentationWizard({
     { id: 7, name: t('salesPresentations.steps.signature'), key: 'summary' },
   ], [t]) as any
 
-  const [currentStep, setCurrentStep] = useState(() => (isNewCustomer ? 1 : 2))
+  const [currentStep, setCurrentStep] = useState(() => (isNewClient ? 1 : 2))
   const [data, setData] = useState<PresentationData>(() =>
-    createInitialPresentationData({ customerId, initialCustomerData })
+    createInitialPresentationData({ clientId, initialClientData })
   )
 
   useEffect(() => {
-    const base = createInitialPresentationData({ customerId, initialCustomerData })
-    const saved = loadPresentationData(customerId)
+    const base = createInitialPresentationData({ clientId, initialClientData })
+    const saved = loadPresentationData(clientId)
 
     if (!saved) {
       setData(base)
-      setCurrentStep(isNewCustomer ? 1 : 2)
+      setCurrentStep(isNewClient ? 1 : 2)
       return
     }
 
@@ -133,10 +133,10 @@ export function PresentationWizard({
       lastSavedAt: saved.lastSavedAt ?? saved.completedAt ?? null,
       lastSyncedAt: saved.lastSyncedAt ?? null,
       syncStatus: saved.syncStatus ?? 'idle',
-      customer: {
-        ...base.customer,
-        ...saved.customer,
-        id: saved.customer?.id || customerId,
+      client: {
+        ...base.client,
+        ...saved.client,
+        id: saved.client?.id || clientId,
       },
     }
 
@@ -148,16 +148,16 @@ export function PresentationWizard({
       const lastStep = findLastCompletedStep(merged)
       setCurrentStep(Math.min(Math.max(lastStep + 1, 1), STEPS.length))
     }
-  }, [customerId, initialCustomerData, isNewCustomer])
+  }, [clientId, initialClientData, isNewClient])
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      savePresentationData(customerId, data)
-      enqueuePresentationSync(customerId, data)
+      savePresentationData(clientId, data)
+      enqueuePresentationSync(clientId, data)
     }, STORAGE_DEBOUNCE_MS)
 
     return () => clearTimeout(timeoutId)
-  }, [customerId, data])
+  }, [clientId, data])
 
   useEffect(() => {
     if (!isOnline) {
@@ -175,13 +175,13 @@ export function PresentationWizard({
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              customerId: record.customerId,
+              clientId: record.clientId,
               payload: record.payload,
             }),
           })
 
           const ok = response.ok
-          if (ok && record.customerId === customerId) {
+          if (ok && record.clientId === clientId) {
             if (record.payload.sessionId === data.sessionId) {
               syncedCurrentSession = true
             }
@@ -214,7 +214,7 @@ export function PresentationWizard({
       cancelled = true
       globalThis.removeEventListener?.('online', handleOnline)
     }
-  }, [customerId, data.sessionId, isOnline])
+  }, [clientId, data.sessionId, isOnline])
 
   const updateData = useCallback(<K extends keyof PresentationData>(
     field: K,
@@ -248,7 +248,7 @@ export function PresentationWizard({
   const isStepComplete = useCallback((step: number): boolean => {
     switch (step) {
       case 1:
-        return Boolean(data.customer.name && data.customer.phone)
+        return Boolean(data.client.name && data.client.phone)
       case 2:
         return Boolean(data.scannedImages.front && data.scannedImages.left && data.scannedImages.right)
       case 3:
@@ -281,8 +281,8 @@ export function PresentationWizard({
       case 1:
         return (
           <CustomerInfoStep
-            customer={data.customer}
-            onUpdate={(customer) => updateData('customer', customer)}
+            client={data.client}
+            onUpdate={(client) => updateData('client', client)}
             isOnline={isOnline}
           />
         )
@@ -291,7 +291,7 @@ export function PresentationWizard({
           <ScanStep
             images={data.scannedImages}
             onUpdate={(images) => updateData('scannedImages', images)}
-            customerName={data.customer.name}
+            clientName={data.client.name}
           />
         )
       case 3:
@@ -300,7 +300,7 @@ export function PresentationWizard({
             images={data.scannedImages}
             analysisResults={data.analysisResults}
             onAnalysisComplete={(results) => updateData('analysisResults', results)}
-            customerName={data.customer.name || 'Customer'}
+            clientName={data.client.name || 'Client'}
             isOnline={isOnline}
           />
         )
@@ -311,7 +311,7 @@ export function PresentationWizard({
             analysisResults={data.analysisResults}
             selectedPrograms={data.selectedPrograms}
             onUpdate={(programs) => updateData('selectedPrograms', programs)}
-            customerName={data.customer.name || 'Customer'}
+            clientName={data.client.name || 'Client'}
           />
         )
       case 5:
@@ -320,7 +320,7 @@ export function PresentationWizard({
             selectedProducts={data.selectedProducts}
             recommendedProducts={(data.analysisResults?.recommendations?.map((r: any) => typeof r === 'string' ? r : r.text)) ?? []}
             onUpdate={(products) => updateData('selectedProducts', products)}
-            customerName={data.customer.name || 'Customer'}
+            clientName={data.client.name || 'Client'}
           />
         )
       case 6:
@@ -330,7 +330,7 @@ export function PresentationWizard({
             selectedProducts={data.selectedProducts}
             proposal={data.proposal}
             onUpdate={(proposal) => updateData('proposal', proposal)}
-            customerName={data.customer.name || 'Customer'}
+            clientName={data.client.name || 'Client'}
             isOnline={isOnline}
           />
         )

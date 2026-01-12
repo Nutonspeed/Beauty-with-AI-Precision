@@ -47,7 +47,7 @@ interface ProposalStepProps {
   readonly selectedProducts: string[]
   readonly proposal: ProposalDetails | null
   readonly onUpdate: (proposal: ProposalDetails) => void
-  readonly customerName: string
+  readonly clientName: string
   readonly isOnline: boolean
 }
 
@@ -64,7 +64,7 @@ export function ProposalStep({
   selectedProducts,
   proposal,
   onUpdate,
-  customerName,
+  clientName,
   isOnline,
 }: ProposalStepProps) {
   const t = useTranslations()
@@ -203,7 +203,7 @@ export function ProposalStep({
       <Alert className="bg-blue-50 dark:bg-blue-950/20 border-blue-200">
         <FileText className="h-4 w-4 text-blue-600" />
         <AlertDescription className="text-sm text-blue-900 dark:text-blue-100">
-          {t('salesWizard.steps.proposal.instructions', { name: customerName })}
+          {t('salesWizard.steps.proposal.instructions', { name: clientName })}
         </AlertDescription>
       </Alert>
 

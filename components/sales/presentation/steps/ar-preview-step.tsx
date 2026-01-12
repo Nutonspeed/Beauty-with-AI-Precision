@@ -43,7 +43,7 @@ interface ARPreviewStepProps {
   readonly analysisResults: HybridAnalysisResult | null
   readonly selectedPrograms: string[]
   readonly onUpdate: (programs: string[]) => void
-  readonly customerName: string
+  readonly clientName: string
 }
 
 export function ARPreviewStep({
@@ -51,7 +51,7 @@ export function ARPreviewStep({
   analysisResults,
   selectedPrograms,
   onUpdate,
-  customerName,
+  clientName,
 }: ARPreviewStepProps) {
   const t = useTranslations()
   const [intensity, setIntensity] = useState(70)
@@ -170,7 +170,7 @@ export function ARPreviewStep({
       <Alert className="bg-purple-50 dark:bg-purple-950/20 border-purple-200">
         <Sparkles className="h-4 w-4 text-purple-600" />
         <AlertDescription className="text-sm text-purple-900 dark:text-blue-100">
-          {t('salesWizard.steps.ar.instructions', { name: customerName })}
+          {t('salesWizard.steps.ar.instructions', { name: clientName })}
         </AlertDescription>
       </Alert>
 

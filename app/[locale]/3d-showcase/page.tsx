@@ -94,12 +94,12 @@ export default function ThreeDShowcasePage() {
         return (
           <StripeHero
             title="Unified Beauty Platform"
-            subtitle="AI-powered skin analysis and treatment tracking for modern aesthetic clinics. Built for scale, designed for simplicity."
+            subtitle="AI-powered skin analysis and program tracking for modern aesthetic centers. Built for scale, designed for simplicity."
             theme={selectedTheme as 'stripe' | 'ocean' | 'sunset' | 'emerald'}
             stats={[
               { value: '98.5%', label: 'Analysis Accuracy' },
               { value: '50k+', label: 'Skin Analyses' },
-              { value: '500+', label: 'Partner Clinics' }
+              { value: '500+', label: 'Partner Centers' }
             ]}
           />
         )
@@ -124,7 +124,7 @@ export default function ThreeDShowcasePage() {
         return (
           <VercelHero
             title="Develop. Preview. Ship."
-            subtitle="The platform for modern beauty clinics."
+            subtitle="The platform for modern beauty centers."
           />
         )
       case 'particles':
@@ -213,7 +213,7 @@ export default function ThreeDShowcasePage() {
                 <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent not-italic">Showcase</span>
               </h1>
               <p className="text-xl text-slate-500 font-light tracking-widest max-w-2xl italic leading-relaxed">
-                Orchestrate immersive clinical experiences through precision dimensional rendering and advanced visual nodes.
+                Orchestrate immersive aesthetic experiences through precision dimensional rendering and advanced visual nodes.
               </p>
             </motion.div>
             

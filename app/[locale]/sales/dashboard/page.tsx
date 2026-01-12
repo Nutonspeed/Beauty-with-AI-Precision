@@ -262,7 +262,7 @@ export default function SalesDashboard() {
             <h1 className="text-5xl font-bold tracking-tight text-white leading-tight">
               {t('salesDashboard.title')} <span className="bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent italic">{t('salesDashboard.titleHighlight')}</span>
             </h1>
-            <p className="text-slate-500 font-light tracking-wide text-lg max-w-xl">{t('salesDashboard.subtitle')}</p>
+            <p className="text-slate-500 font-light tracking-wide text-lg max-w-xl">Orchestrating aesthetic node growth with precision intelligence.</p>
           </div>
           <div className="flex items-center gap-4">
             <div className="flex bg-white/[0.03] p-1.5 rounded-2xl border border-white/5 backdrop-blur-xl">
@@ -341,10 +341,10 @@ export default function SalesDashboard() {
                     <div className="p-2 rounded-lg bg-pink-500/10 border border-pink-500/20">
                       <Sparkles className="w-4 h-4 text-pink-400 animate-pulse" />
                     </div>
-                    {t('salesDashboard.pipeline.title')}
+                    Aesthetic Pipeline Analysis
                   </CardTitle>
                   <Badge className="bg-pink-600 text-white border-none px-4 py-1 text-[9px] font-black tracking-widest uppercase">
-                    {t('salesDashboard.pipeline.badge')}
+                    LIVE_NODES
                   </Badge>
                 </CardHeader>
                 <CardContent className="p-10">
@@ -445,7 +445,7 @@ export default function SalesDashboard() {
           <div className="lg:col-span-4 space-y-10">
             <PredictiveReengagement />
 
-            {/* Remote Consult Card */}
+            {/* Remote Protocol Card */}
             <Card className="relative overflow-hidden border-emerald-500/20 bg-emerald-500/[0.02] backdrop-blur-3xl rounded-[3rem] group">
               <div className="absolute top-0 right-0 p-10 opacity-[0.03] group-hover:scale-110 transition-transform">
                 <MessageSquare className="w-32 h-32 text-emerald-500" />
@@ -453,7 +453,7 @@ export default function SalesDashboard() {
               <CardHeader className="p-10 pb-4">
                 <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-400 flex items-center gap-3">
                   <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                  {t('salesDashboard.remoteConsult.title')}
+                  Remote Protocol Request
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-10 pt-0 relative z-10 space-y-10">

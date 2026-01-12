@@ -4,7 +4,7 @@
  * Sales Presentation Wizard - Mobile-First
  * 
  * Complete sales flow for field sales staff:
- * 1. Customer Info
+ * 1. Client Info
  * 2. Quick Scan (3 angles)
  * 3. AI Analysis
  * 4. AR Program Preview
@@ -30,14 +30,14 @@ export default function SalesPresentationWizardPage() {
   const params = useParams()
   const router = useRouter()
   const searchParams = useSearchParams()
-  const customerId = params.customerId as string
+  const clientId = params.clientId as string
   const lp = useLocalizePath()
   const [isOnline, setIsOnline] = useState(true)
   
-  // Get customer data from URL params (if provided from leads)
-  const customerName = searchParams.get('name') || ''
-  const customerPhone = searchParams.get('phone') || ''
-  const customerEmail = searchParams.get('email') || ''
+  // Get client data from URL params (if provided from leads)
+  const clientName = searchParams.get('name') || ''
+  const clientPhone = searchParams.get('phone') || ''
+  const clientEmail = searchParams.get('email') || ''
 
   // Monitor online/offline status
   useEffect(() => {
@@ -54,8 +54,8 @@ export default function SalesPresentationWizardPage() {
     }
   }, [])
 
-  // Check if it's a new customer (temp ID)
-  const isNewCustomer = customerId.startsWith('temp-')
+  // Check if it's a new client (temp ID)
+  const isNewClient = clientId.startsWith('temp-')
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
@@ -74,7 +74,7 @@ export default function SalesPresentationWizardPage() {
             <div>
               <h1 className="text-lg font-bold">{t('salesWizard.title')}</h1>
               <p className="text-xs text-muted-foreground">
-                {isNewCustomer ? t('salesWizard.newCustomer') : `${t('salesWizard.customerId')}: ${customerId.slice(0, 8)}`}
+                {isNewClient ? t('salesWizard.newCustomer') : `${t('salesWizard.customerId')}: ${clientId.slice(0, 8)}`}
               </p>
             </div>
           </div>
@@ -122,13 +122,13 @@ export default function SalesPresentationWizardPage() {
 
         {/* Presentation Wizard */}
         <PresentationWizard 
-          customerId={customerId}
-          isNewCustomer={isNewCustomer}
+          clientId={clientId}
+          isNewClient={isNewClient}
           isOnline={isOnline}
-          initialCustomerData={{
-            name: customerName,
-            phone: customerPhone,
-            email: customerEmail
+          initialClientData={{
+            name: clientName,
+            phone: clientPhone,
+            email: clientEmail
           }}
         />
       </main>
