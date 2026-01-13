@@ -81,11 +81,19 @@ export function SideNav({ sections, containerRef }: SideNavProps) {
 
           <div className="relative flex items-center justify-center">
             {activeSection === i && (
-              <motion.div
-                layoutId="activeDot"
-                className="absolute inset-[-8px] border border-blue-500/50 rounded-full"
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              />
+              <>
+                <motion.div
+                  layoutId="activeDot"
+                  className="absolute inset-[-8px] border border-blue-500/50 rounded-full"
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                />
+                <motion.div
+                  initial={{ scale: 1, opacity: 0.5 }}
+                  animate={{ scale: 2, opacity: 0 }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "easeOut" }}
+                  className="absolute inset-[-4px] border border-blue-400 rounded-full"
+                />
+              </>
             )}
             <motion.div 
               animate={{

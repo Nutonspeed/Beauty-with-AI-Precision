@@ -30,6 +30,8 @@ import { CaseStudyCarousel } from "@/components/CaseStudyCarousel"
 import { SideNav } from "@/components/ui/side-nav"
 import { NumberTicker } from "@/components/ui/number-ticker"
 import { MedicalCursor } from "@/components/ui/medical-cursor"
+import { FloatingSymbols } from "@/components/ui/floating-symbols"
+import { MagneticButton } from "@/components/ui/magnetic-button"
 import { cn } from "@/lib/utils"
 
 export default function HomePage() {
@@ -90,9 +92,30 @@ export default function HomePage() {
     { key: 'platinum', code: 'ULT-01' }
   ];
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.5 }
+    }
+  };
+
   return (
     <>
       <MedicalCursor />
+      <FloatingSymbols />
       <SideNav sections={sectionData} containerRef={containerRef} />
       <main ref={containerRef} className="snap-container">
         {/* 1. Hero Section */}
@@ -178,49 +201,53 @@ export default function HomePage() {
             </motion.div>
 
             <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-              <Link href={lp("/analysis")}>
-                <Card className="h-full border-slate-200 bg-white rounded-2xl overflow-hidden group transition-all duration-300 shadow-sm medical-card-hover">
-                  <div className="p-10 space-y-8">
-                    <div className="h-16 w-16 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
-                      <Brain className="h-8 w-8" />
+              <MagneticButton strength={0.05} className="w-full h-full">
+                <Link href={lp("/analysis")}>
+                  <Card className="h-full border-slate-200 bg-white rounded-2xl overflow-hidden group transition-all duration-300 shadow-sm medical-card-hover">
+                    <div className="p-10 space-y-8">
+                      <div className="h-16 w-16 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+                        <Brain className="h-8 w-8" />
+                      </div>
+                      <div className="space-y-3">
+                        <h3 className="text-2xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
+                          {t('demo.selector.ai.title')}
+                        </h3>
+                        <p className="text-slate-600 leading-relaxed">
+                          {t('demo.selector.ai.description')}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2 text-blue-600 font-bold text-xs uppercase tracking-widest pt-2">
+                        {t('demo.selector.ai.cta')}
+                        <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                      </div>
                     </div>
-                    <div className="space-y-3">
-                      <h3 className="text-2xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
-                        {t('demo.selector.ai.title')}
-                      </h3>
-                      <p className="text-slate-600 leading-relaxed">
-                        {t('demo.selector.ai.description')}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-2 text-blue-600 font-bold text-xs uppercase tracking-widest pt-2">
-                      {t('demo.selector.ai.cta')}
-                      <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                    </div>
-                  </div>
-                </Card>
-              </Link>
+                  </Card>
+                </Link>
+              </MagneticButton>
 
-              <Link href={lp("/demo/center")}>
-                <Card className="h-full border-slate-200 bg-white rounded-2xl overflow-hidden group transition-all duration-300 shadow-sm medical-card-hover">
-                  <div className="p-10 space-y-8">
-                    <div className="h-16 w-16 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
-                      <Activity className="h-8 w-8" />
+              <MagneticButton strength={0.05} className="w-full h-full">
+                <Link href={lp("/demo/center")}>
+                  <Card className="h-full border-slate-200 bg-white rounded-2xl overflow-hidden group transition-all duration-300 shadow-sm medical-card-hover">
+                    <div className="p-10 space-y-8">
+                      <div className="h-16 w-16 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+                        <Activity className="h-8 w-8" />
+                      </div>
+                      <div className="space-y-3">
+                        <h3 className="text-2xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
+                          {t('demo.selector.revenue.title')}
+                        </h3>
+                        <p className="text-slate-600 leading-relaxed">
+                          {t('demo.selector.revenue.description')}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2 text-blue-600 font-bold text-xs uppercase tracking-widest pt-2">
+                        {t('demo.selector.revenue.cta')}
+                        <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                      </div>
                     </div>
-                    <div className="space-y-3">
-                      <h3 className="text-2xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
-                        {t('demo.selector.revenue.title')}
-                      </h3>
-                      <p className="text-slate-600 leading-relaxed">
-                        {t('demo.selector.revenue.description')}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-2 text-blue-600 font-bold text-xs uppercase tracking-widest pt-2">
-                      {t('demo.selector.revenue.cta')}
-                      <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                    </div>
-                  </div>
-                </Card>
-              </Link>
+                  </Card>
+                </Link>
+              </MagneticButton>
             </div>
           </div>
         </section>
@@ -247,14 +274,17 @@ export default function HomePage() {
               </p>
             </motion.div>
 
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <motion.div 
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+              className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
+            >
               {features.map((feature, i) => (
                 <motion.div
                   key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: i * 0.1 }}
+                  variants={itemVariants}
                 >
                   <Card className="h-full border-slate-200 bg-white rounded-2xl transition-all medical-card-hover group">
                     <CardContent className="p-8 space-y-6">
@@ -273,7 +303,7 @@ export default function HomePage() {
                   </Card>
                 </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
         </section>
 
@@ -305,7 +335,13 @@ export default function HomePage() {
               </p>
             </motion.div>
 
-            <div className="mx-auto grid max-w-6xl gap-12 md:grid-cols-3">
+            <motion.div 
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+              className="mx-auto grid max-w-6xl gap-12 md:grid-cols-3"
+            >
               {[
                 { step: "01", key: 'step1' },
                 { step: "02", key: 'step2' },
@@ -313,18 +349,16 @@ export default function HomePage() {
               ].map((item, i) => (
                 <motion.div 
                   key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  className="relative group p-8 rounded-2xl border border-slate-100 bg-slate-50/30 hover:bg-white hover:border-blue-200 hover:shadow-lg transition-all duration-300"
+                  variants={itemVariants}
+                  className="relative group p-8 rounded-2xl border border-slate-100 bg-slate-50/30 medical-card-hover transition-all duration-300"
                 >
-                  <div className="text-5xl font-bold text-slate-100 absolute -top-6 -left-2 select-none group-hover:text-blue-50 transition-colors">
+                  <div className="text-5xl font-bold text-slate-100 absolute -top-6 -left-2 select-none group-hover:text-blue-50/50 transition-colors">
                     {item.step}
                   </div>
                   <div className="relative z-10 space-y-4">
-                    <div className="h-10 w-10 rounded-lg bg-blue-600 flex items-center justify-center text-sm font-bold text-white shadow-lg shadow-blue-600/20">
-                      {item.step}
+                    <div className="h-10 w-10 rounded-lg bg-blue-600 flex items-center justify-center text-sm font-bold text-white shadow-lg shadow-blue-600/20 relative">
+                      <div className="absolute inset-0 rounded-lg bg-blue-600 animate-ping opacity-20" />
+                      <span className="relative z-10">{item.step}</span>
                     </div>
                     <h3 className="text-xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
                       {t(`home.protocol.${item.key}.title` as any)}
@@ -335,7 +369,7 @@ export default function HomePage() {
                   </div>
                 </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
         </section>
 
@@ -367,7 +401,13 @@ export default function HomePage() {
               </p>
             </motion.div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <motion.div 
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+            >
               {plans.map((plan, i) => {
                 const details = SUBSCRIPTION_PLANS[plan.key as keyof typeof SUBSCRIPTION_PLANS];
                 const isPro = plan.key === 'professional';
@@ -375,60 +415,59 @@ export default function HomePage() {
                 return (
                   <motion.div
                     key={plan.key}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: i * 0.1 }}
+                    variants={itemVariants}
                   >
-                    <Card className={cn(
-                      "relative h-full border-slate-200 bg-white rounded-2xl overflow-hidden transition-all duration-300 shadow-sm medical-card-hover",
-                      isPro && "border-blue-500 shadow-blue-100 shadow-xl lg:scale-105 z-20"
-                    )}>
-                      {isPro && (
-                        <div className="absolute top-0 right-0 p-2 px-6 bg-blue-600 text-[9px] font-bold text-white uppercase tracking-wider rounded-bl-xl">
-                          Recommended
-                        </div>
-                      )}
-                      <CardContent className="p-8 flex flex-col h-full space-y-6">
-                        <div className="space-y-2">
-                          <h3 className="text-xl font-bold text-slate-900">
-                            {t(`pricing.plans.${plan.key}.name` as any)}
-                          </h3>
-                          <p className="text-sm text-slate-500 min-h-[40px]">
-                            {t(`pricing.plans.${plan.key}.description` as any)}
-                          </p>
-                        </div>
-                        
-                        <div className="flex items-baseline gap-1">
-                          <span className="text-3xl font-bold text-slate-900">฿{details.price.toLocaleString()}</span>
-                          <span className="text-slate-500 text-xs font-medium">/month</span>
-                        </div>
+                    <MagneticButton strength={0.03} className="w-full h-full">
+                      <Card className={cn(
+                        "relative h-full border-slate-200 bg-white rounded-2xl overflow-hidden transition-all duration-300 shadow-sm medical-card-hover",
+                        isPro && "border-blue-500 shadow-blue-100 shadow-xl lg:scale-105 z-20"
+                      )}>
+                        {isPro && (
+                          <div className="absolute top-0 right-0 p-2 px-6 bg-blue-600 text-[9px] font-bold text-white uppercase tracking-wider rounded-bl-xl">
+                            Recommended
+                          </div>
+                        )}
+                        <CardContent className="p-8 flex flex-col h-full space-y-6">
+                          <div className="space-y-2">
+                            <h3 className="text-xl font-bold text-slate-900">
+                              {t(`pricing.plans.${plan.key}.name` as any)}
+                            </h3>
+                            <p className="text-sm text-slate-500 min-h-[40px]">
+                              {t(`pricing.plans.${plan.key}.description` as any)}
+                            </p>
+                          </div>
+                          
+                          <div className="flex items-baseline gap-1">
+                            <span className="text-3xl font-bold text-slate-900">฿{details.price.toLocaleString()}</span>
+                            <span className="text-slate-500 text-xs font-medium">/month</span>
+                          </div>
 
-                        <div className="h-px w-full bg-slate-100" />
+                          <div className="h-px w-full bg-slate-100" />
 
-                        <ul className="space-y-3 flex-1">
-                          {[0, 1, 2].map((idx) => (
-                            <li key={idx} className="flex items-start gap-3 text-sm text-slate-600">
-                              <div className="mt-1.5 h-1.5 w-1.5 rounded-full bg-blue-500" />
-                              <span>{t(`pricing.plans.${plan.key}.features.${idx}` as any)}</span>
-                            </li>
-                          ))}
-                        </ul>
+                          <ul className="space-y-3 flex-1">
+                            {[0, 1, 2].map((idx) => (
+                              <li key={idx} className="flex items-start gap-3 text-sm text-slate-600">
+                                <div className="mt-1.5 h-1.5 w-1.5 rounded-full bg-blue-500" />
+                                <span>{t(`pricing.plans.${plan.key}.features.${idx}` as any)}</span>
+                              </li>
+                            ))}
+                          </ul>
 
-                        <Button asChild className={cn(
-                          "w-full rounded-xl font-bold uppercase tracking-wider h-12",
-                          isPro ? "bg-blue-600 hover:bg-blue-700" : "bg-slate-900 hover:bg-slate-800"
-                        )}>
-                          <Link href={plan.key === 'starter' ? lp("/analysis") : lp("/contact")}>
-                            {t(`pricing.plans.${plan.key}.cta` as any)}
-                          </Link>
-                        </Button>
-                      </CardContent>
-                    </Card>
+                          <Button asChild className={cn(
+                            "w-full rounded-xl font-bold uppercase tracking-wider h-12 transition-transform active:scale-95",
+                            isPro ? "bg-blue-600 hover:bg-blue-700" : "bg-slate-900 hover:bg-slate-800"
+                          )}>
+                            <Link href={plan.key === 'starter' ? lp("/analysis") : lp("/contact")}>
+                              {t(`pricing.plans.${plan.key}.cta` as any)}
+                            </Link>
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    </MagneticButton>
                   </motion.div>
                 )
               })}
-            </div>
+            </motion.div>
           </div>
         </section>
 
@@ -446,17 +485,22 @@ export default function HomePage() {
               </div>
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <Button size="xl" className="h-14 px-10 rounded-xl bg-white text-blue-600 hover:bg-blue-50 font-bold" asChild>
-                  <Link href="/analysis" className="flex items-center gap-2">
-                    {t('home.startFreeAnalysis')}
-                    <ArrowRight className="h-4 w-4" />
-                  </Link>
-                </Button>
-                <Button size="xl" variant="outline" className="h-14 px-10 rounded-xl border-white/30 bg-white/10 text-white hover:bg-white/20 font-bold" asChild>
-                  <Link href="/contact">
-                    {t('home.cta.contactSales')}
-                  </Link>
-                </Button>
+                <MagneticButton strength={0.15}>
+                  <Button size="xl" className="h-14 px-10 rounded-xl bg-white text-blue-600 hover:bg-blue-50 font-bold" asChild>
+                    <Link href="/analysis" className="flex items-center gap-2">
+                      {t('home.startFreeAnalysis')}
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                </MagneticButton>
+                
+                <MagneticButton strength={0.1}>
+                  <Button size="xl" variant="outline" className="h-14 px-10 rounded-xl border-white/30 bg-white/10 text-white hover:bg-white/20 font-bold" asChild>
+                    <Link href="/contact">
+                      {t('home.cta.contactSales')}
+                    </Link>
+                  </Button>
+                </MagneticButton>
               </div>
             </div>
           </div>

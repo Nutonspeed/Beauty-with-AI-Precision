@@ -17,6 +17,7 @@ import {
 import { ChevronRight, BookOpen, Quote } from "lucide-react"
 import Link from "next/link"
 import { useLocalizePath } from "@/lib/i18n/locale-link"
+import { MagneticButton } from "@/components/ui/magnetic-button"
 
 export function CaseStudyCarousel() {
   const t = useTranslations()
@@ -25,7 +26,8 @@ export function CaseStudyCarousel() {
   const items = React.useMemo(() => getCaseStudies(locale), [locale])
 
   return (
-    <section className="py-24 lg:py-32 relative bg-white overflow-hidden">
+    <section className="py-24 lg:py-32 relative bg-white overflow-hidden group">
+      <div className="absolute top-0 right-0 w-96 h-96 bg-blue-50/50 rounded-full blur-[100px] -z-10" />
       <div className="container relative z-10">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -33,11 +35,11 @@ export function CaseStudyCarousel() {
           viewport={{ once: true }}
           className="mx-auto mb-16 max-w-4xl text-center space-y-6"
         >
-          <Badge variant="outline" className="px-4 py-1.5 rounded-full border-blue-200 text-blue-700 bg-blue-50 font-bold tracking-wider text-[10px] uppercase">
+          <Badge variant="outline" className="px-4 py-1.5 rounded-full border-blue-200 text-blue-700 bg-blue-50 font-bold tracking-wider text-[10px] uppercase glow-badge">
             <BookOpen className="mr-2 h-3.5 w-3.5" />
             {t('caseStudies.title')}
           </Badge>
-          <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-slate-900 leading-tight">
+          <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-slate-900 leading-tight text-reveal">
             Aesthetic <span className="text-blue-600">Outcomes</span>
           </h2>
           <p className="text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
@@ -62,17 +64,17 @@ export function CaseStudyCarousel() {
                   transition={{ delay: index * 0.1, duration: 0.8 }}
                   className="h-full"
                 >
-                  <Card className="h-full border-slate-200 bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 group">
+                  <Card className="h-full border-slate-200 bg-white rounded-2xl overflow-hidden shadow-sm medical-card-hover group/card">
                     <CardContent className="p-8 lg:p-10 flex flex-col h-full space-y-8">
                       <div className="flex items-center justify-between">
                         <Badge variant="outline" className="bg-blue-50 text-blue-700 border-none rounded-full px-4 py-1 text-[9px] font-bold uppercase tracking-widest">
                           {t('demo.caseNode', { number: index + 1 })}
                         </Badge>
-                        <Quote className="h-6 w-6 text-blue-100 group-hover:text-blue-200 transition-colors" />
+                        <Quote className="h-6 w-6 text-blue-100 group-hover/card:text-blue-200 transition-colors" />
                       </div>
 
                       <div className="space-y-4 flex-1">
-                        <h3 className="text-2xl font-bold text-slate-900 leading-tight group-hover:text-blue-600 transition-colors">
+                        <h3 className="text-2xl font-bold text-slate-900 leading-tight group-hover/card:text-blue-600 transition-colors">
                           {item.title}
                         </h3>
                         <p className="text-slate-600 font-normal leading-relaxed line-clamp-3">
@@ -103,9 +105,13 @@ export function CaseStudyCarousel() {
               </CarouselItem>
             ))}
           </CarouselContent>
-          <div className="hidden md:flex justify-end gap-3 mt-8">
-            <CarouselPrevious className="relative inset-auto translate-y-0 h-12 w-12 rounded-xl border-slate-200 bg-white hover:bg-slate-50 text-slate-600 shadow-sm" />
-            <CarouselNext className="relative inset-auto translate-y-0 h-12 w-12 rounded-xl border-slate-200 bg-white hover:bg-slate-50 text-slate-600 shadow-sm" />
+          <div className="hidden md:flex justify-end gap-4 mt-12">
+            <MagneticButton strength={0.2}>
+              <CarouselPrevious className="relative inset-auto translate-y-0 h-14 w-14 rounded-2xl border-slate-200 bg-white hover:bg-slate-50 text-slate-600 shadow-md transition-all active:scale-90" />
+            </MagneticButton>
+            <MagneticButton strength={0.2}>
+              <CarouselNext className="relative inset-auto translate-y-0 h-14 w-14 rounded-2xl border-slate-200 bg-white hover:bg-slate-50 text-slate-600 shadow-md transition-all active:scale-90" />
+            </MagneticButton>
           </div>
         </Carousel>
       </div>

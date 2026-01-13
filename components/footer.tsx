@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl"
 import { useLocalizePath } from "@/lib/i18n/locale-link"
 import { CenterIQLogoFull, CenterIQMark } from "@/components/brand/logo"
 import { Mail, Phone, Facebook, Instagram, Youtube, Linkedin } from "lucide-react"
-
+import { MagneticButton } from "@/components/ui/magnetic-button"
 import { motion } from "framer-motion"
 
 export function Footer() {
@@ -16,7 +16,8 @@ export function Footer() {
   const t = useTranslations()
 
   return (
-    <footer className="relative border-t border-slate-100 bg-white pt-24 pb-12 overflow-hidden">
+    <footer className="relative border-t border-slate-100 bg-white pt-24 pb-12 overflow-hidden group/footer">
+      <div className="absolute -bottom-20 -right-20 w-96 h-96 bg-blue-50/50 rounded-full blur-[100px] -z-10" />
       <div className="container px-6 relative z-10">
         <div className="grid grid-cols-1 gap-16 md:grid-cols-2 lg:grid-cols-12">
           {/* Brand Portfolio Section */}
@@ -59,22 +60,23 @@ export function Footer() {
             {/* Social Intelligence Links */}
             <div className="flex items-center gap-4 pt-4">
               {[Facebook, Instagram, Youtube, Linkedin].map((Icon, i) => (
-                <motion.a 
-                  key={i} 
-                  href="#" 
-                  aria-label="Social Link"
-                  whileHover={{ y: -2 }}
-                  className="h-10 w-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-all"
-                >
-                  <Icon className="h-4 w-4" />
-                </motion.a>
+                <MagneticButton key={i} strength={0.2}>
+                  <motion.a 
+                    href="#" 
+                    aria-label="Social Link"
+                    whileHover={{ y: -2 }}
+                    className="h-10 w-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-all"
+                  >
+                    <Icon className="h-4 w-4" />
+                  </motion.a>
+                </MagneticButton>
               ))}
             </div>
           </div>
 
           <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-12 sm:gap-16">
-            <div className="space-y-6">
-              <h3 className="text-[10px] font-bold uppercase tracking-widest text-blue-600">{t('footer.product')}</h3>
+            <div className="space-y-6 text-reveal-container">
+              <h3 className="text-[10px] font-bold uppercase tracking-widest text-blue-600 text-reveal">{t('footer.product')}</h3>
               <ul className="space-y-3">
                 {[
                   { href: "/features", label: t('nav.features') },
@@ -93,8 +95,8 @@ export function Footer() {
               </ul>
             </div>
 
-            <div className="space-y-6">
-              <h3 className="text-[10px] font-bold uppercase tracking-widest text-blue-600">{t('footer.company')}</h3>
+            <div className="space-y-6 text-reveal-container">
+              <h3 className="text-[10px] font-bold uppercase tracking-widest text-blue-600 text-reveal">{t('footer.company')}</h3>
               <ul className="space-y-3">
                 {[
                   { href: "/case-studies", label: t('nav.caseStudies') },
@@ -111,8 +113,8 @@ export function Footer() {
               </ul>
             </div>
 
-            <div className="space-y-6">
-              <h3 className="text-[10px] font-bold uppercase tracking-widest text-blue-600">{t('footer.legal')}</h3>
+            <div className="space-y-6 text-reveal-container">
+              <h3 className="text-[10px] font-bold uppercase tracking-widest text-blue-600 text-reveal">{t('footer.legal')}</h3>
               <ul className="space-y-3">
                 {[
                   { href: "/privacy", label: t('footer.privacy') },

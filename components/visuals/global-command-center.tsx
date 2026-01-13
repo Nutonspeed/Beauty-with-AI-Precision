@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { MagneticButton } from "@/components/ui/magnetic-button"
 
 export function GlobalCommandCenter() {
   const t = useTranslations()
@@ -186,10 +187,12 @@ export function GlobalCommandCenter() {
             ))}
           </div>
           
-          <Button className="h-14 px-10 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold uppercase tracking-wider text-xs shadow-lg shadow-blue-600/10 group transition-all">
-            {t('globalCommand.joinInfrastructure')}
-            <ArrowRight className="ml-3 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-          </Button>
+          <MagneticButton strength={0.1}>
+            <Button className="h-14 px-10 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold uppercase tracking-wider text-xs shadow-lg shadow-blue-600/10 group transition-all">
+              {t('globalCommand.joinInfrastructure')}
+              <ArrowRight className="ml-3 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+            </Button>
+          </MagneticButton>
         </div>
       </div>
 
