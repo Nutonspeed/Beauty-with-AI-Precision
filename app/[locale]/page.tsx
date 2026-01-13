@@ -27,13 +27,28 @@ import { LandingHero } from "@/components/LandingHero"
 import { SUBSCRIPTION_PLANS } from "@/lib/subscriptions/plans"
 import { useLocalizePath } from "@/lib/i18n/locale-link"
 import { CaseStudyCarousel } from "@/components/CaseStudyCarousel"
+import { SideNav } from "@/components/ui/side-nav"
+import { NumberTicker } from "@/components/ui/number-ticker"
+import { MedicalCursor } from "@/components/ui/medical-cursor"
 import { cn } from "@/lib/utils"
 
 export default function HomePage() {
   const t = useTranslations()
   const lp = useLocalizePath()
   const locale = useLocale()
-  const heroRef = useRef<HTMLElement | null>(null)
+  const containerRef = useRef<HTMLElement | null>(null)
+
+  const sectionData = [
+    { id: "hero", label: t('common.hero' as any) || "Overview" },
+    { id: "roi", label: "Strategic ROI" },
+    { id: "solutions", label: "Solutions" },
+    { id: "features", label: "Capabilities" },
+    { id: "cases", label: "Case Studies" },
+    { id: "protocol", label: "Protocol" },
+    { id: "global", label: "Infrastructure" },
+    { id: "pricing", label: "Pricing" },
+    { id: "contact", label: "Get Started" }
+  ]
 
   useEffect(() => {
     usageTracker.trackPageView("home")
@@ -77,9 +92,11 @@ export default function HomePage() {
 
   return (
     <>
-      <main className="snap-container">
+      <MedicalCursor />
+      <SideNav sections={sectionData} containerRef={containerRef} />
+      <main ref={containerRef} className="snap-container">
         {/* 1. Hero Section */}
-        <section className="snap-section relative border-b border-slate-100">
+        <section id="hero" className="snap-section relative border-b border-slate-100">
           <LandingHero 
             _onPrimary={onHeroCta} 
             _onSecondary={onDemoCta}
@@ -87,7 +104,9 @@ export default function HomePage() {
         </section>
 
         {/* 2. ROI Section */}
-        <section className="snap-section flex items-center bg-slate-50/50 border-b border-slate-100">
+        <section id="roi" className="snap-section flex items-center bg-slate-50/50 border-b border-slate-100 overflow-hidden group">
+          <div className="section-orb top-0 -left-20 w-80 h-80 bg-blue-400" />
+          <div className="scan-line opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
           <div className="container relative z-10 py-12 lg:py-0">
             <div className="grid lg:grid-cols-12 gap-16 items-center">
               <motion.div 
@@ -97,24 +116,28 @@ export default function HomePage() {
                 transition={{ duration: 0.6 }}
                 className="lg:col-span-5 space-y-8"
               >
-                <Badge variant="outline" className="px-4 py-1.5 rounded-full border-blue-200 text-blue-700 bg-blue-50 font-bold tracking-wider text-[10px] uppercase">
+                <Badge variant="outline" className="px-4 py-1.5 rounded-full border-blue-200 text-blue-700 bg-blue-50 font-bold tracking-wider text-[10px] uppercase glow-badge">
                   CenterIQ Strategic ROI
                 </Badge>
-                <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-slate-900 leading-tight">
-                  Quantify Your <br />
-                  <span className="text-blue-600">Business Growth</span>
-                </h2>
+              <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-slate-900 leading-tight text-reveal">
+                Quantify Your <br />
+                <span className="text-blue-600">Business Growth</span>
+              </h2>
                 <p className="text-lg text-slate-600 leading-relaxed">
                   Use our Strategic ROI Simulator to calculate the precise financial impact of AI integration on your aesthetic center's operations.
                 </p>
                 <div className="flex items-center gap-12 pt-4">
                   <div className="space-y-1">
-                    <div className="text-4xl font-bold text-slate-900">45%</div>
+                    <div className="text-4xl font-bold text-slate-900">
+                      <NumberTicker value={45} suffix="%" />
+                    </div>
                     <div className="text-[11px] font-bold uppercase tracking-wider text-slate-500">{t('home.roi.avgRevenueUplift')}</div>
                   </div>
                   <div className="h-12 w-px bg-slate-200" />
                   <div className="space-y-1">
-                    <div className="text-4xl font-bold text-slate-900">2.4x</div>
+                    <div className="text-4xl font-bold text-slate-900">
+                      <NumberTicker value={2.4} decimalPlaces={1} suffix="x" />
+                    </div>
                     <div className="text-[11px] font-bold uppercase tracking-wider text-slate-500">{t('home.roi.clientRetention')}</div>
                   </div>
                 </div>
@@ -134,7 +157,8 @@ export default function HomePage() {
         </section>
 
         {/* 3. Experience Selector */}
-        <section className="snap-section flex items-center bg-white border-b border-slate-100">
+        <section id="solutions" className="snap-section flex items-center bg-white border-b border-slate-100 relative overflow-hidden group">
+          <div className="section-orb bottom-0 -right-20 w-96 h-96 bg-blue-300" />
           <div className="container relative z-10 py-12 lg:py-0">
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
@@ -142,10 +166,10 @@ export default function HomePage() {
               viewport={{ once: true }}
               className="mx-auto mb-16 max-w-3xl text-center space-y-6"
             >
-              <Badge variant="outline" className="px-4 py-1.5 rounded-full border-blue-200 text-blue-700 bg-blue-50 font-bold tracking-wider text-[10px] uppercase">
+              <Badge variant="outline" className="px-4 py-1.5 rounded-full border-blue-200 text-blue-700 bg-blue-50 font-bold tracking-wider text-[10px] uppercase glow-badge">
                 Explore Solutions
               </Badge>
-              <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-slate-900">
+              <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-slate-900 text-reveal">
                 {t('demo.selector.title')} <span className="text-blue-600">{t('demo.selector.subtitle')}</span>
               </h2>
               <p className="text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
@@ -155,7 +179,7 @@ export default function HomePage() {
 
             <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
               <Link href={lp("/analysis")}>
-                <Card className="h-full border-slate-200 bg-white rounded-2xl overflow-hidden group hover:border-blue-400 transition-all duration-300 shadow-sm hover:shadow-xl">
+                <Card className="h-full border-slate-200 bg-white rounded-2xl overflow-hidden group transition-all duration-300 shadow-sm medical-card-hover">
                   <div className="p-10 space-y-8">
                     <div className="h-16 w-16 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
                       <Brain className="h-8 w-8" />
@@ -177,7 +201,7 @@ export default function HomePage() {
               </Link>
 
               <Link href={lp("/demo/center")}>
-                <Card className="h-full border-slate-200 bg-white rounded-2xl overflow-hidden group hover:border-blue-400 transition-all duration-300 shadow-sm hover:shadow-xl">
+                <Card className="h-full border-slate-200 bg-white rounded-2xl overflow-hidden group transition-all duration-300 shadow-sm medical-card-hover">
                   <div className="p-10 space-y-8">
                     <div className="h-16 w-16 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
                       <Activity className="h-8 w-8" />
@@ -202,7 +226,9 @@ export default function HomePage() {
         </section>
 
         {/* 4. Features Grid */}
-        <section className="snap-section flex items-center bg-slate-50/50 border-b border-slate-100">
+        <section id="features" className="snap-section flex items-center bg-slate-50/50 border-b border-slate-100 relative overflow-hidden group">
+          <div className="section-orb top-1/2 -left-40 w-[500px] h-[500px] bg-indigo-200" />
+          <div className="scan-line opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
           <div className="container relative z-10 py-12 lg:py-0">
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
@@ -210,10 +236,10 @@ export default function HomePage() {
               viewport={{ once: true }}
               className="mx-auto mb-16 lg:mb-20 max-w-3xl text-center space-y-6"
             >
-              <Badge variant="outline" className="px-4 py-1.5 rounded-full border-blue-200 text-blue-700 bg-blue-50 font-bold tracking-wider text-[10px] uppercase">
+              <Badge variant="outline" className="px-4 py-1.5 rounded-full border-blue-200 text-blue-700 bg-blue-50 font-bold tracking-wider text-[10px] uppercase glow-badge">
                 Core Capabilities
               </Badge>
-              <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-slate-900">
+              <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-slate-900 text-reveal">
                 {t('home.features.title')}
               </h2>
               <p className="text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
@@ -230,7 +256,7 @@ export default function HomePage() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: i * 0.1 }}
                 >
-                  <Card className="h-full border-slate-200 bg-white rounded-2xl transition-all hover:shadow-md hover:border-blue-200 group">
+                  <Card className="h-full border-slate-200 bg-white rounded-2xl transition-all medical-card-hover group">
                     <CardContent className="p-8 space-y-6">
                       <div className="h-12 w-12 flex items-center justify-center rounded-xl bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
                         <feature.icon className="h-6 w-6" />
@@ -252,14 +278,15 @@ export default function HomePage() {
         </section>
 
         {/* 5. Case Studies */}
-        <section className="snap-section flex items-center bg-white border-b border-slate-100">
+        <section id="cases" className="snap-section flex items-center bg-white border-b border-slate-100">
           <div className="container relative z-10">
             <CaseStudyCarousel />
           </div>
         </section>
 
         {/* 6. Implementation Protocol */}
-        <section className="snap-section flex items-center bg-slate-50/50 border-b border-slate-100">
+        <section id="protocol" className="snap-section flex items-center bg-slate-50/50 border-b border-slate-100 relative overflow-hidden group">
+          <div className="section-orb bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-blue-100" />
           <div className="container relative z-10 py-12 lg:py-0">
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
@@ -267,10 +294,10 @@ export default function HomePage() {
               viewport={{ once: true }}
               className="mx-auto mb-16 lg:mb-24 max-w-4xl text-center space-y-6"
             >
-              <Badge variant="outline" className="px-4 py-1.5 rounded-full border-blue-200 text-blue-700 bg-blue-50 font-bold tracking-wider text-[10px] uppercase">
+              <Badge variant="outline" className="px-4 py-1.5 rounded-full border-blue-200 text-blue-700 bg-blue-50 font-bold tracking-wider text-[10px] uppercase glow-badge">
                 {t('home.protocol.badge')}
               </Badge>
-              <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-slate-900 leading-tight">
+              <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-slate-900 leading-tight text-reveal">
                 {t('home.protocol.title')}
               </h2>
               <p className="text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
@@ -313,14 +340,15 @@ export default function HomePage() {
         </section>
 
         {/* 7. Global Infrastructure */}
-        <section className="snap-section flex items-center bg-slate-900 overflow-hidden">
+        <section id="global" className="snap-section flex items-center bg-slate-900 overflow-hidden">
           <div className="w-full h-full relative">
             <GlobalCommandCenter />
           </div>
         </section>
 
         {/* 8. Pricing Section */}
-        <section className="snap-section flex items-center bg-white border-b border-slate-100">
+        <section id="pricing" className="snap-section flex items-center bg-white border-b border-slate-100 relative overflow-hidden group">
+          <div className="section-orb top-0 right-0 w-96 h-96 bg-blue-50" />
           <div className="container relative z-10 py-12 lg:py-0">
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
@@ -328,10 +356,10 @@ export default function HomePage() {
               viewport={{ once: true }}
               className="mx-auto mb-16 lg:mb-20 max-w-3xl text-center space-y-6"
             >
-              <Badge variant="outline" className="px-4 py-1.5 rounded-full border-blue-200 text-blue-700 bg-blue-50 font-bold tracking-wider text-[10px] uppercase">
+              <Badge variant="outline" className="px-4 py-1.5 rounded-full border-blue-200 text-blue-700 bg-blue-50 font-bold tracking-wider text-[10px] uppercase glow-badge">
                 {t('home.subscription.badge')}
               </Badge>
-              <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-slate-900">
+              <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-slate-900 text-reveal">
                 Simple <span className="text-blue-600">Pricing</span>
               </h2>
               <p className="text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
@@ -353,7 +381,7 @@ export default function HomePage() {
                     transition={{ duration: 0.5, delay: i * 0.1 }}
                   >
                     <Card className={cn(
-                      "relative h-full border-slate-200 bg-white rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-lg",
+                      "relative h-full border-slate-200 bg-white rounded-2xl overflow-hidden transition-all duration-300 shadow-sm medical-card-hover",
                       isPro && "border-blue-500 shadow-blue-100 shadow-xl lg:scale-105 z-20"
                     )}>
                       {isPro && (
@@ -405,7 +433,7 @@ export default function HomePage() {
         </section>
 
         {/* 9. CTA Section & Footer */}
-        <section className="snap-section flex flex-col bg-blue-600 text-white">
+        <section id="contact" className="snap-section flex flex-col bg-blue-600 text-white">
           <div className="flex-1 flex items-center justify-center">
             <div className="container relative z-10 text-center space-y-10">
               <div className="max-w-3xl mx-auto space-y-4">

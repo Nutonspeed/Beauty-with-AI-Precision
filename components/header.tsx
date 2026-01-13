@@ -22,6 +22,7 @@ import { useLocalizePath } from "@/lib/i18n/locale-link"
 import { LanguageSwitcher } from "@/components/language-switcher"
 
 import { motion } from "framer-motion"
+import { MagneticButton } from "@/components/ui/magnetic-button"
 
 // Safe hook wrapper for server-side rendering
 function useSafeAuth() {
@@ -149,27 +150,31 @@ export function Header() {
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button 
-                  variant="glass" 
-                  size="sm" 
-                  className="h-11 gap-3 px-3 pr-5 rounded-full border-slate-200 bg-white/80 shadow-premium group"
-                >
-                  <div className="relative">
-                    <Avatar className="h-8 w-8 border border-slate-200 ring-2 ring-transparent group-hover:ring-blue-500/10 transition-all">
-                      <AvatarImage src={user.avatar_url || ""} alt={user.full_name || ""} />
-                      <AvatarFallback className="bg-blue-50 text-blue-600 text-[10px] font-bold">
-                        {user.full_name?.charAt(0) || "U"}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-emerald-500 border-2 border-white shadow-sm" />
-                  </div>
-                  <div className="hidden flex-col items-start xl:flex">
-                    <span className="text-xs font-bold text-slate-900 tracking-tight leading-tight">{user.full_name || t('common.profile')}</span>
-                    <span className="text-[8px] uppercase font-black text-blue-600 tracking-[0.2em] leading-none mt-0.5">
-                      {roleLabels[user.role] || user.role?.replace('_', ' ').toUpperCase()}
-                    </span>
-                  </div>
-                </Button>
+                <button className="outline-none">
+                  <MagneticButton strength={0.1}>
+                    <Button 
+                      variant="glass" 
+                      size="sm" 
+                      className="h-11 gap-3 px-3 pr-5 rounded-full border-slate-200 bg-white/80 shadow-premium group pointer-events-none"
+                    >
+                      <div className="relative">
+                        <Avatar className="h-8 w-8 border border-slate-200 ring-2 ring-transparent group-hover:ring-blue-500/10 transition-all">
+                          <AvatarImage src={user.avatar_url || ""} alt={user.full_name || ""} />
+                          <AvatarFallback className="bg-blue-50 text-blue-600 text-[10px] font-bold">
+                            {user.full_name?.charAt(0) || "U"}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-emerald-500 border-2 border-white shadow-sm" />
+                      </div>
+                      <div className="hidden flex-col items-start xl:flex">
+                        <span className="text-xs font-bold text-slate-900 tracking-tight leading-tight">{user.full_name || t('common.profile')}</span>
+                        <span className="text-[8px] uppercase font-black text-blue-600 tracking-[0.2em] leading-none mt-0.5">
+                          {roleLabels[user.role] || user.role?.replace('_', ' ').toUpperCase()}
+                        </span>
+                      </div>
+                    </Button>
+                  </MagneticButton>
+                </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-72 glass-panel border-slate-200 p-3 rounded-2xl shadow-premium backdrop-blur-2xl bg-white/90">
                 <DropdownMenuLabel className="px-4 py-4">
@@ -204,12 +209,17 @@ export function Header() {
             </DropdownMenu>
           ) : (
             <div className="flex items-center gap-4">
-              <Button variant="outline" size="sm" asChild className="hidden sm:flex h-11 px-6 text-[11px] font-black uppercase tracking-[0.2em] text-slate-600 border-slate-200 hover:border-blue-500/50 hover:bg-blue-50 rounded-full transition-all">
-                <Link href={lp("/auth/login")}>{t('common.login')}</Link>
-              </Button>
-              <Button variant="premium" size="sm" asChild className="h-11 px-8 text-[11px] font-black uppercase tracking-[0.2em] shadow-xl shadow-blue-600/20 rounded-full hover:scale-105 active:scale-95 transition-all bg-blue-600 text-white border-none">
-                <Link href={lp("/analysis")}>{t('common.getStarted')}</Link>
-              </Button>
+              <MagneticButton strength={0.1}>
+                <Button variant="outline" size="sm" asChild className="hidden sm:flex h-11 px-6 text-[11px] font-black uppercase tracking-[0.2em] text-slate-600 border-slate-200 hover:border-blue-500/50 hover:bg-blue-50 rounded-full transition-all">
+                  <Link href={lp("/auth/login")}>{t('common.login')}</Link>
+                </Button>
+              </MagneticButton>
+              
+              <MagneticButton strength={0.15}>
+                <Button variant="premium" size="sm" asChild className="h-11 px-8 text-[11px] font-black uppercase tracking-[0.2em] shadow-xl shadow-blue-600/20 rounded-full hover:scale-105 active:scale-95 transition-all bg-blue-600 text-white border-none">
+                  <Link href={lp("/analysis")}>{t('common.getStarted')}</Link>
+                </Button>
+              </MagneticButton>
             </div>
           )}
 
