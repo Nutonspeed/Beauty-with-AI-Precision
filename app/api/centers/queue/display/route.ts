@@ -114,7 +114,7 @@ export async function GET(request: NextRequest) {
       return {
         id: booking.id,
         queueNumber: booking.queue_number || `Q-${booking.id.slice(0, 6)}`,
-        clientName: customer?.full_name || booking.customer_name || "ลูกค้า",
+        clientName: customer?.full_name || booking.customer_name || "Customer",
         status: booking.status,
         programType: booking.program_type,
         estimatedWait,
@@ -134,11 +134,11 @@ export async function GET(request: NextRequest) {
           return {
             id: servingData.id,
             queueNumber: servingData.queue_number || `Q-${servingData.id.slice(0, 6)}`,
-            clientName: customer?.full_name || servingData.customer_name || "ลูกค้า",
+            clientName: customer?.full_name || servingData.customer_name || "Customer",
             status: servingData.status,
             programType: servingData.program_type,
-            room: (servingData as any).room_number || "ห้อง 1", // Default to room 1 if not assigned
-            doctor: staff?.full_name || "แพทย์",
+            room: (servingData as any).room_number || "Room 1", // Default to room 1 if not assigned
+            doctor: staff?.full_name || "Doctor",
             checkInTime: servingData.check_in_time,
           }
         })()

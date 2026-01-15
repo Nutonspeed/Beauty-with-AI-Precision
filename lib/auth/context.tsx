@@ -221,6 +221,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const responseData = await response.json()
         profile = responseData.data
         console.log('[AuthContext] 📦 Profile data received:', profile)
+        console.log('[AuthContext] 👤 User email:', profile?.email, 'Role:', profile?.role)
       } catch (fetchError: any) {
         clearTimeout(timeoutId)
         if (fetchError.name === 'AbortError') {
@@ -266,39 +267,49 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     try {
-      console.log('[AuthContext] 🔐 Starting signIn...')
-      
+      const startTime = Date.now()
+      console.log(`[AuthContext] 🔑 Attempting sign in for: ${email}`)
       const supabase = createClient()
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
-
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password })
       if (error) throw error
-
-      console.log('[AuthContext] ✅ Login successful!')
       
-      // Fetch user profile immediately to get role for redirect
-      if (data.session?.access_token) {
-        try {
-          const profileRes = await fetch('/api/auth/me', {
-            headers: {
-              'Authorization': `Bearer ${data.session.access_token}`,
-            },
-          })
-          if (profileRes.ok) {
-            const profileData = await profileRes.json()
-            console.log('[AuthContext] 📦 Profile for redirect:', profileData.data?.role)
-            return { error: null, role: profileData.data?.role || 'customer' }
-          }
-        } catch (e) {
-          console.warn('[AuthContext] Could not fetch profile for redirect:', e)
-        }
+      const loginTime = Date.now()
+      console.log(`[AuthContext] ✅ Supabase auth success in ${loginTime - startTime}ms`)
+      
+      const userId = data.user?.id
+      if (!userId) {
+        console.warn('[AuthContext] ⚠️ No user ID returned from Supabase')
+        return { error: null, role: 'customer' }
       }
       
-      return { error: null, role: 'customer' }
+      // Wait for session to propagate
+      console.log('[AuthContext] ⏳ Waiting for session propagation...')
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      
+      console.log('[AuthContext] 🔄 Fetching user profile...')
+      const fetchStartTime = Date.now()
+      const profileResponse = await fetch(`/api/user-profile?userId=${userId}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+      })
+      
+      const fetchEndTime = Date.now()
+      if (profileResponse.ok) {
+        const profileData = await profileResponse.json()
+        const profile = profileData.data
+        console.log(`[AuthContext] 📦 Profile received in ${fetchEndTime - fetchStartTime}ms:`, profile?.email, 'Role:', profile?.role)
+        
+        // Update local user state immediately
+        setUser(profile)
+        
+        return { error: null, role: profile?.role || 'customer' }
+      } else {
+        console.error(`[AuthContext] ❌ Profile fetch failed with status: ${profileResponse.status}`)
+        return { error: null, role: 'customer' }
+      }
     } catch (error) {
-      console.error('[AuthContext] ❌ SignIn error:', error)
+      console.error('[AuthContext] ❌ Sign in error:', error)
       return { error: error as Error, role: null }
     }
   }

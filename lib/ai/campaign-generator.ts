@@ -90,6 +90,7 @@ export class AIMarketingCampaignGenerator {
   async generateCampaign(
     lead: LeadData,
     score: AIScoreResult,
+    locale: 'th' | 'en' = 'th',
     context?: {
       previousCampaigns?: GeneratedCampaign[];
       competitorAnalysis?: string;
@@ -98,14 +99,44 @@ export class AIMarketingCampaignGenerator {
     }
   ): Promise<GeneratedCampaign> {
     try {
-      const prompt = this.buildCampaignPrompt(lead, score, context);
+      const isThai = locale === 'th';
+      const prompt = this.buildCampaignPrompt(lead, score, locale, context);
 
       const response = await this.openai.chat.completions.create({
         model: 'gpt-4-turbo-preview',
         messages: [
           {
             role: 'system',
-            content: `You are a master marketing campaign creator for beauty centers. Create highly personalized, conversion-optimized campaigns that resonate with individual leads.
+            content: isThai 
+              ? `คุณคือผู้เชี่ยวชาญด้านการสร้างแคมเปญการตลาดสำหรับศูนย์ความงาม สร้างแคมเปญที่มีความเป็นส่วนตัวสูง ปรับแต่งมาเพื่อการแปลงเป็นลูกค้าที่เหมาะสมกับแต่ละบุคคล
+
+ตอบกลับเป็น JSON ในรูปแบบนี้:
+{
+  "name": "ชื่อแคมเปญ",
+  "type": "email|sms|social|push|personal",
+  "category": "welcome|nurture|conversion|retention|upsell|reactivation",
+  "subjectLine": "หัวข้อที่ดึงดูด",
+  "headline": "พาดหัวที่น่าสนใจ",
+  "content": "เนื้อหาแคมเปญฉบับเต็มในภาษาไทย",
+  "callToAction": {
+    "text": "ข้อความบนปุ่ม CTA",
+    "type": "button|link|phone|booking"
+  },
+  "personalizationElements": ["รายการ", "ของ", "องค์ประกอบ", "ส่วนบุคคล"],
+  "urgencyTriggers": ["รายการ", "ของ", "ตัวกระตุ้น", "ความเร่งด่วน"],
+  "followUpSequence": [
+    {
+      "delay": 24,
+      "type": "email",
+      "content": "เนื้อหาการติดตามผล",
+      "conditions": ["ไม่ได้เปิด", "ไม่ได้คลิก"]
+    }
+  ],
+  "expectedResponseRate": 0-100,
+  "estimatedValue": 0,
+  "optimizationSuggestions": ["รายการ", "ของ", "คำแนะนำ", "การปรับปรุง"]
+}`
+              : `You are a master marketing campaign creator for beauty centers. Create highly personalized, conversion-optimized campaigns that resonate with individual leads.
 
 Return JSON in this format:
 {
@@ -114,7 +145,7 @@ Return JSON in this format:
   "category": "welcome|nurture|conversion|retention|upsell|reactivation",
   "subjectLine": "compelling subject line",
   "headline": "attention-grabbing headline",
-  "content": "full campaign content in Thai",
+  "content": "full campaign content in English",
   "callToAction": {
     "text": "CTA button text",
     "type": "button|link|phone|booking"
@@ -154,7 +185,7 @@ Return JSON in this format:
         subjectLine: result.subjectLine,
         headline: result.headline,
         content: result.content || '',
-        callToAction: result.callToAction || { text: 'ติดต่อเรา', type: 'button' },
+        callToAction: result.callToAction || { text: isThai ? 'ติดต่อเรา' : 'Contact Us', type: 'button' },
         personalizationElements: result.personalizationElements || [],
         urgencyTriggers: result.urgencyTriggers || [],
         followUpSequence: result.followUpSequence || [],
@@ -166,7 +197,7 @@ Return JSON in this format:
       };
     } catch (error) {
       console.error('Campaign generation failed:', error);
-      return this.getFallbackCampaign(lead, score);
+      return this.getFallbackCampaign(lead, score, locale);
     }
   }
 
@@ -345,13 +376,20 @@ Return JSON array of campaigns in sequence.`
   private buildCampaignPrompt(
     lead: LeadData,
     score: AIScoreResult,
+    locale: 'th' | 'en' = 'th',
     context?: any
   ): string {
-    const urgencyLevel = score.urgency === 'critical' ? 'ด่วนมาก' :
-                        score.urgency === 'high' ? 'ด่วน' :
-                        score.urgency === 'medium' ? 'ปานกลาง' : 'ไม่ด่วน';
+    const isThai = locale === 'th';
+    const urgencyLevel = isThai 
+      ? (score.urgency === 'critical' ? 'ด่วนมาก' :
+         score.urgency === 'high' ? 'ด่วน' :
+         score.urgency === 'medium' ? 'ปานกลาง' : 'ไม่ด่วน')
+      : (score.urgency === 'critical' ? 'Critical' :
+         score.urgency === 'high' ? 'High' :
+         score.urgency === 'medium' ? 'Medium' : 'Low');
 
-    return `
+    if (isThai) {
+      return `
 สร้างแคมเปญการตลาดส่วนบุคคลสำหรับลูกค้า:
 
 ข้อมูลลูกค้า:
@@ -386,10 +424,48 @@ ${context ? `บริบทเพิ่มเติม: ${JSON.stringify(contex
 ให้เนื้อหาในภาษาไทยที่เป็นมิตร สุภาพ และน่าเชื่อถือ
 คำนึงถึงวัฒนธรรมไทยและความสุภาพในการสื่อสาร
 `;
+    }
+
+    return `
+Create a personalized marketing campaign for the customer:
+
+Customer Info:
+- Name: ${lead.name}
+- Age: ${lead.age || 'Not specified'}
+- Interests: ${lead.interests.join(', ')}
+- Budget: ${lead.budget || 'Not specified'}
+- Skin Concerns: ${lead.concerns?.join(', ') || 'Not specified'}
+- Source: ${lead.source}
+
+AI Score:
+- Overall Score: ${score.overallScore}/100
+- Conversion Probability: ${score.conversionProbability}%
+- Urgency: ${urgencyLevel}
+- Next Best Action: ${score.nextBestAction}
+
+Additional Info:
+- Engagement: ${JSON.stringify(lead.engagement)}
+- Treatment History: ${lead.previousPrograms?.join(', ') || 'None'}
+- Objections: ${lead.objections?.join(', ') || 'None'}
+
+${context ? `Additional Context: ${JSON.stringify(context)}` : ''}
+
+Create a campaign that:
+1. Is personalized and engaging
+2. Matches customer interests and needs
+3. Builds trust and expertise
+4. Has a clear Call-to-Action
+5. Suits the urgency level
+6. Includes appropriate urgency elements
+
+Provide content in a friendly, polite, and trustworthy English tone.
+`;
   }
 
-  private buildABTestPrompt(baseCampaign: GeneratedCampaign, lead: LeadData): string {
-    return `
+  private buildABTestPrompt(baseCampaign: GeneratedCampaign, lead: LeadData, locale: 'th' | 'en' = 'th'): string {
+    const isThai = locale === 'th';
+    if (isThai) {
+      return `
 สร้างตัวเลือก A/B testing สำหรับแคมเปญ:
 
 แคมเปญหลัก:
@@ -407,10 +483,32 @@ ${context ? `บริบทเพิ่มเติม: ${JSON.stringify(contex
 - มีโอกาสที่จะให้ผลลัพธ์ที่ดีกว่า
 - เหมาะกับกลุ่มเป้าหมาย
 `;
+    }
+
+    return `
+Create A/B testing variants for the campaign:
+
+Main Campaign:
+- Subject Line: ${baseCampaign.subjectLine}
+- Type: ${baseCampaign.type}
+- Target Group: ${lead.name} - ${lead.interests.join(', ')}
+
+Create 3 test variants:
+1. Different Subject Line
+2. Different Content
+3. Different Call-to-Action
+
+Each variant should:
+- Differ significantly from the main campaign
+- Have potential for better results
+- Suit the target audience
+`;
   }
 
-  private buildOptimizationPrompt(campaign: GeneratedCampaign, analytics: CampaignAnalytics): string {
-    return `
+  private buildOptimizationPrompt(campaign: GeneratedCampaign, analytics: CampaignAnalytics, locale: 'th' | 'en' = 'th'): string {
+    const isThai = locale === 'th';
+    if (isThai) {
+      return `
 วิเคราะห์และปรับปรุงแคมเปญ:
 
 ข้อมูลประสิทธิภาพ:
@@ -432,10 +530,36 @@ ${context ? `บริบทเพิ่มเติม: ${JSON.stringify(contex
 4. แก้ไข follow-up sequence
 5. เพิ่ม personalization elements
 `;
+    }
+
+    return `
+Analyze and optimize the campaign:
+
+Performance Info:
+- Sent: ${analytics.sent}
+- Opened: ${analytics.opened} (${((analytics.opened / analytics.sent) * 100).toFixed(1)}%)
+- Clicked: ${analytics.clicked} (${((analytics.clicked / analytics.opened) * 100).toFixed(1)}%)
+- Converted: ${analytics.converted} (${((analytics.converted / analytics.sent) * 100).toFixed(1)}%)
+- Revenue: THB ${analytics.revenue.toLocaleString()}
+
+Original Campaign:
+- Subject: ${campaign.subjectLine}
+- Type: ${campaign.type}
+- Content: ${campaign.content.substring(0, 200)}...
+
+Provide optimization tips:
+1. Catchier subject line
+2. More engaging and effective content
+3. Clearer Call-to-Action
+4. Improved follow-up sequence
+5. Enhanced personalization elements
+`;
   }
 
-  private buildSequencePrompt(lead: LeadData, score: AIScoreResult, duration: number): string {
-    return `
+  private buildSequencePrompt(lead: LeadData, score: AIScoreResult, duration: number, locale: 'th' | 'en' = 'th'): string {
+    const isThai = locale === 'th';
+    if (isThai) {
+      return `
 สร้างลำดับแคมเปญการ nurture เป็นเวลา ${duration} วัน:
 
 ข้อมูลลูกค้า:
@@ -446,16 +570,37 @@ ${context ? `บริบทเพิ่มเติม: ${JSON.stringify(contex
 
 สร้างลำดับ 4-6 แคมเปญที่:
 1. เริ่มจากการสร้างความรู้จักและความไว้วางใจ
-2. ให้ข้อมูลที่มี价值เกี่ยวกับปัญหาผิว
+2. ให้ข้อมูลที่มีคุณค่าเกี่ยวกับปัญหาผิว
 3. แสดงผลลัพธ์และความสำเร็จ
 4. สร้างความเร่งด่วนในการตัดสินใจ
 5. จบด้วยข้อเสนอพิเศษ
 
 แต่ละแคมเปญควรห่างกัน 2-4 วัน และส่งเสริมกันเอง
 `;
+    }
+
+    return `
+Create a nurture campaign sequence for ${duration} days:
+
+Customer Info:
+- Name: ${lead.name}
+- Interests: ${lead.interests.join(', ')}
+- Score: ${score.overallScore}/100
+- Priority Level: ${score.priority}
+
+Create a sequence of 4-6 campaigns that:
+1. Start with building awareness and trust
+2. Provide valuable information about skin concerns
+3. Show results and success stories
+4. Create urgency for decision making
+5. End with a special offer
+
+Each campaign should be 2-4 days apart and mutually reinforcing.
+`;
   }
 
-  private buildAnalysisPrompt(campaigns: GeneratedCampaign[]): string {
+  private buildAnalysisPrompt(campaigns: GeneratedCampaign[], locale: 'th' | 'en' = 'th'): string {
+    const isThai = locale === 'th';
     const summary = campaigns.map(c => ({
       type: c.type,
       category: c.category,
@@ -463,7 +608,8 @@ ${context ? `บริบทเพิ่มเติม: ${JSON.stringify(contex
       status: c.status,
     }));
 
-    return `
+    if (isThai) {
+      return `
 วิเคราะห์ประสิทธิภาพแคมเปญทั้งหมด:
 
 ข้อมูลแคมเปญ: ${JSON.stringify(summary, null, 2)}
@@ -474,6 +620,20 @@ ${context ? `บริบทเพิ่มเติม: ${JSON.stringify(contex
 3. แนวโน้มและรูปแบบ
 4. คำแนะนำในการปรับปรุง
 5. กลยุทธ์สำหรับอนาคต
+`;
+    }
+
+    return `
+Analyze all campaign performance:
+
+Campaign Info: ${JSON.stringify(summary, null, 2)}
+
+Provide insights on:
+1. Top performing campaign types
+2. Categories with highest conversion
+3. Trends and patterns
+4. Optimization tips
+5. Future strategies
 `;
   }
 
@@ -487,31 +647,40 @@ ${context ? `บริบทเพิ่มเติม: ${JSON.stringify(contex
     return 'welcome';
   }
 
-  private getFallbackCampaign(lead: LeadData, score: AIScoreResult): GeneratedCampaign {
+  private getFallbackCampaign(lead: LeadData, score: AIScoreResult, locale: 'th' | 'en' = 'th'): GeneratedCampaign {
+    const isThai = locale === 'th';
     return {
       id: `fallback_${Date.now()}`,
       name: `Basic Campaign for ${lead.name}`,
       type: 'email',
       category: 'nurture',
       targetLead: lead.id,
-      subjectLine: `คำแนะนำพิเศษสำหรับคุณ ${lead.name}`,
-      content: `สวัสดีค่ะ ${lead.name}
+      subjectLine: isThai ? `คำแนะนำพิเศษสำหรับคุณ ${lead.name}` : `Special recommendation for you ${lead.name}`,
+      content: isThai 
+        ? `สวัสดีค่ะ ${lead.name}
 
 ขอบคุณที่สนใจ${lead.interests.join(' และ ')} ของเรา
 
 เรามีบริการที่เหมาะกับคุณโดยเฉพาะ พร้อมให้คำปรึกษาฟรี
 
-ติดต่อเราได้เลยค่ะ`,
+ติดต่อเราได้เลยค่ะ`
+        : `Hello ${lead.name}
+
+Thank you for your interest in our ${lead.interests.join(' and ')}.
+
+We have services tailored just for you, with a free consultation available.
+
+Contact us today.`,
       callToAction: {
-        text: 'ติดต่อปรึกษาฟรี',
+        text: isThai ? 'ติดต่อปรึกษาฟรี' : 'Free Consultation',
         type: 'button',
       },
-      personalizationElements: ['ชื่อลูกค้า'],
+      personalizationElements: isThai ? ['ชื่อลูกค้า'] : ['Customer Name'],
       urgencyTriggers: [],
       followUpSequence: [],
       expectedResponseRate: 25,
       estimatedValue: score.predictedValue,
-      optimizationSuggestions: ['เพิ่มรูปภาพ', 'ปรับหัวข้อให้ดึงดูดมากขึ้น'],
+      optimizationSuggestions: isThai ? ['เพิ่มรูปภาพ', 'ปรับหัวข้อให้ดึงดูดมากขึ้น'] : ['Add images', 'Catchier subject line'],
       createdAt: new Date(),
       status: 'draft',
     };

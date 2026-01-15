@@ -12,10 +12,10 @@ import { toast } from "sonner"
 
 interface MedicalDecisionSupportProps {
   isEnterprise: boolean
-  skinData: any
+  _skinData: any
 }
 
-export function MedicalDecisionSupport({ isEnterprise, skinData }: MedicalDecisionSupportProps) {
+export function MedicalDecisionSupport({ isEnterprise, _skinData }: MedicalDecisionSupportProps) {
   const t = useTranslations('medicalDecisionSupport');
   const [isAnalyzing, setIsAnalyzing] = useState(false)
 

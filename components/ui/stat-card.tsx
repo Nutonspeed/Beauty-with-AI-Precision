@@ -1,6 +1,6 @@
 /**
  * Reusable Stat Card Component
- * ใช้แสดงตัวเลข metrics แบบสม่ำเสมอทุกหน้า
+ * Displays metrics consistently across all pages
  */
 
 import { Card, CardContent } from "@/components/ui/card"
@@ -12,8 +12,8 @@ interface StatCardProps {
   value: string | number
   icon: LucideIcon
   trend?: {
-    value: number // เช่น 12.5 = +12.5%
-    label?: string // เช่น "vs เดือนที่แล้ว"
+    value: number // e.g., 12.5 = +12.5%
+    label?: string // e.g., "vs last month"
   }
   iconColor?: string
   iconBackground?: string
@@ -90,7 +90,7 @@ export function StatCard({
   )
 }
 
-// Skeleton สำหรับ StatCard
+// Skeleton for StatCard
 export function StatCardSkeleton() {
   return (
     <Card data-testid="metric-skeleton">
@@ -107,7 +107,7 @@ export function StatCardSkeleton() {
   )
 }
 
-// Variants สำหรับ metrics ต่างๆ
+// Variants for various metrics
 export const STAT_CARD_VARIANTS = {
   revenue: {
     iconColor: "text-green-600 dark:text-green-400",

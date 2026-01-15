@@ -219,14 +219,14 @@ export default function PresentationsPage() {
             >
               <Badge variant="outline" className="px-4 py-1 rounded-full border-pink-500/30 text-pink-400 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.2em] text-[10px] font-black shadow-2xl shadow-pink-500/10">
                 <FileText className="mr-3 h-3.5 w-3.5 animate-pulse" />
-                Visual Narrative Archive
+                {t('salesPresentations.header.badge')}
               </Badge>
               <h1 className="text-5xl md:text-8xl font-bold tracking-tighter text-white leading-[0.9] italic">
-                Sales<br />
-                <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent not-italic">Archive</span>
+                {t('salesPresentations.header.title')}<br />
+                <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent not-italic">{t('salesPresentations.header.highlight')}</span>
               </h1>
               <p className="text-xl text-slate-500 font-light tracking-widest max-w-2xl italic leading-relaxed">
-                Synchronized historical presentations and diagnostic transformation logs.
+                {t('salesPresentations.header.description')}
               </p>
             </motion.div>
             
@@ -234,7 +234,7 @@ export default function PresentationsPage() {
               <Link href={lp('/sales/dashboard')}>
                 <Button size="xl" variant="outline" className="h-16 px-10 rounded-2xl border-white/5 bg-white/[0.03] text-[10px] font-black uppercase tracking-[0.3em] transition-all hover:bg-white/10 italic">
                   <ArrowLeft className="mr-3 h-5 w-5" />
-                  Terminal Dashboard
+                  {t('salesPresentations.header.dashboardBtn')}
                 </Button>
               </Link>
             </div>
@@ -326,9 +326,14 @@ export default function PresentationsPage() {
             </div>
 
             <div className="grid gap-6">
-              <AnimatePresence>
+              <AnimatePresence mode="popLayout">
                 {filteredPresentations.length === 0 ? (
-                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                  <motion.div
+                    key="empty"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                  >
                     <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] p-20 text-center space-y-6">
                       <div className="h-20 w-20 rounded-3xl bg-white/[0.02] border border-white/5 flex items-center justify-center text-slate-700 mx-auto">
                         <FileText className="h-10 w-10" />
@@ -349,6 +354,7 @@ export default function PresentationsPage() {
                       key={presentation.customerId}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
                       transition={{ delay: index * 0.05 }}
                     >
                       <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2.5rem] hover:bg-white/[0.03] transition-all duration-500 group relative overflow-hidden shadow-2xl">
@@ -386,7 +392,7 @@ export default function PresentationsPage() {
                                     <Badge variant="outline" className="bg-pink-600/10 text-pink-400 border-none rounded-full px-4 py-1 text-[9px] font-black uppercase tracking-widest italic">
                                       {t('salesPresentations.card.step', { current: presentation.currentStep, total: 7 })}: {STEP_NAMES[presentation.currentStep - 1] || t('salesPresentations.steps.start')}
                                     </Badge>
-                                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-600 italic">{Math.round((presentation.currentStep / 7) * 100)}% Synchronized</span>
+                                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-600 italic">{Math.round((presentation.currentStep / 7) * 100)}% {t('salesPresentations.card.synchronized')}</span>
                                   </div>
                                   <div className="h-1.5 bg-white/5 rounded-full overflow-hidden shadow-inner">
                                     <motion.div 
@@ -403,16 +409,16 @@ export default function PresentationsPage() {
                             <div className="flex flex-col items-center lg:items-end gap-2 shrink-0">
                               {presentation.status === 'completed' ? (
                                 <div className="text-right">
-                                  <p className="text-[9px] font-black uppercase tracking-widest text-slate-600 mb-1 italic">Authorized Value</p>
+                                  <p className="text-[9px] font-black uppercase tracking-widest text-slate-600 mb-1 italic">{t('salesPresentations.card.authorizedValue')}</p>
                                   <div className="text-3xl font-black text-emerald-400 tracking-tighter italic">
-                                    <span className="text-sm mr-1 font-normal opacity-50">฿</span>
+                                    <span className="text-sm mr-1 font-normal opacity-50">{t('common.currency.thbSymbol') || '฿'}</span>
                                     {presentation.totalValue.toLocaleString()}
                                   </div>
                                 </div>
                               ) : (
                                 <div className="text-right">
-                                  <p className="text-[9px] font-black uppercase tracking-widest text-slate-600 mb-1 italic">Temporal Status</p>
-                                  <Badge className="bg-amber-500/10 text-amber-400 border-none rounded-full px-4 py-1.5 text-[10px] font-black uppercase tracking-widest italic">INCOMPLETE SEQUENCE</Badge>
+                                  <p className="text-[9px] font-black uppercase tracking-widest text-slate-600 mb-1 italic">{t('salesPresentations.card.temporalStatus')}</p>
+                                  <Badge className="bg-amber-500/10 text-amber-400 border-none rounded-full px-4 py-1.5 text-[10px] font-black uppercase tracking-widest italic">{t('salesPresentations.card.incompleteSequence')}</Badge>
                                 </div>
                               )}
                               <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 italic mt-2">
@@ -428,14 +434,14 @@ export default function PresentationsPage() {
                               <Link href={`/sales/wizard/${presentation.customerId}`} className="flex-1">
                                 <Button size="xl" variant="premium" className="w-full h-14 rounded-2xl shadow-2xl shadow-pink-500/20 text-[9px] font-black uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 border">
                                   <Eye className="h-4 w-4 mr-3" />
-                                  {presentation.status === 'completed' ? 'Inspect Data' : 'Sync Sequence'}
+                                  {presentation.status === 'completed' ? t('salesPresentations.card.inspectData') : t('salesPresentations.card.syncSequence')}
                                 </Button>
                               </Link>
                               <div className="flex gap-3">
                                 {presentation.status === 'completed' && (
                                   <Button size="xl" variant="outline" className="flex-1 h-14 rounded-2xl border-white/5 bg-white/[0.03] text-[9px] font-black uppercase tracking-widest hover:bg-white/10 transition-all">
                                     <Download className="h-4 w-4 mr-3 text-cyan-400" />
-                                    Export Schema
+                                    {t('salesPresentations.card.exportSchema')}
                                   </Button>
                                 )}
                                 <Button

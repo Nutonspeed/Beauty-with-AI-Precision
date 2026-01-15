@@ -20,6 +20,7 @@ const intlMiddleware = createMiddleware({
 
 export default async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname
+  console.log(`[PROXY] Incoming request: ${pathname}`)
 
   // Avoid i18n routing for API and Next internals, but still keep session refresh behavior.
   if (pathname.startsWith('/api/') || pathname.startsWith('/_next/') || pathname.startsWith('/_vercel/')) {
@@ -29,6 +30,11 @@ export default async function proxy(request: NextRequest) {
   const intlResponse = intlMiddleware(request)
   const rewrite = intlResponse.headers.get('x-middleware-rewrite')
   const location = intlResponse.headers.get('location')
+  
+  if (location) {
+    console.log(`[PROXY] Intl middleware redirecting: ${pathname} -> ${location}`)
+  }
+
   const resolvedPathname = rewrite
     ? new URL(rewrite).pathname
     : location
@@ -37,6 +43,10 @@ export default async function proxy(request: NextRequest) {
 
   const authResponse = await updateSession(request, intlResponse, resolvedPathname)
   const authLocation = authResponse.headers.get('location')
+
+  if (authLocation) {
+    console.log(`[PROXY] Auth middleware redirecting: ${pathname} -> ${authLocation}`)
+  }
 
   // If auth decides to redirect, it must win over i18n normalization.
   if (authLocation && authResponse.status >= 300 && authResponse.status < 400) {

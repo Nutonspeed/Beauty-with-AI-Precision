@@ -62,6 +62,7 @@ interface ErrorDashboardProps {
   locale?: string;
 }
 
+/*
 const TRANSLATIONS = {
   en: {
     title: 'Error Dashboard',
@@ -166,6 +167,7 @@ const TRANSLATIONS = {
     },
   },
 };
+*/
 
 export function ErrorDashboard({ locale = 'th' }: ErrorDashboardProps) {
   const t = useTranslations();
@@ -173,7 +175,7 @@ export function ErrorDashboard({ locale = 'th' }: ErrorDashboardProps) {
   const [logs, setLogs] = useState<ErrorLog[]>([]);
   const [stats, setStats] = useState<ErrorStats | null>(null);
   const [loading, setLoading] = useState(true);
-  const [_error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [selectedLog, setSelectedLog] = useState<ErrorLog | null>(null);
 
   // Filters
@@ -357,6 +359,11 @@ export function ErrorDashboard({ locale = 'th' }: ErrorDashboardProps) {
         </CardHeader>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
+            {error && (
+              <div className="p-4 mb-4 text-sm text-red-500 bg-red-500/10 rounded-lg">
+                {error}
+              </div>
+            )}
             <Table>
               <TableHeader>
                 <TableRow className="bg-white/[0.02] border-b border-white/5">

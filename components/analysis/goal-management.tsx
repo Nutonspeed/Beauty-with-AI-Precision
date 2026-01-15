@@ -45,7 +45,7 @@ export default function GoalManagement({
 }: GoalManagementProps) {
   const t = useTranslations();
   const currentLocale = useLocale() as 'th' | 'en';
-  const locale = propLocale ?? currentLocale;
+  const _locale = propLocale ?? currentLocale;
   
   const [selectedGoalId, setSelectedGoalId] = useState<string | null>(
     goals.length > 0 ? goals[0].id : null
@@ -240,7 +240,7 @@ interface GoalCardProps {
 interface GoalDetailsPanelProps {
   readonly goal: SkinGoal;
   readonly t: any;
-  readonly locale: string;
+  readonly _locale: string;
   readonly getParameterLabel: (param: GoalParameter) => string;
   readonly daysRemaining: number;
 }
@@ -248,7 +248,7 @@ interface GoalDetailsPanelProps {
 function GoalDetailsPanel({
   goal,
   t,
-  locale,
+  _locale,
   getParameterLabel,
   daysRemaining,
 }: GoalDetailsPanelProps) {

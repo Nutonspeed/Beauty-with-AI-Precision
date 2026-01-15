@@ -58,8 +58,10 @@ export async function sendBookingConfirmationEmail(params: {
   centerName: string;
   centerAddress?: string;
   bookingId: string;
+  locale?: 'th' | 'en';
 }) {
-  const { to, customerName, bookingDate, bookingTime, program, centerName, centerAddress, bookingId } = params;
+  const { to, customerName, bookingDate, bookingTime, program, centerName, centerAddress, bookingId, locale = 'th' } = params;
+  const isThai = locale === 'th';
 
   const html = `
     <!DOCTYPE html>
@@ -82,66 +84,66 @@ export async function sendBookingConfirmationEmail(params: {
       <body>
         <div class="container">
           <div class="header">
-            <h1>🎉 การจองของคุณได้รับการยืนยันแล้ว</h1>
-            <p>Booking Confirmation</p>
+            <h1>${isThai ? '🎉 การจองของคุณได้รับการยืนยันแล้ว' : '🎉 Your Booking is Confirmed'}</h1>
+            <p>${isThai ? 'Booking Confirmation' : 'Appointment scheduled successfully'}</p>
           </div>
           <div class="content">
-            <p>สวัสดีคุณ ${customerName},</p>
-            <p>ขอบคุณที่เลือกใช้บริการของเรา การจองของคุณได้รับการยืนยันแล้ว</p>
+            <p>${isThai ? `สวัสดีคุณ ${customerName},` : `Hello ${customerName},`}</p>
+            <p>${isThai ? 'ขอบคุณที่เลือกใช้บริการของเรา การจองของคุณได้รับการยืนยันแล้ว' : 'Thank you for choosing us. Your booking has been confirmed.'}</p>
             
             <div class="booking-details">
-              <h3>รายละเอียดการจอง</h3>
+              <h3>${isThai ? 'รายละเอียดการจอง' : 'Booking Details'}</h3>
               <div class="detail-row">
-                <span class="detail-label">หมายเลขการจอง:</span>
+                <span class="detail-label">${isThai ? 'หมายเลขการจอง:' : 'Booking ID:'}</span>
                 <span class="detail-value">${bookingId}</span>
               </div>
               <div class="detail-row">
-                <span class="detail-label">วันที่:</span>
+                <span class="detail-label">${isThai ? 'วันที่:' : 'Date:'}</span>
                 <span class="detail-value">${bookingDate}</span>
               </div>
               <div class="detail-row">
-                <span class="detail-label">เวลา:</span>
+                <span class="detail-label">${isThai ? 'เวลา:' : 'Time:'}</span>
                 <span class="detail-value">${bookingTime}</span>
               </div>
               <div class="detail-row">
-                <span class="detail-label">โปรแกรม:</span>
+                <span class="detail-label">${isThai ? 'โปรแกรม:' : 'Program:'}</span>
                 <span class="detail-value">${program}</span>
               </div>
               <div class="detail-row">
-                <span class="detail-label">ศูนย์ความงาม:</span>
+                <span class="detail-label">${isThai ? 'ศูนย์ความงาม:' : 'Beauty Center:'}</span>
                 <span class="detail-value">${centerName}</span>
               </div>
               ${centerAddress ? `
               <div class="detail-row">
-                <span class="detail-label">ที่อยู่:</span>
+                <span class="detail-label">${isThai ? 'ที่อยู่:' : 'Address:'}</span>
                 <span class="detail-value">${centerAddress}</span>
               </div>
               ` : ''}
             </div>
 
-            <p><strong>สิ่งที่ต้องเตรียม:</strong></p>
+            <p><strong>${isThai ? 'สิ่งที่ต้องเตรียม:' : 'What to prepare:'}</strong></p>
             <ul>
-              <li>มาถึงก่อนเวลานัด 15 นาที</li>
-              <li>นำบัตรประชาชนมาด้วย</li>
-              <li>แจ้งแพ้ยาหรือประวัติการรักษา (ถ้ามี)</li>
+              <li>${isThai ? 'มาถึงก่อนเวลานัด 15 นาที' : 'Arrive 15 minutes early'}</li>
+              <li>${isThai ? 'นำบัตรประชาชนมาด้วย' : 'Bring your ID card'}</li>
+              <li>${isThai ? 'แจ้งแพ้ยาหรือประวัติการรักษา (ถ้ามี)' : 'Inform of any allergies or medical history (if any)'}</li>
             </ul>
 
             <center>
-              <a href="${process.env.NEXT_PUBLIC_APP_URL}/bookings/${bookingId}" class="button">ดูรายละเอียดการจอง</a>
+              <a href="${process.env.NEXT_PUBLIC_APP_URL}/bookings/${bookingId}" class="button">${isThai ? 'ดูรายละเอียดการจอง' : 'View Booking Details'}</a>
             </center>
 
-            <p>หากต้องการเปลี่ยนแปลงหรือยกเลิกการจอง กรุณาติดต่อเราล่วงหน้าอย่างน้อย 24 ชั่วโมง</p>
+            <p>${isThai ? 'หากต้องการเปลี่ยนแปลงหรือยกเลิกการจอง กรุณาติดต่อเราล่วงหน้าอย่างน้อย 24 ชั่วโมง' : 'If you need to change or cancel your booking, please contact us at least 24 hours in advance.'}</p>
           </div>
           <div class="footer">
             <p>© ${new Date().getFullYear()} CenterIQ AI. All rights reserved.</p>
-            <p>Email นี้ส่งอัตโนมัติ กรุณาอย่าตอบกลับ</p>
+            <p>${isThai ? 'Email นี้ส่งอัตโนมัติ กรุณาอย่าตอบกลับ' : 'This is an automated email. Please do not reply.'}</p>
           </div>
         </div>
       </body>
     </html>
   `;
 
-  const text = `
+  const text = isThai ? `
 การจองของคุณได้รับการยืนยันแล้ว
 
 รายละเอียดการจอง:
@@ -158,11 +160,28 @@ ${centerAddress ? `ที่อยู่: ${centerAddress}` : ''}
 - แจ้งแพ้ยาหรือประวัติการรักษา (ถ้ามี)
 
 ขอบคุณที่ใช้บริการ
+  ` : `
+Your booking has been confirmed.
+
+Booking Details:
+Booking ID: ${bookingId}
+Date: ${bookingDate}
+Time: ${bookingTime}
+Program: ${program}
+Center: ${centerName}
+${centerAddress ? `Address: ${centerAddress}` : ''}
+
+What to prepare:
+- Arrive 15 minutes early
+- Bring your ID card
+- Inform of any allergies or medical history (if any)
+
+Thank you for your business.
   `;
 
   return sendEmail({
     to,
-    subject: `✅ ยืนยันการจอง - ${program} วันที่ ${bookingDate}`,
+    subject: isThai ? `✅ ยืนยันการจอง - ${program} วันที่ ${bookingDate}` : `✅ Booking Confirmed - ${program} on ${bookingDate}`,
     html,
     text,
   });
@@ -176,8 +195,10 @@ export async function sendBookingReminderEmail(params: {
   bookingTime: string;
   program: string;
   centerName: string;
+  locale?: 'th' | 'en';
 }) {
-  const { to, customerName, bookingDate, bookingTime, program, centerName } = params;
+  const { to, customerName, bookingDate, bookingTime, program, centerName, locale = 'th' } = params;
+  const isThai = locale === 'th';
 
   const html = `
     <!DOCTYPE html>
@@ -195,20 +216,20 @@ export async function sendBookingReminderEmail(params: {
       <body>
         <div class="container">
           <div class="header">
-            <h1>⏰ การเตือนนัดหมายของคุณ</h1>
+            <h1>${isThai ? '⏰ การเตือนนัดหมายของคุณ' : '⏰ Your Appointment Reminder'}</h1>
           </div>
           <div class="content">
-            <p>สวัสดีคุณ ${customerName},</p>
-            <p>นี่คือการเตือนว่าคุณมีนัดหมายในอีก 24 ชั่วโมง:</p>
+            <p>${isThai ? `สวัสดีคุณ ${customerName},` : `Hello ${customerName},`}</p>
+            <p>${isThai ? 'นี่คือการเตือนว่าคุณมีนัดหมายในอีก 24 ชั่วโมง:' : 'This is a reminder that you have an appointment in the next 24 hours:'}</p>
             
             <div class="reminder-box">
-              <p><strong>📅 วันที่:</strong> ${bookingDate}</p>
-              <p><strong>⏰ เวลา:</strong> ${bookingTime}</p>
-              <p><strong>💆 โปรแกรม:</strong> ${program}</p>
-              <p><strong>🏥 สถานที่:</strong> ${centerName}</p>
+              <p><strong>${isThai ? '📅 วันที่:' : '📅 Date:'}</strong> ${bookingDate}</p>
+              <p><strong>${isThai ? '⏰ เวลา:' : '⏰ Time:'}</strong> ${bookingTime}</p>
+              <p><strong>${isThai ? '💆 โปรแกรม:' : '💆 Program:'}</strong> ${program}</p>
+              <p><strong>${isThai ? '🏥 สถานที่:' : '🏥 Location:'}</strong> ${centerName}</p>
             </div>
 
-            <p>เราตั้งตารอพบคุณ!</p>
+            <p>${isThai ? 'เราตั้งตารอพบคุณ!' : 'We look forward to seeing you!'}</p>
           </div>
         </div>
       </body>
@@ -217,7 +238,7 @@ export async function sendBookingReminderEmail(params: {
 
   return sendEmail({
     to,
-    subject: `⏰ เตือนนัดหมาย: ${program} พรุ่งนี้ ${bookingTime}`,
+    subject: isThai ? `⏰ เตือนนัดหมาย: ${program} พรุ่งนี้ ${bookingTime}` : `⏰ Appointment Reminder: ${program} tomorrow at ${bookingTime}`,
     html,
   });
 }

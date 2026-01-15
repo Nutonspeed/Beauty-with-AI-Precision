@@ -2,7 +2,7 @@
 
 /**
  * Lead Conversion Optimizer
- * วิเคราะห์โอกาสปิดการขายและแนะนำ actions
+ * Analyze sales conversion opportunities and recommend actions
  * Competitive advantage: AI-powered sales coaching
  */
 

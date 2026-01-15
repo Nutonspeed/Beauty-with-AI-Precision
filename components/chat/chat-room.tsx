@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations, useLocale } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
 import { useChatDemo } from '@/hooks/demo/useChatDemo';
 import { Send, Check, CheckCheck } from 'lucide-react';
@@ -17,6 +18,8 @@ interface ChatRoomProps {
 }
 
 export function ChatRoom({ roomId, userId, userName, userRole }: ChatRoomProps) {
+  const t = useTranslations('chatRoom');
+  const locale = useLocale();
   const { messages, typingUsers, isConnected, sendMessage, sendTypingStatus } = useChatDemo({
     roomId,
     userId,
@@ -87,7 +90,7 @@ export function ChatRoom({ roomId, userId, userName, userRole }: ChatRoomProps) 
 
   const formatTime = (timestamp: number) => {
     const date = new Date(timestamp);
-    return date.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+    return date.toLocaleTimeString(locale === 'th' ? 'th-TH' : 'en-US', { hour: '2-digit', minute: '2-digit' });
   };
 
   return (
@@ -95,16 +98,22 @@ export function ChatRoom({ roomId, userId, userName, userRole }: ChatRoomProps) 
       {/* Header */}
       <div className="p-4 border-b flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold">ห้องแชท</h2>
+          <h2 className="text-lg font-semibold">{t('title')}</h2>
           <p className="text-sm text-muted-foreground">
-            {isConnected ? '🟢 เชื่อมต่อแล้ว' : '🔴 ไม่ได้เชื่อมต่อ'}
+            {isConnected ? `🟢 ${t('connected')}` : `🔴 ${t('disconnected')}`}
           </p>
         </div>
       </div>
 
       {/* Messages */}
-      <ScrollArea ref={scrollAreaRef} className="flex-1 p-4">
-        <div className="space-y-4">
+      <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
+        {messages.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full text-gray-500">
+            <p>{t('noMessages')}</p>
+            <p className="text-sm">{t('startChat')}</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
           {messages.map((message) => {
             const isOwnMessage = message.senderId === userId;
             return (
@@ -154,11 +163,12 @@ export function ChatRoom({ roomId, userId, userName, userRole }: ChatRoomProps) 
                 <span className="animate-bounce" style={{ animationDelay: '150ms' }}>●</span>
                 <span className="animate-bounce" style={{ animationDelay: '300ms' }}>●</span>
               </div>
-              <span>{typingUsers.join(', ')} กำลังพิมพ์...</span>
+              <span>{t('typing', { users: typingUsers.join(', ') })}</span>
             </div>
           )}
         </div>
-      </ScrollArea>
+      )}
+    </ScrollArea>
 
       {/* Input */}
       <div className="p-4 border-t">
@@ -166,7 +176,7 @@ export function ChatRoom({ roomId, userId, userName, userRole }: ChatRoomProps) 
           <Input
             value={input}
             onChange={handleInputChange}
-            placeholder="พิมพ์ข้อความ..."
+            placeholder={t('placeholder')}
             className="flex-1"
             disabled={!isConnected}
           />

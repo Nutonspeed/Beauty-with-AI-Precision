@@ -113,7 +113,7 @@ export async function canAccessFeature(centerId: string, feature: string): Promi
   
   if (!status.isActive) return false
   
-  const features = status.planDetails.features as readonly string[]
+  const features = [...((status.planDetails as any).salesFeatures || []), ...((status.planDetails as any).customerFeatures || [])] as readonly string[]
   return features.includes(feature)
 }
 
@@ -134,11 +134,11 @@ export async function canPerformAction(
     return { allowed: false, reason: 'Trial period has expired' }
   }
 
-  const plan = status.planDetails
+  const plan = status.planDetails as any
   const usage = status.usage
 
-  const maxAnalyses = plan.maxAnalysesPerMonth as number
-  const maxUsers = plan.maxUsers as number
+  const maxAnalyses = (plan.quotaPerSales || plan.maxAnalysesPerMonth) as number
+  const maxUsers = (plan.maxSalesUsers || plan.maxUsers) as number
   const maxStorage = plan.maxStorageGB as number
 
   switch (action) {

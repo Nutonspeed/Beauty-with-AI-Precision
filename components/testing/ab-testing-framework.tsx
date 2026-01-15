@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useTranslations } from 'next-intl';
 import {
   FlaskConical,
   TrendingUp,
@@ -66,6 +67,7 @@ interface TestAnalytics {
 }
 
 export function ABTestingFramework() {
+  const t = useTranslations('testing.ab');
   const [tests, setTests] = useState<ABTest[]>([]);
   const [selectedTest, setSelectedTest] = useState<string | null>(null);
   const [analytics, setAnalytics] = useState<TestAnalytics | null>(null);
@@ -324,8 +326,8 @@ export function ABTestingFramework() {
                 <FlaskConical className="w-5 h-5 text-white" />
               </div>
               <div>
-                <CardTitle>A/B Testing Framework</CardTitle>
-                <p className="text-sm text-gray-600">ทดสอบและปรับปรุงฟีเจอร์ AI ด้วยการทดสอบ A/B</p>
+                <CardTitle>{t('title')}</CardTitle>
+                <p className="text-sm text-gray-600">{t('description')}</p>
               </div>
             </div>
             <Button
@@ -333,7 +335,7 @@ export function ABTestingFramework() {
               className="bg-gradient-to-r from-purple-600 to-pink-600"
             >
               <FlaskConical className="w-4 h-4 mr-2" />
-              สร้างการทดสอบใหม่
+              {t('createBtn')}
             </Button>
           </div>
         </CardHeader>
@@ -345,13 +347,13 @@ export function ABTestingFramework() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium">Total Tests</p>
+                <p className="text-sm font-medium">{t('stats.total')}</p>
                 <p className="text-2xl font-bold">{tests.length}</p>
               </div>
               <FlaskConical className="w-8 h-8 text-purple-500" />
             </div>
             <div className="mt-2 text-xs text-gray-600">
-              {tests.filter(t => t.status === 'running').length} กำลังทำงาน
+              {tests.filter(t => t.status === 'running').length} {t('stats.running')}
             </div>
           </CardContent>
         </Card>
@@ -360,13 +362,13 @@ export function ABTestingFramework() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium">Completed Tests</p>
+                <p className="text-sm font-medium">{t('stats.completed')}</p>
                 <p className="text-2xl font-bold">{tests.filter(t => t.status === 'completed').length}</p>
               </div>
               <CheckCircle className="w-8 h-8 text-green-500" />
             </div>
             <div className="mt-2 text-xs text-gray-600">
-              {Math.round((tests.filter(t => t.status === 'completed').length / tests.length) * 100)}% success rate
+              {Math.round((tests.filter(t => t.status === 'completed').length / tests.length) * 100)}% {t('stats.successRate')}
             </div>
           </CardContent>
         </Card>
@@ -375,7 +377,7 @@ export function ABTestingFramework() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium">Avg Improvement</p>
+                <p className="text-sm font-medium">{t('stats.avgImprovement')}</p>
                 <p className="text-2xl font-bold text-green-600">
                   +{Math.round(tests.filter(t => t.status === 'completed').reduce((sum, t) => sum + (t.improvement ?? 0), 0) / Math.max(1, tests.filter(t => t.status === 'completed').length))}%
                 </p>
@@ -389,7 +391,7 @@ export function ABTestingFramework() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium">Total Participants</p>
+                <p className="text-sm font-medium">{t('stats.totalParticipants')}</p>
                 <p className="text-2xl font-bold">{tests.reduce((sum, t) => sum + t.sampleSize, 0).toLocaleString()}</p>
               </div>
               <Users className="w-8 h-8 text-blue-500" />
@@ -401,9 +403,9 @@ export function ABTestingFramework() {
       {/* Test Management */}
       <Tabs defaultValue="tests" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="tests">A/B Tests</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
-          <TabsTrigger value="insights">Insights</TabsTrigger>
+          <TabsTrigger value="tests">{t('suites')}</TabsTrigger>
+          <TabsTrigger value="analytics">{t('analytics.title')}</TabsTrigger>
+          <TabsTrigger value="insights">{t('insights.topFeatures')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="tests" className="space-y-4">
@@ -427,13 +429,11 @@ export function ABTestingFramework() {
                     </div>
                     <div className="flex items-center gap-3">
                       <Badge className={getStatusColor(test.status)}>
-                        {test.status === 'draft' ? 'ร่าง' :
-                         test.status === 'running' ? 'กำลังทำงาน' :
-                         test.status === 'completed' ? 'เสร็จสิ้น' : 'หยุดชั่วคราว'}
+                        {t(`status.${test.status}` as any)}
                       </Badge>
                       {test.winner && (
                         <Badge className="bg-green-100 text-green-800">
-                          Improvement: +{test.improvement}%
+                          {t('card.improvement', { val: test.improvement || 0 })}
                         </Badge>
                       )}
                     </div>
@@ -442,26 +442,26 @@ export function ABTestingFramework() {
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
                     <div>
-                      <p className="text-gray-600">Feature</p>
+                      <p className="text-gray-600">{t('card.feature')}</p>
                       <p className="font-medium">{test.feature}</p>
                     </div>
                     <div>
-                      <p className="text-gray-600">Target Metric</p>
+                      <p className="text-gray-600">{t('card.targetMetric')}</p>
                       <p className="font-medium">{test.targetMetric.replace('_', ' ')}</p>
                     </div>
                     <div>
-                      <p className="text-gray-600">Sample Size</p>
+                      <p className="text-gray-600">{t('card.sampleSize')}</p>
                       <p className="font-medium">{test.sampleSize.toLocaleString()}</p>
                     </div>
                     <div>
-                      <p className="text-gray-600">Confidence</p>
+                      <p className="text-gray-600">{t('card.confidence')}</p>
                       <p className="font-medium">{test.confidenceLevel}%</p>
                     </div>
                   </div>
 
                   {/* Variants */}
                   <div className="space-y-3">
-                    <h4 className="font-medium">Test Variants</h4>
+                    <h4 className="font-medium">{t('card.variantsTitle')}</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                       {test.variants.map((variant) => (
                         <div key={variant.id} className="p-3 border rounded-lg">
@@ -472,19 +472,19 @@ export function ABTestingFramework() {
                           <p className="text-sm text-gray-600 mb-2">{variant.description}</p>
                           <div className="grid grid-cols-2 gap-2 text-xs">
                             <div>
-                              <span className="text-gray-500">Traffic:</span>
+                              <span className="text-gray-500">{t('card.traffic')}:</span>
                               <span className="font-medium ml-1">{variant.trafficPercentage}%</span>
                             </div>
                             <div>
-                              <span className="text-gray-500">Conversions:</span>
+                              <span className="text-gray-500">{t('card.conversions')}:</span>
                               <span className="font-medium ml-1">{variant.metrics.conversions}</span>
                             </div>
                             <div>
-                              <span className="text-gray-500">Rate:</span>
+                              <span className="text-gray-500">{t('card.rate')}:</span>
                               <span className="font-medium ml-1">{variant.metrics.conversionRate}%</span>
                             </div>
                             <div>
-                              <span className="text-gray-500">Satisfaction:</span>
+                              <span className="text-gray-500">{t('card.satisfaction')}:</span>
                               <span className="font-medium ml-1">{variant.metrics.satisfactionScore}/5</span>
                             </div>
                           </div>
@@ -498,24 +498,24 @@ export function ABTestingFramework() {
                     {test.status === 'draft' && (
                       <Button onClick={() => startTest(test.id)}>
                         <Play className="w-4 h-4 mr-2" />
-                        เริ่มการทดสอบ
+                        {t('actions.start')}
                       </Button>
                     )}
                     {test.status === 'running' && (
                       <>
                         <Button onClick={() => pauseTest(test.id)} variant="outline">
                           <Pause className="w-4 h-4 mr-2" />
-                          หยุดชั่วคราว
+                          {t('actions.pause')}
                         </Button>
                         <Button onClick={() => completeTest(test.id)}>
                           <CheckCircle className="w-4 h-4 mr-2" />
-                          เสร็จสิ้นการทดสอบ
+                          {t('actions.complete')}
                         </Button>
                       </>
                     )}
                     <Button onClick={() => analyzeTest(test.id)} variant="outline">
                       <BarChart3 className="w-4 h-4 mr-2" />
-                      วิเคราะห์ผล
+                      {t('actions.analyze')}
                     </Button>
                   </div>
                 </CardContent>
@@ -529,7 +529,7 @@ export function ABTestingFramework() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Test Results</CardTitle>
+                  <CardTitle>{t('analytics.title')}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
@@ -537,29 +537,29 @@ export function ABTestingFramework() {
                       <div className="text-2xl font-bold text-blue-600">
                         {analytics.totalParticipants.toLocaleString()}
                       </div>
-                      <div className="text-sm text-blue-600">Total Participants</div>
+                      <div className="text-sm text-blue-600">{t('analytics.participants')}</div>
                     </div>
                     <div className="text-center p-4 bg-green-50 rounded-lg">
                       <div className="text-2xl font-bold text-green-600">
                         {analytics.conversionRate.toFixed(1)}%
                       </div>
-                      <div className="text-sm text-green-600">Conversion Rate</div>
+                      <div className="text-sm text-green-600">{t('analytics.conversionRate')}</div>
                     </div>
                   </div>
 
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span>Confidence Interval</span>
+                      <span>{t('analytics.confidenceInterval')}</span>
                       <span>{analytics.confidenceInterval[0].toFixed(1)}% - {analytics.confidenceInterval[1].toFixed(1)}%</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span>Statistical Significance</span>
+                      <span>{t('analytics.significance')}</span>
                       <Badge className={analytics.statisticalSignificance ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
-                        {analytics.statisticalSignificance ? 'Significant' : 'Not Significant'}
+                        {analytics.statisticalSignificance ? t('analytics.significant') : t('analytics.notSignificant')}
                       </Badge>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span>Recommended Winner</span>
+                      <span>{t('analytics.winner')}</span>
                       <span className="font-medium">{analytics.recommendedWinner}</span>
                     </div>
                   </div>
@@ -568,7 +568,7 @@ export function ABTestingFramework() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Key Insights</CardTitle>
+                  <CardTitle>{t('analytics.insightsTitle')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
@@ -583,13 +583,13 @@ export function ABTestingFramework() {
                   <div className="mt-6 p-4 bg-green-50 rounded-lg">
                     <div className="flex items-center gap-2 mb-2">
                       <TrendingUp className="w-4 h-4 text-green-600" />
-                      <span className="font-medium text-green-800">Potential Improvement</span>
+                      <span className="font-medium text-green-800">{t('analytics.potentialImprovement')}</span>
                     </div>
                     <div className="text-2xl font-bold text-green-600">
                       +{analytics.potentialImprovement}%
                     </div>
                     <div className="text-sm text-green-600 mt-1">
-                      Expected performance increase
+                      {t('analytics.expectedIncrease')}
                     </div>
                   </div>
                 </CardContent>
@@ -598,9 +598,9 @@ export function ABTestingFramework() {
           ) : (
             <Card className="p-12 text-center">
               <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900">No Analytics Available</h3>
+              <h3 className="text-lg font-medium text-gray-900">{t('analytics.noAnalytics')}</h3>
               <p className="text-gray-600 mt-1">
-                Select a test and click "วิเคราะห์ผล" to view detailed analytics
+                {t('analytics.selectTest')}
               </p>
             </Card>
           )}
@@ -610,7 +610,7 @@ export function ABTestingFramework() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Top Performing Features</CardTitle>
+                <CardTitle className="text-lg">{t('insights.topFeatures')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
@@ -632,7 +632,7 @@ export function ABTestingFramework() {
 
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Testing Best Practices</CardTitle>
+                <CardTitle className="text-lg">{t('insights.bestPractices')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
@@ -654,7 +654,7 @@ export function ABTestingFramework() {
 
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Next Test Suggestions</CardTitle>
+                <CardTitle className="text-lg">{t('insights.nextSuggestions')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">

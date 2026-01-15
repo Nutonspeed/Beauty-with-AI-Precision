@@ -116,9 +116,11 @@ export async function POST(request: NextRequest) {
       .select('*')
       .single();
 
+    const isThai = locale === 'th';
+
     const centerInfo = {
       name: centerSettings?.name || centerSettings?.center_name || 'Beauty with AI Precision',
-      nameTh: centerSettings?.center_name_th || 'ความงามด้วยความแม่นยำของ AI',
+      nameTh: centerSettings?.center_name_th || (isThai ? 'ความงามด้วยความแม่นยำของ AI' : 'Beauty with AI Precision'),
       logo: centerSettings?.logo_url || null,
       brandColor: centerSettings?.primary_color || '#8b5cf6',
       address: centerSettings?.address || '',

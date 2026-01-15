@@ -3,14 +3,16 @@ import React, { motion, useMotionValue, useSpring, useTransform } from 'framer-m
 import { useTranslations } from "next-intl";
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import { MagneticButton } from "@/components/ui/magnetic-button";
+import { MedicalHUD } from "@/components/ui/medical-hud";
 import { useEffect } from "react";
 
 interface LandingHeroProps {
   _onPrimary?: () => void;
   _onSecondary?: () => void;
+  _ctaVariant?: "A" | "B";
 }
 
-export function LandingHero({ _onPrimary, _onSecondary }: LandingHeroProps) {
+export function LandingHero({ _onPrimary, _onSecondary, _ctaVariant = "A" }: LandingHeroProps) {
   const t = useTranslations();
   
   // Mouse parallax setup
@@ -35,6 +37,7 @@ export function LandingHero({ _onPrimary, _onSecondary }: LandingHeroProps) {
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-white">
+      <MedicalHUD />
       {/* Dynamic Medical Grid Pattern with Parallax */}
       <motion.div 
         className="absolute inset-[-100px] opacity-[0.03] pointer-events-none" 

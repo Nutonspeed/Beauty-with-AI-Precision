@@ -149,7 +149,7 @@ export class ImageStorageManager {
       onProgress?.({ 
         stage: 'validating', 
         percent: 0, 
-        message: 'กำลังตรวจสอบรูปภาพ...' 
+        message: 'common.storage.validating' 
       });
 
       const validation = await ImageOptimizer.validateImage(buffer);
@@ -171,7 +171,7 @@ export class ImageStorageManager {
       onProgress?.({ 
         stage: 'optimizing', 
         percent: 20, 
-        message: 'กำลังปรับแต่งรูปภาพ...' 
+        message: 'common.storage.optimizing' 
       });
 
       const optimized = await ImageOptimizer.optimizeAll(buffer);
@@ -180,7 +180,7 @@ export class ImageStorageManager {
       onProgress?.({ 
         stage: 'uploading', 
         percent: 50, 
-        message: 'กำลังอัพโหลด...' 
+        message: 'common.storage.uploading' 
       });
 
       const uploadPromises = Object.entries(optimized).map(async ([tier, result]) => {
@@ -212,7 +212,7 @@ export class ImageStorageManager {
       onProgress?.({ 
         stage: 'complete', 
         percent: 100, 
-        message: 'อัพโหลดสำเร็จ!' 
+        message: 'common.storage.success' 
       });
 
       // Build result

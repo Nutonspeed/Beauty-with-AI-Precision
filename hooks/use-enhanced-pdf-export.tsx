@@ -6,7 +6,8 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { exportEnhancedPDF, type EnhancedPDFOptions } from '@/lib/presentation/enhanced-pdf-exporter';
+import { useTranslations } from 'next-intl';
+import { exportEnhancedPresentationToPDF as exportEnhancedPDF, type EnhancedPDFOptions } from '@/lib/presentation/enhanced-pdf-exporter';
 import type { HybridSkinAnalysis } from '@/lib/types/skin-analysis';
 
 export interface UseEnhancedPDFExportOptions {
@@ -21,6 +22,7 @@ export interface PDFExportResult {
 }
 
 export function useEnhancedPDFExport(options: UseEnhancedPDFExportOptions = {}) {
+  const t = useTranslations('analysis.report');
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [progress, setProgress] = useState(0);
@@ -44,7 +46,7 @@ export function useEnhancedPDFExport(options: UseEnhancedPDFExportOptions = {}) 
         setProgress(20);
 
         // Generate PDF
-        const blob = await exportEnhancedPDF(analysis, finalOptions);
+        const blob = await exportEnhancedPDF(analysis, finalOptions, t);
 
         setProgress(80);
 
@@ -74,7 +76,7 @@ export function useEnhancedPDFExport(options: UseEnhancedPDFExportOptions = {}) 
         setIsGenerating(false);
       }
     },
-    [options.locale, options.autoDownload]
+    [options.locale, options.autoDownload, t]
   );
 
   const generateFromAPI = useCallback(
@@ -119,7 +121,7 @@ export function useEnhancedPDFExport(options: UseEnhancedPDFExportOptions = {}) 
         setProgress(30);
 
         // Generate PDF with fetched data
-        const blob = await exportEnhancedPDF(data.analysis, data.pdfOptions);
+        const blob = await exportEnhancedPDF(data.analysis, data.pdfOptions, t);
 
         setProgress(80);
 
@@ -149,7 +151,7 @@ export function useEnhancedPDFExport(options: UseEnhancedPDFExportOptions = {}) 
         setIsGenerating(false);
       }
     },
-    [options.locale, options.autoDownload]
+    [options.locale, options.autoDownload, t]
   );
 
   const reset = useCallback(() => {

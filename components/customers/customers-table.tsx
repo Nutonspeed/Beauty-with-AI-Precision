@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Customer } from '@/lib/mock/customer-mock-data';
+import { useTranslations } from 'next-intl';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -35,114 +36,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { ChevronDown, Pencil, Trash2 } from 'lucide-react';
 
-export const columns: ColumnDef<Customer>[] = [
-  {
-    accessorKey: 'name',
-    header: 'ชื่อ-นามสกุล',
-    cell: ({ row }: { row: Row<Customer> }) => {
-      const customer = row.original;
-      return (
-        <div className="flex items-center space-x-3">
-          <div className="h-10 w-10 flex-shrink-0 rounded-full bg-gray-200 flex items-center justify-center">
-            {customer.profileImage ? (
-              <img
-                src={customer.profileImage}
-                alt={`${customer.firstName} ${customer.lastName}`}
-                className="h-full w-full rounded-full object-cover"
-              />
-            ) : (
-              <span className="text-gray-500 font-medium">
-                {customer.firstName[0]}
-                {customer.lastName[0]}
-              </span>
-            )}
-          </div>
-          <div>
-            <div className="font-medium">
-              {customer.firstName} {customer.lastName}
-            </div>
-            <div className="text-xs text-muted-foreground">
-              {customer.membershipLevel}
-            </div>
-          </div>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: 'contact',
-    header: 'ข้อมูลติดต่อ',
-    cell: ({ row }: { row: Row<Customer> }) => {
-      const customer = row.original;
-      return (
-        <div className="space-y-1">
-          <div className="font-medium">{customer.phone}</div>
-          <div className="text-sm text-muted-foreground">{customer.email}</div>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: 'visits',
-    header: 'การมาใช้บริการ',
-    cell: ({ row }: { row: Row<Customer> }) => {
-      const customer = row.original;
-      return (
-        <div className="space-y-1">
-          <div>มาแล้ว {customer.totalVisits} ครั้ง</div>
-          <div className="text-sm text-muted-foreground">
-            ใช้จ่าย {customer.totalSpent.toLocaleString()} บาท
-          </div>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: 'lastVisit',
-    header: 'มาใช้บริการล่าสุด',
-    cell: ({ row }: { row: Row<Customer> }) => {
-      const customer = row.original;
-      return customer.lastVisit
-        ? new Date(customer.lastVisit).toLocaleDateString('th-TH', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-          })
-        : 'ยังไม่เคยมาใช้บริการ';
-    },
-  },
-  {
-    id: 'actions',
-    cell: ({ row }: { row: Row<Customer> }) => {
-      const customer = row.original;
-
-      // Delegate to a proper React component to allow using hooks safely
-      const Actions: React.FC<{ customer: Customer }> = ({ customer }) => {
-        const router = useRouter();
-        return (
-          <div className="flex justify-end">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8"
-              onClick={() => router.push(`/admin/customers/${customer.id}`)}
-            >
-              <Pencil className="h-4 w-4" />
-              <span className="sr-only">แก้ไข</span>
-            </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-red-500">
-              <Trash2 className="h-4 w-4" />
-              <span className="sr-only">ลบ</span>
-            </Button>
-          </div>
-        );
-      };
-
-      return <Actions customer={customer} />;
-    },
-  },
-];
-
 interface CustomersTableProps {
   data: Customer[];
   onSearch: (search: string) => void;
@@ -150,6 +43,126 @@ interface CustomersTableProps {
 }
 
 export function CustomersTable({ data, onSearch, onAddNew }: CustomersTableProps) {
+  const t = useTranslations('customers.table');
+  const commonT = useTranslations('common');
+  const router = useRouter();
+
+  const columns = useMemo<ColumnDef<Customer>[]>(() => [
+    {
+      accessorKey: 'name',
+      header: () => t('columns.name'),
+      cell: ({ row }: { row: Row<Customer> }) => {
+        const customer = row.original;
+        return (
+          <div className="flex items-center space-x-3">
+            <div className="h-10 w-10 flex-shrink-0 rounded-full bg-gray-200 flex items-center justify-center">
+              {customer.profileImage ? (
+                <img
+                  src={customer.profileImage}
+                  alt={`${customer.firstName} ${customer.lastName}`}
+                  className="h-full w-full rounded-full object-cover"
+                />
+              ) : (
+                <span className="text-gray-500 font-medium">
+                  {customer.firstName[0]}
+                  {customer.lastName[0]}
+                </span>
+              )}
+            </div>
+            <div>
+              <div className="font-medium">
+                {customer.firstName} {customer.lastName}
+              </div>
+              <div className="text-xs text-muted-foreground">
+                {customer.membershipLevel}
+              </div>
+            </div>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: 'contact',
+      header: () => t('columns.contact'),
+      cell: ({ row }: { row: Row<Customer> }) => {
+        const customer = row.original;
+        return (
+          <div className="space-y-1">
+            <div className="font-medium">{customer.phone}</div>
+            <div className="text-sm text-muted-foreground">{customer.email}</div>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: 'visits',
+      header: () => t('columns.visits'),
+      cell: ({ row }: { row: Row<Customer> }) => {
+        const customer = row.original;
+        return (
+          <div className="space-y-1">
+            <div>{t('visitInfo.count', { count: customer.totalVisits })}</div>
+            <div className="text-sm text-muted-foreground">
+              {t('visitInfo.spent', { 
+                amount: customer.totalSpent.toLocaleString(), 
+                currency: commonT('currency.thb') 
+              })}
+            </div>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: 'lastVisit',
+      header: () => t('columns.lastVisit'),
+      cell: ({ row }: { row: Row<Customer> }) => {
+        const customer = row.original;
+        return customer.lastVisit
+          ? new Date(customer.lastVisit).toLocaleDateString('th-TH', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+            })
+          : t('visitInfo.never');
+      },
+    },
+    {
+      id: 'actions',
+      header: () => t('columns.actions'),
+      cell: ({ row }: { row: Row<Customer> }) => {
+        const customer = row.original;
+        return (
+          <div className="flex justify-end">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              onClick={(e) => {
+                e.stopPropagation();
+                router.push(`/admin/customers/${customer.id}`);
+              }}
+            >
+              <Pencil className="h-4 w-4" />
+              <span className="sr-only">{commonT('edit')}</span>
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-8 w-8 text-red-500"
+              onClick={(e) => {
+                e.stopPropagation();
+                // Handle delete logic here
+              }}
+            >
+              <Trash2 className="h-4 w-4" />
+              <span className="sr-only">{commonT('delete')}</span>
+            </Button>
+          </div>
+        );
+      },
+    },
+  ], [t, commonT, router]);
+
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -158,20 +171,20 @@ export function CustomersTable({ data, onSearch, onAddNew }: CustomersTableProps
   const table = useReactTable({
     data,
     columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
     state: {
       sorting,
       columnFilters,
       columnVisibility,
       rowSelection,
     },
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: setRowSelection,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
   });
 
   return (
@@ -179,14 +192,14 @@ export function CustomersTable({ data, onSearch, onAddNew }: CustomersTableProps
       <div className="flex items-center justify-between py-4">
         <div className="flex items-center space-x-2">
           <Input
-            placeholder="ค้นหาลูกค้า..."
+            placeholder={t('searchPlaceholder')}
             onChange={(e) => onSearch(e.target.value)}
             className="max-w-sm"
           />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="ml-auto">
-                คอลัมน์ <ChevronDown className="ml-2 h-4 w-4" />
+                {t('columnsButton')} <ChevronDown className="ml-2 h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -204,13 +217,13 @@ export function CustomersTable({ data, onSearch, onAddNew }: CustomersTableProps
                       }
                     >
                       {column.id === 'name'
-                        ? 'ชื่อ-นามสกุล'
+                        ? t('columns.name')
                         : column.id === 'contact'
-                        ? 'ข้อมูลติดต่อ'
+                        ? t('columns.contact')
                         : column.id === 'visits'
-                        ? 'การมาใช้บริการ'
+                        ? t('columns.visits')
                         : column.id === 'lastVisit'
-                        ? 'มาใช้บริการล่าสุด'
+                        ? t('columns.lastVisit')
                         : column.id}
                     </DropdownMenuCheckboxItem>
                   );
@@ -219,7 +232,7 @@ export function CustomersTable({ data, onSearch, onAddNew }: CustomersTableProps
           </DropdownMenu>
         </div>
         <Button onClick={onAddNew}>
-          เพิ่มลูกค้าใหม่
+          {t('addNew')}
         </Button>
       </div>
       <div className="rounded-md border">
@@ -265,7 +278,7 @@ export function CustomersTable({ data, onSearch, onAddNew }: CustomersTableProps
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  ไม่พบข้อมูลลูกค้า
+                  {t('noResults')}
                 </TableCell>
               </TableRow>
             )}
@@ -274,8 +287,7 @@ export function CustomersTable({ data, onSearch, onAddNew }: CustomersTableProps
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
-          แสดง {table.getFilteredRowModel().rows.length} รายการ จากทั้งหมด{' '}
-          {data.length} รายการ
+          {t('pagination.showing', { count: table.getFilteredRowModel().rows.length, total: data.length })}
         </div>
         <div className="space-x-2">
           <Button
@@ -284,7 +296,7 @@ export function CustomersTable({ data, onSearch, onAddNew }: CustomersTableProps
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            ก่อนหน้า
+            {t('pagination.previous')}
           </Button>
           <Button
             variant="outline"
@@ -292,7 +304,7 @@ export function CustomersTable({ data, onSearch, onAddNew }: CustomersTableProps
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            ถัดไป
+            {t('pagination.next')}
           </Button>
         </div>
       </div>

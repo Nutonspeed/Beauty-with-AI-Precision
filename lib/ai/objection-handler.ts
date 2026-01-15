@@ -59,16 +59,27 @@ export class AIObjectionHandler {
   /**
    * Detect objections in user message
    */
-  async detectObjection(message: string, context: ObjectionContext): Promise<ObjectionAnalysis> {
+  async detectObjection(message: string, context: ObjectionContext, locale: 'th' | 'en' = 'th'): Promise<ObjectionAnalysis> {
     try {
-      const prompt = this.buildDetectionPrompt(message, context);
+      const prompt = this.buildDetectionPrompt(message, context, locale);
 
       const response = await this.openai.chat.completions.create({
         model: 'gpt-4-turbo-preview',
         messages: [
           {
             role: 'system',
-            content: `You are an expert sales objection analyzer for a beauty center. Analyze the user's message and classify any objections with high accuracy.
+            content: locale === 'th' 
+              ? `คุณคือผู้เชี่ยวชาญด้านการวิเคราะห์ข้อโต้แย้งจากการขายสำหรับศูนย์ความงาม วิเคราะห์ข้อความของผู้ใช้และจัดประเภทข้อโต้แย้งอย่างแม่นยำ
+
+ตอบกลับเป็น JSON ในรูปแบบนี้:
+{
+  "objectionType": "price|time|trust|pain|commitment|competition|information|none",
+  "confidence": 0.0-1.0,
+  "severity": "low|medium|high",
+  "keywords": ["รายการ", "ของ", "คำ", "หลัก"],
+  "context": "คำอธิบายสั้นๆ เกี่ยวกับบริบทของข้อโต้แย้ง"
+}`
+              : `You are an expert sales objection analyzer for a beauty center. Analyze the user's message and classify any objections with high accuracy.
 
 Return JSON in this format:
 {
@@ -114,7 +125,8 @@ Return JSON in this format:
    */
   async handleObjection(
     objection: ObjectionAnalysis,
-    context: ObjectionContext
+    context: ObjectionContext,
+    locale: 'th' | 'en' = 'th'
   ): Promise<ObjectionResponse> {
     if (objection.objectionType === 'none') {
       return {
@@ -127,25 +139,44 @@ Return JSON in this format:
     }
 
     try {
-      const prompt = this.buildResponsePrompt(objection, context);
+      const isThai = locale === 'th';
+      const prompt = this.buildResponsePrompt(objection, context, locale);
 
       const response = await this.openai.chat.completions.create({
         model: 'gpt-4-turbo-preview',
         messages: [
           {
             role: 'system',
-            content: `You are a master sales closer for a premium beauty center. Generate empathetic, persuasive responses to handle customer objections.
+            content: isThai
+              ? `คุณคือผู้เชี่ยวชาญการปิดการขายสำหรับศูนย์ความงามระดับพรีเมียม สร้างการตอบสนองที่เห็นอกเห็นใจและจูงใจเพื่อจัดการกับข้อโต้แย้งของลูกค้า
+
+เน้นที่:
+- การสร้างความไว้วางใจและความสัมพันธ์
+- การจัดการข้อกังวลโดยตรง
+- การมอบคุณค่าและหลักฐานทางสังคม
+- การสร้างความเร่งด่วนโดยไม่มีแรงกดดัน
+- การใช้ภาษาไทยอย่างเหมาะสม
+
+ตอบกลับเป็น JSON ในรูปแบบนี้:
+{
+  "response": "การตอบสนองที่เป็นธรรมชาติในบทสนทนาภาษาไทย",
+  "strategy": "acknowledge|reframe|evidence|alternative|urgency|social_proof",
+  "followUpActions": ["การดำเนินการ1", "การดำเนินการ2"],
+  "conversionProbability": 0.0-1.0,
+  "script": "สคริปต์การขายที่สมบูรณ์พร้อมการจัดการข้อโต้แย้ง"
+}`
+              : `You are a master sales closer for a premium beauty center. Generate empathetic, persuasive responses to handle customer objections.
 
 Focus on:
 - Building trust and rapport
 - Addressing concerns directly
 - Providing value and social proof
 - Creating urgency without pressure
-- Using Thai language appropriately
+- Using appropriate language
 
 Return JSON in this format:
 {
-  "response": "natural conversational response in Thai",
+  "response": "natural conversational response",
   "strategy": "acknowledge|reframe|evidence|alternative|urgency|social_proof",
   "followUpActions": ["action1", "action2"],
   "conversionProbability": 0.0-1.0,
@@ -164,7 +195,7 @@ Return JSON in this format:
       const result = JSON.parse(response.choices[0]?.message?.content || '{}');
 
       return {
-        response: result.response || 'ขออภัยค่ะ ฉันไม่เข้าใจความกังวลของคุณ',
+        response: result.response || (isThai ? 'ขออภัยค่ะ ฉันไม่เข้าใจความกังวลของคุณ' : 'I am sorry, I do not quite understand your concern.'),
         strategy: result.strategy || 'acknowledge',
         followUpActions: result.followUpActions || [],
         conversionProbability: result.conversionProbability || 0.5,
@@ -172,25 +203,29 @@ Return JSON in this format:
       };
     } catch (error) {
       console.error('Objection handling failed:', error);
-      return this.getFallbackResponse(objection);
+      return this.getFallbackResponse(objection, locale);
     }
   }
 
   /**
    * Get conversion optimization strategies
    */
-  async getConversionStrategies(context: ObjectionContext): Promise<string[]> {
+  async getConversionStrategies(context: ObjectionContext, locale: 'th' | 'en' = 'th'): Promise<string[]> {
     try {
-      const prompt = this.buildStrategyPrompt(context);
+      const prompt = this.buildStrategyPrompt(context, locale);
 
       const response = await this.openai.chat.completions.create({
         model: 'gpt-4-turbo-preview',
         messages: [
           {
             role: 'system',
-            content: `You are a sales optimization expert for beauty centers. Provide specific, actionable strategies to increase conversion rates.
+            content: locale === 'th'
+              ? `คุณคือผู้เชี่ยวชาญด้านการเพิ่มประสิทธิภาพการขายสำหรับศูนย์ความงาม มอบกลยุทธ์ที่ชัดเจนและนำไปปฏิบัติได้เพื่อเพิ่มอัตราการแปลงเป็นลูกค้า
 
-Return JSON array of strategy strings in Thai.`
+ตอบกลับเป็นอาเรย์ JSON ของสตริงกลยุทธ์ในภาษาไทย`
+              : `You are a sales optimization expert for beauty centers. Provide specific, actionable strategies to increase conversion rates.
+
+Return JSON array of strategy strings.`
           },
           {
             role: 'user',
@@ -209,8 +244,10 @@ Return JSON array of strategy strings in Thai.`
     }
   }
 
-  private buildDetectionPrompt(message: string, context: ObjectionContext): string {
-    return `
+  private buildDetectionPrompt(message: string, context: ObjectionContext, locale: 'th' | 'en' = 'th'): string {
+    const isThai = locale === 'th';
+    if (isThai) {
+      return `
 วิเคราะห์ข้อความของลูกค้าและตรวจสอบ objection:
 
 ข้อความลูกค้า: "${message}"
@@ -240,10 +277,43 @@ Return JSON array of strategy strings in Thai.`
 ความเจ็บปวด: เจ็บไหม, กลัว, ผลข้างเคียง, ต้องพักฟื้นกี่วัน
 การตัดสินใจ: คิดก่อน, คุยกับคนอื่น, ยังไม่แน่ใจ, รออีกสักพัก
 `;
+    }
+
+    return `
+Analyze customer message and detect objections:
+
+Customer Message: "${message}"
+
+Customer Info:
+- Name: ${context.customerProfile?.name || 'Not specified'}
+- Age: ${context.customerProfile?.age || 'Not specified'}
+- Interests: ${context.programInterest?.join(', ') || 'Not specified'}
+- Budget: ${context.customerProfile?.budget || 'Not specified'}
+- Current Program: ${context.currentProgram?.name || 'Not specified'}
+- Price: ${context.currentProgram?.price ? `฿${context.currentProgram.price.toLocaleString()}` : 'Not specified'}
+- Lead Score: ${context.leadScore || 'Not specified'}
+
+Common Objection Types:
+- price: Concerned about the price being too high
+- time: No time, not convenient
+- trust: Does not trust the clinic/doctor
+- pain: Fear of pain, concerned about side effects
+- commitment: Not ready to decide
+- competition: Going elsewhere is cheaper/better
+- information: Needs more information
+
+Keywords indicating objections:
+Price: expensive, cheap, how much, worth it, discount
+Time: no time, busy, convenient, when, what time
+Trust: can I trust, safe, good doctor, real results
+Pain: does it hurt, scared, side effects, recovery time
+Decision: think about it, talk to someone, not sure, wait a while
+`;
   }
 
-  private buildResponsePrompt(objection: ObjectionAnalysis, context: ObjectionContext): string {
-    const objectionTypes = {
+  private buildResponsePrompt(objection: ObjectionAnalysis, context: ObjectionContext, locale: 'th' | 'en' = 'th'): string {
+    const isThai = locale === 'th';
+    const objectionTypes = isThai ? {
       price: 'กังวลเรื่องราคา',
       time: 'กังวลเรื่องเวลา',
       trust: 'กังวลเรื่องความเชื่อถือ',
@@ -251,10 +321,19 @@ Return JSON array of strategy strings in Thai.`
       commitment: 'ยังไม่พร้อมตัดสินใจ',
       competition: 'เปรียบเทียบกับที่อื่น',
       information: 'ต้องการข้อมูลเพิ่มเติม',
+    } : {
+      price: 'Concerned about price',
+      time: 'Concerned about time',
+      trust: 'Concerned about trust',
+      pain: 'Concerned about pain',
+      commitment: 'Not ready to decide',
+      competition: 'Comparing with others',
+      information: 'Needs more information',
     };
 
-    return `
-  สร้างการตอบสนองสำหรับ objection: ${(objectionTypes as any)[objection.objectionType] || objection.objectionType}
+    if (isThai) {
+      return `
+สร้างการตอบสนองสำหรับ objection: ${(objectionTypes as any)[objection.objectionType] || objection.objectionType}
 
 รายละเอียด objection:
 - ประเภท: ${objection.objectionType}
@@ -278,10 +357,39 @@ Return JSON array of strategy strings in Thai.`
 
 ใช้ภาษาที่เป็นมิตร สุภาพ และสร้างความเชื่อถือ
 `;
+    }
+
+    return `
+Generate response for objection: ${(objectionTypes as any)[objection.objectionType] || objection.objectionType}
+
+Objection Details:
+- Type: ${objection.objectionType}
+- Confidence: ${(objection.confidence * 100).toFixed(0)}%
+- Severity: ${objection.severity}
+- Keywords: ${objection.keywords.join(', ')}
+- Context: ${objection.context}
+
+Customer Info:
+- Name: ${context.customerProfile?.name || 'Customer'}
+- Interests: ${context.programInterest?.join(', ') || 'Not specified'}
+- Program: ${context.currentProgram?.name || 'Not specified'}
+- Price: ${context.currentProgram?.price ? `฿${context.currentProgram.price.toLocaleString()}` : 'Not specified'}
+
+Generate a response that:
+1. Acknowledges the concern
+2. Handles the objection directly
+3. Provides information or alternatives
+4. Builds confidence
+5. Encourages decision making
+
+Use friendly, polite, and professional language.
+`;
   }
 
-  private buildStrategyPrompt(context: ObjectionContext): string {
-    return `
+  private buildStrategyPrompt(context: ObjectionContext, locale: 'th' | 'en' = 'th'): string {
+    const isThai = locale === 'th';
+    if (isThai) {
+      return `
 สร้างกลยุทธ์เพิ่ม conversion สำหรับลูกค้า:
 
 ข้อมูลลูกค้า:
@@ -303,10 +411,35 @@ Return JSON array of strategy strings in Thai.`
 
 ให้กลยุทธ์ที่เป็นรูปธรรมและนำไปปฏิบัติได้
 `;
+    }
+
+    return `
+Generate conversion optimization strategies for the customer:
+
+Customer Info:
+- Name: ${context.customerProfile?.name || 'Not specified'}
+- Interests: ${context.programInterest?.join(', ') || 'Not specified'}
+- Budget: ${context.customerProfile?.budget || 'Not specified'}
+- Lead Score: ${context.leadScore || 'Not specified'}
+- Urgency: ${context.urgency || 'Not specified'}
+
+Suggested strategies:
+1. Relationship building
+2. Show results/Social proof
+3. Objection handling
+4. Create urgency
+5. Follow-up strategy
+6. Discounts/Promotions
+7. Package suggestions
+8. Additional information
+
+Provide concrete and actionable strategies.
+`;
   }
 
-  private getFallbackResponse(objection: ObjectionAnalysis): ObjectionResponse {
-    const fallbacks = {
+  private getFallbackResponse(objection: ObjectionAnalysis, locale: 'th' | 'en' = 'th'): ObjectionResponse {
+    const isThai = locale === 'th';
+    const fallbacks = isThai ? {
       price: {
         response: 'เข้าใจค่ะ ราคาเป็นเรื่องสำคัญ เรามีโปรโมชั่นและผ่อนชำระหลายทางเลือก อยากให้ดูรายละเอียดไหมคะ?',
         strategy: 'alternative' as const,
@@ -328,10 +461,32 @@ Return JSON array of strategy strings in Thai.`
         conversionProbability: 0.65,
         script: 'คุณ[ชื่อ]คะ เราเข้าใจความกังวลค่ะ ลองดูรีวิวจากลูกค้าจริงก่อนไหมคะ...'
       },
+    } : {
+      price: {
+        response: 'I understand that price is an important factor. We have several promotions and flexible payment options. Would you like to see the details?',
+        strategy: 'alternative' as const,
+        followUpActions: ['Offer promotion', 'Explain payment plans'],
+        conversionProbability: 0.6,
+        script: 'Hello [Name], we understand that price is a key factor. We have the following options...'
+      },
+      time: {
+        response: 'I understand that timing is important. We have various service times, including after-work hours and weekends. Which time works best for you?',
+        strategy: 'alternative' as const,
+        followUpActions: ['Offer flexible timing', 'Pre-book appointment'],
+        conversionProbability: 0.7,
+        script: 'Hello [Name], I understand you are busy, but we have services after work hours...'
+      },
+      trust: {
+        response: 'I understand that trust is crucial. We have specialist doctors and many satisfied customers. Would you like to see our portfolio and reviews?',
+        strategy: 'evidence' as const,
+        followUpActions: ['Show portfolio', 'Introduce doctors', 'Offer free consultation'],
+        conversionProbability: 0.65,
+        script: 'Hello [Name], we understand your concern. Would you like to see real customer reviews first?'
+      },
     };
 
     return (fallbacks as any)[objection.objectionType] || {
-      response: 'เข้าใจค่ะ อยากให้ชี้แจงเพิ่มเติมไหมคะ?',
+      response: isThai ? 'เข้าใจค่ะ อยากให้ชี้แจงเพิ่มเติมไหมคะ?' : 'I understand. Would you like me to clarify further?',
       strategy: 'acknowledge' as const,
       followUpActions: [],
       conversionProbability: 0.5,

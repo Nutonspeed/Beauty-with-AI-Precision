@@ -1,5 +1,6 @@
 "use client"
 
+import { useTranslations, useLocale } from "next-intl"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   RadarChart,
@@ -26,9 +27,11 @@ interface SkinAnalysisRadarChartProps {
 }
 
 export function SkinAnalysisRadarChart({ data }: SkinAnalysisRadarChartProps) {
+  const t = useTranslations('skinAnalysis.radar')
+  const locale = useLocale()
   // Transform data for radar chart
   const chartData = data.map((metric) => ({
-    metric: metric.name,
+    metric: locale === 'th' ? metric.name_th : metric.name,
     score: metric.score,
   }))
 
@@ -42,9 +45,9 @@ export function SkinAnalysisRadarChart({ data }: SkinAnalysisRadarChartProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Multi-Metric Radar Chart / กราฟเรดาร์หลายมิติ</CardTitle>
+        <CardTitle>{t('title')}</CardTitle>
         <p className="text-sm text-muted-foreground">
-          Visual representation of all 8 skin metrics / แสดงภาพรวมทั้ง 8 ตัวชี้วัด
+          {t('description')}
         </p>
       </CardHeader>
       <CardContent>
@@ -73,7 +76,7 @@ export function SkinAnalysisRadarChart({ data }: SkinAnalysisRadarChartProps) {
         <div className="mt-6 grid gap-3 sm:grid-cols-2 md:grid-cols-4">
           {data.map((metric, index) => (
             <div key={index} className="rounded-lg border border-border bg-muted/30 p-3 text-center">
-              <div className="text-xs text-muted-foreground">{metric.name}</div>
+              <div className="text-xs text-muted-foreground">{locale === 'th' ? metric.name_th : metric.name}</div>
               <div className="text-lg font-bold text-primary">{metric.score}</div>
             </div>
           ))}

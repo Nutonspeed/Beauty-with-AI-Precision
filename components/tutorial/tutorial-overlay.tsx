@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronLeft, ChevronRight, CheckCircle2 } from 'lucide-react';
@@ -13,6 +14,7 @@ interface TutorialOverlayProps {
 }
 
 export function TutorialOverlay({ steps, onComplete, onSkip }: TutorialOverlayProps) {
+  const t = useTranslations('tutorial.overlay');
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [highlightRect, setHighlightRect] = useState<DOMRect | null>(null);
 
@@ -190,7 +192,7 @@ export function TutorialOverlay({ steps, onComplete, onSkip }: TutorialOverlayPr
           className="absolute inset-0 pointer-events-auto cursor-pointer"
           style={getSpotlightStyle()}
           onClick={onSkip}
-          aria-label="คลิกเพื่อปิดคำแนะนำ"
+          aria-label={t('ariaClose')}
         />
 
         {/* Highlight border with pulse animation */}
@@ -246,7 +248,7 @@ export function TutorialOverlay({ steps, onComplete, onSkip }: TutorialOverlayPr
                   </span>
                 </div>
                 <h3 className="text-base font-bold text-gray-900 dark:text-white mt-1 drop-shadow-sm line-clamp-2">
-                  {currentStep.title}
+                  {t(currentStep.title)}
                 </h3>
               </div>
               <Button
@@ -254,7 +256,7 @@ export function TutorialOverlay({ steps, onComplete, onSkip }: TutorialOverlayPr
                 size="icon"
                 onClick={onSkip}
                 className="h-9 w-9 -mt-1 -mr-1 shrink-0 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 touch-manipulation"
-                aria-label="ปิด"
+                aria-label={t('close')}
               >
                 <X className="h-5 w-5" />
               </Button>
@@ -262,7 +264,7 @@ export function TutorialOverlay({ steps, onComplete, onSkip }: TutorialOverlayPr
 
             {/* Description */}
             <p className="text-sm text-gray-800 dark:text-gray-100 mb-3 md:mb-4 leading-snug md:leading-relaxed font-medium line-clamp-4 md:line-clamp-none">
-              {currentStep.description}
+              {t(currentStep.description)}
             </p>
 
             {/* Progress bar */}
@@ -287,16 +289,16 @@ export function TutorialOverlay({ steps, onComplete, onSkip }: TutorialOverlayPr
                 className="flex items-center gap-1 border-gray-400 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white font-medium disabled:opacity-50 touch-manipulation h-10 px-3"
               >
                 <ChevronLeft className="h-4 w-4" />
-                <span className="hidden sm:inline text-xs">ก่อนหน้า</span>
+                <span className="hidden sm:inline text-xs">{t('previous')}</span>
               </Button>
 
               <Button 
                 onClick={onSkip} 
                 variant="ghost" 
-                size="sm"
+                size="sm" 
                 className="hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 font-medium touch-manipulation h-10 px-2 text-xs"
               >
-                ข้าม
+                {t('skip')}
               </Button>
 
               <Button
@@ -307,11 +309,11 @@ export function TutorialOverlay({ steps, onComplete, onSkip }: TutorialOverlayPr
                 {isLastStep ? (
                   <>
                     <CheckCircle2 className="h-4 w-4" />
-                    เสร็จ
+                    {t('done')}
                   </>
                 ) : (
                   <>
-                    ถัดไป
+                    {t('next')}
                     <ChevronRight className="h-4 w-4" />
                   </>
                 )}

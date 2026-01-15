@@ -36,7 +36,7 @@ async function fetchSalesStaff(supabase: any, userId: string) {
 
 async function fetchLead(supabase: any, id: string) {
   const { data, error } = await supabase
-    .from('leads')
+    .from('sales_leads')
     .select('*')
     .eq('id', id)
     .single()
@@ -49,13 +49,13 @@ async function fetchLead(supabase: any, id: string) {
 function verifyConvertible(lead: any, salesStaff: any) {
   const staffRole = normalizeRole(salesStaff.role)
   const permitted =
-    lead.sales_staff_id === salesStaff.id ||
+    lead.sales_user_id === salesStaff.user_id ||
     staffRole === 'super_admin' ||
     (staffRole === 'center_admin' && lead.center_id === salesStaff.center_id)
   if (!permitted) {
     return { response: NextResponse.json({ success: false, message: 'You do not have permission to convert this lead' }, { status: 403 }) }
   }
-  if (lead.converted_to_customer) {
+  if (lead.customer_user_id) {
     return { response: NextResponse.json({ success: false, message: 'Lead is already converted' }, { status: 400 }) }
   }
   return { staffRole }
@@ -69,14 +69,15 @@ async function createCustomerAccountIfNeeded(supabase: any, lead: any, opts: { c
   if (!opts.password) {
     return { response: NextResponse.json({ success: false, message: 'Password is required to create user account' }, { status: 400 }) }
   }
+  
+  // Use admin client for user creation as it bypasses confirm email if needed
   const { data: authData, error: authCreateError } = await supabase.auth.admin.createUser({
     email: lead.email,
     password: opts.password,
     email_confirm: true,
     user_metadata: {
-      full_name: lead.full_name,
+      full_name: lead.name,
       phone: lead.phone,
-      line_id: lead.line_id,
       center_id: lead.center_id,
     },
   })
@@ -85,42 +86,40 @@ async function createCustomerAccountIfNeeded(supabase: any, lead: any, opts: { c
     return { response: NextResponse.json({ success: false, message: `Failed to create user account: ${authCreateError.message}` }, { status: 400 }) }
   }
   const customerId = authData.user.id
-  const { error: profileError } = await supabase
-    .from('users')
-    .insert({
-      id: customerId,
-      email: lead.email,
-      full_name: lead.full_name,
-      phone: lead.phone,
-      center_id: lead.center_id,
-      role: 'customer',
-    })
-  if (profileError) {
-    console.error('[LeadConvertAPI] Error creating user profile:', profileError)
+  
+  // Profile is created by trigger in some setups, but let's be explicit if needed
+  // Check if users table already has it via trigger
+  const { data: existingUser } = await supabase.from('users').select('id').eq('id', customerId).single()
+  
+  if (!existingUser) {
+    const { error: profileError } = await supabase
+      .from('users')
+      .insert({
+        id: customerId,
+        email: lead.email,
+        full_name: lead.name,
+        phone: lead.phone,
+        center_id: lead.center_id,
+        role: 'customer',
+      })
+    if (profileError) {
+      console.error('[LeadConvertAPI] Error creating user profile:', profileError)
+    }
+  } else {
+    // Update existing profile role to customer just in case
+    await supabase.from('users').update({ role: 'customer' }).eq('id', customerId)
   }
+  
   return { customerId }
 }
 
 async function markLeadConverted(supabase: any, lead: any, id: string, customerId: string | null, createdAccount: boolean, salesStaff: any) {
   const convertedAt = new Date().toISOString()
   const { data, error } = await supabase
-    .from('leads')
+    .from('sales_leads')
     .update({
-      status: 'converted',
-      converted_to_customer: true,
-      converted_user_id: customerId,
-      converted_at: convertedAt,
-      interaction_history: [
-        ...(lead.interaction_history || []),
-        {
-          date: convertedAt,
-          type: 'converted',
-          notes: createdAccount
-            ? 'Lead converted to customer with user account'
-            : 'Lead converted to customer',
-          sales_staff_id: salesStaff.id,
-        },
-      ],
+      status: 'won', // Align with your status 'won' or 'converted'
+      customer_user_id: customerId,
       updated_at: convertedAt,
     })
     .eq('id', id)
@@ -130,11 +129,11 @@ async function markLeadConverted(supabase: any, lead: any, id: string, customerI
         id,
         name
       ),
-      sales_staff:users!sales_staff_id (
+      sales_user:users!sales_user_id (
         id,
         full_name
       ),
-      converted_user:users!converted_user_id (
+      customer_user:users!customer_user_id (
         id,
         email,
         full_name

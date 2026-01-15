@@ -5,7 +5,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { TrendingUp, Users, Target, Sparkles, Heart, Eye, Flame, Scissors, Brain, MessageSquare, Camera, Wand2, BarChart3, Activity, Crosshair, Microscope, Fingerprint } from 'lucide-react'
+import { TrendingUp, Target, Sparkles, Heart, Eye, Flame, Scissors, Brain, MessageSquare, Camera, Wand2, BarChart3, Activity, Crosshair, Microscope, Fingerprint } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -81,9 +81,12 @@ import { SalesVelocity } from '@/components/sales/sales-velocity'
 import { GenMarketingVisuals } from '@/components/sales/gen-marketing-visuals'
 import { PredictiveReengagement } from '@/components/sales/predictive-reengagement'
 import { IntelligenceCommandPalette } from '@/components/analytics/intelligence-command-palette'
+import { SalesQuotaDashboard } from '@/components/sales/SalesQuotaDashboard'
+import { CreateScanLink } from '@/components/sales/CreateScanLink'
+import { QuotaAlertBanner } from '@/components/sales/QuotaAlertBanner'
 
 export default function SalesDashboard() {
-  const t = useTranslations()
+  const t = useTranslations('salesDashboard')
   const { user } = useAuth()
   const router = useRouter()
   const lp = useLocalizePath()
@@ -221,9 +224,9 @@ export default function SalesDashboard() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center p-6">
         <div className="text-center">
-          <p className="text-red-600">{t('common.error')}: {error}</p>
+          <p className="text-red-600">{t('common.error' as any)}: {error}</p>
           <Button onClick={() => window.location.reload()} className="mt-4">
-            {t('common.reset')}
+            {t('common.reset' as any)}
           </Button>
         </div>
       </div>
@@ -248,6 +251,8 @@ export default function SalesDashboard() {
       </div>
 
       <div className="max-w-7xl mx-auto space-y-10 relative z-10">
+        <QuotaAlertBanner />
+        
         {/* Header - Elite Aesthetic Dashboard */}
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
@@ -257,12 +262,12 @@ export default function SalesDashboard() {
           <div className="space-y-3">
             <Badge variant="outline" className="px-4 py-1 rounded-full border-pink-500/30 text-pink-400 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.2em] text-[10px] font-black">
               <Activity className="mr-2 h-3 w-3 animate-pulse" />
-              {t('salesDashboard.intelligenceBadge')}
+              {t('intelligenceBadge')}
             </Badge>
             <h1 className="text-5xl font-bold tracking-tight text-white leading-tight">
-              {t('salesDashboard.title')} <span className="bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent italic">{t('salesDashboard.titleHighlight')}</span>
+              {t('title')} <span className="bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent italic">{t('titleHighlight')}</span>
             </h1>
-            <p className="text-slate-500 font-light tracking-wide text-lg max-w-xl">Orchestrating aesthetic node growth with precision intelligence.</p>
+            <p className="text-slate-500 font-light tracking-wide text-lg max-w-xl">{t('growthDesc')}</p>
           </div>
           <div className="flex items-center gap-4">
             <div className="flex bg-white/[0.03] p-1.5 rounded-2xl border border-white/5 backdrop-blur-xl">
@@ -281,6 +286,7 @@ export default function SalesDashboard() {
                 </button>
               ))}
             </div>
+            <CreateScanLink />
             <Link href={lp('/sales/quick-scan')}>
               <Button 
                 variant="premium"
@@ -288,42 +294,46 @@ export default function SalesDashboard() {
                 className="h-14 px-8 rounded-2xl shadow-2xl shadow-pink-500/20 hover:scale-105 active:scale-95 transition-all"
               >
                 <Crosshair className="w-5 h-5 mr-3" />
-                {t('salesDashboard.initializeScan')}
+                {t('initializeScan')}
               </Button>
             </Link>
           </div>
         </motion.div>
 
         {/* Executive Summary Metrics - Precision Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-          {[
-            { label: t('salesDashboard.metrics.acquisition'), val: totalScansThisMonth, sub: t('salesDashboard.metrics.today', { count: metrics?.leadsContacted.today ?? 0 }), icon: Users, color: "text-pink-400", bg: "bg-pink-500/10", border: "border-pink-500/20" },
-            { label: t('salesDashboard.metrics.conversions'), val: metrics?.proposalsSent.today ?? 0, sub: t('salesDashboard.metrics.vsPrev', { percent: (metrics?.proposalsSent.change ?? 0).toFixed(1) }), icon: Target, color: "text-purple-400", bg: "bg-purple-500/10", border: "border-purple-500/20" },
-            { label: t('salesDashboard.metrics.retention'), val: `${(metrics?.conversionRate.today ?? 0).toFixed(1)}%`, sub: t('salesDashboard.metrics.delta', { percent: (metrics?.conversionRate.change ?? 0).toFixed(1) }), icon: Brain, color: "text-cyan-400", bg: "bg-cyan-500/10", border: "border-cyan-500/20" },
-            { label: t('salesDashboard.metrics.revenue'), val: t('format.currency', { amount: `${(revenueThisMonth / 1000).toFixed(0)}K` }), sub: `+${t('format.currency', { amount: (metrics?.revenueGenerated.today ?? 0).toLocaleString() })}`, icon: TrendingUp, color: "text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/20" }
-          ].map((m, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-            >
-              <Card className="h-full border-white/5 bg-white/[0.01] backdrop-blur-3xl hover:bg-white/[0.03] hover:border-white/10 transition-all group overflow-hidden rounded-[2.5rem]">
-                <CardContent className="p-8 relative">
-                  <div className={cn("absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity", m.color)}>
-                    <m.icon className="w-16 h-16" />
-                  </div>
-                  <div className="space-y-4 relative z-10">
-                    <p className="text-[10px] uppercase font-black tracking-[0.3em] text-slate-500">{m.label}</p>
-                    <div className="text-4xl font-bold text-white tracking-tighter">{m.val}</div>
-                    <div className="flex items-center gap-2">
-                      <span className={cn("text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-lg border", m.bg, m.color, m.border)}>{m.sub}</span>
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          <div className="lg:col-span-1">
+            <SalesQuotaDashboard compact />
+          </div>
+          <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              { label: t('metrics.conversions'), val: metrics?.proposalsSent.today ?? 0, sub: t('metrics.vsPrev', { percent: (metrics?.proposalsSent.change ?? 0).toFixed(1) }), icon: Target, color: "text-purple-400", bg: "bg-purple-500/10", border: "border-purple-500/20" },
+              { label: t('metrics.retention'), val: `${(metrics?.conversionRate.today ?? 0).toFixed(1)}%`, sub: t('metrics.delta', { percent: (metrics?.conversionRate.change ?? 0).toFixed(1) }), icon: Brain, color: "text-cyan-400", bg: "bg-cyan-500/10", border: "border-cyan-500/20" },
+              { label: t('metrics.revenue'), val: t('format.currency' as any, { amount: `${(revenueThisMonth / 1000).toFixed(0)}K` }), sub: `+${t('format.currency' as any, { amount: (metrics?.revenueGenerated.today ?? 0).toLocaleString() })}`, icon: TrendingUp, color: "text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/20" }
+            ].map((m, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+              >
+                <Card className="h-full border-white/5 bg-white/[0.01] backdrop-blur-3xl hover:bg-white/[0.03] hover:border-white/10 transition-all group overflow-hidden rounded-[2.5rem]">
+                  <CardContent className="p-8 relative">
+                    <div className={cn("absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity", m.color)}>
+                      <m.icon className="w-16 h-16" />
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
+                    <div className="space-y-4 relative z-10">
+                      <p className="text-[10px] uppercase font-black tracking-[0.3em] text-slate-500">{m.label}</p>
+                      <div className="text-4xl font-bold text-white tracking-tighter">{m.val}</div>
+                      <div className="flex items-center gap-2">
+                        <span className={cn("text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-lg border", m.bg, m.color, m.border)}>{m.sub}</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
         </div>
 
         {/* AI Conversion Pipeline - Aesthetic Data Stream */}
@@ -341,7 +351,7 @@ export default function SalesDashboard() {
                     <div className="p-2 rounded-lg bg-pink-500/10 border border-pink-500/20">
                       <Sparkles className="w-4 h-4 text-pink-400 animate-pulse" />
                     </div>
-                    Aesthetic Pipeline Analysis
+                    {t('pipeline.analysis')}
                   </CardTitle>
                   <Badge className="bg-pink-600 text-white border-none px-4 py-1 text-[9px] font-black tracking-widest uppercase">
                     LIVE_NODES
@@ -350,9 +360,9 @@ export default function SalesDashboard() {
                 <CardContent className="p-10">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
                     {[
-                      { label: t('salesDashboard.pipeline.acquisition'), val: aiLeadsToday, desc: t('salesDashboard.pipeline.acquisitionDesc'), icon: Microscope, color: "from-pink-500/20 to-purple-600/20", iconColor: "text-pink-400" },
-                      { label: t('salesDashboard.pipeline.proposals'), val: aiProposalsToday, desc: t('salesDashboard.pipeline.proposalsDesc'), icon: Brain, color: "from-blue-500/20 to-cyan-600/20", iconColor: "text-blue-400" },
-                      { label: t('salesDashboard.pipeline.bookings'), val: aiBookingsToday, desc: t('salesDashboard.pipeline.bookingsDesc'), icon: Fingerprint, color: "from-emerald-500/20 to-teal-600/20", iconColor: "text-emerald-400" }
+                      { label: t('pipeline.acquisition'), val: aiLeadsToday, desc: t('pipeline.acquisitionDesc'), icon: Microscope, color: "from-pink-500/20 to-purple-600/20", iconColor: "text-pink-400" },
+                      { label: t('pipeline.proposals'), val: aiProposalsToday, desc: t('pipeline.proposalsDesc'), icon: Brain, color: "from-blue-500/20 to-cyan-600/20", iconColor: "text-blue-400" },
+                      { label: t('pipeline.bookings'), val: aiBookingsToday, desc: t('pipeline.bookingsDesc'), icon: Fingerprint, color: "from-emerald-500/20 to-teal-600/20", iconColor: "text-emerald-400" }
                     ].map((s, i) => (
                       <div key={i} className="relative group p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/5 hover:border-white/10 transition-all text-center md:text-left">
                         <div className={cn("inline-flex h-14 w-14 rounded-2xl bg-gradient-to-br border border-white/5 flex items-center justify-center shadow-lg group-hover:scale-110 transition-all duration-500 mb-6 mx-auto md:mx-0", s.color)}>
@@ -386,18 +396,18 @@ export default function SalesDashboard() {
               <div className="flex items-center justify-between px-4">
                 <h3 className="text-2xl font-bold tracking-tight text-white flex items-center gap-4 italic">
                   <Wand2 className="w-7 h-7 text-pink-500" />
-                  {t('salesDashboard.toolset.title')}
+                  {t('toolset.title')}
                 </h3>
                 <div className="h-px flex-1 bg-gradient-to-r from-pink-500/30 via-transparent to-transparent mx-8 hidden sm:block" />
-                <p className="text-[10px] uppercase tracking-[0.3em] text-slate-600 font-black whitespace-nowrap">{t('salesDashboard.toolset.optimization')}</p>
+                <p className="text-[10px] uppercase tracking-[0.3em] text-slate-600 font-black whitespace-nowrap">{t('toolset.optimization')}</p>
               </div>
               
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                 {[
-                  { icon: Camera, title: t('salesDashboard.toolset.precisionScan'), desc: t('salesDashboard.toolset.precisionScanDesc'), href: '/sales/quick-scan', color: "text-blue-400", bg: "bg-blue-500/10" },
-                  { icon: TrendingUp, title: t('salesDashboard.toolset.futureForecast'), desc: t('salesDashboard.toolset.futureForecastDesc'), href: "/analysis/future", color: "text-emerald-400", bg: "bg-emerald-500/10" },
-                  { icon: Wand2, title: t('salesDashboard.toolset.arSimulation'), desc: t('salesDashboard.toolset.arSimulationDesc'), href: "/ar-simulator", color: "text-pink-400", bg: "bg-pink-500/10" },
-                  { icon: BarChart3, title: t('salesDashboard.toolset.presentation'), desc: t('salesDashboard.toolset.presentationDesc'), href: '/sales/presentations', color: "text-purple-400", bg: "bg-purple-500/10" }
+                  { icon: Camera, title: t('toolset.precisionScan'), desc: t('toolset.precisionScanDesc'), href: '/sales/quick-scan', color: "text-blue-400", bg: "bg-blue-500/10" },
+                  { icon: TrendingUp, title: t('toolset.futureForecast'), desc: t('toolset.futureForecastDesc'), href: "/analysis/future", color: "text-emerald-400", bg: "bg-emerald-500/10" },
+                  { icon: Wand2, title: t('toolset.arSimulation'), desc: t('toolset.arSimulationDesc'), href: "/ar-simulator", color: "text-pink-400", bg: "bg-pink-500/10" },
+                  { icon: BarChart3, title: t('toolset.presentation'), desc: t('toolset.presentationDesc'), href: '/sales/presentations', color: "text-purple-400", bg: "bg-purple-500/10" }
                 ].map((tool, i) => (
                   <Link key={i} href={lp(tool.href)}>
                     <Card className="h-full border-white/5 bg-white/[0.01] backdrop-blur-2xl hover:border-white/20 hover:bg-white/[0.04] transition-all cursor-pointer group text-center rounded-[2rem] overflow-hidden">
@@ -419,15 +429,15 @@ export default function SalesDashboard() {
             {/* Specialized Aesthetic AR Modules */}
             <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden">
               <CardHeader className="bg-white/[0.03] border-b border-white/5 px-10 py-6">
-                <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">{t('salesDashboard.arModules.title')}</CardTitle>
+                <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">{t('arModules.title')}</CardTitle>
               </CardHeader>
               <CardContent className="p-10">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                   {[
-                    { icon: Heart, label: t('salesDashboard.arModules.filler'), bg: "from-pink-500/10 to-rose-500/10", border: "border-pink-500/20", color: "text-pink-400" },
-                    { icon: Flame, label: t('salesDashboard.arModules.body'), bg: "from-orange-500/10 to-red-500/10", border: "border-orange-500/20", color: "text-orange-400" },
-                    { icon: Scissors, label: t('salesDashboard.arModules.hair'), bg: "from-emerald-500/10 to-teal-500/10", border: "border-emerald-500/20", color: "text-emerald-400" },
-                    { icon: Eye, label: t('salesDashboard.arModules.eye'), bg: "from-blue-500/10 to-indigo-500/10", border: "border-blue-500/20", color: "text-blue-400" }
+                    { icon: Heart, label: t('arModules.filler'), bg: "from-pink-500/10 to-rose-500/10", border: "border-pink-500/20", color: "text-pink-400" },
+                    { icon: Flame, label: t('arModules.body'), bg: "from-orange-500/10 to-red-500/10", border: "border-orange-500/20", color: "text-orange-400" },
+                    { icon: Scissors, label: t('arModules.hair'), bg: "from-emerald-500/10 to-teal-500/10", border: "border-emerald-500/20", color: "text-emerald-400" },
+                    { icon: Eye, label: t('arModules.eye'), bg: "from-blue-500/10 to-indigo-500/10", border: "border-blue-500/20", color: "text-blue-400" }
                   ].map((art, i) => (
                     <Link key={i} href={lp('/sales/ar-tools')} className="block">
                       <div className={cn("p-8 rounded-[2rem] border-2 transition-all hover:scale-[1.05] active:scale-95 text-center flex flex-col items-center justify-center gap-4 bg-gradient-to-br shadow-xl group", art.bg, art.border)}>
@@ -453,17 +463,17 @@ export default function SalesDashboard() {
               <CardHeader className="p-10 pb-4">
                 <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-400 flex items-center gap-3">
                   <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                  Remote Protocol Request
+                  {t('remoteConsult.title')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-10 pt-0 relative z-10 space-y-10">
                 <div className="space-y-2">
                   <p className="text-7xl font-bold text-white tracking-tighter">{remoteConsultRequestsToday}</p>
-                  <p className="text-[11px] font-black uppercase tracking-widest text-slate-500">{t('salesDashboard.remoteConsult.requests')}</p>
+                  <p className="text-[11px] font-black uppercase tracking-widest text-slate-500">{t('remoteConsult.requests')}</p>
                 </div>
                 <div className="p-6 rounded-3xl bg-white/[0.02] border border-white/5 space-y-4">
                   <div className="flex justify-between items-baseline">
-                    <span className="text-[10px] uppercase font-black text-emerald-500/80 tracking-widest">{t('salesDashboard.remoteConsult.efficiency')}</span>
+                    <span className="text-[10px] uppercase font-black text-emerald-500/80 tracking-widest">{t('remoteConsult.efficiency')}</span>
                     <span className="text-xl font-bold text-white">{(metrics?.remoteConsultConversion.today ?? 0).toFixed(1)}%</span>
                   </div>
                   <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
@@ -476,7 +486,7 @@ export default function SalesDashboard() {
                   </div>
                 </div>
                 <Button variant="outline" className="w-full h-14 rounded-2xl border-white/10 bg-white/5 text-xs tracking-[0.2em] font-black uppercase hover:bg-white/10">
-                  {t('salesDashboard.remoteConsult.manageQueue')}
+                  {t('remoteConsult.manageQueue')}
                 </Button>
               </CardContent>
             </Card>
@@ -484,22 +494,22 @@ export default function SalesDashboard() {
             {/* Performance Snapshot Portfolio */}
             <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden">
               <CardHeader className="p-10 pb-6 border-b border-white/5">
-                <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">{t('salesDashboard.snapshot.title')}</CardTitle>
+                <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">{t('snapshot.title')}</CardTitle>
               </CardHeader>
               <CardContent className="p-10 space-y-10">
                 {[
-                  { label: t('salesDashboard.snapshot.today'), scans: metrics?.leadsContacted.today, rev: metrics?.revenueGenerated.today, color: "text-pink-500" },
-                  { label: t('salesDashboard.snapshot.weekly'), scans: metrics?.leadsContacted.yesterday, rev: metrics?.revenueGenerated.yesterday, color: "text-slate-400" },
-                  { label: t('salesDashboard.snapshot.monthly'), scans: metrics?.leadsContacted.target, rev: metrics?.revenueGenerated.target, color: "text-slate-400" }
+                  { label: t('snapshot.today'), scans: metrics?.leadsContacted.today, rev: metrics?.revenueGenerated.today, color: "text-pink-500" },
+                  { label: t('snapshot.weekly'), scans: metrics?.leadsContacted.yesterday, rev: metrics?.revenueGenerated.yesterday, color: "text-slate-400" },
+                  { label: t('snapshot.monthly'), scans: metrics?.leadsContacted.target, rev: metrics?.revenueGenerated.target, color: "text-slate-400" }
                 ].map((p, i) => (
                   <div key={i} className="flex items-center justify-between group cursor-default">
                     <div className="space-y-2">
                       <p className={cn("text-xs font-black uppercase tracking-widest transition-colors", p.color)}>{p.label}</p>
-                      <p className="text-[10px] text-slate-600 uppercase font-bold tracking-tighter">{p.scans} {t('salesDashboard.snapshot.cycles')}</p>
+                      <p className="text-[10px] text-slate-600 uppercase font-bold tracking-tighter">{p.scans} {t('snapshot.cycles')}</p>
                     </div>
                     <div className="text-right space-y-1">
                       <p className="text-xl font-bold text-white tracking-tight group-hover:text-pink-400 transition-colors">฿{p.rev?.toLocaleString() || '0'}</p>
-                      <p className="text-[9px] text-slate-600 uppercase font-black tracking-[0.2em]">{t('salesDashboard.snapshot.volume')}</p>
+                      <p className="text-[9px] text-slate-600 uppercase font-black tracking-[0.2em]">{t('snapshot.volume')}</p>
                     </div>
                   </div>
                 ))}
@@ -511,7 +521,7 @@ export default function SalesDashboard() {
         {/* Top Aesthetic Service Assets */}
         <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden">
           <CardHeader className="p-10 pb-6 border-b border-white/5">
-            <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">{t('salesDashboard.topAssets.title')}</CardTitle>
+            <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">{t('topAssets.title')}</CardTitle>
           </CardHeader>
           <CardContent className="p-10">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -523,12 +533,12 @@ export default function SalesDashboard() {
                     </div>
                     <div className="space-y-1">
                       <h4 className="font-bold text-white text-lg tracking-tight group-hover:text-pink-400 transition-colors">{pkg.name}</h4>
-                      <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black italic">{pkg.sold} {t('salesDashboard.topAssets.units')}</p>
+                      <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black italic">{pkg.sold} {t('topAssets.units')}</p>
                     </div>
                   </div>
                   <div className="text-right space-y-1">
                     <p className="text-xl font-bold text-white tracking-tight group-hover:text-pink-400 transition-colors">฿{pkg.revenue.toLocaleString()}</p>
-                    <p className="text-[9px] text-slate-600 uppercase font-black tracking-[0.2em]">{t('salesDashboard.topAssets.gross')}</p>
+                    <p className="text-[9px] text-slate-600 uppercase font-black tracking-[0.2em]">{t('topAssets.gross')}</p>
                   </div>
                 </div>
               ))}

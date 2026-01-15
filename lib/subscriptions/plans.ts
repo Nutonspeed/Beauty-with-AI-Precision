@@ -1,157 +1,127 @@
+// =====================================================
+// SALES-GATED QUOTA MODEL
+// Quota is tied to each Sales User, not the Center
+// Customers analyze via link from sales -> counts towards sales quota
+// =====================================================
+
+// Annual discount: 2 months free (pay 10, get 12)
+export const ANNUAL_DISCOUNT = 0.167 // ~16.7% discount = 2 months free
+
+// Add-on pricing for extra resources
+export const ADDON_PRICING = {
+  extraSalesUser: {
+    price: 2900, // per user per month
+  },
+  extraBranch: {
+    price: 1900, // per branch per month
+  },
+  extraAnalyses: {
+    price: 990, // per 100 analyses (for Starter tier)
+    appliesTo: 'starter', // Only for Starter tier
+  },
+  extraARSimulations: {
+    price: 490, // per 50 simulations (for Starter tier)
+    appliesTo: 'starter',
+  },
+} as const
+
+// Features that are SALES-ONLY (customers cannot access directly)
+export const SALES_ONLY_FEATURES = [
+  'ai_analysis',        // AI Skin Analysis
+  'ar_simulators',      // All AR Simulators  
+  'quick_scan',         // Quick Scan Mobile
+  'proposal_generator', // AI Proposal Generator
+  'lead_scoring',       // Lead Scoring
+  'video_call_host',    // Host video calls
+] as const
+
+// Features that CUSTOMERS can access
+export const CUSTOMER_FEATURES = [
+  'view_own_results',   // View their analysis results
+  'track_progress',     // Track skin progress over time
+  'loyalty_points',     // Loyalty & rewards (Professional+)
+  'book_appointments',  // Book appointments
+  'video_call_join',    // Join video calls (not host)
+  'chat_support',       // Chat with clinic
+] as const
+
 export const SUBSCRIPTION_PLANS = {
   starter: {
     name: 'Starter',
-    nameTH: 'Starter (AI-First CRM)',
-    price: 9900,
-    maxUsers: 2,
+    price: 6900,
+    priceAnnual: 6900 * 10,
+    annualSavings: 6900 * 2,
+    // Sales User Limits
     maxSalesUsers: 1,
+    quotaPerSales: 100,      // 100 analyses per sales user per month
+    arQuotaPerSales: 20,     // 20 AR simulations per sales user per month
+    // Center Limits
     maxBranches: 1,
-    maxCustomersPerMonth: 100,
+    maxCustomersPerMonth: -1, // Unlimited customers
     maxStorageGB: 10,
-    maxAnalysesPerMonth: 100,
     trialDays: 14,
-    features: [
-      'Aesthetic AI Skin Analysis (100/month)',
-      'Gemini 1.5 Flash Intelligence Node',
-      'AI Conversion Pipeline tracking',
-      'Intelligent CRM & Lead Management',
-      'Automated Appointment System',
-      'Secure Customer Database',
-      'Basic Performance Reports',
-    ],
-    featuresTH: [
-      'Aesthetic AI Skin Analysis (100 ครั้ง/เดือน)',
-      'Gemini 1.5 Flash Intelligence Node',
-      'ระบบติดตาม AI Conversion Pipeline',
-      'CRM & จัดการ Lead อัจฉริยะ',
-      'ระบบนัดหมายอัตโนมัติ',
-      'ฐานข้อมูลลูกค้าปลอดภัยสูง',
-      'รายงานประสิทธิภาพพื้นฐาน',
-    ],
-    limitations: [
-      '1 branch only',
-      'No Predictive Insights',
-      'No AR Simulator',
-      'No Marketing Automation',
-    ],
-    limitationsTH: [
-      'ใช้งานได้ 1 สาขาเท่านั้น',
-      'ไม่มีระบบทำนายสภาพผิวล่วงหน้า',
-      'ไม่มี AR Simulator',
-      'ไม่มีระบบการตลาดอัตโนมัติ',
-    ],
+    salesFeatures: ['Basic AI Analysis', 'Standard AR Simulator', 'Lead Management'],
+    salesFeaturesTH: ['การวิเคราะห์ AI พื้นฐาน', 'ระบบ AR จำลองมาตรฐาน', 'การจัดการรายชื่อลูกค้า'],
+    customerFeatures: ['View Results', 'Basic Progress Tracking'],
+    customerFeaturesTH: ['ดูผลการวิเคราะห์', 'ติดตามความคืบหน้าพื้นฐาน'],
   },
   professional: {
     name: 'Professional',
-    nameTH: 'Professional (Precision Growth)',
-    price: 19900,
-    maxUsers: 10,
+    popular: true,
+    price: 14900,
+    priceAnnual: 14900 * 10,
+    annualSavings: 14900 * 2,
+    // Sales User Limits
     maxSalesUsers: 3,
-    maxBranches: 3,
-    maxCustomersPerMonth: -1, // Unlimited
+    quotaPerSales: -1,       // Unlimited analyses per sales
+    arQuotaPerSales: -1,     // Unlimited AR per sales
+    // Center Limits
+    maxBranches: 2,
+    maxCustomersPerMonth: -1,
     maxStorageGB: 100,
-    maxAnalysesPerMonth: -1, // Unlimited
     trialDays: 14,
-    savings: 0.30, // 30% savings per user
-    features: [
-      'Unified Aesthetic Intelligence Hub (Unlimited)',
-      'Multi-Node Detection (Acne, Wrinkles, Spots)',
-      'Hugging Face Specialized AI Integration',
-      'Sales Enablement: AI Conversion Suite',
-      'AR Before/After Simulator (Real-time)',
-      'Predictive Sales Velocity AI',
-      'Smart Regimen Tracker',
-      'Aesthetic Loyalty & Gamification',
-      'AI Virtual Concierge (Standard)',
-      'ROI Analytics Dashboard',
-      'Multi-branch Synchronization (3)',
-    ],
-    featuresTH: [
-      'ทุกอย่างในแพ็กเกจ Starter',
-      'Unified Aesthetic Intelligence Hub (ไม่จำกัด)',
-      'Multi-Node Detection (ตรวจสิว, ริ้วรอย, จุดด่างดำ)',
-      'Hugging Face Specialized AI Integration',
-      'ชุดเครื่องมือสนับสนุนการขาย: AI Conversion Suite',
-      'AR Before/After Simulator (จำลองภาพเสมือนจริง)',
-      'AI ทำนายความเร็วการปิดยอด (Sales Velocity)',
-      'ระบบติดตามการใช้ผลิตภัณฑ์ (Regimen Tracker)',
-      'ระบบ Loyalty & แต้มสะสมอัจฉริยะ',
-      'AI Virtual Concierge (ระดับมาตรฐาน)',
-      'แดชบอร์ดคำนวณกำไรจาก AI (ROI)',
-      'รองรับสูงสุด 3 สาขา (ซิงค์ข้อมูล)',
-    ],
+    salesFeatures: ['Advanced AI Analysis', 'Full AR Suite', 'Sales CRM', 'AI Proposals'],
+    salesFeaturesTH: ['การวิเคราะห์ AI ขั้นสูง', 'ระบบ AR เต็มรูปแบบ', 'ระบบ CRM การขาย', 'ข้อเสนอโครงการโดย AI'],
+    customerFeatures: ['View Results', 'Advanced Progress Tracking', 'Loyalty Rewards'],
+    customerFeaturesTH: ['ดูผลการวิเคราะห์', 'ติดตามความคืบหน้าขั้นสูง', 'ระบบคะแนนสะสม'],
   },
   enterprise: {
     name: 'Enterprise',
-    nameTH: 'Enterprise (Intelligence Hub)',
-    price: 39900,
-    maxUsers: -1, // Unlimited
+    price: 29900,
+    priceAnnual: 29900 * 10,
+    annualSavings: 29900 * 2,
+    // Sales User Limits
     maxSalesUsers: 10,
-    maxBranches: -1, // Unlimited
-    maxCustomersPerMonth: -1, // Unlimited
+    quotaPerSales: -1,       // Unlimited
+    arQuotaPerSales: -1,     // Unlimited
+    // Center Limits
+    maxBranches: -1,         // Unlimited
+    maxCustomersPerMonth: -1,
     maxStorageGB: 500,
-    maxAnalysesPerMonth: -1, // Unlimited
     trialDays: 30,
-    savings: 0.60, // 60% savings per user
-    features: [
-      'Everything in Professional',
-      'Aesthetic Decision Support (ADSS)',
-      'Service Compliance Audit AI',
-      'Predictive Inventory Forecasting',
-      'AI Revenue Forecaster (90-day)',
-      'AI Autonomous Marketing Engine',
-      'Generative Marketing Visuals',
-      'Global Industry Benchmarking',
-      'Vision-to-Order Pipeline',
-      'Shared 3D Service Canvas',
-      'Enterprise Data Isolation',
-    ],
-    featuresTH: [
-      'ทุกอย่างในแพ็กเกจ Professional',
-      'ระบบสนับสนุนการแนะนำความงาม (ADSS)',
-      'AI ตรวจสอบมาตรฐานการให้บริการ (Compliance)',
-      'ระบบทำนายสต็อกเวชภัณฑ์ล่วงหน้า',
-      'AI คาดการณ์รายได้แม่นยำ (90 วัน)',
-      'เครื่องมือสร้างแคมเปญการตลาดอัตโนมัติ',
-      'AI สร้างภาพโฆษณาพรีเมียม (Generative)',
-      'ระบบเปรียบเทียบมาตรฐานโลก (Benchmarking)',
-      'ระบบร่างแผนงานความงามทันที (Aesthetic Hub)',
-      'พื้นที่วางแผน 3 มิตร่วมกับลูกค้า (Shared Canvas)',
-      'ระบบแยกข้อมูลความปลอดภัยระดับสูง',
-    ],
+    salesFeatures: ['Custom AI Models', 'Multi-branch Sync', 'Enterprise Analytics', 'Voice AI Concierge'],
+    salesFeaturesTH: ['โมเดล AI เฉพาะทาง', 'ระบบเชื่อมต่อหลายสาขา', 'ระบบวิเคราะห์ระดับองค์กร', 'ระบบสั่งงานด้วยเสียง AI'],
+    customerFeatures: ['White-label Portal', 'Priority Booking', 'Exclusive Offers'],
+    customerFeaturesTH: ['พอร์ทัลแบรนด์ตัวเอง', 'ระบบจองคิวพิเศษ', 'ข้อเสนอสุดพิเศษเฉพาะบุคคล'],
   },
   platinum: {
     name: 'Platinum',
-    nameTH: 'Platinum (Elite Custom)',
-    price: 69900,
-    maxUsers: -1, // Unlimited
-    maxSalesUsers: -1, // Unlimited
-    maxBranches: -1, // Unlimited
-    maxCustomersPerMonth: -1, // Unlimited
-    maxStorageGB: -1, // Unlimited
-    maxAnalysesPerMonth: -1, // Unlimited
+    price: 49900,
+    priceAnnual: 49900 * 10,
+    annualSavings: 49900 * 2,
+    // Sales User Limits
+    maxSalesUsers: -1,       // Unlimited
+    quotaPerSales: -1,       // Unlimited
+    arQuotaPerSales: -1,     // Unlimited
+    // Center Limits
+    maxBranches: -1,         // Unlimited
+    maxCustomersPerMonth: -1,
+    maxStorageGB: -1,        // Unlimited
     trialDays: 30,
-    savings: 0.75, // 75% savings
-    features: [
-      'Everything in Enterprise',
-      'Generative 4D Aging Simulator',
-      'Bio-Metric IoT Telemetry Sync',
-      'Full White-label (Custom Domain)',
-      'Custom AI Model Fine-tuning',
-      'On-premise / Private Cloud Option',
-      'Bespoke Feature Development',
-      'Strategic AI Consulting',
-    ],
-    featuresTH: [
-      'ทุกอย่างในแพ็กเกจ Enterprise',
-      'เครื่องมือจำลองอายุผิว 4 มิติ (Moonshot)',
-      'ระบบซิงค์ข้อมูล IoT & Smart Mirror',
-      'White-label (ใช้โดเมนและโลโก้ตัวเอง)',
-      'ปรับแต่งโมเดล AI เฉพาะศูนย์ความงามคุณ',
-      'ทางเลือก Private Cloud ส่วนตัว',
-      'พัฒนาฟีเจอร์ใหม่ตามความต้องการ',
-      'ที่ปรึกษาเชิงกลยุทธ์ด้าน AI ส่วนตัว',
-    ],
+    salesFeatures: ['Unlimited Nodes', 'Global Deployment', 'Custom Integration', 'Executive Boardroom'],
+    salesFeaturesTH: ['โหนดไม่จำกัด', 'ระบบติดตั้งทั่วโลก', 'ระบบเชื่อมต่อ API', 'รายงานสำหรับผู้บริหาร'],
+    customerFeatures: ['VIP Concierge', 'Health Insurance Sync', 'Global Access'],
+    customerFeaturesTH: ['ผู้ช่วย VIP ส่วนตัว', 'เชื่อมต่อประกันสุขภาพ', 'เข้าถึงได้จากทั่วโลก'],
   },
 } as const
 
@@ -169,7 +139,8 @@ export function getPlan(planName: SubscriptionPlan) {
  */
 export function canAccessFeature(planName: SubscriptionPlan, feature: string): boolean {
   const plan = SUBSCRIPTION_PLANS[planName]
-  return (plan.features as readonly string[]).includes(feature)
+  const allFeatures = [...(plan as any).salesFeatures, ...(plan as any).customerFeatures]
+  return allFeatures.includes(feature)
 }
 
 /**
@@ -180,10 +151,10 @@ export function isWithinLimits(
   usage: { users?: number; customers?: number; storage?: number; analyses?: number }
 ): boolean {
   const plan = SUBSCRIPTION_PLANS[planName]
-  const maxUsers = plan.maxUsers as number
-  const maxCustomers = plan.maxCustomersPerMonth as number
-  const maxStorage = plan.maxStorageGB as number
-  const maxAnalyses = plan.maxAnalysesPerMonth as number
+  const maxUsers = (plan as any).maxSalesUsers as number
+  const maxCustomers = (plan as any).maxCustomersPerMonth as number
+  const maxStorage = (plan as any).maxStorageGB as number
+  const maxAnalyses = (plan as any).quotaPerSales as number
   
   if (usage.users && maxUsers !== -1 && usage.users > maxUsers) return false
   if (usage.customers && maxCustomers !== -1 && usage.customers > maxCustomers) return false
@@ -201,4 +172,84 @@ export function formatPrice(planName: SubscriptionPlan, locale: 'th' | 'en' = 't
   
   // All plans have prices > 0, so no need for free/contact checks
   return locale === 'th' ? `฿${plan.price.toLocaleString()}` : `$${(plan.price / 100).toFixed(2)}`
+}
+
+/**
+ * Get annual price for a plan
+ */
+export function getAnnualPrice(planName: SubscriptionPlan): number {
+  const plan = SUBSCRIPTION_PLANS[planName]
+  return (plan as any).priceAnnual || plan.price * 10
+}
+
+/**
+ * Get annual savings for a plan
+ */
+export function getAnnualSavings(planName: SubscriptionPlan): number {
+  const plan = SUBSCRIPTION_PLANS[planName]
+  return (plan as any).annualSavings || plan.price * 2
+}
+
+/**
+ * Format annual price for display
+ */
+export function formatAnnualPrice(planName: SubscriptionPlan, locale: 'th' | 'en' = 'th'): string {
+  const annualPrice = getAnnualPrice(planName)
+  return locale === 'th' ? `฿${annualPrice.toLocaleString()}` : `$${(annualPrice / 100).toFixed(2)}`
+}
+
+/**
+ * Calculate price with add-ons
+ */
+export function calculateTotalPrice(
+  planName: SubscriptionPlan,
+  addons: {
+    extraSalesUsers?: number
+    extraBranches?: number
+    extraAnalysesPacks?: number
+    extraARPacks?: number
+  } = {},
+  _billingCycle: 'monthly' | 'annual' = 'monthly'
+): { 
+  basePrice: number
+  addonsPrice: number
+  totalMonthly: number
+  totalAnnual: number
+  savings: number 
+} {
+  const plan = SUBSCRIPTION_PLANS[planName]
+  const basePrice = plan.price
+  
+  let addonsPrice = 0
+  if (addons.extraSalesUsers) {
+    addonsPrice += addons.extraSalesUsers * ADDON_PRICING.extraSalesUser.price
+  }
+  if (addons.extraBranches) {
+    addonsPrice += addons.extraBranches * ADDON_PRICING.extraBranch.price
+  }
+  if (addons.extraAnalysesPacks) {
+    addonsPrice += addons.extraAnalysesPacks * ADDON_PRICING.extraAnalyses.price
+  }
+  if (addons.extraARPacks) {
+    addonsPrice += addons.extraARPacks * ADDON_PRICING.extraARSimulations.price
+  }
+  
+  const totalMonthly = basePrice + addonsPrice
+  const totalAnnual = totalMonthly * 10 // Pay 10, get 12
+  const savings = totalMonthly * 2 // Save 2 months
+  
+  return {
+    basePrice,
+    addonsPrice,
+    totalMonthly,
+    totalAnnual,
+    savings
+  }
+}
+
+/**
+ * Get add-on pricing info
+ */
+export function getAddonPricing() {
+  return ADDON_PRICING
 }

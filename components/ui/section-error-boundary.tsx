@@ -8,6 +8,8 @@ import { cn } from '@/lib/utils'
 interface Props {
   children: ReactNode
   fallbackMessage?: string
+  retryMessage?: string
+  retryLabel?: string
   className?: string
   onError?: (error: Error, errorInfo: ErrorInfo) => void
 }
@@ -53,10 +55,10 @@ export class SectionErrorBoundary extends Component<Props, State> {
             <AlertCircle className="h-5 w-5 text-destructive mt-0.5" />
             <div className="flex-1">
               <p className="font-medium text-destructive">
-                {this.props.fallbackMessage || 'ไม่สามารถโหลดส่วนนี้ได้'}
+                {this.props.fallbackMessage || 'Unable to load section'}
               </p>
               <p className="text-sm text-muted-foreground mt-1">
-                กรุณาลองใหม่อีกครั้ง หรือรีเฟรชหน้า
+                {this.props.retryMessage || 'Please try again or refresh the page'}
               </p>
               <Button
                 variant="outline"
@@ -65,7 +67,7 @@ export class SectionErrorBoundary extends Component<Props, State> {
                 className="mt-3"
               >
                 <RefreshCw className="h-4 w-4 mr-2" />
-                ลองใหม่
+                {this.props.retryLabel || 'Retry'}
               </Button>
             </div>
           </div>
@@ -77,6 +79,8 @@ export class SectionErrorBoundary extends Component<Props, State> {
   }
 }
 
+import { useTranslations } from 'next-intl'
+
 /**
  * HOC to wrap any component with error boundary
  */
@@ -85,8 +89,13 @@ export function withSectionErrorBoundary<P extends object>(
   fallbackMessage?: string
 ) {
   return function WithErrorBoundary(props: P) {
+    const t = useTranslations('ui.sectionError')
     return (
-      <SectionErrorBoundary fallbackMessage={fallbackMessage}>
+      <SectionErrorBoundary 
+        fallbackMessage={fallbackMessage || t('fallback')}
+        retryMessage={t('retryMessage')}
+        retryLabel={t('retry')}
+      >
         <WrappedComponent {...props} />
       </SectionErrorBoundary>
     )

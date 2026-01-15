@@ -13,9 +13,6 @@ export class CustomerReportGenerator implements ReportGenerator {
       // Process customer metrics
       const processedData = await this.processCustomerData(data, metrics)
       
-      // Generate customer insights
-      const insights = await this.generateCustomerInsights(processedData)
-      
       return {
         metadata: {
           title: config.title,
@@ -25,11 +22,12 @@ export class CustomerReportGenerator implements ReportGenerator {
             endDate: dateRange.endDate.toISOString()
           },
           filters,
-          totalRecords: data.customers.length
+          totalRecords: data.customers.length,
+          locale: config.locale || 'th'
         },
         data: processedData,
-        insights: insights as any,
-        charts: this.generateCustomerCharts(processedData, metrics) as any
+        insights: await this.generateCustomerInsights(processedData, config.locale || 'th') as any,
+        charts: this.generateCustomerCharts(processedData, metrics, config.locale || 'th') as any
       }
     } catch (error) {
       console.error('Failed to generate customer report:', error)
@@ -126,8 +124,9 @@ export class CustomerReportGenerator implements ReportGenerator {
     return processed
   }
   
-  private async generateCustomerInsights(data: any) {
+  private async generateCustomerInsights(data: any, locale: string = 'th') {
     const insights = []
+    const isThai = locale === 'th'
     
     // Demographics insights
     if (data.demographics) {
@@ -136,8 +135,10 @@ export class CustomerReportGenerator implements ReportGenerator {
       
       insights.push({
         type: 'demographics',
-        title: 'Primary Age Group',
-        description: `Most customers are in the ${dominantAgeGroup[0]} age group`,
+        title: isThai ? 'กลุ่มอายุหลัก' : 'Primary Age Group',
+        description: isThai 
+          ? `ลูกค้าส่วนใหญ่อยู่ในกลุ่มอายุ ${dominantAgeGroup[0]}`
+          : `Most customers are in the ${dominantAgeGroup[0]} age group`,
         value: Number(dominantAgeGroup[1]),
         category: 'age'
       })
@@ -147,8 +148,10 @@ export class CustomerReportGenerator implements ReportGenerator {
     if (data.programs) {
       insights.push({
         type: 'programs',
-        title: 'Program Success',
-        description: `Program success rate is ${data.programs.successRate}%`,
+        title: isThai ? 'ความสำเร็จของโปรแกรม' : 'Program Success',
+        description: isThai
+          ? `อัตราความสำเร็จของโปรแกรมคือ ${data.programs.successRate}%`
+          : `Program success rate is ${data.programs.successRate}%`,
         value: data.programs.successRate,
         benchmark: 85 // 85% benchmark
       })
@@ -157,13 +160,14 @@ export class CustomerReportGenerator implements ReportGenerator {
     return insights
   }
   
-  private generateCustomerCharts(data: any, metrics: string[]) {
+  private generateCustomerCharts(data: any, metrics: string[], locale: string = 'th') {
     const charts = []
+    const isThai = locale === 'th'
     
     if (metrics.includes('demographics')) {
       charts.push({
-        type: 'pie',
-        title: 'Age Distribution',
+        type: 'pie' as const,
+        title: isThai ? 'การกระจายตัวของอายุ' : 'Age Distribution',
         data: Object.entries(data.demographics.ageDistribution).map(([age, count]) => ({
           age,
           count
@@ -181,8 +185,8 @@ export class CustomerReportGenerator implements ReportGenerator {
     
     if (metrics.includes('programs')) {
       charts.push({
-        type: 'bar',
-        title: 'Program Types',
+        type: 'bar' as const,
+        title: isThai ? 'ประเภทของโปรแกรม' : 'Program Types',
         data: Object.entries(data.programs.byType).map(([type, count]) => ({
           type,
           count

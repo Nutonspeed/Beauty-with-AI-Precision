@@ -161,7 +161,7 @@ function getTrendDisplay(trend: 'improving' | 'stable' | 'worsening') {
 function OverviewStats({
   analyses,
   metrics,
-  locale = 'th',
+  _locale = 'th',
 }: Readonly<{
   analyses: AnalysisSnapshot[];
   metrics: ProgressMetrics[];
@@ -312,7 +312,7 @@ function ProgressTimeline({
  */
 function MetricsTable({
   metrics,
-  locale = 'th',
+  _locale = 'th',
 }: Readonly<{
   metrics: ProgressMetrics[];
   locale?: 'th' | 'en';

@@ -13,7 +13,6 @@ const programs = [
   {
     id: "botox",
     name: "Botox",
-    name_th: "โบท็อกซ์",
     icon: Syringe,
     color: "text-blue-600",
     bgColor: "bg-blue-500/10",
@@ -22,7 +21,6 @@ const programs = [
   {
     id: "filler",
     name: "Dermal Filler",
-    name_th: "ฟิลเลอร์",
     icon: Droplet,
     color: "text-purple-600",
     bgColor: "bg-purple-500/10",
@@ -31,7 +29,6 @@ const programs = [
   {
     id: "laser",
     name: "Laser Program",
-    name_th: "เลเซอร์",
     icon: Zap,
     color: "text-red-600",
     bgColor: "bg-red-500/10",
@@ -40,7 +37,6 @@ const programs = [
   {
     id: "peel",
     name: "Chemical Peel",
-    name_th: "พีลลิ่ง",
     icon: Sparkles,
     color: "text-yellow-600",
     bgColor: "bg-yellow-500/10",
@@ -49,7 +45,6 @@ const programs = [
   {
     id: "microneedling",
     name: "Microneedling",
-    name_th: "ไมโครนีดดลิ้ง",
     icon: Grid3x3,
     color: "text-green-600",
     bgColor: "bg-green-500/10",
@@ -58,7 +53,6 @@ const programs = [
   {
     id: "thread",
     name: "Thread Lift",
-    name_th: "ยกกระชับด้วยด้าย",
     icon: Scissors,
     color: "text-pink-600",
     bgColor: "bg-pink-500/10",
@@ -66,10 +60,20 @@ const programs = [
   },
 ]
 
+import { useTranslations } from "next-intl"
+
 export function ProgramSelector({ selectedProgram, onSelectProgram }: ProgramSelectorProps) {
+  const t = useTranslations('booking.programs')
+  const commonT = useTranslations('common')
+
+  const localizedPrograms = programs.map(p => ({
+    ...p,
+    name: t(`${p.id}.name`)
+  }))
+
   return (
     <div className="space-y-2">
-      {programs.map((program) => {
+      {localizedPrograms.map((program) => {
         const Icon = program.icon
         const isSelected = selectedProgram === program.id
 
@@ -87,11 +91,10 @@ export function ProgramSelector({ selectedProgram, onSelectProgram }: ProgramSel
               </div>
               <div className="flex-1">
                 <div className="font-medium">{program.name}</div>
-                <div className="text-xs text-muted-foreground">{program.name_th}</div>
               </div>
               {isSelected && (
                 <Badge className={`${program.bgColor} ${program.color} border-0`} variant="secondary">
-                  Selected
+                  {commonT('selected')}
                 </Badge>
               )}
             </CardContent>

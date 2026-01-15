@@ -22,7 +22,11 @@ interface NotificationPreferences {
   push_notifications: boolean
 }
 
+import { useTranslations } from "next-intl"
+
 export function NotificationSettings({ userId }: NotificationSettingsProps) {
+  const t = useTranslations('profile.notifications')
+  const commonT = useTranslations('common')
   const supabase = createBrowserClient()
 
   const [isLoading, setIsLoading] = useState(true)
@@ -95,10 +99,10 @@ export function NotificationSettings({ userId }: NotificationSettingsProps) {
       if (upsertError) throw upsertError
 
       setSuccess(true)
-      toast.success("บันทึกการตั้งค่าสำเร็จ!")
+      toast.success(t('successMessage'))
     } catch (err: any) {
-      setError(err.message || "เกิดข้อผิดพลาดในการบันทึก")
-      toast.error("เกิดข้อผิดพลาด")
+      setError(err.message || t('errors.saveFailed'))
+      toast.error(commonT('error'))
     } finally {
       setIsSaving(false)
     }
@@ -124,22 +128,22 @@ export function NotificationSettings({ userId }: NotificationSettingsProps) {
       {success && (
         <Alert className="border-green-200 bg-green-50 text-green-800">
           <Check className="h-4 w-4" />
-          <AlertDescription>บันทึกการตั้งค่าสำเร็จ!</AlertDescription>
+          <AlertDescription>{t('successMessage')}</AlertDescription>
         </Alert>
       )}
 
       {/* Email Notifications */}
       <div className="space-y-4">
         <div>
-          <h3 className="mb-2 font-medium">Email Notifications / การแจ้งเตือนทางอีเมล</h3>
-          <p className="text-sm text-muted-foreground">รับการแจ้งเตือนผ่านอีเมล</p>
+          <h3 className="mb-2 font-medium">{t('emailTitle')}</h3>
+          <p className="text-sm text-muted-foreground">{t('emailDesc')}</p>
         </div>
 
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <Label htmlFor="email-bookings">Booking Confirmations / ยืนยันการจอง</Label>
-              <p className="text-sm text-muted-foreground">แจ้งเตือนเมื่อมีการจอง/เปลี่ยนแปลง/ยกเลิก</p>
+              <Label htmlFor="email-bookings">{t('emailBookings.label')}</Label>
+              <p className="text-sm text-muted-foreground">{t('emailBookings.description')}</p>
             </div>
             <Switch
               id="email-bookings"
@@ -150,8 +154,8 @@ export function NotificationSettings({ userId }: NotificationSettingsProps) {
 
           <div className="flex items-center justify-between">
             <div>
-              <Label htmlFor="email-analyses">Analysis Results / ผลการวิเคราะห์</Label>
-              <p className="text-sm text-muted-foreground">แจ้งเตือนเมื่อผลการวิเคราะห์ผิวพร้อม</p>
+              <Label htmlFor="email-analyses">{t('emailAnalyses.label')}</Label>
+              <p className="text-sm text-muted-foreground">{t('emailAnalyses.description')}</p>
             </div>
             <Switch
               id="email-analyses"
@@ -162,8 +166,8 @@ export function NotificationSettings({ userId }: NotificationSettingsProps) {
 
           <div className="flex items-center justify-between">
             <div>
-              <Label htmlFor="email-promotions">Promotions & Offers / โปรโมชั่น</Label>
-              <p className="text-sm text-muted-foreground">รับข้อเสนอพิเศษและโปรโมชั่น</p>
+              <Label htmlFor="email-promotions">{t('emailPromotions.label')}</Label>
+              <p className="text-sm text-muted-foreground">{t('emailPromotions.description')}</p>
             </div>
             <Switch
               id="email-promotions"
@@ -174,8 +178,8 @@ export function NotificationSettings({ userId }: NotificationSettingsProps) {
 
           <div className="flex items-center justify-between">
             <div>
-              <Label htmlFor="email-updates">Product Updates / อัปเดตผลิตภัณฑ์</Label>
-              <p className="text-sm text-muted-foreground">ข่าวสารและอัปเดตจากระบบ</p>
+              <Label htmlFor="email-updates">{t('emailUpdates.label')}</Label>
+              <p className="text-sm text-muted-foreground">{t('emailUpdates.description')}</p>
             </div>
             <Switch
               id="email-updates"
@@ -189,14 +193,14 @@ export function NotificationSettings({ userId }: NotificationSettingsProps) {
       {/* SMS Notifications */}
       <div className="space-y-4 border-t pt-6">
         <div>
-          <h3 className="mb-2 font-medium">SMS Notifications / การแจ้งเตือนทาง SMS</h3>
-          <p className="text-sm text-muted-foreground">รับการแจ้งเตือนผ่าน SMS</p>
+          <h3 className="mb-2 font-medium">{t('smsTitle')}</h3>
+          <p className="text-sm text-muted-foreground">{t('smsDesc')}</p>
         </div>
 
         <div className="flex items-center justify-between">
           <div>
-            <Label htmlFor="sms-reminders">Appointment Reminders / เตือนการนัดหมาย</Label>
-            <p className="text-sm text-muted-foreground">แจ้งเตือนก่อนนัดหมาย 24 ชั่วโมง</p>
+            <Label htmlFor="sms-reminders">{t('smsReminders.label')}</Label>
+            <p className="text-sm text-muted-foreground">{t('smsReminders.description')}</p>
           </div>
           <Switch
             id="sms-reminders"
@@ -209,14 +213,14 @@ export function NotificationSettings({ userId }: NotificationSettingsProps) {
       {/* Push Notifications */}
       <div className="space-y-4 border-t pt-6">
         <div>
-          <h3 className="mb-2 font-medium">Push Notifications / การแจ้งเตือนบนอุปกรณ์</h3>
-          <p className="text-sm text-muted-foreground">รับการแจ้งเตือนแบบ Push (Coming Soon)</p>
+          <h3 className="mb-2 font-medium">{t('pushTitle')}</h3>
+          <p className="text-sm text-muted-foreground">{t('pushDesc')}</p>
         </div>
 
         <div className="flex items-center justify-between">
           <div>
-            <Label htmlFor="push-notifications">Enable Push Notifications</Label>
-            <p className="text-sm text-muted-foreground">ฟีเจอร์นี้จะเปิดใช้งานเร็วๆ นี้</p>
+            <Label htmlFor="push-notifications">{t('pushNotifications.label')}</Label>
+            <p className="text-sm text-muted-foreground">{t('pushNotifications.description')}</p>
           </div>
           <Switch
             id="push-notifications"
@@ -233,10 +237,10 @@ export function NotificationSettings({ userId }: NotificationSettingsProps) {
           {isSaving ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              กำลังบันทึก...
+              {t('actions.saving')}
             </>
           ) : (
-            "Save Preferences / บันทึกการตั้งค่า"
+            t('actions.save')
           )}
         </Button>
       </div>

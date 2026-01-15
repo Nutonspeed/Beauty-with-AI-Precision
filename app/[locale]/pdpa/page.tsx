@@ -178,10 +178,10 @@ export default function PDPAPage() {
                       {t('pdpa.contact.email')}
                     </h3>
                     <a
-                      href="mailto:pdpa@aibeautyplatform.com"
+                      href={`mailto:${t('pdpa.contact.emailValue')}`}
                       className="text-sm text-primary hover:underline break-all"
                     >
-                      pdpa@aibeautyplatform.com
+                      {t('pdpa.contact.emailValue')}
                     </a>
                     <p className="mt-2 text-xs text-muted-foreground">
                       {t('pdpa.contact.emailResponse')}
@@ -198,8 +198,8 @@ export default function PDPAPage() {
                     <h3 className="mb-2 text-lg font-semibold">
                       {t('pdpa.contact.phone')}
                     </h3>
-                    <a href="tel:+66-2-xxx-xxxx" className="text-sm text-primary hover:underline">
-                      +66 2 XXX XXXX
+                    <a href={`tel:${t('pdpa.contact.phoneValue')}`} className="text-sm text-primary hover:underline">
+                      {t('pdpa.contact.phoneValue')}
                     </a>
                     <p className="mt-2 text-xs text-muted-foreground">
                       {t('pdpa.contact.phoneHours')}
@@ -250,14 +250,14 @@ export default function PDPAPage() {
                         </p>
                         <p>
                           <strong>{t('pdpa.dpo.email')}</strong>{" "}
-                          <a href="mailto:dpo@aibeautyplatform.com" className="text-primary hover:underline">
-                            dpo@aibeautyplatform.com
+                          <a href={`mailto:${t('pdpa.dpo.emailValue')}`} className="text-primary hover:underline">
+                            {t('pdpa.dpo.emailValue')}
                           </a>
                         </p>
                         <p>
                           <strong>{t('pdpa.dpo.phone')}</strong>{" "}
-                          <a href="tel:+66-2-xxx-xxxx" className="text-primary hover:underline">
-                            +66 2 XXX XXXX ต่อ 101
+                          <a href={`tel:${t('pdpa.dpo.phoneValue')}`} className="text-primary hover:underline">
+                            {t('pdpa.dpo.phoneValue')}
                           </a>
                         </p>
                       </div>

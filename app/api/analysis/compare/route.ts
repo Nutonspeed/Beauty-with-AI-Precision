@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
       { key: 'spots', label: { en: 'Dark Spots', th: 'จุดด่างดำ' } },
       { key: 'pores', label: { en: 'Pore Size', th: 'ขนาดรูขุมขน' } },
       { key: 'wrinkles', label: { en: 'Wrinkles', th: 'ริ้วรอย' } },
-      { key: 'texture', label: { en: 'Skin Texture', th: 'พื้นผิวผิว' } },
+      { key: 'texture', label: { en: 'Skin Texture', th: 'พื้นผิว' } },
       { key: 'redness', label: { en: 'Redness', th: 'ความแดง' } },
       { key: 'overall_score', label: { en: 'Overall Score', th: 'คะแนนรวม' } }
     ];

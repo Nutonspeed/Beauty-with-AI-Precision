@@ -49,6 +49,9 @@ import { AestheticLoyalty } from '@/components/client/aesthetic-loyalty';
 import { IoTTelemetrySync } from '@/components/client/iot-telemetry-sync';
 import { AestheticOutcomeQuantifier } from '@/components/analytics/aesthetic-outcome-quantifier';
 import { BioDigitalTwinEvolution } from '@/components/client/bio-digital-twin-evolution';
+import { RecommendedPrograms } from '@/components/client/recommended-programs';
+import { AestheticMilestones } from '@/components/client/aesthetic-milestones';
+import { SmartNotificationsFeed } from '@/components/client/smart-notifications-feed';
 
 export default function CustomerDashboard() {
   const t = useTranslations()
@@ -109,15 +112,16 @@ export default function CustomerDashboard() {
     { date: '2026-01', score: 85 },
   ];
 
+  // Customer Quick Actions - Analysis available if customer has credits from sales
   const quickActions = [
     { 
       label: t('nav.analysis'), 
-      href: lp('/analysis'), 
+      href: lp('/customer/analysis'), 
       icon: Camera, 
       color: 'text-blue-600',
       bg: 'bg-blue-50',
       border: 'border-blue-100',
-      description: 'AI Precision Skin Diagnostic'
+      description: t('salesPresentations.quickActions.analysis.description')
     },
     { 
       label: t('nav.booking'), 
@@ -126,16 +130,16 @@ export default function CustomerDashboard() {
       color: 'text-indigo-600',
       bg: 'bg-indigo-50',
       border: 'border-indigo-100',
-      description: 'Initialize Aesthetic Protocol'
+      description: t('salesPresentations.quickActions.booking.description')
     },
     { 
-      label: t('nav.overview'), 
+      label: t('salesPresentations.quickActions.progress.label'), 
       href: lp('/customer/analysis/history'), 
       icon: TrendingUp, 
       color: 'text-cyan-600',
       bg: 'bg-cyan-50',
       border: 'border-cyan-100',
-      description: 'Temporal Aesthetic Metrics'
+      description: t('salesPresentations.quickActions.progress.description')
     },
     { 
       label: t('nav.profile'), 
@@ -144,7 +148,7 @@ export default function CustomerDashboard() {
       color: 'text-slate-600',
       bg: 'bg-slate-50',
       border: 'border-slate-200',
-      description: 'Client Node Configuration'
+      description: t('salesPresentations.quickActions.profile.description')
     }
   ]
 
@@ -173,23 +177,23 @@ export default function CustomerDashboard() {
           <div className="space-y-3">
             <Badge variant="outline" className="px-4 py-1 rounded-full border-blue-500/30 text-blue-600 bg-blue-500/5 backdrop-blur-md uppercase tracking-[0.2em] text-[10px] font-black shadow-lg shadow-blue-500/5">
               <Activity className="mr-2 h-3 w-3 animate-pulse" />
-              Biological Synchronized Dashboard
+              {t('header.badge')}
             </Badge>
             <h1 className="text-5xl font-bold text-slate-900 tracking-tight italic">
               {t('nav.dashboard')}{' '}
               <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 bg-clip-text text-transparent not-italic text-2xl tracking-[0.3em] font-black uppercase">
-                {user?.full_name?.split(' ')[0] || 'Client'}_Node
+                {user?.full_name?.split(' ')[0] || t('header.defaultClient')}{t('header.nodeSuffix')}
               </span>
             </h1>
-            <p className="text-slate-500 font-light tracking-wide text-lg italic">Orchestrating your aesthetic evolution with AI Precision.</p>
+            <p className="text-slate-500 font-light tracking-wide text-lg italic">{t('header.description')}</p>
           </div>
           
           <div className="flex gap-4">
-            <button className="h-14 px-8 rounded-2xl border border-slate-200 bg-white shadow-sm hover:bg-slate-50 text-[10px] font-black uppercase tracking-widest italic transition-all" onClick={() => router.push(lp('/profile'))}>
-              Edit_Schema
+            <button className="h-14 px-8 rounded-2xl border border-slate-200 bg-white shadow-sm hover:bg-slate-50 text-[10px] font-black uppercase tracking-widest italic transition-all" onClick={() => router.push(lp('/customer/analysis/history'))}>
+              {t('buttons.myProgress')}
             </button>
-            <button className="h-14 px-8 rounded-2xl bg-blue-600 text-white shadow-xl shadow-blue-600/20 text-[10px] font-black uppercase tracking-widest italic border-none hover:scale-105 active:scale-95 transition-all" onClick={() => router.push(lp('/analysis'))}>
-              Initialize_Scan
+            <button className="h-14 px-8 rounded-2xl bg-blue-600 text-white shadow-xl shadow-blue-600/20 text-[10px] font-black uppercase tracking-widest italic border-none hover:scale-105 active:scale-95 transition-all" onClick={() => router.push(lp('/customer/analysis'))}>
+              {t('buttons.analyzeSkin')}
             </button>
           </div>
         </motion.div>
@@ -228,6 +232,9 @@ export default function CustomerDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           {/* Main Content - Temporal Evolution Chart */}
           <div className="lg:col-span-8 space-y-10">
+            <RecommendedPrograms isPremium={isPremium} />
+            <SmartNotificationsFeed />
+            <AestheticMilestones isPremium={isPremium} />
             <BioDigitalTwinEvolution isPremium={isPremium} />
             <AestheticOutcomeQuantifier isPremium={isPremium} />
             <IoTTelemetrySync isPremium={isPremium} />
@@ -237,8 +244,8 @@ export default function CustomerDashboard() {
             <Card className="border-white bg-white/60 backdrop-blur-xl rounded-[3rem] overflow-hidden shadow-premium relative group">
               <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/10 to-transparent" />
               <CardHeader className="p-10 lg:p-12 pb-6 border-b border-slate-100">
-                <CardTitle className="text-2xl font-bold text-slate-900 tracking-tight italic">Aesthetic Journey</CardTitle>
-                <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Temporal aesthetic index progression metrics</CardDescription>
+                <CardTitle className="text-2xl font-bold text-slate-900 tracking-tight italic">{t('journey.title')}</CardTitle>
+                <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('journey.subtitle')}</CardDescription>
               </CardHeader>
               <CardContent className="p-10 lg:p-16 h-[400px]">
                 <ResponsiveContainer width="100%" height="100%">
@@ -279,7 +286,7 @@ export default function CustomerDashboard() {
             <Card className="border-white bg-white/60 backdrop-blur-xl rounded-[3rem] overflow-hidden shadow-premium relative">
               <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/10 to-transparent" />
               <CardHeader className="p-10 pb-6 border-b border-slate-100 flex flex-row items-center justify-between">
-                <CardTitle className="text-2xl font-bold text-slate-900 tracking-tight italic">Temporal Activity Logs</CardTitle>
+                <CardTitle className="text-2xl font-bold text-slate-900 tracking-tight italic">{t('logs.title')}</CardTitle>
               </CardHeader>
               <CardContent className="p-10 lg:p-12 space-y-8">
                 {recentActivity.map((activity, index) => (
@@ -319,7 +326,7 @@ export default function CustomerDashboard() {
               <CardHeader className="p-10 pb-4">
                 <CardTitle className="text-xs font-black uppercase tracking-[0.3em] text-blue-600 flex items-center gap-3">
                   <Sparkles className="w-4 h-4 animate-pulse" />
-                  AI Digital Twin Portfolio
+                  {t('digitalTwin.title')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-10 pt-0 flex flex-col items-center justify-center space-y-10 flex-1">
@@ -329,12 +336,12 @@ export default function CustomerDashboard() {
                       <DigitalTwinModule />
                       <div className="absolute bottom-6 left-6 flex items-center gap-3">
                         <div className="h-2 w-2 rounded-full bg-blue-500 animate-ping" />
-                        <span className="text-[8px] font-black text-blue-600 uppercase tracking-[0.3em]">Neural_Link_Active</span>
+                        <span className="text-[8px] font-black text-blue-600 uppercase tracking-[0.3em]">{t('digitalTwin.neuralLinkActive')}</span>
                       </div>
                     </div>
                     <div className="text-center">
-                      <p className="font-semibold text-slate-900 italic">Aesthetic Synchronized</p>
-                      <p className="text-xs text-slate-500 uppercase font-black tracking-widest mt-1">Real-time Bio-Data Node</p>
+                      <p className="font-semibold text-slate-900 italic">{t('digitalTwin.synchronized')}</p>
+                      <p className="text-xs text-slate-500 uppercase font-black tracking-widest mt-1">{t('digitalTwin.bioNode')}</p>
                     </div>
                   </>
                 ) : (
@@ -343,11 +350,11 @@ export default function CustomerDashboard() {
                       <ShieldCheck className="h-10 w-10 text-slate-300" />
                     </div>
                     <div className="space-y-2">
-                      <p className="font-bold text-slate-900 italic uppercase tracking-tighter">Premium Access Required</p>
-                      <p className="text-xs text-slate-500 leading-relaxed italic">Upgrade to unlock your AI Digital Twin and biological evolution tracking.</p>
+                      <p className="font-bold text-slate-900 italic uppercase tracking-tighter">{t('digitalTwin.premiumRequired')}</p>
+                      <p className="text-xs text-slate-500 leading-relaxed italic">{t('digitalTwin.upgradeDesc')}</p>
                     </div>
                     <Button variant="premium" size="sm" className="h-10 px-6 rounded-xl text-[9px] font-black uppercase tracking-widest italic" asChild>
-                      <Link href={lp('/pricing')}>Upgrade Now</Link>
+                      <Link href={lp('/pricing')}>{t('digitalTwin.upgradeBtn')}</Link>
                     </Button>
                   </div>
                 )}
@@ -357,13 +364,13 @@ export default function CustomerDashboard() {
             {/* Critical Metrics Index */}
             <Card className="border-white bg-white/60 backdrop-blur-xl rounded-[3rem] overflow-hidden shadow-premium relative">
               <CardHeader className="p-10 pb-6 border-b border-slate-100">
-                <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Biological Vitals</CardTitle>
+                <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('vitals.title')}</CardTitle>
               </CardHeader>
               <CardContent className="p-10 space-y-10">
                 {[
-                  { label: 'Aesthetic Score', val: '85/100', trend: '+12%', color: 'text-emerald-600' },
-                  { label: 'Cellular Hydration', val: '72%', trend: '+5%', color: 'text-blue-600' },
-                  { label: 'Texture Uniformity', val: '91%', trend: 'Stable', color: 'text-slate-600' },
+                  { label: t('vitals.aestheticScore'), val: '85/100', trend: '+12%', color: 'text-emerald-600' },
+                  { label: t('vitals.cellularHydration'), val: '72%', trend: '+5%', color: 'text-blue-600' },
+                  { label: t('vitals.textureUniformity'), val: '91%', trend: t('vitals.stable'), color: 'text-slate-600' },
                 ].map((stat, i) => (
                   <div key={i} className="flex items-center justify-between group cursor-default">
                     <div className="space-y-1">

@@ -9,7 +9,11 @@ import { createBrowserClient } from "@/lib/supabase/client"
 import { AlertCircle, Check, Eye, EyeOff, Loader2 } from "lucide-react"
 import { toast } from "sonner"
 
+import { useTranslations } from "next-intl"
+
 export function PasswordChangeForm() {
+  const t = useTranslations('profile.password')
+  const commonT = useTranslations('common')
   const supabase = createBrowserClient()
 
   const [isLoading, setIsLoading] = useState(false)
@@ -28,8 +32,8 @@ export function PasswordChangeForm() {
 
   // Password strength
   const getPasswordStrength = (password: string) => {
-    if (password.length < 6) return { strength: 1, text: "อ่อนแอ", color: "text-red-500" }
-    if (password.length < 8) return { strength: 2, text: "ปานกลาง", color: "text-yellow-500" }
+    if (password.length < 6) return { strength: 1, text: t('strength.weak'), color: "text-red-500" }
+    if (password.length < 8) return { strength: 2, text: t('strength.medium'), color: "text-yellow-500" }
 
     const hasUpper = /[A-Z]/.test(password)
     const hasLower = /[a-z]/.test(password)
@@ -39,12 +43,12 @@ export function PasswordChangeForm() {
     const score = [hasUpper, hasLower, hasNumber, hasSpecial].filter(Boolean).length
 
     if (score >= 3 && password.length >= 8) {
-      return { strength: 4, text: "แข็งแรงมาก", color: "text-green-500" }
+      return { strength: 4, text: t('strength.veryStrong'), color: "text-green-500" }
     } else if (score >= 2) {
-      return { strength: 3, text: "แข็งแรง", color: "text-blue-500" }
+      return { strength: 3, text: t('strength.strong'), color: "text-blue-500" }
     }
 
-    return { strength: 2, text: "ปานกลาง", color: "text-yellow-500" }
+    return { strength: 2, text: t('strength.medium'), color: "text-yellow-500" }
   }
 
   const passwordStrength = getPasswordStrength(newPassword)
@@ -58,25 +62,25 @@ export function PasswordChangeForm() {
     try {
       // Validate
       if (!currentPassword) {
-        setError("กรุณากรอกรหัสผ่านปัจจุบัน")
+        setError(t('errors.currentRequired'))
         setIsLoading(false)
         return
       }
 
       if (newPassword.length < 8) {
-        setError("รหัสผ่านใหม่ต้องมีอย่างน้อย 8 ตัวอักษร")
+        setError(t('errors.tooShort'))
         setIsLoading(false)
         return
       }
 
       if (newPassword !== confirmPassword) {
-        setError("รหัสผ่านใหม่ไม่ตรงกัน")
+        setError(t('errors.mismatch'))
         setIsLoading(false)
         return
       }
 
       if (currentPassword === newPassword) {
-        setError("รหัสผ่านใหม่ต้องไม่เหมือนรหัสผ่านเดิม")
+        setError(t('errors.sameAsOld'))
         setIsLoading(false)
         return
       }
@@ -84,7 +88,7 @@ export function PasswordChangeForm() {
       // Verify current password by trying to sign in
       const { data: user } = await supabase.auth.getUser()
       if (!user.user?.email) {
-        setError("ไม่พบข้อมูลผู้ใช้")
+        setError(t('errors.userNotFound'))
         setIsLoading(false)
         return
       }
@@ -96,7 +100,7 @@ export function PasswordChangeForm() {
       })
 
       if (verifyError) {
-        setError("รหัสผ่านปัจจุบันไม่ถูกต้อง")
+        setError(t('errors.incorrectCurrent'))
         setIsLoading(false)
         return
       }
@@ -109,15 +113,15 @@ export function PasswordChangeForm() {
       if (updateError) throw updateError
 
       setSuccess(true)
-      toast.success("เปลี่ยนรหัสผ่านสำเร็จ!")
+      toast.success(t('success.changeSuccess'))
 
       // Clear form
       setCurrentPassword("")
       setNewPassword("")
       setConfirmPassword("")
     } catch (err: any) {
-      setError(err.message || "เกิดข้อผิดพลาดในการเปลี่ยนรหัสผ่าน")
-      toast.error("เกิดข้อผิดพลาด")
+      setError(err.message || t('errors.changeFailed'))
+      toast.error(commonT('error'))
     } finally {
       setIsLoading(false)
     }
@@ -135,20 +139,20 @@ export function PasswordChangeForm() {
       {success && (
         <Alert className="border-green-200 bg-green-50 text-green-800">
           <Check className="h-4 w-4" />
-          <AlertDescription>เปลี่ยนรหัสผ่านสำเร็จ!</AlertDescription>
+          <AlertDescription>{t('success.changeSuccess')}</AlertDescription>
         </Alert>
       )}
 
       {/* Current Password */}
       <div className="space-y-2">
         <Label htmlFor="currentPassword">
-          Current Password / รหัสผ่านปัจจุบัน <span className="text-red-500">*</span>
+          {t('currentPasswordLabel')} <span className="text-red-500">*</span>
         </Label>
         <div className="relative">
           <Input
             id="currentPassword"
             type={showCurrent ? "text" : "password"}
-            placeholder="กรอกรหัสผ่านปัจจุบัน"
+            placeholder={t('currentPasswordPlaceholder')}
             value={currentPassword}
             onChange={(e) => setCurrentPassword(e.target.value)}
             required
@@ -166,13 +170,13 @@ export function PasswordChangeForm() {
       {/* New Password */}
       <div className="space-y-2">
         <Label htmlFor="newPassword">
-          New Password / รหัสผ่านใหม่ <span className="text-red-500">*</span>
+          {t('newPasswordLabel')} <span className="text-red-500">*</span>
         </Label>
         <div className="relative">
           <Input
             id="newPassword"
             type={showNew ? "text" : "password"}
-            placeholder="กรอกรหัสผ่านใหม่ (อย่างน้อย 8 ตัวอักษร)"
+            placeholder={t('newPasswordPlaceholder')}
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
             required
@@ -202,7 +206,7 @@ export function PasswordChangeForm() {
                 />
               ))}
             </div>
-            <p className={`text-xs ${passwordStrength.color}`}>ความแข็งแรง: {passwordStrength.text}</p>
+            <p className={`text-xs ${passwordStrength.color}`}>{t('strength.label')}: {passwordStrength.text}</p>
           </div>
         )}
       </div>
@@ -210,13 +214,13 @@ export function PasswordChangeForm() {
       {/* Confirm Password */}
       <div className="space-y-2">
         <Label htmlFor="confirmPassword">
-          Confirm New Password / ยืนยันรหัสผ่านใหม่ <span className="text-red-500">*</span>
+          {t('confirmPasswordLabel')} <span className="text-red-500">*</span>
         </Label>
         <div className="relative">
           <Input
             id="confirmPassword"
             type={showConfirm ? "text" : "password"}
-            placeholder="กรอกรหัสผ่านใหม่อีกครั้ง"
+            placeholder={t('confirmPasswordPlaceholder')}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
@@ -236,19 +240,19 @@ export function PasswordChangeForm() {
           <p
             className={`text-xs ${newPassword === confirmPassword ? "text-green-500" : "text-red-500"}`}
           >
-            {newPassword === confirmPassword ? "✓ รหัสผ่านตรงกัน" : "✗ รหัสผ่านไม่ตรงกัน"}
+            {newPassword === confirmPassword ? `✓ ${t('match.success')}` : `✗ ${t('match.error')}`}
           </p>
         )}
       </div>
 
       {/* Security Tips */}
       <div className="rounded-lg border bg-muted/50 p-4">
-        <p className="mb-2 text-sm font-medium">💡 เคล็ดลับความปลอดภัย:</p>
+        <p className="mb-2 text-sm font-medium">💡 {t('tips.title')}:</p>
         <ul className="space-y-1 text-xs text-muted-foreground">
-          <li>• ใช้อักษรตัวพิมพ์ใหญ่และเล็กผสมกัน</li>
-          <li>• เพิ่มตัวเลขและอักขระพิเศษ (!@#$%^&*)</li>
-          <li>• อย่างน้อย 8 ตัวอักษร (แนะนำ 12+)</li>
-          <li>• อย่าใช้รหัสผ่านเดียวกันในหลายเว็บไซต์</li>
+          <li>• {t('tips.mixed')}</li>
+          <li>• {t('tips.special')}</li>
+          <li>• {t('tips.length')}</li>
+          <li>• {t('tips.reuse')}</li>
         </ul>
       </div>
 
@@ -257,10 +261,10 @@ export function PasswordChangeForm() {
         {isLoading ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            กำลังเปลี่ยนรหัสผ่าน...
+            {t('actions.changing')}
           </>
         ) : (
-          "Change Password / เปลี่ยนรหัสผ่าน"
+          t('actions.change')
         )}
       </Button>
     </form>

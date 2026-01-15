@@ -3,7 +3,6 @@
 
 import { ProgressPhoto } from '@/types/progress';
 import { format } from 'date-fns';
-import { th } from 'date-fns/locale';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 interface ProgramTimelineChartProps {
@@ -12,31 +11,28 @@ interface ProgramTimelineChartProps {
 
 type MetricKey = 'spots' | 'pores' | 'wrinkles' | 'redness' | 'acne';
 
-const metricLabels: Record<MetricKey, string> = {
-  spots: 'ฝ้า-กระ',
-  pores: 'รูขุมขน',
-  wrinkles: 'ริ้วรอย',
-  redness: 'ความแดง',
-  acne: 'สิว',
-};
-
-const metricColors: Record<MetricKey, string> = {
-    spots: '#8884d8',
-    pores: '#82ca9d',
-    wrinkles: '#ffc658',
-    redness: '#ff8042',
-    acne: '#e64980',
-};
-
+import { useTranslations, useLocale } from 'next-intl';
 
 export default function ProgramTimelineChart({ photos }: ProgramTimelineChartProps) {
+  const t = useTranslations('progress.timelineChart');
+  const locale = useLocale();
+  const dateLocale = locale === 'th' ? require('date-fns/locale').th : require('date-fns/locale').enUS;
+
   if (photos.length < 2) {
     return (
       <div className="flex items-center justify-center h-64 bg-gray-50 rounded-lg">
-        <p className="text-gray-500">ต้องมีภาพอย่างน้อย 2 ภาพเพื่อแสดงกราฟ</p>
+        <p className="text-gray-500">{t('insufficientData')}</p>
       </div>
     );
   }
+
+  const metricLabels: Record<MetricKey, string> = {
+    spots: t('metrics.spots'),
+    pores: t('metrics.pores'),
+    wrinkles: t('metrics.wrinkles'),
+    redness: t('metrics.redness'),
+    acne: t('metrics.acne'),
+  };
 
   const chartData = photos
     .sort((a, b) => new Date(a.taken_at).getTime() - new Date(b.taken_at).getTime())
@@ -44,7 +40,7 @@ export default function ProgramTimelineChart({ photos }: ProgramTimelineChartPro
         const analysis = photo.analysis_results || {};
         return {
             date: new Date(photo.taken_at),
-            name: format(new Date(photo.taken_at), 'd MMM yy', { locale: th }),
+            name: format(new Date(photo.taken_at), 'd MMM yy', { locale: dateLocale }),
             ...analysis,
         }
     });
@@ -56,7 +52,7 @@ export default function ProgramTimelineChart({ photos }: ProgramTimelineChartPro
 
   return (
     <div className="bg-white p-4 rounded-lg shadow">
-        <h3 className="font-semibold mb-4 text-lg">กราฟแสดงผลโปรแกรมความงาม</h3>
+        <h3 className="font-semibold mb-4 text-lg">{t('title')}</h3>
         <ResponsiveContainer width="100%" height={400}>
             <LineChart
             data={chartData}
@@ -74,11 +70,11 @@ export default function ProgramTimelineChart({ photos }: ProgramTimelineChartPro
             />
             <YAxis 
                 tick={{ fontSize: 12 }}
-                label={{ value: 'ค่าคะแนน (น้อย=ดี)', angle: -90, position: 'insideLeft', offset: 10, style: { textAnchor: 'middle', fontSize: 14 } }}
+                label={{ value: t('yAxisLabel'), angle: -90, position: 'insideLeft', offset: 10, style: { textAnchor: 'middle', fontSize: 14 } }}
             />
             <Tooltip
                 formatter={(value: number, name: string) => [value.toFixed(2), metricLabels[name as MetricKey]]}
-                labelFormatter={(label: string) => `วันที่: ${label}`}
+                labelFormatter={(label: string) => `${t('dateLabel')}: ${label}`}
             />
             <Legend formatter={(value) => metricLabels[value as MetricKey]} />
             {activeMetrics.map(metric => (

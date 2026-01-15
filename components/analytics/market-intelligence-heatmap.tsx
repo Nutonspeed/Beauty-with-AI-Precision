@@ -113,7 +113,7 @@ export function MarketIntelligenceHeatmap({ isEnterprise }: MarketIntelligenceHe
           <div className="lg:col-span-5 space-y-8">
             <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-600 italic">{t('marketIntelligence.regionalBuffer')}</h4>
             <div className="space-y-6">
-              {regions.map((region, idx) => (
+              {regions.map((region, _idx) => (
                 <div key={region.id} className="p-6 bg-white/[0.02] border border-white/5 rounded-2xl group/region hover:bg-white/[0.04] transition-all">
                   <div className="flex justify-between items-center mb-4">
                     <div className="flex items-center gap-4">

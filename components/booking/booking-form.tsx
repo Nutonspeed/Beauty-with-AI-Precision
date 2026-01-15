@@ -132,7 +132,7 @@ export function BookingForm({ onSubmit, availableSlots, onDateChange, isLoading 
                 onValueChange={value => setFormData(prev => ({ ...prev, specialistId: value }))}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="เลือกผู้เชี่ยวชาญ (ถ้ามี)" />
+                  <SelectValue placeholder={t('bookingForm.specialistPlaceholder')} />
                 </SelectTrigger>
                 <SelectContent>
                   {specialistOptions.map((option) => (
@@ -152,7 +152,7 @@ export function BookingForm({ onSubmit, availableSlots, onDateChange, isLoading 
                 onValueChange={value => setFormData(prev => ({ ...prev, programType: value }))}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="เลือกผู้เชี่ยวชาญ (ถ้ามี)" />
+                  <SelectValue placeholder={t('bookingForm.programPlaceholder')} />
                 </SelectTrigger>
                 <SelectContent>
                   {programOptions.map(program => (

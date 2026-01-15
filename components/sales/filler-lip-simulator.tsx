@@ -1,9 +1,8 @@
 'use client';
 
 /**
- * Filler & Lip Enhancement Simulator
- * AR tool for visualizing filler and lip augmentation results
- * สำหรับคลินิกฉีดฟิลเลอร์และเสริมปาก
+ * Filler & Lip Simulator (Task 5/7)
+ * For filler injection and lip augmentation clinics
  */
 
 import { useState, useRef, useEffect, useCallback } from 'react';
@@ -24,76 +23,46 @@ import {
 } from 'lucide-react';
 
 // Filler injection areas
-const FILLER_AREAS = {
+const FILLER_AREAS_BASE = {
   lips: {
     id: 'lips',
-    name: 'ปาก (Lips)',
-    nameEn: 'Lips',
     subAreas: ['upper_lip', 'lower_lip', 'lip_border', 'cupids_bow'],
     priceRange: '8,000 - 25,000',
-    duration: '30-45 นาที',
-    recovery: '3-5 วัน',
-    results: '6-12 เดือน'
   },
   cheeks: {
     id: 'cheeks',
-    name: 'แก้ม (Cheeks)',
-    nameEn: 'Cheeks',
     subAreas: ['apple_cheeks', 'cheekbone', 'midface'],
     priceRange: '15,000 - 35,000',
-    duration: '30-45 นาที',
-    recovery: '3-7 วัน',
-    results: '12-18 เดือน'
   },
   chin: {
     id: 'chin',
-    name: 'คาง (Chin)',
-    nameEn: 'Chin',
     subAreas: ['chin_projection', 'jawline'],
     priceRange: '12,000 - 28,000',
-    duration: '20-30 นาที',
-    recovery: '3-5 วัน',
-    results: '12-18 เดือน'
   },
   nose: {
     id: 'nose',
-    name: 'จมูก (Nose)',
-    nameEn: 'Non-Surgical Rhinoplasty',
     subAreas: ['nose_bridge', 'nose_tip'],
     priceRange: '10,000 - 20,000',
-    duration: '15-30 นาที',
-    recovery: '1-3 วัน',
-    results: '12-18 เดือน'
   },
   nasolabial: {
     id: 'nasolabial',
-    name: 'ร่องแก้ม (Nasolabial)',
-    nameEn: 'Nasolabial Folds',
     subAreas: ['smile_lines'],
     priceRange: '12,000 - 25,000',
-    duration: '20-30 นาที',
-    recovery: '2-5 วัน',
-    results: '9-12 เดือน'
   },
   undereye: {
     id: 'undereye',
-    name: 'ใต้ตา (Under Eye)',
-    nameEn: 'Tear Trough',
     subAreas: ['tear_trough', 'dark_circles'],
     priceRange: '15,000 - 30,000',
-    duration: '20-30 นาที',
-    recovery: '5-7 วัน',
-    results: '9-12 เดือน'
   }
 };
 
 // Filler product options
 const FILLER_PRODUCTS = [
-  { id: 'juvederm', name: 'Juvederm', brand: 'Allergan', type: 'HA', popularity: 95 },
-  { id: 'restylane', name: 'Restylane', brand: 'Galderma', type: 'HA', popularity: 90 },
-  { id: 'teosyal', name: 'Teosyal', brand: 'Teoxane', type: 'HA', popularity: 85 },
-  { id: 'belotero', name: 'Belotero', brand: 'Merz', type: 'HA', popularity: 80 },
-  { id: 'radiesse', name: 'Radiesse', brand: 'Merz', type: 'CaHA', popularity: 75 },
+  { id: 'juvederm', name: 'Juvederm', brand: 'allergan', type: 'HA', popularity: 95 },
+  { id: 'restylane', name: 'Restylane', brand: 'galderma', type: 'HA', popularity: 90 },
+  { id: 'teosyal', name: 'Teosyal', brand: 'teoxane', type: 'HA', popularity: 85 },
+  { id: 'belotero', name: 'Belotero', brand: 'merz', type: 'HA', popularity: 80 },
+  { id: 'radiesse', name: 'Radiesse', brand: 'merz', type: 'CaHA', popularity: 75 },
 ];
 
 interface FillerSimulatorProps {
@@ -123,55 +92,43 @@ export function FillerLipSimulator({
   // Filler injection areas
   const FILLER_AREAS = {
     lips: {
-      id: "lips",
+      ...FILLER_AREAS_BASE.lips,
       name: t('fillerLipSimulator.areas.lips.name'),
-      subAreas: ["upper_lip", "lower_lip", "lip_border", "cupids_bow"],
-      priceRange: "8,000 - 25,000",
       duration: locale === 'th' ? "30-45 นาที" : "30-45 min",
       recovery: t('fillerLipSimulator.areas.lips.recovery'),
       results: t('fillerLipSimulator.areas.lips.results')
     },
     cheeks: {
-      id: "cheeks",
+      ...FILLER_AREAS_BASE.cheeks,
       name: t('fillerLipSimulator.areas.cheeks.name'),
-      subAreas: ["apple_cheeks", "cheekbone", "midface"],
-      priceRange: "15,000 - 35,000",
       duration: locale === 'th' ? "30-45 นาที" : "30-45 min",
       recovery: t('fillerLipSimulator.areas.cheeks.recovery'),
       results: t('fillerLipSimulator.areas.cheeks.results')
     },
     chin: {
-      id: "chin",
+      ...FILLER_AREAS_BASE.chin,
       name: t('fillerLipSimulator.areas.chin.name'),
-      subAreas: ["chin_projection", "jawline"],
-      priceRange: "12,000 - 28,000",
       duration: locale === 'th' ? "20-30 นาที" : "20-30 min",
       recovery: t('fillerLipSimulator.areas.chin.recovery'),
       results: t('fillerLipSimulator.areas.chin.results')
     },
     nose: {
-      id: "nose",
+      ...FILLER_AREAS_BASE.nose,
       name: t('fillerLipSimulator.areas.nose.name'),
-      subAreas: ["nose_bridge", "nose_tip"],
-      priceRange: "10,000 - 20,000",
       duration: locale === 'th' ? "15-30 นาที" : "15-30 min",
       recovery: t('fillerLipSimulator.areas.nose.recovery'),
       results: t('fillerLipSimulator.areas.nose.results')
     },
     nasolabial: {
-      id: "nasolabial",
+      ...FILLER_AREAS_BASE.nasolabial,
       name: t('fillerLipSimulator.areas.nasolabial.name'),
-      subAreas: ["smile_lines"],
-      priceRange: "12,000 - 25,000",
       duration: locale === 'th' ? "20-30 นาที" : "20-30 min",
       recovery: t('fillerLipSimulator.areas.nasolabial.recovery'),
       results: t('fillerLipSimulator.areas.nasolabial.results')
     },
     undereye: {
-      id: "undereye",
+      ...FILLER_AREAS_BASE.undereye,
       name: t('fillerLipSimulator.areas.undereye.name'),
-      subAreas: ["tear_trough", "dark_circles"],
-      priceRange: "15,000 - 30,000",
       duration: locale === 'th' ? "20-30 นาที" : "20-30 min",
       recovery: t('fillerLipSimulator.areas.undereye.recovery'),
       results: t('fillerLipSimulator.areas.undereye.results')

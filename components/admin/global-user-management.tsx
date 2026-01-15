@@ -132,7 +132,7 @@ export default function GlobalUserManagement() {
     } finally {
       setLoading(false);
     }
-  }, [roleFilter, centerFilter, statusFilter, offset, searchTerm, toast]);
+  }, [roleFilter, centerFilter, statusFilter, offset, searchTerm, toast, t]);
 
   useEffect(() => {
     fetchUsers();

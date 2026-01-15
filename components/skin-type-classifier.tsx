@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import {
   SkinTypeClassifier,
   type SkinCharacteristics,
@@ -28,78 +29,12 @@ interface SkinTypeClassifierProps {
   onClassificationChange?: (result: ClassificationResult) => void;
 }
 
-const translations = {
-  en: {
-    title: 'Skin Type Classification',
-    characteristics: 'Skin Characteristics',
-    analysis: 'Analysis Results',
-    confidence: 'Classification Confidence',
-    indicators: 'Skin Indicators',
-    recommendations: 'Personalized Recommendations',
-    tips: 'Skincare Tips',
-    sebumLevel: 'Sebum Level',
-    hydrationLevel: 'Hydration Level',
-    sensitivityScore: 'Sensitivity',
-    poreSize: 'Pore Size',
-    textureRoughness: 'Texture Roughness',
-    acneScore: 'Acne Score',
-    rednessLevel: 'Redness Level',
-    shininess: 'Shininess',
-    classify: 'Classify Skin Type',
-    skinType: 'Skin Type',
-    drawerOpen: 'Open',
-    normal: 'Normal',
-    oily: 'Oily',
-    dry: 'Dry',
-    combination: 'Combination',
-    sensitive: 'Sensitive',
-    histogram: 'Characteristic Distribution',
-    radarChart: 'Skin Profile Radar',
-    lowConfidence: 'Low classification confidence',
-    mediumConfidence: 'Medium classification confidence',
-    highConfidence: 'High classification confidence',
-    noResults: 'No classification results yet',
-    scanSkin: 'Scan Your Skin',
-  },
-  th: {
-    title: 'การจำแนกประเภทผิว',
-    characteristics: 'ลักษณะเฉพาะของผิว',
-    analysis: 'ผลการวิเคราะห์',
-    confidence: 'ความมั่นใจในการจำแนก',
-    indicators: 'ตัวบ่งชี้ของผิว',
-    recommendations: 'คำแนะนำเฉพาะตัว',
-    tips: 'เคล็ดลับการดูแลผิว',
-    sebumLevel: 'ระดับสารสมบูรณ์',
-    hydrationLevel: 'ระดับความชุ่มชื้น',
-    sensitivityScore: 'ความไวแพ้',
-    poreSize: 'ขนาดรูขุมขน',
-    textureRoughness: 'ความหยาบของพื้นผิว',
-    acneScore: 'คะแนนสิว',
-    rednessLevel: 'ระดับความแดง',
-    shininess: 'ความมันของผิว',
-    classify: 'จำแนกประเภทผิว',
-    skinType: 'ประเภทผิว',
-    drawerOpen: 'เปิด',
-    normal: 'ปกติ',
-    oily: 'มันมาก',
-    dry: 'แห้ง',
-    combination: 'ผสม',
-    sensitive: 'ไวแพ้',
-    histogram: 'การกระจายตัวของลักษณะเฉพาะ',
-    radarChart: 'แผนภูมิโปรไฟล์ผิว',
-    lowConfidence: 'ความมั่นใจในการจำแนกต่ำ',
-    mediumConfidence: 'ความมั่นใจในการจำแนกปานกลาง',
-    highConfidence: 'ความมั่นใจในการจำแนกสูง',
-    noResults: 'ยังไม่มีผลการจำแนกประเภท',
-    scanSkin: 'สแกนผิวของคุณ',
-  },
-};
+// const translations = {};
 
 export const SkinTypeClassifierComponent: React.FC<SkinTypeClassifierProps> = ({
-  language = 'en',
   onClassificationChange,
 }) => {
-  const t = translations[language] || translations.en;
+  const t = useTranslations('skinType');
 
   const [characteristics, setCharacteristics] = useState<SkinCharacteristics>({
     sebumLevel: 50,
@@ -180,28 +115,28 @@ export const SkinTypeClassifierComponent: React.FC<SkinTypeClassifierProps> = ({
   };
 
   const getConfidenceLabel = (confidence: number): string => {
-    if (confidence >= 80) return t.highConfidence;
-    if (confidence >= 60) return t.mediumConfidence;
-    return t.lowConfidence;
+    if (confidence >= 80) return t('highConfidence');
+    if (confidence >= 60) return t('mediumConfidence');
+    return t('lowConfidence');
   };
 
   return (
     <div className="w-full space-y-6 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg">
       {/* Header */}
       <div className="space-y-2">
-        <h2 className="text-3xl font-bold text-gray-900">{t.title}</h2>
-        <p className="text-gray-600">{t.scanSkin}</p>
+        <h2 className="text-3xl font-bold text-gray-900">{t('title')}</h2>
+        <p className="text-gray-600">{t('scanSkin')}</p>
       </div>
 
       {/* Characteristics Input Section */}
       <div className="bg-white rounded-lg shadow-md p-6 space-y-6">
-        <h3 className="text-xl font-semibold text-gray-800">{t.characteristics}</h3>
+        <h3 className="text-xl font-semibold text-gray-800">{t('characteristics')}</h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {Object.entries(characteristics).map(([key, value]) => (
             <div key={key}>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t[key as keyof typeof t] || key}
+                {t(key as any) || key}
               </label>
               <input
                 type="range"
@@ -225,7 +160,7 @@ export const SkinTypeClassifierComponent: React.FC<SkinTypeClassifierProps> = ({
           onClick={handleClassify}
           className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-md"
         >
-          {t.classify}
+          {t('classify')}
         </button>
       </div>
 
@@ -233,7 +168,7 @@ export const SkinTypeClassifierComponent: React.FC<SkinTypeClassifierProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Radar Chart */}
         <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">{t.radarChart}</h3>
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">{t('radarChart')}</h3>
           <ResponsiveContainer width="100%" height={300}>
             <RadarChart data={radarData}>
               <PolarGrid />
@@ -246,7 +181,7 @@ export const SkinTypeClassifierComponent: React.FC<SkinTypeClassifierProps> = ({
 
         {/* Bar Chart */}
         <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">{t.histogram}</h3>
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">{t('histogram')}</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={radarData}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -265,9 +200,9 @@ export const SkinTypeClassifierComponent: React.FC<SkinTypeClassifierProps> = ({
           <div className="space-y-4">
             {/* Skin Type Result */}
             <div className="flex items-center justify-between">
-              <h3 className="text-2xl font-bold text-gray-900">{t.analysis}</h3>
+              <h3 className="text-2xl font-bold text-gray-900">{t('analysis')}</h3>
               <span className={`px-4 py-2 rounded-full font-bold text-lg ${getSkinTypeBadgeColor(classificationResult.skinType)}`}>
-                {t[classificationResult.skinType as keyof typeof t]}
+                {t(classificationResult.skinType as any)}
               </span>
             </div>
 
@@ -276,7 +211,7 @@ export const SkinTypeClassifierComponent: React.FC<SkinTypeClassifierProps> = ({
               <div className="flex items-center gap-3">
                 {getConfidenceIcon(classificationResult.confidence)}
                 <div>
-                  <p className="text-sm font-semibold text-gray-600">{t.confidence}</p>
+                  <p className="text-sm font-semibold text-gray-600">{t('confidence')}</p>
                   <p className="text-xs text-gray-500">
                     {getConfidenceLabel(classificationResult.confidence)}
                   </p>
@@ -288,7 +223,7 @@ export const SkinTypeClassifierComponent: React.FC<SkinTypeClassifierProps> = ({
             {/* Indicators */}
             {classificationResult.indicators.length > 0 && (
               <div className="space-y-2">
-                <h4 className="font-semibold text-gray-800">{t.indicators}</h4>
+                <h4 className="font-semibold text-gray-800">{t('indicators')}</h4>
                 <div className="flex flex-wrap gap-2">
                   {classificationResult.indicators.map((indicator) => (
                     <span
@@ -305,7 +240,7 @@ export const SkinTypeClassifierComponent: React.FC<SkinTypeClassifierProps> = ({
             {/* Recommendations */}
             {classificationResult.recommendations.length > 0 && (
               <div className="space-y-2">
-                <h4 className="font-semibold text-gray-800">{t.recommendations}</h4>
+                <h4 className="font-semibold text-gray-800">{t('recommendations')}</h4>
                 <ul className="space-y-2">
                   {classificationResult.recommendations.map((rec) => (
                     <li key={rec} className="flex items-start gap-2 text-sm">
@@ -319,7 +254,7 @@ export const SkinTypeClassifierComponent: React.FC<SkinTypeClassifierProps> = ({
 
             {/* Tips */}
             <div className="space-y-2">
-              <h4 className="font-semibold text-gray-800">{t.tips}</h4>
+              <h4 className="font-semibold text-gray-800">{t('tips')}</h4>
               <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 space-y-2">
                 {SkinTypeClassifier.generateTips(
                   classificationResult.skinType,
@@ -327,7 +262,7 @@ export const SkinTypeClassifierComponent: React.FC<SkinTypeClassifierProps> = ({
                 ).map((tip) => (
                   <div key={tip} className="flex items-start gap-2">
                     <TrendingUp className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-sm text-gray-700">{tip}</span>
+                    <span className="text-gray-700">{tip}</span>
                   </div>
                 ))}
               </div>
@@ -337,18 +272,18 @@ export const SkinTypeClassifierComponent: React.FC<SkinTypeClassifierProps> = ({
       ) : (
         <div className="bg-white rounded-lg shadow-md p-8 text-center">
           <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-          <p className="text-gray-500">{t.noResults}</p>
+          <p className="text-gray-500">{t('noResults')}</p>
         </div>
       )}
 
       {/* Characteristic Details */}
       {classificationResult && (
         <div className="bg-white rounded-lg shadow-md p-6 space-y-4">
-          <h3 className="text-lg font-semibold text-gray-800">Detailed Characteristics</h3>
+          <h3 className="text-lg font-semibold text-gray-800">{t('detailedCharacteristics')}</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {Object.entries(classificationResult.characteristics).map(([key, value]) => (
               <div key={key} className="bg-gray-50 rounded-lg p-4">
-                <p className="text-xs font-semibold text-gray-600 uppercase">{t[key as keyof typeof t] || key}</p>
+                <p className="text-xs font-semibold text-gray-600 uppercase">{t(key as any) || key}</p>
                 <p className="text-2xl font-bold text-gray-900 mt-2">{value}</p>
                 <div className="w-full bg-gray-200 rounded-full h-2 mt-3 overflow-hidden">
                   {/* Progress bar - width determined by percentage class matching */}

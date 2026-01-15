@@ -1,6 +1,6 @@
 /**
  * AR/AI Simulators for Sales Dashboard
- * เครื่องมือจำลองผลลัพธ์สำหรับศูนย์ความงามทุกสาขา
+ * Result simulation tools for all beauty center branches
  */
 
 // Skin & Face
@@ -18,14 +18,14 @@ export { default as HairRestorationSimulator } from '../hair-restoration-simulat
 export { default as SkinHeatmap } from '../skin-heatmap';
 
 /**
- * Simulator Registry - ใช้สำหรับ dynamic loading
+ * Simulator Registry - used for dynamic loading
  */
 export const SIMULATOR_REGISTRY = {
   // Face & Skin
   skin_analysis: {
     id: 'skin_analysis',
     name: 'AI Skin Analysis',
-    nameTh: 'วิเคราะห์ผิวด้วย AI',
+    nameKey: 'simulators.skinAnalysis.name',
     category: 'face',
     component: 'SkinHeatmap',
     centerTypes: ['dermatology', 'aesthetic', 'spa'],
@@ -34,7 +34,7 @@ export const SIMULATOR_REGISTRY = {
   filler_lip: {
     id: 'filler_lip',
     name: 'Filler & Lip Simulator',
-    nameTh: 'จำลองฟิลเลอร์และปาก',
+    nameKey: 'simulators.fillerLip.name',
     category: 'face',
     component: 'FillerLipSimulator',
     centerTypes: ['aesthetic', 'plastic_surgery'],
@@ -43,7 +43,7 @@ export const SIMULATOR_REGISTRY = {
   eye_enhancement: {
     id: 'eye_enhancement',
     name: 'Eye Enhancement Simulator',
-    nameTh: 'จำลองการทำตา',
+    nameKey: 'simulators.eyeEnhancement.name',
     category: 'face',
     component: 'EyeEnhancementSimulator',
     centerTypes: ['aesthetic', 'plastic_surgery'],
@@ -52,7 +52,7 @@ export const SIMULATOR_REGISTRY = {
   program_preview: {
     id: 'program_preview',
     name: 'AR Program Preview',
-    nameTh: 'ดูผลลัพธ์ล่วงหน้า',
+    nameKey: 'simulators.programPreview.name',
     category: 'face',
     component: 'ARProgramPreview',
     centerTypes: ['dermatology', 'aesthetic', 'spa'],
@@ -63,7 +63,7 @@ export const SIMULATOR_REGISTRY = {
   body_contouring: {
     id: 'body_contouring',
     name: 'Body Contouring Simulator',
-    nameTh: 'จำลองการกระชับสัดส่วน',
+    nameKey: 'simulators.bodyContouring.name',
     category: 'body',
     component: 'BodyContouringSimulator',
     centerTypes: ['slimming', 'aesthetic', 'spa'],
@@ -74,7 +74,7 @@ export const SIMULATOR_REGISTRY = {
   hair_restoration: {
     id: 'hair_restoration',
     name: 'Hair Restoration Simulator',
-    nameTh: 'จำลองการปลูกผม',
+    nameKey: 'simulators.hairRestoration.name',
     category: 'hair',
     component: 'HairRestorationSimulator',
     centerTypes: ['hair_center', 'aesthetic'],

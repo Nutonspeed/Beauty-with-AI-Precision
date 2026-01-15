@@ -1,6 +1,6 @@
 /**
  * Modern Beauty Icons 2025
- * ไอคอนสมัยใหม่ ดูน่าเชื่อถือ ด้วยเทคนิคปี 2025
+ * Modern, reliable icons using 2025 techniques
  */
 
 import React from 'react';

@@ -4,6 +4,7 @@ import React from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 interface ErrorBoundaryState {
   hasError: boolean
@@ -147,6 +148,7 @@ function DefaultErrorFallback({
   retry: () => void
   goHome: () => void
 }) {
+  const t = useTranslations('ui.errorBoundary')
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-purple-50">
       <Card className="w-full max-w-md">
@@ -154,11 +156,11 @@ function DefaultErrorFallback({
           <div className="mx-auto w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4">
             <AlertTriangle className="w-6 h-6 text-red-600" />
           </div>
-          <CardTitle className="text-xl">เกิดข้อผิดพลาด</CardTitle>
+          <CardTitle className="text-xl">{t('title')}</CardTitle>
         </CardHeader>
         <CardContent className="text-center space-y-4">
           <p className="text-gray-600">
-            ขออภัยด้วยครับ ระบบเกิดข้อผิดพลาดบางอย่าง
+            {t('message')}
             {process.env.NODE_ENV === 'development' && error && (
               <span className="block mt-2 text-sm text-red-600 font-mono">
                 {error.message}
@@ -169,16 +171,16 @@ function DefaultErrorFallback({
           <div className="flex flex-col sm:flex-row gap-2">
             <Button onClick={retry} className="flex-1">
               <RefreshCw className="w-4 h-4 mr-2" />
-              ลองใหม่
+              {t('retry') || 'Retry'}
             </Button>
             <Button variant="outline" onClick={goHome} className="flex-1">
               <Home className="w-4 h-4 mr-2" />
-              หน้าแรก
+              {t('homeBtn')}
             </Button>
           </div>
           
           <p className="text-xs text-gray-500">
-            หากปัญหายังคงอยู่ กรุณาติดต่อผู้ดูแลระบบ
+            {t('contactAdmin')}
           </p>
         </CardContent>
       </Card>

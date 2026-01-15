@@ -1,5 +1,6 @@
 "use client"
 
+import { useTranslations } from "next-intl"
 import { Suspense, useRef } from "react"
 import { Canvas, useFrame, useLoader } from "@react-three/fiber"
 import { OrbitControls, PerspectiveCamera, Environment } from "@react-three/drei"
@@ -57,6 +58,7 @@ function Scene3D() {
 }
 
 export default function Robot3DShowcase() {
+  const t = useTranslations()
   const containerRef = useRef<HTMLDivElement>(null)
   
   const { scrollYProgress } = useScroll({
@@ -115,10 +117,10 @@ export default function Robot3DShowcase() {
               </span>
             </h1>
             <p className="text-2xl md:text-3xl text-gray-300 mb-8">
-              เทคโนโลยี 3D ที่ทันสมัยที่สุด
+              {t('robot3D.hero.subtitle')}
             </p>
             <p className="text-lg text-gray-400">
-              ⬅️ ลากเมาส์เพื่อหมุนดู 360° • Scroll เพื่อดูเนื้อหา
+              {t('robot3D.hero.instructions')}
             </p>
           </motion.div>
 
@@ -153,16 +155,16 @@ export default function Robot3DShowcase() {
             >
               <h2 className="text-4xl md:text-5xl font-bold mb-6">
                 <span className="bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
-                  ฟีเจอร์ล้ำสมัย
+                  {t('robot3D.features.title')}
                 </span>
               </h2>
               
               <div className="space-y-4">
                 {[
-                  { title: "3D Rendering", desc: "แสดงผล 3D แบบ Real-time" },
-                  { title: "Interactive", desc: "ลาก หมุน ซูม ได้ตามใจ" },
-                  { title: "Smooth Animation", desc: "Animation ลื่นไหล 60 FPS" },
-                  { title: "GLB Support", desc: "รองรับไฟล์ 3D มาตรฐาน" }
+                  { title: t('robot3D.features.items.rendering.title'), desc: t('robot3D.features.items.rendering.desc') },
+                  { title: t('robot3D.features.items.interactive.title'), desc: t('robot3D.features.items.interactive.desc') },
+                  { title: t('robot3D.features.items.smooth.title'), desc: t('robot3D.features.items.smooth.desc') },
+                  { title: t('robot3D.features.items.glb.title'), desc: t('robot3D.features.items.glb.desc') }
                 ].map((item, i) => (
                   <motion.div
                     key={i}
@@ -187,9 +189,9 @@ export default function Robot3DShowcase() {
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full blur-3xl opacity-30 animate-pulse" />
                 <div className="relative text-center p-8 rounded-2xl border border-white/20 bg-white/5 backdrop-blur-sm">
-                  <div className="text-6xl font-bold text-cyan-400 mb-2">360°</div>
-                  <p className="text-gray-300">มุมมองทุกด้าน</p>
-                  <p className="text-sm text-gray-500 mt-4">ลากเพื่อหมุนดู Robot</p>
+                  <div className="text-6xl font-bold text-cyan-400 mb-2">{t('robot3D.features.view360.title')}</div>
+                  <p className="text-gray-300">{t('robot3D.features.view360.subtitle')}</p>
+                  <p className="text-sm text-gray-500 mt-4">{t('robot3D.features.view360.tip')}</p>
                 </div>
               </div>
             </motion.div>
@@ -209,15 +211,15 @@ export default function Robot3DShowcase() {
             transition={{ duration: 0.8 }}
           >
             <h2 className="text-5xl md:text-7xl font-bold mb-6">
-              พร้อมสัมผัส
+              {t('robot3D.cta.title')}
               <br />
               <span className="bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
-                เทคโนโลยี 3D
+                {t('robot3D.cta.subtitle')}
               </span>
             </h2>
 
             <p className="text-xl text-gray-300 mb-12">
-              เพิ่ม 3D Models เข้าเว็บไซต์ของคุณได้ง่ายๆ
+              {t('robot3D.cta.description')}
             </p>
 
             <motion.button
@@ -230,17 +232,17 @@ export default function Robot3DShowcase() {
                 transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
                 className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
               />
-              <span className="relative z-10">เริ่มใช้งานเลย</span>
+              <span className="relative z-10">{t('robot3D.cta.button')}</span>
             </motion.button>
 
             <div className="mt-8 flex items-center justify-center gap-8 text-sm text-gray-400">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                <span>Drag to Rotate</span>
+                <span>{t('robot3D.cta.controls.rotate')}</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" />
-                <span>Scroll Wheel to Zoom</span>
+                <span>{t('robot3D.cta.controls.zoom')}</span>
               </div>
             </div>
           </motion.div>

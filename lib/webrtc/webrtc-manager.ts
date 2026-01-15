@@ -1,6 +1,6 @@
 /**
  * WebRTC Stream Manager
- * จัดการ WebRTC connections สำหรับ live streaming และ video calls
+ * Manage WebRTC connections for live streaming and video calls
  */
 
 export interface RTCConfig {
@@ -33,7 +33,7 @@ export class WebRTCManager {
   }
 
   /**
-   * เริ่มต้น local media stream
+   * Initialize local media stream
    */
   async startLocalStream(options: StreamOptions = { video: true, audio: false }): Promise<MediaStream> {
     try {
@@ -61,7 +61,7 @@ export class WebRTCManager {
   }
 
   /**
-   * หยุด local stream
+   * Stop local stream
    */
   stopLocalStream(): void {
     if (this.localStream) {
@@ -74,7 +74,7 @@ export class WebRTCManager {
   }
 
   /**
-   * สร้าง peer connection
+   * Create peer connection
    */
   createPeerConnection(config?: Partial<RTCConfig>): RTCPeerConnection {
     const fullConfig = { ...this.defaultConfig, ...config }
@@ -127,7 +127,7 @@ export class WebRTCManager {
   }
 
   /**
-   * สร้าง offer (caller side)
+   * Create offer (caller side)
    */
   async createOffer(): Promise<RTCSessionDescriptionInit> {
     if (!this.peerConnection) {
@@ -156,7 +156,7 @@ export class WebRTCManager {
   }
 
   /**
-   * สร้าง answer (callee side)
+   * Create answer (callee side)
    */
   async createAnswer(offer: RTCSessionDescriptionInit): Promise<RTCSessionDescriptionInit> {
     if (!this.peerConnection) {
@@ -203,7 +203,7 @@ export class WebRTCManager {
   }
 
   /**
-   * เพิ่ม ICE candidate
+   * Add ICE candidate
    */
   async addIceCandidate(candidate: RTCIceCandidateInit): Promise<void> {
     if (!this.peerConnection) {
@@ -289,7 +289,7 @@ export class WebRTCManager {
   }
 
   /**
-   * ปิด connection
+   * Close connection
    */
   close(): void {
     console.log('[WebRTC] Closing connection...')

@@ -22,6 +22,7 @@ import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { SalesLeaderboard } from '@/components/sales/SalesLeaderboard';
 
 interface Invitation {
   id: string;
@@ -169,6 +170,8 @@ export default function CenterTeamPage() {
               </motion.div>
             ))}
           </div>
+
+          <SalesLeaderboard />
 
           <div className="grid gap-10 lg:grid-cols-2">
             {/* Active Personnel Registry */}

@@ -3,6 +3,7 @@
  */
 
 import { useState, useCallback, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import {
   ProgressTracker,
   ProgressDataPoint,
@@ -42,6 +43,7 @@ export type UseProgressTrackingResult = UseProgressTrackingState & UseProgressTr
  * Hook for managing progress tracking
  */
 export function useProgressTracking(): UseProgressTrackingResult {
+  const t = useTranslations('progress.tracking');
   const [state, setState] = useState<UseProgressTrackingState>({
     dataPoints: [],
     comparison: null,
@@ -167,6 +169,7 @@ export function useProgressTracking(): UseProgressTrackingResult {
         state.dataPoints,
         state.comparison,
         state.stats,
+        t,
         options
       );
 
@@ -185,7 +188,7 @@ export function useProgressTracking(): UseProgressTrackingResult {
         error: err instanceof Error ? err.message : 'Failed to export PDF',
       }));
     }
-  }, [state.dataPoints, state.comparison, state.stats]);
+  }, [state.dataPoints, state.comparison, state.stats, t]);
 
   /**
    * Export to JSON

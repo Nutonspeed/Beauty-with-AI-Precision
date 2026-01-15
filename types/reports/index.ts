@@ -7,6 +7,7 @@ export interface ReportConfig {
   }
   filters?: Record<string, any>
   metrics: string[]
+  locale?: 'th' | 'en'
 }
 
 export interface ReportData {
@@ -20,6 +21,7 @@ export interface ReportData {
     filters?: Record<string, any>
     totalRecords?: number
     currency?: string
+    locale?: 'th' | 'en'
   }
   data: Record<string, any>
   insights: ReportInsight[]

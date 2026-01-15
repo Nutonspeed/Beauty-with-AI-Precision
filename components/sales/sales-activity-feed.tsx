@@ -13,6 +13,7 @@ import {
   MessageSquare,
   Phone,
   User,
+  RefreshCw,
 } from "lucide-react"
 
 import { useTranslations, useLocale } from "next-intl"
@@ -27,6 +28,7 @@ import {
 } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Skeleton } from "@/components/ui/skeleton"
+import { motion, AnimatePresence } from "framer-motion"
 
 type ActivityType =
   | "call"
@@ -230,23 +232,27 @@ export function SalesActivityFeed() {
   }
 
   return (
-    <Card className="h-full">
-      <CardHeader className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-        <div className="space-y-1">
-          <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
-            <MessageSquare className="h-5 w-5 text-primary" />
+    <Card className="h-full border-white/10 bg-slate-900/20 backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-[0_0_80px_rgba(0,0,0,0.2)] relative group ring-1 ring-white/10">
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent opacity-50" />
+      <CardHeader className="p-10 lg:p-12 pb-8 border-b border-white/5 flex flex-col gap-6 md:flex-row md:items-center md:justify-between relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/[0.03] to-transparent animate-neural-pulse pointer-events-none" />
+        <div className="space-y-2 relative z-10">
+          <CardTitle className="text-3xl font-black text-white italic tracking-tighter uppercase flex items-center gap-4">
+            <div className="p-2.5 rounded-xl bg-blue-500/10 border border-blue-500/20 shadow-inner group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
+              <ActivitySquare className="h-6 w-6 text-blue-400" />
+            </div>
             {t('salesActivityFeed.title')}
           </CardTitle>
-          <CardDescription>{latestActivityText}</CardDescription>
+          <CardDescription className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic ml-1">{latestActivityText}</CardDescription>
         </div>
-        <div className="flex w-full items-center gap-3 md:w-auto">
+        <div className="flex w-full items-center gap-4 md:w-auto relative z-10">
           <Select value={range} onValueChange={(value) => setRange(value as any)}>
-            <SelectTrigger className="w-full md:w-40">
+            <SelectTrigger className="w-full md:w-44 h-12 rounded-xl border-white/10 bg-white/5 text-white text-[10px] font-black uppercase tracking-widest italic focus:ring-blue-500/20">
               <SelectValue placeholder={t('salesActivityFeed.rangeLabel')} />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-slate-900 border-white/10 rounded-xl">
               {RANGE_OPTIONS.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
+                <SelectItem key={option.value} value={option.value} className="text-[10px] font-black uppercase italic tracking-widest">
                   {option.label}
                 </SelectItem>
               ))}
@@ -255,17 +261,17 @@ export function SalesActivityFeed() {
           <Button
             variant="outline"
             size="sm"
-            className="whitespace-nowrap"
+            className="h-12 px-6 rounded-xl border-white/10 bg-white/5 text-[10px] font-black uppercase tracking-widest italic hover:bg-white/10 transition-all shadow-xl ring-1 ring-white/5"
             onClick={handleRefresh}
             disabled={isRefreshing || isLoading}
           >
             {isRefreshing ? (
               <span className="flex items-center gap-2">
-                <Clock className="h-4 w-4 animate-spin" /> {t('salesActivityFeed.refreshing')}
+                <RefreshCw className="h-4 w-4 animate-spin text-blue-400" /> {t('salesActivityFeed.refreshing')}
               </span>
             ) : (
               <span className="flex items-center gap-2">
-                <Clock className="h-4 w-4" /> {t('salesActivityFeed.refresh')}
+                <RefreshCw className="h-4 w-4 text-blue-400" /> {t('salesActivityFeed.refresh')}
               </span>
             )}
           </Button>
@@ -307,17 +313,18 @@ export function SalesActivityFeed() {
             </div>
           </div>
         ) : (
-          <div className="space-y-5">
+          <div className="space-y-8">
             {summary && (
-              <div className="flex flex-wrap items-center gap-2 rounded-lg border bg-muted/40 p-3 text-xs md:text-sm">
-                <Badge variant="secondary" className="bg-primary/10 text-primary">
+              <div className="flex flex-wrap items-center gap-4 p-6 rounded-[2rem] bg-white/[0.02] border border-white/5 shadow-inner ring-1 ring-white/5">
+                <Badge variant="secondary" className="bg-blue-500/10 text-blue-400 border-none px-4 py-1 rounded-lg text-[9px] font-black italic tracking-widest uppercase">
                   {t('salesActivityFeed.totalActivities')} {summary.totalActivities.toLocaleString()}
                 </Badge>
-                <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-600">
+                <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-400 border-none px-4 py-1 rounded-lg text-[9px] font-black italic tracking-widest uppercase">
                   {t('salesActivityFeed.uniqueLeads')} {summary.uniqueLeads.toLocaleString()}
                 </Badge>
+                <div className="h-4 w-px bg-white/10 mx-2" />
                 {typeSummary.slice(0, 4).map((item) => (
-                  <Badge key={item.type} variant="outline" className="gap-1">
+                  <Badge key={item.type} variant="outline" className="gap-2 border-white/10 bg-white/5 text-slate-400 px-3 py-1 rounded-lg text-[8px] font-black italic uppercase tracking-widest">
                     {getActivityIcon(item.type)}
                     <span>
                       {ACTIVITY_BADGE[item.type]?.label ?? item.type}: {item.total}
@@ -327,85 +334,95 @@ export function SalesActivityFeed() {
               </div>
             )}
 
-            <div className="space-y-4">
-              {activities.map((activity) => (
-                <div
-                  key={activity.id}
-                  className="flex flex-col gap-3 rounded-xl border bg-background/80 p-4 transition hover:border-primary/40 hover:shadow-sm md:flex-row md:items-start"
-                >
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
-                    {getActivityIcon(activity.type)}
-                  </div>
-                  <div className="flex-1 space-y-2">
-                    <div className="flex flex-col justify-between gap-2 md:flex-row md:items-start">
-                      <div className="space-y-1">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <p className="font-semibold leading-tight">{activity.subject}</p>
-                          {getActivityBadge(activity.type)}
-                          {activity.isTask && !activity.completedAt && (
-                            <Badge className="bg-amber-500 text-white">{t('salesActivityFeed.pendingTask')}</Badge>
-                          )}
-                          {activity.completedAt && (
-                            <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600">
-                              {t('salesActivityFeed.completed')}
-                            </Badge>
-                          )}
-                        </div>
-                        {activity.description && (
-                          <p className="text-sm text-muted-foreground">{activity.description}</p>
-                        )}
-                        <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-                          <span className="flex items-center gap-1">
-                            <Clock className="h-3 w-3" />
-                            {formatTimeAgo(activity.createdAt)}
-                          </span>
-                          {activity.contactMethod && <span>{t('salesActivityFeed.contactMethod')}: {activity.contactMethod}</span>}
-                          {activity.durationMinutes && activity.durationMinutes > 0 && (
-                            <span>{t('salesActivityFeed.duration')}: {t('salesActivityFeed.durationMins', { mins: activity.durationMinutes })}</span>
-                          )}
-                          {activity.dueDate && !activity.completedAt && (
-                            <span>{t('salesActivityFeed.dueDate')}: {formatTimeAgo(activity.dueDate)}</span>
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex flex-col gap-2 text-xs text-muted-foreground md:text-right">
-                        {activity.lead && (
-                          <div className="flex items-center gap-2 md:justify-end">
-                            <Badge variant="outline" className="gap-1">
-                              <User className="h-3.5 w-3.5" /> {activity.lead.name}
-                            </Badge>
-                            {typeof activity.lead.score === "number" && (
-                              <Badge className="bg-primary/10 text-primary">{t('salesActivityFeed.score')} {activity.lead.score}</Badge>
+            <div className="space-y-6">
+              <AnimatePresence mode="popLayout">
+                {activities.map((activity, idx) => (
+                  <motion.div
+                    key={activity.id}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: idx * 0.05 }}
+                    className="flex flex-col gap-6 rounded-[2.5rem] border border-white/5 bg-white/[0.01] p-8 transition-all duration-500 hover:bg-white/[0.03] hover:border-blue-500/20 hover:shadow-2xl md:flex-row md:items-start ring-1 ring-white/5 group/activity"
+                  >
+                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/[0.03] border border-white/10 shadow-inner group-hover/activity:scale-110 group-hover/activity:rotate-3 transition-all duration-500 shrink-0">
+                      {getActivityIcon(activity.type)}
+                    </div>
+                    <div className="flex-1 space-y-4">
+                      <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start">
+                        <div className="space-y-2">
+                          <div className="flex flex-wrap items-center gap-3">
+                            <p className="text-lg font-black text-white italic tracking-tight uppercase leading-none">{activity.subject}</p>
+                            {getActivityBadge(activity.type)}
+                            {activity.isTask && !activity.completedAt && (
+                              <Badge className="bg-amber-500/20 text-amber-400 border border-amber-500/30 px-3 py-0.5 rounded-lg text-[8px] font-black italic tracking-widest uppercase">
+                                {t('salesActivityFeed.pendingTask')}
+                              </Badge>
                             )}
                           </div>
-                        )}
-                        {activity.proposal && (
-                          <div className="flex items-center gap-2 md:justify-end">
-                            <Badge variant="outline" className="gap-1">
-                              <FileText className="h-3.5 w-3.5" /> {activity.proposal.title}
-                            </Badge>
-                            {activity.proposal.totalValue && (
-                              <span className="font-medium text-foreground">
-                                ฿{Number(activity.proposal.totalValue).toLocaleString()}
+                          {activity.description && (
+                            <p className="text-sm text-slate-400 font-light italic leading-relaxed">"{activity.description}"</p>
+                          )}
+                          <div className="flex flex-wrap items-center gap-4 text-[9px] font-black uppercase tracking-widest text-slate-600 italic">
+                            <span className="flex items-center gap-2">
+                              <Clock className="h-3 w-3 text-blue-500" />
+                              {formatTimeAgo(activity.createdAt)}
+                            </span>
+                            {activity.contactMethod && (
+                              <span className="flex items-center gap-2">
+                                <div className="h-1 w-1 rounded-full bg-slate-800" />
+                                {t('salesActivityFeed.contactMethod')}: {activity.contactMethod}
+                              </span>
+                            )}
+                            {activity.durationMinutes && activity.durationMinutes > 0 && (
+                              <span className="flex items-center gap-2">
+                                <div className="h-1 w-1 rounded-full bg-slate-800" />
+                                {t('salesActivityFeed.duration')}: {activity.durationMinutes}m
                               </span>
                             )}
                           </div>
-                        )}
+                        </div>
+                        <div className="flex flex-col gap-3 text-xs md:text-right">
+                          {activity.lead && (
+                            <div className="flex items-center gap-3 md:justify-end">
+                              <div className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse" />
+                              <Badge variant="outline" className="gap-2 border-white/10 bg-white/5 text-white px-4 py-1.5 rounded-xl font-bold italic text-[10px] shadow-lg ring-1 ring-white/5 uppercase tracking-tight">
+                                <User className="h-3.5 w-3.5 text-blue-400" /> {activity.lead.name}
+                              </Badge>
+                              {typeof activity.lead.score === "number" && (
+                                <Badge className="bg-emerald-500/10 text-emerald-400 border-none px-3 py-0.5 rounded-lg text-[9px] font-black italic">
+                                  {activity.lead.score}% Score
+                                </Badge>
+                              )}
+                            </div>
+                          )}
+                          {activity.proposal && (
+                            <div className="flex items-center gap-3 md:justify-end">
+                              <Badge variant="outline" className="gap-2 border-white/10 bg-white/5 text-white px-4 py-1.5 rounded-xl font-bold italic text-[10px] shadow-lg ring-1 ring-white/5 uppercase tracking-tight">
+                                <FileText className="h-3.5 w-3.5 text-pink-400" /> {activity.proposal.title}
+                              </Badge>
+                              {activity.proposal.totalValue && (
+                                <span className="font-black text-white italic tracking-tighter text-lg">
+                                  ฿{Number(activity.proposal.totalValue).toLocaleString()}
+                                </span>
+                              )}
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    </div>
 
-                    {Object.keys(activity.metadata ?? {}).length > 0 && (
-                      <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
-                        {Object.entries(activity.metadata).map(([key, value]) => (
-                          <Badge key={key} variant="secondary" className="bg-muted text-muted-foreground">
-                            {key}: {String(value)}
-                          </Badge>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
+                      {Object.keys(activity.metadata ?? {}).length > 0 && (
+                        <div className="flex flex-wrap gap-3 pt-2">
+                          {Object.entries(activity.metadata).map(([key, value]) => (
+                            <Badge key={key} variant="secondary" className="bg-white/5 border border-white/5 text-[8px] font-black uppercase tracking-widest text-slate-500 px-3 py-0.5 rounded-lg italic">
+                              {key.replace(/_/g, ' ')}: {String(value)}
+                            </Badge>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
             </div>
           </div>
         )}

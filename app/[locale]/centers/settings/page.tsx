@@ -66,7 +66,7 @@ interface CenterSettings {
 }
 
 export default function CenterSettingsPage() {
-  const t = useTranslations();
+  const t = useTranslations('centerSettings');
   const locale = useLocale();
   const isThaiLocale = locale === 'th';
   const { user, loading: authLoading } = useAuth();
@@ -99,6 +99,10 @@ export default function CenterSettingsPage() {
     deposit_percentage: 20,
     accepted_payment_methods: ['cash', 'credit_card', 'promptpay']
   });
+
+  useEffect(() => {
+    fetchSettings();
+  }, [t]);
 
   useEffect(() => {
     if (authLoading) return;
@@ -144,8 +148,8 @@ export default function CenterSettingsPage() {
       } catch (error) {
         console.error('Error loading settings:', error);
         toast({
-          title: 'เกิดข้อผิดพลาด',
-          description: 'ไม่สามารถโหลดการตั้งค่าได้',
+          title: t('errorGeneric'),
+          description: t('loadError'),
           variant: 'destructive'
         });
       } finally {
@@ -188,7 +192,7 @@ export default function CenterSettingsPage() {
     loadSettings();
     loadKpiTargets();
     loadPromptPay();
-  }, [user, authLoading, router, lp, toast]);
+  }, [user, authLoading, router, lp, toast, t]);
 
   const handleSavePromptPay = async () => {
     setIsPromptPaySaving(true);
@@ -208,13 +212,13 @@ export default function CenterSettingsPage() {
       }
 
       toast({
-        title: 'บันทึกสำเร็จ',
-        description: 'ตั้งค่า PromptPay ได้รับการบันทึกแล้ว',
+        title: t('successTitle'),
+        description: t('promptPaySuccess'),
       });
     } catch (error: any) {
       toast({
-        title: 'เกิดข้อผิดพลาด',
-        description: error?.message || 'ไม่สามารถบันทึก PromptPay ได้',
+        title: t('errorGeneric'),
+        description: error?.message || t('promptPayError'),
         variant: 'destructive',
       });
     } finally {
@@ -238,7 +242,7 @@ export default function CenterSettingsPage() {
     const parsed = parseTargets();
     if (!parsed.ok) {
       toast({
-        title: 'เกิดข้อผิดพลาด',
+        title: t('errorGeneric'),
         description: parsed.error,
         variant: 'destructive',
       });
@@ -263,14 +267,14 @@ export default function CenterSettingsPage() {
       setKpiTargetsText(JSON.stringify(targets, null, 2));
 
       toast({
-        title: 'บันทึกสำเร็จ',
-        description: 'KPI Targets ได้รับการบันทึกแล้ว',
+        title: t('successTitle'),
+        description: t('kpiSuccess'),
       });
     } catch (error: any) {
       console.error('Error saving KPI targets:', error);
       toast({
-        title: 'เกิดข้อผิดพลาด',
-        description: error?.message || 'ไม่สามารถบันทึก KPI Targets ได้',
+        title: t('errorGeneric'),
+        description: error?.message || t('kpiError'),
         variant: 'destructive',
       });
     } finally {
@@ -292,14 +296,14 @@ export default function CenterSettingsPage() {
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       toast({
-        title: 'บันทึกสำเร็จ',
-        description: 'การตั้งค่าได้รับการบันทึกแล้ว'
+        title: t('successTitle'),
+        description: t('saveSuccessDesc'),
       });
     } catch (error) {
       console.error('Error saving settings:', error);
       toast({
-        title: 'เกิดข้อผิดพลาด',
-        description: 'ไม่สามารถบันทึกการตั้งค่าได้',
+        title: t('errorGeneric'),
+        description: t('saveError'),
         variant: 'destructive'
       });
     } finally {
@@ -312,7 +316,7 @@ export default function CenterSettingsPage() {
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center space-y-4">
           <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
-          <p className="text-muted-foreground">กำลังโหลดการตั้งค่า...</p>
+          <p className="text-muted-foreground">{t('loading')}</p>
         </div>
       </div>
     );
@@ -344,14 +348,14 @@ export default function CenterSettingsPage() {
             >
               <Badge variant="outline" className="px-4 py-1 rounded-full border-pink-500/30 text-pink-400 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.2em] text-[10px] font-black shadow-2xl shadow-pink-500/10">
                 <Settings className="mr-3 h-3.5 w-3.5 animate-spin-slow" />
-                Aesthetic Parameter Configuration
+                {t('labels.aestheticParamConfig')}
               </Badge>
               <h1 className="text-5xl md:text-8xl font-bold tracking-tighter text-white leading-[0.9] italic">
-                System<br />
+                {t('tabs.general')}<br />
                 <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent not-italic">Settings</span>
               </h1>
               <p className="text-xl text-slate-500 font-light tracking-widest max-w-2xl italic leading-relaxed">
-                Orchestrate aesthetic protocols and define system-wide diagnostic parameters.
+                {t('labels.orchestrateProtocols')}
               </p>
             </motion.div>
             
@@ -360,12 +364,12 @@ export default function CenterSettingsPage() {
                 {isSaving ? (
                   <div className="flex items-center gap-3">
                     <Loader2 className="h-5 w-5 animate-spin" />
-                    Syncing...
+                    {t('labels.syncingNode')}
                   </div>
                 ) : (
                   <div className="flex items-center gap-3">
                     <Save className="h-5 w-5" />
-                    Commit Changes
+                    {t('labels.commitChanges')}
                   </div>
                 )}
               </Button>
@@ -409,13 +413,13 @@ export default function CenterSettingsPage() {
                   <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group">
                     <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                     <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
-                      <CardTitle className="text-3xl font-bold text-white tracking-tight italic">Center Identity</CardTitle>
-                      <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Establish center node parameters</CardDescription>
+                      <CardTitle className="text-3xl font-bold text-white tracking-tight italic">{t('labels.centerIdentity')}</CardTitle>
+                      <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('labels.centerNodeParams')}</CardDescription>
                     </CardHeader>
                     <CardContent className="p-10 lg:p-12 space-y-10">
                       <div className="grid gap-10 md:grid-cols-2">
                         <div className="space-y-3">
-                          <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">Center Name</Label>
+                          <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">{t('labels.centerNodeIdentifier')}</Label>
                           <Input
                             className="h-14 rounded-2xl border-white/5 bg-white/[0.03] text-white placeholder:text-slate-700 focus:border-pink-500/30 focus:ring-pink-500/20 transition-all px-6"
                             value={settings.center_name}
@@ -423,7 +427,7 @@ export default function CenterSettingsPage() {
                           />
                         </div>
                         <div className="space-y-3">
-                          <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">Authorized Email</Label>
+                          <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">{t('labels.authorizedSyncEmail')}</Label>
                           <Input
                             className="h-14 rounded-2xl border-white/5 bg-white/[0.03] text-white placeholder:text-slate-700 focus:border-pink-500/30 focus:ring-pink-500/20 transition-all px-6"
                             type="email"
@@ -434,7 +438,7 @@ export default function CenterSettingsPage() {
                       </div>
                       <div className="grid gap-10 md:grid-cols-2">
                         <div className="space-y-3">
-                          <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">Center Line (Phone)</Label>
+                          <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">{t('labels.directTransmissionLine')}</Label>
                           <Input
                             className="h-14 rounded-2xl border-white/5 bg-white/[0.03] text-white placeholder:text-slate-700 focus:border-pink-500/30 focus:ring-pink-500/20 transition-all px-6"
                             value={settings.center_phone}

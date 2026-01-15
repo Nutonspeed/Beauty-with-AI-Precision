@@ -349,14 +349,14 @@ export class ProgressTracker {
 
     // Generate milestone for each metric below 80
     const metricTargets: Record<string, { current: number; name: string }> = {
-      spots: { current: metrics.spots.score, name: 'ลดจุดด่างดำ' },
-      pores: { current: metrics.pores.score, name: 'ลดรูขุมขน' },
-      wrinkles: { current: metrics.wrinkles.score, name: 'ลดริ้วรอย' },
-      texture: { current: metrics.texture.score, name: 'ปรับปรุงผิว' },
-      redness: { current: metrics.redness.score, name: 'ลดความแดง' },
-      hydration: { current: metrics.hydration.score, name: 'เพิ่มความชุ่มชื้น' },
-      skinTone: { current: metrics.skinTone.score, name: 'ปรับสีผิว' },
-      elasticity: { current: metrics.elasticity.score, name: 'เพิ่มความยืดหยุ่น' },
+      spots: { current: metrics.spots.score, name: 'progress.milestones.actions.spots' },
+      pores: { current: metrics.pores.score, name: 'progress.milestones.actions.pores' },
+      wrinkles: { current: metrics.wrinkles.score, name: 'progress.milestones.actions.wrinkles' },
+      texture: { current: metrics.texture.score, name: 'progress.milestones.actions.texture' },
+      redness: { current: metrics.redness.score, name: 'progress.milestones.actions.redness' },
+      hydration: { current: metrics.hydration.score, name: 'progress.milestones.actions.hydration' },
+      skinTone: { current: metrics.skinTone.score, name: 'progress.milestones.actions.skinTone' },
+      elasticity: { current: metrics.elasticity.score, name: 'progress.milestones.actions.elasticity' },
     };
 
     Object.entries(metricTargets).forEach(([key, { current, name }]) => {
@@ -365,7 +365,7 @@ export class ProgressTracker {
         milestones.push({
           id: `milestone_${key}_${Date.now()}`,
           title: name,
-          description: `เป้าหมาย: เพิ่มคะแนนจาก ${current.toFixed(1)} เป็น ${targetValue.toFixed(1)}`,
+          description: 'progress.milestones.target', // Use a key, the UI will translate with values
           targetMetric: key,
           targetValue,
           currentValue: current,

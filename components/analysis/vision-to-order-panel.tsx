@@ -9,11 +9,11 @@ import { useTranslations } from "next-intl"
 import { toast } from "sonner"
 
 interface VisionToOrderProps {
-  analysisId: string
+  _analysisId: string
   recommendations: any
 }
 
-export function VisionToOrderPanel({ analysisId, recommendations }: VisionToOrderProps) {
+export function VisionToOrderPanel({ _analysisId, recommendations }: VisionToOrderProps) {
   const t = useTranslations('visionToOrder');
   const [isGenerating, setIsGenerating] = useState(false)
   const [isSynced, setIsSynced] = useState(false)

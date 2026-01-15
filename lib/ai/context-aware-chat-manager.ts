@@ -43,51 +43,51 @@ export interface ConversationContext {
  */
 const THAI_MEDICAL_TERMS: Record<string, string[]> = {
   // Skin concerns
-  'ฝ้า': ['melasma', 'hyperpigmentation', 'dark spots', 'pigmentation'],
-  'กระ': ['freckles', 'age spots', 'sun spots'],
-  'สิว': ['acne', 'pimples', 'breakout', 'blemish'],
-  'รอยสิว': ['acne scar', 'post-acne marks', 'PIH', 'PIE'],
-  'รูขุมขน': ['pores', 'enlarged pores', 'open pores'],
-  'ริ้วรอย': ['wrinkles', 'fine lines', 'aging lines'],
-  'หย่อนคล้อย': ['sagging', 'drooping', 'loss of elasticity'],
-  'ผิวแห้ง': ['dry skin', 'dehydration', 'flaky skin'],
-  'ผิวมัน': ['oily skin', 'sebum', 'greasy skin'],
-  'ผิวแดง': ['redness', 'inflammation', 'erythema'],
-  'ผิวหมองคล้ำ': ['dull skin', 'uneven tone', 'lackluster'],
+  'melasma': ['ฝ้า', 'melasma', 'hyperpigmentation', 'dark spots', 'pigmentation'],
+  'freckles': ['กระ', 'freckles', 'age spots', 'sun spots'],
+  'acne': ['สิว', 'acne', 'pimples', 'breakout', 'blemish'],
+  'acne_scar': ['รอยสิว', 'acne scar', 'post-acne marks', 'PIH', 'PIE'],
+  'pores': ['รูขุมขน', 'pores', 'enlarged pores', 'open pores'],
+  'wrinkles': ['ริ้วรอย', 'wrinkles', 'fine lines', 'aging lines'],
+  'sagging': ['หย่อนคล้อย', 'sagging', 'drooping', 'loss of elasticity'],
+  'dry_skin': ['ผิวแห้ง', 'dry skin', 'dehydration', 'flaky skin'],
+  'oily_skin': ['ผิวมัน', 'oily skin', 'sebum', 'greasy skin'],
+  'redness': ['ผิวแดง', 'redness', 'inflammation', 'erythema'],
+  'dull_skin': ['ผิวหมองคล้ำ', 'dull skin', 'uneven tone', 'lackluster'],
   
   // Programs
-  'โบท็อกซ์': ['botox', 'botulinum toxin', 'neurotoxin'],
-  'ฟิลเลอร์': ['filler', 'dermal filler', 'HA filler', 'hyaluronic acid'],
-  'เลเซอร์': ['laser', 'laser program', 'laser therapy'],
-  'พีโค': ['pico', 'picosecond', 'pico laser'],
-  'คาร์บอน': ['carbon', 'carbon peel', 'carbon laser'],
-  'ปอกหน้า': ['peel', 'chemical peel', 'facial peel'],
-  'ไนโตรเจน': ['nitrogen', 'liquid nitrogen', 'cryotherapy'],
-  'ไฮฟู': ['hifu', 'high-intensity focused ultrasound'],
-  'อัลเทอร์ร่า': ['ultherapy', 'ulthera'],
-  'เธอร์มาจ': ['thermage', 'radiofrequency'],
-  'ไมโครนีดดลิ้ง': ['microneedling', 'derma roller', 'needling'],
-  'เมโสแฟต': ['mesotherapy', 'meso', 'injection'],
-  'ไฮโดรเฟเชียล': ['hydrafacial', 'hydrodermabrasion'],
+  'botox': ['โบท็อกซ์', 'botox', 'botulinum toxin', 'neurotoxin'],
+  'filler': ['ฟิลเลอร์', 'filler', 'dermal filler', 'HA filler', 'hyaluronic acid'],
+  'laser': ['เลเซอร์', 'laser', 'laser program', 'laser therapy'],
+  'pico': ['พีโค', 'pico', 'picosecond', 'pico laser'],
+  'carbon': ['คาร์บอน', 'carbon', 'carbon peel', 'carbon laser'],
+  'peel': ['ปอกหน้า', 'peel', 'chemical peel', 'facial peel'],
+  'nitrogen': ['ไนโตรเจน', 'nitrogen', 'liquid nitrogen', 'cryotherapy'],
+  'hifu': ['ไฮฟู', 'hifu', 'high-intensity focused ultrasound'],
+  'ultherapy': ['อัลเทอร์ร่า', 'ultherapy', 'ulthera'],
+  'thermage': ['เธอร์มาจ', 'thermage', 'radiofrequency'],
+  'microneedling': ['ไมโครนีดดลิ้ง', 'microneedling', 'derma roller', 'needling'],
+  'mesofat': ['เมโสแฟต', 'mesotherapy', 'meso', 'injection'],
+  'hydrafacial': ['ไฮโดรเฟเชียล', 'hydrafacial', 'hydrodermabrasion'],
   
   // Ingredients
-  'วิตามินซี': ['vitamin c', 'ascorbic acid', 'L-ascorbic acid'],
-  'เรตินอล': ['retinol', 'vitamin a', 'retinoid'],
-  'ไนอะซินาไมด์': ['niacinamide', 'vitamin b3'],
-  'ไฮยาลูรอน': ['hyaluronic acid', 'HA', 'sodium hyaluronate'],
-  'เซรามายด์': ['ceramide', 'ceramides'],
-  'เพปไทด์': ['peptide', 'peptides'],
-  'อาร์บูติน': ['arbutin', 'alpha-arbutin'],
+  'vitamin_c': ['วิตามินซี', 'vitamin c', 'ascorbic acid', 'L-ascorbic acid'],
+  'retinol': ['เรตินอล', 'retinol', 'vitamin a', 'retinoid'],
+  'niacinamide': ['ไนอะซินาไมด์', 'niacinamide', 'vitamin b3'],
+  'hyaluronic': ['ไฮยาลูรอน', 'hyaluronic acid', 'HA', 'sodium hyaluronate'],
+  'ceramide': ['เซรามายด์', 'ceramide', 'ceramides'],
+  'peptide': ['เพปไทด์', 'peptide', 'peptides'],
+  'arbutin': ['อาร์บูติน', 'arbutin', 'alpha-arbutin'],
   
   // Body parts
-  'หน้าผาก': ['forehead'],
-  'ขมับ': ['temple', 'temporal area'],
-  'หางตา': ['crow\'s feet', 'eye wrinkles'],
-  'ใต้ตา': ['under eye', 'tear trough'],
-  'แก้ม': ['cheek', 'cheekbone'],
-  'จมูก': ['nose', 'nasal'],
-  'คาง': ['chin', 'jawline'],
-  'ลำคอ': ['neck', 'neck area']
+  'forehead': ['หน้าผาก', 'forehead'],
+  'temple': ['ขมับ', 'temple', 'temporal area'],
+  'crows_feet': ['หางตา', 'crow\'s feet', 'eye wrinkles'],
+  'undereye': ['ใต้ตา', 'under eye', 'tear trough'],
+  'cheek': ['แก้ม', 'cheek', 'cheekbone'],
+  'nose': ['จมูก', 'nose', 'nasal'],
+  'chin': ['คาง', 'chin', 'jawline'],
+  'neck': ['ลำคอ', 'neck', 'neck area']
 }
 
 /**
@@ -140,7 +140,8 @@ export class ContextAwareChatManager {
    */
   addMessage(
     context: ConversationContext,
-    message: ChatMessage
+    message: ChatMessage,
+    locale: 'th' | 'en' = 'th'
   ): ConversationContext {
     // Add metadata
     const enrichedMessage = this.enrichMessage(message, context)
@@ -159,7 +160,8 @@ export class ContextAwareChatManager {
     // Generate follow-up suggestions
     const followUpSuggestions = this.generateFollowUpSuggestions(
       enrichedMessage,
-      context
+      context,
+      locale
     )
     
     return {
@@ -274,49 +276,60 @@ export class ContextAwareChatManager {
    */
   private generateFollowUpSuggestions(
     message: ChatMessage,
-    context: ConversationContext
+    context: ConversationContext,
+    locale: 'th' | 'en' = 'th'
   ): string[] {
     let suggestions: string[] = []
     const intent = message.metadata?.intent
     const concerns = message.metadata?.skinConcerns || []
+    const isThai = locale === 'th'
     
     // Intent-based suggestions
     if (intent === 'ask_program') {
-      suggestions = [
-        ...suggestions,
+      suggestions = isThai ? [
         'ราคาประมาณเท่าไหร่?',
         'มีผลข้างเคียงไหม?',
         'พักฟื้นนานแค่ไหน?',
+      ] : [
+        'How much does it cost?',
+        'Are there any side effects?',
+        'How long is the recovery?',
       ];
     } else if (intent === 'ask_price') {
-      suggestions = [
-        ...suggestions,
+      suggestions = isThai ? [
         'ทำกี่ครั้งถึงเห็นผล?',
         'มีโปรโมชั่นไหม?',
         'ควรทำร่วมกับอะไร?',
+      ] : [
+        'How many sessions to see results?',
+        'Are there any promotions?',
+        'What should I combine this with?',
       ];
     } else if (intent === 'ask_safety') {
-      suggestions = [
-        ...suggestions,
+      suggestions = isThai ? [
         'ใครไม่ควรทำ?',
         'ต้องเตรียมตัวอย่างไร?',
         'หลังทำต้องดูแลอะไร?',
+      ] : [
+        'Who should avoid this?',
+        'How should I prepare?',
+        'What is the post-treatment care?',
       ];
     }
     
     // Concern-based suggestions
-    if (concerns.includes('ฝ้า') || concerns.includes('กระ')) {
+    if (concerns.includes('melasma') || concerns.includes('freckles')) {
       suggestions = [
         ...suggestions,
-        'Pico Laser ช่วยได้ไหม?',
-        'ครีมบำรุงที่ช่วยได้?',
+        isThai ? 'Pico Laser ช่วยได้ไหม?' : 'Can Pico Laser help?',
+        isThai ? 'ครีมบำรุงที่ช่วยได้?' : 'Which skincare helps?',
       ];
     }
-    if (concerns.includes('ริ้วรอย')) {
+    if (concerns.includes('wrinkles')) {
       suggestions = [
         ...suggestions,
-        'โบท็อกซ์กับฟิลเลอร์ต่างกันอย่างไร?',
-        'Hifu ช่วยได้ไหม?',
+        isThai ? 'โบท็อกซ์กับฟิลเลอร์ต่างกันอย่างไร?' : 'What is the difference between Botox and Filler?',
+        isThai ? 'Hifu ช่วยได้ไหม?' : 'Can Hifu help?',
       ];
     }
     
@@ -325,12 +338,25 @@ export class ContextAwareChatManager {
       const cv = context.skinAnalysis.cv
       const additionalSuggestions: string[] = [];
       if (cv.spots && cv.spots.severity > 70) {
-        additionalSuggestions.push('มีฝ้ากระมาก แนะนำ program อะไร?');
+        additionalSuggestions.push(isThai ? 'มีฝ้ากระมาก แนะนำ program อะไร?' : 'I have many spots, what program do you recommend?');
       }
       if (cv.wrinkles && cv.wrinkles.severity > 70) {
-        additionalSuggestions.push('ริ้วรอยเยอะ ควรเริ่มจากอะไร?');
+        additionalSuggestions.push(isThai ? 'ริ้วรอยเยอะ ควรเริ่มจากอะไร?' : 'Many wrinkles, where should I start?');
       }
       suggestions = [...suggestions, ...additionalSuggestions];
+    }
+    
+    // Default suggestions if none
+    if (suggestions.length === 0) {
+      suggestions = isThai ? [
+        'ผิวฉันมีปัญหาอะไรบ้าง?',
+        'แนะนำ program สำหรับฝ้า-กระ',
+        'โบท็อกซ์กับฟิลเลอร์ต่างกันอย่างไร?'
+      ] : [
+        'What are my skin concerns?',
+        'Recommend programs for melasma/freckles',
+        'What is the difference between Botox and Filler?'
+      ];
     }
     
     // Remove duplicates and limit to 5
@@ -342,14 +368,16 @@ export class ContextAwareChatManager {
    */
   buildContextPrompt(
     userMessage: string,
-    context: ConversationContext
+    context: ConversationContext,
+    locale: 'th' | 'en' = 'th'
   ): {
     systemPrompt: string
     conversationHistory: string
     currentMessage: string
   } {
+    const isThai = locale === 'th'
     // System prompt
-    const systemPrompt = `คุณคือ "AI Beauty Advisor" ที่ปรึกษาด้านความงามผิวหน้าแบบมืออาชีพ
+    const systemPrompt = isThai ? `คุณคือ "AI Beauty Advisor" ที่ปรึกษาด้านความงามผิวหน้าแบบมืออาชีพ
 
 บทบาท:
 - ให้คำแนะนำการรักษาผิวหน้าที่เชื่อถือได้
@@ -361,14 +389,27 @@ export class ContextAwareChatManager {
 ข้อจำกัด:
 ⚠️ ไม่วินิจฉัยโรค (ให้แพทย์ผิวหนังเท่านั้น)
 ⚠️ ไม่ระบุชื่อยี่ห้อยาหรือผลิตภัณฑ์เฉพาะ
-✅ แนะนำให้ปรึกษาคลินิกถ้าปัญหารุนแรง
-✅ ให้ข้อมูลทั่วไปเกี่ยวกับ Program ต่างๆ`
+✅ แนะนำให้ปรึกษาคลินิกถ้าปัญุหารุนแรง
+✅ ให้ข้อมูลทั่วไปเกี่ยวกับ Program ต่างๆ` : `You are "AI Beauty Advisor", a professional facial beauty consultant.
+
+Roles:
+- Provide reliable skin treatment advice
+- Respond in a friendly, easy-to-understand English
+- Remember previous conversation context
+- Understand medical terms
+- Provide recommendations suitable for skin concerns and budget
+
+Limitations:
+⚠️ Do not diagnose diseases (Dermatologists only)
+⚠️ Do not specify medication brands or specific products
+✅ Recommend consulting a clinic for severe issues
+✅ Provide general information about various programs`
 
     // Conversation history (last N messages)
     const recentMessages = context.messages.slice(-this.contextWindowSize)
     const conversationHistory = recentMessages
       .map(msg => {
-        const role = msg.role === 'user' ? 'ผู้ใช้' : 'AI'
+        const role = msg.role === 'user' ? (isThai ? 'ผู้ใช้' : 'User') : (isThai ? 'AI' : 'AI')
         return `${role}: ${msg.content}`
       })
       .join('\n')
@@ -379,14 +420,14 @@ export class ContextAwareChatManager {
     // User profile
     if (context.userProfile) {
       const profile = context.userProfile
-      if (profile.name) contextParts.push(`ชื่อ: ${profile.name}`)
-      if (profile.age) contextParts.push(`อายุ: ${profile.age} ปี`)
+      if (profile.name) contextParts.push(`${isThai ? 'ชื่อ' : 'Name'}: ${profile.name}`)
+      if (profile.age) contextParts.push(`${isThai ? 'อายุ' : 'Age'}: ${profile.age} ${isThai ? 'ปี' : 'years'}`)
       if (profile.budget) {
-        contextParts.push(`งบประมาณ: ${profile.budget.toLocaleString()} บาท`)
+        contextParts.push(`${isThai ? 'งบประมาณ' : 'Budget'}: ${profile.budget.toLocaleString()} ${isThai ? 'บาท' : 'THB'}`)
       }
       if (profile.previousPrograms && profile.previousPrograms.length > 0) {
         contextParts.push(
-          `เคยทำ: ${profile.previousPrograms.join(', ')}`
+          `${isThai ? 'เคยทำ' : 'Previous treatments'}: ${profile.previousPrograms.join(', ')}`
         )
       }
     }
@@ -394,39 +435,39 @@ export class ContextAwareChatManager {
     // Skin analysis
     if (context.skinAnalysis) {
       const cv = context.skinAnalysis.cv
-      contextParts.push('\nผลวิเคราะห์ผิว:')
+      contextParts.push(isThai ? '\nผลวิเคราะห์ผิว:' : '\nSkin Analysis Results:')
       if (cv.spots) {
-        contextParts.push(`- ฝ้า-กระ: ${cv.spots.severity}% (${cv.spots.count} จุด)`)
+        contextParts.push(`- ${isThai ? 'ฝ้า-กระ' : 'Spots/Freckles'}: ${cv.spots.severity}% (${cv.spots.count} ${isThai ? 'จุด' : 'spots'})`)
       }
       if (cv.pores) {
-        contextParts.push(`- รูขุมขน: ${cv.pores.severity}%`)
+        contextParts.push(`- ${isThai ? 'รูขุมขน' : 'Pores'}: ${cv.pores.severity}%`)
       }
       if (cv.wrinkles) {
-        contextParts.push(`- ริ้วรอย: ${cv.wrinkles.severity}%`)
+        contextParts.push(`- ${isThai ? 'ริ้วรอย' : 'Wrinkles'}: ${cv.wrinkles.severity}%`)
       }
       if (cv.texture) {
-        contextParts.push(`- เนื้อผิว: ${cv.texture.score}%`)
+        contextParts.push(`- ${isThai ? 'เนื้อผิว' : 'Texture'}: ${cv.texture.score}%`)
       }
       if (cv.redness) {
-        contextParts.push(`- ความแดง: ${cv.redness.severity}%`)
+        contextParts.push(`- ${isThai ? 'ความแดง' : 'Redness'}: ${cv.redness.severity}%`)
       }
-      contextParts.push(`- คะแนนรวม: ${context.skinAnalysis.overallScore}%`)
+      contextParts.push(`- ${isThai ? 'คะแนนรวม' : 'Overall Score'}: ${context.skinAnalysis.overallScore}%`)
     }
     
     // Current topic
     if (context.currentTopic) {
-      contextParts.push(`\nหัวข้อที่กำลังพูดถึง: ${context.currentTopic}`)
+      contextParts.push(`\n${isThai ? 'หัวข้อที่กำลังพูดถึง' : 'Current Topic'}: ${context.currentTopic}`)
     }
     
     const currentMessage = `
 ${contextParts.join('\n')}
 
-ประวัติการสนทนา:
+${isThai ? 'ประวัติการสนทนา' : 'Conversation History'}:
 ${conversationHistory}
 
-คำถามใหม่: ${userMessage}
+${isThai ? 'คำถามใหม่' : 'New Question'}: ${userMessage}
 
-คำตอบ (ภาษาไทย, เข้าใจง่าย, ประมาณ 150-300 คำ):`
+${isThai ? 'คำตอบ (ภาษาไทย, เข้าใจง่าย, ประมาณ 150-300 คำ)' : 'Answer (English, easy to understand, approx 150-300 words)'}:`
     
     return {
       systemPrompt,
@@ -492,14 +533,19 @@ ${conversationHistory}
   /**
    * Reset conversation
    */
-  resetConversation(userId: string): ConversationContext {
+  resetConversation(userId: string, locale: 'th' | 'en' = 'th'): ConversationContext {
+    const isThai = locale === 'th'
     return {
       userId,
       messages: [],
-      followUpSuggestions: [
+      followUpSuggestions: isThai ? [
         'ผิวฉันมีปัญหาอะไรบ้าง?',
         'แนะนำ program สำหรับฝ้า-กระ',
         'โบท็อกซ์กับฟิลเลอร์ต่างกันอย่างไร?'
+      ] : [
+        'What are my skin concerns?',
+        'Recommend programs for melasma/freckles',
+        'What is the difference between Botox and Filler?'
       ]
     }
   }

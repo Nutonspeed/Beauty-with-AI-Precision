@@ -16,7 +16,11 @@ interface PersonalInfoFormProps {
   profile: any
 }
 
+import { useTranslations } from "next-intl"
+
 export function PersonalInfoForm({ user, profile }: PersonalInfoFormProps) {
+  const t = useTranslations('profile.personal')
+  const commonT = useTranslations('common')
   const router = useRouter()
 
   const [isLoading, setIsLoading] = useState(false)
@@ -41,13 +45,13 @@ export function PersonalInfoForm({ user, profile }: PersonalInfoFormProps) {
 
       // Validate
       if (!fullName || fullName.length < 2) {
-        setError("กรุณากรอกชื่อ-นามสกุล (อย่างน้อย 2 ตัวอักษร)")
+        setError(t('errors.nameTooShort'))
         setIsLoading(false)
         return
       }
 
       if (phone && !/^\d{10}$/.test(phone)) {
-        setError("กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง (10 หลัก)")
+        setError(t('errors.invalidPhone'))
         setIsLoading(false)
         return
       }
@@ -58,7 +62,7 @@ export function PersonalInfoForm({ user, profile }: PersonalInfoFormProps) {
       } = await supabase.auth.getSession()
 
       if (!session?.access_token) {
-        throw new Error("ไม่พบเซสชันสำหรับการอัปเดตข้อมูล")
+        throw new Error(t('errors.noSession'))
       }
 
       const response = await fetch("/api/user-profile", {
@@ -85,15 +89,15 @@ export function PersonalInfoForm({ user, profile }: PersonalInfoFormProps) {
       await response.json()
 
       setSuccess(true)
-      toast.success("อัปเดตข้อมูลสำเร็จ!")
+      toast.success(t('success.saveSuccess'))
 
       // Refresh the page to show updated data
       setTimeout(() => {
         router.refresh()
       }, 1000)
     } catch (err: any) {
-      setError(err.message || "เกิดข้อผิดพลาดในการอัปเดตข้อมูล")
-      toast.error("เกิดข้อผิดพลาด")
+      setError(err.message || t('errors.saveFailed'))
+      toast.error(commonT('error'))
     } finally {
       setIsLoading(false)
     }
@@ -111,36 +115,36 @@ export function PersonalInfoForm({ user, profile }: PersonalInfoFormProps) {
       {success && (
         <Alert className="border-green-200 bg-green-50 text-green-800">
           <Check className="h-4 w-4" />
-          <AlertDescription>อัปเดตข้อมูลสำเร็จ!</AlertDescription>
+          <AlertDescription>{t('success.saveSuccess')}</AlertDescription>
         </Alert>
       )}
 
       {/* Profile Picture */}
       <div className="space-y-2">
-        <Label>Profile Picture / รูปโปรไฟล์</Label>
+        <Label>{t('profilePictureLabel')}</Label>
         <div className="flex items-center gap-4">
           <div className="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-3xl font-bold text-primary">
             {fullName?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase() || "U"}
           </div>
           <Button type="button" variant="outline" disabled>
             <Upload className="mr-2 h-4 w-4" />
-            Upload Photo (Coming Soon)
+            {t('uploadPhotoComingSoon')}
           </Button>
         </div>
         <p className="text-xs text-muted-foreground">
-          รองรับไฟล์ JPG, PNG (สูงสุด 2MB) - ฟีเจอร์นี้จะเปิดใช้งานเร็วๆ นี้
+          {t('uploadPhotoHint')}
         </p>
       </div>
 
       {/* Full Name */}
       <div className="space-y-2">
         <Label htmlFor="fullName">
-          Full Name / ชื่อ-นามสกุล <span className="text-red-500">*</span>
+          {t('fullNameLabel')} <span className="text-red-500">*</span>
         </Label>
         <Input
           id="fullName"
           type="text"
-          placeholder="กรอกชื่อ-นามสกุล"
+          placeholder={t('fullNamePlaceholder')}
           value={fullName}
           onChange={(e) => setFullName(e.target.value)}
           required
@@ -150,16 +154,16 @@ export function PersonalInfoForm({ user, profile }: PersonalInfoFormProps) {
 
       {/* Email (Read-only) */}
       <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="email">{t('emailLabel')}</Label>
         <Input id="email" type="email" value={user.email} disabled className="bg-muted" />
         <p className="text-xs text-muted-foreground">
-          อีเมลไม่สามารถเปลี่ยนแปลงได้ ติดต่อแอดมินหากต้องการเปลี่ยน
+          {t('emailHint')}
         </p>
       </div>
 
       {/* Phone */}
       <div className="space-y-2">
-        <Label htmlFor="phone">Phone Number / เบอร์โทรศัพท์</Label>
+        <Label htmlFor="phone">{t('phoneLabel')}</Label>
         <Input
           id="phone"
           type="tel"
@@ -172,10 +176,10 @@ export function PersonalInfoForm({ user, profile }: PersonalInfoFormProps) {
 
       {/* Address */}
       <div className="space-y-2">
-        <Label htmlFor="address">Address / ที่อยู่</Label>
+        <Label htmlFor="address">{t('addressLabel')}</Label>
         <Textarea
           id="address"
-          placeholder="กรอกที่อยู่"
+          placeholder={t('addressPlaceholder')}
           value={address}
           onChange={(e) => setAddress(e.target.value)}
           rows={3}
@@ -184,16 +188,16 @@ export function PersonalInfoForm({ user, profile }: PersonalInfoFormProps) {
 
       {/* Bio */}
       <div className="space-y-2">
-        <Label htmlFor="bio">Bio / เกี่ยวกับคุณ</Label>
+        <Label htmlFor="bio">{t('bioLabel')}</Label>
         <Textarea
           id="bio"
-          placeholder="เล่าเกี่ยวกับตัวคุณ..."
+          placeholder={t('bioPlaceholder')}
           value={bio}
           onChange={(e) => setBio(e.target.value)}
           rows={4}
           maxLength={500}
         />
-        <p className="text-xs text-muted-foreground">สูงสุด 500 ตัวอักษร</p>
+        <p className="text-xs text-muted-foreground">{t('bioHint')}</p>
       </div>
 
       {/* Submit Button */}
@@ -202,10 +206,10 @@ export function PersonalInfoForm({ user, profile }: PersonalInfoFormProps) {
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              กำลังบันทึก...
+              {t('actions.saving')}
             </>
           ) : (
-            "Save Changes / บันทึกการเปลี่ยนแปลง"
+            t('actions.save')
           )}
         </Button>
         <Button
@@ -221,7 +225,7 @@ export function PersonalInfoForm({ user, profile }: PersonalInfoFormProps) {
           }}
           disabled={isLoading}
         >
-          Reset
+          {t('actions.reset')}
         </Button>
       </div>
     </form>

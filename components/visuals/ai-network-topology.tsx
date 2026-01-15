@@ -45,7 +45,7 @@ export function AINetworkTopology() {
           {/* Animated Synaptic Lines */}
           <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-20">
             {nodes.map((node, i) => (
-              nodes.slice(i + 1).map((target, j) => (
+              nodes.slice(i + 1).map((target) => (
                 <motion.line
                   key={`${node.id}-${target.id}`}
                   x1={node.x}

@@ -13,13 +13,7 @@ import { cn } from "@/lib/utils"
 import { analyzeSkinAesthetic } from '@/lib/ai/aesthetic-hub'
 import { BeforeAfterSlider } from '@/components/ar/before-after-slider'
 import { SkinEffectProcessor } from '@/lib/ar/skin-effects'
-// import { analyzeSkinWithGemini } from '@/lib/ai/gemini-advisor'
-// import { predictSkinFuture, type SkinAgePrediction } from '@/lib/ai/skin-age-predictor'
-// import ARProgramPreview from '@/components/sales/ar-program-preview'
-// import SkinHeatmap from '@/components/sales/skin-heatmap'
-// import LeadIntegration from '@/components/sales/lead-integration'
-// import ShareResults from '@/components/sales/share-results'
-// import { useToast } from '@/hooks/use-toast'
+import { recordQuotaUsage, type QuotaInfo } from '@/lib/quota'
 import { useTranslations } from "next-intl"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
@@ -62,7 +56,9 @@ interface ScanResult {
 }
 
 export default function QuickScanPage() {
-  const t = useTranslations()
+  const t = useTranslations('salesQuickScan')
+  const thm = useTranslations('skinHeatmap')
+  const tp = useTranslations('packages')
   // const { toast } = useToast()
   const [step, setStep] = useState<'intro' | 'scanning' | 'results'>('intro')
   const [currentAngle, setCurrentAngle] = useState<'front' | 'left' | 'right'>('front')
@@ -87,10 +83,12 @@ export default function QuickScanPage() {
   const [isSaving, setIsSaving] = useState(false)
   const [isUploadMode, setIsUploadMode] = useState(false)
   const [uploadedImage, setUploadedImage] = useState<string | null>(null)
+  const [quotaInfo, setQuotaInfo] = useState<QuotaInfo | null>(null)
+  const [quotaError, setQuotaError] = useState<string | null>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
-  const startCamera = useCallback(async () => {
+  const startScan = useCallback(async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: 'user', width: 1280, height: 720 }
@@ -101,19 +99,32 @@ export default function QuickScanPage() {
       setStep('scanning')
     } catch (error) {
       console.error('Camera access denied:', error)
-      setIsUploadMode(true)
-      setUploadedImage(null)
-      setStep('intro')
+      // toast({
+      //   title: t('error.camera.title'),
+      //   description: t('error.camera.description'),
+      //   variant: 'destructive'
+      // })
     }
   }, [])
 
   const analyzePhotos = useCallback(async (images: typeof capturedImages) => {
     setIsAnalyzing(true)
+    setQuotaError(null)
     const startTime = Date.now()
 
     try {
+      // Check quota before analysis
+      const quotaResult = await recordQuotaUsage('analysis')
+      if (!quotaResult.success) {
+        setQuotaError(quotaResult.error || 'Quota exceeded')
+        setQuotaInfo(quotaResult.quota || null)
+        setIsAnalyzing(false)
+        return
+      }
+      setQuotaInfo(quotaResult.quota || null)
+
       if (!images.front) {
-        throw new Error(t('salesQuickScan.errors.noFrontImage'))
+        throw new Error(t('errors.noFrontImage'))
       }
       const frontImage = images.front
 
@@ -138,7 +149,7 @@ export default function QuickScanPage() {
       let analysis;
       try {
         analysis = await analyzeSkinAesthetic(frontImage, {
-          name: selectedCustomer?.name || t('roles.customer'),
+          name: selectedCustomer?.name || t('guestCustomer'),
           age: 35 // Default age, can be enhanced later
         });
         console.log('Aesthetic analysis completed:', analysis);
@@ -149,42 +160,42 @@ export default function QuickScanPage() {
           skinType: 'Combination',
           concerns: [
             {
-              name: t('skinHeatmap.tabs.wrinkles'),
+              name: thm('tabs.wrinkles'),
               severity: 7,
-              description: t('salesQuickScan.fallback.wrinklesDesc')
+              description: t('fallback.wrinklesDesc')
             },
             {
-              name: t('analysis.metrics.uvDamage'),
+              name: t('results.uv_spots' as any), // Use key if available or generic
               severity: 6,
-              description: t('salesQuickScan.fallback.uvDamageDesc')
+              description: t('fallback.uvDamageDesc')
             },
             {
-              name: t('skinHeatmap.tabs.pigmentation'),
+              name: thm('tabs.pigmentation'),
               severity: 5,
-              description: t('salesQuickScan.fallback.pigmentationDesc')
+              description: t('fallback.pigmentationDesc')
             }
           ],
           recommendations: [
             {
-              program: t('packages.basic.name'),
+              program: tp('basic.name'),
               sessions: 6,
               price: 19900,
               duration: '3 months',
-              expectedOutcome: t('salesQuickScan.fallback.outcome1')
+              expectedOutcome: t('fallback.outcome1')
             },
             {
-              program: t('packages.premium.name'),
+              program: tp('premium.name'),
               sessions: 8,
               price: 24900,
               duration: '4 months',
-              expectedOutcome: t('salesQuickScan.fallback.outcome2')
+              expectedOutcome: t('fallback.outcome2')
             },
             {
-              program: t('packages.vip.name'),
+              program: tp('vip.name'),
               sessions: 12,
               price: 39900,
               duration: '6 months',
-              expectedOutcome: t('salesQuickScan.fallback.outcome3')
+              expectedOutcome: t('fallback.outcome3')
             }
           ]
         };
@@ -200,19 +211,19 @@ export default function QuickScanPage() {
       // Generate heatmap data
       const problemAreas = [
         {
-          region: t('salesQuickScan.results.forehead'),
+          region: t('results.forehead'),
           severity: 7,
           coordinates: { x: 0.5, y: 0.2, radius: 0.15 },
           concernType: 'wrinkles' as const
         },
         {
-          region: t('salesQuickScan.results.eyeArea'),
+          region: t('results.eyeArea'),
           severity: 6,
           coordinates: { x: 0.35, y: 0.35, radius: 0.1 },
           concernType: 'wrinkles' as const
         },
         {
-          region: t('salesQuickScan.results.cheeks'),
+          region: t('results.cheeks'),
           severity: 5,
           coordinates: { x: 0.4, y: 0.55, radius: 0.12 },
           concernType: 'pigmentation' as const
@@ -226,7 +237,7 @@ export default function QuickScanPage() {
 
       // Save to database
       const scanData = {
-        customer_name: selectedCustomer?.name || t('salesQuickScan.guestCustomer'),
+        customer_name: selectedCustomer?.name || t('guestCustomer'),
         customer_phone: selectedCustomer?.phone || '0000000000',
         customer_email: customerEmail || null,
         photo_front: images.front,
@@ -319,10 +330,10 @@ export default function QuickScanPage() {
           await processor.initialize(canvas, 800, 800)
           await processor.loadImage(images.front)
           
-          // Map AI concerns to simulation intensity
-          const smoothing = result.concerns.find(c => c.name.includes('รูขุมขน')) ? 0.6 : 0.3
-          const brightening = result.concerns.find(c => c.name.includes('กระจ่างใส')) ? 0.4 : 0.2
-          const spotRemoval = result.concerns.find(c => c.name.includes('จุดด่างดำ')) ? 0.7 : 0.2
+          // Map AI concerns to simulation intensity using localized markers
+          const smoothing = result.concerns.find(c => c.name.includes(thm('tabs.pores')) || c.name.includes('Pores')) ? 0.6 : 0.3
+          const brightening = result.concerns.find(c => c.name.includes(thm('tabs.radiance')) || c.name.includes('Radiance')) ? 0.4 : 0.2
+          const spotRemoval = result.concerns.find(c => c.name.includes(thm('tabs.pigmentation')) || c.name.includes('Pigment')) ? 0.7 : 0.2
           
           processor.applyEffects({
             smoothing,
@@ -358,7 +369,7 @@ export default function QuickScanPage() {
       setIsAnalyzing(false)
       setIsSaving(false)
     }
-  }, [selectedCustomer, customerEmail, t])
+  }, [selectedCustomer, customerEmail, t, thm, tp])
 
   const capturePhoto = useCallback(async () => {
     if (!videoRef.current || !canvasRef.current) return
@@ -390,9 +401,9 @@ export default function QuickScanPage() {
   }, [currentAngle, capturedImages, analyzePhotos])
 
   const angleInstructions = {
-    front: t('salesQuickScan.scanning.front'),
-    left: t('salesQuickScan.scanning.left'),
-    right: t('salesQuickScan.scanning.right')
+    front: t('scanning.front'),
+    left: t('scanning.left'),
+    right: t('scanning.right')
   }
 
   return (
@@ -435,10 +446,10 @@ export default function QuickScanPage() {
                         
                         <div className="space-y-3">
                           <CardTitle className="text-4xl md:text-5xl font-bold tracking-tight text-white leading-tight">
-                            {t('salesQuickScan.title')}
+                            {t('title')}
                           </CardTitle>
                           <p className="text-slate-400 text-lg font-light tracking-wide max-w-md mx-auto">
-                            {t('salesQuickScan.subtitle')}
+                            {t('subtitle')}
                           </p>
                         </div>
                       </div>
@@ -455,7 +466,7 @@ export default function QuickScanPage() {
                           <div className="h-px flex-1 bg-pink-500/20" />
                           <div className="flex items-center gap-2">
                             <UserPlus className="w-3.5 h-3.5" />
-                            {t('salesQuickScan.customerInfo')}
+                            {t('customerInfo')}
                           </div>
                           <div className="h-px flex-1 bg-pink-500/20" />
                         </div>
@@ -463,11 +474,11 @@ export default function QuickScanPage() {
                         <div className="grid gap-5">
                           <div className="space-y-2.5">
                             <Label htmlFor="customer-name" className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-4">
-                              {t('salesQuickScan.name')}
+                              {t('name')}
                             </Label>
                             <Input
                               id="customer-name"
-                              placeholder={t('salesQuickScan.namePlaceholder')}
+                              placeholder={t('namePlaceholder')}
                               value={customerName}
                               onChange={(e) => setCustomerName(e.target.value)}
                               className="h-14 bg-white/[0.02] border-white/5 focus:border-pink-500/30 focus:ring-pink-500/10 rounded-2xl transition-all duration-300 px-6 font-light tracking-wide text-white placeholder:text-slate-600"
@@ -476,11 +487,11 @@ export default function QuickScanPage() {
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                             <div className="space-y-2.5">
                               <Label htmlFor="customer-phone" className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-4">
-                                {t('salesQuickScan.phone')}
+                                {t('phone')}
                               </Label>
                               <Input
                                 id="customer-phone"
-                                placeholder={t('salesQuickScan.phonePlaceholder')}
+                                placeholder={t('phonePlaceholder')}
                                 value={customerPhone}
                                 onChange={(e) => setCustomerPhone(e.target.value)}
                                 className="h-14 bg-white/[0.02] border-white/5 focus:border-pink-500/30 focus:ring-pink-500/10 rounded-2xl transition-all duration-300 px-6 font-light tracking-wide text-white placeholder:text-slate-600"
@@ -488,12 +499,12 @@ export default function QuickScanPage() {
                             </div>
                             <div className="space-y-2.5">
                               <Label htmlFor="customer-email" className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-4">
-                                {t('salesQuickScan.emailOptional')}
+                                {t('emailOptional')}
                               </Label>
                               <Input
                                 id="customer-email"
                                 type="email"
-                                placeholder={t('salesQuickScan.emailPlaceholder')}
+                                placeholder={t('emailPlaceholder')}
                                 value={customerEmail}
                                 onChange={(e) => setCustomerEmail(e.target.value)}
                                 className="h-14 bg-white/[0.02] border-white/5 focus:border-pink-500/30 focus:ring-pink-500/10 rounded-2xl transition-all duration-300 px-6 font-light tracking-wide text-white placeholder:text-slate-600"
@@ -516,7 +527,7 @@ export default function QuickScanPage() {
                             disabled={!customerName.trim()}
                           >
                             <CheckCircle2 className="w-4 h-4 mr-2" />
-                            {t('salesQuickScan.confirmInfo')}
+                            {t('confirmInfo')}
                           </Button>
                         </div>
                       </motion.div>
@@ -562,7 +573,7 @@ export default function QuickScanPage() {
                           disabled={!selectedCustomer}
                         >
                           <Camera className="w-5 h-5 mr-3" />
-                          {t('salesQuickScan.actions.startCamera')}
+                          {t('actions.startCamera')}
                         </Button>
                         
                         {!isUploadMode && (
@@ -572,7 +583,7 @@ export default function QuickScanPage() {
                             disabled={!selectedCustomer}
                             onClick={() => setIsUploadMode(true)}
                           >
-                            {t('salesQuickScan.actions.useUpload')}
+                            {t('actions.useUpload')}
                           </Button>
                         )}
                       </div>
@@ -616,7 +627,7 @@ export default function QuickScanPage() {
                                   : "border-white/10 text-slate-500 bg-transparent"
                               )}
                             >
-                              {t(`salesQuickScan.scanning.${angle}Label` as any)}
+                              {t(`scanning.${angle}Label` as any)}
                             </Badge>
                           </motion.div>
                         ))}
@@ -678,12 +689,12 @@ export default function QuickScanPage() {
                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-pink-500 opacity-75"></span>
                                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-pink-500"></span>
                               </span>
-                              Live Analysis
+                              {t('scanning.liveAnalysis')}
                             </div>
                           </div>
                           <div className="bg-[#020617]/60 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/5 min-w-[100px]">
                             <div className="flex justify-between items-center text-[10px] font-black text-white uppercase tracking-widest mb-1.5">
-                              <span>Progress</span>
+                              <span>{t('scanning.progress')}</span>
                               <span className="text-pink-500">{Object.keys(capturedImages).length}/3</span>
                             </div>
                             <div className="w-full bg-white/10 rounded-full h-1">
@@ -708,19 +719,19 @@ export default function QuickScanPage() {
                         {isAnalyzing ? (
                           <div className="flex items-center gap-3">
                             <Sparkles className="w-5 h-5 animate-spin text-pink-600" />
-                            {t('salesQuickScan.actions.analyzing')}
+                            {t('actions.analyzing')}
                           </div>
                         ) : (
                           <div className="flex items-center gap-3">
                             <Camera className="w-5 h-5" />
-                            {t('salesQuickScan.actions.capture')}
+                            {t('actions.capture')}
                           </div>
                         )}
                       </Button>
 
                       <div className="text-center">
                         <p className="text-xs text-slate-500 font-light tracking-wide italic">
-                          {t('salesQuickScan.scanning.guide')}
+                          {t('scanning.guide')}
                         </p>
                       </div>
                     </div>
@@ -747,8 +758,8 @@ export default function QuickScanPage() {
                       <BeforeAfterSlider 
                         beforeImage={capturedImages.front}
                         afterImage={simulatedAfterImage}
-                        title="Aesthetic Outcome Simulation"
-                        description="Visual prediction of your skin transformation / จำลองผลลัพธ์การเปลี่ยนแปลงของผิว"
+                        title={t('results.simulationTitle')}
+                        description={t('results.simulationDesc')}
                       />
                     </div>
                   )}
@@ -766,30 +777,30 @@ export default function QuickScanPage() {
                           {scanResult.skinAge}
                         </h2>
                         <div className="space-y-1">
-                          <p className="text-2xl text-slate-400 font-light leading-none">{t('salesQuickScan.results.years')}</p>
-                          <p className="text-xs font-black uppercase tracking-widest text-slate-600">Aesthetic Age Analysis</p>
+                          <p className="text-2xl text-slate-400 font-light leading-none">{t('results.years')}</p>
+                          <p className="text-xs font-black uppercase tracking-widest text-slate-600">{t('results.title')}</p>
                         </div>
                       </div>
                       <div className="h-px w-full bg-gradient-to-r from-pink-500/30 via-transparent to-transparent" />
                       <div className="flex flex-wrap gap-8">
                         <div className="space-y-1">
-                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Actual Age</p>
-                          <p className="text-xl text-white font-light">{scanResult.actualAge} Years</p>
+                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">{t('results.actualAge')}</p>
+                          <p className="text-xl text-white font-light">{scanResult.actualAge} {t('results.years')}</p>
                         </div>
                         {scanResult.specializedMetrics?.detectedSkinType && (
                           <div className="space-y-1">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-pink-500">Detected Type</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-pink-500">{t('results.concernsTitle')}</p>
                             <p className="text-xl text-white font-light capitalize">{scanResult.specializedMetrics.detectedSkinType}</p>
                           </div>
                         )}
                         <div className="space-y-1">
-                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Age Variance</p>
+                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">{t('results.actualAge')}</p>
                           <p className={cn("text-xl font-bold", scanResult.skinAge > scanResult.actualAge ? "text-rose-500" : "text-emerald-500")}>
-                            {scanResult.skinAge > scanResult.actualAge ? "+" : ""}{scanResult.skinAge - scanResult.actualAge} Years
+                            {scanResult.skinAge > scanResult.actualAge ? "+" : ""}{scanResult.skinAge - scanResult.actualAge} {t('results.years')}
                           </p>
                         </div>
                         <div className="space-y-1">
-                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Precision</p>
+                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">{t('results.confidence' as any)}</p>
                           <p className="text-xl text-pink-400 font-light">{(scanResult.confidence_score || 0.85 * 100).toFixed(0)}%</p>
                         </div>
                       </div>
@@ -799,33 +810,33 @@ export default function QuickScanPage() {
                   <Card className="relative overflow-hidden border-white/5 bg-gradient-to-br from-pink-600 to-purple-700 rounded-[3rem] p-10 text-white shadow-2xl">
                     <div className="relative z-10 h-full flex flex-col justify-between">
                       <div className="space-y-4">
-                        <Zap className="w-10 h-10 text-white opacity-80" />
-                        <h3 className="text-2xl font-bold leading-tight">Precision Recommendation</h3>
+                        < Zap className="w-10 h-10 text-white opacity-80" />
+                        <h3 className="text-2xl font-bold leading-tight">{t('results.roadmap')}</h3>
                         {scanResult.specializedMetrics?.acneSeverity && (
                           <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-md mb-2">
-                            Acne Node: {scanResult.specializedMetrics.acneSeverity} ({scanResult.specializedMetrics.acneScore}%)
+                            {t('results.concerns')}: {scanResult.specializedMetrics.acneSeverity} ({scanResult.specializedMetrics.acneScore}%)
                           </Badge>
                         )}
                         {(scanResult.specializedMetrics?.wrinklesScore !== undefined || scanResult.specializedMetrics?.spotsScore !== undefined) && (
                           <div className="flex flex-wrap gap-2 mt-2">
                             {scanResult.specializedMetrics?.wrinklesScore !== undefined && (
                               <Badge variant="outline" className="border-pink-500/30 text-pink-400 bg-pink-500/5 text-[9px] uppercase font-black tracking-widest">
-                                Wrinkle Intensity: {scanResult.specializedMetrics.wrinklesScore}%
+                                {t('results.wrinkleIntensity')} {scanResult.specializedMetrics.wrinklesScore}%
                               </Badge>
                             )}
                             {scanResult.specializedMetrics?.spotsScore !== undefined && (
                               <Badge variant="outline" className="border-cyan-500/30 text-cyan-400 bg-cyan-500/5 text-[9px] uppercase font-black tracking-widest">
-                                Pigmentation Index: {scanResult.specializedMetrics.spotsScore}%
+                                {t('results.pigmentationIndex')} {scanResult.specializedMetrics.spotsScore}%
                               </Badge>
                             )}
                           </div>
                         )}
                         <p className="text-white/70 font-light leading-relaxed text-sm">
-                          Based on 468-point mapping, we've synthesized an optimized protocol for {selectedCustomer.name}.
+                          {t('results.protocolDescription')}
                         </p>
                       </div>
                       <Button size="lg" className="w-full h-14 bg-white text-pink-600 hover:bg-slate-100 rounded-2xl font-black uppercase tracking-widest text-[10px] mt-8 shadow-xl">
-                        {t('salesQuickScan.actions.createProposal')}
+                        {t('actions.createProposal')}
                       </Button>
                     </div>
                   </Card>
@@ -837,7 +848,7 @@ export default function QuickScanPage() {
                     <CardHeader className="p-10 pb-6 border-b border-white/5">
                       <CardTitle className="text-xs font-black uppercase tracking-[0.25em] flex items-center gap-4 text-pink-400">
                         <TrendingUp className="w-5 h-5" />
-                        {t('salesQuickScan.results.concernsTitle')}
+                        {t('results.concernsTitle')}
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="p-10 space-y-6">
@@ -869,7 +880,7 @@ export default function QuickScanPage() {
                     <CardHeader className="p-10 pb-6 border-b border-white/5">
                       <CardTitle className="text-xs font-black uppercase tracking-[0.25em] flex items-center gap-4 text-emerald-400">
                         <Award className="w-5 h-5" />
-                        Aesthetic Roadmap
+                        {t('salesQuickScan.results.roadmap')}
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="p-10 space-y-6">
@@ -883,11 +894,11 @@ export default function QuickScanPage() {
                           </div>
                           <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-1">
-                              <p className="text-[9px] font-black uppercase tracking-widest text-slate-600">Protocol Duration</p>
+                              <p className="text-[9px] font-black uppercase tracking-widest text-slate-600">{t('results.protocolDuration')}</p>
                               <p className="text-sm text-slate-300 font-light">{rec.duration}</p>
                             </div>
                             <div className="space-y-1">
-                              <p className="text-[9px] font-black uppercase tracking-widest text-slate-600">Biological Target</p>
+                              <p className="text-[9px] font-black uppercase tracking-widest text-slate-600">{t('results.biologicalTarget')}</p>
                               <p className="text-sm text-slate-300 font-light">{rec.expectedOutcome}</p>
                             </div>
                           </div>
@@ -914,13 +925,13 @@ export default function QuickScanPage() {
                     }}
                     className="flex-1 h-16 border-white/10 bg-white/[0.02] text-white hover:bg-white/5 rounded-2xl font-bold tracking-widest uppercase text-[10px]"
                   >
-                    Reset Infrastructure
+                    {t('results.reset')}
                   </Button>
                   <Button
                     size="lg"
                     className="flex-1 h-16 bg-emerald-600 hover:bg-emerald-500 text-white border-0 shadow-2xl shadow-emerald-600/20 rounded-2xl font-black tracking-widest uppercase text-[10px] transition-transform hover:scale-[1.02]"
                   >
-                    Generate Aesthetic Report (PDF)
+                    {t('results.generatePdf')}
                   </Button>
                 </div>
               </motion.div>

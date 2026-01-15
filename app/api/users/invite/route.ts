@@ -107,9 +107,14 @@ export async function POST(request: NextRequest) {
 
     // Prepare email content
     const setupUrl = `${process.env.NEXT_PUBLIC_APP_URL}/auth/setup?token=${setupToken}`
+    const locale = (body.locale as 'th' | 'en') || 'th'
+    const isThai = locale === 'th'
+
     const emailContent = {
       to: targetUser.email,
-      subject: `Welcome to AI367 Beauty - ${getRoleDisplayName(targetUser.role)}`,
+      subject: isThai 
+        ? `ยินดีต้อนรับสู่ AI367 Beauty - ${getRoleDisplayName(targetUser.role, 'th')}`
+        : `Welcome to AI367 Beauty - ${getRoleDisplayName(targetUser.role, 'en')}`,
       html: generateInvitationEmail({
         recipientName: targetUser.full_name,
         inviterName: profile.full_name,
@@ -117,11 +122,12 @@ export async function POST(request: NextRequest) {
         email: targetUser.email,
         tempPassword: temp_password,
         setupUrl,
-        expiresAt: expiresAt.toLocaleDateString('th-TH', {
+        expiresAt: expiresAt.toLocaleDateString(isThai ? 'th-TH' : 'en-US', {
           year: 'numeric',
           month: 'long',
           day: 'numeric',
         }),
+        locale
       }),
     }
 
@@ -182,18 +188,19 @@ function generateSetupToken(): string {
 }
 
 /**
- * Get role display name in Thai
+ * Get role display name
  */
-function getRoleDisplayName(role: string): string {
-  const roleNames: Record<string, string> = {
-    super_admin: 'Super Administrator',
-    center_owner: 'เจ้าของศูนย์ความงาม',
-    center_admin: 'ผู้ดูแลระบบศูนย์ความงาม',
-    center_staff: 'พนักงานศูนย์ความงาม',
-    sales_staff: 'พนักงานขาย',
-    customer: 'ลูกค้า',
+function getRoleDisplayName(role: string, locale: 'th' | 'en' = 'th'): string {
+  const isThai = locale === 'th'
+  const roleNames: Record<string, { th: string, en: string }> = {
+    super_admin: { th: 'Super Administrator', en: 'Super Administrator' },
+    center_owner: { th: 'เจ้าของศูนย์ความงาม', en: 'Center Owner' },
+    center_admin: { th: 'ผู้ดูแลระบบศูนย์ความงาม', en: 'Center Administrator' },
+    center_staff: { th: 'พนักงานศูนย์ความงาม', en: 'Center Staff' },
+    sales_staff: { th: 'พนักงานขาย', en: 'Sales Staff' },
+    customer: { th: 'ลูกค้า', en: 'Customer' },
   }
-  return roleNames[role] || role
+  return roleNames[role]?.[isThai ? 'th' : 'en'] || role
 }
 
 /**
@@ -207,10 +214,12 @@ function generateInvitationEmail(params: {
   tempPassword: string
   setupUrl: string
   expiresAt: string
+  locale?: 'th' | 'en'
 }): string {
+  const isThai = (params.locale || 'th') === 'th'
   return `
 <!DOCTYPE html>
-<html>
+<html lang="${params.locale || 'th'}">
 <head>
   <meta charset="UTF-8">
   <style>
@@ -226,46 +235,49 @@ function generateInvitationEmail(params: {
 <body>
   <div class="container">
     <div class="header">
-      <h1>🌟 ยินดีต้อนรับสู่ AI367 Beauty</h1>
+      <h1>${isThai ? '🌟 ยินดีต้อนรับสู่ AI367 Beauty' : '🌟 Welcome to AI367 Beauty'}</h1>
     </div>
     <div class="content">
-      <p>สวัสดีครับ/ค่ะ คุณ<strong>${params.recipientName}</strong></p>
+      <p>${isThai ? `สวัสดีครับ/ค่ะ คุณ<strong>${params.recipientName}</strong>` : `Hello <strong>${params.recipientName}</strong>,`}</p>
       
-      <p>คุณ<strong>${params.inviterName}</strong> ได้เชิญคุณเข้าใช้งานระบบ AI367 Beauty ในตำแหน่ง <strong>${getRoleDisplayName(params.role)}</strong></p>
+      <p>${isThai 
+        ? `คุณ<strong>${params.inviterName}</strong> ได้เชิญคุณเข้าใช้งานระบบ AI367 Beauty ในตำแหน่ง <strong>${getRoleDisplayName(params.role, 'th')}</strong>`
+        : `<strong>${params.inviterName}</strong> has invited you to join AI367 Beauty as a <strong>${getRoleDisplayName(params.role, 'en')}</strong>`
+      }</p>
       
       <div class="credentials">
-        <h3>🔐 ข้อมูลเข้าสู่ระบบ:</h3>
+        <h3>${isThai ? '🔐 ข้อมูลเข้าสู่ระบบ:' : '🔐 Login Credentials:'}</h3>
         <p><strong>Email:</strong> ${params.email}</p>
-        <p><strong>รหัสผ่านชั่วคราว:</strong> <code>${params.tempPassword}</code></p>
-        <p style="color: #d9534f;"><strong>⚠️ กรุณาเปลี่ยนรหัสผ่านหลังเข้าสู่ระบบครั้งแรก</strong></p>
+        <p><strong>${isThai ? 'รหัสผ่านชั่วคราว:' : 'Temporary Password:'}</strong> <code>${params.tempPassword}</code></p>
+        <p style="color: #d9534f;"><strong>${isThai ? '⚠️ กรุณาเปลี่ยนรหัสผ่านหลังเข้าสู่ระบบครั้งแรก' : '⚠️ Please change your password after your first login'}</strong></p>
       </div>
       
-      <p>คลิกปุ่มด้านล่างเพื่อตั้งค่าบัญชีของคุณ:</p>
+      <p>${isThai ? 'คลิกปุ่มด้านล่างเพื่อตั้งค่าบัญชีของคุณ:' : 'Click the button below to set up your account:'}</p>
       
-      <a href="${params.setupUrl}" class="button">ตั้งค่าบัญชี →</a>
+      <a href="${params.setupUrl}" class="button">${isThai ? 'ตั้งค่าบัญชี →' : 'Set up Account →'}</a>
       
-      <p><small>หรือคัดลอกลิงก์นี้ไปวางในเบราว์เซอร์:</small></p>
+      <p><small>${isThai ? 'หรือคัดลอกลิงก์นี้ไปวางในเบราว์เซอร์:' : 'Or copy and paste this link into your browser:'}</small></p>
       <p><small><a href="${params.setupUrl}">${params.setupUrl}</a></small></p>
       
-      <p><strong>⏰ ลิงก์นี้จะหมดอายุในวันที่:</strong> ${params.expiresAt}</p>
+      <p><strong>${isThai ? '⏰ ลิงก์นี้จะหมดอายุในวันที่:' : '⏰ This link will expire on:'}</strong> ${params.expiresAt}</p>
       
       <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;">
       
-      <p><strong>ขั้นตอนการเข้าใช้งาน:</strong></p>
+      <p><strong>${isThai ? 'ขั้นตอนการเข้าใช้งาน:' : 'How to get started:'}</strong></p>
       <ol>
-        <li>คลิกปุ่ม "ตั้งค่าบัญชี" ด้านบน</li>
-        <li>เข้าสู่ระบบด้วย Email และรหัสผ่านชั่วคราว</li>
-        <li>เปลี่ยนรหัสผ่านเป็นรหัสใหม่ของคุณ</li>
-        <li>เริ่มใช้งานระบบได้ทันที!</li>
+        <li>${isThai ? 'คลิกปุ่ม "ตั้งค่าบัญชี" ด้านบน' : 'Click the "Set up Account" button above'}</li>
+        <li>${isThai ? 'เข้าสู่ระบบด้วย Email และรหัสผ่านชั่วคราว' : 'Log in with your Email and temporary password'}</li>
+        <li>${isThai ? 'เปลี่ยนรหัสผ่านเป็นรหัสใหม่ของคุณ' : 'Change the password to your new one'}</li>
+        <li>${isThai ? 'เริ่มใช้งานระบบได้ทันที!' : 'Start using the system immediately!'}</li>
       </ol>
       
-      <p>หากมีคำถามหรือต้องการความช่วยเหลือ กรุณาติดต่อ:</p>
+      <p>${isThai ? 'หากมีคำถามหรือต้องการความช่วยเหลือ กรุณาติดต่อ:' : 'If you have any questions or need assistance, please contact:'}</p>
       <p>📧 Email: <a href="mailto:support@ai367beauty.com">support@ai367beauty.com</a></p>
       <p>📱 Line: @ai367beauty</p>
     </div>
     <div class="footer">
       <p>© 2025 AI367 Beauty. All rights reserved.</p>
-      <p>This is an automated email. Please do not reply.</p>
+      <p>${isThai ? 'Email นี้ส่งอัตโนมัติ กรุณาอย่าตอบกลับ' : 'This is an automated email. Please do not reply.'}</p>
     </div>
   </div>
 </body>

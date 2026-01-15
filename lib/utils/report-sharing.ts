@@ -175,7 +175,7 @@ export function createShareView(token: string, metadata: Partial<ShareView> = {}
 /**
  * Generate HTML email template for sharing analysis
  */
-export function generateShareEmail(data: EmailShareData): string {
+export function generateShareEmail(data: EmailShareData & { t: any, locale?: string }): string {
   const {
     recipientName,
     senderName,
@@ -186,21 +186,24 @@ export function generateShareEmail(data: EmailShareData): string {
     message,
   } = data
 
-  const expiryText = expiresAt 
-    ? `<p style="color: #666; font-size: 14px;">Link expires: ${new Date(expiresAt).toLocaleDateString('th-TH', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
+  const expiryDate = expiresAt ? new Date(expiresAt) : null;
+  const expiryText = expiryDate 
+    ? `<p style="color: #666; font-size: 14px;">${data.t('email.expiry', { 
+        date: expiryDate.toLocaleDateString(data.locale === 'th' ? 'th-TH' : 'en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        }) 
       })}</p>`
     : ''
 
   return `
 <!DOCTYPE html>
-<html lang="th">
+<html lang="${data.locale || 'en'}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Skin Analysis Report - ${centerName}</title>
+  <title>${data.t('email.title')} - ${centerName}</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f5f5f5;">
   <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f5f5f5; padding: 40px 20px;">
@@ -213,10 +216,10 @@ export function generateShareEmail(data: EmailShareData): string {
             <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px; text-align: center;">
               ${centerLogoUrl ? `<img src="${centerLogoUrl}" alt="${centerName}" style="max-width: 150px; max-height: 60px; margin-bottom: 20px;">` : ''}
               <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 700;">
-                Skin Analysis Report
+                ${data.t('email.title')}
               </h1>
               <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0; font-size: 16px;">
-                รายงานการวิเคราะห์ผิวหน้า
+                ${data.t('email.subtitle')}
               </p>
             </td>
           </tr>
@@ -224,20 +227,16 @@ export function generateShareEmail(data: EmailShareData): string {
           <!-- Content -->
           <tr>
             <td style="padding: 40px;">
-              ${recipientName ? `<p style="font-size: 16px; color: #333; margin: 0 0 20px 0;">สวัสดีค่ะคุณ ${recipientName}</p>` : ''}
+              ${recipientName ? `<p style="font-size: 16px; color: #333; margin: 0 0 20px 0;">${data.t('email.greeting', { name: recipientName })}</p>` : ''}
               
               <p style="font-size: 16px; color: #333; line-height: 1.6; margin: 0 0 20px 0;">
-                ${senderName} from <strong>${centerName}</strong> has shared a skin analysis report with you.
-                <br>
-                <span style="color: #666;">
-                  ${senderName} จาก <strong>${centerName}</strong> ได้แชร์รายงานการวิเคราะห์ผิวหน้าให้คุณ
-                </span>
+                ${data.t('email.message', { senderName, centerName })}
               </p>
               
               ${message ? `
                 <div style="background-color: #f9fafb; border-left: 4px solid #667eea; padding: 16px; margin: 20px 0; border-radius: 4px;">
                   <p style="margin: 0; color: #333; font-size: 14px; line-height: 1.6;">
-                    <strong>Message:</strong><br>
+                    <strong>${data.t('email.personalMessage')}</strong><br>
                     ${message}
                   </p>
                 </div>
@@ -245,7 +244,7 @@ export function generateShareEmail(data: EmailShareData): string {
               
               <div style="text-align: center; margin: 30px 0;">
                 <a href="${shareUrl}" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; text-decoration: none; padding: 16px 48px; border-radius: 8px; font-size: 16px; font-weight: 600; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);">
-                  View Report / ดูรายงาน
+                  ${data.t('email.viewButton')}
                 </a>
               </div>
               
@@ -293,7 +292,7 @@ export function generateShareEmail(data: EmailShareData): string {
                 ${centerName}
               </p>
               <p style="margin: 0; font-size: 14px; color: #666;">
-                Powered by AI Beauty Platform
+                Powered by CenterIQ AI
               </p>
             </td>
           </tr>
@@ -302,8 +301,7 @@ export function generateShareEmail(data: EmailShareData): string {
         
         <!-- Footer Note -->
         <p style="text-align: center; font-size: 12px; color: #999; margin-top: 20px; line-height: 1.6;">
-          This report is confidential and intended only for the recipient.<br>
-          If you received this in error, please delete it immediately.
+          ${data.t('email.footer')}
         </p>
       </td>
     </tr>
@@ -316,7 +314,7 @@ export function generateShareEmail(data: EmailShareData): string {
 /**
  * Generate plain text email (fallback)
  */
-export function generateShareEmailText(data: EmailShareData): string {
+export function generateShareEmailText(data: EmailShareData & { t: any, locale?: string }): string {
   const {
     recipientName,
     senderName,
@@ -324,28 +322,27 @@ export function generateShareEmailText(data: EmailShareData): string {
     shareUrl,
     expiresAt,
     message,
+    locale
   } = data
 
-  const greeting = recipientName ? `สวัสดีค่ะคุณ ${recipientName}\n\n` : ''
+  const greeting = recipientName ? `${data.t('email.greeting', { name: recipientName })}\n\n` : ''
   const expiryText = expiresAt 
-    ? `\nLink expires: ${new Date(expiresAt).toLocaleDateString('th-TH')}`
+    ? `\n${data.t('email.expiry', { date: new Date(expiresAt).toLocaleDateString(locale === 'th' ? 'th-TH' : 'en-US') })}`
     : ''
-  const messageText = message ? `\nMessage:\n${message}\n` : ''
+  const messageText = message ? `\n${data.t('email.personalMessage')}\n${message}\n` : ''
 
   return `
-${greeting}${senderName} from ${centerName} has shared a skin analysis report with you.
-${senderName} จาก ${centerName} ได้แชร์รายงานการวิเคราะห์ผิวหน้าให้คุณ
+${greeting}${data.t('email.message', { senderName, centerName })}
 ${messageText}
-View Report / ดูรายงาน:
+${data.t('email.viewButton')}:
 ${shareUrl}
 ${expiryText}
 
 ---
 ${centerName}
-Powered by AI Beauty Platform
+Powered by CenterIQ AI
 
-This report is confidential and intended only for the recipient.
-If you received this in error, please delete it immediately.
+${data.t('email.footer')}
   `.trim()
 }
 
@@ -361,13 +358,12 @@ export function generateShareSMS(data: {
   centerName: string
   shareUrl: string
   recipientName?: string
+  t: any
 }): string {
-  const { centerName, shareUrl, recipientName } = data
+  const { centerName, shareUrl } = data
   
-  const greeting = recipientName ? `${recipientName} ` : ''
-  
-  // Short URL for SMS (consider using URL shortener service)
-  return `${greeting}${centerName}: รายงานการวิเคราะห์ผิวหน้าของคุณพร้อมแล้ว ${shareUrl}`.substring(0, 160)
+  // Use localized SMS template
+  return `${data.t('sms.message', { centerName, url: shareUrl })}`.substring(0, 160)
 }
 
 // ============================================================================
@@ -382,12 +378,19 @@ export function generateLineFlexMessage(data: {
   centerLogoUrl?: string
   shareUrl: string
   expiresAt?: string
+  t: any
+  locale?: string
 }) {
   const { centerName, centerLogoUrl, shareUrl, expiresAt } = data
   
   const expiryText = expiresAt 
-    ? `หมดอายุ: ${new Date(expiresAt).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' })}`
-    : 'ไม่มีวันหมดอายุ'
+    ? data.t('line.expiresAt', { 
+        date: new Date(expiresAt).toLocaleDateString(data.locale === 'th' ? 'th-TH' : 'en-US', { 
+          day: 'numeric', 
+          month: 'short' 
+        }) 
+      })
+    : data.t('line.neverExpires')
 
   return {
     type: 'bubble',
@@ -404,7 +407,7 @@ export function generateLineFlexMessage(data: {
       contents: [
         {
           type: 'text',
-          text: 'รายงานการวิเคราะห์ผิว',
+          text: data.t('line.title'),
           weight: 'bold',
           size: 'xl',
           color: '#667eea',
@@ -422,7 +425,7 @@ export function generateLineFlexMessage(data: {
               contents: [
                 {
                   type: 'text',
-                  text: 'คลินิก',
+                  text: data.t('line.clinic'),
                   color: '#aaaaaa',
                   size: 'sm',
                   flex: 2,
@@ -444,7 +447,7 @@ export function generateLineFlexMessage(data: {
               contents: [
                 {
                   type: 'text',
-                  text: 'ระยะเวลา',
+                  text: data.t('line.duration'),
                   color: '#aaaaaa',
                   size: 'sm',
                   flex: 2,
@@ -474,7 +477,7 @@ export function generateLineFlexMessage(data: {
           height: 'sm',
           action: {
             type: 'uri',
-            label: 'ดูรายงาน',
+            label: data.t('line.viewButton'),
             uri: shareUrl,
           },
           color: '#667eea',

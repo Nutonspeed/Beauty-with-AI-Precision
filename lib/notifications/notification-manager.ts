@@ -4,17 +4,6 @@
  */
 
 import { toast, type ExternalToast } from "sonner";
-import {
-  showSuccessToast,
-  showAnalysisSavedToast,
-  showUploadSuccessToast,
-  showExportSuccessToast,
-  showShareSuccessToast,
-  showAppointmentBookedToast,
-  showProgramPlanCreatedToast,
-  showProfileUpdatedToast,
-  showSettingsSavedToast,
-} from "@/components/ui/success-toast";
 import { AnalysisError } from "@/lib/errors/analysis-errors";
 
 /**
@@ -36,63 +25,13 @@ export interface NotificationOptions extends ExternalToast {
 
 /**
  * Error notification messages
+ * @deprecated Use i18n keys instead
  */
-const ERROR_MESSAGES = {
-  th: {
-    generic: "เกิดข้อผิดพลาด",
-    network: "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้",
-    upload: "ไม่สามารถอัปโหลดรูปภาพได้",
-    save: "ไม่สามารถบันทึกข้อมูลได้",
-    load: "ไม่สามารถโหลดข้อมูลได้",
-    auth: "กรุณาเข้าสู่ระบบก่อน",
-    permission: "คุณไม่มีสิทธิ์เข้าถึงข้อมูลนี้",
-  },
-  en: {
-    generic: "An error occurred",
-    network: "Unable to connect to server",
-    upload: "Unable to upload image",
-    save: "Unable to save data",
-    load: "Unable to load data",
-    auth: "Please login first",
-    permission: "You don't have permission to access this data",
-  },
-};
-
-/**
- * Warning notification messages
- */
-const WARNING_MESSAGES = {
-  th: {
-    unsavedChanges: "คุณมีการเปลี่ยนแปลงที่ยังไม่ได้บันทึก",
-    slowConnection: "การเชื่อมต่ออินเทอร์เน็ตช้า",
-    lowQuality: "คุณภาพของรูปภาพต่ำ",
-    outdatedBrowser: "เบราว์เซอร์ของคุณล้าสมัย",
-  },
-  en: {
-    unsavedChanges: "You have unsaved changes",
-    slowConnection: "Slow internet connection",
-    lowQuality: "Low image quality",
-    outdatedBrowser: "Your browser is outdated",
-  },
-};
-
-/**
- * Info notification messages
- */
-const INFO_MESSAGES = {
-  th: {
-    processing: "กำลังประมวลผล...",
-    uploading: "กำลังอัปโหลด...",
-    saving: "กำลังบันทึก...",
-    loading: "กำลังโหลด...",
-  },
-  en: {
-    processing: "Processing...",
-    uploading: "Uploading...",
-    saving: "Saving...",
-    loading: "Loading...",
-  },
-};
+/*
+const ERROR_MESSAGES = {};
+const WARNING_MESSAGES = {};
+const INFO_MESSAGES = {};
+*/
 
 /**
  * NotificationManager class
@@ -118,7 +57,12 @@ class NotificationManagerClass {
    * Show success notification
    */
   success(message: string, options?: NotificationOptions) {
-    return showSuccessToast(message, options as any);
+    const { description, duration = 4000, ...restOptions } = options || {};
+    return toast.success(message, {
+      description,
+      duration,
+      ...restOptions,
+    });
   }
 
   /**
@@ -135,6 +79,8 @@ class NotificationManagerClass {
     const { duration = 5000, action, showTechnical = false, onRetry, ...restOptions } =
       options || {};
 
+    const isThai = this.defaultLocale === "th";
+
     // Handle AnalysisError
     if (error instanceof AnalysisError) {
       const message = error.userMessage[this.defaultLocale as "th" | "en"] || error.userMessage.th;
@@ -146,7 +92,7 @@ class NotificationManagerClass {
         action:
           error.retryable && onRetry
             ? {
-                label: this.defaultLocale === "th" ? "ลองใหม่" : "Retry",
+                label: isThai ? "ลองใหม่" : "Retry",
                 onClick: onRetry,
               }
             : action
@@ -161,20 +107,17 @@ class NotificationManagerClass {
 
     // Handle regular Error
     if (error instanceof Error) {
-      return toast.error(
-        this.defaultLocale === "th" ? "เกิดข้อผิดพลาด" : "Error Occurred",
-        {
-          description: error.message,
-          duration,
-          action: action
-            ? {
-                label: action.label,
-                onClick: action.onClick,
-              }
-            : undefined,
-          ...restOptions,
-        }
-      );
+      return toast.error(isThai ? "เกิดข้อผิดพลาด" : "Error Occurred", {
+        description: error.message,
+        duration,
+        action: action
+          ? {
+              label: action.label,
+              onClick: action.onClick,
+            }
+          : undefined,
+        ...restOptions,
+      });
     }
 
     // Handle string error
@@ -262,35 +205,55 @@ class NotificationManagerClass {
    * Analysis saved notification
    */
   analysisSaved(analysisId: string, onViewClick: () => void, locale?: string) {
-    return showAnalysisSavedToast(
-      analysisId,
-      onViewClick,
-      locale || this.defaultLocale
-    );
+    const loc = locale || this.defaultLocale;
+    const isThai = loc === "th";
+    return this.success(isThai ? "บันทึกผลการวิเคราะห์แล้ว" : "Analysis saved successfully", {
+      description: isThai ? "ผลการวิเคราะห์ของคุณถูกบันทึกลงในโปรไฟล์แล้ว" : "Your skin analysis has been saved to your profile",
+      action: {
+        label: isThai ? "ดูผล" : "View",
+        onClick: onViewClick,
+      },
+      duration: 5000,
+    });
   }
 
   /**
    * Upload success notification
    */
   uploadSuccess(locale?: string) {
-    return showUploadSuccessToast(locale || this.defaultLocale);
+    const loc = locale || this.defaultLocale;
+    const isThai = loc === "th";
+    return this.success(isThai ? "อัปโหลดสำเร็จ" : "Upload successful", {
+      description: isThai ? "รูปภาพของคุณถูกอัปโหลดและพร้อมสำหรับการวิเคราะห์" : "Your image has been uploaded and is ready for analysis",
+      duration: 3000,
+    });
   }
 
   /**
    * Export success notification
    */
   exportSuccess(onDownloadClick: () => void, locale?: string) {
-    return showExportSuccessToast(
-      onDownloadClick,
-      locale || this.defaultLocale
-    );
+    const loc = locale || this.defaultLocale;
+    const isThai = loc === "th";
+    return this.success(isThai ? "ส่งออกรายงานสำเร็จ" : "Report exported successfully", {
+      description: isThai ? "รายงานของคุณพร้อมสำหรับการดาวน์โหลดแล้ว" : "Your report is ready for download",
+      action: {
+        label: isThai ? "ดาวน์โหลด" : "Download",
+        onClick: onDownloadClick,
+      },
+    });
   }
 
   /**
    * Share success notification
    */
   shareSuccess(locale?: string) {
-    return showShareSuccessToast(locale || this.defaultLocale);
+    const loc = locale || this.defaultLocale;
+    const isThai = loc === "th";
+    return this.success(isThai ? "แชร์สำเร็จ" : "Shared successfully", {
+      description: isThai ? "ลิงก์ของคุณถูกคัดลอกไปยังคลิปบอร์ดแล้ว" : "Your link has been copied to the clipboard",
+      duration: 3000,
+    });
   }
 
   /**
@@ -301,36 +264,57 @@ class NotificationManagerClass {
     onViewClick: () => void,
     locale?: string
   ) {
-    return showAppointmentBookedToast(
-      appointmentDate,
-      onViewClick,
-      locale || this.defaultLocale
-    );
+    const loc = locale || this.defaultLocale;
+    const isThai = loc === "th";
+    const dateStr = appointmentDate.toLocaleString(isThai ? 'th-TH' : 'en-US');
+    return this.success(isThai ? "จองนัดหมายสำเร็จ" : "Appointment booked successfully", {
+      description: isThai ? `นัดหมายของคุณคือวันที่ ${dateStr}` : `Your appointment is scheduled for ${dateStr}`,
+      action: {
+        label: isThai ? "ดูรายละเอียด" : "View",
+        onClick: onViewClick,
+      },
+      duration: 6000,
+    });
   }
 
   /**
    * Program plan created notification
    */
   programPlanCreated(planId: string, onViewClick: () => void, locale?: string) {
-    return showProgramPlanCreatedToast(
-      planId,
-      onViewClick,
-      locale || this.defaultLocale
-    );
+    const loc = locale || this.defaultLocale;
+    const isThai = loc === "th";
+    return this.success(isThai ? "สร้างแผนงานสำเร็จ" : "Program plan created", {
+      description: isThai ? "แผนงานการดูแลผิวส่วนบุคคลของคุณพร้อมแล้ว" : "Your personalized skin care plan is ready",
+      action: {
+        label: isThai ? "ดูแผนงาน" : "View Plan",
+        onClick: onViewClick,
+      },
+      duration: 5000,
+    });
   }
 
   /**
    * Profile updated notification
    */
   profileUpdated(locale?: string) {
-    return showProfileUpdatedToast(locale || this.defaultLocale);
+    const loc = locale || this.defaultLocale;
+    const isThai = loc === "th";
+    return this.success(isThai ? "อัปเดตโปรไฟล์สำเร็จ" : "Profile updated", {
+      description: isThai ? "ข้อมูลโปรไฟล์ของคุณถูกบันทึกแล้ว" : "Your profile information has been saved",
+      duration: 3000,
+    });
   }
 
   /**
    * Settings saved notification
    */
   settingsSaved(locale?: string) {
-    return showSettingsSavedToast(locale || this.defaultLocale);
+    const loc = locale || this.defaultLocale;
+    const isThai = loc === "th";
+    return this.success(isThai ? "บันทึกการตั้งค่าแล้ว" : "Settings saved", {
+      description: isThai ? "การตั้งค่าของคุณถูกนำไปใช้แล้ว" : "Your settings have been applied",
+      duration: 3000,
+    });
   }
 
   // ============================================
@@ -353,12 +337,13 @@ class NotificationManagerClass {
    */
   networkError(locale?: string, onRetry?: () => void) {
     const loc = locale || this.defaultLocale;
-    const messages = ERROR_MESSAGES[loc as keyof typeof ERROR_MESSAGES] || ERROR_MESSAGES.th;
-
-    return this.error(messages.network, {
+    const isThai = loc === "th";
+    const message = isThai ? "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้" : "Unable to connect to server";
+    
+    return this.error(message, {
       action: onRetry
         ? {
-            label: loc === "th" ? "ลองอีกครั้ง" : "Retry",
+            label: isThai ? "ลองอีกครั้ง" : "Retry",
             onClick: onRetry,
           }
         : undefined,
@@ -370,12 +355,13 @@ class NotificationManagerClass {
    */
   uploadError(locale?: string, onRetry?: () => void) {
     const loc = locale || this.defaultLocale;
-    const messages = ERROR_MESSAGES[loc as keyof typeof ERROR_MESSAGES] || ERROR_MESSAGES.th;
+    const isThai = loc === "th";
+    const message = isThai ? "ไม่สามารถอัปโหลดรูปภาพได้" : "Unable to upload image";
 
-    return this.error(messages.upload, {
+    return this.error(message, {
       action: onRetry
         ? {
-            label: loc === "th" ? "ลองอีกครั้ง" : "Retry",
+            label: isThai ? "ลองอีกครั้ง" : "Retry",
             onClick: onRetry,
           }
         : undefined,
@@ -387,12 +373,13 @@ class NotificationManagerClass {
    */
   saveError(locale?: string, onRetry?: () => void) {
     const loc = locale || this.defaultLocale;
-    const messages = ERROR_MESSAGES[loc as keyof typeof ERROR_MESSAGES] || ERROR_MESSAGES.th;
+    const isThai = loc === "th";
+    const message = isThai ? "ไม่สามารถบันทึกข้อมูลได้" : "Unable to save data";
 
-    return this.error(messages.save, {
+    return this.error(message, {
       action: onRetry
         ? {
-            label: loc === "th" ? "ลองอีกครั้ง" : "Retry",
+            label: isThai ? "ลองอีกครั้ง" : "Retry",
             onClick: onRetry,
           }
         : undefined,
@@ -404,12 +391,13 @@ class NotificationManagerClass {
    */
   loadError(locale?: string, onRetry?: () => void) {
     const loc = locale || this.defaultLocale;
-    const messages = ERROR_MESSAGES[loc as keyof typeof ERROR_MESSAGES] || ERROR_MESSAGES.th;
+    const isThai = loc === "th";
+    const message = isThai ? "ไม่สามารถโหลดข้อมูลได้" : "Unable to load data";
 
-    return this.error(messages.load, {
+    return this.error(message, {
       action: onRetry
         ? {
-            label: loc === "th" ? "ลองอีกครั้ง" : "Retry",
+            label: isThai ? "ลองอีกครั้ง" : "Retry",
             onClick: onRetry,
           }
         : undefined,
@@ -421,12 +409,13 @@ class NotificationManagerClass {
    */
   authError(locale?: string, onLogin?: () => void) {
     const loc = locale || this.defaultLocale;
-    const messages = ERROR_MESSAGES[loc as keyof typeof ERROR_MESSAGES] || ERROR_MESSAGES.th;
+    const isThai = loc === "th";
+    const message = isThai ? "กรุณาเข้าสู่ระบบก่อน" : "Please login first";
 
-    return this.error(messages.auth, {
+    return this.error(message, {
       action: onLogin
         ? {
-            label: loc === "th" ? "เข้าสู่ระบบ" : "Login",
+            label: isThai ? "เข้าสู่ระบบ" : "Login",
             onClick: onLogin,
           }
         : undefined,
@@ -438,9 +427,10 @@ class NotificationManagerClass {
    */
   permissionError(locale?: string) {
     const loc = locale || this.defaultLocale;
-    const messages = ERROR_MESSAGES[loc as keyof typeof ERROR_MESSAGES] || ERROR_MESSAGES.th;
-
-    return this.error(messages.permission);
+    const isThai = loc === "th";
+    const message = isThai ? "คุณไม่มีสิทธิ์เข้าถึงข้อมูลนี้" : "You don't have permission to access this data";
+    
+    return this.error(message);
   }
 
   // ============================================
@@ -452,12 +442,13 @@ class NotificationManagerClass {
    */
   unsavedChanges(locale?: string, onSave?: () => void) {
     const loc = locale || this.defaultLocale;
-    const messages = WARNING_MESSAGES[loc as keyof typeof WARNING_MESSAGES] || WARNING_MESSAGES.th;
+    const isThai = loc === "th";
+    const message = isThai ? "คุณมีการเปลี่ยนแปลงที่ยังไม่ได้บันทึก" : "You have unsaved changes";
 
-    return this.warning(messages.unsavedChanges, {
+    return this.warning(message, {
       action: onSave
         ? {
-            label: loc === "th" ? "บันทึก" : "Save",
+            label: isThai ? "บันทึก" : "Save",
             onClick: onSave,
           }
         : undefined,
@@ -470,9 +461,10 @@ class NotificationManagerClass {
    */
   slowConnection(locale?: string) {
     const loc = locale || this.defaultLocale;
-    const messages = WARNING_MESSAGES[loc as keyof typeof WARNING_MESSAGES] || WARNING_MESSAGES.th;
-
-    return this.warning(messages.slowConnection);
+    const isThai = loc === "th";
+    const message = isThai ? "การเชื่อมต่ออินเทอร์เน็ตช้า" : "Slow internet connection";
+    
+    return this.warning(message);
   }
 
   /**
@@ -480,12 +472,13 @@ class NotificationManagerClass {
    */
   lowQuality(locale?: string, onReupload?: () => void) {
     const loc = locale || this.defaultLocale;
-    const messages = WARNING_MESSAGES[loc as keyof typeof WARNING_MESSAGES] || WARNING_MESSAGES.th;
+    const isThai = loc === "th";
+    const message = isThai ? "คุณภาพของรูปภาพต่ำ" : "Low image quality";
 
-    return this.warning(messages.lowQuality, {
+    return this.warning(message, {
       action: onReupload
         ? {
-            label: loc === "th" ? "อัปโหลดใหม่" : "Re-upload",
+            label: isThai ? "อัปโหลดใหม่" : "Re-upload",
             onClick: onReupload,
           }
         : undefined,
@@ -501,9 +494,10 @@ class NotificationManagerClass {
    */
   processing(locale?: string) {
     const loc = locale || this.defaultLocale;
-    const messages = INFO_MESSAGES[loc as keyof typeof INFO_MESSAGES] || INFO_MESSAGES.th;
-
-    return this.loading(messages.processing);
+    const isThai = loc === "th";
+    const message = isThai ? "กำลังประมวลผล..." : "Processing...";
+    
+    return this.loading(message);
   }
 
   /**
@@ -511,9 +505,10 @@ class NotificationManagerClass {
    */
   uploading(locale?: string) {
     const loc = locale || this.defaultLocale;
-    const messages = INFO_MESSAGES[loc as keyof typeof INFO_MESSAGES] || INFO_MESSAGES.th;
-
-    return this.loading(messages.uploading);
+    const isThai = loc === "th";
+    const message = isThai ? "กำลังอัปโหลด..." : "Uploading...";
+    
+    return this.loading(message);
   }
 
   /**
@@ -521,9 +516,10 @@ class NotificationManagerClass {
    */
   saving(locale?: string) {
     const loc = locale || this.defaultLocale;
-    const messages = INFO_MESSAGES[loc as keyof typeof INFO_MESSAGES] || INFO_MESSAGES.th;
-
-    return this.loading(messages.saving);
+    const isThai = loc === "th";
+    const message = isThai ? "กำลังบันทึก..." : "Saving...";
+    
+    return this.loading(message);
   }
 }
 

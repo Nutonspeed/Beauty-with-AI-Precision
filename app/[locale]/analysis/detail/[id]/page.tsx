@@ -761,6 +761,7 @@ export default function AnalysisDetailPage({ params }: Readonly<AnalysisDetailPa
         // Use new professional PDF export
         await downloadAnalysisPDF(
           analysis,
+          t.raw('analysis.report') || {},
           {
             locale: locale as 'th' | 'en',
             clientInfo: customerInfo ? {

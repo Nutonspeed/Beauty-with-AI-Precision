@@ -13,99 +13,15 @@ import {
   type Commission,
 } from '@/lib/referral-loyalty-calculator';
 
-const translations = {
-  en: {
-    title: 'Referral & Loyalty Program',
-    referralCode: 'Your Referral Code',
-    copy: 'Copy Code',
-    copied: 'Copied!',
-    loyaltyPoints: 'Loyalty Points',
-    currentTier: 'Current Tier',
-    referrals: 'Referrals',
-    achievements: 'Achievements',
-    myReferrals: 'My Referrals',
-    commission: 'Commission',
-    pendingCommission: 'Pending Commission',
-    paidCommission: 'Paid Commission',
-    pointsBalance: 'Points Balance',
-    pointsEarned: 'Points Earned',
-    pointsRedeemed: 'Points Redeemed',
-    tierProgress: 'Tier Progress',
-    nextTier: 'Next Tier',
-    benefits: 'Tier Benefits',
-    discount: 'Discount',
-    multiplier: 'Points Multiplier',
-    freeConsultations: 'Free Consultations',
-    priorityBooking: 'Priority Booking',
-    exclusiveDeals: 'Exclusive Deals',
-    referralBonus: 'Referral Bonus',
-    earnMore: 'Earn More Points',
-    redeemRewards: 'Redeem Rewards',
-    shareCode: 'Share Your Code',
-    referralHistory: 'Referral History',
-    status: 'Status',
-    amount: 'Amount',
-    date: 'Date',
-    pending: 'Pending',
-    completed: 'Completed',
-    cancelled: 'Cancelled',
-    noReferrals: 'No referrals yet. Start sharing your code!',
-    topPerformers: 'Top Performers',
-    rank: 'Rank',
-    earnings: 'Earnings',
-  },
-  th: {
-    title: 'โปรแกรมอ้างอิง & ความเที่ยงตรง',
-    referralCode: 'รหัสอ้างอิงของคุณ',
-    copy: 'คัดลอกรหัส',
-    copied: 'คัดลอกแล้ว!',
-    loyaltyPoints: 'คะแนนความเที่ยงตรง',
-    currentTier: 'ระดับปัจจุบัน',
-    referrals: 'การอ้างอิง',
-    achievements: 'ความสำเร็จ',
-    myReferrals: 'การอ้างอิงของฉัน',
-    commission: 'ค่าคอมมิชชัน',
-    pendingCommission: 'ค่าคอมมิชชันที่รอดำเนินการ',
-    paidCommission: 'ค่าคอมมิชชันที่ชำระแล้ว',
-    pointsBalance: 'ยอดคะแนน',
-    pointsEarned: 'คะแนนที่ได้รับ',
-    pointsRedeemed: 'คะแนนที่ใช้แล้ว',
-    tierProgress: 'ความก้าวหน้าระดับ',
-    nextTier: 'ระดับถัดไป',
-    benefits: 'ประโยชน์ของระดับ',
-    discount: 'ส่วนลด',
-    multiplier: 'ตัวคูณคะแนน',
-    freeConsultations: 'คำปรึกษาฟรี',
-    priorityBooking: 'การจองลำดับความสำคัญ',
-    exclusiveDeals: 'ข้อเสนอแต่เฉพาะ',
-    referralBonus: 'โบนัสอ้างอิง',
-    earnMore: 'รับคะแนนเพิ่มเติม',
-    redeemRewards: 'แลกรางวัล',
-    shareCode: 'แบ่งปันรหัสของคุณ',
-    referralHistory: 'ประวัติการอ้างอิง',
-    status: 'สถานะ',
-    amount: 'จำนวนเงิน',
-    date: 'วันที่',
-    pending: 'รอดำเนินการ',
-    completed: 'เสร็จสิ้น',
-    cancelled: 'ยกเลิก',
-    noReferrals: 'ยังไม่มีการอ้างอิง เริ่มแบ่งปันรหัสของคุณ!',
-    topPerformers: 'ผู้ปฏิบัติงานเยี่ยมที่สุด',
-    rank: 'อันดับ',
-    earnings: 'รายได้',
-  },
-};
-
-type Locale = 'en' | 'th';
-
 export interface ReferralLoyaltyDisplayProps {
-  readonly language?: 'en' | 'th';
   readonly onReferralsChange?: (referrals: Referral[]) => void;
 }
 
-export default function ReferralLoyaltyDisplay({ language = 'en', onReferralsChange: _onReferralsChange }: ReferralLoyaltyDisplayProps) {
-  const locale = language as Locale;
-  const t = translations[locale] ?? translations.en;
+import { useTranslations, useLocale } from 'next-intl';
+
+export default function ReferralLoyaltyDisplay({ onReferralsChange: _onReferralsChange }: ReferralLoyaltyDisplayProps) {
+  const t = useTranslations('referralLoyalty');
+  const locale = useLocale();
 
   // State
   const [referralCode] = useState<ReferralCode>(
@@ -264,19 +180,19 @@ export default function ReferralLoyaltyDisplay({ language = 'en', onReferralsCha
       {/* Referral Code Section */}
       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200 p-8">
         <h2 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-2">
-          🔗 {t.shareCode}
+          🔗 {t('shareCode')}
         </h2>
 
         <div className="bg-white rounded-lg p-6 flex items-center justify-between border-2 border-dashed border-blue-300">
           <div>
-            <p className="text-sm text-slate-600 mb-2">{t.referralCode}</p>
+            <p className="text-sm text-slate-600 mb-2">{t('referralCode')}</p>
             <p className="text-3xl font-bold text-blue-600 font-mono">{referralCode.code}</p>
           </div>
           <button
             onClick={handleCopyCode}
             className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold"
           >
-            {copied ? `✓ ${t.copied}` : t.copy}
+            {copied ? `✓ ${t('copied')}` : t('copy')}
           </button>
         </div>
       </div>
@@ -286,22 +202,22 @@ export default function ReferralLoyaltyDisplay({ language = 'en', onReferralsCha
         {/* Loyalty Points Card */}
         <div className="bg-white rounded-lg border border-slate-200 p-6">
           <h3 className="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
-            ⭐ {t.loyaltyPoints}
+            ⭐ {t('loyaltyPoints')}
           </h3>
 
           <div className="space-y-4">
             <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-lg p-4 border border-amber-200">
-              <p className="text-sm text-slate-600 mb-1">{t.pointsBalance}</p>
+              <p className="text-sm text-slate-600 mb-1">{t('pointsBalance')}</p>
               <p className="text-4xl font-bold text-orange-600">{loyaltyPoints.balance}</p>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-green-50 rounded-lg p-3 border border-green-200">
-                <p className="text-xs text-slate-600 mb-1">{t.pointsEarned}</p>
+                <p className="text-xs text-slate-600 mb-1">{t('pointsEarned')}</p>
                 <p className="text-2xl font-bold text-green-600">{loyaltyPoints.earned}</p>
               </div>
               <div className="bg-red-50 rounded-lg p-3 border border-red-200">
-                <p className="text-xs text-slate-600 mb-1">{t.pointsRedeemed}</p>
+                <p className="text-xs text-slate-600 mb-1">{t('pointsRedeemed')}</p>
                 <p className="text-2xl font-bold text-red-600">{loyaltyPoints.redeemed}</p>
               </div>
             </div>
@@ -311,17 +227,17 @@ export default function ReferralLoyaltyDisplay({ language = 'en', onReferralsCha
         {/* Tier Status Card */}
         <div className="bg-white rounded-lg border border-slate-200 p-6">
           <h3 className="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
-            {getTierBadge(userTier.currentTier)} {t.currentTier}
+            {getTierBadge(userTier.currentTier)} {t('currentTier')}
           </h3>
 
           <div className={`rounded-lg p-4 mb-4 border-2 ${getTierColor(userTier.currentTier)}`}>
             <p className="text-sm font-semibold capitalize">{userTier.currentTier} Tier</p>
-            <p className="text-2xl font-bold mt-1">${userTier.spentAmount}</p>
+            <p className="text-2xl font-bold mt-1">{t('currencySymbol') || '฿'}{userTier.spentAmount.toLocaleString()}</p>
           </div>
 
           <div className="space-y-2">
             <div className="flex justify-between text-xs text-slate-600">
-              <span>{t.tierProgress}</span>
+              <span>{t('tierProgress')}</span>
               <span>{Math.round(tierProgress.progress)}%</span>
             </div>
             <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
@@ -330,7 +246,7 @@ export default function ReferralLoyaltyDisplay({ language = 'en', onReferralsCha
               />
             </div>
             <p className="text-xs text-slate-600 mt-2">
-              {t.nextTier}: ${tierProgress.nextThreshold}
+              {t('nextTier')}: {t('currencySymbol') || '฿'}{tierProgress.nextThreshold.toLocaleString()}
             </p>
           </div>
         </div>
@@ -338,18 +254,18 @@ export default function ReferralLoyaltyDisplay({ language = 'en', onReferralsCha
         {/* Commission Card */}
         <div className="bg-white rounded-lg border border-slate-200 p-6">
           <h3 className="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
-            💰 {t.commission}
+            💰 {t('commission')}
           </h3>
 
           <div className="space-y-4">
             <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4 border border-green-200">
-              <p className="text-sm text-slate-600 mb-1">{t.pendingCommission}</p>
-              <p className="text-3xl font-bold text-green-600">${commissionSummary.pending}</p>
+              <p className="text-sm text-slate-600 mb-1">{t('pendingCommission')}</p>
+              <p className="text-3xl font-bold text-green-600">{t('currencySymbol') || '฿'}{commissionSummary.pending.toLocaleString()}</p>
             </div>
 
             <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg p-4 border border-blue-200">
-              <p className="text-sm text-slate-600 mb-1">{t.paidCommission}</p>
-              <p className="text-3xl font-bold text-blue-600">${commissionSummary.paid}</p>
+              <p className="text-sm text-slate-600 mb-1">{t('paidCommission')}</p>
+              <p className="text-3xl font-bold text-blue-600">{t('currencySymbol') || '฿'}{commissionSummary.paid.toLocaleString()}</p>
             </div>
           </div>
         </div>
@@ -357,31 +273,31 @@ export default function ReferralLoyaltyDisplay({ language = 'en', onReferralsCha
 
       {/* Tier Benefits */}
       <div className="bg-white rounded-lg border border-slate-200 p-6">
-        <h3 className="text-lg font-semibold text-slate-800 mb-4">{t.benefits}</h3>
+        <h3 className="text-lg font-semibold text-slate-800 mb-4">{t('benefits')}</h3>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           <div className="p-4 bg-slate-50 rounded-lg">
-            <p className="text-sm text-slate-600 mb-2">{t.discount}</p>
+            <p className="text-sm text-slate-600 mb-2">{t('discount')}</p>
             <p className="text-2xl font-bold text-slate-900">{tierBenefits.discountPercentage}%</p>
           </div>
           <div className="p-4 bg-slate-50 rounded-lg">
-            <p className="text-sm text-slate-600 mb-2">{t.multiplier}</p>
+            <p className="text-sm text-slate-600 mb-2">{t('multiplier')}</p>
             <p className="text-2xl font-bold text-slate-900">x{tierBenefits.pointsMultiplier}</p>
           </div>
           <div className="p-4 bg-slate-50 rounded-lg">
-            <p className="text-sm text-slate-600 mb-2">{t.freeConsultations}</p>
+            <p className="text-sm text-slate-600 mb-2">{t('freeConsultations')}</p>
             <p className="text-2xl font-bold text-slate-900">{tierBenefits.freeConsultations}</p>
           </div>
           <div className="p-4 bg-slate-50 rounded-lg">
-            <p className="text-sm text-slate-600 mb-2">{t.priorityBooking}</p>
+            <p className="text-sm text-slate-600 mb-2">{t('priorityBooking')}</p>
             <p className="text-2xl font-bold text-slate-900">{tierBenefits.priorityBooking ? '✓' : '✗'}</p>
           </div>
           <div className="p-4 bg-slate-50 rounded-lg">
-            <p className="text-sm text-slate-600 mb-2">{t.exclusiveDeals}</p>
+            <p className="text-sm text-slate-600 mb-2">{t('exclusiveDeals')}</p>
             <p className="text-2xl font-bold text-slate-900">{tierBenefits.exclusiveDeals ? '✓' : '✗'}</p>
           </div>
           <div className="p-4 bg-slate-50 rounded-lg">
-            <p className="text-sm text-slate-600 mb-2">{t.referralBonus}</p>
+            <p className="text-sm text-slate-600 mb-2">{t('referralBonus')}</p>
             <p className="text-2xl font-bold text-slate-900">{tierBenefits.referralBonusPercentage}%</p>
           </div>
         </div>
@@ -390,7 +306,7 @@ export default function ReferralLoyaltyDisplay({ language = 'en', onReferralsCha
       {/* Commission Chart */}
       {chartData.length > 0 && (
         <div className="bg-white rounded-lg border border-slate-200 p-6">
-          <h3 className="text-lg font-semibold text-slate-800 mb-4">Commission Trend</h3>
+          <h3 className="text-lg font-semibold text-slate-800 mb-4">{t('commissionTrend') || 'Commission Trend'}</h3>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -398,7 +314,7 @@ export default function ReferralLoyaltyDisplay({ language = 'en', onReferralsCha
               <YAxis />
               <Tooltip />
               <Legend />
-              <Line type="monotone" dataKey="cumulative" stroke="#3b82f6" name="Cumulative Commission" />
+              <Line type="monotone" dataKey="cumulative" stroke="#3b82f6" name={t('paidCommission')} />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -407,14 +323,14 @@ export default function ReferralLoyaltyDisplay({ language = 'en', onReferralsCha
       {/* Achievements */}
       {achievements.length > 0 && (
         <div className="bg-white rounded-lg border border-slate-200 p-6">
-          <h3 className="text-lg font-semibold text-slate-800 mb-4">{t.achievements}</h3>
+          <h3 className="text-lg font-semibold text-slate-800 mb-4">{t('achievements')}</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {achievements.map((achievement) => (
               <div key={achievement.id} className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg p-4 border border-amber-200">
                 <p className="text-4xl mb-2">{achievement.badge}</p>
                 <p className="font-semibold text-slate-800 capitalize">{achievement.type.replace('-', ' ')}</p>
-                <p className="text-sm text-slate-600 mt-2">+{achievement.pointsReward} Points</p>
-                <p className="text-xs text-slate-500 mt-1">{achievement.earnedAt.toLocaleDateString()}</p>
+                <p className="text-sm text-slate-600 mt-2">+{achievement.pointsReward} {t('points') || 'Points'}</p>
+                <p className="text-xs text-slate-500 mt-1">{achievement.earnedAt.toLocaleDateString(locale === 'th' ? 'th-TH' : 'en-US')}</p>
               </div>
             ))}
           </div>
@@ -423,24 +339,24 @@ export default function ReferralLoyaltyDisplay({ language = 'en', onReferralsCha
 
       {/* Referral History */}
       <div className="bg-white rounded-lg border border-slate-200 p-6">
-        <h3 className="text-lg font-semibold text-slate-800 mb-4">{t.myReferrals}</h3>
+        <h3 className="text-lg font-semibold text-slate-800 mb-4">{t('myReferrals')}</h3>
 
         {referrals.length === 0 ? (
-          <p className="text-center text-slate-600 py-8">{t.noReferrals}</p>
+          <p className="text-center text-slate-600 py-8">{t('noReferrals')}</p>
         ) : (
           <div className="space-y-3">
             {referrals.map((referral, _idx) => (
               <div key={referral.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-200">
                 <div>
                   <p className="font-semibold text-slate-900">{referral.referredUserId}</p>
-                  <p className="text-xs text-slate-600">{referral.createdAt.toLocaleDateString()}</p>
+                  <p className="text-xs text-slate-600">{referral.createdAt.toLocaleDateString(locale === 'th' ? 'th-TH' : 'en-US')}</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold text-slate-900">${referral.totalRevenue}</p>
+                  <p className="font-bold text-slate-900">{t('currencySymbol') || '฿'}{referral.totalRevenue.toLocaleString()}</p>
                   <span
                     className={`text-xs font-semibold px-2 py-1 rounded ${getStatusColorClass(referral.status)}`}
                   >
-                    {referral.status}
+                    {t(referral.status) || referral.status}
                   </span>
                 </div>
               </div>

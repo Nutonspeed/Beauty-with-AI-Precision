@@ -7,16 +7,6 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { useTranslations } from "next-intl"
 import { cn } from "@/lib/utils"
-import dynamic from 'next/dynamic'
-
-// @ts-ignore
-const ResponsiveContainer = dynamic(() => import('recharts').then(mod => mod.ResponsiveContainer), { ssr: false });
-// @ts-ignore
-const PieChart = dynamic(() => import('recharts').then(mod => mod.PieChart), { ssr: false });
-// @ts-ignore
-const Pie = dynamic(() => import('recharts').then(mod => mod.Pie), { ssr: false });
-// @ts-ignore
-const Cell = dynamic(() => import('recharts').then(mod => mod.Cell), { ssr: false });
 
 interface Asset {
   id: string

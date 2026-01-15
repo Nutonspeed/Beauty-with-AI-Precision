@@ -109,7 +109,7 @@ export default function SubscriptionManagement() {
     } finally {
       setLoading(false);
     }
-  }, [toast]);
+  }, [toast, t]);
 
   const filterSubscriptions = useCallback(() => {
     let filtered = [...subscriptions];

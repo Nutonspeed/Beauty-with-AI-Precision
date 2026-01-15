@@ -52,68 +52,6 @@ interface PresentationModeProps {
   onClose?: () => void;
 }
 
-const PROGRAM_PACKAGES = [
-  {
-    id: 'basic',
-    name: { en: 'Basic Care', th: 'ดูแลพื้นฐาน' },
-    badge: { en: 'Popular', th: 'ยอดนิยม' },
-    badgeColor: 'bg-blue-500',
-    programs: [
-      { name: { en: 'Aesthetic Cleansing', th: 'ทำความสะอาดผิวอัจฉริยะ' }, sessions: 4 },
-      { name: { en: 'AI-Guided Serum', th: 'เซรั่มสูตร AI' }, sessions: 8 },
-      { name: { en: 'Hydration Protocol', th: 'โปรโตคอลเติมความชุ่มชื้น' }, sessions: 4 },
-    ],
-    duration: { weeks: 8, months: 2 },
-    price: 12000,
-    perSession: 1500,
-    sessions: 8,
-    improvement: 25,
-    effectiveness: { spots: 40, pores: 30, wrinkles: 20, texture: 50, redness: 35 },
-  },
-  {
-    id: 'advanced',
-    name: { en: 'Advanced Aesthetic', th: 'การดูแลขั้นสูง' },
-    badge: { en: 'Best Value', th: 'คุ้มค่าที่สุด' },
-    badgeColor: 'bg-green-500',
-    programs: [
-      { name: { en: 'Precision Laser', th: 'เลเซอร์ความแม่นยำสูง' }, sessions: 6 },
-      { name: { en: 'Smart Skin Resurfacing', th: 'ผลัดเซลล์ผิวอัจฉริยะ' }, sessions: 4 },
-      { name: { en: 'Acoustic Wave Therapy', th: 'คลื่นเสียงบำบัด' }, sessions: 6 },
-      { name: { en: 'Bio-Light Therapy', th: 'บำบัดด้วยแสงชีวภาพ' }, sessions: 8 },
-    ],
-    duration: { weeks: 12, months: 3 },
-    price: 35000,
-    perSession: 2917,
-    sessions: 12,
-    improvement: 60,
-    effectiveness: { spots: 75, pores: 65, wrinkles: 55, texture: 80, redness: 70 },
-    discount: 15,
-    originalPrice: 41200,
-  },
-  {
-    id: 'premium',
-    name: { en: 'Aesthetic Intelligence', th: 'โปรแกรมอัจฉริยะสูงสุด' },
-    badge: { en: 'Comprehensive', th: 'ครบวงจร' },
-    badgeColor: 'bg-purple-500',
-    programs: [
-      { name: { en: 'Neural Skin Repair', th: 'ซ่อมแซมผิวระดับเซลล์' }, sessions: 4 },
-      { name: { en: 'Dynamic Muscle Modulation', th: 'ปรับกล้ามเนื้อใบหน้า' }, sessions: 2 },
-      { name: { en: 'Volume Orchestration', th: 'ปรับรูปหน้าอัจฉริยะ' }, sessions: 2 },
-      { name: { en: 'Regenerative Complex', th: 'รีเจนเนอเรทีฟคอมเพล็กซ์' }, sessions: 4 },
-      { name: { en: 'Digital Micro-needling', th: 'ไมโครนีดเดิ้ลระบบดิจิทัล' }, sessions: 6 },
-      { name: { en: 'AI Bio-Homecare Kit', th: 'ชุดดูแลต่อเนื่องที่บ้าน' }, sessions: 1 },
-    ],
-    duration: { weeks: 16, months: 4 },
-    price: 85000,
-    perSession: 4473,
-    sessions: 19,
-    improvement: 85,
-    effectiveness: { spots: 90, pores: 85, wrinkles: 80, texture: 95, redness: 85 },
-    discount: 20,
-    originalPrice: 106250,
-  },
-];
-
 export function PresentationMode({
   analysis,
   comparisonAnalysis,
@@ -125,9 +63,73 @@ export function PresentationMode({
   onPrint,
   onClose,
 }: PresentationModeProps) {
-  const t = useTranslations();
+  const t = useTranslations('presentationMode');
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [currentTab, setCurrentTab] = useState('overview');
+
+  const getProgramPackages = () => [
+    {
+      id: 'basic',
+      name: t('packages.basic.name'),
+      badge: t('packages.basic.badge'),
+      badgeColor: 'bg-blue-500',
+      programs: [
+        { name: t('packages.basic.programs.cleansing'), sessions: 4 },
+        { name: t('packages.basic.programs.serum'), sessions: 8 },
+        { name: t('packages.basic.programs.hydration'), sessions: 4 },
+      ],
+      duration: { weeks: 8, months: 2 },
+      price: 12000,
+      perSession: 1500,
+      sessions: 8,
+      improvement: 25,
+      effectiveness: { spots: 40, pores: 30, wrinkles: 20, texture: 50, redness: 35 },
+    },
+    {
+      id: 'advanced',
+      name: t('packages.advanced.name'),
+      badge: t('packages.advanced.badge'),
+      badgeColor: 'bg-green-500',
+      programs: [
+        { name: t('packages.advanced.programs.laser'), sessions: 6 },
+        { name: t('packages.advanced.programs.resurfacing'), sessions: 4 },
+        { name: t('packages.advanced.programs.acoustic'), sessions: 6 },
+        { name: t('packages.advanced.programs.biolight'), sessions: 8 },
+      ],
+      duration: { weeks: 12, months: 3 },
+      price: 35000,
+      perSession: 2917,
+      sessions: 12,
+      improvement: 60,
+      effectiveness: { spots: 75, pores: 65, wrinkles: 55, texture: 80, redness: 70 },
+      discount: 15,
+      originalPrice: 41200,
+    },
+    {
+      id: 'premium',
+      name: t('packages.premium.name'),
+      badge: t('packages.premium.badge'),
+      badgeColor: 'bg-purple-500',
+      programs: [
+        { name: t('packages.premium.programs.repair'), sessions: 4 },
+        { name: t('packages.premium.programs.muscle'), sessions: 2 },
+        { name: t('packages.premium.programs.volume'), sessions: 2 },
+        { name: t('packages.premium.programs.regenerative'), sessions: 4 },
+        { name: t('packages.premium.programs.microneedling'), sessions: 6 },
+        { name: t('packages.premium.programs.homecare'), sessions: 1 },
+      ],
+      duration: { weeks: 16, months: 4 },
+      price: 85000,
+      perSession: 4473,
+      sessions: 19,
+      improvement: 85,
+      effectiveness: { spots: 90, pores: 85, wrinkles: 80, texture: 95, redness: 85 },
+      discount: 20,
+      originalPrice: 106250,
+    },
+  ];
+
+  const programPackages = getProgramPackages();
 
   // Handle fullscreen toggle
   const toggleFullscreen = useCallback(() => {
@@ -468,7 +470,7 @@ export function PresentationMode({
           {/* Programs Tab */}
           <TabsContent value="programs" className="space-y-6">
             <div className="grid gap-6 md:grid-cols-3">
-              {PROGRAM_PACKAGES.map((pkg) => (
+              {programPackages.map((pkg) => (
                 <Card
                   key={pkg.id}
                   className="relative overflow-hidden hover:shadow-lg transition-shadow"
@@ -477,29 +479,29 @@ export function PresentationMode({
                     <div
                       className={`absolute top-4 right-4 ${pkg.badgeColor} text-white px-3 py-1 rounded-full text-xs font-bold`}
                     >
-                      {pkg.badge[locale]}
+                      {pkg.badge}
                     </div>
                   )}
                   <CardHeader>
-                    <CardTitle>{pkg.name[locale]}</CardTitle>
+                    <CardTitle>{pkg.name}</CardTitle>
                     <div className="text-3xl font-bold text-primary">
-                      {t('presentationMode.baht')}
+                      {t('baht')}
                       {pkg.price.toLocaleString()}
                     </div>
                     {pkg.discount && (
                       <div className="text-sm text-muted-foreground line-through">
-                        {t('presentationMode.baht')}
+                        {t('baht')}
                         {pkg.originalPrice?.toLocaleString()}
                       </div>
                     )}
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="space-y-2">
-                      {pkg.programs.map((program, idx) => (
+                      {pkg.programs.map((program: any, idx: number) => (
                         <div key={idx} className="flex justify-between text-sm">
-                          <span>{program.name[locale]}</span>
+                          <span>{program.name}</span>
                           <span className="text-muted-foreground">
-                            {program.sessions} {t('presentationMode.sessions')}
+                            {program.sessions} {t('sessions')}
                           </span>
                         </div>
                       ))}
@@ -547,30 +549,30 @@ export function PresentationMode({
           <TabsContent value="pricing" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>{t('presentationMode.estimatedCost')}</CardTitle>
+                <CardTitle>{t('estimatedCost')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {PROGRAM_PACKAGES.map((pkg) => (
+                  {programPackages.map((pkg) => (
                     <div
                       key={pkg.id}
                       className="p-4 rounded-lg border bg-gradient-to-r from-muted/30 to-muted/10 hover:border-primary transition-colors"
                     >
                       <div className="flex items-start justify-between mb-3">
                         <div>
-                          <div className="font-semibold text-lg">{pkg.name[locale]}</div>
+                          <div className="font-semibold text-lg">{pkg.name}</div>
                           <div className="text-sm text-muted-foreground">
-                            {pkg.sessions} {t('presentationMode.sessions')} • {pkg.duration.weeks} {t('presentationMode.weeks')}
+                            {pkg.sessions} {t('sessions')} • {pkg.duration.weeks} {t('weeks')}
                           </div>
                         </div>
                         <div className="text-right">
                           <div className="text-2xl font-bold text-primary">
-                            {t('presentationMode.baht')}
+                            {t('baht')}
                             {pkg.price.toLocaleString()}
                           </div>
                           {pkg.discount && (
                             <Badge variant="default" className="bg-green-500 mt-1">
-                              {t('presentationMode.save')} {pkg.discount}%
+                              {t('save')} {pkg.discount}%
                             </Badge>
                           )}
                         </div>
@@ -597,20 +599,20 @@ export function PresentationMode({
           <TabsContent value="timeline" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>{t('presentationMode.programPlan')}</CardTitle>
+                <CardTitle>{t('programPlan')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-8">
-                  {PROGRAM_PACKAGES.map((pkg, pkgIdx) => (
+                  {programPackages.map((pkg, pkgIdx) => (
                     <div key={pkg.id}>
                       <div className="flex items-center gap-3 mb-4">
                         <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">
                           {pkgIdx + 1}
                         </div>
                         <div>
-                          <div className="font-semibold">{pkg.name[locale]}</div>
+                          <div className="font-semibold">{pkg.name}</div>
                           <div className="text-sm text-muted-foreground">
-                            {pkg.duration.months} {t('presentationMode.months')} {t('presentationMode.timeline')}
+                            {pkg.duration.months} {t('months')} {t('timeline')}
                           </div>
                         </div>
                       </div>
@@ -625,10 +627,10 @@ export function PresentationMode({
                               {idx + 1}
                             </div>
                             <div className="flex-1">
-                              <div className="font-medium">{program.name[locale]}</div>
+                              <div className="font-medium">{program.name}</div>
                             </div>
                             <div className="text-sm text-muted-foreground">
-                              {program.sessions} {t('presentationMode.sessions')}
+                              {program.sessions} {t('sessions')}
                             </div>
                           </div>
                         ))}
@@ -636,10 +638,10 @@ export function PresentationMode({
                         <div className="p-3 rounded-lg bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/30">
                           <div className="flex items-center justify-between">
                             <span className="text-sm font-medium">
-                              {t('presentationMode.expectedResults')}
+                              {t('expectedResults')}
                             </span>
                             <span className="text-lg font-bold text-green-600">
-                              +{pkg.improvement}% {t('presentationMode.improvement')}
+                              +{pkg.improvement}% {t('improvement')}
                             </span>
                           </div>
                         </div>

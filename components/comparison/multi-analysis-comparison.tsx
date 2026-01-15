@@ -5,6 +5,7 @@
 
 'use client';
 
+import { useTranslations, useLocale } from 'next-intl';
 import React, { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -56,94 +57,15 @@ interface MultiAnalysisComparisonProps {
   onClose?: () => void;
 }
 
-const TRANSLATIONS = {
-  en: {
-    title: 'Multi-Analysis Comparison',
-    description: 'Compare multiple analyses to track your progress',
-    loading: 'Loading comparison data...',
-    error: 'Failed to load comparison',
-    retry: 'Retry',
-    sideBySide: 'Side-by-Side',
-    metrics: 'Metrics',
-    timeline: 'Timeline',
-    improvements: 'Improvements',
-    session: 'Session',
-    date: 'Date',
-    score: 'Score',
-  parameterHeading: 'Parameter',
-    change: 'Change from previous',
-    overall: 'Overall Change',
-    improving: 'Improving',
-    declining: 'Declining',
-    stable: 'Stable',
-    noChange: 'No significant change',
-    parameters: {
-      spots: 'Dark Spots',
-      pores: 'Pore Size',
-      wrinkles: 'Wrinkles',
-      texture: 'Skin Texture',
-      redness: 'Redness',
-      overall_score: 'Overall Score'
-    },
-    summary: {
-      totalAnalyses: 'Total Analyses',
-      timeSpan: 'Time Span',
-      overallImprovement: 'Overall Improvement',
-      improvingParams: 'Improving Parameters',
-      decliningParams: 'Declining Parameters',
-      stableParams: 'Stable Parameters'
-    },
-    days: 'days',
-    close: 'Close'
-  },
-  th: {
-    title: 'เปรียบเทียบหลายการวิเคราะห์',
-    description: 'เปรียบเทียบหลายการวิเคราะห์เพื่อติดตามความคืบหน้า',
-    loading: 'กำลังโหลดข้อมูลเปรียบเทียบ...',
-    error: 'ไม่สามารถโหลดการเปรียบเทียบ',
-    retry: 'ลองใหม่',
-    sideBySide: 'เคียงข้างกัน',
-    metrics: 'ตัวชี้วัด',
-    timeline: 'เส้นเวลา',
-    improvements: 'การปรับปรุง',
-    session: 'เซสชัน',
-    date: 'วันที่',
-    score: 'คะแนน',
-  parameterHeading: 'พารามิเตอร์',
-    change: 'เปลี่ยนแปลงจากครั้งก่อน',
-    overall: 'การเปลี่ยนแปลงโดยรวม',
-    improving: 'ดีขึ้น',
-    declining: 'แย่ลง',
-    stable: 'คงที่',
-    noChange: 'ไม่มีการเปลี่ยนแปลงอย่างมีนัยสำคัญ',
-    parameters: {
-      spots: 'จุดด่างดำ',
-      pores: 'ขนาดรูขุมขน',
-      wrinkles: 'ริ้วรอย',
-      texture: 'พื้นผิวผิว',
-      redness: 'ความแดง',
-      overall_score: 'คะแนนรวม'
-    },
-    summary: {
-      totalAnalyses: 'การวิเคราะห์ทั้งหมด',
-      timeSpan: 'ช่วงเวลา',
-      overallImprovement: 'การปรับปรุงโดยรวม',
-      improvingParams: 'พารามิเตอร์ที่ดีขึ้น',
-      decliningParams: 'พารามิเตอร์ที่แย่ลง',
-      stableParams: 'พารามิเตอร์ที่คงที่'
-    },
-    days: 'วัน',
-    close: 'ปิด'
-  }
-};
+// // const TRANSLATIONS = {};
 
 export function MultiAnalysisComparison({
   userId,
   analysisIds,
-  locale = 'en',
   onClose
 }: MultiAnalysisComparisonProps) {
-  const t = TRANSLATIONS[locale];
+  const t = useTranslations('comparison');
+  const locale = useLocale() as 'en' | 'th';
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [analyses, setAnalyses] = useState<AnalysisData[]>([]);
@@ -199,7 +121,7 @@ export function MultiAnalysisComparison({
     return (
       <Badge className={getTrendColor(trend)}>
         {getTrendIcon(trend)}
-        <span className="ml-1">{t[trend]}</span>
+        <span className="ml-1">{t(trend)}</span>
       </Badge>
     );
   };
@@ -209,7 +131,7 @@ export function MultiAnalysisComparison({
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-12">
           <Loader2 className="w-12 h-12 animate-spin text-primary mb-4" />
-          <p className="text-lg font-medium">{t.loading}</p>
+          <p className="text-lg font-medium">{t('loading')}</p>
         </CardContent>
       </Card>
     );
@@ -220,9 +142,9 @@ export function MultiAnalysisComparison({
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-12">
           <AlertCircle className="w-12 h-12 text-destructive mb-4" />
-          <p className="text-lg font-medium mb-4">{t.error}</p>
+          <p className="text-lg font-medium mb-4">{t('error')}</p>
           <p className="text-sm text-muted-foreground mb-4">{error}</p>
-          <Button onClick={loadComparison}>{t.retry}</Button>
+          <Button onClick={loadComparison}>{t('retry')}</Button>
         </CardContent>
       </Card>
     );
@@ -235,12 +157,12 @@ export function MultiAnalysisComparison({
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>{t.title}</CardTitle>
-              <CardDescription>{t.description}</CardDescription>
+              <CardTitle>{t('title')}</CardTitle>
+              <CardDescription>{t('description')}</CardDescription>
             </div>
             {onClose && (
               <Button variant="outline" onClick={onClose}>
-                {t.close}
+                {t('close')}
               </Button>
             )}
           </div>
@@ -250,15 +172,15 @@ export function MultiAnalysisComparison({
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="p-4 bg-secondary rounded-lg">
-              <p className="text-sm text-muted-foreground mb-1">{t.summary.totalAnalyses}</p>
+              <p className="text-sm text-muted-foreground mb-1">{t('stats.totalAnalyses')}</p>
               <p className="text-3xl font-bold">{summary.analysisCount}</p>
             </div>
             <div className="p-4 bg-secondary rounded-lg">
-              <p className="text-sm text-muted-foreground mb-1">{t.summary.timeSpan}</p>
-              <p className="text-3xl font-bold">{summary.timeSpanDays} {t.days}</p>
+              <p className="text-sm text-muted-foreground mb-1">{t('stats.timeSpan')}</p>
+              <p className="text-3xl font-bold">{summary.timeSpanDays} {t('days')}</p>
             </div>
             <div className="p-4 bg-secondary rounded-lg">
-              <p className="text-sm text-muted-foreground mb-1">{t.summary.overallImprovement}</p>
+              <p className="text-sm text-muted-foreground mb-1">{t('stats.overallImprovement')}</p>
               <div className="flex items-center gap-2">
                 <p className="text-3xl font-bold">
                   {summary.overallImprovement > 0 ? '+' : ''}{summary.overallImprovement}%
@@ -276,11 +198,11 @@ export function MultiAnalysisComparison({
             <div className="flex items-start gap-3">
               <CheckCircle2 className="w-5 h-5 text-green-600 mt-0.5" />
               <div>
-                <p className="font-medium text-sm mb-1">{t.summary.improvingParams}</p>
+                <p className="font-medium text-sm mb-1">{t('stats.improvingParams')}</p>
                 <div className="flex flex-wrap gap-1">
                   {summary.improvingParameters.map((param: string) => (
                     <Badge key={param} variant="outline" className="text-xs">
-                      {t.parameters[param as keyof typeof t.parameters]}
+                      {t(`paramNames.${param}` as any)}
                     </Badge>
                   ))}
                   {summary.improvingParameters.length === 0 && (
@@ -293,11 +215,11 @@ export function MultiAnalysisComparison({
             <div className="flex items-start gap-3">
               <XCircle className="w-5 h-5 text-red-600 mt-0.5" />
               <div>
-                <p className="font-medium text-sm mb-1">{t.summary.decliningParams}</p>
+                <p className="font-medium text-sm mb-1">{t('stats.decliningParams')}</p>
                 <div className="flex flex-wrap gap-1">
                   {summary.decliningParameters.map((param: string) => (
                     <Badge key={param} variant="outline" className="text-xs">
-                      {t.parameters[param as keyof typeof t.parameters]}
+                      {t(`paramNames.${param}` as any)}
                     </Badge>
                   ))}
                   {summary.decliningParameters.length === 0 && (
@@ -310,11 +232,11 @@ export function MultiAnalysisComparison({
             <div className="flex items-start gap-3">
               <Minus className="w-5 h-5 text-gray-600 mt-0.5" />
               <div>
-                <p className="font-medium text-sm mb-1">{t.summary.stableParams}</p>
+                <p className="font-medium text-sm mb-1">{t('stats.stableParams')}</p>
                 <div className="flex flex-wrap gap-1">
                   {summary.stableParameters.map((param: string) => (
                     <Badge key={param} variant="outline" className="text-xs">
-                      {t.parameters[param as keyof typeof t.parameters]}
+                      {t(`paramNames.${param}` as any)}
                     </Badge>
                   ))}
                   {summary.stableParameters.length === 0 && (
@@ -330,10 +252,10 @@ export function MultiAnalysisComparison({
       {/* Comparison Tabs */}
       <Tabs defaultValue="sideBySide">
         <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="sideBySide">{t.sideBySide}</TabsTrigger>
-          <TabsTrigger value="metrics">{t.metrics}</TabsTrigger>
-          <TabsTrigger value="timeline">{t.timeline}</TabsTrigger>
-          <TabsTrigger value="improvements">{t.improvements}</TabsTrigger>
+          <TabsTrigger value="sideBySide">{t('sideBySide')}</TabsTrigger>
+          <TabsTrigger value="metrics">{t('metrics')}</TabsTrigger>
+          <TabsTrigger value="timeline">{t('timeline')}</TabsTrigger>
+          <TabsTrigger value="improvements">{t('improvements')}</TabsTrigger>
         </TabsList>
 
         {/* Side-by-Side Tab */}
@@ -345,7 +267,7 @@ export function MultiAnalysisComparison({
                   <div className="flex items-center justify-between">
                     <div>
                       <CardTitle className="text-lg">
-                        {t.session} {analysis.sessionNumber}
+                        {t('session')} {analysis.sessionNumber}
                       </CardTitle>
                       <CardDescription>
                         {new Date(analysis.createdAt).toLocaleDateString(locale, {
@@ -368,7 +290,7 @@ export function MultiAnalysisComparison({
                   <div className="relative w-full aspect-[4/3] bg-secondary rounded-lg overflow-hidden mb-4">
                     <Image
                       src={analysis.thumbnailUrl || analysis.imageUrl}
-                      alt={`${t.session} ${analysis.sessionNumber}`}
+                      alt={`${t('session')} ${analysis.sessionNumber}`}
                       fill
                       className="object-cover"
                     />
@@ -376,11 +298,11 @@ export function MultiAnalysisComparison({
 
                   {/* Metrics */}
                   <div className="space-y-2">
-                    {Object.entries(t.parameters).map(([key, label]) => {
+                    {Object.entries(t.raw('paramNames')).map(([key, label]) => {
                       const value = analysis.metrics[key as keyof typeof analysis.metrics];
                       return (
                         <div key={key} className="flex items-center justify-between">
-                          <span className="text-sm text-muted-foreground">{label}</span>
+                          <span className="text-sm text-muted-foreground">{label as string}</span>
                           <span className="font-medium">{value?.toFixed(1) || '—'}</span>
                         </div>
                       );
@@ -395,13 +317,13 @@ export function MultiAnalysisComparison({
           {analyses.length >= 2 && (
             <Card className="mt-6">
               <CardHeader>
-                <CardTitle>{t.overall}</CardTitle>
+                <CardTitle>{t('overall')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <BeforeAfterSlider
                   beforeImage={analyses[0].imageUrl}
                   afterImage={analyses[analyses.length - 1].imageUrl}
-                  title={`${t.session} ${analyses[0].sessionNumber} → ${t.session} ${analyses[analyses.length - 1].sessionNumber}`}
+                  title={`${t('session')} ${analyses[0].sessionNumber} → ${t('session')} ${analyses[analyses.length - 1].sessionNumber}`}
                   description={`${new Date(analyses[0].createdAt).toLocaleDateString(locale)} → ${new Date(analyses[analyses.length - 1].createdAt).toLocaleDateString(locale)}`}
                 />
               </CardContent>
@@ -417,13 +339,13 @@ export function MultiAnalysisComparison({
                 <table className="w-full">
                   <thead>
                     <tr className="border-b">
-                      <th className="text-left py-3 px-4">{t.parameterHeading}</th>
+                      <th className="text-left py-3 px-4">{t('parameterHeading')}</th>
                       {analyses.map((a) => (
                         <th key={a.id} className="text-center py-3 px-4">
-                          {t.session} {a.sessionNumber}
+                          {t('session')} {a.sessionNumber}
                         </th>
                       ))}
-                      <th className="text-center py-3 px-4">{t.change}</th>
+                      <th className="text-center py-3 px-4">{t('change')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -485,7 +407,7 @@ export function MultiAnalysisComparison({
                         <div className="flex items-start justify-between mb-2">
                           <div>
                             <h3 className="font-semibold text-lg">
-                              {t.session} {analysis.sessionNumber}
+                              {t('session')} {analysis.sessionNumber}
                             </h3>
                             <p className="text-sm text-muted-foreground flex items-center gap-2">
                               <Calendar className="w-4 h-4" />
@@ -501,14 +423,14 @@ export function MultiAnalysisComparison({
                         </div>
 
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-                          {Object.entries(t.parameters).slice(0, 5).map(([key, label]) => {
+                          {Object.entries(t.raw('paramNames')).slice(0, 5).map(([key, label]) => {
                             const value = analysis.metrics[key as keyof typeof analysis.metrics];
                             const prevValue = index > 0 ? analyses[index - 1].metrics[key as keyof typeof analysis.metrics] : null;
                             const change = prevValue !== null ? value - prevValue : 0;
 
                             return (
                               <div key={key} className="p-3 bg-secondary rounded-lg">
-                                <p className="text-xs text-muted-foreground mb-1">{label}</p>
+                                <p className="text-xs text-muted-foreground mb-1">{label as string}</p>
                                 <div className="flex items-baseline gap-2">
                                   <p className="text-xl font-bold">{value?.toFixed(1)}</p>
                                   {index > 0 && change !== 0 && (

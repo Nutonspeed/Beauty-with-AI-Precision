@@ -6,6 +6,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import {
   ProgramRecommendation,
   ProgramCategory,
@@ -58,13 +59,13 @@ const getPriorityColor = (priority: number): string => {
 /**
  * Get pain level indicator
  */
-const getPainLevelText = (level: number): string => {
-  if (level === 0) return 'ไม่มี';
-  if (level <= 2) return 'น้อยมาก';
-  if (level <= 4) return 'น้อย';
-  if (level <= 6) return 'ปานกลาง';
-  if (level <= 8) return 'มาก';
-  return 'มากที่สุด';
+const getPainLevelText = (level: number, t: any): string => {
+  if (level === 0) return t('painLevel.none');
+  if (level <= 2) return t('painLevel.veryLow');
+  if (level <= 4) return t('painLevel.low');
+  if (level <= 6) return t('painLevel.moderate');
+  if (level <= 8) return t('painLevel.high');
+  return t('painLevel.veryHigh');
 };
 
 /**
@@ -74,7 +75,8 @@ const ProgramCard: React.FC<{
   program: ProgramRecommendation;
   onSelect?: () => void;
   onBook?: () => void;
-}> = ({ program, onSelect, onBook }) => {
+  t: any;
+}> = ({ program, onSelect, onBook, t }) => {
   const [expanded, setExpanded] = useState(false);
 
   return (
@@ -92,7 +94,7 @@ const ProgramCard: React.FC<{
         </div>
         <div className="ml-4">
           <Badge className={getPriorityColor(program.priority)}>
-            Priority {program.priority.toFixed(1)}
+            {t('priorityLabel')} {program.priority.toFixed(1)}
           </Badge>
         </div>
       </div>
@@ -100,7 +102,7 @@ const ProgramCard: React.FC<{
       {/* Confidence Score */}
       <div className="mb-4">
         <div className="flex justify-between items-center mb-1">
-          <span className="text-sm font-medium text-gray-700">AI Confidence</span>
+          <span className="text-sm font-medium text-gray-700">{t('confidenceLabel')}</span>
           <span className="text-sm font-bold text-gray-900">
             {(program.confidence * 100).toFixed(0)}%
           </span>
@@ -111,35 +113,35 @@ const ProgramCard: React.FC<{
       {/* Reasoning */}
       <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
         <p className="text-sm text-gray-700">
-          <span className="font-semibold">เหตุผลที่แนะนำ:</span> {program.reasoning}
+          <span className="font-semibold">{t('reasoningLabel')}:</span> {program.reasoning}
         </p>
       </div>
 
       {/* Key Information Grid */}
       <div className="grid grid-cols-2 gap-4 mb-4">
         <div>
-          <p className="text-xs text-gray-500 mb-1">จำนวนครั้ง</p>
+          <p className="text-xs text-gray-500 mb-1">{t('sessionsLabel')}</p>
           <p className="text-sm font-semibold text-gray-900">
-            {program.sessions.recommended} sessions
+            {program.sessions.recommended} {t('sessionsUnit')}
           </p>
           <p className="text-xs text-gray-500">
-            ทุก {program.sessions.interval}
+            {t('intervalLabel')} {program.sessions.interval}
           </p>
         </div>
         <div>
-          <p className="text-xs text-gray-500 mb-1">ค่าใช้จ่าย</p>
+          <p className="text-xs text-gray-500 mb-1">{t('costLabel')}</p>
           <p className="text-sm font-semibold text-gray-900">
             ฿{program.cost.min.toLocaleString()} - ฿{program.cost.max.toLocaleString()}
           </p>
         </div>
         <div>
-          <p className="text-xs text-gray-500 mb-1">ระยะพักฟื้น</p>
+          <p className="text-xs text-gray-500 mb-1">{t('downtimeLabel')}</p>
           <p className="text-sm font-semibold text-gray-900">{program.downtime}</p>
         </div>
         <div>
-          <p className="text-xs text-gray-500 mb-1">ระดับความเจ็บ</p>
+          <p className="text-xs text-gray-500 mb-1">{t('painLabel')}</p>
           <p className="text-sm font-semibold text-gray-900">
-            {getPainLevelText(program.painLevel)} ({program.painLevel}/10)
+            {getPainLevelText(program.painLevel, t)} ({program.painLevel}/10)
           </p>
         </div>
       </div>
@@ -147,7 +149,7 @@ const ProgramCard: React.FC<{
       {/* Expected Results */}
       {program.expectedResults.length > 0 && (
         <div className="mb-4">
-          <h4 className="text-sm font-semibold text-gray-900 mb-2">ผลลัพธ์ที่คาดหวัง:</h4>
+          <h4 className="text-sm font-semibold text-gray-900 mb-2">{t('resultsLabel')}:</h4>
           <div className="space-y-2">
             {program.expectedResults.map((result, index) => (
               <div key={index} className="flex items-center justify-between text-sm">
@@ -167,7 +169,7 @@ const ProgramCard: React.FC<{
         <div className="mt-4 pt-4 border-t border-gray-200 space-y-3">
           {/* Target Metrics */}
           <div>
-            <h4 className="text-sm font-semibold text-gray-900 mb-2">ปัญหาที่ดูแล:</h4>
+            <h4 className="text-sm font-semibold text-gray-900 mb-2">{t('concernsLabel')}:</h4>
             <div className="flex flex-wrap gap-1">
               {program.targetMetrics.map((metric, index) => (
                 <Badge key={index} variant="outline" className="text-xs">
@@ -180,7 +182,7 @@ const ProgramCard: React.FC<{
           {/* Contraindications */}
           {program.contraindications.length > 0 && (
             <div>
-              <h4 className="text-sm font-semibold text-red-800 mb-2">ข้อห้าม:</h4>
+              <h4 className="text-sm font-semibold text-red-800 mb-2">{t('contraindicationsLabel')}:</h4>
               <ul className="list-disc list-inside text-sm text-gray-700 space-y-1">
                 {program.contraindications.map((contra, index) => (
                   <li key={index}>{contra}</li>
@@ -192,7 +194,7 @@ const ProgramCard: React.FC<{
           {/* Side Effects */}
           {program.sideEffects.length > 0 && (
             <div>
-              <h4 className="text-sm font-semibold text-orange-800 mb-2">ผลข้างเคียง:</h4>
+              <h4 className="text-sm font-semibold text-orange-800 mb-2">{t('sideEffectsLabel')}:</h4>
               <ul className="list-disc list-inside text-sm text-gray-700 space-y-1">
                 {program.sideEffects.map((effect, index) => (
                   <li key={index}>{effect}</li>
@@ -211,7 +213,7 @@ const ProgramCard: React.FC<{
           onClick={() => setExpanded(!expanded)}
           className="flex-1"
         >
-          {expanded ? 'ซ่อนรายละเอียด' : 'ดูรายละเอียด'}
+          {expanded ? t('hideDetails') : t('showDetails')}
         </Button>
         {onSelect && (
           <Button
@@ -220,7 +222,7 @@ const ProgramCard: React.FC<{
             onClick={onSelect}
             className="flex-1"
           >
-            เลือกรายการนี้
+            {t('selectProgram')}
           </Button>
         )}
         {onBook && (
@@ -230,7 +232,7 @@ const ProgramCard: React.FC<{
             onClick={onBook}
             className="flex-1 bg-pink-600 hover:bg-pink-700"
           >
-            จองคิว
+            {t('bookConsultation')}
           </Button>
         )}
       </div>
@@ -247,6 +249,8 @@ export const ProgramRecommendations: React.FC<ProgramRecommendationsProps> = ({
   onSelectProgram,
   onBookConsultation,
 }) => {
+  const t = useTranslations('programRecommendations');
+  const _commonT = useTranslations('common');
   const [filter, setFilter] = useState<ProgramCategory | 'all'>('all');
   const [sortBy, setSortBy] = useState<'priority' | 'cost' | 'pain'>('priority');
 
@@ -278,9 +282,9 @@ export const ProgramRecommendations: React.FC<ProgramRecommendationsProps> = ({
   if (recommendations.length === 0) {
     return (
       <Card className="p-8 text-center">
-        <p className="text-gray-500">ยังไม่มีคำแนะนำโปรแกรม</p>
+        <p className="text-gray-500">{t('emptyState')}</p>
         <p className="text-sm text-gray-400 mt-2">
-          กรุณาทำการวิเคราะห์ผิวเพื่อรับคำแนะนำที่เหมาะสม
+          {t('emptyStateDesc')}
         </p>
       </Card>
     );
@@ -291,11 +295,11 @@ export const ProgramRecommendations: React.FC<ProgramRecommendationsProps> = ({
       {/* Summary */}
       {summary && (
         <Card className="p-6 bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">สรุปคำแนะนำ</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('summaryTitle')}</h2>
           
           {/* Primary Concerns */}
           <div className="mb-4">
-            <h3 className="text-sm font-semibold text-gray-700 mb-2">ปัญหาหลัก:</h3>
+            <h3 className="text-sm font-semibold text-gray-700 mb-2">{t('primaryConcernsLabel')}:</h3>
             <div className="flex flex-wrap gap-2">
               {summary.primaryConcerns.map((concern, index) => (
                 <Badge key={index} className="bg-purple-100 text-purple-800 border-purple-300">
@@ -307,20 +311,20 @@ export const ProgramRecommendations: React.FC<ProgramRecommendationsProps> = ({
 
           {/* Recommended Plan */}
           <div className="mb-4">
-            <h3 className="text-sm font-semibold text-gray-700 mb-2">แผนงานโปรแกรมที่แนะนำ:</h3>
+            <h3 className="text-sm font-semibold text-gray-700 mb-2">{t('recommendedPlanLabel')}:</h3>
             <p className="text-gray-900">{summary.recommendedPlan}</p>
           </div>
 
           {/* Estimates */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="text-xs text-gray-600 mb-1">ค่าใช้จ่ายโดยประมาณ</p>
+              <p className="text-xs text-gray-600 mb-1">{t('estimatedCostLabel')}</p>
               <p className="text-lg font-bold text-gray-900">
                 ฿{summary.estimatedCost.min.toLocaleString()} - ฿{summary.estimatedCost.max.toLocaleString()}
               </p>
             </div>
             <div>
-              <p className="text-xs text-gray-600 mb-1">ระยะเวลาโดยประมาณ</p>
+              <p className="text-xs text-gray-600 mb-1">{t('estimatedDurationLabel')}</p>
               <p className="text-lg font-bold text-gray-900">{summary.estimatedDuration}</p>
             </div>
           </div>
@@ -336,7 +340,7 @@ export const ProgramRecommendations: React.FC<ProgramRecommendationsProps> = ({
               size="sm"
               onClick={() => setFilter('all')}
             >
-              ทั้งหมด ({recommendations.length})
+              {t('allFilter')} ({recommendations.length})
             </Button>
             {Object.values(ProgramCategory).map(category => {
               const count = recommendations.filter(r => r.category === category).length;
@@ -360,9 +364,9 @@ export const ProgramRecommendations: React.FC<ProgramRecommendationsProps> = ({
               onChange={(e) => setSortBy(e.target.value as 'priority' | 'cost' | 'pain')}
               className="px-3 py-1 text-sm border border-gray-300 rounded-md"
             >
-              <option value="priority">เรียงตามความสำคัญ</option>
-              <option value="cost">เรียงตามราคา</option>
-              <option value="pain">เรียงตามความเจ็บ</option>
+              <option value="priority">{t('sortOptions.priority')}</option>
+              <option value="cost">{t('sortOptions.cost')}</option>
+              <option value="pain">{t('sortOptions.pain')}</option>
             </select>
           </div>
         </div>
@@ -376,6 +380,7 @@ export const ProgramRecommendations: React.FC<ProgramRecommendationsProps> = ({
             program={program}
             onSelect={onSelectProgram ? () => onSelectProgram(program) : undefined}
             onBook={onBookConsultation ? () => onBookConsultation(program) : undefined}
+            t={t}
           />
         ))}
       </div>
@@ -383,7 +388,7 @@ export const ProgramRecommendations: React.FC<ProgramRecommendationsProps> = ({
       {/* No Results */}
       {filteredRecommendations.length === 0 && (
         <Card className="p-8 text-center">
-          <p className="text-gray-500">ไม่พบคำแนะนำตามเงื่อนไขที่เลือก</p>
+          <p className="text-gray-500">{t('noResults')}</p>
         </Card>
       )}
     </div>

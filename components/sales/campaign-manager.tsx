@@ -51,7 +51,7 @@ export function CampaignManager({ leads = [], onCampaignCreated }: CampaignManag
       const mockLeads: LeadData[] = [
         {
           id: '1',
-          name: 'สมใจ รักสวย',
+          name: 'Somjai Raksauy',
           email: 'somjai@email.com',
           phone: '081-234-5678',
           source: 'Facebook Ads',
@@ -77,7 +77,7 @@ export function CampaignManager({ leads = [], onCampaignCreated }: CampaignManag
         },
         {
           id: '2',
-          name: 'วิชัย ใจดี',
+          name: 'Wichai Jaidee',
           email: 'wichai@email.com',
           phone: '082-345-6789',
           source: 'Google Search',

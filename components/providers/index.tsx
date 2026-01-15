@@ -6,7 +6,14 @@
  */
 
 import { SupabaseAuthProvider } from './supabase-auth-provider'
+import { SmoothScroll } from './smooth-scroll'
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  return <SupabaseAuthProvider>{children}</SupabaseAuthProvider>
+  return (
+    <SupabaseAuthProvider>
+      <SmoothScroll>
+        {children}
+      </SmoothScroll>
+    </SupabaseAuthProvider>
+  )
 }

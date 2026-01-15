@@ -10,73 +10,15 @@ import {
   ReviewAggregation,
 } from '@/lib/review-analyzer';
 
-const translations = {
-  en: {
-    title: 'Reviews & Satisfaction System',
-    addReview: 'Add Review',
-    rating: 'Rating',
-    review: 'Review',
-    category: 'Category',
-    sentiment: 'Sentiment',
-    verified: 'Verified',
-    analyze: 'Analyze Reviews',
-    reset: 'Reset',
-    averageRating: 'Average Rating',
-    trustScore: 'Trust Score',
-    verifiedReviews: 'Verified Reviews',
-    recommendations: 'Likely to Recommend',
-    satisfactionStats: 'Satisfaction Statistics',
-    sentimentBreakdown: 'Sentiment Breakdown',
-    categoryRatings: 'Ratings by Category',
-    ratingDistribution: 'Rating Distribution',
-    npsScore: 'NPS Score',
-    keywordAnalysis: 'Keyword Analysis',
-    insights: 'Insights',
-    strengths: 'Strengths',
-    improvements: 'Areas for Improvement',
-    recentReviews: 'Recent Reviews',
-    noReviews: 'No reviews added yet',
-    summary: 'Summary',
-  },
-  th: {
-    title: 'ระบบรีวิว & ความพึงพอใจ',
-    addReview: 'เพิ่มรีวิว',
-    rating: 'ความคิดเห็น',
-    review: 'บทวิจารณ์',
-    category: 'หมวดหมู่',
-    sentiment: 'ความรู้สึก',
-    verified: 'ยืนยันแล้ว',
-    analyze: 'วิเคราะห์รีวิว',
-    reset: 'รีเซ็ต',
-    averageRating: 'ความคิดเห็นเฉลี่ย',
-    trustScore: 'คะแนนความน่าเชื่อถือ',
-    verifiedReviews: 'รีวิวที่ยืนยันแล้ว',
-    recommendations: 'มีแนวโน้มที่จะแนะนำ',
-    satisfactionStats: 'สถิติความพึงพอใจ',
-    sentimentBreakdown: 'การแยกความรู้สึก',
-    categoryRatings: 'ความคิดเห็นตามหมวดหมู่',
-    ratingDistribution: 'การกระจายความคิดเห็น',
-    npsScore: 'คะแนน NPS',
-    keywordAnalysis: 'การวิเคราะห์คำหลัก',
-    insights: 'สัญญาณ',
-    strengths: 'จุดแข็ง',
-    improvements: 'พื้นที่ที่ต้องปรับปรุง',
-    recentReviews: 'รีวิวล่าสุด',
-    noReviews: 'ยังไม่มีรีวิวใด ๆ',
-    summary: 'สรุป',
-  },
-};
-
-type Locale = 'en' | 'th';
-
 interface ComponentProps {
-  readonly language?: Locale;
   readonly onReviewsChange?: (reviews: Review[]) => void;
 }
 
-export default function ReviewsDisplay({ language = 'en', onReviewsChange }: ComponentProps) {
-  const t = translations[language] ?? translations.en;
+import { useTranslations } from 'next-intl';
 
+export default function ReviewsDisplay({ onReviewsChange }: ComponentProps) {
+  const t = useTranslations('reviewsDisplay');
+  
   const [reviews, setReviews] = useState<Review[]>([]);
   const [formData, setFormData] = useState({
     rating: 5,
@@ -216,19 +158,19 @@ export default function ReviewsDisplay({ language = 'en', onReviewsChange }: Com
 
   return (
     <div className="w-full max-w-6xl mx-auto p-6 bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl">
-      <h1 className="text-3xl font-bold text-slate-900 mb-6">{t.title}</h1>
+      <h1 className="text-3xl font-bold text-slate-900 mb-6">{t('title')}</h1>
 
       {/* Input Section */}
       <div className="bg-white rounded-lg border border-slate-200 p-6 mb-6">
-        <h2 className="text-xl font-semibold text-slate-800 mb-4">{t.addReview}</h2>
+        <h2 className="text-xl font-semibold text-slate-800 mb-4">{t('addReview')}</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           <div>
             <label htmlFor="rating" className="block text-sm font-medium text-slate-700 mb-2">
-              {t.rating}
+              {t('rating')}
             </label>
             <select
               id="rating"
-              title={t.rating}
+              title={t('rating')}
               value={formData.rating}
               onChange={(e) => setFormData({ ...formData, rating: Number.parseInt(e.target.value, 10) })}
               className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -242,11 +184,11 @@ export default function ReviewsDisplay({ language = 'en', onReviewsChange }: Com
           </div>
           <div>
             <label htmlFor="category" className="block text-sm font-medium text-slate-700 mb-2">
-              {t.category}
+              {t('category')}
             </label>
             <select
               id="category"
-              title={t.category}
+              title={t('category')}
               value={formData.category}
               onChange={(e) => setFormData({ ...formData, category: e.target.value as ReviewCategory })}
               className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -266,12 +208,12 @@ export default function ReviewsDisplay({ language = 'en', onReviewsChange }: Com
                 onChange={(e) => setFormData({ ...formData, verified: e.target.checked })}
                 className="w-4 h-4 rounded border-slate-300"
               />
-              <span className="text-sm font-medium text-slate-700">{t.verified}</span>
+              <span className="text-sm font-medium text-slate-700">{t('verified')}</span>
             </label>
           </div>
         </div>
         <textarea
-          placeholder={t.review}
+          placeholder={t('review')}
           value={formData.text}
           onChange={(e) => setFormData({ ...formData, text: e.target.value })}
           className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
@@ -282,13 +224,13 @@ export default function ReviewsDisplay({ language = 'en', onReviewsChange }: Com
             onClick={handleAddReview}
             className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
           >
-            {t.addReview}
+            {t('addReview')}
           </button>
           <button
             onClick={handleReset}
             className="px-6 py-2 bg-slate-400 text-white rounded-lg hover:bg-slate-500 transition"
           >
-            {t.reset}
+            {t('reset')}
           </button>
         </div>
       </div>
@@ -329,7 +271,7 @@ export default function ReviewsDisplay({ language = 'en', onReviewsChange }: Com
           onClick={handleAnalyze}
           className="w-full mb-6 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-purple-700 transition"
         >
-          {t.analyze}
+          {t('analyze')}
         </button>
       )}
 
@@ -339,26 +281,26 @@ export default function ReviewsDisplay({ language = 'en', onReviewsChange }: Com
           {/* Summary Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="bg-white rounded-lg border border-slate-200 p-4">
-              <p className="text-sm text-slate-600">{t.averageRating}</p>
+              <p className="text-sm text-slate-600">{t('averageRating')}</p>
               <p className={`text-2xl font-bold ${getRatingColor(analysis.averageRating)}`}>
                 {analysis.averageRating.toFixed(1)}/5
               </p>
             </div>
             <div className="bg-white rounded-lg border border-slate-200 p-4">
-              <p className="text-sm text-slate-600">{t.trustScore}</p>
+              <p className="text-sm text-slate-600">{t('trustScore')}</p>
               <p className="text-2xl font-bold text-blue-600">
                 {analysis.trustScore.toFixed(0)}%
               </p>
             </div>
             <div className="bg-white rounded-lg border border-slate-200 p-4">
-              <p className="text-sm text-slate-600">{t.verifiedReviews}</p>
+              <p className="text-sm text-slate-600">{t('verifiedReviews')}</p>
               <p className="text-2xl font-bold text-slate-900">
                 {analysis.verifiedReviewCount}/{analysis.totalReviews}
               </p>
             </div>
             {recommendation && (
               <div className={`rounded-lg border-2 border-slate-200 p-4 ${recommendation.likelyToRecommend ? 'bg-green-50' : 'bg-red-50'}`}>
-                <p className="text-sm text-slate-600">{t.npsScore}</p>
+                <p className="text-sm text-slate-600">{t('npsScore')}</p>
                 <p className={`text-2xl font-bold ${recommendation.likelyToRecommend ? 'text-green-600' : 'text-red-600'}`}>
                   {recommendation.npsScore}
                 </p>
@@ -371,7 +313,7 @@ export default function ReviewsDisplay({ language = 'en', onReviewsChange }: Com
             {/* Rating Distribution */}
             {ratingData.length > 0 && (
               <div className="bg-white rounded-lg border border-slate-200 p-6">
-                <h3 className="text-lg font-semibold text-slate-800 mb-4">{t.ratingDistribution}</h3>
+                <h3 className="text-lg font-semibold text-slate-800 mb-4">{t('ratingDistribution')}</h3>
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={ratingData}>
                     <CartesianGrid strokeDasharray="3 3" />
@@ -387,7 +329,7 @@ export default function ReviewsDisplay({ language = 'en', onReviewsChange }: Com
             {/* Sentiment Breakdown */}
             {sentimentData.length > 0 && (
               <div className="bg-white rounded-lg border border-slate-200 p-6">
-                <h3 className="text-lg font-semibold text-slate-800 mb-4">{t.sentimentBreakdown}</h3>
+                <h3 className="text-lg font-semibold text-slate-800 mb-4">{t('sentimentBreakdown')}</h3>
                 <ResponsiveContainer width="100%" height={300}>
                   <PieChart>
                     <Pie
@@ -414,7 +356,7 @@ export default function ReviewsDisplay({ language = 'en', onReviewsChange }: Com
           {/* Category Ratings */}
           {categoryData.length > 0 && (
             <div className="bg-white rounded-lg border border-slate-200 p-6">
-              <h3 className="text-lg font-semibold text-slate-800 mb-4">{t.categoryRatings}</h3>
+              <h3 className="text-lg font-semibold text-slate-800 mb-4">{t('categoryRatings')}</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={categoryData}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -433,7 +375,7 @@ export default function ReviewsDisplay({ language = 'en', onReviewsChange }: Com
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {insights.strengths.length > 0 && (
                 <div className="bg-white rounded-lg border border-slate-200 p-6">
-                  <h3 className="text-lg font-semibold text-green-700 mb-4">✓ {t.strengths}</h3>
+                  <h3 className="text-lg font-semibold text-green-700 mb-4">✓ {t('strengths')}</h3>
                   <ul className="space-y-2">
                     {insights.strengths.map((strength) => (
                       <li key={strength} className="text-sm text-slate-700 flex gap-2">
@@ -447,7 +389,7 @@ export default function ReviewsDisplay({ language = 'en', onReviewsChange }: Com
 
               {insights.improvementAreas.length > 0 && (
                 <div className="bg-white rounded-lg border border-slate-200 p-6">
-                  <h3 className="text-lg font-semibold text-orange-700 mb-4">! {t.improvements}</h3>
+                  <h3 className="text-lg font-semibold text-orange-700 mb-4">! {t('improvements')}</h3>
                   <ul className="space-y-2">
                     {insights.improvementAreas.map((area) => (
                       <li key={area} className="text-sm text-slate-700 flex gap-2">
@@ -464,7 +406,7 @@ export default function ReviewsDisplay({ language = 'en', onReviewsChange }: Com
           {/* Keywords */}
           {insights && insights.mostMentionedKeywords.length > 0 && (
             <div className="bg-white rounded-lg border border-slate-200 p-6">
-              <h3 className="text-lg font-semibold text-slate-800 mb-4">{t.keywordAnalysis}</h3>
+              <h3 className="text-lg font-semibold text-slate-800 mb-4">{t('keywordAnalysis')}</h3>
               <div className="flex flex-wrap gap-2">
                 {insights.mostMentionedKeywords.slice(0, 10).map((kw) => (
                   <span
@@ -483,7 +425,7 @@ export default function ReviewsDisplay({ language = 'en', onReviewsChange }: Com
       {/* Empty State */}
       {reviews.length === 0 && !analysis && (
         <div className="bg-white rounded-lg border border-slate-200 p-12 text-center">
-          <p className="text-slate-600">{t.noReviews}</p>
+          <p className="text-slate-600">{t('noReviews')}</p>
         </div>
       )}
     </div>

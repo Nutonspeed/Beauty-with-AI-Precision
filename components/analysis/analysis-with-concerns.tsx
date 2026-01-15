@@ -97,7 +97,7 @@ export function AnalysisWithConcerns({
     };
 
     loadConcernData();
-  }, [analysis]);
+  }, [analysis, t]);
 
   // Handle concern marker click
   const handleConcernClick = (

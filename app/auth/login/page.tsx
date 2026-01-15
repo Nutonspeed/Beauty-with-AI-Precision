@@ -63,7 +63,7 @@ export default function LoginPage() {
     try {
       console.log('[LoginPage] 🔐 Attempting login for:', email)
       
-      const { error } = await signIn(email, password)
+      const { error, role } = await signIn(email, password)
       
       if (error) {
         console.error('[LoginPage] ❌ Login error:', error)
@@ -78,7 +78,18 @@ export default function LoginPage() {
         return
       }
 
-      console.log('[LoginPage] ✅ Login successful! Waiting for auth context...')
+      console.log('[LoginPage] ✅ Login successful! Role:', role)
+      
+      // Manual redirect based on role from signIn
+      if (role) {
+        const normalized = normalizeRole(role as any)
+        const redirectPath = getDefaultLandingPage(normalized as any)
+        console.log('[LoginPage] Manual redirect to:', redirectPath)
+        router.push(redirectPath)
+      } else {
+        // Fallback: wait for auth context
+        console.log('[LoginPage] No role from signIn, waiting for auth context...')
+      }
       
       // Keep loading = true while waiting for auth context to update
       // useEffect will detect user change and redirect based on role

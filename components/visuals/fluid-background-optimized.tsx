@@ -1,52 +1,53 @@
 "use client"
 
 import React, { useEffect, useRef } from "react"
+import { cn } from "@/lib/utils"
 
 type FluidBackgroundProps = {
   className?: string
-  /** CSS selector ขององค์ประกอบที่อยากให้ fluid "ไหลเข้าหา" เช่น .cta-primary */
-  focusSelector?: string
-  /** ความแรงของแรงดึงดูดไปหา focus target (0–1) */
-  focusAttraction?: number
-  /** จำนวนอนุภาคพื้นฐาน */
+  /** CSS selector of elements that fluid should "flow towards" e.g., .cta-primary */
+  focusTarget?: string
+  /** Attraction strength towards focus target (0–1) */
+  focusStrength?: number
+  /** Base particle count */
   particleCount?: number
-  /** ความเข้มของสีเอฟเฟกต์ (0–1) */
+  /** Effect color intensity (0–1) */
   intensity?: number
-  /** ปรับชุดสีอนุภาค (HSL hue) เช่น [210, 200, 190] */
+  /** Customize particle color set (HSL hue) e.g., [210, 200, 190] */
   hues?: number[]
-  /** กำหนดสี gradient พื้นหลัง เช่น ["hsla(210,80%,55%,.05)", "hsla(195,70%,60%,.05)"] */
-  gradient?: [string, string]
-  /** หยุดเมื่ออยู่นอก viewport เพื่อลดการใช้ทรัพยากร */
-  pauseWhenOffscreen?: boolean
-  /** ลดภาระงานอัตโนมัติเมื่อ FPS ต่ำ */
-  autoThrottle?: boolean
-  /** โทนสีสำเนียง (เช่น cyan) สำหรับโซนใกล้ CTA */
+  /** Define background gradient colors e.g., ["hsla(210,80%,55%,.05)", "hsla(195,70%,60%,.05)"] */
+  gradientColors?: string[]
+  /** Stop when outside viewport to save resources */
+  pauseOffscreen?: boolean
+  /** Automatically reduce workload when FPS is low */
+  autoOptimize?: boolean
+  /** Accent hue (e.g., cyan) for zones near CTA */
   accentHue?: number
-  /** ปริมาณการผสมสีสำเนียง 0–1 */
-  accentAmount?: number
+  /** Accent color mix amount 0–1 */
+  accentMix?: number
   /** Production mode - disable animations for faster builds */
   isProduction?: boolean
 }
 
 /**
- * FluidBackground: เอฟเฟกต์พื้นหลังเบาๆ ด้วยอนุภาคที่ไหลตามเวกเตอร์ฟิลด์ (noise + time)
- * - ปรับขนาดตาม container ด้วย ResizeObserver
- * - Respect prefers-reduced-motion
- * - ดึงดูดอนุภาคใกล้บริเวณ CTA ที่กำหนดด้วย focusSelector
- * - Production mode: ปิด animation สำหรับ build performance
+ * FluidBackground: A lightweight background effect with particles flowing along a vector field (noise + time)
+ * - Resizes with container using ResizeObserver
+ * - Respects prefers-reduced-motion
+ * - Attracts particles near the specified focus target
+ * - Production mode: Disables animations for faster builds
  */
 export default function FluidBackground({
   className,
-  focusSelector = ".cta-primary",
-  focusAttraction = 0.35,
+  focusTarget = ".cta-primary",
+  focusStrength = 0.35,
   particleCount = 1200,
   intensity = 0.6,
   hues,
-  gradient,
-  pauseWhenOffscreen = true,
-  autoThrottle = true,
+  gradientColors,
+  pauseOffscreen = true,
+  autoOptimize = true,
   accentHue = 190,
-  accentAmount = 0.25,
+  accentMix = 0.25,
   isProduction = false,
 }: FluidBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
@@ -54,7 +55,7 @@ export default function FluidBackground({
   const rafRef = useRef<number | null>(null)
   const cleanupsRef = useRef<(() => void)[]>([])
   const inViewRef = useRef(true)
-  const throttleRef = useRef(1) // 1 = ทุกเฟรม, 2 = ข้าม 1 เฟรม, 3 = ข้าม 2 เฟรม
+  const throttleRef = useRef(1) // 1 = every frame, 2 = skip 1 frame, 3 = skip 2 frames
   const frameCountRef = useRef(0)
   const focusHoverRef = useRef(false)
 
@@ -84,8 +85,8 @@ export default function FluidBackground({
       // Static gradient background
       const { width, height } = container.getBoundingClientRect()
       const grad = ctx.createLinearGradient(0, 0, width, height)
-      const g0 = gradient?.[0] ?? `hsla(210, 80%, 55%, ${0.05 * intensity})`
-      const g1 = gradient?.[1] ?? `hsla(195, 70%, 60%, ${0.05 * intensity})`
+      const g0 = gradientColors?.[0] ?? `hsla(210, 80%, 55%, ${0.05 * intensity})`
+      const g1 = gradientColors?.[1] ?? `hsla(195, 70%, 60%, ${0.05 * intensity})`
       grad.addColorStop(0, g0)
       grad.addColorStop(1, g1)
       ctx.fillStyle = grad
@@ -105,7 +106,7 @@ export default function FluidBackground({
     const dpr = Math.min(window.devicePixelRatio || 1, 2)
 
     // Helper: query focus element
-    const getFocus = () => document.querySelector(focusSelector) as HTMLElement | null
+    const getFocus = () => document.querySelector(focusTarget) as HTMLElement | null
 
     const resize = () => {
       const { width, height } = container.getBoundingClientRect()
@@ -133,7 +134,7 @@ export default function FluidBackground({
     ro.observe(container)
     cleanupsRef.current.push(() => ro.disconnect())
 
-    // Simple pseudo-noise field using trig (เบากว่า Perlin)
+    // Simple pseudo-noise field using trig (lighter than Perlin)
     const field = (x: number, y: number, t: number) => {
       const k1 = 0.0018
       const k2 = 0.0012
@@ -151,8 +152,8 @@ export default function FluidBackground({
     const isMobile = Math.min(cw, ch) < 640 || (window.matchMedia && window.matchMedia("(max-width: 640px)").matches)
     const count = Math.floor(baseCount * (isMobile ? 0.4 : 0.6)) // Further reduce for mobile
 
-    // สีโทนแบรนด์ (ปรับได้ตามต้องการ)
-    const baseHues = (hues && hues.length > 0 ? hues : [210, 200, 190]) // น้ำเงิน-เทา-พรีเมียม
+    // Brand color tones (can be adjusted as needed)
+    const baseHues = (hues && hues.length > 0 ? hues : [210, 200, 190]) // Blue-Grey-Premium
 
     for (let i = 0; i < count; i++) {
       particles.push({
@@ -175,8 +176,8 @@ export default function FluidBackground({
       t += dt
 
       const { width, height } = container.getBoundingClientRect()
-      if (pauseWhenOffscreen && !inViewRef.current) {
-        // clear ครั้งเดียวเพื่อประหยัด
+      if (pauseOffscreen && !inViewRef.current) {
+        // clear once to save resources
         ctx.clearRect(0, 0, width, height)
         rafRef.current = requestAnimationFrame(step)
         return
@@ -186,8 +187,8 @@ export default function FluidBackground({
       // soft background glow
       const grad = ctx.createLinearGradient(0, 0, width, height)
       const effIntensity = (isMobile ? intensity * 0.85 : intensity)
-      const g0 = gradient?.[0] ?? `hsla(210, 80%, 55%, ${0.05 * effIntensity})`
-      const g1 = gradient?.[1] ?? `hsla(195, 70%, 60%, ${0.05 * effIntensity})`
+      const g0 = gradientColors?.[0] ?? `hsla(210, 80%, 55%, ${0.05 * effIntensity})`
+      const g1 = gradientColors?.[1] ?? `hsla(195, 70%, 60%, ${0.05 * effIntensity})`
       grad.addColorStop(0, g0)
       grad.addColorStop(1, g1)
       ctx.fillStyle = grad
@@ -201,21 +202,21 @@ export default function FluidBackground({
       const focusRadius = Math.min(width, height) * 0.22
 
       frameCountRef.current++
-      const skip = autoThrottle ? throttleRef.current : 1
-      // หากกำหนด throttle และถึงเฟรมที่ต้องข้าม ให้ข้ามการอัปเดตอนุภาคเพื่อลดภาระ
-      if (autoThrottle && (frameCountRef.current % skip !== 0)) {
+      const skip = autoOptimize ? throttleRef.current : 1
+      // If throttle is set and we've reached the frame to skip, skip particle update to reduce load
+      if (autoOptimize && (frameCountRef.current % skip !== 0)) {
         rafRef.current = requestAnimationFrame(step)
         return
       }
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i]
         const F = field(p.x, p.y, t)
-        // attraction to CTA area (เบามาก ๆ เพื่อแค่ชี้นำ)
+        // attraction to CTA area (very subtle just to guide)
         const dx = fx - p.x
         const dy = fy - p.y
         const dist = Math.max(1, Math.hypot(dx, dy))
-        const ax = F.u * 0.4 + (dx / dist) * (0.6 * focusAttraction)
-        const ay = F.v * 0.4 + (dy / dist) * (0.6 * focusAttraction)
+        const ax = F.u * 0.4 + (dx / dist) * (0.6 * focusStrength)
+        const ay = F.v * 0.4 + (dy / dist) * (0.6 * focusStrength)
 
         p.vx = (p.vx + ax * dt * 60) * 0.96
         p.vy = (p.vy + ay * dt * 60) * 0.96
@@ -232,7 +233,7 @@ export default function FluidBackground({
         // near-focus accent blend
         const near = Math.hypot(p.x - fx, p.y - fy) < focusRadius || focusHoverRef.current
         const hue = near ? (isFinite(accentHue) ? accentHue : p.hue) : p.hue
-        const blend = near ? Math.min(1, Math.max(0, accentAmount)) : 0
+        const blend = near ? Math.min(1, Math.max(0, accentMix)) : 0
         const finalHue = blend > 0 ? (p.hue * (1 - blend) + hue * blend) : p.hue
         const alphaScale = near ? 1.1 : 1
         ctx.beginPath()
@@ -259,8 +260,8 @@ export default function FluidBackground({
       }
 
       // simple FPS sensing
-      if (autoThrottle) {
-        // หากวาดนานเกิน 22ms ต่อเฟรม ( < ~45 FPS ) ให้เพิ่มการข้ามเฟรม
+      if (autoOptimize) {
+        // If drawing takes longer than 22ms per frame ( < ~45 FPS ), increase frame skipping
         const frameMs = (performance.now() - now)
         if (frameMs > 22 && throttleRef.current < 3) throttleRef.current++
         else if (frameMs < 14 && throttleRef.current > 1) throttleRef.current--
@@ -290,17 +291,15 @@ export default function FluidBackground({
       document.removeEventListener("visibilitychange", visibilityHandler)
     })
 
-    // Capture cleanups array before cleanup function runs
     const cleanups = cleanupsRef.current
     return () => {
-      cleanups.forEach(cleanup => cleanup())
-      cleanups.length = 0
+      cleanups.forEach((c) => c())
     }
-  }, [focusSelector, focusAttraction, particleCount, intensity, hues, gradient, pauseWhenOffscreen, autoThrottle, accentHue, accentAmount, isProduction])
+  }, [focusTarget, focusStrength, hues, intensity, particleCount, pauseOffscreen, autoOptimize, accentHue, accentMix, isProduction, gradientColors])
 
   return (
-    <div ref={containerRef} className={className}>
-      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
+    <div ref={containerRef} className={cn("absolute inset-0 pointer-events-none", className)}>
+      <canvas ref={canvasRef} className="block" />
     </div>
   )
 }

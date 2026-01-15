@@ -83,21 +83,17 @@ export class AILeadScorer {
   /**
    * Score a lead using AI analysis
    */
-  // For build stability and to avoid broken prompt/template parsing during
-  // static analysis, the scorer falls back to a deterministic local
-  // calculation. This keeps the repository buildable while preserving
-  // the ability to re-enable OpenAI-powered scoring behind a feature flag
-  // in a future, tested change.
-  async scoreLead(lead: LeadData): Promise<AIScoreResult> {
-    return this.getFallbackScore(lead);
+  async scoreLead(lead: LeadData, locale: 'th' | 'en' = 'th'): Promise<AIScoreResult> {
+    return this.getFallbackScore(lead, locale);
   }
 
-  async generateCampaign(lead: LeadData, score: AIScoreResult): Promise<any> {
+  async generateCampaign(lead: LeadData, score: AIScoreResult, locale: 'th' | 'en' = 'th'): Promise<any> {
     // Use the local fallback campaign generator to avoid runtime AI calls
-    return this.getFallbackCampaign(lead);
+    return this.getFallbackCampaign(lead, locale);
   }
 
-  async predictBehavior(lead: LeadData, historicalData?: LeadData[]): Promise<any> {
+  async predictBehavior(lead: LeadData, historicalData?: LeadData[], locale: 'th' | 'en' = 'th'): Promise<any> {
+    const isThai = locale === 'th';
     // Provide a lightweight deterministic prediction to keep types satisfied
     return {
       shortTermConversion: Math.round(this.calculateBasicScore(lead) * 0.6),
@@ -113,11 +109,13 @@ export class AILeadScorer {
     };
   }
 
-  private buildScoringPrompt(lead: LeadData): string {
+  private buildScoringPrompt(lead: LeadData, locale: 'th' | 'en' = 'th'): string {
     const daysSinceLastActivity = Math.floor((Date.now() - lead.lastActivity.getTime()) / (1000 * 60 * 60 * 24));
     const daysSinceFirstContact = Math.floor((Date.now() - lead.firstContact.getTime()) / (1000 * 60 * 60 * 24));
+    const isThai = locale === 'th';
 
-    return `
+    if (isThai) {
+      return `
 วิเคราะห์ Lead นี้และให้คะแนนอย่างละเอียด:
 
 ข้อมูลลูกค้า:
@@ -163,9 +161,58 @@ export class AILeadScorer {
 
 ให้คำแนะนำเฉพาะบุคคลและกลยุทธ์การตลาดที่เหมาะสม
 `;
+    }
+
+    return `
+Analyze this Lead and provide detailed scoring:
+
+Customer Info:
+- Name: ${lead.name}
+- Age: ${lead.age || 'Not specified'}
+- Gender: ${lead.gender || 'Not specified'}
+- Source: ${lead.source}
+- Current Status: ${lead.status}
+- Budget: ${lead.budget || 'Not specified'}
+- Timeline: ${lead.timeline || 'Not specified'}
+- Interests: ${lead.interests.join(', ')}
+- Skin Concerns: ${lead.concerns?.join(', ') || 'Not specified'}
+- Skin Type: ${lead.skinType || 'Not specified'}
+- Previous Treatments: ${lead.previousPrograms?.join(', ') || 'None'}
+
+Engagement Stats:
+- Website Visits: ${lead.engagement.websiteVisits}
+- Email Opens: ${lead.engagement.emailOpens}
+- Email Clicks: ${lead.engagement.emailClicks}
+- Chat Interactions: ${lead.engagement.chatInteractions}
+- Social Engagement: ${lead.engagement.socialEngagement}
+- Content Downloads: ${lead.engagement.contentDownloads}
+- Appointment Bookings: ${lead.engagement.appointmentBookings}
+
+Duration:
+- Last Activity: ${daysSinceLastActivity} days ago
+- First Contact: ${daysSinceFirstContact} days ago
+- Total Interactions: ${lead.totalInteractions}
+- Avg Response Time: ${lead.responseTime || 'Not specified'} hours
+
+Risk Factors:
+- Objections: ${lead.objections?.join(', ') || 'None'}
+- Competitor Mentions: ${lead.competitorMentions?.join(', ') || 'None'}
+
+Score and Analyze:
+1. Overall Score (0-100): Consider all factors
+2. Confidence Score: Reliability of analysis
+3. Conversion Probability: Likelihood to buy
+4. Predicted Value: In THB
+5. Predicted LTV: Lifetime Value
+6. Urgency Level: How fast to follow up
+7. Priority Level: Follow-up priority
+
+Provide personalized recommendations and suitable marketing strategy.
+`;
   }
 
-  private buildSegmentationPrompt(leads: LeadData[]): string {
+  private buildSegmentationPrompt(leads: LeadData[], locale: 'th' | 'en' = 'th'): string {
+    const isThai = locale === 'th';
     const summary = leads.slice(0, 10).map(lead => ({
       name: lead.name,
       source: lead.source,
@@ -175,7 +222,8 @@ export class AILeadScorer {
       score: this.calculateBasicScore(lead),
     }));
 
-    return `
+    if (isThai) {
+      return `
 วิเคราะห์กลุ่มลูกค้า ${leads.length} คน และแบ่งเป็นกลุ่มที่มีความหมาย:
 
 ข้อมูลสรุปของลูกค้า (10 คนแรก):
@@ -197,10 +245,36 @@ ${JSON.stringify(summary, null, 2)}
 
 แบ่งเป็น 4-6 กลุ่มหลัก
 `;
+    }
+
+    return `
+Analyze ${leads.length} leads and divide them into meaningful segments:
+
+Customer Summary (first 10):
+${JSON.stringify(summary, null, 2)}
+
+Create segments with similar characteristics considering:
+- Buying behavior (budget, interests)
+- Source
+- Engagement level
+- Conversion probability
+
+For each segment, provide:
+- Descriptive segment name
+- Segment description
+- Key characteristics
+- Average conversion rate
+- Average value
+- Recommended marketing strategy
+
+Divide into 4-6 main segments.
+`;
   }
 
-  private buildCampaignPrompt(lead: LeadData, score: AIScoreResult): string {
-    return `
+  private buildCampaignPrompt(lead: LeadData, score: AIScoreResult, locale: 'th' | 'en' = 'th'): string {
+    const isThai = locale === 'th';
+    if (isThai) {
+      return `
 สร้างแคมเปญการตลาดส่วนบุคคลสำหรับลูกค้า:
 
 ข้อมูลลูกค้า:
@@ -221,10 +295,35 @@ ${JSON.stringify(summary, null, 2)}
 
 ให้เนื้อหาในภาษาไทยที่เป็นมิตรและน่าเชื่อถือ
 `;
+    }
+
+    return `
+Create a personalized marketing campaign for the customer:
+
+Customer Info:
+- Name: ${lead.name}
+- Interests: ${lead.interests.join(', ')}
+- Budget: ${lead.budget}
+- Score: ${score.overallScore}/100
+- Conversion Probability: ${score.conversionProbability}%
+
+AI Recommendation: ${score.nextBestAction}
+
+Create a campaign that:
+1. Is personalized and engaging
+2. Matches customer interests
+3. Creates appropriate urgency
+4. Has a clear Call-to-Action
+5. Suits the contact channel
+
+Provide content in a friendly and trustworthy English tone.
+`;
   }
 
-  private buildPredictionPrompt(lead: LeadData, historicalData?: LeadData[]): string {
-    return `
+  private buildPredictionPrompt(lead: LeadData, historicalData?: LeadData[], locale: 'th' | 'en' = 'th'): string {
+    const isThai = locale === 'th';
+    if (isThai) {
+      return `
 คาดการณ์พฤติกรรมของลูกค้า:
 
 ข้อมูลลูกค้า:
@@ -242,6 +341,27 @@ ${historicalData ? `ข้อมูลประวัติ (${historicalData.le
 - ช่องทางติดต่อที่ดีที่สุด
 - ความไวต่อราคา
 - ความภักดีต่อแบรนด์
+`;
+    }
+
+    return `
+Predict customer behavior:
+
+Customer Info:
+- Name: ${lead.name}
+- Engagement: ${JSON.stringify(lead.engagement)}
+- Last Activity: ${lead.lastActivity.toISOString()}
+- Total Interactions: ${lead.totalInteractions}
+
+${historicalData ? `Historical data (${historicalData.length} leads): ${JSON.stringify(historicalData.slice(0, 5).map(l => ({ engagement: l.engagement, converted: l.status === 'hot' })), null, 2)}` : ''}
+
+Predict:
+- Short/Medium/Long term conversion probability
+- Churn risk
+- Engagement trend
+- Best contact channel
+- Price sensitivity
+- Brand loyalty
 `;
   }
 
@@ -271,8 +391,9 @@ ${historicalData ? `ข้อมูลประวัติ (${historicalData.le
     return Math.min(100, Math.max(0, score));
   }
 
-  private getFallbackScore(lead: LeadData): AIScoreResult {
+  private getFallbackScore(lead: LeadData, locale: 'th' | 'en' = 'th'): AIScoreResult {
     const basicScore = this.calculateBasicScore(lead);
+    const isThai = locale === 'th';
 
     return {
       overallScore: basicScore,
@@ -282,37 +403,38 @@ ${historicalData ? `ข้อมูลประวัติ (${historicalData.le
       predictedLTV: basicScore * 600,
       urgency: basicScore > 70 ? 'high' : basicScore > 40 ? 'medium' : 'low',
       priority: basicScore > 70 ? 'urgent' : basicScore > 40 ? 'high' : 'medium',
-      insights: ['ใช้ระบบการให้คะแนนพื้นฐานเนื่องจาก AI ไม่พร้อมใช้งาน'],
-      recommendations: ['ติดต่อลูกค้าเพื่อรวบรวมข้อมูลเพิ่มเติม'],
-      riskFactors: ['ข้อมูลไม่เพียงพอสำหรับการวิเคราะห์เชิงลึก'],
-      opportunityFactors: ['มีโอกาสในการพัฒนาความสัมพันธ์'],
-      nextBestAction: 'ส่งอีเมลแนะนำบริการ',
-      suggestedTimeline: 'ภายใน 48 ชั่วโมง',
+      insights: [isThai ? 'ใช้ระบบการให้คะแนนพื้นฐานเนื่องจาก AI ไม่พร้อมใช้งาน' : 'Using basic scoring system as AI is unavailable'],
+      recommendations: [isThai ? 'ติดต่อลูกค้าเพื่อรวบรวมข้อมูลเพิ่มเติม' : 'Contact customer to gather more information'],
+      riskFactors: [isThai ? 'ข้อมูลไม่เพียงพอสำหรับการวิเคราะห์เชิงลึก' : 'Insufficient data for in-depth analysis'],
+      opportunityFactors: [isThai ? 'มีโอกาสในการพัฒนาความสัมพันธ์' : 'Opportunity to develop relationship'],
+      nextBestAction: isThai ? 'ส่งอีเมลแนะนำบริการ' : 'Send service introduction email',
+      suggestedTimeline: isThai ? 'ภายใน 48 ชั่วโมง' : 'Within 48 hours',
     };
   }
 
-  private getDefaultSegments(): LeadSegmentation[] {
+  private getDefaultSegments(locale: 'th' | 'en' = 'th'): LeadSegmentation[] {
+    const isThai = locale === 'th';
     return [
       {
         segment: 'High-Value Prospects',
-        description: 'ลูกค้าที่มีงบประมาณสูงและสนใจบริการพรีเมียม',
-        characteristics: ['งบประมาณสูง', 'สนใจหลายบริการ', 'การมีส่วนร่วมสูง'],
+        description: isThai ? 'ลูกค้าที่มีงบประมาณสูงและสนใจบริการพรีเมียม' : 'Leads with high budget and interest in premium services',
+        characteristics: isThai ? ['งบประมาณสูง', 'สนใจหลายบริการ', 'การมีส่วนร่วมสูง'] : ['High budget', 'Multiple interests', 'High engagement'],
         conversionRate: 75,
         averageValue: 45000,
         recommendedStrategy: 'Personal consultation + VIP program packages'
       },
       {
         segment: 'Engaged Browsers',
-        description: 'ลูกค้าที่เข้าชมเว็บไซต์บ่อยแต่ยังไม่ได้ตัดสินใจ',
-        characteristics: ['เข้าชมเว็บไซต์บ่อย', 'ดาวน์โหลดเนื้อหา', 'ยังไม่ได้ติดต่อ'],
+        description: isThai ? 'ลูกค้าที่เข้าชมเว็บไซต์บ่อยแต่ยังไม่ได้ตัดสินใจ' : 'Frequent website visitors who haven\'t decided yet',
+        characteristics: isThai ? ['เข้าชมเว็บไซต์บ่อย', 'ดาวน์โหลดเนื้อหา', 'ยังไม่ได้ติดต่อ'] : ['Frequent visits', 'Content downloads', 'Not yet contacted'],
         conversionRate: 45,
         averageValue: 25000,
         recommendedStrategy: 'Educational content + limited-time offers'
       },
       {
         segment: 'Cold Leads',
-        description: 'ลูกค้าที่มีกิจกรรมน้อยและยังไม่พร้อม',
-        characteristics: ['กิจกรรมน้อย', 'ไม่ได้เปิดอีเมล', 'ไม่ได้สนทนา'],
+        description: isThai ? 'ลูกค้าที่มีกิจกรรมน้อยและยังไม่พร้อม' : 'Leads with low activity and not yet ready',
+        characteristics: isThai ? ['กิจกรรมน้อย', 'ไม่ได้เปิดอีเมล', 'ไม่ได้สนทนา'] : ['Low activity', 'No email opens', 'No chat interactions'],
         conversionRate: 15,
         averageValue: 12000,
         recommendedStrategy: 'Nurturing campaigns + retargeting ads'
@@ -320,17 +442,20 @@ ${historicalData ? `ข้อมูลประวัติ (${historicalData.le
     ];
   }
 
-  private getFallbackCampaign(lead: LeadData): any {
+  private getFallbackCampaign(lead: LeadData, locale: 'th' | 'en' = 'th'): any {
+    const isThai = locale === 'th';
     return {
       campaignName: 'Personalized Welcome',
       campaignType: 'email',
-      subjectLine: `สวัสดี ${lead.name} - คำแนะนำพิเศษสำหรับคุณ`,
-      content: `สวัสดีค่ะ ${lead.name}\n\nขอบคุณที่สนใจ${lead.interests.join(' และ ')} ของเรา\n\nเรามีบริการที่เหมาะกับคุณโดยเฉพาะ ติดต่อปรึกษาฟรีได้เลยค่ะ`,
-      callToAction: 'ติดต่อปรึกษาฟรี',
+      subjectLine: isThai ? `สวัสดี ${lead.name} - คำแนะนำพิเศษสำหรับคุณ` : `Hello ${lead.name} - Special recommendations for you`,
+      content: isThai 
+        ? `สวัสดีค่ะ ${lead.name}\n\nขอบคุณที่สนใจ${lead.interests.join(' และ ')} ของเรา\n\nเรามีบริการที่เหมาะกับคุณโดยเฉพาะ ติดต่อปรึกษาฟรีได้เลยค่ะ`
+        : `Hello ${lead.name}\n\nThank you for your interest in our ${lead.interests.join(' and ')}.\n\nWe have services tailored just for you. Contact us for a free consultation.`,
+      callToAction: isThai ? 'ติดต่อปรึกษาฟรี' : 'Free Consultation',
       expectedResponseRate: 30,
-      followUpSequence: ['ส่งข้อมูลเพิ่มเติม', 'ติดตามผ่านโทรศัพท์'],
-      personalizationElements: ['ชื่อลูกค้า', 'ความสนใจ'],
-      urgencyTriggers: ['จำกัดเวลา 7 วัน']
+      followUpSequence: isThai ? ['ส่งข้อมูลเพิ่มเติม', 'ติดตามผ่านโทรศัพท์'] : ['Send more info', 'Phone follow-up'],
+      personalizationElements: isThai ? ['ชื่อลูกค้า', 'ความสนใจ'] : ['Customer Name', 'Interests'],
+      urgencyTriggers: isThai ? ['จำกัดเวลา 7 วัน'] : ['Limited time (7 days)']
     };
   }
 }

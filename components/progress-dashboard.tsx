@@ -5,7 +5,9 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
+import { useTranslations } from 'next-intl';
+import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 
 // Static imports for better performance and cleaner code structure
@@ -36,6 +38,8 @@ import { Milestone } from '@/lib/progress/progress-tracker';
  * Progress Dashboard Component
  */
 export const ProgressDashboard: React.FC = () => {
+  const t = useTranslations('progress.dashboard');
+  const commonT = useTranslations('common');
   const {
     dataPoints,
     comparison,
@@ -128,7 +132,7 @@ export const ProgressDashboard: React.FC = () => {
     URL.revokeObjectURL(url);
   };
 
-  if (isLoading) {
+    if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
@@ -136,7 +140,7 @@ export const ProgressDashboard: React.FC = () => {
             <div className="h-8 bg-gray-200 rounded w-48 mx-auto mb-4"></div>
             <div className="h-4 bg-gray-200 rounded w-32 mx-auto"></div>
           </div>
-          <p className="text-gray-600 mt-4">กำลังโหลดข้อมูล...</p>
+          <p className="text-gray-600 mt-4">{commonT('loading')}...</p>
         </div>
       </div>
     );
@@ -145,7 +149,7 @@ export const ProgressDashboard: React.FC = () => {
   if (error) {
     return (
       <Card className="p-8 border-red-200 bg-red-50">
-        <p className="text-red-800 font-semibold">เกิดข้อผิดพลาด:</p>
+        <p className="text-red-800 font-semibold">{commonT('error')}:</p>
         <p className="text-red-600">{error}</p>
       </Card>
     );
@@ -155,10 +159,10 @@ export const ProgressDashboard: React.FC = () => {
     return (
       <Card className="p-12 text-center">
         <h3 className="text-xl font-bold text-gray-900 mb-4">
-          ยังไม่มีข้อมูลความก้าวหน้า
+          {t('noData')}
         </h3>
         <p className="text-gray-600 mb-6">
-          เริ่มต้นติดตามความก้าวหน้าโดยทำการวิเคราะห์ผิวครั้งแรก
+          {t('noDataDesc')}
         </p>
       </Card>
     );
@@ -170,18 +174,18 @@ export const ProgressDashboard: React.FC = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">
-            📊 Progress Dashboard
+            📊 {t('title')}
           </h1>
           <p className="text-gray-600 mt-1">
-            ติดตามความก้าวหน้าการรักษาผิวของคุณ
+            {t('subtitle')}
           </p>
         </div>
         <div className="flex gap-2">
           <Button onClick={handleExportJSON} variant="outline" size="sm">
-            📄 Export JSON
+            📄 {t('exportJSON')}
           </Button>
           <Button onClick={handleExportPDF} variant="default" size="sm">
-            📑 Export PDF
+            📑 {t('exportPDF')}
           </Button>
         </div>
       </div>
@@ -190,27 +194,27 @@ export const ProgressDashboard: React.FC = () => {
       {stats && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card className="p-6">
-            <p className="text-sm text-gray-500 mb-1">จำนวนครั้งที่ตรวจ</p>
+            <p className="text-sm text-gray-500 mb-1">{t('stats.totalAnalyses')}</p>
             <p className="text-3xl font-bold text-gray-900">{stats.totalDataPoints}</p>
-            <p className="text-xs text-gray-500 mt-1">ครั้ง</p>
+            <p className="text-xs text-gray-500 mt-1">{t('stats.times')}</p>
           </Card>
 
           <Card className="p-6">
-            <p className="text-sm text-gray-500 mb-1">ระยะเวลา</p>
+            <p className="text-sm text-gray-500 mb-1">{t('stats.duration')}</p>
             <p className="text-3xl font-bold text-gray-900">{stats.timeSpanDays}</p>
-            <p className="text-xs text-gray-500 mt-1">วัน</p>
+            <p className="text-xs text-gray-500 mt-1">{t('stats.days')}</p>
           </Card>
 
           <Card className="p-6">
-            <p className="text-sm text-gray-500 mb-1">ค่าเฉลี่ยการปรับปรุง</p>
+            <p className="text-sm text-gray-500 mb-1">{t('stats.avgImprovement')}</p>
             <p className={`text-3xl font-bold ${stats.averageImprovement > 0 ? 'text-green-600' : 'text-red-600'}`}>
               {stats.averageImprovement > 0 ? '+' : ''}{stats.averageImprovement.toFixed(1)}
             </p>
-            <p className="text-xs text-gray-500 mt-1">คะแนน</p>
+            <p className="text-xs text-gray-500 mt-1">{t('stats.points')}</p>
           </Card>
 
           <Card className="p-6">
-            <p className="text-sm text-gray-500 mb-1">ความสม่ำเสมอ</p>
+            <p className="text-sm text-gray-500 mb-1">{t('stats.consistency')}</p>
             <p className="text-3xl font-bold text-gray-900">{stats.consistencyScore.toFixed(0)}%</p>
             <Progress value={stats.consistencyScore} className="mt-2" />
           </Card>
@@ -221,15 +225,15 @@ export const ProgressDashboard: React.FC = () => {
       {comparison && (
         <Card className="p-6">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            📈 Overall Progress
+            📈 {t('comparison.title')}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
-              <p className="text-sm text-gray-500 mb-2">ระยะเวลา</p>
-              <p className="text-2xl font-bold">{comparison.durationDays} วัน</p>
+              <p className="text-sm text-gray-500 mb-2">{t('stats.duration')}</p>
+              <p className="text-2xl font-bold">{comparison.durationDays} {t('stats.days')}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-500 mb-2">แนวโน้ม</p>
+              <p className="text-sm text-gray-500 mb-2">{t('comparison.trend')}</p>
               <Badge
                 className={
                   comparison.trend === 'improving'
@@ -239,11 +243,11 @@ export const ProgressDashboard: React.FC = () => {
                     : 'bg-yellow-100 text-yellow-800 border-yellow-300'
                 }
               >
-                {comparison.trend === 'improving' ? '📈 ดีขึ้น' : comparison.trend === 'declining' ? '📉 แย่ลง' : '➡️ คงที่'}
+                {comparison.trend === 'improving' ? `📈 ${t('comparison.trends.improving')}` : comparison.trend === 'declining' ? `📉 ${t('comparison.trends.declining')}` : `➡️ ${t('comparison.trends.stable')}`}
               </Badge>
             </div>
             <div>
-              <p className="text-sm text-gray-500 mb-2">การเปลี่ยนแปลง</p>
+              <p className="text-sm text-gray-500 mb-2">{t('comparison.change')}</p>
               <p className={`text-2xl font-bold ${comparison.percentageChange > 0 ? 'text-green-600' : 'text-red-600'}`}>
                 {comparison.percentageChange > 0 ? '+' : ''}{comparison.percentageChange.toFixed(1)}%
               </p>
@@ -257,7 +261,7 @@ export const ProgressDashboard: React.FC = () => {
         <Card className="p-6">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold text-gray-900">
-              📉 Timeline Progress
+              📉 {t('timeline.title')}
             </h2>
             <div className="flex gap-2">
               <Button
@@ -265,7 +269,7 @@ export const ProgressDashboard: React.FC = () => {
                 size="sm"
                 onClick={() => setShowAllMetrics(!showAllMetrics)}
               >
-                {showAllMetrics ? 'แสดงสรุป' : 'แสดงทั้งหมด'}
+                {showAllMetrics ? t('timeline.showSummary') : t('timeline.showAll')}
               </Button>
             </div>
           </div>
@@ -355,15 +359,15 @@ export const ProgressDashboard: React.FC = () => {
         <Card className="p-6">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold text-gray-900">
-              🎯 Milestones
+              🎯 {t('milestones.title')}
             </h2>
             <Button variant="outline" size="sm" onClick={generateMilestones}>
-              สร้างเป้าหมายใหม่
+              {t('milestones.generateNew')}
             </Button>
           </div>
           <div className="space-y-4">
             {milestones.map(milestone => (
-              <MilestoneCard key={milestone.id} milestone={milestone} />
+              <MilestoneCard key={milestone.id} milestone={milestone} t={t} />
             ))}
           </div>
         </Card>
@@ -372,9 +376,9 @@ export const ProgressDashboard: React.FC = () => {
       {/* Improvement Rates */}
       <Card className="p-6">
         <h2 className="text-2xl font-bold text-gray-900 mb-4">
-          📈 Improvement Rates
+          📈 {t('rates.title')}
         </h2>
-        <ImprovementRatesDisplay getImprovementRates={getImprovementRates} />
+        <ImprovementRatesDisplay getImprovementRates={getImprovementRates} t={t} />
       </Card>
     </div>
   );
@@ -383,7 +387,7 @@ export const ProgressDashboard: React.FC = () => {
 /**
  * Milestone Card Component
  */
-const MilestoneCard: React.FC<{ milestone: Milestone }> = ({ milestone }) => {
+const MilestoneCard: React.FC<{ milestone: Milestone; t: any }> = ({ milestone, t }) => {
   return (
     <div className="p-4 border border-gray-200 rounded-lg">
       <div className="flex justify-between items-start mb-2">
@@ -393,19 +397,19 @@ const MilestoneCard: React.FC<{ milestone: Milestone }> = ({ milestone }) => {
         </div>
         {milestone.achieved && (
           <Badge className="bg-green-100 text-green-800 border-green-300">
-            ✓ สำเร็จ
+            ✓ {t('milestones.completed')}
           </Badge>
         )}
       </div>
       <div className="mt-3">
         <div className="flex justify-between text-sm mb-1">
-          <span className="text-gray-600">ความก้าวหน้า</span>
+          <span className="text-gray-600">{t('milestones.progress')}</span>
           <span className="font-semibold">{milestone.progress.toFixed(0)}%</span>
         </div>
         <Progress value={milestone.progress} className="h-2" />
         <div className="flex justify-between text-xs text-gray-500 mt-1">
-          <span>ปัจจุบัน: {milestone.currentValue.toFixed(1)}</span>
-          <span>เป้าหมาย: {milestone.targetValue.toFixed(1)}</span>
+          <span>{t('milestones.current')}: {milestone.currentValue.toFixed(1)}</span>
+          <span>{t('milestones.target')}: {milestone.targetValue.toFixed(1)}</span>
         </div>
       </div>
     </div>
@@ -417,23 +421,24 @@ const MilestoneCard: React.FC<{ milestone: Milestone }> = ({ milestone }) => {
  */
 const ImprovementRatesDisplay: React.FC<{
   getImprovementRates: () => Record<string, number> | null;
-}> = ({ getImprovementRates }) => {
+  t: any;
+}> = ({ getImprovementRates, t }) => {
   const rates = getImprovementRates();
 
   if (!rates) {
-    return <p className="text-gray-500">ไม่มีข้อมูลเพียงพอในการคำนวณ</p>;
+    return <p className="text-gray-500">{t('rates.insufficientData')}</p>;
   }
 
   const metricLabels: Record<string, string> = {
-    spots: 'จุดด่างดำ',
-    pores: 'รูขุมขน',
-    wrinkles: 'ริ้วรอย',
-    texture: 'เนื้อผิว',
-    redness: 'ความแดง',
-    hydration: 'ความชุ่มชื้น',
-    skinTone: 'สีผิว',
-    elasticity: 'ความยืดหยุ่น',
-    overallHealth: 'สุขภาพรวม',
+    spots: t('metrics.spots'),
+    pores: t('metrics.pores'),
+    wrinkles: t('metrics.wrinkles'),
+    texture: t('metrics.texture'),
+    redness: t('metrics.redness'),
+    hydration: t('metrics.hydration'),
+    skinTone: t('metrics.skinTone'),
+    elasticity: t('metrics.elasticity'),
+    overallHealth: t('metrics.overallHealth'),
   };
 
   return (
@@ -442,7 +447,7 @@ const ImprovementRatesDisplay: React.FC<{
         <div key={key} className="p-3 bg-gray-50 rounded-lg">
           <p className="text-sm text-gray-600">{metricLabels[key]}</p>
           <p className={`text-lg font-bold ${rate > 0 ? 'text-green-600' : rate < 0 ? 'text-red-600' : 'text-gray-600'}`}>
-            {rate > 0 ? '+' : ''}{rate.toFixed(3)} / วัน
+            {rate > 0 ? '+' : ''}{rate.toFixed(3)} / {t('stats.days')}
           </p>
         </div>
       ))}

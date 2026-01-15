@@ -10,55 +10,55 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useTranslations } from "next-intl"
 import { Send, Phone, Mail, MessageCircle, User } from "lucide-react"
 
-// Mock data - ในโปรดักชั่นจะดึงจาก API
+// Mock data - In production this would come from API
 const activeChats = [
   {
     id: "1",
     customer: {
-      name: "นางสาว สมใจ รักสวย",
+      name: "Somjai Raksauy", // Default fallback if translation fails
       avatar: "/avatars/01.png",
       status: "online"
     },
-    lastMessage: "สนใจแพ็คเกจครบครันมากค่ะ อยากทราบราคา",
-    timestamp: "2 นาทีที่แล้ว",
+    lastMessage: "Interested in the complete package, what is the price?",
+    timestamp: "2 min ago",
     unread: 2,
     messages: [
-      { id: "1", sender: "customer", text: "สวัสดีค่ะ อยากสอบถามเรื่องทรีตเมนต์", time: "10:30" },
-      { id: "2", sender: "agent", text: "สวัสดีค่ะ มีอะไรให้ช่วยเหลือครับ", time: "10:31" },
-      { id: "3", sender: "customer", text: "สนใจแพ็คเกจครบครันมากค่ะ อยากทราบราคา", time: "10:32" }
+      { id: "1", sender: "customer", text: "Hello! I'd like to ask about treatments", time: "10:30" },
+      { id: "2", sender: "agent", text: "Hello! How can I help you today?", time: "10:31" },
+      { id: "3", sender: "customer", text: "I'm interested in the complete package, what is the price?", time: "10:32" }
     ]
   },
   {
     id: "2",
     customer: {
-      name: "นาย วิชัย ใจดี",
+      name: "Wichai Jaidee",
       avatar: "/avatars/02.png",
       status: "away"
     },
-    lastMessage: "ขอบคุณที่ส่ง proposal มาครับ จะติดต่อกลับ",
-    timestamp: "15 นาทีที่แล้ว",
+    lastMessage: "Thank you for the proposal, I will get back to you",
+    timestamp: "15 min ago",
     unread: 0,
     messages: [
-      { id: "1", sender: "agent", text: "สวัสดีครับ นายวิชัย ตามที่คุยกันเมื่อวาน", time: "09:15" },
-      { id: "2", sender: "customer", text: "สวัสดีครับ จำได้ค่ะ", time: "09:16" },
-      { id: "3", sender: "agent", text: "ได้ส่ง proposal ตามที่คุยกันแล้วครับ", time: "09:20" },
-      { id: "4", sender: "customer", text: "ขอบคุณที่ส่ง proposal มาครับ จะติดต่อกลับ", time: "09:45" }
+      { id: "1", sender: "agent", text: "Hello Wichai, following up from yesterday", time: "09:15" },
+      { id: "2", sender: "customer", text: "Hello, I remember", time: "09:16" },
+      { id: "3", sender: "agent", text: "I've sent the proposal as we discussed", time: "09:20" },
+      { id: "4", sender: "customer", text: "Thank you for the proposal, I will get back to you", time: "09:45" }
     ]
   },
   {
     id: "3",
     customer: {
-      name: "นาง วรรณา สวยงาม",
+      name: "Wanna Suayngam",
       avatar: "/avatars/03.png",
       status: "online"
     },
-    lastMessage: "พร้อมทำสัญญาแล้วค่ะ",
-    timestamp: "5 นาทีที่แล้ว",
+    lastMessage: "Ready to sign the agreement",
+    timestamp: "5 min ago",
     unread: 1,
     messages: [
-      { id: "1", sender: "customer", text: "สวัสดีค่ะ อยากเริ่มทรีตเมนต์สัปดาห์หน้า", time: "14:20" },
-      { id: "2", sender: "agent", text: "สวัสดีค่ะ ดีใจที่สนใจครับ จะจัดเตรียมเอกสารให้", time: "14:22" },
-      { id: "3", sender: "customer", text: "พร้อมทำสัญญาแล้วค่ะ", time: "14:25" }
+      { id: "1", sender: "customer", text: "Hello! I'd like to start treatment next week", time: "14:20" },
+      { id: "2", sender: "agent", text: "Hello! Glad to hear that. I'll prepare the documents for you", time: "14:22" },
+      { id: "3", sender: "customer", text: "Ready to sign the agreement", time: "14:25" }
     ]
   }
 ]
@@ -112,7 +112,7 @@ export function LiveChat() {
   const handleSendMessage = () => {
     if (!newMessage.trim()) return
 
-    // ในโปรดักชั่นจะส่งไปยัง API
+    // In production this would be sent to an API
     console.log("Sending message:", newMessage)
     setNewMessage("")
 
@@ -335,7 +335,7 @@ export function LiveChat() {
                   </div>
                   <div>
                     <div className="text-sm font-medium">{t("totalSpent")}</div>
-                    <p className="text-sm text-muted-foreground">฿45,000</p>
+                    <p className="text-sm text-muted-foreground">{t('currencySymbol') || '฿'}45,000</p>
                   </div>
                 </div>
 

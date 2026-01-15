@@ -51,8 +51,32 @@ export async function sendEmail({ to, subject, html, text }: EmailOptions) {
   }
 }
 
-export async function sendBookingConfirmation(to: string, bookingDetails: any) {
-  const subject = "Booking Confirmation - AI Beauty Platform"
+// Email Subjects by Locale
+const EMAIL_SUBJECTS = {
+  th: {
+    bookingConfirmed: "ยืนยันการจอง - AI Beauty Platform",
+    bookingReminder: "เตือนนัดหมาย - พรุ่งนี้",
+    analysisComplete: "ผลการวิเคราะห์ผิวของคุณพร้อมแล้ว",
+    weeklyDigest: (data: any) => `📊 สรุปความคืบหน้าประจำสัปดาห์ (${data.weekStart} - ${data.weekEnd})`,
+    automatedProgress: (data: any) => `✨ รายงานความคืบหน้า - ${data.reportPeriod}`,
+    goalAchievement: (data: any) => `🎉 ยินดีด้วย! คุณบรรลุเป้าหมาย "${data.goalName}" แล้ว!`,
+    reEngagement: `💜 เราคิดถึงคุณ! กลับมาดูแลผิวกันต่อนะ`,
+  },
+  en: {
+    bookingConfirmed: "Booking Confirmation - AI Beauty Platform",
+    bookingReminder: "Appointment Reminder - Tomorrow",
+    analysisComplete: "Your AI Skin Analysis is Ready",
+    weeklyDigest: (data: any) => `📊 Weekly Progress Digest (${data.weekStart} - ${data.weekEnd})`,
+    automatedProgress: (data: any) => `✨ Progress Report - ${data.reportPeriod}`,
+    goalAchievement: (data: any) => `🎉 Congratulations! You've achieved your goal "${data.goalName}"!`,
+    reEngagement: `💜 We miss you! Come back and continue your skin care journey`,
+  }
+};
+
+export async function sendBookingConfirmation(to: string, bookingDetails: any, locale: 'th' | 'en' = 'en') {
+  const t = EMAIL_SUBJECTS[locale] || EMAIL_SUBJECTS.en;
+  const subject = t.bookingConfirmed;
+  const isThai = locale === 'th';
   const html = `
     <!DOCTYPE html>
     <html>
@@ -71,38 +95,38 @@ export async function sendBookingConfirmation(to: string, bookingDetails: any) {
       <body>
         <div class="container">
           <div class="header">
-            <h1>Booking Confirmed!</h1>
-            <p>Your appointment has been successfully scheduled</p>
+            <h1>${isThai ? "ยืนยันการจอง!" : "Booking Confirmed!"}</h1>
+            <p>${isThai ? "นัดหมายของคุณได้รับการยืนยันแล้ว" : "Your appointment has been successfully scheduled"}</p>
           </div>
           <div class="content">
-            <p>Dear Customer,</p>
-            <p>Thank you for booking with us. Here are your appointment details:</p>
+            <p>${isThai ? "เรียน คุณลูกค้า," : "Dear Customer,"}</p>
+            <p>${isThai ? "ขอบคุณสำหรับการจอง ข้อมูลนัดหมายของคุณมีดังนี้:" : "Thank you for booking with us. Here are your appointment details:"}</p>
             
             <div class="details">
               <div class="detail-row">
-                <strong>Program:</strong>
+                <strong>${isThai ? "โปรแกรม:" : "Program:"}</strong>
                 <span>${bookingDetails.program_type}</span>
               </div>
               <div class="detail-row">
-                <strong>Date:</strong>
+                <strong>${isThai ? "วันที่:" : "Date:"}</strong>
                 <span>${bookingDetails.booking_date}</span>
               </div>
               <div class="detail-row">
-                <strong>Time:</strong>
+                <strong>${isThai ? "เวลา:" : "Time:"}</strong>
                 <span>${bookingDetails.booking_time}</span>
               </div>
               <div class="detail-row">
-                <strong>Center:</strong>
+                <strong>${isThai ? "ศูนย์บริการ:" : "Center:"}</strong>
                 <span>${bookingDetails.center?.name || "TBD"}</span>
               </div>
             </div>
 
-            <p>Please arrive 10 minutes before your appointment time.</p>
+            <p>${isThai ? "กรุณามาถึงก่อนเวลานัด 10 นาที" : "Please arrive 10 minutes before your appointment time."}</p>
             
-            <a href="${process.env.NEXT_PUBLIC_SITE_URL}/customer/dashboard" class="button">View My Bookings</a>
+            <a href="${process.env.NEXT_PUBLIC_SITE_URL}/customer/dashboard" class="button">${isThai ? "ดูการจองของฉัน" : "View My Bookings"}</a>
             
             <p style="margin-top: 30px; font-size: 14px; color: #666;">
-              If you need to reschedule or cancel, please contact us at least 24 hours in advance.
+              ${isThai ? "หากคุณต้องการเลื่อนนัดหรือยกเลิก กรุณาติดต่อเราอย่างน้อย 24 ชั่วโมงล่วงหน้า" : "If you need to reschedule or cancel, please contact us at least 24 hours in advance."}
             </p>
           </div>
         </div>
@@ -113,8 +137,10 @@ export async function sendBookingConfirmation(to: string, bookingDetails: any) {
   return sendEmail({ to, subject, html })
 }
 
-export async function sendBookingReminder(to: string, bookingDetails: any) {
-  const subject = "Appointment Reminder - Tomorrow"
+export async function sendBookingReminder(to: string, bookingDetails: any, locale: 'th' | 'en' = 'en') {
+  const t = EMAIL_SUBJECTS[locale] || EMAIL_SUBJECTS.en;
+  const subject = t.bookingReminder;
+  const isThai = locale === 'th';
   const html = `
     <!DOCTYPE html>
     <html>
@@ -130,23 +156,23 @@ export async function sendBookingReminder(to: string, bookingDetails: any) {
       <body>
         <div class="container">
           <div class="header">
-            <h1>Appointment Reminder</h1>
+            <h1>${isThai ? "เตือนนัดหมาย" : "Appointment Reminder"}</h1>
           </div>
           <div class="content">
             <div class="reminder-box">
-              <strong>Your appointment is tomorrow!</strong>
+              <strong>${isThai ? "นัดหมายของคุณคือวันพรุ่งนี้!" : "Your appointment is tomorrow!"}</strong>
             </div>
             
-            <p>This is a friendly reminder about your upcoming appointment:</p>
+            <p>${isThai ? "นี่คือการแจ้งเตือนสำหรับนัดหมายที่กำลังจะมาถึง:" : "This is a friendly reminder about your upcoming appointment:"}</p>
             
             <ul>
-              <li><strong>Program:</strong> ${bookingDetails.program_type}</li>
-              <li><strong>Date:</strong> ${bookingDetails.booking_date}</li>
-              <li><strong>Time:</strong> ${bookingDetails.booking_time}</li>
-              <li><strong>Location:</strong> ${bookingDetails.center?.name || "TBD"}</li>
+              <li><strong>${isThai ? "โปรแกรม:" : "Program:"}</strong> ${bookingDetails.program_type}</li>
+              <li><strong>${isThai ? "วันที่:" : "Date:"}</strong> ${bookingDetails.booking_date}</li>
+              <li><strong>${isThai ? "เวลา:" : "Time:"}</strong> ${bookingDetails.booking_time}</li>
+              <li><strong>${isThai ? "สถานที่:" : "Location:"}</strong> ${bookingDetails.center?.name || "TBD"}</li>
             </ul>
 
-            <p>We look forward to seeing you!</p>
+            <p>${isThai ? "เราตั้งตารอพบคุณ!" : "We look forward to seeing you!"}</p>
           </div>
         </div>
       </body>
@@ -156,8 +182,10 @@ export async function sendBookingReminder(to: string, bookingDetails: any) {
   return sendEmail({ to, subject, html })
 }
 
-export async function sendAnalysisComplete(to: string, _analysisId: string) {
-  const subject = "Your AI Skin Analysis is Ready"
+export async function sendAnalysisComplete(to: string, _analysisId: string, locale: 'th' | 'en' = 'en') {
+  const t = EMAIL_SUBJECTS[locale] || EMAIL_SUBJECTS.en;
+  const subject = t.analysisComplete;
+  const isThai = locale === 'th';
   const html = `
     <!DOCTYPE html>
     <html>
@@ -173,14 +201,14 @@ export async function sendAnalysisComplete(to: string, _analysisId: string) {
       <body>
         <div class="container">
           <div class="header">
-            <h1>Analysis Complete!</h1>
-            <p>Your AI skin analysis results are ready</p>
+            <h1>${isThai ? "วิเคราะห์ผิวสำเร็จ!" : "Analysis Complete!"}</h1>
+            <p>${isThai ? "ผลการวิเคราะห์ผิวด้วย AI ของคุณพร้อมแล้ว" : "Your AI skin analysis results are ready"}</p>
           </div>
           <div class="content">
-            <p>Your skin analysis has been completed successfully.</p>
-            <p>View your personalized results and program recommendations now.</p>
+            <p>${isThai ? "การวิเคราะห์ผิวของคุณเสร็จสิ้นเรียบร้อยแล้ว" : "Your skin analysis has been completed successfully."}</p>
+            <p>${isThai ? "ดูผลลัพธ์เฉพาะบุคคลและคำแนะนำโปรแกรมได้เลย" : "View your personalized results and program recommendations now."}</p>
             
-            <a href="${process.env.NEXT_PUBLIC_SITE_URL}/analysis/results" class="button">View Results</a>
+            <a href="${process.env.NEXT_PUBLIC_SITE_URL}/analysis/results" class="button">${isThai ? "ดูผลลัพธ์" : "View Results"}</a>
           </div>
         </div>
       </body>
@@ -217,8 +245,9 @@ export type {
  * Send weekly progress digest email
  * Sent every Monday morning with summary of past week
  */
-export async function sendWeeklyProgressDigest(to: string, data: WeeklyDigestData) {
-  const subject = `📊 สรุปความคืบหน้าประจำสัปดาห์ (${data.weekStart} - ${data.weekEnd})`
+export async function sendWeeklyProgressDigest(to: string, data: WeeklyDigestData, locale: 'th' | 'en' = 'en') {
+  const t = EMAIL_SUBJECTS[locale] || EMAIL_SUBJECTS.en;
+  const subject = t.weeklyDigest(data)
   const html = generateWeeklyProgressDigest(data)
 
   return sendEmail({ to, subject, html })
@@ -228,8 +257,9 @@ export async function sendWeeklyProgressDigest(to: string, data: WeeklyDigestDat
  * Send automated progress report
  * Sent every 2 weeks comparing latest analysis with previous
  */
-export async function sendAutomatedProgressReport(to: string, data: ProgressReportData) {
-  const subject = `✨ รายงานความคืบหน้า - ${data.reportPeriod}`
+export async function sendAutomatedProgressReport(to: string, data: ProgressReportData, locale: 'th' | 'en' = 'en') {
+  const t = EMAIL_SUBJECTS[locale] || EMAIL_SUBJECTS.en;
+  const subject = t.automatedProgress(data)
   const html = generateAutomatedProgressReport(data)
 
   return sendEmail({ to, subject, html })
@@ -239,8 +269,9 @@ export async function sendAutomatedProgressReport(to: string, data: ProgressRepo
  * Send goal achievement celebration email
  * Sent immediately when user achieves a goal
  */
-export async function sendGoalAchievementEmail(to: string, data: GoalAchievementData) {
-  const subject = `🎉 ยินดีด้วย! คุณบรรลุเป้าหมาย "${data.goalName}" แล้ว!`
+export async function sendGoalAchievementEmail(to: string, data: GoalAchievementData, locale: 'th' | 'en' = 'en') {
+  const t = EMAIL_SUBJECTS[locale] || EMAIL_SUBJECTS.en;
+  const subject = t.goalAchievement(data)
   const html = generateGoalAchievement(data)
 
   return sendEmail({ to, subject, html })
@@ -250,8 +281,9 @@ export async function sendGoalAchievementEmail(to: string, data: GoalAchievement
  * Send re-engagement email
  * Sent to inactive users (no analysis for 7+ days)
  */
-export async function sendReEngagementEmail(to: string, data: ReEngagementData) {
-  const subject = `💜 เราคิดถึงคุณ! กลับมาดูแลผิวกันต่อนะ`
+export async function sendReEngagementEmail(to: string, data: ReEngagementData, locale: 'th' | 'en' = 'en') {
+  const t = EMAIL_SUBJECTS[locale] || EMAIL_SUBJECTS.en;
+  const subject = t.reEngagement
   const html = generateReEngagement(data)
 
   return sendEmail({ to, subject, html })

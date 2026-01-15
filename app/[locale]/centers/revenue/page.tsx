@@ -28,7 +28,7 @@ import {
   Binary
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { useToast } from '@/hooks/use-toast';
 
 // @ts-ignore
@@ -127,7 +127,10 @@ interface AppointmentAnalytics {
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
 export default function CenterRevenuePage() {
-  const t = useTranslations();
+  const t = useTranslations('revenue');
+  const commonT = useTranslations('common');
+  const aboutT = useTranslations('about');
+  const locale = useLocale();
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
   const lp = useLocalizePath();
@@ -161,12 +164,12 @@ export default function CenterRevenuePage() {
     } catch (error) {
       console.error('Error loading appointment data:', error);
       toast({
-        title: t('common.error'),
-        description: t('revenue.errors.loadAppointments'),
+        title: commonT('error'),
+        description: t('errors.loadAppointments'),
         variant: 'destructive'
       });
     }
-  }, [period, t, toast]);
+  }, [period, commonT, t, toast]);
 
   const loadRevenueData = useCallback(async () => {
     setIsLoading(true);
@@ -180,14 +183,14 @@ export default function CenterRevenuePage() {
     } catch (error) {
       console.error('Error loading revenue data:', error);
       toast({
-        title: t('common.error'),
-        description: t('revenue.errors.loadRevenue'),
+        title: commonT('error'),
+        description: t('errors.loadRevenue'),
         variant: 'destructive'
       });
     } finally {
       setIsLoading(false);
     }
-  }, [period, t, toast]);
+  }, [period, commonT, t, toast]);
 
   useEffect(() => {
     if (authLoading) return;
@@ -231,17 +234,17 @@ export default function CenterRevenuePage() {
 
     // Create CSV content
     const header = [
-      t('revenue.csv.reportTitle'),
-      `${t('revenue.csv.periodLabel')} ${t(`revenue.periods.${period}`)}`,
+      t('csv.reportTitle'),
+      `${t('csv.periodLabel')} ${t(`periods.${period}`)}`,
       '',
-      t('revenue.csv.summary'),
-      `${t('revenue.metrics.totalRevenue')},${data.summary.totalRevenue}`,
-      `${t('revenue.metrics.confirmedBookings')},${data.summary.totalBookings}`,
-      `${t('revenue.metrics.avgTransactionValue')},${data.summary.averageOrderValue}`,
-      `${t('about.stats.accuracy')},${data.summary.growthRate}%`,
+      t('csv.summary'),
+      `${t('metrics.totalRevenue')},${data.summary.totalRevenue}`,
+      `${t('metrics.confirmedBookings')},${data.summary.totalBookings}`,
+      `${t('metrics.avgTransactionValue')},${data.summary.averageOrderValue}`,
+      `${aboutT('stats.accuracy')},${data.summary.growthRate}%`,
       '',
-      t('revenue.csv.dailyRevenue'),
-      `${t('revenue.csv.columns.date')},${t('revenue.csv.columns.revenue')},${t('revenue.csv.columns.bookings')}`
+      t('csv.dailyRevenue'),
+      `${t('csv.columns.date')},${t('csv.columns.revenue')},${t('csv.columns.bookings')}`
     ];
 
     // Add daily data
@@ -252,8 +255,8 @@ export default function CenterRevenuePage() {
     // Add payment methods section
     const paymentHeader = [
       '',
-      t('revenue.csv.paymentMethods'),
-      `${t('revenue.csv.columns.method')},${t('revenue.csv.columns.amount')},${t('revenue.csv.columns.count')},${t('revenue.csv.columns.average')}`
+      t('csv.paymentMethods'),
+      `${t('csv.columns.method')},${t('csv.columns.amount')},${t('csv.columns.count')},${t('csv.columns.average')}`
     ];
 
     const paymentRows = data.byPaymentMethod.map(method => 
@@ -281,13 +284,13 @@ export default function CenterRevenuePage() {
     URL.revokeObjectURL(url);
 
     toast({
-      title: t('revenue.export.success'),
-      description: t('revenue.export.csvDownloaded')
+      title: t('export.success'),
+      description: t('export.csvDownloaded')
     });
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('th-TH', {
+    return new Intl.NumberFormat(locale === 'th' ? 'th-TH' : 'en-US', {
       style: 'currency',
       currency: 'THB',
       minimumFractionDigits: 0
@@ -299,7 +302,7 @@ export default function CenterRevenuePage() {
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center space-y-4">
           <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
-          <p className="text-muted-foreground">{t('revenue.loading')}</p>
+          <p className="text-muted-foreground">{t('loading')}</p>
         </div>
       </div>
     );
@@ -338,14 +341,14 @@ export default function CenterRevenuePage() {
               >
                 <Badge variant="outline" className="px-4 py-1 rounded-full border-blue-500/30 text-blue-600 bg-blue-500/5 backdrop-blur-md uppercase tracking-[0.2em] text-[10px] font-black shadow-lg shadow-blue-500/5">
                   <TrendingUp className="mr-3 h-3.5 w-3.5 animate-pulse" />
-                  Aesthetic Intelligence Terminal
+                  {t('terminal')}
                 </Badge>
                 <h1 className="text-5xl md:text-8xl font-bold tracking-tighter text-slate-900 leading-[0.9] italic">
-                  Revenue<br />
-                  <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 bg-clip-text text-transparent not-italic text-2xl tracking-[0.3em] font-black uppercase">Active Nodes MTD</span>
+                  {t('reportTitle')}<br />
+                  <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 bg-clip-text text-transparent not-italic text-2xl tracking-[0.3em] font-black uppercase">{t('activeNodes')}</span>
                 </h1>
                 <p className="text-xl text-slate-500 font-light tracking-widest max-w-2xl italic leading-relaxed">
-                  Orchestrate aesthetic financial flows and monitor yield optimization cycles with precision telemetry.
+                  {t('syncDescription')}
                 </p>
               </motion.div>
             </div>
@@ -374,11 +377,11 @@ export default function CenterRevenuePage() {
               <div className="flex gap-4">
                 <Button variant="outline" className="h-14 px-8 rounded-2xl border-slate-200 bg-white hover:bg-slate-50 text-[10px] font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95" onClick={() => handleExport('pdf')}>
                   <Download className="mr-3 h-4 w-4" />
-                  PDF_EXPORT
+                  {t('pdfExport')}
                 </Button>
                 <Button variant="premium" className="h-14 px-8 rounded-2xl shadow-xl shadow-blue-600/20 text-[10px] font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95 border-none bg-blue-600 text-white" onClick={() => handleExport('excel')}>
                   <Download className="mr-3 h-4 w-4" />
-                  LEDGER_SYNC
+                  {t('ledgerSync')}
                 </Button>
               </div>
             </div>
@@ -387,10 +390,10 @@ export default function CenterRevenuePage() {
           {/* Executive Metrics Grid - Aesthetic Stats */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             {[
-              { label: t('revenue.metrics.totalRevenue'), val: formatCurrency(data.summary.totalRevenue), icon: DollarSign, color: "text-blue-600", bg: "bg-blue-50", trend: data.summary.growthRate },
-              { label: t('revenue.metrics.confirmedBookings'), val: data.summary.totalBookings, icon: Calendar, color: "text-indigo-600", bg: "bg-indigo-50", sub: "Operational Cycles" },
-              { label: t('revenue.metrics.avgTransactionValue'), val: formatCurrency(data.summary.averageOrderValue), icon: Package, color: "text-cyan-600", bg: "bg-cyan-50", sub: "Unit Yield" },
-              { label: t('revenue.metrics.clientRetention'), val: data.byPaymentMethod.reduce((sum, m) => sum + m.count, 0), icon: Users, color: "text-slate-600", bg: "bg-slate-50", sub: "Verified Entities" }
+              { label: t('metrics.totalRevenue'), val: formatCurrency(data.summary.totalRevenue), icon: DollarSign, color: "text-blue-600", bg: "bg-blue-50", trend: data.summary.growthRate },
+              { label: t('metrics.confirmedBookings'), val: data.summary.totalBookings, icon: Calendar, color: "text-indigo-600", bg: "bg-indigo-50", sub: "{t('metrics.operationalCycles')}" },
+              { label: t('metrics.avgTransactionValue'), val: formatCurrency(data.summary.averageOrderValue), icon: Package, color: "text-cyan-600", bg: "bg-cyan-50", sub: "{t('metrics.unitYield')}" },
+              { label: t('revenue.metrics.clientRetention'), val: data.byPaymentMethod.reduce((sum, m) => sum + m.count, 0), icon: Users, color: "text-slate-600", bg: "bg-slate-50", sub: "{t('metrics.verifiedEntities')}" }
             ].map((m, i) => (
               <motion.div
                 key={i}
@@ -431,12 +434,12 @@ export default function CenterRevenuePage() {
             <div className="flex justify-center border-b border-slate-200">
               <TabsList className="bg-transparent h-auto p-0 gap-8">
                 {[
-                  { id: 'mission', label: 'Mission_Control', icon: LayoutGrid },
-                  { id: 'trend', label: 'Temporal_Dynamics', icon: TrendingUp },
-                  { id: 'payment', label: 'Vector_Optimization', icon: CreditCard },
-                  { id: 'appointments', label: 'Throughput_Matrix', icon: Calendar },
-                  { id: 'forecast', label: 'Predictive_Revenue', icon: Binary },
-                  { id: 'marketing', label: 'Autonomous_Growth', icon: Megaphone }
+                  { id: 'mission', label: t('tabs.mission'), icon: LayoutGrid },
+                  { id: 'trend', label: t('tabs.trend'), icon: TrendingUp },
+                  { id: 'payment', label: t('tabs.payment'), icon: CreditCard },
+                  { id: 'appointments', label: t('tabs.appointments'), icon: Calendar },
+                  { id: 'forecast', label: t('tabs.forecast'), icon: Binary },
+                  { id: 'marketing', label: t('tabs.marketing'), icon: Megaphone }
                 ].map((tab) => (
                   <TabsTrigger
                     key={tab.id}
@@ -465,10 +468,10 @@ export default function CenterRevenuePage() {
                 </TabsContent>
         <TabsContent value="trend" className="mt-0 outline-none">
                 <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group">
-                  <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-royalblue-500/20 to-transparent" />
+                  <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-600/20 to-transparent" />
                   <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
-                    <CardTitle className="text-2xl font-bold text-royalblue-500 tracking-tight italic">Synthesis Dynamics</CardTitle>
-                    <CardDescription className="text-sm text-slate-500 font-light italic mt-2">Historical revenue momentum and cycle volume analytics</CardDescription>
+                    <CardTitle className="text-2xl font-bold text-blue-600 tracking-tight italic">{t('charts.synthesisDynamics')}</CardTitle>
+                    <CardDescription className="text-sm text-slate-500 font-light italic mt-2">{t('charts.dynamicsDescription')}</CardDescription>
                   </CardHeader>
                   <CardContent className="p-10 lg:p-16">
                     <div className="print:hidden h-[500px] w-full">
@@ -507,7 +510,7 @@ export default function CenterRevenuePage() {
                             strokeWidth={6}
                             dot={false}
                             activeDot={{ r: 10, strokeWidth: 0, fill: '#2563eb' }}
-                            name="Gross Inflow"
+                            name={t('charts.grossInflow')}
                           />
                           <Line
                             type="monotone"
@@ -516,7 +519,7 @@ export default function CenterRevenuePage() {
                             strokeWidth={3}
                             strokeDasharray="8 8"
                             dot={false}
-                            name="Cycle Volume"
+                            name={t('charts.cycleVolume')}
                           />
                         </LineChart>
                       </ResponsiveContainer>
@@ -525,78 +528,78 @@ export default function CenterRevenuePage() {
                 </Card>
               </TabsContent>
 
-              <TabsContent value="payment" className="mt-0 outline-none">
-                <div className="grid lg:grid-cols-12 gap-10">
-                  <Card className="lg:col-span-7 border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group">
-                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
-                    <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
-                      <CardTitle className="text-2xl font-bold text-royalblue-500 tracking-tight italic">Vector Optimization</CardTitle>
-                      <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Aesthetic financial ingestion method breakdown</CardDescription>
-                    </CardHeader>
-                    <CardContent className="p-10 lg:p-16 h-[450px]">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={data.byPaymentMethod}>
-                          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
-                          <XAxis dataKey="method" tick={{ fill: '#475569', fontSize: 10, fontWeight: 'bold' }} axisLine={false} dy={15} />
-                          <YAxis tick={{ fill: '#475569', fontSize: 10, fontWeight: 'bold' }} axisLine={false} tickFormatter={(v: number) => `฿${v/1000}k`} dx={-10} />
-                          <Tooltip 
-                            cursor={{ fill: 'rgba(255,255,255,0.02)' }}
-                            contentStyle={{ backgroundColor: '#020617', border: 'none', borderRadius: '24px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }}
-                          />
-                          <Bar dataKey="amount" radius={[12, 12, 0, 0]} name="Inflow Vector">
-                            {data.byPaymentMethod.map((entry, index) => (
-                              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} opacity={0.8} stroke="rgba(255,255,255,0.05)" strokeWidth={2} />
-                            ))}
-                          </Bar>
-                        </BarChart>
-                      </ResponsiveContainer>
-                    </CardContent>
-                  </Card>
+                <TabsContent value="payment" className="mt-0 outline-none">
+                  <div className="grid lg:grid-cols-12 gap-10">
+                    <Card className="lg:col-span-7 border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group">
+                      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
+                      <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
+                        <CardTitle className="text-2xl font-bold text-royalblue-500 tracking-tight italic">{t('charts.vectorOptimization')}</CardTitle>
+                        <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('charts.vectorDescription')}</CardDescription>
+                      </CardHeader>
+                      <CardContent className="p-10 lg:p-16 h-[450px]">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart data={data.byPaymentMethod}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
+                            <XAxis dataKey="method" tick={{ fill: '#475569', fontSize: 10, fontWeight: 'bold' }} axisLine={false} dy={15} />
+                            <YAxis tick={{ fill: '#475569', fontSize: 10, fontWeight: 'bold' }} axisLine={false} tickFormatter={(v: number) => `฿${v/1000}k`} dx={-10} />
+                            <Tooltip 
+                              cursor={{ fill: 'rgba(255,255,255,0.02)' }}
+                              contentStyle={{ backgroundColor: '#020617', border: 'none', borderRadius: '24px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }}
+                            />
+                            <Bar dataKey="amount" radius={[12, 12, 0, 0]} name={t('charts.inflowVector')}>
+                              {data.byPaymentMethod.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} opacity={0.8} stroke="rgba(255,255,255,0.05)" strokeWidth={2} />
+                              ))}
+                            </Bar>
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </CardContent>
+                    </Card>
 
-                  <div className="lg:col-span-5 space-y-8">
-                    <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-600 ml-4 italic">Operational Performance</h3>
-                    <div className="space-y-6">
-                      {data.byPaymentMethod.map((method, idx) => (
-                        <motion.div
-                          key={method.method}
-                          initial={{ opacity: 0, x: 20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: idx * 0.1 }}
-                        >
-                          <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2rem] hover:bg-white/[0.03] hover:border-pink-500/20 transition-all duration-500 group overflow-hidden relative shadow-xl">
-                            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
-                            <CardContent className="p-8">
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-6">
-                                  <div className="h-14 w-14 rounded-2xl flex items-center justify-center bg-white/[0.03] border border-white/10 group-hover:scale-110 group-hover:border-pink-500/30 transition-all duration-700 shadow-inner">
-                                    <CreditCard className="h-6 w-6 text-pink-400" />
+                    <div className="lg:col-span-5 space-y-8">
+                      <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-600 ml-4 italic">{t('performance.title')}</h3>
+                      <div className="space-y-6">
+                        {data.byPaymentMethod.map((method, idx) => (
+                          <motion.div
+                            key={method.method}
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: idx * 0.1 }}
+                          >
+                            <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2rem] hover:bg-white/[0.03] hover:border-pink-500/20 transition-all duration-500 group overflow-hidden relative shadow-xl">
+                              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+                              <CardContent className="p-8">
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center gap-6">
+                                    <div className="h-14 w-14 rounded-2xl flex items-center justify-center bg-white/[0.03] border border-white/10 group-hover:scale-110 group-hover:border-pink-500/30 transition-all duration-700 shadow-inner">
+                                      <CreditCard className="h-6 w-6 text-pink-400" />
+                                    </div>
+                                    <div className="space-y-1">
+                                      <p className="text-lg font-bold text-white italic group-hover:text-pink-400 transition-colors">{method.method}</p>
+                                      <p className="text-[9px] text-slate-600 font-black uppercase tracking-widest">{method.count} {t('performance.verifiedNodes')}</p>
+                                    </div>
                                   </div>
-                                  <div className="space-y-1">
-                                    <p className="text-lg font-bold text-white italic group-hover:text-pink-400 transition-colors">{method.method}</p>
-                                    <p className="text-[9px] uppercase font-black text-slate-600 tracking-widest">{method.count} Verified Nodes</p>
+                                  <div className="text-right space-y-1">
+                                    <p className="text-2xl font-black text-white tracking-tighter italic">{formatCurrency(method.amount)}</p>
+                                    <p className="text-[9px] text-pink-500/60 font-black uppercase tracking-widest italic">YIELD: {formatCurrency(method.amount / method.count)}</p>
                                   </div>
                                 </div>
-                                <div className="text-right space-y-1">
-                                  <p className="text-2xl font-black text-white tracking-tighter italic">{formatCurrency(method.amount)}</p>
-                                  <p className="text-[9px] text-pink-500/60 font-black uppercase tracking-widest italic">YIELD: {formatCurrency(method.amount / method.count)}</p>
-                                </div>
-                              </div>
-                            </CardContent>
-                          </Card>
-                        </motion.div>
-                      ))}
+                              </CardContent>
+                            </Card>
+                          </motion.div>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </TabsContent>
+                </TabsContent>
 
                 <TabsContent value="appointments" className="mt-0 outline-none">
                   <div className="space-y-12">
                     <div className="grid gap-8 md:grid-cols-3">
                       {[
-                        { label: "Throughput", val: appointmentData?.summary.totalAppointments || 0, sub: "Cumulative Cycles", icon: Calendar, color: 'text-blue-400' },
-                        { label: "Efficiency", val: `${appointmentData?.summary.completionRate || 0}%`, sub: "Execution Yield", icon: TrendingUp, color: 'text-pink-400' },
-                        { label: "Velocity", val: `${appointmentData?.summary.paymentRate || 0}%`, sub: "Liquidity Index", icon: CreditCard, color: 'text-emerald-400' }
+                        { label: t('throughput.label'), val: appointmentData?.summary.totalAppointments || 0, sub: t('throughput.sub'), icon: Calendar, color: 'text-blue-400' },
+                        { label: t('efficiency.label'), val: `${appointmentData?.summary.completionRate || 0}%`, sub: t('efficiency.sub'), icon: TrendingUp, color: 'text-pink-400' },
+                        { label: t('velocity.label'), val: `${appointmentData?.summary.paymentRate || 0}%`, sub: t('velocity.sub'), icon: CreditCard, color: 'text-emerald-400' }
                       ].map((s, i) => (
                         <motion.div
                           key={i}
@@ -625,7 +628,7 @@ export default function CenterRevenuePage() {
                       <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] shadow-2xl relative group overflow-hidden">
                         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent" />
                         <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
-                          <CardTitle className="text-2xl font-bold text-white tracking-tight italic">Status Matrix</CardTitle>
+                          <CardTitle className="text-2xl font-bold text-white tracking-tight italic">{t('charts.statusMatrix')}</CardTitle>
                         </CardHeader>
                         <CardContent className="p-12 flex flex-col items-center">
                           <div className="h-[350px] w-full">
@@ -657,7 +660,7 @@ export default function CenterRevenuePage() {
                       <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] shadow-2xl relative group overflow-hidden">
                         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent" />
                         <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
-                          <CardTitle className="text-2xl font-bold text-white tracking-tight italic">Status Index</CardTitle>
+                          <CardTitle className="text-2xl font-bold text-white tracking-tight italic">{t('charts.statusIndex')}</CardTitle>
                         </CardHeader>
                         <CardContent className="p-10 lg:p-12 space-y-10">
                           {(appointmentData?.statusBreakdown || []).map((status, index) => (
@@ -665,7 +668,7 @@ export default function CenterRevenuePage() {
                               <div className="flex justify-between items-end">
                                 <div className="space-y-1">
                                   <span className="text-[10px] font-black text-white group-hover/status:text-pink-400 transition-colors uppercase tracking-[0.25em] italic">{status.status}</span>
-                                  <p className="text-[9px] text-slate-600 font-black uppercase tracking-widest">{status.count} Operational Cycles</p>
+                                  <p className="text-[9px] text-slate-600 font-black uppercase tracking-widest">{status.count} {t('metrics.operationalCycles')}</p>
                                 </div>
                                 <span className="text-2xl font-black text-white italic tracking-tighter">{status.percentage}%</span>
                               </div>

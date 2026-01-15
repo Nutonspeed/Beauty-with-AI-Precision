@@ -231,7 +231,7 @@ export default function CenterPaymentsPage() {
       URL.revokeObjectURL(url)
     } catch (e) {
       console.error(e)
-      setError("ไม่สามารถ Export CSV (All) ได้")
+      setError(t('centers.payments.exportError'))
     } finally {
       setExportAllLoading(false)
     }
@@ -284,7 +284,7 @@ export default function CenterPaymentsPage() {
         }
       } catch (e) {
         console.error(e)
-        if (!cancelled) setError("ไม่สามารถโหลดรายการชำระเงินได้")
+        if (!cancelled) setError(t('centers.payments.loadError'))
       } finally {
         if (!cancelled) setLoading(false)
       }
@@ -297,7 +297,7 @@ export default function CenterPaymentsPage() {
     return () => {
       cancelled = true
     }
-  }, [authLoading, user, searchParams])
+  }, [authLoading, user, searchParams, t])
 
   useEffect(() => {
     setOffset(0)
@@ -353,7 +353,7 @@ export default function CenterPaymentsPage() {
       setMarkPaidPayment(null)
     } catch (e) {
       console.error(e)
-      setError("ไม่สามารถอัปเดตสถานะการชำระเงินได้")
+      setError(t('centers.payments.updateError'))
     } finally {
       setMarkPaidSaving(false)
     }
@@ -381,28 +381,28 @@ export default function CenterPaymentsPage() {
             >
               <Badge variant="outline" className="px-4 py-1 rounded-full border-pink-500/30 text-pink-400 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.2em] text-[10px] font-black shadow-2xl shadow-pink-500/10">
                 <CreditCard className="mr-3 h-3.5 w-3.5 animate-pulse" />
-                Financial Reconciliation Node
+                {t('centers.payments.financialNode')}
               </Badge>
               <h1 className="text-5xl md:text-7xl font-bold tracking-tighter text-white leading-[0.9] italic">
-                Payment<br />
+                {t('nav.inventory')}<br />
                 <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent not-italic">Ledger</span>
               </h1>
               <p className="text-xl text-slate-500 font-light tracking-widest max-w-2xl italic leading-relaxed">
-                Comprehensive aesthetic inflow tracking and financial node synchronization.
+                {t('centers.payments.syncDescription')}
               </p>
             </motion.div>
             
             <div className="flex flex-wrap items-center gap-4 shrink-0">
               <div className="flex gap-3">
                 <Button variant="outline" className="h-14 px-8 rounded-2xl border-white/10 bg-white/5 hover:bg-white/10 text-[10px] font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95" onClick={exportCsv} disabled={!data?.payments?.length || loading}>
-                  Export Node
+                  {t('centers.payments.exportNode')}
                 </Button>
                 <Button variant="premium" className="h-14 px-8 rounded-2xl shadow-2xl shadow-pink-500/20 text-[10px] font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95" onClick={exportCsvAll} disabled={loading || exportAllLoading}>
-                  {exportAllLoading ? "Syncing CSV..." : "Export Global"}
+                  {exportAllLoading ? t('centers.payments.syncingCsv') : "{t('centers.payments.exportGlobal')}"}
                 </Button>
               </div>
               <Button variant="outline" className="h-14 px-8 rounded-2xl border-white/10 bg-white/5 hover:bg-white/10 text-[10px] font-black uppercase tracking-widest transition-all" onClick={() => router.push(lp("/center/appointments"))}>
-                Temporal Map
+                {t('centers.payments.temporalMap')}
               </Button>
             </div>
           </div>
@@ -410,11 +410,11 @@ export default function CenterPaymentsPage() {
           {/* Financial Metrics Summary Nodes */}
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             {[
-              { label: 'Total Inflow', val: data?.payments?.reduce((sum, p) => sum + Number(p.amount || 0), 0).toLocaleString(), count: data?.payments?.length, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-              { label: 'Verified (Paid)', val: data?.payments?.filter(p => p.payment_status === "paid").reduce((sum, p) => sum + Number(p.amount || 0), 0).toLocaleString(), count: data?.payments?.filter(p => p.payment_status === "paid").length, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
-              { label: 'Pending Auth', val: data?.payments?.filter(p => p.payment_status === "pending").reduce((sum, p) => sum + Number(p.amount || 0), 0).toLocaleString(), count: data?.payments?.filter(p => p.payment_status === "pending").length, color: 'text-amber-400', bg: 'bg-amber-500/10' },
-              { label: 'Refunded', val: data?.payments?.filter(p => p.payment_status === "refunded").reduce((sum, p) => sum + Number(p.amount || 0), 0).toLocaleString(), count: data?.payments?.filter(p => p.payment_status === "refunded").length, color: 'text-rose-400', bg: 'bg-rose-500/10' },
-              { label: 'Cancelled', val: data?.payments?.filter(p => p.payment_status === "cancelled").reduce((sum, p) => sum + Number(p.amount || 0), 0).toLocaleString(), count: data?.payments?.filter(p => p.payment_status === "cancelled").length, color: 'text-slate-400', bg: 'bg-white/5' }
+              { label: t('centers.payments.metrics.totalInflow'), val: data?.payments?.reduce((sum, p) => sum + Number(p.amount || 0), 0).toLocaleString(), count: data?.payments?.length, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+              { label: t('centers.payments.metrics.verified'), val: data?.payments?.filter(p => p.payment_status === "paid").reduce((sum, p) => sum + Number(p.amount || 0), 0).toLocaleString(), count: data?.payments?.filter(p => p.payment_status === "paid").length, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+              { label: t('centers.payments.metrics.pendingAuth'), val: data?.payments?.filter(p => p.payment_status === "pending").reduce((sum, p) => sum + Number(p.amount || 0), 0).toLocaleString(), count: data?.payments?.filter(p => p.payment_status === "pending").length, color: 'text-amber-400', bg: 'bg-amber-500/10' },
+              { label: t('centers.payments.metrics.refunded'), val: data?.payments?.filter(p => p.payment_status === "refunded").reduce((sum, p) => sum + Number(p.amount || 0), 0).toLocaleString(), count: data?.payments?.filter(p => p.payment_status === "refunded").length, color: 'text-rose-400', bg: 'bg-rose-500/10' },
+              { label: t('centers.payments.metrics.cancelled'), val: data?.payments?.filter(p => p.payment_status === "cancelled").reduce((sum, p) => sum + Number(p.amount || 0), 0).toLocaleString(), count: data?.payments?.filter(p => p.payment_status === "cancelled").length, color: 'text-slate-400', bg: 'bg-white/5' }
             ].map((stat, i) => (
               <motion.div
                 key={i}
@@ -427,7 +427,7 @@ export default function CenterPaymentsPage() {
                   <CardContent className="p-6">
                     <p className="text-[8px] font-black uppercase tracking-[0.2em] text-slate-600 mb-3 italic">{stat.label}</p>
                     <div className={cn("text-xl font-black tracking-tighter italic mb-1", stat.color)}>฿{stat.val}</div>
-                    <p className="text-[8px] font-black uppercase tracking-widest text-slate-700">{stat.count} CYCLES</p>
+                    <p className="text-[8px] font-black uppercase tracking-widest text-slate-700">{stat.count} t('centers.payments.metrics.cycles')</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -437,40 +437,40 @@ export default function CenterPaymentsPage() {
           {/* Filtering & Search Interface */}
           <div className="grid gap-6 md:grid-cols-12 items-end">
             <div className="md:col-span-2 space-y-2">
-              <Label className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">Status Filter</Label>
+              <Label className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">{t('centers.payments.filters.status')}</Label>
               <select className="h-12 w-full rounded-xl border border-white/5 bg-white/[0.03] px-4 text-[10px] font-bold text-white focus:outline-none focus:ring-2 focus:ring-pink-500/20 appearance-none transition-all cursor-pointer" value={status} onChange={(e) => setStatus(e.target.value as any)}>
-                <option value="all" className="bg-[#020617]">GLOBAL</option>
-                <option value="pending" className="bg-[#020617]">PENDING</option>
-                <option value="paid" className="bg-[#020617]">VERIFIED</option>
-                <option value="refunded" className="bg-[#020617]">REFUNDED</option>
-                <option value="cancelled" className="bg-[#020617]">CANCELLED</option>
+                <option value="all" className="bg-[#020617]">{t('centers.payments.status.all')}</option>
+                <option value="pending" className="bg-[#020617]">{t('centers.payments.status.pending')}</option>
+                <option value="paid" className="bg-[#020617]">{t('centers.payments.status.paid')}</option>
+                <option value="refunded" className="bg-[#020617]">{t('centers.payments.status.refunded')}</option>
+                <option value="cancelled" className="bg-[#020617]">{t('centers.payments.status.cancelled')}</option>
               </select>
             </div>
 
             <div className="md:col-span-2 space-y-2">
-              <Label className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">Method</Label>
+              <Label className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">{t('centers.payments.filters.method')}</Label>
               <select className="h-12 w-full rounded-xl border border-white/5 bg-white/[0.03] px-4 text-[10px] font-bold text-white focus:outline-none focus:ring-2 focus:ring-pink-500/20 appearance-none transition-all cursor-pointer" value={method} onChange={(e) => setMethod(e.target.value as any)}>
-                <option value="all" className="bg-[#020617]">ALL METHODS</option>
-                <option value="promptpay" className="bg-[#020617]">PROMPTPAY</option>
-                <option value="cash" className="bg-[#020617]">CASH</option>
-                <option value="credit_card" className="bg-[#020617]">CREDIT CARD</option>
-                <option value="bank_transfer" className="bg-[#020617]">TRANSFER</option>
-                <option value="other" className="bg-[#020617]">OTHER</option>
+                <option value="all" className="bg-[#020617]">{t('centers.payments.methods.all')}</option>
+                <option value="promptpay" className="bg-[#020617]">{t('centers.payments.methods.promptpay')}</option>
+                <option value="cash" className="bg-[#020617]">{t('centers.payments.methods.cash')}</option>
+                <option value="credit_card" className="bg-[#020617]">{t('centers.payments.methods.creditCard')}</option>
+                <option value="bank_transfer" className="bg-[#020617]">{t('centers.payments.methods.bankTransfer')}</option>
+                <option value="other" className="bg-[#020617]">{t('centers.payments.methods.other')}</option>
               </select>
             </div>
 
             <div className="md:col-span-4 space-y-2">
-              <Label className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">Diagnostic Search</Label>
-              <Input className="h-12 rounded-xl border-white/5 bg-white/[0.03] text-white placeholder:text-slate-700 focus:border-pink-500/30 transition-all px-6 text-xs" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search Ledger ID / Hash / Notes..." />
+              <Label className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">{t('centers.payments.filters.search')}</Label>
+              <Input className="h-12 rounded-xl border-white/5 bg-white/[0.03] text-white placeholder:text-slate-700 focus:border-pink-500/30 transition-all px-6 text-xs" value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t('centers.payments.filters.searchPlaceholder')} />
             </div>
 
             <div className="md:col-span-2 space-y-2">
-              <Label className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">Start Node</Label>
+              <Label className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">{t('centers.payments.filters.startNode')}</Label>
               <Input type="date" className="h-12 rounded-xl border-white/5 bg-white/[0.03] text-white focus:border-pink-500/30 transition-all px-4 text-[10px] font-bold" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
             </div>
 
             <div className="md:col-span-2 space-y-2">
-              <Label className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">End Node</Label>
+              <Label className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">{t('centers.payments.filters.endNode')}</Label>
               <Input type="date" className="h-12 rounded-xl border-white/5 bg-white/[0.03] text-white focus:border-pink-500/30 transition-all px-4 text-[10px] font-bold" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
             </div>
           </div>
@@ -482,9 +482,9 @@ export default function CenterPaymentsPage() {
               <div className="space-y-2">
                 <CardTitle className="text-3xl font-bold text-white tracking-tight italic flex items-center gap-4">
                   <CreditCard className="h-8 w-8 text-pink-500" />
-                  Transaction Ledger ({total.toLocaleString()})
+                  t('centers.payments.ledger.title') ({total.toLocaleString()})
                 </CardTitle>
-                <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Live aesthetic node synchronization</CardDescription>
+                <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">t('centers.payments.ledger.syncDescription')</CardDescription>
               </div>
               <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-widest text-slate-600 italic">
                 Page {page} / {totalPages}
@@ -504,19 +504,19 @@ export default function CenterPaymentsPage() {
               ) : (data?.payments || []).length === 0 ? (
                 <div className="py-40 text-center space-y-6">
                   <CreditCard className="mx-auto h-12 w-12 text-slate-700 animate-pulse" />
-                  <p className="text-xl font-bold text-slate-500 italic">Ledger Empty</p>
+                  <p className="text-xl font-bold text-slate-500 italic">t('centers.payments.ledger.empty')</p>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full border-collapse">
                     <thead>
                       <tr className="bg-white/[0.02] border-b border-white/5">
-                        <th className="px-8 py-6 text-left text-[9px] font-black uppercase tracking-[0.3em] text-slate-600">Sync Date</th>
-                        <th className="px-8 py-6 text-left text-[9px] font-black uppercase tracking-[0.3em] text-slate-600">Appointment Node</th>
-                        <th className="px-8 py-6 text-left text-[9px] font-black uppercase tracking-[0.3em] text-slate-600">Inflow Amount</th>
-                        <th className="px-8 py-6 text-left text-[9px] font-black uppercase tracking-[0.3em] text-slate-600">Method Vector</th>
-                        <th className="px-8 py-6 text-left text-[9px] font-black uppercase tracking-[0.3em] text-slate-600">Auth Status</th>
-                        <th className="px-8 py-6 text-left text-[9px] font-black uppercase tracking-[0.3em] text-slate-600">Control</th>
+                        <th className="px-8 py-6 text-left text-[9px] font-black uppercase tracking-[0.3em] text-slate-600">t('centers.payments.ledger.syncDate')</th>
+                        <th className="px-8 py-6 text-left text-[9px] font-black uppercase tracking-[0.3em] text-slate-600">t('centers.payments.ledger.appointmentNode')</th>
+                        <th className="px-8 py-6 text-left text-[9px] font-black uppercase tracking-[0.3em] text-slate-600">t('centers.payments.ledger.inflowAmount')</th>
+                        <th className="px-8 py-6 text-left text-[9px] font-black uppercase tracking-[0.3em] text-slate-600">t('centers.payments.filters.method') Vector</th>
+                        <th className="px-8 py-6 text-left text-[9px] font-black uppercase tracking-[0.3em] text-slate-600">t('centers.payments.ledger.authStatus')</th>
+                        <th className="px-8 py-6 text-left text-[9px] font-black uppercase tracking-[0.3em] text-slate-600">t('centers.payments.ledger.control')</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
@@ -547,7 +547,7 @@ export default function CenterPaymentsPage() {
                           </td>
                           <td className="px-8 py-8 align-top">
                             <Badge variant="outline" className="bg-white/[0.02] text-[8px] font-black text-slate-500 border-white/5 uppercase tracking-widest px-3 py-1 rounded-lg">
-                              {p.payment_method || "UNSPECIFIED"}
+                              {p.payment_method || t('centers.payments.ledger.unspecified')}
                             </Badge>
                           </td>
                           <td className="px-8 py-8 align-top">
@@ -562,12 +562,12 @@ export default function CenterPaymentsPage() {
                             <div className="flex items-center gap-3">
                               {p.payment_method === "promptpay" && (
                                 <Button size="sm" variant="outline" className="h-10 rounded-xl border-white/10 bg-white/5 hover:bg-white/10 text-[9px] font-black uppercase tracking-widest transition-all" onClick={() => openPromptPayQr(p.center_id, Number(p.amount || 0))}>
-                                  Gateway
+                                  {t('centers.payments.ledger.gateway')}
                                 </Button>
                               )}
                               {p.payment_status === "pending" && (
                                 <Button size="sm" variant="premium" className="h-10 rounded-xl shadow-2xl shadow-pink-500/20 text-[9px] font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95" onClick={() => openMarkPaid(p)}>
-                                  Verify Inflow
+                                  {t('centers.payments.ledger.verifyInflow')}
                                 </Button>
                               )}
                             </div>
@@ -638,7 +638,7 @@ export default function CenterPaymentsPage() {
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-pink-500/10 border border-pink-500/20 shadow-inner mb-2">
               <CreditCard className="h-8 w-8 text-pink-400" />
             </div>
-            <DialogTitle className="text-3xl font-bold text-white tracking-tight italic">Verify Inflow Node</DialogTitle>
+            <DialogTitle className="text-3xl font-bold text-white tracking-tight italic">{t('centers.payments.ledger.verifyInflow')} Node</DialogTitle>
             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Authorize aesthetic financial synchronization</p>
           </DialogHeader>
 

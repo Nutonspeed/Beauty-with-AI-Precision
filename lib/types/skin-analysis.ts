@@ -4,12 +4,12 @@ import type { AnalysisMode } from '../../types/analysis-mode';
  * TypeScript Types for Skin Analysis System
  */
 
-// ประเภทผิว
+// Skin types
 export type SkinType = 'oily' | 'dry' | 'combination' | 'normal' | 'sensitive';
 
 export type AIProvider = 'local' | 'huggingface' | 'google-vision' | 'gemini';
 
-// ปัญหาผิว
+// Skin concerns
 export type SkinConcern = 
   | 'acne' 
   | 'wrinkles' 
@@ -24,7 +24,7 @@ export type SkinConcern =
   | 'pores'
   | 'texture';
 
-// ผลการวิเคราะห์จาก Computer Vision
+// Computer Vision analysis results
 export interface CVAnalysisResult {
   spots: {
     count: number;
@@ -53,7 +53,7 @@ export interface CVAnalysisResult {
   };
 }
 
-// ผลการวิเคราะห์จาก AI
+// AI analysis results
 export interface AIAnalysisResult {
   skinType: SkinType;
   concerns: SkinConcern[];
@@ -67,23 +67,23 @@ export interface AIAnalysisResult {
   confidence: number;
 }
 
-// ผลการวิเคราะห์แบบรวม (Hybrid)
+// Combined (Hybrid) Analysis results
 export interface HybridSkinAnalysis {
-  // ข้อมูลพื้นฐาน
+  // Basic Information
   id: string;
   userId: string;
   createdAt: Date;
-  timestamp: Date; // เพิ่ม timestamp property
+  timestamp: Date; // Add timestamp property
   imageUrl: string;
   
-  // ผลจาก AI
+  // AI Results
   ai: AIAnalysisResult;
   aiProvider: AIProvider;
   
-  // ผลจาก Computer Vision
+  // Computer Vision Results
   cv: CVAnalysisResult;
   
-  // คะแนนรวม (Composite Score)
+  // Composite Score
   overallScore: {
     spots: number; // 1-10
     pores: number; // 1-10
@@ -93,23 +93,23 @@ export interface HybridSkinAnalysis {
     pigmentation: number; // 1-10
   };
   
-  // เปอร์เซ็นไทล์ (เทียบกับคนอื่น)
+  // Percentiles (Compared to others)
   percentiles: {
     spots: number;
     pores: number;
     wrinkles: number;
     texture: number;
     redness: number;
-    overall: number; // เพิ่ม overall percentile
+    overall: number; // Add overall percentile
   };
   
-  // ความมั่นใจของผลการวิเคราะห์
-  confidence: number; // เพิ่ม confidence property
+  // Analysis Confidence
+  confidence: number; // Add confidence property
   
-  // คำแนะนำสำหรับการดูแลผิว
-  recommendations: string[]; // เพิ่ม recommendations property
+  // Skin Care Recommendations
+  recommendations: string[]; // Add recommendations property
   
-  // รูปภาพที่มี annotation
+  // Annotated Images
   annotatedImages: {
     spots?: string;
     pores?: string;
@@ -118,7 +118,7 @@ export interface HybridSkinAnalysis {
     combined?: string;
   };
   
-  // ข้อมูล 3D Face Mesh
+  // 3D Face Mesh data
   faceMesh?: {
     landmarks: Array<{ x: number; y: number; z: number }>;
     topology: number[][];
@@ -133,15 +133,15 @@ export interface HybridSkinAnalysis {
   };
 }
 
-// การตั้งค่าการวิเคราะห์
+// Analysis settings
 export interface AnalysisOptions {
-  // ระดับความละเอียด
+  // Level of detail
   detailLevel: 'basic' | 'standard' | 'detailed';
   
-  // ภาษา
+  // Language
   language: 'th' | 'en';
   
-  // เปิดใช้งาน features
+  // Enable features
   features: {
     aiAnalysis: boolean;
     cvAnalysis: boolean;
@@ -149,7 +149,7 @@ export interface AnalysisOptions {
     arSimulation: boolean;
   };
   
-  // ตัวเลือกเพิ่มเติม
+  // Additional options
   options?: {
     compareWithPrevious?: boolean;
     generateReport?: boolean;
@@ -166,11 +166,11 @@ export interface AnalysisOptions {
 
   mode?: AnalysisMode;
 
-  // เปิดใช้งาน cache
+  // Enable cache
   useCache?: boolean;
 }
 
-// ประวัติการวิเคราะห์
+// Analysis history
 export interface AnalysisHistory {
   analyses: HybridSkinAnalysis[];
   improvements: {
@@ -193,7 +193,7 @@ export interface ProgramSimulation {
   };
 }
 
-// Export types สำหรับ API Response
+// Export types for API Response
 export interface AnalyzeResponse {
   success: boolean;
   data?: HybridSkinAnalysis;

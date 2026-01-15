@@ -10,11 +10,11 @@ import { AILeadScorer, LeadData, AIScoreResult } from "@/lib/ai/lead-scorer"
 import { Target, Users, DollarSign, TrendingUp } from 'lucide-react'
 import { AIMarketingCampaignGenerator } from "@/lib/ai/campaign-generator"
 
-// Mock data - ในโปรดักชั่นจะดึงจาก API
+// Mock data - In production this would come from API
 const leadsData: any[] = [
   {
     id: "1",
-    name: "นางสาว สมใจ รักสวย",
+    name: "Somjai Raksauy", // Default fallback
     avatar: "/avatars/01.png",
     email: "somjai@email.com",
     phone: "081-234-5678",
@@ -26,8 +26,8 @@ const leadsData: any[] = [
     totalInteractions: 25,
     responseTime: 12,
     budget: "high",
-    timeline: "ด่วน",
-    interests: ["สิว", "รูขุมขน"],
+    timeline: "urgent",
+    interests: ["acne", "pores"],
     engagement: {
       websiteVisits: 12,
       emailOpens: 8,
@@ -42,7 +42,7 @@ const leadsData: any[] = [
   },
   {
     id: "2",
-    name: "นาย วิชัย ใจดี",
+    name: "Wichai Jaidee",
     avatar: "/avatars/02.png",
     email: "wichai@email.com",
     phone: "082-345-6789",
@@ -54,8 +54,8 @@ const leadsData: any[] = [
     totalInteractions: 12,
     responseTime: 24,
     budget: "medium",
-    timeline: "1-3 เดือน",
-    interests: ["ริ้วรอย", "ผิวไม่กระชับ"],
+    timeline: "1-3 months",
+    interests: ["wrinkles", "sagging"],
     engagement: {
       websiteVisits: 8,
       emailOpens: 3,
@@ -70,7 +70,7 @@ const leadsData: any[] = [
   },
   {
     id: "3",
-    name: "นาง วรรณา สวยงาม",
+    name: "Wanna Suayngam",
     avatar: "/avatars/03.png",
     email: "wanna@email.com",
     phone: "083-456-7890",
@@ -82,7 +82,7 @@ const leadsData: any[] = [
     totalInteractions: 3,
     responseTime: 72,
     budget: "low",
-    timeline: "ยังไม่แน่ใจ",
+    timeline: "undecided",
     interests: ["HydraFacial"],
     engagement: {
       websiteVisits: 2,
@@ -114,7 +114,28 @@ const getStatusBadge = (status: string, t: any) => {
 
 export function LeadScoring() {
   const t = useTranslations()
-  const [leads, setLeads] = useState<any[]>(leadsData)
+  const leadsDataLocal: any[] = [
+    {
+      ...leadsData[0],
+      name: t('leadScoring.mock.name1'),
+      timeline: t('leadScoring.mock.urgencyHot'),
+      interests: [t('leadScoring.mock.interestAcne'), t('leadScoring.mock.interestPores')],
+    },
+    {
+      ...leadsData[1],
+      name: t('leadScoring.mock.name2'),
+      timeline: t('leadScoring.mock.urgencyWarm'),
+      interests: [t('leadScoring.mock.interestWrinkles'), t('leadScoring.mock.interestFirming')],
+    },
+    {
+      ...leadsData[2],
+      name: t('leadScoring.mock.name3'),
+      timeline: t('leadScoring.mock.urgencyCold'),
+      interests: [t('leadScoring.mock.interestHydra')],
+    }
+  ]
+
+  const [leads, setLeads] = useState<any[]>(leadsDataLocal)
   const [sortBy, setSortBy] = useState("aiScore")
   const [filterBy, setFilterBy] = useState("all")
   const [isAnalyzing, setIsAnalyzing] = useState(true)
@@ -183,7 +204,7 @@ export function LeadScoring() {
     })
 
   const handleContactLead = (leadId: string) => {
-    // ในโปรดักชั่นจะเปิด chat หรือส่ง email
+    // In production this would open chat or send email
     console.log("Contacting lead:", leadId)
     alert(t('leadScoring.actions.contactAlert'))
   }
@@ -233,7 +254,7 @@ export function LeadScoring() {
               <div className="ml-2">
                 <p className="text-sm font-medium leading-none">{t('leadScoring.stats.predictedRevenue')}</p>
                 <p className="text-2xl font-bold">
-                  ฿{leads.reduce((sum, lead) => sum + (lead.aiScore?.predictedValue || (lead as any).predictedValue || 0), 0).toLocaleString()}
+                  {t('currencySymbol') || '฿'}{leads.reduce((sum, lead) => sum + (lead.aiScore?.predictedValue || (lead as any).predictedValue || 0), 0).toLocaleString()}
                 </p>
               </div>
             </div>

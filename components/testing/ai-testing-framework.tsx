@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useTranslations } from 'next-intl';
 import {
   Play,
   CheckCircle,
@@ -60,6 +61,7 @@ interface AITestMetrics {
 }
 
 export function AITestingFramework() {
+  const t = useTranslations('testing.ai');
   const [testSuites, setTestSuites] = useState<TestSuite[]>([]);
   const [selectedSuite, setSelectedSuite] = useState<string | null>(null);
   const [isRunning, setIsRunning] = useState(false);
@@ -399,12 +401,12 @@ export function AITestingFramework() {
               {isRunning ? (
                 <>
                   <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-                  กำลังรันทดสอบ...
+                  {t('running')}
                 </>
               ) : (
                 <>
                   <Play className="w-4 h-4 mr-2" />
-                  รันทั้งหมด
+                  {t('runAll')}
                 </>
               )}
             </Button>
@@ -502,9 +504,7 @@ export function AITestingFramework() {
                       <div>
                         <CardTitle className="text-lg">{suite.name}</CardTitle>
                         <Badge className={getCategoryColor(suite.category)}>
-                          {suite.category === 'comprehensive' ? 'ครอบคลุม' :
-                           suite.category === 'performance' ? 'ประสิทธิภาพ' :
-                           suite.category === 'smoke' ? 'ทดสอบเบื้องต้น' : 'ถดถอย'}
+                          {t(`categories.${suite.category}` as any)}
                         </Badge>
                       </div>
                     </div>
@@ -512,7 +512,7 @@ export function AITestingFramework() {
                       <div className="text-2xl font-bold">
                         {suite.passedTests}/{suite.totalTests}
                       </div>
-                      <div className="text-sm text-gray-600">ผ่านแล้ว</div>
+                      <div className="text-sm text-gray-600">{t('status.passed')}</div>
                     </div>
                   </div>
                 </CardHeader>
@@ -522,7 +522,7 @@ export function AITestingFramework() {
                   {suite.status === 'running' && (
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
-                        <span>ความคืบหน้า</span>
+                        <span>{t('metrics.featureAdoption')}</span>
                         <span>{suite.progress.toFixed(0)}%</span>
                       </div>
                       <Progress value={suite.progress} className="h-2" />
@@ -533,15 +533,15 @@ export function AITestingFramework() {
                     <div className="grid grid-cols-3 gap-4 text-center">
                       <div className="p-3 bg-green-50 rounded-lg">
                         <div className="text-lg font-bold text-green-600">{suite.passedTests}</div>
-                        <div className="text-xs text-green-600">ผ่าน</div>
+                        <div className="text-xs text-green-600">{t('status.passed')}</div>
                       </div>
                       <div className="p-3 bg-red-50 rounded-lg">
                         <div className="text-lg font-bold text-red-600">{suite.failedTests}</div>
-                        <div className="text-xs text-red-600">ไม่ผ่าน</div>
+                        <div className="text-xs text-red-600">{t('status.failed')}</div>
                       </div>
                       <div className="p-3 bg-blue-50 rounded-lg">
                         <div className="text-lg font-bold text-blue-600">{(suite.executionTime / 1000).toFixed(1)}s</div>
-                        <div className="text-xs text-blue-600">เวลา</div>
+                        <div className="text-xs text-blue-600">{t('metrics.responseTime')}</div>
                       </div>
                     </div>
                   )}
@@ -555,17 +555,17 @@ export function AITestingFramework() {
                     {suite.status === 'running' ? (
                       <>
                         <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-                        กำลังรัน...
+                        {t('actions.running')}
                       </>
                     ) : suite.status === 'completed' ? (
                       <>
                         <RefreshCw className="w-4 h-4 mr-2" />
-                        รันอีกครั้ง
+                        {t('actions.rerun')}
                       </>
                     ) : (
                       <>
                         <Play className="w-4 h-4 mr-2" />
-                        รันทดสอบ
+                        {t('actions.run')}
                       </>
                     )}
                   </Button>
@@ -587,9 +587,7 @@ export function AITestingFramework() {
                         <div>
                           <h4 className="font-medium">{test.name}</h4>
                           <Badge className={getStatusColor(test.status)} variant="secondary">
-                            {test.status === 'passed' ? 'ผ่าน' :
-                             test.status === 'failed' ? 'ไม่ผ่าน' :
-                             test.status === 'running' ? 'กำลังรัน' : 'รอดำเนินการ'}
+                            {t(`status.${test.status}` as any)}
                           </Badge>
                         </div>
                       </div>

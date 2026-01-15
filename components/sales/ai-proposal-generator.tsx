@@ -44,7 +44,7 @@ export function AIProposalGenerator() {
   const aiSuggestions = [
     {
       id: "1",
-      customerName: "นางสาว สมใจ รักสวย",
+      customerName: "Somjai Raksauy",
       skinType: t('customer.skinType.oily'),
       concerns: [t('programComparison.concerns.acne'), t('programComparison.concerns.pigmentation')],
       recommendedPackage: "premium",
@@ -53,7 +53,7 @@ export function AIProposalGenerator() {
     },
     {
       id: "2",
-      customerName: "นาย วิชัย ใจดี",
+      customerName: "Wichai Jaidee",
       skinType: t('customer.skinType.dry'),
       concerns: [t('programComparison.concerns.anti_aging'), t('programComparison.concerns.dryness')],
       recommendedPackage: "vip",
@@ -62,35 +62,33 @@ export function AIProposalGenerator() {
     }
   ]
 
-  const handleGenerateProposal = async () => {
-    if (!selectedCustomer || !selectedPackage) return
-
+  const handleGenerateProposal = () => {
     setIsGenerating(true)
-
     // Simulate AI generation
     setTimeout(() => {
       const customer = aiSuggestions.find(c => c.id === selectedCustomer)
-      const package_ = programPackages.find(p => p.id === selectedPackage)
-
-      if (customer && package_) {
-        const proposal = `${t('salesProposalGenerator.template.greeting', { name: customer.customerName })}\n\n` +
-          `${t('salesProposalGenerator.template.intro', { concerns: customer.concerns.join(", ") })}\n\n` +
-          `${t('salesProposalGenerator.template.recommend', { package: t(`salesProposalGenerator.packages.${package_.id}.name`), price: package_.price.toLocaleString() })}\n` +
-          `${t('salesProposalGenerator.template.includes', { items: package_.programs.join(", ") })}\n\n` +
-          `${t(`salesProposalGenerator.packages.${package_.id}.description`)}\n\n` +
-          `${customMessage ? `${t('salesProposalGenerator.customMessage')}: ${customMessage}` : ""}\n\n` +
-          `${t('salesProposalGenerator.template.contact')}\n\n` +
-          `${t('salesProposalGenerator.template.closing')}`
-
+      const pkg = programPackages.find(p => p.id === selectedPackage)
+      
+      if (customer && pkg) {
+        let proposal = t('salesProposalGenerator.proposalTemplate', {
+          customerName: customer.customerName,
+          packageName: pkg.name,
+          price: pkg.price.toLocaleString(),
+          reasoning: customer.reasoning
+        })
+        
+        if (customMessage) {
+          proposal += `\n\n${t('salesProposalGenerator.personalNote')}: ${customMessage}`
+        }
+        
         setGeneratedProposal(proposal)
       }
-
       setIsGenerating(false)
-    }, 2000)
+    }, 1500)
   }
 
   const handleSendProposal = () => {
-    // ในโปรดักชั่นจะส่งไปยัง API
+    // In production this would be sent to an API
     console.log("Sending proposal:", generatedProposal)
     alert(t('salesProposalGenerator.sendSuccess'))
   }

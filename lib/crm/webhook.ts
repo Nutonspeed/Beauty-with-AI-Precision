@@ -283,11 +283,12 @@ function mapScoreToRating(score: number): string {
 function parseBudgetValue(budgetRange?: string): number {
   if (!budgetRange) return 0
 
-  if (budgetRange.includes('> ฿100,000')) return 100000
-  if (budgetRange.includes('฿50,000 - ฿100,000')) return 75000
-  if (budgetRange.includes('฿30,000 - ฿50,000')) return 40000
-  if (budgetRange.includes('฿10,000 - ฿30,000')) return 20000
-  if (budgetRange.includes('< ฿10,000')) return 5000
+  // Handle both localized and non-localized budget ranges
+  if (budgetRange.includes('> ฿100,000') || budgetRange.includes('> 100,000')) return 100000
+  if (budgetRange.includes('฿50,000') || budgetRange.includes('50,000')) return 75000
+  if (budgetRange.includes('฿30,000') || budgetRange.includes('30,000')) return 40000
+  if (budgetRange.includes('฿10,000') || budgetRange.includes('10,000')) return 20000
+  if (budgetRange.includes('< ฿10,000') || budgetRange.includes('< 10,000')) return 5000
 
   return 0
 }

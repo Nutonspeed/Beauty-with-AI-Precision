@@ -41,131 +41,23 @@ export interface PDFExportOptions {
   };
 }
 
-// Translation dictionary
-const TRANSLATIONS = {
-  en: {
-    title: 'Aesthetic Intelligence Analysis Report',
-    reportDate: 'Report Date',
-    customerInfo: 'Client Information',
-    name: 'Name',
-    age: 'Age',
-    gender: 'Gender',
-    skinType: 'Skin Type',
-    customerId: 'Client ID',
-    overallScore: 'Overall Skin Health Score',
-    confidence: 'Analysis Confidence',
-    concerns: 'Detected Skin Concerns',
-    severity: 'Severity',
-    high: 'High',
-    medium: 'Medium',
-    low: 'Low',
-    urgency: 'Urgency',
-    recommendations: 'Program Recommendations',
-    programs: 'Recommended Programs',
-    products: 'Recommended Products',
-    lifestyle: 'Lifestyle Recommendations',
-    timeline: 'Program Roadmap',
-    estimatedCost: 'Estimated Cost',
-    expectedImprovement: 'Expected Improvement',
-    sessions: 'Sessions',
-    effectiveness: 'Effectiveness',
-    progressTracking: 'Progress Tracking',
-    analysisDate: 'Analysis Date',
-    disclaimer: 'This report was generated using AI-powered Aesthetic Intelligence technology. Results should be reviewed by a qualified aesthetic specialist or skincare professional.',
-    confidential: 'CONFIDENTIAL - For customer use only',
-    reportId: 'Report ID',
-    page: 'Page',
-    of: 'of',
-    spots: 'Spots',
-    pores: 'Pores',
-    wrinkles: 'Wrinkles',
-    texture: 'Texture',
-    redness: 'Redness',
-    pigmentation: 'Pigmentation',
-    acne: 'Acne',
-    sunProtection: 'Sun Protection',
-    diet: 'Diet',
-    hydration: 'Hydration',
-    sleep: 'Sleep',
-    stress: 'Stress Management',
-    priorityRanking: 'Priority Ranking',
-    detailedAnalysis: 'Detailed Analysis',
-    count: 'Count',
-    score: 'Score',
-    overall: 'Overall',
-    percentile: 'Percentile',
-  },
-  th: {
-    title: 'รายงานการวิเคราะห์ความงามอัจฉริยะ',
-    reportDate: 'วันที่ออกรายงาน',
-    customerInfo: 'ข้อมูลผู้รับบริการ',
-    name: 'ชื่อ',
-    age: 'อายุ',
-    gender: 'เพศ',
-    skinType: 'ประเภทผิว',
-    customerId: 'รหัสลูกค้า',
-    overallScore: 'คะแนนสุขภาพผิวโดยรวม',
-    confidence: 'ความเชื่อมั่นในการวิเคราะห์',
-    concerns: 'ปัญหาผิวที่ตรวจพบ',
-    severity: 'ความรุนแรง',
-    high: 'สูง',
-    medium: 'ปานกลาง',
-    low: 'ต่ำ',
-    urgency: 'ความเร่งด่วน',
-    recommendations: 'คำแนะนำโปรแกรมความงาม',
-    programs: 'โปรแกรมที่แนะนำ',
-    products: 'ผลิตภัณฑ์ที่แนะนำ',
-    lifestyle: 'คำแนะนำการดูแลตนเอง',
-    timeline: 'แผนงานความงาม',
-    estimatedCost: 'ประมาณการค่าใช้จ่าย',
-    expectedImprovement: 'การปรับปรุงที่คาดหวัง',
-    sessions: 'จำนวนครั้ง',
-    effectiveness: 'ประสิทธิภาพ',
-    progressTracking: 'ติดตามความคืบหน้า',
-    analysisDate: 'วันที่วิเคราะห์',
-    disclaimer: 'รายงานนี้สร้างจากเทคโนโลยีความงามอัจฉริยะด้วยปัญญาประดิษฐ์ ผลการวิเคราะห์ควรได้รับการตรวจสอบโดยผู้เชี่ยวชาญด้านความงาม',
-    confidential: 'เอกสารลับ - สำหรับลูกค้าเท่านั้น',
-    reportId: 'รหัสรายงาน',
-    page: 'หน้า',
-    of: 'จาก',
-    spots: 'จุดด่างดำ',
-    pores: 'รูขุมขน',
-    wrinkles: 'ริ้วรอย',
-    texture: 'เนื้อผิว',
-    redness: 'รอยแดง',
-    pigmentation: 'เม็ดสี',
-    acne: 'สิว',
-    sunProtection: 'การป้องกันแสงแดด',
-    diet: 'อาหาร',
-    hydration: 'การดื่มน้ำ',
-    sleep: 'การนอนหลับ',
-    stress: 'การจัดการความเครียด',
-    priorityRanking: 'ลำดับความสำคัญ',
-    detailedAnalysis: 'การวิเคราะห์โดยละเอียด',
-    count: 'จำนวน',
-    score: 'คะแนน',
-    overall: 'โดยรวม',
-    percentile: 'เปอร์เซ็นไทล์',
-  },
-};
-
 export class PDFReportGenerator {
   private pdf: jsPDF;
   private locale: 'th' | 'en';
-  private t: typeof TRANSLATIONS.en;
+  private t: any;
   private currentY: number = 20;
   private pageHeight: number = 297; // A4 height in mm
   private margin: number = 20;
   private pageNumber: number = 1;
 
-  constructor(locale: 'th' | 'en' = 'en') {
+  constructor(translations: any, locale: 'th' | 'en' = 'en') {
     this.pdf = new jsPDF({
       orientation: 'portrait',
       unit: 'mm',
       format: 'a4',
     });
     this.locale = locale;
-    this.t = TRANSLATIONS[locale];
+    this.t = translations;
   }
 
   /**
@@ -499,17 +391,22 @@ export class PDFReportGenerator {
   }
 }
 
-export async function exportAnalysisToPDF(analysis: HybridSkinAnalysis, options: PDFExportOptions = {}): Promise<Blob> {
-  const generator = new PDFReportGenerator(options.locale || 'en');
+export async function exportAnalysisToPDF(
+  analysis: HybridSkinAnalysis, 
+  translations: any,
+  options: PDFExportOptions = {}
+): Promise<Blob> {
+  const generator = new PDFReportGenerator(translations, options.locale || 'en');
   return generator.generateReport(analysis, options);
 }
 
 export async function downloadAnalysisPDF(
   analysis: HybridSkinAnalysis,
+  translations: any,
   options: PDFExportOptions = {},
   filename?: string
 ): Promise<void> {
-  const blob = await exportAnalysisToPDF(analysis, options);
+  const blob = await exportAnalysisToPDF(analysis, translations, options);
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;

@@ -1,13 +1,14 @@
 /**
  * Advanced Beauty AI Loading Components
- * Loading animations ขั้นสูงพร้อมเอฟเฟกต์พิเศษ
+ * Advanced loading animations with special effects
  */
 
 import React from 'react';
 import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 import { GemLoading, RoseLoading } from './beauty-loading';
 
-// DNA Beauty Loading - แสดงการวิเคราะห์ DNA ความงาม
+// DNA Beauty Loading - displays DNA beauty analysis
 export function DNABeautyLoading({ className }: { className?: string }) {
   return (
     <div className={cn('relative w-20 h-20', className)}>
@@ -60,12 +61,12 @@ export function DNABeautyLoading({ className }: { className?: string }) {
   );
 }
 
-// Skin Analysis Loading - แสดงการสแกนผิว
+// Skin Analysis Loading - displays skin scanning
 export function SkinAnalysisLoading({ className }: { className?: string }) {
   return (
     <div className={cn('relative w-24 h-24', className)}>
       <svg className="w-full h-full" viewBox="0 0 120 120">
-        {/* ใบหน้า */}
+        {/* Face */}
         <ellipse
           cx="60"
           cy="60"
@@ -112,12 +113,12 @@ export function SkinAnalysisLoading({ className }: { className?: string }) {
   );
 }
 
-// AI Brain Loading - แสดง AI กำลังประมวลผล
+// AI Brain Loading - displays AI processing
 export function AIBrainLoading({ className }: { className?: string }) {
   return (
     <div className={cn('relative w-20 h-20', className)}>
       <svg className="w-full h-full" viewBox="0 0 100 100">
-        {/* สมอง */}
+        {/* Brain */}
         <path
           d="M50 20 C30 20, 20 35, 20 50 C20 65, 30 80, 50 80 C70 80, 80 65, 80 50 C80 35, 70 20, 50 20Z"
           fill="none"
@@ -164,18 +165,20 @@ export function AIBrainLoading({ className }: { className?: string }) {
   );
 }
 
-// Progress Loading แบบ Beauty
+// Beauty Progress Loading
 export function BeautyProgressLoading({ 
   progress = 0, 
-  message = 'กำลังวิเคราะห์...' 
+  message 
 }: { 
   progress?: number; 
   message?: string; 
 }) {
+  const t = useTranslations('common');
+  const displayMessage = message || t('analyzing');
   return (
     <div className="w-full max-w-md mx-auto p-6 glass-card">
       <div className="flex items-center justify-between mb-4">
-        <span className="beauty-subtitle font-medium">{message}</span>
+        <span className="beauty-subtitle font-medium">{displayMessage}</span>
         <span className="text-sm text-gray-600">{Math.round(progress)}%</span>
       </div>
       
@@ -197,23 +200,30 @@ export function BeautyProgressLoading({
   );
 }
 
-// Staggered Loading - แสดงหลายอย่างพร้อมกัน
-export function StaggeredBeautyLoading({ items = ['Analyzing skin', 'Checking database', 'Generating recommendations'] }: { items?: string[] }) {
+// Staggered Loading - displays multiple items sequentially
+export function StaggeredBeautyLoading({ items }: { items?: string[] }) {
+  const t = useTranslations('common');
+  const defaultItems = [
+    t('analyzing'),
+    t('checkingDatabase'),
+    t('generatingRecommendations')
+  ];
+  const displayItems = items || defaultItems;
   const [currentIndex, setCurrentIndex] = React.useState(0);
   
   React.useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % items.length);
+      setCurrentIndex((prev) => (prev + 1) % displayItems.length);
     }, 2000);
     
     return () => clearInterval(timer);
-  }, [items.length]);
+  }, [displayItems.length]);
   
   return (
     <div className="flex flex-col items-center gap-4">
       <RoseLoading size="md" />
       <div className="text-center">
-        {items.map((item, i) => (
+        {displayItems.map((item, i) => (
           <p
             key={i}
             className={cn(

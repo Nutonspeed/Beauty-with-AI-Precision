@@ -100,46 +100,49 @@ export function calculateImprovementMetrics(
 /**
  * Generate human-readable improvement summary
  */
-export function generateImprovementSummary(metrics: ImprovementMetrics): string {
+export function generateImprovementSummary(
+  metrics: ImprovementMetrics,
+  t: (key: string, values?: any) => string
+): string {
   const improvements: string[] = [];
 
   // Spots
   if (metrics.spots.trend === 'improving' && Math.abs(metrics.spots.percentage) >= 10) {
     improvements.push(
-      `ฝ้า-กระลดลง ${Math.abs(metrics.spots.percentage).toFixed(1)}%`
+      t('progress.summary.spots', { percent: Math.abs(metrics.spots.percentage).toFixed(1) })
     );
   }
 
   // Pores
   if (metrics.pores.trend === 'improving' && Math.abs(metrics.pores.percentage) >= 10) {
     improvements.push(
-      `รูขุมขนกระชับขึ้น ${Math.abs(metrics.pores.percentage).toFixed(1)}%`
+      t('progress.summary.pores', { percent: Math.abs(metrics.pores.percentage).toFixed(1) })
     );
   }
 
   // Wrinkles
   if (metrics.wrinkles.trend === 'improving' && Math.abs(metrics.wrinkles.percentage) >= 10) {
     improvements.push(
-      `ริ้วรอยลดลง ${Math.abs(metrics.wrinkles.percentage).toFixed(1)}%`
+      t('progress.summary.wrinkles', { percent: Math.abs(metrics.wrinkles.percentage).toFixed(1) })
     );
   }
 
   // Texture
   if (metrics.texture.trend === 'improving' && Math.abs(metrics.texture.percentage) >= 10) {
     improvements.push(
-      `ผิวเรียบเนียนขึ้น ${Math.abs(metrics.texture.percentage).toFixed(1)}%`
+      t('progress.summary.texture', { percent: Math.abs(metrics.texture.percentage).toFixed(1) })
     );
   }
 
   // Redness
   if (metrics.redness.trend === 'improving' && Math.abs(metrics.redness.percentage) >= 10) {
     improvements.push(
-      `ความแดงลดลง ${Math.abs(metrics.redness.percentage).toFixed(1)}%`
+      t('progress.summary.redness', { percent: Math.abs(metrics.redness.percentage).toFixed(1) })
     );
   }
 
   if (improvements.length === 0) {
-    return 'ยังไม่มีการเปลี่ยนแปลงที่เห็นได้ชัด';
+    return t('progress.summary.noChange');
   }
 
   return improvements.join(', ');
@@ -177,7 +180,8 @@ export function calculateOverallImprovement(metrics: ImprovementMetrics): number
  */
 export function generateRecommendations(
   metrics: ImprovementMetrics,
-  daysSinceProgram: number
+  daysSinceProgram: number,
+  t: (key: string, values?: any) => string
 ): string[] {
   const recommendations: string[] = [];
 
@@ -187,32 +191,32 @@ export function generateRecommendations(
 
   if (actualImprovement < expectedImprovement * 0.7) {
     recommendations.push(
-      'ผลลัพธ์ยังไม่เป็นไปตามที่คาดหวัง แนะนำให้ปรึกษาคลินิก'
+      t('progress.recommendations.consult')
     );
   }
 
   // Specific recommendations
   if (metrics.spots.trend === 'stable' || metrics.spots.trend === 'worsening') {
     recommendations.push(
-      'ใช้ครีมกันแดด SPF 50+ ทุกวัน เพื่อป้องกันฝ้า-กระ'
+      t('progress.recommendations.sunscreen')
     );
   }
 
   if (metrics.pores.trend === 'stable' || metrics.pores.trend === 'worsening') {
     recommendations.push(
-      'ทำความสะอาดผิวหน้าให้สะอาด 2 ครั้งต่อวัน'
+      t('progress.recommendations.cleanse')
     );
   }
 
   if (metrics.texture.trend === 'stable' || metrics.texture.trend === 'worsening') {
     recommendations.push(
-      'ใช้ครีมบำรุงผิวที่มี Hyaluronic Acid เพิ่มความชุ่มชื้น'
+      t('progress.recommendations.moisturize')
     );
   }
 
   if (daysSinceProgram >= 30 && actualImprovement >= 40) {
     recommendations.push(
-      '✨ ผลลัพธ์ดีมาก! พิจารณาจองคิวเข้ารับบริการเพื่อรักษาผลลัพธ์'
+      t('progress.recommendations.maintenance')
     );
   }
 
@@ -278,18 +282,18 @@ export function calculateTimeElapsed(
 /**
  * Format time elapsed for display
  */
-export function formatTimeElapsed(days: number): string {
+export function formatTimeElapsed(days: number, t: (key: string, values?: any) => string): string {
   if (days < 7) {
-    return `${days} วัน`;
+    return t('progress.time.days', { count: days });
   } else if (days < 30) {
     const weeks = Math.floor(days / 7);
-    return `${weeks} สัปดาห์`;
+    return t('progress.time.weeks', { count: weeks });
   } else {
     const months = Math.floor(days / 30);
     const remainingDays = days % 30;
     if (remainingDays === 0) {
-      return `${months} เดือน`;
+      return t('progress.time.months', { count: months });
     }
-    return `${months} เดือน ${remainingDays} วัน`;
+    return t('progress.time.monthsAndDays', { months, days: remainingDays });
   }
 }

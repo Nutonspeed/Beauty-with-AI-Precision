@@ -8,6 +8,7 @@ export interface HotLead {
   photo: string | null
   initials: string
   score: number
+  status: string
   priorityScore: {
     totalScore: number
     priorityLevel: 'critical' | 'high' | 'medium' | 'low'
@@ -26,6 +27,9 @@ export interface HotLead {
   lastActivity: string
   analysisTimestamp: Date
   engagementCount: number
+  lastEngagementDuration?: number
+  lastEngagementType?: string
+  lastScrollDepth?: number
   analysisData: {
     wrinkles?: number
     pigmentation?: number
@@ -45,7 +49,7 @@ export async function fetchHotLeadsForUser(userId: string, centerId: string | nu
     .from('sales_leads')
     .select('*')
     .eq('sales_user_id', userId)
-    .in('status', ['new', 'contacted', 'qualified'])
+    .in('status', ['new', 'contacted', 'qualified', 'active'])
     .order('score', { ascending: false, nullsFirst: false })
     .order('created_at', { ascending: false })
     .range(safeOffset, safeOffset + safeLimit - 1)
@@ -64,9 +68,11 @@ export async function fetchHotLeadsForUser(userId: string, centerId: string | nu
     const initials = nameParts.length > 1
       ? `${(nameParts[0]?.[0] || 'U')}${(nameParts[nameParts.length - 1]?.[0] || 'N')}`
       : `${(nameParts[0]?.[0] || 'U')}${(nameParts[0]?.[1] || 'N')}`
+    
     const lastActivityDate = lead.last_contact_at 
       ? new Date(lead.last_contact_at)
       : new Date(lead.created_at)
+    
     const minutesAgo = Math.floor((Date.now() - lastActivityDate.getTime()) / 1000 / 60)
     let lastActivity: string
     if (minutesAgo < 60) {
@@ -76,6 +82,7 @@ export async function fetchHotLeadsForUser(userId: string, centerId: string | nu
     } else {
       lastActivity = `${Math.floor(minutesAgo / 1440)} day ago`
     }
+
     let metadata: any = {}
     if (lead.metadata) {
       if (typeof lead.metadata === 'string') {
@@ -88,11 +95,16 @@ export async function fetchHotLeadsForUser(userId: string, centerId: string | nu
         metadata = lead.metadata
       }
     }
+
     const isOnline = minutesAgo < 5
     const numericScore = lead.score || 50
     let priorityLevel: 'critical' | 'high' | 'medium' | 'low'
     let badge: string
-    if (numericScore >= 90) {
+
+    // Enhanced priority logic including engagement
+    const hasHighEngagement = (metadata.last_engagement_duration || 0) > 60
+    
+    if (numericScore >= 90 || (numericScore >= 80 && hasHighEngagement)) {
       priorityLevel = 'critical'
       badge = '🔥 Critical'
     } else if (numericScore >= 70) {
@@ -105,6 +117,7 @@ export async function fetchHotLeadsForUser(userId: string, centerId: string | nu
       priorityLevel = 'low'
       badge = '📉 Low'
     }
+
     return {
       id: lead.id,
       customer_user_id: lead.customer_user_id,
@@ -113,13 +126,14 @@ export async function fetchHotLeadsForUser(userId: string, centerId: string | nu
       photo: metadata.photo,
       initials: initials.toUpperCase(),
       score: numericScore,
+      status: lead.status || 'new',
       priorityScore: {
         totalScore: numericScore,
         priorityLevel,
         badge,
         details: {
           skinCondition: Math.round(numericScore * 0.3),
-          engagement: Math.round(numericScore * 0.25),
+          engagement: Math.round(numericScore * 0.25) + (hasHighEngagement ? 15 : 0),
           intent: Math.round(numericScore * 0.25),
           urgency: Math.round(numericScore * 0.2)
         }
@@ -131,6 +145,9 @@ export async function fetchHotLeadsForUser(userId: string, centerId: string | nu
       lastActivity,
       analysisTimestamp: lead.updated_at ? new Date(lead.updated_at) : new Date(lead.created_at),
       engagementCount: metadata.engagement_count || 0,
+      lastEngagementDuration: metadata.last_engagement_duration,
+      lastEngagementType: metadata.last_engagement_type,
+      lastScrollDepth: metadata.last_scroll_depth,
       analysisData: {
         wrinkles: metadata.wrinkles || 0,
         pigmentation: metadata.pigmentation || 0,

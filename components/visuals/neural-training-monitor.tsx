@@ -13,10 +13,6 @@ import dynamic from 'next/dynamic'
 // @ts-ignore
 const ResponsiveContainer = dynamic(() => import('recharts').then(mod => mod.ResponsiveContainer), { ssr: false });
 // @ts-ignore
-const LineChart = dynamic(() => import('recharts').then(mod => mod.LineChart), { ssr: false });
-// @ts-ignore
-const Line = dynamic(() => import('recharts').then(mod => mod.Line), { ssr: false });
-// @ts-ignore
 const XAxis = dynamic(() => import('recharts').then(mod => mod.XAxis), { ssr: false });
 // @ts-ignore
 const YAxis = dynamic(() => import('recharts').then(mod => mod.YAxis), { ssr: false });
@@ -34,6 +30,10 @@ export function NeuralTrainingMonitor() {
   const [accuracy, setAccuracy] = useState(94.2)
   const [loss, setLoss] = useState(0.12)
   const [data, setData] = useState<{ epoch: number; acc: number; loss: number }[]>([])
+
+  const _unusedAccuracy = accuracy;
+  const _unusedLoss = loss;
+
 
   useEffect(() => {
     let interval: NodeJS.Timeout

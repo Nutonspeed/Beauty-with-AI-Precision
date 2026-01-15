@@ -3,8 +3,8 @@ import { test as base, expect, type Page } from '@playwright/test';
 // Test data fixtures
 export const testUsers = {
   superAdmin: {
-    email: 'nuttapong+sa2@gmail.com',
-    password: 'password123',
+    email: 'admin@ai367bar.com',
+    password: 'Admin123!',
     role: 'super_admin',
     name: 'Super Admin Test'
   },

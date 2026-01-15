@@ -6,9 +6,9 @@
  * Shows comprehensive progress dashboard for logged-in clients
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
-import { useRouter, useParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import ClientProgressDashboard, {
   type AnalysisSnapshot,
 } from '@/components/client/progress-dashboard';
@@ -78,13 +78,13 @@ interface ProgressPageProps {
 }
 
 export default function ClientProgressPage({ params }: ProgressPageProps) {
+  const unwrappedParams = React.use(params)
+  const locale = unwrappedParams.locale
   const t = useTranslations();
   const [analyses, setAnalyses] = useState<AnalysisSnapshot[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-  const urlParams = useParams();
-  const locale = (urlParams.locale as string) || 'th';
 
   const loadAnalyses = useCallback(async () => {
     try {

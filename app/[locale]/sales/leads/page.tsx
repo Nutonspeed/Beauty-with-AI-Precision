@@ -50,12 +50,16 @@ import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
+import { GiveCreditsDialog } from "@/components/sales/GiveCreditsDialog"
+import { ConvertLeadDialog } from "@/components/sales/ConvertLeadDialog"
+import { Gift, UserCheck } from "lucide-react"
 
 type SalesLeadStatus = 'new' | 'contacted' | 'qualified' | 'proposal_sent' | 'negotiation' | 'won' | 'lost' | 'cold' | 'warm' | 'hot'
 type SalesLeadSource = 'website' | 'facebook' | 'instagram' | 'google_ads' | 'referral' | 'walk_in' | 'phone' | 'email' | 'other' | 'ai_scan' | 'quick_scan'
 
 interface Lead {
   id: string
+  customer_user_id?: string | null
   name: string
   phone?: string | null
   email?: string | null
@@ -103,6 +107,8 @@ export default function LeadsListPage() {
   const [sourceFilter, setSourceFilter] = useState<SalesLeadSource | "all">("all")
   const [campaignFilter, setCampaignFilter] = useState<string>("")
   const [showCaptureForm, setShowCaptureForm] = useState(false)
+  const [convertDialogOpen, setConvertDialogOpen] = useState(false)
+  const [selectedLeadForConvert, setSelectedLeadForConvert] = useState<Lead | null>(null)
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 20,
@@ -463,6 +469,37 @@ export default function LeadsListPage() {
                                   Authorize Win
                                 </DropdownMenuItem>
                               )}
+                              
+                              {!lead.customer_user_id ? (
+                                <DropdownMenuItem 
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSelectedLeadForConvert(lead);
+                                    setConvertDialogOpen(true);
+                                  }} 
+                                  className="rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-pink-600 focus:text-white transition-colors"
+                                >
+                                  <UserCheck className="mr-3 h-4 w-4 text-pink-500" />
+                                  Convert to Customer
+                                </DropdownMenuItem>
+                              ) : (
+                                <div className="px-1 py-1">
+                                  <GiveCreditsDialog 
+                                    customer={{
+                                      id: lead.customer_user_id,
+                                      full_name: lead.name,
+                                      email: lead.email || undefined,
+                                      phone: lead.phone || undefined
+                                    }}
+                                    trigger={
+                                      <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-purple-600 focus:text-white transition-colors">
+                                        <Gift className="mr-3 h-4 w-4" />
+                                        Grant Credits
+                                      </DropdownMenuItem>
+                                    }
+                                  />
+                                </div>
+                              )}
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </TableCell>
@@ -473,6 +510,21 @@ export default function LeadsListPage() {
               </div>
             )}
           </motion.div>
+
+          {/* Dialogs */}
+          {selectedLeadForConvert && (
+            <ConvertLeadDialog
+              open={convertDialogOpen}
+              onOpenChange={setConvertDialogOpen}
+              lead={{
+                id: selectedLeadForConvert.id,
+                name: selectedLeadForConvert.name,
+                email: selectedLeadForConvert.email,
+                phone: selectedLeadForConvert.phone
+              }}
+              onSuccess={() => fetchLeads()}
+            />
+          )}
 
           {/* Temporal Pagination Control */}
           {pagination.total_pages > 1 && (

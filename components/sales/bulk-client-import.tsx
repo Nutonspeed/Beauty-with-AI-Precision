@@ -84,7 +84,7 @@ export default function BulkClientImport({ open, onOpenChange, onSuccess }: Prop
   };
 
   const downloadTemplate = () => {
-    const csv = 'email,name,phone\nclient1@example.com,สมชาย ใจดี,0812345678\nclient2@example.com,สมหญิง สวยงาม,0898765432\n';
+    const csv = t('download.templateCsv') || 'email,name,phone\nclient1@example.com,John Doe,0812345678\nclient2@example.com,Jane Smith,0898765432\n';
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');

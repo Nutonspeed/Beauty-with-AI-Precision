@@ -55,51 +55,60 @@ export function MissionControl() {
   ]
 
   return (
-    <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group min-h-[800px] flex flex-col">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
-      <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03] bg-center animate-grid-drift" />
+    <Card className="border-white/5 bg-slate-900/20 backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-[0_0_100px_rgba(6,182,212,0.1)] relative group min-h-[800px] flex flex-col ring-1 ring-white/10">
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent opacity-50" />
+      <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.02] bg-center animate-grid-drift" />
       
-      <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/[0.02] to-transparent animate-neural-pulse pointer-events-none" />
-        <div className="space-y-2 relative z-10">
-          <CardTitle className="text-4xl font-bold text-white tracking-tighter italic flex items-center gap-4">
-            <Cpu className="h-10 w-10 text-cyan-400 animate-spin-slow" />
+      <CardHeader className="p-10 lg:p-12 pb-10 border-b border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-10 relative z-10 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/[0.03] to-transparent animate-neural-pulse pointer-events-none" />
+        <div className="space-y-3 relative z-10">
+          <CardTitle className="text-5xl font-black text-white tracking-tighter italic flex items-center gap-6 uppercase leading-none">
+            <div className="p-3 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 shadow-inner group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
+              <Cpu className="h-10 w-10 text-cyan-400 animate-spin-slow" />
+            </div>
             {t('missionControl.title')}
           </CardTitle>
-          <CardDescription className="text-xs font-black uppercase tracking-[0.3em] text-slate-500">
+          <CardDescription className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-500 italic ml-1">
             {t('missionControl.subtitle')}
           </CardDescription>
         </div>
-        <div className="flex items-center gap-6 relative z-10">
-          <div className="text-right hidden sm:block">
-            <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest">{t('missionControl.status')}</p>
-            <p className="text-xs font-bold text-emerald-400 italic">{t('ui.status.allSystemsOptimal')}</p>
+        <div className="flex items-center gap-10 relative z-10">
+          <div className="text-right hidden sm:block space-y-1">
+            <p className="text-[9px] font-black text-slate-600 uppercase tracking-[0.3em] italic">{t('missionControl.status')}</p>
+            <p className="text-sm font-black text-emerald-400 italic flex items-center gap-2">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              {t('ui.status.allSystemsOptimal').toUpperCase()}
+            </p>
           </div>
-          <div className="h-12 w-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center relative">
-            <Bell className="h-5 w-5 text-pink-500 animate-swing" />
-            <div className="absolute top-3 right-3 h-2 w-2 rounded-full bg-pink-500 shadow-[0_0_10px_rgba(236,72,153,0.8)]" />
-          </div>
+          <motion.div 
+            whileHover={{ scale: 1.05 }}
+            className="h-16 w-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center relative shadow-2xl ring-1 ring-white/10 cursor-pointer overflow-hidden group/bell"
+          >
+            <div className="absolute inset-0 bg-pink-500/10 opacity-0 group-hover/bell:opacity-100 transition-opacity" />
+            <Bell className="h-6 w-6 text-pink-500 animate-swing relative z-10" />
+            <div className="absolute top-4 right-4 h-2.5 w-2.5 rounded-full bg-pink-500 shadow-[0_0_15px_rgba(236,72,153,0.8)] z-20" />
+          </motion.div>
         </div>
       </CardHeader>
 
       <CardContent className="p-10 lg:p-12 space-y-16 flex-1 relative z-10">
         {/* Core Strategic Metrics */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-10">
           {metrics.map((m, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-              className="p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/5 shadow-xl relative overflow-hidden group/metric"
+              transition={{ delay: i * 0.1, type: "spring", stiffness: 100 }}
+              className="p-10 rounded-[3rem] bg-white/[0.02] border border-white/5 shadow-2xl relative overflow-hidden group/metric ring-1 ring-white/5"
             >
-              <div className="absolute top-0 right-0 p-6 opacity-[0.03] group-hover/metric:scale-110 transition-transform duration-700">
-                <Target className="h-16 w-16" />
+              <div className={cn("absolute -top-6 -right-6 p-8 opacity-[0.03] group-hover/metric:scale-110 group-hover/metric:rotate-12 transition-all duration-700", m.color)}>
+                <Target className="h-24 w-24" />
               </div>
-              <div className="space-y-4 relative z-10">
-                <p className="text-[9px] font-black uppercase tracking-widest text-slate-600 italic">{m.label}</p>
-                <p className={cn("text-3xl font-black italic tracking-tighter", m.color)}>{m.val}</p>
-                <Badge variant="outline" className="text-[8px] font-black border-white/10 text-slate-500 italic uppercase">
+              <div className="space-y-6 relative z-10">
+                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-600 italic">{m.label}</p>
+                <p className={cn("text-4xl font-black italic tracking-tighter leading-none", m.color)}>{m.val}</p>
+                <Badge variant="outline" className="text-[9px] font-black border-white/10 bg-white/5 text-slate-500 italic uppercase tracking-widest px-4 py-1 rounded-lg shadow-lg">
                   {m.sub}
                 </Badge>
               </div>
@@ -190,45 +199,57 @@ export function MissionControl() {
 
           {/* Module Integrity Sidebar */}
           <div className="lg:col-span-5 space-y-8">
-            <div className="flex items-center justify-between border-b border-white/5 pb-4">
-              <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-600 italic">{t('missionControl.activeNodes')}</h4>
-              <Badge className="bg-cyan-600 text-white border-none text-[8px] font-black italic">{t('missionControl.activeNodesCount')}</Badge>
+            <div className="flex items-center justify-between border-b border-white/10 pb-6 mb-10">
+              <h4 className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-500 italic">{t('missionControl.activeNodes')}</h4>
+              <Badge className="bg-cyan-600/20 text-cyan-400 border border-cyan-500/30 text-[9px] font-black italic px-4 py-1 rounded-lg uppercase tracking-widest shadow-lg">{t('missionControl.activeNodesCount')}</Badge>
             </div>
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 gap-6">
               {modules.slice(0, 4).map((m, i) => (
-                <div key={i} className="flex items-center justify-between p-6 rounded-2xl bg-white/[0.02] border border-white/5 group hover:bg-white/[0.04] transition-all">
-                  <div className="flex items-center gap-6">
-                    <div className={cn("h-10 w-10 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-center shadow-inner", m.color)}>
-                      <m.icon className="h-5 w-5" />
+                <motion.div 
+                  key={i} 
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                  className="flex items-center justify-between p-8 rounded-[2.5rem] bg-white/[0.01] border border-white/5 group hover:bg-white/[0.03] hover:border-cyan-500/20 transition-all duration-500 ring-1 ring-white/5"
+                >
+                  <div className="flex items-center gap-8">
+                    <div className={cn("h-14 w-14 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center shadow-inner transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3", m.color)}>
+                      <m.icon className="h-7 w-7" />
                     </div>
-                    <span className="text-sm font-bold text-white italic">{m.label}</span>
+                    <span className="text-base font-black text-white italic tracking-tight uppercase leading-none">{m.label}</span>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest italic">{t('ui.status.nodeSync')}</span>
+                  <div className="flex items-center gap-4 bg-emerald-500/5 px-4 py-2 rounded-xl border border-emerald-500/10">
+                    <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="text-[10px] font-black text-emerald-500/80 uppercase tracking-[0.2em] italic">{t('ui.status.nodeSync')}</span>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
             
-            <div className="p-8 rounded-[3rem] bg-gradient-to-br from-cyan-600/10 via-transparent to-transparent border border-cyan-500/20 relative overflow-hidden group/box">
-              <Compass className="absolute bottom-[-30px] right-[-30px] h-40 w-40 text-cyan-500/5 rotate-12 transition-transform duration-1000 group-hover/box:rotate-90" />
-              <div className="space-y-6 relative z-10">
-                <div className="flex items-center gap-4">
-                  <div className="h-10 w-10 rounded-xl bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20">
-                    <Zap className="h-5 w-5 text-cyan-400 animate-pulse" />
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.5 }}
+              className="mt-10 p-10 rounded-[3.5rem] bg-gradient-to-br from-cyan-600/10 via-transparent to-transparent border border-cyan-500/30 relative overflow-hidden group/box shadow-2xl ring-1 ring-white/10"
+            >
+              <Compass className="absolute bottom-[-40px] right-[-40px] h-48 w-48 text-cyan-500/5 rotate-12 transition-transform duration-[2000ms] group-hover/box:rotate-90 group-hover/box:scale-110" />
+              <div className="space-y-8 relative z-10 text-left">
+                <div className="flex items-center gap-5">
+                  <div className="h-14 w-14 rounded-[1.5rem] bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20 shadow-inner group-hover/box:scale-110 transition-transform duration-500">
+                    <Zap className="h-7 w-7 text-cyan-400 animate-pulse" />
                   </div>
-                  <h5 className="text-xs font-black text-white uppercase tracking-[0.3em] italic">{t('missionControl.commandPath')}</h5>
+                  <h5 className="text-sm font-black text-white uppercase tracking-[0.4em] italic leading-none">{t('missionControl.commandPath')}</h5>
                 </div>
-                <p className="text-[11px] text-slate-400 font-light leading-relaxed italic">
+                <p className="text-sm text-slate-400 font-light leading-relaxed italic max-w-[280px]">
                   {t('missionControl.oversightDesc')}
                 </p>
-                <Button className="w-full h-14 rounded-2xl bg-cyan-600 hover:bg-cyan-500 text-[#020617] font-black uppercase tracking-widest text-[10px] italic transition-all group-hover/box:shadow-2xl group-hover/box:shadow-cyan-500/20">
+                <Button className="w-full h-18 rounded-[2rem] bg-cyan-600 hover:bg-cyan-500 text-[#020617] font-black uppercase tracking-[0.3em] text-[11px] italic transition-all group-hover/box:shadow-[0_20px_50px_rgba(6,182,212,0.3)] border-none">
                   {t('missionControl.launchAnalysis')}
-                  <ArrowRight className="ml-3 h-4 w-4" />
+                  <ArrowRight className="ml-4 h-5 w-5" />
                 </Button>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </CardContent>

@@ -351,7 +351,7 @@ export function ChatDrawer({
       },
       onError: (error: VoiceRecognitionError, message) => {
         console.error('Voice recognition error:', error, message)
-        const errorMessage = voiceRecognition.getErrorMessage(error)
+        const errorMessage = voiceRecognition.getErrorKey(error)
         alert(errorMessage)
         setVoiceStatus('idle')
         setInterimTranscript("")
@@ -492,7 +492,7 @@ export function ChatDrawer({
                 }`}
               >
                 <span className="text-base">{category.emoji}</span>
-                <span>{category.name}</span>
+                <span>{category.name.includes('.') ? t(category.name) : category.name}</span>
               </button>
             ))}
           </div>
@@ -506,10 +506,10 @@ export function ChatDrawer({
                     variant="outline"
                     size="sm"
                     className="h-auto min-h-[48px] px-4 py-2 text-left justify-start hover:bg-primary hover:text-primary-foreground transition-colors whitespace-normal"
-                    onClick={() => handleQuickReply(reply.text)}
+                    onClick={() => handleQuickReply(reply.text.includes('.') ? t(reply.text) : reply.text)}
                   >
                     {reply.emoji && <span className="mr-1.5">{reply.emoji}</span>}
-                    <span className="text-xs line-clamp-2">{reply.text}</span>
+                    <span className="text-xs line-clamp-2">{reply.text.includes('.') ? t(reply.text) : reply.text}</span>
                   </Button>
                   
                   {/* Delete button for custom replies */}

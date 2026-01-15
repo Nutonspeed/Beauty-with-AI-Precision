@@ -132,22 +132,22 @@ export function getTrendColor(value: number): string {
   return TREND_COLORS.neutral;
 }
 
-// Status Display Names (for UI)
-export const STATUS_LABELS = {
-  pending: "รอดำเนินการ",
-  confirmed: "ยืนยันแล้ว",
-  arrived: "มาถึงแล้ว",
-  in_progress: "กำลังให้บริการ",
-  completed: "เสร็จสิ้น",
-  cancelled: "ยกเลิก",
-  no_show: "ไม่มา",
+// Status Display Name Keys (for UI)
+export const STATUS_LABEL_KEYS = {
+  pending: "common.status.pending",
+  confirmed: "common.status.confirmed",
+  arrived: "common.status.arrived",
+  in_progress: "common.status.in_progress",
+  completed: "common.status.completed",
+  cancelled: "common.status.cancelled",
+  no_show: "common.status.no_show",
 } as const;
 
-export const ROLE_LABELS = {
-  super_admin: "Super Admin",
-  center_owner: "เจ้าของศูนย์ความงาม",
-  center_staff: "พนักงาน",
-  sales_staff: "ฝ่ายขาย",
-  customer: "ลูกค้า",
-  premium_customer: "ลูกค้า VIP",
+export const ROLE_LABEL_KEYS = {
+  super_admin: "common.roles.super_admin",
+  center_owner: "common.roles.center_owner",
+  center_staff: "common.roles.center_staff",
+  sales_staff: "common.roles.sales_staff",
+  customer: "common.roles.customer",
+  premium_customer: "common.roles.premium_customer",
 } as const;

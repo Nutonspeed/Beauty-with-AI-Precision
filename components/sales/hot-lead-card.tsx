@@ -17,7 +17,8 @@ import {
   TrendingUp,
   Sparkles,
   StickyNote,
-  AlertCircle
+  AlertCircle,
+  Activity
 } from "lucide-react"
 import { useTranslations } from "next-intl"
 
@@ -30,11 +31,15 @@ interface HotLeadCardProps {
     photo?: string
     initials: string
     score: number
+    status: string
     isOnline: boolean
     topConcern: string
     secondaryConcern?: string
     estimatedValue: number
     lastActivity: string
+    lastEngagementDuration?: number
+    lastEngagementType?: string
+    lastScrollDepth?: number
     analysisData: {
       wrinkles?: number
       pigmentation?: number
@@ -118,8 +123,14 @@ export function HotLeadCard({ lead, onCall, onChat, onEmail, onARDemo, onProposa
                 <Sparkles className="h-3 w-3 mr-1" />
                 {t('salesLeadDetail.score')}: {lead.score}
               </Badge>
-              {lead.score < 70 && (
-                <Badge className="bg-red-100 text-red-800">
+              {lead.status === 'active' && (
+                <Badge className="bg-blue-100 text-blue-800 animate-pulse">
+                  <Activity className="h-3 w-3 mr-1" />
+                  {t('salesLeads.status.active') || 'ACTIVE'}
+                </Badge>
+              )}
+              {(lead.lastEngagementDuration || 0) > 120 && (
+                <Badge className="bg-rose-100 text-rose-800">
                   🔥 {t('salesLeads.status.hot')}
                 </Badge>
               )}
@@ -136,6 +147,26 @@ export function HotLeadCard({ lead, onCall, onChat, onEmail, onARDemo, onProposa
           <p className="text-xl font-bold text-green-600">{t('format.currency', { amount: lead.estimatedValue.toLocaleString() })}</p>
         </div>
       </div>
+
+      {/* Telemetry Insight - Real-time Engagement */}
+      {lead.lastEngagementDuration && (
+        <div className="mb-3 p-3 bg-blue-50/50 border border-blue-100 rounded-lg flex items-center justify-between group/telemetry">
+          <div className="flex items-center gap-3">
+            <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
+              <Activity className="h-4 w-4 text-blue-600 animate-pulse" />
+            </div>
+            <div>
+              <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Live_Engagement</p>
+              <p className="text-xs font-bold text-slate-700 italic">
+                {lead.lastEngagementDuration}s duration • {lead.lastScrollDepth}% depth
+              </p>
+            </div>
+          </div>
+          <Badge variant="outline" className="border-blue-200 bg-white text-blue-600 text-[8px] font-black uppercase">
+            {lead.lastEngagementType === 'report_view' ? 'Neural_Report_Active' : 'Sync_Node_Active'}
+          </Badge>
+        </div>
+      )}
 
       {/* Quick Insights - 2 Column Grid */}
       <div className="grid grid-cols-2 gap-2 mb-3 p-3 bg-background/80 rounded-lg border border-border/50">

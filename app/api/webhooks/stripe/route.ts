@@ -71,17 +71,21 @@ export async function POST(request: NextRequest) {
             .single();
 
           if (booking && booking.customer) {
+            // Get locale from metadata or fallback to th
+            const locale = (paymentIntent.metadata.locale as 'th' | 'en') || 'th';
+
             // Send confirmation email
             if (booking.customer.email) {
               await sendBookingConfirmationEmail({
                 to: booking.customer.email,
                 customerName: booking.customer.full_name || booking.customer.email,
-                bookingDate: new Date(booking.booking_date).toLocaleDateString('th-TH'),
+                bookingDate: new Date(booking.booking_date).toLocaleDateString(locale === 'th' ? 'th-TH' : 'en-US'),
                 bookingTime: booking.booking_time || 'TBD',
                 program: booking.program_type || 'Program',
                 centerName: booking.center?.name || 'Beauty Aesthetic Center',
                 centerAddress: booking.center?.address,
                 bookingId: booking.id,
+                locale
               });
             }
 
@@ -90,11 +94,12 @@ export async function POST(request: NextRequest) {
               await sendBookingConfirmationSMS({
                 to: booking.customer.phone,
                 customerName: booking.customer.full_name || 'Customer',
-                bookingDate: new Date(booking.booking_date).toLocaleDateString('th-TH'),
+                bookingDate: new Date(booking.booking_date).toLocaleDateString(locale === 'th' ? 'th-TH' : 'en-US'),
                 bookingTime: booking.booking_time || 'TBD',
                 program: booking.program_type || 'Program',
                 centerName: booking.center?.name || 'Beauty Aesthetic Center',
                 bookingId: booking.id,
+                locale
               });
 
               // Send payment success SMS
@@ -102,6 +107,7 @@ export async function POST(request: NextRequest) {
                 to: booking.customer.phone,
                 amount: paymentIntent.amount / 100,
                 bookingId: booking.id,
+                locale
               });
             }
           }

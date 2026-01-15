@@ -33,7 +33,7 @@ export default function Vision2026Page() {
       icon: Cpu, 
       color: 'text-cyan-400', 
       bg: 'bg-cyan-500/10',
-      desc: 'Autonomous center management and predictive logistics.'
+      desc: t('vision2026.descriptions.automation')
     },
     { 
       id: 'precision', 
@@ -41,7 +41,7 @@ export default function Vision2026Page() {
       icon: Target, 
       color: 'text-pink-400', 
       bg: 'bg-pink-500/10',
-      desc: 'AI-mapped aesthetic protocols with biometric accuracy.'
+      desc: t('vision2026.descriptions.precision')
     },
     { 
       id: 'retention', 
@@ -49,7 +49,7 @@ export default function Vision2026Page() {
       icon: Users, 
       color: 'text-purple-400', 
       bg: 'bg-purple-500/10',
-      desc: 'Smart re-engagement cycles and biological loyalty hooks.'
+      desc: t('vision2026.descriptions.retention')
     }
   ]
 
@@ -126,11 +126,11 @@ export default function Vision2026Page() {
                       <div className="space-y-4 pt-6 border-t border-white/5">
                         <div className="flex items-center gap-3">
                           <Zap className="h-3 w-3 text-cyan-500" />
-                          <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Deployed Efficiency: 99.4%</span>
+                          <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{t('vision2026.stats.efficiency')}</span>
                         </div>
                         <div className="flex items-center gap-3">
                           <Fingerprint className="h-3 w-3 text-pink-500" />
-                          <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Data Integrity: AES-256</span>
+                          <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{t('vision2026.stats.integrity')}</span>
                         </div>
                       </div>
                     </CardContent>
@@ -156,21 +156,21 @@ export default function Vision2026Page() {
                   {[
                     { 
                       tier: t('vision2026.tierValue.standard'), 
-                      price: 'Starter', 
-                      features: ['Basic AI Scanning', 'Client Registry', 'Simple Analytics'],
+                      price: t('vision2026.pkgNames.starter'), 
+                      features: t.raw('vision2026.pkgFeatures.basic') as string[],
                       color: 'border-slate-800 bg-slate-900/20'
                     },
                     { 
                       tier: t('vision2026.tierValue.professional'), 
-                      price: 'Growth', 
-                      features: ['Predictive Sales Velocity', 'AR Simulations', 'Branch Benchmarking', 'Staff Efficiency AI'],
+                      price: t('vision2026.pkgNames.growth'), 
+                      features: t.raw('vision2026.pkgFeatures.pro') as string[],
                       color: 'border-blue-500/30 bg-blue-500/5',
                       highlight: true
                     },
                     { 
                       tier: t('vision2026.tierValue.enterprise'), 
-                      price: 'Elite', 
-                      features: ['Aesthetic Decision Support (ADSS)', 'Service Compliance Audit', 'Global Industry Benchmarking', 'Generative Marketing Engine'],
+                      price: t('vision2026.pkgNames.elite'), 
+                      features: t.raw('vision2026.pkgFeatures.enterprise') as string[],
                       color: 'border-pink-500/30 bg-pink-500/5',
                       premium: true
                     }
@@ -196,7 +196,7 @@ export default function Vision2026Page() {
                           ))}
                         </ul>
                         <Button variant={pkg.highlight || pkg.premium ? "premium" : "outline"} className="w-full h-14 rounded-2xl uppercase font-black text-[10px] tracking-widest italic">
-                          Select Path
+                          {t('common.select')}
                         </Button>
                       </Card>
                     </motion.div>
@@ -210,42 +210,42 @@ export default function Vision2026Page() {
                   <CardHeader className="p-10 lg:p-16 border-b border-white/5">
                     <div className="flex justify-between items-end">
                       <div className="space-y-2">
-                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 italic">Strategic ROI Projection</p>
-                        <h3 className="text-4xl font-bold text-white italic tracking-tighter">Enterprise Platform Yield</h3>
+                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 italic">{t('vision2026.roi.projection')}</p>
+                        <h3 className="text-4xl font-bold text-white italic tracking-tighter">{t('vision2026.roi.yield')}</h3>
                       </div>
                       <Badge className="bg-emerald-600 text-white border-none px-6 py-2 text-xs font-black italic tracking-widest uppercase mb-1 shadow-lg shadow-emerald-500/20">
-                        +240% LTV INCREASE
+                        {t('vision2026.roi.ltvIncrease')}
                       </Badge>
                     </div>
                   </CardHeader>
                   <CardContent className="p-10 lg:p-16 space-y-12">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
                       <div className="space-y-8">
-                        <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-white/5 pb-4">Efficiency Benchmarks</h4>
+                        <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-white/5 pb-4">{t('vision2026.roi.benchmarks')}</h4>
                         <div className="space-y-6">
                           {[
-                            { label: 'Conversion Velocity', val: '4.2 Days', trend: '-65%', color: 'text-cyan-400' },
-                            { label: 'Operational Accuracy', val: '99.9%', trend: '+42%', color: 'text-emerald-400' },
-                            { label: 'Retention Lift', val: '88%', trend: '+120%', color: 'text-pink-400' },
+                            { label: t('vision2026.roi.metrics.velocity'), val: '4.2 Days', trend: '-65%', color: 'text-cyan-400' },
+                            { label: t('vision2026.roi.metrics.accuracy'), val: '99.9%', trend: '+42%', color: 'text-emerald-400' },
+                            { label: t('vision2026.roi.metrics.retention'), val: '88%', trend: '+120%', color: 'text-pink-400' },
                           ].map((item, i) => (
                             <div key={i} className="flex justify-between items-center group/roi">
                               <span className="text-xs font-bold text-slate-500 italic transition-colors group-hover/roi:text-white">{item.label}</span>
                               <div className="text-right">
                                 <p className="text-lg font-black text-white italic">{item.val}</p>
-                                <p className={cn("text-[9px] font-black uppercase tracking-widest", item.color)}>{item.trend} Improvement</p>
+                                <p className={cn("text-[9px] font-black uppercase tracking-widest", item.color)}>{item.trend} {t('vision2026.roi.metrics.improvement')}</p>
                               </div>
                             </div>
                           ))}
                         </div>
                       </div>
                       <div className="space-y-8">
-                        <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-white/5 pb-4">Market Position</h4>
+                        <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-white/5 pb-4">{t('vision2026.roi.marketPosition')}</h4>
                         <div className="p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/5 relative overflow-hidden group/rank">
                           <Globe className="absolute bottom-[-30px] right-[-30px] h-32 w-32 text-white/5 group-hover:scale-110 transition-transform duration-1000" />
                           <div className="space-y-2 relative z-10 text-center">
-                            <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em] italic">Global Intelligence Index</p>
+                            <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em] italic">{t('vision2026.roi.intelligenceIndex')}</p>
                             <p className="text-6xl font-black text-white italic tracking-tighter">#1</p>
-                            <p className="text-[10px] font-bold text-cyan-500 uppercase tracking-widest">Aesthetic AI Category</p>
+                            <p className="text-[10px] font-bold text-cyan-500 uppercase tracking-widest">{t('vision2026.roi.category')}</p>
                           </div>
                         </div>
                       </div>
@@ -259,15 +259,15 @@ export default function Vision2026Page() {
                    <CardHeader className="p-10 pb-6 border-b border-white/5">
                       <CardTitle className="text-xl font-black italic text-emerald-400 uppercase tracking-widest flex items-center gap-4">
                         <ShieldCheck className="h-6 w-6" />
-                        Infrastructure Security
+                        {t('vision2026.security.title')}
                       </CardTitle>
                    </CardHeader>
                    <CardContent className="p-10 space-y-8">
                       <p className="text-xs text-slate-400 italic font-light leading-relaxed">
-                        Beauty-Intelligence-Precision (BIP) protocol ensures 100% HIPAA/GDPR compliance while leveraging deep aesthetic datasets for autonomous analysis support.
+                        {t('vision2026.security.description')}
                       </p>
                       <div className="space-y-4">
-                        {['Zero-Latency Edge API', 'Quantum-Safe Encryption', 'Neural Aesthetic Audit'].map((tag, i) => (
+                        {(t.raw('vision2026.security.tags') as string[]).map((tag, i) => (
                           <div key={i} className="flex items-center gap-3">
                             <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
                             <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">{tag}</span>
@@ -275,7 +275,7 @@ export default function Vision2026Page() {
                         ))}
                       </div>
                       <Button className="w-full h-14 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-[#020617] font-black uppercase tracking-widest text-[10px] italic transition-all group-hover:shadow-2xl group-hover:shadow-emerald-500/20">
-                        Audit System Integrity
+                        {t('vision2026.security.auditBtn')}
                       </Button>
                    </CardContent>
                 </Card>
@@ -311,7 +311,7 @@ export default function Vision2026Page() {
 
             <div className="pt-20">
               <Button variant="premium" className="h-20 px-16 rounded-[2.5rem] shadow-2xl shadow-pink-500/20 text-md font-black uppercase tracking-[0.4em] italic group transition-all">
-                Partner with the Future
+                {t('vision2026.cta.button')}
                 <ArrowRight className="ml-4 h-6 w-6 group-hover:translate-x-2 transition-transform" />
               </Button>
             </div>

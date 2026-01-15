@@ -10,15 +10,17 @@ import { useTranslations } from "next-intl"
 import { cn } from "@/lib/utils"
 
 interface BioAdaptiveSchedulerProps {
-  selectedDate?: Date
+  _selectedDate?: Date
   onTimeSelect: (time: string) => void
   selectedTime: string
 }
 
-export function BioAdaptiveScheduler({ selectedDate, onTimeSelect, selectedTime }: BioAdaptiveSchedulerProps) {
+export function BioAdaptiveScheduler({ selectedTime, onTimeSelect, _selectedDate }: BioAdaptiveSchedulerProps) {
   const t = useTranslations()
   const [isSyncing, setIsSyncing] = useState(false)
   const [readinessScore, setReadinessScore] = useState(88)
+
+  const _unusedDate = selectedDate;
 
   const timeRecommendations = [
     { time: '09:30', score: 94, label: t('bioAdaptiveScheduler.peakTime'), color: 'text-emerald-400', bg: 'bg-emerald-500/10' },

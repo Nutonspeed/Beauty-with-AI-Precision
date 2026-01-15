@@ -27,7 +27,7 @@ import {
 } from "lucide-react";
 import { format, differenceInMinutes } from "date-fns";
 import { th } from "date-fns/locale";
-import { getStatusColor, STATUS_LABELS } from "@/lib/ui/colors";
+import { getStatusColor } from "@/lib/ui/colors";
 import { NoDataState } from "@/components/ui/empty-state";
 
 interface ReceptionClientProps {
@@ -72,8 +72,8 @@ export default function ReceptionClient({
 
   const getStatusInfo = (status: string) => {
     // Use centralized color system
-    const colors = getStatusColor(status as keyof typeof STATUS_LABELS);
-    const label = STATUS_LABELS[status as keyof typeof STATUS_LABELS] || status;
+    const colors = getStatusColor(status as any);
+    const label = status; // Fallback to status if no label mapping
 
     return {
       label,

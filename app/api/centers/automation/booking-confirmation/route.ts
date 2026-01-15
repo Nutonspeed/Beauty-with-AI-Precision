@@ -9,7 +9,7 @@ import { sendBookingConfirmationSMS, isSmsConfigured } from "@/lib/notifications
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { booking_id } = await request.json();
+    const { booking_id, locale = 'th' } = await request.json();
 
     if (!booking_id) {
       return NextResponse.json(
@@ -17,6 +17,9 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    const isThai = locale === 'th';
+    const dateLocale = isThai ? th : undefined;
 
     // ดึงการตั้งค่า
     const { data: settings } = await supabase
@@ -33,7 +36,9 @@ export async function POST(request: NextRequest) {
       ],
       template:
         settings?.settings?.booking_confirmation_template ||
-        "ยืนยันการจองสำเร็จ! 🎉\n\nเลขที่การจอง: {{booking_id}}\nวันที่: {{date}}\nเวลา: {{time}}\nการรักษา: {{program}}\nผู้ให้บริการ: {{staff_name}}",
+        (isThai 
+          ? "ยืนยันการจองสำเร็จ! 🎉\n\nเลขที่การจอง: {{booking_id}}\nวันที่: {{date}}\nเวลา: {{time}}\nการรักษา: {{program}}\nผู้ให้บริการ: {{staff_name}}"
+          : "Booking Confirmed! 🎉\n\nBooking ID: {{booking_id}}\nDate: {{date}}\nTime: {{time}}\nProgram: {{program}}\nStaff: {{staff_name}}"),
     };
 
     if (!confirmationSettings.enabled) {
@@ -66,8 +71,8 @@ export async function POST(request: NextRequest) {
     // สร้างข้อความยืนยัน
     const appointmentDate = format(
       new Date(booking.appointment_date),
-      "d MMMM yyyy",
-      { locale: th }
+      isThai ? "d MMMM yyyy" : "MMMM d, yyyy",
+      { locale: dateLocale }
     );
 
     const message = confirmationSettings.template
@@ -75,8 +80,8 @@ export async function POST(request: NextRequest) {
       .replace("{{date}}", appointmentDate)
       .replace("{{time}}", booking.appointment_time)
       .replace("{{program}}", booking.program_type)
-      .replace("{{staff_name}}", booking.staff?.name || "ทีมงาน")
-      .replace("{{customer_name}}", booking.customer?.name || "ลูกค้า");
+      .replace("{{staff_name}}", booking.staff?.name || (isThai ? "ทีมงาน" : "Staff"))
+      .replace("{{customer_name}}", booking.customer?.name || (isThai ? "ลูกค้า" : "Customer"));
 
     // ส่งการยืนยันผ่านช่องทางที่เลือก
     const sentChannels: string[] = [];
@@ -102,7 +107,7 @@ export async function POST(request: NextRequest) {
           // Send via Resend
           const emailResult = await sendBookingConfirmationEmail({
             to: booking.customer.email,
-            customerName: booking.customer.name || "ลูกค้า",
+            customerName: booking.customer.name || (isThai ? "ลูกค้า" : "Customer"),
             bookingDate: appointmentDate,
             bookingTime: booking.appointment_time,
             program: booking.program_type,
@@ -120,12 +125,13 @@ export async function POST(request: NextRequest) {
           if (isSmsConfigured()) {
             const smsResult = await sendBookingConfirmationSMS({
               to: booking.customer.phone,
-              customerName: booking.customer.name || "ลูกค้า",
+              customerName: booking.customer.name || (isThai ? "ลูกค้า" : "Customer"),
               bookingDate: appointmentDate,
               bookingTime: booking.appointment_time,
               program: booking.program_type,
               centerName: "AI367 Beauty Center",
-              bookingId: booking.id
+              bookingId: booking.id,
+              locale: locale as 'th' | 'en'
             });
             if (smsResult.success) {
               sentChannels.push("sms");

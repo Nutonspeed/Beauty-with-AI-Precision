@@ -15,79 +15,13 @@ interface SeasonalRecommendationsProps {
   language?: 'th' | 'en';
 }
 
-const translations = {
-  th: {
-    title: 'คำแนะนำเกี่ยวกับการดูแลผิวตามฤดูกาล',
-    currentSeason: 'ฤดูกาลปัจจุบัน',
-    climate: 'สภาพอากาศ',
-    temperature: 'อุณหภูมิ',
-    humidity: 'ความชื้น',
-    uvIndex: 'ดัชนี UV',
-    airQuality: 'คุณภาพอากาศ',
-    hydrationLevel: 'ระดับความชื้น',
-    sunProtection: 'การป้องกันแสงแดด',
-    morningRoutine: 'รูทีนตอนเช้า',
-    eveningRoutine: 'รูทีนตอนเย็น',
-    weeklyRoutine: 'รูทีนรายสัปดาห์',
-    duration: 'ระยะเวลา',
-    minutes: 'นาที',
-    products: 'ผลิตภัณฑ์',
-    tips: 'เคล็ดลับ',
-    precautions: 'ข้อระวัง',
-    recommendations: 'คำแนะนำ',
-    priorityAreas: 'พื้นที่ลำดับความสำคัญ',
-    monthlyFocus: 'ความสำคัญรายเดือน',
-    useFrequency: 'ความถี่การใช้',
-    benefits: 'ประโยชน์',
-    ingredients: 'ส่วนประกอบ',
-    effectiveness: 'ประสิทธิผล',
-    routineComparison: 'เปรียบเทียบรูทีน',
-    climateAdvice: 'คำแนะนำเกี่ยวกับสภาพอากาศ',
-    daily: 'ทุกวัน',
-    twiceDaily: 'สองครั้งต่อวัน',
-    weekly: 'รายสัปดาห์',
-    asNeeded: 'ตามต้องการ',
-  },
-  en: {
-    title: 'Seasonal Skincare Recommendations',
-    currentSeason: 'Current Season',
-    climate: 'Climate',
-    temperature: 'Temperature',
-    humidity: 'Humidity',
-    uvIndex: 'UV Index',
-    airQuality: 'Air Quality',
-    hydrationLevel: 'Hydration Level',
-    sunProtection: 'Sun Protection (SPF)',
-    morningRoutine: 'Morning Routine',
-    eveningRoutine: 'Evening Routine',
-    weeklyRoutine: 'Weekly Routine',
-    duration: 'Duration',
-    minutes: 'minutes',
-    products: 'Products',
-    tips: 'Tips',
-    precautions: 'Precautions',
-    recommendations: 'Recommendations',
-    priorityAreas: 'Priority Areas',
-    monthlyFocus: 'Monthly Focus',
-    useFrequency: 'Use Frequency',
-    benefits: 'Benefits',
-    ingredients: 'Ingredients',
-    effectiveness: 'Routine Effectiveness',
-    routineComparison: 'Routine Comparison',
-    climateAdvice: 'Climate-Specific Advice',
-    daily: 'Daily',
-    twiceDaily: 'Twice Daily',
-    weekly: 'Weekly',
-    asNeeded: 'As Needed',
-  },
-};
+import { useTranslations } from 'next-intl';
 
 export const SeasonalRecommendationsComponent: React.FC<SeasonalRecommendationsProps> = ({
   skinType,
   environment,
-  language = 'en',
 }) => {
-  const t = translations[language];
+  const t = useTranslations('seasonalRecommendations');
   const [expandedProductId, setExpandedProductId] = useState<string | null>(null);
 
   // Use provided environment or generate default
@@ -107,11 +41,11 @@ export const SeasonalRecommendationsComponent: React.FC<SeasonalRecommendationsP
 
   const getFrequencyLabel = (frequency: string): string => {
     const frequencyMap: Record<string, string> = {
-      'daily': t.daily,
-      'twice-daily': t.twiceDaily,
-      '2-3-times': '2-3 times weekly',
-      'weekly': t.weekly,
-      'as-needed': t.asNeeded,
+      'daily': t('daily'),
+      'twice-daily': t('twiceDaily'),
+      '2-3-times': t('2-3-times', { defaultValue: '2-3 times weekly' }),
+      'weekly': t('weekly'),
+      'as-needed': t('asNeeded'),
     };
     return frequencyMap[frequency] || frequency;
   };
@@ -131,9 +65,9 @@ export const SeasonalRecommendationsComponent: React.FC<SeasonalRecommendationsP
     <div className="space-y-6">
       {/* Header */}
       <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">{t.title}</h1>
+        <h1 className="text-4xl font-bold text-gray-900 mb-2">{t('title')}</h1>
         <p className="text-gray-600">
-          Personalized routine for {skinType} skin in {env.season} season
+          {t('personalizedRoutine', { skinType, season: env.season })}
         </p>
       </div>
 
@@ -144,7 +78,7 @@ export const SeasonalRecommendationsComponent: React.FC<SeasonalRecommendationsP
             <div className="flex justify-center mb-2">
               <Cloud className="w-6 h-6" />
             </div>
-            <p className="text-sm opacity-90">{t.climate}</p>
+            <p className="text-sm opacity-90">{t('climate')}</p>
             <p className="font-bold text-lg capitalize">{env.climate}</p>
           </div>
 
@@ -152,7 +86,7 @@ export const SeasonalRecommendationsComponent: React.FC<SeasonalRecommendationsP
             <div className="flex justify-center mb-2">
               <Sun className="w-6 h-6" />
             </div>
-            <p className="text-sm opacity-90">{t.temperature}</p>
+            <p className="text-sm opacity-90">{t('temperature')}</p>
             <p className="font-bold text-lg">{env.temperature}°C</p>
           </div>
 
@@ -160,7 +94,7 @@ export const SeasonalRecommendationsComponent: React.FC<SeasonalRecommendationsP
             <div className="flex justify-center mb-2">
               <Droplets className="w-6 h-6" />
             </div>
-            <p className="text-sm opacity-90">{t.humidity}</p>
+            <p className="text-sm opacity-90">{t('humidity')}</p>
             <p className="font-bold text-lg">{env.humidity}%</p>
           </div>
 
@@ -168,7 +102,7 @@ export const SeasonalRecommendationsComponent: React.FC<SeasonalRecommendationsP
             <div className="flex justify-center mb-2">
               <AlertCircle className="w-6 h-6" />
             </div>
-            <p className="text-sm opacity-90">{t.uvIndex}</p>
+            <p className="text-sm opacity-90">{t('uvIndex')}</p>
             <p className="font-bold text-lg">{env.uvIndex}/11</p>
           </div>
 
@@ -176,7 +110,7 @@ export const SeasonalRecommendationsComponent: React.FC<SeasonalRecommendationsP
             <div className="flex justify-center mb-2">
               <Wind className="w-6 h-6" />
             </div>
-            <p className="text-sm opacity-90">{t.airQuality}</p>
+            <p className="text-sm opacity-90">{t('airQuality')}</p>
             <p className="font-bold text-lg">AQI {env.airQuality}</p>
           </div>
         </div>
@@ -187,28 +121,28 @@ export const SeasonalRecommendationsComponent: React.FC<SeasonalRecommendationsP
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <div className="flex items-center gap-2 mb-2">
             <Droplets className="w-5 h-5 text-blue-600" />
-            <h3 className="font-semibold text-gray-900">{t.hydrationLevel}</h3>
+            <h3 className="font-semibold text-gray-900">{t('hydrationLevel')}</h3>
           </div>
           <p className="text-3xl font-bold text-blue-600">{recommendation.hydrationLevel}%</p>
-          <p className="text-sm text-gray-600 mt-1">Recommended hydration boost</p>
+          <p className="text-sm text-gray-600 mt-1">{t('recommendedHydration')}</p>
         </div>
 
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
           <div className="flex items-center gap-2 mb-2">
             <Sun className="w-5 h-5 text-yellow-600" />
-            <h3 className="font-semibold text-gray-900">{t.sunProtection}</h3>
+            <h3 className="font-semibold text-gray-900">{t('sunProtection')}</h3>
           </div>
           <p className="text-3xl font-bold text-yellow-600">SPF {recommendation.sunProtection}</p>
-          <p className="text-sm text-gray-600 mt-1">Minimum recommended</p>
+          <p className="text-sm text-gray-600 mt-1">{t('minimumRecommended')}</p>
         </div>
 
         <div className="bg-green-50 border border-green-200 rounded-lg p-4">
           <div className="flex items-center gap-2 mb-2">
             <CheckCircle className="w-5 h-5 text-green-600" />
-            <h3 className="font-semibold text-gray-900">{t.effectiveness}</h3>
+            <h3 className="font-semibold text-gray-900">{t('effectiveness')}</h3>
           </div>
           <p className="text-3xl font-bold text-green-600">{comparisonData.currentRoutine.effectiveness}%</p>
-          <p className="text-sm text-gray-600 mt-1">Routine effectiveness</p>
+          <p className="text-sm text-gray-600 mt-1">{t('routineEffectiveness')}</p>
         </div>
       </div>
 
@@ -217,10 +151,10 @@ export const SeasonalRecommendationsComponent: React.FC<SeasonalRecommendationsP
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
             <Sun className="w-6 h-6 text-orange-500" />
-            {t.morningRoutine}
+            {t('morningRoutine')}
           </h2>
           <span className="text-sm font-semibold text-gray-600">
-            {comparisonData.currentRoutine.estimatedDuration.morning} {t.minutes}
+            {comparisonData.currentRoutine.estimatedDuration.morning} {t('minutes')}
           </span>
         </div>
 
@@ -246,7 +180,7 @@ export const SeasonalRecommendationsComponent: React.FC<SeasonalRecommendationsP
               {expandedProductId === product.id && (
                 <div className="mt-4 pt-4 border-t border-orange-200 space-y-3 text-sm">
                   <div>
-                    <p className="font-semibold text-gray-900">{t.benefits}:</p>
+                    <p className="font-semibold text-gray-900">{t('benefits')}:</p>
                     <ul className="list-disc list-inside text-gray-700 mt-1">
                       {product.benefits.map((benefit) => (
                         <li key={benefit}>{benefit}</li>
@@ -254,7 +188,7 @@ export const SeasonalRecommendationsComponent: React.FC<SeasonalRecommendationsP
                     </ul>
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-900">{t.ingredients}:</p>
+                    <p className="font-semibold text-gray-900">{t('ingredients')}:</p>
                     <p className="text-gray-700 mt-1">{product.ingredients.join(', ')}</p>
                   </div>
                 </div>
@@ -269,10 +203,10 @@ export const SeasonalRecommendationsComponent: React.FC<SeasonalRecommendationsP
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
             <Moon className="w-6 h-6 text-indigo-500" />
-            {t.eveningRoutine}
+            {t('eveningRoutine')}
           </h2>
           <span className="text-sm font-semibold text-gray-600">
-            {comparisonData.currentRoutine.estimatedDuration.evening} {t.minutes}
+            {comparisonData.currentRoutine.estimatedDuration.evening} {t('minutes')}
           </span>
         </div>
 
@@ -298,7 +232,7 @@ export const SeasonalRecommendationsComponent: React.FC<SeasonalRecommendationsP
               {expandedProductId === product.id && (
                 <div className="mt-4 pt-4 border-t border-indigo-200 space-y-3 text-sm">
                   <div>
-                    <p className="font-semibold text-gray-900">{t.benefits}:</p>
+                    <p className="font-semibold text-gray-900">{t('benefits')}:</p>
                     <ul className="list-disc list-inside text-gray-700 mt-1">
                       {product.benefits.map((benefit) => (
                         <li key={benefit}>{benefit}</li>
@@ -306,7 +240,7 @@ export const SeasonalRecommendationsComponent: React.FC<SeasonalRecommendationsP
                     </ul>
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-900">{t.ingredients}:</p>
+                    <p className="font-semibold text-gray-900">{t('ingredients')}:</p>
                     <p className="text-gray-700 mt-1">{product.ingredients.join(', ')}</p>
                   </div>
                 </div>
@@ -321,7 +255,7 @@ export const SeasonalRecommendationsComponent: React.FC<SeasonalRecommendationsP
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
             <Target className="w-6 h-6 text-purple-500" />
-            {t.weeklyRoutine}
+            {t('weeklyRoutine')}
           </h2>
 
           <div className="space-y-3">
@@ -339,7 +273,7 @@ export const SeasonalRecommendationsComponent: React.FC<SeasonalRecommendationsP
 
       {/* Tips Section */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-        <h3 className="text-lg font-bold text-blue-900 mb-3">{t.tips}</h3>
+        <h3 className="text-lg font-bold text-blue-900 mb-3">{t('tips')}</h3>
         <ul className="space-y-2">
           {comparisonData.currentRoutine.tips.map((tip) => (
             <li key={tip} className="flex gap-2 text-blue-800">
@@ -355,7 +289,7 @@ export const SeasonalRecommendationsComponent: React.FC<SeasonalRecommendationsP
         <div className="bg-amber-50 border border-amber-200 rounded-lg p-6">
           <h3 className="text-lg font-bold text-amber-900 mb-3 flex items-center gap-2">
             <AlertCircle className="w-5 h-5" />
-            Weather Alerts
+            {t('weatherAlerts')}
           </h3>
           <ul className="space-y-2">
             {comparisonData.currentRoutine.weatherAlerts.map((alert) => (
@@ -371,7 +305,7 @@ export const SeasonalRecommendationsComponent: React.FC<SeasonalRecommendationsP
       {/* Precautions */}
       {recommendation.precautions.length > 0 && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-          <h3 className="text-lg font-bold text-red-900 mb-3">{t.precautions}</h3>
+          <h3 className="text-lg font-bold text-red-900 mb-3">{t('precautions')}</h3>
           <ul className="space-y-2">
             {recommendation.precautions.map((precaution) => (
               <li key={precaution} className="flex gap-2 text-red-800">
@@ -385,7 +319,7 @@ export const SeasonalRecommendationsComponent: React.FC<SeasonalRecommendationsP
 
       {/* Climate-Specific Advice */}
       <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-lg font-bold text-gray-900 mb-4">{t.climateAdvice}</h3>
+        <h3 className="text-lg font-bold text-gray-900 mb-4">{t('climateAdvice')}</h3>
         <div className="space-y-2">
           {climateTips.map((tip) => (
             <div key={tip} className="flex gap-3 p-3 bg-gray-50 rounded-lg">
@@ -399,7 +333,7 @@ export const SeasonalRecommendationsComponent: React.FC<SeasonalRecommendationsP
       {/* Priority Areas */}
       {recommendation.priorityAreas.length > 0 && (
         <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-lg font-bold text-gray-900 mb-4">{t.priorityAreas}</h3>
+          <h3 className="text-lg font-bold text-gray-900 mb-4">{t('priorityAreas')}</h3>
           <div className="flex flex-wrap gap-2">
             {recommendation.priorityAreas.map((area) => (
               <span key={area} className="px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm font-semibold">
@@ -412,7 +346,7 @@ export const SeasonalRecommendationsComponent: React.FC<SeasonalRecommendationsP
 
       {/* Monthly Focus */}
       <div className="bg-gradient-to-r from-purple-100 to-pink-100 border border-purple-300 rounded-lg p-6">
-        <h3 className="text-lg font-bold text-purple-900 mb-2">{t.monthlyFocus}</h3>
+        <h3 className="text-lg font-bold text-purple-900 mb-2">{t('monthlyFocus')}</h3>
         <p className="text-purple-800 text-lg font-semibold">{recommendation.monthlyFocus}</p>
       </div>
     </div>

@@ -12,8 +12,10 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Loader2, Save, User, Bell, Palette } from "lucide-react"
 import type { UserProfileData, UpdateProfileRequest } from "@/types/api"
 import { useLocalizePath } from "@/lib/i18n/locale-link"
+import { useTranslations } from "next-intl"
 
 export function UserProfileForm() {
+  const t = useTranslations('profile.form')
   const { user, loading } = useAuth()
   const router = useRouter()
   const lp = useLocalizePath()
@@ -50,7 +52,7 @@ export function UserProfileForm() {
 
       const response = await fetch('/api/user/profile')
       if (!response.ok) {
-        throw new Error('Failed to load profile')
+        throw new Error(t('errors.loadFailed'))
       }
 
       const data = await response.json()
@@ -66,7 +68,7 @@ export function UserProfileForm() {
       }
     } catch (err) {
       console.error('Failed to load profile:', err)
-      setError(err instanceof Error ? err.message : 'Failed to load profile')
+      setError(err instanceof Error ? err.message : t('errors.loadFailed'))
     } finally {
       setIsLoading(false)
     }
@@ -98,7 +100,7 @@ export function UserProfileForm() {
       })
 
       if (!response.ok) {
-        throw new Error('Failed to update profile')
+        throw new Error(t('errors.saveFailed'))
       }
 
       const data = await response.json()
@@ -109,7 +111,7 @@ export function UserProfileForm() {
       }
     } catch (err) {
       console.error('Failed to save profile:', err)
-      setError(err instanceof Error ? err.message : 'Failed to save profile')
+      setError(err instanceof Error ? err.message : t('errors.saveFailed'))
     } finally {
       setIsSaving(false)
     }
@@ -144,7 +146,7 @@ export function UserProfileForm() {
       {success && (
         <Card className="border-green-500/20 bg-green-500/10">
           <CardContent className="p-4">
-            <p className="text-sm text-green-700">Profile updated successfully!</p>
+            <p className="text-sm text-green-700">{t('successMessage')}</p>
           </CardContent>
         </Card>
       )}
@@ -154,31 +156,31 @@ export function UserProfileForm() {
         <CardHeader>
           <div className="flex items-center gap-2">
             <User className="h-5 w-5 text-primary" />
-            <CardTitle>Basic Information / ข้อมูลพื้นฐาน</CardTitle>
+            <CardTitle>{t('basicInfoTitle')}</CardTitle>
           </div>
           <CardDescription>
-            Your personal skin profile information
+            {t('basicInfoDesc')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="skinType">Skin Type / ประเภทผิว</Label>
+            <Label htmlFor="skinType">{t('skinTypeLabel')}</Label>
             <Select value={skinType} onValueChange={setSkinType}>
               <SelectTrigger id="skinType">
-                <SelectValue placeholder="Select skin type..." />
+                <SelectValue placeholder={t('skinTypePlaceholder')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="oily">Oily / มัน</SelectItem>
-                <SelectItem value="dry">Dry / แห้ง</SelectItem>
-                <SelectItem value="combination">Combination / ผสม</SelectItem>
-                <SelectItem value="normal">Normal / ปกติ</SelectItem>
-                <SelectItem value="sensitive">Sensitive / บอบบาง</SelectItem>
+                <SelectItem value="oily">{t('skinTypes.oily')}</SelectItem>
+                <SelectItem value="dry">{t('skinTypes.dry')}</SelectItem>
+                <SelectItem value="combination">{t('skinTypes.combination')}</SelectItem>
+                <SelectItem value="normal">{t('skinTypes.normal')}</SelectItem>
+                <SelectItem value="sensitive">{t('skinTypes.sensitive')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="space-y-2">
-            <Label>Primary Concerns / ปัญหาหลัก</Label>
+            <Label>{t('primaryConcernsLabel')}</Label>
             <div className="grid gap-3 sm:grid-cols-2">
               {['wrinkle', 'pigmentation', 'pore', 'redness', 'acne', 'dark_circle'].map((concern) => (
                 <div key={concern} className="flex items-center space-x-2">
@@ -191,7 +193,7 @@ export function UserProfileForm() {
                     htmlFor={concern}
                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
-                    {getConcernLabel(concern)}
+                    {getConcernLabel(concern, t)}
                   </label>
                 </div>
               ))}
@@ -199,15 +201,15 @@ export function UserProfileForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="allergies">Allergies / การแพ้</Label>
+            <Label htmlFor="allergies">{t('allergiesLabel')}</Label>
             <Input
               id="allergies"
               value={allergies}
               onChange={(e) => setAllergies(e.target.value)}
-              placeholder="List any allergies or sensitivities..."
+              placeholder={t('allergiesPlaceholder')}
             />
             <p className="text-xs text-muted-foreground">
-              Optional - helps us provide better recommendations
+              {t('allergiesHint')}
             </p>
           </div>
         </CardContent>
@@ -218,36 +220,36 @@ export function UserProfileForm() {
         <CardHeader>
           <div className="flex items-center gap-2">
             <Palette className="h-5 w-5 text-primary" />
-            <CardTitle>Preferences / การตั้งค่า</CardTitle>
+            <CardTitle>{t('preferencesTitle')}</CardTitle>
           </div>
           <CardDescription>
-            Customize your experience
+            {t('preferencesDesc')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="language">Language / ภาษา</Label>
+            <Label htmlFor="language">{t('languageLabel')}</Label>
             <Select value={language} onValueChange={setLanguage}>
               <SelectTrigger id="language">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="en">English</SelectItem>
-                <SelectItem value="th">ไทย (Thai)</SelectItem>
+                <SelectItem value="en">{t('languages.en')}</SelectItem>
+                <SelectItem value="th">{t('languages.th')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="theme">Theme / ธีม</Label>
+            <Label htmlFor="theme">{t('themeLabel')}</Label>
             <Select value={theme} onValueChange={setTheme}>
               <SelectTrigger id="theme">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="light">Light / สว่าง</SelectItem>
-                <SelectItem value="dark">Dark / มืด</SelectItem>
-                <SelectItem value="system">System / ระบบ</SelectItem>
+                <SelectItem value="light">{t('themes.light')}</SelectItem>
+                <SelectItem value="dark">{t('themes.dark')}</SelectItem>
+                <SelectItem value="system">{t('themes.system')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -259,10 +261,10 @@ export function UserProfileForm() {
         <CardHeader>
           <div className="flex items-center gap-2">
             <Bell className="h-5 w-5 text-primary" />
-            <CardTitle>Notifications / การแจ้งเตือน</CardTitle>
+            <CardTitle>{t('notificationsTitle')}</CardTitle>
           </div>
           <CardDescription>
-            Manage how you receive updates
+            {t('notificationsDesc')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -276,11 +278,7 @@ export function UserProfileForm() {
               htmlFor="notifications"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Receive email notifications about analysis results and recommendations
-              <br />
-              <span className="text-xs text-muted-foreground">
-                รับการแจ้งเตือนทางอีเมลเกี่ยวกับผลการวิเคราะห์และคำแนะนำ
-              </span>
+              {t('notificationsLabel')}
             </label>
           </div>
         </CardContent>
@@ -289,18 +287,18 @@ export function UserProfileForm() {
       {/* Save Button */}
       <div className="flex justify-end gap-3">
         <Button variant="outline" onClick={() => router.push(lp('/analysis'))}>
-          Cancel
+          {t('cancel')}
         </Button>
         <Button onClick={handleSave} disabled={isSaving}>
           {isSaving ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Saving...
+              {t('saving')}
             </>
           ) : (
             <>
               <Save className="mr-2 h-4 w-4" />
-              Save Profile
+              {t('save')}
             </>
           )}
         </Button>
@@ -310,14 +308,6 @@ export function UserProfileForm() {
 }
 
 // Helper function
-function getConcernLabel(type: string): string {
-  const labels: Record<string, string> = {
-    wrinkle: 'Wrinkles / ริ้วรอย',
-    pigmentation: 'Dark Spots / จุดด่างดำ',
-    pore: 'Pores / รูขุมขน',
-    redness: 'Redness / ผิวแดง',
-    acne: 'Acne / สิว',
-    dark_circle: 'Dark Circles / ใต้ตาคล้ำ',
-  }
-  return labels[type] || type
+function getConcernLabel(type: string, t: any): string {
+  return t(`concerns.${type}`) || type
 }

@@ -66,7 +66,7 @@ export default function SkinAnalyzerComponent() {
     } finally {
       setIsAnalyzing(false)
     }
-  }, [])
+  }, [t])
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]

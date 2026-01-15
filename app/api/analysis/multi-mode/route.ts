@@ -256,7 +256,8 @@ export const POST = withPublicAccess(async (request: NextRequest) => {
     console.log(`[Analysis] Saved to database: ${analysisData.id}`);
 
     // Step 6: Generate recommendations based on analysis
-    const recommendations = generateRecommendations(analysisData);
+    const locale = formData.get('locale') as 'th' | 'en' || 'th';
+    const recommendations = generateRecommendations(analysisData, locale);
 
     // Update with recommendations
     await supabase
@@ -321,7 +322,8 @@ export const POST = withPublicAccess(async (request: NextRequest) => {
 /**
  * Generate personalized recommendations based on analysis results
  */
-function generateRecommendations(analysis: any) {
+function generateRecommendations(analysis: any, locale: 'th' | 'en' = 'th') {
+  const isThai = locale === 'th';
   const recommendations: any = {
     programs: [],
     products: [],
@@ -331,42 +333,42 @@ function generateRecommendations(analysis: any) {
   // Spots recommendations
   if (analysis.spots_severity === 'high' || analysis.spots_severity === 'severe') {
     recommendations.programs.push({
-      name: 'Laser Program',
-      description: 'IPL or Q-switched laser for spot reduction',
+      name: isThai ? 'โปรแกรมเลเซอร์' : 'Laser Program',
+      description: isThai ? 'เลเซอร์ IPL หรือ Q-switched เพื่อลดจุดด่างดำ' : 'IPL or Q-switched laser for spot reduction',
       priority: 'high',
     });
     recommendations.products.push({
       category: 'brightening',
-      name: 'Vitamin C Serum',
-      description: 'Helps reduce dark spots and even skin tone',
+      name: isThai ? 'เซรั่มวิตามินซี' : 'Vitamin C Serum',
+      description: isThai ? 'ช่วยลดจุดด่างดำและปรับสีผิวให้สม่ำเสมอ' : 'Helps reduce dark spots and even skin tone',
     });
   }
 
   // Wrinkles recommendations
   if (analysis.wrinkles_severity === 'high' || analysis.wrinkles_severity === 'severe') {
     recommendations.programs.push({
-      name: 'Botox or Fillers',
-      description: 'Reduce expression lines and restore volume',
+      name: isThai ? 'โบท็อกซ์ หรือ ฟิลเลอร์' : 'Botox or Fillers',
+      description: isThai ? 'ลดริ้วรอยจากการแสดงอารมณ์และเติมเต็มร่องลึก' : 'Reduce expression lines and restore volume',
       priority: 'high',
     });
     recommendations.products.push({
       category: 'anti-aging',
-      name: 'Retinol Cream',
-      description: 'Boosts collagen production and reduces fine lines',
+      name: isThai ? 'ครีมเรตินอล' : 'Retinol Cream',
+      description: isThai ? 'กระตุ้นการสร้างคอลลาเจนและลดเลือนริ้วรอย' : 'Boosts collagen production and reduces fine lines',
     });
   }
 
   // Texture recommendations
   if (analysis.texture_severity === 'high' || analysis.texture_severity === 'severe') {
     recommendations.programs.push({
-      name: 'Chemical Peel',
-      description: 'Improves skin texture and promotes cell renewal',
+      name: isThai ? 'การผลัดเซลล์ผิวด้วยเคมี' : 'Chemical Peel',
+      description: isThai ? 'ปรับปรุงเนื้อผิวและส่งเสริมการผลัดเซลล์ผิวใหม่' : 'Improves skin texture and promotes cell renewal',
       priority: 'medium',
     });
     recommendations.products.push({
       category: 'exfoliation',
-      name: 'AHA/BHA Exfoliant',
-      description: 'Gently removes dead skin cells for smoother texture',
+      name: isThai ? 'ผลิตภัณฑ์ผลัดเซลล์ผิว AHA/BHA' : 'AHA/BHA Exfoliant',
+      description: isThai ? 'ขจัดเซลล์ผิวที่ตายแล้วอย่างอ่อนโยนเพื่อผิวที่เรียบเนียนขึ้น' : 'Gently removes dead skin cells for smoother texture',
     });
   }
 
@@ -374,13 +376,13 @@ function generateRecommendations(analysis: any) {
   if (analysis.pores_severity === 'high' || analysis.pores_severity === 'severe') {
     recommendations.programs.push({
       name: 'HydraFacial',
-      description: 'Deep cleansing to minimize pore appearance',
+      description: isThai ? 'ทำความสะอาดล้ำลึกเพื่อลดการปรากฏของรูขุมขน' : 'Deep cleansing to minimize pore appearance',
       priority: 'medium',
     });
     recommendations.products.push({
       category: 'pore care',
-      name: 'Niacinamide Serum',
-      description: 'Helps tighten pores and regulate oil production',
+      name: isThai ? 'เซรั่มไนอะซินาไมด์' : 'Niacinamide Serum',
+      description: isThai ? 'ช่วยกระชับรูขุมขนและควบคุมการผลิตน้ำมัน' : 'Helps tighten pores and regulate oil production',
     });
   }
 
@@ -388,31 +390,31 @@ function generateRecommendations(analysis: any) {
   if (analysis.uv_spots_severity === 'high' || analysis.brown_spots_severity === 'high') {
     recommendations.lifestyle.push({
       category: 'sun protection',
-      description: 'Use SPF 50+ sunscreen daily and reapply every 2 hours',
+      description: isThai ? 'ใช้ครีมกันแดด SPF 50+ ทุกวันและทาซ้ำทุก 2 ชั่วโมง' : 'Use SPF 50+ sunscreen daily and reapply every 2 hours',
       priority: 'critical',
     });
     recommendations.products.push({
       category: 'sun protection',
-      name: 'Broad Spectrum SPF 50+',
-      description: 'Prevents further pigmentation and protects from UV damage',
+      name: isThai ? 'ครีมกันแดด Broad Spectrum SPF 50+' : 'Broad Spectrum SPF 50+',
+      description: isThai ? 'ป้องกันการเกิดเม็ดสีเพิ่มเติมและปกป้องจากรังสี UV' : 'Prevents further pigmentation and protects from UV damage',
     });
   }
 
   // Red areas/inflammation recommendations
   if (analysis.red_areas_severity === 'high' || analysis.red_areas_severity === 'severe') {
     recommendations.programs.push({
-      name: 'LED Light Therapy',
-      description: 'Reduces inflammation and promotes healing',
+      name: isThai ? 'การบำบัดด้วยแสง LED' : 'LED Light Therapy',
+      description: isThai ? 'ลดการอักเสบและส่งเสริมการสมานแผล' : 'Reduces inflammation and promotes healing',
       priority: 'medium',
     });
     recommendations.products.push({
       category: 'soothing',
-      name: 'Centella Asiatica Serum',
-      description: 'Calms irritation and reduces redness',
+      name: isThai ? 'เซรั่มใบบัวบก (Centella Asiatica)' : 'Centella Asiatica Serum',
+      description: isThai ? 'ปลอบประโลมการระคายเคืองและลดรอยแดง' : 'Calms irritation and reduces redness',
     });
     recommendations.lifestyle.push({
       category: 'diet',
-      description: 'Avoid spicy foods and alcohol which can trigger redness',
+      description: isThai ? 'หลีกเลี่ยงอาหารรสจัดและแอลกอฮอล์ซึ่งอาจกระตุ้นให้เกิดรอยแดง' : 'Avoid spicy foods and alcohol which can trigger redness',
       priority: 'medium',
     });
   }
@@ -420,18 +422,18 @@ function generateRecommendations(analysis: any) {
   // Porphyrins (bacterial) recommendations
   if (analysis.porphyrins_severity === 'high' || analysis.porphyrins_severity === 'severe') {
     recommendations.programs.push({
-      name: 'Blue Light Therapy',
-      description: 'Kills acne-causing bacteria',
+      name: isThai ? 'การบำบัดด้วยแสงสีฟ้า' : 'Blue Light Therapy',
+      description: isThai ? 'กำจัดแบคทีเรียที่ทำให้เกิดสิว' : 'Kills acne-causing bacteria',
       priority: 'high',
     });
     recommendations.products.push({
       category: 'acne care',
-      name: 'Benzoyl Peroxide or Salicylic Acid',
-      description: 'Antibacterial program for acne-prone skin',
+      name: isThai ? 'เบนโซอิลเปอร์ออกไซด์ หรือ กรดซาลิไซลิก' : 'Benzoyl Peroxide or Salicylic Acid',
+      description: isThai ? 'โปรแกรมต้านเชื้อแบคทีเรียสำหรับผิวที่เป็นสิวง่าย' : 'Antibacterial program for acne-prone skin',
     });
     recommendations.lifestyle.push({
       category: 'hygiene',
-      description: 'Change pillowcases regularly and avoid touching face',
+      description: isThai ? 'เปลี่ยนปลอกหมอนเป็นประจำและหลีกเลี่ยงการสัมผัสใบหน้า' : 'Change pillowcases regularly and avoid touching face',
       priority: 'high',
     });
   }
@@ -439,13 +441,13 @@ function generateRecommendations(analysis: any) {
   // General recommendations
   recommendations.lifestyle.push({
     category: 'hydration',
-    description: 'Drink at least 8 glasses of water daily',
+    description: isThai ? 'ดื่มน้ำอย่างน้อย 8 แก้วต่อวัน' : 'Drink at least 8 glasses of water daily',
     priority: 'medium',
   });
 
   recommendations.lifestyle.push({
     category: 'sleep',
-    description: 'Get 7-8 hours of quality sleep for skin regeneration',
+    description: isThai ? 'นอนหลับพักผ่อนให้เพียงพอ 7-8 ชั่วโมงเพื่อการฟื้นฟูผิว' : 'Get 7-8 hours of quality sleep for skin regeneration',
     priority: 'medium',
   });
 

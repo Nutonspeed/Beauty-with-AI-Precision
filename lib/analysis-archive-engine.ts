@@ -113,7 +113,6 @@ export class AnalysisArchiveEngine {
     pageSize: number = 20
   ): SearchResult {
     const records = this.loadArchive();
-    const lowerQuery = query.toLowerCase();
 
     let filtered = records.filter((record) => {
       const lowerQuery = query.toLowerCase();

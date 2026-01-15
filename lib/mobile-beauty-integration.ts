@@ -1,6 +1,6 @@
 /**
  * Mobile Beauty AR/AI Integration Layer
- * รวมทุกระบบเข้าด้วยกัน: AI analysis + AR program + Sales tools + Offline + Voice
+ * Integrates all systems: AI analysis + AR program + Sales tools + Offline + Voice
  */
 
 import { SkinTypeClassifier } from '@/lib/skin-type-classifier'

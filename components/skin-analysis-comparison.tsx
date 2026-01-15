@@ -1,5 +1,6 @@
 "use client"
 
+import { useTranslations, useLocale } from "next-intl"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -28,6 +29,8 @@ interface SkinAnalysisComparisonProps {
 }
 
 export function SkinAnalysisComparison({ currentData }: SkinAnalysisComparisonProps) {
+  const t = useTranslations('skinAnalysis.comparison')
+  const locale = useLocale()
   // Mock previous data for comparison
   const previousData = {
     overall_score: 72,
@@ -44,23 +47,21 @@ export function SkinAnalysisComparison({ currentData }: SkinAnalysisComparisonPr
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Progress Tracking / ติดตามผล</CardTitle>
+          <CardTitle>{t('title')}</CardTitle>
           <p className="text-sm text-muted-foreground">
-            Compare your current results with previous analysis / เปรียบเทียบผลปัจจุบันกับการวิเคราะห์ก่อนหน้า
+            {t('description')}
           </p>
         </CardHeader>
         <CardContent>
           <div className="mb-6 rounded-lg border-2 border-dashed border-border bg-muted/30 p-8 text-center">
             <Upload className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
-            <h3 className="mb-2 font-semibold">No Previous Analysis Found</h3>
+            <h3 className="mb-2 font-semibold">{t('noPrevious.title')}</h3>
             <p className="mb-4 text-sm text-muted-foreground">
-              Upload a previous photo to compare results
-              <br />
-              อัปโหลดรูปก่อนหน้าเพื่อเปรียบเทียบผล
+              {t('noPrevious.description')}
             </p>
             <Button variant="outline">
               <Upload className="mr-2 h-4 w-4" />
-              Upload Previous Photo
+              {t('noPrevious.action')}
             </Button>
           </div>
 
@@ -69,8 +70,8 @@ export function SkinAnalysisComparison({ currentData }: SkinAnalysisComparisonPr
             <div className="rounded-lg bg-muted/50 p-4">
               <div className="mb-4 flex items-center justify-between">
                 <div>
-                  <h4 className="font-semibold">Overall Progress</h4>
-                  <p className="text-sm text-muted-foreground">Since {previousData.date}</p>
+                  <h4 className="font-semibold">{t('overall.title')}</h4>
+                  <p className="text-sm text-muted-foreground">{t('overall.since', { date: previousData.date })}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   {scoreDiff > 0 ? (
@@ -89,11 +90,11 @@ export function SkinAnalysisComparison({ currentData }: SkinAnalysisComparisonPr
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="rounded-lg border border-border bg-background p-3">
-                  <div className="text-xs text-muted-foreground">Previous Score</div>
+                  <div className="text-xs text-muted-foreground">{t('overall.previousScore')}</div>
                   <div className="text-xl font-bold">{previousData.overall_score}</div>
                 </div>
                 <div className="rounded-lg border border-border bg-background p-3">
-                  <div className="text-xs text-muted-foreground">Current Score</div>
+                  <div className="text-xs text-muted-foreground">{t('overall.currentScore')}</div>
                   <div className="text-xl font-bold text-primary">{currentData.overall_score}</div>
                 </div>
               </div>
@@ -108,8 +109,7 @@ export function SkinAnalysisComparison({ currentData }: SkinAnalysisComparisonPr
                   <div key={index} className="rounded-lg border border-border bg-background p-4">
                     <div className="mb-2 flex items-center justify-between">
                       <div>
-                        <h5 className="font-medium">{metric.name}</h5>
-                        <p className="text-xs text-muted-foreground">{metric.name_th}</p>
+                        <h5 className="font-medium">{locale === 'th' ? metric.name_th : metric.name}</h5>
                       </div>
                       <div className="flex items-center gap-2">
                         {diff > 0 ? (
@@ -122,7 +122,7 @@ export function SkinAnalysisComparison({ currentData }: SkinAnalysisComparisonPr
                             {diff}
                           </Badge>
                         ) : (
-                          <Badge variant="outline">No change</Badge>
+                          <Badge variant="outline">{t('noChange')}</Badge>
                         )}
                       </div>
                     </div>
@@ -130,14 +130,14 @@ export function SkinAnalysisComparison({ currentData }: SkinAnalysisComparisonPr
                     <div className="grid gap-2 sm:grid-cols-2">
                       <div>
                         <div className="mb-1 flex items-center justify-between text-xs">
-                          <span className="text-muted-foreground">Previous</span>
+                          <span className="text-muted-foreground">{t('previous')}</span>
                           <span className="font-medium">{prevMetric.score}</span>
                         </div>
                         <Progress value={prevMetric.score} className="h-1.5" />
                       </div>
                       <div>
                         <div className="mb-1 flex items-center justify-between text-xs">
-                          <span className="text-muted-foreground">Current</span>
+                          <span className="text-muted-foreground">{t('current')}</span>
                           <span className="font-medium text-primary">{metric.score}</span>
                         </div>
                         <Progress value={metric.score} className="h-1.5" />
@@ -155,14 +155,12 @@ export function SkinAnalysisComparison({ currentData }: SkinAnalysisComparisonPr
         <CardContent className="p-6">
           <div className="flex flex-col items-center gap-4 text-center md:flex-row md:text-left">
             <div className="flex-1">
-              <h3 className="mb-2 text-lg font-bold">Track Your Progress Over Time</h3>
+              <h3 className="mb-2 text-lg font-bold">{t('upgrade.title')}</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Premium users get unlimited progress tracking with detailed before/after comparisons
-                <br />
-                ผู้ใช้ Premium ได้รับการติดตามผลไม่จำกัดพร้อมการเปรียบเทียบก่อน-หลังแบบละเอียด
+                {t('upgrade.description')}
               </p>
             </div>
-            <Button className="shrink-0">Upgrade to Premium</Button>
+            <Button className="shrink-0">{t('upgrade.action')}</Button>
           </div>
         </CardContent>
       </Card>

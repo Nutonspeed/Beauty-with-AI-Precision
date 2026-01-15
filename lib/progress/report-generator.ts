@@ -13,7 +13,8 @@ import { formatTimeElapsed } from './metric-calculator';
  */
 export async function generateProgressReport(
   report: ProgressReport,
-  userName: string
+  userName: string,
+  t: (key: string, values?: any) => string
 ): Promise<Blob> {
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.getWidth();
@@ -22,16 +23,16 @@ export async function generateProgressReport(
 
   // Header
   doc.setFontSize(20);
-  doc.text('รายงานการติดตามผลการรักษา', pageWidth / 2, yPos, { align: 'center' });
+  doc.text(t('title'), pageWidth / 2, yPos, { align: 'center' });
   yPos += 10;
 
   doc.setFontSize(12);
-  doc.text(`ผู้ป่วย: ${userName}`, pageWidth / 2, yPos, { align: 'center' });
+  doc.text(t('patient', { name: userName }), pageWidth / 2, yPos, { align: 'center' });
   yPos += 6;
 
   doc.setFontSize(10);
   doc.text(
-    `วันที่สร้างรายงาน: ${new Date(report.generated_at).toLocaleDateString('th-TH')}`,
+    t('generatedAt', { date: new Date(report.generated_at).toLocaleDateString(t('locale') === 'th' ? 'th-TH' : 'en-US') }),
     pageWidth / 2,
     yPos,
     { align: 'center' }
@@ -40,14 +41,14 @@ export async function generateProgressReport(
 
   // Summary Section
   doc.setFontSize(14);
-  doc.text('สรุปผลการรักษา', 20, yPos);
+  doc.text(t('summaryTitle'), 20, yPos);
   yPos += 8;
 
   doc.setFontSize(10);
   const summaryLines = [
-    `จำนวนครั้งที่เข้ารับบริการ: ${report.total_sessions} ครั้ง`,
-    `ระยะเวลาการรักษา: ${formatTimeElapsed(report.program_duration_days)}`,
-    `การปรับปรุงโดยรวม: ${report.overall_improvement.toFixed(1)}%`,
+    t('sessionsCount', { count: report.total_sessions }),
+    t('duration', { duration: formatTimeElapsed(report.program_duration_days, t) }),
+    t('overallImprovement', { percent: report.overall_improvement.toFixed(1) }),
   ];
 
   summaryLines.forEach((line) => {
@@ -59,17 +60,17 @@ export async function generateProgressReport(
   // Metrics Comparison
   if (report.baseline_photo && report.latest_photo) {
     doc.setFontSize(14);
-    doc.text('ผลการเปลี่ยนแปลง', 20, yPos);
+    doc.text(t('changesTitle'), 20, yPos);
     yPos += 8;
 
     const baselineMetrics = report.baseline_photo.analysis_results || {};
     const latestMetrics = report.latest_photo.analysis_results || {};
 
     const metrics = [
-      { label: 'ฝ้า-กระ', key: 'spots' as const },
-      { label: 'รูขุมขน', key: 'pores' as const },
-      { label: 'ริ้วรอย', key: 'wrinkles' as const },
-      { label: 'ความแดง', key: 'redness' as const },
+      { label: t('metrics.spots'), key: 'spots' as const },
+      { label: t('metrics.pores'), key: 'pores' as const },
+      { label: t('metrics.wrinkles'), key: 'wrinkles' as const },
+      { label: t('metrics.redness'), key: 'redness' as const },
     ];
 
     doc.setFontSize(10);
@@ -99,7 +100,7 @@ export async function generateProgressReport(
     }
 
     doc.setFontSize(14);
-    doc.text('ภาพเปรียบเทียบ', 20, yPos);
+    doc.text(t('photosTitle'), 20, yPos);
     yPos += 8;
 
     const imgWidth = (pageWidth - 50) / 2;
@@ -111,7 +112,7 @@ export async function generateProgressReport(
       doc.addImage(beforeImg, 'JPEG', 20, yPos, imgWidth, imgHeight);
       doc.setFontSize(10);
       doc.text(
-        `ก่อน (${new Date(report.baseline_photo.taken_at).toLocaleDateString('th-TH')})`,
+        t('beforeLabel', { date: new Date(report.baseline_photo.taken_at).toLocaleDateString(t('locale') === 'th' ? 'th-TH' : 'en-US') }),
         20,
         yPos + imgHeight + 5
       );
@@ -120,7 +121,7 @@ export async function generateProgressReport(
       const afterImg = await loadImageAsBase64(report.latest_photo.image_url);
       doc.addImage(afterImg, 'JPEG', 30 + imgWidth, yPos, imgWidth, imgHeight);
       doc.text(
-        `หลัง (${new Date(report.latest_photo.taken_at).toLocaleDateString('th-TH')})`,
+        t('afterLabel', { date: new Date(report.latest_photo.taken_at).toLocaleDateString(t('locale') === 'th' ? 'th-TH' : 'en-US') }),
         30 + imgWidth,
         yPos + imgHeight + 5
       );
@@ -128,7 +129,7 @@ export async function generateProgressReport(
       yPos += imgHeight + 15;
     } catch (error) {
       console.error('Failed to load images:', error);
-      doc.text('ไม่สามารถโหลดภาพได้', 20, yPos);
+      doc.text(t('loadError'), 20, yPos);
       yPos += 10;
     }
   }
@@ -140,7 +141,7 @@ export async function generateProgressReport(
   }
 
   doc.setFontSize(14);
-  doc.text('เส้นเวลาการรักษา', 20, yPos);
+  doc.text(t('timelineTitle'), 20, yPos);
   yPos += 8;
 
   doc.setFontSize(10);
@@ -150,17 +151,16 @@ export async function generateProgressReport(
       yPos = 20;
     }
 
-    const date = new Date(entry.date).toLocaleDateString('th-TH');
+    const date = new Date(entry.date).toLocaleDateString(t('locale') === 'th' ? 'th-TH' : 'en-US');
     if (entry.type === 'photo' && entry.photo) {
-      const photoType =
-        entry.photo.photo_type === 'baseline'
-          ? 'พื้นฐาน'
-          : entry.photo.photo_type === 'final'
-            ? 'สุดท้าย'
-            : `ติดตามผล #${entry.photo.session_number}`;
-      doc.text(`${date} - ถ่ายภาพ${photoType}`, 25, yPos);
+      const typeLabel = entry.photo.photo_type === 'baseline' 
+        ? t('photoTypes.baseline') 
+        : entry.photo.photo_type === 'final' 
+          ? t('photoTypes.final') 
+          : t('photoTypes.followup', { number: entry.photo.session_number });
+      doc.text(t('timelinePhoto', { date, type: typeLabel }), 25, yPos);
     } else if (entry.type === 'session' && entry.session) {
-      doc.text(`${date} - รับบริการครั้งที่ ${entry.session.session_number}`, 25, yPos);
+      doc.text(t('timelineSession', { date, number: entry.session.session_number }), 25, yPos);
     } else if (entry.type === 'milestone' && entry.milestone) {
       doc.text(`${date} - ${entry.milestone.title}`, 25, yPos);
     }
@@ -177,7 +177,7 @@ export async function generateProgressReport(
     }
 
     doc.setFontSize(14);
-    doc.text('ความสำเร็จ', 20, yPos);
+    doc.text(t('milestonesTitle'), 20, yPos);
     yPos += 8;
 
     doc.setFontSize(10);
@@ -188,8 +188,8 @@ export async function generateProgressReport(
       }
 
       const date = milestone.achieved_at
-        ? new Date(milestone.achieved_at).toLocaleDateString('th-TH')
-        : 'รอบรรลุ';
+        ? new Date(milestone.achieved_at).toLocaleDateString(t('locale') === 'th' ? 'th-TH' : 'en-US')
+        : t('milestonePending');
       doc.text(`✓ ${milestone.title} - ${date}`, 25, yPos);
       yPos += 6;
     });
@@ -197,7 +197,7 @@ export async function generateProgressReport(
 
   // Footer
   doc.setFontSize(8);
-  const footerText = 'รายงานนี้สร้างโดยระบบ AI Skin Analysis';
+  const footerText = t('footer');
   doc.text(footerText, pageWidth / 2, pageHeight - 10, { align: 'center' });
 
   // Generate blob
@@ -237,9 +237,10 @@ async function loadImageAsBase64(url: string): Promise<string> {
  */
 export async function downloadProgressReport(
   report: ProgressReport,
-  userName: string
+  userName: string,
+  t: (key: string, values?: any) => string
 ): Promise<void> {
-  const blob = await generateProgressReport(report, userName);
+  const blob = await generateProgressReport(report, userName, t);
   
   // Create download link
   const url = URL.createObjectURL(blob);

@@ -53,137 +53,10 @@ export interface ProgramPackage {
   badge?: { en: string; th: string };
 }
 
-const TRANSLATIONS = {
-  en: {
-    title: 'Personalized Aesthetic Program Proposal',
-    subtitle: 'Professional Aesthetic Analysis & Program Plan',
-    date: 'Date',
-    preparedFor: 'Prepared For',
-    clientInfo: 'Client Information',
-    name: 'Name',
-    age: 'Age',
-    gender: 'Gender',
-    skinType: 'Skin Type',
-    clientId: 'Client ID',
-    analysisResults: 'Aesthetic Analysis Results',
-    overallScore: 'Overall Skin Health Score',
-    confidence: 'Analysis Confidence',
-    detailedAnalysis: 'Detailed Analysis',
-    concerns: 'Skin Concerns',
-    spots: 'Spots & Pigmentation',
-    pores: 'Pore Size',
-    wrinkles: 'Fine Lines & Wrinkles',
-    texture: 'Skin Texture',
-    redness: 'Redness & Inflammation',
-    severity: 'Severity',
-    percentile: 'Percentile',
-    programPackages: 'Recommended Aesthetic Packages',
-    package: 'Package',
-    packageDetails: 'Package Details',
-    duration: 'Program Duration',
-    sessions: 'Total Sessions',
-    improvement: 'Expected Improvement',
-    price: 'Price',
-    savings: 'You Save',
-    effectiveness: 'Program Effectiveness',
-    programTimeline: 'Aesthetic Roadmap',
-    week: 'Week',
-    weeks: 'weeks',
-    month: 'Month',
-    months: 'months',
-    session: 'session',
-    programPlan: 'Your Aesthetic Plan',
-    nextSteps: 'Next Steps',
-    stepOne: 'Schedule your consultation with our aesthetic specialist',
-    stepTwo: 'Receive detailed program plan and timeline',
-    stepThree: 'Begin your personalized aesthetic journey',
-    contactUs: 'Contact Us',
-    phone: 'Phone',
-    email: 'Email',
-    website: 'Website',
-    address: 'Address',
-    disclaimer: 'This aesthetic proposal is based on AI-powered skin analysis. Final program plan will be determined after consultation with our aesthetic consultant.',
-    confidential: 'CONFIDENTIAL - For customer use only',
-    validUntil: 'This proposal is valid for 30 days',
-    page: 'Page',
-    of: 'of',
-    years: 'years old',
-    proposalId: 'Proposal ID',
-    high: 'High',
-    medium: 'Medium',
-    low: 'Low',
-    total: 'Total',
-    perSession: 'per session',
-    baht: 'THB',
-  },
-  th: {
-    title: 'ข้อเสนอการดูแลผิวเฉพาะบุคคล',
-    subtitle: 'การวิเคราะห์และวางแผนความงามระดับมืออาชีพ',
-    date: 'วันที่',
-    preparedFor: 'จัดทำสำหรับ',
-    clientInfo: 'ข้อมูลผู้รับบริการ',
-    name: 'ชื่อ',
-    age: 'อายุ',
-    gender: 'เพศ',
-    skinType: 'ประเภทผิว',
-    clientId: 'รหัสลูกค้า',
-    analysisResults: 'ผลการวิเคราะห์ผิวอัจฉริยะ',
-    overallScore: 'คะแนนสุขภาพผิวโดยรวม',
-    confidence: 'ความเชื่อมั่นในการวิเคราะห์',
-    detailedAnalysis: 'การวิเคราะห์โดยละเอียด',
-    concerns: 'ปัญหาผิวที่ตรวจพบ',
-    spots: 'จุดด่างดำ & เม็ดสี',
-    pores: 'ขนาดรูขุมขน',
-    wrinkles: 'ริ้วรอยและเส้นตื้น',
-    texture: 'เนื้อผิว',
-    redness: 'รอยแดงและการอักเสบ',
-    severity: 'ความรุนแรง',
-    percentile: 'เปอร์เซ็นไทล์',
-    programPackages: 'โปรแกรมความงามที่แนะนำ',
-    package: 'แพ็คเกจ',
-    packageDetails: 'รายละเอียดแพ็คเกจ',
-    duration: 'ระยะเวลาโปรแกรม',
-    sessions: 'จำนวนครั้งทั้งหมด',
-    improvement: 'การปรับปรุงที่คาดหวัง',
-    price: 'ราคา',
-    savings: 'คุณประหยัด',
-    effectiveness: 'ประสิทธิภาพของโปรแกรม',
-    programTimeline: 'ไทม์ไลน์ความงาม',
-    week: 'สัปดาห์',
-    weeks: 'สัปดาห์',
-    month: 'เดือน',
-    months: 'เดือน',
-    session: 'ครั้ง',
-    programPlan: 'แผนงานความงามของคุณ',
-    nextSteps: 'ขั้นตอนถัดไป',
-    stepOne: 'นัดหมายให้คำปรึกษากับที่ปรึกษาความงาม',
-    stepTwo: 'รับแผนงานความงามและไทม์ไลน์โดยละเอียด',
-    stepThree: 'เริ่มต้นการดูแลผิวเฉพาะบุคคลของคุณ',
-    contactUs: 'ติดต่อเรา',
-    phone: 'โทรศัพท์',
-    email: 'อีเมล',
-    website: 'เว็บไซต์',
-    address: 'ที่อยู่',
-    disclaimer: 'ข้อเสนอนี้อิงจากการวิเคราะห์ผิวด้วย AI แผนงานขั้นสุดท้ายจะถูกกำหนดหลังจากการปรึกษากับที่ปรึกษาความงาม',
-    confidential: 'เอกสารลับ - สำหรับลูกค้าเท่านั้น',
-    validUntil: 'ข้อเสนอนี้มีผลบังคับใช้ 30 วัน',
-    page: 'หน้า',
-    of: 'จาก',
-    years: 'ปี',
-    proposalId: 'รหัสข้อเสนอ',
-    high: 'สูง',
-    medium: 'ปานกลาง',
-    low: 'ต่ำ',
-    total: 'รวม',
-    perSession: 'ต่อครั้ง',
-    baht: '฿',
-  },
-};
-
 export class PresentationPDFExporter {
   private pdf: jsPDF;
   private locale: 'th' | 'en';
-  private t: typeof TRANSLATIONS.en;
+  private t: any;
   private currentPage: number = 1;
   private totalPages: number = 0;
   private brandColor: string;
@@ -197,7 +70,6 @@ export class PresentationPDFExporter {
 
   constructor(options: PresentationPDFOptions) {
     this.locale = options.locale || 'en';
-    this.t = TRANSLATIONS[this.locale];
     this.brandColor = options.centerInfo.brandColor || '#6366f1';
 
     this.pdf = new jsPDF({
@@ -512,7 +384,7 @@ export class PresentationPDFExporter {
         this.pdf.setFont('helvetica', 'bold');
         this.pdf.setTextColor(0, 0, 0);
         this.pdf.text(
-          this.locale === 'th' ? 'ภาพถ่ายผิว' : 'Skin Photo',
+          this.locale === 'th' ? this.t('skinPhoto') : 'Skin Photo',
           this.marginLeft,
           y
         );
@@ -680,7 +552,7 @@ export class PresentationPDFExporter {
       this.pdf.setTextColor(100, 100, 100);
       this.pdf.setFont('helvetica', 'normal');
       this.pdf.text(
-        `${pkg.duration.months} ${this.t.months} ${this.locale === 'th' ? 'แผน' : 'plan'}`,
+        `${pkg.duration.months} ${this.t.months} ${this.locale === 'th' ? this.t('planSuffix') : 'plan'}`,
         this.marginLeft + 12,
         y + 6
       );
@@ -713,7 +585,7 @@ export class PresentationPDFExporter {
       this.pdf.setTextColor(22, 163, 74); // Green
       this.pdf.setFont('helvetica', 'bold');
       this.pdf.text(
-        `${this.locale === 'th' ? 'ผลลัพธ์ที่คาดหวัง' : 'Expected Results'}: +${pkg.improvement}% ${this.t.improvement}`,
+        `${this.locale === 'th' ? this.t('expectedOutcome') : 'Expected Results'}: +${pkg.improvement}% ${this.t.improvement}`,
         this.marginLeft + 15,
         y + 5
       );
@@ -822,8 +694,10 @@ export class PresentationPDFExporter {
   public async generate(
     analysis: HybridSkinAnalysis,
     options: PresentationPDFOptions,
+    t: (key: string, values?: any) => string,
     _filename: string = 'aesthetic-proposal.pdf'
   ): Promise<void> {
+    this.t = t as any; // We'll use the passed translator instead of internal one
     // Calculate total pages (approximate)
     this.totalPages = 2; // Cover + Analysis
     if (options.programPackages && options.programPackages.length > 0) {
@@ -869,12 +743,14 @@ export class PresentationPDFExporter {
 export async function exportPresentationToPDF(
   analysis: HybridSkinAnalysis,
   options: PresentationPDFOptions,
+  t: (key: string, values?: any) => string,
   filename?: string
 ): Promise<void> {
   const exporter = new PresentationPDFExporter(options);
   await exporter.generate(
     analysis,
     options,
+    t,
     filename || `aesthetic-proposal-${Date.now()}.pdf`
   );
 }

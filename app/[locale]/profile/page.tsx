@@ -11,6 +11,7 @@ import { PersonalInfoForm } from '@/components/profile/personal-info-form'
 import { PasswordChangeForm } from '@/components/profile/password-change-form'
 import { NotificationSettings } from '@/components/profile/notification-settings'
 import { PreferencesForm } from '@/components/profile/preferences-form'
+import { getTranslations } from 'next-intl/server'
 
 type PageProps = {
   params: Promise<{ locale: string }>
@@ -135,16 +136,19 @@ export default async function ProfilePage({ params }: PageProps) {
 
   const isThaiLocale = locale === 'th';
 
+  const t = await getTranslations('profile')
+
   const getRoleDisplay = (role: string) => {
-    const roleMap: Record<string, string> = {
-      customer: isThaiLocale ? 'ผู้รับบริการ (Client)' : 'Client',
-      sales_staff: isThaiLocale ? 'พนักงานขาย (Sales Staff)' : 'Sales Staff',
-      center_owner: isThaiLocale ? 'เจ้าของศูนย์ความงาม (Center Owner)' : 'Center Owner',
-      center_staff: isThaiLocale ? 'พนักงาน (Staff)' : 'Staff',
-      admin: isThaiLocale ? 'ผู้ดูแลระบบ (Admin)' : 'Admin',
-      super_admin: isThaiLocale ? 'ผู้ดูแลระบบสูงสุด (Super Admin)' : 'Super Admin',
+    const roleKey = role as keyof typeof roleMap
+    const roleMap = {
+      customer: isThaiLocale ? t('roles.customer') : t('roles.customer'),
+      sales_staff: isThaiLocale ? t('roles.sales_staff') : t('roles.sales_staff'),
+      center_owner: isThaiLocale ? t('roles.center_owner') : t('roles.center_owner'),
+      center_staff: isThaiLocale ? t('roles.center_staff') : t('roles.center_staff'),
+      admin: isThaiLocale ? t('roles.admin') : t('roles.admin'),
+      super_admin: isThaiLocale ? t('roles.super_admin') : t('roles.super_admin'),
     }
-    return roleMap[role] || role
+    return roleMap[roleKey] || role
   }
 
   return (
@@ -167,14 +171,14 @@ export default async function ProfilePage({ params }: PageProps) {
             className="mb-12 space-y-4"
           >
             <Badge variant="outline" className="px-4 py-1 rounded-full border-pink-500/30 text-pink-400 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.2em] text-[10px] font-black shadow-2xl shadow-pink-500/10">
-              Aesthetic Profile Infrastructure
+              {t('infrastructure')}
             </Badge>
             <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white italic">
-              Profile Settings
+              {t('title')}
               <br />
-              <span className="text-2xl md:text-3xl bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent not-italic font-light">ตั้งค่าโปรไฟล์</span>
+              <span className="text-2xl md:text-3xl bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent not-italic font-light">{t('subtitle')}</span>
             </h1>
-            <p className="text-slate-400 font-light tracking-wide max-w-2xl italic">Manage your aesthetic account nodes and system preferences with precision.</p>
+            <p className="text-slate-400 font-light tracking-wide max-w-2xl italic">{t('description')}</p>
           </motion.div>
 
           <motion.div
@@ -192,7 +196,7 @@ export default async function ProfilePage({ params }: PageProps) {
                   </div>
                 </div>
                 <div className="flex-1 text-center md:text-left space-y-2">
-                  <h2 className="text-3xl font-bold text-white tracking-tight italic">{profile?.full_name || 'System User'}</h2>
+                  <h2 className="text-3xl font-bold text-white tracking-tight italic">{profile?.full_name || t('systemUser')}</h2>
                   <p className="text-lg text-slate-500 font-light tracking-wide">{session.user.email}</p>
                 </div>
                 <Badge className="bg-pink-600/10 text-pink-400 border border-pink-500/20 px-6 py-2 rounded-full uppercase tracking-widest text-[10px] font-black italic shadow-inner">
@@ -206,19 +210,19 @@ export default async function ProfilePage({ params }: PageProps) {
             <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 bg-white/[0.02] border border-white/5 p-2 rounded-[2rem] mb-10 h-auto gap-2">
               <TabsTrigger value="personal" className="rounded-2xl py-4 data-[state=active]:bg-pink-600 data-[state=active]:text-white transition-all font-black uppercase tracking-[0.15em] text-[10px]">
                 <User className="mr-3 h-4 w-4" />
-                Personal Info
+                {t('tabs.personal')}
               </TabsTrigger>
               <TabsTrigger value="security" className="rounded-2xl py-4 data-[state=active]:bg-pink-600 data-[state=active]:text-white transition-all font-black uppercase tracking-[0.15em] text-[10px]">
                 <Lock className="mr-3 h-4 w-4" />
-                Security
+                {t('tabs.security')}
               </TabsTrigger>
               <TabsTrigger value="notifications" className="rounded-2xl py-4 data-[state=active]:bg-pink-600 data-[state=active]:text-white transition-all font-black uppercase tracking-[0.15em] text-[10px]">
                 <Bell className="mr-3 h-4 w-4" />
-                Notifications
+                {t('tabs.notifications')}
               </TabsTrigger>
               <TabsTrigger value="preferences" className="rounded-2xl py-4 data-[state=active]:bg-pink-600 data-[state=active]:text-white transition-all font-black uppercase tracking-[0.15em] text-[10px]">
                 <Palette className="mr-3 h-4 w-4" />
-                Preferences
+                {t('tabs.preferences')}
               </TabsTrigger>
             </TabsList>
 
@@ -231,8 +235,8 @@ export default async function ProfilePage({ params }: PageProps) {
                 <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2.5rem] overflow-hidden shadow-2xl relative">
                   <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                   <CardHeader className="p-10 lg:p-12 pb-4">
-                    <CardTitle className="text-2xl font-bold text-white tracking-tight italic">Personal Information</CardTitle>
-                    <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Synchronize your aesthetic identity</CardDescription>
+                    <CardTitle className="text-2xl font-bold text-white tracking-tight italic">{t('sections.personal.title')}</CardTitle>
+                    <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('sections.personal.description')}</CardDescription>
                   </CardHeader>
                   <CardContent className="p-10 lg:p-12 pt-6">
                     <PersonalInfoForm user={session.user} profile={profile} />
@@ -244,8 +248,8 @@ export default async function ProfilePage({ params }: PageProps) {
                 <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2.5rem] overflow-hidden shadow-2xl relative">
                   <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                   <CardHeader className="p-10 lg:p-12 pb-4">
-                    <CardTitle className="text-2xl font-bold text-white tracking-tight italic">Password & Security</CardTitle>
-                    <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Manage secure access keys</CardDescription>
+                    <CardTitle className="text-2xl font-bold text-white tracking-tight italic">{t('sections.security.title')}</CardTitle>
+                    <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('sections.security.description')}</CardDescription>
                   </CardHeader>
                   <CardContent className="p-10 lg:p-12 pt-6">
                     <PasswordChangeForm />
@@ -257,8 +261,8 @@ export default async function ProfilePage({ params }: PageProps) {
                 <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2.5rem] overflow-hidden shadow-2xl relative">
                   <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                   <CardHeader className="p-10 lg:p-12 pb-4">
-                    <CardTitle className="text-2xl font-bold text-white tracking-tight italic">Notification Settings</CardTitle>
-                    <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Configure real-time system alerts</CardDescription>
+                    <CardTitle className="text-2xl font-bold text-white tracking-tight italic">{t('sections.notifications.title')}</CardTitle>
+                    <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('sections.notifications.description')}</CardDescription>
                   </CardHeader>
                   <CardContent className="p-10 lg:p-12 pt-6">
                     <NotificationSettings userId={session.user.id} />
@@ -270,8 +274,8 @@ export default async function ProfilePage({ params }: PageProps) {
                 <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2.5rem] overflow-hidden shadow-2xl relative">
                   <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                   <CardHeader className="p-10 lg:p-12 pb-4">
-                    <CardTitle className="text-2xl font-bold text-white tracking-tight italic">Preferences</CardTitle>
-                    <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">Customize system interface parameters</CardDescription>
+                    <CardTitle className="text-2xl font-bold text-white tracking-tight italic">{t('sections.preferences.title')}</CardTitle>
+                    <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('sections.preferences.description')}</CardDescription>
                   </CardHeader>
                   <CardContent className="p-10 lg:p-12 pt-6">
                     <PreferencesForm userId={session.user.id} />

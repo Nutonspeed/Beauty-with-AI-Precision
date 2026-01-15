@@ -7,7 +7,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { useTranslations } from "next-intl"
 import { Sparkles, Send, MessageSquare, Mail, Check, ArrowLeft, Zap } from "lucide-react"
 
-// Interface สำหรับข้อมูลลีด
+// Interface for lead data
 import { SUBSCRIPTION_PLANS } from "@/lib/subscriptions/plans"
 
 interface Lead {
@@ -54,7 +54,7 @@ export function QuickProposal({ open, onOpenChange, lead, onSent }: QuickProposa
   const [selectedPackage, setSelectedPackage] = useState<string | null>(null)
   const [sendMethod, setSendMethod] = useState<"line" | "email" | null>(null)
 
-  // AI แนะนำแพ็คเกจอัตโนมัติจากข้อมูลการวิเคราะห์
+  // AI automatically recommends packages based on analysis data
   const getAIRecommendedPackages = (): ProgramPackage[] => {
     if (!lead || !lead.analysisData) {
       return getDefaultPackages()
@@ -63,7 +63,7 @@ export function QuickProposal({ open, onOpenChange, lead, onSent }: QuickProposa
     const { wrinkles, pigmentation, pores, hydration } = lead.analysisData
     const avgScore = (wrinkles + pigmentation + pores + hydration) / 4
 
-    // แพ็คเกจพื้นฐาน - สำหรับคะแนนดี (>80)
+    // Basic package - for good scores (>80)
     const basicPackage: ProgramPackage = {
       id: "basic",
       name: t('packages.basic.name'),
@@ -102,7 +102,7 @@ export function QuickProposal({ open, onOpenChange, lead, onSent }: QuickProposa
       recommended: avgScore <= 50,
     }
 
-    // เรียงตาม recommended ก่อน
+    // Sort by recommended first
     return [basicPackage, premiumPackage, vipPackage].sort((a, b) => {
       if (a.recommended && !b.recommended) return -1
       if (!a.recommended && b.recommended) return 1
@@ -110,7 +110,7 @@ export function QuickProposal({ open, onOpenChange, lead, onSent }: QuickProposa
     })
   }
 
-  // แพ็คเกจเริ่มต้นถ้าไม่มีข้อมูลการวิเคราะห์
+  // Default packages if no analysis data
   const getDefaultPackages = (): ProgramPackage[] => {
     return [
       {
@@ -143,7 +143,7 @@ export function QuickProposal({ open, onOpenChange, lead, onSent }: QuickProposa
   const packages = getAIRecommendedPackages()
   const selectedPkg = packages.find(p => p.id === selectedPackage)
 
-  // สร้าง proposal text
+  // Create proposal text
   const generateProposalText = () => {
     if (!lead || !selectedPkg) return ""
 
@@ -167,15 +167,15 @@ export function QuickProposal({ open, onOpenChange, lead, onSent }: QuickProposa
            t('template.closing');
   }
 
-  // ส่ง proposal
+  // Send proposal
   const handleSendProposal = () => {
     if (!sendMethod || !selectedPkg) return
 
-    // จำลองการส่ง
+    // Simulate sending
     setTimeout(() => {
       setStep("sent")
       
-      // Reset หลัง 3 วินาที
+      // Reset after 3 seconds
       setTimeout(() => {
         onOpenChange(false)
         setStep("select")
@@ -186,7 +186,7 @@ export function QuickProposal({ open, onOpenChange, lead, onSent }: QuickProposa
     }, 500)
   }
 
-  // Reset เมื่อปิด
+  // Reset when closing
   const handleClose = () => {
     onOpenChange(false)
     setTimeout(() => {
@@ -283,11 +283,11 @@ export function QuickProposal({ open, onOpenChange, lead, onSent }: QuickProposa
                       <div className="text-right">
                         {pkg.discount && (
                           <div className="text-xs text-red-600 line-through">
-                            ฿{pkg.price.toLocaleString()}
+                            {t('currencySymbol') || '฿'}{pkg.price.toLocaleString()}
                           </div>
                         )}
                         <div className="text-lg font-bold text-purple-600">
-                          ฿{(pkg.price * (1 - (pkg.discount || 0) / 100)).toLocaleString()}
+                          {t('currencySymbol') || '฿'}{(pkg.price * (1 - (pkg.discount || 0) / 100)).toLocaleString()}
                         </div>
                         {pkg.discount && (
                           <Badge variant="destructive" className="text-xs">

@@ -221,9 +221,10 @@ export async function POST(request: NextRequest) {
 
     // Adjust based on budget
     if (budget_range) {
-      if (budget_range.includes('> ฿100,000')) leadScore += 15
-      else if (budget_range.includes('฿50,000')) leadScore += 10
-      else if (budget_range.includes('฿30,000')) leadScore += 5
+      // Handle both localized and non-localized budget ranges
+      if (budget_range.includes('> ฿100,000') || budget_range.includes('> 100,000')) leadScore += 15
+      else if (budget_range.includes('฿50,000') || budget_range.includes('50,000')) leadScore += 10
+      else if (budget_range.includes('฿30,000') || budget_range.includes('30,000')) leadScore += 5
     }
 
     // Adjust based on interested programs

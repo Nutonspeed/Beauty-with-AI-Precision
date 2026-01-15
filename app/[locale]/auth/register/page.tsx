@@ -3,13 +3,8 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Card, CardDescription, CardTitle } from '@/components/ui/card'
 import { 
-  Loader2, 
-  UserPlus, 
   ArrowLeft, 
   Sparkles, 
   Shield, 
@@ -153,130 +148,81 @@ export default function RegisterPage() {
           <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] shadow-2xl overflow-hidden relative group">
             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
             
-            <CardHeader className="space-y-8 p-12 pb-6">
-              {/* Mobile Infrastructure Logo */}
-              <div className="flex items-center justify-center lg:hidden">
-                <div className="flex items-center gap-4">
-                  <div className="p-3 bg-gradient-to-br from-pink-500 to-purple-600 rounded-2xl shadow-lg">
-                    <Sparkles className="w-6 h-6 text-white" />
-                  </div>
-                  <span className="text-2xl font-black text-white tracking-tighter">
-                    CenterIQ
-                  </span>
-                </div>
-              </div>
+            <div className="text-center space-y-8 p-12">
+              <motion.div 
+                className="mx-auto flex items-center justify-center w-20 h-20 rounded-[2rem] bg-pink-500/10 border border-pink-500/20 shadow-inner"
+                animate={{ scale: [1, 1.05, 1] }}
+                transition={{ duration: 4, repeat: Infinity }}
+              >
+                <Shield className="w-8 h-8 text-pink-400" />
+              </motion.div>
               
-              <div className="text-center space-y-4">
-                <motion.div 
-                  className="mx-auto flex items-center justify-center w-20 h-20 rounded-[2rem] bg-white/[0.03] border border-white/5 shadow-inner group-hover:scale-110 group-hover:border-pink-500/30 transition-all duration-700"
-                  whileHover={{ rotate: -5 }}
-                >
-                  <UserPlus className="w-8 h-8 text-pink-400" />
-                </motion.div>
-                <div className="space-y-2">
-                  <CardTitle className="text-3xl font-bold text-white tracking-tight italic">
-                    {isThaiLocale ? 'สร้างบัญชีใหม่' : 'Initialize Profile'}
-                  </CardTitle>
-                  <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
-                    {isThaiLocale ? 'กรอกข้อมูลเพื่อเริ่มต้นใช้งานระบบ' : 'Establish unique diagnostic node'}
-                  </CardDescription>
-                </div>
+              <div className="space-y-4">
+                <CardTitle className="text-3xl font-bold text-white tracking-tight italic">
+                  {isThaiLocale ? 'ระบบจำกัดการเข้าถึง' : 'Access Restricted'}
+                </CardTitle>
+                <CardDescription className="text-sm text-slate-400 leading-relaxed">
+                  {isThaiLocale 
+                    ? 'CenterIQ เป็นระบบปิดที่เน้นความปลอดภัยสูงสุด ไม่มีการเปิดให้บุคคลทั่วไปสมัครสมาชิกเองได้' 
+                    : 'CenterIQ is a secure professional platform. Public self-registration is disabled.'}
+                </CardDescription>
               </div>
-            </CardHeader>
 
-            <form onSubmit={onSubmit}>
-              <CardContent className="space-y-6 p-12 pt-6">
-                {error && (
-                  <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-                    <Alert variant="destructive" className="bg-rose-500/10 border-rose-500/20 text-rose-400 rounded-2xl">
-                      <AlertDescription className="text-xs font-bold uppercase tracking-widest">{error}</AlertDescription>
-                    </Alert>
-                  </motion.div>
-                )}
-
-                <div className="space-y-5">
-                  <div className="space-y-2">
-                    <Label htmlFor="name" className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 ml-1">
-                      {isThaiLocale ? 'ชื่อ-นามสกุล' : 'Full Name'}
-                    </Label>
-                    <Input
-                      id="name"
-                      name="name"
-                      type="text"
-                      placeholder="Dr. Aesthetic Precise"
-                      required
-                      disabled={isLoading}
-                      className="h-14 rounded-2xl border-white/5 bg-white/[0.03] text-white placeholder:text-slate-700 focus:border-pink-500/30 focus:ring-pink-500/20 transition-all px-6"
-                    />
+              <div className="space-y-6 text-left">
+                <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 space-y-4">
+                  <div className="flex gap-4">
+                    <div className="h-10 w-10 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0">
+                      <UserCheck className="h-5 w-5 text-blue-400" />
+                    </div>
+                    <div>
+                      <p className="font-bold text-white text-sm italic">{isThaiLocale ? 'สำหรับลูกค้า' : 'For Customers'}</p>
+                      <p className="text-xs text-slate-500 mt-1">
+                        {isThaiLocale 
+                          ? 'กรุณาติดต่อเจ้าหน้าที่คลินิกเพื่อรับบัญชีเข้าใช้งาน' 
+                          : 'Please contact clinic staff to receive your secure credentials.'}
+                      </p>
+                    </div>
                   </div>
+                  
+                  <div className="h-px bg-white/5 w-full" />
 
-                  <div className="space-y-2">
-                    <Label htmlFor="email" className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 ml-1">
-                      {isThaiLocale ? 'อีเมล' : 'System ID / Email'}
-                    </Label>
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      placeholder="node@aesthetic.ai"
-                      required
-                      disabled={isLoading}
-                      className="h-14 rounded-2xl border-white/5 bg-white/[0.03] text-white placeholder:text-slate-700 focus:border-pink-500/30 focus:ring-pink-500/20 transition-all px-6"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="password" className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 ml-1">
-                      {isThaiLocale ? 'รหัสผ่าน' : 'Access Key'}
-                    </Label>
-                    <Input
-                      id="password"
-                      name="password"
-                      type="password"
-                      placeholder="••••••••"
-                      required
-                      disabled={isLoading}
-                      className="h-14 rounded-2xl border-white/5 bg-white/[0.03] text-white placeholder:text-slate-700 focus:border-pink-500/30 focus:ring-pink-500/20 transition-all px-6"
-                    />
+                  <div className="flex gap-4">
+                    <div className="h-10 w-10 rounded-xl bg-purple-500/10 flex items-center justify-center shrink-0">
+                      <Lock className="h-5 w-5 text-purple-400" />
+                    </div>
+                    <div>
+                      <p className="font-bold text-white text-sm italic">{isThaiLocale ? 'สำหรับพนักงาน' : 'For Staff'}</p>
+                      <p className="text-xs text-slate-500 mt-1">
+                        {isThaiLocale 
+                          ? 'ผู้จัดการสาขาหรือเจ้าของคลินิกจะเป็นผู้เพิ่มรายชื่อคุณเข้าระบบ' 
+                          : 'Clinic owners or managers will authorize your node access.'}
+                      </p>
+                    </div>
                   </div>
                 </div>
 
                 <Button 
-                  type="submit" 
+                  asChild
                   variant="premium"
                   size="xl"
-                  className="w-full h-16 rounded-[2rem] shadow-2xl shadow-pink-500/20 text-xs font-black uppercase tracking-[0.3em] transition-all hover:scale-[1.02] active:scale-[0.98] mt-4" 
-                  disabled={isLoading}
+                  className="w-full h-16 rounded-[2rem] shadow-2xl shadow-pink-500/20 text-xs font-black uppercase tracking-[0.3em]" 
                 >
-                  {isLoading ? (
-                    <div className="flex items-center gap-3">
-                      <Loader2 className="h-5 w-5 animate-spin" />
-                      {isThaiLocale ? 'กำลังประมวลผล...' : 'Synchronizing...'}
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-3">
-                      <UserPlus className="h-5 w-5" />
-                      {isThaiLocale ? 'สร้างบัญชี' : 'Initialize Account'}
-                    </div>
-                  )}
+                  <Link href={lp('/auth/login')}>
+                    <ArrowLeft className="mr-3 h-4 w-4" />
+                    {isThaiLocale ? 'กลับไปหน้าเข้าสู่ระบบ' : 'Back to Gateway'}
+                  </Link>
                 </Button>
-              </CardContent>
 
-              <CardFooter className="flex flex-col space-y-10 p-12 pt-0 pb-16">
-                <div className="text-[10px] text-center text-slate-600 font-black uppercase tracking-[0.2em] leading-relaxed max-w-[200px] mx-auto">
-                  {isThaiLocale ? 'มีบัญชีอยู่แล้ว?' : 'Existing node credentials?'}
-                  <div className="mt-3">
-                    <Button 
-                      variant="link" 
-                      className="p-0 h-auto text-pink-500/60 hover:text-pink-400 transition-colors text-[10px] font-black uppercase tracking-[0.2em]" 
-                      onClick={() => router.push(lp('/auth/login'))}
-                    >
-                      {isThaiLocale ? 'เข้าสู่ระบบที่นี่' : 'Access Gateway'}
-                    </Button>
-                  </div>
+                <div className="text-center">
+                  <Link 
+                    href={lp('/contact')}
+                    className="text-[10px] font-black uppercase tracking-widest text-slate-600 hover:text-pink-400 transition-colors"
+                  >
+                    {isThaiLocale ? 'ติดต่อฝ่ายเทคนิค' : 'Contact Core Infrastructure'}
+                  </Link>
                 </div>
-              </CardFooter>
-            </form>
+              </div>
+            </div>
           </Card>
         </motion.div>
       </div>

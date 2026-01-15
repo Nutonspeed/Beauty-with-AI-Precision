@@ -1,6 +1,6 @@
 /**
- * Wrinkle Detector - ตรวจจับริ้วรอย
- * ใช้ Shadow Analysis และ Line Detection
+ * Wrinkle Detector - Detects facial wrinkles
+ * Uses Shadow Analysis and Line Detection
  */
 
 import { Jimp } from 'jimp';
@@ -16,7 +16,7 @@ export interface WrinkleDetectionResult {
 }
 
 /**
- * ตรวจจับริ้วรอยบนใบหน้า
+ * Detect facial wrinkles
  */
 export async function detectWrinkles(
   imageBuffer: Buffer | string
@@ -26,23 +26,23 @@ export async function detectWrinkles(
     const width = image.bitmap.width;
     const height = image.bitmap.height;
 
-    // แปลงเป็น grayscale (Jimp v1.x)
+    // Convert to grayscale (Jimp v1.x)
     await (image.greyscale() as unknown as Promise<void>);
 
-    // เพิ่ม contrast เพื่อเน้นริ้วรอย
+    // Increase contrast to emphasize wrinkles
     await (image.contrast(0.3) as unknown as Promise<void>);
 
-    // ใช้ edge detection
+    // Use edge detection
     const edges = await detectEdges(image);
 
-    // หาเส้นจาก edges (Hough Line Transform - simplified)
+    // Find lines from edges (Hough Line Transform - simplified)
     const lines = detectLines(edges);
 
-    // แยกประเภทของริ้วรอย
+    // Categorize wrinkles
     const fineLines = lines.filter((line) => line.length < 20);
     const deepWrinkles = lines.filter((line) => line.length >= 20);
 
-    // คำนวณ severity
+    // Calculate severity
     const totalLength = lines.reduce((sum, line) => sum + line.length, 0);
     const imageDimension = Math.sqrt(width * height);
     const wrinkleRatio = totalLength / imageDimension;
@@ -72,7 +72,7 @@ export async function detectWrinkles(
 }
 
 /**
- * Detect edges ด้วย Sobel operator
+ * Detect edges using Sobel operator
  */
 async function detectEdges(image: any): Promise<any> {
   const width = image.bitmap.width;
@@ -118,7 +118,7 @@ async function detectEdges(image: any): Promise<any> {
 }
 
 /**
- * ตรวจจับเส้น (Hough Line Transform - simplified)
+ * Detect lines (Hough Line Transform - simplified)
  */
 function detectLines(
   edgeImage: any
@@ -128,7 +128,7 @@ function detectLines(
   const lines: Array<{ x1: number; y1: number; x2: number; y2: number; length: number }> = [];
   const threshold = 150;
 
-  // ใช้ simple line detection (horizontal & vertical emphasis)
+  // Use simple line detection (horizontal & vertical emphasis)
   const visited = new Array(height)
     .fill(null)
     .map(() => new Array(width).fill(false));
@@ -141,7 +141,7 @@ function detectLines(
       const intensity = (color >> 16) & 0xff;
       if (intensity < threshold) continue;
 
-      // ลองหาเส้นในทิศทางต่างๆ
+      // Try finding lines in various directions
       const directions = [
         { dx: 1, dy: 0 }, // Horizontal
         { dx: 0, dy: 1 }, // Vertical
@@ -152,7 +152,7 @@ function detectLines(
       for (const dir of directions) {
         const line = traceLine(edgeImage, x, y, dir.dx, dir.dy, visited, threshold);
         if (line.length > 10) {
-          // เส้นยาวกว่า 10 pixels
+          // Lines longer than 10 pixels
           lines.push(line);
           break;
         }
@@ -164,7 +164,7 @@ function detectLines(
 }
 
 /**
- * ติดตามเส้นในทิศทางที่กำหนด
+ * Trace line in specified direction
  */
 function traceLine(
   image: any,

@@ -1,12 +1,13 @@
 /**
  * Empty State Component
- * แสดงเมื่อไม่มีข้อมูล พร้อม CTA ให้ user ทำ action
+ * Displayed when no data is available, with CTA for user action
  */
 
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { LucideIcon } from "lucide-react"
+import { useTranslations } from "next-intl"
 
 interface EmptyStateProps {
   icon: LucideIcon
@@ -108,17 +109,18 @@ export function EmptyState({
   )
 }
 
-// Variants สำหรับ use cases ต่างๆ
+// Variants for different use cases
 export function NoAppointmentsState({ onAddNew }: { onAddNew?: () => void }) {
+  const t = useTranslations('ui.emptyState')
   return (
     <EmptyState
       icon={require("lucide-react").Calendar}
-      title="ยังไม่มีนัดหมาย"
-      description="เริ่มต้นโดยเพิ่มนัดหมายใหม่ หรือรอลูกค้าจองผ่านระบบออนไลน์"
+      title={t('noAppointments')}
+      description={t('noAppointmentsDesc')}
       action={
         onAddNew
           ? {
-              label: "เพิ่มนัดหมาย",
+              label: t('addAppointment'),
               onClick: onAddNew,
             }
           : undefined
@@ -128,15 +130,16 @@ export function NoAppointmentsState({ onAddNew }: { onAddNew?: () => void }) {
 }
 
 export function NoCustomersState({ onAddNew }: { onAddNew?: () => void }) {
+  const t = useTranslations('ui.emptyState')
   return (
     <EmptyState
       icon={require("lucide-react").Users}
-      title="ยังไม่มีลูกค้า"
-      description="เพิ่มลูกค้าใหม่เพื่อเริ่มต้นจัดการข้อมูลและประวัติโปรแกรมความงาม"
+      title={t('noCustomers')}
+      description={t('noCustomersDesc')}
       action={
         onAddNew
           ? {
-              label: "เพิ่มลูกค้า",
+              label: t('addCustomer'),
               onClick: onAddNew,
             }
           : undefined
@@ -146,17 +149,18 @@ export function NoCustomersState({ onAddNew }: { onAddNew?: () => void }) {
 }
 
 export function NoDataState({ 
-  message = "ยังไม่มีข้อมูล",
-  description = "ข้อมูลจะแสดงที่นี่เมื่อมีการเพิ่มข้อมูลเข้ามาในระบบ"
+  message,
+  description
 }: { 
   message?: string
   description?: string 
 }) {
+  const t = useTranslations('ui.emptyState')
   return (
     <EmptyState
       icon={require("lucide-react").Inbox}
-      title={message}
-      description={description}
+      title={message || t('noData')}
+      description={description || t('noDataDesc')}
       size="sm"
     />
   )
@@ -169,13 +173,14 @@ export function SearchNoResultsState({
   query: string
   onClear: () => void 
 }) {
+  const t = useTranslations('ui.emptyState')
   return (
     <EmptyState
       icon={require("lucide-react").Search}
-      title="ไม่พบผลลัพธ์"
-      description={`ไม่พบข้อมูลที่ตรงกับคำค้นหา "${query}"`}
+      title={t('noResults')}
+      description={t('searchNoResults', { query })}
       action={{
-        label: "ล้างการค้นหา",
+        label: t('clearSearch'),
         onClick: onClear,
         variant: "outline",
       }}
@@ -189,13 +194,14 @@ export function ErrorState({
 }: { 
   onRetry: () => void 
 }) {
+  const t = useTranslations('ui.errorState')
   return (
     <EmptyState
       icon={require("lucide-react").AlertTriangle}
-      title="เกิดข้อผิดพลาด"
-      description="ไม่สามารถโหลดข้อมูลได้ กรุณาลองใหม่อีกครั้ง"
+      title={t('title')}
+      description={t('message')}
       action={{
-        label: "ลองอีกครั้ง",
+        label: t('retry'),
         onClick: onRetry,
       }}
     />

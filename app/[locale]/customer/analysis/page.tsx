@@ -7,7 +7,9 @@ import {
   Upload, 
   Play, 
   CheckCircle, 
-  AlertCircle
+  AlertCircle,
+  Gift,
+  Loader2
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -15,13 +17,47 @@ import { Badge } from '@/components/ui/badge'
 import { useAuth } from '@/lib/auth/context'
 import { useTranslations } from 'next-intl'
 
+interface CreditInfo {
+  has_credits: boolean
+  remaining: number
+  total_credits: number
+  total_used: number
+}
+
 export default function SkinAnalysisPage() {
-  const t = useTranslations()
+  const t = useTranslations('customerAnalysis')
+  const navT = useTranslations('nav')
+  const commonT = useTranslations('common')
   const { user, loading: authLoading } = useAuth()
   const [isLoading, setIsLoading] = useState(true)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [analysisResults, setAnalysisResults] = useState<any>(null)
+  const [creditInfo, setCreditInfo] = useState<CreditInfo | null>(null)
+  const [creditLoading, setCreditLoading] = useState(true)
+
+  // Check customer credits
+  useEffect(() => {
+    async function checkCredits() {
+      if (!user) return
+      setCreditLoading(true)
+      try {
+        const response = await fetch('/api/credits/check?type=analysis')
+        const data = await response.json()
+        if (data.success) {
+          setCreditInfo(data)
+        }
+      } catch (error) {
+        console.error('Error checking credits:', error)
+      } finally {
+        setCreditLoading(false)
+      }
+    }
+    
+    if (user) {
+      checkCredits()
+    }
+  }, [user])
 
   useEffect(() => {
     if (authLoading && !user) return
@@ -48,7 +84,40 @@ export default function SkinAnalysisPage() {
   const handleAnalysis = async () => {
     if (!imagePreview) return
     
+    // Check if customer has credits
+    if (!creditInfo?.has_credits) {
+      alert(t('credits.noCreditsAlert'))
+      return
+    }
+    
     setIsAnalyzing(true)
+    
+    // Use credit before analysis
+    try {
+      const creditResponse = await fetch('/api/credits/use', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'analysis' })
+      })
+      const creditResult = await creditResponse.json()
+      
+      if (!creditResult.success) {
+        alert(creditResult.message || t('credits.useFailedAlert'))
+        setIsAnalyzing(false)
+        return
+      }
+      
+      // Update credit info
+      setCreditInfo(prev => prev ? {
+        ...prev,
+        remaining: creditResult.credits_remaining,
+        total_used: prev.total_used + 1
+      } : null)
+    } catch (error) {
+      console.error('Error using credit:', error)
+      setIsAnalyzing(false)
+      return
+    }
     
     // Simulate AI analysis
     setTimeout(() => {
@@ -92,8 +161,26 @@ export default function SkinAnalysisPage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-8"
         >
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">{t('nav.analysis')}</h1>
-          <p className="text-lg text-gray-600">{t('analysis.description')}</p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">{navT('analysis')}</h1>
+          <p className="text-lg text-gray-600">{t('flow.startDesc')}</p>
+          
+          {/* Credit Status */}
+          {!creditLoading && (
+            <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm border">
+              <Gift className={`h-5 w-5 ${creditInfo?.has_credits ? 'text-green-600' : 'text-red-500'}`} />
+              <span className="text-sm font-medium">
+                {creditInfo?.has_credits 
+                  ? t('credits.remaining', { count: creditInfo.remaining })
+                  : t('credits.none')}
+              </span>
+            </div>
+          )}
+          {creditLoading && (
+            <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm border">
+              <Loader2 className="h-5 w-5 animate-spin text-blue-600" />
+              <span className="text-sm">{t('credits.checking')}</span>
+            </div>
+          )}
         </motion.div>
 
         {!analysisResults ? (
@@ -104,8 +191,8 @@ export default function SkinAnalysisPage() {
           >
             <Card>
               <CardHeader>
-                <CardTitle className="text-center">Start Your Analysis</CardTitle>
-                <p className="text-center text-gray-600">Upload a clear photo of your face for accurate analysis</p>
+                <CardTitle className="text-center">{t('flow.startTitle')}</CardTitle>
+                <p className="text-center text-gray-600">{t('flow.startDesc')}</p>
               </CardHeader>
               <CardContent className="space-y-6">
                 {/* Image Upload */}
@@ -122,7 +209,7 @@ export default function SkinAnalysisPage() {
                         variant="outline"
                         className="w-full"
                       >
-                        Choose Different Image
+                        {t('flow.differentImage')}
                       </Button>
                     </div>
                   ) : (
@@ -132,7 +219,7 @@ export default function SkinAnalysisPage() {
                         <label htmlFor="image-upload" className="cursor-pointer">
                           <span className="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors inline-flex items-center space-x-2">
                             <Upload className="w-5 h-5" />
-                            <span>Choose Image</span>
+                            <span>{t('flow.chooseImage')}</span>
                           </span>
                           <input
                             id="image-upload"
@@ -142,7 +229,7 @@ export default function SkinAnalysisPage() {
                             className="hidden"
                           />
                         </label>
-                        <p className="text-sm text-gray-500 mt-2">or drag and drop</p>
+                        <p className="text-sm text-gray-500 mt-2">{t('flow.dragDrop')}</p>
                       </div>
                     </div>
                   )}
@@ -159,12 +246,12 @@ export default function SkinAnalysisPage() {
                     {isAnalyzing ? (
                       <div className="flex items-center space-x-2">
                         <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                        <span>Analyzing...</span>
+                        <span>{t('flow.analyzing')}</span>
                       </div>
                     ) : (
                       <div className="flex items-center space-x-2">
                         <Play className="w-5 h-5" />
-                        <span>Start Analysis</span>
+                        <span>{t('flow.startBtn')}</span>
                       </div>
                     )}
                   </Button>
@@ -175,12 +262,11 @@ export default function SkinAnalysisPage() {
                   <div className="flex items-start space-x-3">
                     <AlertCircle className="w-5 h-5 text-blue-600 mt-0.5" />
                     <div>
-                      <h4 className="font-semibold text-blue-900">Tips for best results:</h4>
+                      <h4 className="font-semibold text-blue-900">{t('flow.tips.title')}</h4>
                       <ul className="text-sm text-blue-800 mt-2 space-y-1">
-                        <li>• Use good, even lighting</li>
-                        <li>• Remove makeup and accessories</li>
-                        <li>• Face the camera directly</li>
-                        <li>• Keep a neutral expression</li>
+                        {(t.raw('flow.tips.list') as string[]).map((tip, i) => (
+                          <li key={i}>• {tip}</li>
+                        ))}
                       </ul>
                     </div>
                   </div>
@@ -199,11 +285,11 @@ export default function SkinAnalysisPage() {
               <CardHeader className="text-center">
                 <div className="flex items-center justify-center space-x-2 mb-4">
                   <CheckCircle className="w-8 h-8 text-green-600" />
-                  <h2 className="text-2xl font-bold text-green-600">{t('analysis.complete')}</h2>
+                  <h2 className="text-2xl font-bold text-green-600">{t('results.complete')}</h2>
                 </div>
                 <div className="text-center">
                   <div className="text-5xl font-bold text-primary mb-2">{analysisResults.skinScore}/100</div>
-                  <p className="text-gray-600">{t('analysis.yourScore')}</p>
+                  <p className="text-gray-600">{t('results.yourScore')}</p>
                 </div>
               </CardHeader>
             </Card>
@@ -211,7 +297,7 @@ export default function SkinAnalysisPage() {
             {/* Skin Conditions */}
             <Card>
               <CardHeader>
-                <CardTitle>{t('analysis.conditionsDetected')}</CardTitle>
+                <CardTitle>{t('results.conditionsTitle')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -219,7 +305,7 @@ export default function SkinAnalysisPage() {
                     <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                       <div>
                         <h4 className="font-semibold">{condition.name}</h4>
-                        <p className="text-sm text-gray-600">{t('analysis.metrics.confidence')}: {Math.round(condition.confidence * 100)}%</p>
+                        <p className="text-sm text-gray-600">{t('results.confidence')}: {Math.round(condition.confidence * 100)}%</p>
                       </div>
                       <Badge variant={condition.severity === 'mild' ? 'default' : condition.severity === 'moderate' ? 'secondary' : 'outline'}>
                         {condition.severity}
@@ -233,7 +319,7 @@ export default function SkinAnalysisPage() {
             {/* Recommendations */}
             <Card>
               <CardHeader>
-                <CardTitle>{t('analysis.personalizedRecommendations')}</CardTitle>
+                <CardTitle>{t('results.personalizedRecommendations')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
@@ -250,7 +336,7 @@ export default function SkinAnalysisPage() {
             {/* Product Recommendations */}
             <Card>
               <CardHeader>
-                <CardTitle>{t('analysis.recommendedProducts')}</CardTitle>
+                <CardTitle>{t('results.productsTitle')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -260,7 +346,7 @@ export default function SkinAnalysisPage() {
                       <p className="text-sm text-gray-600">{product.brand}</p>
                       <p className="text-lg font-bold text-primary mt-2">฿{product.price}</p>
                       <Button className="w-full mt-3" size="sm">
-                        View Details
+                        {t('results.viewDetails')}
                       </Button>
                     </div>
                   ))}
@@ -271,13 +357,13 @@ export default function SkinAnalysisPage() {
             {/* Action Buttons */}
             <div className="flex space-x-4">
               <Button className="flex-1" size="lg">
-                {t('common.save')} {t('nav.analysis')}
+                {commonT('save')} {navT('analysis')}
               </Button>
               <Button variant="outline" className="flex-1" size="lg" onClick={() => {
                 setAnalysisResults(null)
                 setImagePreview(null)
               }}>
-                {t('analysis.newAnalysis')}
+                {t('results.newBtn')}
               </Button>
             </div>
           </motion.div>

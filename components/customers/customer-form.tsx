@@ -25,40 +25,44 @@ import { Textarea } from '@/components/ui/textarea';
 import { Calendar } from '@/components/ui/calendar';
 import { Calendar as CalendarIcon, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
-import { th } from 'date-fns/locale';
+import { th, enUS } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { Customer } from '@/lib/mock/customer-mock-data';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-
-const formSchema = z.object({
-  firstName: z.string().min(2, 'กรุณากรอกชื่ออย่างน้อย 2 ตัวอักษร'),
-  lastName: z.string().min(1, 'กรุณากรอกนามสกุล'),
-  phone: z.string().min(10, 'กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง'),
-  email: z.string().email('กรุณากรอกอีเมลให้ถูกต้อง').optional().or(z.literal('')),
-  gender: z.enum(['male', 'female', 'other'], {
-    required_error: 'กรุณาเลือกเพศ',
-  }),
-  birthDate: z.date({
-    required_error: 'กรุณาเลือกวันเกิด',
-  }),
-  address: z.string().optional(),
-  allergies: z.string().optional(),
-  notes: z.string().optional(),
-  membershipLevel: z.enum(['silver', 'gold', 'platinum']).default('silver'),
-});
-
-type CustomerFormValues = z.infer<typeof formSchema>;
+import { useTranslations, useLocale } from 'next-intl';
 
 interface CustomerFormProps {
-  initialData?: Customer | null;
-  onSubmit: (data: CustomerFormValues) => Promise<void>;
+  initialData?: Customer;
+  onSubmit: (data: any) => Promise<void>;
   isSubmitting: boolean;
 }
 
 export function CustomerForm({ initialData, onSubmit, isSubmitting }: CustomerFormProps) {
   const router = useRouter();
+  const t = useTranslations('customers.form');
+  const _commonT = useTranslations('common');
+  const locale = useLocale();
+  
+  const formSchema = z.object({
+    firstName: z.string().min(2, t('validation.firstName')),
+    lastName: z.string().min(1, t('validation.lastName')),
+    phone: z.string().min(10, t('validation.phone')),
+    email: z.string().email(t('validation.email')).optional().or(z.literal('')),
+    gender: z.enum(['male', 'female', 'other'], {
+      required_error: t('validation.gender'),
+    }),
+    birthDate: z.date({
+      required_error: t('validation.birthDate'),
+    }),
+    address: z.string().optional(),
+    allergies: z.string().optional(),
+    notes: z.string().optional(),
+    membershipLevel: z.enum(['silver', 'gold', 'platinum']).default('silver'),
+  });
+
+  type CustomerFormValues = z.infer<typeof formSchema>;
   
   const form = useForm<CustomerFormValues>({
     resolver: zodResolver(formSchema),
@@ -90,11 +94,11 @@ export function CustomerForm({ initialData, onSubmit, isSubmitting }: CustomerFo
   const handleSubmit = async (data: CustomerFormValues) => {
     try {
       await onSubmit(data);
-      toast.success(initialData ? 'อัปเดตข้อมูลลูกค้าเรียบร้อยแล้ว' : 'เพิ่มลูกค้าใหม่เรียบร้อยแล้ว');
+      toast.success(initialData ? t('messages.updateSuccess') : t('messages.addSuccess'));
       router.push('/admin/customers');
     } catch (error) {
       console.error('Error submitting form:', error);
-      toast.error('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+      toast.error(t('messages.error'));
     }
   };
 
@@ -107,9 +111,9 @@ export function CustomerForm({ initialData, onSubmit, isSubmitting }: CustomerFo
             name="firstName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>ชื่อ</FormLabel>
+                <FormLabel>{t('fields.firstName')}</FormLabel>
                 <FormControl>
-                  <Input placeholder="ชื่อ" {...field} />
+                  <Input placeholder={t('fields.firstName')} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -121,9 +125,9 @@ export function CustomerForm({ initialData, onSubmit, isSubmitting }: CustomerFo
             name="lastName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>นามสกุล</FormLabel>
+                <FormLabel>{t('fields.lastName')}</FormLabel>
                 <FormControl>
-                  <Input placeholder="นามสกุล" {...field} />
+                  <Input placeholder={t('fields.lastName')} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -135,9 +139,9 @@ export function CustomerForm({ initialData, onSubmit, isSubmitting }: CustomerFo
             name="phone"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>เบอร์โทรศัพท์</FormLabel>
+                <FormLabel>{t('fields.phone')}</FormLabel>
                 <FormControl>
-                  <Input placeholder="เบอร์โทรศัพท์" {...field} />
+                  <Input placeholder={t('fields.phone')} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -149,9 +153,9 @@ export function CustomerForm({ initialData, onSubmit, isSubmitting }: CustomerFo
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>อีเมล (ไม่บังคับ)</FormLabel>
+                <FormLabel>{t('fields.email')} {t('fields.optional')}</FormLabel>
                 <FormControl>
-                  <Input type="email" placeholder="อีเมล" {...field} value={field.value || ''} />
+                  <Input type="email" placeholder={t('fields.email')} {...field} value={field.value || ''} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -163,17 +167,17 @@ export function CustomerForm({ initialData, onSubmit, isSubmitting }: CustomerFo
             name="gender"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>เพศ</FormLabel>
+                <FormLabel>{t('fields.gender.label')}</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="เลือกเพศ" />
+                      <SelectValue placeholder={t('fields.gender.placeholder')} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="male">ชาย</SelectItem>
-                    <SelectItem value="female">หญิง</SelectItem>
-                    <SelectItem value="other">อื่นๆ</SelectItem>
+                    <SelectItem value="male">{t('fields.gender.male')}</SelectItem>
+                    <SelectItem value="female">{t('fields.gender.female')}</SelectItem>
+                    <SelectItem value="other">{t('fields.gender.other')}</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -186,7 +190,7 @@ export function CustomerForm({ initialData, onSubmit, isSubmitting }: CustomerFo
             name="birthDate"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>วันเกิด</FormLabel>
+                <FormLabel>{t('fields.birthDate.label')}</FormLabel>
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -198,9 +202,9 @@ export function CustomerForm({ initialData, onSubmit, isSubmitting }: CustomerFo
                         )}
                       >
                         {field.value ? (
-                          format(field.value, "PPP", { locale: th })
+                          format(field.value, "PPP", { locale: locale === 'th' ? th : enUS })
                         ) : (
-                          <span>เลือกวันเกิด</span>
+                          <span>{t('fields.birthDate.placeholder')}</span>
                         )}
                         <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                       </Button>
@@ -215,7 +219,7 @@ export function CustomerForm({ initialData, onSubmit, isSubmitting }: CustomerFo
                         date > new Date() || date < new Date("1900-01-01")
                       }
                       initialFocus
-                      locale={th}
+                      locale={locale === 'th' ? th : enUS}
                     />
                   </PopoverContent>
                 </Popover>
@@ -229,17 +233,17 @@ export function CustomerForm({ initialData, onSubmit, isSubmitting }: CustomerFo
             name="membershipLevel"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>ระดับสมาชิก</FormLabel>
+                <FormLabel>{t('fields.membership.label')}</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="เลือกระดับสมาชิก" />
+                      <SelectValue placeholder={t('fields.membership.placeholder')} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="silver">ซิลเวอร์</SelectItem>
-                    <SelectItem value="gold">โกลด์</SelectItem>
-                    <SelectItem value="platinum">แพลตตินัม</SelectItem>
+                    <SelectItem value="silver">{t('fields.membership.silver')}</SelectItem>
+                    <SelectItem value="gold">{t('fields.membership.gold')}</SelectItem>
+                    <SelectItem value="platinum">{t('fields.membership.platinum')}</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -253,10 +257,10 @@ export function CustomerForm({ initialData, onSubmit, isSubmitting }: CustomerFo
               name="address"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>ที่อยู่ (ไม่บังคับ)</FormLabel>
+                  <FormLabel>{t('fields.address')} {t('fields.optional')}</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="ที่อยู่"
+                      placeholder={t('fields.address')}
                       className="resize-none"
                       {...field}
                       value={field.value || ''}
@@ -273,16 +277,16 @@ export function CustomerForm({ initialData, onSubmit, isSubmitting }: CustomerFo
             name="allergies"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>ประวัติการแพ้ยา/สารเคมี (ไม่บังคับ)</FormLabel>
+                <FormLabel>{t('fields.allergies.label')} {t('fields.optional')}</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="เช่น ยาแก้ปวด, ยาปฏิชีวนะ, ยาง, ฯลฯ"
+                    placeholder={t('fields.allergies.placeholder')}
                     {...field}
                     value={field.value || ''}
                   />
                 </FormControl>
                 <FormDescription>
-                  กรุณาระบุยาหรือสารเคมีที่แพ้ คั่นด้วยเครื่องหมายจุลภาค (,)
+                  {t('fields.allergies.description')}
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -294,10 +298,10 @@ export function CustomerForm({ initialData, onSubmit, isSubmitting }: CustomerFo
             name="notes"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>หมายเหตุ (ไม่บังคับ)</FormLabel>
+                <FormLabel>{t('fields.notes')} {t('fields.optional')}</FormLabel>
                 <FormControl>
                   <Textarea
-                    placeholder="หมายเหตุเพิ่มเติม"
+                    placeholder={t('fields.notes')}
                     className="resize-none"
                     {...field}
                     value={field.value || ''}
@@ -316,13 +320,13 @@ export function CustomerForm({ initialData, onSubmit, isSubmitting }: CustomerFo
             onClick={() => router.push('/admin/customers')}
             disabled={isSubmitting}
           >
-            ยกเลิก
+            {t('buttons.cancel')}
           </Button>
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting && (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             )}
-            {initialData ? 'อัปเดตข้อมูล' : 'เพิ่มลูกค้าใหม่'}
+            {initialData ? t('buttons.update') : t('buttons.save')}
           </Button>
         </div>
       </form>

@@ -59,7 +59,7 @@ export default function RoiMiniCalculator() {
 
           <div className="space-y-3">
             <Label htmlFor="avg" className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic ml-1">
-              {t('roi.avgBill', { currency: locale === 'th' ? 'บาท' : 'THB' })}
+              {t('roi.avgBill', { currency: locale === 'th' ? t('roi.currencyThai') : 'THB' })}
             </Label>
             <Input
               id="avg"

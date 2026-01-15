@@ -22,53 +22,62 @@ import {
   Brain
 } from "lucide-react"
 import { useTranslations, useLocale } from "next-intl"
-import { SUBSCRIPTION_PLANS, formatPrice } from "@/lib/subscriptions/plans"
+import { SUBSCRIPTION_PLANS, formatPrice, formatAnnualPrice } from "@/lib/subscriptions/plans"
 import { motion } from "framer-motion"
+import { useState } from "react"
 
 export default function PricingPage() {
-  const t = useTranslations()
+  const t = useTranslations('pricing')
+  const plansT = useTranslations('plans')
+  const commonT = useTranslations('common')
   const locale = useLocale()
   const language = locale as 'th' | 'en'
+  
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly')
 
   const pricingTiers = [
     {
       planKey: 'starter' as const,
-      name: language === "th" ? t('pricing.plans.starter.name') : SUBSCRIPTION_PLANS.starter.name,
-      badge: t('pricing.plans.starter.badge'),
+      name: plansT('starter.name'),
+      badge: plansT('starter.badge' as any) || 'Starter',
       icon: Cpu,
-      price: formatPrice('starter', language as 'th' | 'en'),
-      period: t('pricing.plans.starter.period'),
+      price: formatPrice('starter', language),
+      priceAnnual: formatAnnualPrice('starter', language),
+      period: t('plans.starter.period'),
       limits: {
-        users: SUBSCRIPTION_PLANS.starter.maxUsers,
+        users: SUBSCRIPTION_PLANS.starter.maxSalesUsers,
         storage: SUBSCRIPTION_PLANS.starter.maxStorageGB,
-        analyses: SUBSCRIPTION_PLANS.starter.maxAnalysesPerMonth,
+        analyses: SUBSCRIPTION_PLANS.starter.quotaPerSales,
         trial: SUBSCRIPTION_PLANS.starter.trialDays
       },
-      description: t('pricing.plans.starter.description'),
-      features: language === "th" ? t.raw('pricing.plans.starter.features') : SUBSCRIPTION_PLANS.starter.features,
-      excludedFeatures: language === "th" ? SUBSCRIPTION_PLANS.starter.limitationsTH || [] : SUBSCRIPTION_PLANS.starter.limitations || [],
-      cta: t('pricing.plans.starter.cta'),
+      description: t('plans.starter.description'),
+      salesFeatures: plansT.raw('starter.features'),
+      customerFeatures: plansT.raw('starter.customerFeatures'),
+      excludedFeatures: plansT.raw('starter.limitations'),
+      cta: t('plans.starter.cta'),
       href: "/auth/login",
       variant: "outline" as const,
       color: "from-blue-500/20 to-indigo-600/20"
     },
     {
       planKey: 'professional' as const,
-      name: language === "th" ? t('pricing.plans.professional.name') : SUBSCRIPTION_PLANS.professional.name,
-      badge: t('pricing.plans.professional.badge'),
+      name: plansT('professional.name'),
+      badge: plansT('professional.badge' as any) || 'Recommended',
       icon: Crown,
-      price: formatPrice('professional', language as 'th' | 'en'),
-      period: t('pricing.plans.professional.period'),
+      price: formatPrice('professional', language),
+      priceAnnual: formatAnnualPrice('professional', language),
+      period: t('plans.professional.period'),
       limits: {
-        users: SUBSCRIPTION_PLANS.professional.maxUsers,
+        users: SUBSCRIPTION_PLANS.professional.maxSalesUsers,
         storage: SUBSCRIPTION_PLANS.professional.maxStorageGB,
-        analyses: SUBSCRIPTION_PLANS.professional.maxAnalysesPerMonth,
+        analyses: SUBSCRIPTION_PLANS.professional.quotaPerSales,
         trial: SUBSCRIPTION_PLANS.professional.trialDays
       },
-      description: t('pricing.plans.professional.description'),
-      features: language === "th" ? t.raw('pricing.plans.professional.features') : SUBSCRIPTION_PLANS.professional.features,
+      description: t('plans.professional.description'),
+      salesFeatures: plansT.raw('professional.features'),
+      customerFeatures: plansT.raw('professional.customerFeatures'),
       excludedFeatures: [],
-      cta: t('pricing.plans.professional.cta'),
+      cta: t('plans.professional.cta'),
       href: "/contact?plan=professional",
       variant: "default" as const,
       popular: true,
@@ -76,42 +85,46 @@ export default function PricingPage() {
     },
     {
       planKey: 'enterprise' as const,
-      name: language === "th" ? t('pricing.plans.enterprise.name') : SUBSCRIPTION_PLANS.enterprise.name,
-      badge: t('pricing.plans.enterprise.badge'),
+      name: plansT('enterprise.name'),
+      badge: plansT('enterprise.badge' as any) || 'Enterprise',
       icon: Building2,
-      price: formatPrice('enterprise', language as 'th' | 'en'),
-      period: t('pricing.plans.enterprise.period'),
+      price: formatPrice('enterprise', language),
+      priceAnnual: formatAnnualPrice('enterprise', language),
+      period: t('plans.enterprise.period'),
       limits: {
-        users: SUBSCRIPTION_PLANS.enterprise.maxUsers,
+        users: SUBSCRIPTION_PLANS.enterprise.maxSalesUsers,
         storage: SUBSCRIPTION_PLANS.enterprise.maxStorageGB,
-        analyses: SUBSCRIPTION_PLANS.enterprise.maxAnalysesPerMonth,
+        analyses: SUBSCRIPTION_PLANS.enterprise.quotaPerSales,
         trial: SUBSCRIPTION_PLANS.enterprise.trialDays
       },
-      description: t('pricing.plans.enterprise.description'),
-      features: language === "th" ? t.raw('pricing.plans.enterprise.features') : SUBSCRIPTION_PLANS.enterprise.features,
+      description: t('plans.enterprise.description'),
+      salesFeatures: plansT.raw('enterprise.features'),
+      customerFeatures: plansT.raw('enterprise.customerFeatures'),
       excludedFeatures: [],
-      cta: t('pricing.plans.enterprise.cta'),
+      cta: t('plans.enterprise.cta'),
       href: "/contact?plan=enterprise",
       variant: "outline" as const,
       color: "from-emerald-500/20 to-teal-600/20"
     },
     {
       planKey: 'platinum' as const,
-      name: language === "th" ? t('pricing.plans.platinum.name') : SUBSCRIPTION_PLANS.platinum.name,
-      badge: t('pricing.plans.platinum.badge'),
+      name: plansT('platinum.name'),
+      badge: plansT('platinum.badge' as any) || 'Platinum',
       icon: Globe,
-      price: formatPrice('platinum', language as 'th' | 'en'),
-      period: t('pricing.plans.platinum.period'),
+      price: formatPrice('platinum', language),
+      priceAnnual: formatAnnualPrice('platinum', language),
+      period: t('plans.platinum.period'),
       limits: {
-        users: SUBSCRIPTION_PLANS.platinum.maxUsers,
+        users: SUBSCRIPTION_PLANS.platinum.maxSalesUsers,
         storage: SUBSCRIPTION_PLANS.platinum.maxStorageGB,
-        analyses: SUBSCRIPTION_PLANS.platinum.maxAnalysesPerMonth,
+        analyses: SUBSCRIPTION_PLANS.platinum.quotaPerSales,
         trial: SUBSCRIPTION_PLANS.platinum.trialDays
       },
-      description: t('pricing.plans.platinum.description'),
-      features: language === "th" ? t.raw('pricing.plans.platinum.features') : SUBSCRIPTION_PLANS.platinum.features,
+      description: t('plans.platinum.description'),
+      salesFeatures: plansT.raw('platinum.features'),
+      customerFeatures: plansT.raw('platinum.customerFeatures'),
       excludedFeatures: [],
-      cta: t('pricing.plans.platinum.cta'),
+      cta: t('plans.platinum.cta'),
       href: "/contact?plan=platinum",
       variant: "outline" as const,
       color: "from-amber-500/20 to-orange-600/20"
@@ -119,9 +132,9 @@ export default function PricingPage() {
   ]
 
   const formatLimit = (value: number, type: 'users' | 'storage' | 'analyses') => {
-    if (value === -1) return t('pricing.limits.unlimited')
+    if (value === -1) return t('limits.unlimited')
     if (type === 'storage') return `${value} GB`
-    if (type === 'analyses') return `${value}/${t('pricing.limits.perMonth')}`
+    if (type === 'analyses') return `${value}/${t('limits.perMonth')}`
     return value.toString()
   }
 
@@ -148,28 +161,28 @@ export default function PricingPage() {
             >
               <Badge className="px-6 py-2 rounded-full border-pink-500/30 text-pink-400 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.2em] text-[10px] font-black shadow-2xl shadow-pink-500/10" variant="outline">
                 <TrendingUp className="mr-3 h-3.5 w-3.5 animate-pulse" />
-                {t('pricing.hero.badge')}
+                {t('hero.badge')}
               </Badge>
 
               <h1 className="text-5xl md:text-8xl font-bold tracking-tight text-white leading-tight">
-                {t('pricing.hero.title')}
+                {t('hero.title')}
                 <span className="block mt-4 bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent italic">
-                  {t('pricing.hero.subtitle')}
+                  {t('hero.subtitle')}
                 </span>
               </h1>
 
               <p className="text-slate-400 max-w-2xl mx-auto text-xl font-light leading-relaxed tracking-wide">
-                {t('pricing.hero.description')}
+                {t('hero.description')}
               </p>
 
               <div className="flex flex-wrap items-center justify-center gap-10 pt-4">
                 <div className="flex items-center gap-3 group">
                   <div className="h-1.5 w-1.5 rounded-full bg-pink-500 shadow-lg shadow-pink-500/50" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 group-hover:text-slate-300 transition-colors">{t('pricing.hero.freeTrial')}</span>
+                  <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 group-hover:text-slate-300 transition-colors">{t('hero.freeTrial')}</span>
                 </div>
                 <div className="flex items-center gap-3 group">
                   <div className="h-1.5 w-1.5 rounded-full bg-cyan-500 shadow-lg shadow-cyan-500/50" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 group-hover:text-slate-300 transition-colors">{t('pricing.hero.cancelAnytime')}</span>
+                  <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 group-hover:text-slate-300 transition-colors">{t('hero.cancelAnytime')}</span>
                 </div>
               </div>
             </motion.div>
@@ -240,7 +253,7 @@ export default function PricingPage() {
                         {tier.limits.trial > 0 && (
                           <div className="flex items-center gap-3 rounded-2xl bg-pink-500/5 px-5 py-3 text-[10px] font-black uppercase tracking-widest text-pink-400 border border-pink-500/10 shadow-inner">
                             <Clock className="h-4 w-4 animate-pulse" />
-                            {t('pricing.trial.freeTrial', {days: tier.limits.trial})}
+                            {t('trial.freeTrial', {days: tier.limits.trial})}
                           </div>
                         )}
 
@@ -264,7 +277,7 @@ export default function PricingPage() {
                         <div className="relative z-10">
                           <Users className="mx-auto mb-2 h-4 w-4 text-slate-600 group-hover/node:text-pink-400 transition-colors" />
                           <div className="font-bold text-white text-[10px] tracking-tight">{formatLimit(tier.limits.users, 'users')}</div>
-                          <div className="text-[7px] text-slate-600 uppercase font-black tracking-widest mt-1">{t('pricing.limits.users')}</div>
+                          <div className="text-[7px] text-slate-600 uppercase font-black tracking-widest mt-1">{t('limits.users')}</div>
                         </div>
                         <div className="relative z-10 border-x border-white/5">
                           <Brain className="mx-auto mb-2 h-4 w-4 text-slate-600 group-hover/node:text-cyan-400 transition-colors" />
@@ -280,7 +293,7 @@ export default function PricingPage() {
 
                         {/* Aesthetic Precision Infrastructure */}
                         <div className="space-y-5">
-                          {tier.features.map((feature: string, index: number) => {
+                          {[...(tier as any).features || [], ...(tier as any).salesFeatures || [], ...(tier as any).customerFeatures || []].map((feature: string, index: number) => {
                             const isHub = feature.toLowerCase().includes('hub') || feature.toLowerCase().includes('intelligence');
                             const isSpecialized = feature.toLowerCase().includes('specialized') || feature.toLowerCase().includes('node');
                             const isSales = feature.toLowerCase().includes('conversion') || feature.toLowerCase().includes('enablement');
@@ -326,11 +339,11 @@ export default function PricingPage() {
               className="mx-auto mb-24 max-w-3xl text-center space-y-6"
             >
               <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-white leading-tight">
-                {t('pricing.comparison.title')}
+                {t('comparison.title')}
               </h2>
               <div className="h-1 w-20 bg-cyan-500/50 mx-auto rounded-full" />
               <p className="text-xl text-slate-400 font-light tracking-wide">
-                {t('pricing.comparison.description')}
+                {t('comparison.description')}
               </p>
             </motion.div>
 
@@ -345,7 +358,7 @@ export default function PricingPage() {
                   <thead>
                     <tr className="border-b border-white/5 bg-white/[0.02]">
                       <th className="px-12 py-10 text-left text-xs font-black uppercase tracking-[0.3em] text-slate-500">
-                        {t('pricing.comparison.features')}
+                        {t('comparison.features')}
                       </th>
                       <th className="px-8 py-10 text-center text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Starter</th>
                       <th className="px-8 py-10 text-center text-[10px] font-black uppercase tracking-[0.3em] text-pink-400 bg-pink-500/5">Professional</th>
@@ -354,16 +367,16 @@ export default function PricingPage() {
                   </thead>
                   <tbody className="divide-y divide-white/5">
                     {[ 
-                      { label: t('pricing.comparison.aiAnalysis'), starter: true, pro: true, enterprise: true },
-                      { label: t('pricing.comparison.aestheticMetrics'), starter: true, pro: true, enterprise: true },
-                      { label: t('pricing.comparison.saveHistory'), starter: false, pro: true, enterprise: true },
-                      { label: t('pricing.comparison.arSimulator'), starter: false, pro: true, enterprise: true },
-                      { label: t('pricing.comparison.predictiveSales'), starter: false, pro: true, enterprise: true },
-                      { label: t('pricing.comparison.roiSimulator'), starter: false, pro: true, enterprise: true },
-                      { label: t('pricing.comparison.ads'), starter: false, pro: false, enterprise: true },
-                      { label: t('pricing.comparison.complianceAudit'), starter: false, pro: false, enterprise: true },
-                      { label: t('pricing.comparison.revenueForecast'), starter: false, pro: false, enterprise: true },
-                      { label: t('pricing.comparison.multiBranch'), starter: false, pro: false, enterprise: true }
+                      { label: t('comparison.aiAnalysis'), starter: true, pro: true, enterprise: true },
+                      { label: t('comparison.aestheticMetrics'), starter: true, pro: true, enterprise: true },
+                      { label: t('comparison.saveHistory'), starter: false, pro: true, enterprise: true },
+                      { label: t('comparison.arSimulator'), starter: false, pro: true, enterprise: true },
+                      { label: t('comparison.predictiveSales'), starter: false, pro: true, enterprise: true },
+                      { label: t('comparison.roiSimulator'), starter: false, pro: true, enterprise: true },
+                      { label: t('comparison.ads'), starter: false, pro: false, enterprise: true },
+                      { label: t('comparison.complianceAudit'), starter: false, pro: false, enterprise: true },
+                      { label: t('comparison.revenueForecast'), starter: false, pro: false, enterprise: true },
+                      { label: t('comparison.multiBranch'), starter: false, pro: false, enterprise: true }
                     ].map((row, idx) => (
                       <tr key={idx} className="hover:bg-white/[0.02] transition-colors group">
                         <td className="px-12 py-8 text-sm font-bold text-white tracking-tight">
@@ -397,7 +410,7 @@ export default function PricingPage() {
               className="mx-auto mb-24 max-w-2xl text-center space-y-6"
             >
               <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-white leading-tight">
-                {t('pricing.faq.title')}
+                {t('faq.title')}
               </h2>
               <div className="h-1 w-20 bg-purple-500/50 mx-auto rounded-full" />
             </motion.div>
@@ -407,7 +420,7 @@ export default function PricingPage() {
                 <motion.div
                   key={num}
                   initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
+                  whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.8, delay: num * 0.1 }}
                 >
@@ -420,10 +433,10 @@ export default function PricingPage() {
                         </div>
                         <div className="space-y-4">
                           <CardTitle className="text-2xl font-bold text-white tracking-tight group-hover:text-pink-400 transition-colors duration-500">
-                            {t(`pricing.faq.q${num}.question` as any)}
+                            {t(`faq.q${num}` as any)}
                           </CardTitle>
                           <p className="text-lg text-slate-400 font-light leading-relaxed">
-                            {t(`pricing.faq.q${num}.answer` as any)}
+                            {t(`faq.a${num}` as any)}
                           </p>
                         </div>
                       </div>
@@ -447,10 +460,10 @@ export default function PricingPage() {
             >
               <div className="space-y-6">
                 <h2 className="text-5xl md:text-8xl font-bold tracking-tight text-white leading-tight">
-                  {t('pricing.cta.title')}
+                  {t('cta.title')}
                 </h2>
                 <p className="text-2xl text-slate-400 font-light leading-relaxed max-w-2xl mx-auto">
-                  {t('pricing.cta.description')}
+                  {t('cta.description')}
                 </p>
               </div>
               
@@ -458,7 +471,7 @@ export default function PricingPage() {
                 <Button size="xl" variant="premium" className="h-20 px-16 rounded-3xl shadow-2xl shadow-pink-500/20 text-xl font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all" asChild>
                   <Link href="/analysis">
                     <Sparkles className="mr-4 h-7 w-7" />
-                    {t('pricing.cta.startFree')}
+                    {t('cta.startFree')}
                   </Link>
                 </Button>
                 <Button
@@ -469,7 +482,7 @@ export default function PricingPage() {
                 >
                   <Link href="/contact">
                     <Building2 className="mr-4 h-7 w-7" />
-                    {t('pricing.cta.contactSales')}
+                    {t('cta.contactSales')}
                   </Link>
                 </Button>
               </div>

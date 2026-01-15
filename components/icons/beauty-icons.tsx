@@ -54,7 +54,7 @@ export const AIStarIcon = ({ className, size = 24 }: { className?: string; size?
   </svg>
 )
 
-// พลอยความงาม
+// Beauty Gem
 export const BeautyGemIcon = ({ className, size = 24 }: { className?: string; size?: number }) => (
   <svg 
     width={size} 
@@ -82,7 +82,7 @@ export const BeautyGemIcon = ({ className, size = 24 }: { className?: string; si
   </svg>
 )
 
-// Logo หลัก
+// Logo - Primary
 export const BeautyAILogo = ({ className, size = 40 }: { className?: string; size?: number }) => (
   <div className={`flex items-center gap-2 ${className}`}>
     <div className="relative">

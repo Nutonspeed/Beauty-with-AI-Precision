@@ -35,17 +35,22 @@ export default function LoginPage() {
 
   // Auto-redirect if already logged in (use canonical normalization + default landing)
   useEffect(() => {
-    if (user) {
+    if (user && !loading) {
+      console.log('[LoginPage] User detected, redirecting...', user.role)
       try {
         const normalized = normalizeRole(user.role as any)
         const redirectPath = getDefaultLandingPage(normalized as any)
-        globalThis.location.href = lp(redirectPath)
+        const localizedPath = lp(redirectPath)
+        
+        console.log('[LoginPage] Target redirect path:', localizedPath)
+        // Use router.replace to avoid back-button loop
+        router.replace(localizedPath)
       } catch (e) {
         console.warn('[LoginPage] Failed to resolve landing page, fallback to /dashboard', e)
-        globalThis.location.href = lp('/dashboard')
+        router.replace(lp('/dashboard'))
       }
     }
-  }, [user, lp])
+  }, [user, loading, lp, router])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -54,19 +59,19 @@ export default function LoginPage() {
 
     // Validation
     if (!email || !password) {
-      setError('กรุณากรอกอีเมลและรหัสผ่าน')
+      setError(isThaiLocale ? 'กรุณากรอกอีเมลและรหัสผ่าน' : 'Please enter email and password')
       setLoading(false)
       return
     }
 
     if (!email.includes('@')) {
-      setError('กรุณากรอกอีเมลที่ถูกต้อง')
+      setError(isThaiLocale ? 'กรุณากรอกอีเมลที่ถูกต้อง' : 'Please enter a valid email')
       setLoading(false)
       return
     }
 
     if (password.length < 6) {
-      setError('รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร')
+      setError(isThaiLocale ? 'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร' : 'Password must be at least 6 characters')
       setLoading(false)
       return
     }
@@ -79,9 +84,9 @@ export default function LoginPage() {
       if (result.error) {
         console.error('[LoginPage] ❌ Login error:', result.error)
         if (result.error instanceof Error && result.error.message.includes('Invalid login credentials')) {
-          setError('Invalid email or password')
+          setError(isThaiLocale ? 'อีเมลหรือรหัสผ่านไม่ถูกต้อง' : 'Invalid email or password')
         } else if (result.error instanceof Error && result.error.message.includes('Email not confirmed')) {
-          setError('กรุณายืนยันอีเมลก่อนเข้าสู่ระบบ')
+          setError(isThaiLocale ? 'กรุณายืนยันอีเมลก่อนเข้าสู่ระบบ' : 'Please confirm your email before logging in')
         } else {
           setError(result.error instanceof Error ? result.error.message : 'Unknown error')
         }
@@ -91,15 +96,10 @@ export default function LoginPage() {
 
       console.log('[LoginPage] ✅ Login successful! Role:', result.role)
       
-      // Redirect immediately based on role from signIn response
-      const role = result.role || 'customer'
-      const redirectPath = getDefaultLandingPage(normalizeRole(role as any) as any)
-      console.log('[LoginPage] 🚀 Redirecting to:', redirectPath)
-      
-      // Use router.push for faster redirect
-      router.push(lp(redirectPath))
+      // The useEffect will handle the redirect once the user state is updated in AuthContext
+      // This prevents double-redirection issues.
     } catch (err) {
-      setError('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง')
+      setError(isThaiLocale ? 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง' : 'An error occurred. Please try again.')
       console.error('[LoginPage] ❌ Unexpected error:', err)
       setLoading(false)
     }

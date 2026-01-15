@@ -116,11 +116,11 @@ export default function FaqPage() {
               <div className="inline-block p-1 rounded-[2.5rem] bg-gradient-to-r from-pink-500/20 via-purple-500/20 to-cyan-500/20">
                 <div className="bg-[#020617] rounded-[2.4rem] px-12 py-10 space-y-8">
                   <p className="text-slate-400 font-light tracking-wide italic">
-                    {isThaiLocale ? 'ยังไม่พบคำตอบที่คุณต้องการ?' : 'Cant find what you are looking for?'}
+                    {t('faqPage.cantFindAnswer')}
                   </p>
                   <Button size="xl" variant="premium" className="h-16 px-12 rounded-2xl shadow-2xl shadow-pink-500/20 text-lg font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all" asChild>
                     <a href="/contact">
-                      {isThaiLocale ? 'ติดต่อฝ่ายสนับสนุน' : 'Contact Aesthetic Support'}
+                      {t('faqPage.contactSupport')}
                     </a>
                   </Button>
                 </div>

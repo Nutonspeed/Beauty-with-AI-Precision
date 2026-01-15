@@ -61,7 +61,7 @@ export function AnalysisHistoryGallery() {
     } finally {
       setIsLoading(false)
     }
-  }, [user?.id, router, lp, pagination.limit, pagination.offset])
+  }, [user?.id, router, lp, pagination.limit, pagination.offset, t])
 
   useEffect(() => {
     if (authLoading) return

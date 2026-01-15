@@ -5,12 +5,12 @@ import { Button } from '@/components/ui/button'
 import { AlertCircle, RefreshCw, X } from 'lucide-react'
 import type { AnalysisError } from '@/lib/errors/analysis-errors'
 import { useState } from 'react'
+import { useTranslations, useLocale } from 'next-intl'
 
 interface ErrorAlertProps {
   error: AnalysisError
   onRetry?: () => void
   onDismiss?: () => void
-  locale?: 'th' | 'en'
   className?: string
   showTechnicalDetails?: boolean
 }
@@ -19,23 +19,19 @@ export function ErrorAlert({
   error,
   onRetry,
   onDismiss,
-  locale = 'en',
   className = '',
   showTechnicalDetails = false,
 }: ErrorAlertProps) {
+  const t = useTranslations('errorAlert')
+  const locale = useLocale() as 'en' | 'th'
   const [isExpanded, setIsExpanded] = useState(false)
-
-  const titles = {
-    th: 'เกิดข้อผิดพลาด',
-    en: 'Error',
-  }
 
   return (
     <Alert variant="destructive" className={className}>
       <div className="flex items-start gap-3">
         <AlertCircle className="h-5 w-5 mt-0.5" />
         <div className="flex-1 space-y-2">
-          <AlertTitle>{titles[locale]}</AlertTitle>
+          <AlertTitle>{t('title')}</AlertTitle>
           <AlertDescription className="space-y-2">
             <p>{error.getUserMessage(locale)}</p>
 
@@ -45,13 +41,7 @@ export function ErrorAlert({
                   onClick={() => setIsExpanded(!isExpanded)}
                   className="text-xs underline hover:no-underline"
                 >
-                  {isExpanded
-                    ? locale === 'th'
-                      ? 'ซ่อนรายละเอียด'
-                      : 'Hide details'
-                    : locale === 'th'
-                      ? 'แสดงรายละเอียด'
-                      : 'Show details'}
+                  {isExpanded ? t('hideDetails') : t('showDetails')}
                 </button>
                 {isExpanded && (
                   <div className="mt-2 p-3 bg-destructive/10 rounded text-xs font-mono">
@@ -80,7 +70,7 @@ export function ErrorAlert({
                   className="gap-2"
                 >
                   <RefreshCw className="h-4 w-4" />
-                  {locale === 'th' ? 'ลองใหม่' : 'Try Again'}
+                  {t('tryAgain')}
                 </Button>
               )}
               {onDismiss && (
@@ -91,7 +81,7 @@ export function ErrorAlert({
                   className="gap-2"
                 >
                   <X className="h-4 w-4" />
-                  {locale === 'th' ? 'ปิด' : 'Dismiss'}
+                  {t('dismiss')}
                 </Button>
               )}
             </div>
@@ -114,6 +104,7 @@ export function ErrorAlertCompact({
   onRetry,
   className = '',
 }: ErrorAlertCompactProps) {
+  const t = useTranslations('errorAlert')
   return (
     <div
       className={`flex items-center gap-2 text-sm text-destructive ${className}`}
@@ -125,7 +116,7 @@ export function ErrorAlertCompact({
           onClick={onRetry}
           className="underline hover:no-underline ml-2"
         >
-          Retry
+          {t('retry')}
         </button>
       )}
     </div>

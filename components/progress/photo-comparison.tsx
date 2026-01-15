@@ -9,11 +9,16 @@ interface PhotoComparisonProps {
   showMetrics?: boolean;
 }
 
+import { useTranslations, useLocale } from 'next-intl';
+
 export default function PhotoComparison({
   beforePhoto,
   afterPhoto,
   showMetrics = true,
 }: PhotoComparisonProps) {
+  const t = useTranslations('progress.photoComparison');
+  const commonT = useTranslations('common');
+  const locale = useLocale();
   const [sliderPosition, setSliderPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
   const [isAligning, setIsAligning] = useState(true); // Start with aligning true
@@ -96,7 +101,7 @@ export default function PhotoComparison({
   if (!beforePhoto || !afterPhoto) {
     return (
       <div className="aspect-[4/3] flex items-center justify-center bg-gray-100 rounded-lg">
-        <p className="text-gray-500">กรุณาเลือกภาพเพื่อเปรียบเทียบ</p>
+        <p className="text-gray-500">{t('selectPhotos')}</p>
       </div>
     );
   }
@@ -112,25 +117,25 @@ export default function PhotoComparison({
 
   const metrics = [
     {
-      label: 'ฝ้า-กระ',
+      label: t('metrics.spots'),
       before: beforeMetrics.spots || 0,
       after: afterMetrics.spots || 0,
       improvement: calculateImprovement(beforeMetrics.spots || 0, afterMetrics.spots || 0),
     },
     {
-      label: 'รูขุมขน',
+      label: t('metrics.pores'),
       before: beforeMetrics.pores || 0,
       after: afterMetrics.pores || 0,
       improvement: calculateImprovement(beforeMetrics.pores || 0, afterMetrics.pores || 0),
     },
     {
-      label: 'ริ้วรอย',
+      label: t('metrics.wrinkles'),
       before: beforeMetrics.wrinkles || 0,
       after: afterMetrics.wrinkles || 0,
       improvement: calculateImprovement(beforeMetrics.wrinkles || 0, afterMetrics.wrinkles || 0),
     },
     {
-      label: 'ความแดง',
+      label: t('metrics.redness'),
       before: beforeMetrics.redness || 0,
       after: afterMetrics.redness || 0,
       improvement: calculateImprovement(beforeMetrics.redness || 0, afterMetrics.redness || 0),
@@ -158,7 +163,7 @@ export default function PhotoComparison({
             draggable={false}
           />
           <div className="absolute top-4 left-4 bg-black/70 text-white px-3 py-1 rounded text-sm">
-            ก่อน
+            {t('before')}
           </div>
         </div>
 
@@ -171,7 +176,7 @@ export default function PhotoComparison({
             <div className="absolute inset-0 flex items-center justify-center bg-gray-200/50 backdrop-blur-sm">
               <div className="text-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-2"></div>
-                <p className="text-sm text-gray-600 font-medium">กำลังจัดตำแหน่งภาพ...</p>
+                <p className="text-sm text-gray-600 font-medium">{t('aligning')}</p>
               </div>
             </div>
           ) : (
@@ -183,7 +188,7 @@ export default function PhotoComparison({
             />
           )}
           <div className="absolute top-4 right-4 bg-black/70 text-white px-3 py-1 rounded text-sm">
-            หลัง
+            {t('after')}
           </div>
         </div>
 
@@ -212,19 +217,19 @@ export default function PhotoComparison({
       {/* Date Labels */}
       <div className="flex justify-between text-sm text-gray-600">
         <div>
-          <div className="font-medium">วันที่ถ่ายภาพ</div>
-          <div>{new Date(beforePhoto.taken_at).toLocaleDateString('th-TH')}</div>
+          <div className="font-medium">{t('photoDate')}</div>
+          <div>{new Date(beforePhoto.taken_at).toLocaleDateString(locale === 'th' ? 'th-TH' : 'en-US')}</div>
         </div>
         <div className="text-right">
-          <div className="font-medium">วันที่ถ่ายภาพ</div>
-          <div>{new Date(afterPhoto.taken_at).toLocaleDateString('th-TH')}</div>
+          <div className="font-medium">{t('photoDate')}</div>
+          <div>{new Date(afterPhoto.taken_at).toLocaleDateString(locale === 'th' ? 'th-TH' : 'en-US')}</div>
         </div>
       </div>
 
       {/* Metrics Comparison */}
       {showMetrics && (
         <div className="bg-gray-50 rounded-lg p-4">
-          <h3 className="font-semibold mb-3">การเปลี่ยนแปลง</h3>
+          <h3 className="font-semibold mb-3">{t('changes')}</h3>
           <div className="space-y-3">
             {metrics.map((metric) => (
               <div key={metric.label}>
@@ -244,8 +249,8 @@ export default function PhotoComparison({
                   </span>
                 </div>
                 <div className="flex gap-2 text-xs text-gray-500">
-                  <div>ก่อน: {metric.before.toFixed(0)}</div>
-                  <div>หลัง: {metric.after.toFixed(0)}</div>
+                  <div>{t('beforeLabel')}: {metric.before.toFixed(0)}</div>
+                  <div>{t('afterLabel')}: {metric.after.toFixed(0)}</div>
                   <div className={`ml-auto font-medium ${
                       metric.improvement > 0
                         ? 'text-green-600'
@@ -264,8 +269,8 @@ export default function PhotoComparison({
 
       {/* Tips */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-800">
-        <div className="font-medium mb-1">💡 วิธีใช้งาน</div>
-        <div>ลากเส้นตรงกลางเพื่อเปรียบเทียบภาพก่อน-หลัง</div>
+        <div className="font-medium mb-1">💡 {commonT('howToUse')}</div>
+        <div>{t('howToUseDesc')}</div>
       </div>
     </div>
   );

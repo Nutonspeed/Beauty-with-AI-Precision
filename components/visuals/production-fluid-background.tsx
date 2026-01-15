@@ -4,17 +4,17 @@ import React from "react"
 
 type FluidBackgroundProps = {
   className?: string
-  /** สี gradient พื้นหลัง */
+  /** Background gradient colors */
   gradient?: [string, string]
-  /** ความเข้มของสีเอฟเฟกต์ (0–1) */
+  /** Effect color intensity (0–1) */
   intensity?: number
 }
 
 /**
- * ProductionFluidBackground: เวอร์ชัน production ที่ไม่มี animation
- * - เร็วและเบาสำหรับ build performance
- * - ยังคงมี visual appeal ด้วย gradient
- * - ไม่มี canvas หรือ animation loop
+ * ProductionFluidBackground: Production version without animation
+ * - Fast and lightweight for build performance
+ * - Still maintains visual appeal with gradient
+ * - No canvas or animation loop
  */
 export default function ProductionFluidBackground({
   className,

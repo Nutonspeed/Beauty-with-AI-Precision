@@ -8,6 +8,7 @@
 import { useAuth } from "@/lib/auth/context"
 import { AnalysisTier, hasFeatureAccess } from "@/types/supabase"
 import { Lock, Sparkles } from "lucide-react"
+import { useTranslations } from "next-intl"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
@@ -114,23 +115,7 @@ export function FeatureGate({
  */
 function DefaultUpgradePrompt({ _tier, feature }: { _tier: AnalysisTier; feature: string }) {
   const lp = useLocalizePath()
-  const featureNames: Record<string, string> = {
-    'basic_analysis': 'การวิเคราะห์พื้นฐาน',
-    'advanced_analysis': 'การวิเคราะห์ขั้นสูง',
-    'ai_recommendations': 'คำแนะนำจาก AI',
-    'comparison': 'การเปรียบเทียบผล',
-    'history': 'ประวัติการวิเคราะห์',
-    'export': 'การส่งออกข้อมูล',
-    'center_management': 'การจัดการเซ็นเตอร์',
-    'multi_user': 'ผู้ใช้หลายคน',
-    'api_access': 'API Access',
-  }
-
-  const tierNames: Record<AnalysisTier, string> = {
-    'free': 'Free',
-    'premium': 'Premium',
-    'aesthetic': 'Aesthetic',
-  }
+  const t = useTranslations('featureGate')
 
   const requiredTier = getRequiredTier(feature)
 
@@ -138,22 +123,24 @@ function DefaultUpgradePrompt({ _tier, feature }: { _tier: AnalysisTier; feature
     <Alert className="border-amber-500/50 bg-amber-500/10">
       <Lock className="h-5 w-5 text-amber-600" />
       <AlertTitle className="text-amber-900 dark:text-amber-100">
-        ฟีเจอร์นี้ต้องใช้แพ็คเกจ {tierNames[requiredTier]}
+        {t('requiredTier', { tier: t(`tiers.${requiredTier}`) })}
       </AlertTitle>
       <AlertDescription className="mt-2 space-y-3">
         <p className="text-amber-800 dark:text-amber-200">
-          <strong>{featureNames[feature] || feature}</strong> พร้อมใช้งานใน{" "}
-          <span className="font-semibold">{tierNames[requiredTier]}</span>
+          <strong dangerouslySetInnerHTML={{ 
+            __html: t('availableIn', { feature: t(`features.${feature}` as any) || feature }) 
+          }} />
+          <span className="font-semibold">{t(`tiers.${requiredTier}`)}</span>
         </p>
         <div className="flex gap-2">
           <Button asChild size="sm" className="bg-amber-600 hover:bg-amber-700">
             <Link href={lp("/pricing")}>
               <Sparkles className="mr-2 h-4 w-4" />
-              อัปเกรดเลย
+              {t('upgradeBtn')}
             </Link>
           </Button>
           <Button asChild size="sm" variant="outline">
-            <Link href={lp("/features")}>ดูฟีเจอร์ทั้งหมด</Link>
+            <Link href={lp("/features")}>{t('allFeatures')}</Link>
           </Button>
         </div>
       </AlertDescription>

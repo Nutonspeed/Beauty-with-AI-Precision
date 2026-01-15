@@ -140,7 +140,7 @@ export default function CenterAppointmentsPage() {
       } catch (err) {
         console.error("Load appointments failed:", err)
         if (!cancelled) {
-          setError("ไม่สามารถโหลดตารางนัดได้")
+          setError(t('centers.appointments.loadError'))
           setIsLoading(false)
         }
       }
@@ -151,7 +151,7 @@ export default function CenterAppointmentsPage() {
     return () => {
       cancelled = true
     }
-  }, [mineOnly, statusFilter, range])
+  }, [mineOnly, statusFilter, range, t])
 
   useEffect(() => {
     let cancelled = false
@@ -238,7 +238,7 @@ export default function CenterAppointmentsPage() {
       setMarkPaidPayment(null)
     } catch (e) {
       console.error("Mark paid failed:", e)
-      setError("ไม่สามารถอัปเดตสถานะการชำระเงินได้")
+      setError(t('centers.appointments.updatePaymentError'))
     } finally {
       setMarkPaidLoadingId(null)
     }
@@ -329,14 +329,14 @@ export default function CenterAppointmentsPage() {
             >
               <Badge variant="outline" className="px-4 py-1 rounded-full border-pink-500/30 text-pink-400 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.2em] text-[10px] font-black shadow-2xl shadow-pink-500/10">
                 <Calendar className="mr-3 h-3.5 w-3.5 animate-pulse" />
-                Temporal Intelligence Node
+                {t('centers.appointments.temporalNode')}
               </Badge>
               <h1 className="text-5xl md:text-7xl font-bold tracking-tighter text-white leading-[0.9] italic">
-                Appointment<br />
+                {t('nav.booking')}<br />
                 <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent not-italic">Synchronizer</span>
               </h1>
               <p className="text-xl text-slate-500 font-light tracking-widest max-w-2xl italic leading-relaxed">
-                Monitor real-time aesthetic cycles and team resource allocation with precision.
+                {t('centers.appointments.syncDescription')}
               </p>
             </motion.div>
             
@@ -351,12 +351,12 @@ export default function CenterAppointmentsPage() {
                       range === opt ? "bg-pink-600 text-white shadow-2xl shadow-pink-600/40 italic" : "text-slate-600 hover:text-slate-300"
                     )}
                   >
-                    {opt === 'today' ? 'Today' : opt === '7d' ? '7 Days' : '30 Days'}
+                    {opt === 'today' ? t('centers.appointments.today') : opt === '7d' ? t('centers.appointments.days7') : t('centers.appointments.days30')}
                   </button>
                 ))}
               </div>
               <Button variant="premium" className="h-14 px-8 rounded-2xl shadow-2xl shadow-pink-500/20 text-[10px] font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95" onClick={() => router.push(lp("/center/payments"))}>
-                Financial Nodes
+                {t('centers.appointments.financialNodes')}
               </Button>
             </div>
           </div>
@@ -378,21 +378,21 @@ export default function CenterAppointmentsPage() {
                         <Sparkles className="h-6 w-6 text-emerald-400 animate-pulse" />
                       </div>
                       <p className="text-sm font-bold text-white tracking-tight italic">
-                        Active Selection Node: <span className="font-mono text-emerald-400 ml-2">{highlightAppointmentId}</span>
+                        {t('centers.appointments.activeSelection')}: <span className="font-mono text-emerald-400 ml-2">{highlightAppointmentId}</span>
                       </p>
                     </div>
                     <div className="flex items-center gap-3">
                       <Button variant="outline" size="sm" className="rounded-xl border-white/10 bg-white/5 hover:bg-white/10 text-[9px] font-black uppercase tracking-widest h-10 px-6" onClick={async () => {
                         try { await navigator.clipboard.writeText(globalThis.location.href) } catch {}
                       }}>
-                        Copy Link
+                        {t('centers.appointments.copyLink')}
                       </Button>
                       <Button variant="outline" size="sm" className="rounded-xl border-white/10 bg-white/5 hover:bg-white/10 text-[9px] font-black uppercase tracking-widest h-10 px-6" onClick={() => {
                         const url = new URL(globalThis.location.href)
                         url.searchParams.delete("appointment_id")
                         router.replace(url.pathname + (url.search ? url.search : ""))
                       }}>
-                        Bypass Selection
+                        {t('centers.appointments.bypassSelection')}
                       </Button>
                     </div>
                   </div>
@@ -404,7 +404,7 @@ export default function CenterAppointmentsPage() {
           {/* Filtering Infrastructure */}
           <div className="grid gap-8 md:grid-cols-12 items-end">
             <div className="md:col-span-5 space-y-3">
-              <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">Search Diagnostics</Label>
+              <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">{t('centers.appointments.searchDiagnostics')}</Label>
               <div className="relative group">
                 <div className="absolute -inset-1 bg-gradient-to-r from-pink-500/20 to-purple-500/20 rounded-2xl blur opacity-0 group-focus-within:opacity-100 transition duration-1000" />
                 <Input
@@ -417,14 +417,14 @@ export default function CenterAppointmentsPage() {
             </div>
             
             <div className="md:col-span-3 space-y-3">
-              <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">Status Filter</Label>
+              <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">{t('centers.appointments.statusFilter')}</Label>
               <div className="relative">
                 <select
                   className="h-14 w-full rounded-2xl border border-white/5 bg-white/[0.03] px-6 text-sm text-white focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500/30 appearance-none transition-all cursor-pointer"
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value as any)}
                 >
-                  <option value="all" className="bg-[#020617]">GLOBAL VIEW</option>
+                  <option value="all" className="bg-[#020617]">{t('centers.appointments.globalView')}</option>
                   <option value="scheduled" className="bg-[#020617]">SCHEDULED</option>
                   <option value="completed" className="bg-[#020617]">COMPLETED</option>
                   <option value="cancelled" className="bg-[#020617]">CANCELLED</option>
@@ -444,7 +444,7 @@ export default function CenterAppointmentsPage() {
                 )}
                 onClick={() => setMineOnly((v) => !v)}
               >
-                {mineOnly ? "My Nodes Only" : "Global Node View"}
+                {mineOnly ? t('centers.appointments.myNodesOnly') : t('centers.appointments.globalNodeView')}
               </Button>
               {query && (
                 <Button variant="ghost" size="icon" className="h-14 w-14 rounded-2xl bg-white/[0.03] border border-white/5 text-slate-500 hover:text-white" onClick={() => setQuery("")}>
@@ -461,9 +461,9 @@ export default function CenterAppointmentsPage() {
               <div className="space-y-2">
                 <CardTitle className="text-3xl font-bold text-white tracking-tight italic flex items-center gap-4">
                   <Calendar className="h-8 w-8 text-pink-500" />
-                  Live Cycle Monitor ({filteredAppointments.length})
+                  {t('centers.appointments.liveMonitor')} ({filteredAppointments.length})
                 </CardTitle>
-                <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Real-time aesthetic synchronization</CardDescription>
+                <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{t('centers.appointments.syncDescription')}</CardDescription>
               </div>
             </CardHeader>
             <CardContent className="p-0">
@@ -473,8 +473,8 @@ export default function CenterAppointmentsPage() {
                     <Calendar className="h-10 w-10" />
                   </div>
                   <div className="space-y-2">
-                    <p className="text-xl font-bold text-slate-500 italic">Temporal Void</p>
-                    <p className="text-sm text-slate-700 font-light uppercase tracking-widest">No cycles detected for current parameters.</p>
+                    <p className="text-xl font-bold text-slate-500 italic">{t('centers.appointments.temporalVoid')}</p>
+                    <p className="text-sm text-slate-700 font-light uppercase tracking-widest">{t('centers.appointments.noCycles')}</p>
                   </div>
                 </div>
               ) : (
@@ -482,12 +482,12 @@ export default function CenterAppointmentsPage() {
                   <table className="w-full border-collapse">
                     <thead>
                       <tr className="bg-white/[0.02] border-b border-white/5">
-                        <th className="px-8 py-6 text-left text-[9px] font-black uppercase tracking-[0.3em] text-slate-600">Cycle Time</th>
-                        <th className="px-8 py-6 text-left text-[9px] font-black uppercase tracking-[0.3em] text-slate-600">Client Identity</th>
-                        <th className="px-8 py-6 text-left text-[9px] font-black uppercase tracking-[0.3em] text-slate-600">Aesthetic Program</th>
-                        <th className="px-8 py-6 text-left text-[9px] font-black uppercase tracking-[0.3em] text-slate-600">Operator Node</th>
-                        <th className="px-8 py-6 text-left text-[9px] font-black uppercase tracking-[0.3em] text-slate-600">Status Vector</th>
-                        <th className="px-8 py-6 text-left text-[9px] font-black uppercase tracking-[0.3em] text-slate-600">Financial Inflow</th>
+                        <th className="px-8 py-6 text-left text-[9px] font-black uppercase tracking-[0.3em] text-slate-600">{t('centers.appointments.table.cycleTime')}</th>
+                        <th className="px-8 py-6 text-left text-[9px] font-black uppercase tracking-[0.3em] text-slate-600">{t('centers.appointments.table.clientIdentity')}</th>
+                        <th className="px-8 py-6 text-left text-[9px] font-black uppercase tracking-[0.3em] text-slate-600">{t('centers.appointments.table.aestheticProgram')}</th>
+                        <th className="px-8 py-6 text-left text-[9px] font-black uppercase tracking-[0.3em] text-slate-600">{t('centers.appointments.table.operatorNode')}</th>
+                        <th className="px-8 py-6 text-left text-[9px] font-black uppercase tracking-[0.3em] text-slate-600">{t('centers.appointments.table.statusVector')}</th>
+                        <th className="px-8 py-6 text-left text-[9px] font-black uppercase tracking-[0.3em] text-slate-600">{t('centers.appointments.table.financialInflow')}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
@@ -520,7 +520,7 @@ export default function CenterAppointmentsPage() {
                                 </div>
                                 <div className="space-y-1">
                                   <p className="font-bold text-white tracking-tight italic group-hover:text-pink-400 transition-colors">{a.customer_name}</p>
-                                  <p className="text-[10px] text-slate-600 font-black uppercase tracking-widest">{a.customer_phone || "PRIVATE NODE"}</p>
+                                  <p className="text-[10px] text-slate-600 font-black uppercase tracking-widest">{a.customer_phone || t('centers.appointments.table.privateNode')}</p>
                                 </div>
                               </div>
                             </td>
@@ -539,7 +539,7 @@ export default function CenterAppointmentsPage() {
                                   <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 group-hover/op:text-blue-400 transition-colors">{a.specialist_id}</span>
                                 </div>
                               ) : (
-                                <Badge variant="outline" className="bg-white/[0.02] text-[8px] font-black text-slate-700 border-white/5">UNASSIGNED</Badge>
+                                <Badge variant="outline" className="bg-white/[0.02] text-[8px] font-black text-slate-700 border-white/5">{t('centers.appointments.table.unassigned')}</Badge>
                               )}
                             </td>
                             <td className="px-8 py-8 align-top">
@@ -574,7 +574,7 @@ export default function CenterAppointmentsPage() {
                                         className="h-10 px-6 rounded-xl border-white/10 bg-white/5 hover:bg-white/10 text-[9px] font-black uppercase tracking-widest transition-all"
                                         onClick={() => handleOpenPromptPayQr(payment.center_id, Number(payment.amount || 0))}
                                       >
-                                        Open Gateway
+                                        {t('centers.appointments.table.openGateway')}
                                       </Button>
                                     )}
                                     {payment.payment_status === "pending" && (
@@ -584,7 +584,7 @@ export default function CenterAppointmentsPage() {
                                         onClick={() => openMarkPaidDialog(payment)}
                                         disabled={markPaidLoadingId === payment.id}
                                       >
-                                        {markPaidLoadingId === payment.id ? "SYNCING..." : "Verify Payment"}
+                                        {markPaidLoadingId === payment.id ? t('centers.appointments.table.syncing') : t('centers.appointments.table.verifyPayment')}
                                       </Button>
                                     )}
                                   </div>
@@ -619,19 +619,19 @@ export default function CenterAppointmentsPage() {
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-pink-500/10 border border-pink-500/20 shadow-inner mb-2">
               <CreditCard className="h-8 w-8 text-pink-400" />
             </div>
-            <DialogTitle className="text-3xl font-bold text-white tracking-tight italic">Verify Inflow Node</DialogTitle>
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Authorize aesthetic financial synchronization</p>
+            <DialogTitle className="text-3xl font-bold text-white tracking-tight italic">{t('centers.appointments.dialog.verifyInflow')}</DialogTitle>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{t('centers.appointments.dialog.authorizeFinancial')}</p>
           </DialogHeader>
 
           <div className="space-y-10 py-8">
             {markPaidPayment && (
               <div className="grid grid-cols-2 gap-6 p-6 rounded-2xl bg-white/[0.02] border border-white/5 shadow-inner">
                 <div className="space-y-1">
-                  <p className="text-[8px] font-black uppercase tracking-widest text-slate-600">Payment Vector ID</p>
+                  <p className="text-[8px] font-black uppercase tracking-widest text-slate-600">{t('centers.appointments.dialog.paymentVectorId')}</p>
                   <p className="font-mono text-xs text-slate-400 truncate">{markPaidPayment.id}</p>
                 </div>
                 <div className="space-y-1 text-right">
-                  <p className="text-[8px] font-black uppercase tracking-widest text-slate-600">Authorized Amount</p>
+                  <p className="text-[8px] font-black uppercase tracking-widest text-slate-600">{t('centers.appointments.dialog.authorizedAmount')}</p>
                   <p className="text-2xl font-black text-pink-400 italic tracking-tighter">฿{Number(markPaidPayment.amount || 0).toLocaleString()}</p>
                 </div>
               </div>
@@ -639,7 +639,7 @@ export default function CenterAppointmentsPage() {
 
             <div className="space-y-6">
               <div className="space-y-3">
-                <Label className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">Reference Hash (Transaction ID)</Label>
+                <Label className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">{t('centers.appointments.dialog.referenceHash')}</Label>
                 <Input 
                   className="h-14 rounded-2xl border-white/5 bg-white/[0.03] text-white placeholder:text-slate-700 px-6 font-mono text-xs" 
                   value={markPaidTransactionId} 
@@ -649,7 +649,7 @@ export default function CenterAppointmentsPage() {
               </div>
 
               <div className="space-y-3">
-                <Label className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">Diagnostic Notes</Label>
+                <Label className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-600 ml-1 italic">{t('centers.appointments.dialog.diagnosticNotes')}</Label>
                 <Textarea 
                   className="rounded-2xl border-white/5 bg-white/[0.03] text-white placeholder:text-slate-700 px-6 py-4 resize-none italic font-light" 
                   value={markPaidNotes} 
@@ -670,7 +670,7 @@ export default function CenterAppointmentsPage() {
                 setMarkPaidPayment(null)
               }}
             >
-              Abort SYNC
+              {t('centers.appointments.dialog.abortSync')}
             </Button>
             <Button
               variant="premium"
@@ -683,7 +683,7 @@ export default function CenterAppointmentsPage() {
                   <Loader2 className="h-4 w-4 animate-spin" />
                   SYNCING...
                 </div>
-              ) : "Authorize Sync"}
+              ) : "t('centers.appointments.dialog.commitSync')"}
             </Button>
           </DialogFooter>
         </DialogContent>

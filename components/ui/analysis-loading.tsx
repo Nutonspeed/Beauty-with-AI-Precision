@@ -4,62 +4,35 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { Loader2, Upload, Brain, Save, CheckCircle } from 'lucide-react'
 
+import { useTranslations } from 'next-intl'
+
 export type AnalysisStep = 'upload' | 'processing' | 'saving' | 'complete'
 
 interface AnalysisLoadingProps {
   step: AnalysisStep
   progress: number
   message?: string
-  locale?: 'th' | 'en'
   className?: string
 }
-
-const STEP_CONFIG: Record<
-  AnalysisStep,
-  {
-    icon: typeof Upload
-    label: { th: string; en: string }
-    description: { th: string; en: string }
-    color: string
-  }
-> = {
-  upload: {
-    icon: Upload,
-    label: { th: 'กำลังอัปโหลด', en: 'Uploading' },
-    description: { th: 'กำลังอัปโหลดรูปภาพ...', en: 'Uploading image...' },
-    color: 'text-blue-500',
-  },
-  processing: {
-    icon: Brain,
-    label: { th: 'กำลังวิเคราะห์', en: 'Processing' },
-    description: { th: 'AI กำลังวิเคราะห์ผิวหน้าของคุณ...', en: 'AI is analyzing your skin...' },
-    color: 'text-purple-500',
-  },
-  saving: {
-    icon: Save,
-    label: { th: 'กำลังบันทึก', en: 'Saving' },
-    description: { th: 'กำลังบันทึกผลการวิเคราะห์...', en: 'Saving analysis results...' },
-    color: 'text-green-500',
-  },
-  complete: {
-    icon: CheckCircle,
-    label: { th: 'เสร็จสิ้น', en: 'Complete' },
-    description: { th: 'การวิเคราะห์เสร็จสมบูรณ์!', en: 'Analysis complete!' },
-    color: 'text-green-600',
-  },
-}
-
-const STEP_ORDER: AnalysisStep[] = ['upload', 'processing', 'saving', 'complete']
 
 export function AnalysisLoading({
   step,
   progress,
   message,
-  locale = 'en',
   className = '',
 }: AnalysisLoadingProps) {
+  const t = useTranslations('analysisLoading')
+  
+  const STEP_ORDER: AnalysisStep[] = ['upload', 'processing', 'saving', 'complete']
   const currentStepIndex = STEP_ORDER.indexOf(step)
-  const config = STEP_CONFIG[step]
+  
+  const config = {
+    upload: { icon: Upload, color: 'text-blue-500' },
+    processing: { icon: Brain, color: 'text-purple-500' },
+    saving: { icon: Save, color: 'text-green-500' },
+    complete: { icon: CheckCircle, color: 'text-green-600' },
+  }[step]
+  
   const Icon = config.icon
 
   return (
@@ -79,9 +52,9 @@ export function AnalysisLoading({
 
           {/* Step Label */}
           <div className="space-y-2">
-            <h3 className="text-2xl font-semibold">{config.label[locale]}</h3>
+            <h3 className="text-2xl font-semibold">{t(`${step}.label`)}</h3>
             <p className="text-muted-foreground">
-              {message || config.description[locale]}
+              {message || t(`${step}.description`)}
             </p>
           </div>
 
@@ -96,8 +69,14 @@ export function AnalysisLoading({
           {/* Step Indicators */}
           <div className="flex items-center justify-center gap-2 pt-4">
             {STEP_ORDER.slice(0, -1).map((stepName, index) => {
-              const stepConfig = STEP_CONFIG[stepName]
-              const StepIcon = stepConfig.icon
+              const stepIconConfig = {
+                upload: { icon: Upload, color: 'text-blue-500' },
+                processing: { icon: Brain, color: 'text-purple-500' },
+                saving: { icon: Save, color: 'text-green-500' },
+                complete: { icon: CheckCircle, color: 'text-green-600' },
+              }[stepName]
+              
+              const StepIcon = stepIconConfig.icon
               const isActive = index === currentStepIndex
               const isCompleted = index < currentStepIndex
 
@@ -105,7 +84,7 @@ export function AnalysisLoading({
               if (isCompleted) {
                 stepClassName = 'bg-green-500 border-green-500 text-white'
               } else if (isActive) {
-                stepClassName = `${stepConfig.color} border-current bg-background`
+                stepClassName = `${stepIconConfig.color} border-current bg-background`
               }
 
               return (
@@ -135,7 +114,7 @@ export function AnalysisLoading({
           <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground">
             {STEP_ORDER.slice(0, -1).map((stepName) => (
               <div key={stepName} className="w-20 text-center">
-                {STEP_CONFIG[stepName].label[locale]}
+                {t(`${stepName}.label`)}
               </div>
             ))}
           </div>
@@ -148,16 +127,22 @@ export function AnalysisLoading({
 // Compact version for smaller spaces
 interface AnalysisLoadingCompactProps {
   step: AnalysisStep
-  locale?: 'th' | 'en'
   className?: string
 }
 
 export function AnalysisLoadingCompact({
   step,
-  locale = 'en',
   className = '',
 }: AnalysisLoadingCompactProps) {
-  const config = STEP_CONFIG[step]
+  const t = useTranslations('analysisLoading')
+  
+  const config = {
+    upload: { icon: Upload, color: 'text-blue-500' },
+    processing: { icon: Brain, color: 'text-purple-500' },
+    saving: { icon: Save, color: 'text-green-500' },
+    complete: { icon: CheckCircle, color: 'text-green-600' },
+  }[step]
+  
   const Icon = config.icon
 
   return (
@@ -170,8 +155,8 @@ export function AnalysisLoadingCompact({
         )}
       </div>
       <div className="flex-1">
-        <p className="font-medium">{config.label[locale]}</p>
-        <p className="text-sm text-muted-foreground">{config.description[locale]}</p>
+        <p className="font-medium">{t(`${step}.label`)}</p>
+        <p className="text-sm text-muted-foreground">{t(`${step}.description`)}</p>
       </div>
     </div>
   )

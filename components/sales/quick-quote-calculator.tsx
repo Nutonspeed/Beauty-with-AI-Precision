@@ -2,7 +2,7 @@
 
 /**
  * Quick Quote Calculator
- * คำนวณราคาแบบ real-time พร้อมส่วนลดและ promotions
+ * Real-time price calculation with discounts and promotions
  * Competitive advantage: Instant pricing with upsell suggestions
  */
 

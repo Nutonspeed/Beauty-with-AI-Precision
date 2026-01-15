@@ -312,31 +312,31 @@ class VoiceRecognitionManager {
   }
 
   /**
-   * Get user-friendly error message
+   * Get user-friendly error key
    */
-  public getErrorMessage(error: VoiceRecognitionError): string {
-    return VoiceRecognitionManager.getErrorMessage(error);
+  public getErrorKey(error: VoiceRecognitionError): string {
+    return VoiceRecognitionManager.getErrorKey(error);
   }
 
   /**
-   * Get user-friendly error message (static)
+   * Get user-friendly error key (static)
    */
-  public static getErrorMessage(error: VoiceRecognitionError): string {
+  public static getErrorKey(error: VoiceRecognitionError): string {
     switch (error) {
       case 'not-supported':
-        return 'เบราว์เซอร์นี้ไม่รองรับการพูดเป็นข้อความ กรุณาใช้ Chrome, Edge หรือ Safari';
+        return 'errors.notSupported';
       case 'no-speech':
-        return 'ไม่ได้ยินเสียงพูด กรุณาลองอีกครั้ง';
+        return 'errors.noSpeech';
       case 'audio-capture':
-        return 'ไม่พบไมโครโฟน กรุณาตรวจสอบอุปกรณ์';
+        return 'errors.audioCapture';
       case 'not-allowed':
-        return 'กรุณาอนุญาตการเข้าถึงไมโครโฟนในการตั้งค่าเบราว์เซอร์';
+        return 'errors.notAllowed';
       case 'network':
-        return 'เกิดข้อผิดพลาดเครือข่าย กรุณาตรวจสอบการเชื่อมต่อ';
+        return 'errors.network';
       case 'aborted':
-        return 'ยกเลิกการบันทึกเสียง';
+        return 'errors.aborted';
       default:
-        return 'เกิดข้อผิดพลาด กรุณาลองอีกครั้ง';
+        return 'errors.default';
     }
   }
 }

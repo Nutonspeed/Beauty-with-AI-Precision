@@ -92,8 +92,13 @@ export async function POST(request: NextRequest) {
     // Calculate metrics
     const metrics = calculateImprovementMetrics(beforePhoto, afterPhoto);
     const timeElapsed = calculateTimeElapsed(beforePhoto, afterPhoto);
-    const improvementSummary = generateImprovementSummary(metrics);
-    const recommendations = generateRecommendations(metrics, timeElapsed.days);
+    
+    // In API routes, we don't have next-intl hooks, so we pass a fallback or the requester's locale if possible
+    // For now, using a simple identity function as translation fallback for summary
+    const t = (key: string, values?: any) => key;
+    
+    const improvementSummary = generateImprovementSummary(metrics, t);
+    const recommendations = generateRecommendations(metrics, timeElapsed.days, t);
 
     return NextResponse.json({
       comparison,

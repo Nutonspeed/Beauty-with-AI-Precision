@@ -15,11 +15,11 @@ export default function MySchedulePage() {
 
   // Mock schedule data
   const todaySchedule = [
-    { time: "09:00", customer: "คุณสมหญิง", program: "Botox", duration: "30 นาที", room: "ห้อง 1" },
-    { time: "10:00", customer: "คุณมานี", program: "Filler", duration: "45 นาที", room: "ห้อง 2" },
-    { time: "11:00", customer: "คุณวิชัย", program: "Laser", duration: "60 นาที", room: "ห้อง 1" },
-    { time: "14:00", customer: "คุณสุดา", program: "Facial", duration: "90 นาที", room: "ห้อง 3" },
-    { time: "16:00", customer: "คุณประภา", program: "Consultation", duration: "30 นาที", room: "ห้อง 1" },
+    { time: "09:00", customer: t('mySchedule.mock.customer1'), program: "Botox", duration: t('mySchedule.mock.duration30'), room: t('mySchedule.mock.room1') },
+    { time: "10:00", customer: t('mySchedule.mock.customer2'), program: "Filler", duration: t('mySchedule.mock.duration45'), room: t('mySchedule.mock.room2') },
+    { time: "11:00", customer: t('mySchedule.mock.customer3'), program: "Laser", duration: t('mySchedule.mock.duration60'), room: t('mySchedule.mock.room1') },
+    { time: "14:00", customer: t('mySchedule.mock.customer4'), program: "Facial", duration: t('mySchedule.mock.duration90'), room: t('mySchedule.mock.room3') },
+    { time: "16:00", customer: t('mySchedule.mock.customer5'), program: "Consultation", duration: t('mySchedule.mock.duration30'), room: t('mySchedule.mock.room1') },
   ]
 
   return (
@@ -121,7 +121,7 @@ export default function MySchedulePage() {
                         </div>
                         <div className="pl-14">
                           <Badge variant="outline" className="bg-white/[0.02] text-[10px] font-black uppercase tracking-[0.15em] text-slate-500 border-white/5 group-hover:text-slate-300 transition-colors italic">
-                            PROTOCOL: {item.program}
+                            {t('mySchedule.protocol')} {item.program}
                           </Badge>
                         </div>
                       </div>

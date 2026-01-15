@@ -1,6 +1,6 @@
 /**
- * Texture Analyzer - วิเคราะห์ผิวหนัง
- * ใช้ FFT และ Local Binary Patterns
+ * Texture Analyzer - Analyzes skin texture
+ * Uses FFT and Local Binary Patterns
  */
 
 import { Jimp } from 'jimp';
@@ -13,7 +13,7 @@ export interface TextureAnalysisResult {
 }
 
 /**
- * วิเคราะห์ texture ของผิวหนัง
+ * Analyze skin texture
  */
 export async function analyzeTexture(
   imageBuffer: Buffer | string
@@ -23,22 +23,22 @@ export async function analyzeTexture(
     const width = image.bitmap.width;
     const height = image.bitmap.height;
 
-    // แปลงเป็น grayscale (Jimp v1.x)
+    // Convert to grayscale (Jimp v1.x)
     await (image.greyscale() as unknown as Promise<void>);
 
-    // คำนวณ Local Binary Patterns (LBP) สำหรับหา texture patterns
+    // Calculate Local Binary Patterns (LBP) to find texture patterns
     const lbpMap = calculateLBP(image);
 
-    // หา variance ของ LBP เพื่อประเมิน roughness
+    // Find variance of LBP to assess roughness
     const roughAreas = findRoughAreas(lbpMap, width, height);
 
-    // คำนวณ global smoothness จาก standard deviation
+    // Calculate global smoothness from standard deviation
     const smoothness = calculateSmoothness(image);
 
-    // คำนวณ uniformity จาก LBP histogram
+    // Calculate uniformity from LBP histogram
     const uniformity = calculateUniformity(lbpMap);
 
-    // คำนวณ severity
+    // Calculate severity
     let severity = 10 - smoothness; // inverse relationship
     if (roughAreas.length > 10) severity = Math.min(10, severity + 2);
     if (uniformity < 5) severity = Math.min(10, severity + 1);
@@ -56,7 +56,7 @@ export async function analyzeTexture(
 }
 
 /**
- * คำนวณ Local Binary Pattern
+ * Calculate Local Binary Pattern
  */
 function calculateLBP(image: any): number[][] {
   const width = image.bitmap.width;
@@ -96,7 +96,7 @@ function calculateLBP(image: any): number[][] {
 }
 
 /**
- * หาพื้นที่ที่มี texture ขรุขระ
+ * Find areas with rough texture
  */
 function findRoughAreas(
   lbpMap: number[][],
@@ -112,7 +112,7 @@ function findRoughAreas(
       let count = 0;
       const values: number[] = [];
 
-      // คำนวณ variance ใน window
+      // Calculate variance in window
       for (let wy = 0; wy < windowSize && y + wy < lbpMap.length; wy++) {
         for (let wx = 0; wx < windowSize && x + wx < (lbpMap[y + wy]?.length || 0); wx++) {
           const value = lbpMap[y + wy]?.[x + wx];
@@ -127,7 +127,7 @@ function findRoughAreas(
         const mean = values.reduce((sum, v) => sum + v, 0) / count;
         variance = values.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / count;
 
-        // ถ้า variance สูง แสดงว่า texture ไม่สม่ำเสมอ (ขรุขระ)
+        // If variance is high, texture is uneven (rough)
         if (variance > 100) {
           roughAreas.push({
             x,
@@ -143,7 +143,7 @@ function findRoughAreas(
 }
 
 /**
- * คำนวณความเรียบจาก standard deviation
+ * Calculate smoothness from standard deviation
  */
 function calculateSmoothness(image: any): number {
   const width = image.bitmap.width;
@@ -162,14 +162,14 @@ function calculateSmoothness(image: any): number {
   const variance = values.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / values.length;
   const stdDev = Math.sqrt(variance);
 
-  // แปลง stdDev เป็น smoothness score (0-10)
-  // stdDev ต่ำ = เรียบ, stdDev สูง = ขรุขระ
+  // Convert stdDev to smoothness score (0-10)
+  // stdDev low = smooth, stdDev high = rough
   const smoothness = Math.max(0, 10 - stdDev / 10);
   return smoothness;
 }
 
 /**
- * คำนวณความสม่ำเสมอจาก LBP histogram
+ * Calculate uniformity from LBP histogram
  */
 function calculateUniformity(lbpMap: number[][]): number {
   const histogram: Record<number, number> = {};
@@ -187,7 +187,7 @@ function calculateUniformity(lbpMap: number[][]): number {
 
   if (totalCount === 0) return 0;
 
-  // คำนวณ entropy
+  // Calculate entropy
   let entropy = 0;
   for (const count of Object.values(histogram)) {
     const probability = count / totalCount;
@@ -196,8 +196,8 @@ function calculateUniformity(lbpMap: number[][]): number {
     }
   }
 
-  // แปลง entropy เป็น uniformity score (0-10)
-  // entropy ต่ำ = สม่ำเสมอ, entropy สูง = ไม่สม่ำเสมอ
+  // Convert entropy to uniformity score (0-10)
+  // low entropy = uniform, high entropy = non-uniform
   const maxEntropy = 8; // LBP has 256 possible values, log2(256) = 8
   const uniformity = Math.max(0, 10 - (entropy / maxEntropy) * 10);
   return uniformity;

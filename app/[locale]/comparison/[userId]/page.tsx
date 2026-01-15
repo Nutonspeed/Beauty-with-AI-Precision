@@ -7,6 +7,7 @@ import React from 'react';
 import { redirect } from 'next/navigation';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
+import { getTranslations } from 'next-intl/server';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Share2 } from 'lucide-react';
 import Link from 'next/link';
@@ -70,6 +71,7 @@ async function getAnalyses(userId: string, analysisIds?: string[]) {
 
 export default async function ComparisonPage({ params, searchParams }: PageProps) {
   const { locale, userId } = await params;
+  const t = await getTranslations({ locale, namespace: 'comparison' });
   const { analysisIds: rawIds } = await searchParams;
 
   // Parse analysis IDs from awaited search params
@@ -86,23 +88,21 @@ export default async function ComparisonPage({ params, searchParams }: PageProps
           <Link href={`/${locale}/analysis/history`}>
             <Button variant="ghost" size="sm">
               <ArrowLeft className="w-4 h-4 mr-2" />
-              {locale === 'th' ? 'กลับ' : 'Back'}
+              {t('back')}
             </Button>
           </Link>
         </div>
 
         <div className="flex flex-col items-center justify-center py-12 text-center">
           <h2 className="text-2xl font-bold mb-2">
-            {locale === 'th' ? 'ไม่พบข้อมูลเพียงพอ' : 'Insufficient Data'}
+            {t('insufficientData')}
           </h2>
           <p className="text-muted-foreground mb-6">
-            {locale === 'th'
-              ? 'ต้องมีอย่างน้อย 2 การวิเคราะห์เพื่อเปรียบเทียบความคืบหน้า'
-              : 'At least 2 analyses are required to compare progress'}
+            {t('insufficientDataDesc')}
           </p>
           <Link href={`/${locale}/ai-chat`}>
             <Button>
-              {locale === 'th' ? 'เริ่มวิเคราะห์' : 'Start Analysis'}
+              {t('startAnalysis')}
             </Button>
           </Link>
         </div>
@@ -118,22 +118,20 @@ export default async function ComparisonPage({ params, searchParams }: PageProps
           <Link href={`/${locale}/analysis/history`}>
             <Button variant="ghost" size="sm">
               <ArrowLeft className="w-4 h-4 mr-2" />
-              {locale === 'th' ? 'กลับ' : 'Back'}
+              {t('back')}
             </Button>
           </Link>
           <h1 className="text-3xl font-bold mt-2">
-            {locale === 'th' ? 'ติดตามความคืบหน้า' : 'Progress Tracking'}
+            {t('title')}
           </h1>
           <p className="text-muted-foreground">
-            {locale === 'th'
-              ? `เปรียบเทียบ ${analyses.length} การวิเคราะห์`
-              : `Comparing ${analyses.length} analyses`}
+            {t('comparingXAnalyses', { count: analyses.length })}
           </p>
         </div>
 
         <Button variant="outline">
           <Share2 className="w-4 h-4 mr-2" />
-          {locale === 'th' ? 'แชร์' : 'Share'}
+          {t('share')}
         </Button>
       </div>
 
@@ -150,11 +148,10 @@ export default async function ComparisonPage({ params, searchParams }: PageProps
 
 export async function generateMetadata({ params }: PageProps) {
   const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'comparison' });
   
   return {
-    title: locale === 'th' ? 'ติดตามความคืบหน้า - ai367bar' : 'Progress Tracking - ai367bar',
-    description: locale === 'th'
-      ? 'เปรียบเทียบผลการวิเคราะห์ผิวหน้าและติดตามความคืบหน้าของโปรแกรมความงาม'
-      : 'Compare skin analysis results and track program progress over time'
+    title: t('pageTitle'),
+    description: t('pageDesc')
   };
 }

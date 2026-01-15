@@ -1,12 +1,13 @@
 /**
  * Beauty AI Loading Components
- * Loading animations ที่ออกแบบเฉพาะสำหรับ Beauty with AI Precision
+ * Custom loading animations for Beauty with AI Precision
  */
 
 import React from 'react';
 import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 
-// ดอกกุหลาบบาน - หลัก
+// Rose Loading - Primary
 export function RoseLoading({ className, size = 'md' }: { className?: string; size?: 'sm' | 'md' | 'lg' }) {
   const sizeClasses = {
     sm: 'w-8 h-8',
@@ -22,7 +23,7 @@ export function RoseLoading({ className, size = 'md' }: { className?: string; si
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        {/* กลีบดอกกุหลาบ */}
+        {/* Rose Petals */}
         {[0, 45, 90, 135, 180, 225, 270, 315].map((rotation, i) => (
           <path
             key={i}
@@ -34,7 +35,7 @@ export function RoseLoading({ className, size = 'md' }: { className?: string; si
             style={{ animationDelay: `${i * 0.1}s` }}
           />
         ))}
-        {/* วงกลมกลาง */}
+        {/* Center Circle */}
         <circle cx="50" cy="50" r="8" fill="currentColor" />
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
@@ -44,7 +45,7 @@ export function RoseLoading({ className, size = 'md' }: { className?: string; si
   );
 }
 
-// พลอยเรืองแสง
+// Gem Loading
 export function GemLoading({ className, size = 'md' }: { className?: string; size?: 'sm' | 'md' | 'lg' }) {
   const sizeClasses = {
     sm: 'w-8 h-8',
@@ -60,7 +61,7 @@ export function GemLoading({ className, size = 'md' }: { className?: string; siz
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        {/* พลอย */}
+        {/* Gem */}
         <path
           d="M50 10 L70 40 L90 50 L70 60 L50 90 L30 60 L10 50 L30 40 Z"
           fill="url(#gemGradient)"
@@ -82,7 +83,7 @@ export function GemLoading({ className, size = 'md' }: { className?: string; siz
   );
 }
 
-// หยดน้ำ AI
+// AI Water Drop
 export function WaterDropLoading({ className, size = 'md' }: { className?: string; size?: 'sm' | 'md' | 'lg' }) {
   const sizeClasses = {
     sm: 'w-8 h-12',
@@ -115,7 +116,7 @@ export function WaterDropLoading({ className, size = 'md' }: { className?: strin
   );
 }
 
-// ระฆังความงาม
+// Beauty Bell
 export function BeautyBellLoading({ className, size = 'md' }: { className?: string; size?: 'sm' | 'md' | 'lg' }) {
   const sizeClasses = {
     sm: 'w-8 h-8',
@@ -147,15 +148,18 @@ export function BeautyBellLoading({ className, size = 'md' }: { className?: stri
   );
 }
 
-// Loading แบบ Fullscreen
-export function BeautyFullscreenLoading({ message = 'กำลังเตรียมความงาม...' }: { message?: string }) {
+// Fullscreen Loading
+export function BeautyFullscreenLoading({ message }: { message?: string }) {
+  const t = useTranslations('common');
+  const displayMessage = message || t('preparingBeauty');
+
   return (
     <div className="fixed inset-0 bg-gradient-to-br from-rose-50 via-white to-purple-50 flex items-center justify-center z-50">
       <div className="text-center">
         <div className="mb-8">
           <RoseLoading size="lg" className="mx-auto" />
         </div>
-        <p className="beauty-subtitle text-lg animate-pulse">{message}</p>
+        <p className="beauty-subtitle text-lg animate-pulse">{displayMessage}</p>
         <div className="mt-4 flex justify-center gap-2">
           {[0, 1, 2].map((i) => (
             <div
@@ -170,7 +174,7 @@ export function BeautyFullscreenLoading({ message = 'กำลังเตรี
   );
 }
 
-// Loading แบบ Card
+// Card Loading
 export function BeautyCardLoading({ className }: { className?: string }) {
   return (
     <div className={cn('glass-card p-6', className)}>
@@ -185,7 +189,7 @@ export function BeautyCardLoading({ className }: { className?: string }) {
   );
 }
 
-// Loading แบบ Button
+// Button Loading
 export function BeautyButtonLoading({ children }: { children: React.ReactNode }) {
   return (
     <button disabled className="btn-beauty opacity-70 cursor-not-allowed flex items-center gap-2">

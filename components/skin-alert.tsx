@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
+import { useTranslations, useLocale } from 'next-intl';
 import {
   AlertCircle,
   TrendingDown,
@@ -22,62 +23,7 @@ interface Props {
   maxVisibleAlerts?: number;
 }
 
-const translations = {
-  th: {
-    title: 'การแจ้งเตือนสภาพผิว',
-    alerts: 'การแจ้งเตือน',
-    noAlerts: 'ไม่มีการแจ้งเตือน',
-    markAsRead: 'ทำเครื่องหมายว่าอ่านแล้ว',
-    dismiss: 'ปิด',
-    severity: 'ความรุนแรง',
-    category: 'หมวดหมู่',
-    degradation: 'การลดลง',
-    improvement: 'การปรับปรุง',
-    anomaly: 'ความผิดปกติ',
-    threshold: 'เกณฑ์',
-    trend: 'แนวโน้ม',
-    warning: 'คำเตือน',
-    achievement: 'ความสำเร็จ',
-    milestone: 'เหตุการณ์สำคัญ',
-    recommendedAction: 'การกระทำที่แนะนำ',
-    critical: 'วิกฤต',
-    high: 'สูง',
-    medium: 'ปานกลาง',
-    low: 'ต่ำ',
-    viewMore: 'ดูเพิ่มเติม',
-    allAlerts: 'การแจ้งเตือนทั้งหมด',
-    change: 'การเปลี่ยนแปลง',
-    previous: 'ก่อนหน้า',
-    current: 'ปัจจุบัน',
-  },
-  en: {
-    title: 'Skin Condition Alerts',
-    alerts: 'Alerts',
-    noAlerts: 'No alerts',
-    markAsRead: 'Mark as read',
-    dismiss: 'Dismiss',
-    severity: 'Severity',
-    category: 'Category',
-    degradation: 'Degradation',
-    improvement: 'Improvement',
-    anomaly: 'Anomaly',
-    threshold: 'Threshold',
-    trend: 'Trend',
-    warning: 'Warning',
-    achievement: 'Achievement',
-    milestone: 'Milestone',
-    recommendedAction: 'Recommended Action',
-    critical: 'Critical',
-    high: 'High',
-    medium: 'Medium',
-    low: 'Low',
-    viewMore: 'View More',
-    allAlerts: 'All Alerts',
-    change: 'Change',
-    previous: 'Previous',
-    current: 'Current',
-  },
-};
+// const translations = {};
 
 const severityColors: Record<AlertSeverity, { bg: string; border: string; icon: string; text: string }> = {
   critical: {
@@ -115,12 +61,12 @@ const categoryIcons: Record<string, React.ComponentType<{ className?: string }>>
 
 export const SkinAlertComponent: React.FC<Props> = ({
   alerts,
-  language = 'en',
   onMarkAsRead,
   onDismiss,
   maxVisibleAlerts = 3,
 }) => {
-  const t = translations[language];
+  const t = useTranslations('skinAlert');
+  const locale = useLocale();
   const [expandedAlertId, setExpandedAlertId] = useState<string | null>(null);
   const [filterSeverity, setFilterSeverity] = useState<AlertSeverity | null>(null);
   const [showAll, setShowAll] = useState(false);
@@ -143,7 +89,7 @@ export const SkinAlertComponent: React.FC<Props> = ({
     return (
       <div className="bg-green-50 rounded-lg border border-green-300 p-4 text-center">
         <CheckCircle className="w-8 h-8 text-green-600 mx-auto mb-2" />
-        <p className="text-green-900 font-semibold">{t.noAlerts}</p>
+        <p className="text-green-900 font-semibold">{t('noAlerts')}</p>
       </div>
     );
   }
@@ -155,11 +101,11 @@ export const SkinAlertComponent: React.FC<Props> = ({
         <div>
           <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
             <Bell className="w-6 h-6" />
-            {t.title}
+            {t('title')}
           </h2>
           {unreadCount > 0 && (
             <p className="text-sm text-gray-600 mt-1">
-              {unreadCount} unread {criticalCount > 0 && `, ${criticalCount} critical`}
+              {t('unreadMessage', { count: unreadCount })} {criticalCount > 0 && `, ${t('criticalMessage', { count: criticalCount })}`}
             </p>
           )}
         </div>
@@ -175,7 +121,7 @@ export const SkinAlertComponent: React.FC<Props> = ({
             }`}
           >
             <Filter className="w-4 h-4 inline mr-1" />
-            All
+            {t('allAlerts')}
           </button>
           {(['critical', 'high', 'medium', 'low'] as AlertSeverity[]).map((severity) => (
             <button
@@ -187,7 +133,7 @@ export const SkinAlertComponent: React.FC<Props> = ({
                   : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
               }`}
             >
-              {t[severity as keyof typeof t] || severity}
+              {t(severity as any)}
             </button>
           ))}
         </div>
@@ -217,7 +163,7 @@ export const SkinAlertComponent: React.FC<Props> = ({
                           alert.severity === 'critical' ? 'bg-red-200 text-red-800' : 'bg-gray-200 text-gray-700'
                         }`}
                       >
-                        {t[alert.severity as keyof typeof t] || alert.severity}
+                        {t(alert.severity as any)}
                       </span>
                     </div>
                     <p className={`text-sm mt-1 ${colors.text}`}>{alert.message}</p>
@@ -238,15 +184,15 @@ export const SkinAlertComponent: React.FC<Props> = ({
               {/* Metrics */}
               <div className="flex gap-4 mt-3 pl-9 text-sm">
                 <div>
-                  <p className="text-gray-600">{t.previous}</p>
+                  <p className="text-gray-600">{t('previous')}</p>
                   <p className={`font-semibold ${colors.text}`}>{alert.previousValue.toFixed(1)}</p>
                 </div>
                 <div>
-                  <p className="text-gray-600">{t.current}</p>
+                  <p className="text-gray-600">{t('current')}</p>
                   <p className={`font-semibold ${colors.text}`}>{alert.currentValue.toFixed(1)}</p>
                 </div>
                 <div>
-                  <p className="text-gray-600">{t.change}</p>
+                  <p className="text-gray-600">{t('change')}</p>
                   <p className={`font-semibold ${alert.changePercentage < 0 ? 'text-green-600' : 'text-red-600'}`}>
                     {alert.changePercentage > 0 ? '+' : ''}
                     {alert.changePercentage.toFixed(1)}%
@@ -259,29 +205,29 @@ export const SkinAlertComponent: React.FC<Props> = ({
                 onClick={() => setExpandedAlertId(isExpanded ? null : alert.id)}
                 className="mt-3 pl-9 text-blue-600 hover:text-blue-700 font-medium text-sm flex items-center gap-1"
               >
-                {isExpanded ? 'Hide' : 'Show'} Details
+                {isExpanded ? t('hideDetails') : t('showDetails')}
                 <ChevronDown className={`w-4 h-4 transition ${isExpanded ? 'rotate-180' : ''}`} />
               </button>
 
               {isExpanded && (
                 <div className="mt-3 pl-9 space-y-2 pt-3 border-t border-gray-300">
                   <div>
-                    <p className="text-xs text-gray-600 uppercase font-semibold">{t.recommendedAction}</p>
+                    <p className="text-xs text-gray-600 uppercase font-semibold">{t('recommendedAction')}</p>
                     <p className={`text-sm mt-1 ${colors.text}`}>{alert.recommendedAction}</p>
                   </div>
                   <div className="grid grid-cols-2 gap-2 text-sm">
                     <div>
-                      <p className="text-gray-600">{t.category}</p>
+                      <p className="text-gray-600">{t('category')}</p>
                       <p className="font-semibold capitalize text-gray-900">{alert.category}</p>
                     </div>
                     <div>
-                      <p className="text-gray-600">Type</p>
+                      <p className="text-gray-600">{t('type')}</p>
                       <p className="font-semibold capitalize text-gray-900">{alert.type}</p>
                     </div>
                   </div>
                   <div className="pt-2 border-t border-gray-300">
                     <p className="text-xs text-gray-500">
-                      {new Date(alert.timestamp).toLocaleString(language === 'th' ? 'th-TH' : 'en-US')}
+                      {new Date(alert.timestamp).toLocaleString(locale === 'th' ? 'th-TH' : 'en-US')}
                     </p>
                   </div>
                 </div>
@@ -294,7 +240,7 @@ export const SkinAlertComponent: React.FC<Props> = ({
                     onClick={() => onMarkAsRead?.(alert.id)}
                     className="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 text-sm font-medium transition"
                   >
-                    {t.markAsRead}
+                    {t('markAsRead')}
                   </button>
                 )}
               </div>
@@ -309,7 +255,7 @@ export const SkinAlertComponent: React.FC<Props> = ({
           onClick={() => setShowAll(true)}
           className="w-full py-3 bg-gray-100 hover:bg-gray-200 text-gray-900 rounded-lg font-medium transition"
         >
-          {t.viewMore} ({filteredAlerts.length - maxVisibleAlerts} more)
+          {t('viewMore')} ({filteredAlerts.length - maxVisibleAlerts} more)
         </button>
       )}
     </div>

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { Globe, ShieldCheck, Activity, Server, Compass, ArrowRight } from "lucide-react"
+import { Globe, ShieldCheck, Activity, Server, ArrowRight } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
@@ -29,7 +29,7 @@ export function GlobalCommandCenter() {
       setLiveTraffic(prev => prev + Math.floor(Math.random() * 50) - 20)
     }, 3000)
     return () => clearInterval(interval)
-  }, [])
+  }, [globalNodes.length, setActiveNode, setLiveTraffic])
 
   return (
     <div className="w-full bg-slate-50 border-y border-slate-100 relative overflow-hidden group h-full flex flex-col">
@@ -96,7 +96,7 @@ export function GlobalCommandCenter() {
               </linearGradient>
             </defs>
             {globalNodes.map((node, i) => (
-              globalNodes.slice(i + 1).map((target, j) => (
+              globalNodes.slice(i + 1).map((target) => (
                 <motion.path
                   key={`${node.id}-${target.id}`}
                   d={`M ${node.lon} ${node.lat} Q 500 100 ${target.lon} ${target.lat}`}

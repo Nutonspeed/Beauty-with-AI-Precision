@@ -31,9 +31,8 @@ interface CustomerDashboardProps {
 }
 
 export default function CustomerDashboard({ role }: CustomerDashboardProps) {
-  const t = useTranslations();
+  const t = useTranslations('customerDashboard');
   const locale = useLocale();
-  const isThaiLocale = locale === 'th';
   const isPremium = role === 'premium_customer';
   const [showOnboarding, setShowOnboarding] = useState(false);
   const lp = useLocalizePath();
@@ -83,21 +82,19 @@ export default function CustomerDashboard({ role }: CustomerDashboardProps) {
                     <AlertDescription className="flex flex-col md:flex-row items-center justify-between w-full gap-8">
                       <div className="space-y-2 text-center md:text-left">
                         <p className="text-2xl font-bold text-white tracking-tight italic">
-                          {isThaiLocale ? 'ยินดีต้อนรับสู่ CenterIQ AI! 👋' : 'Welcome to CenterIQ AI! 👋'}
+                          {t('onboarding.welcome')}
                         </p>
                         <p className="text-slate-400 font-light tracking-wide italic">
-                          {isThaiLocale 
-                            ? 'ใหม่กับระบบหรือเปล่า? ดูคู่มือเริ่มต้นใช้งาน 3 ขั้นตอน (ใช้เวลา 2 นาที)' 
-                            : 'New to the system? View our 3-step initialization guide (2 min).'}
+                          {t('onboarding.newToSystem')}
                         </p>
                       </div>
                       <div className="flex items-center gap-4 shrink-0">
                         <Button variant="outline" className="rounded-xl border-white/10 bg-white/5 hover:bg-white/10 text-[10px] font-black uppercase tracking-widest h-12 px-8" onClick={dismissOnboarding}>
-                          {isThaiLocale ? 'ข้ามไป' : 'Bypass'}
+                          {t('onboarding.bypass')}
                         </Button>
                         <Button variant="premium" className="rounded-xl shadow-2xl shadow-pink-500/20 text-[10px] font-black uppercase tracking-widest h-12 px-8" asChild>
                           <Link href={lp('/onboarding/customer')}>
-                            {isThaiLocale ? 'ดูคู่มือ' : 'Initialize Guide'}
+                            {t('onboarding.viewGuide')}
                             <ArrowRight className="ml-2 h-4 w-4" />
                           </Link>
                         </Button>
@@ -120,13 +117,13 @@ export default function CustomerDashboard({ role }: CustomerDashboardProps) {
               <span className="text-[10px] font-black uppercase tracking-[0.4em] text-pink-500/60 italic">System Status: Operational</span>
             </div>
             <h1 className="text-5xl md:text-8xl font-bold tracking-tighter text-white leading-[0.9] italic">
-              {isThaiLocale ? 'ยินดีต้อนรับสู่' : 'Welcome to'}<br />
+              {t('welcome')}<br />
               <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent italic">
                 CenterIQ <span className="not-italic">AI</span>
               </span>
             </h1>
             <p className="text-xl text-slate-500 font-light tracking-widest max-w-2xl italic">
-              {isThaiLocale ? 'เริ่มต้นการดูแลผิวพรรณของคุณด้วยระบบสังเคราะห์ความแม่นยำสูง' : 'Initialize your aesthetic journey with precision AI synthesis.'}
+              {t('subtitle')}
             </p>
           </motion.div>
 
@@ -135,31 +132,31 @@ export default function CustomerDashboard({ role }: CustomerDashboardProps) {
             {[
               { 
                 icon: Camera, 
-                title: isThaiLocale ? 'วิเคราะห์ผิวหน้า' : 'Skin Synthesis', 
-                desc: isThaiLocale ? 'อัปโหลดภาพเพื่อวิเคราะห์สภาพผิวด้วย AI' : 'Perform high-precision AI skin diagnostic.',
+                title: t('actions.skinSynthesis.title'), 
+                desc: t('actions.skinSynthesis.desc'),
                 href: '/analysis',
-                cta: isThaiLocale ? 'เริ่มวิเคราะห์' : 'Begin Synthesis',
+                cta: t('actions.skinSynthesis.cta'),
                 color: 'from-blue-500/20 to-indigo-600/20',
                 iconColor: 'text-blue-400',
-                badge: !isPremium ? (isThaiLocale ? 'ฟรี' : 'OPEN') : null
+                badge: !isPremium ? t('actions.skinSynthesis.badge') : null
               },
               { 
                 icon: Sparkles, 
-                title: isThaiLocale ? 'ทดลอง AR' : 'AR Simulation', 
-                desc: isThaiLocale ? 'ดูผลการรักษาแบบ 3D ก่อนตัดสินใจ' : 'Visualize program outcomes in real-time 3D.',
+                title: t('actions.arSimulation.title'), 
+                desc: t('actions.arSimulation.desc'),
                 href: '/ar-simulator',
-                cta: isThaiLocale ? 'เริ่มทดลอง' : 'Initialize AR',
+                cta: t('actions.arSimulation.cta'),
                 color: 'from-purple-500/20 to-pink-600/20',
                 iconColor: 'text-purple-400',
-                badge: !isPremium ? (isThaiLocale ? 'ฟรี' : 'OPEN') : null,
+                badge: !isPremium ? t('actions.arSimulation.badge') : null,
                 variant: 'outline'
               },
               { 
                 icon: Star, 
-                title: isThaiLocale ? 'คำแนะนำเฉพาะคุณ' : 'Aesthetic Protocol', 
-                desc: isThaiLocale ? 'ดูคำแนะนำจาก AI ที่ปรับแต่งเฉพาะผิวคุณ' : 'View personalized program algorithms.',
+                title: t('actions.aestheticProtocol.title'), 
+                desc: t('actions.aestheticProtocol.desc'),
                 href: '/recommendations',
-                cta: isThaiLocale ? 'ดูคำแนะนำ' : 'View Protocol',
+                cta: t('actions.aestheticProtocol.cta'),
                 color: 'from-amber-500/20 to-orange-600/20',
                 iconColor: 'text-amber-400',
                 badge: 'AI',
@@ -167,30 +164,30 @@ export default function CustomerDashboard({ role }: CustomerDashboardProps) {
               },
               { 
                 icon: Calendar, 
-                title: isThaiLocale ? 'จองนัดหมาย' : 'Access Node', 
-                desc: isThaiLocale ? 'จองนัดกับผู้เชี่ยวชาญของเรา' : 'Secure a diagnostic session with experts.',
+                title: t('actions.accessNode.title'), 
+                desc: t('actions.accessNode.desc'),
                 href: '/booking',
-                cta: isThaiLocale ? 'จองเลย' : 'Secure Session',
+                cta: t('actions.accessNode.cta'),
                 color: 'from-emerald-500/20 to-teal-600/20',
                 iconColor: 'text-emerald-400',
                 variant: 'outline'
               },
               { 
                 icon: BarChart3, 
-                title: isThaiLocale ? 'ติดตามความก้าวหน้า' : 'Metrics Progress', 
-                desc: isThaiLocale ? 'ดูกราฟและเปรียบเทียบผลการรักษา' : 'Analyze program efficacy trends.',
+                title: t('actions.metricsProgress.title'), 
+                desc: t('actions.metricsProgress.desc'),
                 href: '/analysis/progress',
-                cta: isThaiLocale ? 'ดูความก้าวหน้า' : 'View Metrics',
+                cta: t('actions.metricsProgress.cta'),
                 color: 'from-cyan-500/20 to-blue-500/20',
                 iconColor: 'text-cyan-400',
                 variant: 'outline'
               },
               { 
                 icon: History, 
-                title: isThaiLocale ? 'ประวัติการวิเคราะห์' : 'Diagnostic History', 
-                desc: isThaiLocale ? 'ดูภาพและผลการวิเคราะห์ย้อนหลัง' : 'Review historical synthesis logs.',
+                title: t('actions.diagnosticHistory.title'), 
+                desc: t('actions.diagnosticHistory.desc'),
                 href: '/analysis/history',
-                cta: isThaiLocale ? 'ดูประวัติ' : 'Review Logs',
+                cta: t('actions.diagnosticHistory.cta'),
                 color: 'from-rose-500/20 to-red-600/20',
                 iconColor: 'text-rose-400',
                 variant: 'outline'
@@ -247,15 +244,15 @@ export default function CustomerDashboard({ role }: CustomerDashboardProps) {
               <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative h-full">
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
                 <CardHeader className="p-12 pb-6">
-                  <CardTitle className="text-3xl font-bold text-white tracking-tight italic">{isThaiLocale ? 'เริ่มต้นใช้งาน' : 'System Initialization'}</CardTitle>
-                  <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{isThaiLocale ? 'ทำตามขั้นตอนเหล่านี้เพื่อประสบการณ์ที่ดีที่สุด' : 'Follow protocol for optimal performance'}</CardDescription>
+                  <CardTitle className="text-3xl font-bold text-white tracking-tight italic">{t('guide.title')}</CardTitle>
+                  <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('guide.subtitle')}</CardDescription>
                 </CardHeader>
                 <CardContent className="p-12 pt-6 space-y-8">
                   {[
-                    { step: "1", title: isThaiLocale ? 'อัปโหลดรูปภาพผิวหน้า' : 'Ingest Dermal Assets', desc: isThaiLocale ? 'ถ่ายภาพในแสงสว่างเพียงพอ หน้าตรง ไม่เอียง' : 'Capture aesthetic-grade direct orientation images.' },
-                    { step: "2", title: isThaiLocale ? 'รับผลการวิเคราะห์จาก AI' : 'Execute AI Synthesis', desc: isThaiLocale ? 'ดู Heatmap และคำแนะนำโปรแกรม' : 'Generate diagnostic heatmaps and recommendations.' },
-                    { step: "3", title: isThaiLocale ? 'ทดลอง AR Simulator' : 'AR Outcome Simulation', desc: isThaiLocale ? 'ดูผลโปรแกรมแบบ 3D ก่อนตัดสินใจ' : 'Simulate therapeutic results in real-time 3D.' },
-                    { step: "4", title: isThaiLocale ? 'จองนัดหมายผู้เชี่ยวชาญ' : 'Authorize Consultant', desc: isThaiLocale ? 'ปรึกษาแผนงานโปรแกรมที่เหมาะสมกับคุณ' : 'Confirm aesthetic implementation parameters.' }
+                    { step: "1", title: t('guide.step1.title'), desc: t('guide.step1.desc') },
+                    { step: "2", title: t('guide.step2.title'), desc: t('guide.step2.desc') },
+                    { step: "3", title: t('guide.step3.title'), desc: t('guide.step3.desc') },
+                    { step: "4", title: t('guide.step4.title'), desc: t('guide.step4.desc') }
                   ].map((s, i) => (
                     <div key={i} className="flex items-start gap-6 group">
                       <div className="h-10 w-10 rounded-xl bg-white/[0.03] border border-white/5 flex items-center justify-center shrink-0 text-[10px] font-black text-slate-500 group-hover:text-pink-400 group-hover:border-pink-500/30 transition-all shadow-inner italic">
@@ -269,7 +266,7 @@ export default function CustomerDashboard({ role }: CustomerDashboardProps) {
                   ))}
                   <Button asChild variant="outline" className="w-full h-16 rounded-[1.5rem] border-white/10 bg-white/5 text-[10px] font-black uppercase tracking-widest hover:bg-white/10 mt-6">
                     <Link href={lp('/onboarding/customer')}>
-                      {isThaiLocale ? 'ดูคู่มือการใช้งานแบบเต็ม' : 'Full Protocol Manual'}
+                      {t('guide.fullManual')}
                       <ArrowRight className="ml-3 h-4 w-4" />
                     </Link>
                   </Button>
@@ -288,9 +285,9 @@ export default function CustomerDashboard({ role }: CustomerDashboardProps) {
                 <CardHeader className="p-12 pb-6">
                   <CardTitle className="text-3xl font-bold text-white tracking-tight italic flex items-center gap-4">
                     <History className="h-8 w-8 text-pink-500" />
-                    {isThaiLocale ? 'ประวัติการใช้งาน' : 'System Logs'}
+                    {t('history.title')}
                   </CardTitle>
-                  <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{isThaiLocale ? 'การวิเคราะห์และนัดหมายล่าสุดของคุณ' : 'Historical diagnostic and access nodes'}</CardDescription>
+                  <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('history.subtitle')}</CardDescription>
                 </CardHeader>
                 <CardContent className="p-12 pt-6">
                   <div className="text-center py-20 space-y-8 bg-white/[0.01] rounded-[2rem] border border-white/5 border-dashed">
@@ -298,12 +295,12 @@ export default function CustomerDashboard({ role }: CustomerDashboardProps) {
                       <FileText className="h-10 w-10" />
                     </div>
                     <div className="space-y-2">
-                      <p className="text-xl font-bold text-slate-400 italic">{isThaiLocale ? 'ยังไม่มีประวัติการใช้งาน' : 'Logs Empty'}</p>
-                      <p className="text-sm text-slate-600 font-light italic">{isThaiLocale ? 'เริ่มต้นด้วยการวิเคราะห์ผิวหน้าครั้งแรกของคุณ!' : 'Execute your first aesthetic synthesis.'}</p>
+                      <p className="text-xl font-bold text-slate-400 italic">{t('history.empty')}</p>
+                      <p className="text-sm text-slate-600 font-light italic">{t('history.emptyDesc')}</p>
                     </div>
                     <Button asChild variant="premium" className="h-14 px-10 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] shadow-2xl shadow-pink-500/20">
                       <Link href={lp('/analysis')}>
-                        {isThaiLocale ? 'วิเคราะห์เลย' : 'Begin Log'}
+                        {t('history.beginBtn')}
                       </Link>
                     </Button>
                   </div>
@@ -328,19 +325,14 @@ export default function CustomerDashboard({ role }: CustomerDashboardProps) {
                     <div className="space-y-4">
                       <Badge className="bg-pink-600 text-white px-6 py-2 rounded-full border-none shadow-2xl shadow-pink-600/40 uppercase tracking-[0.2em] text-[10px] font-black italic">ELITE UPGRADE</Badge>
                       <h2 className="text-4xl md:text-6xl font-bold text-white tracking-tight leading-tight italic">
-                        {isThaiLocale ? 'อัพเกรดเป็น Premium' : 'Deploy Premium Infrastructure'}
+                        {t('premium.title')}
                       </h2>
                       <p className="text-xl text-slate-400 font-light italic leading-relaxed max-w-xl">
-                        {isThaiLocale ? 'ปลดล็อคฟีเจอร์พิเศษเพื่อประสิทธิภาพการดูแลผิวขั้นสูงสุด' : 'Unlock elite aesthetic modules for maximum diagnostic performance.'}
+                        {t('premium.description')}
                       </p>
                     </div>
                     <ul className="grid sm:grid-cols-2 gap-6">
-                      {[
-                        isThaiLocale ? 'วิเคราะห์ไม่จำกัดครั้ง' : 'Infinite Synthesis Cycles',
-                        isThaiLocale ? 'รายงานแบบละเอียด พร้อม PDF' : 'Full Aesthetic Export (PDF)',
-                        isThaiLocale ? 'ติดตามความก้าวหน้าแบบ Timeline' : 'Longitudinal Analytics',
-                        isThaiLocale ? 'ปรึกษาผู้เชี่ยวชาญทาง Chat' : 'Direct Expert Gateway'
-                      ].map((item, i) => (
+                      {(t.raw('premium.features') as string[]).map((item, i) => (
                         <li key={i} className="flex items-center gap-4 group/item">
                           <div className="h-6 w-6 rounded-lg bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 group-hover/item:bg-emerald-500 group-hover/item:text-white transition-all">
                             <CheckCircle2 className="h-3.5 w-3.5" />
@@ -353,7 +345,7 @@ export default function CustomerDashboard({ role }: CustomerDashboardProps) {
                   <div className="shrink-0 w-full lg:w-auto">
                     <Button size="xl" className="w-full lg:w-auto h-20 px-16 rounded-[2rem] bg-pink-600 text-white hover:bg-pink-500 shadow-2xl shadow-pink-600/40 text-lg font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95" asChild>
                       <Link href={lp('/pricing')}>
-                        {isThaiLocale ? 'ดูแพ็กเกจ Premium' : 'Initialize Elite Tier'}
+                        {t('premium.cta')}
                         <ArrowRight className="ml-4 h-7 w-7" />
                       </Link>
                     </Button>

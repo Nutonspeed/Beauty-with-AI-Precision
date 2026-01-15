@@ -27,16 +27,7 @@ export async function GET(request: NextRequest) {
 
     console.log('[user-profile] Fetching profile for userId:', userId)
 
-    // Verify request has valid session (security check)
-    const authHeader = request.headers.get('authorization')
-    if (!authHeader) {
-      console.log('[user-profile] Missing authorization header')
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
-    }
-
+    // Session is handled by cookies (credentials: 'include'), no authorization header needed
     // Use service role client to bypass RLS
     const supabaseAdmin = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,

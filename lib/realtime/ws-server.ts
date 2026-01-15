@@ -19,7 +19,7 @@ const supabaseAdmin = createClient(supabaseUrl, supabaseKey, {
   }
 });
 
-// ประกาศ type สำหรับ WebSocket message
+// WebSocket message type definition
 interface WebSocketMessage {
   type: string;
   data?: unknown;
@@ -27,7 +27,7 @@ interface WebSocketMessage {
   [key: string]: unknown;
 }
 
-// ประกาศ interface สำหรับ client information
+// Client information interface
 interface ClientInfo {
   socket: WebSocketType;
   clientId: string;
@@ -37,14 +37,14 @@ interface ClientInfo {
   subscribedChannels: Set<string>;
 }
 
-// ประกาศ interface สำหรับ JWT payload
+// JWT payload interface
 interface WsJwtPayload extends JwtPayload {
   userId: string;
   role: string;
   centerId: string;
 }
 
-// ประกาศ type สำหรับ filter ในการ broadcast
+// Broadcast filter type
 interface BroadcastFilter {
   userIds?: string[];
   centerIds?: string[];
@@ -52,12 +52,12 @@ interface BroadcastFilter {
   channels?: string[];
 }
 
-// ประกาศ type สำหรับ user role
+// User role type
 type UserRole = 'admin' | 'doctor' | 'staff' | 'free_user' | 'premium_user';
 
-// ฟังก์ชันสำหรับตรวจสอบสิทธิ์การเข้าถึง channel
+// Function to check channel access permissions
 function canSubscribeToChannel(channel: string, role: UserRole, userId: string, centerId: string): boolean {
-  // ตัวอย่างการตรวจสอบสิทธิ์พื้นฐาน
+  // Basic permission check example
   if (channel.startsWith('user:') && channel !== `user:${userId}`) {
     return false;
   }
@@ -67,7 +67,7 @@ function canSubscribeToChannel(channel: string, role: UserRole, userId: string, 
   return true;
 }
 
-// ฟังก์ชันสำหรับกรอง channel ที่อนุญาต
+// Function to filter allowed channels
 function filterAllowedChannels(
   channels: string[], 
   role: UserRole, 
@@ -122,7 +122,7 @@ export class WSServer {
     this.wss.on('connection', (ws: WebSocketType, req: IncomingMessage) => {
       const clientId = uuidv4();
       
-      // กำหนดค่าเริ่มต้นให้กับ WebSocket
+      // Initialize WebSocket values
       (ws as any).isAlive = true;
       (ws as any).clientId = clientId;
       (ws as any).subscribedChannels = new Set<string>();
@@ -135,14 +135,14 @@ export class WSServer {
         return;
       }
 
-      // ตรวจสอบ token และยืนยันตัวตน
+      // Verify token and authenticate
       this.authenticateClient(ws, clientId, token).catch((error: Error) => {
         console.error('Authentication error:', error);
         ws.close(4001, 'Authentication failed');
       });
     });
 
-    // ตั้งค่า interval สำหรับการตรวจสอบการเชื่อมต่อ
+    // Setup ping interval for connection health checks
     this.pingInterval = setInterval((): void => {
       this.wss.clients.forEach((ws: WebSocketType) => {
         const wsAny = ws as any;
@@ -216,12 +216,12 @@ export class WSServer {
         throw new Error('Invalid or expired token');
       }
       
-      // ตรวจสอบว่ามี userId หรือไม่
+      // Check if userId exists
       if (!payload.userId) {
         throw new Error('Missing user ID in token');
       }
 
-      // ตรวจสอบข้อมูลผู้ใช้จากฐานข้อมูล
+      // Verify user information from database
       const { data: user, error } = await supabaseAdmin
         .from('users')
         .select('id, role, center_id')
@@ -249,13 +249,13 @@ export class WSServer {
         centerId: clientInfo.centerId
       });
 
-      // ตั้งค่า event handlers สำหรับ WebSocket
+      // Setup WebSocket event handlers
       ws.on('message', (data) => this.handleMessage(clientId, data));
       ws.on('pong', () => { (ws as any).isAlive = true; });
       ws.on('close', () => this.handleClose(clientId));
       ws.on('error', (error) => this.handleError(clientId, error));
 
-      // ส่งข้อความยืนยันการเชื่อมต่อ
+      // Send connection confirmation
       this.sendToClient(ws, {
         type: 'CONNECTED',
         data: { clientId, userId: clientInfo.userId }
@@ -288,7 +288,7 @@ export class WSServer {
         return null;
       }
 
-      // ควรดึงข้อมูล role และ centerId จากฐานข้อมูลแทนการตั้งค่าเริ่มต้น
+      // Should fetch role and centerId from DB instead of using defaults
       return { 
         userId: obj.userId, 
         timestamp: obj.timestamp,
@@ -306,11 +306,11 @@ export class WSServer {
     if (!client) return;
 
     try {
-      // แปลงข้อมูลเป็น string
+      // Convert data to string
       const messageStr = typeof data === 'string' ? data : data.toString('utf8');
       const messageObj = JSON.parse(messageStr) as WebSocketMessage;
       
-      // ตรวจสอบว่า message มี type หรือไม่
+      // Verify message has a type
       if (!messageObj || typeof messageObj !== 'object' || !messageObj.type) {
         this.log('warn', 'invalid_message_format', { clientId });
         return;
@@ -331,7 +331,7 @@ export class WSServer {
               client.centerId
             );
 
-            // เพิ่มช่องทางที่อนุญาต
+            // Add allowed channels
             for (const channel of allowed) {
               client.subscribedChannels.add(channel);
             }
@@ -343,7 +343,7 @@ export class WSServer {
               denied: denied.map(d => d.channel)
             });
 
-            // ส่งการตอบกลับ
+            // Send response
             this.sendToClient(client.socket, {
               type: 'SUBSCRIBE_RESULT',
               data: { allowed, denied }
@@ -430,22 +430,22 @@ export class WSServer {
   private clientMatchesFilter(client: ClientInfo, filter?: BroadcastFilter): boolean {
     if (!filter) return true;
     
-    // ตรวจสอบ user ID
+    // Check user ID
     if (filter.userIds && filter.userIds.length > 0 && !filter.userIds.includes(client.userId)) {
       return false;
     }
     
-    // ตรวจสอบ center ID
+    // Check center ID
     if (filter.centerIds && filter.centerIds.length > 0 && !filter.centerIds.includes(client.centerId)) {
       return false;
     }
     
-    // ตรวจสอบ role
+    // Check role
     if (filter.roles && filter.roles.length > 0 && !filter.roles.includes(client.role)) {
       return false;
     }
     
-    // ตรวจสอบ channel
+    // Check channel
     if (filter.channels && filter.channels.length > 0) {
       const hasMatchingChannel = filter.channels.some(channel => 
         client.subscribedChannels.has(channel)
@@ -474,10 +474,10 @@ export class WSServer {
     
     this.log('info', 'server_shutdown_initiated', { clientCount: this.clients.size });
     
-    // หยุดการเชื่อมต่อใหม่
+    // Stop new connections
     this.wss.close();
     
-    // ปิดการเชื่อมต่อ client ทั้งหมด
+    // Close all client connections
     const closePromises = Array.from(this.clients.values()).map(client => 
       new Promise<void>((resolve) => {
         const socket = client.socket;
@@ -486,19 +486,19 @@ export class WSServer {
       })
     );
     
-    // รอให้ client ทั้งหมดตัดการเชื่อมต่อหรือหมดเวลา 5 วินาที
+    // Wait for all clients to disconnect or timeout after 5 seconds
     await Promise.race([
       Promise.all(closePromises),
       new Promise(resolve => setTimeout(resolve, 5000))
     ]);
     
-    // ล้าง interval
+    // Clear interval
     if (this.pingInterval) {
       clearInterval(this.pingInterval);
       this.pingInterval = null;
     }
     
-    // ปิด HTTP server
+    // Close HTTP server
     await new Promise<void>((resolve) => {
       this.httpServer.close(() => resolve());
     });

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { ProgressPhoto, TimelineEntry } from '@/types/progress';
 import { formatTimeElapsed } from '@/lib/progress/metric-calculator';
 
@@ -10,6 +11,8 @@ interface ProgramTimelineProps {
 }
 
 export default function ProgramTimeline({ photos, startDate }: ProgramTimelineProps) {
+  const t = useTranslations('progress.timeline');
+  const commonT = useTranslations('common');
   const [selectedPhotoId, setSelectedPhotoId] = useState<string | null>(null);
 
   // Sort photos by date
@@ -63,26 +66,26 @@ export default function ProgramTimeline({ photos, startDate }: ProgramTimelinePr
       {/* Summary Cards */}
       <div className="grid grid-cols-2 gap-4">
         <div className="bg-white rounded-lg p-4 shadow">
-          <div className="text-sm text-gray-600 mb-1">ระยะเวลา</div>
+          <div className="text-sm text-gray-600 mb-1">{t('duration')}</div>
           <div className="text-2xl font-bold text-gray-900">
-            {calculateDaysSince(latestPhoto.taken_at)} วัน
+            {calculateDaysSince(latestPhoto.taken_at)} {t('days')}
           </div>
         </div>
         <div className="bg-white rounded-lg p-4 shadow">
-          <div className="text-sm text-gray-600 mb-1">จำนวนภาพ</div>
-          <div className="text-2xl font-bold text-gray-900">{sortedPhotos.length} ภาพ</div>
+          <div className="text-sm text-gray-600 mb-1">{t('photoCount')}</div>
+          <div className="text-2xl font-bold text-gray-900">{sortedPhotos.length} {t('photos')}</div>
         </div>
       </div>
 
       {/* Metrics Trend */}
       <div className="bg-white rounded-lg p-4 shadow">
-        <h3 className="font-semibold mb-3">แนวโน้มการเปลี่ยนแปลง</h3>
+        <h3 className="font-semibold mb-3">{t('trendTitle')}</h3>
         <div className="space-y-3">
           {[
-            { label: 'ฝ้า-กระ', metric: 'spots' as const },
-            { label: 'รูขุมขน', metric: 'pores' as const },
-            { label: 'ริ้วรอย', metric: 'wrinkles' as const },
-            { label: 'ความแดง', metric: 'redness' as const },
+            { label: t('metrics.spots'), metric: 'spots' as const },
+            { label: t('metrics.pores'), metric: 'pores' as const },
+            { label: t('metrics.wrinkles'), metric: 'wrinkles' as const },
+            { label: t('metrics.redness'), metric: 'redness' as const },
           ].map(({ label, metric }) => {
             const trend = calculateTrend(metric);
             const firstValue = metricsHistory[0]?.[metric] || 0;
@@ -122,7 +125,7 @@ export default function ProgramTimeline({ photos, startDate }: ProgramTimelinePr
 
       {/* Timeline */}
       <div className="bg-white rounded-lg p-4 shadow">
-        <h3 className="font-semibold mb-4">เส้นเวลา</h3>
+        <h3 className="font-semibold mb-4">{t('title')}</h3>
         <div className="space-y-4">
           {timelineEntries.map((entry, index) => {
             const photo = entry.photo!;
@@ -153,20 +156,20 @@ export default function ProgramTimeline({ photos, startDate }: ProgramTimelinePr
                     <div>
                       <div className="font-medium">
                         {photo.photo_type === 'baseline'
-                          ? 'ภาพพื้นฐาน (ก่อนเริ่ม)'
+                          ? t('photoTypes.baseline')
                           : photo.photo_type === 'final'
-                            ? 'ภาพสุดท้าย'
-                            : `ติดตามผล ${photo.session_number ? `#${photo.session_number}` : ''}`}
+                            ? t('photoTypes.final')
+                            : t('photoTypes.followUp', { count: photo.session_number || 0 })}
                       </div>
                       <div className="text-sm text-gray-500">
-                        {new Date(photo.taken_at).toLocaleDateString('th-TH', {
+                        {new Date(photo.taken_at).toLocaleDateString(undefined, {
                           year: 'numeric',
                           month: 'long',
                           day: 'numeric',
                         })}
                       </div>
                     </div>
-                    <div className="text-xs text-gray-500">{formatTimeElapsed(daysSince)}</div>
+                    <div className="text-xs text-gray-500">{formatTimeElapsed(daysSince, commonT as any)}</div>
                   </div>
 
                   {/* Thumbnail */}
@@ -175,11 +178,11 @@ export default function ProgramTimeline({ photos, startDate }: ProgramTimelinePr
                     className={`relative rounded-lg overflow-hidden border-2 transition-all ${
                       isSelected ? 'border-blue-500 ring-2 ring-blue-200' : 'border-gray-200'
                     }`}
-                    aria-label={isSelected ? "ยกเลิกการเลือกภาพ" : "เลือกภาพเพื่อดูรายละเอียด"}
-                    title={isSelected ? "ยกเลิกการเลือกภาพ" : "เลือกภาพเพื่อดูรายละเอียด"}
+                    aria-label={isSelected ? t('aria.deselect') : t('aria.select')}
+                    title={isSelected ? t('aria.deselect') : t('aria.select')}
                   >
                     <span className="sr-only">
-                      {isSelected ? "ยกเลิกการเลือกภาพ" : "เลือกภาพเพื่อดูรายละเอียด"}
+                      {isSelected ? t('aria.deselect') : t('aria.select')}
                     </span>
                     <img
                       src={photo.thumbnail_url || photo.image_url}
@@ -216,7 +219,7 @@ export default function ProgramTimeline({ photos, startDate }: ProgramTimelinePr
       {selectedPhoto && (
         <div className="bg-white rounded-lg p-4 shadow">
           <div className="flex justify-between items-start mb-3">
-            <h3 className="font-semibold">รายละเอียดภาพ</h3>
+            <h3 className="font-semibold">{t('detailsTitle')}</h3>
             <button
               onClick={() => setSelectedPhotoId(null)}
               className="text-gray-400 hover:text-gray-600"
@@ -238,19 +241,19 @@ export default function ProgramTimeline({ photos, startDate }: ProgramTimelinePr
           {selectedPhoto.analysis_results && (
             <div className="grid grid-cols-2 gap-2 text-sm">
               <div className="bg-gray-50 rounded p-2">
-                <div className="text-gray-600">ฝ้า-กระ</div>
+                <div className="text-gray-600">{t('metrics.spots')}</div>
                 <div className="font-medium">{selectedPhoto.analysis_results.spots || 0}</div>
               </div>
               <div className="bg-gray-50 rounded p-2">
-                <div className="text-gray-600">รูขุมขน</div>
+                <div className="text-gray-600">{t('metrics.pores')}</div>
                 <div className="font-medium">{selectedPhoto.analysis_results.pores || 0}</div>
               </div>
               <div className="bg-gray-50 rounded p-2">
-                <div className="text-gray-600">ริ้วรอย</div>
+                <div className="text-gray-600">{t('metrics.wrinkles')}</div>
                 <div className="font-medium">{selectedPhoto.analysis_results.wrinkles || 0}</div>
               </div>
               <div className="bg-gray-50 rounded p-2">
-                <div className="text-gray-600">ความแดง</div>
+                <div className="text-gray-600">{t('metrics.redness')}</div>
                 <div className="font-medium">{selectedPhoto.analysis_results.redness || 0}</div>
               </div>
             </div>

@@ -71,6 +71,32 @@ export async function sendLineMessage(
 }
 
 /**
+ * LINE Templates
+ */
+const LINE_TEMPLATES = {
+  th: {
+    reminderTitle: '📅 แจ้งเตือนนัดหมาย',
+    confirmLabel: 'ยืนยัน',
+    rescheduleLabel: 'เลื่อนนัด',
+    analysisTitle: 'ผลวิเคราะห์ผิวของคุณ',
+    overallScore: 'คะแนนรวม',
+    viewDetails: 'ดูรายละเอียด',
+    altReminder: (program: string) => `นัดหมาย: ${program}`,
+    altAnalysis: (score: number) => `ผลวิเคราะห์ผิว: ${score}/100`,
+  },
+  en: {
+    reminderTitle: '📅 Appointment Reminder',
+    confirmLabel: 'Confirm',
+    rescheduleLabel: 'Reschedule',
+    analysisTitle: 'Your Skin Analysis Result',
+    overallScore: 'Overall Score',
+    viewDetails: 'View Details',
+    altReminder: (program: string) => `Appointment: ${program}`,
+    altAnalysis: (score: number) => `Skin Analysis: ${score}/100`,
+  },
+};
+
+/**
  * Send appointment reminder via LINE
  */
 export async function sendAppointmentReminder(
@@ -81,11 +107,13 @@ export async function sendAppointmentReminder(
     time: string
     program: string
     centerName: string
-  }
+  },
+  locale: 'th' | 'en' = 'th'
 ): Promise<LineSendResult> {
+  const t = LINE_TEMPLATES[locale] || LINE_TEMPLATES.th;
   const message: LineMessage = {
     type: 'flex',
-    altText: `นัดหมาย: ${appointment.program}`,
+    altText: t.altReminder(appointment.program),
     contents: {
       type: 'bubble',
       hero: {
@@ -96,7 +124,7 @@ export async function sendAppointmentReminder(
         contents: [
           {
             type: 'text',
-            text: '📅 แจ้งเตือนนัดหมาย',
+            text: t.reminderTitle,
             color: '#ffffff',
             weight: 'bold',
             size: 'lg'
@@ -122,7 +150,7 @@ export async function sendAppointmentReminder(
             layout: 'vertical',
             margin: 'md',
             contents: [
-              { type: 'text', text: `📆 ${formatDate(appointment.date)}`, size: 'sm' },
+              { type: 'text', text: `📆 ${formatDate(appointment.date, locale)}`, size: 'sm' },
               { type: 'text', text: `⏰ ${appointment.time}`, size: 'sm' },
               { type: 'text', text: `🏥 ${appointment.centerName}`, size: 'sm' }
             ]
@@ -135,13 +163,13 @@ export async function sendAppointmentReminder(
         contents: [
           {
             type: 'button',
-            action: { type: 'uri', label: 'ยืนยัน', uri: 'https://centeriq.app/appointments' },
+            action: { type: 'uri', label: t.confirmLabel, uri: 'https://centeriq.app/appointments' },
             style: 'primary',
             color: '#06b6d4'
           },
           {
             type: 'button',
-            action: { type: 'uri', label: 'เลื่อนนัด', uri: 'https://centeriq.app/reschedule' },
+            action: { type: 'uri', label: t.rescheduleLabel, uri: 'https://centeriq.app/reschedule' },
             style: 'secondary'
           }
         ]
@@ -161,13 +189,15 @@ export async function sendAnalysisResult(
     overallScore: number
     topConcern: string
     recommendation: string
-  }
+  },
+  locale: 'th' | 'en' = 'th'
 ): Promise<LineSendResult> {
+  const t = LINE_TEMPLATES[locale] || LINE_TEMPLATES.th;
   const scoreEmoji = analysis.overallScore >= 80 ? '🌟' : analysis.overallScore >= 60 ? '✨' : '💫'
   
   const message: LineMessage = {
     type: 'flex',
-    altText: `ผลวิเคราะห์ผิว: ${analysis.overallScore}/100`,
+    altText: t.altAnalysis(analysis.overallScore),
     contents: {
       type: 'bubble',
       body: {
@@ -176,13 +206,13 @@ export async function sendAnalysisResult(
         contents: [
           {
             type: 'text',
-            text: `${scoreEmoji} ผลวิเคราะห์ผิวของคุณ`,
+            text: `${scoreEmoji} ${t.analysisTitle}`,
             weight: 'bold',
             size: 'lg'
           },
           {
             type: 'text',
-            text: `คะแนนรวม: ${analysis.overallScore}/100`,
+            text: `${t.overallScore}: ${analysis.overallScore}/100`,
             size: 'xxl',
             weight: 'bold',
             color: '#06b6d4',
@@ -213,7 +243,7 @@ export async function sendAnalysisResult(
         contents: [
           {
             type: 'button',
-            action: { type: 'uri', label: 'ดูรายละเอียด', uri: 'https://centeriq.app/analysis' },
+            action: { type: 'uri', label: t.viewDetails, uri: 'https://centeriq.app/analysis' },
             style: 'primary',
             color: '#06b6d4'
           }
@@ -243,8 +273,8 @@ function formatMessage(msg: LineMessage): object {
   return { type: 'text', text: 'Message' }
 }
 
-function formatDate(date: Date): string {
-  return date.toLocaleDateString('th-TH', {
+function formatDate(date: Date, locale: 'th' | 'en' = 'th'): string {
+  return date.toLocaleDateString(locale === 'th' ? 'th-TH' : 'en-US', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',

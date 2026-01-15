@@ -21,7 +21,11 @@ interface UserPreferences {
   currency: string
 }
 
+import { useTranslations } from "next-intl"
+
 export function PreferencesForm({ userId }: PreferencesFormProps) {
+  const t = useTranslations('profile.preferences')
+  const commonT = useTranslations('common')
   const supabase = createBrowserClient()
 
   const [isLoading, setIsLoading] = useState(true)
@@ -91,15 +95,15 @@ export function PreferencesForm({ userId }: PreferencesFormProps) {
       if (upsertError) throw upsertError
 
       setSuccess(true)
-      toast.success("บันทึกการตั้งค่าสำเร็จ!")
+      toast.success(t('success.saveSuccess'))
 
       // Reload page to apply theme changes
       setTimeout(() => {
         window.location.reload()
       }, 1000)
     } catch (err: any) {
-      setError(err.message || "เกิดข้อผิดพลาดในการบันทึก")
-      toast.error("เกิดข้อผิดพลาด")
+      setError(err.message || t('errors.saveFailed'))
+      toast.error(commonT('error'))
     } finally {
       setIsSaving(false)
     }
@@ -125,13 +129,13 @@ export function PreferencesForm({ userId }: PreferencesFormProps) {
       {success && (
         <Alert className="border-green-200 bg-green-50 text-green-800">
           <Check className="h-4 w-4" />
-          <AlertDescription>บันทึกการตั้งค่าสำเร็จ! กำลังรีโหลดหน้า...</AlertDescription>
+          <AlertDescription>{t('success.reloadMessage')}</AlertDescription>
         </Alert>
       )}
 
       {/* Language */}
       <div className="space-y-2">
-        <Label htmlFor="language">Language / ภาษา</Label>
+        <Label htmlFor="language">{t('language.label')}</Label>
         <Select
           value={preferences.language}
           onValueChange={(value) => setPreferences({ ...preferences, language: value })}
@@ -140,16 +144,16 @@ export function PreferencesForm({ userId }: PreferencesFormProps) {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="th">🇹🇭 ไทย (Thai)</SelectItem>
-            <SelectItem value="en">🇬🇧 English</SelectItem>
+            <SelectItem value="th">{t('language.options.th')}</SelectItem>
+            <SelectItem value="en">{t('language.options.en')}</SelectItem>
           </SelectContent>
         </Select>
-        <p className="text-xs text-muted-foreground">เลือกภาษาที่ต้องการใช้ในระบบ</p>
+        <p className="text-xs text-muted-foreground">{t('language.description')}</p>
       </div>
 
       {/* Theme */}
       <div className="space-y-2">
-        <Label htmlFor="theme">Theme / ธีม</Label>
+        <Label htmlFor="theme">{t('theme.label')}</Label>
         <Select
           value={preferences.theme}
           onValueChange={(value) => setPreferences({ ...preferences, theme: value })}
@@ -158,17 +162,17 @@ export function PreferencesForm({ userId }: PreferencesFormProps) {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="light">☀️ Light / สว่าง</SelectItem>
-            <SelectItem value="dark">🌙 Dark / มืด</SelectItem>
-            <SelectItem value="system">💻 System / ตามระบบ</SelectItem>
+            <SelectItem value="light">{t('theme.options.light')}</SelectItem>
+            <SelectItem value="dark">{t('theme.options.dark')}</SelectItem>
+            <SelectItem value="system">{t('theme.options.system')}</SelectItem>
           </SelectContent>
         </Select>
-        <p className="text-xs text-muted-foreground">เลือกธีมการแสดงผล</p>
+        <p className="text-xs text-muted-foreground">{t('theme.description')}</p>
       </div>
 
       {/* Timezone */}
       <div className="space-y-2">
-        <Label htmlFor="timezone">Timezone / เขตเวลา</Label>
+        <Label htmlFor="timezone">{t('timezone.label')}</Label>
         <Select
           value={preferences.timezone}
           onValueChange={(value) => setPreferences({ ...preferences, timezone: value })}
@@ -177,20 +181,20 @@ export function PreferencesForm({ userId }: PreferencesFormProps) {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="Asia/Bangkok">🇹🇭 Bangkok (GMT+7)</SelectItem>
-            <SelectItem value="Asia/Singapore">🇸🇬 Singapore (GMT+8)</SelectItem>
-            <SelectItem value="Asia/Hong_Kong">🇭🇰 Hong Kong (GMT+8)</SelectItem>
-            <SelectItem value="Asia/Tokyo">🇯🇵 Tokyo (GMT+9)</SelectItem>
-            <SelectItem value="Europe/London">🇬🇧 London (GMT+0)</SelectItem>
-            <SelectItem value="America/New_York">🇺🇸 New York (GMT-5)</SelectItem>
+            <SelectItem value="Asia/Bangkok">{t('timezone.options.bangkok')}</SelectItem>
+            <SelectItem value="Asia/Singapore">{t('timezone.options.singapore')}</SelectItem>
+            <SelectItem value="Asia/Hong_Kong">{t('timezone.options.hongkong')}</SelectItem>
+            <SelectItem value="Asia/Tokyo">{t('timezone.options.tokyo')}</SelectItem>
+            <SelectItem value="Europe/London">{t('timezone.options.london')}</SelectItem>
+            <SelectItem value="America/New_York">{t('timezone.options.newyork')}</SelectItem>
           </SelectContent>
         </Select>
-        <p className="text-xs text-muted-foreground">เลือกเขตเวลาสำหรับการแสดงวันที่และเวลา</p>
+        <p className="text-xs text-muted-foreground">{t('timezone.description')}</p>
       </div>
 
       {/* Date Format */}
       <div className="space-y-2">
-        <Label htmlFor="dateFormat">Date Format / รูปแบบวันที่</Label>
+        <Label htmlFor="dateFormat">{t('dateFormat.label')}</Label>
         <Select
           value={preferences.date_format}
           onValueChange={(value) => setPreferences({ ...preferences, date_format: value })}
@@ -204,12 +208,12 @@ export function PreferencesForm({ userId }: PreferencesFormProps) {
             <SelectItem value="YYYY-MM-DD">YYYY-MM-DD (2024-12-31)</SelectItem>
           </SelectContent>
         </Select>
-        <p className="text-xs text-muted-foreground">เลือกรูปแบบการแสดงวันที่</p>
+        <p className="text-xs text-muted-foreground">{t('dateFormat.description')}</p>
       </div>
 
       {/* Currency */}
       <div className="space-y-2">
-        <Label htmlFor="currency">Currency / สกุลเงิน</Label>
+        <Label htmlFor="currency">{t('currency.label')}</Label>
         <Select
           value={preferences.currency}
           onValueChange={(value) => setPreferences({ ...preferences, currency: value })}
@@ -218,14 +222,14 @@ export function PreferencesForm({ userId }: PreferencesFormProps) {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="THB">🇹🇭 THB (บาท)</SelectItem>
-            <SelectItem value="USD">🇺🇸 USD ($)</SelectItem>
-            <SelectItem value="EUR">🇪🇺 EUR (€)</SelectItem>
-            <SelectItem value="GBP">🇬🇧 GBP (£)</SelectItem>
-            <SelectItem value="SGD">🇸🇬 SGD (S$)</SelectItem>
+            <SelectItem value="THB">{t('currency.options.thb')}</SelectItem>
+            <SelectItem value="USD">{t('currency.options.usd')}</SelectItem>
+            <SelectItem value="EUR">{t('currency.options.eur')}</SelectItem>
+            <SelectItem value="GBP">{t('currency.options.gbp')}</SelectItem>
+            <SelectItem value="SGD">{t('currency.options.sgd')}</SelectItem>
           </SelectContent>
         </Select>
-        <p className="text-xs text-muted-foreground">เลือกสกุลเงินสำหรับการแสดงราคา</p>
+        <p className="text-xs text-muted-foreground">{t('currency.description')}</p>
       </div>
 
       {/* Save Button */}
@@ -234,10 +238,10 @@ export function PreferencesForm({ userId }: PreferencesFormProps) {
           {isSaving ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              กำลังบันทึก...
+              {t('actions.saving')}
             </>
           ) : (
-            "Save Preferences / บันทึกการตั้งค่า"
+            t('actions.save')
           )}
         </Button>
       </div>

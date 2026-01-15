@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
+import { useTranslations } from "next-intl"
 
 /**
  * Modern Loading Components - Awwwards Inspired
@@ -134,6 +135,7 @@ export function AIProcessingOverlay({
   stage: string
   progress: number
 }) {
+  const t = useTranslations('ui.modernLoader')
   return (
     <AnimatePresence>
       {isVisible && (
@@ -187,7 +189,7 @@ export function AIProcessingOverlay({
             </motion.h3>
             
             <p className="text-sm text-muted-foreground text-center mb-6">
-              กำลังประมวลผลด้วย AI หลายโมเดล
+              {t('aiProcessing')}
             </p>
 
             {/* Progress */}

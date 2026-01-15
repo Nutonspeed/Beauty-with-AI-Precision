@@ -44,14 +44,14 @@ export class PDFReportGenerator {
     dataPoints: ProgressDataPoint[],
     comparison: ProgressComparison | null,
     stats: ProgressStats | null,
+    t: (key: string, values?: any) => string,
     options: PDFReportOptions = {}
   ): Promise<Blob> {
     const {
-      title = 'Skin Progress Report',
+      title = t('title'),
       clientName,
       clientId,
       centerName = 'AI Beauty Center',
-      language = 'th',
     } = options;
 
     // Header
@@ -59,43 +59,43 @@ export class PDFReportGenerator {
 
     // Client Info
     if (clientName || clientId) {
-      this.addClientInfo(clientName, clientId);
+      this.addClientInfo(clientName, clientId, t);
     }
 
     // Report Date
-    this.addText(`Report Date: ${new Date().toLocaleDateString()}`, 14, false);
+    this.addText(t('reportDate', { date: new Date().toLocaleDateString(t('locale') === 'th' ? 'th-TH' : 'en-US') }), 14, false);
     this.addSpace(10);
 
     // Statistics Summary
     if (stats) {
-      this.addSection('Progress Summary');
-      this.addStatistics(stats, language);
+      this.addSection(t('summaryTitle'));
+      this.addStatistics(stats, t);
       this.addSpace(10);
     }
 
     // Overall Comparison
     if (comparison) {
-      this.addSection('Overall Progress');
-      this.addComparison(comparison, language);
+      this.addSection(t('overallProgress'));
+      this.addComparison(comparison, t);
       this.addSpace(10);
     }
 
     // Detailed Metrics
     if (dataPoints.length > 0) {
-      this.addSection('Latest Analysis Results');
+      this.addSection(t('latestAnalysis'));
       const latest = dataPoints[dataPoints.length - 1];
-      this.addMetricsTable(latest.metrics, language);
+      this.addMetricsTable(latest.metrics, t);
       this.addSpace(10);
     }
 
     // Timeline
     if (dataPoints.length >= 2) {
-      this.addSection('Progress Timeline');
-      this.addTimeline(dataPoints, language);
+      this.addSection(t('timelineTitle'));
+      this.addTimeline(dataPoints, t);
     }
 
     // Footer on all pages
-    this.addFooter();
+    this.addFooter(t);
 
     return this.pdf.output('blob');
   }
@@ -129,12 +129,12 @@ export class PDFReportGenerator {
   /**
    * Add client information
    */
-  private addClientInfo(name?: string, id?: string): void {
+  private addClientInfo(name: string | undefined, id: string | undefined, t: (key: string, values?: any) => string): void {
     this.pdf.setFontSize(12);
     this.pdf.setFont('helvetica', 'normal');
 
     if (name) {
-      this.addText(`Client: ${name}`, 12, false);
+      this.addText(t('patient', { name }), 12, false);
     }
     if (id) {
       this.addText(`ID: ${id}`, 12, false);
@@ -157,40 +157,22 @@ export class PDFReportGenerator {
   /**
    * Add statistics section
    */
-  private addStatistics(stats: ProgressStats, language: 'th' | 'en'): void {
+  private addStatistics(stats: ProgressStats, t: (key: string, values?: any) => string): void {
     this.pdf.setFontSize(11);
     this.pdf.setFont('helvetica', 'normal');
 
-    const labels = language === 'th' ? {
-      dataPoints: 'จำนวนครั้งที่ตรวจ',
-      timeSpan: 'ระยะเวลา',
-      avgImprovement: 'ค่าเฉลี่ยการปรับปรุง',
-      bestMetric: 'ปรับปรุงดีที่สุด',
-      worstMetric: 'ต้องปรับปรุง',
-      consistency: 'ความสม่ำเสมอ',
-      projected: 'คาดการณ์ 30 วัน',
-    } : {
-      dataPoints: 'Total Checkups',
-      timeSpan: 'Duration',
-      avgImprovement: 'Average Improvement',
-      bestMetric: 'Best Improvement',
-      worstMetric: 'Needs Work',
-      consistency: 'Consistency',
-      projected: '30-Day Projection',
-    };
-
-    this.addText(`${labels.dataPoints}: ${stats.totalDataPoints} times`, 11, false);
-    this.addText(`${labels.timeSpan}: ${stats.timeSpanDays} days`, 11, false);
+    this.addText(`${t('totalCheckups')}: ${stats.totalDataPoints} times`, 11, false);
+    this.addText(`${t('duration', { duration: stats.timeSpanDays })}`, 11, false);
     this.addText(
-      `${labels.avgImprovement}: ${stats.averageImprovement > 0 ? '+' : ''}${stats.averageImprovement.toFixed(2)} points`,
+      `${t('avgImprovement')}: ${stats.averageImprovement > 0 ? '+' : ''}${stats.averageImprovement.toFixed(2)} points`,
       11,
       false
     );
-    this.addText(`${labels.bestMetric}: ${stats.bestMetric}`, 11, false);
-    this.addText(`${labels.worstMetric}: ${stats.worstMetric}`, 11, false);
-    this.addText(`${labels.consistency}: ${stats.consistencyScore.toFixed(1)}%`, 11, false);
+    this.addText(`${t('bestImprovement')}: ${stats.bestMetric}`, 11, false);
+    this.addText(`${t('needsWork')}: ${stats.worstMetric}`, 11, false);
+    this.addText(`${t('consistency')}: ${stats.consistencyScore.toFixed(1)}%`, 11, false);
     this.addText(
-      `${labels.projected}: ${stats.projectedImprovement > 0 ? '+' : ''}${stats.projectedImprovement.toFixed(2)} points`,
+      `${t('projected30Days')}: ${stats.projectedImprovement > 0 ? '+' : ''}${stats.projectedImprovement.toFixed(2)} points`,
       11,
       false
     );
@@ -199,35 +181,17 @@ export class PDFReportGenerator {
   /**
    * Add comparison section
    */
-  private addComparison(comparison: ProgressComparison, language: 'th' | 'en'): void {
+  private addComparison(comparison: ProgressComparison, t: (key: string, values?: any) => string): void {
     this.pdf.setFontSize(11);
 
-    const labels = language === 'th' ? {
-      duration: 'ระยะเวลา',
-      trend: 'แนวโน้ม',
-      change: 'การเปลี่ยนแปลง',
-      days: 'วัน',
-    } : {
-      duration: 'Duration',
-      trend: 'Trend',
-      change: 'Change',
-      days: 'days',
-    };
-
-    const trendText = {
-      improving: language === 'th' ? 'ดีขึ้น' : 'Improving',
-      stable: language === 'th' ? 'คงที่' : 'Stable',
-      declining: language === 'th' ? 'แย่ลง' : 'Declining',
-    };
-
     this.addText(
-      `${labels.duration}: ${comparison.durationDays} ${labels.days}`,
+      `${t('duration', { duration: comparison.durationDays })}`,
       11,
       false
     );
-    this.addText(`${labels.trend}: ${trendText[comparison.trend]}`, 11, false);
+    this.addText(`${t('trend')}: ${t(`trendValues.${comparison.trend}`)}`, 11, false);
     this.addText(
-      `${labels.change}: ${comparison.percentageChange > 0 ? '+' : ''}${comparison.percentageChange.toFixed(2)}%`,
+      `${t('changeHeader')}: ${comparison.percentageChange > 0 ? '+' : ''}${comparison.percentageChange.toFixed(2)}%`,
       11,
       false
     );
@@ -235,7 +199,7 @@ export class PDFReportGenerator {
     this.addSpace(5);
 
     // Improvements table
-    this.addImprovementsTable(comparison.improvements, language);
+    this.addImprovementsTable(comparison.improvements, t);
   }
 
   /**
@@ -243,30 +207,8 @@ export class PDFReportGenerator {
    */
   private addImprovementsTable(
     improvements: Record<string, number>,
-    language: 'th' | 'en'
+    t: (key: string, values?: any) => string
   ): void {
-    const metricLabels = language === 'th' ? {
-      spots: 'จุดด่างดำ',
-      pores: 'รูขุมขน',
-      wrinkles: 'ริ้วรอย',
-      texture: 'เนื้อผิว',
-      redness: 'ความแดง',
-      hydration: 'ความชุ่มชื้น',
-      skinTone: 'สีผิว',
-      elasticity: 'ความยืดหยุ่น',
-      overallHealth: 'สุขภาพรวม',
-    } : {
-      spots: 'Spots',
-      pores: 'Pores',
-      wrinkles: 'Wrinkles',
-      texture: 'Texture',
-      redness: 'Redness',
-      hydration: 'Hydration',
-      skinTone: 'Skin Tone',
-      elasticity: 'Elasticity',
-      overallHealth: 'Overall Health',
-    };
-
     const _startY = this.currentY;
     const rowHeight = 7;
     const col1X = this.margin;
@@ -274,15 +216,15 @@ export class PDFReportGenerator {
 
     // Table header
     this.pdf.setFont('helvetica', 'bold');
-    this.pdf.text('Metric', col1X, this.currentY);
-    this.pdf.text('Change', col2X, this.currentY);
+    this.pdf.text(t('metricsHeader'), col1X, this.currentY);
+    this.pdf.text(t('changeHeader'), col2X, this.currentY);
     this.currentY += rowHeight;
 
     // Table rows
     this.pdf.setFont('helvetica', 'normal');
     Object.entries(improvements).forEach(([key, value]) => {
       this.checkPageBreak(rowHeight);
-      const label = metricLabels[key as keyof typeof metricLabels] || key;
+      const label = t(`metrics.${key}`) || key;
       const changeText = `${value > 0 ? '+' : ''}${value.toFixed(2)}`;
       
       this.pdf.text(label, col1X, this.currentY);
@@ -299,30 +241,8 @@ export class PDFReportGenerator {
    */
   private addMetricsTable(
     metrics: EnhancedMetricsResult,
-    language: 'th' | 'en'
+    t: (key: string, values?: any) => string
   ): void {
-    const metricLabels = language === 'th' ? {
-      spots: 'จุดด่างดำ',
-      pores: 'รูขุมขน',
-      wrinkles: 'ริ้วรอย',
-      texture: 'เนื้อผิว',
-      redness: 'ความแดง',
-      hydration: 'ความชุ่มชื้น',
-      skinTone: 'สีผิว',
-      elasticity: 'ความยืดหยุ่น',
-      overallHealth: 'สุขภาพรวม',
-    } : {
-      spots: 'Spots',
-      pores: 'Pores',
-      wrinkles: 'Wrinkles',
-      texture: 'Texture',
-      redness: 'Redness',
-      hydration: 'Hydration',
-      skinTone: 'Skin Tone',
-      elasticity: 'Elasticity',
-      overallHealth: 'Overall Health',
-    };
-
     const rowHeight = 7;
     const col1X = this.margin;
     const col2X = this.margin + 60;
@@ -330,9 +250,9 @@ export class PDFReportGenerator {
 
     // Table header
     this.pdf.setFont('helvetica', 'bold');
-    this.pdf.text('Metric', col1X, this.currentY);
-    this.pdf.text('Score', col2X, this.currentY);
-    this.pdf.text('Grade', col3X, this.currentY);
+    this.pdf.text(t('metricsHeader'), col1X, this.currentY);
+    this.pdf.text(t('scoreHeader'), col2X, this.currentY);
+    this.pdf.text(t('gradeHeader'), col3X, this.currentY);
     this.currentY += rowHeight;
 
     // Table rows
@@ -350,7 +270,7 @@ export class PDFReportGenerator {
 
     for (const { key, score } of metricsData) {
       this.checkPageBreak(rowHeight);
-      const label = metricLabels[key as keyof typeof metricLabels];
+      const label = t(`metrics.${key}`);
       const grade = this.getGrade(score);
 
       this.pdf.text(label, col1X, this.currentY);
@@ -363,7 +283,7 @@ export class PDFReportGenerator {
     this.checkPageBreak(rowHeight);
     this.pdf.setFont('helvetica', 'bold');
     this.pdf.text(
-      metricLabels.overallHealth,
+      t('metrics.overallHealth' as any),
       col1X,
       this.currentY
     );
@@ -379,27 +299,17 @@ export class PDFReportGenerator {
   /**
    * Add timeline
    */
-  private addTimeline(dataPoints: ProgressDataPoint[], language: 'th' | 'en'): void {
+  private addTimeline(dataPoints: ProgressDataPoint[], t: (key: string, values?: any) => string): void {
     const rowHeight = 7;
     const col1X = this.margin;
     const col2X = this.margin + 40;
     const col3X = this.margin + 90;
 
-    const labels = language === 'th' ? {
-      date: 'วันที่',
-      score: 'คะแนน',
-      notes: 'หมายเหตุ',
-    } : {
-      date: 'Date',
-      score: 'Score',
-      notes: 'Notes',
-    };
-
     // Table header
     this.pdf.setFont('helvetica', 'bold');
-    this.pdf.text(labels.date, col1X, this.currentY);
-    this.pdf.text(labels.score, col2X, this.currentY);
-    this.pdf.text(labels.notes, col3X, this.currentY);
+    this.pdf.text(t('timelineLabels.date'), col1X, this.currentY);
+    this.pdf.text(t('timelineLabels.score'), col2X, this.currentY);
+    this.pdf.text(t('timelineLabels.notes'), col3X, this.currentY);
     this.currentY += rowHeight;
 
     // Table rows
@@ -407,7 +317,7 @@ export class PDFReportGenerator {
     for (const dp of dataPoints) {
       this.checkPageBreak(rowHeight);
       
-      const dateStr = dp.date.toLocaleDateString();
+      const dateStr = dp.date.toLocaleDateString(t('locale') === 'th' ? 'th-TH' : 'en-US');
       const scoreStr = dp.metrics.overallHealth.score.toFixed(1);
       const notesStr = dp.notes?.substring(0, 30) || '-';
 
@@ -449,7 +359,7 @@ export class PDFReportGenerator {
   /**
    * Add footer to all pages
    */
-  private addFooter(): void {
+  private addFooter(t: (key: string, values?: any) => string): void {
     const pageCount = this.pdf.getNumberOfPages();
     
     for (let i = 1; i <= pageCount; i++) {
@@ -463,7 +373,7 @@ export class PDFReportGenerator {
         { align: 'center' }
       );
       this.pdf.text(
-        'Generated by AI Beauty Center System',
+        t('footer'),
         this.pageWidth / 2,
         this.pageHeight - 5,
         { align: 'center' }

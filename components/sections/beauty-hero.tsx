@@ -1,6 +1,6 @@
 /**
  * Beauty AI Custom Hero Section
- * Hero section ที่ออกแบบเฉพาะ
+ * Specially designed hero section
  */
 
 'use client';
@@ -10,7 +10,10 @@ import { Button } from '@/components/ui/button';
 import { AIStarIcon, BeautyGemIcon } from '@/components/icons/beauty-icons';
 import Link from 'next/link';
 
+import { useTranslations } from 'next-intl';
+
 export function BeautyHero() {
+  const t = useTranslations('hero');
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Gradient */}
@@ -33,27 +36,23 @@ export function BeautyHero() {
 
         {/* Title */}
         <h1 className="beauty-title text-5xl md:text-7xl font-bold mb-6">
-          Beauty with
-          <br />
-          AI Precision
+          {t('title')}
         </h1>
 
         {/* Subtitle */}
         <p className="beauty-subtitle text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
-          ปฏิวัติวงการความงามด้วย AI ที่วิเคราะห์ผิวหน้าอย่างแม่นยำ
-          <br />
-          และแนะนำการดูแลที่เหมาะสมเฉพาะคุณ
+          {t('subtitle')}
         </p>
 
         {/* Stats */}
         <div className="grid grid-cols-3 gap-8 mb-12 max-w-2xl mx-auto">
           <div className="text-center">
             <div className="text-3xl font-bold text-rose-500">98%</div>
-            <div className="text-sm text-gray-600">ความแม่นยำ</div>
+            <div className="text-sm text-gray-600">{t('stats.accuracy')}</div>
           </div>
           <div className="text-center">
             <div className="text-3xl font-bold text-purple-500">50K+</div>
-            <div className="text-sm text-gray-600">ผู้ใช้งาน</div>
+            <div className="text-sm text-gray-600">{t('stats.users')}</div>
           </div>
           <div className="text-center">
             <div className="text-3xl font-bold text-gold-500">24/7</div>
@@ -66,13 +65,13 @@ export function BeautyHero() {
           <Link href="/analysis">
             <Button size="lg" className="btn-beauty text-lg px-8 py-4">
               <BeautyGemIcon size={20} className="mr-2" />
-              เริ่มวิเคราะห์ฟรี
+              {t('actions.startAnalysis')}
             </Button>
           </Link>
           <Link href="/ar-simulator">
             <Button variant="outline" size="lg" className="text-lg px-8 py-4 border-2 border-rose-200 hover:bg-rose-50">
               <span className="mr-2">👗</span>
-              ลองเสื้อผ้า AR
+              {t('actions.tryAr')}
             </Button>
           </Link>
         </div>

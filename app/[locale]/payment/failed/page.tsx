@@ -6,23 +6,25 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import Link from 'next/link';
 import { AlertCircle, RefreshCw, Phone, Mail } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 export default function PaymentFailedPage() {
+  const t = useTranslations('paymentFailed');
   const searchParams = useSearchParams();
   const reason = searchParams.get('reason') || 'unknown';
 
   const getErrorMessage = (reason: string) => {
     switch (reason) {
       case 'timeout':
-        return 'การชำระเงินหมดเวลา กรุณาลองใหม่';
+        return t('errors.timeout');
       case 'cancelled':
-        return 'การชำระเงินถูกยกเลิก';
+        return t('errors.cancelled');
       case 'insufficient':
-        return 'ยอดเงินในบัญชีไม่เพียงพอ';
+        return t('errors.insufficient');
       case 'technical':
-        return 'เกิดข้อผิดพลาดทางเทคนิค กรุณาลองใหม่ในภายหลัง';
+        return t('errors.technical');
       default:
-        return 'การชำระเงินไม่สำเร็จ กรุณาลองใหม่อีกครั้ง';
+        return t('errors.default');
     }
   };
 
@@ -32,7 +34,7 @@ export default function PaymentFailedPage() {
         {/* Error Message */}
         <div className="text-center mb-8">
           <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h1 className="text-3xl font-bold mb-2">การชำระเงินไม่สำเร็จ</h1>
+          <h1 className="text-3xl font-bold mb-2">{t('errorTitle')}</h1>
           <p className="text-gray-600">{getErrorMessage(reason)}</p>
         </div>
 
@@ -40,15 +42,15 @@ export default function PaymentFailedPage() {
         <Alert className="mb-6 border-red-200 bg-red-50">
           <AlertCircle className="h-4 w-4 text-red-600" />
           <AlertDescription className="text-red-700">
-            <strong>รหัสข้อผิดพลาด:</strong> PAY_FAILED_{reason.toUpperCase()} <br />
-            <strong>เวลา:</strong> {new Date().toLocaleString('th-TH')}
+            <strong>{t('errorCode')}</strong> PAY_FAILED_{reason.toUpperCase()} <br />
+            <strong>{t('time')}</strong> {new Date().toLocaleString()}
           </AlertDescription>
         </Alert>
 
         {/* What to do */}
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle>ควรทำอย่างไรต่อ?</CardTitle>
+            <CardTitle>{t('whatToDo')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -57,9 +59,9 @@ export default function PaymentFailedPage() {
                   1
                 </span>
                 <div>
-                  <p className="font-medium">ตรวจสอบข้อมูลการชำระเงิน</p>
+                  <p className="font-medium">{t('step1Title')}</p>
                   <p className="text-sm text-gray-600">
-                    ตรวจสอบว่าบัญชีมียอดเงินเพียงพอและข้อมูลถูกต้อง
+                    {t('step1Desc')}
                   </p>
                 </div>
               </div>
@@ -68,9 +70,9 @@ export default function PaymentFailedPage() {
                   2
                 </span>
                 <div>
-                  <p className="font-medium">ลองชำระเงินอีกครั้ง</p>
+                  <p className="font-medium">{t('step2Title')}</p>
                   <p className="text-sm text-gray-600">
-                    คลิกปุ่มด้านล่างเพื่อกลับไปหน้าชำระเงิน
+                    {t('step2Desc')}
                   </p>
                 </div>
               </div>
@@ -79,9 +81,9 @@ export default function PaymentFailedPage() {
                   3
                 </span>
                 <div>
-                  <p className="font-medium">ติดต่อฝ่ายสนับสนุน</p>
+                  <p className="font-medium">{t('step3Title')}</p>
                   <p className="text-sm text-gray-600">
-                    หากยังไม่สามารถชำระเงินได้ กรุณาติดต่อเรา
+                    {t('step3Desc')}
                   </p>
                 </div>
               </div>
@@ -92,30 +94,30 @@ export default function PaymentFailedPage() {
         {/* Actions */}
         <div className="flex flex-col sm:flex-row gap-4 mb-8">
           <Button asChild className="flex-1">
-            <Link href="/th/pricing">
+            <Link href="/pricing">
               <RefreshCw className="w-4 h-4 mr-2" />
-              ลองชำระเงินอีกครั้ง
+              {t('retryButton')}
             </Link>
           </Button>
           <Button variant="outline" asChild className="flex-1">
-            <Link href="/th/support">ติดต่อฝ่ายสนับสนุน</Link>
+            <Link href="/support">{t('contactButton')}</Link>
           </Button>
         </div>
 
         {/* Support Info */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">ข้อมูลติดต่อ</CardTitle>
+            <CardTitle className="text-lg">{t('contactInfo')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
                 <Phone className="w-4 h-4 text-gray-500" />
-                <span>โทร: 02-XXX-XXXX</span>
+                <span>{t('phone')} 02-XXX-XXXX</span>
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="w-4 h-4 text-gray-500" />
-                <span>อีเมล: support@beauty-with-ai.com</span>
+                <span>{t('email')} support@beauty-with-ai.com</span>
               </div>
             </div>
           </CardContent>

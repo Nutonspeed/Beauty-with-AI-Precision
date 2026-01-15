@@ -58,6 +58,8 @@ export async function GET(request: NextRequest) {
         displayUrl: row.image_url,
         thumbnailUrl: row.image_thumbnail_url || undefined,
         concerns,
+        overallScore: row.overall_score,
+        skinType: row.ai_skin_type,
         createdAt: row.created_at,
         concernCount,
       }

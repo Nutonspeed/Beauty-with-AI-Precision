@@ -22,8 +22,6 @@ const YAxis = dynamic(() => import('recharts').then(mod => mod.YAxis), { ssr: fa
 const CartesianGrid = dynamic(() => import('recharts').then(mod => mod.CartesianGrid), { ssr: false });
 // @ts-ignore
 const Tooltip = dynamic(() => import('recharts').then(mod => mod.Tooltip), { ssr: false });
-// @ts-ignore
-const Legend = dynamic(() => import('recharts').then(mod => mod.Legend), { ssr: false });
 
 interface BranchBenchmarkingProps {
   isEnterprise: boolean

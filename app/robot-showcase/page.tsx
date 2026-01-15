@@ -1,5 +1,6 @@
 "use client"
 
+import { useTranslations } from "next-intl"
 import { Suspense, useRef, useMemo, useState, useEffect } from "react"
 import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber"
 import { 
@@ -258,6 +259,7 @@ function InfoHotspot({ position, label, description }: { position: [number, numb
 
 // Main Component
 export default function RobotShowcase() {
+  const t = useTranslations()
   const containerRef = useRef<HTMLDivElement>(null)
   const [cameraMode, setCameraMode] = useState(0)
   
@@ -341,20 +343,20 @@ export default function RobotShowcase() {
               </span>
             </motion.h1>
             <p className="text-3xl md:text-4xl text-gray-600 mb-8 font-light tracking-wide">
-              เทคโนโลยีเสริมความงามที่ทันสมัย
+              {t('robotShowcase.hero.subtitle')}
             </p>
             <div className="flex items-center justify-center gap-6 text-sm text-rose-600">
               <motion.div animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 2, repeat: Infinity }} className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-rose-400" />
-                <span>ปลอดภัย</span>
+                <span>{t('robotShowcase.hero.features.safety')}</span>
               </motion.div>
               <motion.div animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 2, repeat: Infinity, delay: 0.5 }} className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-rose-400" />
-                <span>มาตรฐานสากล</span>
+                <span>{t('robotShowcase.hero.features.standard')}</span>
               </motion.div>
               <motion.div animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 2, repeat: Infinity, delay: 1 }} className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-rose-400" />
-                <span>ผลลัพธ์ที่แท้จริง</span>
+                <span>{t('robotShowcase.hero.features.results')}</span>
               </motion.div>
             </div>
           </motion.div>
@@ -370,17 +372,17 @@ export default function RobotShowcase() {
           <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {[
               { 
-                title: "การวิเคราะห์ผิว", 
+                title: t('robotShowcase.sections.analysis.title'), 
                 specs: ["AI Skin Diagnostics", "3D Facial Mapping", "Real-time Analysis"],
                 icon: "🔬"
               },
               { 
-                title: "การรักษา", 
-                specs: ["Non-Invasive", "FDA Approved", "Centeral Grade"],
+                title: t('robotShowcase.sections.treatment.title'), 
+                specs: ["Non-Invasive", "FDA Approved", "Clinical Grade"],
                 icon: "💎"
               },
               { 
-                title: "ผลลัพธ์", 
+                title: t('robotShowcase.sections.results.title'), 
                 specs: ["Visible Results", "Long-lasting", "Natural Look"],
                 icon: "✨"
               }
@@ -422,16 +424,16 @@ export default function RobotShowcase() {
             className="text-6xl md:text-7xl font-light"
           >
             <span className="bg-gradient-to-r from-rose-400 to-pink-500 bg-clip-text text-transparent">
-              เทคโนโลยีที่ทันสมัย
+              {t('robotShowcase.features.title')}
             </span>
           </motion.h2>
 
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {[
-              { title: "มุมมอง 360°", desc: "ดูรายละเอียดทุกมุมด้วยเทคโนโลยี 3D", icon: "🔄" },
-              { title: "ระบบแสงอัจฉริยะ", desc: "แสดงผลแบบ Real-time สมจริง", icon: "💡" },
-              { title: "กล้องอัตโนมัติ", desc: "ระบบกล้องเคลื่อนไหวอย่างนุ่มนวล", icon: "🎥" },
-              { title: "คุณภาพระดับสูง", desc: "กราฟิกระดับมืออาชีพ", icon: "✨" }
+              { title: t('robotShowcase.features.items.view360.title'), desc: t('robotShowcase.features.items.view360.desc'), icon: "🔄" },
+              { title: t('robotShowcase.features.items.lighting.title'), desc: t('robotShowcase.features.items.lighting.desc'), icon: "💡" },
+              { title: t('robotShowcase.features.items.camera.title'), desc: t('robotShowcase.features.items.camera.desc'), icon: "🎥" },
+              { title: t('robotShowcase.features.items.quality.title'), desc: t('robotShowcase.features.items.quality.desc'), icon: "✨" }
             ].map((item, i) => (
               <motion.div
                 key={i}
@@ -453,7 +455,7 @@ export default function RobotShowcase() {
             whileInView={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
           >
-            คลิกที่จุดสีชมพูเพื่อดูข้อมูลเพิ่มเติม
+            {t('robotShowcase.features.clickTip')}
           </motion.p>
         </div>
       </motion.section>
@@ -470,15 +472,15 @@ export default function RobotShowcase() {
             transition={{ duration: 1 }}
           >
             <h2 className="text-6xl md:text-8xl font-light mb-6">
-              พร้อมแล้วหรือยัง
+              {t('robotShowcase.cta.title')}
               <br />
               <span className="bg-gradient-to-r from-rose-400 via-pink-400 to-rose-500 bg-clip-text text-transparent font-normal">
-                สำหรับความงามใหม่?
+                {t('robotShowcase.cta.subtitle')}
               </span>
             </h2>
 
             <p className="text-2xl text-gray-600 mb-12">
-              เทคโนโลยี AI เพื่อความงามที่สมบูรณ์แบบ
+              {t('robotShowcase.cta.description')}
             </p>
 
             <motion.button
@@ -491,14 +493,14 @@ export default function RobotShowcase() {
                 transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
                 className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-12"
               />
-              <span className="relative z-10">นัดหมายปรึกษา</span>
+              <span className="relative z-10">{t('robotShowcase.cta.button')}</span>
             </motion.button>
 
             <div className="mt-12 grid grid-cols-3 gap-8 max-w-2xl mx-auto">
               {[
-                { label: "ลูกค้า", value: "10K+" },
-                { label: "ความพึงพอใจ", value: "98%" },
-                { label: "การรักษา", value: "50+" }
+                { label: t('robotShowcase.cta.stats.clients'), value: "10K+" },
+                { label: t('robotShowcase.cta.stats.satisfaction'), value: "98%" },
+                { label: t('robotShowcase.cta.stats.treatments'), value: "50+" }
               ].map((stat, i) => (
                 <motion.div
                   key={i}

@@ -1,5 +1,6 @@
-"use client"
+'use client'
 
+import { useState, useEffect } from 'react'
 import { motion } from "framer-motion"
 import { Target, TrendingUp, ArrowUpRight, User, Sparkles, Zap } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -14,51 +15,61 @@ interface PrioritizedLead {
   score: number
   value: string
   concern: string
-  status: 'high_propensity' | 'churn_risk' | 'followup_needed'
+  status: 'hot' | 'warm' | 'new' | 'contacted'
   reason: string
 }
 
 export function LeadPrioritization() {
   const t = useTranslations()
+  const [leads, setLeads] = useState<PrioritizedLead[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const prioritizedLeads: PrioritizedLead[] = [
-    {
-      id: '1',
-      name: t('leadPrioritization.mock.name1'),
-      score: 94,
-      value: '฿45,000',
-      concern: t('programSentiment.keywords.prevention'),
-      status: 'high_propensity',
-      reason: t('leadPrioritization.mock.reason1')
-    },
-    {
-      id: '2',
-      name: t('leadPrioritization.mock.name2'),
-      score: 82,
-      value: '฿12,000',
-      concern: t('marketIntelligence.concerns.acnePores'),
-      status: 'followup_needed',
-      reason: t('leadPrioritization.mock.reason2')
-    },
-    {
-      id: '3',
-      name: t('leadPrioritization.mock.name3'),
-      score: 45,
-      value: '฿85,000',
-      concern: t('revenueAnalyticsInternal.momentum.title'),
-      status: 'churn_risk',
-      reason: t('leadPrioritization.mock.reason3')
+  const fetchPrioritizedLeads = async () => {
+    setLoading(true)
+    try {
+      // Fetch from the enhanced hot-leads service which includes telemetry
+      const response = await fetch('/api/sales/hot-leads?limit=5')
+      const result = await response.json()
+      
+      if (result.leads) {
+        const mapped = result.leads.map((l: any) => ({
+          id: l.id,
+          name: l.name,
+          score: l.score || 0,
+          value: `฿${(l.estimatedValue || 0).toLocaleString()}`,
+          concern: l.topConcern || 'General Wellness',
+          status: l.status,
+          reason: l.lastEngagementDuration 
+            ? `Engaged with report for ${l.lastEngagementDuration}s` 
+            : l.primary_concern || 'High conversion probability',
+          lastEngagementDuration: l.lastEngagementDuration,
+          isOnline: l.isOnline
+        }))
+        setLeads(mapped)
+      }
+    } catch (error) {
+      console.error('Failed to fetch prioritized leads:', error)
+    } finally {
+      setLoading(false)
     }
-  ]
+  }
+
+  useEffect(() => {
+    fetchPrioritizedLeads()
+    const interval = setInterval(fetchPrioritizedLeads, 30000)
+    return () => clearInterval(interval)
+  }, [])
 
   const getStatusConfig = (status: string) => {
     switch (status) {
-      case 'high_propensity':
-        return { label: t('leadPrioritization.status.high_propensity'), color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' }
-      case 'churn_risk':
-        return { label: t('leadPrioritization.status.churn_risk'), color: 'text-rose-400', bg: 'bg-rose-500/10', border: 'border-rose-500/20' }
+      case 'hot':
+        return { label: 'HOT_NODE', color: 'text-rose-400', bg: 'bg-rose-500/10', border: 'border-rose-500/20' }
+      case 'active':
+        return { label: 'ACTIVE_SYNC', color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20' }
+      case 'warm':
+        return { label: 'WARM_SIGNAL', color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/20' }
       default:
-        return { label: t('leadPrioritization.status.followup_needed'), color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/20' }
+        return { label: status.toUpperCase(), color: 'text-slate-400', bg: 'bg-white/5', border: 'border-white/10' }
     }
   }
 
@@ -82,68 +93,82 @@ export function LeadPrioritization() {
       </CardHeader>
       <CardContent className="p-10 lg:p-12 space-y-8">
         <div className="space-y-6">
-          {prioritizedLeads.map((lead, idx) => {
-            const config = getStatusConfig(lead.status)
-            return (
-              <motion.div
-                key={lead.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: idx * 0.1 }}
-                className="p-6 bg-white/[0.02] border border-white/5 rounded-[2rem] hover:bg-white/[0.04] transition-all group/item relative overflow-hidden"
-              >
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
-                  <div className="flex items-center gap-6">
-                    <div className="h-14 w-14 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center shadow-inner group-hover/item:border-pink-500/30 transition-all animate-synaptic-fire">
-                      <User className="h-6 w-6 text-slate-500 group-hover/item:text-pink-400" />
-                    </div>
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-3">
-                        <h4 className="text-lg font-bold text-white italic">{lead.name}</h4>
-                        <Badge variant="outline" className={cn("text-[8px] font-black uppercase tracking-widest", config.bg, config.color, config.border)}>
-                          {config.label}
-                        </Badge>
+          {loading ? (
+            Array(3).fill(0).map((_, i) => (
+              <div key={i} className="h-24 rounded-[2rem] bg-white/5 animate-pulse" />
+            ))
+          ) : leads.length === 0 ? (
+            <div className="py-10 text-center text-slate-500 italic text-sm">
+              No high-priority leads detected at this node.
+            </div>
+          ) : (
+            leads.map((lead, idx) => {
+              const config = getStatusConfig(lead.status)
+              return (
+                <motion.div
+                  key={lead.id}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: idx * 0.1 }}
+                  className="p-6 bg-white/[0.02] border border-white/5 rounded-[2rem] hover:bg-white/[0.04] transition-all group/item relative overflow-hidden"
+                >
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+                    <div className="flex items-center gap-6">
+                      <div className="h-14 w-14 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center shadow-inner group-hover/item:border-pink-500/30 transition-all animate-synaptic-fire">
+                        <User className="h-6 w-6 text-slate-500 group-hover/item:text-pink-400" />
                       </div>
-                      <p className="text-[10px] text-slate-500 uppercase font-black tracking-widest">{lead.concern}</p>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-12">
-                    <div className="space-y-1">
-                      <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest">{t('leadPrioritization.estValue')}</p>
-                      <p className="text-sm font-black text-white italic">{lead.value}</p>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest">{t('leadPrioritization.scoreLabel')}</p>
-                      <div className="flex items-center gap-2">
-                        <p className={cn("text-sm font-black italic", lead.score > 80 ? "text-emerald-400" : "text-amber-400")}>{lead.score}%</p>
-                        <TrendingUp className={cn("h-3 w-3", lead.score > 80 ? "text-emerald-400" : "text-amber-400")} />
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-3">
+                          <h4 className="text-lg font-bold text-white italic">{lead.name}</h4>
+                          <Badge variant="outline" className={cn("text-[8px] font-black uppercase tracking-widest", config.bg, config.color, config.border)}>
+                            {config.label}
+                          </Badge>
+                        </div>
+                        <p className="text-[10px] text-slate-500 uppercase font-black tracking-widest">{lead.concern}</p>
                       </div>
                     </div>
-                    <div className="hidden md:block space-y-1">
-                      <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest">{t('leadPrioritization.aiReasoning')}</p>
-                      <p className="text-[10px] text-slate-400 font-light italic truncate max-w-[150px]">{lead.reason}</p>
-                    </div>
-                  </div>
 
-                  <Button variant="ghost" size="icon" className="h-12 w-12 rounded-xl text-slate-500 hover:text-white hover:bg-pink-500 transition-all group/btn">
-                    <ArrowUpRight className="h-5 w-5 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
-                  </Button>
-                </div>
-                
-                {/* Background Sparkles for High Propensity */}
-                {lead.status === 'high_propensity' && (
-                  <div className="absolute top-0 right-0 p-4">
-                    <Sparkles className="h-12 w-12 text-pink-500/10 animate-pulse" />
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-12">
+                      <div className="space-y-1">
+                        <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest">{t('leadPrioritization.estValue')}</p>
+                        <p className="text-sm font-black text-white italic">{lead.value}</p>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest">{t('leadPrioritization.scoreLabel')}</p>
+                        <div className="flex items-center gap-2">
+                          <p className={cn("text-sm font-black italic", lead.score > 80 ? "text-emerald-400" : "text-amber-400")}>{lead.score}%</p>
+                          <TrendingUp className={cn("h-3 w-3", lead.score > 80 ? "text-emerald-400" : "text-amber-400")} />
+                        </div>
+                      </div>
+                      <div className="hidden md:block space-y-1">
+                        <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest">{t('leadPrioritization.aiReasoning')}</p>
+                        <p className="text-[10px] text-slate-400 font-light italic truncate max-w-[150px]">{lead.reason}</p>
+                      </div>
+                    </div>
+
+                    <Button variant="ghost" size="icon" className="h-12 w-12 rounded-xl text-slate-500 hover:text-white hover:bg-pink-500 transition-all group/btn">
+                      <ArrowUpRight className="h-5 w-5 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
+                    </Button>
                   </div>
-                )}
-              </motion.div>
-            )
-          })}
+                  
+                  {/* Background Sparkles for High Propensity */}
+                  {lead.score > 85 && (
+                    <div className="absolute top-0 right-0 p-4">
+                      <Sparkles className="h-12 w-12 text-pink-500/10 animate-pulse" />
+                    </div>
+                  )}
+                </motion.div>
+              )
+            })
+          )}
         </div>
         
-        <Button variant="outline" className="w-full h-14 rounded-2xl border-white/10 bg-white/5 text-[10px] font-black uppercase tracking-[0.3em] hover:bg-white/10 italic">
-          <Zap className="mr-3 h-4 w-4 text-amber-400" />
+        <Button 
+          variant="outline" 
+          onClick={fetchPrioritizedLeads}
+          className="w-full h-14 rounded-2xl border-white/10 bg-white/5 text-[10px] font-black uppercase tracking-[0.3em] hover:bg-white/10 italic"
+        >
+          <Zap className={cn("mr-3 h-4 w-4 text-amber-400", loading && "animate-spin")} />
           {t('leadPrioritization.syncMatrix')}
         </Button>
       </CardContent>

@@ -13,9 +13,6 @@ export class FinancialReportGenerator implements ReportGenerator {
       // Process financial metrics
       const processedData = await this.processFinancialData(data, metrics)
       
-      // Generate financial insights
-      const insights = await this.generateFinancialInsights(processedData)
-      
       return {
         metadata: {
           title: config.title,
@@ -25,11 +22,12 @@ export class FinancialReportGenerator implements ReportGenerator {
             endDate: dateRange.endDate.toISOString()
           },
           filters,
-          currency: 'THB'
+          currency: 'THB',
+          locale: config.locale || 'th'
         },
         data: processedData,
-        insights,
-        charts: this.generateFinancialCharts(processedData, metrics)
+        insights: await this.generateFinancialInsights(processedData, config.locale || 'th'),
+        charts: this.generateFinancialCharts(processedData, metrics, config.locale || 'th')
       }
     } catch (error) {
       console.error('Failed to generate financial report:', error)
@@ -110,16 +108,19 @@ export class FinancialReportGenerator implements ReportGenerator {
     return processed
   }
   
-  private async generateFinancialInsights(data: any) {
+  private async generateFinancialInsights(data: any, locale: string = 'th') {
     const insights = []
+    const isThai = locale === 'th'
     
     // Revenue insights
     if (data.revenue) {
       const revenueGrowth = this.calculateRevenueGrowth(data.revenue.byMonth)
       insights.push({
         type: 'revenue_growth',
-        title: 'Revenue Growth',
-        description: `Revenue is ${revenueGrowth > 0 ? 'growing' : 'declining'} by ${Math.abs(revenueGrowth)}%`,
+        title: isThai ? 'การเติบโตของรายได้' : 'Revenue Growth',
+        description: isThai 
+          ? `รายได้${revenueGrowth > 0 ? 'เพิ่มขึ้น' : 'ลดลง'} ${Math.abs(revenueGrowth)}%`
+          : `Revenue is ${revenueGrowth > 0 ? 'growing' : 'declining'} by ${Math.abs(revenueGrowth)}%`,
         value: revenueGrowth,
         trend: (revenueGrowth > 0 ? 'up' : 'down') as 'up' | 'down' | 'stable'
       })
@@ -129,8 +130,10 @@ export class FinancialReportGenerator implements ReportGenerator {
     if (data.profit) {
       insights.push({
         type: 'profitability',
-        title: 'Profit Margin',
-        description: `Current profit margin is ${data.profit.margin.toFixed(1)}%`,
+        title: isThai ? 'อัตรากำไร' : 'Profit Margin',
+        description: isThai
+          ? `อัตรากำไรปัจจุบันอยู่ที่ ${data.profit.margin.toFixed(1)}%`
+          : `Current profit margin is ${data.profit.margin.toFixed(1)}%`,
         value: data.profit.margin,
         benchmark: 20 // 20% benchmark
       })
@@ -139,13 +142,14 @@ export class FinancialReportGenerator implements ReportGenerator {
     return insights
   }
   
-  private generateFinancialCharts(data: any, metrics: string[]) {
+  private generateFinancialCharts(data: any, metrics: string[], locale: string = 'th') {
     const charts = []
+    const isThai = locale === 'th'
     
     if (metrics.includes('revenue')) {
       charts.push({
         type: 'line' as const,
-        title: 'Revenue Trend',
+        title: isThai ? 'แนวโน้มรายได้' : 'Revenue Trend',
         data: Object.entries(data.revenue.byMonth).map(([month, amount]) => ({
           month,
           revenue: amount
@@ -158,7 +162,7 @@ export class FinancialReportGenerator implements ReportGenerator {
             legend: { position: 'top' },
             tooltip: {
               callbacks: {
-                label: (context: any) => `Revenue: ฿${context.parsed.y.toLocaleString()}`
+                label: (context: any) => `${isThai ? 'รายได้' : 'Revenue'}: ฿${context.parsed.y.toLocaleString()}`
               }
             }
           }
@@ -169,7 +173,7 @@ export class FinancialReportGenerator implements ReportGenerator {
     if (metrics.includes('expenses')) {
       charts.push({
         type: 'pie' as const,
-        title: 'Expense Breakdown',
+        title: isThai ? 'สัดส่วนค่าใช้จ่าย' : 'Expense Breakdown',
         data: Object.entries(data.expenses.byCategory).map(([category, amount]) => ({
           category,
           amount

@@ -13,9 +13,6 @@ export class AnalyticsReportGenerator implements ReportGenerator {
       // Process and aggregate data
       const processedData = await this.processData(data, metrics)
       
-      // Generate insights
-      const insights = await this.generateInsights(processedData)
-      
       return {
         metadata: {
           title: config.title,
@@ -25,11 +22,12 @@ export class AnalyticsReportGenerator implements ReportGenerator {
             endDate: dateRange.endDate.toISOString()
           },
           filters,
-          totalRecords: data.userAnalytics.length + data.sessionData.length + data.featureUsage.length
+          totalRecords: data.userAnalytics.length + data.sessionData.length + data.featureUsage.length,
+          locale: config.locale || 'th'
         },
         data: processedData,
-        insights,
-        charts: this.generateChartConfigs(processedData, metrics)
+        insights: await this.generateInsights(processedData, config.locale || 'th'),
+        charts: this.generateChartConfigs(processedData, metrics, config.locale || 'th')
       }
     } catch (error) {
       console.error('Failed to generate analytics report:', error)
@@ -103,16 +101,19 @@ export class AnalyticsReportGenerator implements ReportGenerator {
     return processed
   }
   
-  private async generateInsights(data: any) {
+  private async generateInsights(data: any, locale: string = 'th') {
     const insights = []
+    const isThai = locale === 'th'
     
     // User growth insights
     if (data.users) {
       const growthRate = this.calculateGrowthRate(data.users.newUsers, data.users.returningUsers)
       insights.push({
         type: 'user_growth',
-        title: 'User Growth Trend',
-        description: `User base is ${growthRate > 0 ? 'growing' : 'declining'} at ${Math.abs(growthRate)}%`,
+        title: isThai ? 'แนวโน้มการเติบโตของผู้ใช้' : 'User Growth Trend',
+        description: isThai 
+          ? `ฐานผู้ใช้คือ${growthRate > 0 ? 'กำลังเติบโต' : 'กำลังลดลง'}ที่ ${Math.abs(growthRate)}%`
+          : `User base is ${growthRate > 0 ? 'growing' : 'declining'} at ${Math.abs(growthRate)}%`,
         value: growthRate,
         trend: (growthRate > 0 ? 'up' : 'down') as 'up' | 'down' | 'stable'
       })
@@ -122,8 +123,10 @@ export class AnalyticsReportGenerator implements ReportGenerator {
     if (data.sessions) {
       insights.push({
         type: 'engagement',
-        title: 'User Engagement',
-        description: `Average session duration is ${data.sessions.averageDuration} minutes`,
+        title: isThai ? 'การมีส่วนร่วมของผู้ใช้' : 'User Engagement',
+        description: isThai
+          ? `ระยะเวลาเซสชันเฉลี่ยคือ ${data.sessions.averageDuration} นาที`
+          : `Average session duration is ${data.sessions.averageDuration} minutes`,
         value: data.sessions.averageDuration,
         benchmark: 5 // 5 minutes benchmark
       })
@@ -132,13 +135,14 @@ export class AnalyticsReportGenerator implements ReportGenerator {
     return insights
   }
   
-  private generateChartConfigs(data: any, metrics: string[]) {
+  private generateChartConfigs(data: any, metrics: string[], locale: string = 'th') {
     const charts = []
+    const isThai = locale === 'th'
     
     if (metrics.includes('users')) {
       charts.push({
         type: 'line' as const,
-        title: 'User Growth Over Time',
+        title: isThai ? 'การเติบโตของผู้ใช้เมื่อเวลาผ่านไป' : 'User Growth Over Time',
         data: this.formatTimeSeriesData(data.userAnalytics, 'created_at'),
         xAxis: 'date',
         yAxis: 'count',
@@ -155,7 +159,7 @@ export class AnalyticsReportGenerator implements ReportGenerator {
     if (metrics.includes('sessions')) {
       charts.push({
         type: 'bar' as const,
-        title: 'Session Duration Distribution',
+        title: isThai ? 'การกระจายระยะเวลาเซสชัน' : 'Session Duration Distribution',
         data: data.sessionData.map((s: any) => ({ duration: s.duration, count: 1 })),
         xAxis: 'duration',
         yAxis: 'count',

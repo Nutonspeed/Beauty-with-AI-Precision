@@ -259,17 +259,18 @@ export default function SalesPresentationPage() {
               }
             : undefined,
           centerInfo: {
-            name: currentLocale === 'th' ? t('common.center.name') : t('common.center.name'),
-            address: currentLocale === 'th' ? t('common.center.address') : t('common.center.address'),
-            phone: t('common.center.phone'),
-            email: t('common.center.email'),
-            website: t('common.center.website'),
+            name: t('common.center.name' as any),
+            address: t('common.center.address' as any),
+            phone: t('common.center.phone' as any),
+            email: t('common.center.email' as any),
+            website: t('common.center.website' as any),
             brandColor: '#6366f1',
           },
           includePricing: true,
           includeTimeline: true,
           showDiscounts: true,
         },
+        t,
         `aesthetic-proposal-${analysisId}-${Date.now()}.pdf`
       );
     } catch (err) {

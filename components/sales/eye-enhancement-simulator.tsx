@@ -1,9 +1,8 @@
 "use client"
 
 /**
- * Eye Enhancement Simulator
- * AR tool for visualizing eye procedures (double eyelid, eye bag removal, brow lift)
- * สำหรับคลินิกทำตาสองชั้น/ลดถุงใต้ตา
+ * Eye Enhancement Simulator (Task 5/7)
+ * For double eyelid clinics / eye bag removal
  */
 
 import { useState, useEffect, useCallback } from "react"

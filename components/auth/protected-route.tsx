@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect } from "react"
+import { useTranslations } from 'next-intl';
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth/context"
 import { UserRole } from "@/types/supabase"
@@ -102,6 +103,7 @@ export function ProtectedRoute({
   loadingComponent,
   persistLoading = false,
 }: ProtectedRouteProps) {
+  const t = useTranslations('common.messages');
   const router = useRouter()
   const { user, loading } = useAuth()
 
@@ -157,7 +159,7 @@ export function ProtectedRoute({
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center space-y-4">
           <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
-          <p className="text-muted-foreground">กำลังตรวจสอบสิทธิ์...</p>
+          <p className="text-muted-foreground">{t('verifyingAccess')}</p>
         </div>
       </div>
     )

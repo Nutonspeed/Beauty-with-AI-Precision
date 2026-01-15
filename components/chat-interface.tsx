@@ -5,6 +5,7 @@
  * Real-time messaging UI with all chat features
  */
 
+import { useTranslations, useLocale } from 'next-intl';
 import { useState, useRef, useEffect } from 'react';
 import { Send, Paperclip, Smile, MoreVertical, Search, Phone, Video, X } from 'lucide-react';
 import { useMessages, useTyping, useOnlineStatus } from '@/hooks/useChat';
@@ -35,6 +36,8 @@ export function ChatInterface({
   onVideoCall,
   onVoiceCall,
 }: ChatInterfaceProps) {
+  const t = useTranslations('chatInterface');
+  const locale = useLocale();
   const [messageText, setMessageText] = useState('');
   const [replyingTo, setReplyingTo] = useState<Message | null>(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -118,26 +121,26 @@ export function ChatInterface({
   };
 
   const formatTime = (date: Date) => {
-    return new Date(date).toLocaleTimeString('th-TH', {
+    return new Date(date).toLocaleTimeString(locale === 'th' ? 'th-TH' : 'en-US', {
       hour: '2-digit',
       minute: '2-digit',
     });
   };
 
   const formatLastSeen = (date?: Date) => {
-    if (!date) return 'ไม่ทราบ';
+    if (!date) return t('lastSeen.never');
     const now = new Date();
     const diff = now.getTime() - new Date(date).getTime();
     const minutes = Math.floor(diff / 60000);
 
-    if (minutes < 1) return 'เมื่อสักครู่';
-    if (minutes < 60) return `${minutes} นาทีที่แล้ว`;
+    if (minutes < 1) return t('lastSeen.justNow');
+    if (minutes < 60) return t('lastSeen.minutesAgo', { count: minutes });
     
     const hours = Math.floor(minutes / 60);
-    if (hours < 24) return `${hours} ชั่วโมงที่แล้ว`;
+    if (hours < 24) return t('lastSeen.hoursAgo', { count: hours });
     
     const days = Math.floor(hours / 24);
-    return `${days} วันที่แล้ว`;
+    return t('lastSeen.daysAgo', { count: days });
   };
 
   const emojis = ['😀', '😂', '❤️', '👍', '🙏', '🎉', '😍', '👏', '🔥', '✨'];
@@ -159,7 +162,7 @@ export function ChatInterface({
           <div>
             <h3 className="font-semibold">{recipientName}</h3>
             <p className="text-sm text-gray-500">
-              {isOnline(recipientId) ? 'ออนไลน์' : `ออนไลน์ ${formatLastSeen(getLastSeen(recipientId))}`}
+              {isOnline(recipientId) ? t('online') : `${t('online')} ${formatLastSeen(getLastSeen(recipientId))}`}
             </p>
           </div>
         </div>
@@ -188,23 +191,23 @@ export function ChatInterface({
       <ScrollArea className="flex-1 p-4" ref={scrollRef}>
         {loading && messages.length === 0 ? (
           <div className="flex items-center justify-center h-full">
-            <div className="text-gray-500">กำลังโหลดข้อความ...</div>
+            <div className="text-gray-500">{t('loadingMessages')}</div>
           </div>
         ) : error ? (
           <div className="flex items-center justify-center h-full">
-            <div className="text-red-500">เกิดข้อผิดพลาด: {error}</div>
+            <div className="text-red-500">{t('error')}: {error}</div>
           </div>
         ) : messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-gray-500">
-            <p>ยังไม่มีข้อความ</p>
-            <p className="text-sm">เริ่มสนทนากันเลย!</p>
+            <p>{t('noMessages')}</p>
+            <p className="text-sm">{t('startConversation')}</p>
           </div>
         ) : (
           <>
             {hasMore && (
               <div className="text-center mb-4">
                 <Button variant="ghost" onClick={loadMore}>
-                  โหลดข้อความเก่า
+                  {t('loadOldMessages')}
                 </Button>
               </div>
             )}
@@ -229,7 +232,7 @@ export function ChatInterface({
                         } ${isDeleted ? 'opacity-50 italic' : ''}`}
                         onDoubleClick={() => {
                           if (isOwn && !isDeleted) {
-                            const newContent = prompt('แก้ไขข้อความ:', message.content);
+                            const newContent = prompt(t('editMessage'), message.content);
                             if (newContent && newContent !== message.content) {
                               editMessage(message.id, newContent);
                             }
@@ -238,7 +241,7 @@ export function ChatInterface({
                       >
                         {message.replyTo && (
                           <div className={`text-xs mb-2 pb-2 border-b ${isOwn ? 'border-blue-400' : 'border-gray-300'}`}>
-                            ตอบกลับข้อความ
+                            {t('replyAction')}
                           </div>
                         )}
 
@@ -260,13 +263,13 @@ export function ChatInterface({
                         )}
 
                         <p className="whitespace-pre-wrap break-words">
-                          {isDeleted ? 'ข้อความนี้ถูกลบแล้ว' : message.content}
+                          {isDeleted ? t('messageDeleted') : message.content}
                         </p>
 
                         <div className="flex items-center justify-between mt-1">
                           <span className={`text-xs ${isOwn ? 'text-blue-100' : 'text-gray-500'}`}>
                             {formatTime(message.createdAt)}
-                            {message.edited && ' (แก้ไข)'}
+                            {message.edited && ` ${t('editedLabel')}`}
                           </span>
                           {isOwn && (
                             <span className="text-xs">
@@ -302,24 +305,24 @@ export function ChatInterface({
                             className="text-xs text-gray-500 hover:text-gray-700"
                             onClick={() => setReplyingTo(message)}
                           >
-                            ตอบกลับ
+                            {t('replyAction')}
                           </button>
                           <button
                             className="text-xs text-gray-500 hover:text-gray-700"
                             onClick={() => setShowEmojiPicker(!showEmojiPicker)}
                           >
-                            แสดงความรู้สึก
+                            {t('reactAction')}
                           </button>
                           {isOwn && (
                             <button
                               className="text-xs text-red-500 hover:text-red-700"
                               onClick={() => {
-                                if (confirm('ต้องการลบข้อความนี้?')) {
+                                if (confirm(t('deleteConfirm'))) {
                                   deleteMessage(message.id);
                                 }
                               }}
                             >
-                              ลบ
+                              {t('deleteAction')}
                             </button>
                           )}
                         </div>
@@ -344,7 +347,7 @@ export function ChatInterface({
       {replyingTo && (
         <div className="flex items-center justify-between px-4 py-2 bg-gray-50 border-t">
           <div className="text-sm">
-            <span className="text-gray-500">ตอบกลับ:</span>{' '}
+            <span className="text-gray-500">{t('replyingTo')}</span>{' '}
             <span className="text-gray-900">{replyingTo.content.substring(0, 50)}...</span>
           </div>
           <Button
@@ -408,7 +411,7 @@ export function ChatInterface({
             handleTyping();
           }}
           onKeyPress={handleKeyPress}
-          placeholder="พิมพ์ข้อความ..."
+          placeholder={t('inputPlaceholder')}
           className="flex-1"
         />
 
