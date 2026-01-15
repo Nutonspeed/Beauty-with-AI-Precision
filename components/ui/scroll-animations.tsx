@@ -47,7 +47,7 @@ interface ScrollRevealProps {
   direction?: 'up' | 'down' | 'left' | 'right' | 'scale' | 'rotate'
   delay?: number
   duration?: number
-  _once?: boolean
+  once?: boolean
 }
 
 export function ScrollReveal({
@@ -56,7 +56,7 @@ export function ScrollReveal({
   direction = 'up',
   delay = 0,
   duration = 0.8,
-  _once = true
+  once = true
 }: ScrollRevealProps) {
   const ref = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({
@@ -64,7 +64,7 @@ export function ScrollReveal({
     offset: ["start 0.9", "start 0.4"]
   })
 
-  // 'once' is currently unused by the underlying implementation but kept for future use
+  // Handle unused 'once' prop
   const _unusedOnce = once;
 
   /*
@@ -211,6 +211,7 @@ export function HorizontalScrollSection({
   className,
   speed = 1
 }: HorizontalScrollProps) {
+  // Handle unused 'speed' prop
   const _unusedSpeed = speed;
   const containerRef = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({
