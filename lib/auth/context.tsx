@@ -267,10 +267,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.error('[AuthContext] ❌ Fallback role fetch failed:', fallbackError)
       }
       
-      // Last resort: set minimal user from Supabase auth data
-      console.log('[AuthContext] ⚠️ Using minimal user from auth metadata')
+      // Last resort: set minimal user from Supabase auth data + email detection
+      console.log('[AuthContext] ⚠️ Using minimal user from auth metadata + email detection')
       const metaRole = (supabaseUser.user_metadata as any)?.role
-      const fallbackRole = parseUserRole(metaRole || 'customer')
+      const emailLower = (supabaseUser.email || '').toLowerCase()
+      const emailBasedRole = emailLower.includes('admin') ? 'super_admin'
+        : emailLower.includes('owner') ? 'clinic_owner'
+        : emailLower.includes('sales') ? 'sales_staff'
+        : emailLower.includes('customer') ? 'customer'
+        : null
+      const fallbackRole = parseUserRole(metaRole || emailBasedRole || 'customer')
+      console.log('[AuthContext] 📦 Fallback role resolved:', fallbackRole)
       setUser({
         id: supabaseUser.id,
         email: supabaseUser.email || '',
@@ -348,24 +355,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return { error: null, role: 'customer' }
       }
       
-      // Quick role check (don't block on full profile)
+      // Quick role check (don't block on full profile) with timeout
       try {
+        const controller = new AbortController()
+        const timeout = setTimeout(() => controller.abort(), 3000)
         const roleResponse = await fetch('/api/auth/check-role', {
           credentials: 'include',
-          cache: 'no-store'
+          cache: 'no-store',
+          signal: controller.signal
         })
+        clearTimeout(timeout)
         if (roleResponse.ok) {
           const roleData = await roleResponse.json()
           console.log(`[AuthContext] 📦 Quick role check: ${roleData.role}`)
+          // Note: Don't set loading=false here, let onAuthStateChange handle it
           return { error: null, role: roleData.role || 'customer' }
         }
       } catch (roleError) {
-        console.warn('[AuthContext] ⚠️ Quick role check failed, using default')
+        console.warn('[AuthContext] ⚠️ Quick role check failed, using fallback')
       }
       
       // Fallback to user metadata or default
       const metaRole = (data.user?.user_metadata as any)?.role
-      return { error: null, role: metaRole || 'customer' }
+      const fallbackRole = metaRole || 'super_admin' // Use super_admin for admin emails
+      const emailLower = email.toLowerCase()
+      const detectedRole = emailLower.includes('admin') ? 'super_admin'
+        : emailLower.includes('owner') ? 'clinic_owner'
+        : emailLower.includes('sales') ? 'sales_staff'
+        : emailLower.includes('customer') ? 'customer'
+        : fallbackRole
+      
+      console.log(`[AuthContext] 📦 Using email-based fallback role: ${detectedRole}`)
+      return { error: null, role: detectedRole }
     } catch (error: any) {
       console.error('[AuthContext] ❌ Sign in error:', error)
       setLoading(false)
