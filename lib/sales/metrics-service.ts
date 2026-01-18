@@ -181,7 +181,7 @@ export async function fetchSalesMetricsForUser(userId: string, centerId: string 
       .select('*', { count: 'exact', head: true })
       .eq('sales_user_id', userId)
       .contains('metadata', { remote_consult_request: true })
-      .eq('status', 'converted')
+      .eq('status', 'won')
       .gte('updated_at', currentStart),
   )
   const { count: remoteConsultConvertedCount } = await q13

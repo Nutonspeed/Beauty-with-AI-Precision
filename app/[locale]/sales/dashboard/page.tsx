@@ -17,7 +17,6 @@ import { useTranslations } from 'next-intl'
 import { useAuth } from '@/lib/auth/context'
 
 export const dynamic = 'force-dynamic'
-export const revalidate = 0
 
 interface MetricBlock {
   today: number

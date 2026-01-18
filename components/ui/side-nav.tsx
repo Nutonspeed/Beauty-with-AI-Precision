@@ -34,22 +34,22 @@ export function SideNav({ sections, containerRef }: SideNavProps) {
     return () => container.removeEventListener("scroll", handleScroll)
   }, [activeSection, containerRef])
 
-  const scrollToSection = (index: number) => {
-    const container = containerRef.current
-    if (!container) return
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id)
+    if (!element) return
     
-    container.scrollTo({
-      top: index * container.clientHeight,
-      behavior: "smooth"
+    element.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
     })
   }
 
   return (
-    <div className="fixed right-8 top-1/2 -translate-y-1/2 z-50 flex flex-col items-center gap-8 py-10 px-4 rounded-full bg-white/5 backdrop-blur-md border border-white/10 hidden lg:flex shadow-2xl">
+    <div className="fixed right-8 top-1/2 -translate-y-1/2 z-[100] flex flex-col items-center gap-8 py-10 px-4 rounded-full bg-slate-900/40 backdrop-blur-xl border border-white/10 hidden lg:flex shadow-2xl pointer-events-auto">
       {/* Vertical Progress Track */}
-      <div className="absolute top-10 bottom-10 w-[1px] bg-slate-200/30 -z-10">
+      <div className="absolute top-10 bottom-10 w-[1px] bg-white/10 -z-10">
         <motion.div 
-          className="absolute top-0 w-full bg-blue-600"
+          className="absolute top-0 w-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]"
           style={{ height: `${scrollProgress}%` }}
         />
       </div>
@@ -57,10 +57,10 @@ export function SideNav({ sections, containerRef }: SideNavProps) {
       {sections.map((section, i) => (
         <button
           key={section.id}
-          onClick={() => scrollToSection(i)}
+          onClick={() => scrollToSection(section.id)}
           onMouseEnter={() => setIsHovered(i)}
           onMouseLeave={() => setIsHovered(null)}
-          className="group relative flex items-center justify-center w-4 h-4"
+          className="group relative flex items-center justify-center w-4 h-4 cursor-pointer pointer-events-auto"
           aria-label={`Scroll to ${section.label}`}
         >
           <AnimatePresence>

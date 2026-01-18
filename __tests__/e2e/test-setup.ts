@@ -9,22 +9,22 @@ export const testUsers = {
     name: 'Super Admin Test'
   },
   centerOwner: {
-    email: 'center-owner@test.com', 
-    password: 'password123',
+    email: 'clinic-owner@example.com', 
+    password: 'Admin123!',
     role: 'center_owner',
     name: 'Center Owner Test',
     centerId: 'test-center-1'
   },
   salesStaff: {
-    email: 'sales2@test.com',
-    password: 'password123', 
+    email: 'sales@example.com',
+    password: 'Admin123!', 
     role: 'sales_staff',
     name: 'Sales Staff Test',
     centerId: 'test-center-1'
   },
   customer: {
-    email: 'customer3@test.com',
-    password: 'password123',
+    email: 'customer@example.com',
+    password: 'Admin123!',
     role: 'customer', 
     name: 'Customer Test',
     centerId: 'test-center-1'

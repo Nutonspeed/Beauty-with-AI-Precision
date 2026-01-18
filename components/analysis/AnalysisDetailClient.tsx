@@ -515,10 +515,10 @@ export default function AnalysisDetailClient({
           {/* Program Protocol Tab */}
           <TabsContent value="recommendations" className="animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div className="space-y-10">
-              <MedicalDecisionSupport isEnterprise={isEnterprise} skinData={analysis} />
+              <MedicalDecisionSupport isEnterprise={isEnterprise} _skinData={analysis} />
               <AestheticGenomeVisualization />
               <Shared3DCanvas isPremium={isEnterprise || isPlatinum} />
-              <VisionToOrderPanel analysisId={analysis.id} recommendations={analysis.recommendations} />
+              <VisionToOrderPanel _analysisId={analysis.id} recommendations={analysis.recommendations} />
               
               {analysis.recommendations ? (
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

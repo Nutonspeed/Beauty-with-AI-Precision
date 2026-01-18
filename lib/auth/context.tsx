@@ -79,14 +79,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.log('[AuthContext] 🔔 Auth state changed:', event, 'hasSession:', !!session)
         
         if (session?.user) {
-          await loadUserData(session.user, session) // Pass session directly
+          // loadUserData manages its own loading state - don't set loading=false here
+          await loadUserData(session.user, session)
         } else {
           setUser(null)
           setSupabaseUser(null)
           loadingUserIdRef.current = null
           loadedUserIdRef.current = null
+          setLoading(false)
         }
-        setLoading(false)
       }
     )
 
@@ -118,6 +119,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     loadingUserIdRef.current = supabaseUser.id
     
     setSupabaseUser(supabaseUser)
+
+    let profile: any | null = null
     setLoading(true)
 
     // Get session - prefer from event, fallback to getSession if needed
@@ -141,11 +144,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     console.log('[AuthContext] 🌐 Calling /api/user-profile...')
     
-    // Call API route with timeout
+    // Call API route with short timeout for E2E stability
     const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 10000)
-    
-    let profile: any = null
+    const timeoutId = setTimeout(() => controller.abort(), 2000)
     
     try {
       const response = await fetch(`/api/user-profile?userId=${supabaseUser.id}`, {
@@ -156,160 +157,218 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         signal: controller.signal
       })
 
-        clearTimeout(timeoutId)
-        console.log('[AuthContext] 📡 API Response status:', response.status)
+      clearTimeout(timeoutId)
+      console.log('[AuthContext] 📡 API Response status:', response.status)
 
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({ error: 'Unknown error' }))
-          console.error('[AuthContext] ❌ Error loading user profile:', errorData)
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }))
+        console.error('[AuthContext] ❌ Error loading user profile:', errorData)
+        
+        // If user doesn't exist (404), create default customer profile
+        if (response.status === 404) {
+          console.log('[AuthContext] ⚠️ User not found, creating default profile...')
           
-          // If user doesn't exist (404), create default customer profile
-          if (response.status === 404) {
-            console.log('[AuthContext] ⚠️ User not found, creating default profile...')
-            
-            // Create default profile via API
-            const createResponse = await fetch('/api/user-profile', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${session.access_token}`
-              },
-              body: JSON.stringify({
-                userId: supabaseUser.id,
-                updates: {
-                  id: supabaseUser.id,
-                  email: supabaseUser.email,
-                  full_name: supabaseUser.user_metadata?.full_name || supabaseUser.email?.split('@')[0],
-                  role: 'customer',
-                  tier: 'free',
-                  is_active: true
-                }
-              })
-            })
-
-            if (createResponse.ok) {
-              const { data: newProfile } = await createResponse.json()
-              console.log('[AuthContext] ✅ Created default profile:', newProfile)
-              
-              setUser({
-                id: newProfile.id,
-                email: newProfile.email,
+          // Create default profile via API
+          const createResponse = await fetch('/api/user-profile', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${session.access_token}`
+            },
+            body: JSON.stringify({
+              userId: supabaseUser.id,
+              updates: {
+                id: supabaseUser.id,
+                email: supabaseUser.email,
+                full_name: supabaseUser.user_metadata?.full_name || supabaseUser.email?.split('@')[0],
                 role: 'customer',
                 tier: 'free',
-                center_id: null,
-                full_name: newProfile.full_name,
-                avatar_url: null,
-                phone: null,
-                is_active: true,
-                permissions: null,
-              })
-              
-              // ✅ Mark as successfully loaded
-              loadedUserIdRef.current = supabaseUser.id
-              loadingUserIdRef.current = null
-              setLoading(false)
-              return
-            } else {
-              console.error('[AuthContext] ❌ Failed to create profile:', createResponse.status)
-            }
+                is_active: true
+              }
+            })
+          })
+
+          if (createResponse.ok) {
+            const { data: newProfile } = await createResponse.json()
+            console.log('[AuthContext] ✅ Created default profile:', newProfile)
+            
+            setUser({
+              id: newProfile.id,
+              email: newProfile.email,
+              role: 'customer',
+              tier: 'free',
+              center_id: null,
+              full_name: newProfile.full_name,
+              avatar_url: null,
+              phone: null,
+              is_active: true,
+              permissions: null,
+            })
+            
+            // ✅ Mark as successfully loaded
+            loadedUserIdRef.current = supabaseUser.id
+            loadingUserIdRef.current = null
+            setLoading(false)
+            return
+          } else {
+            console.error('[AuthContext] ❌ Failed to create profile:', createResponse.status)
           }
+        }
+        setLoading(false)
+        loadingUserIdRef.current = null
+        return
+      }
+
+      const responseData = await response.json()
+      profile = responseData.data
+      console.log('[AuthContext] 📦 Profile data received:', profile)
+      console.log('[AuthContext] 👤 User email:', profile?.email, 'Role:', profile?.role)
+    } catch (fetchError: any) {
+      clearTimeout(timeoutId)
+      if (fetchError.name === 'AbortError') {
+        console.error('[AuthContext] ⏰ API request timeout after 2 seconds')
+      } else {
+        console.error('[AuthContext] ❌ Fetch error:', fetchError)
+      }
+      
+      // Fallback: try /api/auth/check-role for minimal role info (with 2s timeout)
+      console.log('[AuthContext] 🔄 Attempting fallback via /api/auth/check-role...')
+      try {
+        const fallbackController = new AbortController()
+        const fallbackTimeout = setTimeout(() => fallbackController.abort(), 2000)
+        const roleResponse = await fetch('/api/auth/check-role', {
+          credentials: 'include',
+          cache: 'no-store',
+          signal: fallbackController.signal
+        })
+        clearTimeout(fallbackTimeout)
+        if (roleResponse.ok) {
+          const roleData = await roleResponse.json()
+          console.log('[AuthContext] ✅ Fallback role received:', roleData.role)
+          const userRole = parseUserRole(roleData.role)
+          setUser({
+            id: supabaseUser.id,
+            email: supabaseUser.email || roleData.email || '',
+            role: userRole,
+            tier: getRoleTier(userRole),
+            center_id: roleData.centerId || null,
+            full_name: supabaseUser.user_metadata?.full_name || supabaseUser.email?.split('@')[0] || null,
+            avatar_url: null,
+            phone: null,
+            is_active: true,
+            permissions: null,
+          })
+          loadedUserIdRef.current = supabaseUser.id
           setLoading(false)
           loadingUserIdRef.current = null
           return
         }
-
-        const responseData = await response.json()
-        profile = responseData.data
-        console.log('[AuthContext] 📦 Profile data received:', profile)
-        console.log('[AuthContext] 👤 User email:', profile?.email, 'Role:', profile?.role)
-      } catch (fetchError: any) {
-        clearTimeout(timeoutId)
-        if (fetchError.name === 'AbortError') {
-          console.error('[AuthContext] ⏰ API request timeout after 10 seconds')
-        } else {
-          console.error('[AuthContext] ❌ Fetch error:', fetchError)
-        }
-        loadingUserIdRef.current = null
-        setLoading(false)
-        return
-      }
-
-      // Debug log
-      console.log('[AuthContext] ✅ User profile loaded:', { 
-        hasProfile: !!profile,
-        userId: supabaseUser.id,
-        role: profile?.role
-      })
-
-      if (profile) {
-        const userRole = parseUserRole(profile.role)
-        setUser({
-          id: profile.id,
-          email: profile.email,
-          role: userRole,
-          tier: getRoleTier(userRole),
-          center_id: profile.center_id || profile.center_id,
-          full_name: profile.full_name,
-          avatar_url: profile.avatar_url,
-          phone: profile.phone,
-          is_active: profile.is_active,
-          permissions: profile.permissions as Record<string, boolean> | null,
-        })
-        
-        // ✅ Mark as successfully loaded
-        loadedUserIdRef.current = supabaseUser.id
-        console.log('[AuthContext] ✅ User loaded successfully')
+      } catch (fallbackError) {
+        console.error('[AuthContext] ❌ Fallback role fetch failed:', fallbackError)
       }
       
+      // Last resort: set minimal user from Supabase auth data
+      console.log('[AuthContext] ⚠️ Using minimal user from auth metadata')
+      const metaRole = (supabaseUser.user_metadata as any)?.role
+      const fallbackRole = parseUserRole(metaRole || 'customer')
+      setUser({
+        id: supabaseUser.id,
+        email: supabaseUser.email || '',
+        role: fallbackRole,
+        tier: getRoleTier(fallbackRole),
+        center_id: null,
+        full_name: supabaseUser.user_metadata?.full_name || supabaseUser.email?.split('@')[0] || null,
+        avatar_url: null,
+        phone: null,
+        is_active: true,
+        permissions: null,
+      })
+      loadedUserIdRef.current = supabaseUser.id
+      loadingUserIdRef.current = null
       setLoading(false)
-      loadingUserIdRef.current = null // Reset loading flag
+      return
+    }
+
+    // Debug log
+    console.log('[AuthContext] ✅ User profile loaded:', { 
+      hasProfile: !!profile,
+      userId: supabaseUser.id,
+      role: profile?.role
+    })
+
+    if (profile) {
+      const userRole = parseUserRole(profile.role)
+      setUser({
+        id: profile.id,
+        email: profile.email,
+        role: userRole,
+        tier: getRoleTier(userRole),
+        center_id: profile.center_id,
+        full_name: profile.full_name,
+        avatar_url: profile.avatar_url,
+        phone: profile.phone,
+        is_active: profile.is_active,
+        permissions: profile.permissions as Record<string, boolean> | null,
+      })
+      
+      // ✅ Mark as successfully loaded
+      loadedUserIdRef.current = supabaseUser.id
+      console.log('[AuthContext] ✅ User loaded successfully')
+    }
+    
+    setLoading(false)
+    loadingUserIdRef.current = null // Reset loading flag
   }
 
   const signIn = async (email: string, password: string) => {
+    const startTime = Date.now()
+    console.log(`[AuthContext] 🔑 Attempting sign in for: ${email}`)
+    setLoading(true)
+
     try {
-      const startTime = Date.now()
-      console.log(`[AuthContext] 🔑 Attempting sign in for: ${email}`)
       const supabase = createClient()
+      console.log(`[AuthContext] 📡 Calling Supabase signInWithPassword...`)
+      
       const { data, error } = await supabase.auth.signInWithPassword({ email, password })
-      if (error) throw error
+      
+      if (error) {
+        console.error(`[AuthContext] ❌ Supabase auth error:`, error.message)
+        setLoading(false)
+        return { error, role: null }
+      }
       
       const loginTime = Date.now()
-      console.log(`[AuthContext] ✅ Supabase auth success in ${loginTime - startTime}ms`)
+      console.log(`[AuthContext] ✅ Supabase auth success in ${loginTime - startTime}ms. User ID: ${data.user?.id}`)
       
+      // Auth state change will trigger loadUserData via onAuthStateChange
+      // Just get role quickly from check-role API for immediate return
       const userId = data.user?.id
       if (!userId) {
         console.warn('[AuthContext] ⚠️ No user ID returned from Supabase')
         return { error: null, role: 'customer' }
       }
       
-      // Wait for session to propagate
-      console.log('[AuthContext] ⏳ Waiting for session propagation...')
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      console.log('[AuthContext] 🔄 Fetching user profile...')
-      const fetchStartTime = Date.now()
-      const profileResponse = await fetch(`/api/user-profile?userId=${userId}`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-      })
-      
-      const fetchEndTime = Date.now()
-      if (profileResponse.ok) {
-        const profileData = await profileResponse.json()
-        const profile = profileData.data
-        console.log(`[AuthContext] 📦 Profile received in ${fetchEndTime - fetchStartTime}ms:`, profile?.email, 'Role:', profile?.role)
-        
-        // Update local user state immediately
-        setUser(profile)
-        
-        return { error: null, role: profile?.role || 'customer' }
-      } else {
-        console.error(`[AuthContext] ❌ Profile fetch failed with status: ${profileResponse.status}`)
-        return { error: null, role: 'customer' }
+      // Quick role check (don't block on full profile)
+      try {
+        const roleResponse = await fetch('/api/auth/check-role', {
+          credentials: 'include',
+          cache: 'no-store'
+        })
+        if (roleResponse.ok) {
+          const roleData = await roleResponse.json()
+          console.log(`[AuthContext] 📦 Quick role check: ${roleData.role}`)
+          return { error: null, role: roleData.role || 'customer' }
+        }
+      } catch (roleError) {
+        console.warn('[AuthContext] ⚠️ Quick role check failed, using default')
       }
-    } catch (error) {
+      
+      // Fallback to user metadata or default
+      const metaRole = (data.user?.user_metadata as any)?.role
+      return { error: null, role: metaRole || 'customer' }
+    } catch (error: any) {
       console.error('[AuthContext] ❌ Sign in error:', error)
+      setLoading(false)
       return { error: error as Error, role: null }
     }
   }
@@ -335,7 +394,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           id: data.user.id,
           email: data.user.email!,
           full_name: fullName,
-          role: 'customer',  // string ไม่ใช่ enum
+          role: 'customer',
           is_active: true,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),

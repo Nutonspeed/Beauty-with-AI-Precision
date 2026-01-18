@@ -30,7 +30,7 @@ interface AestheticTimelineProps {
 export function AestheticTimeline({ programId }: AestheticTimelineProps) {
   const t = useTranslations()
   const locale = useLocale()
-  const { timeline, loading, _error } = useProgramTimeline(programId)
+  const { timeline, loading, error: _error } = useProgramTimeline(programId)
 
   if (loading) {
     return (

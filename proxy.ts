@@ -1,5 +1,5 @@
 import createMiddleware from 'next-intl/middleware';
-import type { NextRequest } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
 import { locales, defaultLocale } from './i18n/request';
 import { updateSession } from './lib/supabase/middleware'
@@ -22,8 +22,22 @@ export default async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname
   console.log(`[PROXY] Incoming request: ${pathname}`)
 
-  // Avoid i18n routing for API and Next internals, but still keep session refresh behavior.
-  if (pathname.startsWith('/api/') || pathname.startsWith('/_next/') || pathname.startsWith('/_vercel/')) {
+  // Completely bypass everything for static assets and internal Next.js paths to ensure performance
+  if (
+    pathname.startsWith('/_next/') || 
+    pathname.startsWith('/_vercel/') || 
+    pathname.includes('/favicon.ico') ||
+    pathname.includes('/manifest.json') ||
+    pathname.includes('/sw.js') ||
+    pathname.includes('/robots.txt') ||
+    pathname.includes('/sitemap.xml') ||
+    pathname.match(/\.(png|jpg|jpeg|gif|webp|svg|ico|woff2?|css|js|json|svg)$/)
+  ) {
+    return NextResponse.next()
+  }
+
+  // Avoid i18n routing for API, but still keep session refresh behavior.
+  if (pathname.startsWith('/api/')) {
     return updateSession(request)
   }
 
@@ -58,6 +72,14 @@ export default async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)',
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - sitemap.xml, robots.txt, manifest.json, sw.js (SEO/PWA files)
+     * - all files with common extensions (images, fonts, etc.)
+     */
+    '/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|manifest.json|sw.js|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|json|js|css|woff2?|map)$).*)',
   ],
 };

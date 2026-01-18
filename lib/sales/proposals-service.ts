@@ -1008,7 +1008,7 @@ export async function bookFromProposal(
     if (Number.isFinite(amount) && amount > 0) {
       paymentAmount = amount
       const { data: payment, error: paymentError } = await supabase
-        .from("booking_payments")
+        .from("payments")
         .insert({
           center_id: effectiveCenterId,
           appointment_id: appointment.id,

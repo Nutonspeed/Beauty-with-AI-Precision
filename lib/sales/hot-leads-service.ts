@@ -49,7 +49,7 @@ export async function fetchHotLeadsForUser(userId: string, centerId: string | nu
     .from('sales_leads')
     .select('*')
     .eq('sales_user_id', userId)
-    .in('status', ['new', 'contacted', 'qualified', 'active'])
+    .in('status', ['new', 'contacted', 'qualified'])
     .order('score', { ascending: false, nullsFirst: false })
     .order('created_at', { ascending: false })
     .range(safeOffset, safeOffset + safeLimit - 1)

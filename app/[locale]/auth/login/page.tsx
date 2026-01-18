@@ -28,15 +28,21 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+  const [mounted, setMounted] = useState(false)
   
   const { signIn, user } = useAuth()
   const router = useRouter()
   const lp = useLocalizePath()
 
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
   // Auto-redirect if already logged in (use canonical normalization + default landing)
   useEffect(() => {
+    console.log('[LoginPage] useEffect trigger:', { hasUser: !!user, loading, userRole: user?.role })
     if (user && !loading) {
-      console.log('[LoginPage] User detected, redirecting...', user.role)
+      console.log('[LoginPage] 🏃 User detected, initiating redirect...', user.role)
       try {
         const normalized = normalizeRole(user.role as any)
         const redirectPath = getDefaultLandingPage(normalized as any)
@@ -77,9 +83,11 @@ export default function LoginPage() {
     }
 
     try {
-      console.log('[LoginPage] 🔐 Attempting login for:', email)
+      console.log(`[LoginPage] 🔐 handleLogin triggered for: ${email}`)
       
       const result = await signIn(email, password)
+      
+      console.log(`[LoginPage] Sign in call result:`, { hasError: !!result.error, role: result.role })
       
       if (result.error) {
         console.error('[LoginPage] ❌ Login error:', result.error)
@@ -95,6 +103,7 @@ export default function LoginPage() {
       }
 
       console.log('[LoginPage] ✅ Login successful! Role:', result.role)
+      setLoading(false)
       
       // The useEffect will handle the redirect once the user state is updated in AuthContext
       // This prevents double-redirection issues.
@@ -106,7 +115,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex bg-[#020617] text-slate-200 selection:bg-pink-500/30 overflow-hidden relative">
+    <div className="min-h-screen flex bg-[#020617] text-slate-200 selection:bg-pink-500/30 overflow-hidden relative" data-hydrated={mounted}>
       {/* Infrastructure Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-pink-500/5 rounded-full blur-[120px] animate-glow-pulse" />
@@ -310,12 +319,12 @@ export default function LoginPage() {
                   disabled={loading}
                 >
                   {loading ? (
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3" id="login-loading-indicator">
                       <Loader2 className="h-5 w-5 animate-spin" />
                       {isThaiLocale ? 'กำลังประมวลผล...' : 'Authenticating...'}
                     </div>
                   ) : (
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3" id="login-button-content">
                       <LogIn className="h-5 w-5" />
                       {isThaiLocale ? 'เข้าสู่ระบบ' : 'Initialize Session'}
                     </div>
@@ -351,7 +360,7 @@ export default function LoginPage() {
                     <div className="grid grid-cols-2 gap-3">
                       {[
                         { label: 'Admin', icon: '🔧', email: 'admin@ai367bar.com', color: 'text-orange-400' },
-                        { label: 'Owner', icon: '🏥', email: 'center-owner@example.com', color: 'text-blue-400' },
+                        { label: 'Owner', icon: '🏥', email: 'clinic-owner@example.com', color: 'text-blue-400' },
                         { label: 'Sales', icon: '💼', email: 'sales@example.com', color: 'text-emerald-400' },
                         { label: 'Client', icon: '👤', email: 'customer@example.com', color: 'text-purple-400' }
                       ].map((d, i) => (
@@ -359,6 +368,7 @@ export default function LoginPage() {
                           key={i}
                           type="button"
                           onClick={() => {
+                            console.log(`[LoginPage] 🧪 Demo button clicked for: ${d.label}`)
                             setEmail(d.email)
                             setPassword('Admin123!')
                           }}

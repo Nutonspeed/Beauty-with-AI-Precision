@@ -41,20 +41,20 @@ export async function GET(request: NextRequest) {
     )
 
     console.log('[user-profile] Querying database...')
-    // Get user profile
+    // Get user profile - explicitly select columns to avoid schema mismatch issues
     const { data: profile, error } = await supabaseAdmin
       .from('users')
-      .select('*')
+      .select('id, email, role, tier, full_name, avatar_url, phone, created_at, updated_at, last_login_at, email_verified, center_id')
       .eq('id', userId)
-      .single()
+      .maybeSingle()
 
     const elapsed = Date.now() - startTime
     console.log(`[user-profile] Query completed in ${elapsed}ms`)
 
     if (error) {
-      console.error('[user-profile] Error fetching user profile:', error)
+      console.error('[user-profile] Supabase error:', error)
       return NextResponse.json(
-        { error: error instanceof Error ? error.message : 'Unknown error' },
+        { error: error.message || 'Database error', details: error },
         { status: 500 }
       )
     }

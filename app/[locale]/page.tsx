@@ -36,6 +36,7 @@ import { cn } from "@/lib/utils"
 import { ScrollReveal, ZoomOnScroll, ScrollProgressBar } from "@/components/ui/scroll-animations"
 import { FeaturesShowcase } from "@/components/sections/FeaturesShowcase"
 import { StickyTestimonials } from "@/components/sections/StickyTestimonials"
+import { ProtocolFlow } from "@/components/sections/ProtocolFlow"
 
 export default function HomePage() {
   const t = useTranslations()
@@ -282,64 +283,7 @@ export default function HomePage() {
         </section>
 
         {/* 6. Implementation Protocol */}
-        <section id="protocol" className="snap-section flex items-center bg-slate-50/50 border-b border-slate-100 relative overflow-hidden group">
-          <div className="section-orb bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-blue-100" />
-          <div className="container relative z-10 py-12 lg:py-0">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="mx-auto mb-16 lg:mb-24 max-w-4xl text-center space-y-6"
-            >
-              <Badge variant="outline" className="px-4 py-1.5 rounded-full border-blue-200 text-blue-700 bg-blue-50 font-bold tracking-wider text-[10px] uppercase glow-badge">
-                {t('home.protocol.badge')}
-              </Badge>
-              <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-slate-900 leading-tight text-reveal">
-                {t('home.protocol.title')}
-              </h2>
-              <p className="text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
-                {t('home.protocol.description')}
-              </p>
-            </motion.div>
-
-            <motion.div 
-              variants={containerVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-100px" }}
-              className="mx-auto grid max-w-6xl gap-12 md:grid-cols-3"
-            >
-              {[
-                { step: "01", key: 'step1' },
-                { step: "02", key: 'step2' },
-                { step: "03", key: 'step3' }
-              ].map((item, i) => (
-                <motion.div 
-                  key={i}
-                  variants={itemVariants}
-                >
-                  <GlowCard className="relative group p-8 rounded-2xl border border-slate-100 bg-slate-50/30 medical-card-hover transition-all duration-300">
-                    <div className="text-5xl font-bold text-slate-100 absolute -top-6 -left-2 select-none group-hover:text-blue-50/50 transition-colors">
-                      {item.step}
-                    </div>
-                    <div className="relative z-10 space-y-4">
-                      <div className="h-10 w-10 rounded-lg bg-blue-600 flex items-center justify-center text-sm font-bold text-white shadow-lg shadow-blue-600/20 relative">
-                        <div className="absolute inset-0 rounded-lg bg-blue-600 animate-ping opacity-20" />
-                        <span className="relative z-10">{item.step}</span>
-                      </div>
-                      <h3 className="text-xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
-                        {t(`home.protocol.${item.key}.title` as any)}
-                      </h3>
-                      <p className="text-slate-600 leading-relaxed text-sm">
-                        {t(`home.protocol.${item.key}.description` as any)}
-                      </p>
-                    </div>
-                  </GlowCard>
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
-        </section>
+        <ProtocolFlow />
 
         {/* 7. Global Infrastructure */}
         <section id="global" className="snap-section flex items-center bg-slate-900 overflow-hidden">

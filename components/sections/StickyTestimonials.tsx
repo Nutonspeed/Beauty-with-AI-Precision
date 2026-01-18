@@ -139,12 +139,14 @@ export function StickyTestimonials() {
   const t = useTranslations('testimonials')
   const containerRef = useRef<HTMLDivElement>(null)
   
-  const localizedTestimonials = (t.raw('items') as any[]).map((item, idx) => ({
-    ...item,
-    rating: 5,
-    image: `/testimonials/${idx === 2 ? 'doctor' : 'owner'}-${idx === 2 ? 1 : idx + 1}.jpg`,
-    metric: idx === 0 ? "3x" : idx === 1 ? "65%" : t('currencySymbol') + "2M+"
-  }))
+  const localizedTestimonials = Array.isArray(t.raw('items')) 
+    ? (t.raw('items') as any[]).map((item, idx) => ({
+        ...item,
+        rating: 5,
+        image: `/testimonials/${idx === 2 ? 'doctor' : 'owner'}-${idx === 2 ? 1 : idx + 1}.jpg`,
+        metric: idx === 0 ? "3x" : idx === 1 ? "65%" : t('currencySymbol') + "2M+"
+      }))
+    : [];
 
   const { scrollYProgress } = useScroll({
     target: containerRef,

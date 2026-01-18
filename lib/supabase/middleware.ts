@@ -163,7 +163,16 @@ export async function updateSession(request: NextRequest, response?: NextRespons
     }
 
     if (user && isProtectedRoute(normalizedPathname)) {
-      const { data: userProfile } = await supabase.from("users").select("role, center_id").eq("id", user.id).single()
+      const { data: userProfile, error: profileError } = await supabase
+        .from("users")
+        .select("role, center_id")
+        .eq("id", user.id)
+        .maybeSingle()
+      
+      if (profileError) {
+        console.error('[MIDDLEWARE ERROR] Failed to fetch user profile:', profileError)
+      }
+
       const resolvedRole = userProfile?.role ?? (user.user_metadata as any)?.role ?? (user.app_metadata as any)?.role ?? null
       const roleDashboardPath = getRoleDashboardPath(resolvedRole, locale)
 

@@ -109,7 +109,7 @@ export async function GET(request: Request) {
     startDate.setDate(startDate.getDate() - days)
     
     const { data: revenueData, error: revenueError } = await supabase
-      .from('booking_payments')
+      .from('payments')
       .select('payment_date, amount')
       .eq('center_id', centerId)
       .eq('payment_status', 'paid')

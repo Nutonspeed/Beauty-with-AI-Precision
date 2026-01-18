@@ -46,7 +46,7 @@ export const GET = withAuth(
       }
 
       const { data: payments, error } = await service
-        .from("booking_payments")
+        .from("payments")
         .select("id, center_id, appointment_id, amount, payment_method, payment_status, payment_date, transaction_id, notes")
         .in("appointment_id", appointmentIds)
 

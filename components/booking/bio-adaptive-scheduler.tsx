@@ -20,7 +20,7 @@ export function BioAdaptiveScheduler({ selectedTime, onTimeSelect, _selectedDate
   const [isSyncing, setIsSyncing] = useState(false)
   const [readinessScore, setReadinessScore] = useState(88)
 
-  const _unusedDate = selectedDate;
+  const _unusedDate = _selectedDate;
 
   const timeRecommendations = [
     { time: '09:30', score: 94, label: t('bioAdaptiveScheduler.peakTime'), color: 'text-emerald-400', bg: 'bg-emerald-500/10' },

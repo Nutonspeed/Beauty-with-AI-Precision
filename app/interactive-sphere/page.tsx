@@ -38,7 +38,7 @@ export default async function InteractiveSphere() {
   
   return (
     <>
-      <LandingHero ctaVariant={ctaVariant} />
+      <LandingHero _ctaVariant={ctaVariant} />
     </>
   );
 }

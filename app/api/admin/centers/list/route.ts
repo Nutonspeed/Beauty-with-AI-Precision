@@ -71,7 +71,7 @@ export const GET = withAuth(
       const thirtyDaysAgoStr = thirtyDaysAgo.toISOString().split("T")[0]
 
       const { data: payments } = await service
-        .from("booking_payments")
+        .from("payments")
         .select("center_id, amount")
         .eq("payment_status", "paid")
         .gte("payment_date", thirtyDaysAgoStr)

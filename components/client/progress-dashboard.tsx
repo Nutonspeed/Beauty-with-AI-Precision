@@ -165,7 +165,7 @@ function OverviewStats({
 }: Readonly<{
   analyses: AnalysisSnapshot[];
   metrics: ProgressMetrics[];
-  locale?: 'th' | 'en';
+  _locale?: 'th' | 'en';
 }>) {
   const t = useTranslations();
 
@@ -315,7 +315,7 @@ function MetricsTable({
   _locale = 'th',
 }: Readonly<{
   metrics: ProgressMetrics[];
-  locale?: 'th' | 'en';
+  _locale?: 'th' | 'en';
 }>) {
   const t = useTranslations();
 
@@ -509,7 +509,7 @@ export default function CustomerProgressDashboard({
       </div>
 
       {/* Overview Stats */}
-      <OverviewStats analyses={sortedAnalyses} metrics={metrics} locale={locale} />
+      <OverviewStats analyses={sortedAnalyses} metrics={metrics} _locale={locale} />
 
       {/* Main Content Tabs */}
       <Tabs defaultValue="overview" className="space-y-4">
@@ -527,7 +527,7 @@ export default function CustomerProgressDashboard({
               current={current}
               locale={locale}
             />
-            <MetricsTable metrics={metrics} locale={locale} />
+            <MetricsTable metrics={metrics} _locale={locale} />
           </div>
         </TabsContent>
 
@@ -544,7 +544,7 @@ export default function CustomerProgressDashboard({
         </TabsContent>
 
         <TabsContent value="metrics">
-          <MetricsTable metrics={metrics} locale={locale} />
+          <MetricsTable metrics={metrics} _locale={locale} />
         </TabsContent>
       </Tabs>
     </div>

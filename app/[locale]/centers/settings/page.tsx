@@ -101,7 +101,7 @@ export default function CenterSettingsPage() {
   });
 
   useEffect(() => {
-    fetchSettings();
+    // settings are loaded in the effect below
   }, [t]);
 
   useEffect(() => {

@@ -217,7 +217,7 @@ export default function GoalManagement({
         <GoalDetailsPanel
           goal={selectedGoal}
           t={t}
-          locale={locale}
+          _locale={_locale}
           getParameterLabel={getParameterLabel}
           daysRemaining={daysRemaining}
         />

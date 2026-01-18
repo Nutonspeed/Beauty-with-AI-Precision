@@ -18,7 +18,8 @@ import {
   DollarSign,
   Building,
   ArrowRight,
-  Cpu
+  Cpu,
+  Loader2
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -84,6 +85,7 @@ export default function AdminDashboard() {
   }, [])
 
   useEffect(() => {
+    console.log('[AdminDashboard] Auth state:', { hasUser: !!user, role: user?.role, authLoading })
     // If auth never resolves, stop spinning and surface an actionable error
     if (authLoading && !user) {
       const timeoutId = window.setTimeout(() => {
@@ -98,16 +100,19 @@ export default function AdminDashboard() {
     
     // Only super_admin can access this dashboard
     if (!user || user.role !== 'super_admin') {
+      console.warn('[AdminDashboard] Access denied for role:', user?.role)
       setError('Access denied')
       setIsLoading(false)
       return
     }
 
+    console.log('[AdminDashboard] Access granted, loading data...')
     loadDashboardData()
   }, [user, authLoading])
 
   const loadDashboardData = async () => {
     try {
+      console.log('[AdminDashboard] Fetching performance data...')
       setIsLoading(true)
       const supabase = createClient()
       const { data: sessionData } = await supabase.auth.getSession()
@@ -180,7 +185,18 @@ export default function AdminDashboard() {
   }
 
   if (!data) {
-    return null
+    return (
+      <div className="flex min-h-screen flex-col bg-slate-50 text-slate-900">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <div className="flex flex-col items-center gap-4">
+            <Loader2 className="h-12 w-12 text-blue-600 animate-spin" />
+            <p className="text-sm font-bold uppercase tracking-widest text-slate-400">Initializing System Data...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    )
   }
 
   return (

@@ -1,4 +1,5 @@
 import { locales } from '@/i18n/request'
+import { HydrationProvider } from '@/components/providers/hydration-provider'
 
 // Force runtime rendering for the entire locale subtree
 export const dynamic = 'force-dynamic'
@@ -17,12 +18,13 @@ export default async function LocaleLayout({
     console.log('[locale] layout params', { locale })
   }
 
-  // Temporarily disable notFound() to let middleware handle locale routing
-  // if (!locales.includes(locale as any)) {
-  //   console.log('[DEBUG] Locale', locale, 'not found in', locales, 'calling notFound()')
-  //   notFound()
-  // }
-
-  console.log('[DEBUG] Locale', locale, 'is valid, rendering children')
-  return children
+  return (
+    <html lang={locale} suppressHydrationWarning>
+      <body suppressHydrationWarning>
+        <HydrationProvider>
+          {children}
+        </HydrationProvider>
+      </body>
+    </html>
+  )
 }

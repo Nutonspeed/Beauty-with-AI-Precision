@@ -40,7 +40,7 @@ export const GET = withAuth(
 
       // Get paid appointments (those with payment)
       const { data: paidAppointments, error: paymentsError } = await service
-        .from("booking_payments")
+        .from("payments")
         .select("appointment_id")
         .eq("center_id", user.center_id!)
         .eq("payment_status", "paid")

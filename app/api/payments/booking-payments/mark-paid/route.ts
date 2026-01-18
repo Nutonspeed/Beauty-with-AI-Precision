@@ -28,7 +28,7 @@ export const POST = withAuth(
       const service = createServiceClient()
 
       const { data: existing, error: existingErr } = await service
-        .from("booking_payments")
+        .from("payments")
         .select("id, center_id, payment_status")
         .eq("id", payment_id)
         .single()
@@ -56,7 +56,7 @@ export const POST = withAuth(
       if (notes) update.notes = notes
 
       const { data: updated, error: updErr } = await service
-        .from("booking_payments")
+        .from("payments")
         .update(update)
         .eq("id", payment_id)
         .select("*")
@@ -72,7 +72,7 @@ export const POST = withAuth(
           user_id: user.id,
           center_id: existing.center_id,
           action: "mark_payment_paid",
-          resource_type: "booking_payment",
+          resource_type: "payment",
           resource_id: payment_id,
           details: {
             previous_status: existing.payment_status,

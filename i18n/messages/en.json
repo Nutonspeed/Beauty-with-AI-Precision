@@ -24,6 +24,7 @@
     "login": "Login",
     "logout": "Logout",
     "getStarted": "Get Started",
+    "home": "Home",
     "profile": "Profile",
     "language": "Language",
     "notifications": "Notifications",
@@ -1344,6 +1345,33 @@
     }
   },
   "home": {
+    "features": {
+      "title": "Analytical Capabilities",
+      "neural": {
+        "title": "Neural Analysis",
+        "description": "8-point sub-dermal scanning using proprietary vision transformers."
+      },
+      "ar": {
+        "title": "AR Prototyping",
+        "description": "Real-time aesthetic simulation with voxel-level precision."
+      },
+      "safety": {
+        "title": "Data Governance",
+        "description": "AES-256 encryption with distributed ledger auditing."
+      },
+      "vitals": {
+        "title": "Clinical Metrics",
+        "description": "Longitudinal tracking of skin health markers and treatment ROI."
+      },
+      "speed": {
+        "title": "Nano-Latency",
+        "description": "Analysis results delivered in <3ms via edge computing nodes."
+      },
+      "management": {
+        "title": "Node Management",
+        "description": "Orchestrate multiple clinic locations via a central command hub."
+      }
+    },
     "hero": {
       "badge": "VISIA-Level AI • Mobile Sales Tool",
       "title": "Stop Paying Millions for VISIA",
@@ -1359,45 +1387,8 @@
     "heroDescription": "Give your sales team the power to analyze skin and show treatment previews outside the clinic. No million-baht equipment needed — just a smartphone.",
     "startFreeAnalysis": "Try Free Demo",
     "watchDemo": "Watch 2-Min Demo",
-    "noCreditCard": "14-day free trial",
-    "freeTierAvailable": "No credit card required",
     "whyChooseTitle": "Why Clinics Switch to CenterIQ",
     "whyChooseSubtitle": "Everything VISIA does, but portable — plus AR simulators and AI recommendations",
-    "features": {
-      "title": "Sales Tools That Close Deals",
-      "ar": {
-        "title": "4 AR Simulators",
-        "description": "Lip Filler, Body Contouring, Hair Restoration, Eye Enhancement — show clients their results before treatment"
-      },
-      "ai": {
-        "title": "AI Skin Analysis",
-        "description": "VISIA-level 8-point analysis in 3 seconds. Works on any smartphone."
-      },
-      "mobile": {
-        "title": "Quick Scan Mobile",
-        "description": "Your sales team can analyze clients anywhere — at events, home visits, or partner locations"
-      },
-      "proposal": {
-        "title": "AI Proposal Generator",
-        "description": "Generate professional treatment proposals automatically based on analysis results"
-      },
-      "leads": {
-        "title": "Lead Scoring & Hot Leads",
-        "description": "AI prioritizes which clients are most likely to convert — focus on the right ones"
-      },
-      "crm": {
-        "title": "Sales CRM",
-        "description": "Track all client interactions, follow-ups, and conversions in one place"
-      },
-      "video": {
-        "title": "Video Consultation",
-        "description": "Built-in video calls for remote consultations with screen sharing"
-      },
-      "reports": {
-        "title": "ROI Dashboard",
-        "description": "See exactly how much revenue AI is generating for your clinic"
-      }
-    },
     "howItWorks": {
       "title": "How Your Sales Team Uses It",
       "subtitle": "From client meeting to closed deal in minutes",
@@ -6406,12 +6397,22 @@
     }
   },
   "pricing": {
+    "salesTools": "Sales Augmentation Tools",
+    "customerPortal": "Patient Intelligence Portal",
+    "cta": {
+      "contactSales": "Contact Sales",
+      "title": "Ready to Orchestrate?",
+      "description": "Join elite clinics using AI to drive 3x higher sales conversion.",
+      "startFree": "Begin Analysis",
+      "requestProtocol": "Request Protocol"
+    },
     "activeNode": "Active Node",
     "title": "Resource Allocation Nodes",
     "subtitle": "Scalable aesthetic intelligence infrastructure for elite clinics.",
     "billingToggle": {
       "monthly": "Monthly Cycle",
-      "annual": "Annual Schema"
+      "annual": "Annual Schema",
+      "saveLabel": "Save 2 Months"
     },
     "activeTier": "Active Tier: {tier}",
     "billingCycle": "Billing Cycle:",
@@ -6503,12 +6504,6 @@
       "a2": "Yes, expansion nodes can be added at any time through the management interface with pro-rated billing.",
       "q3": "Is data synchronization secure?",
       "a3": "All telemetry and aesthetic data are encrypted via AES-256 at rest and TLS 1.3 in transit, ensuring HIPAA-level clinical privacy."
-    },
-    "cta": {
-      "title": "Ready to Orchestrate?",
-      "description": "Join elite clinics using AI to drive 3x higher sales conversion.",
-      "startFree": "Begin Analysis",
-      "contactSales": "Request Protocol"
     }
   },
   "toasts": {
@@ -6879,6 +6874,35 @@
     "allow": "Allow",
     "decline": "Decline"
   },
+  "autonomousOps": {
+    "title": "Autonomous Ops",
+    "subtitle": "Live automation updates.",
+    "activeOps": "Active operations",
+    "systemDecisions": "System decisions",
+    "actionNode": "Action node",
+    "engineMode": "Autonomous Mode",
+    "justNow": "Just now",
+    "impact": "Impact",
+    "status": "Sync status",
+    "executingNode": "Executing Node",
+    "operationSynced": "Operation Synced",
+    "actions": {
+      "autoReorder": "Auto-reorder initiated",
+      "avoidedStockout": "Stockout avoided",
+      "campaignSynthesis": "Campaign synthesis complete",
+      "leadVolume": "Lead volume increased",
+      "neuralAudit": "Neural security audit",
+      "protocolMatch": "Protocol match verified",
+      "optimizingStock": "Optimizing stock levels",
+      "reducedWaste": "Waste reduced",
+      "synthesizingMDSS": "Synthesizing MDSS rationale",
+      "confidenceScore": "Confidence score increased",
+      "hyperPersonalizing": "Hyper-personalizing outreach",
+      "highPropensity": "High-propensity segment detected",
+      "quantumHandshake": "Quantum handshake secured",
+      "meshNodeSync": "Mesh node sync complete"
+    }
+  },
   "ui": {
     "errorState": {
       "title": "Error Occurred",
@@ -6914,6 +6938,20 @@
     },
     "modernLoader": {
       "aiProcessing": "Processing with multiple AI models..."
+    },
+    "hud": {
+      "inferenceStreamingActive": "Inference streaming active",
+      "regionalExpansionNode": "Regional expansion node",
+      "activeDefenseOn": "Active defense on"
+    },
+    "status": {
+      "activeDecisionMatrix": "ACTIVE_DECISION_MATRIX",
+      "liveNeuralStream": "LIVE_NEURAL_STREAM"
+    }
+  },
+  "securityDashboard": {
+    "sector": {
+      "threatLevel": "Threat level"
     }
   },
   "featureGate": {
@@ -7344,6 +7382,7 @@
   "testimonials": {
     "badge": "Testimonials",
     "title": "What Our Clinics Say",
+    "currencySymbol": "$",
     "items": [
       {
         "quote": "Before we just waited for walk-in customers. Now 3 sales staff go out and close 5-6 cases a day outside the clinic. Sales increased 3x.",
@@ -7673,6 +7712,14 @@
       "compare": {
         "title": "Compare Before/After",
         "description": "Toggle Before/After to see clear differences."
+      },
+      "speed": {
+        "title": "Nano-speed Closing",
+        "description": "Close deals 2.4x faster with near-instant diagnostic throughput."
+      },
+      "deployment": {
+        "title": "Rapid Edge Deployment",
+        "description": "Deploy your aesthetic intelligence node globally with 99.9% availability."
       },
       "save": {
         "title": "Save Results",
@@ -8321,6 +8368,11 @@
     "successMessageSuffix": "has been given {count} credits"
   },
   "notifications": {
+    "announcements": {
+      "title": "System Announcements",
+      "newAnnouncement": "New Announcement",
+      "viewAll": "View All"
+    },
     "error": {
       "generic": "An error occurred",
       "network": "Unable to connect to server",
@@ -8379,5 +8431,82 @@
     "recentReviews": "Recent Reviews",
     "noReviews": "No reviews added yet",
     "summary": "Summary"
+  },
+  "footer": {
+    "description": "AI platform for aesthetic centers to enhance skin analysis and customer management",
+    "product": "Product",
+    "tryDemo": "Try Demo",
+    "company": "Company",
+    "careers": "Careers",
+    "legal": "Legal",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "compliance": "Compliance",
+    "pdpa": "PDPA",
+    "copyright": " 2025 AI Beauty Platform. All rights reserved",
+    "engineeringExcellence": "Engineering Excellence",
+    "pdpaCertified": "PDPA Certified",
+    "isoCloud": "ISO 27001 Cloud",
+    "madeInThailand": "Made in Thailand"
+  },
+  "globalCommand": {
+    "title": "BIP-Global Command Center",
+    "distributed": "Distributed",
+    "intelligence": "Intelligence",
+    "subtitle": "Orchestrating center intelligence across a worldwide distributed neural mesh",
+    "totalNodes": "Global Intelligence Nodes",
+    "liveTraffic": "Live Inference Traffic",
+    "reqPerSec": "req/sec",
+    "meshActive": "Mesh Active",
+    "nodesResilient": "Nodes Resilient",
+    "optimal": "Optimal",
+    "load": "Load",
+    "latency": "Latency",
+    "ms": "ms",
+    "securityStatus": "Neural Mesh Integrity",
+    "uptime": "System Resiliency",
+    "mapTitle": "Interactive Global Infrastructure Map",
+    "nodeLatency": "Inter-node Latency",
+    "activeSessions": "Concurrent Neural Sessions",
+    "joinInfrastructure": "Join Infrastructure Mesh"
+  },
+  "roiSimulator": {
+    "title": "AI Strategic ROI Simulator",
+    "subtitle": "Quantify center yield and ROI from Beauty-Precision AI infrastructure",
+    "calculateButton": "Calculate Annual Yield",
+    "inputs": {
+      "avgMonthlyRevenue": "Current Monthly Revenue",
+      "leadCount": "Monthly Lead Volume",
+      "conversionRate": "Conversion Rate (%)"
+    },
+    "results": {
+      "projectedRevenue": "Projected Revenue with AI",
+      "efficiencyGain": "Efficiency Alpha Gain",
+      "roiPercentage": "Return on Investment (ROI)",
+      "paybackPeriod": "Capital Payback Period (Months)"
+    },
+    "aiImpact": "AI projects a potential upsell yield increase of {percent}%",
+    "centerLogic": "Derived from average performance of centers in BIP network",
+    "lockedBadge": "ROI_STRATEGY_LOCKED",
+    "unlockButton": "Unlock Strategy Module",
+    "biBadge": "BUSINESS_INTELLIGENCE_V2",
+    "leadsLabel": "Leads",
+    "projectedRevenue": "Projected Monthly Yield",
+    "monthlyLift": "{val} / MONTH",
+    "annualYield": "ANNUAL_YIELD",
+    "efficiencyAlpha": "Efficiency Alpha Projection",
+    "revenueGrowthNode": "Revenue Growth Node",
+    "lift": "{val}% Lift",
+    "awaitingParams": "Awaiting Simulation Parameters",
+    "aestheticLogic": "AI Aesthetic Logic"
+  },
+  "roles": {
+    "super_admin": "Super Admin",
+    "admin": "Admin",
+    "center_admin": "Center Admin",
+    "center_owner": "Center Owner",
+    "center_staff": "Center Staff",
+    "sales_staff": "Sales Staff",
+    "customer": "Customer"
   }
 }

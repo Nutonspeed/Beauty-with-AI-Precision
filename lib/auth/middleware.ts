@@ -14,7 +14,6 @@ export interface AuthenticatedUser {
   email: string;
   role: string;
   center_id?: string;
-  branch_id?: string;
 }
 
 export interface AuthMiddlewareOptions {
@@ -121,7 +120,7 @@ export function withAuth(
       // Fetch user details including role and center_id
       let { data: userData, error: userError } = await supabase
         .from('users')
-        .select('id, email, role, center_id, branch_id')
+        .select('id, email, role, center_id')
         .eq('id', authUser.id)
         .single();
 
@@ -166,7 +165,7 @@ export function withAuth(
               },
               { onConflict: 'id' }
             )
-            .select('id, email, role, center_id, branch_id')
+            .select('id, email, role, center_id')
             .single()
 
           if (createError || !createdUser) {
@@ -201,8 +200,6 @@ export function withAuth(
         id: userData.id,
         email: userData.email,
         role: authUser.user_metadata?.role || userData.role || 'customer',
-        center_id: userData.center_id,
-        branch_id: userData.branch_id,
       };
 
       // Check role-based access
@@ -220,7 +217,7 @@ export function withAuth(
       }
 
       // Check center_id requirement
-      if (requireCenterId && !user.center_id) {
+      if (requireCenterId && !userData.center_id) {
         const nextRes = NextResponse.json(
           {
             error: 'Forbidden',
@@ -292,7 +289,6 @@ export function withAuthContext<TContext>(
           id: 'test-user-id',
           email: 'test@example.com',
           role: 'sales_staff',
-          center_id: 'test-center-id',
         };
         const response = await handler(req, testUser, context);
         const resWithId = attachRequestIdHeader(response, requestId);
@@ -325,7 +321,7 @@ export function withAuthContext<TContext>(
 
       const { data: userData, error: userError } = await supabase
         .from('users')
-        .select('id, email, role, center_id, branch_id')
+        .select('id, email, role, center_id')
         .eq('id', authUser.id)
         .single();
 
@@ -343,8 +339,6 @@ export function withAuthContext<TContext>(
         id: userData.id,
         email: userData.email,
         role: authUser.user_metadata?.role || userData.role || 'customer',
-        center_id: userData.center_id,
-        branch_id: userData.branch_id,
       };
 
       if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {

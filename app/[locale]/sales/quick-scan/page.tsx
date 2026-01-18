@@ -21,7 +21,6 @@ import { Footer } from "@/components/footer"
 // Build-time guard: avoid prerendering this interactive sales page to reduce
 // Vercel build duration (force runtime rendering instead of SSG/ISR).
 export const dynamic = 'force-dynamic'
-export const revalidate = 0
 
 interface ScanResult {
   id: string
@@ -567,7 +566,7 @@ export default function QuickScanPage() {
                         <Button
                           onClick={() => {
                             setIsUploadMode(false)
-                            startCamera()
+                            startScan()
                           }}
                           className="w-full h-16 bg-white text-[#020617] hover:bg-slate-100 rounded-2xl font-black tracking-[0.15em] uppercase text-xs shadow-2xl transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-20 disabled:grayscale"
                           disabled={!selectedCustomer}

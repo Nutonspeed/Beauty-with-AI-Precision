@@ -1,0 +1,3 @@
+email,name,role
+test-sales-staff@example.com,Test Sales E2E,sales_staff
+test-center-staff@example.com,Test Staff E2E,clinic_staff

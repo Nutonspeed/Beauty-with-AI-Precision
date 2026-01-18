@@ -30,7 +30,7 @@ export const GET = withAuth(
 
       // Get all paid payments in the period
       const { data: payments, error } = await service
-        .from("booking_payments")
+        .from("payments")
         .select("id, amount, payment_method, payment_date, created_at")
         .eq("center_id", user.center_id)
         .eq("payment_status", "paid")
@@ -98,7 +98,7 @@ export const GET = withAuth(
         const prevEndDateStr = startDate.toISOString().split("T")[0]
 
         const { data: prevPayments } = await service
-          .from("booking_payments")
+          .from("payments")
           .select("amount")
           .eq("center_id", user.center_id)
           .eq("payment_status", "paid")

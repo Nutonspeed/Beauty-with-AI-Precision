@@ -312,7 +312,7 @@ export default function BookingPage() {
                   </Card>
 
                   <BioAdaptiveScheduler 
-                    selectedDate={date} 
+                    _selectedDate={date} 
                     onTimeSelect={setSelectedTime} 
                     selectedTime={selectedTime} 
                   />

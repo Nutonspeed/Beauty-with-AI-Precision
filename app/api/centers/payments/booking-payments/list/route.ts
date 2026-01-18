@@ -27,7 +27,7 @@ export const GET = withAuth(
       const service = createServiceClient()
 
       let query = service
-        .from("booking_payments")
+        .from("payments")
         .select("id, center_id, appointment_id, amount, payment_method, payment_status, payment_date, transaction_id, notes, created_at", {
           count: "exact",
         })
