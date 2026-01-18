@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate Hero Video</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        #canvas { width: 100vw; height: 100vh; }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = 1920;
+        canvas.height = 1080;
+        
+        let time = 0;
+        
+        function animate() {
+            // Gradient animation
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            
+            const hue1 = (time * 0.5) % 360;
+            const hue2 = (time * 0.5 + 120) % 360;
+            
+            gradient.addColorStop(0, `hsl(${hue1}, 70%, 30%)`);
+            gradient.addColorStop(0.5, `hsl(${hue2}, 60%, 40%)`);
+            gradient.addColorStop(1, `hsl(${hue1 + 60}, 70%, 30%)`);
+            
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Particles
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
+            for(let i = 0; i < 50; i++) {
+                const x = Math.sin(time * 0.01 + i) * canvas.width/2 + canvas.width/2;
+                const y = Math.cos(time * 0.01 + i * 0.5) * canvas.height/2 + canvas.height/2;
+                const size = Math.sin(time * 0.02 + i) * 20 + 30;
+                
+                ctx.beginPath();
+                ctx.arc(x, y, size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            time++;
+            requestAnimationFrame(animate);
+        }
+        
+        animate();
+        
+        // Instructions
+        setTimeout(() => {
+            alert('Record this animation using Windows Game Bar (Win+G) or any screen recorder for 10-15 seconds, then save as hero-demo.mp4 in public/videos/');
+        }, 2000);
+    </script>
+</body>
+</html>

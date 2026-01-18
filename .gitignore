@@ -49,6 +49,7 @@ google-credentials.json
 
 # vercel
 .vercel
+.env.vercel
 
 # typescript
 *.tsbuildinfo

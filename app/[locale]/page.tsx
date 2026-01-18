@@ -13,14 +13,21 @@ import {
   Zap,
   Users
 } from "lucide-react"
-import { ROISimulator } from "@/components/analytics/roi-simulator"
-import { GlobalCommandCenter } from "@/components/visuals/global-command-center"
+const ROISimulator = dynamic(() => import("@/components/analytics/roi-simulator").then(mod => ({ default: mod.ROISimulator })), { ssr: false })
+const GlobalCommandCenter = dynamic(() => import("@/components/visuals/global-command-center").then(mod => ({ default: mod.GlobalCommandCenter })), { ssr: false })
 import { useTranslations } from "next-intl"
 import { useLocale } from "next-intl"
 import { useEffect, useRef } from "react"
 import { usageTracker } from "@/lib/analytics/usage-tracker"
 import { motion } from "framer-motion"
-import { LandingHeroAdvanced } from "@/components/LandingHeroAdvanced"
+import dynamic from "next/dynamic"
+import { VideoHeroSkeleton } from "@/components/sections/VideoHeroSkeleton"
+
+// Lazy load heavy components
+const VideoHeroSection = dynamic(
+  () => import("@/components/sections/VideoHeroSection").then(mod => ({ default: mod.VideoHeroSection })),
+  { loading: () => <VideoHeroSkeleton />, ssr: false }
+)
 import { SUBSCRIPTION_PLANS, formatPrice, formatAnnualPrice } from "@/lib/subscriptions/plans"
 import { useLocalizePath } from "@/lib/i18n/locale-link"
 import { useState } from "react"
@@ -34,9 +41,11 @@ import { GlowCard } from "@/components/ui/glow-card"
 import { MedicalPulse } from "@/components/ui/medical-pulse"
 import { cn } from "@/lib/utils"
 import { ScrollReveal, ZoomOnScroll, ScrollProgressBar } from "@/components/ui/scroll-animations"
-import { FeaturesShowcase } from "@/components/sections/FeaturesShowcase"
-import { StickyTestimonials } from "@/components/sections/StickyTestimonials"
-import { ProtocolFlow } from "@/components/sections/ProtocolFlow"
+// Dynamic imports for code splitting
+const FeaturesShowcase = dynamic(() => import("@/components/sections/FeaturesShowcase").then(mod => ({ default: mod.FeaturesShowcase })), { ssr: false })
+const StickyTestimonials = dynamic(() => import("@/components/sections/StickyTestimonials").then(mod => ({ default: mod.StickyTestimonials })), { ssr: false })
+const ProtocolFlow = dynamic(() => import("@/components/sections/ProtocolFlow").then(mod => ({ default: mod.ProtocolFlow })), { ssr: false })
+const TrustSection = dynamic(() => import("@/components/sections/TrustSection").then(mod => ({ default: mod.TrustSection })), { ssr: false })
 
 export default function HomePage() {
   const t = useTranslations()
@@ -127,11 +136,11 @@ export default function HomePage() {
       <main ref={containerRef} className="scroll-smooth">
         {/* 1. Hero Section - With Scroll-Driven Parallax */}
         <section id="hero">
-          <LandingHeroAdvanced 
-            onPrimary={onHeroCta} 
-            onSecondary={onDemoCta}
-          />
+          <VideoHeroSection />
         </section>
+
+        {/* Trust Badges & Client Logos */}
+        <TrustSection />
 
         {/* 2. ROI Section - With Scroll Reveal Effects */}
         <section id="roi" className="relative py-32 bg-gradient-to-b from-slate-50 to-white overflow-hidden">

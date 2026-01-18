@@ -182,7 +182,14 @@
       "ISO-certified analysis pipeline",
       "Ethical AI guidelines respected",
       "Data encrypted in transit and at rest"
-    ]
+    ],
+    "badges": {
+      "pdpa": "PDPA Compliant",
+      "iso": "ISO 27001",
+      "encryption": "256-bit Encryption",
+      "verified": "Verified Partner"
+    },
+    "trustedBy": "Trusted by 500+ beauty clinics across Thailand"
   },
   "unauthorized": {
     "title": "Access Denied",
@@ -1209,9 +1216,9 @@
         "annual": "Annual",
         "saveLabel": "Save 2 months"
       },
-      "comparisonTitle": "vs VISIA Equipment",
+      "comparisonTitle": "vs Traditional Equipment",
       "comparisonItems": {
-        "visia": "฿2-5 Million one-time + maintenance",
+        "traditional": "฿2-5 Million one-time + maintenance",
         "centeriq": "Starting at ฿6,900/month",
         "savings": "Save 99% and go mobile"
       },
@@ -1241,15 +1248,15 @@
     },
     "home": {
       "title": "Simple, Transparent Pricing",
-      "subtitle": "99% cheaper than VISIA — and your sales team can use it anywhere",
+      "subtitle": "99% cheaper than traditional equipment — and your sales team can use it anywhere",
       "billingToggle": {
         "monthly": "Monthly",
         "annual": "Annual",
         "saveLabel": "Save 2 months"
       },
-      "comparisonTitle": "vs VISIA Equipment",
+      "comparisonTitle": "vs Traditional Equipment",
       "comparisonItems": {
-        "visia": "฿2-5 Million one-time + maintenance",
+        "traditional": "฿2-5 Million one-time + maintenance",
         "centeriq": "Starting at ฿6,900/month",
         "savings": "Save 99% and go mobile"
       },
@@ -1373,8 +1380,8 @@
       }
     },
     "hero": {
-      "badge": "VISIA-Level AI • Mobile Sales Tool",
-      "title": "Stop Paying Millions for VISIA",
+      "badge": "Professional-Grade AI • Mobile Sales Tool",
+      "title": "Stop Paying Millions for Equipment",
       "subtitle": "Let Your Sales Team Close Deals Anywhere",
       "description": "AI skin analysis + AR treatment preview that your sales team can take to clients. No need to wait for walk-ins — close deals 2.4x faster.",
       "cta": "Book a Demo",
@@ -1382,13 +1389,13 @@
       "noCreditCard": "14-day Free Trial",
       "freeTierAvailable": "Starting at ฿6,900/month"
     },
-    "heroTitle": "Mobile VISIA Alternative for Clinic Sales Teams",
+    "heroTitle": "Mobile AI Solution for Clinic Sales Teams",
     "heroSubtitle": "AI Analysis + AR Preview — Anywhere, Anytime",
     "heroDescription": "Give your sales team the power to analyze skin and show treatment previews outside the clinic. No million-baht equipment needed — just a smartphone.",
     "startFreeAnalysis": "Try Free Demo",
     "watchDemo": "Watch 2-Min Demo",
     "whyChooseTitle": "Why Clinics Switch to CenterIQ",
-    "whyChooseSubtitle": "Everything VISIA does, but portable — plus AR simulators and AI recommendations",
+    "whyChooseSubtitle": "Professional-grade skin analysis, but portable — plus AR simulators and AI recommendations",
     "howItWorks": {
       "title": "How Your Sales Team Uses It",
       "subtitle": "From client meeting to closed deal in minutes",
@@ -1434,15 +1441,15 @@
     "pricing_home": {
       "dashboard": {
         "title": "Simple, Transparent Pricing",
-        "subtitle": "99% cheaper than VISIA — and your sales team can use it anywhere",
+        "subtitle": "99% cheaper than traditional equipment — and your sales team can use it anywhere",
         "billingToggle": {
           "monthly": "Monthly",
           "annual": "Annual",
           "saveLabel": "Save 2 months"
         },
-        "comparisonTitle": "vs VISIA Equipment",
+        "comparisonTitle": "vs Traditional Equipment",
         "comparisonItems": {
-          "visia": "฿2-5 Million one-time + maintenance",
+          "traditional": "฿2-5 Million one-time + maintenance",
           "centeriq": "Starting at ฿6,900/month",
           "savings": "Save 99% and go mobile"
         },

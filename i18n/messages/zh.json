@@ -454,7 +454,7 @@
       },
       "quality": {
         "title": "质量",
-        "description": "与VISIA相当的医疗级标准"
+        "description": "专业级医疗标准"
       }
     },
     "techStack": {
@@ -469,8 +469,8 @@
       "ar": {
         "description": "决策前方案结果的AR可视化"
       },
-      "visia": {
-        "description": "按VISIA标准测量的8个指标"
+      "professional": {
+        "description": "专业级标准测量的8个指标"
       }
     },
     "milestones": {
@@ -520,8 +520,8 @@
       "subtitle": "领先技术让您脱颖而出",
       "aiAnalysis": {
         "title": "8点AI皮肤分析",
-        "desc": "使用VISIA级AI精度分析8个皮肤问题：皱纹、黑斑、毛孔、痤疮、水分、弹性、质地和肤色",
-        "feature1": "✓ 95%+准确度，与VISIA相当",
+        "desc": "使用专业级AI精度分析8个皮肤问题：皱纹、黑斑、毛孔、痤疮、水分、弹性、质地和肤色",
+        "feature1": "✓ 95%+准确度，专业级标准",
         "feature2": "✓ 3秒内完成分析",
         "feature3": "✓ 支持468个面部标记",
         "feature4": "✓ 每个点评分0-100"
@@ -655,7 +655,7 @@
       "description": "查看每个套餐中的所有功能",
       "features": "功能",
       "aiAnalysis": "AI皮肤分析",
-      "visiaMetrics": "8个VISIA指标",
+      "professionalMetrics": "8个专业指标",
       "saveHistory": "保存历史",
       "arSimulator": "AR模拟器",
       "dashboard": "仪表板和分析",
@@ -725,18 +725,6 @@
       "arVisualization": {
         "title": "AR可视化",
         "description": "实时AR预览方案效果"
-      },
-      "pdpaCompliant": {
-        "title": "PDPA合规",
-        "description": "安全的加密数据管理，符合泰国个人数据保护法"
-      },
-      "visiaStyle": {
-        "title": "VISIA风格仪表板",
-        "description": "可与百万美元VISIA设备媲美的专业报告"
-      },
-      "fastAccurate": {
-        "title": "快速准确",
-        "description": "3-5秒内完成分析，提供个性化建议"
       },
       "multiCenter": {
         "title": "多中心支持",

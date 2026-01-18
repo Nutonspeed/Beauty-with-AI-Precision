@@ -137,7 +137,7 @@ const nextConfig = {
   //   },
   // },
 
-  webpack: (config, { dev, isServer }) => {
+  webpack: (config, { dev, isServer, webpack }) => {
     config.ignoreWarnings = [
       ...(config.ignoreWarnings || []),
       {
@@ -161,19 +161,61 @@ const nextConfig = {
     if (!dev && !isServer && !FAST_BUILD) {
       config.optimization = {
         ...config.optimization,
+        usedExports: true,
+        sideEffects: false,
         splitChunks: {
           chunks: 'all',
+          maxInitialRequests: 25,
+          minSize: 20000,
           cacheGroups: {
             default: false,
             vendors: false,
+            framework: {
+              name: 'framework',
+              chunks: 'all',
+              test: /[\\/]node_modules[\\/](react|react-dom|scheduler|prop-types|use-subscription)[\\/]/,
+              priority: 40,
+              enforce: true,
+            },
+            lib: {
+              test(module) {
+                return module.size() > 160000 &&
+                  /node_modules[\\/]/.test(module.identifier())
+              },
+              name(module) {
+                const hash = require('crypto').createHash('sha1')
+                hash.update(module.identifier())
+                return hash.digest('hex').substring(0, 8)
+              },
+              priority: 30,
+              minChunks: 1,
+              reuseExistingChunk: true,
+            },
             commons: {
               name: 'commons',
               chunks: 'all',
               minChunks: 2,
+              priority: 20,
+            },
+            shared: {
+              name(module, chunks) {
+                return 'shared-' + 
+                  require('crypto').createHash('sha1')
+                    .update(chunks.reduce((acc, chunk) => acc + chunk.name, ''))
+                    .digest('hex').substring(0, 8)
+              },
+              priority: 10,
+              minChunks: 2,
+              reuseExistingChunk: true,
             },
           },
         },
       }
+      
+      // Add webpack plugins for better optimization
+      config.plugins.push(
+        new webpack.optimize.ModuleConcatenationPlugin()
+      )
     }
 
     return config
@@ -187,7 +229,12 @@ const nextConfig = {
       : [
           '@radix-ui/react-icons',
           'lucide-react',
-        ], // Reduce scope of optimization
+          'framer-motion',
+          '@tensorflow/tfjs',
+          'date-fns',
+          'recharts',
+          'lodash',
+        ], // Optimize more packages
     optimizeCss: false, // Disable CSS optimization to fix critters error
     webpackBuildWorker: false,
     // Note: serverExternalPackages has been moved to root level

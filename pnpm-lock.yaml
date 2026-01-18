@@ -226,6 +226,9 @@ importers:
       '@types/debug':
         specifier: ^4.1.12
         version: 4.1.12
+      '@types/lodash':
+        specifier: ^4.17.23
+        version: 4.17.23
       '@types/pg':
         specifier: ^8.10.9
         version: 8.15.5
@@ -376,6 +379,9 @@ importers:
       lightningcss:
         specifier: ^1.30.2
         version: 1.30.2
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
       lru-cache:
         specifier: ^10.0.1
         version: 10.4.3
@@ -4225,6 +4231,9 @@ packages:
   '@types/jspdf@2.0.0':
     resolution: {integrity: sha512-oonYDXI4GegGaG7FFVtriJ+Yqlh4YR3L3NVDiwCEBVG7sbya19SoGx4MW4kg1MCMRPgkbbFTck8YKJL8PrkDfA==}
     deprecated: This is a stub types definition. jspdf provides its own type definitions, so you do not need this installed.
+
+  '@types/lodash@4.17.23':
+    resolution: {integrity: sha512-RDvF6wTulMPjrNdCoYRC8gNR880JNGT8uB+REUpC2Ns4pRqQJhGz90wh7rgdXDPpCczF3VGktDuFGVnz8zP7HA==}
 
   '@types/long@4.0.2':
     resolution: {integrity: sha512-MqTGEo5bj5t157U6fA/BiDynNkn0YknVdh48CMPkTSpFTVmvao5UQmm7uEF6xBEo7qIMAlY/JSleYaE6VOdpaA==}
@@ -14816,6 +14825,8 @@ snapshots:
   '@types/jspdf@2.0.0':
     dependencies:
       jspdf: 2.5.2
+
+  '@types/lodash@4.17.23': {}
 
   '@types/long@4.0.2': {}
 
