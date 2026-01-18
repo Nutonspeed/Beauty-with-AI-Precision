@@ -8,8 +8,9 @@ import { Toaster } from "@/components/ui/sonner"
 import AnnouncementSubscriber from "@/components/realtime/AnnouncementSubscriber"
 import { ConnectionStatusIndicator } from "@/components/realtime/ConnectionStatusIndicator"
 import { OfflineIndicator } from "@/components/offline/offline-indicator"
-import { ErrorBoundaryWrapper } from "@/components/error/error-boundary"
-import { PerformanceInit } from "./performance-init"
+import { ErrorBoundary } from '@/components/ui/error-boundary'
+import { GoogleAnalytics } from '@/components/analytics/GoogleAnalytics'
+import { StructuredData } from '@/components/seo/StructuredData'
 import { ServiceWorkerRegistration } from "@/components/service-worker-registration"
 import { InstallPrompt } from "@/components/pwa/install-prompt"
 import { SessionTracker } from "@/components/session-tracker"
@@ -151,9 +152,9 @@ export default async function RootLayout({
       <body className={`${_notoThai.variable} ${_kanit.variable} font-sans antialiased`}>
         {/* Skip link for keyboard users */}
         <a href="#main-content" className="skip-link">Skip to main content</a>
-        <PerformanceInit />
-        <ErrorBoundaryWrapper locale="th" showDetails={process.env.NODE_ENV === 'development'}>
-          <NextIntlClientProvider messages={messages}>
+        <GoogleAnalytics />
+        <StructuredData />
+        <NextIntlClientProvider messages={messages}>
             <Providers>
               <SessionTracker />
               <ServiceWorkerRegistration />
@@ -173,8 +174,7 @@ export default async function RootLayout({
               </main>
               <Toaster position="top-right" richColors closeButton />
             </Providers>
-          </NextIntlClientProvider>
-        </ErrorBoundaryWrapper>
+        </NextIntlClientProvider>
         <Analytics />
       </body>
     </html>
