@@ -7,14 +7,17 @@ import { Shield, Award, Lock, CheckCircle2 } from "lucide-react"
 const trustBadges = [
   { icon: Shield, key: "pdpa", color: "blue" },
   { icon: Award, key: "iso", color: "emerald" },
-  { icon: Lock, key: "encryption", color: "violet" },
-  { icon: CheckCircle2, key: "verified", color: "amber" },
 ]
 
 const clientLogos = [
-  "Bangkok Beauty", "Aesthetic Plus", "Skin Perfect", 
-  "Derma Care", "Glow Med", "Premium Lab",
-  "Royal Clinic", "Beauty First", "Skin Elite"
+  { name: "Siam Beauty", src: "/images/clients/siam-beauty.svg" },
+  { name: "Bangkok Clinic", src: "/images/clients/bangkok-clinic.svg" },
+  { name: "Thonburi Med", src: "/images/clients/thonburi-med.svg" },
+  { name: "Pattaya Skin", src: "/images/clients/pattaya-skin.svg" },
+  { name: "Chiang Mai Beauty", src: "/images/clients/chiangmai-beauty.svg" },
+  { name: "Phuket Aesthetics", src: "/images/clients/phuket-aesthetics.svg" },
+  { name: "Sukhumvit Clinic", src: "/images/clients/sukhumvit-clinic.svg" },
+  { name: "Ratchada Beauty", src: "/images/clients/ratchada-beauty.svg" }
 ]
 
 export function TrustSection() {
@@ -52,7 +55,7 @@ export function TrustSection() {
           >
             {[...clientLogos, ...clientLogos].map((logo, i) => (
               <div key={i} className="flex-shrink-0 px-6 py-4 rounded-xl bg-white border border-slate-100">
-                <span className="text-lg font-bold text-slate-400 whitespace-nowrap">{logo}</span>
+                <img src={logo.src} alt={logo.name} className="h-8 w-auto opacity-60 grayscale" />
               </div>
             ))}
           </motion.div>
