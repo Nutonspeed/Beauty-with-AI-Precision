@@ -111,22 +111,15 @@ export const dynamic = 'force-dynamic'
 // All pages will be rendered dynamically
 
 import { PageTransition } from "@/components/animations/page-transition"
+import { Suspense } from 'react'
 
 export default async function RootLayout({
   children,
-  params: { locale }
 }: Readonly<{
   children: React.ReactNode
-  params: { locale: string }
 }>) {
-  // ใช้ default locale ถ้า locale ไม่ถูกต้อง
-  const validLocale = locales.includes(locale as any) ? locale : 'th'
-  
-  // Get messages for next-intl
-  const messages = await getMessages()
-
   return (
-    <html lang={validLocale} suppressHydrationWarning>
+    <html lang="th" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -152,29 +145,26 @@ export default async function RootLayout({
       <body className={`${_notoThai.variable} ${_kanit.variable} font-sans antialiased`}>
         {/* Skip link for keyboard users */}
         <a href="#main-content" className="skip-link">Skip to main content</a>
-        <GoogleAnalytics />
+        <Suspense fallback={null}>
+          <GoogleAnalytics />
+        </Suspense>
         <StructuredData />
-        <NextIntlClientProvider messages={messages}>
-            <Providers>
-              <SessionTracker />
-              <ServiceWorkerRegistration />
-              <InstallPrompt />
-              {/* Global realtime announcements */}
-              <AnnouncementSubscriber />
-              {/* Connection status indicator (fixed bottom-right) */}
-              <div className="fixed bottom-4 right-4 z-50">
-                <ConnectionStatusIndicator variant="badge" />
-              </div>
-              {/* Offline mode indicator with sync status */}
-              <OfflineIndicator />
-              <main id="main-content" role="main" aria-label="Primary content">
-                <PageTransition>
-                  {children}
-                </PageTransition>
-              </main>
-              <Toaster position="top-right" richColors closeButton />
-            </Providers>
-        </NextIntlClientProvider>
+        <Providers>
+          <SessionTracker />
+          <ServiceWorkerRegistration />
+          <InstallPrompt />
+          <AnnouncementSubscriber />
+          <div className="fixed bottom-4 right-4 z-50">
+            <ConnectionStatusIndicator variant="badge" />
+          </div>
+          <OfflineIndicator />
+          <main id="main-content" role="main" aria-label="Primary content">
+            <PageTransition>
+              {children}
+            </PageTransition>
+          </main>
+          <Toaster position="top-right" richColors closeButton />
+        </Providers>
         <Analytics />
       </body>
     </html>

@@ -1,10 +1,10 @@
 import type { Metadata, Viewport } from "next"
 import { locales } from '@/i18n/request'
-import { HydrationProvider } from '@/components/providers/hydration-provider'
+import { NextIntlClientProvider } from 'next-intl'
+import { getMessages } from 'next-intl/server'
+import { notFound } from 'next/navigation'
 
-// Changed to static for better SEO performance
-export const dynamic = 'force-static'
-export const revalidate = 3600 // Revalidate every hour
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: {
@@ -46,19 +46,18 @@ export default async function LocaleLayout({
   params: Promise<{ locale: string }>
 }) {
   const { locale } = await params
-  console.log('[DEBUG] Locale layout called with locale:', locale, 'valid locales:', locales)
-
-  if (process.env.NODE_ENV === 'development') {
-    console.log('[locale] layout params', { locale })
+  
+  if (!locales.includes(locale as any)) {
+    notFound()
   }
 
+  const messages = await getMessages()
+
   return (
-    <html lang={locale} suppressHydrationWarning>
-      <body suppressHydrationWarning>
-        <HydrationProvider>
-          {children}
-        </HydrationProvider>
-      </body>
-    </html>
+    <NextIntlClientProvider locale={locale} messages={messages}>
+      <div className="contents">
+        {children}
+      </div>
+    </NextIntlClientProvider>
   )
 }
