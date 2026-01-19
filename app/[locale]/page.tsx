@@ -11,27 +11,19 @@ import {
   Microscope, 
   Fingerprint,
   Zap,
-  Users
+  Users,
+  Check,
+  Info,
+  PlusCircle
 } from "lucide-react"
-const ROISimulator = dynamic(() => import("@/components/analytics/roi-simulator").then(mod => ({ default: mod.ROISimulator })), { ssr: false })
-const GlobalCommandCenter = dynamic(() => import("@/components/visuals/global-command-center").then(mod => ({ default: mod.GlobalCommandCenter })), { ssr: false })
-import { useTranslations } from "next-intl"
-import { useLocale } from "next-intl"
-import { useEffect, useRef } from "react"
+import { useTranslations, useLocale } from "next-intl"
+import { useEffect, useRef, useState } from "react"
 import { usageTracker } from "@/lib/analytics/usage-tracker"
 import { motion } from "framer-motion"
 import dynamic from "next/dynamic"
 import { VideoHeroSkeleton } from "@/components/sections/VideoHeroSkeleton"
-
-// Lazy load heavy components
-const VideoHeroSection = dynamic(
-  () => import("@/components/sections/VideoHeroSection").then(mod => ({ default: mod.VideoHeroSection })),
-  { loading: () => <VideoHeroSkeleton />, ssr: false }
-)
 import { SUBSCRIPTION_PLANS, formatPrice, formatAnnualPrice } from "@/lib/subscriptions/plans"
 import { useLocalizePath } from "@/lib/i18n/locale-link"
-import { useState } from "react"
-import { Check, Info, PlusCircle } from "lucide-react"
 import { SideNav } from "@/components/ui/side-nav"
 import { NumberTicker } from "@/components/ui/number-ticker"
 import { MedicalCursor } from "@/components/ui/medical-cursor"
@@ -41,7 +33,14 @@ import { GlowCard } from "@/components/ui/glow-card"
 import { MedicalPulse } from "@/components/ui/medical-pulse"
 import { cn } from "@/lib/utils"
 import { ScrollReveal, ZoomOnScroll, ScrollProgressBar } from "@/components/ui/scroll-animations"
-// Dynamic imports for code splitting
+
+// Lazy load heavy components
+const ROISimulator = dynamic(() => import("@/components/analytics/roi-simulator").then(mod => ({ default: mod.ROISimulator })), { ssr: false })
+const GlobalCommandCenter = dynamic(() => import("@/components/visuals/global-command-center").then(mod => ({ default: mod.GlobalCommandCenter })), { ssr: false })
+const VideoHeroSection = dynamic(
+  () => import("@/components/sections/VideoHeroSection").then(mod => ({ default: mod.VideoHeroSection })),
+  { loading: () => <VideoHeroSkeleton />, ssr: false }
+)
 const FeaturesShowcase = dynamic(() => import("@/components/sections/FeaturesShowcase").then(mod => ({ default: mod.FeaturesShowcase })), { ssr: false })
 const StickyTestimonials = dynamic(() => import("@/components/sections/StickyTestimonials").then(mod => ({ default: mod.StickyTestimonials })), { ssr: false })
 const ProtocolFlow = dynamic(() => import("@/components/sections/ProtocolFlow").then(mod => ({ default: mod.ProtocolFlow })), { ssr: false })

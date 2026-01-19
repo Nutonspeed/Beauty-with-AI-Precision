@@ -17,6 +17,8 @@ import { SessionTracker } from "@/components/session-tracker"
 import { Providers } from "@/components/providers"
 import { Analytics } from "@vercel/analytics/react"
 import { Noto_Sans_Thai, Kanit } from "next/font/google"
+import { PageTransition } from "@/components/animations/page-transition"
+import { Suspense } from 'react'
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'),
@@ -109,9 +111,6 @@ export const dynamic = 'force-dynamic'
 
 // Remove generateStaticParams to prevent static generation
 // All pages will be rendered dynamically
-
-import { PageTransition } from "@/components/animations/page-transition"
-import { Suspense } from 'react'
 
 export default async function RootLayout({
   children,
