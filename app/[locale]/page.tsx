@@ -126,6 +126,54 @@ export default function HomePage() {
     }
   };
 
+  const pricingMeta = {
+    starter: {
+      bestFor: t('pricing.bestFor.starter'),
+      cta: t('pricing.plans.starter.cta'),
+      href: lp('/analysis'),
+    },
+    professional: {
+      bestFor: t('pricing.bestFor.professional'),
+      cta: t('pricing.plans.professional.cta'),
+      href: lp('/contact'),
+    },
+    enterprise: {
+      bestFor: t('pricing.bestFor.enterprise'),
+      cta: t('pricing.plans.enterprise.cta'),
+      href: lp('/contact'),
+    },
+    platinum: {
+      bestFor: t('pricing.bestFor.platinum'),
+      cta: t('pricing.plans.platinum.cta'),
+      href: lp('/contact'),
+    },
+  } as const;
+
+  const pricingMetrics = [
+    { label: t('pricing.metrics.uptimeLabel'), value: t('pricing.metrics.uptimeValue') },
+    { label: t('pricing.metrics.supportLabel'), value: t('pricing.metrics.supportValue') },
+    { label: t('pricing.metrics.deploymentLabel'), value: t('pricing.metrics.deploymentValue') },
+  ];
+
+  const trustBadges = [
+    t('trust.badges.pdpa'),
+    t('trust.badges.iso'),
+    t('trust.badges.encryption'),
+    t('trust.badges.verified'),
+  ];
+
+  const formatLimit = (value: number, suffix?: string) => {
+    if (value === -1) return t('pricing.limits.unlimited');
+    const formatted = value.toLocaleString();
+    if (suffix) return `${formatted} ${suffix}`;
+    return formatted;
+  };
+
+  const formatAnalysisQuota = (value: number) => {
+    if (value === -1) return t('pricing.limits.unlimited');
+    return value.toLocaleString();
+  };
+
   return (
     <>
       <ScrollProgressBar />
@@ -301,49 +349,119 @@ export default function HomePage() {
         </section>
 
         {/* 8. Pricing Section */}
-        <section id="pricing" className="py-24 lg:py-32 bg-white relative overflow-hidden">
-          <div className="section-orb top-0 right-0 w-96 h-96 bg-blue-50/50" />
-          <div className="container relative z-10">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
+        <section id="pricing" className="py-24 lg:py-32 bg-slate-50 relative overflow-hidden">
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute -top-32 left-1/2 h-[480px] w-[720px] -translate-x-1/2 rounded-full bg-gradient-to-br from-blue-100/70 via-white to-cyan-100/70 blur-3xl" />
+            <div className="absolute bottom-0 right-0 h-[420px] w-[420px] rounded-full bg-gradient-to-br from-indigo-100/60 to-white/40 blur-3xl" />
+            <div
+              className="absolute inset-0 opacity-[0.35]"
+              style={{
+                backgroundImage:
+                  'linear-gradient(to right, rgba(148,163,184,0.18) 1px, transparent 1px), linear-gradient(to bottom, rgba(148,163,184,0.18) 1px, transparent 1px)',
+                backgroundSize: '120px 120px',
+              }}
+            />
+          </div>
+          <div className="container relative z-10 space-y-16">
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="mx-auto mb-16 max-w-3xl text-center space-y-6"
+              className="grid gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] items-start"
             >
-              <Badge variant="outline" className="px-4 py-1.5 rounded-full border-blue-200 text-blue-700 bg-blue-50 font-bold tracking-wider text-[10px] uppercase">
-                {t('pricing.title')}
-              </Badge>
-              <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-slate-900">
-                {t('pricing.title')}
-              </h2>
-              <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-                {t('pricing.subtitle')}
-              </p>
+              <div className="space-y-6">
+                <Badge variant="outline" className="px-4 py-1.5 rounded-full border-blue-200 text-blue-700 bg-blue-50 font-bold tracking-wider text-[10px] uppercase">
+                  {t('pricing.hero.badge')}
+                </Badge>
+                <div className="space-y-4">
+                  <p className="text-[11px] font-black uppercase tracking-[0.4em] text-slate-400">
+                    {t('pricing.hero.subtitle')}
+                  </p>
+                  <h2 className="text-4xl md:text-6xl font-display font-bold tracking-tight text-slate-900">
+                    {t('pricing.hero.title')}
+                  </h2>
+                  <p className="text-lg text-slate-600 max-w-2xl">
+                    {t('pricing.hero.description')}
+                  </p>
+                </div>
 
-              {/* Billing Toggle */}
-              <div className="flex items-center justify-center gap-4 mt-8">
-                <span className={cn("text-sm font-medium transition-colors", billingCycle === 'monthly' ? "text-slate-900" : "text-slate-400")}>
-                  {t('pricing.billingToggle.monthly')}
-                </span>
-                <button 
-                  onClick={() => setBillingCycle(prev => prev === 'monthly' ? 'annual' : 'monthly')}
-                  className="relative w-14 h-7 rounded-full bg-slate-100 border border-slate-200 p-1 transition-colors hover:border-blue-300"
-                >
-                  <motion.div 
-                    className="w-5 h-5 rounded-full bg-blue-600 shadow-md"
-                    animate={{ x: billingCycle === 'monthly' ? 0 : 28 }}
-                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                  />
-                </button>
-                <div className="flex items-center gap-2">
-                  <span className={cn("text-sm font-medium transition-colors", billingCycle === 'annual' ? "text-slate-900" : "text-slate-400")}>
-                    {t('pricing.billingToggle.annual')}
-                  </span>
-                  <Badge variant="secondary" className="bg-emerald-100 text-emerald-700 border-none text-[10px] py-0 px-2">
-                    {t('pricing.billingToggle.saveLabel')}
-                  </Badge>
+                <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+                  {/* Billing Toggle */}
+                  <div className="flex items-center gap-4">
+                    <span className={cn("text-sm font-medium transition-colors", billingCycle === 'monthly' ? "text-slate-900" : "text-slate-400")}>
+                      {t('pricing.billingToggle.monthly')}
+                    </span>
+                    <button
+                      onClick={() => setBillingCycle(prev => prev === 'monthly' ? 'annual' : 'monthly')}
+                      className="relative w-14 h-7 rounded-full bg-white border border-slate-200 p-1 transition-colors hover:border-blue-300"
+                    >
+                      <motion.div
+                        className="w-5 h-5 rounded-full bg-blue-600 shadow-md"
+                        animate={{ x: billingCycle === 'monthly' ? 0 : 28 }}
+                        transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                      />
+                    </button>
+                    <div className="flex items-center gap-2">
+                      <span className={cn("text-sm font-medium transition-colors", billingCycle === 'annual' ? "text-slate-900" : "text-slate-400")}>
+                        {t('pricing.billingToggle.annual')}
+                      </span>
+                      <Badge variant="secondary" className="bg-emerald-100 text-emerald-700 border-none text-[10px] py-0 px-2">
+                        {t('pricing.billingToggle.saveLabel')}
+                      </Badge>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2 text-[10px] font-black uppercase tracking-[0.28em] text-slate-400">
+                    <div className="flex items-center gap-2">
+                      <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                      <span className="text-slate-500">{t('pricing.hero.freeTrial')}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="h-2 w-2 rounded-full bg-blue-500" />
+                      <span className="text-slate-500">{t('pricing.hero.cancelAnytime')}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
+
+              <GlowCard className="rounded-[32px] border-slate-200/70 bg-white/90 shadow-premium backdrop-blur">
+                <div className="p-8 space-y-6">
+                  <div className="flex items-center justify-between">
+                    <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400">
+                      {t('pricing.metrics.title')}
+                    </p>
+                    <Badge
+                      variant="outline"
+                      className="border-emerald-200 bg-emerald-50 text-emerald-700 text-[9px] font-black uppercase tracking-[0.2em]"
+                    >
+                      {t('pricing.metrics.verified')}
+                    </Badge>
+                  </div>
+                  <div className="grid grid-cols-3 gap-4">
+                    {pricingMetrics.map((metric) => (
+                      <div key={metric.label} className="rounded-2xl border border-slate-200/70 bg-white px-4 py-3">
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+                          {metric.label}
+                        </p>
+                        <p className="text-lg font-black text-slate-900">{metric.value}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {trustBadges.map((badge) => (
+                      <span
+                        key={badge}
+                        className="rounded-full border border-slate-200/80 bg-white px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500"
+                      >
+                        {badge}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="rounded-2xl border border-slate-200/70 bg-slate-50 px-4 py-3 text-xs text-slate-500">
+                    <span className="font-semibold text-slate-700">{t('pricing.metrics.noteLabel')}</span> {t('pricing.metrics.note')}
+                  </div>
+                </div>
+              </GlowCard>
             </motion.div>
 
             <motion.div 
@@ -356,52 +474,93 @@ export default function HomePage() {
               {plans.map((plan) => {
                 const details = SUBSCRIPTION_PLANS[plan.key as keyof typeof SUBSCRIPTION_PLANS];
                 const isPro = plan.key === 'professional';
+                const meta = pricingMeta[plan.key as keyof typeof pricingMeta];
+                const quotaValue = details.quotaPerSales === -1
+                  ? t('pricing.limits.unlimited')
+                  : `${formatAnalysisQuota(details.quotaPerSales)} ${t('pricing.limits.perMonth')}`;
+                const arQuotaValue = details.arQuotaPerSales === -1
+                  ? t('pricing.limits.unlimited')
+                  : `${formatLimit(details.arQuotaPerSales)} ${t('pricing.limits.perMonth')}`;
+                const limitRows = [
+                  { label: t('pricing.limits.users'), value: formatLimit(details.maxSalesUsers) },
+                  { label: t('pricing.limits.analysis'), value: quotaValue },
+                  { label: t('pricing.limits.arSimulations'), value: arQuotaValue },
+                  { label: t('pricing.limits.branches'), value: formatLimit(details.maxBranches) },
+                  { label: t('pricing.limits.storage'), value: formatLimit(details.maxStorageGB, 'GB') },
+                  { label: t('pricing.limits.trial'), value: t('pricing.trial.freeTrial', { days: details.trialDays }), span: true },
+                ];
                 
                 return (
                   <motion.div key={plan.key} variants={itemVariants}>
                     <GlowCard className={cn(
-                      "relative h-full border-slate-200 bg-white rounded-3xl overflow-hidden transition-all duration-500",
-                      isPro && "border-blue-500 shadow-2xl shadow-blue-500/10 lg:scale-105 z-20"
+                      "relative h-full border-slate-200/80 bg-white/90 rounded-[32px] overflow-hidden transition-all duration-500 shadow-premium",
+                      isPro && "border-blue-500 shadow-2xl shadow-blue-500/20 lg:-translate-y-2 z-20"
                     )}>
                       {isPro && (
-                        <div className="absolute top-0 right-0 p-2 px-6 bg-blue-600 text-[9px] font-black text-white uppercase tracking-[0.2em] rounded-bl-2xl">
+                        <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-5 py-2 rounded-full bg-blue-600 text-[9px] font-black text-white uppercase tracking-[0.3em] shadow-lg">
                           {t('common.recommended')}
                         </div>
                       )}
                       
-                      <div className="p-8 flex flex-col h-full space-y-8">
-                        <div className="space-y-2">
-                          <h3 className="text-2xl font-bold text-slate-900 italic">
-                            {t(`pricing.plans.${plan.key}.title` as any)}
-                          </h3>
-                          <p className="text-xs text-slate-500 uppercase font-black tracking-widest leading-relaxed">
-                            {t(`pricing.plans.${plan.key}.tagline` as any)}
-                          </p>
+                      <div className="p-8 flex flex-col h-full gap-8">
+                        <div className="space-y-4">
+                          <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-[0.35em] text-slate-400">
+                            <span>{plan.code}</span>
+                            <span className="text-emerald-500">{t('pricing.metrics.verified')}</span>
+                          </div>
+                          <div className="space-y-2">
+                            <p className="text-[10px] font-black uppercase tracking-[0.28em] text-blue-600">
+                              {meta.bestFor}
+                            </p>
+                            <h3 className="text-2xl font-bold text-slate-900">
+                              {t(`pricing.plans.${plan.key}.title` as any)}
+                            </h3>
+                            <p className="text-xs text-slate-500 uppercase font-black tracking-widest leading-relaxed">
+                              {t(`pricing.plans.${plan.key}.tagline` as any)}
+                            </p>
+                          </div>
                         </div>
                         
-                        <div className="space-y-1">
-                          <div className="flex items-baseline gap-1">
-                            <span className="text-4xl font-black text-slate-900 tracking-tighter">
+                        <div className="space-y-2">
+                          <div className="flex items-baseline gap-2">
+                            <span className="text-4xl font-black text-slate-900 tracking-tight">
                               {billingCycle === 'monthly' ? formatPrice(plan.key as any, locale as any) : formatAnnualPrice(plan.key as any, locale as any)}
                             </span>
                             <span className="text-slate-400 text-xs font-bold uppercase tracking-widest">
                               {billingCycle === 'monthly' ? '/mo' : '/yr'}
                             </span>
                           </div>
-                          {billingCycle === 'annual' && (
-                            <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">
-                              Save {formatPrice(plan.key as any, locale as any)} x 2 months
-                            </p>
-                          )}
+                          <p className="text-[11px] font-semibold text-emerald-600">
+                            {billingCycle === 'annual'
+                              ? t('pricing.billingToggle.saveLabel')
+                              : t('pricing.trial.freeTrial', { days: details.trialDays })}
+                          </p>
                         </div>
 
-                        <div className="h-px w-full bg-slate-100" />
+                        <div className="grid grid-cols-2 gap-3">
+                          {limitRows.map((row) => (
+                            <div
+                              key={row.label}
+                              className={cn(
+                                "rounded-2xl border border-slate-100 bg-white px-3 py-2",
+                                row.span && "col-span-2"
+                              )}
+                            >
+                              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+                                {row.label}
+                              </p>
+                              <p className="text-sm font-bold text-slate-700">
+                                {row.value}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
 
                         <div className="space-y-4 flex-1">
                           <div className="space-y-2">
                             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600">{t('pricing.salesTools')}</p>
                             <ul className="space-y-2.5">
-                              {details.salesFeaturesTH.slice(0, 5).map((feature, idx) => (
+                              {details.salesFeaturesTH.slice(0, 4).map((feature, idx) => (
                                 <li key={idx} className="flex items-start gap-3 text-xs text-slate-600 font-medium">
                                   <Check className="mt-0.5 h-3.5 w-3.5 text-blue-500 shrink-0" />
                                   <span>{locale === 'th' ? feature : details.salesFeatures[idx]}</span>
@@ -427,8 +586,8 @@ export default function HomePage() {
                           "w-full rounded-2xl font-black uppercase tracking-widest text-[10px] h-14 transition-all active:scale-95 shadow-lg",
                           isPro ? "bg-blue-600 hover:bg-blue-700 shadow-blue-600/20" : "bg-slate-900 hover:bg-slate-800"
                         )}>
-                          <Link href={lp("/contact")}>
-                            {t('pricing.cta.contactSales')}
+                          <Link href={meta.href}>
+                            {meta.cta}
                           </Link>
                         </Button>
                       </div>

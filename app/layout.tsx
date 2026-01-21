@@ -1,27 +1,26 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { NextIntlClientProvider } from 'next-intl'
-import { getMessages } from 'next-intl/server'
-import { locales } from "@/i18n/request"
-import "./globals.css"
-import { Toaster } from "@/components/ui/sonner"
-import AnnouncementSubscriber from "@/components/realtime/AnnouncementSubscriber"
-import { ConnectionStatusIndicator } from "@/components/realtime/ConnectionStatusIndicator"
-import { OfflineIndicator } from "@/components/offline/offline-indicator"
-import { ErrorBoundary } from '@/components/ui/error-boundary'
-import { GoogleAnalytics } from '@/components/analytics/GoogleAnalytics'
-import { StructuredData } from '@/components/seo/StructuredData'
-import { ServiceWorkerRegistration } from "@/components/service-worker-registration"
-import { InstallPrompt } from "@/components/pwa/install-prompt"
-import { SessionTracker } from "@/components/session-tracker"
-import { Providers } from "@/components/providers"
+import { Suspense } from "react"
 import { Analytics } from "@vercel/analytics/react"
-import { Noto_Sans_Thai, Kanit } from "next/font/google"
+import { Kanit, Noto_Sans_Thai } from "next/font/google"
+
+import "./globals.css"
+import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics"
 import { PageTransition } from "@/components/animations/page-transition"
-import { Suspense } from 'react'
+import { OfflineIndicator } from "@/components/offline/offline-indicator"
+import { InstallPrompt } from "@/components/pwa/install-prompt"
+import { ConnectionStatusIndicator } from "@/components/realtime/ConnectionStatusIndicator"
+import { ServiceWorkerRegistration } from "@/components/service-worker-registration"
+import { SessionTracker } from "@/components/session-tracker"
+import { StructuredData } from "@/components/seo/StructuredData"
+import { Providers } from "@/components/providers"
+import { Toaster } from "@/components/ui/sonner"
+
+const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000").trim()
+const metadataBase = URL.canParse(siteUrl) ? new URL(siteUrl) : new URL("http://localhost:3000")
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'),
+  metadataBase,
   title: "Aesthetic OS — Intelligent Aesthetic Intelligence Platform",
   description: "Aesthetic OS brings elite-grade AI to aesthetics: skin analysis, booking, program recommendations, and center operations.",
   generator: "Next.js",
@@ -107,10 +106,7 @@ export const viewport = {
 
 // Dynamic rendering for locales to avoid build timeout
 // Force dynamic to prevent SSG generation at build time
-export const dynamic = 'force-dynamic'
-
-// Remove generateStaticParams to prevent static generation
-// All pages will be rendered dynamically
+export const dynamic = "force-dynamic"
 
 export default async function RootLayout({
   children,
@@ -136,14 +132,15 @@ export default async function RootLayout({
             `,
           }}
         />
-  <link rel="icon" href="/favicon.svg" />
+        <link rel="icon" href="/favicon.svg" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="color-scheme" content="light dark" />
         <meta httpEquiv="Permissions-Policy" content="camera=(self), microphone=(self)" />
       </head>
       <body className={`${_notoThai.variable} ${_kanit.variable} font-sans antialiased`}>
-        {/* Skip link for keyboard users */}
-        <a href="#main-content" className="skip-link">Skip to main content</a>
+        <a href="#main-content" className="skip-link">
+          Skip to main content
+        </a>
         <Suspense fallback={null}>
           <GoogleAnalytics />
         </Suspense>
@@ -152,15 +149,12 @@ export default async function RootLayout({
           <SessionTracker />
           <ServiceWorkerRegistration />
           <InstallPrompt />
-          <AnnouncementSubscriber />
           <div className="fixed bottom-4 right-4 z-50">
             <ConnectionStatusIndicator variant="badge" />
           </div>
           <OfflineIndicator />
           <main id="main-content" role="main" aria-label="Primary content">
-            <PageTransition>
-              {children}
-            </PageTransition>
+            <PageTransition>{children}</PageTransition>
           </main>
           <Toaster position="top-right" richColors closeButton />
         </Providers>

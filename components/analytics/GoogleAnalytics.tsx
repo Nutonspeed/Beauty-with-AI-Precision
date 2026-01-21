@@ -19,15 +19,21 @@ export function GoogleAnalytics() {
   const searchParams = useSearchParams()
 
   useEffect(() => {
-    if (pathname) {
-      const url = pathname + (searchParams?.toString() ? `?${searchParams.toString()}` : '')
-      
-      // Track page views
-      window.gtag('config', GA_MEASUREMENT_ID, {
-        page_path: url,
-        page_title: document.title,
-      })
+    if (!GA_MEASUREMENT_ID || GA_MEASUREMENT_ID === 'G-XXXXXXXXXX') return
+    if (!pathname || typeof window === 'undefined') return
+
+    window.dataLayer = window.dataLayer || []
+    if (typeof window.gtag !== 'function') {
+      window.gtag = (...args: any[]) => window.dataLayer.push(args)
     }
+
+    const url = pathname + (searchParams?.toString() ? `?${searchParams.toString()}` : '')
+
+    // Track page views
+    window.gtag('config', GA_MEASUREMENT_ID, {
+      page_path: url,
+      page_title: document.title,
+    })
   }, [pathname, searchParams])
 
   if (!GA_MEASUREMENT_ID || GA_MEASUREMENT_ID === 'G-XXXXXXXXXX') {

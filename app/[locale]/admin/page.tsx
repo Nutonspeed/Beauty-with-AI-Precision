@@ -62,6 +62,19 @@ interface AdminDashboardData {
   topCenters: CenterPerformance[]
 }
 
+const fallbackDashboardData: AdminDashboardData = {
+  systemStats: {
+    totalUsers: 0,
+    activeCenters: 0,
+    totalAnalyses: 0,
+    totalRevenue: 0,
+    totalBookings: 0,
+    growthRate: 0,
+    averageOrderValue: 0,
+  },
+  topCenters: [],
+}
+
 export default function AdminDashboard() {
   const t = useTranslations()
   const locale = useLocale()
@@ -71,6 +84,7 @@ export default function AdminDashboard() {
   const [isLoading, setIsLoading] = useState(true)
   const [data, setData] = useState<AdminDashboardData | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [dataError, setDataError] = useState<string | null>(null)
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false)
 
   useEffect(() => {
@@ -111,6 +125,8 @@ export default function AdminDashboard() {
   }, [user, authLoading])
 
   const loadDashboardData = async () => {
+    let timeoutId: ReturnType<typeof window.setTimeout> | null = null
+    setDataError(null)
     try {
       console.log('[AdminDashboard] Fetching performance data...')
       setIsLoading(true)
@@ -123,7 +139,7 @@ export default function AdminDashboard() {
       }
 
       const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 10000)
+      timeoutId = window.setTimeout(() => controller.abort(), 30000)
 
       const response = await fetch('/api/admin/centers/performance?period=30d', {
         headers: { Authorization: `Bearer ${accessToken}` },
@@ -131,7 +147,6 @@ export default function AdminDashboard() {
         signal: controller.signal,
       })
 
-      clearTimeout(timeoutId)
       if (!response.ok) {
         const errorText = await response.text().catch(() => '')
         throw new Error(`Failed to load dashboard data (HTTP ${response.status})${errorText ? `: ${errorText}` : ''}`)
@@ -140,8 +155,20 @@ export default function AdminDashboard() {
       setData(result)
     } catch (err) {
       console.error('Dashboard loading error:', err)
-      setError(err instanceof Error ? err.message : 'Failed to load dashboard data')
+      const message = err instanceof Error ? err.message : 'Failed to load dashboard data'
+      if (message.includes('No session token')) {
+        setError(message)
+        return
+      }
+      const friendlyMessage = message.includes('signal is aborted')
+        ? 'Dashboard data request timed out. Showing fallback metrics.'
+        : message
+      setDataError(friendlyMessage)
+      setData(fallbackDashboardData)
     } finally {
+      if (timeoutId) {
+        window.clearTimeout(timeoutId)
+      }
       setIsLoading(false)
     }
   }
@@ -220,6 +247,12 @@ export default function AdminDashboard() {
         </div>
 
         <div className="container relative z-10 py-12 md:py-20 px-6 space-y-16 max-w-7xl mx-auto flex-1">
+          {dataError && (
+            <div className="rounded-[2rem] border border-amber-200 bg-amber-50/80 px-6 py-4 text-amber-900 shadow-inner">
+              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-amber-500 italic">Data status</p>
+              <p className="mt-2 text-sm font-medium">{dataError}</p>
+            </div>
+          )}
           {/* Welcome Interface Header */}
           <motion.div 
             initial={{ opacity: 0, x: -20 }}

@@ -246,7 +246,7 @@ export function getDefaultLandingPage(userRole: UserRole): string {
     case 'center_admin':
       return '/admin';
     case 'center_owner':
-      return '/center/dashboard';
+      return '/centers/dashboard';
     case 'sales_staff':
       return '/sales/dashboard';
     case 'center_staff':

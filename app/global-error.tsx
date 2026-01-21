@@ -23,8 +23,23 @@ export default function GlobalError({
               <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
                 Something went wrong!
               </h2>
-              <p className="mt-2 text-center text-sm text-gray-600">
-                An unexpected error occurred. Our team has been notified.
+              <div className="mt-4 p-4 bg-red-50 rounded-lg border border-red-200">
+                <p className="text-sm font-mono text-red-800 break-all">
+                  Error: {error.message || 'Unknown runtime error'}
+                </p>
+                {error.digest && (
+                  <p className="mt-2 text-xs font-mono text-red-600">
+                    Digest: {error.digest}
+                  </p>
+                )}
+                <p className="mt-4 text-[10px] font-mono text-gray-400">
+                  Build ID: {process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA?.substring(0, 7) || 'local'}
+                  <br />
+                  Timestamp: {new Date().toISOString()}
+                </p>
+              </div>
+              <p className="mt-4 text-center text-sm text-gray-600">
+                Our team has been notified. Please try again or contact support if the issue persists.
               </p>
             </div>
             <div className="mt-8 space-y-6">

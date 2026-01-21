@@ -24,16 +24,12 @@ import {
 import { useTranslations, useLocale } from "next-intl"
 import { SUBSCRIPTION_PLANS, formatPrice, formatAnnualPrice } from "@/lib/subscriptions/plans"
 import { motion } from "framer-motion"
-import { useState } from "react"
 
 export default function PricingPage() {
   const t = useTranslations('pricing')
   const plansT = useTranslations('plans')
-  const commonT = useTranslations('common')
   const locale = useLocale()
   const language = locale as 'th' | 'en'
-  
-  const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly')
 
   const pricingTiers = [
     {
@@ -57,7 +53,7 @@ export default function PricingPage() {
       cta: t('plans.starter.cta'),
       href: "/auth/login",
       variant: "outline" as const,
-      color: "from-blue-500/20 to-indigo-600/20"
+      color: "from-sky-500/20 to-cyan-400/20"
     },
     {
       planKey: 'professional' as const,
@@ -81,7 +77,7 @@ export default function PricingPage() {
       href: "/contact?plan=professional",
       variant: "default" as const,
       popular: true,
-      color: "from-pink-500/20 to-purple-600/20"
+      color: "from-blue-600/25 to-indigo-500/25"
     },
     {
       planKey: 'enterprise' as const,
@@ -104,7 +100,7 @@ export default function PricingPage() {
       cta: t('plans.enterprise.cta'),
       href: "/contact?plan=enterprise",
       variant: "outline" as const,
-      color: "from-emerald-500/20 to-teal-600/20"
+      color: "from-emerald-500/20 to-teal-500/20"
     },
     {
       planKey: 'platinum' as const,
@@ -127,7 +123,7 @@ export default function PricingPage() {
       cta: t('plans.platinum.cta'),
       href: "/contact?plan=platinum",
       variant: "outline" as const,
-      color: "from-amber-500/20 to-orange-600/20"
+      color: "from-slate-500/20 to-blue-500/20"
     }
   ]
 
@@ -139,19 +135,19 @@ export default function PricingPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#020617] text-slate-200 selection:bg-pink-500/30">
+    <div className="flex min-h-screen flex-col bg-slate-50 text-slate-900 selection:bg-blue-200/60">
       <Header />
 
       <main className="flex-1 relative overflow-hidden">
         {/* Infrastructure Background */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-pink-500/5 rounded-full blur-[120px] animate-glow-pulse" />
-          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-500/5 rounded-full blur-[100px] animate-float" />
-          <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.02]" />
+          <div className="absolute -top-32 left-[-10%] h-[520px] w-[520px] rounded-full bg-blue-200/60 blur-[140px]" />
+          <div className="absolute bottom-[-15%] right-[-10%] h-[520px] w-[520px] rounded-full bg-cyan-200/60 blur-[140px]" />
+          <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.08]" />
         </div>
 
         {/* Cinematic Hero Section */}
-        <section className="relative pt-32 pb-24 lg:pt-48 lg:pb-40 border-b border-white/5">
+        <section className="relative pt-28 pb-20 lg:pt-36 lg:pb-28 border-b border-slate-200/70">
           <div className="container relative z-10">
             <motion.div 
               initial={{ opacity: 0, scale: 0.9 }}
@@ -159,30 +155,30 @@ export default function PricingPage() {
               transition={{ duration: 0.8 }}
               className="mx-auto max-w-5xl text-center space-y-10"
             >
-              <Badge className="px-6 py-2 rounded-full border-pink-500/30 text-pink-400 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.2em] text-[10px] font-black shadow-2xl shadow-pink-500/10" variant="outline">
-                <TrendingUp className="mr-3 h-3.5 w-3.5 animate-pulse" />
+              <Badge className="px-6 py-2 rounded-full border-blue-200 text-blue-700 bg-blue-50 uppercase tracking-[0.2em] text-[10px] font-black shadow-sm" variant="outline">
+                <TrendingUp className="mr-3 h-3.5 w-3.5 text-blue-600" />
                 {t('hero.badge')}
               </Badge>
 
-              <h1 className="text-5xl md:text-8xl font-bold tracking-tight text-white leading-tight">
+              <h1 className="text-4xl md:text-7xl font-display font-bold tracking-tight text-slate-900 leading-tight">
                 {t('hero.title')}
-                <span className="block mt-4 bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent italic">
+                <span className="block mt-4 bg-gradient-to-r from-blue-600 via-cyan-500 to-emerald-500 bg-clip-text text-transparent italic">
                   {t('hero.subtitle')}
                 </span>
               </h1>
 
-              <p className="text-slate-400 max-w-2xl mx-auto text-xl font-light leading-relaxed tracking-wide">
+              <p className="text-slate-600 max-w-2xl mx-auto text-lg font-medium leading-relaxed">
                 {t('hero.description')}
               </p>
 
               <div className="flex flex-wrap items-center justify-center gap-10 pt-4">
                 <div className="flex items-center gap-3 group">
-                  <div className="h-1.5 w-1.5 rounded-full bg-pink-500 shadow-lg shadow-pink-500/50" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 group-hover:text-slate-300 transition-colors">{t('hero.freeTrial')}</span>
+                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/40" />
+                  <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 group-hover:text-slate-700 transition-colors">{t('hero.freeTrial')}</span>
                 </div>
                 <div className="flex items-center gap-3 group">
-                  <div className="h-1.5 w-1.5 rounded-full bg-cyan-500 shadow-lg shadow-cyan-500/50" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 group-hover:text-slate-300 transition-colors">{t('hero.cancelAnytime')}</span>
+                  <div className="h-1.5 w-1.5 rounded-full bg-blue-500 shadow-lg shadow-blue-500/40" />
+                  <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 group-hover:text-slate-700 transition-colors">{t('hero.cancelAnytime')}</span>
                 </div>
               </div>
             </motion.div>
@@ -204,15 +200,15 @@ export default function PricingPage() {
                     transition={{ duration: 0.8, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
                   >
                     <Card 
-                      className={`relative h-full border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] transition-all duration-700 hover:bg-white/[0.03] hover:border-white/10 group ${
-                        tier.popular ? 'border-pink-500/20 bg-pink-500/[0.02] shadow-2xl shadow-pink-500/10 lg:scale-105' : 'shadow-2xl'
+                      className={`relative h-full border-slate-200/70 bg-white/90 backdrop-blur rounded-[2.5rem] transition-all duration-700 hover:border-blue-300/60 hover:shadow-premium group ${
+                        tier.popular ? 'border-blue-500/40 shadow-2xl shadow-blue-500/15 lg:-translate-y-2' : 'shadow-lg'
                       }`}
                     >
-                      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+                      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-slate-200/70 to-transparent" />
                       
                       {tier.popular && (
                         <div className="absolute -top-5 left-1/2 -translate-x-1/2 z-20">
-                          <Badge className="bg-pink-600 text-white px-6 py-2 rounded-full border-none shadow-2xl shadow-pink-600/40 uppercase tracking-[0.2em] text-[9px] font-black italic">
+                          <Badge className="bg-blue-600 text-white px-6 py-2 rounded-full border-none shadow-xl shadow-blue-600/30 uppercase tracking-[0.2em] text-[9px] font-black">
                             {tier.badge}
                           </Badge>
                         </div>
@@ -220,39 +216,39 @@ export default function PricingPage() {
                       
                       <CardHeader className="p-10">
                         <div className="mb-10 flex items-center justify-between">
-                          <div className={`flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${tier.color} border border-white/5 shadow-inner transition-transform duration-700 group-hover:scale-110 group-hover:rotate-3 relative`}>
+                          <div className={`flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${tier.color} border border-slate-200/70 shadow-inner transition-transform duration-700 group-hover:scale-110 group-hover:rotate-3 relative`}>
                             <Icon className="h-8 w-8 text-white" />
                             {tier.planKey === 'professional' && (
-                              <div className="absolute -right-2 -top-2 h-6 w-6 rounded-full bg-pink-600 flex items-center justify-center border-2 border-[#020617] shadow-lg animate-pulse">
+                              <div className="absolute -right-2 -top-2 h-6 w-6 rounded-full bg-blue-600 flex items-center justify-center border-2 border-white shadow-lg animate-pulse">
                                 <Sparkles className="h-3 w-3 text-white" />
                               </div>
                             )}
                           </div>
                           {!tier.popular && (
-                            <Badge variant="outline" className="border-white/5 text-slate-500 font-black uppercase tracking-widest text-[8px] bg-white/[0.02]">{tier.badge}</Badge>
+                            <Badge variant="outline" className="border-slate-200 text-slate-500 font-black uppercase tracking-widest text-[8px] bg-slate-50">{tier.badge}</Badge>
                           )}
                         </div>
                         
-                        <CardTitle className="text-3xl font-bold text-white tracking-tight group-hover:text-pink-400 transition-colors">
+                        <CardTitle className="text-3xl font-bold text-slate-900 tracking-tight group-hover:text-blue-600 transition-colors">
                           {tier.name}
                           {tier.planKey === 'professional' && (
-                            <span className="ml-2 inline-block h-2 w-2 rounded-full bg-pink-500 animate-ping" />
+                            <span className="ml-2 inline-block h-2 w-2 rounded-full bg-blue-500 animate-ping" />
                           )}
                         </CardTitle>
-                        <CardDescription className="min-h-12 text-slate-500 font-light mt-4 leading-relaxed italic">{tier.description}</CardDescription>
+                        <CardDescription className="min-h-12 text-slate-600 font-medium mt-4 leading-relaxed">{tier.description}</CardDescription>
                         
                         <div className="mt-10 space-y-1">
-                          <div className="text-4xl font-black text-white tracking-tighter">{tier.price}</div>
+                          <div className="text-4xl font-black text-slate-900 tracking-tighter">{tier.price}</div>
                           {tier.period && (
-                            <div className="text-[10px] text-slate-600 font-black uppercase tracking-[0.2em]">/ {tier.period}</div>
+                            <div className="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em]">/ {tier.period}</div>
                           )}
                         </div>
                       </CardHeader>
 
                       <CardContent className="p-10 pt-0 space-y-10">
                         {tier.limits.trial > 0 && (
-                          <div className="flex items-center gap-3 rounded-2xl bg-pink-500/5 px-5 py-3 text-[10px] font-black uppercase tracking-widest text-pink-400 border border-pink-500/10 shadow-inner">
-                            <Clock className="h-4 w-4 animate-pulse" />
+                          <div className="flex items-center gap-3 rounded-2xl bg-emerald-50 px-5 py-3 text-[10px] font-black uppercase tracking-widest text-emerald-600 border border-emerald-200/70 shadow-inner">
+                            <Clock className="h-4 w-4 text-emerald-500" />
                             {t('trial.freeTrial', {days: tier.limits.trial})}
                           </div>
                         )}
@@ -261,33 +257,33 @@ export default function PricingPage() {
                           size="xl"
                           className={`w-full h-16 rounded-[2rem] font-black uppercase tracking-widest text-xs transition-all hover:scale-105 active:scale-95 ${
                             tier.popular 
-                              ? 'bg-pink-600 text-white hover:bg-pink-500 shadow-2xl shadow-pink-600/30' 
-                              : 'border-white/10 bg-white/5 text-white hover:bg-white/10 border'
+                              ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-2xl shadow-blue-600/30' 
+                              : 'bg-white text-slate-900 border border-slate-200/80 hover:border-blue-200 hover:text-blue-700 hover:bg-blue-50/60'
                           }`}
-                      >
-                        <Link href={tier.href}>
-                          {tier.cta}
-                          <ArrowRight className="ml-3 h-5 w-5" />
-                        </Link>
-                      </Button>
+                        >
+                          <Link href={tier.href}>
+                            {tier.cta}
+                            <ArrowRight className="ml-3 h-5 w-5" />
+                          </Link>
+                        </Button>
 
                       {/* Aesthetic Intelligence Infrastructure */}
-                      <div className="grid grid-cols-3 gap-2 rounded-[2rem] bg-white/[0.02] border border-white/5 p-6 text-center shadow-inner relative overflow-hidden group/node">
-                        <div className="absolute inset-0 bg-pink-500/[0.01] opacity-0 group-hover/node:opacity-100 transition-opacity" />
+                      <div className="grid grid-cols-3 gap-2 rounded-[2rem] bg-slate-50 border border-slate-200/70 p-6 text-center shadow-inner relative overflow-hidden group/node">
+                        <div className="absolute inset-0 bg-blue-500/5 opacity-0 group-hover/node:opacity-100 transition-opacity" />
                         <div className="relative z-10">
-                          <Users className="mx-auto mb-2 h-4 w-4 text-slate-600 group-hover/node:text-pink-400 transition-colors" />
-                          <div className="font-bold text-white text-[10px] tracking-tight">{formatLimit(tier.limits.users, 'users')}</div>
-                          <div className="text-[7px] text-slate-600 uppercase font-black tracking-widest mt-1">{t('limits.users')}</div>
+                          <Users className="mx-auto mb-2 h-4 w-4 text-slate-500 group-hover/node:text-blue-600 transition-colors" />
+                          <div className="font-bold text-slate-900 text-[10px] tracking-tight">{formatLimit(tier.limits.users, 'users')}</div>
+                          <div className="text-[7px] text-slate-400 uppercase font-black tracking-widest mt-1">{t('limits.users')}</div>
                         </div>
-                        <div className="relative z-10 border-x border-white/5">
-                          <Brain className="mx-auto mb-2 h-4 w-4 text-slate-600 group-hover/node:text-cyan-400 transition-colors" />
-                          <div className="font-bold text-white text-[10px] tracking-tight">{formatLimit(tier.limits.analyses, 'analyses')}</div>
-                          <div className="text-[7px] text-slate-600 uppercase font-black tracking-widest mt-1">AI Nodes</div>
+                        <div className="relative z-10 border-x border-slate-200/70">
+                          <Brain className="mx-auto mb-2 h-4 w-4 text-slate-500 group-hover/node:text-cyan-500 transition-colors" />
+                          <div className="font-bold text-slate-900 text-[10px] tracking-tight">{formatLimit(tier.limits.analyses, 'analyses')}</div>
+                          <div className="text-[7px] text-slate-400 uppercase font-black tracking-widest mt-1">{t('limits.analysis')}</div>
                         </div>
                         <div className="relative z-10">
-                          <Zap className="mx-auto mb-2 h-4 w-4 text-slate-600 group-hover/node:text-purple-400 transition-colors" />
-                          <div className="font-bold text-white text-[10px] tracking-tight">{tier.planKey === 'starter' ? 'Gemini' : 'Hybrid'}</div>
-                          <div className="text-[7px] text-slate-600 uppercase font-black tracking-widest mt-1">Engine</div>
+                          <Zap className="mx-auto mb-2 h-4 w-4 text-slate-500 group-hover/node:text-emerald-500 transition-colors" />
+                          <div className="font-bold text-slate-900 text-[10px] tracking-tight">{tier.planKey === 'starter' ? 'Gemini' : 'Hybrid'}</div>
+                          <div className="text-[7px] text-slate-400 uppercase font-black tracking-widest mt-1">{t('limits.engine')}</div>
                         </div>
                       </div>
 
@@ -302,21 +298,21 @@ export default function PricingPage() {
                             return (
                               <div key={index} className="flex items-start gap-4 text-sm group/item">
                                 <div className={`mt-1 flex h-1.5 w-1.5 shrink-0 rounded-full transition-colors ${
-                                  isHighlight ? 'bg-pink-400 shadow-[0_0_12px_rgba(236,72,153,0.8)]' : 'bg-pink-500/50 shadow-[0_0_8px_rgba(236,72,153,0.5)]'
-                                } group-hover/item:bg-pink-500`} />
-                                <span className={`font-light leading-snug transition-colors ${
-                                  isHighlight ? 'text-white font-bold tracking-tight' : 'text-slate-400 group-hover/item:text-slate-200'
+                                  isHighlight ? 'bg-blue-500 shadow-[0_0_12px_rgba(59,130,246,0.55)]' : 'bg-emerald-400/60 shadow-[0_0_8px_rgba(16,185,129,0.4)]'
+                                } group-hover/item:bg-blue-500`} />
+                                <span className={`font-medium leading-snug transition-colors ${
+                                  isHighlight ? 'text-slate-900 font-bold tracking-tight' : 'text-slate-600 group-hover/item:text-slate-900'
                                 }`}>
                                   {feature}
-                                  {isHighlight && <Sparkles className="inline-block ml-1.5 h-3 w-3 text-pink-400 animate-pulse" />}
+                                  {isHighlight && <Sparkles className="inline-block ml-1.5 h-3 w-3 text-blue-500 animate-pulse" />}
                                 </span>
                               </div>
                             );
                           })}
                           {tier.excludedFeatures.map((feature: string, index: number) => (
-                            <div key={`ex-${index}`} className="flex items-start gap-4 text-sm opacity-30 grayscale">
-                              <X className="mt-1 h-3.5 w-3.5 shrink-0 text-slate-600" />
-                              <span className="text-slate-600 font-light leading-snug italic">{feature}</span>
+                            <div key={`ex-${index}`} className="flex items-start gap-4 text-sm opacity-50">
+                              <X className="mt-1 h-3.5 w-3.5 shrink-0 text-slate-300" />
+                              <span className="text-slate-400 font-medium leading-snug italic">{feature}</span>
                             </div>
                           ))}
                         </div>
@@ -330,7 +326,7 @@ export default function PricingPage() {
         </section>
 
         {/* Aesthetic Intelligence Comparison Grid - High-End Matrix */}
-        <section className="py-32 lg:py-48 relative border-y border-white/5 bg-white/[0.01]">
+        <section className="py-24 lg:py-32 relative border-y border-slate-200/70 bg-white">
           <div className="container relative z-10">
             <motion.div 
               initial={{ opacity: 0, y: 30 }}
@@ -338,11 +334,11 @@ export default function PricingPage() {
               viewport={{ once: true }}
               className="mx-auto mb-24 max-w-3xl text-center space-y-6"
             >
-              <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-white leading-tight">
+              <h2 className="text-4xl md:text-6xl font-display font-bold tracking-tight text-slate-900 leading-tight">
                 {t('comparison.title')}
               </h2>
-              <div className="h-1 w-20 bg-cyan-500/50 mx-auto rounded-full" />
-              <p className="text-xl text-slate-400 font-light tracking-wide">
+              <div className="h-1 w-20 bg-blue-500/60 mx-auto rounded-full" />
+              <p className="text-lg text-slate-600 font-medium tracking-wide">
                 {t('comparison.description')}
               </p>
             </motion.div>
@@ -351,21 +347,21 @@ export default function PricingPage() {
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="overflow-hidden rounded-[3rem] border border-white/5 bg-white/[0.01] backdrop-blur-3xl shadow-2xl"
+              className="overflow-hidden rounded-[2.5rem] border border-slate-200/70 bg-white shadow-premium"
             >
               <div className="overflow-x-auto">
                 <table className="w-full border-collapse">
                   <thead>
-                    <tr className="border-b border-white/5 bg-white/[0.02]">
+                    <tr className="border-b border-slate-200/70 bg-slate-50">
                       <th className="px-12 py-10 text-left text-xs font-black uppercase tracking-[0.3em] text-slate-500">
                         {t('comparison.features')}
                       </th>
-                      <th className="px-8 py-10 text-center text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Starter</th>
-                      <th className="px-8 py-10 text-center text-[10px] font-black uppercase tracking-[0.3em] text-pink-400 bg-pink-500/5">Professional</th>
-                      <th className="px-8 py-10 text-center text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Enterprise</th>
+                      <th className="px-8 py-10 text-center text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">{t('plans.starter.title')}</th>
+                      <th className="px-8 py-10 text-center text-[10px] font-black uppercase tracking-[0.3em] text-blue-600 bg-blue-50">{t('plans.professional.title')}</th>
+                      <th className="px-8 py-10 text-center text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">{t('plans.enterprise.title')}</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-white/5">
+                  <tbody className="divide-y divide-slate-200/70">
                     {[ 
                       { label: t('comparison.aiAnalysis'), starter: true, pro: true, enterprise: true },
                       { label: t('comparison.aestheticMetrics'), starter: true, pro: true, enterprise: true },
@@ -378,18 +374,18 @@ export default function PricingPage() {
                       { label: t('comparison.revenueForecast'), starter: false, pro: false, enterprise: true },
                       { label: t('comparison.multiBranch'), starter: false, pro: false, enterprise: true }
                     ].map((row, idx) => (
-                      <tr key={idx} className="hover:bg-white/[0.02] transition-colors group">
-                        <td className="px-12 py-8 text-sm font-bold text-white tracking-tight">
+                      <tr key={idx} className="hover:bg-slate-50/80 transition-colors group">
+                        <td className="px-12 py-8 text-sm font-bold text-slate-900 tracking-tight">
                           {row.label}
                         </td>
                         <td className="px-8 py-8 text-center">
-                          {row.starter ? <CheckCircle2 className="mx-auto h-5 w-5 text-pink-500/40" /> : <X className="mx-auto h-5 w-5 text-slate-800" />}
+                          {row.starter ? <CheckCircle2 className="mx-auto h-5 w-5 text-slate-400" /> : <X className="mx-auto h-5 w-5 text-slate-300" />}
                         </td>
-                        <td className="px-8 py-8 text-center bg-pink-500/[0.02] group-hover:bg-pink-500/5 transition-colors border-x border-white/5">
-                          {row.pro ? <CheckCircle2 className="mx-auto h-5 w-5 text-pink-400" /> : <X className="mx-auto h-5 w-5 text-slate-800" />}
+                        <td className="px-8 py-8 text-center bg-blue-50/70 group-hover:bg-blue-100/60 transition-colors border-x border-slate-200/70">
+                          {row.pro ? <CheckCircle2 className="mx-auto h-5 w-5 text-blue-600" /> : <X className="mx-auto h-5 w-5 text-slate-300" />}
                         </td>
                         <td className="px-8 py-8 text-center">
-                          {row.enterprise ? <CheckCircle2 className="mx-auto h-5 w-5 text-pink-500/40" /> : <X className="mx-auto h-5 w-5 text-slate-800" />}
+                          {row.enterprise ? <CheckCircle2 className="mx-auto h-5 w-5 text-emerald-500" /> : <X className="mx-auto h-5 w-5 text-slate-300" />}
                         </td>
                       </tr>
                     ))}
@@ -401,7 +397,7 @@ export default function PricingPage() {
         </section>
 
         {/* Aesthetic Intelligence FAQ - Diagnostic Nodes */}
-        <section className="py-32 lg:py-48 relative overflow-hidden">
+        <section className="py-24 lg:py-32 relative overflow-hidden bg-slate-50">
           <div className="container relative z-10">
             <motion.div 
               initial={{ opacity: 0, y: 30 }}
@@ -409,10 +405,10 @@ export default function PricingPage() {
               viewport={{ once: true }}
               className="mx-auto mb-24 max-w-2xl text-center space-y-6"
             >
-              <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-white leading-tight">
+              <h2 className="text-4xl md:text-6xl font-display font-bold tracking-tight text-slate-900 leading-tight">
                 {t('faq.title')}
               </h2>
-              <div className="h-1 w-20 bg-purple-500/50 mx-auto rounded-full" />
+              <div className="h-1 w-20 bg-emerald-500/60 mx-auto rounded-full" />
             </motion.div>
 
             <div className="mx-auto max-w-4xl grid gap-8 md:grid-cols-1">
@@ -424,18 +420,18 @@ export default function PricingPage() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.8, delay: num * 0.1 }}
                 >
-                  <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2.5rem] overflow-hidden group hover:border-white/10 transition-all duration-500 shadow-2xl relative">
-                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+                  <Card className="border-slate-200/70 bg-white rounded-[2.5rem] overflow-hidden group hover:border-blue-300/60 transition-all duration-500 shadow-premium relative">
+                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-slate-200/70 to-transparent" />
                     <CardHeader className="p-10 lg:p-12">
                       <div className="flex gap-8">
-                        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/[0.03] border border-white/5 shadow-inner group-hover:scale-110 group-hover:border-purple-500/30 transition-all duration-500">
-                          <Zap className="h-6 w-6 text-slate-500 group-hover:text-purple-400 transition-colors" />
+                        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-slate-50 border border-slate-200/70 shadow-inner group-hover:scale-110 group-hover:border-emerald-300 transition-all duration-500">
+                          <Zap className="h-6 w-6 text-slate-500 group-hover:text-emerald-500 transition-colors" />
                         </div>
                         <div className="space-y-4">
-                          <CardTitle className="text-2xl font-bold text-white tracking-tight group-hover:text-pink-400 transition-colors duration-500">
+                          <CardTitle className="text-2xl font-bold text-slate-900 tracking-tight group-hover:text-blue-600 transition-colors duration-500">
                             {t(`faq.q${num}` as any)}
                           </CardTitle>
-                          <p className="text-lg text-slate-400 font-light leading-relaxed">
+                          <p className="text-lg text-slate-600 font-medium leading-relaxed">
                             {t(`faq.a${num}` as any)}
                           </p>
                         </div>
@@ -449,8 +445,8 @@ export default function PricingPage() {
         </section>
 
         {/* Global Deployment CTA - Cinematic Section */}
-        <section className="relative py-40 overflow-hidden bg-[#020617]">
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-pink-600/10" />
+        <section className="relative py-24 lg:py-32 overflow-hidden border-t border-slate-200/70 bg-gradient-to-b from-white via-slate-50 to-slate-100">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(59,130,246,0.12),_transparent_55%),radial-gradient(circle_at_bottom,_rgba(16,185,129,0.12),_transparent_55%)]" />
           <div className="container relative z-10">
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }}
@@ -459,16 +455,16 @@ export default function PricingPage() {
               className="mx-auto max-w-4xl text-center space-y-12"
             >
               <div className="space-y-6">
-                <h2 className="text-5xl md:text-8xl font-bold tracking-tight text-white leading-tight">
+                <h2 className="text-5xl md:text-7xl font-display font-bold tracking-tight text-slate-900 leading-tight">
                   {t('cta.title')}
                 </h2>
-                <p className="text-2xl text-slate-400 font-light leading-relaxed max-w-2xl mx-auto">
+                <p className="text-xl text-slate-600 font-medium leading-relaxed max-w-2xl mx-auto">
                   {t('cta.description')}
                 </p>
               </div>
               
               <div className="flex flex-col sm:flex-row gap-8 justify-center items-center">
-                <Button size="xl" variant="premium" className="h-20 px-16 rounded-3xl shadow-2xl shadow-pink-500/20 text-xl font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all" asChild>
+                <Button size="xl" variant="premium" className="h-20 px-16 rounded-3xl shadow-2xl shadow-blue-500/20 text-xl font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all" asChild>
                   <Link href="/analysis">
                     <Sparkles className="mr-4 h-7 w-7" />
                     {t('cta.startFree')}
@@ -477,7 +473,7 @@ export default function PricingPage() {
                 <Button
                   size="xl"
                   variant="outline"
-                  className="h-20 px-16 rounded-3xl border-white/10 bg-white/5 text-white backdrop-blur-md hover:bg-white/10 hover:border-white/20 text-xl font-bold tracking-wide transition-all hover:scale-105 active:scale-95"
+                  className="h-20 px-16 rounded-3xl border-slate-200/70 bg-white text-slate-700 hover:bg-slate-50 hover:border-blue-200/80 text-xl font-bold tracking-wide transition-all hover:scale-105 active:scale-95"
                   asChild
                 >
                   <Link href="/contact">

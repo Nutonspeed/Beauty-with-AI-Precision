@@ -19,7 +19,7 @@ interface Notification {
 }
 
 export function SynapticNotifications() {
-  const t = useTranslations()
+  const t = useTranslations('home.salesWizard')
   const [notifications, setNotifications] = useState<Notification[]>([
     {
       id: 'sn1',

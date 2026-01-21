@@ -20,7 +20,7 @@ interface Recommendation {
 }
 
 export function StrategicGrowthAdvisor() {
-  const t = useTranslations()
+  const t = useTranslations('home.salesWizard')
   const [isExecuting, setIsExecuting] = useState<string | null>(null)
 
   const recommendations: Recommendation[] = [

@@ -25,7 +25,7 @@ const CartesianGrid = dynamic(() => import('recharts').then(mod => mod.Cartesian
 const Tooltip = dynamic(() => import('recharts').then(mod => mod.Tooltip), { ssr: false });
 
 export function GlobalPerformanceIndex() {
-  const t = useTranslations()
+  const t = useTranslations('home.salesWizard')
 
   const chartData = [
     { name: 'Jan', performance: 85, benchmark: 70 },

@@ -2,13 +2,25 @@ import { createBrowserClient as createSupabaseBrowserClient } from "@supabase/ss
 
 export function createBrowserClient() {
   // Check if we're in a browser environment
-  if (globalThis.window === undefined) {
-    throw new TypeError('createBrowserClient should only be called in browser environment')
+  if (typeof window === 'undefined') {
+    console.warn('createBrowserClient called in server environment - returning null or throwing later if env vars missing')
+    // Return a dummy client or handle gracefully instead of throwing immediately
+    // Next.js sometimes pre-renders components that use this
+  }
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    if (typeof window === 'undefined') {
+      return null as any // Fail gracefully on server
+    }
+    throw new Error('Missing Supabase Environment Variables')
   }
 
   return createSupabaseBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!, 
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    supabaseUrl,
+    supabaseAnonKey,
     {
       auth: {
         autoRefreshToken: true,
@@ -26,13 +38,17 @@ export function createBrowserClient() {
         },
         setAll(cookiesToSet) {
           if (typeof document === 'undefined') return
+          const isHttps = typeof window !== 'undefined' && window.location.protocol === 'https:'
           for (const { name, value, options } of cookiesToSet) {
             let cookieString = `${name}=${value}`
             if (options?.maxAge) cookieString += `; max-age=${options.maxAge}`
             if (options?.path) cookieString += `; path=${options.path}`
             if (options?.domain) cookieString += `; domain=${options.domain}`
-            if (options?.sameSite) cookieString += `; samesite=${options.sameSite}`
-            if (options?.secure) cookieString += '; secure'
+
+            const secure = Boolean(options?.secure && isHttps)
+            const sameSite = !secure && options?.sameSite === 'none' ? 'lax' : options?.sameSite
+            if (sameSite) cookieString += `; samesite=${sameSite}`
+            if (secure) cookieString += '; secure'
             document.cookie = cookieString
           }
         },

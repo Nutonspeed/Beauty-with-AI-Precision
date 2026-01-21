@@ -18,7 +18,7 @@ interface Operation {
 }
 
 export function AutonomousOpsLog() {
-  const t = useTranslations()
+  const t = useTranslations('home.salesWizard')
   const [ops, setOps] = useState<Operation[]>([
     {
       id: 'op1',

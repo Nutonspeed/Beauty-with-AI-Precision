@@ -22,7 +22,7 @@ const YAxis = dynamic(() => import('recharts').then(mod => mod.YAxis), { ssr: fa
 const Tooltip = dynamic(() => import('recharts').then(mod => mod.Tooltip), { ssr: false });
 
 export function NeuralHealthMonitor() {
-  const t = useTranslations()
+  const t = useTranslations('home.salesWizard')
 
   const healthData = [
     { time: '00:00', accuracy: 98.2, latency: 120 },

@@ -46,7 +46,7 @@ interface IntelligenceCommandPaletteProps {
 }
 
 export function IntelligenceCommandPalette({ onSelect, isOpen, onClose }: IntelligenceCommandPaletteProps) {
-  const t = useTranslations()
+  const t = useTranslations('home.salesWizard')
   const [query, setInput] = useState("")
 
   const commands: CommandItem[] = [

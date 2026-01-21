@@ -51,6 +51,14 @@ export const waitForLoading = async (page: Page) => {
   await page.waitForLoadState('domcontentloaded', { timeout: 15000 });
   // Fallback: ensure body is present
   await page.locator('body').first().waitFor({ state: 'visible', timeout: 10000 });
+  // Wait for React hydration when marker exists (prevents input reset after fill)
+  await page
+    .waitForFunction(() => {
+      const hydrated = document.querySelector('[data-hydrated]') as HTMLElement | null
+      if (!hydrated) return true
+      return hydrated.getAttribute('data-hydrated') === 'true'
+    }, { timeout: 15000 })
+    .catch(() => {})
 };
 
 export const takeScreenshot = async (page: Page, name: string) => {

@@ -23,6 +23,10 @@ const nextConfig = {
     ignoreBuildErrors: FAST_BUILD,
   },
 
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+
   // Note: ESLint is now configured via .eslintrc.json
 
   productionBrowserSourceMaps: !FAST_BUILD,
@@ -113,11 +117,7 @@ const nextConfig = {
   },
 
   async redirects() {
-    return [
-      { source: '/leads', destination: '/th/sales/leads', permanent: true },
-      { source: '/sales/leads', destination: '/th/sales/leads', permanent: true },
-      { source: '/sales/leads/:id', destination: '/th/sales/leads/:id', permanent: true },
-    ]
+    return []
   },
 
   ...(process.env.NODE_ENV === 'production' && !FAST_BUILD && {

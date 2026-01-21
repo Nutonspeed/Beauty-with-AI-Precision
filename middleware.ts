@@ -1,26 +1,13 @@
 import createMiddleware from 'next-intl/middleware';
 import { NextRequest, NextResponse } from 'next/server'
-
-import { locales, defaultLocale } from './i18n/request';
+import { routing } from './i18n/routing';
 import { updateSession } from './lib/supabase/middleware'
 
-const intlMiddleware = createMiddleware({
-  // A list of all locales that are supported
-  locales,
-  
-  // Used when no locale matches
-  defaultLocale,
-  
-  // Optional: Configure path prefix behavior
-  localePrefix: 'as-needed', // Default is 'always'
-  
-  // Optional: Configure locale detection
-  localeDetection: true,
-});
+const intlMiddleware = createMiddleware(routing);
 
-export default async function proxy(request: NextRequest) {
+export default async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
-  console.log(`[PROXY] Incoming request: ${pathname}`)
+  console.log(`[MIDDLEWARE] Incoming request: ${pathname}`)
 
   // Completely bypass everything for static assets and internal Next.js paths to ensure performance
   if (
@@ -46,20 +33,34 @@ export default async function proxy(request: NextRequest) {
   const location = intlResponse.headers.get('location')
   
   if (location) {
-    console.log(`[PROXY] Intl middleware redirecting: ${pathname} -> ${location}`)
+    console.log(`[MIDDLEWARE] Intl middleware redirecting: ${pathname} -> ${location}`)
   }
 
   const resolvedPathname = rewrite
-    ? new URL(rewrite).pathname
+    ? (() => {
+        try {
+          return new URL(rewrite).pathname
+        } catch (e) {
+          // If rewrite is just a path, return it as is
+          return rewrite
+        }
+      })()
     : location
-      ? new URL(location, request.url).pathname
+      ? (() => {
+          try {
+            return new URL(location, request.url).pathname
+          } catch (e) {
+            return undefined
+          }
+        })()
       : undefined
 
+  // Auth + session refresh (RBAC) should run after i18n normalization.
   const authResponse = await updateSession(request, intlResponse, resolvedPathname)
   const authLocation = authResponse.headers.get('location')
 
   if (authLocation) {
-    console.log(`[PROXY] Auth middleware redirecting: ${pathname} -> ${authLocation}`)
+    console.log(`[MIDDLEWARE] Auth middleware redirecting: ${pathname} -> ${authLocation}`)
   }
 
   // If auth decides to redirect, it must win over i18n normalization.

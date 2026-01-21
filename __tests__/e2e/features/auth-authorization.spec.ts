@@ -2,7 +2,7 @@ import { test, expect, waitForLoading, takeScreenshot, testUsers } from '../test
 
 test.describe('Authentication & Authorization', () => {
   test('should display login page correctly', async ({ page }) => {
-    await page.goto('/th/auth/login');
+    await page.goto('/th/auth/login', { waitUntil: 'domcontentloaded', timeout: 120000 });
     await waitForLoading(page);
     
     // Check if login page loads correctly - debug what's actually loaded
@@ -35,12 +35,12 @@ test.describe('Authentication & Authorization', () => {
   });
 
   test('should login as super admin successfully', async ({ page }) => {
-    await page.goto('/th/auth/login');
+    await page.goto('/th/auth/login', { waitUntil: 'domcontentloaded', timeout: 120000 });
     await waitForLoading(page);
     
     await page.fill('#email', testUsers.superAdmin.email);
     await page.fill('#password', testUsers.superAdmin.password);
-    await page.click('button[type="submit"]');
+    await page.click('button[type="submit"]', { noWaitAfter: true });
     
     // Smoke only: no navigation expectation (password cannot be reset for demo emails)
     await page.waitForTimeout(1500);
@@ -48,12 +48,12 @@ test.describe('Authentication & Authorization', () => {
   });
 
   test('should login as center owner successfully', async ({ page }) => {
-    await page.goto('/th/auth/login');
+    await page.goto('/th/auth/login', { waitUntil: 'domcontentloaded', timeout: 120000 });
     await waitForLoading(page);
     
     await page.fill('#email', testUsers.centerOwner.email);
     await page.fill('#password', testUsers.centerOwner.password);
-    await page.click('button[type="submit"]');
+    await page.click('button[type="submit"]', { noWaitAfter: true });
     
     // Smoke only
     await page.waitForTimeout(1500);
@@ -62,12 +62,12 @@ test.describe('Authentication & Authorization', () => {
 
   test('should login as sales staff successfully', async ({ page, browserName }) => {
     test.skip(browserName === 'webkit', 'Safari/WebKit redirects back to login on supabase auth cookies');
-    await page.goto('/th/auth/login');
+    await page.goto('/th/auth/login', { waitUntil: 'domcontentloaded', timeout: 120000 });
     await waitForLoading(page);
     
     await page.fill('#email', testUsers.salesStaff.email);
     await page.fill('#password', testUsers.salesStaff.password);
-    await page.click('button[type="submit"]');
+    await page.click('button[type="submit"]', { noWaitAfter: true });
     
     // Wait for session cookie to be issued
     const start = Date.now();
@@ -79,7 +79,7 @@ test.describe('Authentication & Authorization', () => {
     }
     
     // Try to reach sales dashboard explicitly
-    await page.goto('/th/sales/dashboard');
+    await page.goto('/th/sales/dashboard', { waitUntil: 'domcontentloaded', timeout: 120000 });
     await page.waitForLoadState('domcontentloaded');
     const currentUrl = page.url();
     console.log('Sales dashboard URL:', currentUrl);
@@ -88,34 +88,34 @@ test.describe('Authentication & Authorization', () => {
   });
 
   test('should login as customer successfully', async ({ page }) => {
-    await page.goto('/th/auth/login');
+    await page.goto('/th/auth/login', { waitUntil: 'domcontentloaded', timeout: 120000 });
     await waitForLoading(page);
     
     await page.fill('#email', testUsers.customer.email);
     await page.fill('#password', testUsers.customer.password);
-    await page.click('button[type="submit"]');
+    await page.click('button[type="submit"]', { noWaitAfter: true });
     
     await page.waitForTimeout(1500);
     await takeScreenshot(page, 'auth-customer-login');
   });
 
   test('should handle invalid login credentials', async ({ page }) => {
-    await page.goto('/th/auth/login');
+    await page.goto('/th/auth/login', { waitUntil: 'domcontentloaded', timeout: 120000 });
     await waitForLoading(page);
     
     await page.fill('#email', 'invalid@test.com');
     await page.fill('#password', 'wrongpassword');
-    await page.click('button[type="submit"]');
+    await page.click('button[type="submit"]', { noWaitAfter: true });
     
     await page.waitForTimeout(2000);
     await takeScreenshot(page, 'auth-invalid-login');
   });
 
   test('should handle empty login fields', async ({ page }) => {
-    await page.goto('/th/auth/login');
+    await page.goto('/th/auth/login', { waitUntil: 'domcontentloaded', timeout: 120000 });
     await waitForLoading(page);
     
-    await page.click('button[type="submit"]');
+    await page.click('button[type="submit"]', { noWaitAfter: true });
     await page.waitForTimeout(2000);
     await takeScreenshot(page, 'auth-empty-fields');
   });
@@ -136,7 +136,7 @@ test.describe('Authentication & Authorization', () => {
   test.skip('should handle session expiration (skipped on prod)', async ({ page }) => {});
 
   test('should handle social login', async ({ page }) => {
-    await page.goto('/th/auth/login');
+    await page.goto('/th/auth/login', { waitUntil: 'domcontentloaded', timeout: 120000 });
     await waitForLoading(page);
     
     // Check for social login buttons
@@ -152,12 +152,12 @@ test.describe('Authentication & Authorization', () => {
 
   test('should handle two-factor authentication', async ({ page }) => {
     // This test assumes 2FA is enabled for some accounts
-    await page.goto('/th/auth/login');
+    await page.goto('/th/auth/login', { waitUntil: 'domcontentloaded', timeout: 120000 });
     await waitForLoading(page);
     
     await page.fill('#email', testUsers.superAdmin.email);
     await page.fill('#password', testUsers.superAdmin.password);
-    await page.click('button[type="submit"]');
+    await page.click('button[type="submit"]', { noWaitAfter: true });
     
     // Check if 2FA screen appears
     if (await page.locator('h1:has-text("Two-Factor Authentication")').isVisible()) {

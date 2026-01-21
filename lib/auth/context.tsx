@@ -53,23 +53,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const supabase = createClient()
 
-    // Get initial session
+    // Get initial session with timeout
     const getInitialSession = async () => {
+      console.log('[AuthContext] 🔑 Getting initial session...');
+      
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Auth timeout')), 5000)
+      );
+
       try {
         // ⚡ Use getUser() instead of getSession() (faster + more secure)
-        const { data: { user: authUser } } = await supabase.auth.getUser()
+        const userPromise = supabase.auth.getUser();
+        
+        const { data: { user: authUser } } = await Promise.race([
+          userPromise,
+          timeoutPromise
+        ]) as any;
         
         if (authUser) {
-          // Get session for token
-          const { data: { session } } = await supabase.auth.getSession()
-          await loadUserData(authUser, session)
+          console.log('[AuthContext] 👤 Found user:', authUser.id);
+          const { data: { session } } = await supabase.auth.getSession();
+          await loadUserData(authUser, session);
+        } else {
+          console.log('[AuthContext] 👤 No initial user found');
         }
       } catch (error) {
-        console.error('Error loading session:', error)
+        console.error('[AuthContext] ❌ Error loading initial session:', error);
       } finally {
-        setLoading(false)
+        console.log('[AuthContext] ✅ Initial session check complete');
+        setLoading(false);
       }
-    }
+    };
 
     getInitialSession()
 

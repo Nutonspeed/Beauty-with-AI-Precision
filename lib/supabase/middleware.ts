@@ -68,7 +68,7 @@ function getRoleDashboardPath(role?: string | null, locale?: string | null) {
     case "clinic_owner":
     case "clinic_admin":
     case "clinic_staff":
-      return withLocalePath("/center/dashboard", locale ?? null)
+      return withLocalePath("/centers/dashboard", locale ?? null)
     case "sales_staff":
       return withLocalePath("/sales/dashboard", locale ?? null)
     case "customer":
@@ -138,9 +138,21 @@ export async function updateSession(request: NextRequest, response?: NextRespons
     },
   )
 
-  // Try to refresh the session
+  // Try to refresh the session with a timeout
   try {
-    const { data: { user }, error } = await supabase.auth.getUser()
+    console.log('[MIDDLEWARE] Fetching user session...')
+    
+    // Create a promise that rejects after a timeout
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Supabase timeout')), 8000)
+    )
+
+    const userPromise = supabase.auth.getUser()
+    
+    const { data: { user }, error } = await Promise.race([
+      userPromise,
+      timeoutPromise
+    ]) as any
 
     const originalPathname = request.nextUrl.pathname
     const pathnameForChecks = resolvedPathname ?? originalPathname
@@ -182,62 +194,64 @@ export async function updateSession(request: NextRequest, response?: NextRespons
       }
 
       const resolvedRole = userProfile?.role ?? (user.user_metadata as any)?.role ?? (user.app_metadata as any)?.role ?? null
-      const roleDashboardPath = getRoleDashboardPath(resolvedRole, locale)
+      const effectiveRole = userProfile?.role ?? resolvedRole
+      const roleDashboardPath = getRoleDashboardPath(effectiveRole, locale)
 
       // DEBUG: Add logging to identify the issue
       console.log('[MIDDLEWARE DEBUG] User ID:', user.id)
       console.log('[MIDDLEWARE DEBUG] User Role (DB):', userProfile?.role)
       console.log('[MIDDLEWARE DEBUG] User Role (Metadata):', (user.user_metadata as any)?.role)
       console.log('[MIDDLEWARE DEBUG] Resolved Role:', resolvedRole)
+      console.log('[MIDDLEWARE DEBUG] Effective Role:', effectiveRole)
       console.log('[MIDDLEWARE DEBUG] Locale:', locale)
       console.log('[MIDDLEWARE DEBUG] Role Dashboard Path:', roleDashboardPath)
       console.log('[MIDDLEWARE DEBUG] Current Normalized Pathname:', normalizedPathname)
       console.log('[MIDDLEWARE DEBUG] Current Original Pathname:', originalPathname)
 
-      if (userProfile) {
-        // Prevent redirect loop if already at the correct dashboard
-        if (originalPathname === roleDashboardPath) {
-          console.log('[MIDDLEWARE DEBUG] Already at correct dashboard path, continuing...')
-          return supabaseResponse
-        }
+      // Prevent redirect loop if already at the correct dashboard
+      if (originalPathname === roleDashboardPath) {
+        console.log('[MIDDLEWARE DEBUG] Already at correct dashboard path, continuing...')
+        return supabaseResponse
+      }
 
-        // Center and branches routes require center_owner or center_staff
-        if ((normalizedPathname.startsWith("/center") || normalizedPathname.startsWith("/branches")) && 
-            !["center_owner", "center_staff", "center_admin", "clinic_owner", "clinic_admin", "clinic_staff"].includes(userProfile.role)) {
-          console.log('[MIDDLEWARE DEBUG] Center route access denied, redirecting to:', roleDashboardPath)
-          const url = request.nextUrl.clone()
-          url.pathname = roleDashboardPath
-          return NextResponse.redirect(url)
-        }
+      const roleForChecks = effectiveRole ?? ""
 
-        // Sales routes require sales_staff
-        if (normalizedPathname.startsWith("/sales") && userProfile.role !== "sales_staff") {
-          console.log('[MIDDLEWARE DEBUG] Sales route access denied, redirecting to:', roleDashboardPath)
-          const url = request.nextUrl.clone()
-          url.pathname = roleDashboardPath
-          return NextResponse.redirect(url)
-        }
+      // Center and branches routes require center_owner or center_staff
+      if ((normalizedPathname.startsWith("/center") || normalizedPathname.startsWith("/branches")) && 
+          !["center_owner", "center_staff", "center_admin", "clinic_owner", "clinic_admin", "clinic_staff"].includes(roleForChecks)) {
+        console.log('[MIDDLEWARE DEBUG] Center route access denied, redirecting to:', roleDashboardPath)
+        const url = request.nextUrl.clone()
+        url.pathname = roleDashboardPath
+        return NextResponse.redirect(url)
+      }
 
-        // Super Admin exclusive routes (super_admin only)
-        if ((normalizedPathname.startsWith("/super-admin") || 
-             normalizedPathname.startsWith("/users") || 
-             normalizedPathname.startsWith("/settings")) && 
-            userProfile.role !== "super_admin") {
-          console.log('[MIDDLEWARE DEBUG] Super Admin route access denied, redirecting to:', roleDashboardPath)
-          const url = request.nextUrl.clone()
-          url.pathname = roleDashboardPath
-          return NextResponse.redirect(url)
-        }
+      // Sales routes require sales_staff
+      if (normalizedPathname.startsWith("/sales") && roleForChecks !== "sales_staff") {
+        console.log('[MIDDLEWARE DEBUG] Sales route access denied, redirecting to:', roleDashboardPath)
+        const url = request.nextUrl.clone()
+        url.pathname = roleDashboardPath
+        return NextResponse.redirect(url)
+      }
 
-        // Admin routes require center_owner or super_admin (shared admin tools)
-        if (normalizedPathname.startsWith("/admin") && 
-            userProfile.role !== "center_owner" && 
-            userProfile.role !== "super_admin") {
-          console.log('[MIDDLEWARE DEBUG] Admin route access denied, redirecting to:', roleDashboardPath)
-          const url = request.nextUrl.clone()
-          url.pathname = roleDashboardPath
-          return NextResponse.redirect(url)
-        }
+      // Super Admin exclusive routes (super_admin only)
+      if ((normalizedPathname.startsWith("/super-admin") || 
+           normalizedPathname.startsWith("/users") || 
+           normalizedPathname.startsWith("/settings")) && 
+          roleForChecks !== "super_admin") {
+        console.log('[MIDDLEWARE DEBUG] Super Admin route access denied, redirecting to:', roleDashboardPath)
+        const url = request.nextUrl.clone()
+        url.pathname = roleDashboardPath
+        return NextResponse.redirect(url)
+      }
+
+      // Admin routes require center_owner or super_admin (shared admin tools)
+      if (normalizedPathname.startsWith("/admin") && 
+          roleForChecks !== "center_owner" && 
+          roleForChecks !== "super_admin") {
+        console.log('[MIDDLEWARE DEBUG] Admin route access denied, redirecting to:', roleDashboardPath)
+        const url = request.nextUrl.clone()
+        url.pathname = roleDashboardPath
+        return NextResponse.redirect(url)
       }
 
       // If user is on generic /dashboard or root but has specific role, route them accordingly

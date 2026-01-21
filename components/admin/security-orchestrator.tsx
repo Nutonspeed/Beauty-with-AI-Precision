@@ -9,7 +9,7 @@ import { useTranslations } from "next-intl"
 import { cn } from "@/lib/utils"
 
 export function SecurityOrchestrator() {
-  const t = useTranslations()
+  const t = useTranslations('home.salesWizard')
   const [isScanning, setIsScanning] = useState(false)
   const [integrityScore, setIntegrityScore] = useState(99.98)
 

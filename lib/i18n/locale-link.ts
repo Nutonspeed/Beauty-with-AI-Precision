@@ -1,6 +1,6 @@
 "use client";
 import { useMemo, useState, useEffect } from "react";
-import { locales, type Locale, defaultLocale } from "@/i18n/request";
+import { locales, type Locale, defaultLocale } from "@/i18n/locales";
 
 function normalizePath(path: string): string {
   if (!path) return "/";

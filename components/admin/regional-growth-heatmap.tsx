@@ -9,7 +9,7 @@ import { useTranslations } from "next-intl"
 import { cn } from "@/lib/utils"
 
 export function RegionalGrowthHeatmap() {
-  const t = useTranslations()
+  const t = useTranslations('home.salesWizard')
 
   const regions = [
     { name: t('regionalGrowthHeatmap.regions.bangkok'), users: '42.5K', growth: '+18%', penetration: 75, color: 'bg-pink-500' },
