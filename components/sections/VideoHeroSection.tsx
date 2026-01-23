@@ -26,9 +26,9 @@ export function VideoHeroSection() {
   const smoothY = useSpring(mouseY, { stiffness: 50, damping: 20 })
   
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] })
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
-  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 1.1])
-  const contentY = useTransform(scrollYProgress, [0, 0.5], [0, -80])
+  const opacity = useTransform(scrollYProgress, [0, 0.35], [1, 0])
+  const scale = useTransform(scrollYProgress, [0, 0.35], [1, 1.08])
+  const contentY = useTransform(scrollYProgress, [0, 0.35], [0, -60])
 
   // Throttle mouse events for performance (60fps max)
   const handleMouse = useCallback((e: MouseEvent) => {
@@ -61,24 +61,30 @@ export function VideoHeroSection() {
   }, [throttledHandleMouse, isMobile])
 
   return (
-    <div ref={ref} className="relative min-h-[200vh]">
+    <div ref={ref} className="relative min-h-[130vh]">
       <div className="sticky top-0 h-screen overflow-hidden bg-slate-900">
-        <motion.div className="relative h-full" style={{ opacity }}>
+        <div className="relative h-full">
           <motion.div className="absolute inset-0" style={{ scale }}>
             {/* Video with fallback */}
             <div className="relative w-full h-full">
               {!isMobile ? (
-                <iframe
-                  className="absolute inset-0 w-[120%] h-[120%] -left-[10%] -top-[10%] object-cover pointer-events-none opacity-40"
-                  src="https://www.youtube.com/embed/4kX_hS69SJQ?autoplay=1&mute=1&loop=1&playlist=4kX_hS69SJQ&controls=0&showinfo=0&autohide=1&modestbranding=1&vq=hd1080"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  frameBorder="0"
+                <video
+                  className="absolute inset-0 w-[120%] h-[120%] -left-[10%] -top-[10%] object-cover pointer-events-none opacity-45"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
                   aria-hidden="true"
-                />
+                >
+                  <source src="/videos/hero-demo.mp4" type="video/mp4" />
+                </video>
               ) : null}
               {/* Fallback gradient if video fails */}
-              <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900" 
-                   style={{ zIndex: -1 }} />
+              <div
+                className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900"
+                style={{ zIndex: -1 }}
+              />
             </div>
             <div className="absolute inset-0 bg-gradient-to-br from-slate-900/80 via-blue-900/40 to-slate-900/60" />
           </motion.div>
@@ -100,7 +106,7 @@ export function VideoHeroSection() {
             </motion.div>
           ))}
 
-          <motion.div style={{ y: contentY }} className="relative z-10 h-full flex flex-col justify-center items-center text-center px-6">
+          <motion.div style={{ y: contentY, opacity }} className="relative z-10 h-full flex flex-col justify-center items-center text-center px-6">
             <motion.span initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs font-bold tracking-widest uppercase mb-8">
               <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
               {t("home.hero.badge")}
@@ -123,17 +129,19 @@ export function VideoHeroSection() {
               <div className="text-center"><div className="text-3xl font-bold">4.9/5</div><div className="text-xs text-white/50 uppercase tracking-wider">Rating</div></div>
             </motion.div>
           </motion.div>
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }} className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-10">
+          <motion.div style={{ opacity }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }} className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-10">
             <span className="text-[10px] text-white/40 uppercase tracking-widest">Scroll</span>
             <div className="w-5 h-8 rounded-full border-2 border-white/30 flex justify-center pt-2"><motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 1.5, repeat: Infinity }} className="w-1 h-1 bg-white/60 rounded-full" /></div>
           </motion.div>
-        </motion.div>
+        </div>
       </div>
       {showModal && (
         <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4" onClick={() => setShowModal(false)}>
           <button className="absolute top-6 right-6 text-white/80 hover:text-white"><X className="w-8 h-8" /></button>
-          <div className="w-full max-w-5xl aspect-video bg-slate-800 rounded-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
-            <iframe className="w-full h-full" src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1" allow="autoplay; encrypted-media" allowFullScreen />
+          <div className="w-full max-w-5xl aspect-video bg-slate-900 rounded-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
+            <video className="w-full h-full" controls autoPlay playsInline>
+              <source src="/videos/hero-demo.mp4" type="video/mp4" />
+            </video>
           </div>
         </div>
       )}

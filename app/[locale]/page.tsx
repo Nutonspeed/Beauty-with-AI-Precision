@@ -38,7 +38,7 @@ const ROISimulator = dynamic(() => import("@/components/analytics/roi-simulator"
 const GlobalCommandCenter = dynamic(() => import("@/components/visuals/global-command-center").then(mod => ({ default: mod.GlobalCommandCenter })), { ssr: false })
 const VideoHeroSection = dynamic(
   () => import("@/components/sections/VideoHeroSection").then(mod => ({ default: mod.VideoHeroSection })),
-  { loading: () => <VideoHeroSkeleton />, ssr: false }
+  { loading: () => <VideoHeroSkeleton /> }
 )
 const FeaturesShowcase = dynamic(() => import("@/components/sections/FeaturesShowcase").then(mod => ({ default: mod.FeaturesShowcase })), { ssr: false })
 const StickyTestimonials = dynamic(() => import("@/components/sections/StickyTestimonials").then(mod => ({ default: mod.StickyTestimonials })), { ssr: false })
@@ -89,15 +89,55 @@ export default function HomePage() {
     }
   };
 
+  const plans = [
+    { key: 'starter', code: 'ST' },
+    { key: 'professional', code: 'PRO' },
+    { key: 'enterprise', code: 'ENT' },
+    { key: 'platinum', code: 'PLT' }
+  ] as const
+
+  const pricingMeta = {
+    starter: {
+      bestFor: t('pricing.bestFor.starter' as any) || 'Best for boutique clinics',
+      cta: t('pricing.plans.starter.cta' as any) || 'Start free',
+      href: lp('/auth/login')
+    },
+    professional: {
+      bestFor: t('pricing.bestFor.professional' as any) || 'Best for growing sales teams',
+      cta: t('pricing.plans.professional.cta' as any) || 'Talk to us',
+      href: lp('/contact?plan=professional')
+    },
+    enterprise: {
+      bestFor: t('pricing.bestFor.enterprise' as any) || 'Best for multi-branch operators',
+      cta: t('pricing.plans.enterprise.cta' as any) || 'Book a consult',
+      href: lp('/contact?plan=enterprise')
+    },
+    platinum: {
+      bestFor: t('pricing.bestFor.platinum' as any) || 'Best for global brands',
+      cta: t('pricing.plans.platinum.cta' as any) || 'Design my plan',
+      href: lp('/contact?plan=platinum')
+    }
+  }
+
+  const formatLimit = (value: number) => {
+    if (value === -1) return t('pricing.limits.unlimited' as any) || 'Unlimited'
+    return value.toString()
+  }
+
   return (
-    <div className="flex min-h-screen flex-col bg-white text-slate-950 selection:bg-pink-500/10">
-      <ScrollProgressBar />
-      <MedicalCursor />
-      <FloatingSymbols />
-      <Header />
-      <SideNav sections={sectionData} containerRef={containerRef} />
-      
-      <main ref={containerRef as any} className="flex-1 relative overflow-hidden flex flex-col">
+    <div className="relative flex min-h-screen flex-col bg-[#f8f6f2] text-slate-950 selection:bg-pink-500/10">
+      <div aria-hidden className="pointer-events-none fixed inset-0 z-0">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,214,229,0.45),_transparent_55%),radial-gradient(circle_at_bottom_right,_rgba(196,221,255,0.4),_transparent_60%)] opacity-70" />
+        <div className="absolute inset-0 opacity-[0.06] mix-blend-multiply bg-[url('/textures/noise.svg')] bg-[size:160px_160px]" />
+      </div>
+      <div className="relative z-10 flex min-h-screen flex-col">
+        <ScrollProgressBar />
+        <MedicalCursor />
+        <FloatingSymbols />
+        <Header />
+        <SideNav sections={sectionData} containerRef={containerRef} />
+        
+        <main ref={containerRef as any} className="flex-1 relative overflow-hidden flex flex-col">
         {/* 1. Cinematic Hero Section */}
         <section id="hero" className="relative">
           <VideoHeroSection />
@@ -107,7 +147,7 @@ export default function HomePage() {
         <TrustSection />
 
         {/* 2. Precision ROI Section */}
-        <section id="roi" className="relative py-24 lg:py-40 bg-white overflow-hidden">
+        <section id="roi" className="relative py-20 lg:py-32 bg-transparent overflow-hidden">
           {/* Infrastructure Background */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-pink-500/5 rounded-full blur-[120px] animate-glow-pulse" />
@@ -173,7 +213,7 @@ export default function HomePage() {
         </section>
 
         {/* 3. Aesthetic Solution Matrix interface */}
-        <section id="solutions" className="relative py-24 lg:py-40 bg-slate-50/30 border-y border-slate-100 overflow-hidden">
+        <section id="solutions" className="relative py-20 lg:py-32 bg-slate-50/30 border-y border-slate-100 overflow-hidden">
           <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.01] pointer-events-none" />
           <div className="container relative z-10 mx-auto px-6 max-w-7xl">
             <motion.div 
@@ -252,7 +292,7 @@ export default function HomePage() {
         </section>
 
         {/* 5. Chronology Testimonials */}
-        <section id="cases" className="relative bg-white">
+        <section id="cases" className="relative bg-transparent">
           <StickyTestimonials />
         </section>
 
@@ -260,7 +300,7 @@ export default function HomePage() {
         <ProtocolFlow />
 
         {/* 7. Global Infrastructure Node */}
-        <section id="global" className="bg-slate-950 relative overflow-hidden min-h-screen flex flex-col justify-center py-32 lg:py-48">
+        <section id="global" className="bg-slate-950 relative overflow-hidden min-h-[70vh] flex flex-col justify-center py-24 lg:py-36">
           <div className="absolute inset-0 bg-gradient-to-br from-pink-500/5 via-transparent to-blue-600/5 pointer-events-none" />
           <div className="container relative z-10 mx-auto px-6 max-w-7xl">
             <div className="mx-auto mb-24 max-w-4xl text-center space-y-8">
@@ -282,7 +322,7 @@ export default function HomePage() {
         </section>
 
         {/* 8. Pricing Matrix interface */}
-        <section id="pricing" className="py-24 lg:py-48 bg-white relative overflow-hidden border-y border-slate-100">
+        <section id="pricing" className="py-20 lg:py-36 bg-transparent relative overflow-hidden border-y border-slate-100">
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute -top-32 left-1/2 h-[600px] w-[900px] -translate-x-1/2 rounded-full bg-pink-500/5 blur-[120px] animate-glow-pulse" />
             <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-500/5 rounded-full blur-[100px] animate-float" />
@@ -502,7 +542,7 @@ export default function HomePage() {
         </section>
 
         {/* 9. Final CTA - Transformation interface */}
-        <section id="contact" className="relative py-48 overflow-hidden bg-slate-950 flex items-center justify-center min-h-[80vh]">
+        <section id="contact" className="relative py-32 lg:py-40 overflow-hidden bg-slate-950 flex items-center justify-center min-h-[60vh]">
           <div className="absolute inset-0 bg-gradient-to-br from-pink-500/10 via-transparent to-blue-600/10 opacity-50" />
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
           
@@ -558,9 +598,10 @@ export default function HomePage() {
             </motion.div>
           </div>
         </section>
-      </main>
+        </main>
 
-      <Footer />
+        <Footer />
+      </div>
     </div>
   )
 }

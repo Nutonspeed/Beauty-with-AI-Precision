@@ -157,12 +157,13 @@ export function StickyTestimonials() {
   })
 
   const bgScale = useTransform(scrollYProgress, [0, 1], [0.8, 1.5])
+  const sectionHeight = `${Math.max(2, localizedTestimonials.length) * 80}vh`
 
   return (
     <div 
       ref={containerRef} 
-      className="relative bg-white"
-      style={{ height: `${(localizedTestimonials.length + 1) * 100}vh` }}
+      className="relative bg-transparent"
+      style={{ height: sectionHeight }}
     >
       {/* Sticky Container */}
       <div className="sticky top-0 h-screen overflow-hidden flex items-center">
@@ -206,7 +207,7 @@ export function StickyTestimonials() {
           </div>
 
           {/* Testimonial Cards - Stacked and Revealed */}
-          <div className="relative h-[60vh] mt-32">
+          <div className="relative h-[60vh] mt-24">
             {localizedTestimonials.map((testimonial, index) => (
               <TestimonialCard
                 key={index}

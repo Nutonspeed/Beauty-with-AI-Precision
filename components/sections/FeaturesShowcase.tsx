@@ -11,10 +11,12 @@ import {
   Zap, 
   Users,
   Sparkles,
-  ChevronRight
+  ChevronRight,
+  ShieldCheck
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 
 const features = [
   { 
