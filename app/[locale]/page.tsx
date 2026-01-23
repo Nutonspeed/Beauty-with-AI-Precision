@@ -126,9 +126,12 @@ export default function HomePage() {
 
   return (
     <div className="relative flex min-h-screen flex-col bg-[#f8f6f2] text-slate-950 selection:bg-pink-500/10">
+      {/* 2026 Cinematic Infrastructure */}
       <div aria-hidden className="pointer-events-none fixed inset-0 z-0">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,214,229,0.45),_transparent_55%),radial-gradient(circle_at_bottom_right,_rgba(196,221,255,0.4),_transparent_60%)] opacity-70" />
-        <div className="absolute inset-0 opacity-[0.06] mix-blend-multiply bg-[url('/textures/noise.svg')] bg-[size:160px_160px]" />
+        {/* Dynamic Cinematic Grain */}
+        <div className="absolute inset-0 opacity-[0.25] mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-repeat" />
+        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.02] pointer-events-none" />
       </div>
       <div className="relative z-10 flex min-h-screen flex-col">
         <ScrollProgressBar />
@@ -213,28 +216,27 @@ export default function HomePage() {
         </section>
 
         {/* 3. Aesthetic Solution Matrix interface */}
-        <section id="solutions" className="relative py-20 lg:py-32 bg-slate-50/30 border-y border-slate-100 overflow-hidden">
-          <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.01] pointer-events-none" />
+        <section id="solutions" className="relative py-24 lg:py-40 bg-transparent overflow-hidden">
           <div className="container relative z-10 mx-auto px-6 max-w-7xl">
             <motion.div 
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="mx-auto mb-24 max-w-4xl text-center space-y-8"
+              className="mx-auto mb-24 max-w-5xl text-center space-y-10"
             >
-              <Badge variant="outline" className="px-6 py-2 rounded-full border-pink-500/30 text-pink-600 bg-white font-black tracking-[0.3em] text-[10px] uppercase shadow-sm italic animate-pulse">
+              <Badge variant="outline" className="px-8 py-2.5 rounded-full border-pink-500/30 text-pink-600 bg-white/50 backdrop-blur-md font-black tracking-[0.4em] text-[10px] uppercase shadow-sm italic animate-pulse">
                 {t('home.solutions.badge' as any) || 'Orchestration Hubs'}
               </Badge>
-              <h2 className="text-5xl md:text-8xl font-black tracking-tighter text-slate-950 leading-[0.85] italic uppercase">
+              <h2 className="text-6xl md:text-9xl font-black tracking-tighter text-slate-950 leading-[0.85] italic uppercase">
                 {t('demo.selector.title' as any) || 'Select your'}<br />
-                <span className="bg-gradient-to-r from-pink-500 via-purple-600 to-blue-600 bg-clip-text text-transparent not-italic block mt-6">{t('demo.selector.subtitle' as any) || 'Experience Sequence'}</span>
+                <span className="bg-gradient-to-r from-pink-500 via-purple-600 to-blue-600 bg-clip-text text-transparent not-italic block mt-8">{t('demo.selector.subtitle' as any) || 'Experience Sequence'}</span>
               </h2>
-              <p className="text-xl text-slate-500 font-light max-w-2xl mx-auto italic leading-relaxed tracking-tight">
+              <p className="text-xl text-slate-500 font-light max-w-3xl mx-auto italic leading-relaxed tracking-tight">
                 {t('demo.selector.description' as any) || 'Navigate through our dual-track diagnostic ecosystem designed for both consumers and professional clinicians.'}
               </p>
             </motion.div>
 
-            <div className="grid md:grid-cols-2 gap-12 max-w-6xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-16 lg:gap-20 max-w-6xl mx-auto">
               {[
                 { 
                   href: "/analysis", 
@@ -243,7 +245,8 @@ export default function HomePage() {
                   desc: t('demo.selector.ai.description' as any) || 'Synchronize your individual biological parameters with our 468-point neural mapping sequence.',
                   cta: t('demo.selector.ai.cta' as any) || 'Initialize Scan',
                   color: 'text-pink-600',
-                  bg: 'bg-pink-50'
+                  bg: 'bg-pink-500/5',
+                  accent: 'pink'
                 },
                 { 
                   href: "/demo/center", 
@@ -252,35 +255,50 @@ export default function HomePage() {
                   desc: t('demo.selector.revenue.description' as any) || 'Orchestrate multi-branch financial yield and synchronize operational telemetry across your network.',
                   cta: t('demo.selector.revenue.cta' as any) || 'Launch Console',
                   color: 'text-blue-600',
-                  bg: 'bg-blue-50'
+                  bg: 'bg-blue-500/5',
+                  accent: 'blue'
                 }
               ].map((node, i) => (
-                <MagneticButton key={i} strength={0.05} className="w-full">
-                  <Link href={lp(node.href)} className="block h-full group">
-                    <Card className="h-full border-slate-100 bg-white shadow-premium rounded-[3.5rem] overflow-hidden group-hover:border-pink-500/20 transition-all duration-700 relative">
-                      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                      <CardContent className="p-12 space-y-10 flex flex-col justify-between h-full bg-slate-50/30 group-hover:bg-white transition-all duration-700">
-                        <div className="space-y-10">
-                          <div className={cn("h-20 w-20 rounded-[1.5rem] border border-slate-100 shadow-inner flex items-center justify-center transition-all duration-700 group-hover:scale-110 group-hover:rotate-3", node.bg, node.color)}>
-                            <node.icon className="h-10 w-10" />
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: i * 0.2 }}
+                  viewport={{ once: true }}
+                >
+                  <MagneticButton strength={0.03} className="w-full">
+                    <Link href={lp(node.href)} className="block h-full group">
+                      <div className="relative h-full rounded-[4rem] p-[1.5px] bg-gradient-to-br from-white/80 via-white/40 to-white/10 group-hover:from-pink-500/40 group-hover:to-blue-600/40 transition-all duration-700 overflow-hidden shadow-premium">
+                        <div className="absolute inset-0 bg-white/40 backdrop-blur-3xl -z-10" />
+                        <CardContent className="p-16 space-y-12 flex flex-col justify-between h-full relative z-10">
+                          <div className="space-y-12">
+                            <div className={cn(
+                              "h-24 w-24 rounded-[2rem] border border-white shadow-2xl flex items-center justify-center transition-all duration-1000 group-hover:scale-110 group-hover:rotate-6",
+                              node.bg, 
+                              node.color
+                            )}>
+                              <node.icon className="h-12 w-12 drop-shadow-2xl" />
+                            </div>
+                            <div className="space-y-6">
+                              <h3 className="text-4xl font-black text-slate-950 italic uppercase tracking-tighter group-hover:text-pink-600 transition-colors leading-[0.9]">
+                                {node.title}
+                              </h3>
+                              <p className="text-xl text-slate-500 font-light italic leading-relaxed tracking-tight">
+                                {node.desc}
+                              </p>
+                            </div>
                           </div>
-                          <div className="space-y-4">
-                            <h3 className="text-3xl font-black text-slate-950 italic uppercase tracking-tight group-hover:text-pink-600 transition-colors leading-none">
-                              {node.title}
-                            </h3>
-                            <p className="text-lg text-slate-500 font-light italic leading-relaxed">
-                              {node.desc}
-                            </p>
+                          <div className="pt-10 border-t border-slate-100/50 flex items-center gap-6 text-[12px] font-black uppercase tracking-[0.4em] text-pink-600 group-hover:translate-x-3 transition-all italic">
+                            {node.cta}
+                            <div className="h-10 w-10 rounded-full border border-pink-500/20 flex items-center justify-center group-hover:bg-pink-500 group-hover:text-white transition-all">
+                              <ArrowRight className="h-5 w-5" />
+                            </div>
                           </div>
-                        </div>
-                        <div className="pt-8 border-t border-slate-100 flex items-center gap-4 text-[11px] font-black uppercase tracking-[0.3em] text-pink-600 group-hover:translate-x-2 transition-all italic">
-                          {node.cta}
-                          <ArrowRight className="h-5 w-5" />
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                </MagneticButton>
+                        </CardContent>
+                      </div>
+                    </Link>
+                  </MagneticButton>
+                </motion.div>
               ))}
             </div>
           </div>
