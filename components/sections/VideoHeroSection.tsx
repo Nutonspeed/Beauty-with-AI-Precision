@@ -60,6 +60,17 @@ export function VideoHeroSection() {
     }
   }, [throttledHandleMouse, isMobile])
 
+  const videoRef = useRef<HTMLVideoElement>(null)
+
+  // Force play video on mount
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.play().catch(err => {
+        console.error("Video play failed:", err)
+      })
+    }
+  }, [])
+
   return (
     <div ref={ref} className="relative min-h-[130vh]">
       <div className="sticky top-0 h-screen overflow-hidden bg-slate-900">
@@ -68,15 +79,14 @@ export function VideoHeroSection() {
             {/* Video with fallback */}
             <div className="relative w-full h-full">
                 <video
-                  className="absolute inset-0 w-[120%] h-[120%] -left-[10%] -top-[10%] object-cover pointer-events-none opacity-60"
+                  ref={videoRef}
+                  className="absolute inset-0 w-[120%] h-[120%] -left-[10%] -top-[10%] object-cover pointer-events-none opacity-70"
                   autoPlay
                   muted
                   loop
                   playsInline
                   preload="auto"
                   aria-hidden="true"
-                  onCanPlay={() => console.log("Video can play")}
-                  onError={(e) => console.error("Video error:", e)}
                 >
                   <source src="/videos/hero-demo.mp4" type="video/mp4" />
                 </video>
