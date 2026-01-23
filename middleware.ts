@@ -18,7 +18,7 @@ export default async function middleware(request: NextRequest) {
     pathname.includes('/sw.js') ||
     pathname.includes('/robots.txt') ||
     pathname.includes('/sitemap.xml') ||
-    pathname.match(/\.(png|jpg|jpeg|gif|webp|svg|ico|woff2?|css|js|json|svg)$/)
+    pathname.match(/\.(png|jpg|jpeg|gif|webp|svg|ico|mp4|webm|woff2?|css|js|json)$/)
   ) {
     return NextResponse.next()
   }
@@ -81,6 +81,6 @@ export const config = {
      * - sitemap.xml, robots.txt, manifest.json, sw.js (SEO/PWA files)
      * - all files with common extensions (images, fonts, etc.)
      */
-    '/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|manifest.json|sw.js|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|json|js|css|woff2?|map)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|manifest.json|sw.js|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|json|js|css|mp4|webm|woff2?|map)$).*)',
   ],
 };
