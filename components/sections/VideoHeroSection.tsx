@@ -70,48 +70,53 @@ export function VideoHeroSection() {
 
     const handleLoadedData = () => {
       setVideoLoaded(true)
-      console.log("Video data loaded, attempting play...")
-      video.play().catch(err => console.warn("Initial play attempt failed:", err))
+      console.log("Video data loaded")
     }
 
     const attemptPlay = async () => {
       try {
-        await video.play()
-        console.log("Video playback started successfully")
-      } catch (err) {
-        console.warn("Autoplay failed, retrying muted...", err)
         video.muted = true
-        video.play().catch(e => console.error("Final playback attempt failed:", e))
+        await video.play()
+        setVideoLoaded(true)
+        console.log("Video playback started")
+      } catch (err) {
+        console.warn("Autoplay attempt failed:", err)
       }
     }
 
     video.addEventListener('loadeddata', handleLoadedData)
-    video.addEventListener('canplay', attemptPlay)
+    video.addEventListener('play', () => setVideoLoaded(true))
     
-    // Trigger load if already ready
-    if (video.readyState >= 3) {
+    if (video.readyState >= 2) {
       handleLoadedData()
       attemptPlay()
     }
 
+    // Heavy-handed play attempt every 2 seconds if not playing
+    const interval = setInterval(() => {
+      if (video.paused && !video.ended) {
+        attemptPlay()
+      }
+    }, 2000)
+
     return () => {
       video.removeEventListener('loadeddata', handleLoadedData)
-      video.removeEventListener('canplay', attemptPlay)
+      clearInterval(interval)
     }
   }, [])
 
   return (
     <div ref={ref} className="relative min-h-[130vh]">
-      <div className="sticky top-0 h-screen overflow-hidden bg-slate-900">
+      <div className="sticky top-0 h-[100dvh] overflow-hidden bg-slate-900">
         <div className="relative h-full">
           <motion.div className="absolute inset-0" style={{ scale }}>
             {/* Video with fallback */}
-            <div className="relative w-full h-full overflow-hidden">
+            <div className="relative w-full h-full overflow-hidden bg-slate-950">
               <video
                 ref={videoRef}
                 className={cn(
-                  "absolute inset-0 w-full h-full object-cover transition-opacity duration-1000",
-                  videoLoaded ? "opacity-80" : "opacity-0"
+                  "absolute inset-0 w-full h-full object-cover transition-opacity duration-700",
+                  videoLoaded ? "opacity-90" : "opacity-40"
                 )}
                 autoPlay
                 muted
@@ -119,9 +124,9 @@ export function VideoHeroSection() {
                 playsInline
                 preload="auto"
                 aria-hidden="true"
-                style={{ filter: 'brightness(1.1)' }}
+                style={{ filter: 'brightness(1.2) contrast(1.1)' }}
               >
-                <source src="/videos/hero-demo.mp4?v=4" type="video/mp4" />
+                <source src="/videos/hero-demo.mp4?v=5" type="video/mp4" />
               </video>
               {/* Fallback gradient if video fails or loading */}
               <div
