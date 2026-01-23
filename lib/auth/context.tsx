@@ -382,16 +382,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (roleResponse.ok) {
           const roleData = await roleResponse.json()
           console.log(`[AuthContext] 📦 Quick role check: ${roleData.role}`)
-          // Note: Don't set loading=false here, let onAuthStateChange handle it
           return { error: null, role: roleData.role || 'customer' }
         }
-      } catch (roleError) {
+      } catch {
         console.warn('[AuthContext] ⚠️ Quick role check failed, using fallback')
       }
       
       // Fallback to user metadata or default
       const metaRole = (data.user?.user_metadata as any)?.role
-      const fallbackRole = metaRole || 'super_admin' // Use super_admin for admin emails
+      const fallbackRole = metaRole || 'customer'
       const emailLower = email.toLowerCase()
       const detectedRole = emailLower.includes('admin') ? 'super_admin'
         : emailLower.includes('owner') ? 'clinic_owner'

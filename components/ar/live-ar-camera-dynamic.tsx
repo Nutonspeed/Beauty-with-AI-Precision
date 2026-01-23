@@ -11,7 +11,7 @@ import { Card, CardContent } from '@/components/ui/card'
 
 // Dynamic import with loading state
 const LiveARCamera = dynamic(
-  () => import('./live-ar-camera').then(mod => ({ default: mod.LiveARCamera })),
+  () => import('./ar-camera').then(mod => ({ default: mod.ARCamera })),
   {
     loading: () => (
       <Card className="w-full h-[480px] flex items-center justify-center bg-black/5">

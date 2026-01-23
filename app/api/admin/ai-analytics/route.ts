@@ -189,6 +189,39 @@ export async function GET() {
 
     const uniqueUserCount = new Set(uniqueUsers?.map((u) => u.user_id)).size;
 
+    // Get performance metrics (telemetry) from analytics_events
+    const { data: telemetryData } = await supabase
+      .from('analytics_events')
+      .select('properties, timestamp')
+      .eq('event_type', 'skin_analysis_performed')
+      .order('timestamp', { ascending: false })
+      .limit(100);
+
+    const performanceMetrics = {
+      avgProcessingTime: 0,
+      providerDistribution: {} as Record<string, number>,
+      successRate: 0,
+      errorCount: 0
+    };
+
+    if (telemetryData && telemetryData.length > 0) {
+      let totalTime = 0;
+      let successCount = 0;
+      
+      telemetryData.forEach(event => {
+        const props = event.properties as any;
+        if (props.processing_time_ms) totalTime += props.processing_time_ms;
+        if (props.success) successCount++;
+        if (props.provider) {
+          performanceMetrics.providerDistribution[props.provider] = (performanceMetrics.providerDistribution[props.provider] || 0) + 1;
+        }
+      });
+
+      performanceMetrics.avgProcessingTime = Math.round(totalTime / telemetryData.length);
+      performanceMetrics.successRate = Number(((successCount / telemetryData.length) * 100).toFixed(1));
+      performanceMetrics.errorCount = telemetryData.length - successCount;
+    }
+
     return NextResponse.json({
       overview: {
         totalAnalyses: totalAnalyses || 0,
@@ -199,6 +232,7 @@ export async function GET() {
         avgOverallScore,
         uniqueUsers: uniqueUserCount,
       },
+      performance: performanceMetrics,
       monthlyTrend,
       dailyTrend,
       skinTypeDistribution: Object.entries(skinTypeDistribution).map(([type, count]) => ({

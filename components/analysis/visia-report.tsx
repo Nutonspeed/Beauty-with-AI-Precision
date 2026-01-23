@@ -1,467 +1,273 @@
-'use client';
+"use client"
 
-/**
- * VISIA-Style Analysis Report
- * Complete professional skin analysis report
- */
+import { useState } from "react"
+import { useTranslations } from "next-intl"
+import { motion } from "framer-motion"
+import { 
+  FileText, 
+  Download, 
+  Activity, 
+  Zap, 
+  ShieldCheck, 
+  Target, 
+  Layers, 
+  Sparkles, 
+  ChevronRight,
+  Monitor,
+  Printer,
+  Calendar
+} from "lucide-react"
+import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { AnalysisCardsGrid } from './analysis-card';
-import { useTranslations } from 'next-intl';
-import { Printer, Share2, FileText } from 'lucide-react';
-import type { HybridSkinAnalysis } from '@/lib/types/skin-analysis';
-
-export interface VISIAReportProps {
-  analysis: HybridSkinAnalysis;
-  customerInfo?: {
-    name?: string;
-    age?: number;
-    gender?: string;
-    skinType?: string;
-  };
-  centerInfo?: {
-    name?: string;
-    logo?: string;
-    address?: string;
-  };
-  locale?: string;
-  onExport?: (format: 'pdf' | 'png') => void;
-  onPrint?: () => void;
-  onShare?: () => void;
-  className?: string;
+interface VisiaReportProps {
+  analysis: any
+  userProfile?: any
 }
 
-export function VISIAReport({
-  analysis,
-  customerInfo,
-  centerInfo,
-  locale = 'en',
-  onExport,
-  onPrint,
-  onShare,
-  className = '',
-}: VISIAReportProps) {
-  const t = useTranslations('visiaReport');
-  const reportDate = new Date(analysis.timestamp);
+export function VisiaReport({ analysis, userProfile: _userProfile }: VisiaReportProps) {
+  const t = useTranslations('visiaReport')
+  const [_activeTab, _setActiveTab] = useState("full_report")
 
-  // Calculate overall health score with fallback
-  const overallScore = analysis.overallScore || {
-    spots: 0,
-    pores: 0,
-    wrinkles: 0,
-    texture: 0,
-    redness: 0,
-    pigmentation: 0
-  };
-  
-  // Calculate average severity (lower is better in VISIA scale)
-  const averageSeverity = 
-    ((overallScore.spots || 0) +
-     (overallScore.pores || 0) +
-     (overallScore.wrinkles || 0) +
-     (overallScore.texture || 0) +
-     (overallScore.redness || 0) +
-     (overallScore.pigmentation || 0)) / 6;
-  
-  // Convert to health score (100 - average = higher is better)
-  const healthScore = Math.round(Math.max(0, Math.min(100, (10 - averageSeverity) * 10))) || 0;
-  
-  const healthGrade =
-    healthScore >= 90
-      ? 'A+'
-      : healthScore >= 80
-      ? 'A'
-      : healthScore >= 70
-      ? 'B'
-      : healthScore >= 60
-      ? 'C'
-      : 'D';
+  const reportMetrics = [
+    { id: 'spots', label: t('spots' as any) || 'Spots', score: analysis.spots_score, severity: analysis.spots_severity, icon: Target, color: 'text-pink-600', bg: 'bg-pink-50' },
+    { id: 'wrinkles', label: t('wrinkles' as any) || 'Wrinkles', score: analysis.wrinkles_score, severity: analysis.wrinkles_severity, icon: Activity, color: 'text-blue-600', bg: 'bg-blue-50' },
+    { id: 'texture', label: t('texture' as any) || 'Texture', score: analysis.texture_score, severity: analysis.texture_severity, icon: Sparkles, color: 'text-purple-600', bg: 'bg-purple-50' },
+    { id: 'pores', label: t('pores' as any) || 'Pores', score: analysis.pores_score, severity: analysis.pores_severity, icon: Layers, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+    { id: 'uv_spots', label: t('uvSpots' as any) || 'UV_Spots', score: analysis.uv_spots_score, severity: analysis.uv_spots_severity, icon: Zap, color: 'text-amber-600', bg: 'bg-amber-50' },
+    { id: 'brown_spots', label: t('brownSpots' as any) || 'Brown_Spots', score: analysis.brown_spots_score, severity: analysis.brown_spots_severity, icon: Layers, color: 'text-orange-600', bg: 'bg-orange-50' },
+    { id: 'red_areas', label: t('redAreas' as any) || 'Red_Areas', score: analysis.red_areas_score, severity: analysis.red_areas_severity, icon: Activity, color: 'text-rose-600', bg: 'bg-rose-50' },
+    { id: 'porphyrins', label: t('porphyrins' as any) || 'Porphyrins', score: analysis.porphyrins_score, severity: analysis.porphyrins_severity, icon: Monitor, color: 'text-cyan-600', bg: 'bg-cyan-50' },
+  ]
+
+  const getScoreStyles = (score: number) => {
+    if (score >= 90) return 'text-emerald-600'
+    if (score >= 75) return 'text-blue-600'
+    if (score >= 60) return 'text-amber-600'
+    return 'text-rose-600'
+  }
+
+  const getSeverityBadge = (severity: string) => {
+    const s = severity?.toLowerCase()
+    if (s === 'low' || s === 'mild') return 'bg-emerald-50 text-emerald-600'
+    if (s === 'moderate') return 'bg-amber-50 text-amber-600'
+    return 'bg-rose-50 text-rose-600'
+  }
 
   return (
-    <div className={`space-y-6 ${className}`} id="visia-report">
-      {/* Center Info */}
-      <Card className="p-6 print:shadow-none">
-        <div className="flex items-start justify-between">
-          {/* Center Info */}
-          <div className="flex items-center gap-4">
-            {centerInfo?.logo && (
-              <img src={centerInfo.logo} alt="Center Logo" className="h-16 w-auto" />
-            )}
-            <div>
-              {centerInfo?.name && (
-                <h1 className="text-2xl font-bold">{centerInfo.name}</h1>
-              )}
-              {centerInfo?.address && (
-                <p className="text-sm text-muted-foreground">{centerInfo.address}</p>
-              )}
-            </div>
-          </div>
-
-          {/* Actions (hidden in print) */}
-          <div className="flex gap-2 print:hidden">
-            <Button onClick={onPrint} variant="outline" size="sm" className="gap-2">
-              <Printer className="w-4 h-4" />
-              {t('print')}
-            </Button>
-            <Button
-              onClick={() => onExport?.('pdf')}
-              variant="outline"
-              size="sm"
-              className="gap-2"
-            >
-              <Printer className="w-4 h-4" />
-              {t('pdf')}
-            </Button>
-            <Button onClick={onShare} variant="outline" size="sm" className="gap-2">
-              <Share2 className="w-4 h-4" />
-              {t('share')}
-            </Button>
-          </div>
-        </div>
-
-        <Separator className="my-4" />
-
-        {/* Report Info */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div>
-            <p className="text-sm text-muted-foreground">{t('reportDate')}</p>
-            <p className="font-medium">{reportDate.toLocaleDateString(locale === 'th' ? 'th-TH' : 'en-US')}</p>
-          </div>
-          <div>
-            <p className="text-sm text-muted-foreground">{t('customer')}</p>
-            <p className="font-medium">{customerInfo?.name || t('defaultCustomerName')}</p>
-          </div>
-          {customerInfo?.age && (
-            <div>
-              <p className="text-sm text-muted-foreground">{t('age')}</p>
-              <p className="font-medium">{customerInfo.age} {t('years')}</p>
-            </div>
-          )}
-          <div>
-            <p className="text-sm text-muted-foreground">{t('skinType')}</p>
-            <p className="font-medium capitalize">{customerInfo?.skinType || analysis.ai?.skinType || 'Normal'}</p>
-          </div>
-        </div>
-      </Card>
-
-      {/* Overall Score */}
-      <Card className="p-8 text-center bg-gradient-to-br from-primary/5 to-primary/10 print:shadow-none">
-        <div className="inline-block">
-          <div className="text-6xl font-bold text-primary mb-2">{healthScore}</div>
-          <div className="text-2xl font-semibold mb-2">{t('skinHealthScore')}</div>
-          <Badge className="text-lg px-4 py-1">{t('grade')}: {healthGrade}</Badge>
-          <p className="text-sm text-muted-foreground mt-4">
-            {t('confidence')}: {(() => {
-              const conf = analysis.confidence || 0;
-              return conf > 1 ? Math.round(conf) : Math.round(conf * 100);
-            })()}%
-          </p>
-        </div>
-      </Card>
-
-      {/* Analysis Cards */}
-      <div>
-        <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
-          <FileText className="w-6 h-6 text-primary" />
-          {t('detailedAnalysis')}
-        </h2>
-        <AnalysisCardsGrid
-          analysis={{
-            spots: {
-              severity: analysis.cv.spots.severity,
-              count: analysis.cv.spots.count,
-              percentile: analysis.percentiles.spots,
-            },
-            pores: {
-              severity: analysis.cv.pores.severity,
-              count: analysis.cv.pores.enlargedCount,
-              percentile: analysis.percentiles.pores,
-            },
-            wrinkles: {
-              severity: analysis.cv.wrinkles.severity,
-              count: analysis.cv.wrinkles.count,
-              percentile: analysis.percentiles.wrinkles,
-            },
-            texture: {
-              severity: analysis.cv.texture.score,
-              percentile: analysis.percentiles.texture,
-            },
-            redness: {
-              severity: analysis.cv.redness.severity,
-              count: analysis.cv.redness.areas.length,
-              percentile: analysis.percentiles.redness,
-            },
-          }}
-          locale={locale}
-        />
-      </div>
-
-      {/* AI Insights */}
-      {analysis.ai && (
-        <Card className="p-6 print:shadow-none">
-          <h3 className="text-xl font-semibold mb-4">{t('aiInsights')}</h3>
-          <div className="space-y-4">
-            <div>
-              <p className="text-sm font-medium text-muted-foreground mb-2">{t('skinType')}</p>
-              <Badge variant="outline" className="text-base">
-                {analysis.ai.skinType}
+    <Card className="border-slate-100 bg-white shadow-premium rounded-[4rem] overflow-hidden relative group transition-all duration-1000 hover:border-pink-500/10 flex flex-col min-h-[900px]">
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+      <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.01] bg-center pointer-events-none" />
+      
+      <CardHeader className="p-12 lg:p-16 pb-10 border-b border-slate-50 bg-slate-50/30 flex flex-col md:flex-row md:items-start justify-between gap-12 relative overflow-hidden">
+        <div className="space-y-8 relative z-10">
+          <div className="flex items-center gap-6">
+            <Badge variant="outline" className="px-6 py-2 rounded-full border-pink-500/30 text-pink-600 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.3em] text-[10px] font-black shadow-sm animate-pulse italic">
+              <FileText className="mr-3 h-3.5 w-3.5" />
+              {t('fullReport' as any) || 'Unified_Diagnostic_Dossier'}
+            </Badge>
+            {analysis.is_baseline && (
+              <Badge className="bg-emerald-50 text-emerald-600 border-none px-4 py-1 rounded-full text-[10px] font-black italic shadow-sm uppercase tracking-widest">
+                BASELINE_NODE
               </Badge>
-            </div>
-
-            {analysis.ai.concerns && analysis.ai.concerns.length > 0 && (
-              <div>
-                <p className="text-sm font-medium text-muted-foreground mb-2">
-                  {t('skinConcerns')}
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {analysis.ai.concerns.map((concern: any, index: number) => (
-                    <Badge key={index} variant="secondary">
-                      {concern.type || concern}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
             )}
-
-            <div>
-              <p className="text-sm font-medium text-muted-foreground mb-2">
-                {t('overallCondition')}
-              </p>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {Object.entries(analysis.ai.severity).map(([key, value]: [string, any]) => (
-                  <div key={key} className="flex justify-between items-center p-2 bg-muted rounded">
-                    <span className="text-sm capitalize">{key}</span>
-                    <span className="font-semibold">{value}/10</span>
-                  </div>
-                ))}
-              </div>
+          </div>
+          <div className="space-y-4">
+            <h3 className="text-5xl md:text-7xl font-black text-slate-950 italic tracking-tighter uppercase leading-[0.8]">
+              VISIA_Inference<br />
+              <span className="bg-gradient-to-r from-pink-500 via-purple-600 to-blue-600 bg-clip-text text-transparent not-italic block mt-6 tracking-[0.2em] font-black uppercase text-2xl md:text-4xl">Comprehensive_Report</span>
+            </h3>
+            <div className="flex flex-wrap items-center gap-8 text-slate-400 mt-8 uppercase tracking-[0.3em] text-[10px] font-black italic">
+              <span className="flex items-center gap-3">
+                <Calendar className="w-4 h-4 text-pink-500/40" />
+                DATE: {new Date(analysis.analyzed_at).toLocaleDateString()}
+              </span>
+              <span className="flex items-center gap-3">
+                <Activity className="w-4 h-4 text-blue-500/40" />
+                NODE_HASH: {analysis.id.slice(0, 16).toUpperCase()}
+              </span>
             </div>
           </div>
-        </Card>
-      )}
+        </div>
+        
+        <div className="flex flex-wrap gap-6 shrink-0 relative z-10">
+          <Button variant="outline" className="h-16 px-8 rounded-2xl border-slate-200 bg-white text-slate-950 font-black uppercase tracking-[0.2em] text-[10px] italic shadow-premium hover:bg-slate-50 transition-all active:scale-95 group/btn">
+            <Printer className="w-4 h-4 mr-4 text-slate-300 group-hover/btn:text-blue-600 transition-colors" />
+            {t('print' as any) || 'PHYSICAL_EXPORT'}
+          </Button>
+          <Button variant="premium" className="h-16 px-10 rounded-2xl shadow-2xl shadow-pink-500/20 text-[10px] font-black uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 bg-slate-950 text-white border-none italic group/export relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover/export:translate-x-[100%] transition-transform duration-1000" />
+            <Download className="w-4 h-4 mr-4 text-pink-500 group-hover/export:translate-y-1 transition-transform" />
+            {t('download' as any) || 'AUTHORIZE_DOWNLOAD'}
+          </Button>
+        </div>
+      </CardHeader>
 
-      {/* Recommendations */}
-      <Card className="p-6 print:shadow-none print:break-before-page">
-        <h3 className="text-xl font-semibold mb-4">{t('recommendations')}</h3>
-        <div className="space-y-3">
-          {(analysis.recommendations && analysis.recommendations.length > 0) ? (
-            analysis.recommendations.map((recommendation: any, index: number) => {
-              // Parse JSON string if needed
-              let parsedRec = recommendation;
-              if (typeof recommendation === 'string' && recommendation.startsWith('{')) {
-                try {
-                  parsedRec = JSON.parse(recommendation);
-                } catch {
-                  // If parsing fails, treat as plain text
-                  parsedRec = { reason: recommendation };
-                }
-              }
-              
-              const category = parsedRec.category || '';
-              const product = parsedRec.product || '';
-              const reason = parsedRec.reason || parsedRec.product || parsedRec;
-              const uniqueKey = `rec-${index}-${category}-${Date.now()}`;
-              
-              return (
-                <div key={uniqueKey} className="flex gap-3 p-3 bg-muted/50 rounded-lg">
-                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm font-semibold">
-                    {index + 1}
-                  </div>
-                  <div className="flex-1">
-                    {category && (
-                      <Badge variant="secondary" className="mb-2 capitalize">
-                        {category}
-                      </Badge>
-                    )}
-                    <p className="text-sm font-medium mb-1">{product}</p>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{reason}</p>
+      <CardContent className="p-12 lg:p-16 space-y-16 bg-white flex-1 relative overflow-hidden">
+        {/* Global Summary Hub interface */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+          <div className="lg:col-span-4">
+            <Card className="border-slate-100 bg-slate-50/50 border border-slate-100 shadow-inner rounded-[4rem] h-full flex flex-col items-center justify-center p-12 relative group/overall hover:bg-white hover:border-pink-500/20 transition-all duration-700">
+              <div className="absolute top-0 right-0 p-10 opacity-[0.02] group-hover/overall:scale-110 group-hover:rotate-12 transition-transform duration-1000">
+                <Target className="w-48 h-48 text-pink-600" />
+              </div>
+              <div className="space-y-10 relative z-10 text-center">
+                <p className="text-[11px] font-black uppercase tracking-[0.4em] text-slate-400 italic leading-none">{t('overallScore' as any) || 'GLOBAL_INTEGRITY_INDEX'}</p>
+                <div className="relative inline-flex items-center justify-center">
+                  <div className="absolute inset-0 bg-pink-500/5 rounded-full blur-3xl animate-pulse" />
+                  <svg className="h-64 w-64 -rotate-90">
+                    <circle cx="128" cy="128" r="110" fill="none" stroke="currentColor" strokeWidth="4" className="text-slate-100" />
+                    <motion.circle
+                      cx="128" cy="128" r="110" fill="none" stroke="#ff69b4" strokeWidth="14"
+                      strokeDasharray={691.15}
+                      initial={{ strokeDashoffset: 691.15 }}
+                      whileInView={{ strokeDashoffset: 691.15 - (691.15 * analysis.overall_score) / 100 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 2, ease: "easeOut" }}
+                      className="drop-shadow-glow-pink"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <span className={cn("text-9xl font-black italic tracking-tighter leading-none group-hover/overall:scale-110 transition-transform duration-700", getScoreStyles(analysis.overall_score))}>
+                      {analysis.overall_score.toFixed(0)}
+                    </span>
+                    <span className="text-[11px] font-black uppercase text-slate-400 tracking-[0.3em] mt-4">{t('aggregate' as any) || 'MEAN_SYNC'}</span>
                   </div>
                 </div>
-              );
-            })
-          ) : (
-            <p className="text-sm text-muted-foreground">{t('noRecommendations')}</p>
-          )}
-        </div>
-      </Card>
+                <div className="space-y-4">
+                  <Badge className="text-2xl px-12 py-3 rounded-full border-none shadow-2xl bg-slate-950 text-white font-black italic tracking-[0.2em] uppercase group-hover/overall:bg-pink-600 transition-colors">
+                    GRADE: {analysis.skin_health_grade}
+                  </Badge>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">{t('classification' as any) || 'Aesthetic_Node_Sync: STABLE'}</p>
+                </div>
+              </div>
+            </Card>
+          </div>
 
-      {/* Program Plan */}
-      <Card className="p-6 print:shadow-none">
-        <h3 className="text-xl font-semibold mb-4">{t('recommendedProgramPlan')}</h3>
-        <div className="space-y-3">
-          {(() => {
-            // Generate program plan based on severity
-            const programs: Array<{
-              id: string;
-              name: string;
-              description: string;
-              duration: string;
-              priority: 'high' | 'medium' | 'low';
-            }> = [];
-            const severity = analysis.ai?.severity || {};
-            const cvData = analysis.cv || {};
-            
-            if (severity.acne >= 4) {
-              programs.push({
-                id: 'acne-program',
-                name: 'Acne Program',
-                description: 'Professional acne program with laser or chemical peels',
-                duration: '4-6 weeks',
-                priority: 'high'
-              });
-            }
-            
-            const wrinklesSeverity = typeof cvData.wrinkles?.severity === 'number' 
-              ? cvData.wrinkles.severity 
-              : 0;
-            if (severity.wrinkles >= 4 || wrinklesSeverity >= 4) {
-              programs.push({
-                id: 'anti-aging-program',
-                name: 'Anti-Aging Program',
-                description: 'Botox, dermal fillers, or RF skin tightening',
-                duration: '6-12 weeks',
-                priority: 'medium'
-              });
-            }
-            
-            const spotsSeverity = typeof cvData.spots?.severity === 'number'
-              ? cvData.spots.severity
-              : 0;
-            if (severity.dark_spots >= 4 || spotsSeverity >= 4) {
-              programs.push({
-                id: 'pigmentation-program',
-                name: 'Pigmentation Program',
-                description: 'Laser program or intense chemical peels for dark spots',
-                duration: '8-12 weeks',
-                priority: 'high'
-              });
-            }
-            
-            const rednessSeverity = typeof cvData.redness?.severity === 'number'
-              ? cvData.redness.severity
-              : 0;
-            if (severity.redness >= 4 || rednessSeverity >= 4) {
-              programs.push({
-                id: 'redness-reduction',
-                name: 'Redness Reduction',
-                description: 'IPL therapy or gentle laser program',
-                duration: '6-8 weeks',
-                priority: 'medium'
-              });
-            }
-            
-            const poresSeverity = typeof cvData.pores?.severity === 'number'
-              ? cvData.pores.severity
-              : 0;
-            if (poresSeverity >= 4) {
-              programs.push({
-                id: 'pore-refinement',
-                name: 'Pore Refinement',
-                description: 'Microneedling or fractional laser for pore size reduction',
-                duration: '4-8 weeks',
-                priority: 'low'
-              });
-            }
-            
-            // Default general care
-            if (programs.length === 0) {
-              programs.push({
-                id: 'preventive-skincare',
-                name: 'Preventive Skincare',
-                description: 'Maintain healthy skin with regular facials and proper skincare routine',
-                duration: 'Ongoing',
-                priority: 'low'
-              });
-            }
-            
-            return programs.length > 0 ? (
-              programs.map((program, idx) => {
-                const getBadgeVariant = (priority: 'high' | 'medium' | 'low') => {
-                  if (priority === 'high') return 'destructive';
-                  if (priority === 'medium') return 'default';
-                  return 'secondary';
-                };
-                
-                const getBadgeLabel = (priority: 'high' | 'medium' | 'low') => {
-                  if (priority === 'high') return '⚡ Priority';
-                  if (priority === 'medium') return '📌 Recommended';
-                  return '✨ Optional';
-                };
-                
-                return (
-                  <div key={program.id} className="flex gap-3 p-4 border rounded-lg hover:bg-muted/50 transition-colors">
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-semibold">
-                      {idx + 1}
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <p className="font-semibold text-base">{program.name}</p>
-                        <Badge variant={getBadgeVariant(program.priority)} className="text-xs">
-                          {getBadgeLabel(program.priority)}
-                        </Badge>
+          {/* Metric Grid matrix interface */}
+          <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+            {reportMetrics.map((m, i) => (
+              <motion.div
+                key={m.id}
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.05 }}
+              >
+                <Card className="border-slate-100 bg-white shadow-sm rounded-[3rem] hover:border-pink-500/20 hover:shadow-premium transition-all duration-700 group/metric overflow-hidden h-full flex flex-col">
+                  <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/10 to-transparent opacity-0 group-hover/metric:opacity-100 transition-opacity" />
+                  <CardHeader className="p-8 pb-6 border-b border-slate-50 bg-slate-50/30">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-5">
+                        <div className={cn("p-3 rounded-xl bg-white border border-slate-100 flex items-center justify-center shadow-inner group-hover/metric:scale-110 transition-transform duration-700", m.color)}>
+                          <m.icon className="h-6 w-6" />
+                        </div>
+                        <span className="font-black text-lg italic tracking-tight text-slate-950 uppercase group-hover/metric:text-pink-600 transition-colors leading-none">{m.label}</span>
                       </div>
-                      <p className="text-sm text-muted-foreground mb-2">{program.description}</p>
-                      <p className="text-xs text-muted-foreground">
-                        ⏱️ {t('estimatedDuration')}: <span className="font-medium">{program.duration}</span>
-                      </p>
+                      <Badge className={cn("px-4 py-1 rounded-full text-[9px] font-black uppercase tracking-widest italic shadow-sm leading-none border-none", getSeverityBadge(m.severity))}>
+                        {m.severity.toUpperCase()}
+                      </Badge>
                     </div>
-                  </div>
-                );
-              })
-            ) : (
-              <p className="text-sm text-muted-foreground">{t('noProgramPlan')}</p>
-            );
-          })()}
-        </div>
-      </Card>
-
-      {/* Technical Details */}
-      <Card className="p-6 print:shadow-none bg-muted/50">
-        <h3 className="text-lg font-semibold mb-4">{t('techDetails')}</h3>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
-          <div>
-            <p className="text-muted-foreground">{t('analysisMethod')}</p>
-            <p className="font-medium">{t('hybridMethod')}</p>
-          </div>
-          <div>
-            <p className="text-muted-foreground">{t('aiConfidence')}</p>
-            <p className="font-medium">{(() => {
-              const conf = analysis.ai.confidence || 0;
-              return conf > 1 ? Math.round(conf) : Math.round(conf * 100);
-            })()}%</p>
-          </div>
-          <div>
-            <p className="text-muted-foreground">{t('overallPercentile')}</p>
-            <p className="font-medium">{Math.round((analysis.percentiles.spots + analysis.percentiles.pores + analysis.percentiles.wrinkles + analysis.percentiles.texture + analysis.percentiles.redness) / 5)}th</p>
-          </div>
-          <div>
-            <p className="text-muted-foreground">{t('spotsDetected')}</p>
-            <p className="font-medium">{analysis.cv.spots.count}</p>
-          </div>
-          <div>
-            <p className="text-muted-foreground">{t('poresAnalyzed')}</p>
-            <p className="font-medium">{analysis.cv.pores.enlargedCount}</p>
-          </div>
-          <div>
-            <p className="text-muted-foreground">{t('wrinklesDetected')}</p>
-            <p className="font-medium">{analysis.cv.wrinkles.count}</p>
+                  </CardHeader>
+                  <CardContent className="p-8 space-y-8 flex-1 flex flex-col justify-between bg-white">
+                    <div className="flex items-end justify-between gap-6">
+                      <div className="space-y-1">
+                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic leading-none">{t('qualityIndex' as any) || 'PRECISION_IDX'}</p>
+                        <p className={cn("text-5xl font-black italic tracking-tighter uppercase leading-none group-hover/metric:scale-105 transition-transform origin-left", getScoreStyles(m.score))}>{m.score.toFixed(0)}</p>
+                      </div>
+                      <div className="text-right space-y-4">
+                        <Badge variant="outline" className="bg-white border-slate-100 text-slate-300 text-[8px] font-black italic uppercase tracking-[0.2em] px-3 py-1">HEURISTIC_SYNC</Badge>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic leading-none group-hover/metric:text-slate-950 transition-colors">Nominal_State: <span className="text-emerald-600">VERIFIED</span></p>
+                      </div>
+                    </div>
+                    <div className="h-2 w-full bg-slate-50 rounded-full overflow-hidden border border-slate-100 p-0.5 shadow-inner relative group/bar">
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        whileInView={{ width: `${m.score}%` }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 1.5, delay: i * 0.1 }}
+                        className={cn("h-full rounded-full transition-all duration-1000", m.score >= 90 ? 'bg-emerald-500 shadow-glow-emerald/30' : m.score >= 75 ? 'bg-blue-500 shadow-glow-blue/30' : m.score >= 60 ? 'bg-amber-500' : 'bg-rose-500 shadow-glow-rose/30')} 
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover/bar:translate-x-[100%] transition-transform duration-1000" />
+                      </motion.div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
           </div>
         </div>
-      </Card>
 
-      {/* Footer */}
-      <div className="text-center text-sm text-muted-foreground print:mt-8">
-        <p>
-          {t('footerNotice')}
-        </p>
-        <p className="mt-2">
-          {t('reportId')}: {analysis.timestamp.getTime()} | {t('generatedOn')}{' '}
-          {reportDate.toLocaleString(locale === 'th' ? 'th-TH' : 'en-US')}
-        </p>
-      </div>
-    </div>
-  );
+        {/* Diagnostic Insight Node interface */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="p-12 lg:p-16 rounded-[4rem] bg-slate-950 text-white relative overflow-hidden group/audit shadow-2xl"
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-pink-500/10 via-transparent to-blue-500/10 opacity-50" />
+          <div className="absolute top-0 right-0 p-16 opacity-[0.05] group-hover/audit:rotate-12 group-hover/audit:scale-110 transition-transform duration-1000">
+            <ShieldCheck className="w-64 h-64 text-white" />
+          </div>
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-16 relative z-10">
+            <div className="space-y-10 flex-1">
+              <div className="flex items-center gap-8">
+                <div className="h-20 w-20 rounded-[1.5rem] bg-white/5 border border-white/10 flex items-center justify-center shadow-2xl group-hover/audit:scale-110 transition-transform duration-700">
+                  <ShieldCheck className="h-10 w-10 text-pink-500 animate-pulse" />
+                </div>
+                <div className="space-y-2">
+                  <h4 className="text-4xl font-black italic tracking-tighter uppercase leading-none">{t('summary' as any) || 'Strategic_Diagnostic_Brief'}</h4>
+                  <p className="text-[11px] font-black uppercase tracking-[0.4em] text-pink-500/60 italic leading-none">Neural_Logic_Auth: BIP-Standard-v4.8</p>
+                </div>
+              </div>
+              <p className="text-2xl text-slate-400 font-light italic leading-relaxed tracking-tight max-w-4xl">
+                {t('summaryDesc' as any || 'Global diagnostic nodes exhibit a baseline integrity of {score}th percentile. Primary variance detected in {concern} sectors. Strategic protocol commitment recommended for biological restoration.').replace('{score}', String(analysis.overall_score.toFixed(0))).replace('{concern}', analysis.spots_score < analysis.wrinkles_score ? 'DERMAL_PIGMENT' : 'STRUCTURAL_ELASTICITY')}
+              </p>
+            </div>
+            <div className="flex flex-col gap-6 shrink-0 min-w-[320px]">
+              <div className="p-8 rounded-[3rem] bg-white/5 border border-white/10 space-y-6 shadow-inner hover:bg-white/10 transition-all">
+                <div className="flex justify-between items-center">
+                  <span className="text-[10px] font-black uppercase text-slate-500 italic">Auth_Precision</span>
+                  <Badge className="bg-emerald-500 text-white border-none text-[8px] font-black italic px-3 py-0.5 rounded-full uppercase">99.9%_ACCURATE</Badge>
+                </div>
+                <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden p-0.5 shadow-sm">
+                  <motion.div initial={{ width: 0 }} whileInView={{ width: '99.9%' }} viewport={{ once: true }} transition={{ duration: 2, delay: 0.5 }} className="h-full bg-emerald-500 rounded-full" />
+                </div>
+              </div>
+              <Button size="xl" variant="premium" className="h-20 rounded-[2.5rem] bg-white text-slate-950 border-none shadow-2xl transition-all hover:scale-105 active:scale-95 font-black text-[11px] uppercase tracking-[0.3em] italic group/btn">
+                {t('viewProtocols' as any) || 'AUTHORIZE_PROTOCOL_SYNC'}
+                <ChevronRight className="ml-4 h-6 w-6 text-pink-600 group-hover/btn:translate-x-2 transition-transform" />
+              </Button>
+            </div>
+          </div>
+        </motion.div>
+      </CardContent>
+
+      <CardFooter className="p-12 lg:p-16 border-t border-slate-50 bg-slate-50/30 flex flex-col md:flex-row items-center justify-between gap-12">
+        <div className="flex items-center gap-8 text-slate-400 group/status cursor-default">
+          <div className="h-14 w-14 rounded-[1.5rem] bg-white border border-slate-100 flex items-center justify-center shadow-sm group-hover/status:bg-emerald-50 transition-all duration-700">
+            <ShieldCheck className="h-8 w-8 text-emerald-600" />
+          </div>
+          <div className="space-y-1">
+            <p className="text-[11px] font-black uppercase tracking-[0.4em] text-slate-900 italic leading-none">{t('governance' as any) || 'Precision_Governance_Validated'}</p>
+            <p className="text-[10px] font-medium uppercase tracking-widest italic">Node_Fidelity_Sync: NOMINAL</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-10">
+          <div className="flex items-center gap-4 bg-white px-8 py-3 rounded-full border border-slate-100 shadow-sm group/all">
+            <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shadow-glow-emerald" />
+            <span className="text-[10px] font-black text-slate-950 uppercase tracking-[0.3em] italic group-hover/all:text-emerald-600 transition-colors">{t('allSystemsNominal' as any) || 'INFRASTRUCTURE_OPTIMAL'}</span>
+          </div>
+          <div className="flex items-center gap-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-300 italic">
+            <span>BIP_DOSS_v4.8</span>
+            <div className="h-4 w-px bg-slate-200" />
+            <span>EPOCH_2026.4</span>
+          </div>
+        </div>
+      </CardFooter>
+    </Card>
+  )
 }

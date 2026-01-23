@@ -17,10 +17,11 @@ import { ARVisualization } from "@/components/ar-visualization"
 import { Interactive3DViewer } from "@/components/ar/interactive-3d-viewer"
 import { Enhanced3DViewer } from "@/components/ar/enhanced-3d-viewer"
 import { AdvancedARViewer } from "@/components/ar/advanced-ar-viewer"
-import { LiveARCamera } from "@/components/ar/live-ar-camera"
+import LiveARCamera from "@/components/ar/live-ar-camera-dynamic"
 import { BeforeAfterSlider } from "@/components/ar/before-after-slider"
 import { LiveCameraAR } from "@/components/ar/live-camera-ar"
 import { useHaptic, HAPTIC_PATTERNS } from "@/lib/hooks/use-haptic"
+import { useLocalizePath } from "@/lib/i18n/locale-link"
 
 export default function ARSimulatorPage() {
   return (
@@ -52,6 +53,7 @@ function ARSimulatorContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const haptic = useHaptic()
+  const lp = useLocalizePath()
   
   // Support mode parameter from redirected routes (ar-3d, ar-advanced, ar-live)
   const modeParam = searchParams?.get("mode") || "simulator"
@@ -105,27 +107,26 @@ function ARSimulatorContent() {
 
       <main className="flex-1 bg-muted/30">
         <div className="container py-8">
-          <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <Button variant="outline" onClick={() => router.push("/analysis/results")} className="mb-2 bg-background">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Results / กลับไปผลลัพธ์
+          <div className="mb-12 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between pb-12 border-b border-slate-100">
+            <div className="space-y-6">
+              <Button variant="ghost" size="sm" onClick={() => router.push(lp("/analysis/results"))} className="h-10 px-4 rounded-xl border border-slate-100 bg-white text-slate-400 hover:text-pink-600 shadow-inner transition-all italic font-black uppercase tracking-widest text-[9px]">
+                <ArrowLeft className="mr-2 h-3 w-3" />
+                Back to Results Node
               </Button>
-              <h1 className="text-2xl font-bold">
-                AR Program Simulator
-                <br />
-                <span className="text-lg text-primary">จำลองผลการรักษาด้วย AR</span>
+              <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-slate-950 leading-[0.85] italic uppercase">
+                AR Program<br />
+                <span className="bg-gradient-to-r from-pink-500 via-purple-600 to-blue-600 bg-clip-text text-transparent not-italic block mt-4 tracking-[0.1em] font-black uppercase text-2xl md:text-4xl">Simulator Node</span>
               </h1>
             </div>
 
-            <div className="flex flex-wrap gap-2">
-              <Button variant="outline" size="sm" className="bg-background">
+            <div className="flex flex-wrap gap-4 bg-slate-50 p-2 rounded-2xl border border-slate-100 shadow-inner">
+              <Button variant="outline" size="sm" className="h-12 px-6 rounded-xl border-slate-200 bg-white text-slate-950 font-black uppercase tracking-widest text-[10px] italic shadow-premium hover:bg-slate-50">
                 <Download className="mr-2 h-4 w-4" />
-                Save Result
+                Capture_Sequence
               </Button>
-              <Button variant="outline" size="sm" className="bg-background">
+              <Button variant="outline" size="sm" className="h-12 px-6 rounded-xl border-slate-200 bg-white text-slate-950 font-black uppercase tracking-widest text-[10px] italic shadow-premium hover:bg-slate-50">
                 <Share2 className="mr-2 h-4 w-4" />
-                Share
+                Distribute_Node
               </Button>
             </div>
           </div>
@@ -133,39 +134,54 @@ function ARSimulatorContent() {
           <div className="grid gap-6 lg:grid-cols-3">
             {/* Program Selection Panel */}
             <div className="lg:col-span-1">
-              <Card className="sticky top-4">
-                <CardHeader>
-                  <CardTitle className="text-lg">Select Program / เลือกการรักษา</CardTitle>
-                  <Badge className="w-fit bg-primary/10 text-primary" variant="secondary">
-                    <Sparkles className="mr-1 h-3 w-3" />
-                    AI-Powered Preview
-                  </Badge>
+              <Card className="sticky top-4 border-slate-100 bg-white shadow-premium rounded-[3rem] overflow-hidden relative group transition-all duration-700 hover:border-pink-500/10">
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/10 to-transparent" />
+                <CardHeader className="p-8 pb-6 border-b border-slate-50 bg-slate-50/30">
+                  <CardTitle className="text-xl font-black text-slate-950 tracking-tighter italic uppercase leading-none">Parameter_Sync</CardTitle>
+                  <div className="mt-4">
+                    <Badge className="bg-pink-500/5 text-pink-600 border-pink-500/20 uppercase tracking-[0.2em] text-[9px] font-black italic px-3 py-1 rounded-full shadow-sm animate-pulse" variant="secondary">
+                      <Sparkles className="mr-2 h-3 w-3" />
+                      Neural_Preview_Active
+                    </Badge>
+                  </div>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-4">
+                <CardContent className="p-8 space-y-10">
+                  <div className="space-y-6">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">Mode / โหมด</span>
+                      <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 italic">Protocol_Mode</span>
                       <Button
                         variant={showMultiProgram ? "default" : "outline"}
                         size="sm"
+                        className={cn(
+                          "rounded-xl px-4 py-2 font-black uppercase tracking-widest text-[9px] italic transition-all",
+                          showMultiProgram 
+                            ? "bg-pink-600 text-white border-none shadow-glow-pink/30" 
+                            : "bg-white text-slate-400 border-slate-200"
+                        )}
                         onClick={() => {
                           haptic.trigger(HAPTIC_PATTERNS.BUTTON_TAP)
                           setShowMultiProgram(!showMultiProgram)
                         }}
                       >
-                        {showMultiProgram ? "Multi-Program" : "Single Program"}
+                        {showMultiProgram ? "Multi_Sync" : "Single_Sequence"}
                       </Button>
                     </div>
 
                     {showMultiProgram ? (
-                      <div className="space-y-2">
-                        <p className="text-xs text-muted-foreground">Select multiple programs to combine:</p>
-                        <div className="grid grid-cols-2 gap-2">
+                      <div className="space-y-4">
+                        <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 italic">Select multiple nodes to synchronize:</p>
+                        <div className="grid grid-cols-2 gap-3">
                           {["botox", "filler", "laser", "peel", "microneedling", "thread"].map((program) => (
                             <Button
                               key={program}
                               variant={selectedPrograms.includes(program) ? "default" : "outline"}
                               size="sm"
+                              className={cn(
+                                "rounded-xl py-4 font-black uppercase tracking-widest text-[9px] italic transition-all h-auto",
+                                selectedPrograms.includes(program)
+                                  ? "bg-slate-950 text-white border-none shadow-lg"
+                                  : "bg-white text-slate-400 border-slate-100 hover:border-pink-500/20 hover:text-pink-600"
+                              )}
                               onClick={() => {
                                 haptic.trigger(HAPTIC_PATTERNS.BUTTON_TAP)
                                 if (selectedPrograms.includes(program)) {
@@ -175,7 +191,6 @@ function ARSimulatorContent() {
                                   haptic.trigger(HAPTIC_PATTERNS.PROGRAM_APPLIED)
                                 }
                               }}
-                              className="capitalize"
                             >
                               {program}
                             </Button>
@@ -190,10 +205,10 @@ function ARSimulatorContent() {
                     )}
                   </div>
 
-                  <div className="space-y-3">
+                  <div className="space-y-6">
                     <div className="flex items-center justify-between">
-                      <div className="text-sm font-medium">Intensity / ความเข้มข้น</div>
-                      <span className="text-sm font-bold text-primary">{intensity[0]}%</span>
+                      <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 italic">Intensity_Yield</div>
+                      <span className="text-xs font-black text-pink-600 italic">{intensity[0]}%</span>
                     </div>
                     <Slider
                       value={intensity}
@@ -206,23 +221,26 @@ function ARSimulatorContent() {
                       step={5}
                       className="w-full"
                     />
-                    <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>Subtle / เบา</span>
-                      <span>Natural / ธรรมชาติ</span>
-                      <span>Dramatic / เข้มข้น</span>
+                    <div className="flex justify-between text-[8px] font-black uppercase tracking-[0.2em] text-slate-300 italic">
+                      <span>Subtle</span>
+                      <span>Natural</span>
+                      <span>Dramatic</span>
                     </div>
                   </div>
 
-                  <div className="rounded-lg border border-border bg-muted/30 p-4">
-                    <h4 className="mb-2 text-sm font-semibold">Program Info</h4>
-                    <p className="text-xs text-muted-foreground leading-relaxed">
+                  <div className="rounded-2xl border border-slate-50 bg-slate-50/50 p-6 space-y-3 group-hover:bg-white transition-all duration-700 shadow-inner">
+                    <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-950 italic flex items-center gap-2">
+                      <Activity className="h-3 w-3 text-pink-600" />
+                      Protocol_Intelligence
+                    </h4>
+                    <p className="text-xs text-slate-500 font-light italic leading-relaxed">
                       {getProgramInfo(selectedProgram)}
                     </p>
                   </div>
 
-                  <Button className="w-full" size="lg">
-                    <Zap className="mr-2 h-4 w-4" />
-                    Book This Program / จองการรักษา
+                  <Button className="w-full h-16 rounded-2xl bg-slate-950 hover:bg-pink-600 text-white shadow-2xl shadow-pink-500/20 text-[10px] font-black uppercase tracking-[0.3em] transition-all hover:scale-105 active:scale-95 italic border-none">
+                    <Zap className="mr-3 h-4 w-4" />
+                    Initialize_Booking
                   </Button>
                 </CardContent>
               </Card>

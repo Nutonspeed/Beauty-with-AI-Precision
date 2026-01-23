@@ -13,20 +13,20 @@ function InputGroup({ className, ...props }: React.ComponentProps<'div'>) {
       data-slot="input-group"
       role="group"
       className={cn(
-        'group/input-group border-input dark:bg-input/30 relative flex w-full items-center rounded-md border shadow-xs transition-[color,box-shadow] outline-none',
-        'h-9 has-[>textarea]:h-auto',
+        'group/input-group border-slate-200 bg-white/80 backdrop-blur-md relative flex w-full items-center rounded-2xl border shadow-sm transition-all duration-300 outline-none',
+        'h-14 has-[>textarea]:h-auto',
 
         // Variants based on alignment.
-        'has-[>[data-align=inline-start]]:[&>input]:pl-2',
-        'has-[>[data-align=inline-end]]:[&>input]:pr-2',
-        'has-[>[data-align=block-start]]:h-auto has-[>[data-align=block-start]]:flex-col has-[>[data-align=block-start]]:[&>input]:pb-3',
-        'has-[>[data-align=block-end]]:h-auto has-[>[data-align=block-end]]:flex-col has-[>[data-align=block-end]]:[&>input]:pt-3',
+        'has-[>[data-align=inline-start]]:[&>input]:pl-4',
+        'has-[>[data-align=inline-end]]:[&>input]:pr-4',
+        'has-[>[data-align=block-start]]:h-auto has-[>[data-align=block-start]]:flex-col has-[>[data-align=block-start]]:[&>input]:pb-4',
+        'has-[>[data-align=block-end]]:h-auto has-[>[data-align=block-end]]:flex-col has-[>[data-align=block-end]]:[&>input]:pt-4',
 
         // Focus state.
-        'has-[[data-slot=input-group-control]:focus-visible]:border-ring has-[[data-slot=input-group-control]:focus-visible]:ring-ring/50 has-[[data-slot=input-group-control]:focus-visible]:ring-[3px]',
+        'has-[[data-slot=input-group-control]:focus-visible]:border-pink-500/50 has-[[data-slot=input-group-control]:focus-visible]:ring-4 has-[[data-slot=input-group-control]:focus-visible]:ring-pink-500/5',
 
         // Error state.
-        'has-[[data-slot][aria-invalid=true]]:ring-destructive/20 has-[[data-slot][aria-invalid=true]]:border-destructive dark:has-[[data-slot][aria-invalid=true]]:ring-destructive/40',
+        'has-[[data-slot][aria-invalid=true]]:ring-rose-500/20 has-[[data-slot][aria-invalid=true]]:border-rose-500',
 
         className,
       )}
@@ -36,18 +36,18 @@ function InputGroup({ className, ...props }: React.ComponentProps<'div'>) {
 }
 
 const inputGroupAddonVariants = cva(
-  "text-muted-foreground flex h-auto cursor-text items-center justify-center gap-2 py-1.5 text-sm font-medium select-none [&>svg:not([class*='size-'])]:size-4 [&>kbd]:rounded-[calc(var(--radius)-5px)] group-data-[disabled=true]/input-group:opacity-50",
+  "text-slate-400 flex h-auto cursor-text items-center justify-center gap-2 py-3 text-[10px] font-black uppercase tracking-widest italic select-none [&>svg:not([class*='size-'])]:size-5 [&>kbd]:rounded-lg group-data-[disabled=true]/input-group:opacity-50",
   {
     variants: {
       align: {
         'inline-start':
-          'order-first pl-3 has-[>button]:ml-[-0.45rem] has-[>kbd]:ml-[-0.35rem]',
+          'order-first pl-5 has-[>button]:ml-[-0.45rem] has-[>kbd]:ml-[-0.35rem]',
         'inline-end':
-          'order-last pr-3 has-[>button]:mr-[-0.4rem] has-[>kbd]:mr-[-0.35rem]',
+          'order-last pr-5 has-[>button]:mr-[-0.4rem] has-[>kbd]:mr-[-0.35rem]',
         'block-start':
-          'order-first w-full justify-start px-3 pt-3 [.border-b]:pb-3 group-has-[>input]/input-group:pt-2.5',
+          'order-first w-full justify-start px-5 pt-4 [.border-b]:pb-4 group-has-[>input]/input-group:pt-3',
         'block-end':
-          'order-last w-full justify-start px-3 pb-3 [.border-t]:pt-3 group-has-[>input]/input-group:pb-2.5',
+          'order-last w-full justify-start px-5 pb-4 [.border-t]:pt-4 group-has-[>input]/input-group:pb-3',
       },
     },
     defaultVariants: {
@@ -79,15 +79,15 @@ function InputGroupAddon({
 }
 
 const inputGroupButtonVariants = cva(
-  'text-sm shadow-none flex gap-2 items-center',
+  'text-[10px] font-black uppercase tracking-widest italic shadow-none flex gap-2 items-center',
   {
     variants: {
       size: {
-        xs: "h-6 gap-1 px-2 rounded-[calc(var(--radius)-5px)] [&>svg:not([class*='size-'])]:size-3.5 has-[>svg]:px-2",
-        sm: 'h-8 px-2.5 gap-1.5 rounded-md has-[>svg]:px-2.5',
+        xs: "h-8 gap-1 px-3 rounded-lg [&>svg:not([class*='size-'])]:size-4 has-[>svg]:px-2.5",
+        sm: 'h-10 px-4 gap-2 rounded-xl has-[>svg]:px-3',
         'icon-xs':
-          'size-6 rounded-[calc(var(--radius)-5px)] p-0 has-[>svg]:p-0',
-        'icon-sm': 'size-8 p-0 has-[>svg]:p-0',
+          'size-8 rounded-lg p-0 has-[>svg]:p-0',
+        'icon-sm': 'size-10 rounded-xl p-0 has-[>svg]:p-0',
       },
     },
     defaultVariants: {

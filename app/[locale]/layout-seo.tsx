@@ -1,7 +1,7 @@
 import { Metadata } from "next"
 
 export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
-  const locale = params.locale || 'en'
+  const _locale = params.locale || 'en'
   
   return {
     title: 'AI Skin Analysis - 99% Cheaper Than Traditional Equipment | CenterIQ',

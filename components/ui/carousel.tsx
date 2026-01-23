@@ -162,7 +162,7 @@ function CarouselItem({ className, ...props }: React.ComponentProps<'div'>) {
       aria-roledescription="slide"
       data-slot="carousel-item"
       className={cn(
-        'min-w-0 shrink-0 grow-0 basis-full',
+        'min-w-0 shrink-0 grow-0 basis-full transition-all duration-500',
         orientation === 'horizontal' ? 'pl-4' : 'pt-4',
         className,
       )}
@@ -185,17 +185,17 @@ function CarouselPrevious({
       variant={variant}
       size={size}
       className={cn(
-        'absolute size-8 rounded-full',
+        'absolute size-12 rounded-xl bg-white/80 backdrop-blur-md border-slate-200 text-slate-950 shadow-premium hover:bg-pink-50 hover:text-pink-600 transition-all duration-500 group',
         orientation === 'horizontal'
-          ? 'top-1/2 -left-12 -translate-y-1/2'
-          : '-top-12 left-1/2 -translate-x-1/2 rotate-90',
+          ? 'top-1/2 -left-16 -translate-y-1/2'
+          : '-top-16 left-1/2 -translate-x-1/2 rotate-90',
         className,
       )}
       disabled={!canScrollPrev}
       onClick={scrollPrev}
       {...props}
     >
-      <ArrowLeft />
+      <ArrowLeft className="size-6 transition-transform duration-500 group-hover:-translate-x-1" />
       <span className="sr-only">Previous slide</span>
     </Button>
   )
@@ -215,17 +215,17 @@ function CarouselNext({
       variant={variant}
       size={size}
       className={cn(
-        'absolute size-8 rounded-full',
+        'absolute size-12 rounded-xl bg-white/80 backdrop-blur-md border-slate-200 text-slate-950 shadow-premium hover:bg-pink-50 hover:text-pink-600 transition-all duration-500 group',
         orientation === 'horizontal'
-          ? 'top-1/2 -right-12 -translate-y-1/2'
-          : '-bottom-12 left-1/2 -translate-x-1/2 rotate-90',
+          ? 'top-1/2 -right-16 -translate-y-1/2'
+          : '-bottom-16 left-1/2 -translate-x-1/2 rotate-90',
         className,
       )}
       disabled={!canScrollNext}
       onClick={scrollNext}
       {...props}
     >
-      <ArrowRight />
+      <ArrowRight className="size-6 transition-transform duration-500 group-hover:translate-x-1" />
       <span className="sr-only">Next slide</span>
     </Button>
   )

@@ -114,7 +114,7 @@ export function StaffClient({ initialStaff, initialStats }: StaffClientProps) {
           schema: 'public',
           table: 'center_staff',
         },
-        (payload) => {
+        (payload: any) => {
           console.log('Staff change received:', payload)
           // Reload page to get fresh data
           globalThis.location.reload()

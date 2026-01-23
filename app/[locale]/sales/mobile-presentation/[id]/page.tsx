@@ -26,12 +26,21 @@ export default function MobileSalesPresentationPage() {
   const isOnline = true
 
   return (
-    <div className="min-h-screen bg-background">
-      <PresentationWizard 
-        clientId={clientId}
-        isNewClient={isNewClient}
-        isOnline={isOnline}
-      />
+    <div className="min-h-screen bg-white text-slate-950 selection:bg-pink-500/10">
+      {/* Infrastructure Background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-pink-500/5 rounded-full blur-[120px] animate-glow-pulse" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-500/5 rounded-full blur-[100px] animate-float" />
+        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.015]" />
+      </div>
+
+      <div className="relative z-10">
+        <PresentationWizard 
+          clientId={clientId}
+          isNewClient={isNewClient}
+          isOnline={isOnline}
+        />
+      </div>
     </div>
   )
 }

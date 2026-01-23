@@ -17,7 +17,8 @@ export function Footer() {
 
   return (
     <footer className="relative border-t border-slate-100 bg-white pt-24 pb-12 overflow-hidden group/footer">
-      <div className="absolute -bottom-20 -right-20 w-96 h-96 bg-blue-50/50 rounded-full blur-[100px] -z-10" />
+      <div className="absolute -bottom-20 -right-20 w-96 h-96 bg-pink-500/5 rounded-full blur-[100px] -z-10" />
+      <div className="absolute -bottom-20 -left-20 w-96 h-96 bg-blue-500/5 rounded-full blur-[100px] -z-10" />
       <div className="container px-6 relative z-10">
         <div className="grid grid-cols-1 gap-16 md:grid-cols-2 lg:grid-cols-12">
           {/* Brand Portfolio Section */}
@@ -42,15 +43,15 @@ export function Footer() {
             </div>
             
             {/* Global Communication Channels */}
-            <div className="space-y-3 pt-4">
-              <div className="flex items-center gap-3 text-xs font-bold uppercase tracking-wider text-slate-400 group cursor-pointer hover:text-blue-600 transition-colors">
-                <div className="p-2 rounded-lg bg-slate-50 border border-slate-100 transition-all">
-                  <Mail className="h-4 w-4 text-blue-600" />
+            <div className="space-y-4 pt-4">
+              <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 group/item cursor-pointer hover:text-pink-500 transition-colors">
+                <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 group-hover/item:bg-pink-50 group-hover/item:border-pink-100 transition-all shadow-sm">
+                  <Mail className="h-4 w-4 text-pink-500" />
                 </div>
                 <span>ops@aestheticos.ai</span>
               </div>
-              <div className="flex items-center gap-3 text-xs font-bold uppercase tracking-wider text-slate-400 group cursor-pointer hover:text-blue-600 transition-colors">
-                <div className="p-2 rounded-lg bg-slate-50 border border-slate-100 transition-all">
+              <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 group/item cursor-pointer hover:text-blue-600 transition-colors">
+                <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 group-hover/item:bg-blue-50 group-hover/item:border-blue-100 transition-all shadow-sm">
                   <Phone className="h-4 w-4 text-blue-600" />
                 </div>
                 <span>+66 2-000-0000</span>
@@ -58,16 +59,16 @@ export function Footer() {
             </div>
 
             {/* Social Intelligence Links */}
-            <div className="flex items-center gap-4 pt-4">
+            <div className="flex items-center gap-4 pt-6">
               {[Facebook, Instagram, Youtube, Linkedin].map((Icon, i) => (
                 <MagneticButton key={i} strength={0.2}>
                   <motion.a 
                     href="#" 
                     aria-label="Social Link"
-                    whileHover={{ y: -2 }}
-                    className="h-10 w-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-all"
+                    whileHover={{ y: -4, scale: 1.1 }}
+                    className="h-11 w-11 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 hover:text-pink-500 hover:bg-pink-50 hover:border-pink-100 transition-all shadow-sm"
                   >
-                    <Icon className="h-4 w-4" />
+                    <Icon className="h-5 w-5" />
                   </motion.a>
                 </MagneticButton>
               ))}
@@ -75,9 +76,9 @@ export function Footer() {
           </div>
 
           <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-12 sm:gap-16">
-            <div className="space-y-6 text-reveal-container">
-              <h3 className="text-[10px] font-bold uppercase tracking-widest text-blue-600 text-reveal">{t('footer.product')}</h3>
-              <ul className="space-y-3">
+            <div className="space-y-8 text-reveal-container">
+              <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-pink-500 text-reveal italic">{t('footer.product')}</h3>
+              <ul className="space-y-4">
                 {[
                   { href: "/features", label: t('nav.features') },
                   { href: "/pricing", label: t('nav.pricing') },
@@ -87,7 +88,8 @@ export function Footer() {
                   { href: "/auth/login", label: t('common.login') }
                 ].map((link) => (
                   <li key={link.href}>
-                    <Link href={lp(link.href)} className="text-sm text-slate-500 font-medium hover:text-blue-600 transition-colors">
+                    <Link href={lp(link.href)} className="text-sm text-slate-500 font-medium hover:text-pink-500 transition-colors flex items-center group/link">
+                      <span className="h-px w-0 bg-pink-500 mr-0 transition-all group-hover/link:w-3 group-hover/link:mr-2" />
                       {link.label}
                     </Link>
                   </li>
@@ -95,9 +97,9 @@ export function Footer() {
               </ul>
             </div>
 
-            <div className="space-y-6 text-reveal-container">
-              <h3 className="text-[10px] font-bold uppercase tracking-widest text-blue-600 text-reveal">{t('footer.company')}</h3>
-              <ul className="space-y-3">
+            <div className="space-y-8 text-reveal-container">
+              <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-blue-600 text-reveal italic">{t('footer.company')}</h3>
+              <ul className="space-y-4">
                 {[
                   { href: "/case-studies", label: t('nav.caseStudies') },
                   { href: "/about", label: t('nav.about') },
@@ -105,7 +107,8 @@ export function Footer() {
                   { href: "/3d-showcase", label: t('nav.3dModels') }
                 ].map((link) => (
                   <li key={link.href}>
-                    <Link href={lp(link.href)} className="text-sm text-slate-500 font-medium hover:text-blue-600 transition-colors">
+                    <Link href={lp(link.href)} className="text-sm text-slate-500 font-medium hover:text-blue-600 transition-colors flex items-center group/link">
+                      <span className="h-px w-0 bg-blue-600 mr-0 transition-all group-hover/link:w-3 group-hover/link:mr-2" />
                       {link.label}
                     </Link>
                   </li>
@@ -113,9 +116,9 @@ export function Footer() {
               </ul>
             </div>
 
-            <div className="space-y-6 text-reveal-container">
-              <h3 className="text-[10px] font-bold uppercase tracking-widest text-blue-600 text-reveal">{t('footer.legal')}</h3>
-              <ul className="space-y-3">
+            <div className="space-y-8 text-reveal-container">
+              <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-900 text-reveal italic">{t('footer.legal')}</h3>
+              <ul className="space-y-4">
                 {[
                   { href: "/privacy", label: t('footer.privacy') },
                   { href: "/terms", label: t('footer.terms') },
@@ -123,7 +126,8 @@ export function Footer() {
                   { href: "/pdpa", label: t('footer.pdpa') }
                 ].map((link) => (
                   <li key={link.href}>
-                    <Link href={lp(link.href)} className="text-sm text-slate-500 font-medium hover:text-blue-600 transition-colors">
+                    <Link href={lp(link.href)} className="text-sm text-slate-500 font-medium hover:text-slate-900 transition-colors flex items-center group/link">
+                      <span className="h-px w-0 bg-slate-900 mr-0 transition-all group-hover/link:w-3 group-hover/link:mr-2" />
                       {link.label}
                     </Link>
                   </li>
@@ -145,20 +149,20 @@ export function Footer() {
               </p>
             </div>
             
-            <div className="flex flex-wrap justify-center items-center gap-8 text-[9px] font-bold uppercase tracking-widest text-slate-400">
-              <span className="flex items-center gap-2">
-                <div className="h-1 w-1 rounded-full bg-blue-500" />
+            <div className="flex flex-wrap justify-center items-center gap-8 text-[9px] font-black uppercase tracking-[0.3em] text-slate-400">
+              <span className="flex items-center gap-2 group/status cursor-default">
+                <div className="h-1.5 w-1.5 rounded-full bg-pink-500 shadow-glow-pink animate-pulse" />
                 {t('footer.engineeringExcellence')}
               </span>
-              <span className="flex items-center gap-2">
-                <div className="h-1 w-1 rounded-full bg-emerald-500" />
+              <span className="flex items-center gap-2 group/status cursor-default">
+                <div className="h-1.5 w-1.5 rounded-full bg-blue-500 shadow-glow-blue animate-pulse" />
                 {t('footer.pdpaCertified')}
               </span>
-              <span className="flex items-center gap-2">
-                <div className="h-1 w-1 rounded-full bg-cyan-500" />
+              <span className="flex items-center gap-2 group/status cursor-default">
+                <div className="h-1.5 w-1.5 rounded-full bg-indigo-500 animate-pulse" />
                 {t('footer.isoCloud')}
               </span>
-              <span className="text-slate-300 hidden sm:inline">
+              <span className="text-slate-300 hidden sm:inline italic">
                 {t('footer.madeInThailand')}
               </span>
             </div>

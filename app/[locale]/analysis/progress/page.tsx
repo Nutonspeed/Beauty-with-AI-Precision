@@ -1,7 +1,7 @@
 import { Suspense } from "react"
 import { redirect } from "next/navigation"
 import { createServerClient } from "@/lib/supabase/server"
-import { ProgressDashboard } from "@/components/analysis/progress-dashboard"
+import { ProgressDashboard } from "@/components/progress-dashboard"
 import { Card } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 

@@ -131,9 +131,10 @@ export function Header() {
             <Link
               key={item.href}
               href={lp(item.href)}
-              className="relative text-[11px] font-bold uppercase tracking-widest text-slate-500 transition-all hover:text-blue-600 py-2"
+              className="relative text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 transition-all hover:text-pink-500 py-2 group/nav"
             >
               {item.label}
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-pink-500 to-blue-600 transition-all group-hover/nav:w-full" />
             </Link>
           ))}
         </nav>
@@ -216,7 +217,7 @@ export function Header() {
               </MagneticButton>
               
               <MagneticButton strength={0.15}>
-                <Button variant="premium" size="sm" asChild className="h-11 px-8 text-[11px] font-black uppercase tracking-[0.2em] shadow-xl shadow-blue-600/20 rounded-full hover:scale-105 active:scale-95 transition-all bg-blue-600 text-white border-none">
+                <Button variant="premium" size="sm" asChild className="h-11 px-8 text-[11px] font-black uppercase tracking-[0.2em] shadow-xl shadow-pink-500/20 rounded-full hover:scale-105 active:scale-95 transition-all bg-gradient-to-r from-pink-500 via-purple-600 to-blue-600 text-white border-none">
                   <Link href={lp("/analysis")}>{t('common.getStarted')}</Link>
                 </Button>
               </MagneticButton>
@@ -240,20 +241,20 @@ export function Header() {
                 </div>
                 <nav className="flex flex-col gap-8 mt-12">
                   {navItems.map((item, i) => (
-                    <motion.div
-                      key={item.href}
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: i * 0.1 }}
-                    >
-                      <Link
-                        href={lp(item.href)}
-                        className="text-2xl font-black text-slate-900 hover:text-blue-600 transition-all flex items-center group uppercase tracking-tighter"
-                      >
-                        <span className="mr-6 h-px w-0 bg-blue-600 transition-all group-hover:w-8" />
-                        {item.label}
-                      </Link>
-                    </motion.div>
+              <motion.div
+                key={item.href}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.1 }}
+              >
+                <Link
+                  href={lp(item.href)}
+                  className="text-2xl font-black text-slate-900 hover:text-pink-500 transition-all flex items-center group uppercase tracking-tighter italic"
+                >
+                  <span className="mr-6 h-px w-0 bg-gradient-to-r from-pink-500 to-blue-600 transition-all group-hover:w-12" />
+                  {item.label}
+                </Link>
+              </motion.div>
                   ))}
                 </nav>
                 <div className="mt-auto space-y-6">

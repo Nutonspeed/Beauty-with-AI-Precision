@@ -81,85 +81,85 @@ export function GlobalCommandCenter() {
   }, [globalNodes.length])
 
   return (
-    <div className="w-full bg-slate-50 border-y border-slate-100 relative overflow-hidden group h-full flex flex-col">
-      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" 
-           style={{ backgroundImage: 'linear-gradient(#1e40af 1px, transparent 1px), linear-gradient(90deg, #1e40af 1px, transparent 1px)', backgroundSize: '100px 100px' }} />
+    <div className="w-full bg-white border-y border-slate-100 relative overflow-hidden group h-full flex flex-col">
+      <div className="absolute inset-0 opacity-[0.05] pointer-events-none" 
+           style={{ backgroundImage: 'linear-gradient(#ec4899 1px, transparent 1px), linear-gradient(90deg, #ec4899 1px, transparent 1px)', backgroundSize: '100px 100px' }} />
       
-      {/* HUD Overlays - Clean Medical Look */}
-      <div className="absolute top-10 left-10 z-20 space-y-5 max-w-xl">
-        <Badge variant="outline" className="px-4 py-1.5 rounded-full border-blue-200 text-blue-700 bg-blue-50 font-bold tracking-wider text-[10px] uppercase">
+      {/* HUD Overlays - High-End Aesthetic */}
+      <div className="absolute top-10 left-10 z-20 space-y-6 max-w-xl">
+        <Badge variant="outline" className="px-4 py-1.5 rounded-full border-pink-500/30 text-pink-600 bg-pink-500/5 font-black tracking-[0.2em] text-[10px] uppercase animate-pulse shadow-lg shadow-pink-500/5">
           <Globe className="mr-2 h-3.5 w-3.5" />
           {t('globalCommand.title')}
         </Badge>
-        <div className="space-y-2">
-          <h3 className="text-4xl md:text-6xl font-bold text-slate-900 tracking-tight leading-tight">
+        <div className="space-y-3">
+          <h3 className="text-4xl md:text-6xl font-bold text-slate-900 tracking-tighter leading-[0.9] italic">
             {t('globalCommand.distributed')}<br />
-            <span className="text-blue-600">{t('globalCommand.intelligence')}</span>
+            <span className="bg-gradient-to-r from-pink-500 via-purple-600 to-blue-600 bg-clip-text text-transparent not-italic uppercase text-2xl tracking-[0.3em] font-black">{t('globalCommand.intelligence')}</span>
           </h3>
-          <p className="text-slate-500 text-sm leading-relaxed max-w-md">
+          <p className="text-slate-500 text-lg font-light leading-relaxed max-w-md italic">
             {t('globalCommand.subtitle')}
           </p>
         </div>
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
           {headlineMetrics.map((metric, index) => (
             <div
               key={`${metric.label}-${index}`}
-              className="rounded-xl border border-slate-200/80 bg-white/80 backdrop-blur px-3 py-2 shadow-sm"
+              className="rounded-2xl border border-slate-100 bg-white/80 backdrop-blur-xl px-4 py-3 shadow-premium hover:border-pink-500/20 transition-all duration-500"
             >
-              <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{metric.label}</p>
-              <p className="text-sm font-bold text-slate-900 tracking-tight">{metric.value}</p>
+              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic">{metric.label}</p>
+              <p className="text-base font-black text-slate-900 tracking-tighter italic">{metric.value}</p>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="absolute top-10 right-10 z-20 hidden md:flex flex-col items-end gap-6">
+      <div className="absolute top-10 right-10 z-20 hidden md:flex flex-col items-end gap-8">
         <div className="space-y-1 text-right">
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('globalCommand.liveTraffic')}</p>
-          <p className="text-4xl font-bold text-slate-900 tracking-tight">
-            {liveTraffic.toLocaleString()} <span className="text-sm font-normal text-slate-500">{t('globalCommand.reqPerSec')}</span>
+          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">{t('globalCommand.liveTraffic')}</p>
+          <p className="text-5xl font-black text-slate-900 tracking-tighter italic">
+            {liveTraffic.toLocaleString()} <span className="text-sm font-black uppercase tracking-widest text-pink-500">{t('globalCommand.reqPerSec')}</span>
           </p>
         </div>
-        <Card className="w-64 bg-white/90 border-slate-200 p-4 rounded-2xl shadow-lg">
+        <Card className="w-72 bg-white/90 backdrop-blur-2xl border-slate-100 p-6 rounded-[2.5rem] shadow-premium hover:border-pink-500/20 transition-all duration-700">
           <div className="flex items-center justify-between">
-            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{t('globalCommand.meshActive')}</span>
-            <Badge className="bg-emerald-50 text-emerald-700 border-none text-[8px] font-bold uppercase">
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic">{t('globalCommand.meshActive')}</span>
+            <Badge className="bg-pink-50 text-pink-600 border-none text-[9px] font-black uppercase tracking-widest animate-pulse">
               {t('globalCommand.optimal')}
             </Badge>
           </div>
-          <div className="mt-3">
-            <p className="text-sm font-semibold text-slate-900">{activeHub.name}</p>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">{activeHub.region}</p>
+          <div className="mt-4 space-y-1">
+            <p className="text-lg font-bold text-slate-900 italic uppercase">{activeHub.name}</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-pink-500">{activeHub.region}</p>
           </div>
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            <div>
-              <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{t('globalCommand.load')}</p>
-              <p className="text-sm font-bold text-slate-900">{activeHub.load}%</p>
+          <div className="mt-6 grid grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic">{t('globalCommand.load')}</p>
+              <p className="text-base font-black text-slate-900 italic">{activeHub.load}%</p>
             </div>
-            <div className="text-right">
-              <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{t('globalCommand.latency')}</p>
-              <p className="text-sm font-bold text-blue-600">{activeHub.latency}{t('globalCommand.ms')}</p>
+            <div className="text-right space-y-1">
+              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic">{t('globalCommand.latency')}</p>
+              <p className="text-base font-black text-pink-600 italic">{activeHub.latency}{t('globalCommand.ms')}</p>
             </div>
           </div>
         </Card>
       </div>
 
       {/* Main Map Visualization */}
-      <div className="relative flex-1 w-full flex items-center justify-center min-h-[520px] px-6 pb-12 pt-24">
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-50 via-white to-blue-50/60" />
-        <div className="relative w-full max-w-6xl aspect-[2/1] rounded-[36px] border border-blue-100/70 bg-white/70 shadow-[0_25px_70px_rgba(15,23,42,0.12)] overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(37,99,235,0.15),transparent_45%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_70%,rgba(14,116,144,0.14),transparent_52%)]" />
+      <div className="relative flex-1 w-full flex items-center justify-center min-h-[600px] px-6 pb-16 pt-32">
+        <div className="absolute inset-0 bg-gradient-to-b from-white via-slate-50 to-blue-50/30" />
+        <div className="relative w-full max-w-6xl aspect-[2/1] rounded-[48px] border border-slate-100 bg-white shadow-premium overflow-hidden group/map">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(236,72,153,0.1),transparent_45%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_70%,rgba(37,99,235,0.1),transparent_52%)]" />
           <div
-            className="absolute inset-0 opacity-50"
+            className="absolute inset-0 opacity-30"
             style={{
               backgroundImage:
-                'linear-gradient(to right, rgba(148,163,184,0.25) 1px, transparent 1px), linear-gradient(to bottom, rgba(148,163,184,0.25) 1px, transparent 1px)',
-              backgroundSize: '90px 90px',
+                'linear-gradient(to right, rgba(148,163,184,0.2) 1px, transparent 1px), linear-gradient(to bottom, rgba(148,163,184,0.2) 1px, transparent 1px)',
+              backgroundSize: '80px 80px',
             }}
           />
-          <div className="relative w-full h-full">
-            <svg viewBox="0 0 1000 500" className="w-full h-full text-slate-200 fill-current">
+          <div className="relative w-full h-full p-12">
+            <svg viewBox="0 0 1000 500" className="w-full h-full text-slate-100 fill-current">
               {mapDots.map((dot, index) => (
                 <circle
                   key={`dot-${index}`}
@@ -175,7 +175,7 @@ export function GlobalCommandCenter() {
               <defs>
                 <linearGradient id="beamGrad" x1="0%" y1="0%" x2="100%" y2="0%">
                   <stop offset="0%" stopColor="transparent" />
-                  <stop offset="50%" stopColor="#2563eb" stopOpacity="0.9" />
+                  <stop offset="50%" stopColor="#ec4899" stopOpacity="0.8" />
                   <stop offset="100%" stopColor="transparent" />
                 </linearGradient>
               </defs>
@@ -188,18 +188,18 @@ export function GlobalCommandCenter() {
                     key={`${activeHub.id}-${node.id}`}
                     d={`M ${hubPoint.x} ${hubPoint.y} Q ${midX} ${midY} ${targetPoint.x} ${targetPoint.y}`}
                     stroke="url(#beamGrad)"
-                    strokeWidth="1.2"
+                    strokeWidth="1.5"
                     fill="transparent"
                     initial={{ pathLength: 0, opacity: 0 }}
-                    animate={{ pathLength: 1, opacity: [0, 0.55, 0] }}
-                    transition={{ duration: 3.8, repeat: Infinity, repeatDelay: 1.2 + index * 0.3 }}
+                    animate={{ pathLength: 1, opacity: [0, 0.6, 0] }}
+                    transition={{ duration: 4, repeat: Infinity, repeatDelay: 1 + index * 0.4 }}
                   />
                 )
               })}
             </svg>
 
-            <div className="absolute left-8 bottom-8 flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">
-              <span className="h-2 w-2 rounded-full bg-blue-500 shadow-[0_0_12px_rgba(59,130,246,0.8)]" />
+            <div className="absolute left-12 bottom-12 flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 italic">
+              <span className="h-2 w-2 rounded-full bg-pink-500 shadow-glow-pink animate-pulse" />
               {t('globalCommand.mapTitle')}
             </div>
 
@@ -223,51 +223,51 @@ export function GlobalCommandCenter() {
                     <div className="relative">
                       {isActive ? (
                         <motion.div
-                          className="absolute inset-0 rounded-full bg-blue-400/40"
-                          animate={{ scale: [1, 2.4, 1], opacity: [0.5, 0, 0.35] }}
-                          transition={{ repeat: Infinity, duration: 2.8 }}
+                          className="absolute inset-[-8px] rounded-full bg-pink-400/20"
+                          animate={{ scale: [1, 2.5, 1], opacity: [0.4, 0, 0.2] }}
+                          transition={{ repeat: Infinity, duration: 3 }}
                         />
                       ) : null}
                       <div
                         className={cn(
-                          "h-3.5 w-3.5 rounded-full relative z-10 border transition-all duration-500",
+                          "h-4 w-4 rounded-full relative z-10 border-2 transition-all duration-700",
                           isActive
-                            ? "bg-blue-600 border-blue-100 shadow-[0_0_18px_rgba(37,99,235,0.6)]"
-                            : "bg-white border-slate-300"
+                            ? "bg-pink-500 border-white shadow-glow-pink"
+                            : "bg-white border-slate-200 group-hover/node:border-pink-300"
                         )}
                       />
 
                       {/* Node Tooltip */}
                       <div
                         className={cn(
-                          "absolute top-6 left-1/2 -translate-x-1/2 whitespace-nowrap transition-all duration-500 z-30",
-                          isActive ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"
+                          "absolute top-8 left-1/2 -translate-x-1/2 whitespace-nowrap transition-all duration-700 z-30",
+                          isActive ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"
                         )}
                       >
-                        <Card className="bg-white border-slate-200 p-4 rounded-xl shadow-lg space-y-3 min-w-[176px]">
-                          <div className="flex justify-between items-center">
-                            <span className="text-[10px] font-bold text-slate-900 uppercase tracking-wider">
+                        <Card className="bg-white/95 backdrop-blur-xl border-slate-100 p-5 rounded-2xl shadow-premium min-w-[200px]">
+                          <div className="flex justify-between items-center mb-3">
+                            <span className="text-[11px] font-black text-slate-900 uppercase tracking-wider italic">
                               {node.name}
                             </span>
-                            <Badge className="bg-emerald-50 text-emerald-700 border-none text-[8px] font-bold uppercase">
+                            <Badge className="bg-pink-50 text-pink-600 border-none text-[8px] font-black uppercase tracking-widest">
                               {t('globalCommand.optimal')}
                             </Badge>
                           </div>
-                          <p className="text-[9px] font-semibold uppercase tracking-[0.2em] text-slate-400">
+                          <p className="text-[9px] font-black uppercase tracking-[0.3em] text-pink-500 mb-4">
                             {node.region}
                           </p>
-                          <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-0.5">
-                              <p className="text-[8px] font-bold text-slate-400 uppercase tracking-wider">
+                          <div className="grid grid-cols-2 gap-6">
+                            <div className="space-y-1">
+                              <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest italic">
                                 {t('globalCommand.load')}
                               </p>
-                              <p className="text-xs font-bold text-slate-900">{node.load}%</p>
+                              <p className="text-xs font-black text-slate-900 italic">{node.load}%</p>
                             </div>
-                            <div className="text-right space-y-0.5">
-                              <p className="text-[8px] font-bold text-slate-400 uppercase tracking-wider">
+                            <div className="text-right space-y-1">
+                              <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest italic">
                                 {t('globalCommand.latency')}
                               </p>
-                              <p className="text-xs font-bold text-blue-600">
+                              <p className="text-xs font-black text-pink-600 italic">
                                 {node.latency}{t('globalCommand.ms')}
                               </p>
                             </div>
@@ -284,26 +284,26 @@ export function GlobalCommandCenter() {
       </div>
 
       {/* Bottom Interface Bar */}
-      <div className="bg-white border-t border-slate-100 p-8 md:p-10 z-20">
-        <div className="container mx-auto flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
-          <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
+      <div className="bg-white border-t border-slate-100 p-10 md:p-12 z-20">
+        <div className="container mx-auto flex flex-col gap-10 md:flex-row md:items-center md:justify-between">
+          <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
             {summaryMetrics.map((metric, i) => (
-              <div key={i} className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center">
-                  <metric.icon className={cn("h-5 w-5", metric.color)} />
+              <div key={i} className="flex items-center gap-4 group/metric">
+                <div className="h-12 w-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center group-hover/metric:bg-pink-50 group-hover/metric:border-pink-100 transition-all duration-500 shadow-sm">
+                  <metric.icon className={cn("h-6 w-6 transition-colors duration-500", metric.color.replace('blue', 'pink').replace('emerald', 'pink').replace('indigo', 'pink'))} />
                 </div>
                 <div className="space-y-0.5">
-                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{metric.label}</p>
-                  <p className="text-sm font-bold text-slate-900 tracking-tight">{metric.value}</p>
+                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic">{metric.label}</p>
+                  <p className="text-base font-black text-slate-900 tracking-tighter italic">{metric.value}</p>
                 </div>
               </div>
             ))}
           </div>
 
           <MagneticButton strength={0.1}>
-            <Button className="h-14 px-10 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold uppercase tracking-wider text-xs shadow-lg shadow-blue-600/10 group transition-all">
+            <Button className="h-16 px-12 rounded-2xl bg-gradient-to-r from-pink-500 via-purple-600 to-blue-600 text-white font-black uppercase tracking-[0.3em] text-[10px] shadow-2xl shadow-pink-500/20 group transition-all hover:scale-105 active:scale-95">
               {t('globalCommand.joinInfrastructure')}
-              <ArrowRight className="ml-3 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="ml-4 h-5 w-5 group-hover:translate-x-2 transition-transform" />
             </Button>
           </MagneticButton>
         </div>

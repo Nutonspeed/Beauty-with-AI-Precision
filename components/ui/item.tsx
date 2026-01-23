@@ -31,17 +31,17 @@ function ItemSeparator({
 }
 
 const itemVariants = cva(
-  'group/item flex items-center border border-transparent text-sm rounded-md transition-colors [a&]:hover:bg-accent/50 [a&]:transition-colors duration-100 flex-wrap outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]',
+  'group/item flex items-center border border-transparent text-sm rounded-2xl transition-all duration-500 [a&]:hover:bg-pink-50/50 [a&]:hover:border-pink-500/10 flex-wrap outline-none focus-visible:ring-4 focus-visible:ring-pink-500/5',
   {
     variants: {
       variant: {
         default: 'bg-transparent',
-        outline: 'border-border',
-        muted: 'bg-muted/50',
+        outline: 'border-slate-100 bg-white/80 backdrop-blur-sm shadow-sm',
+        muted: 'bg-slate-50/50',
       },
       size: {
-        default: 'p-4 gap-4 ',
-        sm: 'py-3 px-4 gap-2.5',
+        default: 'p-6 gap-6',
+        sm: 'py-4 px-6 gap-4',
       },
     },
     defaultVariants: {
@@ -72,14 +72,14 @@ function Item({
 }
 
 const itemMediaVariants = cva(
-  'flex shrink-0 items-center justify-center gap-2 group-has-[[data-slot=item-description]]/item:self-start [&_svg]:pointer-events-none group-has-[[data-slot=item-description]]/item:translate-y-0.5',
+  'flex shrink-0 items-center justify-center gap-3 group-has-[[data-slot=item-description]]/item:self-start [&_svg]:pointer-events-none group-has-[[data-slot=item-description]]/item:translate-y-0.5 transition-all duration-500',
   {
     variants: {
       variant: {
         default: 'bg-transparent',
-        icon: "size-8 border rounded-sm bg-muted [&_svg:not([class*='size-'])]:size-4",
+        icon: "size-12 border border-slate-100 rounded-xl bg-slate-50/50 text-slate-400 group-hover/item:text-pink-600 group-hover/item:bg-pink-50/50 group-hover/item:border-pink-500/20 shadow-inner [&_svg:not([class*='size-'])]:size-6",
         image:
-          'size-10 rounded-sm overflow-hidden [&_img]:size-full [&_img]:object-cover',
+          'size-14 rounded-xl overflow-hidden [&_img]:size-full [&_img]:object-cover border border-slate-100 shadow-sm group-hover/item:shadow-glow-pink/20',
       },
     },
     defaultVariants: {
@@ -121,7 +121,7 @@ function ItemTitle({ className, ...props }: React.ComponentProps<'div'>) {
     <div
       data-slot="item-title"
       className={cn(
-        'flex w-fit items-center gap-2 text-sm leading-snug font-medium',
+        'flex w-fit items-center gap-2 text-sm leading-snug font-black uppercase tracking-widest italic text-slate-950',
         className,
       )}
       {...props}
@@ -134,8 +134,8 @@ function ItemDescription({ className, ...props }: React.ComponentProps<'p'>) {
     <p
       data-slot="item-description"
       className={cn(
-        'text-muted-foreground line-clamp-2 text-sm leading-normal font-normal text-balance',
-        '[&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4',
+        'text-slate-500 line-clamp-2 text-sm leading-relaxed font-medium italic text-balance',
+        '[&>a:hover]:text-pink-600 [&>a]:underline [&>a]:underline-offset-4',
         className,
       )}
       {...props}

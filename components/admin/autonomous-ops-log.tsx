@@ -71,28 +71,29 @@ export function AutonomousOpsLog() {
   }, [t])
 
   return (
-    <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
+    <Card className="border-slate-100 bg-white shadow-premium rounded-[3rem] overflow-hidden relative group transition-all duration-700 hover:border-pink-500/20">
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/10 to-transparent" />
       
-      <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/[0.02] to-transparent animate-neural-pulse pointer-events-none" />
-        <div className="space-y-2 relative z-10">
-          <CardTitle className="text-3xl font-bold text-white tracking-tight italic flex items-center gap-4">
-            <Cpu className="h-8 w-8 text-cyan-400" />
+      <CardHeader className="p-10 lg:p-12 pb-6 border-b border-slate-50 flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden">
+        <div className="space-y-3 relative z-10">
+          <CardTitle className="text-3xl font-black text-slate-950 tracking-tight italic flex items-center gap-5 uppercase leading-none">
+            <div className="p-3 bg-pink-50 rounded-2xl shadow-sm group-hover:bg-pink-500 group-hover:text-white transition-all duration-700">
+              <Cpu className="h-8 w-8 text-pink-600 group-hover:text-white" />
+            </div>
             {t('autonomousOps.title')}
           </CardTitle>
-          <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
+          <CardDescription className="text-[11px] font-black uppercase tracking-[0.3em] text-slate-400 mt-4 italic">
             {t('autonomousOps.subtitle')}
           </CardDescription>
         </div>
         <div className="flex items-center gap-4">
-          <Badge className="bg-cyan-600 text-white border-none px-4 py-1 text-[9px] font-black tracking-widest uppercase italic">
+          <Badge className="bg-pink-50 text-pink-600 border-none px-5 py-1.5 text-[10px] font-black tracking-widest uppercase italic shadow-sm">
             {t('autonomousOps.engineMode')}
           </Badge>
         </div>
       </CardHeader>
 
-      <CardContent className="p-10 lg:p-12">
+      <CardContent className="p-10 lg:p-12 bg-slate-50/30">
         <div className="space-y-6">
           <AnimatePresence mode="popLayout">
             {ops.map((op) => (
@@ -102,37 +103,37 @@ export function AutonomousOpsLog() {
                 initial={{ opacity: 0, x: -20, height: 0 }}
                 animate={{ opacity: 1, x: 0, height: 'auto' }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="p-6 bg-white/[0.02] border border-white/5 rounded-[2rem] hover:bg-white/[0.04] transition-all group/op"
+                className="p-8 bg-white border border-slate-100 rounded-[2.5rem] hover:border-pink-500/20 transition-all duration-700 group/op shadow-sm hover:shadow-premium"
               >
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
                   <div className="flex items-start gap-6">
                     <div className={cn(
-                      "h-12 w-12 rounded-2xl flex items-center justify-center border transition-all duration-500 shadow-inner group-hover/op:scale-110 animate-synaptic-fire",
-                      op.type === 'inventory' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' :
-                      op.type === 'marketing' ? 'bg-pink-500/10 text-pink-400 border-pink-500/20' :
-                      op.type === 'security' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
-                      'bg-cyan-500/10 text-cyan-400 border-cyan-500/20'
+                      "h-14 w-14 rounded-2xl flex items-center justify-center border transition-all duration-700 shadow-inner group-hover/op:scale-110",
+                      op.type === 'inventory' ? 'bg-amber-50 text-amber-600 border-amber-100' :
+                      op.type === 'marketing' ? 'bg-pink-50 text-pink-600 border-pink-100' :
+                      op.type === 'security' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' :
+                      'bg-blue-50 text-blue-600 border-blue-100'
                     )}>
-                      <Activity className="h-6 w-6" />
+                      <Activity className="h-7 w-7" />
                     </div>
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-3">
-                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">{op.type}</span>
-                        <h5 className="text-sm font-bold text-white italic">{op.action}</h5>
+                    <div className="space-y-1.5">
+                      <div className="flex items-center gap-4">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 italic">{op.type}</span>
+                        <h5 className="text-lg font-black text-slate-950 italic uppercase leading-none group-hover:text-pink-600 transition-colors">{op.action}</h5>
                       </div>
-                      <p className="text-xs text-slate-400 font-light leading-relaxed italic">
-                        {t('autonomousOps.impact')}: <span className="text-emerald-400 font-bold">{op.impact}</span>
+                      <p className="text-[13px] text-slate-500 font-light leading-relaxed italic tracking-tight">
+                        {t('autonomousOps.impact')}: <span className="text-emerald-600 font-black uppercase">{op.impact}</span>
                       </p>
                     </div>
                   </div>
-                  <div className="text-right flex flex-col items-end gap-3">
+                  <div className="text-right flex flex-col items-end gap-4 min-w-[140px]">
                     <Badge variant="outline" className={cn(
-                      "px-4 py-1 text-[9px] font-black tracking-widest border-white/5 italic",
-                      op.status === 'executing' ? "text-cyan-400 bg-cyan-500/5 animate-pulse" : "text-slate-500 bg-white/5"
+                      "px-5 py-1.5 text-[10px] font-black tracking-widest border-none italic shadow-sm rounded-full",
+                      op.status === 'executing' ? "text-pink-600 bg-pink-50 animate-pulse" : "text-slate-400 bg-slate-50"
                     )}>
                       {op.status === 'executing' ? t('autonomousOps.executingNode') : t('autonomousOps.operationSynced')}
                     </Badge>
-                    <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest">{op.timestamp}</span>
+                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] italic">{op.timestamp}</span>
                   </div>
                 </div>
               </motion.div>
@@ -141,12 +142,12 @@ export function AutonomousOpsLog() {
         </div>
       </CardContent>
 
-      <div className="px-10 lg:p-12 py-6 border-t border-white/5 bg-white/[0.01] flex items-center justify-between">
-        <div className="flex items-center gap-4 text-slate-600">
-          <Layers className="h-4 w-4" />
-          <p className="text-[9px] font-black uppercase tracking-[0.2em] italic">{t('ui.status.activeDecisionMatrix')}</p>
+      <div className="px-10 lg:p-12 py-8 border-t border-slate-50 bg-white flex items-center justify-between">
+        <div className="flex items-center gap-5 text-slate-400">
+          <Layers className="h-5 w-5" />
+          <p className="text-[10px] font-black uppercase tracking-[0.3em] italic">{t('ui.status.activeDecisionMatrix')}</p>
         </div>
-        <p className="text-[9px] font-black text-cyan-500/60 uppercase tracking-widest italic">{t('ui.status.liveNeuralStream')}</p>
+        <p className="text-[10px] font-black text-pink-500/60 uppercase tracking-widest italic bg-pink-50 px-6 py-2 rounded-full shadow-sm">{t('ui.status.liveNeuralStream')}</p>
       </div>
     </Card>
   )

@@ -244,22 +244,22 @@ export function getDefaultLandingPage(userRole: UserRole): string {
     case 'super_admin':
       return '/super-admin';
     case 'center_admin':
-      return '/admin';
     case 'center_owner':
       return '/centers/dashboard';
+    case 'center_staff':
+      return '/beautician/dashboard';
     case 'sales_staff':
       return '/sales/dashboard';
-    case 'center_staff':
-      return '/dashboard';
     case 'customer':
     case 'customer_free':
     case 'customer_premium':
     case 'customer_aesthetic':
+    case 'customer_elite':
     case 'premium_customer':
     case 'free_user':
       return '/dashboard';
     default:
-      return '/';
+      return '/dashboard';
   }
 }
 

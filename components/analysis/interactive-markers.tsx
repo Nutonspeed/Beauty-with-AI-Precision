@@ -1,14 +1,14 @@
+'use client';
+
 /**
  * Interactive Photo Markers
  * Displays clickable concern markers overlaid on skin analysis photo
  */
 
-'use client';
-
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
-import { X, ZoomIn, ZoomOut, Info, Eye, EyeOff } from 'lucide-react';
+import { X, ZoomIn, ZoomOut, Eye, EyeOff, Maximize2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -27,6 +27,7 @@ import {
   formatConcernType,
   getSeverityColor,
 } from '@/lib/concerns/concern-education';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface InteractivePhotoMarkersProps {
   imageUrl: string;
@@ -186,21 +187,22 @@ export function InteractivePhotoMarkers({
       <TooltipProvider key={`${concern.type}-${index}`}>
         <Tooltip open={isHovered}>
           <TooltipTrigger asChild>
-            <button
+            <motion.button
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 0.8 }}
+              whileHover={{ scale: 1.25, opacity: 1 }}
               className={cn(
                 'absolute transform -translate-x-1/2 -translate-y-1/2',
                 'rounded-full border-2 border-white shadow-lg',
                 'transition-all duration-200 cursor-pointer',
-                'hover:scale-125 focus:scale-125 focus:outline-none',
-                isHovered && 'scale-125 ring-4 ring-white/30'
+                isHovered && 'scale-125 ring-4 ring-white/30 z-30'
               )}
               style={{
                 left: `${position.left}px`,
                 top: `${position.top}px`,
-                width: location.radius ? `${location.radius * 2}px` : '20px',
-                height: location.radius ? `${location.radius * 2}px` : '20px',
+                width: location.radius ? `${location.radius * 2}px` : '24px',
+                height: location.radius ? `${location.radius * 2}px` : '24px',
                 backgroundColor: color,
-                opacity: 0.8,
               }}
               onClick={() => handleMarkerClick(concern, location)}
               onMouseEnter={() => handleMarkerHover(concern, location)}
@@ -208,26 +210,34 @@ export function InteractivePhotoMarkers({
               aria-label={`${formatConcernType(concern.type)} marker`}
             >
               <span className="sr-only">{formatConcernType(concern.type)}</span>
-            </button>
+              {isHovered && (
+                <div className="absolute inset-0 rounded-full animate-ping bg-white/20" />
+              )}
+            </motion.button>
           </TooltipTrigger>
           <TooltipContent
             side="top"
-            className="bg-white dark:bg-gray-800 border shadow-lg p-3"
+            className="bg-white border-slate-100 rounded-2xl shadow-premium p-4 min-w-[180px] z-[100]"
           >
-            <div className="flex items-center gap-2">
-              <span className="text-2xl">{concern.education?.icon || '📍'}</span>
-              <div>
-                <div className="font-semibold">{formatConcernType(concern.type)}</div>
-                <div className="text-xs text-gray-500">
-                  {t('confidence', { value: Math.round(location.confidence * 100) })}
+            <div className="flex items-center gap-4">
+              <div className="h-10 w-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-2xl shadow-inner">
+                {concern.education?.icon || '📍'}
+              </div>
+              <div className="space-y-1">
+                <div className="font-black text-slate-950 italic uppercase tracking-tight leading-none">{formatConcernType(concern.type)}</div>
+                <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">
+                  {(t('confidence' as any) || 'Precision: {value}%').replace('{value}', String(Math.round(location.confidence * 100)))}
                 </div>
                 {location.severity && (
                   <Badge
-                    variant="secondary"
-                    className="text-xs mt-1"
-                    style={{ backgroundColor: getSeverityColor(location.severity) }}
+                    className={cn(
+                      "text-[8px] font-black italic border-none shadow-sm px-3 py-0.5 mt-1 rounded-full uppercase leading-none",
+                      location.severity === 'low' ? 'bg-emerald-50 text-emerald-600' :
+                      location.severity === 'medium' ? 'bg-amber-50 text-amber-600' :
+                      'bg-rose-50 text-rose-600'
+                    )}
                   >
-                    {t(location.severity as any)}
+                    {location.severity.toUpperCase()}
                   </Badge>
                 )}
               </div>
@@ -238,95 +248,75 @@ export function InteractivePhotoMarkers({
     );
   };
 
-  // Render concern summary markers (for concerns without specific locations)
-  const renderSummaryMarkers = () => {
-    const concernsWithoutLocations = concerns.filter(
-      c => visibleLayers.has(c.type) && (!c.locations || c.locations.length === 0)
-    );
-
-    if (concernsWithoutLocations.length === 0) return null;
-
-    return (
-      <div className="absolute bottom-4 left-4 space-y-2">
-        {concernsWithoutLocations.map((concern) => (
-          <button
-            key={concern.type}
-            onClick={() => handleMarkerClick(concern)}
-            className={cn(
-              'flex items-center gap-2 px-3 py-2 rounded-lg',
-              'bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm',
-              'border shadow-md hover:shadow-lg transition-all',
-              'hover:scale-105'
-            )}
-          >
-            <span className="text-xl">{concern.education?.icon || '📍'}</span>
-            <div className="text-left">
-              <div className="text-sm font-semibold">{formatConcernType(concern.type)}</div>
-              <div className="text-xs text-gray-500">
-                {t('severity', { value: concern.averageSeverity.toFixed(1) })}
-              </div>
-            </div>
-          </button>
-        ))}
-      </div>
-    );
-  };
-
   return (
-    <div className={cn('relative w-full', className)}>
-      {/* Controls */}
-      <div className="absolute top-4 right-4 z-10 flex flex-col gap-2">
-        {/* Zoom controls */}
+    <div className={cn('relative w-full group/markers animate-in fade-in duration-700', className)}>
+      {/* HUD interface interface */}
+      <div className="absolute top-6 right-6 z-20 flex flex-col gap-4">
+        {/* Zoom interface interface */}
         {enableZoom && (
-          <div className="flex flex-col gap-1 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg p-2 shadow-lg">
+          <div className="flex flex-col gap-2 bg-white/80 backdrop-blur-md border border-white/50 rounded-2xl p-2 shadow-premium group/zoom">
             <Button
               size="icon"
               variant="ghost"
               onClick={handleZoomIn}
               disabled={zoomLevel >= 3}
-              className="h-8 w-8"
+              className="h-10 w-10 rounded-xl hover:bg-pink-50 hover:text-pink-600 transition-all shadow-inner"
             >
-              <ZoomIn className="h-4 w-4" />
+              <ZoomIn className="h-5 w-5" />
             </Button>
+            <div className="h-px w-6 mx-auto bg-slate-100" />
             <Button
               size="icon"
               variant="ghost"
               onClick={handleZoomOut}
               disabled={zoomLevel <= 1}
-              className="h-8 w-8"
+              className="h-10 w-10 rounded-xl hover:bg-pink-50 hover:text-pink-600 transition-all shadow-inner"
             >
-              <ZoomOut className="h-4 w-4" />
+              <ZoomOut className="h-5 w-5" />
             </Button>
-            {zoomLevel > 1 && (
-              <Button
-                size="icon"
-                variant="ghost"
-                onClick={handleResetZoom}
-                className="h-8 w-8"
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            )}
+            <AnimatePresence>
+              {zoomLevel > 1 && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  className="mt-2"
+                >
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    onClick={handleResetZoom}
+                    className="h-10 w-10 rounded-xl border-slate-200 bg-white text-slate-400 hover:text-pink-600 transition-all shadow-sm"
+                  >
+                    <X className="h-5 w-5" />
+                  </Button>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         )}
 
-        {/* Layer toggle */}
+        {/* Layer toggle interface */}
         {enableLayerToggle && (
-          <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg p-2 shadow-lg">
+          <div className="bg-white/80 backdrop-blur-md border border-white/50 rounded-2xl p-2 shadow-premium flex flex-col gap-2">
             <Button
               size="icon"
               variant="ghost"
               onClick={toggleAllLayers}
-              className="h-8 w-8 mb-1"
-              title={visibleLayers.size > 0 ? t('hideAllLayers') : t('showAllLayers')}
+              className={cn(
+                "h-10 w-10 rounded-xl transition-all shadow-inner",
+                visibleLayers.size > 0 ? "text-pink-600 bg-pink-50" : "text-slate-300"
+              )}
+              title={visibleLayers.size > 0 ? t('hideAllLayers' as any) : t('showAllLayers' as any)}
             >
               {visibleLayers.size > 0 ? (
-                <Eye className="h-4 w-4" />
+                <Eye className="h-5 w-5" />
               ) : (
-                <EyeOff className="h-4 w-4" />
+                <EyeOff className="h-5 w-5" />
               )}
             </Button>
-            <div className="space-y-1">
+            <div className="h-px w-6 mx-auto bg-slate-100" />
+            <div className="space-y-2 max-h-[200px] overflow-y-auto scrollbar-hide py-1">
               {concerns.map((concern) => (
                 <Button
                   key={concern.type}
@@ -334,17 +324,13 @@ export function InteractivePhotoMarkers({
                   variant="ghost"
                   onClick={() => toggleLayer(concern.type)}
                   className={cn(
-                    'h-8 w-8',
-                    !visibleLayers.has(concern.type) && 'opacity-40'
+                    'h-10 w-10 rounded-xl transition-all duration-500 shadow-sm relative overflow-hidden',
+                    !visibleLayers.has(concern.type) ? 'opacity-30 grayscale' : 'bg-white hover:bg-slate-50'
                   )}
-                  style={{
-                    color: visibleLayers.has(concern.type)
-                      ? concern.education?.color
-                      : undefined,
-                  }}
                   title={formatConcernType(concern.type)}
                 >
-                  <span className="text-lg">{concern.education?.icon || '📍'}</span>
+                  <div className="absolute inset-0 bg-white/50 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <span className="text-xl relative z-10">{concern.education?.icon || '📍'}</span>
                 </Button>
               ))}
             </div>
@@ -352,21 +338,34 @@ export function InteractivePhotoMarkers({
         )}
       </div>
 
-      {/* Info badge */}
-      <div className="absolute top-4 left-4 z-10">
-        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm shadow-lg">
-          <Info className="h-4 w-4 text-blue-600" />
-          <span className="text-sm font-medium">
-            {t('concernsDetected', { count: concerns.filter(c => visibleLayers.has(c.type)).length })}
+      {/* Analytics interface Overlay interface */}
+      <div className="absolute top-6 left-6 z-20 flex flex-col gap-4 pointer-events-none">
+        <div className="flex items-center gap-4 px-6 py-2.5 rounded-full bg-white/80 backdrop-blur-md border border-white/50 shadow-premium">
+          <div className="h-2 w-2 rounded-full bg-pink-500 animate-pulse shadow-glow-pink" />
+          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-950 italic">
+            {(t('concernsDetected' as any) || '{count} Delta Nodes Active').replace('{count}', String(concerns.filter(c => visibleLayers.has(c.type)).length))}
           </span>
         </div>
+        <AnimatePresence>
+          {zoomLevel > 1 && (
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="flex items-center gap-4 px-6 py-2.5 rounded-full bg-slate-950/80 backdrop-blur-md border border-white/10 shadow-2xl text-white"
+            >
+              <Maximize2 className="h-4 w-4 text-pink-500" />
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] italic leading-none">Magnification: {zoomLevel.toFixed(1)}X</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
-      {/* Image container */}
+      {/* Core Imaging Node interface */}
       <div
         ref={containerRef}
         className={cn(
-          'relative overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800',
+          'relative overflow-hidden rounded-[3.5rem] border-4 border-white bg-slate-50 shadow-premium transition-all duration-700',
           zoomLevel > 1 && 'cursor-move'
         )}
         style={{
@@ -378,18 +377,21 @@ export function InteractivePhotoMarkers({
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
       >
-        {/* Image */}
+        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.03] pointer-events-none z-10" />
+        
+        {/* Imaging Asset interface */}
         <div
           style={{
             transform: `scale(${zoomLevel}) translate(${pan.x / zoomLevel}px, ${pan.y / zoomLevel}px)`,
             transformOrigin: 'center',
-            transition: isPanning ? 'none' : 'transform 0.2s ease-out',
+            transition: isPanning ? 'none' : 'transform 0.3s cubic-bezier(0.2, 0, 0.2, 1)',
           }}
+          className="relative w-full h-full"
         >
           <Image
             ref={imageRef as any}
             src={imageUrl}
-            alt={imageAlt || t('imageAlt')}
+            alt={imageAlt || t('imageAlt' as any) || "Dermal node capture"}
             fill
             className="object-contain"
             onLoad={(e) => {
@@ -401,40 +403,69 @@ export function InteractivePhotoMarkers({
             }}
           />
 
-          {/* Markers */}
-          {concerns.map((concern) =>
-            concern.locations.map((location, index) =>
-              renderMarker(concern, location, index)
-            )
-          )}
+          {/* Neural Marker interface */}
+          <div className="absolute inset-0 z-20">
+            {concerns.map((concern) =>
+              concern.locations.map((location, index) =>
+                renderMarker(concern, location, index)
+              )
+            )}
+          </div>
         </div>
 
-        {/* Summary markers */}
-        {renderSummaryMarkers()}
+        {/* Summary Overlay interface (for concerns without specific locations) */}
+        <div className="absolute bottom-10 left-10 z-20 flex flex-col gap-4">
+          <AnimatePresence>
+            {concerns.filter(c => visibleLayers.has(c.type) && (!c.locations || c.locations.length === 0)).map((concern, idx) => (
+              <motion.button
+                key={concern.type}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ delay: idx * 0.1 }}
+                onClick={() => handleMarkerClick(concern)}
+                className="flex items-center gap-6 p-6 rounded-[2.5rem] bg-white/90 backdrop-blur-xl border border-white shadow-premium group/sum hover:scale-105 transition-all duration-500"
+              >
+                <div className="h-14 w-14 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-3xl shadow-inner group-hover/sum:bg-pink-50 transition-colors">
+                  {concern.education?.icon || '📍'}
+                </div>
+                <div className="text-left space-y-1 pr-4">
+                  <div className="text-xl font-black text-slate-950 italic uppercase tracking-tighter group-hover/sum:text-pink-600 transition-colors leading-none">{formatConcernType(concern.type)}</div>
+                  <div className="flex items-center gap-3">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">{(t('severity' as any) || 'DELTA_IDX')}: {concern.averageSeverity.toFixed(1)}th</p>
+                    <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse shadow-glow-emerald" />
+                  </div>
+                </div>
+              </motion.button>
+            ))}
+          </AnimatePresence>
+        </div>
       </div>
 
-      {/* Legend */}
-      <div className="mt-4 flex flex-wrap gap-2">
-        {concerns.map((concern) => (
-          <button
+      {/* Legend interface interface */}
+      <div className="mt-8 flex flex-wrap gap-4 px-4">
+        {concerns.map((concern, idx) => (
+          <motion.button
             key={concern.type}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: idx * 0.05 }}
             onClick={() => toggleLayer(concern.type)}
             className={cn(
-              'flex items-center gap-2 px-3 py-1.5 rounded-full text-sm',
-              'border transition-all hover:scale-105',
+              'flex items-center gap-4 px-6 py-2.5 rounded-full text-[10px] font-black italic uppercase tracking-widest border transition-all duration-500 shadow-sm',
               visibleLayers.has(concern.type)
-                ? 'bg-white dark:bg-gray-800 shadow'
-                : 'bg-gray-100 dark:bg-gray-900 opacity-50'
+                ? 'bg-white border-slate-200 text-slate-950 hover:border-pink-500/20'
+                : 'bg-slate-50 border-transparent text-slate-300 opacity-40 hover:opacity-100 grayscale'
             )}
           >
-            <span className="text-lg">{concern.education?.icon || '📍'}</span>
-            <span className="font-medium">{formatConcernType(concern.type)}</span>
+            <span className="text-xl">{concern.education?.icon || '📍'}</span>
+            <span className="group-hover:text-pink-600 transition-colors">{formatConcernType(concern.type)}</span>
             {concern.locations.length > 0 && (
-              <Badge variant="secondary" className="text-xs">
+              <Badge className="bg-slate-950 text-white border-none rounded-full px-2 h-5 text-[8px] font-black leading-none flex items-center justify-center">
                 {concern.locations.length}
               </Badge>
             )}
-          </button>
+          </motion.button>
         ))}
       </div>
     </div>

@@ -1,5 +1,4 @@
 "use client"
-// responsive-design
 
 import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -29,8 +28,8 @@ import {
   UserCog, 
   Zap, 
   ArrowRight, 
-  Monitor, 
-  LayoutDashboard 
+  Monitor,
+  PlusCircle
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
@@ -39,6 +38,7 @@ import { UserManagementTable } from "@/components/admin/user-management-table"
 import { ChannelSubscriber } from "@/components/realtime/ChannelSubscriber"
 import { channels } from "@/lib/realtime/channels"
 import { toast } from "sonner"
+import { useLocalizePath } from "@/lib/i18n/locale-link"
 
 interface AdminDashboardClientProps {
   stats: {
@@ -52,12 +52,14 @@ interface AdminDashboardClientProps {
 
 export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientProps) {
   const t = useTranslations()
+  const lp = useLocalizePath()
   const [searchQuery, setSearchQuery] = useState("")
+  const [activeTab, setActiveTab] = useState("users")
 
   const handleRealtimeMessage = (msg: { type: string; data?: any }) => {
     if (msg.type === 'MAINTENANCE') {
-      toast.warning(t('adminDashboard.maintenance'), {
-        description: msg.data?.message || t('adminDashboard.scheduled'),
+      toast.warning(t('adminDashboard.maintenance' as any) || 'System Maintenance', {
+        description: msg.data?.message || t('adminDashboard.scheduled' as any) || 'A scheduled synchronization is pending.',
       });
     }
   };
@@ -66,376 +68,381 @@ export function AdminDashboardClient({ stats, bookings }: AdminDashboardClientPr
     switch (status) {
       case "confirmed":
         return (
-          <Badge className="bg-green-500/10 text-green md:text-green-700 border-green-500/20" variant="outline">
-            <CheckCircle2 className="mr-1 h-3 w-3" />
-            {t('adminDashboard.status.confirmed')}
+          <Badge className="bg-emerald-50 text-emerald-600 border-none rounded-full px-4 py-1 text-[10px] font-black uppercase tracking-widest italic shadow-sm" variant="outline">
+            <CheckCircle2 className="mr-2 h-3.5 w-3.5" />
+            {t('adminDashboard.status.confirmed' as any) || 'Synchronized'}
           </Badge>
         )
       case "pending":
         return (
-          <Badge className="bg-yellow-500/10 text-yellow md:text-yellow-700 border-yellow-500/20" variant="outline">
-            <Clock className="mr-1 h-3 w-3" />
-            {t('adminDashboard.status.pending')}
+          <Badge className="bg-amber-50 text-amber-600 border-none rounded-full px-4 py-1 text-[10px] font-black uppercase tracking-widest italic shadow-sm" variant="outline">
+            <Clock className="mr-2 h-3.5 w-3.5" />
+            {t('adminDashboard.status.pending' as any) || 'Awaiting_Sync'}
           </Badge>
         )
       case "cancelled":
         return (
-          <Badge className="bg-red-500/10 text-red md:text-red-700 border-red-500/20" variant="outline">
-            <XCircle className="mr-1 h-3 w-3" />
-            {t('adminDashboard.status.cancelled')}
+          <Badge className="bg-rose-50 text-rose-600 border-none rounded-full px-4 py-1 text-[10px] font-black uppercase tracking-widest italic shadow-sm" variant="outline">
+            <XCircle className="mr-2 h-3.5 w-3.5" />
+            {t('adminDashboard.status.cancelled' as any) || 'De-Authorized'}
           </Badge>
         )
       default:
-        return <Badge variant="outline">{status}</Badge>
+        return <Badge variant="outline" className="rounded-full px-4 py-1 text-[10px] font-black uppercase italic">{status}</Badge>
     }
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#020617] text-slate-200 selection:bg-pink-500/30">
-      {/* Realtime maintenance alerts subscription */}
+    <div className="space-y-16 animate-in fade-in duration-700">
       <ChannelSubscriber
         channels={[channels.system.maintenance]}
         onMessage={handleRealtimeMessage}
       />
-      
-      <main className="flex-1 relative overflow-hidden flex flex-col">
-        {/* Infrastructure Background */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-pink-500/5 rounded-full blur-[120px] animate-glow-pulse" />
-          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-500/5 rounded-full blur-[100px] animate-float" />
-          <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.02]" />
-        </div>
 
-        <div className="container relative z-10 py-12 md:py-20 px-6 space-y-16 max-w-7xl mx-auto flex-1">
-          {/* Dashboard Welcome Header */}
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="space-y-6 pb-12 border-b border-white/5"
+      {/* Primary Metrics */}
+      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+        {[
+          { label: t('adminDashboard.metrics.syncCycles' as any) || 'System Cycles', val: stats?.totalBookings || 0, sub: t('adminDashboard.globalBookings' as any) || 'Global Sequence Load', icon: Calendar, color: 'text-pink-600', bg: 'bg-pink-50' },
+          { label: t('adminDashboard.metrics.verifiedEntities' as any) || 'Verified Entities', val: stats?.activeCustomers || 0, sub: t('adminDashboard.activeCustomers' as any) || 'Identity Nodes', icon: Users, color: 'text-blue-600', bg: 'bg-blue-50' },
+          { label: t('adminDashboard.metrics.grossInflow' as any) || 'Global Inflow', val: `฿${(stats?.revenue || 0).toLocaleString()}`, sub: t('adminDashboard.monthlyRevenue' as any) || 'Gross Yield MTD', icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+          { label: t('adminDashboard.metrics.conversionVelocity' as any) || 'Inference Velocity', val: `${stats?.conversionRate || 0}%`, sub: t('adminDashboard.efficiencyIndex' as any) || 'Efficiency Coefficient', icon: TrendingUp, color: 'text-purple-600', bg: 'bg-purple-50' }
+        ].map((stat, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.1 }}
           >
-            <Badge variant="outline" className="px-4 py-1 rounded-full border-pink-500/30 text-pink-400 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.2em] text-[10px] font-black shadow-2xl shadow-pink-500/10">
-              <LayoutDashboard className="mr-3 h-3.5 w-3.5 animate-pulse" />
-              {t('adminDashboard.orchestration')}
-            </Badge>
-            <h1 className="text-5xl md:text-8xl font-bold tracking-tighter text-white leading-[0.9] italic">
-              {t('nav.admin')}<br />
-              <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent not-italic font-black uppercase tracking-tight">Intelligence</span>
-            </h1>
-            <p className="text-xl text-slate-500 font-light tracking-widest max-w-2xl italic leading-relaxed">
-              {t('adminDashboard.commandDesc')}
-            </p>
+            <Card className="border-slate-100 bg-white shadow-premium rounded-[3rem] transition-all duration-700 hover:border-pink-500/20 group relative overflow-hidden h-full">
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/10 to-transparent" />
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 p-10 pb-6">
+                <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 italic group-hover:text-slate-900 transition-colors">{stat.label}</CardTitle>
+                <div className={cn("p-3 rounded-2xl border border-slate-50 shadow-inner group-hover:scale-110 transition-transform duration-700", stat.bg)}>
+                  <stat.icon className={cn("h-5 w-5", stat.color)} />
+                </div>
+              </CardHeader>
+              <CardContent className="p-10 pt-0">
+                <div className="text-4xl font-black text-slate-950 tracking-tighter italic uppercase">{stat.val}</div>
+                <p className="text-[9px] font-black uppercase tracking-widest mt-4 text-slate-400 italic group-hover:text-slate-600 transition-colors">{stat.sub}</p>
+              </CardContent>
+            </Card>
           </motion.div>
+        ))}
+      </div>
 
-          {/* Core Metrics Grid - Infrastructure Nodes */}
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {[
-              { label: t('adminDashboard.metrics.syncCycles'), val: stats?.totalBookings || 0, sub: t('adminDashboard.globalBookings'), icon: Calendar, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-              { label: t('adminDashboard.metrics.verifiedEntities'), val: stats?.activeCustomers || 0, sub: t('adminDashboard.activeCustomers'), icon: Users, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
-              { label: t('adminDashboard.metrics.grossInflow'), val: `฿${(stats?.revenue || 0).toLocaleString()}`, sub: t('adminDashboard.monthlyRevenue'), icon: DollarSign, color: 'text-pink-400', bg: 'bg-pink-500/10' },
-              { label: t('adminDashboard.metrics.conversionVelocity'), val: `${stats?.conversionRate || 0}%`, sub: t('adminDashboard.efficiencyIndex'), icon: TrendingUp, color: 'text-cyan-400', bg: 'bg-cyan-500/10' }
-            ].map((stat, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
-              >
-                <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2rem] hover:bg-white/[0.03] transition-all duration-500 group shadow-2xl relative overflow-hidden">
-                  <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-                    <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 italic">{stat.label}</CardTitle>
-                    <div className={cn("p-2 rounded-lg border border-white/5 shadow-inner group-hover:scale-110 transition-transform duration-700", stat.bg)}>
-                      <stat.icon className={cn("h-4 w-4", stat.color)} />
+      {/* Control Infrastructure */}
+      <div className="space-y-10">
+        <div className="flex items-center justify-between border-b border-slate-100 pb-8 px-6">
+          <h2 className="text-3xl font-black text-slate-950 italic tracking-tighter flex items-center gap-6 uppercase leading-none">
+            <div className="p-3 bg-pink-50 rounded-2xl border border-pink-100 shadow-sm">
+              <Wrench className="h-8 w-8 text-pink-600" />
+            </div>
+            {t('adminDashboard.controlCenter' as any) || 'Command_Orchestration_Hub'}
+          </h2>
+          <Badge variant="outline" className="px-6 py-2 rounded-full border-slate-100 text-slate-400 bg-slate-50 text-[10px] font-black uppercase tracking-[0.3em] italic">{t('adminDashboard.globalNodeAccess' as any) || 'Global_Node_Interface'}</Badge>
+        </div>
+        
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            { label: 'Personnel Registry', sub: 'Identity Access Management', href: '/admin/users', icon: UserCog, color: 'text-blue-600', bg: 'bg-blue-50' },
+            { label: 'Center Topology', sub: 'Network Node Allocation', href: '/admin/centers', icon: Building2, color: 'text-purple-600', bg: 'bg-purple-50' },
+            { label: 'Security Matrix', sub: 'Threat Detection Sequence', href: '/admin/health', icon: Shield, color: 'text-rose-600', bg: 'bg-rose-50' },
+            { label: 'Audit Ledger', sub: 'Immutable Activity Stream', href: '/admin/logs', icon: FileText, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+            { label: 'Sync Stream', sub: 'Real-time WebSocket Pipeline', href: '/admin/system-status', icon: Radio, color: 'text-cyan-600', bg: 'bg-cyan-50' },
+            { label: 'Protocol Refinement', sub: 'Core Logic Optimization', href: '/admin/settings', icon: Wrench, color: 'text-orange-600', bg: 'bg-orange-50' },
+            { label: 'Neural Analytics', sub: 'Deep Ingestion Matrix', href: '/admin/analytics', icon: TrendingUp, color: 'text-indigo-600', bg: 'bg-indigo-50' },
+            { label: 'Global Broadcast', sub: 'Multicast Event Relay', href: '/admin/settings', icon: Megaphone, color: 'text-pink-600', bg: 'bg-pink-50' }
+          ].map((tool, i) => (
+            <motion.div key={i} whileHover={{ y: -8, scale: 1.02 }} transition={{ duration: 0.5 }}>
+              <Link href={lp(tool.href)}>
+                <Card className="cursor-pointer border-slate-100 bg-white shadow-premium rounded-[2.5rem] hover:border-pink-500/20 transition-all duration-700 group overflow-hidden relative h-full">
+                  <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <CardContent className="p-8 space-y-8 flex flex-col justify-between h-full">
+                    <div className="flex items-center gap-6">
+                      <div className={cn("h-16 w-16 rounded-2xl flex items-center justify-center border border-slate-50 shadow-inner transition-all duration-700 group-hover:scale-110 group-hover:bg-white", tool.bg)}>
+                        <tool.icon className={cn("h-8 w-8", tool.color)} />
+                      </div>
+                      <div className="space-y-1 flex-1">
+                        <p className="text-xl font-black text-slate-950 italic uppercase tracking-tighter leading-none">{tool.label}</p>
+                        <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 italic">{tool.sub}</p>
+                      </div>
                     </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-3xl font-black text-white tracking-tighter italic">{stat.val}</div>
-                    <p className="text-[9px] font-black uppercase tracking-widest mt-2 text-slate-500 italic">{stat.sub}</p>
+                    <div className="flex items-center justify-end">
+                      <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl bg-slate-50 text-slate-300 group-hover:bg-pink-50 group-hover:text-pink-600 transition-all">
+                        <ArrowRight className="h-5 w-5" />
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Tactical Control Hub */}
-          <div className="space-y-10">
-            <div className="flex items-center justify-between border-b border-white/5 pb-6">
-              <h2 className="text-2xl font-bold text-white tracking-tight italic flex items-center gap-4">
-                <Wrench className="h-6 w-6 text-pink-500" />
-                {t('adminDashboard.controlCenter')}
-              </h2>
-              <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-600 italic">{t('adminDashboard.globalNodeAccess')}</p>
-            </div>
-            
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {[
-                { label: t('adminDashboard.tools.personnelRegistry.label'), sub: t('adminDashboard.tools.personnelRegistry.sub'), href: '/admin/users', icon: UserCog, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-                { label: t('adminDashboard.tools.centerUplinks.label'), sub: t('adminDashboard.tools.centerUplinks.sub'), href: '/super-admin', icon: Building2, color: 'text-purple-400', bg: 'bg-purple-500/10' },
-                { label: t('adminDashboard.tools.securityMatrix.label'), sub: t('adminDashboard.tools.securityMatrix.sub'), href: '/super-admin', icon: Shield, color: 'text-rose-400', bg: 'bg-rose-500/10' },
-                { label: t('adminDashboard.tools.auditLedger.label'), sub: t('adminDashboard.tools.auditLedger.sub'), href: '/super-admin', icon: FileText, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
-                { label: t('adminDashboard.tools.syncStream.label'), sub: t('adminDashboard.tools.syncStream.sub'), href: '/super-admin', icon: Radio, color: 'text-cyan-400', bg: 'bg-cyan-500/10' },
-                { label: t('adminDashboard.tools.databaseFlux.label'), sub: t('adminDashboard.tools.databaseFlux.sub'), href: '/super-admin', icon: Wrench, color: 'text-orange-400', bg: 'bg-orange-500/10', dev: true },
-                { label: t('adminDashboard.tools.globalBroadcast.label'), sub: t('adminDashboard.tools.globalBroadcast.sub'), href: '/super-admin', icon: Megaphone, color: 'text-pink-400', bg: 'bg-pink-500/10' },
-                { label: t('adminDashboard.tools.neuralAnalytics.label'), sub: t('adminDashboard.tools.neuralAnalytics.sub'), href: '/super-admin', icon: TrendingUp, color: 'text-indigo-400', bg: 'bg-indigo-500/10' }
-              ].map((tool, i) => (
-                <motion.div key={i} whileHover={{ y: -5 }} transition={{ duration: 0.3 }}>
-                  <Link href={tool.href}>
-                    <Card className="cursor-pointer border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2.5rem] hover:bg-white/[0.03] hover:border-pink-500/20 transition-all duration-500 group overflow-hidden relative shadow-xl h-full">
-                      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
-                      <CardContent className="p-8">
-                        <div className="flex items-center gap-6">
-                          <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center border border-white/5 shadow-inner transition-transform duration-700 group-hover:scale-110", tool.bg)}>
-                            <tool.icon className={cn("h-6 w-6", tool.color)} />
-                          </div>
-                          <div>
-                            <p className="text-lg font-bold text-white italic tracking-tight group-hover:text-pink-400 transition-colors">{tool.label}</p>
-                            <div className="flex items-center gap-3 mt-1">
-                              <p className="text-[9px] font-black uppercase tracking-widest text-slate-600">{tool.sub}</p>
-                              {tool.dev && <Badge className="bg-orange-500/10 text-orange-400 border-none text-[7px] font-black italic rounded-full px-2">DEV_MODE</Badge>}
-                            </div>
-                          </div>
-                        </div>
-                        <div className="mt-6 flex items-center justify-end">
-                          <ArrowRight className="h-4 w-4 text-slate-700 group-hover:text-pink-500 transition-all group-hover:translate-x-1" />
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-
-          {/* Comprehensive Management Interface */}
-          <div className="pt-10">
-            <Tabs defaultValue="users" className="space-y-10">
-              <div className="flex items-center justify-center">
-                <TabsList className="bg-white/[0.02] border border-white/5 p-1.5 rounded-2xl h-auto gap-2 flex-wrap justify-center">
-                  {[
-                    { value: 'users', label: t('adminDashboard.tabs.identityRegistry') },
-                    { value: 'bookings', label: t('adminDashboard.tabs.processCycles') },
-                    { value: 'centers', label: t('adminDashboard.tabs.nodeTopology') },
-                    { value: 'analytics', label: t('adminDashboard.tabs.inferenceMatrix') }
-                  ].map((tab) => (
-                    <TabsTrigger 
-                      key={tab.value} 
-                      value={tab.value} 
-                      className="rounded-xl px-10 py-4 data-[state=active]:bg-pink-600 data-[state=active]:text-white transition-all font-black uppercase tracking-[0.2em] text-[10px] italic h-full"
-                    >
-                      {tab.label}
-                    </TabsTrigger>
-                  ))}
-                </TabsList>
-              </div>
-
-              <AnimatePresence mode="wait">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <TabsContent value="users" className="mt-0 outline-none">
-                    <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3.5rem] overflow-hidden shadow-2xl relative">
-                      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-                      <CardHeader className="p-12 pb-6 border-b border-white/5">
-                        <CardTitle className="text-3xl font-black text-white italic tracking-tighter uppercase">{t('adminDashboard.management.identityTitle')}</CardTitle>
-                        <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('adminDashboard.management.identityDesc')}</CardDescription>
-                      </CardHeader>
-                      <CardContent className="p-0">
-                        <UserManagementTable />
-                      </CardContent>
-                    </Card>
-                  </TabsContent>
-
-                  <TabsContent value="bookings" className="mt-0 outline-none">
-                    <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3.5rem] overflow-hidden shadow-2xl relative">
-                      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-                      <CardHeader className="p-12 pb-6 border-b border-white/5">
-                        <CardTitle className="text-3xl font-black text-white italic tracking-tighter uppercase">{t('adminDashboard.management.processTitle')}</CardTitle>
-                        <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('adminDashboard.management.processDesc')}</CardDescription>
-                      </CardHeader>
-                      <CardContent className="p-0">
-                        <div className="overflow-x-auto">
-                          <Table>
-                            <TableHeader>
-                              <TableRow className="bg-white/[0.02] border-b border-white/5">
-                                <TableHead className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('adminDashboard.table.identityNode')}</TableHead>
-                                <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('adminDashboard.table.programType')}</TableHead>
-                                <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('adminDashboard.table.temporalStamp')}</TableHead>
-                                <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('adminDashboard.table.syncTime')}</TableHead>
-                                <TableHead className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('adminDashboard.table.authStatus')}</TableHead>
-                                <TableHead className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic"></TableHead>
-                              </TableRow>
-                            </TableHeader>
-                            <TableBody className="divide-y divide-white/5">
-                              {bookings.map((booking: any) => (
-                                <TableRow key={booking.id} className="group/row transition-all duration-500 hover:bg-white/[0.03]">
-                                  <TableCell className="px-10 py-8">
-                                    <div className="text-base font-bold text-white italic group-hover/row:text-pink-400 transition-colors uppercase tracking-tight">{booking.user?.full_name || booking.user?.email || 'UNDEFINED_ENTITY'}</div>
-                                  </TableCell>
-                                  <TableCell className="px-8 py-8">
-                                    <Badge variant="outline" className="bg-white/[0.02] border-white/10 text-slate-400 text-[10px] font-black rounded-lg px-4 py-1 italic uppercase tracking-widest">{booking.program_type}</Badge>
-                                  </TableCell>
-                                  <TableCell className="px-8 py-8 text-slate-300 font-bold italic">{booking.booking_date}</TableCell>
-                                  <TableCell className="px-8 py-8 font-mono text-xs text-slate-500">{booking.booking_time}</TableCell>
-                                  <TableCell className="px-8 py-8">{getStatusBadge(booking.status)}</TableCell>
-                                  <TableCell className="px-10 py-8 text-right">
-                                    <DropdownMenu>
-                                      <DropdownMenuTrigger asChild>
-                                        <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl hover:bg-white/10 text-slate-500">
-                                          <MoreVertical className="h-5 w-5" />
-                                        </Button>
-                                      </DropdownMenuTrigger>
-                                      <DropdownMenuContent align="end" className="bg-[#020617] border-white/10 rounded-2xl p-2 min-w-[180px]">
-                                        <DropdownMenuItem className="rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-pink-600 focus:text-white transition-colors">{t('adminDashboard.dropdown.viewDetails')}</DropdownMenuItem>
-                                        <DropdownMenuItem className="rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-pink-600 focus:text-white transition-colors">{t('adminDashboard.dropdown.refineParameters')}</DropdownMenuItem>
-                                        <DropdownMenuItem className="rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-pink-600 focus:text-white transition-colors text-emerald-400">{t('adminDashboard.dropdown.verifyNode')}</DropdownMenuItem>
-                                        <DropdownMenuItem className="rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-rose-600 focus:text-white transition-colors text-rose-500">{t('adminDashboard.dropdown.decommission')}</DropdownMenuItem>
-                                      </DropdownMenuContent>
-                                    </DropdownMenu>
-                                  </TableCell>
-                                </TableRow>
-                              ))}
-                            </TableBody>
-                          </Table>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </TabsContent>
-
-                  <TabsContent value="centers" className="mt-6">
-                    <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3.5rem] overflow-hidden shadow-2xl relative">
-                      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-                      <CardHeader className="p-12 border-b border-white/5">
-                        <div className="flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">
-                          <div className="space-y-2">
-                            <CardTitle className="text-3xl font-black text-white italic tracking-tighter uppercase">{t('adminDashboard.management.topologyTitle')}</CardTitle>
-                            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('adminDashboard.management.topologyDesc')}</CardDescription>
-                          </div>
-                          <div className="flex gap-3">
-                            <div className="relative group">
-                              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-600 group-focus-within:text-pink-500 transition-colors" />
-                              <Input 
-                                placeholder={t('adminDashboard.searchPlaceholder')} 
-                                className="h-14 pl-12 pr-6 rounded-2xl border-white/5 bg-white/[0.03] text-white placeholder:text-slate-700 focus:border-pink-500/30 focus:ring-pink-500/20 transition-all font-bold italic w-[240px]" 
-                                value={searchQuery} 
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)} 
-                              />
-                            </div>
-                            <Button variant="premium" className="h-14 px-8 rounded-2xl shadow-2xl shadow-pink-500/20 text-[10px] font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95 border">
-                              {t('adminDashboard.management.initializeNode')}
-                            </Button>
-                          </div>
-                        </div>
-                      </CardHeader>
-                      <CardContent className="p-20 text-center space-y-6">
-                        <Monitor className="w-16 h-16 text-slate-700 mx-auto mb-6 opacity-20" />
-                        <p className="text-xl font-bold text-slate-500 italic uppercase tracking-widest">{t('adminDashboard.management.syncing')}</p>
-                        <p className="text-sm text-slate-600 font-light italic leading-relaxed">{t('adminDashboard.management.awaitingTelemetry')}</p>
-                      </CardContent>
-                    </Card>
-                  </TabsContent>
-
-                  <TabsContent value="analytics" className="mt-0 outline-none">
-                    <div className="grid gap-10 md:grid-cols-2">
-                      <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group">
-                        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
-                        <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
-                          <CardTitle className="text-2xl font-bold text-white tracking-tight italic">{t('aiAnalyticsDashboard.popularityMatrix')}</CardTitle>
-                        </CardHeader>
-                        <CardContent className="p-10 lg:p-12 space-y-10">
-                          {[
-                            { name: "Botox Program", count: 45, percentage: 35, color: 'from-blue-500 to-indigo-600' },
-                            { name: "Dermal Inflow", count: 38, percentage: 30, color: 'from-purple-500 to-pink-600' },
-                            { name: "Neural Laser Grid", count: 28, percentage: 22, color: 'from-cyan-500 to-blue-600' },
-                            { name: "Chemical Dermal Layer", count: 17, percentage: 13, color: 'from-amber-500 to-orange-600' },
-                          ].map((program, index) => (
-                            <div key={index} className="space-y-4 group/item">
-                              <div className="flex items-center justify-between">
-                                <span className="text-[10px] font-black text-slate-400 group-hover/item:text-white transition-colors uppercase tracking-widest italic">{program.name}</span>
-                                <span className="text-lg font-black text-white italic tracking-tighter">{program.count} <span className="text-[9px] text-slate-600 not-italic ml-1">{t('aiAnalyticsDashboard.cycles')}</span></span>
-                              </div>
-                              <div className="relative h-1.5 w-full bg-white/[0.02] rounded-full overflow-hidden border border-white/5">
-                                <motion.div
-                                  initial={{ width: 0 }}
-                                  animate={{ width: `${program.percentage}%` }}
-                                  transition={{ duration: 1.5, delay: index * 0.1 }}
-                                  className={cn("h-full rounded-full bg-gradient-to-r", program.color)}
-                                  style={{ boxShadow: `0 0 15px rgba(236,72,153,0.3)` }}
-                                />
-                              </div>
-                            </div>
-                          ))}
-                        </CardContent>
-                      </Card>
-
-                      <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group">
-                        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent" />
-                        <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
-                          <CardTitle className="text-2xl font-bold text-white tracking-tight italic">{t('aiAnalyticsDashboard.revenueBreakdown')}</CardTitle>
-                        </CardHeader>
-                        <CardContent className="p-10 lg:p-12 space-y-10">
-                          {[
-                            { category: "Aesthetic Protocols", amount: "฿180K", percentage: 73, color: 'from-emerald-500 to-teal-600' },
-                            { category: "Consultation Uplink", amount: "฿35K", percentage: 14, color: 'from-blue-500 to-cyan-600' },
-                            { category: "Dermal Products", amount: "฿30K", percentage: 13, color: 'from-pink-500 to-rose-600' },
-                          ].map((item, index) => (
-                            <div key={index} className="space-y-4 group/item">
-                              <div className="flex items-center justify-between">
-                                <span className="text-[10px] font-black text-slate-400 group-hover/item:text-white transition-colors uppercase tracking-widest italic">{item.category} {t('aiAnalyticsDashboard.vector')}</span>
-                                <span className="text-lg font-black text-white italic tracking-tighter">{item.amount}</span>
-                              </div>
-                              <div className="relative h-1.5 w-full bg-white/[0.02] rounded-full overflow-hidden border border-white/5">
-                                <motion.div
-                                  initial={{ width: 0 }}
-                                  animate={{ width: `${item.percentage}%` }}
-                                  transition={{ duration: 1.5, delay: index * 0.1 }}
-                                  className={cn("h-full rounded-full bg-gradient-to-r", item.color)}
-                                  style={{ boxShadow: `0 0 15px rgba(16,185,129,0.3)` }}
-                                />
-                              </div>
-                            </div>
-                          ))}
-                        </CardContent>
-                      </Card>
-
-                      <Card className="md:col-span-2 border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group">
-                        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/20 to-transparent" />
-                        <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
-                          <CardTitle className="text-2xl font-bold text-white tracking-tight italic">{t('aiAnalyticsDashboard.activityStream')}</CardTitle>
-                        </CardHeader>
-                        <CardContent className="p-10 lg:p-12">
-                          <div className="space-y-8">
-                            {[
-                              { action: t('aiAnalyticsDashboard.actions.newCycle'), entity: "Sarah Johnson", time: "5m ago", icon: Zap, color: 'text-blue-400' },
-                              { action: t('aiAnalyticsDashboard.actions.inflowVerified'), entity: "Michael Chen", time: "1h ago", icon: DollarSign, color: 'text-emerald-400' },
-                              { action: t('aiAnalyticsDashboard.actions.protocolTerminated'), entity: "Emma Wilson", time: "2h ago", icon: CheckCircle2, color: 'text-purple-400' },
-                              { action: t('aiAnalyticsDashboard.actions.entityEstablished'), entity: "David Lee", time: "3h ago", icon: Users, color: 'text-pink-400' },
-                            ].map((activity, index) => (
-                              <div key={index} className="flex items-center justify-between border-b border-white/5 pb-6 last:border-0 last:pb-0 group/act">
-                                <div className="flex items-center gap-6">
-                                  <div className="h-12 w-12 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center shadow-inner group-hover/act:border-pink-500/30 transition-all">
-                                    <activity.icon className={cn("h-5 w-5", activity.color)} />
-                                  </div>
-                                  <div className="space-y-1">
-                                    <p className="text-base font-bold text-white italic group-hover/act:text-pink-400 transition-colors uppercase tracking-tight">{activity.action}</p>
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">{activity.entity} Node</p>
-                                  </div>
-                                </div>
-                                <span className="text-[9px] font-black uppercase tracking-widest text-slate-700 italic">{activity.time}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </div>
-                  </TabsContent>
-                </motion.div>
-              </AnimatePresence>
-            </Tabs>
-          </div>
+              </Link>
+            </motion.div>
+          ))}
         </div>
-      </main>
+      </div>
+
+      {/* Management Interface */}
+      <div className="pt-10">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-12">
+          <div className="flex items-center justify-center">
+            <TabsList className="bg-slate-50 border border-slate-100 p-2 rounded-[2rem] h-auto gap-3 shadow-inner flex-wrap justify-center">
+              {[
+                { value: 'users', label: 'Identity_Registry', icon: UserCog },
+                { value: 'bookings', label: 'Process_Cycles', icon: Calendar },
+                { value: 'centers', label: 'Node_Topology', icon: Building2 },
+                { value: 'analytics', label: 'Inference_Matrix', icon: TrendingUp }
+              ].map((tab) => (
+                <TabsTrigger 
+                  key={tab.value} 
+                  value={tab.value} 
+                  className="rounded-2xl px-10 py-4 data-[state=active]:bg-pink-600 data-[state=active]:text-white transition-all font-black uppercase tracking-[0.2em] text-[10px] shadow-sm italic h-full"
+                >
+                  <tab.icon className="mr-3 h-4 w-4" />
+                  {tab.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </div>
+
+          <AnimatePresence mode="wait">
+            {activeTab === 'users' && (
+              <motion.div
+                key="users"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5 }}
+              >
+                <TabsContent value="users" className="mt-0 outline-none">
+                  <Card className="border-slate-100 bg-white shadow-premium rounded-[3.5rem] overflow-hidden relative group">
+                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/10 to-transparent" />
+                    <CardHeader className="p-10 lg:p-12 pb-8 border-b border-slate-50 bg-slate-50/30">
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-2">
+                          <CardTitle className="text-3xl font-black text-slate-950 italic uppercase tracking-tighter leading-none">{t('adminDashboard.management.identityTitle' as any) || 'Global_Entity_Database'}</CardTitle>
+                          <CardDescription className="text-[11px] font-black uppercase tracking-[0.3em] text-slate-400 mt-4 italic">{t('adminDashboard.management.identityDesc' as any) || 'Synchronized registry of all authorized system nodes'}</CardDescription>
+                        </div>
+                        <Badge className="bg-blue-50 text-blue-600 border-none px-6 py-2 text-[10px] font-black tracking-[0.2em] uppercase italic shadow-sm">Identity_Module_Active</Badge>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="p-0">
+                      <UserManagementTable />
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              </motion.div>
+            )}
+
+            {activeTab === 'bookings' && (
+              <motion.div
+                key="bookings"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5 }}
+              >
+                <TabsContent value="bookings" className="mt-0 outline-none">
+                  <Card className="border-slate-100 bg-white shadow-premium rounded-[3.5rem] overflow-hidden relative group">
+                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/10 to-transparent" />
+                    <CardHeader className="p-10 lg:p-12 pb-8 border-b border-slate-50 bg-slate-50/30">
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-2">
+                          <CardTitle className="text-3xl font-black text-slate-950 italic uppercase tracking-tighter leading-none">{t('adminDashboard.management.processTitle' as any) || 'Aesthetic_Process_Log'}</CardTitle>
+                          <CardDescription className="text-[11px] font-black uppercase tracking-[0.3em] text-slate-400 mt-4 italic">{t('adminDashboard.management.processDesc' as any) || 'Real-time telemetry of active treatment cycles'}</CardDescription>
+                        </div>
+                        <Badge className="bg-pink-50 text-pink-600 border-none px-6 py-2 text-[10px] font-black tracking-[0.2em] uppercase italic shadow-sm">Cycle_Load: {bookings.length}</Badge>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="p-0">
+                      <div className="overflow-x-auto">
+                        <Table>
+                          <TableHeader>
+                            <TableRow className="bg-white/50 border-b border-slate-100 hover:bg-white/50">
+                              <TableHead className="px-10 py-10 text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 italic">{t('adminDashboard.table.identityNode' as any) || 'Entity_Node'}</TableHead>
+                              <TableHead className="px-10 py-10 text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 italic">{t('adminDashboard.table.programType' as any) || 'Protocol_Class'}</TableHead>
+                              <TableHead className="px-10 py-10 text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 italic">{t('adminDashboard.table.temporalStamp' as any) || 'Temporal_Stamp'}</TableHead>
+                              <TableHead className="px-10 py-10 text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 italic">{t('adminDashboard.table.authStatus' as any) || 'Security_Status'}</TableHead>
+                              <TableHead className="px-10 py-10 text-right text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 italic"></TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody className="divide-y divide-slate-100">
+                            {bookings.map((booking: any) => (
+                              <TableRow key={booking.id} className="group/row transition-all duration-500 hover:bg-slate-50 relative">
+                                <TableCell className="px-10 py-10">
+                                  <div className="flex items-center gap-4">
+                                    <div className="h-1.5 w-1.5 rounded-full bg-blue-500/30 group-hover/row:scale-150 group-hover/row:bg-blue-600 transition-all shadow-glow-blue/20" />
+                                    <span className="text-base font-black text-slate-950 italic group-hover/row:text-pink-600 transition-colors uppercase tracking-tight leading-none">{booking.user?.full_name || booking.user?.email || 'UNDEFINED_ENTITY'}</span>
+                                  </div>
+                                </TableCell>
+                                <TableCell className="px-10 py-10">
+                                  <Badge variant="outline" className="bg-slate-50 border-slate-100 text-slate-400 text-[9px] font-black rounded-full px-4 py-1 italic uppercase tracking-widest group-hover/row:bg-white group-hover/row:text-slate-950 transition-all">{booking.program_type}</Badge>
+                                </TableCell>
+                                <TableCell className="px-10 py-10">
+                                  <div className="space-y-1">
+                                    <p className="text-base font-black text-slate-950 italic tracking-tighter leading-none">{booking.booking_date}</p>
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 italic">{booking.booking_time}</p>
+                                  </div>
+                                </TableCell>
+                                <TableCell className="px-10 py-10">{getStatusBadge(booking.status)}</TableCell>
+                                <TableCell className="px-10 py-10 text-right">
+                                  <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                      <Button variant="ghost" size="icon" className="h-12 w-12 rounded-xl hover:bg-white text-slate-300 hover:text-pink-600 transition-all shadow-inner border border-transparent hover:border-slate-100">
+                                        <MoreVertical className="h-5 w-5" />
+                                      </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end" className="bg-white border-slate-100 rounded-2xl p-2 shadow-premium min-w-[200px]">
+                                      <DropdownMenuItem className="rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-pink-50 focus:text-pink-600 transition-colors gap-3"><Monitor className="h-4 w-4" /> Inspect_Node</DropdownMenuItem>
+                                      <DropdownMenuItem className="rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-pink-50 focus:text-pink-600 transition-colors gap-3"><Zap className="h-4 w-4" /> Override_Cycle</DropdownMenuItem>
+                                      <DropdownMenuItem className="rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-emerald-50 focus:text-emerald-600 transition-colors text-emerald-600 gap-3"><CheckCircle2 className="h-4 w-4" /> Verify_Entity</DropdownMenuItem>
+                                      <DropdownMenuItem className="rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-rose-50 focus:text-rose-600 transition-colors text-rose-600 gap-3"><XCircle className="h-4 w-4" /> Decommission</DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                  </DropdownMenu>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              </motion.div>
+            )}
+
+            {activeTab === 'centers' && (
+              <motion.div
+                key="centers"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5 }}
+              >
+                <TabsContent value="centers" className="mt-0 outline-none">
+                  <Card className="border-slate-100 bg-white shadow-premium rounded-[3.5rem] overflow-hidden relative group transition-all duration-700 hover:border-purple-500/20">
+                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500/10 to-transparent" />
+                    <CardHeader className="p-10 lg:p-12 pb-8 border-b border-slate-50 bg-slate-50/30">
+                      <div className="flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="space-y-2">
+                          <CardTitle className="text-3xl font-black text-slate-950 italic uppercase tracking-tighter leading-none">{t('adminDashboard.management.topologyTitle' as any) || 'Network_Node_Topology'}</CardTitle>
+                          <CardDescription className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 mt-4 italic">{t('adminDashboard.management.topologyDesc' as any) || 'Manage centralized infrastructure node allocation'}</CardDescription>
+                        </div>
+                        <div className="flex gap-4">
+                          <div className="relative group/search">
+                            <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 group-focus-within/search:text-purple-600 transition-colors" />
+                            <Input 
+                              placeholder="Search_Nodes..." 
+                              className="h-14 pl-14 pr-8 rounded-2xl border-slate-100 bg-white text-slate-950 placeholder:text-slate-300 focus:border-purple-500/30 focus:ring-purple-500/10 transition-all text-sm font-bold italic w-[280px] shadow-inner" 
+                              value={searchQuery} 
+                              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)} 
+                            />
+                          </div>
+                          <Button variant="premium" className="h-14 px-8 rounded-2xl bg-slate-950 text-white font-black uppercase tracking-widest text-[10px] italic shadow-2xl transition-all hover:scale-105 active:scale-95 border-none">
+                            <PlusCircle className="mr-3 h-4 w-4" />
+                            {t('adminDashboard.management.initializeNode' as any) || 'Initialize_Uplink'}
+                          </Button>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="p-32 text-center space-y-10 italic bg-slate-50/30">
+                      <div className="mx-auto h-32 w-32 rounded-[2.5rem] bg-white border border-slate-100 flex items-center justify-center text-slate-200 animate-pulse shadow-inner">
+                        <Monitor className="h-16 w-16" />
+                      </div>
+                      <div className="space-y-4">
+                        <p className="text-2xl font-black text-slate-950 uppercase tracking-widest leading-none">{t('adminDashboard.management.syncing' as any) || 'Synchronizing_Matrix'}</p>
+                        <p className="text-[11px] font-black uppercase tracking-[0.4em] text-slate-400">{t('adminDashboard.management.awaitingTelemetry' as any) || 'Awaiting global network telemetry packet ingestion'}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              </motion.div>
+            )}
+
+            {activeTab === 'analytics' && (
+              <motion.div
+                key="analytics"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5 }}
+              >
+                <TabsContent value="analytics" className="mt-0 outline-none">
+                  <div className="grid gap-12 lg:grid-cols-2">
+                    <Card className="border-slate-100 bg-white shadow-premium rounded-[3.5rem] overflow-hidden relative group transition-all duration-700 hover:border-pink-500/20">
+                      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <CardHeader className="p-10 lg:p-12 pb-8 border-b border-slate-50 bg-slate-50/30">
+                        <CardTitle className="text-3xl font-black text-slate-950 italic uppercase tracking-tighter leading-none">{t('aiAnalyticsDashboard.popularityMatrix' as any) || 'Protocol_Impact_Matrix'}</CardTitle>
+                      </CardHeader>
+                      <CardContent className="p-10 lg:p-16 space-y-10">
+                        {[
+                          { name: "Neural Dermal Mapping", count: 45, percentage: 35, color: 'bg-pink-500 shadow-glow-pink' },
+                          { name: "Cellular Rejuvenation", count: 38, percentage: 30, color: 'bg-blue-500 shadow-glow-blue' },
+                          { name: "Volumetric Fill Sequence", count: 28, percentage: 22, color: 'bg-purple-500 shadow-glow-purple' },
+                          { name: "Surface Synthesis", count: 17, percentage: 13, color: 'bg-emerald-500 shadow-glow-emerald' },
+                        ].map((program, index) => (
+                          <div key={index} className="space-y-4 group/item">
+                            <div className="flex items-center justify-between">
+                              <span className="text-[10px] font-black text-slate-400 group-hover/item:text-slate-950 transition-colors uppercase tracking-[0.2em] italic leading-none">{program.name}</span>
+                              <span className="text-xl font-black text-slate-950 italic tracking-tighter leading-none">{program.count} <span className="text-[9px] text-slate-300 not-italic ml-1 uppercase">{t('aiAnalyticsDashboard.cycles' as any) || 'Cycles'}</span></span>
+                            </div>
+                            <div className="h-2 w-full bg-slate-50 rounded-full overflow-hidden shadow-inner border border-slate-100 p-0.5">
+                              <motion.div initial={{ width: 0 }} animate={{ width: `${program.percentage}%` }} transition={{ duration: 1.5, delay: index * 0.1 }} className={cn("h-full rounded-full", program.color)} />
+                            </div>
+                          </div>
+                        ))}
+                      </CardContent>
+                    </Card>
+
+                    <Card className="border-slate-100 bg-white shadow-premium rounded-[3.5rem] overflow-hidden relative group transition-all duration-700 hover:border-emerald-500/20">
+                      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <CardHeader className="p-10 lg:p-12 pb-8 border-b border-slate-50 bg-slate-50/30">
+                        <CardTitle className="text-3xl font-black text-slate-950 italic uppercase tracking-tighter leading-none">{t('aiAnalyticsDashboard.revenueBreakdown' as any) || 'Yield_Vector_Distribution'}</CardTitle>
+                      </CardHeader>
+                      <CardContent className="p-10 lg:p-16 space-y-10">
+                        {[
+                          { category: "Aesthetic Protocol Nodes", amount: "฿180K", percentage: 73, color: 'bg-emerald-500 shadow-glow-emerald' },
+                          { category: "Clinical Consultation Link", amount: "฿35K", percentage: 14, color: 'bg-blue-500 shadow-glow-blue' },
+                          { category: "Dermal Product Ingestion", amount: "฿30K", percentage: 13, color: 'bg-pink-500 shadow-glow-pink' },
+                        ].map((item, index) => (
+                          <div key={index} className="space-y-4 group/item">
+                            <div className="flex items-center justify-between">
+                              <span className="text-[10px] font-black text-slate-400 group-hover/item:text-slate-950 transition-colors uppercase tracking-[0.2em] italic leading-none">{item.category}</span>
+                              <span className="text-xl font-black text-slate-950 italic tracking-tighter leading-none">{item.amount}</span>
+                            </div>
+                            <div className="h-2 w-full bg-slate-50 rounded-full overflow-hidden shadow-inner border border-slate-100 p-0.5">
+                              <motion.div initial={{ width: 0 }} animate={{ width: `${item.percentage}%` }} transition={{ duration: 1.5, delay: index * 0.1 }} className={cn("h-full rounded-full", item.color)} />
+                            </div>
+                          </div>
+                        ))}
+                      </CardContent>
+                    </Card>
+                  </div>
+                </TabsContent>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </Tabs>
+      </div>
     </div>
   );
+}
+
+function PlusCircle(props: any) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="12" cy="12" r="10" />
+      <path d="M8 12h8" />
+      <path d="M12 8v8" />
+    </svg>
+  )
 }

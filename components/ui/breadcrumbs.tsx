@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { ChevronRight, Home } from 'lucide-react';
 import { useLocalizePath } from '@/lib/i18n/locale-link';
+import { cn } from '@/lib/utils';
 
 interface BreadcrumbsProps {
   className?: string;
@@ -27,29 +28,22 @@ export function Breadcrumbs({ className = '' }: BreadcrumbsProps) {
   const pathname = usePathname();
   const lp = useLocalizePath();
   
-  // Don't show breadcrumbs on homepage
   if (pathname === '/' || pathname === '/th' || pathname === '/en' || pathname === '/zh') {
     return null;
   }
 
-  // Remove locale prefix if exists
   const pathWithoutLocale = pathname.replace(/^\/(th|en|zh)/, '');
-  
-  // Split pathname into segments
   const segments = pathWithoutLocale.split('/').filter(Boolean);
 
-  // Build breadcrumb items
   const breadcrumbs = segments.map((segment, index) => {
     const path = `/${segments.slice(0, index + 1).join('/')}`;
     const isLast = index === segments.length - 1;
 
-    // Get display name (prefer localized name from i18n, then fallback to English, then capitalize segment)
     let displayName = t(segment as any) || 
                       segment.split('-').map(word => 
                         word.charAt(0).toUpperCase() + word.slice(1)
                       ).join(' ');
 
-    // Special handling for dynamic routes (UUIDs, IDs)
     if (segment.match(/^[a-f0-9-]{36}$/i)) {
       displayName = t('details');
     }
@@ -62,27 +56,27 @@ export function Breadcrumbs({ className = '' }: BreadcrumbsProps) {
   });
 
   return (
-    <nav aria-label="Breadcrumb" className={`flex items-center space-x-1 text-sm ${className}`}>
-      {/* Home Link */}
+    <nav aria-label="Breadcrumb" className={cn("flex items-center space-x-2 text-[10px] font-black uppercase tracking-widest italic rounded-xl bg-slate-50 shadow-inner", className)}>
       <Link 
         href={lp('/dashboard')} 
-        className="flex items-center text-muted-foreground hover:text-foreground transition-colors"
+        className="flex items-center text-slate-400 hover:text-pink-600 transition-all duration-300 group"
       >
-        <Home className="h-4 w-4" />
+        <div className="size-8 rounded-xl bg-slate-50 flex items-center justify-center group-hover:bg-pink-50 transition-colors shadow-inner">
+          <Home className="size-4" />
+        </div>
       </Link>
 
-      {/* Breadcrumb Items */}
       {breadcrumbs.map((item, _index) => (
         <Fragment key={item.path}>
-          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+          <ChevronRight className="size-4 text-slate-300" />
           {item.isLast ? (
-            <span className="font-medium text-foreground">
+            <span className="text-slate-950 font-black">
               {item.name}
             </span>
           ) : (
             <Link
               href={lp(item.path)}
-              className="text-muted-foreground hover:text-foreground transition-colors"
+              className="text-slate-400 hover:text-pink-600 transition-all duration-300"
             >
               {item.name}
             </Link>
@@ -117,21 +111,21 @@ export function CustomBreadcrumbs({
   }
 
   return (
-    <nav aria-label="Breadcrumb" className={`flex items-center space-x-1 text-sm ${className}`}>
-      {items.map((item, index) => {
-        const isLast = index === items.length - 1;
+    <nav aria-label="Breadcrumb" className={cn("flex items-center space-x-2 text-[10px] font-black uppercase tracking-widest italic rounded-xl bg-slate-50/50 p-1 shadow-inner w-fit", className)}>
+      {items.map((item, _index) => {
+        const isLast = _index === items.length - 1;
 
         return (
-          <Fragment key={`${item.name}-${index}`}>
-            {index > 0 && <ChevronRight className="h-4 w-4 text-muted-foreground" />}
+          <Fragment key={`${item.name}-${_index}`}>
+            {_index > 0 && <ChevronRight className="size-4 text-slate-300" />}
             {isLast || !item.path ? (
-              <span className="font-medium text-foreground">
+              <span className="text-slate-950 font-black px-2">
                 {item.name}
               </span>
             ) : (
               <Link
                 href={lp(item.path)}
-                className="text-muted-foreground hover:text-foreground transition-colors"
+                className="text-slate-400 hover:text-pink-600 transition-all duration-300 px-2"
               >
                 {item.name}
               </Link>

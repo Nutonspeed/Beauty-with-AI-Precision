@@ -40,7 +40,7 @@ export default async function middleware(request: NextRequest) {
     ? (() => {
         try {
           return new URL(rewrite).pathname
-        } catch (e) {
+        } catch {
           // If rewrite is just a path, return it as is
           return rewrite
         }
@@ -49,7 +49,7 @@ export default async function middleware(request: NextRequest) {
       ? (() => {
           try {
             return new URL(location, request.url).pathname
-          } catch (e) {
+          } catch {
             return undefined
           }
         })()

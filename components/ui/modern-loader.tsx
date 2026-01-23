@@ -11,39 +11,39 @@ import { useTranslations } from "next-intl"
 
 // Gradient Spinner - Apple style
 export function GradientSpinner({ className, size = "md" }: { className?: string; size?: "sm" | "md" | "lg" }) {
-  const sizes = { sm: "w-5 h-5", md: "w-8 h-8", lg: "w-12 h-12" }
+  const sizes = { sm: "w-6 h-6", md: "w-10 h-10", lg: "w-16 h-16" }
   
   return (
     <div className={cn("relative", sizes[size], className)}>
       <motion.div
         className="absolute inset-0 rounded-full"
         style={{
-          background: "conic-gradient(from 0deg, transparent, hsl(var(--primary)))",
+          background: "conic-gradient(from 0deg, transparent, #ff69b4)",
         }}
         animate={{ rotate: 360 }}
         transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
       />
-      <div className="absolute inset-[2px] rounded-full bg-background" />
+      <div className="absolute inset-[3px] rounded-full bg-white shadow-inner" />
     </div>
   )
 }
 
-// Pulse Dots - Google style
+// Pulse Dots
 export function PulseDots({ className }: { className?: string }) {
   return (
-    <div className={cn("flex items-center gap-1", className)}>
+    <div className={cn("flex items-center gap-2", className)}>
       {[0, 1, 2].map((i) => (
         <motion.div
           key={i}
-          className="w-2 h-2 rounded-full bg-primary"
+          className="w-2.5 h-2.5 rounded-full bg-pink-500 shadow-glow-pink"
           animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.5, 1, 0.5],
+            scale: [1, 1.3, 1],
+            opacity: [0.4, 1, 0.4],
           }}
           transition={{
-            duration: 0.8,
+            duration: 1,
             repeat: Infinity,
-            delay: i * 0.15,
+            delay: i * 0.2,
             ease: "easeInOut",
           }}
         />
@@ -64,27 +64,21 @@ export function GlowProgress({
 }) {
   return (
     <div className={cn("w-full", className)}>
-      <div className="relative h-1.5 bg-muted rounded-full overflow-hidden">
+      <div className="relative h-2.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200/50 shadow-inner">
         <motion.div
-          className="absolute inset-y-0 left-0 bg-gradient-to-r from-primary via-cyan-400 to-primary rounded-full"
+          className="absolute inset-y-0 left-0 bg-gradient-to-r from-pink-500 via-blue-500 to-pink-500 bg-[length:200%_auto] rounded-full shadow-glow-pink animate-gradient-x"
           initial={{ width: 0 }}
           animate={{ width: `${progress}%` }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-        />
-        <motion.div
-          className="absolute inset-y-0 left-0 bg-gradient-to-r from-primary/50 via-cyan-400/50 to-primary/50 rounded-full blur-sm"
-          initial={{ width: 0 }}
-          animate={{ width: `${progress}%` }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
         />
       </div>
       {showPercentage && (
         <motion.p 
-          className="mt-2 text-sm text-muted-foreground text-center"
+          className="mt-3 text-[10px] font-black uppercase tracking-widest italic text-slate-400 text-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
-          {Math.round(progress)}%
+          SYNC_IDX: {Math.round(progress)}%
         </motion.p>
       )}
     </div>

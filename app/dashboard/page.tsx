@@ -29,7 +29,7 @@ export default function DashboardPage() {
       }
 
       // Role-based redirects
-      const role = user.role;
+      const role = user.role as any;
       console.log('[Dashboard] User role:', role);
 
       if (role === 'super_admin') {
@@ -39,17 +39,24 @@ export default function DashboardPage() {
         return;
       }
 
-      if (role === 'center_owner') {
-        console.log('[Dashboard] Redirecting center_owner to /center');
+      if (role === 'center_owner' || role === 'center_admin' || (role as string) === 'clinic_owner' || (role as string) === 'clinic_admin') {
+        console.log('[Dashboard] Redirecting center admin/owner to /centers/dashboard');
         setRedirecting(true);
-        window.location.href = lp('/center');
+        window.location.href = lp('/centers/dashboard');
+        return;
+      }
+
+      if (role === 'center_staff' || (role as string) === 'clinic_staff') {
+        console.log('[Dashboard] Redirecting beautician/staff to /beautician/dashboard');
+        setRedirecting(true);
+        window.location.href = lp('/beautician/dashboard');
         return;
       }
 
       if (role === 'sales_staff') {
-        console.log('[Dashboard] Redirecting sales_staff to /sales');
+        console.log('[Dashboard] Redirecting sales_staff to /sales/dashboard');
         setRedirecting(true);
-        window.location.href = lp('/sales');
+        window.location.href = lp('/sales/dashboard');
         return;
       }
 

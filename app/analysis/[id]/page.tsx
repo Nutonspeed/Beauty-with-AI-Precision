@@ -13,7 +13,7 @@
 import { createServerClient } from '@/lib/supabase/server';
 import { notFound, redirect } from 'next/navigation';
 import { Metadata } from 'next';
-import AnalysisDetailClient from '@/components/analysis/AnalysisDetailClient';
+import { AnalysisDetailClient } from '@/components/analysis/AnalysisDetailClient';
 
 interface AnalysisDetailPageProps {
   params: Promise<{

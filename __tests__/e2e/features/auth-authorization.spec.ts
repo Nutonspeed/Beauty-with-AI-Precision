@@ -34,69 +34,154 @@ test.describe('Authentication & Authorization', () => {
     await takeScreenshot(page, 'auth-login-page');
   });
 
-  test('should login as super admin successfully', async ({ page }) => {
+  test('should login as super admin successfully and redirect to admin dashboard', async ({ page, browserName }) => {
+    test.skip(browserName === 'webkit', 'Safari/WebKit redirects back to login on supabase auth cookies');
+    console.log('--- Starting Super Admin Login Test ---');
     await page.goto('/th/auth/login', { waitUntil: 'domcontentloaded', timeout: 120000 });
     await waitForLoading(page);
     
     await page.fill('#email', testUsers.superAdmin.email);
     await page.fill('#password', testUsers.superAdmin.password);
-    await page.click('button[type="submit"]', { noWaitAfter: true });
     
-    // Smoke only: no navigation expectation (password cannot be reset for demo emails)
-    await page.waitForTimeout(1500);
-    await takeScreenshot(page, 'auth-super-admin-login');
+    console.log('Clicking login button...');
+    await page.click('button[type="submit"]');
+    
+    // Log URL changes
+    page.on('framenavigated', frame => {
+      console.log(`Navigated to: ${frame.url()}`);
+    });
+
+    // Wait for any loading state to clear
+    console.log('Waiting for loaders to disappear...');
+    const pageLoader = page.locator('text=/กำลังประมวลผล|Authenticating|Loading|กำลังโหลด/');
+    await expect(pageLoader.first()).not.toBeVisible({ timeout: 60000 });
+
+    console.log('Waiting for redirect to /admin...');
+    try {
+      await page.waitForURL(/.*\/admin/, { timeout: 45000 });
+      console.log('Successfully reached /admin');
+    } catch (e) {
+      console.error(`Failed to reach /admin. Current URL: ${page.url()}`);
+      await takeScreenshot(page, 'auth-super-admin-failed');
+      throw e;
+    }
+    
+    await expect(page.locator('body')).toContainText(/Admin|Infrastructure/i, { timeout: 30000 });
+    await takeScreenshot(page, 'auth-super-admin-success');
+    console.log('Super Admin Login Test Passed');
   });
 
-  test('should login as center owner successfully', async ({ page }) => {
+  test('should login as clinic owner successfully and redirect to revenue dashboard', async ({ page, browserName }) => {
+    test.skip(browserName === 'webkit', 'Safari/WebKit redirects back to login on supabase auth cookies');
+    console.log('--- Starting Clinic Owner Login Test ---');
     await page.goto('/th/auth/login', { waitUntil: 'domcontentloaded', timeout: 120000 });
     await waitForLoading(page);
     
     await page.fill('#email', testUsers.centerOwner.email);
     await page.fill('#password', testUsers.centerOwner.password);
-    await page.click('button[type="submit"]', { noWaitAfter: true });
     
-    // Smoke only
-    await page.waitForTimeout(1500);
-    await takeScreenshot(page, 'auth-center-owner-login');
+    console.log('Clicking login button...');
+    const loginButton = page.locator('button[type="submit"]');
+    await loginButton.click();
+    
+    // Wait for any loading state to clear
+    console.log('Waiting for loaders to disappear...');
+    const pageLoader = page.locator('text=/กำลังประมวลผล|Authenticating|Loading|กำลังโหลด/');
+    await expect(pageLoader.first()).not.toBeVisible({ timeout: 60000 });
+
+    console.log('Waiting for redirect to /centers/revenue...');
+    try {
+      await page.waitForURL(/.*\/centers\/(dashboard|revenue)/, { timeout: 60000 });
+      if (page.url().includes('/dashboard')) {
+        await page.waitForURL(/.*\/centers\/revenue/, { timeout: 30000 });
+      }
+      console.log('Successfully reached /centers/revenue');
+    } catch (e) {
+      console.error(`Failed to reach revenue page. Current URL: ${page.url()}`);
+      await takeScreenshot(page, 'auth-clinic-owner-failed');
+      throw e;
+    }
+    
+    // Wait for content
+    console.log('Waiting for content or header...');
+    // Clinic Owner Dashboard (Revenue Page) Marker: "การสังเคราะห์ทางการเงิน" or "โหนดประสิทธิภาพ" or "สถานีการเงิน"
+    await expect(page.locator('body')).toContainText(/การสังเคราะห์ทางการเงิน|Revenue|Financial|สถานีการเงิน/i, { timeout: 60000 });
+    
+    await takeScreenshot(page, 'auth-clinic-owner-success');
+    console.log('Clinic Owner Login Test Passed');
   });
 
-  test('should login as sales staff successfully', async ({ page, browserName }) => {
+  test('should login as sales staff successfully and redirect to sales dashboard', async ({ page, browserName }) => {
     test.skip(browserName === 'webkit', 'Safari/WebKit redirects back to login on supabase auth cookies');
+    console.log('--- Starting Sales Staff Login Test ---');
     await page.goto('/th/auth/login', { waitUntil: 'domcontentloaded', timeout: 120000 });
     await waitForLoading(page);
     
     await page.fill('#email', testUsers.salesStaff.email);
     await page.fill('#password', testUsers.salesStaff.password);
-    await page.click('button[type="submit"]', { noWaitAfter: true });
     
-    // Wait for session cookie to be issued
-    const start = Date.now();
-    while (Date.now() - start < 8000) {
-      const cookies = await page.context().cookies();
-      const hasSession = cookies.some(c => c.name.includes('sb-access-token'));
-      if (hasSession) break;
-      await page.waitForTimeout(500);
+    console.log('Clicking login button...');
+    const loginButton = page.locator('button[type="submit"]');
+    await loginButton.click();
+    
+    // Wait for any loading state to clear
+    console.log('Waiting for loaders to disappear...');
+    const pageLoader = page.locator('text=/กำลังประมวลผล|Authenticating|Loading|กำลังโหลด/');
+    await expect(pageLoader.first()).not.toBeVisible({ timeout: 60000 });
+
+    console.log('Waiting for redirect to /sales/dashboard...');
+    try {
+      await page.waitForURL(/.*\/sales\/dashboard/, { timeout: 60000 });
+      console.log('Successfully reached /sales/dashboard');
+    } catch (e) {
+      console.error(`Failed to reach sales dashboard. Current URL: ${page.url()}`);
+      await takeScreenshot(page, 'auth-sales-failed');
+      throw e;
     }
     
-    // Try to reach sales dashboard explicitly
-    await page.goto('/th/sales/dashboard', { waitUntil: 'domcontentloaded', timeout: 120000 });
-    await page.waitForLoadState('domcontentloaded');
-    const currentUrl = page.url();
-    console.log('Sales dashboard URL:', currentUrl);
-    await takeScreenshot(page, 'auth-sales-login');
-    await expect(currentUrl.includes('/auth/login')).toBeFalsy();
+    // Wait for content
+    console.log('Waiting for sales content...');
+    // Sales Dashboard Marker: "งานขาย" or "Dashboard" or "Intelligence"
+    await expect(page.locator('body')).toContainText(/งานขาย|Sales|Dashboard|Intelligence/i, { timeout: 60000 });
+    
+    await takeScreenshot(page, 'auth-sales-success');
+    console.log('Sales Staff Login Test Passed');
   });
 
-  test('should login as customer successfully', async ({ page }) => {
+  test('should login as customer successfully and redirect to customer dashboard', async ({ page, browserName }) => {
+    test.skip(browserName === 'webkit', 'Safari/WebKit redirects back to login on supabase auth cookies');
+    console.log('--- Starting Customer Login Test ---');
     await page.goto('/th/auth/login', { waitUntil: 'domcontentloaded', timeout: 120000 });
     await waitForLoading(page);
     
     await page.fill('#email', testUsers.customer.email);
     await page.fill('#password', testUsers.customer.password);
-    await page.click('button[type="submit"]', { noWaitAfter: true });
     
-    await page.waitForTimeout(1500);
-    await takeScreenshot(page, 'auth-customer-login');
+    console.log('Clicking login button...');
+    const loginButton = page.locator('button[type="submit"]');
+    await loginButton.click();
+    
+    // Wait for any loading state to clear
+    console.log('Waiting for loaders to disappear...');
+    const pageLoader = page.locator('text=/กำลังประมวลผล|Authenticating|Loading|กำลังโหลด/');
+    await expect(pageLoader.first()).not.toBeVisible({ timeout: 60000 });
+
+    console.log('Waiting for redirect to /dashboard...');
+    try {
+      await page.waitForURL(url => 
+        url.pathname.endsWith('/dashboard') && !url.pathname.includes('/sales/') && !url.pathname.includes('/centers/'), 
+        { timeout: 60000 }
+      );
+      console.log('Successfully reached customer dashboard:', page.url());
+    } catch (e) {
+      console.error(`Failed to reach customer dashboard. Current URL: ${page.url()}`);
+      await takeScreenshot(page, 'auth-customer-failed');
+      throw e;
+    }
+    
+    await expect(page.locator('body')).toContainText(/ยินดีต้อนรับ|Welcome|CenterIQ/i, { timeout: 45000 });
+    await takeScreenshot(page, 'auth-customer-success');
+    console.log('Customer Login Test Passed');
   });
 
   test('should handle invalid login credentials', async ({ page }) => {

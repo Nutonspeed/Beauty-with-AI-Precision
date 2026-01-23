@@ -11,7 +11,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ProgressTrackingChart } from '@/components/comparison/progress-tracking-chart';
 import { MultiAnalysisComparison } from '@/components/comparison/multi-analysis-comparison';
 import { PhotoGallery } from '@/components/comparison/photo-gallery';
-import { BarChart3, Grid3x3, Image as ImageIcon } from 'lucide-react';
+import { Image as ImageIcon, TrendingUp, Columns } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Card, CardContent } from '@/components/ui/card';
 
 interface Analysis {
   id: string;
@@ -82,47 +84,75 @@ export function ComparisonPageClient({
   }));
 
   return (
-    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-      <TabsList className="grid w-full grid-cols-3 mb-6">
-        <TabsTrigger value="chart" className="flex items-center gap-2">
-          <BarChart3 className="w-4 h-4" />
-          {t('comparison.tabs.chart')}
-        </TabsTrigger>
-        <TabsTrigger value="comparison" className="flex items-center gap-2">
-          <Grid3x3 className="w-4 h-4" />
-          {t('comparison.tabs.comparison')}
-        </TabsTrigger>
-        <TabsTrigger value="gallery" className="flex items-center gap-2">
-          <ImageIcon className="w-4 h-4" />
-          {t('comparison.tabs.gallery')}
-        </TabsTrigger>
-      </TabsList>
+    <div className="space-y-12">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full space-y-12">
+        <div className="flex items-center justify-center">
+          <TabsList className="bg-slate-50 border border-slate-100 p-2 rounded-[2rem] h-auto gap-3 shadow-inner flex-wrap justify-center">
+            <TabsTrigger value="chart" className="rounded-2xl px-10 py-4 data-[state=active]:bg-pink-600 data-[state=active]:text-white transition-all font-black uppercase tracking-[0.2em] text-[10px] shadow-sm italic h-full">
+              <TrendingUp className="mr-3 h-4 w-4" />
+              {t('comparison.tabs.chart' as any) || 'Progress_Metrics'}
+            </TabsTrigger>
+            <TabsTrigger value="comparison" className="rounded-2xl px-10 py-4 data-[state=active]:bg-pink-600 data-[state=active]:text-white transition-all font-black uppercase tracking-[0.2em] text-[10px] shadow-sm italic h-full">
+              <Columns className="mr-3 h-4 w-4" />
+              {t('comparison.tabs.comparison' as any) || 'Side_By_Side'}
+            </TabsTrigger>
+            <TabsTrigger value="gallery" className="rounded-2xl px-10 py-4 data-[state=active]:bg-pink-600 data-[state=active]:text-white transition-all font-black uppercase tracking-[0.2em] text-[10px] shadow-sm italic h-full">
+              <ImageIcon className="mr-3 h-4 w-4" />
+              {t('comparison.tabs.gallery' as any) || 'Visual_Archive'}
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
-      <TabsContent value="chart" className="mt-0">
-        <ProgressTrackingChart
-          data={chartData}
-          locale={locale}
-          onAnalysisClick={(id) => {
-            // Navigate to analysis detail page
-            window.location.href = `/${locale}/analysis/detail/${id}`;
-          }}
-        />
-      </TabsContent>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.5 }}
+          >
+            <TabsContent value="chart" className="mt-0 outline-none">
+              <Card className="border-slate-100 bg-white shadow-premium rounded-[3.5rem] overflow-hidden p-8 lg:p-12 relative group">
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/10 to-transparent" />
+                <CardContent className="p-0">
+                  <ProgressTrackingChart
+                    data={chartData}
+                    locale={locale}
+                    onAnalysisClick={(id) => {
+                      window.location.href = `/${locale}/analysis/detail/${id}`;
+                    }}
+                  />
+                </CardContent>
+              </Card>
+            </TabsContent>
 
-      <TabsContent value="comparison" className="mt-0">
-        <MultiAnalysisComparison
-          userId={userId}
-          analysisIds={analysisIds}
-          locale={locale}
-          onClose={() => {
-            window.history.back();
-          }}
-        />
-      </TabsContent>
+            <TabsContent value="comparison" className="mt-0 outline-none">
+              <Card className="border-slate-100 bg-white shadow-premium rounded-[3.5rem] overflow-hidden p-2 relative group">
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/10 to-transparent" />
+                <CardContent className="p-0">
+                  <MultiAnalysisComparison
+                    userId={userId}
+                    analysisIds={analysisIds}
+                    locale={locale}
+                    onClose={() => {
+                      window.history.back();
+                    }}
+                  />
+                </CardContent>
+              </Card>
+            </TabsContent>
 
-      <TabsContent value="gallery" className="mt-0">
-        <PhotoGallery photos={galleryPhotos} locale={locale} />
-      </TabsContent>
-    </Tabs>
+            <TabsContent value="gallery" className="mt-0 outline-none">
+              <Card className="border-slate-100 bg-white shadow-premium rounded-[3.5rem] overflow-hidden p-8 lg:p-12 relative group">
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500/10 to-transparent" />
+                <CardContent className="p-0">
+                  <PhotoGallery photos={galleryPhotos} locale={locale} />
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </motion.div>
+        </AnimatePresence>
+      </Tabs>
+    </div>
   );
 }

@@ -28,7 +28,7 @@ export const ChartTooltip = React.forwardRef<HTMLDivElement, React.ComponentProp
       <div
         ref={ref}
         className={cn(
-          "rounded-lg border bg-background p-2 shadow-sm",
+          "rounded-2xl border border-slate-100 bg-white/90 backdrop-blur-md p-3 shadow-premium text-[10px] font-black uppercase tracking-widest italic",
           className
         )}
         {...props}
@@ -49,8 +49,8 @@ export const ChartTooltipContent = React.forwardRef<
   }
 >(({ className, hideLabel, hideIndicator, indicator: _indicator = "dot", ...props }, ref) => {
   return (
-    <div ref={ref} className={cn("grid gap-1.5", className)} {...props}>
-      {!hideLabel && <div className="font-medium">{props.children}</div>}
+    <div ref={ref} className={cn("grid gap-2", className)} {...props}>
+      {!hideLabel && <div className="font-black text-pink-600 mb-1">{props.children}</div>}
     </div>
   )
 })

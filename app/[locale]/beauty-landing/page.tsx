@@ -1,212 +1,229 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import Link from "next/link"
+import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
-import { ArrowRight, Sparkles, Camera, BrainCircuit, Star } from "lucide-react"
-import { useTranslations } from "next-intl"
+import { Badge } from "@/components/ui/badge"
+import { Card, CardContent } from "@/components/ui/card"
+import { 
+  ArrowRight, 
+  Sparkles, 
+  Camera, 
+  BrainCircuit, 
+  Star,
+  ChevronRight
+} from "lucide-react"
+import { useTranslations, useLocale } from "next-intl"
+import { useLocalizePath } from "@/lib/i18n/locale-link"
+import { cn } from "@/lib/utils"
+import { Header } from "@/components/header"
 
 export default function BeautyLandingPage() {
   const t = useTranslations('beauty-landing')
+  const locale = useLocale()
+  const lp = useLocalizePath()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) return null
+
   const avatarGradients = [
-    'bg-avatar-1',
-    'bg-avatar-2',
-    'bg-avatar-3',
-    'bg-avatar-4',
-    'bg-avatar-5',
+    'bg-gradient-to-br from-pink-400 to-purple-500',
+    'bg-gradient-to-br from-blue-400 to-cyan-500',
+    'bg-gradient-to-br from-purple-400 to-indigo-500',
+    'bg-gradient-to-br from-emerald-400 to-teal-500',
+    'bg-gradient-to-br from-orange-400 to-rose-500',
   ]
-  
-  // Helper function for link prefix
-  const lp = (path: string) => `/th${path}`
-  
-  // Helper function for tracking
-  const trackEngagement = (action: string, element: string, metadata?: any) => {
-    console.log('Track:', action, element, metadata)
-    // TODO: Implement actual tracking
-  }
-  
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 text-white overflow-hidden">
-      {/* Animated Orbs Background */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        {/* Large Blue Orb - Top Left */}
-        <div
-          className="absolute -top-48 -left-48 w-96 h-96 rounded-full opacity-30 blur-3xl animate-float-slow bg-orb-blue"
-        />
-        
-        {/* Purple Orb - Top Right */}
-        <div
-          className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full opacity-25 blur-3xl animate-float-medium bg-orb-purple animate-delay-2000"
-        />
-        
-        {/* Pink Orb - Center */}
-        <div
-          className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full opacity-20 blur-3xl animate-float-slow bg-orb-pink animate-delay-4000"
-        />
-        
-        {/* Cyan Orb - Bottom Left */}
-        <div
-          className="absolute -bottom-40 -left-40 w-[450px] h-[450px] rounded-full opacity-25 blur-3xl animate-float-fast bg-orb-cyan animate-delay-1000"
-        />
-        
-        {/* Violet Orb - Bottom Right */}
-        <div
-          className="absolute -bottom-32 right-1/4 w-96 h-96 rounded-full opacity-30 blur-3xl animate-float-medium bg-orb-violet animate-delay-3000"
-        />
+    <div className="flex min-h-screen flex-col bg-white text-slate-950 selection:bg-pink-500/10 overflow-hidden">
+      <Header />
 
-        {/* Grain Texture Overlay */}
-        <div className="absolute inset-0 opacity-[0.03] grain-texture" />
-      </div>
+      <main className="flex-1 relative">
+        {/* Infrastructure Background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-pink-500/5 rounded-full blur-[120px] animate-glow-pulse" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-500/5 rounded-full blur-[100px] animate-float" />
+          <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.015]" />
+        </div>
 
-      {/* Navigation */}
-      <nav className="relative z-10 border-b border-white/10 backdrop-blur-sm bg-black/20">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-6 h-6 text-pink-400" />
-              <span className="text-xl font-bold bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 bg-clip-text text-transparent">
-                BeautyAI
-              </span>
-            </div>
-            <div className="flex items-center gap-6">
-              <Link href={lp("/")} className="text-sm text-gray-300 hover:text-white transition-colors">
-                หน้าแรก
-              </Link>
-              <Link href={lp("/demo")} className="text-sm text-gray-300 hover:text-white transition-colors">
-                ฟีเจอร์
-              </Link>
-              <Button aria-label="Learn more about AI beauty analysis" size="sm" className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 border-0"
-                onClick={() => trackEngagement('click', 'nav_get_started', { page: 'beauty-landing' })}
+        {/* Cinematic Hero Section */}
+        <section className="relative pt-24 pb-32 lg:pt-40 lg:pb-48">
+          <div className="container relative z-10 mx-auto px-6 max-w-7xl">
+            <div className="max-w-5xl mx-auto text-center space-y-12">
+              {/* Premium Badge */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8 }}
               >
-                เริ่มใช้งาน
-              </Button>
+                <Badge variant="outline" className="px-6 py-2 rounded-full border-pink-500/30 text-pink-600 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.3em] text-[10px] font-black shadow-premium animate-pulse italic">
+                  <Star className="mr-3 h-3.5 w-3.5 fill-pink-600" />
+                  {isThaiLocale ? 'อันดับ 1 ระบบวิเคราะห์ผิวด้วย AI' : 'Elite AI Aesthetic Protocol'}
+                </Badge>
+              </motion.div>
+
+              {/* Main Headline */}
+              <motion.h1 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+                className="text-6xl md:text-9xl font-black tracking-tighter text-slate-950 leading-[0.85] italic uppercase"
+              >
+                <span className="block mb-4">{isThaiLocale ? 'เปิดโลก' : 'Evolve'}</span>
+                <span className="bg-gradient-to-r from-pink-500 via-purple-600 to-blue-600 bg-clip-text text-transparent not-italic">
+                  {isThaiLocale ? 'ความงามด้วย AI' : 'Beauty Intelligence'}
+                </span>
+              </motion.h1>
+
+              {/* Subheadline */}
+              <motion.p 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.4, duration: 1 }}
+                className="text-xl md:text-2xl text-slate-500 max-w-3xl mx-auto leading-relaxed tracking-tight italic font-light"
+              >
+                {isThaiLocale 
+                  ? 'วิเคราะห์ผิวหน้า 8 ตัวชี้วัด พร้อม AR แสดงผลการรักษา เพิ่มยอดขายศูนย์ความงามของคุณได้ถึง 65%' 
+                  : '8-Point biological mapping with real-time AR outcome synthesis. Orchestrate a 65% yield increase for your aesthetic node.'}
+              </motion.p>
+
+              {/* Action Sequence Trigger */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6, duration: 0.8 }}
+                className="flex flex-col sm:flex-row items-center justify-center gap-8 pt-6"
+              >
+                <Button 
+                  size="xl" 
+                  className="h-20 px-14 rounded-[2.5rem] shadow-2xl shadow-pink-500/20 text-[11px] font-black uppercase tracking-[0.3em] hover:scale-105 active:scale-95 transition-all bg-gradient-to-r from-pink-500 via-purple-600 to-blue-600 border-none text-white italic group"
+                  asChild
+                >
+                  <Link href={lp("/analysis")}>
+                    <Camera className="mr-4 h-6 w-6" />
+                    {isThaiLocale ? 'ทดลองวิเคราะห์ฟรี' : 'Initialize Analysis'}
+                    <ArrowRight className="ml-4 h-6 w-6 group-hover:translate-x-2 transition-transform" />
+                  </Link>
+                </Button>
+                <Button 
+                  size="xl" 
+                  variant="outline"
+                  className="h-20 px-14 rounded-[2.5rem] border-slate-200 bg-white/50 text-slate-950 backdrop-blur-md hover:bg-slate-50 hover:border-pink-500/30 text-[11px] font-black uppercase tracking-[0.3em] transition-all hover:scale-105 active:scale-95 shadow-premium italic"
+                  asChild
+                >
+                  <Link href={lp("/case-studies")}>
+                    {isThaiLocale ? 'ดูตัวอย่างผลงาน' : 'Inspect Chronology'}
+                  </Link>
+                </Button>
+              </motion.div>
+
+              {/* Trust Telemetry interface */}
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1, duration: 1 }}
+                className="flex flex-wrap items-center justify-center gap-12 pt-12 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400"
+              >
+                <div className="flex items-center gap-4 group">
+                  <div className="flex -space-x-3">
+                    {[0, 1, 2, 3, 4].map((i) => (
+                      <div 
+                        key={i} 
+                        className={cn("w-10 h-10 rounded-full border-4 border-white shadow-premium transition-transform group-hover:translate-x-1", avatarGradients[i])}
+                      />
+                    ))}
+                  </div>
+                  <span className="italic group-hover:text-pink-600 transition-colors">{isThaiLocale ? '89+ ศูนย์ความงามใช้งาน' : '89+ Nodes Operational'}</span>
+                </div>
+                <div className="flex items-center gap-4 group">
+                  <Star className="w-5 h-5 text-amber-400 fill-amber-400 group-hover:scale-125 transition-transform" />
+                  <span className="italic group-hover:text-amber-600 transition-colors"><span className="text-slate-900">4.8/5</span> User Consensus</span>
+                </div>
+                <div className="flex items-center gap-4 group">
+                  <BrainCircuit className="w-5 h-5 text-blue-500 group-hover:rotate-12 transition-transform" />
+                  <span className="italic group-hover:text-blue-600 transition-colors">Accuracy <span className="text-slate-900">95.3%</span></span>
+                </div>
+              </motion.div>
             </div>
           </div>
-        </div>
-      </nav>
+        </section>
 
-      {/* Hero Section */}
-      <section className="relative z-10 container mx-auto px-4 pt-20 pb-32">
-        <div className="max-w-4xl mx-auto text-center space-y-8">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-purple-500/30 bg-purple-500/10 backdrop-blur-sm">
-            <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-            <span className="text-sm text-purple-200">อันดับ 1 ระบบวิเคราะห์ผิวด้วย AI</span>
+        {/* Feature Matrix - Precision Cards */}
+        <section className="relative z-10 container mx-auto px-6 pb-48">
+          <div className="grid md:grid-cols-3 gap-10 max-w-6xl mx-auto">
+            {[
+              { 
+                icon: Camera, 
+                title: isThaiLocale ? 'วิเคราะห์ผิว AI' : 'Neural Mapping', 
+                desc: isThaiLocale ? 'ถ่ายภาพแค่ 3 วินาที รับผลวิเคราะห์ 8 ตัวชี้วัดทันที' : '3-Second multi-angle scan delivering 8-Point precision telemetry.',
+                color: 'from-pink-500 to-purple-600'
+              },
+              { 
+                icon: BrainCircuit, 
+                title: isThaiLocale ? 'AR แสดงผล' : 'AR Synthesis', 
+                desc: isThaiLocale ? 'เห็นผลก่อน-หลังการรักษาแบบ Real-time บนใบหน้า' : 'Real-time biological transformation preview on digital twin.',
+                color: 'from-blue-500 to-cyan-600'
+              },
+              { 
+                icon: TrendingUp, 
+                title: isThaiLocale ? 'เพิ่มยอดขาย 65%' : 'Yield Optimization', 
+                desc: isThaiLocale ? 'ลูกค้าตัดสินใจเร็วขึ้นเมื่อเห็นภาพผลลัพธ์ชัดเจน' : 'Accelerate conversion sequence with quantitative proof nodes.',
+                color: 'from-emerald-500 to-teal-600'
+              }
+            ].map((f, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 + 0.2 }}
+              >
+                <Card className="group border-slate-100 bg-white shadow-premium rounded-[3rem] overflow-hidden transition-all duration-700 hover:border-pink-500/20 h-full">
+                  <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <CardContent className="p-12 space-y-10 flex flex-col h-full bg-slate-50/30 group-hover:bg-white transition-all duration-700">
+                    <div className={cn("w-16 h-16 rounded-[1.5rem] flex items-center justify-center bg-gradient-to-br text-white shadow-lg transition-transform duration-700 group-hover:scale-110 group-hover:rotate-3", f.color)}>
+                      <f.icon className="w-8 h-8" />
+                    </div>
+                    <div className="space-y-4 flex-grow">
+                      <h3 className="text-2xl font-black italic text-slate-950 uppercase group-hover:text-pink-600 transition-colors leading-none">{f.title}</h3>
+                      <p className="text-lg text-slate-500 font-light leading-relaxed italic">
+                        {f.desc}
+                      </p>
+                    </div>
+                    <div className="pt-6 border-t border-slate-100 flex justify-between items-center group/btn">
+                      <span className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-400 group-hover:text-pink-600 transition-colors">Initialize Module</span>
+                      <ChevronRight className="w-4 h-4 text-slate-300 group-hover:translate-x-2 transition-transform group-hover:text-pink-600" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
           </div>
+        </section>
+      </main>
 
-          {/* Main Headline */}
-          <h1 className="text-5xl md:text-7xl font-bold leading-tight">
-            <span className="block mb-2">เปิดโลก</span>
-            <span className="bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 bg-clip-text text-transparent">
-              ความงามด้วย AI
-            </span>
-          </h1>
-
-          {/* Subheadline */}
-          <p className="text-xl md:text-2xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
-            วิเคราะห์ผิวหน้า 8 ตัวชี้วัด พร้อม AR แสดงผลการรักษา
-            <br />
-            เพิ่มยอดขายศูนย์ความงามของคุณได้ถึง <span className="text-pink-400 font-semibold">65%</span>
-          </p>
-
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-            <Button aria-label="View pricing options"
-              size="lg" 
-              className="h-14 px-8 text-lg bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 border-0 shadow-lg shadow-purple-500/50"
-              onClick={() => trackEngagement('click', 'hero_try_free', { page: 'beauty-landing' })}
-            >
-              <Camera className="mr-2 h-5 w-5" />
-              ทดลองวิเคราะห์ฟรี
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <Button aria-label="Start free trial"
-              size="lg" 
-              variant="outline"
-              className="h-14 px-8 text-lg border-2 border-white/20 bg-white/5 hover:bg-white/10 backdrop-blur-sm"
-              onClick={() => trackEngagement('click', 'hero_view_examples', { page: 'beauty-landing' })}
-            >
-              ดูตัวอย่างผลงาน
-            </Button>
-          </div>
-
-          {/* Stats */}
-          <div className="flex flex-wrap items-center justify-center gap-8 pt-12 text-sm">
-            <div className="flex items-center gap-2">
-              <div className="flex -space-x-2">
-                {[1, 2, 3, 4, 5].map((i) => (
-                  <div 
-                    key={i} 
-                    className={`w-8 h-8 rounded-full border-2 border-slate-950 ${avatarGradients[i-1]}`}
-                  />
-                ))}
-              </div>
-              <span className="text-gray-300">89+ ศูนย์ความงามใช้งาน</span>
+      {/* Aesthetic Footer interface */}
+      <footer className="relative z-10 border-t border-slate-100 bg-white py-12">
+        <div className="container mx-auto px-6 max-w-7xl">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 italic">
+            <div className="flex items-center gap-4">
+              <Sparkles className="w-4 h-4 text-pink-500" />
+              <span>© 2025 BeautyAI Sequence // Beta_Protocol</span>
             </div>
-            <div className="flex items-center gap-2">
-              <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-              <span className="text-gray-300"><span className="font-semibold text-white">4.8/5</span> จากรีวิวจริง</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <BrainCircuit className="w-4 h-4 text-purple-400" />
-              <span className="text-gray-300">ความแม่นยำ <span className="font-semibold text-white">95.3%</span></span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Grid */}
-      <section className="relative z-10 container mx-auto px-4 pb-32">
-        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-          {/* Feature 1 */}
-          <div className="group relative p-8 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm hover:border-purple-500/50 hover:bg-white/10 transition-all">
-            <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-            <div className="relative">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mb-4">
-                <Camera className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="text-xl font-bold mb-2">วิเคราะห์ผิว AI</h3>
-              <p className="text-gray-400">
-                ถ่ายภาพแค่ 3 วินาที รับผลวิเคราะห์ 8 ตัวชี้วัดทันที
-              </p>
+            <div className="flex gap-10">
+              <Link href={lp("/privacy")} className="hover:text-pink-600 transition-colors">Privacy_Node</Link>
+              <Link href={lp("/terms")} className="hover:text-pink-600 transition-colors">Protocol_Terms</Link>
             </div>
           </div>
-
-          {/* Feature 2 */}
-          <div className="group relative p-8 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm hover:border-blue-500/50 hover:bg-white/10 transition-all">
-            <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-            <div className="relative">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mb-4">
-                <BrainCircuit className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="text-xl font-bold mb-2">AR แสดงผล</h3>
-              <p className="text-gray-400">
-                เห็นผลก่อน-หลังการรักษาแบบ Real-time บนใบหน้า
-              </p>
-            </div>
-          </div>
-
-          {/* Feature 3 */}
-          <div className="group relative p-8 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm hover:border-pink-500/50 hover:bg-white/10 transition-all">
-            <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-pink-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-            <div className="relative">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center mb-4">
-                <Sparkles className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="text-xl font-bold mb-2">เพิ่มยอดขาย 65%</h3>
-              <p className="text-gray-400">
-                ลูกค้าตัดสินใจเร็วขึ้นเมื่อเห็นภาพผลลัพธ์ชัดเจน
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="relative z-10 border-t border-white/10 backdrop-blur-sm bg-black/20 py-8">
-        <div className="container mx-auto px-4 text-center text-gray-400 text-sm">
-          <p>© 2025 BeautyAI. ระบบอยู่ในช่วง Beta Testing</p>
         </div>
       </footer>
     </div>
   )
 }
+
+const isThaiLocale = true // Temporarily hardcoded for this demo component as we use locale hook

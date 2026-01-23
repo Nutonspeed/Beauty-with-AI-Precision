@@ -24,6 +24,8 @@ import { ArrowLeft, Wifi, WifiOff } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { useLocalizePath } from '@/lib/i18n/locale-link'
 import { useTranslations } from 'next-intl'
+import { cn } from '@/lib/utils'
+import { motion } from 'framer-motion'
 
 export default function SalesPresentationWizardPage() {
   const t = useTranslations()
@@ -58,41 +60,50 @@ export default function SalesPresentationWizardPage() {
   const isNewClient = clientId.startsWith('temp-')
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
+    <div className="min-h-screen bg-white text-slate-950 selection:bg-pink-500/10">
+      {/* Infrastructure Background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-pink-500/5 rounded-full blur-[120px] animate-glow-pulse" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-500/5 rounded-full blur-[100px] animate-float" />
+        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.015]" />
+      </div>
+
       {/* Header - Sticky */}
-      <header className="sticky top-0 z-50 bg-white/95 dark:bg-slate-950/95 backdrop-blur-sm border-b shadow-sm">
-        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-3xl border-b border-slate-100 shadow-sm">
+        <div className="container mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-6">
             <Button
               variant="ghost"
-              size="sm"
+              size="icon"
               onClick={() => router.back()}
-              className="h-9 w-9 p-0"
+              className="h-12 w-12 rounded-2xl text-slate-400 hover:bg-slate-50 border border-slate-100 shadow-inner transition-all hover:text-pink-600"
             >
-              <ArrowLeft className="h-5 w-5" />
+              <ArrowLeft className="h-6 w-6" />
             </Button>
-            <div>
-              <h1 className="text-lg font-bold">{t('salesWizard.title')}</h1>
-              <p className="text-xs text-muted-foreground">
+            <div className="space-y-1">
+              <h1 className="text-xl font-black text-slate-950 tracking-tighter italic uppercase leading-none">{t('salesWizard.title')}</h1>
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 italic">
                 {isNewClient ? t('salesWizard.newClient') : `${t('salesWizard.clientId')}: ${clientId.slice(0, 8)}`}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-4">
             {/* Online/Offline Indicator */}
             <Badge 
-              variant={isOnline ? 'default' : 'secondary'}
-              className={isOnline ? 'bg-green-500' : 'bg-gray-400'}
+              className={cn(
+                "px-6 py-2 rounded-full border-none text-[10px] font-black uppercase tracking-[0.2em] italic shadow-sm",
+                isOnline ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'
+              )}
             >
               {isOnline ? (
                 <>
-                  <Wifi className="h-3 w-3 mr-1" />
+                  <Wifi className="h-3.5 w-3.5 mr-2" />
                   {t('salesWizard.online')}
                 </>
               ) : (
                 <>
-                  <WifiOff className="h-3 w-3 mr-1" />
+                  <WifiOff className="h-3.5 w-3.5 mr-2" />
                   {t('salesWizard.offline')}
                 </>
               )}
@@ -102,22 +113,32 @@ export default function SalesPresentationWizardPage() {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-6 max-w-4xl">
+      <main className="container relative z-10 mx-auto px-6 py-12 max-w-5xl">
         {/* Offline Warning */}
         {!isOnline && (
-          <Card className="mb-4 p-4 bg-amber-50 dark:bg-amber-950/20 border-amber-200">
-            <div className="flex items-start gap-3">
-              <WifiOff className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
-              <div className="space-y-1">
-                <p className="text-sm font-medium text-amber-900 dark:text-amber-100">
-                  {t('salesWizard.offlineWarning.title')}
-                </p>
-                <p className="text-xs text-amber-700 dark:text-amber-300">
-                  {t('salesWizard.offlineWarning.description')}
-                </p>
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <Card className="mb-10 p-8 bg-rose-50 border-rose-100 rounded-[2.5rem] shadow-premium relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:rotate-12 transition-transform duration-1000">
+                <WifiOff className="w-24 h-24 text-rose-600" />
               </div>
-            </div>
-          </Card>
+              <div className="flex items-start gap-6 relative z-10">
+                <div className="h-12 w-12 rounded-2xl bg-white border border-rose-100 flex items-center justify-center shadow-sm">
+                  <WifiOff className="h-6 w-6 text-rose-600" />
+                </div>
+                <div className="space-y-2">
+                  <p className="text-xl font-black text-slate-950 italic uppercase leading-none">
+                    {t('salesWizard.offlineWarning.title')}
+                  </p>
+                  <p className="text-sm text-slate-500 font-light italic leading-relaxed">
+                    {t('salesWizard.offlineWarning.description')}
+                  </p>
+                </div>
+              </div>
+            </Card>
+          </motion.div>
         )}
 
         {/* Presentation Wizard */}

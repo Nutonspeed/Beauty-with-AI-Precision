@@ -11,11 +11,14 @@ import { Footer } from '@/components/footer'
 import { MultiModeViewer, type AnalysisMode } from '@/components/analysis/multi-mode-viewer'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Upload, Image, Loader2, AlertCircle } from 'lucide-react'
+import { Upload, Image as ImageIcon, Loader2, AlertCircle, Sparkles, Zap, Activity, LayoutGrid, Search } from 'lucide-react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { useTranslations } from 'next-intl'
+import { motion } from 'framer-motion'
+import { Badge } from '@/components/ui/badge'
+import { cn } from '@/lib/utils'
 
-// Static mock data - แก้ไข hydration mismatch โดยใช้ค่าคงที่แทน Math.random()
+// Static mock data
 const MOCK_DETECTION_DATA = {
   spots: [
     { x: 25.3, y: 32.1, radius: 3.2 },
@@ -242,7 +245,6 @@ export default function MultiModeAnalysisPage() {
 
     setError(null)
 
-    // Show image preview immediately
     const reader = new FileReader()
     reader.onload = (event) => {
       if (event.target?.result) {
@@ -251,7 +253,6 @@ export default function MultiModeAnalysisPage() {
     }
     reader.readAsDataURL(file)
 
-    // If real API is enabled, analyze the image
     if (useRealAPI) {
       setIsAnalyzing(true)
 
@@ -270,7 +271,6 @@ export default function MultiModeAnalysisPage() {
           if (response.status === 401) {
             throw new Error('Unauthorized: Please login to run multi-mode analysis')
           }
-
           throw new Error(payload?.error || payload?.details || 'Failed to analyze image')
         }
 
@@ -315,15 +315,9 @@ export default function MultiModeAnalysisPage() {
             return mode
           }),
         )
-
-        console.log('✅ Analysis complete:', {
-          overall_score: analysis?.overall_score,
-          processing_time: analysis?.processing_time_ms,
-        })
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Failed to analyze image'
         setError(message)
-        console.error('❌ Analysis error:', err)
       } finally {
         setIsAnalyzing(false)
       }
@@ -331,166 +325,190 @@ export default function MultiModeAnalysisPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-white text-slate-950 selection:bg-pink-500/10">
       <Header />
 
-      <main className="flex-1 bg-gradient-to-b from-background to-muted/30">
-        <div className="container py-12">
-          <div className="mx-auto max-w-7xl space-y-8">
-            {/* Hero Section */}
-            <div className="text-center space-y-4">
-              <h1 className="text-4xl font-bold tracking-tight">
-                {t('analysis.multiMode.title')}
-              </h1>
-              <p className="text-xl text-primary">
-                {t('analysis.multiMode.subtitle')}
-              </p>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
-                {t('analysis.multiMode.description')}
-              </p>
-            </div>
+      <main className="flex-1 relative overflow-hidden flex flex-col">
+        {/* Infrastructure Background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-pink-500/5 rounded-full blur-[120px] animate-glow-pulse" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-500/5 rounded-full blur-[100px] animate-float" />
+          <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.015]" />
+        </div>
 
-            {/* Upload Section */}
-            <Card className="border-2 border-dashed">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Upload className="h-5 w-5" />
-                  {t('analysis.multiMode.uploadTitle')}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {/* API Toggle */}
-                  <div className="flex items-center justify-center gap-3 p-3 bg-muted rounded-lg">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={useRealAPI}
-                        onChange={(e) => setUseRealAPI(e.target.checked)}
-                        className="w-4 h-4 cursor-pointer"
-                      />
-                      <span className="text-sm font-medium">
-                        {t('analysis.multiMode.useRealApi')}
-                      </span>
-                    </label>
-                    {!useRealAPI && (
-                      <span className="text-xs text-muted-foreground">
-                        {t('analysis.multiMode.usingMockData')}
-                      </span>
-                    )}
+        <div className="container relative z-10 py-12 md:py-20 px-6 max-w-7xl mx-auto flex-1 space-y-16">
+          {/* Header */}
+          <div className="text-center space-y-10">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8 }}
+            >
+              <Badge variant="outline" className="px-6 py-2 rounded-full border-pink-500/30 text-pink-600 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.3em] text-[10px] font-black shadow-premium animate-pulse italic">
+                <Sparkles className="mr-3 h-3.5 w-3.5" />
+                Dimensional Diagnostic Node
+              </Badge>
+            </motion.div>
+            
+            <h1 className="text-5xl md:text-8xl font-black tracking-tighter text-slate-950 leading-[0.8] italic uppercase">
+              Multi-Mode<br />
+              <span className="bg-gradient-to-r from-pink-500 via-purple-600 to-blue-600 bg-clip-text text-transparent not-italic block mt-6 tracking-[0.2em] font-black uppercase text-2xl md:text-4xl">8-Point Analysis</span>
+            </h1>
+            
+            <p className="text-xl text-slate-500 font-light max-w-2xl mx-auto italic leading-relaxed tracking-tight">
+              Synchronize multi-layered biological telemetry using advanced Computer Vision and Neural Ingestion.
+            </p>
+          </div>
+
+          {/* Upload Configuration interface */}
+          <Card className="border-slate-100 bg-white shadow-premium rounded-[3.5rem] overflow-hidden relative group transition-all duration-700 hover:border-pink-500/10">
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/10 to-transparent" />
+            <CardHeader className="p-10 lg:p-16 pb-8 border-b border-slate-50 bg-slate-50/30">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+                <div className="flex items-center gap-6">
+                  <div className="h-14 w-14 rounded-2xl bg-white border border-slate-100 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-700">
+                    <Upload className="h-7 w-7 text-pink-600" />
                   </div>
-
-                  {/* Error Alert */}
-                  {error && (
-                    <Alert variant="destructive">
-                      <AlertCircle className="h-4 w-4" />
-                      <AlertDescription>{error}</AlertDescription>
-                    </Alert>
-                  )}
-
-                  {/* Upload Button */}
-                  <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
-                    <Button 
-                      variant="outline" 
-                      className="relative"
-                      disabled={isAnalyzing}
-                    >
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageUpload}
-                        className="absolute inset-0 opacity-0 cursor-pointer"
-                        aria-label="Upload image file"
-                        title="Upload image"
-                        disabled={isAnalyzing}
-                      />
-                      {isAnalyzing ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          {t('analysis.multiMode.analyzing')}
-                        </>
-                      ) : (
-                        <>
-                          <Image className="mr-2 h-4 w-4" />
-                          {t('analysis.multiMode.chooseImage')}
-                        </>
-                      )}
-                    </Button>
-                    <div className="text-sm text-muted-foreground">
-                      {isAnalyzing 
-                        ? t('analysis.multiMode.analyzingState')
-                        : t('analysis.multiMode.useSampleBelow')
-                      }
-                    </div>
+                  <div className="space-y-1">
+                    <CardTitle className="text-2xl font-black text-slate-950 italic uppercase tracking-tighter leading-none">Parameter Ingestion</CardTitle>
+                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 italic">Initialize raw data node transmission</p>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
 
-            {/* Analysis Summary */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-yellow-600">
-                      {analysisData.find(m => m.id === 'spots')?.count || 0}
-                    </div>
-                    <div className="text-sm text-muted-foreground">{t('analysis.multiMode.spotsDetected')}</div>
+                {/* API Control Toggle interface */}
+                <div className="flex items-center gap-6 px-8 py-4 bg-white rounded-full border border-slate-100 shadow-inner">
+                  <div className="flex items-center gap-3">
+                    <div className={cn("h-2.5 w-2.5 rounded-full animate-pulse", useRealAPI ? "bg-emerald-500 shadow-glow-emerald" : "bg-amber-500 shadow-glow-amber")} />
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-950 italic">{useRealAPI ? 'Production API Active' : 'Simulation Mode'}</span>
                   </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-green-600">
-                      {analysisData.find(m => m.id === 'wrinkles')?.count || 0}
-                    </div>
-                    <div className="text-sm text-muted-foreground">{t('analysis.multiMode.wrinklesDetected')}</div>
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-purple-600">
-                      {analysisData.find(m => m.id === 'pores')?.count || 0}
-                    </div>
-                    <div className="text-sm text-muted-foreground">{t('analysis.multiMode.poresDetected')}</div>
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-red-600">
-                      {analysisData.find(m => m.id === 'red_areas')?.count || 0}
-                    </div>
-                    <div className="text-sm text-muted-foreground">{t('analysis.multiMode.redAreas')}</div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+                  <Separator orientation="vertical" className="h-6" />
+                  <label className="relative inline-flex items-center cursor-pointer group/toggle">
+                    <input type="checkbox" checked={useRealAPI} onChange={(e) => setUseRealAPI(e.target.checked)} className="sr-only peer" />
+                    <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-600" />
+                  </label>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="p-10 lg:p-16 space-y-10">
+              {error && (
+                <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
+                  <Alert variant="destructive" className="bg-rose-50 border-rose-100 text-rose-600 rounded-2xl shadow-sm">
+                    <AlertCircle className="h-5 w-5" />
+                    <AlertDescription className="text-[10px] font-black uppercase tracking-widest italic">{error}</AlertDescription>
+                  </Alert>
+                </motion.div>
+              )}
 
-            {/* Multi-Mode Viewer */}
-            <MultiModeViewer
-              originalImage={selectedImage}
-              modes={analysisData}
-              detectionData={detectionData}
-            />
+              <div className="flex flex-col sm:flex-row gap-8 items-center justify-center">
+                <Button 
+                  variant="outline" 
+                  className="h-20 px-12 rounded-[2rem] border-slate-200 bg-white text-slate-950 hover:bg-slate-50 font-black uppercase tracking-[0.2em] text-[11px] transition-all italic shadow-premium group/upload relative overflow-hidden"
+                  disabled={isAnalyzing}
+                >
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="absolute inset-0 opacity-0 cursor-pointer"
+                    title="Upload image"
+                    disabled={isAnalyzing}
+                  />
+                  {isAnalyzing ? (
+                    <>
+                      <Loader2 className="mr-4 h-6 w-6 animate-spin text-pink-600" />
+                      Sequencing Data...
+                    </>
+                  ) : (
+                    <>
+                      <ImageIcon className="mr-4 h-6 w-6 text-slate-300 group-hover/upload:text-pink-600 transition-colors" />
+                      Choose Analysis Node
+                    </>
+                  )}
+                </Button>
+                <div className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 italic">
+                  {isAnalyzing ? 'Processing multi-layer neural weights...' : 'Awaiting volumetric payload'}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-            {/* Information */}
-            <Card className="bg-primary/5 border-primary/20">
-              <CardContent className="pt-6">
-                <h3 className="font-semibold mb-2">{t('analysis.multiMode.techTitle')}</h3>
-                <ul className="space-y-1 text-sm text-muted-foreground">
-                  <li>• <strong>Computer Vision:</strong> {t('analysis.multiMode.techItems.cv')}</li>
-                  <li>• <strong>AI Analysis:</strong> {t('analysis.multiMode.techItems.ai')}</li>
-                  <li>• <strong>UV Detection:</strong> {t('analysis.multiMode.techItems.uv')}</li>
-                  <li>• <strong>Porphyrins Detection:</strong> {t('analysis.multiMode.techItems.porphyrins')}</li>
-                </ul>
-              </CardContent>
-            </Card>
+          {/* Analysis Metrics Matrix interface */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {[
+              { id: 'spots', label: 'Spots Detected', icon: Target, color: 'text-amber-600', bg: 'bg-amber-50' },
+              { id: 'wrinkles', label: 'Wrinkle Count', icon: Activity, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+              { id: 'pores', label: 'Pore Density', icon: LayoutGrid, color: 'text-purple-600', bg: 'bg-purple-50' },
+              { id: 'red_areas', label: 'Erythema Nodes', icon: Zap, color: 'text-rose-600', bg: 'bg-rose-50' }
+            ].map((m, i) => (
+              <motion.div
+                key={m.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 + (i * 0.1) }}
+              >
+                <Card className="border-slate-100 bg-white shadow-premium rounded-[3rem] overflow-hidden relative group transition-all duration-700 hover:border-pink-500/20">
+                  <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <CardContent className="p-10 text-center space-y-6">
+                    <div className={cn("mx-auto h-16 w-16 rounded-2xl flex items-center justify-center border border-slate-50 shadow-inner group-hover:scale-110 transition-transform duration-700", m.bg)}>
+                      <m.icon className={cn("h-8 w-8", m.color)} />
+                    </div>
+                    <div className="space-y-2">
+                      <div className="text-5xl font-black text-slate-950 italic tracking-tighter uppercase leading-none">
+                        {analysisData.find(d => d.id === m.id)?.count || 0}
+                      </div>
+                      <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 italic group-hover:text-slate-950 transition-colors">{m.label}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
           </div>
+
+          {/* Multi-Mode Viewer interface */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.8 }}
+            className="relative group"
+          >
+            <div className="absolute -inset-4 bg-gradient-to-r from-pink-500/5 via-purple-500/5 to-blue-600/5 rounded-[4rem] blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none" />
+            <Card className="border-slate-100 bg-white shadow-premium rounded-[4rem] overflow-hidden p-2 relative z-10">
+              <MultiModeViewer
+                originalImage={selectedImage}
+                modes={analysisData}
+                detectionData={detectionData}
+              />
+            </Card>
+          </motion.div>
+
+          {/* Technical Protocol Documentation interface */}
+          <Card className="border-slate-100 bg-slate-50/30 backdrop-blur-xl rounded-[3rem] overflow-hidden relative group transition-all duration-700 hover:border-pink-500/10">
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/10 to-transparent" />
+            <CardContent className="p-12 lg:p-16 space-y-10">
+              <div className="flex items-center gap-6">
+                <div className="h-14 w-14 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-pink-600 shadow-sm">
+                  <Brain className="h-8 w-8" />
+                </div>
+                <h3 className="text-3xl font-black italic text-slate-950 uppercase tracking-tighter leading-none">Neural Protocol Schema</h3>
+              </div>
+              <div className="grid gap-10 md:grid-cols-2">
+                {[
+                  { label: 'Computer Vision', val: 'Proprietary edge-inference architecture for real-time dermal surface mapping.', icon: Search },
+                  { label: 'Neural Analysis', val: 'Multi-layer deep learning sequence calibrated on global dermatology datasets.', icon: Brain },
+                  { label: 'UV Mapping', val: 'Simulated 365nm wave-length projection node for sub-dermal integrity audits.', icon: Zap },
+                  { label: 'Porphyrin Detection', val: 'Autonomous pathological recognition of bacterial colonies across facial vectors.', icon: Activity }
+                ].map((tech, i) => (
+                  <div key={i} className="flex items-start gap-6 group/tech">
+                    <div className="mt-1.5 h-1.5 w-1.5 rounded-full bg-pink-500/30 group-hover/tech:scale-150 group-hover/tech:bg-pink-500 transition-all duration-500" />
+                    <div className="space-y-2">
+                      <p className="text-sm font-black uppercase tracking-widest text-slate-900 italic group-hover/tech:text-pink-600 transition-colors leading-none">{tech.label}</p>
+                      <p className="text-lg text-slate-500 font-light leading-relaxed italic">{tech.val}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </main>
 

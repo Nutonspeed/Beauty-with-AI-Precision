@@ -38,14 +38,14 @@ export function ProtocolFlow() {
 
   return (
     <section id="protocol" ref={containerRef} className="relative py-24 lg:py-40 bg-white overflow-hidden">
-      {/* Background Decorative Elements */}
+      {/* Background Decorative Elements with Neon Accents */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-1/4 -left-20 w-[500px] h-[500px] bg-blue-50 rounded-full blur-[120px] opacity-60" />
-        <div className="absolute bottom-1/4 -right-20 w-[500px] h-[500px] bg-indigo-50 rounded-full blur-[120px] opacity-60" />
+        <div className="absolute top-1/4 -left-20 w-[500px] h-[500px] bg-pink-500/5 rounded-full blur-[120px] opacity-40" />
+        <div className="absolute bottom-1/4 -right-20 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[120px] opacity-40" />
         
         {/* Grid Pattern */}
-        <div className="absolute inset-0 opacity-[0.02]" 
-          style={{ backgroundImage: 'radial-gradient(#3b82f6 0.5px, transparent 0.5px)', backgroundSize: '24px 24px' }} 
+        <div className="absolute inset-0 opacity-[0.03]" 
+          style={{ backgroundImage: 'radial-gradient(#3b82f6 0.5px, transparent 0.5px)', backgroundSize: '32px 32px' }} 
         />
       </div>
 
@@ -57,13 +57,13 @@ export function ProtocolFlow() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <Badge variant="outline" className="px-4 py-1.5 rounded-full border-blue-200 text-blue-700 bg-blue-50 font-bold tracking-wider text-[10px] uppercase mb-6">
+            <Badge variant="outline" className="px-4 py-1.5 rounded-full border-pink-500/30 text-pink-600 bg-pink-500/5 font-black tracking-[0.2em] text-[10px] uppercase mb-6 animate-pulse">
               {t('home.protocol.badge')}
             </Badge>
-            <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-slate-900 leading-tight mb-8">
+            <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-slate-900 leading-tight mb-8 italic">
               {t('home.protocol.title')}
             </h2>
-            <p className="text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg text-slate-500 max-w-2xl mx-auto leading-relaxed font-light">
               {t('home.protocol.description')}
             </p>
           </motion.div>
@@ -92,56 +92,56 @@ export function ProtocolFlow() {
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mt-32 p-8 lg:p-12 rounded-[2.5rem] bg-slate-900 text-white relative overflow-hidden"
+          className="mt-32 p-10 lg:p-16 rounded-[3rem] bg-slate-950 text-white relative overflow-hidden shadow-premium"
         >
-          {/* Glowing Background */}
-          <div className="absolute top-0 right-0 w-96 h-96 bg-blue-600/20 rounded-full blur-[100px]" />
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-indigo-600/20 rounded-full blur-[100px]" />
+          {/* Glowing Background with Pink/Blue Gradient */}
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px]" />
+          <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-pink-600/10 rounded-full blur-[120px]" />
 
           <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-12">
-            <div className="space-y-6 max-w-xl text-center lg:text-left">
-              <div className="flex items-center gap-3 justify-center lg:justify-start">
-                <div className="h-2 w-2 rounded-full bg-blue-500 animate-pulse" />
-                <span className="text-blue-400 text-xs font-bold uppercase tracking-widest">Medical Intelligence Core</span>
+            <div className="space-y-8 max-w-xl text-center lg:text-left">
+              <div className="flex items-center gap-4 justify-center lg:justify-start">
+                <div className="h-2 w-2 rounded-full bg-pink-500 animate-pulse shadow-glow-pink" />
+                <span className="text-pink-400 text-[10px] font-black uppercase tracking-[0.3em]">Medical Intelligence Core</span>
               </div>
-              <h3 className="text-3xl font-bold">High-Fidelity Neural Synthesis</h3>
-              <p className="text-slate-400 leading-relaxed">
+              <h3 className="text-4xl font-bold italic tracking-tight">High-Fidelity Neural Synthesis</h3>
+              <p className="text-slate-400 leading-relaxed font-light text-lg">
                 Our protocol combines clinical expertise with proprietary AI models to deliver 
                 sub-dermal insights that go beyond traditional surface-level scanning.
               </p>
-              <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
-                <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-xs font-medium">
-                  <ShieldCheck className="h-4 w-4 text-blue-400" /> HIPAA Compliant
-                </div>
-                <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-xs font-medium">
-                  <Activity className="h-4 w-4 text-emerald-400" /> Real-time Telemetry
-                </div>
-                <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-xs font-medium">
-                  <Zap className="h-4 w-4 text-amber-400" /> &lt; 3ms Latency
-                </div>
+              <div className="flex flex-wrap gap-4 justify-center lg:justify-start pt-4">
+                {[
+                  { icon: ShieldCheck, text: "HIPAA Compliant", color: "text-blue-400" },
+                  { icon: Activity, text: "Real-time Telemetry", color: "text-emerald-400" },
+                  { icon: Zap, text: "< 3ms Latency", color: "text-pink-400" }
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-3 px-5 py-2.5 rounded-2xl bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-colors">
+                    <item.icon className={cn("h-4 w-4", item.color)} /> {item.text}
+                  </div>
+                ))}
               </div>
             </div>
 
-            <div className="relative h-64 w-64 flex items-center justify-center">
-              {/* Animated Rings */}
+            <div className="relative h-72 w-72 flex items-center justify-center">
+              {/* Animated Rings with Neon Colors */}
               <motion.div 
                 className="absolute inset-0 rounded-full border-2 border-white/5"
                 animate={{ rotate: 360 }}
+                transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+              />
+              <motion.div 
+                className="absolute inset-6 rounded-full border border-pink-500/20"
+                animate={{ rotate: -360 }}
                 transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
               />
               <motion.div 
-                className="absolute inset-4 rounded-full border border-white/10"
-                animate={{ rotate: -360 }}
-                transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-              />
-              <motion.div 
-                className="absolute inset-8 rounded-full border border-blue-500/20"
-                animate={{ scale: [1, 1.1, 1] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute inset-12 rounded-full border border-blue-500/20 shadow-glow-blue/10"
+                animate={{ scale: [1, 1.15, 1] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
               />
               <div className="relative z-10 text-center">
-                <div className="text-5xl font-black text-white">99.9<span className="text-blue-500">%</span></div>
-                <div className="text-[10px] font-black uppercase tracking-widest text-slate-500 mt-2">Precision Accuracy</div>
+                <div className="text-6xl font-black text-white italic tracking-tighter">99.9<span className="text-pink-500">%</span></div>
+                <div className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 mt-3">Precision Accuracy</div>
               </div>
             </div>
           </div>
@@ -172,27 +172,27 @@ function StepItem({ step, index, t, scrollYProgress }: any) {
         <div className="w-3 h-3 rounded-full bg-slate-200 border-4 border-white group-hover:bg-blue-600 group-hover:scale-150 transition-all duration-500" />
       </div>
 
-      <div className="relative z-10 p-10 lg:p-12 rounded-[2.5rem] bg-white border border-slate-100 shadow-xl shadow-slate-200/50 hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-500 hover:-translate-y-2 overflow-hidden">
+      <div className="relative z-10 p-10 lg:p-12 rounded-[3rem] bg-white border border-slate-100 shadow-premium hover:border-pink-500/30 transition-all duration-700 hover:-translate-y-2 overflow-hidden">
         {/* Background Step Number */}
-        <div className="absolute top-6 right-8 text-8xl font-black text-slate-50/50 select-none group-hover:text-blue-50 transition-colors">
+        <div className="absolute top-6 right-8 text-8xl font-black text-slate-50 select-none group-hover:text-pink-50/50 transition-colors italic">
           0{index + 1}
         </div>
 
         <div className="relative space-y-8">
           <div className={cn(
-            "h-20 w-20 rounded-2xl flex items-center justify-center transition-all duration-500 group-hover:scale-110",
-            index === 0 ? "bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white" :
-            index === 1 ? "bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white" :
-            "bg-violet-50 text-violet-600 group-hover:bg-violet-600 group-hover:text-white"
+            "h-20 w-20 rounded-2xl flex items-center justify-center transition-all duration-700 group-hover:scale-110 shadow-sm",
+            index === 0 ? "bg-pink-50 text-pink-600 group-hover:bg-gradient-to-br group-hover:from-pink-500 group-hover:to-pink-600 group-hover:text-white" :
+            index === 1 ? "bg-blue-50 text-blue-600 group-hover:bg-gradient-to-br group-hover:from-blue-500 group-hover:to-blue-600 group-hover:text-white" :
+            "bg-indigo-50 text-indigo-600 group-hover:bg-gradient-to-br group-hover:from-indigo-500 group-hover:to-indigo-600 group-hover:text-white"
           )}>
             <Icon className="h-10 w-10" />
           </div>
 
           <div className="space-y-4">
-            <h3 className="text-2xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
+            <h3 className="text-2xl font-bold text-slate-900 group-hover:bg-gradient-to-r group-hover:from-pink-500 group-hover:to-blue-600 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-500 italic">
               {t(`home.protocol.${step.key}.title` as any)}
             </h3>
-            <p className="text-slate-500 leading-relaxed text-sm">
+            <p className="text-slate-500 leading-relaxed text-sm font-light">
               {t(`home.protocol.${step.key}.description` as any)}
             </p>
           </div>
@@ -201,15 +201,15 @@ function StepItem({ step, index, t, scrollYProgress }: any) {
 
           <ul className="space-y-3">
             {step.details.map((detail: string, i: number) => (
-              <li key={i} className="flex items-center gap-3 text-xs font-bold text-slate-400 group-hover:text-slate-600 transition-colors">
-                <div className="h-1 w-1 rounded-full bg-slate-300 group-hover:bg-blue-500" />
+              <li key={i} className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-slate-600 transition-colors">
+                <div className="h-1 w-1 rounded-full bg-slate-300 group-hover:bg-pink-500 shadow-glow-pink" />
                 {detail}
               </li>
             ))}
           </ul>
 
-          <div className="pt-4 flex items-center gap-2 text-blue-600 font-bold text-[10px] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all duration-500 translate-x-[-10px] group-hover:translate-x-0">
-            Learn Protocol <ArrowRight className="h-3.5 w-3.5" />
+          <div className="pt-4 flex items-center gap-2 text-pink-500 font-black text-[10px] uppercase tracking-[0.3em] opacity-0 group-hover:opacity-100 transition-all duration-700 translate-x-[-10px] group-hover:translate-x-0">
+            Initialize Protocol <ArrowRight className="h-3.5 w-3.5" />
           </div>
         </div>
       </div>

@@ -9,74 +9,93 @@ import {
   Fingerprint, 
   Activity, 
   Zap, 
-  Users
+  Users,
+  Sparkles,
+  ChevronRight
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Badge } from '@/components/ui/badge'
 
 const features = [
   { 
     icon: Brain, 
     key: 'neural',
-    color: 'from-blue-500 to-indigo-600',
-    bgColor: 'bg-blue-500/10',
-    accentColor: 'text-blue-500'
+    color: 'from-pink-500 to-purple-600',
+    bgColor: 'bg-pink-50',
+    accentColor: 'text-pink-600',
+    border: 'border-pink-100'
   },
   { 
     icon: Microscope, 
     key: 'ar',
-    color: 'from-purple-500 to-pink-600',
-    bgColor: 'bg-purple-500/10',
-    accentColor: 'text-purple-500'
+    color: 'from-blue-500 to-indigo-600',
+    bgColor: 'bg-blue-50',
+    accentColor: 'text-blue-600',
+    border: 'border-blue-100'
   },
   { 
     icon: Fingerprint, 
     key: 'safety',
     color: 'from-emerald-500 to-teal-600',
-    bgColor: 'bg-emerald-500/10',
-    accentColor: 'text-emerald-500'
+    bgColor: 'bg-emerald-50',
+    accentColor: 'text-emerald-600',
+    border: 'border-emerald-100'
   },
   { 
     icon: Activity, 
     key: 'vitals',
-    color: 'from-orange-500 to-red-600',
-    bgColor: 'bg-orange-500/10',
-    accentColor: 'text-orange-500'
+    color: 'from-purple-500 to-indigo-600',
+    bgColor: 'bg-purple-50',
+    accentColor: 'text-purple-600',
+    border: 'border-purple-100'
   },
   { 
     icon: Zap, 
     key: 'speed',
-    color: 'from-yellow-500 to-orange-600',
-    bgColor: 'bg-yellow-500/10',
-    accentColor: 'text-yellow-500'
+    color: 'from-amber-500 to-orange-600',
+    bgColor: 'bg-amber-50',
+    accentColor: 'text-amber-600',
+    border: 'border-amber-100'
   },
   { 
     icon: Users, 
     key: 'management',
     color: 'from-cyan-500 to-blue-600',
-    bgColor: 'bg-cyan-500/10',
-    accentColor: 'text-cyan-500'
+    bgColor: 'bg-cyan-50',
+    accentColor: 'text-cyan-600',
+    border: 'border-cyan-100'
   }
 ]
 
 function NavigationDot({ index, total, scrollYProgress }: { index: number, total: number, scrollYProgress: MotionValue<number> }) {
+  const start = index / total
+  const end = (index + 1) / total
+  
   const scale = useTransform(
     scrollYProgress,
-    [(index - 0.5) / total, index / total, (index + 0.5) / total],
-    [0.8, 1.5, 0.8]
+    [start - 0.1, start, end, end + 0.1],
+    [0.8, 1.5, 1.5, 0.8]
   )
   
   const backgroundColor = useTransform(
     scrollYProgress,
-    [(index - 0.5) / total, index / total, (index + 0.5) / total],
-    ['rgba(255,255,255,0.3)', 'rgba(59,130,246,1)', 'rgba(255,255,255,0.3)']
+    [start - 0.1, start, end, end + 0.1],
+    ['rgba(241,245,249,1)', 'rgba(236,72,153,1)', 'rgba(236,72,153,1)', 'rgba(241,245,249,1)']
+  )
+
+  const boxShadow = useTransform(
+    scrollYProgress,
+    [start - 0.1, start, end, end + 0.1],
+    ['0 0 0 rgba(236,72,153,0)', '0 0 20px rgba(236,72,153,0.4)', '0 0 20px rgba(236,72,153,0.4)', '0 0 0 rgba(236,72,153,0)']
   )
 
   return (
     <motion.div
-      className="w-2 h-2 rounded-full"
+      className="w-3 h-3 rounded-full border border-slate-200"
       style={{
         scale,
-        backgroundColor
+        backgroundColor,
+        boxShadow
       }}
     />
   )
@@ -91,86 +110,68 @@ export function FeaturesShowcase() {
     offset: ["start start", "end end"]
   })
 
-  // Horizontal scroll transform
   const x = useTransform(
     scrollYProgress,
     [0, 1],
     ["0%", `-${(features.length - 1) * 100}%`]
   )
   const smoothX = useSpring(x, { damping: 30, stiffness: 100 })
-
-  // Progress indicator
   const progressWidth = useTransform(scrollYProgress, [0, 1], ["0%", "100%"])
 
   return (
     <div 
       ref={containerRef} 
-      className="relative bg-slate-950"
+      className="relative bg-white"
       style={{ height: `${(features.length + 1) * 100}vh` }}
     >
-      {/* Sticky Container */}
       <div className="sticky top-0 h-screen overflow-hidden">
-        {/* Background Effects */}
-        <div className="absolute inset-0">
-          {/* Animated gradient background */}
-          <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950" />
-          
-          {/* Grid pattern */}
-          <div 
-            className="absolute inset-0 opacity-[0.03]"
-            style={{
-              backgroundImage: `
-                linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)
-              `,
-              backgroundSize: '60px 60px'
-            }}
-          />
-          
-          {/* Gradient orbs */}
-          <BackgroundOrbs scrollYProgress={scrollYProgress} />
+        {/* Infrastructure Background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-pink-500/5 rounded-full blur-[120px] animate-glow-pulse" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-500/5 rounded-full blur-[100px] animate-float" />
+          <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.015]" />
         </div>
 
-        {/* Header */}
-        <div className="absolute top-0 left-0 right-0 z-20 p-8 lg:p-12">
-          <div className="flex items-center justify-between">
-            <div>
-              <motion.span 
-                className="inline-block px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold tracking-[0.2em] text-blue-400 uppercase mb-4"
+        {/* Header interface */}
+        <div className="absolute top-0 left-0 right-0 z-30 p-10 lg:p-16">
+          <div className="flex items-center justify-between gap-10">
+            <div className="space-y-4">
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                Core Capabilities
-              </motion.span>
+                <Badge variant="outline" className="px-6 py-2 rounded-full border-pink-500/30 text-pink-600 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.3em] text-[10px] font-black shadow-sm animate-pulse italic">
+                  <Sparkles className="mr-3 h-3.5 w-3.5" />
+                  Ecosystem_Core_Capabilities
+                </Badge>
+              </motion.div>
               <motion.h2 
-                className="text-3xl md:text-5xl font-bold text-white"
+                className="text-4xl md:text-6xl font-black text-slate-950 italic uppercase tracking-tighter leading-none"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
               >
-                {t('home.features.title')}
+                {t('home.features.title' as any) || 'Network Capacities'}
               </motion.h2>
             </div>
             
-            {/* Progress Counter */}
-            <div className="hidden md:flex items-center gap-4">
+            <div className="hidden md:flex items-center gap-10 bg-white/50 backdrop-blur-md p-6 rounded-[2rem] border border-slate-100 shadow-premium">
               <ProgressCounter scrollYProgress={scrollYProgress} total={features.length} />
+              <div className="h-10 w-px bg-slate-100" />
+              <div className="w-40 h-1.5 bg-slate-100 rounded-full overflow-hidden shadow-inner p-0.5">
+                <motion.div 
+                  className="h-full bg-gradient-to-r from-pink-500 to-blue-600 rounded-full shadow-glow-pink/50"
+                  style={{ width: progressWidth }}
+                />
+              </div>
             </div>
-          </div>
-          
-          {/* Progress Bar */}
-          <div className="mt-6 h-1 bg-white/10 rounded-full overflow-hidden">
-            <motion.div 
-              className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"
-              style={{ width: progressWidth }}
-            />
           </div>
         </div>
 
-        {/* Horizontal Scroll Content */}
+        {/* Horizontal Scroll interface */}
         <motion.div 
-          className="absolute inset-0 flex pt-40"
+          className="absolute inset-0 flex pt-48 lg:pt-64"
           style={{ x: smoothX }}
         >
           {features.map((feature, index) => (
@@ -185,42 +186,14 @@ export function FeaturesShowcase() {
           ))}
         </motion.div>
 
-        {/* Navigation Dots */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3 z-20">
+        {/* Navigation Dots interface */}
+        <div className="absolute bottom-16 left-1/2 -translate-x-1/2 flex items-center gap-6 z-30 bg-white/50 backdrop-blur-md px-10 py-5 rounded-full border border-slate-100 shadow-premium">
           {features.map((_, i) => (
             <NavigationDot key={i} index={i} total={features.length} scrollYProgress={scrollYProgress} />
           ))}
         </div>
       </div>
     </div>
-  )
-}
-
-function BackgroundOrbs({ scrollYProgress }: { scrollYProgress: MotionValue<number> }) {
-  const x1 = useTransform(scrollYProgress, [0, 1], ['-20%', '30%'])
-  const y1 = useTransform(scrollYProgress, [0, 1], ['-20%', '20%'])
-  const x2 = useTransform(scrollYProgress, [0, 1], ['20%', '-30%'])
-  const y2 = useTransform(scrollYProgress, [0, 1], ['20%', '-20%'])
-
-  return (
-    <>
-      <motion.div 
-        className="absolute top-0 left-0 w-[800px] h-[800px] rounded-full blur-[200px]"
-        style={{
-          background: 'radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%)',
-          x: x1,
-          y: y1
-        }}
-      />
-      <motion.div 
-        className="absolute bottom-0 right-0 w-[600px] h-[600px] rounded-full blur-[150px]"
-        style={{
-          background: 'radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%)',
-          x: x2,
-          y: y2
-        }}
-      />
-    </>
   )
 }
 
@@ -235,13 +208,12 @@ function ProgressCounter({ scrollYProgress, total }: { scrollYProgress: MotionVa
   }, [count])
 
   return (
-    <span className="text-white/50 text-sm font-mono">
-      <span className="text-white text-2xl font-bold">
+    <div className="flex items-baseline gap-3">
+      <span className="text-4xl font-black text-slate-950 italic tracking-tighter leading-none">
         {displayCount}
       </span>
-      <span className="mx-2">/</span>
-      {total.toString().padStart(2, '0')}
-    </span>
+      <span className="text-xs font-black text-slate-300 uppercase tracking-widest italic">/ {total.toString().padStart(2, '0')}</span>
+    </div>
   )
 }
 
@@ -255,7 +227,7 @@ function FeatureSlide({
   feature: typeof features[0]
   index: number
   total: number
-  scrollYProgress: any
+  scrollYProgress: MotionValue<number>
   t: any
 }) {
   const start = index / total
@@ -268,16 +240,10 @@ function FeatureSlide({
     [0, 1, 1, 0]
   )
 
-  const y = useTransform(
-    scrollYProgress,
-    [start, mid, end],
-    [100, 0, -100]
-  )
-
   const scale = useTransform(
     scrollYProgress,
     [start, mid, end],
-    [0.8, 1, 0.8]
+    [0.9, 1, 0.9]
   )
 
   const rotateY = useTransform(
@@ -287,113 +253,109 @@ function FeatureSlide({
   )
 
   return (
-    <div className="w-screen h-full flex-shrink-0 flex items-center justify-center px-8 lg:px-20">
+    <div className="w-screen h-full flex-shrink-0 flex items-center justify-center px-10 lg:px-20 relative">
       <motion.div 
-        className="relative max-w-5xl w-full"
-        style={{ opacity, y, scale }}
+        className="relative max-w-6xl w-full"
+        style={{ opacity, scale }}
       >
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left: Icon & Visual */}
+        <div className="grid lg:grid-cols-2 gap-20 items-center">
+          {/* Visual Node port interface */}
           <motion.div 
             className="relative"
             style={{ rotateY, transformStyle: 'preserve-3d' }}
           >
-            {/* Large gradient background */}
             <div className={cn(
-              "absolute inset-0 rounded-[3rem] blur-3xl opacity-30",
+              "absolute -inset-10 rounded-full blur-[100px] opacity-20",
               `bg-gradient-to-br ${feature.color}`
             )} />
             
-            {/* Icon container */}
-            <div className="relative aspect-square max-w-md mx-auto flex items-center justify-center">
-              {/* Outer ring */}
+            <div className="relative aspect-square max-w-lg mx-auto flex items-center justify-center">
               <motion.div 
-                className="absolute inset-8 rounded-full border border-white/10"
+                className="absolute inset-4 rounded-full border-2 border-slate-100 border-dashed opacity-40"
                 animate={{ rotate: 360 }}
+                transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+              />
+              <motion.div 
+                className="absolute inset-16 rounded-full border border-slate-50 opacity-60"
+                animate={{ rotate: -360 }}
                 transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
               />
               
-              {/* Middle ring */}
-              <motion.div 
-                className="absolute inset-16 rounded-full border border-white/5"
-                animate={{ rotate: -360 }}
-                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              />
-              
-              {/* Center icon */}
               <div className={cn(
-                "relative w-32 h-32 rounded-3xl flex items-center justify-center",
-                "bg-gradient-to-br shadow-2xl",
-                feature.color
+                "relative w-48 h-48 rounded-[3rem] flex items-center justify-center",
+                "bg-white shadow-premium border transition-all duration-700",
+                feature.border
               )}>
-                <feature.icon className="w-16 h-16 text-white" />
-                
-                {/* Glow effect */}
+                <feature.icon className={cn("w-20 h-20", feature.accentColor)} />
                 <div className={cn(
-                  "absolute inset-0 rounded-3xl blur-xl opacity-50",
+                  "absolute -inset-4 rounded-[3.5rem] blur-2xl opacity-20 animate-pulse",
                   `bg-gradient-to-br ${feature.color}`
                 )} />
               </div>
 
-              {/* Floating particles */}
-              {[...Array(6)].map((_, i) => (
+              {[...Array(8)].map((_, i) => (
                 <motion.div
                   key={i}
-                  className="absolute w-2 h-2 rounded-full bg-white/30"
+                  className={cn("absolute w-2 h-2 rounded-full", feature.accentColor.replace('text', 'bg'), "opacity-20 shadow-lg")}
                   style={{
                     left: `${20 + Math.random() * 60}%`,
                     top: `${20 + Math.random() * 60}%`,
                   }}
                   animate={{
-                    y: [0, -20, 0],
-                    opacity: [0.3, 0.8, 0.3],
-                    scale: [1, 1.5, 1]
+                    y: [0, -40, 0],
+                    x: [0, (Math.random() - 0.5) * 40, 0],
+                    opacity: [0.1, 0.5, 0.1],
+                    scale: [1, 2, 1]
                   }}
                   transition={{
-                    duration: 3 + Math.random() * 2,
+                    duration: 4 + Math.random() * 3,
                     repeat: Infinity,
-                    delay: i * 0.5
+                    delay: i * 0.4
                   }}
                 />
               ))}
             </div>
           </motion.div>
 
-          {/* Right: Content */}
-          <div className="space-y-8 text-center lg:text-left">
-            <div>
-              <span className={cn(
-                "inline-block px-4 py-1 rounded-full text-xs font-bold tracking-wider uppercase mb-4",
+          {/* Content interface */}
+          <div className="space-y-10 text-center lg:text-left">
+            <div className="space-y-6">
+              <Badge className={cn(
+                "px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.3em] border-none shadow-sm italic leading-none",
                 feature.bgColor,
                 feature.accentColor
               )}>
-                Feature {(index + 1).toString().padStart(2, '0')}
-              </span>
-              <h3 className="text-4xl md:text-5xl font-bold text-white mb-6">
+                NODE_PROTOCOL_{(index + 1).toString().padStart(2, '0')}
+              </Badge>
+              <h3 className="text-5xl md:text-7xl font-black text-slate-950 italic uppercase tracking-tighter leading-tight">
                 {t(`home.features.${feature.key}.title` as any)}
               </h3>
-              <p className="text-lg text-white/60 leading-relaxed">
+              <p className="text-xl text-slate-500 font-light leading-relaxed italic">
                 {t(`home.features.${feature.key}.description` as any)}
               </p>
             </div>
 
-            {/* Stats or highlights */}
-            <div className="flex flex-wrap gap-6 justify-center lg:justify-start">
+            <div className="grid grid-cols-3 gap-8 pt-8 border-t border-slate-100">
               {[
-                { value: '99.9%', label: 'Accuracy' },
-                { value: '<1s', label: 'Response' },
-                { value: '24/7', label: 'Available' }
+                { value: '99.9%', label: 'NOMINAL', icon: ShieldCheck },
+                { value: '0.003s', label: 'LATENCY', icon: Zap },
+                { value: 'SYNCED', label: 'STATE', icon: Activity }
               ].map((stat, i) => (
-                <div key={i} className="text-center">
-                  <div className={cn("text-2xl font-bold", feature.accentColor)}>
+                <div key={i} className="space-y-2 group/stat">
+                  <div className={cn("text-2xl font-black italic tracking-tighter uppercase leading-none group-hover/stat:text-pink-600 transition-colors", feature.accentColor)}>
                     {stat.value}
                   </div>
-                  <div className="text-xs text-white/40 uppercase tracking-wider">
-                    {stat.label}
+                  <div className="flex items-center justify-center lg:justify-start gap-2">
+                    <stat.icon className="w-3 h-3 text-slate-300" />
+                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic">{stat.label}</span>
                   </div>
                 </div>
               ))}
             </div>
+
+            <Button variant="ghost" className="h-auto p-0 text-[11px] font-black uppercase tracking-[0.4em] text-pink-600 hover:bg-transparent hover:translate-x-3 transition-all italic group/btn">
+              Explore Documentation Sequence <ChevronRight className="ml-3 h-4 w-4 group-hover/btn:translate-x-2 transition-transform" />
+            </Button>
           </div>
         </div>
       </motion.div>

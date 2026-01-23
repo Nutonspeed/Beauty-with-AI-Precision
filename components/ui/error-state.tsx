@@ -1,6 +1,7 @@
 import { AlertCircle, RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useTranslations } from "next-intl"
+import { cn } from "@/lib/utils"
 
 interface ErrorStateProps {
   title?: string
@@ -21,13 +22,15 @@ export function ErrorState({
   const displayMessage = message || t('message')
 
   return (
-    <div className={`flex flex-col items-center justify-center py-12 text-center ${className}`}>
-      <AlertCircle className="h-12 w-12 text-destructive mb-4" />
-      <h3 className="text-lg font-semibold text-foreground mb-2">{displayTitle}</h3>
-      <p className="text-sm text-muted-foreground mb-4 max-w-md">{displayMessage}</p>
+    <div className={cn("flex flex-col items-center justify-center py-16 text-center bg-white/50 backdrop-blur-sm rounded-[3rem] border border-slate-100 shadow-premium p-12", className)}>
+      <div className="flex items-center justify-center size-16 rounded-[2rem] bg-rose-50/50 shadow-inner mb-6">
+        <AlertCircle className="size-8 text-rose-600" />
+      </div>
+      <h3 className="text-xl font-black uppercase tracking-widest italic text-slate-950 mb-3">{displayTitle}</h3>
+      <p className="text-base text-slate-500 font-medium italic mb-8 max-w-md">{displayMessage}</p>
       {onRetry && (
-        <Button onClick={onRetry} variant="outline" className="gap-2">
-          <RefreshCw className="h-4 w-4" />
+        <Button onClick={onRetry} variant="outline" size="lg" className="gap-2 px-8">
+          <RefreshCw className="size-4" />
           {t('retry')}
         </Button>
       )}

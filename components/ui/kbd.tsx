@@ -5,9 +5,9 @@ function Kbd({ className, ...props }: React.ComponentProps<'kbd'>) {
     <kbd
       data-slot="kbd"
       className={cn(
-        'bg-muted w-fit text-muted-foreground pointer-events-none inline-flex h-5 min-w-5 items-center justify-center gap-1 rounded-sm px-1 font-sans text-xs font-medium select-none',
-        "[&_svg:not([class*='size-'])]:size-3",
-        '[[data-slot=tooltip-content]_&]:bg-background/20 [[data-slot=tooltip-content]_&]:text-background dark:[[data-slot=tooltip-content]_&]:bg-background/10',
+        'bg-slate-100/50 text-slate-500 pointer-events-none inline-flex h-6 min-w-6 items-center justify-center gap-1 rounded-lg px-2 font-mono text-[10px] font-black uppercase tracking-widest italic shadow-inner border border-slate-200/50 select-none',
+        "[&_svg:not([class*='size-'])]:size-3.5",
+        '[[data-slot=tooltip-content]_&]:bg-white/20 [[data-slot=tooltip-content]_&]:text-white [[data-slot=tooltip-content]_&]:border-white/10 dark:[[data-slot=tooltip-content]_&]:bg-white/10',
         className,
       )}
       {...props}

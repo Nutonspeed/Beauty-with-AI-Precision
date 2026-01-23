@@ -34,7 +34,7 @@ function FloatingSymbolItem({ symbol, scrollYProgress, index }: { symbol: Symbol
   
   return (
     <motion.div
-      className="absolute text-blue-600"
+      className="absolute text-pink-500"
       style={{
         top: symbol.top,
         left: symbol.left,
@@ -43,13 +43,15 @@ function FloatingSymbolItem({ symbol, scrollYProgress, index }: { symbol: Symbol
       animate={{
         rotate: [0, 10, -10, 0],
         scale: [1, 1.1, 1],
+        opacity: [0.03, 0.05, 0.03]
       }}
       transition={{
         rotate: { duration: 6 + index, repeat: Infinity, ease: "easeInOut", delay: symbol.delay },
         scale: { duration: 4 + index, repeat: Infinity, ease: "easeInOut", delay: symbol.delay },
+        opacity: { duration: 5, repeat: Infinity, ease: "easeInOut" }
       }}
     >
-      <symbol.Icon size={symbol.size} strokeWidth={1.5} />
+      <symbol.Icon size={symbol.size} strokeWidth={1} className="drop-shadow-glow-pink" />
     </motion.div>
   )
 }
@@ -58,7 +60,7 @@ export function FloatingSymbols() {
   const { scrollYProgress } = useScroll()
 
   return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-[0.03] z-0">
+    <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
       {SYMBOLS.map((symbol, i) => (
         <FloatingSymbolItem key={i} symbol={symbol} scrollYProgress={scrollYProgress} index={i} />
       ))}

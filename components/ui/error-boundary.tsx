@@ -150,36 +150,36 @@ function DefaultErrorFallback({
 }) {
   const t = useTranslations('ui.errorBoundary')
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-purple-50">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <div className="mx-auto w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4">
-            <AlertTriangle className="w-6 h-6 text-red-600" />
+    <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50/50 backdrop-blur-sm">
+      <Card className="w-full max-w-lg rounded-[3.5rem] border border-slate-100 bg-white/90 shadow-premium p-10 backdrop-blur-xl">
+        <CardHeader className="text-center p-0 mb-8">
+          <div className="mx-auto size-20 rounded-[2rem] bg-rose-50/50 flex items-center justify-center mb-6 shadow-inner">
+            <AlertTriangle className="size-10 text-rose-600 shadow-glow-pink" />
           </div>
-          <CardTitle className="text-xl">{t('title')}</CardTitle>
+          <CardTitle className="text-3xl font-black uppercase tracking-widest italic text-slate-950">{t('title')}</CardTitle>
         </CardHeader>
-        <CardContent className="text-center space-y-4">
-          <p className="text-gray-600">
+        <CardContent className="text-center space-y-8 p-0">
+          <p className="text-slate-500 font-medium italic text-lg leading-relaxed">
             {t('message')}
             {process.env.NODE_ENV === 'development' && error && (
-              <span className="block mt-2 text-sm text-red-600 font-mono">
+              <span className="block mt-4 p-4 rounded-2xl bg-rose-50/30 border border-rose-100/50 text-sm text-rose-600 font-mono overflow-auto max-h-32 text-left">
                 {error.message}
               </span>
             )}
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-2">
-            <Button onClick={retry} className="flex-1">
-              <RefreshCw className="w-4 h-4 mr-2" />
+          <div className="flex flex-col sm:flex-row gap-4">
+            <Button onClick={retry} className="flex-1 h-14 rounded-2xl shadow-glow-pink">
+              <RefreshCw className="size-5 mr-2" />
               {t('retry') || 'Retry'}
             </Button>
-            <Button variant="outline" onClick={goHome} className="flex-1">
-              <Home className="w-4 h-4 mr-2" />
+            <Button variant="outline" onClick={goHome} className="flex-1 h-14 rounded-2xl border-slate-200">
+              <Home className="size-5 mr-2" />
               {t('homeBtn')}
             </Button>
           </div>
           
-          <p className="text-xs text-gray-500">
+          <p className="text-[10px] font-black uppercase tracking-widest italic text-slate-400">
             {t('contactAdmin')}
           </p>
         </CardContent>

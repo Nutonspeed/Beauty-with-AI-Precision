@@ -5,6 +5,7 @@ interface StructuredDataProps {
 }
 
 export function StructuredData({ type = 'Organization' }: StructuredDataProps) {
+  console.log(`[StructuredData] Initializing for type: ${type}`)
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",

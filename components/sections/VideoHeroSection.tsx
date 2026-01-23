@@ -1,13 +1,12 @@
 "use client"
 
 import { useRef, useState, useEffect, useCallback, useMemo } from "react"
-import { motion, useScroll, useTransform, useMotionValue, useSpring, AnimatePresence } from "framer-motion"
+import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion"
 import { throttle } from "lodash"
 import { useTranslations } from "next-intl"
 import { ArrowRight, Play, X, Sparkles, Zap, Shield } from "lucide-react"
 import { useLocalizePath } from "@/lib/i18n/locale-link"
 import Link from "next/link"
-import { cn } from "@/lib/utils"
 
 const floatingCards = [
   { icon: Sparkles, label: "AI Analysis", x: "8%", y: "25%", delay: 0.5 },
@@ -70,8 +69,8 @@ export function VideoHeroSection() {
             <div className="relative w-full h-full">
               {!isMobile ? (
                 <iframe
-                  className="absolute inset-0 w-[120%] h-[120%] -left-[10%] -top-[10%] object-cover pointer-events-none opacity-50"
-                  src="https://www.youtube.com/embed/IUN664s7N-c?autoplay=1&mute=1&loop=1&playlist=IUN664s7N-c&controls=0&showinfo=0&autohide=1&modestbranding=1&vq=hd1080"
+                  className="absolute inset-0 w-[120%] h-[120%] -left-[10%] -top-[10%] object-cover pointer-events-none opacity-40"
+                  src="https://www.youtube.com/embed/4kX_hS69SJQ?autoplay=1&mute=1&loop=1&playlist=4kX_hS69SJQ&controls=0&showinfo=0&autohide=1&modestbranding=1&vq=hd1080"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   frameBorder="0"
                   aria-hidden="true"
@@ -81,23 +80,23 @@ export function VideoHeroSection() {
               <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900" 
                    style={{ zIndex: -1 }} />
             </div>
-            <div className="absolute inset-0 bg-gradient-to-br from-slate-900/70 via-blue-900/30 to-purple-900/50" />
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-900/80 via-blue-900/40 to-slate-900/60" />
           </motion.div>
 
-          {/* Floating Glass Cards */}
+          {/* Floating Glass Cards with Neon Accents */}
           {floatingCards.map((card, i) => (
             <motion.div
               key={i}
-              className="absolute hidden lg:flex items-center gap-3 px-4 py-3 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl z-20"
+              className="absolute hidden lg:flex items-center gap-3 px-4 py-3 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl z-20 hover:border-pink-500/50 transition-colors duration-500 group/float"
               style={{ left: card.x, top: card.y, x: smoothX, y: smoothY }}
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1, y: [0, -10, 0] }}
               transition={{ delay: card.delay, duration: 0.6, y: { delay: card.delay + 0.6, duration: 3, repeat: Infinity } }}
             >
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 to-blue-600 flex items-center justify-center shadow-lg shadow-pink-500/20 group-hover/float:scale-110 transition-transform">
                 <card.icon className="w-5 h-5 text-white" />
               </div>
-              <span className="text-white/90 text-sm font-semibold">{card.label}</span>
+              <span className="text-white/90 text-[10px] font-black uppercase tracking-widest">{card.label}</span>
             </motion.div>
           ))}
 
@@ -111,11 +110,11 @@ export function VideoHeroSection() {
             </motion.h1>
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="mt-6 text-lg text-white/60 max-w-2xl">{t("home.hero.description")}</motion.p>
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="mt-10 flex flex-wrap gap-4 justify-center">
-              <Link href={lp("/analysis")} className="group h-14 px-8 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold flex items-center gap-2 hover:shadow-xl hover:shadow-blue-500/25 transition-all">
+              <Link href={lp("/analysis")} className="group h-14 px-10 rounded-xl bg-gradient-to-r from-pink-500 via-purple-600 to-blue-600 text-white text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-3 hover:shadow-2xl hover:shadow-pink-500/25 transition-all hover:scale-105 active:scale-95">
                 {t("home.hero.cta")} <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
-              <button onClick={() => setShowModal(true)} className="h-14 px-8 rounded-xl bg-white/10 backdrop-blur border border-white/20 text-white font-bold flex items-center gap-2 hover:bg-white/20 transition-all">
-                <Play className="w-5 h-5" /> Watch Demo
+              <button onClick={() => setShowModal(true)} className="h-14 px-10 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 text-white text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-3 hover:bg-white/10 transition-all hover:scale-105 active:scale-95">
+                <Play className="w-5 h-5 text-pink-400" /> Watch Synthesis
               </button>
             </motion.div>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="mt-16 flex gap-12 text-white/80">

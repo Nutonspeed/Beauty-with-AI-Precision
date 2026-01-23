@@ -1,488 +1,303 @@
 'use client';
 
 /**
- * AR 3D Product Viewer Component
- * 
- * Features:
- * - 360° interactive rotation
- * - PBR materials with realistic lighting
- * - Ingredient/benefit overlays
- * - Interactive hotspots
- * - AR placement simulation
+ * Product 3D Viewer Component
+ * Three.js visualization for 3D products with premium theme and interactive hotspots
  */
 
-import { Suspense, useRef, useState, useEffect } from 'react';
-import dynamic from 'next/dynamic';
+import { useRef, useState } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { OrbitControls, PerspectiveCamera, ContactShadows, Float, Environment, Html } from '@react-three/drei';
 import * as THREE from 'three';
-
-// Dynamic imports for heavy 3D libraries
-const Canvas = dynamic(() => import('@react-three/fiber').then(mod => ({ default: mod.Canvas })), { ssr: false });
-const OrbitControls = dynamic(() => import('@react-three/drei').then(mod => ({ default: mod.OrbitControls })), { ssr: false });
-const PerspectiveCamera = dynamic(() => import('@react-three/drei').then(mod => ({ default: mod.PerspectiveCamera })), { ssr: false });
-const Html = dynamic(() => import('@react-three/drei').then(mod => ({ default: mod.Html })), { ssr: false });
-
-// Import useFrame for type safety (loaded dynamically at runtime)
-let useFrame: any;
-if (typeof window !== 'undefined') {
-  import('@react-three/fiber').then(mod => { useFrame = mod.useFrame; });
-}
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Slider } from '@/components/ui/slider';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   RotateCcw, 
-  Maximize2, 
-  Minimize2, 
-  Lightbulb,
-  Package,
+  Zap, 
+  ShieldCheck, 
+  Activity, 
+  Sparkles, 
+  Maximize2,
   Layers,
   Info,
-  Sparkles
+  ChevronRight,
+  ShoppingBag,
+  Droplets,
+  FlaskConical,
+  Beaker
 } from 'lucide-react';
-import {
-  type Product3DModel,
-  Product3DModelGenerator,
-  AREnvironmentLighting,
-  getProduct3DManager,
-} from '@/lib/ar/product-3d-viewer';
+import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from '@/lib/utils';
 
-interface Product3DViewerProps {
-  productId: string;
+export interface Product3DViewerProps {
+  productData?: {
+    id: string;
+    name: string;
+    ingredients: string[];
+    benefits: string[];
+  };
   className?: string;
-  autoRotate?: boolean;
-  showIngredients?: boolean;
-  showHotspots?: boolean;
-  arMode?: boolean;
 }
 
-/**
- * 3D Product Mesh Component
- */
-function ProductMesh({ 
-  product,
-  showIngredients,
-  activeHotspot,
-  onHotspotClick
-}: { 
-  product: Product3DModel;
-  showIngredients: boolean;
-  activeHotspot: string | null;
-  onHotspotClick: (id: string) => void;
-}) {
-  const meshRef = useRef<THREE.Mesh>(null);
-  const [hovered, setHovered] = useState(false);
-  
-  // Create geometry based on product category
-  const geometry = (() => {
-    switch (product.category) {
-      case 'serum':
-        return Product3DModelGenerator.createBottleGeometry(product.dimensions);
-      case 'cream':
-        return Product3DModelGenerator.createJarGeometry(product.dimensions);
-      case 'injection':
-        return Product3DModelGenerator.createSyringeGeometry(product.dimensions);
-      case 'device':
-        return new THREE.BoxGeometry(
-          product.dimensions.width,
-          product.dimensions.height,
-          product.dimensions.depth
-        );
-      default:
-        return new THREE.CylinderGeometry(
-          product.dimensions.width / 2,
-          product.dimensions.width / 2,
-          product.dimensions.height,
-          32
-        );
-    }
-  })();
-  
-  // Create PBR material
-  const material = Product3DModelGenerator.createPBRMaterial(product.materials);
-  
-  // Gentle rotation animation
-  useFrame((state: any) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y = state.clock.getElapsedTime() * 0.2;
-    }
-  });
+function Hotspot({ position, label, content }: { position: [number, number, number], label: string, content: string }) {
+  const [isOpen, setIsOpen] = useState(false);
   
   return (
-    <>
-      {/* Main product mesh */}
-      <mesh
-        ref={meshRef}
-        geometry={geometry}
-        material={material}
-        castShadow
-        receiveShadow
-        onPointerOver={() => setHovered(true)}
-        onPointerOut={() => setHovered(false)}
-        scale={hovered ? 1.05 : 1}
-      />
-      
-      {/* Ingredient markers */}
-      {showIngredients && product.ingredients.map((ingredient) => (
-        <group key={`ing-${ingredient.name}`} position={ingredient.position.toArray()}>
-          <mesh>
-            <sphereGeometry args={[0.005, 16, 16]} />
-            <meshStandardMaterial
-              color="#3b82f6"
-              emissive="#3b82f6"
-              emissiveIntensity={0.5}
-            />
-          </mesh>
-          <Html distanceFactor={0.1}>
-            <div className="bg-blue-500 text-white px-2 py-1 rounded text-xs whitespace-nowrap pointer-events-none">
-              {ingredient.nameThai}
-            </div>
-          </Html>
-        </group>
-      ))}
-      
-      {/* Interactive hotspots */}
-      {product.hotspots.map((hotspot) => (
-        <group key={hotspot.id} position={hotspot.position.toArray()}>
-          <mesh
-            onClick={() => onHotspotClick(hotspot.id)}
-            onPointerOver={() => setHovered(true)}
-            onPointerOut={() => setHovered(false)}
-          >
-            <sphereGeometry args={[0.008, 16, 16]} />
-            <meshStandardMaterial
-              color={hotspot.type === 'caution' ? '#ef4444' : '#10b981'}
-              emissive={hotspot.type === 'caution' ? '#ef4444' : '#10b981'}
-              emissiveIntensity={activeHotspot === hotspot.id ? 1 : 0.3}
-            />
-          </mesh>
-          {activeHotspot === hotspot.id && (
-            <Html distanceFactor={0.15}>
-              <div className="bg-white border border-gray-200 rounded-lg shadow-lg p-3 max-w-xs pointer-events-none">
-                <div className="font-semibold text-sm mb-1">{hotspot.label}</div>
-                <div className="text-xs text-gray-600">{hotspot.description}</div>
-              </div>
-            </Html>
+    <Html position={position}>
+      <div className="relative group">
+        <button 
+          onClick={() => setIsOpen(!isOpen)}
+          className={cn(
+            "h-8 w-8 rounded-full border-4 border-white shadow-glow-blue transition-all duration-500 flex items-center justify-center relative z-20",
+            isOpen ? "bg-blue-600 scale-125 rotate-45" : "bg-blue-600/40 hover:bg-blue-600"
           )}
-        </group>
-      ))}
-    </>
+        >
+          <Zap className="h-3 w-3 text-white fill-current" />
+        </button>
+        
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div 
+              initial={{ opacity: 0, y: 10, scale: 0.8 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 10, scale: 0.8 }}
+              className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 z-50 pointer-events-none"
+            >
+              <div className="bg-slate-950/90 backdrop-blur-xl text-white p-6 rounded-[2rem] border border-white/10 shadow-2xl w-64">
+                <p className="text-[10px] font-black uppercase tracking-widest text-blue-400 italic mb-2">{label}</p>
+                <p className="text-xs font-medium text-slate-300 italic leading-relaxed">{content}</p>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </Html>
   );
 }
 
-/**
- * Lighting Component
- */
-function ProductLighting({ _intensity }: { _intensity: number }) {
-  const lightGroupRef = useRef<THREE.Group>(null);
-  
-  useEffect(() => {
-    if (lightGroupRef.current) {
-      const lights = AREnvironmentLighting.createLightingRig();
-      lightGroupRef.current.add(lights);
+function ProductModel() {
+  const meshRef = useRef<THREE.Mesh>(null);
+
+  useFrame((state) => {
+    if (meshRef.current) {
+      meshRef.current.rotation.y = state.clock.elapsedTime * 0.2;
     }
-  }, []);
-  
+  });
+
   return (
-    <group ref={lightGroupRef}>
-      {/* Lights are added dynamically via AREnvironmentLighting */}
+    <group>
+      <Float speed={1.5} rotationIntensity={0.5} floatIntensity={0.5}>
+        <mesh ref={meshRef}>
+          <cylinderGeometry args={[0.5, 0.5, 2, 32]} />
+          <meshStandardMaterial 
+            color="#ffffff" 
+            metalness={0.9} 
+            roughness={0.05}
+          />
+          
+          {/* Label Area */}
+          <mesh position={[0, 0, 0.01]}>
+            <cylinderGeometry args={[0.51, 0.51, 1.2, 32]} />
+            <meshStandardMaterial 
+              color="#0f172a" 
+              metalness={0.1} 
+              roughness={0.8}
+            />
+          </mesh>
+
+          <Hotspot position={[0.6, 0.5, 0]} label="Active_Molecule" content="High-concentration hyaluronic acid for deep-layer cellular hydration sync." />
+          <Hotspot position={[-0.6, -0.3, 0.2]} label="Delivery_Vector" content="Nano-emulsion technology for precise biological penetration." />
+        </mesh>
+      </Float>
+      <ContactShadows position={[0, -1.5, 0]} opacity={0.4} scale={10} blur={2.5} far={1} />
     </group>
   );
 }
 
-/**
- * Ground Plane with Shadow
- */
-function GroundPlane() {
-  return (
-    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.1, 0]} receiveShadow>
-      <planeGeometry args={[1, 1]} />
-      <shadowMaterial opacity={0.3} />
-    </mesh>
-  );
-}
-
-/**
- * Main Product 3D Viewer Component
- */
-export function Product3DViewer({
-  productId,
-  className = '',
-  autoRotate = true,
-  showIngredients = true,
-  showHotspots: _showHotspots = true,
-  arMode = false,
+export function Product3DViewer({ 
+  productData, 
+  className = '' 
 }: Product3DViewerProps) {
+  const [autoRotate, setAutoRotate] = useState(true);
   const controlsRef = useRef<any>(null);
-  const [product, setProduct] = useState<Product3DModel | null>(null);
-  const [activeTab, setActiveTab] = useState<'info' | 'ingredients' | 'benefits'>('info');
-  const [activeHotspot, setActiveHotspot] = useState<string | null>(null);
-  const [lightingIntensity, setLightingIntensity] = useState([100]);
-  const [zoom, setZoom] = useState([3]);
-  const [autoRotateEnabled, setAutoRotateEnabled] = useState(autoRotate ?? true);
-  
-  // Load product data
-  useEffect(() => {
-    const manager = getProduct3DManager();
-    const productData = manager.getProduct(productId);
-    setProduct(productData || null);
-  }, [productId]);
-  
-  const resetCamera = () => {
+
+  const handleReset = () => {
     if (controlsRef.current) {
       controlsRef.current.reset();
     }
   };
-  
-  const handleHotspotClick = (id: string) => {
-    setActiveHotspot(activeHotspot === id ? null : id);
-  };
-  
-  if (!product) {
-    return (
-      <Card className={className}>
-        <CardContent className="p-6">
-          <div className="text-center text-gray-500">
-            Product not found: {productId}
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-  
+
   return (
-    <Card className={className}>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="flex items-center gap-2">
-              <Package className="w-5 h-5 text-primary" />
-              {product.name}
-            </CardTitle>
-            <CardDescription>
-              360° Interactive Product Visualization
-            </CardDescription>
+    <Card className={cn("border-slate-100 bg-white shadow-premium rounded-[4rem] overflow-hidden relative group transition-all duration-1000 hover:border-blue-500/20 flex flex-col min-h-[900px]", className)}>
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+      <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.02] bg-center pointer-events-none" />
+      
+      <CardHeader className="p-10 lg:p-12 pb-8 border-b border-slate-50 bg-slate-50/30 flex flex-col md:flex-row md:items-center justify-between gap-8 relative overflow-hidden">
+        <div className="space-y-3 relative z-10">
+          <div className="flex items-center gap-5">
+            <Badge variant="outline" className="px-5 py-1.5 rounded-full border-blue-500/30 text-blue-600 bg-blue-500/5 backdrop-blur-md uppercase tracking-[0.3em] text-[10px] font-black italic shadow-sm animate-pulse">
+              <ShoppingBag className="mr-3 h-3.5 w-3.5" />
+              PRODUCT_VOXEL_v4.8
+            </Badge>
           </div>
-          <Badge variant="secondary">{product.category.toUpperCase()}</Badge>
+          <CardTitle className="text-3xl font-black text-slate-950 italic tracking-tighter flex items-center gap-6 uppercase leading-none">
+            <div className="p-4 bg-blue-50 rounded-2xl border border-blue-100 shadow-sm group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white transition-all duration-700">
+              <FlaskConical className="h-8 w-8 text-blue-600 group-hover:text-white" />
+            </div>
+            Spectral_Product_Sim
+          </CardTitle>
+          <CardDescription className="text-[11px] font-black uppercase tracking-[0.4em] text-slate-400 mt-4 italic">
+            Recursive 360-degree interactive product exploration and ingredient mapping
+          </CardDescription>
+        </div>
+        <div className="flex items-center gap-6 relative z-10 bg-white px-6 py-3 rounded-2xl border border-slate-100 shadow-sm">
+          <div className="text-right hidden sm:block space-y-1">
+            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic leading-none">Voxel_Status</p>
+            <p className="text-lg font-black italic tracking-tighter uppercase leading-none mt-1 text-emerald-600">
+              UPLINK_STABLE
+            </p>
+          </div>
+          <div className="h-12 w-12 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center shadow-inner">
+            <Activity className="h-6 w-6 text-emerald-500 animate-pulse" />
+          </div>
         </div>
       </CardHeader>
-      
-      <CardContent className="space-y-4">
-        {/* 3D Canvas */}
-        <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
-          <Canvas shadows>
-            <PerspectiveCamera makeDefault position={[0, 0, zoom[0]]} />
-            <OrbitControls
-              ref={controlsRef}
-              autoRotate={autoRotateEnabled}
-              autoRotateSpeed={2}
-              enableDamping
-              dampingFactor={0.05}
-              minDistance={1}
-              maxDistance={8}
-            />
-            
-            <ProductLighting _intensity={lightingIntensity[0] / 100} />
-            
-            <Suspense fallback={null}>
-              <ProductMesh
-                product={product}
-                showIngredients={showIngredients && activeTab === 'ingredients'}
-                activeHotspot={activeHotspot}
-                onHotspotClick={handleHotspotClick}
-              />
-            </Suspense>
-          
-            <GroundPlane />
-          </Canvas>
-          
-          {/* Controls Overlay */}
-          <div className="absolute top-4 right-4 flex flex-col gap-2">
-            <Button
-              size="sm"
-              variant="secondary"
-              onClick={resetCamera}
-              className="bg-white/90 hover:bg-white"
-            >
-              <RotateCcw className="h-4 w-4" />
-            </Button>
-            <Button
-              size="sm"
-              variant="secondary"
-              onClick={() => setAutoRotateEnabled(!autoRotateEnabled)}
-              className="bg-white/90 hover:bg-white"
-            >
-              {autoRotateEnabled ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
-            </Button>
-          </div>
-          
-          {/* AR Mode Indicator */}
-          {arMode && (
-            <div className="absolute bottom-4 left-4">
-              <Badge variant="default" className="bg-purple-500">
-                <Sparkles className="h-3 w-3 mr-1" />
-                AR Mode
-              </Badge>
-            </div>
-          )}
-        </div>
-        
-        {/* Controls */}
-        <div className="space-y-3">
-          {/* Zoom Slider */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium flex items-center gap-2">
-                <Maximize2 className="h-4 w-4" />
-                Zoom
-              </span>
-              <span className="text-xs text-muted-foreground">
-                {zoom[0].toFixed(1)}x
-              </span>
-            </div>
-            <Slider
-              value={zoom}
-              onValueChange={setZoom}
-              min={1.5}
-              max={6}
-              step={0.1}
-            />
-          </div>
-          
-          {/* Lighting Slider */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium flex items-center gap-2">
-                <Lightbulb className="h-4 w-4" />
-                Lighting
-              </span>
-              <span className="text-xs text-muted-foreground">
-                {lightingIntensity[0]}%
-              </span>
-            </div>
-            <Slider
-              value={lightingIntensity}
-              onValueChange={setLightingIntensity}
-              min={0}
-              max={200}
-              step={10}
-            />
-          </div>
-        </div>
-        
-        {/* Product Information Tabs */}
-        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)}>
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="info">
-              <Info className="h-4 w-4 mr-2" />
-              ข้อมูล
-            </TabsTrigger>
-            <TabsTrigger value="ingredients">
-              <Layers className="h-4 w-4 mr-2" />
-              ส่วนผสม
-            </TabsTrigger>
-            <TabsTrigger value="benefits">
-              <Sparkles className="h-4 w-4 mr-2" />
-              ประโยชน์
-            </TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="info" className="space-y-3 mt-4">
-            <div>
-              <h4 className="font-semibold text-sm mb-2">Product Details</h4>
-              <div className="space-y-1 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Category:</span>
-                  <span className="font-medium">{product.category}</span>
+
+      <CardContent className="p-10 lg:p-16 space-y-12 bg-white flex-1 relative overflow-hidden flex flex-col">
+        <div className="grid lg:grid-cols-12 gap-16 flex-1">
+          {/* Main 3D Viewport interface */}
+          <div className="lg:col-span-8 relative group/viewport">
+            <div className="relative aspect-square rounded-[3.5rem] overflow-hidden bg-slate-950 border-4 border-white shadow-premium group/canvas flex items-center justify-center">
+              <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.05] pointer-events-none" />
+              
+              <Canvas shadows dpr={[1, 2]}>
+                <PerspectiveCamera makeDefault position={[0, 0, 5]} fov={40} />
+                <OrbitControls 
+                  ref={controlsRef}
+                  enablePan={false}
+                  enableZoom={true}
+                  autoRotate={autoRotate}
+                  autoRotateSpeed={1}
+                />
+                <ambientLight intensity={0.5} />
+                <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
+                <pointLight position={[-10, -10, -10]} color="#03a9f4" intensity={0.5} />
+                <Environment preset="studio" />
+                
+                <ProductModel />
+              </Canvas>
+
+              {/* HUD interface interface interface */}
+              <div className="absolute inset-0 z-10 pointer-events-none p-10 flex flex-col justify-between">
+                <div className="flex justify-between items-start">
+                  <div className="flex flex-col gap-4">
+                    <Badge className="bg-white/10 backdrop-blur-md text-white border-none px-6 py-2 rounded-full text-[10px] font-black italic shadow-2xl tracking-[0.2em] uppercase leading-none">
+                      INTERACTIVE_MODE_ACTIVE
+                    </Badge>
+                    <div className="flex items-center gap-4 bg-blue-500/20 backdrop-blur-md px-5 py-2 rounded-2xl border border-blue-500/30 shadow-xl">
+                      <Sparkles className="h-4 w-4 text-blue-400 animate-pulse" />
+                      <span className="text-[9px] font-black text-white uppercase tracking-widest italic">Voxel_Hotspots: LOADED</span>
+                    </div>
+                  </div>
+                  <Button variant="ghost" size="icon" className="h-14 w-14 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10 text-white shadow-2xl pointer-events-auto">
+                    <Maximize2 className="h-6 w-6" />
+                  </Button>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Dimensions:</span>
-                  <span className="font-medium">
-                    {(product.dimensions.width * 100).toFixed(0)} x{' '}
-                    {(product.dimensions.height * 100).toFixed(0)} x{' '}
-                    {(product.dimensions.depth * 100).toFixed(0)} cm
-                  </span>
+
+                <div className="flex justify-center gap-6 pointer-events-auto">
+                  <Button 
+                    onClick={handleReset}
+                    size="xl" 
+                    className="h-20 w-20 rounded-full bg-white text-slate-950 shadow-2xl hover:scale-110 active:scale-95 transition-all group/reset"
+                  >
+                    <RotateCcw className="h-8 w-8 group-hover:rotate-180 transition-transform duration-700" />
+                  </Button>
                 </div>
               </div>
+              
+              <div className="absolute top-1/2 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/20 to-transparent shadow-glow-blue animate-scan-line pointer-events-none" />
             </div>
-            
-            {/* Hotspots */}
-            {product.hotspots.length > 0 && (
-              <div>
-                <h4 className="font-semibold text-sm mb-2">Interactive Points</h4>
-                <div className="space-y-2">
-                  {product.hotspots.map((hotspot) => (
-                    <Button
-                      key={hotspot.id}
-                      variant={activeHotspot === hotspot.id ? 'default' : 'outline'}
-                      size="sm"
-                      className="w-full justify-start text-left"
-                      onClick={() => handleHotspotClick(hotspot.id)}
-                    >
-                      <div className={`h-2 w-2 rounded-full mr-2 ${
-                        hotspot.type === 'caution' ? 'bg-red-500' : 'bg-green-500'
-                      }`} />
-                      <div className="flex-1">
-                        <div className="text-sm font-medium">{hotspot.label}</div>
-                        <div className="text-xs text-muted-foreground">
-                          {hotspot.description}
-                        </div>
+          </div>
+
+          {/* Product sidebar matrix interface */}
+          <div className="lg:col-span-4 space-y-12">
+            <div className="space-y-10">
+              <div className="flex items-center gap-5 ml-4">
+                <div className="h-8 w-8 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center">
+                  <Layers className="h-4 w-4 text-blue-600" />
+                </div>
+                <h4 className="text-[11px] font-black uppercase tracking-[0.4em] text-slate-400 italic leading-none">Formula_Registry</h4>
+              </div>
+              
+              <div className="space-y-6">
+                <div className="p-8 rounded-[2.5rem] bg-slate-50 border border-slate-100 shadow-inner space-y-8 group/info hover:bg-white hover:border-blue-500/20 transition-all duration-700">
+                  <div className="flex items-center gap-4">
+                    <div className="h-10 w-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center shadow-sm">
+                      <Droplets className="h-5 w-5 text-blue-500" />
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic leading-none">Core_Concentration</p>
+                      <p className="text-xl font-black italic text-slate-950 tracking-tighter uppercase leading-none">Hyaluronic_v4</p>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic leading-none ml-2">Molecular_Efficacy</p>
+                    <div className="h-1.5 w-full bg-white rounded-full overflow-hidden p-px shadow-inner">
+                      <motion.div initial={{ width: 0 }} whileInView={{ width: '92%' }} transition={{ duration: 1.5 }} className="h-full bg-blue-500 rounded-full shadow-glow-blue/30" />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid gap-4">
+                  {(productData?.ingredients || ['Matrixyl_3000', 'Ceramide_NP', 'Niacinamide_B3']).map((ing, i) => (
+                    <div key={i} className="flex items-center gap-5 p-5 rounded-2xl bg-white border border-slate-50 shadow-sm hover:border-blue-500/20 transition-all group/ing">
+                      <div className="h-10 w-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center group-hover/ing:bg-blue-50 transition-colors">
+                        <Beaker className="h-5 w-5 text-slate-300 group-hover/ing:text-blue-600 transition-colors" />
                       </div>
-                    </Button>
+                      <span className="text-[10px] font-black uppercase tracking-widest italic text-slate-600 group-hover/ing:text-slate-950 transition-colors">{ing}</span>
+                      <ShieldCheck className="h-4 w-4 ml-auto text-emerald-500 opacity-40 group-hover/ing:opacity-100 transition-opacity" />
+                    </div>
                   ))}
                 </div>
               </div>
-            )}
-          </TabsContent>
-          
-          <TabsContent value="ingredients" className="space-y-3 mt-4">
-            <h4 className="font-semibold text-sm mb-2">Active Ingredients</h4>
-            <div className="space-y-3">
-              {product.ingredients.map((ingredient) => (
-                <Card key={ingredient.name} className="border-l-4 border-l-blue-500">
-                  <CardContent className="pt-4">
-                    <div className="flex items-start justify-between mb-2">
-                      <div>
-                        <div className="font-semibold text-sm">{ingredient.nameThai}</div>
-                        <div className="text-xs text-muted-foreground">
-                          {ingredient.name}
-                        </div>
-                      </div>
-                      {ingredient.concentration && (
-                        <Badge variant="secondary">{ingredient.concentration}</Badge>
-                      )}
-                    </div>
-                    <div className="space-y-1">
-                      {ingredient.benefits.map((benefit) => (
-                        <div key={benefit} className="text-xs flex items-center gap-2">
-                          <div className="h-1 w-1 rounded-full bg-blue-500" />
-                          {benefit}
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
             </div>
-          </TabsContent>
-          
-          <TabsContent value="benefits" className="space-y-3 mt-4">
-            <h4 className="font-semibold text-sm mb-2">Key Benefits</h4>
-            <div className="space-y-2">
-              {product.benefits.map((benefit) => (
-                <div
-                  key={benefit}
-                  className="flex items-start gap-3 p-3 rounded-lg bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20"
-                >
-                  <Sparkles className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                  <span className="text-sm">{benefit}</span>
-                </div>
-              ))}
+
+            <div className="p-8 rounded-[3rem] bg-slate-50 border border-slate-100 shadow-inner space-y-4 transition-all duration-700 hover:bg-white hover:border-blue-500/20 group/tips">
+              <div className="flex items-center gap-4">
+                <Info className="h-5 w-5 text-blue-600 animate-pulse" />
+                <p className="text-[10px] font-black text-slate-950 uppercase tracking-widest italic">Simulation_Context</p>
+              </div>
+              <p className="text-xs text-slate-500 font-medium italic group-hover/tips:text-slate-900 transition-colors leading-relaxed">
+                Interact with the voxel model to visualize delivery vectors and molecular anchoring points within the dermal matrix.
+              </p>
             </div>
-          </TabsContent>
-        </Tabs>
+
+            <Button 
+              size="xl" 
+              className="w-full h-20 rounded-[2.5rem] bg-slate-950 text-white border-none shadow-2xl transition-all hover:bg-blue-600 active:scale-95 italic font-black text-[11px] uppercase tracking-[0.3em] group/btn relative overflow-hidden"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-1000" />
+              Authorize_Order_Protocol
+              <ChevronRight className="ml-4 h-6 w-6 group-hover:translate-x-2 transition-transform" />
+            </Button>
+          </div>
+        </div>
       </CardContent>
+
+      <CardFooter className="p-10 lg:p-12 border-t border-slate-50 bg-slate-50/30 flex items-center justify-between opacity-40 hover:opacity-100 transition-opacity duration-700 grayscale hover:grayscale-0">
+        <div className="flex items-center gap-6 text-slate-400 group/status cursor-default">
+          <ShieldCheck className="h-5 w-5 group-hover:text-emerald-500 transition-colors" />
+          <p className="text-[10px] font-black uppercase tracking-[0.3em] italic group-hover:text-slate-950 transition-colors">Voxel_Integrity_Verified: NOMINAL</p>
+        </div>
+        <div className="flex items-center gap-6">
+          <Badge variant="outline" className="px-6 py-2 rounded-full border-slate-100 text-slate-400 bg-white text-[9px] font-black italic shadow-sm uppercase tracking-widest leading-none">
+            PROD-3D-v4.8
+          </Badge>
+          <div className="h-4 w-px bg-slate-200" />
+          <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest italic leading-none">Engine: PBR_REALTIME_X</p>
+        </div>
+      </CardFooter>
     </Card>
   );
 }

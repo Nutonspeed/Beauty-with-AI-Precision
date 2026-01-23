@@ -11,8 +11,7 @@ import {
   Brain,
   Activity,
   ShieldCheck,
-  Zap,
-  Sparkles
+  Zap
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import Link from 'next/link'
@@ -118,36 +117,36 @@ export default function CustomerDashboard() {
       label: t('nav.analysis'), 
       href: lp('/customer/analysis'), 
       icon: Camera, 
-      color: 'text-blue-600',
-      bg: 'bg-blue-50',
-      border: 'border-blue-100',
+      color: 'text-pink-600',
+      bg: 'bg-pink-50',
+      border: 'border-pink-100',
       description: t('salesPresentations.quickActions.analysis.description')
     },
     { 
       label: t('nav.booking'), 
       href: lp('/booking'), 
       icon: Calendar, 
-      color: 'text-indigo-600',
-      bg: 'bg-indigo-50',
-      border: 'border-indigo-100',
+      color: 'text-blue-600',
+      bg: 'bg-blue-50',
+      border: 'border-blue-100',
       description: t('salesPresentations.quickActions.booking.description')
     },
     { 
       label: t('salesPresentations.quickActions.progress.label'), 
       href: lp('/customer/analysis/history'), 
       icon: TrendingUp, 
-      color: 'text-cyan-600',
-      bg: 'bg-cyan-50',
-      border: 'border-cyan-100',
+      color: 'text-purple-600',
+      bg: 'bg-purple-50',
+      border: 'border-purple-100',
       description: t('salesPresentations.quickActions.progress.description')
     },
     { 
       label: t('nav.profile'), 
       href: lp('/profile'), 
       icon: User, 
-      color: 'text-slate-600',
-      bg: 'bg-slate-50',
-      border: 'border-slate-200',
+      color: 'text-indigo-600',
+      bg: 'bg-indigo-50',
+      border: 'border-indigo-100',
       description: t('salesPresentations.quickActions.profile.description')
     }
   ]
@@ -159,12 +158,12 @@ export default function CustomerDashboard() {
   ]
 
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50 text-slate-900 selection:bg-blue-500/30">
+    <div className="flex min-h-screen flex-col bg-white text-slate-900 selection:bg-pink-500/10">
       {/* Infrastructure Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-blue-500/5 rounded-full blur-[120px] animate-glow-pulse" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-indigo-500/5 rounded-full blur-[100px] animate-float" />
-        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.03]" />
+        <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-pink-500/5 rounded-full blur-[120px] animate-glow-pulse" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-500/5 rounded-full blur-[100px] animate-float" />
+        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.015]" />
       </div>
 
       <div className="max-w-7xl mx-auto space-y-12 relative z-10 px-6 py-12 w-full">
@@ -172,29 +171,31 @@ export default function CustomerDashboard() {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col md:flex-row md:items-end justify-between gap-8 pb-10 border-b border-slate-200"
+          className="flex flex-col md:flex-row md:items-end justify-between gap-8 pb-12 border-b border-slate-100"
         >
-          <div className="space-y-3">
-            <Badge variant="outline" className="px-4 py-1 rounded-full border-blue-500/30 text-blue-600 bg-blue-500/5 backdrop-blur-md uppercase tracking-[0.2em] text-[10px] font-black shadow-lg shadow-blue-500/5">
-              <Activity className="mr-2 h-3 w-3 animate-pulse" />
+          <div className="space-y-6">
+            <Badge variant="outline" className="px-6 py-2 rounded-full border-pink-500/30 text-pink-600 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.3em] text-[10px] font-black shadow-premium animate-pulse italic">
+              <Activity className="mr-3 h-3.5 w-3.5" />
               {t('header.badge')}
             </Badge>
-            <h1 className="text-5xl font-bold text-slate-900 tracking-tight italic">
-              {t('nav.dashboard')}{' '}
-              <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 bg-clip-text text-transparent not-italic text-2xl tracking-[0.3em] font-black uppercase">
+            <h1 className="text-5xl md:text-8xl font-black tracking-tighter text-slate-950 leading-[0.8] italic uppercase">
+              {t('nav.dashboard')}<br />
+              <span className="bg-gradient-to-r from-pink-500 via-purple-600 to-blue-600 bg-clip-text text-transparent not-italic block mt-6 tracking-[0.2em] font-black uppercase">
                 {user?.full_name?.split(' ')[0] || t('header.defaultClient')}{t('header.nodeSuffix')}
               </span>
             </h1>
-            <p className="text-slate-500 font-light tracking-wide text-lg italic">{t('header.description')}</p>
+            <p className="text-xl text-slate-500 font-light max-w-2xl italic leading-relaxed tracking-tight">
+              {t('header.description')}
+            </p>
           </div>
           
-          <div className="flex gap-4">
-            <button className="h-14 px-8 rounded-2xl border border-slate-200 bg-white shadow-sm hover:bg-slate-50 text-[10px] font-black uppercase tracking-widest italic transition-all" onClick={() => router.push(lp('/customer/analysis/history'))}>
+          <div className="flex gap-6">
+            <Button variant="outline" className="h-16 px-10 rounded-2xl border-slate-200 bg-white hover:bg-slate-50 text-[10px] font-black uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 shadow-premium italic" onClick={() => router.push(lp('/customer/analysis/history'))}>
               {t('buttons.myProgress')}
-            </button>
-            <button className="h-14 px-8 rounded-2xl bg-blue-600 text-white shadow-xl shadow-blue-600/20 text-[10px] font-black uppercase tracking-widest italic border-none hover:scale-105 active:scale-95 transition-all" onClick={() => router.push(lp('/customer/analysis'))}>
+            </Button>
+            <Button variant="premium" className="h-16 px-10 rounded-2xl shadow-2xl shadow-pink-500/20 text-[10px] font-black uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 bg-gradient-to-r from-pink-500 via-purple-600 to-blue-600 border-none text-white italic" onClick={() => router.push(lp('/customer/analysis'))}>
               {t('buttons.analyzeSkin')}
-            </button>
+            </Button>
           </div>
         </motion.div>
 
@@ -207,19 +208,20 @@ export default function CustomerDashboard() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
             >
-              <Link href={action.href}>
-                <Card className="h-full border-white bg-white/60 backdrop-blur-xl hover:bg-white/80 hover:border-blue-500/20 transition-all group overflow-hidden rounded-[2.5rem] cursor-pointer shadow-premium">
-                  <CardContent className="p-8 relative">
-                    <div className={cn("absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity", action.color)}>
-                      <action.icon className="w-16 h-16" />
+            <Link href={action.href}>
+                <Card className="h-full border-slate-100 bg-white shadow-premium rounded-[3rem] transition-all duration-700 hover:border-pink-500/20 group relative overflow-hidden h-full cursor-pointer">
+                  <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/10 to-transparent" />
+                  <CardContent className="p-10 relative">
+                    <div className={cn("absolute top-0 right-0 p-8 opacity-[0.03] group-hover:scale-110 transition-transform duration-700", action.color)}>
+                      <action.icon className="w-20 h-20" />
                     </div>
-                    <div className="space-y-4 relative z-10">
-                      <div className={cn("h-12 w-12 rounded-2xl flex items-center justify-center border transition-all duration-500", action.bg, action.color, action.border, "group-hover:scale-110 shadow-sm")}>
-                        <action.icon className="w-6 h-6" />
+                    <div className="space-y-6 relative z-10">
+                      <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center border transition-all duration-700 shadow-sm group-hover:scale-110", action.bg, action.color, action.border)}>
+                        <action.icon className="w-7 h-7" />
                       </div>
-                      <div>
-                        <h3 className="font-bold text-lg text-slate-900 tracking-tight italic group-hover:text-blue-600 transition-colors">{action.label}</h3>
-                        <p className="text-[9px] text-slate-500 uppercase font-black tracking-widest leading-relaxed mt-1">{action.description}</p>
+                      <div className="space-y-2">
+                        <h3 className="font-black text-2xl text-slate-950 tracking-tight italic group-hover:text-pink-600 transition-colors uppercase">{action.label}</h3>
+                        <p className="text-[10px] text-slate-400 uppercase font-black tracking-widest leading-relaxed italic group-hover:text-slate-600 transition-colors">{action.description}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -241,41 +243,41 @@ export default function CustomerDashboard() {
             <AestheticLoyalty isPremium={isPremium} />
             <RegimenTracker isPremium={isPremium} />
 
-            <Card className="border-white bg-white/60 backdrop-blur-xl rounded-[3rem] overflow-hidden shadow-premium relative group">
-              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/10 to-transparent" />
-              <CardHeader className="p-10 lg:p-12 pb-6 border-b border-slate-100">
-                <CardTitle className="text-2xl font-bold text-slate-900 tracking-tight italic">{t('journey.title')}</CardTitle>
-                <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{t('journey.subtitle')}</CardDescription>
+            <Card className="border-slate-100 bg-white shadow-premium rounded-[3rem] overflow-hidden relative group transition-all duration-700 hover:border-pink-500/20">
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/10 to-transparent" />
+              <CardHeader className="p-10 lg:p-12 pb-6 border-b border-slate-50">
+                <CardTitle className="text-3xl font-black text-slate-950 tracking-tight italic uppercase">{t('journey.title')}</CardTitle>
+                <CardDescription className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 mt-4 italic">{t('journey.subtitle')}</CardDescription>
               </CardHeader>
-              <CardContent className="p-10 lg:p-16 h-[400px]">
+              <CardContent className="p-10 lg:p-16 h-[450px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={chartData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.03)" vertical={false} />
                     <XAxis 
                       dataKey="date" 
-                      tick={{ fill: '#64748b', fontSize: 10, fontWeight: 'bold' }} 
+                      tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 'bold' }} 
                       axisLine={false} 
                       tickLine={false} 
                       dy={15} 
                     />
                     <YAxis 
-                      tick={{ fill: '#64748b', fontSize: 10, fontWeight: 'bold' }} 
+                      tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 'bold' }} 
                       axisLine={false} 
                       tickLine={false} 
                       dx={-10} 
                       domain={[0, 100]}
                     />
                     <Tooltip 
-                      contentStyle={{ backgroundColor: 'white', borderColor: 'rgba(0,0,0,0.05)', borderRadius: '24px', boxShadow: '0 10px 30px rgba(0,0,0,0.05)' }} 
-                      itemStyle={{ fontSize: '12px', fontWeight: 'bold', textTransform: 'uppercase', color: '#2563eb' }}
+                      contentStyle={{ backgroundColor: 'white', border: 'none', borderRadius: '24px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.05)' }} 
+                      itemStyle={{ fontSize: '12px', fontWeight: 'black', textTransform: 'uppercase', color: '#ec4899', letterSpacing: '0.1em' }}
                     />
                     <Line 
                       type="monotone" 
                       dataKey="score" 
-                      stroke="#2563eb" 
+                      stroke="#ec4899" 
                       strokeWidth={6} 
-                      dot={{ r: 6, fill: 'white', strokeWidth: 3, stroke: '#2563eb' }} 
-                      activeDot={{ r: 10, fill: '#2563eb', strokeWidth: 0 }} 
+                      dot={{ r: 8, fill: 'white', strokeWidth: 4, stroke: '#ec4899' }} 
+                      activeDot={{ r: 12, fill: '#ec4899', strokeWidth: 0 }} 
                     />
                   </LineChart>
                 </ResponsiveContainer>
@@ -283,32 +285,32 @@ export default function CustomerDashboard() {
             </Card>
 
             {/* Recent Activity Stream */}
-            <Card className="border-white bg-white/60 backdrop-blur-xl rounded-[3rem] overflow-hidden shadow-premium relative">
-              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/10 to-transparent" />
-              <CardHeader className="p-10 pb-6 border-b border-slate-100 flex flex-row items-center justify-between">
-                <CardTitle className="text-2xl font-bold text-slate-900 tracking-tight italic">{t('logs.title')}</CardTitle>
+            <Card className="border-slate-100 bg-white shadow-premium rounded-[3rem] overflow-hidden relative group transition-all duration-700 hover:border-pink-500/20">
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/10 to-transparent" />
+              <CardHeader className="p-10 lg:p-12 pb-6 border-b border-slate-50 flex flex-row items-center justify-between">
+                <CardTitle className="text-3xl font-black text-slate-950 tracking-tight italic uppercase">{t('logs.title')}</CardTitle>
               </CardHeader>
-              <CardContent className="p-10 lg:p-12 space-y-8">
+              <CardContent className="p-10 lg:p-12 space-y-8 bg-slate-50/30">
                 {recentActivity.map((activity, index) => (
                   <motion.div 
                     key={index} 
                     initial={{ opacity: 0, x: -20 }} 
                     animate={{ opacity: 1, x: 0 }} 
                     transition={{ delay: index * 0.1 }}
-                    className="flex items-center justify-between p-6 bg-slate-50/50 border border-slate-100 rounded-3xl hover:bg-white transition-all group shadow-sm"
+                    className="flex items-center justify-between p-8 bg-white border border-slate-100 rounded-[2.5rem] hover:border-pink-500/20 transition-all duration-700 group shadow-sm hover:shadow-premium"
                   >
-                    <div className="flex items-center gap-6">
-                      <div className={cn("h-14 w-14 rounded-2xl bg-white border border-slate-100 flex items-center justify-center shadow-sm group-hover:scale-110 transition-all", activity.color)}>
-                        <activity.icon className="h-6 w-6" />
+                    <div className="flex items-center gap-8">
+                      <div className={cn("h-16 w-16 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center shadow-inner group-hover:scale-110 transition-all duration-700", activity.color.replace('600', '500'))}>
+                        <activity.icon className="h-8 w-8" />
                       </div>
-                      <div>
-                        <p className="font-bold text-slate-900 italic group-hover:text-blue-600 transition-colors capitalize">{activity.type}</p>
-                        <p className="text-[10px] text-slate-500 uppercase font-black tracking-widest">{activity.date}</p>
+                      <div className="space-y-1.5">
+                        <p className="font-black text-xl text-slate-950 italic group-hover:text-pink-600 transition-colors uppercase leading-none">{activity.type}</p>
+                        <p className="text-[10px] text-slate-400 uppercase font-black tracking-widest italic">{activity.date}</p>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <p className="text-sm font-black text-slate-900 italic tracking-tight">{activity.result}</p>
-                      <Badge variant="outline" className="mt-2 text-[8px] font-black uppercase tracking-widest border-emerald-500/20 text-emerald-600 bg-emerald-500/5">Verified</Badge>
+                    <div className="text-right space-y-2">
+                      <p className="text-lg font-black text-slate-950 italic tracking-tight uppercase leading-none">{activity.result}</p>
+                      <Badge variant="outline" className="text-[9px] font-black uppercase tracking-widest border-none text-emerald-600 bg-emerald-50 italic px-4 py-1 rounded-full shadow-sm">Verified Node</Badge>
                     </div>
                   </motion.div>
                 ))}
@@ -321,39 +323,39 @@ export default function CustomerDashboard() {
             <VirtualConcierge isPremium={isPremium} />
 
             {/* Digital Twin Visualization - PREMIUM VALUE */}
-            <Card className="relative overflow-hidden border-blue-500/10 bg-blue-500/[0.01] backdrop-blur-3xl rounded-[3rem] shadow-premium group min-h-[450px]">
-              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/20 to-transparent" />
-              <CardHeader className="p-10 pb-4">
-                <CardTitle className="text-xs font-black uppercase tracking-[0.3em] text-blue-600 flex items-center gap-3">
-                  <Sparkles className="w-4 h-4 animate-pulse" />
+            <Card className="relative overflow-hidden border-slate-100 bg-white shadow-premium rounded-[3rem] group min-h-[500px] transition-all duration-700 hover:border-pink-500/20">
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/10 to-transparent" />
+              <CardHeader className="p-10 lg:p-12 pb-6 border-b border-slate-50">
+                <CardTitle className="text-[11px] font-black uppercase tracking-[0.4em] text-pink-600 flex items-center gap-4 italic leading-none">
+                  <div className="h-2 w-2 rounded-full bg-pink-500 animate-pulse shadow-glow-pink" />
                   {t('digitalTwin.title')}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-10 pt-0 flex flex-col items-center justify-center space-y-10 flex-1">
+              <CardContent className="p-10 lg:p-12 flex flex-col items-center justify-center space-y-12 flex-1 bg-slate-50/30">
                 {isPremium ? (
                   <>
-                    <div className="w-full aspect-square rounded-[3rem] overflow-hidden border border-slate-100 relative bg-slate-50 shadow-inner">
+                    <div className="w-full aspect-square rounded-[3.5rem] overflow-hidden border border-slate-100 relative bg-white shadow-inner group-hover:shadow-premium transition-all duration-700">
                       <DigitalTwinModule />
-                      <div className="absolute bottom-6 left-6 flex items-center gap-3">
-                        <div className="h-2 w-2 rounded-full bg-blue-500 animate-ping" />
-                        <span className="text-[8px] font-black text-blue-600 uppercase tracking-[0.3em]">{t('digitalTwin.neuralLinkActive')}</span>
+                      <div className="absolute bottom-8 left-8 flex items-center gap-4 bg-white/80 backdrop-blur-md px-5 py-2.5 rounded-2xl border border-white/50 shadow-premium">
+                        <div className="h-2.5 w-2.5 rounded-full bg-pink-500 animate-ping" />
+                        <span className="text-[10px] font-black text-pink-600 uppercase tracking-[0.3em] italic">{t('digitalTwin.neuralLinkActive')}</span>
                       </div>
                     </div>
-                    <div className="text-center">
-                      <p className="font-semibold text-slate-900 italic">{t('digitalTwin.synchronized')}</p>
-                      <p className="text-xs text-slate-500 uppercase font-black tracking-widest mt-1">{t('digitalTwin.bioNode')}</p>
+                    <div className="text-center space-y-2">
+                      <p className="text-2xl font-black text-slate-950 italic uppercase tracking-tight">{t('digitalTwin.synchronized')}</p>
+                      <p className="text-[10px] text-slate-400 uppercase font-black tracking-[0.3em] italic">{t('digitalTwin.bioNode')}</p>
                     </div>
                   </>
                 ) : (
-                  <div className="text-center space-y-6">
-                    <div className="h-20 w-20 rounded-3xl bg-slate-50 border border-slate-100 flex items-center justify-center mx-auto shadow-inner">
-                      <ShieldCheck className="h-10 w-10 text-slate-300" />
+                  <div className="text-center space-y-10">
+                    <div className="h-28 w-28 rounded-[2.5rem] bg-pink-50 border border-pink-100 flex items-center justify-center mx-auto shadow-inner group-hover:scale-110 transition-transform duration-700">
+                      <ShieldCheck className="h-14 w-14 text-pink-600" />
                     </div>
-                    <div className="space-y-2">
-                      <p className="font-bold text-slate-900 italic uppercase tracking-tighter">{t('digitalTwin.premiumRequired')}</p>
-                      <p className="text-xs text-slate-500 leading-relaxed italic">{t('digitalTwin.upgradeDesc')}</p>
+                    <div className="space-y-4">
+                      <p className="text-2xl font-black text-slate-950 italic uppercase tracking-tight">{t('digitalTwin.premiumRequired')}</p>
+                      <p className="text-sm text-slate-500 leading-relaxed italic max-w-[280px] mx-auto">{t('digitalTwin.upgradeDesc')}</p>
                     </div>
-                    <Button variant="premium" size="sm" className="h-10 px-6 rounded-xl text-[9px] font-black uppercase tracking-widest italic" asChild>
+                    <Button variant="premium" className="h-16 px-10 rounded-2xl shadow-2xl shadow-pink-500/20 text-[10px] font-black uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 bg-gradient-to-r from-pink-500 via-purple-600 to-blue-600 border-none text-white italic w-full" asChild>
                       <Link href={lp('/pricing')}>{t('digitalTwin.upgradeBtn')}</Link>
                     </Button>
                   </div>
@@ -362,23 +364,24 @@ export default function CustomerDashboard() {
             </Card>
 
             {/* Critical Metrics Index */}
-            <Card className="border-white bg-white/60 backdrop-blur-xl rounded-[3rem] overflow-hidden shadow-premium relative">
-              <CardHeader className="p-10 pb-6 border-b border-slate-100">
-                <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('vitals.title')}</CardTitle>
+            <Card className="border-slate-100 bg-white shadow-premium rounded-[3rem] overflow-hidden relative group transition-all duration-700 hover:border-pink-500/20">
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/10 to-transparent" />
+              <CardHeader className="p-10 lg:p-12 pb-6 border-b border-slate-50">
+                <CardTitle className="text-[11px] font-black uppercase tracking-[0.4em] text-slate-400 italic leading-none">{t('vitals.title')}</CardTitle>
               </CardHeader>
-              <CardContent className="p-10 space-y-10">
+              <CardContent className="p-10 lg:p-12 space-y-10 bg-slate-50/30">
                 {[
-                  { label: t('vitals.aestheticScore'), val: '85/100', trend: '+12%', color: 'text-emerald-600' },
-                  { label: t('vitals.cellularHydration'), val: '72%', trend: '+5%', color: 'text-blue-600' },
-                  { label: t('vitals.textureUniformity'), val: '91%', trend: t('vitals.stable'), color: 'text-slate-600' },
+                  { label: t('vitals.aestheticScore'), val: '85/100', trend: '+12%', color: 'text-emerald-600', bg: 'bg-emerald-50' },
+                  { label: t('vitals.cellularHydration'), val: '72%', trend: '+5%', color: 'text-blue-600', bg: 'bg-blue-50' },
+                  { label: t('vitals.textureUniformity'), val: '91%', trend: t('vitals.stable'), color: 'text-slate-600', bg: 'bg-slate-50' },
                 ].map((stat, i) => (
                   <div key={i} className="flex items-center justify-between group cursor-default">
-                    <div className="space-y-1">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 italic transition-colors group-hover:text-slate-600">{stat.label}</p>
-                      <p className={cn("text-2xl font-black italic tracking-tighter", stat.color)}>{stat.val}</p>
+                    <div className="space-y-2">
+                      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 italic transition-colors group-hover:text-pink-600">{stat.label}</p>
+                      <p className={cn("text-3xl font-black italic tracking-tighter uppercase leading-none", stat.color)}>{stat.val}</p>
                     </div>
                     <div className="text-right">
-                      <Badge variant="outline" className="text-[8px] font-black uppercase tracking-widest border-slate-100 text-slate-400 italic">{stat.trend}</Badge>
+                      <Badge className={cn("text-[10px] font-black uppercase tracking-widest border-none italic px-4 py-1.5 rounded-full shadow-sm", stat.bg, stat.color)}>{stat.trend}</Badge>
                     </div>
                   </div>
                 ))}

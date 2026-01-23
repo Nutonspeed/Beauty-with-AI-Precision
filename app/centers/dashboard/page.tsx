@@ -20,8 +20,8 @@ export default async function CenterDashboardPage() {
   console.log('[CenterDashboard] 📍 Page rendering...')
   
   try {
-    // ✅ Allow center_owner and center_staff
-    const { user, centerId } = await checkUserRole(["center_owner", "center_staff", "center_admin", "super_admin"])
+    // ✅ Allow center_owner and center_admin (staff goes to beautician dashboard)
+    const { user, centerId } = await checkUserRole(["center_owner", "center_admin", "super_admin"])
 
     if (!user || !centerId) {
       console.log('[CenterDashboard] ❌ No user/center, redirecting to login')

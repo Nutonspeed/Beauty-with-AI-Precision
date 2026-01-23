@@ -157,27 +157,27 @@ export default function TermsOfServicePage() {
   ]
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#020617] text-slate-200 selection:bg-pink-500/30">
+    <div className="flex min-h-screen flex-col bg-white text-slate-950 selection:bg-pink-500/10">
       <Header />
 
-      <main className="flex-1 relative overflow-hidden">
+      <main className="flex-1 relative overflow-hidden flex flex-col">
         {/* Infrastructure Background */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-pink-500/5 rounded-full blur-[120px] animate-glow-pulse" />
           <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-500/5 rounded-full blur-[100px] animate-float" />
-          <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.02]" />
+          <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.015]" />
         </div>
 
         {/* Cinematic Hero Section */}
-        <section className="relative pt-24 pb-16 lg:pt-32 lg:pb-24 border-b border-white/5">
-          <div className="container relative z-10">
+        <section className="relative pt-24 pb-16 lg:pt-32 lg:pb-24 border-b border-slate-100">
+          <div className="container relative z-10 max-w-7xl mx-auto px-6">
             <div className="mx-auto max-w-4xl text-center space-y-8">
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8 }}
               >
-                <Badge className="px-6 py-2 rounded-full border-pink-500/30 text-pink-400 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.2em] text-[10px] font-black shadow-2xl shadow-pink-500/10" variant="outline">
+                <Badge className="px-6 py-2 rounded-full border-pink-500/30 text-pink-600 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.3em] text-[10px] font-black shadow-premium animate-pulse italic" variant="outline">
                   <FileText className="mr-3 h-3.5 w-3.5" />
                   {t('terms.effectiveDate')}
                 </Badge>
@@ -187,7 +187,7 @@ export default function TermsOfServicePage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-                className="text-4xl md:text-7xl font-bold tracking-tight text-white leading-tight"
+                className="text-5xl md:text-8xl font-black tracking-tighter text-slate-950 leading-[0.8] italic uppercase"
               >
                 {t('terms.title')}
               </motion.h1>
@@ -196,7 +196,7 @@ export default function TermsOfServicePage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.4, duration: 1 }}
-                className="text-slate-400 max-w-2xl mx-auto text-xl font-light leading-relaxed tracking-wide"
+                className="text-xl text-slate-500 font-light max-w-2xl mx-auto italic leading-relaxed tracking-tight"
               >
                 {t('terms.description')}
               </motion.p>
@@ -205,14 +205,14 @@ export default function TermsOfServicePage() {
         </section>
 
         {/* Quick Aesthetic Navigation */}
-        <section className="sticky top-[72px] z-40 border-b border-white/5 bg-[#020617]/80 backdrop-blur-xl py-4 overflow-x-auto">
-          <div className="container">
-            <div className="flex items-center justify-center gap-4 min-w-max">
+        <section className="sticky top-[72px] z-40 border-b border-slate-100 bg-white/80 backdrop-blur-xl py-6 overflow-x-auto shadow-sm">
+          <div className="container max-w-7xl mx-auto px-6">
+            <div className="flex items-center justify-center gap-6 min-w-max">
               {sections.map((section, index) => (
                 <a
                   key={index}
                   href={`#section-${index}`}
-                  className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-500 hover:text-pink-400 transition-colors px-4 py-2 rounded-xl hover:bg-white/[0.03] border border-transparent hover:border-white/5"
+                  className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-pink-600 transition-all px-6 py-3 rounded-[1.25rem] hover:bg-pink-50/50 border border-transparent hover:border-pink-500/10 italic"
                 >
                   {section.title}
                 </a>
@@ -223,8 +223,8 @@ export default function TermsOfServicePage() {
 
         {/* Content Infrastructure */}
         <section className="py-20 lg:py-32">
-          <div className="container relative z-10">
-            <div className="mx-auto max-w-4xl space-y-12 lg:space-y-20">
+          <div className="container relative z-10 max-w-7xl mx-auto px-6">
+            <div className="mx-auto max-w-4xl space-y-16 lg:space-y-24">
               {sections.map((section, index) => (
                 <motion.div
                   key={index}
@@ -233,33 +233,34 @@ export default function TermsOfServicePage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-100px" }}
                   transition={{ duration: 0.8 }}
-                  className="scroll-mt-40"
+                  className="scroll-mt-48"
                 >
-                  <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group">
-                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                  <Card className="border-slate-100 bg-white shadow-premium rounded-[3.5rem] overflow-hidden relative group transition-all duration-700 hover:border-pink-500/10">
+                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                     <CardContent className="p-10 lg:p-16 space-y-12">
-                      <div className="flex flex-col md:flex-row items-start gap-8">
-                        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white/[0.03] border border-white/5 shadow-inner group-hover:scale-110 group-hover:border-pink-500/30 transition-all duration-700">
-                          <section.icon className="h-8 w-8 text-slate-400 group-hover:text-pink-400 transition-colors" />
+                      <div className="flex flex-col md:flex-row items-start gap-10">
+                        <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[2rem] bg-slate-50 border border-slate-100 shadow-inner group-hover:scale-110 group-hover:bg-pink-50 group-hover:border-pink-500/20 transition-all duration-700">
+                          <section.icon className="h-10 w-10 text-slate-300 group-hover:text-pink-600 transition-colors" />
                         </div>
                         <div className="space-y-4">
-                          <h2 className="text-3xl font-bold text-white tracking-tight italic">{section.title}</h2>
-                          <p className="text-lg text-slate-400 font-light leading-relaxed">
+                          <h2 className="text-4xl font-black text-slate-950 tracking-tighter italic uppercase leading-none">{section.title}</h2>
+                          <p className="text-xl text-slate-500 font-light italic leading-relaxed">
                             {section.content}
                           </p>
                         </div>
                       </div>
 
-                      <div className="grid gap-6">
+                      <div className="grid gap-8">
                         {section.items.map((item, idx) => (
                           <div
                             key={idx}
-                            className="flex items-start gap-6 rounded-[2rem] border border-white/5 bg-white/[0.02] p-8 transition-all hover:bg-white/[0.04] hover:border-white/10 group/item"
+                            className="flex items-start gap-8 rounded-[2.5rem] border border-slate-50 bg-slate-50/30 p-10 transition-all duration-700 hover:bg-white hover:border-pink-500/20 hover:shadow-premium group/item relative overflow-hidden"
                           >
-                            <div className="mt-1.5 flex h-2 w-2 shrink-0 items-center justify-center rounded-full bg-pink-500/50 group-hover/item:bg-pink-500 transition-colors" />
-                            <div className="space-y-2">
-                              <h3 className="text-lg font-bold text-white tracking-tight">{item.label}</h3>
-                              <p className="text-sm text-slate-500 font-light leading-relaxed">
+                            <div className="absolute top-0 left-0 bottom-0 w-1 bg-slate-100 group-hover/item:bg-pink-600 transition-all duration-700" />
+                            <div className="mt-2.5 flex h-2 w-2 shrink-0 items-center justify-center rounded-full bg-pink-500/30 group-hover/item:bg-pink-600 transition-colors duration-500" />
+                            <div className="space-y-3 relative z-10">
+                              <h3 className="text-xl font-black text-slate-900 tracking-tight italic uppercase leading-none group-hover/item:text-pink-600 transition-colors">{item.label}</h3>
+                              <p className="text-lg text-slate-500 font-light italic leading-relaxed">
                                 {item.desc}
                               </p>
                             </div>
@@ -278,32 +279,32 @@ export default function TermsOfServicePage() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.8 }}
               >
-                <Card className="border-pink-500/20 bg-pink-500/[0.02] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative">
-                  <div className="absolute top-0 right-0 p-12 opacity-[0.03] pointer-events-none">
-                    <Scale className="w-64 h-64 text-pink-500" />
+                <Card className="border-pink-500/20 bg-pink-50/30 backdrop-blur-3xl rounded-[3.5rem] overflow-hidden shadow-premium relative group hover:border-pink-500/30 transition-all duration-700">
+                  <div className="absolute top-0 right-0 p-16 opacity-[0.03] pointer-events-none group-hover:rotate-12 transition-transform duration-1000">
+                    <Scale className="w-72 h-72 text-pink-600" />
                   </div>
                   <CardContent className="p-10 lg:p-16 relative z-10">
                     <div className="flex flex-col lg:flex-row items-start gap-12">
-                      <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-pink-500/10 border border-pink-500/20 shadow-inner">
-                        <Scale className="h-8 w-8 text-pink-400" />
+                      <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[2rem] bg-white border border-pink-100 shadow-premium group-hover:scale-110 transition-transform duration-700">
+                        <Scale className="h-10 w-10 text-pink-600" />
                       </div>
-                      <div className="flex-1 space-y-10">
+                      <div className="flex-1 space-y-12">
                         <div className="space-y-4">
-                          <h2 className="text-3xl font-bold text-white tracking-tight italic">
+                          <h2 className="text-4xl font-black text-slate-950 tracking-tighter italic uppercase leading-none">
                             {t('terms.governingLaw.title')}
                           </h2>
-                          <p className="text-lg text-slate-400 font-light leading-relaxed">
+                          <p className="text-xl text-slate-500 font-light italic leading-relaxed tracking-tight">
                             {t('terms.governingLaw.description')}
                           </p>
                         </div>
                         
-                        <div className="flex flex-col sm:flex-row gap-6">
-                          <Button size="xl" variant="premium" className="h-16 px-12 rounded-2xl shadow-2xl shadow-pink-500/20 text-lg font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all" asChild>
+                        <div className="flex flex-col sm:flex-row gap-8">
+                          <Button size="xl" variant="premium" className="h-20 px-12 rounded-[2rem] shadow-2xl shadow-pink-500/20 text-[11px] font-black uppercase tracking-[0.3em] bg-gradient-to-r from-pink-500 via-purple-600 to-blue-600 border-none text-white italic hover:scale-105 active:scale-95 transition-all" asChild>
                             <Link href="/contact">
                               {t('nav.contact')}
                             </Link>
                           </Button>
-                          <Button size="xl" variant="outline" className="h-16 px-12 rounded-2xl border-white/10 bg-white/5 text-white backdrop-blur-md hover:bg-white/10 hover:border-white/20 text-lg font-bold tracking-wide transition-all hover:scale-105 active:scale-95" asChild>
+                          <Button size="xl" variant="outline" className="h-20 px-12 rounded-[2rem] border-slate-200 bg-white text-slate-950 hover:bg-slate-50 text-[11px] font-black uppercase tracking-[0.3em] shadow-premium italic hover:scale-105 active:scale-95 transition-all" asChild>
                             <Link href="/privacy">
                               {t('footer.privacy')}
                             </Link>

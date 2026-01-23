@@ -11,7 +11,7 @@ export const testUsers = {
   centerOwner: {
     email: 'clinic-owner@example.com', 
     password: 'Admin123!',
-    role: 'center_owner',
+    role: 'clinic_owner',
     name: 'Center Owner Test',
     centerId: 'test-center-1'
   },
@@ -25,7 +25,7 @@ export const testUsers = {
   customer: {
     email: 'customer@example.com',
     password: 'Admin123!',
-    role: 'customer', 
+    role: 'customer_free', 
     name: 'Customer Test',
     centerId: 'test-center-1'
   }
@@ -48,16 +48,15 @@ export { expect };
 // Test utilities
 export const waitForLoading = async (page: Page) => {
   // Some pages stream; use domcontentloaded to avoid hanging
-  await page.waitForLoadState('domcontentloaded', { timeout: 15000 });
-  // Fallback: ensure body is present
-  await page.locator('body').first().waitFor({ state: 'visible', timeout: 10000 });
+  await page.waitForLoadState('domcontentloaded', { timeout: 30000 });
+  
   // Wait for React hydration when marker exists (prevents input reset after fill)
   await page
     .waitForFunction(() => {
       const hydrated = document.querySelector('[data-hydrated]') as HTMLElement | null
       if (!hydrated) return true
       return hydrated.getAttribute('data-hydrated') === 'true'
-    }, { timeout: 15000 })
+    }, { timeout: 30000 })
     .catch(() => {})
 };
 

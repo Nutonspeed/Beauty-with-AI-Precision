@@ -9,6 +9,7 @@ import { analyzeSkin } from "@/lib/ai/hybrid-skin-analyzer"
 import { withPublicAccess } from "@/lib/auth/middleware"
 import type { AnalysisMode } from "@/types"
 import { parseAnalysisMode } from "@/types"
+import { getUserQuotaStatus } from "@/lib/subscriptions/quota"
 
 export const runtime = "nodejs"
 export const maxDuration = 60 // 60 seconds timeout
@@ -62,6 +63,18 @@ export const POST = withPublicAccess(async (request: NextRequest) => {
     const userId = user?.id || "demo-user-" + Date.now()
     console.log("[v0] 👤 User ID:", userId)
 
+    // Check Quota
+    const quota = await getUserQuotaStatus(userId)
+    if (!quota.allowed) {
+      console.log(`[v0] ❌ Quota exceeded for user ${userId}: ${quota.usage}/${quota.limit}`)
+      return NextResponse.json({ 
+        error: "Monthly quota exceeded. Please upgrade to Premium.", 
+        success: false,
+        quota 
+      }, { status: 403 })
+    }
+    console.log(`[v0] ✅ Quota OK: ${quota.usage}/${quota.limit}`)
+
     // Decode base64 image
     console.log("[v0] 🖼️ Decoding base64 image...")
     const base64Data = body.image.replace(/^data:image\/\w+;base64,/, "")
@@ -95,6 +108,34 @@ export const POST = withPublicAccess(async (request: NextRequest) => {
 
     // Save analysis to database
     console.log("[v0] 💾 Saving analysis to database...")
+    
+    // Log Telemetry before saving to DB
+    try {
+      await supabase.from('analytics_events').insert({
+        event_type: 'skin_analysis_performed',
+        user_id: userId,
+        properties: {
+          category: 'performance',
+          provider: analysis.aiProvider,
+          processing_time_ms: analysisTime,
+          success: true,
+          mode: requestMode,
+          quality: body.qualityMetrics?.overallQuality,
+          overall_score: Math.round(
+            ((analysis.overallScore?.spots || 0) +
+              (analysis.overallScore?.pores || 0) +
+              (analysis.overallScore?.wrinkles || 0) +
+              (analysis.overallScore?.texture || 0) +
+              (analysis.overallScore?.redness || 0)) /
+              5,
+          ),
+        },
+        timestamp: new Date().toISOString()
+      });
+    } catch (telemetryError) {
+      console.warn("[v0] ⚠️ Failed to log telemetry:", telemetryError);
+    }
+
     const { data: savedAnalysis, error: dbError } = await supabase
       .from("skin_analyses")
       .insert({
@@ -187,6 +228,7 @@ export const POST = withPublicAccess(async (request: NextRequest) => {
       overall_score: savedAnalysis.overall_score,
       timestamp: savedAnalysis.created_at,
       analysisTime,
+      quota: await getUserQuotaStatus(userId) // Return updated quota info
     })
   } catch (error) {
     console.error("[v0] ❌ Analysis API error:", error)

@@ -51,7 +51,6 @@ import { Footer } from "@/components/footer"
 import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { GiveCreditsDialog } from "@/components/sales/GiveCreditsDialog"
-import { ConvertLeadDialog } from "@/components/sales/ConvertLeadDialog"
 import { Gift, UserCheck } from "lucide-react"
 
 type SalesLeadStatus = 'new' | 'contacted' | 'qualified' | 'proposal_sent' | 'negotiation' | 'won' | 'lost' | 'cold' | 'warm' | 'hot'
@@ -222,7 +221,7 @@ export default function LeadsListPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#020617] text-slate-200 selection:bg-pink-500/30">
+    <div className="flex min-h-screen flex-col bg-white text-slate-950 selection:bg-pink-500/10">
       <Header />
       
       <main className="flex-1 relative overflow-hidden flex flex-col">
@@ -230,53 +229,54 @@ export default function LeadsListPage() {
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-pink-500/5 rounded-full blur-[120px] animate-glow-pulse" />
           <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-500/5 rounded-full blur-[100px] animate-float" />
-          <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.02]" />
+          <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.015]" />
         </div>
 
         <div className="container relative z-10 py-12 md:py-20 px-6 space-y-16 max-w-7xl mx-auto flex-1">
           {/* Leads Header Interface */}
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-12">
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-12 pb-12 border-b border-slate-100">
             <motion.div 
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="space-y-6"
+              className="space-y-8"
             >
-              <Badge variant="outline" className="px-4 py-1 rounded-full border-pink-500/30 text-pink-400 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.2em] text-[10px] font-black shadow-2xl shadow-pink-500/10">
-                <Target className="mr-3 h-3.5 w-3.5 animate-pulse" />
+              <Badge variant="outline" className="px-6 py-2 rounded-full border-pink-500/30 text-pink-600 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.3em] text-[10px] font-black shadow-premium animate-pulse italic">
+                <Target className="mr-3 h-3.5 w-3.5" />
                 Intelligence Acquisition Node
               </Badge>
-              <h1 className="text-5xl md:text-8xl font-bold tracking-tighter text-white leading-[0.9] italic">
+              <h1 className="text-5xl md:text-8xl font-black tracking-tighter text-slate-950 leading-[0.8] italic uppercase">
                 Lead<br />
-                <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent not-italic">Management</span>
+                <span className="bg-gradient-to-r from-pink-500 via-purple-600 to-blue-600 bg-clip-text text-transparent not-italic block mt-6 tracking-[0.2em] font-black uppercase">Management</span>
               </h1>
-              <p className="text-xl text-slate-500 font-light tracking-widest max-w-2xl italic leading-relaxed">
+              <p className="text-xl text-slate-500 font-light max-w-2xl italic leading-relaxed tracking-tight">
                 Orchestrate prospective conversion flows through aesthetic intelligence metrics.
               </p>
             </motion.div>
             
-            <div className="flex flex-col sm:flex-row gap-4 shrink-0">
-              <div className="w-full sm:w-[240px] relative group">
+            <div className="flex flex-col sm:flex-row gap-6 shrink-0">
+              <div className="w-full sm:w-[280px] relative group">
+                <div className="absolute -inset-1 bg-gradient-to-r from-pink-500/20 to-blue-600/20 rounded-2xl blur opacity-0 group-focus-within:opacity-100 transition duration-1000" />
                 <Input
-                  className="h-16 rounded-2xl border-white/5 bg-white/[0.03] text-white placeholder:text-slate-700 focus:border-pink-500/30 focus:ring-pink-500/20 transition-all px-6 italic"
+                  className="h-16 rounded-2xl border-slate-100 bg-slate-50 text-slate-900 placeholder:text-slate-400 focus:border-pink-500/30 focus:ring-pink-500/10 transition-all px-8 italic font-bold shadow-inner relative z-10"
                   placeholder="CAMPAIGN_ID_SYNC"
                   value={campaignFilter}
                   onChange={(e) => setCampaignFilter(e.target.value)}
                 />
               </div>
-              <Button size="xl" variant="premium" className="h-16 px-10 rounded-2xl shadow-2xl shadow-pink-500/20 text-[10px] font-black uppercase tracking-[0.3em] transition-all hover:scale-105 active:scale-95 border" onClick={() => setShowCaptureForm(true)}>
-                <UserPlus className="mr-3 h-5 w-5" />
+              <Button size="xl" variant="premium" className="h-16 px-10 rounded-2xl shadow-2xl shadow-pink-500/20 text-[10px] font-black uppercase tracking-[0.3em] transition-all hover:scale-105 active:scale-95 bg-gradient-to-r from-pink-500 via-purple-600 to-blue-600 border-none text-white italic" onClick={() => setShowCaptureForm(true)}>
+                <UserPlus className="mr-4 h-5 w-5" />
                 Initialize Lead
               </Button>
             </div>
           </div>
 
           {/* Acquisition Metrics Hub */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {[
-              { label: t('salesLeads.stats.total'), val: pagination.total, color: 'text-white' },
-              { label: t('salesLeads.stats.hot'), val: leads.filter(l => l.status === 'hot').length, color: 'text-rose-400' },
-              { label: t('salesLeads.stats.won'), val: leads.filter(l => l.status === 'won').length, color: 'text-emerald-400' },
-              { label: t('salesLeads.stats.avgScore'), val: leads.length > 0 ? Math.round(leads.reduce((sum, l) => sum + l.score, 0) / leads.length) : 0, color: 'text-cyan-400' }
+              { label: t('salesLeads.stats.total'), val: pagination.total, color: 'text-slate-950', icon: Target },
+              { label: t('salesLeads.stats.hot'), val: leads.filter(l => l.status === 'hot').length, color: 'text-rose-600', icon: Zap },
+              { label: t('salesLeads.stats.won'), val: leads.filter(l => l.status === 'won').length, color: 'text-emerald-600', icon: CheckCircle },
+              { label: t('salesLeads.stats.avgScore'), val: leads.length > 0 ? Math.round(leads.reduce((sum, l) => sum + l.score, 0) / leads.length) : 0, color: 'text-pink-600', icon: TrendingUp }
             ].map((stat, i) => (
               <motion.div
                 key={i}
@@ -284,11 +284,16 @@ export default function LeadsListPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
               >
-                <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2.5rem] hover:bg-white/[0.03] transition-all duration-500 group shadow-2xl relative overflow-hidden">
-                  <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
-                  <CardContent className="p-8">
-                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 mb-4 italic">{stat.label}</p>
-                    <div className={cn("text-4xl font-black tracking-tighter italic", stat.color)}>{stat.val}</div>
+                <Card className="border-slate-100 bg-white shadow-premium rounded-[3rem] transition-all duration-700 hover:border-pink-500/20 group relative overflow-hidden h-full">
+                  <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/10 to-transparent" />
+                  <CardContent className="p-10">
+                    <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:scale-110 transition-transform duration-700">
+                      <stat.icon className={cn("w-20 h-20", stat.color)} />
+                    </div>
+                    <div className="space-y-6 relative z-10">
+                      <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 italic group-hover:text-slate-900 transition-colors">{stat.label}</p>
+                      <div className={cn("text-4xl font-black tracking-tighter italic uppercase", stat.color)}>{stat.val}</div>
+                    </div>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -296,25 +301,26 @@ export default function LeadsListPage() {
           </div>
 
           {/* Filtering Node Interface */}
-          <div className="flex flex-col lg:flex-row gap-6">
+          <div className="flex flex-col lg:flex-row gap-8">
             <div className="flex-1 relative group">
-              <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-slate-600 group-focus-within:text-pink-500 transition-colors" />
+              <div className="absolute -inset-1 bg-gradient-to-r from-pink-500/20 to-blue-600/20 rounded-[1.5rem] blur opacity-0 group-focus-within:opacity-100 transition duration-1000" />
+              <div className="absolute inset-y-0 left-8 flex items-center pointer-events-none z-20">
+                <Search className="h-6 w-6 text-slate-400 group-focus-within:text-pink-500 transition-colors" />
               </div>
               <Input
-                className="h-16 pl-16 pr-8 rounded-2xl border-white/5 bg-white/[0.03] text-white placeholder:text-slate-700 focus:border-pink-500/30 focus:ring-pink-500/20 transition-all text-sm font-bold italic"
+                className="h-16 pl-20 pr-10 rounded-2xl border-slate-100 bg-slate-50 text-slate-900 placeholder:text-slate-400 focus:border-pink-500/30 focus:ring-pink-500/10 transition-all text-base font-bold italic shadow-inner relative z-10"
                 placeholder={t('salesLeads.searchPlaceholder')}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
             </div>
 
-            <div className="flex gap-4">
+            <div className="flex gap-6">
               <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as any)}>
-                <SelectTrigger className="w-[200px] h-16 rounded-2xl border-white/5 bg-white/[0.03] text-white focus:ring-pink-500/20 focus:border-pink-500/30 transition-all px-6 text-[10px] font-black uppercase tracking-widest italic">
+                <SelectTrigger className="w-[240px] h-16 rounded-2xl border-slate-100 bg-slate-50 text-slate-900 focus:ring-pink-500/10 focus:border-pink-500/30 transition-all px-8 text-[10px] font-black uppercase tracking-widest italic shadow-inner">
                   <SelectValue placeholder={t('salesLeads.filterStatus')} />
                 </SelectTrigger>
-                <SelectContent className="bg-[#020617] border-white/10 rounded-2xl">
+                <SelectContent className="bg-white border-slate-100 rounded-2xl shadow-premium">
                   <SelectItem value="all" className="text-[10px] font-black uppercase tracking-widest italic">{t('salesLeads.allStatuses')}</SelectItem>
                   {Object.entries(STATUS_CONFIG).map(([status, config]) => (
                     <SelectItem key={status} value={status} className="text-[10px] font-black uppercase tracking-widest italic">
@@ -325,10 +331,10 @@ export default function LeadsListPage() {
               </Select>
 
               <Select value={sourceFilter} onValueChange={(v) => setSourceFilter(v as any)}>
-                <SelectTrigger className="w-[200px] h-16 rounded-2xl border-white/5 bg-white/[0.03] text-white focus:ring-pink-500/20 focus:border-pink-500/30 transition-all px-6 text-[10px] font-black uppercase tracking-widest italic">
+                <SelectTrigger className="w-[240px] h-16 rounded-2xl border-slate-100 bg-slate-50 text-slate-900 focus:ring-pink-500/10 focus:border-pink-500/30 transition-all px-8 text-[10px] font-black uppercase tracking-widest italic shadow-inner">
                   <SelectValue placeholder={t('salesLeads.filterSource')} />
                 </SelectTrigger>
-                <SelectContent className="bg-[#020617] border-white/10 rounded-2xl">
+                <SelectContent className="bg-white border-slate-100 rounded-2xl shadow-premium">
                   <SelectItem value="all" className="text-[10px] font-black uppercase tracking-widest italic">{t('salesLeads.allSources')}</SelectItem>
                   <SelectItem value="website" className="text-[10px] font-black uppercase tracking-widest italic">Aesthetic Portal</SelectItem>
                   <SelectItem value="facebook" className="text-[10px] font-black uppercase tracking-widest italic">Meta Node</SelectItem>
@@ -348,124 +354,144 @@ export default function LeadsListPage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="border border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group"
+            className="border border-slate-100 bg-white shadow-premium rounded-[3.5rem] overflow-hidden relative transition-all duration-700 hover:border-pink-500/10"
           >
-            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/10 to-transparent" />
             {isLoading ? (
-              <div className="flex flex-col items-center justify-center py-40 space-y-6">
-                <Loader2 className="h-16 w-16 animate-spin text-pink-500" />
-                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-600 animate-pulse">Syncing Intelligence Nodes...</p>
+              <div className="flex flex-col items-center justify-center py-40 space-y-8 bg-slate-50/30">
+                <div className="relative h-20 w-20">
+                  <div className="absolute inset-0 bg-pink-500/10 blur-2xl rounded-full animate-pulse" />
+                  <Loader2 className="h-12 w-12 animate-spin text-pink-600 relative mx-auto" />
+                </div>
+                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 italic animate-pulse">Syncing Intelligence Nodes...</p>
               </div>
             ) : leads.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-40 space-y-6 text-center">
-                <div className="h-20 w-20 rounded-3xl bg-white/[0.02] border border-white/5 flex items-center justify-center text-slate-700">
-                  <Search className="h-10 w-10" />
+              <div className="flex flex-col items-center justify-center py-40 space-y-10 text-center bg-white italic">
+                <div className="h-32 w-32 rounded-[2.5rem] bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-200 animate-pulse shadow-inner">
+                  <Search className="h-16 w-16" />
                 </div>
-                <div className="space-y-2">
-                  <p className="text-xl font-bold text-slate-500 italic">{t('salesLeads.noLeads')}</p>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-700">No data found in acquisition database</p>
+                <div className="space-y-4">
+                  <p className="text-3xl font-black text-slate-950 uppercase tracking-tighter">{t('salesLeads.noLeads')}</p>
+                  <p className="text-[11px] font-black uppercase tracking-[0.4em] text-slate-400">No data found in acquisition database</p>
                 </div>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
-                    <TableRow className="border-b border-white/5 hover:bg-transparent">
-                      <TableHead className="h-20 px-10 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('salesLeads.table.name')}</TableHead>
-                      <TableHead className="h-20 px-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('salesLeads.table.contact')}</TableHead>
-                      <TableHead className="h-20 px-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('salesLeads.table.status')}</TableHead>
-                      <TableHead className="h-20 px-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('salesLeads.table.score')}</TableHead>
-                      <TableHead className="h-20 px-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{t('salesLeads.table.followUp')}</TableHead>
-                      <TableHead className="h-20 px-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Personnel</TableHead>
-                      <TableHead className="h-20 px-10 text-right w-[70px]"></TableHead>
+                    <TableRow className="bg-slate-50/50 border-b border-slate-100 hover:bg-transparent">
+                      <TableHead className="h-24 px-10 text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 italic">{t('salesLeads.table.name')}</TableHead>
+                      <TableHead className="h-24 px-8 text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 italic">{t('salesLeads.table.contact')}</TableHead>
+                      <TableHead className="h-24 px-8 text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 italic">{t('salesLeads.table.status')}</TableHead>
+                      <TableHead className="h-24 px-8 text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 italic">{t('salesLeads.table.score')}</TableHead>
+                      <TableHead className="h-24 px-8 text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 italic">{t('salesLeads.table.followUp')}</TableHead>
+                      <TableHead className="h-24 px-8 text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 italic">Personnel</TableHead>
+                      <TableHead className="h-24 px-10 text-right w-[70px]"></TableHead>
                     </TableRow>
                   </TableHeader>
-                  <TableBody>
+                  <TableBody className="bg-white">
                     {leads.map((lead) => (
                       <TableRow 
                         key={lead.id} 
-                        className="border-b border-white/5 hover:bg-white/[0.02] transition-colors group/row cursor-pointer"
+                        className="border-b border-slate-100 hover:bg-slate-50/50 transition-all duration-700 group/row cursor-pointer"
                         onClick={() => handleViewLead(lead.id)}
                       >
-                        <TableCell className="px-10 py-8">
-                          <div className="flex flex-col gap-2">
-                            <span className="text-lg font-bold text-white tracking-tight italic group-hover/row:text-pink-400 transition-colors">{lead.name}</span>
+                        <TableCell className="px-10 py-10">
+                          <div className="flex flex-col gap-3">
+                            <span className="text-xl font-black text-slate-950 tracking-tight italic group-hover/row:text-pink-600 transition-colors uppercase leading-none">{lead.name}</span>
                             {lead.metadata?.campaign && (
-                              <Badge variant="outline" className="w-fit text-[9px] font-black uppercase tracking-widest border-white/10 text-slate-500 py-0.5 px-2 italic">
+                              <Badge variant="outline" className="w-fit text-[9px] font-black uppercase tracking-widest border-none bg-pink-50 text-pink-500 py-1 px-3 italic shadow-sm">
                                 NODE: {lead.metadata?.campaign}
                               </Badge>
                             )}
                           </div>
                         </TableCell>
-                        <TableCell className="px-8 py-8">
-                          <div className="flex flex-col gap-3">
+                        <TableCell className="px-8 py-10">
+                          <div className="flex flex-col gap-4">
                             {lead.phone && (
-                              <div className="flex items-center gap-3 text-[10px] font-black tracking-widest text-slate-500 group-hover/row:text-slate-300 transition-colors italic">
-                                <Phone className="h-3.5 w-3.5 text-pink-500/60" />
+                              <div className="flex items-center gap-4 text-[10px] font-black tracking-widest text-slate-400 group-hover/row:text-slate-600 transition-colors italic uppercase leading-none">
+                                <Phone className="h-4 w-4 text-pink-500/40" />
                                 {lead.phone}
                               </div>
                             )}
                             {lead.email && (
-                              <div className="flex items-center gap-3 text-[10px] font-black tracking-widest text-slate-500 group-hover/row:text-slate-300 transition-colors italic">
-                                <Mail className="h-3.5 w-3.5 text-cyan-500/60" />
+                              <div className="flex items-center gap-4 text-[10px] font-black tracking-widest text-slate-400 group-hover/row:text-slate-600 transition-colors italic uppercase leading-none">
+                                <Mail className="h-4 w-4 text-blue-500/40" />
                                 {lead.email}
                               </div>
                             )}
                           </div>
                         </TableCell>
-                        <TableCell className="px-8 py-8">
+                        <TableCell className="px-8 py-10">
                           <Badge
                             className={cn(
-                              "px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border-none shadow-inner",
-                              STATUS_CONFIG[lead.status].color
+                              "px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border-none shadow-sm italic",
+                              STATUS_CONFIG[lead.status].color.replace('bg-', 'bg-opacity-10 text-').replace('500', '600').replace('600', '50 text-')
                             )}
+                            style={{ 
+                              backgroundColor: STATUS_CONFIG[lead.status].color.includes('emerald') || STATUS_CONFIG[lead.status].color.includes('green') ? 'rgba(16, 185, 129, 0.1)' : 
+                                               STATUS_CONFIG[lead.status].color.includes('rose') || STATUS_CONFIG[lead.status].color.includes('red') ? 'rgba(244, 63, 94, 0.1)' :
+                                               STATUS_CONFIG[lead.status].color.includes('blue') ? 'rgba(59, 130, 246, 0.1)' :
+                                               STATUS_CONFIG[lead.status].color.includes('purple') ? 'rgba(168, 85, 247, 0.1)' :
+                                               'rgba(148, 163, 184, 0.1)',
+                              color: STATUS_CONFIG[lead.status].color.includes('emerald') || STATUS_CONFIG[lead.status].color.includes('green') ? '#059669' : 
+                                     STATUS_CONFIG[lead.status].color.includes('rose') || STATUS_CONFIG[lead.status].color.includes('red') ? '#e11d48' :
+                                     STATUS_CONFIG[lead.status].color.includes('blue') ? '#2563eb' :
+                                     STATUS_CONFIG[lead.status].color.includes('purple') ? '#9333ea' :
+                                     '#475569'
+                            }}
                           >
                             {STATUS_CONFIG[lead.status].label}
                           </Badge>
                         </TableCell>
-                        <TableCell className="px-8 py-8">
+                        <TableCell className="px-8 py-10">
                           <div className={cn(
-                            "flex items-center gap-3 text-2xl font-black italic tracking-tighter",
-                            getScoreColor(lead.score).replace('text-', 'text-').replace('600', '400')
+                            "flex items-center gap-4 text-3xl font-black italic tracking-tighter uppercase leading-none transition-transform duration-700 group-hover/row:translate-x-2",
+                            lead.score >= 80 ? 'text-emerald-600' : lead.score >= 60 ? 'text-amber-600' : 'text-slate-400'
                           )}>
-                            <TrendingUp className="h-5 w-5" />
+                            <TrendingUp className="h-6 w-6" />
                             {lead.score}
                           </div>
                         </TableCell>
-                        <TableCell className="px-8 py-8">
+                        <TableCell className="px-8 py-10">
                           {lead.next_follow_up_at ? (
-                            <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-slate-400 italic">
-                              <Calendar className="h-4 w-4 text-pink-500/60" />
+                            <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-widest text-slate-400 italic group-hover/row:text-slate-900 transition-colors">
+                              <Calendar className="h-5 w-5 text-pink-500/40" />
                               {format(new Date(lead.next_follow_up_at), "MMM d, yyyy")}
                             </div>
                           ) : (
-                            <span className="text-slate-700 text-[10px] font-black tracking-[0.2em]">--:--:--</span>
+                            <div className="h-px w-10 bg-slate-100" />
                           )}
                         </TableCell>
-                        <TableCell className="px-8 py-8">
-                          <div className="text-[11px] font-bold text-slate-400 italic group-hover/row:text-white transition-colors">
-                            {lead.sales_user?.full_name || 'UNASSIGNED'}
+                        <TableCell className="px-8 py-10">
+                          <div className="flex items-center gap-4 group/p">
+                            <div className="h-10 w-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center group-hover/p:bg-blue-600 group-hover/p:text-white transition-all duration-700 shadow-sm">
+                              <User className="w-5 h-5 text-blue-600 group-hover/p:text-white" />
+                            </div>
+                            <div className="text-[11px] font-black text-slate-400 italic group-hover/row:text-slate-900 transition-colors uppercase leading-none">
+                              {lead.sales_user?.full_name || 'UNASSIGNED'}
+                            </div>
                           </div>
                         </TableCell>
-                        <TableCell className="px-10 py-8 text-right">
+                        <TableCell className="px-10 py-10 text-right">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                              <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl hover:bg-white/10 text-slate-500">
-                                <MoreVertical className="h-5 w-5" />
+                              <Button variant="ghost" size="icon" className="h-12 w-12 rounded-2xl bg-slate-50 border border-slate-100 hover:bg-pink-50 hover:text-pink-600 transition-all duration-500 shadow-inner">
+                                <MoreVertical className="h-6 w-6" />
                               </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="bg-[#020617] border-white/10 rounded-2xl p-2 min-w-[180px]">
-                              <DropdownMenuItem onClick={() => handleViewLead(lead.id)} className="rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-pink-600 focus:text-white transition-colors">
-                                <Eye className="mr-3 h-4 w-4" />
+                            <DropdownMenuContent align="end" className="bg-white border-slate-100 rounded-3xl p-3 min-w-[220px] shadow-premium selection:bg-pink-500/10">
+                              <DropdownMenuItem onClick={() => handleViewLead(lead.id)} className="rounded-2xl px-5 py-4 text-[11px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-pink-50 focus:text-pink-600 transition-all gap-4 mb-1">
+                                <Eye className="h-5 w-5 text-pink-500" />
                                 Inspect Node
                               </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleViewLead(lead.id)} className="rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-pink-600 focus:text-white transition-colors">
-                                <Edit className="mr-3 h-4 w-4" />
+                              <DropdownMenuItem onClick={() => handleViewLead(lead.id)} className="rounded-2xl px-5 py-4 text-[11px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-blue-50 focus:text-blue-600 transition-all gap-4 mb-1">
+                                <Edit className="h-5 w-5 text-blue-500" />
                                 Refine Parameter
                               </DropdownMenuItem>
                               {lead.status !== 'won' && (
-                                <DropdownMenuItem onClick={() => handleViewLead(lead.id)} className="rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-pink-600 focus:text-white transition-colors">
-                                  <CheckCircle className="mr-3 h-4 w-4" />
+                                <DropdownMenuItem onClick={() => handleViewLead(lead.id)} className="rounded-2xl px-5 py-4 text-[11px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-emerald-50 focus:text-emerald-600 transition-all gap-4 mb-1">
+                                  <CheckCircle className="h-5 w-5 text-emerald-500" />
                                   Authorize Win
                                 </DropdownMenuItem>
                               )}
@@ -477,9 +503,9 @@ export default function LeadsListPage() {
                                     setSelectedLeadForConvert(lead);
                                     setConvertDialogOpen(true);
                                   }} 
-                                  className="rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-pink-600 focus:text-white transition-colors"
+                                  className="rounded-2xl px-5 py-4 text-[11px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-purple-50 focus:text-purple-600 transition-all gap-4"
                                 >
-                                  <UserCheck className="mr-3 h-4 w-4 text-pink-500" />
+                                  <UserCheck className="h-5 w-5 text-purple-500" />
                                   Convert to Customer
                                 </DropdownMenuItem>
                               ) : (
@@ -492,8 +518,8 @@ export default function LeadsListPage() {
                                       phone: lead.phone || undefined
                                     }}
                                     trigger={
-                                      <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-purple-600 focus:text-white transition-colors">
-                                        <Gift className="mr-3 h-4 w-4" />
+                                      <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="rounded-2xl px-5 py-4 text-[11px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-purple-50 focus:text-purple-600 transition-all gap-4">
+                                        <Gift className="h-5 w-5 text-purple-500" />
                                         Grant Credits
                                       </DropdownMenuItem>
                                     }
@@ -511,32 +537,17 @@ export default function LeadsListPage() {
             )}
           </motion.div>
 
-          {/* Dialogs */}
-          {selectedLeadForConvert && (
-            <ConvertLeadDialog
-              open={convertDialogOpen}
-              onOpenChange={setConvertDialogOpen}
-              lead={{
-                id: selectedLeadForConvert.id,
-                name: selectedLeadForConvert.name,
-                email: selectedLeadForConvert.email,
-                phone: selectedLeadForConvert.phone
-              }}
-              onSuccess={() => fetchLeads()}
-            />
-          )}
-
           {/* Temporal Pagination Control */}
           {pagination.total_pages > 1 && (
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-8 pt-10 border-t border-white/5">
-              <div className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 italic">
-                Synchronizing Nodes {((pagination.page - 1) * pagination.limit) + 1} to{' '}
-                {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} Units
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-12 pt-12 border-t border-slate-100">
+              <div className="text-[11px] font-black uppercase tracking-[0.4em] text-slate-400 italic">
+                Synchronizing Nodes <span className="text-slate-900">{((pagination.page - 1) * pagination.limit) + 1}</span> to{' '}
+                <span className="text-slate-900">{Math.min(pagination.page * pagination.limit, pagination.total)}</span> of <span className="text-pink-600">{pagination.total}</span> Units
               </div>
-              <div className="flex gap-4">
+              <div className="flex gap-6">
                 <Button
                   variant="outline"
-                  className="h-14 rounded-2xl border-white/5 bg-white/[0.03] text-[10px] font-black uppercase tracking-widest italic hover:bg-white/10 transition-all px-8"
+                  className="h-16 px-10 rounded-2xl border-slate-200 bg-white text-[10px] font-black uppercase tracking-widest italic hover:bg-slate-50 transition-all shadow-premium"
                   onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
                   disabled={pagination.page === 1}
                 >
@@ -544,7 +555,7 @@ export default function LeadsListPage() {
                 </Button>
                 <Button
                   variant="outline"
-                  className="h-14 rounded-2xl border-white/5 bg-white/[0.03] text-[10px] font-black uppercase tracking-widest italic hover:bg-white/10 transition-all px-8"
+                  className="h-16 px-10 rounded-2xl border-slate-200 bg-white text-[10px] font-black uppercase tracking-widest italic hover:bg-slate-50 transition-all shadow-premium"
                   onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
                   disabled={pagination.page === pagination.total_pages}
                 >

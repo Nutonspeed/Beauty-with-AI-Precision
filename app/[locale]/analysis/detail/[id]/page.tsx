@@ -6,16 +6,31 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { VISIAReport } from '@/components/analysis/visia-report';
-import AnalysisDetailClient from '@/components/analysis/AnalysisDetailClient';
+import { VisiaReport } from '@/components/analysis/visia-report';
+import { AnalysisDetailClient } from '@/components/analysis/AnalysisDetailClient';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Face3DViewer } from '@/components/ar/face-3d-viewer';
 import { ProgramSimulator } from '@/components/ar/program-simulator';
-import PriorityRankingCard from '@/components/analysis/priority-ranking-card';
-import ProgramRecommendations from '@/components/analysis/program-recommendations';
-import { Loader2, AlertCircle, ArrowLeft, Globe, Check, Presentation, LineChart } from 'lucide-react';
+import { PriorityRankingCard } from '@/components/analysis';
+import ProgramRecommendations from '@/components/program-recommendations';
+import { 
+  Loader2, 
+  AlertCircle, 
+  ArrowLeft, 
+  Globe, 
+  Check, 
+  Presentation, 
+  LineChart, 
+  Wand2, 
+  BarChart3, 
+  LayoutGrid, 
+  FileText,
+  Box,
+  TrendingUp,
+  Award
+} from 'lucide-react';
 import { useTranslations, useLocale } from 'next-intl';
 import { useRouter, useParams } from 'next/navigation';
 import { downloadAnalysisPDF } from '@/lib/utils/pdf-export';
@@ -42,50 +57,27 @@ import type {
 import { useAuth } from '@/lib/auth/context';
 import { normalizeRole } from '@/lib/auth/role-normalize';
 import { useLocalizePath } from "@/lib/i18n/locale-link"
+import { motion, AnimatePresence } from 'framer-motion'
+import { Badge } from '@/components/ui/badge'
 
 const LANGUAGES = [
   { code: 'th', name: 'ไทย', flag: '🇹🇭' },
   { code: 'en', name: 'English', flag: '🇬🇧' },
 ];
 
-const SKIN_TYPES: Set<SkinType> = new Set(['oily', 'dry', 'combination', 'normal', 'sensitive']);
 const SKIN_CONCERNS: SkinConcern[] = [
-  'acne',
-  'wrinkles',
-  'dark_spots',
-  'large_pores',
-  'redness',
-  'dullness',
-  'fine_lines',
-  'blackheads',
-  'hyperpigmentation',
+  'acne', 'wrinkles', 'dark_spots', 'large_pores', 'redness', 'dullness', 'fine_lines', 'blackheads', 'hyperpigmentation'
 ];
-type RecommendationCategory = AIAnalysisResult['recommendations'][number]['category'];
-const RECOMMENDATION_CATEGORIES: RecommendationCategory[] = [
-  'cleanser',
-  'serum',
-  'moisturizer',
-  'program',
-  'sunscreen',
-];
-const AI_PROVIDERS: Set<AIProvider> = new Set(['huggingface', 'google-vision', 'gemini']);
 
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null;
+const RECOMMENDATION_CATEGORIES = ['cleanser', 'serum', 'moisturizer', 'program', 'sunscreen'];
 
-const isSkinType = (value: unknown): value is SkinType =>
-  typeof value === 'string' && SKIN_TYPES.has(value as SkinType);
-
-const isSkinConcern = (value: unknown): value is SkinConcern =>
-  typeof value === 'string' && SKIN_CONCERNS.includes(value as SkinConcern);
-
-const isAIProvider = (value: unknown): value is AIProvider =>
-  typeof value === 'string' && AI_PROVIDERS.has(value as AIProvider);
+const isRecord = (value: unknown): value is Record<string, unknown> => typeof value === 'object' && value !== null;
+const isSkinType = (value: unknown): value is SkinType => typeof value === 'string' && ['oily', 'dry', 'combination', 'normal', 'sensitive'].includes(value);
+const isSkinConcern = (value: unknown): value is SkinConcern => typeof value === 'string' && SKIN_CONCERNS.includes(value as SkinConcern);
+const isAIProvider = (value: unknown): value is AIProvider => typeof value === 'string' && ['huggingface', 'google-vision', 'gemini'].includes(value as AIProvider);
 
 const asNumber = (value: unknown): number | undefined => {
-  if (typeof value === 'number' && Number.isFinite(value)) {
-    return value;
-  }
+  if (typeof value === 'number' && Number.isFinite(value)) return value;
   if (typeof value === 'string' && value.trim() !== '') {
     const parsed = Number(value);
     return Number.isFinite(parsed) ? parsed : undefined;
@@ -93,575 +85,133 @@ const asNumber = (value: unknown): number | undefined => {
   return undefined;
 };
 
-const toNumber = (value: unknown, fallback = 0): number => {
-  const numeric = asNumber(value);
-  return numeric ?? fallback;
-};
-
+const toNumber = (value: unknown, fallback = 0): number => asNumber(value) ?? fallback;
 const clamp = (value: number, min = 0, max = 10): number => Math.min(max, Math.max(min, value));
-
-const normalizeSeverity = (raw: unknown): Record<SkinConcern, number> => {
-  return SKIN_CONCERNS.reduce((acc, concern) => {
-    const source = isRecord(raw) ? raw[concern] : undefined;
-    acc[concern] = clamp(toNumber(source, 0));
-    return acc;
-  }, {} as Record<SkinConcern, number>);
-};
-
-const normalizeAIRecommendations = (raw: unknown): AIAnalysisResult['recommendations'] => {
-  if (!Array.isArray(raw)) {
-    return [];
-  }
-
-  const allowed = new Set<RecommendationCategory>(RECOMMENDATION_CATEGORIES);
-  const recommendations: AIAnalysisResult['recommendations'] = [];
-
-  for (const entry of raw) {
-    if (typeof entry === 'string' && entry.trim() !== '') {
-      recommendations.push({
-        category: 'program',
-        product: entry,
-        reason: 'Provided by AI analysis',
-      });
-      continue;
-    }
-
-    if (!isRecord(entry)) {
-      continue;
-    }
-
-    const entryRecord = entry;
-    const productValue = entryRecord.product;
-    if (typeof productValue !== 'string' || productValue.trim() === '') {
-      continue;
-    }
-
-    const reasonValue = entryRecord.reason;
-    const categoryValue = entryRecord.category;
-    const category = typeof categoryValue === 'string' && allowed.has(categoryValue as RecommendationCategory)
-      ? (categoryValue as RecommendationCategory)
-      : 'program';
-    const reason = typeof reasonValue === 'string' && reasonValue.trim() !== ''
-      ? reasonValue
-      : 'Provided by AI analysis';
-
-    recommendations.push({ category, product: productValue, reason });
-  }
-
-  return recommendations;
-};
-
-const normalizeAIAnalysis = (raw: unknown): AIAnalysisResult => {
-  const record = isRecord(raw) ? raw : {};
-  const skinTypeCandidate = record.skinType;
-  const concernsCandidate = record.concerns;
-  const recommendationsCandidate = record.recommendations;
-  const confidenceValue = record.confidence ?? record.confidenceLevel;
-
-  const skinType = isSkinType(skinTypeCandidate) ? skinTypeCandidate : 'normal';
-  const concerns = Array.isArray(concernsCandidate)
-    ? concernsCandidate.filter(isSkinConcern)
-    : [];
-  const severity = normalizeSeverity(record.severity);
-  const recommendations = normalizeAIRecommendations(recommendationsCandidate);
-  const confidence = clamp(toNumber(confidenceValue, 0.8), 0, 1);
-
-  const ai: AIAnalysisResult = {
-    skinType,
-    concerns,
-    severity,
-    recommendations,
-    confidence,
-  };
-
-  if (typeof record.programPlan === 'string') {
-    ai.programPlan = record.programPlan;
-  }
-
-  return ai;
-};
-
-const normalizeCVAnalysis = (raw: unknown): CVAnalysisResult => {
-  const record = isRecord(raw) ? raw : {};
-  const spotsRaw: Record<string, unknown> = isRecord(record.spots) ? record.spots : {};
-  const poresRaw: Record<string, unknown> = isRecord(record.pores) ? record.pores : {};
-  const wrinklesRaw: Record<string, unknown> = isRecord(record.wrinkles) ? record.wrinkles : {};
-  const textureRaw: Record<string, unknown> = isRecord(record.texture) ? record.texture : {};
-  const rednessRaw: Record<string, unknown> = isRecord(record.redness) ? record.redness : {};
-
-  const spotsLocations = Array.isArray(spotsRaw['locations'])
-    ? (spotsRaw['locations'] as unknown[])
-        .map((loc) => {
-          if (!isRecord(loc)) return null;
-          const x = asNumber(loc.x);
-          const y = asNumber(loc.y);
-          const radius = asNumber(loc.radius);
-          if (x === undefined || y === undefined || radius === undefined) return null;
-          return { x, y, radius };
-        })
-        .filter((loc): loc is { x: number; y: number; radius: number } => loc !== null)
-    : [];
-
-  const poresAverage =
-    asNumber(poresRaw['averageSize']) ??
-    asNumber(poresRaw['average']) ??
-    asNumber(poresRaw['size']) ??
-    0;
-  const poresCount =
-    asNumber(poresRaw['enlargedCount']) ??
-    asNumber(poresRaw['count']) ??
-    0;
-
-  const wrinklesLocations = Array.isArray(wrinklesRaw['locations'])
-    ? (wrinklesRaw['locations'] as unknown[])
-        .map((loc) => {
-          if (!isRecord(loc)) return null;
-          const x1 = asNumber(loc.x1);
-          const y1 = asNumber(loc.y1);
-          const x2 = asNumber(loc.x2);
-          const y2 = asNumber(loc.y2);
-          if (x1 === undefined || y1 === undefined || x2 === undefined || y2 === undefined) return null;
-          return { x1, y1, x2, y2 };
-        })
-        .filter((loc): loc is { x1: number; y1: number; x2: number; y2: number } => loc !== null)
-    : [];
-
-  let rednessAreasSource: unknown[] = [];
-  if (Array.isArray(rednessRaw['areas'])) {
-    rednessAreasSource = rednessRaw['areas'] as unknown[];
-  } else if (Array.isArray(rednessRaw['locations'])) {
-    rednessAreasSource = rednessRaw['locations'] as unknown[];
-  }
-
-  const rednessAreas = rednessAreasSource
-    .map((area) => {
-      if (!isRecord(area)) return null;
-      const x = asNumber(area.x);
-      const y = asNumber(area.y);
-      const width = asNumber(area.width ?? area.size);
-      const height = asNumber(area.height ?? area.size);
-      if (x === undefined || y === undefined || width === undefined || height === undefined) return null;
-      return { x, y, width, height };
-    })
-    .filter((area): area is { x: number; y: number; width: number; height: number } => area !== null);
-
-  const textureSmoothness = clamp(
-    toNumber(textureRaw['smoothness'] ?? textureRaw['score'], 0)
-  );
-  const textureScore = clamp(
-    toNumber(textureRaw['score'] ?? textureSmoothness, textureSmoothness)
-  );
-  const textureRoughness = clamp(
-    toNumber(textureRaw['roughness'] ?? 10 - textureSmoothness, 10 - textureSmoothness)
-  );
-
-  return {
-    spots: {
-      count: clamp(toNumber(spotsRaw['count'], spotsLocations.length), 0, Number.MAX_SAFE_INTEGER),
-      locations: spotsLocations,
-      severity: clamp(toNumber(spotsRaw['severity'], 0)),
-    },
-    pores: {
-      averageSize: clamp(poresAverage, 0, Number.MAX_SAFE_INTEGER),
-      enlargedCount: clamp(poresCount, 0, Number.MAX_SAFE_INTEGER),
-      severity: clamp(toNumber(poresRaw['severity'], 0)),
-    },
-    wrinkles: {
-      count: clamp(toNumber(wrinklesRaw['count'], wrinklesLocations.length), 0, Number.MAX_SAFE_INTEGER),
-      locations: wrinklesLocations,
-      severity: clamp(toNumber(wrinklesRaw['severity'], 0)),
-    },
-    texture: {
-      smoothness: textureSmoothness,
-      roughness: textureRoughness,
-      score: textureScore,
-    },
-    redness: {
-      percentage: clamp(
-        toNumber(rednessRaw['percentage'] ?? rednessRaw['coverage'], 0),
-        0,
-        100
-      ),
-      areas: rednessAreas,
-      severity: clamp(toNumber(rednessRaw['severity'], 0)),
-    },
-  };
-};
-
-const normalizeOverallScore = (
-  raw: unknown,
-  cv: CVAnalysisResult
-): HybridSkinAnalysis['overallScore'] => {
-  const record = isRecord(raw) ? raw : {};
-  return {
-    spots: clamp(toNumber(record.spots, cv.spots.severity)),
-    pores: clamp(toNumber(record.pores, cv.pores.severity)),
-    wrinkles: clamp(toNumber(record.wrinkles, cv.wrinkles.severity)),
-    texture: clamp(toNumber(record.texture, cv.texture.score)),
-    redness: clamp(toNumber(record.redness, cv.redness.severity)),
-    pigmentation: clamp(toNumber(record.pigmentation, cv.spots.severity)),
-  };
-};
-
-const normalizePercentiles = (raw: unknown): HybridSkinAnalysis['percentiles'] => {
-  const record = isRecord(raw) ? raw : {};
-  const percentiles = {
-    spots: clamp(toNumber(record.spots, 0), 0, 100),
-    pores: clamp(toNumber(record.pores, 0), 0, 100),
-    wrinkles: clamp(toNumber(record.wrinkles, 0), 0, 100),
-    texture: clamp(toNumber(record.texture, 0), 0, 100),
-    redness: clamp(toNumber(record.redness, 0), 0, 100),
-    overall: clamp(toNumber(record.overall, Number.NaN), 0, 100),
-  };
-
-  if (!Number.isFinite(percentiles.overall)) {
-    const average =
-      (percentiles.spots + percentiles.pores + percentiles.wrinkles + percentiles.texture + percentiles.redness) /
-      5;
-    percentiles.overall = clamp(Math.round(average), 0, 100);
-  }
-
-  return percentiles;
-};
-
-const normalizeAnnotatedImages = (raw: unknown): HybridSkinAnalysis['annotatedImages'] => {
-  if (!isRecord(raw)) {
-    return {};
-  }
-
-  const result: HybridSkinAnalysis['annotatedImages'] = {};
-  const keys: Array<keyof HybridSkinAnalysis['annotatedImages']> = [
-    'spots',
-    'pores',
-    'wrinkles',
-    'redness',
-    'combined',
-  ];
-
-  for (const key of keys) {
-    const value = raw[key];
-    if (typeof value === 'string' && value.trim() !== '') {
-      result[key] = value;
-    }
-  }
-
-  return result;
-};
-
-const normalizeFaceMesh = (raw: unknown): HybridSkinAnalysis['faceMesh'] | undefined => {
-  if (!isRecord(raw)) {
-    return undefined;
-  }
-
-  const landmarksRaw = raw.landmarks;
-  if (!Array.isArray(landmarksRaw) || landmarksRaw.length === 0) {
-    return undefined;
-  }
-
-  const normalizedLandmarks = landmarksRaw
-    .map((point) => {
-      if (!isRecord(point)) return null;
-      const x = asNumber(point.x);
-      const y = asNumber(point.y);
-      const z = asNumber(point.z);
-      if (x === undefined || y === undefined || z === undefined) return null;
-      return { x, y, z };
-    })
-    .filter((point): point is { x: number; y: number; z: number } => point !== null);
-
-  if (normalizedLandmarks.length === 0) {
-    return undefined;
-  }
-
-  const topologyRaw = raw.topology;
-  const normalizedTopology = Array.isArray(topologyRaw)
-    ? topologyRaw
-        .map((row) => {
-          if (!Array.isArray(row)) return null;
-          const normalizedRow = row
-            .map((value) => asNumber(value))
-            .filter((value): value is number => value !== undefined);
-          return normalizedRow.length > 0 ? normalizedRow : null;
-        })
-        .filter((row): row is number[] => row !== null)
-    : [];
-
-  return {
-    landmarks: normalizedLandmarks,
-    topology: normalizedTopology,
-  };
-};
 
 const buildHybridAnalysis = (raw: unknown, fallbackId: string): HybridSkinAnalysis => {
   const record = isRecord(raw) ? raw : {};
+  
+  const normalizeSeverity = (raw: unknown): Record<SkinConcern, number> => {
+    return SKIN_CONCERNS.reduce((acc, concern) => {
+      const source = isRecord(raw) ? raw[concern] : undefined;
+      acc[concern] = clamp(toNumber(source, 0));
+      return acc;
+    }, {} as Record<SkinConcern, number>);
+  };
+
+  const normalizeAIAnalysis = (raw: unknown): AIAnalysisResult => {
+    const r = isRecord(raw) ? raw : {};
+    return {
+      skinType: isSkinType(r.skinType) ? r.skinType : 'normal',
+      concerns: Array.isArray(r.concerns) ? r.concerns.filter(isSkinConcern) : [],
+      severity: normalizeSeverity(r.severity),
+      recommendations: Array.isArray(r.recommendations) ? r.recommendations.map((entry: any) => {
+        if (typeof entry === 'string') return { category: 'program', product: entry, reason: 'AI analysis' };
+        return { 
+          category: RECOMMENDATION_CATEGORIES.includes(entry.category) ? entry.category : 'program',
+          product: entry.product || 'Unknown',
+          reason: entry.reason || 'AI analysis'
+        };
+      }) : [],
+      confidence: clamp(toNumber(r.confidence ?? r.confidenceLevel, 0.8), 0, 1),
+      programPlan: typeof r.programPlan === 'string' ? r.programPlan : undefined
+    };
+  };
+
+  const normalizeCVAnalysis = (raw: unknown): CVAnalysisResult => {
+    const r = isRecord(raw) ? raw : {};
+    const spotsRaw = isRecord(r.spots) ? r.spots : {};
+    const poresRaw = isRecord(r.pores) ? r.pores : {};
+    const wrinklesRaw = isRecord(r.wrinkles) ? r.wrinkles : {};
+    const textureRaw = isRecord(r.texture) ? r.texture : {};
+    const rednessRaw = isRecord(r.redness) ? r.redness : {};
+
+    return {
+      spots: { 
+        count: clamp(toNumber(spotsRaw.count, 0)), 
+        locations: Array.isArray(spotsRaw.locations) ? spotsRaw.locations : [], 
+        severity: clamp(toNumber(spotsRaw.severity, 0)) 
+      },
+      pores: { 
+        averageSize: clamp(toNumber(poresRaw.averageSize ?? poresRaw.average, 0)), 
+        enlargedCount: clamp(toNumber(poresRaw.enlargedCount ?? poresRaw.count, 0)), 
+        severity: clamp(toNumber(poresRaw.severity, 0)) 
+      },
+      wrinkles: { 
+        count: clamp(toNumber(wrinklesRaw.count, 0)), 
+        locations: Array.isArray(wrinklesRaw.locations) ? wrinklesRaw.locations : [], 
+        severity: clamp(toNumber(wrinklesRaw.severity, 0)) 
+      },
+      texture: { 
+        smoothness: clamp(toNumber(textureRaw.smoothness ?? textureRaw.score, 0)), 
+        roughness: clamp(toNumber(textureRaw.roughness, 0)), 
+        score: clamp(toNumber(textureRaw.score, 0)) 
+      },
+      redness: { 
+        percentage: clamp(toNumber(rednessRaw.percentage ?? rednessRaw.coverage, 0), 0, 100), 
+        areas: Array.isArray(rednessRaw.areas) ? rednessRaw.areas : [], 
+        severity: clamp(toNumber(rednessRaw.severity, 0)) 
+      },
+    };
+  };
+
   const ai = normalizeAIAnalysis(record.aiAnalysis ?? record.ai);
   const cv = normalizeCVAnalysis(record.cvAnalysis ?? record.cv);
-  const overallScore = normalizeOverallScore(record.overallScore, cv);
-  const percentiles = normalizePercentiles(record.percentiles);
-  const annotatedImages = normalizeAnnotatedImages(record.annotatedImages);
-  const faceMesh = normalizeFaceMesh(record.faceMesh);
-
-  const createdAtSource = record.createdAt ?? record.created_at;
-  const timestampSource = record.timestamp ?? createdAtSource;
-  const createdAt = new Date(
-    typeof createdAtSource === 'string' || typeof createdAtSource === 'number'
-      ? createdAtSource
-      : Date.now()
-  );
-  const timestamp = new Date(
-    typeof timestampSource === 'string' || typeof timestampSource === 'number'
-      ? timestampSource
-      : Date.now()
-  );
-
-  const recommendationsSource = Array.isArray(record.recommendations)
-    ? record.recommendations.filter((item): item is string => typeof item === 'string')
-    : undefined;
-
-  const confidenceValue = record.confidence ?? record.confidence_level ?? ai.confidence;
-  const providerValue = record.aiProvider ?? record.ai_provider ?? record.provider;
-  const aiProvider = isAIProvider(providerValue) ? providerValue : 'gemini';
 
   return {
     id: typeof record.id === 'string' && record.id ? record.id : fallbackId,
     userId: typeof record.userId === 'string' ? record.userId : '',
-    createdAt,
-    timestamp,
+    createdAt: new Date((record.createdAt ?? record.created_at) as string || Date.now()),
+    timestamp: new Date((record.timestamp ?? record.createdAt ?? record.created_at) as string || Date.now()),
     imageUrl: typeof record.imageUrl === 'string' ? record.imageUrl : '',
     ai,
-    aiProvider,
+    aiProvider: isAIProvider(record.aiProvider ?? record.provider) ? (record.aiProvider ?? record.provider) as AIProvider : 'gemini',
     cv,
-    overallScore,
-    percentiles,
-    confidence: clamp(toNumber(confidenceValue, ai.confidence), 0, 1),
-    recommendations:
-      recommendationsSource && recommendationsSource.length > 0
-        ? recommendationsSource
-        : ai.recommendations.map((rec) => `${rec.product}: ${rec.reason}`),
-    annotatedImages,
-    faceMesh,
+    overallScore: (record.overallScore as any) || { spots: 5, pores: 5, wrinkles: 5, texture: 5, redness: 5, pigmentation: 5 },
+    percentiles: (record.percentiles as any) || { spots: 50, pores: 50, wrinkles: 50, texture: 50, redness: 50, overall: 50 },
+    confidence: clamp(toNumber(record.confidence ?? ai.confidence, 0.8), 0, 1),
+    recommendations: Array.isArray(record.recommendations) ? record.recommendations : [],
+    annotatedImages: (record.annotatedImages as any) || {},
   };
 };
 
-interface AnalysisDetailPageProps {
-  params: Promise<{ id: string; locale: string }>;
-}
-
-/**
- * Transform database record to AnalysisDetailClient format
- */
-function transformToAnalysisFormat(dbRecord: any) {
-  const getHealthGrade = (score: number): string => {
-    if (score >= 90) return 'A+';
-    if (score >= 80) return 'A';
-    if (score >= 70) return 'B';
-    if (score >= 60) return 'C';
-    if (score >= 50) return 'D';
-    return 'F';
-  };
-
-  const parseDate = (value: unknown): string => {
-    if (!value) {
-      return new Date().toISOString();
-    }
-
-    const parsed = new Date(value as string);
-    return Number.isNaN(parsed.getTime()) ? new Date().toISOString() : parsed.toISOString();
-  };
-
-  const getSeverityFromScore = (score: number): string => {
-    if (score >= 90) return 'low';
-    if (score >= 75) return 'moderate';
-    if (score >= 50) return 'high';
-    return 'severe';
-  };
-
-  const normalizeSeverity = (value: unknown, scoreFallback?: number, countFallback?: number, maxGood: number = 0): string => {
-    if (typeof value === 'string' && value.trim() !== '') {
-      return value;
-    }
-
-    if (typeof value === 'number' && Number.isFinite(value)) {
-      if (value <= 2) return 'mild';
-      if (value <= 5) return 'moderate';
-      if (value <= 8) return 'high';
-      return 'severe';
-    }
-
-    if (typeof scoreFallback === 'number') {
-      return getSeverityFromScore(scoreFallback);
-    }
-
-    if (typeof countFallback === 'number') {
-      const scoreFromCount = Math.max(0, 100 - Math.max(0, countFallback - maxGood) * 2);
-      return getSeverityFromScore(scoreFromCount);
-    }
-
-    return 'mild';
-  };
-
-  const parseOptionalNumber = (value: unknown): number | undefined => {
-    if (typeof value === 'number' && Number.isFinite(value)) return value;
-    if (typeof value === 'string') {
-      const n = Number(value);
-      return Number.isFinite(n) ? n : undefined;
-    }
-    return undefined;
-  };
-
-  const numberWithFallback = (value: unknown, fallback: number): number => {
-    const parsed = parseOptionalNumber(value);
-    return typeof parsed === 'number' ? parsed : fallback;
-  };
-
-  let parsedRecommendations: string[] | null = null;
-  if (Array.isArray(dbRecord.recommendations)) {
-    parsedRecommendations = dbRecord.recommendations;
-  } else if (typeof dbRecord.recommendations === 'string' && dbRecord.recommendations.trim() !== '') {
-    parsedRecommendations = [dbRecord.recommendations];
-  }
-
-  const analyzedAt = parseDate(dbRecord.analyzed_at || dbRecord.created_at || dbRecord.createdAt);
-  const overallScore = numberWithFallback(dbRecord.overall_score, 0);
-  const spotsCount = numberWithFallback(dbRecord.spots_count, 0);
-  const wrinklesCount = numberWithFallback(dbRecord.wrinkles_count, 0);
-  const poresCount = numberWithFallback(dbRecord.pores_count, 0);
-  const uvSpotsCount = numberWithFallback(dbRecord.uv_spots_count, 0);
-  const brownSpotsCount = numberWithFallback(dbRecord.brown_spots_count, 0);
-  const redAreasPct = numberWithFallback(dbRecord.red_areas_percentage, 0);
-  const porphyrinsCount = numberWithFallback(dbRecord.porphyrins_count, 0);
-
-  const calcScoreFromCount = (count: number, maxGood: number) => Math.max(0, 100 - Math.max(0, count - maxGood) * 2);
-
-  return {
-    id: dbRecord.id,
-    user_id: dbRecord.user_id,
-    image_url: dbRecord.image_url,
-    visualization_url: dbRecord.visualization_url,
-    analyzed_at: analyzedAt,
-    overall_score: overallScore,
-    skin_health_grade: getHealthGrade(overallScore),
-
-    spots_score: numberWithFallback(dbRecord.spots_score, calcScoreFromCount(spotsCount, 5)),
-    spots_count: spotsCount,
-    spots_severity: normalizeSeverity(dbRecord.spots_severity, parseOptionalNumber(dbRecord.spots_score), spotsCount, 5),
-
-    wrinkles_score: numberWithFallback(dbRecord.wrinkles_score, calcScoreFromCount(wrinklesCount, 3)),
-    wrinkles_count: wrinklesCount,
-    wrinkles_severity: normalizeSeverity(dbRecord.wrinkles_severity, parseOptionalNumber(dbRecord.wrinkles_score), wrinklesCount, 3),
-
-    texture_score: numberWithFallback(dbRecord.texture_score, numberWithFallback(dbRecord.texture_smoothness, 80)),
-    texture_smoothness: numberWithFallback(dbRecord.texture_smoothness, 0),
-    texture_roughness: numberWithFallback(dbRecord.texture_roughness, 0),
-    texture_severity: normalizeSeverity(dbRecord.texture_severity, parseOptionalNumber(dbRecord.texture_score)),
-
-    pores_score: numberWithFallback(dbRecord.pores_score, calcScoreFromCount(poresCount, 50)),
-    pores_count: poresCount,
-    pores_average_size: numberWithFallback(dbRecord.pores_average_size, 0),
-    pores_severity: normalizeSeverity(dbRecord.pores_severity, parseOptionalNumber(dbRecord.pores_score), poresCount, 50),
-
-    uv_spots_score: numberWithFallback(dbRecord.uv_spots_score, calcScoreFromCount(uvSpotsCount, 3)),
-    uv_spots_count: uvSpotsCount,
-    uv_spots_severity: normalizeSeverity(dbRecord.uv_spots_severity, parseOptionalNumber(dbRecord.uv_spots_score), uvSpotsCount, 3),
-
-    brown_spots_score: numberWithFallback(dbRecord.brown_spots_score, calcScoreFromCount(brownSpotsCount, 3)),
-    brown_spots_count: brownSpotsCount,
-    brown_spots_severity: normalizeSeverity(dbRecord.brown_spots_severity, parseOptionalNumber(dbRecord.brown_spots_score), brownSpotsCount, 3),
-
-    red_areas_score: numberWithFallback(dbRecord.red_areas_score, Math.max(0, 100 - redAreasPct)),
-    red_areas_percentage: redAreasPct,
-    red_areas_severity: normalizeSeverity(dbRecord.red_areas_severity, parseOptionalNumber(dbRecord.red_areas_score), redAreasPct, 0),
-
-    porphyrins_score: numberWithFallback(dbRecord.porphyrins_score, calcScoreFromCount(porphyrinsCount, 2)),
-    porphyrins_count: porphyrinsCount,
-    porphyrins_severity: normalizeSeverity(dbRecord.porphyrins_severity, parseOptionalNumber(dbRecord.porphyrins_score), porphyrinsCount, 2),
-
-    processing_time_ms: numberWithFallback(dbRecord.processing_time_ms ?? dbRecord.processing_time, 0),
-    recommendations: parsedRecommendations,
-    is_baseline: Boolean(dbRecord.is_baseline),
-  };
-}
-
-/**
- * Advanced Analysis Tab Component
- * Fetches and displays 8-mode CV analysis data
- */
-function AdvancedAnalysisTab({ analysisId, locale }: Readonly<{ analysisId: string; locale: string }>) {
+function AdvancedAnalysisTab({ analysisId, locale }: { analysisId: string; locale: string }) {
   const [cvData, setCvData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchCVAnalysis = async () => {
+    const fetchCV = async () => {
       try {
         setIsLoading(true);
-        setError(null);
-
-        // Fetch 8-mode analysis from API
-        const response = await fetch(`/api/analysis/multi-mode?id=${analysisId}`, {
-          credentials: 'include',
-        });
-        
-        if (!response.ok) {
-          throw new Error('Failed to load advanced analysis');
-        }
-
-        const data = await response.json();
-        
-        if (data.success && data.data) {
-          // Transform database format to component format
-          const transformedData = transformToAnalysisFormat(data.data);
-          setCvData(transformedData);
-        } else {
-          throw new Error(data.error || 'Failed to load analysis');
-        }
+        const res = await fetch(`/api/analysis/multi-mode?id=${analysisId}`);
+        if (!res.ok) throw new Error('Failed to load advanced analysis');
+        const data = await res.json();
+        if (data.success) setCvData(data.data);
+        else throw new Error(data.error || 'Failed to load analysis');
       } catch (err) {
-        console.error('Advanced analysis error:', err);
-        setError(err instanceof Error ? err.message : 'Failed to load advanced analysis');
+        setError(err instanceof Error ? err.message : 'Unknown error');
       } finally {
         setIsLoading(false);
       }
     };
-
-    fetchCVAnalysis();
+    fetchCV();
   }, [analysisId]);
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-        <span className="ml-2 text-muted-foreground">
-          {locale === 'th' ? 'กำลังโหลดการวิเคราะห์ขั้นสูง...' : 'Loading advanced analysis...'}
-        </span>
-      </div>
-    );
-  }
+  if (isLoading) return <div className="flex items-center justify-center min-h-[400px]"><Loader2 className="w-12 h-12 animate-spin text-pink-600" /></div>;
+  if (error) return <Alert variant="destructive" className="rounded-[2rem]"><AlertCircle className="h-4 w-4" /><AlertDescription>{error}</AlertDescription></Alert>;
 
-  if (error || !cvData) {
-    return (
-      <Alert variant="destructive">
-        <AlertCircle className="h-4 w-4" />
-        <AlertDescription>
-          {error || (locale === 'th' ? 'ไม่พบข้อมูลการวิเคราะห์ขั้นสูง' : 'Advanced analysis not found')}
-        </AlertDescription>
-      </Alert>
-    );
-  }
-
-  return (
-    <AnalysisDetailClient
-      analysis={cvData}
-      userId={cvData.user_id}
-      comparisonAnalysis={null}
-      availableAnalyses={[]}
-    />
-  );
+  return <AnalysisDetailClient analysis={cvData} userId={cvData?.user_id} comparisonAnalysis={null} availableAnalyses={[]} />;
 }
 
-export default function AnalysisDetailPage({ params }: Readonly<AnalysisDetailPageProps>) {
+export default function AnalysisDetailPage() {
   const t = useTranslations();
   const locale = useLocale();
   const lp = useLocalizePath();
+  const params = useParams();
+  const router = useRouter();
+  const analysisId = params.id as string;
+  
   const [analysis, setAnalysis] = useState<HybridSkinAnalysis | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [customerInfo, setCustomerInfo] = useState<any>(null);
@@ -669,23 +219,18 @@ export default function AnalysisDetailPage({ params }: Readonly<AnalysisDetailPa
   const [programRecs, setProgramRecs] = useState<RecommendationResult | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [analysisId, setAnalysisId] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const router = useRouter();
-  const urlParams = useParams();
   
-  // Get user role for permission checks
   const { user } = useAuth();
   const allowedRoles = new Set(['sales_staff', 'center_owner', 'center_admin', 'super_admin']);
   const normalized = normalizeRole(user?.role ?? null);
   const canAccessSalesPresentation = allowedRoles.has(normalized);
 
-  // Check authentication status
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch('/api/auth/session');
-        const data = await response.json();
+        const res = await fetch('/api/auth/session');
+        const data = await res.json();
         setIsAuthenticated(!!data?.user);
       } catch {
         setIsAuthenticated(false);
@@ -697,100 +242,33 @@ export default function AnalysisDetailPage({ params }: Readonly<AnalysisDetailPa
   const loadAnalysis = useCallback(async (id: string) => {
     try {
       setIsLoading(true);
-      setError(null);
+      const res = await fetch(`/api/skin-analysis/${id}`);
+      if (!res.ok) throw new Error(t('analysis.error' as any) || 'Analysis not found');
+      const data = await res.json();
+      if (!data.success) throw new Error(t('analysis.error' as any) || 'Analysis not found');
 
-      const response = await fetch(`/api/skin-analysis/${id}`);
-
-      if (!response.ok) {
-        if (response.status === 404) {
-          throw new Error(t('analysis.notFound'));
-        }
-        throw new Error(t('analysis.error'));
-      }
-
-      const data = await response.json();
-
-      if (!data.success) {
-        throw new Error(t('analysis.error'));
-      }
-
-      const normalizedAnalysis = buildHybridAnalysis(data.data, id);
-      setAnalysis(normalizedAnalysis);
-      setImageUrl(normalizedAnalysis.imageUrl || null);
-      
-      const ranking = rankSkinConcernPriorities(normalizedAnalysis);
-      setPriorityRanking(ranking);
-      
-      const skinType = normalizedAnalysis.ai.skinType || 'normal';
-      const recommendations = generateProgramRecommendations(
-        normalizedAnalysis,
-        (normalizedAnalysis.ai.skinType as any) || 'normal'
-      );
-      setProgramRecs(recommendations);
-      
-      const customerInfoValue = isRecord(data.data) && 'customerInfo' in data.data
-        ? (data.data as Record<string, unknown>).customerInfo ?? null
-        : null;
-      
-      const finalClientInfo = customerInfoValue || {
-        name: t('roles.client'),
-        skinType: normalizedAnalysis.ai.skinType || 'normal'
-      };
-      
-      setCustomerInfo(finalClientInfo);
+      const normalized = buildHybridAnalysis(data.data, id);
+      setAnalysis(normalized);
+      setImageUrl(normalized.imageUrl);
+      setPriorityRanking(rankSkinConcernPriorities(normalized));
+      setProgramRecs(generateProgramRecommendations(normalized, (normalized.ai.skinType as any) || 'normal'));
+      setCustomerInfo(data.data.customerInfo || { name: t('roles.client' as any) || 'Client', skinType: normalized.ai.skinType });
     } catch (err) {
-      console.error('Load analysis error:', err);
-      setError(err instanceof Error ? err.message : t('analysis.error'));
+      setError(err instanceof Error ? err.message : 'Error loading analysis');
     } finally {
       setIsLoading(false);
     }
   }, [t]);
 
   useEffect(() => {
-    params.then((resolvedParams) => {
-      setAnalysisId(resolvedParams.id);
-      loadAnalysis(resolvedParams.id);
-    });
-  }, [params, loadAnalysis]);
+    if (analysisId) loadAnalysis(analysisId);
+  }, [analysisId, loadAnalysis]);
 
   const handleExport = async (format: 'pdf' | 'png') => {
+    if (!analysis) return;
     try {
-      if (!analysis) return;
-
-      if (format === 'pdf') {
-        // Use new professional PDF export
-        await downloadAnalysisPDF(
-          analysis,
-          t.raw('analysis.report') || {},
-          {
-            locale: locale as 'th' | 'en',
-            clientInfo: customerInfo ? {
-              name: customerInfo.name,
-              age: customerInfo.age,
-              gender: customerInfo.gender,
-              skinType: customerInfo.skinType || analysis.ai.skinType,
-              clientId: analysisId || undefined,
-            } : undefined,
-            centerInfo: {
-              name: 'CenterIQ Aesthetic',
-              nameTh: 'ศูนย์ความงาม CenterIQ',
-              address: '123 Medical Plaza, Bangkok, Thailand',
-              addressTh: '123 อาคารแมดิคัล พลาซ่า กรุงเทพฯ',
-              phone: '+66 2 XXX XXXX',
-              email: 'info@centeriq.ai',
-              website: 'www.centeriq.ai',
-            },
-            includeCharts: true,
-            includeImages: !!imageUrl,
-            includeRecommendations: !!programRecs,
-            includePriorityRanking: !!priorityRanking,
-            photos: imageUrl ? {
-              current: imageUrl,
-            } : undefined,
-          },
-          `skin-analysis-${analysisId}-${Date.now()}.pdf`
-        );
-      } else if (format === 'png') {
+      if (format === 'pdf') await downloadAnalysisPDF(analysis, t.raw('analysis.report') || {}, { locale: locale as 'th' | 'en', clientInfo: customerInfo, photos: imageUrl ? { current: imageUrl } : undefined }, `skin-analysis-${analysisId}.pdf`);
+      else if (format === 'png') {
         const blob = await exportToPNG('visia-report');
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -800,217 +278,176 @@ export default function AnalysisDetailPage({ params }: Readonly<AnalysisDetailPa
         URL.revokeObjectURL(url);
       }
     } catch (err) {
-      console.error('Export error:', err);
       alert('Failed to export report');
     }
   };
 
   const handleShare = async () => {
-    try {
-      if (!analysis) {
-        return;
-      }
-      await shareAnalysis(analysis, {
-        title: 'My Skin Analysis Report',
-      });
-    } catch (err) {
-      console.error('Share error:', err);
-      alert('Sharing not supported on this device');
-    }
+    if (!analysis) return;
+    try { await shareAnalysis(analysis, { title: 'My Skin Analysis Report' }); }
+    catch { alert('Sharing not supported on this device'); }
   };
 
-  const handlePrint = () => {
-    printReport('visia-report');
-  };
-
-  if (isLoading) {
-    return (
-      <div className="container mx-auto py-8 px-4">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+  if (isLoading) return (
+    <div className="flex min-h-screen items-center justify-center bg-white">
+      <div className="text-center space-y-6">
+        <div className="relative h-20 w-20 mx-auto">
+          <div className="absolute inset-0 bg-pink-500/10 blur-2xl rounded-full animate-pulse" />
+          <Loader2 className="h-12 w-12 animate-spin mx-auto text-pink-600 relative" />
         </div>
+        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 italic">Decoding Aesthetic Sequence...</p>
       </div>
-    );
-  }
+    </div>
+  );
 
-  if (error || !analysis) {
-    return (
-      <div className="container mx-auto py-8 px-4">
-        <Alert variant="destructive" className="mb-4">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>{error || t('analysis.notFound')}</AlertDescription>
-        </Alert>
-        <Button onClick={() => router.push(`/${locale}`)}>
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          {t('analysis.backToHome')}
+  if (error || !analysis) return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-white p-6">
+      <Card className="max-w-md w-full border-rose-100 bg-rose-50/50 rounded-[2.5rem] p-10 text-center space-y-6">
+        <div className="h-20 w-20 bg-white rounded-2xl flex items-center justify-center mx-auto shadow-sm border border-rose-100">
+          <AlertCircle className="h-10 w-10 text-rose-600" />
+        </div>
+        <div className="space-y-2">
+          <h3 className="text-2xl font-black text-slate-950 italic uppercase tracking-tighter">Analysis Node Offline</h3>
+          <p className="text-sm text-slate-500 font-light italic">{error || 'Data could not be retrieved'}</p>
+        </div>
+        <Button onClick={() => router.push(lp('/'))} className="w-full h-14 rounded-xl bg-slate-950 text-white font-black uppercase tracking-widest text-[10px] italic">
+          <ArrowLeft className="mr-2 h-4 w-4" /> Back to System
         </Button>
-      </div>
-    );
-  }
+      </Card>
+    </div>
+  );
 
   return (
-    <div className="container mx-auto py-8 px-4 max-w-7xl">
-      <div className="mb-6 flex items-center justify-between">
-        <Button
-          onClick={() => {
-            if (isAuthenticated) {
-              router.push(`/${locale}/analysis/history`);
-            } else {
-              router.push(`/${locale}`);
-            }
-          }}
-          variant="ghost"
-          className="gap-2"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          {isAuthenticated ? t('analysis.backToHistory') : t('analysis.analyzeAnother')}
-        </Button>
+    <div className="flex min-h-screen flex-col bg-white text-slate-950 selection:bg-pink-500/10">
+      <Header />
+      
+      <main className="flex-1 relative overflow-hidden flex flex-col">
+        {/* Infrastructure Background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-pink-500/5 rounded-full blur-[120px] animate-glow-pulse" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-500/5 rounded-full blur-[100px] animate-float" />
+          <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.015]" />
+        </div>
 
-        {canAccessSalesPresentation && (
-          <Button
-            onClick={() => router.push(`/${locale}/sales/presentation/${analysisId}`)}
-            variant="default"
-            size="sm"
-            className="gap-2"
-          >
-            <Presentation className="w-4 h-4" />
-            <span className="hidden sm:inline">{t('analysis.presentationMode')}</span>
-          </Button>
-        )}
+        <div className="container relative z-10 py-12 md:py-20 px-6 max-w-7xl mx-auto flex-1 space-y-16">
+          {/* Header Interface */}
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-12 pb-12 border-b border-slate-100">
+            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="space-y-8">
+              <div className="flex items-center gap-6">
+                <Button variant="ghost" size="icon" className="h-14 w-14 rounded-2xl text-slate-400 hover:bg-slate-50 border border-slate-100 shadow-inner transition-all hover:text-pink-600" onClick={() => isAuthenticated ? router.push(lp('/analysis/history')) : router.push(lp('/'))}>
+                  <ArrowLeft className="h-6 w-6" />
+                </Button>
+                <Badge variant="outline" className="px-6 py-2 rounded-full border-pink-500/30 text-pink-600 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.3em] text-[10px] font-black shadow-premium animate-pulse italic">
+                  <BarChart3 className="mr-3 h-3.5 w-3.5" />
+                  Dimensional Report Node
+                </Badge>
+              </div>
+              <h1 className="text-5xl md:text-8xl font-black tracking-tighter text-slate-950 leading-[0.8] italic uppercase">
+                Aesthetic<br />
+                <span className="bg-gradient-to-r from-pink-500 via-purple-600 to-blue-600 bg-clip-text text-transparent not-italic block mt-6 tracking-[0.2em] font-black uppercase text-2xl md:text-4xl">Intelligence Report</span>
+              </h1>
+            </motion.div>
 
-        <Button
-          onClick={() => {
-            if (isAuthenticated && analysis) {
-              router.push(`/${locale}/comparison/${analysis.userId}`);
-            }
-          }}
-          variant="outline"
-          size="sm"
-          className="gap-2"
-        >
-          <LineChart className="w-4 h-4" />
-          <span className="hidden sm:inline">{t('analysis.compareProgress')}</span>
-        </Button>
+            <div className="flex flex-wrap items-center gap-4 bg-slate-50 p-2 rounded-[1.5rem] border border-slate-100 shadow-inner">
+              {canAccessSalesPresentation && (
+                <Button onClick={() => router.push(lp(`/sales/presentation/${analysisId}`))} variant="premium" className="h-14 px-8 rounded-xl shadow-premium italic font-black uppercase tracking-widest text-[10px] bg-gradient-to-r from-pink-500 to-purple-600 border-none text-white transition-all hover:scale-105 active:scale-95">
+                  <Presentation className="mr-3 h-4 w-4" /> Presentation Mode
+                </Button>
+              )}
+              <Button onClick={() => isAuthenticated && router.push(lp(`/comparison/${analysis.userId}`))} variant="outline" className="h-14 px-8 rounded-xl border-slate-200 bg-white text-slate-950 font-black uppercase tracking-widest text-[10px] italic shadow-premium hover:bg-slate-50 transition-all hover:scale-105 active:scale-95">
+                <LineChart className="mr-3 h-4 w-4" /> Compare Progress
+              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="h-14 px-6 rounded-xl border-slate-200 bg-white text-slate-950 font-black uppercase tracking-widest text-[10px] italic shadow-premium hover:bg-slate-50">
+                    <Globe className="mr-3 h-4 w-4" /> {LANGUAGES.find(l => l.code === locale)?.name}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="bg-white border-slate-100 rounded-2xl p-2 shadow-premium">
+                  {LANGUAGES.map(lang => (
+                    <DropdownMenuItem key={lang.code} onClick={() => router.push(globalThis.location.pathname.replace(`/${locale}/`, `/${lang.code}/`))} className="rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-pink-50 focus:text-pink-600 gap-3">
+                      <span>{lang.flag}</span> {lang.name} {locale === lang.code && <Check className="ml-auto h-3 w-3" />}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm" className="gap-2">
-              <Globe className="w-4 h-4" />
-              <span className="hidden sm:inline">
-                {LANGUAGES.find(l => l.code === locale)?.name || 'English'}
-              </span>
-              <span className="sm:hidden">
-                {LANGUAGES.find(l => l.code === locale)?.flag || '🇬🇧'}
-              </span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {LANGUAGES.map(language => (
-              <DropdownMenuItem
-                key={language.code}
-                onClick={() => {
-                  const currentPath = globalThis.location.pathname;
-                  const newPath = currentPath.replace(`/${locale}/`, `/${language.code}/`);
-                  router.push(newPath);
-                }}
-                className="gap-2 cursor-pointer"
-              >
-                <span className="text-lg">{language.flag}</span>
-                <span>{language.name}</span>
-                {locale === language.code && (
-                  <Check className="h-4 w-4" />
-                )}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
+          <Tabs defaultValue="report" className="space-y-16">
+            <div className="flex items-center justify-center">
+              <TabsList className="bg-slate-50 border border-slate-100 p-2 rounded-[1.5rem] h-auto gap-2 shadow-inner flex-wrap justify-center">
+                {[
+                  { id: 'report', label: 'Summary', icon: FileText },
+                  { id: 'priorities', label: 'Priorities', icon: TrendingUp },
+                  { id: 'recommendations', label: 'Recommendations', icon: Award },
+                  { id: 'advanced', label: '8-Mode', icon: LayoutGrid },
+                  { id: '3d', label: '3D View', icon: Box },
+                  { id: 'simulator', label: 'Simulator', icon: Wand2 },
+                ].map(tab => (
+                  <TabsTrigger key={tab.id} value={tab.id} className="rounded-xl px-6 py-4 data-[state=active]:bg-pink-600 data-[state=active]:text-white transition-all font-black uppercase tracking-[0.2em] text-[10px] italic h-full shadow-sm">
+                    <tab.icon className="w-4 h-4 mr-2" /> {tab.label}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </div>
 
-      <Tabs defaultValue="report" className="space-y-6">
-        <TabsList className="grid w-full max-w-3xl grid-cols-6">
-          <TabsTrigger value="report">{t('analysis.report')}</TabsTrigger>
-          <TabsTrigger value="priorities">{t('analysis.priorities')}</TabsTrigger>
-          <TabsTrigger value="recommendations">{t('analysis.recommendations')}</TabsTrigger>
-          <TabsTrigger value="advanced">{t('analysis.advanced')}</TabsTrigger>
-          <TabsTrigger value="3d">{t('analysis.3dView')}</TabsTrigger>
-          <TabsTrigger value="simulator">{t('analysis.simulator')}</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="report">
-          <VISIAReport
-            analysis={analysis}
-            customerInfo={customerInfo}
-            locale={locale}
-            onExport={handleExport}
-            onPrint={handlePrint}
-            onShare={handleShare}
-          />
-        </TabsContent>
-
-        <TabsContent value="priorities">
-          {priorityRanking && (
-            <PriorityRankingCard
-              rankingResult={priorityRanking}
-              locale={locale as 'th' | 'en'}
-              onBookAppointment={() => {
-                router.push(`/${locale}/booking`);
-              }}
-            />
-          )}
-        </TabsContent>
-
-        <TabsContent value="recommendations">
-          {programRecs && (
-            <ProgramRecommendations
-              recommendations={programRecs}
-              onBookConsultation={(id) => router.push(`/${locale}/booking?program=${id}`)}
-            />
-          )}
-        </TabsContent>
-
-        <TabsContent value="advanced">
-          {analysisId && (
-            <AdvancedAnalysisTab analysisId={analysisId} locale={locale} />
-          )}
-        </TabsContent>
-
-        <TabsContent value="3d">
-          {imageUrl && (
-            <Face3DViewer
-              imageUrl={imageUrl}
-              analysisData={{
-                spots: analysis.cv.spots.severity,
-                wrinkles: analysis.cv.wrinkles.severity,
-                pores: analysis.cv.pores.severity,
-                texture: analysis.cv.texture.score,
-                redness: analysis.cv.redness.severity,
-                overall: analysis.percentiles.overall,
-              }}
-              locale={locale}
-            />
-          )}
-        </TabsContent>
-
-        <TabsContent value="simulator">
-          <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative">
-            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-            <CardHeader className="p-10 lg:p-12 pb-6 border-b border-white/5">
-              <CardTitle className="text-3xl font-bold text-white tracking-tight italic flex items-center gap-4">
-                Program Effect Simulator / จำลองผลลัพธ์โปรแกรม
-              </CardTitle>
-              <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">
-                Visualize potential improvements after recommended programs
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-10 lg:p-12">
-              <ProgramSimulator 
-                beforeImage={imageUrl || ''} 
-                locale={locale}
-              />
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+            <AnimatePresence mode="wait">
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+                <TabsContent value="report" className="mt-0 outline-none">
+                  <VisiaReport analysis={analysis} customerInfo={customerInfo} locale={locale} onExport={async (f) => {
+                    if (f === 'pdf') await downloadAnalysisPDF(analysis, {}, { locale: locale as any, clientInfo: customerInfo, photos: imageUrl ? { current: imageUrl } : undefined }, `skin-analysis-${analysisId}.pdf`);
+                    else {
+                      const blob = await exportToPNG('visia-report');
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement('a');
+                      a.href = url;
+                      a.download = `skin-analysis-${analysisId}.png`;
+                      a.click();
+                      URL.revokeObjectURL(url);
+                    }
+                  }} onPrint={() => printReport('visia-report')} onShare={handleShare} />
+                </TabsContent>
+                
+                <TabsContent value="priorities" className="mt-0 outline-none">
+                  {priorityRanking && <PriorityRankingCard rankingResult={priorityRanking} locale={locale as 'th' | 'en'} onBookAppointment={() => router.push(lp('/booking'))} />}
+                </TabsContent>
+                
+                <TabsContent value="recommendations" className="mt-0 outline-none">
+                  {programRecs && <ProgramRecommendations recommendations={programRecs} onBookConsultation={(id) => router.push(lp(`/booking?program=${id}`))} />}
+                </TabsContent>
+                
+                <TabsContent value="advanced" className="mt-0 outline-none">
+                  <AdvancedAnalysisTab analysisId={analysisId} locale={locale} />
+                </TabsContent>
+                
+                <TabsContent value="3d" className="mt-0 outline-none">
+                  {imageUrl && <Face3DViewer imageUrl={imageUrl} analysisData={{ spots: analysis.cv.spots.severity, wrinkles: analysis.cv.wrinkles.severity, pores: analysis.cv.pores.severity, texture: analysis.cv.texture.score, redness: analysis.cv.redness.severity, overall: analysis.percentiles.overall }} locale={locale} />}
+                </TabsContent>
+                
+                <TabsContent value="simulator" className="mt-0 outline-none">
+                  <Card className="border-slate-100 bg-white shadow-premium rounded-[3.5rem] overflow-hidden relative group transition-all duration-700 hover:border-pink-500/10">
+                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/10 to-transparent" />
+                    <CardHeader className="p-10 lg:p-12 pb-8 border-b border-slate-50 text-center space-y-4">
+                      <div className="mx-auto h-16 w-16 rounded-2xl bg-pink-50 border border-pink-100 flex items-center justify-center shadow-sm mb-2 group-hover:scale-110 transition-transform duration-700">
+                        <Wand2 className="h-8 w-8 text-pink-600" />
+                      </div>
+                      <CardTitle className="text-3xl font-black text-slate-950 tracking-tighter italic uppercase leading-none">Program Effect Simulator</CardTitle>
+                      <CardDescription className="text-[11px] font-black uppercase tracking-[0.3em] text-slate-400 italic">Visualize potential improvements after recommended programs</CardDescription>
+                    </CardHeader>
+                    <CardContent className="p-10 lg:p-16 bg-slate-50/30">
+                      <div className="bg-white p-10 rounded-[2.5rem] border border-slate-100 shadow-inner">
+                        <ProgramSimulator beforeImage={imageUrl || ''} locale={locale} />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              </motion.div>
+            </AnimatePresence>
+          </Tabs>
+        </div>
+      </main>
+      <Footer />
     </div>
   );
 }

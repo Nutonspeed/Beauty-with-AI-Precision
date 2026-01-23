@@ -1,5 +1,4 @@
 import { test, expect, waitForLoading } from '../test-setup';
-import path from 'path';
 
 // เพิ่ม timeout สำหรับการนำทางและการทำงานให้ครอบคลุมความหน่วงของระบบ
 test.use({ navigationTimeout: 180000, actionTimeout: 120000 });

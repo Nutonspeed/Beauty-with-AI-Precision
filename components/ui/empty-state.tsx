@@ -37,19 +37,19 @@ export function EmptyState({
 }: EmptyStateProps) {
   const sizes = {
     sm: {
-      icon: "h-12 w-12",
+      icon: "h-10 w-10",
       title: "text-lg",
       description: "text-sm",
       padding: "p-8",
     },
     md: {
-      icon: "h-16 w-16",
+      icon: "h-14 w-14",
       title: "text-xl",
       description: "text-base",
       padding: "p-12",
     },
     lg: {
-      icon: "h-24 w-24",
+      icon: "h-20 w-20",
       title: "text-2xl",
       description: "text-lg",
       padding: "p-16",
@@ -59,35 +59,36 @@ export function EmptyState({
   const sizeClasses = sizes[size]
 
   return (
-    <Card className={cn("border-dashed", className)}>
+    <Card className={cn("border-2 border-dashed border-slate-100 bg-white/50 backdrop-blur-sm rounded-[3rem] shadow-none hover:border-pink-200 transition-colors duration-500", className)}>
       <CardContent className={cn("text-center", sizeClasses.padding)}>
-        <div className="flex flex-col items-center space-y-4">
+        <div className="flex flex-col items-center space-y-6">
           {/* Icon */}
-          <div className="flex items-center justify-center rounded-full bg-muted/50 p-4">
+          <div className="flex items-center justify-center rounded-[2rem] bg-pink-50/50 p-5 shadow-inner">
             <Icon
-              className={cn(sizeClasses.icon, "text-muted-foreground")}
+              className={cn(sizeClasses.icon, "text-pink-600")}
               aria-hidden="true"
             />
           </div>
 
           {/* Text */}
-          <div className="space-y-2">
-            <h3 className={cn("font-semibold", sizeClasses.title)}>
+          <div className="space-y-3">
+            <h3 className={cn("font-black uppercase tracking-widest italic text-slate-950", sizeClasses.title)}>
               {title}
             </h3>
-            <p className={cn("text-muted-foreground max-w-md", sizeClasses.description)}>
+            <p className={cn("text-slate-500 font-medium italic max-w-md", sizeClasses.description)}>
               {description}
             </p>
           </div>
 
           {/* Actions */}
           {(action || secondaryAction) && (
-            <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
+            <div className="flex flex-col sm:flex-row items-center gap-4 pt-4">
               {action && (
                 <Button
                   onClick={action.onClick}
                   variant={action.variant || "default"}
-                  size={size === "sm" ? "sm" : "default"}
+                  size={size === "sm" ? "sm" : "lg"}
+                  className="px-8"
                 >
                   {action.label}
                 </Button>
@@ -96,7 +97,8 @@ export function EmptyState({
                 <Button
                   onClick={secondaryAction.onClick}
                   variant="outline"
-                  size={size === "sm" ? "sm" : "default"}
+                  size={size === "sm" ? "sm" : "lg"}
+                  className="px-8"
                 >
                   {secondaryAction.label}
                 </Button>

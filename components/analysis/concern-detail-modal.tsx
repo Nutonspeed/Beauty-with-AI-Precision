@@ -1,16 +1,15 @@
-/**
- * Concern Detail Modal
- * Displays comprehensive educational content for a skin concern
- */
+"use client"
 
-'use client';
+/**
+ * Concern Detail Modal interface
+ * Displays comprehensive educational content for a skin concern node
+ */
 
 import React, { useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog';
@@ -23,13 +22,22 @@ import {
   AlertCircle, 
   ShieldCheck, 
   Sparkles, 
-  Calendar,
-  CheckCircle2,
-  XCircle,
-  Printer
+  Calendar, 
+  CheckCircle2, 
+  XCircle, 
+  Printer,
+  Zap,
+  Activity,
+  ChevronRight,
+  Target,
+  FlaskConical,
+  Sun,
+  Moon
 } from 'lucide-react';
 import type { InteractiveConcern, ConcernLocation } from '@/lib/concerns/concern-education';
-import { formatConcernType, getSeverityColor } from '@/lib/concerns/concern-education';
+import { formatConcernType } from '@/lib/concerns/concern-education';
+import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from '@/lib/utils';
 
 interface ConcernDetailModalProps {
   concern: InteractiveConcern | null;
@@ -55,16 +63,12 @@ export function ConcernDetailModal({
   const { education } = concern;
   const severity = location?.severity || concern.averageSeverity > 7 ? 'high' : concern.averageSeverity > 4 ? 'medium' : 'low';
   
-  // Get program based on severity
   const getProgramOptions = () => {
     if (!education.program) return [];
-    
-    // Handle different program structures
     if ('mild' in education.program) {
-      return education.program[severity as 'mild' | 'moderate' | 'severe']?.options || [];
+      return (education.program as any)[severity === 'low' ? 'mild' : severity === 'medium' ? 'moderate' : 'severe']?.options || [];
     }
     if ('fine_lines' in education.program) {
-      // Wrinkles special case
       const level = concern.averageSeverity < 4 ? 'fine_lines' : concern.averageSeverity < 7 ? 'moderate' : 'severe';
       return (education.program as any)[level]?.options || [];
     }
@@ -72,320 +76,410 @@ export function ConcernDetailModal({
   };
 
   const handlePrint = () => {
-    window.print();
+    if (typeof window !== 'undefined') window.print();
+  };
+
+  const getSeverityStyles = (sev: string) => {
+    switch (sev) {
+      case 'low': return 'bg-emerald-50 text-emerald-600 shadow-glow-emerald/20';
+      case 'medium': return 'bg-amber-50 text-amber-600 shadow-glow-amber/20';
+      case 'high': return 'bg-rose-50 text-rose-600 shadow-glow-rose/20';
+      default: return 'bg-slate-50 text-slate-400';
+    }
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh]">
-        <DialogHeader>
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-3">
-              <span className="text-4xl">{education.icon}</span>
-              <div>
-                <DialogTitle className="text-2xl">
+      <DialogContent className="max-w-4xl max-h-[90vh] bg-white border-slate-100 rounded-[4rem] p-0 overflow-hidden shadow-premium selection:bg-pink-500/10">
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/20 to-transparent" />
+        
+        <div className="flex flex-col h-full max-h-[90vh]">
+          {/* Header interface */}
+          <div className="p-10 lg:p-12 pb-8 border-b border-slate-50 bg-slate-50/30 flex flex-col md:flex-row md:items-start justify-between gap-10">
+            <div className="flex items-center gap-8">
+              <div className="h-20 w-20 rounded-[1.5rem] bg-white border border-slate-100 flex items-center justify-center text-4xl shadow-sm group-hover:scale-110 transition-transform duration-700">
+                {education.icon}
+              </div>
+              <div className="space-y-3">
+                <DialogTitle className="text-3xl font-black text-slate-950 italic uppercase tracking-tighter leading-none">
                   {formatConcernType(concern.type)}
                 </DialogTitle>
-                <DialogDescription className="text-base mt-1">
+                <DialogDescription className="text-lg text-slate-500 font-medium italic leading-relaxed tracking-tight max-w-2xl">
                   {education.definition[currentLanguage]}
                 </DialogDescription>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              {/* Language toggle */}
+            
+            <div className="flex items-center gap-4 shrink-0">
               <Button
                 variant="outline"
                 size="sm"
+                className="h-12 px-6 rounded-xl border-slate-200 bg-white text-slate-950 font-black uppercase tracking-widest text-[9px] italic shadow-sm hover:bg-slate-50 transition-all"
                 onClick={() => setCurrentLanguage(currentLanguage === 'en' ? 'th' : 'en')}
               >
-                {currentLanguage === 'en' ? t('thaiLanguage') : t('englishLanguage')}
+                {currentLanguage === 'en' ? 'TH_SYNC' : 'EN_SYNC'}
               </Button>
-              {/* Print button */}
-              <Button variant="outline" size="sm" onClick={handlePrint}>
-                <Printer className="h-4 w-4" />
+              <Button 
+                variant="outline" 
+                size="icon" 
+                className="h-12 w-12 rounded-xl border-slate-200 bg-white text-slate-300 hover:text-blue-600 transition-all shadow-sm"
+                onClick={handlePrint}
+              >
+                <Printer className="h-5 w-5" />
               </Button>
             </div>
           </div>
 
-          {/* Severity badge */}
-          <div className="flex items-center gap-2 mt-3">
-            <Badge
-              variant="secondary"
-              className="px-3 py-1"
-              style={{ backgroundColor: getSeverityColor(severity) }}
-            >
-              {severity.toUpperCase()} - {t('score', { value: concern.averageSeverity.toFixed(1) })}
+          <div className="px-10 lg:p-12 py-6 border-b border-slate-50 bg-white flex flex-wrap items-center gap-6">
+            <Badge className={cn("px-6 py-2 rounded-full border-none shadow-lg text-[10px] font-black italic uppercase tracking-widest leading-none", getSeverityStyles(severity))}>
+              {severity.toUpperCase()}_VARIANCE // {concern.averageSeverity.toFixed(1)}th
             </Badge>
             {concern.locations.length > 0 && (
-              <Badge variant="outline">
-                {t('locations', { count: concern.locations.length })}
+              <Badge variant="outline" className="bg-slate-50 border-slate-100 text-slate-400 px-5 py-1.5 rounded-full text-[9px] font-black italic uppercase shadow-sm">
+                {(t('locations' as any) || '{count} Nodes Detected').replace('{count}', String(concern.locations.length))}
               </Badge>
             )}
             {location && (
-              <Badge variant="outline">
-                {t('confidence', { value: Math.round(location.confidence * 100) })}
-              </Badge>
+              <div className="flex items-center gap-3 bg-white px-5 py-1.5 rounded-full border border-slate-100 shadow-sm">
+                <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic">{(t('confidence' as any) || 'Precision: {value}%').replace('{value}', String(Math.round(location.confidence * 100)))}</span>
+              </div>
             )}
           </div>
-        </DialogHeader>
 
-        <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="overview">
-              <Info className="h-4 w-4 mr-1" />
-              {t('overview')}
-            </TabsTrigger>
-            <TabsTrigger value="causes">
-              <AlertCircle className="h-4 w-4 mr-1" />
-              {t('causes')}
-            </TabsTrigger>
-            <TabsTrigger value="prevention">
-              <ShieldCheck className="h-4 w-4 mr-1" />
-              {t('prevention')}
-            </TabsTrigger>
-            <TabsTrigger value="program">
-              <Sparkles className="h-4 w-4 mr-1" />
-              {t('program')}
-            </TabsTrigger>
-            <TabsTrigger value="routine">
-              <Calendar className="h-4 w-4 mr-1" />
-              {t('routine')}
-            </TabsTrigger>
-          </TabsList>
+          {/* Tabs Navigation interface */}
+          <Tabs defaultValue="overview" className="flex-1 flex flex-col min-h-0">
+            <div className="px-10 lg:p-12 py-6 bg-slate-50/30 border-b border-slate-50">
+              <TabsList className="bg-white border border-slate-100 p-1.5 rounded-2xl h-auto gap-2 shadow-inner flex-wrap">
+                {[
+                  { id: 'overview', label: t('overview' as any) || 'Synthesis', icon: Info },
+                  { id: 'causes', label: t('causes' as any) || 'Catalysts', icon: AlertCircle },
+                  { id: 'prevention', label: t('prevention' as any) || 'Mitigation', icon: ShieldCheck },
+                  { id: 'program', label: t('program' as any) || 'Protocol', icon: Sparkles },
+                  { id: 'routine', label: t('routine' as any) || 'Temporal_Sync', icon: Calendar }
+                ].map((tab) => (
+                  <TabsTrigger 
+                    key={tab.id} 
+                    value={tab.id} 
+                    className="rounded-xl px-6 py-3 data-[state=active]:bg-pink-600 data-[state=active]:text-white transition-all font-black uppercase tracking-[0.15em] text-[9px] shadow-sm italic h-full"
+                  >
+                    <tab.icon className="mr-3 h-3.5 w-3.5" />
+                    {tab.label}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </div>
 
-          <ScrollArea className="h-[50vh] mt-4 pr-4">
-            {/* Overview Tab */}
-            <TabsContent value="overview" className="space-y-6">
-              {/* Statistics */}
-              {education.statistics && (
-                <div className="rounded-lg border p-4 bg-blue-50 dark:bg-blue-950">
-                  <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
-                    <Info className="h-5 w-5" />
-                    {t('keyStatistics')}
-                  </h3>
-                  <ul className="space-y-2">
-                    {Object.entries(education.statistics).map(([key, value]) => (
-                      <li key={key} className="flex items-start gap-2">
-                        <CheckCircle2 className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
-                        <span>{value}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {/* Myths & Facts */}
-              {education.myths && education.myths.length > 0 && (
-                <div>
-                  <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
-                    <XCircle className="h-5 w-5 text-red-600" />
-                    {t('commonMyths')}
-                  </h3>
-                  <div className="space-y-4">
-                    {education.myths.map((myth, index) => (
-                      <div key={index} className="rounded-lg border p-4">
-                        <div className="flex items-start gap-2 mb-2">
-                          <Badge variant="destructive" className="mt-1">{t('myth')}</Badge>
-                          <p className="font-medium text-red-700 dark:text-red-400">
-                            {myth.myth}
-                          </p>
+            <ScrollArea className="flex-1 min-h-0 bg-white">
+              <div className="p-10 lg:p-16">
+                <AnimatePresence mode="wait">
+                  <TabsContent value="overview" className="mt-0 outline-none space-y-12">
+                    {education.statistics && (
+                      <div className="rounded-[3rem] border border-blue-100 p-10 bg-blue-50/30 relative overflow-hidden group/stats shadow-inner">
+                        <div className="absolute top-0 right-0 p-10 opacity-[0.03] group-hover/stats:scale-110 transition-transform duration-1000">
+                          <Activity className="w-32 h-32 text-blue-600" />
                         </div>
-                        <div className="flex items-start gap-2 ml-2 pl-4 border-l-2 border-green-600">
-                          <Badge variant="secondary" className="mt-1 bg-green-600">{t('fact')}</Badge>
-                          <p className="text-green-700 dark:text-green-400">
-                            {myth.fact}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Related Concerns */}
-              {education.relatedConcerns && education.relatedConcerns.length > 0 && (
-                <div>
-                  <h3 className="font-semibold text-lg mb-3">{t('relatedConcerns')}</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {education.relatedConcerns.map((relatedType) => (
-                      <Badge key={relatedType} variant="outline">
-                        {formatConcernType(relatedType as any)}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </TabsContent>
-
-            {/* Causes Tab */}
-            <TabsContent value="causes" className="space-y-4">
-              <div className="rounded-lg border p-4">
-                <h3 className="font-semibold text-lg mb-3">{t('whatCauses', { concern: formatConcernType(concern.type) })}</h3>
-                <ul className="space-y-2">
-                  {education.causes[currentLanguage].map((cause, index) => (
-                    <li key={index} className="flex items-start gap-3">
-                      <span className="text-red-600 font-bold mt-1">{index + 1}.</span>
-                      <span>{cause}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </TabsContent>
-
-            {/* Prevention Tab */}
-            <TabsContent value="prevention" className="space-y-4">
-              <div className="rounded-lg border p-4 bg-green-50 dark:bg-green-950">
-                <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
-                  <ShieldCheck className="h-5 w-5 text-green-600" />
-                  {t('howToPrevent', { concern: formatConcernType(concern.type) })}
-                </h3>
-                <ul className="space-y-2">
-                  {education.prevention[currentLanguage].map((tip, index) => (
-                    <li key={index} className="flex items-start gap-3">
-                      <CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <span>{tip}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </TabsContent>
-
-            {/* Program Tab */}
-            <TabsContent value="program" className="space-y-6">
-              {/* Current severity program */}
-              <div className="rounded-lg border p-4 bg-purple-50 dark:bg-purple-950">
-                <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-purple-600" />
-                  {t('recommendedProgram', { severity: severity.toUpperCase() })}
-                </h3>
-                <ul className="space-y-2">
-                  {getProgramOptions().map((option: string, index: number) => (
-                    <li key={index} className="flex items-start gap-3">
-                      <span className="text-purple-600 font-bold mt-1">•</span>
-                      <span>{option}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* When to see dermatologist */}
-              {education.whenToSeeDermatologist && (
-                <div className="rounded-lg border p-4 bg-orange-50 dark:bg-orange-950">
-                  <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
-                    <AlertCircle className="h-5 w-5 text-orange-600" />
-                    {t('whenToSeeDermatologist')}
-                  </h3>
-                  <ul className="space-y-2">
-                    {education.whenToSeeDermatologist[currentLanguage].map((scenario, index) => (
-                      <li key={index} className="flex items-start gap-3">
-                        <AlertCircle className="h-5 w-5 text-orange-600 mt-0.5 flex-shrink-0" />
-                        <span>{scenario}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {/* Ingredients */}
-              {(education as any).ingredients && (
-                <div>
-                  <h3 className="font-semibold text-lg mb-3">{t('effectiveIngredients')}</h3>
-                  <div className="grid gap-4 md:grid-cols-2">
-                    {(education as any).ingredients.proven && (
-                      <div className="rounded-lg border p-4">
-                        <h4 className="font-medium mb-2">{t('provenIngredients')}</h4>
-                        <ul className="space-y-1 text-sm">
-                          {(education as any).ingredients.proven.map((ingredient: string, index: number) => (
-                            <li key={index} className="flex items-center gap-2">
-                              <CheckCircle2 className="h-4 w-4 text-green-600" />
-                              {ingredient}
-                            </li>
+                        <h3 className="text-xl font-black text-slate-950 italic uppercase tracking-tighter mb-8 flex items-center gap-5 relative z-10">
+                          <div className="p-2 bg-white rounded-xl shadow-sm">
+                            <Info className="h-5 w-5 text-blue-600" />
+                          </div>
+                          {t('keyStatistics' as any) || 'Sector_Demographics'}
+                        </h3>
+                        <ul className="grid gap-6 relative z-10">
+                          {Object.entries(education.statistics).map(([key, value], i) => (
+                            <motion.li 
+                              key={key} 
+                              initial={{ opacity: 0, x: -20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: i * 0.1 }}
+                              className="flex items-start gap-6 group/item p-4 rounded-2xl hover:bg-white transition-all duration-500"
+                            >
+                              <div className="h-10 w-10 rounded-xl bg-white border border-blue-50 flex items-center justify-center shrink-0 shadow-sm group-hover/item:scale-110 transition-transform">
+                                <CheckCircle2 className="h-5 w-5 text-emerald-500" />
+                              </div>
+                              <span className="text-lg text-slate-600 font-medium italic leading-relaxed tracking-tight group-hover/item:text-slate-950 transition-colors">{value}</span>
+                            </motion.li>
                           ))}
                         </ul>
                       </div>
                     )}
-                    {(education as any).ingredients.effective && (
-                      <div className="rounded-lg border p-4">
-                        <h4 className="font-medium mb-2">{t('effectiveIngredients')}</h4>
-                        <ul className="space-y-1 text-sm">
-                          {(education as any).ingredients.effective.map((ingredient: string, index: number) => (
-                            <li key={index} className="flex items-center gap-2">
-                              <CheckCircle2 className="h-4 w-4 text-green-600" />
-                              {ingredient}
-                            </li>
+
+                    {education.myths && education.myths.length > 0 && (
+                      <div className="space-y-10">
+                        <h3 className="text-xl font-black text-slate-950 italic uppercase tracking-tighter flex items-center gap-5 ml-4">
+                          <div className="p-2 bg-rose-50 rounded-xl shadow-sm">
+                            <XCircle className="h-5 w-5 text-rose-600" />
+                          </div>
+                          {t('commonMyths' as any) || 'Heuristic_Fallacies'}
+                        </h3>
+                        <div className="grid gap-8">
+                          {education.myths.map((myth, index) => (
+                            <motion.div 
+                              key={index} 
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ delay: index * 0.1 }}
+                              className="rounded-[3rem] border border-slate-100 overflow-hidden shadow-sm hover:shadow-premium transition-all duration-700 group/myth"
+                            >
+                              <div className="p-8 bg-rose-50/30 border-b border-rose-100 flex flex-col md:flex-row md:items-center gap-6">
+                                <Badge className="bg-rose-600 text-white border-none px-4 py-1 rounded-full text-[8px] font-black italic uppercase tracking-widest shrink-0 w-fit">{t('myth' as any) || 'MYTH'}</Badge>
+                                <p className="text-lg font-black text-slate-950 italic leading-relaxed tracking-tight">"{myth.myth}"</p>
+                              </div>
+                              <div className="p-8 bg-white flex flex-col md:flex-row md:items-center gap-6">
+                                <Badge className="bg-emerald-500 text-white border-none px-4 py-1 rounded-full text-[8px] font-black italic uppercase tracking-widest shrink-0 w-fit">{t('fact' as any) || 'FACT'}</Badge>
+                                <p className="text-lg text-slate-500 font-medium italic leading-relaxed tracking-tight group-hover/myth:text-slate-900 transition-colors">"{myth.fact}"</p>
+                              </div>
+                            </motion.div>
                           ))}
-                        </ul>
+                        </div>
                       </div>
                     )}
-                  </div>
-                </div>
-              )}
-            </TabsContent>
 
-            {/* Routine Tab */}
-            <TabsContent value="routine" className="space-y-6">
-              {education.dailyRoutine && (
-                <>
-                  {/* Morning routine */}
-                  {education.dailyRoutine.morning && (
-                    <div className="rounded-lg border p-4 bg-yellow-50 dark:bg-yellow-950">
-                      <h3 className="font-semibold text-lg mb-3">{t('morningRoutine')}</h3>
-                      <ol className="space-y-2">
-                        {education.dailyRoutine.morning.map((step, index) => (
-                          <li key={index} className="flex items-start gap-3">
-                            <span className="font-bold text-yellow-600">{index + 1}.</span>
-                            <span>{step}</span>
-                          </li>
-                        ))}
-                      </ol>
-                    </div>
-                  )}
+                    {education.relatedConcerns && education.relatedConcerns.length > 0 && (
+                      <div className="space-y-6 pt-10 border-t border-slate-50">
+                        <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.4em] italic ml-4">{t('relatedConcerns' as any) || 'Adjacent_Variance_Nodes'}</h3>
+                        <div className="flex flex-wrap gap-4">
+                          {education.relatedConcerns.map((relatedType) => (
+                            <Badge key={relatedType} variant="outline" className="px-6 py-2 rounded-full border-slate-100 bg-slate-50 text-slate-500 text-[10px] font-black italic uppercase shadow-sm hover:border-pink-500/20 hover:text-pink-600 transition-all cursor-default">
+                              {formatConcernType(relatedType as any)}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </TabsContent>
 
-                  {/* Evening routine */}
-                  {education.dailyRoutine.evening && (
-                    <div className="rounded-lg border p-4 bg-blue-50 dark:bg-blue-950">
-                      <h3 className="font-semibold text-lg mb-3">{t('eveningRoutine')}</h3>
-                      <ol className="space-y-2">
-                        {education.dailyRoutine.evening.map((step, index) => (
-                          <li key={index} className="flex items-start gap-3">
-                            <span className="font-bold text-blue-600">{index + 1}.</span>
-                            <span>{step}</span>
-                          </li>
-                        ))}
-                      </ol>
-                    </div>
-                  )}
-
-                  {/* Weekly routine */}
-                  {education.dailyRoutine.weekly && education.dailyRoutine.weekly.length > 0 && (
-                    <div className="rounded-lg border p-4 bg-purple-50 dark:bg-purple-950">
-                      <h3 className="font-semibold text-lg mb-3">{t('weeklyPrograms')}</h3>
-                      <ul className="space-y-2">
-                        {education.dailyRoutine.weekly.map((program, index) => (
-                          <li key={index} className="flex items-start gap-3">
-                            <Calendar className="h-5 w-5 text-purple-600 mt-0.5 flex-shrink-0" />
-                            <span>{program}</span>
-                          </li>
+                  <TabsContent value="causes" className="mt-0 outline-none space-y-10">
+                    <div className="p-10 lg:p-16 rounded-[4rem] border border-slate-100 bg-slate-50/30 relative overflow-hidden group/causes shadow-inner">
+                      <div className="absolute top-0 right-0 p-12 opacity-[0.03] group-hover/causes:scale-110 transition-transform duration-1000">
+                        <Zap className="w-48 h-48 text-rose-600" />
+                      </div>
+                      <h3 className="text-3xl font-black text-slate-950 italic uppercase tracking-tighter mb-12 leading-none relative z-10">{(t('whatCauses' as any) || 'Primary_Catalysts').replace('{concern}', formatConcernType(concern.type))}</h3>
+                      <ul className="grid gap-8 relative z-10">
+                        {education.causes[currentLanguage].map((cause, index) => (
+                          <motion.li 
+                            key={index} 
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.1 }}
+                            className="flex items-start gap-8 group/item"
+                          >
+                            <div className="h-14 w-14 rounded-2xl bg-white border border-slate-100 flex items-center justify-center font-black text-2xl italic text-rose-600 shadow-sm group-hover/item:scale-110 transition-all duration-700">
+                              {(index + 1).toString().padStart(2, '0')}
+                            </div>
+                            <div className="space-y-2 pt-2">
+                              <p className="text-xl text-slate-600 font-medium italic leading-relaxed tracking-tight group-hover/item:text-slate-950 transition-colors">{cause}</p>
+                              <div className="h-0.5 w-8 bg-rose-500/20 group-hover/item:w-16 group-hover/item:bg-rose-500 transition-all duration-700 rounded-full" />
+                            </div>
+                          </motion.li>
                         ))}
                       </ul>
                     </div>
-                  )}
-                </>
-              )}
-            </TabsContent>
-          </ScrollArea>
-        </Tabs>
+                  </TabsContent>
 
-        {/* Footer */}
-        <div className="flex items-center justify-between pt-4 border-t">
-          <p className="text-sm text-gray-500">
-            {t('consistencyTip')}
-          </p>
-          <Button onClick={() => onOpenChange(false)}>
-            {t('close')}
-          </Button>
+                  <TabsContent value="prevention" className="mt-0 outline-none space-y-10">
+                    <div className="p-10 lg:p-16 rounded-[4rem] border border-emerald-100 bg-emerald-50/20 relative overflow-hidden group/prevent shadow-inner">
+                      <div className="absolute top-0 right-0 p-12 opacity-[0.03] group-hover/prevent:scale-110 transition-transform duration-1000">
+                        <ShieldCheck className="w-48 h-48 text-emerald-600" />
+                      </div>
+                      <h3 className="text-3xl font-black text-slate-950 italic uppercase tracking-tighter mb-12 leading-none relative z-10 flex items-center gap-6">
+                        <div className="p-4 bg-white rounded-[1.5rem] shadow-sm">
+                          <ShieldCheck className="h-8 w-8 text-emerald-600" />
+                        </div>
+                        {(t('howToPrevent' as any) || 'Mitigation_Strategies').replace('{concern}', formatConcernType(concern.type))}
+                      </h3>
+                      <div className="grid md:grid-cols-2 gap-8 relative z-10">
+                        {education.prevention[currentLanguage].map((tip, index) => (
+                          <motion.div 
+                            key={index} 
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: index * 0.1 }}
+                            className="p-8 rounded-[3rem] bg-white border border-emerald-100 shadow-sm group/tip hover:border-emerald-500/20 transition-all duration-700"
+                          >
+                            <div className="flex items-start gap-6">
+                              <div className="h-12 w-12 rounded-2xl bg-emerald-50 flex items-center justify-center shrink-0 group-hover/tip:scale-110 transition-transform">
+                                <CheckCircle2 className="h-6 w-6 text-emerald-600" />
+                              </div>
+                              <p className="text-lg text-slate-600 font-medium italic leading-relaxed tracking-tight group-hover/tip:text-slate-950 transition-colors">{tip}</p>
+                            </div>
+                          </motion.div>
+                        ))}
+                      </div>
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="program" className="mt-0 outline-none space-y-12">
+                    <div className="p-10 lg:p-16 rounded-[4rem] border border-purple-100 bg-purple-50/20 relative overflow-hidden group/program shadow-inner">
+                      <div className="absolute top-0 right-0 p-12 opacity-[0.03] group-hover/program:scale-110 transition-transform duration-1000">
+                        <Sparkles className="w-48 h-48 text-purple-600" />
+                      </div>
+                      <h3 className="text-3xl font-black text-slate-950 italic uppercase tracking-tighter mb-12 leading-none relative z-10 flex items-center gap-6">
+                        <div className="p-4 bg-white rounded-[1.5rem] shadow-sm">
+                          <Sparkles className="h-8 w-8 text-purple-600" />
+                        </div>
+                        {(t('recommendedProgram' as any) || 'Synthesis_Protocol').replace('{severity}', severity.toUpperCase())}
+                      </h3>
+                      <div className="grid gap-6 relative z-10">
+                        {getProgramOptions().map((option: string, index: number) => (
+                          <motion.div 
+                            key={index} 
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.1 }}
+                            className="flex items-center gap-8 group/opt p-6 rounded-[2rem] bg-white/50 border border-white hover:bg-white hover:border-purple-200 transition-all duration-700 shadow-sm"
+                          >
+                            <div className="h-12 w-12 rounded-xl bg-white border border-purple-100 flex items-center justify-center text-xl font-black italic text-purple-600 shadow-sm group-hover/opt:scale-110 transition-transform">
+                              {(index + 1).toString().padStart(2, '0')}
+                            </div>
+                            <span className="text-xl text-slate-600 font-medium italic uppercase tracking-tight group-hover/opt:text-purple-600 transition-colors leading-none">{option}</span>
+                          </motion.div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {education.whenToSeeDermatologist && (
+                      <div className="p-10 lg:p-16 rounded-[4rem] border border-amber-100 bg-amber-50/20 relative overflow-hidden group/warn shadow-inner">
+                        <h3 className="text-xl font-black text-slate-950 italic uppercase tracking-tighter mb-10 flex items-center gap-5 relative z-10">
+                          <div className="p-2 bg-white rounded-xl shadow-sm border border-amber-100">
+                            <AlertCircle className="h-5 w-5 text-amber-600" />
+                          </div>
+                          {t('whenToSeeDermatologist' as any) || 'Critical_Escalation_Pathways'}
+                        </h3>
+                        <div className="grid md:grid-cols-2 gap-8 relative z-10">
+                          {education.whenToSeeDermatologist[currentLanguage].map((scenario, index) => (
+                            <motion.div 
+                              key={index} 
+                              className="flex items-start gap-6 group/item"
+                            >
+                              <div className="h-10 w-10 rounded-xl bg-white border border-amber-100 flex items-center justify-center shrink-0 shadow-sm group-hover/item:scale-110 transition-transform">
+                                <AlertCircle className="h-5 w-5 text-amber-600" />
+                              </div>
+                              <p className="text-lg text-slate-500 font-medium italic leading-relaxed tracking-tight group-hover/item:text-slate-950 transition-colors">{scenario}</p>
+                            </motion.div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {(education as any).ingredients && (
+                      <div className="space-y-10">
+                        <h3 className="text-xl font-black text-slate-950 italic uppercase tracking-tighter flex items-center gap-5 ml-4">
+                          <div className="p-2 bg-blue-50 rounded-xl shadow-sm border border-blue-100">
+                            <FlaskConical className="h-5 w-5 text-blue-600" />
+                          </div>
+                          {t('effectiveIngredients' as any) || 'Validated_Molecular_Actives'}
+                        </h3>
+                        <div className="grid gap-10 md:grid-cols-2">
+                          {['proven', 'effective'].map((type) => {
+                            const ings = (education as any).ingredients[type];
+                            if (!ings) return null;
+                            return (
+                              <div key={type} className="p-10 rounded-[3rem] bg-slate-50 border border-slate-100 shadow-inner space-y-8">
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] italic leading-none">{type === 'proven' ? (t('provenIngredients' as any) || 'PHARMA_GRADE') : (t('effectiveIngredients' as any) || 'AUXILIARY_NODES')}</p>
+                                <div className="flex flex-wrap gap-4">
+                                  {ings.map((ingredient: string, idx: number) => (
+                                    <Badge key={idx} variant="outline" className="px-6 py-2.5 rounded-full border-slate-200 bg-white text-slate-900 text-sm font-bold italic shadow-sm hover:border-blue-500/20 hover:text-blue-600 transition-all uppercase tracking-tight">
+                                      {ingredient}
+                                    </Badge>
+                                  ))}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </TabsContent>
+
+                  <TabsContent value="routine" className="mt-0 outline-none space-y-12">
+                    {education.dailyRoutine && (
+                      <div className="grid gap-10">
+                        {[
+                          { id: 'morning', label: t('morningRoutine' as any) || 'Morning_Sequence', icon: Sun, color: "text-amber-500", bg: "bg-amber-50", data: education.dailyRoutine.morning },
+                          { id: 'evening', label: t('eveningRoutine' as any) || 'Evening_Sequence', icon: Moon, color: "text-blue-600", bg: "bg-blue-50", data: education.dailyRoutine.evening },
+                          { id: 'weekly', label: t('weeklyPrograms' as any) || 'Cyclical_Protocols', icon: Calendar, color: "text-purple-600", bg: "bg-purple-50", data: education.dailyRoutine.weekly }
+                        ].map((routine) => {
+                          if (!routine.data) return null;
+                          return (
+                            <motion.div 
+                              key={routine.id}
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              className="p-10 lg:p-16 rounded-[4rem] border border-slate-100 bg-slate-50/30 relative overflow-hidden group/routine shadow-inner hover:bg-white hover:border-pink-500/10 transition-all duration-700"
+                            >
+                              <div className="absolute top-0 right-0 p-12 opacity-[0.03] group-hover/routine:scale-110 group-hover/routine:rotate-12 transition-transform duration-1000">
+                                <routine.icon className="w-48 h-48" />
+                              </div>
+                              <h3 className="text-2xl font-black text-slate-950 italic uppercase tracking-tighter mb-12 flex items-center gap-6 relative z-10 leading-none">
+                                <div className={cn("p-4 rounded-[1.5rem] bg-white border border-slate-100 shadow-sm", routine.color)}>
+                                  <routine.icon className="h-8 w-8" />
+                                </div>
+                                {routine.label}
+                              </h3>
+                              <div className="grid gap-6 relative z-10">
+                                {routine.data.map((step, idx) => (
+                                  <div key={idx} className="flex items-center gap-8 group/step p-6 rounded-[2.5rem] bg-white/50 border border-white hover:bg-white hover:border-slate-200 transition-all duration-700 shadow-sm">
+                                    <div className="h-12 w-12 rounded-xl bg-white border border-slate-100 flex items-center justify-center font-black text-xl italic text-slate-300 shadow-sm group-hover/step:text-pink-600 transition-colors">
+                                      {(idx + 1).toString().padStart(2, '0')}
+                                    </div>
+                                    <span className="text-xl text-slate-600 font-medium italic uppercase tracking-tight group-hover/step:text-slate-950 transition-colors leading-none">{step}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </motion.div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </TabsContent>
+                </AnimatePresence>
+              </div>
+            </ScrollArea>
+          </Tabs>
+
+          {/* Footer interface */}
+          <div className="p-10 lg:p-12 border-t border-slate-100 bg-slate-50/30 flex flex-col md:flex-row items-center justify-between gap-10">
+            <div className="flex items-center gap-6">
+              <div className="h-12 w-12 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-slate-300 shadow-sm">
+                <Target className="h-6 w-6" />
+              </div>
+              <p className="text-lg text-slate-500 font-medium italic leading-none max-w-xl">
+                {t('consistencyTip' as any) || 'Long-term protocol adherence is essential for achieving projected dermal yield nominals.'}
+              </p>
+            </div>
+            <Button 
+              size="xl" 
+              onClick={() => onOpenChange(false)}
+              className="h-18 px-12 rounded-[2rem] bg-slate-950 text-white font-black uppercase tracking-[0.3em] text-[11px] italic shadow-2xl transition-all hover:bg-pink-600 active:scale-95 border-none group/btn"
+            >
+              Terminate_Session
+              <ChevronRight className="ml-4 h-5 w-5 group-hover:translate-x-2 transition-transform" />
+            </Button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>
   );
+}
+
+function Moon(props: any) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect width="20" height="14" x="2" y="3" rx="2" />
+      <line x1="8" x2="16" y1="21" y2="21" />
+      <line x1="12" x2="12" y1="17" y2="21" />
+    </svg>
+  )
 }

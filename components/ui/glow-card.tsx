@@ -13,7 +13,7 @@ interface GlowCardProps {
 export function GlowCard({ 
   children, 
   className, 
-  glowColor = "rgba(37, 99, 235, 0.15)" 
+  glowColor = "rgba(236, 72, 153, 0.15)" 
 }: GlowCardProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mouseX = useMotionValue(0)
@@ -31,7 +31,7 @@ export function GlowCard({
       ref={containerRef}
       onMouseMove={handleMouseMove}
       className={cn(
-        "relative overflow-hidden rounded-2xl border border-slate-200 bg-white transition-colors duration-500 group",
+        "relative overflow-hidden rounded-[2.5rem] border border-slate-100 bg-white/80 backdrop-blur-md transition-all duration-500 group shadow-premium hover:shadow-glow-pink hover:border-pink-200",
         className
       )}
     >
@@ -44,7 +44,7 @@ export function GlowCard({
       
       {/* Scanner Effect Line */}
       <motion.div 
-        className="pointer-events-none absolute left-0 right-0 h-[1px] bg-blue-500/30 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+        className="pointer-events-none absolute left-0 right-0 h-[1px] bg-pink-500/20 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
         style={{ top: mouseY }}
       />
 

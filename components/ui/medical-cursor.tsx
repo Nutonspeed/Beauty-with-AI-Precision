@@ -41,7 +41,7 @@ export function MedicalCursor() {
 
   return (
     <motion.div
-      className="fixed top-0 left-0 w-8 h-8 pointer-events-none z-[9999] mix-blend-difference hidden lg:block"
+      className="fixed top-0 left-0 w-10 h-10 pointer-events-none z-[9999] mix-blend-difference hidden lg:block"
       style={{
         x,
         y,
@@ -51,29 +51,29 @@ export function MedicalCursor() {
     >
       <motion.div
         animate={{
-          scale: isPointer ? 1.5 : 1,
+          scale: isPointer ? 1.4 : 1,
           rotate: isPointer ? 45 : 0,
         }}
-        className="w-full h-full border border-blue-500 rounded-sm relative flex items-center justify-center"
+        className="w-full h-full border border-pink-500 rounded-lg relative flex items-center justify-center shadow-glow-pink"
       >
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-1 bg-blue-500" />
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[1px] h-1 bg-blue-500" />
-        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-[1px] bg-blue-500" />
-        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-[1px] bg-blue-500" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-1.5 bg-pink-500 shadow-glow-pink" />
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[1px] h-1.5 bg-pink-500 shadow-glow-pink" />
+        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-[1px] bg-pink-500 shadow-glow-pink" />
+        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-[1px] bg-pink-500 shadow-glow-pink" />
         
         <motion.div 
-          animate={{ opacity: isPointer ? 1 : 0 }}
-          className="w-1 h-1 bg-blue-500 rounded-full" 
+          animate={{ opacity: isPointer ? 1 : 0, scale: isPointer ? 1 : 0 }}
+          className="size-1.5 bg-pink-500 rounded-full shadow-glow-pink" 
         />
       </motion.div>
       
       {isPointer && (
         <motion.span 
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="absolute -right-16 top-0 text-[8px] font-bold text-blue-500 tracking-[0.2em] uppercase"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 30 }}
+          className="absolute left-full top-0 text-[10px] font-black italic text-pink-500 tracking-[0.3em] uppercase whitespace-nowrap drop-shadow-glow-pink"
         >
-          Select
+          Aesthetic Mode
         </motion.span>
       )}
     </motion.div>

@@ -4,14 +4,6 @@ import { stripe, isStripeConfigured } from "@/lib/stripe/client"
 
 export async function POST(request: NextRequest) {
   try {
-    // Check if Stripe is configured
-    if (!isStripeConfigured) {
-      return NextResponse.json(
-        { error: "Payment system is not configured. Please contact support." },
-        { status: 503 }
-      )
-    }
-
     const supabase = await createServerClient()
     const {
       data: { session },
@@ -23,6 +15,25 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json()
     const { priceId, mode = "payment", successUrl, cancelUrl } = body
+
+    // Check if Stripe is configured
+    if (!isStripeConfigured) {
+      // Allow demo checkout if specifically requested or in dev
+      if (process.env.NODE_ENV === 'development' || body.demo === true) {
+        console.log("[Demo] 🧪 Stripe not configured, simulating success for user:", session.user.id);
+        
+        return NextResponse.json({ 
+          success: true, 
+          isDemo: true,
+          url: `${process.env.NEXT_PUBLIC_SITE_URL || ''}/payment/success?session_id=demo_${Date.now()}` 
+        })
+      }
+
+      return NextResponse.json(
+        { error: "Payment system is not configured. Please contact support." },
+        { status: 503 }
+      )
+    }
 
     // Create Stripe checkout session
     const checkoutSession = await stripe!.checkout.sessions.create({

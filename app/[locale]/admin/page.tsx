@@ -18,8 +18,7 @@ import {
   DollarSign,
   Building,
   ArrowRight,
-  Cpu,
-  Loader2
+  Cpu
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -213,12 +212,15 @@ export default function AdminDashboard() {
 
   if (!data) {
     return (
-      <div className="flex min-h-screen flex-col bg-slate-50 text-slate-900">
+      <div className="flex min-h-screen flex-col bg-white text-slate-900">
         <Header />
         <main className="flex-1 flex items-center justify-center">
-          <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-12 w-12 text-blue-600 animate-spin" />
-            <p className="text-sm font-bold uppercase tracking-widest text-slate-400">Initializing System Data...</p>
+          <div className="flex flex-col items-center gap-6">
+            <div className="relative h-20 w-20 mx-auto">
+              <div className="absolute inset-0 bg-pink-500/10 blur-2xl rounded-full animate-pulse" />
+              <GradientSpinner size="lg" className="relative" />
+            </div>
+            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 italic">Initializing System Data...</p>
           </div>
         </main>
         <Footer />
@@ -227,7 +229,7 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50 text-slate-900 selection:bg-blue-500/30">
+    <div className="flex min-h-screen flex-col bg-white text-slate-900 selection:bg-pink-500/10">
       <Header />
       
       <IntelligenceCommandPalette 
@@ -239,46 +241,49 @@ export default function AdminDashboard() {
       />
 
       <main className="flex-1 relative overflow-hidden flex flex-col">
-        {/* Infrastructure Background */}
+        {/* Infrastructure Background - Light Theme */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-blue-500/5 rounded-full blur-[120px] animate-glow-pulse" />
-          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-indigo-500/5 rounded-full blur-[100px] animate-float" />
-          <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.03]" />
+          <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-pink-500/5 rounded-full blur-[120px] animate-glow-pulse" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-500/5 rounded-full blur-[100px] animate-float" />
+          <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.015]" />
         </div>
 
         <div className="container relative z-10 py-12 md:py-20 px-6 space-y-16 max-w-7xl mx-auto flex-1">
           {dataError && (
-            <div className="rounded-[2rem] border border-amber-200 bg-amber-50/80 px-6 py-4 text-amber-900 shadow-inner">
-              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-amber-500 italic">Data status</p>
-              <p className="mt-2 text-sm font-medium">{dataError}</p>
+            <div className="rounded-[2.5rem] border border-amber-100 bg-amber-50/50 px-8 py-6 text-amber-900 shadow-sm backdrop-blur-md">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
+                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-amber-600 italic">Data status</p>
+              </div>
+              <p className="text-sm font-medium italic">{dataError}</p>
             </div>
           )}
           {/* Welcome Interface Header */}
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="space-y-6 pb-12 border-b border-slate-200"
+            className="space-y-8 pb-12 border-b border-slate-100"
           >
-            <Badge variant="outline" className="px-4 py-1 rounded-full border-blue-500/30 text-blue-600 bg-blue-500/5 backdrop-blur-md uppercase tracking-[0.2em] text-[10px] font-black shadow-lg shadow-blue-500/5">
-              <Shield className="mr-3 h-3.5 w-3.5 animate-pulse" />
+            <Badge variant="outline" className="px-6 py-2 rounded-full border-pink-500/30 text-pink-600 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.4em] text-[10px] font-black shadow-premium animate-pulse italic">
+              <Shield className="mr-3 h-3.5 w-3.5" />
               Elite System Orchestration Node
             </Badge>
-            <h1 className="text-5xl md:text-8xl font-bold tracking-tighter text-slate-900 leading-[0.9] italic">
+            <h1 className="text-6xl md:text-9xl font-black tracking-tighter text-slate-950 leading-[0.8] italic uppercase">
               Admin<br />
-              <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 bg-clip-text text-transparent not-italic">Infrastructure</span>
+              <span className="bg-gradient-to-r from-pink-500 via-purple-600 to-blue-600 bg-clip-text text-transparent not-italic block mt-6 tracking-[0.2em] font-black uppercase">Infrastructure</span>
             </h1>
-            <p className="text-xl text-slate-500 font-light tracking-widest max-w-2xl italic leading-relaxed">
+            <p className="text-2xl text-slate-500 font-light max-w-2xl italic leading-relaxed tracking-tight">
               Command global system parameters and monitor center ecosystem health with precision metrics.
             </p>
           </motion.div>
 
           {/* System Metrics Grid - Operational Nodes */}
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
             {[
-              { label: 'Total User Registry', val: data.systemStats.totalUsers.toLocaleString(), sub: 'Active Entities', icon: Users, color: 'text-blue-600', bg: 'bg-blue-50' },
-              { label: 'Center Nodes', val: data.systemStats.activeCenters.toString(), sub: 'Operational Units', icon: Building, color: 'text-indigo-600', bg: 'bg-indigo-50' },
+              { label: 'Total User Registry', val: data.systemStats.totalUsers.toLocaleString(), sub: 'Active Entities', icon: Users, color: 'text-pink-600', bg: 'bg-pink-50' },
+              { label: 'Center Nodes', val: data.systemStats.activeCenters.toString(), sub: 'Operational Units', icon: Building, color: 'text-blue-600', bg: 'bg-blue-50' },
               { label: 'Global Revenue', val: formatCurrency(data.systemStats.totalRevenue), sub: `${data.systemStats.growthRate >= 0 ? '+' : ''}${data.systemStats.growthRate}% MTD`, icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-              { label: 'System Cycles', val: data.systemStats.totalBookings.toLocaleString(), sub: `Avg ${formatCurrency(data.systemStats.averageOrderValue)}`, icon: TrendingUp, color: 'text-cyan-600', bg: 'bg-cyan-50' }
+              { label: 'System Cycles', val: data.systemStats.totalBookings.toLocaleString(), sub: `Avg ${formatCurrency(data.systemStats.averageOrderValue)}`, icon: TrendingUp, color: 'text-purple-600', bg: 'bg-purple-50' }
             ].map((stat, i) => (
               <motion.div
                 key={i}
@@ -286,19 +291,22 @@ export default function AdminDashboard() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
               >
-                <Card className="border-white bg-white/60 backdrop-blur-xl rounded-[2.5rem] hover:bg-white transition-all duration-500 group shadow-premium relative overflow-hidden">
-                  <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/10 to-transparent" />
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-                    <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 italic">{stat.label}</CardTitle>
-                    <div className={cn("p-2.5 rounded-xl border border-slate-100 shadow-inner group-hover:scale-110 transition-transform duration-700", stat.bg)}>
-                      <stat.icon className={cn("h-4 w-4", stat.color)} />
+                <Card className="border-slate-100 bg-white shadow-premium rounded-[3rem] transition-all duration-700 hover:border-pink-500/20 group relative overflow-hidden h-full">
+                  <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/10 to-transparent" />
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 p-10 pb-6">
+                    <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 italic group-hover:text-slate-900 transition-colors">{stat.label}</CardTitle>
+                    <div className={cn("p-3 rounded-2xl border border-slate-100 shadow-sm group-hover:scale-110 transition-transform duration-700", stat.bg)}>
+                      <stat.icon className={cn("h-5 w-5", stat.color)} />
                     </div>
                   </CardHeader>
-                  <CardContent>
-                    <div className="text-3xl font-black text-slate-900 tracking-tighter italic">{stat.val}</div>
-                    <p className="text-[9px] font-black uppercase tracking-widest mt-3 text-slate-400 italic">
-                      {stat.sub}
-                    </p>
+                  <CardContent className="p-10 pt-0">
+                    <div className="text-4xl font-black text-slate-950 tracking-tighter italic uppercase">{stat.val}</div>
+                    <div className="flex items-center gap-3 mt-4">
+                      <div className="h-1 w-6 bg-slate-100 rounded-full group-hover:w-12 group-hover:bg-pink-500 transition-all duration-500" />
+                      <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 italic group-hover:text-slate-600">
+                        {stat.sub}
+                      </p>
+                    </div>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -309,34 +317,34 @@ export default function AdminDashboard() {
             {/* Tactical Control Hub */}
             <div className="lg:col-span-4 space-y-10">
               <SynapticNotifications />
-              <Card className="border-white bg-white/60 backdrop-blur-xl rounded-[3rem] overflow-hidden shadow-premium relative group">
-                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
-                <CardHeader className="p-10 lg:p-12 pb-6 border-b border-slate-100">
-                  <CardTitle className="text-2xl font-bold text-slate-900 tracking-tight italic flex items-center gap-4">
-                    <div className="p-3 bg-cyan-50 rounded-2xl border border-cyan-100">
-                      <Cpu className="h-6 w-6 text-cyan-600" />
+              <Card className="border-slate-100 bg-white shadow-premium rounded-[3rem] overflow-hidden relative group transition-all duration-700 hover:border-pink-500/20">
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/10 to-transparent" />
+                <CardHeader className="p-10 lg:p-12 pb-6 border-b border-slate-50">
+                  <CardTitle className="text-2xl font-black text-slate-950 tracking-tighter italic flex items-center gap-5 uppercase">
+                    <div className="p-3 bg-pink-50 rounded-2xl border border-pink-100 shadow-sm group-hover:bg-pink-500 group-hover:text-white transition-all duration-500">
+                      <Cpu className="h-8 w-8" />
                     </div>
                     Command Hub
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-10 lg:p-12 space-y-6 bg-slate-50/30">
                   {quickActions.map((action, i) => (
-                    <motion.div key={i} whileHover={{ x: 10 }} transition={{ duration: 0.3 }}>
+                    <motion.div key={i} whileHover={{ x: 12 }} transition={{ duration: 0.5 }}>
                       <Link href={action.href}>
-                        <Card className="border-white bg-white rounded-[2rem] hover:border-blue-500/20 transition-all duration-500 shadow-sm overflow-hidden group/action">
+                        <Card className="border-slate-100 bg-white rounded-[2rem] hover:border-pink-500/20 transition-all duration-700 shadow-sm overflow-hidden group/action">
                           <CardContent className="p-8">
-                            <div className="flex items-center gap-6 mb-6">
-                              <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center border border-slate-100 shadow-inner group-hover/action:scale-110 transition-transform duration-700", action.color.replace('bg-', 'bg-opacity-10 text-').replace('500', '600'))}>
-                                <action.icon className="h-7 w-7" />
+                            <div className="flex items-center gap-6 mb-8">
+                              <div className={cn("h-16 w-16 rounded-2xl flex items-center justify-center border border-slate-100 shadow-inner group-hover/action:scale-110 transition-transform duration-700", action.color.replace('bg-', 'bg-pink-50 text-pink-').replace('500', '600'))}>
+                                <action.icon className="h-8 w-8" />
                               </div>
-                              <div className="space-y-1">
-                                <h4 className="font-bold text-slate-900 text-lg tracking-tight italic group-hover/action:text-blue-600 transition-colors uppercase">{action.label}</h4>
-                                <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 italic">Access Node Parameter</p>
+                              <div className="space-y-1.5">
+                                <h4 className="font-black text-slate-950 text-xl tracking-tight italic group-hover/action:text-pink-600 transition-colors uppercase">{action.label}</h4>
+                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 italic">Access Node Parameter</p>
                               </div>
                             </div>
-                            <Button variant="outline" className="w-full h-12 rounded-xl border-slate-100 bg-slate-50 text-[9px] font-black uppercase tracking-widest italic hover:bg-blue-600 hover:text-white transition-all shadow-sm">
+                            <Button variant="outline" className="w-full h-14 rounded-2xl border-slate-200 bg-slate-50 text-[10px] font-black uppercase tracking-widest italic hover:bg-gradient-to-r hover:from-pink-500 hover:to-blue-600 hover:text-white hover:border-none transition-all shadow-sm">
                               Initialize Module
-                              <ArrowRight className="ml-2 h-3 w-3" />
+                              <ArrowRight className="ml-3 h-4 w-4" />
                             </Button>
                           </CardContent>
                         </Card>
@@ -347,26 +355,26 @@ export default function AdminDashboard() {
               </Card>
 
               {/* System Telemetry Node */}
-              <Card className="border-emerald-500/20 bg-emerald-50/50 backdrop-blur-xl rounded-[3rem] overflow-hidden shadow-premium relative">
-                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent" />
-                <CardHeader className="p-10 lg:p-12 pb-6 border-b border-emerald-100">
-                  <CardTitle className="text-xl font-bold text-slate-900 tracking-tight italic flex items-center gap-4">
-                    <div className="p-2.5 bg-emerald-50 rounded-xl border border-emerald-100">
-                      <Server className="h-6 w-6 text-emerald-600" />
+              <Card className="border-emerald-100 bg-emerald-50/10 shadow-premium rounded-[3rem] overflow-hidden relative group transition-all duration-700 hover:border-emerald-500/20">
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/10 to-transparent" />
+                <CardHeader className="p-10 lg:p-12 pb-6 border-b border-emerald-50">
+                  <CardTitle className="text-2xl font-black text-slate-950 tracking-tighter italic flex items-center gap-5 uppercase">
+                    <div className="p-3 bg-white rounded-2xl shadow-sm">
+                      <Server className="h-8 w-8 text-emerald-600" />
                     </div>
                     System Telemetry
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-10 lg:p-12 space-y-6">
                   {systemStatus.map((service) => (
-                    <div key={service.name} className="flex items-center justify-between p-5 rounded-2xl bg-white border border-emerald-50 group hover:border-emerald-500/30 transition-all shadow-sm">
-                      <div className="flex items-center gap-4">
-                        <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.4)]" />
-                        <span className="text-sm font-bold text-slate-700 italic uppercase">{service.name}</span>
+                    <div key={service.name} className="flex items-center justify-between p-6 rounded-[2rem] bg-white border border-slate-100 group hover:border-emerald-500/20 transition-all duration-500 shadow-sm">
+                      <div className="flex items-center gap-5">
+                        <div className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse shadow-glow-emerald" />
+                        <span className="text-base font-black text-slate-900 italic uppercase tracking-tight">{service.name}</span>
                       </div>
                       <div className="flex items-center gap-4">
-                        <Badge variant="outline" className="bg-slate-50 text-[8px] font-black text-slate-400 border-slate-100 uppercase tracking-widest px-3 py-1 rounded-lg italic">{service.latency}</Badge>
-                        <Badge className="bg-emerald-50 text-emerald-600 border-emerald-100 rounded-full px-4 py-1 text-[9px] font-black uppercase tracking-widest italic shadow-sm">Nominal</Badge>
+                        <Badge variant="outline" className="bg-slate-50 text-[10px] font-black text-slate-400 border-slate-100 uppercase tracking-widest px-4 py-1.5 rounded-full italic">{service.latency}</Badge>
+                        <Badge className="bg-emerald-50 text-emerald-600 border-none rounded-full px-5 py-1.5 text-[10px] font-black uppercase tracking-widest italic shadow-sm">Nominal</Badge>
                       </div>
                     </div>
                   ))}
@@ -375,7 +383,7 @@ export default function AdminDashboard() {
             </div>
 
             {/* Performance Analytics Column */}
-            <div className="lg:col-span-8 space-y-10">
+            <div className="lg:col-span-8 space-y-12">
               <SecurityOrchestrator />
               <StrategicGrowthAdvisor />
               <AutonomousOpsLog />
@@ -383,55 +391,55 @@ export default function AdminDashboard() {
               <GlobalPerformanceIndex />
               <RegionalGrowthHeatmap />
               
-              <Card className="border-white bg-white/60 backdrop-blur-xl rounded-[3rem] overflow-hidden shadow-premium relative group">
-                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/10 to-transparent" />
-                <CardHeader className="p-10 lg:p-12 pb-6 border-b border-slate-100 flex flex-row items-center justify-between">
-                  <div className="space-y-2">
-                    <CardTitle className="text-3xl font-bold text-slate-900 tracking-tight italic flex items-center gap-4">
-                      <div className="p-3 bg-blue-50 rounded-2xl border border-blue-100 shadow-sm">
-                        <BarChart3 className="h-8 w-8 text-blue-600" />
+              <Card className="border-slate-100 bg-white shadow-premium rounded-[3.5rem] overflow-hidden relative group transition-all duration-700 hover:border-pink-500/20">
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/10 to-transparent" />
+                <CardHeader className="p-12 lg:p-16 pb-8 border-b border-slate-50 flex flex-row items-center justify-between">
+                  <div className="space-y-3">
+                    <CardTitle className="text-4xl font-black text-slate-950 tracking-tighter italic flex items-center gap-6 uppercase">
+                      <div className="p-4 bg-slate-50 rounded-2xl shadow-sm group-hover:bg-pink-500 group-hover:text-white transition-all duration-700">
+                        <BarChart3 className="h-10 w-10 text-pink-600 group-hover:text-white" />
                       </div>
                       Top Performing Nodes
                     </CardTitle>
-                    <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 italic">Live aesthetic efficiency synchronization</CardDescription>
+                    <CardDescription className="text-[11px] font-black uppercase tracking-[0.3em] text-slate-400 mt-4 italic">Live aesthetic efficiency synchronization</CardDescription>
                   </div>
                 </CardHeader>
-                <CardContent className="p-10 lg:p-12 bg-slate-50/30">
+                <CardContent className="p-12 lg:p-16 bg-slate-50/30">
                   {data.topCenters.length === 0 ? (
-                    <div className="py-32 text-center space-y-6 bg-white/40 rounded-[2.5rem] border border-slate-200 border-dashed italic shadow-inner">
-                      <div className="mx-auto h-20 w-20 rounded-3xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-200 animate-pulse shadow-sm">
-                        <Database className="h-10 w-10" />
+                    <div className="py-32 text-center space-y-10 bg-white rounded-[3rem] border border-slate-100 border-dashed italic shadow-inner">
+                      <div className="mx-auto h-28 w-28 rounded-[2rem] bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-200 animate-pulse shadow-sm">
+                        <Database className="h-14 w-14" />
                       </div>
-                      <div className="space-y-2">
-                        <p className="text-xl font-bold text-slate-400 uppercase tracking-tighter">No Registry Data</p>
-                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-300">Awaiting center node synchronization</p>
+                      <div className="space-y-4">
+                        <p className="text-3xl font-black text-slate-950 italic uppercase tracking-tight">No Registry Data</p>
+                        <p className="text-[11px] font-black uppercase tracking-[0.3em] text-slate-400">Awaiting center node synchronization</p>
                       </div>
                     </div>
                   ) : (
-                    <div className="space-y-6">
+                    <div className="space-y-8">
                       {data.topCenters.map((center, index) => (
                         <motion.div
                           key={center.id}
                           initial={{ opacity: 0, x: -20 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: index * 0.1 }}
-                          className="flex flex-col md:flex-row md:items-center justify-between p-10 rounded-[2.5rem] border border-slate-100 bg-white group/item hover:border-blue-500/30 transition-all duration-500 relative overflow-hidden shadow-sm"
+                          className="flex flex-col md:flex-row md:items-center justify-between p-12 rounded-[3rem] border border-slate-100 bg-white group/item hover:border-pink-500/20 transition-all duration-700 relative overflow-hidden shadow-sm hover:shadow-premium"
                         >
-                          <div className="absolute top-0 left-0 bottom-0 w-1.5 bg-blue-600/10 group-hover/item:bg-blue-600 transition-colors" />
-                          <div className="flex items-center gap-8 mb-6 md:mb-0">
-                            <div className="h-16 w-16 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center shadow-inner group-hover/item:border-blue-500/30 transition-all">
-                              <span className="text-2xl font-black italic text-slate-300 group-hover:text-blue-600">0{index + 1}</span>
+                          <div className="absolute top-0 left-0 bottom-0 w-2 bg-gradient-to-b from-pink-500 to-blue-600 opacity-10 group-hover/item:opacity-100 transition-opacity" />
+                          <div className="flex items-center gap-10 mb-8 md:mb-0">
+                            <div className="h-20 w-20 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center shadow-inner group-hover/item:border-pink-500/30 transition-all duration-700">
+                              <span className="text-3xl font-black italic text-slate-200 group-hover:text-pink-600 transition-colors">0{index + 1}</span>
                             </div>
-                            <div className="space-y-2">
-                              <p className="text-2xl font-bold text-slate-900 tracking-tight italic group-hover:text-blue-600 transition-colors uppercase">{center.name}</p>
-                              <Badge variant="outline" className="bg-slate-50 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 border-slate-100 group-hover/item:text-blue-400 transition-colors italic px-4 py-1 rounded-lg">
+                            <div className="space-y-3">
+                              <p className="text-3xl font-black text-slate-950 tracking-tight italic group-hover:text-pink-600 transition-colors uppercase">{center.name}</p>
+                              <Badge variant="outline" className="bg-slate-50 text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 border-slate-100 group-hover/item:text-blue-600 transition-colors italic px-5 py-1.5 rounded-full border-none shadow-sm">
                                 CYCLES: {center.bookings}
                               </Badge>
                             </div>
                           </div>
-                          <div className="text-right space-y-2">
-                            <p className="text-3xl font-black text-slate-900 tracking-tighter italic group-hover:text-blue-600 transition-colors">{formatCurrency(center.revenue)}</p>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 italic">Avg Node Yield: {formatCurrency(center.averageOrderValue)}</p>
+                          <div className="text-right space-y-3">
+                            <p className="text-4xl font-black text-slate-950 tracking-tighter italic group-hover:text-pink-600 transition-colors uppercase">{formatCurrency(center.revenue)}</p>
+                            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 italic">Avg Node Yield: {formatCurrency(center.averageOrderValue)}</p>
                           </div>
                         </motion.div>
                       ))}

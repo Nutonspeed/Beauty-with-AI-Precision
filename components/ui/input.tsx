@@ -8,9 +8,9 @@ function Input({ className, type, ...props }: React.ComponentProps<'input'>) {
       type={type}
       data-slot="input"
       className={cn(
-        'file:text-foreground placeholder:text-muted-foreground selection:bg-primary/30 selection:text-foreground dark:bg-white/5 border-border/50 h-11 w-full min-w-0 rounded-xl border bg-background/50 backdrop-blur-sm px-4 py-2 text-base shadow-sm transition-all duration-300 outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
-        'focus-visible:border-primary/50 focus-visible:ring-4 focus-visible:ring-primary/10 hover:border-primary/30',
-        'aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive',
+        'file:text-slate-950 placeholder:text-slate-400 selection:bg-pink-500/10 selection:text-slate-950 dark:bg-white/5 border-slate-200 h-14 w-full min-w-0 rounded-2xl border bg-white/80 backdrop-blur-md px-6 py-2 text-base shadow-sm transition-all duration-500 outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm italic font-medium',
+        'focus-visible:border-pink-500/50 focus-visible:ring-4 focus-visible:ring-pink-500/5 hover:border-pink-500/30 shadow-inner',
+        'aria-invalid:ring-rose-500/20 aria-invalid:border-rose-500',
         className,
       )}
       {...props}

@@ -26,8 +26,8 @@ export function StatCard({
   value,
   icon: Icon,
   trend,
-  iconColor = "text-blue-600 dark:text-blue-400",
-  iconBackground = "bg-blue-50 dark:bg-blue-950",
+  iconColor = "text-pink-600",
+  iconBackground = "bg-pink-50/50",
   className,
   onClick,
 }: StatCardProps) {
@@ -36,53 +36,53 @@ export function StatCard({
   return (
     <Card
       className={cn(
-        "transition-all hover:shadow-md",
-        isClickable && "cursor-pointer hover:border-primary",
+        "rounded-[2.5rem] bg-white/80 backdrop-blur-md border-slate-100 shadow-premium transition-all duration-500 hover:shadow-glow-pink hover:border-pink-200 group",
+        isClickable && "cursor-pointer active:scale-95",
         className
       )}
       onClick={onClick}
     >
-      <CardContent className="p-6">
+      <CardContent className="p-8">
         <div className="flex items-center justify-between">
-          <div className="space-y-2">
-            <p className="text-sm font-medium text-muted-foreground">
+          <div className="space-y-3">
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] italic text-slate-400 group-hover:text-pink-600 transition-colors">
               {title}
             </p>
-            <p className="text-2xl font-bold tracking-tight">
+            <p className="text-3xl font-black italic tracking-tight text-slate-950">
               {typeof value === 'number' ? value.toLocaleString('th-TH') : value}
             </p>
             {trend && (
-              <div className="flex items-center gap-1 text-sm">
+              <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest italic">
                 {trend.value > 0 ? (
                   <>
-                    <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" />
-                    <span className="text-green-600 dark:text-green-400 font-medium">
-                      +{trend.value}%
-                    </span>
+                    <div className="flex items-center gap-1 text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg shadow-inner">
+                      <TrendingUp className="size-3" />
+                      <span>+{trend.value}%</span>
+                    </div>
                   </>
                 ) : trend.value < 0 ? (
                   <>
-                    <TrendingDown className="h-4 w-4 text-red-600 dark:text-red-400" />
-                    <span className="text-red-600 dark:text-red-400 font-medium">
-                      {trend.value}%
-                    </span>
+                    <div className="flex items-center gap-1 text-rose-600 bg-rose-50 px-2 py-1 rounded-lg shadow-inner">
+                      <TrendingDown className="size-3" />
+                      <span>{trend.value}%</span>
+                    </div>
                   </>
                 ) : (
-                  <span className="text-muted-foreground">0%</span>
+                  <span className="text-slate-400">0%</span>
                 )}
                 {trend.label && (
-                  <span className="text-muted-foreground">{trend.label}</span>
+                  <span className="text-slate-400 opacity-60 lowercase">{trend.label}</span>
                 )}
               </div>
             )}
           </div>
           <div
             className={cn(
-              "flex h-12 w-12 items-center justify-center rounded-lg",
+              "flex size-16 items-center justify-center rounded-2xl shadow-inner transition-all duration-500 group-hover:scale-110 group-hover:shadow-glow-pink",
               iconBackground
             )}
           >
-            <Icon className={cn("h-6 w-6", iconColor)} aria-hidden="true" />
+            <Icon className={cn("size-8 transition-transform duration-500 group-hover:rotate-12", iconColor)} aria-hidden="true" />
           </div>
         </div>
       </CardContent>

@@ -760,7 +760,7 @@ export async function analyzeSkin(
       console.log(`   - Confidence: ${(aiAnalysis.confidence * 100).toFixed(1)}%`);
     }
 
-    // Calculate overall scores FIRST (ต้องมีก่อนจะคำนวณ percentiles)
+    // Calculate overall scores
     console.log('📊 Step 4: Combining results...');
     const overallScore = {
       spots: spots.severity,
@@ -770,9 +770,22 @@ export async function analyzeSkin(
       redness: redness.severity,
       pigmentation: spots.severity
     };
+    
+    // Calculate an aggregate health score (0-100, higher is better)
+    // Formula: 100 - (average severity * 10)
+    const avgSeverity = (
+      overallScore.spots + 
+      overallScore.pores + 
+      overallScore.wrinkles + 
+      overallScore.texture + 
+      overallScore.redness
+    ) / 5;
+    const healthScore = Math.max(0, Math.min(100, Math.round(100 - (avgSeverity * 10))));
+    
     console.log('Overall Scores:', overallScore);
+    console.log('Health Score:', healthScore);
 
-    // �🔥 FIXED: คำนวณ Percentiles จาก database จริง (เปลี่ยนจาก mock!)
+    // Calculating Percentiles from database
     console.log('📊 Calculating percentiles from database...');
     const percentiles = {
       spots: await calculateRealPercentile(overallScore.spots, 'spots'),
@@ -780,33 +793,56 @@ export async function analyzeSkin(
       wrinkles: await calculateRealPercentile(overallScore.wrinkles, 'wrinkles'),
       texture: await calculateRealPercentile(overallScore.texture, 'texture'),
       redness: await calculateRealPercentile(overallScore.redness, 'redness'),
-      overall: await calculateRealPercentile(
-        (overallScore.spots + overallScore.pores + overallScore.wrinkles + overallScore.texture + overallScore.redness) / 5,
-        'spots' // Use spots as proxy for overall
-      )
+      overall: await calculateRealPercentile(avgSeverity, 'spots')
     };
     console.log('✅ Percentiles calculated:', percentiles);
 
-    // สร้าง Hybrid Analysis Result
+    // AI Analysis
+    console.log('🤖 Refining AI Confidence (Bug #15)...');
+    const baseConfidence = aiAnalysis.confidence || 0.8;
+    // Adjust confidence based on image quality if available
+    const qualityMultiplier = options.qualityMetrics 
+      ? (options.qualityMetrics.overallQuality / 10) 
+      : 1.0;
+    const refinedConfidence = Math.max(0.1, Math.min(0.99, baseConfidence * qualityMultiplier));
+
+    // Bug #14: Improve recommendation consistency
+    const recommendations = (aiAnalysis as any).recommendations?.length 
+      ? (aiAnalysis as any).recommendations.map((r: any) => {
+          if (typeof r === 'string') return r;
+          const product = r.product || r.name || 'Recommended Product';
+          const reason = r.reason || r.description || 'Based on your analysis';
+          return `${product}: ${reason}`;
+        }) 
+      : [
+          'Gentle daily cleanser: Baseline guidance for healthy skin',
+          'Hydrating moisturizer with ceramides: Supports skin barrier',
+          'Broad-spectrum SPF 30+: Prevents UV-driven pigmentation and redness'
+        ];
+
+    // Create Hybrid Analysis Result
     const result: HybridSkinAnalysis = {
       id: crypto.randomUUID(),
       userId: '', // Will be set by caller
       createdAt: new Date(),
-      timestamp: new Date(), // เพิ่ม timestamp property
+      timestamp: new Date(),
       imageUrl: '', // Will be set by caller
-  ai: aiAnalysis,
+      ai: {
+        ...aiAnalysis,
+        confidence: refinedConfidence,
+        recommendations: (aiAnalysis as any).recommendations || []
+      },
       aiProvider,
       cv: cvAnalysis,
-      overallScore,
+      overallScore: {
+        ...overallScore,
+        healthScore // Include fixed health score
+      },
       percentiles,
-      confidence: aiAnalysis.confidence || 0.8, // เพิ่ม confidence property กับ fallback
-      recommendations: aiAnalysis.recommendations?.length ? aiAnalysis.recommendations.map(r => r.product + ': ' + r.reason) : [
-        'Gentle daily cleanser: Baseline guidance for healthy skin',
-        'Hydrating moisturizer with ceramides: Supports skin barrier',
-        'Broad-spectrum SPF 30+: Prevents UV-driven pigmentation and redness'
-      ], // เพิ่ม recommendations property กับ default ถ้าไม่มี
+      confidence: refinedConfidence,
+      recommendations,
       annotatedImages: {},
-      qualityMetrics: options.qualityMetrics, // Phase 1: Include quality metrics
+      qualityMetrics: options.qualityMetrics,
     };
 
     // ⚡ Performance Monitoring

@@ -32,14 +32,16 @@ export async function checkUserRole(allowedRoles: UserRole[]) {
   if (!allowedRoles.includes(userRole)) {
     // Redirect to appropriate dashboard based on role
     if (userRole === "super_admin") {
-      redirect("/admin")
-    } else if (userRole === "center_owner" || userRole === "center_admin" || userRole === "center_staff") {
-      redirect("/center/dashboard")
+      redirect("/super-admin")
+    } else if (userRole === "center_owner" || userRole === "center_admin") {
+      redirect("/centers/dashboard")
+    } else if (userRole === "center_staff") {
+      redirect("/beautician/dashboard")
     } else if (userRole === "sales_staff") {
       redirect("/sales/dashboard")
     } else {
       // Default: customer goes to their dashboard
-      redirect("/customer/dashboard")
+      redirect("/dashboard")
     }
   }
 

@@ -29,11 +29,12 @@ export function useSuccessToasts() {
     return toast.success(message, {
       description,
       duration,
-      icon: <CheckCircle2 className="h-5 w-5" />,
+      icon: <CheckCircle2 className="size-6 text-emerald-500 shadow-glow-emerald" />,
+      className: "group toast group-[.toaster]:bg-white/90 group-[.toaster]:backdrop-blur-xl group-[.toaster]:border-emerald-100/50 group-[.toaster]:shadow-premium group-[.toaster]:rounded-[2rem] group-[.toaster]:p-6",
       action: action
         ? {
             label: (
-              <span className="flex items-center gap-2">
+              <span className="flex items-center gap-2 font-black uppercase tracking-widest italic text-[10px]">
                 {action.icon}
                 {action.label}
               </span>
@@ -153,11 +154,12 @@ export function showSuccessToast(
   return toast.success(message, {
     description,
     duration,
-    icon: <CheckCircle2 className="h-5 w-5" />,
+    icon: <CheckCircle2 className="size-6 text-emerald-500 shadow-glow-emerald" />,
+    className: "group toast group-[.toaster]:bg-white/90 group-[.toaster]:backdrop-blur-xl group-[.toaster]:border-emerald-100/50 group-[.toaster]:shadow-premium group-[.toaster]:rounded-[2rem] group-[.toaster]:p-6",
     action: action
       ? {
           label: (
-            <span className="flex items-center gap-2">
+            <span className="flex items-center gap-2 font-black uppercase tracking-widest italic text-[10px]">
               {action.icon}
               {action.label}
             </span>

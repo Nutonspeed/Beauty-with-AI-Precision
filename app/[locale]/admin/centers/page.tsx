@@ -40,7 +40,6 @@ import {
   Pagination,
   PaginationContent,
   PaginationItem,
-  PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination'
 
@@ -175,7 +174,7 @@ export default function AdminCentersPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#020617] text-slate-200 selection:bg-pink-500/30">
+    <div className="flex min-h-screen flex-col bg-white text-slate-950 selection:bg-pink-500/10">
       <Header />
       
       <main className="flex-1 relative overflow-hidden flex flex-col">
@@ -183,50 +182,50 @@ export default function AdminCentersPage() {
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-pink-500/5 rounded-full blur-[120px] animate-glow-pulse" />
           <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-500/5 rounded-full blur-[100px] animate-float" />
-          <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.02]" />
+          <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.015]" />
         </div>
 
         <div className="container relative z-10 py-12 md:py-20 px-6 space-y-16 max-w-7xl mx-auto flex-1">
           {/* Centers Header Interface */}
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-12 pb-12 border-b border-white/5">
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-12 pb-12 border-b border-slate-100">
             <motion.div 
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="space-y-6"
+              className="space-y-8"
             >
-              <div className="flex items-center gap-4">
-                <Button variant="ghost" size="icon" className="h-12 w-12 rounded-xl text-slate-400 hover:bg-white/5 border border-transparent hover:border-white/10 transition-all" onClick={() => router.push(lp('/admin'))}>
-                  <ArrowLeft className="h-5 w-5" />
+              <div className="flex items-center gap-6">
+                <Button variant="ghost" size="icon" className="h-14 w-14 rounded-2xl text-slate-400 hover:bg-slate-50 border border-slate-100 shadow-inner transition-all hover:text-pink-600" onClick={() => router.push(lp('/admin'))}>
+                  <ArrowLeft className="h-6 w-6" />
                 </Button>
-                <Badge variant="outline" className="px-4 py-1 rounded-full border-pink-500/30 text-pink-400 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.2em] text-[10px] font-black shadow-2xl shadow-pink-500/10">
-                  <Box className="mr-3 h-3.5 w-3.5 animate-pulse" />
+                <Badge variant="outline" className="px-6 py-2 rounded-full border-pink-500/30 text-pink-600 bg-pink-500/5 backdrop-blur-md uppercase tracking-[0.3em] text-[10px] font-black shadow-premium animate-pulse italic">
+                  <Box className="mr-3 h-3.5 w-3.5" />
                   Global Aesthetic Infrastructure
                 </Badge>
               </div>
-              <h1 className="text-5xl md:text-8xl font-bold tracking-tighter text-white leading-[0.9] italic">
+              <h1 className="text-5xl md:text-8xl font-black tracking-tighter text-slate-950 leading-[0.8] italic uppercase">
                 Center<br />
-                <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent not-italic">Management</span>
+                <span className="bg-gradient-to-r from-pink-500 via-purple-600 to-blue-600 bg-clip-text text-transparent not-italic block mt-6 tracking-[0.2em] font-black uppercase">Management</span>
               </h1>
-              <p className="text-xl text-slate-500 font-light tracking-widest max-w-2xl italic leading-relaxed">
+              <p className="text-xl text-slate-500 font-light max-w-2xl italic leading-relaxed tracking-tight">
                 Synchronize and orchestrate aesthetic nodes across the global precision aesthetic network.
               </p>
             </motion.div>
             
             <div className="shrink-0">
-              <Button size="xl" variant="premium" className="h-16 px-10 rounded-2xl shadow-2xl shadow-pink-500/20 text-[10px] font-black uppercase tracking-[0.3em] transition-all hover:scale-105 active:scale-95 border">
-                <Plus className="mr-3 h-5 w-5" />
+              <Button size="xl" variant="premium" className="h-16 px-12 rounded-2xl shadow-2xl shadow-pink-500/20 text-[10px] font-black uppercase tracking-[0.3em] transition-all hover:scale-105 active:scale-95 bg-gradient-to-r from-pink-500 via-purple-600 to-blue-600 border-none text-white italic">
+                <Plus className="mr-4 h-6 w-6" />
                 Provision New Node
               </Button>
             </div>
           </div>
 
           {/* Aesthetic Metrics Hub */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {[
-              { label: 'Total Node Registry', val: total, sub: `${centers.filter((c: Center) => c.is_active).length} Active Nodes`, icon: Building, color: 'text-white' },
-              { label: 'Global Personnel', val: centers.reduce((sum: number, c: Center) => sum + (c.userCount || 0), 0), sub: `${centers.reduce((sum: number, c: Center) => sum + (c.ownerCount || 0), 0)} Authorized Owners`, icon: Users, color: 'text-pink-400' },
-              { label: 'Global Revenue (30d)', val: formatCurrency(centers.reduce((sum: number, c: Center) => sum + (c.revenue30Days || 0), 0)), sub: 'System-wide Inflow', icon: DollarSign, color: 'text-emerald-400' },
-              { label: 'Temporal Authorizations', val: centers.filter((c: Center) => c.subscriptionStatus === 'expired').length, sub: 'Expired Plan Vectors', icon: Shield, color: 'text-rose-400' }
+              { label: 'Total Node Registry', val: total, sub: `${centers.filter((c: Center) => c.is_active).length} Active Nodes`, icon: Building, color: 'text-slate-950' },
+              { label: 'Global Personnel', val: centers.reduce((sum: number, c: Center) => sum + (c.userCount || 0), 0), sub: `${centers.reduce((sum: number, c: Center) => sum + (c.ownerCount || 0), 0)} Authorized Owners`, icon: Users, color: 'text-pink-600' },
+              { label: 'Global Revenue (30d)', val: formatCurrency(centers.reduce((sum: number, c: Center) => sum + (c.revenue30Days || 0), 0)), sub: 'System-wide Inflow', icon: DollarSign, color: 'text-emerald-600' },
+              { label: 'Temporal Authorizations', val: centers.filter((c: Center) => c.subscriptionStatus === 'expired').length, sub: 'Expired Plan Vectors', icon: Shield, color: 'text-rose-600' }
             ].map((stat, i) => (
               <motion.div
                 key={i}
@@ -234,12 +233,20 @@ export default function AdminCentersPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
               >
-                <Card className="border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[2.5rem] hover:bg-white/[0.03] transition-all duration-500 group shadow-2xl relative overflow-hidden">
-                  <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
-                  <CardContent className="p-8">
-                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 mb-4 italic">{stat.label}</p>
-                    <div className={cn("text-3xl font-black tracking-tighter italic mb-2", stat.color)}>{stat.val}</div>
-                    <p className="text-[9px] font-black uppercase tracking-widest text-slate-500 italic">{stat.sub}</p>
+                <Card className="border-slate-100 bg-white shadow-premium rounded-[3.5rem] transition-all duration-700 hover:border-pink-500/10 group relative overflow-hidden h-full">
+                  <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/10 to-transparent" />
+                  <CardContent className="p-10">
+                    <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:scale-110 transition-transform duration-700">
+                      <stat.icon className={cn("w-20 h-20", stat.color)} />
+                    </div>
+                    <div className="space-y-6 relative z-10">
+                      <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 italic group-hover:text-slate-900 transition-colors">{stat.label}</p>
+                      <div className={cn("text-3xl font-black tracking-tighter italic uppercase leading-none", stat.color)}>{stat.val}</div>
+                      <div className="flex items-center gap-3">
+                        <div className="h-1 w-6 bg-slate-100 rounded-full group-hover:w-12 group-hover:bg-pink-500 transition-all duration-500" />
+                        <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 italic group-hover:text-slate-600">{stat.sub}</p>
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -247,152 +254,155 @@ export default function AdminCentersPage() {
           </div>
 
           {/* Filtering Node Interface */}
-          <div className="flex flex-col lg:flex-row gap-6">
-            <div className="flex-1 relative group">
-              <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-slate-600 group-focus-within:text-pink-500 transition-colors" />
+          <div className="grid gap-10 lg:grid-cols-12 items-end">
+            <div className="lg:col-span-6 space-y-4">
+              <Label className="text-[11px] font-black uppercase tracking-[0.4em] text-slate-400 ml-2 italic leading-none">Global Search Diagnostics</Label>
+              <div className="relative group">
+                <div className="absolute -inset-1 bg-gradient-to-r from-pink-500/20 to-blue-600/20 rounded-[1.5rem] blur opacity-0 group-focus-within:opacity-100 transition duration-1000" />
+                <div className="absolute inset-y-0 left-8 flex items-center pointer-events-none z-20">
+                  <Search className="h-6 w-6 text-slate-400 group-focus-within:text-pink-500 transition-colors" />
+                </div>
+                <Input
+                  className="h-16 pl-20 pr-10 rounded-2xl border-slate-100 bg-slate-50 text-slate-950 placeholder:text-slate-400 focus:border-pink-500/30 focus:ring-pink-500/10 transition-all text-base font-bold italic shadow-inner relative z-10"
+                  placeholder="Search Centers / Nodes / Emails..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
               </div>
-              <Input
-                className="h-16 pl-16 pr-8 rounded-2xl border-white/5 bg-white/[0.03] text-white placeholder:text-slate-700 focus:border-pink-500/30 focus:ring-pink-500/20 transition-all text-sm font-bold italic"
-                placeholder="Search Centers / Nodes / Emails..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
             </div>
 
-            <div className="flex gap-4">
+            <div className="lg:col-span-3 space-y-4">
+              <Label className="text-[11px] font-black uppercase tracking-[0.4em] text-slate-400 ml-2 italic leading-none">Status Filtering</Label>
               <select
-                className="h-16 w-[200px] rounded-2xl border border-white/5 bg-white/[0.03] px-6 text-[10px] font-black uppercase tracking-widest text-white focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500/30 appearance-none transition-all cursor-pointer italic"
+                className="h-16 w-full rounded-2xl border border-slate-100 bg-slate-50 px-8 text-sm font-black text-slate-950 focus:outline-none focus:ring-2 focus:ring-pink-500/10 focus:border-pink-500/30 appearance-none transition-all cursor-pointer italic uppercase shadow-inner"
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
               >
-                <option value="all" className="bg-[#020617]">GLOBAL VIEW</option>
-                <option value="active" className="bg-[#020617]">ACTIVE NODES</option>
-                <option value="inactive" className="bg-[#020617]">DEACTIVATED</option>
+                <option value="all">GLOBAL VIEW</option>
+                <option value="active">ACTIVE NODES</option>
+                <option value="inactive">DEACTIVATED</option>
               </select>
+            </div>
 
+            <div className="lg:col-span-3 space-y-4">
+              <Label className="text-[11px] font-black uppercase tracking-[0.4em] text-slate-400 ml-2 italic leading-none">Node Density</Label>
               <select
-                className="h-16 w-[200px] rounded-2xl border border-white/5 bg-white/[0.03] px-6 text-[10px] font-black uppercase tracking-widest text-white focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500/30 appearance-none transition-all cursor-pointer italic"
+                className="h-16 w-full rounded-2xl border border-slate-100 bg-slate-50 px-8 text-sm font-black text-slate-950 focus:outline-none focus:ring-2 focus:ring-pink-500/10 focus:border-pink-500/30 appearance-none transition-all cursor-pointer italic uppercase shadow-inner"
                 value={limit.toString()}
                 onChange={(e) => {
                   setLimit(Number(e.target.value))
                   setOffset(0)
                 }}
               >
-                <option value="25" className="bg-[#020617]">25 PER NODE</option>
-                <option value="50" className="bg-[#020617]">50 PER NODE</option>
-                <option value="100" className="bg-[#020617]">100 PER NODE</option>
+                <option value="25">25 PER NODE</option>
+                <option value="50">50 PER NODE</option>
+                <option value="100">100 PER NODE</option>
               </select>
             </div>
           </div>
 
           {/* Aesthetic Node Registry Architecture */}
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="border border-white/5 bg-white/[0.01] backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl relative group"
-          >
-            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+          <Card className="border-slate-100 bg-white shadow-premium rounded-[3.5rem] overflow-hidden relative transition-all duration-700 hover:border-pink-500/10 group">
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/10 to-transparent" />
             <div className="overflow-x-auto">
               <table className="w-full border-collapse">
                 <thead>
-                  <tr className="bg-white/[0.02] border-b border-white/5">
-                    <th className="px-10 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Aesthetic Node</th>
-                    <th className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Personnel Density</th>
-                    <th className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Yield (30d)</th>
-                    <th className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Authorization</th>
-                    <th className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Status Vector</th>
+                  <tr className="bg-slate-50/50 border-b border-slate-100">
+                    <th className="px-10 py-8 text-left text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 italic">Aesthetic Node</th>
+                    <th className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 italic">Personnel Density</th>
+                    <th className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 italic">Yield (30d)</th>
+                    <th className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 italic">Authorization</th>
+                    <th className="px-8 py-8 text-left text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 italic">Status Vector</th>
                     <th className="px-10 py-8 text-right w-[70px]"></th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5">
+                <tbody className="divide-y divide-slate-100 bg-white">
                   {centers.map((center: Center, index: number) => (
                     <motion.tr
                       key={center.id}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: index * 0.05 }}
-                      className="group/row transition-all duration-500 hover:bg-white/[0.03]"
+                      className="group/row transition-all duration-700 hover:bg-slate-50/50 relative"
                     >
-                      <td className="px-10 py-8">
-                        <div className="flex items-center gap-6">
-                          <div className="h-14 w-14 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center shadow-inner group-hover/row:border-pink-500/30 transition-all">
-                            <Building className="h-7 w-7 text-slate-500 group-hover/row:text-pink-400 transition-colors" />
+                      <td className="px-10 py-10">
+                        <div className="flex items-center gap-8">
+                          <div className="h-16 w-16 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center shadow-inner group-hover/row:bg-pink-50 transition-all duration-700">
+                            <Building className="h-8 w-8 text-slate-300 group-hover/row:text-pink-600 transition-colors" />
                           </div>
-                          <div className="space-y-1">
-                            <div className="text-xl font-bold text-white tracking-tight italic group-hover/row:text-pink-400 transition-colors">{center.name}</div>
-                            <div className="flex flex-wrap gap-4">
-                              <span className="text-[10px] font-black uppercase tracking-widest text-slate-600 italic flex items-center gap-2">
-                                <Mail className="h-3 w-3 text-pink-500/40" />
+                          <div className="space-y-1.5">
+                            <div className="text-2xl font-black text-slate-950 tracking-tighter italic uppercase group-hover/row:text-pink-600 transition-colors leading-none">{center.name}</div>
+                            <div className="flex flex-wrap gap-6">
+                              <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 italic flex items-center gap-3">
+                                <Mail className="h-3.5 w-3.5 text-pink-500/40" />
                                 {center.email}
                               </span>
-                              <span className="text-[10px] font-black uppercase tracking-widest text-slate-600 italic flex items-center gap-2">
-                                <MapPin className="h-3 w-3 text-cyan-500/40" />
+                              <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 italic flex items-center gap-3">
+                                <MapPin className="h-3.5 w-3.5 text-blue-500/40" />
                                 {center.city}, {center.province}
                               </span>
                             </div>
                           </div>
                         </div>
                       </td>
-                      <td className="px-8 py-8">
-                        <div className="space-y-1">
-                          <div className="text-sm font-bold text-white italic">{center.userCount} Units</div>
-                          <p className="text-[9px] font-black uppercase tracking-widest text-slate-600">{center.ownerCount} Owners / {center.staffCount} Staff</p>
+                      <td className="px-8 py-10">
+                        <div className="space-y-2">
+                          <div className="text-lg font-black text-slate-900 italic uppercase leading-none">{center.userCount} Units</div>
+                          <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 italic leading-none">{center.ownerCount} Owners / {center.staffCount} Staff</p>
                         </div>
                       </td>
-                      <td className="px-8 py-8">
-                        <div className="text-xl font-black text-white italic tracking-tighter group-hover/row:text-emerald-400 transition-colors">
+                      <td className="px-8 py-10">
+                        <div className="text-3xl font-black text-slate-950 italic tracking-tighter uppercase leading-none group-hover/row:text-emerald-600 transition-colors">
                           {formatCurrency(center.revenue30Days)}
                         </div>
                       </td>
-                      <td className="px-8 py-8">
-                        <div className="space-y-2">
+                      <td className="px-8 py-10">
+                        <div className="space-y-3">
                           <Badge className={cn(
-                            "px-4 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border-none shadow-inner",
-                            center.subscriptionStatus === 'active' ? "bg-blue-500/10 text-blue-400" : 
-                            center.subscriptionStatus === 'expired' ? "bg-rose-500/10 text-rose-400" : "bg-white/[0.03] text-slate-600"
+                            "px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border-none shadow-sm italic",
+                            center.subscriptionStatus === 'active' ? "bg-blue-50 text-blue-600" : 
+                            center.subscriptionStatus === 'expired' ? "bg-rose-50 text-rose-600" : "bg-slate-50 text-slate-400"
                           )}>
                             {center.subscription_plan || 'TRIAL'} ({center.subscriptionStatus})
                           </Badge>
                           {center.subscription_expires_at && (
-                            <p className="text-[8px] font-black uppercase tracking-widest text-slate-600 pl-1 italic">EXPIRES: {formatDate(center.subscription_expires_at)}</p>
+                            <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 pl-2 italic leading-none">EXPIRES: {formatDate(center.subscription_expires_at)}</p>
                           )}
                         </div>
                       </td>
-                      <td className="px-8 py-8">
+                      <td className="px-8 py-10">
                         <Badge className={cn(
-                          "px-4 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border-none shadow-inner",
-                          center.is_active ? "bg-emerald-500/10 text-emerald-400" : "bg-white/[0.03] text-slate-600"
+                          "px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border-none shadow-sm italic",
+                          center.is_active ? "bg-emerald-50 text-emerald-600" : "bg-slate-50 text-slate-400"
                         )}>
                           {center.is_active ? 'NOMINAL' : 'OFFLINE'}
                         </Badge>
                       </td>
-                      <td className="px-10 py-8 text-right">
+                      <td className="px-10 py-10 text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl hover:bg-white/10 text-slate-500">
-                              <MoreHorizontal className="h-5 w-5" />
+                            <Button variant="ghost" size="icon" className="h-12 w-12 rounded-2xl bg-slate-50 border border-slate-100 hover:bg-pink-50 hover:text-pink-600 transition-all duration-500 shadow-inner">
+                              <MoreHorizontal className="h-6 w-6" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="bg-[#020617] border-white/10 rounded-2xl p-2 min-w-[180px]">
-                            <DropdownMenuLabel className="px-4 py-2 text-[9px] font-black uppercase tracking-[0.2em] text-slate-500 italic">Module Controls</DropdownMenuLabel>
-                            <DropdownMenuSeparator className="bg-white/5" />
-                            <DropdownMenuItem className="rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-pink-600 focus:text-white transition-colors">
-                              <Eye className="mr-3 h-4 w-4" />
+                          <DropdownMenuContent align="end" className="bg-white border-slate-100 rounded-3xl p-3 min-w-[220px] shadow-premium selection:bg-pink-500/10">
+                            <DropdownMenuLabel className="px-5 py-3 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 italic">Module Controls</DropdownMenuLabel>
+                            <DropdownMenuSeparator className="bg-slate-50" />
+                            <DropdownMenuItem className="rounded-2xl px-5 py-4 text-[11px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-pink-50 focus:text-pink-600 transition-all gap-4 mb-1">
+                              <Eye className="h-5 w-5 text-pink-500" />
                               Inspect Node
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-pink-600 focus:text-white transition-colors">
-                              <Edit className="mr-3 h-4 w-4" />
+                            <DropdownMenuItem className="rounded-2xl px-5 py-4 text-[11px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-blue-50 focus:text-blue-600 transition-all gap-4 mb-1">
+                              <Edit className="h-5 w-5 text-blue-500" />
                               Refine Parameter
                             </DropdownMenuItem>
-                            <DropdownMenuSeparator className="bg-white/5" />
-                            <DropdownMenuItem className="rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-pink-600 focus:text-white transition-colors">
-                              <Users className="mr-3 h-4 w-4" />
+                            <DropdownMenuSeparator className="bg-slate-50" />
+                            <DropdownMenuItem className="rounded-2xl px-5 py-4 text-[11px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-pink-50 focus:text-pink-600 transition-all gap-4 mb-1">
+                              <Users className="h-5 w-5 text-pink-500" />
                               Sync Personnel
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-pink-600 focus:text-white transition-colors text-emerald-400">
-                              <DollarSign className="mr-3 h-4 w-4" />
+                            <DropdownMenuItem className="rounded-2xl px-5 py-4 text-[11px] font-black uppercase tracking-widest italic cursor-pointer focus:bg-emerald-50 focus:text-emerald-600 transition-all gap-4">
+                              <DollarSign className="h-5 w-5 text-emerald-500" />
                               Yield Analysis
                             </DropdownMenuItem>
                           </DropdownMenuContent>
@@ -406,14 +416,14 @@ export default function AdminCentersPage() {
 
             {/* Registry Pagination Interface */}
             {totalPages > 1 && (
-              <div className="p-8 lg:p-10 border-t border-white/5 bg-white/[0.01]">
+              <div className="p-10 lg:p-12 border-t border-slate-50 bg-white">
                 <Pagination>
-                  <PaginationContent className="gap-4">
+                  <PaginationContent className="gap-6">
                     <PaginationItem>
                       <PaginationPrevious
                         href="#"
                         className={cn(
-                          "rounded-xl border-white/10 bg-white/5 hover:bg-white/10 text-[9px] font-black uppercase tracking-widest h-12 px-6 transition-all",
+                          "rounded-2xl border-slate-200 bg-slate-50 hover:bg-white text-[10px] font-black uppercase tracking-widest h-14 px-8 transition-all shadow-premium italic",
                           page === 1 && "opacity-20 pointer-events-none"
                         )}
                         onClick={(e) => {
@@ -424,29 +434,31 @@ export default function AdminCentersPage() {
                     </PaginationItem>
 
                     <PaginationItem>
-                      <div className="h-12 px-6 flex items-center justify-center rounded-xl bg-pink-600 text-white shadow-2xl shadow-pink-600/40 font-black text-xs italic">
+                      <div className="h-14 px-10 flex items-center justify-center rounded-2xl bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-2xl shadow-pink-500/20 font-black text-sm italic uppercase tracking-widest">
                         Sector {page} / {totalPages}
                       </div>
                     </PaginationItem>
 
                     <PaginationItem>
-                      <PaginationNext
-                        href="#"
+                      <div
                         className={cn(
-                          "rounded-xl border-white/10 bg-white/5 hover:bg-white/10 text-[9px] font-black uppercase tracking-widest h-12 px-6 transition-all",
+                          "cursor-pointer rounded-2xl border-slate-200 bg-slate-50 hover:bg-white text-[10px] font-black uppercase tracking-widest h-14 px-8 transition-all shadow-premium italic flex items-center gap-2",
                           page === totalPages && "opacity-20 pointer-events-none"
                         )}
                         onClick={(e) => {
                           e.preventDefault()
                           if (page < totalPages) setOffset(offset + limit)
                         }}
-                      />
+                      >
+                        Next
+                        <ChevronRight className="h-4 w-4" />
+                      </div>
                     </PaginationItem>
                   </PaginationContent>
                 </Pagination>
               </div>
             )}
-          </motion.div>
+          </Card>
         </div>
       </main>
 

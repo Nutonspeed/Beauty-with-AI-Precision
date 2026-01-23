@@ -59,28 +59,27 @@ function getRoleDashboardPath(role?: string | null, locale?: string | null) {
   
   switch (role) {
     case "super_admin":
-      const path = withLocalePath("/super-admin", locale ?? null)
-      console.log('[MIDDLEWARE DEBUG] Super admin path:', path)
-      return path
+      return withLocalePath("/super-admin", locale ?? null)
     case "center_owner":
-    case "center_staff":
     case "center_admin":
     case "clinic_owner":
     case "clinic_admin":
-    case "clinic_staff":
       return withLocalePath("/centers/dashboard", locale ?? null)
+    case "center_staff":
+    case "clinic_staff":
+      return withLocalePath("/beautician/dashboard", locale ?? null)
     case "sales_staff":
       return withLocalePath("/sales/dashboard", locale ?? null)
     case "customer":
     case "customer_free":
     case "customer_premium":
+    case "customer_aesthetic":
+    case "customer_elite":
     case "free_user":
     case "premium_customer":
       return withLocalePath("/dashboard", locale ?? null)
     default:
-      const defaultPath = withLocalePath("/dashboard", locale ?? null)
-      console.log('[MIDDLEWARE DEBUG] Default path for role', role, ':', defaultPath)
-      return defaultPath
+      return withLocalePath("/dashboard", locale ?? null)
   }
 }
 
@@ -154,6 +153,8 @@ export async function updateSession(request: NextRequest, response?: NextRespons
       timeoutPromise
     ]) as any
 
+    console.log('[MIDDLEWARE] User check result:', { hasUser: !!user, error: error?.message })
+
     const originalPathname = request.nextUrl.pathname
     const pathnameForChecks = resolvedPathname ?? originalPathname
     const locale = getLocaleFromPathname(originalPathname)
@@ -161,8 +162,9 @@ export async function updateSession(request: NextRequest, response?: NextRespons
     const loginPath = locale ? `/${locale}/auth/login` : "/auth/login"
     
     if (error) {
+      console.error('[MIDDLEWARE ERROR] Auth error:', error.message)
       if (isProtectedRoute(normalizedPathname)) {
-        console.error('Auth error in middleware (protected route):', error.message)
+        console.log('[MIDDLEWARE] Protected route + error, redirecting to login:', loginPath)
         // Clear invalid session
         supabaseResponse.cookies.delete('sb-access-token')
         supabaseResponse.cookies.delete('sb-refresh-token')
@@ -176,6 +178,7 @@ export async function updateSession(request: NextRequest, response?: NextRespons
     }
 
     if (isProtectedRoute(normalizedPathname) && !user) {
+      console.log('[MIDDLEWARE] Protected route + no user, redirecting to login:', loginPath)
       const url = request.nextUrl.clone()
       url.pathname = loginPath
       url.searchParams.set("redirect", originalPathname)
@@ -183,6 +186,7 @@ export async function updateSession(request: NextRequest, response?: NextRespons
     }
 
     if (user && isProtectedRoute(normalizedPathname)) {
+      console.log('[MIDDLEWARE] Protected route + user found, checking profile for:', user.id)
       const { data: userProfile, error: profileError } = await supabase
         .from("users")
         .select("role, center_id")
