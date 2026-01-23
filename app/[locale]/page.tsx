@@ -3,14 +3,16 @@
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Card, CardContent } from "@/components/ui/card"
 import Link from "next/link"
-import { 
-  ArrowRight, 
-  Brain, 
+import {
+  ArrowRight,
+  Brain,
   Activity,
   Zap,
   TrendingUp,
-  Sparkles
+  Sparkles,
+  Building2
 } from "lucide-react"
 import { useTranslations, useLocale } from "next-intl"
 import { useEffect, useRef, useState } from "react"
