@@ -6,6 +6,7 @@ import { throttle } from "lodash"
 import { useTranslations } from "next-intl"
 import { ArrowRight, Play, X, Sparkles, Zap, Shield } from "lucide-react"
 import { useLocalizePath } from "@/lib/i18n/locale-link"
+import { cn } from "@/lib/utils"
 import Link from "next/link"
 
 const floatingCards = [
@@ -60,11 +61,18 @@ export function VideoHeroSection() {
     }
   }, [throttledHandleMouse, isMobile])
 
+  const [videoLoaded, setVideoLoaded] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
 
   useEffect(() => {
     const video = videoRef.current
     if (!video) return
+
+    const handleLoadedData = () => {
+      setVideoLoaded(true)
+      console.log("Video data loaded, attempting play...")
+      video.play().catch(err => console.warn("Initial play attempt failed:", err))
+    }
 
     const attemptPlay = async () => {
       try {
@@ -77,11 +85,18 @@ export function VideoHeroSection() {
       }
     }
 
+    video.addEventListener('loadeddata', handleLoadedData)
+    video.addEventListener('canplay', attemptPlay)
+    
+    // Trigger load if already ready
     if (video.readyState >= 3) {
+      handleLoadedData()
       attemptPlay()
-    } else {
-      video.addEventListener('canplay', attemptPlay)
-      return () => video.removeEventListener('canplay', attemptPlay)
+    }
+
+    return () => {
+      video.removeEventListener('loadeddata', handleLoadedData)
+      video.removeEventListener('canplay', attemptPlay)
     }
   }, [])
 
@@ -94,7 +109,10 @@ export function VideoHeroSection() {
             <div className="relative w-full h-full overflow-hidden">
               <video
                 ref={videoRef}
-                className="absolute inset-0 w-full h-full object-cover opacity-80"
+                className={cn(
+                  "absolute inset-0 w-full h-full object-cover transition-opacity duration-1000",
+                  videoLoaded ? "opacity-80" : "opacity-0"
+                )}
                 autoPlay
                 muted
                 loop
@@ -103,12 +121,12 @@ export function VideoHeroSection() {
                 aria-hidden="true"
                 style={{ filter: 'brightness(1.1)' }}
               >
-                <source src="/videos/hero-demo.mp4?v=3" type="video/mp4" />
+                <source src="/videos/hero-demo.mp4?v=4" type="video/mp4" />
               </video>
-              {/* Fallback gradient if video fails */}
+              {/* Fallback gradient if video fails or loading */}
               <div
-                className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900"
-                style={{ zIndex: -1 }}
+                className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 transition-opacity duration-1000"
+                style={{ zIndex: -1, opacity: videoLoaded ? 0.5 : 1 }}
               />
             </div>
             <div className="absolute inset-0 bg-gradient-to-br from-slate-900/60 via-blue-900/20 to-slate-900/40" />
@@ -163,9 +181,9 @@ export function VideoHeroSection() {
       {showModal && (
         <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4" onClick={() => setShowModal(false)}>
           <button className="absolute top-6 right-6 text-white/80 hover:text-white"><X className="w-8 h-8" /></button>
-          <div className="w-full max-w-5xl aspect-video bg-slate-900 rounded-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
+          <div className="w-full max-w-5xl aspect-video bg-slate-900 rounded-2xl overflow-hidden shadow-2xl relative" onClick={e => e.stopPropagation()}>
             <video className="w-full h-full" controls autoPlay playsInline>
-              <source src="/videos/hero-demo.mp4" type="video/mp4" />
+              <source src="/videos/hero-demo.mp4?v=4" type="video/mp4" />
             </video>
           </div>
         </div>
