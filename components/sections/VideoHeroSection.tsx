@@ -159,15 +159,37 @@ export function VideoHeroSection() {
               <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
               {t("home.hero.badge")}
             </motion.span>
-            <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-4xl md:text-6xl lg:text-7xl font-bold text-white max-w-5xl leading-[1.1]">
-              {t("home.hero.title")} <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">{t("home.hero.subtitle")}</span>
+            <motion.h1 
+              initial={{ opacity: 0, y: 30 }} 
+              animate={{ opacity: 1, y: 0 }} 
+              transition={{ delay: 0.1 }} 
+              className="text-4xl md:text-6xl lg:text-7xl font-black text-white max-w-5xl leading-[1.1] tracking-[-0.02em] uppercase italic"
+            >
+              {t("home.hero.title")} <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-emerald-400 bg-clip-text text-transparent not-italic">{t("home.hero.subtitle")}</span>
             </motion.h1>
-            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="mt-6 text-lg text-white/60 max-w-2xl">{t("home.hero.description")}</motion.p>
+            <motion.p 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              transition={{ delay: 0.2 }} 
+              className="mt-6 text-lg text-white/60 max-w-2xl font-light tracking-wide"
+            >
+              {t("home.hero.description")}
+            </motion.p>
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="mt-10 flex flex-wrap gap-4 justify-center">
-              <Link href={lp("/analysis")} className="group h-14 px-10 rounded-xl bg-gradient-to-r from-pink-500 via-purple-600 to-blue-600 text-white text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-3 hover:shadow-2xl hover:shadow-pink-500/25 transition-all hover:scale-105 active:scale-95">
-                {t("home.hero.cta")} <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              <Link 
+                href={lp("/analysis")} 
+                className="group relative h-14 px-10 rounded-xl bg-gradient-to-r from-pink-500 via-purple-600 to-blue-600 text-white text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-3 transition-all hover:scale-105 active:scale-95 overflow-hidden"
+              >
+                {/* Glow Effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-pink-500 via-purple-600 to-blue-600 opacity-0 group-hover:opacity-100 blur-xl transition-opacity -z-10" />
+                <span className="relative z-10 flex items-center gap-3">
+                  {t("home.hero.cta")} <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </span>
               </Link>
-              <button onClick={() => setShowModal(true)} className="h-14 px-10 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 text-white text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-3 hover:bg-white/10 transition-all hover:scale-105 active:scale-95">
+              <button 
+                onClick={() => setShowModal(true)} 
+                className="h-14 px-10 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 text-white text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-3 hover:bg-white/10 transition-all hover:scale-105 active:scale-95"
+              >
                 <Play className="w-5 h-5 text-pink-400" /> Watch Synthesis
               </button>
             </motion.div>
