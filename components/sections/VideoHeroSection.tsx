@@ -88,7 +88,7 @@ export function VideoHeroSection() {
                   preload="auto"
                   aria-hidden="true"
                 >
-                  <source src="/videos/hero-demo.mp4" type="video/mp4" />
+                  <source src="/videos/hero-demo.mp4?v=2" type="video/mp4" />
                 </video>
               {/* Fallback gradient if video fails */}
               <div
