@@ -67,26 +67,26 @@ export function VideoHeroSection() {
           <motion.div className="absolute inset-0" style={{ scale }}>
             {/* Video with fallback */}
             <div className="relative w-full h-full">
-              {!isMobile ? (
                 <video
-                  className="absolute inset-0 w-[120%] h-[120%] -left-[10%] -top-[10%] object-cover pointer-events-none opacity-45"
+                  className="absolute inset-0 w-[120%] h-[120%] -left-[10%] -top-[10%] object-cover pointer-events-none opacity-60"
                   autoPlay
                   muted
                   loop
                   playsInline
-                  preload="metadata"
+                  preload="auto"
                   aria-hidden="true"
+                  onCanPlay={() => console.log("Video can play")}
+                  onError={(e) => console.error("Video error:", e)}
                 >
                   <source src="/videos/hero-demo.mp4" type="video/mp4" />
                 </video>
-              ) : null}
               {/* Fallback gradient if video fails */}
               <div
                 className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900"
                 style={{ zIndex: -1 }}
               />
             </div>
-            <div className="absolute inset-0 bg-gradient-to-br from-slate-900/80 via-blue-900/40 to-slate-900/60" />
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-900/60 via-blue-900/20 to-slate-900/40" />
           </motion.div>
 
           {/* Floating Glass Cards with Neon Accents */}
