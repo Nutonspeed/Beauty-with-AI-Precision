@@ -62,12 +62,26 @@ export function VideoHeroSection() {
 
   const videoRef = useRef<HTMLVideoElement>(null)
 
-  // Force play video on mount
   useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.play().catch(err => {
-        console.error("Video play failed:", err)
-      })
+    const video = videoRef.current
+    if (!video) return
+
+    const attemptPlay = async () => {
+      try {
+        await video.play()
+        console.log("Video playback started successfully")
+      } catch (err) {
+        console.warn("Autoplay failed, retrying muted...", err)
+        video.muted = true
+        video.play().catch(e => console.error("Final playback attempt failed:", e))
+      }
+    }
+
+    if (video.readyState >= 3) {
+      attemptPlay()
+    } else {
+      video.addEventListener('canplay', attemptPlay)
+      return () => video.removeEventListener('canplay', attemptPlay)
     }
   }, [])
 
@@ -77,22 +91,23 @@ export function VideoHeroSection() {
         <div className="relative h-full">
           <motion.div className="absolute inset-0" style={{ scale }}>
             {/* Video with fallback */}
-            <div className="relative w-full h-full">
-                <video
-                  ref={videoRef}
-                  className="absolute inset-0 w-[120%] h-[120%] -left-[10%] -top-[10%] object-cover pointer-events-none opacity-70"
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  preload="auto"
-                  aria-hidden="true"
-                >
-                  <source src="/videos/hero-demo.mp4?v=2" type="video/mp4" />
-                </video>
+            <div className="relative w-full h-full overflow-hidden">
+              <video
+                ref={videoRef}
+                className="absolute inset-0 w-full h-full object-cover opacity-80"
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="auto"
+                aria-hidden="true"
+                style={{ filter: 'brightness(1.1)' }}
+              >
+                <source src="/videos/hero-demo.mp4?v=3" type="video/mp4" />
+              </video>
               {/* Fallback gradient if video fails */}
               <div
-                className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900"
+                className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900"
                 style={{ zIndex: -1 }}
               />
             </div>
